@@ -6,7 +6,7 @@ Product of Exponentials FK, Newton-Raphson IK, Space/Body Jacobians.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -50,7 +50,7 @@ def FKinSpace(M: Any, Slist: Any, thetalist: Any) -> np.ndarray:
     T = T @ M
 
     ensure(abs(np.linalg.det(T[:3, :3]) - 1.0) < 1e-9, "result must be SE(3)")
-    return T
+    return cast(np.ndarray, np.asarray(T, dtype=float))
 
 
 def FKinBody(M: Any, Blist: Any, thetalist: Any) -> np.ndarray:
@@ -72,7 +72,7 @@ def FKinBody(M: Any, Blist: Any, thetalist: Any) -> np.ndarray:
         T = T @ MatrixExp6(se3)
 
     ensure(abs(np.linalg.det(T[:3, :3]) - 1.0) < 1e-9, "result must be SE(3)")
-    return T  # type: ignore[no-any-return]
+    return cast(np.ndarray, np.asarray(T, dtype=float))
 
 
 # ---------------------------------------------------------------------------
@@ -98,7 +98,7 @@ def JacobianSpace(Slist: Any, thetalist: Any) -> np.ndarray:
         Js[:, i] = _Adjoint(T) @ Slist[:, i]
 
     ensure(Js.shape == (6, n), "Jacobian must be 6xn")
-    return Js
+    return cast(np.ndarray, Js)
 
 
 def JacobianBody(Blist: Any, thetalist: Any) -> np.ndarray:
@@ -119,7 +119,7 @@ def JacobianBody(Blist: Any, thetalist: Any) -> np.ndarray:
         Jb[:, i] = _Adjoint(T) @ Blist[:, i]
 
     ensure(Jb.shape == (6, n), "Jacobian must be 6xn")
-    return Jb
+    return cast(np.ndarray, Jb)
 
 
 # ---------------------------------------------------------------------------
@@ -137,8 +137,7 @@ def IKinBody(
     max_iter: int = 100,
 ) -> tuple[np.ndarray, bool]:
     """Iterative inverse kinematics using Newton-Raphson in the body frame."""
-    if eomg is None:
-        raise ValueError("eomg must be provided")
+    require(eomg is not None, "angular tolerance must be provided", eomg)
     Blist = np.asarray(Blist, dtype=float)
     M = np.asarray(M, dtype=float)
     T_desired = np.asarray(T_desired, dtype=float)
@@ -175,8 +174,7 @@ def IKinSpace(
     Slist: Any, M: Any, T: Any, thetalist0: Any, eomg: float, ev: float
 ) -> tuple[np.ndarray, bool]:
     """Computes inverse kinematics in the space frame for an open chain robot."""
-    if Slist is None:
-        raise ValueError("Slist must be provided")
+    require(Slist is not None, "Slist must be provided", Slist)
     thetalist = np.array(thetalist0).copy()
     i = 0
     maxiterations = 20

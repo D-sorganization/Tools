@@ -14,6 +14,8 @@ from typing import Any, cast
 
 import numpy as np
 
+from rotation_converter._contracts import require
+
 from .se3 import Adjoint, MatrixExp6, TransInv, VecTose3
 from .so3 import VecToso3
 
@@ -44,8 +46,7 @@ def InverseDynamics(
     Slist: Any,
 ) -> np.ndarray:
     """Computes inverse dynamics in the space frame using forward-backward Newton-Euler."""  # noqa: E501
-    if thetalist is None:
-        raise ValueError("thetalist must be provided")
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     n = len(thetalist)
     Mi = np.eye(4)
     Ai = np.zeros((6, n))
@@ -82,8 +83,7 @@ def InverseDynamics(
 
 def MassMatrix(thetalist: Any, Mlist: Any, Glist: Any, Slist: Any) -> np.ndarray:
     """Computes the mass matrix of an open chain robot."""
-    if thetalist is None:
-        raise ValueError("thetalist must be provided")
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     n = len(thetalist)
     M = np.zeros((n, n))
     for i in range(n):
@@ -122,8 +122,7 @@ def GravityForces(
     thetalist: Any, g: Any, Mlist: Any, Glist: Any, Slist: Any
 ) -> np.ndarray:
     """Computes the joint forces/torques required to overcome gravity."""
-    if thetalist is None:
-        raise ValueError("thetalist must be provided")
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     n = len(thetalist)
     return InverseDynamics(
         thetalist, [0] * n, [0] * n, g, [0, 0, 0, 0, 0, 0], Mlist, Glist, Slist
@@ -134,8 +133,7 @@ def EndEffectorForces(
     thetalist: Any, Ftip: Any, Mlist: Any, Glist: Any, Slist: Any
 ) -> np.ndarray:
     """Computes the joint forces/torques required to create end-effector force Ftip."""
-    if thetalist is None:
-        raise ValueError("thetalist must be provided")
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     n = len(thetalist)
     return InverseDynamics(
         thetalist, [0] * n, [0] * n, [0, 0, 0], Ftip, Mlist, Glist, Slist
@@ -186,8 +184,7 @@ def InverseDynamicsTrajectory(
     Slist: Any,
 ) -> np.ndarray:
     """Calculates joint forces/torques for a trajectory using inverse dynamics."""
-    if thetamat is None:
-        raise ValueError("thetamat must be provided")
+    require(thetamat is not None, "thetamat must be provided", thetamat)
     thetamat = np.array(thetamat).T
     dthetamat = np.array(dthetamat).T
     ddthetamat = np.array(ddthetamat).T
@@ -205,7 +202,7 @@ def InverseDynamicsTrajectory(
             Slist,
         )
     taumat = np.array(taumat).T
-    return taumat
+    return cast(np.ndarray, taumat)
 
 
 def ForwardDynamicsTrajectory(
@@ -221,8 +218,7 @@ def ForwardDynamicsTrajectory(
     intRes: int,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Simulates the motion of a serial chain given an open-loop history of joint forces/torques."""  # noqa: E501
-    if thetalist is None:
-        raise ValueError("thetalist must be provided")
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     taumat = np.array(taumat).T
     Ftipmat = np.array(Ftipmat).T
     thetamat = taumat.copy().astype(float)
@@ -267,8 +263,7 @@ def ComputedTorque(
     Kd: float,
 ) -> np.ndarray:
     """Computes the joint control torques at a particular time instant."""
-    if thetalist is None:
-        raise ValueError("thetalist must be provided")
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     e = np.subtract(thetalistd, thetalist)
     torques = np.asarray(
         np.dot(
@@ -313,8 +308,7 @@ def SimulateControl(
     intRes: int,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Simulates the computed torque controller over a given desired trajectory."""
-    if thetalist is None:
-        raise ValueError("thetalist must be provided")
+    require(thetalist is not None, "thetalist must be provided", thetalist)
     Ftipmat = np.array(Ftipmat).T
     thetamatd = np.array(thetamatd).T
     dthetamatd = np.array(dthetamatd).T

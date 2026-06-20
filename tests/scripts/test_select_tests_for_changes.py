@@ -195,6 +195,22 @@ def test_vessel_drafter_contracts_source_change_selects_contract_tests() -> None
 
 
 @pytest.mark.unit
+def test_modern_robotics_contract_sources_select_focused_public_tests() -> None:
+    targets = select_tests_for_changes.select_targets(
+        [
+            "src/rotation_converter/modern_robotics.py",
+            "src/rotation_converter/_mr_dynamics.py",
+            "src/rotation_converter/modern_robotics_pkg/dynamics.py",
+            "src/rotation_converter/modern_robotics_pkg/kinematics.py",
+            "src/rotation_converter/modern_robotics_pkg/trajectory.py",
+        ]
+    )
+
+    assert targets == ["tests/rotation_converter/test_modern_robotics.py"]
+    assert "tests/rotation_converter" not in targets
+
+
+@pytest.mark.unit
 def test_mr_kinematics_source_change_selects_focused_contract_tests() -> None:
     targets = select_tests_for_changes.select_targets(
         ["src/rotation_converter/_mr_kinematics.py"]

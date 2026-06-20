@@ -159,7 +159,8 @@ def _setup_process_doc(
     (doc, msp, t, layout_regions, text_layer, notes_layer,
      instrument_layer, leader_layer, arrow_size, bubble_radius)
     """
-    assert spec is not None, "spec must be provided"
+    if spec is None:
+        raise ValueError("spec must be provided")
     doc = ezdxf.new(setup=True)
     ensure_layers(doc, spec)
     msp = doc.modelspace()
@@ -223,8 +224,10 @@ def _render_process_elements(
     - spec has been prepared (defaults merged, instruments spread).
     - label_placer has equipment/panel rects reserved.
     """
-    assert msp is not None, "msp must be provided"
-    assert spec is not None, "spec must be provided"
+    if msp is None:
+        raise ValueError("msp must be provided")
+    if spec is None:
+        raise ValueError("spec must be provided")
     stream_label_scale = layout_cfg["stream_label_scale"]
     stream_label_leaders = layout_cfg["stream_label_leaders"]
     instrument_spacing = bubble_radius * layout_cfg["instrument_spacing_factor"]
@@ -524,8 +527,10 @@ def _render_controls_table(
     - spec has been prepared (defaults merged).
     - layout_cfg is the layout configuration dict from get_layout_config(spec).
     """
-    assert msp is not None, "msp must be provided"
-    assert spec is not None, "spec must be provided"
+    if msp is None:
+        raise ValueError("msp must be provided")
+    if spec is None:
+        raise ValueError("spec must be provided")
     width = x_max - x_min
     height = y_max - y_min
 
@@ -601,7 +606,8 @@ def generate_process_sheet(
     prepared_spec: dict[str, Any] | None = None,
 ) -> None:
     """Generate the process (Sheet 1) DXF and optional SVG."""
-    assert spec_path is not None, "spec_path must be provided"
+    if spec_path is None:
+        raise ValueError("spec_path must be provided")
     if prepared_spec is None:
         spec = prepare_spec(spec_path, profile)
     else:

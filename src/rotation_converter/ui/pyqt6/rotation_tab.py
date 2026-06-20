@@ -195,7 +195,8 @@ class RotationConverterTab(QWidget):
         self._draw_rotation(rot)
 
     def _update_main_result(self, rot: Rotation) -> None:
-        assert rot is not None, "rot must be provided"
+        if rot is None:
+            raise ValueError("rot must be provided")
         idx = self._target_repr.currentIndex()
         conv = self._target_euler_conv.currentText()
         try:
@@ -219,7 +220,8 @@ class RotationConverterTab(QWidget):
             self._main_result.setText(f"Error: {e}")
 
     def _display_all(self, rot: Rotation, conv: str) -> None:
-        assert rot is not None, "rot must be provided"
+        if rot is None:
+            raise ValueError("rot must be provided")
         q = rot.as_quaternion()
         R = rot.as_rotation_matrix()
         axis, angle = rot.as_axis_angle()
@@ -253,7 +255,8 @@ class RotationConverterTab(QWidget):
         self._output_text.setPlainText("\n".join(lines))
 
     def _draw_rotation(self, rot: Rotation) -> None:
-        assert rot is not None, "rot must be provided"
+        if rot is None:
+            raise ValueError("rot must be provided")
         self._fig.clear()
         ax = self._fig.add_subplot(111, projection="3d")
         style_figure(self._fig, ax)

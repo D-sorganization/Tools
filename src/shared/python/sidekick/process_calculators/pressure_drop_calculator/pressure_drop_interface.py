@@ -446,7 +446,8 @@ def _resolve_pipe_geometry(
     Returns:
         Tuple of (diameter_m, roughness_m).
     """
-    assert pipe_material is not None, "pipe_material must be provided"
+    if pipe_material is None:
+        raise ValueError("pipe_material must be provided")
     if pipe_diameter is None:
         if pipe_size is None or pipe_schedule is None:
             raise ValueError(
@@ -480,7 +481,8 @@ def _resolve_gas_and_flow(
     Returns:
         Tuple of (composition, mass_flow_kg_s).
     """
-    assert flow_rate is not None, "flow_rate must be provided"
+    if flow_rate is None:
+        raise ValueError("flow_rate must be provided")
     if gas_composition is None:
         gas_composition = {"Air": 1.0}
         _logger.info("Using default gas composition: Air")
@@ -804,7 +806,8 @@ def calculate_pressure_drop_syngas(
         ...     flow_rate=5000, flow_unit='kg/h', pressure=20, temperature=750
         ... )
     """
-    assert pipe_size is not None, "pipe_size must be provided"
+    if pipe_size is None:
+        raise ValueError("pipe_size must be provided")
     syngas = {
         "H2": H2_fraction,
         "CO": CO_fraction,

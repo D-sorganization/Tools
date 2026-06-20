@@ -142,7 +142,8 @@ class HumanoidModel:
         joints: list[GeneratedJoint],
         root_link_name: str = "pelvis",
     ) -> None:
-        assert links is not None, "links must be provided"
+        if links is None:
+            raise ValueError("links must be provided")
         self.links = links
         self.joints = joints
         self.root_link_name = root_link_name

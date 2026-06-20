@@ -122,7 +122,8 @@ def apply_window_function(
     window_shape: str,
 ) -> np.ndarray[Any, Any]:
     """Apply window function to smooth frequency response."""
-    assert filter_response is not None, "filter_response must be provided"
+    if filter_response is None:
+        raise ValueError("filter_response must be provided")
     n = len(filter_response)
 
     if window_shape == "Gaussian":
@@ -166,7 +167,8 @@ def apply_fft_filter_core(
     Returns:
         Filtered signal data
     """
-    assert signal_data is not None, "signal_data must be provided"
+    if signal_data is None:
+        raise ValueError("signal_data must be provided")
     if len(filter_coeffs) != len(signal_data):
         old_indices = np.linspace(0, len(filter_coeffs) - 1, len(filter_coeffs))
         new_indices = np.linspace(0, len(filter_coeffs) - 1, len(signal_data))

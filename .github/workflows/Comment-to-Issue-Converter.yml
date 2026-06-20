@@ -76,7 +76,7 @@ jobs:
        github.actor != 'd-sorgcodexagent[bot]' &&
        github.actor != 'copilot-pull-request-reviewer[bot]')
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 1
       - uses: actions/setup-python@v6

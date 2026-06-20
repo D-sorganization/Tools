@@ -19,6 +19,7 @@ from unittest.mock import patch
 
 import pytest
 
+import src.shared.python.ai.tools.cli_tools as cli_tools
 from src.shared.python.ai.tools.cli_tools import ShellTool  # noqa: E402
 
 
@@ -137,3 +138,28 @@ class TestAllowDenyMatrix:
     def test_bypasses_rejected(self, tool: ShellTool, command: str) -> None:
         """Bypass attempts with paths or embedded dangerous commands are rejected."""
         assert tool._is_command_allowed(command) is False
+
+    @pytest.mark.unit
+    def test_token_validation_errors_fail_closed_and_log(
+        self,
+        tool: ShellTool,
+        monkeypatch: pytest.MonkeyPatch,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        """A token Path validation failure rejects the command with a warning."""
+        real_path = cli_tools.Path
+        bad_token = "path-validation-boom"
+
+        def raising_path(value: str) -> Path:
+            if value == bad_token:
+                raise OSError("synthetic path failure")
+            return real_path(value)
+
+        monkeypatch.setattr(cli_tools, "Path", raising_path)
+
+        with caplog.at_level("WARNING"):
+            allowed = tool._is_command_allowed(f"ls {bad_token}")
+
+        assert allowed is False
+        assert "Could not validate token" in caplog.text
+        assert bad_token in caplog.text

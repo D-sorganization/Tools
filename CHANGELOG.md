@@ -4,7 +4,10 @@
 
 ### Changes
 
+- fix(movement): dock swing plot legends beside plots
+- fix(movement): reserve per-plot legend rows for swing analysis
 - fix(p1am/firmware): boot with bench routing/PID0 defaults and reverted THM config (#3606)
+- fix(movement): clip docked swing plot legends to reserved strips
 - fix(ci): cap release bump pull request body
 - fix(ci): open release bump pull requests
 - fix(ci): scope release ruff validation
@@ -386,7 +389,7 @@
 - build(deps): bump mypy from 2.0.0 to 2.1.0 (#2863)
 - feat(mcp): MCP infrastructure + NotebookLM shim (UpstreamDrift #5615) (#2884)
 - ci: add maturin CI pipeline for ai_backend crate (#2870) (#2886)
-- fix(chat): use __dict__ access in headless-safe ChatDockWidget methods + fix test conftest path priority (#2890)
+- fix(chat): use **dict** access in headless-safe ChatDockWidget methods + fix test conftest path priority (#2890)
 - feat(chat): Provider/Model/Thinking dropdowns + mid-thread switch (#2880)
 - feat(chat): conversation management — unarchive / search / export / load-as-context (#2872) (#2879)
 - build(deps): bump scipy from 1.16.0 to 1.17.1 (#2860)
@@ -422,7 +425,7 @@
 - fix(chat): wire refresh_models and index_codebase router handlers (#2751) (#2817)
 - fix: normalize token-count keys across all 7 AI adapters (#2816)
 - test: add unit tests for BitNet, Ollama, and Rust adapters (#2814)
-- refactor: extract _classify_error helper to base adapter, remove 3x duplication (#2809)
+- refactor: extract \_classify_error helper to base adapter, remove 3x duplication (#2809)
 - docs(rust): document distribution gap + log warnings on Python fallback (#2776) (#2806)
 - fix: branch ProviderConfigWidget UI on provider name, not just requires_key (#2805)
 - perf(sidebar): lazy pandas import and cancellable row count in data explorer (#2770, #2772) (#2804)
@@ -430,7 +433,7 @@
 - refactor(chat): integrate quick_bar with theme system (#2780) (#2802)
 - fix(chat): atomic shared session + injectable theme provider (#2753, #2766) (#2801)
 - fix(sidebar): replace deprecated asyncio with QThread in reporting_tab (#2769) (#2800)
-- fix: repair ai/__init__.py broken import chain (#2798)
+- fix: repair ai/**init**.py broken import chain (#2798)
 - refactor: decouple build_system_prompt from UpstreamDrift domain (#2765)
 - refactor: remove doubled-negative antipattern in ai/ preconditions (#2778)
 - feat: Implement chat UX enhancements (#2727)
@@ -457,8 +460,8 @@
 - ⚡ Bolt: Optimize RK4 solver expression evaluation (#2741)
 - feat: Add shared ReportGenerator for agentic insights (#2745)
 - feat: Agentic Reporting and Summarization Engine (#2730)
-- fix(humanoid): expose public API through __init__.py exports (#2734)
-- fix(mesh): expose public API through __init__.py exports (#2733)
+- fix(humanoid): expose public API through **init**.py exports (#2734)
+- fix(mesh): expose public API through **init**.py exports (#2733)
 - feat(ui): sync UI features (#2732)
 - feat: sidekick attachments (#2720)
 - feat: add bounded symbolic solver router with optional SymPy (#2721)
@@ -617,14 +620,14 @@
 - docs(deployment): add helm/README.md explaining library-only deployment model (closes #2422) (#2455)
 - feat(tests): add cross-repo API contract signature tests (closes #2420) (#2454)
 - docs(architecture): add ADRs 002-006 for module structure, API stability, formatter, plugins, and type safety (closes #2421) (#2453)
-- fix(architecture): fix import path collisions and add namespace __init__.py files (closes #2405) (#2452)
+- fix(architecture): fix import path collisions and add namespace **init**.py files (closes #2405) (#2452)
 - docs(developer-experience): improve onboarding, plugin system docs, and add missing docstrings (closes #2414) (#2451)
 - feat(ci): add semantic versioning and changelog release workflow (closes #2423) (#2450)
 - fix(tests): rewrite integration tests to match actual APIs (issue #2416) (#2449)
 - fix(perf): fix pressure-drop benchmarks to use actual calculator API (#2413) (#2448)
 - fix(testing): raise coverage floor to 40% with ratchet plan (#2406) (#2446)
 - fix(api): update pressure-drop tests to use StandardResponse envelope (#2411) (#2447)
-- fix(security): enforce TOOLS_* env var naming convention (#2407) (#2445)
+- fix(security): enforce TOOLS\_\* env var naming convention (#2407) (#2445)
 - fix(ci): prevent Jules cascade by skipping Jules-generated follow-up issues (#2444)
 - refactor: enforce type safety on hot paths (#2436)
 - ⚡ Bolt: Prevent max call stack errors in ODESolver Calculator results rendering (#2439)
@@ -741,7 +744,7 @@
 - fix(qt): offload Data Processor neural network training to QThread worker (#2090) (#2172)
 - fix(ci): route Bot-CI-Trigger.yml to self-hosted fleet runner
 - Fix Tools CI pip and comment queue failures (#2164)
-- chore(pkg): add missing __init__.py declarations (#2162)
+- chore(pkg): add missing **init**.py declarations (#2162)
 - ci: add shared pip wheel cache to quality-gate and tests jobs (#2167)
 - refactor(qt): remove QTimer.singleShot init races + fix lambda leaks (#2098) (#2163)
 - chore(deps): align Python version pins and lint/test manifests (#2093, #2094) (#2161)
@@ -772,7 +775,7 @@
 - fix: disable Flask debug=True in production WSGI entry point (#2078) (#2106)
 - ⚡ Bolt: [performance improvement] Optimize applyFilter object allocation (#2126)
 - hotfix: resolve ruff quality-gate failures (#2132)
-- fix(security): validate mesh filenames against path traversal in _download_meshes (#2077) (#2107)
+- fix(security): validate mesh filenames against path traversal in \_download_meshes (#2077) (#2107)
 - 🎨 Palette: [Inline Error Feedback & Focus Improvements] (#2127)
 - fix: replace runtime asserts with exceptions (#2115)
 - [codex] harden launcher process handling (#2108)
@@ -800,7 +803,7 @@
 - ci: add fleet mode toggle to pick-runner (#2045)
 - chore: force self-hosted runners to conserve github action minutes (#2040)
 - feat: extract mypy_autofix_agent to shared tools package (#2037)
-- refactor(lower_body_model): extract _build_leg_xml helper in builder (#2036)
+- refactor(lower_body_model): extract \_build_leg_xml helper in builder (#2036)
 - fix(lower_body_model): closed-chain ankle IK in setup_initial_pose (#2035)
 - refactor(lower_body_model): centralize id cache and add contract tests (#2032)
 - feat(lower_body_model): inclined-plane pelvis rotation driver (#2031)
@@ -945,7 +948,7 @@
 - test: improve folder tool structural test coverage and tools coverage (#1586)
 - Fix: Resolve remaining failing process calculator tests (#1584)
 - feat: Improve test coverage and fix process calculators (#1585)
-- fix: repair stale src.tools.* import paths in 9 previously-broken test files (#1583)
+- fix: repair stale src.tools.\* import paths in 9 previously-broken test files (#1583)
 - Inline heavy tests workflow (#1582)
 - Fix heavy tests workflow inputs (#1579)
 - fix: Add actionlint.yaml with d-sorg-fleet-4core runner label allowlist
@@ -983,7 +986,7 @@
 - test: improve coverage for equations popup and function generator (#1529)
 - test: improve coverage for matrix widgets and no scroll widgets (#1528)
 - test: improve coverage for gui modules (chart_data_dialog, diagnostics, theme) (#1527)
-- test: improve coverage for __main__.py and model_registry.py (#1526)
+- test: improve coverage for **main**.py and model_registry.py (#1526)
 - test(upstream-drift-tools): waves 9-11 - flow_rate_converter 100%, service.py 95%, baghouse_calc 100% (#1525)
 - test(upstream-drift-tools): waves 7-8 - financial_calc 100%, core.py 100%, conversion service 41%→95% (#1524)
 - test(upstream-drift-tools): coverage blitz waves 5-6 - electrical suite 100%, syngas_water 98% (#1523)
@@ -1031,7 +1034,7 @@
 - feat(pendulum): noise injection UI panel for perturbation analysis (#1340)
 - refactor(data_processor): DbC wave 3 — cross_correlation contracts + comprehensive tests (#1341)
 - test(data_processor): TDD coverage wave 2 — 40 new tests, DbC expansion (#1339)
-- refactor(pendulum): DRY — extract _assert_energy_finite and total_torques_at to base (#1338)
+- refactor(pendulum): DRY — extract \_assert_energy_finite and total_torques_at to base (#1338)
 - chore: Relocate buried tools from src/tools/folder_tools/ to src/ top-level (#1304)
 - refactor(data_processor): DRY/DbC quality wave 1 — signal_processing & signal_processor (#1303)
 - fix(golfer): add constraint violation postcondition and bounded-drift tests (#1302)
@@ -1081,7 +1084,7 @@
 - feat(pendulum): V2 comprehensive fixes batch 1-7 (#1156)
 - feat(dwsim_model): migrate DWSIM Gasification Model into monorepo (#1131)
 - fix(pid_generator): align with canonical tool pattern (#1129)
-- fix(vessel_drafter): use _bootstrap launcher, add README (#1130)
+- fix(vessel_drafter): use \_bootstrap launcher, add README (#1130)
 - refactor(pendulum): extract base class, fix UI bugs, add DbC contracts (#1126)
 - feat: integrate programmatic-pid library into Tools monorepo (#1120)
 - feat: migrate vessel drafter tool from Programmatic-Drafting repo (#1127)
@@ -1139,7 +1142,7 @@
 - fix(arch): register upstream_drift_tools→theme as allowed dependency (#969)
 - feat(shared): add DbC guards + contract tests to GUIRegistry (#968)
 - feat(shared): add DbC guards + tests to DataProcessor and cors.py (#967)
-- chore(tools): fix __init__.py to use utils.logging_utils directly (#966)
+- chore(tools): fix **init**.py to use utils.logging_utils directly (#966)
 - test(tools): boost matlab_quality_utils coverage 64%→85% (#965)
 - test(tools): boost ui_utils coverage from 71% to ~95% (#964)
 - test(tools): coverage boost for scientific_auditor + launch_utils (#963)
@@ -1256,7 +1259,7 @@
 - chore: remove stale root artifacts and update .gitignore (#767)
 - fix: Phase 1 — replace print with stdout, comprehensive assessment and plan (#766)
 - test: add comprehensive tests for conversion utilities (Phase 4 coverage improvement) (#754)
-- fix: add get_species() method to _MinimalSpeciesDB for WGS reactor tests (#747)
+- fix: add get_species() method to \_MinimalSpeciesDB for WGS reactor tests (#747)
 - test: expand Tools Phase 2/3 coverage and fix pressure-drop imports (#761)
 - ci: add ratcheting coverage gate and trend reporting (#760)
 - docs: define and enforce canonical repository topology (#759)
@@ -1294,7 +1297,7 @@
 - Audit .jules/completist_data and create audit report (#688)
 - fix: restore 45 archived Jules/Bot workflows and add CODEOWNERS protection (#683)
 - fix: Update Cantera API TX/PX to TQ/PQ for 3.x compatibility (#681)
-- refactor: Replace 62 sys.path hacks with centralized _bootstrap module (#680)
+- refactor: Replace 62 sys.path hacks with centralized \_bootstrap module (#680)
 - docs: add design criteria to AGENTS.md and code quality assessment (#676)
 - feat: Phase 3.1 - verify installable package, bump to v0.3.0 (#675)
 - feat: add tool_surface_contract.json generation for cross-repo parity (#674)
@@ -1663,11 +1666,11 @@
 - feat: update cursor rules and copilot instructions
 - Merge pull request #9 from dieterolson/feat/folder-reorg-2025-08-09
 - Merge remote-tracking branch 'origin/main' into feat/folder-reorg-2025-08-09
-- chore(pre-commit): exclude python/* during reorg to avoid linting legacy trees
+- chore(pre-commit): exclude python/\* during reorg to avoid linting legacy trees
 - Merge pull request #8 from dieterolson/chore/wip-2025-08-09
 - chore: auto-fetch remote on folder open via VS Code task and settings
 - Merge pull request #7 from dieterolson/chore/cleanup-pycache
-- chore: stop tracking __pycache__/pyc; ensure ignore rules are applied
+- chore: stop tracking **pycache**/pyc; ensure ignore rules are applied
 - Merge pull request #6 from dieterolson/chore/safety-guardrails
 - chore: apply black/isort changes from pre-commit; guardrails green
 - Commit local changes on my desktop. Not sure why they are showing up as changes.
@@ -1701,7 +1704,7 @@
 - Fix critical bug: Preserve all original data processor tabs while adding new functionality
 - Implement critical fixes: memory management, threading safety, and input validation - Added MemoryManager class with chunked reading and garbage collection - Added ThreadSafeUI class with queue-based UI updates - Added InputValidator class with comprehensive validation - Improved application stability by 90% - Enhanced security with input sanitization - All critical issues resolved, application now production-ready
 - Add code review summary documenting critical fixes applied and remaining issues to address
-- Fix critical code issues: move folder tool variable initialization to __init__() and add error handling to file operations - addresses AttributeError risks and improves application stability
+- Fix critical code issues: move folder tool variable initialization to **init**() and add error handling to file operations - addresses AttributeError risks and improves application stability
 - Dramatically expand help documentation tab with comprehensive feature guide - covers all 5 tabs with detailed usage instructions, workflows, and best practices
 - integration summary
 - Complete folder tool integration with full functionality - all original features implemented as native tab

@@ -16,6 +16,7 @@ Written BEFORE implementation (TDD).
 from __future__ import annotations
 
 import math
+from typing import Any
 
 import pytest
 
@@ -24,9 +25,12 @@ import numpy as np
 
 from rotation_converter._contracts import PreconditionError
 from rotation_converter.modern_robotics import (
+    AxisAng3,
+    AxisAng6,
     FKinBody,
     FKinSpace,
     IKinBody,
+    IKinSpace,
     InverseDynamics,
     JacobianBody,
     JacobianSpace,
@@ -34,6 +38,7 @@ from rotation_converter.modern_robotics import (
     MatrixExp6,
     MatrixLog3,
     MatrixLog6,
+    Normalize,
     RpToTrans,
     ScrewTrajectory,
     TransInv,
@@ -667,6 +672,21 @@ class TestIKFailure:
 class TestModernRoboticsContracts:
     """NaN/Inf and shape contract tests for modern_robotics functions."""
 
+    def test_normalize_rejects_zero_vector(self) -> None:
+        with pytest.raises(PreconditionError, match="cannot normalize zero vector"):
+            Normalize(np.zeros(3))
+
+    def test_axis_ang3_rejects_zero_exponential_coordinates(self) -> None:
+        with pytest.raises(PreconditionError, match="cannot normalize zero vector"):
+            AxisAng3(np.zeros(3))
+
+    def test_axis_ang6_zero_twist_returns_zero_angle_without_nan(self) -> None:
+        screw_axis, theta = AxisAng6(np.zeros(6))
+
+        assert theta == 0.0
+        np.testing.assert_allclose(screw_axis, np.zeros(6))
+        assert np.isfinite(screw_axis).all()
+
     def test_nan_so3_raises(self) -> None:
         so3 = np.array([[0, float("nan"), 0], [0, 0, 0], [0, 0, 0]])
         with pytest.raises(PreconditionError):
@@ -710,6 +730,48 @@ class TestModernRoboticsContracts:
         T = np.eye(4)
         with pytest.raises(PreconditionError):
             IKinBody(Blist, M, T, np.array([0.0]), eomg=-1.0)
+
+    @pytest.mark.parametrize(
+        ("call", "message"),
+        [
+            (
+                lambda: IKinBody(
+                    np.array([[0, 0, 1, 0, 0, 0]], dtype=float).T,
+                    np.eye(4),
+                    np.eye(4),
+                    np.array([0.0]),
+                    eomg=None,
+                ),
+                "angular tolerance must be provided",
+            ),
+            (
+                lambda: IKinSpace(
+                    None,
+                    np.eye(4),
+                    np.eye(4),
+                    np.array([0.0]),
+                    1e-4,
+                    1e-4,
+                ),
+                "Slist must be provided",
+            ),
+            (
+                lambda: ScrewTrajectory(
+                    np.eye(4),
+                    np.eye(4),
+                    None,
+                    2,
+                ),
+                "Tf must be provided",
+            ),
+        ],
+    )
+    def test_modern_robotics_none_guards_use_contracts(
+        self, call: Any, message: str
+    ) -> None:
+        """Former assert guards should remain active under optimized Python."""
+        with pytest.raises(PreconditionError, match=message):
+            call()
 
 
 # ===========================================================================
@@ -908,8 +970,8 @@ class TestSimulateControlPlot:
             _simulate_control_plot(thetamat, thetamatd, dt)
 
     def test_plot_precondition_thetamat_none(self) -> None:
-        """_simulate_control_plot must raise AssertionError when thetamat is None."""
+        """_simulate_control_plot must raise PreconditionError when thetamat is None."""
         from rotation_converter.modern_robotics import _simulate_control_plot
 
-        with pytest.raises(AssertionError):
-            _simulate_control_plot(None, np.zeros((2, 2)), 0.01)  # type: ignore[arg-type]
+        with pytest.raises(PreconditionError):
+            _simulate_control_plot(None, np.zeros((2, 2)), 0.01)

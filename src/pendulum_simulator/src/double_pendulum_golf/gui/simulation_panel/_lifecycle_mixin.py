@@ -136,7 +136,8 @@ class _SimulationLifecycleMixin:
 
         Pre: result has n_steps, t, states attributes (TrajectoryResultMixin).
         """
-        assert result is not None, "Simulation result must not be None"
+        if result is None:
+            raise ValueError("Simulation result must not be None")
         assert hasattr(result, "n_steps"), "Result must have n_steps attribute"
         assert hasattr(result, "t"), "Result must have t attribute"
 
@@ -177,7 +178,8 @@ class _SimulationLifecycleMixin:
 
     def _on_sim_error(self, msg: str) -> None:
         """Called on the main thread when simulation fails."""
-        assert msg is not None, "msg must be provided"
+        if msg is None:
+            raise ValueError("msg must be provided")
         from ..diagnostics import get_tracker
 
         logger.error("Simulation failed: %s", msg)
@@ -196,7 +198,8 @@ class _SimulationLifecycleMixin:
 
     def _show_busy(self, busy: bool) -> None:
         """Show / hide a 'Simulating…' indicator in the top-right."""
-        assert busy is not None, "busy must be provided"
+        if busy is None:
+            raise ValueError("busy must be provided")
         host = cast(QWidget, self)  # Mixin used only on QWidget subclasses
         if not hasattr(self, "_busy_label"):
             self._busy_label = QLabel("…  Simulating", host)
@@ -240,7 +243,8 @@ class _SimulationLifecycleMixin:
         Pre: result has 'coeffs' key with a numpy array.
         Closes #1151.
         """
-        assert result is not None, "result must be provided"
+        if result is None:
+            raise ValueError("result must be provided")
         _log = logging.getLogger(__name__)
 
         if not isinstance(result, dict):

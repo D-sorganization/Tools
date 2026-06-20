@@ -527,7 +527,7 @@ class TestUncertaintyQuantification:
 
         uq = UncertaintyQuantifier()
 
-        with pytest.raises(ValueError, match="at least 2 data points"):
+        with pytest.raises(ValueError, match="data must contain at least 2 values"):
             uq.bootstrap_ci(data, np.mean)
 
     @pytest.mark.parametrize("data", [np.array([]), np.array([1.0])])
@@ -541,7 +541,7 @@ class TestUncertaintyQuantification:
 
         uq = UncertaintyQuantifier()
 
-        with pytest.raises(ValueError, match="at least 2 observations"):
+        with pytest.raises(ValueError, match="data must contain at least 2 values"):
             uq.bayesian_credible_interval(data)
 
     def test_monte_carlo_propagation(self) -> None:
@@ -609,6 +609,129 @@ class TestUncertaintyQuantification:
         assert result == 30
         # For sum, errors add in quadrature: sqrt(1^2 + 2^2) = sqrt(5)
         assert abs(unc - np.sqrt(5)) < 0.1
+
+    def test_error_propagation_shares_linear_quadrature_path(self) -> None:
+        """Linear and quadrature modes use one maintained variance path."""
+        import inspect
+
+        from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
+
+        def sum_func(a: float, b: float) -> float:
+            return a + b
+
+        uq = UncertaintyQuantifier()
+
+        linear = uq.error_propagation(
+            sum_func,
+            {"a": 10, "b": 20},
+            {"a": 1, "b": 2},
+            method="linear",
+        )
+        quadrature = uq.error_propagation(
+            sum_func,
+            {"a": 10, "b": 20},
+            {"a": 1, "b": 2},
+            method="quadrature",
+        )
+
+        assert quadrature == linear
+        source = inspect.getsource(UncertaintyQuantifier.error_propagation)
+        assert source.count("variance = 0.0") == 1
+
+    def test_prediction_intervals(self) -> None:
+        """Test linear regression prediction intervals."""
+        from data_processor.core.uncertainty_quantification import (
+            UncertaintyConfig,
+            UncertaintyQuantifier,
+        )
+
+        X = np.arange(1.0, 7.0)
+        y = 1.0 + 2.0 * X
+        X_new = np.array([2.5, 4.5])
+
+        uq = UncertaintyQuantifier(UncertaintyConfig(confidence_level=0.95))
+        result = uq.prediction_intervals(X, y, X_new)
+
+        np.testing.assert_allclose(result.predicted, np.array([6.0, 10.0]), atol=1e-12)
+        assert result.lower.shape == (2,)
+        assert result.upper.shape == (2,)
+        assert result.mean_lower.shape == (2,)
+        assert result.mean_upper.shape == (2,)
+        assert result.confidence_level == pytest.approx(0.95)
+        assert result.residual_std == pytest.approx(0.0, abs=1e-12)
+        assert np.all(result.lower <= result.predicted)
+        assert np.all(result.predicted <= result.upper)
+        assert np.all(result.mean_lower <= result.predicted)
+        assert np.all(result.predicted <= result.mean_upper)
+
+    def test_prediction_intervals_rejects_too_few_residual_degrees(self) -> None:
+        """Test prediction intervals validate residual degrees of freedom."""
+        from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
+
+        uq = UncertaintyQuantifier()
+
+        with pytest.raises(
+            ValueError,
+            match="X must contain more rows than fitted parameters",
+        ):
+            uq.prediction_intervals(
+                np.array([[1.0], [2.0]]),
+                np.array([3.0, 5.0]),
+                np.array([[3.0]]),
+            )
+
+    def test_bayesian_credible_interval(self) -> None:
+        """Test Bayesian credible interval fields."""
+        from data_processor.core.uncertainty_quantification import (
+            UncertaintyConfig,
+            UncertaintyQuantifier,
+        )
+
+        data = np.array([9.5, 10.0, 10.5, 11.0])
+        uq = UncertaintyQuantifier(UncertaintyConfig(confidence_level=0.9))
+        result = uq.bayesian_credible_interval(data, prior_mean=10.0, prior_std=2.0)
+
+        assert result.lower < result.point_estimate < result.upper
+        assert result.contains(result.point_estimate)
+        assert result.confidence_level == pytest.approx(0.9)
+        assert result.method == "bayesian"
+        assert np.isfinite(result.lower)
+        assert np.isfinite(result.upper)
+
+    @pytest.mark.parametrize("data", [np.array([]), np.array([1.0])])
+    def test_bayesian_credible_interval_rejects_degenerate_data(
+        self, data: np.ndarray
+    ) -> None:
+        """Test Bayesian credible intervals validate sample size."""
+        from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
+
+        uq = UncertaintyQuantifier()
+
+        with pytest.raises(ValueError, match="data must contain at least 2 values"):
+            uq.bayesian_credible_interval(data)
+
+    def test_delta_method_ci(self) -> None:
+        """Test delta method confidence interval fields."""
+        from data_processor.core.uncertainty_quantification import (
+            UncertaintyConfig,
+            UncertaintyQuantifier,
+        )
+
+        def product(a: float, b: float) -> float:
+            return a * b
+
+        estimates = {"a": 2.0, "b": 3.0}
+        covariance = np.diag([0.04, 0.09])
+        uq = UncertaintyQuantifier(UncertaintyConfig(confidence_level=0.95))
+
+        result = uq.delta_method_ci(product, estimates, covariance, ["a", "b"])
+
+        expected_se = np.sqrt((3.0**2 * 0.04) + (2.0**2 * 0.09))
+        assert result.point_estimate == pytest.approx(6.0)
+        assert result.method == "delta"
+        assert result.confidence_level == pytest.approx(0.95)
+        assert result.lower == pytest.approx(6.0 - 1.9604 * expected_se, abs=0.001)
+        assert result.upper == pytest.approx(6.0 + 1.9604 * expected_se, abs=0.001)
 
     def test_sensitivity_analysis(self) -> None:
         """Test sensitivity analysis."""

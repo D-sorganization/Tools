@@ -798,7 +798,8 @@ class BasePendulumWidget(QWidget):
         ``@jit(nopython=True)`` decorator here crashed the entire process
         on the first paint after a simulation finished.
         """
-        assert painter is not None, "painter must be provided"
+        if painter is None:
+            raise ValueError("painter must be provided")
         n = len(self._trail)
         if n < 2:
             return

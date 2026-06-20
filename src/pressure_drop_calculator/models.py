@@ -8,7 +8,7 @@ and provide clear, validated request/response contracts.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 
 class PressureDropInput(BaseModel):
@@ -58,11 +58,13 @@ class PressureDropInput(BaseModel):
         default=True, description="Apply compressible flow corrections"
     )
 
-    class Config:
-        """Pydantic config."""
+    model_config = ConfigDict(str_strip_whitespace=True, validate_assignment=True)
 
-        str_strip_whitespace = True
-        validate_assignment = True
+    @model_validator(mode="after")
+    def _validate_composition_contract(self) -> PressureDropInput:
+        """Enforce gas-composition invariants at the API boundary."""
+        self.validate_composition()
+        return self
 
     def validate_composition(self) -> None:
         """Validate that gas composition sums to 1.0 within tolerance.
@@ -154,7 +156,4 @@ class PressureDropOutput(BaseModel):
         default="", description="Error message if calculation failed"
     )
 
-    class Config:
-        """Pydantic config."""
-
-        validate_assignment = True
+    model_config = ConfigDict(validate_assignment=True)

@@ -11,7 +11,7 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.25`                                                |
+| Spec Version     | `1.0.36`                                                |
 | Last Spec Update | 2026-06-19                                              |
 
 ## 2. Purpose
@@ -39,9 +39,41 @@ Movement-Optimizer is a biomechanics trajectory optimizer for barbell exercises.
   gap, compact multi-column legends, and minimum scrollable plot-panel sizing
   so visible legends identify the plotted series without covering plot data,
   neighboring subplots, axis labels, or figure edges on compact panes.
+- Swingset and Chain Dynamics analysis panels collect each plot's labeled
+  series into that plot's reserved legend row instead of using one shared
+  figure-level footer, so each legend remains visible and local to its plot
+  without covering or crowding plot contents.
 - Compact plot panes reserve enough vertical gap between data axes and docked
   legend rows for x-axis labels, y-axis labels, and titles to remain readable
   without being obscured by legends.
+- Docked Swingset and Chain Dynamics plot legends are centered inside taller
+  reserved legend rows, with rendered padding coverage so multi-row joint
+  legends cannot crowd the plots or appear clipped on compact panes.
+- Docked Swingset and Chain Dynamics plot legends now clip the legend container
+  and every child artist to the reserved legend row, preventing renderer- or
+  backend-specific text/handle overflow from painting over plot contents.
+- Swingset and Chain Dynamics analysis panels now require wider scrollable plot
+  columns and anchor dense docked legends to the full reserved legend strip, so
+  the live Swingset `3 x 2` plot layout preserves usable data-axis width while
+  legends remain outside plotted curves.
+- Swingset and Chain Dynamics analysis legends now dock into dedicated bands
+  beneath each plot instead of narrow side strips, preserving full plot width
+  while keeping legends clear of curves, tick labels, and axis labels.
+- Swingset and Chain Dynamics panel renderers now suppress transient data-axis
+  legends while preserving series labels for `MotionAnalysisPanel` to dock in
+  reserved legend rows, so visible legends cannot appear over the plotted
+  curves between plot rendering and panel draw.
+- Rendered `MotionAnalysisPanel` legend layout regressions now live in
+  `tests/test_motion_analysis_panel_legends.py`, keeping the broad panel test
+  module under the changed-file size budget while retaining the same
+  no-overlap pixel assertions.
+- `MotionAnalysisPanel.draw()` enforces the panel's legend-safe minimum figure
+  dimensions before docking legends, so compact split-pane or backend resize
+  paths cannot squeeze legend strips into axis labels or plotted curves.
+- The shared exercise/swing plot-grid legend helper now anchors legends lower
+  and the exercise analysis grid reserves a larger vertical inter-row band, so
+  legends clear axis tick labels and x/y labels instead of merely clearing the
+  plotted data rectangle.
 - The Swingset policy optimization trace legend now measures and wraps entries
   by widget width, and the trace series uses the wrapped legend height as its
   top inset so the legend does not obscure optimizer telemetry in narrow panes.
@@ -213,6 +245,14 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-06-19 | 1.0.36  | Split rendered MotionAnalysisPanel legend layout regressions into `tests/test_motion_analysis_panel_legends.py`, preserving the Swingset/Chain no-overlap assertions while keeping changed test files below the size budget.                                                                                                                                                                                  |
+| 2026-06-19 | 1.0.35  | Replaced per-plot Swingset and Chain Dynamics analysis legend strips with one reserved figure-level legend footer, reducing vertical clutter while preserving rendered regression coverage that the legend cannot overlap plot data, tick labels, or axis labels.                                                                                                                                             |
+| 2026-06-19 | 1.0.33  | Moved Swingset and Chain Dynamics analysis legends into right-docked per-plot strips with wider scrollable plot columns, so legends remain visible beside each plot instead of sitting between rows or covering plotted curves and neighboring axis labels.                                                                                                                                                   |
+| 2026-06-19 | 1.0.32  | Widened scrollable Swingset and Chain Dynamics analysis plot columns and anchored dense docked legends to their full reserved strips, so the live Swingset 3x2 plot layout keeps usable data-axis width without legend overlap.                                                                                                                                                                               |
+| 2026-06-19 | 1.0.29  | Enforced `MotionAnalysisPanel`'s legend-safe minimum render dimensions during draw before docking Swingset and Chain Dynamics legends, so compact panes and backend resize edge cases cannot squeeze legends into axis labels, tick labels, titles, or plotted curves.                                                                                                                                        |
+| 2026-06-19 | 1.0.28  | Rendered Swingset and Chain Dynamics panel plots without transient data-axis legends while preserving labeled artists for `MotionAnalysisPanel` docked legend strips, so visible legends cannot obscure plot contents between renderer and panel draw steps.                                                                                                                                                  |
+| 2026-06-19 | 1.0.27  | Centered docked Swingset and Chain Dynamics plot legends inside taller reserved legend rows and added rendered padding coverage, so multi-row joint legends cannot crowd plots or appear clipped on compact panes.                                                                                                                                                                                            |
+| 2026-06-19 | 1.0.26  | Reserved a bottom axis-label band in the Swingset policy optimization trace canvas and included that band in the width-aware minimum-height contract, so the `iteration` label stays below the plotted optimizer traces instead of overlaying telemetry at narrow widths.                                                                                                                                     |
 | 2026-06-19 | 1.0.25  | Made the Swingset policy optimization trace canvas advertise a width-aware minimum height from its wrapped legend rows plus a minimum telemetry band, so narrow optimizer panes scroll or expand instead of letting the legend dominate the plot area.                                                                                                                                                        |
 | 2026-06-18 | 1.0.24  | Prevented compact Swingset and Chain Dynamics plot panes from crushing docked legends back into the plots by giving `MotionAnalysisPanel` a grid-aware minimum canvas size, hosting plot panels in scroll areas, and using up to three docked legend columns for joint-series plots.                                                                                                                          |
 | 2026-06-18 | 1.0.22  | Typed sidebar builder/state helper surfaces against declared `ParameterSidebar` and protocol contracts, covering progress widgets, result widgets, convergence plots, and body-model sliders while preserving existing sidebar behavior.                                                                                                                                                                      |

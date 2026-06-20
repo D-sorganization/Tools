@@ -25,11 +25,13 @@ class Vec2(NamedTuple):
     y: float = 0.0
 
     def __add__(self, other: object) -> Vec2:  # override with wider type
-        assert isinstance(other, Vec2), "Vec2 + Vec2 required"
+        if not isinstance(other, Vec2):
+            raise TypeError("Vec2 + Vec2 required")
         return Vec2(self.x + other.x, self.y + other.y)
 
     def __sub__(self, other: object) -> Vec2:  # override with wider type
-        assert isinstance(other, Vec2), "Vec2 - Vec2 required"
+        if not isinstance(other, Vec2):
+            raise TypeError("Vec2 - Vec2 required")
         return Vec2(self.x - other.x, self.y - other.y)
 
     def __mul__(self, scalar: object) -> Vec2:
@@ -96,10 +98,12 @@ class RigidBody:
     angular_vel: float = 0.0  # rad/s
 
     def __post_init__(self) -> None:
-        assert self.mass > 0, f"mass must be positive, got {self.mass}"
-        assert self.moment_of_inertia > 0, (
-            f"moment_of_inertia must be positive, got {self.moment_of_inertia}"
-        )
+        if self.mass <= 0:
+            raise ValueError(f"mass must be positive, got {self.mass}")
+        if self.moment_of_inertia <= 0:
+            raise ValueError(
+                f"moment_of_inertia must be positive, got {self.moment_of_inertia}"
+            )
 
     @property
     def speed(self) -> float:

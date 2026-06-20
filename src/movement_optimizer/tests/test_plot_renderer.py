@@ -168,6 +168,18 @@ class TestPlotRenderer:
         renderer = canvas.get_renderer()
         figure_box = figure.bbox
         data_boxes = [axis.get_window_extent(renderer) for axis in axes.values()]
+        text_boxes = [
+            artist.get_window_extent(renderer)
+            for axis in axes.values()
+            for artist in (
+                axis.title,
+                axis.xaxis.label,
+                axis.yaxis.label,
+                *axis.get_xticklabels(),
+                *axis.get_yticklabels(),
+            )
+            if artist.get_visible()
+        ]
         for axis in axes.values():
             legend = axis.get_legend()
             assert legend is not None
@@ -177,6 +189,7 @@ class TestPlotRenderer:
             assert legend_box.y0 >= figure_box.y0 - 1.0
             assert legend_box.y1 <= figure_box.y1 + 1.0
             assert not any(data_box.overlaps(legend_box) for data_box in data_boxes)
+            assert not any(text_box.overlaps(legend_box) for text_box in text_boxes)
 
 
 class TestPlotSpineLoadsExerciseAlias:

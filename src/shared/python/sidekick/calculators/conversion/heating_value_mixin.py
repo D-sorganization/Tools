@@ -46,7 +46,8 @@ class HeatingValueConversionMixin:
         gas_density_stp: float | None = None,
     ) -> float:
         """Convert heating value."""
-        assert value is not None, "value must be provided"
+        if value is None:
+            raise ValueError("value must be provided")
         if gas_density_stp is not None:
             self._require_positive_finite(gas_density_stp, "Gas density")
         from_key = from_unit.lower()

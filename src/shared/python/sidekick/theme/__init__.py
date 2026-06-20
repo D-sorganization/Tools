@@ -23,11 +23,15 @@ All symbols from the installed top-level ``theme`` package are re-exported here.
 from __future__ import annotations
 
 import logging
+import sys
 
 _logger = logging.getLogger(__name__)
 
 # Dynamically import and re-export everything from the canonical theme package.
 try:
+    if sys.modules.get("theme") is None and "theme" in sys.modules:
+        raise ImportError("theme module disabled")
+
     # Re-export all public symbols
     # Protocol re-exports (no PyQt6 dependency)
     from shared.python.theme import (

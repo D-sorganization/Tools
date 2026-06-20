@@ -325,7 +325,8 @@ class FolderOperationsMixin:
         Returns:
             Tuple of (files_copied, files_failed)
         """
-        assert source_file_path is not None, "source_file_path must be provided"
+        if source_file_path is None:
+            raise ValueError("source_file_path must be provided")
         if not self.validate_file_filters(source_file_path):  # type: ignore[attr-defined]
             return 0, 0
 

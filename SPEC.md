@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7784                                   |
+| **Spec Version**        | 1.1.7788                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -55,6 +55,34 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
   executable wrapper is missing (#3797).
+- The data-processor Rust extension import gate now invokes the installed
+  `maturin` package through `python -m maturin`, so self-hosted runners with a
+  missing console-script shim still build and import-check `data_processor_core`
+  across the required Python matrix.
+- The file watcher Rust extension import gate now invokes the installed
+  `maturin` package through `python -m maturin`, covering the same self-hosted
+  runner console-script shim gap for `file_watcher_rs`.
+- The data-processor and file watcher Rust extension gates now force-reinstall
+  `maturin` without using the pip cache before building, repairing stale
+  self-hosted runner installs where the Python package exists but its bundled
+  executable payload is missing.
+- The data-processor Rust extension import gate now hard-gates Python 3.10
+  through 3.12, avoiding nondeterministic Python 3.13 setup failures on
+  Linux Mint self-hosted runners that lack a local 3.13 toolcache.
+- The file watcher Rust extension import gate now follows the same hard-gated
+  Python 3.10 through 3.12 matrix, avoiding unsupported Python 3.13 setup on
+  fleet runners that do not yet have a local 3.13 toolcache.
+- Maturin workflow coverage tests now distinguish required hard-gated fleet
+  Python versions from documented Python 3.13 toolcache deferrals, so CI tests
+  enforce the runner contract without reintroducing an unsupported 3.13 matrix
+  leg.
+- The movement optimizer and pendulum Rust extension gates now use the same
+  documented Python 3.10 through 3.12 hard-gate policy on self-hosted fleet
+  runners, keeping Python 3.13 coverage deferred until runner toolcaches are
+  provisioned consistently.
+- The pendulum Rust extension gate invokes maturin through the active Python
+  interpreter so self-hosted runners do not depend on a console-script PATH
+  mutation after dependency installation.
 - Model generation REST route coverage now reaches `inertia/from-mesh` success
   paths through the route dispatcher for both explicit mass and density inputs,
   proving mesh volume, center of mass, and inertia responses stay populated
@@ -1374,6 +1402,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-19 | 1.1.7674 | test(data-processor, #3738): delete the permanently skipped `tests/data_processor/test_integrated_import_fallback.py` legacy sentinel for the archived `Data_Processor_Integrated.py` module, reducing the data-processor skip surface without removing executable coverage. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3760): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-20 | 1.1.7782 | fix(ci): install actionlint into a runner-local temporary bin directory, reject the old sudo actionlint move in workflow validation, and guard CI Standard apt installs so non-passwordless self-hosted runners do not fail before tests when system dependencies are pre-provisioned. |
+| 2026-06-20 | 1.1.7784 | fix(ci): run the data-processor maturin import gate through `python -m maturin` so installed package entrypoints remain available even when self-hosted runner console-script shims are stale or missing. |
+| 2026-06-20 | 1.1.7785 | fix(ci): run the file_watcher_rs maturin import gate through `python -m maturin` so self-hosted runner console-script shim drift does not block the Rust backend build gate. |
+| 2026-06-20 | 1.1.7786 | fix(ci): force-reinstall `maturin` without pip cache in the data-processor and file_watcher_rs import gates so stale self-hosted runner package installs cannot lose the bundled build executable. |
+| 2026-06-20 | 1.1.7787 | fix(ci): hard-gate the data-processor Rust extension import check on Python 3.10-3.12 until the self-hosted Linux Mint fleet consistently provides a Python 3.13 setup-python toolcache. |
 | 2026-06-19 | 1.1.7674 | fix(plugin-manager, #3720 #3721): make `PluginManager.load_tools()` skip malformed `tools.json` categories and non-dict entries with warnings while preserving valid tools from the same load, with strict-mypy-clean focused regression coverage. |
 | 2026-06-19 | 1.1.7674 | test(plugin-manager, #3720 #3721): centralize isolated plugin-manager import/skip helpers in `test_python_dbc_lod.py`, preserving malformed manifest regression coverage while keeping the changed test file below the 500 LOC CI budget. |
 | 2026-06-19 | 1.1.7675 | fix(data-processor, #3661): keep time-series decomposition helpers importable when installed Numba rejects the active NumPy version by falling back to a no-op `jit` decorator, preserving pure-Python decomposition behavior under optional acceleration failures. |

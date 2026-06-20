@@ -54,8 +54,7 @@ def ScrewTrajectory(
     method: int = 3,
 ) -> list[np.ndarray]:
     """Generate a trajectory as a list of SE(3) matrices via screw motion."""
-    if Tf is None:
-        raise ValueError("Tf must be provided")
+    require(Tf is not None, "Tf must be provided", Tf)
     Xstart = np.asarray(Xstart, dtype=float)
     Xend = np.asarray(Xend, dtype=float)
     require(Xstart.shape == (4, 4), "Xstart must be 4x4")
@@ -85,8 +84,7 @@ def JointTrajectory(
     method: int,
 ) -> np.ndarray:
     """Computes a straight-line trajectory in joint space."""
-    if thetastart is None:
-        raise ValueError("thetastart must be provided")
+    require(thetastart is not None, "thetastart must be provided", thetastart)
     N = int(N)
     timegap = Tf / (N - 1.0)
     traj = np.zeros((len(thetastart), N))
@@ -108,8 +106,7 @@ def CartesianTrajectory(
     method: int,
 ) -> list:
     """Computes a trajectory as a list of N SE(3) matrices (straight-line origin path)."""  # noqa: E501
-    if Xstart is None:
-        raise ValueError("Xstart must be provided")
+    require(Xstart is not None, "Xstart must be provided", Xstart)
     N = int(N)
     timegap = Tf / (N - 1.0)
     traj = [[None]] * N

@@ -218,6 +218,19 @@ class UncertaintyQuantifier:
         self.config = config or UncertaintyConfig()
         self._rng = np.random.default_rng(self.config.random_seed)
 
+    @staticmethod
+    def _require_min_sample_size(
+        data: np.ndarray,
+        *,
+        name: str,
+        min_size: int = 2,
+    ) -> np.ndarray:
+        """Return data as float array after enforcing a minimum sample size."""
+        data = np.asarray(data, dtype=np.float64)
+        if len(data) < min_size:
+            raise ValueError(f"{name} must contain at least {min_size} values")
+        return data
+
     def bootstrap_ci(
         self,
         data: np.ndarray,
@@ -239,7 +252,7 @@ class UncertaintyQuantifier:
         """
         if data is None:
             raise ValueError("data must be provided")
-        data = np.asarray(data, dtype=np.float64)
+        data = self._require_min_sample_size(data, name="data")
         n = len(data)
         if n < 2:
             raise ValueError("bootstrap_ci requires at least 2 data points")
@@ -443,7 +456,7 @@ class UncertaintyQuantifier:
             func: Function to propagate errors through
             values: Dictionary of parameter central values
             uncertainties: Dictionary of parameter uncertainties (std)
-            method: 'linear' for linear approximation, 'quadrature' for quadrature
+            method: 'linear' or 'quadrature' for independent-error quadrature
 
         Returns:
             Tuple of (result, uncertainty)
@@ -453,19 +466,8 @@ class UncertaintyQuantifier:
             raise ValueError("func must be provided")
         central = func(**values)
 
-        if method == "linear":
-            # Linear error propagation using partial derivatives
-            variance = 0.0
-
-            for name, unc in uncertainties.items():
-                # Numerical partial derivative
-                deriv = self._numerical_derivative(func, values, name)
-                variance += (deriv * unc) ** 2
-
-            return central, np.sqrt(variance)
-
-        elif method == "quadrature":
-            # Add in quadrature (assumes independent errors)
+        if method in {"linear", "quadrature"}:
+            # Independent-error quadrature using numerical partial derivatives.
             variance = 0.0
 
             for name, unc in uncertainties.items():
@@ -474,14 +476,13 @@ class UncertaintyQuantifier:
 
             return central, np.sqrt(variance)
 
-        else:
-            # Use Monte Carlo for nonlinear case
-            distributions = {
-                name: ("normal", {"loc": val, "scale": uncertainties.get(name, 0)})
-                for name, val in values.items()
-            }
-            result = self.monte_carlo_propagation(func, distributions)
-            return result.mean, result.std
+        # Use Monte Carlo for nonlinear case
+        distributions = {
+            name: ("normal", {"loc": val, "scale": uncertainties.get(name, 0)})
+            for name, val in values.items()
+        }
+        result = self.monte_carlo_propagation(func, distributions)
+        return result.mean, result.std
 
     def sensitivity_analysis(
         self,
@@ -593,6 +594,13 @@ class UncertaintyQuantifier:
 
         n, p = X.shape
         n_new = X_new.shape[0]
+        residual_degrees = n - p - 1
+        if residual_degrees <= 0:
+            raise ValueError("X must contain more rows than fitted parameters")
+        if y.shape[0] != n:
+            raise ValueError("y must have the same number of rows as X")
+        if X_new.shape[1] != p:
+            raise ValueError("X_new must have the same number of columns as X")
 
         # Add intercept
         X_design = np.column_stack([np.ones(n), X])
@@ -610,7 +618,7 @@ class UncertaintyQuantifier:
 
         # Residuals and MSE
         residuals = y - y_pred
-        mse = np.sum(residuals**2) / (n - p - 1)
+        mse = np.sum(residuals**2) / residual_degrees
         residual_std = np.sqrt(mse)
 
         # Covariance matrix of beta
@@ -621,7 +629,7 @@ class UncertaintyQuantifier:
 
         # t-value for confidence level
         alpha = 1 - self.config.confidence_level
-        t_val = self._t_ppf(1 - alpha / 2, n - p - 1)
+        t_val = self._t_ppf(1 - alpha / 2, residual_degrees)
 
         # Standard errors and intervals (vectorized)
         # var_mean_diag[i] = X_new_design[i] @ XtX_inv @ X_new_design[i].T
@@ -668,7 +676,7 @@ class UncertaintyQuantifier:
         """
         if data is None:
             raise ValueError("data must be provided")
-        data = np.asarray(data, dtype=np.float64)
+        data = self._require_min_sample_size(data, name="data")
         n = len(data)
         if n < 2:
             raise ValueError(
