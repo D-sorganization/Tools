@@ -610,6 +610,34 @@ class TestUncertaintyQuantification:
         # For sum, errors add in quadrature: sqrt(1^2 + 2^2) = sqrt(5)
         assert abs(unc - np.sqrt(5)) < 0.1
 
+    def test_error_propagation_shares_linear_quadrature_path(self) -> None:
+        """Linear and quadrature modes use one maintained variance path."""
+        import inspect
+
+        from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
+
+        def sum_func(a: float, b: float) -> float:
+            return a + b
+
+        uq = UncertaintyQuantifier()
+
+        linear = uq.error_propagation(
+            sum_func,
+            {"a": 10, "b": 20},
+            {"a": 1, "b": 2},
+            method="linear",
+        )
+        quadrature = uq.error_propagation(
+            sum_func,
+            {"a": 10, "b": 20},
+            {"a": 1, "b": 2},
+            method="quadrature",
+        )
+
+        assert quadrature == linear
+        source = inspect.getsource(UncertaintyQuantifier.error_propagation)
+        assert source.count("variance = 0.0") == 1
+
     def test_sensitivity_analysis(self) -> None:
         """Test sensitivity analysis."""
         from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
