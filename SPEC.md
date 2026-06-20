@@ -44,6 +44,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   series contracts across lagged, rolling, partial, causality, transfer-entropy,
   and multi-series entrypoints, and single-sources lag alignment so lag slicing
   cannot drift across public methods (#3724, #3726, #3727, #3728, #3729).
+- Sidekick Python REPL execution now starts its worker asynchronously without
+  a GUI-thread `processEvents()` busy-wait, keeps the re-entrant run guard
+  covered, propagates deleted or no-longer-exportable names back to the
+  Workspace registry, and pins export-filter coverage for modules, callables,
+  reserved aliases, and private names (#3716, #3717, #3718, #3719).
 - CI Standard now keeps the shared apt lock for dependency installation but
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages
@@ -1371,6 +1376,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-19 | 1.1.7674 | test(data-processor, #3738): delete the permanently skipped `tests/data_processor/test_integrated_import_fallback.py` legacy sentinel for the archived `Data_Processor_Integrated.py` module, reducing the data-processor skip surface without removing executable coverage. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3760): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-20 | 1.1.7782 | fix(ci): install actionlint into a runner-local temporary bin directory, reject the old sudo actionlint move in workflow validation, and guard CI Standard apt installs so non-passwordless self-hosted runners do not fail before tests when system dependencies are pre-provisioned. |
+| 2026-06-20 | 1.1.7783 | fix(sidekick, #3716 #3717 #3718 #3719): run Python REPL workers asynchronously without a GUI-thread busy-wait, preserve cancel and re-entrant guard coverage, remove deleted or no-longer-exportable names from the Workspace registry, and cover module/callable/reserved/private namespace export filtering. |
 | 2026-06-19 | 1.1.7674 | fix(plugin-manager, #3720 #3721): make `PluginManager.load_tools()` skip malformed `tools.json` categories and non-dict entries with warnings while preserving valid tools from the same load, with strict-mypy-clean focused regression coverage. |
 | 2026-06-19 | 1.1.7674 | test(plugin-manager, #3720 #3721): centralize isolated plugin-manager import/skip helpers in `test_python_dbc_lod.py`, preserving malformed manifest regression coverage while keeping the changed test file below the 500 LOC CI budget. |
 | 2026-06-19 | 1.1.7675 | fix(data-processor, #3661): keep time-series decomposition helpers importable when installed Numba rejects the active NumPy version by falling back to a no-op `jit` decorator, preserving pure-Python decomposition behavior under optional acceleration failures. |

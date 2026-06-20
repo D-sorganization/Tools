@@ -764,6 +764,9 @@ class TestF6AsyncRepl:
         """Return a ready-to-use PythonReplWidget with a stub registry."""
         try:
             from upstream_drift_tools.ui.tools_sidebar import runtime_tabs
+            from upstream_drift_tools.ui.tools_sidebar.calculator_startup import (
+                CalculatorStartupConfig,
+            )
             from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
             from upstream_drift_tools.ui.tools_sidebar.registry import (
                 WorkspaceRegistry,
@@ -776,6 +779,7 @@ class TestF6AsyncRepl:
         widget = runtime_tabs.PythonReplWidget(
             registry=reg,
             set_variable=lambda name, value: reg.set(name, value),
+            startup_config=CalculatorStartupConfig(()),
         )
         qtbot.addWidget(widget)
         return widget
@@ -808,12 +812,11 @@ class TestF6AsyncRepl:
 
         # Wait up to 3 s for the worker to finish (signal updates output)
         qtbot.waitUntil(
-            lambda: (
-                not widget._run_button.isEnabled()  # noqa: SLF001
-                or "x" in widget._namespace
-            ),  # noqa: SLF001
+            lambda: widget._worker is None,  # noqa: SLF001
             timeout=3000,
         )
+        assert widget._namespace["x"] == 4  # noqa: SLF001
+        assert widget._run_button.isEnabled()  # noqa: SLF001
 
     def test_set_running_toggles_controls(self, qtbot: Any) -> None:
         """_set_running(True) disables Run and shows Cancel + status label."""
