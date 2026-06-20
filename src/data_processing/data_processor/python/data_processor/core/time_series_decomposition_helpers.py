@@ -163,7 +163,7 @@ def extract_stl_seasonal(
 
     for offset in range(period):
         subseries = detrended[offset::period]
-        smoothed = smoother(subseries, frac=0.5)
+        smoothed = smoother(subseries, 0.5)
         seasonal_indices[offset] = np.mean(smoothed)
 
     seasonal_indices -= np.mean(seasonal_indices)
