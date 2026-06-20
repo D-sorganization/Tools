@@ -190,13 +190,21 @@ jobs:
       - name: Install System Dependencies
         run: |
           set -o pipefail
-          sudo flock /tmp/d-sorg-apt-install.lock bash -c '
+          apt_packages=(libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 xvfb)
+          install_system_deps() {
             set -euo pipefail
             while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
             rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock /var/cache/apt/pkgcache.bin /var/cache/apt/srcpkgcache.bin
             env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
-            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 xvfb
-          '
+            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing "${apt_packages[@]}"
+          }
+          if [ "$(id -u)" -eq 0 ]; then
+            flock /tmp/d-sorg-apt-install.lock bash -c "$(declare -f install_system_deps); $(declare -p apt_packages); install_system_deps"
+          elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+            sudo -n flock /tmp/d-sorg-apt-install.lock bash -c "$(declare -f install_system_deps); $(declare -p apt_packages); install_system_deps"
+          else
+            echo "::warning::Passwordless sudo is unavailable; skipping apt install and using pre-provisioned system dependencies."
+          fi
 
       - name: Install Dependencies
         env:
@@ -535,13 +543,21 @@ jobs:
       - name: Install System Dependencies
         run: |
           set -o pipefail
-          sudo flock /tmp/d-sorg-apt-install.lock bash -c '
+          apt_packages=(libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 python3-tk)
+          install_system_deps() {
             set -euo pipefail
             while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
             rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock /var/cache/apt/pkgcache.bin /var/cache/apt/srcpkgcache.bin
             env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
-            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 python3-tk
-          '
+            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing "${apt_packages[@]}"
+          }
+          if [ "$(id -u)" -eq 0 ]; then
+            flock /tmp/d-sorg-apt-install.lock bash -c "$(declare -f install_system_deps); $(declare -p apt_packages); install_system_deps"
+          elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+            sudo -n flock /tmp/d-sorg-apt-install.lock bash -c "$(declare -f install_system_deps); $(declare -p apt_packages); install_system_deps"
+          else
+            echo "::warning::Passwordless sudo is unavailable; skipping apt install and using pre-provisioned system dependencies."
+          fi
 
       - name: Install Dependencies
         # See quality-gate Install Dependencies for the rationale — the shared
