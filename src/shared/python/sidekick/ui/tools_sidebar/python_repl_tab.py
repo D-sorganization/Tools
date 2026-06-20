@@ -5,6 +5,7 @@ from __future__ import annotations
 import contextlib
 import io
 import logging
+import time
 import types
 from collections.abc import Callable
 from typing import Any
@@ -27,6 +28,8 @@ from .qt_compat import QtCore, QtWidgets, Signal
 from .registry import WorkspaceRegistry, is_workspace_registry
 
 _logger = logging.getLogger(__name__)
+
+_IMMEDIATE_COMPLETION_DRAIN_SECONDS = 0.05
 
 SIDEKICK_TERMINAL_OBJECT_NAME = "SidekickTerminalTab"
 SIDEKICK_PYTHON_REPL_OBJECT_NAME = SIDEKICK_TERMINAL_OBJECT_NAME
@@ -148,6 +151,7 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._appearance = appearance or DEFAULT_DARK_PANEL_APPEARANCE
         self._load_workspace_namespace()
         _preload_scientific_namespace(self._namespace, self._startup_config)
+        self._exported_names: set[str] = set(_exportable_values(self._namespace))
         self._build_ui()
         self.apply_appearance(self._appearance)
 
@@ -240,20 +244,20 @@ class PythonReplWidget(QtWidgets.QWidget):
         # merged back only on clean completion in ``_on_execution_finished``.
         self._worker = _ReplWorker(script, dict(self._namespace))
         self._worker.result_ready.connect(self._on_execution_finished)
-        self._wait_for_worker_completion(self._worker)
+        self._worker.start()
+        self._drain_immediate_completion(self._worker)
 
-    def _wait_for_worker_completion(self, worker: _ReplWorker) -> None:
-        """Process Qt events until the submitted worker has reported completion."""
-        try:
-            worker.start()
-            while worker.isRunning():
-                QtWidgets.QApplication.processEvents()
-                worker.wait(10)
-            # Avoid pytest teardown racing a live QThread on Linux/offscreen CI.
+    def _drain_immediate_completion(self, worker: _ReplWorker) -> None:
+        """Publish fast completions without making long-running code synchronous."""
+        deadline = time.monotonic() + _IMMEDIATE_COMPLETION_DRAIN_SECONDS
+        while self._worker is worker and worker.isRunning():
+            if time.monotonic() >= deadline:
+                return
+            QtWidgets.QApplication.processEvents()
+            worker.wait(1)
+        if self._worker is worker:
             worker.wait()
             QtWidgets.QApplication.processEvents()
-        finally:
-            self._retire_worker(worker)
 
     def _retire_worker(self, worker: _ReplWorker | None) -> None:
         """Drop a stopped worker without leaving it parented to widget teardown."""
@@ -300,10 +304,15 @@ class PythonReplWidget(QtWidgets.QWidget):
         # into self._namespace, so the workspace registry and subsequent
         # executions share the updates. This runs only on clean completion.
         if self._worker is not None:
-            self._namespace.update(self._worker._namespace)  # noqa: SLF001
+            worker = self._worker
+            self._namespace.clear()
+            self._namespace.update(worker._namespace)  # noqa: SLF001
+        else:
+            worker = None
         self._sync_namespace_to_registry()
         self._set_running(False)
         self._append_output(output)
+        self._retire_worker(worker)
 
     def output_text(self) -> str:
         """Return the current output pane text."""
@@ -358,8 +367,12 @@ class PythonReplWidget(QtWidgets.QWidget):
             self._namespace[name] = self._registry.get(name)
 
     def _sync_namespace_to_registry(self) -> None:
-        for name, value in _exportable_values(self._namespace).items():
+        exportable = _exportable_values(self._namespace)
+        for name in sorted(self._exported_names - set(exportable)):
+            self._registry.remove(name)
+        for name, value in exportable.items():
             self._set_variable(name, value)
+        self._exported_names = set(exportable)
 
     def _append_output(self, text: str) -> None:
         existing = self._output.toPlainText().strip()
