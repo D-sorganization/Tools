@@ -12,7 +12,6 @@ import logging
 from collections.abc import Callable
 
 import numpy as np
-from numba import jit
 
 from .feature_types import FeatureConfig, FeatureResult
 
@@ -230,7 +229,6 @@ class FeatureExtractor:
 
         return np.array(features), names
 
-    @jit(nopython=True, fastmath=True)
     def extract_lag(
         self,
         data: np.ndarray,
@@ -274,7 +272,6 @@ class FeatureExtractor:
 
         return np.array(features), names
 
-    @jit(nopython=True, fastmath=True)
     def create_polynomial_features(
         self,
         data: np.ndarray,
@@ -612,7 +609,6 @@ class FeatureExtractor:
 
         return float(np.nanmean(((data - mean) / std) ** 4) - 3)
 
-    @jit(nopython=True, fastmath=True)
     def _count_peaks(self, data: np.ndarray) -> int:
         """Count number of peaks."""
         if data is None:
@@ -628,7 +624,6 @@ class FeatureExtractor:
 
         return peaks
 
-    @jit(nopython=True, fastmath=True)
     def _peak_prominences(self, data: np.ndarray) -> list[float]:
         """Get peak prominences."""
         if data is None:
