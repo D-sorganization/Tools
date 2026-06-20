@@ -50,6 +50,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   self-hosted runner tool-cache states where the package is present but its
   executable wrapper is missing (#3797).
 
+### 2026-06-19 Update
+
+- `PluginManager.load_tools()` now validates each `tools.json` category and
+  item before constructing `Tool` records, skipping malformed category values
+  or non-dict entries with warnings while preserving valid tools from the same
+  manifest, backed by strict-mypy-clean focused regression coverage (#3720,
+  #3721). The shared DbC/LoD test module keeps that coverage under the 500 LOC
+  file-size budget by centralizing isolated plugin-manager import/skip helpers.
+
 ### 2026-06-18 Update
 
 - Data Processor statistical analysis methods that orchestrate Python objects,
@@ -1328,6 +1337,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3793): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
+| 2026-06-20 | 1.1.7781 | fix(data-processor, #3760): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
+| 2026-06-19 | 1.1.7674 | fix(plugin-manager, #3720 #3721): make `PluginManager.load_tools()` skip malformed `tools.json` categories and non-dict entries with warnings while preserving valid tools from the same load, with strict-mypy-clean focused regression coverage. |
+| 2026-06-19 | 1.1.7674 | test(plugin-manager, #3720 #3721): centralize isolated plugin-manager import/skip helpers in `test_python_dbc_lod.py`, preserving malformed manifest regression coverage while keeping the changed test file below the 500 LOC CI budget. |
 | 2026-06-19 | 1.1.7675 | fix(data-processor, #3661): keep time-series decomposition helpers importable when installed Numba rejects the active NumPy version by falling back to a no-op `jit` decorator, preserving pure-Python decomposition behavior under optional acceleration failures. |
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3661, #3662, #3663, #3665, #3666, #3667, #3681, #3744): keep object-oriented statistical analysis, filtering, and workspace persistence methods as plain Python functions instead of duplicate/triple Numba dispatchers; add default-collected regression tests for the affected runtime paths and a JSON-backed workspace fallback when optional parquet engines are unavailable. |
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3733, #3734): fail fast on invalid uncertainty-quantification confidence and normal-quantile boundaries while keeping tiny-sample skewness and kurtosis finite under default-collected regression coverage. |
