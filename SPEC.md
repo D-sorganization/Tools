@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7782                                   |
+| **Spec Version**        | 1.1.7783                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- Data processor cross-correlation now rejects invalid significance levels
+  before confidence interval calculation, rejects out-of-domain inverse-normal
+  probabilities instead of returning a zero z-score, validates same-length
+  series contracts across lagged, rolling, partial, causality, transfer-entropy,
+  and multi-series entrypoints, and single-sources lag alignment so lag slicing
+  cannot drift across public methods (#3724, #3726, #3727, #3728, #3729).
 - CI Standard now keeps the shared apt lock for dependency installation but
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages

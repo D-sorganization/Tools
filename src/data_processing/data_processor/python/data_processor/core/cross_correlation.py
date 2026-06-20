@@ -163,13 +163,7 @@ class CrossCorrelationAnalyzer:
         Returns:
             CrossCorrelationResult with CCF values and analysis
         """
-        if x is None:
-            raise ValueError("x must be provided")
-        x = np.asarray(x, dtype=np.float64)
-        y = np.asarray(y, dtype=np.float64)
-
-        require(len(x) == len(y), "Series must have the same length", len(x))
-        require(len(x) >= 3, "Need at least 3 data points", len(x))
+        x, y = self._validate_pair_series(x, y)
 
         n = len(x)
         max_lag = max_lag or self.config.max_lag or n // 3
@@ -238,23 +232,14 @@ class CrossCorrelationAnalyzer:
         Returns:
             Tuple of (correlation, p-value)
         """
-        if x is None:
-            raise ValueError("x must be provided")
-        x = np.asarray(x, dtype=np.float64)
-        y = np.asarray(y, dtype=np.float64)
+        x, y = self._validate_pair_series(x, y)
 
         n = len(x)
 
         if abs(lag) >= n:
             return 0.0, 1.0
 
-        # Align series
-        if lag >= 0:
-            x_aligned = x[lag:]
-            y_aligned = y[: n - lag]
-        else:
-            x_aligned = x[: n + lag]
-            y_aligned = y[-lag:]
+        x_aligned, y_aligned = self._align_lagged_series(x, y, lag)
 
         # Compute correlation
         corr = np.corrcoef(x_aligned, y_aligned)[0, 1]
@@ -324,22 +309,13 @@ class CrossCorrelationAnalyzer:
         Returns:
             RollingCorrelationResult with time-varying correlations
         """
-        if x is None:
-            raise ValueError("x must be provided")
-        x = np.asarray(x, dtype=np.float64)
-        y = np.asarray(y, dtype=np.float64)
+        x, y = self._validate_pair_series(x, y)
 
         n = len(x)
         window = window or self.config.rolling_window or n // 10
         min_periods = self.config.rolling_min_periods or window // 2
 
-        # Align series for lag
-        if lag >= 0:
-            x_work = x[lag:]
-            y_work = y[: n - lag]
-        else:
-            x_work = x[: n + lag]
-            y_work = y[-lag:]
+        x_work, y_work = self._align_lagged_series(x, y, lag)
 
         n_work = len(x_work)
         correlations = np.full(n_work, np.nan)
@@ -392,10 +368,7 @@ class CrossCorrelationAnalyzer:
         Returns:
             GrangerCausalityResult with causality test results
         """
-        if x is None:
-            raise ValueError("x must be provided")
-        x = np.asarray(x, dtype=np.float64)
-        y = np.asarray(y, dtype=np.float64)
+        x, y = self._validate_pair_series(x, y)
 
         max_lag = max_lag or self.config.granger_max_lag
 
@@ -459,12 +432,11 @@ class CrossCorrelationAnalyzer:
         Returns:
             TransferEntropyResult with transfer entropy values
         """
-        if x is None:
-            raise ValueError("x must be provided")
-        x = np.asarray(x, dtype=np.float64)
-        y = np.asarray(y, dtype=np.float64)
+        x, y = self._validate_pair_series(x, y)
 
-        k = history_length or self.config.te_history_length
+        k = self.config.te_history_length if history_length is None else history_length
+        require(k >= 1, "history_length must be at least 1", k)
+        require(k < len(x), "history_length must be smaller than series length", k)
         bins = self.config.te_bins
 
         # Compute TE(X->Y)
@@ -518,11 +490,7 @@ class CrossCorrelationAnalyzer:
         Returns:
             CrossCorrelationResult for partial correlation
         """
-        if x is None:
-            raise ValueError("x must be provided")
-        x = np.asarray(x, dtype=np.float64)
-        y = np.asarray(y, dtype=np.float64)
-        z = np.asarray(z, dtype=np.float64)
+        x, y, z = self._validate_triplet_series(x, y, z)
 
         # Residualize x and y with respect to z
         x_resid = self._residualize(x, z)
@@ -547,7 +515,8 @@ class CrossCorrelationAnalyzer:
         """
         if series_dict is None:
             raise ValueError("series_dict must be provided")
-        names = list(series_dict.keys())
+        series = self._validate_series_dict(series_dict)
+        names = list(series.keys())
         n_series = len(names)
 
         corr_matrix = np.eye(n_series)
@@ -555,7 +524,7 @@ class CrossCorrelationAnalyzer:
         for i in range(n_series):
             for j in range(i + 1, n_series):
                 corr, _ = self.lagged_correlation(
-                    series_dict[names[i]], series_dict[names[j]], lag
+                    series[names[i]], series[names[j]], lag
                 )
                 corr_matrix[i, j] = corr
                 corr_matrix[j, i] = corr
@@ -578,7 +547,8 @@ class CrossCorrelationAnalyzer:
         """
         if series_dict is None:
             raise ValueError("series_dict must be provided")
-        names = list(series_dict.keys())
+        series = self._validate_series_dict(series_dict)
+        names = list(series.keys())
         results = {}
 
         for i, name_x in enumerate(names):
@@ -586,8 +556,8 @@ class CrossCorrelationAnalyzer:
                 if i >= j:
                     continue
 
-                x = series_dict[name_x]
-                y = series_dict[name_y]
+                x = series[name_x]
+                y = series[name_y]
 
                 ccf_result = self.cross_correlate(x, y, max_lag)
 
@@ -606,6 +576,74 @@ class CrossCorrelationAnalyzer:
 
     # Private helper methods
 
+    def _as_float_series(self, values: np.ndarray, name: str) -> np.ndarray:
+        """Convert an input series to the module's float-array representation."""
+        if values is None:
+            raise ValueError(f"{name} must be provided")
+        return np.asarray(values, dtype=np.float64)
+
+    def _validate_pair_series(
+        self,
+        x: np.ndarray,
+        y: np.ndarray,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Validate and coerce two same-length time series."""
+        x_arr = self._as_float_series(x, "x")
+        y_arr = self._as_float_series(y, "y")
+        require(
+            len(x_arr) == len(y_arr), "Series must have the same length", len(x_arr)
+        )
+        require(len(x_arr) >= 3, "Need at least 3 data points", len(x_arr))
+        return x_arr, y_arr
+
+    def _validate_triplet_series(
+        self,
+        x: np.ndarray,
+        y: np.ndarray,
+        z: np.ndarray,
+    ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+        """Validate and coerce three same-length time series."""
+        x_arr, y_arr = self._validate_pair_series(x, y)
+        z_arr = self._as_float_series(z, "z")
+        require(
+            len(z_arr) == len(x_arr), "Series must have the same length", len(z_arr)
+        )
+        return x_arr, y_arr, z_arr
+
+    def _validate_series_dict(
+        self,
+        series_dict: dict[str, np.ndarray],
+    ) -> dict[str, np.ndarray]:
+        """Validate a collection of same-length time series."""
+        series = {
+            name: self._as_float_series(values, name)
+            for name, values in series_dict.items()
+        }
+        if not series:
+            return series
+
+        first_length = len(next(iter(series.values())))
+        require(first_length >= 3, "Need at least 3 data points", first_length)
+        for values in series.values():
+            require(
+                len(values) == first_length,
+                "Series must have the same length",
+                len(values),
+            )
+        return series
+
+    def _align_lagged_series(
+        self,
+        x: np.ndarray,
+        y: np.ndarray,
+        lag: int,
+    ) -> tuple[np.ndarray, np.ndarray]:
+        """Align two validated series at the requested lag."""
+        n = len(x)
+        if lag >= 0:
+            return x[lag:], y[: n - lag]
+        return x[: n + lag], y[-lag:]
+
     def _compute_ccf_at_lag(self, x: np.ndarray, y: np.ndarray, lag: int) -> float:
         """Compute cross-correlation at a specific lag."""
         if x is None:
@@ -615,13 +653,7 @@ class CrossCorrelationAnalyzer:
         if abs(lag) >= n:
             return 0.0
 
-        # Align series
-        if lag >= 0:
-            x_aligned = x[lag:]
-            y_aligned = y[: n - lag]
-        else:
-            x_aligned = x[: n + lag]
-            y_aligned = y[-lag:]
+        x_aligned, y_aligned = self._align_lagged_series(x, y, lag)
 
         # Compute correlation based on normalization method
         norm = self.config.normalization
@@ -653,6 +685,12 @@ class CrossCorrelationAnalyzer:
         # Approximate using normal distribution
         if n is None:
             raise ValueError("n must be provided")
+        if alpha is None:
+            raise ValueError("significance_level must be provided")
+        if not np.isfinite(alpha):
+            raise ValueError("significance_level must be finite")
+        if not 0 < alpha < 1:
+            raise ValueError("significance_level must be between 0 and 1")
         z = self._normal_ppf(1 - alpha / 2)
         ci = z / np.sqrt(n)
         return (-ci, ci)
@@ -679,8 +717,10 @@ class CrossCorrelationAnalyzer:
         # Rational approximation
         if p is None:
             raise ValueError("p must be provided")
+        if not np.isfinite(p):
+            raise ValueError("p must be finite")
         if p <= 0 or p >= 1:
-            return 0.0
+            raise ValueError("p must be between 0 and 1")
 
         if p < 0.5:
             return -self._normal_ppf(1 - p)

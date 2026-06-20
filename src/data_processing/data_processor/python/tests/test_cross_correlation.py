@@ -14,6 +14,7 @@ from data_processor.core import cross_correlation as cross_correlation_module
 from data_processor.core.cross_correlation import (
     CrossCorrelationAnalyzer,
     CrossCorrelationConfig,
+    CrossCorrelationResult,
     cross_correlate,
 )
 
@@ -111,6 +112,32 @@ class TestCrossCorrelate:
         assert p_values[1] == pytest.approx(1.0)
         assert p_values[2] == 0.0
 
+    @pytest.mark.parametrize("p", [0.0, 1.0, -0.1, float("nan")])
+    def test_normal_ppf_rejects_out_of_range_probabilities(
+        self, analyzer: CrossCorrelationAnalyzer, p: float
+    ) -> None:
+        """Out-of-range probabilities must not silently return median z=0."""
+        with pytest.raises(ValueError, match="p must"):
+            analyzer._normal_ppf(p)
+
+    @pytest.mark.parametrize("alpha", [0.0, 1.0, -0.1, float("nan")])
+    def test_confidence_interval_rejects_invalid_significance_level(
+        self, analyzer: CrossCorrelationAnalyzer, alpha: float
+    ) -> None:
+        """Invalid alpha must not produce a zero-width confidence interval."""
+        with pytest.raises(ValueError, match="significance_level"):
+            analyzer._compute_confidence_interval(20, alpha)
+
+    def test_invalid_significance_level_rejects_significance_path(self) -> None:
+        """Degenerate alpha=0 should fail before significant-lag selection."""
+        analyzer = CrossCorrelationAnalyzer(
+            CrossCorrelationConfig(significance_level=0)
+        )
+        x = np.linspace(-1.0, 1.0, 20)
+
+        with pytest.raises(ValueError, match="significance_level"):
+            analyzer.cross_correlate(x, x, max_lag=3)
+
 
 class TestLaggedCorrelation:
     """Tests for lagged_correlation method."""
@@ -131,6 +158,24 @@ class TestLaggedCorrelation:
         corr, p = analyzer.lagged_correlation(x, x, lag=100)
         assert corr == 0.0
         assert p == 1.0
+
+    def test_mismatched_lengths_raise_clear_contract(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
+        """Length mismatches should fail before NumPy shape errors."""
+        with pytest.raises(ValueError, match="same length"):
+            analyzer.lagged_correlation(np.arange(5.0), np.arange(4.0), lag=0)
+
+    def test_lag_alignment_helper_is_shared_by_lagged_paths(self) -> None:
+        """The duplicated lag-slicing block should stay single-sourced."""
+        assert hasattr(CrossCorrelationAnalyzer, "_align_lagged_series")
+        for method_name in (
+            "lagged_correlation",
+            "rolling_cross_correlation",
+            "_compute_ccf_at_lag",
+        ):
+            source = inspect.getsource(getattr(CrossCorrelationAnalyzer, method_name))
+            assert "_align_lagged_series" in source, method_name
 
 
 class TestFindOptimalLag:
@@ -172,6 +217,13 @@ class TestRollingCrossCorrelation:
 
         assert result.correlation_stability >= 0.0
 
+    def test_mismatched_lengths_raise_clear_contract(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
+        """Rolling correlation should share the public length precondition."""
+        with pytest.raises(ValueError, match="same length"):
+            analyzer.rolling_cross_correlation(np.arange(10.0), np.arange(9.0))
+
 
 class TestCausalityRuntime:
     """Regression tests for causal-analysis runtime paths."""
@@ -190,6 +242,12 @@ class TestCausalityRuntime:
         assert np.isfinite(result.x_causes_y_pvalue)
         assert np.isfinite(result.y_causes_x_pvalue)
 
+    def test_granger_causality_rejects_mismatched_lengths(self) -> None:
+        analyzer = CrossCorrelationAnalyzer(CrossCorrelationConfig(granger_max_lag=2))
+
+        with pytest.raises(ValueError, match="same length"):
+            analyzer.granger_causality_test(np.arange(12.0), np.arange(11.0))
+
     def test_transfer_entropy_runs_end_to_end(self) -> None:
         rng = np.random.default_rng(3666)
         x = rng.standard_normal(60)
@@ -205,6 +263,75 @@ class TestCausalityRuntime:
         assert np.isfinite(result.te_y_to_x)
         assert 0.0 <= result.te_x_to_y_pvalue <= 1.0
         assert 0.0 <= result.te_y_to_x_pvalue <= 1.0
+
+    @pytest.mark.parametrize("history_length", [0, 5])
+    def test_transfer_entropy_rejects_invalid_history_length(
+        self, history_length: int
+    ) -> None:
+        analyzer = CrossCorrelationAnalyzer(CrossCorrelationConfig(te_bins=3))
+        x = np.arange(5.0)
+
+        with pytest.raises(ValueError, match="history_length"):
+            analyzer.transfer_entropy(x, x, history_length=history_length)
+
+    def test_transfer_entropy_rejects_mismatched_lengths(self) -> None:
+        analyzer = CrossCorrelationAnalyzer(CrossCorrelationConfig(te_bins=3))
+
+        with pytest.raises(ValueError, match="same length"):
+            analyzer.transfer_entropy(np.arange(8.0), np.arange(7.0))
+
+
+class TestPartialCrossCorrelation:
+    """Tests for partial_cross_correlation method."""
+
+    def test_partial_cross_correlation_returns_result(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
+        rng = np.random.default_rng(3724)
+        z = rng.standard_normal(80)
+        x = 0.4 * z + rng.standard_normal(80) * 0.2
+        y = 0.3 * z + 0.5 * x + rng.standard_normal(80) * 0.2
+
+        result = analyzer.partial_cross_correlation(x, y, z, max_lag=4)
+
+        assert isinstance(result, CrossCorrelationResult)
+        assert len(result.lags) == 9
+        assert np.all(np.isfinite(result.ccf_values))
+
+    def test_partial_cross_correlation_rejects_mismatched_control_length(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
+        with pytest.raises(ValueError, match="same length"):
+            analyzer.partial_cross_correlation(
+                np.arange(8.0), np.arange(8.0), np.arange(7.0)
+            )
+
+
+class TestLeadLagRelationship:
+    """Tests for find_lead_lag_relationship method."""
+
+    def test_finds_pairwise_relationship(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
+        n = 200
+        x = np.sin(np.linspace(0, 4 * np.pi, n))
+        y = np.roll(x, 5)
+
+        result = analyzer.find_lead_lag_relationship({"x": x, "y": y}, max_lag=20)
+
+        relationship = result["x_vs_y"]
+        assert relationship["leader"] in {"x", "y"}
+        assert relationship["follower"] in {"x", "y"}
+        assert relationship["leader"] != relationship["follower"]
+        assert relationship["lag_magnitude"] <= 7
+
+    def test_rejects_mismatched_series_lengths(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
+        with pytest.raises(ValueError, match="same length"):
+            analyzer.find_lead_lag_relationship(
+                {"x": np.arange(8.0), "y": np.arange(7.0)}
+            )
 
 
 class TestMultiSeries:
@@ -231,6 +358,15 @@ class TestMultiSeries:
         }
         mat, _ = analyzer.multi_series_correlation_matrix(series)
         np.testing.assert_array_almost_equal(mat, mat.T)
+
+    def test_mismatched_lengths_raise_clear_contract(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
+        """Multi-series correlations should validate all series lengths."""
+        with pytest.raises(ValueError, match="same length"):
+            analyzer.multi_series_correlation_matrix(
+                {"x": np.arange(8.0), "y": np.arange(7.0)}
+            )
 
 
 class TestTransferEntropy:
