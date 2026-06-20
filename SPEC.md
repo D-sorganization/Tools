@@ -27,14 +27,21 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7779                                   |
-| **Last Spec Update**    | 2026-06-19                                 |
+| **Spec Version**        | 1.1.7780                                   |
+| **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-06-20 Update
+
+- Workflow Lint now installs `actionlint` into a runner-local directory added
+  through `GITHUB_PATH` instead of moving it into `/usr/local/bin` with `sudo`,
+  preserving self-hosted runners that do not allow passwordless sudo while
+  keeping the existing actionlint invocation unchanged (#3762).
 
 ### 2026-06-18 Update
 
