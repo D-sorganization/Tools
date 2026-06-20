@@ -74,12 +74,14 @@ jobs:
 
       - name: Fetch base branch
         if: github.event_name == 'pull_request'
+        shell: bash
         run: |
           git fetch origin "${{ github.event.pull_request.base.ref }}" --depth=1 || true
           git fetch origin "${{ github.event.pull_request.base.sha }}" || true
 
       - name: Check admin override label
         id: override
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -123,6 +125,7 @@ jobs:
         # skipped — the authoritative diff analysis already ran on the
         # `pull_request` trigger, and that trigger never sees repo secrets.
         if: github.event_name == 'pull_request' && steps.override.outputs.override != 'true'
+        shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
@@ -277,10 +280,12 @@ jobs:
 
       - name: Note override
         if: steps.override.outputs.override == 'true'
+        shell: bash
         run: |
           echo "::notice title=Phantom-Guard overridden::Admin override label honored — skipping checks."
 
       - name: Note ignored non-admin override label
         if: github.event_name == 'pull_request_target' && steps.override.outputs.override != 'true'
+        shell: bash
         run: |
           echo "::notice title=Phantom-Guard override ignored::Label event evaluated through API-only path; full diff checks run on pull_request events."
