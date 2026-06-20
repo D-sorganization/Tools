@@ -44,7 +44,12 @@ restore_python() {
   echo "Restored Python $version in $cache_dir"
 }
 
-restore_python "3.10.20" "/home/dieterolson/actions-runners/python-venvs/3.10.20"
-restore_python "3.11.15" "/home/dieterolson/actions-runners/python-venvs/3.11.15"
-restore_python "3.12.13" "/home/dieterolson/actions-runners/python-venvs/3.12.13"
-restore_python "3.12.3" "/home/dieterolson/actions-runners/python-venvs/3.12.3"
+shopt -s nullglob
+for venv_dir in /home/dieterolson/actions-runners/python-venvs/[0-9]*.[0-9]*.[0-9]*; do
+  version="$(basename "$venv_dir")"
+  case "$version" in
+    3.10.*|3.11.*|3.12.*|3.13.*)
+      restore_python "$version" "$venv_dir"
+      ;;
+  esac
+done

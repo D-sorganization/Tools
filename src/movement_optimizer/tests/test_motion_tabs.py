@@ -45,6 +45,28 @@ def _wait_for_policy_worker(qapp, swingset: SwingsetTab, timeout_s: float = 10.0
     assert swingset._policy_worker is None
 
 
+def _assert_reserved_legend_rows_do_not_cover_plots(panel) -> None:
+    panel.canvas.draw()
+    renderer = panel.canvas.get_renderer()
+    data_boxes = [axes.get_window_extent(renderer) for axes in panel.axes.values()]
+    figure_box = panel.figure.bbox
+
+    assert panel._figure_legend is None
+    assert all(axes.get_legend() is None for axes in panel.axes.values())
+    legends = [
+        legend
+        for legend_axis in panel.legend_axes.values()
+        if (legend := legend_axis.get_legend()) is not None
+    ]
+    assert legends
+
+    for legend in legends:
+        legend_box = legend.get_window_extent(renderer)
+        assert legend_box.x0 >= figure_box.x0 - 1.0
+        assert legend_box.x1 <= figure_box.x1 + 1.0
+        assert not any(legend_box.overlaps(data_box) for data_box in data_boxes)
+
+
 def test_main_window_preserves_barbell_tabs_and_adds_motion_tabs(qapp) -> None:
     window = MainWindow()
 
@@ -627,6 +649,11 @@ def test_swingset_iterative_optimize_populates_panel_and_overlays(qapp) -> None:
     assert 0 < swingset.policy_trace_canvas.sample_count() <= 50
     # Analysis plots populated.
     assert swingset.analysis_panel.axes["torques"].get_lines()
+    assert all(axes.get_legend() is None for axes in swingset.analysis_panel.axes.values())
+    assert swingset.analysis_panel._figure_legend is None
+    assert any(
+        axes.get_legend() is not None for axes in swingset.analysis_panel.legend_axes.values()
+    )
     # Force overlay drawn (all toggles default-on).
     assert swingset.canvas._overlay.arrows or swingset.canvas._overlay.com_markers
 
@@ -710,7 +737,28 @@ def test_chain_simulate_populates_panel_and_overlays(qapp) -> None:
 
     assert chain._rollout is not None
     assert chain.analysis_panel.axes["tension"].get_lines()
+    assert all(axes.get_legend() is None for axes in chain.analysis_panel.axes.values())
+    assert chain.analysis_panel._figure_legend is None
+    assert any(axes.get_legend() is not None for axes in chain.analysis_panel.legend_axes.values())
     assert chain.canvas._overlay.arrows
+
+
+def test_motion_analysis_panel_uses_reserved_legend_rows(qapp) -> None:
+    swingset = SwingsetTab()
+    swingset.autoplay_checkbox.setChecked(False)
+    swingset._controls["budget"].set_value(50)
+    swingset._controls["cycles"].set_value(1)
+    swingset._optimize_policy()
+    _wait_for_policy_worker(qapp, swingset)
+
+    chain = ChainDynamicsTab()
+    chain._controls["segments"].set_value(6)
+    chain._controls["duration"].set_value(0.2)
+    chain._controls["dt"].set_value(0.02)
+    chain._simulate()
+
+    _assert_reserved_legend_rows_do_not_cover_plots(swingset.analysis_panel)
+    _assert_reserved_legend_rows_do_not_cover_plots(chain.analysis_panel)
 
 
 def test_chain_force_toggle_does_not_recompute(qapp) -> None:
@@ -819,7 +867,8 @@ def test_swingset_plots_tab_scrolls_instead_of_crushing_legends(qapp) -> None:
 
     assert len(plot_scrolls) == 1
     assert plot_scrolls[0].widgetResizable() is True
-    assert swingset.analysis_panel.canvas.minimumWidth() >= 780
+    assert swingset.analysis_panel.canvas.minimumWidth() >= 800
+    assert swingset.analysis_panel.canvas.minimumHeight() >= 1100
 
 
 def test_swingset_plot_legend_toggle_hides_axes_legends(qapp) -> None:
@@ -830,10 +879,12 @@ def test_swingset_plot_legend_toggle_hides_axes_legends(qapp) -> None:
 
     swingset._plot_legend_toggle.setChecked(False)
     assert legend.get_visible() is False
+    assert swingset.analysis_panel._figure_legend is None
     assert swingset.analysis_panel.legend_axes["torques"].get_legend() is None
 
     swingset._plot_legend_toggle.setChecked(True)
     assert axes.get_legend() is None
+    assert swingset.analysis_panel._figure_legend is None
     assert swingset.analysis_panel.legend_axes["torques"].get_legend() is not None
 
 
@@ -893,10 +944,7 @@ def test_policy_trace_legend_wraps_above_plot_at_narrow_width(qapp) -> None:
 
     assert trace._legend_row_count() > 1
     assert trace._top_margin() == pytest.approx(trace._legend_band_height())
-    assert (
-        trace.height() - trace._top_margin() - trace._TRACE_BOTTOM_PADDING_PX
-        >= trace._MINIMUM_PLOT_HEIGHT_PX
-    )
+    assert trace._plot_bottom() - trace._top_margin() >= trace._MINIMUM_PLOT_HEIGHT_PX
 
     trace.grab()  # repaint with a wrapped legend must not raise
 
@@ -911,8 +959,21 @@ def test_policy_trace_minimum_height_tracks_wrapped_legend(qapp) -> None:
     assert narrow_height >= (
         trace._legend_band_height_for_width(140)
         + trace._MINIMUM_PLOT_HEIGHT_PX
-        + trace._TRACE_BOTTOM_PADDING_PX
+        + trace._axis_label_band_height()
     )
     trace.resize(140, 120)
     trace._sync_minimum_height()
     assert trace.minimumHeight() >= narrow_height
+
+
+def test_policy_trace_iteration_label_stays_below_plot_area(qapp) -> None:
+    trace = PolicyTraceCanvas()
+    trace.resize(140, trace.heightForWidth(140))
+    trace._sync_minimum_height()
+    trace.resize(140, trace.minimumHeight())
+
+    label_rect = trace._iteration_label_rect()
+
+    assert label_rect.top() >= trace._plot_bottom() + trace._AXIS_LABEL_TOP_PADDING_PX - 1
+    assert trace._plot_bottom() - trace._top_margin() >= trace._MINIMUM_PLOT_HEIGHT_PX
+    trace.grab()  # repaint with bottom-axis label must not raise

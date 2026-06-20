@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- Replaced shared-footer Swingset and Chain Dynamics analysis legends with
+  per-plot reserved legend rows so each legend stays close to its plot without
+  covering plot data, ticks, labels, or neighboring subplot content.
+- Prevented the Swingset policy trace `iteration` label from overlapping
+  optimizer telemetry by reserving a bottom axis-label band in the trace
+  canvas height-for-width contract.
 - Prevented narrow Swingset policy optimization panes from compressing the
   telemetry plot under multi-row trace legends by making the trace canvas
   publish a width-aware minimum height.
@@ -35,9 +41,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Docked Swingset and Chain Dynamics analysis legends into reserved
   `MotionAnalysisPanel` legend rows so visible legends no longer obscure curves,
   neighboring plots, or compact plot-pane edges.
+- Clipped docked Swingset and Chain Dynamics analysis legends to their reserved
+  legend rows and draw data axes above legend strips, preventing backend sizing
+  edge cases from painting legends over plotted curves.
 - Tightened the reserved compact-pane gap between Swingset/Chain plot data axes
   and docked legends, and raised the scrollable plot panel's minimum curve
   height so legends no longer dominate the plot area.
+- Centered docked Swingset and Chain Dynamics plot legends inside taller
+  reserved legend strips, with rendered padding coverage so multi-row joint
+  legends do not crowd the charts or appear clipped.
+- Stopped Swingset and Chain Dynamics panel rendering from creating transient
+  data-axis legends; labeled artists now feed `MotionAnalysisPanel` docked
+  legend strips directly so legends cannot reappear over plot contents.
+- Enforced `MotionAnalysisPanel`'s legend-safe minimum render size during draw
+  so compact panes and backend resize edge cases cannot squeeze docked legends
+  into plot labels or curves.
+- Increased the exercise analysis plot-grid vertical spacing and lowered
+  outside legends so legends no longer collide with tick labels or axis labels.
+- Changed the Swingset analysis plot grid from three columns to two columns so
+  the plot and legend strips fit the normal split-pane viewport without hiding
+  the rightmost plots behind horizontal scrolling.
+- Moved Swingset and Chain Dynamics analysis legends from narrow side strips
+  into dedicated bands below each plot, preserving full plot width while
+  keeping legends structurally outside the plotted curves, tick labels, and
+  axis labels.
 - Hardened the `movement_optimizer_core` maturin parity workflow with a
   per-job virtual environment, explicit NumPy/SciPy/`pytest` reinstalls, and
   PyO3 forward compatibility for the declared Python 3.13 lane.
