@@ -411,7 +411,8 @@ class FolderPackerGUI:
             bool: True if the directory should be included.
 
         """
-        assert dir_path is not None, "dir_path must be provided"
+        if dir_path is None:
+            raise ValueError("dir_path must be provided")
         dir_basename = dir_path.name
         dir_name = dir_basename.lower()
 

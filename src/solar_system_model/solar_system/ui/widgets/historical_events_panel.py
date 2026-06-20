@@ -28,7 +28,8 @@ class HistoricalEventsPanel:
             width: Panel width in pixels
             style: Visual styling
         """
-        assert position is not None, "position must be provided"
+        if position is None:
+            raise ValueError("position must be provided")
         self.position = position
         self.width = width
         self.style = style or PanelStyle()
@@ -43,7 +44,8 @@ class HistoricalEventsPanel:
         Args:
             dt: Current simulation date
         """
-        assert dt is not None, "dt must be provided"
+        if dt is None:
+            raise ValueError("dt must be provided")
         self._current_date = dt
         self._events = self._find_events_for_date(dt)
 

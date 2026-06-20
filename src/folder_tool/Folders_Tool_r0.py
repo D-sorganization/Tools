@@ -55,7 +55,8 @@ except ImportError:
         encoding: str = "utf-8",
         create_parents: bool = True,
     ) -> bool:
-        assert file_path is not None, "file_path must be provided"
+        if file_path is None:
+            raise ValueError("file_path must be provided")
         p = Path(file_path)
         if create_parents:
             parent_dir = p.parent

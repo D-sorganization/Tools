@@ -123,7 +123,8 @@ def _fmt_vec(v: np.ndarray, decimals: int = 6) -> str:
 
 def _fmt_mat(M: np.ndarray, decimals: int = 6) -> str:
     """Format a numpy matrix as a multi-line string."""
-    assert M is not None, "M must be provided"
+    if M is None:
+        raise ValueError("M must be provided")
     lines = []
     for row in M:
         lines.append("  ".join(f"{x: .{decimals}f}" for x in row))
@@ -168,7 +169,8 @@ def _get_plot_colors() -> dict[str, Any]:
 
 def _style_figure(fig: Figure, ax: Any = None) -> None:
     """Apply current theme colours to a matplotlib figure."""
-    assert fig is not None, "fig must be provided"
+    if fig is None:
+        raise ValueError("fig must be provided")
     c = _get_plot_colors()
     fig.set_facecolor(c["bg"])
     if ax is not None:
@@ -345,7 +347,8 @@ class RotationConverterTab(QWidget):
         self._draw_rotation(rot)
 
     def _update_main_result(self, rot: Rotation) -> None:
-        assert rot is not None, "rot must be provided"
+        if rot is None:
+            raise ValueError("rot must be provided")
         idx = self._target_repr.currentIndex()
         conv = self._target_euler_conv.currentText()
         try:
@@ -369,7 +372,8 @@ class RotationConverterTab(QWidget):
             self._main_result.setText(f"Error: {e}")
 
     def _display_all(self, rot: Rotation, conv: str) -> None:
-        assert rot is not None, "rot must be provided"
+        if rot is None:
+            raise ValueError("rot must be provided")
         q = rot.as_quaternion()
         R = rot.as_rotation_matrix()
         axis, angle = rot.as_axis_angle()
@@ -403,7 +407,8 @@ class RotationConverterTab(QWidget):
         self._output_text.setPlainText("\n".join(lines))
 
     def _draw_rotation(self, rot: Rotation) -> None:
-        assert rot is not None, "rot must be provided"
+        if rot is None:
+            raise ValueError("rot must be provided")
         self._fig.clear()
         ax = self._fig.add_subplot(111, projection="3d")
         _style_figure(self._fig, ax)
@@ -576,7 +581,8 @@ class RigidTransformTab(QWidget):
         self._draw_transform(T)
 
     def _display_transform(self, T: RigidTransform) -> None:
-        assert T is not None, "T must be provided"
+        if T is None:
+            raise ValueError("T must be provided")
         q, p = T.as_quaternion_translation()
         R, p2 = T.as_rotation_translation()
         euler, _ = T.as_euler_translation("xyz")
@@ -631,7 +637,8 @@ class RigidTransformTab(QWidget):
         self._tf_output.setPlainText("\n".join(lines))
 
     def _draw_transform(self, T: RigidTransform) -> None:
-        assert T is not None, "T must be provided"
+        if T is None:
+            raise ValueError("T must be provided")
         self._tf_fig.clear()
         ax = self._tf_fig.add_subplot(111, projection="3d")
         _style_figure(self._tf_fig, ax)

@@ -643,7 +643,8 @@ class FolderToolMixin:
 
     def _show_folder_analysis_report(self, text: str) -> None:
         """Show report."""
-        assert text is not None, "text must be provided"
+        if text is None:
+            raise ValueError("text must be provided")
         dialog = ctk.CTkToplevel(self)  # type: ignore[attr-defined]
         dialog.title("Analysis Report")
         t = ctk.CTkTextbox(dialog)

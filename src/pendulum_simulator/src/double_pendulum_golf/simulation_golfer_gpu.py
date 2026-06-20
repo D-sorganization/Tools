@@ -155,7 +155,8 @@ def _constraint_acceleration_bias_jax(
     -------
     gamma : JaxArray, shape (4,)
     """
-    assert q is not None, "q must be provided"
+    if q is None:
+        raise ValueError("q must be provided")
     eps = 1e-7  # type: ignore[unreachable]
     Phi_q_0 = constraint_jacobian_jax(q, p)
 

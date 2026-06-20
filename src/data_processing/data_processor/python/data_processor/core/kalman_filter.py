@@ -232,7 +232,8 @@ class KalmanFilter:
         Returns:
             KalmanFilterResult with filtered states and diagnostics
         """
-        assert measurements is not None, "measurements must be provided"
+        if measurements is None:
+            raise ValueError("measurements must be provided")
         measurements = self._normalize_measurements(measurements)
 
         T = measurements.shape[0]

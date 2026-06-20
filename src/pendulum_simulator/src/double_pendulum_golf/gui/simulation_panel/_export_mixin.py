@@ -93,7 +93,8 @@ class _SimulationExportMixin:
 
     def _export_as_svg(self, path: str) -> None:
         """Export the pendulum widget as an SVG image."""
-        assert path is not None, "path must be provided"
+        if path is None:
+            raise ValueError("path must be provided")
         from PyQt6.QtCore import QRect
         from PyQt6.QtGui import QPainter
 
@@ -116,7 +117,8 @@ class _SimulationExportMixin:
 
     def _export_as_pdf(self, path: str) -> None:
         """Export the pendulum widget as a PDF (via QPrinter)."""
-        assert path is not None, "path must be provided"
+        if path is None:
+            raise ValueError("path must be provided")
         from PyQt6.QtCore import QMarginsF
         from PyQt6.QtGui import QPainter
         from PyQt6.QtPrintSupport import QPrinter
