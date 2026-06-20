@@ -834,6 +834,7 @@ jobs:
             tests/shared/python/theme/ \
             -m "not live_simulation" \
             --import-mode=importlib \
+            -n 0 \
             --cov=src/shared/python/upstream_drift_tools \
             --cov=src/shared/python/signal_toolkit \
             --cov=src/shared/python/model_generation \
