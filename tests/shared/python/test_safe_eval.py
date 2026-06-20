@@ -43,6 +43,26 @@ def test_namespace_variables() -> None:
     assert safe_eval("a * b + 1", {"a": 3, "b": 4}) == 13
 
 
+def test_subscript_expression_allowed() -> None:
+    assert safe_eval("x[0]", {"x": [10, 20]}) == 10
+
+
+def test_slice_expression_allowed() -> None:
+    assert safe_eval("x[1:3]", {"x": [0, 1, 2, 3]}) == [1, 2]
+
+
+def test_if_expression_allowed() -> None:
+    assert safe_eval("a if c else b", {"a": 1, "b": 2, "c": True}) == 1
+
+
+def test_bool_operation_allowed() -> None:
+    assert safe_eval("a and b", {"a": True, "b": False}) is False
+
+
+def test_compare_expression_allowed() -> None:
+    assert safe_eval("x > 3", {"x": 5}) is True
+
+
 def test_safe_eval_math_functions() -> None:
     result = safe_eval_math("sqrt(x) + 1", {"x": 4.0}, use_numpy=False)
     assert result == pytest.approx(3.0)

@@ -11,20 +11,7 @@ from scipy import stats
 from .anova_models import ANOVATable, AssumptionTestResult, TwoWayANOVAResult
 from .anova_one_way import test_anova_assumptions
 
-try:
-    from numba import jit
-except ImportError:
 
-    def jit(*_args: Any, **_kwargs: Any):  # type: ignore[no-redef]
-        """Fallback no-op decorator when numba is unavailable."""
-
-        def decorator(func: Any) -> Any:
-            return func
-
-        return decorator
-
-
-@jit(nopython=True, fastmath=True)
 def two_way_sum_of_squares(
     data: pd.DataFrame,
     y: np.ndarray,

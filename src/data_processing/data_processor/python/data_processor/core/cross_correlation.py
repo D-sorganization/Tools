@@ -25,19 +25,6 @@ from typing import Any, NamedTuple
 
 import numpy as np
 
-try:
-    from numba import jit
-except ImportError:
-
-    def jit(*_args: Any, **_kwargs: Any) -> Any:
-        """Fallback decorator when optional numba acceleration is unavailable."""
-
-        def decorator(func: Any) -> Any:
-            return func
-
-        return decorator
-
-
 from data_processor.contracts import require
 from data_processor.core.causality_types import (
     GrangerCausalityResult,
@@ -319,7 +306,6 @@ class CrossCorrelationAnalyzer:
         else:
             return OptimalLagResult(result.optimal_lag, result.max_correlation)
 
-    @jit(nopython=True, fastmath=True)
     def rolling_cross_correlation(
         self,
         x: np.ndarray,
@@ -671,7 +657,6 @@ class CrossCorrelationAnalyzer:
         ci = z / np.sqrt(n)
         return (-ci, ci)
 
-    @jit(nopython=True, fastmath=True)
     def _compute_pvalues(self, ccf: np.ndarray, n: int) -> np.ndarray:
         """Compute p-values for CCF values."""
         # Using Fisher's z-transformation approximation
@@ -793,7 +778,6 @@ class CrossCorrelationAnalyzer:
 
         return f_stat, p_value
 
-    @jit(nopython=True, fastmath=True)
     def _select_lag_order(
         self, y: np.ndarray, x: np.ndarray, max_lag: int, criterion: str
     ) -> int:
@@ -832,7 +816,6 @@ class CrossCorrelationAnalyzer:
 
         return best_lag
 
-    @jit(nopython=True, fastmath=True)
     def _create_lag_matrix(self, data: np.ndarray, lag: int) -> np.ndarray:
         """Create matrix of lagged values."""
         if data is None:
@@ -912,9 +895,6 @@ class CrossCorrelationAnalyzer:
         edges = np.percentile(data, percentiles)
         return np.digitize(data, edges[1:-1])
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def _conditional_entropy(self, x: np.ndarray, y: np.ndarray, y_bins: int) -> float:
         """Compute conditional entropy H(X|Y)."""
         # Joint probability

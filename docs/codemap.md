@@ -4,7 +4,7 @@ A tree-sitter symbol index + SQLite FTS5 search layer that lets the in-app
 chat (and external coding agents) answer questions like "where is
 `apply_theme` called from?" without re-scanning the tree every prompt.
 
-Full design: [`chat_codemap_design.md`](../chat_codemap_design.md) (Part 2).
+Full design: [`SPEC.md` codemap package baseline](../SPEC.md#12-change-log).
 
 ## Install
 
