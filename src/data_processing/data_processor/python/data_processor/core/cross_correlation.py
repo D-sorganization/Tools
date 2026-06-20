@@ -25,19 +25,6 @@ from typing import Any, NamedTuple
 
 import numpy as np
 
-try:
-    from numba import jit
-except ImportError:
-
-    def jit(*_args: Any, **_kwargs: Any) -> Any:
-        """Fallback decorator when optional numba acceleration is unavailable."""
-
-        def decorator(func: Any) -> Any:
-            return func
-
-        return decorator
-
-
 from data_processor.contracts import require
 from data_processor.core.causality_types import (
     GrangerCausalityResult,
@@ -77,6 +64,7 @@ class CrossCorrelationConfig:
     # Significance testing
     significance_level: float = 0.05
     num_permutations: int = 1000  # For permutation testing
+    permutation_random_seed: int | None = None  # Seed for permutation testing
 
     # Granger causality
     granger_max_lag: int = 10
@@ -318,7 +306,6 @@ class CrossCorrelationAnalyzer:
         else:
             return OptimalLagResult(result.optimal_lag, result.max_correlation)
 
-    @jit(nopython=True, fastmath=True)
     def rolling_cross_correlation(
         self,
         x: np.ndarray,
@@ -486,9 +473,11 @@ class CrossCorrelationAnalyzer:
         # Compute TE(Y->X)
         te_yx = self._compute_transfer_entropy(y, x, k, bins)
 
-        # Compute significance using permutation test
-        p_xy = self._permutation_test_te(x, y, k, bins, te_xy)
-        p_yx = self._permutation_test_te(y, x, k, bins, te_yx)
+        # Compute significance using a local generator so callers can seed
+        # permutation tests without mutating NumPy's global RNG state.
+        rng = np.random.default_rng(self.config.permutation_random_seed)
+        p_xy = self._permutation_test_te(x, y, k, bins, te_xy, rng)
+        p_yx = self._permutation_test_te(y, x, k, bins, te_yx, rng)
 
         # Net transfer entropy
         net_te = te_xy - te_yx
@@ -668,7 +657,6 @@ class CrossCorrelationAnalyzer:
         ci = z / np.sqrt(n)
         return (-ci, ci)
 
-    @jit(nopython=True, fastmath=True)
     def _compute_pvalues(self, ccf: np.ndarray, n: int) -> np.ndarray:
         """Compute p-values for CCF values."""
         # Using Fisher's z-transformation approximation
@@ -790,7 +778,6 @@ class CrossCorrelationAnalyzer:
 
         return f_stat, p_value
 
-    @jit(nopython=True, fastmath=True)
     def _select_lag_order(
         self, y: np.ndarray, x: np.ndarray, max_lag: int, criterion: str
     ) -> int:
@@ -829,7 +816,6 @@ class CrossCorrelationAnalyzer:
 
         return best_lag
 
-    @jit(nopython=True, fastmath=True)
     def _create_lag_matrix(self, data: np.ndarray, lag: int) -> np.ndarray:
         """Create matrix of lagged values."""
         if data is None:
@@ -909,9 +895,6 @@ class CrossCorrelationAnalyzer:
         edges = np.percentile(data, percentiles)
         return np.digitize(data, edges[1:-1])
 
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
-    @jit(nopython=True, fastmath=True)
     def _conditional_entropy(self, x: np.ndarray, y: np.ndarray, y_bins: int) -> float:
         """Compute conditional entropy H(X|Y)."""
         # Joint probability
@@ -947,6 +930,7 @@ class CrossCorrelationAnalyzer:
         k: int,
         bins: int,
         observed_te: float,
+        rng: np.random.Generator,
     ) -> float:
         """Permutation test for transfer entropy significance."""
         if source is None:
@@ -956,7 +940,7 @@ class CrossCorrelationAnalyzer:
 
         for _ in range(n_perms):
             # Shuffle source (breaking temporal dependency)
-            source_shuffled = np.random.permutation(source)
+            source_shuffled = rng.permutation(source)
             te_perm = self._compute_transfer_entropy(source_shuffled, target, k, bins)
             if te_perm >= observed_te:
                 count_greater += 1
