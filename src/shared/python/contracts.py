@@ -274,15 +274,28 @@ def _evaluate_precondition(
     if condition is None:
         raise ValueError("condition must be provided")
     try:
-        return bool(condition(*args, **kwargs))
+        inspect.signature(condition).bind(*args, **kwargs)
     except TypeError:
-        # Only swallow TypeError if it's a signature mismatch, not other errors
+        return _evaluate_precondition_by_name(condition, func, args, kwargs)
+    except ValueError:
         pass
+
+    try:
+        return bool(condition(*args, **kwargs))
     except Exception as exc:
-        # Preserve the original exception type and chain for non-TypeError errors
+        # Preserve the original exception type and chain for predicate body errors.
         raise PreconditionEvaluationError(
             f"Failed to evaluate precondition for {func.__qualname__}: {exc!r}", exc
         ) from exc
+
+
+def _evaluate_precondition_by_name(
+    condition: Callable[..., bool],
+    func: Callable[..., Any],
+    args: tuple[Any, ...],
+    kwargs: dict[str, Any],
+) -> bool:
+    """Evaluate a precondition from decorated-function argument names."""
 
     # Fallback: bind the decorated function's args, then select only the
     # parameters the condition function expects.
@@ -517,14 +530,15 @@ def class_invariant(
 
         cls.__init__ = new_init  # type: ignore[misc]
 
-        # Wrap all public methods
-        for name, method in inspect.getmembers(cls, inspect.isfunction):
+        # Wrap public methods defined directly on this class.
+        for name, method in vars(cls).items():
             if not name.startswith("_"):
-                setattr(
-                    cls,
-                    name,
-                    _wrap_method_with_invariant(method, name, condition, message),
-                )
+                if inspect.isfunction(method):
+                    setattr(
+                        cls,
+                        name,
+                        _wrap_method_with_invariant(method, name, condition, message),
+                    )
 
         return cls
 

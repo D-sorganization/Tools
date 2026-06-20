@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7788                                   |
+| **Spec Version**        | 1.1.7789                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- Shared DbC preconditions now distinguish predicate argument-shape mismatches
+  from `TypeError` raised inside the predicate body, preserving the original
+  underlying error and avoiding double evaluation; class invariants wrap only
+  public methods defined directly on the decorated class so inherited methods
+  keep normal MRO/override behavior (#3706, #3707, #3708).
 - Data processor cross-correlation now rejects invalid significance levels
   before confidence interval calculation, rejects out-of-domain inverse-normal
   probabilities instead of returning a zero z-score, validates same-length

@@ -209,6 +209,16 @@ class TestPreconditionDecorator:
         with pytest.raises(PreconditionError):
             sqrt(-1.0)
 
+    def test_condition_can_bind_subset_by_name(self) -> None:
+        @precondition(lambda y: y > 0, message="y must be positive")
+        def add(x: int, y: int) -> int:
+            return x + y
+
+        assert add(1, 2) == 3
+
+        with pytest.raises(PreconditionError):
+            add(1, -2)
+
     def test_decorated_while_off_enforces_after_runtime_enable(self) -> None:
         set_contract_level(ContractLevel.OFF)
 
@@ -370,6 +380,34 @@ class TestClassInvariant:
         set_contract_level(ContractLevel.ENFORCE)
         with pytest.raises(InvariantError, match="count must be non-negative"):
             c.force_negative()
+
+    def test_does_not_shadow_inherited_public_methods(self) -> None:
+        class Base:
+            def inherited(self) -> str:
+                return "base"
+
+        @class_invariant(lambda self: True)
+        class Child(Base):
+            pass
+
+        assert "inherited" not in Child.__dict__
+        assert Child().inherited() == "base"
+
+    def test_inherited_method_override_remains_visible_after_decoration(self) -> None:
+        class Base:
+            def inherited(self) -> str:
+                return "original"
+
+        @class_invariant(lambda self: True)
+        class Child(Base):
+            pass
+
+        def replacement(self: Base) -> str:
+            return "replacement"
+
+        Base.inherited = replacement
+
+        assert Child().inherited() == "replacement"
 
 
 # ── ContractChecker Mixin ────────────────────────────────────────────────
@@ -559,6 +597,27 @@ class TestPreconditionEvaluationError:
         with pytest.raises(PreconditionEvaluationError):
             func({}, 5)
 
+    def test_precondition_type_error_in_predicate_body_evaluates_once(self) -> None:
+        """Body TypeError should not be mistaken for argument binding mismatch."""
+
+        calls = 0
+        original_error = TypeError("predicate body failed")
+
+        def predicate(x: int) -> bool:
+            nonlocal calls
+            calls += 1
+            raise original_error
+
+        @precondition(predicate)
+        def func(x: int) -> int:
+            return x
+
+        with pytest.raises(PreconditionEvaluationError) as exc_info:
+            func(5)
+
+        assert calls == 1
+        assert exc_info.value.underlying_error is original_error
+
 
 class TestPostconditionEvaluationError:
     """Test that evaluation errors in postconditions are properly raised."""
@@ -595,3 +654,22 @@ class TestPostconditionEvaluationError:
             func()
 
         assert isinstance(exc_info.value.underlying_error, ValueError)
+
+    def test_postcondition_type_error_in_predicate_body_evaluates_once(self) -> None:
+        calls = 0
+        original_error = TypeError("postcondition body failed")
+
+        def predicate(result: int) -> bool:
+            nonlocal calls
+            calls += 1
+            raise original_error
+
+        @postcondition(predicate)
+        def func() -> int:
+            return 5
+
+        with pytest.raises(PostconditionEvaluationError) as exc_info:
+            func()
+
+        assert calls == 1
+        assert exc_info.value.underlying_error is original_error
