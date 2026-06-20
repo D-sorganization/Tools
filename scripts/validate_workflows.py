@@ -21,13 +21,18 @@ def iter_workflows(root: Path) -> list[Path]:
 
 def validate_workflow(path: Path) -> list[str]:
     errors: list[str] = []
+    text = path.read_text(encoding="utf-8")
+
+    if "sudo mv actionlint /usr/local/bin/actionlint" in text:
+        errors.append(
+            f"{path}: install actionlint into a runner-local directory, not /usr/local/bin with sudo"
+        )
 
     if yaml is None:
-        text = path.read_text(encoding="utf-8")
         if not text.strip():
             return [f"{path}: expected a non-empty workflow file"]
         if not any(line == "jobs:" for line in text.splitlines()):
-            return [f"{path}: missing top-level 'jobs'"]
+            errors.append(f"{path}: missing top-level 'jobs'")
         return errors
 
     try:

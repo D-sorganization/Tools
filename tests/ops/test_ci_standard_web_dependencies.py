@@ -45,9 +45,12 @@ def test_ci_standard_limits_sidekick_runtime_lane_to_runtime_sources() -> None:
 def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
     workflow = CI_STANDARD.read_text(encoding="utf-8")
 
-    install_steps = workflow.count("sudo flock /tmp/d-sorg-apt-install.lock")
+    install_steps = workflow.count("flock /tmp/d-sorg-apt-install.lock")
 
-    assert install_steps == 2
+    assert install_steps == 4
+    assert "sudo -n true" in workflow
+    assert "sudo -n flock /tmp/d-sorg-apt-install.lock" in workflow
+    assert "Passwordless sudo is unavailable" in workflow
     assert "apt-get -o DPkg::Lock::Timeout=300 update --fix-missing" in workflow
     assert "apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing" in workflow
 
