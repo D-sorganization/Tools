@@ -7,6 +7,11 @@ success + error branches; security headers on all responses.
 
 from __future__ import annotations
 
+import sys
+import types
+from pathlib import Path
+
+import numpy as np
 import pytest
 from model_generation.api.rest_api_routes import ModelGenerationAPI
 from model_generation.api.rest_api_types import APIRequest, APIResponse, HTTPMethod
@@ -460,6 +465,25 @@ def test_inertia_response_includes_shape_and_mass_echo(api: ModelGenerationAPI) 
 # ---------------------------------------------------------------------------
 
 
+_ASCII_STL = b"solid mesh\nendsolid mesh\n"
+
+
+class _FakeInertiaMesh:
+    volume = 0.25
+    center_mass = np.array([0.1, 0.2, 0.3])
+
+    def __init__(self) -> None:
+        self.density = 1.0
+
+    @property
+    def mass(self) -> float:
+        return self.volume * self.density
+
+    @property
+    def moment_inertia(self) -> np.ndarray:
+        return np.eye(3) * self.mass
+
+
 @pytest.mark.unit
 def test_inertia_from_mesh_missing_file_returns_400(api: ModelGenerationAPI) -> None:
     resp = _post(api, "/api/v1/inertia/from-mesh", body={"mass": 1.0})
@@ -479,6 +503,60 @@ def test_inertia_from_mesh_no_mass_or_density_returns_400(
     )
     assert resp.status_code == 400
     assert "error" in resp.body
+
+
+@pytest.mark.unit
+def test_inertia_from_mesh_mass_branch_returns_scaled_inertia(
+    api: ModelGenerationAPI,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fake_mesh = _FakeInertiaMesh()
+
+    def load(path: str | Path) -> _FakeInertiaMesh:
+        assert Path(path).suffix == ".stl"
+        return fake_mesh
+
+    monkeypatch.setitem(sys.modules, "trimesh", types.SimpleNamespace(load=load))
+
+    resp = _post(
+        api,
+        "/api/v1/inertia/from-mesh",
+        body={"mass": 4.0, "filename": "mesh.stl"},
+        files={"mesh": _ASCII_STL},
+    )
+
+    assert resp.status_code == 200
+    assert resp.body["mass"] == pytest.approx(4.0)
+    assert resp.body["volume"] == pytest.approx(0.25)
+    assert resp.body["center_of_mass"] == pytest.approx([0.1, 0.2, 0.3])
+    assert resp.body["inertia"]["ixx"] == pytest.approx(4.0)
+
+
+@pytest.mark.unit
+def test_inertia_from_mesh_density_branch_returns_volume_and_inertia(
+    api: ModelGenerationAPI,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    fake_mesh = _FakeInertiaMesh()
+
+    def load(path: str | Path) -> _FakeInertiaMesh:
+        assert Path(path).suffix == ".stl"
+        return fake_mesh
+
+    monkeypatch.setitem(sys.modules, "trimesh", types.SimpleNamespace(load=load))
+
+    resp = _post(
+        api,
+        "/api/v1/inertia/from-mesh",
+        body={"density": 8.0, "filename": "mesh.stl"},
+        files={"mesh": _ASCII_STL},
+    )
+
+    assert resp.status_code == 200
+    assert fake_mesh.density == 8.0
+    assert resp.body["mass"] == pytest.approx(2.0)
+    assert resp.body["volume"] == pytest.approx(0.25)
+    assert resp.body["inertia"]["ixx"] == pytest.approx(2.0)
 
 
 @pytest.mark.unit
