@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7782                                   |
-| **Last Spec Update**    | 2026-06-19                                 |
+| **Spec Version**        | 1.1.7783                                   |
+| **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
 
@@ -56,6 +56,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   the whole `tests/rotation_converter` and `tests/tools` directories, keeping
   small DbC cleanup PRs inside the self-hosted runner CPU budget while
   preserving changed-source coverage (#3736).
+- Workflow Lint installs `actionlint` into a runner-local temporary bin
+  directory and exports it through `GITHUB_PATH` instead of moving the binary
+  into `/usr/local/bin` with sudo; `scripts/validate_workflows.py` rejects the
+  old sudo install command so self-hosted runners without passwordless sudo
+  fail locally before CI.
 - P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
   all-unmapped primitive but layer bench-safe routing after an invalid or
   erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
