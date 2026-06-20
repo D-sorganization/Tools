@@ -182,6 +182,11 @@ class BaseStateSpaceModel(ABC):
         # Estimated parameters
         self._parameters: dict[str, float] = {}
 
+    @property
+    def _minimum_observations(self) -> int:
+        """Minimum observations required for stable matrix initialization."""
+        return 2
+
     @abstractmethod
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices based on data."""
@@ -202,15 +207,26 @@ class BaseStateSpaceModel(ABC):
         """Fit the state space model to data.
 
         Args:
-            y: Time series observations
+            y: Finite time series observations. At least two observations are required
+                for local-level models; models that estimate trend/seasonal curvature
+                may require more.
 
         Returns:
             StateSpaceResult with fitted values and diagnostics
+
+        Raises:
+            ValueError: If observations are missing, too short for the model, or
+                contain NaN/inf values.
         """
         if y is None:
             raise ValueError("y must be provided")
         y = np.asarray(y, dtype=np.float64).flatten()
         n = len(y)
+        min_observations = self._minimum_observations
+        if n < min_observations:
+            raise ValueError(f"y must contain at least {min_observations} observations")
+        if not np.all(np.isfinite(y)):
+            raise ValueError("y must not contain NaN or inf values")
 
         # Initialize model
         self._initialize_matrices(y)
@@ -665,6 +681,11 @@ class LocalLinearTrendModel(BaseStateSpaceModel):
         self.n_states = 2
         self.n_obs = 1
 
+    @property
+    def _minimum_observations(self) -> int:
+        """Minimum observations required to estimate second differences."""
+        return 3
+
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
         if y is None:
@@ -723,6 +744,11 @@ class SeasonalModel(BaseStateSpaceModel):
         self.period = period
         self.n_states = 2 + period - 1  # Level + trend + seasonal
         self.n_obs = 1
+
+    @property
+    def _minimum_observations(self) -> int:
+        """Minimum observations required to estimate trend/seasonal components."""
+        return 3
 
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""

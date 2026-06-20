@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7780                                   |
+| **Spec Version**        | 1.1.7781                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -41,7 +41,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - CI Standard now keeps the shared apt lock for dependency installation but
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages
-  instead of failing before quality/tests can start (#3755).
+  instead of failing before quality/tests can start (#3783). Workflow Lint also
+  runs the downloaded `./actionlint` binary from the workspace instead of
+  moving it into `/usr/local/bin` with `sudo`, keeping workflow validation
+  runnable on the same non-sudo fleet runners.
+- CI Standard now force-reinstalls `maturin` without using the pip cache before
+  building the required Python 3.11 `tools_core` Rust wheel, repairing
+  self-hosted runner tool-cache states where the package is present but its
+  executable wrapper is missing (#3797).
 
 ### 2026-06-18 Update
 
@@ -133,6 +140,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   preserving the existing zero-mean behavior. Cross-correlation now also treats
   numba as optional acceleration and falls back to a no-op `jit` decorator when
   CI or downstream consumers install the data processor without numba (#3745).
+- Data processor state-space fitting now validates the public `fit(y)` input
+  contract before matrix initialization: observations must be finite, local
+  level models require at least two points, and trend/seasonal models require
+  at least three points so short or non-finite series fail with `ValueError`
+  instead of producing NaN diagnostics (#3696).
 - Repository package metadata is prepared for the v1.1.0 release by aligning
   `pyproject.toml`, `VERSION`, `CHANGELOG.md`, and this specification's current
   version field.
@@ -1321,6 +1333,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3665, #3666, #3667): consolidate cross-correlation runtime regression coverage into the canonical Numba dispatcher PR and preserve pandas dtype metadata across JSON workspace fallback round trips. |
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3661): keep augmentation, feature extraction, neural-network training, outlier, spectral, and decomposition object methods as mypy-clean plain Python functions instead of invalid Numba dispatchers, and extend the dispatcher regression guard to cover those runtime paths. |
 | 2026-06-19 | 1.1.7674 | fix(data-processor, #3730, #3731): reject empty and single-observation inputs in bootstrap and Bayesian credible intervals before NumPy can emit NaN confidence bounds, and document the n>=2 preconditions with default-collected regression coverage. |
+| 2026-06-19 | 1.1.7674 | fix(docs, #3743): repoint the codemap "Full design" cross-reference from the missing root `chat_codemap_design.md` file to the existing SPEC codemap package baseline, and add a focused regression test that resolves the linked file from `docs/codemap.md`. |
 | 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |
 | 2026-06-19 | 1.1.7675 | fix(p1am, #3607): preserve the firmware `TAG_255` unmapped sentinel in Modbus routing and PID pv/cv encoders while keeping ordinary broker-tag parsing strict, with write-routing coverage for all-unmapped configs after erased-NVRAM boots. |
