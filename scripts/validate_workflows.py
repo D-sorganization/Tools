@@ -21,18 +21,27 @@ def iter_workflows(root: Path) -> list[Path]:
 
 def validate_workflow(path: Path) -> list[str]:
     errors: list[str] = []
+    text = path.read_text(encoding="utf-8")
+
+    if (
+        path.name == "workflow-lint.yml"
+        and "sudo apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck" in text
+    ):
+        errors.append(
+            f"{path}: install shellcheck only when passwordless sudo is "
+            "available, or run actionlint without shellcheck"
+        )
 
     if yaml is None:
-        text = path.read_text(encoding="utf-8")
         if not text.strip():
-            return [f"{path}: expected a non-empty workflow file"]
+            errors.append(f"{path}: expected a non-empty workflow file")
+            return errors
         if not any(line == "jobs:" for line in text.splitlines()):
-            return [f"{path}: missing top-level 'jobs'"]
+            errors.append(f"{path}: missing top-level 'jobs'")
         return errors
 
     try:
-        with path.open(encoding="utf-8") as handle:
-            data = yaml.safe_load(handle)
+        data = yaml.safe_load(text)
     except Exception as exc:  # pragma: no cover - surfaced directly in CI
         return [f"{path}: YAML parse error: {exc}"]
 

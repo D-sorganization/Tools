@@ -149,7 +149,28 @@ jobs:
           echo "$RUNNER_TEMP/actionlint-bin" >> "$GITHUB_PATH"
 
       - name: Install shellcheck
-        run: while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update || true && while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true; sudo apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck
+        run: |
+          if command -v shellcheck >/dev/null 2>&1; then
+            echo "shellcheck is already available."
+            exit 0
+          fi
+          install_shellcheck='
+            set -euo pipefail
+            apt-get -o DPkg::Lock::Timeout=300 update --fix-missing || true
+            apt-get -o DPkg::Lock::Timeout=300 install -y shellcheck
+          '
+          if [ "$(id -u)" -eq 0 ]; then
+            flock /tmp/d-sorg-apt-install.lock bash -c "$install_shellcheck"
+          elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+            sudo -n flock /tmp/d-sorg-apt-install.lock bash -c "$install_shellcheck"
+          else
+            echo "::warning::Passwordless sudo is unavailable; running actionlint without shellcheck integration."
+          fi
 
       - name: Run actionlint
-        run: actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
+        run: |
+          if command -v shellcheck >/dev/null 2>&1; then
+            actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
+          else
+            actionlint -color -shellcheck= -pyflakes=
+          fi
