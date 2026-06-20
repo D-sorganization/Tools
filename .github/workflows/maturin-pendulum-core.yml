@@ -101,7 +101,7 @@ jobs:
         run: python -m pip install --upgrade pip maturin "numpy>=1.24" pytest
 
       - name: Build pendulum_core wheel
-        run: maturin build --release -m src/pendulum_simulator/pendulum-core/Cargo.toml --out dist
+        run: python -m maturin build --release -m src/pendulum_simulator/pendulum-core/Cargo.toml --out dist
 
       - name: Install the built wheel
         shell: bash

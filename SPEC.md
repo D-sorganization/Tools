@@ -80,6 +80,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   documented Python 3.10 through 3.12 hard-gate policy on self-hosted fleet
   runners, keeping Python 3.13 coverage deferred until runner toolcaches are
   provisioned consistently.
+- The pendulum Rust extension gate invokes maturin through the active Python
+  interpreter so self-hosted runners do not depend on a console-script PATH
+  mutation after dependency installation.
 - Model generation REST route coverage now reaches `inertia/from-mesh` success
   paths through the route dispatcher for both explicit mass and density inputs,
   proving mesh volume, center of mass, and inertia responses stay populated
