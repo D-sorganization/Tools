@@ -19,6 +19,10 @@ def iter_workflows(root: Path) -> list[Path]:
     return sorted(root.glob("*.yml")) + sorted(root.glob("*.yaml"))
 
 
+def _yaml_safe_load() -> Any:
+    return getattr(yaml, "safe_load", None)
+
+
 def validate_workflow(path: Path) -> list[str]:
     errors: list[str] = []
     text = path.read_text(encoding="utf-8")
@@ -28,7 +32,8 @@ def validate_workflow(path: Path) -> list[str]:
             f"{path}: install actionlint into a runner-local directory, not /usr/local/bin with sudo"
         )
 
-    if yaml is None:
+    safe_load = _yaml_safe_load()
+    if safe_load is None:
         if not text.strip():
             return [f"{path}: expected a non-empty workflow file"]
         if not any(line == "jobs:" for line in text.splitlines()):
@@ -37,7 +42,7 @@ def validate_workflow(path: Path) -> list[str]:
 
     try:
         with path.open(encoding="utf-8") as handle:
-            data = yaml.safe_load(handle)
+            data = safe_load(handle)
     except Exception as exc:  # pragma: no cover - surfaced directly in CI
         return [f"{path}: YAML parse error: {exc}"]
 

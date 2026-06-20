@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7783                                   |
+| **Spec Version**        | 1.1.7784                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -49,6 +49,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
   executable wrapper is missing (#3797).
+- Workflow validation tests load the repository-local `scripts/validate_workflows.py`
+  by file path and the validator treats a missing `safe_load` attribute the
+  same as missing PyYAML, preventing vendored downstream `scripts` packages
+  from shadowing the workflow validator under mixed import-order test batches.
 - The `rotation_converter.modern_robotics` compatibility shim now shares a
   local provided-argument guard for explicit `ValueError` validation, keeping
   the assert-removal contract while reducing the module below its frozen size

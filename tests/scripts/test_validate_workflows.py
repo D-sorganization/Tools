@@ -1,6 +1,22 @@
+import importlib.util
 from pathlib import Path
 
-from scripts import validate_workflows
+
+def _load_validate_workflows_module():
+    module_path = (
+        Path(__file__).resolve().parents[2] / "scripts" / "validate_workflows.py"
+    )
+    spec = importlib.util.spec_from_file_location(
+        "repo_validate_workflows", module_path
+    )
+    assert spec is not None
+    assert spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+validate_workflows = _load_validate_workflows_module()
 
 
 def test_validate_workflow_text_fallback_accepts_jobs_mapping(
