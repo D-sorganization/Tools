@@ -224,6 +224,77 @@ def test_validate_tool_path_type_error_for_non_str(tmp_path: Path) -> None:
         manager.validate_tool_path(None)
 
 
+def test_load_tools_skips_non_dict_entries_without_discarding_valid_tools(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """load_tools keeps valid tools when a category contains a malformed item."""
+    module = _import_plugin_manager_module()
+
+    tool_file = tmp_path / "valid_tool.py"
+    tool_file.write_text("print('ok')\n")
+    (tmp_path / "tools.json").write_text("{}\n")
+    manager = module.PluginManager(repo_root=tmp_path)
+
+    manifest_data = {
+        "Mixed": [
+            "bare-string-entry",
+            {
+                "name": "Valid Tool",
+                "path": tool_file.name,
+                "type": "python",
+                "desc": "A valid tool",
+            },
+        ],
+    }
+
+    with (
+        patch.object(module, "safe_read_json", return_value=manifest_data),
+        caplog.at_level("WARNING"),
+    ):
+        loaded = manager.load_tools()
+
+    assert [tool.name for tool in loaded["Mixed"]] == ["Valid Tool"]
+    assert "Skipping invalid tool entry in Mixed" in caplog.text
+
+
+@pytest.mark.parametrize("bad_items", [None, 42, "not-a-list", {"path": "x.py"}])
+def test_load_tools_skips_non_list_category_values_without_discarding_valid_tools(
+    tmp_path: Path,
+    caplog: pytest.LogCaptureFixture,
+    bad_items: object,
+) -> None:
+    """load_tools keeps valid categories when another category has bad items."""
+    module = _import_plugin_manager_module()
+
+    tool_file = tmp_path / "valid_tool.py"
+    tool_file.write_text("print('ok')\n")
+    (tmp_path / "tools.json").write_text("{}\n")
+    manager = module.PluginManager(repo_root=tmp_path)
+
+    manifest_data = {
+        "Bad": bad_items,
+        "Good": [
+            {
+                "name": "Valid Tool",
+                "path": tool_file.name,
+                "type": "python",
+                "desc": "A valid tool",
+            },
+        ],
+    }
+
+    with (
+        patch.object(module, "safe_read_json", return_value=manifest_data),
+        caplog.at_level("WARNING"),
+    ):
+        loaded = manager.load_tools()
+
+    assert "Bad" not in loaded
+    assert [tool.name for tool in loaded["Good"]] == ["Valid Tool"]
+    assert "Skipping invalid tool category Bad" in caplog.text
+
+
 def test_plugin_manager_scan_defaults_are_module_constants() -> None:
     """scan_for_tools uses shared constants for manifest defaults."""
     module = _import_plugin_manager_module()
