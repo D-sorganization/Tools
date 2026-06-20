@@ -45,9 +45,10 @@ def test_ci_standard_limits_sidekick_runtime_lane_to_runtime_sources() -> None:
 def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
     workflow = CI_STANDARD.read_text(encoding="utf-8")
 
-    install_steps = workflow.count("sudo flock /tmp/d-sorg-apt-install.lock")
+    install_steps = workflow.count("flock /tmp/d-sorg-apt-install.lock")
 
-    assert install_steps == 2
+    assert install_steps == 4
+    assert workflow.count("sudo -n flock /tmp/d-sorg-apt-install.lock") == 2
     assert "apt-get -o DPkg::Lock::Timeout=300 update --fix-missing" in workflow
     assert "apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing" in workflow
 
@@ -64,3 +65,24 @@ def test_quality_gate_dependency_install_does_not_use_shared_pip_cache() -> None
 
     assert install_step["env"]["PIP_NO_CACHE_DIR"] == "1"
     assert install_step["env"]["PIP_CACHE_DIR"] == "${{ runner.temp }}/pip-quality-gate"
+
+
+def test_ci_standard_reinstalls_qt_stack_without_pip_cache() -> None:
+    import yaml
+
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+
+    for job_name in ("quality-gate", "tests"):
+        install_step = next(
+            step
+            for step in workflow["jobs"][job_name]["steps"]
+            if step.get("name") == "Install Dependencies"
+        )
+        install_script = install_step["run"]
+
+        assert "grep -v -E '^(mypy==|PyQt6|pyqtgraph)'" in install_script
+        assert (
+            'python -m pip install --force-reinstall --no-cache-dir "PyQt6>=6.7.0"'
+            in install_script
+        )
+        assert '"pyqtgraph>=0.13.7"' in install_script

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7780                                   |
+| **Spec Version**        | 1.1.7781                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -42,6 +42,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
   executable wrapper is missing (#3797).
+- CI Standard now excludes PyQt packages from the bulk requirements install and
+  reinstalls the Qt stack from fresh wheels, repairing self-hosted runner
+  tool-cache states where restored Qt library files are incomplete (#3797).
 
 ### 2026-06-18 Update
 

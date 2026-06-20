@@ -225,8 +225,9 @@ jobs:
           python -m pip install --upgrade click setuptools wheel
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --no-deps mypy==1.13.0
-          grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
+          grep -v -E '^(mypy==|PyQt6|pyqtgraph)' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
+          python -m pip install --force-reinstall --no-cache-dir "PyQt6>=6.7.0" "pyqtgraph>=0.13.7"
           python -m pip install fastapi python-multipart
           # P1AM HMI/PLC backend runtime deps so its safety-critical E-stop /
           # alarm / historian tests actually RUN (and gate) instead of being
@@ -572,8 +573,9 @@ jobs:
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --no-deps --no-cache-dir "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
           python -m pip install --ignore-installed --no-deps mypy==1.13.0
-          grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
+          grep -v -E '^(mypy==|PyQt6|pyqtgraph)' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
+          python -m pip install --force-reinstall --no-cache-dir "PyQt6>=6.7.0" "pyqtgraph>=0.13.7"
           # The shared self-hosted runner cache has produced mixed NumPy/SciPy
           # binary installs on individual Python minors. Reinstall the compiled
           # numerical stack without cache before importing provider contracts.
