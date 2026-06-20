@@ -38,6 +38,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- Workflow validation regression fixtures now include explicit `runs-on` keys when
+  exercising rejected `sudo mv actionlint /usr/local/bin/actionlint` steps,
+  keeping the validator test YAML representative of runnable GitHub jobs.
 - CI Standard now keeps the shared apt lock for dependency installation but
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages
@@ -1358,6 +1361,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-20 | 1.1.7783 | test(ci): include `runs-on` in workflow-validator fixtures that reject privileged actionlint installation steps, keeping regression YAML structurally valid while preserving the sudo guard. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3767): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3758): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-19 | 1.1.7674 | test(data-processor, #3738): delete the permanently skipped `tests/data_processor/test_integrated_import_fallback.py` legacy sentinel for the archived `Data_Processor_Integrated.py` module, reducing the data-processor skip surface without removing executable coverage. |
