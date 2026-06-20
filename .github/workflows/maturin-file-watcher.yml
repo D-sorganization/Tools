@@ -3,7 +3,9 @@
 # Builds the `file_watcher_rs` Rust crate (cross-platform notify-based watcher
 # with debouncing + gitignore filtering) on the local fleet across supported
 # Python versions (3.10, 3.11, 3.12), then asserts the wrapper package
-# `shared.python.file_watcher` selects the Rust backend. The repo's
+# `shared.python.file_watcher` selects the Rust backend. Python 3.13 coverage is
+# documented but not hard-gated here until all fleet runners have a 3.13 toolcache.
+# The repo's
 # local-only runner guard forbids hosted ubuntu/windows/macos runners; broad
 # platform packaging remains covered by the existing allowlisted maturin
 # workflow.

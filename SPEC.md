@@ -72,6 +72,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - The file watcher Rust extension import gate now follows the same hard-gated
   Python 3.10 through 3.12 matrix, avoiding unsupported Python 3.13 setup on
   fleet runners that do not yet have a local 3.13 toolcache.
+- Maturin workflow coverage tests now distinguish required hard-gated fleet
+  Python versions from documented Python 3.13 toolcache deferrals, so CI tests
+  enforce the runner contract without reintroducing an unsupported 3.13 matrix
+  leg.
 - Model generation REST route coverage now reaches `inertia/from-mesh` success
   paths through the route dispatcher for both explicit mass and density inputs,
   proving mesh volume, center of mass, and inertia responses stay populated

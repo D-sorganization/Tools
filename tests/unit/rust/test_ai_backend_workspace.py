@@ -72,7 +72,7 @@ def test_maturin_ci_covers_all_platforms():
 
 @pytest.mark.unit
 def test_maturin_ci_covers_python_versions():
-    """CI must target Python 3.10, 3.11, 3.12, and 3.13."""
+    """Maturin CI must hard-gate supported fleet versions and document 3.13 gaps."""
     workflows_dir = REPO_ROOT / ".github" / "workflows"
     candidates = (
         list(workflows_dir.glob("*maturin*"))
@@ -83,10 +83,24 @@ def test_maturin_ci_covers_python_versions():
         "No maturin CI workflow found — cannot check Python version coverage."
     )
 
+    fleet_toolcache_limited = {
+        "maturin-data-processor-core.yml",
+        "maturin-file-watcher.yml",
+    }
     for wf_path in candidates:
         content = wf_path.read_text(encoding="utf-8")
-        for version in ["3.10", "3.11", "3.12", "3.13"]:
+        for version in ["3.10", "3.11", "3.12"]:
             assert version in content, f"Python {version} not listed in {wf_path.name}"
+        if wf_path.name in fleet_toolcache_limited:
+            assert "3.13" in content, (
+                f"{wf_path.name}: must document why Python 3.13 is not hard-gated"
+            )
+            assert "toolcache" in content.lower(), (
+                f"{wf_path.name}: Python 3.13 deferral must cite runner "
+                "toolcache limits"
+            )
+            continue
+        assert "3.13" in content, f"Python 3.13 not listed in {wf_path.name}"
 
 
 @pytest.mark.unit
