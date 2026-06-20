@@ -28,6 +28,18 @@ interface Results {
   paybackYears: number
 }
 
+// ⚡ Bolt Optimization: Cache Intl.NumberFormat instances outside the component
+// to avoid expensive instantiation on every render/format call.
+const CURRENCY_FORMATTER = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+  maximumFractionDigits: 0,
+});
+
+const NUMBER_FORMATTER = new Intl.NumberFormat('en-US', {
+  maximumFractionDigits: 0,
+});
+
 function FinancialCalculator() {
   const [plantCapacity, setPlantCapacity] = useState(100)
   const [operatingDays, setOperatingDays] = useState(330)
@@ -88,15 +100,11 @@ function FinancialCalculator() {
   }
 
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-      maximumFractionDigits: 0,
-    }).format(value)
+    return CURRENCY_FORMATTER.format(value)
   }
 
   const formatNumber = (value: number) => {
-    return new Intl.NumberFormat('en-US', { maximumFractionDigits: 0 }).format(value)
+    return NUMBER_FORMATTER.format(value)
   }
 
   return (
