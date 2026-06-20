@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7779                                   |
-| **Last Spec Update**    | 2026-06-19                                 |
+| **Spec Version**        | 1.1.7780                                   |
+| **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
 
@@ -38,6 +38,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Workflow Lint now installs `actionlint` into a runner-local temporary bin
+  directory and appends it to `GITHUB_PATH`, avoiding privileged writes to
+  `/usr/local/bin` on self-hosted runners without passwordless sudo.
+- CI Standard system dependency setup now runs apt installs directly when the
+  job is already root, uses noninteractive `sudo -n` when available, and
+  otherwise warns that the runner image must pre-provision those dependencies
+  instead of blocking quality/test jobs at a password prompt.
 - Removed redundant `assert ... is not None` guards in
   `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config` that were
   shadowed by a following `require()`/`isinstance()` contract on the same
@@ -1293,6 +1300,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-20 | 1.1.7780 | ci(workflows): install `actionlint` from a runner-local temporary bin directory and guard CI Standard apt setup behind root/passwordless-sudo checks so self-hosted runners without interactive sudo no longer fail before workflow lint, quality, or tests start. |
 | 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7675 | test(p1am, #3709 #3710): split PID tuning unmapped-tag regression coverage into `test_pid_tuning_tag_guards.py` so the endpoint behavior remains covered while `test_backend.py` stays under the fleet 500 LOC file-size budget. |
 | 2026-06-19 | 1.1.7674 | fix(p1am, #3709 #3710): return descriptive HTTP 409 errors before mutating tuning state when PID tuning start/step references PV/CV tags missing from `latest_tags`, avoiding raw `KeyError` 500s and preventing physical CV writes when a tuning step's CV tag is unmapped. |
