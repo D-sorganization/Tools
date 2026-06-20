@@ -37,7 +37,7 @@ jobs:
       current_version: ${{ steps.bump.outputs.current_version }}
       changelog_entry: ${{ steps.bump.outputs.changelog_entry }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # Full history required to walk commits since last tag
 
@@ -164,7 +164,7 @@ jobs:
     needs: analyse-commits
     if: needs.analyse-commits.outputs.bump != 'none'
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 2
 
@@ -246,7 +246,7 @@ jobs:
       new_version: ${{ needs.analyse-commits.outputs.new_version }}
       release_pr_url: ${{ steps.release_pr.outputs.release_pr_url }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
@@ -399,7 +399,7 @@ jobs:
     needs: [analyse-commits, bump-version]
     if: needs.analyse-commits.outputs.bump != 'none' && needs.bump-version.outputs.release_pr_url == ''
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           ref: main
           fetch-depth: 0

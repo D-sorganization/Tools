@@ -41,7 +41,7 @@ jobs:
       issues: write # open tracking issues for below-threshold criteria
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 

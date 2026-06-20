@@ -112,7 +112,7 @@ jobs:
       RUST_MIN_STACK: "536870912"
       RUSTFLAGS: "-Cdebuginfo=0"
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Use local Node.js 24 toolcache
         shell: bash
@@ -252,7 +252,7 @@ jobs:
       RUST_MIN_STACK: "536870912"
       RUSTFLAGS: "-Cdebuginfo=0"
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Use local Node.js 24 toolcache (Linux)
         if: matrix.platform.label == 'linux-x64'
