@@ -107,6 +107,9 @@ from .utils.pipe_database import (
 
 _logger = logging.getLogger(__name__)
 
+_FRICTION_METHODS = frozenset({"colebrook", "swamee-jain", "churchill", "haaland"})
+_EXTRA_FLOW_UNITS = frozenset({"SCFM", "ACFM", "Nm3/h", "Nm³/h"})
+
 
 # ============================================================================
 # QUICK REFERENCE HELPERS
@@ -578,6 +581,44 @@ def _build_pressure_drop_inputs(
     )
 
 
+def _require_positive_public_value(value: float, name: str) -> None:
+    if value is None or value <= 0:
+        raise ValueError(f"{name} must be positive, got {value}")
+
+
+def _require_supported_flow_unit(flow_unit: str) -> None:
+    all_units = (
+        set(MASS_FLOW_CONVERSIONS)
+        | set(MOLAR_FLOW_CONVERSIONS)
+        | set(VOLUMETRIC_FLOW_CONVERSIONS_TO_M3_S)
+        | _EXTRA_FLOW_UNITS
+    )
+    if flow_unit not in all_units and flow_unit.upper() not in {"SCFM", "ACFM"}:
+        raise ValueError(f"Unknown flow_unit '{flow_unit}'. See list_flow_units().")
+
+
+def _require_supported_friction_method(friction_method: str) -> None:
+    if friction_method not in _FRICTION_METHODS:
+        allowed = ", ".join(sorted(_FRICTION_METHODS))
+        raise ValueError(
+            f"Unknown friction_method '{friction_method}'. Expected one of: {allowed}"
+        )
+
+
+def _validate_calculate_pressure_drop_boundary(
+    pipe_length: float,
+    flow_rate: float,
+    flow_unit: str,
+    pressure: float,
+    friction_method: str,
+) -> None:
+    _require_positive_public_value(pipe_length, "pipe_length")
+    _require_positive_public_value(flow_rate, "flow_rate")
+    _require_positive_public_value(pressure, "pressure")
+    _require_supported_flow_unit(flow_unit)
+    _require_supported_friction_method(friction_method)
+
+
 def calculate_pressure_drop(
     # Pipe geometry
     pipe_size: str | None = None,
@@ -633,7 +674,9 @@ def calculate_pressure_drop(
         ...     pipe_length=100, flow_rate=1500, flow_unit='SCFM',
         ...     pressure=10, temperature=500)
     """
-    assert pipe_length is not None, "pipe_length must be provided"
+    _validate_calculate_pressure_drop_boundary(
+        pipe_length, flow_rate, flow_unit, pressure, friction_method
+    )
     temp_k = _convert_temperature(temperature, temperature_unit, "K")
     pressure_pa = _convert_pressure(pressure, pressure_unit, "Pa")
     inputs = _build_pressure_drop_inputs(
@@ -656,7 +699,8 @@ def calculate_pressure_drop(
     )
     engine = PressureDropCalculationEngine()
     results = engine.calculate(inputs)
-    return _format_results(results)
+    formatted_results: dict[str, Any] = _format_results(results)
+    return formatted_results
 
 
 def calculate_pressure_drop_custom_gas(
