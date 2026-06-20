@@ -1,5 +1,3 @@
-from numba import jit
-
 # TRACKED_TASK: see #2310 — architecture debt extraction schedule
 
 """Tests for advanced statistical analysis modules.
@@ -394,7 +392,6 @@ class TestCrossCorrelation:
         # Optimal lag should be around 5
         assert abs(result.optimal_lag - 5) < 3
 
-    @jit(nopython=True, fastmath=True)
     def test_granger_causality(self) -> None:
         """Test Granger causality test."""
         from data_processor.core.cross_correlation import CrossCorrelationAnalyzer
@@ -522,14 +519,30 @@ class TestUncertaintyQuantification:
         assert abs(result.point_estimate - 10) < 1
 
     @pytest.mark.parametrize("data", [np.array([]), np.array([1.0])])
-    def test_bootstrap_ci_rejects_degenerate_data(self, data: np.ndarray) -> None:
-        """Test bootstrap confidence interval validates sample size."""
-        from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
+    def test_bootstrap_ci_rejects_degenerate_samples(self, data: np.ndarray) -> None:
+        """Bootstrap intervals require at least two observations."""
+        from data_processor.core.uncertainty_quantification import (
+            UncertaintyQuantifier,
+        )
 
         uq = UncertaintyQuantifier()
 
         with pytest.raises(ValueError, match="data must contain at least 2 values"):
             uq.bootstrap_ci(data, np.mean)
+
+    @pytest.mark.parametrize("data", [np.array([]), np.array([1.0])])
+    def test_bayesian_credible_interval_rejects_degenerate_samples(
+        self, data: np.ndarray
+    ) -> None:
+        """Bayesian credible intervals require finite sample variance."""
+        from data_processor.core.uncertainty_quantification import (
+            UncertaintyQuantifier,
+        )
+
+        uq = UncertaintyQuantifier()
+
+        with pytest.raises(ValueError, match="data must contain at least 2 values"):
+            uq.bayesian_credible_interval(data)
 
     def test_monte_carlo_propagation(self) -> None:
         """Test Monte Carlo uncertainty propagation."""
@@ -547,6 +560,37 @@ class TestUncertaintyQuantification:
         # Mean should be close to pi * 5^2
         expected = np.pi * 25
         assert abs(result.mean - expected) < 1
+
+    @pytest.mark.parametrize("confidence_level", [0.0, 1.0, float("nan")])
+    def test_uncertainty_config_rejects_invalid_confidence_level(
+        self,
+        confidence_level: float,
+    ) -> None:
+        """Invalid confidence levels fail before intervals collapse."""
+        from data_processor.core.uncertainty_quantification import UncertaintyConfig
+
+        with pytest.raises(ValueError, match="confidence_level"):
+            UncertaintyConfig(confidence_level=confidence_level)
+
+    def test_moment_helpers_return_finite_values_for_tiny_samples(self) -> None:
+        """Tiny samples should not leak inf/NaN through Monte Carlo moments."""
+        from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
+
+        uq = UncertaintyQuantifier()
+
+        assert uq._skewness(np.array([1.0])) == 0.0
+        assert uq._skewness(np.array([1.0, 2.0])) == 0.0
+        assert uq._kurtosis(np.array([1.0, 2.0, 3.0])) == 0.0
+
+    @pytest.mark.parametrize("p", [0.0, 1.0, -0.1, float("nan")])
+    def test_normal_ppf_rejects_out_of_range_probabilities(self, p: float) -> None:
+        """Out-of-range probabilities must not silently return median z=0."""
+        from data_processor.core.uncertainty_quantification import UncertaintyQuantifier
+
+        uq = UncertaintyQuantifier()
+
+        with pytest.raises(ValueError, match="p must"):
+            uq._normal_ppf(p)
 
     def test_error_propagation(self) -> None:
         """Test linear error propagation."""
@@ -911,7 +955,6 @@ class TestIntegration:
 
         assert result.seasonal_strength > 0.3
 
-    @jit(nopython=True, fastmath=True)
     def test_outlier_detection_then_smoothing(self) -> None:
         """Test outlier detection then Kalman smoothing."""
         from data_processor.core.kalman_filter import kalman_smooth

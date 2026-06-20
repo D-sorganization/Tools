@@ -25,7 +25,6 @@ from enum import Enum
 from typing import Any
 
 import numpy as np
-from numba import jit
 from scipy.optimize import minimize
 
 logger = logging.getLogger(__name__)
@@ -291,7 +290,6 @@ class BaseStateSpaceModel(ABC):
             n_iterations=n_iter,
         )
 
-    @jit(nopython=True, fastmath=True)
     def forecast(
         self,
         steps: int | None = None,
@@ -353,7 +351,6 @@ class BaseStateSpaceModel(ABC):
             confidence_level=confidence_level,
         )
 
-    @jit(nopython=True, fastmath=True)
     def _kalman_filter(self, y: np.ndarray) -> tuple[np.ndarray, np.ndarray, float]:
         """Run Kalman filter.
 
@@ -419,7 +416,6 @@ class BaseStateSpaceModel(ABC):
 
         return filtered_states, filtered_cov, log_likelihood
 
-    @jit(nopython=True, fastmath=True)
     def _kalman_smoother(
         self,
         y: np.ndarray,
@@ -553,7 +549,6 @@ class BaseStateSpaceModel(ABC):
 
         return params, prev_ll, False, max_iter
 
-    @jit(nopython=True, fastmath=True)
     def _em_m_step(
         self,
         y: np.ndarray,
@@ -585,7 +580,6 @@ class BaseStateSpaceModel(ABC):
 
         return np.array([max(1e-10, state_var), max(1e-10, obs_var)])
 
-    @jit(nopython=True, fastmath=True)
     def _numerical_gradient(
         self, y: np.ndarray, params: np.ndarray, eps: float = 1e-6
     ) -> np.ndarray:
@@ -756,7 +750,6 @@ class SeasonalModel(BaseStateSpaceModel):
         """Minimum observations required to estimate trend/seasonal components."""
         return 3
 
-    @jit(nopython=True, fastmath=True)
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
         if y is None:
@@ -873,7 +866,6 @@ class ARIMAStateSpace(BaseStateSpaceModel):
         self.Q = np.array([[var_y]])
         self.H = np.array([[0.0]])  # Pure ARIMA has no observation noise
 
-    @jit(nopython=True, fastmath=True)
     def _update_matrices(self, parameters: np.ndarray) -> None:
         """Update with parameter values."""
         if parameters is None:
@@ -919,7 +911,6 @@ class ARIMAStateSpace(BaseStateSpaceModel):
         result["sigma_sq"] = float(parameters[idx])
         return result
 
-    @jit(nopython=True, fastmath=True)
     def _estimate_ar(self, y: np.ndarray, p: int) -> np.ndarray:
         """Estimate AR coefficients using Yule-Walker equations."""
         if y is None:

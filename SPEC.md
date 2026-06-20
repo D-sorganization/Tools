@@ -52,6 +52,21 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Data Processor statistical analysis methods that orchestrate Python objects,
+  pandas frames, callables, dictionaries, dataclasses, and mutable instance
+  state now stay as plain Python functions instead of being wrapped in Numba
+  `nopython` dispatchers. This removes duplicate/triple `@jit` stacks and
+  uncompilable method decorators from uncertainty quantification,
+  cross-correlation, Kalman filters, state-space models, and two-way ANOVA,
+  while preserving explicit float return contracts for Kalman likelihood and
+  parameter-estimation helpers. Default-collected regression coverage proves
+  the affected methods remain executable object-oriented paths (#3661, #3662,
+  #3663, #3665, #3666, #3667, #3681, #3744).
+- Data Processor uncertainty quantification now rejects invalid confidence
+  levels before interval calculations, rejects out-of-domain inverse-normal
+  probabilities instead of returning the median z-score, and returns finite
+  zero skewness/kurtosis for tiny samples that cannot support those higher
+  moments (#3733, #3734).
 - Removed redundant `assert ... is not None` guards in
   `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config` that were
   shadowed by a following `require()`/`isinstance()` contract on the same
@@ -1312,6 +1327,13 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-20 | 1.1.7781 | fix(data-processor, #3793): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
+| 2026-06-19 | 1.1.7675 | fix(data-processor, #3661): keep time-series decomposition helpers importable when installed Numba rejects the active NumPy version by falling back to a no-op `jit` decorator, preserving pure-Python decomposition behavior under optional acceleration failures. |
+| 2026-06-19 | 1.1.7674 | fix(data-processor, #3661, #3662, #3663, #3665, #3666, #3667, #3681, #3744): keep object-oriented statistical analysis, filtering, and workspace persistence methods as plain Python functions instead of duplicate/triple Numba dispatchers; add default-collected regression tests for the affected runtime paths and a JSON-backed workspace fallback when optional parquet engines are unavailable. |
+| 2026-06-19 | 1.1.7674 | fix(data-processor, #3733, #3734): fail fast on invalid uncertainty-quantification confidence and normal-quantile boundaries while keeping tiny-sample skewness and kurtosis finite under default-collected regression coverage. |
+| 2026-06-19 | 1.1.7674 | fix(data-processor, #3665, #3666, #3667): consolidate cross-correlation runtime regression coverage into the canonical Numba dispatcher PR and preserve pandas dtype metadata across JSON workspace fallback round trips. |
+| 2026-06-19 | 1.1.7674 | fix(data-processor, #3661): keep augmentation, feature extraction, neural-network training, outlier, spectral, and decomposition object methods as mypy-clean plain Python functions instead of invalid Numba dispatchers, and extend the dispatcher regression guard to cover those runtime paths. |
+| 2026-06-19 | 1.1.7674 | fix(data-processor, #3730, #3731): reject empty and single-observation inputs in bootstrap and Bayesian credible intervals before NumPy can emit NaN confidence bounds, and document the n>=2 preconditions with default-collected regression coverage. |
 | 2026-06-19 | 1.1.7674 | fix(docs, #3743): repoint the codemap "Full design" cross-reference from the missing root `chat_codemap_design.md` file to the existing SPEC codemap package baseline, and add a focused regression test that resolves the linked file from `docs/codemap.md`. |
 | 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7675 | fix(data_processor, #3735): add explicit uncertainty-quantification preconditions for bootstrap and Bayesian credible intervals requiring at least two samples, and for prediction intervals requiring positive residual degrees of freedom, with deterministic coverage for prediction intervals, Bayesian credible intervals, and delta-method confidence intervals. |
