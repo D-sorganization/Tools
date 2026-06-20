@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7781                                   |
-| **Last Spec Update**    | 2026-06-19                                 |
+| **Spec Version**        | 1.1.7782                                   |
+| **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
 
@@ -38,6 +38,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-18 Update
 
+- Workflow Lint now installs `actionlint` into a runner-local temporary bin
+  directory and appends it to `GITHUB_PATH`, avoiding privileged writes to
+  `/usr/local/bin` on self-hosted runners without passwordless sudo.
 - Removed redundant `assert ... is not None` guards in
   `_mr_kinematics.IKinBody` and `config_loader.validate_tools_config` that were
   shadowed by a following `require()`/`isinstance()` contract on the same
@@ -1293,6 +1296,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-20 | 1.1.7782 | ci(workflows): install `actionlint` from a runner-local temporary bin directory so self-hosted runners without interactive sudo no longer fail before workflow lint starts. |
 | 2026-06-19 | 1.1.7781 | fix(scripting, #3701): stop calling `resource.setrlimit` at `scripting_env` import time, which silently capped the entire host process to 10s cumulative CPU / 512 MiB. Limits now live in an explicit `apply_process_resource_limits()` opt-in (also reachable via the `SCRIPTING_ENV_APPLY_RLIMITS` env flag); importing the module is side-effect-free. |
 | 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |
