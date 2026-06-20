@@ -27,8 +27,8 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7779                                   |
-| **Last Spec Update**    | 2026-06-19                                 |
+| **Spec Version**        | 1.1.7780                                   |
+| **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
 
@@ -48,6 +48,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   the whole `tests/rotation_converter` and `tests/tools` directories, keeping
   small DbC cleanup PRs inside the self-hosted runner CPU budget while
   preserving changed-source coverage (#3736).
+- Workflow Lint installs `actionlint` into a runner-local temporary bin
+  directory and exports it through `GITHUB_PATH` instead of moving the binary
+  into `/usr/local/bin` with sudo; `scripts/validate_workflows.py` rejects the
+  old sudo install command so self-hosted runners without passwordless sudo
+  fail locally before CI.
 - P1AM firmware first-boot defaults now keep `SignalBroker::Reset()` as the
   all-unmapped primitive but layer bench-safe routing after an invalid or
   erased flash configuration: thermocouples TC0-TC3 route to TAG_0-TAG_3,
@@ -1293,6 +1298,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-20 | 1.1.7780 | fix(ci): install actionlint into a runner-local temporary bin directory and export it through GITHUB_PATH instead of moving it into `/usr/local/bin` with sudo; workflow validation now rejects the old sudo install command before self-hosted CI. |
 | 2026-06-19 | 1.1.7779 | fix(p1am, #3670): replace the bare `except Exception: pass` in `EventLogViewerWidget.update_event_types_combobox` with a module logger that records the failure, so a corrupt/locked event database no longer silently empties the event-type filter without any diagnostic. |
 | 2026-06-19 | 1.1.7675 | refactor(data_processor, #3732): collapse the duplicated `linear` and `quadrature` variance loops in `UncertaintyQuantifier.error_propagation` into one independent-error quadrature path, preserving output while preventing future branch divergence. |
 | 2026-06-19 | 1.1.7676 | fix(p1am, #3607): annotate the Modbus codec's re-exported unmapped-sentinel constants and remove stale hardware-test suppressions so the `TAG_255` routing fix remains mypy-clean under pre-push gates. |
