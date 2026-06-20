@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7783                                   |
+| **Spec Version**        | 1.1.7784                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -59,6 +59,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   paths through the route dispatcher for both explicit mass and density inputs,
   proving mesh volume, center of mass, and inertia responses stay populated
   beyond early validation guards (#3669).
+- P1AM backend safety writes now coerce latest tag lookups through the endpoint
+  float contract before returning PID process values, keeping delta mypy checks
+  strict while preserving unmapped-tag rejection behavior (#3809).
 
 ### 2026-06-19 Update
 

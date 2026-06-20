@@ -246,7 +246,7 @@ def _reject_output_write_if_estopped() -> None:
 
 def _require_latest_tag(tag_name: str, *, role: str) -> float:
     try:
-        return control_context.latest_tags[tag_name]
+        return float(control_context.latest_tags[tag_name])
     except KeyError as exc:
         raise HTTPException(
             status_code=409,
