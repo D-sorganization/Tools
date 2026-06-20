@@ -22,7 +22,7 @@ pytest.importorskip("httpx")
 pytest.importorskip("fastapi.testclient")
 
 from fastapi.testclient import TestClient
-from main import app, get_session, modbus_manager
+from main import app, control_context, get_session, modbus_manager
 from models import InterlockConfig, PIDConfig, RoutingConfig, TagLog
 from sqlalchemy.pool import StaticPool
 from sqlmodel import Session, SQLModel, create_engine
@@ -226,6 +226,7 @@ async def test_estop_trigger() -> None:
         assert response.status_code == 200
         assert "E-stop triggered" in response.json()["message"]
         mock_estop.assert_called_once()
+        control_context.clear_estop()
 
 
 def test_export_data() -> None:
