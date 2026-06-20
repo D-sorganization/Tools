@@ -143,8 +143,11 @@ jobs:
       - name: Install actionlint
         run: |
           ACTIONLINT_VERSION=1.7.11
-          curl -sSL "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" | tar -xz
-          chmod +x actionlint
+          ACTIONLINT_BIN="${RUNNER_TEMP:-/tmp}/actionlint-bin"
+          mkdir -p "$ACTIONLINT_BIN"
+          curl -sSL "https://github.com/rhysd/actionlint/releases/download/v${ACTIONLINT_VERSION}/actionlint_${ACTIONLINT_VERSION}_linux_amd64.tar.gz" | tar -xz -C "$ACTIONLINT_BIN" actionlint
+          chmod +x "$ACTIONLINT_BIN/actionlint"
+          echo "$ACTIONLINT_BIN" >> "$GITHUB_PATH"
 
       - name: Install shellcheck
         run: |
@@ -155,4 +158,4 @@ jobs:
           fi
 
       - name: Run actionlint
-        run: ./actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
+        run: actionlint -color -shellcheck ./scripts/actionlint_shellcheck.sh -pyflakes=
