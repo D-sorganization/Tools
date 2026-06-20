@@ -35,6 +35,7 @@ def test_validate_workflow_rejects_sudo_actionlint_install(tmp_path: Path) -> No
                 "name: Test",
                 "jobs:",
                 "  lint:",
+                "    runs-on: ubuntu-latest",
                 "    steps:",
                 "      - run: sudo mv actionlint /usr/local/bin/actionlint",
             ]

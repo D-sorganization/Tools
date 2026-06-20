@@ -30,14 +30,13 @@ def validate_workflow(path: Path) -> list[str]:
 
     if yaml is None:
         if not text.strip():
-            return [f"{path}: expected a non-empty workflow file"]
+            errors.append(f"{path}: expected a non-empty workflow file")
         if not any(line == "jobs:" for line in text.splitlines()):
             errors.append(f"{path}: missing top-level 'jobs'")
         return errors
 
     try:
-        with path.open(encoding="utf-8") as handle:
-            data = yaml.safe_load(handle)
+        data = yaml.safe_load(text)
     except Exception as exc:  # pragma: no cover - surfaced directly in CI
         return [f"{path}: YAML parse error: {exc}"]
 

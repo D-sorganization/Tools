@@ -1357,6 +1357,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-19 | 1.1.7715 | fix(sidekick, #3715): run the Python REPL worker against an isolated namespace copy and merge results back only after clean completion, so cancellation cannot corrupt the live workspace namespace. |
 | 2026-06-19 | 1.1.7678 | fix(pressure-drop, #3672): replace the public pressure-drop API's strippable pipe-length assert with unconditional boundary validation for pipe length, flow rate, pressure, flow unit, and friction method, including optimized-Python regression coverage. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3758): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-19 | 1.1.7674 | fix(pressure-drop, #3660): collapse the duplicate `flow_properties.py` engine body into an explicit facade over `_flow_calculations.py` and add split-test coverage for single definitions plus facade identity. |

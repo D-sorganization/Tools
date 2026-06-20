@@ -234,7 +234,11 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._history.append(script.strip())
         self._set_running(True)
 
-        self._worker = _ReplWorker(script, self._namespace)
+        # Run against an isolated copy of the namespace so that cancelling the
+        # worker (which kills the QThread at an arbitrary instruction) can never
+        # leave the live ``self._namespace`` half-mutated. The worker's copy is
+        # merged back only on clean completion in ``_on_execution_finished``.
+        self._worker = _ReplWorker(script, dict(self._namespace))
         self._worker.result_ready.connect(self._on_execution_finished)
         self._wait_for_worker_completion(self._worker)
 
@@ -270,9 +274,20 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._status_label.setVisible(running)
 
     def _on_cancel_clicked(self) -> None:
-        """Best-effort cancel: terminate the worker thread (F6)."""
+        """Best-effort cancel: terminate the worker thread (F6).
+
+        The worker mutates only its private *copy* of the namespace (see
+        ``execute``), and that copy is merged back into ``self._namespace`` only
+        on clean completion. Terminating the thread mid-run therefore discards
+        the partial work without corrupting the live namespace, so the cancelled
+        run leaves the workspace exactly as it was before the run started.
+        """
         if self._worker is not None and self._worker.isRunning():
             worker = self._worker
+            # Drop the result slot first so a race-completed worker cannot merge
+            # its namespace back after the user asked to cancel.
+            with contextlib.suppress(TypeError, RuntimeError):
+                worker.result_ready.disconnect(self._on_execution_finished)
             worker.terminate()
             worker.wait()
             self._append_output("[Cancelled]")
@@ -281,8 +296,9 @@ class PythonReplWidget(QtWidgets.QWidget):
 
     def _on_execution_finished(self, output: str) -> None:
         """Slot called on the GUI thread when the worker emits ``result_ready`` (F6)."""
-        # Sync namespace changes made by the worker back into self._namespace
-        # so the workspace registry and subsequent executions share the updates.
+        # Merge namespace changes made by the worker (on its private copy) back
+        # into self._namespace, so the workspace registry and subsequent
+        # executions share the updates. This runs only on clean completion.
         if self._worker is not None:
             self._namespace.update(self._worker._namespace)  # noqa: SLF001
         self._sync_namespace_to_registry()
