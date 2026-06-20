@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7789                                   |
+| **Current Version**     | 1.2.0                                      |
+| **Spec Version**        | 1.2.0                                      |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- Release metadata now publishes Tools v1.2.0 across `VERSION` and
+  `pyproject.toml`, and the generated changelog avoids historical closing
+  keywords so the release PR references prior issues without re-closing them
+  (#3810).
 - Shared DbC preconditions now distinguish predicate argument-shape mismatches
   from `TypeError` raised inside the predicate body, preserving the original
   underlying error and avoiding double evaluation; class invariants wrap only
