@@ -83,7 +83,7 @@ jobs:
     if: needs.check-mention.outputs.should_run == 'true' && !github.event.issue.pull_request
     runs-on: d-sorg-fleet
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
