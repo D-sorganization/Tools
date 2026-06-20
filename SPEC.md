@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7782                                   |
+| **Spec Version**        | 1.1.7783                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- Movement Optimizer now renders Swingset and Chain Dynamics analysis legends
+  in per-plot reserved legend rows instead of one shared figure-level footer,
+  preserving local series labels while preventing legends from covering or
+  crowding plot data, ticks, and axis labels (#3773).
+- Movement Optimizer rendered legend layout regression coverage now lives in
+  `src/movement_optimizer/tests/test_motion_analysis_panel_legends.py`, keeping
+  the focused `MotionAnalysisPanel` test files below the changed-file size
+  budget while preserving the same TDD layout assertions (#3773).
 - CI Standard now keeps the shared apt lock for dependency installation but
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages
