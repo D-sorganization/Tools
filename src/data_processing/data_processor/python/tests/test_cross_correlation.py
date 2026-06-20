@@ -6,11 +6,15 @@ rolling_cross_correlation, and multi_series_correlation_matrix.
 
 from __future__ import annotations
 
+import inspect
+
 import numpy as np
 import pytest
+from data_processor.core import cross_correlation as cross_correlation_module
 from data_processor.core.cross_correlation import (
     CrossCorrelationAnalyzer,
     CrossCorrelationConfig,
+    cross_correlate,
 )
 
 
@@ -28,6 +32,27 @@ def sine_pair() -> tuple[np.ndarray, np.ndarray]:
     x = np.sin(t)
     y = np.sin(t - 5 * (4 * np.pi / n))
     return x, y
+
+
+def test_cross_correlation_module_imports() -> None:
+    """The module should import with real Numba installed."""
+    assert cross_correlation_module.CrossCorrelationAnalyzer is CrossCorrelationAnalyzer
+
+
+def test_instance_methods_remain_plain_python_functions() -> None:
+    """Self methods must not be wrapped in Numba dispatchers."""
+    method_names = (
+        "rolling_cross_correlation",
+        "_compute_pvalues",
+        "_select_lag_order",
+        "_create_lag_matrix",
+        "_conditional_entropy",
+    )
+
+    for method_name in method_names:
+        method = CrossCorrelationAnalyzer.__dict__[method_name]
+        assert inspect.isfunction(method), method_name
+        assert not hasattr(method, "py_func"), method_name
 
 
 class TestCrossCorrelate:
@@ -57,12 +82,34 @@ class TestCrossCorrelate:
         assert hasattr(result, "confidence_interval")
         assert len(result.lags) == 21  # -10 to +10
 
+    def test_convenience_function_returns_pvalues(self) -> None:
+        """Module-level cross_correlate should run the p-value path."""
+        rng = np.random.default_rng(3667)
+        x = rng.standard_normal(50)
+        y = rng.standard_normal(50)
+
+        result = cross_correlate(x, y, max_lag=5)
+
+        assert result.p_values is not None
+        assert len(result.p_values) == len(result.ccf_values)
+        assert np.all(np.isfinite(result.p_values))
+
     def test_mismatched_lengths_raises(
         self, analyzer: CrossCorrelationAnalyzer
     ) -> None:
         """Unequal series should raise ValueError."""
         with pytest.raises(ValueError, match="same length"):
             analyzer.cross_correlate(np.array([1.0, 2.0]), np.array([1.0]))
+
+    def test_compute_pvalues_handles_perfect_correlation_extremes(
+        self, analyzer: CrossCorrelationAnalyzer
+    ) -> None:
+        """Exact +/-1 correlations avoid division-by-zero p-value math."""
+        p_values = analyzer._compute_pvalues(np.array([-1.0, 0.0, 1.0]), n=50)
+
+        assert p_values[0] == 0.0
+        assert p_values[1] == pytest.approx(1.0)
+        assert p_values[2] == 0.0
 
 
 class TestLaggedCorrelation:
@@ -124,6 +171,40 @@ class TestRollingCrossCorrelation:
         result = analyzer.rolling_cross_correlation(x, y, window=10)
 
         assert result.correlation_stability >= 0.0
+
+
+class TestCausalityRuntime:
+    """Regression tests for causal-analysis runtime paths."""
+
+    def test_granger_causality_test_runs_end_to_end(self) -> None:
+        rng = np.random.default_rng(3667)
+        x = rng.standard_normal(80)
+        y = 0.35 * np.roll(x, 1) + rng.standard_normal(80) * 0.1
+        y[0] = rng.standard_normal()
+        analyzer = CrossCorrelationAnalyzer(CrossCorrelationConfig(granger_max_lag=2))
+
+        result = analyzer.granger_causality_test(x, y, max_lag=2)
+
+        assert np.isfinite(result.x_causes_y_fstat)
+        assert np.isfinite(result.y_causes_x_fstat)
+        assert np.isfinite(result.x_causes_y_pvalue)
+        assert np.isfinite(result.y_causes_x_pvalue)
+
+    def test_transfer_entropy_runs_end_to_end(self) -> None:
+        rng = np.random.default_rng(3666)
+        x = rng.standard_normal(60)
+        y = 0.25 * np.roll(x, 1) + rng.standard_normal(60) * 0.2
+        y[0] = rng.standard_normal()
+        analyzer = CrossCorrelationAnalyzer(
+            CrossCorrelationConfig(num_permutations=5, te_bins=4)
+        )
+
+        result = analyzer.transfer_entropy(x, y, history_length=1)
+
+        assert np.isfinite(result.te_x_to_y)
+        assert np.isfinite(result.te_y_to_x)
+        assert 0.0 <= result.te_x_to_y_pvalue <= 1.0
+        assert 0.0 <= result.te_y_to_x_pvalue <= 1.0
 
 
 class TestMultiSeries:
