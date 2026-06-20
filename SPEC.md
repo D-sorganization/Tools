@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.1.0                                      |
-| **Spec Version**        | 1.1.7780                                   |
+| **Spec Version**        | 1.1.7781                                   |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- CI Standard now keeps the shared apt lock for dependency installation but
+  only invokes `sudo` when passwordless sudo is available; non-sudo-capable
+  fleet runners warn and continue with the pre-provisioned image packages
+  instead of failing before quality/tests can start (#3783). Workflow Lint also
+  runs the downloaded `./actionlint` binary from the workspace instead of
+  moving it into `/usr/local/bin` with `sudo`, keeping workflow validation
+  runnable on the same non-sudo fleet runners.
 - CI Standard now force-reinstalls `maturin` without using the pip cache before
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
@@ -118,6 +125,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   preserving the existing zero-mean behavior. Cross-correlation now also treats
   numba as optional acceleration and falls back to a no-op `jit` decorator when
   CI or downstream consumers install the data processor without numba (#3745).
+- Data processor state-space fitting now validates the public `fit(y)` input
+  contract before matrix initialization: observations must be finite, local
+  level models require at least two points, and trend/seasonal models require
+  at least three points so short or non-finite series fail with `ValueError`
+  instead of producing NaN diagnostics (#3696).
 - Repository package metadata is prepared for the v1.1.0 release by aligning
   `pyproject.toml`, `VERSION`, `CHANGELOG.md`, and this specification's current
   version field.
