@@ -1336,6 +1336,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-20 | 1.1.7781 | fix(data-processor, #3758): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
+| 2026-06-19 | 1.1.7674 | test(data-processor, #3738): delete the permanently skipped `tests/data_processor/test_integrated_import_fallback.py` legacy sentinel for the archived `Data_Processor_Integrated.py` module, reducing the data-processor skip surface without removing executable coverage. |
 | 2026-06-20 | 1.1.7781 | fix(data-processor, #3760): call the STL seasonal smoother with a positional fraction argument so the merged time-series helper remains mypy-clean under the existing `Callable[[np.ndarray, float], np.ndarray]` contract. |
 | 2026-06-19 | 1.1.7674 | fix(plugin-manager, #3720 #3721): make `PluginManager.load_tools()` skip malformed `tools.json` categories and non-dict entries with warnings while preserving valid tools from the same load, with strict-mypy-clean focused regression coverage. |
 | 2026-06-19 | 1.1.7674 | test(plugin-manager, #3720 #3721): centralize isolated plugin-manager import/skip helpers in `test_python_dbc_lod.py`, preserving malformed manifest regression coverage while keeping the changed test file below the 500 LOC CI budget. |
