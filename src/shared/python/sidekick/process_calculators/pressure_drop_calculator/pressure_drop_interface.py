@@ -46,7 +46,7 @@ GAS COMPONENTS:
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, cast
 
 from .engine.pressure_drop_calculation_engine import (
     PressureDropCalculationEngine,
@@ -659,7 +659,7 @@ def calculate_pressure_drop(
     )
     engine = PressureDropCalculationEngine()
     results = engine.calculate(inputs)
-    return _format_results(results)
+    return cast(dict[str, Any], _format_results(results))
 
 
 def calculate_pressure_drop_custom_gas(

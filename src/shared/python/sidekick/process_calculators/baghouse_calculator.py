@@ -49,10 +49,10 @@ __all__ = [
 
 # Standalone simplified calculations are the shared-layer contract. Importing
 # downstream ``tools`` packages from src/shared violates the fleet dependency DAG.
-HAS_THERMO = False
-FlowUnit = None
-GasStream = None
-ThermodynamicCalculator = None
+HAS_THERMO: bool = False
+FlowUnit: Any | None = None
+GasStream: Any | None = None
+ThermodynamicCalculator: Any | None = None
 
 
 def convert(value: float, from_unit: str, to_unit: str) -> float:
@@ -226,7 +226,12 @@ class BaghouseCalculator:
         """
         if gas_flow_kg_s is None:
             raise ValueError("gas_flow_kg_s must be provided")
-        if self.thermo_calc is not None and HAS_THERMO:
+        if (
+            self.thermo_calc is not None
+            and HAS_THERMO
+            and GasStream is not None
+            and FlowUnit is not None
+        ):
             try:
                 stream = GasStream(
                     flow_rate=gas_flow_kg_s,

@@ -170,7 +170,7 @@ class SeriesExpansion:
         # Create sample points centered at 'center'
         dx_values = np.linspace(-dx_range, dx_range, num_samples)
         x_samples = center + dx_values
-        y_samples = np.array([float(f(x)) for x in x_samples])  # type: ignore[arg-type]
+        y_samples = np.array([float(f(x)) for x in x_samples])
 
         # Fit polynomial of degree n_terms-1 in terms of (x - center)
         # This gives us Taylor coefficients directly
@@ -245,7 +245,7 @@ class SeriesExpansion:
         if f is None:
             raise ValueError("f must be provided")
         try:
-            exact_value = float(f(x_test))  # type: ignore[arg-type]
+            exact_value = float(f(x_test))
         except (ValueError, RuntimeError, FloatingPointError):
             return {
                 "convergent": False,
@@ -265,14 +265,12 @@ class SeriesExpansion:
             error = abs(approx - exact_value)
             errors_by_term.append(error)
 
-            if error < tolerance and not convergent:  # type: ignore[operator]
+            if error < tolerance and not convergent:
                 convergent = True
                 terms_for_convergence = n
 
             # Check for divergence (error growing)
-            if prev_approx is not None and (
-                abs(approx) > 1e15 or np.isnan(approx) or np.isinf(approx)  # type: ignore[operator]
-            ):
+            if abs(approx) > 1e15 or np.isnan(approx) or np.isinf(approx):
                 return {
                     "convergent": False,
                     "terms_for_convergence": None,
@@ -354,7 +352,7 @@ class SeriesExpansion:
         if f is None:
             raise ValueError("f must be provided")
         if n == 0:
-            return float(f(x))  # type: ignore[arg-type]
+            return float(f(x))
 
         # Use Richardson extrapolation for better accuracy
         return self._richardson_derivative(f, x, n)
@@ -431,7 +429,7 @@ class SeriesExpansion:
             coeff = ((-1) ** k) * self._binomial(n, k)
             point = x + (n / 2 - k) * h
             try:
-                val = float(f(point))  # type: ignore[arg-type]
+                val = float(f(point))
                 if np.isfinite(val):
                     result += coeff * val
             except (ValueError, RuntimeError, FloatingPointError):
