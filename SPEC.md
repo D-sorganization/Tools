@@ -41,7 +41,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - CI Standard now keeps the shared apt lock for dependency installation but
   only invokes `sudo` when passwordless sudo is available; non-sudo-capable
   fleet runners warn and continue with the pre-provisioned image packages
-  instead of failing before quality/tests can start (#3783).
+  instead of failing before quality/tests can start (#3783). Workflow Lint also
+  installs `actionlint` under `$RUNNER_TEMP/bin` instead of moving it into
+  `/usr/local/bin` with `sudo`, keeping workflow validation runnable on the same
+  non-sudo fleet runners.
 
 ### 2026-06-18 Update
 
