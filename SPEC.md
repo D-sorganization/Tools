@@ -156,6 +156,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - P1AM backend safety writes now coerce latest tag lookups through the endpoint
   float contract before returning PID process values, keeping delta mypy checks
   strict while preserving unmapped-tag rejection behavior (#3809).
+- Plugin manager discovery coverage now exercises `load_tools()`,
+  `scan_for_tools()`, and `load_tools_with_discovery()` against real temporary
+  `tools.json` and manifest files, pinning malformed-entry tolerance and
+  discovered-manifest precedence (#3723).
+- `PluginManager.scan_for_tools()` and `load_tools_with_discovery()` now
+  document the same real-file discovery contract in source: relative manifest
+  entry points are validated, first-file fallback is explicit, and discovered
+  manifests replace stale same-name `tools.json` entries (#3723).
 
 ### 2026-06-19 Update
 
@@ -1474,6 +1482,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-06-20 | 1.1.7785 | fix(ci): run the file_watcher_rs maturin import gate through `python -m maturin` so self-hosted runner console-script shim drift does not block the Rust backend build gate. |
 | 2026-06-20 | 1.1.7786 | fix(ci): force-reinstall `maturin` without pip cache in the data-processor and file_watcher_rs import gates so stale self-hosted runner package installs cannot lose the bundled build executable. |
 | 2026-06-20 | 1.1.7787 | fix(ci): hard-gate the data-processor Rust extension import check on Python 3.10-3.12 until the self-hosted Linux Mint fleet consistently provides a Python 3.13 setup-python toolcache. |
+| 2026-06-20 | 1.1.7788 | test(core, #3723): cover `PluginManager.load_tools`, `scan_for_tools`, and `load_tools_with_discovery` with real temporary discovery files so malformed JSON entries and discovered-manifest precedence stay pinned. |
 | 2026-06-19 | 1.1.7674 | fix(plugin-manager, #3720 #3721): make `PluginManager.load_tools()` skip malformed `tools.json` categories and non-dict entries with warnings while preserving valid tools from the same load, with strict-mypy-clean focused regression coverage. |
 | 2026-06-19 | 1.1.7674 | test(plugin-manager, #3720 #3721): centralize isolated plugin-manager import/skip helpers in `test_python_dbc_lod.py`, preserving malformed manifest regression coverage while keeping the changed test file below the 500 LOC CI budget. |
 | 2026-06-19 | 1.1.7675 | fix(data-processor, #3661): keep time-series decomposition helpers importable when installed Numba rejects the active NumPy version by falling back to a no-op `jit` decorator, preserving pure-Python decomposition behavior under optional acceleration failures. |

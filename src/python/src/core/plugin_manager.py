@@ -204,6 +204,8 @@ class PluginManager:
         """
         Scan repository for tools with tool_manifest.json files.
         This provides automatic discovery without manual tools.json editing.
+        Manifests may name a relative entry point or rely on the first Python
+        file in the manifest directory; both paths are validated before use.
 
         Returns:
             Dictionary mapping categories to lists of discovered tools.
@@ -279,6 +281,8 @@ class PluginManager:
         """
         Load tools from tools.json and merge with discovered tools from manifests.
         This provides backward compatibility while enabling automatic discovery.
+        Discovered manifests replace same-named tools.json entries within a
+        category so real-file discovery can correct stale registry entries.
         """
         # Load from tools.json (existing method)
         json_tools = self.load_tools()
