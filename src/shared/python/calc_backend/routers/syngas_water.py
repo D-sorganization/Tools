@@ -65,34 +65,41 @@ def calculate_syngas_water(request: SyngasWaterRequest) -> SyngasWaterResponse:
 
 
 def _fallback_calculate(request: SyngasWaterRequest) -> SyngasWaterResponse:
-    """Basic fallback when full calculator is not available."""
-    import math
+    """Basic fallback when full calculator is not available.
 
-    try:
-        from shared.python.sidekick.process_calculators.constants import (
-            ANTOINE_WATER_A,
-            ANTOINE_WATER_B,
-            ANTOINE_WATER_C,
-        )
-        from shared.python.sidekick.utils.unit_constants import (
-            CELSIUS_TO_KELVIN_OFFSET,
-            MMHG_TO_PASCAL,
-            R_UNIVERSAL,
-        )
+    All physical constants are imported from the canonical shared modules so
+    the fallback path cannot silently drift from the authoritative values
+    (issue #3678).  The Antoine vapor-pressure and inverse-dewpoint formulas
+    delegate to the shared :mod:`water_vapor_pressure` kernel.
+    """
+    from shared.python.sidekick.process_calculators.constants import (
+        ANTOINE_WATER_A,
+        ANTOINE_WATER_B,
+        ANTOINE_WATER_C,
+        CELSIUS_TO_KELVIN_OFFSET,
+        MW_WATER_GMOL,
+    )
+    from shared.python.sidekick.process_calculators.water_vapor_pressure import (
+        antoine_pressure_pa,
+        antoine_temperature_c,
+    )
+    from shared.python.sidekick.utils.unit_constants import (
+        MOLAR_VOLUME_STP_OLD,
+        R_UNIVERSAL,
+    )
 
-        A, B, C = ANTOINE_WATER_A, ANTOINE_WATER_B, ANTOINE_WATER_C
-        r_gas = R_UNIVERSAL
-        c_to_k = CELSIUS_TO_KELVIN_OFFSET
-        mmhg_to_pa = MMHG_TO_PASCAL
-    except ImportError:
-        A, B, C = 8.07131, 1730.63, 233.426
-        r_gas = 8.314
-        c_to_k = 273.15
-        mmhg_to_pa = 133.322387415
+    A, B, C = ANTOINE_WATER_A, ANTOINE_WATER_B, ANTOINE_WATER_C
+    r_gas = R_UNIVERSAL
+    c_to_k = CELSIUS_TO_KELVIN_OFFSET
+    mw_water_g_mol = MW_WATER_GMOL
 
-    # Antoine equation for water vapor pressure
-    log_p = A - B / (C + request.temperature_c)
-    vp_bar = math.pow(10, log_p) * mmhg_to_pa / 1e5
+    # lb/mmscf conversion: standard molar volume at 60°F/14.696 psia (385.5
+    # scf/lb-mol) and pounds-to-grams (453.592 g/lb).
+    _scf_per_lbmol_60f = 385.5
+    _grams_per_pound = 453.592
+
+    # Antoine equation for water vapor pressure (shared kernel returns Pa).
+    vp_bar = antoine_pressure_pa(A, B, C, request.temperature_c) / 1e5
 
     # Simple water mole fraction from composition preset
     water_pct_map = {
@@ -105,21 +112,17 @@ def _fallback_calculate(request: SyngasWaterRequest) -> SyngasWaterResponse:
     mole_frac = min(water_pct / 100.0, vp_bar / request.pressure_bar)
 
     ppmv = mole_frac * 1e6
-    mg_nm3 = mole_frac * (18.015 / 0.022414) * 1000
+    mg_nm3 = mole_frac * (mw_water_g_mol / MOLAR_VOLUME_STP_OLD) * 1000
     g_m3 = (
         mole_frac
-        * (18.015 * request.pressure_bar * 1e5)
+        * (mw_water_g_mol * request.pressure_bar * 1e5)
         / (r_gas * (request.temperature_c + c_to_k))
     )
-    lb_mmscf = ppmv * 18.015 / (385.5 * 453.592) * 1e6
+    lb_mmscf = ppmv * mw_water_g_mol / (_scf_per_lbmol_60f * _grams_per_pound) * 1e6
 
-    # Dew point via inverse Antoine
+    # Dew point via inverse Antoine (shared kernel takes Pa).
     pp = mole_frac * request.pressure_bar
-    dew_c = (
-        B / (A - math.log10(max(pp * 1e5 / mmhg_to_pa, 1e-10))) - C
-        if pp > 0
-        else -c_to_k
-    )
+    dew_c = antoine_temperature_c(A, B, C, max(pp * 1e5, 1e-10)) if pp > 0 else -c_to_k
 
     margin = request.temperature_c - dew_c
     if margin < 0:

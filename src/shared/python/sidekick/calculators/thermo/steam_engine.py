@@ -30,6 +30,15 @@ from shared.python.sidekick.process_calculators.constants import (
 from shared.python.sidekick.process_calculators.constants import (
     MMHG_TO_PA as _MMHG_TO_PA,
 )
+from shared.python.sidekick.process_calculators.water_vapor_pressure import (
+    antoine_pressure_pa as _antoine_pressure_pa,
+)
+from shared.python.sidekick.process_calculators.water_vapor_pressure import (
+    antoine_temperature_c as _antoine_temperature_c,
+)
+from shared.python.sidekick.process_calculators.water_vapor_pressure import (
+    buck_pressure_pa as _buck_pressure_pa,
+)
 
 __all__ = [
     "ANTOINE_A",
@@ -459,34 +468,32 @@ class SteamCalculationEngine:
             return self._antoine_equation(temperature)  # Fallback
 
     def _antoine_equation(self, temperature_c: float) -> float:
-        """Antoine equation for water vapor pressure (valid 1-100°C)"""
-        # Antoine equation: log10(P) = A - B/(C + T)
-        # P in mmHg, T in °C
-        if temperature_c is None:
-            raise ValueError("temperature_c must be provided")
-        log_p_mmhg = ANTOINE_A - ANTOINE_B / (ANTOINE_C_CELSIUS + temperature_c)
-        p_mmhg = 10**log_p_mmhg
+        """Antoine equation for water vapor pressure (valid 1-100°C).
 
-        # Convert to Pascal
-        return float(p_mmhg * MMHG_TO_PASCAL_FACTOR)
+        Delegates to the shared Antoine kernel (°C convention,
+        ``log10(P_mmHg) = A - B/(C + t)``) so the formula body and unit
+        conversion live in a single place (issue #3677).
+        """
+        return float(
+            _antoine_pressure_pa(ANTOINE_A, ANTOINE_B, ANTOINE_C_CELSIUS, temperature_c)
+        )
 
     def _buck_equation(self, temperature_c: float) -> float:
         """
         Buck equation for water vapor pressure (improved accuracy).
-        """
-        # Buck equation: P = a * exp((b - T/c) * T/(T + d))
-        # P in kPa, T in °C
-        # BUCK_A is stored in mbar, but Buck equation requires 'a' in kPa
-        # Convert mbar to kPa by dividing by 10 (1 mbar = 0.1 kPa)
-        if temperature_c is None:
-            raise ValueError("temperature_c must be provided")
-        a_kpa = BUCK_A / MBAR_TO_KPA_FACTOR
-        p_kpa = a_kpa * np.exp(
-            (BUCK_B - temperature_c / BUCK_C) * temperature_c / (temperature_c + BUCK_D)
-        )
 
-        # Convert kPa to Pascal
-        return float(p_kpa * KPA_TO_PA_FACTOR)
+        Delegates to the shared Buck kernel.  ``BUCK_A`` is stored in mbar,
+        but the Buck equation requires the pre-factor in kPa, so it is
+        converted (1 mbar = 0.1 kPa) before delegation.
+
+        The steam engine historically used the coefficient order
+        ``(b - T/c) * T / (T + d)``, which is the transpose of the syngas
+        order the shared kernel implements (``(b - T/d) * T / (c + T)``).  The
+        ``BUCK_C`` / ``BUCK_D`` arguments are therefore swapped here so the
+        delegated curve exactly reproduces the legacy steam saturation curve.
+        """
+        a_kpa = BUCK_A / MBAR_TO_KPA_FACTOR
+        return float(_buck_pressure_pa(a_kpa, BUCK_B, BUCK_D, BUCK_C, temperature_c))
 
     def _iapws_equation(self, temperature_c: float) -> float:
         """IAPWS-IF97 formulation for high-accuracy vapor pressure"""
@@ -626,12 +633,12 @@ class SteamCalculationEngine:
     ) -> SteamProperties:
         """Calculate saturated steam properties from temperature using simplified correlations"""
         self._validate_saturation_temperature(temperature)
-        # Antoine equation for water vapor pressure (valid 1-100°C)
-        # log10(P_mmHg) = A - B/(T_K - C) where C is for temperature in Kelvin
-        # Calculate saturation pressure using Antoine equation
-        log_p_mmhg = ANTOINE_A - ANTOINE_B / (temperature - ANTOINE_C_KELVIN)
-        pressure_mmhg = 10**log_p_mmhg
-        pressure = pressure_mmhg * MMHG_TO_PASCAL_FACTOR
+        # Antoine equation for water vapor pressure (valid 1-100°C), Kelvin
+        # convention: log10(P_mmHg) = A - B/(T_K - C_KELVIN). Routed through
+        # the shared kernel by passing the Kelvin-convention C constant.
+        pressure = _antoine_pressure_pa(
+            ANTOINE_A, ANTOINE_B, -ANTOINE_C_KELVIN, temperature
+        )
 
         # Calculate properties at saturation
         return self._calculate_simplified_properties(temperature, pressure)
@@ -641,12 +648,12 @@ class SteamCalculationEngine:
     ) -> SteamProperties:
         """Calculate saturated steam properties from pressure using simplified correlations"""
         self._validate_saturation_pressure(pressure)
-        # Inverse Antoine equation to find temperature from pressure
-        pressure_mmhg = pressure * PASCAL_TO_MMHG_FACTOR
-
-        # Solve for temperature: T = B / (A - log10(P)) + C
-        log_p = np.log10(pressure_mmhg)
-        temperature = ANTOINE_B / (ANTOINE_A - log_p) + ANTOINE_C_KELVIN
+        # Inverse Antoine (Kelvin convention) to find temperature from pressure:
+        # T_K = B / (A - log10(P_mmHg)) + C_KELVIN. Delegated to the shared
+        # kernel by passing the Kelvin-convention C constant.
+        temperature = _antoine_temperature_c(
+            ANTOINE_A, ANTOINE_B, -ANTOINE_C_KELVIN, pressure
+        )
         self._validate_saturation_temperature(temperature)
 
         # Calculate properties at saturation
@@ -666,10 +673,12 @@ class SteamCalculationEngine:
                 )
 
         try:
-            # Use Antoine equation
-            log_p_mmhg = ANTOINE_A - ANTOINE_B / (temperature - ANTOINE_C_KELVIN)
-            pressure_mmhg = 10**log_p_mmhg
-            return float(pressure_mmhg * MMHG_TO_PASCAL_FACTOR)
+            # Use Antoine equation (Kelvin convention) via the shared kernel.
+            return float(
+                _antoine_pressure_pa(
+                    ANTOINE_A, ANTOINE_B, -ANTOINE_C_KELVIN, temperature
+                )
+            )
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             _logger.exception("Saturation pressure calculation failed: %s", e)
             raise ValueError(f"Saturation pressure calculation failed: {e}") from e
@@ -681,10 +690,12 @@ class SteamCalculationEngine:
             if CANTERA_AVAILABLE and self.water is not None and self.water:
                 self.water.PQ = pressure, 1.0
                 return float(self.water.T)
-            # Use inverse Antoine equation
-            pressure_mmhg = pressure * PASCAL_TO_MMHG_FACTOR
-            log_p = np.log10(pressure_mmhg)
-            return float(ANTOINE_B / (ANTOINE_A - log_p) + ANTOINE_C_KELVIN)
+            # Use inverse Antoine equation (Kelvin convention) via shared kernel.
+            return float(
+                _antoine_temperature_c(
+                    ANTOINE_A, ANTOINE_B, -ANTOINE_C_KELVIN, pressure
+                )
+            )
         except (ValueError, ZeroDivisionError, OverflowError, TypeError) as e:
             _logger.exception("Saturation temperature calculation failed: %s", e)
             raise ValueError(f"Saturation temperature calculation failed: {e}") from e
