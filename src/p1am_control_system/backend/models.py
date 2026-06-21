@@ -5,13 +5,32 @@ try:
 except ImportError:
     UTC = timezone.utc  # noqa: UP017
 
-from pydantic import BaseModel
+import hardware
+from pydantic import BaseModel, field_validator
 from sqlmodel import Field, SQLModel
 
 
 def utc_now() -> datetime:
     """Return an aware UTC timestamp for database defaults."""
     return datetime.now(UTC)
+
+
+def _validate_loop_tag(value: str) -> str:
+    """Validate a PID loop tag name against the firmware tag contract.
+
+    Accepts a well-formed ``TAG_<n>`` with ``n`` in ``[0, TAG_COUNT)`` or the
+    firmware ``kUnmappedTag`` sentinel (``TAG_255``). Any other value — an empty
+    string, a non-``TAG_`` name, a non-numeric or out-of-range index — is
+    rejected so an invalid loop config cannot persist and later fault a control
+    endpoint (e.g. a KeyError-500 in tuning start/step). Mirrors the acceptance
+    policy of ``modbus_codec.tag_to_index`` (issue #3745).
+    """
+    if value == hardware.UNMAPPED_TAG_NAME:
+        return value
+    # Delegate to the single strict parser; it raises ValueError/TypeError on a
+    # malformed or out-of-range name.
+    hardware.tag_index(value)
+    return value
 
 
 class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
@@ -86,6 +105,11 @@ class PIDConfig(BaseModel):
     kp: float
     ki: float
     kd: float
+
+    @field_validator("pv_tag", "cv_tag")
+    @classmethod
+    def _check_loop_tag(cls, value: str) -> str:
+        return _validate_loop_tag(value)
 
 
 class InterlockConfig(BaseModel):

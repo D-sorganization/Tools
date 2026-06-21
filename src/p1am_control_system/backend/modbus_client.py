@@ -18,7 +18,6 @@ from modbus_codec import (
 from models import RoutingConfig
 from plc_interface import BasePLCClient
 from pymodbus.client import AsyncModbusTcpClient
-from pymodbus.exceptions import ModbusException
 
 logger = logging.getLogger("dcs_backend.modbus_client")
 
@@ -129,7 +128,7 @@ class AsyncModbusManager(BasePLCClient):
                     high = response.registers[i * 2 + 1]
                     tags[f"TAG_{i}"] = registers_to_float(low, high)
                 return tags
-            except (ModbusException, Exception) as e:
+            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception during tag read: {e}")
                 self._connected = False
                 return None
@@ -264,7 +263,7 @@ class AsyncModbusManager(BasePLCClient):
                 )
                 return True
 
-            except (ModbusException, Exception) as e:
+            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception writing configuration to PLC: {e}")
                 self._connected = False
                 return False
@@ -289,7 +288,7 @@ class AsyncModbusManager(BasePLCClient):
                     return False
                 logger.info("Triggered Save to Flash Modbus Coil.")
                 return True
-            except (ModbusException, Exception) as e:
+            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception saving config to PLC flash: {e}")
                 self._connected = False
                 return False
@@ -335,7 +334,7 @@ class AsyncModbusManager(BasePLCClient):
                 else:
                     logger.error("E-stop: one or more zeroing writes FAILED — retry.")
                 return all_ok
-            except (ModbusException, Exception) as e:
+            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception during E-stop Modbus execution: {e}")
                 self._connected = False
                 return False
@@ -365,7 +364,7 @@ class AsyncModbusManager(BasePLCClient):
                     return False
                 logger.warning("E-stop reset coil written to PLC successfully.")
                 return True
-            except (ModbusException, Exception) as e:
+            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception during E-stop reset Modbus execution: {e}")
                 self._connected = False
                 return False
@@ -395,7 +394,7 @@ class AsyncModbusManager(BasePLCClient):
                     )
                     return False
                 return True
-            except (ModbusException, Exception) as exc:
+            except Exception as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(
                     "write_pid_setpoint(%d, %f) exception: %s", pid_index, value, exc
                 )
@@ -417,7 +416,7 @@ class AsyncModbusManager(BasePLCClient):
                     logger.error("write_coil(%d, %s) failed: %s", address, value, resp)
                     return False
                 return True
-            except (ModbusException, Exception) as exc:
+            except Exception as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error("write_coil(%d, %s) exception: %s", address, value, exc)
                 self._connected = False
                 return False
@@ -452,7 +451,7 @@ class AsyncModbusManager(BasePLCClient):
                     f"Directly wrote {value} to tag {tag_name} at register {address}."
                 )
                 return True
-            except (ModbusException, Exception) as e:
+            except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception during direct tag write for {tag_name}: {e}")
                 self._connected = False
                 return False
