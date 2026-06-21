@@ -36,6 +36,25 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-06-21 Deferred #3745 cleanup hardening
+
+- `scripts/convert_print_to_logging.py` now parses candidate single-line
+  `print(...)` statements with `ast` before rewriting, preserving trailing
+  inline comments outside the generated `logger.*(...)` call and using
+  word-boundary log-level detection so text such as `no errors` no longer
+  escalates to `logger.error`.
+- `sidekick.ui.tools_sidebar.python_repl_tab` exposes the REPL namespace through
+  a public `namespace` property; the legacy wrapper now uses that intentional
+  live alias instead of reaching through `_repl._namespace`, while worker
+  execution still runs on an isolated copy and merges back only after clean
+  completion.
+- `p1am_control_system.backend.main.get_ladder_explorer` now preloads area, unit,
+  and equipment lookup tables before rendering tags, matching the plant
+  hierarchy endpoint pattern and avoiding per-tag parent `db.get()` round-trips.
+- `data_processor.core.dat_importer.detect_dat_delimiter` raises `ValueError`
+  when the sampled DAT content is empty or has no supported delimiters instead
+  of silently defaulting such single-column files to tab-separated data.
+
 ### 2026-06-21 REST API & P1AM validation hardening
 
 - `p1am_control_system.backend.models.PIDConfig` now validates `pv_tag`/`cv_tag`

@@ -97,6 +97,44 @@ class TestPrintMigrationTooling:
         assert not (self.REPO_ROOT / "migrate_print_to_logging.py").exists()
         assert (self.REPO_ROOT / "scripts" / "convert_print_to_logging.py").is_file()
 
+    def test_converter_preserves_inline_comment_outside_call(self) -> None:
+        """Inline comments after print() must not become logger call arguments."""
+        from scripts.convert_print_to_logging import _convert_print_line
+
+        converted, changed = _convert_print_line("    print('done')  # keep me")
+
+        assert changed is True
+        assert converted == "    logger.info('done')  # keep me"
+
+    def test_converter_handles_nested_parentheses_before_comment(self) -> None:
+        """Nested calls should convert without greedy comment capture."""
+        from scripts.convert_print_to_logging import _convert_print_line
+
+        converted, changed = _convert_print_line(
+            "print(format_value(func(')')))  # nested"
+        )
+
+        assert changed is True
+        assert converted == "logger.info(format_value(func(')')))  # nested"
+
+    def test_converter_uses_word_boundaries_for_log_level(self) -> None:
+        """Substring matches like 'no errors' should not force error logging."""
+        from scripts.convert_print_to_logging import _convert_print_line
+
+        converted, changed = _convert_print_line("print('no errors detected')")
+
+        assert changed is True
+        assert converted == "logger.info('no errors detected')"
+
+    def test_converter_still_detects_error_word(self) -> None:
+        """A standalone error token should still map to logger.error."""
+        from scripts.convert_print_to_logging import _convert_print_line
+
+        converted, changed = _convert_print_line("print('error detected')")
+
+        assert changed is True
+        assert converted == "logger.error('error detected')"
+
 
 class TestRuffT201Configured:
     """Verify T201 (print-statement) rule is enabled in ruff config.

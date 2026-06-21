@@ -61,6 +61,11 @@ class _ReplWorker(QtCore.QThread):
         self._script = script
         self._namespace = namespace
 
+    @property
+    def namespace(self) -> dict[str, Any]:
+        """Return the worker-owned namespace copy after clean execution."""
+        return self._namespace
+
     def run(self) -> None:  # noqa: ANN201 - Qt override
         """Run the user script and emit ``result_ready`` with formatted output."""
         stdout = io.StringIO()
@@ -306,7 +311,7 @@ class PythonReplWidget(QtWidgets.QWidget):
         if self._worker is not None:
             worker = self._worker
             self._namespace.clear()
-            self._namespace.update(worker._namespace)  # noqa: SLF001
+            self._namespace.update(worker.namespace)
         else:
             worker = None
         self._sync_namespace_to_registry()
@@ -346,6 +351,15 @@ class PythonReplWidget(QtWidgets.QWidget):
     def startup_config(self) -> CalculatorStartupConfig:
         """Return the startup-import config currently backing the REPL."""
         return self._startup_config
+
+    @property
+    def namespace(self) -> dict[str, Any]:
+        """Return the live REPL namespace.
+
+        The returned dict is the canonical live namespace. Executions still run
+        against a worker-owned copy and merge back only after clean completion.
+        """
+        return self._namespace
 
     def apply_startup_config(
         self, config: CalculatorStartupConfig
@@ -411,7 +425,7 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
         )
         self._registry = registry
         self._set_variable = set_variable
-        self._namespace = self._repl._namespace  # noqa: SLF001 - intentional alias
+        self._namespace = self._repl.namespace
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self._repl)
