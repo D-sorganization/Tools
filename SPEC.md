@@ -55,6 +55,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- The scripting sandbox timeout (`scripting_env.ConsoleEnvironment`) now
+  delivers the daemon-thread fallback interrupt deterministically: a genuine
+  timeout is absorbed inside the timeout context and reported as a
+  `TimeoutError` instead of letting an injected `KeyboardInterrupt` leak past
+  the context boundary into host code (the Windows always-on path). The
+  `PyThreadState_SetAsyncExc` return code is checked and a multi-match result
+  is reverted. Added regression coverage for restricted-import /
+  restricted-builtins enforcement and for the safe-eval Subscript / Slice /
+  IfExp / BoolOp / Compare node types (#3702, #3700, #3704).
 - Release metadata now publishes Tools v1.5.0 across `VERSION` and
   `pyproject.toml`, and the generated changelog plus release PR body retain
   reference-only issue wording so historical release notes do not re-close
