@@ -108,6 +108,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `AISettingsDialog` connects its handler to that signal instead of reaching
   through the tab into the inner `provider_combo.currentIndexChanged`
   (Law of Demeter).
+- Post-merge test hygiene removes stale `type: ignore[arg-type]` comments from
+  the newly merged Kalman and P1AM validation regression tests so strict mypy
+  continues to pass on the consolidated branch.
 
 ### 2026-06-21 Core P2 cleanup (plugin manager, robotics, safe-eval, contracts)
 

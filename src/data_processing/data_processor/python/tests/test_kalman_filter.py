@@ -81,7 +81,7 @@ class TestKalmanFilterConstruction:
 
     def test_requires_config(self) -> None:
         with pytest.raises(ValueError):
-            KalmanFilter(None)  # type: ignore[arg-type]
+            KalmanFilter(None)
 
     def test_rejects_non_psd_process_noise(self) -> None:
         cfg = KalmanFilterConfig(
@@ -170,7 +170,7 @@ class TestKalmanFilterRun:
     def test_filter_rejects_none(self) -> None:
         kf = KalmanFilter(self._config())
         with pytest.raises(ValueError):
-            kf.filter(None)  # type: ignore[arg-type]
+            kf.filter(None)
 
     def test_filter_rejects_empty(self) -> None:
         kf = KalmanFilter(self._config())
@@ -212,7 +212,7 @@ class TestKalmanFilterRun:
     def test_smoother_rejects_none(self) -> None:
         kf = KalmanFilter(self._config())
         with pytest.raises(ValueError):
-            kf.smooth(None)  # type: ignore[arg-type]
+            kf.smooth(None)
 
 
 class TestExtendedKalmanFilter:
@@ -294,7 +294,7 @@ class TestConvenienceFunctions:
 
     def test_apply_kalman_filter_rejects_none(self) -> None:
         with pytest.raises(ValueError):
-            apply_kalman_filter(None, "s")  # type: ignore[arg-type]
+            apply_kalman_filter(None, "s")
 
     def test_kalman_smooth_smooths(self) -> None:
         sig = _random_walk(50)
@@ -305,7 +305,7 @@ class TestConvenienceFunctions:
 
     def test_kalman_smooth_rejects_none(self) -> None:
         with pytest.raises(ValueError):
-            kalman_smooth(None)  # type: ignore[arg-type]
+            kalman_smooth(None)
 
     def test_estimate_kalman_params_positive(self) -> None:
         q, r = estimate_kalman_params(_random_walk(100))
@@ -324,7 +324,7 @@ class TestConvenienceFunctions:
 
     def test_estimate_kalman_params_rejects_none(self) -> None:
         with pytest.raises(ValueError):
-            estimate_kalman_params(None)  # type: ignore[arg-type]
+            estimate_kalman_params(None)
 
 
 class TestKalmanFilterType:

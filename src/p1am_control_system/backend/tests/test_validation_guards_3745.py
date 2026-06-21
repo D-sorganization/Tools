@@ -35,7 +35,7 @@ def _valid_pid(**overrides: object) -> PIDConfig:
         "kd": 0.1,
     }
     base.update(overrides)
-    return PIDConfig(**base)  # type: ignore[arg-type]
+    return PIDConfig(**base)
 
 
 def test_pidconfig_accepts_valid_tags() -> None:
