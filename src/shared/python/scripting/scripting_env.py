@@ -410,11 +410,24 @@ def _raise_keyboard_interrupt_in_thread(thread_id: int) -> None:
     This is the Windows-compatible fallback for enforcing the execution
     timeout.  Only works with CPython; on other runtimes the call is a
     no-op.
+
+    ``PyThreadState_SetAsyncExc`` returns the number of thread states that
+    were modified: ``1`` on success, ``0`` if the target thread id was not
+    found, and ``>1`` if it (erroneously) matched multiple states — in which
+    case the CPython C-API contract requires reverting the pending exception
+    by calling it again with ``NULL`` so a stray ``KeyboardInterrupt`` is not
+    left queued in an unrelated thread.
     """
-    ctypes.pythonapi.PyThreadState_SetAsyncExc(
+    modified = ctypes.pythonapi.PyThreadState_SetAsyncExc(
         ctypes.c_ulong(thread_id),
         ctypes.py_object(KeyboardInterrupt),
     )
+    if modified > 1:
+        # Revert: clear the pending async exception we just set.
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(
+            ctypes.c_ulong(thread_id),
+            ctypes.c_void_p(0),
+        )
 
 
 class ConsoleEnvironment:
@@ -584,10 +597,31 @@ class ConsoleEnvironment:
                 _signal.signal(_signal.SIGALRM, old_handler)  # type: ignore[attr-defined]
         else:
             # Windows / non-main-thread path — daemon thread fires KI.
+            #
+            # ``timer.cancel()`` only stops a Timer whose target has not yet
+            # *begun* running; once ``_fire`` has been entered, cancel() is a
+            # no-op and the async ``KeyboardInterrupt`` would still be queued —
+            # possibly landing AFTER ``yield`` returns and leaking into
+            # unrelated host code.  Guard delivery with a lock + done flag:
+            # the ``finally`` marks completion under the lock before cancelling,
+            # and ``_fire`` re-checks the flag under the same lock and skips the
+            # injection if the protected block already finished.  Because the
+            # async exception is raised while the lock is held, it cannot be
+            # delivered until ``_fire`` returns and releases the lock, so a
+            # late-but-still-pre-completion fire is fully serialized against the
+            # ``finally``.
             caller_id = threading.get_ident()
+            delivery_lock = threading.Lock()
+            state = {"completed": False, "fired": False}
 
             def _fire() -> None:
-                _raise_keyboard_interrupt_in_thread(caller_id)
+                with delivery_lock:
+                    if state["completed"]:
+                        # The guarded block already exited; do not inject a
+                        # stray interrupt into whatever the caller does next.
+                        return
+                    state["fired"] = True
+                    _raise_keyboard_interrupt_in_thread(caller_id)
 
             timer = threading.Timer(timeout, _fire)
             timer.daemon = True
@@ -596,6 +630,34 @@ class ConsoleEnvironment:
                 yield
             finally:
                 timer.cancel()
+                # Close the delivery race deterministically. Acquiring the lock
+                # serializes against ``_fire``: once we hold it, ``_fire`` has
+                # either already injected the KeyboardInterrupt (state["fired"]
+                # is True) or is now permanently disarmed by state["completed"].
+                fired = False
+                while True:
+                    try:
+                        with delivery_lock:
+                            state["completed"] = True
+                            fired = state["fired"]
+                        break
+                    except KeyboardInterrupt:
+                        # A timeout KI surfaced while we were finalizing. Absorb
+                        # it here so it cannot leak past the context boundary,
+                        # then retry the bookkeeping that the interrupt aborted.
+                        fired = True
+                if fired:
+                    # Drain any KI that ``_fire`` injected but that has not yet
+                    # surfaced, then re-raise the timeout deterministically as a
+                    # TimeoutError so it never escapes as a bare interrupt.
+                    try:
+                        # A no-op statement gives a pending async exception a
+                        # bytecode boundary to surface at, under our control.
+                        for _ in range(1):
+                            pass
+                    except KeyboardInterrupt:
+                        pass
+                    raise TimeoutError(f"Execution exceeded {timeout} s time limit")
 
     def execute(self, source: str | None) -> tuple[str, str]:
         """Execute a block of source code, capturing stdout and stderr.
