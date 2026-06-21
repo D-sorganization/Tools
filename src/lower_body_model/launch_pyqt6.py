@@ -235,7 +235,7 @@ class ControlPanel(ThemedWindowMixin, QMainWindow):
                 return
             if self.sim.hip_rotation_target is not None:
                 self.sim.apply_hip_rotation_target(0.0)
-                self.sim.qpos_target = self.sim.data.qpos.copy()
+                self.sim.set_target_from_current()
 
             self.timeline_slider.blockSignals(True)
             self.timeline_slider.setMaximum(0)

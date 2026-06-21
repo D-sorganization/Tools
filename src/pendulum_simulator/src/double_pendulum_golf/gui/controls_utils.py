@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import importlib.util
 
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QHBoxLayout,
     QLabel,
@@ -129,7 +130,14 @@ PENDULUM_DARK_STYLE = f"""
 
 
 class LabeledInput(QWidget):
-    """A label + line-edit pair used throughout the control panel."""
+    """A label + line-edit pair used throughout the control panel.
+
+    Exposes a ``value_changed(str)`` signal so callers can react to edits
+    without reaching into the private ``.edit`` line-edit (LOD: callers
+    connect to the control's own signal, not its internals).
+    """
+
+    value_changed = pyqtSignal(str)
 
     def __init__(
         self,
@@ -157,6 +165,10 @@ class LabeledInput(QWidget):
         if tooltip:
             self.edit.setToolTip(tooltip)
         layout.addWidget(self.edit)
+
+        # Re-emit edits through the control's own signal so callers do not
+        # reach into the private line-edit (LOD).
+        self.edit.textChanged.connect(self.value_changed)
 
     @property
     def value(self) -> str:

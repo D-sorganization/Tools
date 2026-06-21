@@ -171,9 +171,9 @@ class ControlsWidget(ControlsWidgetBase):
         main_layout.addStretch()
 
         # Wire torque preview
-        self.inp_tau_shoulder.edit.textChanged.connect(self._update_torque_preview)
-        self.inp_tau_wrist.edit.textChanged.connect(self._update_torque_preview)
-        self.inp_tend.edit.textChanged.connect(self._update_torque_preview)
+        self.inp_tau_shoulder.value_changed.connect(self._update_torque_preview)
+        self.inp_tau_wrist.value_changed.connect(self._update_torque_preview)
+        self.inp_tend.value_changed.connect(self._update_torque_preview)
         self.chk_clamp.toggled.connect(lambda _: self._update_torque_preview())
 
     def _build_extra_hidden_widgets(self) -> None:
@@ -469,8 +469,8 @@ class ControlsWidget(ControlsWidgetBase):
         )
         layout.addWidget(self.inp_azimuth)
 
-        self.inp_tilt.edit.textChanged.connect(self._on_tilt_edited)
-        self.inp_azimuth.edit.textChanged.connect(self._on_azimuth_edited)
+        self.inp_tilt.value_changed.connect(self._on_tilt_edited)
+        self.inp_azimuth.value_changed.connect(self._on_azimuth_edited)
         return box
 
     def _on_tilt_edited(self, text: str) -> None:

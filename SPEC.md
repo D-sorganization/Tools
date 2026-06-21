@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.1                                      |
-| **Spec Version**        | 1.5.1                                      |
+| **Current Version**     | 1.5.2                                      |
+| **Spec Version**        | 1.5.2                                      |
 | **Last Spec Update**    | 2026-06-21                                 |
 
 ## 2. Purpose & Mission
@@ -54,6 +54,33 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   sites in `modbus_client.py` (`ModbusException` is a subclass of `Exception`),
   collapsed to a documented single catch-all preserving reconnect behavior
   (#3745).
+
+### 2026-06-21 GUI/error-handling P2 cleanup (pendulum, sidekick REPL, PSA, lower-body, p1am)
+
+- The double/triple pendulum `simulation_panel._on_run` no longer catches
+  `(AssertionError, Exception)` when building params; it narrows to
+  `(ValueError, TypeError, KeyError)` so internal invariant `assert`s propagate
+  instead of being downgraded to a GUI warning.
+- `controls_utils.LabeledInput` exposes a `value_changed(str)` signal; the
+  double/triple pendulum control widgets connect to it instead of reaching into
+  the private `inp_x.edit.textChanged` line-edit (LOD).
+- `sidekick.ui.tools_sidebar.python_repl_tab.SidekickPythonReplWidget` drops its
+  duplicated `ValueError` registry/`set_variable` guards; the inner
+  `PythonReplWidget` is the single `TypeError`-raising validation boundary.
+- `sidekick.process_calculators.psa_package.psa_gui.ResultsPanel.update_results`
+  validates `results` once at the public boundary with `ValueError`; the private
+  `_update_*` helpers no longer re-check (under `-O` a `None` previously produced
+  an opaque `AttributeError`).
+- `sidekick.calculators.thermo.steam_engine` derives its `BUCK_A/B/C/D`
+  coefficients from the canonical `process_calculators.constants`
+  `BUCK_ABOVE_FREEZING_*` values instead of re-stating the magic numbers.
+- `lower_body_model.simulator.LowerBodySimulator` gains a `current_qpos`
+  property and `set_target_from_current()` accessor; `launch_pyqt6` uses them
+  instead of the `self.sim.data.qpos.copy()` train-wreck (LOD).
+- `tests/p1am_control_system/test_backend_security.py` narrows its first-party
+  backend import guard to `ModuleNotFoundError` so a `NameError`/`SyntaxError`
+  in the backend fails loudly instead of silently skipping the whole
+  auth/zip-bomb security suite (#3745).
 
 ### 2026-06-21 Core P2 cleanup (plugin manager, robotics, safe-eval, contracts)
 

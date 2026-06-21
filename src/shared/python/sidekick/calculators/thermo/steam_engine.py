@@ -28,6 +28,18 @@ from shared.python.sidekick.process_calculators.constants import (
     ANTOINE_WATER_C as ANTOINE_C_CELSIUS,
 )
 from shared.python.sidekick.process_calculators.constants import (
+    BUCK_ABOVE_FREEZING_A as _BUCK_ABOVE_FREEZING_A_KPA,
+)
+from shared.python.sidekick.process_calculators.constants import (
+    BUCK_ABOVE_FREEZING_B as _BUCK_ABOVE_FREEZING_B,
+)
+from shared.python.sidekick.process_calculators.constants import (
+    BUCK_ABOVE_FREEZING_C as _BUCK_ABOVE_FREEZING_C,
+)
+from shared.python.sidekick.process_calculators.constants import (
+    BUCK_ABOVE_FREEZING_D as _BUCK_ABOVE_FREEZING_D,
+)
+from shared.python.sidekick.process_calculators.constants import (
     MMHG_TO_PA as _MMHG_TO_PA,
 )
 from shared.python.sidekick.process_calculators.water_vapor_pressure import (
@@ -165,12 +177,6 @@ NEWTON_RAPHSON_STEP_SIZE: float = 0.1  # [°C] Step size for numerical derivativ
 # For saturation calculations, use different C value when temperature is in Kelvin
 ANTOINE_C_KELVIN: float = 39.724  # [K] Antoine C constant for temp in Kelvin
 
-# Buck equation constants for water vapor pressure (improved accuracy)
-BUCK_A: float = 6.1121  # [mbar] Buck equation constant A (or 0.61121 kPa)
-BUCK_B: float = 18.678  # [dimensionless] Buck equation constant B
-BUCK_C: float = 234.5  # [°C] Buck equation constant C
-BUCK_D: float = 257.14  # [°C] Buck equation constant D
-
 # Unit conversion constants.
 # Reference the shared full-precision constant instead of a local 133.322
 # literal so this module matches the rest of the library (issue #3676).
@@ -181,6 +187,15 @@ PASCAL_TO_MMHG_FACTOR: float = (
 MBAR_TO_KPA_FACTOR: float = (
     10.0  # [mbar/kPa] Conversion factor from mbar to kPa (1 mbar = 0.1 kPa)
 )
+
+# Buck equation constants for water vapor pressure (improved accuracy).
+# DRY: derived from the canonical above-freezing Buck coefficients in
+# process_calculators.constants instead of re-stating the magic numbers here.
+# The canonical A is in kPa; this module's public API exposes it in mbar.
+BUCK_A: float = _BUCK_ABOVE_FREEZING_A_KPA * MBAR_TO_KPA_FACTOR  # [mbar]
+BUCK_B: float = _BUCK_ABOVE_FREEZING_B  # [dimensionless]
+BUCK_C: float = _BUCK_ABOVE_FREEZING_C  # [°C]
+BUCK_D: float = _BUCK_ABOVE_FREEZING_D  # [°C]
 KPA_TO_PA_FACTOR: float = 1000.0  # [Pa/kPa] Conversion factor from kPa to Pascal
 KELVIN_TO_CELSIUS_OFFSET: float = (
     273.15  # [K] Temperature offset for Kelvin to Celsius conversion

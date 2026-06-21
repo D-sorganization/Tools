@@ -51,6 +51,23 @@ class LowerBodySimulator:
 
         mujoco.mj_forward(self.model, self.data)
 
+    @property
+    def current_qpos(self) -> np.ndarray:
+        """Return a copy of the simulator's current generalized positions.
+
+        Lets callers read the live ``qpos`` buffer without reaching into the
+        MuJoCo ``data`` struct (LOD).
+        """
+        return self.data.qpos.copy()
+
+    def set_target_from_current(self) -> np.ndarray:
+        """Snapshot the current pose as the stability/hold target.
+
+        Sets :attr:`qpos_target` to a copy of the live positions and returns it.
+        """
+        self.qpos_target = self.data.qpos.copy()
+        return self.qpos_target
+
     def _current_hip_rotation_target_diagnostics(
         self, time_sec: float
     ) -> dict[str, float] | None:
