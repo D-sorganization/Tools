@@ -52,6 +52,7 @@ from models import (
     TagLog,
 )
 from mpc import simulate_pid_vs_mpc
+from pid_tuning import identify_fopdt_and_tune
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
 from poll_runtime import _connect_once, _poll_once
@@ -956,85 +957,15 @@ async def stop_pid_tuning(pid_index: int) -> dict[str, Any]:
         )
 
     session = control_context.tuning_sessions.pop(pid_index)
-    history = session["history"]
-
-    if not history or not session["step_triggered"]:
-        return {
-            "status": "warning",
-            "message": "Tuning stopped, but no step change was executed or history is empty.",
-            "parameters": {"kp": 0.0, "tau": 0.0, "theta": 0.0},
-            "recommended_pid": {"kp": 0.0, "ki": 0.0, "kd": 0.0},
-        }
-
-    delta_cv = session["final_cv"] - session["initial_cv"]
-    if abs(delta_cv) < 0.01:
-        delta_cv = 1.0
-
-    n_samples = len(history)
-    last_samples = history[max(0, n_samples - 10) :]
-    final_pv = sum(h[2] for h in last_samples) / len(last_samples)
-    initial_pv = session["initial_pv"]
-    delta_pv = final_pv - initial_pv
-
-    kp_ident = delta_pv / delta_cv
-
-    threshold_10 = initial_pv + 0.10 * delta_pv
-    threshold_63 = initial_pv + 0.632 * delta_pv
-
-    t_step = session["step_time"]
-    t_10 = None
-    t_63 = None
-
-    for time_offset, _, pv_val in history:
-        if time_offset < t_step:
-            continue
-        if t_10 is None:
-            if (delta_pv > 0 and pv_val >= threshold_10) or (
-                delta_pv < 0 and pv_val <= threshold_10
-            ):
-                t_10 = time_offset
-        if t_63 is None:
-            if (delta_pv > 0 and pv_val >= threshold_63) or (
-                delta_pv < 0 and pv_val <= threshold_63
-            ):
-                t_63 = time_offset
-
-    if t_10 is None:
-        t_10 = t_step + 1.0
-    if t_63 is None:
-        t_63 = t_10 + 2.0
-
-    theta_ident = max(0.1, t_10 - t_step)
-    tau_ident = max(0.1, t_63 - t_10)
-
-    ratio = theta_ident / tau_ident
-    if abs(kp_ident) > 0.001:
-        kc = (1.0 / kp_ident) * (tau_ident / theta_ident) * (1.333 + 0.25 * ratio)
-        ti = theta_ident * (32.0 + 6.0 * ratio) / (13.0 + 8.0 * ratio)
-        td = theta_ident * 4.0 / (11.0 + 2.0 * ratio)
-
-        kp_recom = round(kc, 3)
-        ki_recom = round(kc / ti, 3)
-        kd_recom = round(kc * td, 3)
-    else:
-        kp_recom = 0.0
-        ki_recom = 0.0
-        kd_recom = 0.0
-
-    return {
-        "status": "success",
-        "message": "Tuning parameters identified successfully.",
-        "parameters": {
-            "kp": round(kp_ident, 3),
-            "tau": round(tau_ident, 2),
-            "theta": round(theta_ident, 2),
-        },
-        "recommended_pid": {
-            "kp": max(0.0, kp_recom),
-            "ki": max(0.0, ki_recom),
-            "kd": max(0.0, kd_recom),
-        },
-    }
+    result = identify_fopdt_and_tune(
+        session["history"],
+        step_triggered=session["step_triggered"],
+        initial_pv=session["initial_pv"],
+        initial_cv=session["initial_cv"],
+        final_cv=session["final_cv"],
+        step_time=session["step_time"],
+    )
+    return cast(dict[str, Any], result.as_response())
 
 
 class MPCSimulatePayload(BaseModel):
