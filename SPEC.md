@@ -47,6 +47,16 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   is reverted. Added regression coverage for restricted-import /
   restricted-builtins enforcement and for the safe-eval Subscript / Slice /
   IfExp / BoolOp / Compare node types (#3702, #3700, #3704).
+- `rotation_converter.modern_robotics` legacy IK/trajectory functions
+  (`IKinSpace`, `JointTrajectory`, `CartesianTrajectory`) now enforce explicit
+  shape, finite, `N >= 2`, and positive-tolerance/`Tf` preconditions via
+  `require()`/`require_finite()`, matching the curated functions instead of
+  relying on a single `is not None` check; input validation across the module
+  uses `-O`-safe `require()` raises rather than stripped `assert` statements,
+  and the previously-untested public surface (`RotInv`, `Adjoint`,
+  `ScrewToAxis`, `ProjectToSO3/SE3`, `DistanceToSO3/SE3`, `TestIfSO3/SE3`,
+  `Cubic/QuinticTimeScaling`, `JointTrajectory`, `CartesianTrajectory`,
+  `IKinSpace`) gains regression coverage (#3687, #3688, #3689).
 - Release metadata now publishes Tools v1.5.0 across `VERSION` and
   `pyproject.toml`, and the generated changelog plus release PR body retain
   reference-only issue wording so historical release notes do not re-close

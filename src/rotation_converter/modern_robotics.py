@@ -920,6 +920,18 @@ def IKinSpace(Slist, M, T, thetalist0, eomg, ev):
         (np.array([ 1.57073783,  2.99966384,  3.1415342 ]), True)
     """
     require(Slist is not None, "Slist must be provided", Slist)
+    M = np.array(M)
+    T = np.array(T)
+    Slist = np.array(Slist)
+    require(M.shape == (4, 4), "M must be 4x4", M.shape)
+    require_finite(M, "M")
+    require(T.shape == (4, 4), "T_desired must be 4x4", T.shape)
+    require_finite(T, "T_desired")
+    require(Slist.ndim == 2 and Slist.shape[0] == 6, "Slist must be 6×n", Slist.shape)
+    require_finite(Slist, "Slist")
+    require_finite(thetalist0, "thetalist0")
+    require(eomg > 0, "angular tolerance must be positive", eomg)
+    require(ev > 0, "linear tolerance must be positive", ev)
     thetalist = np.array(thetalist0).copy()
     i = 0
     maxiterations = 20
@@ -1685,6 +1697,18 @@ def JointTrajectory(thetastart, thetaend, Tf, N, method):
                   [   1.2,   0.5,    0.6,    1.1,     2,      2,    0.9, 1]])
     """
     require(thetastart is not None, "thetastart must be provided", thetastart)
+    thetastart = np.array(thetastart)
+    thetaend = np.array(thetaend)
+    require(thetastart.ndim == 1, "thetastart must be a 1-D vector", thetastart.shape)
+    require(
+        thetaend.shape == thetastart.shape,
+        "thetaend must match thetastart shape",
+        thetaend.shape,
+    )
+    require_finite(thetastart, "thetastart")
+    require_finite(thetaend, "thetaend")
+    require(Tf > 0, "Tf must be positive", Tf)
+    require(int(N) >= 2, "N must be >= 2", N)
     N = int(N)
     timegap = Tf / (N - 1.0)
     traj = np.zeros((len(thetastart), N))
@@ -1748,6 +1772,14 @@ def CartesianTrajectory(Xstart, Xend, Tf, N, method):
                    [0, 0, 0,   1]])]
     """
     require(Xstart is not None, "Xstart must be provided", Xstart)
+    Xstart = np.array(Xstart)
+    Xend = np.array(Xend)
+    require(Xstart.shape == (4, 4), "Xstart must be 4x4", Xstart.shape)
+    require(Xend.shape == (4, 4), "Xend must be 4x4", Xend.shape)
+    require_finite(Xstart, "Xstart")
+    require_finite(Xend, "Xend")
+    require(Tf > 0, "Tf must be positive", Tf)
+    require(int(N) >= 2, "N must be >= 2", N)
     N = int(N)
     timegap = Tf / (N - 1.0)
     traj = [[None]] * N
