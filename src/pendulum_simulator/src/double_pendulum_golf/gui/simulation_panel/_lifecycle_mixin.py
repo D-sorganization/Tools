@@ -71,7 +71,7 @@ class _SimulationLifecycleMixin:
 
         try:
             params = self._params_builder(p)
-        except (AssertionError, Exception) as e:
+        except (ValueError, TypeError, KeyError) as e:
             logger.warning("Parameter build failed: %s", e, exc_info=True)
             get_tracker().record_exception("simulation", e, context="Parameter build")
             QMessageBox.warning(self, "Parameter Error", str(e))  # type: ignore[arg-type]

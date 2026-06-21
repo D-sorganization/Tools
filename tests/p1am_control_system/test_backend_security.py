@@ -37,7 +37,11 @@ try:
         PlantUnit,
         TagDefinitionDb,
     )
-except Exception as exc:  # pragma: no cover - environment-dependent
+except ModuleNotFoundError as exc:  # pragma: no cover - environment-dependent
+    # Only a genuinely missing module skips this suite. A NameError /
+    # SyntaxError / ImportError inside main.py or models.py is a real defect
+    # in the security-critical backend and must fail loudly, not silently
+    # skip the entire auth/zip-bomb suite (issue #3745).
     pytest.skip(
         f"P1AM backend not importable in this environment: {exc}",
         allow_module_level=True,

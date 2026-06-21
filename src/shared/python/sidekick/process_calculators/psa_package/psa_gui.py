@@ -389,9 +389,11 @@ class ResultsPanel(QWidget):  # noqa: F811, F821
         self._update_compositions_table(results)
 
     def _update_key_metrics(self, results: PSAResults) -> None:  # noqa: F821
-        """Update key performance metric labels."""
-        if results is None:
-            raise ValueError("results must be provided")
+        """Update key performance metric labels.
+
+        ``results`` is validated once by :meth:`update_results`; this private
+        helper trusts that boundary check.
+        """
         self.h2_recovery_label.setText(f"{results.h2_recovery_pct:.2f}%")
         self.h2_purity_label.setText(f"{results.h2_purity_pct:.5f}%")
         self.net_product_label.setText(f"{results.total_net_product_scfm:.2f} SCFM")
@@ -399,9 +401,10 @@ class ResultsPanel(QWidget):  # noqa: F811, F821
         self.mass_balance_label.setText(f"{results.mass_balance_error:.2e}")
 
     def _update_safety_metrics(self, results: PSAResults) -> None:  # noqa: F821
-        """Update safety/flammability metric labels and styling."""
-        if results is None:
-            raise ValueError("results must be provided")
+        """Update safety/flammability metric labels and styling.
+
+        ``results`` is validated once by :meth:`update_results`.
+        """
         self.s2_tail_h2_label.setText(f"{results.s2_tail_h2_pct:.2f}%")
         self.s2_tail_o2_label.setText(f"{results.s2_tail_o2_pct:.2f}%")
 
@@ -422,9 +425,10 @@ class ResultsPanel(QWidget):  # noqa: F811, F821
             )
 
     def _update_flows_table(self, results: PSAResults) -> None:  # noqa: F821
-        """Populate the flows table with component flow data and totals."""
-        if results is None:
-            raise ValueError("results must be provided")
+        """Populate the flows table with component flow data and totals.
+
+        ``results`` is validated once by :meth:`update_results`.
+        """
         n_comp = len(results.component_names)
         self.flows_table.setRowCount(n_comp + 1)
 
@@ -470,9 +474,10 @@ class ResultsPanel(QWidget):  # noqa: F811, F821
         self.flows_table.resizeColumnsToContents()
 
     def _update_compositions_table(self, results: PSAResults) -> None:  # noqa: F821
-        """Populate the compositions table with component percentage data."""
-        if results is None:
-            raise ValueError("results must be provided")
+        """Populate the compositions table with component percentage data.
+
+        ``results`` is validated once by :meth:`update_results`.
+        """
         n_comp = len(results.component_names)
         self.comp_table.setRowCount(n_comp + 1)
 
