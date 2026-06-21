@@ -115,6 +115,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   registration now restore the accessor immediately after module import, so
   xdist workers cannot leak an isolated empty registry into later registration
   assertions.
+- Obsidian shared-client tests now clear both the default `ObsidianConfig`
+  vault path and the `OBSIDIAN_VAULT_PATH` environment fallback in their reset
+  helper, keeping the "not configured" RuntimeError contract independent of
+  earlier env-var coverage tests.
 
 ### 2026-06-21 Core P2 cleanup (plugin manager, robotics, safe-eval, contracts)
 
