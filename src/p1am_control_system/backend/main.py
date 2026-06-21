@@ -110,8 +110,19 @@ class ConnectionManager:
 
     async def connect(self, websocket: WebSocket) -> None:
         await websocket.accept()
-        self.active_connections.append(websocket)
+        self.register_accepted(websocket)
         logger.info("New WebSocket client connected.")
+
+    def register_accepted(self, websocket: WebSocket) -> None:
+        """Register an already-accepted socket without re-accepting it.
+
+        Used by the frame-authenticated path, which must ``accept()`` before it
+        can read the credential frame and therefore cannot call ``connect()``.
+        Routing the registration through the manager keeps connection
+        bookkeeping in one place instead of reaching into
+        ``active_connections`` directly.
+        """
+        self.active_connections.append(websocket)
 
     def disconnect(self, websocket: WebSocket) -> None:
         if websocket in self.active_connections:
@@ -887,6 +898,18 @@ async def start_pid_tuning(pid_index: int) -> dict[str, str]:
             status_code=400, detail="PID index must be between 0 and 3."
         )
 
+    # Reject a double-start rather than silently overwriting an in-progress
+    # session (a double-click or race would otherwise wipe the captured initial
+    # PV/CV and step history). The operator must stop the loop first.
+    if pid_index in control_context.tuning_sessions:
+        raise HTTPException(
+            status_code=409,
+            detail=(
+                f"Tuning session already active for PID loop {pid_index}; "
+                "stop it before starting a new one."
+            ),
+        )
+
     pv_tag = control_context.active_config.pids[pid_index].pv_tag
     cv_tag = control_context.active_config.pids[pid_index].cv_tag
     current_pv = _latest_tag_or_http_error(pv_tag, "PV", pid_index)
@@ -1058,7 +1081,7 @@ async def stream_websocket(websocket: WebSocket) -> None:
             await websocket.close(code=1008)
             return
         # Authenticated via first frame; register without re-accepting.
-        ws_manager.active_connections.append(websocket)
+        ws_manager.register_accepted(websocket)
         logger.info("New WebSocket client connected (authenticated via frame).")
     else:
         await ws_manager.connect(websocket)

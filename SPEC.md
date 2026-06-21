@@ -26,15 +26,34 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.0                                      |
-| **Spec Version**        | 1.5.0                                      |
-| **Last Spec Update**    | 2026-06-20                                 |
+| **Current Version**     | 1.5.1                                      |
+| **Spec Version**        | 1.5.1                                      |
+| **Last Spec Update**    | 2026-06-21                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-06-21 REST API & P1AM validation hardening
+
+- `p1am_control_system.backend.models.PIDConfig` now validates `pv_tag`/`cv_tag`
+  against the firmware tag contract (`hardware.tag_index`): a well-formed
+  in-range `TAG_<n>` or the `kUnmappedTag` sentinel (`TAG_255`) is accepted; an
+  empty, malformed, or out-of-range tag is rejected at construction so an
+  invalid loop config can no longer persist and later fault a tuning endpoint
+  with a KeyError-500.
+- `start_pid_tuning` (`POST /api/pid/{i}/tuning/start`) now returns HTTP 409
+  when a tuning session is already active for that loop instead of silently
+  overwriting (and wiping) an in-progress session on a double-click/race.
+- `ConnectionManager` gains a `register_accepted` method; the frame-authenticated
+  WebSocket path uses it instead of reaching into `active_connections` directly,
+  keeping connection bookkeeping in one place.
+- The dead `except (ModbusException, Exception)` member is removed across all 8
+  sites in `modbus_client.py` (`ModbusException` is a subclass of `Exception`),
+  collapsed to a documented single catch-all preserving reconnect behavior
+  (#3745).
 
 ### 2026-06-21 Core P2 cleanup (plugin manager, robotics, safe-eval, contracts)
 
