@@ -187,6 +187,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   paths through the route dispatcher for both explicit mass and density inputs,
   proving mesh volume, center of mass, and inertia responses stay populated
   beyond early validation guards (#3669).
+- P1AM firmware now explicitly configures the P1-04THM thermocouple module for
+  type-K Celsius operation after `P1.init()`, emits readback diagnostics for
+  the expected configuration bytes, and documents bench-verification steps so
+  high-temperature channels no longer depend on implicit Fahrenheit conversion
+  or library defaults (#3608).
 - P1AM backend safety writes now coerce latest tag lookups through the endpoint
   float contract before returning PID process values, keeping delta mypy checks
   strict while preserving unmapped-tag rejection behavior (#3809).

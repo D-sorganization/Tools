@@ -9,21 +9,71 @@
 // in setup() after Ethernet.begin. The probe sketch firmware_probe.ino
 // validates this pattern works without per-call SPI transactions.
 
-// Note: facts-engineering/P1AM#31 documents an SPI bus-sharing issue between
-// the P1AM library and Ethernet. The proven mitigation is to (a) call P1.init
-// FIRST (before Ethernet.begin), and (b) apply the SPI bus reset workaround
-// in setup() after Ethernet.begin. The probe sketch firmware_probe.ino
-// validates this pattern works without per-call SPI transactions.
+namespace {
+
+const int kThmConfigBytes = 20;
+
+// P1-04THM: enable all 4 channels, low-side burnout, Celsius, type-K ranges.
+// Layout from FACTS P1-04THM docs:
+//   0x4003 = ch1-4 enabled
+//   0x6001 = low-side burnout, degrees C
+//   0x2n01 = channel n, type K
+const char kP104ThmTypeKCelsiusConfig[kThmConfigBytes] = {
+    0x40, 0x03, 0x60, 0x01, 0x21, 0x01, 0x22, 0x01, 0x23, 0x01,
+    0x24, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
+void PrintHexByte(char value) {
+  uint8_t byte = static_cast<uint8_t>(value);
+  if (byte < 0x10) {
+    Serial.print('0');
+  }
+  Serial.print(byte, HEX);
+}
+
+void PrintThmConfig(const char config[]) {
+  for (int i = 0; i < kThmConfigBytes; ++i) {
+    if (i > 0) {
+      Serial.print(' ');
+    }
+    PrintHexByte(config[i]);
+  }
+  Serial.println();
+}
+
+bool ConfigMatches(const char lhs[], const char rhs[]) {
+  for (int i = 0; i < kThmConfigBytes; ++i) {
+    if (lhs[i] != rhs[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
+}  // namespace
 
 P1AMHardware::P1AMHardware() {}
 
 void P1AMHardware::Begin() {
-  // P1.init() auto-configures the P1-04THM with the library default, which
-  // reads a real, stable thermocouple value — but in Fahrenheit. We deliberately
-  // do NOT call P1.configureModule() here: custom config arrays put the channel
-  // into a bad state (dead-flat reading) on this module, so we keep the proven
-  // default and convert F->C in software (see ReadThermocouple).
+  // P1.init() auto-configures the P1-04THM with the library default
+  // (type-J/Fahrenheit). Override it before Ethernet init so thermocouple
+  // channels report type-K values directly in degrees C.
   P1.init();
+  Serial.println(F("[hw] configuring P1-04THM: type K, Celsius"));
+  bool thm_configured = P1.configureModule(kP104ThmTypeKCelsiusConfig, kSlotThm);
+  Serial.print(F("[hw] P1-04THM configureModule="));
+  Serial.println(thm_configured ? F("ok") : F("failed"));
+
+  char thm_readback[kThmConfigBytes] = {};
+  P1.readModuleConfig(thm_readback, kSlotThm);
+  Serial.print(F("[hw] P1-04THM config readback: "));
+  PrintThmConfig(thm_readback);
+  if (ConfigMatches(kP104ThmTypeKCelsiusConfig, thm_readback)) {
+    Serial.println(F("[hw] P1-04THM config verified: type K, Celsius"));
+  } else {
+    Serial.println(F("[hw] WARNING: P1-04THM config readback mismatch"));
+  }
+
   pinMode(kPinInhibit, OUTPUT);
   digitalWrite(kPinInhibit, LOW);
   // Heater relay control output starts de-energized (LOW = heater OFF).
@@ -37,11 +87,9 @@ float P1AMHardware::ReadThermocouple(int channel) {
   if (channel < 0 || channel >= 4) {
     return 0.0f;
   }
-  // The P1-04THM reports in Fahrenheit under the library default config.
-  // Convert to Celsius here so the broker/backend speak one unit (deg C).
-  // P1AM library channels are 1-indexed; broker uses 0-indexed.
-  const float fahrenheit = P1.readTemperature(kSlotThm, channel + 1);
-  return (fahrenheit - 32.0f) * 5.0f / 9.0f;
+  // The P1-04THM is configured in Begin() for Celsius. P1AM library channels
+  // are 1-indexed; broker uses 0-indexed.
+  return P1.readTemperature(kSlotThm, channel + 1);
 }
 
 float P1AMHardware::ReadAnalogInput(int channel) {
