@@ -123,7 +123,39 @@ class KalmanFilterConfig:
     # Measurement dimension
     measurement_dim: int = 1
 
+    # Names accepted by ``__init__`` beyond the class-level field defaults.
+    # ``obs_dim`` is a backward-compatible alias handled explicitly below.
+    _ALLOWED_KWARGS: frozenset[str] = frozenset(
+        {
+            "state_dim",
+            "measurement_dim",
+            "obs_dim",
+            "process_noise",
+            "measurement_noise",
+            "initial_state",
+            "initial_covariance",
+            "state_transition",
+            "measurement_matrix",
+            "control_matrix",
+            "filter_type",
+            "ukf_alpha",
+            "ukf_beta",
+            "ukf_kappa",
+        }
+    )
+
     def __init__(self, **kwargs: Any) -> None:
+        # Reject typo'd / unknown configuration keys instead of silently
+        # attaching them as dead attributes (e.g. ``meas_noise=0.1`` would
+        # never reach ``measurement_noise``). Issue #3745.
+        unknown = set(kwargs) - self._ALLOWED_KWARGS
+        if unknown:
+            allowed = ", ".join(sorted(self._ALLOWED_KWARGS))
+            raise ValueError(
+                f"Unknown KalmanFilterConfig argument(s): "
+                f"{', '.join(sorted(unknown))}. Allowed: {allowed}."
+            )
+
         if "obs_dim" in kwargs:
             self.measurement_dim = kwargs.pop("obs_dim")
 
@@ -592,8 +624,10 @@ class ExtendedKalmanFilter:
         obs_dim: int | None = None,
     ) -> None:
         """Initialize EKF."""
-        if state_dim is None:
-            raise ValueError("state_dim must be provided")
+        _require(
+            isinstance(state_dim, (int, np.integer)) and state_dim > 0,
+            f"state_dim must be a positive integer (got {state_dim!r})",
+        )
         self.n = state_dim
         self.m = measurement_dim or obs_dim or state_dim
         self.f = f
@@ -720,8 +754,10 @@ class UnscentedKalmanFilter:
         kappa: float = 0.0,
     ) -> None:
         """Initialize UKF."""
-        if state_dim is None:
-            raise ValueError("state_dim must be provided")
+        _require(
+            isinstance(state_dim, (int, np.integer)) and state_dim > 0,
+            f"state_dim must be a positive integer (got {state_dim!r})",
+        )
         self.n = state_dim
         self.m = measurement_dim
         self.f = f

@@ -102,6 +102,52 @@ class TestKalmanFilterConstruction:
             KalmanFilter(cfg)
 
 
+class TestKalmanFilterConfigKwargs:
+    """#3745 — KalmanFilterConfig rejects unknown/typo'd keyword arguments."""
+
+    def test_accepts_known_kwargs(self) -> None:
+        cfg = KalmanFilterConfig(state_dim=3, measurement_dim=2)
+        assert cfg.state_dim == 3
+        assert cfg.measurement_dim == 2
+
+    def test_obs_dim_alias_still_accepted(self) -> None:
+        cfg = KalmanFilterConfig(state_dim=2, obs_dim=4)
+        assert cfg.measurement_dim == 4
+
+    @pytest.mark.parametrize(
+        "bad_kwargs",
+        [
+            {"meas_noise": 0.1},
+            {"state_dimension": 3},
+            {"transition": np.eye(2)},
+        ],
+    )
+    def test_rejects_unknown_kwarg(self, bad_kwargs: dict) -> None:
+        with pytest.raises(ValueError, match="Unknown KalmanFilterConfig argument"):
+            KalmanFilterConfig(**bad_kwargs)
+
+
+class TestNonlinearFilterStateDimValidation:
+    """#3745 — EKF/UKF require a positive-integer state_dim."""
+
+    @pytest.mark.parametrize("bad", [0, -1])
+    def test_ekf_rejects_non_positive_state_dim(self, bad: int) -> None:
+        with pytest.raises(ValueError, match="state_dim must be a positive integer"):
+            ExtendedKalmanFilter(state_dim=bad)
+
+    @pytest.mark.parametrize("bad", [0, -3])
+    def test_ukf_rejects_non_positive_state_dim(self, bad: int) -> None:
+        with pytest.raises(ValueError, match="state_dim must be a positive integer"):
+            UnscentedKalmanFilter(
+                state_dim=bad,
+                measurement_dim=1,
+                f=lambda x, u: x,
+                h=lambda x: x,
+                Q=np.eye(1),
+                R=np.eye(1),
+            )
+
+
 class TestKalmanFilterRun:
     """Standard Kalman filter happy-path + validation (#3691, #3695)."""
 
