@@ -396,13 +396,12 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
         appearance: PanelAppearance | None = None,
         parent: QtWidgets.QWidget | None = None,
     ) -> None:
-        if registry is None:
-            raise ValueError("registry must be provided")
-        if set_variable is None:
-            raise ValueError("set_variable must be provided")
         super().__init__(parent)
         self.setObjectName(SIDEKICK_TERMINAL_OBJECT_NAME)
         self._terminal_theme = terminal_theme or theme.SidekickTerminalTheme.inherited()
+        # registry/set_variable are validated once by the inner PythonReplWidget,
+        # which raises TypeError for missing/wrong-typed arguments. Do not
+        # duplicate those guards here (single source of truth).
         self._repl = PythonReplWidget(
             registry=registry,
             set_variable=set_variable,

@@ -114,10 +114,10 @@ class ControlsWidgetTriple(ControlsWidgetBase):
         main_layout.addStretch()
 
         # Wire torque preview
-        self.inp_tau_shoulder.edit.textChanged.connect(self._update_torque_preview)
-        self.inp_tau_elbow.edit.textChanged.connect(self._update_torque_preview)
-        self.inp_tau_wrist.edit.textChanged.connect(self._update_torque_preview)
-        self.inp_tend.edit.textChanged.connect(self._update_torque_preview)
+        self.inp_tau_shoulder.value_changed.connect(self._update_torque_preview)
+        self.inp_tau_elbow.value_changed.connect(self._update_torque_preview)
+        self.inp_tau_wrist.value_changed.connect(self._update_torque_preview)
+        self.inp_tend.value_changed.connect(self._update_torque_preview)
 
     # ── Model-specific section builders ──────────────────────────────
 
