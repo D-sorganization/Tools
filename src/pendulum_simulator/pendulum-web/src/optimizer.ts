@@ -163,7 +163,19 @@ function nelderMead(
     simplex.push({ x: xi, cost: f(xi) });
   }
 
-  const sortSimplex = () => simplex.sort((a, b) => a.cost - b.cost);
+  // ⚡ Bolt Optimization: Replace Array.prototype.sort() with manual in-place insertion sort
+  // for this tiny, statically-sized array to eliminate callback invocation overhead in the hot loop.
+  const sortSimplex = () => {
+    for (let i = 1; i < simplex.length; i++) {
+      const key = simplex[i];
+      let j = i - 1;
+      while (j >= 0 && simplex[j].cost > key.cost) {
+        simplex[j + 1] = simplex[j];
+        j--;
+      }
+      simplex[j + 1] = key;
+    }
+  };
   sortSimplex();
 
   let iter = 0;
