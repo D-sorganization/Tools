@@ -26,15 +26,18 @@ def _get_global_registry_stub() -> ToolRegistry:
 
 import src.shared.python.ai.tool_registry as _tr_mod  # noqa: E402
 
+_saved_get_global_registry = _tr_mod.get_global_registry
 _tr_mod.get_global_registry = _get_global_registry_stub  # type: ignore[attr-defined]
-
-import src.shared.python.ai.integrations.obsidian as obsidian_module  # noqa: E402
-from src.shared.python.ai.integrations.obsidian import (  # noqa: E402
-    obsidian_list_notes,
-    obsidian_read_note,
-    obsidian_write_note,
-    set_obsidian_vault_path,
-)
+try:
+    import src.shared.python.ai.integrations.obsidian as obsidian_module  # noqa: E402
+    from src.shared.python.ai.integrations.obsidian import (  # noqa: E402
+        obsidian_list_notes,
+        obsidian_read_note,
+        obsidian_write_note,
+        set_obsidian_vault_path,
+    )
+finally:
+    _tr_mod.get_global_registry = _saved_get_global_registry  # type: ignore[attr-defined]
 
 # ---------------------------------------------------------------------------
 # Helpers

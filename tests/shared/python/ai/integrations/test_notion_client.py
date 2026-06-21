@@ -34,18 +34,21 @@ def _get_global_registry_stub() -> ToolRegistry:
 
 import src.shared.python.ai.tool_registry as _tr_mod  # noqa: E402
 
+_saved_get_global_registry = _tr_mod.get_global_registry
 _tr_mod.get_global_registry = _get_global_registry_stub  # type: ignore[attr-defined]
+try:
+    # Remove the cached notion module so our patched registry is used.
+    sys.modules.pop("src.shared.python.ai.integrations.notion", None)
 
-# Remove the cached notion module so our patched registry is used.
-sys.modules.pop("src.shared.python.ai.integrations.notion", None)
-
-import src.shared.python.ai.integrations.notion as _notion_mod  # noqa: E402
-from src.shared.python.ai.integrations.notion import (  # noqa: E402
-    _markdown_to_notion_blocks,
-    notion_push_report,
-    notion_read_knowledge_base,
-    set_notion_api_token,
-)
+    import src.shared.python.ai.integrations.notion as _notion_mod  # noqa: E402
+    from src.shared.python.ai.integrations.notion import (  # noqa: E402
+        _markdown_to_notion_blocks,
+        notion_push_report,
+        notion_read_knowledge_base,
+        set_notion_api_token,
+    )
+finally:
+    _tr_mod.get_global_registry = _saved_get_global_registry  # type: ignore[attr-defined]
 
 # ---------------------------------------------------------------------------
 # Helpers
