@@ -6,7 +6,7 @@
   "src/electrode_advisor/python/electrode_advisor/ui/pyqt6/main_window.py": 4386,
   "src/electrode_advisor/tests/test_electrode_advisor_contracts.py": 1562,
   "src/p1am_control_system/backend/main.py": 1376,
-  "src/rotation_converter/modern_robotics.py": 2101,
+  "src/rotation_converter/modern_robotics.py": 2130,
   "src/rotation_converter/ui/pyqt6/main_window.py": 1308,
   "src/shared/python/ai/gui/assistant_panel.py": 1334,
   "src/shared/python/signal_toolkit/widget.py": 1794,
