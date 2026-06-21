@@ -62,7 +62,7 @@ jobs:
           esac
   downstream-consumer-contracts:
     needs: pick-runner
-    runs-on: d-sorg-fleet
+    runs-on: [self-hosted, Linux, X64, d-sorg-fleet]
     timeout-minutes: 30
     strategy:
       fail-fast: false
@@ -90,7 +90,7 @@ jobs:
         with:
           repository: ${{ matrix.downstream.repo }}
           path: ${{ matrix.downstream.path }}
-          token: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          token: ${{ secrets.RUNNER_CHECK_TOKEN || github.token }}
 
       - name: Force-clean stale Python tool cache (NVMe runners)
         run: |
