@@ -87,24 +87,66 @@ class ConversionReport:
 
 # ── Cancellation token ────────────────────────────────────────────────────────
 
-_cancelled: bool = False
+
+class OperationCancelled(RuntimeError):
+    """Raised when an operation is stopped via its :class:`CancellationToken`."""
+
+
+class CancellationToken:
+    """Per-operation cancellation handle.
+
+    Each long-running operation is scoped to its own token, so cancelling one
+    operation never affects another running concurrently. Call :meth:`cancel`
+    (from any thread) to stop the bound operation at its next batch boundary.
+
+    Replaces the former process-global ``_cancelled`` flag (issue #3679), which
+    let concurrent conversions cancel each other.
+    """
+
+    __slots__ = ("_cancelled",)
+
+    def __init__(self) -> None:
+        self._cancelled = False
+
+    def cancel(self) -> None:
+        """Request cancellation of the operation bound to this token."""
+        self._cancelled = True
+        logger.info("Engine cancellation requested (token %#x)", id(self))
+
+    def is_cancelled(self) -> bool:
+        """Return whether cancellation has been requested for this token."""
+        return self._cancelled
+
+    def reset(self) -> None:
+        """Clear the cancellation request so the token can be reused."""
+        self._cancelled = False
+
+
+# Backwards-compatible process-global token used only by the legacy ``cancel()``
+# below; new code should pass an explicit per-operation ``CancellationToken``.
+_global_token = CancellationToken()
 
 
 def cancel() -> None:
-    """Signal that the current operation should be cancelled.
+    """Signal cancellation via the legacy process-global token.
 
-    The pandas fallback checks this flag at batch boundaries.  The native Rust
-    engine exposes a cancellation token in Phase 3.
+    Deprecated: prefer passing a per-operation :class:`CancellationToken` to
+    ``scan_batch``/``filter_export`` so concurrent operations do not cancel each
+    other.  This affects only operations that were *not* given an explicit token.
     """
-    global _cancelled  # noqa: PLW0603
-    _cancelled = True
-    logger.info("Engine cancellation requested")
+    _global_token.cancel()
 
 
-def _reset_cancel() -> None:
-    """Internal: reset the cancellation flag (called at the start of each op)."""
-    global _cancelled  # noqa: PLW0603
-    _cancelled = False
+def _resolve_token(token: CancellationToken | None) -> CancellationToken:
+    """Return the token an operation should observe.
+
+    An explicit per-operation token is used as-is; otherwise the global token is
+    reset so the operation starts un-cancelled regardless of a prior ``cancel()``.
+    """
+    if token is not None:
+        return token
+    _global_token.reset()
+    return _global_token
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -164,7 +206,7 @@ def inspect(path: str | os.PathLike[str]) -> SchemaInfo:
         ValueError: if path is empty or format is unsupported.
         FileNotFoundError: if the file does not exist.
     """
-    _reset_cancel()
+    _global_token.reset()
     p = _str_path(path)
     _require_path(p)
     fmt = _detect_format(p)
@@ -223,7 +265,7 @@ def preview(
         ValueError: for contract violations.
         FileNotFoundError: if the file does not exist.
     """
-    _reset_cancel()
+    _global_token.reset()
     p = _str_path(path)
     _require_path(p)
     fmt = _detect_format(p)
@@ -252,6 +294,7 @@ def convert(
     src: str | os.PathLike[str],
     dst: str | os.PathLike[str],
     format: str,  # noqa: A002
+    token: CancellationToken | None = None,
 ) -> ConversionReport:
     """Convert ``src`` to ``dst`` in the given ``format``.
 
@@ -259,12 +302,17 @@ def convert(
         - ``src`` must exist and be a supported format.
         - ``format`` must be ``"csv"`` or ``"parquet"``.
 
+    Args:
+        token: Optional per-operation cancellation handle (issue #3679).
+            Cancelling it before the write stops this conversion only.
+
     Raises:
         ValueError: for contract violations or unsupported format combinations.
         FileNotFoundError: if ``src`` does not exist.
         NotImplementedError: for format paths not yet implemented.
+        OperationCancelled: if ``token`` is cancelled before the output is written.
     """
-    _reset_cancel()
+    active_token = _resolve_token(token)
     p_src = _str_path(src)
     p_dst = _str_path(dst)
     _require_path(p_src)
@@ -289,6 +337,9 @@ def convert(
         df = pd.read_csv(p_src)
     else:
         df = pd.read_parquet(p_src)
+
+    if active_token.is_cancelled():
+        raise OperationCancelled("convert cancelled before write")
 
     Path(p_dst).parent.mkdir(parents=True, exist_ok=True)
 
@@ -315,12 +366,17 @@ def scan_batch(
     path: str | os.PathLike[str],
     batch_size: int,
     columns: Sequence[str] | None = None,
+    token: CancellationToken | None = None,
 ) -> Iterator[pd.DataFrame]:
     """Yield DataFrames of ``batch_size`` rows until the file is exhausted.
 
     Preconditions:
         - ``path`` must exist and be a supported format.
         - ``batch_size`` must be greater than zero.
+
+    Args:
+        token: Optional per-operation cancellation handle (issue #3679), checked
+            at each batch boundary. Cancelling it stops this scan only.
 
     Raises:
         ValueError: for contract violations.
@@ -329,7 +385,7 @@ def scan_batch(
     Yields:
         pd.DataFrame: successive batches of at most ``batch_size`` rows.
     """
-    _reset_cancel()
+    active_token = _resolve_token(token)
     p = _str_path(path)
     _require_path(p)
     fmt = _detect_format(p)
@@ -353,7 +409,7 @@ def scan_batch(
             p, chunksize=batch_size
         )
         for chunk in reader:
-            if _cancelled:
+            if active_token.is_cancelled():
                 logger.info("scan_batch cancelled after %d rows", len(chunk))
                 return
             yield _select_columns(chunk, columns).reset_index(drop=True)
@@ -361,7 +417,7 @@ def scan_batch(
         df = pd.read_parquet(p)
         df = _select_columns(df, columns)
         for start in range(0, len(df), batch_size):
-            if _cancelled:
+            if active_token.is_cancelled():
                 return
             yield df.iloc[start : start + batch_size].reset_index(drop=True)
 
@@ -374,6 +430,7 @@ def filter_export(
     dst: str | os.PathLike[str],
     predicate: str,
     columns: Sequence[str] | None = None,
+    token: CancellationToken | None = None,
 ) -> int:
     """Filter rows matching ``predicate`` (pandas query string) and export.
 
@@ -382,14 +439,19 @@ def filter_export(
         - ``dst`` must be a non-empty path with a supported format extension.
         - ``predicate`` must be a non-empty string.
 
+    Args:
+        token: Optional per-operation cancellation handle (issue #3679).
+            Cancelling it before the export writes stops this operation only.
+
     Returns:
         Number of rows written to ``dst``.
 
     Raises:
         ValueError: for contract violations.
         FileNotFoundError: if ``path`` does not exist.
+        OperationCancelled: if ``token`` is cancelled before the output is written.
     """
-    _reset_cancel()
+    active_token = _resolve_token(token)
     p = _str_path(path)
     p_dst = _str_path(dst)
     _require_path(p)
@@ -421,6 +483,9 @@ def filter_export(
 
     df = _select_columns(df, columns)
     filtered = df.query(predicate)
+
+    if active_token.is_cancelled():
+        raise OperationCancelled("filter_export cancelled before write")
 
     Path(p_dst).parent.mkdir(parents=True, exist_ok=True)
 
