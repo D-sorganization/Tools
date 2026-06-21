@@ -66,7 +66,7 @@ def temp_vault(tmp_path: Path) -> Generator[Path, None, None]:
     yield vault
 
     # Reset so other tests (or the module state) are not polluted.
-    _obsidian_mod._OBSIDIAN_VAULT_PATH = None  # noqa: SLF001
+    _obsidian_mod.get_default_config().vault_path = None
 
 
 # ---------------------------------------------------------------------------
@@ -207,14 +207,15 @@ def test_no_token_safety_concern(temp_vault: Path) -> None:
 def test_no_vault_configured_raises() -> None:
     """Without a vault path configured, all operations must raise RuntimeError."""
     # Ensure nothing is configured for this test (reset module state).
-    original = _obsidian_mod._OBSIDIAN_VAULT_PATH  # noqa: SLF001
-    _obsidian_mod._OBSIDIAN_VAULT_PATH = None  # noqa: SLF001
+    config = _obsidian_mod.get_default_config()
+    original = config.vault_path
+    config.vault_path = None
     original_env = os.environ.pop("OBSIDIAN_VAULT_PATH", None)
     try:
         with pytest.raises(RuntimeError, match="not configured"):
             obsidian_list_notes()
     finally:
-        _obsidian_mod._OBSIDIAN_VAULT_PATH = original  # noqa: SLF001
+        config.vault_path = original
         if original_env is not None:
             os.environ["OBSIDIAN_VAULT_PATH"] = original_env
 

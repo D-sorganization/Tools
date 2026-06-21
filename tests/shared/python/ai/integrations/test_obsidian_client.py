@@ -48,9 +48,7 @@ def _configure_vault(tmp_path: Path) -> None:
 
 def _reset_vault() -> None:
     """Clear the vault path so tests don't bleed state."""
-    obsidian_module._OBSIDIAN_VAULT_PATH = None
-    obsidian_module._OBSIDIAN_REST_API_URL = None
-    obsidian_module._OBSIDIAN_REST_API_KEY = None
+    obsidian_module.get_default_config().vault_path = None
 
 
 # ---------------------------------------------------------------------------

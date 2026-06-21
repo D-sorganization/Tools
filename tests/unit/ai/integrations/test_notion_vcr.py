@@ -18,7 +18,7 @@ from src.shared.python.ai.integrations import notion
 def notion_token_env(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     """Provide a fake Notion token so requests can be constructed."""
     monkeypatch.setenv("NOTION_API_KEY", "secret_fake_notion_token_for_replay")
-    monkeypatch.setattr(notion, "_NOTION_API_TOKEN", None)
+    notion.get_default_credentials().token = None
     yield
 
 

@@ -85,6 +85,30 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   in the backend fails loudly instead of silently skipping the whole
   auth/zip-bomb security suite (#3745).
 
+### 2026-06-21 AI integration-layer global-state cleanup (#3745)
+
+- Module-level mutable credential globals in
+  `shared.python.ai.integrations.{notion,linear,affine,obsidian}` are replaced
+  with per-consumer config objects: `NotionCredentials`, `LinearCredentials`,
+  `AffineCredentials`, and `ObsidianConfig`. Each module keeps one shared
+  _default_ instance (exposed via `get_default_credentials()` /
+  `get_default_config()`) that the legacy `set_*_api_token` /
+  `set_obsidian_vault_path` / `set_affine_base_url` entry points mutate, so all
+  existing callers keep working unchanged. Independently constructed instances
+  never clobber one another, which defeats the previous cross-consumer
+  process-wide-singleton leak and restores test isolation. The
+  `mcp.widgets.health_query_api` probes read the default credentials object
+  instead of the removed `_*_API_TOKEN` globals.
+- `tool_registry.get_global_registry` and `sample_tools._get_education_system`
+  drop the dict-holder "avoids global" pattern
+  (`_registry_holder = {"instance": None}`) in favor of
+  `functools.lru_cache`-memoized accessors. A new
+  `tool_registry.reset_global_registry()` clears the cache for test isolation.
+- `gui._providers_tab.ProvidersTab` exposes a `provider_changed(int)` signal;
+  `AISettingsDialog` connects its handler to that signal instead of reaching
+  through the tab into the inner `provider_combo.currentIndexChanged`
+  (Law of Demeter).
+
 ### 2026-06-21 Core P2 cleanup (plugin manager, robotics, safe-eval, contracts)
 
 - `core.plugin_manager.DEFAULT_TOOL_SCAN_DIRS` drops the phantom

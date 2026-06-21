@@ -96,10 +96,11 @@ def _make_mock_response(body: dict[str, Any], status_code: int = 200) -> MagicMo
 
 @pytest.fixture(autouse=True)
 def reset_token(monkeypatch):
-    """Reset module-level token and env var before each test."""
-    monkeypatch.setattr(linear_mod, "_LINEAR_API_TOKEN", None)
+    """Reset default-credentials token and env var before each test."""
+    linear_mod.get_default_credentials().token = None
     monkeypatch.delenv("LINEAR_API_KEY", raising=False)
     yield
+    linear_mod.get_default_credentials().token = None
 
 
 @pytest.fixture()

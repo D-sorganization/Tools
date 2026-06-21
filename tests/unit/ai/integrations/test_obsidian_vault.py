@@ -43,10 +43,10 @@ def vault(tmp_path: Path) -> Path:
 @pytest.fixture(autouse=True)
 def _reset_vault():
     """Ensure module state does not leak between tests."""
-    obsidian._OBSIDIAN_VAULT_PATH = None  # type: ignore[attr-defined]
+    obsidian.get_default_config().vault_path = None
     saved = os.environ.pop("OBSIDIAN_VAULT_PATH", None)
     yield
-    obsidian._OBSIDIAN_VAULT_PATH = None  # type: ignore[attr-defined]
+    obsidian.get_default_config().vault_path = None
     if saved is not None:
         os.environ["OBSIDIAN_VAULT_PATH"] = saved
 

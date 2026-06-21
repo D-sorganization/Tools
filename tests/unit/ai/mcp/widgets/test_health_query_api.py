@@ -62,7 +62,7 @@ class TestQueryIntegrationStatus:
         # Also clear any module-level token cached.
         from src.shared.python.ai.integrations import linear as linear_mod
 
-        linear_mod._LINEAR_API_TOKEN = None  # noqa: SLF001 — test cleanup
+        linear_mod.get_default_credentials().token = None  # test cleanup
         status = query_integration_status("linear")
         assert status.level is IntegrationStatusLevel.UNCONFIGURED
 

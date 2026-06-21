@@ -76,14 +76,15 @@ def _make_mock_response(json_body: dict, status_code: int = 200) -> MagicMock:
 
 @pytest.fixture(autouse=True)
 def reset_token_and_url(monkeypatch):
-    """Reset module-level token and base URL between tests."""
-    monkeypatch.setattr(affine_mod, "_AFFINE_API_TOKEN", None)
-    monkeypatch.setattr(
-        affine_mod, "_AFFINE_BASE_URL", "https://app.affine.pro/graphql"
-    )
+    """Reset default-credentials token and base URL between tests."""
+    creds = affine_mod.get_default_credentials()
+    creds.token = None
+    creds.base_url = "https://app.affine.pro/graphql"
     monkeypatch.delenv("AFFINE_API_KEY", raising=False)
     monkeypatch.delenv("AFFINE_BASE_URL", raising=False)
     yield
+    creds.token = None
+    creds.base_url = "https://app.affine.pro/graphql"
 
 
 # ---------------------------------------------------------------------------

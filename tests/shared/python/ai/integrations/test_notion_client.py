@@ -78,10 +78,10 @@ def _make_httpx_response(status_code: int, body: dict) -> MagicMock:
 
 @pytest.fixture(autouse=True)
 def reset_token():
-    """Reset the global token before and after every test."""
-    _notion_mod._NOTION_API_TOKEN = None
+    """Reset the default credentials token before and after every test."""
+    _notion_mod.get_default_credentials().token = None
     yield
-    _notion_mod._NOTION_API_TOKEN = None
+    _notion_mod.get_default_credentials().token = None
 
 
 @pytest.fixture()
