@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.4.0                                      |
-| **Spec Version**        | 1.4.0                                      |
+| **Current Version**     | 1.5.0                                      |
+| **Spec Version**        | 1.5.0                                      |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- Release metadata now publishes Tools v1.5.0 across `VERSION` and
+  `pyproject.toml`, and the generated changelog plus release PR body retain
+  reference-only issue wording so historical release notes do not re-close
+  prior issues (#3815).
 - Release metadata now publishes Tools v1.4.0 across `VERSION` and
   `pyproject.toml`, and the generated changelog plus release PR body retain
   reference-only issue wording so historical release notes do not re-close
