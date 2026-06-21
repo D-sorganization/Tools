@@ -36,6 +36,10 @@ concurrency:
   group: bot-ci-trigger-${{ github.event.pull_request.number || github.run_id }}
   cancel-in-progress: true
 
+defaults:
+  run:
+    shell: bash
+
 jobs:
   # ── Dispatcher: require a local self-hosted runner and fail closed ──────────────────
   pick-runner:

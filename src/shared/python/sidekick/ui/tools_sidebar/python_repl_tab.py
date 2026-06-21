@@ -61,6 +61,11 @@ class _ReplWorker(QtCore.QThread):
         self._script = script
         self._namespace = namespace
 
+    @property
+    def namespace(self) -> dict[str, Any]:
+        """Return the worker-owned namespace copy after clean execution."""
+        return self._namespace
+
     def run(self) -> None:  # noqa: ANN201 - Qt override
         """Run the user script and emit ``result_ready`` with formatted output."""
         stdout = io.StringIO()
@@ -238,10 +243,7 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._history.append(script.strip())
         self._set_running(True)
 
-        # Run against an isolated copy of the namespace so that cancelling the
-        # worker (which kills the QThread at an arbitrary instruction) can never
-        # leave the live ``self._namespace`` half-mutated. The worker's copy is
-        # merged back only on clean completion in ``_on_execution_finished``.
+        # Use a copy so cancelled executions cannot half-mutate the live namespace.
         self._worker = _ReplWorker(script, dict(self._namespace))
         self._worker.result_ready.connect(self._on_execution_finished)
         self._worker.start()
@@ -278,18 +280,10 @@ class PythonReplWidget(QtWidgets.QWidget):
         self._status_label.setVisible(running)
 
     def _on_cancel_clicked(self) -> None:
-        """Best-effort cancel: terminate the worker thread (F6).
-
-        The worker mutates only its private *copy* of the namespace (see
-        ``execute``), and that copy is merged back into ``self._namespace`` only
-        on clean completion. Terminating the thread mid-run therefore discards
-        the partial work without corrupting the live namespace, so the cancelled
-        run leaves the workspace exactly as it was before the run started.
-        """
+        """Best-effort cancel: terminate the worker thread (F6)."""
         if self._worker is not None and self._worker.isRunning():
             worker = self._worker
-            # Drop the result slot first so a race-completed worker cannot merge
-            # its namespace back after the user asked to cancel.
+            # Prevent a race-completed worker from merging after cancellation.
             with contextlib.suppress(TypeError, RuntimeError):
                 worker.result_ready.disconnect(self._on_execution_finished)
             worker.terminate()
@@ -300,13 +294,11 @@ class PythonReplWidget(QtWidgets.QWidget):
 
     def _on_execution_finished(self, output: str) -> None:
         """Slot called on the GUI thread when the worker emits ``result_ready`` (F6)."""
-        # Merge namespace changes made by the worker (on its private copy) back
-        # into self._namespace, so the workspace registry and subsequent
-        # executions share the updates. This runs only on clean completion.
+        # Merge the worker copy only after clean completion.
         if self._worker is not None:
             worker = self._worker
             self._namespace.clear()
-            self._namespace.update(worker._namespace)  # noqa: SLF001
+            self._namespace.update(worker.namespace)
         else:
             worker = None
         self._sync_namespace_to_registry()
@@ -346,6 +338,11 @@ class PythonReplWidget(QtWidgets.QWidget):
     def startup_config(self) -> CalculatorStartupConfig:
         """Return the startup-import config currently backing the REPL."""
         return self._startup_config
+
+    @property
+    def namespace(self) -> dict[str, Any]:
+        """Return the live REPL namespace."""
+        return self._namespace
 
     def apply_startup_config(
         self, config: CalculatorStartupConfig
@@ -399,9 +396,6 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
         super().__init__(parent)
         self.setObjectName(SIDEKICK_TERMINAL_OBJECT_NAME)
         self._terminal_theme = terminal_theme or theme.SidekickTerminalTheme.inherited()
-        # registry/set_variable are validated once by the inner PythonReplWidget,
-        # which raises TypeError for missing/wrong-typed arguments. Do not
-        # duplicate those guards here (single source of truth).
         self._repl = PythonReplWidget(
             registry=registry,
             set_variable=set_variable,
@@ -411,12 +405,11 @@ class SidekickPythonReplWidget(QtWidgets.QWidget):
         )
         self._registry = registry
         self._set_variable = set_variable
-        self._namespace = self._repl._namespace  # noqa: SLF001 - intentional alias
+        self._namespace = self._repl.namespace
         layout = QtWidgets.QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self._repl)
-        # Expose the historic input/output/run object names by re-tagging the
-        # nested widgets so existing findChild() queries keep working.
+        # Preserve historic child object names for findChild() callers.
         self._repl._input.setObjectName("SidekickTerminalInput")  # noqa: SLF001
         self._repl._output.setObjectName("SidekickTerminalOutput")  # noqa: SLF001
         self._repl._run_button.setObjectName("SidekickTerminalRun")  # noqa: SLF001

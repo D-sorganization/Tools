@@ -1,13 +1,15 @@
 """Script to convert print() statements to logging calls."""
 
+import ast
 import re
 import sys
 from pathlib import Path
 
-# Match single-line print() statements. Note: This pattern may not correctly handle
-# multiline print statements or deeply nested parentheses. For complex cases,
-# manual review is recommended.
-PRINT_PATTERN = re.compile(r"^(\s*)print\((.+)\)(\s*)$")
+LOG_LEVEL_PATTERNS = {
+    "error": re.compile(r"\berror\b", re.IGNORECASE),
+    "warning": re.compile(r"\bwarn(?:ing)?\b", re.IGNORECASE),
+    "debug": re.compile(r"\bdebug\b", re.IGNORECASE),
+}
 
 
 def _has_logging_import(lines: list[str]) -> bool:
@@ -23,12 +25,11 @@ def _has_logging_import(lines: list[str]) -> bool:
 
 def _determine_log_level(content: str) -> str:
     """Determine appropriate log level based on message content."""
-    content_lower = content.lower()
-    if "error" in content_lower:
+    if LOG_LEVEL_PATTERNS["error"].search(content):
         return "error"
-    if "warn" in content_lower:
+    if LOG_LEVEL_PATTERNS["warning"].search(content):
         return "warning"
-    if "debug" in content_lower:
+    if LOG_LEVEL_PATTERNS["debug"].search(content):
         return "debug"
     return "info"
 
@@ -39,13 +40,28 @@ def _convert_print_line(line: str) -> tuple[str, bool]:
     Returns:
         Tuple of (converted line, was_converted).
     """
-    match = PRINT_PATTERN.match(line)
-    if not match:
+    indent_len = len(line) - len(line.lstrip())
+    indent = line[:indent_len]
+    source = line[indent_len:]
+    try:
+        tree = ast.parse(source)
+    except (IndentationError, SyntaxError):
+        return line, False
+    if len(tree.body) != 1:
+        return line, False
+    expr = tree.body[0]
+    if (
+        not isinstance(expr, ast.Expr)
+        or not isinstance(expr.value, ast.Call)
+        or not isinstance(expr.value.func, ast.Name)
+        or expr.value.func.id != "print"
+        or expr.value.end_col_offset is None
+    ):
         return line, False
 
-    indent = match.group(1)
-    content_inside = match.group(2)
-    trailing = match.group(3)
+    call_source = source[: expr.value.end_col_offset]
+    content_inside = call_source[call_source.index("(") + 1 : -1]
+    trailing = source[expr.value.end_col_offset :]
     level = _determine_log_level(content_inside)
 
     return f"{indent}logger.{level}({content_inside}){trailing}", True

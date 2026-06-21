@@ -140,6 +140,16 @@ class TestDetectDatDelimiter:
         delim = detect_dat_delimiter(csv_dat)
         assert delim == ","
 
+    @pytest.mark.parametrize("content", ["", "single_column\nvalue\n"])
+    def test_detect_rejects_empty_or_single_column_input(
+        self, tmp_path: Path, content: str
+    ) -> None:
+        dat_file = tmp_path / "single_column.dat"
+        dat_file.write_text(content, encoding="utf-8")
+
+        with pytest.raises(ValueError, match="Could not detect a DAT delimiter"):
+            detect_dat_delimiter(dat_file)
+
 
 class TestGetDatFileInfo:
     """Test get_dat_file_info function."""

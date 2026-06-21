@@ -9,7 +9,8 @@ Covers:
 
 import copy
 import os
-from collections.abc import Generator
+from collections.abc import Generator, Iterable
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 import pytest
@@ -92,6 +93,83 @@ def test_connection_manager_register_accepted_tracks_socket() -> None:
     assert socket in manager.active_connections
     # register_accepted must NOT call accept() — the frame-auth path already did.
     socket.accept.assert_not_called()
+
+
+# ---------------------------------------------------------------------------
+# Finding [I] main.py: get_ladder_explorer N+1 parent lookups
+# ---------------------------------------------------------------------------
+
+
+class _Rows:
+    def __init__(self, rows: Iterable[object]) -> None:
+        self._rows = list(rows)
+
+    def all(self) -> list[object]:
+        return self._rows
+
+
+class _LadderExplorerSession:
+    def __init__(self) -> None:
+        self.exec_count = 0
+        self.get_count = 0
+        self.area = SimpleNamespace(id=1, name="Area A")
+        self.unit = SimpleNamespace(id=2, name="Unit 1", area_id=1)
+        self.equip = SimpleNamespace(id=3, name="Pump 1", unit_id=2)
+        self.tag = SimpleNamespace(
+            name="TAG_1",
+            tag_type="Real",
+            description="Process value",
+            rw_mode="Read-only",
+            register_type="holding",
+            register_num=1,
+            data_format="float",
+            scale_factor=1.0,
+            equipment_id=3,
+        )
+
+    def exec(self, statement: object) -> _Rows:
+        self.exec_count += 1
+        text = str(statement).lower()
+        if "plantarea" in text:
+            return _Rows([self.area])
+        if "plantunit" in text:
+            return _Rows([self.unit])
+        if "plantequipment" in text:
+            return _Rows([self.equip])
+        if "tagdefinitiondb" in text:
+            return _Rows([self.tag])
+        raise AssertionError(f"unexpected statement: {statement!r}")
+
+    def get(self, *_args: object, **_kwargs: object) -> object:
+        self.get_count += 1
+        raise AssertionError("get_ladder_explorer should preload parent lookups")
+
+
+@pytest.mark.asyncio
+async def test_ladder_explorer_preloads_parent_lookup_tables() -> None:
+    from main import get_ladder_explorer
+
+    session = _LadderExplorerSession()
+
+    result = await get_ladder_explorer(db=session)
+
+    assert session.exec_count == 4
+    assert session.get_count == 0
+    assert result == [
+        {
+            "name": "TAG_1",
+            "tag_type": "Real",
+            "description": "Process value",
+            "rw_mode": "Read-only",
+            "register_type": "holding",
+            "register_num": 1,
+            "data_format": "float",
+            "scale_factor": 1.0,
+            "equipment": "Pump 1",
+            "unit": "Unit 1",
+            "area": "Area A",
+        }
+    ]
 
 
 # ---------------------------------------------------------------------------

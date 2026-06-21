@@ -1113,13 +1113,19 @@ async def get_ladder_explorer(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> list[dict[str, Any]]:
     """Retrieve all tag definitions with their PLC register mappings for exploration."""
+    areas = db.exec(select(PlantArea)).all()
+    units = db.exec(select(PlantUnit)).all()
+    equips = db.exec(select(PlantEquipment)).all()
     tags = db.exec(select(TagDefinitionDb)).all()
+    area_by_id = {area.id: area for area in areas}
+    unit_by_id = {unit.id: unit for unit in units}
+    equip_by_id = {equip.id: equip for equip in equips}
+
     results = []
     for t in tags:
-        # Load parent equipment, unit, area names
-        equip = db.get(PlantEquipment, t.equipment_id) if t.equipment_id else None
-        unit = db.get(PlantUnit, equip.unit_id) if equip else None
-        area = db.get(PlantArea, unit.area_id) if unit else None
+        equip = equip_by_id.get(t.equipment_id) if t.equipment_id else None
+        unit = unit_by_id.get(equip.unit_id) if equip else None
+        area = area_by_id.get(unit.area_id) if unit else None
 
         results.append(
             {
