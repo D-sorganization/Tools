@@ -76,7 +76,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `BUCK_ABOVE_FREEZING_*` values instead of re-stating the magic numbers.
 - `lower_body_model.simulator.LowerBodySimulator` gains a `current_qpos`
   property and `set_target_from_current()` accessor; `launch_pyqt6` uses them
-  instead of the `self.sim.data.qpos.copy()` train-wreck (LOD).
+  instead of the `self.sim.data.qpos.copy()` train-wreck (LOD). The accessors
+  return copied NumPy arrays from MuJoCo's live buffer so callers receive stable,
+  typed pose snapshots while the simulator keeps ownership of mutable engine
+  state.
 - `tests/p1am_control_system/test_backend_security.py` narrows its first-party
   backend import guard to `ModuleNotFoundError` so a `NameError`/`SyntaxError`
   in the backend fails loudly instead of silently skipping the whole

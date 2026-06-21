@@ -1,5 +1,5 @@
 # ruff: noqa: E501
-from typing import Any
+from typing import Any, cast
 
 import mujoco
 import numpy as np
@@ -58,15 +58,16 @@ class LowerBodySimulator:
         Lets callers read the live ``qpos`` buffer without reaching into the
         MuJoCo ``data`` struct (LOD).
         """
-        return self.data.qpos.copy()
+        return cast(np.ndarray, self.data.qpos.copy())
 
     def set_target_from_current(self) -> np.ndarray:
         """Snapshot the current pose as the stability/hold target.
 
         Sets :attr:`qpos_target` to a copy of the live positions and returns it.
         """
-        self.qpos_target = self.data.qpos.copy()
-        return self.qpos_target
+        target = cast(np.ndarray, self.data.qpos.copy())
+        self.qpos_target = target
+        return target
 
     def _current_hip_rotation_target_diagnostics(
         self, time_sec: float
