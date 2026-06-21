@@ -81,8 +81,8 @@ These are hard-coded in `P1AMHardware.h` and assumed by `SignalBroker`:
 
 | Slot | Module        | Channels                                         |
 | ---- | ------------- | ------------------------------------------------ |
-| 1    | P1-04THM      | 4 thermocouple inputs                            |
-| 2    | P1-4ADL2DAL-1 | 2 analog inputs + 2 analog outputs (all 4-20 mA) |
+| 1    | P1-4ADL2DAL-1 | 2 analog inputs + 2 analog outputs (all 4-20 mA) |
+| 2    | P1-04THM      | 4 thermocouple inputs                            |
 
 The Inhibit GPIO is wired to D6. **D5 is reserved** — the P1AM-ETH shield
 hardwires the W5500 chip-select there and driving D5 from the firmware
@@ -102,6 +102,26 @@ breaks Ethernet SPI.
 Tag values are clamped 0.0–100.0 by the broker. AO outputs scale linearly:
 0.0% -> 4.000 mA, 100.0% -> 20.000 mA. AI readings are pre-scaled by the P1AM
 library before reaching the broker.
+
+## Thermocouple module configuration
+
+`P1AMHardware::Begin()` overrides the P1AM library's P1-04THM default after
+`P1.init()` and before Ethernet setup. The firmware configures all four
+thermocouple channels for type K, low-side burnout, and Celsius output:
+
+```text
+40 03 60 01 21 01 22 01 23 01 24 01 00 00 00 00 00 00 00 00
+```
+
+Boot diagnostics call `P1.readModuleConfig()` and print the active 20-byte
+readback. Expected readback is the same byte sequence above. Temperature reads
+are then consumed directly from `P1.readTemperature()` as degrees C; there is no
+firmware Fahrenheit-to-Celsius conversion in this mode.
+
+Hardware verification still requires a connected P1-04THM with type-K
+thermocouple/reference hardware: confirm the boot readback matches, validate at
+least one channel against a known-temperature source, and check that no burnout
+or over-range status is asserted with a healthy junction connected.
 
 ## EEPROM / FlashStorage
 
