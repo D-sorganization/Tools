@@ -6205,13 +6205,13 @@
     ],
     "symbols": {
       "ANTOINE_A": {
-        "type": "variable"
+        "type": "unknown"
       },
       "ANTOINE_B": {
-        "type": "variable"
+        "type": "unknown"
       },
       "ANTOINE_C_CELSIUS": {
-        "type": "variable"
+        "type": "unknown"
       },
       "ANTOINE_C_KELVIN": {
         "type": "variable"
@@ -34957,6 +34957,170 @@
               "returns": "None"
             }
           }
+        }
+      }
+    }
+  },
+  "process_calculators/water_vapor_pressure.py": {
+    "__all__": [
+      "PA_PER_HPA",
+      "PA_PER_KPA",
+      "antoine_pressure_pa",
+      "antoine_temperature_c",
+      "buck_pressure_pa",
+      "iapws_pressure_pa",
+      "magnus_pressure_pa",
+      "safe_exp"
+    ],
+    "symbols": {
+      "PA_PER_HPA": {
+        "type": "variable"
+      },
+      "PA_PER_KPA": {
+        "type": "variable"
+      },
+      "antoine_pressure_pa": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "a",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "b",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "temperature_c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "antoine_temperature_c": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "a",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "b",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "pressure_pa",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "buck_pressure_pa": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "a_kpa",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "b",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "d",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "temperature_c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "iapws_pressure_pa": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "temperature_c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "magnus_pressure_pa": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "temperature_c",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "safe_exp": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "x",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
         }
       }
     }

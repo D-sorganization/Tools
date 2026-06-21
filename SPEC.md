@@ -38,6 +38,21 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- Water-vapor-pressure correlations are now single-sourced. The Antoine
+  (forward + inverse), Buck, IAPWS-IF97, and Magnus saturation-pressure formula
+  bodies live in one shared kernel,
+  `shared.python.sidekick.process_calculators.water_vapor_pressure`, with a
+  shared `safe_exp` overflow guard. `SyngasWaterCalculator`,
+  `AcidGasDewpointCalculator`, the `SteamCalculationEngine`, and the
+  `calc_backend` syngas-water router fallback all delegate to it instead of
+  re-implementing the formulas inline, and the router fallback no longer
+  restates Antoine constants or water molar-mass/molar-volume literals
+  (#3675, #3677, #3678). The shared Buck kernel keeps the syngas coefficient
+  order; the steam engine swaps its `C`/`D` arguments at the call site (and a
+  regression test pins both legacy curves) so neither caller's saturation curve
+  shifts. The pressure-drop flow-calculation engine is likewise single-sourced
+  on `_flow_calculations`, with `flow_properties.py` retained only as an
+  import-stable facade (#3660).
 - Safety-critical PID auto-tuning math is now a pure, importable module
   (`p1am_control_system.backend.pid_tuning`): FOPDT step-response
   identification and Cohen-Coon tuning no longer live inline in the
