@@ -38,6 +38,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-21 Deferred #3745 cleanup hardening
 
+- `Bot-CI-Trigger.yml` now pins workflow `run` steps to bash so its CI-trigger
+  discovery and summary scripts are interpreted consistently on Windows or Linux
+  self-hosted runners instead of failing under PowerShell syntax parsing.
 - `scripts/convert_print_to_logging.py` now parses candidate single-line
   `print(...)` statements with `ast` before rewriting, preserving trailing
   inline comments outside the generated `logger.*(...)` call and using
