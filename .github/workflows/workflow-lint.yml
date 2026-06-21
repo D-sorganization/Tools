@@ -66,6 +66,9 @@ jobs:
     timeout-minutes: 30
     needs: pick-runner
     runs-on: ${{ needs.pick-runner.outputs.runner }}
+    defaults:
+      run:
+        shell: bash
 
     steps:
       - name: Checkout repository
