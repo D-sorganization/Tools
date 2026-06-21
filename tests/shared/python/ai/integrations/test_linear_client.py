@@ -34,15 +34,18 @@ def _get_global_registry_stub() -> ToolRegistry:
 
 import src.shared.python.ai.tool_registry as _tr_mod  # noqa: E402
 
+_saved_get_global_registry = _tr_mod.get_global_registry
 _tr_mod.get_global_registry = _get_global_registry_stub  # type: ignore[attr-defined]
-
-# Import the module under test AFTER patching the registry.
-import src.shared.python.ai.integrations.linear as linear_mod  # noqa: E402
-from src.shared.python.ai.integrations.linear import (  # noqa: E402
-    linear_create_issue,
-    linear_query_issues,
-    set_linear_api_token,
-)
+try:
+    # Import the module under test AFTER patching the registry.
+    import src.shared.python.ai.integrations.linear as linear_mod  # noqa: E402
+    from src.shared.python.ai.integrations.linear import (  # noqa: E402
+        linear_create_issue,
+        linear_query_issues,
+        set_linear_api_token,
+    )
+finally:
+    _tr_mod.get_global_registry = _saved_get_global_registry  # type: ignore[attr-defined]
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -96,10 +99,11 @@ def _make_mock_response(body: dict[str, Any], status_code: int = 200) -> MagicMo
 
 @pytest.fixture(autouse=True)
 def reset_token(monkeypatch):
-    """Reset module-level token and env var before each test."""
-    monkeypatch.setattr(linear_mod, "_LINEAR_API_TOKEN", None)
+    """Reset default-credentials token and env var before each test."""
+    linear_mod.get_default_credentials().token = None
     monkeypatch.delenv("LINEAR_API_KEY", raising=False)
     yield
+    linear_mod.get_default_credentials().token = None
 
 
 @pytest.fixture()

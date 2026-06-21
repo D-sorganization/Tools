@@ -19,8 +19,9 @@ def affine_token_env(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     """Provide a fake Affine token and reset module-level state."""
     monkeypatch.setenv("AFFINE_API_KEY", "affine_fake_token_for_replay")
     monkeypatch.delenv("AFFINE_BASE_URL", raising=False)
-    monkeypatch.setattr(affine, "_AFFINE_API_TOKEN", None)
-    monkeypatch.setattr(affine, "_AFFINE_BASE_URL", "https://app.affine.pro/graphql")
+    creds = affine.get_default_credentials()
+    creds.token = None
+    creds.base_url = "https://app.affine.pro/graphql"
     yield
 
 

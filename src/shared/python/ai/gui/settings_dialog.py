@@ -194,9 +194,7 @@ class AISettingsDialog(QDialog):
         tabs = QTabWidget()
 
         self._providers_tab = ProvidersTab()
-        self._providers_tab.provider_combo.currentIndexChanged.connect(
-            self._on_provider_changed
-        )
+        self._providers_tab.provider_changed.connect(self._on_provider_changed)
         tabs.addTab(self._providers_tab, "Provider")
 
         self._general_tab = GeneralPreferencesTab()

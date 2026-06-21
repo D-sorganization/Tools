@@ -82,7 +82,7 @@ def _probe_linear() -> IntegrationStatus:
         try:
             from shared.python.ai.integrations import linear as linear_mod
 
-            token = getattr(linear_mod, "_LINEAR_API_TOKEN", None)
+            token = linear_mod.get_default_credentials().token
         except ImportError:
             token = None
     if not token:
@@ -110,7 +110,7 @@ def _probe_notion() -> IntegrationStatus:
         try:
             from shared.python.ai.integrations import notion as notion_mod
 
-            token = getattr(notion_mod, "_NOTION_API_TOKEN", None)
+            token = notion_mod.get_default_credentials().token
         except ImportError:
             token = None
     if not token:
@@ -137,7 +137,7 @@ def _probe_affine() -> IntegrationStatus:
         try:
             from shared.python.ai.integrations import affine as affine_mod
 
-            token = getattr(affine_mod, "_AFFINE_API_TOKEN", None)
+            token = affine_mod.get_default_credentials().token
         except ImportError:
             token = None
     if not token:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import Path
 
 import pytest
@@ -26,15 +27,18 @@ def _get_global_registry_stub() -> ToolRegistry:
 
 import src.shared.python.ai.tool_registry as _tr_mod  # noqa: E402
 
+_saved_get_global_registry = _tr_mod.get_global_registry
 _tr_mod.get_global_registry = _get_global_registry_stub  # type: ignore[attr-defined]
-
-import src.shared.python.ai.integrations.obsidian as obsidian_module  # noqa: E402
-from src.shared.python.ai.integrations.obsidian import (  # noqa: E402
-    obsidian_list_notes,
-    obsidian_read_note,
-    obsidian_write_note,
-    set_obsidian_vault_path,
-)
+try:
+    import src.shared.python.ai.integrations.obsidian as obsidian_module  # noqa: E402
+    from src.shared.python.ai.integrations.obsidian import (  # noqa: E402
+        obsidian_list_notes,
+        obsidian_read_note,
+        obsidian_write_note,
+        set_obsidian_vault_path,
+    )
+finally:
+    _tr_mod.get_global_registry = _saved_get_global_registry  # type: ignore[attr-defined]
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -47,10 +51,9 @@ def _configure_vault(tmp_path: Path) -> None:
 
 
 def _reset_vault() -> None:
-    """Clear the vault path so tests don't bleed state."""
-    obsidian_module._OBSIDIAN_VAULT_PATH = None
-    obsidian_module._OBSIDIAN_REST_API_URL = None
-    obsidian_module._OBSIDIAN_REST_API_KEY = None
+    """Clear vault configuration so tests don't bleed state."""
+    obsidian_module.get_default_config().vault_path = None
+    os.environ.pop("OBSIDIAN_VAULT_PATH", None)
 
 
 # ---------------------------------------------------------------------------
@@ -202,13 +205,13 @@ class TestObsidianListNotes:
 @pytest.mark.unit
 class TestObsidianValidation:
     def test_vault_not_configured_raises_value_error(self) -> None:
-        """All tool functions raise ValueError when vault path is not configured."""
+        """obsidian_read_note raises RuntimeError when vault path is not configured."""
         _reset_vault()
         with pytest.raises(RuntimeError, match="not configured"):
             obsidian_read_note("any_note")
 
     def test_vault_not_configured_write_raises_value_error(self) -> None:
-        """obsidian_write_note raises ValueError when vault path is not configured."""
+        """obsidian_write_note raises RuntimeError when vault path is not configured."""
         _reset_vault()
         with pytest.raises(RuntimeError, match="not configured"):
             obsidian_write_note("any_note", "content")

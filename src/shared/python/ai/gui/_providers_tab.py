@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QComboBox,
     QFormLayout,
@@ -19,7 +20,15 @@ from shared.python.ai.gui._provider_registry_data import (
 
 
 class ProvidersTab(QWidget):
-    """Provider selector, model selector, and per-provider config area."""
+    """Provider selector, model selector, and per-provider config area.
+
+    Emits :attr:`provider_changed` (carrying the newly selected combo index)
+    so callers can react to provider selection without reaching through this
+    tab into its internal ``provider_combo`` widget (Law of Demeter).
+    """
+
+    #: Emitted with the new combo index whenever the provider selection changes.
+    provider_changed = pyqtSignal(int)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -34,6 +43,7 @@ class ProvidersTab(QWidget):
 
         self.provider_combo = QComboBox()
         populate_provider_combo(self.provider_combo)
+        self.provider_combo.currentIndexChanged.connect(self.provider_changed)
         provider_layout.addWidget(self.provider_combo)
 
         cost_label = QLabel(

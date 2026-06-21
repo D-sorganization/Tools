@@ -18,6 +18,7 @@ Example:
 
 from __future__ import annotations
 
+import functools
 from pathlib import Path
 from typing import Any
 
@@ -28,19 +29,15 @@ from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
 
-# Singleton holder for education system (avoids 'global' keyword)
-_education_holder: dict[str, EducationSystem | None] = {"instance": None}
 
-
+@functools.lru_cache(maxsize=1)
 def _get_education_system() -> EducationSystem:
-    """Get or create the education system singleton."""
-    if _education_holder["instance"] is None:
-        _education_holder["instance"] = EducationSystem()
+    """Get or create the process-wide education system.
 
-    system = _education_holder["instance"]
-    if system is None:  # Ensure it is not None for mypy
-        raise ValueError("DbC Blocked: Precondition failed.")
-    return system
+    Memoized with :func:`functools.lru_cache`, which owns the single cached
+    instance internally — no module-level mutable global.
+    """
+    return EducationSystem()
 
 
 def register_golf_suite_tools(registry: ToolRegistry) -> None:

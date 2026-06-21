@@ -26,15 +26,18 @@ from src.shared.python.ai.tool_registry import ToolRegistry  # noqa: E402
 _fresh_registry = ToolRegistry()
 import src.shared.python.ai.tool_registry as _tr_mod  # noqa: E402
 
+_saved_get_global_registry = _tr_mod.get_global_registry
 _tr_mod.get_global_registry = lambda: _fresh_registry  # type: ignore[attr-defined]
-
-import src.shared.python.ai.integrations.affine as affine_mod  # noqa: E402
-from src.shared.python.ai.integrations.affine import (  # noqa: E402
-    affine_list_workspaces,
-    affine_sync_notes,
-    set_affine_api_token,
-    set_affine_base_url,
-)
+try:
+    import src.shared.python.ai.integrations.affine as affine_mod  # noqa: E402
+    from src.shared.python.ai.integrations.affine import (  # noqa: E402
+        affine_list_workspaces,
+        affine_sync_notes,
+        set_affine_api_token,
+        set_affine_base_url,
+    )
+finally:
+    _tr_mod.get_global_registry = _saved_get_global_registry  # type: ignore[attr-defined]
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -76,14 +79,15 @@ def _make_mock_response(json_body: dict, status_code: int = 200) -> MagicMock:
 
 @pytest.fixture(autouse=True)
 def reset_token_and_url(monkeypatch):
-    """Reset module-level token and base URL between tests."""
-    monkeypatch.setattr(affine_mod, "_AFFINE_API_TOKEN", None)
-    monkeypatch.setattr(
-        affine_mod, "_AFFINE_BASE_URL", "https://app.affine.pro/graphql"
-    )
+    """Reset default-credentials token and base URL between tests."""
+    creds = affine_mod.get_default_credentials()
+    creds.token = None
+    creds.base_url = "https://app.affine.pro/graphql"
     monkeypatch.delenv("AFFINE_API_KEY", raising=False)
     monkeypatch.delenv("AFFINE_BASE_URL", raising=False)
     yield
+    creds.token = None
+    creds.base_url = "https://app.affine.pro/graphql"
 
 
 # ---------------------------------------------------------------------------

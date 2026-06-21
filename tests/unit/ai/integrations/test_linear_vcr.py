@@ -26,8 +26,8 @@ def linear_token_env(monkeypatch: pytest.MonkeyPatch) -> Iterator[None]:
     redacts the ``authorization`` header.
     """
     monkeypatch.setenv("LINEAR_API_KEY", "lin_api_fake_token_for_replay")
-    # Reset module-level cache between tests.
-    monkeypatch.setattr(linear, "_LINEAR_API_TOKEN", None)
+    # Reset default-credentials token between tests.
+    linear.get_default_credentials().token = None
     yield
 
 

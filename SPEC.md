@@ -117,6 +117,41 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   in the backend fails loudly instead of silently skipping the whole
   auth/zip-bomb security suite (#3745).
 
+### 2026-06-21 AI integration-layer global-state cleanup (#3745)
+
+- Module-level mutable credential globals in
+  `shared.python.ai.integrations.{notion,linear,affine,obsidian}` are replaced
+  with per-consumer config objects: `NotionCredentials`, `LinearCredentials`,
+  `AffineCredentials`, and `ObsidianConfig`. Each module keeps one shared
+  _default_ instance (exposed via `get_default_credentials()` /
+  `get_default_config()`) that the legacy `set_*_api_token` /
+  `set_obsidian_vault_path` / `set_affine_base_url` entry points mutate, so all
+  existing callers keep working unchanged. Independently constructed instances
+  never clobber one another, which defeats the previous cross-consumer
+  process-wide-singleton leak and restores test isolation. The
+  `mcp.widgets.health_query_api` probes read the default credentials object
+  instead of the removed `_*_API_TOKEN` globals.
+- `tool_registry.get_global_registry` and `sample_tools._get_education_system`
+  drop the dict-holder "avoids global" pattern
+  (`_registry_holder = {"instance": None}`) in favor of
+  `functools.lru_cache`-memoized accessors. A new
+  `tool_registry.reset_global_registry()` clears the cache for test isolation.
+- `gui._providers_tab.ProvidersTab` exposes a `provider_changed(int)` signal;
+  `AISettingsDialog` connects its handler to that signal instead of reaching
+  through the tab into the inner `provider_combo.currentIndexChanged`
+  (Law of Demeter).
+- Post-merge test hygiene removes stale `type: ignore[arg-type]` comments from
+  the newly merged Kalman and P1AM validation regression tests so strict mypy
+  continues to pass on the consolidated branch.
+- AI integration-client tests that patch `get_global_registry()` for import-time
+  registration now restore the accessor immediately after module import, so
+  xdist workers cannot leak an isolated empty registry into later registration
+  assertions.
+- Obsidian shared-client tests now clear both the default `ObsidianConfig`
+  vault path and the `OBSIDIAN_VAULT_PATH` environment fallback in their reset
+  helper, keeping the "not configured" RuntimeError contract independent of
+  earlier env-var coverage tests.
+
 ### 2026-06-21 Core P2 cleanup (plugin manager, robotics, safe-eval, contracts)
 
 - `core.plugin_manager.DEFAULT_TOOL_SCAN_DIRS` drops the phantom
@@ -1611,6 +1646,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-21 | 1.1.7792 | fix(ci): route the Cross-Repo Python Integration downstream contract matrix to Linux self-hosted runners and fall back to `github.token` when `RUNNER_CHECK_TOKEN` is unset, preventing PowerShell parsing failures and checkout token omissions. |
 | 2026-06-21 | 1.1.7791 | fix(ci): route the Performance Regression benchmark workflow to the Linux self-hosted fleet labels so `actions/setup-python` no longer lands on Windows runners without registry-write permissions. |
 | 2026-06-21 | 1.1.7790 | perf(pendulum-web): replace the Nelder-Mead simplex `Array.prototype.sort()` comparator in `optimizer.ts` with a manual in-place insertion sort for the tiny fixed-size simplex, preserving ordering behavior while removing repeated callback dispatch from the hot optimization loop. |
 | 2026-06-21 | 1.1.7789 | cleanup(data-processor, #3745): extract a shared `_predict_cov` covariance-propagation helper in `state_space` and remove ~10 dead `y is None` guards from its private helpers; whitelist `KalmanFilterConfig.__init__` kwargs (reject typos like `meas_noise`) and replace the dead `state_dim is None` checks in EKF/UKF with positive-integer validation; document the `[0,1]` clamp on `cross_correlation` rolling `correlation_stability`; precompute the target-correlation vector once in `feature_selector.select_by_correlation`; and reuse an allocation-free `_jackknife` helper for the BCa interval (numerically identical, regression-pinned). |
