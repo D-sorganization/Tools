@@ -444,7 +444,7 @@ jobs:
     # ``fix-brick-toolcache`` removed from ``needs:`` — see ``quality-gate``
     # job comment for rationale (soft dependency, symlink persists).
     needs: [pick-runner]
-    runs-on: d-sorg-fleet
+    runs-on: [self-hosted, Linux, X64, d-sorg-fleet]
     strategy:
       # Do NOT cancel sibling Python lanes when one fails. Only ``tests (3.11)``
       # is a required check; an infra crash in the non-required 3.10/3.12 lanes
