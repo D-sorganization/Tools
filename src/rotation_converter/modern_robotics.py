@@ -236,15 +236,11 @@ def _Adjoint(T: Any) -> np.ndarray:
 
     Ad_T = [R  0; [p]R  R]
 
-    Used internally for Jacobian computation.
+    Used internally for Jacobian computation. Delegates to the public
+    :func:`Adjoint` so both share a single implementation; only the
+    float coercion of arbitrary array-likes is performed here.
     """
-    T = np.asarray(T, dtype=float)
-    R, p = TransToRp(T)
-    Ad = np.zeros((6, 6))
-    Ad[:3, :3] = R
-    Ad[3:, 3:] = R
-    Ad[3:, :3] = VecToso3(p) @ R
-    return Ad
+    return np.asarray(Adjoint(np.asarray(T, dtype=float)), dtype=float)
 
 
 def MatrixExp6(se3mat: Any) -> np.ndarray:
@@ -874,7 +870,7 @@ def TestIfSE3(mat):
     return abs(DistanceToSE3(mat)) < 1e-3
 
 
-def IKinSpace(Slist, M, T, thetalist0, eomg, ev):
+def IKinSpace(Slist, M, T, thetalist0, eomg, ev, max_iter=20):
     """Computes inverse kinematics in the space frame for an open chain robot
 
     :param Slist: The joint screw axes in the space frame when the
@@ -897,9 +893,10 @@ def IKinSpace(Slist, M, T, thetalist0, eomg, ev):
                      number of maximum iterations without finding a solution
                      within the tolerances eomg and ev.
     Uses an iterative Newton-Raphson root-finding method.
-    The maximum number of iterations before the algorithm is terminated has
-    been hardcoded in as a variable called maxiterations. It is set to 20 at
-    the start of the function, but can be changed if needed.
+    The maximum number of iterations before the algorithm is terminated is
+    controlled by ``max_iter`` (default 20).
+
+    :param max_iter: Maximum number of Newton-Raphson iterations (positive).
 
     Example Input:
         Slist = np.array([[0, 0,  1,  4, 0,    0],
@@ -932,9 +929,10 @@ def IKinSpace(Slist, M, T, thetalist0, eomg, ev):
     require_finite(thetalist0, "thetalist0")
     require(eomg > 0, "angular tolerance must be positive", eomg)
     require(ev > 0, "linear tolerance must be positive", ev)
+    require(max_iter > 0, "max_iter must be positive", max_iter)
     thetalist = np.array(thetalist0).copy()
     i = 0
-    maxiterations = 20
+    maxiterations = max_iter
     Tsb = FKinSpace(M, Slist, thetalist)
     Vs = np.dot(Adjoint(Tsb), se3ToVec(MatrixLog6(np.dot(TransInv(Tsb), T))))
     err = (
