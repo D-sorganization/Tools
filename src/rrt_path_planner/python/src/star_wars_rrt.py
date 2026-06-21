@@ -257,10 +257,24 @@ class RRTPlanner:
     def _nearest_node_index(
         self, nodes: list[npt.NDArray[np.float64]], sample: Vector3
     ) -> int:
-        """Return the index of the nearest existing tree node."""
+        """Return the index of the nearest existing tree node.
+
+        Kept for backward compatibility and ad-hoc queries: it rebuilds the
+        coordinate array from ``nodes`` on each call. The hot planning loop uses
+        :meth:`_nearest_in_coords` against an incrementally maintained array to
+        avoid the O(N^2) full-array reconstruction (see issue #3683).
+        """
         if nodes is None:
             raise TypeError("nodes must not be None")
         coordinates = np.array([node[:3] for node in nodes], dtype=np.float64)
+        return self._nearest_in_coords(coordinates, sample)
+
+    @staticmethod
+    def _nearest_in_coords(
+        coordinates: npt.NDArray[np.float64],
+        sample: npt.NDArray[np.float64],
+    ) -> int:
+        """Return the index of the row in ``coordinates`` nearest to ``sample``."""
         distances = np.linalg.norm(coordinates - sample, axis=1)
         return int(np.argmin(distances))
 
@@ -325,9 +339,19 @@ class RRTPlanner:
 
         nodes = [np.append(start_point, -1.0)]
 
+        # Maintain the tree's coordinates in an incrementally grown buffer so the
+        # nearest-neighbour query never rebuilds the full coordinate array from
+        # ``nodes`` (issue #3683). The buffer doubles in capacity as needed,
+        # giving amortized O(1) appends instead of the previous O(N) rebuild that
+        # made planning O(N^2) in the number of tree nodes.
+        capacity = max(16, self.max_iterations + 1)
+        coords: npt.NDArray[np.float64] = np.empty((capacity, 3), dtype=np.float64)
+        coords[0] = start_point
+        node_count = 1
+
         for _iteration in range(self.max_iterations):
             sample = self._sample_point(goal_point)
-            nearest_idx = self._nearest_node_index(nodes, sample)
+            nearest_idx = self._nearest_in_coords(coords[:node_count], sample)
             nearest_point = np.asarray(nodes[nearest_idx][:3], dtype=np.float64)
             new_point = self._steer(nearest_point, sample)
 
@@ -337,6 +361,10 @@ class RRTPlanner:
                 continue
 
             nodes.append(np.append(new_point, float(nearest_idx)))
+            if node_count >= coords.shape[0]:
+                coords = np.resize(coords, (coords.shape[0] * 2, 3))
+            coords[node_count] = new_point
+            node_count += 1
             if np.linalg.norm(new_point - goal_point) <= self.goal_radius:
                 path = self._extract_path(nodes, len(nodes) - 1)
                 self.last_plan_metrics = self.analyze_path(path, obstacles)

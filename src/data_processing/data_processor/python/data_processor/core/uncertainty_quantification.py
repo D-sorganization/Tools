@@ -31,6 +31,29 @@ import numpy as np
 logger = logging.getLogger(__name__)
 
 
+def _leave_one_out_indices(n: int) -> np.ndarray:
+    """Return an ``(n, n - 1)`` index matrix where row ``j`` omits column ``j``.
+
+    Row ``j`` lists the indices ``0..n-1`` with ``j`` removed, preserving the
+    original order. Gathering a length-``n`` array through this matrix yields the
+    same set of jackknife (leave-one-out) subsamples that repeated
+    ``np.delete(sample, j)`` calls would produce, but the index pattern is built
+    once and reused, avoiding per-element reallocation.
+
+    Args:
+        n: Sample length. Must be at least 1.
+
+    Returns:
+        Integer array of shape ``(n, n - 1)``. For ``n == 1`` the result has
+        shape ``(1, 0)`` (a single empty subsample), matching ``np.delete``.
+    """
+    if n < 1:
+        return np.empty((0, 0), dtype=np.intp)
+    tiled = np.broadcast_to(np.arange(n, dtype=np.intp), (n, n))
+    mask = ~np.eye(n, dtype=bool)
+    return tiled[mask].reshape(n, n - 1)
+
+
 class BootstrapMethod(Enum):
     """Bootstrap confidence interval methods."""
 
@@ -845,15 +868,29 @@ class UncertaintyQuantifier:
         # Compute standard error for each bootstrap sample
         t_stats = np.zeros(n_bootstrap)
 
+        # All bootstrap samples share the same length, so the leave-one-out
+        # index pattern is identical for every sample. Build it once instead of
+        # calling ``np.delete`` (which reallocates and runs a boolean search per
+        # element) inside the inner loop -- this removes the O(B * n) allocation
+        # churn that made the studentized interval O(B * n^2) with a large
+        # constant factor. Results are numerically identical because each
+        # leave-one-out subsample contains exactly the same elements in the same
+        # order that ``np.delete`` produced.
+        sample_len = bootstrap_samples.shape[1] if n_bootstrap else 0
+        loo_indices = _leave_one_out_indices(sample_len)
+
         for i in range(n_bootstrap):
             sample = bootstrap_samples[i]
             boot_stat = bootstrap_stats[i]
 
-            # Nested bootstrap for SE (simplified: use jackknife)
-            jack_stats = np.zeros(len(sample))
-            for j in range(len(sample)):
-                jack_sample = np.delete(sample, j)
-                jack_stats[j] = statistic(jack_sample)
+            # Nested bootstrap for SE (simplified: use jackknife). ``sample`` is
+            # gathered through the precomputed leave-one-out index matrix so each
+            # jackknife replicate omits exactly one element with no per-iteration
+            # allocation from ``np.delete``.
+            jack_subsamples = sample[loo_indices]
+            jack_stats = np.array(
+                [statistic(subsample) for subsample in jack_subsamples]
+            )
 
             boot_se = np.std(jack_stats) * np.sqrt(len(sample) - 1)
 
