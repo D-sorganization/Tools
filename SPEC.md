@@ -36,6 +36,23 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-06-20 State-estimation hardening
+
+- `data_processor.core.kalman_filter` now validates filter dimensions and
+  rejects non-PSD/asymmetric noise or initial covariance matrices at
+  construction, surfaces a singular innovation covariance as `-inf`
+  log-likelihood (instead of a silent `nan`), shares one Gaussian
+  log-likelihood helper across the standard/extended/unscented filters, and
+  marks innovations `NaN` consistently for missing measurements across all
+  three filters (#3691, #3692, #3693, #3694, #3695).
+- `data_processor.core.state_space` now enforces positive variances in
+  `SeasonalModel` (squared parameters), raises `ValueError` for invalid `p`
+  in `_normal_ppf` instead of collapsing confidence intervals to zero width,
+  and floors the innovation variance in `_kalman_filter` to avoid dividing the
+  Kalman gain by zero for pure ARIMA models (`H=0`). Adds the first test
+  coverage for the `SeasonalModel`/`ARIMAStateSpace` fit paths
+  (#3664, #3697, #3698, #3699).
+
 ### 2026-06-20 Update
 
 - Release metadata now publishes Tools v1.5.0 across `VERSION` and

@@ -29,6 +29,11 @@ from scipy.optimize import minimize
 
 logger = logging.getLogger(__name__)
 
+# Smallest innovation variance permitted before the Kalman gain divides by it.
+# Pure ARIMA models set H=0 and can momentarily drive the predicted innovation
+# variance to zero; flooring it keeps the filter finite (issue #3699).
+_MIN_INNOVATION_VARIANCE = 1e-12
+
 
 class StateSpaceModelType(Enum):
     """Available state space model types."""
@@ -392,9 +397,25 @@ class BaseStateSpaceModel(ABC):
 
             # Innovation covariance
             F = self.Z @ cov_pred @ self.Z.T + self.H
+            f_scalar = float(F[0, 0])
+
+            # Guard against a zero/near-zero (or negative) innovation
+            # variance, which would divide the Kalman gain by zero. This
+            # happens e.g. for a pure ARIMA model where H=0 and the predicted
+            # state variance momentarily collapses (issue #3699). Floor it
+            # with a small positive jitter so the update stays finite.
+            if not np.isfinite(f_scalar) or f_scalar <= _MIN_INNOVATION_VARIANCE:
+                logger.debug(
+                    "Innovation variance %.3e at step %d floored to %.3e to "
+                    "avoid division by zero.",
+                    f_scalar,
+                    t,
+                    _MIN_INNOVATION_VARIANCE,
+                )
+                f_scalar = _MIN_INNOVATION_VARIANCE
 
             # Kalman gain
-            K = cov_pred @ self.Z.T / F[0, 0]
+            K = cov_pred @ self.Z.T / f_scalar
 
             # Update step
             state = state_pred + K * innovation
@@ -405,10 +426,9 @@ class BaseStateSpaceModel(ABC):
             filtered_cov[t] = state_cov
 
             # Log-likelihood contribution
-            if F[0, 0] > 0:
-                log_likelihood -= 0.5 * (
-                    np.log(2 * np.pi) + np.log(F[0, 0]) + innovation**2 / F[0, 0]
-                )
+            log_likelihood -= 0.5 * (
+                np.log(2 * np.pi) + np.log(f_scalar) + innovation**2 / f_scalar
+            )
 
         # Store last state for forecasting
         self._last_state = state
@@ -606,11 +626,23 @@ class BaseStateSpaceModel(ABC):
         return grad
 
     def _normal_ppf(self, p: float) -> float:
-        """Inverse normal CDF."""
+        """Inverse normal CDF (quantile function).
+
+        Args:
+            p: Probability in the open interval ``(0, 1)``.
+
+        Returns:
+            The standard-normal quantile for ``p``.
+
+        Raises:
+            ValueError: If ``p`` is None or not strictly within ``(0, 1)``.
+                Returning 0.0 here (the previous behaviour) silently
+                collapsed confidence intervals to zero width (issue #3698).
+        """
         if p is None:
             raise ValueError("p must be provided")
-        if p <= 0 or p >= 1:
-            return 0.0
+        if not (0.0 < p < 1.0):
+            raise ValueError(f"p must be in the open interval (0, 1); got {p}")
         if p < 0.5:
             return -self._normal_ppf(1 - p)
 
@@ -784,25 +816,37 @@ class SeasonalModel(BaseStateSpaceModel):
         self.H = np.array([[var_y * 0.5]])
 
     def _update_matrices(self, parameters: np.ndarray) -> None:
-        """Update with parameter values."""
+        """Update with parameter values.
+
+        Parameters are unconstrained standard deviations; the variances used
+        in Q and H are their squares so the optimizer can never drive a
+        covariance negative (issue #3697).
+        """
         if parameters is None:
             raise ValueError("parameters must be provided")
-        self.Q = np.diag([parameters[0], parameters[1], parameters[2]])
-        self.H = np.array([[parameters[3]]])
+        self.Q = np.diag([parameters[0] ** 2, parameters[1] ** 2, parameters[2] ** 2])
+        self.H = np.array([[parameters[3] ** 2]])
 
     def _get_initial_parameters(self) -> np.ndarray:
-        """Initial parameter estimates."""
-        return np.array([self.Q[0, 0], self.Q[1, 1], self.Q[2, 2], self.H[0, 0]])
+        """Initial parameter estimates (standard deviations)."""
+        return np.array(
+            [
+                np.sqrt(np.abs(self.Q[0, 0])),
+                np.sqrt(np.abs(self.Q[1, 1])),
+                np.sqrt(np.abs(self.Q[2, 2])),
+                np.sqrt(np.abs(self.H[0, 0])),
+            ]
+        )
 
     def _parameters_to_dict(self, parameters: np.ndarray) -> dict[str, float]:
-        """Convert to dictionary."""
+        """Convert to dictionary (reporting variances)."""
         if parameters is None:
             raise ValueError("parameters must be provided")
         return {
-            "sigma_level_sq": float(parameters[0]),
-            "sigma_trend_sq": float(parameters[1]),
-            "sigma_seasonal_sq": float(parameters[2]),
-            "sigma_obs_sq": float(parameters[3]),
+            "sigma_level_sq": float(parameters[0] ** 2),
+            "sigma_trend_sq": float(parameters[1] ** 2),
+            "sigma_seasonal_sq": float(parameters[2] ** 2),
+            "sigma_obs_sq": float(parameters[3] ** 2),
         }
 
 
