@@ -30,6 +30,82 @@ import pandas as pd
 logger = logging.getLogger(__name__)
 
 
+def _require(condition: bool, message: str) -> None:
+    """Raise ``ValueError`` if ``condition`` is falsy.
+
+    Unlike the fleet-shared ``contracts.require`` (which is disabled under
+    ``python -O``), this guard always runs, so input/boundary validation
+    survives optimized execution (issue #3695).
+    """
+    if not condition:
+        raise ValueError(message)
+
+
+def _is_psd_symmetric(matrix: np.ndarray, tol: float = 1e-8) -> bool:
+    """Return ``True`` if ``matrix`` is (numerically) symmetric and PSD.
+
+    A covariance matrix must be symmetric positive semi-definite. We test
+    symmetry directly and positive semi-definiteness via the smallest
+    eigenvalue of the symmetrized matrix (robust to tiny asymmetries).
+    """
+    if matrix.ndim != 2 or matrix.shape[0] != matrix.shape[1]:
+        return False
+    if not np.allclose(matrix, matrix.T, atol=tol, rtol=0.0):
+        return False
+    symmetrized = 0.5 * (matrix + matrix.T)
+    try:
+        min_eig = float(np.linalg.eigvalsh(symmetrized).min())
+    except np.linalg.LinAlgError:
+        return False
+    return min_eig >= -tol
+
+
+def _gaussian_log_likelihood(
+    innovation: np.ndarray,
+    innovation_cov: np.ndarray,
+) -> float:
+    """Gaussian log-likelihood contribution of a single innovation.
+
+    Shared helper used by the standard, extended, and unscented filters so
+    the ``slogdet`` + ``inv`` block is written once (issue #3693).
+
+    Computes ``-0.5 * (m*ln(2*pi) + ln|S| + yᵀ S⁻¹ y)`` where ``y`` is the
+    innovation and ``S`` is its covariance. Returns ``-inf`` when ``S`` is
+    not positive definite (a singular/indefinite innovation covariance is a
+    divergence signal, surfaced rather than silently producing ``nan``;
+    issue #3692).
+
+    Args:
+        innovation: Innovation (measurement residual) vector.
+        innovation_cov: Innovation covariance matrix ``S``.
+
+    Returns:
+        Scalar log-likelihood contribution, or ``-inf`` if ``S`` is singular.
+    """
+    _require(innovation is not None, "innovation must be provided")
+    _require(innovation_cov is not None, "innovation_cov must be provided")
+    m = len(innovation)
+    sign, logdet = np.linalg.slogdet(innovation_cov)
+    if sign <= 0 or not np.isfinite(logdet):
+        logger.warning(
+            "Singular or non-positive-definite innovation covariance "
+            "(slogdet sign=%s); log-likelihood contribution is -inf. This "
+            "usually indicates filter divergence or a mis-specified model.",
+            sign,
+        )
+        return float(-np.inf)
+    try:
+        solved = np.linalg.solve(innovation_cov, innovation)
+    except np.linalg.LinAlgError:
+        logger.warning(
+            "Innovation covariance is singular; cannot solve for "
+            "Mahalanobis distance. Returning -inf log-likelihood."
+        )
+        return float(-np.inf)
+    mahalanobis = float(innovation @ solved)
+    return float(-0.5 * (m * np.log(2 * np.pi) + logdet + mahalanobis))
+
+
 class KalmanFilterType(Enum):
     """Types of Kalman filters available."""
 
@@ -140,10 +216,42 @@ class KalmanFilter:
         Args:
             config: Filter configuration
         """
-        if config is None:
-            raise ValueError("config must be provided")
+        _require(config is not None, "config must be provided")
         self.config = config
         self._initialize_matrices()
+        self._validate_matrices()
+
+    def _validate_matrices(self) -> None:
+        """Validate matrix shapes and covariance PSD/symmetry (issue #3692/#3695).
+
+        Raises:
+            ValueError: If any dimension is non-positive or a noise/initial
+                covariance matrix is not symmetric positive semi-definite.
+        """
+        n = self.config.state_dim
+        m = self.config.measurement_dim
+        _require(n > 0, f"state_dim must be positive (got {n})")
+        _require(m > 0, f"measurement_dim must be positive (got {m})")
+        _require(
+            self.A.shape == (n, n),
+            f"state transition A must be {n}x{n} (got {self.A.shape})",
+        )
+        _require(
+            self.H.shape == (m, n),
+            f"measurement matrix H must be {m}x{n} (got {self.H.shape})",
+        )
+        _require(
+            _is_psd_symmetric(self.Q),
+            "process noise covariance Q must be symmetric positive semi-definite",
+        )
+        _require(
+            _is_psd_symmetric(self.R),
+            "measurement noise covariance R must be symmetric positive semi-definite",
+        )
+        _require(
+            _is_psd_symmetric(self.P0),
+            "initial covariance P0 must be symmetric positive semi-definite",
+        )
 
     def _initialize_matrices(self) -> None:
         """Initialize filter matrices."""
@@ -232,11 +340,24 @@ class KalmanFilter:
         Returns:
             KalmanFilterResult with filtered states and diagnostics
         """
-        if measurements is None:
-            raise ValueError("measurements must be provided")
+        _require(measurements is not None, "measurements must be provided")
+        measurements = np.asarray(measurements, dtype=np.float64)
         measurements = self._normalize_measurements(measurements)
 
         T = measurements.shape[0]
+        _require(T > 0, "measurements must contain at least one observation")
+        _require(
+            measurements.shape[1] == self.config.measurement_dim,
+            "measurements second dimension must equal measurement_dim "
+            f"({self.config.measurement_dim}); got shape {measurements.shape}",
+        )
+        if control_inputs is not None:
+            control_inputs = np.asarray(control_inputs, dtype=np.float64)
+            _require(
+                control_inputs.shape[0] == T,
+                "control_inputs must have one row per measurement; got shape "
+                f"{control_inputs.shape}",
+            )
         storage = self._allocate_storage(T)
 
         # Initialize
@@ -347,10 +468,19 @@ class KalmanFilter:
 
         y = z - self.H @ x_pred
         S = self.H @ P_pred @ self.H.T + self.R
-        K = P_pred @ self.H.T @ np.linalg.inv(S)
+        # Solve S Kᵀ = H P_predᵀ rather than forming inv(S) explicitly: more
+        # numerically stable and lets us surface a singular S (issue #3692).
+        try:
+            gain_t = np.linalg.solve(S, self.H @ P_pred.T)
+        except np.linalg.LinAlgError as exc:
+            raise np.linalg.LinAlgError(
+                "Innovation covariance S is singular; the filter has likely "
+                "diverged or the model is mis-specified."
+            ) from exc
+        K = gain_t.T
         x = x_pred + K @ y
         P = (np.eye(n) - K @ self.H) @ P_pred
-        ll_contrib = self._log_likelihood_contribution(y, S)
+        ll_contrib = _gaussian_log_likelihood(y, S)
         return x, P, y, S, K, ll_contrib
 
     def _accumulate_results(
@@ -431,15 +561,12 @@ class KalmanFilter:
         innovation: np.ndarray,
         innovation_cov: np.ndarray,
     ) -> float:
-        """Calculate log likelihood contribution from one observation."""
-        if innovation is None:
-            raise ValueError("innovation must be provided")
-        m = len(innovation)
-        sign, logdet = np.linalg.slogdet(innovation_cov)
-        if sign <= 0:
-            return float(-np.inf)
-        mahalanobis = innovation @ np.linalg.inv(innovation_cov) @ innovation
-        return float(-0.5 * (m * np.log(2 * np.pi) + logdet + mahalanobis))
+        """Calculate log likelihood contribution from one observation.
+
+        Thin wrapper over the shared :func:`_gaussian_log_likelihood` helper
+        (issue #3693), retained for backward compatibility.
+        """
+        return _gaussian_log_likelihood(innovation, innovation_cov)
 
 
 class ExtendedKalmanFilter:
@@ -545,14 +672,17 @@ class ExtendedKalmanFilter:
                 innovation_covariances[t] = S
                 kalman_gains[t] = K
 
-                sign, logdet = np.linalg.slogdet(S)
-                if sign > 0:
-                    log_likelihood += -0.5 * (
-                        self.m * np.log(2 * np.pi) + logdet + y @ np.linalg.inv(S) @ y
-                    )
+                ll_contrib = _gaussian_log_likelihood(y, S)
+                if np.isfinite(ll_contrib):
+                    log_likelihood += ll_contrib
             else:
+                # Missing measurement: carry the prior forward and mark the
+                # innovation/covariance NaN, consistent with the standard KF
+                # (issue #3694).
                 x = x_pred
                 P = P_pred
+                innovations[t] = np.full(self.m, np.nan)
+                innovation_covariances[t] = np.full((self.m, self.m), np.nan)
 
             filtered_states[t] = x
             filtered_covariances[t] = P
@@ -718,14 +848,17 @@ class UnscentedKalmanFilter:
                 innovation_covariances[t] = Pzz
                 kalman_gains[t] = K
 
-                sign, logdet = np.linalg.slogdet(Pzz)
-                if sign > 0:
-                    log_likelihood += -0.5 * (
-                        self.m * np.log(2 * np.pi) + logdet + y @ np.linalg.inv(Pzz) @ y
-                    )
+                ll_contrib = _gaussian_log_likelihood(y, Pzz)
+                if np.isfinite(ll_contrib):
+                    log_likelihood += ll_contrib
             else:
+                # Missing measurement: carry the prior forward and mark the
+                # innovation/covariance NaN, consistent with the standard KF
+                # (issue #3694).
                 x = x_pred
                 P = P_pred
+                innovations[t] = np.full(self.m, np.nan)
+                innovation_covariances[t] = np.full((self.m, self.m), np.nan)
 
             filtered_states[t] = x
             filtered_covariances[t] = P

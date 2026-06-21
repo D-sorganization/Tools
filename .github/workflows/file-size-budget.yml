@@ -48,6 +48,7 @@ jobs:
 
       - name: Resolve base ref
         id: base-ref
+        shell: bash
         run: |
           if [ -n "${{ github.base_ref }}" ]; then
             base_ref="${{ github.base_ref }}"
@@ -61,10 +62,12 @@ jobs:
           echo "Using base ref: $base_ref"
 
       - name: Fetch base ref
+        shell: bash
         run: |
           git fetch origin "${{ steps.base-ref.outputs.base_ref }}"
 
       - name: Enforce 500 LOC budget on changed files
+        shell: bash
         run: |
           python3 scripts/check_file_size_budget.py \
             --max-loc 500 \
