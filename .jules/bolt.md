@@ -63,3 +63,6 @@
 ## 2024-08-01 - Avoid multiple .filter() passes for bucketing
 **Learning:** Calling `.filter()` multiple times on the same array to separate elements into different buckets (e.g. major vs moderate issues) creates unnecessary iterations and intermediate array allocations, adding up to GC pressure during recurring tasks.
 **Action:** Replace multiple `.filter()` calls over the same source array with a single-pass `for` loop that pushes into pre-allocated or localized arrays.
+## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
+**Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
+**Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.

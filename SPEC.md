@@ -36,6 +36,16 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-06-21 Pendulum web optimizer hot-loop sorting
+
+- `src/pendulum_simulator/pendulum-web/src/optimizer.ts` keeps the
+  Nelder-Mead simplex ordering allocation-free in the hot optimization loop by
+  sorting the tiny, fixed-size simplex in place with insertion sort instead of
+  calling `Array.prototype.sort()` with a comparator callback on every
+  iteration. The objective ordering semantics are unchanged; the implementation
+  only removes repeated callback dispatch and closure overhead from the
+  repeatedly executed simplex ranking step.
+
 ### 2026-06-21 REST API & P1AM validation hardening
 
 - `p1am_control_system.backend.models.PIDConfig` now validates `pv_tag`/`cv_tag`
@@ -1614,6 +1624,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-21 | 1.1.7790 | perf(pendulum-web): replace the Nelder-Mead simplex `Array.prototype.sort()` comparator in `optimizer.ts` with a manual in-place insertion sort for the tiny fixed-size simplex, preserving ordering behavior while removing repeated callback dispatch from the hot optimization loop. |
 | 2026-06-21 | 1.1.7789 | cleanup(data-processor, #3745): extract a shared `_predict_cov` covariance-propagation helper in `state_space` and remove ~10 dead `y is None` guards from its private helpers; whitelist `KalmanFilterConfig.__init__` kwargs (reject typos like `meas_noise`) and replace the dead `state_dim is None` checks in EKF/UKF with positive-integer validation; document the `[0,1]` clamp on `cross_correlation` rolling `correlation_stability`; precompute the target-correlation vector once in `feature_selector.select_by_correlation`; and reuse an allocation-free `_jackknife` helper for the BCa interval (numerically identical, regression-pinned). |
 | 2026-06-20 | 1.1.7788 | perf(rrt-planner, #3683): maintain the RRT tree's coordinates in an incrementally grown buffer so nearest-neighbour selection no longer rebuilds the full coordinate array every iteration (was O(N^2) in tree size); planner output is unchanged, with brute-force NN and path-validity regression coverage. |
 | 2026-06-20 | 1.1.7788 | fix(data-processor-io, #3679): replace the process-global `_cancelled` flag in `data_processor_io.rust_engine` with a per-operation `CancellationToken` so concurrent conversions/scans no longer cancel each other; `convert`/`scan_batch`/`filter_export` accept an optional token, legacy `cancel()` keeps working on a private global token. |
@@ -2536,3 +2547,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.412 - plugin_manager discovery precedence (#3722)
 
 - **2026-06-18**: fix(core) — reconcile the `load_tools_with_discovery` merge in `plugin_manager.py` with its documented contract: on a name collision within a category a discovered manifest tool now replaces the same-named `tools.json` entry (discovered wins), instead of silently keeping the stale JSON entry. Added a regression test (`test_discovered_tool_wins_name_collision`) asserting the discovered tool survives a duplicate-name collision and that its path/desc reflect the manifest source.
+
+## 1.1.413 - Optimized Nelder-Mead loop in `optimizer.ts`
+
+- **2026-06-21**: perf(pendulum) — Replaced `Array.prototype.sort` with manual insertion sort in `nelderMead` loop in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate callback invocation overhead.
