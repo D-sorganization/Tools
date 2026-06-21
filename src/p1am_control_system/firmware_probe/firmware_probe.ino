@@ -14,6 +14,15 @@ IPAddress ip(192, 168, 1, 100);
 EthernetServer ethServer(502);
 ModbusTCPServer modbusServer;
 
+const int kSlotAna = 1;
+const int kSlotThm = 2;
+const int kThmConfigBytes = 20;
+
+const char kP104ThmTypeKCelsiusConfig[kThmConfigBytes] = {
+  0x40, 0x03, 0x60, 0x01, 0x21, 0x01, 0x22, 0x01, 0x23, 0x01,
+  0x24, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+};
+
 // Same shape as the main firmware's ConfigStruct, but minimal so we can isolate
 // whether FlashStorage's static instantiation is what wedges things.
 struct ProbeFlash {
@@ -21,6 +30,33 @@ struct ProbeFlash {
   uint8_t payload[256];
 };
 FlashStorage(probeFlash, ProbeFlash);
+
+void printHexByte(char value) {
+  uint8_t byte = static_cast<uint8_t>(value);
+  if (byte < 0x10) {
+    Serial.print('0');
+  }
+  Serial.print(byte, HEX);
+}
+
+void printThmConfig(const char config[]) {
+  for (int i = 0; i < kThmConfigBytes; ++i) {
+    if (i > 0) {
+      Serial.print(' ');
+    }
+    printHexByte(config[i]);
+  }
+  Serial.println();
+}
+
+bool thmConfigMatches(const char lhs[], const char rhs[]) {
+  for (int i = 0; i < kThmConfigBytes; ++i) {
+    if (lhs[i] != rhs[i]) {
+      return false;
+    }
+  }
+  return true;
+}
 
 void setup() {
   Serial.begin(115200);
@@ -37,6 +73,17 @@ void setup() {
   Serial.println(F("[0] calling P1.init() -- backplane module scan"));
   uint8_t modules = P1.init();
   Serial.print(F("[0] P1.init() returned ")); Serial.print(modules); Serial.println(F(" modules"));
+
+  Serial.println(F("[0a] configuring P1-04THM for type K, Celsius"));
+  bool thmConfigured = P1.configureModule(kP104ThmTypeKCelsiusConfig, kSlotThm);
+  Serial.print(F("[0a] configureModule returned "));
+  Serial.println(thmConfigured ? F("ok") : F("failed"));
+  char thmReadback[kThmConfigBytes] = {};
+  P1.readModuleConfig(thmReadback, kSlotThm);
+  Serial.print(F("[0a] config readback = "));
+  printThmConfig(thmReadback);
+  Serial.print(F("[0a] config match = "));
+  Serial.println(thmConfigMatches(kP104ThmTypeKCelsiusConfig, thmReadback) ? F("yes") : F("NO"));
 
   Serial.println(F("[1] calling Ethernet.init(5)"));
   Ethernet.init(5);
@@ -95,12 +142,12 @@ void loop() {
   static unsigned long lastScan = 0;
   if (millis() - lastScan >= 100) {
     lastScan = millis();
-    // Read thermocouples from slot 1 (P1-04THM): channels 0..3
-    float t0 = P1.readTemperature(1, 1);
-    float t1 = P1.readTemperature(1, 2);
-    // Read analog inputs from slot 2 (P1-4ADL2DAL-1): channels 0..1
-    int a0 = P1.readAnalog(2, 1);
-    int a1 = P1.readAnalog(2, 2);
+    // Read thermocouples from slot 2 (P1-04THM): channels 0..3
+    float t0 = P1.readTemperature(kSlotThm, 1);
+    float t1 = P1.readTemperature(kSlotThm, 2);
+    // Read analog inputs from slot 1 (P1-4ADL2DAL-1): channels 0..1
+    int a0 = P1.readAnalog(kSlotAna, 1);
+    int a1 = P1.readAnalog(kSlotAna, 2);
     // Publish to Modbus so we can read them from outside
     modbusServer.holdingRegisterWrite(2, (uint16_t)(t0 * 10.0f));
     modbusServer.holdingRegisterWrite(3, (uint16_t)(t1 * 10.0f));
