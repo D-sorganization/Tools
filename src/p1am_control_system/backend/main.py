@@ -965,7 +965,7 @@ async def stop_pid_tuning(pid_index: int) -> dict[str, Any]:
         final_cv=session["final_cv"],
         step_time=session["step_time"],
     )
-    return result.as_response()
+    return cast(dict[str, Any], result.as_response())
 
 
 class MPCSimulatePayload(BaseModel):
