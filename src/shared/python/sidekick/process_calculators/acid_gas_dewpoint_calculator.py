@@ -137,12 +137,14 @@ from .constants import (
     CELSIUS_TO_KELVIN_OFFSET,
     MMHG_TO_PA_CONV,
 )
+from .water_vapor_pressure import antoine_pressure_pa, antoine_temperature_c
 
 __all__ = [
     "ACID_GAS_PRESETS",
     "AcidGasComposition",
     "AcidGasDewpointCalculator",
     "DewpointResult",
+    "MMHG_TO_PA_CONV",
     "estimate_condensation_risk",
     "quick_dewpoint_calculation",
 ]
@@ -386,9 +388,7 @@ class AcidGasDewpointCalculator:
             )
 
             # Antoine equation (°C convention): log10(P) = A - B/(C + t_°C)
-            log_p = A - B / (C + temperature_c)
-            p_mmhg = 10**log_p
-            return float(p_mmhg * MMHG_TO_PA_CONV)  # Convert mmHg to Pa
+            return float(antoine_pressure_pa(A, B, C, temperature_c))
 
         if method == "extended_antoine":
             # Extended Antoine equation for wider temperature range
@@ -409,9 +409,7 @@ class AcidGasDewpointCalculator:
                     self.antoine_constants[component]["C"],
                 )
 
-            log_p = A - B / (C + temperature_c)
-            p_mmhg = 10**log_p
-            return float(p_mmhg * MMHG_TO_PA_CONV)
+            return float(antoine_pressure_pa(A, B, C, temperature_c))
 
         if method == "thermo":
             if not THERMO_AVAILABLE:
@@ -478,27 +476,14 @@ class AcidGasDewpointCalculator:
             component,
         )
 
-        # Convert partial pressure to mmHg for the Antoine equation
-        p_mmHg = partial_pressure_pa / MMHG_TO_PA_CONV
-
-        if p_mmHg <= 0:
-            raise ValueError(
-                f"partial pressure in mmHg must be > 0, got {p_mmHg} "
-                f"(from {partial_pressure_pa} Pa)"
-            )
-
         A = self.antoine_constants[component]["A"]
         B = self.antoine_constants[component]["B"]
         C = self.antoine_constants[component]["C"]
 
-        # Inverse Antoine equation: T = B / (A - log10(P)) - C
-        denominator = A - np.log10(p_mmHg)
-        if denominator == 0:
-            raise ValueError(
-                f"Antoine inverse calculation has zero denominator for "
-                f"component={component!r}, partial_pressure_pa={partial_pressure_pa}"
-            )
-        return float(B / denominator - C)
+        # Inverse Antoine equation: T = B / (A - log10(P_mmHg)) - C
+        # (shared kernel handles the Pa->mmHg conversion and the
+        # zero-denominator / non-positive-pressure guards).
+        return float(antoine_temperature_c(A, B, C, partial_pressure_pa))
 
     def _calculate_partial_pressures(
         self, pressure_pa: float, composition: AcidGasComposition
