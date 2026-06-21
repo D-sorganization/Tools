@@ -133,6 +133,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `scan_for_tools()`, and `load_tools_with_discovery()` against real temporary
   `tools.json` and manifest files, pinning malformed-entry tolerance and
   discovered-manifest precedence (#3723).
+- `PluginManager.scan_for_tools()` and `load_tools_with_discovery()` now
+  document the same real-file discovery contract in source: relative manifest
+  entry points are validated, first-file fallback is explicit, and discovered
+  manifests replace stale same-name `tools.json` entries (#3723).
 
 ### 2026-06-19 Update
 
