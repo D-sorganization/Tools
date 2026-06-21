@@ -166,7 +166,6 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 "src/shared/python/programmatic_pid/validation.py" = ["E501"]
 "src/shared/python/signal_toolkit/io.py" = ["E501"]
 "src/shared/python/signal_toolkit/tests/test_noise.py" = ["E501"]
-"src/shared/python/tests/test_safe_eval.py" = ["E501"]
 "src/shared/python/theme/dialogs/custom_theme_dialog.py" = ["E501"]
 "src/shared/python/theme/dialogs/custom_theme_editor.py" = ["E501"]
 "src/shared/python/upstream_drift_tools/__init__.py" = ["E501"]

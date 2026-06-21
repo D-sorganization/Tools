@@ -225,7 +225,6 @@ def test_plugin_manager_scan_defaults_are_module_constants() -> None:
         "tools",
         "web_applications",
         "data_processing",
-        "scientific_modeling",
         "media_processing",
     )
 

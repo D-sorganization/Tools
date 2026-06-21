@@ -25,6 +25,7 @@ import numpy as np
 
 from rotation_converter._contracts import PreconditionError
 from rotation_converter.modern_robotics import (
+    Adjoint,
     AxisAng3,
     AxisAng6,
     FKinBody,
@@ -45,6 +46,7 @@ from rotation_converter.modern_robotics import (
     TransToRp,
     VecTose3,
     VecToso3,
+    _Adjoint,
     _inverse_dynamics_backward_pass,
     _inverse_dynamics_forward_pass,
     se3ToVec,
@@ -975,3 +977,110 @@ class TestSimulateControlPlot:
 
         with pytest.raises(PreconditionError):
             _simulate_control_plot(None, np.zeros((2, 2)), 0.01)
+
+
+# ===========================================================================
+# Adjoint delegation: _Adjoint and public Adjoint must agree (issue #3745)
+# ===========================================================================
+
+
+class TestAdjointDelegation:
+    """_Adjoint delegates to the public Adjoint; both must be identical."""
+
+    @pytest.mark.parametrize(
+        "T",
+        [
+            np.array(
+                [
+                    [1, 0, 0, 0],
+                    [0, 0, -1, 0],
+                    [0, 1, 0, 3],
+                    [0, 0, 0, 1],
+                ],
+                dtype=float,
+            ),
+            np.eye(4),
+            RpToTrans(
+                MatrixExp3(VecToso3(np.array([0.3, -0.7, 1.1]))),
+                np.array([2.0, -1.0, 0.5]),
+            ),
+        ],
+    )
+    def test_private_matches_public_adjoint(self, T: Any) -> None:
+        np.testing.assert_allclose(_Adjoint(T), Adjoint(T), atol=ATOL)
+
+    def test_adjoint_known_value(self) -> None:
+        T = np.array(
+            [
+                [1, 0, 0, 0],
+                [0, 0, -1, 0],
+                [0, 1, 0, 3],
+                [0, 0, 0, 1],
+            ],
+            dtype=float,
+        )
+        expected = np.array(
+            [
+                [1, 0, 0, 0, 0, 0],
+                [0, 0, -1, 0, 0, 0],
+                [0, 1, 0, 0, 0, 0],
+                [0, 0, 3, 1, 0, 0],
+                [3, 0, 0, 0, 0, -1],
+                [0, 0, 0, 0, 1, 0],
+            ],
+            dtype=float,
+        )
+        np.testing.assert_allclose(Adjoint(T), expected, atol=ATOL)
+        np.testing.assert_allclose(_Adjoint(T), expected, atol=ATOL)
+
+    def test_private_adjoint_coerces_array_like(self) -> None:
+        """_Adjoint accepts nested-list input (its float-coercion contract)."""
+        T_list = [
+            [1, 0, 0, 0],
+            [0, 0, -1, 0],
+            [0, 1, 0, 3],
+            [0, 0, 0, 1],
+        ]
+        np.testing.assert_allclose(_Adjoint(T_list), Adjoint(np.asarray(T_list, float)))
+
+
+# ===========================================================================
+# IKinSpace: configurable max_iter (issue #3745)
+# ===========================================================================
+
+
+class TestIKinSpaceMaxIter:
+    """IKinSpace exposes a configurable, validated max_iter parameter."""
+
+    def test_max_iter_default_solves(self) -> None:
+        Slist = np.array([[0, 0, 1, 0, 0, 0]], dtype=float).T
+        M = np.eye(4)
+        T = np.eye(4)
+        thetalist, success = IKinSpace(Slist, M, T, np.array([0.0]), 1e-4, 1e-4)
+        assert success
+        assert np.allclose(thetalist, 0.0, atol=1e-3)
+
+    def test_max_iter_is_honored(self) -> None:
+        """Too few iterations fail; the default budget succeeds (2R arm)."""
+        L1, L2 = 1.0, 1.0
+        M = np.array(
+            [[1, 0, 0, L1 + L2], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+            dtype=float,
+        )
+        Slist = np.array([[0, 0, 1, 0, 0, 0], [0, 0, 1, 0, -L1, 0]], dtype=float).T
+        # A reachable target (generated via FK) that needs several Newton
+        # steps to reach from a zero initial guess.
+        T = FKinSpace(M, Slist, np.array([0.6, -0.8]))
+        thetalist0 = np.array([0.0, 0.0])
+
+        _, capped = IKinSpace(Slist, M, T, thetalist0, 1e-8, 1e-8, max_iter=2)
+        _, full = IKinSpace(Slist, M, T, thetalist0, 1e-8, 1e-8, max_iter=100)
+        assert capped is False
+        assert full is True
+
+    def test_max_iter_must_be_positive(self) -> None:
+        Slist = np.array([[0, 0, 1, 0, 0, 0]], dtype=float).T
+        M = np.eye(4)
+        T = np.eye(4)
+        with pytest.raises(PreconditionError, match="max_iter must be positive"):
+            IKinSpace(Slist, M, T, np.array([0.0]), 1e-4, 1e-4, max_iter=0)

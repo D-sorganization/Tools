@@ -36,6 +36,29 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-06-21 Core P2 cleanup (plugin manager, robotics, safe-eval, contracts)
+
+- `core.plugin_manager.DEFAULT_TOOL_SCAN_DIRS` drops the phantom
+  `scientific_modeling` entry (no such top-level source directory exists); the
+  remaining scan roots (`tools`, `web_applications`, `data_processing`,
+  `media_processing`) all correspond to real `src/` directories.
+- `rotation_converter.modern_robotics.IKinSpace` gains a configurable,
+  validated `max_iter` parameter (default 20, `require(max_iter > 0)`),
+  matching `IKinBody` and the docstring's "can be changed if needed"
+  contract; the private `_Adjoint` now delegates to the public `Adjoint`
+  so the two formerly-divergent 6x6 adjoint implementations share one source
+  of truth (regression coverage pins their equivalence).
+- The duplicate, sys.path-fragile `src/shared/python/tests/test_safe_eval.py`
+  suite (bare `from safe_eval import ...`) is consolidated into the canonical
+  `tests/shared/python/test_safe_eval.py` and removed; the canonical suite
+  retains the merged behavioral coverage (allowlisted-node evaluation, numpy
+  aliases, builtins-removed, Starred/keyword-unpacking rejection).
+- `shared.python.contracts` factors the triplicated function-local
+  `import numpy as np` into a single lazy `_numpy()` helper, and
+  `require`/`ensure`/`invariant` drop the unconditional `condition is None`
+  pre-check (it ran even when contracts were disabled and only special-cased
+  one falsy value) so the OFF short-circuit stays zero-cost (#3745).
+
 ### 2026-06-20 State-estimation hardening
 
 - `data_processor.core.kalman_filter` now validates filter dimensions and

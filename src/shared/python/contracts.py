@@ -223,8 +223,6 @@ def _handle_violation(
 
 def require(condition: bool, message: str, value: Any = None) -> None:
     """Assert a pre-condition at function entry."""
-    if condition is None:
-        raise ValueError("condition must be provided")
     if not _contracts_enabled():
         return
     if not condition:
@@ -233,8 +231,6 @@ def require(condition: bool, message: str, value: Any = None) -> None:
 
 def ensure(condition: bool, message: str, value: Any = None) -> None:
     """Assert a post-condition before function return."""
-    if condition is None:
-        raise ValueError("condition must be provided")
     if not _contracts_enabled():
         return
     if not condition:
@@ -243,8 +239,6 @@ def ensure(condition: bool, message: str, value: Any = None) -> None:
 
 def invariant(condition: bool, message: str, value: Any = None) -> None:
     """Assert a class or loop invariant."""
-    if condition is None:
-        raise ValueError("condition must be provided")
     if not _contracts_enabled():
         return
     if not condition:
@@ -649,6 +643,18 @@ def set_contracts_enabled(enabled: bool) -> None:
 # ─── Convenience Validation Functions ─────────────────────────
 
 
+def _numpy() -> Any:
+    """Lazily import numpy.
+
+    numpy is imported on demand (not at module load) so that importing
+    ``contracts`` stays lightweight for callers that never use the
+    array-validation helpers.
+    """
+    import numpy as np
+
+    return np
+
+
 def require_positive(value: float, name: str = "value") -> None:
     """Require that *value* is strictly positive.
 
@@ -667,10 +673,9 @@ def require_finite(array: Any, name: str = "array") -> None:
     Raises:
         PreconditionError: If any element is NaN or Inf.
     """
-    import numpy as np
-
     if not _contracts_enabled():
         return
+    np = _numpy()
     if not np.all(np.isfinite(array)):
         raise PreconditionError(f"{name} contains NaN or Inf values")
 
@@ -681,10 +686,9 @@ def require_unit_vector(vector: Any, name: str = "vector", tol: float = 1e-6) ->
     Raises:
         PreconditionError: If the norm deviates from 1.0 by more than *tol*.
     """
-    import numpy as np
-
     if not _contracts_enabled():
         return
+    np = _numpy()
     norm = np.linalg.norm(vector)
     if abs(norm - 1.0) > tol:
         raise PreconditionError(f"{name} must be a unit vector (norm = {norm})")
@@ -723,6 +727,5 @@ def is_valid_result(result: Any) -> bool:
 
 def has_finite_elements(array: Any) -> bool:
     """Return ``True`` if all elements of *array* are finite."""
-    import numpy as np
-
+    np = _numpy()
     return bool(np.all(np.isfinite(array)))
