@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.3.0                                      |
-| **Spec Version**        | 1.3.0                                      |
+| **Current Version**     | 1.4.0                                      |
+| **Spec Version**        | 1.4.0                                      |
 | **Last Spec Update**    | 2026-06-20                                 |
 
 ## 2. Purpose & Mission
@@ -38,6 +38,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- Release metadata now publishes Tools v1.4.0 across `VERSION` and
+  `pyproject.toml`, and the generated changelog plus release PR body retain
+  reference-only issue wording so historical release notes do not re-close
+  prior issues (#3813).
 - Release metadata now publishes Tools v1.3.0 across `VERSION` and
   `pyproject.toml`, and the generated changelog uses reference-only issue
   wording so historical release notes do not re-close prior issues (#3812).
@@ -1809,11 +1813,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-04-23 | 1.1.97 | Security and robustness remediation pass from adversarial review: tightened exception boundaries and error propagation for shared rotation conversion, scripting runtime, and model-generation loaders; hardened data-processing and state-management paths against invalid inputs and silent failures; and aligned related test coverage for the updated failure-handling contracts. |
 | 2026-04-23 | 1.1.96 | Hardened ODE and signal generation preconditions so direct RK4 calls reject fewer than two output points, chirp generation rejects single-point time arrays, and sawtooth/triangle/square generation reject non-positive frequencies with clear `ValueError` messages instead of division-by-zero failures. |
 | 2026-04-22 | 1.1.92 | Fixed Design by Contract runtime toggling so contract primitives, decorators, invariant checks, and validation helpers read the canonical contract state instead of stale module-level compatibility aliases; added regression coverage for alias/state divergence. |
-| 2026-04-22 | 1.1.91 | Security hardening (closes #2219): removed starred argument unpacking from the safe mathematical expression evaluator AST allowlist and added regression coverage so expressions such as `sum(*x)` are rejected before execution. |
-| 2026-04-22 | 1.1.88 | Test-enforcement fix (closes #2211): restricted GH1732 logging-consistency excluded-directory matching to the top-level `src/<segment>` only, and added regression coverage proving nested path segments named like excluded dirs remain in sweep scope. |
+| 2026-04-22 | 1.1.91 | Security hardening (refs #2219): removed starred argument unpacking from the safe mathematical expression evaluator AST allowlist and added regression coverage so expressions such as `sum(*x)` are rejected before execution. |
+| 2026-04-22 | 1.1.88 | Test-enforcement fix (refs #2211): restricted GH1732 logging-consistency excluded-directory matching to the top-level `src/<segment>` only, and added regression coverage proving nested path segments named like excluded dirs remain in sweep scope. |
 | 2026-04-22 | 1.1.87 | Documented the `signal_toolkit` package organization for adaptive filters: `AdaptiveFilter` now lives in `adaptive_filter.py` while remaining available from the package root and legacy `filters` module. |
-| 2026-04-22 | 1.1.85 | Implementation (closes #2200): added a flat Asteroid Jumper controller snapshot DTO and routed the renderer through it to remove nested state traversal from the draw path. |
-| 2026-04-22 | 1.1.84 | Documentation (closes #2200): reviewed deep object traversal hotspots in launchers, Matplotlib/Qt UI code, assessment scripts, Rust ball-flight physics, and Asteroid Jumper controller code, documenting framework/path/import/value-object boundaries that do not require DTO or facade extraction. |
+| 2026-04-22 | 1.1.85 | Implementation (refs #2200): added a flat Asteroid Jumper controller snapshot DTO and routed the renderer through it to remove nested state traversal from the draw path. |
+| 2026-04-22 | 1.1.84 | Documentation (refs #2200): reviewed deep object traversal hotspots in launchers, Matplotlib/Qt UI code, assessment scripts, Rust ball-flight physics, and Asteroid Jumper controller code, documenting framework/path/import/value-object boundaries that do not require DTO or facade extraction. |
 | 2026-04-22 | 1.1.83 | Optimized statistical calculation in data processor using Welford's algorithm to compute variance in a single pass. |
 | 2026-04-19 | 1.1.82 | Removed QTimer.singleShot startup races and leaky lambda captures in shared chat dock and syngas compression calculator UI code by routing deferred initialization through named callbacks and stored helper methods (PR #2163). |
 | 2026-04-19 | 1.1.81 | Aligned dependency metadata with the supported Python and toolchain baseline: Python package metadata now starts at Python 3.11, lint/type configuration shares that floor, Black was removed from the canonical format path, and the reproducible requirements lock includes the pytest timeout and benchmark plugins declared by the development manifests (PR #2161). |
