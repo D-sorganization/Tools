@@ -431,19 +431,13 @@ class DataProcessorMainWindow(
 
         # Analysis tab (PCA, ANOVA, Regression, Surface, Neural Network)
         self.analysis_panel = AnalysisPanel()
-        self.analysis_panel.pca_widget.analysis_requested.connect(
-            self._run_pca_analysis
-        )
-        self.analysis_panel.anova_widget.analysis_requested.connect(
-            self._run_anova_analysis
-        )
-        self.analysis_panel.regression_widget.analysis_requested.connect(
-            self._run_regression_analysis
-        )
-        self.analysis_panel.surface_widget.plot_requested.connect(
-            self._run_surface_analysis
-        )
-        self.analysis_panel.nn_widget.train_requested.connect(self._run_nn_analysis)
+        # Connect to the panel's aggregate signals rather than reaching
+        # through into its private child widgets (LoD / Orthogonality).
+        self.analysis_panel.pca_requested.connect(self._run_pca_analysis)
+        self.analysis_panel.anova_requested.connect(self._run_anova_analysis)
+        self.analysis_panel.regression_requested.connect(self._run_regression_analysis)
+        self.analysis_panel.surface_requested.connect(self._run_surface_analysis)
+        self.analysis_panel.nn_train_requested.connect(self._run_nn_analysis)
         self.tab_widget.addTab(self.analysis_panel, "Analysis")
 
         # DAT Import tab
