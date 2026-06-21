@@ -1465,6 +1465,7 @@ export const App: React.FC = () => {
                   <button
                     key={tab.id}
                     type="button"
+                    aria-pressed={visibleTabs[tab.id]}
                     className={`tab-toggle ${visibleTabs[tab.id] ? "on" : ""}`}
                     onClick={() => handleTabVisibilityToggle(tab.id)}
                   >
