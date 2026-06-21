@@ -2512,5 +2512,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.412 - plugin_manager discovery precedence (#3722)
 
 - **2026-06-18**: fix(core) — reconcile the `load_tools_with_discovery` merge in `plugin_manager.py` with its documented contract: on a name collision within a category a discovered manifest tool now replaces the same-named `tools.json` entry (discovered wins), instead of silently keeping the stale JSON entry. Added a regression test (`test_discovered_tool_wins_name_collision`) asserting the discovered tool survives a duplicate-name collision and that its path/desc reflect the manifest source.
+
 ## 1.1.413 - Optimized Nelder-Mead loop in `optimizer.ts`
+
 - **2026-06-21**: perf(pendulum) — Replaced `Array.prototype.sort` with manual insertion sort in `nelderMead` loop in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate callback invocation overhead.
