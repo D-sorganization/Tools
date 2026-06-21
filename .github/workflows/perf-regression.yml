@@ -20,7 +20,7 @@ concurrency:
 
 jobs:
   benchmark:
-    runs-on: d-sorg-fleet
+    runs-on: [self-hosted, Linux, X64, d-sorg-fleet]
     timeout-minutes: 30
     steps:
       - name: Checkout

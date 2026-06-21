@@ -82,6 +82,7 @@ def test_worker_runs_against_isolated_namespace_copy(qapp, qtbot) -> None:
     _execute_and_wait(widget, qtbot, "a = 1")
     # Clean completion merges back: the live namespace has the value.
     assert widget._namespace.get("a") == 1  # noqa: SLF001
+    assert widget.namespace is widget._namespace  # noqa: SLF001
 
 
 def test_cancel_does_not_corrupt_live_namespace(qapp, qtbot) -> None:
@@ -101,3 +102,24 @@ def test_cancel_does_not_corrupt_live_namespace(qapp, qtbot) -> None:
     assert "corrupt" not in widget._namespace  # noqa: SLF001
     assert widget._namespace["sentinel"] == "untouched"  # noqa: SLF001
     assert widget._worker is None  # noqa: SLF001
+
+
+def test_legacy_wrapper_aliases_public_repl_namespace(qapp, qtbot) -> None:
+    """The compatibility wrapper uses the REPL's public namespace alias."""
+    from sidekick.ui.tools_sidebar.calculator_startup import CalculatorStartupConfig
+    from sidekick.ui.tools_sidebar.python_repl_tab import SidekickPythonReplWidget
+    from sidekick.ui.tools_sidebar.registry import WorkspaceRegistry
+
+    registry = WorkspaceRegistry()
+
+    def set_variable(name: str, value: object) -> None:
+        registry.set(name, value)
+
+    widget = SidekickPythonReplWidget(
+        registry=registry,
+        set_variable=set_variable,
+        startup_config=CalculatorStartupConfig(()),
+    )
+    qtbot.addWidget(widget)
+
+    assert widget._namespace is widget._repl.namespace  # noqa: SLF001

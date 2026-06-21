@@ -119,7 +119,7 @@ def get_dat_columns(
     if file_path is None:
         raise ValueError("file_path must be provided")
     df = read_dat_file(file_path, delimiter=delimiter, nrows=nrows)
-    return df.columns.tolist()
+    return [str(column) for column in df.columns]
 
 
 def import_dat_with_tags(
@@ -226,6 +226,10 @@ def detect_dat_delimiter(file_path: str | Path) -> str:
 
     Returns:
         Detected delimiter character
+
+    Raises:
+        ValueError: If the sampled file content is empty or contains no
+            supported delimiter.
     """
     file_path = Path(file_path)
 
@@ -239,7 +243,13 @@ def detect_dat_delimiter(file_path: str | Path) -> str:
         for delim in delimiters:
             delimiters[delim] += line.count(delim)
 
-    # Return the most common delimiter
+    max_count = max(delimiters.values())
+    if max_count == 0:
+        raise ValueError(
+            f"Could not detect a DAT delimiter in {file_path}; "
+            "sample is empty or single-column."
+        )
+
     return max(delimiters, key=delimiters.get)  # type: ignore[arg-type]
 
 

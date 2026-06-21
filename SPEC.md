@@ -46,6 +46,28 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   only removes repeated callback dispatch and closure overhead from the
   repeatedly executed simplex ranking step.
 
+### 2026-06-21 Deferred #3745 cleanup hardening
+
+- `Bot-CI-Trigger.yml` now pins workflow `run` steps to bash so its CI-trigger
+  discovery and summary scripts are interpreted consistently on Windows or Linux
+  self-hosted runners instead of failing under PowerShell syntax parsing.
+- `scripts/convert_print_to_logging.py` now parses candidate single-line
+  `print(...)` statements with `ast` before rewriting, preserving trailing
+  inline comments outside the generated `logger.*(...)` call and using
+  word-boundary log-level detection so text such as `no errors` no longer
+  escalates to `logger.error`.
+- `sidekick.ui.tools_sidebar.python_repl_tab` exposes the REPL namespace through
+  a public `namespace` property; the legacy wrapper now uses that intentional
+  live alias instead of reaching through `_repl._namespace`, while worker
+  execution still runs on an isolated copy and merges back only after clean
+  completion.
+- `p1am_control_system.backend.main.get_ladder_explorer` now preloads area, unit,
+  and equipment lookup tables before rendering tags, matching the plant
+  hierarchy endpoint pattern and avoiding per-tag parent `db.get()` round-trips.
+- `data_processor.core.dat_importer.detect_dat_delimiter` raises `ValueError`
+  when the sampled DAT content is empty or has no supported delimiters instead
+  of silently defaulting such single-column files to tab-separated data.
+
 ### 2026-06-21 REST API & P1AM validation hardening
 
 - `p1am_control_system.backend.models.PIDConfig` now validates `pv_tag`/`cv_tag`
@@ -1589,6 +1611,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-06-21 | 1.1.7791 | fix(ci): route the Performance Regression benchmark workflow to the Linux self-hosted fleet labels so `actions/setup-python` no longer lands on Windows runners without registry-write permissions. |
 | 2026-06-21 | 1.1.7790 | perf(pendulum-web): replace the Nelder-Mead simplex `Array.prototype.sort()` comparator in `optimizer.ts` with a manual in-place insertion sort for the tiny fixed-size simplex, preserving ordering behavior while removing repeated callback dispatch from the hot optimization loop. |
 | 2026-06-21 | 1.1.7789 | cleanup(data-processor, #3745): extract a shared `_predict_cov` covariance-propagation helper in `state_space` and remove ~10 dead `y is None` guards from its private helpers; whitelist `KalmanFilterConfig.__init__` kwargs (reject typos like `meas_noise`) and replace the dead `state_dim is None` checks in EKF/UKF with positive-integer validation; document the `[0,1]` clamp on `cross_correlation` rolling `correlation_stability`; precompute the target-correlation vector once in `feature_selector.select_by_correlation`; and reuse an allocation-free `_jackknife` helper for the BCa interval (numerically identical, regression-pinned). |
 | 2026-06-20 | 1.1.7788 | perf(rrt-planner, #3683): maintain the RRT tree's coordinates in an incrementally grown buffer so nearest-neighbour selection no longer rebuilds the full coordinate array every iteration (was O(N^2) in tree size); planner output is unchanged, with brute-force NN and path-validity regression coverage. |
