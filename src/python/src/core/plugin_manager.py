@@ -16,7 +16,6 @@ DEFAULT_TOOL_SCAN_DIRS = (
     "tools",
     "web_applications",
     "data_processing",
-    "scientific_modeling",
     "media_processing",
 )
 
