@@ -415,6 +415,18 @@ def test_psa_main_window_initialization(
         assert mock_msg_box.about.called
 
 
+def test_results_panel_update_results_rejects_none(dummy_qapp: QApplication) -> None:
+    """update_results validates at the public boundary with ValueError.
+
+    Under ``-O`` the previous assert-based guard would be stripped and a None
+    would reach ``results.h2_recovery_pct`` producing an opaque AttributeError.
+    The boundary check must hold regardless of optimization level.
+    """
+    panel = ResultsPanel()
+    with pytest.raises(ValueError, match="results must be provided"):
+        panel.update_results(None)  # type: ignore[arg-type]
+
+
 def test_pfd_widget(dummy_qapp: QApplication) -> None:
     """Test the Process Flow Diagram widget."""
     widget = PFDWidget()

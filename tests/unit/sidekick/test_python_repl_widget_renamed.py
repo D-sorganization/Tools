@@ -62,6 +62,32 @@ def test_python_repl_widget_evaluates_python(tmp_path: Path, qtbot) -> None:
     assert sidebar.registry.get("answer") == 42
 
 
+def test_sidekick_repl_wrapper_raises_typeerror_for_missing_args(qtbot) -> None:
+    """The wrapper defers arg validation to the inner widget (single guard).
+
+    ``SidekickPythonReplWidget`` no longer duplicates the registry/set_variable
+    checks; it relies on the inner ``PythonReplWidget`` which raises
+    ``TypeError`` for missing/wrong-typed arguments (issue #3745).
+    """
+    try:
+        from upstream_drift_tools.ui.tools_sidebar.qt_compat import QtWidgets
+    except ImportError:
+        pytest.skip("Qt widgets unavailable")
+
+    from upstream_drift_tools.ui.tools_sidebar.registry import WorkspaceRegistry
+    from upstream_drift_tools.ui.tools_sidebar.runtime_tabs import (
+        SidekickPythonReplWidget,
+    )
+
+    _ = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+
+    with pytest.raises(TypeError):
+        SidekickPythonReplWidget(registry=None, set_variable=lambda _n, _v: None)  # type: ignore[arg-type]
+
+    with pytest.raises(TypeError):
+        SidekickPythonReplWidget(registry=WorkspaceRegistry(), set_variable=None)  # type: ignore[arg-type]
+
+
 def test_terminal_tab_id_now_hosts_os_terminal(tmp_path: Path, qtbot) -> None:
     """The ``terminal`` tab id now hosts the new OS terminal widget."""
     try:
