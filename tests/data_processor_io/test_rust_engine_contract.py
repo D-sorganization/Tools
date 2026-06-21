@@ -62,8 +62,10 @@ import importlib.util
 os.environ["DATA_PROCESSOR_IO_DISABLE_NATIVE"] = "1"
 
 from data_processor_io.rust_engine import (  # noqa: E402
+    CancellationToken,
     ConversionReport,
     DataProcessorRustError,
+    OperationCancelled,
     RustBulkDataEngine,
     SchemaInfo,
     cancel,
@@ -402,6 +404,85 @@ class TestCancel:
         # iteration should still yield rows (cancel was pre-call).
         batches = list(scan_batch(csv_file, batch_size=10))
         assert len(batches) >= 1  # flag was reset on entry, so data flows
+
+
+# ── Per-operation cancellation token (issue #3679) ───────────────────────────
+
+
+@pytest.mark.unit
+@pytest.mark.contract
+class TestCancellationToken:
+    """Contract: per-operation tokens isolate cancellation between operations."""
+
+    def test_tokens_are_independent(self) -> None:
+        """Cancelling one token must not cancel another."""
+        token_a = CancellationToken()
+        token_b = CancellationToken()
+
+        token_a.cancel()
+
+        assert token_a.is_cancelled()
+        assert not token_b.is_cancelled()
+
+    def test_concurrent_conversions_do_not_cross_cancel(self, tmp_path: Path) -> None:
+        """Cancelling one conversion's token leaves a concurrent one unaffected.
+
+        Regression for the former process-global ``_cancelled`` flag, which let
+        any ``cancel()`` abort every in-flight operation (issue #3679).
+        """
+        src = tmp_path / "in.csv"
+        src.write_text(_CSV_CONTENT, encoding="utf-8")
+        dst_cancelled = tmp_path / "cancelled.csv"
+        dst_ok = tmp_path / "ok.csv"
+
+        token_cancelled = CancellationToken()
+        token_ok = CancellationToken()
+
+        # Interleave: cancel only the first operation's token.
+        token_cancelled.cancel()
+
+        # The conversion bound to the cancelled token must abort...
+        with pytest.raises(OperationCancelled):
+            convert(src, dst_cancelled, "csv", token=token_cancelled)
+        assert not dst_cancelled.exists()
+
+        # ...while the conversion with its own (un-cancelled) token completes.
+        report = convert(src, dst_ok, "csv", token=token_ok)
+        assert isinstance(report, ConversionReport)
+        assert dst_ok.exists()
+        assert report.rows_written == 3
+
+    def test_filter_export_respects_token(self, csv_file: Path, tmp_path: Path) -> None:
+        """A cancelled token aborts filter_export before writing output."""
+        dst = tmp_path / "filtered.csv"
+        token = CancellationToken()
+        token.cancel()
+
+        with pytest.raises(OperationCancelled):
+            filter_export(csv_file, dst, "force > 0", token=token)
+        assert not dst.exists()
+
+    def test_scan_batch_token_stops_other_unaffected(self, csv_file: Path) -> None:
+        """A cancelled token stops its scan; an independent scan still yields."""
+        token_stop = CancellationToken()
+        token_stop.cancel()
+
+        stopped = list(scan_batch(csv_file, batch_size=1, token=token_stop))
+        assert stopped == []
+
+        # A fresh token (or no token) is unaffected by the other cancellation.
+        flowing = list(scan_batch(csv_file, batch_size=1, token=CancellationToken()))
+        assert len(flowing) >= 1
+
+    def test_global_cancel_does_not_affect_tokened_operation(
+        self, csv_file: Path
+    ) -> None:
+        """Legacy global cancel() must not cancel operations with their own token."""
+        cancel()  # legacy process-wide signal
+        token = CancellationToken()
+
+        batches = list(scan_batch(csv_file, batch_size=1, token=token))
+        assert len(batches) >= 1
 
 
 # ── Type stability (regression guard) ────────────────────────────────────────
