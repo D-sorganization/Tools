@@ -1,6 +1,8 @@
 import math
 from typing import Any, Protocol
 
+from pid_tuning import cohen_coon_pid
+
 
 class MPCSimulationPayload(Protocol):
     prediction_horizon: int
@@ -20,13 +22,9 @@ def simulate_pid_vs_mpc(payload: MPCSimulationPayload) -> dict[str, Any]:
     dt = 0.5
     steps = 50
 
-    ratio = max(0.1, theta) / max(0.5, tau)
-    kc = (1.0 / kp_process) * (tau / max(0.1, theta)) * (1.333 + 0.25 * ratio)
-    ti = max(0.1, theta) * (32.0 + 6.0 * ratio) / (13.0 + 8.0 * ratio)
-    td = max(0.1, theta) * 4.0 / (11.0 + 2.0 * ratio)
-    pid_kp = kc
-    pid_ki = kc / ti
-    pid_kd = kc * td
+    # Reuse the canonical Cohen-Coon coefficients from pid_tuning so the MPC
+    # comparison baseline can never drift from the live tuning recommendation.
+    pid_kp, pid_ki, pid_kd = cohen_coon_pid(kp_process, max(0.5, tau), max(0.1, theta))
 
     pid_pv = [0.0] * steps
     pid_cv = [0.0] * steps

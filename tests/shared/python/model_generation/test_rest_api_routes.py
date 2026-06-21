@@ -560,6 +560,72 @@ def test_inertia_from_mesh_density_branch_returns_volume_and_inertia(
 
 
 @pytest.mark.unit
+def test_inertia_from_mesh_real_trimesh_unit_box_density(
+    api: ModelGenerationAPI,
+) -> None:
+    """End-to-end through the real trimesh loader on a generated unit box.
+
+    Exercises the actual ``trimesh.load`` -> ``moment_inertia`` code path
+    (not a monkeypatched stub). For a solid unit cube (side 1, volume 1) of
+    uniform density rho, the centroidal principal moment of inertia about each
+    axis is I = (1/12) * m * (a^2 + a^2) = m / 6, with m = rho * volume.
+    """
+    trimesh = pytest.importorskip("trimesh")
+
+    box = trimesh.creation.box(extents=(1.0, 1.0, 1.0))
+    stl_bytes = box.export(file_type="stl")
+    if isinstance(stl_bytes, str):  # some exporters return ASCII text
+        stl_bytes = stl_bytes.encode()
+
+    density = 1000.0
+    resp = _post(
+        api,
+        "/api/v1/inertia/from-mesh",
+        body={"density": density, "filename": "box.stl"},
+        files={"mesh": stl_bytes},
+    )
+
+    assert resp.status_code == 200, resp.body
+    assert resp.body["volume"] == pytest.approx(1.0, rel=1e-3)
+    assert resp.body["mass"] == pytest.approx(density, rel=1e-3)
+    # Center of mass of a centered unit cube is the origin.
+    assert resp.body["center_of_mass"] == pytest.approx([0.0, 0.0, 0.0], abs=1e-6)
+    expected_i = density / 6.0
+    for axis in ("ixx", "iyy", "izz"):
+        assert resp.body["inertia"][axis] == pytest.approx(expected_i, rel=1e-3)
+    # A centered axis-aligned cube has zero products of inertia.
+    for axis in ("ixy", "ixz", "iyz"):
+        assert resp.body["inertia"][axis] == pytest.approx(0.0, abs=1e-6)
+
+
+@pytest.mark.unit
+def test_inertia_from_mesh_real_trimesh_unit_box_mass_scaling(
+    api: ModelGenerationAPI,
+) -> None:
+    """Real trimesh loader, mass branch: inertia scales to the requested mass."""
+    trimesh = pytest.importorskip("trimesh")
+
+    box = trimesh.creation.box(extents=(1.0, 1.0, 1.0))
+    stl_bytes = box.export(file_type="stl")
+    if isinstance(stl_bytes, str):
+        stl_bytes = stl_bytes.encode()
+
+    mass = 12.0
+    resp = _post(
+        api,
+        "/api/v1/inertia/from-mesh",
+        body={"mass": mass, "filename": "box.stl"},
+        files={"mesh": stl_bytes},
+    )
+
+    assert resp.status_code == 200, resp.body
+    assert resp.body["mass"] == pytest.approx(mass)
+    expected_i = mass / 6.0
+    for axis in ("ixx", "iyy", "izz"):
+        assert resp.body["inertia"][axis] == pytest.approx(expected_i, rel=1e-3)
+
+
+@pytest.mark.unit
 @pytest.mark.parametrize("field", ["mass", "density"])
 def test_inertia_from_mesh_rejects_non_positive_mass_inputs(
     api: ModelGenerationAPI,

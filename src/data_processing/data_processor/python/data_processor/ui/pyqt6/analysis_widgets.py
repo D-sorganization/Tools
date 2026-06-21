@@ -17,6 +17,7 @@ import logging
 import pandas as pd
 
 try:
+    from PyQt6.QtCore import pyqtSignal
     from PyQt6.QtWidgets import (
         QTabWidget,
         QVBoxLayout,
@@ -57,11 +58,27 @@ logger = logging.getLogger(__name__)
 if PYQT6_AVAILABLE:
 
     class AnalysisPanel(QWidget):
-        """Main panel containing all analysis widgets."""
+        """Main panel containing all analysis widgets.
+
+        The panel re-exposes aggregate request signals that forward from its
+        internal child widgets. Consumers (e.g. ``MainWindow``) connect to
+        these panel-level signals instead of reaching through the panel into
+        its private child widgets, so the panel's internal composition can
+        change without breaking its consumers.
+        """
+
+        # Aggregate signals forwarded from the internal child widgets. Each
+        # carries the same ``dict`` payload as the originating child signal.
+        pca_requested = pyqtSignal(dict)
+        anova_requested = pyqtSignal(dict)
+        regression_requested = pyqtSignal(dict)
+        surface_requested = pyqtSignal(dict)
+        nn_train_requested = pyqtSignal(dict)
 
         def __init__(self, parent: QWidget | None = None) -> None:
             super().__init__(parent)
             self._setup_ui()
+            self._connect_child_signals()
 
         def _setup_ui(self) -> None:
             layout = QVBoxLayout(self)
@@ -88,6 +105,14 @@ if PYQT6_AVAILABLE:
             self.tabs.addTab(self.script_widget, "Script Generator")
 
             layout.addWidget(self.tabs)
+
+        def _connect_child_signals(self) -> None:
+            """Forward each child widget's request signal to a panel signal."""
+            self.pca_widget.analysis_requested.connect(self.pca_requested)
+            self.anova_widget.analysis_requested.connect(self.anova_requested)
+            self.regression_widget.analysis_requested.connect(self.regression_requested)
+            self.surface_widget.plot_requested.connect(self.surface_requested)
+            self.nn_widget.train_requested.connect(self.nn_train_requested)
 
         def set_dataframe(self, df: pd.DataFrame) -> None:
             """Update all widgets with new DataFrame."""
