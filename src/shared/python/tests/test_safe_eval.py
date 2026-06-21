@@ -56,6 +56,52 @@ class TestValidateExpression:
         assert isinstance(tree, ast.Expression)
 
 
+class TestAllowlistedNodeEvaluation:
+    """Behavioral coverage for allowlisted AST node types (issue #3704).
+
+    ``_ALLOWED_NODE_TYPES`` permits Subscript, Slice, IfExp, BoolOp/boolop,
+    and Compare/cmpop, but the suite previously asserted no *evaluated*
+    result for any of them. These tests pin concrete return values so a
+    regression that broke (or an allowlist change that silently broadened)
+    any of these node types is caught.
+    """
+
+    def test_subscript_evaluates(self) -> Any:
+        assert safe_eval("x[0]", {"x": [10, 20]}) == 10
+        assert safe_eval("x[-1]", {"x": [10, 20, 30]}) == 30
+
+    def test_slice_evaluates(self) -> Any:
+        assert safe_eval("x[1:3]", {"x": [0, 1, 2, 3]}) == [1, 2]
+        assert safe_eval("x[::2]", {"x": [0, 1, 2, 3, 4]}) == [0, 2, 4]
+
+    def test_ifexp_evaluates(self) -> Any:
+        assert safe_eval("a if c else b", {"a": 1, "b": 2, "c": True}) == 1
+        assert safe_eval("a if c else b", {"a": 1, "b": 2, "c": False}) == 2
+
+    def test_boolop_evaluates(self) -> Any:
+        assert safe_eval("a and b", {"a": True, "b": False}) is False
+        assert safe_eval("a or b", {"a": False, "b": True}) is True
+        # Short-circuit semantics return the operand, not a coerced bool.
+        assert safe_eval("a and b", {"a": 1, "b": 2}) == 2
+
+    def test_compare_evaluates(self) -> Any:
+        assert safe_eval("x > 3", {"x": 5}) is True
+        assert safe_eval("x < 3", {"x": 5}) is False
+        # Chained comparison exercises multiple cmpop nodes in one Compare.
+        assert safe_eval("1 < x < 10", {"x": 5}) is True
+
+    def test_disallowed_constructs_still_rejected(self) -> Any:
+        # Adding evaluation coverage must not imply broadening the allowlist:
+        # comprehensions, dict/list/set literals, and assignment expressions
+        # remain rejected node types.
+        with pytest.raises(ValueError, match="Unsafe operation detected"):
+            validate_expression("[i for i in x]", {"x"})
+        with pytest.raises(ValueError, match="Unsafe operation detected"):
+            validate_expression("{1: 2}")
+        with pytest.raises(ValueError, match="Unsafe operation detected"):
+            validate_expression("(y := 5)")
+
+
 class TestSafeEval:
     def test_safe_eval_basic(self) -> Any:
         result = safe_eval("2 * x", {"x": 21})
