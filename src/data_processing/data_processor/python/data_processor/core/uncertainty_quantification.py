@@ -54,6 +54,28 @@ def _leave_one_out_indices(n: int) -> np.ndarray:
     return tiled[mask].reshape(n, n - 1)
 
 
+def _jackknife(
+    sample: np.ndarray,
+    statistic: Callable[[np.ndarray], float],
+) -> np.ndarray:
+    """Evaluate ``statistic`` on every leave-one-out subsample of ``sample``.
+
+    Returns an array ``out`` of length ``len(sample)`` where ``out[j]`` is
+    ``statistic`` applied to ``sample`` with element ``j`` removed (order
+    preserved). The subsamples are built via :func:`_leave_one_out_indices`
+    so the index pattern is constructed once and reused, avoiding the
+    per-element ``np.delete`` reallocation. Results are numerically identical
+    to ``np.array([statistic(np.delete(sample, j)) for j in range(n)])``.
+
+    Shared by the BCa and studentized bootstrap intervals (issue #3745).
+    """
+    sample = np.asarray(sample)
+    n = len(sample)
+    loo_indices = _leave_one_out_indices(n)
+    subsamples = sample[loo_indices]
+    return np.array([statistic(subsample) for subsample in subsamples])
+
+
 class BootstrapMethod(Enum):
     """Bootstrap confidence interval methods."""
 
@@ -804,17 +826,16 @@ class UncertaintyQuantifier:
         """Compute BCa confidence interval."""
         if data is None:
             raise ValueError("data must be provided")
-        n = len(data)
 
         # Bias correction factor
         prop_less = float(np.mean(bootstrap_stats < theta_hat))
         z0 = self._normal_ppf(prop_less) if 0 < prop_less < 1 else 0.0
 
-        # Acceleration factor using jackknife
-        jackknife_stats = np.zeros(n)
-        for i in range(n):
-            jack_sample = np.delete(data, i)
-            jackknife_stats[i] = statistic(jack_sample)
+        # Acceleration factor using jackknife. Reuses the shared, allocation-free
+        # leave-one-out helper instead of an inner ``np.delete`` loop (issue
+        # #3745); the subsamples are byte-for-byte identical to the previous
+        # ``np.delete(data, i)`` sequence, so the statistic is unchanged.
+        jackknife_stats = _jackknife(data, statistic)
 
         jack_mean = np.mean(jackknife_stats)
         jack_diff = jack_mean - jackknife_stats
@@ -868,29 +889,14 @@ class UncertaintyQuantifier:
         # Compute standard error for each bootstrap sample
         t_stats = np.zeros(n_bootstrap)
 
-        # All bootstrap samples share the same length, so the leave-one-out
-        # index pattern is identical for every sample. Build it once instead of
-        # calling ``np.delete`` (which reallocates and runs a boolean search per
-        # element) inside the inner loop -- this removes the O(B * n) allocation
-        # churn that made the studentized interval O(B * n^2) with a large
-        # constant factor. Results are numerically identical because each
-        # leave-one-out subsample contains exactly the same elements in the same
-        # order that ``np.delete`` produced.
-        sample_len = bootstrap_samples.shape[1] if n_bootstrap else 0
-        loo_indices = _leave_one_out_indices(sample_len)
-
         for i in range(n_bootstrap):
             sample = bootstrap_samples[i]
             boot_stat = bootstrap_stats[i]
 
-            # Nested bootstrap for SE (simplified: use jackknife). ``sample`` is
-            # gathered through the precomputed leave-one-out index matrix so each
-            # jackknife replicate omits exactly one element with no per-iteration
-            # allocation from ``np.delete``.
-            jack_subsamples = sample[loo_indices]
-            jack_stats = np.array(
-                [statistic(subsample) for subsample in jack_subsamples]
-            )
+            # Nested bootstrap for SE (simplified: use jackknife). The shared
+            # allocation-free helper omits exactly one element per replicate,
+            # matching the prior ``np.delete`` behaviour (issue #3745).
+            jack_stats = _jackknife(sample, statistic)
 
             boot_se = np.std(jack_stats) * np.sqrt(len(sample) - 1)
 

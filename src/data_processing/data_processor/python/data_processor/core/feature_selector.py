@@ -53,6 +53,18 @@ class FeatureSelector:
         # Compute correlation matrix
         corr_matrix = np.corrcoef(features, rowvar=False)
 
+        # Precompute |corr(feature_k, target)| once for every feature, rather
+        # than recomputing np.corrcoef inside the O(F^2) pair loop (issue #3745).
+        target_corr: np.ndarray | None = None
+        if target is not None:
+            target = np.asarray(target)
+            target_corr = np.array(
+                [
+                    abs(np.corrcoef(features[:, k], target)[0, 1])
+                    for k in range(n_features)
+                ]
+            )
+
         # Find highly correlated pairs
         to_remove: set[int] = set()
         scores: dict[str, float] = {}
@@ -67,10 +79,8 @@ class FeatureSelector:
 
                 if abs(corr_matrix[i, j]) > threshold:
                     # Keep feature with higher target correlation if provided
-                    if target is not None:
-                        corr_i = abs(np.corrcoef(features[:, i], target)[0, 1])
-                        corr_j = abs(np.corrcoef(features[:, j], target)[0, 1])
-                        to_remove.add(j if corr_i >= corr_j else i)
+                    if target_corr is not None:
+                        to_remove.add(j if target_corr[i] >= target_corr[j] else i)
                     else:
                         # Remove the one with higher average correlation
                         avg_corr_i = np.mean(np.abs(corr_matrix[i, :]))
