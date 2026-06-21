@@ -192,6 +192,16 @@ class BaseStateSpaceModel(ABC):
         """Minimum observations required for stable matrix initialization."""
         return 2
 
+    def _predict_cov(self, P: np.ndarray) -> np.ndarray:
+        """One-step covariance prediction ``T P Tᵀ + R Q Rᵀ``.
+
+        Shared by :meth:`forecast`, :meth:`_kalman_filter`, and
+        :meth:`_kalman_smoother` so the propagation block is written once
+        (issue #3745). No boundary validation here: this is a private helper
+        invoked only after the public surface has validated its inputs.
+        """
+        return self.T @ P @ self.T.T + self.R @ self.Q @ self.R.T
+
     @abstractmethod
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices based on data."""
@@ -330,7 +340,7 @@ class BaseStateSpaceModel(ABC):
         for h in range(steps):
             # Predict state
             state = self.T @ state
-            state_cov = self.T @ state_cov @ self.T.T + self.R @ self.Q @ self.R.T
+            state_cov = self._predict_cov(state_cov)
 
             # Predict observation
             forecast[h] = (self.Z @ state).item()
@@ -365,8 +375,6 @@ class BaseStateSpaceModel(ABC):
         Returns:
             Tuple of (filtered_states, filtered_covariances, log_likelihood)
         """
-        if y is None:
-            raise ValueError("y must be provided")
         n = len(y)
 
         # Initialize
@@ -389,7 +397,7 @@ class BaseStateSpaceModel(ABC):
         for t in range(n):
             # Prediction step
             state_pred = self.T @ state
-            cov_pred = self.T @ state_cov @ self.T.T + self.R @ self.Q @ self.R.T
+            cov_pred = self._predict_cov(state_cov)
 
             # Innovation
             y_pred = self.Z @ state_pred
@@ -452,8 +460,6 @@ class BaseStateSpaceModel(ABC):
         Returns:
             Tuple of (smoothed_states, smoothed_covariances)
         """
-        if y is None:
-            raise ValueError("y must be provided")
         n = len(y)
 
         # Initialize with last filtered values
@@ -464,7 +470,7 @@ class BaseStateSpaceModel(ABC):
         for t in range(n - 2, -1, -1):
             # Predicted state at t+1 given t
             state_pred = self.T @ filtered_states[t].reshape(-1, 1)
-            cov_pred = self.T @ filtered_cov[t] @ self.T.T + self.R @ self.Q @ self.R.T
+            cov_pred = self._predict_cov(filtered_cov[t])
 
             # Smoother gain
             try:
@@ -494,9 +500,6 @@ class BaseStateSpaceModel(ABC):
         Returns:
             Tuple of (optimal_params, log_likelihood, converged, n_iterations)
         """
-
-        if y is None:
-            raise ValueError("y must be provided")
 
         def objective(params) -> Any:
             # Ensure positive variances if needed
@@ -542,8 +545,6 @@ class BaseStateSpaceModel(ABC):
         Returns:
             Tuple of (optimal_params, log_likelihood, converged, n_iterations)
         """
-        if y is None:
-            raise ValueError("y must be provided")
         params = initial_params.copy()
         max_iter = self.config.max_iterations
         tol = self.config.tolerance
@@ -579,8 +580,6 @@ class BaseStateSpaceModel(ABC):
 
         Default implementation - can be overridden by subclasses.
         """
-        if y is None:
-            raise ValueError("y must be provided")
         n = len(y)
 
         # Estimate observation variance
@@ -604,8 +603,6 @@ class BaseStateSpaceModel(ABC):
         self, y: np.ndarray, params: np.ndarray, eps: float = 1e-6
     ) -> np.ndarray:
         """Compute numerical gradient of log-likelihood."""
-        if y is None:
-            raise ValueError("y must be provided")
         grad = np.zeros(len(params))
 
         for i in range(len(params)):
@@ -668,8 +665,6 @@ class LocalLevelModel(BaseStateSpaceModel):
 
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
-        if y is None:
-            raise ValueError("y must be provided")
         self.T = np.array([[1.0]])
         self.Z = np.array([[1.0]])
         self.R = np.array([[1.0]])
@@ -720,8 +715,6 @@ class LocalLinearTrendModel(BaseStateSpaceModel):
 
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
-        if y is None:
-            raise ValueError("y must be provided")
         self.T = np.array([[1.0, 1.0], [0.0, 1.0]])
         self.Z = np.array([[1.0, 0.0]])
         self.R = np.eye(2)
@@ -784,8 +777,6 @@ class SeasonalModel(BaseStateSpaceModel):
 
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
-        if y is None:
-            raise ValueError("y must be provided")
         period = self.period
 
         # Transition matrix
@@ -871,8 +862,6 @@ class ARIMAStateSpace(BaseStateSpaceModel):
 
     def _initialize_matrices(self, y: np.ndarray) -> None:
         """Initialize model matrices."""
-        if y is None:
-            raise ValueError("y must be provided")
         r = self.n_states
 
         # Difference the series if needed
@@ -957,8 +946,6 @@ class ARIMAStateSpace(BaseStateSpaceModel):
 
     def _estimate_ar(self, y: np.ndarray, p: int) -> np.ndarray:
         """Estimate AR coefficients using Yule-Walker equations."""
-        if y is None:
-            raise ValueError("y must be provided")
         n = len(y)
         if n < p + 1:
             return np.zeros(p)

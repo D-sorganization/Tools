@@ -129,7 +129,11 @@ class RollingCorrelationResult:
     # Statistics
     mean_correlation: float
     std_correlation: float
-    correlation_stability: float  # 1 - coefficient of variation
+    # Stability score in [0, 1]: ``1 - |std/mean|`` (one minus the coefficient
+    # of variation of the rolling correlations), clamped at 0. Higher means the
+    # correlation is steadier across windows. Defined as 0.0 when the mean
+    # correlation is exactly zero (CoV undefined).
+    correlation_stability: float
 
 
 class CrossCorrelationAnalyzer:
@@ -338,6 +342,11 @@ class CrossCorrelationAnalyzer:
         mean_corr = float(np.mean(valid_corr)) if len(valid_corr) > 0 else 0.0
         std_corr = float(np.std(valid_corr)) if len(valid_corr) > 0 else 0.0
 
+        # Stability = 1 - coefficient of variation, clamped to [0, 1]. Without
+        # the ``max(0.0, ...)`` floor a volatile correlation (|std/mean| > 1)
+        # would yield an arbitrarily negative value, contradicting the
+        # documented [0, 1] contract. When ``mean_corr == 0`` the CoV is
+        # undefined, so stability is reported as 0.0 by convention. Issue #3745.
         stability = max(0.0, 1 - abs(std_corr / mean_corr)) if mean_corr != 0 else 0.0
 
         return RollingCorrelationResult(
