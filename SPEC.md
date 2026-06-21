@@ -55,6 +55,25 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-06-20 Update
 
+- Safety-critical PID auto-tuning math is now a pure, importable module
+  (`p1am_control_system.backend.pid_tuning`): FOPDT step-response
+  identification and Cohen-Coon tuning no longer live inline in the
+  `stop_pid_tuning` FastAPI route. Every Cohen-Coon coefficient is a named
+  constant, and a numerical test suite pins the recommended gains against the
+  reference formulas for known plants. The `/api/mpc/simulate` baseline reuses
+  the same `cohen_coon_pid` helper so the MPC comparison can no longer drift
+  from the live tuning recommendation (#3684).
+- The data-processor `AnalysisPanel` now exposes its own aggregate request
+  signals (`pca_requested`, `anova_requested`, `regression_requested`,
+  `surface_requested`, `nn_train_requested`) that forward from its internal
+  child widgets. `MainWindow` connects to these panel-level signals instead of
+  reaching through `analysis_panel.<widget>.<signal>` chains, so the panel's
+  internal composition can change without breaking its consumers (#3680).
+- Added real-trimesh success-path coverage for the model-generation
+  `inertia_from_mesh` endpoint: tests now load a generated unit-box mesh through
+  the actual trimesh loader and assert the returned mass, volume, center of
+  mass, and moment-of-inertia tensor on both the density and mass-scaling
+  branches (#3669).
 - The scripting sandbox timeout (`scripting_env.ConsoleEnvironment`) now
   delivers the daemon-thread fallback interrupt deterministically: a genuine
   timeout is absorbed inside the timeout context and reported as a
