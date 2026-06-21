@@ -12,10 +12,13 @@ Public API::
 """
 
 from .rust_engine import (
+    CancellationToken,
     ConversionReport,
     DataProcessorRustError,
+    OperationCancelled,
     RustBulkDataEngine,
     SchemaInfo,
+    cancel,
     convert,
     filter_export,
     inspect,
@@ -24,10 +27,13 @@ from .rust_engine import (
 )
 
 __all__ = [
+    "CancellationToken",
     "ConversionReport",
     "DataProcessorRustError",
+    "OperationCancelled",
     "RustBulkDataEngine",
     "SchemaInfo",
+    "cancel",
     "convert",
     "filter_export",
     "inspect",
