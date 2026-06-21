@@ -303,6 +303,7 @@ markers = [
     "math_regression: tests looking for unintended calculation changes",
     "flaky: tests that are known to fail intermittently",
     "tools_contracts: tests verifying shared tools libraries interfaces",
+    "vcr: tests that replay recorded HTTP interactions with vcrpy/pytest-vcr",
     # ---- fleet testing standards §2 additions ----
     "serial: must run with -n 0 (xdist parallel breaks this test)",
     "requires_mujoco: skip when import mujoco fails",
