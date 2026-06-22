@@ -18,7 +18,8 @@ export type TabId =
   | "ladder"
   | "hierarchy"
   | "powerSupply"
-  | "temperature";
+  | "temperature"
+  | "diagnostics";
 
 export interface TabDef {
   /** Stable identifier used as the `activeTab` value and visibility key. */
@@ -85,6 +86,12 @@ export const TABS: readonly TabDef[] = [
     label: "Heater Controls",
     settingsLabel: "Heater Controls",
     accentVar: "var(--accent-orange, #fb923c)",
+  },
+  {
+    id: "diagnostics",
+    label: "Signal Diagnostics",
+    settingsLabel: "Signal Diagnostics (raw 0–5 V)",
+    accentVar: "var(--accent-cyan)",
   },
 ] as const;
 
