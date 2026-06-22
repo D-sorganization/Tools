@@ -92,21 +92,23 @@ class PowerSupplyConfig(BaseModel):
     )
 
     current_full_scale_a: float = Field(
-        default=100.0,
+        default=200.0,
         gt=0.0,
         description=(
             "Calibration: amps that correspond to a full-scale signal "
             "(100 % = 20 mA = 5 V) on the current command AND current-monitor "
-            "legs. Set this to what the supply's meter reads at full output."
+            "legs. Set this to what the supply's meter reads at full output. "
+            "Default 200 A (this bench supply's max); adjustable in Calibration."
         ),
     )
     voltage_full_scale_v: float = Field(
-        default=50.0,
+        default=300.0,
         gt=0.0,
         description=(
             "Calibration: volts that correspond to a full-scale signal "
             "(100 % = 20 mA = 5 V) on the voltage-monitor AI. Set this to what "
-            "the supply's voltmeter reads at full scale."
+            "the supply's voltmeter reads at full scale. Default 300 V (this "
+            "bench supply's max); adjustable in Calibration."
         ),
     )
 
@@ -116,15 +118,23 @@ class PowerSupplyConfig(BaseModel):
         description="Lower clamp for operator current setpoint (A).",
     )
     current_setpoint_max_a: float = Field(
-        default=50.0,
+        default=200.0,
         gt=0.0,
-        description="Upper clamp for operator current setpoint (A).",
+        description=(
+            "Upper clamp for operator current setpoint (A). Default 200 A to "
+            "match the supply's full scale; the output clamp (% of full) is the "
+            "live safety guard. Adjustable."
+        ),
     )
 
     power_alarm_max_w: float = Field(
-        default=1000.0,
+        default=60000.0,
         gt=0.0,
-        description="Power trip threshold in watts (HH_POWER).",
+        description=(
+            "Power trip threshold in watts (HH_POWER). Default 60 kW = 200 A x "
+            "300 V (the supply's max) so it guards against a genuine over-power "
+            "fault without nuisance-tripping. Adjustable."
+        ),
     )
     temp_alarm_max_c: float = Field(
         default=1200.0,

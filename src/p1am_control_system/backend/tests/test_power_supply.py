@@ -44,10 +44,11 @@ from pydantic import ValidationError
 class TestPowerSupplyConfigValidation:
     def test_defaults_construct(self) -> None:
         config = PowerSupplyConfig()
-        assert config.current_full_scale_a == 100.0
-        assert config.voltage_full_scale_v == 50.0
+        # Production defaults are tuned to the bench supply (200 A / 300 V).
+        assert config.current_full_scale_a == 200.0
+        assert config.voltage_full_scale_v == 300.0
         assert config.current_setpoint_min_a == 0.0
-        assert config.current_setpoint_max_a == 50.0
+        assert config.current_setpoint_max_a == 200.0
 
     def test_full_scale_must_be_positive(self) -> None:
         with pytest.raises(ValidationError):
@@ -217,11 +218,19 @@ class TestStatus:
         # 20 % clamp of a 100 A full scale -> 20 A is the real deliverable max,
         # even though the setpoint band may go to 50 A.
         c = PowerSupplyController(
-            PowerSupplyConfig(output_clamp_percent=20.0, current_full_scale_a=100.0)
+            PowerSupplyConfig(
+                output_clamp_percent=20.0,
+                current_full_scale_a=100.0,
+                current_setpoint_max_a=50.0,
+            )
         )
         assert c.status().effective_max_current_a == pytest.approx(20.0)
         c.update_config(
-            PowerSupplyConfig(output_clamp_percent=50.0, current_full_scale_a=80.0)
+            PowerSupplyConfig(
+                output_clamp_percent=50.0,
+                current_full_scale_a=80.0,
+                current_setpoint_max_a=50.0,
+            )
         )
         assert c.status().effective_max_current_a == pytest.approx(40.0)
 
