@@ -16,6 +16,12 @@ class P1AMHardware : public HardwareInterface {
   void WriteInhibit(bool active) override;
   void WriteHeaterRelay(bool on) override;
 
+  // Raw, unscaled diagnostic read of one analog input (channels 0-3) as the
+  // 0-5 V the terminal sees (counts -> 0-20 mA -> 0-5 V across the input
+  // burden). No process scaling — purely for the signal-diagnostics plot so
+  // operators can troubleshoot the monitor card independent of calibration.
+  float ReadAnalogInputRawVolts(int channel);
+
  private:
   // Actual bench-verified slot order via P1.printModules() on 2026-06-01:
   //   Slot 1 = P1-4ADL2DAL-1   (analog combo, 4 AI + 2 AO, 4-20 mA)
