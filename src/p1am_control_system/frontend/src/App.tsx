@@ -11,6 +11,7 @@ import { LadderExplorer } from "./components/LadderExplorer";
 import { PlantHierarchy } from "./components/PlantHierarchy";
 import { PowerSupplyControl } from "./components/PowerSupplyControl";
 import { TemperatureControl } from "./components/TemperatureControl";
+import { SignalDiagnostics } from "./components/SignalDiagnostics";
 import { AlicatInspector } from "./components/AlicatInspector";
 import { TagInspector } from "./components/TagInspector";
 import type { LadderTagInfo } from "./api/schemas";
@@ -656,6 +657,10 @@ export const App: React.FC = () => {
 
           {activeTab === "temperature" && visibleTabs.temperature && (
             <TemperatureControl liveStatus={temperatureStatus} />
+          )}
+
+          {activeTab === "diagnostics" && visibleTabs.diagnostics && (
+            <SignalDiagnostics history={history} />
           )}
 
           {/* Render Tab Contents */}
