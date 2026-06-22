@@ -173,7 +173,7 @@ class TestRouterEndpoints:
         resp = client.get("/api/power_supply/config")
         assert resp.status_code == 200
         body = resp.json()
-        assert body["current_full_scale_a"] == 100.0
+        assert body["current_full_scale_a"] == 200.0
         assert body["setpoint_ramp_rate_pct_per_s"] == 5.0
 
     def test_put_config_validates_and_replaces(
@@ -230,8 +230,8 @@ class TestRouterEndpoints:
             json={"mode": "current", "value_a": 9999.0},
         )
         assert resp.status_code == 200
-        # Clamped to default max (50)
-        assert resp.json() == {"mode": "current", "applied_a": 50.0}
+        # Clamped to the default current_setpoint_max_a (200 A).
+        assert resp.json() == {"mode": "current", "applied_a": 200.0}
 
     def test_setpoint_current_mode_missing_value_returns_400(
         self,

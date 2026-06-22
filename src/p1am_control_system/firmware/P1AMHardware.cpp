@@ -115,6 +115,18 @@ float P1AMHardware::ReadAnalogInput(int channel) {
   return percent;
 }
 
+float P1AMHardware::ReadAnalogInputRawVolts(int channel) {
+  if (channel < 0 || channel >= 4) {
+    return 0.0f;
+  }
+  // counts 0-8191 = 0-20 mA; the 0-5 V terminal voltage = mA * 250 ohm / 1000.
+  // So volts = counts * 5 / 8191 (0 mA -> 0 V, 20 mA -> 5 V). No clamping or
+  // process scaling: this is the raw signal for troubleshooting.
+  // Library channels are 1-indexed; broker uses 0-indexed.
+  uint32_t counts = P1.readAnalog(kSlotAna, channel + 1);
+  return static_cast<float>(counts) * (5.0f / 8191.0f);
+}
+
 void P1AMHardware::WriteAnalogOutput(int channel, float value) {
   if (channel < 0 || channel >= 2) {
     return;

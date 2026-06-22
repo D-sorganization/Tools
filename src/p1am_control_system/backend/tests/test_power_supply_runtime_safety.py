@@ -21,6 +21,7 @@ from _power_supply_helpers import (
     fresh_armed_controller_unclamped,
     fresh_idle_controller,
     fresh_running_controller,
+    test_config,
 )
 from power_supply import PowerSupplyConfig, PowerSupplyController, PowerSupplyState
 
@@ -204,7 +205,7 @@ class TestOutputClamp:
         assert c.status().output_clamped is False
 
     def test_custom_clamp_value_is_enforced(self) -> None:
-        cfg = PowerSupplyConfig(output_clamp_percent=35.0)
+        cfg = test_config(output_clamp_percent=35.0)  # 100 A full scale
         c = PowerSupplyController(cfg)
         c.set_permissive(True)
         c.set_current_setpoint(50.0)  # 50 % raw

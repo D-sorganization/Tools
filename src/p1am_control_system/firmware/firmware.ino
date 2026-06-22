@@ -277,6 +277,23 @@ void loop() {
     // the safety interlock always wins — a trip forces the relay off regardless.
     bool relay_cmd = (modbusServer.coilRead(kHeaterRelayCoil) == 1);
     hw.WriteHeaterRelay(relay_cmd && !interlock.IsTripped());
+
+    // --- Signal diagnostics: raw 0-5 V of every analog channel (TAG_20..25) ---
+    // Unscaled, for troubleshooting the analog card independent of calibration.
+    // AI0..3 show the actual 0-5 V at the input terminal; AO0..1 show the
+    // commanded output as 0-5 V (0 % -> 0 V, 100 % -> 5 V). These tags are
+    // diagnostics only — nothing routes through them.
+    for (int ch = 0; ch < 4; ++ch) {
+      broker.SetTag(20 + ch, hw.ReadAnalogInputRawVolts(ch));
+    }
+    for (int ch = 0; ch < 2; ++ch) {
+      int srcTag = broker.GetOutputRouting(ch);
+      float cmdPct = (srcTag >= 0 && srcTag < SignalBroker::kNumTags)
+                         ? broker.GetTag(srcTag)
+                         : 0.0f;
+      broker.SetTag(24 + ch, cmdPct * (5.0f / 100.0f));
+    }
+
     for (int i = 0; i < SignalBroker::kNumTags; ++i) {
       WriteFloatToModbus(i * 2, broker.GetTag(i));
     }

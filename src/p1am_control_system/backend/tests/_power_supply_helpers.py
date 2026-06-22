@@ -15,15 +15,36 @@ _BACKEND_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 if _BACKEND_DIR not in sys.path:
     sys.path.insert(0, _BACKEND_DIR)
 
+from typing import Any
+
 from power_supply import (  # noqa: E402  (path setup above must run first)
     PowerSupplyConfig,
     PowerSupplyController,
 )
 
 
+def test_config(**overrides: Any) -> PowerSupplyConfig:
+    """A stable config for controller-logic tests.
+
+    Pinned to the historical 100 A / 50 V / 50 A / 1000 W values so these tests
+    exercise the *control law* (scaling, trips, clamps) independent of the
+    production defaults in PowerSupplyConfig — which are tuned to a specific
+    bench supply and may change. Tests that assert the production defaults
+    construct PowerSupplyConfig() directly instead.
+    """
+    base: dict[str, Any] = {
+        "current_full_scale_a": 100.0,
+        "voltage_full_scale_v": 50.0,
+        "current_setpoint_max_a": 50.0,
+        "power_alarm_max_w": 1000.0,
+    }
+    base.update(overrides)
+    return PowerSupplyConfig(**base)
+
+
 def fresh_idle_controller() -> PowerSupplyController:
-    """Return a controller in IDLE state (default config)."""
-    return PowerSupplyController(PowerSupplyConfig())
+    """Return a controller in IDLE state (stable test config)."""
+    return PowerSupplyController(test_config())
 
 
 def fresh_armed_controller() -> PowerSupplyController:
@@ -47,6 +68,6 @@ def fresh_armed_controller_unclamped() -> PowerSupplyController:
     Tests that exercise the proportional-scaling / slew / full-scale laws in
     isolation use this so the clamp doesn't cap the value under test.
     """
-    c = PowerSupplyController(PowerSupplyConfig(output_clamp_percent=100.0))
+    c = PowerSupplyController(test_config(output_clamp_percent=100.0))
     c.set_permissive(True)
     return c
