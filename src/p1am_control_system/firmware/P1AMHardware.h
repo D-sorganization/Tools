@@ -23,20 +23,20 @@ class P1AMHardware : public HardwareInterface {
   float ReadAnalogInputRawVolts(int channel);
 
  private:
-  // Actual bench-verified slot order via P1.printModules() on 2026-06-01:
+  // Bench slot order (left-to-right, contiguous) via P1.printModules():
   //   Slot 1 = P1-4ADL2DAL-1   (analog combo, 4 AI + 2 AO, 4-20 mA)
   //   Slot 2 = P1-04THM        (4-channel thermocouple)
+  //   Slot 3 = P1-08TD2        (8-pt 12-24 VDC sourcing discrete output)
   static const int kSlotAna = 1;
   static const int kSlotThm = 2;
-  // Heater relay control GPIO (Arduino-header digital pin D2). Driven
-  // active-HIGH: HIGH (3.3 V) = relay energized = heater ON; boots LOW. The
-  // temperature controller commands this via Modbus coil 2, and the safety
-  // interlock forces it LOW on any trip. NOTE: this is a 3.3 V logic output
-  // (~7 mA) — drive a logic-level relay board / SSR, or a small
-  // transistor/opto driver for a 24 V relay coil; it cannot switch 24 V itself.
-  // Reserved pins to avoid: D5 (Ethernet W5500 CS), D6 (inhibit), A3/A4/33
-  // (P1AM base controller).
-  static const int kPinHeaterRelay = 2;
+  // Heater relay drive: channel 1 of the P1-08TD2 discrete-output module in
+  // slot 3. This is a real 24 VDC sourcing output (sources the field supply on
+  // ON, ~0 V on OFF) — wire it directly to the 24 V relay coil. The temperature
+  // controller commands it via Modbus coil 2; the safety interlock forces it
+  // OFF on any trip. If the module is moved, update kSlotHeaterDO (1-indexed
+  // slot) / kChanHeaterDO (1-indexed channel).
+  static const int kSlotHeaterDO = 3;
+  static const int kChanHeaterDO = 1;
   // Inhibit GPIO. MUST NOT be pin 5 — the P1AM-ETH shield hardwires the W5500
   // chip-select to D5, so driving D5 from this firmware breaks Ethernet SPI.
   // D6 is free on the P1AM-100 / P1AM-ETH stack.

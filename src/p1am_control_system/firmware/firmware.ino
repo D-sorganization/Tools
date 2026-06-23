@@ -31,6 +31,9 @@ const unsigned long kScanIntervalMs = 100;
 // (Coil 0 = save-to-flash, coil 1 = E-stop reset.)
 const int kHeaterRelayCoil = 2;
 
+// Count of signed-on backplane modules (captured at boot, published to TAG_26).
+uint8_t g_moduleCount = 0;
+
 // Helper to Pack Float into 2 Modbus registers (IEEE-754)
 void WriteFloatToModbus(int regAddress, float val) {
   uint32_t raw;
@@ -153,7 +156,7 @@ void setup() {
   // module is missing, P1.writeAnalog silently returns and outputs hold
   // at their DAC power-on default of 4 mA.
   Serial.println(F("[hw] signed-on modules:"));
-  P1.printModules();
+  g_moduleCount = P1.printModules();
 
   // Initialize Ethernet. The P1AM-ETH shield wires W5500 CS to pin 5.
   Ethernet.init(5);
@@ -293,6 +296,9 @@ void loop() {
                          : 0.0f;
       broker.SetTag(24 + ch, cmdPct * (5.0f / 100.0f));
     }
+    // TAG_26 = number of signed-on backplane modules (read over Modbus to
+    // confirm the P1-08TD2 is present: analog + thermocouple + DO = 3).
+    broker.SetTag(26, static_cast<float>(g_moduleCount));
 
     for (int i = 0; i < SignalBroker::kNumTags; ++i) {
       WriteFloatToModbus(i * 2, broker.GetTag(i));

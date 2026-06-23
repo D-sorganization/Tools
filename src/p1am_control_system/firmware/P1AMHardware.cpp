@@ -76,9 +76,10 @@ void P1AMHardware::Begin() {
 
   pinMode(kPinInhibit, OUTPUT);
   digitalWrite(kPinInhibit, LOW);
-  // Heater relay control output starts de-energized (LOW = heater OFF).
-  pinMode(kPinHeaterRelay, OUTPUT);
-  digitalWrite(kPinHeaterRelay, LOW);
+  // Heater relay now drives the P1-08TD2 discrete-output module (see
+  // WriteHeaterRelay). Force it OFF at boot so the heater is never energized
+  // before the controller commands it.
+  P1.writeDiscrete(LOW, kSlotHeaterDO, kChanHeaterDO);
 }
 
 void P1AMHardware::Update() {}
@@ -149,6 +150,8 @@ void P1AMHardware::WriteInhibit(bool active) {
 }
 
 void P1AMHardware::WriteHeaterRelay(bool on) {
-  // Active-HIGH GPIO drive (D2): HIGH = relay energized = heater ON.
-  digitalWrite(kPinHeaterRelay, on ? HIGH : LOW);
+  // Drive channel 1 of the P1-08TD2 (slot 3): ON sources 24 V to the relay
+  // coil, OFF drives ~0 V. If no DO module is in the slot, P1.writeDiscrete is
+  // a harmless no-op.
+  P1.writeDiscrete(on ? HIGH : LOW, kSlotHeaterDO, kChanHeaterDO);
 }
