@@ -25,3 +25,7 @@
 ## 2024-06-25 - Custom Toggle Controls
 **Learning:** When using `<button>` elements to create custom ON/OFF toggles or mode switches (like the "Add" / "Subtract" operations) that rely entirely on background color changes for state, screen readers cannot determine their current state.
 **Action:** Always add `aria-pressed={isActive}` to custom toggle buttons, along with keyboard-accessible hover (`hover:bg-...`) and focus states (`focus-visible:ring-2`) to ensure both semantic state and visual focus are clear.
+
+## 2024-05-24 - Form Submissions for Keyboard Users
+**Learning:** Wrapping a collection of data entry fields in a native `<form>` element instead of a `<div>` instantly enables native "Enter" key form submission, which is critical for heavy data-entry applications. Users don't need to manually tab to the calculate button.
+**Action:** For all data-entry calculators or settings panels, always use a `<form onSubmit={...}>` structure instead of binding `onClick` directly to the submit button.
