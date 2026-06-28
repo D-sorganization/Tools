@@ -66,3 +66,6 @@
 ## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
 **Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
 **Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
+## 2026-06-25 - Replace Array.prototype.includes combined with .filter()
+**Learning:** Using `phases.filter(p => [...].includes(p.phase))` inside a React component render function causes unnecessary array allocations (for the `[...]` literal) and additional iterative `includes` checks for every element during every render cycle. This drastically increases garbage collection overhead during high-frequency UI updates.
+**Action:** Replace `Array.prototype.filter` with a standard `for` loop, and replace `[...].includes()` with explicit boolean OR conditions (`=== || ===`) when the matched set is small and static, which completely eliminates unnecessary allocations and closure executions per render.

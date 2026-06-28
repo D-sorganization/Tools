@@ -76,14 +76,19 @@ export default function PhaseTimeline({
   const activePhase = getCurrentPhase();
 
   // Key phases for simplified view
-  const keyPhases = phases.filter((p) =>
-    [
-      SwingPhase.ADDRESS,
-      SwingPhase.TOP_OF_BACKSWING,
-      SwingPhase.IMPACT,
-      SwingPhase.FINISH,
-    ].includes(p.phase)
-  );
+  // ⚡ Bolt Optimization: Replace .filter() and .includes() array allocation with a single-pass for-loop
+  const keyPhases: PhaseTransition[] = [];
+  for (let i = 0; i < phases.length; i++) {
+    const p = phases[i];
+    if (
+      p.phase === SwingPhase.ADDRESS ||
+      p.phase === SwingPhase.TOP_OF_BACKSWING ||
+      p.phase === SwingPhase.IMPACT ||
+      p.phase === SwingPhase.FINISH
+    ) {
+      keyPhases.push(p);
+    }
+  }
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
