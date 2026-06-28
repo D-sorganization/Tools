@@ -11,9 +11,11 @@ import { TABS, type TabId, defaultTabOrder } from "../lib/tabs";
  * be persisted; this component only emits change callbacks.
  */
 
-const TAB_BY_ID: Record<TabId, (typeof TABS)[number]> = Object.fromEntries(
-  TABS.map((tab) => [tab.id, tab]),
-) as Record<TabId, (typeof TABS)[number]>;
+// ⚡ Bolt Optimization: Replace Object.fromEntries(TABS.map(...)) with a single-pass loop to eliminate Map/FromEntries intermediate array allocation overhead
+const TAB_BY_ID: Record<TabId, (typeof TABS)[number]> = {} as Record<TabId, (typeof TABS)[number]>;
+for (const tab of TABS) {
+  TAB_BY_ID[tab.id] = tab;
+}
 
 interface ContextMenuState {
   id: TabId;

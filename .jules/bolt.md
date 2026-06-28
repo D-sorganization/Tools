@@ -66,3 +66,7 @@
 ## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
 **Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
 **Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
+
+## 2026-06-12 - Eliminate Map/FromEntries overhead for object creation
+**Learning:** Initializing objects with `Object.fromEntries(array.map(...))` or chaining `.reduce()` for defaults allocates intermediate arrays for entries, map results, and internal fromEntries representations.
+**Action:** Always replace chained `.map()` object initializations with a pre-allocated empty object and a single-pass `for...of` loop.
