@@ -6,12 +6,14 @@ import {
   axisTicks,
 } from "../lib/trendAxis";
 import {
-  windowSamples as windowSampleCount,
   downsample,
   formatWindow,
+  elapsedSeconds,
+  windowStartIndex,
 } from "../lib/trendTime";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
+import { TrendTimeAxis } from "./TrendPlotOverlays";
 
 /**
  * Signal Diagnostics plot — the raw, unscaled 0-5 V of every analog channel on
@@ -46,11 +48,11 @@ const CHANNELS: DiagChannel[] = [
 
 const FULL_SCALE_V = 5;
 const W = 600;
-const H = 220;
+const H = 232;
 const PAD_L = 34;
 const PAD_R = 10;
 const PAD_T = 10;
-const PAD_B = 18;
+const PAD_B = 28; // room for the X-axis time labels
 const PLOT_W = W - PAD_L - PAD_R;
 const PLOT_H = H - PAD_T - PAD_B;
 
@@ -70,23 +72,31 @@ function buildPath(values: number[], min: number, max: number): string {
 interface Props {
   /** Rolling per-scan tag history: each row is the full tag array for a scan. */
   history: number[][];
+  /** Epoch-ms timestamp of each history row (same length as `history`). */
+  historyTimes: number[];
 }
 
-export const SignalDiagnostics: React.FC<Props> = ({ history }) => {
+export const SignalDiagnostics: React.FC<Props> = ({ history, historyTimes }) => {
   const [axis, setAxis] = useState<AxisRange>(
     defaultAxisRange(0, FULL_SCALE_V),
   );
-  const [windowSeconds, setWindowSeconds] = useState<number>(30);
+  const [windowSeconds, setWindowSeconds] = useState<number>(120);
 
-  const windowRows = history.slice(-windowSampleCount(windowSeconds));
-  const series = CHANNELS.map((ch) => {
-    const raw = windowRows.map((row) => row[ch.tag] ?? 0);
-    return {
-      ...ch,
-      values: downsample(raw),
-      last: raw.length ? raw[raw.length - 1] : null,
-    };
-  });
+  // Window by real wall-clock time so the span is correct regardless of the
+  // actual poll rate (the Pi runs below the nominal 10 Hz under load).
+  const start = windowStartIndex(historyTimes, windowSeconds);
+  const windowRows = history.slice(start);
+  const windowTimes = historyTimes.slice(start);
+  // Downsample the rows once, then read each channel — far cheaper than
+  // downsampling six separate series over a long (up to 1 h) window.
+  const downRows = downsample(windowRows);
+  const series = CHANNELS.map((ch) => ({
+    ...ch,
+    values: downRows.map((row) => row[ch.tag] ?? 0),
+    last: windowRows.length
+      ? (windowRows[windowRows.length - 1][ch.tag] ?? 0)
+      : null,
+  }));
   const { min, max } = resolveRange(
     axis,
     series.flatMap((s) => s.values),
@@ -147,6 +157,13 @@ export const SignalDiagnostics: React.FC<Props> = ({ history }) => {
             </g>
           );
         })}
+
+        <TrendTimeAxis
+          x0={PAD_L}
+          x1={W - PAD_R}
+          yBottom={PAD_T + PLOT_H}
+          spanSeconds={elapsedSeconds(windowTimes)}
+        />
 
         {windowRows.length < 2 ? (
           <text x={W / 2} y={H / 2} className="ps-trend-empty" textAnchor="middle">

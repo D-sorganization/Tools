@@ -6,12 +6,14 @@ import {
   axisTicks,
 } from "../lib/trendAxis";
 import {
-  windowSamples as windowSampleCount,
   downsample,
   formatWindow,
+  elapsedSeconds,
+  windowStartIndex,
 } from "../lib/trendTime";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
+import { TrendTimeAxis } from "./TrendPlotOverlays";
 
 /**
  * Compact dual-trace trend for the power-supply screen: measured current and
@@ -28,6 +30,7 @@ import { TrendTimeControls } from "./TrendTimeControls";
  */
 
 export interface TrendSample {
+  t: number; // epoch ms when sampled
   i: number; // measured current (A)
   v: number; // measured voltage (V)
   p: number; // measured power (W)
@@ -43,11 +46,11 @@ interface Props {
 }
 
 const W = 600;
-const H = 180;
+const H = 192;
 const PAD_L = 34;
 const PAD_R = 10;
 const PAD_T = 10;
-const PAD_B = 18;
+const PAD_B = 28; // room for the X-axis time labels
 const PLOT_W = W - PAD_L - PAD_R;
 const PLOT_H = H - PAD_T - PAD_B;
 
@@ -83,9 +86,15 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   voltageLabel = "Voltage",
 }) => {
   const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, 100));
-  const [windowSeconds, setWindowSeconds] = useState<number>(30);
+  const [windowSeconds, setWindowSeconds] = useState<number>(120);
 
-  const windowed = samples.slice(-windowSampleCount(windowSeconds));
+  // Window by real wall-clock time (rate-independent).
+  const windowed = samples.slice(
+    windowStartIndex(
+      samples.map((s) => s.t),
+      windowSeconds,
+    ),
+  );
   const iPct = downsample(windowed.map((s) => toPct(s.i, currentFullScale)));
   const vPct = downsample(windowed.map((s) => toPct(s.v, voltageFullScale)));
   const pPct = downsample(windowed.map((s) => toPct(s.p, powerFullScale)));
@@ -156,6 +165,13 @@ export const PowerSupplyTrend: React.FC<Props> = ({
             </g>
           );
         })}
+
+        <TrendTimeAxis
+          x0={PAD_L}
+          x1={W - PAD_R}
+          yBottom={PAD_T + PLOT_H}
+          spanSeconds={elapsedSeconds(windowed.map((s) => s.t))}
+        />
 
         {windowed.length < 2 ? (
           <text x={W / 2} y={H / 2} className="ps-trend-empty" textAnchor="middle">

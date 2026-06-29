@@ -214,6 +214,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
       const next = [
         ...prev,
         {
+          t: Date.now(),
           i: liveStatus.measured_current_a,
           v: liveStatus.measured_voltage_v,
           p: liveStatus.measured_power_w,

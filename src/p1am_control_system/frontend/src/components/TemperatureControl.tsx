@@ -8,18 +8,29 @@ import {
 } from "../lib/trendAxis";
 import {
   MAX_TREND_SAMPLES,
-  windowSamples as windowSampleCount,
   downsample,
   formatWindow,
+  elapsedSeconds,
+  windowStartIndex,
 } from "../lib/trendTime";
+import { fitSeries, NO_FIT_ID } from "../lib/curveFit";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
+import { TrendFitControls } from "./TrendFitControls";
+import { TrendTimeAxis, TrendFitOverlay } from "./TrendPlotOverlays";
 import "./TemperatureControl.css";
 
 // Rolling trend buffer: deep enough for the longest selectable window
-// (5 min @ ~10 Hz); the plot slices/downsamples to the chosen window.
+// (up to 1 h); the plot slices to the chosen window by real time.
 const TREND_MAX_POINTS = MAX_TREND_SAMPLES;
-const DEFAULT_WINDOW_SECONDS = 30;
+const DEFAULT_WINDOW_SECONDS = 120;
+
+/** One temperature sample: epoch-ms timestamp + measured °C. Timestamping the
+ * buffer makes the window, axis, and fit slope accurate at any poll rate. */
+interface TempSample {
+  t: number;
+  c: number;
+}
 
 /**
  * Temperature controller tab.
@@ -91,7 +102,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
   const [configDraft, setConfigDraft] = useState<TemperatureConfig | null>(null);
   const [stagedSetpointText, setStagedSetpointText] = useState<string>("0");
   const [setpointStep, setSetpointStep] = useState<number>(10);
-  const [trend, setTrend] = useState<number[]>([]);
+  const [trend, setTrend] = useState<TempSample[]>([]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
@@ -116,7 +127,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
   useEffect(() => {
     if (!liveStatus) return;
     setTrend((prev) => {
-      const next = [...prev, liveStatus.measured_temp_c];
+      const next = [...prev, { t: Date.now(), c: liveStatus.measured_temp_c }];
       return next.length > TREND_MAX_POINTS
         ? next.slice(next.length - TREND_MAX_POINTS)
         : next;
@@ -586,11 +597,11 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
  * buffer from the live status and passes it in.
  */
 const TREND_W = 600;
-const TREND_H = 180;
+const TREND_H = 188;
 const TREND_PAD_L = 40;
 const TREND_PAD_R = 10;
 const TREND_PAD_T = 10;
-const TREND_PAD_B = 18;
+const TREND_PAD_B = 26; // room for the X-axis time labels
 const TREND_PLOT_W = TREND_W - TREND_PAD_L - TREND_PAD_R;
 const TREND_PLOT_H = TREND_H - TREND_PAD_T - TREND_PAD_B;
 
@@ -612,7 +623,7 @@ function tempPath(values: number[], min: number, max: number): string {
 }
 
 interface TrendProps {
-  samples: number[];
+  samples: TempSample[];
   fullScale: number;
   setpoint: number;
   hhLimit: number;
@@ -627,17 +638,33 @@ const TempTrend: React.FC<TrendProps> = ({
   const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, fullScale));
   const [windowSeconds, setWindowSeconds] =
     useState<number>(DEFAULT_WINDOW_SECONDS);
+  const [fitMethodId, setFitMethodId] = useState<string>(NO_FIT_ID);
 
-  const windowed = samples.slice(-windowSampleCount(windowSeconds));
+  // Window + scale by real wall-clock time so the span and the fit slope are
+  // correct regardless of the actual poll rate.
+  const windowed = samples.slice(
+    windowStartIndex(
+      samples.map((s) => s.t),
+      windowSeconds,
+    ),
+  );
   const plotted = downsample(windowed);
-  const { min, max } = resolveRange(axis, plotted, { min: 0, max: fullScale });
-  const path = tempPath(plotted, min, max);
-  const last = windowed[windowed.length - 1];
+  const plottedC = plotted.map((s) => s.c);
+  const { min, max } = resolveRange(axis, plottedC, { min: 0, max: fullScale });
+  const path = tempPath(plottedC, min, max);
+  const last = windowed.length ? windowed[windowed.length - 1].c : undefined;
 
   const refY = (value: number): number => {
     const frac = Math.max(0, Math.min(1, (value - min) / (max - min)));
     return TREND_PAD_T + (1 - frac) * TREND_PLOT_H;
   };
+
+  // Fit over (real elapsed minutes, °C) so a linear slope reads directly as the
+  // heating rate in °C/min. x = 0 at the left (oldest) edge of the window.
+  const t0 = windowed.length ? windowed[0].t : 0;
+  const fitPoints = plotted.map((s) => ({ x: (s.t - t0) / 60000, y: s.c }));
+  const fitXs = fitPoints.map((p) => p.x);
+  const fit = fitSeries(fitPoints, fitMethodId);
 
   return (
     <div className="tc-trend">
@@ -660,6 +687,18 @@ const TempTrend: React.FC<TrendProps> = ({
         <span className="tc-trend-window">
           last {formatWindow(windowSeconds)} · {min.toFixed(0)}–{max.toFixed(0)} °C
         </span>
+        {fit && (
+          <span
+            className="tc-trend-key"
+            style={{ color: "var(--text-primary)", fontFamily: "var(--font-mono)" }}
+            title="Linear fit of temperature vs elapsed minutes"
+          >
+            <span className="swatch" style={{ background: "var(--text-primary)", opacity: 0.7 }} />
+            {fit.equation}
+            <strong>R²={fit.r2.toFixed(3)}</strong>
+            <span style={{ color: "var(--text-muted)" }}>(t in min)</span>
+          </span>
+        )}
       </div>
 
       <div
@@ -673,6 +712,7 @@ const TempTrend: React.FC<TrendProps> = ({
       >
         <TrendTimeControls value={windowSeconds} onChange={setWindowSeconds} />
         <TrendAxisControls value={axis} onChange={setAxis} unit="°C" />
+        <TrendFitControls value={fitMethodId} onChange={setFitMethodId} />
       </div>
 
       <svg
@@ -728,6 +768,13 @@ const TempTrend: React.FC<TrendProps> = ({
           </>
         )}
 
+        <TrendTimeAxis
+          x0={TREND_PAD_L}
+          x1={TREND_W - TREND_PAD_R}
+          yBottom={TREND_PAD_T + TREND_PLOT_H}
+          spanSeconds={elapsedSeconds(windowed.map((s) => s.t))}
+        />
+
         {plotted.length < 2 ? (
           <text
             x={TREND_W / 2}
@@ -738,7 +785,18 @@ const TempTrend: React.FC<TrendProps> = ({
             waiting for live data…
           </text>
         ) : (
-          <path d={path} className="tc-trend-line" stroke={TEMP_COLOR} />
+          <>
+            <path d={path} className="tc-trend-line" stroke={TEMP_COLOR} />
+            {fit && (
+              <TrendFitOverlay
+                fit={fit}
+                xs={fitXs}
+                yScale={refY}
+                x0={TREND_PAD_L}
+                x1={TREND_W - TREND_PAD_R}
+              />
+            )}
+          </>
         )}
       </svg>
     </div>

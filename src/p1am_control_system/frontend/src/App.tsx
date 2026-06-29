@@ -99,6 +99,7 @@ export const App: React.FC = () => {
   const {
     tagValues,
     history,
+    historyTimes,
     tagsDict,
     alicats,
     activeAlarms,
@@ -660,7 +661,7 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "diagnostics" && visibleTabs.diagnostics && (
-            <SignalDiagnostics history={history} />
+            <SignalDiagnostics history={history} historyTimes={historyTimes} />
           )}
 
           {/* Render Tab Contents */}

@@ -28,6 +28,8 @@ const POLL_MS = 1500;
 export interface TelemetryState {
   tagValues: number[];
   history: number[][];
+  /** Epoch-ms timestamp of each `history` frame (same length as `history`). */
+  historyTimes: number[];
   tagsDict: Record<string, number>;
   alicats: AlicatMFCState[];
   activeAlarms: ActiveAlarm[];
@@ -61,6 +63,10 @@ export function useTelemetryStream(
     Array(TAG_COUNT).fill(0.0),
   );
   const [history, setHistory] = useState<number[][]>([]);
+  // Wall-clock (epoch ms) of each history frame, kept in lockstep with
+  // `history` so trends can window/scale by real time rather than assuming a
+  // fixed sample rate (the Pi polls below the nominal 10 Hz under load).
+  const [historyTimes, setHistoryTimes] = useState<number[]>([]);
   const [tagsDict, setTagsDict] = useState<Record<string, number>>({});
   const [alicats, setAlicats] = useState<AlicatMFCState[]>([]);
   const [activeAlarms, setActiveAlarms] = useState<ActiveAlarm[]>([]);
@@ -84,8 +90,16 @@ export function useTelemetryStream(
 
     const pushTags = (values: number[]) => {
       setTagValues(values);
+      const stamp = Date.now();
       setHistory((prev) => {
         const updated = [...prev, values];
+        if (updated.length > MAX_HISTORY) {
+          updated.shift();
+        }
+        return updated;
+      });
+      setHistoryTimes((prev) => {
+        const updated = [...prev, stamp];
         if (updated.length > MAX_HISTORY) {
           updated.shift();
         }
@@ -189,6 +203,7 @@ export function useTelemetryStream(
   return {
     tagValues,
     history,
+    historyTimes,
     tagsDict,
     alicats,
     activeAlarms,

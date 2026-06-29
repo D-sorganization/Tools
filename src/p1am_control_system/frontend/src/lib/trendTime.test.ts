@@ -1,0 +1,144 @@
+import { describe, it, expect } from "vitest";
+import {
+  toSeconds,
+  fromSeconds,
+  clampWindow,
+  windowSamples,
+  naturalUnit,
+  windowUnit,
+  formatWindow,
+  formatDuration,
+  timeAxisTicks,
+  spanSeconds,
+  elapsedSeconds,
+  windowStartIndex,
+  downsample,
+  SELECTABLE_TIME_UNITS,
+  MAX_WINDOW_SECONDS,
+  MIN_WINDOW_SECONDS,
+} from "./trendTime";
+
+describe("toSeconds / fromSeconds", () => {
+  it("converts units to seconds", () => {
+    expect(toSeconds(5, "m")).toBe(300);
+    expect(toSeconds(2, "h")).toBe(7200);
+    expect(toSeconds(45, "s")).toBe(45);
+  });
+
+  it("validates inputs (DbC)", () => {
+    expect(() => toSeconds(Number.NaN, "m")).toThrow(TypeError);
+    expect(() => toSeconds(-1, "m")).toThrow(RangeError);
+  });
+
+  it("round-trips", () => {
+    expect(fromSeconds(toSeconds(7, "m"), "m")).toBe(7);
+  });
+});
+
+describe("clampWindow", () => {
+  it("bounds to [MIN, MAX]", () => {
+    expect(clampWindow(0)).toBe(MIN_WINDOW_SECONDS);
+    expect(clampWindow(1e9)).toBe(MAX_WINDOW_SECONDS);
+    expect(clampWindow(120)).toBe(120);
+    expect(clampWindow(Number.NaN)).toBe(MIN_WINDOW_SECONDS);
+  });
+});
+
+describe("windowSamples", () => {
+  it("scales by 10 Hz and floors at 2", () => {
+    expect(windowSamples(30)).toBe(300);
+    expect(windowSamples(0)).toBe(2);
+  });
+});
+
+describe("labels", () => {
+  it("picks a natural unit", () => {
+    expect(naturalUnit(30)).toBe("s");
+    expect(naturalUnit(90)).toBe("m");
+    expect(naturalUnit(7200)).toBe("h");
+  });
+
+  it("formats windows compactly", () => {
+    expect(formatWindow(30)).toBe("30s");
+    expect(formatWindow(300)).toBe("5m");
+    expect(formatWindow(3600)).toBe("1h");
+  });
+
+  it("formats durations as a clock", () => {
+    expect(formatDuration(0)).toBe("0s");
+    expect(formatDuration(45)).toBe("45s");
+    expect(formatDuration(90)).toBe("1m30s");
+    expect(formatDuration(120)).toBe("2m");
+    expect(formatDuration(3600)).toBe("1h");
+  });
+});
+
+describe("timeAxisTicks", () => {
+  it("returns count+1 ticks from oldest to now", () => {
+    const ticks = timeAxisTicks(300, 4);
+    expect(ticks).toHaveLength(5);
+    expect(ticks[0].frac).toBe(0);
+    expect(ticks[0].label).toBe("-5m");
+    expect(ticks[ticks.length - 1].frac).toBe(1);
+    expect(ticks[ticks.length - 1].label).toBe("now");
+  });
+});
+
+describe("spanSeconds", () => {
+  it("is (n-1)/10", () => {
+    expect(spanSeconds(301)).toBeCloseTo(30, 9);
+    expect(spanSeconds(0)).toBe(0);
+  });
+});
+
+describe("timestamp windowing (rate-independent)", () => {
+  // 0.2 s spacing (5 Hz) — deliberately NOT the nominal 10 Hz.
+  const times = Array.from({ length: 20 }, (_, i) => 1000 + i * 200);
+
+  it("elapsedSeconds is exact from timestamps", () => {
+    expect(elapsedSeconds(times)).toBeCloseTo((19 * 200) / 1000, 9);
+    expect(elapsedSeconds([])).toBe(0);
+    expect(elapsedSeconds([42])).toBe(0);
+  });
+
+  it("windowStartIndex keeps exactly the trailing window", () => {
+    // last ts = 1000 + 19*200 = 4800; a 1 s window keeps ts >= 3800 -> idx 14
+    expect(windowStartIndex(times, 1)).toBe(14);
+    // window larger than the buffer keeps everything
+    expect(windowStartIndex(times, 999)).toBe(0);
+    expect(windowStartIndex([], 5)).toBe(0);
+  });
+});
+
+describe("windowUnit / SELECTABLE_TIME_UNITS", () => {
+  it("defaults to minutes, hours past 1 h", () => {
+    expect(windowUnit(120)).toBe("m");
+    expect(windowUnit(3600)).toBe("h");
+  });
+
+  it("offers only minutes and hours", () => {
+    expect(SELECTABLE_TIME_UNITS).toEqual(["m", "h"]);
+  });
+});
+
+describe("downsample", () => {
+  it("leaves short series untouched", () => {
+    const v = [1, 2, 3];
+    expect(downsample(v, 10)).toBe(v);
+  });
+
+  it("reduces to maxPoints and keeps the last sample", () => {
+    const v = Array.from({ length: 1000 }, (_, i) => i);
+    const out = downsample(v, 100);
+    expect(out).toHaveLength(100);
+    expect(out[out.length - 1]).toBe(999);
+    expect(out[0]).toBe(0);
+  });
+
+  it("works on generic rows", () => {
+    const rows = Array.from({ length: 50 }, (_, i) => [i, i * 2]);
+    const out = downsample(rows, 10);
+    expect(out).toHaveLength(10);
+    expect(out[out.length - 1]).toEqual([49, 98]);
+  });
+});
