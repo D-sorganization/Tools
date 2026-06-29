@@ -250,7 +250,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
           )}
         </div>
         <div style={{ display: "flex", gap: "0.3rem" }}>
-          {[10, 30, 60, 120].map((t) => (
+          {[10, 30, 60, 120, 300].map((t) => (
             <button
               key={t}
               type="button"

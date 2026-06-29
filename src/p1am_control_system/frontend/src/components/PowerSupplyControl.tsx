@@ -2,11 +2,12 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Download } from "lucide-react";
 import { PowerSupplyTrend, type TrendSample } from "./PowerSupplyTrend";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
+import { MAX_TREND_SAMPLES } from "../lib/trendTime";
 import "./PowerSupplyControl.css";
 
-// Rolling trend buffer: ~300 samples at the ~10 Hz broadcast rate ≈ 30 s.
-const TREND_MAX_POINTS = 300;
-const TREND_WINDOW_SECONDS = 30;
+// Rolling trend buffer: deep enough for the longest selectable window (5 min
+// @ ~10 Hz); the plot itself slices/downsamples to the chosen window.
+const TREND_MAX_POINTS = MAX_TREND_SAMPLES;
 
 /**
  * Power-supply control tab.
@@ -536,7 +537,6 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
           powerFullScale={config.power_alarm_max_w}
           currentLabel={config.current_feedback_label}
           voltageLabel={config.voltage_feedback_label}
-          windowSeconds={TREND_WINDOW_SECONDS}
         />
       </div>
 

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { TAG_COUNT } from "../lib/tags";
+import { MAX_TREND_SAMPLES } from "../lib/trendTime";
 import { telemetryFrameSchema } from "../api/schemas";
 import type { PowerSupplyStatus } from "../components/PowerSupplyControl";
 import type { TemperatureStatus } from "../components/TemperatureControl";
@@ -36,7 +37,8 @@ export interface TelemetryState {
   isConnected: boolean;
 }
 
-const MAX_HISTORY = 1200;
+// Buffer enough history for the longest selectable trend window (5 min @ 10 Hz).
+const MAX_HISTORY = MAX_TREND_SAMPLES;
 
 export interface UseTelemetryStreamOptions {
   /** Called once when the socket first opens (e.g. to show a banner). */

@@ -6,12 +6,20 @@ import {
   resolveRange,
   axisTicks,
 } from "../lib/trendAxis";
+import {
+  MAX_TREND_SAMPLES,
+  windowSamples as windowSampleCount,
+  downsample,
+  formatWindow,
+} from "../lib/trendTime";
 import { TrendAxisControls } from "./TrendAxisControls";
+import { TrendTimeControls } from "./TrendTimeControls";
 import "./TemperatureControl.css";
 
-// Rolling trend buffer: ~300 samples at the ~10 Hz broadcast rate ≈ 30 s.
-const TREND_MAX_POINTS = 300;
-const TREND_WINDOW_SECONDS = 30;
+// Rolling trend buffer: deep enough for the longest selectable window
+// (5 min @ ~10 Hz); the plot slices/downsamples to the chosen window.
+const TREND_MAX_POINTS = MAX_TREND_SAMPLES;
+const DEFAULT_WINDOW_SECONDS = 30;
 
 /**
  * Temperature controller tab.
@@ -396,7 +404,6 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
           fullScale={config.temp_full_scale_c}
           setpoint={s?.setpoint_c ?? config.setpoint_min_c}
           hhLimit={hhLimit}
-          windowSeconds={TREND_WINDOW_SECONDS}
         />
       </div>
 
@@ -609,7 +616,6 @@ interface TrendProps {
   fullScale: number;
   setpoint: number;
   hhLimit: number;
-  windowSeconds: number;
 }
 
 const TempTrend: React.FC<TrendProps> = ({
@@ -617,12 +623,16 @@ const TempTrend: React.FC<TrendProps> = ({
   fullScale,
   setpoint,
   hhLimit,
-  windowSeconds,
 }) => {
   const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, fullScale));
-  const { min, max } = resolveRange(axis, samples, { min: 0, max: fullScale });
-  const path = tempPath(samples, min, max);
-  const last = samples[samples.length - 1];
+  const [windowSeconds, setWindowSeconds] =
+    useState<number>(DEFAULT_WINDOW_SECONDS);
+
+  const windowed = samples.slice(-windowSampleCount(windowSeconds));
+  const plotted = downsample(windowed);
+  const { min, max } = resolveRange(axis, plotted, { min: 0, max: fullScale });
+  const path = tempPath(plotted, min, max);
+  const last = windowed[windowed.length - 1];
 
   const refY = (value: number): number => {
     const frac = Math.max(0, Math.min(1, (value - min) / (max - min)));
@@ -648,11 +658,20 @@ const TempTrend: React.FC<TrendProps> = ({
           <strong>{hhLimit.toFixed(0)} °C</strong>
         </span>
         <span className="tc-trend-window">
-          last {windowSeconds}s · {min.toFixed(0)}–{max.toFixed(0)} °C
+          last {formatWindow(windowSeconds)} · {min.toFixed(0)}–{max.toFixed(0)} °C
         </span>
       </div>
 
-      <div style={{ margin: "0.1rem 0 0.3rem" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+          margin: "0.1rem 0 0.3rem",
+          flexWrap: "wrap",
+        }}
+      >
+        <TrendTimeControls value={windowSeconds} onChange={setWindowSeconds} />
         <TrendAxisControls value={axis} onChange={setAxis} unit="°C" />
       </div>
 
@@ -709,7 +728,7 @@ const TempTrend: React.FC<TrendProps> = ({
           </>
         )}
 
-        {samples.length < 2 ? (
+        {plotted.length < 2 ? (
           <text
             x={TREND_W / 2}
             y={TREND_H / 2}

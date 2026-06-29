@@ -5,7 +5,13 @@ import {
   resolveRange,
   axisTicks,
 } from "../lib/trendAxis";
+import {
+  windowSamples as windowSampleCount,
+  downsample,
+  formatWindow,
+} from "../lib/trendTime";
 import { TrendAxisControls } from "./TrendAxisControls";
+import { TrendTimeControls } from "./TrendTimeControls";
 
 /**
  * Compact dual-trace trend for the power-supply screen: measured current and
@@ -34,7 +40,6 @@ interface Props {
   powerFullScale: number;
   currentLabel?: string;
   voltageLabel?: string;
-  windowSeconds: number;
 }
 
 const W = 600;
@@ -76,13 +81,14 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   powerFullScale,
   currentLabel = "Current",
   voltageLabel = "Voltage",
-  windowSeconds,
 }) => {
   const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, 100));
+  const [windowSeconds, setWindowSeconds] = useState<number>(30);
 
-  const iPct = samples.map((s) => toPct(s.i, currentFullScale));
-  const vPct = samples.map((s) => toPct(s.v, voltageFullScale));
-  const pPct = samples.map((s) => toPct(s.p, powerFullScale));
+  const windowed = samples.slice(-windowSampleCount(windowSeconds));
+  const iPct = downsample(windowed.map((s) => toPct(s.i, currentFullScale)));
+  const vPct = downsample(windowed.map((s) => toPct(s.v, voltageFullScale)));
+  const pPct = downsample(windowed.map((s) => toPct(s.p, powerFullScale)));
   const { min, max } = resolveRange(axis, [...iPct, ...vPct, ...pPct], {
     min: 0,
     max: 100,
@@ -91,7 +97,7 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   const currentPath = buildPctPath(iPct, min, max);
   const voltagePath = buildPctPath(vPct, min, max);
   const powerPath = buildPctPath(pPct, min, max);
-  const last = samples[samples.length - 1];
+  const last = windowed[windowed.length - 1];
 
   return (
     <div className="ps-trend">
@@ -113,10 +119,21 @@ export const PowerSupplyTrend: React.FC<Props> = ({
             {last ? `${(last.p / 1000).toFixed(last.p / 1000 >= 10 ? 1 : 2)} kW` : "—"}
           </strong>
         </span>
-        <span className="ps-trend-window">last {windowSeconds}s · % of full scale</span>
+        <span className="ps-trend-window">
+          last {formatWindow(windowSeconds)} · % of full scale
+        </span>
       </div>
 
-      <div style={{ margin: "0.1rem 0 0.3rem" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+          margin: "0.1rem 0 0.3rem",
+          flexWrap: "wrap",
+        }}
+      >
+        <TrendTimeControls value={windowSeconds} onChange={setWindowSeconds} />
         <TrendAxisControls value={axis} onChange={setAxis} unit="%" />
       </div>
 
@@ -140,7 +157,7 @@ export const PowerSupplyTrend: React.FC<Props> = ({
           );
         })}
 
-        {samples.length < 2 ? (
+        {windowed.length < 2 ? (
           <text x={W / 2} y={H / 2} className="ps-trend-empty" textAnchor="middle">
             waiting for live data…
           </text>

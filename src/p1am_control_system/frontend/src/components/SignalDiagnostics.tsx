@@ -5,7 +5,13 @@ import {
   resolveRange,
   axisTicks,
 } from "../lib/trendAxis";
+import {
+  windowSamples as windowSampleCount,
+  downsample,
+  formatWindow,
+} from "../lib/trendTime";
 import { TrendAxisControls } from "./TrendAxisControls";
+import { TrendTimeControls } from "./TrendTimeControls";
 
 /**
  * Signal Diagnostics plot — the raw, unscaled 0-5 V of every analog channel on
@@ -15,11 +21,12 @@ import { TrendAxisControls } from "./TrendAxisControls";
  * terminal and troubleshoot the monitor card independently of the engineering
  * (A / V) readouts on the Power Supply tab.
  *
- * The Y axis defaults to 0-5 V but is rescalable (Auto-fit or manual min/max)
- * via the shared TrendAxisControls so a small signal can be zoomed in.
+ * Both axes are adjustable: the Y axis (Auto-fit or manual 0-5 V via
+ * TrendAxisControls) and the time window (TrendTimeControls). Long windows are
+ * downsampled before drawing so the SVG stays light on the Pi.
  *
  * Self-contained SVG (no chart lib): the parent passes the rolling per-scan tag
- * history; this slices the last `windowSamples` of tag columns 20..25.
+ * history; this slices the last `windowSeconds` of tag columns 20..25.
  */
 
 export interface DiagChannel {
@@ -63,24 +70,23 @@ function buildPath(values: number[], min: number, max: number): string {
 interface Props {
   /** Rolling per-scan tag history: each row is the full tag array for a scan. */
   history: number[][];
-  /** How many trailing samples to plot (≈ samples × 0.1 s at 10 Hz). */
-  windowSamples?: number;
 }
 
-export const SignalDiagnostics: React.FC<Props> = ({
-  history,
-  windowSamples = 300,
-}) => {
+export const SignalDiagnostics: React.FC<Props> = ({ history }) => {
   const [axis, setAxis] = useState<AxisRange>(
     defaultAxisRange(0, FULL_SCALE_V),
   );
-  const window = history.slice(-windowSamples);
-  const series = CHANNELS.map((ch) => ({
-    ...ch,
-    values: window.map((row) => row[ch.tag] ?? 0),
-    last: window.length ? (window[window.length - 1][ch.tag] ?? 0) : null,
-  }));
-  const seconds = Math.round((windowSamples * 0.1) / 1) || 30;
+  const [windowSeconds, setWindowSeconds] = useState<number>(30);
+
+  const windowRows = history.slice(-windowSampleCount(windowSeconds));
+  const series = CHANNELS.map((ch) => {
+    const raw = windowRows.map((row) => row[ch.tag] ?? 0);
+    return {
+      ...ch,
+      values: downsample(raw),
+      last: raw.length ? raw[raw.length - 1] : null,
+    };
+  });
   const { min, max } = resolveRange(
     axis,
     series.flatMap((s) => s.values),
@@ -106,10 +112,19 @@ export const SignalDiagnostics: React.FC<Props> = ({
             <strong>{s.last != null ? `${s.last.toFixed(3)} V` : "—"}</strong>
           </span>
         ))}
-        <span className="ps-trend-window">last {seconds}s</span>
+        <span className="ps-trend-window">last {formatWindow(windowSeconds)}</span>
       </div>
 
-      <div style={{ margin: "0.2rem 0 0.4rem" }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "1rem",
+          margin: "0.2rem 0 0.4rem",
+          flexWrap: "wrap",
+        }}
+      >
+        <TrendTimeControls value={windowSeconds} onChange={setWindowSeconds} />
         <TrendAxisControls value={axis} onChange={setAxis} unit="V" />
       </div>
 
@@ -133,7 +148,7 @@ export const SignalDiagnostics: React.FC<Props> = ({
           );
         })}
 
-        {window.length < 2 ? (
+        {windowRows.length < 2 ? (
           <text x={W / 2} y={H / 2} className="ps-trend-empty" textAnchor="middle">
             waiting for live data…
           </text>
