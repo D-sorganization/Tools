@@ -652,7 +652,7 @@ export const App: React.FC = () => {
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
             <PowerSupplyControl
               liveStatus={powerSupplyStatus}
-              onExport={() => setInspectorView({ type: "export" })}
+              onOpenCapture={() => setInspectorView({ type: "export" })}
             />
           )}
 

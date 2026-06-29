@@ -14,6 +14,7 @@ import {
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
 import { TrendTimeAxis } from "./TrendPlotOverlays";
+import { ExportButton } from "./ExportButton";
 
 /**
  * Signal Diagnostics plot — the raw, unscaled 0-5 V of every analog channel on
@@ -136,6 +137,7 @@ export const SignalDiagnostics: React.FC<Props> = ({ history, historyTimes }) =>
       >
         <TrendTimeControls value={windowSeconds} onChange={setWindowSeconds} />
         <TrendAxisControls value={axis} onChange={setAxis} unit="V" />
+        <ExportButton tags={CHANNELS.map((c) => c.tag)} label="Export" />
       </div>
 
       <svg

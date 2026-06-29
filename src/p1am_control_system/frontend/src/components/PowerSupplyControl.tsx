@@ -1,9 +1,13 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { Download } from "lucide-react";
+import { Database } from "lucide-react";
 import { PowerSupplyTrend, type TrendSample } from "./PowerSupplyTrend";
+import { ExportButton } from "./ExportButton";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
 import { MAX_TREND_SAMPLES } from "../lib/trendTime";
 import "./PowerSupplyControl.css";
+
+// Tags carrying the unit's current/voltage feedback (P1-4ADL2DAL AI0/AI1).
+const PS_EXPORT_TAGS = [12, 13] as const;
 
 // Rolling trend buffer: deep enough for the longest selectable window (5 min
 // @ ~10 Hz); the plot itself slices/downsamples to the chosen window.
@@ -109,8 +113,8 @@ export interface PowerSupplyStatus {
 interface Props {
   /** Status pushed each scan via the parent's WebSocket; undefined while waiting. */
   liveStatus?: PowerSupplyStatus;
-  /** Opens the data-export drawer (wired to the plot-header Export button). */
-  onExport?: () => void;
+  /** Opens the capture status / historian-management drawer. */
+  onOpenCapture?: () => void;
 }
 
 const STATE_LABELS: Record<PowerSupplyStatus["state"], string> = {
@@ -165,7 +169,7 @@ function noiseMetricValue(stats: NoiseStats | undefined): number | null {
   }
 }
 
-export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) => {
+export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onOpenCapture }) => {
   const [config, setConfig] = useState<PowerSupplyConfig | null>(null);
   const [configDraft, setConfigDraft] = useState<PowerSupplyConfig | null>(null);
   const [mode, setMode] = useState<"current" | "power">("current");
@@ -525,11 +529,18 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
       <div className="ps-card">
         <div className="ps-card-title">
           <span>Live signals — current, voltage &amp; power feedback</span>
-          {onExport && (
-            <button className="btn ps-export-btn" onClick={onExport} title="Export captured data">
-              <Download size={13} /> Export
-            </button>
-          )}
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+            <ExportButton tags={PS_EXPORT_TAGS} label="Export" />
+            {onOpenCapture && (
+              <button
+                className="btn ps-export-btn"
+                onClick={onOpenCapture}
+                title="Capture status & historian management"
+              >
+                <Database size={13} /> Capture
+              </button>
+            )}
+          </div>
         </div>
         <PowerSupplyTrend
           samples={trend}

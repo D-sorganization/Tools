@@ -19,6 +19,7 @@ import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
 import { TrendFitControls } from "./TrendFitControls";
 import { TrendTimeAxis, TrendFitOverlay } from "./TrendPlotOverlays";
+import { ExportButton } from "./ExportButton";
 import "./TemperatureControl.css";
 
 // Rolling trend buffer: deep enough for the longest selectable window
@@ -412,8 +413,21 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
 
       {/* ---- Live trend ---- */}
       <div className="tc-card">
-        <div className="tc-card-title">
+        <div
+          className="tc-card-title"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: "0.5rem",
+          }}
+        >
           <span>Live temperature — {config.heater_label}</span>
+          <ExportButton
+            tags={[Number.parseInt(config.temp_tag.replace(/\D/g, ""), 10) || 0]}
+            label="Export"
+            onError={setError}
+          />
         </div>
         <TempTrend
           samples={trend}
