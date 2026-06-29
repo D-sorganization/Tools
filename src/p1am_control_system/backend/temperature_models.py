@@ -58,7 +58,27 @@ class TemperatureConfig(BaseModel):
     deadband_c: float = Field(
         default=5.0,
         gt=0.0,
-        description="on/off hysteresis half-band around setpoint",
+        description=(
+            "on/off hysteresis half-band around setpoint (deg C); the relay "
+            "switches ON at setpoint-deadband and OFF at setpoint+deadband, so "
+            "the full control band is 2x this. Smaller = tighter regulation."
+        ),
+    )
+    min_on_time_s: float = Field(
+        default=0.0,
+        ge=0.0,
+        description=(
+            "minimum seconds the relay must stay ON before it may switch OFF "
+            "(anti-short-cycle; 0 disables). Caps how often the heater cycles."
+        ),
+    )
+    min_off_time_s: float = Field(
+        default=0.0,
+        ge=0.0,
+        description=(
+            "minimum seconds the relay must stay OFF before it may switch ON "
+            "(anti-short-cycle; 0 disables). Caps how often the heater cycles."
+        ),
     )
     hh_limit_c: float = Field(
         default=1400.0,
@@ -116,5 +136,7 @@ class TemperatureStatus(BaseModel):
 
     hh_limit_c: float
     deadband_c: float
+    min_on_time_s: float = 0.0
+    min_off_time_s: float = 0.0
 
     estopped: bool = False

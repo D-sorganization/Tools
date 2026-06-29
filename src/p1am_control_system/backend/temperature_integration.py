@@ -11,6 +11,7 @@ controller and the PLC client's public seam, never their internals).
 from __future__ import annotations
 
 import logging
+import time
 from typing import Any
 
 import hardware
@@ -39,7 +40,9 @@ class TemperatureService:
         commanded value to False, so a failed write can never *energize* it.
         """
         temp_c = self._temp_from_tags(tags)
-        relay_on = self.controller.tick(measured_temp_c=temp_c)
+        # Pass a monotonic clock so the controller can enforce the
+        # anti-short-cycle min on/off dwell across scans.
+        relay_on = self.controller.tick(measured_temp_c=temp_c, now=time.monotonic())
         await self._write_relay(relay_on)
         return self.controller.status()
 

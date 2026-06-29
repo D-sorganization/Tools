@@ -59,6 +59,8 @@ export interface TemperatureConfig {
   setpoint_min_c: number;
   setpoint_max_c: number;
   deadband_c: number;
+  min_on_time_s: number;
+  min_off_time_s: number;
   hh_limit_c: number;
   heater_label: string;
 }
@@ -72,6 +74,8 @@ export interface TemperatureStatus {
   trips: string[];
   hh_limit_c: number;
   deadband_c: number;
+  min_on_time_s: number;
+  min_off_time_s: number;
 }
 
 interface Props {
@@ -536,9 +540,19 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
 
         <div className="tc-config-grid">
           <ConfigField
-            label="Deadband (°C)"
+            label="Deadband (°C, ± half-band)"
             value={configDraft.deadband_c}
             onChange={(v) => setConfigDraft({ ...configDraft, deadband_c: v })}
+          />
+          <ConfigField
+            label="Min ON time (s)"
+            value={configDraft.min_on_time_s}
+            onChange={(v) => setConfigDraft({ ...configDraft, min_on_time_s: v })}
+          />
+          <ConfigField
+            label="Min OFF time (s)"
+            value={configDraft.min_off_time_s}
+            onChange={(v) => setConfigDraft({ ...configDraft, min_off_time_s: v })}
           />
           <ConfigField
             label="High-high cutoff (°C)"

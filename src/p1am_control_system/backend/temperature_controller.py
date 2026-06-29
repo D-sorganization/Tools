@@ -56,6 +56,9 @@ class TemperatureController:
         # the hysteresis band can keep the relay in its prior position while the
         # measured temperature sits inside the deadband.
         self._relay_on = False
+        # Monotonic-seconds timestamp of the last relay state change, used to
+        # enforce the anti-short-cycle min on/off dwell. None until first switch.
+        self._last_switch_t: float | None = None
         # E-stop latch. While set, the controller forces the relay off, refuses
         # to arm, and rejects setpoints until clear_estop() is called. This is a
         # one-way kill — it must be explicitly cleared by an operator.
@@ -276,6 +279,32 @@ class TemperatureController:
             or bool(self._trips)
         )
 
+    def _set_relay(self, on: bool, now: float | None) -> None:
+        """Apply a commanded relay state, recording the switch time so the
+        anti-short-cycle dwell can be measured. A no-op when unchanged."""
+        if on != self._relay_on:
+            self._relay_on = on
+            if now is not None:
+                self._last_switch_t = now
+
+    def _dwell_blocks_switch(self, now: float | None) -> bool:
+        """True when the anti-short-cycle dwell has not yet elapsed since the
+        last switch, so an opposite relay demand must wait.
+
+        Disabled (returns False) when no clock is supplied, no switch has
+        happened yet, or the relevant min on/off time is 0.
+        """
+        if now is None or self._last_switch_t is None:
+            return False
+        min_dwell = (
+            self._config.min_on_time_s
+            if self._relay_on
+            else self._config.min_off_time_s
+        )
+        if min_dwell <= 0.0:
+            return False
+        return bool((now - self._last_switch_t) < min_dwell)
+
     def tick(self, measured_temp_c: float, now: float | None = None) -> bool:
         """Advance the controller one cycle and return the commanded relay state.
 
@@ -287,15 +316,19 @@ class TemperatureController:
           - Relay turns OFF when measured >= setpoint + deadband.
           - Inside the band the relay HOLDS its previous state, so it doesn't
             chatter around the setpoint.
+          - Anti-short-cycle: after a switch the relay is held for at least
+            `min_on_time_s` / `min_off_time_s` before an opposite demand is
+            honored, capping how often the heater cycles. Enforced only when a
+            clock is supplied via `now` (the live scan loop passes one).
           - Any path that forces the relay off (E-stop / IDLE / ARMED /
-            TRIPPED / permissive off / any trip) bypasses the band, so
-            shutdowns are always one tick.
+            TRIPPED / permissive off / any trip) bypasses the band AND the
+            dwell, so shutdowns are always one tick.
 
         Args:
             measured_temp_c: thermocouple temperature in deg C.
-            now: Optional timestamp in seconds. Accepted for signature parity
-                with the power-supply controller and for future use; the
-                control law is deterministic and does not consult it.
+            now: Monotonic timestamp in seconds, used to enforce the min on/off
+                dwell. When None the dwell is not enforced (the control law
+                stays deterministic for unit tests that pass explicit times).
 
         Precondition: measured_temp_c is a finite float. Non-finite inputs are
         treated as 0 (safe).
@@ -305,23 +338,30 @@ class TemperatureController:
         Returns:
             True if the heater relay should be energized, else False.
         """
-        del now  # Accepted for signature parity / future use; deterministic.
         self._last_t = self._safe_finite(measured_temp_c)
 
         self._evaluate_trips()
 
         if self._should_force_relay_off():
-            self._relay_on = False
+            # Safety always wins and bypasses the anti-short-cycle dwell.
+            self._set_relay(False, now)
             return False
 
         # RUNNING on/off hysteresis around the setpoint.
         on_threshold = self._setpoint_c - self._config.deadband_c
         off_threshold = self._setpoint_c + self._config.deadband_c
         if self._last_t <= on_threshold:
-            self._relay_on = True
+            desired = True
         elif self._last_t >= off_threshold:
-            self._relay_on = False
-        # else: inside the band -> hold previous relay state.
+            desired = False
+        else:
+            desired = self._relay_on  # inside the band -> hold
+
+        # Anti-short-cycle: make an opposite demand wait out the min dwell.
+        if desired != self._relay_on and self._dwell_blocks_switch(now):
+            desired = self._relay_on
+
+        self._set_relay(desired, now)
         return self._relay_on
 
     def status(self) -> TemperatureStatus:
@@ -335,5 +375,7 @@ class TemperatureController:
             trips=sorted(self._trips),
             hh_limit_c=self._config.hh_limit_c,
             deadband_c=self._config.deadband_c,
+            min_on_time_s=self._config.min_on_time_s,
+            min_off_time_s=self._config.min_off_time_s,
             estopped=self._estopped,
         )

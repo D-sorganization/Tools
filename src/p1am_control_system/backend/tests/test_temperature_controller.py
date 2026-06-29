@@ -424,3 +424,77 @@ class TestUpdateConfig:
         c.update_config(TemperatureConfig(deadband_c=10.0))
         assert c.state == TemperatureState.ARMED
         assert c.config.deadband_c == 10.0
+
+
+# --------------------------------------------------------------------------
+# Anti-short-cycle min on/off dwell
+# --------------------------------------------------------------------------
+
+
+def running_with_dwell(
+    min_on: float = 0.0, min_off: float = 0.0, sp_c: float = 500.0
+) -> TemperatureController:
+    """A RUNNING controller (setpoint 500, deadband 5) with dwell limits set."""
+    c = TemperatureController(
+        TemperatureConfig(min_on_time_s=min_on, min_off_time_s=min_off)
+    )
+    c.set_permissive(True)
+    c.set_setpoint_c(sp_c)
+    return c
+
+
+class TestAntiShortCycle:
+    def test_min_off_time_blocks_early_re_energize(self) -> None:
+        c = running_with_dwell(min_off=30.0)
+        assert c.tick(490.0, now=0.0) is True  # first ON allowed (no prior switch)
+        assert c.tick(510.0, now=1.0) is False  # OFF (min_on=0)
+        # wants ON again at t=10, but only 9 s off < 30 s -> held OFF
+        assert c.tick(490.0, now=10.0) is False
+        # 30 s elapsed -> re-energize allowed
+        assert c.tick(490.0, now=31.0) is True
+
+    def test_min_on_time_blocks_early_de_energize(self) -> None:
+        c = running_with_dwell(min_on=30.0)
+        assert c.tick(490.0, now=0.0) is True  # ON
+        # wants OFF at t=10, but only 10 s on < 30 s -> held ON
+        assert c.tick(510.0, now=10.0) is True
+        # 30 s elapsed -> de-energize allowed
+        assert c.tick(510.0, now=31.0) is False
+
+    def test_dwell_boundary_is_inclusive(self) -> None:
+        c = running_with_dwell(min_off=30.0)
+        assert c.tick(490.0, now=0.0) is True
+        assert c.tick(510.0, now=1.0) is False  # OFF at t=1
+        # exactly 30 s after the OFF switch -> allowed (>= not >)
+        assert c.tick(490.0, now=31.0) is True
+
+    def test_estop_bypasses_dwell(self) -> None:
+        c = running_with_dwell(min_on=60.0)
+        assert c.tick(490.0, now=0.0) is True  # ON
+        c.engage_estop()
+        # min_on not elapsed, but E-stop forces OFF the same tick
+        assert c.tick(490.0, now=1.0) is False
+
+    def test_permissive_off_bypasses_dwell(self) -> None:
+        c = running_with_dwell(min_on=60.0)
+        assert c.tick(490.0, now=0.0) is True
+        c.set_permissive(False)
+        assert c.tick(490.0, now=1.0) is False
+
+    def test_no_clock_disables_dwell(self) -> None:
+        c = running_with_dwell(min_off=60.0)
+        assert c.tick(490.0) is True  # ON (now=None)
+        assert c.tick(510.0) is False  # OFF
+        assert c.tick(490.0) is True  # immediately ON again — dwell not enforced
+
+    def test_default_config_has_no_dwell(self) -> None:
+        c = fresh_running_controller()
+        assert c.tick(490.0, now=0.0) is True
+        assert c.tick(510.0, now=0.1) is False
+        assert c.tick(490.0, now=0.2) is True  # no min-off constraint by default
+
+    def test_status_reports_dwell_config(self) -> None:
+        c = running_with_dwell(min_on=15.0, min_off=20.0)
+        st = c.status()
+        assert st.min_on_time_s == 15.0
+        assert st.min_off_time_s == 20.0
