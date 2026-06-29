@@ -1,5 +1,12 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
+import {
+  type AxisRange,
+  defaultAxisRange,
+  resolveRange,
+  axisTicks,
+} from "../lib/trendAxis";
+import { TrendAxisControls } from "./TrendAxisControls";
 import "./TemperatureControl.css";
 
 // Rolling trend buffer: ~300 samples at the ~10 Hz broadcast rate ≈ 30 s.
@@ -584,13 +591,13 @@ const TEMP_COLOR = "var(--color-error)";
 const SETPOINT_COLOR = "var(--accent-cyan)";
 const HH_COLOR = "var(--color-warning)";
 
-function tempPath(values: number[], fullScale: number): string {
-  if (values.length < 2 || fullScale <= 0) return "";
+function tempPath(values: number[], min: number, max: number): string {
+  if (values.length < 2 || max <= min) return "";
   const n = values.length;
   return values
     .map((val, idx) => {
       const x = TREND_PAD_L + (idx / (n - 1)) * TREND_PLOT_W;
-      const frac = Math.max(0, Math.min(1, val / fullScale));
+      const frac = Math.max(0, Math.min(1, (val - min) / (max - min)));
       const y = TREND_PAD_T + (1 - frac) * TREND_PLOT_H;
       return `${idx === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
     })
@@ -612,11 +619,13 @@ const TempTrend: React.FC<TrendProps> = ({
   hhLimit,
   windowSeconds,
 }) => {
-  const path = tempPath(samples, fullScale);
+  const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, fullScale));
+  const { min, max } = resolveRange(axis, samples, { min: 0, max: fullScale });
+  const path = tempPath(samples, min, max);
   const last = samples[samples.length - 1];
 
   const refY = (value: number): number => {
-    const frac = Math.max(0, Math.min(1, value / fullScale));
+    const frac = Math.max(0, Math.min(1, (value - min) / (max - min)));
     return TREND_PAD_T + (1 - frac) * TREND_PLOT_H;
   };
 
@@ -639,8 +648,12 @@ const TempTrend: React.FC<TrendProps> = ({
           <strong>{hhLimit.toFixed(0)} °C</strong>
         </span>
         <span className="tc-trend-window">
-          last {windowSeconds}s · 0–{fullScale.toFixed(0)} °C
+          last {windowSeconds}s · {min.toFixed(0)}–{max.toFixed(0)} °C
         </span>
+      </div>
+
+      <div style={{ margin: "0.1rem 0 0.3rem" }}>
+        <TrendAxisControls value={axis} onChange={setAxis} unit="°C" />
       </div>
 
       <svg
@@ -650,11 +663,11 @@ const TempTrend: React.FC<TrendProps> = ({
         role="img"
         aria-label="Temperature trend"
       >
-        {/* gridlines + °C axis labels at 0/25/50/75/100 % of full scale */}
-        {[0, 0.25, 0.5, 0.75, 1].map((frac) => {
-          const y = TREND_PAD_T + (1 - frac) * TREND_PLOT_H;
+        {/* gridlines + °C axis labels across the resolved [min, max] range */}
+        {axisTicks(min, max, 4).map((tick, i) => {
+          const y = TREND_PAD_T + (1 - (tick - min) / (max - min)) * TREND_PLOT_H;
           return (
-            <g key={frac}>
+            <g key={i}>
               <line
                 x1={TREND_PAD_L}
                 y1={y}
@@ -668,14 +681,14 @@ const TempTrend: React.FC<TrendProps> = ({
                 className="tc-trend-axis"
                 textAnchor="end"
               >
-                {(frac * fullScale).toFixed(0)}
+                {tick.toFixed(0)}
               </text>
             </g>
           );
         })}
 
-        {/* setpoint + HH reference lines */}
-        {fullScale > 0 && (
+        {/* setpoint + HH reference lines (only when within the visible range) */}
+        {max > min && (
           <>
             <line
               x1={TREND_PAD_L}

@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Play, Pause, ZoomIn, ZoomOut, Image, FileSpreadsheet, RotateCcw } from "lucide-react";
 import { TAG_INDICES } from "./RoutingMatrix";
+import { type AxisRange, defaultAxisRange } from "../lib/trendAxis";
+import { TrendAxisControls } from "./TrendAxisControls";
 
 interface TrendChartProps {
   history: number[][]; // Array of TagValue arrays: number[time][tag_id]
@@ -21,6 +23,10 @@ const LINE_COLORS = [
 export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) => {
   const [selectedTags, setSelectedTags] = useState<number[]>([0, 1, 10]);
   const [duration, setDuration] = useState<number>(60); // Time window in seconds
+
+  // Y-axis range: "auto" keeps the existing auto-scale + Y-Zoom behavior;
+  // manual mode pins the axis to operator-entered min/max.
+  const [yAxis, setYAxis] = useState<AxisRange>(defaultAxisRange(0, 100));
 
   // Advanced Plot Control States
   const [isPaused, setIsPaused] = useState<boolean>(false);
@@ -67,6 +73,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
     setScrollOffset(0);
     setSmoothingMode("none");
     setSmoothedData(null);
+    setYAxis(defaultAxisRange(0, 100));
   };
 
   const [smoothingMode, setSmoothingMode] = useState<string>("none");
@@ -155,6 +162,12 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
       minVal = Math.max(0, center - zoomedRange / 2);
       maxVal = center + zoomedRange / 2;
     }
+  }
+
+  // Manual axis override wins over the auto-scale + zoom computed above.
+  if (!yAxis.auto) {
+    minVal = yAxis.min;
+    maxVal = yAxis.max > yAxis.min ? yAxis.max : yAxis.min + 1;
   }
 
   const valRange = maxVal - minVal || 1;
@@ -366,6 +379,31 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
             <span>CSV</span>
           </button>
         </div>
+      </div>
+
+      {/* Manual Y-axis range override (auto-scale + Y-Zoom still apply when "Auto Y" is on) */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem",
+          background: "var(--input-bg)",
+          padding: "0.35rem 0.6rem",
+          borderRadius: "4px",
+          border: "1px solid var(--panel-border)",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "0.7rem",
+            color: "var(--text-secondary)",
+            minWidth: "75px",
+            textTransform: "uppercase",
+          }}
+        >
+          Y Axis:
+        </span>
+        <TrendAxisControls value={yAxis} onChange={setYAxis} />
       </div>
 
       {/* History scroll panning slider */}

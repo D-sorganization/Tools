@@ -1,10 +1,21 @@
-import React from "react";
+import React, { useState } from "react";
+import {
+  type AxisRange,
+  defaultAxisRange,
+  resolveRange,
+  axisTicks,
+} from "../lib/trendAxis";
+import { TrendAxisControls } from "./TrendAxisControls";
 
 /**
  * Compact dual-trace trend for the power-supply screen: measured current and
  * voltage coming back from the unit, plotted as a percent of their respective
- * full scales on a shared 0–100 % axis so both fit one clean chart. Live
- * engineering values are shown in the legend.
+ * full scales on a shared axis so both fit one clean chart. Live engineering
+ * values are shown in the legend.
+ *
+ * The shared axis is in % of full scale and defaults to 0-100 %, but is
+ * rescalable (Auto-fit or manual min/max %) via the shared TrendAxisControls so
+ * small signals can be zoomed in.
  *
  * Self-contained SVG (no chart lib): the parent accumulates a rolling sample
  * buffer from the live status and passes it in.
@@ -39,16 +50,19 @@ const CURRENT_COLOR = "var(--color-success)";
 const VOLTAGE_COLOR = "var(--accent-purple)";
 const POWER_COLOR = "var(--accent-cyan)";
 
-function buildPath(
-  values: number[],
-  fullScale: number,
-): string {
-  if (values.length < 2 || fullScale <= 0) return "";
-  const n = values.length;
-  return values
-    .map((val, idx) => {
+/** Convert a measured value to percent of its full scale (0 when no scale). */
+function toPct(value: number, fullScale: number): number {
+  return fullScale > 0 ? (value / fullScale) * 100 : 0;
+}
+
+/** Plot a series already expressed in % against the resolved [min, max] % axis. */
+function buildPctPath(pctValues: number[], min: number, max: number): string {
+  if (pctValues.length < 2 || max <= min) return "";
+  const n = pctValues.length;
+  return pctValues
+    .map((pct, idx) => {
       const x = PAD_L + (idx / (n - 1)) * PLOT_W;
-      const frac = Math.max(0, Math.min(1, val / fullScale));
+      const frac = Math.max(0, Math.min(1, (pct - min) / (max - min)));
       const y = PAD_T + (1 - frac) * PLOT_H;
       return `${idx === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
     })
@@ -64,18 +78,19 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   voltageLabel = "Voltage",
   windowSeconds,
 }) => {
-  const currentPath = buildPath(
-    samples.map((s) => s.i),
-    currentFullScale,
-  );
-  const voltagePath = buildPath(
-    samples.map((s) => s.v),
-    voltageFullScale,
-  );
-  const powerPath = buildPath(
-    samples.map((s) => s.p),
-    powerFullScale,
-  );
+  const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, 100));
+
+  const iPct = samples.map((s) => toPct(s.i, currentFullScale));
+  const vPct = samples.map((s) => toPct(s.v, voltageFullScale));
+  const pPct = samples.map((s) => toPct(s.p, powerFullScale));
+  const { min, max } = resolveRange(axis, [...iPct, ...vPct, ...pPct], {
+    min: 0,
+    max: 100,
+  });
+
+  const currentPath = buildPctPath(iPct, min, max);
+  const voltagePath = buildPctPath(vPct, min, max);
+  const powerPath = buildPctPath(pPct, min, max);
   const last = samples[samples.length - 1];
 
   return (
@@ -101,6 +116,10 @@ export const PowerSupplyTrend: React.FC<Props> = ({
         <span className="ps-trend-window">last {windowSeconds}s · % of full scale</span>
       </div>
 
+      <div style={{ margin: "0.1rem 0 0.3rem" }}>
+        <TrendAxisControls value={axis} onChange={setAxis} unit="%" />
+      </div>
+
       <svg
         className="ps-trend-svg"
         viewBox={`0 0 ${W} ${H}`}
@@ -108,20 +127,14 @@ export const PowerSupplyTrend: React.FC<Props> = ({
         role="img"
         aria-label="Current and voltage trend"
       >
-        {/* gridlines at 0/25/50/75/100 % */}
-        {[0, 0.25, 0.5, 0.75, 1].map((frac) => {
-          const y = PAD_T + (1 - frac) * PLOT_H;
+        {/* gridlines + % axis labels across the resolved [min, max] range */}
+        {axisTicks(min, max, 4).map((tick, i) => {
+          const y = PAD_T + (1 - (tick - min) / (max - min)) * PLOT_H;
           return (
-            <g key={frac}>
-              <line
-                x1={PAD_L}
-                y1={y}
-                x2={W - PAD_R}
-                y2={y}
-                className="ps-trend-grid"
-              />
+            <g key={i}>
+              <line x1={PAD_L} y1={y} x2={W - PAD_R} y2={y} className="ps-trend-grid" />
               <text x={PAD_L - 6} y={y + 3} className="ps-trend-axis" textAnchor="end">
-                {frac * 100}
+                {tick.toFixed(Number.isInteger(tick) ? 0 : 1)}
               </text>
             </g>
           );
