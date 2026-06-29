@@ -14,6 +14,7 @@ import {
   windowStartIndex,
 } from "../lib/trendTime";
 import { fitSeries, NO_FIT_ID } from "../lib/curveFit";
+import { useTrendBackfill } from "../hooks/useTrendBackfill";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
 import { TrendFitControls } from "./TrendFitControls";
@@ -412,6 +413,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
         </div>
         <TempTrend
           samples={trend}
+          tagId={Number.parseInt(config.temp_tag.replace(/\D/g, ""), 10) || 0}
           fullScale={config.temp_full_scale_c}
           setpoint={s?.setpoint_c ?? config.setpoint_min_c}
           hhLimit={hhLimit}
@@ -624,6 +626,8 @@ function tempPath(values: number[], min: number, max: number): string {
 
 interface TrendProps {
   samples: TempSample[];
+  /** Tag index backing the temperature (for historian backfill). */
+  tagId: number;
   fullScale: number;
   setpoint: number;
   hhLimit: number;
@@ -631,6 +635,7 @@ interface TrendProps {
 
 const TempTrend: React.FC<TrendProps> = ({
   samples,
+  tagId,
   fullScale,
   setpoint,
   hhLimit,
@@ -640,11 +645,21 @@ const TempTrend: React.FC<TrendProps> = ({
     useState<number>(DEFAULT_WINDOW_SECONDS);
   const [fitMethodId, setFitMethodId] = useState<string>(NO_FIT_ID);
 
+  // Backfill from the historian so widening the window immediately shows past
+  // data (stored tag is a 0–100 %, so scale it to °C). Merge the backfilled
+  // history (anything older than the live buffer) ahead of the live samples.
+  const backfill = useTrendBackfill(tagId, windowSeconds, fullScale / 100);
+  const liveStart = samples.length ? samples[0].t : Infinity;
+  const older = backfill.filter((b) => b.t < liveStart);
+  const series: TempSample[] = older.length
+    ? [...older.map((b) => ({ t: b.t, c: b.v })), ...samples]
+    : samples;
+
   // Window + scale by real wall-clock time so the span and the fit slope are
   // correct regardless of the actual poll rate.
-  const windowed = samples.slice(
+  const windowed = series.slice(
     windowStartIndex(
-      samples.map((s) => s.t),
+      series.map((s) => s.t),
       windowSeconds,
     ),
   );
