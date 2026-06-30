@@ -19,7 +19,7 @@ from auth_config import require_admin_key
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from temperature_controller import TemperatureController
-from temperature_models import TemperatureConfig, TemperatureStatus
+from temperature_models import TcType, TemperatureConfig, TemperatureStatus
 
 
 class TemperatureService:
@@ -88,6 +88,12 @@ class TemperaturePermissiveRequest(BaseModel):
     enabled: bool
 
 
+class TcTypeRequest(BaseModel):
+    """Operator selection of which thermocouple (K or R) drives the heater."""
+
+    active_tc_type: TcType
+
+
 def create_temperature_router(service: TemperatureService) -> APIRouter:
     router = APIRouter(prefix="/api/temperature", tags=["temperature"])
     controller = service.controller
@@ -126,6 +132,15 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
         req: TemperaturePermissiveRequest,
     ) -> TemperatureStatus:
         controller.set_permissive(req.enabled)
+        return controller.status()
+
+    @router.post("/tc_type", dependencies=[Depends(require_admin_key)])
+    async def set_active_tc_type(req: TcTypeRequest) -> TemperatureStatus:
+        """Switch the heater's controlling thermocouple between type K and R."""
+        try:
+            controller.set_active_tc_type(req.active_tc_type)
+        except (TypeError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
         return controller.status()
 
     @router.post("/acknowledge_trip", dependencies=[Depends(require_admin_key)])

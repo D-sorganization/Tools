@@ -54,9 +54,23 @@ interface TempSample {
  *  - Permissive must be ON before any setpoint takes effect (server enforces).
  */
 
+/** Thermocouple type selectable for the heater control. */
+export type TcType = "K" | "R";
+
+export interface ThermocoupleChannel {
+  tag: string;
+  full_scale_c: number;
+  label: string;
+}
+
 export interface TemperatureConfig {
+  type_k: ThermocoupleChannel;
+  type_r: ThermocoupleChannel;
+  active_tc_type: TcType;
+  /** Derived (read-only) from the active channel — see backend computed fields. */
   temp_tag: string;
   temp_full_scale_c: number;
+  active_tc_label: string;
   setpoint_min_c: number;
   setpoint_max_c: number;
   deadband_c: number;
@@ -77,6 +91,8 @@ export interface TemperatureStatus {
   deadband_c: number;
   min_on_time_s: number;
   min_off_time_s: number;
+  active_tc_type: TcType;
+  active_tc_label: string;
 }
 
 interface Props {
@@ -113,21 +129,22 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
 
-  // Load config once.
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const res = await fetchWithTimeout("/api/temperature/config");
-        if (!res.ok) throw new Error(`config GET ${res.status}`);
-        const cfg = (await res.json()) as TemperatureConfig;
-        setConfig(cfg);
-        setConfigDraft(cfg);
-      } catch (e) {
-        setError(`Load config failed: ${(e as Error).message}`);
-      }
-    };
-    load();
+  // Load config (reused after a thermocouple switch re-clamps the limits).
+  const loadConfig = useCallback(async () => {
+    try {
+      const res = await fetchWithTimeout("/api/temperature/config");
+      if (!res.ok) throw new Error(`config GET ${res.status}`);
+      const cfg = (await res.json()) as TemperatureConfig;
+      setConfig(cfg);
+      setConfigDraft(cfg);
+    } catch (e) {
+      setError(`Load config failed: ${(e as Error).message}`);
+    }
   }, []);
+
+  useEffect(() => {
+    loadConfig();
+  }, [loadConfig]);
 
   // Accumulate a rolling trend buffer from the live status broadcasts.
   useEffect(() => {
@@ -250,6 +267,27 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
     [liveStatus?.relay_on, flash],
   );
 
+  const setActiveTcType = useCallback(
+    async (tcType: TcType) => {
+      setBusy(true);
+      try {
+        const res = await fetchWithTimeout("/api/temperature/tc_type", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ active_tc_type: tcType }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        flash(`Heater now reading the Type ${tcType} thermocouple`);
+        await loadConfig(); // limits may have re-clamped to the new channel
+      } catch (e) {
+        flash(`Thermocouple switch failed: ${(e as Error).message}`, "error");
+      } finally {
+        setBusy(false);
+      }
+    },
+    [flash, loadConfig],
+  );
+
   const acknowledgeTrip = useCallback(async () => {
     setBusy(true);
     try {
@@ -307,6 +345,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
   const s = liveStatus;
   const state = s?.state ?? "idle";
   const relayOn = s?.relay_on ?? false;
+  const activeTcType: TcType = s?.active_tc_type ?? config.active_tc_type;
   const hhLimit = s?.hh_limit_c ?? config.hh_limit_c;
   const deadband = s?.deadband_c ?? config.deadband_c;
   const tripped = state === "tripped";
@@ -354,6 +393,12 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
             <span className="tc-metric-label">HH limit</span>
             <span className="tc-metric-value is-warning">{hhLimit.toFixed(0)} °C</span>
           </div>
+          <div className="tc-metric">
+            <span className="tc-metric-label">Thermocouple</span>
+            <span className="tc-metric-value">
+              {s?.active_tc_label ?? config.active_tc_label ?? "—"}
+            </span>
+          </div>
         </div>
 
         <div className="tc-status-actions">
@@ -396,6 +441,68 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
                 : "PERMISSIVE OFF"}
           </button>
         </div>
+      </div>
+
+      {/* ---- Thermocouple selector (Type K / Type R) ---- */}
+      <div className="tc-card">
+        <div className="tc-card-title">
+          <span>Thermocouple — heater temperature source</span>
+        </div>
+        <div
+          role="group"
+          aria-label="Thermocouple type"
+          style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}
+        >
+          {(["K", "R"] as const).map((tc) => {
+            const ch = tc === "K" ? config.type_k : config.type_r;
+            const isActive = activeTcType === tc;
+            return (
+              <button
+                key={tc}
+                type="button"
+                onClick={() => !isActive && setActiveTcType(tc)}
+                disabled={busy || isActive}
+                aria-pressed={isActive}
+                title={`${ch.label} on ${ch.tag}`}
+                style={{
+                  flex: "1 1 0",
+                  minWidth: "8rem",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: "0.15rem",
+                  padding: "0.5rem 0.75rem",
+                  borderRadius: "6px",
+                  cursor: isActive ? "default" : "pointer",
+                  border: "2px solid",
+                  borderColor: isActive ? "var(--accent-cyan)" : "var(--panel-border)",
+                  background: isActive ? "var(--cell-hover-bg)" : "var(--input-bg)",
+                  color: isActive ? "var(--accent-cyan)" : "var(--text-secondary)",
+                }}
+              >
+                <strong style={{ fontSize: "0.95rem" }}>
+                  Type {tc}
+                  {isActive ? " ✓" : ""}
+                </strong>
+                <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
+                  {ch.label} · {ch.tag}
+                </span>
+              </button>
+            );
+          })}
+        </div>
+        <p
+          style={{
+            fontSize: "0.72rem",
+            color: "var(--text-secondary)",
+            margin: "0.5rem 0 0",
+            lineHeight: 1.5,
+          }}
+        >
+          The selected thermocouple drives <strong>all</strong> heater control —
+          setpoint band, HH cutoff and trends. Switching re-clamps the limits to
+          the chosen channel's range. (Type R is wired to a separate THM channel.)
+        </p>
       </div>
 
       {/* ---- High-high cutoff banner ---- */}
@@ -574,21 +681,50 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
             onChange={(v) => setConfigDraft({ ...configDraft, hh_limit_c: v })}
           />
           <ConfigField
-            label="Temperature full scale (°C)"
-            value={configDraft.temp_full_scale_c}
-            onChange={(v) => setConfigDraft({ ...configDraft, temp_full_scale_c: v })}
-          />
-          <ConfigField
             label="Max setpoint (°C)"
             value={configDraft.setpoint_max_c}
             onChange={(v) => setConfigDraft({ ...configDraft, setpoint_max_c: v })}
           />
           <ConfigField
-            label="Temperature tag"
-            value={configDraft.temp_tag}
+            label="Type-K tag"
+            value={configDraft.type_k.tag}
             stringMode
             onChange={(v) =>
-              setConfigDraft({ ...configDraft, temp_tag: v as unknown as string })
+              setConfigDraft({
+                ...configDraft,
+                type_k: { ...configDraft.type_k, tag: v as unknown as string },
+              })
+            }
+          />
+          <ConfigField
+            label="Type-K full scale (°C)"
+            value={configDraft.type_k.full_scale_c}
+            onChange={(v) =>
+              setConfigDraft({
+                ...configDraft,
+                type_k: { ...configDraft.type_k, full_scale_c: v },
+              })
+            }
+          />
+          <ConfigField
+            label="Type-R tag"
+            value={configDraft.type_r.tag}
+            stringMode
+            onChange={(v) =>
+              setConfigDraft({
+                ...configDraft,
+                type_r: { ...configDraft.type_r, tag: v as unknown as string },
+              })
+            }
+          />
+          <ConfigField
+            label="Type-R full scale (°C)"
+            value={configDraft.type_r.full_scale_c}
+            onChange={(v) =>
+              setConfigDraft({
+                ...configDraft,
+                type_r: { ...configDraft.type_r, full_scale_c: v },
+              })
             }
           />
           <ConfigField

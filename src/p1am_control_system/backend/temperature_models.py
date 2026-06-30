@@ -8,7 +8,13 @@ circular-import risk. Mirrors the structure of `power_supply_models.py`.
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field, field_validator, model_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    computed_field,
+    field_validator,
+    model_validator,
+)
 
 from shared.python.compatibility import StrEnum
 
@@ -22,26 +28,90 @@ class TemperatureState(StrEnum):
     TRIPPED = "tripped"
 
 
+class TcType(StrEnum):
+    """Thermocouple type the heater controller reads from.
+
+    The bench has a type-K and a type-R thermocouple wired to separate channels;
+    the operator picks which one drives the heater for a given experiment.
+    """
+
+    TYPE_K = "K"
+    TYPE_R = "R"
+
+
+def _stripped_label(value: str) -> str:
+    """Trim a label and reject whitespace-only names (DbC helper, DRY)."""
+    trimmed = value.strip()
+    if not trimmed:
+        raise ValueError("label must not be blank")
+    return trimmed
+
+
+class ThermocoupleChannel(BaseModel):
+    """One thermocouple input: the tag carrying it, its full scale, and a label.
+
+    The firmware scales every TC channel 0-100 % over the *same* full scale
+    (default 1400 C), and the P1-04THM does the per-type linearization on-module,
+    so K and R differ only by which tag they land on — not by how the backend
+    converts percent to deg C.
+    """
+
+    tag: str = Field(
+        default="TAG_0",
+        description="Modbus tag carrying this thermocouple's scaled reading.",
+    )
+    full_scale_c: float = Field(
+        default=1400.0,
+        gt=0.0,
+        description="deg C at 100 % of the tag (must match the firmware scaling).",
+    )
+    label: str = Field(
+        default="Thermocouple",
+        min_length=1,
+        max_length=40,
+        description="HMI name for this thermocouple.",
+    )
+
+    @field_validator("label")
+    @classmethod
+    def _strip_label(cls, value: str) -> str:
+        return _stripped_label(value)
+
+
+def _default_type_k() -> ThermocoupleChannel:
+    return ThermocoupleChannel(tag="TAG_0", full_scale_c=1400.0, label="Type K")
+
+
+def _default_type_r() -> ThermocoupleChannel:
+    return ThermocoupleChannel(tag="TAG_1", full_scale_c=1400.0, label="Type R")
+
+
 class TemperatureConfig(BaseModel):
     """Operator-configurable parameters for the temperature controller.
 
-    All numeric fields are validated by Pydantic at construction (Pydantic's
-    Field constraints raise ValidationError on bad input). The
-    `_check_invariants` validator enforces the cross-field invariants:
+    Two thermocouple channels (type K and type R) are configured; `active_tc_type`
+    selects which one drives the controller. `temp_tag` / `temp_full_scale_c` are
+    derived (read-only) from the active channel, so the rest of the system reads
+    the controlled thermocouple through one stable accessor regardless of which
+    type is selected (DRY / LOD).
+
+    Cross-field invariants (checked against the *active* channel's full scale):
         setpoint_min_c < setpoint_max_c
         setpoint_max_c <= temp_full_scale_c
         hh_limit_c <= temp_full_scale_c
     """
 
-    temp_tag: str = Field(
-        default="TAG_0",
-        description="Modbus tag carrying the controlled thermocouple (TC0).",
+    type_k: ThermocoupleChannel = Field(
+        default_factory=_default_type_k,
+        description="Type-K thermocouple channel.",
     )
-
-    temp_full_scale_c: float = Field(
-        default=1400.0,
-        gt=0.0,
-        description="deg C at 100% of the thermocouple tag",
+    type_r: ThermocoupleChannel = Field(
+        default_factory=_default_type_r,
+        description="Type-R thermocouple channel.",
+    )
+    active_tc_type: TcType = Field(
+        default=TcType.TYPE_K,
+        description="Which thermocouple the controller currently reads.",
     )
 
     setpoint_min_c: float = Field(
@@ -95,12 +165,31 @@ class TemperatureConfig(BaseModel):
 
     @field_validator("heater_label")
     @classmethod
-    def _strip_label(cls, value: str) -> str:
-        """Trim labels and reject whitespace-only names (DbC)."""
-        trimmed = value.strip()
-        if not trimmed:
-            raise ValueError("signal label must not be blank")
-        return trimmed
+    def _strip_heater_label(cls, value: str) -> str:
+        return _stripped_label(value)
+
+    @property
+    def active_channel(self) -> ThermocoupleChannel:
+        """The thermocouple channel the controller currently reads."""
+        return self.type_r if self.active_tc_type == TcType.TYPE_R else self.type_k
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def temp_tag(self) -> str:
+        """Tag of the active thermocouple (what the controller reads)."""
+        return self.active_channel.tag
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def temp_full_scale_c(self) -> float:
+        """Full scale (deg C) of the active thermocouple."""
+        return self.active_channel.full_scale_c
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def active_tc_label(self) -> str:
+        """HMI label of the active thermocouple."""
+        return self.active_channel.label
 
     @model_validator(mode="after")
     def _check_invariants(self) -> TemperatureConfig:
@@ -109,15 +198,16 @@ class TemperatureConfig(BaseModel):
                 f"setpoint_min_c ({self.setpoint_min_c}) must be less than "
                 f"setpoint_max_c ({self.setpoint_max_c})"
             )
-        if self.setpoint_max_c > self.temp_full_scale_c:
+        full_scale = self.temp_full_scale_c
+        if self.setpoint_max_c > full_scale:
             raise ValueError(
-                f"setpoint_max_c ({self.setpoint_max_c}) must not exceed "
-                f"temp_full_scale_c ({self.temp_full_scale_c})"
+                f"setpoint_max_c ({self.setpoint_max_c}) must not exceed the "
+                f"active thermocouple full scale ({full_scale})"
             )
-        if self.hh_limit_c > self.temp_full_scale_c:
+        if self.hh_limit_c > full_scale:
             raise ValueError(
-                f"hh_limit_c ({self.hh_limit_c}) must not exceed "
-                f"temp_full_scale_c ({self.temp_full_scale_c})"
+                f"hh_limit_c ({self.hh_limit_c}) must not exceed the active "
+                f"thermocouple full scale ({full_scale})"
             )
         return self
 
@@ -138,5 +228,8 @@ class TemperatureStatus(BaseModel):
     deadband_c: float
     min_on_time_s: float = 0.0
     min_off_time_s: float = 0.0
+
+    active_tc_type: TcType = Field(default=TcType.TYPE_K)
+    active_tc_label: str = "Type K"
 
     estopped: bool = False

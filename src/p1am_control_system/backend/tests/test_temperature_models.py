@@ -20,9 +20,11 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from pydantic import ValidationError  # noqa: E402
 from temperature_models import (  # noqa: E402  (path setup above must run first)
+    TcType,
     TemperatureConfig,
     TemperatureState,
     TemperatureStatus,
+    ThermocoupleChannel,
 )
 
 # --------------------------------------------------------------------------
@@ -43,9 +45,9 @@ class TestTemperatureConfigValidation:
 
     def test_full_scale_must_be_positive(self) -> None:
         with pytest.raises(ValidationError):
-            TemperatureConfig(temp_full_scale_c=0.0)
+            ThermocoupleChannel(full_scale_c=0.0)
         with pytest.raises(ValidationError):
-            TemperatureConfig(temp_full_scale_c=-1.0)
+            ThermocoupleChannel(full_scale_c=-1.0)
 
     def test_setpoint_min_negative_rejected(self) -> None:
         with pytest.raises(ValidationError):
@@ -73,17 +75,22 @@ class TestTemperatureConfigValidation:
         with pytest.raises(ValidationError):
             TemperatureConfig(setpoint_min_c=500.0, setpoint_max_c=500.0)
 
-    def test_setpoint_max_cannot_exceed_full_scale(self) -> None:
+    def test_setpoint_max_cannot_exceed_active_full_scale(self) -> None:
         with pytest.raises(ValidationError):
-            TemperatureConfig(temp_full_scale_c=1000.0, setpoint_max_c=1200.0)
+            TemperatureConfig(
+                type_k=ThermocoupleChannel(full_scale_c=1000.0, label="K"),
+                setpoint_max_c=1200.0,
+            )
 
-    def test_hh_limit_cannot_exceed_full_scale(self) -> None:
+    def test_hh_limit_cannot_exceed_active_full_scale(self) -> None:
         with pytest.raises(ValidationError):
-            TemperatureConfig(temp_full_scale_c=1000.0, hh_limit_c=1200.0)
+            TemperatureConfig(
+                type_k=ThermocoupleChannel(full_scale_c=1000.0, label="K"),
+                hh_limit_c=1200.0,
+            )
 
     def test_in_range_invariants_construct(self) -> None:
         cfg = TemperatureConfig(
-            temp_full_scale_c=1400.0,
             setpoint_min_c=50.0,
             setpoint_max_c=900.0,
             hh_limit_c=1000.0,
@@ -133,3 +140,88 @@ class TestTemperatureStatus:
         assert TemperatureState.ARMED == "armed"
         assert TemperatureState.RUNNING == "running"
         assert TemperatureState.TRIPPED == "tripped"
+
+
+# --------------------------------------------------------------------------
+# Dual thermocouple (type K / type R) + active selection
+# --------------------------------------------------------------------------
+
+
+class TestThermocoupleChannel:
+    def test_defaults(self) -> None:
+        ch = ThermocoupleChannel()
+        assert ch.tag == "TAG_0"
+        assert ch.full_scale_c == 1400.0
+        assert ch.label
+
+    def test_full_scale_must_be_positive(self) -> None:
+        with pytest.raises(ValidationError):
+            ThermocoupleChannel(full_scale_c=0.0)
+
+    def test_label_trimmed_and_blank_rejected(self) -> None:
+        assert ThermocoupleChannel(label="  Type R  ").label == "Type R"
+        with pytest.raises(ValidationError):
+            ThermocoupleChannel(label="   ")
+
+
+class TestDualThermocouple:
+    def test_defaults_have_k_active_on_tag0_and_r_on_tag1(self) -> None:
+        cfg = TemperatureConfig()
+        assert cfg.active_tc_type == TcType.TYPE_K
+        assert cfg.type_k.tag == "TAG_0"
+        assert cfg.type_r.tag == "TAG_1"
+        # The derived accessors point at the active (K) channel.
+        assert cfg.temp_tag == "TAG_0"
+        assert cfg.temp_full_scale_c == 1400.0
+        assert cfg.active_tc_label == cfg.type_k.label
+
+    def test_active_accessors_follow_selection(self) -> None:
+        cfg = TemperatureConfig(
+            type_r=ThermocoupleChannel(tag="TAG_2", full_scale_c=1400.0, label="R"),
+            active_tc_type=TcType.TYPE_R,
+        )
+        assert cfg.temp_tag == "TAG_2"
+        assert cfg.active_tc_label == "R"
+        assert cfg.active_channel is cfg.type_r
+
+    def test_invariant_checks_the_active_channel(self) -> None:
+        # hh_limit 1300 is fine against the active R channel (1400)...
+        cfg = TemperatureConfig(
+            type_r=ThermocoupleChannel(full_scale_c=1400.0, label="R"),
+            active_tc_type=TcType.TYPE_R,
+            hh_limit_c=1300.0,
+        )
+        assert cfg.hh_limit_c == 1300.0
+        # ...but exceeding the active channel's full scale is rejected.
+        with pytest.raises(ValidationError):
+            TemperatureConfig(
+                type_r=ThermocoupleChannel(full_scale_c=1000.0, label="R"),
+                active_tc_type=TcType.TYPE_R,
+                hh_limit_c=1200.0,
+            )
+
+    def test_computed_fields_serialize(self) -> None:
+        dumped = TemperatureConfig(active_tc_type=TcType.TYPE_R).model_dump()
+        assert dumped["active_tc_type"] == "R"
+        assert dumped["temp_tag"] == "TAG_1"  # active R channel's tag
+        assert dumped["active_tc_label"] == "Type R"
+
+    def test_tc_type_enum_values(self) -> None:
+        assert TcType.TYPE_K == "K"
+        assert TcType.TYPE_R == "R"
+
+    def test_status_reports_active_tc(self) -> None:
+        status = TemperatureStatus(
+            state=TemperatureState.IDLE,
+            permissive=False,
+            setpoint_c=0.0,
+            measured_temp_c=20.0,
+            relay_on=False,
+            trips=[],
+            hh_limit_c=1400.0,
+            deadband_c=5.0,
+            active_tc_type=TcType.TYPE_R,
+            active_tc_label="Type R",
+        )
+        assert status.active_tc_type == TcType.TYPE_R
+        assert status.model_dump()["active_tc_type"] == "R"

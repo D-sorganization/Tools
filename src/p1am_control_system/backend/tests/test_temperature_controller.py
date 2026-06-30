@@ -23,9 +23,11 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from temperature_controller import (  # noqa: E402  (path setup must run first)
+    TcType,
     TemperatureConfig,
     TemperatureController,
     TemperatureState,
+    ThermocoupleChannel,
 )
 
 # --------------------------------------------------------------------------
@@ -498,3 +500,72 @@ class TestAntiShortCycle:
         st = c.status()
         assert st.min_on_time_s == 15.0
         assert st.min_off_time_s == 20.0
+
+
+# --------------------------------------------------------------------------
+# Active thermocouple selection (type K / type R toggle)
+# --------------------------------------------------------------------------
+
+
+class TestActiveTcType:
+    def test_default_active_is_type_k(self) -> None:
+        c = fresh_idle_controller()
+        assert c.config.active_tc_type == TcType.TYPE_K
+        assert c.config.temp_tag == "TAG_0"
+
+    def test_switch_to_type_r_changes_active_tag(self) -> None:
+        c = fresh_idle_controller()
+        c.set_active_tc_type(TcType.TYPE_R)
+        assert c.config.active_tc_type == TcType.TYPE_R
+        assert c.config.temp_tag == "TAG_1"  # the type-R channel's tag
+        assert c.status().active_tc_type == TcType.TYPE_R
+
+    def test_switch_back_to_type_k(self) -> None:
+        c = fresh_idle_controller()
+        c.set_active_tc_type(TcType.TYPE_R)
+        c.set_active_tc_type(TcType.TYPE_K)
+        assert c.config.active_tc_type == TcType.TYPE_K
+        assert c.config.temp_tag == "TAG_0"
+
+    def test_switch_does_not_change_state_machine(self) -> None:
+        c = fresh_running_controller(sp_c=500.0)
+        assert c.state == TemperatureState.RUNNING
+        c.set_active_tc_type(TcType.TYPE_R)
+        assert c.state == TemperatureState.RUNNING
+
+    def test_rejects_non_tc_type(self) -> None:
+        c = fresh_idle_controller()
+        with pytest.raises(TypeError):
+            c.set_active_tc_type("R")  # type: ignore[arg-type]
+
+    def test_switch_reclamps_setpoint_to_narrower_channel(self) -> None:
+        # type-R channel has a smaller full scale; switching must pull the
+        # setpoint / limits down so the resulting config stays valid.
+        cfg = TemperatureConfig(
+            type_r=ThermocoupleChannel(tag="TAG_1", full_scale_c=900.0, label="R"),
+        )
+        c = TemperatureController(cfg)
+        c.set_permissive(True)
+        c.set_setpoint_c(1200.0)  # valid under active K (1400)
+        c.set_active_tc_type(TcType.TYPE_R)
+        assert c.config.setpoint_max_c <= 900.0
+        assert c.status().setpoint_c <= 900.0
+
+    def test_active_channel_drives_status_label(self) -> None:
+        cfg = TemperatureConfig(
+            type_r=ThermocoupleChannel(
+                tag="TAG_1", full_scale_c=1400.0, label="R-furnace"
+            ),
+        )
+        c = TemperatureController(cfg)
+        c.set_active_tc_type(TcType.TYPE_R)
+        assert c.status().active_tc_label == "R-furnace"
+
+
+class TestReadingCoercion:
+    def test_non_numeric_reading_coerced_to_zero(self) -> None:
+        # IDLE forces the relay off, but _safe_finite still runs on the input:
+        # a None / non-numeric reading must coerce to 0 (deterministic), not crash.
+        c = fresh_idle_controller()
+        assert c.tick(None) is False  # type: ignore[arg-type]
+        assert c.tick("sensor fault") is False  # type: ignore[arg-type]
