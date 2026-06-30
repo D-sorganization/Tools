@@ -75,6 +75,7 @@ __all__ = [
     "compute_histogram",
     "dataset_to_csv_rows",
     "dataset_to_json",
+    "validate_export",
 ]
 
 
@@ -114,9 +115,44 @@ def _drop_nan(array: _F64) -> _F64:
     return finite
 
 
+# datetime can only represent up to ~year 9999; ~8.64e15 ms is comfortably past
+# any real timestamp while staying inside the representable range.
+_MAX_EPOCH_MS = 8.64e15
+
+# Memory ceiling for a historian dataset build: index samples x tag count. At
+# ~8 bytes/cell, 20M cells is ~160 MB of float64 — a safe ceiling for the Pi.
+_MAX_HISTORIAN_CELLS = 20_000_000
+
+
 def _epoch_ms_to_iso(ms: float) -> str:
-    """Render epoch milliseconds as an ISO-8601 UTC string."""
+    """Render epoch milliseconds as an ISO-8601 UTC string.
+
+    Defensive: a non-finite or out-of-range ``ms`` yields ``""`` rather than
+    raising, so a streaming CSV export can never crash mid-body.
+    """
+    if not np.isfinite(ms) or abs(ms) > _MAX_EPOCH_MS:
+        return ""
     return datetime.fromtimestamp(ms / 1000.0, tz=_UTC).isoformat()
+
+
+def validate_export(index: Sequence[float] | None, columns: Sequence[Column]) -> None:
+    """DbC precheck for an export so bad input is a 400, not a corrupt 200.
+
+    The CSV export streams lazily, so an exception raised *during* iteration
+    cannot be turned into an error status — the response has already begun. This
+    eager check lets the router reject a non-finite / out-of-range index up front.
+
+    Raises:
+        ValueError: if ``index`` contains a ``None``, non-finite, or
+            out-of-representable-range epoch-ms value.
+    """
+    if index is None:
+        return
+    for v in index:
+        if v is None or not np.isfinite(v) or abs(float(v)) > _MAX_EPOCH_MS:
+            raise ValueError(
+                "export index contains a non-finite or out-of-range epoch-ms value"
+            )
 
 
 def _to_epoch_ms(value: datetime) -> float:
@@ -217,6 +253,16 @@ def _load_historian(
         union.extend(times)
 
     index: _F64 = np.unique(np.asarray(union, dtype=np.float64))
+    # Bound the materialized matrix so a wide range x many tags cannot exhaust
+    # the Pi's RAM. Reject up front (router -> 400) so the operator narrows the
+    # range or resamples, rather than OOM-killing the backend.
+    cells = int(index.size) * max(1, len(list(tags)))
+    if cells > _MAX_HISTORIAN_CELLS:
+        raise ValueError(
+            f"historian selection too large: {index.size} samples x "
+            f"{len(list(tags))} tags = {cells} cells; narrow the time range "
+            f"or select fewer tags"
+        )
     columns: dict[str, _F64] = {}
     for tag in tags:
         tag_times, tag_vals = raw[tag]

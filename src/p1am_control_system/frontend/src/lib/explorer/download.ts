@@ -13,6 +13,41 @@
 const SVG_NS = "http://www.w3.org/2000/svg";
 const XLINK_NS = "http://www.w3.org/1999/xlink";
 
+// Theme CSS custom properties the plots reference via `var(--x)`. A standalone
+// SVG (opened as a file or rasterized through an <img>) has no access to the
+// page's :root, so these would resolve to nothing (black/none). We snapshot
+// their current computed values and redeclare them inside the exported SVG.
+const EXPORT_CSS_VARS = [
+  "--bg-color",
+  "--text-primary",
+  "--text-secondary",
+  "--text-muted",
+  "--panel-border",
+  "--cell-border",
+  "--accent-cyan",
+  "--accent-magenta",
+  "--accent-purple",
+  "--color-error",
+  "--color-warning",
+  "--color-success",
+] as const;
+
+/** Snapshot the active theme's CSS variables as a CSS declaration string. */
+function resolvedThemeVarDeclarations(): string {
+  if (typeof document === "undefined" || typeof getComputedStyle !== "function") {
+    return "";
+  }
+  const rootStyle = getComputedStyle(document.documentElement);
+  const bodyStyle = document.body ? getComputedStyle(document.body) : null;
+  const decls: string[] = [];
+  for (const name of EXPORT_CSS_VARS) {
+    let value = rootStyle.getPropertyValue(name).trim();
+    if (!value && bodyStyle) value = bodyStyle.getPropertyValue(name).trim();
+    if (value) decls.push(`${name}: ${value};`);
+  }
+  return decls.join(" ");
+}
+
 /**
  * Trigger a browser download of `blob` as `filename`.
  *
@@ -76,6 +111,16 @@ export function serializeSvgString(svg: SVGSVGElement): string {
   }
   if (!clone.getAttribute("xmlns:xlink")) {
     clone.setAttribute("xmlns:xlink", XLINK_NS);
+  }
+  // Bake the theme colors in so `var(--x)` resolves in the standalone file.
+  const decls = resolvedThemeVarDeclarations();
+  if (decls) {
+    const style = (clone.ownerDocument ?? document).createElementNS(
+      SVG_NS,
+      "style",
+    );
+    style.textContent = `svg{${decls}}`;
+    clone.insertBefore(style, clone.firstChild);
   }
   const xml = new XMLSerializer().serializeToString(clone);
   return xml.startsWith("<?xml")

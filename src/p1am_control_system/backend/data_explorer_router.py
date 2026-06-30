@@ -50,6 +50,7 @@ from data_explorer_service import (
     dataset_to_csv_rows,
     dataset_to_json,
     list_signals,
+    validate_export,
 )
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse, StreamingResponse
@@ -135,6 +136,9 @@ def create_data_explorer_router(get_session_dep: Callable[..., object]) -> APIRo
     @router.post("/export", response_model=None)
     async def post_export(req: ExportRequest) -> StreamingResponse | JSONResponse:
         try:
+            # Eagerly validate the index: the CSV path streams lazily, so a bad
+            # value discovered mid-iteration could not become a 4xx.
+            validate_export(req.index, req.columns)
             if req.format == ExportFormat.JSON:
                 return JSONResponse(content=dataset_to_json(req.index, req.columns))
             filename = req.filename or "dataset.csv"

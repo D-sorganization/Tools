@@ -248,3 +248,57 @@ def test_post_export_json(client: TestClient) -> None:
     assert resp.status_code == 200
     payload = resp.json()
     assert payload["columns"][0]["values"] == [1.0, None]
+
+
+# --------------------------------------------------------------------------- #
+# Regression: export index validation + historian memory guard                #
+# --------------------------------------------------------------------------- #
+def test_post_export_nonfinite_index_is_400(client: TestClient) -> None:
+    body = {
+        "index": [0.0, 1e19],  # out-of-range epoch ms
+        "columns": [{"name": "a", "values": [1.0, 2.0]}],
+        "format": "csv",
+    }
+    resp = client.post("/api/explorer/export", json=body)
+    assert resp.status_code == 400
+
+
+def test_post_export_valid_index_streams_csv(client: TestClient) -> None:
+    body = {
+        "index": [0.0, 1000.0],
+        "columns": [{"name": "a", "values": [1.0, 2.0]}],
+        "format": "csv",
+    }
+    resp = client.post("/api/explorer/export", json=body)
+    assert resp.status_code == 200
+    assert resp.text.splitlines()[0] == "timestamp,a"
+
+
+def test_historian_cells_guard_is_400(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    import data_explorer_service as svc
+
+    monkeypatch.setattr(svc, "_MAX_HISTORIAN_CELLS", 1)
+    body = {
+        "historian": {
+            "tags": ["TAG_0", "TAG_1"],
+            "start_time": "2026-01-01T00:00:00+00:00",
+            "end_time": "2026-01-01T00:00:02+00:00",
+        }
+    }
+    resp = client.post("/api/explorer/dataset", json=body)
+    assert resp.status_code == 400
+    assert "too large" in resp.json()["detail"]
+
+
+def test_tags_over_cap_is_422(client: TestClient) -> None:
+    body = {
+        "historian": {
+            "tags": [f"TAG_{i}" for i in range(65)],  # > max_length 64
+            "start_time": "2026-01-01T00:00:00+00:00",
+            "end_time": "2026-01-01T00:00:02+00:00",
+        }
+    }
+    resp = client.post("/api/explorer/dataset", json=body)
+    assert resp.status_code == 422

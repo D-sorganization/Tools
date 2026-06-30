@@ -390,3 +390,35 @@ def test_apply_filter_ftype_type_rejected() -> None:
 def test_apply_filter_params_type_rejected() -> None:
     with pytest.raises(TypeError):
         apply_filter([1.0, 2.0], "median", [1, 2])  # type: ignore[arg-type]
+
+
+# --------------------------------------------------------------------------- #
+# Regression: resample grid DoS guard + present-bin correctness               #
+# --------------------------------------------------------------------------- #
+def test_resample_rejects_oversized_grid() -> None:
+    # A tiny interval over a wide span would allocate billions of bins.
+    with pytest.raises(ValueError, match="resample grid too large"):
+        resample_series([0.0, 1.0e6], [1.0, 2.0], 1.0e-3, "mean", False)
+
+
+def test_resample_drops_empty_bins_when_not_interpolating() -> None:
+    # Samples at t=0 and t=10 with 1s bins -> only bins 0 and 10 are present.
+    centers, vals = resample_series([0.0, 10.0], [5.0, 7.0], 1.0, "mean", False)
+    np.testing.assert_allclose(centers, [0.5, 10.5])
+    np.testing.assert_allclose(vals, [5.0, 7.0])
+
+
+def test_resample_interpolates_empty_bins() -> None:
+    centers, vals = resample_series([0.0, 2.0], [0.0, 2.0], 1.0, "mean", True)
+    # 3 bins (centers 0.5,1.5,2.5); middle bin linearly interpolated.
+    np.testing.assert_allclose(centers, [0.5, 1.5, 2.5])
+    np.testing.assert_allclose(vals, [0.0, 1.0, 2.0])
+
+
+def test_resample_sum_and_last_aggregations() -> None:
+    t = [0.0, 0.4, 0.8, 1.2]
+    y = [1.0, 2.0, 3.0, 10.0]
+    _, s = resample_series(t, y, 1.0, "sum", False)
+    np.testing.assert_allclose(s, [6.0, 10.0])  # bin0 = 1+2+3, bin1 = 10
+    _, last = resample_series(t, y, 1.0, "last", False)
+    np.testing.assert_allclose(last, [3.0, 10.0])

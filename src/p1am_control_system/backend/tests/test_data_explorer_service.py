@@ -435,3 +435,34 @@ def test_dataset_to_json_shape() -> None:
     assert payload["index"] == [0.0, 1.0]
     assert payload["columns"][0]["name"] == "a"
     assert payload["columns"][0]["values"] == [1.0, None]
+
+
+# --------------------------------------------------------------------------- #
+# Regression: export validation + safe ISO rendering                          #
+# --------------------------------------------------------------------------- #
+import data_explorer_service as _svc  # noqa: E402
+from data_explorer_models import Column as _Column  # noqa: E402
+
+
+def test_validate_export_rejects_nonfinite_index() -> None:
+    with pytest.raises(ValueError, match="non-finite or out-of-range"):
+        _svc.validate_export(
+            [0.0, float("inf")], [_Column(name="a", values=[1.0, 2.0])]
+        )
+
+
+def test_validate_export_rejects_out_of_range_index() -> None:
+    with pytest.raises(ValueError):
+        _svc.validate_export([1e19], [_Column(name="a", values=[1.0])])
+
+
+def test_validate_export_accepts_none_or_finite_index() -> None:
+    _svc.validate_export(None, [_Column(name="a", values=[1.0])])
+    _svc.validate_export([0.0, 1000.0], [_Column(name="a", values=[1.0, 2.0])])
+
+
+def test_epoch_ms_to_iso_safe_on_bad_input() -> None:
+    assert _svc._epoch_ms_to_iso(float("nan")) == ""
+    assert _svc._epoch_ms_to_iso(float("inf")) == ""
+    assert _svc._epoch_ms_to_iso(1e18) == ""
+    assert _svc._epoch_ms_to_iso(0.0).startswith("1970-01-01")

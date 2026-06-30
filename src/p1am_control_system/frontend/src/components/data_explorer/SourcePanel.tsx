@@ -19,6 +19,7 @@ export interface SourcePanelProps {
   onHistorianChange: (form: HistorianForm) => void;
   csv: CsvSource | null;
   onCsvLoaded: (csv: CsvSource | null) => void;
+  onError: (message: string) => void;
   onBuild: () => void;
   loading: boolean;
   error: string | null;
@@ -50,6 +51,7 @@ export const SourcePanel: React.FC<SourcePanelProps> = ({
   onHistorianChange,
   csv,
   onCsvLoaded,
+  onError,
   onBuild,
   loading,
   error,
@@ -91,9 +93,11 @@ export const SourcePanel: React.FC<SourcePanelProps> = ({
       const table = parseCsv(text);
       onCsvLoaded({ name: file.name, index: table.index, columns: table.columns });
     } catch (err) {
+      // Surface parse failures instead of silently dropping the selection.
       onCsvLoaded(null);
-      // Surface parse failures through the same error channel as the build.
-      throw err;
+      onError(
+        `Could not parse ${file.name}: ${err instanceof Error ? err.message : String(err)}`,
+      );
     }
   };
 
@@ -211,7 +215,10 @@ export const SourcePanel: React.FC<SourcePanelProps> = ({
             type="file"
             accept=".csv,text/csv"
             style={{ display: "none" }}
-            onChange={(e) => void handleFile(e.target.files?.[0])}
+            onChange={(e) => {
+              void handleFile(e.target.files?.[0]);
+              e.target.value = ""; // allow re-selecting the same file
+            }}
           />
           <Row>
             <Btn onClick={() => fileRef.current?.click()}>Choose CSV…</Btn>

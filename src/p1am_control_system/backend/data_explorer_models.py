@@ -67,7 +67,7 @@ class InlineData(BaseModel):
 class HistorianSource(BaseModel):
     """Selector for pulling raw tag series out of the SQLite historian."""
 
-    tags: list[str] = Field(min_length=1)
+    tags: list[str] = Field(min_length=1, max_length=64)
     start_time: str = Field(description="ISO-8601 inclusive lower bound")
     end_time: str = Field(description="ISO-8601 inclusive upper bound")
     max_points: int = Field(default=5000, ge=10, le=500_000)

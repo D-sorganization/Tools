@@ -202,3 +202,52 @@ def test_syntax_error_rejected() -> None:
 def test_string_constant_rejected() -> None:
     with pytest.raises(ExpressionError):
         evaluate_expression("'hello'", _vars(a=[1.0]))
+
+
+# --------------------------------------------------------------------------- #
+# Regression: review findings (arity, in-place mutation, overflow)            #
+# --------------------------------------------------------------------------- #
+def test_min_three_args_rejected_not_mutating() -> None:
+    # A 3-arg min() must be rejected, never dispatched to np.minimum(out=...).
+    orig = np.asarray([5.0, 5.0, 5.0])
+    variables = {"x": orig, "y": np.asarray([1.0, 2.0, 9.0])}
+    with pytest.raises(ExpressionError):
+        evaluate_expression("min(x, y, x)", variables)
+
+
+def test_expression_never_mutates_caller_columns() -> None:
+    orig = np.asarray([3.0, 4.0, 5.0])
+    before = orig.copy()
+    evaluate_expression("min(x, 1) + max(x, 9)", {"x": orig})
+    np.testing.assert_array_equal(orig, before)
+
+
+def test_min_two_args_elementwise() -> None:
+    out = evaluate_expression("min(a, b)", _vars(a=[1, 5, 3], b=[4, 2, 6]))
+    np.testing.assert_allclose(out, [1.0, 2.0, 3.0])
+
+
+def test_min_one_arg_reduces() -> None:
+    out = evaluate_expression("min(a)", _vars(a=[3, 1, 2]))
+    np.testing.assert_allclose(out, [1.0, 1.0, 1.0])  # scalar broadcast
+
+
+def test_clip_requires_three_args() -> None:
+    with pytest.raises(ExpressionError):
+        evaluate_expression("clip(a, 0)", _vars(a=[1, 2, 3]))
+
+
+def test_mean_requires_one_arg() -> None:
+    with pytest.raises(ExpressionError):
+        evaluate_expression("mean(a, b)", _vars(a=[1, 2], b=[3, 4]))
+
+
+def test_large_exponent_yields_inf_not_overflow() -> None:
+    # Must NOT raise a bare OverflowError; numpy ufuncs give inf instead.
+    out = evaluate_expression("2.0 ** (2.0 ** 2.0 ** 2.0 ** 100)", _vars(a=[1.0]))
+    assert np.isinf(out).all()
+
+
+def test_scalar_divide_by_zero_is_inf_not_exception() -> None:
+    out = evaluate_expression("a / 0", _vars(a=[1.0, 2.0]))
+    assert np.isinf(out).all()

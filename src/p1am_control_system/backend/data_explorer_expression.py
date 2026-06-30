@@ -85,16 +85,26 @@ _REDUCERS: dict[str, Callable[..., object]] = {
     "mean": np.mean,
 }
 
-# Allowed binary operators -> implementing callables.
+# Allowed binary operators -> implementing callables. These use numpy ufuncs
+# (not Python operators) so that overflow and divide-by-zero produce ``inf``/
+# ``nan`` per the documented contract instead of raising ``OverflowError`` /
+# ``ZeroDivisionError`` (which are not ``ExpressionError`` and would 500).
 _BINOPS: dict[type[ast.operator], Callable[[Any, Any], Any]] = {
-    ast.Add: lambda a, b: a + b,
-    ast.Sub: lambda a, b: a - b,
-    ast.Mult: lambda a, b: a * b,
-    ast.Div: lambda a, b: a / b,
-    ast.Pow: lambda a, b: a**b,
-    ast.Mod: lambda a, b: a % b,
-    ast.FloorDiv: lambda a, b: a // b,
+    ast.Add: np.add,
+    ast.Sub: np.subtract,
+    ast.Mult: np.multiply,
+    ast.Div: np.divide,
+    ast.Pow: np.power,
+    ast.Mod: np.mod,
+    ast.FloorDiv: np.floor_divide,
 }
+
+# Per-function argument arity. ``min``/``max`` accept 1 (reduce) or 2
+# (elementwise); ``clip`` needs 3; every other whitelisted function is unary.
+# Enforced so a wrong arg count is a clean ExpressionError, never a numpy
+# ``out=`` aliasing (which would mutate a caller column) or a raw numpy error.
+_VARIADIC_MINMAX = frozenset({"min", "max"})
+_TERNARY = frozenset({"clip"})
 
 
 def evaluate_expression(expr: str, variables: Mapping[str, np.ndarray]) -> np.ndarray:
@@ -137,7 +147,9 @@ def evaluate_expression(expr: str, variables: Mapping[str, np.ndarray]) -> np.nd
             raise TypeError("variable names must be str")
         if not isinstance(value, np.ndarray):
             raise TypeError(f"variable {name!r} must be a numpy.ndarray")
-        coerced[name] = np.asarray(value, dtype=float)
+        # Always copy: an expression must never be able to write back into a
+        # caller's column (e.g. via a numpy ``out=`` aliasing path).
+        coerced[name] = np.array(value, dtype=float, copy=True)
 
     try:
         tree = ast.parse(expr, mode="eval")
@@ -202,8 +214,36 @@ def _eval_call(node: ast.Call, variables: Mapping[str, np.ndarray]) -> object:
         raise ExpressionError(f"unknown function: {name!r}")
 
     args = [_eval_node(arg, variables) for arg in node.args]
+    n = len(args)
 
-    # Single-arg reductions: route ``min``/``max``/``mean`` to the reducer.
-    if name in _REDUCERS and len(args) == 1:
-        return _REDUCERS[name](args[0])
-    return func(*args)
+    # Strict per-function arity. This both gives clean errors and prevents a
+    # 3-arg ``min``/``max`` from reaching numpy's binary ufunc, where the 3rd
+    # positional is the ``out=`` destination and would mutate a column.
+    if name in _VARIADIC_MINMAX:
+        if n == 1:
+            chosen: Callable[..., object] = _REDUCERS[name]
+        elif n == 2:
+            chosen = func  # np.minimum / np.maximum, elementwise
+        else:
+            raise ExpressionError(
+                f"{name}() takes 1 (reduce) or 2 (elementwise) arguments, got {n}"
+            )
+    elif name == "mean":
+        if n != 1:
+            raise ExpressionError(f"mean() takes exactly 1 argument, got {n}")
+        chosen = func
+    elif name in _TERNARY:
+        if n != 3:
+            raise ExpressionError(
+                f"{name}() takes exactly 3 arguments (x, lo, hi), got {n}"
+            )
+        chosen = func
+    else:
+        if n != 1:
+            raise ExpressionError(f"{name}() takes exactly 1 argument, got {n}")
+        chosen = func
+
+    try:
+        return chosen(*args)
+    except (TypeError, ValueError, ArithmeticError) as exc:
+        raise ExpressionError(f"invalid call to {name}(): {exc}") from exc

@@ -395,6 +395,11 @@ def differentiate(y: _ArrayLike, x: _ArrayLike | None = None) -> _F64:
     return cast(_F64, np.gradient(arr, xs))
 
 
+# Upper bound on the resample grid size. A tiny ``interval_s`` over a wide span
+# could otherwise allocate gigabytes / hang the backend; 5M float64 bins is
+# ~40 MB, a safe ceiling for the Pi while covering any realistic request.
+_MAX_RESAMPLE_BINS = 5_000_000
+
 _AGG_FUNCS: dict[str, Callable[[_F64], float]] = {
     "mean": lambda v: float(np.mean(v)),
     "median": lambda v: float(np.median(v)),
@@ -448,25 +453,35 @@ def resample_series(
     t0 = ts[0]
     span = ts[-1] - t0
     n_bins = int(np.floor(span / step)) + 1
-    bin_idx = np.floor((ts - t0) / step).astype(int)
-    bin_idx = np.clip(bin_idx, 0, n_bins - 1)
+    # Guard against a pathological grid: a tiny ``interval_s`` over a wide span
+    # would allocate gigabytes and hang the Pi. Reject rather than OOM-kill.
+    if n_bins > _MAX_RESAMPLE_BINS:
+        raise ValueError(
+            f"resample grid too large: {n_bins} bins "
+            f"(span {span:g}s / interval {step:g}s); increase interval_s"
+        )
 
-    centers: _F64 = t0 + (np.arange(n_bins) + 0.5) * step
-    filled: npt.NDArray[np.bool_] = np.zeros(n_bins, dtype=bool)
-    values: _F64 = np.full(n_bins, np.nan, dtype=np.float64)
-    for b in range(n_bins):
-        members = ys[bin_idx == b]
-        if members.size:
-            values[b] = func(members)
-            filled[b] = True
+    bin_idx = np.clip(np.floor((ts - t0) / step).astype(np.int64), 0, n_bins - 1)
+
+    # ``ts`` is ascending so ``bin_idx`` is non-decreasing: each occupied bin is a
+    # contiguous run. ``np.unique`` gives the present bins and each run's start;
+    # aggregating per *present* run is O(n_samples), independent of ``n_bins``.
+    present, starts = np.unique(bin_idx, return_index=True)
+    ends: npt.NDArray[np.int64] = np.append(starts[1:], ys.size)
+    present_values: _F64 = np.empty(present.size, dtype=np.float64)
+    for k in range(present.size):
+        present_values[k] = func(ys[starts[k] : ends[k]])
 
     if interpolate:
-        if filled.any() and not filled.all():
-            grid: _F64 = np.arange(n_bins, dtype=np.float64)
-            values = np.interp(grid, grid[filled], values[filled])
+        centers: _F64 = t0 + (np.arange(n_bins) + 0.5) * step
+        if present.size == n_bins:
+            return centers, present_values
+        grid: _F64 = np.arange(n_bins, dtype=np.float64)
+        values: _F64 = np.interp(grid, present.astype(np.float64), present_values)
         return centers, values
 
-    return centers[filled], values[filled]
+    present_centers: _F64 = t0 + (present.astype(np.float64) + 0.5) * step
+    return present_centers, present_values
 
 
 def _require_param(params: Mapping[str, float], key: str) -> float:

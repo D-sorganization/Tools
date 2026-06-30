@@ -190,6 +190,7 @@ export const DataExplorer: React.FC<DataExplorerProps> = ({ triggerNotification 
             onHistorianChange={setHistorian}
             csv={csv}
             onCsvLoaded={handleCsvLoaded}
+            onError={setError}
             onBuild={() => void onBuild()}
             loading={loading}
             error={error}
