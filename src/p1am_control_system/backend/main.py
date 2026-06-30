@@ -11,12 +11,15 @@ except ImportError:
     UTC = timezone.utc  # noqa: UP017
 from typing import Any, cast
 
+import historian
 from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import require_admin_key, require_api_key, verify_operator_key
 from cors_config import resolve_cors_settings
 from data_capture import (
     TRENDS_MAX_POINTS,
+    CaptureConfig,
     CaptureStats,
+    CaptureThrottle,
     ClearResult,
     capture_stats,
     clear_capture,
@@ -100,6 +103,16 @@ backup_simulator = SimulatedPLCClient()
 
 power_supply_service = PowerSupplyService(plc_client=plc_client, logger=logger)
 temperature_service = TemperatureService(plc_client=plc_client, logger=logger)
+
+# Historian write throttle: decouples how often scans are *persisted* from how
+# often the PLC is *polled*, so the capture DB grows at an operator-chosen rate
+# without slowing the control/stream loop. Runtime-adjustable via /api/capture/config.
+capture_throttle = CaptureThrottle(settings.capture_interval_s)
+
+
+def _throttled_log_scan(session: Session, tags: dict[str, float]) -> int:
+    """Persist a scan to the historian only when the throttle says it's due."""
+    return historian.log_scan(session, tags) if capture_throttle.due() else 0
 
 
 class ConnectionManager:
@@ -289,6 +302,7 @@ async def poll_plc_loop() -> None:
                 active_alarm_map=control_context.active_alarms,
                 session_factory=get_session,
                 estop_active=control_context.e_stop_active,
+                log_scan=_throttled_log_scan,
             )
             # Cache the frame for the /api/snapshot polling fallback. Reassigning
             # the reference is atomic, so a concurrent reader sees a whole frame.
@@ -794,6 +808,31 @@ async def get_capture_status(
     indicator.
     """
     return capture_stats(db, capturing=True)
+
+
+@app.get("/api/capture/config", response_model=CaptureConfig)
+async def get_capture_config() -> CaptureConfig:
+    """Return the current historian sampling interval (seconds between writes)."""
+    return CaptureConfig(interval_s=capture_throttle.interval_s)
+
+
+@app.put(
+    "/api/capture/config",
+    response_model=CaptureConfig,
+    dependencies=[Depends(require_admin_key)],
+)
+async def update_capture_config(req: CaptureConfig) -> CaptureConfig:
+    """Set how often scans are persisted. Larger interval => smaller data files.
+
+    Takes effect immediately for the running scan loop; admin-gated since it
+    changes the historian's data-retention characteristics.
+    """
+    try:
+        capture_throttle.set_interval_s(req.interval_s)
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    logger.info("Capture interval set to %.3f s", capture_throttle.interval_s)
+    return CaptureConfig(interval_s=capture_throttle.interval_s)
 
 
 class CaptureClearRequest(BaseModel):

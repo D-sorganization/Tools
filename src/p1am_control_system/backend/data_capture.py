@@ -22,7 +22,8 @@ import datetime as _dt
 import io
 import logging
 import os
-from collections.abc import Iterator
+import time
+from collections.abc import Callable, Iterator
 from typing import Any
 
 from database import DB_FILE
@@ -76,6 +77,70 @@ class RetentionResult(BaseModel):
     rows_deleted: int = Field(ge=0, description="Oldest tag rows purged.")
     db_bytes_before: int = Field(ge=0)
     db_bytes_after: int = Field(ge=0)
+
+
+class CaptureConfig(BaseModel):
+    """Operator-configurable historian sampling parameters."""
+
+    interval_s: float = Field(
+        ge=0.0,
+        le=3600.0,
+        description=(
+            "Minimum seconds between historian writes. 0 logs every scan; "
+            "larger values shrink the data files. The live stream is unaffected."
+        ),
+    )
+
+
+class CaptureThrottle:
+    """Rate-limits historian writes to at most one per ``interval_s``.
+
+    The scan loop calls :meth:`due` once per scan; it returns True only when at
+    least ``interval_s`` of wall-clock has elapsed since the last write it
+    approved (the first call always approves). This decouples how often data is
+    *persisted* from how often the PLC is *polled*, so the DB grows at a bounded,
+    operator-chosen rate without slowing the control/stream loop.
+
+    A clock is injected so the timing is deterministic in tests (DbC: the
+    interval setter validates type and range).
+    """
+
+    def __init__(
+        self,
+        interval_s: float,
+        *,
+        clock: Callable[[], float] = time.monotonic,
+    ) -> None:
+        self._clock = clock
+        self._last: float | None = None
+        self._interval_s = 0.0
+        self.set_interval_s(interval_s)
+
+    @property
+    def interval_s(self) -> float:
+        return self._interval_s
+
+    def set_interval_s(self, value: float) -> None:
+        """Update the minimum write period.
+
+        Raises:
+            TypeError: if value is not numeric.
+            ValueError: if value is negative or non-finite.
+        """
+        if not isinstance(value, int | float) or isinstance(value, bool):
+            raise TypeError(f"interval_s must be numeric, got {type(value).__name__}")
+        v = float(value)
+        if not (v >= 0.0) or v != v or v == float("inf"):
+            raise ValueError(f"interval_s must be a finite value >= 0, got {value}")
+        self._interval_s = v
+
+    def due(self) -> bool:
+        """Return True (and arm the next window) when a write is allowed now."""
+        now = self._clock()
+        if self._last is None or (now - self._last) >= self._interval_s:
+            self._last = now
+            return True
+        return False
 
 
 def _db_size_bytes() -> int:

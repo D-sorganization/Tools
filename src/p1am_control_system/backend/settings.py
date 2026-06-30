@@ -41,13 +41,24 @@ class P1AMSettings(BaseSettings):
     poll_interval_s: float = Field(
         default=0.1, gt=0.0, validation_alias="P1AM_POLL_INTERVAL_S"
     )
+    capture_interval_s: float = Field(
+        default=5.0,
+        ge=0.0,
+        validation_alias="P1AM_CAPTURE_INTERVAL_S",
+        description=(
+            "Minimum seconds between historian writes. The scan loop still runs "
+            "(and the live stream updates) every poll; only persistence is "
+            "decimated to this period so the DB doesn't bloat. 0 = every scan. "
+            "Operator-adjustable at runtime via /api/capture/config."
+        ),
+    )
     connect_retry_interval_s: float = Field(
         default=5.0,
         gt=0.0,
         validation_alias="P1AM_CONNECT_RETRY_INTERVAL_S",
     )
     historian_max_bytes: int = Field(
-        default=2 * 1024**3,
+        default=1 * 1024**3,
         ge=0,
         validation_alias="P1AM_HISTORIAN_MAX_BYTES",
     )

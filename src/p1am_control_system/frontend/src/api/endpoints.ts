@@ -9,8 +9,10 @@ import {
   plantHierarchySchema,
   captureStatusSchema,
   captureClearResultSchema,
+  captureConfigSchema,
   type CaptureStatus,
   type CaptureClearResult,
+  type CaptureConfig,
   type LadderTagInfo,
   type AlicatMFCState,
   type EventLogEntry,
@@ -136,5 +138,17 @@ export function clearCapture(includeEvents = true): Promise<CaptureClearResult> 
     method: "POST",
     json: { include_events: includeEvents },
     schema: captureClearResultSchema,
+  });
+}
+
+export function getCaptureConfig(): Promise<CaptureConfig> {
+  return apiFetch("/capture/config", { schema: captureConfigSchema });
+}
+
+export function setCaptureConfig(intervalSeconds: number): Promise<CaptureConfig> {
+  return apiFetch("/capture/config", {
+    method: "PUT",
+    json: { interval_s: intervalSeconds },
+    schema: captureConfigSchema,
   });
 }

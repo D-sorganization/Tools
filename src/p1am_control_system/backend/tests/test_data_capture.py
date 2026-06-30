@@ -31,6 +31,7 @@ from data_capture import (  # noqa: E402
     stream_tag_export_csv,
 )
 from models import EventLog, TagLog  # noqa: E402
+from pydantic import ValidationError  # noqa: E402
 from sqlalchemy import StaticPool  # noqa: E402
 from sqlmodel import Session, SQLModel, create_engine, select  # noqa: E402
 
@@ -225,3 +226,65 @@ class TestEnforceSizeCap:
     def test_rejects_bad_headroom(self, session: Session) -> None:
         with pytest.raises(ValueError):
             enforce_size_cap(session, max_bytes=1000, headroom=1.5)
+
+
+class _FakeClock:
+    """Deterministic monotonic clock for throttle tests."""
+
+    def __init__(self) -> None:
+        self.t = 0.0
+
+    def __call__(self) -> float:
+        return self.t
+
+
+class TestCaptureThrottle:
+    def test_first_call_is_always_due(self) -> None:
+        thr = data_capture.CaptureThrottle(5.0, clock=_FakeClock())
+        assert thr.due() is True
+
+    def test_holds_off_until_interval_elapses(self) -> None:
+        clk = _FakeClock()
+        thr = data_capture.CaptureThrottle(5.0, clock=clk)
+        assert thr.due() is True  # t=0 -> log
+        clk.t = 3.0
+        assert thr.due() is False  # 3 s < 5 s
+        clk.t = 5.0
+        assert thr.due() is True  # 5 s >= 5 s (inclusive) -> log
+        clk.t = 9.0
+        assert thr.due() is False  # 4 s since last
+        clk.t = 10.0
+        assert thr.due() is True  # 5 s since last -> log
+
+    def test_zero_interval_logs_every_call(self) -> None:
+        thr = data_capture.CaptureThrottle(0.0, clock=_FakeClock())
+        assert [thr.due(), thr.due(), thr.due()] == [True, True, True]
+
+    def test_set_interval_takes_effect(self) -> None:
+        clk = _FakeClock()
+        thr = data_capture.CaptureThrottle(5.0, clock=clk)
+        assert thr.due() is True
+        thr.set_interval_s(1.0)
+        assert thr.interval_s == 1.0
+        clk.t = 1.0
+        assert thr.due() is True
+
+    def test_set_interval_validates(self) -> None:
+        thr = data_capture.CaptureThrottle(5.0)
+        with pytest.raises(TypeError):
+            thr.set_interval_s("nope")  # type: ignore[arg-type]
+        with pytest.raises(TypeError):
+            thr.set_interval_s(True)  # bool is not an accepted numeric
+        with pytest.raises(ValueError):
+            thr.set_interval_s(-1.0)
+        with pytest.raises(ValueError):
+            thr.set_interval_s(float("inf"))
+        with pytest.raises(ValueError):
+            thr.set_interval_s(float("nan"))
+
+    def test_config_model_validates_bounds(self) -> None:
+        assert data_capture.CaptureConfig(interval_s=5.0).interval_s == 5.0
+        with pytest.raises(ValidationError):
+            data_capture.CaptureConfig(interval_s=-1.0)
+        with pytest.raises(ValidationError):
+            data_capture.CaptureConfig(interval_s=10_000.0)  # exceeds le=3600

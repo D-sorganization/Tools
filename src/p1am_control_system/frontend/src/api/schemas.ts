@@ -104,6 +104,12 @@ export const captureClearResultSchema = z.object({
 });
 export type CaptureClearResult = z.infer<typeof captureClearResultSchema>;
 
+export const captureConfigSchema = z.object({
+  /** Minimum seconds between historian writes (0 = every scan). */
+  interval_s: z.number(),
+});
+export type CaptureConfig = z.infer<typeof captureConfigSchema>;
+
 /** PID auto-tuning result returned by `/api/pid/{i}/tuning/stop`. */
 export const tuningResultSchema = z.object({
   status: z.string(),
