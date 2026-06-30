@@ -138,24 +138,24 @@ export const App: React.FC = () => {
     return () => ro.disconnect();
   }, []);
 
-  // Global performance mode (fast polling vs. lightweight to conserve CPU).
+  // Global performance mode. `perfMode` is the operator's preference for when
+  // the HMI tab is visible; lightweight by default. Whenever the tab is hidden
+  // we force lightweight (no point polling fast when nobody is looking), then
+  // restore the preference when the tab is shown again.
   const [perfMode, setPerfMode] = useState<"performance" | "lightweight">(
-    "performance",
+    "lightweight",
   );
   useEffect(() => {
-    api
-      .getPerformance()
-      .then((c) => setPerfMode(c.mode))
-      .catch(() => {});
-  }, []);
-  const togglePerfMode = () => {
-    const next = perfMode === "performance" ? "lightweight" : "performance";
-    setPerfMode(next); // optimistic
-    api
-      .setPerformanceMode(next)
-      .then((c) => setPerfMode(c.mode))
-      .catch(() => {});
-  };
+    const apply = () => {
+      const effective = document.hidden ? "lightweight" : perfMode;
+      api.setPerformanceMode(effective).catch(() => {});
+    };
+    apply();
+    document.addEventListener("visibilitychange", apply);
+    return () => document.removeEventListener("visibilitychange", apply);
+  }, [perfMode]);
+  const togglePerfMode = () =>
+    setPerfMode((m) => (m === "performance" ? "lightweight" : "performance"));
 
   useEffect(() => {
     saveTabOrder(tabOrder);
@@ -647,8 +647,8 @@ export const App: React.FC = () => {
             }}
             title={
               perfMode === "lightweight"
-                ? "Lightweight mode — PLC polled slowly to conserve CPU / browser load. Click for Performance."
-                : "Performance mode — fast PLC polling + live updates. Click for Lightweight (saves CPU)."
+                ? "Lightweight mode — PLC polled slowly to conserve CPU / browser load. Click for Performance. (Auto-engages whenever this tab is hidden.)"
+                : "Performance mode — fast PLC polling + live updates while this tab is visible. Click for Lightweight (saves CPU). Auto-drops to Lightweight when the tab is hidden."
             }
           >
             {perfMode === "lightweight" ? "◐ Lightweight" : "● Performance"}

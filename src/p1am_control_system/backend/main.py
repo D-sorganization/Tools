@@ -112,8 +112,12 @@ capture_throttle = CaptureThrottle(settings.capture_interval_s)
 
 # Global performance mode: switches the scan-loop cadence between the fast
 # (performance) and slow (lightweight) intervals to conserve CPU / HMI load.
+# Defaults to lightweight — fast polling is opt-in (and the HMI auto-engages it
+# whenever its tab is hidden), so an unattended backend stays easy on the Pi.
 perf_controller = PerformanceController(
-    settings.poll_interval_s, settings.lightweight_poll_interval_s
+    settings.poll_interval_s,
+    settings.lightweight_poll_interval_s,
+    mode=PerformanceMode.LIGHTWEIGHT,
 )
 
 
