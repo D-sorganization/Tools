@@ -79,11 +79,13 @@ class ThermocoupleChannel(BaseModel):
 
 
 def _default_type_k() -> ThermocoupleChannel:
-    return ThermocoupleChannel(tag="TAG_0", full_scale_c=1400.0, label="Type K")
+    # P1-04THM channel 1 -> TAG_0.
+    return ThermocoupleChannel(tag="TAG_0", full_scale_c=1400.0, label="Type K (Ch 1)")
 
 
 def _default_type_r() -> ThermocoupleChannel:
-    return ThermocoupleChannel(tag="TAG_1", full_scale_c=1400.0, label="Type R")
+    # P1-04THM channel 2 -> TAG_1.
+    return ThermocoupleChannel(tag="TAG_1", full_scale_c=1400.0, label="Type R (Ch 2)")
 
 
 class TemperatureConfig(BaseModel):

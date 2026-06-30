@@ -204,7 +204,7 @@ class TestDualThermocouple:
         dumped = TemperatureConfig(active_tc_type=TcType.TYPE_R).model_dump()
         assert dumped["active_tc_type"] == "R"
         assert dumped["temp_tag"] == "TAG_1"  # active R channel's tag
-        assert dumped["active_tc_label"] == "Type R"
+        assert dumped["active_tc_label"] == "Type R (Ch 2)"
 
     def test_tc_type_enum_values(self) -> None:
         assert TcType.TYPE_K == "K"

@@ -20,14 +20,15 @@ const int kThmConfigBytes = 20;
 const char kTcTypeK = 0x01;
 const char kTcTypeR = 0x03;
 
-// P1-04THM: enable all 4 channels, low-side burnout, Celsius. Channel 1 (TC0 ->
-// TAG_0) is type K and channel 2 (TC1 -> TAG_1) is type R, so the operator can
-// drive the heater from either thermocouple via the HMI toggle. Channels 3-4
-// stay type K.
+// P1-04THM: enable all 4 channels, low-side burnout, Celsius. Module channel 1
+// is type K and channel 2 is type R, so the operator can drive the heater from
+// either thermocouple via the HMI toggle. Channels 3-4 stay type K.
+// Module channels are 1-indexed (1-4); the broker maps channel N to TAG_(N-1),
+// so channel 1 (type K) reads back on TAG_0 and channel 2 (type R) on TAG_1.
 // Layout from FACTS P1-04THM docs:
 //   0x4003 = ch1-4 enabled
 //   0x6001 = low-side burnout, degrees C
-//   0x2n[type] = channel n input type
+//   0x2n[type] = channel n input type (n = 1..4)
 const char kP104ThmConfig[kThmConfigBytes] = {
     0x40, 0x03, 0x60, 0x01,
     0x21, kTcTypeK, 0x22, kTcTypeR, 0x23, kTcTypeK, 0x24, kTcTypeK,
