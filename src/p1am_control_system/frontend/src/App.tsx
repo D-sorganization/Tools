@@ -9,6 +9,7 @@ import { EventLogView } from "./components/EventLogView";
 import { ProjectImporter } from "./components/ProjectImporter";
 import { LadderExplorer } from "./components/LadderExplorer";
 import { PlantHierarchy } from "./components/PlantHierarchy";
+import { DataExplorer } from "./components/data_explorer/DataExplorer";
 import { PowerSupplyControl } from "./components/PowerSupplyControl";
 import { TemperatureControl } from "./components/TemperatureControl";
 import { SignalDiagnostics } from "./components/SignalDiagnostics";
@@ -1280,6 +1281,10 @@ export const App: React.FC = () => {
               onSelectTag={handleSelectTag}
               triggerNotification={triggerNotification}
             />
+          )}
+
+          {activeTab === "explorer" && visibleTabs.explorer && (
+            <DataExplorer triggerNotification={triggerNotification} />
           )}
         </div>
 

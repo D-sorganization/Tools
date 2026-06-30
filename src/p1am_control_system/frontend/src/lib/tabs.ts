@@ -11,6 +11,7 @@
 
 export type TabId =
   | "trends"
+  | "explorer"
   | "controllers"
   | "routing"
   | "tuning"
@@ -38,6 +39,12 @@ export const TABS: readonly TabDef[] = [
     label: "Trends & Monitors",
     settingsLabel: "Live Trends & Monitors",
     accentVar: "var(--accent-cyan)",
+  },
+  {
+    id: "explorer",
+    label: "Data Explorer",
+    settingsLabel: "Data Explorer & Analysis",
+    accentVar: "var(--accent-magenta)",
   },
   {
     id: "controllers",

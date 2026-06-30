@@ -2,8 +2,11 @@ FROM python:3.13-slim
 
 WORKDIR /app
 
-# Install standard dependencies directly to keep container fast and lightweight
-RUN pip install --no-cache-dir fastapi sqlmodel pymodbus uvicorn websockets
+# Install standard dependencies directly to keep container fast and lightweight.
+# numpy powers the Data Explorer analysis endpoints; the router degrades
+# gracefully (feature disabled) if it is ever absent, so the control core still
+# boots without it.
+RUN pip install --no-cache-dir fastapi sqlmodel pymodbus uvicorn websockets numpy
 
 # Copy source code to working directory
 COPY . /app

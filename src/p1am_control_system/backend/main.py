@@ -395,6 +395,18 @@ app.state.control_context = control_context
 app.include_router(create_power_supply_router(power_supply_service))
 app.include_router(create_temperature_router(temperature_service))
 
+# Data Explorer analysis suite (historian querying, filtering, correlation,
+# spectral, trendlines, PCA, export). It is numpy-backed; if numpy or the module
+# is unavailable (e.g. the slim image without it) the feature simply stays off
+# and the safety-critical control core still boots — mirroring the tools_core
+# graceful fallback above.
+try:
+    from data_explorer_router import create_data_explorer_router
+
+    app.include_router(create_data_explorer_router(get_session))
+except Exception as exc:  # pragma: no cover - only when numpy/module absent
+    logger.warning("Data Explorer disabled (%s): %s", type(exc).__name__, exc)
+
 # Restrict CORS to a configured allowlist (no wildcard with credentials).
 # See cors_config.resolve_cors_settings for env-driven configuration.
 _cors = resolve_cors_settings()
