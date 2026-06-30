@@ -12,6 +12,8 @@ import {
   spanSeconds,
   elapsedSeconds,
   windowStartIndex,
+  timeToX,
+  timeSeriesPath,
   downsample,
   SELECTABLE_TIME_UNITS,
   MAX_WINDOW_SECONDS,
@@ -118,6 +120,69 @@ describe("windowUnit / SELECTABLE_TIME_UNITS", () => {
 
   it("offers only minutes and hours", () => {
     expect(SELECTABLE_TIME_UNITS).toEqual(["m", "h"]);
+  });
+});
+
+describe("timeToX", () => {
+  it("maps endpoints and midpoint of the time range", () => {
+    expect(timeToX(100, 100, 200, 0, 600)).toBe(0);
+    expect(timeToX(200, 100, 200, 0, 600)).toBe(600);
+    expect(timeToX(150, 100, 200, 0, 600)).toBe(300);
+  });
+
+  it("clamps timestamps outside the range", () => {
+    expect(timeToX(50, 100, 200, 0, 600)).toBe(0);
+    expect(timeToX(250, 100, 200, 0, 600)).toBe(600);
+  });
+
+  it("returns x0 for a degenerate range", () => {
+    expect(timeToX(150, 100, 100, 0, 600)).toBe(0);
+  });
+});
+
+describe("timeSeriesPath", () => {
+  const geom = {
+    t0: 0,
+    t1: 100,
+    min: 0,
+    max: 100,
+    x0: 0,
+    x1: 600,
+    yTop: 0,
+    plotH: 200,
+  };
+  const xs = (d: string): number[] =>
+    (d.match(/[ML]([\d.]+),/g) ?? []).map((m) => Number.parseFloat(m.slice(1)));
+
+  it("returns empty for <2 points or a degenerate range (DbC)", () => {
+    expect(timeSeriesPath([{ t: 0, v: 0 }], geom)).toBe("");
+    expect(timeSeriesPath([{ t: 0, v: 0 }, { t: 1, v: 1 }], { ...geom, t1: 0 })).toBe("");
+    expect(timeSeriesPath([{ t: 0, v: 0 }, { t: 1, v: 1 }], { ...geom, max: 0 })).toBe("");
+  });
+
+  it("positions points by TIME, not index (the bug being fixed)", () => {
+    // The middle point is at 90% of the time span. Index-based plotting would
+    // place it at x=300 (50%); time-based places it at x=540 (90%).
+    const d = timeSeriesPath(
+      [
+        { t: 0, v: 0 },
+        { t: 90, v: 50 },
+        { t: 100, v: 100 },
+      ],
+      geom,
+    );
+    expect(xs(d)).toEqual([0, 540, 600]);
+  });
+
+  it("maps value to Y inverted (max at top)", () => {
+    const d = timeSeriesPath(
+      [
+        { t: 0, v: 100 },
+        { t: 100, v: 0 },
+      ],
+      geom,
+    );
+    expect(d).toBe("M0.0,0.0 L600.0,200.0");
   });
 });
 

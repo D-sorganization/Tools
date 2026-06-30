@@ -10,6 +10,7 @@ import {
   formatWindow,
   elapsedSeconds,
   windowStartIndex,
+  timeSeriesPath,
 } from "../lib/trendTime";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
@@ -51,7 +52,6 @@ const PAD_L = 34;
 const PAD_R = 10;
 const PAD_T = 10;
 const PAD_B = 28; // room for the X-axis time labels
-const PLOT_W = W - PAD_L - PAD_R;
 const PLOT_H = H - PAD_T - PAD_B;
 
 const CURRENT_COLOR = "var(--color-success)";
@@ -61,20 +61,6 @@ const POWER_COLOR = "var(--accent-cyan)";
 /** Convert a measured value to percent of its full scale (0 when no scale). */
 function toPct(value: number, fullScale: number): number {
   return fullScale > 0 ? (value / fullScale) * 100 : 0;
-}
-
-/** Plot a series already expressed in % against the resolved [min, max] % axis. */
-function buildPctPath(pctValues: number[], min: number, max: number): string {
-  if (pctValues.length < 2 || max <= min) return "";
-  const n = pctValues.length;
-  return pctValues
-    .map((pct, idx) => {
-      const x = PAD_L + (idx / (n - 1)) * PLOT_W;
-      const frac = Math.max(0, Math.min(1, (pct - min) / (max - min)));
-      const y = PAD_T + (1 - frac) * PLOT_H;
-      return `${idx === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
 }
 
 export const PowerSupplyTrend: React.FC<Props> = ({
@@ -88,24 +74,37 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, 100));
   const [windowSeconds, setWindowSeconds] = useState<number>(120);
 
-  // Window by real wall-clock time (rate-independent).
+  // Window by real wall-clock time, then position by timestamp (not index) so
+  // the traces stay time-accurate regardless of poll-rate jitter.
   const windowed = samples.slice(
     windowStartIndex(
       samples.map((s) => s.t),
       windowSeconds,
     ),
   );
-  const iPct = downsample(windowed.map((s) => toPct(s.i, currentFullScale)));
-  const vPct = downsample(windowed.map((s) => toPct(s.v, voltageFullScale)));
-  const pPct = downsample(windowed.map((s) => toPct(s.p, powerFullScale)));
-  const { min, max } = resolveRange(axis, [...iPct, ...vPct, ...pPct], {
-    min: 0,
-    max: 100,
-  });
+  const down = downsample(windowed);
+  const iPts = down.map((s) => ({ t: s.t, v: toPct(s.i, currentFullScale) }));
+  const vPts = down.map((s) => ({ t: s.t, v: toPct(s.v, voltageFullScale) }));
+  const pPts = down.map((s) => ({ t: s.t, v: toPct(s.p, powerFullScale) }));
+  const { min, max } = resolveRange(
+    axis,
+    [...iPts, ...vPts, ...pPts].map((p) => p.v),
+    { min: 0, max: 100 },
+  );
+  const geom = {
+    t0: down.length ? down[0].t : 0,
+    t1: down.length ? down[down.length - 1].t : 0,
+    min,
+    max,
+    x0: PAD_L,
+    x1: W - PAD_R,
+    yTop: PAD_T,
+    plotH: PLOT_H,
+  };
 
-  const currentPath = buildPctPath(iPct, min, max);
-  const voltagePath = buildPctPath(vPct, min, max);
-  const powerPath = buildPctPath(pPct, min, max);
+  const currentPath = timeSeriesPath(iPts, geom);
+  const voltagePath = timeSeriesPath(vPts, geom);
+  const powerPath = timeSeriesPath(pPts, geom);
   const last = windowed[windowed.length - 1];
 
   return (

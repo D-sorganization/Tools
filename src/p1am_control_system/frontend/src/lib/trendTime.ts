@@ -159,6 +159,73 @@ export function windowStartIndex(times: number[], windowSeconds: number): number
 }
 
 /**
+ * Map a timestamp to an X coordinate on a linear time axis [t0,t1] -> [x0,x1].
+ * Clamps to [x0,x1]; returns x0 for a degenerate (t1 <= t0) range.
+ *
+ * This is the core of *time-accurate* plotting: a point's horizontal position
+ * reflects WHEN it was sampled, not its index in the array — so a trend stays
+ * correct even when sample spacing is non-uniform (sparse historian backfill
+ * merged with dense live samples, or a jittery poll rate).
+ */
+export function timeToX(
+  t: number,
+  t0: number,
+  t1: number,
+  x0: number,
+  x1: number,
+): number {
+  if (!(t1 > t0)) return x0;
+  const frac = Math.max(0, Math.min(1, (t - t0) / (t1 - t0)));
+  return x0 + frac * (x1 - x0);
+}
+
+export interface TimedValue {
+  /** Sample timestamp (epoch ms). */
+  t: number;
+  /** Sample value (engineering units). */
+  v: number;
+}
+
+export interface TimeSeriesGeometry {
+  /** Time range mapped across the plot width. */
+  t0: number;
+  t1: number;
+  /** Value range mapped across the plot height. */
+  min: number;
+  max: number;
+  /** Horizontal pixel extent of the plot area. */
+  x0: number;
+  x1: number;
+  /** Top pixel + height of the plot area. */
+  yTop: number;
+  plotH: number;
+}
+
+/**
+ * Build an SVG path for a time series, placing each point by its timestamp (X
+ * via [t0,t1]) and value (Y via [min,max]). Time-accurate regardless of sample
+ * spacing — the cure for index-based plotting drifting against the time axis.
+ *
+ * Returns "" (no path) when there are fewer than 2 points or the time/value
+ * range is degenerate (DbC — callers render nothing rather than NaN paths).
+ */
+export function timeSeriesPath(
+  points: readonly TimedValue[],
+  geom: TimeSeriesGeometry,
+): string {
+  const { t0, t1, min, max, x0, x1, yTop, plotH } = geom;
+  if (points.length < 2 || !(t1 > t0) || !(max > min)) return "";
+  return points
+    .map((p, i) => {
+      const x = timeToX(p.t, t0, t1, x0, x1);
+      const frac = Math.max(0, Math.min(1, (p.v - min) / (max - min)));
+      const y = yTop + (1 - frac) * plotH;
+      return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
+}
+
+/**
  * Stride-sample `values` down to at most `maxPoints`, always keeping the final
  * element so the live edge stays accurate. Returns the input untouched when
  * already short enough. Generic so it works on scalar series or history rows.

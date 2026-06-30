@@ -12,6 +12,7 @@ import {
   formatWindow,
   elapsedSeconds,
   windowStartIndex,
+  timeSeriesPath,
 } from "../lib/trendTime";
 import { fitSeries, NO_FIT_ID } from "../lib/curveFit";
 import { useTrendBackfill } from "../hooks/useTrendBackfill";
@@ -768,25 +769,11 @@ const TREND_PAD_L = 40;
 const TREND_PAD_R = 10;
 const TREND_PAD_T = 10;
 const TREND_PAD_B = 26; // room for the X-axis time labels
-const TREND_PLOT_W = TREND_W - TREND_PAD_L - TREND_PAD_R;
 const TREND_PLOT_H = TREND_H - TREND_PAD_T - TREND_PAD_B;
 
 const TEMP_COLOR = "var(--color-error)";
 const SETPOINT_COLOR = "var(--accent-cyan)";
 const HH_COLOR = "var(--color-warning)";
-
-function tempPath(values: number[], min: number, max: number): string {
-  if (values.length < 2 || max <= min) return "";
-  const n = values.length;
-  return values
-    .map((val, idx) => {
-      const x = TREND_PAD_L + (idx / (n - 1)) * TREND_PLOT_W;
-      const frac = Math.max(0, Math.min(1, (val - min) / (max - min)));
-      const y = TREND_PAD_T + (1 - frac) * TREND_PLOT_H;
-      return `${idx === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
-}
 
 interface TrendProps {
   samples: TempSample[];
@@ -830,7 +817,6 @@ const TempTrend: React.FC<TrendProps> = ({
   const plotted = downsample(windowed);
   const plottedC = plotted.map((s) => s.c);
   const { min, max } = resolveRange(axis, plottedC, { min: 0, max: fullScale });
-  const path = tempPath(plottedC, min, max);
   const last = windowed.length ? windowed[windowed.length - 1].c : undefined;
 
   const refY = (value: number): number => {
@@ -838,12 +824,30 @@ const TempTrend: React.FC<TrendProps> = ({
     return TREND_PAD_T + (1 - frac) * TREND_PLOT_H;
   };
 
+  // Position the trace by real timestamp (not array index) so it is time-accurate
+  // even when sparse historian backfill is merged with dense live samples — the
+  // path and the X axis below share this [t0, t1] range.
+  const t0 = plotted.length ? plotted[0].t : 0;
+  const t1 = plotted.length ? plotted[plotted.length - 1].t : 0;
+  const path = timeSeriesPath(
+    plotted.map((s) => ({ t: s.t, v: s.c })),
+    {
+      t0,
+      t1,
+      min,
+      max,
+      x0: TREND_PAD_L,
+      x1: TREND_W - TREND_PAD_R,
+      yTop: TREND_PAD_T,
+      plotH: TREND_PLOT_H,
+    },
+  );
+
   // Fit over (real elapsed minutes, °C) so a linear slope reads directly as the
   // heating rate in °C/min. x = 0 at the left (oldest) edge of the window.
-  const t0 = windowed.length ? windowed[0].t : 0;
   const fitPoints = plotted.map((s) => ({ x: (s.t - t0) / 60000, y: s.c }));
-  const fitXs = fitPoints.map((p) => p.x);
   const fit = fitSeries(fitPoints, fitMethodId);
+  const fitOverlayPoints = plotted.map((s) => ({ t: s.t, x: (s.t - t0) / 60000 }));
 
   return (
     <div className="tc-trend">
@@ -969,10 +973,12 @@ const TempTrend: React.FC<TrendProps> = ({
             {fit && (
               <TrendFitOverlay
                 fit={fit}
-                xs={fitXs}
-                yScale={refY}
+                points={fitOverlayPoints}
+                t0={t0}
+                t1={t1}
                 x0={TREND_PAD_L}
                 x1={TREND_W - TREND_PAD_R}
+                yScale={refY}
               />
             )}
           </>

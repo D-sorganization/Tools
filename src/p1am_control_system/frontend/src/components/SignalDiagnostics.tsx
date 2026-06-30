@@ -10,6 +10,7 @@ import {
   formatWindow,
   elapsedSeconds,
   windowStartIndex,
+  timeSeriesPath,
 } from "../lib/trendTime";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
@@ -54,21 +55,7 @@ const PAD_L = 34;
 const PAD_R = 10;
 const PAD_T = 10;
 const PAD_B = 28; // room for the X-axis time labels
-const PLOT_W = W - PAD_L - PAD_R;
 const PLOT_H = H - PAD_T - PAD_B;
-
-function buildPath(values: number[], min: number, max: number): string {
-  if (values.length < 2 || max <= min) return "";
-  const n = values.length;
-  return values
-    .map((val, idx) => {
-      const x = PAD_L + (idx / (n - 1)) * PLOT_W;
-      const frac = Math.max(0, Math.min(1, (val - min) / (max - min)));
-      const y = PAD_T + (1 - frac) * PLOT_H;
-      return `${idx === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
-    })
-    .join(" ");
-}
 
 interface Props {
   /** Rolling per-scan tag history: each row is the full tag array for a scan. */
@@ -88,21 +75,33 @@ export const SignalDiagnostics: React.FC<Props> = ({ history, historyTimes }) =>
   const start = windowStartIndex(historyTimes, windowSeconds);
   const windowRows = history.slice(start);
   const windowTimes = historyTimes.slice(start);
-  // Downsample the rows once, then read each channel — far cheaper than
-  // downsampling six separate series over a long (up to 1 h) window.
+  // Downsample the rows (and their timestamps in lockstep) once, then read each
+  // channel — far cheaper than downsampling six series over a long window. Each
+  // point carries its timestamp so the trace is positioned by time, not index.
   const downRows = downsample(windowRows);
+  const downTimes = downsample(windowTimes);
   const series = CHANNELS.map((ch) => ({
     ...ch,
-    values: downRows.map((row) => row[ch.tag] ?? 0),
+    points: downRows.map((row, i) => ({ t: downTimes[i], v: row[ch.tag] ?? 0 })),
     last: windowRows.length
       ? (windowRows[windowRows.length - 1][ch.tag] ?? 0)
       : null,
   }));
   const { min, max } = resolveRange(
     axis,
-    series.flatMap((s) => s.values),
+    series.flatMap((s) => s.points.map((p) => p.v)),
     { min: 0, max: FULL_SCALE_V },
   );
+  const geom = {
+    t0: downTimes.length ? downTimes[0] : 0,
+    t1: downTimes.length ? downTimes[downTimes.length - 1] : 0,
+    min,
+    max,
+    x0: PAD_L,
+    x1: W - PAD_R,
+    yTop: PAD_T,
+    plotH: PLOT_H,
+  };
 
   return (
     <div className="ps-card">
@@ -175,7 +174,7 @@ export const SignalDiagnostics: React.FC<Props> = ({ history, historyTimes }) =>
           series.map((s) => (
             <path
               key={s.tag}
-              d={buildPath(s.values, min, max)}
+              d={timeSeriesPath(s.points, geom)}
               className="ps-trend-line"
               stroke={s.color}
             />
