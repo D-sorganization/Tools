@@ -632,14 +632,16 @@ export function useDataProcessor() {
         let safeExpr = baseExpr;
         const safeUsedSignals: { original: string; safeName: string }[] = [];
 
-        signals.forEach((signal, idx) => {
+        // ⚡ Bolt Optimization: Replace .forEach with a standard for-loop to eliminate callback overhead
+        for (let idx = 0; idx < signals.length; idx++) {
+          const signal = signals[idx];
           const regex = new RegExp(`\\b${escapeRegExp(signal)}\\b`, 'g');
           if (regex.test(safeExpr)) {
             const safeName = `_sig_${idx}`;
             safeUsedSignals.push({ original: signal, safeName });
             safeExpr = safeExpr.replace(regex, safeName);
           }
-        });
+        }
 
         let evalFunc: Function;
         try {

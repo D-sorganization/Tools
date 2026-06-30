@@ -66,3 +66,7 @@
 ## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
 **Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
 **Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
+
+## 2024-05-30 - Remove .forEach for string replacements in tight loops
+**Learning:** In string processing steps, calling .forEach repeatedly creates unnecessary callback invocation overhead. While less obvious than inner-loop numerical operations, eliminating these callbacks improves overall performance.
+**Action:** Use a standard for-loop instead of .forEach() for mapping strings in frequent processing paths to reduce garbage collection pressure.
