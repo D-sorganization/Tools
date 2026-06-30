@@ -10,7 +10,7 @@ import {
   MAX_TREND_SAMPLES,
   downsample,
   formatWindow,
-  elapsedSeconds,
+  fixedWindowRange,
   windowStartIndex,
   timeSeriesPath,
 } from "../lib/trendTime";
@@ -26,7 +26,7 @@ import "./TemperatureControl.css";
 // Rolling trend buffer: deep enough for the longest selectable window
 // (up to 1 h); the plot slices to the chosen window by real time.
 const TREND_MAX_POINTS = MAX_TREND_SAMPLES;
-const DEFAULT_WINDOW_SECONDS = 120;
+const DEFAULT_WINDOW_SECONDS = 3600; // 60 minutes
 
 /** One temperature sample: epoch-ms timestamp + measured °C. Timestamping the
  * buffer makes the window, axis, and fit slope accurate at any poll rate. */
@@ -825,10 +825,11 @@ const TempTrend: React.FC<TrendProps> = ({
   };
 
   // Position the trace by real timestamp (not array index) so it is time-accurate
-  // even when sparse historian backfill is merged with dense live samples — the
-  // path and the X axis below share this [t0, t1] range.
-  const t0 = plotted.length ? plotted[0].t : 0;
-  const t1 = plotted.length ? plotted[plotted.length - 1].t : 0;
+  // even when sparse historian backfill is merged with dense live samples. The X
+  // axis is a FIXED window ending at the latest sample, so changing the window
+  // rescales the axis immediately (rather than fitting to the data's span).
+  const latestMs = plotted.length ? plotted[plotted.length - 1].t : Date.now();
+  const { t0, t1 } = fixedWindowRange(latestMs, windowSeconds);
   const path = timeSeriesPath(
     plotted.map((s) => ({ t: s.t, v: s.c })),
     {
@@ -955,7 +956,7 @@ const TempTrend: React.FC<TrendProps> = ({
           x0={TREND_PAD_L}
           x1={TREND_W - TREND_PAD_R}
           yBottom={TREND_PAD_T + TREND_PLOT_H}
-          spanSeconds={elapsedSeconds(windowed.map((s) => s.t))}
+          spanSeconds={windowSeconds}
         />
 
         {plotted.length < 2 ? (

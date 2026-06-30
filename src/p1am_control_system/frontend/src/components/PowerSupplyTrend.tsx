@@ -8,7 +8,7 @@ import {
 import {
   downsample,
   formatWindow,
-  elapsedSeconds,
+  fixedWindowRange,
   windowStartIndex,
   timeSeriesPath,
 } from "../lib/trendTime";
@@ -72,7 +72,7 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   voltageLabel = "Voltage",
 }) => {
   const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, 100));
-  const [windowSeconds, setWindowSeconds] = useState<number>(120);
+  const [windowSeconds, setWindowSeconds] = useState<number>(3600); // 60 minutes
 
   // Window by real wall-clock time, then position by timestamp (not index) so
   // the traces stay time-accurate regardless of poll-rate jitter.
@@ -91,9 +91,11 @@ export const PowerSupplyTrend: React.FC<Props> = ({
     [...iPts, ...vPts, ...pPts].map((p) => p.v),
     { min: 0, max: 100 },
   );
+  const latestMs = down.length ? down[down.length - 1].t : Date.now();
+  const { t0, t1 } = fixedWindowRange(latestMs, windowSeconds);
   const geom = {
-    t0: down.length ? down[0].t : 0,
-    t1: down.length ? down[down.length - 1].t : 0,
+    t0,
+    t1,
     min,
     max,
     x0: PAD_L,
@@ -169,7 +171,7 @@ export const PowerSupplyTrend: React.FC<Props> = ({
           x0={PAD_L}
           x1={W - PAD_R}
           yBottom={PAD_T + PLOT_H}
-          spanSeconds={elapsedSeconds(windowed.map((s) => s.t))}
+          spanSeconds={windowSeconds}
         />
 
         {windowed.length < 2 ? (

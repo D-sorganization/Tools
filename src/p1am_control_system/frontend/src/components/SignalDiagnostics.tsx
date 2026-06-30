@@ -8,7 +8,7 @@ import {
 import {
   downsample,
   formatWindow,
-  elapsedSeconds,
+  fixedWindowRange,
   windowStartIndex,
   timeSeriesPath,
 } from "../lib/trendTime";
@@ -68,7 +68,7 @@ export const SignalDiagnostics: React.FC<Props> = ({ history, historyTimes }) =>
   const [axis, setAxis] = useState<AxisRange>(
     defaultAxisRange(0, FULL_SCALE_V),
   );
-  const [windowSeconds, setWindowSeconds] = useState<number>(120);
+  const [windowSeconds, setWindowSeconds] = useState<number>(3600); // 60 minutes
 
   // Window by real wall-clock time so the span is correct regardless of the
   // actual poll rate (the Pi runs below the nominal 10 Hz under load).
@@ -92,9 +92,11 @@ export const SignalDiagnostics: React.FC<Props> = ({ history, historyTimes }) =>
     series.flatMap((s) => s.points.map((p) => p.v)),
     { min: 0, max: FULL_SCALE_V },
   );
+  const latestMs = downTimes.length ? downTimes[downTimes.length - 1] : Date.now();
+  const { t0, t1 } = fixedWindowRange(latestMs, windowSeconds);
   const geom = {
-    t0: downTimes.length ? downTimes[0] : 0,
-    t1: downTimes.length ? downTimes[downTimes.length - 1] : 0,
+    t0,
+    t1,
     min,
     max,
     x0: PAD_L,
@@ -163,7 +165,7 @@ export const SignalDiagnostics: React.FC<Props> = ({ history, historyTimes }) =>
           x0={PAD_L}
           x1={W - PAD_R}
           yBottom={PAD_T + PLOT_H}
-          spanSeconds={elapsedSeconds(windowTimes)}
+          spanSeconds={windowSeconds}
         />
 
         {windowRows.length < 2 ? (

@@ -26,8 +26,8 @@ export type TimeUnit = "s" | "m" | "h";
 
 export const TIME_UNITS: readonly TimeUnit[] = ["s", "m", "h"] as const;
 
-/** Units offered in the window dropdown — seconds is excluded by design. */
-export const SELECTABLE_TIME_UNITS: readonly TimeUnit[] = ["m", "h"] as const;
+/** Units offered in the window dropdown. */
+export const SELECTABLE_TIME_UNITS: readonly TimeUnit[] = ["s", "m", "h"] as const;
 
 const UNIT_SECONDS: Record<TimeUnit, number> = { s: 1, m: 60, h: 3600 };
 const UNIT_LABEL: Record<TimeUnit, string> = { s: "sec", m: "min", h: "hr" };
@@ -74,9 +74,12 @@ export function naturalUnit(seconds: number): TimeUnit {
   return "s";
 }
 
-/** Default dropdown unit for a window — minutes, or hours at ≥ 1 h. */
+/** Default dropdown unit for a window: seconds < 1 m, hours > 1 h, else minutes
+ * (so 3600 s shows as "60 min", not "1 hr"). */
 export function windowUnit(seconds: number): TimeUnit {
-  return seconds >= 3600 ? "h" : "m";
+  if (seconds > 3600) return "h";
+  if (seconds >= 60) return "m";
+  return "s";
 }
 
 /** Compact window label: "30s" / "5m" / "1.5h". */
@@ -135,6 +138,19 @@ export function spanSeconds(sampleCount: number): number {
 export function elapsedSeconds(times: number[]): number {
   if (times.length < 2) return 0;
   return Math.max(0, (times[times.length - 1] - times[0]) / 1000);
+}
+
+/**
+ * Fixed display window of `windowSeconds` ending at `latestMs`. The plot's X
+ * axis spans exactly this range regardless of how much data has accumulated, so
+ * changing the window immediately rescales the axis (instead of fitting to the
+ * data's actual span, which leaves the axis "stuck" until the buffer fills).
+ */
+export function fixedWindowRange(
+  latestMs: number,
+  windowSeconds: number,
+): { t0: number; t1: number } {
+  return { t0: latestMs - windowSeconds * 1000, t1: latestMs };
 }
 
 /**

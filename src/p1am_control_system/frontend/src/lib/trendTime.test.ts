@@ -11,6 +11,7 @@ import {
   timeAxisTicks,
   spanSeconds,
   elapsedSeconds,
+  fixedWindowRange,
   windowStartIndex,
   timeToX,
   timeSeriesPath,
@@ -113,13 +114,32 @@ describe("timestamp windowing (rate-independent)", () => {
 });
 
 describe("windowUnit / SELECTABLE_TIME_UNITS", () => {
-  it("defaults to minutes, hours past 1 h", () => {
+  it("picks seconds / minutes / hours", () => {
+    expect(windowUnit(30)).toBe("s");
     expect(windowUnit(120)).toBe("m");
-    expect(windowUnit(3600)).toBe("h");
+    expect(windowUnit(3600)).toBe("m"); // 60 min, not 1 hr
+    expect(windowUnit(7200)).toBe("h");
   });
 
-  it("offers only minutes and hours", () => {
-    expect(SELECTABLE_TIME_UNITS).toEqual(["m", "h"]);
+  it("offers seconds, minutes, and hours", () => {
+    expect(SELECTABLE_TIME_UNITS).toEqual(["s", "m", "h"]);
+  });
+});
+
+describe("fixedWindowRange", () => {
+  it("spans exactly windowSeconds ending at latestMs", () => {
+    expect(fixedWindowRange(1_000_000, 60)).toEqual({ t0: 940_000, t1: 1_000_000 });
+    // a 60-minute window
+    expect(fixedWindowRange(0, 3600)).toEqual({ t0: -3_600_000, t1: 0 });
+  });
+
+  it("rescales immediately when the window changes (the bug being fixed)", () => {
+    const latest = 5_000_000;
+    expect(fixedWindowRange(latest, 30).t0).toBe(latest - 30_000);
+    expect(fixedWindowRange(latest, 600).t0).toBe(latest - 600_000);
+    // span is the requested window, independent of how much data exists
+    const r = fixedWindowRange(latest, 120);
+    expect((r.t1 - r.t0) / 1000).toBe(120);
   });
 });
 
