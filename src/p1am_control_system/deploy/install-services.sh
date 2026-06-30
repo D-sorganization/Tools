@@ -51,6 +51,9 @@ Group=$GROUP_NAME
 WorkingDirectory=$SYS/backend
 Environment=PYTHONUNBUFFERED=1
 Environment=PYTHONPATH=$REPO/src
+# Bench/dev mode: disable API auth (mirrors run_pi.sh). Set P1AM_API_KEY /
+# P1AM_ADMIN_API_KEY and drop this if the HMI is ever exposed beyond the bench.
+Environment=P1AM_DEV_NO_AUTH=1
 Environment=PLC_DRIVER=modbus
 Environment=PLC_IP=$PLC_IP
 Environment=PLC_PORT=$PLC_PORT
