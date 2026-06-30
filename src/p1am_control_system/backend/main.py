@@ -55,6 +55,7 @@ from models import (
     TagLog,
 )
 from mpc import simulate_pid_vs_mpc
+from performance import PerformanceConfig, PerformanceController, PerformanceMode
 from pid_tuning import identify_fopdt_and_tune
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
@@ -108,6 +109,12 @@ temperature_service = TemperatureService(plc_client=plc_client, logger=logger)
 # often the PLC is *polled*, so the capture DB grows at an operator-chosen rate
 # without slowing the control/stream loop. Runtime-adjustable via /api/capture/config.
 capture_throttle = CaptureThrottle(settings.capture_interval_s)
+
+# Global performance mode: switches the scan-loop cadence between the fast
+# (performance) and slow (lightweight) intervals to conserve CPU / HMI load.
+perf_controller = PerformanceController(
+    settings.poll_interval_s, settings.lightweight_poll_interval_s
+)
 
 
 def _throttled_log_scan(session: Session, tags: dict[str, float]) -> int:
@@ -288,7 +295,7 @@ async def poll_plc_loop() -> None:
     logger.info("Starting background PLC polling loop...")
     consecutive_failures = 0
     while not shutdown_event.is_set():
-        retry_delay = settings.poll_interval_s
+        retry_delay = perf_controller.poll_interval_s
         try:
             frame = await _poll_once(
                 plc=plc_client,
@@ -833,6 +840,37 @@ async def update_capture_config(req: CaptureConfig) -> CaptureConfig:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     logger.info("Capture interval set to %.3f s", capture_throttle.interval_s)
     return CaptureConfig(interval_s=capture_throttle.interval_s)
+
+
+class PerformanceModeRequest(BaseModel):
+    """Operator selection of the global performance mode."""
+
+    mode: PerformanceMode
+
+
+@app.get("/api/performance", response_model=PerformanceConfig)
+async def get_performance() -> PerformanceConfig:
+    """Return the active performance mode + its resolved poll interval."""
+    return perf_controller.config()
+
+
+@app.put(
+    "/api/performance",
+    response_model=PerformanceConfig,
+    dependencies=[Depends(require_admin_key)],
+)
+async def update_performance(req: PerformanceModeRequest) -> PerformanceConfig:
+    """Switch performance/lightweight mode. Takes effect on the next scan."""
+    try:
+        perf_controller.set_mode(req.mode)
+    except TypeError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    logger.info(
+        "Performance mode set to %s (poll %.3f s)",
+        perf_controller.mode,
+        perf_controller.poll_interval_s,
+    )
+    return perf_controller.config()
 
 
 class CaptureClearRequest(BaseModel):

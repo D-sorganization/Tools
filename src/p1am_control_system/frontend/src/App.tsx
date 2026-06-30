@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { RoutingMatrix } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
 import { AlarmsHeader } from "./components/AlarmsHeader";
@@ -124,6 +124,38 @@ export const App: React.FC = () => {
     loadTabVisibility,
   );
   const [tabOrder, setTabOrder] = useState<TabId[]>(loadTabOrder);
+
+  // Measure the sticky header so the tab bar can freeze just below it on scroll.
+  const headerRef = useRef<HTMLElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const measure = () => setHeaderHeight(el.offsetHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Global performance mode (fast polling vs. lightweight to conserve CPU).
+  const [perfMode, setPerfMode] = useState<"performance" | "lightweight">(
+    "performance",
+  );
+  useEffect(() => {
+    api
+      .getPerformance()
+      .then((c) => setPerfMode(c.mode))
+      .catch(() => {});
+  }, []);
+  const togglePerfMode = () => {
+    const next = perfMode === "performance" ? "lightweight" : "performance";
+    setPerfMode(next); // optimistic
+    api
+      .setPerformanceMode(next)
+      .then((c) => setPerfMode(c.mode))
+      .catch(() => {});
+  };
 
   useEffect(() => {
     saveTabOrder(tabOrder);
@@ -531,6 +563,7 @@ export const App: React.FC = () => {
       <NotificationBanner notification={notification} />
 
       <header
+        ref={headerRef}
         style={{
           display: "flex",
           alignItems: "center",
@@ -600,6 +633,29 @@ export const App: React.FC = () => {
 
           <button
             type="button"
+            onClick={togglePerfMode}
+            className="btn"
+            style={{
+              padding: "0.4rem 0.6rem",
+              fontSize: "0.72rem",
+              fontWeight: 700,
+              whiteSpace: "nowrap",
+              color:
+                perfMode === "lightweight"
+                  ? "var(--color-warning)"
+                  : "var(--accent-cyan)",
+            }}
+            title={
+              perfMode === "lightweight"
+                ? "Lightweight mode — PLC polled slowly to conserve CPU / browser load. Click for Performance."
+                : "Performance mode — fast PLC polling + live updates. Click for Lightweight (saves CPU)."
+            }
+          >
+            {perfMode === "lightweight" ? "◐ Lightweight" : "● Performance"}
+          </button>
+
+          <button
+            type="button"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="btn"
             style={{ padding: "0.5rem" }}
@@ -640,14 +696,26 @@ export const App: React.FC = () => {
       {/* Main content — the inspector is now a slide-in drawer (below), not a column */}
       <div className="main-layout-grid" style={{ gridTemplateColumns: "1fr" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          <TabBar
-            activeTab={activeTab}
-            visibleTabs={visibleTabs}
-            onSelect={setActiveTab}
-            order={tabOrder}
-            onReorder={setTabOrder}
-            onHide={handleTabVisibilityToggle}
-          />
+          {/* Freeze the tab bar just below the sticky header so the active tab
+              stays visible while scrolling the panel below. */}
+          <div
+            style={{
+              position: "sticky",
+              top: headerHeight,
+              zIndex: 250,
+              background: "var(--bg-color)",
+              paddingBottom: "0.4rem",
+            }}
+          >
+            <TabBar
+              activeTab={activeTab}
+              visibleTabs={visibleTabs}
+              onSelect={setActiveTab}
+              order={tabOrder}
+              onReorder={setTabOrder}
+              onHide={handleTabVisibilityToggle}
+            />
+          </div>
 
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
             <PowerSupplyControl

@@ -41,6 +41,15 @@ class P1AMSettings(BaseSettings):
     poll_interval_s: float = Field(
         default=0.1, gt=0.0, validation_alias="P1AM_POLL_INTERVAL_S"
     )
+    lightweight_poll_interval_s: float = Field(
+        default=2.0,
+        gt=0.0,
+        validation_alias="P1AM_LIGHTWEIGHT_POLL_INTERVAL_S",
+        description=(
+            "Poll/broadcast interval used in 'lightweight' performance mode. "
+            "Slower than poll_interval_s to cut CPU + HMI re-render load."
+        ),
+    )
     capture_interval_s: float = Field(
         default=5.0,
         ge=0.0,

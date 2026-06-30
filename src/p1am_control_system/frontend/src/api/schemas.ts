@@ -110,6 +110,13 @@ export const captureConfigSchema = z.object({
 });
 export type CaptureConfig = z.infer<typeof captureConfigSchema>;
 
+export const performanceConfigSchema = z.object({
+  mode: z.enum(["performance", "lightweight"]),
+  poll_interval_s: z.number(),
+});
+export type PerformanceConfig = z.infer<typeof performanceConfigSchema>;
+export type PerformanceMode = PerformanceConfig["mode"];
+
 /** PID auto-tuning result returned by `/api/pid/{i}/tuning/stop`. */
 export const tuningResultSchema = z.object({
   status: z.string(),

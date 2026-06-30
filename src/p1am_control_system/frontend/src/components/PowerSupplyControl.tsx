@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { Database } from "lucide-react";
 import { PowerSupplyTrend, type TrendSample } from "./PowerSupplyTrend";
 import { ExportButton } from "./ExportButton";
+import { CollapsibleSection } from "./CollapsibleSection";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
 import { MAX_TREND_SAMPLES } from "../lib/trendTime";
 import "./PowerSupplyControl.css";
@@ -526,9 +527,10 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onOpenCapture 
       )}
 
       {/* ---- Live trend (current + voltage from the unit) ---- */}
-      <div className="ps-card">
-        <div className="ps-card-title">
-          <span>Live signals — current, voltage &amp; power feedback</span>
+      <CollapsibleSection
+        className="ps-card"
+        title={<span>Live signals — current, voltage &amp; power feedback</span>}
+        headerExtra={
           <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
             <ExportButton tags={PS_EXPORT_TAGS} label="Export" />
             {onOpenCapture && (
@@ -541,7 +543,8 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onOpenCapture 
               </button>
             )}
           </div>
-        </div>
+        }
+      >
         <PowerSupplyTrend
           samples={trend}
           currentFullScale={config.current_full_scale_a}
@@ -550,7 +553,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onOpenCapture 
           currentLabel={config.current_feedback_label}
           voltageLabel={config.voltage_feedback_label}
         />
-      </div>
+      </CollapsibleSection>
 
       <div className="ps-grid">
         {/* ---- Output clamp (safety) ---- */}
@@ -712,8 +715,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onOpenCapture 
       </div>
 
       {/* ---- Live telemetry ---- */}
-      <div className="ps-card">
-        <div className="ps-card-title">Live telemetry</div>
+      <CollapsibleSection className="ps-card" title="Live telemetry">
         <div className="ps-readouts">
           <Readout label="Setpoint" value={`${s?.setpoint_a.toFixed(2) ?? "—"} A`} />
           <Readout
@@ -761,7 +763,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onOpenCapture 
             />
           </div>
         </div>
-      </div>
+      </CollapsibleSection>
 
       {/* ---- Signal noise / arc detection ---- */}
       <div className={`ps-card ps-noise ${s?.arcing ? "is-arcing" : ""}`}>

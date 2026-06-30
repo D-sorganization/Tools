@@ -21,6 +21,7 @@ import { TrendTimeControls } from "./TrendTimeControls";
 import { TrendFitControls } from "./TrendFitControls";
 import { TrendTimeAxis, TrendFitOverlay } from "./TrendPlotOverlays";
 import { ExportButton } from "./ExportButton";
+import { CollapsibleSection } from "./CollapsibleSection";
 import "./TemperatureControl.css";
 
 // Rolling trend buffer: deep enough for the longest selectable window
@@ -445,10 +446,10 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
       </div>
 
       {/* ---- Thermocouple selector (Type K / Type R) ---- */}
-      <div className="tc-card">
-        <div className="tc-card-title">
-          <span>Thermocouple — heater temperature source</span>
-        </div>
+      <CollapsibleSection
+        className="tc-card"
+        title="Thermocouple — heater temperature source"
+      >
         <div
           role="group"
           aria-label="Thermocouple type"
@@ -504,7 +505,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
           setpoint band, HH cutoff and trends. Switching re-clamps the limits to
           the chosen channel's range. (Type R is wired to a separate THM channel.)
         </p>
-      </div>
+      </CollapsibleSection>
 
       {/* ---- High-high cutoff banner ---- */}
       {hhTripped && (
@@ -520,23 +521,17 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
       )}
 
       {/* ---- Live trend ---- */}
-      <div className="tc-card">
-        <div
-          className="tc-card-title"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            gap: "0.5rem",
-          }}
-        >
-          <span>Live temperature — {config.heater_label}</span>
+      <CollapsibleSection
+        className="tc-card"
+        title={<span>Live temperature — {config.heater_label}</span>}
+        headerExtra={
           <ExportButton
             tags={[Number.parseInt(config.temp_tag.replace(/\D/g, ""), 10) || 0]}
             label="Export"
             onError={setError}
           />
-        </div>
+        }
+      >
         <TempTrend
           samples={trend}
           tagId={Number.parseInt(config.temp_tag.replace(/\D/g, ""), 10) || 0}
@@ -544,14 +539,10 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
           setpoint={s?.setpoint_c ?? config.setpoint_min_c}
           hhLimit={hhLimit}
         />
-      </div>
+      </CollapsibleSection>
 
       {/* ---- Setpoint ---- */}
-      <div className="tc-card">
-        <div className="tc-card-title">
-          <span>Setpoint</span>
-        </div>
-
+      <CollapsibleSection className="tc-card" title="Setpoint">
         <div className="tc-setpoint-row">
           <button
             className="tc-step-btn"
@@ -629,11 +620,10 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
           <strong>{hhLimit.toFixed(0)} °C</strong> latches the heater OFF
           regardless of setpoint.
         </p>
-      </div>
+      </CollapsibleSection>
 
       {/* ---- Live telemetry ---- */}
-      <div className="tc-card">
-        <div className="tc-card-title">Live telemetry</div>
+      <CollapsibleSection className="tc-card" title="Live telemetry">
         <div className="tc-readouts">
           <Readout label="Setpoint" value={`${s?.setpoint_c.toFixed(1) ?? "—"} °C`} />
           <Readout
@@ -648,7 +638,7 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
           />
           <Readout label="HH limit" value={`${hhLimit.toFixed(0)} °C`} />
         </div>
-      </div>
+      </CollapsibleSection>
 
       {/* ---- Advanced config ---- */}
       <details className="tc-card tc-config">

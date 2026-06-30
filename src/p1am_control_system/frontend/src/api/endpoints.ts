@@ -10,9 +10,12 @@ import {
   captureStatusSchema,
   captureClearResultSchema,
   captureConfigSchema,
+  performanceConfigSchema,
   type CaptureStatus,
   type CaptureClearResult,
   type CaptureConfig,
+  type PerformanceConfig,
+  type PerformanceMode,
   type LadderTagInfo,
   type AlicatMFCState,
   type EventLogEntry,
@@ -150,5 +153,19 @@ export function setCaptureConfig(intervalSeconds: number): Promise<CaptureConfig
     method: "PUT",
     json: { interval_s: intervalSeconds },
     schema: captureConfigSchema,
+  });
+}
+
+// --- Performance mode ---------------------------------------------------------
+
+export function getPerformance(): Promise<PerformanceConfig> {
+  return apiFetch("/performance", { schema: performanceConfigSchema });
+}
+
+export function setPerformanceMode(mode: PerformanceMode): Promise<PerformanceConfig> {
+  return apiFetch("/performance", {
+    method: "PUT",
+    json: { mode },
+    schema: performanceConfigSchema,
   });
 }
