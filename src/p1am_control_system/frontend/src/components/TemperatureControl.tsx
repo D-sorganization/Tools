@@ -31,6 +31,7 @@ import { TrendFitControls } from "./TrendFitControls";
 import { TrendTimeAxis, TrendFitOverlay } from "./TrendPlotOverlays";
 import { ExportButton } from "./ExportButton";
 import { CollapsibleSection } from "./CollapsibleSection";
+import { EditableValue } from "./EditableValue";
 import "./TemperatureControl.css";
 
 // Rolling trend buffer: deep enough for the longest selectable window
@@ -509,6 +510,54 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
     }
   }, [flash]);
 
+  // Commit a single config field via the same PUT the config editor uses, so an
+  // inline edit (e.g. the HH cutoff shown in the live section) applies at once
+  // without a separate Save step. The server re-validates + clamps and returns
+  // the authoritative config, which we adopt. Best-effort: a reject/failure is
+  // surfaced and the displayed value stays at the server's last-known value.
+  const commitConfigField = useCallback(
+    async <K extends keyof TemperatureConfig>(
+      field: K,
+      value: TemperatureConfig[K],
+      describe: (cfg: TemperatureConfig) => string,
+    ): Promise<void> => {
+      if (!config) return;
+      try {
+        const res = await fetchWithTimeout("/api/temperature/config", {
+          method: "PUT",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ ...config, [field]: value }),
+        });
+        const json = await res.json();
+        if (!res.ok) {
+          flash(
+            `Change rejected: ${
+              json.detail ? JSON.stringify(json.detail) : res.statusText
+            }`,
+            "error",
+          );
+          return;
+        }
+        setConfig(json);
+        setConfigDraft(json);
+        flash(describe(json as TemperatureConfig));
+      } catch (e) {
+        flash(`Change failed: ${(e as Error).message}`, "error");
+      }
+    },
+    [config, flash],
+  );
+
+  const commitHhLimit = useCallback(
+    (value: number) =>
+      commitConfigField(
+        "hh_limit_c",
+        value,
+        (cfg) => `High-high cutoff set to ${cfg.hh_limit_c.toFixed(0)} °C`,
+      ),
+    [commitConfigField],
+  );
+
   const saveConfig = useCallback(async () => {
     if (!configDraft) return;
     setBusy(true);
@@ -599,7 +648,18 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
           </div>
           <div className="tc-metric">
             <span className="tc-metric-label">HH limit</span>
-            <span className="tc-metric-value is-warning">{hhLimit.toFixed(0)} °C</span>
+            <EditableValue
+              className="tc-metric-value is-warning"
+              value={hhLimit}
+              label="High-high cutoff"
+              unit="°C"
+              format={(v) => v.toFixed(0)}
+              min={0}
+              max={config.temp_full_scale_c}
+              step={10}
+              title="High-high cutoff — click to edit"
+              onCommit={commitHhLimit}
+            />
           </div>
           <div className="tc-metric">
             <span className="tc-metric-label">Thermocouple</span>
