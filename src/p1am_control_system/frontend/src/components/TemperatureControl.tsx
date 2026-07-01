@@ -102,6 +102,12 @@ export interface TemperatureStatus {
   /** Operator's setpoint from the last session, recalled by the backend on
    * restart (null when none was ever persisted). Used to pre-fill the entry. */
   last_setpoint_c?: number | null;
+  /** Latest type-K reading (deg C), regardless of which TC is controlling, so
+   * the HMI can show/plot both channels. null/undefined before the first scan. */
+  type_k_temp_c?: number | null;
+  /** Latest type-R reading (deg C), regardless of which TC is controlling, so
+   * the HMI can show/plot both channels. null/undefined before the first scan. */
+  type_r_temp_c?: number | null;
 }
 
 /**

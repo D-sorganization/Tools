@@ -132,3 +132,82 @@ export function fitSeries(points: FitPoint[], methodId: string): FitResult | nul
     return null;
   }
 }
+
+// --------------------------------------------------------------------------
+// Heat-up / cool-down rate (deg C per minute and per hour).
+//
+// The operator fits a linear trend over a chosen recent window to read the
+// heater's ramp rate. These helpers are pure so they can be unit-tested and
+// reused by any trend (DRY); the component just supplies the points, window,
+// and the x-unit scale.
+// --------------------------------------------------------------------------
+
+/** A temperature ramp rate expressed in the two units operators asked for. */
+export interface HeatUpRate {
+  /** Degrees C per minute (positive = heating, negative = cooling). */
+  perMinute: number;
+  /** Degrees C per hour (positive = heating, negative = cooling). */
+  perHour: number;
+}
+
+const MS_PER_MINUTE = 60_000;
+const MS_PER_HOUR = 3_600_000;
+
+/**
+ * Keep only the points whose x is within `windowMs` of the most recent x, so a
+ * fit regresses just the operator-chosen recent window. A non-positive or
+ * non-finite `windowMs` means "no window" and returns the points unchanged.
+ *
+ * @throws TypeError if `points` is not an array.
+ */
+export function pointsInLastWindow(points: FitPoint[], windowMs: number): FitPoint[] {
+  if (!Array.isArray(points)) {
+    throw new TypeError("pointsInLastWindow: points must be an array");
+  }
+  if (!Number.isFinite(windowMs) || windowMs <= 0 || points.length === 0) {
+    return points;
+  }
+  let maxX = -Infinity;
+  for (const p of points) {
+    if (Number.isFinite(p.x) && p.x > maxX) maxX = p.x;
+  }
+  if (!Number.isFinite(maxX)) return points;
+  const cutoff = maxX - windowMs;
+  return points.filter((p) => Number.isFinite(p.x) && p.x >= cutoff);
+}
+
+/**
+ * Convert a linear fit's slope (deg C per x-unit) into a heat-up rate.
+ *
+ * The rate is only defined for the linear method (a straight-line ramp), so any
+ * other / absent fit returns null and the caller can show a placeholder.
+ * `msPerXUnit` is how many milliseconds one x-unit spans — 1 when x is in
+ * milliseconds (as the live trend uses `Date.now()`).
+ *
+ * @throws RangeError if `msPerXUnit` is not a positive finite number.
+ */
+export function heatUpRateFromFit(
+  fit: FitResult | null,
+  msPerXUnit = 1,
+): HeatUpRate | null {
+  if (typeof msPerXUnit !== "number" || !Number.isFinite(msPerXUnit) || msPerXUnit <= 0) {
+    throw new RangeError("heatUpRateFromFit: msPerXUnit must be a positive finite number");
+  }
+  if (!fit || fit.methodId !== "linear") return null;
+  const slopePerX = fit.coeffs[0];
+  if (typeof slopePerX !== "number" || !Number.isFinite(slopePerX)) return null;
+  const perMs = slopePerX / msPerXUnit;
+  return { perMinute: perMs * MS_PER_MINUTE, perHour: perMs * MS_PER_HOUR };
+}
+
+/**
+ * Format a ramp rate for a readout box, e.g. "+12.3 °C/min · +738 °C/hr".
+ * Returns a dash placeholder when no rate is available.
+ */
+export function formatHeatUpRate(rate: HeatUpRate | null): string {
+  if (!rate) return "—";
+  const sign = (n: number): string => (n >= 0 ? "+" : "−");
+  const perMin = `${sign(rate.perMinute)}${Math.abs(rate.perMinute).toFixed(1)} °C/min`;
+  const perHour = `${sign(rate.perHour)}${Math.abs(rate.perHour).toFixed(0)} °C/hr`;
+  return `${perMin} · ${perHour}`;
+}

@@ -4,6 +4,9 @@ import {
   fitSeries,
   getFitMethod,
   fitOptions,
+  heatUpRateFromFit,
+  pointsInLastWindow,
+  formatHeatUpRate,
   NO_FIT_ID,
   type FitPoint,
 } from "./curveFit";
@@ -88,5 +91,94 @@ describe("registry", () => {
   it("looks methods up by id", () => {
     expect(getFitMethod("linear")?.label).toBe("Linear");
     expect(getFitMethod("missing")).toBeNull();
+  });
+});
+
+describe("pointsInLastWindow", () => {
+  it("keeps only points within the window of the latest x", () => {
+    // x in ms; keep the last 2000 ms => x >= 5000-2000 = 3000.
+    const pts: FitPoint[] = [
+      { x: 0, y: 0 },
+      { x: 3000, y: 3 },
+      { x: 4000, y: 4 },
+      { x: 5000, y: 5 },
+    ];
+    expect(pointsInLastWindow(pts, 2000).map((p) => p.x)).toEqual([3000, 4000, 5000]);
+  });
+
+  it("returns all points when the window is non-positive or non-finite", () => {
+    const pts: FitPoint[] = [
+      { x: 0, y: 0 },
+      { x: 10, y: 1 },
+    ];
+    expect(pointsInLastWindow(pts, 0)).toBe(pts);
+    expect(pointsInLastWindow(pts, -5)).toBe(pts);
+    expect(pointsInLastWindow(pts, Number.NaN)).toBe(pts);
+  });
+
+  it("handles an empty series and rejects non-arrays (DbC)", () => {
+    expect(pointsInLastWindow([], 1000)).toEqual([]);
+    // @ts-expect-error deliberate wrong type
+    expect(() => pointsInLastWindow(null, 1000)).toThrow(TypeError);
+  });
+});
+
+describe("heatUpRateFromFit", () => {
+  it("converts a ms-based linear slope into deg/min and deg/hr", () => {
+    // 0.01 deg C per ms => 600 deg/min, 36000 deg/hr.
+    const fit = linearFit.fit([
+      { x: 0, y: 0 },
+      { x: 1000, y: 10 },
+    ]);
+    const rate = heatUpRateFromFit(fit, 1);
+    expect(rate?.perMinute).toBeCloseTo(600, 6);
+    expect(rate?.perHour).toBeCloseTo(36000, 6);
+  });
+
+  it("reports a negative rate while cooling", () => {
+    const fit = linearFit.fit([
+      { x: 0, y: 100 },
+      { x: 60000, y: 40 },
+    ]); // -60 deg over 60 s => -1 deg/min
+    const rate = heatUpRateFromFit(fit, 1);
+    expect(rate?.perMinute).toBeCloseTo(-60, 6); // slope=-0.001 deg/ms => -60/min
+  });
+
+  it("returns null for no fit / non-linear fit", () => {
+    expect(heatUpRateFromFit(null)).toBeNull();
+    expect(
+      heatUpRateFromFit({
+        methodId: "poly",
+        label: "x",
+        coeffs: [1, 0],
+        r2: 1,
+        predict: (x) => x,
+        equation: "",
+      }),
+    ).toBeNull();
+  });
+
+  it("rejects a non-positive x-unit scale (DbC)", () => {
+    const fit = linearFit.fit([
+      { x: 0, y: 0 },
+      { x: 1, y: 1 },
+    ]);
+    expect(() => heatUpRateFromFit(fit, 0)).toThrow(RangeError);
+    expect(() => heatUpRateFromFit(fit, -1)).toThrow(RangeError);
+  });
+});
+
+describe("formatHeatUpRate", () => {
+  it("formats both units with an explicit sign", () => {
+    expect(formatHeatUpRate({ perMinute: 12.34, perHour: 740.4 })).toBe(
+      "+12.3 °C/min · +740 °C/hr",
+    );
+    expect(formatHeatUpRate({ perMinute: -5, perHour: -300 })).toBe(
+      "−5.0 °C/min · −300 °C/hr",
+    );
+  });
+
+  it("shows a placeholder when there is no rate", () => {
+    expect(formatHeatUpRate(null)).toBe("—");
   });
 });
