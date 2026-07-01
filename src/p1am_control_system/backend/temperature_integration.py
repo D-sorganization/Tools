@@ -62,6 +62,13 @@ class TemperatureService:
         # in status() so the HMI can pre-fill the target after a restart. Recalling
         # it NEVER arms/energizes the heater — the controller stays IDLE.
         self._last_setpoint_c: float | None = None
+        # Latest reading of each thermocouple in deg C (None until first poll),
+        # computed from tags every scan regardless of which TC is controlling.
+        # Surfaced in status() so the HMI can display/plot both channels at once,
+        # and the non-controlling one is fed to the controller as the cross-check
+        # / HH-on-either-TC reference.
+        self._last_type_k_c: float | None = None
+        self._last_type_r_c: float | None = None
         # Defense-in-depth E-stop interlock, independent of the controller's own
         # latch: when set, ``_write_relay`` forces the heater relay OFF and
         # surfaces a failed de-energize as a comms failure. Set by the poll loop.
@@ -94,23 +101,42 @@ class TemperatureService:
         PLC last latched, and the controller's HH cutoff / E-stop still force the
         commanded value to False, so a failed write can never *energize* it.
         """
+        cfg = self.controller.config
+        # Scale BOTH thermocouples every scan, independent of which one controls,
+        # so the HMI can show/plot both and the controller gets the non-active TC
+        # as its HH-on-either-TC / cross-check reference.
+        self._last_type_k_c = self._temp_from_channel(tags, cfg.type_k)
+        self._last_type_r_c = self._temp_from_channel(tags, cfg.type_r)
         temp_c = self._temp_from_tags(tags)
+        other_c = (
+            self._last_type_r_c
+            if cfg.active_tc_type == TcType.TYPE_K
+            else self._last_type_k_c
+        )
         # Pass a monotonic clock so the controller can enforce the
         # anti-short-cycle min on/off dwell across scans.
-        relay_on = self.controller.tick(measured_temp_c=temp_c, now=time.monotonic())
+        relay_on = self.controller.tick(
+            measured_temp_c=temp_c,
+            now=time.monotonic(),
+            other_temp_c=other_c,
+        )
         await self._write_relay(relay_on)
         return self.status()
 
     def status(self) -> TemperatureStatus:
-        """Controller status augmented with the recalled last setpoint.
+        """Controller status augmented with service-owned readings.
 
         Returns the controller snapshot with ``last_setpoint_c`` set to the value
-        recalled from persisted settings (``None`` when nothing was recalled), so
-        the HMI can pre-fill the target field without the service leaking any
-        controller internals (LOD).
+        recalled from persisted settings (``None`` when nothing was recalled) and
+        ``type_k_temp_c`` / ``type_r_temp_c`` set to the latest per-channel
+        readings from the most recent poll (``None`` before the first scan), so
+        the HMI can pre-fill the target field and show/plot both thermocouples
+        without the service leaking any controller internals (LOD).
         """
         status: TemperatureStatus = self.controller.status()
         status.last_setpoint_c = self._last_setpoint_c
+        status.type_k_temp_c = self._last_type_k_c
+        status.type_r_temp_c = self._last_type_r_c
         return status
 
     def update_config(self, new_config: TemperatureConfig) -> TemperatureConfig:
@@ -223,6 +249,21 @@ class TemperatureService:
         cfg = self.controller.config
         temp_pct = float(tags.get(cfg.temp_tag, 0.0))
         return float(temp_pct * cfg.temp_full_scale_c / 100.0)
+
+    @staticmethod
+    def _temp_from_channel(tags: dict[str, float] | None, channel: Any) -> float | None:
+        """Scale one thermocouple channel's tag (percent) into deg C, or None.
+
+        Returns None when there is no scan data yet (``tags`` is falsy) so the HMI
+        can distinguish "not read" from a genuine 0 deg C. Uses the SAME
+        percent-of-full-scale conversion as ``_temp_from_tags`` (DRY), applied to
+        the given channel rather than the active one, so both K and R are computed
+        identically regardless of which is controlling.
+        """
+        if not tags:
+            return None
+        pct = float(tags.get(channel.tag, 0.0))
+        return float(pct * channel.full_scale_c / 100.0)
 
     async def _write_relay(self, on: bool) -> bool:
         """Command the heater relay via the client's public coil seam.

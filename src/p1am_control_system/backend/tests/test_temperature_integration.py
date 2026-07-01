@@ -267,6 +267,80 @@ class TestActiveThermocouple:
         assert "active_tc_label" in body
 
 
+class TestBothThermocoupleReadings:
+    """The service surfaces BOTH TC readings every scan and feeds the
+    non-controlling one to the controller as the cross-check reference."""
+
+    def test_status_reports_both_tc_temps_regardless_of_active(self) -> None:
+        async def _go() -> None:
+            svc = _service()  # type K active by default (TAG_0)
+            # K=50% -> 700 C, R=20% -> 280 C. Both reported even though K controls.
+            status = await svc.poll({"TAG_0": 50.0, "TAG_1": 20.0})
+            assert status.type_k_temp_c == pytest.approx(700.0)
+            assert status.type_r_temp_c == pytest.approx(280.0)
+            assert status.measured_temp_c == pytest.approx(700.0)  # active == K
+
+        asyncio.run(_go())
+
+    def test_both_tc_temps_none_before_first_scan(self) -> None:
+        svc = _service()
+        status = svc.status()
+        assert status.type_k_temp_c is None
+        assert status.type_r_temp_c is None
+
+    def test_no_tags_leaves_both_tc_temps_none(self) -> None:
+        async def _go() -> None:
+            svc = _service()
+            status = await svc.poll(None)
+            assert status.type_k_temp_c is None
+            assert status.type_r_temp_c is None
+
+        asyncio.run(_go())
+
+    def test_cross_check_trips_when_controlling_tc_stuck_cold(self) -> None:
+        # The type-R incident end-to-end through the service: control off K but
+        # K is stuck cold (~34 C) while R (the other TC) is genuinely hot. After
+        # the debounce the controller must latch TC_DISAGREE and open the relay.
+        async def _go() -> None:
+            from temperature_controller import _CROSS_FAULT_DEBOUNCE_SCANS
+
+            plc = _FakePLC()
+            svc = _service(plc)
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(700.0)  # RUNNING, K controls
+            # K ~34 C (2.4% of 1400) stuck cold; R ~800 C (57.1%) hot.
+            tags = {"TAG_0": 2.4, "TAG_1": 57.1}
+            status = None
+            for _ in range(_CROSS_FAULT_DEBOUNCE_SCANS):
+                status = await svc.poll(tags)
+            assert status is not None
+            assert status.state == TemperatureState.TRIPPED
+            assert "TC_DISAGREE" in status.trips
+            assert status.relay_on is False
+
+        asyncio.run(_go())
+
+    def test_switching_to_a_dead_cold_tc_while_hot_trips(self) -> None:
+        # Operator switches to control off R while R is dead-cold and the vessel
+        # (K) is hot: the cross-check catches steering onto a dead sensor.
+        async def _go() -> None:
+            from temperature_controller import _CROSS_FAULT_DEBOUNCE_SCANS
+
+            svc = _service()
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(700.0)
+            svc.set_active_tc_type(TcType.TYPE_R)  # smooth switch, stays RUNNING
+            assert svc.controller.state == TemperatureState.RUNNING
+            # R stuck cold (2.4% -> ~34 C), K hot (57.1% -> ~800 C).
+            status = None
+            for _ in range(_CROSS_FAULT_DEBOUNCE_SCANS):
+                status = await svc.poll({"TAG_0": 57.1, "TAG_1": 2.4})
+            assert status is not None
+            assert "TC_DISAGREE" in status.trips
+
+        asyncio.run(_go())
+
+
 class TestServiceAndTcTypeErrors:
     def test_service_estop_engage_and_clear(self) -> None:
         svc = _service()

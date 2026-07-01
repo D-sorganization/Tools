@@ -234,6 +234,23 @@ class TemperatureStatus(BaseModel):
     active_tc_type: TcType = Field(default=TcType.TYPE_K)
     active_tc_label: str = "Type K"
 
+    type_k_temp_c: float | None = Field(
+        default=None,
+        description=(
+            "Latest type-K thermocouple reading (deg C), regardless of which TC "
+            "is controlling, so the HMI can display and plot both channels at "
+            "once. None when no reading is available yet."
+        ),
+    )
+    type_r_temp_c: float | None = Field(
+        default=None,
+        description=(
+            "Latest type-R thermocouple reading (deg C), regardless of which TC "
+            "is controlling, so the HMI can display and plot both channels at "
+            "once. None when no reading is available yet."
+        ),
+    )
+
     estopped: bool = False
 
     last_setpoint_c: float | None = Field(

@@ -313,6 +313,122 @@ class TestHHCutoff:
 
 
 # --------------------------------------------------------------------------
+# HH on EITHER thermocouple (dead-controlling-sensor backstop)
+# --------------------------------------------------------------------------
+
+
+class TestHHOnEitherThermocouple:
+    """The HH cutoff must trip on the OTHER TC too, so a stuck/dead controlling
+    sensor reading a false 'cold' cannot mask a real over-temperature."""
+
+    def test_hh_trips_on_other_tc_while_controlling_tc_reads_cold(self) -> None:
+        # Controlling TC stuck cold (30 C) but the other TC is at the HH limit:
+        # the vessel is genuinely over-temp and must trip even though the sensor
+        # we steer on says it is cold — the exact type-R runaway signature.
+        c = TemperatureController(TemperatureConfig(hh_limit_c=1000.0))
+        c.set_permissive(True)
+        c.set_setpoint_c(800.0)
+        relay = c.tick(30.0, other_temp_c=1000.0)
+        assert relay is False
+        assert c.state == TemperatureState.TRIPPED
+        assert "HH_TEMP" in c.trips
+
+    def test_other_tc_below_limit_does_not_trip_hh(self) -> None:
+        c = TemperatureController(TemperatureConfig(hh_limit_c=1000.0))
+        c.set_permissive(True)
+        c.set_setpoint_c(800.0)
+        c.tick(700.0, other_temp_c=999.0)
+        assert c.state == TemperatureState.RUNNING
+        assert c.trips == []
+
+    def test_missing_other_tc_preserves_single_tc_hh(self) -> None:
+        # other_temp_c=None (single-TC callers / bench with one probe): HH still
+        # evaluates on the controlling TC exactly as before.
+        c = TemperatureController(TemperatureConfig(hh_limit_c=1000.0))
+        c.set_permissive(True)
+        c.set_setpoint_c(800.0)
+        assert c.tick(1000.0) is False
+        assert c.state == TemperatureState.TRIPPED
+        assert "HH_TEMP" in c.trips
+
+
+# --------------------------------------------------------------------------
+# Cross-check trip: controlling sensor stuck cold while the other reads hot
+# --------------------------------------------------------------------------
+
+
+class TestCrossCheckTrip:
+    """Debounced TC_DISAGREE trip — the fast catch for a dead controlling
+    thermocouple driving a runaway before HH (the type-R incident)."""
+
+    def _run_disagreeing_scans(
+        self, c: TemperatureController, n: int, *, active: float = 30.0
+    ) -> None:
+        for _ in range(n):
+            c.tick(active, other_temp_c=800.0)
+
+    def test_trips_after_debounce_when_controlling_tc_stuck_cold(self) -> None:
+        from temperature_controller import _CROSS_FAULT_DEBOUNCE_SCANS
+
+        c = fresh_running_controller(500.0)
+        # One scan short of the debounce: still RUNNING, no trip yet.
+        self._run_disagreeing_scans(c, _CROSS_FAULT_DEBOUNCE_SCANS - 1)
+        assert c.state == TemperatureState.RUNNING
+        assert "TC_DISAGREE" not in c.trips
+        # The scan that reaches the debounce latches the trip and kills the relay.
+        relay = c.tick(30.0, other_temp_c=800.0)
+        assert relay is False
+        assert c.state == TemperatureState.TRIPPED
+        assert "TC_DISAGREE" in c.trips
+
+    def test_debounce_resets_on_a_good_scan(self) -> None:
+        from temperature_controller import _CROSS_FAULT_DEBOUNCE_SCANS
+
+        c = fresh_running_controller(500.0)
+        self._run_disagreeing_scans(c, _CROSS_FAULT_DEBOUNCE_SCANS - 1)
+        # A single agreeing scan (both plausibly warm) breaks the streak...
+        c.tick(400.0, other_temp_c=420.0)
+        assert "TC_DISAGREE" not in c.trips
+        # ...so it now takes a full fresh debounce window to trip again.
+        self._run_disagreeing_scans(c, _CROSS_FAULT_DEBOUNCE_SCANS - 1)
+        assert c.state == TemperatureState.RUNNING
+        assert "TC_DISAGREE" not in c.trips
+
+    def test_no_trip_at_startup_when_both_cold(self) -> None:
+        # Both TCs near ambient during warm-up must never cross-trip.
+        c = fresh_running_controller(500.0)
+        for _ in range(20):
+            c.tick(25.0, other_temp_c=27.0)
+        assert c.state == TemperatureState.RUNNING
+        assert "TC_DISAGREE" not in c.trips
+
+    def test_no_trip_when_not_running(self) -> None:
+        # ARMED (not yet RUNNING): the control law can't energize, so a cold/hot
+        # split is not a runaway and must not trip.
+        c = fresh_armed_controller()
+        for _ in range(20):
+            c.tick(30.0, other_temp_c=800.0)
+        assert c.state == TemperatureState.ARMED
+        assert "TC_DISAGREE" not in c.trips
+
+    def test_no_trip_when_controlling_tc_is_the_hot_one(self) -> None:
+        # The GOOD sensor is controlling (hot) and the OTHER is the broken-cold
+        # one: we are not steering on a dead sensor, so no cross-trip.
+        c = fresh_running_controller(500.0)
+        for _ in range(20):
+            c.tick(480.0, other_temp_c=30.0)
+        assert c.state == TemperatureState.RUNNING
+        assert "TC_DISAGREE" not in c.trips
+
+    def test_missing_other_tc_never_cross_trips(self) -> None:
+        c = fresh_running_controller(500.0)
+        for _ in range(20):
+            c.tick(30.0)  # no other_temp_c -> no cross-check data
+        assert c.state == TemperatureState.RUNNING
+        assert "TC_DISAGREE" not in c.trips
+
+
+# --------------------------------------------------------------------------
 # acknowledge_trip transitions
 # --------------------------------------------------------------------------
 

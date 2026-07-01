@@ -35,6 +35,22 @@ __all__ = [
 
 logger = logging.getLogger("dcs_backend.temperature")
 
+# --------------------------------------------------------------------------
+# Cross-check ("controlling sensor stuck") trip thresholds.
+#
+# The type-R incident showed the worst failure this system can have: the
+# controlling thermocouple died and read a fixed ~34 C ("cold") while the vessel
+# was really >790 C, so the on/off law called for heat indefinitely with no
+# over-temperature protection until HH. When BOTH thermocouples are available we
+# can catch this fast: if the CONTROLLING sensor reads essentially cold while the
+# other reads clearly hot AND the heater is running, the controlling sensor is
+# lying and we trip. The band is deliberately wide (cold vs. hot, not a tight
+# delta) so a legitimate inter-probe gradient never false-trips, and it is
+# debounced over several scans so a single transient read can never trip it.
+_CROSS_FAULT_ACTIVE_MAX_C = 100.0  # controlling TC must read below this ("cold")
+_CROSS_FAULT_OTHER_MIN_C = 200.0  # other TC must read at/above this ("hot")
+_CROSS_FAULT_DEBOUNCE_SCANS = 5  # consecutive disagreeing scans before latching
+
 
 class TemperatureController(SafetyStateMachine[TemperatureState]):
     """State machine + on/off control law for the resistive heater.
@@ -61,6 +77,14 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
         self._config = config
         self._setpoint_c = 0.0
         self._last_t = 0.0
+        # Most recent reading of the OTHER (non-controlling) thermocouple in
+        # deg C, or None when it wasn't supplied / wasn't finite. Used only for
+        # the HH-on-either-TC backstop and the cross-check trip below; it never
+        # drives the control law (that always follows the active TC via _last_t).
+        self._last_other_t: float | None = None
+        # Consecutive scans the cross-check disagreement has held. Debounces the
+        # stuck-controlling-sensor trip so a single transient can never latch it.
+        self._cross_fault_scans = 0
         # Commanded relay state from the most recent tick. Held across ticks so
         # the hysteresis band can keep the relay in its prior position while the
         # measured temperature sits inside the deadband.
@@ -228,6 +252,21 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
     def _on_trip_acknowledged(self) -> None:
         self._setpoint_c = 0.0
 
+    @staticmethod
+    def _finite_or_none(value: float | None) -> float | None:
+        """Return ``value`` as a finite float, or None if missing/garbage.
+
+        The other-TC reading is advisory safety data, not control feedback, so an
+        absent or non-finite value simply means "no cross-check data this scan"
+        rather than a fault — unlike the controlling TC, whose garbage reading
+        trips ``_evaluate_sensor_fault``.
+        """
+        if value is None or isinstance(value, bool):
+            return None
+        if not isinstance(value, int | float) or not math.isfinite(float(value)):
+            return None
+        return float(value)
+
     def _evaluate_sensor_fault(self, raw_temp: float) -> None:
         """Latch a TC_FAULT trip on a non-finite/garbage feedback while RUNNING.
 
@@ -249,11 +288,63 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
             self._trips.add("TC_FAULT")
 
     def _evaluate_trips(self) -> None:
-        """Latch the HH cutoff based on the latest temperature; flips state to
-        TRIPPED on first breach."""
-        if self._last_t >= self._config.hh_limit_c:
+        """Latch every temperature trip for this scan, then flip to TRIPPED.
+
+        Adds any breached trip to ``self._trips`` first and latches once, so a
+        trip discovered by the cross-check (evaluated after HH) still flips the
+        state in the SAME tick rather than lagging a scan.
+        """
+        self._evaluate_hh_cutoff()
+        self._evaluate_cross_fault()
+        self._latch_trips(log_context=self._trip_log_context())
+
+    def _evaluate_hh_cutoff(self) -> None:
+        """Latch HH when EITHER thermocouple reaches the high-high limit.
+
+        Checking both channels means a stuck/dead *controlling* sensor cannot
+        mask a real over-temperature: if the vessel is genuinely hot, the healthy
+        channel still trips the cutoff even while the controller reads the dead
+        one at a false "cold". The other channel only counts when it was supplied
+        (``_last_other_t`` is not None), so single-TC callers are unaffected.
+        """
+        hottest = self._last_t
+        if self._last_other_t is not None:
+            hottest = max(hottest, self._last_other_t)
+        if hottest >= self._config.hh_limit_c:
             self._trips.add("HH_TEMP")
-        self._latch_trips(log_context=f"T={self._last_t:.1f} C")
+
+    def _evaluate_cross_fault(self) -> None:
+        """Debounced trip when the CONTROLLING thermocouple is stuck cold.
+
+        Fires only when, for ``_CROSS_FAULT_DEBOUNCE_SCANS`` consecutive scans,
+        the controller is RUNNING, the controlling TC reads essentially cold
+        (< ``_CROSS_FAULT_ACTIVE_MAX_C``), and the other TC reads clearly hot
+        (>= ``_CROSS_FAULT_OTHER_MIN_C``). That combination — heating while the
+        sensor we steer on says "cold" but its neighbour says "hot" — is the
+        signature of a dead/disconnected controlling thermocouple (the type-R
+        incident), which the on/off law would otherwise answer with unbounded
+        heat. Any disagreeing streak that breaks resets the debounce, so only a
+        sustained fault latches ``TC_DISAGREE``.
+        """
+        other = self._last_other_t
+        disagreeing = (
+            self._state == TemperatureState.RUNNING
+            and other is not None
+            and self._last_t < _CROSS_FAULT_ACTIVE_MAX_C
+            and other >= _CROSS_FAULT_OTHER_MIN_C
+        )
+        if not disagreeing:
+            self._cross_fault_scans = 0
+            return
+        self._cross_fault_scans += 1
+        if self._cross_fault_scans >= _CROSS_FAULT_DEBOUNCE_SCANS:
+            self._trips.add("TC_DISAGREE")
+
+    def _trip_log_context(self) -> str:
+        """Human-readable temperature context for the trip log line."""
+        if self._last_other_t is None:
+            return f"T={self._last_t:.1f} C"
+        return f"T={self._last_t:.1f} C, other={self._last_other_t:.1f} C"
 
     def _should_force_relay_off(self) -> bool:
         """All "kill the heater now" conditions in one place."""
@@ -285,7 +376,13 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
             return False
         return bool((now - self._last_switch_t) < min_dwell)
 
-    def tick(self, measured_temp_c: float, now: float | None = None) -> bool:
+    def tick(
+        self,
+        measured_temp_c: float,
+        now: float | None = None,
+        *,
+        other_temp_c: float | None = None,
+    ) -> bool:
         """Advance the controller one cycle and return the commanded relay state.
 
         Reads the temperature feedback, evaluates the HH cutoff (latching it on
@@ -305,10 +402,14 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
             dwell, so shutdowns are always one tick.
 
         Args:
-            measured_temp_c: thermocouple temperature in deg C.
+            measured_temp_c: controlling thermocouple temperature in deg C.
             now: Monotonic timestamp in seconds, used to enforce the min on/off
                 dwell. When None the dwell is not enforced (the control law
                 stays deterministic for unit tests that pass explicit times).
+            other_temp_c: reading of the OTHER (non-controlling) thermocouple in
+                deg C, or None when unavailable. Used only by the HH-on-either-TC
+                backstop and the cross-check trip — never by the control law. A
+                non-finite value is treated as None (no safety data this scan).
 
         Precondition: measured_temp_c is a finite float. Non-finite inputs are
         treated as 0 (safe).
@@ -322,6 +423,7 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
         # finite value, so an open thermocouple trips instead of reading "cold".
         self._evaluate_sensor_fault(measured_temp_c)
         self._last_t = self._safe_finite(measured_temp_c)
+        self._last_other_t = self._finite_or_none(other_temp_c)
 
         self._evaluate_trips()
 
