@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
+import { startStopView, setpointOutcome } from "../lib/heaterControls";
 import {
   type AxisRange,
   defaultAxisRange,
@@ -52,8 +53,11 @@ interface TempSample {
  *    controller; the operator must acknowledge to reset (server enforces).
  *  - Setpoint clamping happens server-side, so the displayed value reflects what
  *    was actually applied (not what was typed).
- *  - "Apply Setpoint" commits the staged value — typing alone commands nothing.
- *  - Permissive must be ON before any setpoint takes effect (server enforces).
+ *  - Operator model is Start/Stop: Start arms the heater (and applies the shown
+ *    target); Stop opens the relay immediately. A setpoint is committed by
+ *    pressing Enter (or the ± steps) — there is no separate apply step. While
+ *    stopped a typed target is staged and takes effect on Start (server enforces
+ *    that a setpoint only applies once the controller is started).
  */
 
 /** Thermocouple type selectable for the heater control. */
@@ -110,9 +114,9 @@ const STATE_LABELS: Record<TemperatureStatus["state"], string> = {
 };
 
 const STATE_HINTS: Record<TemperatureStatus["state"], string> = {
-  idle: "permissive off",
-  armed: "ready · set a target",
-  running: "regulating heater",
+  idle: "stopped · press Start",
+  armed: "started · set a target",
+  running: "heating to setpoint",
   tripped: "latched · acknowledge",
 };
 
@@ -173,6 +177,32 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
     }, 4000);
   }, []);
 
+  // Raw POST helpers (DRY): used by both the Start/Stop button and the setpoint
+  // commit. They don't consult the (possibly stale) live status — the caller
+  // decides when it is safe to send.
+  const postPermissive = useCallback(async (enabled: boolean): Promise<void> => {
+    const res = await fetchWithTimeout("/api/temperature/permissive", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ enabled }),
+    });
+    if (!res.ok) throw new Error(await res.text());
+  }, []);
+
+  const postSetpoint = useCallback(async (value: number): Promise<number> => {
+    const res = await fetchWithTimeout("/api/temperature/setpoint", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ value_c: value }),
+    });
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.detail ?? res.statusText);
+    return json.applied_c as number;
+  }, []);
+
+  // Commit a setpoint. When the heater is started it applies now; when stopped
+  // it is staged as the target (applied on Start); when tripped / status-unknown
+  // it is refused — decided by the pure setpointOutcome() helper.
   const applySetpoint = useCallback(
     async (rawValue: number) => {
       if (!Number.isFinite(rawValue)) {
@@ -183,34 +213,24 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
         flash("Config not loaded", "error");
         return;
       }
-      // Guard rail: the server silently ignores setpoints unless the controller
-      // is armed, so tell the operator instead of pretending it was applied.
-      // Without live status we can't verify permissive/trip — refuse.
-      if (!liveStatus) {
-        flash("Live status unavailable — cannot confirm permissive/trip.", "error");
+      const outcome = setpointOutcome(liveStatus);
+      if (outcome === "blocked") {
+        flash(
+          liveStatus?.state === "tripped"
+            ? "Controller is TRIPPED — acknowledge the trip first."
+            : "Live status unavailable — commands are blocked.",
+          "error",
+        );
         return;
       }
-      if (liveStatus.state === "tripped") {
-        flash("Controller is TRIPPED — acknowledge the trip first.", "error");
-        return;
-      }
-      if (!liveStatus.permissive) {
-        flash("Permissive is OFF — enable it before commanding the heater.", "error");
+      if (outcome === "stage") {
+        setStagedSetpointText(rawValue.toFixed(1));
+        flash(`Target set to ${rawValue.toFixed(1)} °C — press Start to heat`);
         return;
       }
       setBusy(true);
       try {
-        const res = await fetchWithTimeout("/api/temperature/setpoint", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ value_c: rawValue }),
-        });
-        const json = await res.json();
-        if (!res.ok) {
-          flash(`Setpoint rejected: ${json.detail ?? res.statusText}`, "error");
-          return;
-        }
-        const applied = json.applied_c as number;
+        const applied = await postSetpoint(rawValue);
         setStagedSetpointText(applied.toFixed(1));
         flash(`Applied ${applied.toFixed(1)} °C`);
       } catch (e) {
@@ -219,7 +239,7 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
         setBusy(false);
       }
     },
-    [config, flash, liveStatus],
+    [config, flash, liveStatus, postSetpoint],
   );
 
   const nudgeSetpoint = useCallback(
@@ -232,7 +252,8 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
     [stagedSetpointText, applySetpoint],
   );
 
-  const handleApplyClick = useCallback(() => {
+  // Commit the typed setpoint (Enter key). No separate "apply" button.
+  const commitSetpoint = useCallback(() => {
     const v = Number.parseFloat(stagedSetpointText);
     if (!Number.isFinite(v)) {
       flash("Enter a number first", "error");
@@ -241,33 +262,45 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
     applySetpoint(v);
   }, [stagedSetpointText, applySetpoint, flash]);
 
-  const setPermissive = useCallback(
-    async (enabled: boolean) => {
-      if (
-        !enabled &&
-        liveStatus?.relay_on &&
-        !window.confirm(
-          "Disabling permissive will open the heater relay immediately. Continue?",
-        )
-      )
-        return;
-      setBusy(true);
-      try {
-        const res = await fetchWithTimeout("/api/temperature/permissive", {
-          method: "POST",
-          headers: { "content-type": "application/json" },
-          body: JSON.stringify({ enabled }),
-        });
-        if (!res.ok) throw new Error(await res.text());
-        flash(enabled ? "Permissive ON" : "Permissive OFF");
-      } catch (e) {
-        flash(`Permissive set failed: ${(e as Error).message}`, "error");
-      } finally {
-        setBusy(false);
+  // Start: arm the heater, then heat to the shown target if one is set. Sends
+  // the setpoint after arming (server-side ordering) so it isn't rejected.
+  const handleStart = useCallback(async () => {
+    setBusy(true);
+    try {
+      await postPermissive(true);
+      const target = Number.parseFloat(stagedSetpointText);
+      if (Number.isFinite(target) && target > 0) {
+        const applied = await postSetpoint(target);
+        setStagedSetpointText(applied.toFixed(1));
+        flash(`Heater started — heating to ${applied.toFixed(1)} °C`);
+      } else {
+        flash("Heater started — enter a target to begin heating");
       }
-    },
-    [liveStatus?.relay_on, flash],
-  );
+    } catch (e) {
+      flash(`Start failed: ${(e as Error).message}`, "error");
+    } finally {
+      setBusy(false);
+    }
+  }, [postPermissive, postSetpoint, stagedSetpointText, flash]);
+
+  // Stop: open the relay immediately (confirm if it is currently energized).
+  const handleStop = useCallback(async () => {
+    if (
+      liveStatus?.relay_on &&
+      !window.confirm("Stop the heater? The relay will open immediately.")
+    ) {
+      return;
+    }
+    setBusy(true);
+    try {
+      await postPermissive(false);
+      flash("Heater stopped");
+    } catch (e) {
+      flash(`Stop failed: ${(e as Error).message}`, "error");
+    } finally {
+      setBusy(false);
+    }
+  }, [postPermissive, liveStatus?.relay_on, flash]);
 
   const setActiveTcType = useCallback(
     async (tcType: TcType) => {
@@ -352,6 +385,8 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
   const deadband = s?.deadband_c ?? config.deadband_c;
   const tripped = state === "tripped";
   const hhTripped = tripped || (s ? hasHighHighTrip(s.trips) : false);
+  // Operator-facing Start/Stop button state (pure helper — see lib/heaterControls).
+  const startStop = startStopView(s);
 
   // Highlight measured temperature amber within ~90 % of the HH limit.
   const tempWarn = s ? s.measured_temp_c >= 0.9 * hhLimit : false;
@@ -426,21 +461,31 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
             </button>
           )}
           <button
-            className={`tc-permissive ${s?.permissive ? "is-on" : ""}`}
-            onClick={() => setPermissive(!s?.permissive)}
-            disabled={busy}
+            className="tc-permissive"
+            onClick={startStop.command === "start" ? handleStart : handleStop}
+            disabled={busy || startStop.disabled}
+            style={{
+              background:
+                startStop.command === "stop"
+                  ? "var(--color-error)"
+                  : "var(--color-success)",
+              color: "#04141b",
+              borderColor: "transparent",
+            }}
             title={
               busy
                 ? "Applying — please wait…"
-                : "Master enable — the heater relay is forced open while OFF"
+                : startStop.command === "start"
+                  ? "Start the heater — arm and heat to the target"
+                  : "Stop the heater — the relay opens immediately"
             }
           >
             <span className="dot" />
             {busy
               ? "APPLYING…"
-              : s?.permissive
-                ? "PERMISSIVE ON"
-                : "PERMISSIVE OFF"}
+              : startStop.command === "stop"
+                ? "■ STOP"
+                : "▶ START"}
           </button>
         </div>
       </div>
@@ -559,8 +604,9 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
             value={stagedSetpointText}
             onChange={(e) => setStagedSetpointText(e.target.value)}
             onKeyDown={(e) => {
-              if (e.key === "Enter") handleApplyClick();
+              if (e.key === "Enter") commitSetpoint();
             }}
+            aria-label="Setpoint target (°C) — press Enter to apply"
           />
           <button
             className="tc-step-btn"
@@ -586,13 +632,11 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
             />
             °C
           </span>
-          <button
-            className={`btn btn-primary ${busy ? "tc-disabled" : ""}`}
-            onClick={handleApplyClick}
-            disabled={busy}
+          <span
+            style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}
           >
-            Apply Setpoint
-          </button>
+            Type a target and press <strong>Enter</strong> to apply — or use ± .
+          </span>
         </div>
 
         {s && s.state === "tripped" ? (
@@ -601,8 +645,8 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
           </p>
         ) : s && !s.permissive ? (
           <p className="tc-setpoint-warn">
-            ⚠ Permissive is OFF — enable it (switch, top-right) before commanding
-            the heater.
+            Heater is stopped — set a target, then press <strong>Start</strong> to
+            begin heating.
           </p>
         ) : !s ? (
           <p className="tc-setpoint-warn">
