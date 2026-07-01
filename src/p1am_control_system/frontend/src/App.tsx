@@ -1,4 +1,11 @@
-import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  lazy,
+  Suspense,
+} from "react";
 import { RoutingMatrix } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
 import { AlarmsHeader } from "./components/AlarmsHeader";
@@ -112,10 +119,15 @@ export const App: React.FC = () => {
   const [notification, setNotification] = useState<NotificationState | null>(null);
 
   // Show a notification banner (declared early so the telemetry hook can use it).
-  const triggerNotification = (message: string, type: NotificationType) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
+  // Stable identity (empty deps — only calls stable setState) so memoized
+  // children that take `triggerNotification` don't re-render every frame.
+  const triggerNotification = useCallback(
+    (message: string, type: NotificationType) => {
+      setNotification({ message, type });
+      setTimeout(() => setNotification(null), 5000);
+    },
+    [],
+  );
 
   // Live telemetry (WS stream + derived state) is owned by a dedicated hook.
   const {
@@ -228,18 +240,26 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleSelectTag = (name: string) => {
+  // Latest live values read by the (stable) tag selector below. Kept in refs so
+  // `handleSelectTag` keeps a stable identity (for memoized consumers) while
+  // still reading the current frame's values when actually invoked.
+  const tagValuesRef = useRef(tagValues);
+  tagValuesRef.current = tagValues;
+  const tagsDictRef = useRef(tagsDict);
+  tagsDictRef.current = tagsDict;
+
+  const handleSelectTag = useCallback((name: string) => {
     const id = parseTagId(name);
     if (id !== null) {
       setInspectorView({ type: "tag", tagId: id });
-      setOverrideVal(fmtNumber(tagValues[id] ?? 0.0, 2, "0.00"));
+      setOverrideVal(fmtNumber(tagValuesRef.current[id] ?? 0.0, 2, "0.00"));
       setShowOverrideConfirm(false);
       return;
     }
     setInspectorView({ type: "custom_tag", tagName: name });
-    setOverrideVal(fmtNumber(tagsDict[name] ?? 0.0, 2, "0.00"));
+    setOverrideVal(fmtNumber(tagsDictRef.current[name] ?? 0.0, 2, "0.00"));
     setShowOverrideConfirm(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (inspectorView.type === "alicat") {
@@ -449,7 +469,7 @@ export const App: React.FC = () => {
     }
   };
 
-  const fetchAlarmsAndEvents = async () => {
+  const fetchAlarmsAndEvents = useCallback(async () => {
     try {
       const [alarms, events] = await Promise.all([
         api.getActiveAlarms(),
@@ -460,17 +480,32 @@ export const App: React.FC = () => {
     } catch (err) {
       console.error("Failed to fetch alarms and events", err);
     }
-  };
+  }, [setActiveAlarms]);
 
-  const handleAcknowledgeAlarm = async (tagId: string) => {
-    try {
-      await api.acknowledgeAlarm(tagId);
-      triggerNotification(`Alarm on Tag ${tagId} acknowledged`, "success");
-      fetchAlarmsAndEvents();
-    } catch {
-      triggerNotification("Failed to acknowledge alarm", "error");
+  const handleAcknowledgeAlarm = useCallback(
+    async (tagId: string) => {
+      try {
+        await api.acknowledgeAlarm(tagId);
+        triggerNotification(`Alarm on Tag ${tagId} acknowledged`, "success");
+        fetchAlarmsAndEvents();
+      } catch {
+        triggerNotification("Failed to acknowledge alarm", "error");
+      }
+    },
+    [triggerNotification, fetchAlarmsAndEvents],
+  );
+
+  // Stable ack-all handler for the memoized AlarmsHeader. `activeAlarms` is read
+  // from a ref so this identity survives every telemetry frame.
+  const activeAlarmsRef = useRef(activeAlarms);
+  activeAlarmsRef.current = activeAlarms;
+  const handleAcknowledgeAll = useCallback(async () => {
+    for (const a of activeAlarmsRef.current) {
+      if (!a.acknowledged) {
+        await handleAcknowledgeAlarm(a.tag_id);
+      }
     }
-  };
+  }, [handleAcknowledgeAlarm]);
 
   const handleAlicatSetpoint = async (deviceId: string, val: number) => {
     try {
@@ -555,21 +590,24 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleTabVisibilityToggle = (tab: TabId) => {
-    const nextVisible = { ...visibleTabs, [tab]: !visibleTabs[tab] };
-    const anyVisible = Object.values(nextVisible).some(Boolean);
-    if (!anyVisible) {
-      triggerNotification("At least one tab must remain visible.", "error");
-      return;
-    }
-    setVisibleTabs(nextVisible);
-    if (activeTab === tab && !nextVisible[tab]) {
-      const firstVisible = (Object.keys(nextVisible) as TabId[]).find(
-        (k) => nextVisible[k],
-      );
-      setActiveTab(firstVisible ?? "trends");
-    }
-  };
+  const handleTabVisibilityToggle = useCallback(
+    (tab: TabId) => {
+      const nextVisible = { ...visibleTabs, [tab]: !visibleTabs[tab] };
+      const anyVisible = Object.values(nextVisible).some(Boolean);
+      if (!anyVisible) {
+        triggerNotification("At least one tab must remain visible.", "error");
+        return;
+      }
+      setVisibleTabs(nextVisible);
+      if (activeTab === tab && !nextVisible[tab]) {
+        const firstVisible = (Object.keys(nextVisible) as TabId[]).find(
+          (k) => nextVisible[k],
+        );
+        setActiveTab(firstVisible ?? "trends");
+      }
+    },
+    [visibleTabs, activeTab, triggerNotification],
+  );
 
   // Initial REST fetches on mount. The live WebSocket stream is owned by the
   // useTelemetryStream hook above; this only pulls the one-shot config/registry.
@@ -704,15 +742,9 @@ export const App: React.FC = () => {
         </div>
       </header>
 
-      <AlarmsHeader 
-        activeAlarms={activeAlarms} 
-        onAcknowledgeAll={async () => {
-          for (const a of activeAlarms) {
-            if (!a.acknowledged) {
-              await handleAcknowledgeAlarm(a.tag_id);
-            }
-          }
-        }} 
+      <AlarmsHeader
+        activeAlarms={activeAlarms}
+        onAcknowledgeAll={handleAcknowledgeAll}
       />
 
       {/* Main content — the inspector is now a slide-in drawer (below), not a column */}

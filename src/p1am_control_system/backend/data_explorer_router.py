@@ -79,19 +79,33 @@ def _build_slot() -> Iterator[None]:
         _build_semaphore.release()
 
 
-def create_data_explorer_router(get_session_dep: Callable[..., object]) -> APIRouter:
+def create_data_explorer_router(
+    get_session_dep: Callable[..., object],
+    read_auth_dep: Callable[..., object] | None = None,
+) -> APIRouter:
     """Build the Data Explorer ``APIRouter`` bound to a session dependency.
 
     Args:
         get_session_dep: The backend's ``get_session`` FastAPI dependency
             (a generator yielding a SQLModel ``Session``). Used by the
             historian-backed ``/signals`` and ``/dataset`` routes.
+        read_auth_dep: Optional FastAPI dependency gating the whole router
+            behind read authentication. The integrator passes the backend's
+            opt-in read-auth dependency so, when enabled, every explorer route
+            requires an API key. Omitted/``None`` keeps the routes public
+            (default bench behavior), matching ``/api/trends`` and
+            ``/api/export``.
 
     Returns:
         An :class:`fastapi.APIRouter` prefixed ``/api/explorer`` exposing every
         analysis endpoint with ``response_model`` set where applicable.
     """
-    router = APIRouter(prefix="/api/explorer", tags=["explorer"])
+    router_dependencies = [Depends(read_auth_dep)] if read_auth_dep is not None else []
+    router = APIRouter(
+        prefix="/api/explorer",
+        tags=["explorer"],
+        dependencies=router_dependencies,
+    )
 
     @router.get("/signals", response_model=SignalListResponse)
     def get_signals(

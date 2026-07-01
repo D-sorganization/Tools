@@ -42,6 +42,31 @@ class AsyncModbusManager(BasePLCClient):
         self.estop_reset_coil_address = hardware.ESTOP_RESET_COIL
         self.tag_value_registers_address = hardware.TAG_VALUE_BASE
 
+        # Defense-in-depth E-stop interlock latch. When set, the low-level write
+        # seams (write_coil / write_pid_setpoint) independently force any
+        # *energizing* command to the safe OFF/0 direction regardless of what the
+        # controller commanded. Deliberately separate from the controllers' own
+        # latch so a single missed re-engage cannot re-energize an output.
+        self._estop_active = False
+
+    @property
+    def estop_active(self) -> bool:
+        """Whether the low-level write-seam E-stop interlock is latched."""
+        return self._estop_active
+
+    def set_estop_active(self, active: bool) -> None:
+        """Set the low-level write-seam E-stop interlock latch.
+
+        Precondition: ``active`` is exactly a bool (no truthy coercion, to catch
+        caller bugs on this safety-critical seam).
+
+        Raises:
+            TypeError: if ``active`` is not a bool.
+        """
+        if not isinstance(active, bool):
+            raise TypeError(f"active must be a bool, got {type(active).__name__}")
+        self._estop_active = active
+
     @property
     def connected(self) -> bool:
         return self._connected
@@ -375,6 +400,14 @@ class AsyncModbusManager(BasePLCClient):
         Public command seam used by the power-supply service so it no longer
         reaches into this client's private connection/lock. Address and float
         encoding come from the shared hardware contract.
+
+        Defense-in-depth E-stop interlock: when the write-seam latch is set
+        (``set_estop_active(True)``) any *energizing* (non-zero) setpoint is
+        forced to 0 here, independent of the controller's own logic. The
+        de-energizing direction (0) is never blocked. A failed de-energize
+        write (commanded 0 but the write raises/errors) is retried once and, if
+        it still fails, surfaced as ``False`` so the caller escalates a comms
+        alarm rather than leaving the output at its last commanded value.
         """
         if not self._connected:
             return False
@@ -383,43 +416,105 @@ class AsyncModbusManager(BasePLCClient):
         except ValueError as exc:
             logger.warning("write_pid_setpoint: %s", exc)
             return False
+        # Interlock: force an energizing command to 0 while E-stop is latched.
+        if self._estop_active and value != 0.0:
+            logger.warning(
+                "write_pid_setpoint(%d, %f) forced to 0 — E-stop interlock active",
+                pid_index,
+                value,
+            )
+            value = 0.0
+        deenergize = value == 0.0
+        attempts = 2 if deenergize else 1
         async with self.lock:
-            try:
-                resp = await self._get_client().write_registers(
-                    address=address, values=float_to_registers(value)
-                )
-                if resp.isError():
-                    logger.error(
-                        "write_pid_setpoint(%d, %f) failed: %s", pid_index, value, resp
+            for attempt in range(attempts):
+                try:
+                    resp = await self._get_client().write_registers(
+                        address=address, values=float_to_registers(value)
                     )
-                    return False
-                return True
-            except Exception as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+                    if not resp.isError():
+                        return True
+                    logger.error(
+                        "write_pid_setpoint(%d, %f) failed: %s",
+                        pid_index,
+                        value,
+                        resp,
+                    )
+                except Exception as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+                    logger.error(
+                        "write_pid_setpoint(%d, %f) exception: %s",
+                        pid_index,
+                        value,
+                        exc,
+                    )
+                    self._connected = False
+                    if not deenergize:
+                        return False
+                if deenergize and attempt + 1 < attempts:
+                    logger.error(
+                        "write_pid_setpoint(%d, 0) de-energize FAILED — retrying",
+                        pid_index,
+                    )
+            if deenergize:
                 logger.error(
-                    "write_pid_setpoint(%d, %f) exception: %s", pid_index, value, exc
+                    "write_pid_setpoint(%d, 0) de-energize FAILED after retry — "
+                    "comms alarm",
+                    pid_index,
                 )
-                self._connected = False
-                return False
+            return False
 
     async def write_coil(self, address: int, value: bool) -> bool:
-        """Write a single discrete coil (public seam, e.g. the heater relay)."""
+        """Write a single discrete coil (public seam, e.g. the heater relay).
+
+        Defense-in-depth E-stop interlock: when the write-seam latch is set
+        (``set_estop_active(True)``) an *energizing* command (``value`` True) is
+        forced to ``False`` here, independent of the controller's own logic. The
+        de-energizing direction (``False``) is never blocked. A failed
+        de-energize write (commanded ``False`` but the write raises/errors) is
+        retried once and, if it still fails, surfaced as ``False`` so the caller
+        escalates a comms alarm rather than leaving the relay in its last state.
+        """
         if not self._connected:
             return False
         if not isinstance(address, int) or isinstance(address, bool):
             raise TypeError(f"address must be an int, got {type(address).__name__}")
         if not isinstance(value, bool):
             raise TypeError(f"value must be a bool, got {type(value).__name__}")
+        # Interlock: force an energizing command off while E-stop is latched.
+        if self._estop_active and value:
+            logger.warning(
+                "write_coil(%d, True) forced OFF — E-stop interlock active", address
+            )
+            value = False
+        deenergize = value is False
+        attempts = 2 if deenergize else 1
         async with self.lock:
-            try:
-                resp = await self._get_client().write_coil(address=address, value=value)
-                if resp.isError():
+            for attempt in range(attempts):
+                try:
+                    resp = await self._get_client().write_coil(
+                        address=address, value=value
+                    )
+                    if not resp.isError():
+                        return True
                     logger.error("write_coil(%d, %s) failed: %s", address, value, resp)
-                    return False
-                return True
-            except Exception as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
-                logger.error("write_coil(%d, %s) exception: %s", address, value, exc)
-                self._connected = False
-                return False
+                except Exception as exc:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
+                    logger.error(
+                        "write_coil(%d, %s) exception: %s", address, value, exc
+                    )
+                    self._connected = False
+                    if not deenergize:
+                        return False
+                if deenergize and attempt + 1 < attempts:
+                    logger.error(
+                        "write_coil(%d, False) de-energize FAILED — retrying", address
+                    )
+            if deenergize:
+                logger.error(
+                    "write_coil(%d, False) de-energize FAILED after retry — "
+                    "comms alarm",
+                    address,
+                )
+            return False
 
     async def write_tag(self, tag_name: str, value: float) -> bool:
         """Write a 32-bit float directly to a tag register.

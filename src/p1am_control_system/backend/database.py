@@ -33,7 +33,9 @@ def _configure_sqlite_connection(dbapi_connection: Any, _record: Any) -> None:
     must be set on each connect — not once at startup. WAL journaling plus
     ``synchronous=NORMAL`` makes the 10 Hz historian write path ~7x cheaper than
     the default rollback-journal + FULL-sync, and lets readers (trend/export
-    queries) run without blocking the writer.
+    queries) run without blocking the writer. The read-performance pragmas
+    (``mmap_size``, ``cache_size``, ``temp_store``) are likewise per-connection
+    and only speed up reads / bound memory — they do not weaken durability.
     """
     cursor = dbapi_connection.cursor()
     try:
@@ -45,6 +47,22 @@ def _configure_sqlite_connection(dbapi_connection: Any, _record: Any) -> None:
         # never shrinks on disk after a checkpoint. 64 MiB keeps it bounded on the
         # Pi's storage while leaving ample headroom for burst writes.
         cursor.execute("PRAGMA journal_size_limit=67108864")
+        # --- Read-performance pragmas (per-connection, safe for a single writer) ---
+        # These only affect read throughput / memory use; they never relax the
+        # durability guarantees that matter for a safety-critical historian.
+        #
+        # mmap_size=256 MiB: memory-map the DB so hot trend/export range scans read
+        # pages straight from the page cache instead of via pread() syscalls. This
+        # is an upper bound, not a reservation — SQLite maps lazily up to this size.
+        cursor.execute("PRAGMA mmap_size=268435456")
+        # cache_size=-65536: negative => KiB, so 65536 KiB = 64 MiB of page cache
+        # per connection. A larger cache keeps the (tag_name, timestamp) index and
+        # recently-scanned leaf pages resident, cutting I/O on repeated trend reads.
+        cursor.execute("PRAGMA cache_size=-65536")
+        # temp_store=MEMORY (2): keep transient B-trees / materializations (sorts,
+        # temp tables from aggregate/export queries) in RAM rather than spilling to
+        # the Pi's slower storage.
+        cursor.execute("PRAGMA temp_store=MEMORY")
     finally:
         cursor.close()
 
@@ -63,6 +81,7 @@ def init_db() -> None:
     try:
         SQLModel.metadata.create_all(engine)
         _migrate_historian_indexes()
+        _optimize_planner_statistics()
         logger.info("Database tables initialized successfully.")
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
@@ -96,6 +115,23 @@ def _migrate_historian_indexes() -> None:
             conn.exec_driver_sql("PRAGMA wal_checkpoint(TRUNCATE)")
         except Exception as exc:  # pragma: no cover - best-effort reclaim
             logger.warning("WAL truncate checkpoint skipped: %s", exc)
+
+
+def _optimize_planner_statistics() -> None:
+    """Refresh the query-planner statistics once at startup (best-effort).
+
+    ``PRAGMA optimize`` lets SQLite record/update ``sqlite_stat*`` data so the
+    planner picks the right index for the trend/export hot path — especially
+    important right after the ``(tag_name, timestamp)`` migration adds a new
+    index the planner has never seen stats for. It is cheap, idempotent, and
+    non-essential: wrap it so a failure only warns and never blocks boot of the
+    safety-critical controller.
+    """
+    with engine.connect() as conn:
+        try:
+            conn.exec_driver_sql("PRAGMA optimize")
+        except Exception as exc:  # pragma: no cover - best-effort stats refresh
+            logger.warning("PRAGMA optimize skipped: %s", exc)
 
 
 def get_session() -> Generator[Session, None, None]:

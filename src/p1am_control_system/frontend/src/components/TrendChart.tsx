@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef, useMemo } from "react";
 import { Play, Pause, ZoomIn, ZoomOut, Image, FileSpreadsheet, RotateCcw } from "lucide-react";
 import { TAG_INDICES } from "./RoutingMatrix";
 import { type AxisRange, defaultAxisRange } from "../lib/trendAxis";
+import { downsample, RENDER_MAX_POINTS } from "../lib/trendTime";
 import { TrendAxisControls } from "./TrendAxisControls";
 
 interface TrendChartProps {
@@ -36,12 +37,19 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
 
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  // Freeze history when paused
-  useEffect(() => {
-    if (isPaused) {
-      setFrozenHistory([...history]);
-    }
-  }, [isPaused]);
+  // Toggle freeze/live. Capturing the frozen snapshot HERE (in the click
+  // handler) instead of a `useEffect(..., [isPaused])` avoids a stale-closure
+  // race: the effect only re-ran on the isPaused flip, so a frame that landed
+  // between the click and the effect could be missed. Snapshotting the current
+  // `history` synchronously on the freeze click captures exactly what's on
+  // screen at that instant.
+  const togglePause = () => {
+    setIsPaused((prev) => {
+      const next = !prev;
+      if (next) setFrozenHistory(history);
+      return next;
+    });
+  };
 
   // Adjust scroll offset bounds when history changes
   const activeHistoryPool = isPaused ? frozenHistory : history;
@@ -54,7 +62,18 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   // Slice history pool based on duration and offset
   const sliceEnd = activeHistoryPool.length - safeOffset;
   const sliceStart = Math.max(0, sliceEnd - maxSamples);
+  // Full-resolution visible slice — kept intact for the CSV export only.
   const activeHistory = activeHistoryPool.slice(sliceStart, sliceEnd);
+
+  // Render-resolution slice: stride the visible window down to at most
+  // RENDER_MAX_POINTS rows BEFORE the extent scan and SVG path build, so a long
+  // window (e.g. 300 s = 3000 samples) draws a few hundred points instead of
+  // thousands. Memoized on the slice identity + point cap so it isn't recomputed
+  // on unrelated re-renders.
+  const renderHistory = useMemo(
+    () => downsample(activeHistory, RENDER_MAX_POINTS),
+    [activeHistory],
+  );
 
   const toggleTag = (tagId: number) => {
     if (selectedTags.includes(tagId)) {
@@ -81,8 +100,11 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
 
   const fetchSmoothedData = async () => {
     if (smoothingMode === "none" || selectedTags.length === 0) return;
+    // Freeze the on-screen slice at request time (previously done by the
+    // isPaused effect) so the live buffer stops advancing under the fetch.
+    setFrozenHistory(history);
     setIsPaused(true);
-    
+
     const end = new Date();
     const start = new Date(end.getTime() - duration * 1000);
     const startIso = start.toISOString();
@@ -115,60 +137,65 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   const chartWidth = width - paddingLeft - paddingRight;
   const chartHeight = height - paddingTop - paddingBottom;
 
-  // Compute scale boundaries across selected tags in history
-  let minVal = 0;
-  let maxVal = 100;
+  // Compute scale boundaries across selected tags. Memoized on the exact inputs
+  // that move the axis (selected tags, the render-resolution slice, any server
+  // smoothing, zoom, manual override) so the extent scan doesn't re-run on
+  // unrelated re-renders. The scan reads `renderHistory` (already strided to
+  // RENDER_MAX_POINTS) rather than the full slice.
+  const { minVal, maxVal } = useMemo(() => {
+    let lo = 0;
+    let hi = 100;
 
-  if (selectedTags.length > 0) {
-    let realMin = Infinity;
-    let realMax = -Infinity;
-    let hasData = false;
+    if (selectedTags.length > 0) {
+      let realMin = Infinity;
+      let realMax = -Infinity;
+      let hasData = false;
 
-    if (smoothedData) {
-      // ⚡ Bolt Optimization: Use single-pass loops instead of flat() and Math.min/max
-      const series = Object.values(smoothedData);
-      for (let i = 0; i < series.length; i++) {
-        const values = series[i];
-        for (let j = 0; j < values.length; j++) {
-          hasData = true;
-          const val = values[j];
-          if (val < realMin) realMin = val;
-          if (val > realMax) realMax = val;
+      if (smoothedData) {
+        const series = Object.values(smoothedData);
+        for (let i = 0; i < series.length; i++) {
+          const values = series[i];
+          for (let j = 0; j < values.length; j++) {
+            hasData = true;
+            const val = values[j];
+            if (val < realMin) realMin = val;
+            if (val > realMax) realMax = val;
+          }
+        }
+      } else if (renderHistory.length > 0) {
+        hasData = true;
+        for (let i = 0; i < renderHistory.length; i++) {
+          const sample = renderHistory[i];
+          for (let j = 0; j < selectedTags.length; j++) {
+            const val = sample[selectedTags[j]] ?? 0;
+            if (val < realMin) realMin = val;
+            if (val > realMax) realMax = val;
+          }
         }
       }
-    } else if (activeHistory.length > 0) {
-      // ⚡ Bolt Optimization: Use single-pass loops instead of flatMap, map, and Math.min/max
-      hasData = true;
-      for (let i = 0; i < activeHistory.length; i++) {
-        const sample = activeHistory[i];
-        for (let j = 0; j < selectedTags.length; j++) {
-          const val = sample[selectedTags[j]] ?? 0;
-          if (val < realMin) realMin = val;
-          if (val > realMax) realMax = val;
-        }
+
+      if (hasData) {
+        const delta = realMax - realMin;
+        const padding = delta > 0 ? delta * 0.1 : 5;
+        lo = Math.max(0, realMin - padding);
+        hi = realMax + padding;
+
+        // Apply Zoom multiplier
+        const center = lo + (hi - lo) / 2;
+        const zoomedRange = (hi - lo) * zoomLevel;
+        lo = Math.max(0, center - zoomedRange / 2);
+        hi = center + zoomedRange / 2;
       }
     }
 
-    if (hasData) {
-      const delta = realMax - realMin;
-      
-      const padding = delta > 0 ? delta * 0.1 : 5;
-      minVal = Math.max(0, realMin - padding);
-      maxVal = realMax + padding;
-
-      // Apply Zoom multiplier
-      const center = minVal + (maxVal - minVal) / 2;
-      const zoomedRange = (maxVal - minVal) * zoomLevel;
-      minVal = Math.max(0, center - zoomedRange / 2);
-      maxVal = center + zoomedRange / 2;
+    // Manual axis override wins over the auto-scale + zoom computed above.
+    if (!yAxis.auto) {
+      lo = yAxis.min;
+      hi = yAxis.max > yAxis.min ? yAxis.max : yAxis.min + 1;
     }
-  }
 
-  // Manual axis override wins over the auto-scale + zoom computed above.
-  if (!yAxis.auto) {
-    minVal = yAxis.min;
-    maxVal = yAxis.max > yAxis.min ? yAxis.max : yAxis.min + 1;
-  }
+    return { minVal: lo, maxVal: hi };
+  }, [selectedTags, smoothedData, renderHistory, zoomLevel, yAxis]);
 
   const valRange = maxVal - minVal || 1;
 
@@ -179,6 +206,51 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
     const y = paddingTop + chartHeight - ((value - minVal) / valRange) * chartHeight;
     return { x, y };
   };
+
+  // Precompute each selected trace's SVG line + area `d` strings ONCE per input
+  // change instead of on every render. Reads the render-resolution slice
+  // (`renderHistory`) — the expensive per-point string concat now runs over a
+  // few hundred points, not thousands, and is skipped entirely when none of the
+  // inputs changed.
+  const seriesPaths = useMemo(() => {
+    const lastX = paddingLeft + chartWidth;
+    return selectedTags.map((tagId, activeIdx) => {
+      const color = LINE_COLORS[activeIdx % LINE_COLORS.length];
+      const useSmoothed =
+        smoothedData && smoothedData[tagId] && smoothedData[tagId].length > 0;
+      const totalPoints = useSmoothed
+        ? smoothedData[tagId].length
+        : renderHistory.length;
+
+      if (totalPoints < 2) {
+        return { tagId, activeIdx, color, pathD: "", areaD: "", drawable: false };
+      }
+
+      let pathD = "";
+      let areaD = `M ${paddingLeft} ${paddingTop + chartHeight} `;
+
+      if (useSmoothed) {
+        smoothedData[tagId].forEach((val, sampleIdx) => {
+          const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
+          pathD += `${sampleIdx === 0 ? "M" : "L"} ${x} ${y} `;
+          areaD += `L ${x} ${y} `;
+        });
+      } else {
+        renderHistory.forEach((sample, sampleIdx) => {
+          const val = sample[tagId] ?? 0;
+          const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
+          pathD += `${sampleIdx === 0 ? "M" : "L"} ${x} ${y} `;
+          areaD += `L ${x} ${y} `;
+        });
+      }
+
+      areaD += `L ${lastX} ${paddingTop + chartHeight} Z`;
+      return { tagId, activeIdx, color, pathD, areaD, drawable: true };
+    });
+    // getCoordinates depends only on the memoized minVal/maxVal (valRange) and
+    // static chart dims, so the extent inputs below are sufficient.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTags, renderHistory, smoothedData, minVal, maxVal]);
 
   // Snapshot functionality: Download SVG screenshot
   const downloadSnapshotSVG = () => {
@@ -289,7 +361,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
         <div style={{ display: "flex", gap: "0.3rem" }}>
           <button
             type="button"
-            onClick={() => setIsPaused(!isPaused)}
+            onClick={togglePause}
             className="btn"
             style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
             title={isPaused ? "Resume Live Stream" : "Pause / Freeze Plot"}
@@ -605,46 +677,9 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
               -{Math.round(safeOffset / 10)}s
             </text>
 
-            {/* Paths for active tag series */}
-            {selectedTags.map((tagId, activeIdx) => {
-              const color = LINE_COLORS[activeIdx % LINE_COLORS.length];
-              const useSmoothed = smoothedData && smoothedData[tagId] && smoothedData[tagId].length > 0;
-              const totalPoints = useSmoothed ? smoothedData[tagId].length : activeHistory.length;
-
-              if (totalPoints < 2) return null;
-
-              // Generate Path commands
-              let pathD = "";
-              let areaD = `M ${paddingLeft} ${paddingTop + chartHeight} `;
-
-              if (useSmoothed) {
-                smoothedData[tagId].forEach((val, sampleIdx) => {
-                  const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
-                  if (sampleIdx === 0) {
-                    pathD += `M ${x} ${y} `;
-                  } else {
-                    pathD += `L ${x} ${y} `;
-                  }
-                  areaD += `L ${x} ${y} `;
-                });
-              } else {
-                activeHistory.forEach((sample, sampleIdx) => {
-                  const val = sample[tagId] ?? 0;
-                  const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
-                  if (sampleIdx === 0) {
-                    pathD += `M ${x} ${y} `;
-                  } else {
-                    pathD += `L ${x} ${y} `;
-                  }
-                  areaD += `L ${x} ${y} `;
-                });
-              }
-
-              // Close the area path
-              const lastX = paddingLeft + chartWidth;
-              areaD += `L ${lastX} ${paddingTop + chartHeight} Z`;
-
-              return (
+            {/* Paths for active tag series (precomputed in `seriesPaths`) */}
+            {seriesPaths.map(({ tagId, activeIdx, color, pathD, areaD, drawable }) =>
+              drawable ? (
                 <g key={tagId}>
                   {/* Area Gradient */}
                   <path d={areaD} fill={`url(#grad-${activeIdx})`} />
@@ -658,8 +693,8 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
                     strokeLinejoin="round"
                   />
                 </g>
-              );
-            })}
+              ) : null,
+            )}
           </svg>
         )}
       </div>

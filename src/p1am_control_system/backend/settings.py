@@ -82,6 +82,17 @@ class P1AMSettings(BaseSettings):
         default="NORMAL",
         validation_alias="P1AM_SQLITE_SYNCHRONOUS",
     )
+    require_read_auth: bool = Field(
+        default=False,
+        validation_alias="P1AM_REQUIRE_READ_AUTH",
+        description=(
+            "Opt-in gate for the historian/plant read surface (/api/trends, "
+            "/api/export, /api/snapshot, /api/events, /api/plant, "
+            "/api/project/ladder-explorer, /api/explorer/*). Default False keeps "
+            "those routes public so the HMI works in bench mode. When True (and "
+            "P1AM_DEV_NO_AUTH is off) a valid operator/admin API key is required."
+        ),
+    )
 
     @field_validator("plc_driver", mode="before")
     @classmethod

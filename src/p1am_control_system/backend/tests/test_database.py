@@ -32,6 +32,46 @@ def test_configure_sqlite_sets_wal_and_size_limit(tmp_path) -> None:
         conn.close()
 
 
+def test_configure_sqlite_sets_read_perf_pragmas(tmp_path) -> None:
+    # The read-performance pragmas must be applied on every fresh connection.
+    db_file = tmp_path / "readperf.db"
+    conn = sqlite3.connect(db_file)
+    try:
+        database._configure_sqlite_connection(conn, None)
+        # mmap_size is an upper bound; SQLite maps lazily but reports the cap.
+        assert conn.execute("PRAGMA mmap_size").fetchone()[0] == 268_435_456
+        # cache_size uses the negative-KiB convention: -65536 KiB == 64 MiB.
+        assert conn.execute("PRAGMA cache_size").fetchone()[0] == -65_536
+        # temp_store == 2 is the MEMORY setting.
+        assert conn.execute("PRAGMA temp_store").fetchone()[0] == 2
+    finally:
+        conn.close()
+
+
+def test_optimize_planner_statistics_is_best_effort(tmp_path, monkeypatch) -> None:
+    # PRAGMA optimize must run without raising and must never block startup even
+    # when the driver call fails (best-effort contract).
+    engine = create_engine(f"sqlite:///{tmp_path / 'optimize.db'}")
+    SQLModel.metadata.create_all(engine)
+    monkeypatch.setattr(database, "engine", engine)
+    # Happy path: no exception propagates.
+    database._optimize_planner_statistics()
+
+    # Failure path: a raising exec_driver_sql is swallowed (logged as warning).
+    class _BoomConn:
+        def exec_driver_sql(self, _sql: str) -> None:
+            raise RuntimeError("boom")
+
+        def __enter__(self) -> _BoomConn:
+            return self
+
+        def __exit__(self, *_exc: object) -> bool:
+            return False
+
+    monkeypatch.setattr(database.engine, "connect", lambda: _BoomConn())
+    database._optimize_planner_statistics()  # must not raise
+
+
 def test_migration_creates_composite_and_drops_single(tmp_path) -> None:
     # Seed a DB with the OLD schema: a standalone single-column tag_name index.
     engine = create_engine(f"sqlite:///{tmp_path / 'hist.db'}")

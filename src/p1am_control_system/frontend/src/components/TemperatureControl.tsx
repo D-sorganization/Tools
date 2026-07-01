@@ -121,7 +121,7 @@ function hasHighHighTrip(trips: string[]): boolean {
   return trips.some((t) => /(hh|high.?high|over.?temp)/i.test(t));
 }
 
-export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
+const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
   const [config, setConfig] = useState<TemperatureConfig | null>(null);
   const [configDraft, setConfigDraft] = useState<TemperatureConfig | null>(null);
   const [stagedSetpointText, setStagedSetpointText] = useState<string>("0");
@@ -744,6 +744,12 @@ export const TemperatureControl: React.FC<Props> = ({ liveStatus }) => {
     </div>
   );
 };
+
+/**
+ * Memoized so this always-mounted panel only re-renders when `liveStatus`
+ * (ref-stable from useTelemetryStream) changes, not on every ~10 Hz App frame.
+ */
+export const TemperatureControl = React.memo(TemperatureControlImpl);
 
 /**
  * Compact single-trace temperature trend for the controller screen: measured

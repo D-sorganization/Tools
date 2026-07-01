@@ -64,7 +64,7 @@ interface Props {
   historyTimes: number[];
 }
 
-export const SignalDiagnostics: React.FC<Props> = ({ history, historyTimes }) => {
+const SignalDiagnosticsImpl: React.FC<Props> = ({ history, historyTimes }) => {
   const [axis, setAxis] = useState<AxisRange>(
     defaultAxisRange(0, FULL_SCALE_V),
   );
@@ -186,3 +186,10 @@ export const SignalDiagnostics: React.FC<Props> = ({ history, historyTimes }) =>
     </div>
   );
 };
+
+/**
+ * Memoized so the always-mounted diagnostics plot only re-renders when its
+ * `history` / `historyTimes` props change reference, not on every unrelated
+ * ~10 Hz App re-render.
+ */
+export const SignalDiagnostics = React.memo(SignalDiagnosticsImpl);

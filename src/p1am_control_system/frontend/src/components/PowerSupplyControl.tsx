@@ -170,7 +170,7 @@ function noiseMetricValue(stats: NoiseStats | undefined): number | null {
   }
 }
 
-export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onOpenCapture }) => {
+const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) => {
   const [config, setConfig] = useState<PowerSupplyConfig | null>(null);
   const [configDraft, setConfigDraft] = useState<PowerSupplyConfig | null>(null);
   const [mode, setMode] = useState<"current" | "power">("current");
@@ -1077,6 +1077,13 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onOpenCapture 
     </div>
   );
 };
+
+/**
+ * Memoized so this always-mounted panel only re-renders when `liveStatus`
+ * (ref-stable from useTelemetryStream — only a real status change bumps the
+ * reference) or `onOpenCapture` change, not on every ~10 Hz App re-render.
+ */
+export const PowerSupplyControl = React.memo(PowerSupplyControlImpl);
 
 /**
  * Static reference of how the power-supply signals map to the P1AM analog

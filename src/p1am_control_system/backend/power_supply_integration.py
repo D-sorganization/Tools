@@ -23,6 +23,28 @@ class PowerSupplyService:
         self.controller = PowerSupplyController(PowerSupplyConfig())
         self._plc_client = plc_client
         self._logger = logger
+        # Defense-in-depth E-stop interlock, independent of the controller's own
+        # latch: when set, ``_write_pid_setpoint`` forces the AO command to 0 and
+        # surfaces a failed de-energize as a comms failure. Set by the poll loop.
+        self._estop_active = False
+        # Latched True when a commanded de-energize (0) write failed even after a
+        # retry, so the caller can escalate a comms alarm.
+        self._deenergize_comms_failed = False
+
+    @property
+    def deenergize_comms_failed(self) -> bool:
+        """True when the last commanded AO-zero write failed after retry."""
+        return self._deenergize_comms_failed
+
+    def set_estop_active(self, active: bool) -> None:
+        """Set the service-level E-stop write-seam interlock.
+
+        Raises:
+            TypeError: if ``active`` is not a bool.
+        """
+        if not isinstance(active, bool):
+            raise TypeError(f"active must be a bool, got {type(active).__name__}")
+        self._estop_active = active
 
     async def poll(self, tags: dict[str, float] | None) -> PowerSupplyStatus:
         """Feed measured tags into the controller and write the AO command."""
@@ -65,8 +87,38 @@ class PowerSupplyService:
         the client's private connection/lock or hand-rolls the register encoding
         (which had diverged from modbus_client.float_to_registers). Works for the
         real Modbus client and the simulator alike.
+
+        Defense-in-depth interlock: when the service E-stop flag is set, an
+        energizing (non-zero) command is forced to 0 here regardless of what the
+        controller returned, independent of the controller's own latch. The
+        de-energizing direction (0) is never blocked. A failed de-energize write
+        is retried once; if it still fails ``_deenergize_comms_failed`` is
+        latched so the caller can escalate a comms alarm. A successful write
+        clears it.
         """
-        return bool(await self._plc_client.write_pid_setpoint(pid_index, value))
+        if self._estop_active and value != 0.0:
+            self._logger.warning("PID setpoint energize forced to 0 — E-stop interlock")
+            value = 0.0
+        deenergize = value == 0.0
+        attempts = 2 if deenergize else 1
+        for attempt in range(attempts):
+            try:
+                ok = bool(await self._plc_client.write_pid_setpoint(pid_index, value))
+            except Exception as exc:  # best-effort: never abort the scan loop
+                self._logger.error("PID setpoint write failed: %s", exc)
+                ok = False
+            if ok:
+                if deenergize:
+                    self._deenergize_comms_failed = False
+                return True
+            if deenergize and attempt + 1 < attempts:
+                self._logger.error("PID setpoint de-energize FAILED — retrying")
+        if deenergize:
+            self._deenergize_comms_failed = True
+            self._logger.error(
+                "PID setpoint de-energize FAILED after retry — comms alarm"
+            )
+        return False
 
 
 class PowerSupplySetpointRequest(BaseModel):

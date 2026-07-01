@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -13,7 +14,12 @@ from typing import Any, cast
 
 import historian
 from alicat_manager import AlicatManager, AlicatMFC
-from auth_config import require_admin_key, require_api_key, verify_operator_key
+from auth_config import (
+    CREDENTIAL_HEADER_NAME,
+    require_admin_key,
+    require_api_key,
+    verify_operator_key,
+)
 from cors_config import resolve_cors_settings
 from data_capture import (
     TRENDS_MAX_POINTS,
@@ -35,12 +41,14 @@ from fastapi import (
     File,
     HTTPException,
     Query,
+    Security,
     UploadFile,
     WebSocket,
     WebSocketDisconnect,
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.security import APIKeyHeader
 from models import (
     AlicatGasPayload,
     AlicatMFCState,
@@ -97,6 +105,12 @@ moving_average = scada.moving_average
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("dcs_backend.main")
 settings = get_settings()
+
+# Truthy tokens for the opt-in read-auth env gate (mirrors auth_config).
+_TRUTHY = {"1", "true", "yes", "on"}
+# auto_error=False so require_read_auth can no-op when the gate is disabled
+# instead of FastAPI rejecting a missing header up front.
+_read_api_key_header = APIKeyHeader(name=CREDENTIAL_HEADER_NAME, auto_error=False)
 
 plc_client = PLCFactory.create_client(settings)
 modbus_manager = plc_client  # Compatibility alias
@@ -259,6 +273,7 @@ async def modbus_connect_background() -> None:
             await _connect_once(
                 plc=plc_client,
                 power_supply=power_supply_service,
+                temperature=temperature_service,
                 apply_config=_publish_active_config,
                 estop_active=control_context.e_stop_active,
             )
@@ -270,6 +285,24 @@ async def modbus_connect_background() -> None:
 def _publish_active_config(config: RoutingConfig) -> None:
     """Publish a PLC routing config to the shared control context."""
     control_context.apply_config(config, plc_client, backup_simulator)
+
+
+def require_read_auth(
+    api_key: str | None = Security(_read_api_key_header),
+) -> None:
+    """Optional gate for the historian/plant read surface.
+
+    Enforces :func:`require_api_key` only when ``P1AM_REQUIRE_READ_AUTH`` is
+    enabled. When the setting is off (the default) this is a no-op so the read
+    endpoints stay public and the bench HMI keeps working unchanged. The
+    existing ``P1AM_DEV_NO_AUTH`` bypass still applies via ``require_api_key``.
+
+    The env var is read per-request (not the ``lru_cache``d settings singleton)
+    so the gate can be toggled without a process restart.
+    """
+    if os.environ.get("P1AM_REQUIRE_READ_AUTH", "").strip().lower() not in _TRUTHY:
+        return
+    require_api_key(api_key)
 
 
 def _reject_output_write_if_estopped() -> None:
@@ -403,7 +436,9 @@ app.include_router(create_temperature_router(temperature_service))
 try:
     from data_explorer_router import create_data_explorer_router
 
-    app.include_router(create_data_explorer_router(get_session))
+    app.include_router(
+        create_data_explorer_router(get_session, read_auth_dep=require_read_auth)
+    )
 except Exception as exc:  # pragma: no cover - only when numpy/module absent
     logger.warning("Data Explorer disabled (%s): %s", type(exc).__name__, exc)
 
@@ -634,7 +669,7 @@ async def clear_estop() -> dict[str, str]:
     return {"status": "success", "message": "Hardware E-stop cleared."}
 
 
-@app.get("/api/snapshot")
+@app.get("/api/snapshot", dependencies=[Depends(require_read_auth)])
 async def get_snapshot() -> dict[str, Any]:
     """Latest live frame — identical shape to the /api/stream WebSocket frames.
 
@@ -714,7 +749,7 @@ async def log_user_event(
         raise HTTPException(status_code=500, detail="Failed to log event.") from e
 
 
-@app.get("/api/events")
+@app.get("/api/events", dependencies=[Depends(require_read_auth)])
 def get_events(
     limit: int = 100,
     offset: int = 0,
@@ -731,7 +766,7 @@ def get_events(
     return list(results)
 
 
-@app.get("/api/trends")
+@app.get("/api/trends", dependencies=[Depends(require_read_auth)])
 def get_trends(
     tag_id: str,
     start_time: str,
@@ -778,7 +813,7 @@ def get_trends(
     return {"timestamps": timestamps, "values": values, "truncated": truncated}
 
 
-@app.get("/api/export")
+@app.get("/api/export", dependencies=[Depends(require_read_auth)])
 def export_data(
     tag_ids: str = Query(..., description="Comma-separated list of Tag IDs or Names"),
     start_time: str = Query(..., description="Start date ISO string"),
@@ -1201,7 +1236,10 @@ async def import_project(
     )
 
 
-@app.get("/api/project/ladder-explorer")
+@app.get(
+    "/api/project/ladder-explorer",
+    dependencies=[Depends(require_read_auth)],
+)
 def get_ladder_explorer(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> list[dict[str, Any]]:
@@ -1238,7 +1276,7 @@ def get_ladder_explorer(
     return results
 
 
-@app.get("/api/plant")
+@app.get("/api/plant", dependencies=[Depends(require_read_auth)])
 def get_plant_hierarchy_api(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:

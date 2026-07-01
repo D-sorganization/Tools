@@ -15,6 +15,7 @@ from __future__ import annotations
 import logging
 import math
 
+from safety_state_machine import SafetyStateMachine
 from temperature_models import (
     TcType,
     TemperatureConfig,
@@ -35,7 +36,7 @@ __all__ = [
 logger = logging.getLogger("dcs_backend.temperature")
 
 
-class TemperatureController:
+class TemperatureController(SafetyStateMachine[TemperatureState]):
     """State machine + on/off control law for the resistive heater.
 
     In non-running or unsafe states (IDLE / ARMED / TRIPPED / no-permissive /
@@ -50,11 +51,15 @@ class TemperatureController:
             raise TypeError(
                 f"config must be TemperatureConfig, got {type(config).__name__}"
             )
+        super().__init__(
+            idle=TemperatureState.IDLE,
+            armed=TemperatureState.ARMED,
+            running=TemperatureState.RUNNING,
+            tripped=TemperatureState.TRIPPED,
+            logger=logger,
+        )
         self._config = config
-        self._state = TemperatureState.IDLE
-        self._permissive = False
         self._setpoint_c = 0.0
-        self._trips: set[str] = set()
         self._last_t = 0.0
         # Commanded relay state from the most recent tick. Held across ticks so
         # the hysteresis band can keep the relay in its prior position while the
@@ -63,30 +68,10 @@ class TemperatureController:
         # Monotonic-seconds timestamp of the last relay state change, used to
         # enforce the anti-short-cycle min on/off dwell. None until first switch.
         self._last_switch_t: float | None = None
-        # E-stop latch. While set, the controller forces the relay off, refuses
-        # to arm, and rejects setpoints until clear_estop() is called. This is a
-        # one-way kill — it must be explicitly cleared by an operator.
-        self._estopped = False
-
-    @property
-    def state(self) -> TemperatureState:
-        return self._state
-
-    @property
-    def permissive(self) -> bool:
-        return self._permissive
 
     @property
     def config(self) -> TemperatureConfig:
         return self._config
-
-    @property
-    def trips(self) -> list[str]:
-        return sorted(self._trips)
-
-    @property
-    def estopped(self) -> bool:
-        return self._estopped
 
     def update_config(self, new_config: TemperatureConfig) -> None:
         """Replace operator-configurable parameters.
@@ -171,24 +156,10 @@ class TemperatureController:
         Raises:
             TypeError: if on is not exactly bool.
         """
-        if not isinstance(on, bool):
-            raise TypeError(f"on must be bool, got {type(on).__name__}")
-        if self._estopped:
-            # A latched E-stop cannot be armed around. The relay stays off until
-            # the operator explicitly clears the E-stop.
-            if on:
-                logger.warning("permissive ON ignored — E-stop is latched")
-            self._permissive = False
-            return
-        self._permissive = on
-        if self._state == TemperatureState.TRIPPED:
-            return
-        if on:
-            if self._state == TemperatureState.IDLE:
-                self._state = TemperatureState.ARMED
-        else:
-            self._setpoint_c = 0.0
-            self._state = TemperatureState.IDLE
+        self._apply_permissive(on)
+
+    def _on_disarm(self) -> None:
+        self._setpoint_c = 0.0
 
     def set_setpoint_c(self, value_c: float) -> float:
         """Apply a temperature setpoint (deg C).
@@ -242,71 +213,20 @@ class TemperatureController:
             )
         return clamped
 
-    def engage_estop(self) -> None:
-        """Latch the emergency stop: force the relay off and disarm.
+    def _estop_log_message(self) -> str:
+        return "E-STOP engaged — heater relay latched off"
 
-        This is the software half of the kill switch. It immediately drops the
-        commanded relay to off (via the latch checked in `tick()`), clears the
-        setpoint, turns permissive off, and returns the state machine to IDLE.
-        The latch persists — `set_permissive(True)` and setpoint commands are
-        rejected — until `clear_estop()` is called.
-
-        Postcondition: estopped; permissive False; state IDLE; setpoint 0;
-        relay off.
-        """
-        self._estopped = True
-        self._permissive = False
+    def _on_estop_engaged(self) -> None:
+        # engage_estop (inherited) forces IDLE / disarms; here we drop the
+        # heater-specific setpoint and latch the commanded relay off.
         self._setpoint_c = 0.0
-        self._state = TemperatureState.IDLE
         self._relay_on = False
-        logger.error("E-STOP engaged — heater relay latched off")
 
-    def clear_estop(self) -> None:
-        """Release the emergency-stop latch.
-
-        Leaves the controller IDLE with permissive off, so the operator must
-        deliberately re-arm (permissive on) and re-enter a setpoint before the
-        heater can fire again.
-
-        Postcondition: not estopped; permissive False; state IDLE; setpoint 0.
-        """
-        if not self._estopped:
-            return
-        self._estopped = False
-        self._permissive = False
+    def _on_estop_cleared(self) -> None:
         self._setpoint_c = 0.0
-        self._state = TemperatureState.IDLE
-        logger.warning("E-stop cleared — controller idle, re-arm required")
 
-    def acknowledge_trip(self) -> bool:
-        """Clear latched trips and return controller to safe idle/armed state.
-
-        Postcondition:
-            - All trips cleared.
-            - Setpoint cleared to 0.
-            - State -> ARMED if permissive is True, else IDLE.
-
-        Returns:
-            True if a trip was cleared. False if there were no trips.
-        """
-        if self._state != TemperatureState.TRIPPED:
-            return False
-        self._trips.clear()
+    def _on_trip_acknowledged(self) -> None:
         self._setpoint_c = 0.0
-        self._state = (
-            TemperatureState.ARMED if self._permissive else TemperatureState.IDLE
-        )
-        return True
-
-    @staticmethod
-    def _safe_finite(value: float) -> float:
-        """Coerce a feedback input to a finite float; non-finite values map
-        to 0 so a sensor failure can never accidentally hold the relay on or
-        smuggle a NaN through the comparisons."""
-        if not isinstance(value, int | float) or isinstance(value, bool):
-            return 0.0
-        v = float(value)
-        return v if math.isfinite(v) else 0.0
 
     def _evaluate_sensor_fault(self, raw_temp: float) -> None:
         """Latch a TC_FAULT trip on a non-finite/garbage feedback while RUNNING.
@@ -333,22 +253,11 @@ class TemperatureController:
         TRIPPED on first breach."""
         if self._last_t >= self._config.hh_limit_c:
             self._trips.add("HH_TEMP")
-        if self._trips and self._state != TemperatureState.TRIPPED:
-            logger.error(
-                "trip latched: %s (T=%.1f C)",
-                ",".join(sorted(self._trips)),
-                self._last_t,
-            )
-            self._state = TemperatureState.TRIPPED
+        self._latch_trips(log_context=f"T={self._last_t:.1f} C")
 
     def _should_force_relay_off(self) -> bool:
         """All "kill the heater now" conditions in one place."""
-        return (
-            self._estopped
-            or self._state != TemperatureState.RUNNING
-            or not self._permissive
-            or bool(self._trips)
-        )
+        return self._should_force_actuator_off()
 
     def _set_relay(self, on: bool, now: float | None) -> None:
         """Apply a commanded relay state, recording the switch time so the

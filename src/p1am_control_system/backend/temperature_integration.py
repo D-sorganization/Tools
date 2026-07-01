@@ -29,6 +29,28 @@ class TemperatureService:
         self.controller = TemperatureController(TemperatureConfig())
         self._plc_client = plc_client
         self._logger = logger
+        # Defense-in-depth E-stop interlock, independent of the controller's own
+        # latch: when set, ``_write_relay`` forces the heater relay OFF and
+        # surfaces a failed de-energize as a comms failure. Set by the poll loop.
+        self._estop_active = False
+        # Latched True when a commanded de-energize (relay OFF) write failed even
+        # after a retry, so the caller can escalate a comms alarm.
+        self._deenergize_comms_failed = False
+
+    @property
+    def deenergize_comms_failed(self) -> bool:
+        """True when the last commanded relay-OFF write failed after retry."""
+        return self._deenergize_comms_failed
+
+    def set_estop_active(self, active: bool) -> None:
+        """Set the service-level E-stop write-seam interlock.
+
+        Raises:
+            TypeError: if ``active`` is not a bool.
+        """
+        if not isinstance(active, bool):
+            raise TypeError(f"active must be a bool, got {type(active).__name__}")
+        self._estop_active = active
 
     async def poll(self, tags: dict[str, float] | None) -> TemperatureStatus:
         """Feed the measured thermocouple into the controller, drive the relay.
@@ -68,14 +90,40 @@ class TemperatureService:
         return float(temp_pct * cfg.temp_full_scale_c / 100.0)
 
     async def _write_relay(self, on: bool) -> bool:
-        """Command the heater relay via the client's public coil seam."""
-        try:
-            return bool(
-                await self._plc_client.write_coil(hardware.HEATER_RELAY_COIL, on)
+        """Command the heater relay via the client's public coil seam.
+
+        Defense-in-depth interlock: when the service E-stop flag is set, an
+        energizing command (``on`` True) is forced OFF here regardless of what
+        the controller returned, independent of the controller's own latch. The
+        de-energizing direction is never blocked. A failed de-energize write is
+        retried once; if it still fails ``_deenergize_comms_failed`` is latched
+        so the caller can escalate a comms alarm. A successful write clears it.
+        """
+        if self._estop_active and on:
+            self._logger.warning("heater relay energize forced OFF — E-stop interlock")
+            on = False
+        deenergize = not on
+        attempts = 2 if deenergize else 1
+        for attempt in range(attempts):
+            try:
+                ok = bool(
+                    await self._plc_client.write_coil(hardware.HEATER_RELAY_COIL, on)
+                )
+            except Exception as exc:  # best-effort: never abort the scan loop
+                self._logger.error("heater relay write failed: %s", exc)
+                ok = False
+            if ok:
+                if deenergize:
+                    self._deenergize_comms_failed = False
+                return True
+            if deenergize and attempt + 1 < attempts:
+                self._logger.error("heater relay de-energize FAILED — retrying")
+        if deenergize:
+            self._deenergize_comms_failed = True
+            self._logger.error(
+                "heater relay de-energize FAILED after retry — comms alarm"
             )
-        except Exception as exc:  # best-effort: never abort the scan loop
-            self._logger.error("heater relay write failed: %s", exc)
-            return False
+        return False
 
 
 class TemperatureSetpointRequest(BaseModel):

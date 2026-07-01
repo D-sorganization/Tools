@@ -11,6 +11,7 @@ from power_supply_models import (
     PowerSupplyStatus,
 )
 from power_supply_noise import FeedbackNoiseTracker
+from safety_state_machine import SafetyStateMachine
 
 __all__ = [
     "PowerSupplyConfig",
@@ -23,7 +24,7 @@ __all__ = [
 logger = logging.getLogger("dcs_backend.power_supply")
 
 
-class PowerSupplyController:
+class PowerSupplyController(SafetyStateMachine[PowerSupplyState]):
     """State machine + control law for the power supply.
 
     In non-running or unsafe states, output is always forced to 0. In RUNNING,
@@ -36,13 +37,17 @@ class PowerSupplyController:
             raise TypeError(
                 f"config must be PowerSupplyConfig, got {type(config).__name__}"
             )
+        super().__init__(
+            idle=PowerSupplyState.IDLE,
+            armed=PowerSupplyState.ARMED,
+            running=PowerSupplyState.RUNNING,
+            tripped=PowerSupplyState.TRIPPED,
+            logger=logger,
+        )
         self._config = config
-        self._state = PowerSupplyState.IDLE
         self._mode = PowerSupplyMode.CURRENT
-        self._permissive = False
         self._setpoint_a = 0.0
         self._setpoint_w: float | None = None
-        self._trips: set[str] = set()
         self._last_v = 0.0
         self._last_i = 0.0
         self._last_t = 0.0
@@ -57,31 +62,15 @@ class PowerSupplyController:
         # True when the output clamp is actively limiting the command (the
         # setpoint would otherwise drive the AO above output_clamp_percent).
         self._output_clamped = False
-        # E-stop latch. While set, the controller forces output to zero, refuses
-        # to arm, and rejects setpoints until clear_estop() is called. This is a
-        # one-way kill — it must be explicitly cleared by an operator.
-        self._estopped = False
         self._noise = FeedbackNoiseTracker(config)
-
-    @property
-    def state(self) -> PowerSupplyState:
-        return self._state
 
     @property
     def mode(self) -> PowerSupplyMode:
         return self._mode
 
     @property
-    def permissive(self) -> bool:
-        return self._permissive
-
-    @property
     def config(self) -> PowerSupplyConfig:
         return self._config
-
-    @property
-    def trips(self) -> list[str]:
-        return sorted(self._trips)
 
     def update_config(self, new_config: PowerSupplyConfig) -> None:
         """Replace operator-configurable parameters.
@@ -118,25 +107,11 @@ class PowerSupplyController:
         Raises:
             TypeError: if on is not exactly bool.
         """
-        if not isinstance(on, bool):
-            raise TypeError(f"on must be bool, got {type(on).__name__}")
-        if self._estopped:
-            # A latched E-stop cannot be armed around. Output stays zero until
-            # the operator explicitly clears the E-stop.
-            if on:
-                logger.warning("permissive ON ignored — E-stop is latched")
-            self._permissive = False
-            return
-        self._permissive = on
-        if self._state == PowerSupplyState.TRIPPED:
-            return
-        if on:
-            if self._state == PowerSupplyState.IDLE:
-                self._state = PowerSupplyState.ARMED
-        else:
-            self._setpoint_a = 0.0
-            self._setpoint_w = None
-            self._state = PowerSupplyState.IDLE
+        self._apply_permissive(on)
+
+    def _on_disarm(self) -> None:
+        self._setpoint_a = 0.0
+        self._setpoint_w = None
 
     def set_current_setpoint(self, value_a: float) -> float:
         """Apply a current setpoint (Amps).
@@ -262,16 +237,6 @@ class PowerSupplyController:
             )
         return achievable_w
 
-    @staticmethod
-    def _safe_finite(value: float) -> float:
-        """Coerce a feedback input to a finite float; non-finite values map
-        to 0 so a sensor failure can never accidentally trip the loop or
-        smuggle a NaN through the math."""
-        if not isinstance(value, int | float) or isinstance(value, bool):
-            return 0.0
-        v = float(value)
-        return v if math.isfinite(v) else 0.0
-
     def _evaluate_trips(self, measured_power_w: float) -> None:
         """Latch trips based on the latest power and temperature; flips
         state to TRIPPED on first breach."""
@@ -281,14 +246,9 @@ class PowerSupplyController:
         # saturation) trips — matching the temperature controller's HH check.
         if self._last_t >= self._config.temp_alarm_max_c:
             self._trips.add("HH_TEMP")
-        if self._trips and self._state != PowerSupplyState.TRIPPED:
-            logger.error(
-                "trip latched: %s (P=%.1f W, T=%.1f C)",
-                ",".join(sorted(self._trips)),
-                measured_power_w,
-                self._last_t,
-            )
-            self._state = PowerSupplyState.TRIPPED
+        self._latch_trips(
+            log_context=f"P={measured_power_w:.1f} W, T={self._last_t:.1f} C"
+        )
 
     def _recompute_power_mode_setpoint(self) -> None:
         """In POWER mode, derive the current setpoint from the latest V."""
@@ -307,54 +267,20 @@ class PowerSupplyController:
 
     def _should_force_output_zero(self) -> bool:
         """All "kill the output now" conditions in one place."""
-        return (
-            self._estopped
-            or self._state != PowerSupplyState.RUNNING
-            or not self._permissive
-            or bool(self._trips)
-        )
+        return self._should_force_actuator_off()
 
-    def engage_estop(self) -> None:
-        """Latch the emergency stop: force output to zero and disarm.
+    def _estop_log_message(self) -> str:
+        return "E-STOP engaged — power-supply output latched to zero"
 
-        This is the software half of the kill switch. It immediately drops the
-        commanded output to zero (via the latch checked in `tick()`), clears the
-        setpoint, turns permissive off, and returns the state machine to IDLE.
-        The latch persists — `set_permissive(True)` and setpoint commands are
-        rejected — until `clear_estop()` is called.
-
-        Postcondition: estopped; permissive False; state IDLE; setpoint 0.
-        """
-        self._estopped = True
-        self._permissive = False
+    def _on_estop_engaged(self) -> None:
         self._setpoint_a = 0.0
         self._setpoint_w = None
-        self._state = PowerSupplyState.IDLE
         self._reset_slew_state()
         self._output_clamped = False
-        logger.error("E-STOP engaged — power-supply output latched to zero")
 
-    def clear_estop(self) -> None:
-        """Release the emergency-stop latch.
-
-        Leaves the controller IDLE with permissive off, so the operator must
-        deliberately re-arm (permissive on) and re-enter a setpoint before any
-        output can flow again.
-
-        Postcondition: not estopped; permissive False; state IDLE; setpoint 0.
-        """
-        if not self._estopped:
-            return
-        self._estopped = False
-        self._permissive = False
+    def _on_estop_cleared(self) -> None:
         self._setpoint_a = 0.0
         self._setpoint_w = None
-        self._state = PowerSupplyState.IDLE
-        logger.warning("E-stop cleared — controller idle, re-arm required")
-
-    @property
-    def estopped(self) -> bool:
-        return self._estopped
 
     def _reset_slew_state(self) -> None:
         """Wipe slew tracker so the next RUNNING period starts at 0 % with
