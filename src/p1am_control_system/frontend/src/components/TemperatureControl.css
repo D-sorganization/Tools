@@ -522,3 +522,76 @@
   fill: var(--text-muted);
   font-size: 12px;
 }
+
+/* Clickable legend toggles (show/hide K, R, and the heater-ON band). */
+.tc-trend-toggle {
+  cursor: pointer;
+  user-select: none;
+}
+.tc-trend-toggle input {
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Fit-window (minutes) numeric input next to the fit-method dropdown. */
+.tc-trend-fitwindow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+.tc-trend-fitwindow input {
+  width: 4rem;
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.35rem;
+}
+.tc-trend-fitwindow input:focus {
+  outline: none;
+  border-color: var(--accent-cyan);
+}
+
+/* Heat-up-rate readout box: ramp rate + fit quality. */
+.tc-rate-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+}
+.tc-rate-readout.has-fit {
+  border-color: var(--accent-cyan);
+}
+.tc-rate-label {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+.tc-rate-value {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.tc-rate-readout.has-fit .tc-rate-value {
+  color: var(--accent-cyan);
+}
+.tc-rate-r2 {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Shaded heater-ON status band on the trend. */
+.tc-trend-relay-band {
+  opacity: 0.12;
+}

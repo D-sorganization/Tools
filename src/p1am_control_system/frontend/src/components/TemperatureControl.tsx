@@ -14,8 +14,16 @@ import {
   fixedWindowRange,
   windowStartIndex,
   timeSeriesPath,
+  timeToX,
 } from "../lib/trendTime";
-import { fitSeries, NO_FIT_ID } from "../lib/curveFit";
+import {
+  fitSeries,
+  NO_FIT_ID,
+  pointsInLastWindow,
+  heatUpRateFromFit,
+  formatHeatUpRate,
+  type FitPoint,
+} from "../lib/curveFit";
 import { useTrendBackfill } from "../hooks/useTrendBackfill";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
@@ -30,11 +38,96 @@ import "./TemperatureControl.css";
 const TREND_MAX_POINTS = MAX_TREND_SAMPLES;
 const DEFAULT_WINDOW_SECONDS = 3600; // 60 minutes
 
-/** One temperature sample: epoch-ms timestamp + measured °C. Timestamping the
- * buffer makes the window, axis, and fit slope accurate at any poll rate. */
+/** One temperature sample: epoch-ms timestamp + BOTH thermocouple readings (°C,
+ * null when a channel has not reported) + the heater relay state at that instant.
+ * Timestamping the buffer makes the window, axis, and fit slope accurate at any
+ * poll rate; keeping both channels lets the trend plot K and R together (and spot
+ * a dead sensor) even while only one is controlling. */
 interface TempSample {
   t: number;
-  c: number;
+  /** Latest Type-K reading (°C), or null when the channel has not reported. */
+  k: number | null;
+  /** Latest Type-R reading (°C), or null when the channel has not reported. */
+  r: number | null;
+  /** Heater relay closed at this sample (for the heater-status band). */
+  relayOn: boolean;
+}
+
+/** Pick the reading of one thermocouple channel from a sample (LOD: the trend
+ * math never reaches into the sample shape directly). */
+function tcSampleValue(sample: TempSample, tcType: TcType): number | null {
+  return tcType === "K" ? sample.k : sample.r;
+}
+
+/**
+ * Format a single live thermocouple reading for the selector readout.
+ *
+ * Pure so it can be unit-tested without rendering. Returns the value to one
+ * decimal with a "°C" suffix, or an em-dash placeholder when the channel has
+ * not reported (null/undefined) or is not a finite number (e.g. NaN from a
+ * stuck/broken sensor).
+ */
+// Small pure helper co-located with the component it serves so it can be
+// unit-tested; not a component, so it never participates in fast refresh.
+// eslint-disable-next-line react-refresh/only-export-components
+export function formatTcReadout(value: number | null | undefined): string {
+  if (typeof value !== "number" || !Number.isFinite(value)) return "—";
+  return `${value.toFixed(1)} °C`;
+}
+
+/** The text a heat-up-rate readout box should show for the current selection. */
+export interface HeatUpRateReadout {
+  /** Ramp rate line, e.g. "+12.3 °C/min · +740 °C/hr" or "—" when no fit. */
+  rate: string;
+  /** Fit-quality line, e.g. "R² = 0.987", or "" when there is no fit. */
+  r2: string;
+  /** True when a linear fit was found over the windowed active-TC series. */
+  hasFit: boolean;
+}
+
+/**
+ * Build the heat-up-rate readout from the rolling buffer + operator choices.
+ *
+ * Pure so it can be unit-tested without rendering. It projects the ACTIVE
+ * thermocouple's readings into {@link FitPoint}s (x = epoch ms, y = °C), keeps
+ * only the last `fitWindowMin` minutes via {@link pointsInLastWindow}, fits with
+ * the chosen method via {@link fitSeries}, then formats the ramp rate and R²
+ * using the shared curveFit helpers (DRY — no rate/window math is duplicated
+ * here). Null readings are dropped so a gap never poisons the regression.
+ *
+ * Returns a neutral placeholder (`rate: "—"`, empty `r2`, `hasFit: false`) when
+ * no method is selected, there are too few points, or the fit is not linear.
+ *
+ * @param samples - the rolling trend buffer (ascending timestamps).
+ * @param activeTcType - which channel is controlling ("K" | "R").
+ * @param fitMethodId - selected curveFit method id (NO_FIT_ID for none).
+ * @param fitWindowMin - regression look-back in MINUTES (<= 0 means "no window").
+ * @throws TypeError if `fitWindowMin` is not a finite number.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function heatUpRateReadout(
+  samples: TempSample[],
+  activeTcType: TcType,
+  fitMethodId: string,
+  fitWindowMin: number,
+): HeatUpRateReadout {
+  if (typeof fitWindowMin !== "number" || !Number.isFinite(fitWindowMin)) {
+    throw new TypeError("heatUpRateReadout: fitWindowMin must be a finite number");
+  }
+  const points: FitPoint[] = samples
+    .map((sample) => ({ x: sample.t, y: tcSampleValue(sample, activeTcType) }))
+    .filter((p): p is FitPoint => typeof p.y === "number" && Number.isFinite(p.y));
+  const windowed = pointsInLastWindow(points, fitWindowMin * 60000);
+  const fit = fitSeries(windowed, fitMethodId);
+  if (!fit) {
+    return { rate: "—", r2: "", hasFit: false };
+  }
+  // x is in ms (Date.now()), so msPerXUnit = 1.
+  return {
+    rate: formatHeatUpRate(heatUpRateFromFit(fit, 1)),
+    r2: `R² = ${fit.r2.toFixed(3)}`,
+    hasFit: true,
+  };
 }
 
 /**
@@ -218,11 +311,22 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
     loadConfig();
   }, [loadConfig]);
 
-  // Accumulate a rolling trend buffer from the live status broadcasts.
+  // Accumulate a rolling trend buffer from the live status broadcasts. Capture
+  // BOTH thermocouple readings (and the relay state) each scan so the trend can
+  // plot K and R together — the active channel's reading is `measured_temp_c`,
+  // but type_k_temp_c / type_r_temp_c are present every scan regardless.
   useEffect(() => {
     if (!liveStatus) return;
     setTrend((prev) => {
-      const next = [...prev, { t: Date.now(), c: liveStatus.measured_temp_c }];
+      const next = [
+        ...prev,
+        {
+          t: Date.now(),
+          k: liveStatus.type_k_temp_c ?? null,
+          r: liveStatus.type_r_temp_c ?? null,
+          relayOn: liveStatus.relay_on,
+        },
+      ];
       return next.length > TREND_MAX_POINTS
         ? next.slice(next.length - TREND_MAX_POINTS)
         : next;
@@ -685,6 +789,7 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
           {(["K", "R"] as const).map((tc) => {
             const ch = tc === "K" ? config.type_k : config.type_r;
             const isActive = activeTcType === tc;
+            const reading = tc === "K" ? s?.type_k_temp_c : s?.type_r_temp_c;
             return (
               <button
                 key={tc}
@@ -692,7 +797,7 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
                 onClick={() => !isActive && setActiveTcType(tc)}
                 disabled={busy || isActive}
                 aria-pressed={isActive}
-                title={`${ch.label} on ${ch.tag}`}
+                title={`${ch.label} on ${ch.tag} — live ${formatTcReadout(reading)}`}
                 style={{
                   flex: "1 1 0",
                   minWidth: "8rem",
@@ -709,12 +814,38 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
                   color: isActive ? "var(--accent-cyan)" : "var(--text-secondary)",
                 }}
               >
-                <strong style={{ fontSize: "0.95rem" }}>
-                  Type {tc}
-                  {isActive ? " ✓" : ""}
-                </strong>
+                <span
+                  style={{
+                    display: "flex",
+                    alignItems: "baseline",
+                    justifyContent: "space-between",
+                    gap: "0.5rem",
+                    width: "100%",
+                  }}
+                >
+                  <strong style={{ fontSize: "0.95rem" }}>
+                    Type {tc}
+                    {isActive ? " ✓" : ""}
+                  </strong>
+                  <span
+                    className="tc-tc-reading"
+                    aria-label={`Type ${tc} live reading`}
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "1.05rem",
+                      fontWeight: 700,
+                      // Emphasize the active channel; dim the other so a dead/stuck
+                      // sensor is still visible but reads as secondary.
+                      color: isActive ? "var(--accent-cyan)" : "var(--text-primary)",
+                      opacity: isActive ? 1 : 0.75,
+                    }}
+                  >
+                    {formatTcReadout(reading)}
+                  </span>
+                </span>
                 <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
                   {ch.label} · {ch.tag}
+                  {isActive ? " · controlling" : ""}
                 </span>
               </button>
             );
@@ -765,6 +896,7 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
           fullScale={config.temp_full_scale_c}
           setpoint={s?.setpoint_c ?? config.setpoint_min_c}
           hhLimit={hhLimit}
+          activeTcType={activeTcType}
         />
       </CollapsibleSection>
 
@@ -913,9 +1045,62 @@ const TREND_PAD_T = 10;
 const TREND_PAD_B = 26; // room for the X-axis time labels
 const TREND_PLOT_H = TREND_H - TREND_PAD_T - TREND_PAD_B;
 
-const TEMP_COLOR = "var(--color-error)";
+const K_COLOR = "var(--color-error)"; // Type-K trace (also the historian backfill)
+const R_COLOR = "var(--accent-magenta)"; // Type-R trace
 const SETPOINT_COLOR = "var(--accent-cyan)";
 const HH_COLOR = "var(--color-warning)";
+const RELAY_BAND_COLOR = "var(--color-error)";
+
+/** Default look-back (minutes) for the heat-up-rate regression. */
+const DEFAULT_FIT_WINDOW_MIN = 5;
+
+/**
+ * Split a series into contiguous runs of finite (non-null) points, so a trace is
+ * drawn as separate path segments across gaps instead of a straight line through
+ * a dead-sensor hole. Pure and generic over the timed sample shape.
+ */
+function timedSegments(
+  points: { t: number; v: number | null }[],
+): { t: number; v: number }[][] {
+  const runs: { t: number; v: number }[][] = [];
+  let run: { t: number; v: number }[] = [];
+  for (const p of points) {
+    if (typeof p.v === "number" && Number.isFinite(p.v)) {
+      run.push({ t: p.t, v: p.v });
+    } else if (run.length) {
+      runs.push(run);
+      run = [];
+    }
+  }
+  if (run.length) runs.push(run);
+  return runs;
+}
+
+/**
+ * Contiguous [start, end] time spans (epoch ms) where `on(sample)` holds — used
+ * to draw the heater-status band as shaded rectangles. Each span extends to the
+ * next sample's timestamp so a single-scan pulse is still visible.
+ */
+function activeSpans(
+  samples: TempSample[],
+  on: (s: TempSample) => boolean,
+): { start: number; end: number }[] {
+  const spans: { start: number; end: number }[] = [];
+  let start: number | null = null;
+  for (let i = 0; i < samples.length; i++) {
+    if (on(samples[i])) {
+      if (start === null) start = samples[i].t;
+    } else if (start !== null) {
+      spans.push({ start, end: samples[i].t });
+      start = null;
+    }
+  }
+  if (start !== null) {
+    const lastT = samples[samples.length - 1].t;
+    spans.push({ start, end: lastT });
+  }
+  return spans;
+}
 
 interface TrendProps {
   samples: TempSample[];
@@ -924,6 +1109,8 @@ interface TrendProps {
   fullScale: number;
   setpoint: number;
   hhLimit: number;
+  /** Which thermocouple is controlling — emphasized and used for the fit. */
+  activeTcType: TcType;
 }
 
 const TempTrend: React.FC<TrendProps> = ({
@@ -932,20 +1119,36 @@ const TempTrend: React.FC<TrendProps> = ({
   fullScale,
   setpoint,
   hhLimit,
+  activeTcType,
 }) => {
   const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, fullScale));
   const [windowSeconds, setWindowSeconds] =
     useState<number>(DEFAULT_WINDOW_SECONDS);
   const [fitMethodId, setFitMethodId] = useState<string>(NO_FIT_ID);
+  const [fitWindowMin, setFitWindowMin] = useState<number>(DEFAULT_FIT_WINDOW_MIN);
+
+  // Signal picker: default every trace + the heater-status band visible.
+  const [showK, setShowK] = useState(true);
+  const [showR, setShowR] = useState(true);
+  const [showRelay, setShowRelay] = useState(true);
 
   // Backfill from the historian so widening the window immediately shows past
-  // data (stored tag is a 0–100 %, so scale it to °C). Merge the backfilled
-  // history (anything older than the live buffer) ahead of the live samples.
+  // data (stored tag is a 0–100 %, so scale it to °C). The historian carries the
+  // ACTIVE channel's tag only, so merge it into that channel of the buffer
+  // (anything older than the live buffer) ahead of the live samples.
   const backfill = useTrendBackfill(tagId, windowSeconds, fullScale / 100);
   const liveStart = samples.length ? samples[0].t : Infinity;
   const older = backfill.filter((b) => b.t < liveStart);
   const series: TempSample[] = older.length
-    ? [...older.map((b) => ({ t: b.t, c: b.v })), ...samples]
+    ? [
+        ...older.map((b) => ({
+          t: b.t,
+          k: activeTcType === "K" ? b.v : null,
+          r: activeTcType === "R" ? b.v : null,
+          relayOn: false,
+        })),
+        ...samples,
+      ]
     : samples;
 
   // Window + scale by real wall-clock time so the span and the fit slope are
@@ -957,49 +1160,129 @@ const TempTrend: React.FC<TrendProps> = ({
     ),
   );
   const plotted = downsample(windowed);
-  const plottedC = plotted.map((s) => s.c);
+
+  // Resolve the Y range against BOTH channels so neither trace clips.
+  const plottedC = plotted
+    .flatMap((s) => [s.k, s.r])
+    .filter((v): v is number => typeof v === "number" && Number.isFinite(v));
   const { min, max } = resolveRange(axis, plottedC, { min: 0, max: fullScale });
-  const last = windowed.length ? windowed[windowed.length - 1].c : undefined;
+
+  // Latest reading of each channel (for the legend), and the active reading.
+  const lastSample = windowed.length ? windowed[windowed.length - 1] : undefined;
+  const lastK = lastSample?.k ?? null;
+  const lastR = lastSample?.r ?? null;
 
   const refY = (value: number): number => {
     const frac = Math.max(0, Math.min(1, (value - min) / (max - min)));
     return TREND_PAD_T + (1 - frac) * TREND_PLOT_H;
   };
 
-  // Position the trace by real timestamp (not array index) so it is time-accurate
+  // Position traces by real timestamp (not array index) so they are time-accurate
   // even when sparse historian backfill is merged with dense live samples. The X
   // axis is a FIXED window ending at the latest sample, so changing the window
   // rescales the axis immediately (rather than fitting to the data's span).
   const latestMs = plotted.length ? plotted[plotted.length - 1].t : Date.now();
   const { t0, t1 } = fixedWindowRange(latestMs, windowSeconds);
-  const path = timeSeriesPath(
-    plotted.map((s) => ({ t: s.t, v: s.c })),
-    {
-      t0,
-      t1,
-      min,
-      max,
-      x0: TREND_PAD_L,
-      x1: TREND_W - TREND_PAD_R,
-      yTop: TREND_PAD_T,
-      plotH: TREND_PLOT_H,
-    },
-  );
+  const geom = {
+    t0,
+    t1,
+    min,
+    max,
+    x0: TREND_PAD_L,
+    x1: TREND_W - TREND_PAD_R,
+    yTop: TREND_PAD_T,
+    plotH: TREND_PLOT_H,
+  } as const;
 
-  // Fit over (real elapsed minutes, °C) so a linear slope reads directly as the
-  // heating rate in °C/min. x = 0 at the left (oldest) edge of the window.
-  const fitPoints = plotted.map((s) => ({ x: (s.t - t0) / 60000, y: s.c }));
-  const fit = fitSeries(fitPoints, fitMethodId);
-  const fitOverlayPoints = plotted.map((s) => ({ t: s.t, x: (s.t - t0) / 60000 }));
+  // Build each channel as gap-aware path segments (a null skips the line).
+  const kSegments = timedSegments(plotted.map((s) => ({ t: s.t, v: s.k })));
+  const rSegments = timedSegments(plotted.map((s) => ({ t: s.t, v: s.r })));
+  const kPaths = kSegments.map((seg) => timeSeriesPath(seg, geom));
+  const rPaths = rSegments.map((seg) => timeSeriesPath(seg, geom));
+
+  // Heater-status band: shaded spans where the relay was closed.
+  const relaySpans = activeSpans(plotted, (s) => s.relayOn);
+
+  // Curve fit runs over the ACTIVE thermocouple series, restricted to the last
+  // `fitWindowMin` minutes (the operator-chosen regression window). x is epoch
+  // ms so the shared heat-up-rate helpers (called with msPerXUnit = 1) convert
+  // the slope to °C/min and °C/hr — no rate math is duplicated here (DRY).
+  const activePoints: FitPoint[] = plotted
+    .map((s) => ({ x: s.t, y: tcSampleValue(s, activeTcType) }))
+    .filter((p): p is FitPoint => typeof p.y === "number" && Number.isFinite(p.y));
+  const windowedFitPoints = pointsInLastWindow(activePoints, fitWindowMin * 60000);
+  const fit = fitSeries(windowedFitPoints, fitMethodId);
+  const rateReadout = heatUpRateReadout(
+    plotted,
+    activeTcType,
+    fitMethodId,
+    fitWindowMin,
+  );
+  // The fit's x IS the epoch-ms timestamp, so both the X position (p.t) and the
+  // value fed to fit.predict (p.x) are that same timestamp.
+  const fitOverlayPoints = windowedFitPoints.map((p) => ({ t: p.x, x: p.x }));
+
+  const activeColor = activeTcType === "K" ? K_COLOR : R_COLOR;
 
   return (
     <div className="tc-trend">
       <div className="tc-trend-legend">
-        <span className="tc-trend-key">
-          <span className="swatch" style={{ background: TEMP_COLOR }} />
-          Measured
-          <strong>{last != null ? `${last.toFixed(1)} °C` : "—"}</strong>
-        </span>
+        <label
+          className="tc-trend-key tc-trend-toggle"
+          title="Show / hide the Type-K trace"
+        >
+          <input
+            type="checkbox"
+            checked={showK}
+            onChange={(e) => setShowK(e.target.checked)}
+            aria-label="Show Type K trace"
+          />
+          <span
+            className="swatch"
+            style={{
+              background: K_COLOR,
+              opacity: activeTcType === "K" ? 1 : 0.55,
+            }}
+          />
+          Type K{activeTcType === "K" ? " (active)" : ""}
+          <strong>{formatTcReadout(lastK)}</strong>
+        </label>
+        <label
+          className="tc-trend-key tc-trend-toggle"
+          title="Show / hide the Type-R trace"
+        >
+          <input
+            type="checkbox"
+            checked={showR}
+            onChange={(e) => setShowR(e.target.checked)}
+            aria-label="Show Type R trace"
+          />
+          <span
+            className="swatch"
+            style={{
+              background: R_COLOR,
+              opacity: activeTcType === "R" ? 1 : 0.55,
+            }}
+          />
+          Type R{activeTcType === "R" ? " (active)" : ""}
+          <strong>{formatTcReadout(lastR)}</strong>
+        </label>
+        <label
+          className="tc-trend-key tc-trend-toggle"
+          title="Shade the periods when the heater relay was ON"
+        >
+          <input
+            type="checkbox"
+            checked={showRelay}
+            onChange={(e) => setShowRelay(e.target.checked)}
+            aria-label="Show heater ON band"
+          />
+          <span
+            className="swatch"
+            style={{ background: RELAY_BAND_COLOR, opacity: 0.25 }}
+          />
+          Heater ON
+        </label>
         <span className="tc-trend-key">
           <span className="swatch" style={{ background: SETPOINT_COLOR }} />
           Setpoint
@@ -1013,18 +1296,6 @@ const TempTrend: React.FC<TrendProps> = ({
         <span className="tc-trend-window">
           last {formatWindow(windowSeconds)} · {min.toFixed(0)}–{max.toFixed(0)} °C
         </span>
-        {fit && (
-          <span
-            className="tc-trend-key"
-            style={{ color: "var(--text-primary)", fontFamily: "var(--font-mono)" }}
-            title="Linear fit of temperature vs elapsed minutes"
-          >
-            <span className="swatch" style={{ background: "var(--text-primary)", opacity: 0.7 }} />
-            {fit.equation}
-            <strong>R²={fit.r2.toFixed(3)}</strong>
-            <span style={{ color: "var(--text-muted)" }}>(t in min)</span>
-          </span>
-        )}
       </div>
 
       <div
@@ -1039,6 +1310,39 @@ const TempTrend: React.FC<TrendProps> = ({
         <TrendTimeControls value={windowSeconds} onChange={setWindowSeconds} />
         <TrendAxisControls value={axis} onChange={setAxis} unit="°C" />
         <TrendFitControls value={fitMethodId} onChange={setFitMethodId} />
+        <label
+          className="tc-trend-fitwindow"
+          title="How many recent minutes the linear regression covers"
+        >
+          <span>Fit window (min)</span>
+          <input
+            type="number"
+            min={0.1}
+            step={0.5}
+            value={fitWindowMin}
+            onChange={(e) => {
+              const v = Number.parseFloat(e.target.value);
+              setFitWindowMin(Number.isFinite(v) && v > 0 ? v : DEFAULT_FIT_WINDOW_MIN);
+            }}
+            aria-label="Fit window in minutes"
+          />
+        </label>
+      </div>
+
+      {/* Heat-up-rate readout box: ramp rate (°/min · °/hr) + fit quality. */}
+      <div
+        className={`tc-rate-readout ${rateReadout.hasFit ? "has-fit" : ""}`}
+        aria-label="Heat-up rate readout"
+      >
+        <span className="tc-rate-label">
+          Heat-up rate (Type {activeTcType}, last {fitWindowMin} min)
+        </span>
+        <span className="tc-rate-value">{rateReadout.rate}</span>
+        <span className="tc-rate-r2">
+          {rateReadout.hasFit
+            ? rateReadout.r2
+            : "select a fit method to read the ramp rate"}
+        </span>
       </div>
 
       <svg
@@ -1048,6 +1352,24 @@ const TempTrend: React.FC<TrendProps> = ({
         role="img"
         aria-label="Temperature trend"
       >
+        {/* heater-ON status band behind everything else */}
+        {showRelay &&
+          relaySpans.map((span, i) => {
+            const xa = timeToX(span.start, t0, t1, TREND_PAD_L, TREND_W - TREND_PAD_R);
+            const xb = timeToX(span.end, t0, t1, TREND_PAD_L, TREND_W - TREND_PAD_R);
+            return (
+              <rect
+                key={i}
+                x={xa}
+                y={TREND_PAD_T}
+                width={Math.max(0.5, xb - xa)}
+                height={TREND_PLOT_H}
+                className="tc-trend-relay-band"
+                fill={RELAY_BAND_COLOR}
+              />
+            );
+          })}
+
         {/* gridlines + °C axis labels across the resolved [min, max] range */}
         {axisTicks(min, max, 4).map((tick, i) => {
           const y = TREND_PAD_T + (1 - (tick - min) / (max - min)) * TREND_PLOT_H;
@@ -1112,7 +1434,30 @@ const TempTrend: React.FC<TrendProps> = ({
           </text>
         ) : (
           <>
-            <path d={path} className="tc-trend-line" stroke={TEMP_COLOR} />
+            {/* Non-active channel dimmer; active channel bold/solid. Draw the
+                inactive one first so the active trace sits on top. */}
+            {showR &&
+              rPaths.map((d, i) => (
+                <path
+                  key={`r-${i}`}
+                  d={d}
+                  className="tc-trend-line"
+                  stroke={R_COLOR}
+                  opacity={activeTcType === "R" ? 1 : 0.5}
+                  strokeWidth={activeTcType === "R" ? 2.4 : 1.4}
+                />
+              ))}
+            {showK &&
+              kPaths.map((d, i) => (
+                <path
+                  key={`k-${i}`}
+                  d={d}
+                  className="tc-trend-line"
+                  stroke={K_COLOR}
+                  opacity={activeTcType === "K" ? 1 : 0.5}
+                  strokeWidth={activeTcType === "K" ? 2.4 : 1.4}
+                />
+              ))}
             {fit && (
               <TrendFitOverlay
                 fit={fit}
@@ -1122,6 +1467,7 @@ const TempTrend: React.FC<TrendProps> = ({
                 x0={TREND_PAD_L}
                 x1={TREND_W - TREND_PAD_R}
                 yScale={refY}
+                color={activeColor}
               />
             )}
           </>
