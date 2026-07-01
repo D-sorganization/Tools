@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { RoutingMatrix } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
 import { AlarmsHeader } from "./components/AlarmsHeader";
@@ -6,10 +6,6 @@ import { EStopButton } from "./components/EStopButton";
 import { DataCapturePanel } from "./components/DataCapturePanel";
 import { InterlocksPanel } from "./components/InterlocksPanel";
 import { EventLogView } from "./components/EventLogView";
-import { ProjectImporter } from "./components/ProjectImporter";
-import { LadderExplorer } from "./components/LadderExplorer";
-import { PlantHierarchy } from "./components/PlantHierarchy";
-import { DataExplorer } from "./components/data_explorer/DataExplorer";
 import { PowerSupplyControl } from "./components/PowerSupplyControl";
 import { TemperatureControl } from "./components/TemperatureControl";
 import { SignalDiagnostics } from "./components/SignalDiagnostics";
@@ -54,6 +50,31 @@ import {
   Settings,
   X,
 } from "lucide-react";
+
+// Code-split the heavy, occasionally-used reference/config tabs so the Pi's
+// browser doesn't parse them on cold load. The Data Explorer in particular pulls
+// in the whole plots subsystem; it and the project/ladder/hierarchy tabs load
+// on demand (wrapped in a <Suspense> boundary below).
+const DataExplorer = lazy(() =>
+  import("./components/data_explorer/DataExplorer").then((m) => ({
+    default: m.DataExplorer,
+  })),
+);
+const ProjectImporter = lazy(() =>
+  import("./components/ProjectImporter").then((m) => ({
+    default: m.ProjectImporter,
+  })),
+);
+const LadderExplorer = lazy(() =>
+  import("./components/LadderExplorer").then((m) => ({
+    default: m.LadderExplorer,
+  })),
+);
+const PlantHierarchy = lazy(() =>
+  import("./components/PlantHierarchy").then((m) => ({
+    default: m.PlantHierarchy,
+  })),
+);
 
 // Re-export domain types for back-compat with existing importers (AlarmsHeader,
 // EventLogView, InterlocksPanel, RoutingMatrix, ControlDashboard).
@@ -718,6 +739,13 @@ export const App: React.FC = () => {
             />
           </div>
 
+          <Suspense
+            fallback={
+              <div style={{ padding: "2rem", color: "var(--text-muted)" }}>
+                Loading…
+              </div>
+            }
+          >
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
             <PowerSupplyControl
               liveStatus={powerSupplyStatus}
@@ -1286,6 +1314,7 @@ export const App: React.FC = () => {
           {activeTab === "explorer" && visibleTabs.explorer && (
             <DataExplorer triggerNotification={triggerNotification} />
           )}
+          </Suspense>
         </div>
 
         {/* Inspector / data-export drawer — slides in from the right on demand */}

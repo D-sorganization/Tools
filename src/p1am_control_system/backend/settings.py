@@ -25,7 +25,9 @@ class P1AMSettings(BaseSettings):
     )
 
     plc_driver: str = Field(
-        default="simulated",
+        # "simulator" matches the PLCFactory branch; the default must not fall
+        # through to the "unknown driver" warning on every bench boot.
+        default="simulator",
         validation_alias=AliasChoices("P1AM_PLC_DRIVER", "PLC_DRIVER"),
     )
     plc_ip: str = Field(

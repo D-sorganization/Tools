@@ -69,7 +69,7 @@ WantedBy=multi-user.target
 "
 
 frontend_unit="[Unit]
-Description=P1AM HMI (Vite dev server, :3002)
+Description=P1AM HMI (production build served via vite preview, :3002)
 Documentation=https://github.com/D-sorganization/Tools
 After=network-online.target p1am-backend.service
 Wants=network-online.target
@@ -80,8 +80,13 @@ User=$USER_NAME
 Group=$GROUP_NAME
 WorkingDirectory=$SYS/frontend
 Environment=PATH=$NODE_BIN_DIR:/usr/local/bin:/usr/bin:/bin
-Environment=NODE_ENV=development
-ExecStart=$NPM run dev
+Environment=NODE_ENV=production
+# Build the minified, code-split production bundle once at (re)start, then serve
+# the static dist/ via 'vite preview' (which proxies /api + the WS to :8000 per
+# vite.config.ts). This is far lighter on the Pi than the dev server: no HMR, no
+# per-request transpile, a ~140 kB initial chunk (vs a 409 kB unsplit dev bundle)
+# and cacheable vendor chunks. Build failures keep the last good dist/ served.
+ExecStart=/bin/sh -c '$NPM run build; exec $NPM run preview'
 Restart=always
 RestartSec=3
 TimeoutStopSec=15

@@ -40,22 +40,62 @@ def _configure_sqlite_connection(dbapi_connection: Any, _record: Any) -> None:
         cursor.execute("PRAGMA journal_mode=WAL")
         cursor.execute(f"PRAGMA synchronous={_synchronous_mode()}")
         cursor.execute("PRAGMA busy_timeout=5000")
+        # Cap the WAL file: a long-held read transaction (e.g. a slow trend/export
+        # query) can grow the WAL indefinitely; without a size limit the file
+        # never shrinks on disk after a checkpoint. 64 MiB keeps it bounded on the
+        # Pi's storage while leaving ample headroom for burst writes.
+        cursor.execute("PRAGMA journal_size_limit=67108864")
     finally:
         cursor.close()
 
 
 def init_db() -> None:
-    """Initialize database tables using SQLModel metadata.
+    """Initialize database tables using SQLModel metadata, then migrate.
+
+    ``create_all`` only creates *missing* tables — it does not add indexes to a
+    pre-existing table. So the historian-read performance index and the WAL
+    reclaim are applied explicitly here (idempotently) so an already-populated
+    ``dcs_scada.db`` gets them on the next boot.
 
     Raises:
         Exception: If connection or table creation fails.
     """
     try:
         SQLModel.metadata.create_all(engine)
+        _migrate_historian_indexes()
         logger.info("Database tables initialized successfully.")
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
         raise
+
+
+def _migrate_historian_indexes() -> None:
+    """Ensure the composite trend-query index exists and reclaim WAL space.
+
+    The trend/export/Data-Explorer read paths all filter
+    ``WHERE tag_name = ? AND timestamp BETWEEN ? AND ? ORDER BY timestamp``.
+    A composite ``(tag_name, timestamp)`` index turns that from an index-scan +
+    temp-B-tree sort (measured ~3.9 s on a 6 M-row DB) into a pure indexed range
+    scan (~0.58 s, ~7x). The composite fully covers ``tag_name``-only lookups, so
+    the redundant single-column index is dropped to cut write overhead. A one-off
+    ``wal_checkpoint(TRUNCATE)`` reclaims a WAL that a prior long reader bloated.
+    """
+    from sqlalchemy import text
+
+    with engine.begin() as conn:
+        conn.execute(
+            text(
+                "CREATE INDEX IF NOT EXISTS ix_taglog_tag_name_timestamp "
+                "ON taglog (tag_name, timestamp)"
+            )
+        )
+        conn.execute(text("DROP INDEX IF EXISTS ix_taglog_tag_name"))
+    # Checkpoint outside the transaction; TRUNCATE shrinks the WAL file on disk.
+    with engine.connect() as conn:
+        try:
+            conn.exec_driver_sql("PRAGMA wal_checkpoint(TRUNCATE)")
+        except Exception as exc:  # pragma: no cover - best-effort reclaim
+            logger.warning("WAL truncate checkpoint skipped: %s", exc)
 
 
 def get_session() -> Generator[Session, None, None]:

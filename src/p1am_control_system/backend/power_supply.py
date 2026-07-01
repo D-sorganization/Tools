@@ -277,7 +277,9 @@ class PowerSupplyController:
         state to TRIPPED on first breach."""
         if measured_power_w > self._config.power_alarm_max_w:
             self._trips.add("HH_POWER")
-        if self._last_t > self._config.temp_alarm_max_c:
+        # Use >= so a reading pinned exactly at the limit (common on sensor
+        # saturation) trips — matching the temperature controller's HH check.
+        if self._last_t >= self._config.temp_alarm_max_c:
             self._trips.add("HH_TEMP")
         if self._trips and self._state != PowerSupplyState.TRIPPED:
             logger.error(

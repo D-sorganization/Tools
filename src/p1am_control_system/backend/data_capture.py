@@ -242,6 +242,11 @@ async def historian_retention_loop(
         try:
             with Session(engine) as session:
                 enforce_size_cap(session, max_bytes)
+            # Reclaim WAL disk: a long-held reader can bloat the WAL between
+            # sweeps; TRUNCATE checkpoints it back to journal_size_limit. Runs on
+            # this background task, never the poll/event loop.
+            with engine.connect() as conn:
+                conn.exec_driver_sql("PRAGMA wal_checkpoint(TRUNCATE)")
         except Exception as ret_err:
             logger.error("Historian retention sweep failed: %s", ret_err)
 

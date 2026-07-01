@@ -256,10 +256,14 @@ class TestHysteresis:
         c.tick(490.0)  # ON first
         assert c.tick(505.0) is False
 
-    def test_non_finite_measured_coerced_to_zero(self) -> None:
-        # NaN measured -> 0 C, which is well below the band -> relay ON.
+    def test_non_finite_measured_trips_and_coerces_display(self) -> None:
+        # A non-finite reading while RUNNING is a sensor fault: it TRIPS (relay
+        # off) rather than coercing to 0 C and calling for heat (see
+        # TestSensorFaultTrip). The stored/displayed temperature is still coerced
+        # to a finite 0.0 so no NaN leaks into the status/telemetry.
         c = fresh_running_controller(500.0)
-        assert c.tick(float("nan")) is True
+        assert c.tick(float("nan")) is False
+        assert c.state == TemperatureState.TRIPPED
         assert c.status().measured_temp_c == 0.0
 
 
@@ -569,3 +573,68 @@ class TestReadingCoercion:
         c = fresh_idle_controller()
         assert c.tick(None) is False  # type: ignore[arg-type]
         assert c.tick("sensor fault") is False  # type: ignore[arg-type]
+
+
+# --------------------------------------------------------------------------
+# Regression: safety hardening (open-TC runaway trip + E-stop config lock)
+# --------------------------------------------------------------------------
+class TestSensorFaultTrip:
+    """A non-finite feedback while RUNNING must trip, not read 'cold' and heat."""
+
+    def test_running_nan_reading_latches_tc_fault_and_kills_relay(self) -> None:
+        c = fresh_running_controller(500.0)
+        assert c.state == TemperatureState.RUNNING
+        # Baseline: a genuine cold reading calls for heat.
+        assert c.tick(20.0) is True
+        # Open thermocouple (NaN) — must trip instead of coercing to 0 and heating.
+        assert c.tick(float("nan")) is False
+        assert c.state == TemperatureState.TRIPPED
+        assert "TC_FAULT" in c.trips
+
+    def test_running_inf_reading_trips(self) -> None:
+        c = fresh_running_controller(500.0)
+        assert c.tick(float("inf")) is False
+        assert c.state == TemperatureState.TRIPPED
+        assert "TC_FAULT" in c.trips
+
+    def test_idle_nan_reading_does_not_spuriously_trip(self) -> None:
+        # In non-energizable states the relay is already forced off, so a junk
+        # reading during bring-up must NOT latch a spurious trip.
+        c = fresh_idle_controller()
+        assert c.tick(float("nan")) is False
+        assert c.state == TemperatureState.IDLE
+        assert c.trips == []
+
+    def test_finite_reading_never_trips_tc_fault(self) -> None:
+        c = fresh_running_controller(500.0)
+        for t in (0.0, 25.0, 300.0):
+            c.tick(t)
+        assert "TC_FAULT" not in c.trips
+
+
+class TestEstopConfigLock:
+    """A latched E-stop must reject config / TC-type mutation (one-way kill)."""
+
+    def test_update_config_ignored_while_estopped(self) -> None:
+        c = fresh_running_controller(500.0)
+        original_hh = c.config.hh_limit_c
+        c.engage_estop()
+        c.update_config(TemperatureConfig(hh_limit_c=original_hh - 100.0))
+        assert c.config.hh_limit_c == original_hh  # unchanged
+
+    def test_set_active_tc_type_ignored_while_estopped(self) -> None:
+        c = fresh_running_controller(500.0)
+        original = c.config.active_tc_type
+        c.engage_estop()
+        other = TcType.TYPE_R if original == TcType.TYPE_K else TcType.TYPE_K
+        c.set_active_tc_type(other)
+        assert c.config.active_tc_type == original  # unchanged
+
+    def test_type_errors_still_raise_even_when_estopped(self) -> None:
+        # DbC precondition checks precede the E-stop no-op guard.
+        c = fresh_running_controller(500.0)
+        c.engage_estop()
+        with pytest.raises(TypeError):
+            c.update_config("not a config")
+        with pytest.raises(TypeError):
+            c.set_active_tc_type("K")

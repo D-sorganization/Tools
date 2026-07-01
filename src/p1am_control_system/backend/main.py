@@ -507,7 +507,7 @@ async def get_routing() -> RoutingConfig:
     Returns:
         RoutingConfig: The current routing parameters from the PLC.
     """
-    config = await plc_client.read_routing()
+    config: RoutingConfig | None = await plc_client.read_routing()
     if config is None:
         config = await backup_simulator.read_routing()
     if config is None:
@@ -715,7 +715,7 @@ async def log_user_event(
 
 
 @app.get("/api/events")
-async def get_events(
+def get_events(
     limit: int = 100,
     offset: int = 0,
     db: Session = Depends(get_session),  # noqa: B008
@@ -732,7 +732,7 @@ async def get_events(
 
 
 @app.get("/api/trends")
-async def get_trends(
+def get_trends(
     tag_id: str,
     start_time: str,
     end_time: str,
@@ -779,7 +779,7 @@ async def get_trends(
 
 
 @app.get("/api/export")
-async def export_data(
+def export_data(
     tag_ids: str = Query(..., description="Comma-separated list of Tag IDs or Names"),
     start_time: str = Query(..., description="Start date ISO string"),
     end_time: str = Query(..., description="End date ISO string"),
@@ -821,7 +821,7 @@ async def export_data(
 
 
 @app.get("/api/capture/status", response_model=CaptureStats)
-async def get_capture_status(
+def get_capture_status(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> CaptureStats:
     """Report the captured historian: rows, time span, distinct tags, disk size.
@@ -900,7 +900,7 @@ class CaptureClearRequest(BaseModel):
     response_model=ClearResult,
     dependencies=[Depends(require_admin_key)],
 )
-async def clear_capture_data(
+def clear_capture_data(
     req: CaptureClearRequest,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> ClearResult:
@@ -1202,7 +1202,7 @@ async def import_project(
 
 
 @app.get("/api/project/ladder-explorer")
-async def get_ladder_explorer(
+def get_ladder_explorer(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> list[dict[str, Any]]:
     """Retrieve all tag definitions with their PLC register mappings for exploration."""
@@ -1239,7 +1239,7 @@ async def get_ladder_explorer(
 
 
 @app.get("/api/plant")
-async def get_plant_hierarchy_api(
+def get_plant_hierarchy_api(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
     """Retrieve the physical plant layout and tag tree hierarchical structure."""

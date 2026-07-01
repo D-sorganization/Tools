@@ -73,7 +73,7 @@ def create_data_explorer_router(get_session_dep: Callable[..., object]) -> APIRo
     router = APIRouter(prefix="/api/explorer", tags=["explorer"])
 
     @router.get("/signals", response_model=SignalListResponse)
-    async def get_signals(
+    def get_signals(
         session: object = Depends(get_session_dep),  # noqa: B008
     ) -> SignalListResponse:
         try:
@@ -82,7 +82,7 @@ def create_data_explorer_router(get_session_dep: Callable[..., object]) -> APIRo
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/dataset", response_model=DatasetResponse)
-    async def post_dataset(
+    def post_dataset(
         req: DatasetRequest,
         session: object = Depends(get_session_dep),  # noqa: B008
     ) -> DatasetResponse:
@@ -92,49 +92,49 @@ def create_data_explorer_router(get_session_dep: Callable[..., object]) -> APIRo
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/statistics", response_model=StatisticsResponse)
-    async def post_statistics(req: ColumnsRequest) -> StatisticsResponse:
+    def post_statistics(req: ColumnsRequest) -> StatisticsResponse:
         try:
             return compute_statistics(req)
         except (TypeError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/correlation", response_model=CorrelationResponse)
-    async def post_correlation(req: CorrelationRequest) -> CorrelationResponse:
+    def post_correlation(req: CorrelationRequest) -> CorrelationResponse:
         try:
             return compute_correlation(req)
         except (TypeError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/spectrum", response_model=SpectrumResponse)
-    async def post_spectrum(req: SpectrumRequest) -> SpectrumResponse:
+    def post_spectrum(req: SpectrumRequest) -> SpectrumResponse:
         try:
             return compute_spectrum(req)
         except (TypeError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/trendline", response_model=TrendlineResponse)
-    async def post_trendline(req: TrendlineRequest) -> TrendlineResponse:
+    def post_trendline(req: TrendlineRequest) -> TrendlineResponse:
         try:
             return compute_trendline(req)
         except (TypeError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/pca", response_model=PcaResponse)
-    async def post_pca(req: PcaRequest) -> PcaResponse:
+    def post_pca(req: PcaRequest) -> PcaResponse:
         try:
             return compute_pca(req)
         except (TypeError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/histogram", response_model=HistogramResponse)
-    async def post_histogram(req: HistogramRequest) -> HistogramResponse:
+    def post_histogram(req: HistogramRequest) -> HistogramResponse:
         try:
             return compute_histogram(req)
         except (TypeError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/export", response_model=None)
-    async def post_export(req: ExportRequest) -> StreamingResponse | JSONResponse:
+    def post_export(req: ExportRequest) -> StreamingResponse | JSONResponse:
         try:
             # Eagerly validate the index: the CSV path streams lazily, so a bad
             # value discovered mid-iteration could not become a 4xx.

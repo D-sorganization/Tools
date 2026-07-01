@@ -102,6 +102,11 @@ class TemperatureController:
             raise TypeError(
                 f"new_config must be TemperatureConfig, got {type(new_config).__name__}"
             )
+        if self._estopped:
+            # A latched E-stop is one-way: safety limits must not be re-tuned
+            # while it is engaged (consistent with set_setpoint_c / set_permissive).
+            logger.warning("temperature config change ignored — E-stop is latched")
+            return
         self._config = new_config
         # Re-clamp current setpoint to new bounds without changing state.
         self._setpoint_c = max(
@@ -129,6 +134,10 @@ class TemperatureController:
         """
         if not isinstance(tc_type, TcType):
             raise TypeError(f"tc_type must be a TcType, got {type(tc_type).__name__}")
+        if self._estopped:
+            # Don't let a channel switch ratchet the safety limits while E-stopped.
+            logger.warning("TC-type change ignored — E-stop is latched")
+            return
         channel = (
             self._config.type_r if tc_type == TcType.TYPE_R else self._config.type_k
         )
@@ -299,6 +308,26 @@ class TemperatureController:
         v = float(value)
         return v if math.isfinite(v) else 0.0
 
+    def _evaluate_sensor_fault(self, raw_temp: float) -> None:
+        """Latch a TC_FAULT trip on a non-finite/garbage feedback while RUNNING.
+
+        An open or failed thermocouple can read non-finite (NaN/inf) or a
+        non-numeric junk value. ``_safe_finite`` would coerce that to 0 C
+        ("cold"), so the on/off law would call for heat indefinitely — the
+        classic heater-runaway failure mode. Treat a bad reading as a sensor
+        fault and trip (fail-safe). Scoped to RUNNING because that is the only
+        state in which the control law can energize the relay; in every other
+        state the relay is already force-held off, so a transient junk reading
+        during bring-up doesn't latch a spurious trip.
+        """
+        bad = (
+            isinstance(raw_temp, bool)
+            or not isinstance(raw_temp, int | float)
+            or not math.isfinite(float(raw_temp))
+        )
+        if bad and self._state == TemperatureState.RUNNING:
+            self._trips.add("TC_FAULT")
+
     def _evaluate_trips(self) -> None:
         """Latch the HH cutoff based on the latest temperature; flips state to
         TRIPPED on first breach."""
@@ -380,6 +409,9 @@ class TemperatureController:
         Returns:
             True if the heater relay should be energized, else False.
         """
+        # Detect a sensor fault from the RAW reading before it is coerced to a
+        # finite value, so an open thermocouple trips instead of reading "cold".
+        self._evaluate_sensor_fault(measured_temp_c)
         self._last_t = self._safe_finite(measured_temp_c)
 
         self._evaluate_trips()
