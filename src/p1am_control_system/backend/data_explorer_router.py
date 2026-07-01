@@ -18,7 +18,9 @@ wires this into ``main.py``; this module never imports ``main`` (LOD).
 
 from __future__ import annotations
 
-from collections.abc import Callable
+import threading
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 
 from data_explorer_enums import ExportFormat
 from data_explorer_models import (
@@ -57,6 +59,25 @@ from fastapi.responses import JSONResponse, StreamingResponse
 
 __all__ = ["create_data_explorer_router"]
 
+# Bound concurrent dataset builds so a burst of large-range requests can't
+# exhaust the Pi's RAM (each build materializes up to ~160 MB). The routes are
+# sync (FastAPI threadpool), so a threading semaphore is the correct guard; over
+# the limit we shed load with 503 rather than risk an OOM-kill of the SCADA core.
+_MAX_CONCURRENT_BUILDS = 3
+_build_semaphore = threading.Semaphore(_MAX_CONCURRENT_BUILDS)
+
+
+@contextmanager
+def _build_slot() -> Iterator[None]:
+    if not _build_semaphore.acquire(timeout=15.0):
+        raise HTTPException(
+            status_code=503, detail="data explorer busy — too many concurrent builds"
+        )
+    try:
+        yield
+    finally:
+        _build_semaphore.release()
+
 
 def create_data_explorer_router(get_session_dep: Callable[..., object]) -> APIRouter:
     """Build the Data Explorer ``APIRouter`` bound to a session dependency.
@@ -86,10 +107,11 @@ def create_data_explorer_router(get_session_dep: Callable[..., object]) -> APIRo
         req: DatasetRequest,
         session: object = Depends(get_session_dep),  # noqa: B008
     ) -> DatasetResponse:
-        try:
-            return build_dataset(session, req)
-        except (TypeError, ValueError) as exc:
-            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        with _build_slot():
+            try:
+                return build_dataset(session, req)
+            except (TypeError, ValueError) as exc:
+                raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/statistics", response_model=StatisticsResponse)
     def post_statistics(req: ColumnsRequest) -> StatisticsResponse:

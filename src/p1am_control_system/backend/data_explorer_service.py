@@ -373,6 +373,25 @@ def _downsample(
     )
 
 
+def _assert_columns_aligned(
+    index_ms: np.ndarray, columns: dict[str, np.ndarray]
+) -> None:
+    """DbC: every column must match the index length before masking.
+
+    Raises:
+        ValueError: if any column's length differs from the index length (e.g. a
+            reducer-derived scalar broadcast to the wrong length, or a ragged
+            resample). The router maps this to HTTP 400.
+    """
+    n = int(index_ms.size)
+    for name, values in columns.items():
+        if int(np.asarray(values).size) != n:
+            raise ValueError(
+                f"column {name!r} length {np.asarray(values).size} != index "
+                f"length {n}; pipeline produced a ragged dataset"
+            )
+
+
 def _sample_rate_hz(index_ms: np.ndarray) -> float | None:
     """Median sample rate (Hz) of the epoch-ms index, or ``None`` if underivable."""
     if index_ms.size < 2:
@@ -407,6 +426,10 @@ def build_dataset(session: object, req: DatasetRequest) -> DatasetResponse:
     index_ms, columns = _resample(index_ms, columns, req)
     columns = _apply_filters(index_ms, columns, req)
     columns = _apply_derived(columns, req)
+    # Every column must stay aligned to the index before trim/downsample mask it;
+    # a filter/derived/ragged-resample length mismatch is a client-input error
+    # (clean 400) rather than an IndexError-500 deeper in the pipeline.
+    _assert_columns_aligned(index_ms, columns)
     index_ms, columns = _trim(index_ms, columns, req)
     index_ms, columns, truncated = _downsample(index_ms, columns, req.max_points)
 

@@ -302,3 +302,17 @@ def test_tags_over_cap_is_422(client: TestClient) -> None:
     }
     resp = client.post("/api/explorer/dataset", json=body)
     assert resp.status_code == 422
+
+
+def test_post_dataset_sheds_load_with_503_when_saturated(
+    client: TestClient, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # When the concurrent-build semaphore is exhausted, /dataset returns 503
+    # rather than piling on and risking an OOM of the SCADA core.
+    import data_explorer_router as router
+
+    monkeypatch.setattr(router._build_semaphore, "acquire", lambda timeout=None: False)
+    body = {"inline": {"index": [0, 1], "columns": [{"name": "a", "values": [1, 2]}]}}
+    resp = client.post("/api/explorer/dataset", json=body)
+    assert resp.status_code == 503
+    assert "busy" in resp.json()["detail"]

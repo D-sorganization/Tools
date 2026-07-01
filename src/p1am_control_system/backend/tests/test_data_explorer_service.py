@@ -466,3 +466,20 @@ def test_epoch_ms_to_iso_safe_on_bad_input() -> None:
     assert _svc._epoch_ms_to_iso(float("inf")) == ""
     assert _svc._epoch_ms_to_iso(1e18) == ""
     assert _svc._epoch_ms_to_iso(0.0).startswith("1970-01-01")
+
+
+def test_assert_columns_aligned_rejects_ragged() -> None:
+    import data_explorer_service as _svc
+
+    with pytest.raises(ValueError, match="ragged"):
+        _svc._assert_columns_aligned(
+            np.array([0.0, 1.0, 2.0]), {"a": np.array([1.0, 2.0])}
+        )
+
+
+def test_assert_columns_aligned_accepts_matched() -> None:
+    import data_explorer_service as _svc
+
+    _svc._assert_columns_aligned(
+        np.array([0.0, 1.0]), {"a": np.array([1.0, 2.0]), "b": np.array([3.0, 4.0])}
+    )
