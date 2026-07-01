@@ -134,7 +134,21 @@ async def _poll_once(
     tags = None
     if plc.connected:
         tags = await plc.read_tags()
-    if tags is None:
+        if tags is None:
+            # Connected but the read hiccuped (common when the Pi is under CPU
+            # load and the Modbus read trips its timeout). HOLD the last good
+            # values instead of substituting the offline simulator's fabricated
+            # readings — otherwise a momentary comms miss shows as a spurious
+            # drop to ~0 and feeds the control law a false "cold", which would
+            # command the heater ON (a runaway contributor). The next scan
+            # retries; a *prolonged* loss is surfaced by the degraded-poll path
+            # and by the connection dropping (which routes to the sim below).
+            if latest_tag_values:
+                tags = dict(latest_tag_values)
+    if tags is None and not plc.connected:
+        # No live PLC (offline / dev, or the connection has dropped) — the
+        # simulator drives the plant so the HMI still animates. On real hardware
+        # the background connect loop is reconnecting in parallel.
         tags = await backup.read_tags()
     if tags is not None and not isinstance(tags, dict):
         raise TypeError(f"poll tags must be a dict or None, got {type(tags).__name__}")

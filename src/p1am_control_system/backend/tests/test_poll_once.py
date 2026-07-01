@@ -129,10 +129,13 @@ def _session_factory(session: _FakeSession) -> Iterator[_FakeSession]:
 
 
 @pytest.mark.asyncio
-async def test_poll_once_falls_back_to_simulator_and_broadcasts_payload() -> None:
+async def test_poll_once_offline_falls_back_to_simulator_and_broadcasts_payload() -> (
+    None
+):
+    # When the PLC is NOT connected (offline / dev), the simulator drives tags.
     session = _FakeSession()
     latest = {"TAG_0": 0.0, "TAG_1": 0.0}
-    plc = _FakePLC(connected=True, tags=None)
+    plc = _FakePLC(connected=False, tags=None)
     simulator = _FakeSimulator({"TAG_0": 2.5, "TAG_1": 10.0})
     power = _FakePowerSupply()
     ws = _FakeWsManager()
@@ -166,6 +169,40 @@ async def test_poll_once_falls_back_to_simulator_and_broadcasts_payload() -> Non
     assert session.commits == 1
     assert session.rollbacks == 0
     assert session.closed is True
+
+
+@pytest.mark.asyncio
+async def test_poll_once_connected_read_hiccup_holds_last_good() -> None:
+    # A connected PLC whose read momentarily fails (returns None) must HOLD the
+    # last good values, NOT substitute the offline simulator's fake readings —
+    # otherwise a comms hiccup shows as a spurious drop to ~0 and feeds the
+    # control law a false "cold".
+    session = _FakeSession()
+    last_good = {"TAG_0": 56.5, "TAG_1": 2.5}
+    latest = dict(last_good)
+    plc = _FakePLC(connected=True, tags=None)  # connected but read fails
+    simulator = _FakeSimulator({"TAG_0": 0.0, "TAG_1": 0.0})  # must NOT be used
+    power = _FakePowerSupply()
+    ws = _FakeWsManager()
+
+    payload = await _poll_once(
+        plc=plc,
+        backup=simulator,
+        latest_tag_values=latest,
+        ws=ws,
+        alicats=_FakeAlicats(),
+        power_supply=power,
+        alarm_engine=_FakeAlarmEngine(),
+        active_alarm_map={},
+        session_factory=lambda: _session_factory(session),
+        estop_active=False,
+        log_scan=lambda _s, _t: 0,
+    )
+
+    assert simulator.read_count == 0  # simulator never consulted while connected
+    assert latest == last_good  # held, not zeroed
+    assert payload["tags"][:2] == [56.5, 2.5]
+    assert power.seen_tags == [last_good]
 
 
 @pytest.mark.asyncio

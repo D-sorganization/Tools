@@ -218,6 +218,42 @@
 }
 
 /* ---- Setpoint entry ------------------------------------------------- */
+/* Prominent primary setpoint card: sits directly under the status header,
+   above the thermocouple selector and trend. Compact (not full-bleed) so it
+   reads as the main operator control without dominating the panel. */
+.tc-setpoint-card {
+  border-color: var(--accent-cyan);
+  max-width: 34rem;
+}
+.tc-setpoint-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.tc-setpoint-card-head .tc-card-title {
+  margin-bottom: 0;
+}
+.tc-setpoint-card-current {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.tc-setpoint-primary {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.tc-setpoint-primary .tc-setpoint-row {
+  flex: 1 1 16rem;
+}
+.tc-setpoint-startstop {
+  flex: 0 0 auto;
+  min-width: 8rem;
+}
+
 .tc-setpoint-row {
   display: grid;
   grid-template-columns: auto 1fr auto;

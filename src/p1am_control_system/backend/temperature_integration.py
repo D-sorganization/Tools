@@ -12,23 +12,56 @@ from __future__ import annotations
 
 import logging
 import time
-from typing import Any
+from collections.abc import Callable
+from typing import Any, cast
 
 import hardware
 from auth_config import require_admin_key
+from config_store import load_config, load_model, save_config, save_model
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from temperature_controller import TemperatureController
-from temperature_models import TcType, TemperatureConfig, TemperatureStatus
+from temperature_models import (
+    TcType,
+    TemperatureConfig,
+    TemperatureState,
+    TemperatureStatus,
+)
+
+__all__ = [
+    "TcTypeRequest",
+    "TemperaturePermissiveRequest",
+    "TemperatureService",
+    "TemperatureSetpointRequest",
+    "create_temperature_router",
+]
+
+# config_store keys for the persisted temperature settings.
+_CONFIG_KEY = "temperature_config"
+_SETPOINT_KEY = "temperature_setpoint"
 
 
 class TemperatureService:
     """Owns the controller and applies its relay command to the PLC coil."""
 
-    def __init__(self, plc_client: Any, logger: logging.Logger) -> None:
+    def __init__(
+        self,
+        plc_client: Any,
+        logger: logging.Logger,
+        session_factory: Callable[[], Any] | None = None,
+    ) -> None:
         self.controller = TemperatureController(TemperatureConfig())
         self._plc_client = plc_client
         self._logger = logger
+        # Optional zero-arg callable returning a context-managed Session. When
+        # None (as in the existing tests) the service skips persistence entirely,
+        # so behaviour is unchanged. When set, operator changes are written to
+        # the durable config store and recalled at boot via restore_persisted.
+        self._session_factory = session_factory
+        # Last operator setpoint recalled from persisted settings (deg C). Surfaced
+        # in status() so the HMI can pre-fill the target after a restart. Recalling
+        # it NEVER arms/energizes the heater — the controller stays IDLE.
+        self._last_setpoint_c: float | None = None
         # Defense-in-depth E-stop interlock, independent of the controller's own
         # latch: when set, ``_write_relay`` forces the heater relay OFF and
         # surfaces a failed de-energize as a comms failure. Set by the poll loop.
@@ -66,7 +99,109 @@ class TemperatureService:
         # anti-short-cycle min on/off dwell across scans.
         relay_on = self.controller.tick(measured_temp_c=temp_c, now=time.monotonic())
         await self._write_relay(relay_on)
-        return self.controller.status()
+        return self.status()
+
+    def status(self) -> TemperatureStatus:
+        """Controller status augmented with the recalled last setpoint.
+
+        Returns the controller snapshot with ``last_setpoint_c`` set to the value
+        recalled from persisted settings (``None`` when nothing was recalled), so
+        the HMI can pre-fill the target field without the service leaking any
+        controller internals (LOD).
+        """
+        status: TemperatureStatus = self.controller.status()
+        status.last_setpoint_c = self._last_setpoint_c
+        return status
+
+    def update_config(self, new_config: TemperatureConfig) -> TemperatureConfig:
+        """Apply a new controller config and persist it (best-effort).
+
+        Delegates to the controller, then persists the *resulting* controller
+        config (which may have re-clamped the setpoint) under ``_CONFIG_KEY`` when
+        a session factory is configured.
+
+        Raises:
+            TypeError: if new_config is not a TemperatureConfig (from controller).
+        """
+        self.controller.update_config(new_config)
+        self._persist_config()
+        config: TemperatureConfig = self.controller.config
+        return config
+
+    def set_setpoint(self, value_c: float) -> float:
+        """Apply an operator setpoint and persist it when it actually took effect.
+
+        Returns the clamped value the controller applied. The setpoint is persisted
+        (and remembered as the recalled ``last_setpoint_c``) only when the controller
+        was armed/running so the change actually applied — a stopped no-op is never
+        stored, so a later restore does not resurrect a value the operator never ran.
+
+        Raises:
+            TypeError: if value_c is not numeric (from controller).
+            ValueError: if value_c is not finite (from controller).
+        """
+        applied: float = self.controller.set_setpoint_c(value_c)
+        if self.controller.state in (
+            TemperatureState.ARMED,
+            TemperatureState.RUNNING,
+        ):
+            self._last_setpoint_c = applied
+            self._persist_setpoint(applied)
+        return applied
+
+    def set_active_tc_type(self, tc_type: TcType) -> None:
+        """Switch the controlling thermocouple and persist the config.
+
+        Raises:
+            TypeError: if tc_type is not a TcType (from controller).
+            ValueError: if the resulting config is invalid (from controller).
+        """
+        self.controller.set_active_tc_type(tc_type)
+        self._persist_config()
+
+    def restore_persisted(self, session: Any) -> None:
+        """Recall persisted settings into the controller (SAFE: stays IDLE).
+
+        Applies the persisted config (limits/labels) and remembers the last
+        setpoint for the HMI to pre-fill. It NEVER arms, energizes, or changes the
+        controller's state machine — the heater always comes back IDLE and the
+        operator must press Start to resume. Best-effort: a corrupt/incompatible
+        blob is logged and skipped so it can never block boot.
+
+        Args:
+            session: An active SQLModel session bound to the config DB.
+        """
+        try:
+            cfg = load_model(session, _CONFIG_KEY, TemperatureConfig)
+            if cfg is not None:
+                # update_config only re-tunes limits/setpoint clamp; it does not
+                # arm the controller, so the state machine stays IDLE.
+                self.controller.update_config(cfg)
+            data = load_config(session, _SETPOINT_KEY)
+            if data is not None and "value_c" in data:
+                self._last_setpoint_c = float(cast(float, data["value_c"]))
+        except Exception as exc:  # noqa: BLE001 - a bad blob must not block boot
+            self._logger.warning("temperature restore skipped: %s", exc)
+
+    def _persist_config(self) -> None:
+        """Persist the current controller config (best-effort, no-op if disabled)."""
+        if self._session_factory is None:
+            return
+        try:
+            with self._session_factory() as s:
+                save_model(s, _CONFIG_KEY, self.controller.config)
+        except Exception as exc:  # noqa: BLE001 - persistence must not break control
+            self._logger.warning("temperature config persist failed: %s", exc)
+
+    def _persist_setpoint(self, value_c: float) -> None:
+        """Persist the last applied setpoint (best-effort, no-op if disabled)."""
+        if self._session_factory is None:
+            return
+        try:
+            with self._session_factory() as s:
+                save_config(s, _SETPOINT_KEY, {"value_c": value_c})
+        except Exception as exc:  # noqa: BLE001 - persistence must not break control
+            self._logger.warning("temperature setpoint persist failed: %s", exc)
 
     def engage_estop(self) -> None:
         """Latch the controller's E-stop (forces the heater relay off)."""
@@ -148,7 +283,8 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
 
     @router.get("/config", response_model=TemperatureConfig)
     async def get_temperature_config() -> TemperatureConfig:
-        return controller.config
+        config: TemperatureConfig = controller.config
+        return config
 
     @router.put(
         "/config",
@@ -158,19 +294,18 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
     async def update_temperature_config(
         new_config: TemperatureConfig,
     ) -> TemperatureConfig:
-        controller.update_config(new_config)
-        return controller.config
+        return service.update_config(new_config)
 
     @router.get("/status", response_model=TemperatureStatus)
     async def get_temperature_status() -> TemperatureStatus:
-        return controller.status()
+        return service.status()
 
     @router.post("/setpoint", dependencies=[Depends(require_admin_key)])
     async def apply_temperature_setpoint(
         req: TemperatureSetpointRequest,
     ) -> dict[str, Any]:
         try:
-            applied = controller.set_setpoint_c(req.value_c)
+            applied = service.set_setpoint(req.value_c)
         except (TypeError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return {"applied_c": applied}
@@ -180,20 +315,22 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
         req: TemperaturePermissiveRequest,
     ) -> TemperatureStatus:
         controller.set_permissive(req.enabled)
-        return controller.status()
+        status: TemperatureStatus = controller.status()
+        return status
 
     @router.post("/tc_type", dependencies=[Depends(require_admin_key)])
     async def set_active_tc_type(req: TcTypeRequest) -> TemperatureStatus:
         """Switch the heater's controlling thermocouple between type K and R."""
         try:
-            controller.set_active_tc_type(req.active_tc_type)
+            service.set_active_tc_type(req.active_tc_type)
         except (TypeError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
-        return controller.status()
+        return service.status()
 
     @router.post("/acknowledge_trip", dependencies=[Depends(require_admin_key)])
     async def acknowledge_temperature_trip() -> TemperatureStatus:
         controller.acknowledge_trip()
-        return controller.status()
+        status: TemperatureStatus = controller.status()
+        return status
 
     return router

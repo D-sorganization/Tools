@@ -20,6 +20,7 @@ from auth_config import (
     require_api_key,
     verify_operator_key,
 )
+from config_store import load_config, load_model, save_config, save_model
 from cors_config import resolve_cors_settings
 from data_capture import (
     TRENDS_MAX_POINTS,
@@ -116,8 +117,39 @@ plc_client = PLCFactory.create_client(settings)
 modbus_manager = plc_client  # Compatibility alias
 backup_simulator = SimulatedPLCClient()
 
-power_supply_service = PowerSupplyService(plc_client=plc_client, logger=logger)
-temperature_service = TemperatureService(plc_client=plc_client, logger=logger)
+
+# A session factory lets the services durably persist operator settings (config
+# + last setpoint) to the config store so they survive a restart. Settings only
+# — a restored controller stays IDLE; the operator presses Start to resume.
+def _config_session() -> Session:
+    return Session(engine)
+
+
+def _persist_setting(key: str, payload: dict[str, object]) -> None:
+    """Best-effort persist of a small operator setting to the config store.
+
+    Never raises — a DB hiccup must not fail the operator's command; it only
+    means the setting won't be recalled on the next restart.
+    """
+    try:
+        with _config_session() as s:
+            save_config(s, key, payload)
+    except Exception as exc:  # noqa: BLE001 - persistence is non-critical
+        logger.warning("Persisting %r failed (non-fatal): %s", key, exc)
+
+
+power_supply_service = PowerSupplyService(
+    plc_client=plc_client, logger=logger, session_factory=_config_session
+)
+temperature_service = TemperatureService(
+    plc_client=plc_client, logger=logger, session_factory=_config_session
+)
+
+# The SCADA-authoritative persisted routing (interlocks/alarm setpoints + PID).
+# Held in memory so the PLC-connect read can't clobber the operator's alarm
+# setpoints: _publish_active_config overlays these interlocks onto whatever the
+# PLC returns. Loaded on startup and refreshed on every deploy.
+_persisted_routing: RoutingConfig | None = None
 
 # Historian write throttle: decouples how often scans are *persisted* from how
 # often the PLC is *polled*, so the capture DB grows at an operator-chosen rate
@@ -283,7 +315,14 @@ async def modbus_connect_background() -> None:
 
 
 def _publish_active_config(config: RoutingConfig) -> None:
-    """Publish a PLC routing config to the shared control context."""
+    """Publish a PLC routing config to the shared control context.
+
+    The interlocks (alarm setpoints) are a SCADA-layer concern; if an operator's
+    persisted alarm setpoints exist, they are overlaid onto whatever the PLC
+    returned so a stale/default PLC read can never silently reset them.
+    """
+    if _persisted_routing is not None:
+        config = config.model_copy(update={"interlocks": _persisted_routing.interlocks})
     control_context.apply_config(config, plc_client, backup_simulator)
 
 
@@ -391,12 +430,54 @@ async def poll_plc_loop() -> None:
     logger.info("Background PLC polling loop stopped.")
 
 
+def _restore_persisted_settings(session: Session) -> None:
+    """Recall operator settings from the config store on startup (settings only).
+
+    Restores the SCADA routing (interlocks/alarm setpoints + PID), the heater and
+    power-supply configs + last setpoints, the historian capture rate and the
+    performance mode. SAFETY: nothing here arms or energizes an output — the
+    controllers stay IDLE; the operator presses Start to resume to the recalled
+    setpoint. Best-effort per item so a bad/legacy blob only falls back to a
+    default, never blocks the boot of the safety-critical controller.
+    """
+    global _persisted_routing
+    try:
+        routing = load_model(session, "routing", RoutingConfig)
+        if routing is not None:
+            _persisted_routing = routing
+            control_context.apply_config(routing, plc_client, backup_simulator)
+            logger.info("Recalled persisted routing (alarm setpoints + PID).")
+    except Exception as exc:  # noqa: BLE001 - never block boot on a bad blob
+        logger.warning("Routing recall skipped: %s", exc)
+    try:
+        temperature_service.restore_persisted(session)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Temperature settings recall skipped: %s", exc)
+    try:
+        power_supply_service.restore_persisted(session)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Power-supply settings recall skipped: %s", exc)
+    try:
+        cap = load_config(session, "capture")
+        if cap and "interval_s" in cap:
+            capture_throttle.set_interval_s(float(cap["interval_s"]))  # type: ignore[arg-type]
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Capture-interval recall skipped: %s", exc)
+    try:
+        perf = load_config(session, "performance")
+        if perf and "mode" in perf:
+            perf_controller.set_mode(PerformanceMode(str(perf["mode"])))
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Performance-mode recall skipped: %s", exc)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Startup: initialize database and start PLC polling thread & Alicat manager
     init_db()
     with Session(engine) as session:
         load_tags_into_plc_clients(session)
+        _restore_persisted_settings(session)
     shutdown_event.clear()
     alicat_manager.start()
     connect_task = asyncio.create_task(modbus_connect_background())
@@ -563,6 +644,16 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
         JSON response indicating success.
     """
     control_context.apply_config(config, plc_client, backup_simulator)
+
+    # Persist the SCADA-authoritative routing (interlocks/alarm setpoints + PID)
+    # so it survives a restart independent of PLC flash, and refresh the overlay.
+    global _persisted_routing
+    _persisted_routing = config
+    try:
+        with _config_session() as s:
+            save_model(s, "routing", config)
+    except Exception as exc:  # noqa: BLE001 - persistence must not fail a deploy
+        logger.warning("Persisting routing failed (non-fatal): %s", exc)
 
     if not plc_client.connected:
         await backup_simulator.write_routing(config)
@@ -890,6 +981,7 @@ async def update_capture_config(req: CaptureConfig) -> CaptureConfig:
     except (TypeError, ValueError) as exc:
         raise HTTPException(status_code=400, detail=str(exc)) from exc
     logger.info("Capture interval set to %.3f s", capture_throttle.interval_s)
+    _persist_setting("capture", {"interval_s": capture_throttle.interval_s})
     return CaptureConfig(interval_s=capture_throttle.interval_s)
 
 
@@ -921,6 +1013,7 @@ async def update_performance(req: PerformanceModeRequest) -> PerformanceConfig:
         perf_controller.mode,
         perf_controller.poll_interval_s,
     )
+    _persist_setting("performance", {"mode": str(perf_controller.mode)})
     return perf_controller.config()
 
 

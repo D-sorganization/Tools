@@ -235,3 +235,13 @@ class TemperatureStatus(BaseModel):
     active_tc_label: str = "Type K"
 
     estopped: bool = False
+
+    last_setpoint_c: float | None = Field(
+        default=None,
+        description=(
+            "Last operator setpoint (deg C) recalled from persisted settings, "
+            "used by the HMI to pre-fill the target after a restart. None when "
+            "nothing has been recalled. Recalling it never arms/energizes the "
+            "heater — the controller stays IDLE until the operator presses Start."
+        ),
+    )

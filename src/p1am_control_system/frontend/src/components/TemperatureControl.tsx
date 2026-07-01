@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useCallback, useRef } from "react";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
 import { startStopView, setpointOutcome } from "../lib/heaterControls";
 import {
@@ -99,6 +99,38 @@ export interface TemperatureStatus {
   min_off_time_s: number;
   active_tc_type: TcType;
   active_tc_label: string;
+  /** Operator's setpoint from the last session, recalled by the backend on
+   * restart (null when none was ever persisted). Used to pre-fill the entry. */
+  last_setpoint_c?: number | null;
+}
+
+/**
+ * Decide the text to pre-fill the setpoint entry with on recall.
+ *
+ * Pure so it can be unit-tested without rendering. Returns the formatted
+ * (one-decimal) string when a persisted last setpoint should be shown, or
+ * `null` when nothing should change — i.e. the operator has already typed this
+ * session (`operatorTouched`) or the recalled value is not a finite number.
+ *
+ * @param lastSetpointC - recalled last-session setpoint (may be null/undefined).
+ * @param operatorTouched - true once the operator has edited the field.
+ * @throws TypeError if `operatorTouched` is not a boolean.
+ */
+// Small pure helper co-located with the component it serves so it can be
+// unit-tested; not a component, so it never participates in fast refresh.
+// eslint-disable-next-line react-refresh/only-export-components
+export function recallSetpointText(
+  lastSetpointC: number | null | undefined,
+  operatorTouched: boolean,
+): string | null {
+  if (typeof operatorTouched !== "boolean") {
+    throw new TypeError("operatorTouched must be a boolean");
+  }
+  if (operatorTouched) return null;
+  if (typeof lastSetpointC !== "number" || !Number.isFinite(lastSetpointC)) {
+    return null;
+  }
+  return lastSetpointC.toFixed(1);
 }
 
 interface Props {
@@ -134,6 +166,34 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [info, setInfo] = useState<string | null>(null);
+
+  // Recall guard: true once the operator has typed/nudged a setpoint this
+  // session (so live status updates never clobber their edit), and a one-shot
+  // latch so the recalled last_setpoint_c only pre-fills the field a single
+  // time even though liveStatus arrives on every scan tick.
+  const operatorTouchedRef = useRef(false);
+  const recalledRef = useRef(false);
+
+  // Mark the setpoint entry as operator-owned once they type or nudge it.
+  const touchSetpoint = useCallback((text: string) => {
+    operatorTouchedRef.current = true;
+    setStagedSetpointText(text);
+  }, []);
+
+  // Recall the last-session setpoint ONCE, before any operator edit, so after a
+  // backend restart the previous target is shown ready to Start. Guarded by a
+  // pure helper + a latch so live updates don't overwrite operator input.
+  useEffect(() => {
+    if (recalledRef.current) return;
+    const recalled = recallSetpointText(
+      liveStatus?.last_setpoint_c,
+      operatorTouchedRef.current,
+    );
+    if (recalled !== null) {
+      recalledRef.current = true;
+      setStagedSetpointText(recalled);
+    }
+  }, [liveStatus?.last_setpoint_c]);
 
   // Load config (reused after a thermocouple switch re-clamps the limits).
   const loadConfig = useCallback(async () => {
@@ -246,6 +306,7 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
     (delta: number) => {
       const current = Number.parseFloat(stagedSetpointText);
       const next = Math.max(0, (Number.isFinite(current) ? current : 0) + delta);
+      operatorTouchedRef.current = true;
       setStagedSetpointText(next.toFixed(1));
       applySetpoint(next);
     },
@@ -490,6 +551,121 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
         </div>
       </div>
 
+      {/* ---- Setpoint (prominent, always-visible primary control) ---- */}
+      <div className="tc-card tc-setpoint-card">
+        <div className="tc-setpoint-card-head">
+          <span className="tc-card-title">Setpoint</span>
+          <span className="tc-setpoint-card-current">
+            target {s ? s.setpoint_c.toFixed(1) : "—"} °C
+          </span>
+        </div>
+
+        <div className="tc-setpoint-primary">
+          <div className="tc-setpoint-row">
+            <button
+              className="tc-step-btn"
+              onClick={() => nudgeSetpoint(-setpointStep)}
+              disabled={busy}
+              title={`Decrease by ${setpointStep} °C`}
+            >
+              −
+            </button>
+            <input
+              className="tc-setpoint-input"
+              type="text"
+              inputMode="decimal"
+              value={stagedSetpointText}
+              onChange={(e) => touchSetpoint(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") commitSetpoint();
+              }}
+              aria-label="Setpoint target (°C) — press Enter to apply"
+            />
+            <button
+              className="tc-step-btn"
+              onClick={() => nudgeSetpoint(setpointStep)}
+              disabled={busy}
+              title={`Increase by ${setpointStep} °C`}
+            >
+              +
+            </button>
+          </div>
+
+          <button
+            className="tc-permissive tc-setpoint-startstop"
+            onClick={startStop.command === "start" ? handleStart : handleStop}
+            disabled={busy || startStop.disabled}
+            style={{
+              background:
+                startStop.command === "stop"
+                  ? "var(--color-error)"
+                  : "var(--color-success)",
+              color: "#04141b",
+              borderColor: "transparent",
+            }}
+            title={
+              busy
+                ? "Applying — please wait…"
+                : startStop.command === "start"
+                  ? "Start the heater — arm and heat to the target"
+                  : "Stop the heater — the relay opens immediately"
+            }
+          >
+            <span className="dot" />
+            {busy
+              ? "APPLYING…"
+              : startStop.command === "stop"
+                ? "■ STOP"
+                : "▶ START"}
+          </button>
+        </div>
+
+        <div className="tc-setpoint-controls">
+          <span className="tc-step-field">
+            step&nbsp;
+            <input
+              type="number"
+              min={1}
+              step={1}
+              value={setpointStep}
+              onChange={(e) =>
+                setSetpointStep(Math.max(1, Number.parseFloat(e.target.value) || 1))
+              }
+            />
+            °C
+          </span>
+          <span style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}>
+            Type a target and press <strong>Enter</strong> to apply — or use ± .
+          </span>
+        </div>
+
+        {s && s.state === "tripped" ? (
+          <p className="tc-setpoint-warn">
+            ⚠ Controller is TRIPPED — acknowledge the trip before commanding.
+          </p>
+        ) : s && !s.permissive ? (
+          <p className="tc-setpoint-warn">
+            Heater is stopped — set a target, then press <strong>Start</strong> to
+            begin heating.
+          </p>
+        ) : !s ? (
+          <p className="tc-setpoint-warn">
+            ⚠ Live status unavailable — commands are blocked until the controller
+            reports in.
+          </p>
+        ) : (
+          setpointWarning && <p className="tc-setpoint-warn">⚠ {setpointWarning}</p>
+        )}
+
+        <p className="tc-hint">
+          Allowed setpoint {config.setpoint_min_c}–{config.setpoint_max_c} °C. The
+          relay closes below <strong>setpoint − {deadband.toFixed(0)} °C</strong>{" "}
+          and opens at setpoint (bang-bang control). The high-high cutoff at{" "}
+          <strong>{hhLimit.toFixed(0)} °C</strong> latches the heater OFF
+          regardless of setpoint.
+        </p>
+      </div>
+
       {/* ---- Thermocouple selector (Type K / Type R) ---- */}
       <CollapsibleSection
         className="tc-card"
@@ -584,86 +760,6 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
           setpoint={s?.setpoint_c ?? config.setpoint_min_c}
           hhLimit={hhLimit}
         />
-      </CollapsibleSection>
-
-      {/* ---- Setpoint ---- */}
-      <CollapsibleSection className="tc-card" title="Setpoint">
-        <div className="tc-setpoint-row">
-          <button
-            className="tc-step-btn"
-            onClick={() => nudgeSetpoint(-setpointStep)}
-            disabled={busy}
-            title={`Decrease by ${setpointStep} °C`}
-          >
-            −
-          </button>
-          <input
-            className="tc-setpoint-input"
-            type="text"
-            inputMode="decimal"
-            value={stagedSetpointText}
-            onChange={(e) => setStagedSetpointText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === "Enter") commitSetpoint();
-            }}
-            aria-label="Setpoint target (°C) — press Enter to apply"
-          />
-          <button
-            className="tc-step-btn"
-            onClick={() => nudgeSetpoint(setpointStep)}
-            disabled={busy}
-            title={`Increase by ${setpointStep} °C`}
-          >
-            +
-          </button>
-        </div>
-
-        <div className="tc-setpoint-controls">
-          <span className="tc-step-field">
-            step&nbsp;
-            <input
-              type="number"
-              min={1}
-              step={1}
-              value={setpointStep}
-              onChange={(e) =>
-                setSetpointStep(Math.max(1, Number.parseFloat(e.target.value) || 1))
-              }
-            />
-            °C
-          </span>
-          <span
-            style={{ fontSize: "0.72rem", color: "var(--text-muted)" }}
-          >
-            Type a target and press <strong>Enter</strong> to apply — or use ± .
-          </span>
-        </div>
-
-        {s && s.state === "tripped" ? (
-          <p className="tc-setpoint-warn">
-            ⚠ Controller is TRIPPED — acknowledge the trip before commanding.
-          </p>
-        ) : s && !s.permissive ? (
-          <p className="tc-setpoint-warn">
-            Heater is stopped — set a target, then press <strong>Start</strong> to
-            begin heating.
-          </p>
-        ) : !s ? (
-          <p className="tc-setpoint-warn">
-            ⚠ Live status unavailable — commands are blocked until the controller
-            reports in.
-          </p>
-        ) : (
-          setpointWarning && <p className="tc-setpoint-warn">⚠ {setpointWarning}</p>
-        )}
-
-        <p className="tc-hint">
-          Allowed setpoint {config.setpoint_min_c}–{config.setpoint_max_c} °C. The
-          relay closes below <strong>setpoint − {deadband.toFixed(0)} °C</strong>{" "}
-          and opens at setpoint (bang-bang control). The high-high cutoff at{" "}
-          <strong>{hhLimit.toFixed(0)} °C</strong> latches the heater OFF
-          regardless of setpoint.
-        </p>
       </CollapsibleSection>
 
       {/* ---- Live telemetry ---- */}
