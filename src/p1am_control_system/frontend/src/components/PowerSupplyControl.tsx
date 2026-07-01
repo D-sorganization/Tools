@@ -3,6 +3,7 @@ import { Database } from "lucide-react";
 import { PowerSupplyTrend, type TrendSample } from "./PowerSupplyTrend";
 import { ExportButton } from "./ExportButton";
 import { CollapsibleSection } from "./CollapsibleSection";
+import { EditableValue } from "./EditableValue";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
 import { MAX_TREND_SAMPLES } from "../lib/trendTime";
 import "./PowerSupplyControl.css";
@@ -407,6 +408,19 @@ const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) 
     );
   }, [config, clampDraft, putConfig]);
 
+  // Inline commit for the live "Limit" readout (shared EditableValue): applies
+  // the output limit at once via the same config PUT the clamp control uses.
+  const commitClamp = useCallback(
+    (value: number) => {
+      if (!config) return;
+      putConfig(
+        { ...config, output_clamp_percent: value },
+        `Output limit set to ${value.toFixed(0)} %`,
+      );
+    },
+    [config, putConfig],
+  );
+
   const saveConfig = useCallback(() => {
     if (!configDraft) return;
     putConfig(configDraft, "Configuration saved");
@@ -485,9 +499,18 @@ const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) 
           </div>
           <div className="ps-metric">
             <span className="ps-metric-label">Limit</span>
-            <span className="ps-metric-value is-warning">
-              {activeClamp.toFixed(0)} %
-            </span>
+            <EditableValue
+              className="ps-metric-value is-warning"
+              value={activeClamp}
+              label="Output limit"
+              unit="%"
+              format={(v) => v.toFixed(0)}
+              min={0.1}
+              max={100}
+              step={5}
+              title="Output limit — click to edit"
+              onCommit={commitClamp}
+            />
           </div>
         </div>
 
