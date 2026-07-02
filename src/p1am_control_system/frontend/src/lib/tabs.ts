@@ -97,13 +97,12 @@ export const TABS: readonly TabDef[] = [
 
 /** Default visibility map (all tabs visible) derived from {@link TABS}. */
 export function defaultTabVisibility(): Record<TabId, boolean> {
-  return TABS.reduce(
-    (acc, tab) => {
-      acc[tab.id] = true;
-      return acc;
-    },
-    {} as Record<TabId, boolean>,
-  );
+  // ⚡ Bolt Optimization: Replace .reduce() with a single-pass for...of loop to eliminate callback allocation and GC overhead when initializing objects
+  const visibility: Record<TabId, boolean> = {} as Record<TabId, boolean>;
+  for (const tab of TABS) {
+    visibility[tab.id] = true;
+  }
+  return visibility;
 }
 
 /** The canonical tab id order as declared in {@link TABS}. */
