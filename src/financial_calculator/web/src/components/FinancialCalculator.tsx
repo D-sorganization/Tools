@@ -58,7 +58,8 @@ function FinancialCalculator() {
   const [taxRate, setTaxRate] = useState(25)
   const [results, setResults] = useState<Results | null>(null)
 
-  const calculate = () => {
+  const calculate = (e?: React.FormEvent) => {
+    e?.preventDefault()
     const util = utilization / 100
     const annualFeedstock = plantCapacity * operatingDays * util
     const productTons = annualFeedstock * 0.85
@@ -115,7 +116,7 @@ function FinancialCalculator() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Input Panel */}
-        <div className="space-y-6">
+        <form onSubmit={calculate} className="space-y-6">
           {/* Plant Operations */}
           <div className="rounded-lg p-4" style={{ backgroundColor: colors.mantle, border: `1px solid ${colors.surface1}` }}>
             <h2 className="text-lg font-semibold mb-4" style={{ color: colors.lavender }}>
@@ -199,14 +200,14 @@ function FinancialCalculator() {
           </div>
 
           <button
-            onClick={calculate}
+            type="submit"
             aria-controls="results-panel"
             className="w-full py-3 rounded-lg font-bold text-lg transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#89b4fa] focus-visible:ring-offset-[#1e1e2e]"
             style={{ backgroundColor: colors.blue, color: colors.base }}
           >
             Calculate Financial Model
           </button>
-        </div>
+        </form>
 
         {/* Results Panel */}
         <div id="results-panel" className="space-y-6" aria-live="polite">
