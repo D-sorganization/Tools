@@ -3,6 +3,15 @@
 import { SwingPhase } from '@/lib/golf/types';
 import { PhaseTransition } from '@/lib/golf/phaseDetector';
 
+// ⚡ Bolt Optimization: Extract static array literal outside of component
+// to avoid O(N) array allocation per render cycle.
+const KEY_SWING_PHASES = [
+  SwingPhase.ADDRESS,
+  SwingPhase.TOP_OF_BACKSWING,
+  SwingPhase.IMPACT,
+  SwingPhase.FINISH,
+];
+
 interface PhaseTimelineProps {
   phases: PhaseTransition[];
   totalDuration: number;
@@ -76,14 +85,7 @@ export default function PhaseTimeline({
   const activePhase = getCurrentPhase();
 
   // Key phases for simplified view
-  const keyPhases = phases.filter((p) =>
-    [
-      SwingPhase.ADDRESS,
-      SwingPhase.TOP_OF_BACKSWING,
-      SwingPhase.IMPACT,
-      SwingPhase.FINISH,
-    ].includes(p.phase)
-  );
+  const keyPhases = phases.filter((p) => KEY_SWING_PHASES.includes(p.phase));
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
