@@ -39,8 +39,21 @@ export const TabBar: React.FC<{
   // (a tab added in a new release must never be silently dropped).
   const effectiveOrder = useMemo<TabId[]>(() => {
     const base = order && order.length ? order : defaultTabOrder();
-    const kept = base.filter((id) => TAB_BY_ID[id]);
-    const missing = defaultTabOrder().filter((id) => !kept.includes(id));
+    // ⚡ Bolt Optimization: Replaced chained .filter().includes() with single-pass loops
+    const kept: TabId[] = [];
+    const keptSet = new Set<TabId>();
+    for (const id of base) {
+      if (TAB_BY_ID[id]) {
+        kept.push(id);
+        keptSet.add(id);
+      }
+    }
+    const missing: TabId[] = [];
+    for (const id of defaultTabOrder()) {
+      if (!keptSet.has(id)) {
+        missing.push(id);
+      }
+    }
     return [...kept, ...missing];
   }, [order]);
 

@@ -66,3 +66,6 @@
 ## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
 **Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
 **Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
+## 2024-05-23 - Replaced chained filter().includes() with single pass loops and Sets
+**Learning:** Using `array1.filter(item => !array2.includes(item))` causes O(N^2) complexity and multiple intermediate array allocations per render.
+**Action:** To avoid O(N²) complexity in array filtering or mapping, pre-compute a `Set` from the target array and use `.has()` for O(1) constant-time lookups instead of chained `.filter().includes()` passes.

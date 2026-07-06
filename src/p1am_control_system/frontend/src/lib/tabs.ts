@@ -121,10 +121,21 @@ const VISIBILITY_KEY = "p1am.tabVisibility.v1";
  */
 function reconcileOrder(saved: readonly unknown[]): TabId[] {
   const known = new Set<TabId>(defaultTabOrder());
-  const kept = saved.filter(
-    (id): id is TabId => typeof id === "string" && known.has(id as TabId),
-  );
-  const missing = defaultTabOrder().filter((id) => !kept.includes(id));
+  // ⚡ Bolt Optimization: Replaced chained .filter().includes() with single-pass loops
+  const kept: TabId[] = [];
+  const keptSet = new Set<TabId>();
+  for (const id of saved) {
+    if (typeof id === "string" && known.has(id as TabId)) {
+      kept.push(id as TabId);
+      keptSet.add(id as TabId);
+    }
+  }
+  const missing: TabId[] = [];
+  for (const id of defaultTabOrder()) {
+    if (!keptSet.has(id)) {
+      missing.push(id);
+    }
+  }
   return [...kept, ...missing];
 }
 
