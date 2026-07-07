@@ -21,6 +21,7 @@ import { TagInspector } from "./components/TagInspector";
 import type { LadderTagInfo } from "./api/schemas";
 import { NotificationBanner } from "./components/NotificationBanner";
 import { TabBar } from "./components/TabBar";
+import { HelpModal } from "./components/HelpModal";
 import { CsvExporter } from "./components/CsvExporter";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
 import {
@@ -154,6 +155,8 @@ export const App: React.FC = () => {
   // Tab Navigation, Order, and Visibility State (order + visibility persisted
   // to localStorage so an operator's layout survives reloads).
   const [activeTab, setActiveTab] = useState<TabId>("powerSupply");
+  // Per-tab help modal (opened by the Help button; shows HELP[activeTab]).
+  const [helpOpen, setHelpOpen] = useState(false);
   const [visibleTabs, setVisibleTabs] = useState<Record<TabId, boolean>>(
     loadTabVisibility,
   );
@@ -726,6 +729,17 @@ export const App: React.FC = () => {
 
           <button
             type="button"
+            onClick={() => setHelpOpen(true)}
+            className="btn"
+            style={{ padding: "0.5rem" }}
+            title="Help for the current tab"
+            aria-label="Open help for the current tab"
+          >
+            <BookOpen size={14} />
+          </button>
+
+          <button
+            type="button"
             onClick={() => setInspectorView(inspectorView.type === "settings" ? { type: "none" } : { type: "settings" })}
             className="btn"
             style={{ padding: "0.5rem", color: inspectorView.type === "settings" ? "var(--accent-cyan)" : "inherit" }}
@@ -741,6 +755,12 @@ export const App: React.FC = () => {
           />
         </div>
       </header>
+
+      <HelpModal
+        tabId={activeTab}
+        open={helpOpen}
+        onClose={() => setHelpOpen(false)}
+      />
 
       <AlarmsHeader
         activeAlarms={activeAlarms}
