@@ -250,6 +250,15 @@ class TemperatureStatus(BaseModel):
             "once. None when no reading is available yet."
         ),
     )
+    control_sensor_holding: bool = Field(
+        default=False,
+        description=(
+            "True when the controlling thermocouple's reading is currently being "
+            "held by the deglitch filter (a live dropout is being ridden out). "
+            "Lets the HMI warn that the control sensor is intermittently faulting; "
+            "a sustained fault escalates to a latched TC_FAULT trip."
+        ),
+    )
 
     estopped: bool = False
 

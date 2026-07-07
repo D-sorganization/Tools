@@ -11,6 +11,7 @@ controller and the PLC client's public seam, never their internals).
 from __future__ import annotations
 
 import logging
+import math
 import time
 from collections.abc import Callable
 from typing import Any, cast
@@ -27,6 +28,7 @@ from temperature_models import (
     TemperatureState,
     TemperatureStatus,
 )
+from thermocouple_filter import FilterSample, ThermocoupleDeglitchFilter
 
 __all__ = [
     "TcTypeRequest",
@@ -69,6 +71,23 @@ class TemperatureService:
         # / HH-on-either-TC reference.
         self._last_type_k_c: float | None = None
         self._last_type_r_c: float | None = None
+        # Per-channel deglitch filters. The P1-04THM drives an open thermocouple
+        # to 0 C (low-side burnout); a raw burnout-zero fed into the control law
+        # reads as "cold" and would call for heat (runaway). Each channel's filter
+        # rejects an implausible drop to ~0, holds the last-good value through the
+        # glitch, and on a *persistent* fault emits fault=True so we trip the
+        # heater (fail-safe). The controlling channel's filtered value is what the
+        # control law and the HMI see; both channels are always filtered so a
+        # switch lands on an already-warm filter.
+        self._k_filter = ThermocoupleDeglitchFilter()
+        self._r_filter = ThermocoupleDeglitchFilter()
+        # True when the CONTROLLING channel's reading is currently being held
+        # (a live glitch is being ridden out). Surfaced in status() so the HMI can
+        # warn the operator that the control sensor is acting up.
+        self._control_sensor_holding = False
+        # Latched True once a control-sensor fault has been logged, so the
+        # fail-safe trip is logged once (not every scan) until it recovers.
+        self._control_sensor_faulted = False
         # Defense-in-depth E-stop interlock, independent of the controller's own
         # latch: when set, ``_write_relay`` forces the heater relay OFF and
         # surfaces a failed de-energize as a comms failure. Set by the poll loop.
@@ -102,26 +121,71 @@ class TemperatureService:
         commanded value to False, so a failed write can never *energize* it.
         """
         cfg = self.controller.config
+        now = time.monotonic()
         # Scale BOTH thermocouples every scan, independent of which one controls,
-        # so the HMI can show/plot both and the controller gets the non-active TC
-        # as its HH-on-either-TC / cross-check reference.
-        self._last_type_k_c = self._temp_from_channel(tags, cfg.type_k)
-        self._last_type_r_c = self._temp_from_channel(tags, cfg.type_r)
-        temp_c = self._temp_from_tags(tags)
-        other_c = (
-            self._last_type_r_c
-            if cfg.active_tc_type == TcType.TYPE_K
-            else self._last_type_k_c
-        )
+        # then deglitch each so a burnout-zero / dropout can never reach the
+        # control law or the HMI as a spurious "cold". The FILTERED per-channel
+        # values are what we publish and control on.
+        k_sample = self._k_filter.update(self._temp_from_channel(tags, cfg.type_k), now)
+        r_sample = self._r_filter.update(self._temp_from_channel(tags, cfg.type_r), now)
+        self._last_type_k_c = k_sample.value_c
+        self._last_type_r_c = r_sample.value_c
+
+        active_is_k = cfg.active_tc_type == TcType.TYPE_K
+        active_sample = k_sample if active_is_k else r_sample
+        other_sample = r_sample if active_is_k else k_sample
+        self._note_control_sensor_health(active_sample)
+
         # Pass a monotonic clock so the controller can enforce the
-        # anti-short-cycle min on/off dwell across scans.
+        # anti-short-cycle min on/off dwell across scans. On a persistent
+        # control-sensor fault we feed a non-finite value, which trips the
+        # controller's TC_FAULT (fail-safe) rather than heating on a stale hold.
         relay_on = self.controller.tick(
-            measured_temp_c=temp_c,
-            now=time.monotonic(),
-            other_temp_c=other_c,
+            measured_temp_c=self._control_value(active_sample),
+            now=now,
+            other_temp_c=other_sample.value_c if not other_sample.fault else None,
         )
         await self._write_relay(relay_on)
         return self.status()
+
+    @staticmethod
+    def _control_value(sample: FilterSample) -> float:
+        """The value to feed the control law from a filtered sample.
+
+        A persistent fault becomes NaN so the controller's existing non-finite
+        ``TC_FAULT`` check trips the heater (fail-safe); a not-yet-seen reading
+        becomes a benign 0.0 (the controller is IDLE at startup so this cannot
+        energize); otherwise the held/accepted value is used.
+        """
+        if sample.fault:
+            return math.nan
+        if sample.value_c is None:
+            return 0.0
+        return sample.value_c
+
+    def _note_control_sensor_health(self, active: FilterSample) -> None:
+        """Track + log the controlling sensor's filter state on each scan.
+
+        Logs once on each transition (into holding, into fault, and back to OK)
+        so the journal shows when the control sensor started glitching without
+        spamming a line every scan.
+        """
+        was_holding = self._control_sensor_holding
+        self._control_sensor_holding = active.holding
+        if active.fault and not self._control_sensor_faulted:
+            self._control_sensor_faulted = True
+            self._logger.error(
+                "control thermocouple FAULT — reading bad past hold timeout; "
+                "tripping heater (fail-safe)"
+            )
+        elif active.holding and not was_holding:
+            self._logger.warning(
+                "control thermocouple glitch — holding last-good %.1f C",
+                active.value_c if active.value_c is not None else float("nan"),
+            )
+        elif not active.holding and was_holding:
+            self._control_sensor_faulted = False
+            self._logger.info("control thermocouple recovered")
 
     def status(self) -> TemperatureStatus:
         """Controller status augmented with service-owned readings.
@@ -137,6 +201,7 @@ class TemperatureService:
         status.last_setpoint_c = self._last_setpoint_c
         status.type_k_temp_c = self._last_type_k_c
         status.type_r_temp_c = self._last_type_r_c
+        status.control_sensor_holding = self._control_sensor_holding
         return status
 
     def update_config(self, new_config: TemperatureConfig) -> TemperatureConfig:

@@ -341,6 +341,88 @@ class TestBothThermocoupleReadings:
         asyncio.run(_go())
 
 
+class TestControlSensorDeglitch:
+    """The per-channel deglitch filter must stop a burnout-zero on the control
+    thermocouple from reaching the control law as a spurious 'cold', hold the
+    last-good value through the glitch, and fail safe if the fault persists."""
+
+    # 82.14 % of 1400 C ~= 1150 C.
+    HOT_PCT = 82.14
+    HOT_C = 82.14 * 1400.0 / 100.0
+
+    def test_burnout_zero_on_control_tc_is_held_not_fed_cold(self) -> None:
+        async def _go() -> None:
+            svc = _service()
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(1200.0)  # RUNNING, K controls
+            warm = await svc.poll({"TAG_0": self.HOT_PCT, "TAG_1": self.HOT_PCT})
+            assert warm.measured_temp_c == pytest.approx(self.HOT_C, abs=1)
+            # K burns out to 0 for one scan -> held at last-good, NOT 0.
+            glitch = await svc.poll({"TAG_0": 0.0, "TAG_1": self.HOT_PCT})
+            assert glitch.measured_temp_c == pytest.approx(self.HOT_C, abs=1)
+            assert glitch.control_sensor_holding is True
+            assert glitch.state == TemperatureState.RUNNING
+            assert "TC_FAULT" not in glitch.trips
+
+        asyncio.run(_go())
+
+    def test_holding_clears_on_recovery(self) -> None:
+        async def _go() -> None:
+            svc = _service()
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(1200.0)
+            await svc.poll({"TAG_0": self.HOT_PCT, "TAG_1": self.HOT_PCT})
+            held = await svc.poll({"TAG_0": 0.0, "TAG_1": self.HOT_PCT})
+            assert held.control_sensor_holding is True
+            recovered = await svc.poll({"TAG_0": 82.5, "TAG_1": self.HOT_PCT})
+            assert recovered.control_sensor_holding is False
+            assert recovered.measured_temp_c == pytest.approx(82.5 * 14, abs=1)
+
+        asyncio.run(_go())
+
+    def test_persistent_control_sensor_fault_trips_heater(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        # Drive the injected monotonic clock past the filter's hold timeout so a
+        # sustained burnout escalates to a latched TC_FAULT (fail-safe stop).
+        import temperature_integration as ti
+
+        clock = {"t": 0.0}
+        monkeypatch.setattr(ti.time, "monotonic", lambda: clock["t"])
+
+        async def _go() -> None:
+            svc = _service()
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(1200.0)
+            await svc.poll({"TAG_0": self.HOT_PCT, "TAG_1": self.HOT_PCT})
+            clock["t"] = 1.0
+            still = await svc.poll({"TAG_0": 0.0, "TAG_1": self.HOT_PCT})
+            assert still.control_sensor_holding is True
+            assert "TC_FAULT" not in still.trips  # brief glitch: still holding
+            clock["t"] = 30.0  # well past the 15 s hold timeout
+            tripped = await svc.poll({"TAG_0": 0.0, "TAG_1": self.HOT_PCT})
+            assert "TC_FAULT" in tripped.trips
+            assert tripped.state == TemperatureState.TRIPPED
+            assert tripped.relay_on is False
+
+        asyncio.run(_go())
+
+    def test_other_tc_burnout_does_not_poison_cross_check(self) -> None:
+        # Control off K (hot). The OTHER TC (R) burning out to 0 must be held, so
+        # it never looks like a spurious "cold other" — control keeps running.
+        async def _go() -> None:
+            svc = _service()
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(1200.0)
+            await svc.poll({"TAG_0": self.HOT_PCT, "TAG_1": self.HOT_PCT})
+            s = await svc.poll({"TAG_0": self.HOT_PCT, "TAG_1": 0.0})
+            assert s.type_r_temp_c == pytest.approx(self.HOT_C, abs=1)  # R held
+            assert s.state == TemperatureState.RUNNING
+            assert s.trips == []
+
+        asyncio.run(_go())
+
+
 class TestServiceAndTcTypeErrors:
     def test_service_estop_engage_and_clear(self) -> None:
         svc = _service()

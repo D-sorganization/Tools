@@ -380,6 +380,20 @@
   font-weight: 700;
 }
 
+/* Softer amber warning for a transient control-sensor hold (not a trip). */
+.tc-hold-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid var(--accent-amber, #f59e0b);
+  color: var(--accent-amber, #f59e0b);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
 .tc-btn-danger {
   background: var(--color-error);
   border-color: var(--color-error);

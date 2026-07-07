@@ -202,6 +202,10 @@ export interface TemperatureStatus {
   /** Latest type-R reading (deg C), regardless of which TC is controlling, so
    * the HMI can show/plot both channels. null/undefined before the first scan. */
   type_r_temp_c?: number | null;
+  /** True while the deglitch filter is holding the control thermocouple's
+   * last-good value through a live dropout — a hint the control sensor is
+   * intermittently faulting (a sustained fault escalates to a TC_FAULT trip). */
+  control_sensor_holding?: boolean;
 }
 
 /**
@@ -936,6 +940,15 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
       {/* ---- Generic trips banner (non-HH trips still surface) ---- */}
       {s && s.trips.length > 0 && !hhTripped && (
         <div className="tc-trip-banner">⚠ Active trips: {s.trips.join(", ")}</div>
+      )}
+
+      {/* ---- Control-sensor deglitch hold (intermittent dropout in progress) ---- */}
+      {s?.control_sensor_holding && s.trips.length === 0 && (
+        <div className="tc-hold-banner">
+          ⚠ Control thermocouple glitching — holding last-good reading. Control is
+          protected; check the {activeTcType === "K" ? "Type K" : "Type R"} probe
+          wiring/connections. A sustained fault will trip the heater.
+        </div>
       )}
 
       {/* ---- Live trend ---- */}
