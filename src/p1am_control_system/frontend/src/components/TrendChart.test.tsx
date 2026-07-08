@@ -41,16 +41,54 @@ describe("TrendChart", () => {
     expect(lineCommands).toBeLessThanOrEqual(600);
   });
 
-  it("freezes the on-screen slice when the Freeze button is clicked", () => {
+  it("toggles the Pause button to Live and shows a FROZEN indicator", () => {
     const { rerender } = render(
       <TrendChart history={makeHistory(50)} tagValues={tagValues} />,
     );
-    // Click Freeze — captures the current slice synchronously in the handler.
+    // Live to start: the toggle reads "Freeze", no frozen/panned badge.
+    expect(screen.getByText("Freeze")).toBeInTheDocument();
+    expect(screen.queryByText("FROZEN")).not.toBeInTheDocument();
+
+    // Click Freeze — snapshots the current slice synchronously in the handler.
     fireEvent.click(screen.getByText("Freeze"));
-    expect(screen.getByText("Frozen")).toBeInTheDocument();
+    expect(screen.getByText("Live")).toBeInTheDocument();
+    expect(screen.getByText("FROZEN")).toBeInTheDocument();
 
     // New live frames arriving while frozen must not crash or unfreeze.
     rerender(<TrendChart history={makeHistory(120)} tagValues={tagValues} />);
-    expect(screen.getByText("Frozen")).toBeInTheDocument();
+    expect(screen.getByText("FROZEN")).toBeInTheDocument();
+
+    // Clicking again resumes the live stream.
+    fireEvent.click(screen.getByText("Live"));
+    expect(screen.getByText("Freeze")).toBeInTheDocument();
+    expect(screen.queryByText("FROZEN")).not.toBeInTheDocument();
+  });
+
+  it("changes the visible window when a window button is pressed", () => {
+    // 4000 samples @ 10 Hz = 400 s of data — enough to hold any preset window.
+    render(<TrendChart history={makeHistory(4000)} tagValues={tagValues} />);
+
+    // Default span is 60 s, so the left (oldest) X-axis edge reads "-60s".
+    expect(screen.getByText("-60s")).toBeInTheDocument();
+
+    // Selecting the 30 s window narrows the span; the left edge moves to "-30s".
+    fireEvent.click(screen.getByText("30s"));
+    expect(screen.getByText("-30s")).toBeInTheDocument();
+    expect(screen.queryByText("-60s")).not.toBeInTheDocument();
+
+    // Widening to 300 s pushes the oldest visible edge back to "-300s".
+    fireEvent.click(screen.getByText("300s"));
+    expect(screen.getByText("-300s")).toBeInTheDocument();
+  });
+
+  it("pans back into history and reports the panned offset", () => {
+    render(<TrendChart history={makeHistory(4000)} tagValues={tagValues} />);
+    // Live to start — no panned/frozen badge.
+    expect(screen.queryByText(/^panned/)).not.toBeInTheDocument();
+
+    // The back-in-time (older) button is the one titled accordingly.
+    fireEvent.click(screen.getByTitle("Scroll back in time (older)"));
+    // Now panned back by ~30% of the 60 s window ≈ 18 s.
+    expect(screen.getByText(/^panned -\d+s$/)).toBeInTheDocument();
   });
 });

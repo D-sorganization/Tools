@@ -3,6 +3,7 @@ import {
   recallSetpointText,
   formatTcReadout,
   heatUpRateReadout,
+  plotPxToTime,
 } from "./TemperatureControl";
 
 /**
@@ -111,5 +112,30 @@ describe("heatUpRateReadout", () => {
     expect(() =>
       heatUpRateReadout(linearSamples, "K", "linear", Number.NaN),
     ).toThrow(TypeError);
+  });
+});
+
+/**
+ * Pixel→time mapping that backs the trend's wheel- and drag-to-zoom (the crux of
+ * scroll-back / zoom). Pure so the interaction math is verified without a DOM;
+ * the pan/zoom/pause state itself lives in the tested useTrendViewport hook.
+ */
+describe("plotPxToTime", () => {
+  const plotW = 550; // TREND_W(600) - PAD_L(40) - PAD_R(10)
+
+  it("maps the plot edges to the window bounds", () => {
+    expect(plotPxToTime(0, plotW, 1000, 5000)).toBe(1000);
+    expect(plotPxToTime(plotW, plotW, 1000, 5000)).toBe(5000);
+  });
+
+  it("linearly interpolates a pixel to a time inside the window", () => {
+    // 50% across the plot → midpoint of the [1000, 5000] window.
+    expect(plotPxToTime(plotW / 2, plotW, 1000, 5000)).toBe(3000);
+    // 25% across → 25% of the span.
+    expect(plotPxToTime(plotW * 0.25, plotW, 0, 4000)).toBe(1000);
+  });
+
+  it("degenerates to t0 for a zero-width plot (DbC)", () => {
+    expect(plotPxToTime(100, 0, 1000, 5000)).toBe(1000);
   });
 });

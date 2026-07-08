@@ -9,10 +9,9 @@ import {
 } from "../lib/trendAxis";
 import {
   MAX_TREND_SAMPLES,
+  MAX_WINDOW_SECONDS,
   downsample,
   formatWindow,
-  fixedWindowRange,
-  windowStartIndex,
   timeSeriesPath,
   timeToX,
 } from "../lib/trendTime";
@@ -25,6 +24,7 @@ import {
   type FitPoint,
 } from "../lib/curveFit";
 import { useTrendBackfill } from "../hooks/useTrendBackfill";
+import { useTrendViewport } from "../hooks/useTrendViewport";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
 import { TrendFitControls } from "./TrendFitControls";
@@ -1281,6 +1281,25 @@ function activeSpans(
   return spans;
 }
 
+/**
+ * Map a plot-area pixel (0…plotW) to a time within the resolved [t0,t1] window.
+ * Pure so the wheel / drag-zoom mapping is unit-testable without a DOM, and the
+ * inverse of the SVG's X placement. Linear because the trend SVG uses
+ * preserveAspectRatio="none" (x scales with the rendered width). Degenerates to
+ * t0 for a zero-width plot (DbC — callers get a valid time, never NaN).
+ */
+// Pure helper, not a component, so it never participates in fast refresh.
+// eslint-disable-next-line react-refresh/only-export-components
+export function plotPxToTime(
+  px: number,
+  plotW: number,
+  t0: number,
+  t1: number,
+): number {
+  if (plotW <= 0) return t0;
+  return t0 + (px / plotW) * (t1 - t0);
+}
+
 interface TrendProps {
   samples: TempSample[];
   /** Tag index backing the temperature (for historian backfill). */
@@ -1301,8 +1320,6 @@ const TempTrend: React.FC<TrendProps> = ({
   activeTcType,
 }) => {
   const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, fullScale));
-  const [windowSeconds, setWindowSeconds] =
-    useState<number>(DEFAULT_WINDOW_SECONDS);
   const [fitMethodId, setFitMethodId] = useState<string>(NO_FIT_ID);
   const [fitWindowMin, setFitWindowMin] = useState<number>(DEFAULT_FIT_WINDOW_MIN);
 
@@ -1311,12 +1328,30 @@ const TempTrend: React.FC<TrendProps> = ({
   const [showR, setShowR] = useState(true);
   const [showRelay, setShowRelay] = useState(true);
 
+  // Pan / zoom / pause come from the shared, tested viewport model (DRY). The
+  // domain is epoch ms; the visible window (seconds) is DERIVED from its span so
+  // it still drives the historian backfill depth and the "last …" label.
+  const view = useTrendViewport({
+    defaultSpan: DEFAULT_WINDOW_SECONDS * 1000,
+    minSpan: 1000,
+    maxSpan: MAX_WINDOW_SECONDS * 1000,
+  });
+  const windowSeconds = view.viewport.span / 1000;
+
+  // While paused, plot a frozen snapshot of the samples captured at pause time
+  // so incoming live data never slides the view out from under the operator.
+  const [frozen, setFrozen] = useState<TempSample[]>([]);
+  const svgRef = useRef<SVGSVGElement | null>(null);
+
   // Backfill from the historian so widening the window immediately shows past
   // data (stored tag is a 0–100 %, so scale it to °C). The historian carries the
   // ACTIVE channel's tag only, so merge it into that channel of the buffer
   // (anything older than the live buffer) ahead of the live samples.
   const backfill = useTrendBackfill(tagId, windowSeconds, fullScale / 100);
-  const liveStart = samples.length ? samples[0].t : Infinity;
+  // Freeze swaps the live prop for the snapshot captured at pause time; either
+  // way backfill merges in ahead of it, so windowing/backfill stay unchanged.
+  const source = view.paused ? frozen : samples;
+  const liveStart = source.length ? source[0].t : Infinity;
   const older = backfill.filter((b) => b.t < liveStart);
   const series: TempSample[] = older.length
     ? [
@@ -1326,19 +1361,34 @@ const TempTrend: React.FC<TrendProps> = ({
           r: activeTcType === "R" ? b.v : null,
           relayOn: false,
         })),
-        ...samples,
+        ...source,
       ]
-    : samples;
+    : source;
 
-  // Window + scale by real wall-clock time so the span and the fit slope are
-  // correct regardless of the actual poll rate.
-  const windowed = series.slice(
-    windowStartIndex(
-      series.map((s) => s.t),
-      windowSeconds,
-    ),
-  );
+  // The viewport decides which slice of real wall-clock time is on screen. Its
+  // bounds are the full data extent; resolve() clamps the visible [t0,t1] for
+  // the current span (zoom) and offset (pan), then we window the samples to it.
+  const bounds = {
+    min: series[0]?.t ?? 0,
+    max: series[series.length - 1]?.t ?? Date.now(),
+  };
+  const { start: t0, end: t1 } = view.resolve(bounds);
+  const windowed = series.filter((s) => s.t >= t0 && s.t <= t1);
   const plotted = downsample(windowed);
+
+  // Plot-pixel ↔ time mapping for wheel / drag-zoom. preserveAspectRatio="none"
+  // means x scales with the rendered width, so convert client px → viewBox px →
+  // plot px, and (via the pure helper) plot px → time within the window.
+  const plotW = TREND_W - TREND_PAD_L - TREND_PAD_R;
+  const plotPx = (clientX: number): number => {
+    const el = svgRef.current;
+    if (!el) return 0;
+    const r = el.getBoundingClientRect();
+    if (!r.width) return 0;
+    const x = ((clientX - r.left) / r.width) * TREND_W;
+    return Math.max(0, Math.min(plotW, x - TREND_PAD_L));
+  };
+  const pxToUnit = (px: number): number => plotPxToTime(px, plotW, t0, t1);
 
   // Resolve the Y range against BOTH channels so neither trace clips.
   const plottedC = plotted
@@ -1358,10 +1408,8 @@ const TempTrend: React.FC<TrendProps> = ({
 
   // Position traces by real timestamp (not array index) so they are time-accurate
   // even when sparse historian backfill is merged with dense live samples. The X
-  // axis is a FIXED window ending at the latest sample, so changing the window
-  // rescales the axis immediately (rather than fitting to the data's span).
-  const latestMs = plotted.length ? plotted[plotted.length - 1].t : Date.now();
-  const { t0, t1 } = fixedWindowRange(latestMs, windowSeconds);
+  // axis spans the viewport's resolved [t0,t1] window, so zoom / pan / window
+  // changes rescale the axis immediately.
   const geom = {
     t0,
     t1,
@@ -1472,6 +1520,28 @@ const TempTrend: React.FC<TrendProps> = ({
           HH cutoff
           <strong>{hhLimit.toFixed(0)} °C</strong>
         </span>
+        {!view.live && (
+          <span
+            className="tc-trend-key"
+            style={{
+              color: "var(--color-warning)",
+              border: "1px solid var(--color-warning)",
+              borderRadius: "3px",
+              padding: "0.05rem 0.3rem",
+              fontSize: "0.66rem",
+              fontWeight: 600,
+              letterSpacing: "0.5px",
+              textTransform: "uppercase",
+            }}
+            title={
+              view.paused
+                ? "Plot frozen — live updates paused"
+                : "Scrolled back in time — not following the live edge"
+            }
+          >
+            {view.paused ? "Frozen" : "Panned"}
+          </span>
+        )}
         <span className="tc-trend-window">
           last {formatWindow(windowSeconds)} · {min.toFixed(0)}–{max.toFixed(0)} °C
         </span>
@@ -1486,7 +1556,79 @@ const TempTrend: React.FC<TrendProps> = ({
           flexWrap: "wrap",
         }}
       >
-        <TrendTimeControls value={windowSeconds} onChange={setWindowSeconds} />
+        <div
+          style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
+          role="group"
+          aria-label="Trend pan, zoom and pause controls"
+        >
+          <button
+            type="button"
+            className="btn"
+            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
+            onClick={() => {
+              if (!view.paused) setFrozen(samples);
+              view.togglePause();
+            }}
+            title={view.paused ? "Resume live streaming" : "Pause / freeze the plot"}
+            aria-label={view.paused ? "Resume live" : "Pause"}
+          >
+            {view.paused ? "Live" : "Pause"}
+          </button>
+          <button
+            type="button"
+            className="btn"
+            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
+            onClick={() => view.panBy((t1 - t0) * 0.3, bounds)}
+            title="Scroll back in time"
+            aria-label="Pan back in time"
+          >
+            ◀
+          </button>
+          <button
+            type="button"
+            className="btn"
+            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
+            onClick={() => view.panBy(-(t1 - t0) * 0.3, bounds)}
+            title="Scroll forward in time"
+            aria-label="Pan forward in time"
+          >
+            ▶
+          </button>
+          <button
+            type="button"
+            className="btn"
+            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
+            onClick={() => view.zoomBy(0.7, (t0 + t1) / 2, bounds)}
+            title="Zoom in (narrow the time window)"
+            aria-label="Zoom in"
+          >
+            +
+          </button>
+          <button
+            type="button"
+            className="btn"
+            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
+            onClick={() => view.zoomBy(1.43, (t0 + t1) / 2, bounds)}
+            title="Zoom out (widen the time window)"
+            aria-label="Zoom out"
+          >
+            −
+          </button>
+          <button
+            type="button"
+            className="btn"
+            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
+            onClick={() => view.reset()}
+            title="Reset zoom / pan and resume live"
+            aria-label="Reset view"
+          >
+            Reset
+          </button>
+        </div>
+        <TrendTimeControls
+          value={windowSeconds}
+          onChange={(seconds) => view.setSpan(seconds * 1000)}
+        />
         <TrendAxisControls value={axis} onChange={setAxis} unit="°C" />
         <TrendFitControls value={fitMethodId} onChange={setFitMethodId} />
         <label
@@ -1525,11 +1667,30 @@ const TempTrend: React.FC<TrendProps> = ({
       </div>
 
       <svg
+        ref={svgRef}
         className="tc-trend-svg"
         viewBox={`0 0 ${TREND_W} ${TREND_H}`}
         preserveAspectRatio="none"
         role="img"
         aria-label="Temperature trend"
+        style={{
+          cursor: view.selectionPx ? "ew-resize" : "crosshair",
+          touchAction: "none",
+        }}
+        onWheel={(e) => {
+          e.preventDefault();
+          view.zoomBy(
+            e.deltaY > 0 ? 1.15 : 0.87,
+            pxToUnit(plotPx(e.clientX)),
+            bounds,
+          );
+        }}
+        onPointerDown={(e) => view.startSelect(plotPx(e.clientX))}
+        onPointerMove={(e) => {
+          if (view.selectionPx) view.moveSelect(plotPx(e.clientX));
+        }}
+        onPointerUp={() => view.endSelect(bounds, pxToUnit)}
+        onPointerLeave={() => view.cancelSelect()}
       >
         {/* heater-ON status band behind everything else */}
         {showRelay &&
@@ -1650,6 +1811,20 @@ const TempTrend: React.FC<TrendProps> = ({
               />
             )}
           </>
+        )}
+
+        {/* Drag-to-zoom selection: translucent band over the plot area. */}
+        {view.selectionPx && (
+          <rect
+            x={TREND_PAD_L + Math.min(view.selectionPx.fromPx, view.selectionPx.toPx)}
+            y={TREND_PAD_T}
+            width={Math.abs(view.selectionPx.toPx - view.selectionPx.fromPx)}
+            height={TREND_PLOT_H}
+            fill="var(--accent-cyan)"
+            fillOpacity={0.18}
+            stroke="var(--accent-cyan)"
+            strokeOpacity={0.6}
+          />
         )}
       </svg>
     </div>
