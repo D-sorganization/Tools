@@ -66,3 +66,6 @@
 ## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
 **Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
 **Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
+## 2026-07-08 - Avoid Typecast Clutter When Replacing Object.fromEntries
+**Learning:** When optimizing React initialization logic by replacing `Object.fromEntries()` with single-pass `for...of` loops and pre-allocated objects, typing the initial object as `Partial<Record<...>>` forces all subsequent usages in the component to use verbose typecasts (e.g., `(TAB_BY_ID as Record<...>)[id]`). This directly violates the principle of not sacrificing code readability for micro-optimizations.
+**Action:** When replacing `Object.fromEntries()`, type the pre-allocated empty object explicitly using a type assertion during initialization (e.g., `const obj = {} as Record<...>;`) to keep the call sites completely clean and readable.
