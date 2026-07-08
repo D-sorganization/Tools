@@ -31,6 +31,7 @@ import { TrendTimeControls } from "./TrendTimeControls";
 import { TrendFitControls } from "./TrendFitControls";
 import { TrendTimeAxis, TrendFitOverlay } from "./TrendPlotOverlays";
 import { ExportButton } from "./ExportButton";
+import { SnapshotButton } from "./SnapshotButton";
 import { CollapsibleSection } from "./CollapsibleSection";
 import { EditableValue } from "./EditableValue";
 import "./TemperatureControl.css";
@@ -1461,6 +1462,20 @@ const TempTrend: React.FC<TrendProps> = ({
 
   const activeColor = activeTcType === "K" ? K_COLOR : R_COLOR;
 
+  // CSV export of the plotted K/R samples (empty cell for a channel gap; relay
+  // as 0/1). Hidden (undefined) until the window holds at least one point.
+  const snapshotCsv = plotted.length
+    ? {
+        headers: ["t_ms", "type_k_c", "type_r_c", "relay_on"],
+        rows: plotted.map((s) => [
+          s.t,
+          s.k ?? "",
+          s.r ?? "",
+          s.relayOn ? 1 : 0,
+        ]),
+      }
+    : undefined;
+
   return (
     <div className="tc-trend">
       <div className="tc-trend-legend">
@@ -1658,6 +1673,12 @@ const TempTrend: React.FC<TrendProps> = ({
             aria-label="Fit window in minutes"
           />
         </label>
+        <SnapshotButton
+          targetRef={svgRef}
+          filename="temperature_trend"
+          csv={snapshotCsv}
+          label="Export temperature trend snapshot"
+        />
       </div>
 
       {/* Heat-up-rate readout box: ramp rate (°/min · °/hr) + fit quality. */}

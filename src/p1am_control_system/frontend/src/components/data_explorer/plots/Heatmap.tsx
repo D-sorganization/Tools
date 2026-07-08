@@ -10,8 +10,9 @@
  * `<svg>` so a container can export it. Theme-aware via CSS variables.
  */
 
-import React from "react";
+import React, { useCallback, useRef } from "react";
 import { divergingColor } from "../../../lib/explorer/palette";
+import { SnapshotButton } from "../../SnapshotButton";
 
 export interface HeatmapProps {
   width: number;
@@ -54,9 +55,22 @@ export const Heatmap = React.forwardRef<SVGSVGElement, HeatmapProps>(
     const cellW = n > 0 ? gridW / n : 0;
     const cellH = n > 0 ? gridH / n : 0;
 
+    // Mirror the <svg> node into both a private ref (for the snapshot control)
+    // and the forwarded ref that callers/tests expect (DRY: one <svg> element).
+    const innerRef = useRef<SVGSVGElement | null>(null);
+    const setSvgRef = useCallback(
+      (node: SVGSVGElement | null) => {
+        innerRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref],
+    );
+
     return (
+      <div style={{ position: "relative", display: "inline-block", maxWidth: "100%" }}>
       <svg
-        ref={ref}
+        ref={setSvgRef}
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
@@ -137,6 +151,14 @@ export const Heatmap = React.forwardRef<SVGSVGElement, HeatmapProps>(
           ))}
         </g>
       </svg>
+      <div style={{ position: "absolute", top: 6, right: 6 }}>
+        <SnapshotButton
+          targetRef={innerRef}
+          filename="correlation_heatmap"
+          label="Export heatmap snapshot"
+        />
+      </div>
+      </div>
     );
   },
 );

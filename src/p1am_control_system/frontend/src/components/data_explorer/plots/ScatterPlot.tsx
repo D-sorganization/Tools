@@ -153,6 +153,7 @@ export const ScatterPlot = React.forwardRef<SVGSVGElement, ScatterPlotProps>(
         logX={props.logX}
         logY={props.logY}
         grid={props.grid}
+        snapshotName="scatter_plot"
       >
         {series.map((s, i) => {
           const fill = s.color ?? colorForIndex(i);

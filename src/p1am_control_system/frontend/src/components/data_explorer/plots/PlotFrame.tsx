@@ -13,9 +13,10 @@
  * `--bg-color`, `--accent-cyan`).
  */
 
-import React from "react";
+import React, { useCallback, useRef } from "react";
 
 import { makeProjector, type PlotMargin } from "./projection";
+import { SnapshotButton } from "../../SnapshotButton";
 
 export type { PlotMargin } from "./projection";
 
@@ -30,6 +31,8 @@ export interface PlotFrameProps {
   logY?: boolean;
   grid?: boolean;
   margin?: Partial<PlotMargin>;
+  /** Filename prefix for the shared PNG/SVG snapshot control (default "plot"). */
+  snapshotName?: string;
   children?: React.ReactNode;
 }
 
@@ -49,12 +52,26 @@ function formatTick(value: number): string {
  */
 export const PlotFrame = React.forwardRef<SVGSVGElement, PlotFrameProps>(
   function PlotFrame(props, ref) {
-    const { width, height, xLabel, yLabel, grid = true } = props;
+    const { width, height, xLabel, yLabel, grid = true, snapshotName } = props;
     const { x, y, innerWidth, innerHeight, margin } = makeProjector(props);
 
+    // The snapshot control needs the live `<svg>` node, and callers (and their
+    // tests) still expect the forwarded ref. Keep a private ref for export and
+    // mirror the node into the forwarded ref (DRY: one <svg>, two consumers).
+    const innerRef = useRef<SVGSVGElement | null>(null);
+    const setSvgRef = useCallback(
+      (node: SVGSVGElement | null) => {
+        innerRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) ref.current = node;
+      },
+      [ref],
+    );
+
     return (
+      <div style={{ position: "relative", display: "inline-block", maxWidth: "100%" }}>
       <svg
-        ref={ref}
+        ref={setSvgRef}
         width={width}
         height={height}
         viewBox={`0 0 ${width} ${height}`}
@@ -193,6 +210,14 @@ export const PlotFrame = React.forwardRef<SVGSVGElement, PlotFrameProps>(
           </text>
         )}
       </svg>
+      <div style={{ position: "absolute", top: 6, right: 6 }}>
+        <SnapshotButton
+          targetRef={innerRef}
+          filename={snapshotName ?? "plot"}
+          label="Export plot snapshot"
+        />
+      </div>
+      </div>
     );
   },
 );

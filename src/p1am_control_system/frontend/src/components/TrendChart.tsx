@@ -4,13 +4,12 @@ import {
   Pause,
   ZoomIn,
   ZoomOut,
-  Image,
-  FileSpreadsheet,
   RotateCcw,
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
 import { TAG_INDICES } from "./RoutingMatrix";
+import { SnapshotButton } from "./SnapshotButton";
 import { type AxisRange, defaultAxisRange } from "../lib/trendAxis";
 import {
   SAMPLES_PER_SECOND,
@@ -330,51 +329,19 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTags, renderHistory, smoothedData, minVal, maxVal]);
 
-  // Snapshot functionality: Download SVG screenshot
-  const downloadSnapshotSVG = () => {
-    if (!svgRef.current) return;
-    const svgEl = svgRef.current.cloneNode(true) as SVGSVGElement;
-
-    // Add explicitly styling inline for standalone viewing
-    svgEl.setAttribute("style", "background-color: #0f172a; color: #f8fafc; font-family: sans-serif;");
-    const svgString = new XMLSerializer().serializeToString(svgEl);
-    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `SCADA_Trend_Snapshot_${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}.svg`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
-
-  // Snapshot functionality: Export active chart history to CSV
-  const downloadSnapshotCSV = () => {
-    if (activeHistory.length === 0 || selectedTags.length === 0) return;
-
-    let csvContent = "data:text/csv;charset=utf-8,";
-    // Header
-    csvContent += "Index," + selectedTags.map(tagId => `Tag_${tagId}`).join(",") + "\n";
-
-    // Body
-    activeHistory.forEach((sample, idx) => {
-      const row = [idx];
-      selectedTags.forEach(tagId => {
-        row.push(sample[tagId] ?? 0.0);
-      });
-      csvContent += row.join(",") + "\n";
-    });
-
-    const encodedUri = encodeURI(csvContent);
-    const a = document.createElement("a");
-    a.href = encodedUri;
-    a.download = `Trend_Data_Export_${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-  };
+  // Snapshot/export data for the shared SnapshotButton: PNG + SVG come straight
+  // from the <svg> ref; CSV is the full-resolution visible slice of the selected
+  // tags. `undefined` (no tags / no data) hides the CSV button.
+  const snapshotCsv =
+    selectedTags.length > 0 && activeHistory.length > 0
+      ? {
+          headers: ["index", ...selectedTags.map((tagId) => `tag_${tagId}`)],
+          rows: activeHistory.map((sample, idx) => [
+            idx,
+            ...selectedTags.map((tagId) => sample[tagId] ?? 0),
+          ]),
+        }
+      : undefined;
 
   const gridLinesY = [0, 0.25, 0.5, 0.75, 1];
 
@@ -528,29 +495,13 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
           )}
         </div>
 
-        {/* Snapshot Download Buttons */}
-        <div style={{ display: "flex", gap: "0.3rem" }}>
-          <button
-            type="button"
-            onClick={downloadSnapshotSVG}
-            className="btn"
-            style={{ padding: "0.25rem 0.5rem", fontSize: "0.7rem" }}
-            title="Download Standalone SVG Graphic"
-          >
-            <Image size={12} />
-            <span>SVG</span>
-          </button>
-          <button
-            type="button"
-            onClick={downloadSnapshotCSV}
-            className="btn"
-            style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
-            title="Download trend view data as CSV"
-          >
-            <FileSpreadsheet size={12} />
-            <span>CSV</span>
-          </button>
-        </div>
+        {/* Snapshot / export (PNG + SVG + CSV) via the shared control */}
+        <SnapshotButton
+          targetRef={svgRef}
+          filename="p1am_trend"
+          csv={snapshotCsv}
+          label="Export trend snapshot"
+        />
       </div>
 
       {/* Manual Y-axis range override (auto-scale + Y-Zoom still apply when "Auto Y" is on) */}

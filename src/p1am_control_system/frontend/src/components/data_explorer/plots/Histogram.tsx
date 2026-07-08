@@ -61,6 +61,7 @@ export const Histogram = React.forwardRef<SVGSVGElement, HistogramProps>(
         yDomain={yDomain}
         xLabel={props.xLabel}
         yLabel={props.yLabel}
+        snapshotName="histogram"
       >
         {Array.from({ length: nBins }, (_, i) => {
           const left = x(binEdges[i]);

@@ -25,6 +25,7 @@ import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
 import { TrendTimeAxis } from "./TrendPlotOverlays";
+import { SnapshotButton } from "./SnapshotButton";
 
 /**
  * Compact dual-trace trend for the power-supply screen: measured current and
@@ -190,6 +191,15 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   const onPointerUp = (): void => view.endSelect(bounds, pxToUnit);
   const onPointerLeave = (): void => view.cancelSelect();
 
+  // CSV export of the raw measured samples (t, current, voltage, power). Hidden
+  // (undefined) until at least one sample has been captured.
+  const snapshotCsv = samples.length
+    ? {
+        headers: ["t_ms", "current_a", "voltage_v", "power_w"],
+        rows: samples.map((s) => [s.t, s.i, s.v, s.p]),
+      }
+    : undefined;
+
   return (
     <div className="ps-trend">
       <div className="ps-trend-legend">
@@ -314,6 +324,12 @@ export const PowerSupplyTrend: React.FC<Props> = ({
           onChange={(seconds) => view.setSpan(seconds * 1000)}
         />
         <TrendAxisControls value={axis} onChange={setAxis} unit="%" />
+        <SnapshotButton
+          targetRef={svgRef}
+          filename="power_supply_trend"
+          csv={snapshotCsv}
+          label="Export power-supply trend snapshot"
+        />
       </div>
 
       <svg

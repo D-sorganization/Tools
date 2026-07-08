@@ -6,6 +6,7 @@ import {
   reset as vpReset,
   resolveVisible,
   setPaused as vpSetPaused,
+  setSpan as vpSetSpan,
   zoomBy as vpZoomBy,
   zoomToRange as vpZoomToRange,
   type DomainBounds,
@@ -45,6 +46,7 @@ export interface TrendViewportApi {
   togglePause: () => void;
   setPaused: (paused: boolean) => void;
   reset: () => void;
+  setSpan: (span: number) => void;
   panBy: (deltaUnits: number, bounds: DomainBounds) => void;
   zoomBy: (factor: number, focus: number, bounds: DomainBounds) => void;
   /** In-progress drag selection (plot pixels), or null. */
@@ -96,6 +98,10 @@ export function useTrendViewport(
     setSelectionPx(null);
     setViewport(vpReset(opts.defaultSpan));
   }, [opts.defaultSpan]);
+  const setSpan = useCallback(
+    (span: number) => setViewport((v) => vpSetSpan(v, span, limits)),
+    [limits],
+  );
   const panBy = useCallback(
     (deltaUnits: number, bounds: DomainBounds) =>
       setViewport((v) => vpPanBy(v, deltaUnits, bounds, limits)),
@@ -143,6 +149,7 @@ export function useTrendViewport(
     togglePause,
     setPaused,
     reset,
+    setSpan,
     panBy,
     zoomBy,
     selectionPx,

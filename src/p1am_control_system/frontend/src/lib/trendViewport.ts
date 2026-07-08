@@ -186,6 +186,22 @@ export function reset(span: number): TrendViewport {
   return createViewport(span);
 }
 
+/**
+ * Set an absolute visible span (e.g. a "5 min" window button), clamped to the
+ * limits, keeping pause/offset. Zoom is anchored at the right edge.
+ *
+ * @throws TypeError/RangeError if `span` is not a positive finite number.
+ */
+export function setSpan(
+  vp: TrendViewport,
+  span: number,
+  limits: SpanLimits,
+): TrendViewport {
+  assertFinite("setSpan", span);
+  if (span <= 0) throw new RangeError("setSpan: span must be > 0");
+  return { ...vp, span: clampSpan(span, limits) };
+}
+
 /** Return a copy with the paused flag set. */
 export function setPaused(vp: TrendViewport, paused: boolean): TrendViewport {
   if (typeof paused !== "boolean") {

@@ -8,6 +8,7 @@ import {
   zoomToRange,
   reset,
   setPaused,
+  setSpan,
   type SpanLimits,
 } from "./trendViewport";
 
@@ -108,6 +109,17 @@ describe("zoomToRange (drag-select)", () => {
   it("clamps a too-small selection to minSpan", () => {
     const z = zoomToRange(createViewport(1000), 500, 502, bounds, limits);
     expect(z.span).toBe(limits.minSpan);
+  });
+});
+
+describe("setSpan", () => {
+  it("sets an absolute span, clamped to the limits", () => {
+    expect(setSpan(createViewport(100), 250, limits).span).toBe(250);
+    expect(setSpan(createViewport(100), 1, limits).span).toBe(limits.minSpan);
+    expect(setSpan(createViewport(100), 99999, limits).span).toBe(limits.maxSpan);
+  });
+  it("rejects a non-positive span (DbC)", () => {
+    expect(() => setSpan(createViewport(100), 0, limits)).toThrow(RangeError);
   });
 });
 

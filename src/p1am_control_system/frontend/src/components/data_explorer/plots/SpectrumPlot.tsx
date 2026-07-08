@@ -92,6 +92,7 @@ export const SpectrumPlot = React.forwardRef<SVGSVGElement, SpectrumPlotProps>(
         yLabel={props.yLabel}
         logX={logX}
         logY={logY}
+        snapshotName="spectrum"
       >
         <path
           className="plot-spectrum"

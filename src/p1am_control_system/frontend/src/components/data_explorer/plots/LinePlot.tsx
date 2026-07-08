@@ -98,6 +98,7 @@ export const LinePlot = React.forwardRef<SVGSVGElement, LinePlotProps>(
         logX={props.logX}
         logY={props.logY}
         grid={props.grid}
+        snapshotName="line_plot"
       >
         {series.map((s, i) => (
           <path
