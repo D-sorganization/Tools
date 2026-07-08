@@ -56,8 +56,14 @@ export const eventLogSchema = z.array(eventLogEntrySchema);
 
 export const activeAlarmSchema = z.object({
   tag_id: z.string(),
+  // The backend labels each alarm with the tag name; older frames omit it.
+  tag_name: z.string().optional(),
   state: z.string(),
-  value: z.number(),
+  // `value` is NOT sent by the alarm engine — keep it optional. A strict
+  // `value: z.number()` here made every active alarm fail validation, which
+  // failed the whole telemetry frame and silently black-holed the live stream
+  // (HMI stuck OFFLINE, controls dead) whenever any alarm was active.
+  value: z.number().optional(),
   severity: z.number(),
   acknowledged: z.boolean(),
   timestamp: z.string(),
@@ -71,13 +77,22 @@ export const activeAlarmsSchema = z.array(activeAlarmSchema);
  *
  * Every field is optional because the backend emits partial frames; consumers
  * read what is present rather than duck-typing each message inline.
+ *
+ * Resilience: each validated field is wrapped in `.catch(undefined)` so a schema
+ * drift in ONE field (e.g. an alarm gaining/losing a key) drops just that field
+ * instead of failing the whole frame. A rejected frame would leave the HMI
+ * OFFLINE with dead controls — the live stream must degrade gracefully, never go
+ * dark, on a single-field mismatch.
  */
 export const telemetryFrameSchema = z.object({
-  tags: z.array(z.number()).optional(),
-  tags_dict: z.record(z.string(), z.number()).optional(),
-  alicats: z.array(alicatMfcStateSchema).optional(),
-  active_alarms: z.record(z.string(), activeAlarmSchema).optional(),
-  e_stop_active: z.boolean().optional(),
+  tags: z.array(z.number()).optional().catch(undefined),
+  tags_dict: z.record(z.string(), z.number()).optional().catch(undefined),
+  alicats: z.array(alicatMfcStateSchema).optional().catch(undefined),
+  active_alarms: z
+    .record(z.string(), activeAlarmSchema)
+    .optional()
+    .catch(undefined),
+  e_stop_active: z.boolean().optional().catch(undefined),
   power_supply: z.unknown().optional(),
   temperature: z.unknown().optional(),
 });
