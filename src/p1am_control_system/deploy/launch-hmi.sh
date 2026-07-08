@@ -87,10 +87,23 @@ kiosk="${P1AM_KIOSK:-0}"
 chromium_app=(--app="$HMI_URL" --start-maximized --no-first-run --disable-translate)
 chromium_kiosk=(--kiosk "$HMI_URL" --no-first-run --disable-translate)
 
-if have chromium-browser; then
-  [ "$kiosk" = "1" ] && exec chromium-browser "${chromium_kiosk[@]}" || exec chromium-browser "${chromium_app[@]}"
-elif have chromium; then
-  [ "$kiosk" = "1" ] && exec chromium "${chromium_kiosk[@]}" || exec chromium "${chromium_app[@]}"
+# Pick a chromium to run. IMPORTANT: prefer the RAW binary over the
+# /usr/bin/chromium(-browser) wrapper. On Raspberry Pi OS that wrapper can inject
+# a malformed default flag (e.g. a bare `--no-decommit-pooled-pages` instead of
+# `--js-flags=...`) that the browser rejects, so the launch aborts and the
+# desktop icon appears to "do nothing". The raw binary ignores the flags config
+# and starts cleanly.
+chromium_bin=""
+for cand in /usr/lib/chromium/chromium /usr/lib/chromium-browser/chromium-browser; do
+  [ -x "$cand" ] && { chromium_bin="$cand"; break; }
+done
+if [ -z "$chromium_bin" ]; then
+  if have chromium-browser; then chromium_bin="$(command -v chromium-browser)"
+  elif have chromium; then chromium_bin="$(command -v chromium)"; fi
+fi
+
+if [ -n "$chromium_bin" ]; then
+  [ "$kiosk" = "1" ] && exec "$chromium_bin" "${chromium_kiosk[@]}" || exec "$chromium_bin" "${chromium_app[@]}"
 elif have firefox; then
   [ "$kiosk" = "1" ] && exec firefox --kiosk "$HMI_URL" || exec firefox "$HMI_URL"
 elif have xdg-open; then
