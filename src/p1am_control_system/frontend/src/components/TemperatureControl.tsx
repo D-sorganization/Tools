@@ -25,6 +25,7 @@ import {
 } from "../lib/curveFit";
 import { useTrendBackfill } from "../hooks/useTrendBackfill";
 import { useTrendViewport } from "../hooks/useTrendViewport";
+import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
 import { TrendFitControls } from "./TrendFitControls";
@@ -1390,6 +1391,15 @@ const TempTrend: React.FC<TrendProps> = ({
   };
   const pxToUnit = (px: number): number => plotPxToTime(px, plotW, t0, t1);
 
+  // Wheel zoom about the cursor, attached as a NON-passive native listener (see
+  // useNonPassiveWheel) so preventDefault suppresses page scroll — React's
+  // onWheel is passive under React 18.
+  const handleWheel = (e: WheelEvent): void => {
+    e.preventDefault();
+    view.zoomBy(e.deltaY > 0 ? 1.15 : 0.87, pxToUnit(plotPx(e.clientX)), bounds);
+  };
+  useNonPassiveWheel(svgRef, handleWheel);
+
   // Resolve the Y range against BOTH channels so neither trace clips.
   const plottedC = plotted
     .flatMap((s) => [s.k, s.r])
@@ -1676,14 +1686,6 @@ const TempTrend: React.FC<TrendProps> = ({
         style={{
           cursor: view.selectionPx ? "ew-resize" : "crosshair",
           touchAction: "none",
-        }}
-        onWheel={(e) => {
-          e.preventDefault();
-          view.zoomBy(
-            e.deltaY > 0 ? 1.15 : 0.87,
-            pxToUnit(plotPx(e.clientX)),
-            bounds,
-          );
         }}
         onPointerDown={(e) => view.startSelect(plotPx(e.clientX))}
         onPointerMove={(e) => {

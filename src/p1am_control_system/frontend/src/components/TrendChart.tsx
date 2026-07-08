@@ -19,6 +19,7 @@ import {
   RENDER_MAX_POINTS,
 } from "../lib/trendTime";
 import { useTrendViewport } from "../hooks/useTrendViewport";
+import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
 import { TrendAxisControls } from "./TrendAxisControls";
 
 interface TrendChartProps {
@@ -178,9 +179,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   // pointer's client X into viewBox space, then to a plot-relative pixel, then
   // to a domain (sample-index) unit via the viewport's current window.
   const plotW = chartWidth;
-  const plotPx = (
-    e: React.PointerEvent<SVGSVGElement> | React.WheelEvent<SVGSVGElement>,
-  ): number => {
+  const plotPx = (e: { clientX: number }): number => {
     const svg = svgRef.current;
     if (!svg) return 0;
     const rect = svg.getBoundingClientRect();
@@ -194,10 +193,13 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   };
 
   // Mouse wheel over the plot zooms about the cursor (X axis, via the viewport).
-  const handleWheel = (e: React.WheelEvent<SVGSVGElement>) => {
+  // Attached as a NON-passive native listener (see useNonPassiveWheel) so
+  // preventDefault suppresses page scroll — React's onWheel is passive.
+  const handleWheel = (e: WheelEvent) => {
     e.preventDefault();
     view.zoomBy(e.deltaY > 0 ? 1.15 : 0.87, pxToUnit(plotPx(e)), bounds);
   };
+  useNonPassiveWheel(svgRef, handleWheel);
   // Click-drag to zoom a region: down starts a selection, move grows the
   // overlay rectangle, up zooms to it (release inside), leave cancels it.
   const handlePointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
@@ -679,7 +681,6 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
               touchAction: "none",
               cursor: "crosshair",
             }}
-            onWheel={handleWheel}
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}

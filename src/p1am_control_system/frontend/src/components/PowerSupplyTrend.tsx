@@ -21,6 +21,7 @@ import {
   MAX_WINDOW_SECONDS,
 } from "../lib/trendTime";
 import { useTrendViewport } from "../hooks/useTrendViewport";
+import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
 import { TrendTimeAxis } from "./TrendPlotOverlays";
@@ -156,10 +157,11 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   const last = active.length ? active[active.length - 1] : undefined;
 
   // --- Pixel <-> time mapping (viewBox is 0..W, the <svg> stretches to 100%). ---
-  const plotPx = (e: React.PointerEvent | React.WheelEvent): number => {
+  const plotPx = (e: { clientX: number }): number => {
     const svg = svgRef.current;
     if (!svg) return 0;
     const r = svg.getBoundingClientRect();
+    if (r.width === 0) return 0; // unlaid-out / jsdom: avoid a NaN focus
     const x = ((e.clientX - r.left) / r.width) * W;
     return Math.max(0, Math.min(PLOT_W, x - PAD_L));
   };
@@ -174,10 +176,13 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   const panStep = (end - start) * 0.3;
   const focusCenter = (start + end) / 2;
 
-  const onWheel = (e: React.WheelEvent): void => {
+  // Non-passive native wheel listener (see useNonPassiveWheel) so preventDefault
+  // stops the page scrolling while wheel-zooming; React's onWheel is passive.
+  const onWheel = (e: WheelEvent): void => {
     e.preventDefault();
     view.zoomBy(e.deltaY > 0 ? 1.15 : 0.87, pxToUnit(plotPx(e)), bounds);
   };
+  useNonPassiveWheel(svgRef, onWheel);
   const onPointerDown = (e: React.PointerEvent): void =>
     view.startSelect(plotPx(e));
   const onPointerMove = (e: React.PointerEvent): void =>
@@ -319,7 +324,6 @@ export const PowerSupplyTrend: React.FC<Props> = ({
         role="img"
         aria-label="Current and voltage trend"
         style={{ touchAction: "none", cursor: "crosshair" }}
-        onWheel={onWheel}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
