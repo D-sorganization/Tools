@@ -259,6 +259,15 @@ class TemperatureStatus(BaseModel):
             "a sustained fault escalates to a latched TC_FAULT trip."
         ),
     )
+    burnout_high_side: bool = Field(
+        default=True,
+        description=(
+            "P1-04THM open-circuit (burnout) fail direction. True = HIGH-side (an "
+            "open thermocouple reads full scale, so the heater shuts off — "
+            "fail-safe); False = LOW-side (an open reads 0 C, which looks cold). "
+            "Operator-selectable from the HMI."
+        ),
+    )
 
     estopped: bool = False
 

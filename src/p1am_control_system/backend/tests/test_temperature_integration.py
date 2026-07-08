@@ -66,7 +66,7 @@ class TestTemperatureServicePoll:
             assert status.measured_temp_c == 0.0
             assert status.relay_on is False
             assert status.state == TemperatureState.IDLE
-            plc.write_coil.assert_awaited_with(hardware.HEATER_RELAY_COIL, False)
+            plc.write_coil.assert_any_await(hardware.HEATER_RELAY_COIL, False)
 
         asyncio.run(_go())
 
@@ -88,7 +88,7 @@ class TestTemperatureServicePoll:
             # Measured well below (setpoint - deadband) -> heater should close.
             status = await svc.poll({"TAG_0": 0.0})
             assert status.relay_on is True
-            plc.write_coil.assert_awaited_with(hardware.HEATER_RELAY_COIL, True)
+            plc.write_coil.assert_any_await(hardware.HEATER_RELAY_COIL, True)
 
         asyncio.run(_go())
 
@@ -101,7 +101,7 @@ class TestTemperatureServicePoll:
             # 60 % of 1400 = 840 C, above setpoint + deadband -> relay off.
             status = await svc.poll({"TAG_0": 60.0})
             assert status.relay_on is False
-            plc.write_coil.assert_awaited_with(hardware.HEATER_RELAY_COIL, False)
+            plc.write_coil.assert_any_await(hardware.HEATER_RELAY_COIL, False)
 
         asyncio.run(_go())
 
@@ -132,7 +132,7 @@ class TestTemperatureServicePoll:
             status = await svc.poll({"TAG_0": 0.0})
             assert status.relay_on is False
             assert status.estopped is True
-            plc.write_coil.assert_awaited_with(hardware.HEATER_RELAY_COIL, False)
+            plc.write_coil.assert_any_await(hardware.HEATER_RELAY_COIL, False)
 
         asyncio.run(_go())
 
@@ -421,6 +421,48 @@ class TestControlSensorDeglitch:
             assert s.trips == []
 
         asyncio.run(_go())
+
+
+class TestBurnoutMode:
+    """The P1-04THM open-circuit fail direction is operator-selectable, defaults
+    to fail-safe (high-side), and is re-asserted to the PLC coil each scan."""
+
+    def test_defaults_to_high_side_fail_safe(self) -> None:
+        svc = _service()
+        assert svc.burnout_high_side is True
+        assert svc.status().burnout_high_side is True
+
+    def test_set_low_side_reflects_in_status(self) -> None:
+        svc = _service()
+        assert svc.set_burnout_high_side(False) is False
+        assert svc.status().burnout_high_side is False
+
+    def test_set_rejects_non_bool(self) -> None:
+        svc = _service()
+        with pytest.raises(TypeError):
+            svc.set_burnout_high_side("high")  # type: ignore[arg-type]
+
+    def test_poll_reasserts_burnout_coil(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            svc = _service(plc)
+            svc.set_burnout_high_side(False)
+            await svc.poll({"TAG_0": 10.0})
+            plc.write_coil.assert_any_await(hardware.THM_BURNOUT_COIL, False)
+            svc.set_burnout_high_side(True)
+            await svc.poll({"TAG_0": 10.0})
+            plc.write_coil.assert_any_await(hardware.THM_BURNOUT_COIL, True)
+
+        asyncio.run(_go())
+
+    def test_endpoint_sets_mode(
+        self, client_and_service: tuple[TestClient, TemperatureService]
+    ) -> None:
+        client, svc = client_and_service
+        resp = client.post("/api/temperature/burnout_mode", json={"high_side": False})
+        assert resp.status_code == 200
+        assert resp.json()["burnout_high_side"] is False
+        assert svc.burnout_high_side is False
 
 
 class TestServiceAndTcTypeErrors:

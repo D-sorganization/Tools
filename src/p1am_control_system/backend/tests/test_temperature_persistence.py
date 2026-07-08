@@ -98,6 +98,18 @@ def test_set_active_tc_type_persists(engine: Any) -> None:
     assert fresh.controller.config.active_tc_type == TcType.TYPE_R
 
 
+def test_burnout_mode_persists_and_recalls(engine: Any) -> None:
+    svc = _service(engine)
+    assert svc.burnout_high_side is True  # fail-safe default
+    svc.set_burnout_high_side(False)  # operator switches to low-side
+
+    fresh = _service(engine)
+    assert fresh.burnout_high_side is True  # default before restore
+    with Session(engine) as s:
+        fresh.restore_persisted(s)
+    assert fresh.burnout_high_side is False  # recalled the operator's choice
+
+
 # --------------------------------------------------------------------------
 # setpoint persistence + recall
 # --------------------------------------------------------------------------

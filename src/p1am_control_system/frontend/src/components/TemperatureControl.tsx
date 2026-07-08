@@ -206,6 +206,9 @@ export interface TemperatureStatus {
    * last-good value through a live dropout — a hint the control sensor is
    * intermittently faulting (a sustained fault escalates to a TC_FAULT trip). */
   control_sensor_holding?: boolean;
+  /** P1-04THM open-circuit fail direction. True = high-side (an open reads full
+   * scale -> heater shuts off, fail-safe); false = low-side (an open reads cold). */
+  burnout_high_side?: boolean;
 }
 
 /**
@@ -497,6 +500,32 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
       }
     },
     [flash, loadConfig],
+  );
+
+  // Select the P1-04THM open-circuit fail direction. High-side = an open reads
+  // full scale so the heater shuts off (fail-safe); low-side = an open reads cold.
+  const setBurnoutMode = useCallback(
+    async (highSide: boolean) => {
+      setBusy(true);
+      try {
+        const res = await fetchWithTimeout("/api/temperature/burnout_mode", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ high_side: highSide }),
+        });
+        if (!res.ok) throw new Error(await res.text());
+        flash(
+          highSide
+            ? "Open circuit now reads HOT — heater shuts off (fail-safe)"
+            : "Open circuit now reads COLD — low-side burnout",
+        );
+      } catch (e) {
+        flash(`Burnout mode change failed: ${(e as Error).message}`, "error");
+      } finally {
+        setBusy(false);
+      }
+    },
+    [flash],
   );
 
   const acknowledgeTrip = useCallback(async () => {
@@ -927,6 +956,83 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
           setpoint band, HH cutoff and trends. Switching re-clamps the limits to
           the chosen channel's range. (Type R is wired to a separate THM channel.)
         </p>
+
+        {/* ---- Open-circuit (burnout) fail direction ---- */}
+        <div
+          style={{
+            marginTop: "0.85rem",
+            paddingTop: "0.75rem",
+            borderTop: "1px solid var(--panel-border)",
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: "0.5rem",
+              flexWrap: "wrap",
+            }}
+          >
+            <span style={{ fontSize: "0.78rem", fontWeight: 600 }}>
+              On a broken thermocouple, read:
+            </span>
+            <div
+              style={{
+                display: "inline-flex",
+                borderRadius: "6px",
+                overflow: "hidden",
+                border: "1px solid var(--panel-border)",
+              }}
+            >
+              {(
+                [
+                  { high: true, label: "Hot (fail-safe)" },
+                  { high: false, label: "Cold" },
+                ] as const
+              ).map(({ high, label }) => {
+                const active = (s?.burnout_high_side ?? true) === high;
+                return (
+                  <button
+                    key={label}
+                    type="button"
+                    disabled={busy || active}
+                    onClick={() => setBurnoutMode(high)}
+                    aria-pressed={active}
+                    style={{
+                      border: "none",
+                      padding: "0.3rem 0.75rem",
+                      fontSize: "0.75rem",
+                      fontWeight: 600,
+                      cursor: active ? "default" : "pointer",
+                      background: active
+                        ? high
+                          ? "var(--accent-cyan)"
+                          : "var(--accent-amber, #f59e0b)"
+                        : "var(--input-bg)",
+                      color: active ? "#0f172a" : "var(--text-secondary)",
+                    }}
+                  >
+                    {label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+          <p
+            style={{
+              fontSize: "0.7rem",
+              color: "var(--text-muted)",
+              margin: "0.45rem 0 0",
+              lineHeight: 1.5,
+            }}
+          >
+            Sets the P1-04THM open-circuit (burnout) direction. <strong>Hot</strong>{" "}
+            makes an open sensor read full-scale so the heater shuts off
+            (recommended). <strong>Cold</strong> makes it read 0&nbsp;°C. The deglitch
+            filter rides out brief dropouts either way and trips on a sustained fault.
+          </p>
+        </div>
       </CollapsibleSection>
 
       {/* ---- High-high cutoff banner ---- */}

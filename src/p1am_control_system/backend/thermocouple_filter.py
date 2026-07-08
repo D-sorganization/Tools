@@ -1,27 +1,27 @@
 """Deglitch / hold-last-good / fail-safe filter for thermocouple readings.
 
-The P1-04THM is configured for *low-side burnout*: when a thermocouple input
-goes open-circuit (a loose terminal, an intermittent junction, a degrading
-element at high temperature) the module drives that channel's reading to the
-bottom of scale — 0 C. A control loop that believes a spurious 0 C ("cold")
-while the crucible is really >1000 C will command MORE heat: the classic
-runaway. Feeding a raw burnout-zero straight into the on/off law is therefore a
-safety hazard, and the on-module value passes through as a perfectly finite 0.0
-(so the controller's non-finite ``TC_FAULT`` check never sees it).
+When a thermocouple input goes open-circuit (a loose terminal, an intermittent
+junction, a degrading element at high temperature) the P1-04THM drives that
+channel to a *burnout rail*. The direction is operator-selectable: **low-side**
+burnout rails the reading to ~0 C, **high-side** rails it to ~full scale. Either
+way the on-module value passes through as a perfectly finite number (so the
+controller's non-finite ``TC_FAULT`` check never sees it), and either way a
+control loop that believes the spurious rail can misbehave — a false "cold"
+commands MORE heat (runaway), a false "hot" chatters the heater off.
 
 This filter sits between the raw tag->deg C conversion and the controller. It:
 
   * accepts plausible readings unchanged;
-  * rejects an implausible drop to ~0 (or an impossibly large step down) from a
-    hot last-good value, HOLDING the last-good instead so the control law never
-    acts on a glitch;
+  * rejects an implausible jump toward EITHER rail (~0 or ~full scale), or any
+    non-physical single-scan step, HOLDING the last-good instead so the control
+    law never acts on a glitch — whichever burnout direction is configured;
   * if the fault PERSISTS past a timeout, declares a hard fault so the caller can
     trip the heater — holding a stale value forever would let it heat blind.
 
 Pure and clock-injected (``now`` is passed in) so it is fully unit-testable.
-It never fabricates a *lower* value than reality, so it cannot mask a real
-over-temperature; the worst it does on a genuine fault is hold the last hot
-reading for up to ``hold_timeout_s`` before tripping (fail-safe).
+On a genuine fault it holds the last *good* reading (not a rail) for up to
+``hold_timeout_s`` before tripping, so it can neither mask a real
+over-temperature nor be fooled into commanding heat by a burnout rail.
 """
 
 from __future__ import annotations
@@ -36,9 +36,11 @@ __all__ = [
 ]
 
 # Defaults tuned for a crucible heater (large thermal mass, 0-1400 C range).
-_ZERO_FLOOR_C = 5.0  # a reading at/below this is a candidate burnout "0"
-_MIN_DROP_C = 30.0  # ...only if it fell at least this far from last-good
-_MAX_STEP_DOWN_C = 250.0  # any drop this large in one scan is non-physical
+_ZERO_FLOOR_C = 5.0  # a reading at/below this is a candidate LOW-side burnout "0"
+_MIN_JUMP_C = 30.0  # ...only if it jumped at least this far from last-good
+_MAX_STEP_C = 250.0  # any single-scan change this large (either way) is non-physical
+_FULL_SCALE_C = 1400.0  # range top; a reading near here is a HIGH-side burnout rail
+_RAIL_MARGIN_C = 20.0  # how close to full scale counts as the high rail
 _HOLD_TIMEOUT_S = 15.0  # hold through glitches this long, then trip (fail-safe)
 
 
@@ -67,31 +69,46 @@ class ThermocoupleDeglitchFilter:
         self,
         *,
         zero_floor_c: float = _ZERO_FLOOR_C,
-        min_drop_c: float = _MIN_DROP_C,
-        max_step_down_c: float = _MAX_STEP_DOWN_C,
+        min_jump_c: float = _MIN_JUMP_C,
+        max_step_c: float = _MAX_STEP_C,
+        full_scale_c: float = _FULL_SCALE_C,
+        rail_margin_c: float = _RAIL_MARGIN_C,
         hold_timeout_s: float = _HOLD_TIMEOUT_S,
     ) -> None:
         """Configure the filter thresholds.
 
+        The filter is burnout-direction agnostic: the P1-04THM can be set for
+        LOW-side burnout (an open reads ~0 C) or HIGH-side burnout (an open reads
+        ~full scale), and this rejects an implausible jump toward *either* rail.
+
         Args:
-            zero_floor_c: readings at/below this are candidate burnout zeros.
-            min_drop_c: minimum fall from last-good for a near-zero to count as a
-                glitch (so genuine near-ambient operation is never rejected).
-            max_step_down_c: any single-scan drop this large is non-physical for a
-                crucible and is rejected even if the value is not near zero.
+            zero_floor_c: readings at/below this are candidate low-side burnout "0"s.
+            min_jump_c: minimum jump from last-good for a near-rail reading to count
+                as a glitch (so genuine near-ambient or near-full-scale operation is
+                never rejected).
+            max_step_c: any single-scan change this large, in EITHER direction, is
+                non-physical for a crucible and is rejected even away from a rail.
+            full_scale_c: the channel range top; a reading within ``rail_margin_c``
+                of it is a candidate high-side burnout rail.
+            rail_margin_c: how close to full scale counts as the high rail.
             hold_timeout_s: how long to hold last-good through a continuous fault
                 before declaring a hard fault (trip). Must be > 0.
 
         Raises:
-            ValueError: if any threshold is negative or hold_timeout_s <= 0.
+            ValueError: if any threshold is negative, full_scale_c <= 0, or
+                hold_timeout_s <= 0.
         """
-        if zero_floor_c < 0 or min_drop_c < 0 or max_step_down_c < 0:
+        if min(zero_floor_c, min_jump_c, max_step_c, rail_margin_c) < 0:
             raise ValueError("filter thresholds must be non-negative")
+        if full_scale_c <= 0:
+            raise ValueError("full_scale_c must be positive")
         if hold_timeout_s <= 0:
             raise ValueError("hold_timeout_s must be positive")
         self._zero_floor_c = zero_floor_c
-        self._min_drop_c = min_drop_c
-        self._max_step_down_c = max_step_down_c
+        self._min_jump_c = min_jump_c
+        self._max_step_c = max_step_c
+        self._full_scale_c = full_scale_c
+        self._rail_margin_c = rail_margin_c
         self._hold_timeout_s = hold_timeout_s
         self._last_good_c: float | None = None
         self._hold_since: float | None = None
@@ -128,10 +145,19 @@ class ThermocoupleDeglitchFilter:
             # reading (the controller is IDLE at startup, so this cannot energize).
             return self._accept(raw)
 
-        drop = self._last_good_c - raw
-        burnout_zero = raw <= self._zero_floor_c and drop >= self._min_drop_c
-        impossible_step = drop >= self._max_step_down_c
-        if burnout_zero or impossible_step:
+        # A burnout rails the reading to a limit (0 low-side, full scale high-side),
+        # so reject an instantaneous jump TOWARD either rail. Also reject any huge
+        # single-scan *drop* that isn't quite to 0 (a partial low-side burnout).
+        # A large jump to a mid-scale value is left alone: it isn't a burnout
+        # signature and could be a legitimate fast change or a channel switch.
+        drop = self._last_good_c - raw  # +ve = fell, -ve = rose
+        rise = -drop
+        burnout_low = raw <= self._zero_floor_c and drop >= self._min_jump_c
+        burnout_high = (
+            raw >= self._full_scale_c - self._rail_margin_c and rise >= self._min_jump_c
+        )
+        impossible_drop = drop >= self._max_step_c
+        if burnout_low or burnout_high or impossible_drop:
             return self._reject(now)
 
         return self._accept(raw)

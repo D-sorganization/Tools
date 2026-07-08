@@ -69,22 +69,12 @@ P1AMHardware::P1AMHardware() {}
 void P1AMHardware::Begin() {
   // P1.init() auto-configures the P1-04THM with the library default
   // (type-J/Fahrenheit). Override it before Ethernet init so thermocouple
-  // channels report type-K values directly in degrees C.
+  // channels report type-K values directly in degrees C. Boot default is
+  // low-side burnout, which matches Modbus coil 3's power-on value of 0, so the
+  // first control-loop scan sees no change and won't reconfigure the module
+  // (see ConfigureThm / kThmBurnoutCoil).
   P1.init();
-  Serial.println(F("[hw] configuring P1-04THM: ch1=K ch2=R ch3-4=K, Celsius"));
-  bool thm_configured = P1.configureModule(kP104ThmConfig, kSlotThm);
-  Serial.print(F("[hw] P1-04THM configureModule="));
-  Serial.println(thm_configured ? F("ok") : F("failed"));
-
-  char thm_readback[kThmConfigBytes] = {};
-  P1.readModuleConfig(thm_readback, kSlotThm);
-  Serial.print(F("[hw] P1-04THM config readback: "));
-  PrintThmConfig(thm_readback);
-  if (ConfigMatches(kP104ThmConfig, thm_readback)) {
-    Serial.println(F("[hw] P1-04THM config verified: ch1=K ch2=R, Celsius"));
-  } else {
-    Serial.println(F("[hw] WARNING: P1-04THM config readback mismatch"));
-  }
+  ConfigureThm(false);
 
   pinMode(kPinInhibit, OUTPUT);
   digitalWrite(kPinInhibit, LOW);
@@ -92,6 +82,40 @@ void P1AMHardware::Begin() {
   // WriteHeaterRelay). Force it OFF at boot so the heater is never energized
   // before the controller commands it.
   P1.writeDiscrete(LOW, kSlotHeaterDO, kChanHeaterDO);
+}
+
+bool P1AMHardware::ConfigureThm(bool highSideBurnout) {
+  // Build the P1-04THM config identical to kP104ThmConfig except byte[3], the
+  // burnout+units low byte, which selects the open-thermocouple fail direction:
+  //   0x01 = low-side burnout  (open reads 0 C / cold)
+  //   0x03 = high-side burnout (open reads full-scale / hot)
+  // Channel types and the Celsius unit selection are unchanged. The P1-04THM
+  // cannot disable burnout — only flip its direction.
+  char thm_config[kThmConfigBytes];
+  for (int i = 0; i < kThmConfigBytes; ++i) {
+    thm_config[i] = kP104ThmConfig[i];
+  }
+  thm_config[3] = highSideBurnout ? 0x03 : 0x01;
+
+  Serial.print(F("[hw] configuring P1-04THM: ch1=K ch2=R ch3-4=K, Celsius, burnout="));
+  Serial.println(highSideBurnout ? F("high-side") : F("low-side"));
+  bool thm_configured = P1.configureModule(thm_config, kSlotThm);
+  Serial.print(F("[hw] P1-04THM configureModule="));
+  Serial.println(thm_configured ? F("ok") : F("failed"));
+
+  char thm_readback[kThmConfigBytes] = {};
+  P1.readModuleConfig(thm_readback, kSlotThm);
+  Serial.print(F("[hw] P1-04THM config readback: "));
+  PrintThmConfig(thm_readback);
+  if (ConfigMatches(thm_config, thm_readback)) {
+    Serial.print(F("[hw] P1-04THM config verified: ch1=K ch2=R, Celsius, burnout="));
+    Serial.println(highSideBurnout ? F("high-side") : F("low-side"));
+  } else {
+    Serial.println(F("[hw] WARNING: P1-04THM config readback mismatch"));
+  }
+
+  thm_high_side_ = highSideBurnout;
+  return thm_configured;
 }
 
 void P1AMHardware::Update() {}

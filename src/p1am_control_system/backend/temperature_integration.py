@@ -31,6 +31,7 @@ from temperature_models import (
 from thermocouple_filter import FilterSample, ThermocoupleDeglitchFilter
 
 __all__ = [
+    "BurnoutModeRequest",
     "TcTypeRequest",
     "TemperaturePermissiveRequest",
     "TemperatureService",
@@ -41,6 +42,7 @@ __all__ = [
 # config_store keys for the persisted temperature settings.
 _CONFIG_KEY = "temperature_config"
 _SETPOINT_KEY = "temperature_setpoint"
+_BURNOUT_KEY = "temperature_burnout"
 
 
 class TemperatureService:
@@ -88,6 +90,12 @@ class TemperatureService:
         # Latched True once a control-sensor fault has been logged, so the
         # fail-safe trip is logged once (not every scan) until it recovers.
         self._control_sensor_faulted = False
+        # P1-04THM open-circuit (burnout) fail direction. True = HIGH-side (an open
+        # thermocouple reads full scale -> heater shuts off, fail-safe); False =
+        # LOW-side (an open reads 0 C -> looks cold). Persisted + recalled; defaults
+        # to the fail-safe direction. Re-asserted to the PLC (coil) every scan so it
+        # survives a PLC reboot (the firmware boots low-side).
+        self._burnout_high_side = True
         # Defense-in-depth E-stop interlock, independent of the controller's own
         # latch: when set, ``_write_relay`` forces the heater relay OFF and
         # surfaces a failed de-energize as a comms failure. Set by the poll loop.
@@ -146,6 +154,7 @@ class TemperatureService:
             other_temp_c=other_sample.value_c if not other_sample.fault else None,
         )
         await self._write_relay(relay_on)
+        await self._assert_burnout_coil()
         return self.status()
 
     @staticmethod
@@ -202,6 +211,7 @@ class TemperatureService:
         status.type_k_temp_c = self._last_type_k_c
         status.type_r_temp_c = self._last_type_r_c
         status.control_sensor_holding = self._control_sensor_holding
+        status.burnout_high_side = self._burnout_high_side
         return status
 
     def update_config(self, new_config: TemperatureConfig) -> TemperatureConfig:
@@ -250,6 +260,28 @@ class TemperatureService:
         self.controller.set_active_tc_type(tc_type)
         self._persist_config()
 
+    def set_burnout_high_side(self, high_side: bool) -> bool:
+        """Select the P1-04THM open-circuit (burnout) fail direction and persist.
+
+        HIGH-side (True) makes an open thermocouple read full scale, so the heater
+        shuts off (fail-safe); LOW-side (False) makes an open read 0 C (looks cold).
+        The new direction is written to the PLC on the next scan (and re-asserted
+        every scan thereafter). Returns the applied value.
+
+        Raises:
+            TypeError: if ``high_side`` is not a bool.
+        """
+        if not isinstance(high_side, bool):
+            raise TypeError(f"high_side must be a bool, got {type(high_side).__name__}")
+        self._burnout_high_side = high_side
+        self._persist_burnout(high_side)
+        return high_side
+
+    @property
+    def burnout_high_side(self) -> bool:
+        """Current commanded burnout fail direction (True = high-side/fail-safe)."""
+        return self._burnout_high_side
+
     def restore_persisted(self, session: Any) -> None:
         """Recall persisted settings into the controller (SAFE: stays IDLE).
 
@@ -271,6 +303,11 @@ class TemperatureService:
             data = load_config(session, _SETPOINT_KEY)
             if data is not None and "value_c" in data:
                 self._last_setpoint_c = float(cast(float, data["value_c"]))
+            burnout = load_config(session, _BURNOUT_KEY)
+            if burnout is not None and "high_side" in burnout:
+                # Recall the burnout direction; it is re-asserted to the PLC each
+                # scan. Defaults to fail-safe (high-side) when nothing was stored.
+                self._burnout_high_side = bool(burnout["high_side"])
         except Exception as exc:  # noqa: BLE001 - a bad blob must not block boot
             self._logger.warning("temperature restore skipped: %s", exc)
 
@@ -293,6 +330,32 @@ class TemperatureService:
                 save_config(s, _SETPOINT_KEY, {"value_c": value_c})
         except Exception as exc:  # noqa: BLE001 - persistence must not break control
             self._logger.warning("temperature setpoint persist failed: %s", exc)
+
+    def _persist_burnout(self, high_side: bool) -> None:
+        """Persist the burnout fail direction (best-effort, no-op if disabled)."""
+        if self._session_factory is None:
+            return
+        try:
+            with self._session_factory() as s:
+                save_config(s, _BURNOUT_KEY, {"high_side": high_side})
+        except Exception as exc:  # noqa: BLE001 - persistence must not break control
+            self._logger.warning("temperature burnout persist failed: %s", exc)
+
+    async def _assert_burnout_coil(self) -> None:
+        """Re-assert the burnout-direction coil to the PLC (best-effort).
+
+        Written every scan so the firmware always matches the commanded direction
+        even after a PLC reboot (the firmware boots low-side). The firmware only
+        reconfigures the module when the coil actually changes, so re-writing the
+        same value each scan is cheap and idempotent. Never raises: a failed write
+        must not abort the scan loop.
+        """
+        try:
+            await self._plc_client.write_coil(
+                hardware.THM_BURNOUT_COIL, self._burnout_high_side
+            )
+        except Exception as exc:  # noqa: BLE001 - best-effort, never abort the scan
+            self._logger.debug("burnout coil write failed: %s", exc)
 
     def engage_estop(self) -> None:
         """Latch the controller's E-stop (forces the heater relay off)."""
@@ -383,6 +446,16 @@ class TcTypeRequest(BaseModel):
     active_tc_type: TcType
 
 
+class BurnoutModeRequest(BaseModel):
+    """Operator selection of the P1-04THM open-circuit fail direction.
+
+    high_side True = an open thermocouple reads full scale (heater shuts off,
+    fail-safe); False = an open reads 0 C (looks cold, fail-dangerous).
+    """
+
+    high_side: bool
+
+
 def create_temperature_router(service: TemperatureService) -> APIRouter:
     router = APIRouter(prefix="/api/temperature", tags=["temperature"])
     controller = service.controller
@@ -430,6 +503,15 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
         try:
             service.set_active_tc_type(req.active_tc_type)
         except (TypeError, ValueError) as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
+        return service.status()
+
+    @router.post("/burnout_mode", dependencies=[Depends(require_admin_key)])
+    async def set_burnout_mode(req: BurnoutModeRequest) -> TemperatureStatus:
+        """Select the P1-04THM open-circuit fail direction (high-side/low-side)."""
+        try:
+            service.set_burnout_high_side(req.high_side)
+        except TypeError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return service.status()
 

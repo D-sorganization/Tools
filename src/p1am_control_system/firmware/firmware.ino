@@ -28,7 +28,8 @@ unsigned long lastScanTime = 0;
 const unsigned long kScanIntervalMs = 100;
 
 // Modbus coil 2 = heater relay command from the temperature controller.
-// (Coil 0 = save-to-flash, coil 1 = E-stop reset.)
+// (Coil 0 = save-to-flash, coil 1 = E-stop reset, coil 3 = THM burnout
+// direction -- see kThmBurnoutCoil in P1AMHardware.h.)
 const int kHeaterRelayCoil = 2;
 
 // Count of signed-on backplane modules (captured at boot, published to TAG_26).
@@ -280,6 +281,19 @@ void loop() {
     // the safety interlock always wins — a trip forces the relay off regardless.
     bool relay_cmd = (modbusServer.coilRead(kHeaterRelayCoil) == 1);
     hw.WriteHeaterRelay(relay_cmd && !interlock.IsTripped());
+
+    // Thermocouple burnout direction (Modbus coil 3): an operator/HMI toggle
+    // that flips the open-circuit fail direction. LOW-side (coil = 0) makes an
+    // open TC read 0 C (cold) — fail-dangerous for a heater, because the loop
+    // would keep calling for heat on a broken sensor. HIGH-side (coil = 1)
+    // makes an open TC read full-scale (hot) — fail-safe. The P1-04THM can't
+    // disable burnout, only flip its direction, so reconfigure the module only
+    // when the selection actually changes (a live reconfigure briefly glitches
+    // reads).
+    bool high_side_cmd = (modbusServer.coilRead(kThmBurnoutCoil) == 1);
+    if (high_side_cmd != hw.ThmHighSide()) {
+      hw.ConfigureThm(high_side_cmd);
+    }
 
     // --- Signal diagnostics: raw 0-5 V of every analog channel (TAG_20..25) ---
     // Unscaled, for troubleshooting the analog card independent of calibration.

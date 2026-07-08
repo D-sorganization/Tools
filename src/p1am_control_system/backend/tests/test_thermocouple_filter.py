@@ -79,6 +79,41 @@ class TestRejectsBurnoutZeros:
             assert s.holding is True
 
 
+class TestRejectsHighSideBurnout:
+    """With HIGH-side burnout an open rails to ~full scale; the filter must hold
+    through those up-spikes just as it does the low-side drops to 0."""
+
+    def test_spike_to_full_scale_from_hot_is_held(self) -> None:
+        f = ThermocoupleDeglitchFilter(full_scale_c=1400.0)
+        f.update(800.0, now=0.0)
+        s = f.update(1400.0, now=1.0)  # high-side burnout rail
+        assert s.value_c == 800.0  # held, not 1400
+        assert s.holding is True
+        assert s.fault is False
+
+    def test_near_full_scale_spike_is_held(self) -> None:
+        f = ThermocoupleDeglitchFilter(full_scale_c=1400.0, rail_margin_c=20.0)
+        f.update(1000.0, now=0.0)
+        assert f.update(1385.0, now=1.0).holding is True  # within rail margin
+
+    def test_legitimate_reading_near_full_scale_not_rejected(self) -> None:
+        # Genuinely climbing to ~full scale in small steps must be accepted.
+        f = ThermocoupleDeglitchFilter(full_scale_c=1400.0)
+        f.update(1380.0, now=0.0)
+        s = f.update(1385.0, now=1.0)  # only +5 C — a real ramp, not a spike
+        assert s.value_c == 1385.0
+        assert s.holding is False
+
+    def test_large_upward_jump_to_midscale_is_accepted(self) -> None:
+        # A big rise to a MID value is not a burnout rail (burnout rails to 0 or
+        # full scale), so it is left alone — e.g. a channel switch from cold to hot.
+        f = ThermocoupleDeglitchFilter(full_scale_c=1400.0)
+        f.update(0.0, now=0.0)
+        s = f.update(700.0, now=1.0)
+        assert s.value_c == 700.0
+        assert s.holding is False
+
+
 class TestFailSafeTimeout:
     def test_persistent_fault_trips_after_timeout(self) -> None:
         f = ThermocoupleDeglitchFilter(hold_timeout_s=15.0)
