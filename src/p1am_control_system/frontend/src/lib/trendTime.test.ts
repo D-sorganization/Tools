@@ -21,6 +21,10 @@ import {
   SELECTABLE_TIME_UNITS,
   MAX_WINDOW_SECONDS,
   MIN_WINDOW_SECONDS,
+  BUFFER_WINDOW_SECONDS,
+  MAX_TREND_SAMPLES,
+  SAMPLES_PER_SECOND,
+  TREND_BACKFILL_MAX_POINTS,
 } from "./trendTime";
 
 describe("toSeconds / fromSeconds", () => {
@@ -37,6 +41,35 @@ describe("toSeconds / fromSeconds", () => {
 
   it("round-trips", () => {
     expect(fromSeconds(toSeconds(7, "m"), "m")).toBe(7);
+  });
+});
+
+describe("window range constants (>1 hour support)", () => {
+  it("lets a backfilled trend look back MORE than one hour", () => {
+    expect(MAX_WINDOW_SECONDS).toBeGreaterThan(3600);
+    expect(MAX_WINDOW_SECONDS).toBe(24 * 60 * 60); // 24 h
+  });
+
+  it("caps a live-buffer-only trend at exactly the buffer depth (1 h)", () => {
+    expect(BUFFER_WINDOW_SECONDS).toBe(MAX_TREND_SAMPLES / SAMPLES_PER_SECOND);
+    expect(BUFFER_WINDOW_SECONDS).toBe(3600);
+  });
+
+  it("decouples the backfilled max from the live-buffer depth", () => {
+    // Raising the viewable window must not be tied to the in-memory sample cap.
+    expect(MAX_WINDOW_SECONDS).toBeGreaterThan(BUFFER_WINDOW_SECONDS);
+  });
+
+  it("clamps a window to the (now 24 h) supported max", () => {
+    expect(clampWindow(1e9)).toBe(MAX_WINDOW_SECONDS);
+    expect(clampWindow(6 * 3600)).toBe(6 * 3600); // 6 h is allowed now
+  });
+
+  it("bounds the historian backfill request to a light point count", () => {
+    // More than the ~600 drawn points (headroom for zooming) but nowhere near
+    // the server's 200 000 cap, so a multi-hour window stays a light request.
+    expect(TREND_BACKFILL_MAX_POINTS).toBeGreaterThan(600);
+    expect(TREND_BACKFILL_MAX_POINTS).toBeLessThanOrEqual(200_000);
   });
 });
 

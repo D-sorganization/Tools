@@ -33,6 +33,7 @@ from data_capture import (
     historian_retention_loop,
     parse_query_bound,
     parse_tag_names,
+    query_trend_series,
     stream_tag_export_csv,
 )
 from database import engine, get_session, init_db
@@ -865,9 +866,18 @@ def get_trends(
     smoothing: str = "none",
     window_size: int = 5,
     alpha: float = 0.2,
+    max_points: int = TRENDS_MAX_POINTS,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
-    """Fetch bounded historical trends, optionally applying server-side smoothing."""
+    """Fetch historical trends, decimated to span the whole requested window.
+
+    The series is downsampled server-side to at most ``max_points`` samples that
+    evenly span ``[start_time, end_time]``, so a multi-hour or multi-day request
+    returns the entire span instead of only its newest slice. ``truncated`` is
+    True whenever decimation occurred. Any server-side ``smoothing`` is applied
+    to the decimated values. ``max_points`` is clamped to a sane range; an
+    out-of-range value yields HTTP 400.
+    """
     try:
         start_dt = parse_query_bound(start_time)
         end_dt = parse_query_bound(end_time)
@@ -880,21 +890,18 @@ def get_trends(
     if tag_id.isdigit():
         tag_name = f"TAG_{tag_id}"
 
-    # Cap the row count: take the most-recent N within the range (DESC + limit),
-    # then present oldest-first.
-    statement = (
-        select(TagLog)
-        .where(col(TagLog.tag_name) == tag_name)
-        .where(col(TagLog.timestamp) >= start_dt)
-        .where(col(TagLog.timestamp) <= end_dt)
-        .order_by(col(TagLog.timestamp).desc())
-        .limit(TRENDS_MAX_POINTS)
-    )
-    results = list(reversed(db.exec(statement).all()))
-    truncated = len(results) >= TRENDS_MAX_POINTS
+    try:
+        sample_times, values, truncated = query_trend_series(
+            db,
+            tag_name=tag_name,
+            start=start_dt,
+            end=end_dt,
+            max_points=max_points,
+        )
+    except (TypeError, ValueError) as query_err:
+        raise HTTPException(status_code=400, detail=str(query_err)) from query_err
 
-    timestamps = [r.timestamp.isoformat() for r in results]
-    values = [float(r.value) for r in results]
+    timestamps = [ts.isoformat() for ts in sample_times]
 
     if smoothing == "moving_average" and values:
         values = moving_average(values, window_size)

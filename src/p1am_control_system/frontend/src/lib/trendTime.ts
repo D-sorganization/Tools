@@ -14,10 +14,33 @@
 
 export const SAMPLES_PER_SECOND = 10;
 
-/** Deepest buffer/window the trends retain: 1 hour @ 10 Hz. */
+/** Deepest LIVE in-memory buffer the trends retain: 1 hour @ 10 Hz. */
 export const MAX_TREND_SAMPLES = 60 * 60 * SAMPLES_PER_SECOND;
-export const MAX_WINDOW_SECONDS = MAX_TREND_SAMPLES / SAMPLES_PER_SECOND;
+
+/**
+ * Longest window a live-buffer-only trend (no historian backfill) can show —
+ * exactly the retained buffer depth (1 h). Charts without backfill cap their
+ * zoom-out here so the axis never stretches past the data into an empty region.
+ */
+export const BUFFER_WINDOW_SECONDS = MAX_TREND_SAMPLES / SAMPLES_PER_SECOND;
+
+/**
+ * Longest window a BACKFILLED trend (e.g. the temperature trend) can show. The
+ * historian is size-capped (many hours/days), so a backfilled trend can look
+ * back up to 24 h. Deliberately DECOUPLED from the live-buffer sample count so
+ * raising it never grows any in-memory buffer — old data comes from the
+ * historian, not RAM.
+ */
+export const MAX_WINDOW_SECONDS = 24 * 60 * 60;
 export const MIN_WINDOW_SECONDS = 1;
+
+/**
+ * Points requested per historian backfill. Bounded so a multi-hour window
+ * returns a light, whole-span decimated series (the server spans [start,end]
+ * rather than clipping to the newest slice), instead of tens of thousands of
+ * rows the chart would only downsample away for drawing anyway.
+ */
+export const TREND_BACKFILL_MAX_POINTS = 4000;
 
 /** Max points actually drawn per trace — keeps SVG paths light on the Pi. */
 export const RENDER_MAX_POINTS = 600;

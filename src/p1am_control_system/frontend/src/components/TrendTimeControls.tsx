@@ -25,7 +25,11 @@ function trimNum(n: number): string {
 export const TrendTimeControls: React.FC<{
   value: number; // window in seconds
   onChange: (seconds: number) => void;
-}> = ({ value, onChange }) => {
+  /** Per-chart maximum window (seconds). Defaults to the global backfilled max;
+   *  a live-buffer-only chart passes its shorter BUFFER_WINDOW_SECONDS so the
+   *  control can't request more time than the chart can actually show. */
+  maxSeconds?: number;
+}> = ({ value, onChange, maxSeconds = MAX_WINDOW_SECONDS }) => {
   const [unit, setUnit] = useState<TimeUnit>(() => windowUnit(value));
   const [text, setText] = useState<string>(() => trimNum(fromSeconds(value, windowUnit(value))));
   const focused = useRef(false);
@@ -36,16 +40,20 @@ export const TrendTimeControls: React.FC<{
     if (!focused.current) setText(trimNum(fromSeconds(value, unit)));
   }, [value, unit]);
 
+  // Effective ceiling: never above the global supported range, and never above
+  // this chart's own max (a backfill-less chart caps at its buffer depth).
+  const cap = Math.min(maxSeconds, MAX_WINDOW_SECONDS);
+
   const commit = (raw: string, nextUnit: TimeUnit): void => {
     const parsed = Number.parseFloat(raw);
     if (!Number.isFinite(parsed) || parsed <= 0) return; // wait for a valid value
-    onChange(clampWindow(toSeconds(parsed, nextUnit)));
+    onChange(Math.min(clampWindow(toSeconds(parsed, nextUnit)), cap));
   };
 
   return (
     <div
       style={{ display: "flex", alignItems: "center", gap: "0.3rem", fontSize: "0.68rem" }}
-      title={`Time window shown on the plot (max ${formatWindow(MAX_WINDOW_SECONDS)})`}
+      title={`Time window shown on the plot (max ${formatWindow(cap)})`}
     >
       <span style={{ color: "var(--text-muted)", textTransform: "uppercase" }}>Window</span>
       <input

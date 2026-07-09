@@ -14,6 +14,7 @@ import {
 import {
   MAX_TREND_SAMPLES,
   MAX_WINDOW_SECONDS,
+  TREND_BACKFILL_MAX_POINTS,
   downsample,
   formatWindow,
   formatClock,
@@ -1375,7 +1376,12 @@ const TempTrend: React.FC<TrendProps> = ({
   // data (stored tag is a 0–100 %, so scale it to °C). The historian carries the
   // ACTIVE channel's tag only, so merge it into that channel of the buffer
   // (anything older than the live buffer) ahead of the live samples.
-  const backfill = useTrendBackfill(tagId, windowSeconds, fullScale / 100);
+  const backfill = useTrendBackfill(
+    tagId,
+    windowSeconds,
+    fullScale / 100,
+    TREND_BACKFILL_MAX_POINTS,
+  );
   // Freeze swaps the live prop for the snapshot captured at pause time; either
   // way backfill merges in ahead of it, so windowing/backfill stay unchanged.
   const source = view.paused ? frozen : samples;

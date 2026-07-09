@@ -38,8 +38,12 @@ const LINE_COLORS = [
   "#f43f5e", // Crimson Red
 ];
 
-// Window presets, in seconds.
-const WINDOW_PRESETS = [10, 30, 60, 120, 300];
+// Window presets, in seconds. Capped at 600 s (10 min) — the depth of the live
+// telemetry buffer this multi-tag chart draws from (it has no historian
+// backfill, unlike the temperature trend which reaches back hours). Deeper
+// history per-tag would mean holding an hour of every tag's frames in the JS
+// heap; see MAX_HISTORY in useTelemetryStream for that deliberate tradeoff.
+const WINDOW_PRESETS = [10, 30, 60, 120, 300, 600];
 
 export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) => {
   const [selectedTags, setSelectedTags] = useState<number[]>([0, 1, 10]);

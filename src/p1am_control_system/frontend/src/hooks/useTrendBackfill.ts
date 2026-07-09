@@ -33,6 +33,7 @@ export function useTrendBackfill(
   tagId: number,
   windowSeconds: number,
   scale = 1,
+  maxPoints?: number,
 ): BackfillPoint[] {
   const [points, setPoints] = useState<BackfillPoint[]>([]);
 
@@ -40,10 +41,18 @@ export function useTrendBackfill(
     if (!Number.isFinite(tagId) || tagId < 0) return;
     let cancelled = false;
     const now = Date.now();
+    // Bound the historian response so a multi-hour window returns a light,
+    // whole-span decimated series (the server spreads max_points across the
+    // full [start,end] instead of clipping to the newest rows).
+    const cap =
+      typeof maxPoints === "number" && Number.isFinite(maxPoints) && maxPoints > 0
+        ? `&max_points=${Math.floor(maxPoints)}`
+        : "";
     const url =
       `/api/trends?tag_id=${tagId}` +
       `&start_time=${encodeURIComponent(naiveUtcIso(now - windowSeconds * 1000))}` +
-      `&end_time=${encodeURIComponent(naiveUtcIso(now))}`;
+      `&end_time=${encodeURIComponent(naiveUtcIso(now))}` +
+      cap;
 
     fetchWithTimeout(url)
       .then((r) => (r.ok ? r.json() : null))
@@ -64,7 +73,7 @@ export function useTrendBackfill(
     return () => {
       cancelled = true;
     };
-  }, [tagId, windowSeconds, scale]);
+  }, [tagId, windowSeconds, scale, maxPoints]);
 
   return points;
 }

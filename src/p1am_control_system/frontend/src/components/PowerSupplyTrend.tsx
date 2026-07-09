@@ -21,7 +21,7 @@ import {
   timeSeriesPath,
   timeToX,
   valueToY,
-  MAX_WINDOW_SECONDS,
+  BUFFER_WINDOW_SECONDS,
 } from "../lib/trendTime";
 import { nearestIndexByX } from "../lib/plotCursor";
 import { useTrendViewport } from "../hooks/useTrendViewport";
@@ -110,11 +110,14 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   const [hoverPx, setHoverPx] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  // The one place pan/zoom/pause/drag-to-zoom live. Domain is epoch-ms.
+  // The one place pan/zoom/pause/drag-to-zoom live. Domain is epoch-ms. This
+  // trend has no historian backfill, so it caps its zoom-out at the live-buffer
+  // depth (BUFFER_WINDOW_SECONDS) rather than the longer backfilled max, so the
+  // axis never stretches past the retained data.
   const view = useTrendViewport({
     defaultSpan: DEFAULT_WINDOW_SECONDS * 1000,
     minSpan: 1000,
-    maxSpan: MAX_WINDOW_SECONDS * 1000,
+    maxSpan: BUFFER_WINDOW_SECONDS * 1000,
   });
 
   // Active buffer: the frozen snapshot while paused, the live samples otherwise.
@@ -378,6 +381,7 @@ export const PowerSupplyTrend: React.FC<Props> = ({
         <TrendTimeControls
           value={windowSeconds}
           onChange={(seconds) => view.setSpan(seconds * 1000)}
+          maxSeconds={BUFFER_WINDOW_SECONDS}
         />
         <TrendAxisControls value={axis} onChange={setAxis} unit="%" />
         <SnapshotButton
