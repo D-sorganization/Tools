@@ -90,6 +90,15 @@ export function formatWindow(seconds: number): string {
   return `${txt}${u}`;
 }
 
+/** Wall-clock "HH:MM:SS" (local time) for an epoch-ms timestamp — used by the
+ *  hover tooltip on the time-domain trends so a hovered point shows WHEN it was
+ *  sampled, which is more useful than "-Ns ago" on a long (hours) window. */
+export function formatClock(ms: number): string {
+  const d = new Date(ms);
+  const pad = (n: number): string => String(n).padStart(2, "0");
+  return `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+}
+
 /** Clock-style elapsed label: "0s","45s","1m30s","2m","1h05m". */
 export function formatDuration(seconds: number): string {
   const s = Math.max(0, Math.round(seconds));
@@ -195,6 +204,25 @@ export function timeToX(
   return x0 + frac * (x1 - x0);
 }
 
+/**
+ * Map a value to a Y pixel on a linear value axis: [min,max] -> [yTop+plotH, yTop]
+ * (SVG Y grows downward, so max is at the top). Clamps to the plot area; returns
+ * the bottom (yTop+plotH) for a degenerate (max <= min) range. Single source of
+ * truth for the value→pixel mapping shared by {@link timeSeriesPath} and the
+ * hover crosshair markers (DRY).
+ */
+export function valueToY(
+  value: number,
+  min: number,
+  max: number,
+  yTop: number,
+  plotH: number,
+): number {
+  if (!(max > min)) return yTop + plotH;
+  const frac = Math.max(0, Math.min(1, (value - min) / (max - min)));
+  return yTop + (1 - frac) * plotH;
+}
+
 export interface TimedValue {
   /** Sample timestamp (epoch ms). */
   t: number;
@@ -234,8 +262,7 @@ export function timeSeriesPath(
   return points
     .map((p, i) => {
       const x = timeToX(p.t, t0, t1, x0, x1);
-      const frac = Math.max(0, Math.min(1, (p.v - min) / (max - min)));
-      const y = yTop + (1 - frac) * plotH;
+      const y = valueToY(p.v, min, max, yTop, plotH);
       return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
     })
     .join(" ");

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { render } from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import { createRef } from "react";
 import { Histogram } from "./Histogram";
 
@@ -66,5 +66,26 @@ describe("Histogram", () => {
     );
     const bar = container.querySelector("rect.plot-bar");
     expect(bar?.getAttribute("fill")).toBe("#123456");
+  });
+
+  it("shows a bin's range and count on hover, and clears on leave", () => {
+    const { container } = render(
+      <Histogram
+        width={300}
+        height={200}
+        binEdges={binEdges}
+        counts={counts}
+      />,
+    );
+    const bar1 = container.querySelector('rect.plot-bar[data-bin="1"]')!;
+    fireEvent.pointerEnter(bar1);
+    const lines = Array.from(
+      container.querySelectorAll("g.plot-tooltip text"),
+    ).map((n) => n.textContent);
+    // Bin 1 spans [1, 2) with a count of 5.
+    expect(lines).toContain("[1.00, 2.00)");
+    expect(lines).toContain("count: 5.00");
+    fireEvent.pointerLeave(bar1);
+    expect(container.querySelector("g.plot-tooltip")).toBeNull();
   });
 });

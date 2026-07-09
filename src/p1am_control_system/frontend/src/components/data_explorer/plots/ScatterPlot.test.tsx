@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import { createRef } from "react";
 import { ScatterPlot } from "./ScatterPlot";
+import { mockSvgRect, pointerMoveAt } from "./hoverTestUtils";
 
 describe("ScatterPlot", () => {
   const series = [
@@ -88,5 +89,20 @@ describe("ScatterPlot", () => {
       <ScatterPlot width={300} height={200} series={gapped} />,
     );
     expect(container.querySelectorAll("circle.plot-marker")).toHaveLength(2);
+  });
+
+  it("shows a hover crosshair with the nearest point's value on move", () => {
+    const { container } = render(
+      <ScatterPlot width={300} height={200} series={series} />,
+    );
+    const svg = container.querySelector("svg") as SVGSVGElement;
+    mockSvgRect(svg, 300, 200);
+    // xDomain [0,2], left margin 52, innerWidth 232 -> data-x 1 at clientX 168.
+    pointerMoveAt(svg, 168);
+    expect(container.querySelector("line.plot-crosshair-line")).not.toBeNull();
+    const lines = Array.from(
+      container.querySelectorAll("g.plot-tooltip text"),
+    ).map((n) => n.textContent);
+    expect(lines).toContain("circles: 1.00"); // nearest point (1, 1)
   });
 });

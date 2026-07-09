@@ -40,6 +40,28 @@ describe("PowerSupplyTrend", () => {
     expect(drawnTraces(container)).toBe(3);
   });
 
+  it("shows a hover crosshair with per-trace values on pointer move", () => {
+    const { container } = render(
+      <PowerSupplyTrend samples={makeSamples(200)} {...fullScales} />,
+    );
+    // Target the CHART svg (the toolbar has lucide-icon <svg>s too).
+    const svg = container.querySelector("svg.ps-trend-svg") as SVGSVGElement;
+    svg.getBoundingClientRect = () =>
+      ({ x: 0, y: 0, top: 0, left: 0, right: 600, bottom: 192, width: 600, height: 192, toJSON: () => ({}) }) as DOMRect;
+    expect(svg.querySelector('line[stroke-dasharray="3 3"]')).toBeNull();
+    // jsdom has no PointerEvent; a MouseEvent carries clientX and fires onPointerMove.
+    fireEvent(svg, new MouseEvent("pointermove", { clientX: 300, bubbles: true }));
+    // Crosshair guide line + one marker per trace appear.
+    expect(svg.querySelector('line[stroke-dasharray="3 3"]')).not.toBeNull();
+    expect(svg.querySelectorAll("circle").length).toBe(3);
+    // Tooltip carries engineering-unit values (A / V / kW).
+    expect(svg.textContent).toMatch(/A/);
+    expect(svg.textContent).toMatch(/kW/);
+    // Leaving the plot clears the crosshair.
+    fireEvent.pointerLeave(svg);
+    expect(svg.querySelector('line[stroke-dasharray="3 3"]')).toBeNull();
+  });
+
   it("downsamples a long buffer to a bounded point count", () => {
     const { container } = render(
       <PowerSupplyTrend samples={makeSamples(8000)} {...fullScales} />,

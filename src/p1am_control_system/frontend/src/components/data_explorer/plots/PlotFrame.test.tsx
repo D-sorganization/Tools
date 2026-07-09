@@ -1,8 +1,13 @@
 import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import { createRef } from "react";
-import { PlotFrame } from "./PlotFrame";
+import { PlotFrame, type HoverSeries } from "./PlotFrame";
 import { makeProjector } from "./projection";
+import {
+  mockSvgRect,
+  pointerMoveAt,
+  pointerLeaveSvg,
+} from "./hoverTestUtils";
 
 describe("PlotFrame", () => {
   it("renders an <svg> with the requested size and forwards a ref", () => {
@@ -88,5 +93,76 @@ describe("makeProjector", () => {
     // log10(10) is the midpoint of log10(1)..log10(100) -> pixel 100.
     expect(p.x(10)).toBeCloseTo(100, 4);
     expect(p.x.log).toBe(true);
+  });
+});
+
+describe("PlotFrame hover crosshair", () => {
+  // Default margins: left 52, top 16 (see projection DEFAULT_MARGIN). With a
+  // 300x200 frame and xDomain [0,2], innerWidth = 300-52-16 = 232, so data-x 1
+  // lands at inner pixel 116, i.e. clientX = 116 + 52 = 168.
+  const hover: HoverSeries[] = [
+    { label: "a", color: "#ff0000", xs: [0, 1, 2], ys: [0, 10, 20] },
+  ];
+
+  function renderHoverFrame() {
+    const result = render(
+      <PlotFrame
+        width={300}
+        height={200}
+        xDomain={[0, 2]}
+        yDomain={[0, 20]}
+        hoverSeries={hover}
+      />,
+    );
+    const svg = result.container.querySelector("svg") as SVGSVGElement;
+    mockSvgRect(svg, 300, 200);
+    return { ...result, svg };
+  }
+
+  it("shows no crosshair before the pointer moves", () => {
+    const { container } = renderHoverFrame();
+    expect(container.querySelector("g.plot-crosshair")).toBeNull();
+  });
+
+  it("snaps a crosshair + tooltip to the nearest x-sample on move", () => {
+    const { container, svg } = renderHoverFrame();
+    pointerMoveAt(svg, 168); // data-x ~= 1 -> nearest sample value 10
+    const line = container.querySelector("line.plot-crosshair-line");
+    expect(line).not.toBeNull();
+    expect(Number(line?.getAttribute("x1"))).toBeCloseTo(116, 0);
+    expect(
+      container.querySelectorAll("circle.plot-crosshair-marker"),
+    ).toHaveLength(1);
+    const lines = Array.from(
+      container.querySelectorAll("g.plot-tooltip text"),
+    ).map((n) => n.textContent);
+    expect(lines).toContain("a: 10.00");
+    expect(lines).toContain("x: 1.00");
+  });
+
+  it("clears the crosshair on pointer leave", () => {
+    const { container, svg } = renderHoverFrame();
+    pointerMoveAt(svg, 168);
+    expect(container.querySelector("g.plot-crosshair")).not.toBeNull();
+    pointerLeaveSvg(svg);
+    expect(container.querySelector("g.plot-crosshair")).toBeNull();
+  });
+
+  it("hides the crosshair when the cursor is in the axis margin", () => {
+    const { container, svg } = renderHoverFrame();
+    pointerMoveAt(svg, 168);
+    expect(container.querySelector("g.plot-crosshair")).not.toBeNull();
+    pointerMoveAt(svg, 10); // inside the left margin -> inner-x < 0
+    expect(container.querySelector("g.plot-crosshair")).toBeNull();
+  });
+
+  it("stays inert (no crosshair) when hoverSeries is omitted", () => {
+    const { container } = render(
+      <PlotFrame width={300} height={200} xDomain={[0, 2]} yDomain={[0, 20]} />,
+    );
+    const svg = container.querySelector("svg") as SVGSVGElement;
+    mockSvgRect(svg, 300, 200);
+    pointerMoveAt(svg, 168);
+    expect(container.querySelector("g.plot-crosshair")).toBeNull();
   });
 });

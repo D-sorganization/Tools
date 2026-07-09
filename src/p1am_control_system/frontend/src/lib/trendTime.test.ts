@@ -14,6 +14,8 @@ import {
   fixedWindowRange,
   windowStartIndex,
   timeToX,
+  valueToY,
+  formatClock,
   timeSeriesPath,
   downsample,
   SELECTABLE_TIME_UNITS,
@@ -140,6 +142,57 @@ describe("fixedWindowRange", () => {
     // span is the requested window, independent of how much data exists
     const r = fixedWindowRange(latest, 120);
     expect((r.t1 - r.t0) / 1000).toBe(120);
+  });
+});
+
+describe("valueToY", () => {
+  // Plot area: yTop=10, plotH=100 -> [min,max] maps to [110 (bottom), 10 (top)].
+  it("maps max to the top and min to the bottom", () => {
+    expect(valueToY(100, 0, 100, 10, 100)).toBe(10); // max -> yTop
+    expect(valueToY(0, 0, 100, 10, 100)).toBe(110); // min -> yTop + plotH
+  });
+
+  it("maps the midpoint to the middle", () => {
+    expect(valueToY(50, 0, 100, 10, 100)).toBe(60);
+  });
+
+  it("clamps values outside [min,max] into the plot area", () => {
+    expect(valueToY(150, 0, 100, 10, 100)).toBe(10); // above max -> top
+    expect(valueToY(-20, 0, 100, 10, 100)).toBe(110); // below min -> bottom
+  });
+
+  it("returns the bottom for a degenerate range (max <= min)", () => {
+    expect(valueToY(5, 10, 10, 10, 100)).toBe(110);
+  });
+
+  it("agrees with timeSeriesPath's y for the same value", () => {
+    const geom = { t0: 0, t1: 10, min: 0, max: 100, x0: 0, x1: 100, yTop: 10, plotH: 100 };
+    const d = timeSeriesPath(
+      [
+        { t: 0, v: 25 },
+        { t: 10, v: 75 },
+      ],
+      geom,
+    );
+    // Second point value 75 -> valueToY(75,...) must appear as the L y-coord.
+    const y = valueToY(75, 0, 100, 10, 100);
+    expect(d).toContain(`,${y.toFixed(1)}`);
+  });
+});
+
+describe("formatClock", () => {
+  it("formats an epoch-ms timestamp as zero-padded HH:MM:SS", () => {
+    // Build the expected string from the same local-time fields to stay tz-safe.
+    const ms = 1_700_000_123_000;
+    const d = new Date(ms);
+    const pad = (n: number) => String(n).padStart(2, "0");
+    expect(formatClock(ms)).toBe(
+      `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`,
+    );
+  });
+
+  it("zero-pads single-digit fields", () => {
+    expect(formatClock(0)).toMatch(/^\d{2}:\d{2}:\d{2}$/);
   });
 });
 

@@ -12,7 +12,7 @@
 
 import React from "react";
 import { PlotFrame } from "./PlotFrame";
-import { makeProjector } from "./projection";
+import { finitePairs, makeProjector, type HoverSeries } from "./projection";
 import { colorForIndex } from "../../../lib/explorer/palette";
 
 export type MarkerShape = "circle" | "square" | "triangle";
@@ -141,6 +141,21 @@ export const ScatterPlot = React.forwardRef<SVGSVGElement, ScatterPlotProps>(
     const yDomain = axisExtent(pts, 1);
     const { x, y } = makeProjector({ ...props, xDomain, yDomain });
 
+    // Hover crosshair series: scatter x is unordered, so sort each series'
+    // finite pairs ascending in x (ys in tandem) for a meaningful nearest-by-x.
+    const hoverSeries: HoverSeries[] = series
+      .map((s, i) => {
+        const { xs, ys } = finitePairs(s.points);
+        const order = xs.map((_, k) => k).sort((a, b) => xs[a] - xs[b]);
+        return {
+          label: s.name,
+          color: s.color ?? colorForIndex(i),
+          xs: order.map((k) => xs[k]),
+          ys: order.map((k) => ys[k]),
+        };
+      })
+      .filter((s) => s.xs.length > 0);
+
     return (
       <PlotFrame
         ref={ref}
@@ -154,6 +169,7 @@ export const ScatterPlot = React.forwardRef<SVGSVGElement, ScatterPlotProps>(
         logY={props.logY}
         grid={props.grid}
         snapshotName="scatter_plot"
+        hoverSeries={hoverSeries}
       >
         {series.map((s, i) => {
           const fill = s.color ?? colorForIndex(i);

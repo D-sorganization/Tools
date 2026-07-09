@@ -7,6 +7,7 @@
  */
 
 import { niceTicks } from "../../../lib/explorer/scale";
+import { nearestIndexByX } from "../../../lib/plotCursor";
 
 export interface PlotMargin {
   top: number;
@@ -34,6 +35,14 @@ export interface AxisProjector {
   readonly ticks: number[];
   /** `true` when the axis uses a log10 transform. */
   readonly log: boolean;
+  /**
+   * Inverse of the projection: the data value at an inner-pixel coordinate.
+   *
+   * Mirrors `linearScale.invert`, honouring a log10 axis (the result is mapped
+   * back out of log space). Like the forward projector it does not validate per
+   * call — callers pass finite cursor pixels.
+   */
+  invert(pixel: number): number;
 }
 
 /** A pair of axis projectors mapping data → inner-plot pixels. */
@@ -91,6 +100,17 @@ function makeAxis(
     return pixelMin + ((t(value) - d0) / span) * pSpan;
   }) as AxisProjector;
 
+  // Inverse mapping (pixel → data), mirroring `linearScale.invert`. A zero-width
+  // pixel range can't be inverted, so fall back to the domain midpoint.
+  const invert = (pixel: number): number => {
+    if (pSpan === 0) {
+      const mid = (d0 + d1) / 2;
+      return log ? Math.pow(10, mid) : mid;
+    }
+    const transformed = d0 + ((pixel - pixelMin) / pSpan) * span;
+    return log ? Math.pow(10, transformed) : transformed;
+  };
+
   const lo = Math.min(d0, d1);
   const hi = Math.max(d0, d1);
   const transformedTicks =
@@ -102,6 +122,7 @@ function makeAxis(
   Object.defineProperties(project, {
     ticks: { value: ticks, enumerable: true },
     log: { value: log, enumerable: true },
+    invert: { value: invert, enumerable: true },
   });
   return project;
 }
@@ -119,4 +140,106 @@ export function makeProjector(props: ProjectorInput): PlotProjector {
   const x = makeAxis(props.xDomain, 0, innerWidth, props.logX ?? false, 6);
   const y = makeAxis(props.yDomain, innerHeight, 0, props.logY ?? false, 5);
   return { x, y, innerWidth, innerHeight, margin };
+}
+
+/**
+ * One hoverable series handed to {@link PlotFrame}: ascending `xs` paired with
+ * matching `ys`, plus the label/color used in the crosshair tooltip and marker.
+ */
+export interface HoverSeries {
+  label: string;
+  color: string;
+  xs: number[];
+  ys: number[];
+}
+
+/**
+ * Split `[x, y]` points into parallel `xs`/`ys` arrays, dropping any pair with a
+ * non-finite coordinate. Shared by the point-based plots when they build their
+ * {@link HoverSeries} (DRY).
+ *
+ * @throws TypeError if `points` is not an array.
+ */
+export function finitePairs(points: readonly [number, number][]): {
+  xs: number[];
+  ys: number[];
+} {
+  if (!Array.isArray(points)) {
+    throw new TypeError("finitePairs: points must be an array");
+  }
+  const xs: number[] = [];
+  const ys: number[] = [];
+  for (const [px, py] of points) {
+    if (!Number.isFinite(px) || !Number.isFinite(py)) continue;
+    xs.push(px);
+    ys.push(py);
+  }
+  return { xs, ys };
+}
+
+/** A resolved crosshair marker: one series' nearest sample, in inner pixels. */
+export interface CrosshairMarker {
+  label: string;
+  color: string;
+  /** Inner-pixel x of the sample. */
+  px: number;
+  /** Inner-pixel y of the sample. */
+  py: number;
+  /** The sample's data-y value (for the tooltip line). */
+  value: number;
+}
+
+/** Geometry a crosshair renderer needs for a single hover position. */
+export interface CrosshairModel {
+  /** Inner-pixel x of the vertical crosshair line (snapped to a sample). */
+  lineX: number;
+  /** Snapped data-x value shown in the tooltip. */
+  dataX: number;
+  markers: CrosshairMarker[];
+}
+
+/**
+ * Resolve the crosshair geometry for a cursor at `innerX` (inner-plot pixels).
+ *
+ * The cursor pixel is inverted to a data-x via {@link AxisProjector.invert};
+ * for each series the sample nearest that data-x is located with
+ * {@link nearestIndexByX} and projected back to inner pixels. The vertical line
+ * snaps to the first series' nearest sample. Non-finite samples are skipped;
+ * `null` is returned when no series yields a finite sample (e.g. all empty).
+ *
+ * Precondition: `innerX` is a finite number; `series` is an array.
+ * @throws TypeError if `innerX` is not finite or `series` is not an array.
+ */
+export function buildCrosshairModel(
+  innerX: number,
+  series: readonly HoverSeries[],
+  x: AxisProjector,
+  y: AxisProjector,
+): CrosshairModel | null {
+  if (typeof innerX !== "number" || !Number.isFinite(innerX)) {
+    throw new TypeError("buildCrosshairModel: innerX must be a finite number");
+  }
+  if (!Array.isArray(series)) {
+    throw new TypeError("buildCrosshairModel: series must be an array");
+  }
+  const dataX = x.invert(innerX);
+  const markers: CrosshairMarker[] = [];
+  let snapDataX: number | null = null;
+  for (const s of series) {
+    const idx = nearestIndexByX(s.xs, dataX);
+    if (idx === null) continue;
+    const sx = s.xs[idx];
+    const sy = s.ys[idx];
+    if (!Number.isFinite(sx) || !Number.isFinite(sy)) continue;
+    markers.push({
+      label: s.label,
+      color: s.color,
+      px: x(sx),
+      py: y(sy),
+      value: sy,
+    });
+    if (snapDataX === null) snapDataX = sx;
+  }
+  if (snapDataX === null || markers.length === 0) return null;
+  return { lineX: x(snapDataX), dataX: snapDataX, markers };
 }

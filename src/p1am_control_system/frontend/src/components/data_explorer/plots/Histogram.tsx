@@ -10,9 +10,11 @@
  * `<svg>` (via {@link PlotFrame}). Theme-aware via CSS variables.
  */
 
-import React from "react";
+import React, { useState } from "react";
 import { PlotFrame } from "./PlotFrame";
+import { PlotTooltip } from "./PlotCrosshair";
 import { makeProjector } from "./projection";
+import { fmtNumber } from "../../../lib/format";
 
 export interface HistogramProps {
   width: number;
@@ -48,9 +50,36 @@ export const Histogram = React.forwardRef<SVGSVGElement, HistogramProps>(
         : [0, 1];
     const yDomain: [number, number] = [0, safeMax(counts)];
 
-    const { x, y } = makeProjector({ ...props, xDomain, yDomain });
+    const { x, y, innerWidth, innerHeight } = makeProjector({
+      ...props,
+      xDomain,
+      yDomain,
+    });
     const baseline = y(0);
     const fill = color ?? "var(--accent-cyan)";
+
+    // Bin hover: track which bar the pointer is over and show its range + count.
+    // A categorical hover (not the shared nearest-x crosshair) reads cleanly for
+    // bars, so this reuses only the shared tooltip primitive.
+    const [hoverBin, setHoverBin] = useState<number | null>(null);
+    const activeBin =
+      hoverBin !== null && hoverBin >= 0 && hoverBin < nBins ? hoverBin : null;
+    const binTooltip =
+      activeBin !== null && Number.isFinite(counts[activeBin]) ? (
+        <PlotTooltip
+          lines={[
+            `[${fmtNumber(binEdges[activeBin])}, ${fmtNumber(
+              binEdges[activeBin + 1],
+            )})`,
+            `count: ${fmtNumber(counts[activeBin])}`,
+          ]}
+          anchor={{
+            x: (x(binEdges[activeBin]) + x(binEdges[activeBin + 1])) / 2,
+            y: y(Math.max(0, counts[activeBin])),
+          }}
+          bounds={{ x0: 0, y0: 0, x1: innerWidth, y1: innerHeight }}
+        />
+      ) : null;
 
     return (
       <PlotFrame
@@ -80,12 +109,17 @@ export const Histogram = React.forwardRef<SVGSVGElement, HistogramProps>(
               width={barWidth}
               height={barHeight}
               fill={fill}
-              fillOpacity={0.75}
+              fillOpacity={activeBin === i ? 0.95 : 0.75}
               stroke="var(--panel-border)"
               strokeWidth={0.5}
+              data-bin={i}
+              onPointerEnter={() => setHoverBin(i)}
+              onPointerLeave={() => setHoverBin(null)}
             />
           );
         })}
+
+        {binTooltip}
       </PlotFrame>
     );
   },

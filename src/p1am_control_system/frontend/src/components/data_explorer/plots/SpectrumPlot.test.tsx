@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import { createRef } from "react";
 import { SpectrumPlot } from "./SpectrumPlot";
+import { mockSvgRect, pointerMoveAt } from "./hoverTestUtils";
 
 describe("SpectrumPlot", () => {
   const freqs = [0, 1, 2, 3, 4, 5];
@@ -45,5 +46,20 @@ describe("SpectrumPlot", () => {
     // freq 0 is excluded on a log-x axis, so only 5 of 6 samples remain.
     const points = (d?.match(/[ML]/g) ?? []).length;
     expect(points).toBe(5);
+  });
+
+  it("shows a hover crosshair with the nearest power sample on move", () => {
+    const { container } = render(
+      <SpectrumPlot width={300} height={200} freqs={freqs} power={power} />,
+    );
+    const svg = container.querySelector("svg") as SVGSVGElement;
+    mockSvgRect(svg, 300, 200);
+    // xDomain [0,5], left margin 52, innerWidth 232 -> freq 2 at clientX ~= 145.
+    pointerMoveAt(svg, 145);
+    expect(container.querySelector("line.plot-crosshair-line")).not.toBeNull();
+    const lines = Array.from(
+      container.querySelectorAll("g.plot-tooltip text"),
+    ).map((n) => n.textContent);
+    expect(lines).toContain("power: 1.00"); // power[2] = 1.0 at freq 2
   });
 });

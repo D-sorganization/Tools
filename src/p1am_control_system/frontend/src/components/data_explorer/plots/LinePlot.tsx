@@ -13,7 +13,7 @@
 
 import React from "react";
 import { PlotFrame } from "./PlotFrame";
-import { makeProjector } from "./projection";
+import { finitePairs, makeProjector, type HoverSeries } from "./projection";
 import { colorForIndex } from "../../../lib/explorer/palette";
 
 export interface LineSeries {
@@ -86,6 +86,15 @@ export const LinePlot = React.forwardRef<SVGSVGElement, LinePlotProps>(
     const yDomain = axisExtent(series, 1);
     const { x, y } = makeProjector({ ...props, xDomain, yDomain });
 
+    // Hover crosshair series: finite (x, y) pairs per line, in draw order.
+    const hoverSeries: HoverSeries[] = series
+      .map((s, i) => ({
+        label: s.name,
+        color: s.color ?? colorForIndex(i),
+        ...finitePairs(s.points),
+      }))
+      .filter((s) => s.xs.length > 0);
+
     return (
       <PlotFrame
         ref={ref}
@@ -99,6 +108,7 @@ export const LinePlot = React.forwardRef<SVGSVGElement, LinePlotProps>(
         logY={props.logY}
         grid={props.grid}
         snapshotName="line_plot"
+        hoverSeries={hoverSeries}
       >
         {series.map((s, i) => (
           <path

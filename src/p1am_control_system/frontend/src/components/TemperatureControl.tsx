@@ -16,9 +16,11 @@ import {
   MAX_WINDOW_SECONDS,
   downsample,
   formatWindow,
+  formatClock,
   timeSeriesPath,
   timeToX,
 } from "../lib/trendTime";
+import { nearestIndexByX } from "../lib/plotCursor";
 import {
   fitSeries,
   NO_FIT_ID,
@@ -33,7 +35,12 @@ import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
 import { TrendFitControls } from "./TrendFitControls";
-import { TrendTimeAxis, TrendFitOverlay } from "./TrendPlotOverlays";
+import {
+  TrendTimeAxis,
+  TrendFitOverlay,
+  TrendCrosshair,
+  type CrosshairSeries,
+} from "./TrendPlotOverlays";
 import { ExportButton } from "./ExportButton";
 import { SnapshotButton } from "./SnapshotButton";
 import { CollapsibleSection } from "./CollapsibleSection";
@@ -1360,6 +1367,8 @@ const TempTrend: React.FC<TrendProps> = ({
   // While paused, plot a frozen snapshot of the samples captured at pause time
   // so incoming live data never slides the view out from under the operator.
   const [frozen, setFrozen] = useState<TempSample[]>([]);
+  // Plot pixel X of the hover crosshair, or null when not hovering.
+  const [hoverPx, setHoverPx] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   // Backfill from the historian so widening the window immediately shows past
@@ -1457,6 +1466,33 @@ const TempTrend: React.FC<TrendProps> = ({
 
   // Heater-status band: shaded spans where the relay was closed.
   const relaySpans = activeSpans(plotted, (s) => s.relayOn);
+
+  // Resolve the hover crosshair: snap to the nearest sample by time and read
+  // each visible channel's °C there, placing markers with the same refY mapping
+  // the traces use (DRY). Channels that are null at that sample are skipped.
+  const hover: { px: number; series: CrosshairSeries[]; xLabel: string } | null =
+    (() => {
+      if (hoverPx === null || plotted.length < 2) return null;
+      const idx = nearestIndexByX(
+        plotted.map((s) => s.t),
+        pxToUnit(hoverPx),
+      );
+      if (idx === null) return null;
+      const s = plotted[idx];
+      const series: CrosshairSeries[] = [];
+      if (showK && typeof s.k === "number" && Number.isFinite(s.k)) {
+        series.push({ label: "K", color: K_COLOR, text: `${s.k.toFixed(1)} °C`, py: refY(s.k) });
+      }
+      if (showR && typeof s.r === "number" && Number.isFinite(s.r)) {
+        series.push({ label: "R", color: R_COLOR, text: `${s.r.toFixed(1)} °C`, py: refY(s.r) });
+      }
+      if (series.length === 0) return null;
+      return {
+        px: timeToX(s.t, t0, t1, TREND_PAD_L, TREND_W - TREND_PAD_R),
+        series,
+        xLabel: formatClock(s.t),
+      };
+    })();
 
   // Curve fit runs over the ACTIVE thermocouple series, restricted to the last
   // `fitWindowMin` minutes (the operator-chosen regression window). x is epoch
@@ -1725,12 +1761,22 @@ const TempTrend: React.FC<TrendProps> = ({
           cursor: view.selectionPx ? "ew-resize" : "crosshair",
           touchAction: "none",
         }}
-        onPointerDown={(e) => view.startSelect(plotPx(e.clientX))}
+        onPointerDown={(e) => {
+          setHoverPx(null); // a drag-zoom gesture supersedes the hover readout
+          view.startSelect(plotPx(e.clientX));
+        }}
         onPointerMove={(e) => {
-          if (view.selectionPx) view.moveSelect(plotPx(e.clientX));
+          if (view.selectionPx) {
+            view.moveSelect(plotPx(e.clientX));
+            return;
+          }
+          setHoverPx(plotPx(e.clientX)); // hover: value readout at the cursor
         }}
         onPointerUp={() => view.endSelect(bounds, pxToUnit)}
-        onPointerLeave={() => view.cancelSelect()}
+        onPointerLeave={() => {
+          view.cancelSelect();
+          setHoverPx(null);
+        }}
       >
         {/* heater-ON status band behind everything else */}
         {showRelay &&
@@ -1851,6 +1897,19 @@ const TempTrend: React.FC<TrendProps> = ({
               />
             )}
           </>
+        )}
+
+        {/* Hover crosshair + value tooltip (shared overlay). */}
+        {hover && (
+          <TrendCrosshair
+            px={hover.px}
+            yTop={TREND_PAD_T}
+            yBottom={TREND_PAD_T + TREND_PLOT_H}
+            plotLeft={TREND_PAD_L}
+            plotRight={TREND_W - TREND_PAD_R}
+            series={hover.series}
+            xLabel={hover.xLabel}
+          />
         )}
 
         {/* Drag-to-zoom selection: translucent band over the plot area. */}

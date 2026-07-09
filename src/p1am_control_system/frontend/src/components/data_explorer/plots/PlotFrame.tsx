@@ -13,12 +13,18 @@
  * `--bg-color`, `--accent-cyan`).
  */
 
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 
-import { makeProjector, type PlotMargin } from "./projection";
+import {
+  buildCrosshairModel,
+  makeProjector,
+  type HoverSeries,
+  type PlotMargin,
+} from "./projection";
+import { PlotCrosshair } from "./PlotCrosshair";
 import { SnapshotButton } from "../../SnapshotButton";
 
-export type { PlotMargin } from "./projection";
+export type { HoverSeries, PlotMargin } from "./projection";
 
 export interface PlotFrameProps {
   width: number;
@@ -33,6 +39,13 @@ export interface PlotFrameProps {
   margin?: Partial<PlotMargin>;
   /** Filename prefix for the shared PNG/SVG snapshot control (default "plot"). */
   snapshotName?: string;
+  /**
+   * When present, enables the shared hover crosshair + value tooltip: on
+   * pointer move the frame snaps a vertical guide to the nearest x-sample of
+   * each series and shows a marker and per-series value. Omit to keep a plain,
+   * non-interactive frame (the default; existing consumers are unaffected).
+   */
+  hoverSeries?: HoverSeries[];
   children?: React.ReactNode;
 }
 
@@ -52,7 +65,8 @@ function formatTick(value: number): string {
  */
 export const PlotFrame = React.forwardRef<SVGSVGElement, PlotFrameProps>(
   function PlotFrame(props, ref) {
-    const { width, height, xLabel, yLabel, grid = true, snapshotName } = props;
+    const { width, height, xLabel, yLabel, grid = true, snapshotName, hoverSeries } =
+      props;
     const { x, y, innerWidth, innerHeight, margin } = makeProjector(props);
 
     // The snapshot control needs the live `<svg>` node, and callers (and their
@@ -68,6 +82,36 @@ export const PlotFrame = React.forwardRef<SVGSVGElement, PlotFrameProps>(
       [ref],
     );
 
+    // Hover crosshair state: the cursor's x within the inner plot area (pixels),
+    // or `null` when the pointer is away. Only the geometry needed to place the
+    // guide lives in state; the per-series markers are derived at render time.
+    const [hoverX, setHoverX] = useState<number | null>(null);
+    const hoverEnabled = hoverSeries !== undefined && hoverSeries.length > 0;
+
+    // Stable handlers: they read only primitive geometry (size + left margin),
+    // so the cursor→inner-pixel conversion doesn't churn on every render. The
+    // <svg> uses viewBox="0 0 width height" with a responsive rendered size, so
+    // scale the client offset back into viewBox space before removing the left
+    // margin (mirrors the live TrendChart's pixel mapping).
+    const handlePointerMove = useCallback(
+      (e: React.PointerEvent<SVGSVGElement>) => {
+        const svg = innerRef.current;
+        if (!svg) return;
+        const rect = svg.getBoundingClientRect();
+        if (rect.width === 0) return; // unlaid-out / jsdom: avoid a NaN cursor
+        const svgX = ((e.clientX - rect.left) / rect.width) * width;
+        const innerX = svgX - margin.left;
+        setHoverX(innerX < 0 || innerX > innerWidth ? null : innerX);
+      },
+      [width, margin.left, innerWidth],
+    );
+    const handlePointerLeave = useCallback(() => setHoverX(null), []);
+
+    const crosshair =
+      hoverEnabled && hoverX !== null
+        ? buildCrosshairModel(hoverX, hoverSeries, x, y)
+        : null;
+
     return (
       <div style={{ position: "relative", display: "inline-block", maxWidth: "100%" }}>
       <svg
@@ -76,7 +120,12 @@ export const PlotFrame = React.forwardRef<SVGSVGElement, PlotFrameProps>(
         height={height}
         viewBox={`0 0 ${width} ${height}`}
         role="img"
-        style={{ background: "var(--bg-color)" }}
+        style={{
+          background: "var(--bg-color)",
+          cursor: hoverEnabled ? "crosshair" : undefined,
+        }}
+        onPointerMove={hoverEnabled ? handlePointerMove : undefined}
+        onPointerLeave={hoverEnabled ? handlePointerLeave : undefined}
       >
         <g transform={`translate(${margin.left},${margin.top})`}>
           {/* Gridlines */}
@@ -181,6 +230,15 @@ export const PlotFrame = React.forwardRef<SVGSVGElement, PlotFrameProps>(
 
           {/* Data layers */}
           {props.children}
+
+          {/* Hover crosshair (drawn over the data, inside the inner area) */}
+          {crosshair && (
+            <PlotCrosshair
+              model={crosshair}
+              innerWidth={innerWidth}
+              innerHeight={innerHeight}
+            />
+          )}
         </g>
 
         {/* Axis titles */}

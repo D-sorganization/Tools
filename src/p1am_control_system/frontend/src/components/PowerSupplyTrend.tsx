@@ -17,14 +17,18 @@ import {
 import {
   downsample,
   formatWindow,
+  formatClock,
   timeSeriesPath,
+  timeToX,
+  valueToY,
   MAX_WINDOW_SECONDS,
 } from "../lib/trendTime";
+import { nearestIndexByX } from "../lib/plotCursor";
 import { useTrendViewport } from "../hooks/useTrendViewport";
 import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendTimeControls } from "./TrendTimeControls";
-import { TrendTimeAxis } from "./TrendPlotOverlays";
+import { TrendTimeAxis, TrendCrosshair, type CrosshairSeries } from "./TrendPlotOverlays";
 import { SnapshotButton } from "./SnapshotButton";
 
 /**
@@ -102,6 +106,8 @@ export const PowerSupplyTrend: React.FC<Props> = ({
   // Frozen snapshot of the buffer taken when the operator pauses, so live frames
   // arriving afterwards don't move the plot.
   const [frozen, setFrozen] = useState<TrendSample[]>([]);
+  // Plot pixel X of the hover crosshair, or null when not hovering.
+  const [hoverPx, setHoverPx] = useState<number | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
 
   // The one place pan/zoom/pause/drag-to-zoom live. Domain is epoch-ms.
@@ -184,12 +190,62 @@ export const PowerSupplyTrend: React.FC<Props> = ({
     view.zoomBy(e.deltaY > 0 ? 1.15 : 0.87, pxToUnit(plotPx(e)), bounds);
   };
   useNonPassiveWheel(svgRef, onWheel);
-  const onPointerDown = (e: React.PointerEvent): void =>
+  const onPointerDown = (e: React.PointerEvent): void => {
+    setHoverPx(null); // a drag-zoom gesture supersedes the hover readout
     view.startSelect(plotPx(e));
-  const onPointerMove = (e: React.PointerEvent): void =>
-    view.moveSelect(plotPx(e));
+  };
+  const onPointerMove = (e: React.PointerEvent): void => {
+    if (view.selectionPx) {
+      view.moveSelect(plotPx(e));
+      return;
+    }
+    setHoverPx(plotPx(e)); // hover: show the value readout at the cursor
+  };
   const onPointerUp = (): void => view.endSelect(bounds, pxToUnit);
-  const onPointerLeave = (): void => view.cancelSelect();
+  const onPointerLeave = (): void => {
+    view.cancelSelect();
+    setHoverPx(null);
+  };
+
+  // Resolve the hover crosshair: snap to the nearest sample by time, read each
+  // trace's engineering value there, and place its marker with the SAME
+  // time→x / value→y mapping the paths use (DRY via timeToX / valueToY).
+  const hover: { px: number; series: CrosshairSeries[]; xLabel: string } | null =
+    (() => {
+      if (hoverPx === null || !hasData || down.length === 0) return null;
+      const idx = nearestIndexByX(
+        down.map((s) => s.t),
+        pxToUnit(hoverPx),
+      );
+      if (idx === null) return null;
+      const s = down[idx];
+      const kW = s.p / 1000;
+      const series: CrosshairSeries[] = [
+        {
+          label: currentLabel,
+          color: CURRENT_COLOR,
+          text: `${s.i.toFixed(2)} A`,
+          py: valueToY(toPct(s.i, currentFullScale), min, max, PAD_T, PLOT_H),
+        },
+        {
+          label: voltageLabel,
+          color: VOLTAGE_COLOR,
+          text: `${s.v.toFixed(2)} V`,
+          py: valueToY(toPct(s.v, voltageFullScale), min, max, PAD_T, PLOT_H),
+        },
+        {
+          label: "Power",
+          color: POWER_COLOR,
+          text: `${kW.toFixed(kW >= 10 ? 1 : 2)} kW`,
+          py: valueToY(toPct(s.p, powerFullScale), min, max, PAD_T, PLOT_H),
+        },
+      ];
+      return {
+        px: timeToX(s.t, start, end, PAD_L, W - PAD_R),
+        series,
+        xLabel: formatClock(s.t),
+      };
+    })();
 
   // CSV export of the raw measured samples (t, current, voltage, power). Hidden
   // (undefined) until at least one sample has been captured.
@@ -375,6 +431,19 @@ export const PowerSupplyTrend: React.FC<Props> = ({
             <path d={voltagePath} className="ps-trend-line" stroke={VOLTAGE_COLOR} />
             <path d={currentPath} className="ps-trend-line" stroke={CURRENT_COLOR} />
           </>
+        )}
+
+        {/* Hover crosshair + value tooltip (shared overlay). */}
+        {hover && (
+          <TrendCrosshair
+            px={hover.px}
+            yTop={PAD_T}
+            yBottom={PAD_T + PLOT_H}
+            plotLeft={PAD_L}
+            plotRight={W - PAD_R}
+            series={hover.series}
+            xLabel={hover.xLabel}
+          />
         )}
 
         {/* Translucent drag-to-zoom region while a selection is in progress. */}

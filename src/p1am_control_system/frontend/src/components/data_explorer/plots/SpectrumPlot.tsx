@@ -13,7 +13,7 @@
 
 import React from "react";
 import { PlotFrame } from "./PlotFrame";
-import { makeProjector } from "./projection";
+import { makeProjector, type HoverSeries } from "./projection";
 
 export interface SpectrumPlotProps {
   width: number;
@@ -81,6 +81,31 @@ export const SpectrumPlot = React.forwardRef<SVGSVGElement, SpectrumPlotProps>(
     const yDomain = axisExtent(power, logY);
     const { x, y } = makeProjector({ ...props, xDomain, yDomain });
 
+    // Hover crosshair series: finite (freq, power) samples, dropping any that a
+    // log axis would exclude (freqs are already ascending — no sort needed).
+    const nHover = Math.min(freqs.length, power.length);
+    const hxs: number[] = [];
+    const hys: number[] = [];
+    for (let i = 0; i < nHover; i += 1) {
+      const f = freqs[i];
+      const p = power[i];
+      if (!Number.isFinite(f) || !Number.isFinite(p)) continue;
+      if ((logX && f <= 0) || (logY && p <= 0)) continue;
+      hxs.push(f);
+      hys.push(p);
+    }
+    const hoverSeries: HoverSeries[] =
+      hxs.length > 0
+        ? [
+            {
+              label: props.yLabel ?? "power",
+              color: "var(--accent-cyan)",
+              xs: hxs,
+              ys: hys,
+            },
+          ]
+        : [];
+
     return (
       <PlotFrame
         ref={ref}
@@ -93,6 +118,7 @@ export const SpectrumPlot = React.forwardRef<SVGSVGElement, SpectrumPlotProps>(
         logX={logX}
         logY={logY}
         snapshotName="spectrum"
+        hoverSeries={hoverSeries}
       >
         <path
           className="plot-spectrum"

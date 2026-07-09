@@ -20,6 +20,7 @@ import {
 import { useTrendViewport } from "../hooks/useTrendViewport";
 import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
 import { TrendAxisControls } from "./TrendAxisControls";
+import { TrendCrosshair, type CrosshairSeries } from "./TrendPlotOverlays";
 
 interface TrendChartProps {
   history: number[][]; // Array of TagValue arrays: number[time][tag_id]
@@ -67,6 +68,11 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   const [frozenHistory, setFrozenHistory] = useState<number[][]>([]);
 
   const svgRef = useRef<SVGSVGElement | null>(null);
+
+  // Plot-relative pixel X of the hover crosshair, or null when not hovering.
+  // Stored raw here and resolved to the nearest sample during render (where the
+  // value→pixel scale lives), so hover never duplicates the projection math.
+  const [hoverPx, setHoverPx] = useState<number | null>(null);
 
   // Freeze/live toggle. Snapshot the CURRENT `history` synchronously BEFORE
   // flipping to paused, so the frame on screen at the click instant is frozen
@@ -202,16 +208,22 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   // Click-drag to zoom a region: down starts a selection, move grows the
   // overlay rectangle, up zooms to it (release inside), leave cancels it.
   const handlePointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
+    setHoverPx(null); // a drag-zoom gesture supersedes the hover readout
     view.startSelect(plotPx(e));
   };
   const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (view.selectionPx) view.moveSelect(plotPx(e));
+    if (view.selectionPx) {
+      view.moveSelect(plotPx(e));
+      return;
+    }
+    setHoverPx(plotPx(e)); // hover: show the value readout at the cursor
   };
   const handlePointerUp = () => {
     view.endSelect(bounds, pxToUnit);
   };
   const handlePointerLeave = () => {
     view.cancelSelect();
+    setHoverPx(null);
   };
 
   // Compute scale boundaries across selected tags. Memoized on the exact inputs
@@ -328,6 +340,51 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
     // static chart dims, so the extent inputs below are sufficient.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedTags, renderHistory, smoothedData, minVal, maxVal]);
+
+  // Resolve the hover crosshair from the raw pointer pixel, snapping to the
+  // nearest drawn sample and reading each selected tag's value there. Reuses the
+  // same getCoordinates projection as the series paths (DRY) so the marker sits
+  // exactly on the line. Computed inline (cheap: a handful of series) rather than
+  // memoized because it depends on the full projection state.
+  const seriesLen = (tagId: number): number => {
+    const sm = smoothedData?.[tagId];
+    return sm && sm.length > 0 ? sm.length : renderHistory.length;
+  };
+  const seriesValueAt = (tagId: number, idx: number): number => {
+    const sm = smoothedData?.[tagId];
+    if (sm && sm.length > 0) return sm[idx] ?? 0;
+    return renderHistory[idx]?.[tagId] ?? 0;
+  };
+  const hover: { px: number; series: CrosshairSeries[]; xLabel: string } | null =
+    (() => {
+      if (hoverPx === null) return null;
+      const drawables = seriesPaths.filter((s) => s.drawable);
+      if (drawables.length === 0) return null;
+      const f = chartWidth > 0 ? Math.max(0, Math.min(1, hoverPx / chartWidth)) : 0;
+      const firstLen = seriesLen(drawables[0].tagId);
+      if (firstLen < 2) return null;
+      const snapIdx = Math.max(0, Math.min(firstLen - 1, Math.round(f * (firstLen - 1))));
+      const snappedX = getCoordinates(snapIdx, 0, firstLen).x;
+      const series: CrosshairSeries[] = drawables.map(({ tagId, color }) => {
+        const n = seriesLen(tagId);
+        const idx = Math.max(0, Math.min(n - 1, Math.round(f * (n - 1))));
+        const value = seriesValueAt(tagId, idx);
+        return {
+          label: `#${tagId}`,
+          color,
+          text: value.toFixed(1),
+          py: getCoordinates(idx, value, n).y,
+        };
+      });
+      const secondsAgo = leftSecondsAgo + f * (rightSecondsAgo - leftSecondsAgo);
+      const xLabel =
+        secondsAgo < 0.5
+          ? "now"
+          : secondsAgo < 60
+            ? `-${secondsAgo.toFixed(1)}s`
+            : `-${(secondsAgo / 60).toFixed(1)}m`;
+      return { px: snappedX, series, xLabel };
+    })();
 
   // Snapshot/export data for the shared SnapshotButton: PNG + SVG come straight
   // from the <svg> ref; CSV is the full-resolution visible slice of the selected
@@ -719,6 +776,19 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
                   />
                 </g>
               ) : null,
+            )}
+
+            {/* Hover crosshair + value tooltip (shared overlay) */}
+            {hover && (
+              <TrendCrosshair
+                px={hover.px}
+                yTop={paddingTop}
+                yBottom={paddingTop + chartHeight}
+                plotLeft={paddingLeft}
+                plotRight={width - paddingRight}
+                series={hover.series}
+                xLabel={hover.xLabel}
+              />
             )}
 
             {/* Click-drag zoom-region overlay */}

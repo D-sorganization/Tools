@@ -10,9 +10,11 @@
  * `<svg>` so a container can export it. Theme-aware via CSS variables.
  */
 
-import React, { useCallback, useRef } from "react";
+import React, { useCallback, useRef, useState } from "react";
 import { divergingColor } from "../../../lib/explorer/palette";
+import { PlotTooltip } from "./PlotCrosshair";
 import { SnapshotButton } from "../../SnapshotButton";
+import { fmtNumber } from "../../../lib/format";
 
 export interface HeatmapProps {
   width: number;
@@ -67,6 +69,30 @@ export const Heatmap = React.forwardRef<SVGSVGElement, HeatmapProps>(
       [ref],
     );
 
+    // Cell hover: track the row/col under the pointer and show its value. A
+    // categorical grid needs no crosshair line, so this reuses only the shared
+    // tooltip primitive, anchored at the hovered cell's centre.
+    const [hoverCell, setHoverCell] = useState<{ r: number; c: number } | null>(
+      null,
+    );
+    const cellTooltip =
+      hoverCell !== null &&
+      hoverCell.r < matrix.length &&
+      hoverCell.c < (matrix[hoverCell.r]?.length ?? 0) ? (
+        <PlotTooltip
+          lines={[
+            `row: ${labels[hoverCell.r] ?? hoverCell.r}`,
+            `col: ${labels[hoverCell.c] ?? hoverCell.c}`,
+            `value: ${fmtNumber(matrix[hoverCell.r][hoverCell.c])}`,
+          ]}
+          anchor={{
+            x: hoverCell.c * cellW + cellW / 2,
+            y: hoverCell.r * cellH + cellH / 2,
+          }}
+          bounds={{ x0: 0, y0: 0, x1: gridW, y1: gridH }}
+        />
+      ) : null;
+
     return (
       <div style={{ position: "relative", display: "inline-block", maxWidth: "100%" }}>
       <svg
@@ -99,6 +125,8 @@ export const Heatmap = React.forwardRef<SVGSVGElement, HeatmapProps>(
                     strokeWidth={0.5}
                     data-row={r}
                     data-col={c}
+                    onPointerEnter={() => setHoverCell({ r, c })}
+                    onPointerLeave={() => setHoverCell(null)}
                   />
                   {showValues && (
                     <text
@@ -149,6 +177,9 @@ export const Heatmap = React.forwardRef<SVGSVGElement, HeatmapProps>(
               {label}
             </text>
           ))}
+
+          {/* Hover cell tooltip */}
+          {cellTooltip}
         </g>
       </svg>
       <div style={{ position: "absolute", top: 6, right: 6 }}>

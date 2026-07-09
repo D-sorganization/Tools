@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
 import { createRef } from "react";
 import { LinePlot } from "./LinePlot";
+import { mockSvgRect, pointerMoveAt } from "./hoverTestUtils";
 
 describe("LinePlot", () => {
   const series = [
@@ -76,5 +77,21 @@ describe("LinePlot", () => {
       ?.getAttribute("d");
     // Two move commands -> the line is split into two segments.
     expect((d?.match(/M/g) ?? []).length).toBe(2);
+  });
+
+  it("shows a hover crosshair with each series' value on pointer move", () => {
+    const { container } = render(
+      <LinePlot width={300} height={200} series={series} />,
+    );
+    const svg = container.querySelector("svg") as SVGSVGElement;
+    mockSvgRect(svg, 300, 200);
+    // xDomain [0,2], left margin 52, innerWidth 232 -> data-x 1 at clientX 168.
+    pointerMoveAt(svg, 168);
+    expect(container.querySelector("line.plot-crosshair-line")).not.toBeNull();
+    const lines = Array.from(
+      container.querySelectorAll("g.plot-tooltip text"),
+    ).map((n) => n.textContent);
+    expect(lines).toContain("a: 1.00"); // series a sample at x=1
+    expect(lines).toContain("b: 3.00"); // series b sample at x=1
   });
 });

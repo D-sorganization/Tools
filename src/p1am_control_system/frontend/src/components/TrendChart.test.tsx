@@ -23,6 +23,25 @@ describe("TrendChart", () => {
     expect(screen.getByText("Trends")).toBeInTheDocument();
   });
 
+  it("shows a hover crosshair with per-tag markers on pointer move", () => {
+    const { container } = render(
+      <TrendChart history={makeHistory(200)} tagValues={tagValues} />,
+    );
+    // The chart svg (lucide toolbar icons are separate 24x24 <svg>s).
+    const svg = container.querySelector('svg[viewBox="0 0 700 280"]') as SVGSVGElement;
+    svg.getBoundingClientRect = () =>
+      ({ x: 0, y: 0, top: 0, left: 0, right: 700, bottom: 280, width: 700, height: 280, toJSON: () => ({}) }) as DOMRect;
+    expect(svg.querySelector('line[stroke-dasharray="3 3"]')).toBeNull();
+    // jsdom lacks PointerEvent; a MouseEvent carries clientX and fires onPointerMove.
+    fireEvent(svg, new MouseEvent("pointermove", { clientX: 350, bubbles: true }));
+    // Guide line + one marker per default-selected tag ([0, 1, 10] → 3).
+    expect(svg.querySelector('line[stroke-dasharray="3 3"]')).not.toBeNull();
+    expect(svg.querySelectorAll('circle[r="3"]').length).toBe(3);
+    // Leaving clears it.
+    fireEvent.pointerLeave(svg);
+    expect(svg.querySelector('line[stroke-dasharray="3 3"]')).toBeNull();
+  });
+
   it("downsamples a long history to a bounded point count", () => {
     // 4000 rows would produce thousands of SVG points at full resolution; the
     // component strides down to RENDER_MAX_POINTS (600) before path building.
