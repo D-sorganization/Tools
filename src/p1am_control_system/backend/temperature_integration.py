@@ -302,7 +302,14 @@ class TemperatureService:
                 self.controller.update_config(cfg)
             data = load_config(session, _SETPOINT_KEY)
             if data is not None and "value_c" in data:
-                self._last_setpoint_c = float(cast(float, data["value_c"]))
+                value = float(cast(float, data["value_c"]))
+                self._last_setpoint_c = value
+                # Seed the controller's held setpoint so status().setpoint_c
+                # reports the recalled target at boot (matching last_setpoint_c
+                # and the pre-filled HMI box) instead of 0. SAFE: preload only
+                # applies in IDLE and the relay is force-held off until the
+                # operator arms and runs — restoring never energizes the heater.
+                self.controller.preload_setpoint_c(value)
             burnout = load_config(session, _BURNOUT_KEY)
             if burnout is not None and "high_side" in burnout:
                 # Recall the burnout direction; it is re-asserted to the PLC each

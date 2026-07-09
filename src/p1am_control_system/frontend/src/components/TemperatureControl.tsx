@@ -1,6 +1,10 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
-import { startStopView, setpointOutcome } from "../lib/heaterControls";
+import {
+  startStopView,
+  setpointOutcome,
+  resolveStartTarget,
+} from "../lib/heaterControls";
 import {
   type AxisRange,
   defaultAxisRange,
@@ -449,8 +453,14 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
     setBusy(true);
     try {
       await postPermissive(true);
-      const target = Number.parseFloat(stagedSetpointText);
-      if (Number.isFinite(target) && target > 0) {
+      // Fall back to the recalled/held setpoint when the entry box hasn't been
+      // pre-filled yet (startup race), so a single Start applies the intended
+      // target instead of only arming. The backend seeds setpoint_c at boot.
+      const target = resolveStartTarget(
+        stagedSetpointText,
+        liveStatus?.last_setpoint_c ?? liveStatus?.setpoint_c,
+      );
+      if (target !== null) {
         const applied = await postSetpoint(target);
         setStagedSetpointText(applied.toFixed(1));
         flash(`Heater started — heating to ${applied.toFixed(1)} °C`);
@@ -462,7 +472,14 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
     } finally {
       setBusy(false);
     }
-  }, [postPermissive, postSetpoint, stagedSetpointText, flash]);
+  }, [
+    postPermissive,
+    postSetpoint,
+    stagedSetpointText,
+    liveStatus?.last_setpoint_c,
+    liveStatus?.setpoint_c,
+    flash,
+  ]);
 
   // Stop: open the relay immediately (confirm if it is currently energized).
   const handleStop = useCallback(async () => {

@@ -12,6 +12,7 @@ Covers the durable-settings behaviour wired through the config store:
 
 from __future__ import annotations
 
+import asyncio
 import logging
 import sys
 from pathlib import Path
@@ -29,6 +30,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import config_store  # noqa: E402,F401  (registers PersistedConfig on the metadata)
+import hardware  # noqa: E402
 from temperature_integration import TemperatureService  # noqa: E402
 from temperature_models import (  # noqa: E402
     TcType,
@@ -158,11 +160,41 @@ def test_restore_leaves_controller_idle(engine: Any) -> None:
     with Session(engine) as s:
         fresh.restore_persisted(s)
 
-    # The recalled target is surfaced for the HMI, but the controller stays IDLE:
-    # restoring settings must never arm or energize the heater.
+    # The recalled target is surfaced for the HMI AND seeded into the controller
+    # so the reported setpoint matches at boot (fixes the "displayed setpoint is
+    # not what the controller sees" bug). But the controller stays IDLE with the
+    # relay held off: restoring settings must never arm or energize the heater.
     assert fresh.status().last_setpoint_c == 500.0
     assert fresh.controller.state == TemperatureState.IDLE
-    assert fresh.controller.status().setpoint_c == 0.0
+    assert fresh.controller.status().setpoint_c == 500.0  # seeded, not 0
+    assert fresh.controller.status().relay_on is False
+
+
+def test_restore_seeds_setpoint_but_poll_never_energizes(engine: Any) -> None:
+    # End-to-end: persist a running setpoint, restore into a fresh service, then
+    # poll with a COLD reading (which would call for heat if RUNNING). The seeded
+    # IDLE setpoint must never command the heater relay ON.
+    svc = _service(engine)
+    _arm(svc)
+    svc.set_setpoint(500.0)
+
+    fresh = _service(engine)
+    with Session(engine) as s:
+        fresh.restore_persisted(s)
+    assert fresh.controller.status().setpoint_c == 500.0
+    assert fresh.controller.state == TemperatureState.IDLE
+
+    async def _go() -> None:
+        # Cold tag (0% of full scale) -> well below the seeded 500 C setpoint.
+        await fresh.poll({fresh.controller.config.temp_tag: 0.0})
+
+    asyncio.run(_go())
+    # The relay coil was never commanded ON during the restored, idle poll.
+    plc = fresh._plc_client
+    for call in plc.write_coil.await_args_list:
+        coil, value = call.args[0], call.args[1]
+        if coil == hardware.HEATER_RELAY_COIL:
+            assert value is False
     assert fresh.controller.status().relay_on is False
 
 

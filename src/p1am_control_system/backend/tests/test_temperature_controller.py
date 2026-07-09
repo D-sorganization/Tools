@@ -206,6 +206,97 @@ class TestSetpoint:
 
 
 # --------------------------------------------------------------------------
+# Preload setpoint (boot recall) — seed the held setpoint WITHOUT energizing
+# --------------------------------------------------------------------------
+
+
+class TestPreloadSetpoint:
+    """``preload_setpoint_c`` seeds the held setpoint at boot without arming.
+
+    The persisted-setpoint restore path calls this so ``status().setpoint_c``
+    reports the recalled target at boot instead of 0 — fixing the "displayed
+    setpoint is not the one the controller sees" startup bug — while the
+    controller stays IDLE and the relay is force-held off. Applying it only in
+    IDLE (and never while E-stopped) means it can never resurrect a target into
+    an armed/running/tripped controller.
+    """
+
+    def test_seeds_setpoint_in_idle(self) -> None:
+        c = fresh_idle_controller()
+        applied = c.preload_setpoint_c(700.0)
+        assert applied == 700.0
+        assert c.status().setpoint_c == 700.0
+        assert c.state == TemperatureState.IDLE
+
+    def test_never_energizes(self) -> None:
+        # A seeded setpoint in IDLE must NOT turn the relay on: the state
+        # machine forces the actuator off in every non-RUNNING state, so even a
+        # cold reading (which would call for heat while RUNNING) stays off.
+        c = fresh_idle_controller()
+        c.preload_setpoint_c(700.0)
+        assert c.tick(20.0) is False
+        assert c.state == TemperatureState.IDLE
+        assert c.status().relay_on is False
+
+    def test_clamps_to_max(self) -> None:
+        c = fresh_idle_controller()
+        applied = c.preload_setpoint_c(99999.0)
+        assert applied == c.config.setpoint_max_c
+        assert c.status().setpoint_c == c.config.setpoint_max_c
+
+    def test_clamps_to_min(self) -> None:
+        c = TemperatureController(TemperatureConfig(setpoint_min_c=100.0))
+        applied = c.preload_setpoint_c(-50.0)
+        assert applied == 100.0
+
+    def test_refused_when_armed_leaves_setpoint_zero(self) -> None:
+        c = fresh_armed_controller()  # ARMED, setpoint still 0
+        assert c.preload_setpoint_c(300.0) == 0.0
+        assert c.status().setpoint_c == 0.0  # unchanged
+
+    def test_refused_when_running_preserves_setpoint(self) -> None:
+        c = fresh_running_controller(500.0)
+        assert c.preload_setpoint_c(300.0) == 0.0
+        assert c.status().setpoint_c == 500.0  # running setpoint untouched
+
+    def test_refused_when_tripped(self) -> None:
+        c = fresh_running_controller(500.0)
+        c.tick(1500.0)  # HH trip
+        assert c.state == TemperatureState.TRIPPED
+        assert c.preload_setpoint_c(300.0) == 0.0
+
+    def test_refused_when_estopped(self) -> None:
+        c = fresh_idle_controller()
+        c.engage_estop()
+        assert c.preload_setpoint_c(300.0) == 0.0
+        assert c.status().setpoint_c == 0.0
+
+    def test_rejects_nan(self) -> None:
+        c = fresh_idle_controller()
+        with pytest.raises(ValueError, match="finite"):
+            c.preload_setpoint_c(float("nan"))
+
+    def test_rejects_infinity(self) -> None:
+        c = fresh_idle_controller()
+        with pytest.raises(ValueError, match="finite"):
+            c.preload_setpoint_c(float("inf"))
+        with pytest.raises(ValueError, match="finite"):
+            c.preload_setpoint_c(float("-inf"))
+
+    def test_rejects_non_numeric(self) -> None:
+        c = fresh_idle_controller()
+        with pytest.raises(TypeError):
+            c.preload_setpoint_c("700")
+        with pytest.raises(TypeError):
+            c.preload_setpoint_c(None)
+
+    def test_rejects_bool(self) -> None:
+        c = fresh_idle_controller()
+        with pytest.raises(TypeError):
+            c.preload_setpoint_c(True)
+
+
+# --------------------------------------------------------------------------
 # On/off hysteresis control law
 # --------------------------------------------------------------------------
 

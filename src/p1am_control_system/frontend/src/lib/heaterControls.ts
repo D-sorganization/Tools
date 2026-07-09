@@ -59,3 +59,39 @@ export function setpointOutcome(status: HeaterStatusView | undefined): SetpointO
   if (status.permissive) return "apply";
   return "stage";
 }
+
+/**
+ * Resolve the effective target temperature (°C) a Start click should apply.
+ *
+ * The operator's typed/nudged value wins whenever it is a positive finite
+ * number. Otherwise we fall back to the recalled setpoint the controller
+ * already holds (seeded at boot from persistence, surfaced as
+ * `last_setpoint_c` / `setpoint_c`). This closes the startup race where the
+ * entry box still reads its default "0" because the first telemetry frame
+ * hasn't pre-filled it yet: without the fallback, Start would only arm and the
+ * operator had to click Start a second time once the box populated. Returns
+ * `null` when there is no positive target at all, so Start simply arms.
+ *
+ * @param stagedText - the current setpoint entry-box text.
+ * @param fallbackSetpointC - the recalled/held setpoint to use when the box has
+ *   no positive value (e.g. `status.last_setpoint_c ?? status.setpoint_c`).
+ * @throws TypeError if `stagedText` is not a string.
+ */
+export function resolveStartTarget(
+  stagedText: string,
+  fallbackSetpointC: number | null | undefined,
+): number | null {
+  if (typeof stagedText !== "string") {
+    throw new TypeError("stagedText must be a string");
+  }
+  const typed = Number.parseFloat(stagedText);
+  if (Number.isFinite(typed) && typed > 0) return typed;
+  if (
+    typeof fallbackSetpointC === "number" &&
+    Number.isFinite(fallbackSetpointC) &&
+    fallbackSetpointC > 0
+  ) {
+    return fallbackSetpointC;
+  }
+  return null;
+}

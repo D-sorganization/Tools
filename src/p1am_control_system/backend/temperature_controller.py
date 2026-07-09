@@ -97,6 +97,17 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
     def config(self) -> TemperatureConfig:
         return self._config
 
+    def _clamp_setpoint(self, value_c: float) -> float:
+        """Clamp a setpoint to the configured ``[min, max]`` band (DRY).
+
+        Single source of truth for the setpoint bound check shared by
+        ``set_setpoint_c``, ``preload_setpoint_c``, ``update_config`` and
+        ``set_active_tc_type`` (the last two re-clamp against the NEW config).
+        """
+        return float(
+            max(self._config.setpoint_min_c, min(value_c, self._config.setpoint_max_c))
+        )
+
     def update_config(self, new_config: TemperatureConfig) -> None:
         """Replace operator-configurable parameters.
 
@@ -118,10 +129,7 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
             return
         self._config = new_config
         # Re-clamp current setpoint to new bounds without changing state.
-        self._setpoint_c = max(
-            new_config.setpoint_min_c,
-            min(self._setpoint_c, new_config.setpoint_max_c),
-        )
+        self._setpoint_c = self._clamp_setpoint(self._setpoint_c)
 
     def set_active_tc_type(self, tc_type: TcType) -> None:
         """Select which thermocouple (type K or type R) drives the controller.
@@ -160,10 +168,7 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
         # Reconstruct through the constructor so the cross-field invariants are
         # re-checked (raises ValueError on a degenerate channel configuration).
         self._config = TemperatureConfig(**data)
-        self._setpoint_c = max(
-            self._config.setpoint_min_c,
-            min(self._setpoint_c, self._config.setpoint_max_c),
-        )
+        self._setpoint_c = self._clamp_setpoint(self._setpoint_c)
 
     def set_permissive(self, on: bool) -> None:
         """Toggle permissive. A trip latch is not cleared by a permissive change.
@@ -212,12 +217,7 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
             logger.warning("temperature setpoint ignored — E-stop is latched")
             return 0.0
 
-        clamped = float(
-            max(
-                self._config.setpoint_min_c,
-                min(v, self._config.setpoint_max_c),
-            )
-        )
+        clamped = self._clamp_setpoint(v)
 
         if self._state in (TemperatureState.ARMED, TemperatureState.RUNNING):
             self._setpoint_c = clamped
@@ -235,6 +235,40 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
                 "acknowledge first",
                 clamped,
             )
+        return clamped
+
+    def preload_setpoint_c(self, value_c: float) -> float:
+        """Seed the held setpoint at boot WITHOUT arming or energizing.
+
+        Recalls a persisted target so ``status().setpoint_c`` reports what the
+        controller will heat to, matching the pre-filled HMI entry box, instead
+        of reading 0 until the operator presses Start. The state machine stays
+        IDLE and the relay stays force-held off (``_should_force_actuator_off``
+        is True in every non-RUNNING state), so seeding can never energize the
+        heater. Applied ONLY in IDLE and never while E-stopped, so it can never
+        resurrect a target into an armed/running/tripped controller. Clamped to
+        ``[setpoint_min_c, setpoint_max_c]``.
+
+        Precondition: value_c is finite numeric.
+        Postcondition:
+            - In IDLE (not E-stopped): _setpoint_c == clamped value, state
+              unchanged (IDLE); returns the clamped value.
+            - In any other state (ARMED/RUNNING/TRIPPED) or while E-stopped:
+              nothing changes and 0.0 is returned.
+
+        Raises:
+            TypeError: if value_c is not numeric.
+            ValueError: if value_c is NaN or infinite.
+        """
+        if not isinstance(value_c, int | float) or isinstance(value_c, bool):
+            raise TypeError(f"value_c must be numeric, got {type(value_c).__name__}")
+        v = float(value_c)
+        if not math.isfinite(v):
+            raise ValueError(f"value_c must be finite, got {v}")
+        if self._estopped or self._state != TemperatureState.IDLE:
+            return 0.0
+        clamped = self._clamp_setpoint(v)
+        self._setpoint_c = clamped
         return clamped
 
     def _estop_log_message(self) -> str:
