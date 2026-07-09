@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import { RoutingMatrix } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
+import { PanelStack } from "./components/PanelStack";
 import { AlarmsHeader } from "./components/AlarmsHeader";
 import { EStopButton } from "./components/EStopButton";
 import { DataCapturePanel } from "./components/DataCapturePanel";
@@ -815,74 +816,84 @@ export const App: React.FC = () => {
 
           {/* Render Tab Contents */}
           {activeTab === "trends" && visibleTabs.trends && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-              {/* Live Customizable Graph */}
-              <TrendChart history={history} tagValues={tagValues} />
-
-              {/* 32 Tag Broker Monitor Grid */}
-              <section className="glass-panel">
-                <div className="panel-header">
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <Settings size={16} color="var(--accent-magenta)" />
-                    <span>Signal Monitors</span>
-                  </div>
-                  <span className="tooltip-container">
-                    <Info size={14} color="var(--text-muted)" />
-                    <span className="tooltip-text">Click any tag cell to inspect safety limits or write a manual override value in the inspector sidebar.</span>
-                  </span>
-                </div>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
-                    gap: "0.6rem",
-                  }}
-                >
-                  {TAG_INDICES.map((i) => {
-                    const val = tagValues[i] ?? 0.0;
-                    const interlock = config.interlocks[i];
-                    const isTripped =
-                      interlock && (val > interlock.high_limit || val < interlock.low_limit);
-
-                    return (
+            <PanelStack
+              regionId="trends"
+              panels={[
+                {
+                  id: "trend",
+                  // Drag to reorder / resize the live customizable graph.
+                  node: <TrendChart history={history} tagValues={tagValues} />,
+                },
+                {
+                  id: "monitors",
+                  node: (
+                    /* 32 Tag Broker Monitor Grid */
+                    <section className="glass-panel">
+                      <div className="panel-header">
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                          <Settings size={16} color="var(--accent-magenta)" />
+                          <span>Signal Monitors</span>
+                        </div>
+                        <span className="tooltip-container">
+                          <Info size={14} color="var(--text-muted)" />
+                          <span className="tooltip-text">Click any tag cell to inspect safety limits or write a manual override value in the inspector sidebar.</span>
+                        </span>
+                      </div>
                       <div
-                        key={i}
-                        className="tag-monitor-card"
                         style={{
-                          borderColor: isTripped ? "var(--color-error)" : "var(--tag-card-border)",
-                        }}
-                        onClick={() => {
-                          setInspectorView({ type: "tag", tagId: i });
-                          setOverrideVal(val.toFixed(2));
+                          display: "grid",
+                          gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+                          gap: "0.6rem",
                         }}
                       >
-                        <div
-                          style={{
-                            fontSize: "0.7rem",
-                            color: "var(--text-muted)",
-                            textTransform: "uppercase",
-                            fontWeight: 700,
-                            marginBottom: "0.15rem",
-                          }}
-                        >
-                          Tag {i}
-                        </div>
-                        <div
-                          className="mono-text"
-                          style={{
-                            fontSize: "1.05rem",
-                            fontWeight: 700,
-                            color: isTripped ? "var(--color-error)" : "var(--accent-cyan)",
-                          }}
-                        >
-                          {val.toFixed(2)}
-                        </div>
+                        {TAG_INDICES.map((i) => {
+                          const val = tagValues[i] ?? 0.0;
+                          const interlock = config.interlocks[i];
+                          const isTripped =
+                            interlock && (val > interlock.high_limit || val < interlock.low_limit);
+
+                          return (
+                            <div
+                              key={i}
+                              className="tag-monitor-card"
+                              style={{
+                                borderColor: isTripped ? "var(--color-error)" : "var(--tag-card-border)",
+                              }}
+                              onClick={() => {
+                                setInspectorView({ type: "tag", tagId: i });
+                                setOverrideVal(val.toFixed(2));
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "0.7rem",
+                                  color: "var(--text-muted)",
+                                  textTransform: "uppercase",
+                                  fontWeight: 700,
+                                  marginBottom: "0.15rem",
+                                }}
+                              >
+                                Tag {i}
+                              </div>
+                              <div
+                                className="mono-text"
+                                style={{
+                                  fontSize: "1.05rem",
+                                  fontWeight: 700,
+                                  color: isTripped ? "var(--color-error)" : "var(--accent-cyan)",
+                                }}
+                              >
+                                {val.toFixed(2)}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
-                </div>
-              </section>
-            </div>
+                    </section>
+                  ),
+                },
+              ]}
+            />
           )}
 
           {activeTab === "controllers" && visibleTabs.controllers && (

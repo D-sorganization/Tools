@@ -896,6 +896,29 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
         </p>
       </div>
 
+      {/* ---- Live trend (kept high, just under the setpoint, for at-a-glance
+             monitoring during a heat run) ---- */}
+      <CollapsibleSection
+        className="tc-card"
+        title={<span>Live temperature — {config.heater_label}</span>}
+        headerExtra={
+          <ExportButton
+            tags={[Number.parseInt(config.temp_tag.replace(/\D/g, ""), 10) || 0]}
+            label="Export"
+            onError={setError}
+          />
+        }
+      >
+        <TempTrend
+          samples={trend}
+          tagId={Number.parseInt(config.temp_tag.replace(/\D/g, ""), 10) || 0}
+          fullScale={config.temp_full_scale_c}
+          setpoint={s?.setpoint_c ?? config.setpoint_min_c}
+          hhLimit={hhLimit}
+          activeTcType={activeTcType}
+        />
+      </CollapsibleSection>
+
       {/* ---- Thermocouple selector (Type K / Type R) ---- */}
       <CollapsibleSection
         className="tc-card"
@@ -1083,28 +1106,6 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
           wiring/connections. A sustained fault will trip the heater.
         </div>
       )}
-
-      {/* ---- Live trend ---- */}
-      <CollapsibleSection
-        className="tc-card"
-        title={<span>Live temperature — {config.heater_label}</span>}
-        headerExtra={
-          <ExportButton
-            tags={[Number.parseInt(config.temp_tag.replace(/\D/g, ""), 10) || 0]}
-            label="Export"
-            onError={setError}
-          />
-        }
-      >
-        <TempTrend
-          samples={trend}
-          tagId={Number.parseInt(config.temp_tag.replace(/\D/g, ""), 10) || 0}
-          fullScale={config.temp_full_scale_c}
-          setpoint={s?.setpoint_c ?? config.setpoint_min_c}
-          hhLimit={hhLimit}
-          activeTcType={activeTcType}
-        />
-      </CollapsibleSection>
 
       {/* ---- Live telemetry ---- */}
       <CollapsibleSection className="tc-card" title="Live telemetry">
