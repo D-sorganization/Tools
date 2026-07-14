@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
+
 from shared.python.safe_eval import validate_expression
 
 try:
