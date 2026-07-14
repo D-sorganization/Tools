@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
+from shared.python.safe_eval import validate_expression
 
 try:
     import sympy as sp
@@ -120,6 +121,8 @@ def solve_equation(request: SymbolicSolveRequest) -> SymbolicSolveResponse:
         # Parse the equation
         if "=" in request.equation:
             lhs, rhs = request.equation.split("=", 1)
+            validate_expression(lhs.strip())
+            validate_expression(rhs.strip())
             lhs_expr = parse_expr(
                 lhs.strip(),
                 transformations=standard_transformations + (convert_xor,),
@@ -131,6 +134,7 @@ def solve_equation(request: SymbolicSolveRequest) -> SymbolicSolveResponse:
             equation = sp.Eq(lhs_expr, rhs_expr)
         else:
             # Assume expression equals zero
+            validate_expression(request.equation.strip())
             expr = parse_expr(
                 request.equation,
                 transformations=standard_transformations + (convert_xor,),
@@ -166,6 +170,7 @@ def compute_derivative(
         )
 
     try:
+        validate_expression(request.expression.strip())
         expr = parse_expr(
             request.expression,
             transformations=standard_transformations + (convert_xor,),
@@ -188,6 +193,7 @@ def simplify_expression(request: SymbolicSimplifyRequest) -> SymbolicSimplifyRes
         )
 
     try:
+        validate_expression(request.expression.strip())
         expr = parse_expr(
             request.expression,
             transformations=standard_transformations + (convert_xor,),

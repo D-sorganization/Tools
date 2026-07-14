@@ -22,3 +22,7 @@
 **Vulnerability:** Found unauthenticated API routes in `power_supply_integration.py` that could modify configuration and setpoints.
 **Learning:** Newly created routers (like `power_supply`) aren't automatically protected by the main app's dependencies.
 **Prevention:** Apply `Depends(require_admin_key)` to mutating endpoints inside newly added APIRouters.
+## 2024-07-14 - Prevent Code Injection in Sympy Parse_Expr
+**Vulnerability:** The symbolic solver endpoints passed untrusted user input directly to `sympy.parse_expr()`. Because `parse_expr` internally uses `eval()`, an attacker could supply malicious inputs containing dangerous constructs (like `().__class__`) to achieve arbitrary code execution.
+**Learning:** Functions that parse and evaluate complex expressions (like `sympy.parse_expr()`) often have implicit execution risks. Substring blocklists are insufficient boundaries.
+**Prevention:** Always structurally validate untrusted strings via an AST gate (like `validate_expression`) that enforces an allowlist of permitted node types before handing the input to parsers that compile or evaluate source code.
