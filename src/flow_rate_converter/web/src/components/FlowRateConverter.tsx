@@ -173,6 +173,7 @@ export function FlowRateConverter() {
             onClick={swapUnits}
             className="px-3 py-3 text-slate-400 hover:text-white transition-colors"
             title="Swap units"
+            aria-label="Swap units"
           >
             &#8646;
           </button>
