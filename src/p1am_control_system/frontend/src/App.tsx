@@ -649,23 +649,29 @@ export const App: React.FC = () => {
           />
 
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
-            <PowerSupplyControl
-              liveStatus={powerSupplyStatus}
-              onExport={() => setInspectorView({ type: "export" })}
-            />
+            <div role="tabpanel" id="tabpanel-powerSupply" aria-labelledby="tab-powerSupply">
+              <PowerSupplyControl
+                liveStatus={powerSupplyStatus}
+                onExport={() => setInspectorView({ type: "export" })}
+              />
+            </div>
           )}
 
           {activeTab === "temperature" && visibleTabs.temperature && (
-            <TemperatureControl liveStatus={temperatureStatus} />
+            <div role="tabpanel" id="tabpanel-temperature" aria-labelledby="tab-temperature">
+              <TemperatureControl liveStatus={temperatureStatus} />
+            </div>
           )}
 
           {activeTab === "diagnostics" && visibleTabs.diagnostics && (
-            <SignalDiagnostics history={history} />
+            <div role="tabpanel" id="tabpanel-diagnostics" aria-labelledby="tab-diagnostics">
+              <SignalDiagnostics history={history} />
+            </div>
           )}
 
           {/* Render Tab Contents */}
           {activeTab === "trends" && visibleTabs.trends && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div role="tabpanel" id="tabpanel-trends" aria-labelledby="tab-trends" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               {/* Live Customizable Graph */}
               <TrendChart history={history} tagValues={tagValues} />
 
@@ -736,7 +742,7 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "controllers" && visibleTabs.controllers && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div role="tabpanel" id="tabpanel-controllers" aria-labelledby="tab-controllers" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               {/* PID Loop Cards Row */}
               <div className="glass-panel">
                 <div className="panel-header">
@@ -866,7 +872,7 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "routing" && visibleTabs.routing && (
-            <div style={{ display: "flex", gap: "1rem", flexDirection: "column" }}>
+            <div role="tabpanel" id="tabpanel-routing" aria-labelledby="tab-routing" style={{ display: "flex", gap: "1rem", flexDirection: "column" }}>
               <div
                 className="glass-panel"
                 onClick={() => setInspectorView({ type: "routing" })}
@@ -895,13 +901,13 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "events" && visibleTabs.events && (
-            <div className="glass-panel h-96">
+            <div role="tabpanel" id="tabpanel-events" aria-labelledby="tab-events" className="glass-panel h-96">
               <EventLogView events={eventsHistory} />
             </div>
           )}
 
           {activeTab === "tuning" && visibleTabs.tuning && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <div role="tabpanel" id="tabpanel-tuning" aria-labelledby="tab-tuning" style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
               {/* PID Loop Tuning Section */}
               <div className="glass-panel">
                 <div className="panel-header">
@@ -1191,7 +1197,7 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "ladder" && visibleTabs.ladder && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <div role="tabpanel" id="tabpanel-ladder" aria-labelledby="tab-ladder" style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
               <ProjectImporter
                 onImportSuccess={() => {
                   fetchAllTags();
@@ -1207,10 +1213,12 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "hierarchy" && visibleTabs.hierarchy && (
-            <PlantHierarchy
-              onSelectTag={handleSelectTag}
-              triggerNotification={triggerNotification}
-            />
+            <div role="tabpanel" id="tabpanel-hierarchy" aria-labelledby="tab-hierarchy">
+              <PlantHierarchy
+                onSelectTag={handleSelectTag}
+                triggerNotification={triggerNotification}
+              />
+            </div>
           )}
         </div>
 

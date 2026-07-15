@@ -97,9 +97,11 @@ export const TabBar: React.FC<{
         return (
           <button
             key={id}
+            id={`tab-${id}`}
             type="button"
             role="tab"
             aria-selected={isActive}
+            aria-controls={`tabpanel-${id}`}
             draggable
             className={`tab-btn ${isActive ? "active" : ""} ${
               dragId === id ? "dragging" : ""
