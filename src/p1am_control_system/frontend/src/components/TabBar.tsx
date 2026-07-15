@@ -11,9 +11,13 @@ import { TABS, type TabId, defaultTabOrder } from "../lib/tabs";
  * be persisted; this component only emits change callbacks.
  */
 
-const TAB_BY_ID: Record<TabId, (typeof TABS)[number]> = Object.fromEntries(
-  TABS.map((tab) => [tab.id, tab]),
-) as Record<TabId, (typeof TABS)[number]>;
+const TAB_BY_ID: Record<TabId, (typeof TABS)[number]> = (() => {
+  const obj: Partial<Record<TabId, (typeof TABS)[number]>> = {};
+  for (const tab of TABS) {
+    obj[tab.id] = tab;
+  }
+  return obj as Record<TabId, (typeof TABS)[number]>;
+})();
 
 interface ContextMenuState {
   id: TabId;
@@ -40,7 +44,8 @@ export const TabBar: React.FC<{
   const effectiveOrder = useMemo<TabId[]>(() => {
     const base = order && order.length ? order : defaultTabOrder();
     const kept = base.filter((id) => TAB_BY_ID[id]);
-    const missing = defaultTabOrder().filter((id) => !kept.includes(id));
+    const keptSet = new Set(kept);
+    const missing = defaultTabOrder().filter((id) => !keptSet.has(id));
     return [...kept, ...missing];
   }, [order]);
 
