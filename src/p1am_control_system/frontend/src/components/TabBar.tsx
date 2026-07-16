@@ -40,7 +40,9 @@ export const TabBar: React.FC<{
   const effectiveOrder = useMemo<TabId[]>(() => {
     const base = order && order.length ? order : defaultTabOrder();
     const kept = base.filter((id) => TAB_BY_ID[id]);
-    const missing = defaultTabOrder().filter((id) => !kept.includes(id));
+    // ⚡ Bolt Optimization: Use Set for O(1) lookups in missing tab filter
+    const keptSet = new Set(kept);
+    const missing = defaultTabOrder().filter((id) => !keptSet.has(id));
     return [...kept, ...missing];
   }, [order]);
 
