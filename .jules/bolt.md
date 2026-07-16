@@ -66,3 +66,6 @@
 ## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
 **Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
 **Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
+## 2024-07-16 - TabBar O(N^2) Optimization
+**Learning:** Optimizing `Array.filter` chained with `includes` on a tiny array (10 items) to a `Set` offers zero measurable improvement.
+**Action:** Avoid micro-optimizing operations that run on tiny static arrays executed during initialization or renders.
