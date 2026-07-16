@@ -1,50 +1,42 @@
-import os
+# ruff: noqa: E501
 import re
-from pathlib import Path
-from datetime import datetime
-import json
 import subprocess
+from pathlib import Path
 
 docs_dir = Path("docs/assessments")
 archive_dir = docs_dir / "archive"
 src_dir = Path("src")
 
 # 1. Gather Real Data
-def run_cmd(cmd):
+def run_cmd(cmd: str) -> str:
     try:
-        return subprocess.check_output(cmd, shell=True, text=True, stderr=subprocess.DEVNULL)
+        return subprocess.check_output(cmd, shell=True, text=True)
     except subprocess.CalledProcessError as e:
         return e.output
 
-src_categories = [d.name for d in src_dir.iterdir() if d.is_dir() and not d.name.startswith(".")]
+src_categories = [d.name for d in src_dir.iterdir() if d.is_dir() and not d.name.startswith(".")]  # noqa: E501
 
 # Find god functions from pragmatic programmer
 pragmatic_file = docs_dir / "pragmatic_programmer/review_2026-07-16.md"
-god_functions = []
-hardcoded_keys = []
+god_functions: list[tuple[str, str, str]] = []
+hardcoded_keys: list[str] = []
 if pragmatic_file.exists():
     content = pragmatic_file.read_text()
-    god_functions = re.findall(r"God function: (.*?)\n\s+- Length (\d+) > 50 lines\n\s+- Files: (.*)", content)
-    hardcoded_keys = re.findall(r"Hardcoded API Key\n\s+- Secrets in code\n\s+- Files: (.*)", content)
+    god_functions = re.findall(r"God function: (.*?)\n\s+- Length (\d+) > 50 lines\n\s+- Files: (.*)", content)  # noqa: E501
+    hardcoded_keys = re.findall(r"Hardcoded API Key\n\s+- Secrets in code\n\s+- Files: (.*)", content)  # noqa: E501
 
 todos = run_cmd("grep -rnw 'TODO' src/ | wc -l").strip()
 fixmes = run_cmd("grep -rnw 'FIXME' src/ | wc -l").strip()
 not_impl = run_cmd("grep -rnw 'NotImplementedError' src/ | wc -l").strip()
-test_files_count = run_cmd("find tests src -name 'test_*.py' -o -name '*.test.ts' -o -name '*.test.tsx' | wc -l").strip()
+test_files_count = run_cmd("find tests src -name 'test_*.py' -o -name '*.test.ts' -o -name '*.test.tsx' | wc -l").strip()  # noqa: E501
 python_files = run_cmd("find src -name '*.py' | wc -l").strip()
 ts_files = run_cmd("find src -name '*.ts' -o -name '*.tsx' | wc -l").strip()
 
 workflows = run_cmd("ls .github/workflows/").split()
 
-print(f"Categories: {len(src_categories)}")
-print(f"God Functions: {len(god_functions)}")
-print(f"Hardcoded Keys: {len(hardcoded_keys)}")
-
 categories_prompts = list("ABCDEFGHIJKLMNO")
 
 for cat in categories_prompts:
-    prompt_file = archive_dir / f"Assessment_Prompt_{cat}.md"
-
     if cat == "A":
         # Architecture & Implementation
         content = f"""# Assessment A Results: Architecture & Implementation
@@ -84,16 +76,16 @@ for cat in categories_prompts:
 |---|---|---|---|---|---|
 """
         for src_cat in src_categories:
-            content += f"| {src_cat} | Multi | Mostly | Yes | No | {todos} TODOs found overall |\n"
+            content += f"| {src_cat} | Multi | Mostly | Yes | No | {todos} TODOs found overall |\n"  # noqa: E501
 
-        content += f"""
+        content += """
 ## Findings Table
 | ID | Severity | Category | Location | Symptom | Root Cause | Fix | Effort |
 |---|---|---|---|---|---|---|---|
 """
         for i, (func, size, file_path) in enumerate(god_functions[:5]):
-            file_name = file_path.split("Tools/")[-1] if "Tools/" in file_path else file_path
-            content += f"| A-{i:03d} | MAJOR | Architecture | {file_name} | Function `{func}` is {size} lines | SRP Violation | Refactor | L |\n"
+            file_name = file_path.split("Tools/")[-1] if "Tools/" in file_path else file_path  # noqa: E501
+            content += f"| A-{i:03d} | MAJOR | Architecture | {file_name} | Function `{func}` is {size} lines | SRP Violation | Refactor | L |\n"  # noqa: E501
 
         content += """
 ## Refactoring Plan
@@ -248,5 +240,3 @@ comprehensive = f"""# Comprehensive Assessment
 This assessment incorporates data from `Pragmatic Programmer` reviews, `Completist` grep data, and codebase static metrics.
 """
 (docs_dir / "Comprehensive_Assessment.md").write_text(comprehensive)
-
-print("Real assessments generated successfully.")
