@@ -1,0 +1,1101 @@
+{
+  "timestamp": "2026-07-16T02:03:45.098198",
+  "repository": "Tools",
+  "files_analyzed": 2691,
+  "issues": [
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/UnifiedToolsLauncher.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/launch.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/UnifiedToolsLauncher.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/launch.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 4 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/UnifiedToolsLauncher.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/document_processing/pdf_renamer/src/pdf_renamer/gui.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/sidekick/process_calculators/psa_package/psa_gui.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 4 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/UnifiedToolsLauncher.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/pendulum_simulator/src/double_pendulum_golf/__main__.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/sidekick/process_calculators/psa_package/psa_gui.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 6 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/ai/tests/test_access_policy.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/chat/test_chat_queue_panel.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/data_processing/test_processor.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/model_generation/test_rest_api_routes.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 6 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/financial_calculator/tests/test_financial_calculator_gui_contracts.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/data_processing/test_processor.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/unit/ai/gui/test_session_manager_2872.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "DRY",
+      "severity": "MAJOR",
+      "title": "Duplicate code block",
+      "description": "Found in 2 locations",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/conftest.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/conftest.py"
+      ],
+      "recommendation": "Refactor into shared utility"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: setup_widgets",
+      "description": "Length 56 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/Chaotic_Pendulum/chaotic_pendulum/renderer.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: test_sidekick_calculator_terminal_and_notes_runtime_flow",
+      "description": "Length 103 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: calculate_grades",
+      "description": "Length 55 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/scripts/generate_comprehensive_assessment.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_adam_settings_tab",
+      "description": "Length 67 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/optimizer_gui/python/optimizer_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/pendulum_simulator/src/double_pendulum_golf/gui/diagnostics.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_parameters_tab",
+      "description": "Length 66 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: __init__",
+      "description": "Length 104 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/lower_body_model/launch_pyqt6.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: create_input_tab",
+      "description": "Length 58 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/sidekick/process_calculators/wgs_reactor_calculator.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/sidekick/process_calculators/psa_package/psa_gui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/sidekick/process_calculators/psa_package/ui/results_panel.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 51 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/sidekick/ui/tools_sidebar/notes_tab.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 52 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 78 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/sidekick/ui/tools_sidebar/data_explorer_tab.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_left_panel",
+      "description": "Length 52 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_generation_tab",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_calculus_tab",
+      "description": "Length 59 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/signal_toolkit/widget_ui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 55 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/theme/dialogs/theme_manager_dialog.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: __init__",
+      "description": "Length 55 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/chat/_chat_dock_widget_qt.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: build_chat_dock_ui",
+      "description": "Length 159 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/chat/_qt/ui_builder.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: create_api_tab",
+      "description": "Length 56 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/document_processing/pdf_renamer/src/pdf_renamer/gui.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 57 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/rotation_converter/ui/pyqt6/screw_visualiser_tab.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/rotation_converter/ui/pyqt6/rotation_tab.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 58 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/rotation_converter/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_ui",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/statistical_widgets.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_menu_bar",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_advanced_tab",
+      "description": "Length 67 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_plot_config_tab",
+      "description": "Length 64 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/data_processing/data_processor/python/data_processor/ui/pyqt6/main_window_tabs.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: build_central_widget",
+      "description": "Length 60 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/movement_optimizer/gui/ui_builder.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _build_ui",
+      "description": "Length 59 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/movement_optimizer/gui/motion_tabs_chain.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_primitive_tab",
+      "description": "Length 51 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_manual_tab",
+      "description": "Length 60 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_body_params_tab",
+      "description": "Length 54 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/urdf_builder_gui/python/urdf_builder_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _init_ui",
+      "description": "Length 72 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_parameter_widgets",
+      "description": "Length 74 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/function_generator/python/function_generator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_input_panel",
+      "description": "Length 51 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/steam_engine_calculator/python/steam_engine_calculator/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _create_body_params_tab",
+      "description": "Length 72 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/humanoid_builder_gui/python/humanoid_builder_gui/ui/pyqt6/main_window.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _init_ui",
+      "description": "Length 53 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/p1am_control_system/desktop/trends_tab.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_pid_tab",
+      "description": "Length 68 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/p1am_control_system/desktop/control_tab.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _init_ui",
+      "description": "Length 80 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/p1am_control_system/desktop/sidebar.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _setup_mpc_tab",
+      "description": "Length 68 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/p1am_control_system/desktop/control_tab_mpc.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "ORTHOGONALITY",
+      "severity": "MAJOR",
+      "title": "God function: _init_ui",
+      "description": "Length 57 > 50 lines",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/p1am_control_system/desktop/event_logger.py"
+      ],
+      "recommendation": "Split function"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/ai/test_ai_hardening_3179.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/ai/test_adapter_contract.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/ai/test_rust_adapter_fallback.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/ai/test_rust_adapter.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/ai/test_rust_adapter_extended.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/shared/python/ai/test_classify_error.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/unit/sidekick/agent/test_action_audit.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/unit/ai/test_gemini_adapter.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/unit/chat/test_adapter_capabilities.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/ai/tests/test_adapter_factory.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "REVERSIBILITY",
+      "severity": "MAJOR",
+      "title": "Hardcoded API Key",
+      "description": "Secrets in code",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/src/shared/python/ai/gui/_adapter_lifecycle.py"
+      ],
+      "recommendation": "Use env vars"
+    },
+    {
+      "principle": "QUALITY",
+      "severity": "MINOR",
+      "title": "High TRACKED_TASK count (124)",
+      "description": "Accumulated technical debt",
+      "files": [
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/tools/test_matlab_quality_utils.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/tests/tools/test_quality_utils.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/scripts/analyze_completist_data.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/scripts/pragmatic_programmer_review.py",
+        "/home/dieterolson/actions-runners/runner-8/_work/Tools/Tools/scripts/legacy_tools/code_quality_check.py"
+      ],
+      "recommendation": "Review TODOs"
+    }
+  ]
+}
