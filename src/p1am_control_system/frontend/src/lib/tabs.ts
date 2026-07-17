@@ -124,7 +124,14 @@ function reconcileOrder(saved: readonly unknown[]): TabId[] {
   const kept = saved.filter(
     (id): id is TabId => typeof id === "string" && known.has(id as TabId),
   );
-  const missing = defaultTabOrder().filter((id) => !kept.includes(id));
+  // ⚡ Bolt Optimization: Replace O(N^2) chained .filter().includes() with a Set and single-pass loop
+  const keptSet = new Set(kept);
+  const missing: TabId[] = [];
+  for (const id of defaultTabOrder()) {
+    if (!keptSet.has(id)) {
+      missing.push(id);
+    }
+  }
   return [...kept, ...missing];
 }
 
