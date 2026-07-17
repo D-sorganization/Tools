@@ -22,3 +22,8 @@
 **Vulnerability:** Found unauthenticated API routes in `power_supply_integration.py` that could modify configuration and setpoints.
 **Learning:** Newly created routers (like `power_supply`) aren't automatically protected by the main app's dependencies.
 **Prevention:** Apply `Depends(require_admin_key)` to mutating endpoints inside newly added APIRouters.
+
+## 2025-03-05 - Fix Python code injection in differential equation solver
+**Vulnerability:** In \`calculator.py\`, the method \`solve_differential_equation\` bypasses the structural AST gate \`_ast_security_gate\` before delegating parsing to \`parse_expr(equation, ...)\` from SymPy. This bypass allows Python code injection by passing arbitrary expressions via object introspection, achieving Remote Code Execution (RCE).
+**Learning:** Security gates applied manually in helper functions (like \`parse_expression\`) can be easily bypassed by other top-level evaluation functions (like \`solve_differential_equation\`) if they independently interact directly with the vulnerable subcomponent (like SymPy's \`parse_expr\`).
+**Prevention:** Ensure that the security perimeter is enforced uniformly across *all* entry points. When a common structural validation mechanism is introduced to mitigate a core component's vulnerability, every path that reaches that core component must be audited to invoke the mechanism.

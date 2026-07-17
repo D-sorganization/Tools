@@ -663,6 +663,9 @@ class TI89Calculator:
         function_symbol = sp.Function(function)
         independent_variable = sp.Symbol("x")
 
+        # Ensure we structurally validate untrusted inputs before parsing them
+        TI89Calculator._ast_security_gate(equation)
+
         # Optimization: Use global_dict for allowed functions to avoid copy
         local_dict = {function: function_symbol, "x": independent_variable}
 
