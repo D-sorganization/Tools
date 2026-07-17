@@ -4,8 +4,7 @@
 import unittest
 
 from flask import Flask
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
+from web_applications.calculator.limiter import RateLimiter
 
 
 class TestLimiter(unittest.TestCase):
@@ -14,13 +13,12 @@ class TestLimiter(unittest.TestCase):
     def setUp(self) -> None:
         """Set up the test application and limiter."""
         self.app = Flask(__name__)
-        self.limiter = Limiter(
-            get_remote_address, app=self.app, default_limits=["10 per hour"]
-        )
+        self.limiter = RateLimiter(limit=1, window=1)
 
         @self.app.route("/test")
-        @self.limiter.limit("1 per second")
         def test_route() -> str:
+            if not self.limiter.is_allowed("127.0.0.1"):
+                return "Too Many Requests", 429
             return "ok"
 
         self.client = self.app.test_client()
@@ -47,4 +45,6 @@ class TestLimiter(unittest.TestCase):
 
     def test_independent_keys(self) -> None:
         """Test that limits are tracked independently for different keys."""
-        # This test would require mocking get_remote_address or using a different strategy
+        self.assertTrue(self.limiter.is_allowed("1.1.1.1"))
+        self.assertFalse(self.limiter.is_allowed("1.1.1.1"))
+        self.assertTrue(self.limiter.is_allowed("2.2.2.2"))
