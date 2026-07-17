@@ -2575,3 +2575,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.413 - Optimized Nelder-Mead loop in `optimizer.ts`
 
 - **2026-06-21**: perf(pendulum) — Replaced `Array.prototype.sort` with manual insertion sort in `nelderMead` loop in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate callback invocation overhead.
+
+## 1.1.414 - Replaced .filter().includes() with Set
+
+- **2026-07-17**: perf(SignalList) — Replaced chained `.filter()` and `.includes()` array passes with a pre-computed `Set` for O(N) constant-time lookups to improve high-frequency execution speed in `SignalList.tsx`.
