@@ -2575,3 +2575,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.413 - Optimized Nelder-Mead loop in `optimizer.ts`
 
 - **2026-06-21**: perf(pendulum) — Replaced `Array.prototype.sort` with manual insertion sort in `nelderMead` loop in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate callback invocation overhead.
+
+## 1.1.414 - Financial Calculator Web Form Wrap
+
+- **2026-07-18**: feat(financial_calculator/web) - Added an HTML `<form>` tag around inputs to allow calculation execution by hitting 'Enter' via standard UI workflows. This is a small UX improvement for data entry flow.
