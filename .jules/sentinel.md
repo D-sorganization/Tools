@@ -22,3 +22,7 @@
 **Vulnerability:** Found unauthenticated API routes in `power_supply_integration.py` that could modify configuration and setpoints.
 **Learning:** Newly created routers (like `power_supply`) aren't automatically protected by the main app's dependencies.
 **Prevention:** Apply `Depends(require_admin_key)` to mutating endpoints inside newly added APIRouters.
+## 2024-07-18 - Missing AST Security Gate in Differential Equation Solver
+**Vulnerability:** Code injection vulnerability via `eval()` inside SymPy's `parse_expr(evaluate=True)` because the `equation` input was not passed through `TI89Calculator._ast_security_gate` first in `_solve_differential_equation_cached`.
+**Learning:** Even if the main parsing function (`parse_expression`) is secured, specialized solving methods might bypass it and call the raw vulnerable parser directly.
+**Prevention:** Ensure all entrypoints that evaluate user-provided string expressions go through the central AST security gate before compilation or evaluation.

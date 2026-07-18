@@ -666,6 +666,9 @@ class TI89Calculator:
         # Optimization: Use global_dict for allowed functions to avoid copy
         local_dict = {function: function_symbol, "x": independent_variable}
 
+        # Security: structurally gate the raw input through an AST allowlist
+        TI89Calculator._ast_security_gate(equation)
+
         parsed_equation = parse_expr(
             equation,
             local_dict=local_dict,
