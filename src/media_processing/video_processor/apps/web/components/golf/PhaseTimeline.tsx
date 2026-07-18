@@ -9,6 +9,15 @@ interface PhaseTimelineProps {
   currentFrame?: number;
 }
 
+// ⚡ Bolt Optimization: Extracted static array to a Set outside the render cycle
+// to prevent unnecessary memory allocations and O(N) .includes() overhead on every frame update.
+const KEY_PHASES_SET = new Set([
+  SwingPhase.ADDRESS,
+  SwingPhase.TOP_OF_BACKSWING,
+  SwingPhase.IMPACT,
+  SwingPhase.FINISH,
+]);
+
 export default function PhaseTimeline({
   phases,
   totalDuration,
@@ -76,14 +85,7 @@ export default function PhaseTimeline({
   const activePhase = getCurrentPhase();
 
   // Key phases for simplified view
-  const keyPhases = phases.filter((p) =>
-    [
-      SwingPhase.ADDRESS,
-      SwingPhase.TOP_OF_BACKSWING,
-      SwingPhase.IMPACT,
-      SwingPhase.FINISH,
-    ].includes(p.phase)
-  );
+  const keyPhases = phases.filter((p) => KEY_PHASES_SET.has(p.phase));
 
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
