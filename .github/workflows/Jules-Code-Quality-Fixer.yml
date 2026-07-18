@@ -93,7 +93,7 @@ jobs:
       pull-requests: write # open PR for each quality fix
       issues: write # update related issue status
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 

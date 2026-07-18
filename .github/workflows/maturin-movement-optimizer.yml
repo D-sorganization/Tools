@@ -45,7 +45,7 @@ jobs:
       PYO3_USE_ABI3_FORWARD_COMPATIBILITY: "1"
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Restore local Python toolcache
         shell: bash

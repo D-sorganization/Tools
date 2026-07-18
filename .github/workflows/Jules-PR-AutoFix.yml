@@ -171,7 +171,7 @@ jobs:
 
       - name: Checkout PR Branch
         if: steps.branch.outputs.skip != 'true' && steps.limits.outputs.exceeded != 'true'
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           ref: ${{ steps.branch.outputs.branch }}
           fetch-depth: 0

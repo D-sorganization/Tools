@@ -60,7 +60,7 @@ jobs:
     name: Complexity Analysis (radon)
     runs-on: d-sorg-fleet
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
 
       - name: Setup Python
         env:
@@ -145,7 +145,7 @@ jobs:
     name: Duplication Analysis (jscpd)
     runs-on: d-sorg-fleet
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v6

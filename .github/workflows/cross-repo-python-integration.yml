@@ -81,12 +81,12 @@ jobs:
 
     steps:
       - name: Checkout Tools
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Checkout ${{ matrix.downstream.repo }}
         id: checkout_downstream
         continue-on-error: true
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           repository: ${{ matrix.downstream.repo }}
           path: ${{ matrix.downstream.path }}

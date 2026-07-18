@@ -67,7 +67,7 @@ jobs:
       # in the base-repo security context. Label events below are API-only.
       - name: Check out PR head with full history
         if: github.event_name == 'pull_request'
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.event.pull_request.head.sha }}
