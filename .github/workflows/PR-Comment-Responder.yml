@@ -113,6 +113,8 @@ jobs:
           fi
 
       - uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
         if: steps.filter.outputs.is_bot != 'true' && steps.pr_state.outputs.should_skip != 'true'
         with:
           ref: main

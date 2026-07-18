@@ -85,11 +85,15 @@ jobs:
     steps:
       - name: Checkout Tools (tools-core hub)
         uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
 
       - name: Checkout ${{ matrix.downstream.repo }}
         id: checkout_downstream
         continue-on-error: true
         uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
         with:
           repository: ${{ matrix.downstream.repo }}
           path: _downstream
