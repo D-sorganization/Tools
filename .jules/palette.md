@@ -25,3 +25,6 @@
 ## 2024-06-25 - Custom Toggle Controls
 **Learning:** When using `<button>` elements to create custom ON/OFF toggles or mode switches (like the "Add" / "Subtract" operations) that rely entirely on background color changes for state, screen readers cannot determine their current state.
 **Action:** Always add `aria-pressed={isActive}` to custom toggle buttons, along with keyboard-accessible hover (`hover:bg-...`) and focus states (`focus-visible:ring-2`) to ensure both semantic state and visual focus are clear.
+## 2024-07-18 - Wrap Inputs in Native Form
+**Learning:** For extensive data-entry panels or settings panels like in the financial calculator, binding `onClick` directly to the submit button prevents the native Enter key from submitting the form, degrading keyboard accessibility.
+**Action:** When implementing custom calculators or settings panels, wrap the inputs and submit button inside a native `<form onSubmit={...}>` element rather than a standard `<div>`.
