@@ -2298,6 +2298,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.242
+
+- 2026-07-18: fix(security) — fixed a critical code injection vulnerability in the SymPy differential equation solver by ensuring untrusted expressions are validated by the AST security gate (`TI89Calculator._ast_security_gate`) before evaluation.
+
 ### Version 1.1.598
 
 - 2026-06-18: fix(data-processor, #3745) — keep cross-correlation importable
