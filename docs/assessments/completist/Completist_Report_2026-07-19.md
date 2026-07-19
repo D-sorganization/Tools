@@ -29,7 +29,7 @@ pie title Issues by Module
 ## Critical Incomplete (Top 50)
 | File | Line | Type | Impact | Coverage | Complexity |
 |---|---|---|---|---|---|
-| `src/shared/python/ai/skills/registry.py:77:            async def run(self, invocation)` |  | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/skills/registry.py` | 77 | Stub | 5 | 3 | 4 |
 | `src/shared/python/ai/adapters/base.py` | 201 | NotImplementedError | 5 | 3 | 4 |
 | `src/shared/python/ai/adapters/gemini_adapter.py` | 28 | NotImplementedError | 5 | 3 | 4 |
 | `src/shared/python/ai/adapters/gemini_adapter.py` | 95 | NotImplementedError | 5 | 3 | 4 |
@@ -125,7 +125,7 @@ Prioritized by Impact (High) and Complexity (Low).
 | 3 | `src/shared/python/ai/auth/authentication.py` | f"OAuth login for provider {provider!r} is not implemented (TODO #5227). " | 5/3/3 |
 | 4 | `src/shared/python/ai/auth/authentication.py` | f"Email/password login for {email!r} is not implemented (TODO #5227). " | 5/3/3 |
 | 5 | `src/shared/python/ai/auth/authentication.py` | # TODO(#5227): Exchange refresh token for new access token | 5/3/3 |
-| 6 | `src/shared/python/ai/skills/registry.py:77:            async def run(self, invocation)` | ... | 5/3/4 |
+| 6 | `src/shared/python/ai/skills/registry.py` | async def run(self, invocation): ... | 5/3/4 |
 | 7 | `src/shared/python/ai/adapters/base.py` | # sufficient. The default implementations raise NotImplementedError | 5/3/4 |
 | 8 | `src/shared/python/ai/adapters/gemini_adapter.py` | * raise :class:`NotImplementedError` if a caller passes a non-empty | 5/3/4 |
 | 9 | `src/shared/python/ai/adapters/gemini_adapter.py` | non-empty ``tools`` argument raises :class:`NotImplementedError` rather | 5/3/4 |
@@ -142,7 +142,7 @@ Prioritized by Impact (High) and Complexity (Low).
 | 20 | `src/shared/python/ai/auth/authentication.py` | ``login_with_email_password`` raising ``NotImplementedError``) no | 5/3/4 |
 
 ## Issues Created
-- Created `docs/assessments/issues/Issue_234735_Incomplete_Stub_in_registry_py_77_____________async_def_run_self__invocation.md`
+- Created `docs/assessments/issues/Issue_234745_Incomplete_Stub_in_registry_py_77.md`
 - Created `docs/assessments/issues/Issue_234736_Incomplete_NotImplementedError_in_base_py_201.md`
 - Created `docs/assessments/issues/Issue_234732_Incomplete_NotImplementedError_in_gemini_adapter_py_28.md`
 - Created `docs/assessments/issues/Issue_234733_Incomplete_NotImplementedError_in_gemini_adapter_py_95.md`
