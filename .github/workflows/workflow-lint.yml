@@ -132,7 +132,7 @@ jobs:
       - name: Install workflow validation dependencies
         run: |
           python -m ensurepip --upgrade
-          python -m pip install --ignore-installed --upgrade pip setuptools
+          python -m pip install --ignore-installed --upgrade "pip<26.1" setuptools
           python -m pip install --ignore-installed --no-deps wheel
           python -m pip install --ignore-installed PyYAML || echo "PyYAML unavailable; validation scripts will use stdlib fallback"
 
