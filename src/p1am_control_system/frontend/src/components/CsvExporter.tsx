@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useId } from "react";
 import { Download, FileText } from "lucide-react";
 import type { TriggerNotification } from "../types";
 
@@ -26,6 +26,10 @@ export const CsvExporter: React.FC<{
   const [exportEnd, setExportEnd] = useState<string>(() =>
     localDateTimeInput(0),
   );
+
+  const tagsId = useId();
+  const startId = useId();
+  const endId = useId();
 
   const handleDownloadCSV = () => {
     const startISO = new Date(exportStart).toISOString();
@@ -67,8 +71,9 @@ export const CsvExporter: React.FC<{
       </h3>
       <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
         <div className="input-group">
-          <label className="input-label">Tags (comma-separated)</label>
+          <label htmlFor={tagsId} className="input-label">Tags (comma-separated)</label>
           <input
+            id={tagsId}
             type="text"
             className="form-input"
             value={exportTags}
@@ -77,8 +82,9 @@ export const CsvExporter: React.FC<{
           />
         </div>
         <div className="input-group">
-          <label className="input-label">Start Time</label>
+          <label htmlFor={startId} className="input-label">Start Time</label>
           <input
+            id={startId}
             type="datetime-local"
             className="form-input"
             value={exportStart}
@@ -86,8 +92,9 @@ export const CsvExporter: React.FC<{
           />
         </div>
         <div className="input-group">
-          <label className="input-label">End Time</label>
+          <label htmlFor={endId} className="input-label">End Time</label>
           <input
+            id={endId}
             type="datetime-local"
             className="form-input"
             value={exportEnd}
