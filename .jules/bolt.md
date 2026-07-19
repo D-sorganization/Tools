@@ -66,3 +66,7 @@
 ## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
 **Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
 **Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
+
+## 2026-07-19 - Do not optimize config arrays
+**Learning:** In React components, applying performance optimizations (like converting `.filter().includes()` to Set lookups) on tiny configuration arrays (e.g. 10 elements) that are only processed once during startup or rare menu interactions is an unnecessary micro-optimization.
+**Action:** Avoid micro-optimizing static array iterations executed only once at startup without a proven bottleneck.
