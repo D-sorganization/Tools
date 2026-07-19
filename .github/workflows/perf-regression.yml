@@ -25,8 +25,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        env:
-          GIT_HTTP_VERSION: HTTP/1.1
 
       - name: Set up Python
         env:

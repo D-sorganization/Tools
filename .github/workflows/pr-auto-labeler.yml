@@ -58,8 +58,6 @@ jobs:
     runs-on: d-sorg-fleet
     steps:
       - uses: actions/checkout@v4
-        env:
-          GIT_HTTP_VERSION: HTTP/1.1
 
       - name: Auto-Label PR
         uses: actions/github-script@v9
