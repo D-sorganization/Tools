@@ -587,6 +587,10 @@ jobs:
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark pytest-qt pytest-asyncio pytest-timeout
           python -m pip install --ignore-installed "opencv-python-headless>=4.8.0"
 
+      - name: Install Rust toolchain for tools_core
+        if: ${{ matrix.python-version == '3.11' }}
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+
       - name: Build and install tools_core Rust wheel
         if: ${{ matrix.python-version == '3.11' }}
         env:
