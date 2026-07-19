@@ -139,10 +139,11 @@ def analyze_stubs() -> list[Finding]:
     """Analyze stub functions."""
 
     def _parser(line: str) -> Finding | None:
-        f_path, l_no, c_txt = _parse_grep_line(line)
-        if f_path and l_no and c_txt:
-            return {"file": f_path, "line": l_no, "name": c_txt, "type": "Stub"}
-        return None
+        parts = line.strip().rsplit(" ", 1)
+        if len(parts) < 2 or ":" not in parts[0]:
+            return None
+        filepath, lineno = parts[0].rsplit(":", 1)
+        return {"file": filepath, "line": lineno, "name": parts[1], "type": "Stub"}
 
     return _scan_completist_file("STUBS", _parser)
 
@@ -151,10 +152,11 @@ def analyze_docs() -> list[Finding]:
     """Analyze missing documentation."""
 
     def _parser(line: str) -> Finding | None:
-        f_path, l_no, c_txt = _parse_grep_line(line)
-        if f_path and l_no and c_txt:
-            return {"file": f_path, "line": l_no, "name": c_txt, "type": "DocGap"}
-        return None
+        parts = line.strip().rsplit(" ", 1)
+        if len(parts) < 2 or ":" not in parts[0]:
+            return None
+        filepath, lineno = parts[0].rsplit(":", 1)
+        return {"file": filepath, "line": lineno, "name": parts[1], "type": "DocGap"}
 
     return _scan_completist_file("DOCS", _parser)
 
