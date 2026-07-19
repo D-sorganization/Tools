@@ -97,13 +97,12 @@ export const TABS: readonly TabDef[] = [
 
 /** Default visibility map (all tabs visible) derived from {@link TABS}. */
 export function defaultTabVisibility(): Record<TabId, boolean> {
-  return TABS.reduce(
-    (acc, tab) => {
-      acc[tab.id] = true;
-      return acc;
-    },
-    {} as Record<TabId, boolean>,
-  );
+  // ⚡ Bolt Optimization: Replace .reduce() with a single-pass loop to eliminate callback/allocation overhead
+  const acc = {} as Record<TabId, boolean>;
+  for (let i = 0; i < TABS.length; i++) {
+    acc[TABS[i].id] = true;
+  }
+  return acc;
 }
 
 /** The canonical tab id order as declared in {@link TABS}. */
@@ -124,7 +123,9 @@ function reconcileOrder(saved: readonly unknown[]): TabId[] {
   const kept = saved.filter(
     (id): id is TabId => typeof id === "string" && known.has(id as TabId),
   );
-  const missing = defaultTabOrder().filter((id) => !kept.includes(id));
+  // ⚡ Bolt Optimization: Replace O(N^2) .filter().includes() with a pre-computed Set for O(1) lookups
+  const keptSet = new Set(kept);
+  const missing = defaultTabOrder().filter((id) => !keptSet.has(id));
   return [...kept, ...missing];
 }
 
