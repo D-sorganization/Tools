@@ -94,6 +94,8 @@ jobs:
       issues: write # update related issue status
     steps:
       - uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
         with:
           fetch-depth: 0
 

@@ -125,6 +125,8 @@ jobs:
       PIP_RETRIES: "8"
     steps:
       - uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
         with:
           fetch-depth: 0
       - name: Force-clean stale Python tool cache (NVMe runners)
@@ -467,6 +469,8 @@ jobs:
       BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
       - uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
         with:
           fetch-depth: 0
       - name: Force-clean stale Python tool cache (NVMe runners)
@@ -527,7 +531,7 @@ jobs:
 
       - name: Install Rust toolchain for tools_core wheel
         if: ${{ matrix.python-version == '3.11' }}
-        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Purge pip cache
         run: python -m pip cache purge || true
@@ -898,6 +902,8 @@ jobs:
       RUST_MIN_STACK: "268435456"
     steps:
       - uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
 
       - name: Check for Rust changes
         id: rust-changes
@@ -939,7 +945,7 @@ jobs:
 
       - name: Install Rust toolchain
         if: steps.rust-changes.outputs.has_changes == 'true'
-        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
 

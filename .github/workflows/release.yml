@@ -38,6 +38,8 @@ jobs:
       changelog_entry: ${{ steps.bump.outputs.changelog_entry }}
     steps:
       - uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
         with:
           fetch-depth: 0 # Full history required to walk commits since last tag
 
@@ -165,6 +167,8 @@ jobs:
     if: needs.analyse-commits.outputs.bump != 'none'
     steps:
       - uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
         with:
           fetch-depth: 2
 
@@ -247,6 +251,8 @@ jobs:
       release_pr_url: ${{ steps.release_pr.outputs.release_pr_url }}
     steps:
       - uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
@@ -400,6 +406,8 @@ jobs:
     if: needs.analyse-commits.outputs.bump != 'none' && needs.bump-version.outputs.release_pr_url == ''
     steps:
       - uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
         with:
           ref: main
           fetch-depth: 0

@@ -65,6 +65,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v6
@@ -74,7 +76,7 @@ jobs:
       - name: Purge pip cache
         run: python -m pip cache purge || true
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        uses: dtolnay/rust-toolchain@stable
         with:
           components: rustfmt, clippy
 
@@ -131,6 +133,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
 
       - name: Set up Python 3.12
         uses: actions/setup-python@v6
@@ -138,7 +142,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Install build + test deps
         run: python -m pip install --upgrade pip maturin pytest
@@ -191,6 +195,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        env:
+          GIT_HTTP_VERSION: HTTP/1.1
 
       - name: Set up Python ${{ matrix.python-version }}
         env:
@@ -202,7 +208,7 @@ jobs:
       - name: Purge pip cache
         run: python -m pip cache purge || true
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        uses: dtolnay/rust-toolchain@stable
 
       - name: Install maturin
         run: pip install maturin
