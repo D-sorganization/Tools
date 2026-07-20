@@ -25,3 +25,6 @@
 ## 2024-06-25 - Custom Toggle Controls
 **Learning:** When using `<button>` elements to create custom ON/OFF toggles or mode switches (like the "Add" / "Subtract" operations) that rely entirely on background color changes for state, screen readers cannot determine their current state.
 **Action:** Always add `aria-pressed={isActive}` to custom toggle buttons, along with keyboard-accessible hover (`hover:bg-...`) and focus states (`focus-visible:ring-2`) to ensure both semantic state and visual focus are clear.
+## 2024-05-24 - Form Submission Accessibility
+**Learning:** Data entry panels with multiple inputs should always be wrapped in a native <form> element rather than just relying on a button's onClick handler. This enables native "Enter" key submission, which is a significant accessibility and usability improvement for keyboard users.
+**Action:** When building calculators or settings panels with multiple inputs, wrap the inputs and submit button in a <form onSubmit={...}> and ensure the submit button has type="submit".
