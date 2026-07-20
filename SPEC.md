@@ -2575,3 +2575,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.413 - Optimized Nelder-Mead loop in `optimizer.ts`
 
 - **2026-06-21**: perf(pendulum) — Replaced `Array.prototype.sort` with manual insertion sort in `nelderMead` loop in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate callback invocation overhead.
+
+## 1.1.414 - Form Submission Accessibility (#3908)
+
+- **2026-07-20**: feat(financial-calculator) — refactored the FinancialCalculator component to wrap its input fields and submission button inside a native `<form>` element. The calculate button was updated to `type="submit"`, and the calculation logic now handles the `onSubmit` event. This improves accessibility by enabling keyboard users to submit the form seamlessly using the "Enter" key.
