@@ -22,3 +22,7 @@
 **Vulnerability:** Found unauthenticated API routes in `power_supply_integration.py` that could modify configuration and setpoints.
 **Learning:** Newly created routers (like `power_supply`) aren't automatically protected by the main app's dependencies.
 **Prevention:** Apply `Depends(require_admin_key)` to mutating endpoints inside newly added APIRouters.
+## 2024-05-24 - RCE in calc_backend via SymPy parse_expr
+**Vulnerability:** Remote Code Execution (RCE) in `/api/calc/symbolic/*` endpoints due to passing raw, untrusted user input directly to `sympy.parse_expr` without prior structural validation.
+**Learning:** `sympy.parse_expr` compiles and evaluates transformed source code. It is unsafe to pass untrusted strings to it directly, even when using restricted dictionaries or custom transformations, because Python attribute access can lead to arbitrary code execution (e.g., `().__class__.__bases__[0].__subclasses__()`). The `TI89Calculator` in the codebase had mitigated this locally with `_ast_security_gate`, but the newly added shared `symbolic_solver` module missed this mitigation. Furthermore, any security gate needs to be robust and not bypassable.
+**Prevention:** Always structurally validate untrusted math expressions using an AST allowlist gate *before* passing them to SymPy's `parse_expr`. Never rely on substring blocking. Re-use existing security mitigations when implementing similar functionality across modules.

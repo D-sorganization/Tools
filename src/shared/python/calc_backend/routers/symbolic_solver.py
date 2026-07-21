@@ -3,7 +3,52 @@
 from __future__ import annotations
 
 from fastapi import APIRouter
+import ast
 from pydantic import BaseModel, Field
+
+def _ast_security_gate(expression: str) -> None:
+    if not isinstance(expression, str):
+        raise TypeError("expression must be a string")
+    stripped = expression.strip()
+    if not stripped:
+        return
+    if len(expression) > 1000:
+        raise ValueError("Expression exceeds maximum allowed length")
+
+    try:
+        tree = ast.parse(stripped, mode="eval")
+    except SyntaxError:
+        return
+
+    _CALC_ALLOWED_AST_NODES = (
+        ast.Expression, ast.Call, ast.Name, ast.Load,
+        ast.BinOp, ast.UnaryOp, ast.operator, ast.unaryop, ast.cmpop,
+        ast.Constant,
+        ast.Subscript, ast.Index, ast.Slice, ast.ExtSlice,
+        ast.Compare, ast.BoolOp, ast.boolop,
+    ) if hasattr(ast, "Constant") else (
+        ast.Expression, ast.Call, ast.Name, ast.Load,
+        ast.BinOp, ast.UnaryOp, ast.operator, ast.unaryop, ast.cmpop,
+        ast.Num, ast.Str, ast.Bytes, ast.List, ast.Tuple, ast.Set, ast.Dict,
+        ast.Ellipsis, ast.NameConstant, ast.Constant,
+        ast.Subscript, ast.Index, ast.Slice, ast.ExtSlice,
+        ast.Compare, ast.BoolOp, ast.boolop,
+    )
+
+    node_count = 0
+    for node in ast.walk(tree):
+        node_count += 1
+        if node_count > 1000:
+            raise ValueError("Expression is too complex")
+        if not isinstance(node, _CALC_ALLOWED_AST_NODES):
+            raise ValueError(
+                f"Forbidden expression construct: {type(node).__name__}"
+            )
+        if isinstance(node, ast.Constant) and isinstance(node.value, str | bytes):
+            if len(node.value) > 1000:
+                raise ValueError("String constant exceeds allowed length")
+        if isinstance(node, ast.Call) and not isinstance(node.func, ast.Name):
+            raise ValueError("Attribute-based function calls are not allowed")
 
 try:
     import sympy as sp
@@ -120,10 +165,12 @@ def solve_equation(request: SymbolicSolveRequest) -> SymbolicSolveResponse:
         # Parse the equation
         if "=" in request.equation:
             lhs, rhs = request.equation.split("=", 1)
+            _ast_security_gate(lhs)
             lhs_expr = parse_expr(
                 lhs.strip(),
                 transformations=standard_transformations + (convert_xor,),
             )
+            _ast_security_gate(rhs)
             rhs_expr = parse_expr(
                 rhs.strip(),
                 transformations=standard_transformations + (convert_xor,),
@@ -131,6 +178,7 @@ def solve_equation(request: SymbolicSolveRequest) -> SymbolicSolveResponse:
             equation = sp.Eq(lhs_expr, rhs_expr)
         else:
             # Assume expression equals zero
+            _ast_security_gate(request.equation)
             expr = parse_expr(
                 request.equation,
                 transformations=standard_transformations + (convert_xor,),
@@ -166,6 +214,7 @@ def compute_derivative(
         )
 
     try:
+        _ast_security_gate(request.expression)
         expr = parse_expr(
             request.expression,
             transformations=standard_transformations + (convert_xor,),
@@ -188,6 +237,7 @@ def simplify_expression(request: SymbolicSimplifyRequest) -> SymbolicSimplifyRes
         )
 
     try:
+        _ast_security_gate(request.expression)
         expr = parse_expr(
             request.expression,
             transformations=standard_transformations + (convert_xor,),
