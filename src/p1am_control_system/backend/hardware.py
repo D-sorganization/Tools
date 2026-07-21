@@ -31,6 +31,12 @@ PID_COUNT = 4
 SAVE_TO_FLASH_COIL = 0
 ESTOP_RESET_COIL = 1
 HEATER_RELAY_COIL = 2  # 24 V DO -> relay -> 110 V resistive heater (temp ctrl)
+# Selects the P1-04THM open-circuit (burnout) fail direction: 1 = HIGH-side
+# (an open thermocouple reads full scale -> heater shuts off, fail-safe),
+# 0 = LOW-side (an open reads 0 C -> looks cold). The firmware reconfigures the
+# module on change; the backend re-asserts this each scan so it survives a PLC
+# reboot. See temperature_integration.TemperatureService.set_burnout_high_side.
+THM_BURNOUT_COIL = 3
 
 
 def tag_name(index: int) -> str:

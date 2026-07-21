@@ -21,7 +21,7 @@ interface ContextMenuState {
   y: number;
 }
 
-export const TabBar: React.FC<{
+interface TabBarProps {
   activeTab: TabId;
   visibleTabs: Record<TabId, boolean>;
   onSelect: (id: TabId) => void;
@@ -31,7 +31,16 @@ export const TabBar: React.FC<{
   onReorder?: (order: TabId[]) => void;
   /** Emitted when the operator hides a tab from the right-click menu. */
   onHide?: (id: TabId) => void;
-}> = ({ activeTab, visibleTabs, onSelect, order, onReorder, onHide }) => {
+}
+
+const TabBarImpl: React.FC<TabBarProps> = ({
+  activeTab,
+  visibleTabs,
+  onSelect,
+  order,
+  onReorder,
+  onHide,
+}) => {
   const [dragId, setDragId] = useState<TabId | null>(null);
   const [menu, setMenu] = useState<ContextMenuState | null>(null);
 
@@ -199,6 +208,13 @@ export const TabBar: React.FC<{
     </div>
   );
 };
+
+/**
+ * Memoized: the App tree re-renders on every ~10 Hz telemetry frame, but the tab
+ * bar only depends on tab order / visibility / active id. `React.memo` skips it
+ * when those props (and the App-side `useCallback` handlers) are stable.
+ */
+export const TabBar = React.memo(TabBarImpl);
 
 const MenuItem: React.FC<{
   onClick: () => void;

@@ -20,15 +20,46 @@ from sqlmodel import Session
 logger = logging.getLogger("dcs_backend.poll_runtime")
 
 
+def _reengage_service_estop(service: Any) -> None:
+    """Re-latch a service controller's E-stop if it exposes the seam.
+
+    Defensive (LOD): the poll/connect helpers only depend on the small public
+    ``engage_estop`` / ``set_estop_active`` seam, and tolerate doubles that omit
+    it. Both are idempotent, so re-calling while already latched is safe.
+    """
+    engage = getattr(service, "engage_estop", None)
+    if callable(engage):
+        engage()
+    _set_service_estop_flag(service, True)
+
+
+def _set_service_estop_flag(service: Any, active: bool) -> None:
+    """Set only a service's low-level write-seam interlock flag, if present.
+
+    Does NOT touch the controller's own E-stop latch (that is one-way and only
+    an operator reset clears it). Tolerates doubles without the seam (LOD).
+    """
+    set_flag = getattr(service, "set_estop_active", None)
+    if callable(set_flag):
+        set_flag(active)
+
+
 async def _connect_once(
     *,
     plc: Any,
     power_supply: Any,
     apply_config: Callable[[RoutingConfig], None],
     estop_active: bool,
+    temperature: Any = None,
     ensure_passthrough: Callable[..., Any] = ensure_power_supply_passthrough,
 ) -> RoutingConfig | None:
-    """Attempt one background PLC connection and routing sync."""
+    """Attempt one background PLC connection and routing sync.
+
+    When ``estop_active`` is set, the hardware E-stop is re-asserted AND the
+    process-local controller latches are re-engaged on reconnect: a fresh PLC
+    connection must not let the next poll re-command an output before the
+    controllers are re-latched. Re-latching is idempotent and best-effort.
+    """
     if plc.connected:
         return None
 
@@ -38,6 +69,15 @@ async def _connect_once(
 
     logger.info("Connected to PLC successfully in background.")
     if estop_active:
+        # Re-latch the process-local controllers and low-level write-seam
+        # interlock BEFORE anything can command an output, so the reconnect
+        # cannot transiently re-energize a heater relay / AO setpoint.
+        _reengage_service_estop(power_supply)
+        if temperature is not None:
+            _reengage_service_estop(temperature)
+        set_plc_flag = getattr(plc, "set_estop_active", None)
+        if callable(set_plc_flag):
+            set_plc_flag(True)
         try:
             await plc.trigger_estop()
             logger.warning("Re-asserted hardware E-stop on reconnect.")
@@ -94,7 +134,21 @@ async def _poll_once(
     tags = None
     if plc.connected:
         tags = await plc.read_tags()
-    if tags is None:
+        if tags is None:
+            # Connected but the read hiccuped (common when the Pi is under CPU
+            # load and the Modbus read trips its timeout). HOLD the last good
+            # values instead of substituting the offline simulator's fabricated
+            # readings — otherwise a momentary comms miss shows as a spurious
+            # drop to ~0 and feeds the control law a false "cold", which would
+            # command the heater ON (a runaway contributor). The next scan
+            # retries; a *prolonged* loss is surfaced by the degraded-poll path
+            # and by the connection dropping (which routes to the sim below).
+            if latest_tag_values:
+                tags = dict(latest_tag_values)
+    if tags is None and not plc.connected:
+        # No live PLC (offline / dev, or the connection has dropped) — the
+        # simulator drives the plant so the HMI still animates. On real hardware
+        # the background connect loop is reconnecting in parallel.
         tags = await backup.read_tags()
     if tags is not None and not isinstance(tags, dict):
         raise TypeError(f"poll tags must be a dict or None, got {type(tags).__name__}")
@@ -105,6 +159,27 @@ async def _poll_once(
     tag_list = (
         [tags.get(f"TAG_{i}", 0.0) for i in range(32)] if tags is not None else []
     )
+    # H4: when E-stopped, re-latch the controllers and arm the write-seam
+    # interlocks BEFORE the service polls (which can command outputs), so a scan
+    # can never re-energize an output between a reconnect and the hardware
+    # re-assert. Idempotent + best-effort; the not-estopped path is unchanged.
+    if estop_active:
+        _reengage_service_estop(power_supply)
+        if temperature is not None:
+            _reengage_service_estop(temperature)
+        set_plc_flag = getattr(plc, "set_estop_active", None)
+        if callable(set_plc_flag):
+            set_plc_flag(True)
+    else:
+        # Lower only the low-level write-seam interlock so it tracks the shared
+        # flag. The controllers' own E-stop latch is intentionally NOT cleared
+        # here — that requires an explicit operator reset (clear_estop).
+        _set_service_estop_flag(power_supply, False)
+        if temperature is not None:
+            _set_service_estop_flag(temperature, False)
+        set_plc_flag = getattr(plc, "set_estop_active", None)
+        if callable(set_plc_flag):
+            set_plc_flag(False)
     ps_status = await power_supply.poll(tags)
     temp_status = await temperature.poll(tags) if temperature is not None else None
     if estop_active and plc.connected:

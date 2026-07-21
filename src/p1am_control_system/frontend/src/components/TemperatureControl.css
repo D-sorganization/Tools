@@ -218,6 +218,42 @@
 }
 
 /* ---- Setpoint entry ------------------------------------------------- */
+/* Prominent primary setpoint card: sits directly under the status header,
+   above the thermocouple selector and trend. Compact (not full-bleed) so it
+   reads as the main operator control without dominating the panel. */
+.tc-setpoint-card {
+  border-color: var(--accent-cyan);
+  max-width: 34rem;
+}
+.tc-setpoint-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+.tc-setpoint-card-head .tc-card-title {
+  margin-bottom: 0;
+}
+.tc-setpoint-card-current {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+.tc-setpoint-primary {
+  display: flex;
+  align-items: stretch;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+.tc-setpoint-primary .tc-setpoint-row {
+  flex: 1 1 16rem;
+}
+.tc-setpoint-startstop {
+  flex: 0 0 auto;
+  min-width: 8rem;
+}
+
 .tc-setpoint-row {
   display: grid;
   grid-template-columns: auto 1fr auto;
@@ -342,6 +378,20 @@
   border: 1px solid var(--color-error);
   color: var(--color-error);
   font-weight: 700;
+}
+
+/* Softer amber warning for a transient control-sensor hold (not a trip). */
+.tc-hold-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  border-radius: 8px;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid var(--accent-amber, #f59e0b);
+  color: var(--accent-amber, #f59e0b);
+  font-weight: 600;
+  font-size: 0.85rem;
 }
 
 .tc-btn-danger {
@@ -485,4 +535,77 @@
 .tc-trend-empty {
   fill: var(--text-muted);
   font-size: 12px;
+}
+
+/* Clickable legend toggles (show/hide K, R, and the heater-ON band). */
+.tc-trend-toggle {
+  cursor: pointer;
+  user-select: none;
+}
+.tc-trend-toggle input {
+  cursor: pointer;
+  margin: 0;
+}
+
+/* Fit-window (minutes) numeric input next to the fit-method dropdown. */
+.tc-trend-fitwindow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+.tc-trend-fitwindow input {
+  width: 4rem;
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+  border-radius: 4px;
+  color: var(--text-primary);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.2rem 0.35rem;
+}
+.tc-trend-fitwindow input:focus {
+  outline: none;
+  border-color: var(--accent-cyan);
+}
+
+/* Heat-up-rate readout box: ramp rate + fit quality. */
+.tc-rate-readout {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  background: var(--input-bg);
+  border: 1px solid var(--panel-border);
+}
+.tc-rate-readout.has-fit {
+  border-color: var(--accent-cyan);
+}
+.tc-rate-label {
+  font-size: 0.66rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+.tc-rate-value {
+  font-family: var(--font-mono);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.tc-rate-readout.has-fit .tc-rate-value {
+  color: var(--accent-cyan);
+}
+.tc-rate-r2 {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Shaded heater-ON status band on the trend. */
+.tc-trend-relay-band {
+  opacity: 0.12;
 }

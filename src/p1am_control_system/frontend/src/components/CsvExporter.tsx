@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Download, FileText } from "lucide-react";
 import type { TriggerNotification } from "../types";
+import { buildExportUrl } from "../lib/dataExport";
 
 /** Local datetime-local default string offset by `minutesAgo` from now. */
 function localDateTimeInput(minutesAgo: number): string {
@@ -28,25 +29,25 @@ export const CsvExporter: React.FC<{
   );
 
   const handleDownloadCSV = () => {
-    const startISO = new Date(exportStart).toISOString();
-    const endISO = new Date(exportEnd).toISOString();
-    const cleanedTags = exportTags
+    const tags = exportTags
       .split(",")
       .map((s) => s.trim())
-      .filter(Boolean)
-      .join(",");
+      .filter(Boolean);
 
-    if (!cleanedTags) {
+    if (tags.length === 0) {
       triggerNotification("Please enter at least one Tag ID.", "error");
       return;
     }
 
-    const url = `/api/export?tag_ids=${encodeURIComponent(
-      cleanedTags,
-    )}&start_time=${encodeURIComponent(startISO)}&end_time=${encodeURIComponent(
-      endISO,
-    )}`;
-    window.open(url, "_blank");
+    try {
+      const url = buildExportUrl(tags, {
+        startMs: new Date(exportStart).getTime(),
+        endMs: new Date(exportEnd).getTime(),
+      });
+      window.open(url, "_blank", "noopener");
+    } catch {
+      triggerNotification("End time must be after start time.", "error");
+    }
   };
 
   return (

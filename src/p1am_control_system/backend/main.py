@@ -1,5 +1,6 @@
 import asyncio
 import logging
+import os
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -11,18 +12,28 @@ except ImportError:
     UTC = timezone.utc  # noqa: UP017
 from typing import Any, cast
 
+import historian
 from alicat_manager import AlicatManager, AlicatMFC
-from auth_config import require_admin_key, require_api_key, verify_operator_key
+from auth_config import (
+    CREDENTIAL_HEADER_NAME,
+    require_admin_key,
+    require_api_key,
+    verify_operator_key,
+)
+from config_store import load_config, load_model, save_config, save_model
 from cors_config import resolve_cors_settings
 from data_capture import (
     TRENDS_MAX_POINTS,
+    CaptureConfig,
     CaptureStats,
+    CaptureThrottle,
     ClearResult,
     capture_stats,
     clear_capture,
     historian_retention_loop,
     parse_query_bound,
     parse_tag_names,
+    query_trend_series,
     stream_tag_export_csv,
 )
 from database import engine, get_session, init_db
@@ -32,12 +43,14 @@ from fastapi import (
     File,
     HTTPException,
     Query,
+    Security,
     UploadFile,
     WebSocket,
     WebSocketDisconnect,
 )
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
+from fastapi.security import APIKeyHeader
 from models import (
     AlicatGasPayload,
     AlicatMFCState,
@@ -52,6 +65,7 @@ from models import (
     TagLog,
 )
 from mpc import simulate_pid_vs_mpc
+from performance import PerformanceConfig, PerformanceController, PerformanceMode
 from pid_tuning import identify_fopdt_and_tune
 from plant_model import TagDefinition
 from plc_factory import PLCFactory
@@ -94,12 +108,69 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("dcs_backend.main")
 settings = get_settings()
 
+# Truthy tokens for the opt-in read-auth env gate (mirrors auth_config).
+_TRUTHY = {"1", "true", "yes", "on"}
+# auto_error=False so require_read_auth can no-op when the gate is disabled
+# instead of FastAPI rejecting a missing header up front.
+_read_api_key_header = APIKeyHeader(name=CREDENTIAL_HEADER_NAME, auto_error=False)
+
 plc_client = PLCFactory.create_client(settings)
 modbus_manager = plc_client  # Compatibility alias
 backup_simulator = SimulatedPLCClient()
 
-power_supply_service = PowerSupplyService(plc_client=plc_client, logger=logger)
-temperature_service = TemperatureService(plc_client=plc_client, logger=logger)
+
+# A session factory lets the services durably persist operator settings (config
+# + last setpoint) to the config store so they survive a restart. Settings only
+# — a restored controller stays IDLE; the operator presses Start to resume.
+def _config_session() -> Session:
+    return Session(engine)
+
+
+def _persist_setting(key: str, payload: dict[str, object]) -> None:
+    """Best-effort persist of a small operator setting to the config store.
+
+    Never raises — a DB hiccup must not fail the operator's command; it only
+    means the setting won't be recalled on the next restart.
+    """
+    try:
+        with _config_session() as s:
+            save_config(s, key, payload)
+    except Exception as exc:  # noqa: BLE001 - persistence is non-critical
+        logger.warning("Persisting %r failed (non-fatal): %s", key, exc)
+
+
+power_supply_service = PowerSupplyService(
+    plc_client=plc_client, logger=logger, session_factory=_config_session
+)
+temperature_service = TemperatureService(
+    plc_client=plc_client, logger=logger, session_factory=_config_session
+)
+
+# The SCADA-authoritative persisted routing (interlocks/alarm setpoints + PID).
+# Held in memory so the PLC-connect read can't clobber the operator's alarm
+# setpoints: _publish_active_config overlays these interlocks onto whatever the
+# PLC returns. Loaded on startup and refreshed on every deploy.
+_persisted_routing: RoutingConfig | None = None
+
+# Historian write throttle: decouples how often scans are *persisted* from how
+# often the PLC is *polled*, so the capture DB grows at an operator-chosen rate
+# without slowing the control/stream loop. Runtime-adjustable via /api/capture/config.
+capture_throttle = CaptureThrottle(settings.capture_interval_s)
+
+# Global performance mode: switches the scan-loop cadence between the fast
+# (performance) and slow (lightweight) intervals to conserve CPU / HMI load.
+# Defaults to lightweight — fast polling is opt-in (and the HMI auto-engages it
+# whenever its tab is hidden), so an unattended backend stays easy on the Pi.
+perf_controller = PerformanceController(
+    settings.poll_interval_s,
+    settings.lightweight_poll_interval_s,
+    mode=PerformanceMode.LIGHTWEIGHT,
+)
+
+
+def _throttled_log_scan(session: Session, tags: dict[str, float]) -> int:
+    """Persist a scan to the historian only when the throttle says it's due."""
+    return historian.log_scan(session, tags) if capture_throttle.due() else 0
 
 
 class ConnectionManager:
@@ -235,6 +306,7 @@ async def modbus_connect_background() -> None:
             await _connect_once(
                 plc=plc_client,
                 power_supply=power_supply_service,
+                temperature=temperature_service,
                 apply_config=_publish_active_config,
                 estop_active=control_context.e_stop_active,
             )
@@ -244,8 +316,33 @@ async def modbus_connect_background() -> None:
 
 
 def _publish_active_config(config: RoutingConfig) -> None:
-    """Publish a PLC routing config to the shared control context."""
+    """Publish a PLC routing config to the shared control context.
+
+    The interlocks (alarm setpoints) are a SCADA-layer concern; if an operator's
+    persisted alarm setpoints exist, they are overlaid onto whatever the PLC
+    returned so a stale/default PLC read can never silently reset them.
+    """
+    if _persisted_routing is not None:
+        config = config.model_copy(update={"interlocks": _persisted_routing.interlocks})
     control_context.apply_config(config, plc_client, backup_simulator)
+
+
+def require_read_auth(
+    api_key: str | None = Security(_read_api_key_header),
+) -> None:
+    """Optional gate for the historian/plant read surface.
+
+    Enforces :func:`require_api_key` only when ``P1AM_REQUIRE_READ_AUTH`` is
+    enabled. When the setting is off (the default) this is a no-op so the read
+    endpoints stay public and the bench HMI keeps working unchanged. The
+    existing ``P1AM_DEV_NO_AUTH`` bypass still applies via ``require_api_key``.
+
+    The env var is read per-request (not the ``lru_cache``d settings singleton)
+    so the gate can be toggled without a process restart.
+    """
+    if os.environ.get("P1AM_REQUIRE_READ_AUTH", "").strip().lower() not in _TRUTHY:
+        return
+    require_api_key(api_key)
 
 
 def _reject_output_write_if_estopped() -> None:
@@ -275,7 +372,7 @@ async def poll_plc_loop() -> None:
     logger.info("Starting background PLC polling loop...")
     consecutive_failures = 0
     while not shutdown_event.is_set():
-        retry_delay = settings.poll_interval_s
+        retry_delay = perf_controller.poll_interval_s
         try:
             frame = await _poll_once(
                 plc=plc_client,
@@ -289,6 +386,7 @@ async def poll_plc_loop() -> None:
                 active_alarm_map=control_context.active_alarms,
                 session_factory=get_session,
                 estop_active=control_context.e_stop_active,
+                log_scan=_throttled_log_scan,
             )
             # Cache the frame for the /api/snapshot polling fallback. Reassigning
             # the reference is atomic, so a concurrent reader sees a whole frame.
@@ -333,12 +431,54 @@ async def poll_plc_loop() -> None:
     logger.info("Background PLC polling loop stopped.")
 
 
+def _restore_persisted_settings(session: Session) -> None:
+    """Recall operator settings from the config store on startup (settings only).
+
+    Restores the SCADA routing (interlocks/alarm setpoints + PID), the heater and
+    power-supply configs + last setpoints, the historian capture rate and the
+    performance mode. SAFETY: nothing here arms or energizes an output — the
+    controllers stay IDLE; the operator presses Start to resume to the recalled
+    setpoint. Best-effort per item so a bad/legacy blob only falls back to a
+    default, never blocks the boot of the safety-critical controller.
+    """
+    global _persisted_routing
+    try:
+        routing = load_model(session, "routing", RoutingConfig)
+        if routing is not None:
+            _persisted_routing = routing
+            control_context.apply_config(routing, plc_client, backup_simulator)
+            logger.info("Recalled persisted routing (alarm setpoints + PID).")
+    except Exception as exc:  # noqa: BLE001 - never block boot on a bad blob
+        logger.warning("Routing recall skipped: %s", exc)
+    try:
+        temperature_service.restore_persisted(session)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Temperature settings recall skipped: %s", exc)
+    try:
+        power_supply_service.restore_persisted(session)
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Power-supply settings recall skipped: %s", exc)
+    try:
+        cap = load_config(session, "capture")
+        if cap and "interval_s" in cap:
+            capture_throttle.set_interval_s(float(cap["interval_s"]))  # type: ignore[arg-type]
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Capture-interval recall skipped: %s", exc)
+    try:
+        perf = load_config(session, "performance")
+        if perf and "mode" in perf:
+            perf_controller.set_mode(PerformanceMode(str(perf["mode"])))
+    except Exception as exc:  # noqa: BLE001
+        logger.warning("Performance-mode recall skipped: %s", exc)
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncIterator[None]:
     # Startup: initialize database and start PLC polling thread & Alicat manager
     init_db()
     with Session(engine) as session:
         load_tags_into_plc_clients(session)
+        _restore_persisted_settings(session)
     shutdown_event.clear()
     alicat_manager.start()
     connect_task = asyncio.create_task(modbus_connect_background())
@@ -369,6 +509,20 @@ app = FastAPI(
 app.state.control_context = control_context
 app.include_router(create_power_supply_router(power_supply_service))
 app.include_router(create_temperature_router(temperature_service))
+
+# Data Explorer analysis suite (historian querying, filtering, correlation,
+# spectral, trendlines, PCA, export). It is numpy-backed; if numpy or the module
+# is unavailable (e.g. the slim image without it) the feature simply stays off
+# and the safety-critical control core still boots — mirroring the tools_core
+# graceful fallback above.
+try:
+    from data_explorer_router import create_data_explorer_router
+
+    app.include_router(
+        create_data_explorer_router(get_session, read_auth_dep=require_read_auth)
+    )
+except Exception as exc:  # pragma: no cover - only when numpy/module absent
+    logger.warning("Data Explorer disabled (%s): %s", type(exc).__name__, exc)
 
 # Restrict CORS to a configured allowlist (no wildcard with credentials).
 # See cors_config.resolve_cors_settings for env-driven configuration.
@@ -470,7 +624,7 @@ async def get_routing() -> RoutingConfig:
     Returns:
         RoutingConfig: The current routing parameters from the PLC.
     """
-    config = await plc_client.read_routing()
+    config: RoutingConfig | None = await plc_client.read_routing()
     if config is None:
         config = await backup_simulator.read_routing()
     if config is None:
@@ -491,6 +645,16 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
         JSON response indicating success.
     """
     control_context.apply_config(config, plc_client, backup_simulator)
+
+    # Persist the SCADA-authoritative routing (interlocks/alarm setpoints + PID)
+    # so it survives a restart independent of PLC flash, and refresh the overlay.
+    global _persisted_routing
+    _persisted_routing = config
+    try:
+        with _config_session() as s:
+            save_model(s, "routing", config)
+    except Exception as exc:  # noqa: BLE001 - persistence must not fail a deploy
+        logger.warning("Persisting routing failed (non-fatal): %s", exc)
 
     if not plc_client.connected:
         await backup_simulator.write_routing(config)
@@ -597,7 +761,7 @@ async def clear_estop() -> dict[str, str]:
     return {"status": "success", "message": "Hardware E-stop cleared."}
 
 
-@app.get("/api/snapshot")
+@app.get("/api/snapshot", dependencies=[Depends(require_read_auth)])
 async def get_snapshot() -> dict[str, Any]:
     """Latest live frame — identical shape to the /api/stream WebSocket frames.
 
@@ -677,8 +841,8 @@ async def log_user_event(
         raise HTTPException(status_code=500, detail="Failed to log event.") from e
 
 
-@app.get("/api/events")
-async def get_events(
+@app.get("/api/events", dependencies=[Depends(require_read_auth)])
+def get_events(
     limit: int = 100,
     offset: int = 0,
     db: Session = Depends(get_session),  # noqa: B008
@@ -694,17 +858,26 @@ async def get_events(
     return list(results)
 
 
-@app.get("/api/trends")
-async def get_trends(
+@app.get("/api/trends", dependencies=[Depends(require_read_auth)])
+def get_trends(
     tag_id: str,
     start_time: str,
     end_time: str,
     smoothing: str = "none",
     window_size: int = 5,
     alpha: float = 0.2,
+    max_points: int = TRENDS_MAX_POINTS,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
-    """Fetch bounded historical trends, optionally applying server-side smoothing."""
+    """Fetch historical trends, decimated to span the whole requested window.
+
+    The series is downsampled server-side to at most ``max_points`` samples that
+    evenly span ``[start_time, end_time]``, so a multi-hour or multi-day request
+    returns the entire span instead of only its newest slice. ``truncated`` is
+    True whenever decimation occurred. Any server-side ``smoothing`` is applied
+    to the decimated values. ``max_points`` is clamped to a sane range; an
+    out-of-range value yields HTTP 400.
+    """
     try:
         start_dt = parse_query_bound(start_time)
         end_dt = parse_query_bound(end_time)
@@ -717,21 +890,18 @@ async def get_trends(
     if tag_id.isdigit():
         tag_name = f"TAG_{tag_id}"
 
-    # Cap the row count: take the most-recent N within the range (DESC + limit),
-    # then present oldest-first.
-    statement = (
-        select(TagLog)
-        .where(col(TagLog.tag_name) == tag_name)
-        .where(col(TagLog.timestamp) >= start_dt)
-        .where(col(TagLog.timestamp) <= end_dt)
-        .order_by(col(TagLog.timestamp).desc())
-        .limit(TRENDS_MAX_POINTS)
-    )
-    results = list(reversed(db.exec(statement).all()))
-    truncated = len(results) >= TRENDS_MAX_POINTS
+    try:
+        sample_times, values, truncated = query_trend_series(
+            db,
+            tag_name=tag_name,
+            start=start_dt,
+            end=end_dt,
+            max_points=max_points,
+        )
+    except (TypeError, ValueError) as query_err:
+        raise HTTPException(status_code=400, detail=str(query_err)) from query_err
 
-    timestamps = [r.timestamp.isoformat() for r in results]
-    values = [float(r.value) for r in results]
+    timestamps = [ts.isoformat() for ts in sample_times]
 
     if smoothing == "moving_average" and values:
         values = moving_average(values, window_size)
@@ -741,8 +911,8 @@ async def get_trends(
     return {"timestamps": timestamps, "values": values, "truncated": truncated}
 
 
-@app.get("/api/export")
-async def export_data(
+@app.get("/api/export", dependencies=[Depends(require_read_auth)])
+def export_data(
     tag_ids: str = Query(..., description="Comma-separated list of Tag IDs or Names"),
     start_time: str = Query(..., description="Start date ISO string"),
     end_time: str = Query(..., description="End date ISO string"),
@@ -784,7 +954,7 @@ async def export_data(
 
 
 @app.get("/api/capture/status", response_model=CaptureStats)
-async def get_capture_status(
+def get_capture_status(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> CaptureStats:
     """Report the captured historian: rows, time span, distinct tags, disk size.
@@ -794,6 +964,64 @@ async def get_capture_status(
     indicator.
     """
     return capture_stats(db, capturing=True)
+
+
+@app.get("/api/capture/config", response_model=CaptureConfig)
+async def get_capture_config() -> CaptureConfig:
+    """Return the current historian sampling interval (seconds between writes)."""
+    return CaptureConfig(interval_s=capture_throttle.interval_s)
+
+
+@app.put(
+    "/api/capture/config",
+    response_model=CaptureConfig,
+    dependencies=[Depends(require_admin_key)],
+)
+async def update_capture_config(req: CaptureConfig) -> CaptureConfig:
+    """Set how often scans are persisted. Larger interval => smaller data files.
+
+    Takes effect immediately for the running scan loop; admin-gated since it
+    changes the historian's data-retention characteristics.
+    """
+    try:
+        capture_throttle.set_interval_s(req.interval_s)
+    except (TypeError, ValueError) as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    logger.info("Capture interval set to %.3f s", capture_throttle.interval_s)
+    _persist_setting("capture", {"interval_s": capture_throttle.interval_s})
+    return CaptureConfig(interval_s=capture_throttle.interval_s)
+
+
+class PerformanceModeRequest(BaseModel):
+    """Operator selection of the global performance mode."""
+
+    mode: PerformanceMode
+
+
+@app.get("/api/performance", response_model=PerformanceConfig)
+async def get_performance() -> PerformanceConfig:
+    """Return the active performance mode + its resolved poll interval."""
+    return perf_controller.config()
+
+
+@app.put(
+    "/api/performance",
+    response_model=PerformanceConfig,
+    dependencies=[Depends(require_admin_key)],
+)
+async def update_performance(req: PerformanceModeRequest) -> PerformanceConfig:
+    """Switch performance/lightweight mode. Takes effect on the next scan."""
+    try:
+        perf_controller.set_mode(req.mode)
+    except TypeError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    logger.info(
+        "Performance mode set to %s (poll %.3f s)",
+        perf_controller.mode,
+        perf_controller.poll_interval_s,
+    )
+    _persist_setting("performance", {"mode": str(perf_controller.mode)})
+    return perf_controller.config()
 
 
 class CaptureClearRequest(BaseModel):
@@ -807,7 +1035,7 @@ class CaptureClearRequest(BaseModel):
     response_model=ClearResult,
     dependencies=[Depends(require_admin_key)],
 )
-async def clear_capture_data(
+def clear_capture_data(
     req: CaptureClearRequest,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> ClearResult:
@@ -1108,8 +1336,11 @@ async def import_project(
     )
 
 
-@app.get("/api/project/ladder-explorer")
-async def get_ladder_explorer(
+@app.get(
+    "/api/project/ladder-explorer",
+    dependencies=[Depends(require_read_auth)],
+)
+def get_ladder_explorer(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> list[dict[str, Any]]:
     """Retrieve all tag definitions with their PLC register mappings for exploration."""
@@ -1145,8 +1376,8 @@ async def get_ladder_explorer(
     return results
 
 
-@app.get("/api/plant")
-async def get_plant_hierarchy_api(
+@app.get("/api/plant", dependencies=[Depends(require_read_auth)])
+def get_plant_hierarchy_api(
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, Any]:
     """Retrieve the physical plant layout and tag tree hierarchical structure."""
