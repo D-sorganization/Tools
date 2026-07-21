@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useId } from 'react';
 import {
   LineChart,
   Line,
@@ -1038,10 +1038,12 @@ interface ParamInputProps {
 }
 
 function ParamInput({ label, value, onChange, min, max, step = 0.1 }: ParamInputProps) {
+  const inputId = useId();
   return (
     <div>
-      <label className="block text-sm text-slate-400 mb-1">{label}</label>
+      <label htmlFor={inputId} className="block text-sm text-slate-400 mb-1">{label}</label>
       <input
+        id={inputId}
         type="number"
         value={value}
         onChange={e => onChange(parseFloat(e.target.value) || 0)}
