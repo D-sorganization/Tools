@@ -66,3 +66,6 @@
 ## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
 **Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
 **Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
+## 2024-05-18 - Fast NaN checking in high-frequency loops
+**Learning:** In high-frequency JavaScript/TypeScript loops parsing numeric data, using `x === x` is a performant and allocation-free alternative to `!Number.isNaN(x)` or `!isNaN(x)` for filtering out `NaN` values, as it safely avoids additional function call overhead.
+**Action:** Use `x === x` instead of `!Number.isNaN(x)` when checking for valid numbers inside tight loops that process large arrays.
