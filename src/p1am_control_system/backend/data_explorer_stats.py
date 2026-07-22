@@ -25,6 +25,7 @@ Arrays are coerced with ``np.asarray(x, dtype=float)``. Non-finite inputs
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from typing import cast
 
 import numpy as np
 
@@ -129,11 +130,11 @@ def _window_values(kind: str, length: int) -> np.ndarray:
     if kind == "none":
         return np.ones(length, dtype=float)
     if kind == "hanning":
-        return np.hanning(length)
+        return cast(np.ndarray, np.hanning(length))
     if kind == "hamming":
-        return np.hamming(length)
+        return cast(np.ndarray, np.hamming(length))
     # blackman
-    return np.blackman(length)
+    return cast(np.ndarray, np.blackman(length))
 
 
 # --------------------------------------------------------------------------- #
@@ -286,7 +287,9 @@ def cross_correlation(
 
     da = array_a - array_a.mean()
     db = array_b - array_b.mean()
-    norm = np.sqrt(np.sum(da**2) * np.sum(db**2))
+    sum_sq_a = float(np.sum(da**2))
+    sum_sq_b = float(np.sum(db**2))
+    norm = float(np.sqrt(sum_sq_a * sum_sq_b))
     if norm == 0.0:
         raise ValueError("cross_correlation requires non-constant inputs")
 

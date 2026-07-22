@@ -170,7 +170,7 @@ class TemperatureService:
             return math.nan
         if sample.value_c is None:
             return 0.0
-        return sample.value_c
+        return float(sample.value_c)
 
     def _note_control_sensor_health(self, active: FilterSample) -> None:
         """Track + log the controlling sensor's filter state on each scan.

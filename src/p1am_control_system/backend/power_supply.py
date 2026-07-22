@@ -32,6 +32,11 @@ class PowerSupplyController(SafetyStateMachine[PowerSupplyState]):
     capped by ``output_clamp_percent``, and slew-rate limited.
     """
 
+    # Re-declared for mypy visibility: inherited from SafetyStateMachine[StateT],
+    # whose type parameter isn't resolvable when that module is excluded from a
+    # delta-only mypy run (--follow-imports=skip).
+    _state: PowerSupplyState
+
     def __init__(self, config: PowerSupplyConfig) -> None:
         if not isinstance(config, PowerSupplyConfig):
             raise TypeError(
@@ -267,7 +272,7 @@ class PowerSupplyController(SafetyStateMachine[PowerSupplyState]):
 
     def _should_force_output_zero(self) -> bool:
         """All "kill the output now" conditions in one place."""
-        return self._should_force_actuator_off()
+        return bool(self._should_force_actuator_off())
 
     def _estop_log_message(self) -> str:
         return "E-STOP engaged — power-supply output latched to zero"
