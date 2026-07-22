@@ -22,3 +22,7 @@
 **Vulnerability:** Found unauthenticated API routes in `power_supply_integration.py` that could modify configuration and setpoints.
 **Learning:** Newly created routers (like `power_supply`) aren't automatically protected by the main app's dependencies.
 **Prevention:** Apply `Depends(require_admin_key)` to mutating endpoints inside newly added APIRouters.
+## 2024-07-22 - AST Security Gate Bypass via SyntaxError
+**Vulnerability:** The AST validation step for expressions passed to SymPy's parse_expr was failing-open on SyntaxError. This allowed invalid Python code (which could still be processed maliciously by Sympy's parser transformations) to bypass structural AST validation.
+**Learning:** When implementing an AST-based security gate to sanitize inputs for a parser that eventually uses eval, the gate must be fail-closed. If parsing raises a SyntaxError, the input must be explicitly rejected.
+**Prevention:** Explicitly raise ValueError (or similar) when encountering SyntaxError in structural validation gates.
