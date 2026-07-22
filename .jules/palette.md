@@ -32,3 +32,6 @@
 ## 2024-05-31 - Tab Roles vs aria-pressed
 **Learning:** When implementing custom tab components in React, use `role="tab"` paired strictly with `aria-selected` (not `aria-pressed`, which is intended for toggle buttons) and ensure `aria-controls` points to a valid `role="tabpanel"` container whose `aria-labelledby` points back to the tab.
 **Action:** When adding accessible properties to custom tabs, replace `aria-pressed` with `aria-selected`, ensure a `role="tablist"` wrapper is present, and correctly cross-reference `aria-controls` with the tab panel IDs.
+## 2024-05-24 - Semantic State for Custom Toggle Buttons
+**Learning:** In `SignalList.tsx`, custom toggle buttons used dynamic CSS classes to indicate their active state, but lacked ARIA attributes, making their state invisible to screen readers.
+**Action:** When implementing or modifying custom toggle buttons that rely on dynamic styling, always include `aria-pressed={isActive}` on the `<button>` element to ensure semantic state visibility for assistive technologies.
