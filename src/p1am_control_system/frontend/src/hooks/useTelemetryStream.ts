@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { TAG_COUNT } from "../lib/tags";
+import { SAMPLES_PER_SECOND } from "../lib/trendTime";
 import { telemetryFrameSchema } from "../api/schemas";
 import type { PowerSupplyStatus } from "../components/PowerSupplyControl";
 import type { TemperatureStatus } from "../components/TemperatureControl";
@@ -27,6 +28,8 @@ const POLL_MS = 1500;
 export interface TelemetryState {
   tagValues: number[];
   history: number[][];
+  /** Epoch-ms timestamp of each `history` frame (same length as `history`). */
+  historyTimes: number[];
   tagsDict: Record<string, number>;
   alicats: AlicatMFCState[];
   activeAlarms: ActiveAlarm[];
@@ -36,11 +39,51 @@ export interface TelemetryState {
   isConnected: boolean;
 }
 
-const MAX_HISTORY = 1200;
+// In-memory live buffer bound. The Pi's browser only needs the recent tail for
+// the live TrendChart (which caps its own window at 300 s) and SignalDiagnostics;
+// deeper windows are served on demand by useTrendBackfill from the historian, so
+// there is no reason to hold an hour of frames in JS heap. 6000 = 10 min @ 10 Hz
+// keeps allocation and per-frame slice cost Pi-sane.
+const MAX_HISTORY = 10 * 60 * SAMPLES_PER_SECOND;
 
 export interface UseTelemetryStreamOptions {
   /** Called once when the socket first opens (e.g. to show a banner). */
   onConnect?: () => void;
+}
+
+/** Shallow, one-level equality of two plain objects (status frames). */
+function shallowObjEqual(
+  a: Record<string, unknown> | undefined,
+  b: Record<string, unknown> | undefined,
+): boolean {
+  if (a === b) return true;
+  if (!a || !b) return false;
+  const ak = Object.keys(a);
+  if (ak.length !== Object.keys(b).length) return false;
+  for (const k of ak) {
+    if (a[k] !== b[k]) return false;
+  }
+  return true;
+}
+
+/** Shallow equality of two object lists: same length + per-element shape. */
+function shallowListEqual<T extends Record<string, unknown>>(
+  a: readonly T[],
+  b: readonly T[],
+): boolean {
+  if (a.length !== b.length) return false;
+  for (let i = 0; i < a.length; i++) {
+    if (!shallowObjEqual(a[i], b[i])) return false;
+  }
+  return true;
+}
+
+/** Shallow equality of two flat numeric dictionaries (tags_dict frames). */
+function numberDictEqual(
+  a: Record<string, number>,
+  b: Record<string, number>,
+): boolean {
+  return shallowObjEqual(a, b);
 }
 
 /**
@@ -59,6 +102,10 @@ export function useTelemetryStream(
     Array(TAG_COUNT).fill(0.0),
   );
   const [history, setHistory] = useState<number[][]>([]);
+  // Wall-clock (epoch ms) of each history frame, kept in lockstep with
+  // `history` so trends can window/scale by real time rather than assuming a
+  // fixed sample rate (the Pi polls below the nominal 10 Hz under load).
+  const [historyTimes, setHistoryTimes] = useState<number[]>([]);
   const [tagsDict, setTagsDict] = useState<Record<string, number>>({});
   const [alicats, setAlicats] = useState<AlicatMFCState[]>([]);
   const [activeAlarms, setActiveAlarms] = useState<ActiveAlarm[]>([]);
@@ -82,13 +129,20 @@ export function useTelemetryStream(
 
     const pushTags = (values: number[]) => {
       setTagValues(values);
-      setHistory((prev) => {
-        const updated = [...prev, values];
-        if (updated.length > MAX_HISTORY) {
-          updated.shift();
-        }
-        return updated;
-      });
+      const stamp = Date.now();
+      // Bounded append: once at capacity, drop the single oldest frame with a
+      // tail `slice` (O(MAX_HISTORY)) instead of `[...prev, v]` + `shift()`,
+      // which reallocated and index-shifted the whole array every 100 ms.
+      setHistory((prev) =>
+        prev.length >= MAX_HISTORY
+          ? [...prev.slice(prev.length - MAX_HISTORY + 1), values]
+          : [...prev, values],
+      );
+      setHistoryTimes((prev) =>
+        prev.length >= MAX_HISTORY
+          ? [...prev.slice(prev.length - MAX_HISTORY + 1), stamp]
+          : [...prev, stamp],
+      );
     };
 
     // Apply one telemetry frame from either transport (WS message or snapshot
@@ -100,19 +154,60 @@ export function useTelemetryStream(
         if (frame.tags && frame.tags.length === TAG_COUNT) {
           pushTags(frame.tags);
         }
-        if (frame.tags_dict) setTagsDict(frame.tags_dict);
-        if (frame.alicats) setAlicats(frame.alicats);
+        // Non-live fields: only setState when the value actually changed, so a
+        // memoized consumer (AlarmsHeader, PowerSupplyControl, …) can skip a
+        // re-render even though a new frame arrives every ~100 ms. React bails
+        // out of an identical-reference update, so returning `prev` is a no-op.
+        if (frame.tags_dict) {
+          const next = frame.tags_dict;
+          setTagsDict((prev) => (numberDictEqual(prev, next) ? prev : next));
+        }
+        if (frame.alicats) {
+          const next = frame.alicats;
+          setAlicats((prev) =>
+            shallowListEqual(
+              prev as Record<string, unknown>[],
+              next as Record<string, unknown>[],
+            )
+              ? prev
+              : next,
+          );
+        }
         if (frame.active_alarms) {
-          setActiveAlarms(Object.values(frame.active_alarms));
+          const next = Object.values(frame.active_alarms);
+          setActiveAlarms((prev) =>
+            shallowListEqual(
+              prev as Record<string, unknown>[],
+              next as Record<string, unknown>[],
+            )
+              ? prev
+              : next,
+          );
         }
         if (typeof frame.e_stop_active === "boolean") {
           setEStopActive(frame.e_stop_active);
         }
         if (frame.power_supply) {
-          setPowerSupplyStatus(frame.power_supply as PowerSupplyStatus);
+          const next = frame.power_supply as PowerSupplyStatus;
+          setPowerSupplyStatus((prev) =>
+            shallowObjEqual(
+              prev as Record<string, unknown> | undefined,
+              next as unknown as Record<string, unknown>,
+            )
+              ? prev
+              : next,
+          );
         }
         if (frame.temperature) {
-          setTemperatureStatus(frame.temperature as TemperatureStatus);
+          const next = frame.temperature as TemperatureStatus;
+          setTemperatureStatus((prev) =>
+            shallowObjEqual(
+              prev as Record<string, unknown> | undefined,
+              next as unknown as Record<string, unknown>,
+            )
+              ? prev
+              : next,
+          );
         }
         lastFrameAt = Date.now();
         setIsConnected(true);
@@ -187,6 +282,7 @@ export function useTelemetryStream(
   return {
     tagValues,
     history,
+    historyTimes,
     tagsDict,
     alicats,
     activeAlarms,

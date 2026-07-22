@@ -1,12 +1,19 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
-import { Download } from "lucide-react";
+import { Database } from "lucide-react";
 import { PowerSupplyTrend, type TrendSample } from "./PowerSupplyTrend";
+import { ExportButton } from "./ExportButton";
+import { CollapsibleSection } from "./CollapsibleSection";
+import { EditableValue } from "./EditableValue";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
+import { MAX_TREND_SAMPLES } from "../lib/trendTime";
 import "./PowerSupplyControl.css";
 
-// Rolling trend buffer: ~300 samples at the ~10 Hz broadcast rate ≈ 30 s.
-const TREND_MAX_POINTS = 300;
-const TREND_WINDOW_SECONDS = 30;
+// Tags carrying the unit's current/voltage feedback (P1-4ADL2DAL AI0/AI1).
+const PS_EXPORT_TAGS = [12, 13] as const;
+
+// Rolling trend buffer: deep enough for the longest selectable window (5 min
+// @ ~10 Hz); the plot itself slices/downsamples to the chosen window.
+const TREND_MAX_POINTS = MAX_TREND_SAMPLES;
 
 /**
  * Power-supply control tab.
@@ -108,8 +115,8 @@ export interface PowerSupplyStatus {
 interface Props {
   /** Status pushed each scan via the parent's WebSocket; undefined while waiting. */
   liveStatus?: PowerSupplyStatus;
-  /** Opens the data-export drawer (wired to the plot-header Export button). */
-  onExport?: () => void;
+  /** Opens the capture status / historian-management drawer. */
+  onOpenCapture?: () => void;
 }
 
 const STATE_LABELS: Record<PowerSupplyStatus["state"], string> = {
@@ -164,7 +171,7 @@ function noiseMetricValue(stats: NoiseStats | undefined): number | null {
   }
 }
 
-export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) => {
+const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) => {
   const [config, setConfig] = useState<PowerSupplyConfig | null>(null);
   const [configDraft, setConfigDraft] = useState<PowerSupplyConfig | null>(null);
   const [mode, setMode] = useState<"current" | "power">("current");
@@ -213,6 +220,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
       const next = [
         ...prev,
         {
+          t: Date.now(),
           i: liveStatus.measured_current_a,
           v: liveStatus.measured_voltage_v,
           p: liveStatus.measured_power_w,
@@ -400,6 +408,19 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
     );
   }, [config, clampDraft, putConfig]);
 
+  // Inline commit for the live "Limit" readout (shared EditableValue): applies
+  // the output limit at once via the same config PUT the clamp control uses.
+  const commitClamp = useCallback(
+    (value: number) => {
+      if (!config) return;
+      putConfig(
+        { ...config, output_clamp_percent: value },
+        `Output limit set to ${value.toFixed(0)} %`,
+      );
+    },
+    [config, putConfig],
+  );
+
   const saveConfig = useCallback(() => {
     if (!configDraft) return;
     putConfig(configDraft, "Configuration saved");
@@ -478,9 +499,18 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
           </div>
           <div className="ps-metric">
             <span className="ps-metric-label">Limit</span>
-            <span className="ps-metric-value is-warning">
-              {activeClamp.toFixed(0)} %
-            </span>
+            <EditableValue
+              className="ps-metric-value is-warning"
+              value={activeClamp}
+              label="Output limit"
+              unit="%"
+              format={(v) => v.toFixed(0)}
+              min={0.1}
+              max={100}
+              step={5}
+              title="Output limit — click to edit"
+              onCommit={commitClamp}
+            />
           </div>
         </div>
 
@@ -520,15 +550,24 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
       )}
 
       {/* ---- Live trend (current + voltage from the unit) ---- */}
-      <div className="ps-card">
-        <div className="ps-card-title">
-          <span>Live signals — current, voltage &amp; power feedback</span>
-          {onExport && (
-            <button className="btn ps-export-btn" onClick={onExport} title="Export captured data">
-              <Download size={13} /> Export
-            </button>
-          )}
-        </div>
+      <CollapsibleSection
+        className="ps-card"
+        title={<span>Live signals — current, voltage &amp; power feedback</span>}
+        headerExtra={
+          <div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+            <ExportButton tags={PS_EXPORT_TAGS} label="Export" />
+            {onOpenCapture && (
+              <button
+                className="btn ps-export-btn"
+                onClick={onOpenCapture}
+                title="Capture status & historian management"
+              >
+                <Database size={13} /> Capture
+              </button>
+            )}
+          </div>
+        }
+      >
         <PowerSupplyTrend
           samples={trend}
           currentFullScale={config.current_full_scale_a}
@@ -536,9 +575,8 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
           powerFullScale={config.power_alarm_max_w}
           currentLabel={config.current_feedback_label}
           voltageLabel={config.voltage_feedback_label}
-          windowSeconds={TREND_WINDOW_SECONDS}
         />
-      </div>
+      </CollapsibleSection>
 
       <div className="ps-grid">
         {/* ---- Output clamp (safety) ---- */}
@@ -700,8 +738,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
       </div>
 
       {/* ---- Live telemetry ---- */}
-      <div className="ps-card">
-        <div className="ps-card-title">Live telemetry</div>
+      <CollapsibleSection className="ps-card" title="Live telemetry">
         <div className="ps-readouts">
           <Readout label="Setpoint" value={`${s?.setpoint_a.toFixed(2) ?? "—"} A`} />
           <Readout
@@ -749,7 +786,7 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
             />
           </div>
         </div>
-      </div>
+      </CollapsibleSection>
 
       {/* ---- Signal noise / arc detection ---- */}
       <div className={`ps-card ps-noise ${s?.arcing ? "is-arcing" : ""}`}>
@@ -1063,6 +1100,13 @@ export const PowerSupplyControl: React.FC<Props> = ({ liveStatus, onExport }) =>
     </div>
   );
 };
+
+/**
+ * Memoized so this always-mounted panel only re-renders when `liveStatus`
+ * (ref-stable from useTelemetryStream — only a real status change bumps the
+ * reference) or `onOpenCapture` change, not on every ~10 Hz App re-render.
+ */
+export const PowerSupplyControl = React.memo(PowerSupplyControlImpl);
 
 /**
  * Static reference of how the power-supply signals map to the P1AM analog

@@ -7,6 +7,7 @@ except ImportError:
 
 import hardware
 from pydantic import BaseModel, field_validator
+from sqlalchemy import Index
 from sqlmodel import Field, SQLModel
 
 
@@ -34,10 +35,20 @@ def _validate_loop_tag(value: str) -> str:
 
 
 class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
-    """SQLModel representing a logged tag state in the database."""
+    """SQLModel representing a logged tag state in the database.
+
+    The composite ``(tag_name, timestamp)`` index serves the historian read hot
+    path (``WHERE tag_name=? AND timestamp BETWEEN ? AND ? ORDER BY timestamp``)
+    as a pure indexed range scan — no temp-B-tree sort — and also covers
+    ``tag_name``-only lookups, so no separate single-column ``tag_name`` index is
+    needed. ``timestamp`` keeps its own index for the retention sweep's
+    ``timestamp``-only range deletes.
+    """
+
+    __table_args__ = (Index("ix_taglog_tag_name_timestamp", "tag_name", "timestamp"),)
 
     id: int | None = Field(default=None, primary_key=True)
-    tag_name: str = Field(index=True)
+    tag_name: str
     value: float
     timestamp: datetime = Field(
         default_factory=utc_now,

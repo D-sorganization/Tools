@@ -1,0 +1,71 @@
+/* Inline-editable value: reads like text, edits in place. Shared across the HMI
+   so every operator-changeable number looks and behaves the same. */
+
+.editable-value {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.25rem;
+  font: inherit;
+}
+
+.editable-value--reading {
+  appearance: none;
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed var(--panel-border, #445);
+  color: inherit;
+  font: inherit;
+  padding: 0 0.1rem;
+  cursor: text;
+  border-radius: 2px;
+}
+
+.editable-value--reading:hover:not(:disabled),
+.editable-value--reading:focus-visible {
+  border-bottom-color: var(--accent-cyan, #38bdf8);
+  background: var(--cell-hover-bg, rgba(56, 189, 248, 0.08));
+  outline: none;
+}
+
+.editable-value--reading:disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+
+.editable-value__pencil {
+  font-size: 0.7em;
+  opacity: 0;
+  transition: opacity 0.12s ease;
+  color: var(--accent-cyan, #38bdf8);
+}
+
+.editable-value--reading:hover .editable-value__pencil,
+.editable-value--reading:focus-visible .editable-value__pencil {
+  opacity: 0.9;
+}
+
+.editable-value--disabled {
+  color: var(--text-secondary, #9aa);
+}
+
+.editable-value__input {
+  font: inherit;
+  width: 6ch;
+  min-width: 4ch;
+  max-width: 12ch;
+  padding: 0.05rem 0.2rem;
+  color: var(--text-primary, #e6edf3);
+  background: var(--input-bg, #0d1117);
+  border: 1px solid var(--accent-cyan, #38bdf8);
+  border-radius: 3px;
+}
+
+.editable-value__input--invalid {
+  border-color: var(--accent-red, #f43f5e);
+  background: var(--accent-red-bg, rgba(244, 63, 94, 0.12));
+}
+
+.editable-value__unit {
+  color: var(--text-muted, #778);
+  font-size: 0.85em;
+}

@@ -38,7 +38,7 @@ class PLCFactory:
                 settings.plc_port,
             )
             return AsyncModbusManager(host=settings.plc_ip, port=settings.plc_port)
-        elif driver == "simulator":
+        elif driver in ("simulator", "simulated"):
             logger.info("Instantiating Simulated PLC Client")
             return SimulatedPLCClient()
         else:

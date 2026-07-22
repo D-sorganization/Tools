@@ -9,7 +9,7 @@ interface InterlocksPanelProps {
   deploying: boolean;
 }
 
-export const InterlocksPanel: React.FC<InterlocksPanelProps> = ({
+const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
   interlocks,
   onChange,
   onDeploy,
@@ -120,3 +120,9 @@ export const InterlocksPanel: React.FC<InterlocksPanelProps> = ({
     </div>
   );
 };
+
+/**
+ * Memoized so the interlocks editor skips re-render when its `interlocks` /
+ * `onChange` / `onDeploy` / `deploying` props are unchanged.
+ */
+export const InterlocksPanel = React.memo(InterlocksPanelImpl);

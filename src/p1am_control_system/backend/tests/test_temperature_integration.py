@@ -33,7 +33,11 @@ from temperature_integration import (  # noqa: E402
     TemperatureService,
     create_temperature_router,
 )
-from temperature_models import TemperatureConfig, TemperatureState  # noqa: E402
+from temperature_models import (  # noqa: E402
+    TcType,
+    TemperatureConfig,
+    TemperatureState,
+)
 
 
 class _FakePLC:
@@ -62,7 +66,7 @@ class TestTemperatureServicePoll:
             assert status.measured_temp_c == 0.0
             assert status.relay_on is False
             assert status.state == TemperatureState.IDLE
-            plc.write_coil.assert_awaited_with(hardware.HEATER_RELAY_COIL, False)
+            plc.write_coil.assert_any_await(hardware.HEATER_RELAY_COIL, False)
 
         asyncio.run(_go())
 
@@ -84,7 +88,7 @@ class TestTemperatureServicePoll:
             # Measured well below (setpoint - deadband) -> heater should close.
             status = await svc.poll({"TAG_0": 0.0})
             assert status.relay_on is True
-            plc.write_coil.assert_awaited_with(hardware.HEATER_RELAY_COIL, True)
+            plc.write_coil.assert_any_await(hardware.HEATER_RELAY_COIL, True)
 
         asyncio.run(_go())
 
@@ -97,7 +101,7 @@ class TestTemperatureServicePoll:
             # 60 % of 1400 = 840 C, above setpoint + deadband -> relay off.
             status = await svc.poll({"TAG_0": 60.0})
             assert status.relay_on is False
-            plc.write_coil.assert_awaited_with(hardware.HEATER_RELAY_COIL, False)
+            plc.write_coil.assert_any_await(hardware.HEATER_RELAY_COIL, False)
 
         asyncio.run(_go())
 
@@ -128,7 +132,7 @@ class TestTemperatureServicePoll:
             status = await svc.poll({"TAG_0": 0.0})
             assert status.relay_on is False
             assert status.estopped is True
-            plc.write_coil.assert_awaited_with(hardware.HEATER_RELAY_COIL, False)
+            plc.write_coil.assert_any_await(hardware.HEATER_RELAY_COIL, False)
 
         asyncio.run(_go())
 
@@ -215,3 +219,268 @@ class TestRouterEndpoints:
         resp = client.post("/api/temperature/acknowledge_trip")
         assert resp.status_code == 200
         assert resp.json()["state"] == TemperatureState.IDLE
+
+
+# --------------------------------------------------------------------------
+# Active thermocouple (type K / type R) selection
+# --------------------------------------------------------------------------
+
+
+class TestActiveThermocouple:
+    def test_poll_follows_active_channel(self) -> None:
+        async def _go() -> None:
+            svc = _service()
+            # Type K active -> controller reads TAG_0.
+            status = await svc.poll({"TAG_0": 50.0, "TAG_1": 0.0})
+            assert status.measured_temp_c == pytest.approx(700.0)
+            assert status.active_tc_type == TcType.TYPE_K
+            # Switch to type R -> controller reads TAG_1 instead.
+            svc.controller.set_active_tc_type(TcType.TYPE_R)
+            status = await svc.poll({"TAG_0": 0.0, "TAG_1": 50.0})
+            assert status.measured_temp_c == pytest.approx(700.0)
+            assert status.active_tc_type == TcType.TYPE_R
+
+        asyncio.run(_go())
+
+    def test_tc_type_endpoint_switches_active(
+        self, client_and_service: tuple[TestClient, TemperatureService]
+    ) -> None:
+        client, svc = client_and_service
+        resp = client.post("/api/temperature/tc_type", json={"active_tc_type": "R"})
+        assert resp.status_code == 200
+        assert resp.json()["active_tc_type"] == "R"
+        assert svc.controller.config.active_tc_type == TcType.TYPE_R
+
+    def test_tc_type_endpoint_rejects_unknown_type(
+        self, client_and_service: tuple[TestClient, TemperatureService]
+    ) -> None:
+        client, _ = client_and_service
+        resp = client.post("/api/temperature/tc_type", json={"active_tc_type": "X"})
+        assert resp.status_code == 422
+
+    def test_status_reports_active_tc_type(
+        self, client_and_service: tuple[TestClient, TemperatureService]
+    ) -> None:
+        client, _ = client_and_service
+        body = client.get("/api/temperature/status").json()
+        assert body["active_tc_type"] == "K"
+        assert "active_tc_label" in body
+
+
+class TestBothThermocoupleReadings:
+    """The service surfaces BOTH TC readings every scan and feeds the
+    non-controlling one to the controller as the cross-check reference."""
+
+    def test_status_reports_both_tc_temps_regardless_of_active(self) -> None:
+        async def _go() -> None:
+            svc = _service()  # type K active by default (TAG_0)
+            # K=50% -> 700 C, R=20% -> 280 C. Both reported even though K controls.
+            status = await svc.poll({"TAG_0": 50.0, "TAG_1": 20.0})
+            assert status.type_k_temp_c == pytest.approx(700.0)
+            assert status.type_r_temp_c == pytest.approx(280.0)
+            assert status.measured_temp_c == pytest.approx(700.0)  # active == K
+
+        asyncio.run(_go())
+
+    def test_both_tc_temps_none_before_first_scan(self) -> None:
+        svc = _service()
+        status = svc.status()
+        assert status.type_k_temp_c is None
+        assert status.type_r_temp_c is None
+
+    def test_no_tags_leaves_both_tc_temps_none(self) -> None:
+        async def _go() -> None:
+            svc = _service()
+            status = await svc.poll(None)
+            assert status.type_k_temp_c is None
+            assert status.type_r_temp_c is None
+
+        asyncio.run(_go())
+
+    def test_cross_check_trips_when_controlling_tc_stuck_cold(self) -> None:
+        # The type-R incident end-to-end through the service: control off K but
+        # K is stuck cold (~34 C) while R (the other TC) is genuinely hot. After
+        # the debounce the controller must latch TC_DISAGREE and open the relay.
+        async def _go() -> None:
+            from temperature_controller import _CROSS_FAULT_DEBOUNCE_SCANS
+
+            plc = _FakePLC()
+            svc = _service(plc)
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(700.0)  # RUNNING, K controls
+            # K ~34 C (2.4% of 1400) stuck cold; R ~800 C (57.1%) hot.
+            tags = {"TAG_0": 2.4, "TAG_1": 57.1}
+            status = None
+            for _ in range(_CROSS_FAULT_DEBOUNCE_SCANS):
+                status = await svc.poll(tags)
+            assert status is not None
+            assert status.state == TemperatureState.TRIPPED
+            assert "TC_DISAGREE" in status.trips
+            assert status.relay_on is False
+
+        asyncio.run(_go())
+
+    def test_switching_to_a_dead_cold_tc_while_hot_trips(self) -> None:
+        # Operator switches to control off R while R is dead-cold and the vessel
+        # (K) is hot: the cross-check catches steering onto a dead sensor.
+        async def _go() -> None:
+            from temperature_controller import _CROSS_FAULT_DEBOUNCE_SCANS
+
+            svc = _service()
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(700.0)
+            svc.set_active_tc_type(TcType.TYPE_R)  # smooth switch, stays RUNNING
+            assert svc.controller.state == TemperatureState.RUNNING
+            # R stuck cold (2.4% -> ~34 C), K hot (57.1% -> ~800 C).
+            status = None
+            for _ in range(_CROSS_FAULT_DEBOUNCE_SCANS):
+                status = await svc.poll({"TAG_0": 57.1, "TAG_1": 2.4})
+            assert status is not None
+            assert "TC_DISAGREE" in status.trips
+
+        asyncio.run(_go())
+
+
+class TestControlSensorDeglitch:
+    """The per-channel deglitch filter must stop a burnout-zero on the control
+    thermocouple from reaching the control law as a spurious 'cold', hold the
+    last-good value through the glitch, and fail safe if the fault persists."""
+
+    # 82.14 % of 1400 C ~= 1150 C.
+    HOT_PCT = 82.14
+    HOT_C = 82.14 * 1400.0 / 100.0
+
+    def test_burnout_zero_on_control_tc_is_held_not_fed_cold(self) -> None:
+        async def _go() -> None:
+            svc = _service()
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(1200.0)  # RUNNING, K controls
+            warm = await svc.poll({"TAG_0": self.HOT_PCT, "TAG_1": self.HOT_PCT})
+            assert warm.measured_temp_c == pytest.approx(self.HOT_C, abs=1)
+            # K burns out to 0 for one scan -> held at last-good, NOT 0.
+            glitch = await svc.poll({"TAG_0": 0.0, "TAG_1": self.HOT_PCT})
+            assert glitch.measured_temp_c == pytest.approx(self.HOT_C, abs=1)
+            assert glitch.control_sensor_holding is True
+            assert glitch.state == TemperatureState.RUNNING
+            assert "TC_FAULT" not in glitch.trips
+
+        asyncio.run(_go())
+
+    def test_holding_clears_on_recovery(self) -> None:
+        async def _go() -> None:
+            svc = _service()
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(1200.0)
+            await svc.poll({"TAG_0": self.HOT_PCT, "TAG_1": self.HOT_PCT})
+            held = await svc.poll({"TAG_0": 0.0, "TAG_1": self.HOT_PCT})
+            assert held.control_sensor_holding is True
+            recovered = await svc.poll({"TAG_0": 82.5, "TAG_1": self.HOT_PCT})
+            assert recovered.control_sensor_holding is False
+            assert recovered.measured_temp_c == pytest.approx(82.5 * 14, abs=1)
+
+        asyncio.run(_go())
+
+    def test_persistent_control_sensor_fault_trips_heater(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        # Drive the injected monotonic clock past the filter's hold timeout so a
+        # sustained burnout escalates to a latched TC_FAULT (fail-safe stop).
+        import temperature_integration as ti
+
+        clock = {"t": 0.0}
+        monkeypatch.setattr(ti.time, "monotonic", lambda: clock["t"])
+
+        async def _go() -> None:
+            svc = _service()
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(1200.0)
+            await svc.poll({"TAG_0": self.HOT_PCT, "TAG_1": self.HOT_PCT})
+            clock["t"] = 1.0
+            still = await svc.poll({"TAG_0": 0.0, "TAG_1": self.HOT_PCT})
+            assert still.control_sensor_holding is True
+            assert "TC_FAULT" not in still.trips  # brief glitch: still holding
+            clock["t"] = 30.0  # well past the 15 s hold timeout
+            tripped = await svc.poll({"TAG_0": 0.0, "TAG_1": self.HOT_PCT})
+            assert "TC_FAULT" in tripped.trips
+            assert tripped.state == TemperatureState.TRIPPED
+            assert tripped.relay_on is False
+
+        asyncio.run(_go())
+
+    def test_other_tc_burnout_does_not_poison_cross_check(self) -> None:
+        # Control off K (hot). The OTHER TC (R) burning out to 0 must be held, so
+        # it never looks like a spurious "cold other" — control keeps running.
+        async def _go() -> None:
+            svc = _service()
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(1200.0)
+            await svc.poll({"TAG_0": self.HOT_PCT, "TAG_1": self.HOT_PCT})
+            s = await svc.poll({"TAG_0": self.HOT_PCT, "TAG_1": 0.0})
+            assert s.type_r_temp_c == pytest.approx(self.HOT_C, abs=1)  # R held
+            assert s.state == TemperatureState.RUNNING
+            assert s.trips == []
+
+        asyncio.run(_go())
+
+
+class TestBurnoutMode:
+    """The P1-04THM open-circuit fail direction is operator-selectable, defaults
+    to fail-safe (high-side), and is re-asserted to the PLC coil each scan."""
+
+    def test_defaults_to_high_side_fail_safe(self) -> None:
+        svc = _service()
+        assert svc.burnout_high_side is True
+        assert svc.status().burnout_high_side is True
+
+    def test_set_low_side_reflects_in_status(self) -> None:
+        svc = _service()
+        assert svc.set_burnout_high_side(False) is False
+        assert svc.status().burnout_high_side is False
+
+    def test_set_rejects_non_bool(self) -> None:
+        svc = _service()
+        with pytest.raises(TypeError):
+            svc.set_burnout_high_side("high")  # type: ignore[arg-type]
+
+    def test_poll_reasserts_burnout_coil(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            svc = _service(plc)
+            svc.set_burnout_high_side(False)
+            await svc.poll({"TAG_0": 10.0})
+            plc.write_coil.assert_any_await(hardware.THM_BURNOUT_COIL, False)
+            svc.set_burnout_high_side(True)
+            await svc.poll({"TAG_0": 10.0})
+            plc.write_coil.assert_any_await(hardware.THM_BURNOUT_COIL, True)
+
+        asyncio.run(_go())
+
+    def test_endpoint_sets_mode(
+        self, client_and_service: tuple[TestClient, TemperatureService]
+    ) -> None:
+        client, svc = client_and_service
+        resp = client.post("/api/temperature/burnout_mode", json={"high_side": False})
+        assert resp.status_code == 200
+        assert resp.json()["burnout_high_side"] is False
+        assert svc.burnout_high_side is False
+
+
+class TestServiceAndTcTypeErrors:
+    def test_service_estop_engage_and_clear(self) -> None:
+        svc = _service()
+        svc.engage_estop()
+        assert svc.controller.estopped is True
+        svc.clear_estop()
+        assert svc.controller.estopped is False
+
+    def test_tc_type_endpoint_400_on_degenerate_channel(
+        self, client_and_service: tuple[TestClient, TemperatureService]
+    ) -> None:
+        client, svc = client_and_service
+        cfg = svc.controller.config.model_dump()
+        cfg["setpoint_min_c"] = 50.0
+        cfg["type_r"] = {"tag": "TAG_1", "full_scale_c": 10.0, "label": "R"}
+        assert client.put("/api/temperature/config", json=cfg).status_code == 200
+        # Switching to R clamps the band below setpoint_min -> invalid -> 400.
+        resp = client.post("/api/temperature/tc_type", json={"active_tc_type": "R"})
+        assert resp.status_code == 400

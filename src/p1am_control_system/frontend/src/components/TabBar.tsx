@@ -21,7 +21,7 @@ interface ContextMenuState {
   y: number;
 }
 
-export const TabBar: React.FC<{
+interface TabBarProps {
   activeTab: TabId;
   visibleTabs: Record<TabId, boolean>;
   onSelect: (id: TabId) => void;
@@ -31,16 +31,42 @@ export const TabBar: React.FC<{
   onReorder?: (order: TabId[]) => void;
   /** Emitted when the operator hides a tab from the right-click menu. */
   onHide?: (id: TabId) => void;
-}> = ({ activeTab, visibleTabs, onSelect, order, onReorder, onHide }) => {
+}
+
+const TabBarImpl: React.FC<TabBarProps> = ({
+  activeTab,
+  visibleTabs,
+  onSelect,
+  order,
+  onReorder,
+  onHide,
+}) => {
   const [dragId, setDragId] = useState<TabId | null>(null);
   const [menu, setMenu] = useState<ContextMenuState | null>(null);
 
   // Effective order: caller's order (known ids only) + any tabs missing from it
   // (a tab added in a new release must never be silently dropped).
   const effectiveOrder = useMemo<TabId[]>(() => {
+    // ⚡ Bolt Optimization: Replace chained .filter() array passes with single-pass for-loops and O(1) Set lookups
     const base = order && order.length ? order : defaultTabOrder();
-    const kept = base.filter((id) => TAB_BY_ID[id]);
-    const missing = defaultTabOrder().filter((id) => !kept.includes(id));
+    const kept: TabId[] = [];
+    const keptSet = new Set<TabId>();
+    for (let i = 0; i < base.length; i++) {
+      const id = base[i];
+      if (TAB_BY_ID[id]) {
+        kept.push(id);
+        keptSet.add(id);
+      }
+    }
+
+    const missing: TabId[] = [];
+    const defaults = defaultTabOrder();
+    for (let i = 0; i < defaults.length; i++) {
+      const id = defaults[i];
+      if (!keptSet.has(id)) {
+        missing.push(id);
+      }
+    }
     return [...kept, ...missing];
   }, [order]);
 
@@ -199,6 +225,13 @@ export const TabBar: React.FC<{
     </div>
   );
 };
+
+/**
+ * Memoized: the App tree re-renders on every ~10 Hz telemetry frame, but the tab
+ * bar only depends on tab order / visibility / active id. `React.memo` skips it
+ * when those props (and the App-side `useCallback` handlers) are stable.
+ */
+export const TabBar = React.memo(TabBarImpl);
 
 const MenuItem: React.FC<{
   onClick: () => void;
