@@ -23,7 +23,7 @@ const OUTPUT_LABELS = ["Analog Out V0 (V)", "Analog Out V1 (V)"];
 // (ControlDashboard, TrendChart) keep working while the source of truth is one place.
 export { TAG_INDICES };
 
-export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
+const RoutingMatrixImpl: React.FC<RoutingMatrixProps> = ({
   config,
   onUpdate,
   tagValues,
@@ -222,3 +222,9 @@ export const RoutingMatrix: React.FC<RoutingMatrixProps> = ({
     </div>
   );
 };
+
+/**
+ * Memoized so the routing crossbar only re-renders when its `config` /
+ * `tagValues` / `onUpdate` props change reference.
+ */
+export const RoutingMatrix = React.memo(RoutingMatrixImpl);

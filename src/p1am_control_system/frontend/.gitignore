@@ -1,0 +1,4 @@
+
+# Test coverage + build output (generated)
+coverage/
+dist/

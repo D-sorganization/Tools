@@ -22,7 +22,8 @@ import datetime as _dt
 import io
 import logging
 import os
-from collections.abc import Iterator
+import time
+from collections.abc import Callable, Iterator
 from typing import Any
 
 from database import DB_FILE
@@ -34,6 +35,13 @@ from sqlmodel import Session, col, select
 
 UTC = getattr(_dt, "UTC", _dt.timezone.utc)  # noqa: UP017
 TRENDS_MAX_POINTS = 50_000
+# Inclusive bounds for a caller-supplied ``max_points`` override on the trends
+# read. The floor keeps a series legible; the ceiling caps the response so a
+# pathological override cannot materialize an unbounded payload.
+TRENDS_MIN_MAX_POINTS = 10
+TRENDS_MAX_MAX_POINTS = 200_000
+# yield_per batch size while streaming the decimation cursor (memory hint only).
+TRENDS_STREAM_CHUNK_ROWS = 10_000
 EXPORT_CHUNK_ROWS = 5_000
 HISTORIAN_RETENTION_INTERVAL_S = 300.0
 
@@ -76,6 +84,70 @@ class RetentionResult(BaseModel):
     rows_deleted: int = Field(ge=0, description="Oldest tag rows purged.")
     db_bytes_before: int = Field(ge=0)
     db_bytes_after: int = Field(ge=0)
+
+
+class CaptureConfig(BaseModel):
+    """Operator-configurable historian sampling parameters."""
+
+    interval_s: float = Field(
+        ge=0.0,
+        le=3600.0,
+        description=(
+            "Minimum seconds between historian writes. 0 logs every scan; "
+            "larger values shrink the data files. The live stream is unaffected."
+        ),
+    )
+
+
+class CaptureThrottle:
+    """Rate-limits historian writes to at most one per ``interval_s``.
+
+    The scan loop calls :meth:`due` once per scan; it returns True only when at
+    least ``interval_s`` of wall-clock has elapsed since the last write it
+    approved (the first call always approves). This decouples how often data is
+    *persisted* from how often the PLC is *polled*, so the DB grows at a bounded,
+    operator-chosen rate without slowing the control/stream loop.
+
+    A clock is injected so the timing is deterministic in tests (DbC: the
+    interval setter validates type and range).
+    """
+
+    def __init__(
+        self,
+        interval_s: float,
+        *,
+        clock: Callable[[], float] = time.monotonic,
+    ) -> None:
+        self._clock = clock
+        self._last: float | None = None
+        self._interval_s = 0.0
+        self.set_interval_s(interval_s)
+
+    @property
+    def interval_s(self) -> float:
+        return self._interval_s
+
+    def set_interval_s(self, value: float) -> None:
+        """Update the minimum write period.
+
+        Raises:
+            TypeError: if value is not numeric.
+            ValueError: if value is negative or non-finite.
+        """
+        if not isinstance(value, int | float) or isinstance(value, bool):
+            raise TypeError(f"interval_s must be numeric, got {type(value).__name__}")
+        v = float(value)
+        if not (v >= 0.0) or v != v or v == float("inf"):
+            raise ValueError(f"interval_s must be a finite value >= 0, got {value}")
+        self._interval_s = v
+
+    def due(self) -> bool:
+        """Return True (and arm the next window) when a write is allowed now."""
+        now = self._clock()
+        if self._last is None or (now - self._last) >= self._interval_s:
+            self._last = now
+            return True
+        return False
 
 
 def _db_size_bytes() -> int:
@@ -145,6 +217,119 @@ def stream_tag_export_csv(
             yield line.getvalue()
 
 
+def query_trend_series(
+    session: Session,
+    *,
+    tag_name: str,
+    start: _dt.datetime,
+    end: _dt.datetime,
+    max_points: int = TRENDS_MAX_POINTS,
+) -> tuple[list[_dt.datetime], list[float], bool]:
+    """Fetch a tag's historian samples over ``[start, end]``, decimated to fit.
+
+    A naive ``DESC + LIMIT`` clips a long window to only its newest
+    ``max_points`` rows, so a multi-hour or multi-day request would silently show
+    just the most-recent slice. This instead strides evenly across the *entire*
+    ascending range, so the returned series always spans the whole window.
+
+    Contract:
+        - When the range holds at most ``max_points`` samples: returns them all,
+          ascending by timestamp, with ``truncated=False`` (unchanged behavior).
+        - When it holds more: returns approximately ``max_points`` samples evenly
+          spanning the whole ``[start, end]`` window (the first and last in-range
+          samples are always included), ascending, with ``truncated=True``.
+
+    The decimation is a ``COUNT``-then-stride over a streamed ascending cursor
+    (``yield_per``), so peak memory stays ``O(max_points)`` rather than
+    ``O(rows-in-range)`` — a 24 h window at 10 Hz is never materialized at once.
+
+    Args:
+        session: An active SQLModel session.
+        tag_name: The resolved historian tag name (e.g. ``"TAG_0"``).
+        start: Inclusive lower time bound (aware datetime).
+        end: Inclusive upper time bound (aware datetime).
+        max_points: Maximum samples to return. Defaults to ``TRENDS_MAX_POINTS``.
+
+    Returns:
+        ``(timestamps, values, truncated)`` — two equal-length, ascending lists
+        (datetimes and floats) plus the downsample flag.
+
+    Raises:
+        TypeError: If any argument is of the wrong type.
+        ValueError: If ``max_points`` is outside ``[TRENDS_MIN_MAX_POINTS,
+            TRENDS_MAX_MAX_POINTS]`` or ``start`` is after ``end``.
+    """
+    if not isinstance(session, Session):
+        raise TypeError(f"session must be a Session, got {type(session).__name__}")
+    if not isinstance(tag_name, str):
+        raise TypeError(f"tag_name must be a str, got {type(tag_name).__name__}")
+    if not isinstance(start, _dt.datetime):
+        raise TypeError(f"start must be a datetime, got {type(start).__name__}")
+    if not isinstance(end, _dt.datetime):
+        raise TypeError(f"end must be a datetime, got {type(end).__name__}")
+    # bool is an int subclass; reject it so ``max_points=True`` cannot pose as 1.
+    if isinstance(max_points, bool) or not isinstance(max_points, int):
+        raise TypeError(f"max_points must be an int, got {type(max_points).__name__}")
+    if not TRENDS_MIN_MAX_POINTS <= max_points <= TRENDS_MAX_MAX_POINTS:
+        raise ValueError(
+            f"max_points must be within [{TRENDS_MIN_MAX_POINTS}, "
+            f"{TRENDS_MAX_MAX_POINTS}], got {max_points}"
+        )
+    if start > end:
+        raise ValueError(
+            f"start ({start.isoformat()}) must not be after end ({end.isoformat()})"
+        )
+
+    # One shared filter tuple keeps the COUNT and the row cursor in lock-step.
+    where_clauses = (
+        col(TagLog.tag_name) == tag_name,
+        col(TagLog.timestamp) >= start,
+        col(TagLog.timestamp) <= end,
+    )
+    total = int(
+        session.exec(
+            select(func.count()).select_from(TagLog).where(*where_clauses)
+        ).one()
+        or 0
+    )
+    ordered = (
+        select(TagLog.timestamp, TagLog.value)
+        .where(*where_clauses)
+        .order_by(col(TagLog.timestamp).asc())
+    )
+
+    timestamps: list[_dt.datetime] = []
+    values: list[float] = []
+
+    if total <= max_points:
+        # Fits the budget: return every in-range sample verbatim, ascending.
+        for ts, value in session.exec(ordered):
+            timestamps.append(ts)
+            values.append(float(value))
+        return timestamps, values, False
+
+    # Over budget: stride across the *whole* ascending cursor. Ceil division
+    # keeps the emitted count <= max_points (+1 for the forced final sample).
+    stride = (total + max_points - 1) // max_points
+    last_index = total - 1
+    last_emitted = -1
+    last_ts: _dt.datetime | None = None
+    last_value = 0.0
+    cursor = session.exec(ordered).yield_per(TRENDS_STREAM_CHUNK_ROWS)
+    for i, (ts, value) in enumerate(cursor):
+        last_ts, last_value = ts, value
+        if i % stride == 0:
+            timestamps.append(ts)
+            values.append(float(value))
+            last_emitted = i
+    # Always include the final in-range sample so the series reaches ``end``
+    # rather than stopping up to one stride short of it.
+    if last_emitted != last_index and last_ts is not None:
+        timestamps.append(last_ts)
+        values.append(float(last_value))
+    return timestamps, values, True
+
+
 def historian_max_bytes(settings: P1AMSettings | None = None) -> int:
     """Size cap for the historian (default 2 GiB). 0 disables auto-purge."""
     return int((settings or get_settings()).historian_max_bytes)
@@ -177,6 +362,11 @@ async def historian_retention_loop(
         try:
             with Session(engine) as session:
                 enforce_size_cap(session, max_bytes)
+            # Reclaim WAL disk: a long-held reader can bloat the WAL between
+            # sweeps; TRUNCATE checkpoints it back to journal_size_limit. Runs on
+            # this background task, never the poll/event loop.
+            with engine.connect() as conn:
+                conn.exec_driver_sql("PRAGMA wal_checkpoint(TRUNCATE)")
         except Exception as ret_err:
             logger.error("Historian retention sweep failed: %s", ret_err)
 

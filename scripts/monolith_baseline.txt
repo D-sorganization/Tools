@@ -261,3 +261,11 @@ src/movement_optimizer/tests/test_swingset_chain_models.py
 src/movement_optimizer/tests/test_issue_217_decompose.py
 src/movement_optimizer/tests/test_joint_limits.py
 docs/assessments/README.md
+src/p1am_control_system/backend/tests/test_temperature_controller.py
+src/p1am_control_system/backend/data_explorer_stats.py
+src/p1am_control_system/backend/data_explorer_service.py
+src/p1am_control_system/backend/data_explorer_signals.py
+src/p1am_control_system/backend/data_capture.py
+src/p1am_control_system/backend/modbus_client.py
+src/p1am_control_system/backend/temperature_integration.py
+src/p1am_control_system/backend/temperature_controller.py
