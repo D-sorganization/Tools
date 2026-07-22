@@ -66,3 +66,6 @@
 ## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
 **Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
 **Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
+## 2024-07-29 - Extract array literals from filter callbacks
+**Learning:** Using array literals with `.includes()` inside `.filter()` callbacks (e.g., `items.filter(i => [A, B].includes(i.prop))`) causes unnecessary array allocations on every render and for every iteration of the filter loop.
+**Action:** Always extract array literals used for filtering to a static constant or Set outside the component to eliminate this allocation overhead without sacrificing readability.
