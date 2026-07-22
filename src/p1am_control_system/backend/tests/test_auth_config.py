@@ -76,7 +76,7 @@ def test_require_api_key_401_when_key_wrong(
 ) -> None:
     monkeypatch.setenv("P1AM_API_KEY", _OPERATOR_KEY)
     with pytest.raises(HTTPException) as excinfo:
-        require_api_key(api_key="not-the-key")
+        require_api_key(api_key="not-the-key")  # pragma: allowlist secret
     assert excinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
 
 
@@ -164,7 +164,7 @@ def test_require_admin_key_401_with_wrong_key_when_no_admin_set(
 ) -> None:
     monkeypatch.setenv("P1AM_API_KEY", _OPERATOR_KEY)
     with pytest.raises(HTTPException) as excinfo:
-        require_admin_key(api_key="not-the-key")
+        require_admin_key(api_key="not-the-key")  # pragma: allowlist secret
     assert excinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
 
 
