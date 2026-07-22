@@ -461,7 +461,7 @@ def _restore_persisted_settings(session: Session) -> None:
     try:
         cap = load_config(session, "capture")
         if cap and "interval_s" in cap:
-            capture_throttle.set_interval_s(float(cap["interval_s"]))  # type: ignore[arg-type]
+            capture_throttle.set_interval_s(float(cap["interval_s"]))
     except Exception as exc:  # noqa: BLE001
         logger.warning("Capture-interval recall skipped: %s", exc)
     try:

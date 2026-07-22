@@ -13,7 +13,7 @@ import asyncio
 import logging
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 from unittest.mock import AsyncMock
 
 import pytest
@@ -90,7 +90,9 @@ class TestImmediateStop:
         async def _go() -> None:
             svc = _service()
             with pytest.raises(TypeError):
-                await svc.set_permissive("nope")  # type: ignore[arg-type]
+                # cast so mypy accepts the arg under both full + skip modes; the
+                # str still trips the runtime type guard we're asserting.
+                await svc.set_permissive(cast(bool, "nope"))
 
         asyncio.run(_go())
 

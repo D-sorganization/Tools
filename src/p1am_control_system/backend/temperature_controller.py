@@ -62,6 +62,11 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
     previous state inside the band.
     """
 
+    # Concrete state type for the checker. The SafetyStateMachine base is generic
+    # (``_state: StateT``); naming the resolved type here also keeps it typed
+    # under CI's mypy --follow-imports=skip, where the base module is elided.
+    _state: TemperatureState
+
     def __init__(self, config: TemperatureConfig) -> None:
         if not isinstance(config, TemperatureConfig):
             raise TypeError(
@@ -382,7 +387,7 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
 
     def _should_force_relay_off(self) -> bool:
         """All "kill the heater now" conditions in one place."""
-        return self._should_force_actuator_off()
+        return bool(self._should_force_actuator_off())
 
     def _set_relay(self, on: bool, now: float | None) -> None:
         """Apply a commanded relay state, recording the switch time so the
