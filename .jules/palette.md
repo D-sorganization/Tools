@@ -29,3 +29,6 @@
 ## 2024-05-24 - Form Submissions for Keyboard Users
 **Learning:** Wrapping a collection of data entry fields in a native `<form>` element instead of a `<div>` instantly enables native "Enter" key form submission, which is critical for heavy data-entry applications. Users don't need to manually tab to the calculate button.
 **Action:** For all data-entry calculators or settings panels, always use a `<form onSubmit={...}>` structure instead of binding `onClick` directly to the submit button.
+## 2024-05-31 - Tab Roles vs aria-pressed
+**Learning:** When implementing custom tab components in React, use `role="tab"` paired strictly with `aria-selected` (not `aria-pressed`, which is intended for toggle buttons) and ensure `aria-controls` points to a valid `role="tabpanel"` container whose `aria-labelledby` points back to the tab.
+**Action:** When adding accessible properties to custom tabs, replace `aria-pressed` with `aria-selected`, ensure a `role="tablist"` wrapper is present, and correctly cross-reference `aria-controls` with the tab panel IDs.
