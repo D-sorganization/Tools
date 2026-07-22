@@ -2575,3 +2575,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.413 - Optimized Nelder-Mead loop in `optimizer.ts`
 
 - **2026-06-21**: perf(pendulum) — Replaced `Array.prototype.sort` with manual insertion sort in `nelderMead` loop in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate callback invocation overhead.
+
+## 1.1.414 - Security: Structural validation for SymPy parse_expr
+
+- **2026-07-14**: fix(security) — Added structural validation to the symbolic solver backend endpoints (`/solve`, `/derivative`, `/simplify`) before handing untrusted user input to `sympy.parse_expr`. This mitigates a critical code injection vulnerability where malicious AST constructs (e.g. `().__class__`) could be executed due to `parse_expr`'s internal use of `eval`.

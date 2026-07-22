@@ -145,13 +145,14 @@ class _LadderExplorerSession:
         raise AssertionError("get_ladder_explorer should preload parent lookups")
 
 
-@pytest.mark.asyncio
-async def test_ladder_explorer_preloads_parent_lookup_tables() -> None:
+def test_ladder_explorer_preloads_parent_lookup_tables() -> None:
+    # get_ladder_explorer is a sync (threadpool-offloaded) route handler, so it
+    # is called directly rather than awaited.
     from main import get_ladder_explorer
 
     session = _LadderExplorerSession()
 
-    result = await get_ladder_explorer(db=session)
+    result = get_ladder_explorer(db=session)
 
     assert session.exec_count == 4
     assert session.get_count == 0

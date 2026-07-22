@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61.0,<83", "wheel"]
+requires = ["setuptools>=61.0,<84", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -104,7 +104,7 @@ terminal = [
 
 # CAD geometry export (build123d pulls in its own matplotlib and PyQt6)
 cad = [
-    "build123d==0.11.0",
+    "build123d==0.11.1",
 ]
 # DWSIM gasification model
 dwsim = [
@@ -114,7 +114,7 @@ dwsim = [
 # Repo-aware code map (tree-sitter symbol index + SQLite FTS5).
 # See: docs/codemap.md and chat_codemap_design.md
 codemap = [
-    "tree-sitter>=0.21,<0.26",
+    "tree-sitter>=0.21,<0.27",
     "tree-sitter-python>=0.21",
     "tree-sitter-javascript>=0.21",
     "tree-sitter-typescript>=0.21",

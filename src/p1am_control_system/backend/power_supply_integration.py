@@ -1,11 +1,27 @@
-"""FastAPI and PLC integration for the P1AM power-supply controller."""
+"""FastAPI and PLC integration for the P1AM power-supply controller.
+
+Wires the pure :class:`PowerSupplyController` to the live PLC and, when a
+``session_factory`` is supplied, persists the operator's control *settings*
+(config + last setpoint) to the durable config store so the supply comes back
+with the last session's configuration after a restart. Mirrors
+``temperature_integration.py`` so the two control subsystems share one shape
+(LOD: this layer talks only to the controller, the PLC client's public seam, and
+the config-store public functions — never their internals).
+
+Safety scope: persistence stores **settings only**. Restoring on boot applies
+the config/limits and stashes the last setpoint for HMI pre-fill; it NEVER arms
+or energizes the output — the controller stays IDLE until the operator re-enables
+permissive and re-commands a setpoint.
+"""
 
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from typing import Any
 
 from auth_config import require_admin_key
+from config_store import load_config, load_model, save_model
 from fastapi import APIRouter, Depends, HTTPException
 from power_supply import (
     PowerSupplyConfig,
@@ -13,16 +29,78 @@ from power_supply import (
     PowerSupplyMode,
     PowerSupplyStatus,
 )
+from power_supply_models import PowerSupplyLastSetpoint
 from pydantic import BaseModel
+
+__all__ = [
+    "PowerSupplyPermissiveRequest",
+    "PowerSupplyService",
+    "PowerSupplySetpointRequest",
+    "create_power_supply_router",
+]
+
+# Durable-store keys for the power-supply operator settings. Kept as module
+# constants (DRY) so the service and any future reader agree on the exact names.
+_CONFIG_KEY = "power_config"
+_SETPOINT_KEY = "power_setpoint"
 
 
 class PowerSupplyService:
     """Owns the controller and applies its command to the PLC PID pass-through."""
 
-    def __init__(self, plc_client: Any, logger: logging.Logger) -> None:
+    def __init__(
+        self,
+        plc_client: Any,
+        logger: logging.Logger,
+        session_factory: Callable[[], Any] | None = None,
+    ) -> None:
+        """Create the service.
+
+        Args:
+            plc_client: PLC client exposing the public ``write_pid_setpoint`` seam.
+            logger: Logger for best-effort write/persist diagnostics.
+            session_factory: Optional zero-arg callable returning a
+                context-managed SQLModel ``Session`` (e.g. ``lambda: Session(engine)``).
+                When ``None`` the service skips all persistence — so tests and
+                deployments without a DB behave exactly as before.
+
+        Raises:
+            TypeError: if ``session_factory`` is provided but is not callable.
+        """
+        if session_factory is not None and not callable(session_factory):
+            raise TypeError(
+                "session_factory must be callable or None, got "
+                f"{type(session_factory).__name__}"
+            )
         self.controller = PowerSupplyController(PowerSupplyConfig())
         self._plc_client = plc_client
         self._logger = logger
+        self._session_factory = session_factory
+        # Operator's last commanded setpoint, recalled on boot for HMI pre-fill.
+        # Purely informational: it never arms or energizes the output.
+        self._last_setpoint: PowerSupplyLastSetpoint | None = None
+        # Defense-in-depth E-stop interlock, independent of the controller's own
+        # latch: when set, ``_write_pid_setpoint`` forces the AO command to 0 and
+        # surfaces a failed de-energize as a comms failure. Set by the poll loop.
+        self._estop_active = False
+        # Latched True when a commanded de-energize (0) write failed even after a
+        # retry, so the caller can escalate a comms alarm.
+        self._deenergize_comms_failed = False
+
+    @property
+    def deenergize_comms_failed(self) -> bool:
+        """True when the last commanded AO-zero write failed after retry."""
+        return self._deenergize_comms_failed
+
+    def set_estop_active(self, active: bool) -> None:
+        """Set the service-level E-stop write-seam interlock.
+
+        Raises:
+            TypeError: if ``active`` is not a bool.
+        """
+        if not isinstance(active, bool):
+            raise TypeError(f"active must be a bool, got {type(active).__name__}")
+        self._estop_active = active
 
     async def poll(self, tags: dict[str, float] | None) -> PowerSupplyStatus:
         """Feed measured tags into the controller and write the AO command."""
@@ -42,6 +120,148 @@ class PowerSupplyService:
     def clear_estop(self) -> None:
         """Release the controller's E-stop latch (operator must re-arm)."""
         self.controller.clear_estop()
+
+    def status(self) -> PowerSupplyStatus:
+        """Return the controller status with the recalled last setpoint attached.
+
+        The controller owns the live snapshot; the service overlays the
+        operator's last commanded setpoint (recalled from durable storage on
+        boot, or updated on each ``set_*_setpoint`` call) so the HMI can pre-fill.
+        Purely informational — never arms or energizes the output.
+        """
+        snapshot = self.controller.status()
+        snapshot.last_setpoint = self._last_setpoint
+        return snapshot
+
+    @property
+    def last_setpoint(self) -> PowerSupplyLastSetpoint | None:
+        """The operator's last commanded setpoint recalled/updated for HMI use."""
+        return self._last_setpoint
+
+    def update_config(self, new_config: PowerSupplyConfig) -> PowerSupplyConfig:
+        """Apply an operator config change and persist it (best-effort).
+
+        Delegates to the controller (which validates and re-clamps) and then, when
+        a ``session_factory`` is set, durably stores the new config under
+        ``"power_config"`` so it survives a restart.
+
+        Args:
+            new_config: A fully-validated :class:`PowerSupplyConfig`.
+
+        Returns:
+            The controller's active config after the update.
+
+        Raises:
+            TypeError: if ``new_config`` is not a ``PowerSupplyConfig`` (raised by
+                the controller).
+        """
+        self.controller.update_config(new_config)
+        applied = self.controller.config
+        self._persist_model(_CONFIG_KEY, applied)
+        return applied
+
+    def set_current_setpoint(self, value_a: float) -> float:
+        """Apply a current setpoint and persist it (best-effort).
+
+        Delegates to the controller (which validates, clamps, and may reject the
+        change depending on state) and then persists the operator's intent under
+        ``"power_setpoint"`` so the HMI can recall it after a restart.
+
+        Args:
+            value_a: Desired current setpoint in amps.
+
+        Returns:
+            The clamped current the controller would apply.
+
+        Raises:
+            TypeError: if ``value_a`` is not numeric.
+            ValueError: if ``value_a`` is NaN or infinite.
+        """
+        applied = float(self.controller.set_current_setpoint(value_a))
+        self._record_setpoint(
+            PowerSupplyLastSetpoint(mode=PowerSupplyMode.CURRENT, value_a=value_a)
+        )
+        return applied
+
+    def set_power_setpoint(self, value_w: float) -> float:
+        """Apply a power setpoint and persist it (best-effort).
+
+        Delegates to the controller and persists the operator's intent under
+        ``"power_setpoint"`` for HMI recall.
+
+        Args:
+            value_w: Desired power setpoint in watts.
+
+        Returns:
+            The achievable power given clamping.
+
+        Raises:
+            TypeError: if ``value_w`` is not numeric.
+            ValueError: if ``value_w`` is NaN, infinite, or negative.
+        """
+        achievable = float(self.controller.set_power_setpoint(value_w))
+        self._record_setpoint(
+            PowerSupplyLastSetpoint(mode=PowerSupplyMode.POWER, value_w=value_w)
+        )
+        return achievable
+
+    def set_permissive(self, enabled: bool) -> PowerSupplyStatus:
+        """Toggle permissive on the controller and return the service status.
+
+        Permissive is a live operator control (arming intent), not a persisted
+        setting — restoring on boot must never re-arm — so it is deliberately not
+        written to the durable store.
+
+        Raises:
+            TypeError: if ``enabled`` is not exactly a bool.
+        """
+        self.controller.set_permissive(enabled)
+        return self.status()
+
+    def restore_persisted(self, session: Any) -> None:
+        """Load and apply persisted operator settings (best-effort, boot-only).
+
+        Applies the stored config to the controller and stashes the last
+        setpoint for HMI pre-fill. SAFETY: this NEVER arms or energizes the
+        output — it does not call ``set_permissive`` nor push a setpoint into the
+        controller, so the controller stays IDLE. Any error is swallowed so a
+        corrupt/legacy blob can only fall back to defaults, never block startup.
+
+        Args:
+            session: An active SQLModel session bound to the config DB.
+        """
+        try:
+            cfg = load_model(session, _CONFIG_KEY, PowerSupplyConfig)
+            if cfg is not None:
+                self.controller.update_config(cfg)
+        except Exception as exc:  # noqa: BLE001 - never block boot on restore
+            self._logger.warning("power config restore skipped: %s", exc)
+        try:
+            data = load_config(session, _SETPOINT_KEY)
+            if data is not None:
+                self._last_setpoint = PowerSupplyLastSetpoint(**data)
+        except Exception as exc:  # noqa: BLE001 - never block boot on restore
+            self._logger.warning("power setpoint restore skipped: %s", exc)
+
+    def _record_setpoint(self, setpoint: PowerSupplyLastSetpoint) -> None:
+        """Update the in-memory last setpoint and persist it (best-effort)."""
+        self._last_setpoint = setpoint
+        self._persist_model(_SETPOINT_KEY, setpoint)
+
+    def _persist_model(self, key: str, model: BaseModel) -> None:
+        """Persist ``model`` under ``key`` when a session factory is configured.
+
+        No-op when ``session_factory`` is ``None``. Best-effort: a persistence
+        failure is logged, never raised, so an operator command always succeeds
+        even if the durable store is momentarily unavailable.
+        """
+        if self._session_factory is None:
+            return
+        try:
+            with self._session_factory() as session:
+                save_model(session, key, model)
+        except Exception as exc:  # noqa: BLE001 - persistence must not break control
+            self._logger.error("persisting %r failed: %s", key, exc)
 
     def _inputs_from_tags(
         self,
@@ -65,8 +285,38 @@ class PowerSupplyService:
         the client's private connection/lock or hand-rolls the register encoding
         (which had diverged from modbus_client.float_to_registers). Works for the
         real Modbus client and the simulator alike.
+
+        Defense-in-depth interlock: when the service E-stop flag is set, an
+        energizing (non-zero) command is forced to 0 here regardless of what the
+        controller returned, independent of the controller's own latch. The
+        de-energizing direction (0) is never blocked. A failed de-energize write
+        is retried once; if it still fails ``_deenergize_comms_failed`` is
+        latched so the caller can escalate a comms alarm. A successful write
+        clears it.
         """
-        return bool(await self._plc_client.write_pid_setpoint(pid_index, value))
+        if self._estop_active and value != 0.0:
+            self._logger.warning("PID setpoint energize forced to 0 — E-stop interlock")
+            value = 0.0
+        deenergize = value == 0.0
+        attempts = 2 if deenergize else 1
+        for attempt in range(attempts):
+            try:
+                ok = bool(await self._plc_client.write_pid_setpoint(pid_index, value))
+            except Exception as exc:  # best-effort: never abort the scan loop
+                self._logger.error("PID setpoint write failed: %s", exc)
+                ok = False
+            if ok:
+                if deenergize:
+                    self._deenergize_comms_failed = False
+                return True
+            if deenergize and attempt + 1 < attempts:
+                self._logger.error("PID setpoint de-energize FAILED — retrying")
+        if deenergize:
+            self._deenergize_comms_failed = True
+            self._logger.error(
+                "PID setpoint de-energize FAILED after retry — comms alarm"
+            )
+        return False
 
 
 class PowerSupplySetpointRequest(BaseModel):
@@ -97,12 +347,11 @@ def create_power_supply_router(service: PowerSupplyService) -> APIRouter:
     async def update_power_supply_config(
         new_config: PowerSupplyConfig,
     ) -> PowerSupplyConfig:
-        controller.update_config(new_config)
-        return controller.config
+        return service.update_config(new_config)
 
     @router.get("/status", response_model=PowerSupplyStatus)
     async def get_power_supply_status() -> PowerSupplyStatus:
-        return controller.status()
+        return service.status()
 
     @router.post("/setpoint", dependencies=[Depends(require_admin_key)])
     async def apply_power_supply_setpoint(
@@ -115,7 +364,7 @@ def create_power_supply_router(service: PowerSupplyService) -> APIRouter:
                     detail="value_a is required when mode='current'",
                 )
             try:
-                applied = controller.set_current_setpoint(req.value_a)
+                applied = service.set_current_setpoint(req.value_a)
             except (TypeError, ValueError) as exc:
                 raise HTTPException(status_code=400, detail=str(exc)) from exc
             return {"mode": "current", "applied_a": applied}
@@ -126,7 +375,7 @@ def create_power_supply_router(service: PowerSupplyService) -> APIRouter:
                 detail="value_w is required when mode='power'",
             )
         try:
-            achievable = controller.set_power_setpoint(req.value_w)
+            achievable = service.set_power_setpoint(req.value_w)
         except (TypeError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return {"mode": "power", "achievable_w": achievable}
@@ -135,8 +384,7 @@ def create_power_supply_router(service: PowerSupplyService) -> APIRouter:
     async def set_power_supply_permissive(
         req: PowerSupplyPermissiveRequest,
     ) -> PowerSupplyStatus:
-        controller.set_permissive(req.enabled)
-        return controller.status()
+        return service.set_permissive(req.enabled)
 
     @router.post("/acknowledge_trip", dependencies=[Depends(require_admin_key)])
     async def acknowledge_power_supply_trip() -> PowerSupplyStatus:

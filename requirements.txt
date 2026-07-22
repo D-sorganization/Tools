@@ -3,7 +3,7 @@
 # Regenerate lock: pip install -r requirements.txt && pip freeze > requirements-lock.txt
 
 # Core Scientific Computing
-numpy>=2.0.1  # Fundamental array processing and matrix operations
+numpy>=2.0.1,<2.4.0  # Fundamental array processing and matrix operations; numpy 2.4+ ships PEP 695 syntax in its bundled __init__.pyi stub, which crashes mypy 1.13.0's incremental cache serializer (AssertionError: unresolved placeholder type) under this repo's python_version=3.11 mypy config
 pandas>=2.2.2  # Data analysis, manipulation, and time series
 pytz>=2026.2  # Timezone library required by pandas>=2.3.1
 scipy>=1.13.1,<1.18  # Scientific algorithms (integration, optimization)
@@ -30,6 +30,7 @@ PyOpenGL_accelerate>=3.1.10  # Accelerated OpenGL extensions
 
 # Web Applications
 flask>=3.0.0  # Web framework for building web applications
+flask-limiter>=3.5.0  # Rate limiting for Flask apps (used by calculator API tests)
 
 # Data Validation & Serialization
 pydantic>=2.0.0  # Data validation using Python type annotations
@@ -44,4 +45,4 @@ pygments>=2.20.0,<2.21.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via
 pyyaml>=6.0.1  # YAML parser and emitter
 
 # Web Automation & Testing
-playwright>=1.60.0  # Browser automation and testing framework
+playwright>=1.61.0  # Browser automation and testing framework

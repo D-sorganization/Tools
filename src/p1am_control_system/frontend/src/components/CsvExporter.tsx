@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Download, FileText } from "lucide-react";
 import type { TriggerNotification } from "../types";
+import { buildExportUrl } from "../lib/dataExport";
 
 /** Local datetime-local default string offset by `minutesAgo` from now. */
 function localDateTimeInput(minutesAgo: number): string {
@@ -28,25 +29,25 @@ export const CsvExporter: React.FC<{
   );
 
   const handleDownloadCSV = () => {
-    const startISO = new Date(exportStart).toISOString();
-    const endISO = new Date(exportEnd).toISOString();
-    const cleanedTags = exportTags
+    const tags = exportTags
       .split(",")
       .map((s) => s.trim())
-      .filter(Boolean)
-      .join(",");
+      .filter(Boolean);
 
-    if (!cleanedTags) {
+    if (tags.length === 0) {
       triggerNotification("Please enter at least one Tag ID.", "error");
       return;
     }
 
-    const url = `/api/export?tag_ids=${encodeURIComponent(
-      cleanedTags,
-    )}&start_time=${encodeURIComponent(startISO)}&end_time=${encodeURIComponent(
-      endISO,
-    )}`;
-    window.open(url, "_blank");
+    try {
+      const url = buildExportUrl(tags, {
+        startMs: new Date(exportStart).getTime(),
+        endMs: new Date(exportEnd).getTime(),
+      });
+      window.open(url, "_blank", "noopener");
+    } catch {
+      triggerNotification("End time must be after start time.", "error");
+    }
   };
 
   return (
@@ -65,10 +66,17 @@ export const CsvExporter: React.FC<{
         <FileText size={14} color="var(--accent-purple)" />
         <span>CSV Data Exporter</span>
       </h3>
-      <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+      <form
+        style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleDownloadCSV();
+        }}
+      >
         <div className="input-group">
-          <label className="input-label">Tags (comma-separated)</label>
+          <label htmlFor="csv-tags" className="input-label">Tags (comma-separated)</label>
           <input
+            id="csv-tags"
             type="text"
             className="form-input"
             value={exportTags}
@@ -77,8 +85,9 @@ export const CsvExporter: React.FC<{
           />
         </div>
         <div className="input-group">
-          <label className="input-label">Start Time</label>
+          <label htmlFor="csv-start" className="input-label">Start Time</label>
           <input
+            id="csv-start"
             type="datetime-local"
             className="form-input"
             value={exportStart}
@@ -86,8 +95,9 @@ export const CsvExporter: React.FC<{
           />
         </div>
         <div className="input-group">
-          <label className="input-label">End Time</label>
+          <label htmlFor="csv-end" className="input-label">End Time</label>
           <input
+            id="csv-end"
             type="datetime-local"
             className="form-input"
             value={exportEnd}
@@ -95,15 +105,14 @@ export const CsvExporter: React.FC<{
           />
         </div>
         <button
-          type="button"
-          onClick={handleDownloadCSV}
+          type="submit"
           className="btn"
           style={{ width: "100%", padding: "0.45rem", fontSize: "0.8rem" }}
         >
           <Download size={14} />
           Export Log Data
         </button>
-      </div>
+      </form>
     </div>
   );
 };

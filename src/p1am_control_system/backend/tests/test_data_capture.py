@@ -22,15 +22,19 @@ UTC = getattr(_dt, "UTC", _dt.timezone.utc)  # noqa: UP017
 
 import data_capture  # noqa: E402
 from data_capture import (  # noqa: E402
+    TRENDS_MAX_MAX_POINTS,
+    TRENDS_MIN_MAX_POINTS,
     CaptureStats,
     capture_stats,
     clear_capture,
     enforce_size_cap,
     parse_query_bound,
     parse_tag_names,
+    query_trend_series,
     stream_tag_export_csv,
 )
 from models import EventLog, TagLog  # noqa: E402
+from pydantic import ValidationError  # noqa: E402
 from sqlalchemy import StaticPool  # noqa: E402
 from sqlmodel import Session, SQLModel, create_engine, select  # noqa: E402
 
@@ -225,3 +229,267 @@ class TestEnforceSizeCap:
     def test_rejects_bad_headroom(self, session: Session) -> None:
         with pytest.raises(ValueError):
             enforce_size_cap(session, max_bytes=1000, headroom=1.5)
+
+
+class _FakeClock:
+    """Deterministic monotonic clock for throttle tests."""
+
+    def __init__(self) -> None:
+        self.t = 0.0
+
+    def __call__(self) -> float:
+        return self.t
+
+
+class TestCaptureThrottle:
+    def test_first_call_is_always_due(self) -> None:
+        thr = data_capture.CaptureThrottle(5.0, clock=_FakeClock())
+        assert thr.due() is True
+
+    def test_holds_off_until_interval_elapses(self) -> None:
+        clk = _FakeClock()
+        thr = data_capture.CaptureThrottle(5.0, clock=clk)
+        assert thr.due() is True  # t=0 -> log
+        clk.t = 3.0
+        assert thr.due() is False  # 3 s < 5 s
+        clk.t = 5.0
+        assert thr.due() is True  # 5 s >= 5 s (inclusive) -> log
+        clk.t = 9.0
+        assert thr.due() is False  # 4 s since last
+        clk.t = 10.0
+        assert thr.due() is True  # 5 s since last -> log
+
+    def test_zero_interval_logs_every_call(self) -> None:
+        thr = data_capture.CaptureThrottle(0.0, clock=_FakeClock())
+        assert [thr.due(), thr.due(), thr.due()] == [True, True, True]
+
+    def test_set_interval_takes_effect(self) -> None:
+        clk = _FakeClock()
+        thr = data_capture.CaptureThrottle(5.0, clock=clk)
+        assert thr.due() is True
+        thr.set_interval_s(1.0)
+        assert thr.interval_s == 1.0
+        clk.t = 1.0
+        assert thr.due() is True
+
+    def test_set_interval_validates(self) -> None:
+        thr = data_capture.CaptureThrottle(5.0)
+        with pytest.raises(TypeError):
+            thr.set_interval_s("nope")  # type: ignore[arg-type]
+        with pytest.raises(TypeError):
+            thr.set_interval_s(True)  # bool is not an accepted numeric
+        with pytest.raises(ValueError):
+            thr.set_interval_s(-1.0)
+        with pytest.raises(ValueError):
+            thr.set_interval_s(float("inf"))
+        with pytest.raises(ValueError):
+            thr.set_interval_s(float("nan"))
+
+    def test_config_model_validates_bounds(self) -> None:
+        assert data_capture.CaptureConfig(interval_s=5.0).interval_s == 5.0
+        with pytest.raises(ValidationError):
+            data_capture.CaptureConfig(interval_s=-1.0)
+        with pytest.raises(ValidationError):
+            data_capture.CaptureConfig(interval_s=10_000.0)  # exceeds le=3600
+
+
+def _bare(dt: _dt.datetime) -> _dt.datetime:
+    """Drop tzinfo for comparison — SQLite round-trips datetimes tz-naive."""
+    return dt.replace(tzinfo=None)
+
+
+def _seed_series(
+    s: Session,
+    *,
+    tag_name: str,
+    base: _dt.datetime,
+    n: int,
+    step_s: float = 1.0,
+    reverse: bool = False,
+) -> tuple[_dt.datetime, _dt.datetime]:
+    """Insert ``n`` evenly-spaced rows for ``tag_name`` and return (start, end).
+
+    ``value`` encodes the sample index so ascending-order assertions can verify
+    which physical row was picked. ``reverse`` inserts newest-first to prove the
+    query re-sorts by timestamp rather than trusting insertion order.
+    """
+    order = range(n - 1, -1, -1) if reverse else range(n)
+    for i in order:
+        s.add(
+            TagLog(
+                tag_name=tag_name,
+                value=float(i),
+                timestamp=base + _dt.timedelta(seconds=i * step_s),
+            )
+        )
+    s.commit()
+    return base, base + _dt.timedelta(seconds=(n - 1) * step_s)
+
+
+class TestQueryTrendSeries:
+    _BASE = _dt.datetime(2026, 1, 1, tzinfo=UTC)
+
+    def test_small_range_returns_everything_ascending_untruncated(
+        self, session: Session
+    ) -> None:
+        start, end = _seed_series(session, tag_name="TAG_0", base=self._BASE, n=5)
+        timestamps, values, truncated = query_trend_series(
+            session, tag_name="TAG_0", start=start, end=end
+        )
+        assert truncated is False
+        assert len(timestamps) == 5
+        assert values == [0.0, 1.0, 2.0, 3.0, 4.0]  # ascending by time
+        assert timestamps == sorted(timestamps)
+        assert _bare(timestamps[0]) == _bare(start)
+        assert _bare(timestamps[-1]) == _bare(end)
+
+    def test_reversed_insert_still_returns_ascending(self, session: Session) -> None:
+        start, end = _seed_series(
+            session, tag_name="TAG_0", base=self._BASE, n=6, reverse=True
+        )
+        timestamps, values, _ = query_trend_series(
+            session, tag_name="TAG_0", start=start, end=end
+        )
+        assert values == [0.0, 1.0, 2.0, 3.0, 4.0, 5.0]
+        assert timestamps == sorted(timestamps)
+
+    def test_empty_range_returns_empty_untruncated(self, session: Session) -> None:
+        timestamps, values, truncated = query_trend_series(
+            session,
+            tag_name="TAG_0",
+            start=self._BASE,
+            end=self._BASE + _dt.timedelta(hours=1),
+        )
+        assert timestamps == []
+        assert values == []
+        assert truncated is False
+
+    def test_large_range_spans_whole_window_not_newest_slice(
+        self, session: Session
+    ) -> None:
+        # Regression guard for the DESC+LIMIT bug: 1000 rows over ~1000 s,
+        # decimated to 100. A newest-slice implementation would return points
+        # clustered at the END (value ~900..999); a correct decimation spans the
+        # WHOLE window, so the first point must be at/near the start.
+        start, end = _seed_series(session, tag_name="TAG_0", base=self._BASE, n=1000)
+        timestamps, values, truncated = query_trend_series(
+            session, tag_name="TAG_0", start=start, end=end, max_points=100
+        )
+        assert truncated is True
+        assert 50 <= len(timestamps) <= 101  # ~max_points (+1 forced endpoint)
+        assert timestamps == sorted(timestamps)  # ascending, de-duplicated stride
+        # The whole span is covered: first sample at the range start, last at end.
+        assert _bare(timestamps[0]) == _bare(start)
+        assert values[0] == 0.0
+        assert _bare(timestamps[-1]) == _bare(end)
+        assert values[-1] == 999.0
+        # The series must reach deep into the FIRST half — impossible if it were
+        # clipped to only the newest ~100 rows.
+        assert values[1] < 100.0
+
+    def test_five_x_max_points_is_truncated_and_spans(self, session: Session) -> None:
+        start, end = _seed_series(session, tag_name="TAG_0", base=self._BASE, n=500)
+        timestamps, values, truncated = query_trend_series(
+            session, tag_name="TAG_0", start=start, end=end, max_points=100
+        )
+        assert truncated is True
+        assert len(timestamps) <= 101
+        assert _bare(timestamps[0]) == _bare(start)
+        assert _bare(timestamps[-1]) == _bare(end)
+
+    def test_exact_max_points_returns_all_untruncated(self, session: Session) -> None:
+        start, end = _seed_series(session, tag_name="TAG_0", base=self._BASE, n=100)
+        timestamps, _, truncated = query_trend_series(
+            session, tag_name="TAG_0", start=start, end=end, max_points=100
+        )
+        assert truncated is False
+        assert len(timestamps) == 100
+
+    def test_one_over_max_points_is_truncated(self, session: Session) -> None:
+        start, end = _seed_series(session, tag_name="TAG_0", base=self._BASE, n=101)
+        _, _, truncated = query_trend_series(
+            session, tag_name="TAG_0", start=start, end=end, max_points=100
+        )
+        assert truncated is True
+
+    def test_only_selected_tag_is_returned(self, session: Session) -> None:
+        start, end = _seed_series(session, tag_name="TAG_0", base=self._BASE, n=4)
+        _seed_series(session, tag_name="TAG_1", base=self._BASE, n=4)
+        _, values, _ = query_trend_series(
+            session, tag_name="TAG_0", start=start, end=end
+        )
+        assert len(values) == 4  # TAG_1 rows excluded by the filter
+
+    # -- DbC ---------------------------------------------------------------- #
+
+    def test_rejects_non_session(self) -> None:
+        with pytest.raises(TypeError):
+            query_trend_series(
+                object(),
+                tag_name="TAG_0",
+                start=self._BASE,
+                end=self._BASE,
+            )
+
+    def test_rejects_non_str_tag_name(self, session: Session) -> None:
+        with pytest.raises(TypeError):
+            query_trend_series(
+                session,
+                tag_name=123,
+                start=self._BASE,
+                end=self._BASE,
+            )
+
+    def test_rejects_non_datetime_bounds(self, session: Session) -> None:
+        with pytest.raises(TypeError):
+            query_trend_series(
+                session,
+                tag_name="TAG_0",
+                start="2026-01-01",
+                end=self._BASE,
+            )
+        with pytest.raises(TypeError):
+            query_trend_series(
+                session,
+                tag_name="TAG_0",
+                start=self._BASE,
+                end="2026-01-01",
+            )
+
+    def test_rejects_bool_max_points(self, session: Session) -> None:
+        # bool is an int subclass; it must not slip through as max_points=1.
+        with pytest.raises(TypeError):
+            query_trend_series(
+                session,
+                tag_name="TAG_0",
+                start=self._BASE,
+                end=self._BASE,
+                max_points=True,
+            )
+
+    def test_rejects_out_of_range_max_points(self, session: Session) -> None:
+        with pytest.raises(ValueError):
+            query_trend_series(
+                session,
+                tag_name="TAG_0",
+                start=self._BASE,
+                end=self._BASE,
+                max_points=TRENDS_MIN_MAX_POINTS - 1,
+            )
+        with pytest.raises(ValueError):
+            query_trend_series(
+                session,
+                tag_name="TAG_0",
+                start=self._BASE,
+                end=self._BASE,
+                max_points=TRENDS_MAX_MAX_POINTS + 1,
+            )
+
+    def test_rejects_start_after_end(self, session: Session) -> None:
+        with pytest.raises(ValueError):
+            query_trend_series(
+                session,
+                tag_name="TAG_0",
+                start=self._BASE + _dt.timedelta(hours=1),
+                end=self._BASE,
+            )
