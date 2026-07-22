@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
+import { bridgeTimedSeries } from "../lib/trendGaps";
 
 /**
  * Backfill a trend from the backend historian so changing the time window shows
@@ -60,11 +61,13 @@ export function useTrendBackfill(
         if (cancelled || !d?.timestamps) return;
         const ts: string[] = d.timestamps;
         const vs: number[] = d.values ?? [];
-        setPoints(
-          ts
-            .map((iso, i) => ({ t: parseHistorianTs(iso), v: (vs[i] ?? 0) * scale }))
-            .filter((p) => Number.isFinite(p.t)),
-        );
+        const pts = ts
+          .map((iso, i) => ({ t: parseHistorianTs(iso), v: (vs[i] ?? 0) * scale }))
+          .filter((p) => Number.isFinite(p.t));
+        // The historian stores the RAW tag, so a dropped read is a spurious 0.
+        // Bridge those isolated dropouts so the backfilled region doesn't dip to
+        // zero (the live path is already deglitched by the backend).
+        setPoints(bridgeTimedSeries(pts));
       })
       .catch(() => {
         if (!cancelled) setPoints([]);

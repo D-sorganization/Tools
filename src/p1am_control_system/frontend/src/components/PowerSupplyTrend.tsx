@@ -24,6 +24,7 @@ import {
   BUFFER_WINDOW_SECONDS,
 } from "../lib/trendTime";
 import { nearestIndexByX } from "../lib/plotCursor";
+import { bridgeTimedSeries } from "../lib/trendGaps";
 import { useTrendViewport } from "../hooks/useTrendViewport";
 import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
 import { TrendAxisControls } from "./TrendAxisControls";
@@ -137,9 +138,11 @@ export const PowerSupplyTrend: React.FC<Props> = ({
     ? active.filter((s) => s.t >= start && s.t <= end)
     : [];
   const down = downsample(visible);
-  const iPts = down.map((s) => ({ t: s.t, v: toPct(s.i, currentFullScale) }));
-  const vPts = down.map((s) => ({ t: s.t, v: toPct(s.v, voltageFullScale) }));
-  const pPts = down.map((s) => ({ t: s.t, v: toPct(s.p, powerFullScale) }));
+  // Bridge isolated dropped-read zeros so a spurious 0 doesn't draw a false dip
+  // to zero on any trace (same class of glitch as the thermocouple tags).
+  const iPts = bridgeTimedSeries(down.map((s) => ({ t: s.t, v: toPct(s.i, currentFullScale) })));
+  const vPts = bridgeTimedSeries(down.map((s) => ({ t: s.t, v: toPct(s.v, voltageFullScale) })));
+  const pPts = bridgeTimedSeries(down.map((s) => ({ t: s.t, v: toPct(s.p, powerFullScale) })));
   const { min, max } = resolveRange(
     axis,
     [...iPts, ...vPts, ...pPts].map((p) => p.v),
