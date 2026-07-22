@@ -1,5 +1,13 @@
 # Bench Handoff — P1AM Bring-up
 
+> **⚠️ Historical snapshot (2026-05-27).** Documents the *original x86 host
+> ("Brick")* during the earlier analog-I/O / PID / four-limit-interlock era —
+> before the heater relay, the on/off temperature controller, HH cutoff, and the
+> thermocouple deglitch filter. The live system now runs on a **Raspberry Pi**.
+> For the current architecture and how to run/deploy, see
+> [`README.md`](README.md) and
+> [`docs/SYSTEM_ARCHITECTURE.tex`](docs/SYSTEM_ARCHITECTURE.tex). Kept for history.
+
 This file captures the state of the P1AM-100 bring-up work as of **2026-05-27**.
 It is intended for the next agent or operator who picks up the work, so they
 can resume without re-discovering what's already known.

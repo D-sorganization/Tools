@@ -7,7 +7,7 @@ session teardown (no more manual `run_pi.sh` relaunches).
 | Service              | What it runs                                   | Port            |
 | -------------------- | ---------------------------------------------- | --------------- |
 | `p1am-backend`       | FastAPI/uvicorn — the single Modbus master     | `127.0.0.1:8000` |
-| `p1am-frontend`      | Vite HMI dev server                            | `:3002`         |
+| `p1am-frontend`      | HMI production build served by `vite preview`  | `:3002`         |
 
 The backend binds localhost only; the HMI proxies `/api` + `/ws` to it. The
 backend is intentionally a **single process** (one worker) — the firmware is a
@@ -42,13 +42,13 @@ sudo systemctl disable --now p1am-backend p1am-frontend   # remove from boot
 
 ## Notes
 
-- **Live code changes:** the backend does **not** auto-reload — after editing
-  backend code, `sudo systemctl restart p1am-backend`. The Vite HMI hot-reloads
-  frontend edits automatically.
-- **Production HMI:** for a frozen deployment, swap the `p1am-frontend`
-  `ExecStart` to serve a static build (`npm run build` then a static server /
-  `vite preview`) instead of the dev server. The dev server is used here because
-  the system is under active development.
+- **Live code changes:** neither service auto-reloads. After editing backend
+  code, `sudo systemctl restart p1am-backend`. The `p1am-frontend` unit runs
+  `npm run build` then `vite preview` (serving the production build, **not** a
+  hot-reloading dev server), so after editing HMI code
+  `sudo systemctl restart p1am-frontend` — it rebuilds on start (~30 s).
+- **Remote access:** Raspberry Pi Connect, VNC-over-Tailscale
+  (`100.108.70.33:5900`), and SSH — see the top-level `README.md`.
 - **Network/PLC at boot:** the backend retries the PLC connection in the
   background, so it comes up cleanly even if the network or PLC is slow to
   appear after a power cycle.
