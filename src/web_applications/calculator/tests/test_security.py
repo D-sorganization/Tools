@@ -114,5 +114,9 @@ class TestAstSecurityGate:
         TI89Calculator._ast_security_gate("2 * x + sin(y)")
 
 
+    def test_solve_ode_blocks_dangerous_constructs(self) -> None:
+        with pytest.raises((ValueError, TypeError, SyntaxError)):
+            TI89Calculator().solve_differential_equation("().__class__.__bases__[0].__subclasses__()", "y")
+
 if __name__ == "__main__":
     unittest.main()

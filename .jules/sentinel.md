@@ -26,3 +26,8 @@
 **Vulnerability:** Found a resource leak vulnerability in `src/p1am_control_system/desktop/event_logger.py` where a `sqlite3` connection was established but not guaranteed to close if an exception occurred during database operations because `sqlite3.connect()` context manager only manages transactions, not the connection lifecycle.
 **Learning:** Failing to close connections explicitly can exhaust system file descriptors, leading to Denial of Service (DoS), or leave the database in a locked state.
 **Prevention:** Wrapped `sqlite3.connect()` with `contextlib.closing()` to guarantee the connection is closed even if an exception occurs during the database operation.
+
+## 2024-07-06 - Missing AST Security Gate on ODE Solver
+**Vulnerability:** Code injection vulnerability found in `TI89Calculator._solve_differential_equation_cached` because it bypassed `_ast_security_gate` before passing input to `parse_expr` which runs `eval`.
+**Learning:** All paths taking untrusted math equations directly to SymPy parsers need structural validation.
+**Prevention:** Ensure all evaluation points explicitly invoke `_ast_security_gate`.
