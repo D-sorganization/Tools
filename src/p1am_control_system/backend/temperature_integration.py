@@ -250,6 +250,24 @@ class TemperatureService:
             self._persist_setpoint(applied)
         return applied
 
+    async def set_permissive(self, enabled: bool) -> TemperatureStatus:
+        """Toggle the master enable; on OFF, de-energize the heater relay NOW.
+
+        Stopping is the safe direction, so rather than wait up to one scan for the
+        control loop to open the relay, this commands the relay OFF immediately
+        when disabling — a Stop is then instantaneous regardless of poll timing.
+        The scan loop still force-holds the relay off every tick while not RUNNING
+        (defense in depth), so this only shortens the stop latency, never widens
+        it. Enabling never energizes here — that stays with the control law.
+
+        Raises:
+            TypeError: if ``enabled`` is not a bool (from the controller).
+        """
+        self.controller.set_permissive(enabled)
+        if not enabled:
+            await self._write_relay(False)
+        return self.status()
+
     def set_active_tc_type(self, tc_type: TcType) -> None:
         """Switch the controlling thermocouple and persist the config.
 
@@ -500,9 +518,12 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
     async def set_temperature_permissive(
         req: TemperaturePermissiveRequest,
     ) -> TemperatureStatus:
-        controller.set_permissive(req.enabled)
-        status: TemperatureStatus = controller.status()
-        return status
+        # Route through the service so a Stop (enabled=False) de-energizes the
+        # heater relay immediately, not on the next scan.
+        try:
+            return await service.set_permissive(req.enabled)
+        except TypeError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @router.post("/tc_type", dependencies=[Depends(require_admin_key)])
     async def set_active_tc_type(req: TcTypeRequest) -> TemperatureStatus:

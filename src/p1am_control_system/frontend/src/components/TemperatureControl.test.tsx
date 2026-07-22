@@ -1,10 +1,22 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi, beforeEach } from "vitest";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import {
   recallSetpointText,
   formatTcReadout,
   heatUpRateReadout,
   plotPxToTime,
+  TemperatureControl,
+  type TemperatureConfig,
+  type TemperatureStatus,
 } from "./TemperatureControl";
+
+// Mock the fetch seam so we can drive the config load and inspect the commands
+// the Stop button issues, without a live backend.
+const { fetchMock } = vi.hoisted(() => ({ fetchMock: vi.fn() }));
+vi.mock("../lib/fetchWithTimeout", () => ({
+  fetchWithTimeout: (...args: unknown[]) =>
+    fetchMock(...(args as [string, ...unknown[]])),
+}));
 
 /**
  * Unit tests for the pure setpoint-recall helper. Rendering the full
@@ -137,5 +149,93 @@ describe("plotPxToTime", () => {
 
   it("degenerates to t0 for a zero-width plot (DbC)", () => {
     expect(plotPxToTime(100, 0, 1000, 5000)).toBe(1000);
+  });
+});
+
+// --------------------------------------------------------------------------
+// Heater Stop — safety regression: a Stop must be immediate + unconditional.
+// --------------------------------------------------------------------------
+
+const CONFIG: TemperatureConfig = {
+  type_k: { tag: "TAG_0", full_scale_c: 1400, label: "Type K" },
+  type_r: { tag: "TAG_1", full_scale_c: 1400, label: "Type R" },
+  active_tc_type: "R",
+  temp_tag: "TAG_1",
+  temp_full_scale_c: 1400,
+  active_tc_label: "Type R",
+  setpoint_min_c: 0,
+  setpoint_max_c: 1300,
+  deadband_c: 5,
+  min_on_time_s: 0,
+  min_off_time_s: 0,
+  hh_limit_c: 1400,
+  heater_label: "Crucible",
+};
+
+const RUNNING: TemperatureStatus = {
+  state: "running",
+  permissive: true,
+  setpoint_c: 500,
+  measured_temp_c: 480,
+  relay_on: true,
+  trips: [],
+  hh_limit_c: 1400,
+  deadband_c: 5,
+  min_on_time_s: 0,
+  min_off_time_s: 0,
+  active_tc_type: "R",
+  active_tc_label: "Type R",
+};
+
+function routeFetch(): void {
+  fetchMock.mockImplementation((url: string) => {
+    if (url.startsWith("/api/temperature/config")) {
+      return Promise.resolve({ ok: true, json: async () => CONFIG });
+    }
+    if (url.startsWith("/api/trends")) {
+      return Promise.resolve({
+        ok: true,
+        json: async () => ({ timestamps: [], values: [] }),
+      });
+    }
+    // POST permissive / setpoint etc. -> a benign stopped status.
+    return Promise.resolve({
+      ok: true,
+      json: async () => ({ ...RUNNING, state: "idle", permissive: false, relay_on: false }),
+      text: async () => "",
+    });
+  });
+}
+
+describe("heater Stop (safety)", () => {
+  beforeEach(() => {
+    fetchMock.mockReset();
+    routeFetch();
+  });
+
+  it("sends permissive=false on Stop even when confirm() is suppressed", async () => {
+    // A kiosk / screen-shared browser can make window.confirm() return false with
+    // no visible prompt. The Stop must STILL go through — regression guard for the
+    // removed confirmation gate that was silently swallowing stops.
+    vi.spyOn(window, "confirm").mockReturnValue(false);
+    render(<TemperatureControl liveStatus={RUNNING} />);
+
+    const stopButtons = await screen.findAllByRole("button", { name: /stop/i });
+    fireEvent.click(stopButtons[0]);
+
+    await waitFor(() => {
+      const posted = fetchMock.mock.calls.find(
+        (c) =>
+          typeof c[0] === "string" &&
+          (c[0] as string).startsWith("/api/temperature/permissive"),
+      );
+      expect(posted).toBeTruthy();
+    });
+
+    const posted = fetchMock.mock.calls.find((c) =>
+      (c[0] as string).startsWith("/api/temperature/permissive"),
+    )!;
+    const body = JSON.parse((posted[1] as { body: string }).body);
+    expect(body.enabled).toBe(false);
   });
 });

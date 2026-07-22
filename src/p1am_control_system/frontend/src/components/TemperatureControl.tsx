@@ -491,12 +491,11 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
 
   // Stop: open the relay immediately (confirm if it is currently energized).
   const handleStop = useCallback(async () => {
-    if (
-      liveStatus?.relay_on &&
-      !window.confirm("Stop the heater? The relay will open immediately.")
-    ) {
-      return;
-    }
+    // A Stop is the SAFE direction and must be immediate and UNCONDITIONAL —
+    // never gate it behind a confirmation dialog. Kiosk / screen-shared browsers
+    // can suppress native window.confirm() (it returns false with no prompt),
+    // which would silently swallow the Stop while the heater keeps running.
+    // Confirmation belongs on Start, never Stop.
     setBusy(true);
     try {
       await postPermissive(false);
@@ -506,7 +505,7 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
     } finally {
       setBusy(false);
     }
-  }, [postPermissive, liveStatus?.relay_on, flash]);
+  }, [postPermissive, flash]);
 
   const setActiveTcType = useCallback(
     async (tcType: TcType) => {

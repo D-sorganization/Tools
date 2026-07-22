@@ -150,6 +150,47 @@ class TestTemperatureServicePoll:
         asyncio.run(_go())
 
 
+class TestImmediateStop:
+    """service.set_permissive() de-energizes the heater the instant it's OFF."""
+
+    def test_stop_writes_relay_off_now(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            svc = _service(plc)
+            svc.controller.set_permissive(True)
+            svc.controller.set_setpoint_c(500.0)
+            assert svc.controller.state == TemperatureState.RUNNING
+            plc.write_coil.reset_mock()
+            status = await svc.set_permissive(False)
+            assert status.state == TemperatureState.IDLE
+            # Relay commanded OFF immediately, without waiting for a poll.
+            plc.write_coil.assert_any_await(hardware.HEATER_RELAY_COIL, False)
+
+        asyncio.run(_go())
+
+    def test_enable_arms_without_energizing(self) -> None:
+        async def _go() -> None:
+            plc = _FakePLC()
+            svc = _service(plc)
+            plc.write_coil.reset_mock()
+            status = await svc.set_permissive(True)
+            assert status.state == TemperatureState.ARMED
+            # Enabling never commands the relay ON here (that stays with tick()).
+            for call in plc.write_coil.await_args_list:
+                if call.args[0] == hardware.HEATER_RELAY_COIL:
+                    assert call.args[1] is False
+
+        asyncio.run(_go())
+
+    def test_rejects_non_bool(self) -> None:
+        async def _go() -> None:
+            svc = _service()
+            with pytest.raises(TypeError):
+                await svc.set_permissive("nope")  # type: ignore[arg-type]
+
+        asyncio.run(_go())
+
+
 # --------------------------------------------------------------------------
 # FastAPI router endpoints
 # --------------------------------------------------------------------------
@@ -202,6 +243,21 @@ class TestRouterEndpoints:
         client, _ = client_and_service
         resp = client.post("/api/temperature/permissive", json={"enabled": True})
         assert resp.json()["state"] == TemperatureState.ARMED
+
+    def test_stop_deenergizes_relay_immediately(
+        self, client_and_service: tuple[TestClient, TemperatureService]
+    ) -> None:
+        # Arm + run, then Stop (permissive off) and confirm the relay coil is
+        # commanded OFF within the request itself — not deferred to the next scan.
+        client, svc = client_and_service
+        client.post("/api/temperature/permissive", json={"enabled": True})
+        client.post("/api/temperature/setpoint", json={"value_c": 500.0})
+        assert svc.controller.state == TemperatureState.RUNNING
+        svc._plc_client.write_coil.reset_mock()
+        resp = client.post("/api/temperature/permissive", json={"enabled": False})
+        assert resp.status_code == 200
+        assert resp.json()["state"] == TemperatureState.IDLE
+        svc._plc_client.write_coil.assert_any_await(hardware.HEATER_RELAY_COIL, False)
 
     def test_setpoint_applies_and_clamps(
         self, client_and_service: tuple[TestClient, TemperatureService]
