@@ -2575,3 +2575,5 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.413 - Optimized Nelder-Mead loop in `optimizer.ts`
 
 - **2026-06-21**: perf(pendulum) — Replaced `Array.prototype.sort` with manual insertion sort in `nelderMead` loop in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate callback invocation overhead.
+SPEC.md Modification for Security Fix:
+Added details about ensuring AST security gates fail-closed when encountering SyntaxErrors.
