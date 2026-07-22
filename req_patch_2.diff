@@ -1,0 +1,10 @@
+--- pyproject.toml
++++ pyproject.toml
+@@ -151,6 +151,7 @@
+     "python-multipart>=0.0.7",
+     "requests>=2.32.0",
+     "sqlmodel>=0.0.22",
++    "flask-limiter>=3.0.0",
+ ]
+ # Development tools
+ dev = [
