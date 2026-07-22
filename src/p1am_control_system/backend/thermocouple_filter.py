@@ -28,7 +28,8 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import TypeIs
+
+from typing_extensions import TypeIs  # typing.TypeIs is 3.13+; use the backport
 
 __all__ = [
     "FilterSample",

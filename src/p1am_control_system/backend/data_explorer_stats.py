@@ -129,11 +129,11 @@ def _window_values(kind: str, length: int) -> np.ndarray:
     if kind == "none":
         return np.ones(length, dtype=float)
     if kind == "hanning":
-        return np.hanning(length)
+        return np.asarray(np.hanning(length), dtype=float)
     if kind == "hamming":
-        return np.hamming(length)
+        return np.asarray(np.hamming(length), dtype=float)
     # blackman
-    return np.blackman(length)
+    return np.asarray(np.blackman(length), dtype=float)
 
 
 # --------------------------------------------------------------------------- #
@@ -286,7 +286,7 @@ def cross_correlation(
 
     da = array_a - array_a.mean()
     db = array_b - array_b.mean()
-    norm = np.sqrt(np.sum(da**2) * np.sum(db**2))
+    norm: float = float(np.sqrt(np.sum(da**2) * np.sum(db**2)))
     if norm == 0.0:
         raise ValueError("cross_correlation requires non-constant inputs")
 
