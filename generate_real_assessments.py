@@ -13,7 +13,8 @@ def run_cmd(cmd: str) -> str:
     try:
         return subprocess.check_output(cmd, shell=True, text=True)
     except subprocess.CalledProcessError as e:
-        return e.output
+        output = e.output
+        return output if isinstance(output, str) else str(output)
 
 
 src_categories = [
