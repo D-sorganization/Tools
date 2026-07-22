@@ -30,6 +30,7 @@ PyOpenGL_accelerate>=3.1.10  # Accelerated OpenGL extensions
 
 # Web Applications
 flask>=3.0.0  # Web framework for building web applications
+flask-limiter>=3.5.0  # Rate limiting for Flask apps (used by calculator API tests)
 
 # Data Validation & Serialization
 pydantic>=2.0.0  # Data validation using Python type annotations
