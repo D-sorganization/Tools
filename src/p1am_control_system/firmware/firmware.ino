@@ -28,8 +28,12 @@ unsigned long lastScanTime = 0;
 const unsigned long kScanIntervalMs = 100;
 
 // Modbus coil 2 = heater relay command from the temperature controller.
-// (Coil 0 = save-to-flash, coil 1 = E-stop reset.)
+// (Coil 0 = save-to-flash, coil 1 = E-stop reset, coil 3 = THM burnout
+// direction -- see kThmBurnoutCoil in P1AMHardware.h.)
 const int kHeaterRelayCoil = 2;
+
+// Count of signed-on backplane modules (captured at boot, published to TAG_26).
+uint8_t g_moduleCount = 0;
 
 // Helper to Pack Float into 2 Modbus registers (IEEE-754)
 void WriteFloatToModbus(int regAddress, float val) {
@@ -153,7 +157,7 @@ void setup() {
   // module is missing, P1.writeAnalog silently returns and outputs hold
   // at their DAC power-on default of 4 mA.
   Serial.println(F("[hw] signed-on modules:"));
-  P1.printModules();
+  g_moduleCount = P1.printModules();
 
   // Initialize Ethernet. The P1AM-ETH shield wires W5500 CS to pin 5.
   Ethernet.init(5);
@@ -278,6 +282,19 @@ void loop() {
     bool relay_cmd = (modbusServer.coilRead(kHeaterRelayCoil) == 1);
     hw.WriteHeaterRelay(relay_cmd && !interlock.IsTripped());
 
+    // Thermocouple burnout direction (Modbus coil 3): an operator/HMI toggle
+    // that flips the open-circuit fail direction. LOW-side (coil = 0) makes an
+    // open TC read 0 C (cold) — fail-dangerous for a heater, because the loop
+    // would keep calling for heat on a broken sensor. HIGH-side (coil = 1)
+    // makes an open TC read full-scale (hot) — fail-safe. The P1-04THM can't
+    // disable burnout, only flip its direction, so reconfigure the module only
+    // when the selection actually changes (a live reconfigure briefly glitches
+    // reads).
+    bool high_side_cmd = (modbusServer.coilRead(kThmBurnoutCoil) == 1);
+    if (high_side_cmd != hw.ThmHighSide()) {
+      hw.ConfigureThm(high_side_cmd);
+    }
+
     // --- Signal diagnostics: raw 0-5 V of every analog channel (TAG_20..25) ---
     // Unscaled, for troubleshooting the analog card independent of calibration.
     // AI0..3 show the actual 0-5 V at the input terminal; AO0..1 show the
@@ -293,6 +310,9 @@ void loop() {
                          : 0.0f;
       broker.SetTag(24 + ch, cmdPct * (5.0f / 100.0f));
     }
+    // TAG_26 = number of signed-on backplane modules (read over Modbus to
+    // confirm the P1-08TD2 is present: analog + thermocouple + DO = 3).
+    broker.SetTag(26, static_cast<float>(g_moduleCount));
 
     for (int i = 0; i < SignalBroker::kNumTags; ++i) {
       WriteFloatToModbus(i * 2, broker.GetTag(i));

@@ -1,7 +1,12 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Circle, Download, Trash2, Database } from "lucide-react";
 import "./DataCapturePanel.css";
-import { getCaptureStatus, clearCapture } from "../api/endpoints";
+import {
+  getCaptureStatus,
+  clearCapture,
+  getCaptureConfig,
+  setCaptureConfig,
+} from "../api/endpoints";
 import type { CaptureStatus } from "../api/schemas";
 import { fmtBytes, fmtDuration } from "../lib/format";
 import { TAG_INDICES, tagName } from "../lib/tags";
@@ -23,6 +28,8 @@ const ALL_TAGS = TAG_INDICES.map(tagName).join(",");
 export const DataCapturePanel: React.FC = () => {
   const [status, setStatus] = useState<CaptureStatus | null>(null);
   const [windowMinutes, setWindowMinutes] = useState<number>(0); // 0 = all captured
+  const [intervalS, setIntervalS] = useState<number | null>(null); // applied interval
+  const [intervalDraft, setIntervalDraft] = useState<string>("");
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
 
@@ -39,6 +46,18 @@ export const DataCapturePanel: React.FC = () => {
     const id = setInterval(refresh, 2000);
     return () => clearInterval(id);
   }, [refresh]);
+
+  // Load the current sampling interval once.
+  useEffect(() => {
+    getCaptureConfig()
+      .then((c) => {
+        setIntervalS(c.interval_s);
+        setIntervalDraft(String(c.interval_s));
+      })
+      .catch(() => {
+        /* leave unknown until reachable */
+      });
+  }, []);
 
   const flash = useCallback((m: string) => {
     setMsg(m);
@@ -85,6 +104,25 @@ export const DataCapturePanel: React.FC = () => {
     }
   }, [flash, refresh]);
 
+  const handleApplyInterval = useCallback(async () => {
+    const v = Number.parseFloat(intervalDraft);
+    if (!Number.isFinite(v) || v < 0) {
+      flash("Enter a sample interval of 0 or more seconds.");
+      return;
+    }
+    setBusy(true);
+    try {
+      const c = await setCaptureConfig(v);
+      setIntervalS(c.interval_s);
+      setIntervalDraft(String(c.interval_s));
+      flash(`Now sampling ${describeInterval(c.interval_s)}.`);
+    } catch (e) {
+      flash(`Update failed: ${(e as Error).message}`);
+    } finally {
+      setBusy(false);
+    }
+  }, [intervalDraft, flash]);
+
   return (
     <div className="dc">
       <div className="dc-card">
@@ -108,6 +146,51 @@ export const DataCapturePanel: React.FC = () => {
           <Stat label="On disk" value={fmtBytes(status?.db_bytes ?? 0)} />
           <Stat label="Events" value={(status?.event_rows ?? 0).toLocaleString()} />
         </div>
+      </div>
+
+      <div className="dc-card">
+        <div className="dc-card-title">Sampling rate</div>
+        <p className="dc-sub">
+          How often each scan is written to the historian — larger interval means
+          smaller data files. The live trends still update every scan; only the
+          stored history is decimated.
+          {intervalS != null && (
+            <>
+              {" "}
+              Current: <strong>{describeInterval(intervalS)}</strong>.
+            </>
+          )}
+        </p>
+        <div style={{ display: "flex", gap: "0.3rem", flexWrap: "wrap", marginBottom: "0.6rem" }}>
+          {[1, 2, 5, 10, 30].map((s) => (
+            <button
+              key={s}
+              type="button"
+              className="btn"
+              onClick={() => setIntervalDraft(String(s))}
+              style={{ padding: "0.2rem 0.5rem", fontSize: "0.75rem" }}
+            >
+              {s}s
+            </button>
+          ))}
+        </div>
+        <label className="dc-field">
+          <span>Interval (s)</span>
+          <input
+            type="number"
+            min={0}
+            step="any"
+            value={intervalDraft}
+            onChange={(e) => setIntervalDraft(e.target.value)}
+          />
+        </label>
+        <button
+          className="btn btn-primary dc-btn"
+          onClick={handleApplyInterval}
+          disabled={busy}
+        >
+          Apply sampling rate
+        </button>
       </div>
 
       <div className="dc-grid">
@@ -147,6 +230,12 @@ export const DataCapturePanel: React.FC = () => {
     </div>
   );
 };
+
+/** Human description of a capture interval: "every scan" or "every 5s (0.20 Hz)". */
+function describeInterval(seconds: number): string {
+  if (seconds <= 0) return "every scan";
+  return `every ${seconds}s (${(1 / seconds).toFixed(2)} Hz)`;
+}
 
 const Stat: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div className="dc-stat">

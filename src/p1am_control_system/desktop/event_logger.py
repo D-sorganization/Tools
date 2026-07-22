@@ -9,6 +9,7 @@ import csv
 import logging
 import os
 import sqlite3
+from contextlib import closing
 from datetime import datetime
 from typing import Any
 
@@ -60,7 +61,7 @@ class EventLogger:
 
     def _init_db(self) -> None:
         """Create the event logs table if it does not already exist."""
-        with sqlite3.connect(self.db_path) as conn:
+        with closing(sqlite3.connect(self.db_path)) as conn:
             cursor = conn.cursor()
             cursor.execute("""
                 CREATE TABLE IF NOT EXISTS event_logs (
@@ -105,7 +106,7 @@ class EventLogger:
             timestamp = datetime.now()
         timestamp_str = timestamp.isoformat()
 
-        with sqlite3.connect(self.db_path) as conn:
+        with closing(sqlite3.connect(self.db_path)) as conn:
             cursor = conn.cursor()
             cursor.execute(
                 """
@@ -231,14 +232,14 @@ class EventLogger:
 
         query += " ORDER BY timestamp DESC"
 
-        with sqlite3.connect(self.db_path) as conn:
+        with closing(sqlite3.connect(self.db_path)) as conn:
             cursor = conn.cursor()
             cursor.execute(query, params)
             return cursor.fetchall()
 
     def get_unique_event_types(self) -> list[str]:
         """Retrieve list of unique event types stored in the database."""
-        with sqlite3.connect(self.db_path) as conn:
+        with closing(sqlite3.connect(self.db_path)) as conn:
             cursor = conn.cursor()
             cursor.execute(
                 "SELECT DISTINCT event_type FROM event_logs ORDER BY event_type ASC"
@@ -247,7 +248,7 @@ class EventLogger:
 
     def clear_logs(self) -> None:
         """Clear all event logs in the database."""
-        with sqlite3.connect(self.db_path) as conn:
+        with closing(sqlite3.connect(self.db_path)) as conn:
             cursor = conn.cursor()
             cursor.execute("DELETE FROM event_logs")
             conn.commit()

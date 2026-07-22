@@ -660,6 +660,9 @@ class TI89Calculator:
             # But let's assume the app initializes one calculator.
             pass
 
+        # Security: structurally gate the raw input through an AST allowlist BEFORE handing it to sympy.parse_expr
+        TI89Calculator._ast_security_gate(equation)
+
         function_symbol = sp.Function(function)
         independent_variable = sp.Symbol("x")
 

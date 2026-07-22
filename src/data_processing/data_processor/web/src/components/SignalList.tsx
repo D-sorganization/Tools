@@ -192,6 +192,7 @@ export const SignalList = memo(function SignalList({ signals, selectedSignals, o
                 <button
                   key={signal}
                   onClick={() => toggleSignal(signal)}
+                  aria-pressed={isSelected}
                   className={`
                     w-full flex items-center gap-2 px-3 py-2 rounded-lg
                     text-left text-sm transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500

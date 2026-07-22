@@ -1,6 +1,26 @@
-import React, { useState, useEffect, useRef } from "react";
-import { Play, Pause, ZoomIn, ZoomOut, Image, FileSpreadsheet, RotateCcw } from "lucide-react";
+import React, { useState, useRef, useMemo } from "react";
+import {
+  Play,
+  Pause,
+  ZoomIn,
+  ZoomOut,
+  RotateCcw,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { TAG_INDICES } from "./RoutingMatrix";
+import { SnapshotButton } from "./SnapshotButton";
+import { type AxisRange, defaultAxisRange } from "../lib/trendAxis";
+import {
+  SAMPLES_PER_SECOND,
+  MAX_TREND_SAMPLES,
+  downsample,
+  RENDER_MAX_POINTS,
+} from "../lib/trendTime";
+import { useTrendViewport } from "../hooks/useTrendViewport";
+import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
+import { TrendAxisControls } from "./TrendAxisControls";
+import { TrendCrosshair, type CrosshairSeries } from "./TrendPlotOverlays";
 
 interface TrendChartProps {
   history: number[][]; // Array of TagValue arrays: number[time][tag_id]
@@ -18,37 +38,89 @@ const LINE_COLORS = [
   "#f43f5e", // Crimson Red
 ];
 
+// Window presets, in seconds. Capped at 600 s (10 min) — the depth of the live
+// telemetry buffer this multi-tag chart draws from (it has no historian
+// backfill, unlike the temperature trend which reaches back hours). Deeper
+// history per-tag would mean holding an hour of every tag's frames in the JS
+// heap; see MAX_HISTORY in useTelemetryStream for that deliberate tradeoff.
+const WINDOW_PRESETS = [10, 30, 60, 120, 300, 600];
+
 export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) => {
   const [selectedTags, setSelectedTags] = useState<number[]>([0, 1, 10]);
-  const [duration, setDuration] = useState<number>(60); // Time window in seconds
 
-  // Advanced Plot Control States
-  const [isPaused, setIsPaused] = useState<boolean>(false);
+  // Y-axis range: "auto" keeps the existing auto-scale + Y-Zoom behavior;
+  // manual mode pins the axis to operator-entered min/max.
+  const [yAxis, setYAxis] = useState<AxisRange>(defaultAxisRange(0, 100));
+
+  // X-axis pan / zoom / pause / drag-to-zoom all live in the ONE shared,
+  // pre-tested viewport model (DRY) instead of bespoke scroll/duration/pause
+  // plumbing. The domain here is the SAMPLE INDEX (history rows are per-scan
+  // tag arrays broadcast at ~10 Hz). defaultSpan = 60 s, min = 1 s, max = the
+  // full retained buffer.
+  const view = useTrendViewport({
+    defaultSpan: 60 * SAMPLES_PER_SECOND,
+    minSpan: SAMPLES_PER_SECOND,
+    maxSpan: MAX_TREND_SAMPLES,
+  });
+
+  // Y-axis zoom multiplier (Y AXIS ONLY — independent of the viewport's X zoom).
+  // 1.0 = Default, < 1.0 = Zoom In, > 1.0 = Zoom Out.
+  const [zoomLevel, setZoomLevel] = useState<number>(1.0);
+
+  // Frozen snapshot of the live buffer while paused. Captured in the freeze
+  // handler (below) rather than an effect so exactly what's on screen is frozen.
   const [frozenHistory, setFrozenHistory] = useState<number[][]>([]);
-  const [zoomLevel, setZoomLevel] = useState<number>(1.0); // 1.0 = Default, < 1.0 = Zoom In, > 1.0 = Zoom Out
-  const [scrollOffset, setScrollOffset] = useState<number>(0); // Scroll offset back in samples
 
   const svgRef = useRef<SVGSVGElement | null>(null);
 
-  // Freeze history when paused
-  useEffect(() => {
-    if (isPaused) {
-      setFrozenHistory([...history]);
-    }
-  }, [isPaused]);
+  // Plot-relative pixel X of the hover crosshair, or null when not hovering.
+  // Stored raw here and resolved to the nearest sample during render (where the
+  // value→pixel scale lives), so hover never duplicates the projection math.
+  const [hoverPx, setHoverPx] = useState<number | null>(null);
 
-  // Adjust scroll offset bounds when history changes
-  const activeHistoryPool = isPaused ? frozenHistory : history;
-  const maxSamples = duration * 10;
-  
-  // Bound scroll offset so we don't scroll past the start of the buffer
-  const maxPossibleOffset = Math.max(0, activeHistoryPool.length - maxSamples);
-  const safeOffset = Math.min(scrollOffset, maxPossibleOffset);
+  // Freeze/live toggle. Snapshot the CURRENT `history` synchronously BEFORE
+  // flipping to paused, so the frame on screen at the click instant is frozen
+  // (no frame dropped between the click and a re-render).
+  const handlePauseToggle = () => {
+    if (!view.paused) setFrozenHistory(history);
+    view.togglePause();
+  };
 
-  // Slice history pool based on duration and offset
-  const sliceEnd = activeHistoryPool.length - safeOffset;
-  const sliceStart = Math.max(0, sliceEnd - maxSamples);
-  const activeHistory = activeHistoryPool.slice(sliceStart, sliceEnd);
+  // Active pool: the frozen snapshot while paused, otherwise the live buffer.
+  const pool = view.paused ? frozenHistory : history;
+
+  // Slice the pool to the viewport's visible sample-index window. The domain
+  // spans the whole pool; the viewport decides which trailing/panned window of
+  // it is on screen.
+  const bounds = { min: 0, max: pool.length };
+  const { start, end } = view.resolve(bounds);
+  const clampInt = (n: number) =>
+    Math.max(0, Math.min(pool.length, Math.round(n)));
+  const sliceStart = clampInt(start);
+  const sliceEnd = Math.max(clampInt(end), sliceStart);
+  // Full-resolution visible slice — kept intact for the CSV export only.
+  const activeHistory = pool.slice(sliceStart, sliceEnd);
+
+  // Render-resolution slice: stride the visible window down to at most
+  // RENDER_MAX_POINTS rows BEFORE the extent scan and SVG path build, so a long
+  // window (e.g. 300 s = 3000 samples) draws a few hundred points instead of
+  // thousands. Memoized on the slice identity so it isn't recomputed on
+  // unrelated re-renders.
+  const renderHistory = useMemo(
+    () => downsample(activeHistory, RENDER_MAX_POINTS),
+    [activeHistory],
+  );
+
+  // Window (span) in seconds — drives the window-button highlight + the
+  // server-smoothing fetch range. How far the right edge sits behind "now",
+  // in seconds, drives the "panned -Ns" indicator.
+  const windowSeconds = view.viewport.span / SAMPLES_PER_SECOND;
+  const pannedSeconds = view.viewport.offset / SAMPLES_PER_SECOND;
+
+  // Time-ago labels for the X axis, derived from the visible index range:
+  // secondsAgo(i) = (pool.length - i) / SAMPLES_PER_SECOND.
+  const leftSecondsAgo = (pool.length - sliceStart) / SAMPLES_PER_SECOND;
+  const rightSecondsAgo = (pool.length - sliceEnd) / SAMPLES_PER_SECOND;
 
   const toggleTag = (tagId: number) => {
     if (selectedTags.includes(tagId)) {
@@ -62,11 +134,11 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   const selectOutputs = () => setSelectedTags([10, 11]);
   const clearAll = () => setSelectedTags([]);
   const resetPlotControls = () => {
-    setIsPaused(false);
+    view.reset();
     setZoomLevel(1.0);
-    setScrollOffset(0);
     setSmoothingMode("none");
     setSmoothedData(null);
+    setYAxis(defaultAxisRange(0, 100));
   };
 
   const [smoothingMode, setSmoothingMode] = useState<string>("none");
@@ -74,15 +146,18 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
 
   const fetchSmoothedData = async () => {
     if (smoothingMode === "none" || selectedTags.length === 0) return;
-    setIsPaused(true);
-    
-    const end = new Date();
-    const start = new Date(end.getTime() - duration * 1000);
-    const startIso = start.toISOString();
-    const endIso = end.toISOString();
+    // Freeze the on-screen slice at request time so the live buffer stops
+    // advancing under the fetch.
+    setFrozenHistory(history);
+    view.setPaused(true);
+
+    const nowDate = new Date();
+    const windowStartDate = new Date(nowDate.getTime() - windowSeconds * 1000);
+    const startIso = windowStartDate.toISOString();
+    const endIso = nowDate.toISOString();
 
     const newSmoothedData: { [tagId: number]: number[] } = {};
-    
+
     for (const tagId of selectedTags) {
       try {
         const res = await fetch(`/api/trends?tag_id=${tagId}&start_time=${encodeURIComponent(startIso)}&end_time=${encodeURIComponent(endIso)}&smoothing=${smoothingMode}`);
@@ -108,54 +183,112 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   const chartWidth = width - paddingLeft - paddingRight;
   const chartHeight = height - paddingTop - paddingBottom;
 
-  // Compute scale boundaries across selected tags in history
-  let minVal = 0;
-  let maxVal = 100;
+  // ---- pixel <-> sample-index mapping (the crux of wheel-zoom + drag-zoom) ----
+  // The SVG uses viewBox="0 0 width height" with width:100%, so convert a
+  // pointer's client X into viewBox space, then to a plot-relative pixel, then
+  // to a domain (sample-index) unit via the viewport's current window.
+  const plotW = chartWidth;
+  const plotPx = (e: { clientX: number }): number => {
+    const svg = svgRef.current;
+    if (!svg) return 0;
+    const rect = svg.getBoundingClientRect();
+    if (rect.width === 0) return 0; // unlaid-out / jsdom: avoid a NaN focus
+    const svgX = ((e.clientX - rect.left) / rect.width) * width;
+    return Math.max(0, Math.min(plotW, svgX - paddingLeft));
+  };
+  const pxToUnit = (px: number): number => {
+    const range = view.resolve(bounds);
+    return range.start + (px / plotW) * (range.end - range.start);
+  };
 
-  if (selectedTags.length > 0) {
-    let realMin = Infinity;
-    let realMax = -Infinity;
-    let hasData = false;
+  // Mouse wheel over the plot zooms about the cursor (X axis, via the viewport).
+  // Attached as a NON-passive native listener (see useNonPassiveWheel) so
+  // preventDefault suppresses page scroll — React's onWheel is passive.
+  const handleWheel = (e: WheelEvent) => {
+    e.preventDefault();
+    view.zoomBy(e.deltaY > 0 ? 1.15 : 0.87, pxToUnit(plotPx(e)), bounds);
+  };
+  useNonPassiveWheel(svgRef, handleWheel);
+  // Click-drag to zoom a region: down starts a selection, move grows the
+  // overlay rectangle, up zooms to it (release inside), leave cancels it.
+  const handlePointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
+    setHoverPx(null); // a drag-zoom gesture supersedes the hover readout
+    view.startSelect(plotPx(e));
+  };
+  const handlePointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
+    if (view.selectionPx) {
+      view.moveSelect(plotPx(e));
+      return;
+    }
+    setHoverPx(plotPx(e)); // hover: show the value readout at the cursor
+  };
+  const handlePointerUp = () => {
+    view.endSelect(bounds, pxToUnit);
+  };
+  const handlePointerLeave = () => {
+    view.cancelSelect();
+    setHoverPx(null);
+  };
 
-    if (smoothedData) {
-      // ⚡ Bolt Optimization: Use single-pass loops instead of flat() and Math.min/max
-      const series = Object.values(smoothedData);
-      for (let i = 0; i < series.length; i++) {
-        const values = series[i];
-        for (let j = 0; j < values.length; j++) {
-          hasData = true;
-          const val = values[j];
-          if (val < realMin) realMin = val;
-          if (val > realMax) realMax = val;
+  // Compute scale boundaries across selected tags. Memoized on the exact inputs
+  // that move the axis (selected tags, the render-resolution slice, any server
+  // smoothing, zoom, manual override) so the extent scan doesn't re-run on
+  // unrelated re-renders. The scan reads `renderHistory` (already strided to
+  // RENDER_MAX_POINTS) rather than the full slice.
+  const { minVal, maxVal } = useMemo(() => {
+    let lo = 0;
+    let hi = 100;
+
+    if (selectedTags.length > 0) {
+      let realMin = Infinity;
+      let realMax = -Infinity;
+      let hasData = false;
+
+      if (smoothedData) {
+        const series = Object.values(smoothedData);
+        for (let i = 0; i < series.length; i++) {
+          const values = series[i];
+          for (let j = 0; j < values.length; j++) {
+            hasData = true;
+            const val = values[j];
+            if (val < realMin) realMin = val;
+            if (val > realMax) realMax = val;
+          }
+        }
+      } else if (renderHistory.length > 0) {
+        hasData = true;
+        for (let i = 0; i < renderHistory.length; i++) {
+          const sample = renderHistory[i];
+          for (let j = 0; j < selectedTags.length; j++) {
+            const val = sample[selectedTags[j]] ?? 0;
+            if (val < realMin) realMin = val;
+            if (val > realMax) realMax = val;
+          }
         }
       }
-    } else if (activeHistory.length > 0) {
-      // ⚡ Bolt Optimization: Use single-pass loops instead of flatMap, map, and Math.min/max
-      hasData = true;
-      for (let i = 0; i < activeHistory.length; i++) {
-        const sample = activeHistory[i];
-        for (let j = 0; j < selectedTags.length; j++) {
-          const val = sample[selectedTags[j]] ?? 0;
-          if (val < realMin) realMin = val;
-          if (val > realMax) realMax = val;
-        }
+
+      if (hasData) {
+        const delta = realMax - realMin;
+        const padding = delta > 0 ? delta * 0.1 : 5;
+        lo = Math.max(0, realMin - padding);
+        hi = realMax + padding;
+
+        // Apply Zoom multiplier
+        const center = lo + (hi - lo) / 2;
+        const zoomedRange = (hi - lo) * zoomLevel;
+        lo = Math.max(0, center - zoomedRange / 2);
+        hi = center + zoomedRange / 2;
       }
     }
 
-    if (hasData) {
-      const delta = realMax - realMin;
-      
-      const padding = delta > 0 ? delta * 0.1 : 5;
-      minVal = Math.max(0, realMin - padding);
-      maxVal = realMax + padding;
-
-      // Apply Zoom multiplier
-      const center = minVal + (maxVal - minVal) / 2;
-      const zoomedRange = (maxVal - minVal) * zoomLevel;
-      minVal = Math.max(0, center - zoomedRange / 2);
-      maxVal = center + zoomedRange / 2;
+    // Manual axis override wins over the auto-scale + zoom computed above.
+    if (!yAxis.auto) {
+      lo = yAxis.min;
+      hi = yAxis.max > yAxis.min ? yAxis.max : yAxis.min + 1;
     }
-  }
+
+    return { minVal: lo, maxVal: hi };
+  }, [selectedTags, smoothedData, renderHistory, zoomLevel, yAxis]);
 
   const valRange = maxVal - minVal || 1;
 
@@ -167,51 +300,109 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
     return { x, y };
   };
 
-  // Snapshot functionality: Download SVG screenshot
-  const downloadSnapshotSVG = () => {
-    if (!svgRef.current) return;
-    const svgEl = svgRef.current.cloneNode(true) as SVGSVGElement;
-    
-    // Add explicitly styling inline for standalone viewing
-    svgEl.setAttribute("style", "background-color: #0f172a; color: #f8fafc; font-family: sans-serif;");
-    const svgString = new XMLSerializer().serializeToString(svgEl);
-    const blob = new Blob([svgString], { type: "image/svg+xml;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `SCADA_Trend_Snapshot_${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}.svg`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  };
+  // Precompute each selected trace's SVG line + area `d` strings ONCE per input
+  // change instead of on every render. Reads the render-resolution slice
+  // (`renderHistory`) — the expensive per-point string concat now runs over a
+  // few hundred points, not thousands, and is skipped entirely when none of the
+  // inputs changed.
+  const seriesPaths = useMemo(() => {
+    const lastX = paddingLeft + chartWidth;
+    return selectedTags.map((tagId, activeIdx) => {
+      const color = LINE_COLORS[activeIdx % LINE_COLORS.length];
+      const useSmoothed =
+        smoothedData && smoothedData[tagId] && smoothedData[tagId].length > 0;
+      const totalPoints = useSmoothed
+        ? smoothedData[tagId].length
+        : renderHistory.length;
 
-  // Snapshot functionality: Export active chart history to CSV
-  const downloadSnapshotCSV = () => {
-    if (activeHistory.length === 0 || selectedTags.length === 0) return;
-    
-    let csvContent = "data:text/csv;charset=utf-8,";
-    // Header
-    csvContent += "Index," + selectedTags.map(tagId => `Tag_${tagId}`).join(",") + "\n";
-    
-    // Body
-    activeHistory.forEach((sample, idx) => {
-      const row = [idx];
-      selectedTags.forEach(tagId => {
-        row.push(sample[tagId] ?? 0.0);
-      });
-      csvContent += row.join(",") + "\n";
+      if (totalPoints < 2) {
+        return { tagId, activeIdx, color, pathD: "", areaD: "", drawable: false };
+      }
+
+      let pathD = "";
+      let areaD = `M ${paddingLeft} ${paddingTop + chartHeight} `;
+
+      if (useSmoothed) {
+        smoothedData[tagId].forEach((val, sampleIdx) => {
+          const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
+          pathD += `${sampleIdx === 0 ? "M" : "L"} ${x} ${y} `;
+          areaD += `L ${x} ${y} `;
+        });
+      } else {
+        renderHistory.forEach((sample, sampleIdx) => {
+          const val = sample[tagId] ?? 0;
+          const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
+          pathD += `${sampleIdx === 0 ? "M" : "L"} ${x} ${y} `;
+          areaD += `L ${x} ${y} `;
+        });
+      }
+
+      areaD += `L ${lastX} ${paddingTop + chartHeight} Z`;
+      return { tagId, activeIdx, color, pathD, areaD, drawable: true };
     });
+    // getCoordinates depends only on the memoized minVal/maxVal (valRange) and
+    // static chart dims, so the extent inputs below are sufficient.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedTags, renderHistory, smoothedData, minVal, maxVal]);
 
-    const encodedUri = encodeURI(csvContent);
-    const a = document.createElement("a");
-    a.href = encodedUri;
-    a.download = `Trend_Data_Export_${new Date().toISOString().slice(0, 19).replace(/:/g, "-")}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+  // Resolve the hover crosshair from the raw pointer pixel, snapping to the
+  // nearest drawn sample and reading each selected tag's value there. Reuses the
+  // same getCoordinates projection as the series paths (DRY) so the marker sits
+  // exactly on the line. Computed inline (cheap: a handful of series) rather than
+  // memoized because it depends on the full projection state.
+  const seriesLen = (tagId: number): number => {
+    const sm = smoothedData?.[tagId];
+    return sm && sm.length > 0 ? sm.length : renderHistory.length;
   };
+  const seriesValueAt = (tagId: number, idx: number): number => {
+    const sm = smoothedData?.[tagId];
+    if (sm && sm.length > 0) return sm[idx] ?? 0;
+    return renderHistory[idx]?.[tagId] ?? 0;
+  };
+  const hover: { px: number; series: CrosshairSeries[]; xLabel: string } | null =
+    (() => {
+      if (hoverPx === null) return null;
+      const drawables = seriesPaths.filter((s) => s.drawable);
+      if (drawables.length === 0) return null;
+      const f = chartWidth > 0 ? Math.max(0, Math.min(1, hoverPx / chartWidth)) : 0;
+      const firstLen = seriesLen(drawables[0].tagId);
+      if (firstLen < 2) return null;
+      const snapIdx = Math.max(0, Math.min(firstLen - 1, Math.round(f * (firstLen - 1))));
+      const snappedX = getCoordinates(snapIdx, 0, firstLen).x;
+      const series: CrosshairSeries[] = drawables.map(({ tagId, color }) => {
+        const n = seriesLen(tagId);
+        const idx = Math.max(0, Math.min(n - 1, Math.round(f * (n - 1))));
+        const value = seriesValueAt(tagId, idx);
+        return {
+          label: `#${tagId}`,
+          color,
+          text: value.toFixed(1),
+          py: getCoordinates(idx, value, n).y,
+        };
+      });
+      const secondsAgo = leftSecondsAgo + f * (rightSecondsAgo - leftSecondsAgo);
+      const xLabel =
+        secondsAgo < 0.5
+          ? "now"
+          : secondsAgo < 60
+            ? `-${secondsAgo.toFixed(1)}s`
+            : `-${(secondsAgo / 60).toFixed(1)}m`;
+      return { px: snappedX, series, xLabel };
+    })();
+
+  // Snapshot/export data for the shared SnapshotButton: PNG + SVG come straight
+  // from the <svg> ref; CSV is the full-resolution visible slice of the selected
+  // tags. `undefined` (no tags / no data) hides the CSV button.
+  const snapshotCsv =
+    selectedTags.length > 0 && activeHistory.length > 0
+      ? {
+          headers: ["index", ...selectedTags.map((tagId) => `tag_${tagId}`)],
+          rows: activeHistory.map((sample, idx) => [
+            idx,
+            ...selectedTags.map((tagId) => sample[tagId] ?? 0),
+          ]),
+        }
+      : undefined;
 
   const gridLinesY = [0, 0.25, 0.5, 0.75, 1];
 
@@ -220,7 +411,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
       <div className="panel-header" style={{ marginBottom: "0.5rem" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
           <span>Trends</span>
-          {isPaused && (
+          {!view.live && (
             <span
               style={{
                 fontSize: "0.7rem",
@@ -230,31 +421,35 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
                 padding: "0.05rem 0.25rem",
                 fontWeight: 600,
                 textTransform: "uppercase",
+                fontFamily: "var(--font-mono)",
               }}
             >
-              Frozen
+              {view.paused ? "FROZEN" : `panned -${Math.round(pannedSeconds)}s`}
             </span>
           )}
         </div>
         <div style={{ display: "flex", gap: "0.3rem" }}>
-          {[10, 30, 60, 120].map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setDuration(t)}
-              className="btn"
-              style={{
-                padding: "0.15rem 0.4rem",
-                fontSize: "0.7rem",
-                border: "1px solid",
-                borderColor: duration === t ? "var(--accent-cyan)" : "var(--panel-border)",
-                background: duration === t ? "var(--cell-hover-bg)" : "var(--input-bg)",
-                color: duration === t ? "var(--accent-cyan)" : "var(--text-secondary)",
-              }}
-            >
-              {t}s
-            </button>
-          ))}
+          {WINDOW_PRESETS.map((t) => {
+            const active = Math.round(windowSeconds) === t;
+            return (
+              <button
+                key={t}
+                type="button"
+                onClick={() => view.setSpan(t * SAMPLES_PER_SECOND)}
+                className="btn"
+                style={{
+                  padding: "0.15rem 0.4rem",
+                  fontSize: "0.7rem",
+                  border: "1px solid",
+                  borderColor: active ? "var(--accent-cyan)" : "var(--panel-border)",
+                  background: active ? "var(--cell-hover-bg)" : "var(--input-bg)",
+                  color: active ? "var(--accent-cyan)" : "var(--text-secondary)",
+                }}
+              >
+                {t}s
+              </button>
+            );
+          })}
         </div>
       </div>
 
@@ -272,17 +467,35 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
           flexWrap: "wrap",
         }}
       >
-        {/* Playback Controls */}
+        {/* Playback + pan (X-axis viewport) Controls */}
         <div style={{ display: "flex", gap: "0.3rem" }}>
           <button
             type="button"
-            onClick={() => setIsPaused(!isPaused)}
+            onClick={handlePauseToggle}
             className="btn"
             style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
-            title={isPaused ? "Resume Live Stream" : "Pause / Freeze Plot"}
+            title={view.paused ? "Resume Live Stream" : "Pause / Freeze Plot"}
           >
-            {isPaused ? <Play size={12} color="var(--color-success)" /> : <Pause size={12} />}
-            <span>{isPaused ? "Live" : "Freeze"}</span>
+            {view.paused ? <Play size={12} color="var(--color-success)" /> : <Pause size={12} />}
+            <span>{view.paused ? "Live" : "Freeze"}</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => view.panBy((end - start) * 0.3, bounds)}
+            className="btn"
+            style={{ padding: "0.25rem 0.5rem" }}
+            title="Scroll back in time (older)"
+          >
+            <ChevronLeft size={12} />
+          </button>
+          <button
+            type="button"
+            onClick={() => view.panBy(-(end - start) * 0.3, bounds)}
+            className="btn"
+            style={{ padding: "0.25rem 0.5rem" }}
+            title="Scroll toward now (newer)"
+          >
+            <ChevronRight size={12} />
           </button>
           <button
             type="button"
@@ -321,7 +534,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
         {/* Server-Side Smoothing */}
         <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
           <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", textTransform: "uppercase" }}>Smoothing</span>
-          <select 
+          <select
             value={smoothingMode}
             onChange={(e) => setSmoothingMode(e.target.value)}
             className="form-input"
@@ -343,66 +556,39 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
           )}
         </div>
 
-        {/* Snapshot Download Buttons */}
-        <div style={{ display: "flex", gap: "0.3rem" }}>
-          <button
-            type="button"
-            onClick={downloadSnapshotSVG}
-            className="btn"
-            style={{ padding: "0.25rem 0.5rem", fontSize: "0.7rem" }}
-            title="Download Standalone SVG Graphic"
-          >
-            <Image size={12} />
-            <span>SVG</span>
-          </button>
-          <button
-            type="button"
-            onClick={downloadSnapshotCSV}
-            className="btn"
-            style={{ padding: "0.25rem 0.5rem", fontSize: "0.75rem" }}
-            title="Download trend view data as CSV"
-          >
-            <FileSpreadsheet size={12} />
-            <span>CSV</span>
-          </button>
-        </div>
+        {/* Snapshot / export (PNG + SVG + CSV) via the shared control */}
+        <SnapshotButton
+          targetRef={svgRef}
+          filename="p1am_trend"
+          csv={snapshotCsv}
+          label="Export trend snapshot"
+        />
       </div>
 
-      {/* History scroll panning slider */}
-      {maxPossibleOffset > 0 && (
-        <div
+      {/* Manual Y-axis range override (auto-scale + Y-Zoom still apply when "Auto Y" is on) */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.75rem",
+          background: "var(--input-bg)",
+          padding: "0.35rem 0.6rem",
+          borderRadius: "4px",
+          border: "1px solid var(--panel-border)",
+        }}
+      >
+        <span
           style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            background: "var(--input-bg)",
-            padding: "0.35rem 0.6rem",
-            borderRadius: "4px",
-            border: "1px solid var(--panel-border)",
+            fontSize: "0.7rem",
+            color: "var(--text-secondary)",
+            minWidth: "75px",
+            textTransform: "uppercase",
           }}
         >
-          <span style={{ fontSize: "0.7rem", color: "var(--text-secondary)", minWidth: "75px" }}>
-            Pan History:
-          </span>
-          <input
-            type="range"
-            min={0}
-            max={maxPossibleOffset}
-            value={safeOffset}
-            onChange={(e) => setScrollOffset(Number(e.target.value))}
-            style={{
-              flex: 1,
-              cursor: "pointer",
-              accentColor: "var(--accent-cyan)",
-              height: "4px",
-              background: "var(--panel-border)",
-            }}
-          />
-          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)", fontFamily: "var(--font-mono)", minWidth: "50px", textAlign: "right" }}>
-            -{Math.round(safeOffset / 10)}s
-          </span>
-        </div>
-      )}
+          Y Axis:
+        </span>
+        <TrendAxisControls value={yAxis} onChange={setYAxis} />
+      </div>
 
       {/* Macro Controls */}
       <div style={{ display: "flex", gap: "0.4rem", flexWrap: "wrap", alignItems: "center" }}>
@@ -500,7 +686,17 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
           <svg
             ref={svgRef}
             viewBox={`0 0 ${width} ${height}`}
-            style={{ width: "100%", height: "auto", overflow: "visible" }}
+            style={{
+              width: "100%",
+              height: "auto",
+              overflow: "visible",
+              touchAction: "none",
+              cursor: "crosshair",
+            }}
+            onPointerDown={handlePointerDown}
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerLeave}
           >
             <defs>
               {/* Linear Gradients under lines */}
@@ -555,7 +751,7 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
               fontSize="9"
               textAnchor="start"
             >
-              -{Math.round(duration + safeOffset / 10)}s
+              {`-${Math.round(leftSecondsAgo)}s`}
             </text>
             <text
               x={width - paddingRight}
@@ -564,49 +760,12 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
               fontSize="9"
               textAnchor="end"
             >
-              -{Math.round(safeOffset / 10)}s
+              {rightSecondsAgo < 0.5 ? "now" : `-${Math.round(rightSecondsAgo)}s`}
             </text>
 
-            {/* Paths for active tag series */}
-            {selectedTags.map((tagId, activeIdx) => {
-              const color = LINE_COLORS[activeIdx % LINE_COLORS.length];
-              const useSmoothed = smoothedData && smoothedData[tagId] && smoothedData[tagId].length > 0;
-              const totalPoints = useSmoothed ? smoothedData[tagId].length : activeHistory.length;
-
-              if (totalPoints < 2) return null;
-
-              // Generate Path commands
-              let pathD = "";
-              let areaD = `M ${paddingLeft} ${paddingTop + chartHeight} `;
-
-              if (useSmoothed) {
-                smoothedData[tagId].forEach((val, sampleIdx) => {
-                  const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
-                  if (sampleIdx === 0) {
-                    pathD += `M ${x} ${y} `;
-                  } else {
-                    pathD += `L ${x} ${y} `;
-                  }
-                  areaD += `L ${x} ${y} `;
-                });
-              } else {
-                activeHistory.forEach((sample, sampleIdx) => {
-                  const val = sample[tagId] ?? 0;
-                  const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
-                  if (sampleIdx === 0) {
-                    pathD += `M ${x} ${y} `;
-                  } else {
-                    pathD += `L ${x} ${y} `;
-                  }
-                  areaD += `L ${x} ${y} `;
-                });
-              }
-
-              // Close the area path
-              const lastX = paddingLeft + chartWidth;
-              areaD += `L ${lastX} ${paddingTop + chartHeight} Z`;
-
-              return (
+            {/* Paths for active tag series (precomputed in `seriesPaths`) */}
+            {seriesPaths.map(({ tagId, activeIdx, color, pathD, areaD, drawable }) =>
+              drawable ? (
                 <g key={tagId}>
                   {/* Area Gradient */}
                   <path d={areaD} fill={`url(#grad-${activeIdx})`} />
@@ -620,8 +779,36 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
                     strokeLinejoin="round"
                   />
                 </g>
-              );
-            })}
+              ) : null,
+            )}
+
+            {/* Hover crosshair + value tooltip (shared overlay) */}
+            {hover && (
+              <TrendCrosshair
+                px={hover.px}
+                yTop={paddingTop}
+                yBottom={paddingTop + chartHeight}
+                plotLeft={paddingLeft}
+                plotRight={width - paddingRight}
+                series={hover.series}
+                xLabel={hover.xLabel}
+              />
+            )}
+
+            {/* Click-drag zoom-region overlay */}
+            {view.selectionPx && (
+              <rect
+                x={paddingLeft + Math.min(view.selectionPx.fromPx, view.selectionPx.toPx)}
+                y={paddingTop}
+                width={Math.abs(view.selectionPx.toPx - view.selectionPx.fromPx)}
+                height={chartHeight}
+                fill="var(--accent-cyan)"
+                fillOpacity="0.15"
+                stroke="var(--accent-cyan)"
+                strokeWidth="1"
+                pointerEvents="none"
+              />
+            )}
           </svg>
         )}
       </div>

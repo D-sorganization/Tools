@@ -235,6 +235,26 @@ class PowerSupplyConfig(BaseModel):
         return self
 
 
+class PowerSupplyLastSetpoint(BaseModel):
+    """The operator's last commanded setpoint, persisted for HMI pre-fill.
+
+    Stored durably on every operator setpoint change and recalled on boot so the
+    HMI can show the value the operator last dialed in. It is a *settings* record
+    only: recalling it never arms or energizes the supply (the controller stays
+    IDLE after restore).
+    """
+
+    mode: PowerSupplyMode
+    value_a: float | None = Field(
+        default=None,
+        description="Last current setpoint in amps (set when mode == CURRENT).",
+    )
+    value_w: float | None = Field(
+        default=None,
+        description="Last power setpoint in watts (set when mode == POWER).",
+    )
+
+
 class PowerSupplyStatus(BaseModel):
     """Snapshot of controller state for the UI / WebSocket stream."""
 
@@ -290,5 +310,16 @@ class PowerSupplyStatus(BaseModel):
         description=(
             "True when either feedback channel's noise metric exceeds its arc "
             "threshold — the operator-facing 'system may be arcing' indicator."
+        ),
+    )
+
+    last_setpoint: PowerSupplyLastSetpoint | None = Field(
+        default=None,
+        description=(
+            "Operator's last commanded setpoint recalled from durable storage on "
+            "boot. Populated by the service so the HMI can pre-fill the setpoint "
+            "field after a restart; it is purely informational and does NOT arm "
+            "or energize the output — the controller stays IDLE until the "
+            "operator re-enables permissive. None when nothing was persisted."
         ),
     )

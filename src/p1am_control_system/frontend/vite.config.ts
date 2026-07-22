@@ -1,18 +1,47 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-// Configure Vite to proxy /api backend calls to FastAPI on port 8000
+// Proxy /api (and the /api/stream WebSocket) to the FastAPI backend on :8000.
+// Shared by the dev server and `vite preview` so the production build served on
+// the Pi routes exactly like development.
+const apiProxy = {
+  "/api": {
+    target: "http://localhost:8000",
+    changeOrigin: true,
+    ws: true,
+  },
+};
+
 export default defineConfig({
   plugins: [react()],
   server: {
     port: 3002,
     host: true,
-    proxy: {
-      "/api": {
-        target: "http://localhost:8000",
-        changeOrigin: true,
-        ws: true,
+    proxy: apiProxy,
+  },
+  // `vite preview` serves the minified production build (dist/) — far lighter on
+  // the Raspberry Pi than the dev server (no HMR/transpile) and this is what the
+  // p1am-frontend systemd service runs in production.
+  preview: {
+    port: 3002,
+    host: true,
+    proxy: apiProxy,
+  },
+  build: {
+    // Split rarely-changing vendor code into its own cached chunks so a code
+    // change doesn't force the Pi's browser to re-download React/zod/icons, and
+    // so the initial parse cost is spread across cacheable files.
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          react: ["react", "react-dom"],
+          zod: ["zod"],
+          icons: ["lucide-react"],
+        },
       },
     },
+    // A slightly higher warning threshold: the app is a single-page HMI, not a
+    // latency-critical public site, and the vendor split keeps chunks cacheable.
+    chunkSizeWarningLimit: 700,
   },
 });

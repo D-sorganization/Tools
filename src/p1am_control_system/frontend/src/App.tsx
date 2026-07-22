@@ -1,14 +1,19 @@
-import React, { useState, useEffect } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  lazy,
+  Suspense,
+} from "react";
 import { RoutingMatrix } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
+import { PanelStack } from "./components/PanelStack";
 import { AlarmsHeader } from "./components/AlarmsHeader";
 import { EStopButton } from "./components/EStopButton";
 import { DataCapturePanel } from "./components/DataCapturePanel";
 import { InterlocksPanel } from "./components/InterlocksPanel";
 import { EventLogView } from "./components/EventLogView";
-import { ProjectImporter } from "./components/ProjectImporter";
-import { LadderExplorer } from "./components/LadderExplorer";
-import { PlantHierarchy } from "./components/PlantHierarchy";
 import { PowerSupplyControl } from "./components/PowerSupplyControl";
 import { TemperatureControl } from "./components/TemperatureControl";
 import { SignalDiagnostics } from "./components/SignalDiagnostics";
@@ -17,6 +22,7 @@ import { TagInspector } from "./components/TagInspector";
 import type { LadderTagInfo } from "./api/schemas";
 import { NotificationBanner } from "./components/NotificationBanner";
 import { TabBar } from "./components/TabBar";
+import { HelpModal } from "./components/HelpModal";
 import { CsvExporter } from "./components/CsvExporter";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
 import {
@@ -54,6 +60,31 @@ import {
   X,
 } from "lucide-react";
 
+// Code-split the heavy, occasionally-used reference/config tabs so the Pi's
+// browser doesn't parse them on cold load. The Data Explorer in particular pulls
+// in the whole plots subsystem; it and the project/ladder/hierarchy tabs load
+// on demand (wrapped in a <Suspense> boundary below).
+const DataExplorer = lazy(() =>
+  import("./components/data_explorer/DataExplorer").then((m) => ({
+    default: m.DataExplorer,
+  })),
+);
+const ProjectImporter = lazy(() =>
+  import("./components/ProjectImporter").then((m) => ({
+    default: m.ProjectImporter,
+  })),
+);
+const LadderExplorer = lazy(() =>
+  import("./components/LadderExplorer").then((m) => ({
+    default: m.LadderExplorer,
+  })),
+);
+const PlantHierarchy = lazy(() =>
+  import("./components/PlantHierarchy").then((m) => ({
+    default: m.PlantHierarchy,
+  })),
+);
+
 // Re-export domain types for back-compat with existing importers (AlarmsHeader,
 // EventLogView, InterlocksPanel, RoutingMatrix, ControlDashboard).
 export type {
@@ -90,15 +121,21 @@ export const App: React.FC = () => {
   const [notification, setNotification] = useState<NotificationState | null>(null);
 
   // Show a notification banner (declared early so the telemetry hook can use it).
-  const triggerNotification = (message: string, type: NotificationType) => {
-    setNotification({ message, type });
-    setTimeout(() => setNotification(null), 5000);
-  };
+  // Stable identity (empty deps — only calls stable setState) so memoized
+  // children that take `triggerNotification` don't re-render every frame.
+  const triggerNotification = useCallback(
+    (message: string, type: NotificationType) => {
+      setNotification({ message, type });
+      setTimeout(() => setNotification(null), 5000);
+    },
+    [],
+  );
 
   // Live telemetry (WS stream + derived state) is owned by a dedicated hook.
   const {
     tagValues,
     history,
+    historyTimes,
     tagsDict,
     alicats,
     activeAlarms,
@@ -119,10 +156,44 @@ export const App: React.FC = () => {
   // Tab Navigation, Order, and Visibility State (order + visibility persisted
   // to localStorage so an operator's layout survives reloads).
   const [activeTab, setActiveTab] = useState<TabId>("powerSupply");
+  // Per-tab help modal (opened by the Help button; shows HELP[activeTab]).
+  const [helpOpen, setHelpOpen] = useState(false);
   const [visibleTabs, setVisibleTabs] = useState<Record<TabId, boolean>>(
     loadTabVisibility,
   );
   const [tabOrder, setTabOrder] = useState<TabId[]>(loadTabOrder);
+
+  // Measure the sticky header so the tab bar can freeze just below it on scroll.
+  const headerRef = useRef<HTMLElement>(null);
+  const [headerHeight, setHeaderHeight] = useState(0);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el) return;
+    const measure = () => setHeaderHeight(el.offsetHeight);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Global performance mode. `perfMode` is the operator's preference for when
+  // the HMI tab is visible; lightweight by default. Whenever the tab is hidden
+  // we force lightweight (no point polling fast when nobody is looking), then
+  // restore the preference when the tab is shown again.
+  const [perfMode, setPerfMode] = useState<"performance" | "lightweight">(
+    "lightweight",
+  );
+  useEffect(() => {
+    const apply = () => {
+      const effective = document.hidden ? "lightweight" : perfMode;
+      api.setPerformanceMode(effective).catch(() => {});
+    };
+    apply();
+    document.addEventListener("visibilitychange", apply);
+    return () => document.removeEventListener("visibilitychange", apply);
+  }, [perfMode]);
+  const togglePerfMode = () =>
+    setPerfMode((m) => (m === "performance" ? "lightweight" : "performance"));
 
   useEffect(() => {
     saveTabOrder(tabOrder);
@@ -173,18 +244,26 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleSelectTag = (name: string) => {
+  // Latest live values read by the (stable) tag selector below. Kept in refs so
+  // `handleSelectTag` keeps a stable identity (for memoized consumers) while
+  // still reading the current frame's values when actually invoked.
+  const tagValuesRef = useRef(tagValues);
+  tagValuesRef.current = tagValues;
+  const tagsDictRef = useRef(tagsDict);
+  tagsDictRef.current = tagsDict;
+
+  const handleSelectTag = useCallback((name: string) => {
     const id = parseTagId(name);
     if (id !== null) {
       setInspectorView({ type: "tag", tagId: id });
-      setOverrideVal(fmtNumber(tagValues[id] ?? 0.0, 2, "0.00"));
+      setOverrideVal(fmtNumber(tagValuesRef.current[id] ?? 0.0, 2, "0.00"));
       setShowOverrideConfirm(false);
       return;
     }
     setInspectorView({ type: "custom_tag", tagName: name });
-    setOverrideVal(fmtNumber(tagsDict[name] ?? 0.0, 2, "0.00"));
+    setOverrideVal(fmtNumber(tagsDictRef.current[name] ?? 0.0, 2, "0.00"));
     setShowOverrideConfirm(false);
-  };
+  }, []);
 
   useEffect(() => {
     if (inspectorView.type === "alicat") {
@@ -394,7 +473,7 @@ export const App: React.FC = () => {
     }
   };
 
-  const fetchAlarmsAndEvents = async () => {
+  const fetchAlarmsAndEvents = useCallback(async () => {
     try {
       const [alarms, events] = await Promise.all([
         api.getActiveAlarms(),
@@ -405,17 +484,32 @@ export const App: React.FC = () => {
     } catch (err) {
       console.error("Failed to fetch alarms and events", err);
     }
-  };
+  }, [setActiveAlarms]);
 
-  const handleAcknowledgeAlarm = async (tagId: string) => {
-    try {
-      await api.acknowledgeAlarm(tagId);
-      triggerNotification(`Alarm on Tag ${tagId} acknowledged`, "success");
-      fetchAlarmsAndEvents();
-    } catch {
-      triggerNotification("Failed to acknowledge alarm", "error");
+  const handleAcknowledgeAlarm = useCallback(
+    async (tagId: string) => {
+      try {
+        await api.acknowledgeAlarm(tagId);
+        triggerNotification(`Alarm on Tag ${tagId} acknowledged`, "success");
+        fetchAlarmsAndEvents();
+      } catch {
+        triggerNotification("Failed to acknowledge alarm", "error");
+      }
+    },
+    [triggerNotification, fetchAlarmsAndEvents],
+  );
+
+  // Stable ack-all handler for the memoized AlarmsHeader. `activeAlarms` is read
+  // from a ref so this identity survives every telemetry frame.
+  const activeAlarmsRef = useRef(activeAlarms);
+  activeAlarmsRef.current = activeAlarms;
+  const handleAcknowledgeAll = useCallback(async () => {
+    for (const a of activeAlarmsRef.current) {
+      if (!a.acknowledged) {
+        await handleAcknowledgeAlarm(a.tag_id);
+      }
     }
-  };
+  }, [handleAcknowledgeAlarm]);
 
   const handleAlicatSetpoint = async (deviceId: string, val: number) => {
     try {
@@ -500,21 +594,24 @@ export const App: React.FC = () => {
     }
   };
 
-  const handleTabVisibilityToggle = (tab: TabId) => {
-    const nextVisible = { ...visibleTabs, [tab]: !visibleTabs[tab] };
-    const anyVisible = Object.values(nextVisible).some(Boolean);
-    if (!anyVisible) {
-      triggerNotification("At least one tab must remain visible.", "error");
-      return;
-    }
-    setVisibleTabs(nextVisible);
-    if (activeTab === tab && !nextVisible[tab]) {
-      const firstVisible = (Object.keys(nextVisible) as TabId[]).find(
-        (k) => nextVisible[k],
-      );
-      setActiveTab(firstVisible ?? "trends");
-    }
-  };
+  const handleTabVisibilityToggle = useCallback(
+    (tab: TabId) => {
+      const nextVisible = { ...visibleTabs, [tab]: !visibleTabs[tab] };
+      const anyVisible = Object.values(nextVisible).some(Boolean);
+      if (!anyVisible) {
+        triggerNotification("At least one tab must remain visible.", "error");
+        return;
+      }
+      setVisibleTabs(nextVisible);
+      if (activeTab === tab && !nextVisible[tab]) {
+        const firstVisible = (Object.keys(nextVisible) as TabId[]).find(
+          (k) => nextVisible[k],
+        );
+        setActiveTab(firstVisible ?? "trends");
+      }
+    },
+    [visibleTabs, activeTab, triggerNotification],
+  );
 
   // Initial REST fetches on mount. The live WebSocket stream is owned by the
   // useTelemetryStream hook above; this only pulls the one-shot config/registry.
@@ -530,6 +627,7 @@ export const App: React.FC = () => {
       <NotificationBanner notification={notification} />
 
       <header
+        ref={headerRef}
         style={{
           display: "flex",
           alignItems: "center",
@@ -599,12 +697,46 @@ export const App: React.FC = () => {
 
           <button
             type="button"
+            onClick={togglePerfMode}
+            className="btn"
+            style={{
+              padding: "0.4rem 0.6rem",
+              fontSize: "0.72rem",
+              fontWeight: 700,
+              whiteSpace: "nowrap",
+              color:
+                perfMode === "lightweight"
+                  ? "var(--color-warning)"
+                  : "var(--accent-cyan)",
+            }}
+            title={
+              perfMode === "lightweight"
+                ? "Lightweight mode — PLC polled slowly to conserve CPU / browser load. Click for Performance. (Auto-engages whenever this tab is hidden.)"
+                : "Performance mode — fast PLC polling + live updates while this tab is visible. Click for Lightweight (saves CPU). Auto-drops to Lightweight when the tab is hidden."
+            }
+          >
+            {perfMode === "lightweight" ? "◐ Lightweight" : "● Performance"}
+          </button>
+
+          <button
+            type="button"
             onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
             className="btn"
             style={{ padding: "0.5rem" }}
             title="Toggle light/dark theme"
           >
             {theme === "dark" ? <Sun size={14} /> : <Moon size={14} />}
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setHelpOpen(true)}
+            className="btn"
+            style={{ padding: "0.5rem" }}
+            title="Help for the current tab"
+            aria-label="Open help for the current tab"
+          >
+            <BookOpen size={14} />
           </button>
 
           <button
@@ -625,33 +757,52 @@ export const App: React.FC = () => {
         </div>
       </header>
 
-      <AlarmsHeader 
-        activeAlarms={activeAlarms} 
-        onAcknowledgeAll={async () => {
-          for (const a of activeAlarms) {
-            if (!a.acknowledged) {
-              await handleAcknowledgeAlarm(a.tag_id);
-            }
-          }
-        }} 
+      <HelpModal
+        tabId={activeTab}
+        open={helpOpen}
+        onClose={() => setHelpOpen(false)}
+      />
+
+      <AlarmsHeader
+        activeAlarms={activeAlarms}
+        onAcknowledgeAll={handleAcknowledgeAll}
       />
 
       {/* Main content — the inspector is now a slide-in drawer (below), not a column */}
       <div className="main-layout-grid" style={{ gridTemplateColumns: "1fr" }}>
         <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-          <TabBar
-            activeTab={activeTab}
-            visibleTabs={visibleTabs}
-            onSelect={setActiveTab}
-            order={tabOrder}
-            onReorder={setTabOrder}
-            onHide={handleTabVisibilityToggle}
-          />
+          {/* Freeze the tab bar just below the sticky header so the active tab
+              stays visible while scrolling the panel below. */}
+          <div
+            style={{
+              position: "sticky",
+              top: headerHeight,
+              zIndex: 250,
+              background: "var(--bg-color)",
+              paddingBottom: "0.4rem",
+            }}
+          >
+            <TabBar
+              activeTab={activeTab}
+              visibleTabs={visibleTabs}
+              onSelect={setActiveTab}
+              order={tabOrder}
+              onReorder={setTabOrder}
+              onHide={handleTabVisibilityToggle}
+            />
+          </div>
 
+          <Suspense
+            fallback={
+              <div style={{ padding: "2rem", color: "var(--text-muted)" }}>
+                Loading…
+              </div>
+            }
+          >
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
             <PowerSupplyControl
               liveStatus={powerSupplyStatus}
-              onExport={() => setInspectorView({ type: "export" })}
+              onOpenCapture={() => setInspectorView({ type: "export" })}
             />
           )}
 
@@ -660,79 +811,89 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "diagnostics" && visibleTabs.diagnostics && (
-            <SignalDiagnostics history={history} />
+            <SignalDiagnostics history={history} historyTimes={historyTimes} />
           )}
 
           {/* Render Tab Contents */}
           {activeTab === "trends" && visibleTabs.trends && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-              {/* Live Customizable Graph */}
-              <TrendChart history={history} tagValues={tagValues} />
-
-              {/* 32 Tag Broker Monitor Grid */}
-              <section className="glass-panel">
-                <div className="panel-header">
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <Settings size={16} color="var(--accent-magenta)" />
-                    <span>Signal Monitors</span>
-                  </div>
-                  <span className="tooltip-container">
-                    <Info size={14} color="var(--text-muted)" />
-                    <span className="tooltip-text">Click any tag cell to inspect safety limits or write a manual override value in the inspector sidebar.</span>
-                  </span>
-                </div>
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
-                    gap: "0.6rem",
-                  }}
-                >
-                  {TAG_INDICES.map((i) => {
-                    const val = tagValues[i] ?? 0.0;
-                    const interlock = config.interlocks[i];
-                    const isTripped =
-                      interlock && (val > interlock.high_limit || val < interlock.low_limit);
-
-                    return (
+            <PanelStack
+              regionId="trends"
+              panels={[
+                {
+                  id: "trend",
+                  // Drag to reorder / resize the live customizable graph.
+                  node: <TrendChart history={history} tagValues={tagValues} />,
+                },
+                {
+                  id: "monitors",
+                  node: (
+                    /* 32 Tag Broker Monitor Grid */
+                    <section className="glass-panel">
+                      <div className="panel-header">
+                        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                          <Settings size={16} color="var(--accent-magenta)" />
+                          <span>Signal Monitors</span>
+                        </div>
+                        <span className="tooltip-container">
+                          <Info size={14} color="var(--text-muted)" />
+                          <span className="tooltip-text">Click any tag cell to inspect safety limits or write a manual override value in the inspector sidebar.</span>
+                        </span>
+                      </div>
                       <div
-                        key={i}
-                        className="tag-monitor-card"
                         style={{
-                          borderColor: isTripped ? "var(--color-error)" : "var(--tag-card-border)",
-                        }}
-                        onClick={() => {
-                          setInspectorView({ type: "tag", tagId: i });
-                          setOverrideVal(val.toFixed(2));
+                          display: "grid",
+                          gridTemplateColumns: "repeat(auto-fill, minmax(130px, 1fr))",
+                          gap: "0.6rem",
                         }}
                       >
-                        <div
-                          style={{
-                            fontSize: "0.7rem",
-                            color: "var(--text-muted)",
-                            textTransform: "uppercase",
-                            fontWeight: 700,
-                            marginBottom: "0.15rem",
-                          }}
-                        >
-                          Tag {i}
-                        </div>
-                        <div
-                          className="mono-text"
-                          style={{
-                            fontSize: "1.05rem",
-                            fontWeight: 700,
-                            color: isTripped ? "var(--color-error)" : "var(--accent-cyan)",
-                          }}
-                        >
-                          {val.toFixed(2)}
-                        </div>
+                        {TAG_INDICES.map((i) => {
+                          const val = tagValues[i] ?? 0.0;
+                          const interlock = config.interlocks[i];
+                          const isTripped =
+                            interlock && (val > interlock.high_limit || val < interlock.low_limit);
+
+                          return (
+                            <div
+                              key={i}
+                              className="tag-monitor-card"
+                              style={{
+                                borderColor: isTripped ? "var(--color-error)" : "var(--tag-card-border)",
+                              }}
+                              onClick={() => {
+                                setInspectorView({ type: "tag", tagId: i });
+                                setOverrideVal(val.toFixed(2));
+                              }}
+                            >
+                              <div
+                                style={{
+                                  fontSize: "0.7rem",
+                                  color: "var(--text-muted)",
+                                  textTransform: "uppercase",
+                                  fontWeight: 700,
+                                  marginBottom: "0.15rem",
+                                }}
+                              >
+                                Tag {i}
+                              </div>
+                              <div
+                                className="mono-text"
+                                style={{
+                                  fontSize: "1.05rem",
+                                  fontWeight: 700,
+                                  color: isTripped ? "var(--color-error)" : "var(--accent-cyan)",
+                                }}
+                              >
+                                {val.toFixed(2)}
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
-                    );
-                  })}
-                </div>
-              </section>
-            </div>
+                    </section>
+                  ),
+                },
+              ]}
+            />
           )}
 
           {activeTab === "controllers" && visibleTabs.controllers && (
@@ -1212,6 +1373,11 @@ export const App: React.FC = () => {
               triggerNotification={triggerNotification}
             />
           )}
+
+          {activeTab === "explorer" && visibleTabs.explorer && (
+            <DataExplorer triggerNotification={triggerNotification} />
+          )}
+          </Suspense>
         </div>
 
         {/* Inspector / data-export drawer — slides in from the right on demand */}

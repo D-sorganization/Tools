@@ -9,8 +9,13 @@ import {
   plantHierarchySchema,
   captureStatusSchema,
   captureClearResultSchema,
+  captureConfigSchema,
+  performanceConfigSchema,
   type CaptureStatus,
   type CaptureClearResult,
+  type CaptureConfig,
+  type PerformanceConfig,
+  type PerformanceMode,
   type LadderTagInfo,
   type AlicatMFCState,
   type EventLogEntry,
@@ -136,5 +141,31 @@ export function clearCapture(includeEvents = true): Promise<CaptureClearResult> 
     method: "POST",
     json: { include_events: includeEvents },
     schema: captureClearResultSchema,
+  });
+}
+
+export function getCaptureConfig(): Promise<CaptureConfig> {
+  return apiFetch("/capture/config", { schema: captureConfigSchema });
+}
+
+export function setCaptureConfig(intervalSeconds: number): Promise<CaptureConfig> {
+  return apiFetch("/capture/config", {
+    method: "PUT",
+    json: { interval_s: intervalSeconds },
+    schema: captureConfigSchema,
+  });
+}
+
+// --- Performance mode ---------------------------------------------------------
+
+export function getPerformance(): Promise<PerformanceConfig> {
+  return apiFetch("/performance", { schema: performanceConfigSchema });
+}
+
+export function setPerformanceMode(mode: PerformanceMode): Promise<PerformanceConfig> {
+  return apiFetch("/performance", {
+    method: "PUT",
+    json: { mode },
+    schema: performanceConfigSchema,
   });
 }

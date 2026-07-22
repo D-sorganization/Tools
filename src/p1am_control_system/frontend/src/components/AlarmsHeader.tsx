@@ -12,7 +12,7 @@ interface AlarmsHeaderProps {
  * alarms expand into a scrollable list of clean rows (no per-row checkboxes).
  * Acknowledge-all is the only action, and only when something is unacked.
  */
-export const AlarmsHeader: React.FC<AlarmsHeaderProps> = ({
+const AlarmsHeaderImpl: React.FC<AlarmsHeaderProps> = ({
   activeAlarms,
   onAcknowledgeAll,
 }) => {
@@ -89,3 +89,10 @@ export const AlarmsHeader: React.FC<AlarmsHeaderProps> = ({
     </>
   );
 };
+
+/**
+ * Memoized: the App tree re-renders on every ~10 Hz telemetry frame, but the
+ * alarm list changes rarely. `React.memo` skips this subtree when `activeAlarms`
+ * (ref-stable from useTelemetryStream) and `onAcknowledgeAll` are unchanged.
+ */
+export const AlarmsHeader = React.memo(AlarmsHeaderImpl);

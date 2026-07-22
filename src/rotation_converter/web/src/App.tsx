@@ -15,18 +15,20 @@ function App() {
           </p>
           <div className="mt-4 flex gap-2">
             <button
-              className={`px-3 py-1 rounded text-sm ${
-                activeTab === "rotation" ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-200"
+              className={`px-3 py-1 rounded text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
+                activeTab === "rotation" ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-200 hover:bg-slate-600"
               }`}
               onClick={() => setActiveTab("rotation")}
+              aria-pressed={activeTab === "rotation"}
             >
               Rotation Formats
             </button>
             <button
-              className={`px-3 py-1 rounded text-sm ${
-                activeTab === "reference" ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-200"
+              className={`px-3 py-1 rounded text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 ${
+                activeTab === "reference" ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-200 hover:bg-slate-600"
               }`}
               onClick={() => setActiveTab("reference")}
+              aria-pressed={activeTab === "reference"}
             >
               Reference Frames & Lie Groups
             </button>
