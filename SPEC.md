@@ -2579,3 +2579,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.414 - Security: Structural validation for SymPy parse_expr
 
 - **2026-07-14**: fix(security) — Added structural validation to the symbolic solver backend endpoints (`/solve`, `/derivative`, `/simplify`) before handing untrusted user input to `sympy.parse_expr`. This mitigates a critical code injection vulnerability where malicious AST constructs (e.g. `().__class__`) could be executed due to `parse_expr`'s internal use of `eval`.
+
+## 1.1.415 - Replaced .filter().includes() with Set
+
+- **2026-07-17**: perf(SignalList) — Replaced chained `.filter()` and `.includes()` array passes with a pre-computed `Set` for O(N) constant-time lookups to improve high-frequency execution speed in `SignalList.tsx`.
