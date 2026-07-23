@@ -35,3 +35,7 @@
 ## 2024-05-24 - Semantic State for Custom Toggle Buttons
 **Learning:** In `SignalList.tsx`, custom toggle buttons used dynamic CSS classes to indicate their active state, but lacked ARIA attributes, making their state invisible to screen readers.
 **Action:** When implementing or modifying custom toggle buttons that rely on dynamic styling, always include `aria-pressed={isActive}` on the `<button>` element to ensure semantic state visibility for assistive technologies.
+
+## 2024-07-23 - Focus Rings on Core Buttons
+**Learning:** Discovered a pattern where standard buttons utilizing the `.btn` utility class lacked focus ring accessibility, despite inputs and tabs being styled properly.
+**Action:** Ensure global utility classes for interactive elements inherently contain standard `focus-visible` styling to enforce a baseline accessibility standard across the application.
