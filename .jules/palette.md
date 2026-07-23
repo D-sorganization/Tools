@@ -39,3 +39,7 @@
 ## 2024-07-23 - Focus Rings on Core Buttons
 **Learning:** Discovered a pattern where standard buttons utilizing the `.btn` utility class lacked focus ring accessibility, despite inputs and tabs being styled properly.
 **Action:** Ensure global utility classes for interactive elements inherently contain standard `focus-visible` styling to enforce a baseline accessibility standard across the application.
+
+## 2024-07-23 - Focus Rings on Core Buttons
+**Learning:** Discovered a pattern where standard buttons utilizing the `.btn` utility class lacked focus ring accessibility, despite inputs and tabs being styled properly.
+**Action:** Ensure global utility classes for interactive elements inherently contain standard `focus-visible` styling to enforce a baseline accessibility standard across the application.
