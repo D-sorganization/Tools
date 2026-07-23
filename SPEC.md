@@ -28,13 +28,21 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.5.2                                      |
 | **Spec Version**        | 1.5.2                                      |
-| **Last Spec Update**    | 2026-06-21                                 |
+| **Last Spec Update**    | 2026-07-23                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-23 P1AM Control System Trend Plot Optimization
+
+- `src/p1am_control_system/frontend/src/lib/curveFit.ts` reduces garbage
+  collection overhead during high-frequency UI updates by replacing chained
+  `.reduce()` iterations in `rSquared` and `linearFit.fit` with single-pass
+  standard `for` loops. This eliminates intermediate callback allocations while
+  computing dataset means and sums for trend curve fitting.
 
 ### 2026-06-21 Pendulum web optimizer hot-loop sorting
 
