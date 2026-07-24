@@ -188,7 +188,9 @@ export function reconcilePlotColumns(
   names: string[],
 ): PlotConfig {
   if (names.length === 0) return plot;
-  const has = (n: string) => names.includes(n);
+  // ⚡ Bolt Optimization: Pre-compute a Set for O(1) lookups instead of O(N) array .includes()
+  const namesSet = new Set(names);
+  const has = (n: string) => namesSet.has(n);
   const first = names[0];
   const second = names[1] ?? names[0];
   const keptColumns = plot.columns.filter(has);

@@ -76,3 +76,7 @@
 ## 2026-06-12 - Eliminate map/reduce overhead for parsing assignments
 **Learning:** Parsing simple string formats using `.split().reduce().map()` chains creates unnecessary array allocations, function calls, and closures on every pass, which adds noticeable garbage collection pressure when executing hot paths or frequent input changes.
 **Action:** Replace string processing array chains with single-pass `for` loops and standard `indexOf`/`substring` operations to eliminate closure allocations and minimize object creations.
+
+## 2024-07-24 - Reconciling Dataset Columns
+**Learning:** In the Data Explorer (`reconcilePlotColumns`), reconciling saved plot configs against dataset columns with `.includes()` can cause O(N²) UI lag on wide CSVs, especially since it evaluates `plot.columns.filter(has)`.
+**Action:** Always pre-compute a `Set` from the dataset column names for O(1) lookups when filtering or reconciling config structures.
