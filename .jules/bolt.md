@@ -73,3 +73,6 @@
 ## 2024-05-31 - Fast NaN checks using Number.isNaN vs x !== x
 **Learning:** In modern JavaScript engines like V8 (used in Chrome and Node.js), `Number.isNaN(v)` is an intrinsic function that is heavily optimized and compiled down to the exact same machine code instructions as the manual check `v !== v`. Replacing `Number.isNaN()` with `v !== v` does not provide any measurable performance improvement and only serves to degrade code readability.
 **Action:** Do not micro-optimize `Number.isNaN()` checks into `v !== v` or `v === v`. Rely on the built-in semantics as modern engines handle them with zero overhead.
+## 2026-06-12 - Eliminate map/reduce overhead for parsing assignments
+**Learning:** Parsing simple string formats using `.split().reduce().map()` chains creates unnecessary array allocations, function calls, and closures on every pass, which adds noticeable garbage collection pressure when executing hot paths or frequent input changes.
+**Action:** Replace string processing array chains with single-pass `for` loops and standard `indexOf`/`substring` operations to eliminate closure allocations and minimize object creations.
