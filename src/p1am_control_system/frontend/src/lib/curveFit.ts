@@ -56,7 +56,11 @@ function fmt(n: number): string {
 
 /** R² of a model's predictions against the observed points. */
 function rSquared(points: FitPoint[], predict: (x: number) => number): number {
-  const meanY = points.reduce((sum, p) => sum + p.y, 0) / points.length;
+  let sumY = 0;
+  for (const p of points) {
+    sumY += p.y;
+  }
+  const meanY = sumY / points.length;
   let ssRes = 0;
   let ssTot = 0;
   for (const p of points) {
@@ -76,8 +80,14 @@ export const linearFit: FitMethod = {
       throw new RangeError("linearFit: need at least 2 points");
     }
     const n = points.length;
-    const meanX = points.reduce((s, p) => s + p.x, 0) / n;
-    const meanY = points.reduce((s, p) => s + p.y, 0) / n;
+    let sumX = 0;
+    let sumY = 0;
+    for (const p of points) {
+      sumX += p.x;
+      sumY += p.y;
+    }
+    const meanX = sumX / n;
+    const meanY = sumY / n;
     let sxx = 0;
     let sxy = 0;
     for (const p of points) {
