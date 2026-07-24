@@ -2590,3 +2590,8 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 ### Version 1.1.250
 - 2024-07-23: fix(ux, #3919) - Improve accessibility of standard buttons in data processor web app by adding `focus-visible` styling (focus rings) to the global `.btn` class.
+
+
+## 2026-06-12 (Bolt): Refactoring parseVariableAssignments
+* Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
+* Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
