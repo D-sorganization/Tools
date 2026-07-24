@@ -76,3 +76,7 @@
 ## 2026-06-12 - Eliminate map/reduce overhead for parsing assignments
 **Learning:** Parsing simple string formats using `.split().reduce().map()` chains creates unnecessary array allocations, function calls, and closures on every pass, which adds noticeable garbage collection pressure when executing hot paths or frequent input changes.
 **Action:** Replace string processing array chains with single-pass `for` loops and standard `indexOf`/`substring` operations to eliminate closure allocations and minimize object creations.
+
+## 2026-07-24 - Avoiding Array.from in high frequency component arrays
+**Learning:** In JavaScript/V8 numerical computing hot paths (like PCA or matrix calculations or rendering loop generating SVG bars), using `Array.from({ length: N }, () => ...)` incurs significant overhead from iterability checks, iterator creation, and closure execution per element.
+**Action:** Instead, pre-allocate arrays using `new Array(N)` and populate them with standard `for` loops to prevent O(N) intermediate garbage collection pressure.
