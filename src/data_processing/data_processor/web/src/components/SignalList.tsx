@@ -86,10 +86,8 @@ export const SignalList = memo(function SignalList({ signals, selectedSignals, o
           const content = event.target?.result as string;
           const signalSet = JSON.parse(content);
           if (signalSet.selected_signals && Array.isArray(signalSet.selected_signals)) {
-            // ⚡ Bolt Optimization: Use a Set for O(1) lookups instead of O(N) array .includes() inside .filter()
-            const signalsSet = new Set(signals);
             const validSignals = signalSet.selected_signals.filter((s: string) =>
-              signalsSet.has(s)
+              signals.includes(s)
             );
             onSelectionChange(validSignals);
           }
