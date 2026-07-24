@@ -13,14 +13,26 @@ namespace {
 
 const int kThmConfigBytes = 20;
 
-// P1-04THM: enable all 4 channels, low-side burnout, Celsius, type-K ranges.
+// P1-04THM input-type codes — the low byte of each 0x2n channel config word.
+// 0x01 = type K, 0x03 = type R (FACTS/AutomationDirect P1-04THM input-type
+// table). VERIFY any new type against the datasheet, and confirm the channel
+// against a known-temperature source before relying on it.
+const char kTcTypeK = 0x01;
+const char kTcTypeR = 0x03;
+
+// P1-04THM: enable all 4 channels, low-side burnout, Celsius. Module channel 1
+// is type K and channel 2 is type R, so the operator can drive the heater from
+// either thermocouple via the HMI toggle. Channels 3-4 stay type K.
+// Module channels are 1-indexed (1-4); the broker maps channel N to TAG_(N-1),
+// so channel 1 (type K) reads back on TAG_0 and channel 2 (type R) on TAG_1.
 // Layout from FACTS P1-04THM docs:
 //   0x4003 = ch1-4 enabled
 //   0x6001 = low-side burnout, degrees C
-//   0x2n01 = channel n, type K
-const char kP104ThmTypeKCelsiusConfig[kThmConfigBytes] = {
-    0x40, 0x03, 0x60, 0x01, 0x21, 0x01, 0x22, 0x01, 0x23, 0x01,
-    0x24, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+//   0x2n[type] = channel n input type (n = 1..4)
+const char kP104ThmConfig[kThmConfigBytes] = {
+    0x40, 0x03, 0x60, 0x01,
+    0x21, kTcTypeK, 0x22, kTcTypeR, 0x23, kTcTypeK, 0x24, kTcTypeK,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 };
 
 void PrintHexByte(char value) {
@@ -57,10 +69,37 @@ P1AMHardware::P1AMHardware() {}
 void P1AMHardware::Begin() {
   // P1.init() auto-configures the P1-04THM with the library default
   // (type-J/Fahrenheit). Override it before Ethernet init so thermocouple
-  // channels report type-K values directly in degrees C.
+  // channels report type-K values directly in degrees C. Boot default is
+  // low-side burnout, which matches Modbus coil 3's power-on value of 0, so the
+  // first control-loop scan sees no change and won't reconfigure the module
+  // (see ConfigureThm / kThmBurnoutCoil).
   P1.init();
-  Serial.println(F("[hw] configuring P1-04THM: type K, Celsius"));
-  bool thm_configured = P1.configureModule(kP104ThmTypeKCelsiusConfig, kSlotThm);
+  ConfigureThm(false);
+
+  pinMode(kPinInhibit, OUTPUT);
+  digitalWrite(kPinInhibit, LOW);
+  // Heater relay now drives the P1-08TD2 discrete-output module (see
+  // WriteHeaterRelay). Force it OFF at boot so the heater is never energized
+  // before the controller commands it.
+  P1.writeDiscrete(LOW, kSlotHeaterDO, kChanHeaterDO);
+}
+
+bool P1AMHardware::ConfigureThm(bool highSideBurnout) {
+  // Build the P1-04THM config identical to kP104ThmConfig except byte[3], the
+  // burnout+units low byte, which selects the open-thermocouple fail direction:
+  //   0x01 = low-side burnout  (open reads 0 C / cold)
+  //   0x03 = high-side burnout (open reads full-scale / hot)
+  // Channel types and the Celsius unit selection are unchanged. The P1-04THM
+  // cannot disable burnout — only flip its direction.
+  char thm_config[kThmConfigBytes];
+  for (int i = 0; i < kThmConfigBytes; ++i) {
+    thm_config[i] = kP104ThmConfig[i];
+  }
+  thm_config[3] = highSideBurnout ? 0x03 : 0x01;
+
+  Serial.print(F("[hw] configuring P1-04THM: ch1=K ch2=R ch3-4=K, Celsius, burnout="));
+  Serial.println(highSideBurnout ? F("high-side") : F("low-side"));
+  bool thm_configured = P1.configureModule(thm_config, kSlotThm);
   Serial.print(F("[hw] P1-04THM configureModule="));
   Serial.println(thm_configured ? F("ok") : F("failed"));
 
@@ -68,17 +107,15 @@ void P1AMHardware::Begin() {
   P1.readModuleConfig(thm_readback, kSlotThm);
   Serial.print(F("[hw] P1-04THM config readback: "));
   PrintThmConfig(thm_readback);
-  if (ConfigMatches(kP104ThmTypeKCelsiusConfig, thm_readback)) {
-    Serial.println(F("[hw] P1-04THM config verified: type K, Celsius"));
+  if (ConfigMatches(thm_config, thm_readback)) {
+    Serial.print(F("[hw] P1-04THM config verified: ch1=K ch2=R, Celsius, burnout="));
+    Serial.println(highSideBurnout ? F("high-side") : F("low-side"));
   } else {
     Serial.println(F("[hw] WARNING: P1-04THM config readback mismatch"));
   }
 
-  pinMode(kPinInhibit, OUTPUT);
-  digitalWrite(kPinInhibit, LOW);
-  // Heater relay control output starts de-energized (LOW = heater OFF).
-  pinMode(kPinHeaterRelay, OUTPUT);
-  digitalWrite(kPinHeaterRelay, LOW);
+  thm_high_side_ = highSideBurnout;
+  return thm_configured;
 }
 
 void P1AMHardware::Update() {}
@@ -149,6 +186,8 @@ void P1AMHardware::WriteInhibit(bool active) {
 }
 
 void P1AMHardware::WriteHeaterRelay(bool on) {
-  // Active-HIGH GPIO drive (D2): HIGH = relay energized = heater ON.
-  digitalWrite(kPinHeaterRelay, on ? HIGH : LOW);
+  // Drive channel 1 of the P1-08TD2 (slot 3): ON sources 24 V to the relay
+  // coil, OFF drives ~0 V. If no DO module is in the slot, P1.writeDiscrete is
+  // a harmless no-op.
+  P1.writeDiscrete(on ? HIGH : LOW, kSlotHeaterDO, kChanHeaterDO);
 }

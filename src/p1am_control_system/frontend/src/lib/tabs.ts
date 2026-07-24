@@ -11,6 +11,7 @@
 
 export type TabId =
   | "trends"
+  | "explorer"
   | "controllers"
   | "routing"
   | "tuning"
@@ -38,6 +39,12 @@ export const TABS: readonly TabDef[] = [
     label: "Trends & Monitors",
     settingsLabel: "Live Trends & Monitors",
     accentVar: "var(--accent-cyan)",
+  },
+  {
+    id: "explorer",
+    label: "Data Explorer",
+    settingsLabel: "Data Explorer & Analysis",
+    accentVar: "var(--accent-magenta)",
   },
   {
     id: "controllers",
@@ -120,11 +127,26 @@ const VISIBILITY_KEY = "p1am.tabVisibility.v1";
  * the order was saved (so a new release's tab is never silently hidden).
  */
 function reconcileOrder(saved: readonly unknown[]): TabId[] {
+  // ⚡ Bolt Optimization: Replace chained .filter() array passes with single-pass for-loops and O(1) Set lookups
   const known = new Set<TabId>(defaultTabOrder());
-  const kept = saved.filter(
-    (id): id is TabId => typeof id === "string" && known.has(id as TabId),
-  );
-  const missing = defaultTabOrder().filter((id) => !kept.includes(id));
+  const kept: TabId[] = [];
+  const keptSet = new Set<TabId>();
+  for (let i = 0; i < saved.length; i++) {
+    const id = saved[i];
+    if (typeof id === "string" && known.has(id as TabId)) {
+      kept.push(id as TabId);
+      keptSet.add(id as TabId);
+    }
+  }
+
+  const missing: TabId[] = [];
+  const defaults = defaultTabOrder();
+  for (let i = 0; i < defaults.length; i++) {
+    const id = defaults[i];
+    if (!keptSet.has(id)) {
+      missing.push(id);
+    }
+  }
   return [...kept, ...missing];
 }
 

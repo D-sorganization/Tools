@@ -86,8 +86,10 @@ export const SignalList = memo(function SignalList({ signals, selectedSignals, o
           const content = event.target?.result as string;
           const signalSet = JSON.parse(content);
           if (signalSet.selected_signals && Array.isArray(signalSet.selected_signals)) {
+            // ⚡ Bolt Optimization: Use a Set for O(1) lookups instead of O(N) array .includes() inside .filter()
+            const signalsSet = new Set(signals);
             const validSignals = signalSet.selected_signals.filter((s: string) =>
-              signals.includes(s)
+              signalsSet.has(s)
             );
             onSelectionChange(validSignals);
           }
@@ -192,6 +194,7 @@ export const SignalList = memo(function SignalList({ signals, selectedSignals, o
                 <button
                   key={signal}
                   onClick={() => toggleSignal(signal)}
+                  aria-pressed={isSelected}
                   className={`
                     w-full flex items-center gap-2 px-3 py-2 rounded-lg
                     text-left text-sm transition-colors duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500

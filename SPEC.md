@@ -28,13 +28,21 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.5.2                                      |
 | **Spec Version**        | 1.5.2                                      |
-| **Last Spec Update**    | 2026-06-21                                 |
+| **Last Spec Update**    | 2026-07-23                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-23 P1AM Control System Trend Plot Optimization
+
+- `src/p1am_control_system/frontend/src/lib/curveFit.ts` reduces garbage
+  collection overhead during high-frequency UI updates by replacing chained
+  `.reduce()` iterations in `rSquared` and `linearFit.fit` with single-pass
+  standard `for` loops. This eliminates intermediate callback allocations while
+  computing dataset means and sums for trend curve fitting.
 
 ### 2026-06-21 Pendulum web optimizer hot-loop sorting
 
@@ -2575,3 +2583,15 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.413 - Optimized Nelder-Mead loop in `optimizer.ts`
 
 - **2026-06-21**: perf(pendulum) — Replaced `Array.prototype.sort` with manual insertion sort in `nelderMead` loop in `src/pendulum_simulator/pendulum-web/src/optimizer.ts` to eliminate callback invocation overhead.
+
+## 1.1.414 - Security: Structural validation for SymPy parse_expr
+
+- **2026-07-14**: fix(security) — Added structural validation to the symbolic solver backend endpoints (`/solve`, `/derivative`, `/simplify`) before handing untrusted user input to `sympy.parse_expr`. This mitigates a critical code injection vulnerability where malicious AST constructs (e.g. `().__class__`) could be executed due to `parse_expr`'s internal use of `eval`.
+
+### Version 1.1.250
+- 2024-07-23: fix(ux, #3919) - Improve accessibility of standard buttons in data processor web app by adding `focus-visible` styling (focus rings) to the global `.btn` class.
+
+
+## 2026-06-12 (Bolt): Refactoring parseVariableAssignments
+* Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
+* Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.

@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useEffect } from 'react';
+import { useState, useCallback, useMemo, useEffect, useId } from 'react';
 import {
   LineChart,
   Line,
@@ -359,7 +359,15 @@ export function FunctionGenerator() {
   // Update poly coeffs from text for selected layer
   useEffect(() => {
     try {
-      const coeffs = polyCoeffsText.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+      // ⚡ Bolt Optimization: Replace chained .map().filter() with a single-pass loop
+      const parts = polyCoeffsText.split(',');
+      const coeffs: number[] = [];
+      for (let i = 0; i < parts.length; i++) {
+        const n = parseFloat(parts[i].trim());
+        if (n === n) {
+          coeffs.push(n);
+        }
+      }
       if (coeffs.length > 0) {
         updateLayerParams('polyCoeffs', coeffs);
       }
@@ -818,8 +826,12 @@ export function FunctionGenerator() {
       {/* Visualization Panel */}
       <div className="lg:col-span-2 space-y-4">
         {/* Tabs */}
-        <div className="flex space-x-2">
+        <div className="flex space-x-2" role="tablist" aria-label="Domain view tabs">
           <button
+            id="tab-time"
+            role="tab"
+            aria-selected={activeTab === 'time'}
+            aria-controls="panel-time"
             onClick={() => setActiveTab('time')}
             className={`px-4 py-2 rounded font-medium transition-colors ${
               activeTab === 'time'
@@ -830,6 +842,10 @@ export function FunctionGenerator() {
             Time Domain
           </button>
           <button
+            id="tab-frequency"
+            role="tab"
+            aria-selected={activeTab === 'frequency'}
+            aria-controls="panel-frequency"
             onClick={() => setActiveTab('frequency')}
             className={`px-4 py-2 rounded font-medium transition-colors ${
               activeTab === 'frequency'
@@ -843,7 +859,12 @@ export function FunctionGenerator() {
 
         {/* Time Domain Chart */}
         {activeTab === 'time' && (
-          <div className="bg-slate-800 rounded-lg p-4">
+          <div
+            id="panel-time"
+            role="tabpanel"
+            aria-labelledby="tab-time"
+            className="bg-slate-800 rounded-lg p-4"
+          >
             <h3 className="text-lg font-semibold text-white mb-4">
               {layers.length === 1
                 ? `${WAVEFORM_OPTIONS.find(o => o.value === waveformType)?.label} - Time Domain`
@@ -922,7 +943,12 @@ export function FunctionGenerator() {
 
         {/* Frequency Domain Chart */}
         {activeTab === 'frequency' && (
-          <div className="bg-slate-800 rounded-lg p-4">
+          <div
+            id="panel-frequency"
+            role="tabpanel"
+            aria-labelledby="tab-frequency"
+            className="bg-slate-800 rounded-lg p-4"
+          >
             <h3 className="text-lg font-semibold text-white mb-4">Frequency Spectrum</h3>
             <div className="h-96">
               <ResponsiveContainer width="100%" height="100%">
@@ -1038,10 +1064,12 @@ interface ParamInputProps {
 }
 
 function ParamInput({ label, value, onChange, min, max, step = 0.1 }: ParamInputProps) {
+  const inputId = useId();
   return (
     <div>
-      <label className="block text-sm text-slate-400 mb-1">{label}</label>
+      <label htmlFor={inputId} className="block text-sm text-slate-400 mb-1">{label}</label>
       <input
+        id={inputId}
         type="number"
         value={value}
         onChange={e => onChange(parseFloat(e.target.value) || 0)}

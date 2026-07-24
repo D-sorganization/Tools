@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" role="img" aria-label="P1AM Heater Control">
+  <defs>
+    <linearGradient id="heat" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#f43f5e"/>
+      <stop offset="1" stop-color="#fb923c"/>
+    </linearGradient>
+  </defs>
+  <!-- Card background matching the HMI dark theme, with a cyan accent ring. -->
+  <rect width="256" height="256" rx="48" fill="#0b1e27"/>
+  <rect x="10" y="10" width="236" height="236" rx="40" fill="none" stroke="#38bdf8" stroke-opacity="0.40" stroke-width="4"/>
+  <!-- Heat waves rising to the right of the thermometer. -->
+  <g stroke="#fb923c" stroke-width="7" stroke-linecap="round" fill="none" opacity="0.9">
+    <path d="M150 92 q16 -13 0 -26 q-16 -13 0 -26"/>
+    <path d="M180 100 q18 -15 0 -30 q-18 -15 0 -30"/>
+  </g>
+  <!-- Thermometer. -->
+  <g transform="translate(90,54)">
+    <rect x="10" y="0" width="34" height="120" rx="17" fill="#0b1e27" stroke="#e2e8f0" stroke-width="7"/>
+    <circle cx="27" cy="140" r="33" fill="#0b1e27" stroke="#e2e8f0" stroke-width="7"/>
+    <rect x="19" y="56" width="16" height="86" fill="url(#heat)"/>
+    <circle cx="27" cy="140" r="22" fill="url(#heat)"/>
+  </g>
+</svg>

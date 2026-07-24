@@ -72,4 +72,97 @@ describe("useTelemetryStream", () => {
     });
     expect(result.current.tagValues).toEqual(tags);
   });
+
+  it("keeps activeAlarms REF-STABLE when the frame is unchanged", () => {
+    const { result } = renderHook(() => useTelemetryStream());
+    const tags = Array.from({ length: TAG_COUNT }, () => 0);
+    const alarms = {
+      "1": {
+        tag_id: "1",
+        state: "HIGH",
+        value: 42,
+        severity: 2,
+        acknowledged: false,
+        timestamp: "2026-01-01T00:00:00Z",
+      },
+    };
+
+    act(() => {
+      MockWebSocket.instances[0].onmessage?.({
+        data: JSON.stringify({ tags, active_alarms: alarms }),
+      });
+    });
+    const first = result.current.activeAlarms;
+    expect(first).toHaveLength(1);
+
+    // A second, value-identical frame must NOT allocate a new array (so a
+    // memoized consumer can bail out of re-rendering).
+    act(() => {
+      MockWebSocket.instances[0].onmessage?.({
+        data: JSON.stringify({ tags, active_alarms: alarms }),
+      });
+    });
+    expect(result.current.activeAlarms).toBe(first);
+
+    // A changed alarm DOES produce a new reference.
+    act(() => {
+      MockWebSocket.instances[0].onmessage?.({
+        data: JSON.stringify({
+          tags,
+          active_alarms: {
+            "1": { ...alarms["1"], acknowledged: true },
+          },
+        }),
+      });
+    });
+    expect(result.current.activeAlarms).not.toBe(first);
+    expect(result.current.activeAlarms[0].acknowledged).toBe(true);
+  });
+
+  it("keeps alicats/tagsDict/status fields ref-stable on identical frames", () => {
+    const { result } = renderHook(() => useTelemetryStream());
+    const tags = Array.from({ length: TAG_COUNT }, () => 0);
+    const frame = {
+      tags,
+      tags_dict: { FOO: 1, BAR: 2 },
+      power_supply: { state: "on", voltage: 12 },
+      temperature: { state: "on", temperature: 20 },
+    };
+
+    act(() => {
+      MockWebSocket.instances[0].onmessage?.({ data: JSON.stringify(frame) });
+    });
+    const dict = result.current.tagsDict;
+    const ps = result.current.powerSupplyStatus;
+    const temp = result.current.temperatureStatus;
+
+    act(() => {
+      MockWebSocket.instances[0].onmessage?.({ data: JSON.stringify(frame) });
+    });
+    expect(result.current.tagsDict).toBe(dict);
+    expect(result.current.powerSupplyStatus).toBe(ps);
+    expect(result.current.temperatureStatus).toBe(temp);
+  });
+
+  it("bounds the live history buffer (MAX_HISTORY eviction)", () => {
+    const { result } = renderHook(() => useTelemetryStream());
+    const ws = MockWebSocket.instances[0];
+    // 6000 = 10 min @ 10 Hz. Push well past the cap and confirm the buffer is
+    // bounded and still tracks the most recent frame at its tail.
+    const total = 6100;
+    act(() => {
+      for (let n = 0; n < total; n++) {
+        const tags = Array.from({ length: TAG_COUNT }, () => n);
+        ws.onmessage?.({ data: JSON.stringify({ tags }) });
+      }
+    });
+
+    expect(result.current.history.length).toBe(6000);
+    expect(result.current.historyTimes.length).toBe(6000);
+    // Newest frame is retained at the tail.
+    const last = result.current.history[result.current.history.length - 1];
+    expect(last[0]).toBe(total - 1);
+    // Oldest surviving frame is n = total - 6000 (older frames evicted).
+    expect(result.current.history[0][0]).toBe(total - 6000);
+  });
 });

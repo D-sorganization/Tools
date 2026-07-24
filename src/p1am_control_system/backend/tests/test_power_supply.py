@@ -329,3 +329,28 @@ class TestUpdateConfig:
                 current_full_scale_a=10.0,
                 current_setpoint_max_a=50.0,
             )
+
+
+class TestHhTempBoundaryConsistency:
+    """HH over-temp uses >= (matches TemperatureController); a reading pinned
+    exactly at the limit must trip (regression for the >/>= divergence)."""
+
+    def test_temp_exactly_at_limit_trips(self) -> None:
+        from _power_supply_helpers import fresh_running_controller
+
+        c = fresh_running_controller()
+        limit = c.config.temp_alarm_max_c
+        c.tick(measured_current_a=0.0, measured_voltage_v=0.0, measured_temp_c=limit)
+        assert "HH_TEMP" in c.trips
+
+    def test_temp_just_below_limit_does_not_trip(self) -> None:
+        from _power_supply_helpers import fresh_running_controller
+
+        c = fresh_running_controller()
+        limit = c.config.temp_alarm_max_c
+        c.tick(
+            measured_current_a=0.0,
+            measured_voltage_v=0.0,
+            measured_temp_c=limit - 0.1,
+        )
+        assert "HH_TEMP" not in c.trips

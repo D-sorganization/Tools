@@ -196,9 +196,8 @@ class TI89Calculator:
             tree = ast.parse(stripped, mode="eval")
         except SyntaxError:
             # Not valid Python surface syntax (e.g. an equation "x = y" or a
-            # sympy-specific form). Let parse_expr handle/raise on it; the
-            # restricted global_dict remains the backstop. We only *reject* here.
-            return
+            # sympy-specific form). The gate must be fail-closed, so we reject.
+            raise ValueError("Expression contains invalid syntax") from None
 
         node_count = 0
         for node in ast.walk(tree):
@@ -659,6 +658,9 @@ class TI89Calculator:
             # Wait, _hat, _vee are instance methods. They should be static too.
             # But let's assume the app initializes one calculator.
             pass
+
+        # Security: structurally gate the raw input through an AST allowlist BEFORE handing it to sympy.parse_expr
+        TI89Calculator._ast_security_gate(equation)
 
         function_symbol = sp.Function(function)
         independent_variable = sp.Symbol("x")

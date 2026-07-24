@@ -25,7 +25,9 @@ class P1AMSettings(BaseSettings):
     )
 
     plc_driver: str = Field(
-        default="simulated",
+        # "simulator" matches the PLCFactory branch; the default must not fall
+        # through to the "unknown driver" warning on every bench boot.
+        default="simulator",
         validation_alias=AliasChoices("P1AM_PLC_DRIVER", "PLC_DRIVER"),
     )
     plc_ip: str = Field(
@@ -41,13 +43,33 @@ class P1AMSettings(BaseSettings):
     poll_interval_s: float = Field(
         default=0.1, gt=0.0, validation_alias="P1AM_POLL_INTERVAL_S"
     )
+    lightweight_poll_interval_s: float = Field(
+        default=2.0,
+        gt=0.0,
+        validation_alias="P1AM_LIGHTWEIGHT_POLL_INTERVAL_S",
+        description=(
+            "Poll/broadcast interval used in 'lightweight' performance mode. "
+            "Slower than poll_interval_s to cut CPU + HMI re-render load."
+        ),
+    )
+    capture_interval_s: float = Field(
+        default=5.0,
+        ge=0.0,
+        validation_alias="P1AM_CAPTURE_INTERVAL_S",
+        description=(
+            "Minimum seconds between historian writes. The scan loop still runs "
+            "(and the live stream updates) every poll; only persistence is "
+            "decimated to this period so the DB doesn't bloat. 0 = every scan. "
+            "Operator-adjustable at runtime via /api/capture/config."
+        ),
+    )
     connect_retry_interval_s: float = Field(
         default=5.0,
         gt=0.0,
         validation_alias="P1AM_CONNECT_RETRY_INTERVAL_S",
     )
     historian_max_bytes: int = Field(
-        default=2 * 1024**3,
+        default=1 * 1024**3,
         ge=0,
         validation_alias="P1AM_HISTORIAN_MAX_BYTES",
     )
@@ -59,6 +81,17 @@ class P1AMSettings(BaseSettings):
     sqlite_synchronous: Literal["OFF", "NORMAL", "FULL", "EXTRA"] = Field(
         default="NORMAL",
         validation_alias="P1AM_SQLITE_SYNCHRONOUS",
+    )
+    require_read_auth: bool = Field(
+        default=False,
+        validation_alias="P1AM_REQUIRE_READ_AUTH",
+        description=(
+            "Opt-in gate for the historian/plant read surface (/api/trends, "
+            "/api/export, /api/snapshot, /api/events, /api/plant, "
+            "/api/project/ladder-explorer, /api/explorer/*). Default False keeps "
+            "those routes public so the HMI works in bench mode. When True (and "
+            "P1AM_DEV_NO_AUTH is off) a valid operator/admin API key is required."
+        ),
     )
 
     @field_validator("plc_driver", mode="before")

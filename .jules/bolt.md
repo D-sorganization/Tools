@@ -66,6 +66,13 @@
 ## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
 **Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
 **Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
-## 2024-05-18 - Fast NaN checking in high-frequency loops
-**Learning:** In high-frequency JavaScript/TypeScript loops parsing numeric data, using `x === x` is a performant and allocation-free alternative to `!Number.isNaN(x)` or `!isNaN(x)` for filtering out `NaN` values, as it safely avoids additional function call overhead.
-**Action:** Use `x === x` instead of `!Number.isNaN(x)` when checking for valid numbers inside tight loops that process large arrays.
+## 2024-07-16 - TabBar O(N^2) Optimization
+**Learning:** Optimizing `Array.filter` chained with `includes` on a tiny array (10 items) to a `Set` offers zero measurable improvement.
+**Action:** Avoid micro-optimizing operations that run on tiny static arrays executed during initialization or renders.
+
+## 2024-05-31 - Fast NaN checks using Number.isNaN vs x !== x
+**Learning:** In modern JavaScript engines like V8 (used in Chrome and Node.js), `Number.isNaN(v)` is an intrinsic function that is heavily optimized and compiled down to the exact same machine code instructions as the manual check `v !== v`. Replacing `Number.isNaN()` with `v !== v` does not provide any measurable performance improvement and only serves to degrade code readability.
+**Action:** Do not micro-optimize `Number.isNaN()` checks into `v !== v` or `v === v`. Rely on the built-in semantics as modern engines handle them with zero overhead.
+## 2026-06-12 - Eliminate map/reduce overhead for parsing assignments
+**Learning:** Parsing simple string formats using `.split().reduce().map()` chains creates unnecessary array allocations, function calls, and closures on every pass, which adds noticeable garbage collection pressure when executing hot paths or frequent input changes.
+**Action:** Replace string processing array chains with single-pass `for` loops and standard `indexOf`/`substring` operations to eliminate closure allocations and minimize object creations.

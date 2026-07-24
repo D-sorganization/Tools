@@ -6,7 +6,7 @@ interface EventLogViewProps {
   events: EventLogEntry[];
 }
 
-export const EventLogView: React.FC<EventLogViewProps> = ({ events }) => {
+const EventLogViewImpl: React.FC<EventLogViewProps> = ({ events }) => {
   return (
     <div className="panel flex flex-col h-full">
       <div className="panel-header">
@@ -81,3 +81,6 @@ export const EventLogView: React.FC<EventLogViewProps> = ({ events }) => {
     </div>
   );
 };
+
+/** Memoized so the event log skips re-render when its `events` prop is stable. */
+export const EventLogView = React.memo(EventLogViewImpl);

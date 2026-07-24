@@ -22,3 +22,16 @@
 **Vulnerability:** Found unauthenticated API routes in `power_supply_integration.py` that could modify configuration and setpoints.
 **Learning:** Newly created routers (like `power_supply`) aren't automatically protected by the main app's dependencies.
 **Prevention:** Apply `Depends(require_admin_key)` to mutating endpoints inside newly added APIRouters.
+## 2026-06-29 - Prevent Denial of Service (DoS) via Unclosed SQLite Connections in event_logger.py
+**Vulnerability:** Found a resource leak vulnerability in `src/p1am_control_system/desktop/event_logger.py` where a `sqlite3` connection was established but not guaranteed to close if an exception occurred during database operations because `sqlite3.connect()` context manager only manages transactions, not the connection lifecycle.
+**Learning:** Failing to close connections explicitly can exhaust system file descriptors, leading to Denial of Service (DoS), or leave the database in a locked state.
+**Prevention:** Wrapped `sqlite3.connect()` with `contextlib.closing()` to guarantee the connection is closed even if an exception occurs during the database operation.
+
+## 2024-07-06 - Missing AST Security Gate on ODE Solver
+**Vulnerability:** Code injection vulnerability found in `TI89Calculator._solve_differential_equation_cached` because it bypassed `_ast_security_gate` before passing input to `parse_expr` which runs `eval`.
+**Learning:** All paths taking untrusted math equations directly to SymPy parsers need structural validation.
+**Prevention:** Ensure all evaluation points explicitly invoke `_ast_security_gate`.
+## 2025-02-27 - Fail-Closed Security Boundary for Evaluated Untrusted Expressions
+**Vulnerability:** SymPy's `parse_expr` uses `eval()` and requires upstream validation. The `_ast_security_gate` structural validator was fail-open when encountering a `SyntaxError` while using `ast.parse(stripped, mode="eval")`, relying on `parse_expr` as a backstop. This could allow non-standard Python syntax (e.g. `x = y` or sympy specific forms) to bypass the security gate entirely.
+**Learning:** Security validation gates designed to protect `eval`-like functions must be fail-closed. If structural validation fails or raises an error, the input must be explicitly rejected rather than implicitly passed to a dangerous downstream execution context.
+**Prevention:** Catch parsing exceptions (like `SyntaxError` in AST gates) and explicitly raise a rejection error (e.g., `ValueError`) to ensure the security gate strictly enforces an allowlist.
