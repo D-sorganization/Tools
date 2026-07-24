@@ -197,7 +197,7 @@ class TI89Calculator:
         except SyntaxError:
             # Not valid Python surface syntax (e.g. an equation "x = y" or a
             # sympy-specific form). The gate must be fail-closed, so we reject.
-            raise ValueError("Expression contains invalid syntax")
+            raise ValueError("Expression contains invalid syntax") from None
 
         node_count = 0
         for node in ast.walk(tree):
