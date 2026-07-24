@@ -124,6 +124,8 @@ jobs:
       PIP_DEFAULT_TIMEOUT: "120"
       PIP_RETRIES: "8"
     steps:
+      - name: Git HTTP/1.1 workaround
+        run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
@@ -466,6 +468,8 @@ jobs:
       PYTHONNOUSERSITE: "1"
       BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
+      - name: Git HTTP/1.1 workaround
+        run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
@@ -897,6 +901,8 @@ jobs:
       CARGO_TERM_COLOR: always
       RUST_MIN_STACK: "268435456"
     steps:
+      - name: Git HTTP/1.1 workaround
+        run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
 
       - name: Check for Rust changes
