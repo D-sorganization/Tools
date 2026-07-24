@@ -359,7 +359,15 @@ export function FunctionGenerator() {
   // Update poly coeffs from text for selected layer
   useEffect(() => {
     try {
-      const coeffs = polyCoeffsText.split(',').map(s => parseFloat(s.trim())).filter(n => !isNaN(n));
+      // ⚡ Bolt Optimization: Replace chained .map().filter() with a single-pass loop
+      const parts = polyCoeffsText.split(',');
+      const coeffs: number[] = [];
+      for (let i = 0; i < parts.length; i++) {
+        const n = parseFloat(parts[i].trim());
+        if (n === n) {
+          coeffs.push(n);
+        }
+      }
       if (coeffs.length > 0) {
         updateLayerParams('polyCoeffs', coeffs);
       }
