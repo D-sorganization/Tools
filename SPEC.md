@@ -2595,3 +2595,6 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2026-06-12 (Bolt): Refactoring parseVariableAssignments
 * Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 * Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+### Recent Optimizations
+- Replaced chained array methods (`.reduce()`, `.map()`) with single-pass `for` loops in `p1am_control_system/frontend` plotting overlays to avoid GC pressure and closure allocations during high-frequency pointer move events.
