@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.2                                      |
-| **Spec Version**        | 1.5.2                                      |
+| **Current Version**     | 1.5.3                                      |
+| **Spec Version**        | 1.5.3                                      |
 | **Last Spec Update**    | 2026-07-24                                 |
 
 ## 2. Purpose & Mission
@@ -215,9 +215,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   temperature offset and `d` as the numerator divisor; over-water callers pass
   Buck's 257.14 C / 234.5 C constants in that role order, so
   `SyngasWaterCalculator` now matches the physical Buck curve at 20 C and 50 C
-  while preserving the below-freezing branch (#3867). The pressure-drop
-  flow-calculation engine is likewise single-sourced on `_flow_calculations`,
-  with `flow_properties.py` retained only as an import-stable facade (#3660).
+  while preserving the below-freezing branch (#3867). Saturated syngas water
+  calculations now report the dew point at the gas temperature unless vapor
+  pressure is capped by total pressure, avoiding false condensation warnings
+  caused by mixing Magnus saturation pressure with the Buck inverse. The
+  pressure-drop flow-calculation engine is likewise single-sourced on
+  `_flow_calculations`, with `flow_properties.py` retained only as an
+  import-stable facade (#3660).
 - Pressure-drop friction-factor helpers centralize positive Reynolds-number and
   non-negative relative-roughness validation. Churchill uses the
   Hagen-Poiseuille `64/Re` value for `0 < Re < 1` instead of a constant 64, and
@@ -1660,6 +1664,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-25 | 1.5.3 | fix(syngas-water, #3867): keep saturated syngas dew point equal to gas temperature unless total pressure caps vapor pressure, preserving real condensation warnings while removing false critical risk classifications from correlation-mismatch noise; keep the shared vapor-pressure delegates explicitly typed for mypy. |
 | 2026-06-21 | 1.1.7792 | fix(ci): route the Cross-Repo Python Integration downstream contract matrix to Linux self-hosted runners and fall back to `github.token` when `RUNNER_CHECK_TOKEN` is unset, preventing PowerShell parsing failures and checkout token omissions. |
 | 2026-06-21 | 1.1.7791 | fix(ci): route the Performance Regression benchmark workflow to the Linux self-hosted fleet labels so `actions/setup-python` no longer lands on Windows runners without registry-write permissions. |
 | 2026-06-21 | 1.1.7790 | perf(pendulum-web): replace the Nelder-Mead simplex `Array.prototype.sort()` comparator in `optimizer.ts` with a manual in-place insertion sort for the tiny fixed-size simplex, preserving ordering behavior while removing repeated callback dispatch from the hot optimization loop. |

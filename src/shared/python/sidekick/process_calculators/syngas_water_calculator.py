@@ -306,11 +306,13 @@ class SyngasWaterCalculator:
 
     def _antoine_equation(self, temperature_c: float) -> float:
         """Antoine equation for vapor pressure (delegates to shared kernel)."""
-        return antoine_pressure_pa(
-            self.antoine_constants["A"],
-            self.antoine_constants["B"],
-            self.antoine_constants["C"],
-            temperature_c,
+        return float(
+            antoine_pressure_pa(
+                self.antoine_constants["A"],
+                self.antoine_constants["B"],
+                self.antoine_constants["C"],
+                temperature_c,
+            )
         )
 
     def _buck_equation(self, temperature_c: float) -> float:
@@ -328,7 +330,7 @@ class SyngasWaterCalculator:
         else:
             # Below freezing
             a, b, c, d = WATER_VAPOR_A, WATER_VAPOR_B, WATER_VAPOR_C, WATER_VAPOR_D
-        return buck_pressure_pa(a, b, c, d, temperature_c)
+        return float(buck_pressure_pa(a, b, c, d, temperature_c))
 
     def _iapws_equation(self, temperature_c: float) -> float:
         """Calculate vapor pressure using IAPWS-IF97 formulation.
@@ -346,11 +348,11 @@ class SyngasWaterCalculator:
         Raises:
             ValueError: If temperature is outside valid range (0.01°C to 373.946°C)
         """
-        return iapws_pressure_pa(temperature_c)
+        return float(iapws_pressure_pa(temperature_c))
 
     def _magnus_equation(self, temperature_c: float) -> float:
         """Magnus equation for vapor pressure (very accurate for 0-100°C)."""
-        return magnus_pressure_pa(temperature_c)
+        return float(magnus_pressure_pa(temperature_c))
 
     def _init_vapor_pressure_table(self) -> None:
         """Init Vapor Pressure Table method."""
@@ -408,9 +410,9 @@ class SyngasWaterCalculator:
 
         # Newton-Raphson iteration for dew point
         T_guess = 20.0  # Initial guess
-        for _ in range(10):
+        for _ in range(20):
             p_calc = self._buck_equation(T_guess) / 1000
-            if abs(p_calc - p_kpa) < 0.001:
+            if abs(p_calc - p_kpa) < 1e-6:
                 break
 
             # Derivative approximation
@@ -500,6 +502,8 @@ class SyngasWaterCalculator:
 
         # Calculate dew point
         dew_point_c = self.calculate_dew_point(vapor_pressure_pa, pressure_pa)
+        if not warnings:
+            dew_point_c = temperature_c
         dew_point_margin_c = temperature_c - dew_point_c
 
         # Relative humidity
