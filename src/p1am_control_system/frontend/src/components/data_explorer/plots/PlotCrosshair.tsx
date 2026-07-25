@@ -41,7 +41,11 @@ export function PlotTooltip({
   bounds,
 }: PlotTooltipProps): React.ReactElement | null {
   if (lines.length === 0) return null;
-  const longest = lines.reduce((m, l) => Math.max(m, l.length), 0);
+  // ⚡ Bolt Optimization: Replace chained .reduce() with a single-pass loop to eliminate closure overhead
+  let longest = 0;
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].length > longest) longest = lines[i].length;
+  }
   const w = longest * TOOLTIP_CHAR_W + TOOLTIP_PAD * 2;
   const h = lines.length * TOOLTIP_LINE_H + TOOLTIP_PAD * 2;
   const pos = placeTooltip(anchor, { w, h }, bounds);

@@ -76,3 +76,6 @@
 ## 2026-06-12 - Eliminate map/reduce overhead for parsing assignments
 **Learning:** Parsing simple string formats using `.split().reduce().map()` chains creates unnecessary array allocations, function calls, and closures on every pass, which adds noticeable garbage collection pressure when executing hot paths or frequent input changes.
 **Action:** Replace string processing array chains with single-pass `for` loops and standard `indexOf`/`substring` operations to eliminate closure allocations and minimize object creations.
+## 2025-02-14 - Replace chained .map() and .reduce() in high-frequency pointer move renders
+**Learning:** Chained `.map()` and `.reduce()` operations in high frequency UI paths (like SVG plot crosshairs updating on every mouse move) create unnecessary closure allocations and intermediate arrays, leading to garbage collection pressure and main thread blocking.
+**Action:** Replace multiple `.reduce()` and `.map()` passes with a single-pass `for` loop in high-frequency pointer interaction components.
