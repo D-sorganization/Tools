@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from ._friction_factors import (
+    ColebrookConvergenceError,
     friction_factor_churchill,
     friction_factor_colebrook,
     friction_factor_haaland,
@@ -12,6 +13,7 @@ from ._friction_factors import (
 )
 
 __all__ = [
+    "ColebrookConvergenceError",
     "friction_factor_churchill",
     "friction_factor_colebrook",
     "friction_factor_haaland",

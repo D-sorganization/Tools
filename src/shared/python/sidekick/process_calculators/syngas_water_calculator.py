@@ -322,8 +322,8 @@ class SyngasWaterCalculator:
             a, b, c, d = (
                 BUCK_ABOVE_FREEZING_A,
                 BUCK_ABOVE_FREEZING_B,
-                BUCK_ABOVE_FREEZING_C,
                 BUCK_ABOVE_FREEZING_D,
+                BUCK_ABOVE_FREEZING_C,
             )
         else:
             # Below freezing

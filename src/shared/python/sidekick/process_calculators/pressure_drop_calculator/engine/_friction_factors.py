@@ -22,6 +22,7 @@ from ...constants import (
 )
 
 __all__ = [
+    "ColebrookConvergenceError",
     "friction_factor_churchill",
     "friction_factor_colebrook",
     "friction_factor_haaland",
@@ -31,6 +32,48 @@ __all__ = [
 ]
 
 _logger = logging.getLogger(__name__)
+
+
+class ColebrookConvergenceError(ValueError):
+    """Raised when Colebrook-White iteration exhausts its iteration budget."""
+
+    def __init__(
+        self,
+        reynolds_number: float,
+        relative_roughness: float,
+        max_iterations: int,
+        tolerance: float,
+        last_residual: float,
+    ) -> None:
+        self.reynolds_number = reynolds_number
+        self.relative_roughness = relative_roughness
+        self.max_iterations = max_iterations
+        self.tolerance = tolerance
+        self.last_residual = last_residual
+        super().__init__(
+            "Colebrook did not converge "
+            f"for Re={reynolds_number}, eps/D={relative_roughness} "
+            f"after {max_iterations} iterations "
+            f"(tolerance={tolerance}, last_residual={last_residual})"
+        )
+
+
+def _validate_reynolds_number(reynolds_number: float) -> float:
+    if reynolds_number is None:
+        raise ValueError("reynolds_number must be provided")
+    if reynolds_number <= 0:
+        raise ValueError(f"Reynolds number must be positive, got {reynolds_number}")
+    return float(reynolds_number)
+
+
+def _validate_relative_roughness(relative_roughness: float) -> float:
+    if relative_roughness is None:
+        raise ValueError("relative_roughness must be provided")
+    if relative_roughness < 0:
+        raise ValueError(
+            f"Relative roughness must be non-negative, got {relative_roughness}"
+        )
+    return float(relative_roughness)
 
 
 def friction_factor_laminar(reynolds_number: float) -> float:
@@ -47,16 +90,12 @@ def friction_factor_laminar(reynolds_number: float) -> float:
     Reference:
         Hagen, G. (1839), Poiseuille, J. (1840): Laminar flow in pipes
     """
-    if reynolds_number <= 0:
-        # Raise rather than silently returning a default (issue #3103 F6):
-        # colebrook/swamee-jain delegate here for Re < 2300, so a negative Re
-        # would otherwise yield 0.064 with no error and a wrong ΔP.
-        raise ValueError(f"Reynolds number must be positive, got {reynolds_number}")
+    reynolds_number = _validate_reynolds_number(reynolds_number)
 
     result = LAMINAR_FRICTION_CONSTANT / reynolds_number
     if not (result > 0):
         raise ValueError(f"Friction factor must be positive, got {result}")
-    return result
+    return float(result)
 
 
 def friction_factor_colebrook(
@@ -70,7 +109,7 @@ def friction_factor_colebrook(
     Colebrook-White equation (turbulent flow, Re > 4000):
     1/sqrt(f) = -2.0 * log10(eps/(3.7D) + 2.51/(Re*sqrt(f)))
 
-    Solved iteratively using Newton-Raphson method.
+    Solved iteratively using fixed-point successive substitution.
 
     Args:
         reynolds_number: Reynolds number
@@ -90,30 +129,40 @@ def friction_factor_colebrook(
         This is the most accurate correlation but requires iteration.
         The Moody diagram is a graphical representation of this equation.
     """
-    if reynolds_number is None:
-        raise ValueError("reynolds_number must be provided")
+    reynolds_number = _validate_reynolds_number(reynolds_number)
+    relative_roughness = _validate_relative_roughness(relative_roughness)
+    if max_iterations <= 0:
+        raise ValueError(f"max_iterations must be positive, got {max_iterations}")
+    if tolerance <= 0:
+        raise ValueError(f"tolerance must be positive, got {tolerance}")
     if reynolds_number < RE_LAMINAR_UPPER:
         return friction_factor_laminar(reynolds_number)
 
     # Initial guess using Swamee-Jain as starting point
     f = friction_factor_swamee_jain(reynolds_number, relative_roughness)
 
-    # Newton-Raphson iteration
+    last_residual = math.inf
     for i in range(max_iterations):
         f_old = f
 
         term1 = relative_roughness / COLEBROOK_ROUGHNESS_COEFF
         term2 = 2.51 / (reynolds_number * math.sqrt(f))
         f_new = 0.25 / (math.log10(term1 + term2) ** 2)
+        last_residual = abs(f_new - f_old)
 
-        if abs(f_new - f_old) < tolerance:
+        if last_residual < tolerance:
             _logger.debug(f"Colebrook converged in {i + 1} iterations: f = {f_new:.6f}")
             return f_new
 
         f = f_new
 
-    _logger.warning(f"Colebrook did not converge in {max_iterations} iterations")
-    return f
+    raise ColebrookConvergenceError(
+        reynolds_number,
+        relative_roughness,
+        max_iterations,
+        tolerance,
+        last_residual,
+    )
 
 
 def friction_factor_swamee_jain(
@@ -141,8 +190,8 @@ def friction_factor_swamee_jain(
     Note:
         Explicit formula, no iteration required. Excellent for computational efficiency.
     """
-    if reynolds_number is None:
-        raise ValueError("reynolds_number must be provided")
+    reynolds_number = _validate_reynolds_number(reynolds_number)
+    relative_roughness = _validate_relative_roughness(relative_roughness)
     if reynolds_number < RE_LAMINAR_UPPER:
         return friction_factor_laminar(reynolds_number)
 
@@ -185,12 +234,12 @@ def friction_factor_churchill(
     Note:
         Single equation valid for all flow regimes. Very useful for transitional flow.
     """
-    if reynolds_number is None:
-        raise ValueError("reynolds_number must be provided")
+    reynolds_number = _validate_reynolds_number(reynolds_number)
+    relative_roughness = _validate_relative_roughness(relative_roughness)
     Re = reynolds_number
 
     if Re < 1:
-        return LAMINAR_FRICTION_CONSTANT
+        return friction_factor_laminar(Re)
 
     term1 = (7.0 / Re) ** 0.9 + 0.27 * relative_roughness
     A = (-2.457 * math.log(term1)) ** 16
@@ -224,8 +273,8 @@ def friction_factor_haaland(reynolds_number: float, relative_roughness: float) -
         Haaland, S.E. (1983): "Simple and Explicit Formulas for Friction Factor"
         J. Fluids Engineering, 105(1), 89-90
     """
-    if reynolds_number is None:
-        raise ValueError("reynolds_number must be provided")
+    reynolds_number = _validate_reynolds_number(reynolds_number)
+    relative_roughness = _validate_relative_roughness(relative_roughness)
     if reynolds_number < RE_LAMINAR_UPPER:
         return friction_factor_laminar(reynolds_number)
 

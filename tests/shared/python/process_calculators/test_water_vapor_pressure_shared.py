@@ -19,7 +19,15 @@ from shared.python.sidekick.process_calculators.constants import (
     ANTOINE_WATER_A,
     ANTOINE_WATER_B,
     ANTOINE_WATER_C,
+    BUCK_ABOVE_FREEZING_A,
+    BUCK_ABOVE_FREEZING_B,
+    BUCK_ABOVE_FREEZING_C,
+    BUCK_ABOVE_FREEZING_D,
     MMHG_TO_PA_CONV,
+    WATER_VAPOR_A,
+    WATER_VAPOR_B,
+    WATER_VAPOR_C,
+    WATER_VAPOR_D,
 )
 from shared.python.sidekick.process_calculators.water_vapor_pressure import (
     antoine_pressure_pa,
@@ -101,22 +109,15 @@ class TestAntoineInverse:
 
 class TestBuck:
     def test_buck_water_at_20c(self) -> None:
-        # Pin the consolidated Buck kernel output (a=0.61121 kPa) at 20°C in the
-        # syngas coefficient order ``(b - t/d) * t / (c + t)``. Value matches the
-        # pre-refactor SyngasWaterCalculator._buck_equation (2636.34 Pa).
-        p = buck_pressure_pa(0.61121, 18.678, 234.5, 257.14, 20.0)
-        assert p == pytest.approx(2636.34, rel=1e-4)
+        p = buck_pressure_pa(0.61121, 18.678, 257.14, 234.5, 20.0)
+        assert p == pytest.approx(2338.34, rel=5e-3)
 
-    def test_syngas_order_matches_legacy(self) -> None:
-        """The kernel uses the syngas coefficient order, not the steam transpose."""
-        a, b, c, d = 0.61121, 18.678, 234.5, 257.14
-        legacy_syngas = a * math.exp((b - 20.0 / d) * 20.0 / (c + 20.0)) * 1000.0
-        assert buck_pressure_pa(a, b, c, d, 20.0) == pytest.approx(
-            legacy_syngas, rel=1e-12
-        )
+    def test_buck_water_at_50c(self) -> None:
+        p = buck_pressure_pa(0.61121, 18.678, 257.14, 234.5, 50.0)
+        assert p == pytest.approx(12349.4, rel=5e-3)
 
     def test_positive(self) -> None:
-        assert buck_pressure_pa(0.61121, 18.678, 234.5, 257.14, 25.0) > 0
+        assert buck_pressure_pa(0.61121, 18.678, 257.14, 234.5, 25.0) > 0
 
 
 class TestIapws:
@@ -162,15 +163,8 @@ class TestConsumersDelegate:
         )
         assert engine._antoine_equation(60.0) == pytest.approx(shared, rel=1e-12)
 
-    def test_steam_buck_preserves_legacy_curve(self) -> None:
-        """Steam Buck delegation must reproduce the pre-refactor steam curve.
-
-        The steam engine historically used the coefficient order
-        ``(b - T/c) * T / (T + d)`` (numerator divisor = C, denominator = D),
-        which is the transpose of the syngas Buck order the shared kernel
-        adopts.  Guard against silently re-introducing the wrong arg order
-        (which shifts the steam saturation curve by ~13% at 20°C).
-        """
+    def test_steam_buck_delegates_with_standard_coefficient_roles(self) -> None:
+        """Steam Buck delegation must preserve the physical over-water curve."""
         from shared.python.sidekick.calculators.thermo.steam_engine import (
             BUCK_A,
             BUCK_B,
@@ -186,30 +180,70 @@ class TestConsumersDelegate:
             legacy = a_kpa * math.exp((BUCK_B - t / BUCK_C) * t / (t + BUCK_D)) * 1000.0
             assert engine._buck_equation(t) == pytest.approx(legacy, rel=1e-12)
 
-    def test_syngas_buck_preserves_legacy_curve(self) -> None:
-        """Syngas Buck delegation must reproduce the pre-refactor syngas curve."""
-        from shared.python.sidekick.process_calculators.constants import (
-            BUCK_ABOVE_FREEZING_A,
-            BUCK_ABOVE_FREEZING_B,
-            BUCK_ABOVE_FREEZING_C,
-            BUCK_ABOVE_FREEZING_D,
+    def test_syngas_buck_matches_reference_curve(self) -> None:
+        """Syngas Buck delegation must use the physical over-water curve."""
+        from shared.python.sidekick.process_calculators.syngas_water_calculator import (
+            SyngasWaterCalculator,
         )
+
+        calc = SyngasWaterCalculator()
+        for t, expected in (
+            (0.0, 611.21),
+            (20.0, 2338.34),
+            (50.0, 12349.4),
+        ):
+            assert calc._buck_equation(t) == pytest.approx(expected, rel=5e-3)
+
+    def test_syngas_buck_below_freezing_unchanged(self) -> None:
+        from shared.python.sidekick.process_calculators.syngas_water_calculator import (
+            SyngasWaterCalculator,
+        )
+
+        calc = SyngasWaterCalculator()
+        t = -20.0
+        exponent = (WATER_VAPOR_B - t / WATER_VAPOR_D) * t / (WATER_VAPOR_C + t)
+        expected = WATER_VAPOR_A * math.exp(exponent) * 1000.0
+        assert calc._buck_equation(t) == pytest.approx(expected, rel=1e-12)
+
+    def test_syngas_buck_is_continuous_at_freezing(self) -> None:
+        from shared.python.sidekick.process_calculators.syngas_water_calculator import (
+            SyngasWaterCalculator,
+        )
+
+        calc = SyngasWaterCalculator()
+        assert calc._buck_equation(-0.001) == pytest.approx(
+            calc._buck_equation(0.001), rel=5e-4
+        )
+
+    def test_syngas_buck_dew_point_roundtrip(self) -> None:
+        from shared.python.sidekick.process_calculators.syngas_water_calculator import (
+            SyngasWaterCalculator,
+        )
+
+        calc = SyngasWaterCalculator()
+        for t in (20.0, 50.0):
+            vapor_pressure_pa = calc._buck_equation(t)
+            assert calc.calculate_dew_point(
+                vapor_pressure_pa, 101325.0
+            ) == pytest.approx(t, abs=1.0)
+
+    def test_syngas_buck_shared_formula_uses_named_roles(self) -> None:
         from shared.python.sidekick.process_calculators.syngas_water_calculator import (
             SyngasWaterCalculator,
         )
 
         calc = SyngasWaterCalculator()
         for t in (10.0, 20.0, 50.0, 80.0):
-            legacy = (
+            expected = (
                 BUCK_ABOVE_FREEZING_A
                 * math.exp(
-                    (BUCK_ABOVE_FREEZING_B - t / BUCK_ABOVE_FREEZING_D)
+                    (BUCK_ABOVE_FREEZING_B - t / BUCK_ABOVE_FREEZING_C)
                     * t
-                    / (BUCK_ABOVE_FREEZING_C + t)
+                    / (BUCK_ABOVE_FREEZING_D + t)
                 )
                 * 1000.0
             )
-            assert calc._buck_equation(t) == pytest.approx(legacy, rel=1e-12)
+            assert calc._buck_equation(t) == pytest.approx(expected, rel=1e-12)
 
     def test_acid_gas_water_antoine_equals_shared(self) -> None:
         from shared.python.sidekick.process_calculators.acid_gas_dewpoint_calculator import (  # noqa: E501

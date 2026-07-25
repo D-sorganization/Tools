@@ -28,7 +28,7 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.5.2                                      |
 | **Spec Version**        | 1.5.2                                      |
-| **Last Spec Update**    | 2026-07-23                                 |
+| **Last Spec Update**    | 2026-07-24                                 |
 
 ## 2. Purpose & Mission
 
@@ -211,12 +211,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `calc_backend` syngas-water router fallback all delegate to it instead of
   re-implementing the formulas inline, and the router fallback no longer
   restates Antoine constants or water molar-mass/molar-volume literals
-  (#3675, #3677, #3678). The shared Buck kernel keeps the syngas coefficient
-  order; the steam engine swaps its `C`/`D` arguments at the call site (and a
-  regression test pins both legacy curves) so neither caller's saturation curve
-  shifts. The pressure-drop flow-calculation engine is likewise single-sourced
-  on `_flow_calculations`, with `flow_properties.py` retained only as an
-  import-stable facade (#3660).
+  (#3675, #3677, #3678). The shared Buck kernel takes `c` as the denominator
+  temperature offset and `d` as the numerator divisor; over-water callers pass
+  Buck's 257.14 C / 234.5 C constants in that role order, so
+  `SyngasWaterCalculator` now matches the physical Buck curve at 20 C and 50 C
+  while preserving the below-freezing branch (#3867). The pressure-drop
+  flow-calculation engine is likewise single-sourced on `_flow_calculations`,
+  with `flow_properties.py` retained only as an import-stable facade (#3660).
+- Pressure-drop friction-factor helpers centralize positive Reynolds-number and
+  non-negative relative-roughness validation. Churchill uses the
+  Hagen-Poiseuille `64/Re` value for `0 < Re < 1` instead of a constant 64, and
+  Colebrook-White iteration raises a `ColebrookConvergenceError` carrying the
+  iteration context instead of returning a non-converged iterate (#3868).
 - Safety-critical PID auto-tuning math is now a pure, importable module
   (`p1am_control_system.backend.pid_tuning`): FOPDT step-response
   identification and Cohen-Coon tuning no longer live inline in the
@@ -2589,9 +2595,10 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - **2026-07-14**: fix(security) — Added structural validation to the symbolic solver backend endpoints (`/solve`, `/derivative`, `/simplify`) before handing untrusted user input to `sympy.parse_expr`. This mitigates a critical code injection vulnerability where malicious AST constructs (e.g. `().__class__`) could be executed due to `parse_expr`'s internal use of `eval`.
 
 ### Version 1.1.250
+
 - 2024-07-23: fix(ux, #3919) - Improve accessibility of standard buttons in data processor web app by adding `focus-visible` styling (focus rings) to the global `.btn` class.
 
-
 ## 2026-06-12 (Bolt): Refactoring parseVariableAssignments
-* Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
-* Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+- Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
+- Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.

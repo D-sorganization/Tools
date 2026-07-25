@@ -54,6 +54,7 @@ from ._flow_calculations import (  # noqa: F401
     classify_flow_regime,
 )
 from ._friction_factors import (  # noqa: F401
+    ColebrookConvergenceError,
     friction_factor_churchill,
     friction_factor_colebrook,
     friction_factor_haaland,
