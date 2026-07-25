@@ -26,15 +26,24 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.2                                      |
-| **Spec Version**        | 1.5.2                                      |
-| **Last Spec Update**    | 2026-07-23                                 |
+| **Current Version**     | 1.5.3                                      |
+| **Spec Version**        | 1.5.3                                      |
+| **Last Spec Update**    | 2026-07-25                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-25 Performance Regression Dependabot PR comment guard
+
+- `.github/workflows/perf-regression.yml` still runs the data-processor
+  benchmarks and uploads benchmark artifacts for pull requests, including
+  Dependabot dependency-update branches. The non-blocking PR comment step now
+  runs only for same-repository, non-Dependabot pull requests and is marked
+  `continue-on-error`, so read-only pull-request tokens cannot fail the
+  benchmark status after benchmark execution has already completed.
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
@@ -1654,6 +1663,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-25 | 1.5.3 | fix(ci): keep the Performance Regression benchmark gate passing for Dependabot pull requests by skipping the nonessential benchmark-comment write when the pull-request token is read-only, while still uploading benchmark artifacts. |
 | 2026-06-21 | 1.1.7792 | fix(ci): route the Cross-Repo Python Integration downstream contract matrix to Linux self-hosted runners and fall back to `github.token` when `RUNNER_CHECK_TOKEN` is unset, preventing PowerShell parsing failures and checkout token omissions. |
 | 2026-06-21 | 1.1.7791 | fix(ci): route the Performance Regression benchmark workflow to the Linux self-hosted fleet labels so `actions/setup-python` no longer lands on Windows runners without registry-write permissions. |
 | 2026-06-21 | 1.1.7790 | perf(pendulum-web): replace the Nelder-Mead simplex `Array.prototype.sort()` comparator in `optimizer.ts` with a manual in-place insertion sort for the tiny fixed-size simplex, preserving ordering behavior while removing repeated callback dispatch from the hot optimization loop. |
@@ -2589,9 +2599,10 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - **2026-07-14**: fix(security) — Added structural validation to the symbolic solver backend endpoints (`/solve`, `/derivative`, `/simplify`) before handing untrusted user input to `sympy.parse_expr`. This mitigates a critical code injection vulnerability where malicious AST constructs (e.g. `().__class__`) could be executed due to `parse_expr`'s internal use of `eval`.
 
 ### Version 1.1.250
+
 - 2024-07-23: fix(ux, #3919) - Improve accessibility of standard buttons in data processor web app by adding `focus-visible` styling (focus rings) to the global `.btn` class.
 
-
 ## 2026-06-12 (Bolt): Refactoring parseVariableAssignments
-* Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
-* Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+- Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
+- Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
