@@ -127,7 +127,7 @@ jobs:
         env:
           AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         if: steps.checkout_downstream.outcome == 'success'
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.11"
           cache: pip
