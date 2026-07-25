@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.3                                      |
-| **Spec Version**        | 1.5.3                                      |
+| **Current Version**     | 1.5.4                                      |
+| **Spec Version**        | 1.5.4                                      |
 | **Last Spec Update**    | 2026-07-25                                 |
 
 ## 2. Purpose & Mission
@@ -1663,6 +1663,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-25 | 1.5.4 | fix(ci): install `pytz` explicitly in the `data_processor_core` maturin import gate so Python 3.12 self-hosted runners can import pandas-backed consumer code after the Rust extension wheel is built. |
 | 2026-07-25 | 1.5.3 | fix(ci): keep the Performance Regression benchmark gate passing for Dependabot pull requests by skipping the nonessential benchmark-comment write when the pull-request token is read-only, while still uploading benchmark artifacts. |
 | 2026-06-21 | 1.1.7792 | fix(ci): route the Cross-Repo Python Integration downstream contract matrix to Linux self-hosted runners and fall back to `github.token` when `RUNNER_CHECK_TOKEN` is unset, preventing PowerShell parsing failures and checkout token omissions. |
 | 2026-06-21 | 1.1.7791 | fix(ci): route the Performance Regression benchmark workflow to the Linux self-hosted fleet labels so `actions/setup-python` no longer lands on Windows runners without registry-write permissions. |
