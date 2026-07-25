@@ -28,13 +28,25 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.5.2                                      |
 | **Spec Version**        | 1.5.2                                      |
-| **Last Spec Update**    | 2026-07-23                                 |
+| **Last Spec Update**    | 2026-07-25                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-25 P1AM Heater Bring-Up and Data Explorer Diagnostics
+
+- `src/p1am_control_system/` now includes a consolidated heater bring-up
+  README, bench handoff updates, firmware/deploy documentation, and a
+  system-architecture TeX document covering the P1AM control stack.
+- Backend P1AM control modules tighten temperature-stop handling, power-supply
+  behavior, thermocouple filtering, event logging, and data-explorer summary
+  statistics, with authorization and temperature-stop regression coverage.
+- The P1AM frontend adds diagnostics feed and trend-gap helpers, extends
+  temperature/power controls, and adds focused tests for diagnostics, trend
+  gaps, and temperature-control behavior.
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
@@ -2589,9 +2601,10 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - **2026-07-14**: fix(security) — Added structural validation to the symbolic solver backend endpoints (`/solve`, `/derivative`, `/simplify`) before handing untrusted user input to `sympy.parse_expr`. This mitigates a critical code injection vulnerability where malicious AST constructs (e.g. `().__class__`) could be executed due to `parse_expr`'s internal use of `eval`.
 
 ### Version 1.1.250
+
 - 2024-07-23: fix(ux, #3919) - Improve accessibility of standard buttons in data processor web app by adding `focus-visible` styling (focus rings) to the global `.btn` class.
 
-
 ## 2026-06-12 (Bolt): Refactoring parseVariableAssignments
-* Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
-* Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+- Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
+- Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
