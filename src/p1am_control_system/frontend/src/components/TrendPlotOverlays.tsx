@@ -51,11 +51,23 @@ export const TrendCrosshair: React.FC<{
   xLabel: string;
 }> = ({ px, yTop, yBottom, plotLeft, plotRight, series, xLabel }) => {
   if (series.length === 0) return null;
-  const lines = [xLabel, ...series.map((s) => `${s.label}  ${s.text}`)];
-  const maxChars = lines.reduce((m, l) => Math.max(m, l.length), 0);
+
+  // ⚡ Bolt Optimization: Replaced chained .map() and .reduce() with a single-pass loop
+  // to eliminate intermediate array allocations and closure overhead in high-frequency rendering.
+  const lines = [xLabel];
+  let maxChars = xLabel.length;
+  let anchorY = yBottom;
+
+  for (let i = 0; i < series.length; i++) {
+    const s = series[i];
+    const line = `${s.label}  ${s.text}`;
+    lines.push(line);
+    if (line.length > maxChars) maxChars = line.length;
+    if (s.py < anchorY) anchorY = s.py;
+  }
+
   const boxW = CH_PAD_X * 2 + CH_SWATCH + 4 + maxChars * CH_CHAR_W;
   const boxH = CH_PAD_Y * 2 + lines.length * CH_LINE_H;
-  const anchorY = series.reduce((m, s) => Math.min(m, s.py), yBottom);
   const pos = placeTooltip(
     { x: px, y: anchorY },
     { w: boxW, h: boxH },
