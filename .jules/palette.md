@@ -43,3 +43,6 @@
 ## 2024-07-23 - Focus Rings on Core Buttons
 **Learning:** Discovered a pattern where standard buttons utilizing the `.btn` utility class lacked focus ring accessibility, despite inputs and tabs being styled properly.
 **Action:** Ensure global utility classes for interactive elements inherently contain standard `focus-visible` styling to enforce a baseline accessibility standard across the application.
+## 2024-05-31 - Tab Roles vs aria-pressed
+**Learning:** When implementing custom tab components in React, use `role="tab"` paired strictly with `aria-selected` (not `aria-pressed`, which is intended for toggle buttons) and ensure `aria-controls` points to a valid `role="tabpanel"` container whose `aria-labelledby` points back to the tab.
+**Action:** When adding accessible properties to custom tabs, replace `aria-pressed` with `aria-selected`, ensure a `role="tablist"` wrapper is present, and correctly cross-reference `aria-controls` with the tab panel IDs.
