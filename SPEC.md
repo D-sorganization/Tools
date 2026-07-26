@@ -684,8 +684,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `compatibility`, and `src.shared.python.*` legacy spellings to the same
   canonical `shared.python.*` module objects in `sys.modules`; repeated
   installer calls also coalesce stale preloaded aliases back to those
-  canonical objects. `_bootstrap.py` no longer injects `src/shared/python`
-  directly.
+  canonical objects. Installed applications also bind the intermediate
+  `src.shared` and `src.shared.python` namespaces to their canonical parents,
+  and alias loaders delegate module-code lookup so `python -m sidekick` can
+  execute the canonical entry point. `_bootstrap.py` no longer injects
+  `src/shared/python` directly.
 - Issue #3316 follow-up removed the duplicate pytest-only
   `RobustImportRedirector` implementations from both repository conftests so
   tests and production share the same `shared.python.import_aliases` path. The

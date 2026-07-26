@@ -247,8 +247,22 @@ def _coalesce_loaded_aliases(finder: SharedImportAliasFinder) -> None:
         _canonical_module(finder._aliases(root, suffix))
 
 
+def _bind_legacy_src_namespaces() -> None:
+    """Point installed-app ``src.shared`` parents at canonical namespaces."""
+    shared = sys.modules.get("shared")
+    shared_python = sys.modules.get("shared.python")
+    if shared is None or shared_python is None:
+        return
+    sys.modules["src.shared"] = shared
+    sys.modules["src.shared.python"] = shared_python
+    legacy_src = sys.modules.get("src")
+    if legacy_src is not None:
+        legacy_src.shared = shared  # type: ignore[attr-defined]
+
+
 def install_shared_import_aliases() -> None:
     """Install the shared import alias finder once per interpreter."""
+    _bind_legacy_src_namespaces()
     for finder in sys.meta_path:
         if isinstance(finder, SharedImportAliasFinder):
             _coalesce_loaded_aliases(finder)

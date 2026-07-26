@@ -8,6 +8,7 @@ import subprocess
 import sys
 from importlib.machinery import ModuleSpec
 from pathlib import Path
+from types import ModuleType
 from typing import Any
 
 if sys.version_info >= (3, 11):  # noqa: UP036 - CI still runs a 3.10 lane.
@@ -94,6 +95,25 @@ def test_installer_coalesces_preloaded_legacy_alias() -> None:
 
     assert sys.modules["theme.theme_manager"] is canonical
     assert importlib.import_module("theme.theme_manager") is canonical
+
+
+def test_installer_binds_legacy_src_parent_namespaces(
+    monkeypatch,
+) -> None:
+    """Installed apps must reach canonical modules through ``src.shared``."""
+    shared = importlib.import_module("shared")
+    shared_python = importlib.import_module("shared.python")
+    legacy_src = ModuleType("src")
+    legacy_src.__path__ = []  # type: ignore[attr-defined]
+    monkeypatch.setitem(sys.modules, "src", legacy_src)
+    monkeypatch.delitem(sys.modules, "src.shared", raising=False)
+    monkeypatch.delitem(sys.modules, "src.shared.python", raising=False)
+
+    install_shared_import_aliases()
+
+    assert sys.modules["src.shared"] is shared
+    assert sys.modules["src.shared.python"] is shared_python
+    assert legacy_src.shared is shared  # type: ignore[attr-defined]
 
 
 def test_bootstrap_uses_src_root_not_shared_python_root() -> None:
