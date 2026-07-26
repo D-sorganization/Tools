@@ -14,9 +14,9 @@ REQUIRED_SPARSE_PATHS = {
         "tests/shared_contracts",
     },
     "D-sorganization/UpstreamDrift": {
-        "src",
+        "src/shared/python",
         "tests/shared_contracts",
-        "ui",
+        "tests/support",
     },
 }
 
@@ -52,6 +52,44 @@ def test_each_downstream_declares_its_required_sparse_scope() -> None:
         for downstream in downstreams
     }
 
-    assert actual.keys() == REQUIRED_SPARSE_PATHS.keys()
-    for repo, required_paths in REQUIRED_SPARSE_PATHS.items():
-        assert required_paths <= actual[repo]
+    assert actual == REQUIRED_SPARSE_PATHS
+    upstream_scope = actual["D-sorganization/UpstreamDrift"]
+    assert "src" not in upstream_scope
+    assert "ui" not in upstream_scope
+
+
+def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
+    workflow = _workflow()
+    steps = workflow["jobs"]["downstream-consumer-contracts"]["steps"]
+    checkout = next(
+        step
+        for step in steps
+        if step.get("name") == "Checkout ${{ matrix.downstream.repo }}"
+    )
+
+    assert checkout["with"]["sparse-checkout-cone-mode"] is True
+    assert not checkout["with"].get("filter")
+
+
+def test_cross_repo_job_uses_persistent_python_toolcache_and_cold_cache_budget() -> (
+    None
+):
+    workflow = _workflow()
+    job = workflow["jobs"]["downstream-consumer-contracts"]
+    setup_step = next(
+        step for step in job["steps"] if step.get("name") == "Set up Python"
+    )
+
+    assert int(job["timeout-minutes"]) >= 60
+    cache_step = next(
+        step
+        for step in job["steps"]
+        if step.get("name") == "Select persistent Python tool cache"
+    )
+    assert "AGENT_TOOLSDIRECTORY=$RUNNER_TOOL_CACHE" in cache_step["run"]
+    assert "runner.temp" not in cache_step["run"]
+    assert setup_step["with"] == {
+        "python-version": "3.11",
+        "cache": "pip",
+    }
+    assert "${{ runner.temp }}/_tool_cache" not in setup_step.get("env", {}).values()

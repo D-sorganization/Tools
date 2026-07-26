@@ -63,7 +63,7 @@ jobs:
   downstream-consumer-contracts:
     needs: pick-runner
     runs-on: [self-hosted, Linux, X64, d-sorg-fleet]
-    timeout-minutes: 30
+    timeout-minutes: 60
     strategy:
       fail-fast: false
       matrix:
@@ -82,9 +82,9 @@ jobs:
             test_command: xvfb-run --auto-servernum pytest tests/shared_contracts/ --timeout=60 --timeout-method=thread -v --tb=short
             env_name: REQUIRE_REAL_TOOLS_REPO
             sparse_checkout: |
-              src
+              src/shared/python
               tests/shared_contracts
-              ui
+              tests/support
 
     steps:
       - name: Checkout Tools
@@ -102,9 +102,17 @@ jobs:
           sparse-checkout: ${{ matrix.downstream.sparse_checkout }}
           sparse-checkout-cone-mode: true
 
+      - name: Select persistent Python tool cache
+        run: |
+          if [ -z "${RUNNER_TOOL_CACHE:-}" ]; then
+            echo "::error::RUNNER_TOOL_CACHE is unavailable"
+            exit 1
+          fi
+          echo "AGENT_TOOLSDIRECTORY=$RUNNER_TOOL_CACHE" >> "$GITHUB_ENV"
+
       - name: Force-clean stale Python tool cache (NVMe runners)
         run: |
-          for cache_root in /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+          for cache_root in "$AGENT_TOOLSDIRECTORY" /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
               echo "Checking $cache_root/Python for stale 3.11 installations..."
               for version_dir in "$cache_root/Python"/3.11.*; do
@@ -134,8 +142,6 @@ jobs:
             fi
           done
       - name: Set up Python
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         if: steps.checkout_downstream.outcome == 'success'
         uses: actions/setup-python@v6
         with:

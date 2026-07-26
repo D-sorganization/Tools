@@ -50,6 +50,36 @@ def test_ci_standard_uses_bounded_checkout_history() -> None:
         assert checkout_step["with"]["fetch-depth"] == 2
 
 
+def test_ci_standard_uses_persistent_python_toolcache_and_cold_cache_budgets() -> None:
+    """Cold setup downloads must not consume the entire protected-job budget."""
+    import yaml
+
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+    minimum_timeouts = {
+        "quality-gate": 60,
+        "tests": 90,
+    }
+
+    for job_name, minimum_timeout in minimum_timeouts.items():
+        job = workflow["jobs"][job_name]
+        assert int(job["timeout-minutes"]) >= minimum_timeout
+        cache_step = next(
+            step
+            for step in job["steps"]
+            if step.get("name") == "Select persistent Python tool cache"
+        )
+        assert "AGENT_TOOLSDIRECTORY=$RUNNER_TOOL_CACHE" in cache_step["run"]
+        assert "runner.temp" not in cache_step["run"]
+
+        setup_step = next(
+            step
+            for step in job["steps"]
+            if str(step.get("uses", "")).startswith("actions/setup-python@")
+        )
+        setup_environment = setup_step.get("env", {})
+        assert "${{ runner.temp }}/_tool_cache" not in setup_environment.values()
+
+
 def test_ci_standard_limits_sidekick_runtime_lane_to_runtime_sources() -> None:
     workflow = CI_STANDARD.read_text(encoding="utf-8")
 

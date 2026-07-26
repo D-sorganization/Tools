@@ -1671,6 +1671,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-26 | 1.5.3 | fix(ci): keep protected Python jobs on the persistent runner-scoped tool cache and give cold-cache downloads enough bounded time to reach validation; narrow the UpstreamDrift consumer checkout to the shared Python and contract-support trees without changing its install or test command. |
+| 2026-07-26 | 1.5.3 | fix(ci): bound Anti-Phantom-Merge history to 50 commits and preserve changed-file rule inputs through the GitHub files API fallback, preventing full-history checkout exhaustion without weakening the fail-closed guard. |
 | 2026-07-26 | 1.5.3 | fix(ci): bound CI Standard quality and Python-matrix checkouts to the PR merge commit and parents, preventing persistent self-hosted clones from timing out while unshallowing all branches, tags, and abandoned packfiles; an ops contract pins both checkout depths. |
 | 2026-07-26 | 1.5.3 | test(chat, #3936): keep `src/shared/python/chat` as the sole reusable chat implementation while explicitly constraining the supported `src/chat` compatibility package to a one-file alias, so future copied implementations fail the public contract without rejecting the intentional legacy import surface. |
 | 2026-07-26 | 1.5.3 | fix(chat, #3936): enforce the launcher capability trust boundary inside the canonical native WebSocket URL builder, forwarding the ephemeral token only to verified localhost or loopback IP peers and never to remote `ws://`/`wss://` overrides; contract tests cover remote omission plus IPv4, IPv6, and localhost authentication. |

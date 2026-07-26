@@ -115,7 +115,9 @@ jobs:
     # was paying for a hard dependency we can tolerate as a soft one.
     needs: [pick-runner]
     runs-on: d-sorg-fleet
-    timeout-minutes: 20
+    # A cold setup-python download has taken 22 minutes on the local fleet.
+    # Keep enough budget for the quality checks that follow the bootstrap.
+    timeout-minutes: 60
     env:
       # Shared wheel/download cache for self-hosted runners — avoids re-downloading
       # the same packages on every run.  Path is host-stable and safe for concurrent
@@ -132,16 +134,21 @@ jobs:
           # changed-file gates below. Full history repeatedly exhausts the
           # job timeout while unshallowing persistent self-hosted clones.
           fetch-depth: 2
+      - name: Select persistent Python tool cache
+        run: |
+          if [ -z "${RUNNER_TOOL_CACHE:-}" ]; then
+            echo "::error::RUNNER_TOOL_CACHE is unavailable"
+            exit 1
+          fi
+          echo "AGENT_TOOLSDIRECTORY=$RUNNER_TOOL_CACHE" >> "$GITHUB_ENV"
       - name: Force-clean stale Python tool cache (NVMe runners)
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         # Defensive prepass: actions/setup-python uses ``rmdir`` to delete
         # cached Python directories before installing, which fails when
         # the cache contains read-only or stubborn files (e.g. test/certdata
         # symlinks). ``rm -rf`` succeeds where ``rmdir`` fails. We check and
         # clean only broken/incomplete 3.12 installations to prevent race conditions.
         run: |
-          for cache_root in /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+          for cache_root in "$AGENT_TOOLSDIRECTORY" /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
               echo "Checking $cache_root/Python for stale 3.12 installations..."
               for version_dir in "$cache_root/Python"/3.12.*; do
@@ -171,12 +178,8 @@ jobs:
             fi
           done
       - name: Restore local Python tool cache
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         run: .github/scripts/restore-python-toolcache.sh
       - uses: actions/setup-python@v6
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         with:
           python-version: "3.12"
           cache: pip
@@ -213,7 +216,6 @@ jobs:
 
       - name: Install Dependencies
         env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
           PIP_CACHE_DIR: ${{ runner.temp }}/pip-quality-gate
           PIP_NO_CACHE_DIR: "1"
         # Force-reinstall sortedcontainers (and hypothesis) before anything
@@ -441,7 +443,9 @@ jobs:
           fi
 
   tests:
-    timeout-minutes: 30
+    # The required 3.11 lane must survive a first-use Python download plus
+    # dependency installation, Rust-wheel build, and the actual test suite.
+    timeout-minutes: 90
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
@@ -478,15 +482,20 @@ jobs:
           # Keep the matrix checkout bounded for the same merge-parent
           # contract used by quality-gate.
           fetch-depth: 2
+      - name: Select persistent Python tool cache
+        run: |
+          if [ -z "${RUNNER_TOOL_CACHE:-}" ]; then
+            echo "::error::RUNNER_TOOL_CACHE is unavailable"
+            exit 1
+          fi
+          echo "AGENT_TOOLSDIRECTORY=$RUNNER_TOOL_CACHE" >> "$GITHUB_ENV"
       - name: Force-clean stale Python tool cache (NVMe runners)
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         # See quality-gate job for rationale: ``actions/setup-python`` uses
         # ``rmdir`` and fails on read-only items left behind (test/certdata
         # etc.). ``rm -rf`` succeeds. We check and clean only the broken/incomplete
         # matrix python-version directory to prevent race conditions.
         run: |
-          for cache_root in /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+          for cache_root in "$AGENT_TOOLSDIRECTORY" /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
             if [ -d "$cache_root/Python" ]; then
               echo "Checking $cache_root/Python for stale ${{ matrix.python-version }} installations..."
               for version_dir in "$cache_root/Python"/${{ matrix.python-version }}.*; do
@@ -516,12 +525,8 @@ jobs:
             fi
           done
       - name: Restore local Python tool cache
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         run: .github/scripts/restore-python-toolcache.sh
       - uses: actions/setup-python@v6
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
@@ -662,8 +667,6 @@ jobs:
           echo "coverage_gate_required=$coverage_gate_required" >> "$GITHUB_OUTPUT"
 
       - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
-        env:
-          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         run: |
           export PYTHONPATH="src/data_processing/data_processor/python:src/media_processing/video_processor/python:src/python/src:src:${PYTHONPATH:-}"
           # Core required test suite — always runs regardless of which files changed.
