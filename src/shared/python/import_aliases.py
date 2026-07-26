@@ -17,7 +17,8 @@ import warnings
 from collections.abc import Mapping, Sequence
 from importlib.abc import MetaPathFinder
 from importlib.machinery import ModuleSpec
-from typing import Any
+from pathlib import Path
+from typing import Any, cast
 
 __all__ = [
     "SharedImportAliasFinder",
@@ -50,6 +51,8 @@ _SHARED_ROOTS = frozenset(
         "upstream_drift_tools",
     }
 )
+_DOWNSTREAM_SRC_ALIAS_ROOTS = frozenset({"chat", "sidekick", "upstream_drift_tools"})
+_TOOLS_SRC_ROOT = Path(__file__).resolve().parents[2]
 
 
 def alias_legacy_package(
@@ -126,7 +129,7 @@ class _CanonicalAliasLoader:
         canonical_get_code = getattr(canonical_loader, "get_code", None)
         if canonical_get_code is None:
             return None
-        return canonical_get_code(self.canonical_name)
+        return cast(types.CodeType | None, canonical_get_code(self.canonical_name))
 
     def exec_module(self, module: types.ModuleType) -> None:
         canonical = importlib.import_module(self.canonical_name)
@@ -146,9 +149,14 @@ class SharedImportAliasFinder(MetaPathFinder):
                 else (None, "")
             )
         if len(parts) >= 4 and parts[:3] == ["src", "shared", "python"]:
+            allowed_roots = (
+                _DOWNSTREAM_SRC_ALIAS_ROOTS
+                if _external_src_package_is_available()
+                else _SHARED_ROOTS
+            )
             return (
                 (parts[3], ".".join(parts[4:]))
-                if parts[3] in _SHARED_ROOTS
+                if parts[3] in allowed_roots
                 else (None, "")
             )
         if parts and parts[0] in _SHARED_ROOTS:
@@ -247,17 +255,42 @@ def _coalesce_loaded_aliases(finder: SharedImportAliasFinder) -> None:
         _canonical_module(finder._aliases(root, suffix))
 
 
-def _bind_legacy_src_namespaces() -> None:
-    """Point installed-app ``src.shared`` parents at canonical namespaces."""
-    shared = sys.modules.get("shared")
-    shared_python = sys.modules.get("shared.python")
-    if shared is None or shared_python is None:
-        return
-    sys.modules["src.shared"] = shared
-    sys.modules["src.shared.python"] = shared_python
+def _src_search_locations() -> tuple[str, ...]:
     legacy_src = sys.modules.get("src")
     if legacy_src is not None:
-        legacy_src.shared = shared  # type: ignore[attr-defined]
+        locations = getattr(legacy_src, "__path__", ())
+        return tuple(str(location) for location in locations)
+    try:
+        spec = importlib.util.find_spec("src")
+    except (ImportError, ValueError):
+        return ()
+    locations = None if spec is None else spec.submodule_search_locations
+    return tuple(str(location) for location in locations or ())
+
+
+def _external_src_package_is_available() -> bool:
+    for location in _src_search_locations():
+        try:
+            if Path(location).resolve() != _TOOLS_SRC_ROOT:
+                return True
+        except OSError:
+            return True
+    return False
+
+
+def _bind_legacy_src_namespaces() -> None:
+    """Fill missing ``src.shared`` parents without replacing downstream packages."""
+    shared = sys.modules.get("shared")
+    shared_python = sys.modules.get("shared.python")
+    if shared is None or shared_python is None or _external_src_package_is_available():
+        return
+    legacy_shared = sys.modules.setdefault("src.shared", shared)
+    legacy_python = sys.modules.setdefault("src.shared.python", shared_python)
+    legacy_src = sys.modules.get("src")
+    if legacy_src is not None and not hasattr(legacy_src, "shared"):
+        legacy_src.shared = legacy_shared  # type: ignore[attr-defined]
+    if not hasattr(legacy_shared, "python"):
+        legacy_shared.python = legacy_python  # type: ignore[attr-defined]
 
 
 def install_shared_import_aliases() -> None:

@@ -1028,6 +1028,11 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   `src/shared/python/sidekick/agent`, with audited action registration,
   headless host/subtab ports, and an optional thunk dispatcher compatible with
   the shared AI main-thread tool dispatcher for GUI-affine actions
+- Standalone Sidekick CLI dispatch, headless execution, onboarding,
+  preferences, profile persistence, session storage, and the PyQt6 window shell
+  live canonically under `src/shared/python/sidekick/{__main__,standalone,persistence}`.
+  Downstream applications consume a pinned Tools revision instead of
+  maintaining editable child implementations.
 - The Sidekick action service imports its Tools-owned state contract through
   the package-root-independent `contracts` module so a downstream application's
   `src.shared.python.contracts` alias cannot shadow it. The top-level contracts

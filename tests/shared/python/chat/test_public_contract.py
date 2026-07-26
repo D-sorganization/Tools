@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import importlib
 from pathlib import Path
 
 
@@ -22,12 +23,22 @@ def test_chat_facade_exports_contract_models() -> None:
         "ChatServiceBase",
         "ChatSession",
         "ChatMessage",
+        "ChatWebSocketState",
+        "DisconnectLogConfig",
         "create_chat_router",
+        "run_chat_websocket_protocol",
     }
 
     assert hasattr(chat, "__all__"), getattr(chat, "__file__", "<missing>")
     assert expected.issubset(set(chat.__all__))
-    lazy_exports = {"ChatDockWidget", "ChatMessageBubble", "create_chat_router"}
+    lazy_exports = {
+        "ChatDockWidget",
+        "ChatMessageBubble",
+        "ChatWebSocketState",
+        "DisconnectLogConfig",
+        "create_chat_router",
+        "run_chat_websocket_protocol",
+    }
     for name in expected - lazy_exports:
         assert getattr(chat, name) is not None
 
@@ -40,6 +51,25 @@ def test_chat_qt_loader_uses_package_relative_import() -> None:
 
     assert "from . import _chat_dock_widget_qt" in source
     assert "from src.shared.python.chat import _chat_dock_widget_qt" not in source
+
+
+def test_websocket_protocol_uses_one_canonical_module_identity() -> None:
+    """Direct and shared-package imports must not create separate state."""
+    direct = importlib.import_module("chat.websocket_protocol")
+    canonical = importlib.import_module("shared.python.chat.websocket_protocol")
+
+    assert direct is canonical
+
+
+def test_websocket_protocol_declares_exact_public_api() -> None:
+    """The protocol module exposes only its stable cross-repository surface."""
+    protocol = importlib.import_module("chat.websocket_protocol")
+
+    assert protocol.__all__ == [
+        "ChatWebSocketState",
+        "DisconnectLogConfig",
+        "run_chat_websocket_protocol",
+    ]
 
 
 def test_single_canonical_shared_chat_implementation() -> None:
