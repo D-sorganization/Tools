@@ -1019,7 +1019,8 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   the shared AI main-thread tool dispatcher for GUI-affine actions
 - The Sidekick action service imports its Tools-owned state contract through
   the package-root-independent `contracts` module so a downstream application's
-  `src.shared.python.contracts` alias cannot shadow it.
+  `src.shared.python.contracts` alias cannot shadow it. The top-level contracts
+  shim re-exports `StateError` for direct launchers that place `src` first.
 - Sidekick agent canonical modules are protected by focused unit coverage for
   audit sinks, feature catalog discovery/search, host capability dispatch,
   planner validation/export, and subtab action dispatch so the per-file

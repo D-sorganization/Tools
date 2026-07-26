@@ -313,6 +313,14 @@ def test_state_error_is_tools_owned_and_translated() -> None:
     assert result.error == "state error: not ready"
 
 
+def test_top_level_contracts_shim_exports_state_error() -> None:
+    """Direct launchers put ``src`` first, so its shim must expose StateError."""
+    from src import contracts as contracts_shim
+
+    assert contracts_shim.StateError.__name__ == "StateError"
+    assert issubclass(contracts_shim.StateError, RuntimeError)
+
+
 def test_action_service_does_not_import_host_core_contracts() -> None:
     import sidekick.agent.action_service as action_service
 
