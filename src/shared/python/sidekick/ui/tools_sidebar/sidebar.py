@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import logging
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -56,6 +57,8 @@ from .visibility_persistence import (
     _QS_VISIBLE_TABS_KEY,  # noqa: F401  # re-exported for backward compat
     VisibilityPersistence,
 )
+
+_logger = logging.getLogger(__name__)
 
 __all__ = [
     "LayoutMode",
@@ -172,6 +175,7 @@ class UnifiedToolsSidebar(
         self._settings_button: QtWidgets.QToolButton | None = None
         self._project_root = Path(project_root or Path.cwd()).expanduser().resolve()
         self._layout_mode = _coerce_layout_mode(self._state.layout_mode)
+        self._shutdown_complete = False
 
         self.tabs = QtWidgets.QTabWidget(self)
         self.tabs.setObjectName(SIDEKICK_TABS_OBJECT_NAME)
@@ -235,6 +239,42 @@ class UnifiedToolsSidebar(
     def minimumSizeHint(self) -> QtCore.QSize:
         """Override minimumSizeHint to allow aggressive resizing of the sidebar."""
         return QtCore.QSize(100, 0)
+
+    def shutdown(self) -> None:
+        """Stop runtime resources owned by live sidebar tabs.
+
+        The operation is idempotent so both a host launcher and Qt's close
+        lifecycle may call it. Runtime widgets expose a small public
+        ``shutdown()`` contract; passive tabs require no special handling.
+        """
+        if getattr(self, "_shutdown_complete", False):
+            return
+        self._shutdown_complete = True
+
+        widgets = list(getattr(self, "_tab_widgets", {}).values())
+        popout_windows = getattr(self, "_popout_windows", {})
+        for window in popout_windows.values():
+            central_widget = getattr(window, "centralWidget", None)
+            if callable(central_widget):
+                widgets.append(central_widget())
+
+        seen: set[int] = set()
+        for widget in widgets:
+            if widget is None or id(widget) in seen:
+                continue
+            seen.add(id(widget))
+            shutdown = getattr(widget, "shutdown", None)
+            if not callable(shutdown):
+                continue
+            try:
+                shutdown()
+            except Exception as exc:  # noqa: BLE001 - cleanup is best-effort
+                _logger.debug("Sidekick tab shutdown failed: %s", exc)
+
+    def closeEvent(self, event: object) -> None:  # noqa: N802 - Qt API
+        """Shut down runtime tabs before the sidebar closes."""
+        self.shutdown()
+        super().closeEvent(event)  # type: ignore[misc]
 
     @property
     def dock_widget(self) -> QtWidgets.QDockWidget | None:
