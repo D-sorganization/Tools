@@ -70,6 +70,26 @@ def test_native_websocket_contract_rejects_invalid_server_scheme() -> None:
         chat_dock_widget._native_websocket_origin("http://127.0.0.1:8000")
 
 
+@pytest.mark.parametrize(
+    "server_url",
+    [
+        "ws://127.0.0.1:8000/custom-base",
+        "ws://127.0.0.1:8000?transport=native",
+        "ws://127.0.0.1:8000#sidekick",
+    ],
+)
+def test_native_websocket_contract_rejects_non_authority_server_url(
+    server_url: str,
+) -> None:
+    """DbC: the server setting cannot corrupt the separately owned WS path."""
+    with pytest.raises(ValueError, match="scheme and authority"):
+        chat_dock_widget._build_native_websocket_url(
+            server_url,
+            "/api/ws/chat/new",
+            None,
+        )
+
+
 def test_chat_connect_uses_origin_and_runtime_capability(
     qapp: QApplication,
     monkeypatch: pytest.MonkeyPatch,

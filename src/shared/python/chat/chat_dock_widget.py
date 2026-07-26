@@ -70,6 +70,8 @@ def _validated_websocket_server(server_url: str) -> SplitResult:
         raise ValueError("server_url must include a hostname")
     if parsed.username is not None or parsed.password is not None:
         raise ValueError("server_url must not contain credentials")
+    if parsed.path not in {"", "/"} or parsed.query or parsed.fragment:
+        raise ValueError("server_url must contain only a scheme and authority")
     return parsed
 
 

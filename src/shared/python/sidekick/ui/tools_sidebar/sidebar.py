@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
@@ -78,6 +79,27 @@ class LayoutMode(StrEnum):
 
     SIDEBAR = "sidebar"
     MATLAB_HOME = "matlab_home"
+
+
+class _HostCloseFilter(QtCore.QObject):
+    """Invoke one lifecycle callback when the owning host begins closing."""
+
+    def __init__(
+        self,
+        on_close: Callable[[], None],
+        parent: QtCore.QObject,
+    ) -> None:
+        if not callable(on_close):
+            raise TypeError("on_close must be callable")
+        super().__init__(parent)
+        self._on_close = on_close
+
+    def eventFilter(self, watched: object, event: object) -> bool:  # noqa: N802
+        """Run host cleanup before Qt starts closing child widgets."""
+        event_type = getattr(event, "type", None)
+        if callable(event_type) and event_type() == QtCore.QEvent.Type.Close:
+            self._on_close()
+        return bool(super().eventFilter(watched, event))
 
 
 class MatlabHomeWidget(QtWidgets.QWidget):
@@ -176,6 +198,7 @@ class UnifiedToolsSidebar(
         self._project_root = Path(project_root or Path.cwd()).expanduser().resolve()
         self._layout_mode = _coerce_layout_mode(self._state.layout_mode)
         self._shutdown_complete = False
+        self._host_close_filter: _HostCloseFilter | None = None
 
         self.tabs = QtWidgets.QTabWidget(self)
         self.tabs.setObjectName(SIDEKICK_TABS_OBJECT_NAME)
@@ -548,6 +571,8 @@ class UnifiedToolsSidebar(
         )
         # Keep backward-compatible dock-object-name constant.
         dock.setObjectName(SIDEKICK_DOCK_OBJECT_NAME)
+        self._host_close_filter = _HostCloseFilter(self.shutdown, main_window)
+        main_window.installEventFilter(self._host_close_filter)
         self._emit_context()
         return dock
 

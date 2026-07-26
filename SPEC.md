@@ -1008,9 +1008,9 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   integration for project file browsing, workspace variables, chat, terminal,
   calculator, unit conversion, and notes tabs
 - Unified Sidekick sidebar shutdown is idempotent and delegates to each live
-  runtime tab's public `shutdown()` contract before Qt closes the sidebar, so
-  PTY-backed terminal tabs cannot retain their shell, reader, or bridge
-  processes after a host launcher exits (#3938).
+  runtime tab's public `shutdown()` contract before Qt closes either the
+  sidebar or its generic host window, so PTY-backed terminal tabs cannot retain
+  their shell, reader, or bridge processes after a host launcher exits (#3938).
 - Sidekick runtime tabs embed real utility surfaces for chat status, workspace
   Python execution, symbolic calculator evaluation, and project-persistent
   notes instead of placeholder panels
@@ -1667,7 +1667,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-07-25 | 1.5.3 | fix(sidekick, #3938): add an idempotent aggregate sidebar shutdown contract that delegates once to every live runtime tab and runs during Qt close, preventing PTY-backed Terminal tabs from retaining shell and bridge processes after a host launcher exits. |
+| 2026-07-25 | 1.5.3 | fix(sidekick, #3938): add an idempotent aggregate sidebar shutdown contract that delegates once to every live runtime tab and runs during sidebar or generic host-window close, preventing PTY-backed Terminal tabs from retaining shell and bridge processes after a host launcher exits. |
 | 2026-06-21 | 1.1.7792 | fix(ci): route the Cross-Repo Python Integration downstream contract matrix to Linux self-hosted runners and fall back to `github.token` when `RUNNER_CHECK_TOKEN` is unset, preventing PowerShell parsing failures and checkout token omissions. |
 | 2026-06-21 | 1.1.7791 | fix(ci): route the Performance Regression benchmark workflow to the Linux self-hosted fleet labels so `actions/setup-python` no longer lands on Windows runners without registry-write permissions. |
 | 2026-06-21 | 1.1.7790 | perf(pendulum-web): replace the Nelder-Mead simplex `Array.prototype.sort()` comparator in `optimizer.ts` with a manual in-place insertion sort for the tiny fixed-size simplex, preserving ordering behavior while removing repeated callback dispatch from the hot optimization loop. |
