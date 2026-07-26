@@ -8,6 +8,7 @@ chat widget is shared source; downstream copies must only be synchronized.
 
 from __future__ import annotations
 
+import sys
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -76,29 +77,29 @@ def test_chat_connect_uses_origin_and_runtime_capability(
     """The Qt socket receives both pieces of the local handshake contract."""
     del qapp  # QApplication lifetime is the fixture's purpose.
     monkeypatch.setenv("UD_LAUNCHER_CSRF_TOKEN", "runtime-secret")
+    qt_module = sys.modules[ChatDockWidget.__module__]
+    previous_session = ChatDockWidget._get_shared_session_id()
+    ChatDockWidget._set_shared_session_id(None)
 
-    with (
-        patch.object(ChatDockWidget, "_setup_ui"),
-        patch(
-            "src.shared.python.chat._chat_dock_widget_qt._session_file_path",
-            return_value=Path("unused-session-file"),
-        ),
-        patch(
-            "src.shared.python.chat._chat_dock_widget_qt._read_shared_session_id",
-            return_value=None,
-        ),
-        patch("src.shared.python.chat._chat_dock_widget_qt.QWebSocket") as socket_class,
-    ):
-        socket = MagicMock()
-        socket_class.return_value = socket
-        widget = ChatDockWidget(
-            app_context="test",
-            app_name="test-sidekick",
-            server_url="ws://127.0.0.1:8123",
-        )
-        widget._status_label = MagicMock()
+    try:
+        with (
+            patch.object(ChatDockWidget, "_setup_ui"),
+            patch.object(qt_module, "_session_file_path", return_value=Path("unused")),
+            patch.object(qt_module, "_read_shared_session_id", return_value=None),
+            patch.object(qt_module, "QWebSocket") as socket_class,
+        ):
+            socket = MagicMock()
+            socket_class.return_value = socket
+            widget = ChatDockWidget(
+                app_context="test",
+                app_name="test-sidekick",
+                server_url="ws://127.0.0.1:8123",
+            )
+            widget._status_label = MagicMock()
 
-        widget._connect()
+            widget._connect()
+    finally:
+        ChatDockWidget._set_shared_session_id(previous_session)
 
     socket_class.assert_called_once_with("http://127.0.0.1:8123")
     opened_url = socket.open.call_args.args[0]

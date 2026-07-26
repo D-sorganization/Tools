@@ -344,7 +344,6 @@ class ChatDockWidget(QDockWidget):
         if self._socket is not None:
             self._socket.close()
             self._socket.deleteLater()
-
         sid = ChatDockWidget._get_shared_session_id() or "new"
         path = self._ws_path_template.replace("{session_id}", sid)
         origin, url_text = _connection_contract._native_websocket_connection(
@@ -440,7 +439,9 @@ class ChatDockWidget(QDockWidget):
                 if hasattr(self, "_send_btn") and self._send_btn is not None:
                     self._send_btn.setEnabled(True)
             return
-        self._status_label.setText("Disconnected - retrying in 3s...")
+        self._status_label.setText(
+            "Sidekick API unavailable — retrying in 3s. Set UD_CHAT_WS_URL if the local API is external."
+        )
         self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
         if hasattr(self, "_exit_thinking_state"):
             self._exit_thinking_state()

@@ -961,7 +961,8 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Native Qt chat WebSocket connections derive a loopback HTTP(S) origin from
   the configured WS(S) server and attach the ephemeral launcher capability as
   an encoded query parameter. The capability is never emitted through
-  diagnostics, and malformed server URLs fail closed before opening a socket.
+  diagnostics, malformed server URLs fail closed before opening a socket, and
+  unexpected disconnects identify the Sidekick API and its endpoint override.
 - Shared chat WebSocket terminal-session actions for start/input/resize/events
   and stop lifecycle control return structured errors when a host has not
   configured a terminal runtime
