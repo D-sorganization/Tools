@@ -43,6 +43,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `.reduce()` iterations in `rSquared` and `linearFit.fit` with single-pass
   standard `for` loops. This eliminates intermediate callback allocations while
   computing dataset means and sums for trend curve fitting.
+- `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` optimizes
+  the `TrendCrosshair` overlays rendering loop by replacing chained `.map()` and
+  `.reduce()` operations with a single-pass `for` loop to eliminate intermediate
+  array allocations and closure overhead in high-frequency rendering paths.
 
 ### 2026-06-21 Pendulum web optimizer hot-loop sorting
 
