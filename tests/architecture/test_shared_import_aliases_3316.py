@@ -6,6 +6,7 @@ import importlib
 import os
 import subprocess
 import sys
+from importlib.machinery import ModuleSpec
 from pathlib import Path
 from typing import Any
 
@@ -14,7 +15,29 @@ if sys.version_info >= (3, 11):  # noqa: UP036 - CI still runs a 3.10 lane.
 else:  # pragma: no cover - Python 3.10 compatibility.
     import tomli as tomllib
 
+from shared.python import import_aliases
 from shared.python.import_aliases import install_shared_import_aliases
+
+
+def test_canonical_alias_loader_delegates_runpy_code_lookup() -> None:
+    """`python -m <alias>` must execute the canonical module code."""
+    expected_code = compile("sentinel = True", "<canonical>", "exec")
+    requested: list[str] = []
+
+    class CodeLoader:
+        def get_code(self, fullname: str):
+            requested.append(fullname)
+            return expected_code
+
+    canonical_name = "shared.python.sidekick.__main__"
+    spec = ModuleSpec(canonical_name, CodeLoader())
+    loader = import_aliases._CanonicalAliasLoader(  # type: ignore[attr-defined]
+        spec,
+        [canonical_name, "sidekick.__main__"],
+    )
+
+    assert loader.get_code("sidekick.__main__") is expected_code
+    assert requested == [canonical_name]
 
 
 def test_sidekick_aliases_share_one_registry_module() -> None:

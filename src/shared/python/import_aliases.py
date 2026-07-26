@@ -33,6 +33,7 @@ _SHARED_ROOTS = frozenset(
         "chat_contracts",
         "compatibility",
         "config",
+        "contracts",
         "cors",
         "codemap",
         "deprecation",
@@ -117,6 +118,15 @@ class _CanonicalAliasLoader:
 
     def create_module(self, spec: ModuleSpec) -> types.ModuleType:
         return importlib.import_module(self.canonical_name)
+
+    def get_code(self, fullname: str) -> types.CodeType | None:
+        """Return canonical code when ``runpy`` executes an alias with ``-m``."""
+        del fullname
+        canonical_loader = self.canonical_spec.loader
+        canonical_get_code = getattr(canonical_loader, "get_code", None)
+        if canonical_get_code is None:
+            return None
+        return canonical_get_code(self.canonical_name)
 
     def exec_module(self, module: types.ModuleType) -> None:
         canonical = importlib.import_module(self.canonical_name)

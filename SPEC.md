@@ -1671,6 +1671,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-26 | 1.5.3 | fix(import-aliases, #3936): make canonical shared-module aliases satisfy `runpy` code lookup so packaged compatibility commands such as `python -m sidekick` execute their parent-owned `shared.python` implementation; include `contracts` in the identity-coalescing alias set and keep Sidekick agent DbC imports on the canonical shared path. |
 | 2026-07-26 | 1.5.3 | fix(ci): keep protected Python jobs on the persistent runner-scoped tool cache and give cold-cache downloads enough bounded time to reach validation; narrow the UpstreamDrift consumer checkout to the shared Python and contract-support trees without changing its install or test command. |
 | 2026-07-26 | 1.5.3 | fix(ci): bound Anti-Phantom-Merge history to 50 commits and preserve changed-file rule inputs through the GitHub files API fallback, preventing full-history checkout exhaustion without weakening the fail-closed guard. |
 | 2026-07-26 | 1.5.3 | fix(ci): bound CI Standard quality and Python-matrix checkouts to the PR merge commit and parents, preventing persistent self-hosted clones from timing out while unshallowing all branches, tags, and abandoned packfiles; an ops contract pins both checkout depths. |
