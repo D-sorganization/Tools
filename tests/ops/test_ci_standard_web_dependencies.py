@@ -34,6 +34,22 @@ def test_ci_standard_installs_p1am_runtime_dependencies_without_skips() -> None:
         assert "python -m pip install pymodbus requests sqlmodel" in install_step["run"]
 
 
+def test_ci_standard_uses_bounded_checkout_history() -> None:
+    """PR gates need the merge parents, not every branch, tag, and packfile."""
+    import yaml
+
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+
+    for job_name in ("quality-gate", "tests"):
+        checkout_step = next(
+            step
+            for step in workflow["jobs"][job_name]["steps"]
+            if str(step.get("uses", "")).startswith("actions/checkout@")
+        )
+
+        assert checkout_step["with"]["fetch-depth"] == 2
+
+
 def test_ci_standard_limits_sidekick_runtime_lane_to_runtime_sources() -> None:
     workflow = CI_STANDARD.read_text(encoding="utf-8")
 

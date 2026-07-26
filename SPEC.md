@@ -298,6 +298,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   runs the downloaded actionlint binary from a runner-local temporary directory
   instead of moving it into `/usr/local/bin` with `sudo`, keeping workflow
   validation runnable on the same non-sudo fleet runners.
+- CI Standard quality and Python-matrix checkouts retain the pull-request merge
+  commit and both parents with a depth-two checkout. Changed-file gates fetch
+  the base branch explicitly, while persistent self-hosted clones no longer
+  unshallow every branch and tag before validation can begin.
 - CI Standard now force-reinstalls `maturin` without using the pip cache before
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
@@ -1667,6 +1671,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-26 | 1.5.3 | fix(ci): bound CI Standard quality and Python-matrix checkouts to the PR merge commit and parents, preventing persistent self-hosted clones from timing out while unshallowing all branches, tags, and abandoned packfiles; an ops contract pins both checkout depths. |
 | 2026-07-26 | 1.5.3 | test(chat, #3936): keep `src/shared/python/chat` as the sole reusable chat implementation while explicitly constraining the supported `src/chat` compatibility package to a one-file alias, so future copied implementations fail the public contract without rejecting the intentional legacy import surface. |
 | 2026-07-26 | 1.5.3 | fix(chat, #3936): enforce the launcher capability trust boundary inside the canonical native WebSocket URL builder, forwarding the ephemeral token only to verified localhost or loopback IP peers and never to remote `ws://`/`wss://` overrides; contract tests cover remote omission plus IPv4, IPv6, and localhost authentication. |
 | 2026-07-26 | 1.5.3 | fix(ci): keep Detect Secrets scanning the complete current repository tree while using a shallow checkout and a 30-minute job budget, avoiding full-history transfer exhaustion on the shared runner fleet; an ops contract pins both requirements. |

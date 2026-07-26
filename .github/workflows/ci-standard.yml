@@ -128,7 +128,10 @@ jobs:
         run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0
+          # The PR merge commit and both parents are sufficient for the
+          # changed-file gates below. Full history repeatedly exhausts the
+          # job timeout while unshallowing persistent self-hosted clones.
+          fetch-depth: 2
       - name: Force-clean stale Python tool cache (NVMe runners)
         env:
           AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
@@ -472,7 +475,9 @@ jobs:
         run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
         with:
-          fetch-depth: 0
+          # Keep the matrix checkout bounded for the same merge-parent
+          # contract used by quality-gate.
+          fetch-depth: 2
       - name: Force-clean stale Python tool cache (NVMe runners)
         env:
           AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
