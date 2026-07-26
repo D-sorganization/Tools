@@ -958,6 +958,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Project-scoped terminal-agent runtime coordination for shared chat provider
   processes is host-provided; Tools advertises terminal availability through
   chat WebSocket session capabilities
+- Native Qt chat WebSocket connections derive a loopback HTTP(S) origin from
+  the configured WS(S) server and attach the ephemeral launcher capability as
+  an encoded query parameter. The capability is never emitted through
+  diagnostics, and malformed server URLs fail closed before opening a socket.
 - Shared chat WebSocket terminal-session actions for start/input/resize/events
   and stop lifecycle control return structured errors when a host has not
   configured a terminal runtime
@@ -2589,9 +2593,10 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - **2026-07-14**: fix(security) — Added structural validation to the symbolic solver backend endpoints (`/solve`, `/derivative`, `/simplify`) before handing untrusted user input to `sympy.parse_expr`. This mitigates a critical code injection vulnerability where malicious AST constructs (e.g. `().__class__`) could be executed due to `parse_expr`'s internal use of `eval`.
 
 ### Version 1.1.250
+
 - 2024-07-23: fix(ux, #3919) - Improve accessibility of standard buttons in data processor web app by adding `focus-visible` styling (focus rings) to the global `.btn` class.
 
-
 ## 2026-06-12 (Bolt): Refactoring parseVariableAssignments
-* Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
-* Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+- Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
+- Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.

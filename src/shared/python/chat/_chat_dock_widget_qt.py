@@ -51,6 +51,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from . import chat_dock_widget as _connection_contract
 from ._qt import ai_dropdowns as _ai
 from ._qt import exports as _exports
 from ._qt import sessions as _sessions
@@ -344,16 +345,18 @@ class ChatDockWidget(QDockWidget):
             self._socket.close()
             self._socket.deleteLater()
 
-        self._socket = QWebSocket()
+        sid = ChatDockWidget._get_shared_session_id() or "new"
+        path = self._ws_path_template.replace("{session_id}", sid)
+        origin, url_text = _connection_contract._native_websocket_connection(
+            self._server_url, path
+        )
+        self._socket = QWebSocket(origin)
         self._socket.connected.connect(self._on_connected)
         self._socket.disconnected.connect(self._on_disconnected)
         self._socket.textMessageReceived.connect(self._on_message)
 
-        sid = ChatDockWidget._get_shared_session_id() or "new"
-        path = self._ws_path_template.replace("{session_id}", sid)
-        url = QUrl(f"{self._server_url}{path}")
         self._status_label.setText("Connecting...")
-        self._socket.open(url)
+        self._socket.open(QUrl(url_text))
 
     def connection_diagnostics(self) -> dict[str, Any]:
         """Return host-readable WebSocket readiness diagnostics."""
