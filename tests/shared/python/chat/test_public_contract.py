@@ -42,10 +42,11 @@ def test_chat_qt_loader_uses_package_relative_import() -> None:
     assert "from src.shared.python.chat import _chat_dock_widget_qt" not in source
 
 
-def test_single_canonical_shared_chat_package() -> None:
-    """Tools keeps the canonical reusable chat implementation in one package."""
+def test_single_canonical_shared_chat_implementation() -> None:
+    """Only the shared package may contain the reusable chat implementation."""
     canonical = Path("src/shared/python/chat").resolve()
-    chat_packages = []
+    compatibility_alias = Path("src/chat").resolve()
+    chat_packages: list[Path] = []
     for init_file in Path("src").rglob("__init__.py"):
         if init_file.parent.name != "chat":
             continue
@@ -53,4 +54,12 @@ def test_single_canonical_shared_chat_package() -> None:
             continue
         chat_packages.append(init_file.parent.resolve())
 
-    assert chat_packages == [canonical]
+    assert set(chat_packages) == {canonical, compatibility_alias}
+    alias_files = sorted(
+        path.relative_to(compatibility_alias)
+        for path in compatibility_alias.rglob("*.py")
+    )
+    assert alias_files == [Path("__init__.py")]
+
+    alias_source = (compatibility_alias / "__init__.py").read_text(encoding="utf-8")
+    assert 'alias_legacy_package(__name__, "shared.python.chat")' in alias_source

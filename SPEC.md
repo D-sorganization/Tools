@@ -1667,6 +1667,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-26 | 1.5.3 | test(chat, #3936): keep `src/shared/python/chat` as the sole reusable chat implementation while explicitly constraining the supported `src/chat` compatibility package to a one-file alias, so future copied implementations fail the public contract without rejecting the intentional legacy import surface. |
+| 2026-07-26 | 1.5.3 | fix(chat, #3936): enforce the launcher capability trust boundary inside the canonical native WebSocket URL builder, forwarding the ephemeral token only to verified localhost or loopback IP peers and never to remote `ws://`/`wss://` overrides; contract tests cover remote omission plus IPv4, IPv6, and localhost authentication. |
 | 2026-07-26 | 1.5.3 | fix(ci): keep Detect Secrets scanning the complete current repository tree while using a shallow checkout and a 30-minute job budget, avoiding full-history transfer exhaustion on the shared runner fleet; an ops contract pins both requirements. |
 | 2026-07-25 | 1.5.3 | fix(ci): scope each Cross-Repo Python Integration consumer checkout to the source, shared-contract tests, and UI tree it actually installs or exercises, keeping the 30-minute contract lane available for installation and tests instead of exhausting it on full-repository transfer. |
 | 2026-07-25 | 1.5.3 | fix(sidekick, #3938): add an idempotent aggregate sidebar shutdown contract that delegates once to every live runtime tab and runs during sidebar or generic host-window close, preventing PTY-backed Terminal tabs from retaining shell and bridge processes after a host launcher exits. |

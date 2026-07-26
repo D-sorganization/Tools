@@ -49,6 +49,40 @@ def test_native_websocket_url_omits_absent_launcher_capability() -> None:
     assert result == "wss://chat.example/api/ws/chat/existing"
 
 
+def test_native_websocket_url_never_forwards_launcher_capability_remotely() -> None:
+    """The local launcher secret must not cross the loopback trust boundary."""
+    result = chat_dock_widget._build_native_websocket_url(
+        "wss://chat.example",
+        "/api/ws/chat/existing",
+        "local-launcher-secret",
+    )
+
+    assert result == "wss://chat.example/api/ws/chat/existing"
+    assert "local-launcher-secret" not in result
+
+
+@pytest.mark.parametrize(
+    "server_url",
+    [
+        "ws://localhost:8123",
+        "ws://localhost.:8123",
+        "ws://127.0.0.2:8123",
+        "ws://[::1]:8123",
+    ],
+)
+def test_native_websocket_url_forwards_capability_only_to_loopback(
+    server_url: str,
+) -> None:
+    """Verified localhost and loopback IP endpoints retain local authentication."""
+    result = chat_dock_widget._build_native_websocket_url(
+        server_url,
+        "/api/ws/chat/new",
+        "runtime-secret",
+    )
+
+    assert result.endswith("/api/ws/chat/new?launcher_token=runtime-secret")
+
+
 @pytest.mark.parametrize(
     ("server_url", "expected"),
     [

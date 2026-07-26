@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import os
 import threading
+from ipaddress import ip_address
 from pathlib import Path
 from typing import Any
 from urllib.parse import SplitResult, parse_qsl, urlencode, urlsplit, urlunsplit
@@ -90,6 +91,17 @@ def _native_websocket_origin(server_url: str) -> str:
     return urlunsplit((origin_scheme, parsed.netloc, "", "", ""))
 
 
+def _is_loopback_websocket_server(parsed: SplitResult) -> bool:
+    """Return whether validated server parts identify a loopback peer."""
+    hostname = (parsed.hostname or "").rstrip(".").lower()
+    if hostname == "localhost":
+        return True
+    try:
+        return ip_address(hostname).is_loopback
+    except ValueError:
+        return False
+
+
 def _resolve_launcher_token() -> str | None:
     """Return the ephemeral host capability without persisting or logging it."""
     token = os.environ.get(_LAUNCHER_TOKEN_ENV)
@@ -108,9 +120,10 @@ def _build_native_websocket_url(
         ``websocket_path`` is an absolute path.
 
     Postcondition:
-        The launcher capability is URL encoded exactly once when present.
+        The launcher capability is URL encoded exactly once for verified
+        loopback peers and is never forwarded to a remote endpoint.
     """
-    _validated_websocket_server(server_url)
+    server = _validated_websocket_server(server_url)
     if not isinstance(websocket_path, str):
         raise TypeError("websocket_path must be a string")
     if not websocket_path.startswith("/"):
@@ -124,7 +137,7 @@ def _build_native_websocket_url(
         for name, value in parse_qsl(parsed.query, keep_blank_values=True)
         if name != _LAUNCHER_TOKEN_QUERY_KEY
     ]
-    if launcher_token:
+    if launcher_token and _is_loopback_websocket_server(server):
         query.append((_LAUNCHER_TOKEN_QUERY_KEY, launcher_token))
     return urlunsplit(parsed._replace(query=urlencode(query)))
 
