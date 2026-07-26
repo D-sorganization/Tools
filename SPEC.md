@@ -1667,6 +1667,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-25 | 1.5.3 | fix(ci): scope each Cross-Repo Python Integration consumer checkout to the source, shared-contract tests, and UI tree it actually installs or exercises, keeping the 30-minute contract lane available for installation and tests instead of exhausting it on full-repository transfer. |
 | 2026-07-25 | 1.5.3 | fix(sidekick, #3938): add an idempotent aggregate sidebar shutdown contract that delegates once to every live runtime tab and runs during sidebar or generic host-window close, preventing PTY-backed Terminal tabs from retaining shell and bridge processes after a host launcher exits. |
 | 2026-06-21 | 1.1.7792 | fix(ci): route the Cross-Repo Python Integration downstream contract matrix to Linux self-hosted runners and fall back to `github.token` when `RUNNER_CHECK_TOKEN` is unset, preventing PowerShell parsing failures and checkout token omissions. |
 | 2026-06-21 | 1.1.7791 | fix(ci): route the Performance Regression benchmark workflow to the Linux self-hosted fleet labels so `actions/setup-python` no longer lands on Windows runners without registry-write permissions. |
