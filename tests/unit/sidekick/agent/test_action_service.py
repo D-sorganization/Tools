@@ -20,7 +20,7 @@ from sidekick.agent.action_service import (
     StateError,
 )
 
-from shared.python.contracts import StateError as CanonicalStateError
+from contracts import StateError as CanonicalStateError
 
 pytestmark = pytest.mark.unit
 
@@ -298,6 +298,7 @@ def test_invoke_handler_exception_is_translated_to_error_result() -> None:
 def test_state_error_is_tools_owned_and_translated() -> None:
     assert StateError is CanonicalStateError
     assert StateError.__module__ in {
+        "contracts",
         "shared.python.contracts",
         "src.shared.python.contracts",
     }

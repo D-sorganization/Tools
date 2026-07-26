@@ -37,7 +37,7 @@ from collections.abc import Mapping
 from datetime import datetime, timezone
 from typing import Any
 
-from shared.python.contracts import StateError
+from contracts import StateError
 
 from .action_contracts import (
     ActionDescriptor,
