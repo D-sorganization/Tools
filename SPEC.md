@@ -961,7 +961,17 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   without crashing the importing process
 - Shared chat drift fixtures avoid introducing contiguous secret-like SHA-256
   literals when refreshing Tools baseline hashes, keeping CI secrets scans
-  signal-only while preserving the same runtime hash contract.
+  signal-only while preserving the same runtime hash contract. Their source
+  hashing normalizes checkout line endings so Windows and Linux enforce the
+  same canonical baseline.
+- Protected Python lanes reject toolcache entries unless both the interpreter
+  and pip return recognizable semantic versions, remove stale completion
+  markers with corrupt entries, isolate quality checks from runner user-site
+  packages, and explicitly install the standalone Sidekick build/runtime
+  dependencies before executing artifact contracts.
+- Optional voice-input tests load isolated module instances for dependency
+  present/missing cases so legacy import aliases cannot leak an earlier
+  availability result across the protected test order.
 - Project-scoped terminal-agent runtime coordination for shared chat provider
   processes is host-provided; Tools advertises terminal availability through
   chat WebSocket session capabilities
