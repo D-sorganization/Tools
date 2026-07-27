@@ -6,7 +6,6 @@ import json
 import os
 import subprocess  # nosec B404 - fixed interpreters and local artifacts
 import sys
-import venv
 import zipfile
 from pathlib import Path
 
@@ -50,10 +49,31 @@ def _run(
 def _isolated_environment() -> dict[str, str]:
     env = os.environ.copy()
     env.pop("PYTHONPATH", None)
+    env.pop("VIRTUAL_ENV", None)
     env["PYTHONNOUSERSITE"] = "1"
     env["PIP_NO_INDEX"] = "1"
     env["PIP_DISABLE_PIP_VERSION_CHECK"] = "1"
     return env
+
+
+def _base_python() -> Path:
+    """Return the real base interpreter instead of the active CI virtualenv."""
+    base_root = Path(sys.base_prefix)
+    executable = (
+        base_root / "python.exe" if os.name == "nt" else base_root / "bin" / "python"
+    )
+    assert executable.is_file(), f"base interpreter is missing: {executable}"
+    return executable
+
+
+def _create_clean_venv(root: Path, env: dict[str, str]) -> None:
+    """Create an artifact-test environment from the non-virtual base runtime."""
+    result = _run(
+        [str(_base_python()), "-m", "venv", "--clear", str(root)],
+        cwd=root.parent,
+        env=env,
+    )
+    assert result.returncode == 0, result.stdout + result.stderr
 
 
 def _venv_python(root: Path) -> Path:
@@ -101,7 +121,7 @@ def test_built_wheel_contains_and_executes_canonical_standalone_sidekick(
     assert _WHEEL_MODULES <= wheel_names
 
     venv_root = tmp_path / "venv"
-    venv.EnvBuilder(with_pip=True, clear=True).create(venv_root)
+    _create_clean_venv(venv_root, env)
     python = _venv_python(venv_root)
     install_result = _run(
         [
