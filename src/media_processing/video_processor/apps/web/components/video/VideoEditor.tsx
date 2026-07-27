@@ -2,7 +2,7 @@
 
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { fetchFile } from '@ffmpeg/util';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface VideoEditorProps {
   videoFile: File | null;
@@ -52,10 +52,11 @@ export default function VideoEditor({
     await ffmpeg.load();
   };
 
-  const handleFileLoad = (file: File) => {
-    if (!videoPreviewRef.current) return;
+  useEffect(() => {
+    if (!videoFile || !videoPreviewRef.current) return;
 
-    const url = URL.createObjectURL(file);
+    // ⚡ Bolt: Wrapped URL.createObjectURL in useEffect to prevent memory leaks and unnecessary layout thrashing
+    const url = URL.createObjectURL(videoFile);
     videoPreviewRef.current.src = url;
 
     videoPreviewRef.current.onloadedmetadata = () => {
@@ -65,7 +66,11 @@ export default function VideoEditor({
         setTrimRange({ start: 0, end: duration });
       }
     };
-  };
+
+    return () => {
+      URL.revokeObjectURL(url);
+    };
+  }, [videoFile]);
 
   const handleExport = async () => {
     if (!videoFile || disabled || isProcessing) return;
@@ -139,10 +144,6 @@ export default function VideoEditor({
     const secs = Math.floor(seconds % 60);
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
-
-  if (videoFile) {
-    handleFileLoad(videoFile);
-  }
 
   return (
     <div className="space-y-4">
