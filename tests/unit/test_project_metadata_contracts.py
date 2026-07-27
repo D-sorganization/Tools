@@ -23,6 +23,25 @@ def test_dead_dwsim_console_script_is_not_advertised() -> None:
     assert "dwsim-model" not in scripts
 
 
+def test_standalone_sidekick_runtime_dependency_is_declared() -> None:
+    """The canonical standalone profile store must install its path provider."""
+    metadata = _project_metadata()
+    dependencies = metadata["project"]["dependencies"]  # type: ignore[index]
+
+    assert any(
+        dependency.partition(">=")[0].casefold() == "platformdirs"
+        for dependency in dependencies
+    )
+
+
+def test_standalone_sidekick_console_script_is_declared() -> None:
+    """Installed Tools artifacts expose the supported standalone launcher."""
+    metadata = _project_metadata()
+    scripts = metadata["project"]["scripts"]  # type: ignore[index]
+
+    assert scripts["sidekick"] == "sidekick.__main__:main"
+
+
 def test_shared_modules_are_only_packaged_under_shared_python() -> None:
     """The shared library must not be double-shipped as bare top-level modules."""
     metadata = _project_metadata()
