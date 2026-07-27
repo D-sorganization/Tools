@@ -8,33 +8,41 @@ Tools issue #2744.
 
 from __future__ import annotations
 
+import importlib.util
+from pathlib import Path
+from types import ModuleType
 from unittest.mock import MagicMock, patch
 
 
+def _load_isolated_voice_input_module() -> ModuleType:
+    """Execute the voice-input module without reusing an import alias."""
+    module_path = Path(__file__).parents[1] / "voice_input_manager.py"
+    spec = importlib.util.spec_from_file_location(
+        "_voice_input_manager_test_instance", module_path
+    )
+    if spec is None or spec.loader is None:
+        raise AssertionError(f"Could not load voice-input module from {module_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
 class TestVoiceInputManagerAvailability:
-    def test_available_when_sr_importable(self):
+    def test_available_when_sr_importable(self) -> None:
         fake_sr = MagicMock()
         fake_sr.Recognizer = MagicMock(return_value=MagicMock())
         with patch.dict("sys.modules", {"speech_recognition": fake_sr}):
-            import importlib
-
-            import chat.voice_input_manager as vim_mod
-
-            importlib.reload(vim_mod)
+            vim_mod = _load_isolated_voice_input_module()
             mgr = vim_mod.VoiceInputManager()
             assert mgr.available is True
 
-    def test_unavailable_when_sr_missing(self):
+    def test_unavailable_when_sr_missing(self) -> None:
         with patch.dict("sys.modules", {"speech_recognition": None}):
-            import importlib
-
-            import chat.voice_input_manager as vim_mod
-
-            importlib.reload(vim_mod)
+            vim_mod = _load_isolated_voice_input_module()
             mgr = vim_mod.VoiceInputManager()
             assert mgr.available is False
 
-    def test_not_recording_on_init(self):
+    def test_not_recording_on_init(self) -> None:
         from chat.voice_input_manager import VoiceInputManager
 
         mgr = VoiceInputManager()
@@ -42,7 +50,7 @@ class TestVoiceInputManagerAvailability:
 
 
 class TestVoiceInputManagerCallbacks:
-    def test_connect_transcription_registers_callback(self):
+    def test_connect_transcription_registers_callback(self) -> None:
         from chat.voice_input_manager import VoiceInputManager
 
         received: list[str] = []
@@ -51,7 +59,7 @@ class TestVoiceInputManagerCallbacks:
         mgr._on_transcription("hello world")
         assert received == ["hello world"]
 
-    def test_connect_error_registers_callback(self):
+    def test_connect_error_registers_callback(self) -> None:
         from chat.voice_input_manager import VoiceInputManager
 
         errors: list[str] = []
@@ -60,7 +68,7 @@ class TestVoiceInputManagerCallbacks:
         mgr._on_error("mic error")
         assert errors == ["mic error"]
 
-    def test_transcription_clears_worker(self):
+    def test_transcription_clears_worker(self) -> None:
         from chat.voice_input_manager import VoiceInputManager
 
         mgr = VoiceInputManager()
@@ -68,7 +76,7 @@ class TestVoiceInputManagerCallbacks:
         mgr._on_transcription("text")
         assert mgr._worker is None
 
-    def test_error_clears_worker(self):
+    def test_error_clears_worker(self) -> None:
         from chat.voice_input_manager import VoiceInputManager
 
         mgr = VoiceInputManager()
@@ -76,7 +84,7 @@ class TestVoiceInputManagerCallbacks:
         mgr._on_error("something failed")
         assert mgr._worker is None
 
-    def test_callback_exception_does_not_propagate(self):
+    def test_callback_exception_does_not_propagate(self) -> None:
         from chat.voice_input_manager import VoiceInputManager
 
         def bad_callback(_text: str) -> None:
@@ -88,13 +96,9 @@ class TestVoiceInputManagerCallbacks:
 
 
 class TestVoiceInputManagerStartStop:
-    def test_start_emits_error_when_sr_unavailable(self):
+    def test_start_emits_error_when_sr_unavailable(self) -> None:
         with patch.dict("sys.modules", {"speech_recognition": None}):
-            import importlib
-
-            import chat.voice_input_manager as vim_mod
-
-            importlib.reload(vim_mod)
+            vim_mod = _load_isolated_voice_input_module()
             errors: list[str] = []
             mgr = vim_mod.VoiceInputManager()
             mgr.connect_error(errors.append)
@@ -102,7 +106,7 @@ class TestVoiceInputManagerStartStop:
             assert len(errors) == 1
             assert "SpeechRecognition" in errors[0]
 
-    def test_start_is_noop_when_already_recording(self):
+    def test_start_is_noop_when_already_recording(self) -> None:
         from chat.voice_input_manager import VoiceInputManager
 
         mgr = VoiceInputManager()
@@ -113,7 +117,7 @@ class TestVoiceInputManagerStartStop:
         # worker should not have been replaced
         assert mgr._worker is mock_worker
 
-    def test_stop_when_no_worker_is_safe(self):
+    def test_stop_when_no_worker_is_safe(self) -> None:
         from chat.voice_input_manager import VoiceInputManager
 
         mgr = VoiceInputManager()

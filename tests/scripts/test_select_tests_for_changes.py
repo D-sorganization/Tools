@@ -149,6 +149,44 @@ def test_sidekick_agent_source_change_selects_focused_agent_tests() -> None:
 
 
 @pytest.mark.unit
+def test_standalone_sidekick_sources_select_in_process_runtime_tests() -> None:
+    """Every canonical standalone source must select its coverage-bearing tests."""
+    targets = select_tests_for_changes.select_targets(
+        [
+            "src/shared/python/sidekick/__main__.py",
+            "src/shared/python/sidekick/persistence/__init__.py",
+            "src/shared/python/sidekick/persistence/schema.py",
+            "src/shared/python/sidekick/persistence/state_profile.py",
+            "src/shared/python/sidekick/standalone/__init__.py",
+            "src/shared/python/sidekick/standalone/onboarding.py",
+            "src/shared/python/sidekick/standalone/preferences.py",
+            "src/shared/python/sidekick/standalone/runner.py",
+            "src/shared/python/sidekick/standalone/session_store.py",
+            "src/shared/python/sidekick/standalone/window.py",
+        ]
+    )
+
+    assert targets == [
+        "tests/shared/python/sidekick/ui/test_tools_sidebar_state_profiles.py",
+        "tests/unit/sidekick/test_standalone_public_api_baseline.py",
+        "tests/unit/sidekick/test_standalone_runtime.py",
+    ]
+
+
+@pytest.mark.unit
+def test_standalone_window_change_keeps_profile_tests_focused() -> None:
+    """Non-persistence shell changes must not select profile interoperability."""
+    targets = select_tests_for_changes.select_targets(
+        ["src/shared/python/sidekick/standalone/window.py"]
+    )
+
+    assert targets == [
+        "tests/unit/sidekick/test_standalone_public_api_baseline.py",
+        "tests/unit/sidekick/test_standalone_runtime.py",
+    ]
+
+
+@pytest.mark.unit
 def test_sidekick_tools_sidebar_source_change_selects_focused_tests() -> None:
     targets = select_tests_for_changes.select_targets(
         [

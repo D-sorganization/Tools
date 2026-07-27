@@ -20,7 +20,7 @@ from sidekick.agent.action_service import (
     StateError,
 )
 
-from shared.python.contracts import StateError as CanonicalStateError
+from contracts import StateError as CanonicalStateError
 
 pytestmark = pytest.mark.unit
 
@@ -298,6 +298,7 @@ def test_invoke_handler_exception_is_translated_to_error_result() -> None:
 def test_state_error_is_tools_owned_and_translated() -> None:
     assert StateError is CanonicalStateError
     assert StateError.__module__ in {
+        "contracts",
         "shared.python.contracts",
         "src.shared.python.contracts",
     }
@@ -310,6 +311,14 @@ def test_state_error_is_tools_owned_and_translated() -> None:
 
     assert result.ok is False
     assert result.error == "state error: not ready"
+
+
+def test_top_level_contracts_shim_exports_state_error() -> None:
+    """Direct launchers put ``src`` first, so its shim must expose StateError."""
+    from src import contracts as contracts_shim
+
+    assert contracts_shim.StateError.__name__ == "StateError"
+    assert issubclass(contracts_shim.StateError, RuntimeError)
 
 
 def test_action_service_does_not_import_host_core_contracts() -> None:
