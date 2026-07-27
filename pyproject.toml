@@ -27,6 +27,7 @@ dependencies = [
     "PyYAML>=6.0",
     "defusedxml>=0.7.0",
     "keyring>=24.0.0",
+    "platformdirs>=4.2.0",
 ]
 
 [project.optional-dependencies]
@@ -174,6 +175,7 @@ dev = [
 ]
 
 [project.scripts]
+sidekick = "sidekick.__main__:main"
 urdf-gen = "shared.python.model_generation.cli:main"
 generate-pid = "shared.python.programmatic_pid.cli:main"
 mypy-autofix = "tools.mypy_autofix_agent:main"
