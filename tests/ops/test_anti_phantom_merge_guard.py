@@ -169,7 +169,8 @@ class TestPullRequestTargetWorkflowHardening:
     def test_pull_request_target_workflows_guard_untrusted_head_checkout(self) -> None:
         failures: list[str] = []
         for path in sorted((_REPO_ROOT / ".github" / "workflows").glob("*.yml")):
-            workflow = yaml.load(
+            # BaseLoader preserves workflow scalar strings without constructing objects.
+            workflow = yaml.load(  # nosec B506
                 path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader
             )
             if not isinstance(workflow, dict):
@@ -198,6 +199,28 @@ class TestPullRequestTargetWorkflowHardening:
         ).read_text(encoding="utf-8")
 
         assert "Never check out PR head code on pull_request_target" in workflow_text
+
+    def test_anti_phantom_checkout_is_bounded_and_api_fallback_keeps_paths(
+        self,
+    ) -> None:
+        workflow_path = _REPO_ROOT / ".github" / "workflows" / "anti-phantom-merge.yml"
+        workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+        guard_job = workflow["jobs"]["guard"]
+        checkout = next(
+            step
+            for step in guard_job["steps"]
+            if step.get("name") == "Check out PR head with bounded history"
+        )
+        guard_script = next(
+            step
+            for step in guard_job["steps"]
+            if step.get("name") == "Run phantom guard checks"
+        )["run"]
+
+        assert checkout["with"]["fetch-depth"] == 50
+        assert "gh api --paginate" in guard_script
+        assert "/pulls/$PR_NUMBER/files" in guard_script
+        assert 'CHANGED_FILES="$API_CHANGED_FILES"' in guard_script
 
 
 # ---------------------------------------------------------------------------
