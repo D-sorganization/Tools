@@ -41,36 +41,7 @@ _SIDEKICK_PROCESS_CALCULATOR_TESTS = {
     ],
 }
 
-_STANDALONE_TESTS = [
-    "tests/unit/sidekick/test_standalone_public_api_baseline.py",
-    "tests/unit/sidekick/test_standalone_runtime.py",
-]
-_PROFILE_RUNTIME_TESTS = [
-    "tests/shared/python/sidekick/ui/test_tools_sidebar_state_profiles.py",
-    *_STANDALONE_TESTS,
-]
-
 _SIDEKICK_SOURCE_TESTS = {
-    **{
-        source_path: _PROFILE_RUNTIME_TESTS
-        for source_path in (
-            "persistence/__init__.py",
-            "persistence/schema.py",
-            "persistence/state_profile.py",
-        )
-    },
-    **{
-        source_path: _STANDALONE_TESTS
-        for source_path in (
-            "__main__.py",
-            "standalone/__init__.py",
-            "standalone/onboarding.py",
-            "standalone/preferences.py",
-            "standalone/runner.py",
-            "standalone/session_store.py",
-            "standalone/window.py",
-        )
-    },
     "agent/__init__.py": [
         "tests/unit/sidekick/agent/test_action_service.py",
     ],

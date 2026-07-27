@@ -1,8 +1,8 @@
-# Completist Report: 2026-07-26
+# Completist Report: 2026-07-27
 
 ## Executive Summary
 - **Critical Gaps**: 168
-- **Feature Gaps (TRACKED_TASK)**: 82
+- **Feature Gaps (TRACKED_TASK)**: 81
 - **Technical Debt**: 61
 - **Documentation Gaps**: 4
 
@@ -11,7 +11,7 @@
 ```mermaid
 pie title Completion Status
     "Impl Gaps (Critical)" : 168
-    "Feature Requests (TRACKED_TASK)" : 82
+    "Feature Requests (TRACKED_TASK)" : 81
     "Technical Debt (TRACKED_DEFECT)" : 61
     "Doc Gaps" : 4
 ```
@@ -225,13 +225,13 @@ Prioritized by Impact (High) and Complexity (Low).
 | 20 | `src/shared/python/ai/mcp/pool.py` | connect | 5/3/4 |
 
 ## Issues Created
-- Created `docs/assessments/issues/Issue_2027_Incomplete_Stub_in_integration_py_36.md`
-- Created `docs/assessments/issues/Issue_2028_Incomplete_Stub_in_integration_py_38.md`
-- Created `docs/assessments/issues/Issue_2029_Incomplete_Stub_in_client_py_51.md`
-- Created `docs/assessments/issues/Issue_2030_Incomplete_Stub_in_client_py_52.md`
-- Created `docs/assessments/issues/Issue_2031_Incomplete_Stub_in_client_py_53.md`
-- Created `docs/assessments/issues/Issue_2032_Incomplete_Stub_in_notebooklm_server_py_72.md`
-- Created `docs/assessments/issues/Issue_2033_Incomplete_Stub_in_notebooklm_server_py_73.md`
-- Created `docs/assessments/issues/Issue_2034_Incomplete_Stub_in_notebooklm_server_py_74.md`
-- Created `docs/assessments/issues/Issue_2035_Incomplete_Stub_in_notebooklm_server_py_77.md`
-- Created `docs/assessments/issues/Issue_2036_Incomplete_Stub_in_notebooklm_server_py_78.md`
+- Created `docs/assessments/issues/Issue_234704_Incomplete_Stub_in_integration_py_36.md`
+- Created `docs/assessments/issues/Issue_234705_Incomplete_Stub_in_integration_py_38.md`
+- Created `docs/assessments/issues/Issue_234706_Incomplete_Stub_in_client_py_51.md`
+- Created `docs/assessments/issues/Issue_234707_Incomplete_Stub_in_client_py_52.md`
+- Created `docs/assessments/issues/Issue_234708_Incomplete_Stub_in_client_py_53.md`
+- Created `docs/assessments/issues/Issue_234709_Incomplete_Stub_in_notebooklm_server_py_72.md`
+- Created `docs/assessments/issues/Issue_234710_Incomplete_Stub_in_notebooklm_server_py_73.md`
+- Created `docs/assessments/issues/Issue_234711_Incomplete_Stub_in_notebooklm_server_py_74.md`
+- Created `docs/assessments/issues/Issue_234712_Incomplete_Stub_in_notebooklm_server_py_77.md`
+- Created `docs/assessments/issues/Issue_234713_Incomplete_Stub_in_notebooklm_server_py_78.md`

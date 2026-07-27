@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib
 from pathlib import Path
 
 
@@ -23,22 +22,12 @@ def test_chat_facade_exports_contract_models() -> None:
         "ChatServiceBase",
         "ChatSession",
         "ChatMessage",
-        "ChatWebSocketState",
-        "DisconnectLogConfig",
         "create_chat_router",
-        "run_chat_websocket_protocol",
     }
 
     assert hasattr(chat, "__all__"), getattr(chat, "__file__", "<missing>")
     assert expected.issubset(set(chat.__all__))
-    lazy_exports = {
-        "ChatDockWidget",
-        "ChatMessageBubble",
-        "ChatWebSocketState",
-        "DisconnectLogConfig",
-        "create_chat_router",
-        "run_chat_websocket_protocol",
-    }
+    lazy_exports = {"ChatDockWidget", "ChatMessageBubble", "create_chat_router"}
     for name in expected - lazy_exports:
         assert getattr(chat, name) is not None
 
@@ -53,30 +42,10 @@ def test_chat_qt_loader_uses_package_relative_import() -> None:
     assert "from src.shared.python.chat import _chat_dock_widget_qt" not in source
 
 
-def test_websocket_protocol_uses_one_canonical_module_identity() -> None:
-    """Direct and shared-package imports must not create separate state."""
-    direct = importlib.import_module("chat.websocket_protocol")
-    canonical = importlib.import_module("shared.python.chat.websocket_protocol")
-
-    assert direct is canonical
-
-
-def test_websocket_protocol_declares_exact_public_api() -> None:
-    """The protocol module exposes only its stable cross-repository surface."""
-    protocol = importlib.import_module("chat.websocket_protocol")
-
-    assert protocol.__all__ == [
-        "ChatWebSocketState",
-        "DisconnectLogConfig",
-        "run_chat_websocket_protocol",
-    ]
-
-
-def test_single_canonical_shared_chat_implementation() -> None:
-    """Only the shared package may contain the reusable chat implementation."""
+def test_single_canonical_shared_chat_package() -> None:
+    """Tools keeps the canonical reusable chat implementation in one package."""
     canonical = Path("src/shared/python/chat").resolve()
-    compatibility_alias = Path("src/chat").resolve()
-    chat_packages: list[Path] = []
+    chat_packages = []
     for init_file in Path("src").rglob("__init__.py"):
         if init_file.parent.name != "chat":
             continue
@@ -84,12 +53,4 @@ def test_single_canonical_shared_chat_implementation() -> None:
             continue
         chat_packages.append(init_file.parent.resolve())
 
-    assert set(chat_packages) == {canonical, compatibility_alias}
-    alias_files = sorted(
-        path.relative_to(compatibility_alias)
-        for path in compatibility_alias.rglob("*.py")
-    )
-    assert alias_files == [Path("__init__.py")]
-
-    alias_source = (compatibility_alias / "__init__.py").read_text(encoding="utf-8")
-    assert 'alias_legacy_package(__name__, "shared.python.chat")' in alias_source
+    assert chat_packages == [canonical]

@@ -194,14 +194,3 @@ def test_unknown_action_still_returns_error_detail() -> None:
 
     assert reply["type"] == "error"
     assert "Unknown action" in reply["detail"]
-
-
-def test_session_handshake_keeps_terminal_capabilities() -> None:
-    """Moving the loop must not drop the existing router capability frame."""
-    client = _make_client()
-
-    with client.websocket_connect("/ws/chat/new") as ws:
-        reply = ws.receive_json()
-
-    assert reply["type"] == "session_info"
-    assert reply["capabilities"] == {"terminal_runtime": False}
