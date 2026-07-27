@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.4                                      |
-| **Spec Version**        | 1.5.4                                      |
+| **Current Version**     | 1.5.5                                      |
+| **Spec Version**        | 1.5.5                                      |
 | **Last Spec Update**    | 2026-07-27                                 |
 
 ## 2. Purpose & Mission
@@ -314,6 +314,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   package contract requires Python 3.11 or newer. A repository contract pins
   that boundary so future packaging tests cannot reintroduce an impossible
   Python 3.10 wheel installation.
+- Privileged-workflow hardening tests parse only trusted repository workflows
+  with `yaml.BaseLoader` so GitHub Actions' `on` key cannot be coerced under
+  YAML 1.1; the security-scanner exception is scoped to that exact load site.
 - CI Standard now force-reinstalls `maturin` without using the pip cache before
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
