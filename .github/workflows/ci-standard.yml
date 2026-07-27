@@ -583,11 +583,6 @@ jobs:
           python -m pip install --ignore-installed --no-deps mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
-          # The shared self-hosted runner cache has produced mixed NumPy/SciPy
-          # binary installs on individual Python minors. Reinstall the compiled
-          # numerical stack without cache before importing provider contracts.
-          python -m pip install --upgrade --force-reinstall --no-cache-dir "numpy>=2.0.1,<2.4.0" "scipy>=1.13.1,<1.18"
-          python -c "import numpy, scipy; from scipy.signal import butter; assert numpy.__version__; assert scipy.__version__; butter(2, 0.2)"
           python -m pip install fastapi python-multipart
           # P1AM HMI/PLC backend runtime deps so its safety-critical E-stop /
           # alarm / historian tests actually RUN (and gate) instead of being
@@ -595,7 +590,9 @@ jobs:
           # falls back to scada_fallback when the Rust wheel is absent (#3534).
           python -m pip install pymodbus requests sqlmodel pydantic-settings
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark pytest-qt pytest-asyncio pytest-timeout
-          python -m pip install --force-reinstall --no-deps --no-cache-dir "opencv-python-headless>=4.8.0"
+          python -m pip install "opencv-python-headless>=4.8.0"
+          python -m pip check
+          python -c "import cv2, numpy, scipy; from scipy.signal import butter; assert cv2.__version__; assert numpy.__version__; assert scipy.__version__; butter(2, 0.2)"
 
       - name: Build and install tools_core Rust wheel
         if: ${{ matrix.python-version == '3.11' }}

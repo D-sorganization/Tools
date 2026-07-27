@@ -168,7 +168,7 @@ def test_ci_standard_rejects_semantically_broken_cached_python() -> None:
         )
 
 
-def test_test_matrix_repairs_and_probes_compiled_numerical_stack() -> None:
+def test_test_matrix_probes_one_resolved_compiled_numerical_stack() -> None:
     import yaml
 
     workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
@@ -178,7 +178,14 @@ def test_test_matrix_repairs_and_probes_compiled_numerical_stack() -> None:
         if step.get("name") == "Install Dependencies"
     )
 
-    assert '"numpy>=2.0.1,<2.4.0" "scipy>=1.13.1,<1.18"' in install_step["run"]
+    assert (
+        'python -m pip install --upgrade --force-reinstall --no-cache-dir "numpy'
+    ) not in install_step["run"]
+    assert (
+        'python -m pip install "opencv-python-headless>=4.8.0"' in install_step["run"]
+    )
+    assert "python -m pip check" in install_step["run"]
+    assert "import cv2, numpy, scipy" in install_step["run"]
     assert "from scipy.signal import butter" in install_step["run"]
 
 

@@ -302,6 +302,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   commit and both parents with a depth-two checkout. Changed-file gates fetch
   the base branch explicitly, while persistent self-hosted clones no longer
   unshallow every branch and tag before validation can begin.
+- CI Standard Python-matrix jobs now resolve the compiled numerical stack once
+  inside their private job environment, install OpenCV through the shared wheel
+  cache, and enforce both `pip check` and a combined OpenCV/NumPy/SciPy import
+  probe. This removes a redundant uncached NumPy/SciPy reinstall that made
+  otherwise healthy protected checks depend on a second large network download.
 - CI Standard now force-reinstalls `maturin` without using the pip cache before
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
