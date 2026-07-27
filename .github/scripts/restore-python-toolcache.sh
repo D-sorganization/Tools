@@ -15,9 +15,23 @@ restore_python() {
   local venv_dir="$2"
   local interpreter="$venv_dir/bin/python"
   local cache_dir="$python_cache/$version/x64"
+  local python_version
+  local pip_version
 
   if [ ! -x "$interpreter" ]; then
     echo "Local Python $version not found at $interpreter; setup-python may download it if supported."
+    return
+  fi
+
+  python_version="$(
+    "$interpreter" -c \
+      'import sys, zlib; print(".".join(str(part) for part in sys.version_info[:3]))' \
+      2>/dev/null
+  )" || python_version=""
+  pip_version="$("$interpreter" -m pip --version 2>/dev/null)" || pip_version=""
+  if [ "$python_version" != "$version" ] ||
+    [[ "$pip_version" != pip\ *" from "* ]]; then
+    echo "Local Python $version is semantically invalid; setup-python must replace it."
     return
   fi
 
