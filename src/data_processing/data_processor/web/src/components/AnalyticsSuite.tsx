@@ -412,8 +412,9 @@ function computeRegression(
     if (
       typeof x === "number" &&
       typeof y === "number" &&
-      !Number.isNaN(x) &&
-      !Number.isNaN(y)
+      // ⚡ Bolt Optimization: Use fast `===` to check for NaN instead of `Number.isNaN`.
+      x === x &&
+      y === y
     ) {
       xsBuffer[n] = x;
       ysBuffer[n] = y;
@@ -605,7 +606,8 @@ const COLORS_POSITIVE = ["#0d47a1", "#1565c0", "#1976d2", "#42a5f5", "#90caf9"];
 const COLORS_NEGATIVE = ["#b71c1c", "#c62828", "#d32f2f", "#ef5350", "#ef9a9a"];
 
 function correlationColor(r: number): string {
-  if (isNaN(r)) return "#4a4a4a";
+  // ⚡ Bolt Optimization: Use fast `r !== r` to check for NaN instead of `isNaN`.
+  if (r !== r) return "#4a4a4a";
   const idx = Math.min(4, Math.floor(Math.abs(r) * 5));
   return r >= 0 ? COLORS_POSITIVE[4 - idx] : COLORS_NEGATIVE[4 - idx];
 }
@@ -780,7 +782,7 @@ export const AnalyticsSuite = memo(function AnalyticsSuite({
                           color: Math.abs(r) > 0.5 ? "#fff" : "#ccc",
                         }}
                       >
-                        {isNaN(r) ? "-" : r.toFixed(2)}
+                        {r !== r ? "-" : r.toFixed(2)}
                       </td>
                     ))}
                   </tr>
