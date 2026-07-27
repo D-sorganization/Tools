@@ -307,6 +307,8 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   cache, and enforce both `pip check` and a combined OpenCV/NumPy/SciPy import
   probe. This removes a redundant uncached NumPy/SciPy reinstall that made
   otherwise healthy protected checks depend on a second large network download.
+  The matrix also installs Mypy with its runtime dependencies before enforcing
+  `pip check`, so each isolated environment remains internally consistent.
 - CI Standard now force-reinstalls `maturin` without using the pip cache before
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its

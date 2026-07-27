@@ -189,6 +189,24 @@ def test_test_matrix_probes_one_resolved_compiled_numerical_stack() -> None:
     assert "from scipy.signal import butter" in install_step["run"]
 
 
+def test_test_matrix_installs_mypy_runtime_dependencies() -> None:
+    import yaml
+
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+    for job_name in ("quality-gate", "tests"):
+        install_step = next(
+            step
+            for step in workflow["jobs"][job_name]["steps"]
+            if step.get("name") == "Install Dependencies"
+        )
+
+        assert "python -m pip install mypy==1.13.0" in install_step["run"]
+        assert (
+            "python -m pip install --ignore-installed --no-deps mypy==1.13.0"
+            not in install_step["run"]
+        )
+
+
 def test_quality_gate_invokes_mypy_through_verified_python() -> None:
     import yaml
 

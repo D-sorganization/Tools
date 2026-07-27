@@ -228,7 +228,7 @@ jobs:
           python -m pip install --upgrade --force-reinstall --no-cache-dir "build>=1.2.2" "platformdirs>=4.2.0"
           python -c "import build, platformdirs; assert build.__version__; assert platformdirs.__version__"
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
-          python -m pip install --ignore-installed --no-deps mypy==1.13.0
+          python -m pip install mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
           python -m pip install fastapi python-multipart
@@ -580,7 +580,7 @@ jobs:
           python -c "import build, platformdirs; assert build.__version__; assert platformdirs.__version__"
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --no-deps --no-cache-dir "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
-          python -m pip install --ignore-installed --no-deps mypy==1.13.0
+          python -m pip install mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
           python -m pip install fastapi python-multipart
