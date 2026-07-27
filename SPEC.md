@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.5                                      |
-| **Spec Version**        | 1.5.5                                      |
+| **Current Version**     | 1.5.6                                      |
+| **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-07-27                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,13 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-27 Sidekick saved-session startup safety
+
+- The PyQt6 Sidekick panel restores its initial saved chat session without
+  emitting `session_loaded` before message-display controllers exist. Interactive
+  session changes continue to emit normally, while source and packaged desktop
+  startup remain safe when an active session is already present.
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
