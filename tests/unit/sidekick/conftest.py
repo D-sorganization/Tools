@@ -15,31 +15,6 @@ if str(SHARED_PYTHON) not in sys.path:
     sys.path.insert(0, str(SHARED_PYTHON))
 
 
-class _ProfileStore:
-    """Minimal profile store used to isolate the standalone window."""
-
-    def __init__(self) -> None:
-        self.profiles: dict[str, Any] = {}
-        self.last: str | None = None
-
-    def save_profile(self, name: str, payload: Any) -> None:
-        self.profiles[name] = payload
-
-    def load_profile(self, name: str) -> Any:
-        if name not in self.profiles:
-            raise KeyError(name)
-        return self.profiles[name]
-
-    def set_last_profile(self, name: str) -> None:
-        self.last = name
-
-
-@pytest.fixture
-def profile_store() -> _ProfileStore:
-    """Return an isolated profile store for standalone window tests."""
-    return _ProfileStore()
-
-
 @pytest.fixture(scope="session")
 def qt_app() -> Any:
     """Return a session-scoped QApplication when PyQt6 is available."""

@@ -1,0 +1,47 @@
+# Dependency Pinning Policy: see DEPENDENCIES.md
+# Strategy: >= minimum bounds here; exact pins in requirements-lock.txt
+# Regenerate lock: pip install -r requirements.txt && pip freeze > requirements-lock.txt
+
+# Core Scientific Computing
+numpy>=2.0.1,<2.4.0  # Fundamental array processing and matrix operations; numpy 2.4+ ships PEP 695 syntax in its bundled __init__.pyi stub, which crashes mypy 1.13.0's incremental cache serializer (AssertionError: unresolved placeholder type) under this repo's python_version=3.11 mypy config
+pandas>=2.2.2  # Data analysis, manipulation, and time series
+pytz>=2026.2  # Timezone library required by pandas>=2.3.1
+scipy>=1.13.1,<1.18  # Scientific algorithms (integration, optimization)
+matplotlib>=3.9.0  # Data visualization and plotting library
+sympy>=1.12  # Symbolic mathematics and algebra
+
+# Testing & Quality Assurance
+pytest>=9.0.3  # Testing framework
+pytest-qt>=4.4.0  # Pytest plugin for PyQt applications
+pytest-cov>=4.0.0  # Coverage plugin for pytest (code coverage metrics)
+ruff>=0.1.0  # Fast Python linter and formatter (replaces flake8/black)
+types-PyYAML>=6.0.12.20260518  # Type stubs for PyYAML (static typing)
+types-requests>=2.33.0.20260518  # Type stubs for requests library (static typing)
+types-python-dateutil>=2.9.0.20260716  # Type stubs for python-dateutil (avoids mypy --install-types cache issue)
+types-decorator>=5.2.0.20260712  # Type stubs for decorator (avoids mypy --install-types cache issue)
+
+# GUI & Desktop Applications
+PyQt6>=6.7.0  # Qt6 Python bindings for GUI applications
+pyqtgraph>=0.13.7  # Plot widgets used by P1AM desktop Control/Trends tabs
+pygame>=2.0.0  # Game development and multimedia library
+PyOpenGL>=3.1.10  # OpenGL bindings for Python
+PyOpenGL_accelerate>=3.1.10  # Accelerated OpenGL extensions
+
+# Web Applications
+flask>=3.0.0  # Web framework for building web applications
+flask-limiter>=3.5.0  # Rate limiting for Flask apps (used by calculator API tests)
+
+# Data Validation & Serialization
+pydantic>=2.0.0  # Data validation using Python type annotations
+pydantic-settings>=2.0.0  # Settings management for Pydantic v2
+
+# Security & Encryption
+cryptography>=49.0.0  # Cryptographic recipes and primitives
+defusedxml>=0.7.0  # Safe XML parsing (mitigates XML bomb / XXE attacks)
+pygments>=2.20.0,<2.21.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via rich/pip-audit)
+
+# Data Formats & Configuration
+pyyaml>=6.0.1  # YAML parser and emitter
+
+# Web Automation & Testing
+playwright>=1.61.0  # Browser automation and testing framework
