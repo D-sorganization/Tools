@@ -2,14 +2,14 @@
 by the router (Tools issue #2751).
 
 The dock widget and quick bar send WebSocket actions to the shared chat
-router.  When a sender adds a new action without a matching ``elif
-action == "..."`` branch in ``router_factory.py`` the server returns
+router. When a sender adds a new action without a matching core protocol
+branch or registered router action handler, the server returns
 ``"Unknown action: ..."`` and the feature is silently broken.
 
 This test walks the AST of the sender modules, collects every literal
 action string, and asserts that ``router_factory.py`` has a handler
-branch for it.  Actions that the router knowingly does not yet handle
-can be listed in ``KNOWN_UNHANDLED`` with a tracking issue.
+branch or handler registration for it. Actions that the router knowingly does
+not yet handle can be listed in ``KNOWN_UNHANDLED`` with a tracking issue.
 """
 
 from __future__ import annotations
@@ -22,6 +22,7 @@ import pytest
 CHAT_DIR = Path(__file__).resolve().parents[4] / "src" / "shared" / "python" / "chat"
 SENDERS = [CHAT_DIR / "_chat_dock_widget_qt.py", CHAT_DIR / "quick_bar.py"]
 ROUTER = CHAT_DIR / "router_factory.py"
+PROTOCOL = CHAT_DIR / "websocket_protocol.py"
 
 # Actions that senders emit but the router intentionally does not handle
 # yet.  Each entry must reference a tracking issue.
@@ -51,8 +52,8 @@ def _collect_sent_actions(path: Path) -> set[str]:
     return actions
 
 
-def _collect_router_branches(path: Path) -> set[str]:
-    """Return the set of action strings handled by elif branches in router."""
+def _collect_action_branches(path: Path) -> set[str]:
+    """Return action strings handled by literal comparison branches."""
     tree = ast.parse(path.read_text(encoding="utf-8"))
     branches: set[str] = set()
     for node in ast.walk(tree):
@@ -73,19 +74,41 @@ def _collect_router_branches(path: Path) -> set[str]:
     return branches
 
 
+def _collect_registered_router_actions(path: Path) -> set[str]:
+    """Return literal keys registered by ``_router_action_handlers``."""
+    tree = ast.parse(path.read_text(encoding="utf-8"))
+    for node in tree.body:
+        if not (
+            isinstance(node, ast.FunctionDef) and node.name == "_router_action_handlers"
+        ):
+            continue
+        for child in ast.walk(node):
+            if not isinstance(child, ast.Return) or not isinstance(
+                child.value, ast.Dict
+            ):
+                continue
+            return {
+                key.value
+                for key in child.value.keys
+                if isinstance(key, ast.Constant) and isinstance(key.value, str)
+            }
+    return set()
+
+
 def test_every_sent_action_has_router_branch() -> None:
     """Guard against sender/router drift (Tools issue #2751)."""
     sent: set[str] = set()
     for sender in SENDERS:
         sent |= _collect_sent_actions(sender)
 
-    handled = _collect_router_branches(ROUTER)
+    handled = _collect_action_branches(PROTOCOL)
+    handled |= _collect_registered_router_actions(ROUTER)
     missing = sent - handled - set(KNOWN_UNHANDLED)
 
     assert not missing, (
         f"Widget(s) send action(s) {sorted(missing)} but "
-        f"router_factory.py has no matching ``elif action == '...'`` "
-        f"branch. Either add a handler or list the action in "
+        "the shared protocol/router has no matching branch or handler. "
+        "Either add a handler or list the action in "
         f"KNOWN_UNHANDLED with a tracking issue."
     )
 
