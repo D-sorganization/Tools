@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.2                                      |
-| **Spec Version**        | 1.5.2                                      |
-| **Last Spec Update**    | 2026-07-23                                 |
+| **Current Version**     | 1.5.3                                      |
+| **Spec Version**        | 1.5.3                                      |
+| **Last Spec Update**    | 2026-07-26                                 |
 
 ## 2. Purpose & Mission
 
@@ -319,6 +319,17 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   runs the downloaded actionlint binary from a runner-local temporary directory
   instead of moving it into `/usr/local/bin` with `sudo`, keeping workflow
   validation runnable on the same non-sudo fleet runners.
+- CI Standard quality and Python-matrix checkouts retain the pull-request merge
+  commit and both parents with a depth-two checkout. Changed-file gates fetch
+  the base branch explicitly, while persistent self-hosted clones no longer
+  unshallow every branch and tag before validation can begin.
+- CI Standard Python-matrix jobs now resolve the compiled numerical stack once
+  inside their private job environment, install OpenCV through the shared wheel
+  cache, and enforce both `pip check` and a combined OpenCV/NumPy/SciPy import
+  probe. This removes a redundant uncached NumPy/SciPy reinstall that made
+  otherwise healthy protected checks depend on a second large network download.
+  The matrix also installs Mypy with its runtime dependencies before enforcing
+  `pip check`, so each isolated environment remains internally consistent.
 - CI Standard now force-reinstalls `maturin` without using the pip cache before
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its
@@ -701,8 +712,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `compatibility`, and `src.shared.python.*` legacy spellings to the same
   canonical `shared.python.*` module objects in `sys.modules`; repeated
   installer calls also coalesce stale preloaded aliases back to those
-  canonical objects. `_bootstrap.py` no longer injects `src/shared/python`
-  directly.
+  canonical objects. Installed applications also bind the intermediate
+  `src.shared` and `src.shared.python` namespaces to their canonical parents,
+  and alias loaders delegate module-code lookup so `python -m sidekick` can
+  execute the canonical entry point. `_bootstrap.py` no longer injects
+  `src/shared/python` directly.
 - Issue #3316 follow-up removed the duplicate pytest-only
   `RobustImportRedirector` implementations from both repository conftests so
   tests and production share the same `shared.python.import_aliases` path. The
@@ -975,10 +989,25 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   without crashing the importing process
 - Shared chat drift fixtures avoid introducing contiguous secret-like SHA-256
   literals when refreshing Tools baseline hashes, keeping CI secrets scans
-  signal-only while preserving the same runtime hash contract.
+  signal-only while preserving the same runtime hash contract. Their source
+  hashing normalizes checkout line endings so Windows and Linux enforce the
+  same canonical baseline.
+- Protected Python lanes reject toolcache entries unless both the interpreter
+  and pip return recognizable semantic versions, remove stale completion
+  markers with corrupt entries, isolate quality checks from runner user-site
+  packages, and explicitly install the standalone Sidekick build/runtime
+  dependencies before executing artifact contracts.
+- Optional voice-input tests load isolated module instances for dependency
+  present/missing cases so legacy import aliases cannot leak an earlier
+  availability result across the protected test order.
 - Project-scoped terminal-agent runtime coordination for shared chat provider
   processes is host-provided; Tools advertises terminal availability through
   chat WebSocket session capabilities
+- Native Qt chat WebSocket connections derive a loopback HTTP(S) origin from
+  the configured WS(S) server and attach the ephemeral launcher capability as
+  an encoded query parameter. The capability is never emitted through
+  diagnostics, malformed server URLs fail closed before opening a socket, and
+  unexpected disconnects identify the Sidekick API and its endpoint override.
 - Shared chat WebSocket terminal-session actions for start/input/resize/events
   and stop lifecycle control return structured errors when a host has not
   configured a terminal runtime
@@ -1023,6 +1052,10 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
 - Shared unified tools sidebar widgets provide optional dockable/tear-off host
   integration for project file browsing, workspace variables, chat, terminal,
   calculator, unit conversion, and notes tabs
+- Unified Sidekick sidebar shutdown is idempotent and delegates to each live
+  runtime tab's public `shutdown()` contract before Qt closes either the
+  sidebar or its generic host window, so PTY-backed terminal tabs cannot retain
+  their shell, reader, or bridge processes after a host launcher exits (#3938).
 - Sidekick runtime tabs embed real utility surfaces for chat status, workspace
   Python execution, symbolic calculator evaluation, and project-persistent
   notes instead of placeholder panels
@@ -1033,6 +1066,15 @@ Tools is the central utility hub for the D-sorganization fleet. Other repos depe
   `src/shared/python/sidekick/agent`, with audited action registration,
   headless host/subtab ports, and an optional thunk dispatcher compatible with
   the shared AI main-thread tool dispatcher for GUI-affine actions
+- Standalone Sidekick CLI dispatch, headless execution, onboarding,
+  preferences, profile persistence, session storage, and the PyQt6 window shell
+  live canonically under `src/shared/python/sidekick/{__main__,standalone,persistence}`.
+  Downstream applications consume a pinned Tools revision instead of
+  maintaining editable child implementations.
+- The Sidekick action service imports its Tools-owned state contract through
+  the package-root-independent `contracts` module so a downstream application's
+  `src.shared.python.contracts` alias cannot shadow it. The top-level contracts
+  shim re-exports `StateError` for direct launchers that place `src` first.
 - Sidekick agent canonical modules are protected by focused unit coverage for
   audit sinks, feature catalog discovery/search, host capability dispatch,
   planner validation/export, and subtab action dispatch so the per-file
@@ -1675,6 +1717,17 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |
+| 2026-07-26 | 1.5.3 | fix(ci): isolate both protected Python jobs in per-job virtual environments after validating the persistent setup-python runtime; repair and import-probe the matrix NumPy/SciPy stack with compatible bounds, and reinstall OpenCV without dependency resolution so it cannot replace the verified NumPy wheel. |
+| 2026-07-26 | 1.5.3 | fix(import-aliases, #3936): make canonical shared-module aliases satisfy `runpy` code lookup so packaged compatibility commands such as `python -m sidekick` execute their parent-owned `shared.python` implementation; include `contracts` in the identity-coalescing alias set and keep Sidekick agent DbC imports on the canonical shared path. |
+| 2026-07-26 | 1.5.3 | fix(ci): keep protected Python jobs on the persistent runner-scoped tool cache and give cold-cache downloads enough bounded time to reach validation; narrow the UpstreamDrift consumer checkout to the shared Python and contract-support trees without changing its install or test command. |
+| 2026-07-26 | 1.5.3 | fix(ci): bound Anti-Phantom-Merge history to 50 commits and preserve changed-file rule inputs through the GitHub files API fallback, preventing full-history checkout exhaustion without weakening the fail-closed guard. |
+| 2026-07-26 | 1.5.3 | fix(ci): bound CI Standard quality and Python-matrix checkouts to the PR merge commit and parents, preventing persistent self-hosted clones from timing out while unshallowing all branches, tags, and abandoned packfiles; an ops contract pins both checkout depths. |
+| 2026-07-26 | 1.5.3 | test(chat, #3936): keep `src/shared/python/chat` as the sole reusable chat implementation while explicitly constraining the supported `src/chat` compatibility package to a one-file alias, so future copied implementations fail the public contract without rejecting the intentional legacy import surface. |
+| 2026-07-26 | 1.5.3 | fix(chat, #3936): enforce the launcher capability trust boundary inside the canonical native WebSocket URL builder, forwarding the ephemeral token only to verified localhost or loopback IP peers and never to remote `ws://`/`wss://` overrides; contract tests cover remote omission plus IPv4, IPv6, and localhost authentication. |
+| 2026-07-26 | 1.5.3 | fix(ci): keep Detect Secrets scanning the complete current repository tree while using a shallow checkout and a 30-minute job budget, avoiding full-history transfer exhaustion on the shared runner fleet; an ops contract pins both requirements. |
+| 2026-07-25 | 1.5.3 | fix(ci): scope each Cross-Repo Python Integration consumer checkout to the source, shared-contract tests, and UI tree it actually installs or exercises, keeping the 30-minute contract lane available for installation and tests instead of exhausting it on full-repository transfer. |
+| 2026-07-25 | 1.5.3 | fix(sidekick, #3938): add an idempotent aggregate sidebar shutdown contract that delegates once to every live runtime tab and runs during sidebar or generic host-window close, preventing PTY-backed Terminal tabs from retaining shell and bridge processes after a host launcher exits. |
 | 2026-06-21 | 1.1.7792 | fix(ci): route the Cross-Repo Python Integration downstream contract matrix to Linux self-hosted runners and fall back to `github.token` when `RUNNER_CHECK_TOKEN` is unset, preventing PowerShell parsing failures and checkout token omissions. |
 | 2026-06-21 | 1.1.7791 | fix(ci): route the Performance Regression benchmark workflow to the Linux self-hosted fleet labels so `actions/setup-python` no longer lands on Windows runners without registry-write permissions. |
 | 2026-06-21 | 1.1.7790 | perf(pendulum-web): replace the Nelder-Mead simplex `Array.prototype.sort()` comparator in `optimizer.ts` with a manual in-place insertion sort for the tiny fixed-size simplex, preserving ordering behavior while removing repeated callback dispatch from the hot optimization loop. |
@@ -2610,9 +2663,10 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - **2026-07-14**: fix(security) — Added structural validation to the symbolic solver backend endpoints (`/solve`, `/derivative`, `/simplify`) before handing untrusted user input to `sympy.parse_expr`. This mitigates a critical code injection vulnerability where malicious AST constructs (e.g. `().__class__`) could be executed due to `parse_expr`'s internal use of `eval`.
 
 ### Version 1.1.250
+
 - 2024-07-23: fix(ux, #3919) - Improve accessibility of standard buttons in data processor web app by adding `focus-visible` styling (focus rings) to the global `.btn` class.
 
-
 ## 2026-06-12 (Bolt): Refactoring parseVariableAssignments
-* Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
-* Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+- Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
+- Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
