@@ -51,7 +51,6 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from . import chat_dock_widget as _connection_contract
 from ._qt import ai_dropdowns as _ai
 from ._qt import exports as _exports
 from ._qt import sessions as _sessions
@@ -344,18 +343,17 @@ class ChatDockWidget(QDockWidget):
         if self._socket is not None:
             self._socket.close()
             self._socket.deleteLater()
-        sid = ChatDockWidget._get_shared_session_id() or "new"
-        path = self._ws_path_template.replace("{session_id}", sid)
-        origin, url_text = _connection_contract._native_websocket_connection(
-            self._server_url, path
-        )
-        self._socket = QWebSocket(origin)
+
+        self._socket = QWebSocket()
         self._socket.connected.connect(self._on_connected)
         self._socket.disconnected.connect(self._on_disconnected)
         self._socket.textMessageReceived.connect(self._on_message)
 
+        sid = ChatDockWidget._get_shared_session_id() or "new"
+        path = self._ws_path_template.replace("{session_id}", sid)
+        url = QUrl(f"{self._server_url}{path}")
         self._status_label.setText("Connecting...")
-        self._socket.open(QUrl(url_text))
+        self._socket.open(url)
 
     def connection_diagnostics(self) -> dict[str, Any]:
         """Return host-readable WebSocket readiness diagnostics."""
@@ -439,9 +437,7 @@ class ChatDockWidget(QDockWidget):
                 if hasattr(self, "_send_btn") and self._send_btn is not None:
                     self._send_btn.setEnabled(True)
             return
-        self._status_label.setText(
-            "Sidekick API unavailable — retrying in 3s. Set UD_CHAT_WS_URL if the local API is external."
-        )
+        self._status_label.setText("Disconnected - retrying in 3s...")
         self._status_label.setStyleSheet("color: #f85149; font-size: 10px;")
         if hasattr(self, "_exit_thinking_state"):
             self._exit_thinking_state()

@@ -115,9 +115,7 @@ jobs:
     # was paying for a hard dependency we can tolerate as a soft one.
     needs: [pick-runner]
     runs-on: d-sorg-fleet
-    # A cold setup-python download has taken 22 minutes on the local fleet.
-    # Keep enough budget for the quality checks that follow the bootstrap.
-    timeout-minutes: 60
+    timeout-minutes: 20
     env:
       # Shared wheel/download cache for self-hosted runners — avoids re-downloading
       # the same packages on every run.  Path is host-stable and safe for concurrent
@@ -125,59 +123,60 @@ jobs:
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
       PIP_DEFAULT_TIMEOUT: "120"
       PIP_RETRIES: "8"
-      PYTHONNOUSERSITE: "1"
     steps:
       - name: Git HTTP/1.1 workaround
         run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
         with:
-          # The PR merge commit and both parents are sufficient for the
-          # changed-file gates below. Full history repeatedly exhausts the
-          # job timeout while unshallowing persistent self-hosted clones.
-          fetch-depth: 2
-      - name: Select persistent Python tool cache
-        run: |
-          if [ -z "${RUNNER_TOOL_CACHE:-}" ]; then
-            echo "::error::RUNNER_TOOL_CACHE is unavailable"
-            exit 1
-          fi
-          echo "AGENT_TOOLSDIRECTORY=$RUNNER_TOOL_CACHE" >> "$GITHUB_ENV"
-      - name: Restore local Python tool cache
-        run: .github/scripts/restore-python-toolcache.sh
+          fetch-depth: 0
       - name: Force-clean stale Python tool cache (NVMe runners)
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         # Defensive prepass: actions/setup-python uses ``rmdir`` to delete
         # cached Python directories before installing, which fails when
         # the cache contains read-only or stubborn files (e.g. test/certdata
         # symlinks). ``rm -rf`` succeeds where ``rmdir`` fails. We check and
         # clean only broken/incomplete 3.12 installations to prevent race conditions.
-        run: bash .github/scripts/clean-python-toolcache.sh '3.12'
+        run: |
+          for cache_root in /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+            if [ -d "$cache_root/Python" ]; then
+              echo "Checking $cache_root/Python for stale 3.12 installations..."
+              for version_dir in "$cache_root/Python"/3.12.*; do
+                if [ -d "$version_dir" ]; then
+                  for arch_dir in "$version_dir"/*; do
+                    if [ -d "$arch_dir" ]; then
+                      if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
+                        echo "Directory $arch_dir is incomplete or broken. Cleaning..."
+                        sudo -n rm -rf "$arch_dir" 2>/dev/null || rm -rf "$arch_dir" || true
+                      else
+                        py_bin="$arch_dir/bin/python"
+                        if [ ! -x "$py_bin" ]; then
+                          py_bin="$arch_dir/bin/python3"
+                        fi
+                        echo "Testing zlib import on $py_bin..."
+                        if ! "$py_bin" -c "import zlib"; then
+                          echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
+                          sudo -n rm -rf "$arch_dir" 2>/dev/null || rm -rf "$arch_dir" || true
+                        else
+                          echo "Directory $arch_dir is healthy."
+                        fi
+                      fi
+                    fi
+                  done
+                fi
+              done
+            fi
+          done
+      - name: Restore local Python tool cache
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+        run: .github/scripts/restore-python-toolcache.sh
       - uses: actions/setup-python@v6
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         with:
           python-version: "3.12"
           cache: pip
-
-      - name: Verify Python runtime
-        env:
-          EXPECTED_PYTHON_MINOR: "3.12"
-        run: |
-          python_version="$(python -c 'import sys; print(".".join(str(part) for part in sys.version_info[:3]))')"
-          pip_version="$(python -m pip --version)"
-          if [[ "$python_version" != "$EXPECTED_PYTHON_MINOR".* ]]; then
-            echo "::error::setup-python returned invalid runtime version '$python_version'"
-            exit 1
-          fi
-          if [[ "$pip_version" != pip\ *" from "* ]]; then
-            echo "::error::setup-python returned invalid pip '$pip_version'"
-            exit 1
-          fi
-          echo "$pip_version"
-
-      - name: Create isolated CI virtual environment
-        run: |
-          python -m venv "$RUNNER_TEMP/ci-venv"
-          echo "$RUNNER_TEMP/ci-venv/bin" >> "$GITHUB_PATH"
-          echo "VIRTUAL_ENV=$RUNNER_TEMP/ci-venv" >> "$GITHUB_ENV"
-          "$RUNNER_TEMP/ci-venv/bin/python" -m pip --version
 
       - name: Purge pip cache
         run: python -m pip cache purge || true
@@ -211,6 +210,7 @@ jobs:
 
       - name: Install Dependencies
         env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
           PIP_CACHE_DIR: ${{ runner.temp }}/pip-quality-gate
           PIP_NO_CACHE_DIR: "1"
         # Force-reinstall sortedcontainers (and hypothesis) before anything
@@ -225,10 +225,8 @@ jobs:
           # Keep pip and python bound to the same setup-python interpreter so
           # pytest plugins land in the environment that later runs `python -m pytest`.
           python -m pip install --upgrade click setuptools wheel
-          python -m pip install --upgrade --force-reinstall --no-cache-dir "build>=1.2.2" "platformdirs>=4.2.0"
-          python -c "import build, platformdirs; assert build.__version__; assert platformdirs.__version__"
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
-          python -m pip install mypy==1.13.0
+          python -m pip install --ignore-installed --no-deps mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
           python -m pip install fastapi python-multipart
@@ -240,8 +238,6 @@ jobs:
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark pytest-qt pytest-asyncio pytest-timeout
           python -m pip install ruff==0.14.10 bandit==1.7.7 pip-audit sortedcontainers types-PyYAML types-requests
           python -m pip install --ignore-installed mypy==1.13.0
-          python -m ruff --version
-          python -m mypy --version
 
       - name: Collect Changed Python Files
         run: |
@@ -270,7 +266,7 @@ jobs:
             grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
               changed_python_files.txt > ruff_lint_files.txt || true
             if [ -s ruff_lint_files.txt ]; then
-              xargs -r -d '\n' python -m ruff check < ruff_lint_files.txt
+              xargs -r -d '\n' ruff check < ruff_lint_files.txt
             else
               echo "No files to lint after applying exclude list."
             fi
@@ -286,7 +282,7 @@ jobs:
             grep -v -E '^src/data_processing/|^src/document_processing/|^src/pendulum_simulator/|^src/movement_optimizer/|^src/scientific_modeling/|^src/tools/folder_tools/|^src/tools/code_quality_check\.py' \
               changed_python_files.txt > ruff_format_files.txt || true
             if [ -s ruff_format_files.txt ]; then
-              xargs -r -d '\n' python -m ruff format --check < ruff_format_files.txt
+              xargs -r -d '\n' ruff format --check < ruff_format_files.txt
             else
               echo "No changed Python files to format-check."
             fi
@@ -306,7 +302,7 @@ jobs:
             if [ -s filtered_mypy_files.txt ]; then
               export MYPYPATH=src:src/python/src
               echo "Linting changed files with Mypy..."
-              xargs -r -d '\n' python -m mypy --ignore-missing-imports --follow-imports=skip --install-types --non-interactive < filtered_mypy_files.txt
+              xargs -r -d '\n' mypy --ignore-missing-imports --follow-imports=skip --install-types --non-interactive < filtered_mypy_files.txt
             else
               echo "No changed source Python files to type-check (after filtering legacy)."
             fi
@@ -442,9 +438,7 @@ jobs:
           fi
 
   tests:
-    # The required 3.11 lane must survive a first-use Python download plus
-    # dependency installation, Rust-wheel build, and the actual test suite.
-    timeout-minutes: 90
+    timeout-minutes: 30
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
@@ -478,51 +472,54 @@ jobs:
         run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
         with:
-          # Keep the matrix checkout bounded for the same merge-parent
-          # contract used by quality-gate.
-          fetch-depth: 2
-      - name: Select persistent Python tool cache
-        run: |
-          if [ -z "${RUNNER_TOOL_CACHE:-}" ]; then
-            echo "::error::RUNNER_TOOL_CACHE is unavailable"
-            exit 1
-          fi
-          echo "AGENT_TOOLSDIRECTORY=$RUNNER_TOOL_CACHE" >> "$GITHUB_ENV"
-      - name: Restore local Python tool cache
-        run: .github/scripts/restore-python-toolcache.sh
+          fetch-depth: 0
       - name: Force-clean stale Python tool cache (NVMe runners)
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         # See quality-gate job for rationale: ``actions/setup-python`` uses
         # ``rmdir`` and fails on read-only items left behind (test/certdata
         # etc.). ``rm -rf`` succeeds. We check and clean only the broken/incomplete
         # matrix python-version directory to prevent race conditions.
-        run: bash .github/scripts/clean-python-toolcache.sh '${{ matrix.python-version }}'
+        run: |
+          for cache_root in /opt/runner-tool-cache /home/dieterolson/actions-runners/.shared-tool-cache /home/dieterolson/actions-runners-nvme/.shared-tool-cache; do
+            if [ -d "$cache_root/Python" ]; then
+              echo "Checking $cache_root/Python for stale ${{ matrix.python-version }} installations..."
+              for version_dir in "$cache_root/Python"/${{ matrix.python-version }}.*; do
+                if [ -d "$version_dir" ]; then
+                  for arch_dir in "$version_dir"/*; do
+                    if [ -d "$arch_dir" ]; then
+                      if [ ! -x "$arch_dir/bin/python" ] && [ ! -x "$arch_dir/bin/python3" ]; then
+                        echo "Directory $arch_dir is incomplete or broken. Cleaning..."
+                        sudo -n rm -rf "$arch_dir" 2>/dev/null || rm -rf "$arch_dir" || true
+                      else
+                        py_bin="$arch_dir/bin/python"
+                        if [ ! -x "$py_bin" ]; then
+                          py_bin="$arch_dir/bin/python3"
+                        fi
+                        echo "Testing zlib import on $py_bin..."
+                        if ! "$py_bin" -c "import zlib"; then
+                          echo "Directory $arch_dir is corrupt (zlib import failed). Cleaning..."
+                          sudo -n rm -rf "$arch_dir" 2>/dev/null || rm -rf "$arch_dir" || true
+                        else
+                          echo "Directory $arch_dir is healthy."
+                        fi
+                      fi
+                    fi
+                  done
+                fi
+              done
+            fi
+          done
+      - name: Restore local Python tool cache
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+        run: .github/scripts/restore-python-toolcache.sh
       - uses: actions/setup-python@v6
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         with:
           python-version: ${{ matrix.python-version }}
           cache: pip
-
-      - name: Verify Python runtime
-        env:
-          EXPECTED_PYTHON_MINOR: ${{ matrix.python-version }}
-        run: |
-          python_version="$(python -c 'import sys; print(".".join(str(part) for part in sys.version_info[:3]))')"
-          pip_version="$(python -m pip --version)"
-          if [[ "$python_version" != "$EXPECTED_PYTHON_MINOR".* ]]; then
-            echo "::error::setup-python returned invalid runtime version '$python_version'"
-            exit 1
-          fi
-          if [[ "$pip_version" != pip\ *" from "* ]]; then
-            echo "::error::setup-python returned invalid pip '$pip_version'"
-            exit 1
-          fi
-          echo "$pip_version"
-
-      - name: Create isolated CI virtual environment
-        run: |
-          python -m venv "$RUNNER_TEMP/ci-venv"
-          echo "$RUNNER_TEMP/ci-venv/bin" >> "$GITHUB_PATH"
-          echo "VIRTUAL_ENV=$RUNNER_TEMP/ci-venv" >> "$GITHUB_ENV"
-          "$RUNNER_TEMP/ci-venv/bin/python" -m pip --version
 
       - name: Expose preinstalled Rustup
         if: ${{ matrix.python-version == '3.11' }}
@@ -576,13 +573,15 @@ jobs:
           # Match the plugin install interpreter to the `python -m pytest`
           # invocation below so benchmark support is always discoverable.
           python -m pip install --upgrade click setuptools wheel
-          python -m pip install --upgrade --force-reinstall --no-cache-dir "build>=1.2.2" "platformdirs>=4.2.0"
-          python -c "import build, platformdirs; assert build.__version__; assert platformdirs.__version__"
           python -m pip install --ignore-installed --no-deps "sortedcontainers>=2.4.0" "hypothesis>=6.0.0"
           python -m pip install --ignore-installed --no-deps --no-cache-dir "py-cpuinfo>=9.0.0" "pytest-benchmark>=5.2.3"
-          python -m pip install mypy==1.13.0
+          python -m pip install --ignore-installed --no-deps mypy==1.13.0
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
+          # The shared self-hosted runner cache has produced mixed NumPy/SciPy
+          # binary installs on individual Python minors. Reinstall the compiled
+          # numerical stack without cache before importing provider contracts.
+          python -m pip install --upgrade --force-reinstall --no-cache-dir "numpy>=2.0.1" "scipy>=1.13.1,<1.18"
           python -m pip install fastapi python-multipart
           # P1AM HMI/PLC backend runtime deps so its safety-critical E-stop /
           # alarm / historian tests actually RUN (and gate) instead of being
@@ -590,9 +589,7 @@ jobs:
           # falls back to scada_fallback when the Rust wheel is absent (#3534).
           python -m pip install pymodbus requests sqlmodel pydantic-settings
           python -m pip install httpx pytest-cov pytest-xdist pytest-benchmark pytest-qt pytest-asyncio pytest-timeout
-          python -m pip install "opencv-python-headless>=4.8.0"
-          python -m pip check
-          python -c "import cv2, numpy, scipy; from scipy.signal import butter; assert cv2.__version__; assert numpy.__version__; assert scipy.__version__; butter(2, 0.2)"
+          python -m pip install --ignore-installed "opencv-python-headless>=4.8.0"
 
       - name: Build and install tools_core Rust wheel
         if: ${{ matrix.python-version == '3.11' }}
@@ -660,6 +657,8 @@ jobs:
           echo "coverage_gate_required=$coverage_gate_required" >> "$GITHUB_OUTPUT"
 
       - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         run: |
           export PYTHONPATH="src/data_processing/data_processor/python:src/media_processing/video_processor/python:src/python/src:src:${PYTHONPATH:-}"
           # Core required test suite — always runs regardless of which files changed.

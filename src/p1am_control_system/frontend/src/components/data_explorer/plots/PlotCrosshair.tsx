@@ -41,14 +41,7 @@ export function PlotTooltip({
   bounds,
 }: PlotTooltipProps): React.ReactElement | null {
   if (lines.length === 0) return null;
-
-  // OPTIMIZATION: Single-pass over the array to compute max length instead
-  // of .reduce to avoid closure allocations in pointer move handlers.
-  let longest = 0;
-  for (let i = 0; i < lines.length; i++) {
-    if (lines[i].length > longest) longest = lines[i].length;
-  }
-
+  const longest = lines.reduce((m, l) => Math.max(m, l.length), 0);
   const w = longest * TOOLTIP_CHAR_W + TOOLTIP_PAD * 2;
   const h = lines.length * TOOLTIP_LINE_H + TOOLTIP_PAD * 2;
   const pos = placeTooltip(anchor, { w, h }, bounds);
@@ -99,14 +92,10 @@ export function PlotCrosshair({
   innerWidth,
   innerHeight,
 }: PlotCrosshairProps): React.ReactElement {
-  // OPTIMIZATION: Avoid .map() and spread operator to build lines array
-  // to eliminate intermediate array allocations in pointer move handlers.
-  const lines: string[] = [`x: ${fmtNumber(model.dataX)}`];
-  for (let i = 0; i < model.markers.length; i++) {
-    const m = model.markers[i];
-    lines.push(`${m.label}: ${fmtNumber(m.value)}`);
-  }
-
+  const lines = [
+    `x: ${fmtNumber(model.dataX)}`,
+    ...model.markers.map((m) => `${m.label}: ${fmtNumber(m.value)}`),
+  ];
   const anchor: TooltipPos = {
     x: model.lineX,
     y: model.markers[0]?.py ?? 0,

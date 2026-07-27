@@ -4,11 +4,15 @@
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockDebug = vi.fn();
-const mockInfo = vi.fn();
-const mockWarn = vi.fn();
-const mockError = vi.fn();
-const mockChild = vi.fn();
+const { mockDebug, mockInfo, mockWarn, mockError, mockChild } = vi.hoisted(() => {
+  return {
+    mockDebug: vi.fn(),
+    mockInfo: vi.fn(),
+    mockWarn: vi.fn(),
+    mockError: vi.fn(),
+    mockChild: vi.fn(),
+  };
+});
 
 vi.mock('pino', () => {
   const pinoFn = () => ({

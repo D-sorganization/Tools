@@ -194,7 +194,13 @@ export function sanitizeNumber(
   }
 
   if (options?.decimals !== undefined) {
-    result = parseFloat(result.toFixed(options.decimals));
+    const factor = Math.pow(10, options.decimals);
+    const scaled = result * factor;
+    if (Math.abs(scaled % 1) === 0.5) {
+      result = Math.trunc(scaled) / factor;
+    } else {
+      result = Math.round(scaled) / factor;
+    }
   }
 
   return result;
