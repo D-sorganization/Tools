@@ -13,7 +13,7 @@ function App() {
           <p className="mt-1 text-sm text-slate-400">
             Educational conversion tool for rotations, twists, SE(3), and so(3)/SO(3) maps.
           </p>
-          <div className="mt-4 flex gap-2" role="tablist" aria-label="Converter modes">
+          <div className="mt-4 flex gap-2" role="tablist" aria-label="Converter tabs">
             <button
               id="tab-rotation"
               role="tab"
@@ -23,7 +23,6 @@ function App() {
                 activeTab === "rotation" ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-200 hover:bg-slate-600"
               }`}
               onClick={() => setActiveTab("rotation")}
-              aria-pressed={activeTab === "rotation"}
             >
               Rotation Formats
             </button>
@@ -36,7 +35,6 @@ function App() {
                 activeTab === "reference" ? "bg-blue-600 text-white" : "bg-slate-700 text-slate-200 hover:bg-slate-600"
               }`}
               onClick={() => setActiveTab("reference")}
-              aria-pressed={activeTab === "reference"}
             >
               Reference Frames & Lie Groups
             </button>
