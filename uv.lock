@@ -188,7 +188,7 @@ wheels = [
 
 [[package]]
 name = "build123d"
-version = "0.11.0"
+version = "0.11.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anytree" },
@@ -209,9 +209,9 @@ dependencies = [
     { name = "typing-extensions" },
     { name = "webcolors" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/3b/0c/90667ff68fd77b575a509108b6769008d11f6808ff0c1d1ef522187f33c6/build123d-0.11.0.tar.gz", hash = "sha256:1f2cfc68e9b18dff0b5c9624c760a56daed03ae86457b19bed7046872d076292", size = 20905996, upload-time = "2026-06-17T19:58:40.923Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/84/27/b7487242de480cd349baad8d1a3eca6a5eb65ebfb331cf0c5b408a832f96/build123d-0.11.1.tar.gz", hash = "sha256:9647c3fc7e1ef11d9c335787a54cf26e9bbc2191186342fe9755ec24a480033b", size = 20911070, upload-time = "2026-07-02T18:33:10.783Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f3/57/2c2910ca2fbe913b5cdea8ab50d5ef2d59bbe7c71400a965c442a9d9a506/build123d-0.11.0-py3-none-any.whl", hash = "sha256:22bccaa4cf2cbdcc910f174e49fa359d7fb5a546cf245b0c26e354dd5cc2eb5f", size = 361848, upload-time = "2026-06-17T19:58:38.503Z" },
+    { url = "https://files.pythonhosted.org/packages/e7/f2/c466dbd4cb3aa75a192ba39f1a49058f828fcc0eb6f9cf6936ed6078308b/build123d-0.11.1-py3-none-any.whl", hash = "sha256:4e95fa7ccbdc83e624313be492e7c4f5f0eb2ea1df36130eb718bb0c25a89e10", size = 368081, upload-time = "2026-07-02T18:33:08.787Z" },
 ]
 
 [[package]]
@@ -3966,6 +3966,7 @@ dependencies = [
     { name = "defusedxml" },
     { name = "keyring" },
     { name = "numpy" },
+    { name = "platformdirs" },
     { name = "pyyaml" },
 ]
 
@@ -4082,7 +4083,7 @@ video-analyzer = [
 
 [package.metadata]
 requires-dist = [
-    { name = "build123d", marker = "extra == 'cad'", specifier = "==0.11.0" },
+    { name = "build123d", marker = "extra == 'cad'", specifier = "==0.11.1" },
     { name = "defusedxml", specifier = ">=0.7.0" },
     { name = "ezdxf", extras = ["draw"], marker = "extra == 'pid'", specifier = ">=1.4.3" },
     { name = "ezdxf", extras = ["draw"], marker = "extra == 'test'", specifier = ">=1.4.3" },
@@ -4109,6 +4110,7 @@ requires-dist = [
     { name = "pandas", marker = "extra == 'all'", specifier = ">=2.0.0" },
     { name = "pandas", marker = "extra == 'process'", specifier = ">=2.0.0" },
     { name = "pathspec", marker = "extra == 'codemap'", specifier = ">=0.11.0" },
+    { name = "platformdirs", specifier = ">=4.2.0" },
     { name = "ptyprocess", marker = "sys_platform != 'win32' and extra == 'terminal'" },
     { name = "pyaudio", marker = "extra == 'chat-voice'", specifier = ">=0.2.13" },
     { name = "pydantic", marker = "extra == 'chat'", specifier = ">=2.0.0" },
@@ -4146,7 +4148,7 @@ requires-dist = [
     { name = "sympy", marker = "extra == 'signal'", specifier = ">=1.12" },
     { name = "tomli", marker = "python_full_version < '3.11' and extra == 'dev'", specifier = ">=2.0.0" },
     { name = "torch", marker = "extra == 'ai'", specifier = ">=2.0.0" },
-    { name = "tree-sitter", marker = "extra == 'codemap'", specifier = ">=0.21,<0.26" },
+    { name = "tree-sitter", marker = "extra == 'codemap'", specifier = ">=0.21,<0.27" },
     { name = "tree-sitter-javascript", marker = "extra == 'codemap'", specifier = ">=0.21" },
     { name = "tree-sitter-markdown", marker = "extra == 'codemap'", specifier = ">=0.3" },
     { name = "tree-sitter-python", marker = "extra == 'codemap'", specifier = ">=0.21" },
