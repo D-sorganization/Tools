@@ -200,23 +200,13 @@ function buildPayload() {
 
 function parseVariableAssignments(raw) {
   if (!raw) return {};
-
-  // ⚡ Bolt Optimization: Replaced chained .split().reduce().map() with a single-pass loop.
-  // Performance impact: Eliminates intermediate array allocations, closure executions, and callback overhead.
-  const accumulator = {};
-  const parts = raw.split(",");
-  for (let i = 0; i < parts.length; i++) {
-    const piece = parts[i];
-    const eqIdx = piece.indexOf("=");
-    if (eqIdx !== -1) {
-      const name = piece.substring(0, eqIdx).trim();
-      const value = piece.substring(eqIdx + 1).trim();
-      if (name && value) {
-        accumulator[name] = value;
-      }
+  return raw.split(",").reduce((accumulator, part) => {
+    const [name, value] = part.split("=").map((piece) => piece.trim());
+    if (name && value) {
+      accumulator[name] = value;
     }
-  }
-  return accumulator;
+    return accumulator;
+  }, {});
 }
 
 function renderResult(data) {

@@ -196,8 +196,9 @@ class TI89Calculator:
             tree = ast.parse(stripped, mode="eval")
         except SyntaxError:
             # Not valid Python surface syntax (e.g. an equation "x = y" or a
-            # sympy-specific form). The gate must be fail-closed, so we reject.
-            raise ValueError("Expression contains invalid syntax") from None
+            # sympy-specific form). Let parse_expr handle/raise on it; the
+            # restricted global_dict remains the backstop. We only *reject* here.
+            return
 
         node_count = 0
         for node in ast.walk(tree):

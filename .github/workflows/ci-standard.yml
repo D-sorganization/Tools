@@ -635,7 +635,7 @@ jobs:
           git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- 'tests/test_*.py' 'tests/**/test_*.py' 'tests/**/*test.py' 'src/**/tests/test_*.py' 'src/**/tests/**/test_*.py' 'src/**/tests/**/*test.py' > changed_test_files.txt || echo "No previous commit found (initial commit?)"
           # Vendored self-contained sub-apps run their tests in their origin repos,
           # not in the monorepo changed-test lane (they need their own env, e.g.
-          # scipy<1.18 / offscreen Qt). Mirror the ruff/mypy/bandit exclude lists.
+          # scipy<1.16 / offscreen Qt). Mirror the ruff/mypy/bandit exclude lists.
           grep -v -E '^src/movement_optimizer/|^src/pendulum_simulator/' changed_test_files.txt > changed_test_files.filtered.txt || true
           mv changed_test_files.filtered.txt changed_test_files.txt
           git diff --diff-filter=ACMRT --name-only "$BASE_SHA" HEAD -- '*.py' > changed_python_files.txt || echo "No previous commit found (initial commit?)"
