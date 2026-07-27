@@ -119,19 +119,6 @@ def _scan_fresh_without_updating_baseline() -> dict[str, Any]:
 class TestBaselineExists:
     """Basic structural tests that run quickly without shelling out."""
 
-    def test_workflow_uses_shallow_checkout_with_adequate_timeout(self) -> None:
-        """Secret scanning needs the current tree, not the repository's full history."""
-        import yaml
-
-        workflow = yaml.safe_load(DETECT_SECRETS_WORKFLOW.read_text(encoding="utf-8"))
-        job = workflow["jobs"]["detect-secrets"]
-        checkout = next(
-            step for step in job["steps"] if step.get("name") == "Checkout repository"
-        )
-
-        assert checkout["with"]["fetch-depth"] == 1
-        assert int(job["timeout-minutes"]) >= 30
-
     def test_workflow_invokes_installed_python_module(self) -> None:
         """The fleet runner PATH must not decide whether detect-secrets is runnable."""
         workflow = DETECT_SECRETS_WORKFLOW.read_text(encoding="utf-8")

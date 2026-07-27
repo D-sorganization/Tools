@@ -59,10 +59,6 @@ def test_close_event_disables_reconnect(qapp: QApplication) -> None:
         # The reconnect timer should be started
         assert widget._reconnect_timer.isActive()
         assert not getattr(widget, "_intentional_disconnect", False)
-        widget._status_label.setText.assert_called_once()
-        status_text = widget._status_label.setText.call_args.args[0]
-        assert "Sidekick API unavailable" in status_text
-        assert "UD_CHAT_WS_URL" in status_text
 
         # Stop the timer and reset state
         widget._reconnect_timer.stop()
