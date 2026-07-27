@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.3                                      |
-| **Spec Version**        | 1.5.3                                      |
-| **Last Spec Update**    | 2026-07-26                                 |
+| **Current Version**     | 1.5.4                                      |
+| **Spec Version**        | 1.5.4                                      |
+| **Last Spec Update**    | 2026-07-27                                 |
 
 ## 2. Purpose & Mission
 
@@ -309,6 +309,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   otherwise healthy protected checks depend on a second large network download.
   The matrix also installs Mypy with its runtime dependencies before enforcing
   `pip check`, so each isolated environment remains internally consistent.
+- The Python 3.10 compatibility lane keeps exercising supported source modules
+  but skips the installed-wheel Sidekick smoke because the published `ud-tools`
+  package contract requires Python 3.11 or newer. A repository contract pins
+  that boundary so future packaging tests cannot reintroduce an impossible
+  Python 3.10 wheel installation.
 - CI Standard now force-reinstalls `maturin` without using the pip cache before
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its

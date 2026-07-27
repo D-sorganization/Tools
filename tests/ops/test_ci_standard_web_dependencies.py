@@ -9,6 +9,9 @@ PYTHON_TOOLCACHE_GUARD = REPO_ROOT / ".github" / "scripts" / "clean-python-toolc
 PYTHON_TOOLCACHE_RESTORE = (
     REPO_ROOT / ".github" / "scripts" / "restore-python-toolcache.sh"
 )
+STANDALONE_WHEEL_TEST = (
+    REPO_ROOT / "tests" / "integration" / "sidekick" / "test_standalone_wheel.py"
+)
 
 
 def test_ci_standard_installs_fastapi_multipart_parser() -> None:
@@ -205,6 +208,14 @@ def test_test_matrix_installs_mypy_runtime_dependencies() -> None:
             "python -m pip install --ignore-installed --no-deps mypy==1.13.0"
             not in install_step["run"]
         )
+
+
+def test_standalone_wheel_smoke_skips_unsupported_python() -> None:
+    """A wheel requiring 3.11 cannot be installed by the 3.10 matrix lane."""
+    test_source = STANDALONE_WHEEL_TEST.read_text(encoding="utf-8")
+
+    assert "requires Python >=3.11" in test_source
+    assert "sys.version_info < (3, 11)" in test_source
 
 
 def test_quality_gate_invokes_mypy_through_verified_python() -> None:
