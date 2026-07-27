@@ -41,9 +41,16 @@ export function ODESolverCalculator() {
     const result: Record<string, string> = {}
     for (const line of text.split('\n')) {
       const trimmed = line.trim()
-      if (!trimmed || !trimmed.includes(':')) continue
-      const [key, ...rest] = trimmed.split(':')
-      result[key.trim()] = rest.join(':').trim()
+      if (!trimmed) continue
+
+      // ⚡ Bolt Optimization: Replace split(':')/join(':') array allocations with single-pass indexOf/substring
+      // This prevents intermediate array allocations and handles values with multiple colons safely and efficiently.
+      const colonIdx = trimmed.indexOf(':')
+      if (colonIdx === -1) continue
+
+      const key = trimmed.substring(0, colonIdx).trim()
+      const value = trimmed.substring(colonIdx + 1).trim()
+      result[key] = value
     }
     return result
   }, [])
