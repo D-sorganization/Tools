@@ -267,6 +267,11 @@ body {
   border-color: var(--text-muted);
 }
 
+.btn:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
 .btn-primary {
   background: var(--accent-cyan);
   border-color: var(--accent-cyan);
@@ -289,6 +294,11 @@ body {
 .btn-estop:hover {
   background: #b91c1c;
   border-color: #b91c1c;
+}
+
+.btn-estop:focus-visible {
+  outline: 2px solid var(--color-error);
+  outline-offset: 2px;
 }
 
 /* Pulse indicators */
@@ -399,6 +409,16 @@ body {
 .tab-button.active-tab {
   color: var(--accent-cyan);
   border-bottom-color: var(--accent-cyan);
+}
+
+.tab-btn:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: -2px;
+}
+
+.tab-button:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: -2px;
 }
 
 /* --- Tuning & Comparison Grid --- */
