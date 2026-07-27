@@ -8,6 +8,7 @@ import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
+from ...persistence import unwrap_payload, wrap_state
 from .state import SidebarState
 
 __all__ = [
@@ -54,7 +55,8 @@ class SidekickStateProfileStore:
         profile_name = validate_profile_name(name)
         target = self._profile_path(profile_name)
         target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(json.dumps(state.to_dict(), indent=2), encoding="utf-8")
+        payload = wrap_state(state.to_dict())
+        target.write_text(json.dumps(payload.to_dict(), indent=2), encoding="utf-8")
         return SidekickStateProfileResult(
             ok=True,
             message="saved",
@@ -78,7 +80,8 @@ class SidekickStateProfileStore:
             payload = json.loads(source.read_text(encoding="utf-8"))
             if not isinstance(payload, dict):
                 raise ValueError("profile payload must be a JSON object")
-            state = SidebarState.from_dict(payload)
+            state_data, _version = unwrap_payload(payload)
+            state = SidebarState.from_dict(state_data)
         except (OSError, TypeError, ValueError, json.JSONDecodeError) as exc:
             return SidekickStateProfileResult(
                 ok=False,
