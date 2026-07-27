@@ -11,7 +11,14 @@ from pathlib import Path
 
 import pytest
 
-pytestmark = [pytest.mark.integration, pytest.mark.headless_safe]
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.headless_safe,
+    pytest.mark.skipif(
+        sys.version_info < (3, 11),
+        reason="ud-tools wheel requires Python >=3.11",
+    ),
+]
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 _WHEEL_MODULES = {
