@@ -76,3 +76,6 @@
 ## 2026-06-12 - Eliminate map/reduce overhead for parsing assignments
 **Learning:** Parsing simple string formats using `.split().reduce().map()` chains creates unnecessary array allocations, function calls, and closures on every pass, which adds noticeable garbage collection pressure when executing hot paths or frequent input changes.
 **Action:** Replace string processing array chains with single-pass `for` loops and standard `indexOf`/`substring` operations to eliminate closure allocations and minimize object creations.
+## 2025-02-14 - Replace Math.min/max spread with for-loop in trend axis
+**Learning:** Using the spread operator (`...`) with `Math.min` and `Math.max` on large arrays (like chart data points in `trendAxis.ts`) can throw a `RangeError: Maximum call stack size exceeded` because the engine tries to push every array element onto the call stack as a distinct function argument.
+**Action:** Replace `Math.min(...values)` and `Math.max(...values)` with a single-pass `for` loop to compute the `lo` and `hi` dynamically without spread overhead.
