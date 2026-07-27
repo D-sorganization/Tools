@@ -169,7 +169,8 @@ class TestPullRequestTargetWorkflowHardening:
     def test_pull_request_target_workflows_guard_untrusted_head_checkout(self) -> None:
         failures: list[str] = []
         for path in sorted((_REPO_ROOT / ".github" / "workflows").glob("*.yml")):
-            workflow = yaml.load(
+            # BaseLoader parses workflow YAML as scalar-only test data.
+            workflow = yaml.load(  # nosec B506
                 path.read_text(encoding="utf-8"), Loader=yaml.BaseLoader
             )
             if not isinstance(workflow, dict):
