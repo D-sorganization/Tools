@@ -298,7 +298,7 @@ jobs:
 
       - name: Setup Node.js (Windows)
         if: matrix.platform.label == 'windows-x64'
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version: "24"
           cache: "npm"
