@@ -127,6 +127,8 @@ jobs:
       PIP_RETRIES: "8"
       PYTHONNOUSERSITE: "1"
     steps:
+      - name: Git HTTP/1.1 workaround
+        run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
         with:
           # The PR merge commit and both parents are sufficient for the
@@ -472,6 +474,8 @@ jobs:
       PYTHONNOUSERSITE: "1"
       BRANCH_NAME: ${{ github.head_ref || github.ref_name }}
     steps:
+      - name: Git HTTP/1.1 workaround
+        run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
         with:
           # Keep the matrix checkout bounded for the same merge-parent
@@ -898,6 +902,8 @@ jobs:
       CARGO_TERM_COLOR: always
       RUST_MIN_STACK: "268435456"
     steps:
+      - name: Git HTTP/1.1 workaround
+        run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
 
       - name: Check for Rust changes
