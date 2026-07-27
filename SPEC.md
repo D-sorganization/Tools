@@ -2665,6 +2665,10 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - **2026-07-14**: fix(security) — Added structural validation to the symbolic solver backend endpoints (`/solve`, `/derivative`, `/simplify`) before handing untrusted user input to `sympy.parse_expr`. This mitigates a critical code injection vulnerability where malicious AST constructs (e.g. `().__class__`) could be executed due to `parse_expr`'s internal use of `eval`.
 
+## 1.1.415 - Replaced .filter().includes() with Set
+
+- **2026-07-17**: perf(SignalList) — Replaced chained `.filter()` and `.includes()` array passes with a pre-computed `Set` for O(N) constant-time lookups to improve high-frequency execution speed in `SignalList.tsx`.
+
 ### Version 1.1.250
 
 - 2024-07-23: fix(ux, #3919) - Improve accessibility of standard buttons in data processor web app by adding `focus-visible` styling (focus rings) to the global `.btn` class.

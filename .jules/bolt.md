@@ -69,6 +69,9 @@
 ## 2024-07-16 - TabBar O(N^2) Optimization
 **Learning:** Optimizing `Array.filter` chained with `includes` on a tiny array (10 items) to a `Set` offers zero measurable improvement.
 **Action:** Avoid micro-optimizing operations that run on tiny static arrays executed during initialization or renders.
+## 2026-06-25 - Avoid O(N^2) complexity with array.filter().includes()
+**Learning:** Using `array1.filter(item => !array2.includes(item))` causes O(N^2) execution complexity because `includes` is called on every iteration, leading to massive CPU overhead.
+**Action:** Always pre-compute a `Set` from the target array and use `.has()` for O(1) constant-time lookups to avoid chained `.filter().includes()` passes.
 
 ## 2024-05-31 - Fast NaN checks using Number.isNaN vs x !== x
 **Learning:** In modern JavaScript engines like V8 (used in Chrome and Node.js), `Number.isNaN(v)` is an intrinsic function that is heavily optimized and compiled down to the exact same machine code instructions as the manual check `v !== v`. Replacing `Number.isNaN()` with `v !== v` does not provide any measurable performance improvement and only serves to degrade code readability.
