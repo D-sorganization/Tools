@@ -1729,6 +1729,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-07-26 | 1.5.3 | fix(ci): keep Detect Secrets scanning the complete current repository tree while using a shallow checkout and a 30-minute job budget, avoiding full-history transfer exhaustion on the shared runner fleet; an ops contract pins both requirements. |
 | 2026-07-25 | 1.5.4 | fix(ci): install `pytz` explicitly in the `data_processor_core` maturin import gate so Python 3.12 self-hosted runners can import pandas-backed consumer code after the Rust extension wheel is built. |
 | 2026-07-25 | 1.5.3 | fix(ci): keep the Performance Regression benchmark gate passing for Dependabot pull requests by skipping the nonessential benchmark-comment write when the pull-request token is read-only, while still uploading benchmark artifacts. |
+| 2026-07-26 | 1.5.3 | fix(test): mark the anti-phantom workflow BaseLoader contract with a targeted Bandit B506 suppression, preserving string-only workflow parsing while keeping security hooks green. |
 | 2026-07-25 | 1.5.3 | fix(ci): scope each Cross-Repo Python Integration consumer checkout to the source, shared-contract tests, and UI tree it actually installs or exercises, keeping the 30-minute contract lane available for installation and tests instead of exhausting it on full-repository transfer. |
 | 2026-07-25 | 1.5.3 | fix(sidekick, #3938): add an idempotent aggregate sidebar shutdown contract that delegates once to every live runtime tab and runs during sidebar or generic host-window close, preventing PTY-backed Terminal tabs from retaining shell and bridge processes after a host launcher exits. |
 | 2026-06-21 | 1.1.7792 | fix(ci): route the Cross-Repo Python Integration downstream contract matrix to Linux self-hosted runners and fall back to `github.token` when `RUNNER_CHECK_TOKEN` is unset, preventing PowerShell parsing failures and checkout token omissions. |
@@ -2677,3 +2678,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+## 2024-07-24 (Bolt): Column reconciliation optimization
+
+- Updated column reconciliation optimization to use a Set for O(1) lookups.
