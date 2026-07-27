@@ -20,37 +20,50 @@ REPO_ROOT = Path(__file__).resolve().parents[5 if "tests" in __file__ else 4]
 TOOLS_BASELINE_HASHES: dict[str, str] = {
     "src/shared/python/chat/_chat_dock_widget_qt.py": "".join(
         (
-            "ad0b8816",
-            "f263ea59",
-            "cbbb7ec0",
-            "5f9cd83f",
-            "1d2777de",
-            "1e6c2105",
-            "965c39fa",
-            "ea2f53a3",
+            "6cb29814",
+            "9dc3f377",
+            "84687465",
+            "211950a2",
+            "2825d146",
+            "8efd729e",
+            "8199b4a0",
+            "8bbf9caf",
         )
     ),
     "src/shared/python/chat/models.py": "".join(
         (
-            "b3d8abdc",
-            "363151d3",
-            "6f029819",
-            "d73551d9",
-            "6442db4f",
-            "972e5b55",
-            "1355da1c",
-            "274c3a0a",
+            "d637e81d",
+            "11204f2a",
+            "01c77e81",
+            "5d2dd8ae",
+            "fc68033a",
+            "b6e96a0e",
+            "23739cf3",
+            "79a90c4f",
         )
     ),
     "src/shared/python/chat/tests/__init__.py": "5a0bba6299ce217de8cbfc2e20a354ccf479e8d45152f69ad2543d9183d07812",  # noqa: E501
-    "src/shared/python/chat/tests/test_chat.py": "90ee6b94e6e8cc0eade4a5067bc2d9dec86d7cd0c02181adeff17761b56f03f6",  # noqa: E501
+    "src/shared/python/chat/tests/test_chat.py": "59fa5f6e09f1e2b5e3a21f2b54f20efdbaede1977b791b9331aa584ed14f3ffc",  # noqa: E501
 }
+
+
+def _normalize_source_bytes(source: bytes) -> bytes:
+    """Return UTF-8 source with platform-independent LF line endings."""
+    return source.replace(b"\r\n", b"\n").replace(b"\r", b"\n")
+
+
+def test_source_normalization_is_line_ending_invariant() -> None:
+    """Hash input must not depend on the checkout's text line endings."""
+    expected = b"first\nsecond\nthird\n"
+    assert _normalize_source_bytes(b"first\nsecond\nthird\n") == expected
+    assert _normalize_source_bytes(b"first\r\nsecond\r\nthird\r\n") == expected
+    assert _normalize_source_bytes(b"first\rsecond\rthird\r") == expected
 
 
 def _runtime_equivalent_source(relative_path: str) -> bytes:
     """Return the source bytes that should match the Tools runtime baseline."""
-    source = (REPO_ROOT / relative_path).read_text(encoding="utf-8")
-    return source.encode("utf-8")
+    source = (REPO_ROOT / relative_path).read_bytes()
+    return _normalize_source_bytes(source)
 
 
 @pytest.mark.parametrize(

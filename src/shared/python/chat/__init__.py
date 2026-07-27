@@ -98,6 +98,14 @@ def __getattr__(name: str) -> Any:
         from .router_factory import create_chat_router
 
         return create_chat_router
+    if name in {
+        "ChatWebSocketState",
+        "DisconnectLogConfig",
+        "run_chat_websocket_protocol",
+    }:
+        from . import websocket_protocol
+
+        return getattr(websocket_protocol, name)
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 
@@ -119,7 +127,10 @@ __all__ = [
     "ChatServiceBase",
     "ChatSession",
     "ChatMessage",
+    "ChatWebSocketState",
+    "DisconnectLogConfig",
     "create_chat_router",
+    "run_chat_websocket_protocol",
     "TerminalAgentEvent",
     "TerminalAgentProviderInfo",
     "TerminalAgentSessionInfo",

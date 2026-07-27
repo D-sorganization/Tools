@@ -7,6 +7,7 @@ TDD: Tests were written before filling in this stub to drive the coverage need.
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import pytest
@@ -103,6 +104,75 @@ class TestSidekickStateProfileStoreSaveLoad:
 
         assert result.ok is True
         assert result.state is not None
+
+    def test_embedded_and_standalone_stores_share_profile_format(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Profiles round-trip directly through both public store APIs."""
+        from sidekick.standalone.session_store import StandaloneSessionStore
+        from sidekick.ui.tools_sidebar.state import SidebarState
+        from sidekick.ui.tools_sidebar.state_profiles import (
+            SidekickStateProfileStore,
+        )
+
+        storage_root = tmp_path / "shared"
+        embedded = SidekickStateProfileStore(storage_root)
+        standalone = StandaloneSessionStore(storage_root)
+        expected = SidebarState(dock_area="left", active_tab="calculator")
+
+        embedded.save_profile("shared_profile", expected)
+        standalone_payload = standalone.load_profile("shared_profile")
+        assert standalone_payload.data == expected.to_dict()
+
+        standalone.save_profile("shared_profile", standalone_payload)
+        embedded_result = embedded.load_profile("shared_profile")
+        assert embedded_result.ok is True
+        assert embedded_result.state == expected
+
+    def test_saved_profile_declares_current_schema_version(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """Embedded persistence writes the canonical versioned artifact."""
+        from sidekick.persistence import (
+            PROFILE_SCHEMA_VERSION,
+            PROFILE_SCHEMA_VERSION_KEY,
+        )
+        from sidekick.ui.tools_sidebar.state import SidebarState
+        from sidekick.ui.tools_sidebar.state_profiles import (
+            SidekickStateProfileStore,
+        )
+
+        store = SidekickStateProfileStore(tmp_path / "data")
+        result = store.save_profile("versioned", SidebarState())
+        assert result.path is not None
+
+        payload = json.loads(result.path.read_text(encoding="utf-8"))
+        assert payload[PROFILE_SCHEMA_VERSION_KEY] == PROFILE_SCHEMA_VERSION
+
+    def test_legacy_profile_is_migrated_on_load(
+        self,
+        tmp_path: Path,
+    ) -> None:
+        """A pre-schema embedded profile remains loadable with a clear warning."""
+        from sidekick.persistence import SchemaMigration
+        from sidekick.ui.tools_sidebar.state import SidebarState
+        from sidekick.ui.tools_sidebar.state_profiles import (
+            SidekickStateProfileStore,
+        )
+
+        store = SidekickStateProfileStore(tmp_path / "data")
+        legacy_path = store.profiles_dir / "legacy.json"
+        legacy_path.parent.mkdir(parents=True)
+        expected = SidebarState(dock_area="left")
+        legacy_path.write_text(json.dumps(expected.to_dict()), encoding="utf-8")
+
+        with pytest.warns(SchemaMigration):
+            result = store.load_profile("legacy")
+
+        assert result.ok is True
+        assert result.state == expected
 
     def test_load_missing_profile_returns_not_ok(self, tmp_path: Path) -> None:
         """Precondition: profile file does not exist.
