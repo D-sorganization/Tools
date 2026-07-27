@@ -1,34 +1,77 @@
-# Completist Report: 2026-07-23
+# Completist Report: 2026-07-26
 
 ## Executive Summary
-- **Critical Gaps**: 64
-- **Feature Gaps (TRACKED_TASK)**: 80
+- **Critical Gaps**: 168
+- **Feature Gaps (TRACKED_TASK)**: 82
 - **Technical Debt**: 61
-- **Documentation Gaps**: 0
+- **Documentation Gaps**: 4
 
 ## Visualization
 ### Status Overview
 ```mermaid
 pie title Completion Status
-    "Impl Gaps (Critical)" : 64
-    "Feature Requests (TRACKED_TASK)" : 80
+    "Impl Gaps (Critical)" : 168
+    "Feature Requests (TRACKED_TASK)" : 82
     "Technical Debt (TRACKED_DEFECT)" : 61
-    "Doc Gaps" : 0
+    "Doc Gaps" : 4
 ```
 
 ### Top Impacted Modules
 ```mermaid
 pie title Issues by Module
-    "shared" : 46
-    ".gaai" : 44
-    ".agent" : 26
-    ".claude" : 24
-    "web_applications" : 13
+    "shared" : 89
+    ".gaai" : 62
+    "pendulum_simulator" : 29
+    ".agent" : 29
+    ".claude" : 26
 ```
 
 ## Critical Incomplete (Top 50)
 | File | Line | Type | Impact | Coverage | Complexity |
 |---|---|---|---|---|---|
+| `src/shared/python/ai/integrations/github_mcp/integration.py` | 36 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/integrations/github_mcp/integration.py` | 38 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/client.py` | 51 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/client.py` | 52 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/client.py` | 53 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/notebooklm_server.py` | 72 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/notebooklm_server.py` | 73 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/notebooklm_server.py` | 74 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/notebooklm_server.py` | 77 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/notebooklm_server.py` | 78 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/notebooklm_server.py` | 85 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/notebooklm_server.py` | 86 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/notebooklm_server.py` | 87 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/pool.py` | 38 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/pool.py` | 39 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/pool.py` | 40 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/pool.py` | 41 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/pool.py` | 42 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/pool.py` | 43 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/widgets/health_query_api.py` | 68 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/mcp/widgets/health_query_api.py` | 69 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/skills/builtin/summarize.py` | 22 | Stub | 5 | 3 | 4 |
+| `src/shared/python/ai/skills/registry.py` | 77 | Stub | 5 | 3 | 4 |
+| `src/shared/python/chat/condensation/strategy.py` | 32 | Stub | 5 | 3 | 4 |
+| `src/shared/python/chat/export/copy_clipboard.py` | 29 | Stub | 5 | 3 | 4 |
+| `src/shared/python/model_generation/editor/editor_clipboard.py` | 36 | Stub | 5 | 3 | 4 |
+| `src/shared/python/model_generation/editor/editor_modifications.py` | 50 | Stub | 5 | 3 | 4 |
+| `src/shared/python/model_generation/editor/editor_modifications.py` | 52 | Stub | 5 | 3 | 4 |
+| `src/shared/python/model_generation/editor/editor_modifications.py` | 54 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py` | 97 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py` | 99 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py` | 101 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py` | 103 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/tools_sidebar/os_terminal.py` | 105 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/tools_sidebar/tab_visibility.py` | 25 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/tools_sidebar/tab_visibility.py` | 28 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/widgets/mixins/data_processor_ops.py` | 60 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/widgets/mixins/data_processor_ops.py` | 61 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/widgets/mixins/data_processor_ops.py` | 62 | Stub | 5 | 3 | 4 |
+| `src/shared/python/sidekick/ui/widgets/mixins/data_processor_ops.py` | 63 | Stub | 5 | 3 | 4 |
+| `src/shared/python/signal_toolkit/widget_protocol.py` | 127 | Stub | 5 | 3 | 4 |
+| `src/shared/python/signal_toolkit/widget_protocol.py` | 128 | Stub | 5 | 3 | 4 |
+| `src/shared/python/signal_toolkit/widget_protocol.py` | 136 | Stub | 5 | 3 | 4 |
 | `src/shared/python/ai/adapters/base.py` | 201 | NotImplementedError | 5 | 3 | 4 |
 | `src/shared/python/ai/adapters/gemini_adapter.py` | 28 | NotImplementedError | 5 | 3 | 4 |
 | `src/shared/python/ai/adapters/gemini_adapter.py` | 95 | NotImplementedError | 5 | 3 | 4 |
@@ -36,49 +79,6 @@ pie title Issues by Module
 | `src/shared/python/ai/adapters/gemini_adapter.py` | 194 | NotImplementedError | 5 | 3 | 4 |
 | `src/shared/python/ai/adapters/gemini_adapter.py` | 222 | NotImplementedError | 5 | 3 | 4 |
 | `src/shared/python/ai/auth/authentication.py` | 15 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/ai/auth/authentication.py` | 327 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/ai/auth/authentication.py` | 330 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/ai/auth/authentication.py` | 341 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/ai/auth/authentication.py` | 355 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/ai/auth/authentication.py` | 358 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/ai/auth/authentication.py` | 369 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/ai/auth/authentication.py` | 398 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/ai/gui/_provider_config_widgets.py` | 66 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/ai/integrations/obsidian.py` | 4 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/chat/router_factory.py` | 316 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/chat/router_factory.py` | 351 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/chat/service_base.py` | 424 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/chat/service_base.py` | 433 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/chat/service_base.py` | 438 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/chat/service_base.py` | 450 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/data_processor_io/rust_engine.py` | 18 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/data_processor_io/rust_engine.py` | 312 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/data_processor_io/rust_engine.py` | 396 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/data_processor_io/rust_engine.py` | 403 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/data_processor_io/rust_engine.py` | 475 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/model_generation/explorer/model_explorer.py` | 61 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/state_profile_actions.py` | 21 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/state_profile_actions.py` | 24 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_display_names.py` | 78 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py` | 31 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py` | 34 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py` | 37 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py` | 40 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py` | 43 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_popout.py` | 46 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_settings_panel.py` | 45 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_settings_panel.py` | 48 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_settings_panel.py` | 51 | NotImplementedError | 5 | 3 | 4 |
-| `src/shared/python/sidekick/ui/tools_sidebar/tab_settings_panel.py` | 56 | NotImplementedError | 5 | 3 | 4 |
-| `scripts/legacy_tools/code_quality_check.py` | 37 | NotImplementedError | 3 | 2 | 4 |
-| `src/tools/quality_utils.py` | 41 | NotImplementedError | 3 | 2 | 4 |
-| `generate_real_assessments.py` | 39 | NotImplementedError | 1 | 2 | 4 |
-| `generate_real_assessments.py` | 60 | NotImplementedError | 1 | 2 | 4 |
-| `generate_real_assessments.py` | 66 | NotImplementedError | 1 | 2 | 4 |
-| `generate_real_assessments.py` | 77 | NotImplementedError | 1 | 2 | 4 |
-| `generate_real_assessments.py` | 107 | NotImplementedError | 1 | 2 | 4 |
-| `generate_real_assessments.py` | 244 | NotImplementedError | 1 | 2 | 4 |
-| `src/movement_optimizer/gui/animation_control.py` | 52 | NotImplementedError | 1 | 2 | 4 |
 
 ## Feature Gap Matrix
 | Module | Feature Gap | Type |
@@ -208,30 +208,30 @@ Prioritized by Impact (High) and Complexity (Low).
 | 3 | `src/shared/python/ai/auth/authentication.py` | f"OAuth login for provider {provider!r} is not implemented (TODO #5227). " | 5/3/3 |
 | 4 | `src/shared/python/ai/auth/authentication.py` | f"Email/password login for {email!r} is not implemented (TODO #5227). " | 5/3/3 |
 | 5 | `src/shared/python/ai/auth/authentication.py` | # TODO(#5227): Exchange refresh token for new access token | 5/3/3 |
-| 6 | `src/shared/python/ai/adapters/base.py` | # sufficient. The default implementations raise NotImplementedError | 5/3/4 |
-| 7 | `src/shared/python/ai/adapters/gemini_adapter.py` | * raise :class:`NotImplementedError` if a caller passes a non-empty | 5/3/4 |
-| 8 | `src/shared/python/ai/adapters/gemini_adapter.py` | non-empty ``tools`` argument raises :class:`NotImplementedError` rather | 5/3/4 |
-| 9 | `src/shared/python/ai/adapters/gemini_adapter.py` | raise NotImplementedError( | 5/3/4 |
-| 10 | `src/shared/python/ai/adapters/gemini_adapter.py` | NotImplementedError: If ``tools`` is non-empty (see issue #2764). | 5/3/4 |
-| 11 | `src/shared/python/ai/adapters/gemini_adapter.py` | NotImplementedError: If ``tools`` is non-empty (see issue #2764). | 5/3/4 |
-| 12 | `src/shared/python/ai/auth/authentication.py` | ``NotImplementedError`` unconditionally (Phase 1 of issue #2757). | 5/3/4 |
-| 13 | `src/shared/python/ai/auth/authentication.py` | Never returns — always raises ``NotImplementedError``. | 5/3/4 |
-| 14 | `src/shared/python/ai/auth/authentication.py` | NotImplementedError: Always. Real OAuth (PKCE + token exchange + | 5/3/4 |
-| 15 | `src/shared/python/ai/auth/authentication.py` | raise NotImplementedError( | 5/3/4 |
-| 16 | `src/shared/python/ai/auth/authentication.py` | Never returns — always raises ``NotImplementedError``. | 5/3/4 |
-| 17 | `src/shared/python/ai/auth/authentication.py` | NotImplementedError: Always. Email/password authentication requires | 5/3/4 |
-| 18 | `src/shared/python/ai/auth/authentication.py` | raise NotImplementedError( | 5/3/4 |
-| 19 | `src/shared/python/ai/auth/authentication.py` | ``login_with_email_password`` raising ``NotImplementedError``) no | 5/3/4 |
-| 20 | `src/shared/python/ai/gui/_provider_config_widgets.py` | raise NotImplementedError | 5/3/4 |
+| 6 | `src/shared/python/ai/integrations/github_mcp/integration.py` | is_started | 5/3/4 |
+| 7 | `src/shared/python/ai/integrations/github_mcp/integration.py` | add_server | 5/3/4 |
+| 8 | `src/shared/python/ai/mcp/client.py` | start | 5/3/4 |
+| 9 | `src/shared/python/ai/mcp/client.py` | stop | 5/3/4 |
+| 10 | `src/shared/python/ai/mcp/client.py` | request | 5/3/4 |
+| 11 | `src/shared/python/ai/mcp/notebooklm_server.py` | search | 5/3/4 |
+| 12 | `src/shared/python/ai/mcp/notebooklm_server.py` | summarize | 5/3/4 |
+| 13 | `src/shared/python/ai/mcp/notebooklm_server.py` | metadata | 5/3/4 |
+| 14 | `src/shared/python/ai/mcp/notebooklm_server.py` | list_notebooks | 5/3/4 |
+| 15 | `src/shared/python/ai/mcp/notebooklm_server.py` | create_notebook | 5/3/4 |
+| 16 | `src/shared/python/ai/mcp/notebooklm_server.py` | follow_citation | 5/3/4 |
+| 17 | `src/shared/python/ai/mcp/notebooklm_server.py` | attach_to_chat | 5/3/4 |
+| 18 | `src/shared/python/ai/mcp/notebooklm_server.py` | read_source | 5/3/4 |
+| 19 | `src/shared/python/ai/mcp/pool.py` | is_connected | 5/3/4 |
+| 20 | `src/shared/python/ai/mcp/pool.py` | connect | 5/3/4 |
 
 ## Issues Created
-- Created `docs/assessments/issues/Issue_234735_Incomplete_NotImplementedError_in_base_py_201.md`
-- Created `docs/assessments/issues/Issue_234732_Incomplete_NotImplementedError_in_gemini_adapter_py_28.md`
-- Created `docs/assessments/issues/Issue_234733_Incomplete_NotImplementedError_in_gemini_adapter_py_95.md`
-- Created `docs/assessments/issues/Issue_234734_Incomplete_NotImplementedError_in_gemini_adapter_py_173.md`
-- Created `docs/assessments/issues/Issue_234739_Incomplete_NotImplementedError_in_gemini_adapter_py_194.md`
-- Created `docs/assessments/issues/Issue_234740_Incomplete_NotImplementedError_in_gemini_adapter_py_222.md`
-- Created `docs/assessments/issues/Issue_234741_Incomplete_NotImplementedError_in_authentication_py_15.md`
-- Created `docs/assessments/issues/Issue_234742_Incomplete_NotImplementedError_in_authentication_py_327.md`
-- Created `docs/assessments/issues/Issue_234743_Incomplete_NotImplementedError_in_authentication_py_330.md`
-- Created `docs/assessments/issues/Issue_234744_Incomplete_NotImplementedError_in_authentication_py_341.md`
+- Created `docs/assessments/issues/Issue_2027_Incomplete_Stub_in_integration_py_36.md`
+- Created `docs/assessments/issues/Issue_2028_Incomplete_Stub_in_integration_py_38.md`
+- Created `docs/assessments/issues/Issue_2029_Incomplete_Stub_in_client_py_51.md`
+- Created `docs/assessments/issues/Issue_2030_Incomplete_Stub_in_client_py_52.md`
+- Created `docs/assessments/issues/Issue_2031_Incomplete_Stub_in_client_py_53.md`
+- Created `docs/assessments/issues/Issue_2032_Incomplete_Stub_in_notebooklm_server_py_72.md`
+- Created `docs/assessments/issues/Issue_2033_Incomplete_Stub_in_notebooklm_server_py_73.md`
+- Created `docs/assessments/issues/Issue_2034_Incomplete_Stub_in_notebooklm_server_py_74.md`
+- Created `docs/assessments/issues/Issue_2035_Incomplete_Stub_in_notebooklm_server_py_77.md`
+- Created `docs/assessments/issues/Issue_2036_Incomplete_Stub_in_notebooklm_server_py_78.md`
