@@ -7,6 +7,8 @@ import types
 from dataclasses import replace
 from logging import getLogger
 from pathlib import Path
+from types import SimpleNamespace
+from unittest.mock import MagicMock
 
 ROOT = Path(__file__).resolve().parents[4]
 if str(ROOT) not in sys.path:
@@ -51,6 +53,32 @@ config_pkg.environment = environment
 import pytest
 
 pytest.importorskip("PyQt6.QtWidgets", reason="PyQt6.QtWidgets requires display server")
+
+
+def test_initial_history_load_does_not_emit_before_controllers_exist() -> None:
+    """Startup history restore must not invoke the session-loaded Qt slot."""
+    from src.shared.python.ai.gui.assistant_panel import AIAssistantPanel
+
+    restored_context = object()
+    session_manager = MagicMock()
+    session_manager.list_sessions.return_value = [
+        {"id": "active-session", "archived": False}
+    ]
+    session_manager.load_session.return_value = restored_context
+    panel = SimpleNamespace(
+        _session_manager=session_manager,
+        _context=None,
+        _refresh_prompt_memory=MagicMock(),
+    )
+
+    AIAssistantPanel._load_history(panel)
+
+    session_manager.load_session.assert_called_once_with(
+        "active-session",
+        emit=False,
+    )
+    assert panel._context is restored_context
+    panel._refresh_prompt_memory.assert_called_once()
 
 
 def test_memory_sync_loads_archived_sessions_without_switching_context(

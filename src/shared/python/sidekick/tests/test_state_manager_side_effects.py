@@ -52,3 +52,39 @@ def test_import_has_no_filesystem_side_effects() -> None:
         expected = "[]"
         actual = res.stdout.strip()
         assert actual == expected, f"Eager folders created: {actual}"
+
+
+def test_calculator_state_mixin_import_avoids_deprecated_global() -> None:
+    """Calculator widgets must import when Sidekick deprecations are errors."""
+    tests_dir = os.path.dirname(os.path.abspath(__file__))
+    tools_root = os.path.abspath(os.path.join(tests_dir, "..", "..", "..", "..", ".."))
+    env = os.environ.copy()
+    env["PYTHONPATH"] = os.path.pathsep.join(
+        [
+            os.path.join(tools_root, "src", "shared", "python"),
+            os.path.join(tools_root, "src", "python", "src"),
+            os.path.join(tools_root, "src"),
+        ]
+    )
+    command = [
+        sys.executable,
+        "-c",
+        (
+            "import warnings; "
+            "warnings.filterwarnings("
+            "'error', category=DeprecationWarning, module=r'sidekick(?:\\.|$)'); "
+            "from sidekick.ui.mixins.calculator_state_mixin "
+            "import CalculatorStateMixin; "
+            "assert CalculatorStateMixin"
+        ),
+    ]
+
+    result = subprocess.run(
+        command,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+
+    assert result.returncode == 0, result.stderr

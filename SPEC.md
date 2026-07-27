@@ -28,6 +28,8 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.5.4                                      |
 | **Spec Version**        | 1.5.4                                      |
+| **Current Version**     | 1.5.7                                      |
+| **Spec Version**        | 1.5.7                                      |
 | **Last Spec Update**    | 2026-07-27                                 |
 
 ## 2. Purpose & Mission
@@ -42,6 +44,20 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
+
+### 2026-07-27 Sidekick saved-session startup safety
+
+- The PyQt6 Sidekick panel restores its initial saved chat session without
+  emitting `session_loaded` before message-display controllers exist. Interactive
+  session changes continue to emit normally, while source and packaged desktop
+  startup remain safe when an active session is already present.
+
+### 2026-07-27 Sidekick Units warnings-as-errors compatibility
+
+- Sidekick calculator state initialization uses `get_state_manager()` instead
+  of the deprecated global singleton. Hosts that promote Sidekick deprecations
+  to errors therefore render the real PyQt6 Units converter rather than an
+  optional-tab placeholder (Tools issue #3950).
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
@@ -330,6 +346,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   otherwise healthy protected checks depend on a second large network download.
   The matrix also installs Mypy with its runtime dependencies before enforcing
   `pip check`, so each isolated environment remains internally consistent.
+- The Python 3.10 compatibility lane keeps exercising supported source modules
+  but skips the installed-wheel Sidekick smoke because the published `ud-tools`
+  package contract requires Python 3.11 or newer. A repository contract pins
+  that boundary so future packaging tests cannot reintroduce an impossible
+  Python 3.10 wheel installation.
+- Privileged-workflow hardening tests parse only trusted repository workflows
+  with `yaml.BaseLoader` so GitHub Actions' `on` key cannot be coerced under
+  YAML 1.1; the security-scanner exception is scoped to that exact load site.
 - CI Standard now force-reinstalls `maturin` without using the pip cache before
   building the required Python 3.11 `tools_core` Rust wheel, repairing
   self-hosted runner tool-cache states where the package is present but its

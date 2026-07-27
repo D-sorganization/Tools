@@ -254,7 +254,7 @@ class AIAssistantPanel(QWidget):
         active = [s for s in sessions if not s.get("archived", False)]
         if active:
             latest_id = active[0]["id"]
-            loaded = self._session_manager.load_session(latest_id)
+            loaded = self._session_manager.load_session(latest_id, emit=False)
             if loaded:
                 self._context = loaded
                 self._refresh_prompt_memory()
