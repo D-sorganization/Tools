@@ -308,7 +308,11 @@ class TestChatDockDisconnectLifecycle:
         assert widget._is_streaming is False
         assert widget._send_btn.enabled is True
         assert timer.started_ms == 3000
-        assert widget._status_label.text == "Disconnected - retrying in 3s..."
+        expected_status = (
+            "Sidekick API unavailable — retrying in 3s. "
+            "Set UD_CHAT_WS_URL if the local API is external."
+        )
+        assert widget._status_label.text == expected_status
 
 
 class TestChatDockControls:
