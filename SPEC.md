@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.6                                      |
-| **Spec Version**        | 1.5.6                                      |
+| **Current Version**     | 1.5.7                                      |
+| **Spec Version**        | 1.5.7                                      |
 | **Last Spec Update**    | 2026-07-27                                 |
 
 ## 2. Purpose & Mission
@@ -49,6 +49,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   emitting `session_loaded` before message-display controllers exist. Interactive
   session changes continue to emit normally, while source and packaged desktop
   startup remain safe when an active session is already present.
+
+### 2026-07-27 Sidekick Units warnings-as-errors compatibility
+
+- Sidekick calculator state initialization uses `get_state_manager()` instead
+  of the deprecated global singleton. Hosts that promote Sidekick deprecations
+  to errors therefore render the real PyQt6 Units converter rather than an
+  optional-tab placeholder (Tools issue #3950).
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
