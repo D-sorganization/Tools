@@ -29,7 +29,7 @@ jobs:
       - name: Set up Python
         env:
           AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           python-version: "3.12"
           cache: pip
@@ -62,7 +62,11 @@ jobs:
           path: src/data_processing/data_processor/python/benchmarks/benchmark-results.json
 
       - name: Comment benchmark results on PR
-        if: github.event_name == 'pull_request'
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.actor != 'dependabot[bot]' &&
+          github.event.pull_request.head.repo.full_name == github.repository
+        continue-on-error: true
         uses: actions/github-script@v9
         with:
           script: |

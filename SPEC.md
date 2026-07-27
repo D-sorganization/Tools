@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.3                                      |
-| **Spec Version**        | 1.5.3                                      |
-| **Last Spec Update**    | 2026-07-26                                 |
+| **Current Version**     | 1.5.4                                      |
+| **Spec Version**        | 1.5.4                                      |
+| **Last Spec Update**    | 2026-07-27                                 |
 
 ## 2. Purpose & Mission
 
@@ -1696,6 +1696,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-27 | 1.5.4 | test(ci): document the `yaml.BaseLoader` Bandit suppression in the pull_request_target workflow-hardening test so the security hook recognizes the workflow parser as non-object-constructing. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |
 | 2026-07-26 | 1.5.3 | fix(ci): isolate both protected Python jobs in per-job virtual environments after validating the persistent setup-python runtime; repair and import-probe the matrix NumPy/SciPy stack with compatible bounds, and reinstall OpenCV without dependency resolution so it cannot replace the verified NumPy wheel. |
 | 2026-07-26 | 1.5.3 | fix(import-aliases, #3936): make canonical shared-module aliases satisfy `runpy` code lookup so packaged compatibility commands such as `python -m sidekick` execute their parent-owned `shared.python` implementation; include `contracts` in the identity-coalescing alias set and keep Sidekick agent DbC imports on the canonical shared path. |
@@ -1705,6 +1706,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-07-26 | 1.5.3 | test(chat, #3936): keep `src/shared/python/chat` as the sole reusable chat implementation while explicitly constraining the supported `src/chat` compatibility package to a one-file alias, so future copied implementations fail the public contract without rejecting the intentional legacy import surface. |
 | 2026-07-26 | 1.5.3 | fix(chat, #3936): enforce the launcher capability trust boundary inside the canonical native WebSocket URL builder, forwarding the ephemeral token only to verified localhost or loopback IP peers and never to remote `ws://`/`wss://` overrides; contract tests cover remote omission plus IPv4, IPv6, and localhost authentication. |
 | 2026-07-26 | 1.5.3 | fix(ci): keep Detect Secrets scanning the complete current repository tree while using a shallow checkout and a 30-minute job budget, avoiding full-history transfer exhaustion on the shared runner fleet; an ops contract pins both requirements. |
+| 2026-07-25 | 1.5.4 | fix(ci): install `pytz` explicitly in the `data_processor_core` maturin import gate so Python 3.12 self-hosted runners can import pandas-backed consumer code after the Rust extension wheel is built. |
+| 2026-07-25 | 1.5.3 | fix(ci): keep the Performance Regression benchmark gate passing for Dependabot pull requests by skipping the nonessential benchmark-comment write when the pull-request token is read-only, while still uploading benchmark artifacts. |
 | 2026-07-25 | 1.5.3 | fix(ci): scope each Cross-Repo Python Integration consumer checkout to the source, shared-contract tests, and UI tree it actually installs or exercises, keeping the 30-minute contract lane available for installation and tests instead of exhausting it on full-repository transfer. |
 | 2026-07-25 | 1.5.3 | fix(sidekick, #3938): add an idempotent aggregate sidebar shutdown contract that delegates once to every live runtime tab and runs during sidebar or generic host-window close, preventing PTY-backed Terminal tabs from retaining shell and bridge processes after a host launcher exits. |
 | 2026-06-21 | 1.1.7792 | fix(ci): route the Cross-Repo Python Integration downstream contract matrix to Linux self-hosted runners and fall back to `github.token` when `RUNNER_CHECK_TOKEN` is unset, preventing PowerShell parsing failures and checkout token omissions. |
