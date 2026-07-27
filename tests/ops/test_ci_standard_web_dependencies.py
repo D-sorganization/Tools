@@ -158,6 +158,29 @@ def test_ci_standard_rejects_semantically_broken_cached_python() -> None:
         assert "python -m pip --version" in verify_step["run"]
         assert 'pip\\ *" from "*' in verify_step["run"]
 
+        venv_step = job["steps"][setup_index + 2]
+        assert venv_step["name"] == "Create isolated CI virtual environment"
+        assert 'python -m venv "$RUNNER_TEMP/ci-venv"' in venv_step["run"]
+        assert 'echo "$RUNNER_TEMP/ci-venv/bin" >> "$GITHUB_PATH"' in venv_step["run"]
+        assert (
+            'echo "VIRTUAL_ENV=$RUNNER_TEMP/ci-venv" >> "$GITHUB_ENV"'
+            in venv_step["run"]
+        )
+
+
+def test_test_matrix_repairs_and_probes_compiled_numerical_stack() -> None:
+    import yaml
+
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+    install_step = next(
+        step
+        for step in workflow["jobs"]["tests"]["steps"]
+        if step.get("name") == "Install Dependencies"
+    )
+
+    assert '"numpy>=2.0.1,<2.4.0" "scipy>=1.13.1,<1.18"' in install_step["run"]
+    assert "from scipy.signal import butter" in install_step["run"]
+
 
 def test_quality_gate_invokes_mypy_through_verified_python() -> None:
     import yaml
