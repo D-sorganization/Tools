@@ -9,6 +9,7 @@ import React, {
 import { RoutingMatrix } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
 import { PanelStack } from "./components/PanelStack";
+import { DiagnosticsFeed } from "./components/DiagnosticsFeed";
 import { AlarmsHeader } from "./components/AlarmsHeader";
 import { EStopButton } from "./components/EStopButton";
 import { DataCapturePanel } from "./components/DataCapturePanel";
@@ -791,6 +792,15 @@ export const App: React.FC = () => {
               onHide={handleTabVisibilityToggle}
             />
           </div>
+
+          {/* Live-link diagnostics — shown on EVERY tab so the PLC → backend →
+              HMI data path can be troubleshooted from anywhere. */}
+          <DiagnosticsFeed
+            history={history}
+            historyTimes={historyTimes}
+            isConnected={isConnected}
+            temperature={temperatureStatus}
+          />
 
           <Suspense
             fallback={

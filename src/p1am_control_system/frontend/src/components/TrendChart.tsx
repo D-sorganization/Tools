@@ -21,6 +21,7 @@ import { useTrendViewport } from "../hooks/useTrendViewport";
 import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
 import { TrendAxisControls } from "./TrendAxisControls";
 import { TrendCrosshair, type CrosshairSeries } from "./TrendPlotOverlays";
+import { bridgeIsolatedDropouts } from "../lib/trendGaps";
 
 interface TrendChartProps {
   history: number[][]; // Array of TagValue arrays: number[time][tag_id]
@@ -257,12 +258,16 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
         }
       } else if (renderHistory.length > 0) {
         hasData = true;
-        for (let i = 0; i < renderHistory.length; i++) {
-          const sample = renderHistory[i];
-          for (let j = 0; j < selectedTags.length; j++) {
-            const val = sample[selectedTags[j]] ?? 0;
-            if (val < realMin) realMin = val;
-            if (val > realMax) realMax = val;
+        // Scan the SAME bridged values the traces draw, so a spurious dropout
+        // to zero can't drag the auto-scale floor down and squash the traces.
+        for (let j = 0; j < selectedTags.length; j++) {
+          const tagId = selectedTags[j];
+          const bridged = bridgeIsolatedDropouts(
+            renderHistory.map((sample) => sample[tagId] ?? 0),
+          );
+          for (let i = 0; i < bridged.length; i++) {
+            if (bridged[i] < realMin) realMin = bridged[i];
+            if (bridged[i] > realMax) realMax = bridged[i];
           }
         }
       }
@@ -329,8 +334,13 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
           areaD += `L ${x} ${y} `;
         });
       } else {
-        renderHistory.forEach((sample, sampleIdx) => {
-          const val = sample[tagId] ?? 0;
+        // Raw tags are unfiltered, so a dropped Modbus read is a spurious 0.
+        // Bridge isolated dropouts (a near-zero sample between two clearly
+        // non-zero neighbours) so the trace doesn't draw a false dip to zero.
+        const bridged = bridgeIsolatedDropouts(
+          renderHistory.map((sample) => sample[tagId] ?? 0),
+        );
+        bridged.forEach((val, sampleIdx) => {
           const { x, y } = getCoordinates(sampleIdx, val, totalPoints);
           pathD += `${sampleIdx === 0 ? "M" : "L"} ${x} ${y} `;
           areaD += `L ${x} ${y} `;

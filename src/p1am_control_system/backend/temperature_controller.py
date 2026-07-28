@@ -62,9 +62,9 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
     previous state inside the band.
     """
 
-    # Re-declared for mypy visibility: inherited from SafetyStateMachine[StateT],
-    # whose type parameter isn't resolvable when that module is excluded from a
-    # delta-only mypy run (--follow-imports=skip).
+    # Concrete state type for the checker. The SafetyStateMachine base is generic
+    # (``_state: StateT``); naming the resolved type here also keeps it typed
+    # under CI's mypy --follow-imports=skip, where the base module is elided.
     _state: TemperatureState
 
     def __init__(self, config: TemperatureConfig) -> None:

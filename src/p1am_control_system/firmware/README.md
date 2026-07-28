@@ -98,6 +98,9 @@ breaks Ethernet SPI.
 | 200..239 | 40    | PID config — 4 PIDs x 10 regs = (pv_tag, cv_tag, sp, kp, ki, kd)           |
 | 300..555 | 256   | Interlock limits — 32 tags x 8 regs = (lolo, low, high, hihi) IEEE-754     |
 | coil 0   | 1     | Save-to-flash trigger (firmware writes EEPROM on falling edge of write)    |
+| coil 1   | 1     | E-stop reset — clear the latched E-stop                                    |
+| coil 2   | 1     | Heater relay — 24 V DO (P1-08TD2) -> relay -> 110 V resistive heater       |
+| coil 3   | 1     | P1-04THM burnout direction (1 = high-side / fail-safe, 0 = low-side)       |
 
 Tag values are clamped 0.0–100.0 by the broker. AO outputs scale linearly:
 0.0% -> 4.000 mA, 100.0% -> 20.000 mA. AI readings are pre-scaled by the P1AM
@@ -106,11 +109,16 @@ library before reaching the broker.
 ## Thermocouple module configuration
 
 `P1AMHardware::Begin()` overrides the P1AM library's P1-04THM default after
-`P1.init()` and before Ethernet setup. The firmware configures all four
-thermocouple channels for type K, low-side burnout, and Celsius output:
+`P1.init()` and before Ethernet setup. The firmware configures **channel 1 as
+type K, channel 2 as type R, and channels 3–4 as type K**, with Celsius output
+(`0x01` = type K, `0x03` = type R in the per-channel `0x2n` config byte). The
+burnout direction boots low-side but is overridden at runtime by the backend via
+**coil 3** (default high-side / fail-safe — an open reads full scale so the
+heater shuts off); the firmware reconfigures the module whenever coil 3 changes.
 
 ```text
-40 03 60 01 21 01 22 01 23 01 24 01 00 00 00 00 00 00 00 00
+40 03 60 01 21 01 22 03 23 01 24 01 00 00 00 00 00 00 00 00
+                  ^^^^^  channel 2 = 0x03 (type R)
 ```
 
 Boot diagnostics call `P1.readModuleConfig()` and print the active 20-byte
@@ -118,10 +126,10 @@ readback. Expected readback is the same byte sequence above. Temperature reads
 are then consumed directly from `P1.readTemperature()` as degrees C; there is no
 firmware Fahrenheit-to-Celsius conversion in this mode.
 
-Hardware verification still requires a connected P1-04THM with type-K
-thermocouple/reference hardware: confirm the boot readback matches, validate at
-least one channel against a known-temperature source, and check that no burnout
-or over-range status is asserted with a healthy junction connected.
+Hardware verification requires a connected P1-04THM with the type-K (Ch 1) and
+type-R (Ch 2) thermocouples: confirm the boot readback matches, validate a
+channel against a known-temperature source, and check that no burnout or
+over-range status is asserted with a healthy junction connected.
 
 ## EEPROM / FlashStorage
 

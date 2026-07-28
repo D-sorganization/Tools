@@ -279,8 +279,13 @@ input, so the answer is usually the **field side**, not the sampling rate:
 - **Bench mode:** `P1AM_DEV_NO_AUTH=1` (admin endpoints unauthenticated),
   `PLC_DRIVER=modbus`. When the PLC is offline the backend runs a simulator so the
   HMI still animates.
-- **Historian:** SQLite (`dcs_scada.db`, WAL, retention-capped). Every scan is
-  logged to `taglog`; alarm crossings to `eventlog`.
+- **Historian:** SQLite (`dcs_scada.db`, WAL, retention-capped). Tag values are
+  logged to `taglog` — **decimated by the capture-throttle interval, not every
+  10 Hz scan** — and alarm crossings to `eventlog`.
+- **Remote access:** Raspberry Pi Connect (screen share), VNC over Tailscale
+  (`100.108.70.33:5900`), and SSH (`ssh dieterolson@100.108.70.33`).
+- **Architecture:** see the top-level `README.md` and the full report
+  `docs/SYSTEM_ARCHITECTURE.tex` (compile with `pdflatex`).
 - **Tuning knobs (env):** `P1AM_POLL_INTERVAL_S` (default 0.1 s), the lightweight
   poll interval, and the capture/log-throttle interval.
 

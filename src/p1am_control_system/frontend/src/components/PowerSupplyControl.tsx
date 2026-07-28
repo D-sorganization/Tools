@@ -324,14 +324,10 @@ const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) 
 
   const setPermissive = useCallback(
     async (enabled: boolean) => {
-      if (
-        !enabled &&
-        liveStatus?.state === "running" &&
-        !window.confirm(
-          "Disabling permissive will drop output to 0 immediately. Continue?",
-        )
-      )
-        return;
+      // Disabling permissive (dropping output to 0) is the SAFE direction and
+      // must be immediate + UNCONDITIONAL — never gate it behind a confirm()
+      // dialog, which a kiosk / screen-shared browser can suppress and thereby
+      // silently swallow the stop while the supply keeps driving output.
       setBusy(true);
       try {
         const res = await fetchWithTimeout("/api/power_supply/permissive", {
@@ -347,7 +343,7 @@ const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) 
         setBusy(false);
       }
     },
-    [liveStatus?.state, flash],
+    [flash],
   );
 
   const acknowledgeTrip = useCallback(async () => {

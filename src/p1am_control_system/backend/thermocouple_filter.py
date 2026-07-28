@@ -27,13 +27,9 @@ over-temperature nor be fooled into commanding heat by a burnout rail.
 from __future__ import annotations
 
 import math
-import sys
 from dataclasses import dataclass
 
-if sys.version_info >= (3, 13):
-    from typing import TypeIs
-else:
-    from typing_extensions import TypeIs
+from typing_extensions import TypeIs  # typing.TypeIs is 3.13+; use the backport
 
 __all__ = [
     "FilterSample",

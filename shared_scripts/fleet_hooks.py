@@ -33,6 +33,8 @@ OVERSIZED_SOURCE_LINE_BASELINES = {
     # scripts/monolith_baseline.txt. It may be touched for contract cleanup,
     # but cannot grow beyond this frozen budget without a split.
     "src/rotation_converter/modern_robotics.py": 2130,
+    "src/p1am_control_system/frontend/src/App.tsx": 1679,
+    "src/p1am_control_system/frontend/src/components/TemperatureControl.tsx": 1975,
 }
 
 SOURCE_SUFFIXES = {

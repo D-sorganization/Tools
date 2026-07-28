@@ -1,5 +1,11 @@
 # P1AM PLC connection scripts
 
+> **Windows dev-PC helpers.** These PowerShell scripts toggle a *Windows* PC's
+> NIC onto the PLC subnet. The **deployed Raspberry Pi** instead sets its static
+> `192.168.1.50/24` on `eth0` via NetworkManager (see
+> [`../deploy/README.md`](../deploy/README.md)); use these only on a Windows
+> bench/dev machine.
+
 The P1AM-100 SCADA PLC lives on an **isolated subnet** (`192.168.1.0/24`)
 for industrial safety/predictability. Your PC's Ethernet NIC needs a static
 address on that subnet to talk to it. These scripts automate the toggle

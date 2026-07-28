@@ -59,6 +59,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   to errors therefore render the real PyQt6 Units converter rather than an
   optional-tab placeholder (Tools issue #3950).
 
+### 2026-07-25 P1AM Heater Bring-Up and Data Explorer Diagnostics
+
+- `src/p1am_control_system/` now includes a consolidated heater bring-up
+  README, bench handoff updates, firmware/deploy documentation, and a
+  system-architecture TeX document covering the P1AM control stack.
+- Backend P1AM control modules tighten temperature-stop handling, power-supply
+  behavior, thermocouple filtering, event logging, and data-explorer summary
+  statistics, with authorization and temperature-stop regression coverage.
+- The P1AM frontend adds diagnostics feed and trend-gap helpers, extends
+  temperature/power controls, and adds focused tests for diagnostics, trend
+  gaps, and temperature-control behavior.
+
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
 - `src/p1am_control_system/frontend/src/lib/curveFit.ts` reduces garbage
