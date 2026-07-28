@@ -36,6 +36,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-07-28 Optional PyQt Submodule Import Guards
+
+- Shared Qt UI imports now guard exact PyQt6 submodules instead of assuming a
+  successful top-level `PyQt6` import proves `QtWidgets`, `QtWebSockets`, or
+  `QtSvg` are loadable. Chat workspace widget tests skip cleanly when
+  `QtWebSockets` is unavailable, autocomplete tests set offscreen mode before
+  importing PyQt and use pytest-qt ownership, and `shared.python.ui` lazily
+  exposes optional widgets so importing the package no longer imports the
+  hover-copy `QtSvg` dependency unless that widget is requested. The touched
+  chat workspace test also drops stale mypy suppression comments so changed-file
+  type checks remain clean.
+
 ### 2026-07-28 Shared CORS and Humanoid Preview Contracts
 
 - `src/shared/python/tests/test_cors.py` now asserts the current secure CORS
