@@ -28,20 +28,33 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.5.3                                      |
 | **Spec Version**        | 1.5.3                                      |
-| **Last Spec Update**    | 2026-07-26                                 |
+| **Last Spec Update**    | 2026-07-28                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-28 Shared CORS and Humanoid Preview Contracts
+
+- `src/shared/python/tests/test_cors.py` now asserts the current secure CORS
+  default of `allow_credentials=False` while retaining coverage for the shared
+  origin, method, and header constants.
+- `src/shared/python/humanoid_character_builder/interfaces/__init__.py`
+  re-exports `BodyParameters` from the public interfaces package so preview
+  tests and downstream users can rely on the documented facade import.
+- `src/shared/python/humanoid_character_builder/core/model.py` aligns
+  `HumanoidModel.__init__` DbC preconditions with method argument binding,
+  including the default `root_link_name`, so model construction is validated
+  without misinterpreting `self` as the links dictionary.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 

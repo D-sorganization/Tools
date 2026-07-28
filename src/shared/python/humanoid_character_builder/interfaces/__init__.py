@@ -5,6 +5,7 @@ Provides the clean, user-facing API for character building.
 """
 
 from shared.python.humanoid_character_builder.interfaces.api import (
+    BodyParameters,
     CharacterBuilder,
     CharacterBuildResult,
     ExportOptions,
@@ -12,6 +13,7 @@ from shared.python.humanoid_character_builder.interfaces.api import (
 )
 
 __all__ = [
+    "BodyParameters",
     "CharacterBuilder",
     "CharacterBuildResult",
     "SegmentMeshInfo",
