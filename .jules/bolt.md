@@ -85,3 +85,7 @@
 ## 2024-10-25 - Array spread operator stack overflow on large datasets
 **Learning:** Using `Math.max(...values)` and `Math.min(...values)` on very large arrays like chart data points can allocate an intermediate parameter list large enough to throw a 'Maximum call stack size exceeded' RangeError, crashing the application.
 **Action:** Replace the spread operator with a single-pass `for` loop to compute array extremes safely and efficiently without intermediate allocations, reducing memory overhead and avoiding call stack crashes.
+
+## 2024-07-28 - Replace Math.min/max spread with loops for dynamic scales
+**Learning:** Using `Math.min(...activeValues)` and `Math.max(...activeValues)` on large streams of extracted subset data frequently leads to "Maximum call stack size exceeded" errors.
+**Action:** When calculating min/max bounds across historically tracked subsets, avoid `.flatMap`, `.map`, and the `Math.min(...spread)` syntax entirely. Use a single-pass `for` loop that computes `realMin` and `realMax` dynamically, avoiding massive call stack allocations and garbage collection pressure.
