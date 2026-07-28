@@ -66,6 +66,7 @@ C3DMapping = dict[str, Any]
 SCHEMA_VERSION = "1.0"
 C3D_HEADER_MAGIC_BYTE = 0x50
 C3D_HEADER_LENGTH = 2
+DEFAULT_POINT_UNITS = "mm"
 
 # Guideline P1: Biomechanical marker validation thresholds [m]
 # Source: NIST - Human body dimensions range from
@@ -169,7 +170,7 @@ class C3DDataReader:
             ]
             frame_count = int(point_parameters["FRAMES"]["value"][0])
             frame_rate = float(point_parameters["RATE"]["value"][0])
-            units = str(point_parameters["UNITS"]["value"][0])
+            units = self._point_units(point_parameters)
             analog_labels, analog_rate, analog_units = self._get_analog_details()
             events = self._get_events()
             self._metadata = C3DMetadata(
@@ -726,6 +727,15 @@ class C3DDataReader:
             units = units[: len(labels)]
 
         return labels, analog_rate, units
+
+    @staticmethod
+    def _point_units(point_parameters: dict[str, Any]) -> str:
+        """Return POINT units, defaulting malformed legacy C3D metadata to mm."""
+        values = point_parameters.get("UNITS", {}).get("value", [])
+        if not values:
+            return DEFAULT_POINT_UNITS
+        units = str(values[0]).strip()
+        return units or DEFAULT_POINT_UNITS
 
     def _get_events(self) -> list[C3DEvent]:
         """Extract event markers from the C3D file."""
