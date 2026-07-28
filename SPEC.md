@@ -36,6 +36,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-07-28 C3D POINT:UNITS metadata defaulting
+
+- `shared.python.sidekick.lab.bio.c3d_reader.C3DDataReader` treats missing,
+  empty, or blank `POINT:UNITS` metadata as millimetres (`mm`) when building
+  C3D metadata. This preserves compatibility with legacy and generated C3D
+  fixtures that omit the optional units parameter while retaining downstream
+  unit-conversion behavior for explicit units.
+
 ### 2026-07-28 Optional PyQt Submodule Import Guards
 
 - Shared Qt UI imports now guard exact PyQt6 submodules instead of assuming a

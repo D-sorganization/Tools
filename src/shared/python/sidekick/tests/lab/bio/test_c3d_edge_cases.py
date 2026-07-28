@@ -125,6 +125,66 @@ class TestC3DMetadataValidation:
         )
         assert meta.analog_count == 2
 
+    @pytest.fixture()
+    def c3d_point_metadata(self) -> dict[str, Any]:
+        return {
+            "parameters": {
+                "POINT": {
+                    "LABELS": {"value": ["M1"]},
+                    "FRAMES": {"value": [10]},
+                    "RATE": {"value": [100.0]},
+                    "UNITS": {"value": ["cm"]},
+                },
+                "ANALOG": {
+                    "LABELS": {"value": []},
+                    "UNITS": {"value": []},
+                    "RATE": {"value": [0.0]},
+                },
+                "EVENT": {
+                    "LABELS": {"value": []},
+                    "TIMES": {"value": [[], []]},
+                },
+            },
+            "data": {
+                "points": np.random.rand(4, 1, 10),
+                "analogs": np.empty((1, 0, 0)),
+            },
+        }
+
+    @pytest.fixture()
+    def valid_c3d_path(self, tmp_path: Path) -> Path:
+        c3d_path = tmp_path / "test.c3d"
+        c3d_path.write_bytes(b"\x02\x50")
+        return c3d_path
+
+    def test_metadata_defaults_absent_point_units_to_mm(
+        self,
+        c3d_point_metadata: dict[str, Any],
+        valid_c3d_path: Path,
+    ) -> None:
+        """C3D files without POINT:UNITS still build actionable metadata."""
+        del c3d_point_metadata["parameters"]["POINT"]["UNITS"]
+
+        with patch("sidekick.lab.bio.c3d_reader.ezc3d") as mock_ezc3d:
+            mock_ezc3d.c3d.return_value = c3d_point_metadata
+            metadata = C3DDataReader(valid_c3d_path).get_metadata()
+
+        assert metadata.units == "mm"
+
+    def test_metadata_defaults_empty_point_units_to_mm(
+        self,
+        c3d_point_metadata: dict[str, Any],
+        valid_c3d_path: Path,
+    ) -> None:
+        """Empty POINT:UNITS values use the same default as absent units."""
+        c3d_point_metadata["parameters"]["POINT"]["UNITS"]["value"] = []
+
+        with patch("sidekick.lab.bio.c3d_reader.ezc3d") as mock_ezc3d:
+            mock_ezc3d.c3d.return_value = c3d_point_metadata
+            metadata = C3DDataReader(valid_c3d_path).get_metadata()
+
+        assert metadata.units == "mm"
+
 
 # ---------------------------------------------------------------------------
 # C3DDataReader contract tests
