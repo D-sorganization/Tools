@@ -1753,6 +1753,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-07-27 | 1.5.4 | fix(test): update test assertions and gas properties fallback for process calculator edge cases. |
 | 2026-07-27 | 1.5.4 | test(ci): document the `yaml.BaseLoader` Bandit suppression in the pull_request_target workflow-hardening test so the security hook recognizes the workflow parser as non-object-constructing. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |
 | 2026-07-26 | 1.5.3 | fix(ci): isolate both protected Python jobs in per-job virtual environments after validating the persistent setup-python runtime; repair and import-probe the matrix NumPy/SciPy stack with compatible bounds, and reinstall OpenCV without dependency resolution so it cannot replace the verified NumPy wheel. |

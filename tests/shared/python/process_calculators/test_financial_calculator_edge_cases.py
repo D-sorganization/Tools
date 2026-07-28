@@ -336,10 +336,10 @@ class TestYearlyProjections:
     """Edge cases for generate_yearly_projections."""
 
     def test_zero_years_empty_list(self, calculator, baseline_params):
-        """Zero years should produce an empty projection list."""
+        """Zero years should raise ValueError."""
         calculator.calculate_financial_model(baseline_params)
-        projections = calculator.generate_yearly_projections(years=0)
-        assert projections == []
+        with pytest.raises(ValueError, match="years must be positive"):
+            calculator.generate_yearly_projections(years=0)
 
     def test_one_year_projection(self, calculator, baseline_params):
         """One year should produce exactly one projection entry."""
