@@ -26,11 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.4                                      |
-| **Spec Version**        | 1.5.4                                      |
 | **Current Version**     | 1.5.7                                      |
 | **Spec Version**        | 1.5.7                                      |
-| **Last Spec Update**    | 2026-07-27                                 |
+| **Last Spec Update**    | 2026-07-28                                 |
 
 ## 2. Purpose & Mission
 
@@ -38,12 +36,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
-### 2026-07-26 P1AM Control System Trend Crosshair Optimization
+### 2026-07-28 Shared CORS and Humanoid Preview Contracts
 
-- `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
-  garbage collection pressure during high-frequency pointer move events by
-  replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
-  This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
+- `src/shared/python/tests/test_cors.py` now asserts the current secure CORS
+  default of `allow_credentials=False` while retaining coverage for the shared
+  origin, method, and header constants.
+- `src/shared/python/humanoid_character_builder/interfaces/__init__.py`
+  re-exports `BodyParameters` from the public interfaces package so preview
+  tests and downstream users can rely on the documented facade import.
+- `src/shared/python/humanoid_character_builder/core/model.py` aligns
+  `HumanoidModel.__init__` DbC preconditions with method argument binding,
+  including the default `root_link_name`, so model construction is validated
+  without misinterpreting `self` as the links dictionary.
 
 ### 2026-07-27 Sidekick saved-session startup safety
 
@@ -58,6 +62,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   of the deprecated global singleton. Hosts that promote Sidekick deprecations
   to errors therefore render the real PyQt6 Units converter rather than an
   optional-tab placeholder (Tools issue #3950).
+
+### 2026-07-26 P1AM Control System Trend Crosshair Optimization
+
+- `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
+  garbage collection pressure during high-frequency pointer move events by
+  replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
+  This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
 
 ### 2026-07-25 P1AM Heater Bring-Up and Data Explorer Diagnostics
 

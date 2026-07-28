@@ -1,5 +1,6 @@
 import os
-from typing import Any
+from collections.abc import Generator
+from typing import Any, cast
 
 import pytest
 from cors import (
@@ -20,7 +21,7 @@ from contracts import (
 
 
 @pytest.fixture
-def clean_env() -> Any:
+def clean_env() -> Generator[None]:
     old_contract_level = get_contract_level()
     set_contract_level(ContractLevel.ENFORCE)
     old = os.environ.get("CORS_ORIGINS")
@@ -35,35 +36,37 @@ def clean_env() -> Any:
 def get_cors_origins(app: FastAPI) -> list[str]:
     for middleware in app.user_middleware:
         if middleware.cls == CORSMiddleware:
-            return middleware.kwargs.get("allow_origins", [])
+            return cast(list[str], middleware.kwargs.get("allow_origins", []))
     return []
 
 
-def get_cors_kwargs(app: FastAPI) -> dict:
+def get_cors_kwargs(app: FastAPI) -> dict[str, Any]:
     for middleware in app.user_middleware:
         if middleware.cls == CORSMiddleware:
-            return middleware.kwargs
+            return cast(dict[str, Any], middleware.kwargs)
     return {}
 
 
-def test_add_cors_middleware_default(clean_env) -> Any:
+def test_add_cors_middleware_default(clean_env: None) -> Any:
     app = FastAPI()
     add_cors_middleware(app)
     kwargs = get_cors_kwargs(app)
     assert kwargs["allow_origins"] == DEFAULT_ORIGINS
     assert kwargs["allow_methods"] == DEFAULT_ALLOW_METHODS
     assert kwargs["allow_headers"] == DEFAULT_ALLOW_HEADERS
-    assert kwargs["allow_credentials"] is True
+    assert kwargs["allow_credentials"] is False
 
 
-def test_add_cors_middleware_explicit_origins(clean_env) -> Any:
+def test_add_cors_middleware_explicit_origins(clean_env: None) -> Any:
     app = FastAPI()
     origins = ["http://my-domain.com"]
     add_cors_middleware(app, origins=origins)
     assert get_cors_origins(app) == origins
 
 
-def test_add_cors_middleware_env_override(clean_env, monkeypatch) -> Any:
+def test_add_cors_middleware_env_override(
+    clean_env: None, monkeypatch: pytest.MonkeyPatch
+) -> Any:
     monkeypatch.setenv("CORS_ORIGINS", "http://env1.com, http://env2.com ,")
     app = FastAPI()
     # It should override even if explicit origins are provided
@@ -72,7 +75,7 @@ def test_add_cors_middleware_env_override(clean_env, monkeypatch) -> Any:
     assert origins == ["http://env1.com", "http://env2.com"]
 
 
-def test_add_cors_middleware_kwargs(clean_env) -> Any:
+def test_add_cors_middleware_kwargs(clean_env: None) -> Any:
     app = FastAPI()
     add_cors_middleware(
         app,
@@ -86,12 +89,12 @@ def test_add_cors_middleware_kwargs(clean_env) -> Any:
     assert kwargs["expose_headers"] == ["X-Exposed"]
 
 
-def test_add_cors_middleware_invalid_app(clean_env) -> Any:
+def test_add_cors_middleware_invalid_app(clean_env: None) -> Any:
     with pytest.raises(PreconditionError):
         add_cors_middleware("not_an_app")
 
 
-def test_add_cors_middleware_invalid_origins(clean_env) -> Any:
+def test_add_cors_middleware_invalid_origins(clean_env: None) -> Any:
     app = FastAPI()
     with pytest.raises(PreconditionError):
         add_cors_middleware(app, origins="not_a_list")
