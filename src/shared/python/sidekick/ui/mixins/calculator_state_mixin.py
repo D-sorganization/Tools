@@ -525,11 +525,12 @@ class CalculatorStateMixin:
 
             state_data = self.state_manager.load_state(state_name)
 
-            if state_data:
+            if isinstance(state_data, dict):
                 self.set_calculator_state(state_data)
                 _logger.info("✓ Calculator state loaded: %s", state_name)
+                return state_data
 
-            return cast(dict[str, Any] | None, state_data)
+            return None
 
         except (ValueError, ZeroDivisionError, OverflowError, TypeError):
             return None
