@@ -676,7 +676,7 @@ def estimate_condensation_risk(
     result = calc.calculate_water_content(temperature_c, pressure_bar)
 
     risk_level = "Low"
-    if result.dew_point_margin_c < 0:
+    if result.dew_point_margin_c <= 1e-6:
         risk_level = "Critical - Condensation occurring"
     elif result.dew_point_margin_c < safety_margin_c:
         risk_level = "High"
@@ -687,6 +687,6 @@ def estimate_condensation_risk(
         "dew_point_c": result.dew_point_c,
         "temperature_margin_c": result.dew_point_margin_c,
         "condensation_risk": risk_level,
-        "condensation_occurring": result.dew_point_margin_c < 0,
+        "condensation_occurring": result.dew_point_margin_c <= 1e-6,
         "recommended_temperature_c": result.dew_point_c + safety_margin_c,
     }

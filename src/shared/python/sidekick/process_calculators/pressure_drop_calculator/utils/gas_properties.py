@@ -677,9 +677,8 @@ def _compute_pure_viscosities(
     pure_viscosities: dict[str, float] = {}
     for component in composition.keys():
         if component not in GAS_DATABASE:
-            props = GAS_DATABASE["N2"]
-        else:
-            props = GAS_DATABASE[component]
+            raise ValueError(f"Unknown gas species: {component}")
+        props = GAS_DATABASE[component]
 
         if component in SUTHERLAND_CONSTANTS:
             params = SUTHERLAND_CONSTANTS[component]
