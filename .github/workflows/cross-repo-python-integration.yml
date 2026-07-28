@@ -85,6 +85,7 @@ jobs:
               build_hooks.py
               chat
               contracts.py
+              pyproject.toml
               python/src/utils
               shared
               sidekick
