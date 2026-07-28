@@ -86,7 +86,7 @@ micro, acting as a Modbus-TCP **server** at `192.168.1.100:502`. Firmware FQBN:
 | --- | --- | --- | --- |
 | THM | **P1-04THM** | Ch1 (type K) → `TAG_0`, Ch2 (type R) → `TAG_1`, Ch3–4 (type K) → `TAG_2/3` | Celsius, **low-side burnout**, on-module linearization |
 | DO | **P1-08TD2** | Heater relay = **coil 2** | 24 V discrete out → relay → 110 V heater |
-| ANA | **P1-4ADL2DAL** | AI0/AI1 → `TAG_12/13`, AO0/AO1 ← `TAG_10/11` | Power-supply monitor + command |
+| ANA | **P1-4ADL2DAL** | AI0/AI1 → `TAG_12/13` (PSU V/I), AI2/AI3 → `TAG_14/15` (conditioned K/R TCs), AO0/AO1 ← `TAG_10/11` | Power-supply monitor + command + analog TC path |
 
 **Signal scaling.** Every analog channel is carried as **0–100 % of full scale**.
 The P1-04THM does per-type linearization on-module and the firmware reads degrees C
@@ -126,15 +126,30 @@ Start.
 
 ## 5. Thermocouples
 
-Two probes read the crucible: **type K** (Ch1 → `TAG_0`) and **type R** (Ch2 →
-`TAG_1`). The operator selects which one **controls** the heater; both are always
+Two probes read the crucible — **type K** and **type R** — and each can be read
+through **two acquisition paths**, giving four selectable sources:
+
+| Source | Path | Signal | Tag |
+| ------ | ---- | ------ | --- |
+| TC Card Type K | P1-04THM Ch 1 | thermocouple direct | `TAG_0` |
+| TC Card Type R | P1-04THM Ch 2 | thermocouple direct | `TAG_1` |
+| Analog Type K | P1-4ADL2DAL AI2 | 4–20 mA signal conditioner | `TAG_14` |
+| Analog Type R | P1-4ADL2DAL AI3 | 4–20 mA signal conditioner | `TAG_15` |
+
+The **analog** path routes each thermocouple through an external signal conditioner
+that emits a 4–20 mA loop into the analog card — added to reject the electrical
+noise the bare Type-R sleeve picks up at high temperature. The operator selects
+which source **controls** the heater; the two probes on the active path are both
 read, displayed, and plotted, and the non-controlling one is used as an independent
-safety reference.
+safety reference (HH-on-either + stuck-sensor cross-check).
 
 ### Selecting and switching
-Switching the controlling probe (K ↔ R) is **smooth** — it does not stop the heater.
-The live value of each probe is shown next to its selector so a dead or stuck sensor
-is obvious at a glance.
+Pick one of the four sources from the selector. Switching is **smooth** — it does
+not stop the heater; it only re-clamps the setpoint/limits to the chosen channel's
+range. Live values are shown for the two sources on the active path so a dead or
+stuck sensor is obvious at a glance. **Confirm a live analog reading before
+controlling on it** — an unpowered conditioner reads ≤ 4 mA (clamped to 0 °C /
+"cold"), which the deglitch filter + cross-check + HH-on-either then keep fail-safe.
 
 ### Failure modes and what they look like
 - **Reads 0 °C:** the P1-04THM's **low-side burnout** response to an **open input**

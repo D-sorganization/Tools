@@ -81,8 +81,13 @@ These are hard-coded in `P1AMHardware.h` and assumed by `SignalBroker`:
 
 | Slot | Module        | Channels                                         |
 | ---- | ------------- | ------------------------------------------------ |
-| 1    | P1-4ADL2DAL-1 | 2 analog inputs + 2 analog outputs (all 4-20 mA) |
+| 1    | P1-4ADL2DAL-1 | 4 analog inputs + 2 analog outputs (all 4-20 mA) |
 | 2    | P1-04THM      | 4 thermocouple inputs                            |
+
+Analog inputs: **AI0/AI1** carry the DC power-supply 0-5 V voltage/current
+monitors (scaled over the full 0-20 mA span); **AI2/AI3** carry the
+signal-conditioned type-K / type-R thermocouples (4-20 mA live-zero span). The
+per-channel span handling lives in `P1AMHardware::ReadAnalogInput`.
 
 The Inhibit GPIO is wired to D6. **D5 is reserved** — the P1AM-ETH shield
 hardwires the W5500 chip-select there and driving D5 from the firmware
@@ -93,7 +98,7 @@ breaks Ethernet SPI.
 | Range    | Width | Purpose                                                                    |
 | -------- | ----- | -------------------------------------------------------------------------- |
 | 0..63    | 64    | Tag values — TAG_i is at regs (i*2, i*2+1) as little-endian IEEE-754 float |
-| 100..105 | 6     | Input routing — channel -> tag id; slots 0-3 = TC0-3, 4-5 = AI0-1          |
+| 100..107 | 8     | Input routing — channel -> tag id; slots 0-3 = TC0-3, 4-7 = AI0-3          |
 | 110..111 | 2     | Output routing — channel -> tag id; slots 0-1 = AO0-1                      |
 | 200..239 | 40    | PID config — 4 PIDs x 10 regs = (pv_tag, cv_tag, sp, kp, ki, kd)           |
 | 300..555 | 256   | Interlock limits — 32 tags x 8 regs = (lolo, low, high, hihi) IEEE-754     |
@@ -103,8 +108,11 @@ breaks Ethernet SPI.
 | coil 3   | 1     | P1-04THM burnout direction (1 = high-side / fail-safe, 0 = low-side)       |
 
 Tag values are clamped 0.0–100.0 by the broker. AO outputs scale linearly:
-0.0% -> 4.000 mA, 100.0% -> 20.000 mA. AI readings are pre-scaled by the P1AM
-library before reaching the broker.
+0.0% -> 4.000 mA, 100.0% -> 20.000 mA. AI readings are scaled to 0–100 % per
+channel in `ReadAnalogInput`: AI0/AI1 over the full 0–20 mA span, AI2/AI3 over
+the conditioner's 4–20 mA live-zero span (`(mA - 4) x 100/16`). The default
+bench routing maps AI2 -> `TAG_14` and AI3 -> `TAG_15` (the signal-conditioned
+type-K / type-R thermocouples the backend can select as the control source).
 
 ## Thermocouple module configuration
 

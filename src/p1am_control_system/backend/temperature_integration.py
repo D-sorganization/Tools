@@ -20,9 +20,10 @@ import hardware
 from auth_config import require_admin_key
 from config_store import load_config, load_model, save_config, save_model
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from temperature_controller import TemperatureController
 from temperature_models import (
+    TcPath,
     TcType,
     TemperatureConfig,
     TemperatureState,
@@ -66,23 +67,25 @@ class TemperatureService:
         # in status() so the HMI can pre-fill the target after a restart. Recalling
         # it NEVER arms/energizes the heater — the controller stays IDLE.
         self._last_setpoint_c: float | None = None
-        # Latest reading of each thermocouple in deg C (None until first poll),
-        # computed from tags every scan regardless of which TC is controlling.
-        # Surfaced in status() so the HMI can display/plot both channels at once,
-        # and the non-controlling one is fed to the controller as the cross-check
-        # / HH-on-either-TC reference.
+        # Latest reading of the active acquisition path's K and R thermocouples
+        # in deg C (None until first poll), computed from tags every scan
+        # regardless of which TC is controlling. Surfaced in status() so the HMI
+        # can display/plot both channels of the selected path at once, and the
+        # non-controlling one is fed to the controller as the cross-check /
+        # HH-on-either-TC reference.
         self._last_type_k_c: float | None = None
         self._last_type_r_c: float | None = None
-        # Per-channel deglitch filters. The P1-04THM drives an open thermocouple
-        # to 0 C (low-side burnout); a raw burnout-zero fed into the control law
-        # reads as "cold" and would call for heat (runaway). Each channel's filter
-        # rejects an implausible drop to ~0, holds the last-good value through the
-        # glitch, and on a *persistent* fault emits fault=True so we trip the
-        # heater (fail-safe). The controlling channel's filtered value is what the
-        # control law and the HMI see; both channels are always filtered so a
-        # switch lands on an already-warm filter.
-        self._k_filter = ThermocoupleDeglitchFilter()
-        self._r_filter = ThermocoupleDeglitchFilter()
+        # Deglitch filters, one per source TAG, created on first use. The
+        # P1-04THM drives an open thermocouple to 0 C (low-side burnout) and a
+        # conditioned 4-20 mA loop drops toward its live-zero on a break; a raw
+        # drop-to-~0 fed into the control law reads as "cold" and would call for
+        # heat (runaway). Each filter rejects an implausible drop to ~0, holds
+        # the last-good value through the glitch, and on a *persistent* fault
+        # emits fault=True so we trip the heater (fail-safe). Keying by tag means
+        # each physical source keeps its own filter across type switches on a
+        # path, while a source read for the first time after a path switch starts
+        # clean (a fresh filter, no stale last-good to spuriously hold).
+        self._filters: dict[str, ThermocoupleDeglitchFilter] = {}
         # True when the CONTROLLING channel's reading is currently being held
         # (a live glitch is being ridden out). Surfaced in status() so the HMI can
         # warn the operator that the control sensor is acting up.
@@ -130,18 +133,21 @@ class TemperatureService:
         """
         cfg = self.controller.config
         now = time.monotonic()
-        # Scale BOTH thermocouples every scan, independent of which one controls,
-        # then deglitch each so a burnout-zero / dropout can never reach the
-        # control law or the HMI as a spurious "cold". The FILTERED per-channel
-        # values are what we publish and control on.
-        k_sample = self._k_filter.update(self._temp_from_channel(tags, cfg.type_k), now)
-        r_sample = self._r_filter.update(self._temp_from_channel(tags, cfg.type_r), now)
+        # Scale + deglitch the active path's controlling sensor and its same-path
+        # cross-check partner, so a burnout-zero / dropout can never reach the
+        # control law or the HMI as a spurious "cold". The controller stays
+        # source-agnostic (LOD): it only sees the controlling value and one
+        # "other" reference — the model decides which channels those are.
+        active_sample = self._filtered_channel(tags, cfg.active_channel, now)
+        other_sample = self._filtered_channel(tags, cfg.cross_check_channel, now)
+        # Publish the ACTIVE path's K and R pair for the HMI (the plotted traces
+        # follow the selected path). active/other map onto K/R by which type is
+        # controlling.
+        active_is_k = cfg.active_tc_type == TcType.TYPE_K
+        k_sample = active_sample if active_is_k else other_sample
+        r_sample = other_sample if active_is_k else active_sample
         self._last_type_k_c = k_sample.value_c
         self._last_type_r_c = r_sample.value_c
-
-        active_is_k = cfg.active_tc_type == TcType.TYPE_K
-        active_sample = k_sample if active_is_k else r_sample
-        other_sample = r_sample if active_is_k else k_sample
         self._note_control_sensor_health(active_sample)
 
         # Pass a monotonic clock so the controller can enforce the
@@ -268,8 +274,21 @@ class TemperatureService:
             await self._write_relay(False)
         return self.status()
 
+    def set_active_source(self, tc_type: TcType, tc_path: TcPath) -> None:
+        """Switch the controlling thermocouple SOURCE (type + path) and persist.
+
+        Raises:
+            TypeError: if tc_type/tc_path are the wrong type (from controller).
+            ValueError: if the resulting config is invalid (from controller).
+        """
+        self.controller.set_active_source(tc_type, tc_path)
+        self._persist_config()
+
     def set_active_tc_type(self, tc_type: TcType) -> None:
-        """Switch the controlling thermocouple and persist the config.
+        """Switch the controlling thermocouple type (K/R), keeping the path.
+
+        Backward-compatible shim over :meth:`set_active_source`; persists the
+        resulting config.
 
         Raises:
             TypeError: if tc_type is not a TcType (from controller).
@@ -403,6 +422,21 @@ class TemperatureService:
         temp_pct = float(tags.get(cfg.temp_tag, 0.0))
         return float(temp_pct * cfg.temp_full_scale_c / 100.0)
 
+    def _filtered_channel(
+        self, tags: dict[str, float] | None, channel: Any, now: float
+    ) -> FilterSample:
+        """Scale one channel to deg C and run it through its per-tag deglitch filter.
+
+        The filter is created on first use and cached by the channel's tag, so
+        each physical source keeps its own deglitch state across type/path
+        switches (DRY: the single seam every source's reading flows through).
+        """
+        deglitch = self._filters.get(channel.tag)
+        if deglitch is None:
+            deglitch = ThermocoupleDeglitchFilter()
+            self._filters[channel.tag] = deglitch
+        return deglitch.update(self._temp_from_channel(tags, channel), now)
+
     @staticmethod
     def _temp_from_channel(tags: dict[str, float] | None, channel: Any) -> float | None:
         """Scale one thermocouple channel's tag (percent) into deg C, or None.
@@ -466,9 +500,15 @@ class TemperaturePermissiveRequest(BaseModel):
 
 
 class TcTypeRequest(BaseModel):
-    """Operator selection of which thermocouple (K or R) drives the heater."""
+    """Operator selection of which thermocouple source drives the heater.
+
+    ``active_tc_path`` defaults to the TC-card path, so an older client that
+    sends only ``active_tc_type`` keeps its original behavior (the endpoint
+    stays backward compatible while gaining the analog-conditioner path).
+    """
 
     active_tc_type: TcType
+    active_tc_path: TcPath = Field(default=TcPath.TC_CARD)
 
 
 class BurnoutModeRequest(BaseModel):
@@ -527,9 +567,14 @@ def create_temperature_router(service: TemperatureService) -> APIRouter:
 
     @router.post("/tc_type", dependencies=[Depends(require_admin_key)])
     async def set_active_tc_type(req: TcTypeRequest) -> TemperatureStatus:
-        """Switch the heater's controlling thermocouple between type K and R."""
+        """Switch the heater's controlling thermocouple source (type + path).
+
+        Accepts one of the four sources: type K/R on the TC-card path or the
+        analog-conditioner path. Kept at ``/tc_type`` (with a defaulted path) so
+        existing K/R-only clients keep working.
+        """
         try:
-            service.set_active_tc_type(req.active_tc_type)
+            service.set_active_source(req.active_tc_type, req.active_tc_path)
         except (TypeError, ValueError) as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
         return service.status()

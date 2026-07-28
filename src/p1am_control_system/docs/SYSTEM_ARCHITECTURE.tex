@@ -111,7 +111,7 @@ runbooks (\code{PI\_BRINGUP.md}, \code{BENCH\_HANDOFF.md}, \code{USER\_MANUAL.md
 Controller       & Raspberry\,Pi 5 (Debian 13 ``trixie'', aarch64) & Hosts the backend + HMI; wired to the PLC on a private subnet. \\
 PLC CPU          & P1AM-100 (SAMD21G18A) + W5500 Ethernet & 10\,Hz scan loop; Modbus TCP server at \code{192.168.1.100:502}. \\
 Thermocouple I/O & P1-04THM & 4-channel TC module. Ch\,1 = Type-K $\rightarrow$ \code{TAG\_0}; Ch\,2 = Type-R $\rightarrow$ \code{TAG\_1}. Range $0$--$1400$\,\textdegree C, output in \textdegree C. \\
-Analog I/O       & P1-4ADL2DAL-1 & 4 analog inputs, 2 analog outputs; also surfaces raw $0$--$5$\,V diagnostic channels. \\
+Analog I/O       & P1-4ADL2DAL-1 & 4 analog inputs, 2 analog outputs (all 4--20\,mA). AI0/AI1 = power-supply V/I monitors ($\rightarrow$\code{TAG\_12/13}); AI2/AI3 = 4--20\,mA signal-conditioned Type-K/R thermocouples ($\rightarrow$\code{TAG\_14/15}). Also surfaces raw $0$--$5$\,V diagnostic channels. \\
 Digital output   & P1-08TD2 & 24\,V DO $\rightarrow$ external relay $\rightarrow$ 110\,V AC resistive heater. \\
 Heater           & Resistive element in a refractory-lined crucible & The controlled plant; large thermal mass, target $\sim$1200\,\textdegree C. \\
 \bottomrule
@@ -133,7 +133,7 @@ canonical contract lives in \code{backend/hardware.py} and mirrors
 \textbf{Register base} & \textbf{Layout} & \textbf{Meaning} \\ \midrule
 \endhead
 \code{0}   & \code{TAG\_i} at (\code{2i}, \code{2i+1}) & Tag values, little-endian 32-bit float. \\
-\code{100} & channel $\rightarrow$ tag id & Input routing (slots 0--3 TC, 4--5 AI). \\
+\code{100} & channel $\rightarrow$ tag id & Input routing (slots 0--3 TC, 4--7 AI0--3). \\
 \code{110} & channel $\rightarrow$ tag id & Output routing (slots 0--1 AO). \\
 \code{200} & 4 PIDs $\times$ 10 regs & PID config; setpoint at \code{+2/+3}. \\
 \code{300} & 32 tags $\times$ 8 regs & Four-limit interlocks (lolo/low/high/hihi). \\
@@ -152,11 +152,15 @@ canonical contract lives in \code{backend/hardware.py} and mirrors
 \end{longtable}
 
 \paragraph{Key tag assignments.}
-\code{TAG\_0}=Type-K, \code{TAG\_1}=Type-R (active controlling channel),
-\code{TAG\_10/11}=analog outputs, \code{TAG\_12/13}=analog inputs,
-\code{TAG\_20\,\ldots\,25}=raw $0$--$5$\,V card diagnostics (compare against a
-meter at the terminal). Values are percent-of-full-scale where applicable; the
-backend scales TC tags to \textdegree C via each channel's \code{full\_scale\_c}.
+\code{TAG\_0}=Type-K (TC card), \code{TAG\_1}=Type-R (TC card),
+\code{TAG\_10/11}=analog outputs, \code{TAG\_12/13}=analog inputs (power-supply
+V/I), \code{TAG\_14/15}=analog inputs (4--20\,mA signal-conditioned Type-K/R
+thermocouples), \code{TAG\_20\,\ldots\,25}=raw $0$--$5$\,V card diagnostics
+(compare against a meter at the terminal). Values are percent-of-full-scale where
+applicable; the backend scales TC tags to \textdegree C via each channel's
+\code{full\_scale\_c}. The controlled temperature is one of four selectable
+\emph{sources}---Type~K or R, each on the TC-card path or the analog-conditioner
+path (\S\ref{sec:source}).
 
 % ============================================================================
 \section{PLC firmware}
@@ -276,6 +280,38 @@ HMI Stop button is deliberately \emph{unconditional} --- never gated behind a
 confirmation dialog, which a kiosk browser can suppress.
 
 % ============================================================================
+\section{Temperature source selection}\label{sec:source}
+% ============================================================================
+The controlled temperature comes from one of \textbf{four selectable sources},
+the $2\times2$ product of thermocouple \emph{type} (K/R) and acquisition
+\emph{path}:
+
+\begin{itemize}[nosep]
+  \item \textbf{TC-card path} --- the thermocouple wired straight into the
+  P1-04THM, which linearizes the junction on-module (\code{TAG\_0}/\code{TAG\_1}).
+  \item \textbf{Analog path} --- the same thermocouple routed through an external
+  4--20\,mA signal conditioner into analog inputs AI2/AI3
+  (\code{TAG\_14}/\code{TAG\_15}). Added to reject the electrical noise the bare
+  Type-R sleeve picks up at temperature (\S\ref{sec:findings}); the firmware maps
+  the conditioner's 4--20\,mA live-zero span to $0$--$100$\,\% in
+  \code{ReadAnalogInput}.
+\end{itemize}
+
+\noindent The model (\code{TemperatureConfig}) resolves any (type, path) to a
+channel through one accessor, \code{channel\_for}; the controller's
+\code{set\_active\_source(type,\,path)} switches the active channel and re-clamps
+the setpoint/limits to its full scale, so every resulting state stays valid and
+the rest of the system reads the controlled temperature through the stable
+\code{temp\_tag}/\code{temp\_full\_scale\_c} accessors (DRY/LOD). The two
+sensors on the \emph{active} path back each other up: the non-controlling one
+feeds the HH-on-either cutoff and the stuck-sensor cross-check
+(\code{cross\_check\_channel}). Selecting an analog source whose conditioner is
+unpowered reads $\le 4$\,mA $\rightarrow$ 0\,\textdegree C (``cold''), which the
+deglitch filter, cross-check, and HH-on-either then keep fail-safe. The switch is
+exposed in the HMI exactly like the original K/R toggle --- one selector, four
+buttons, smooth (never stops the heater).
+
+% ============================================================================
 \section{Thermocouple deglitch filter}\label{sec:deglitch}
 % ============================================================================
 An open/failing thermocouple is driven to a burnout \emph{rail} (0\,\textdegree C
@@ -361,9 +397,12 @@ Investigation of the ``dips to zero'' on the R trend established:
   becomes mildly conductive, opening a leakage/ground path that couples the AC
   heater's noise onto the low-output ($\sim$10\,\textmu V/\textdegree C), sleeved
   Type-R thermocouple. It worsens toward 1200\,\textdegree C+.
-  \item \textbf{Recommended fix:} an isolated TC transmitter/signal conditioner on
-  R (galvanic isolation + filtering) plus single-point grounding of the TC
-  shield/sheath. Software already mitigates: the deglitch filter holds last-good
+  \item \textbf{Fix (implemented):} isolated 4--20\,mA TC signal conditioners
+  (galvanic isolation + filtering) plus single-point grounding of the TC
+  shield/sheath. These feed analog inputs AI2/AI3 and are selectable as the
+  \emph{analog path} control source (\S\ref{sec:source}) alongside the direct
+  TC-card path, so the operator can drive control off the conditioned signal.
+  Software also mitigates on either path: the deglitch filter holds last-good
   through the glitches and the trends bridge them for display.
   \item \textbf{Note:} earlier readings of K near ambient were K \emph{not yet
   installed in the vessel} (sitting on the bench), not a K termination fault.

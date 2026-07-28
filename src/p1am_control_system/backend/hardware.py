@@ -19,7 +19,7 @@ UNMAPPED_TAG_NAME = f"{TAG_PREFIX}{UNMAPPED_TAG_INDEX}"
 
 # ---- Register map (holding registers; see firmware/README.md) ---------
 TAG_VALUE_BASE = 0  # tag values: TAG_i at (i*2, i*2+1) little-endian float
-INPUT_ROUTING_BASE = 100  # channel -> tag id (slots 0-3 TC, 4-5 AI)
+INPUT_ROUTING_BASE = 100  # channel -> tag id (slots 0-3 TC, 4-7 AI0-3)
 OUTPUT_ROUTING_BASE = 110  # channel -> tag id (slots 0-1 AO)
 PID_CONFIG_BASE = 200  # 4 PIDs x 10 regs
 PID_STRIDE = 10  # registers per PID block

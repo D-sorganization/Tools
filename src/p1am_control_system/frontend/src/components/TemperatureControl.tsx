@@ -1,5 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
+import { sourceLabel, TEMP_SOURCES } from "../lib/tempSource";
+import type { TcType, TcPath } from "../lib/tempSource";
 import {
   startStopView,
   setpointOutcome,
@@ -168,8 +170,10 @@ export function heatUpRateReadout(
  *    that a setpoint only applies once the controller is started).
  */
 
-/** Thermocouple type selectable for the heater control. */
-export type TcType = "K" | "R";
+// Source domain types + labels live in lib/tempSource (shared with tests; keeps
+// this file exporting only components for fast-refresh). Re-export the types so
+// existing consumers of `TcType` from this module keep working.
+export type { TcType, TcPath } from "../lib/tempSource";
 
 export interface ThermocoupleChannel {
   tag: string;
@@ -180,7 +184,10 @@ export interface ThermocoupleChannel {
 export interface TemperatureConfig {
   type_k: ThermocoupleChannel;
   type_r: ThermocoupleChannel;
+  analog_k: ThermocoupleChannel;
+  analog_r: ThermocoupleChannel;
   active_tc_type: TcType;
+  active_tc_path: TcPath;
   /** Derived (read-only) from the active channel — see backend computed fields. */
   temp_tag: string;
   temp_full_scale_c: number;
@@ -206,15 +213,17 @@ export interface TemperatureStatus {
   min_on_time_s: number;
   min_off_time_s: number;
   active_tc_type: TcType;
+  active_tc_path: TcPath;
   active_tc_label: string;
   /** Operator's setpoint from the last session, recalled by the backend on
    * restart (null when none was ever persisted). Used to pre-fill the entry. */
   last_setpoint_c?: number | null;
-  /** Latest type-K reading (deg C), regardless of which TC is controlling, so
-   * the HMI can show/plot both channels. null/undefined before the first scan. */
+  /** Latest type-K reading (deg C) on the ACTIVE path, regardless of which TC is
+   * controlling, so the HMI can show/plot both channels of the selected path.
+   * null/undefined before the first scan. */
   type_k_temp_c?: number | null;
-  /** Latest type-R reading (deg C), regardless of which TC is controlling, so
-   * the HMI can show/plot both channels. null/undefined before the first scan. */
+  /** Latest type-R reading (deg C) on the ACTIVE path, regardless of which TC is
+   * controlling. null/undefined before the first scan. */
   type_r_temp_c?: number | null;
   /** True while the deglitch filter is holding the control thermocouple's
    * last-good value through a live dropout — a hint the control sensor is
@@ -507,17 +516,20 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
     }
   }, [postPermissive, flash]);
 
-  const setActiveTcType = useCallback(
-    async (tcType: TcType) => {
+  const setActiveSource = useCallback(
+    async (tcType: TcType, tcPath: TcPath) => {
       setBusy(true);
       try {
         const res = await fetchWithTimeout("/api/temperature/tc_type", {
           method: "POST",
           headers: { "content-type": "application/json" },
-          body: JSON.stringify({ active_tc_type: tcType }),
+          body: JSON.stringify({
+            active_tc_type: tcType,
+            active_tc_path: tcPath,
+          }),
         });
         if (!res.ok) throw new Error(await res.text());
-        flash(`Heater now reading the Type ${tcType} thermocouple`);
+        flash(`Heater now reading ${sourceLabel(tcType, tcPath)}`);
         await loadConfig(); // limits may have re-clamped to the new channel
       } catch (e) {
         flash(`Thermocouple switch failed: ${(e as Error).message}`, "error");
@@ -660,6 +672,7 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
   const state = s?.state ?? "idle";
   const relayOn = s?.relay_on ?? false;
   const activeTcType: TcType = s?.active_tc_type ?? config.active_tc_type;
+  const activeTcPath: TcPath = s?.active_tc_path ?? config.active_tc_path;
   const hhLimit = s?.hh_limit_c ?? config.hh_limit_c;
   const deadband = s?.deadband_c ?? config.deadband_c;
   const tripped = state === "tripped";
@@ -918,25 +931,43 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
         />
       </CollapsibleSection>
 
-      {/* ---- Thermocouple selector (Type K / Type R) ---- */}
+      {/* ---- Thermocouple source selector (K/R x TC card / analog) ---- */}
       <CollapsibleSection
         className="tc-card"
         title="Thermocouple — heater temperature source"
       >
         <div
           role="group"
-          aria-label="Thermocouple type"
+          aria-label="Thermocouple source"
           style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}
         >
-          {(["K", "R"] as const).map((tc) => {
-            const ch = tc === "K" ? config.type_k : config.type_r;
-            const isActive = activeTcType === tc;
-            const reading = tc === "K" ? s?.type_k_temp_c : s?.type_r_temp_c;
+          {TEMP_SOURCES.map((src) => {
+            const ch =
+              src.path === "analog"
+                ? src.type === "K"
+                  ? config.analog_k
+                  : config.analog_r
+                : src.type === "K"
+                  ? config.type_k
+                  : config.type_r;
+            const isActive =
+              activeTcType === src.type && activeTcPath === src.path;
+            // The status publishes the ACTIVE path's K/R pair, so a live reading
+            // is available only for the two buttons on the current path.
+            const reading =
+              activeTcPath === src.path
+                ? src.type === "K"
+                  ? s?.type_k_temp_c
+                  : s?.type_r_temp_c
+                : undefined;
+            const label = sourceLabel(src.type, src.path);
             return (
               <button
-                key={tc}
+                key={`${src.type}-${src.path}`}
                 type="button"
-                onClick={() => !isActive && setActiveTcType(tc)}
+                onClick={() =>
+                  !isActive && setActiveSource(src.type, src.path)
+                }
                 disabled={busy || isActive}
                 aria-pressed={isActive}
                 title={`${ch.label} on ${ch.tag} — live ${formatTcReadout(reading)}`}
@@ -966,12 +997,12 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
                   }}
                 >
                   <strong style={{ fontSize: "0.95rem" }}>
-                    Type {tc}
+                    {label}
                     {isActive ? " ✓" : ""}
                   </strong>
                   <span
                     className="tc-tc-reading"
-                    aria-label={`Type ${tc} live reading`}
+                    aria-label={`${label} live reading`}
                     style={{
                       fontFamily: "var(--font-mono)",
                       fontSize: "1.05rem",
@@ -1001,9 +1032,11 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
             lineHeight: 1.5,
           }}
         >
-          The selected thermocouple drives <strong>all</strong> heater control —
-          setpoint band, HH cutoff and trends. Switching re-clamps the limits to
-          the chosen channel's range. (Type R is wired to a separate THM channel.)
+          The selected source drives <strong>all</strong> heater control —
+          setpoint band, HH cutoff and trends. Each thermocouple (K/R) can be read
+          off the P1-04THM card or through a 4-20 mA signal conditioner on the
+          analog card; switching re-clamps the limits to the chosen channel's
+          range. Live values are shown for the two sources on the active path.
         </p>
 
         {/* ---- Open-circuit (burnout) fail direction ---- */}

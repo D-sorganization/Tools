@@ -27,7 +27,9 @@ live data to this browser HMI over a WebSocket.
 
 **I/O modules:** P1-04THM thermocouples (Ch1 = type K → \`TAG_0\`, Ch2 = type R →
 \`TAG_1\`), P1-08TD2 discrete outputs (heater relay = coil 2), and P1-4ADL2DAL analog
-in/out (power-supply monitor and command). Full details are in \`USER_MANUAL.md\`.`;
+in/out — AI0/AI1 = power-supply V/I monitor (\`TAG_12/13\`), AI2/AI3 = 4-20 mA
+signal-conditioned type-K/R thermocouples (\`TAG_14/15\`), AO0/AO1 = command out.
+Full details are in \`USER_MANUAL.md\`.`;
 
 export const HELP: Record<TabId, HelpDoc> = {
   temperature: {
@@ -42,8 +44,10 @@ so it doesn't chatter around the target.
 - **Start / Stop.** *Start* arms the heater and applies the shown target; *Stop*
 opens the relay immediately. A setpoint is committed by pressing **Enter** (or the
 ± steps) — there is no separate apply step.
-- **Thermocouple select.** Choose whether **type K** or **type R** drives control.
-Both live readings are shown; switching is smooth and does not stop the heater.
+- **Source select.** Choose one of four temperature sources — type **K** or **R**,
+read either off the **TC card** or through a **4-20 mA analog signal conditioner**.
+The active path's two readings are shown; switching is smooth and does not stop the
+heater (it re-clamps the limits to the chosen channel's range).
 
 ### Safety interlocks
 - **High-high (HH) cutoff** latches the heater OFF at the limit and trips the

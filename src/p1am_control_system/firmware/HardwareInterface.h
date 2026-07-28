@@ -16,9 +16,10 @@ class HardwareInterface {
   // Postcondition: Returns temperature in Celsius.
   virtual float ReadThermocouple(int channel) = 0;
 
-  // Read analog input from DAC module.
-  // Precondition: 0 <= channel < 2
-  // Postcondition: Returns value scaled to 0.0 - 100.0%.
+  // Read analog input from the analog-combo module.
+  // Precondition: 0 <= channel < 4 (AI0/AI1 = 0-20 mA PSU monitors;
+  //   AI2/AI3 = 4-20 mA signal-conditioned thermocouples).
+  // Postcondition: Returns value scaled to 0.0 - 100.0% over the channel's span.
   virtual float ReadAnalogInput(int channel) = 0;
 
   // Write analog output to DAC module.
