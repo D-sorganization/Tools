@@ -57,6 +57,52 @@ def test_ui_imports_without_pyqt6() -> None:
     assert "HEADLESS_UI_IMPORT_OK" in result.stdout
 
 
+def test_ui_import_does_not_load_hover_copy_browser() -> None:
+    """Importing ``ui`` should not require QtSvg unless hover-copy is used."""
+    script = textwrap.dedent(
+        """
+        import importlib.abc
+        import sys
+
+        HOVER_COPY_MODULES = {
+            "ui.hover_copy_browser",
+            "shared.python.ui.hover_copy_browser",
+            "src.shared.python.ui.hover_copy_browser",
+        }
+
+        class _BlockHoverCopy(importlib.abc.MetaPathFinder):
+            def find_spec(self, name, path=None, target=None):
+                if name in HOVER_COPY_MODULES:
+                    raise OSError(f"hover copy import blocked: {name}")
+                return None
+
+        for _mod in list(sys.modules):
+            if _mod == "ui" or _mod.startswith("ui."):
+                del sys.modules[_mod]
+        sys.meta_path.insert(0, _BlockHoverCopy())
+
+        import ui
+
+        assert "HoverCopyTextBrowser" not in ui.__dict__
+        _ = ui.AutoCompleteLineEdit
+        assert "HoverCopyTextBrowser" not in ui.__dict__
+        print("UI_IMPORT_DID_NOT_LOAD_HOVER_COPY")
+        """
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        capture_output=True,
+        text=True,
+        check=False,
+        cwd=_repo_src_dir(),
+    )
+    assert result.returncode == 0, (
+        "ui import touched hover_copy_browser unexpectedly:\n"
+        f"stdout={result.stdout}\nstderr={result.stderr}"
+    )
+    assert "UI_IMPORT_DID_NOT_LOAD_HOVER_COPY" in result.stdout
+
+
 def _repo_src_dir() -> str:
     """Return the ``src/shared/python`` dir so ``import ui`` resolves."""
     from pathlib import Path

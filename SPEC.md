@@ -28,20 +28,32 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.5.3                                      |
 | **Spec Version**        | 1.5.3                                      |
-| **Last Spec Update**    | 2026-07-26                                 |
+| **Last Spec Update**    | 2026-07-28                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-28 Optional PyQt Submodule Import Guards
+
+- Shared Qt UI imports now guard exact PyQt6 submodules instead of assuming a
+  successful top-level `PyQt6` import proves `QtWidgets`, `QtWebSockets`, or
+  `QtSvg` are loadable. Chat workspace widget tests skip cleanly when
+  `QtWebSockets` is unavailable, autocomplete tests set offscreen mode before
+  importing PyQt and use pytest-qt ownership, and `shared.python.ui` lazily
+  exposes optional widgets so importing the package no longer imports the
+  hover-copy `QtSvg` dependency unless that widget is requested. The touched
+  chat workspace test also drops stale mypy suppression comments so changed-file
+  type checks remain clean.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 

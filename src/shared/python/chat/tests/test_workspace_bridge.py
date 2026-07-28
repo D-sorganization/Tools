@@ -14,6 +14,7 @@ so the module still collects on CI lanes without Qt installed.
 
 from __future__ import annotations
 
+import importlib
 import json
 import os
 import sys
@@ -108,7 +109,7 @@ class TestWorkspaceVariableInfo:
         # frozen dataclasses raise FrozenInstanceError (a TypeError
         # subclass) on attribute assignment.
         with pytest.raises((TypeError, AttributeError)):
-            info.name = "y"  # type: ignore[misc]
+            info.name = "y"
 
 
 class TestWorkspaceContextProtocol:
@@ -146,7 +147,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 @pytest.fixture(scope="module")
 def qapp() -> Any:
-    pytest.importorskip("PyQt6")
+    _require_qt_submodules("PyQt6.QtWidgets")
     from PyQt6.QtWidgets import QApplication
 
     app = QApplication.instance() or QApplication(sys.argv)
@@ -155,9 +156,19 @@ def qapp() -> Any:
 
 @pytest.fixture
 def chat_module(qapp: Any) -> Any:
+    _require_qt_submodules("PyQt6.QtWebSockets")
     from chat import _chat_dock_widget_qt
 
     return _chat_dock_widget_qt
+
+
+def _require_qt_submodules(*module_names: str) -> None:
+    """Skip when a required PyQt6 submodule cannot be loaded."""
+    for module_name in module_names:
+        try:
+            importlib.import_module(module_name)
+        except (ImportError, OSError) as exc:
+            pytest.skip(f"{module_name} not loadable: {exc}")
 
 
 def _make_dock(chat_module: Any, **kwargs: Any) -> Any:
@@ -169,6 +180,23 @@ def _make_dock(chat_module: Any, **kwargs: Any) -> Any:
     # The dock subclasses QDockWidget; connect-on-show defers networking,
     # so simply constructing it does not hit the network.
     return dock
+
+
+def test_chat_qt_guard_skips_broken_websockets(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """A partial PyQt6 install must skip before importing chat widgets."""
+    real_import_module = importlib.import_module
+
+    def fake_import_module(name: str) -> Any:
+        if name == "PyQt6.QtWebSockets":
+            raise OSError("QtWebSockets DLL failed to load")
+        return real_import_module(name)
+
+    monkeypatch.setattr(importlib, "import_module", fake_import_module)
+
+    with pytest.raises(pytest.skip.Exception, match="QtWebSockets"):
+        _require_qt_submodules("PyQt6.QtWebSockets")
 
 
 class TestChatDockWidgetConstruction:
@@ -323,7 +351,7 @@ class TestSlashCommandRouting:
         sent: list[dict[str, Any]] = []
         dock = _make_dock(chat_module)
         try:
-            dock._send_ws = sent.append  # type: ignore[method-assign]
+            dock._send_ws = sent.append
             dock._handle_slash_command("/condense")
         finally:
             dock.close()
