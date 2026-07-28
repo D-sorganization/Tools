@@ -106,7 +106,7 @@ jobs:
           token: ${{ secrets.RUNNER_CHECK_TOKEN || github.token }}
           fetch-depth: 1
           sparse-checkout: ${{ matrix.downstream.sparse_checkout }}
-          sparse-checkout-cone-mode: true
+          sparse-checkout-cone-mode: false
 
       - name: Select persistent Python tool cache
         run: |
