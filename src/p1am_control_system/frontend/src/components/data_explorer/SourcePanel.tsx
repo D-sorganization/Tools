@@ -71,7 +71,12 @@ export const SourcePanel: React.FC<SourcePanelProps> = ({
       const starts = signals
         .map((s) => (s.start_time ? Date.parse(s.start_time) : NaN))
         .filter((t) => Number.isFinite(t));
-      const start = starts.length ? Math.min(...starts) : now - 3600_000;
+      // ⚡ Bolt Optimization: Avoid spread operator in Math.min to prevent call stack overflow
+      let startMin = starts[0];
+      for (let i = 1; i < starts.length; i++) {
+        if (starts[i] < startMin) startMin = starts[i];
+      }
+      const start = starts.length ? startMin : now - 3600_000;
       onHistorianChange({
         ...historian,
         start: toLocalInput(start),
