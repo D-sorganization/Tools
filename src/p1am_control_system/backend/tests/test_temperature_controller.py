@@ -23,6 +23,7 @@ import pytest
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from temperature_controller import (  # noqa: E402  (path setup must run first)
+    TcPath,
     TcType,
     TemperatureConfig,
     TemperatureController,
@@ -771,6 +772,81 @@ class TestActiveTcType:
         c = TemperatureController(cfg)
         c.set_active_tc_type(TcType.TYPE_R)
         assert c.status().active_tc_label == "R-furnace"
+
+    def test_set_active_tc_type_preserves_the_current_path(self) -> None:
+        # The backward-compat type-only shim must not silently reset the path.
+        c = fresh_idle_controller()
+        c.set_active_source(TcType.TYPE_K, TcPath.ANALOG)
+        c.set_active_tc_type(TcType.TYPE_R)
+        assert c.config.active_tc_type == TcType.TYPE_R
+        assert c.config.active_tc_path == TcPath.ANALOG  # path untouched
+
+
+class TestActiveSource:
+    """The 2x2 source selector (type x path) over set_active_source."""
+
+    def test_default_source_is_type_k_on_the_tc_card(self) -> None:
+        c = fresh_idle_controller()
+        assert c.config.active_tc_type == TcType.TYPE_K
+        assert c.config.active_tc_path == TcPath.TC_CARD
+        assert c.config.temp_tag == "TAG_0"
+
+    def test_switch_to_analog_r_changes_tag_and_status(self) -> None:
+        c = fresh_idle_controller()
+        c.set_active_source(TcType.TYPE_R, TcPath.ANALOG)
+        assert c.config.active_tc_type == TcType.TYPE_R
+        assert c.config.active_tc_path == TcPath.ANALOG
+        assert c.config.temp_tag == "TAG_15"  # analog R -> AI3
+        st = c.status()
+        assert st.active_tc_path == TcPath.ANALOG
+        assert st.active_tc_label == "Type R (Analog)"
+
+    def test_each_of_the_four_sources_selects_its_tag(self) -> None:
+        c = fresh_idle_controller()
+        expected = {
+            (TcType.TYPE_K, TcPath.TC_CARD): "TAG_0",
+            (TcType.TYPE_R, TcPath.TC_CARD): "TAG_1",
+            (TcType.TYPE_K, TcPath.ANALOG): "TAG_14",
+            (TcType.TYPE_R, TcPath.ANALOG): "TAG_15",
+        }
+        for (tc_type, tc_path), tag in expected.items():
+            c.set_active_source(tc_type, tc_path)
+            assert c.config.temp_tag == tag
+
+    def test_switch_does_not_change_state_machine(self) -> None:
+        c = fresh_running_controller(sp_c=500.0)
+        c.set_active_source(TcType.TYPE_K, TcPath.ANALOG)
+        assert c.state == TemperatureState.RUNNING
+
+    def test_reclamps_setpoint_to_the_new_analog_full_scale(self) -> None:
+        cfg = TemperatureConfig(
+            analog_k=ThermocoupleChannel(
+                tag="TAG_14", full_scale_c=900.0, label="Type K (Analog)"
+            ),
+        )
+        c = TemperatureController(cfg)
+        c.set_permissive(True)
+        c.set_setpoint_c(1200.0)  # valid under active TC-card K (1400)
+        c.set_active_source(TcType.TYPE_K, TcPath.ANALOG)
+        assert c.config.setpoint_max_c <= 900.0
+        assert c.status().setpoint_c <= 900.0
+
+    def test_rejects_non_tc_type(self) -> None:
+        c = fresh_idle_controller()
+        with pytest.raises(TypeError):
+            c.set_active_source("K", TcPath.ANALOG)  # type: ignore[arg-type]
+
+    def test_rejects_non_tc_path(self) -> None:
+        c = fresh_idle_controller()
+        with pytest.raises(TypeError):
+            c.set_active_source(TcType.TYPE_K, "analog")  # type: ignore[arg-type]
+
+    def test_ignored_while_estopped(self) -> None:
+        c = fresh_idle_controller()
+        c.engage_estop()
+        c.set_active_source(TcType.TYPE_R, TcPath.ANALOG)
+        assert c.config.active_tc_type == TcType.TYPE_K  # unchanged
+        assert c.config.active_tc_path == TcPath.TC_CARD
 
 
 class TestReadingCoercion:

@@ -107,9 +107,12 @@ void SignalBroker::ReadHardwareInputs(HardwareInterface& hw) {
     }
   }
 
-  // Read and scale 2 Analog Inputs (channels 0 to 1)
-  // Analog inputs are already assumed to be in the 0.0% - 100.0% scale.
-  for (int i = 0; i < 2; ++i) {
+  // Read and scale 4 Analog Inputs (channels 0 to 3), routed via input slots
+  // 4..7. AI0/AI1 carry the DC-power-supply voltage/current monitors; AI2/AI3
+  // carry the signal-conditioned type-K/type-R thermocouples (4-20 mA loops).
+  // ReadAnalogInput returns each already scaled to 0.0%-100.0% (per-channel: the
+  // PSU pair over its 0-20 mA span, the conditioned pair over the 4-20 mA span).
+  for (int i = 0; i < 4; ++i) {
     int target_tag = input_routing_[4 + i];
     if (target_tag != kUnmappedTag) {
       float analog_val = hw.ReadAnalogInput(i);

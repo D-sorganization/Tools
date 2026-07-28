@@ -17,6 +17,7 @@ import math
 
 from safety_state_machine import SafetyStateMachine
 from temperature_models import (
+    TcPath,
     TcType,
     TemperatureConfig,
     TemperatureState,
@@ -25,6 +26,7 @@ from temperature_models import (
 )
 
 __all__ = [
+    "TcPath",
     "TcType",
     "TemperatureConfig",
     "TemperatureController",
@@ -136,44 +138,56 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
         # Re-clamp current setpoint to new bounds without changing state.
         self._setpoint_c = self._clamp_setpoint(self._setpoint_c)
 
-    def set_active_tc_type(self, tc_type: TcType) -> None:
-        """Select which thermocouple (type K or type R) drives the controller.
+    def set_active_source(self, tc_type: TcType, tc_path: TcPath) -> None:
+        """Select the controlling thermocouple SOURCE (type + acquisition path).
 
-        Switches the active channel and re-clamps the setpoint / safety limits to
-        the newly-active channel's full scale, so every resulting state remains
-        valid and the rest of the system keeps reading the controlled temperature
-        through ``config.temp_tag`` / ``config.temp_full_scale_c`` (DRY/LOD). The
-        state machine (IDLE/ARMED/RUNNING/TRIPPED) is unchanged.
+        A source is one of the 2x2 combinations of type (K/R) and path (TC card
+        vs analog conditioner). Switches the active channel and re-clamps the
+        setpoint / safety limits to the newly-active channel's full scale, so
+        every resulting state stays valid and the rest of the system keeps
+        reading the controlled temperature through ``config.temp_tag`` /
+        ``config.temp_full_scale_c`` (DRY/LOD). The state machine
+        (IDLE/ARMED/RUNNING/TRIPPED) is unchanged.
 
-        Precondition: tc_type is a TcType.
-        Postcondition: config.active_tc_type == tc_type; setpoint within the new
-        active band.
+        Precondition: tc_type is a TcType and tc_path is a TcPath.
+        Postcondition: config.active_tc_type == tc_type and
+        config.active_tc_path == tc_path; setpoint within the new active band.
 
         Raises:
-            TypeError: if tc_type is not a TcType.
+            TypeError: if tc_type is not a TcType or tc_path is not a TcPath.
             ValueError: if the resulting config is invalid (e.g. the target
                 channel's full scale is below setpoint_min_c).
         """
         if not isinstance(tc_type, TcType):
             raise TypeError(f"tc_type must be a TcType, got {type(tc_type).__name__}")
+        if not isinstance(tc_path, TcPath):
+            raise TypeError(f"tc_path must be a TcPath, got {type(tc_path).__name__}")
         if self._estopped:
-            # Don't let a channel switch ratchet the safety limits while E-stopped.
-            logger.warning("TC-type change ignored — E-stop is latched")
+            # Don't let a source switch ratchet the safety limits while E-stopped.
+            logger.warning("TC-source change ignored — E-stop is latched")
             return
-        channel = (
-            self._config.type_r if tc_type == TcType.TYPE_R else self._config.type_k
-        )
-        full_scale = channel.full_scale_c
+        full_scale = self._config.channel_for(tc_type, tc_path).full_scale_c
         data = self._config.model_dump(
             exclude={"temp_tag", "temp_full_scale_c", "active_tc_label"}
         )
         data["active_tc_type"] = tc_type
+        data["active_tc_path"] = tc_path
         data["setpoint_max_c"] = min(self._config.setpoint_max_c, full_scale)
         data["hh_limit_c"] = min(self._config.hh_limit_c, full_scale)
         # Reconstruct through the constructor so the cross-field invariants are
         # re-checked (raises ValueError on a degenerate channel configuration).
         self._config = TemperatureConfig(**data)
         self._setpoint_c = self._clamp_setpoint(self._setpoint_c)
+
+    def set_active_tc_type(self, tc_type: TcType) -> None:
+        """Select the thermocouple type (K/R), keeping the current path.
+
+        Backward-compatible shim over :meth:`set_active_source`: callers that
+        only care about type (the original two-way K/R toggle) keep working while
+        the acquisition path is preserved. See ``set_active_source`` for the full
+        contract, preconditions, and raised exceptions.
+        """
+        self.set_active_source(tc_type, self._config.active_tc_path)
 
     def set_permissive(self, on: bool) -> None:
         """Toggle permissive. A trip latch is not cleared by a permissive change.
@@ -502,6 +516,7 @@ class TemperatureController(SafetyStateMachine[TemperatureState]):
             min_on_time_s=self._config.min_on_time_s,
             min_off_time_s=self._config.min_off_time_s,
             active_tc_type=self._config.active_tc_type,
+            active_tc_path=self._config.active_tc_path,
             active_tc_label=self._config.active_tc_label,
             estopped=self._estopped,
         )

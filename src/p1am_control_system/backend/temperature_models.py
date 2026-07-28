@@ -39,6 +39,26 @@ class TcType(StrEnum):
     TYPE_R = "R"
 
 
+class TcPath(StrEnum):
+    """Acquisition path a thermocouple's reading arrives through.
+
+    Each physical thermocouple (K and R) can be read two ways:
+
+    - ``TC_CARD``: wired straight into the P1-04THM thermocouple module, which
+      linearizes the junction on-module (the original bench path).
+    - ``ANALOG``: routed through an external signal conditioner that emits a
+      4-20 mA loop into the P1-4ADL2DAL analog input card. Added to reject the
+      electrical noise the bare Type-R sleeve picks up at high temperature.
+
+    Path is orthogonal to :class:`TcType`, so the operator selects one of four
+    sources (K/R x card/analog) exactly the way K vs R was selected before.
+    ``TC_CARD`` is the default so existing configs keep their behavior.
+    """
+
+    TC_CARD = "thm"
+    ANALOG = "analog"
+
+
 def _stripped_label(value: str) -> str:
     """Trim a label and reject whitespace-only names (DbC helper, DRY)."""
     trimmed = value.strip()
@@ -88,14 +108,30 @@ def _default_type_r() -> ThermocoupleChannel:
     return ThermocoupleChannel(tag="TAG_1", full_scale_c=1400.0, label="Type R (Ch 2)")
 
 
+def _default_analog_k() -> ThermocoupleChannel:
+    # Signal-conditioned type-K on P1-4ADL2DAL AI2 (4-20 mA) -> TAG_14. The
+    # conditioner's configured span (default 1400 C) is the tag's full scale.
+    return ThermocoupleChannel(
+        tag="TAG_14", full_scale_c=1400.0, label="Type K (Analog)"
+    )
+
+
+def _default_analog_r() -> ThermocoupleChannel:
+    # Signal-conditioned type-R on P1-4ADL2DAL AI3 (4-20 mA) -> TAG_15.
+    return ThermocoupleChannel(
+        tag="TAG_15", full_scale_c=1400.0, label="Type R (Analog)"
+    )
+
+
 class TemperatureConfig(BaseModel):
     """Operator-configurable parameters for the temperature controller.
 
-    Two thermocouple channels (type K and type R) are configured; `active_tc_type`
-    selects which one drives the controller. `temp_tag` / `temp_full_scale_c` are
-    derived (read-only) from the active channel, so the rest of the system reads
-    the controlled thermocouple through one stable accessor regardless of which
-    type is selected (DRY / LOD).
+    Four thermocouple channels are configured — type K and type R, each on two
+    acquisition paths (the P1-04THM card and an analog signal conditioner). The
+    pair (`active_tc_type`, `active_tc_path`) selects which one drives the
+    controller. `temp_tag` / `temp_full_scale_c` are derived (read-only) from the
+    active channel, so the rest of the system reads the controlled thermocouple
+    through one stable accessor regardless of which source is selected (DRY/LOD).
 
     Cross-field invariants (checked against the *active* channel's full scale):
         setpoint_min_c < setpoint_max_c
@@ -105,15 +141,27 @@ class TemperatureConfig(BaseModel):
 
     type_k: ThermocoupleChannel = Field(
         default_factory=_default_type_k,
-        description="Type-K thermocouple channel.",
+        description="Type-K thermocouple on the P1-04THM card (TC-card path).",
     )
     type_r: ThermocoupleChannel = Field(
         default_factory=_default_type_r,
-        description="Type-R thermocouple channel.",
+        description="Type-R thermocouple on the P1-04THM card (TC-card path).",
+    )
+    analog_k: ThermocoupleChannel = Field(
+        default_factory=_default_analog_k,
+        description="Signal-conditioned type-K on an analog input (analog path).",
+    )
+    analog_r: ThermocoupleChannel = Field(
+        default_factory=_default_analog_r,
+        description="Signal-conditioned type-R on an analog input (analog path).",
     )
     active_tc_type: TcType = Field(
         default=TcType.TYPE_K,
-        description="Which thermocouple the controller currently reads.",
+        description="Which thermocouple type (K or R) the controller reads.",
+    )
+    active_tc_path: TcPath = Field(
+        default=TcPath.TC_CARD,
+        description="Which acquisition path (TC card or analog conditioner).",
     )
 
     setpoint_min_c: float = Field(
@@ -170,10 +218,40 @@ class TemperatureConfig(BaseModel):
     def _strip_heater_label(cls, value: str) -> str:
         return _stripped_label(value)
 
+    def channel_for(self, tc_type: TcType, tc_path: TcPath) -> ThermocoupleChannel:
+        """Return the channel for a (type, path) pair — single source of truth.
+
+        Every "which tag/full-scale/label for this source" decision in the whole
+        system routes through here (DRY), so the 2x2 source matrix has exactly
+        one mapping. Used by ``active_channel`` and by the integration layer to
+        find both the controlling channel and its same-path cross-check partner.
+        """
+        if tc_path == TcPath.ANALOG:
+            return self.analog_r if tc_type == TcType.TYPE_R else self.analog_k
+        return self.type_r if tc_type == TcType.TYPE_R else self.type_k
+
     @property
     def active_channel(self) -> ThermocoupleChannel:
         """The thermocouple channel the controller currently reads."""
-        return self.type_r if self.active_tc_type == TcType.TYPE_R else self.type_k
+        return self.channel_for(self.active_tc_type, self.active_tc_path)
+
+    @property
+    def cross_check_channel(self) -> ThermocoupleChannel:
+        """The OTHER physical sensor on the active path (HH / cross-check partner).
+
+        The complement of :attr:`active_channel`: same acquisition path, opposite
+        thermocouple type. This is the reading the controller uses as its
+        HH-on-either backstop and stuck-sensor cross-check, so both checks compare
+        the two physical sensors seen through the SAME path the operator selected.
+        Written out (rather than ``channel_for`` of a computed "other" type) so no
+        thermocouple-type literal is passed as an argument — keeps it clean under
+        the CI type checker's skipped-import mode.
+        """
+        if self.active_tc_path == TcPath.ANALOG:
+            return (
+                self.analog_k if self.active_tc_type == TcType.TYPE_R else self.analog_r
+            )
+        return self.type_k if self.active_tc_type == TcType.TYPE_R else self.type_r
 
     @computed_field  # type: ignore[prop-decorator]
     @property
@@ -232,22 +310,28 @@ class TemperatureStatus(BaseModel):
     min_off_time_s: float = 0.0
 
     active_tc_type: TcType = Field(default=TcType.TYPE_K)
+    active_tc_path: TcPath = Field(
+        default=TcPath.TC_CARD,
+        description="Acquisition path (TC card or analog conditioner) in use.",
+    )
     active_tc_label: str = "Type K"
 
     type_k_temp_c: float | None = Field(
         default=None,
         description=(
-            "Latest type-K thermocouple reading (deg C), regardless of which TC "
-            "is controlling, so the HMI can display and plot both channels at "
-            "once. None when no reading is available yet."
+            "Latest type-K reading (deg C) on the ACTIVE acquisition path, "
+            "regardless of which TC is controlling, so the HMI can display and "
+            "plot both channels at once. On the TC-card path this is the P1-04THM "
+            "K junction; on the analog path it is the conditioned K loop. None "
+            "when no reading is available yet."
         ),
     )
     type_r_temp_c: float | None = Field(
         default=None,
         description=(
-            "Latest type-R thermocouple reading (deg C), regardless of which TC "
-            "is controlling, so the HMI can display and plot both channels at "
-            "once. None when no reading is available yet."
+            "Latest type-R reading (deg C) on the ACTIVE acquisition path, "
+            "regardless of which TC is controlling, so the HMI can display and "
+            "plot both channels at once. None when no reading is available yet."
         ),
     )
     control_sensor_holding: bool = Field(

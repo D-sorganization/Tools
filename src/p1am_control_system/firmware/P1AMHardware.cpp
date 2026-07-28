@@ -130,20 +130,30 @@ float P1AMHardware::ReadThermocouple(int channel) {
 }
 
 float P1AMHardware::ReadAnalogInput(int channel) {
-  if (channel < 0 || channel >= 2) {
+  if (channel < 0 || channel >= 4) {
     return 0.0f;
   }
   // P1.readAnalog returns raw ADC counts. For the P1-4ADL2DAL-1 the AI is
-  // 13-bit over a 0-20 mA span: 0 counts -> 0 mA, 8191 counts -> 20 mA. The
-  // power-supply monitor outputs are 0-5 V signals (0 V = zero output, 5 V =
-  // full) which drive 0-20 mA through the current input's ~250 ohm burden, so
-  // scale the full 0-20 mA span linearly to 0-100 % (0 mA -> 0 %, 20 mA ->
-  // 100 %). If a channel is instead a 4-20 mA / 1-5 V signal (reads ~1 V / 4 mA
-  // at zero output), use (mA - 4.0f) * (100.0f / 16.0f) instead.
+  // 13-bit over a 0-20 mA span: 0 counts -> 0 mA, 8191 counts -> 20 mA.
   // Library channels are 1-indexed; broker uses 0-indexed.
   uint32_t counts = P1.readAnalog(kSlotAna, channel + 1);
   float mA = static_cast<float>(counts) * (20.0f / 8191.0f);
-  float percent = mA * (100.0f / 20.0f);
+
+  // Per-channel span -> 0-100 %:
+  //   AI0/AI1 (channels 0,1): the DC-power-supply 0-5 V monitor outputs (0 V =
+  //     zero output, 5 V = full) drive 0-20 mA through the ~250 ohm burden, so
+  //     the whole 0-20 mA span maps linearly (0 mA -> 0 %, 20 mA -> 100 %).
+  //   AI2/AI3 (channels 2,3): the thermocouple signal conditioners emit a
+  //     4-20 mA loop (live zero), so map (mA - 4) over the 16 mA span
+  //     (4 mA -> 0 %, 20 mA -> 100 %). A broken loop / unpowered conditioner
+  //     reads < 4 mA and clamps to 0 % ("cold") — the backend deglitch filter +
+  //     cross-check + HH-on-either then keep that fail-safe.
+  float percent;
+  if (channel >= 2) {
+    percent = (mA - 4.0f) * (100.0f / 16.0f);
+  } else {
+    percent = mA * (100.0f / 20.0f);
+  }
   if (percent < 0.0f) {
     percent = 0.0f;
   } else if (percent > 100.0f) {

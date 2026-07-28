@@ -9,6 +9,7 @@ import {
   type TemperatureConfig,
   type TemperatureStatus,
 } from "./TemperatureControl";
+import { sourceLabel, TEMP_SOURCES } from "../lib/tempSource";
 
 // Mock the fetch seam so we can drive the config load and inspect the commands
 // the Stop button issues, without a live backend.
@@ -157,12 +158,15 @@ describe("plotPxToTime", () => {
 // --------------------------------------------------------------------------
 
 const CONFIG: TemperatureConfig = {
-  type_k: { tag: "TAG_0", full_scale_c: 1400, label: "Type K" },
-  type_r: { tag: "TAG_1", full_scale_c: 1400, label: "Type R" },
+  type_k: { tag: "TAG_0", full_scale_c: 1400, label: "Type K (Ch 1)" },
+  type_r: { tag: "TAG_1", full_scale_c: 1400, label: "Type R (Ch 2)" },
+  analog_k: { tag: "TAG_14", full_scale_c: 1400, label: "Type K (Analog)" },
+  analog_r: { tag: "TAG_15", full_scale_c: 1400, label: "Type R (Analog)" },
   active_tc_type: "R",
+  active_tc_path: "thm",
   temp_tag: "TAG_1",
   temp_full_scale_c: 1400,
-  active_tc_label: "Type R",
+  active_tc_label: "Type R (Ch 2)",
   setpoint_min_c: 0,
   setpoint_max_c: 1300,
   deadband_c: 5,
@@ -184,7 +188,8 @@ const RUNNING: TemperatureStatus = {
   min_on_time_s: 0,
   min_off_time_s: 0,
   active_tc_type: "R",
-  active_tc_label: "Type R",
+  active_tc_path: "thm",
+  active_tc_label: "Type R (Ch 2)",
 };
 
 function routeFetch(): void {
@@ -237,5 +242,65 @@ describe("heater Stop (safety)", () => {
     )!;
     const body = JSON.parse((posted[1] as { body: string }).body);
     expect(body.enabled).toBe(false);
+  });
+});
+
+// --------------------------------------------------------------------------
+// Temperature source selector — K/R x (TC card / analog conditioner).
+// --------------------------------------------------------------------------
+
+describe("temperature source selector", () => {
+  beforeEach(() => {
+    fetchMock.mockReset();
+    routeFetch();
+  });
+
+  it("labels the four sources by type and path (pure)", () => {
+    expect(sourceLabel("K", "thm")).toBe("TC Card Type K");
+    expect(sourceLabel("R", "thm")).toBe("TC Card Type R");
+    expect(sourceLabel("K", "analog")).toBe("Analog Type K");
+    expect(sourceLabel("R", "analog")).toBe("Analog Type R");
+    expect(TEMP_SOURCES).toHaveLength(4);
+  });
+
+  it("renders a button for each of the four sources", async () => {
+    render(<TemperatureControl liveStatus={RUNNING} />);
+    for (const src of TEMP_SOURCES) {
+      const label = sourceLabel(src.type, src.path);
+      expect(
+        await screen.findByRole("button", { name: new RegExp(label) }),
+      ).toBeTruthy();
+    }
+  });
+
+  it("posts BOTH the selected type and path when a source is picked", async () => {
+    render(<TemperatureControl liveStatus={RUNNING} />);
+    const btn = await screen.findByRole("button", { name: /Analog Type K/ });
+    fireEvent.click(btn);
+
+    await waitFor(() => {
+      const posted = fetchMock.mock.calls.find(
+        (c) =>
+          typeof c[0] === "string" &&
+          (c[0] as string).startsWith("/api/temperature/tc_type"),
+      );
+      expect(posted).toBeTruthy();
+    });
+
+    const posted = fetchMock.mock.calls.find((c) =>
+      (c[0] as string).startsWith("/api/temperature/tc_type"),
+    )!;
+    const body = JSON.parse((posted[1] as { body: string }).body);
+    expect(body.active_tc_type).toBe("K");
+    expect(body.active_tc_path).toBe("analog");
+  });
+
+  it("marks the active source (from status) as pressed", async () => {
+    // RUNNING is type R on the TC-card path.
+    render(<TemperatureControl liveStatus={RUNNING} />);
+    const active = await screen.findByRole("button", {
+      name: /TC Card Type R/,
+    });
+    expect(active.getAttribute("aria-pressed")).toBe("true");
   });
 });

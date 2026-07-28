@@ -181,7 +181,7 @@ void setup() {
     }
   }
   modbusServer.configureCoils(0, 10);
-  // Holding-register window: tag values (0..63), input routing (100..105),
+  // Holding-register window: tag values (0..63), input routing (100..107),
   // output routing (110..111), PID config (200..239), 4-limit interlocks
   // (300..555 = 32 tags x 8 regs). Bump end to 560 with margin.
   modbusServer.configureHoldingRegisters(0, 560);
@@ -213,14 +213,17 @@ void setup() {
     // upload) boots into the bench hardware map instead of all-unmapped. An
     // all-unmapped map strands every TC/AI AND blocks recovery: the host's
     // config encoder rejects the 255 "unmapped" sentinel, so it cannot write a
-    // good config back. Bench map: TC0-3 -> TAG_0..3, AI0/AI1 -> TAG_12/13,
-    // AO0/AO1 <- TAG_10/11.
+    // good config back. Bench map: TC0-3 -> TAG_0..3, AI0/AI1 -> TAG_12/13
+    // (power-supply V/I), AI2/AI3 -> TAG_14/15 (signal-conditioned type-K/R
+    // thermocouples, 4-20 mA), AO0/AO1 <- TAG_10/11.
     broker.SetInputRouting(0, 0);
     broker.SetInputRouting(1, 1);
     broker.SetInputRouting(2, 2);
     broker.SetInputRouting(3, 3);
     broker.SetInputRouting(4, 12);
     broker.SetInputRouting(5, 13);
+    broker.SetInputRouting(6, 14);
+    broker.SetInputRouting(7, 15);
     broker.SetOutputRouting(0, 10);
     broker.SetOutputRouting(1, 11);
     // PID0 = power-supply current-command pass-through (CV -> AO TAG_10, unity

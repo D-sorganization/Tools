@@ -38,9 +38,10 @@ channel, on a **Facts Engineering P1AM-100 PLC** driven from a **Raspberry Pi**.
 | Tag | Signal | | Coil | Function |
 |-----|--------|-|------|----------|
 | `TAG_0` | Type-K thermocouple (P1-04THM Ch 1) | | `0` | Save config to flash |
-| `TAG_1` | Type-R thermocouple (Ch 2, **active controlling**) | | `1` | E-stop reset |
-| `TAG_10/11` | Analog outputs (P1-4ADL2DAL) | | `2` | **Heater relay** (24 V DO → relay → 110 V) |
-| `TAG_12/13` | Analog inputs | | `3` | THM burnout direction (1 = high-side / fail-safe, default) |
+| `TAG_1` | Type-R thermocouple (P1-04THM Ch 2) | | `1` | E-stop reset |
+| `TAG_10/11` | Analog outputs (P1-4ADL2DAL AO0/AO1) | | `2` | **Heater relay** (24 V DO → relay → 110 V) |
+| `TAG_12/13` | Analog inputs AI0/AI1 (power-supply V/I) | | `3` | THM burnout direction (1 = high-side / fail-safe, default) |
+| `TAG_14/15` | Analog inputs AI2/AI3 (4–20 mA conditioned K/R TCs) | | | |
 | `TAG_20…25` | Raw 0–5 V card diagnostics | | | |
 
 - Thermocouples: 0–1400 °C, reported in °C. PLC at `192.168.1.100:502`; Pi `eth0`
@@ -102,6 +103,9 @@ journalctl -u p1am-backend -f
 R-channel "dips to zero" are **real dropped reads, rare and high-temperature-gated**:
 ~6 % on R near 1180 °C but ~0 % at 800 °C. Above ~1000–1100 °C the refractory turns
 mildly conductive and couples the AC heater's noise onto the low-output Type-R TC.
-**Fix:** an isolated TC signal conditioner + single-point grounding. Software already
-mitigates (deglitch holds last-good; trends bridge the zeros for display). See the
-architecture report §*Engineering findings* for the full analysis.
+**Fix:** isolated 4–20 mA TC signal conditioners + single-point grounding. These are
+wired to analog inputs AI2/AI3 (`TAG_14/15`) and are selectable as an alternate
+control source in the HMI (**Analog Type K / Analog Type R**) alongside the direct
+TC-card path. Software also mitigates in either path (deglitch holds last-good;
+trends bridge the zeros for display). See the architecture report §*Engineering
+findings* for the full analysis.

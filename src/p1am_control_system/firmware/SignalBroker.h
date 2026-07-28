@@ -6,7 +6,7 @@
 class SignalBroker {
  public:
   static const int kNumTags = 32;
-  static const int kNumInputs = 6;    // 4 Thermocouples + 2 Analog Inputs
+  static const int kNumInputs = 8;    // 4 Thermocouples + 4 Analog Inputs
   static const int kNumOutputs = 2;   // 2 Analog Outputs
   static const int kUnmappedTag = 255;
 
