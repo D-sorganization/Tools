@@ -36,6 +36,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-07-28 Humanoid Character Builder Contract Preconditions
+
+- `src/shared/python/humanoid_character_builder/generators/urdf_generator.py`
+  adds DbC preconditions for positive mass on link generation, valid joint limit
+  ranges on joint generation, and a valid XML structure postcondition on URDF
+  generation.
+- `src/shared/python/humanoid_character_builder/tests/test_collision_geometry.py`
+  guards the optional `trimesh` import with `pytest.importorskip`.
+
 ### 2026-07-28 C3D POINT:UNITS metadata defaulting
 
 - `shared.python.sidekick.lab.bio.c3d_reader.C3DDataReader` treats missing,

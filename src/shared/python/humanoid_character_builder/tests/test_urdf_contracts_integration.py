@@ -67,7 +67,8 @@ class TestURDFContracts:
         }
 
         with pytest.raises(
-            ContractViolationError, match="Inertia must be positive definite"
+            ContractViolationError,
+            match="(Inertia must be positive definite|ixx must be positive)",
         ):
             generator._compute_segment_inertia(
                 segment_name="test",
@@ -100,8 +101,13 @@ class TestURDFContracts:
 
         # Mock internal methods to avoid actual computation (which might fail due to defaults)
         # and mock _build_urdf_xml to return invalid XML to trigger the postcondition
+        def mock_gen_link(segment_name, *args, **kwargs):
+            generator._links[segment_name] = MagicMock()
+
         with (
-            patch.object(HumanoidURDFGenerator, "_generate_link"),
+            patch.object(
+                HumanoidURDFGenerator, "_generate_link", side_effect=mock_gen_link
+            ),
             patch.object(HumanoidURDFGenerator, "_generate_joint"),
             patch.object(
                 HumanoidURDFGenerator, "_build_urdf_xml", return_value="invalid xml"

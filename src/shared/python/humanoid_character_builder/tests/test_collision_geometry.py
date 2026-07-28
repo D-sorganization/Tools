@@ -4,7 +4,9 @@ from typing import Any
 
 import numpy as np
 import pytest
-import trimesh
+
+trimesh = pytest.importorskip("trimesh")
+
 from humanoid_character_builder.mesh.collision_geometry import (
     CollisionGeometryGenerator,
 )

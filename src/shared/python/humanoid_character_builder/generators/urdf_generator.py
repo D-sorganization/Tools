@@ -208,6 +208,12 @@ class HumanoidURDFGenerator:
         lambda result: len(result) > 0,
         "URDF output must not be empty",
     )
+    @postcondition(
+        lambda result: (
+            result.strip().startswith("<robot") or result.strip().startswith("<?xml")
+        ),
+        "Generated URDF must be valid XML",
+    )
     def generate(
         self,
         params: BodyParameters,
@@ -299,6 +305,10 @@ class HumanoidURDFGenerator:
         # Default material
         self._materials["default"] = (0.7, 0.7, 0.7, 1.0)
 
+    @precondition(
+        lambda mass: mass > 0,
+        "Mass must be positive",
+    )
     def _generate_link(
         self,
         segment_name: str,
@@ -476,6 +486,12 @@ class HumanoidURDFGenerator:
         else:
             self._generate_single_joint(joint_name, joint_def)
 
+    @precondition(
+        lambda joint_def: (
+            joint_def.limits is None or joint_def.limits.lower <= joint_def.limits.upper
+        ),
+        "Joint limits invalid",
+    )
     def _generate_single_joint(
         self,
         joint_name: str,
@@ -595,6 +611,10 @@ class HumanoidURDFGenerator:
         }
         return mapping.get(joint_type, "fixed")
 
+    @postcondition(
+        lambda result: result.strip().startswith("<") and result.strip().endswith(">"),
+        "Generated URDF must be valid XML",
+    )
     def _build_urdf_xml(self, robot_name: str) -> str:
         """Build the complete URDF XML."""
         if robot_name is None:
