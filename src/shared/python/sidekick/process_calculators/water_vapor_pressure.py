@@ -143,9 +143,9 @@ def buck_pressure_pa(
     """Buck vapor pressure in Pa.
 
     Evaluates ``P_kPa = a * exp((b - t/d) * t / (c + t))`` and converts to Pa.
-    This is the syngas-calculator coefficient order; callers that use the
-    transposed steam-engine order (``(b - t/c) * t / (t + d)``) must swap their
-    ``c`` and ``d`` arguments at the call site to preserve their legacy curve.
+    Pass ``c`` as the denominator temperature offset and ``d`` as the numerator
+    temperature divisor. For the Buck over-water constants this is
+    ``c=257.14`` and ``d=234.5``.
 
     Args:
         a_kpa: Buck pre-factor ``a`` in kPa.

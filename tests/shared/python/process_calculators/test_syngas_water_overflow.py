@@ -114,12 +114,11 @@ class TestBuckEquationOverflow:
         assert result >= 0
 
     def test_moderate_temperature_unchanged(self, calculator):
-        """Fix must not alter results for normal operating temperatures."""
+        """Moderate temperatures evaluate the physical Buck over-water curve."""
         # 50 C is well within the safe range for the Buck equation.
         result = calculator._buck_equation(50.0)
-        # Expected value from the original equation (no clamping active):
-        # a=0.61121, b=18.678, c=234.5, d=257.14
-        a, b, c, d = 0.61121, 18.678, 234.5, 257.14
+        # Buck over-water: c is the denominator offset, d is the numerator divisor.
+        a, b, c, d = 0.61121, 18.678, 257.14, 234.5
         exponent = (b - 50.0 / d) * 50.0 / (c + 50.0)
         expected_kpa = a * math.exp(exponent)
         expected_pa = expected_kpa * 1000

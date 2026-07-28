@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import pytest
 from upstream_drift_tools.process_calculators.pressure_drop_calculator.engine.pressure_drop_calculation_engine import (
+    ColebrookConvergenceError,
     calculate_elevation_pressure_drop,
     calculate_erosional_velocity,
     calculate_expansion_factor,
@@ -125,12 +126,50 @@ class TestFrictionFactorColebrook:
         f_lam = friction_factor_laminar(1000.0)
         assert f_cb == pytest.approx(f_lam, rel=1e-6)
 
+    def test_colebrook_nonconvergence_raises(self) -> None:
+        with pytest.raises(ColebrookConvergenceError) as exc_info:
+            friction_factor_colebrook(100_000.0, 0.0001, max_iterations=1)
+
+        err = exc_info.value
+        assert err.reynolds_number == 100_000.0
+        assert err.relative_roughness == 0.0001
+        assert err.max_iterations == 1
+        assert err.last_residual > err.tolerance
+
     def test_rougher_pipe_higher_friction_factor(self) -> None:
         """Higher relative roughness → higher friction factor in turbulent flow."""
         re = 100_000
         f_smooth = friction_factor_colebrook(re, 1e-5)
         f_rough = friction_factor_colebrook(re, 0.01)
         assert f_rough > f_smooth
+
+    @pytest.mark.parametrize(
+        "method",
+        [
+            friction_factor_colebrook,
+            friction_factor_swamee_jain,
+            friction_factor_churchill,
+            friction_factor_haaland,
+        ],
+    )
+    def test_negative_relative_roughness_raises(self, method) -> None:
+        with pytest.raises(ValueError, match="Relative roughness must be non-negative"):
+            method(10_000.0, -0.001)
+
+
+class TestFrictionFactorChurchill:
+    """Churchill explicit all-regime correlation."""
+
+    def test_creeping_laminar_limit_uses_hagen_poiseuille(self) -> None:
+        assert friction_factor_churchill(0.1, 0.0) == pytest.approx(640.0, rel=1e-12)
+
+    @pytest.mark.parametrize("reynolds_number", [0.0, -100.0])
+    def test_nonpositive_re_raises(self, reynolds_number: float) -> None:
+        with pytest.raises(ValueError, match="Reynolds number must be positive"):
+            friction_factor_churchill(reynolds_number, 0.0)
+
+    def test_boundary_at_re_one_uses_laminar_value(self) -> None:
+        assert friction_factor_churchill(1.0, 0.0) == pytest.approx(64.0, rel=1e-6)
 
 
 class TestClassifyFlowRegime:

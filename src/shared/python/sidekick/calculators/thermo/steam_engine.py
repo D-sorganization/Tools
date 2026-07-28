@@ -501,11 +501,10 @@ class SteamCalculationEngine:
         but the Buck equation requires the pre-factor in kPa, so it is
         converted (1 mbar = 0.1 kPa) before delegation.
 
-        The steam engine historically used the coefficient order
-        ``(b - T/c) * T / (T + d)``, which is the transpose of the syngas
-        order the shared kernel implements (``(b - T/d) * T / (c + T)``).  The
-        ``BUCK_C`` / ``BUCK_D`` arguments are therefore swapped here so the
-        delegated curve exactly reproduces the legacy steam saturation curve.
+        The shared kernel takes ``c`` as the denominator offset and ``d`` as the
+        numerator divisor. The named Buck constants store those values as
+        ``BUCK_D`` and ``BUCK_C``, respectively, so they are passed in that
+        order here.
         """
         a_kpa = BUCK_A / MBAR_TO_KPA_FACTOR
         return float(_buck_pressure_pa(a_kpa, BUCK_B, BUCK_D, BUCK_C, temperature_c))
