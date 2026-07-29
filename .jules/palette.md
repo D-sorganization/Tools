@@ -43,3 +43,6 @@
 ## 2024-07-23 - Focus Rings on Core Buttons
 **Learning:** Discovered a pattern where standard buttons utilizing the `.btn` utility class lacked focus ring accessibility, despite inputs and tabs being styled properly.
 **Action:** Ensure global utility classes for interactive elements inherently contain standard `focus-visible` styling to enforce a baseline accessibility standard across the application.
+## 2024-07-29 - Missing Keyboard Focus States on Form Elements
+**Learning:** Found a pattern across the rotation converter app where main interactable elements (compute buttons, inputs, selects) lacked explicit `focus-visible` states, making keyboard navigation difficult. The global outline removal (`outline-none`) suppressed native indicators.
+**Action:** Always verify that interactive elements, especially custom form controls suppressing native outlines, explicitly define `focus-visible` ring styles to preserve keyboard accessibility.
