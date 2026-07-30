@@ -2670,3 +2670,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+### Version 1.1.242
+
+- **Performance**: Replaced `Math.min(...values)` and `Math.max(...values)` spreads with single-pass `for` loops in `trendAxis.ts` and `SourcePanel.tsx` within the `p1am_control_system` frontend, avoiding call stack overflows on large datasets and eliminating intermediate array allocations (`.map().filter()`).
