@@ -29,7 +29,8 @@ PyOpenGL>=3.1.10  # OpenGL bindings for Python
 PyOpenGL_accelerate>=3.1.10  # Accelerated OpenGL extensions
 
 # Web Applications
-flask>=3.0.0  # Web framework for building web applications
+flask>=3.0.0
+blinker>=1.9.0  # Web framework for building web applications
 flask-limiter>=3.5.0  # Rate limiting for Flask apps (used by calculator API tests)
 
 # Data Validation & Serialization
