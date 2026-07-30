@@ -82,3 +82,7 @@
 ## 2026-07-30 - Math.min/max Spread Operator on Chart Data
 **Learning:** In the P1AM Control System trend plotting (`trendAxis.ts`), using the spread operator with `Math.min(...values)` and `Math.max(...values)` on large telemetry sample arrays can cause 'Maximum call stack size exceeded' errors and allocates unnecessary memory.
 **Action:** Use a single-pass `for` loop to compute min and max for large chart data arrays to prevent stack overflows and improve rendering performance.
+
+## 2024-05-24 - Avoid chained map and every array iterations for parsing
+**Learning:** Multiple array methods (`.map()`, `.every()`, `.filter()`) chained together for iterating over datasets cause unnecessary intermediate array allocations, adding up to increased garbage collection pressure.
+**Action:** Replace multiple chained array passes with a single-pass `for` loop that pre-allocates arrays or calculates results inline.
