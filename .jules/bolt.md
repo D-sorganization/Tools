@@ -79,3 +79,6 @@
 ## 2024-07-26 - Single-pass loops for high-frequency React UI rendering
 **Learning:** In high-frequency React UI rendering paths (e.g., pointer move events for SVG crosshairs), using chained `.map()` and `.reduce()` operations creates unnecessary garbage collection pressure due to intermediate array allocations and closure overhead.
 **Action:** Replace chained `.map()` and `.reduce()` operations with a single-pass `for` loop to eliminate closure allocations and intermediate arrays, leading to smoother UI interactions.
+## 2026-07-30 - Math.min/max Spread Operator on Chart Data
+**Learning:** In the P1AM Control System trend plotting (`trendAxis.ts`), using the spread operator with `Math.min(...values)` and `Math.max(...values)` on large telemetry sample arrays can cause 'Maximum call stack size exceeded' errors and allocates unnecessary memory.
+**Action:** Use a single-pass `for` loop to compute min and max for large chart data arrays to prevent stack overflows and improve rendering performance.
