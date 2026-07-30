@@ -287,7 +287,9 @@ def cross_correlation(
 
     da = array_a - array_a.mean()
     db = array_b - array_b.mean()
-    norm = cast(float, np.sqrt(np.sum(da**2) * np.sum(db**2)))
+    sum_sq_a = float(np.sum(da**2))
+    sum_sq_b = float(np.sum(db**2))
+    norm = cast(float, np.sqrt(sum_sq_a * sum_sq_b))
     if norm == 0.0:
         raise ValueError("cross_correlation requires non-constant inputs")
 

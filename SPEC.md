@@ -2760,3 +2760,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 2024-07-24 (Bolt): Column reconciliation optimization
 
 - Updated column reconciliation optimization to use a Set for O(1) lookups.
+
+## 2026-07-30 fix(mypy) — data_explorer_stats.cross_correlation norm type inference
+
+- **2026-07-30**: fix(mypy) — Resolved a `Never`-type inference error mypy 1.13.0 raised on `np.sum(da**2) * np.sum(db**2)` inside `cross_correlation`'s normalization calc in `src/p1am_control_system/backend/data_explorer_stats.py`. Split each `np.sum(...)` into an explicit `float(...)`-coerced intermediate before multiplying; behavior/output unchanged.
