@@ -67,50 +67,82 @@ jobs:
           PR_BODY: ${{ github.event.pull_request.body }}
           CONSOLIDATED_PR_NUM: ${{ github.event.pull_request.number }}
           GITHUB_REPOSITORY: ${{ github.repository }}
+        shell: bash
         run: |
-          # Extract PR numbers. Expecting "Consolidated PRs: #123 #124" or similar
-          # We use regex to find #\d+ patterns in the body
+          # Close ONLY the PRs a consolidation genuinely landed. The previous
+          # logic closed every "#N" found anywhere in the body and deleted its
+          # branch, which ORPHANED real work when a PR was merely referenced
+          # ("Refs #N"), lived in another repo, or was listed but silently
+          # dropped from the consolidation diff. Three guards fix that:
+          #   1. Close-directive only — match the GitHub close keywords
+          #      (Closes/Fixes/Resolves #N), never a bare mention or "Refs #N".
+          #   2. This-repo only — the keyword must be followed by a bare "#N";
+          #      a cross-repo "Closes owner/repo#N" does NOT match, so we never
+          #      close a same-numbered PR here because another repo was cited.
+          #   3. Diff-overlap gate — require at least one of the target PR's
+          #      changed files to appear in the consolidation diff before
+          #      closing. A PR whose changes never made it in is left OPEN and
+          #      its branch is never deleted (fail safe — no orphaned work).
 
           echo "Analyzing Consolidated PR #$CONSOLIDATED_PR_NUM..."
 
-          # Extract all numbers prefixed with # from the body
-          prs=$(echo "$PR_BODY" | grep -o '#[0-9]\+' | tr -d '#')
+          # Guards 1 + 2: only explicit close directives with a bare "#N".
+          close_targets=$(printf '%s\n' "$PR_BODY" \
+            | grep -oiE '(close[sd]?|fix(e[sd])?|resolve[sd]?)[[:space:]]+#[0-9]+' \
+            | grep -oE '#[0-9]+' | tr -d '#' | sort -u || true)
 
-          for pr_num in $prs; do
-            # Skip self-reference if present
+          if [ -z "$close_targets" ]; then
+            echo "No explicit 'Closes/Fixes/Resolves #N' directives in the body; nothing to auto-close."
+            exit 0
+          fi
+
+          # Files the consolidation actually changed (paginated — it can be large).
+          consolidation_files_file="$(mktemp)"
+          gh api "repos/$GITHUB_REPOSITORY/pulls/$CONSOLIDATED_PR_NUM/files" \
+            --paginate --jq '.[].path' 2>/dev/null | sort -u > "$consolidation_files_file" || true
+          if [ ! -s "$consolidation_files_file" ]; then
+            echo "Could not read consolidation #$CONSOLIDATED_PR_NUM file list; refusing to auto-close anything (fail safe)."
+            exit 0
+          fi
+
+          for pr_num in $close_targets; do
             if [ "$pr_num" == "$CONSOLIDATED_PR_NUM" ]; then
               continue
             fi
+            echo "Processing referenced PR #$pr_num..."
 
-            echo "Processing original PR #$pr_num..."
-
-            # Check if PR is still open
-            state=$(gh pr view "$pr_num" --json state -q .state)
-
-            if [ "$state" == "OPEN" ]; then
-              # Anti-phantom-merge gate: if this PR has the jules-verification-failed
-              # label, do NOT silently close it as "superseded" — that hides the
-              # phantom merge from the user. Leave it open with the failure label so
-              # the diagnostic remains visible.
-              has_failed_label=$(gh pr view "$pr_num" --json labels \
-                --jq '[.labels[].name] | contains(["jules-verification-failed"])')
-              if [ "$has_failed_label" = "true" ]; then
-                echo "  PR #$pr_num carries jules-verification-failed; skipping auto-close (leaves the diagnostic visible)."
-                gh pr comment "$pr_num" --body "Skipped auto-close from consolidation #$CONSOLIDATED_PR_NUM because this PR is flagged jules-verification-failed. Investigate manually before closing." || true
-                continue
-              fi
-
-              echo "  Closing PR #$pr_num as superseded..."
-
-              # Add comment
-              gh pr comment "$pr_num" --body "Superseded by Consolidated PR #$CONSOLIDATED_PR_NUM. This branch will be deleted."
-
-              # Close PR
-              gh pr close "$pr_num" --comment "Auto-closing: consolidated into #$CONSOLIDATED_PR_NUM"
-
-              # Delete branch (gh pr close --delete-branch doesn't always work if not merged, do it explicitly)
-              gh pr close "$pr_num" --delete-branch || echo "  Could not delete branch for #$pr_num (maybe already deleted)"
-            else
-              echo "  PR #$pr_num is already $state. skipping."
+            state=$(gh pr view "$pr_num" --json state -q .state 2>/dev/null || echo "")
+            if [ "$state" != "OPEN" ]; then
+              echo "  PR #$pr_num is '${state:-not a PR}'; skipping."
+              continue
             fi
+
+            # Anti-phantom-merge gate: never silently close a PR flagged as failing
+            # verification — leave it open so the diagnostic stays visible.
+            has_failed_label=$(gh pr view "$pr_num" --json labels \
+              --jq '[.labels[].name] | contains(["jules-verification-failed"])' 2>/dev/null || echo "false")
+            if [ "$has_failed_label" = "true" ]; then
+              echo "  PR #$pr_num carries jules-verification-failed; skipping auto-close."
+              gh pr comment "$pr_num" --body "Skipped auto-close from consolidation #$CONSOLIDATED_PR_NUM because this PR is flagged jules-verification-failed. Investigate manually before closing." || true
+              continue
+            fi
+
+            # Guard 3: confirm the work actually landed in the consolidation diff.
+            pr_files=$(gh api "repos/$GITHUB_REPOSITORY/pulls/$pr_num/files" \
+              --paginate --jq '.[].path' 2>/dev/null | sort -u || true)
+            if [ -z "$pr_files" ]; then
+              echo "  Could not read PR #$pr_num file list; leaving it OPEN (fail safe)."
+              continue
+            fi
+            overlap=$(printf '%s\n' "$pr_files" | grep -Fxf "$consolidation_files_file" 2>/dev/null | grep -c . || true)
+            if [ "${overlap:-0}" -eq 0 ]; then
+              echo "  SKIP: none of PR #$pr_num's changed files are in consolidation #$CONSOLIDATED_PR_NUM — its work was NOT included."
+              gh pr comment "$pr_num" --body "**Not auto-closed.** Consolidation #$CONSOLIDATED_PR_NUM references this PR, but none of its changed files are present in the consolidation diff — so its work was not actually merged. Leaving this PR **open** so the work is not orphaned. Re-run the consolidation or merge this PR directly." || true
+              continue
+            fi
+
+            echo "  Closing PR #$pr_num as superseded ($overlap overlapping file(s))..."
+            gh pr comment "$pr_num" --body "Superseded by Consolidated PR #$CONSOLIDATED_PR_NUM — its changes are present in the consolidation diff. This branch will be deleted."
+            gh pr close "$pr_num" --comment "Auto-closing: consolidated into #$CONSOLIDATED_PR_NUM"
+            gh pr close "$pr_num" --delete-branch 2>/dev/null || echo "  Could not delete branch for #$pr_num (maybe already deleted)."
           done
