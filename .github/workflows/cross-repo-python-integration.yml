@@ -86,6 +86,7 @@ jobs:
               chat
               contracts.py
               pyproject.toml
+              README.md
               python/src/utils
               shared
               sidekick
