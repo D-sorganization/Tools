@@ -82,3 +82,6 @@
 ## 2024-07-28 - Replace Math.min/max spread with loops for dynamic scales
 **Learning:** Using `Math.min(...activeValues)` and `Math.max(...activeValues)` on large streams of extracted subset data (e.g., when determining Y-axis scales in React charts) frequently leads to "Maximum call stack size exceeded" errors. Additionally, chaining operations like `flatMap` and `.map` to prepare this data dynamically creates massive memory pressure across high-frequency re-renders.
 **Action:** When calculating min/max bounds across historically tracked subsets, avoid `.flatMap`, `.map`, and the `Math.min(...spread)` syntax entirely. Use a single-pass `for` loop that computes `realMin` and `realMax` dynamically, avoiding massive call stack allocations and garbage collection pressure.
+## 2024-05-24 - Avoid chained map and every array iterations for parsing
+**Learning:** Multiple array methods (`.map()`, `.every()`, `.filter()`) chained together for iterating over datasets cause unnecessary intermediate array allocations, adding up to increased garbage collection pressure.
+**Action:** Replace multiple chained array passes with a single-pass `for` loop that pre-allocates arrays or calculates results inline.

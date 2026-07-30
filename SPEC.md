@@ -35,13 +35,13 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
@@ -2674,3 +2674,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ### Version 1.1.242
 
 - **Performance**: Replaced `Math.min(...values)` and `Math.max(...values)` spreads with single-pass `for` loops in `trendAxis.ts` and `SourcePanel.tsx` within the `p1am_control_system` frontend, avoiding call stack overflows on large datasets and eliminating intermediate array allocations (`.map().filter()`).
+
+## 2026-07-30 (Bolt): CSV parsing single-pass loops
+
+- Replaced chained `.map()`/`.every()` array passes with single-pass `for` loops in the CSV parser (`src/p1am_control_system/frontend/src/lib/explorer/csv.ts`) to reduce intermediate array allocation and GC pressure on large CSV files (#3965).
