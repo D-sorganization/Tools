@@ -44,8 +44,13 @@ export function resolveRange(
     };
   }
   if (values.length === 0) return defaults;
-  let lo = Math.min(...values);
-  let hi = Math.max(...values);
+  let lo = values[0];
+  let hi = values[0];
+  for (let i = 1; i < values.length; i++) {
+    const val = values[i];
+    if (val < lo) lo = val;
+    if (val > hi) hi = val;
+  }
   if (hi - lo < 1e-9) {
     lo -= 1;
     hi += 1;
