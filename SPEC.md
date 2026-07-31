@@ -2674,3 +2674,6 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.415 - Completist Audit Report
 
 - **2026-07-30**: chore(completist) — generated Completist reports and tracked issue files for new incomplete stubs.
+## 1.1.416 - Fix types-python-dateutil requirement
+
+- **2026-07-31**: fix(deps) — Relaxed `types-python-dateutil` requirement to `>=2.9.0` to resolve CI installation failures where PyPI returned 404 for specific stub versions due to cache/CDN issues.
