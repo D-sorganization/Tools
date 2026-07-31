@@ -1,0 +1,127 @@
+# P1AM firmware — host unit tests + sketch compile
+#
+# The P1AM-100 firmware is the half of the SCADA system that keeps the plant
+# safe when the Raspberry Pi host is gone: it owns the safety interlock, the
+# four PID loops, and the analog/relay outputs. Until this workflow existed,
+# nothing in CI compiled it and nothing ran its tests (issue #3995).
+#
+# A host-side harness already existed at tests/p1am_control_system/firmware/ --
+# a Makefile that builds the real firmware sources against a fake
+# HardwareInterface, plus assertions covering scaling, anti-windup, trip
+# latching and NaN soft-fail. It sat inside a directory pytest collects but
+# holds no .py files, so it was never executed and had rotted: MockHardware no
+# longer implemented the interface and the StorageManager round-trip still
+# used the pre-lolo/hihi 4-argument signature.
+#
+# Two gates, cheapest first:
+#   firmware-unit-tests  plain g++, no board toolchain, seconds. Catches logic
+#                        regressions and is the TDD vehicle for firmware work.
+#   firmware-compile     arduino-cli against the real board package. Catches
+#                        signature and library breakage the host harness cannot
+#                        see, since the harness never includes P1AM.h/Ethernet.h.
+#
+# Pinned toolchain versions are printed to the job summary on every run so a
+# firmware binary can be traced back to the toolchain that produced it -- a
+# requirement for any industrial system where "what was running when this
+# happened?" must be answerable.
+
+name: P1AM Firmware
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "src/p1am_control_system/firmware/**"
+      - "tests/p1am_control_system/firmware/**"
+      - ".github/workflows/p1am-firmware.yml"
+  pull_request:
+    paths:
+      - "src/p1am_control_system/firmware/**"
+      - "tests/p1am_control_system/firmware/**"
+      - ".github/workflows/p1am-firmware.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: p1am-firmware-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  firmware-unit-tests:
+    name: Firmware host unit tests (g++)
+    # The d-sorg-fleet pool spans Linux, Windows and macOS hosts; this job needs
+    # a POSIX toolchain for the Makefile, so pin it to the Linux label.
+    runs-on: [d-sorg-fleet, Linux]
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Show toolchain
+        run: |
+          g++ --version
+          make --version | head -1
+
+      - name: Build and run firmware unit tests
+        working-directory: tests/p1am_control_system/firmware
+        run: make test
+
+      - name: Reject a vacuous build
+        working-directory: tests/p1am_control_system/firmware
+        # Every check in the suite is an assert(). test_dcs.cpp #errors out if
+        # NDEBUG is defined, but that guard only helps if the suite is actually
+        # built the way we think it is -- so assert on the binary's own output
+        # rather than trusting a zero exit code.
+        run: |
+          output="$(./test_dcs)"
+          echo "$output"
+          echo "$output" | grep -q "All C++ Core Firmware Tests Passed Successfully!"
+
+  firmware-compile:
+    name: Firmware sketch compile (arduino-cli)
+    runs-on: [d-sorg-fleet, Linux]
+    timeout-minutes: 25
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Install arduino-cli
+        run: |
+          mkdir -p "$HOME/.local/bin"
+          curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh \
+            | BINDIR="$HOME/.local/bin" sh
+          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+
+      - name: Install P1AM board package and libraries
+        run: |
+          arduino-cli config init --overwrite
+          arduino-cli config add board_manager.additional_urls \
+            https://raw.githubusercontent.com/facts-engineering/facts-engineering.github.io/master/package_productivity-P1AM-boardmanagermodule_index.json
+          arduino-cli core update-index
+          arduino-cli core install P1AM-100:samd
+          arduino-cli lib install P1AM ArduinoModbus ArduinoRS485 Ethernet FlashStorage
+
+      - name: Compile firmware sketch
+        run: |
+          arduino-cli compile \
+            --fqbn P1AM-100:samd:P1AM-100_native \
+            --warnings all \
+            src/p1am_control_system/firmware \
+            --output-dir "${RUNNER_TEMP}/p1am-build"
+
+      - name: Record toolchain versions
+        if: always()
+        run: |
+          {
+            echo "### P1AM firmware toolchain"
+            echo
+            echo '```'
+            arduino-cli version
+            echo
+            arduino-cli core list
+            echo
+            arduino-cli lib list
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

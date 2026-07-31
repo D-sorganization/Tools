@@ -36,6 +36,45 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-07-31 P1AM Firmware Test Harness Repaired and Gated in CI
+
+- `tests/p1am_control_system/firmware/` (Makefile + `MockHardware.h` + `test_dcs.cpp`)
+  is the host-side unit suite for the P1AM firmware. It builds the real firmware
+  sources against a fake `HardwareInterface`, so the safety interlock, PID loops
+  and storage round-trip are testable without a board. It was never executed by
+  CI and had stopped compiling; it is now repaired and green.
+- `.github/workflows/p1am-firmware.yml` adds two gates on changes under
+  `src/p1am_control_system/firmware/**`: `firmware-unit-tests` (g++ `make test`)
+  and `firmware-compile` (arduino-cli against the `P1AM-100:samd` board package).
+  The arduino-cli installer and both package versions are pinned, and the compile
+  job is gated against fork pull requests because this repository is public.
+- `SignalBroker::kThermocoupleFullScaleC` is now a public constant in
+  `SignalBroker.h` (was a function-local literal in `SignalBroker.cpp`). It is
+  the firmware half of the percent/degC contract the backend's
+  `temp_full_scale_c` must match, and the single definition tests derive
+  expectations from.
+
+### 2026-08-14 P1AM Firmware Comms Watchdog and Bumpless Setpoints
+
+- `CommsWatchdog` is a host-liveness dead-man timer with two independent re-arm
+  signals — a live Modbus TCP client and a change on holding register 560 — and a
+  2000 ms timeout (20 nominal scans). Either signal alone misses a case: the
+  socket covers host power loss, a killed backend and a pulled cable, while the
+  heartbeat register additionally catches a wedged backend holding an idle socket
+  open. On expiry the scan drives both analog outputs to zero, opens the heater
+  relay and asserts Inhibit. Register 560 is the firmware half of a contract with
+  the backend's `HOST_HEARTBEAT_REGISTER`; both must agree (issue #3999).
+- `PIDController::Hold`/`Release`/`IsHeld` freeze a loop and shed its accumulated
+  integral and derivative state, so a restored link cannot slam the output with a
+  wound-up integral. Zeroing a setpoint now also resets the integrator, so a
+  de-energized loop cannot keep commanding full output on its accumulated term
+  (issue #4002).
+- The scan integrates over the interval actually elapsed rather than the nominal
+  100 ms, bounded to [1 ms, 1 s]. The scan does ~300 register reads, SPI
+  thermocouple reads and sometimes a blocking flash write, so assuming 100 ms
+  understated Ki and overstated Kd whenever it overran (issue #4009).
+
+
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 
 - Shared golf-club assembly validation returns explicitly typed NumPy arrays
@@ -1730,6 +1769,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-14 | 1.5.8 | fix(p1am-firmware, #3999, #4002): recover the Modbus comms watchdog, bumpless-setpoint/integral-reset handling and the measured-`dt` scan integration that were stranded on an unmerged branch, and repair plus CI-gate the host-side firmware test harness. Deliberately excludes the `SafetyInterlock` trip-tier change from the same commit; does not close #4001 or #4032. |
 | 2026-08-13 | 1.5.6 | fix(ci): drop the no-op `pick-runner` job from Convert Review Comments to Issues (it echoed only constants and fed nothing, while occupying a `d-sorg-fleet` slot per trigger) and narrow its `pull_request` trigger to `opened`, since `synchronize` and `closed` cannot surface new review comments; ignore `.codex-worktrees/` so agent scratch worktrees stop landing as gitlinks. |
 | 2026-08-13 | 1.5.6 | fix(pdf-renamer): close every `ResultCache` SQLite connection with `contextlib.closing` (the bare `sqlite3.connect` context manager commits the transaction but leaks the handle); make the sub-app's test package importable from its own conftest and repair two extractor tests whose patch targets invented unused attributes instead of intercepting the function-local `pypdf`/`fitz` imports. |
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
