@@ -155,21 +155,6 @@ jobs:
           "$node_dir/node" --version
           PATH="$node_dir:$PATH" "$node_dir/npm" --version
 
-      - name: Expose preinstalled Rustup
-        shell: bash
-        run: |
-          if [ -d "$HOME/.cargo/bin" ]; then
-            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          fi
-
-      - name: Use isolated Rust homes
-        shell: bash
-        run: |
-          echo "RUSTUP_HOME=$RUNNER_TEMP/rustup" >> "$GITHUB_ENV"
-          echo "CARGO_HOME=$RUNNER_TEMP/cargo" >> "$GITHUB_ENV"
-          mkdir -p "$RUNNER_TEMP/rustup" "$RUNNER_TEMP/cargo/bin"
-          echo "$RUNNER_TEMP/cargo/bin" >> "$GITHUB_PATH"
-
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
@@ -303,44 +288,6 @@ jobs:
           node-version: "24"
           cache: "npm"
           cache-dependency-path: package-lock.json
-
-      - name: Expose preinstalled Rustup (Linux)
-        if: matrix.platform.label == 'linux-x64'
-        shell: bash
-        run: |
-          if [ -d "$HOME/.cargo/bin" ]; then
-            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          fi
-
-      - name: Expose preinstalled Rustup (Windows)
-        if: matrix.platform.label == 'windows-x64'
-        shell: pwsh
-        run: |
-          $cargoBin = Join-Path $env:USERPROFILE ".cargo\bin"
-          if (Test-Path -LiteralPath $cargoBin) {
-            Add-Content -Path $env:GITHUB_PATH -Value $cargoBin
-          }
-
-      - name: Use isolated Rust homes (Linux)
-        if: matrix.platform.label == 'linux-x64'
-        shell: bash
-        run: |
-          echo "RUSTUP_HOME=$RUNNER_TEMP/rustup" >> "$GITHUB_ENV"
-          echo "CARGO_HOME=$RUNNER_TEMP/cargo" >> "$GITHUB_ENV"
-          mkdir -p "$RUNNER_TEMP/rustup" "$RUNNER_TEMP/cargo/bin"
-          echo "$RUNNER_TEMP/cargo/bin" >> "$GITHUB_PATH"
-
-      - name: Use isolated Rust homes (Windows)
-        if: matrix.platform.label == 'windows-x64'
-        shell: pwsh
-        run: |
-          $rustupHome = Join-Path $env:RUNNER_TEMP "rustup"
-          $cargoHome = Join-Path $env:RUNNER_TEMP "cargo"
-          $cargoBin = Join-Path $cargoHome "bin"
-          New-Item -ItemType Directory -Force -Path $rustupHome, $cargoBin | Out-Null
-          Add-Content -Path $env:GITHUB_ENV -Value "RUSTUP_HOME=$rustupHome"
-          Add-Content -Path $env:GITHUB_ENV -Value "CARGO_HOME=$cargoHome"
-          Add-Content -Path $env:GITHUB_PATH -Value $cargoBin
 
       - name: Setup Rust
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
