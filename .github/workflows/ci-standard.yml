@@ -661,7 +661,7 @@ jobs:
 
       - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
         run: |
-          export PYTHONPATH="src/data_processing/data_processor/python:src/media_processing/video_processor/python:src/python/src:src:${PYTHONPATH:-}"
+          export PYTHONPATH="src/data_processing/data_processor/python:src/media_processing/video_processor/python:src/document_processing/pdf_renamer/src:src/python/src:src:${PYTHONPATH:-}"
           # Core required test suite — always runs regardless of which files changed.
           # Covers: utilities, shared-library contracts, architecture boundaries,
           # rotation math, process calculator constants, and manifest generation.
