@@ -82,3 +82,6 @@
 ## 2024-05-24 - Avoid chained map and every array iterations for parsing
 **Learning:** Multiple array methods (`.map()`, `.every()`, `.filter()`) chained together for iterating over datasets cause unnecessary intermediate array allocations, adding up to increased garbage collection pressure.
 **Action:** Replace multiple chained array passes with a single-pass `for` loop that pre-allocates arrays or calculates results inline.
+## 2025-02-28 - Avoid Math.min/max spread with large arrays in trend axes
+**Learning:** Using `Math.min(...values)` and `Math.max(...values)` on large trend arrays (like telemetry data) can throw a "Maximum call stack size exceeded" error and allocates unnecessary intermediate memory, causing runtime crashes or garbage collection pressure.
+**Action:** Replace `Math.min/max` with the spread operator with a single-pass `for` loop to compute the bounds dynamically when processing large array datasets.
