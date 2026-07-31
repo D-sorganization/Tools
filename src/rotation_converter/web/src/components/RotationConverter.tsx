@@ -27,9 +27,11 @@ export function RotationConverter() {
 
     const [results, setResults] = useState<RotationRepresentations | null>(null);
     const [error, setError] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleCalculate = useCallback(async () => {
         setError(null);
+        setIsLoading(true);
         let payloadValue: number[] = quaternion;
 
         if (inputType === 'quaternion') {
@@ -64,6 +66,8 @@ export function RotationConverter() {
         } catch (err: unknown) {
             const message = err instanceof Error ? err.message : 'Failed to convert rotation';
             setError(message);
+        } finally {
+            setIsLoading(false);
         }
     }, [inputType, quaternion, euler, eulerConvention, axisAngle, rodrigues]);
 
@@ -192,9 +196,11 @@ export function RotationConverter() {
                 <div className="pt-4">
                     <button
                         onClick={handleCalculate}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
+                        disabled={isLoading}
+                        aria-busy={isLoading}
+                        className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
                     >
-                        Compute Equivalents
+                        {isLoading ? 'Computing...' : 'Compute Equivalents'}
                     </button>
                 </div>
             </div>

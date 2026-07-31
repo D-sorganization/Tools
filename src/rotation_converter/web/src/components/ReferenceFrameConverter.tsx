@@ -31,6 +31,7 @@ export function ReferenceFrameConverter() {
   const [so3Vector, setSo3Vector] = useState<number[]>([0, 0, 0.5]);
   const [result, setResult] = useState<ReferenceFrameResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const updateMatrix = useCallback(
     (setter: (rows: number[][]) => void, rows: number[][], i: number, j: number, value: number) => {
@@ -44,6 +45,7 @@ export function ReferenceFrameConverter() {
   const handleCompute = useCallback(async () => {
     setError(null);
     setResult(null);
+    setIsLoading(true);
 
     const payload: Record<string, unknown> = { operation };
     if (operation === "twist_frame_conversion") {
@@ -70,6 +72,8 @@ export function ReferenceFrameConverter() {
     } catch (caught) {
       const message = caught instanceof Error ? caught.message : "Unknown error";
       setError(message);
+    } finally {
+      setIsLoading(false);
     }
   }, [operation, rotationMatrix, so3Vector, transform, translation, twist]);
 
@@ -190,9 +194,11 @@ export function ReferenceFrameConverter() {
 
         <button
           onClick={handleCompute}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
+          disabled={isLoading}
+          aria-busy={isLoading}
+          className="w-full bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-2 px-4 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
         >
-          Compute
+          {isLoading ? 'Computing...' : 'Compute'}
         </button>
       </div>
 

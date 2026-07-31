@@ -46,3 +46,6 @@
 ## 2024-07-30 - Added focus-visible states to Rotation Converter
 **Learning:** Found an accessibility issue pattern where inputs and buttons in Rotation Converter have `outline-none` but lack focus indicators, making keyboard navigation difficult.
 **Action:** Replace `outline-none` with `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to preserve keyboard accessibility while styling interactive elements.
+## 2024-05-24 - Add loading state to async operation buttons
+**Learning:** In interactive tool components like converters, users might repeatedly trigger calculations leading to missing visual feedback if the request has slight delay. An `isLoading` state combined with `disabled` prop and `aria-busy` greatly improves accessibility and user experience, effectively reducing double clicks on computation buttons.
+**Action:** Always wrap API fetching components with an `isLoading` boolean state, disable the submit button with `aria-busy`, and reduce opacity (e.g. `disabled:opacity-50 disabled:cursor-not-allowed`) for immediate visual feedback of ongoing async work.
