@@ -36,6 +36,31 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-07-31 P1AM Firmware Safety: Comms Watchdog, Trip Tier, Bumpless Setpoints
+
+- `firmware/CommsWatchdog.{h,cpp}` is a new dead-man timer on the SCADA link.
+  If neither a Modbus TCP connection nor a change to the new host heartbeat
+  register (holding register 560) is seen for 2 s, the firmware drives all
+  analog outputs to 0 %, opens the heater relay, asserts Inhibit, and holds the
+  PID loops. Previously the PLC held its last command forever once the host
+  died. Rollover-safe across the ~49.7-day `millis()` wrap.
+- `SafetyInterlock::Evaluate` now trips on the **hihi/lolo** band instead of
+  low/high, and skips tags that are not routed as an input or output. The stock
+  config writes `low=5.0` to all 32 tags, so the previous behaviour latched the
+  plant off — unrecoverably — the moment that config was deployed.
+- Modbus coil 1 (E-stop reset) is now read and clears the trip latch, written
+  back to 0 as a pulse acknowledgement. It was previously never read, making a
+  trip unrecoverable without a power cycle.
+- `SafetyInterlock::IsLimitEffective` exposes the reachable-limit domain so the
+  host can reject a limit that could never be crossed (broker tags are clamped
+  to `[0, 100]`; a limit entered in engineering units silently disabled its trip).
+- `PIDController::SetSetpoint` clears the integrator on a setpoint change
+  (bumpless transfer), and `Hold()`/`Release()` freeze the loops while tripped
+  or blind. A wound-up integrator previously held the analog output at 100 %
+  for tens of seconds after a commanded E-stop.
+- The scan loop now integrates against the **measured** interval rather than a
+  hardcoded 0.1 s, bounded to `[1 ms, 1 s]`.
+
 ### 2026-07-31 P1AM Firmware Test Harness Repaired and Gated in CI
 
 - `tests/p1am_control_system/firmware/` (Makefile + `MockHardware.h` + `test_dcs.cpp`)

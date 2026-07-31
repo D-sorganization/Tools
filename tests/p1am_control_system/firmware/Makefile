@@ -5,7 +5,7 @@ CXXFLAGS += -I$(FIRMWARE_SRC_DIR)
 vpath %.cpp $(FIRMWARE_SRC_DIR)
 vpath %.h $(FIRMWARE_SRC_DIR)
 
-SRCS = test_dcs.cpp SignalBroker.cpp PIDController.cpp SafetyInterlock.cpp StorageManager.cpp
+SRCS = test_dcs.cpp SignalBroker.cpp PIDController.cpp SafetyInterlock.cpp StorageManager.cpp CommsWatchdog.cpp
 OBJS = $(SRCS:.cpp=.o)
 TARGET = test_dcs
 

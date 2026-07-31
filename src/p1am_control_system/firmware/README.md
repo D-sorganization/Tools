@@ -90,18 +90,41 @@ breaks Ethernet SPI.
 
 ## Modbus register map
 
-| Range    | Width | Purpose                                                                    |
-| -------- | ----- | -------------------------------------------------------------------------- |
-| 0..63    | 64    | Tag values — TAG_i is at regs (i*2, i*2+1) as little-endian IEEE-754 float |
-| 100..105 | 6     | Input routing — channel -> tag id; slots 0-3 = TC0-3, 4-5 = AI0-1          |
-| 110..111 | 2     | Output routing — channel -> tag id; slots 0-1 = AO0-1                      |
-| 200..239 | 40    | PID config — 4 PIDs x 10 regs = (pv_tag, cv_tag, sp, kp, ki, kd)           |
-| 300..555 | 256   | Interlock limits — 32 tags x 8 regs = (lolo, low, high, hihi) IEEE-754     |
-| coil 0   | 1     | Save-to-flash trigger (firmware writes EEPROM on falling edge of write)    |
+| Range    | Width | Purpose                                                                     |
+| -------- | ----- | --------------------------------------------------------------------------- |
+| 0..63    | 64    | Tag values — TAG_i is at regs (i*2, i*2+1) as little-endian IEEE-754 float  |
+| 100..105 | 6     | Input routing — channel -> tag id; slots 0-3 = TC0-3, 4-5 = AI0-1           |
+| 110..111 | 2     | Output routing — channel -> tag id; slots 0-1 = AO0-1                       |
+| 200..239 | 40    | PID config — 4 PIDs x 10 regs = (pv_tag, cv_tag, sp, kp, ki, kd)            |
+| 300..555 | 256   | Interlock limits — 32 tags x 8 regs = (lolo, low, high, hihi) IEEE-754      |
+| 560      | 1     | Host heartbeat — backend bumps this every scan; feeds the comms watchdog    |
+| coil 0   | 1     | Save-to-flash trigger (firmware writes EEPROM on falling edge of write)     |
+| coil 1   | 1     | E-stop reset — firmware clears the trip latch and writes the coil back to 0 |
+| coil 2   | 1     | Heater relay command (interlock and comms watchdog both override it off)    |
+| coil 3   | 1     | Thermocouple burnout direction (see below)                                  |
 
 Tag values are clamped 0.0–100.0 by the broker. AO outputs scale linearly:
 0.0% -> 4.000 mA, 100.0% -> 20.000 mA. AI readings are pre-scaled by the P1AM
 library before reaching the broker.
+
+### Interlock trip semantics
+
+The firmware trips on the **hihi/lolo** band only. `low`/`high` is the warning
+tier and is stored for host-side annunciation. Because broker tags are clamped
+to `[0, 100]`, a limit outside that range can never be crossed — the firmware
+treats such a limit as absent rather than comparing against an unreachable
+threshold, and the host should reject it at the API boundary. Only tags that
+are routed as an input or output are evaluated; an unrouted tag sits at 0.0 and
+is not a measurement.
+
+### Comms watchdog
+
+If neither a Modbus TCP connection nor a change to the heartbeat register is
+seen for 2 s, the firmware drives every analog output to 0 %, opens the heater
+relay, asserts the Inhibit GPIO, and holds the PID loops with their integrators
+cleared. This is the only protection that survives the host being absent
+entirely — a powered-off Pi, a killed backend, or an unplugged cable. Control
+resumes automatically when the link returns, starting from a clean integrator.
 
 ## Thermocouple module configuration
 
