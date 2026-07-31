@@ -35,6 +35,10 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-07-30 P1AM Control System Trend Axis Optimization
+
+- `src/p1am_control_system/frontend/src/lib/trendAxis.ts` prevents "Maximum call stack size exceeded" errors when computing axis bounds by replacing `Math.min(...values)` and `Math.max(...values)` on large data arrays with a single-pass `for` loop, eliminating intermediate memory allocation overhead.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
