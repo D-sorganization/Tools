@@ -177,13 +177,9 @@ export function parseCsv(text: string): CsvTable {
   const colCount = header.length;
 
   // Materialize each source column's raw cells (padding short rows).
-  // ⚡ Bolt Optimization: Replace dataRows.map() per column with a single-pass loop
-  const rawColumns: string[][] = Array.from({ length: colCount }, () => new Array(dataRows.length));
-  for (let r = 0; r < dataRows.length; r += 1) {
-    const row = dataRows[r];
-    for (let c = 0; c < colCount; c += 1) {
-      rawColumns[c][r] = c < row.length ? row[c] : "";
-    }
+  const rawColumns: string[][] = [];
+  for (let c = 0; c < colCount; c += 1) {
+    rawColumns.push(dataRows.map((r) => (c < r.length ? r[c] : "")));
   }
 
   // Pick the index column: prefer a name match, else a date-parseable column.
@@ -205,20 +201,11 @@ export function parseCsv(text: string): CsvTable {
 
   let index: number[] | null = null;
   if (timeCol !== -1) {
-    // ⚡ Bolt Optimization: Replace multiple passes (.map, .every) with single pass
-    const rawTimes = rawColumns[timeCol];
-    const times = new Array(rawTimes.length);
-    let allValid = true;
-    for (let i = 0; i < rawTimes.length; i++) {
-      const t = parseTime(rawTimes[i]);
-      if (t === null) {
-        allValid = false;
-        break;
-      }
-      times[i] = t as number;
-    }
+    const times = rawColumns[timeCol].map(parseTime);
+    // Only honor the index if every populated cell parsed to a time.
+    const allValid = times.every((t) => t !== null);
     if (allValid) {
-      index = times;
+      index = times.map((t) => t as number);
     } else {
       timeCol = -1;
     }
@@ -227,17 +214,9 @@ export function parseCsv(text: string): CsvTable {
   const columns: CsvColumn[] = [];
   for (let c = 0; c < colCount; c += 1) {
     if (c === timeCol) continue;
-
-    // ⚡ Bolt Optimization: Replace rawColumns[c].map with single-pass loop pre-allocating the array
-    const rawCells = rawColumns[c];
-    const values = new Array(rawCells.length);
-    for (let i = 0; i < rawCells.length; i++) {
-      values[i] = parseNumber(rawCells[i]);
-    }
-
     columns.push({
       name: header[c] === "" ? `column_${c + 1}` : header[c],
-      values,
+      values: rawColumns[c].map(parseNumber),
     });
   }
 
