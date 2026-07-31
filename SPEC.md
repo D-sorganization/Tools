@@ -35,13 +35,30 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Firmware Test Harness Repaired and Gated in CI
+
+- `tests/p1am_control_system/firmware/` (Makefile + `MockHardware.h` + `test_dcs.cpp`)
+  is the host-side unit suite for the P1AM firmware. It builds the real firmware
+  sources against a fake `HardwareInterface`, so the safety interlock, PID loops
+  and storage round-trip are testable without a board. It was never executed by
+  CI and had stopped compiling; it is now repaired and green.
+- `.github/workflows/p1am-firmware.yml` adds two required gates on changes under
+  `src/p1am_control_system/firmware/**`: `firmware-unit-tests` (g++ `make test`)
+  and `firmware-compile` (arduino-cli against the `P1AM-100:samd` board package).
+  Toolchain versions are recorded in the job summary for traceability.
+- `SignalBroker::kThermocoupleFullScaleC` is now a public constant in
+  `SignalBroker.h` (was a function-local literal in `SignalBroker.cpp`). It is
+  the firmware half of the percent/degC contract the backend's
+  `temp_full_scale_c` must match, and the single definition tests derive
+  expectations from.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 

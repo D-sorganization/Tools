@@ -2,6 +2,14 @@
 #include <cassert>
 #include <cmath>
 #include <limits>
+
+// Every check in this suite is an assert(). Building with NDEBUG would compile
+// them all away and leave a binary that exits 0 without testing anything --
+// exactly the silent-pass failure mode this suite exists to prevent.
+#ifdef NDEBUG
+#error "test_dcs must be built with assertions enabled (do not define NDEBUG)"
+#endif
+
 #include "MockHardware.h"
 #include "SignalBroker.h"
 #include "PIDController.h"
@@ -29,14 +37,20 @@ void TestSignalBroker() {
   broker.SetInputRouting(4, 5);
   assert(broker.GetInputRouting(4) == 5);
 
-  // Set physical values in mock hardware
-  hw.SetThermocouple(0, 350.0f);  // Should scale to 35.0%
-  hw.SetAnalogInput(0, 62.5f);    // Scaled raw
+  // Set physical values in mock hardware. The expected percentage is derived
+  // from the firmware's own full-scale constant rather than hardcoded, so a
+  // change to the range updates this expectation instead of silently breaking
+  // it (this assertion was stale at 35.0% from an earlier 1000 C full scale).
+  const float kTempC = 350.0f;
+  const float kExpectedPct =
+      kTempC * (100.0f / SignalBroker::kThermocoupleFullScaleC);
+  hw.SetThermocouple(0, kTempC);
+  hw.SetAnalogInput(0, 62.5f);  // Scaled raw
 
   broker.ReadHardwareInputs(hw);
 
   // Assert tag values were updated and scaled
-  assert(FloatEquals(broker.GetTag(2), 35.0f));
+  assert(FloatEquals(broker.GetTag(2), kExpectedPct));
   assert(FloatEquals(broker.GetTag(5), 62.5f));
 
   // Output routing
@@ -133,14 +147,21 @@ void TestStorageManager() {
   SignalBroker broker;
   PIDController pids[4];
 
-  float high_limits[SignalBroker::kNumTags];
+  // All four interlock tiers are persisted (kMagic was bumped to 0xDC52 when
+  // InterlockConfigData grew from 2 limits to 4). Round-trip every tier so a
+  // future struct change cannot silently drop lolo/hihi again.
+  float lolo_limits[SignalBroker::kNumTags];
   float low_limits[SignalBroker::kNumTags];
+  float high_limits[SignalBroker::kNumTags];
+  float hihi_limits[SignalBroker::kNumTags];
 
   // Initialize
   broker.Reset();
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-    high_limits[i] = 100.0f;
+    lolo_limits[i] = -10.0f;
     low_limits[i] = 0.0f;
+    high_limits[i] = 100.0f;
+    hihi_limits[i] = 110.0f;
   }
 
   // Setup routing config
@@ -155,12 +176,15 @@ void TestStorageManager() {
   pids[0].SetKi(0.5f);
   pids[0].SetKd(0.1f);
 
-  // Setup specific limit
-  high_limits[5] = 85.5f;
+  // Setup specific limits across all four tiers
+  lolo_limits[5] = 3.25f;
   low_limits[5] = 12.5f;
+  high_limits[5] = 85.5f;
+  hihi_limits[5] = 97.75f;
 
   // Save
-  bool save_ok = storage.Save(broker, pids, high_limits, low_limits);
+  bool save_ok = storage.Save(broker, pids, lolo_limits, low_limits, high_limits,
+                              hihi_limits);
   assert(save_ok);
 
   // Mess up original state
@@ -169,12 +193,15 @@ void TestStorageManager() {
     pids[i].Reset();
   }
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
-    high_limits[i] = 0.0f;
+    lolo_limits[i] = 0.0f;
     low_limits[i] = 0.0f;
+    high_limits[i] = 0.0f;
+    hihi_limits[i] = 0.0f;
   }
 
   // Load
-  bool load_ok = storage.Load(broker, pids, high_limits, low_limits);
+  bool load_ok = storage.Load(broker, pids, lolo_limits, low_limits, high_limits,
+                              hihi_limits);
   assert(load_ok);
 
   // Verify
@@ -186,8 +213,12 @@ void TestStorageManager() {
   assert(FloatEquals(pids[0].GetKp(), 2.0f));
   assert(FloatEquals(pids[0].GetKi(), 0.5f));
   assert(FloatEquals(pids[0].GetKd(), 0.1f));
-  assert(FloatEquals(high_limits[5], 85.5f));
+  assert(FloatEquals(lolo_limits[5], 3.25f));
   assert(FloatEquals(low_limits[5], 12.5f));
+  assert(FloatEquals(high_limits[5], 85.5f));
+  assert(FloatEquals(hihi_limits[5], 97.75f));
+  // An untouched tag keeps the value it was saved with, not a zero fill.
+  assert(FloatEquals(hihi_limits[7], 110.0f));
 
   // Cleanup
   storage.Clear();
