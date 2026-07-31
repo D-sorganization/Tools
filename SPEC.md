@@ -1,4 +1,4 @@
-# SPEC.md — Repository Specification Document
+- 2026-07-31: perf(p1am frontend) — replace Math.min/max spread with single-pass for loop in resolveRange to prevent call stack overflow on large datasets.\n# SPEC.md — Repository Specification Document
 
 <!--
   TEMPLATE VERSION: 1.0.0
