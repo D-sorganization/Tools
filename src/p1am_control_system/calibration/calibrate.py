@@ -40,6 +40,16 @@ PID_PV_TAG = {0: 30, 1: 31}
 TAG_DWELL_SECONDS = 0.25
 SWEEP_DWELL_SECONDS = 1.0
 
+# An AO is treated as "off" once its tag reads within this many percent of 0
+# (0 % == 4 mA). 0.5 pp is ~0.08 mA — well inside the module's own resolution.
+AO_ZERO_TOLERANCE_PERCENT = 0.5
+# The firmware writes outputs once per scan, so give it a few scans to settle
+# before declaring a channel stuck.
+AO_ZERO_CONFIRM_ATTEMPTS = 4
+
+# Methods a PLC-like object must expose for the safe-shutdown path to run.
+_ZERO_REQUIRED_METHODS = ("set_pid_setpoint", "read_tag")
+
 
 def _float_to_regs(value: float) -> list[int]:
     lo, hi = struct.unpack("<HH", struct.pack("<f", value))
@@ -215,7 +225,96 @@ def cmd_setup(_: argparse.Namespace, plc: PLC) -> None:
     logger.info("Setup complete. AOs are at 0%s (4 mA).", "%")
 
 
-def cmd_teardown(_: argparse.Namespace, plc: PLC) -> None:
+def _require_zeroable(plc: object) -> None:
+    """Precondition check for the safe-shutdown path (DbC).
+
+    Raises:
+        TypeError: If ``plc`` does not expose the calibration command surface
+            (``set_pid_setpoint`` and ``read_tag``).
+    """
+    missing = [
+        name
+        for name in _ZERO_REQUIRED_METHODS
+        if not callable(getattr(plc, name, None))
+    ]
+    if missing:
+        raise TypeError(
+            f"plc must expose callable {', '.join(_ZERO_REQUIRED_METHODS)}; "
+            f"missing {', '.join(missing)}"
+        )
+
+
+def drive_outputs_to_zero(plc: PLC) -> list[tuple[int, float]]:
+    """Command every calibration AO to 0 % and read the tag back to confirm.
+
+    The firmware keeps writing a routed tag's value every scan, so simply
+    unmapping the pass-through PID freezes the AO at its last commanded value
+    instead of releasing it (issue #3997). The commanded zero must therefore be
+    *confirmed* at the tag before anything is unmapped.
+
+    Preconditions:
+        ``plc`` is connected and exposes ``set_pid_setpoint``/``read_tag``.
+
+    Returns:
+        ``(channel, last_reading)`` for every channel that did NOT confirm 0 %
+        within :data:`AO_ZERO_CONFIRM_ATTEMPTS`. An empty list means every AO
+        is confirmed off.
+
+    Raises:
+        TypeError: If ``plc`` lacks the calibration command surface.
+    """
+    _require_zeroable(plc)
+
+    unconfirmed: list[tuple[int, float]] = []
+    for channel, pid_index in PID_FOR_AO.items():
+        ao_tag = AO_TAG[channel]
+        plc.set_pid_setpoint(pid_index, 0.0)
+        actual = float("nan")
+        for _ in range(AO_ZERO_CONFIRM_ATTEMPTS):
+            time.sleep(TAG_DWELL_SECONDS)
+            actual = plc.read_tag(ao_tag)
+            if abs(actual) <= AO_ZERO_TOLERANCE_PERCENT:
+                break
+        else:
+            unconfirmed.append((channel, actual))
+            logger.error(
+                "AO %d (TAG_%d) did not reach 0%s after %d attempts; last read "
+                "%.3f%s (~%.3f mA)",
+                channel,
+                ao_tag,
+                "%",
+                AO_ZERO_CONFIRM_ATTEMPTS,
+                actual,
+                "%",
+                _percent_to_ma(actual),
+            )
+            continue
+        logger.info("AO %d (TAG_%d) confirmed at %.3f%s", channel, ao_tag, actual, "%")
+    return unconfirmed
+
+
+def zero_analog_outputs(plc: PLC) -> None:
+    """Drive every calibration AO to 0 % and fail loudly if one will not go.
+
+    Raises:
+        TypeError: If ``plc`` lacks the calibration command surface.
+        SystemExit: If any AO could not be confirmed at 0 %.
+    """
+    unconfirmed = drive_outputs_to_zero(plc)
+    if unconfirmed:
+        raise SystemExit(_unconfirmed_message(unconfirmed))
+
+
+def _unconfirmed_message(unconfirmed: Sequence[tuple[int, float]]) -> str:
+    detail = ", ".join(f"AO {ch} last read {value:.3f}%" for ch, value in unconfirmed)
+    return (
+        f"Analog outputs did not confirm 0% ({detail}). The channels were "
+        "unmapped so the firmware drives them to 0% itself — VERIFY AT THE "
+        "TERMINALS before energizing the rig."
+    )
+
+
+def _unmap_calibration_pids(plc: PLC) -> None:
     logger.info("Unmapping calibration PIDs...")
     for pid_index in PID_FOR_AO.values():
         plc.configure_pid(
@@ -228,9 +327,34 @@ def cmd_teardown(_: argparse.Namespace, plc: PLC) -> None:
             kd=0.0,
         )
         logger.info("  PID %d: pv=cv=unmapped, gains=0", pid_index)
+
+
+def _release_output_routing(plc: PLC) -> None:
+    """Unmap the AO channels so the firmware's own 0 % safe path takes over.
+
+    ``SignalBroker::WriteHardwareOutputs`` writes the routed *tag* while a
+    channel is mapped and only calls ``WriteAnalogOutput(i, 0.0f)`` once the
+    CHANNEL itself is unmapped. Releasing the routing is therefore the only
+    state in which a stale tag cannot re-energize the output.
+    """
+    logger.info("Releasing AO output routing...")
+    for channel in AO_TAG:
+        plc.set_output_routing(channel, UNMAPPED_TAG)
+        logger.info("  AO %d: unmapped (firmware holds it at 0%s)", channel, "%")
+
+
+def cmd_teardown(_: argparse.Namespace, plc: PLC) -> None:
+    logger.info("Driving calibration AOs to 0%s before releasing them...", "%")
+    unconfirmed = drive_outputs_to_zero(plc)
+    _unmap_calibration_pids(plc)
+    _release_output_routing(plc)
+    if unconfirmed:
+        raise SystemExit(_unconfirmed_message(unconfirmed))
     logger.info(
-        "Teardown complete. Output routing left in place; real PIDs or the "
-        "backend can now drive AOs."
+        "Teardown complete. AOs confirmed at 0%s (4 mA) and unmapped; run "
+        "`setup` (or deploy a routing config from the backend) before driving "
+        "them again.",
+        "%",
     )
 
 
@@ -382,6 +506,28 @@ _COMMANDS = {
 }
 
 
+def _emergency_zero_outputs(plc: PLC) -> None:
+    """Best-effort AO shutdown on an abnormal exit; never masks the cause.
+
+    Every :class:`PLC` method raises ``SystemExit`` on a Modbus error, so an
+    error part-way through ``sweep`` used to unwind with the AO parked at
+    whatever step it had reached (issue #3997). This runs on *any* exit path
+    that is not a clean return, and swallows its own failures so the original
+    exception still propagates — it only logs, loudly.
+    """
+    logger.warning("Aborting: driving analog outputs to 0%s...", "%")
+    try:
+        zero_analog_outputs(plc)
+    except (Exception, SystemExit) as exc:  # noqa: BLE001 - must not mask cause
+        logger.error(
+            "FAILED to drive the analog outputs to 0%s during abort (%s). The "
+            "AO channels may still be energized at up to 20 mA — check the "
+            "terminals and power down the rig before touching it.",
+            "%",
+            exc,
+        )
+
+
 def main(argv: list[str] | None = None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stderr)
     args = _build_parser().parse_args(argv)
@@ -390,6 +536,12 @@ def main(argv: list[str] | None = None) -> int:
     plc.connect()
     try:
         _COMMANDS[args.cmd](args, plc)
+    except BaseException:
+        # SystemExit and KeyboardInterrupt are BaseException, and both are
+        # routine here (Modbus errors raise SystemExit; the operator Ctrl-Cs a
+        # sweep). Neither may leave an output energized.
+        _emergency_zero_outputs(plc)
+        raise
     finally:
         plc.close()
     return 0

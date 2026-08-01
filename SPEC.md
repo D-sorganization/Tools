@@ -35,13 +35,68 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Calibration Safe Shutdown, Alarm Acknowledgement, and MFC Transport
+
+Three P1 SCADA defects on the P1AM control system (#3997, #4034, #4031).
+
+**Calibration analog outputs are driven to 0 % on every exit path (#3997).**
+`src/p1am_control_system/calibration/calibrate.py` drives the P1AM analog
+outputs to up to 100 % (20 mA) through pass-through PIDs. The firmware's
+`SignalBroker::WriteHardwareOutputs` writes the routed _tag_ every scan and
+only forces `WriteAnalogOutput(i, 0.0f)` once the CHANNEL is unmapped, so
+unmapping the PID alone froze the AO at its last commanded value. `teardown`
+now commands each pass-through PID setpoint to `0.0`, reads the AO tag back to
+CONFIRM it reached 0 % (within `AO_ZERO_TOLERANCE_PERCENT`, retried
+`AO_ZERO_CONFIRM_ATTEMPTS` times), and only then unmaps the PIDs and releases
+the output routing so the firmware's own 0 % safe path takes over. `main()`
+wraps command dispatch in `except BaseException`, so an exception, `SystemExit`
+(every `PLC` method raises it on a Modbus error), or `KeyboardInterrupt` drives
+the AOs to 0 % before `plc.close()`; the emergency path swallows its own
+failures and logs at ERROR so the original cause is never masked. A successful
+`ao` command still leaves the output energized, as the operator needs it held to
+meter the terminals.
+
+**Alarm acknowledgement reaches the alarm engine (#4034).**
+`POST /api/alarms/{tag_id}/acknowledge` previously only flipped a flag in
+`SystemState.active_alarms`; `AlarmEngine.acknowledge_alarm(tag_id, user)` had
+no production caller, so the `acknowledged_by` audit field read `None` forever
+and `SystemState.apply_config` — which runs on every routing deploy and every
+reconnect-time `_publish_active_config` — silently discarded the ack.
+`SystemState.acknowledge_alarm(tag_id, user=None)` now forwards to the engine
+and records `acknowledged_by`; `apply_config` snapshots the outgoing engine's
+active alarms and replays them into the rebuilt engine through the public
+`update_tag` / `acknowledge_alarm` / `get_alarm_state` API, which is identical
+on the Rust `tools_core.scada` engine and the `scada_fallback` implementation.
+The rebuilt engine (not the snapshot) is authoritative on the resulting state,
+so alarms for tags dropped from the new config are correctly forgotten. The
+endpoint accepts an optional `{"user": ...}` body; requests without one are
+attributed to `state.DEFAULT_ACK_USER`. `alarm_processing.build_alarm_entry` and
+`state_name` are the single source of truth for the live alarm record shape.
+
+**Mass flow controller transport comes from settings, never hardcoded (#4031).**
+`main.py` registered every `AlicatMFC` with `connection_type="mock"`, so a
+deployed rig returned `random.uniform` flow, a constant 14.7 PSIA / 23.5 °C, and
+reported setpoint success with no device IO — an operator could watch an N2
+purge "establish" with no gas flowing. New settings
+`P1AM_ALICAT_CONNECTION_TYPE` (`mock`/`serial`/`tcp`, validated) and
+`P1AM_ALICAT_PORT_OR_IP` drive the transport. `alicat_manager.AlicatManager`
+takes the active `plc_driver` and refuses to register a mock device unless the
+driver is itself simulated; `create_default_manager` builds the rig's standard
+MFC complement and, when the combination is refused or unbuildable, returns an
+**empty** manager with `registration_error` set and logs CRITICAL — gas control
+is then plainly absent rather than silently simulated, while the rest of the
+backend (E-stop, heater, power supply) still starts. `AlicatMFC.__init__`
+validates `connection_type` and requires a `port_or_ip` for physical
+transports, and `parse_ascii_response` now applies a device-reported gas
+through `update_gas`, restoring the `VALID_GASES` check it used to bypass.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
