@@ -35,13 +35,24 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Historian DB Path Anchoring
+
+- `src/p1am_control_system/backend/database.py` resolves the SQLite historian to
+  an absolute path anchored to the backend package directory rather than the
+  process CWD. A bare relative `sqlite:///dcs_scada.db` forked the historian into
+  a separate file per launch directory, so tag history appeared to vanish
+  depending on how the backend was started, and a test run from the repo root
+  left a stray untracked DB there. `P1AM_DB_PATH` overrides the location for
+  deployments keeping the historian on separate storage; the container default is
+  unchanged because the image's package directory is `/app`.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
