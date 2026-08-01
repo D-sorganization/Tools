@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import sys
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -85,7 +86,8 @@ def test_disabled_wiring_does_not_import_psycopg() -> None:
 
 def test_wiring_rejects_a_non_callable_due() -> None:
     with pytest.raises(TypeError, match="due must be callable"):
-        build_historian_writer("nope")  # type: ignore[arg-type]
+        bad: Any = "nope"
+        build_historian_writer(bad)
 
 
 def test_stats_for_a_disabled_shipper_are_a_clean_disabled_snapshot() -> None:
@@ -132,7 +134,8 @@ def test_redaction_is_a_noop_without_a_password() -> None:
 
 def test_redaction_rejects_non_strings() -> None:
     with pytest.raises(TypeError, match="dsn must be a str"):
-        redact_dsn(None)  # type: ignore[arg-type]
+        bad: Any = None
+        redact_dsn(bad)
 
 
 def test_writer_exposes_only_a_redacted_dsn() -> None:
@@ -150,7 +153,8 @@ def test_writer_rejects_an_empty_dsn() -> None:
 
 def test_writer_rejects_a_non_string_dsn() -> None:
     with pytest.raises(TypeError, match="dsn must be a str"):
-        TimescaleWriter(None)  # type: ignore[arg-type]
+        bad: Any = None
+        TimescaleWriter(bad)
 
 
 @pytest.mark.parametrize("bad", [0, -1.0])

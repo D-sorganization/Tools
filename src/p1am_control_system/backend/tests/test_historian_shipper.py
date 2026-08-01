@@ -129,7 +129,8 @@ def test_samples_reach_the_remote() -> None:
 def test_non_numeric_values_are_skipped_not_fatal() -> None:
     """The local historian already rejects these loudly; forwarding just skips."""
     sink = StoreAndForwardSink(_FakeRemote())
-    assert sink.write_scan({"TAG_0": 1.0, "TAG_1": "oops"}, _TS) == 1  # type: ignore[dict-item]
+    tags: Any = {"TAG_0": 1.0, "TAG_1": "oops"}
+    assert sink.write_scan(tags, _TS) == 1
 
 
 # ------------------------------------------------------- producer never blocks ---
@@ -306,7 +307,8 @@ def test_start_is_idempotent() -> None:
 
 def test_rejects_a_writer_that_is_not_a_remote_writer() -> None:
     with pytest.raises(TypeError, match="writer must implement"):
-        StoreAndForwardSink(object())  # type: ignore[arg-type]
+        bad: Any = object()
+        StoreAndForwardSink(bad)
 
 
 @pytest.mark.parametrize("bad", [0, -1])
@@ -323,7 +325,8 @@ def test_rejects_non_positive_batch_size(bad: int) -> None:
 
 def test_rejects_non_int_queue_max() -> None:
     with pytest.raises(TypeError, match="queue_max must be an int"):
-        StoreAndForwardSink(_FakeRemote(), queue_max=1.5)  # type: ignore[arg-type]
+        bad: Any = 1.5
+        StoreAndForwardSink(_FakeRemote(), queue_max=bad)
 
 
 @pytest.mark.parametrize("bad", [0.0, -1.0, float("inf"), float("nan")])

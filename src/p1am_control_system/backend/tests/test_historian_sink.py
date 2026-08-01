@@ -228,19 +228,23 @@ def test_close_swallows_sink_failure() -> None:
 
 def test_rejects_non_callable_due() -> None:
     with pytest.raises(TypeError, match="due must be callable"):
-        HistorianWriter(due="nope")  # type: ignore[arg-type]
+        bad: Any = "nope"
+        HistorianWriter(due=bad)
 
 
 def test_rejects_non_callable_log_scan() -> None:
     with pytest.raises(TypeError, match="log_scan must be callable"):
-        HistorianWriter(due=_always_due, log_scan=object())  # type: ignore[arg-type]
+        bad: Any = object()
+        HistorianWriter(due=_always_due, log_scan=bad)
 
 
 def test_rejects_non_callable_clock() -> None:
     with pytest.raises(TypeError, match="clock must be callable"):
-        HistorianWriter(due=_always_due, clock=123)  # type: ignore[arg-type]
+        bad: Any = 123
+        HistorianWriter(due=_always_due, clock=bad)
 
 
 def test_rejects_a_sink_that_is_not_a_sink() -> None:
     with pytest.raises(TypeError, match="sink must implement HistorianSink"):
-        HistorianWriter(due=_always_due, sink=object())  # type: ignore[arg-type]
+        bad: Any = object()
+        HistorianWriter(due=_always_due, sink=bad)

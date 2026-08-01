@@ -184,7 +184,11 @@ def _throttled_log_scan(session: Session, tags: dict[str, float]) -> int:
     signature; the throttle, local write, and remote forward all live in
     :class:`historian_sink.HistorianWriter`.
     """
-    return historian_writer.write(session, tags)
+    # Annotated local: the backend uses flat intra-package imports, which mypy
+    # resolves to Any when it runs from the repo root rather than this
+    # directory. Pinning the type here keeps the check honest either way.
+    rows: int = historian_writer.write(session, tags)
+    return rows
 
 
 class ConnectionManager:
@@ -998,7 +1002,8 @@ async def get_historian_shipper_status() -> dict[str, object]:
     flat process value. ``lag_s`` climbing while the process is running means
     the trend has a hole in it, not that the plant was idle.
     """
-    return shipper_stats(historian_shipper).as_dict()
+    stats: dict[str, object] = shipper_stats(historian_shipper).as_dict()
+    return stats
 
 
 @app.get("/api/capture/config", response_model=CaptureConfig)

@@ -62,6 +62,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - `src/p1am_control_system/backend/settings.py` adds the `P1AM_TIMESCALE_*`
   surface. Forwarding is **off by default**; enabling it without a DSN is
   rejected at startup rather than silently forwarding nowhere.
+- Typing convention for this package: the backend uses flat intra-package
+  imports, which mypy resolves only when invoked from the backend directory. The
+  pre-push hook and CI invoke it from the repo root, where those imports become
+  `Any`. New backend code therefore annotates locals at the return boundary
+  rather than relying on cross-module inference, and expresses
+  deliberately-invalid test arguments through an `Any`-typed local rather than a
+  `# type: ignore` comment (which `warn_unused_ignores` flags as redundant under
+  the root-relative resolution).
 - `GET /api/historian/shipper` reports queue depth, lag, and drop counters so a
   gap in a plant trend can be identified as a forwarding gap rather than
   misread as a real process measurement. Engineering diagnostic only —
