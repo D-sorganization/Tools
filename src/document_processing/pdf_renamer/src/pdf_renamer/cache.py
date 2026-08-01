@@ -1,5 +1,6 @@
 import logging
 import sqlite3
+from contextlib import closing
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -14,7 +15,7 @@ class ResultCache:
         self._initialize_database()
 
     def _initialize_database(self) -> None:
-        with sqlite3.connect(self.db_path) as conn:
+        with closing(sqlite3.connect(self.db_path)) as conn, conn:
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS results (
                     sha256 TEXT PRIMARY KEY,
@@ -31,7 +32,7 @@ class ResultCache:
 
     def get(self, sha256: str) -> TitleResult | None:
         try:
-            with sqlite3.connect(self.db_path) as conn:
+            with closing(sqlite3.connect(self.db_path)) as conn, conn:
                 cur = conn.execute(
                     "SELECT title, confidence, method, error FROM results "
                     "WHERE sha256 = ?",
@@ -55,7 +56,7 @@ class ResultCache:
     ) -> None:
         try:
             error_msg = result.details if result.confidence == 0.0 else ""
-            with sqlite3.connect(self.db_path) as conn:
+            with closing(sqlite3.connect(self.db_path)) as conn, conn:
                 conn.execute(
                     """
                     INSERT OR REPLACE INTO results (

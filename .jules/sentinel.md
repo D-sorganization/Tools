@@ -35,3 +35,7 @@
 **Vulnerability:** SymPy's `parse_expr` uses `eval()` and requires upstream validation. The `_ast_security_gate` structural validator was fail-open when encountering a `SyntaxError` while using `ast.parse(stripped, mode="eval")`, relying on `parse_expr` as a backstop. This could allow non-standard Python syntax (e.g. `x = y` or sympy specific forms) to bypass the security gate entirely.
 **Learning:** Security validation gates designed to protect `eval`-like functions must be fail-closed. If structural validation fails or raises an error, the input must be explicitly rejected rather than implicitly passed to a dangerous downstream execution context.
 **Prevention:** Catch parsing exceptions (like `SyntaxError` in AST gates) and explicitly raise a rejection error (e.g., `ValueError`) to ensure the security gate strictly enforces an allowlist.
+## 2025-12-14 - Prevent Denial of Service (DoS) via Unclosed SQLite Connections in pdf_renamer
+**Vulnerability:** Unclosed SQLite connections in `src/document_processing/pdf_renamer/src/pdf_renamer/cache.py` could exhaust system file descriptors leading to DoS.
+**Learning:** `sqlite3.connect()` context manager only manages transactions, not the connection lifecycle.
+**Prevention:** Wrapped `sqlite3.connect()` with `contextlib.closing()` and used `conn` context manager `with closing(sqlite3.connect(self.db_path)) as conn, conn:` to guarantee connection closure and proper transaction management.
