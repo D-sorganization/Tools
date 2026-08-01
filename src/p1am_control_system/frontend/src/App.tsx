@@ -10,6 +10,7 @@ import { RoutingMatrix } from "./components/RoutingMatrix";
 import { TrendChart } from "./components/TrendChart";
 import { PanelStack } from "./components/PanelStack";
 import { AlarmsHeader } from "./components/AlarmsHeader";
+import { DataAgeIndicator } from "./components/DataAgeIndicator";
 import { EStopButton } from "./components/EStopButton";
 import { DataCapturePanel } from "./components/DataCapturePanel";
 import { InterlocksPanel } from "./components/InterlocksPanel";
@@ -24,7 +25,10 @@ import { NotificationBanner } from "./components/NotificationBanner";
 import { TabBar } from "./components/TabBar";
 import { HelpModal } from "./components/HelpModal";
 import { CsvExporter } from "./components/CsvExporter";
+import { TuningPanel } from "./components/TuningPanel";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
+import { useSetpointDraft } from "./hooks/useSetpointDraft";
+import { usePollingRefresh } from "./hooks/usePollingRefresh";
 import {
   TABS,
   type TabId,
@@ -96,6 +100,13 @@ export type {
   ActiveAlarm,
 } from "./types";
 
+/**
+ * How often the active-alarm list and the event log are reconciled over REST.
+ * Modest on purpose: this is a safety net beside the ~10 Hz stream, not the
+ * primary transport, and the Pi should not be pushed for it.
+ */
+const ALARM_EVENT_REFRESH_MS = 15_000;
+
 const DEFAULT_CONFIG: RoutingConfig = {
   input_routing: [0, 1, 2, 3, 4, 5],
   output_routing: [10, 11],
@@ -142,10 +153,13 @@ export const App: React.FC = () => {
     eStopActive,
     powerSupplyStatus,
     temperatureStatus,
-    isConnected,
+    dataAgeMs,
+    freshness,
+    droppedAlarmCount,
     setAlicats,
     setActiveAlarms,
     setEStopActive,
+    setDroppedAlarmCount,
   } = useTelemetryStream({
     onConnect: () => triggerNotification("SCADA live stream connected.", "info"),
   });
@@ -230,8 +244,20 @@ export const App: React.FC = () => {
   const [overrideVal, setOverrideVal] = useState<string>("0.0");
   const [showOverrideConfirm, setShowOverrideConfirm] = useState<boolean>(false);
 
-  // Alicat MFC form states
-  const [alicatSetpointVal, setAlicatSetpointVal] = useState<string>("");
+  // Alicat MFC setpoint entry. Scoped to the inspected DEVICE ID (a scalar) so
+  // it seeds once per device and is then operator-owned. It used to be seeded
+  // by an effect keyed on `[inspectorView, alicats]`; `alicats` changes
+  // reference on essentially every frame on real hardware (the equality check
+  // compares mass_flow / pressure / temperature), so the field fought every
+  // keystroke and Set could commit a partially-reverted value — 2 instead of
+  // 25, a tenfold gas-flow error the in-range check happily accepts (#4013).
+  const inspectedAlicatId =
+    inspectorView.type === "alicat" ? inspectorView.deviceId : "";
+  const inspectedAlicat = alicats.find((m) => m.device_id === inspectedAlicatId);
+  const alicatSetpointDraft = useSetpointDraft(inspectedAlicat?.setpoint, {
+    scope: inspectedAlicatId,
+    digits: 2,
+  });
 
   // Large-scale plant tags state (ladder registry, for the inspector).
   const [allTags, setAllTags] = useState<LadderTagInfo[]>([]);
@@ -264,15 +290,6 @@ export const App: React.FC = () => {
     setOverrideVal(fmtNumber(tagsDictRef.current[name] ?? 0.0, 2, "0.00"));
     setShowOverrideConfirm(false);
   }, []);
-
-  useEffect(() => {
-    if (inspectorView.type === "alicat") {
-      const mfc = alicats.find((m) => m.device_id === inspectorView.deviceId);
-      if (mfc) {
-        setAlicatSetpointVal(mfc.setpoint.toString());
-      }
-    }
-  }, [inspectorView, alicats]);
 
   // Synchronize CSS custom property set on HTML element
   useEffect(() => {
@@ -480,11 +497,15 @@ export const App: React.FC = () => {
         api.getEvents(50),
       ]);
       setActiveAlarms(alarms);
+      // This list came straight from /api/alarms/active and is complete by
+      // construction, so the stream's degraded-data warning no longer applies
+      // (the next stream frame re-raises it if entries are still unparseable).
+      setDroppedAlarmCount(0);
       setEventsHistory(events);
     } catch (err) {
       console.error("Failed to fetch alarms and events", err);
     }
-  }, [setActiveAlarms]);
+  }, [setActiveAlarms, setDroppedAlarmCount]);
 
   const handleAcknowledgeAlarm = useCallback(
     async (tagId: string) => {
@@ -622,8 +643,24 @@ export const App: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Alarm + event reconciliation, independent of the live stream.
+  //
+  // `fetchAlarmsAndEvents` is the only writer of `eventsHistory` and its only
+  // call site used to be inside `handleAcknowledgeAlarm`, with no mount fetch
+  // and no interval — so the Events tab was blank until an unrelated
+  // acknowledgement happened, then frozen (#4042a).
+  //
+  // The same poll is the active-alarm list's recovery path (#4011): if the
+  // stream ever drops alarm entries, this pulls the authoritative list from
+  // `/api/alarms/active` so the UI cannot stay wrong for the whole session.
+  usePollingRefresh(fetchAlarmsAndEvents, ALARM_EVENT_REFRESH_MS);
+
   return (
-    <div className="dashboard-container">
+    // `data-freshness` drives the stale-value styling in index.css: once the
+    // data age crosses the threshold, every live process readout below is
+    // greyed and cross-hatched so a FROZEN value is visually distinct from a
+    // steady one (#4010). A boolean CONNECTED flag could not express this.
+    <div className="dashboard-container" data-freshness={freshness}>
       <NotificationBanner notification={notification} />
 
       <header
@@ -678,22 +715,7 @@ export const App: React.FC = () => {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-            <span
-              className={`status-indicator ${
-                isConnected ? "status-connected" : "status-disconnected"
-              }`}
-            />
-            <span
-              style={{
-                fontSize: "0.8rem",
-                fontWeight: 700,
-                color: "var(--text-secondary)",
-              }}
-            >
-              {isConnected ? "CONNECTED" : "OFFLINE"}
-            </span>
-          </div>
+          <DataAgeIndicator freshness={freshness} ageMs={dataAgeMs} />
 
           <button
             type="button"
@@ -765,6 +787,7 @@ export const App: React.FC = () => {
 
       <AlarmsHeader
         activeAlarms={activeAlarms}
+        droppedAlarmCount={droppedAlarmCount}
         onAcknowledgeAll={handleAcknowledgeAll}
       />
 
@@ -1062,293 +1085,23 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "tuning" && visibleTabs.tuning && (
-            <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-              {/* PID Loop Tuning Section */}
-              <div className="glass-panel">
-                <div className="panel-header">
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <Sliders size={16} color="var(--accent-cyan)" />
-                    <span>Auto-Tuning & Transient Response Identification</span>
-                  </div>
-                  <span className="tooltip-container">
-                    <Info size={14} color="var(--text-muted)" />
-                    <span className="tooltip-text">
-                      Decouples PID loop automatic control, registers step change, and solves First Order Plus Dead Time parameters.
-                    </span>
-                  </span>
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1.5rem" }}>
-                  <div>
-                    <div className="input-group" style={{ marginBottom: "1rem" }}>
-                      <label className="input-label">Select Controller Loop</label>
-                      <select
-                        className="form-input"
-                        value={selectedTuningLoop}
-                        onChange={(e) => setSelectedTuningLoop(Number(e.target.value))}
-                        disabled={isTuningMode}
-                      >
-                        {config.pids.map((_, idx) => (
-                          <option key={idx} value={idx}>Loop {idx + 1}</option>
-                        ))}
-                      </select>
-                    </div>
-
-                    <div style={{ display: "flex", gap: "1rem", marginTop: "1.5rem" }}>
-                      {!isTuningMode ? (
-                        <button
-                          type="button"
-                          className="btn btn-primary"
-                          style={{ flex: 1, backgroundColor: "var(--accent-purple)", borderColor: "var(--accent-purple)" }}
-                          onClick={() => startTuning(selectedTuningLoop)}
-                        >
-                          Start Tuning Mode
-                        </button>
-                      ) : (
-                        <div style={{ display: "flex", flexDirection: "column", gap: "1rem", width: "100%" }}>
-                          <div style={{ padding: "0.75rem", background: "rgba(255, 179, 0, 0.1)", border: "1px solid rgba(255, 179, 0, 0.3)", borderRadius: "4px", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
-                            <strong>Tuning Active:</strong> PID automatic calculations are paused. Setpoint tracking is decoupled.
-                          </div>
-                          <div style={{ display: "flex", gap: "0.5rem" }}>
-                            <input
-                              type="number"
-                              step="1"
-                              className="form-input"
-                              value={tuningStepVal}
-                              onChange={(e) => setTuningStepVal(e.target.value)}
-                              placeholder="Step CV"
-                              style={{ width: "100px" }}
-                            />
-                            <button
-                              type="button"
-                              className="btn"
-                              onClick={() => stepTuning(selectedTuningLoop, Number(tuningStepVal))}
-                            >
-                              Apply Step
-                            </button>
-                          </div>
-                          <button
-                            type="button"
-                            className="btn btn-primary"
-                            style={{ backgroundColor: "var(--color-error)", borderColor: "var(--color-error)" }}
-                            onClick={() => stopTuning(selectedTuningLoop)}
-                          >
-                            Stop Tuning & Solve FOPDT
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div style={{ borderLeft: "1px solid var(--panel-border)", paddingLeft: "1.5rem" }}>
-                    <h4 style={{ fontSize: "0.85rem", fontWeight: 700, textTransform: "uppercase", marginBottom: "0.75rem", color: "var(--text-secondary)" }}>
-                      Identification & Recommendations
-                    </h4>
-                    {tuningResults ? (
-                      <div>
-                        {tuningResults.status === "success" ? (
-                          <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-                            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-                              <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.5rem", borderRadius: "4px" }}>
-                                <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Process Gain (Kp)</div>
-                                <div style={{ fontSize: "1rem", fontWeight: 700 }}>{tuningResults.parameters.kp.toFixed(3)}</div>
-                              </div>
-                              <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.5rem", borderRadius: "4px" }}>
-                                <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Time Const (Tau)</div>
-                                <div style={{ fontSize: "1rem", fontWeight: 700 }}>{tuningResults.parameters.tau.toFixed(2)} s</div>
-                              </div>
-                              <div style={{ background: "rgba(255,255,255,0.02)", padding: "0.5rem", borderRadius: "4px", gridColumn: "span 2" }}>
-                                <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Dead Time (Theta)</div>
-                                <div style={{ fontSize: "1rem", fontWeight: 700 }}>{tuningResults.parameters.theta.toFixed(2)} s</div>
-                              </div>
-                            </div>
-
-                            <div style={{ borderTop: "1px solid var(--panel-border)", paddingTop: "0.5rem", marginTop: "0.25rem" }}>
-                              <div style={{ fontSize: "0.7rem", color: "var(--text-muted)", marginBottom: "0.35rem" }}>Cohen-Coon Recommended Gains:</div>
-                              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "0.5rem", marginBottom: "0.75rem" }}>
-                                <div>
-                                  <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Kp</div>
-                                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--accent-cyan)" }}>{tuningResults.recommended_pid.kp.toFixed(2)}</div>
-                                </div>
-                                <div>
-                                  <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Ki</div>
-                                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--accent-purple)" }}>{tuningResults.recommended_pid.ki.toFixed(2)}</div>
-                                </div>
-                                <div>
-                                  <div style={{ fontSize: "0.65rem", color: "var(--text-muted)" }}>Kd</div>
-                                  <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--color-warning)" }}>{tuningResults.recommended_pid.kd.toFixed(2)}</div>
-                                </div>
-                              </div>
-                              <button
-                                type="button"
-                                className="btn btn-primary"
-                                style={{ width: "100%", fontSize: "0.75rem", padding: "0.4rem" }}
-                                onClick={() => applyRecommendedGains(selectedTuningLoop)}
-                              >
-                                Load Gains into Controller
-                              </button>
-                            </div>
-                          </div>
-                        ) : (
-                          <div style={{ fontSize: "0.8rem", color: "var(--color-error)" }}>
-                            {tuningResults.message}
-                          </div>
-                        )}
-                      </div>
-                    ) : (
-                      <div style={{ fontSize: "0.8rem", color: "var(--text-muted)", fontStyle: "italic" }}>
-                        No active or past identification results. Start tuning mode and apply a step change to compute model variables.
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* MPC & Advanced Control Section */}
-              <div className="glass-panel">
-                <div className="panel-header">
-                  <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                    <Sliders size={16} color="var(--accent-magenta)" />
-                    <span>Model Predictive Control (MPC) Solver Groundwork</span>
-                  </div>
-                  <span className="tooltip-container">
-                    <Info size={14} color="var(--text-muted)" />
-                    <span className="tooltip-text">
-                      Run projected gradient descent MPC solver comparisons against standard PID loop control to evaluate dynamic constraint optimization.
-                    </span>
-                  </span>
-                </div>
-
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1.5fr", gap: "1.5rem" }}>
-                  <div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Pred Horizon (Np)</label>
-                        <input
-                          type="number"
-                          className="form-input"
-                          value={mpcParams.prediction_horizon}
-                          onChange={(e) => setMpcParams({ ...mpcParams, prediction_horizon: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Ctrl Horizon (Nc)</label>
-                        <input
-                          type="number"
-                          className="form-input"
-                          value={mpcParams.control_horizon}
-                          onChange={(e) => setMpcParams({ ...mpcParams, control_horizon: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Setpoint SP</label>
-                        <input
-                          type="number"
-                          className="form-input"
-                          value={mpcParams.setpoint}
-                          onChange={(e) => setMpcParams({ ...mpcParams, setpoint: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Input Penalty (Rho)</label>
-                        <input
-                          type="number"
-                          step="0.01"
-                          className="form-input"
-                          value={mpcParams.rho}
-                          onChange={(e) => setMpcParams({ ...mpcParams, rho: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Proc Gain (Kp)</label>
-                        <input
-                          type="number"
-                          step="0.1"
-                          className="form-input"
-                          value={mpcParams.process_gain}
-                          onChange={(e) => setMpcParams({ ...mpcParams, process_gain: Number(e.target.value) })}
-                        />
-                      </div>
-                      <div className="input-group">
-                        <label className="input-label" style={{ fontSize: "0.65rem" }}>Proc Tau (s)</label>
-                        <input
-                          type="number"
-                          step="0.1"
-                          className="form-input"
-                          value={mpcParams.process_tau}
-                          onChange={(e) => setMpcParams({ ...mpcParams, process_tau: Number(e.target.value) })}
-                        />
-                      </div>
-                    </div>
-
-                    <button
-                      type="button"
-                      className="btn btn-primary"
-                      style={{ width: "100%", marginTop: "1rem" }}
-                      onClick={runMpcSimulation}
-                    >
-                      Run Predictive Simulation
-                    </button>
-                  </div>
-
-                  <div style={{ display: "flex", flexDirection: "column", height: "100%", justifyContent: "center" }}>
-                    {mpcSimData ? (
-                      <div style={{ position: "relative", width: "100%", height: "200px" }}>
-                        <div style={{ fontSize: "0.75rem", fontWeight: 700, color: "var(--text-secondary)", marginBottom: "0.25rem", textAlign: "center" }}>
-                          Transient Comparison (PID vs MPC)
-                        </div>
-                        {/* Draw SVG Graph comparing the paths */}
-                        <svg style={{ width: "100%", height: "100%", background: "rgba(0,0,0,0.15)", borderRadius: "4px" }}>
-                          {/* Grid lines */}
-                          <line x1="0" y1="50" x2="350" y2="50" stroke="rgba(255,255,255,0.05)" />
-                          <line x1="0" y1="100" x2="350" y2="100" stroke="rgba(255,255,255,0.05)" />
-                          <line x1="0" y1="150" x2="350" y2="150" stroke="rgba(255,255,255,0.05)" />
-                          
-                          {/* Setpoint (dashed line) */}
-                          {(() => {
-                            const spY = 200 - (mpcParams.setpoint * 2);
-                            return <line x1="0" y1={spY} x2="350" y2={spY} stroke="var(--text-muted)" strokeDasharray="3,3" strokeWidth="1" />;
-                          })()}
-
-                          {/* PID PV path (purple) */}
-                          {(() => {
-                            const points = mpcSimData.time.map((_, idx) => {
-                              const x = (idx / (mpcSimData.time.length - 1)) * 340 + 5;
-                              const y = 200 - (mpcSimData.pid.pv[idx] * 2);
-                              return `${x},${y}`;
-                            }).join(" ");
-                            return <polyline fill="none" stroke="var(--accent-purple)" strokeWidth="2" points={points} />;
-                          })()}
-
-                          {/* MPC PV path (cyan) */}
-                          {(() => {
-                            const points = mpcSimData.time.map((_, idx) => {
-                              const x = (idx / (mpcSimData.time.length - 1)) * 340 + 5;
-                              const y = 200 - (mpcSimData.mpc.pv[idx] * 2);
-                              return `${x},${y}`;
-                            }).join(" ");
-                            return <polyline fill="none" stroke="var(--accent-cyan)" strokeWidth="2" points={points} />;
-                          })()}
-                        </svg>
-                        <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.25rem", fontSize: "0.65rem", color: "var(--text-muted)" }}>
-                          <span>Time: 0s</span>
-                          <span style={{ display: "flex", gap: "0.75rem" }}>
-                            <span style={{ color: "var(--accent-purple)" }}>● PID</span>
-                            <span style={{ color: "var(--accent-cyan)" }}>● MPC</span>
-                            <span style={{ color: "var(--text-muted)" }}>-- Setpoint</span>
-                          </span>
-                          <span>25s</span>
-                        </div>
-                      </div>
-                    ) : (
-                      <div style={{ textAlign: "center", border: "1px dashed var(--panel-border)", padding: "2rem", borderRadius: "4px", color: "var(--text-muted)", fontSize: "0.8rem" }}>
-                        Run the predictive simulation to compare tracking trajectories.
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
+            <TuningPanel
+              config={config}
+              selectedTuningLoop={selectedTuningLoop}
+              setSelectedTuningLoop={setSelectedTuningLoop}
+              isTuningMode={isTuningMode}
+              tuningStepVal={tuningStepVal}
+              setTuningStepVal={setTuningStepVal}
+              tuningResults={tuningResults}
+              startTuning={startTuning}
+              stepTuning={stepTuning}
+              stopTuning={stopTuning}
+              applyRecommendedGains={applyRecommendedGains}
+              mpcParams={mpcParams}
+              setMpcParams={setMpcParams}
+              mpcSimData={mpcSimData}
+              runMpcSimulation={runMpcSimulation}
+            />
           )}
 
           {activeTab === "ladder" && visibleTabs.ladder && (
@@ -1651,8 +1404,8 @@ export const App: React.FC = () => {
               <AlicatInspector
                 deviceId={inspectorView.deviceId}
                 alicats={alicats}
-                setpointValue={alicatSetpointVal}
-                onSetpointValueChange={setAlicatSetpointVal}
+                setpointValue={alicatSetpointDraft.text}
+                onSetpointValueChange={alicatSetpointDraft.setText}
                 onSetpoint={handleAlicatSetpoint}
                 onGasChange={handleAlicatGas}
                 triggerNotification={triggerNotification}

@@ -35,13 +35,47 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Operator HMI Truthfulness and Setpoint Ownership
+
+- The HMI reports telemetry liveness as a **data age**, not as a boolean. Every
+  field of the stream payload is optional, so an empty object parses cleanly;
+  liveness now requires a frame carrying at least one recognised field. The
+  header states CONNECTED, STALE DATA or OFFLINE together with how old the data
+  is, and once the age passes the stale threshold every live process readout is
+  greyed and cross-hatched. A frozen value is therefore visually distinct from a
+  steady one, which the previous CONNECTED/OFFLINE flag could not express.
+- Alarm-map resilience is per entry. A single malformed alarm object now costs
+  that one alarm instead of erasing the entire active-alarm map, and whenever an
+  entry is dropped the operator is shown a degraded-data banner stating the list
+  is incomplete. The reassuring "All normal — no active alarms" summary is
+  suppressed while data is known to be missing.
+- The active-alarm list and the event log are reconciled from the REST endpoints
+  on mount and on a periodic refresh, independent of the live stream. The event
+  log previously only loaded as a side effect of acknowledging an alarm, and the
+  alarm list had no recovery path at all once the stream dropped entries.
+- Setpoint entries are owned by the operator from the first keystroke. The
+  Alicat mass-flow entry no longer re-seeds from live telemetry (which changes
+  every scan on real hardware and overwrote the field mid-entry), and the
+  device's own setpoint is shown as a separate read-only readout with a pending
+  indicator when the two disagree. The power-supply entry seeds from the
+  supply's real setpoint instead of a hard-coded zero, and its +/- buttons stage
+  a value rather than commanding it — Apply remains the only write path, as that
+  panel's contract always stated.
+- Power-supply approaching-alarm cues are computed from the server-enforced
+  configuration rather than the local uncommitted draft, and numeric config
+  entry rejects non-finite input, so an in-progress edit can no longer switch a
+  pre-alarm indication off while the supply is climbing.
+- `.github/workflows/p1am-frontend.yml` gates the operator HMI on every pull
+  request touching it: eslint, the TypeScript build, and the vitest suite. None
+  of these were previously executed by any workflow.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 

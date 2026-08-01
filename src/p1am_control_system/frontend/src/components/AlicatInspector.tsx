@@ -28,6 +28,13 @@ export const AlicatInspector: React.FC<{
     );
   }
 
+  // A staged entry that disagrees with the device is called out explicitly.
+  // Tolerance matches the entry's own 0.1 SLPM step so trailing-zero text
+  // ("25" vs "25.00") never reads as a pending change.
+  const draftValue = Number.parseFloat(setpointValue);
+  const draftDiffersFromDevice =
+    Number.isFinite(draftValue) && Math.abs(draftValue - mfc.setpoint) > 0.05;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       <div>
@@ -84,14 +91,44 @@ export const AlicatInspector: React.FC<{
           paddingTop: "0.75rem",
         }}
       >
+        {/* The DEVICE's live setpoint, as its own read-only readout. The entry
+            below is the operator's draft and no longer tracks telemetry
+            (#4013), so both numbers have to be visible at once — otherwise a
+            draft that disagrees with the device is invisible until Set. */}
+        <div
+          data-testid="alicat-device-setpoint"
+          style={{
+            display: "flex",
+            alignItems: "baseline",
+            gap: "0.4rem",
+            marginBottom: "0.5rem",
+          }}
+        >
+          <span
+            style={{
+              fontSize: "0.65rem",
+              color: "var(--text-muted)",
+              textTransform: "uppercase",
+            }}
+          >
+            Device setpoint
+          </span>
+          <span className="mono-text" style={{ fontWeight: 700 }}>
+            {mfc.setpoint.toFixed(2)}
+          </span>
+          <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>SLPM</span>
+        </div>
+
         <label
           className="input-label"
+          htmlFor={`alicat-setpoint-${mfc.device_id}`}
           style={{ fontWeight: 700, marginBottom: "0.4rem", display: "block" }}
         >
           Flow Setpoint Command (SLPM)
         </label>
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <input
+            id={`alicat-setpoint-${mfc.device_id}`}
             type="number"
             step="0.1"
             min="0"
@@ -124,6 +161,20 @@ export const AlicatInspector: React.FC<{
             Set
           </button>
         </div>
+        {draftDiffersFromDevice && (
+          <div
+            data-testid="alicat-setpoint-pending"
+            style={{
+              fontSize: "0.68rem",
+              color: "var(--color-warning)",
+              marginTop: "0.3rem",
+              fontWeight: 600,
+            }}
+          >
+            Pending — entry differs from the device setpoint ({mfc.setpoint.toFixed(2)}{" "}
+            SLPM). Press Set to command it.
+          </div>
+        )}
         <div
           style={{
             fontSize: "0.65rem",

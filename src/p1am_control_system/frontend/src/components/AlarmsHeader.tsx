@@ -4,6 +4,11 @@ import { ActiveAlarm } from "../App";
 
 interface AlarmsHeaderProps {
   activeAlarms: ActiveAlarm[];
+  /**
+   * Entries of the last `active_alarms` map that failed validation and were
+   * dropped. Non-zero means the list below is INCOMPLETE (#4011).
+   */
+  droppedAlarmCount: number;
   onAcknowledgeAll: () => void;
 }
 
@@ -11,9 +16,14 @@ interface AlarmsHeaderProps {
  * Subtle, compact system-status bar. Shows a one-line summary; the active
  * alarms expand into a scrollable list of clean rows (no per-row checkboxes).
  * Acknowledge-all is the only action, and only when something is unacked.
+ *
+ * When any alarm entry was dropped by the parser, a degraded-data banner is
+ * raised and the reassuring "All normal" summary is suppressed: an incomplete
+ * alarm list must never be presented as a clean one.
  */
 const AlarmsHeaderImpl: React.FC<AlarmsHeaderProps> = ({
   activeAlarms,
+  droppedAlarmCount,
   onAcknowledgeAll,
 }) => {
   const [expanded, setExpanded] = useState(false);
@@ -28,7 +38,16 @@ const AlarmsHeaderImpl: React.FC<AlarmsHeaderProps> = ({
   }
 
   const count = activeAlarms.length;
-  const level = count === 0 ? "is-ok" : highestSeverity >= 2 ? "is-crit" : "is-warn";
+  const degraded = droppedAlarmCount > 0;
+  // A known-incomplete list is never "ok", even when everything that parsed is
+  // clear — that combination is exactly how the defect presented.
+  const level = degraded
+    ? "is-warn"
+    : count === 0
+      ? "is-ok"
+      : highestSeverity >= 2
+        ? "is-crit"
+        : "is-warn";
 
   const fmtTime = (iso: string): string => {
     const d = new Date(iso);
@@ -47,7 +66,9 @@ const AlarmsHeaderImpl: React.FC<AlarmsHeaderProps> = ({
         <span className="statusbar-label">System</span>
         <span className="statusbar-summary">
           {count === 0
-            ? "All normal — no active alarms"
+            ? degraded
+              ? "Alarm data degraded"
+              : "All normal — no active alarms"
             : `${count} active alarm${count === 1 ? "" : "s"}` +
               (unacked > 0 ? ` · ${unacked} unacknowledged` : "")}
         </span>
@@ -70,6 +91,18 @@ const AlarmsHeaderImpl: React.FC<AlarmsHeaderProps> = ({
           </button>
         )}
       </div>
+
+      {degraded && (
+        <div className="alarm-degraded" role="alert">
+          <AlertOctagon size={13} color="var(--color-warning)" />
+          <span>
+            Alarm data incomplete — {droppedAlarmCount} alarm
+            {droppedAlarmCount === 1 ? "" : "s"} could not be read from the last
+            frame and {droppedAlarmCount === 1 ? "is" : "are"} NOT shown. Check the
+            PLC alarm summary directly.
+          </span>
+        </div>
+      )}
 
       {expanded && count > 0 && (
         <div className="alarm-list">

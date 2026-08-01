@@ -1,7 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { TAG_COUNT } from "../lib/tags";
 import { SAMPLES_PER_SECOND } from "../lib/trendTime";
-import { telemetryFrameSchema } from "../api/schemas";
+import {
+  hasTelemetryContent,
+  partitionAlarmMap,
+  telemetryFrameSchema,
+} from "../api/schemas";
+import {
+  DATA_STALE_MS,
+  dataFreshness,
+  type DataFreshness,
+} from "../lib/dataAge";
 import type { PowerSupplyStatus } from "../components/PowerSupplyControl";
 import type { TemperatureStatus } from "../components/TemperatureControl";
 import type { AlicatMFCState, ActiveAlarm } from "../api/schemas";
@@ -25,6 +34,13 @@ import type { AlicatMFCState, ActiveAlarm } from "../api/schemas";
 const STALE_MS = 3000;
 /** How often to check staleness / poll the snapshot fallback. */
 const POLL_MS = 1500;
+/**
+ * How often the exposed data age is recomputed. The age is what the whole UI
+ * greys out on, so it must keep climbing while NOTHING arrives — a clock driven
+ * only by incoming frames would freeze exactly when it matters most (#4010).
+ */
+const AGE_TICK_MS = 500;
+
 export interface TelemetryState {
   tagValues: number[];
   history: number[][];
@@ -36,7 +52,26 @@ export interface TelemetryState {
   eStopActive: boolean;
   powerSupplyStatus: PowerSupplyStatus | undefined;
   temperatureStatus: TemperatureStatus | undefined;
+  /**
+   * Milliseconds since the last frame that carried recognised telemetry, or
+   * `undefined` when no such frame has ever arrived. This — not a boolean — is
+   * what the UI must render and grey out on.
+   */
+  dataAgeMs: number | undefined;
+  /** {@link dataAgeMs} classified into live / stale / offline. */
+  freshness: DataFreshness;
+  /**
+   * Convenience alias for `freshness === "live"`. Retained so existing call
+   * sites keep compiling, but it is now derived from the age: an open socket
+   * with no data, or a frozen stream, is NOT connected.
+   */
   isConnected: boolean;
+  /**
+   * How many entries of the most recent `active_alarms` map failed validation
+   * and were dropped. Non-zero means the alarm list on screen is incomplete and
+   * the operator must be told (#4011).
+   */
+  droppedAlarmCount: number;
 }
 
 // In-memory live buffer bound. The Pi's browser only needs the recent tail for
@@ -97,6 +132,13 @@ export function useTelemetryStream(
   setAlicats: React.Dispatch<React.SetStateAction<AlicatMFCState[]>>;
   setActiveAlarms: React.Dispatch<React.SetStateAction<ActiveAlarm[]>>;
   setEStopActive: React.Dispatch<React.SetStateAction<boolean>>;
+  /**
+   * Reset the degraded-alarm-data count. The host calls this after replacing
+   * the alarm list wholesale from `/api/alarms/active`: that list is complete
+   * by construction, so the stream's stale drop count must not keep warning
+   * about it (the next stream frame re-raises the warning if still degraded).
+   */
+  setDroppedAlarmCount: React.Dispatch<React.SetStateAction<number>>;
 } {
   const [tagValues, setTagValues] = useState<number[]>(
     Array(TAG_COUNT).fill(0.0),
@@ -116,7 +158,13 @@ export function useTelemetryStream(
   const [temperatureStatus, setTemperatureStatus] = useState<
     TemperatureStatus | undefined
   >(undefined);
-  const [isConnected, setIsConnected] = useState<boolean>(false);
+  // Epoch-ms of the last frame that actually carried telemetry (undefined =
+  // never), plus a ticking clock so the derived age keeps climbing with no
+  // traffic at all. Both are state (not refs) because the whole UI renders off
+  // the resulting age.
+  const [lastFrameAt, setLastFrameAt] = useState<number | undefined>(undefined);
+  const [nowMs, setNowMs] = useState<number>(() => Date.now());
+  const [droppedAlarmCount, setDroppedAlarmCount] = useState<number>(0);
 
   const wsRef = useRef<WebSocket | null>(null);
   const onConnectRef = useRef(options.onConnect);
@@ -125,7 +173,9 @@ export function useTelemetryStream(
   useEffect(() => {
     let disposed = false;
     let reconnectTimer: ReturnType<typeof setTimeout> | undefined;
-    let lastFrameAt = 0; // epoch ms of the last applied frame (WS or poll)
+    // Epoch ms of the last applied frame (WS or poll); undefined until one with
+    // real content arrives. Mirrored into state by markLive() for rendering.
+    let lastFrameAt: number | undefined;
 
     const pushTags = (values: number[]) => {
       setTagValues(values);
@@ -145,11 +195,25 @@ export function useTelemetryStream(
       );
     };
 
+    /** Stamp the data-age clock. Only a frame with real content may do this. */
+    const markLive = () => {
+      const stamp = Date.now();
+      lastFrameAt = stamp;
+      setLastFrameAt(stamp);
+      setNowMs(stamp);
+    };
+
     // Apply one telemetry frame from either transport (WS message or snapshot
-    // poll). Returns true if it was a recognized frame.
+    // poll). Returns true if it was a recognized frame CARRYING telemetry.
+    //
+    // Parse success is deliberately NOT the liveness test: every field of the
+    // frame schema is optional, so `{}` — which is exactly what the backend's
+    // never-cleared `latest_frame` serves after its poll loop dies — parses
+    // cleanly. Treating that as a live frame is what kept the HMI green, the
+    // status pill CONNECTED, and the trend appending a frozen value forever.
     const applyFrame = (raw: unknown): boolean => {
       const parsed = telemetryFrameSchema.safeParse(raw);
-      if (parsed.success) {
+      if (parsed.success && hasTelemetryContent(parsed.data)) {
         const frame = parsed.data;
         if (frame.tags && frame.tags.length === TAG_COUNT) {
           pushTags(frame.tags);
@@ -174,7 +238,11 @@ export function useTelemetryStream(
           );
         }
         if (frame.active_alarms) {
-          const next = Object.values(frame.active_alarms);
+          // Per-entry resilience: malformed entries parse to `undefined` and
+          // are dropped individually, so one bad alarm no longer erases the
+          // whole list. The drop count is surfaced so the operator is told the
+          // list on screen is incomplete rather than believing it is empty.
+          const { alarms: next, droppedIds } = partitionAlarmMap(frame.active_alarms);
           setActiveAlarms((prev) =>
             shallowListEqual(
               prev as Record<string, unknown>[],
@@ -182,6 +250,9 @@ export function useTelemetryStream(
             )
               ? prev
               : next,
+          );
+          setDroppedAlarmCount((prev) =>
+            prev === droppedIds.length ? prev : droppedIds.length,
           );
         }
         if (typeof frame.e_stop_active === "boolean") {
@@ -209,15 +280,13 @@ export function useTelemetryStream(
               : next,
           );
         }
-        lastFrameAt = Date.now();
-        setIsConnected(true);
+        markLive();
         return true;
       }
       // Legacy fallback: a bare array of tag values.
       if (Array.isArray(raw) && raw.length === TAG_COUNT) {
         pushTags(raw as number[]);
-        lastFrameAt = Date.now();
-        setIsConnected(true);
+        markLive();
         return true;
       }
       return false;
@@ -231,7 +300,9 @@ export function useTelemetryStream(
       wsRef.current = ws;
 
       ws.onopen = () => {
-        setIsConnected(true);
+        // Announce the handshake, but do NOT claim the process is live: a
+        // socket that opens and then delivers nothing is precisely the failure
+        // this hook now has to make visible.
         onConnectRef.current?.();
       };
 
@@ -256,28 +327,41 @@ export function useTelemetryStream(
 
     // HTTP fallback: when no frame has arrived for STALE_MS (WS down/flaky, or a
     // webview that can't hold a socket), pull the cached snapshot over plain HTTP.
+    //
+    // A failed (or contentless) poll no longer needs to flip any flag: the age
+    // clock below is already climbing, so doing nothing here IS reporting the
+    // outage. That is the whole point of driving the UI from an age.
     const pollIfStale = async () => {
-      if (disposed || Date.now() - lastFrameAt < STALE_MS) return;
+      if (disposed || Date.now() - (lastFrameAt ?? 0) < STALE_MS) return;
       try {
         const res = await fetch("/api/snapshot");
-        if (res.ok && applyFrame(await res.json())) return;
-        setIsConnected(false);
+        if (res.ok) applyFrame(await res.json());
       } catch {
-        setIsConnected(false);
+        /* snapshot unavailable — the data age keeps climbing */
       }
     };
 
     connect();
     void pollIfStale(); // immediate snapshot so a fresh mount shows data fast
     const pollTimer = setInterval(pollIfStale, POLL_MS);
+    // Advance the clock the age is measured against, independently of traffic.
+    const ageTimer = setInterval(() => setNowMs(Date.now()), AGE_TICK_MS);
 
     return () => {
       disposed = true;
       if (reconnectTimer) clearTimeout(reconnectTimer);
       clearInterval(pollTimer);
+      clearInterval(ageTimer);
       wsRef.current?.close();
     };
   }, []);
+
+  // Derive the age from the two clocks. `Math.max` guards a backwards system
+  // clock so the age can never go negative (dataFreshness treats that as a
+  // contract violation rather than silently reporting "live").
+  const dataAgeMs =
+    lastFrameAt === undefined ? undefined : Math.max(0, nowMs - lastFrameAt);
+  const freshness = dataFreshness(dataAgeMs, DATA_STALE_MS);
 
   return {
     tagValues,
@@ -289,9 +373,13 @@ export function useTelemetryStream(
     eStopActive,
     powerSupplyStatus,
     temperatureStatus,
-    isConnected,
+    dataAgeMs,
+    freshness,
+    isConnected: freshness === "live",
+    droppedAlarmCount,
     setAlicats,
     setActiveAlarms,
     setEStopActive,
+    setDroppedAlarmCount,
   };
 }

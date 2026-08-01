@@ -73,6 +73,24 @@ export type ActiveAlarm = z.infer<typeof activeAlarmSchema>;
 export const activeAlarmsSchema = z.array(activeAlarmSchema);
 
 /**
+ * One entry of the `active_alarms` map, with resilience at the ENTRY level.
+ *
+ * `.catch(undefined)` deliberately sits here rather than on the enclosing
+ * record (#4011): on the record, ONE malformed alarm object erased the entire
+ * map, `applyFrame`'s `if (frame.active_alarms)` went false, `setActiveAlarms`
+ * was never called again, and the HMI kept rendering its last list — including
+ * "All normal — no active alarms" — while alarms fired on the PLC. Silent and
+ * permanent for the session. Per entry, one bad alarm costs you that alarm.
+ */
+export const activeAlarmEntrySchema = activeAlarmSchema.optional().catch(undefined);
+
+/**
+ * An `active_alarms` map as it survives parsing: an entry is `undefined` when
+ * that single alarm failed validation and was dropped.
+ */
+export type ActiveAlarmMap = Record<string, ActiveAlarm | undefined>;
+
+/**
  * Live telemetry frame pushed over the `/api/stream` WebSocket.
  *
  * Every field is optional because the backend emits partial frames; consumers
@@ -83,20 +101,83 @@ export const activeAlarmsSchema = z.array(activeAlarmSchema);
  * instead of failing the whole frame. A rejected frame would leave the HMI
  * OFFLINE with dead controls — the live stream must degrade gracefully, never go
  * dark, on a single-field mismatch.
+ *
+ * CAUTION: because every field is optional, `{}` — and any object made only of
+ * fields the HMI does not know — parses SUCCESSFULLY. Parse success therefore
+ * says nothing about whether a live frame arrived. Use {@link hasTelemetryContent}
+ * to decide liveness (#4010).
  */
 export const telemetryFrameSchema = z.object({
   tags: z.array(z.number()).optional().catch(undefined),
   tags_dict: z.record(z.string(), z.number()).optional().catch(undefined),
   alicats: z.array(alicatMfcStateSchema).optional().catch(undefined),
-  active_alarms: z
-    .record(z.string(), activeAlarmSchema)
-    .optional()
-    .catch(undefined),
+  active_alarms: z.record(z.string(), activeAlarmEntrySchema).optional().catch(undefined),
   e_stop_active: z.boolean().optional().catch(undefined),
   power_supply: z.unknown().optional(),
   temperature: z.unknown().optional(),
 });
 export type TelemetryFrame = z.infer<typeof telemetryFrameSchema>;
+
+/**
+ * The payload fields the HMI actually understands. Single source of truth for
+ * "does this frame carry telemetry at all".
+ */
+export const TELEMETRY_CONTENT_FIELDS = [
+  "tags",
+  "tags_dict",
+  "alicats",
+  "active_alarms",
+  "e_stop_active",
+  "power_supply",
+  "temperature",
+] as const satisfies readonly (keyof TelemetryFrame)[];
+
+/**
+ * True when a parsed frame carries at least one recognised telemetry field.
+ *
+ * The backend's `latest_frame` starts life as `{}` and is only ever reassigned
+ * on a SUCCESSFUL poll — never cleared, never aged, always served with HTTP
+ * 200. So when the poll loop dies, `/api/snapshot` keeps returning a payload
+ * that parses fine and carries nothing. Counting that as a live frame is what
+ * kept the HMI green on a dead backend.
+ *
+ * @param frame - a frame already validated by {@link telemetryFrameSchema}.
+ * @returns whether the frame should refresh the data-age clock.
+ */
+export function hasTelemetryContent(frame: TelemetryFrame): boolean {
+  for (const field of TELEMETRY_CONTENT_FIELDS) {
+    if (frame[field] !== undefined) return true;
+  }
+  return false;
+}
+
+/** Well-formed alarms plus the ids of entries that failed validation. */
+export interface AlarmPartition {
+  alarms: ActiveAlarm[];
+  /** Map keys whose alarm object was malformed and therefore dropped. */
+  droppedIds: string[];
+}
+
+/**
+ * Split a parsed `active_alarms` map into surviving alarms and dropped ids.
+ *
+ * Callers render `alarms` and surface a degraded-data banner whenever
+ * `droppedIds` is non-empty, so a partially-parsed alarm map is visible to the
+ * operator rather than silently shrinking the list.
+ *
+ * @param map - the parsed map, or `undefined` when the frame carried none.
+ */
+export function partitionAlarmMap(map: ActiveAlarmMap | undefined): AlarmPartition {
+  const alarms: ActiveAlarm[] = [];
+  const droppedIds: string[] = [];
+  if (!map) return { alarms, droppedIds };
+  for (const key of Object.keys(map)) {
+    const alarm = map[key];
+    if (alarm === undefined) droppedIds.push(key);
+    else alarms.push(alarm);
+  }
+  return { alarms, droppedIds };
+}
 
 // --- Data capture / historian ------------------------------------------------
 

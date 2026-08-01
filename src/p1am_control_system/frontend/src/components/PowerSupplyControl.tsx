@@ -5,6 +5,7 @@ import { ExportButton } from "./ExportButton";
 import { CollapsibleSection } from "./CollapsibleSection";
 import { EditableValue } from "./EditableValue";
 import { fetchWithTimeout } from "../lib/fetchWithTimeout";
+import { useSetpointDraft } from "../hooks/useSetpointDraft";
 import { MAX_TREND_SAMPLES } from "../lib/trendTime";
 import "./PowerSupplyControl.css";
 
@@ -154,6 +155,50 @@ const NOISE_METRIC_HINTS: Record<NoiseMetric, string> = {
   cv: "std ÷ |mean|, a dimensionless ratio (noise relative to DC level)",
 };
 
+/**
+ * Is a measurement within `fraction` of its alarm limit?
+ *
+ * Deliberately fails LOUD (#4042b). The pre-alarm cue used to be `x >= 0.9 *
+ * limit` computed against the LOCAL UNCOMMITTED config draft; clearing the
+ * limit field stored `NaN`, and `x >= 0.9 * NaN` is false, so the cue switched
+ * OFF while the supply was still climbing. An unusable limit is a reason to
+ * warn, never a reason to reassure.
+ *
+ * @param measured - the live measurement (undefined before the first frame).
+ * @param limit - the server-enforced alarm limit.
+ * @param fraction - proportion of the limit at which to start warning.
+ * @returns true when the operator should see the approaching-alarm cue.
+ */
+// Pure helper co-located with the component it serves so it can be unit-tested;
+// not a component, so it never participates in fast refresh.
+// eslint-disable-next-line react-refresh/only-export-components
+export function approachingLimit(
+  measured: number | undefined,
+  limit: number | undefined,
+  fraction = 0.9,
+): boolean {
+  if (measured === undefined || !Number.isFinite(measured)) return false;
+  if (limit === undefined || !Number.isFinite(limit)) return true;
+  return measured >= fraction * limit;
+}
+
+/**
+ * Parse a numeric config entry, rejecting anything that is not finite.
+ *
+ * `Number.parseFloat(e.target.value)` written straight into the draft stored
+ * `NaN` for an empty field, which then silently disabled the approaching-alarm
+ * cue and would have been PUT to the backend on save (#4042b).
+ *
+ * @param text - raw input text.
+ * @returns the finite number, or `null` when the text is not usable.
+ */
+// eslint-disable-next-line react-refresh/only-export-components
+export function parseConfigNumber(text: string): number | null {
+  if (typeof text !== "string" || text.trim() === "") return null;
+  const parsed = Number.parseFloat(text);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
 /** Pull the value of the selected metric out of a NoiseStats snapshot. */
 function noiseMetricValue(stats: NoiseStats | undefined): number | null {
   if (!stats) return null;
@@ -175,7 +220,16 @@ const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) 
   const [config, setConfig] = useState<PowerSupplyConfig | null>(null);
   const [configDraft, setConfigDraft] = useState<PowerSupplyConfig | null>(null);
   const [mode, setMode] = useState<"current" | "power">("current");
-  const [stagedSetpointText, setStagedSetpointText] = useState<string>("0");
+  // Staged setpoint entry, seeded from the supply's REAL setpoint and then
+  // operator-owned (#4020). It used to be hard-initialised to "0" and never
+  // seeded, so after a kiosk reload of a supply running at 30 A the box read 0
+  // next to a telemetry readout of 30.00 A.
+  const stagedSetpoint = useSetpointDraft(liveStatus?.setpoint_a, {
+    scope: "power-supply",
+    digits: 2,
+  });
+  const stagedSetpointText = stagedSetpoint.text;
+  const setStagedSetpointText = stagedSetpoint.setText;
   const [setpointStep, setSetpointStep] = useState<number>(1.0);
   const [clampDraft, setClampDraft] = useState<number>(20);
   const [trend, setTrend] = useState<TrendSample[]>([]);
@@ -303,14 +357,19 @@ const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) 
     [config, mode, flash, liveStatus],
   );
 
+  // +/- STAGE a value; they never command (#4020). Nudging used to call
+  // applySetpoint immediately from a staged value that was never seeded, so on
+  // a supply running at 30 A one tap of "+" commanded 1 A and collapsed the
+  // output by 29 A with no confirmation — and it contradicted this file's own
+  // documented contract, "Apply commits the staged value — typing alone
+  // commands nothing". Apply is now the sole write path.
   const nudgeSetpoint = useCallback(
     (delta: number) => {
       const current = Number.parseFloat(stagedSetpointText);
-      const next = Math.max(0, (Number.isFinite(current) ? current : 0) + delta);
-      setStagedSetpointText(next.toFixed(2));
-      applySetpoint(next);
+      const base = Number.isFinite(current) ? current : (liveStatus?.setpoint_a ?? 0);
+      setStagedSetpointText(Math.max(0, base + delta).toFixed(2));
     },
-    [stagedSetpointText, applySetpoint],
+    [stagedSetpointText, liveStatus?.setpoint_a, setStagedSetpointText],
   );
 
   const handleApplyClick = useCallback(() => {
@@ -464,12 +523,12 @@ const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) 
     }
   }
 
-  const powerWarn = s
-    ? s.measured_power_w >= 0.9 * configDraft.power_alarm_max_w
-    : false;
-  const tempWarn = s
-    ? s.measured_temp_c >= 0.9 * configDraft.temp_alarm_max_c
-    : false;
+  // Approaching-alarm cues come from the SERVER-ENFORCED config, never from the
+  // local uncommitted draft (#4042b): the draft is whatever the operator has
+  // half-typed into the advanced editor, and an in-progress edit must not
+  // change what the live readouts warn about.
+  const powerWarn = approachingLimit(s?.measured_power_w, config.power_alarm_max_w);
+  const tempWarn = approachingLimit(s?.measured_temp_c, config.temp_alarm_max_c);
 
   return (
     <div className="ps">
@@ -658,8 +717,7 @@ const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) 
             <button
               className="ps-step-btn"
               onClick={() => nudgeSetpoint(-setpointStep)}
-              disabled={busy}
-              title={`Decrease by ${setpointStep}`}
+              title={`Decrease by ${setpointStep} — stages only, press Apply to command`}
             >
               −
             </button>
@@ -676,8 +734,7 @@ const PowerSupplyControlImpl: React.FC<Props> = ({ liveStatus, onOpenCapture }) 
             <button
               className="ps-step-btn"
               onClick={() => nudgeSetpoint(setpointStep)}
-              disabled={busy}
-              title={`Increase by ${setpointStep}`}
+              title={`Increase by ${setpointStep} — stages only, press Apply to command`}
             >
               +
             </button>
@@ -1237,11 +1294,18 @@ const ConfigField: React.FC<ConfigFieldProps> = ({
     <input
       type={stringMode ? "text" : "number"}
       value={value}
-      onChange={(e) =>
-        onChange(
-          (stringMode ? e.target.value : Number.parseFloat(e.target.value)) as number,
-        )
-      }
+      onChange={(e) => {
+        if (stringMode) {
+          onChange(e.target.value as unknown as number);
+          return;
+        }
+        // Reject non-finite input rather than writing it into the draft
+        // (#4042b): `Number.parseFloat("")` is NaN, and a NaN alarm limit
+        // silently switched the pre-alarm cue OFF while the supply climbed.
+        // An unparseable keystroke simply leaves the last good value in place.
+        const parsed = parseConfigNumber(e.target.value);
+        if (parsed !== null) onChange(parsed);
+      }}
     />
   </label>
 );
