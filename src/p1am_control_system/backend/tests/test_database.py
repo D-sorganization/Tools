@@ -9,6 +9,7 @@ composite-index migration that turns the trend-read hot path from an index-scan
 from __future__ import annotations
 
 import sqlite3
+from pathlib import Path
 
 import pytest
 
@@ -16,11 +17,14 @@ pytest.importorskip("sqlmodel")
 
 import database  # noqa: E402
 from models import TagLog  # noqa: E402,F401  (registers the table in metadata)
-from sqlalchemy import text  # noqa: E402
+from sqlalchemy import (
+    Engine,  # noqa: E402
+    text,  # noqa: E402
+)
 from sqlmodel import Session, SQLModel, create_engine  # noqa: E402
 
 
-def test_configure_sqlite_sets_wal_and_size_limit(tmp_path) -> None:
+def test_configure_sqlite_sets_wal_and_size_limit(tmp_path: Path) -> None:
     db_file = tmp_path / "pragma.db"
     conn = sqlite3.connect(db_file)
     try:
@@ -32,7 +36,7 @@ def test_configure_sqlite_sets_wal_and_size_limit(tmp_path) -> None:
         conn.close()
 
 
-def test_configure_sqlite_sets_read_perf_pragmas(tmp_path) -> None:
+def test_configure_sqlite_sets_read_perf_pragmas(tmp_path: Path) -> None:
     # The read-performance pragmas must be applied on every fresh connection.
     db_file = tmp_path / "readperf.db"
     conn = sqlite3.connect(db_file)
@@ -48,7 +52,9 @@ def test_configure_sqlite_sets_read_perf_pragmas(tmp_path) -> None:
         conn.close()
 
 
-def test_optimize_planner_statistics_is_best_effort(tmp_path, monkeypatch) -> None:
+def test_optimize_planner_statistics_is_best_effort(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     # PRAGMA optimize must run without raising and must never block startup even
     # when the driver call fails (best-effort contract).
     engine = create_engine(f"sqlite:///{tmp_path / 'optimize.db'}")
@@ -65,32 +71,14 @@ def test_optimize_planner_statistics_is_best_effort(tmp_path, monkeypatch) -> No
         def __enter__(self) -> _BoomConn:
             return self
 
-        def __exit__(self, *_exc: object) -> bool:
-            return False
+        def __exit__(self, *_exc: object) -> None:
+            return None
 
     monkeypatch.setattr(database.engine, "connect", lambda: _BoomConn())
     database._optimize_planner_statistics()  # must not raise
 
 
-def test_migration_creates_composite_and_drops_single(tmp_path) -> None:
-    # Seed a DB with the OLD schema: a standalone single-column tag_name index.
-    engine = create_engine(f"sqlite:///{tmp_path / 'hist.db'}")
-    SQLModel.metadata.create_all(engine)
-    with engine.begin() as conn:
-        conn.execute(
-            text("CREATE INDEX IF NOT EXISTS ix_taglog_tag_name ON taglog (tag_name)")
-        )
-
-    # Apply the migration SQL (mirrors database._migrate_historian_indexes body).
-    with engine.begin() as conn:
-        conn.execute(
-            text(
-                "CREATE INDEX IF NOT EXISTS ix_taglog_tag_name_timestamp "
-                "ON taglog (tag_name, timestamp)"
-            )
-        )
-        conn.execute(text("DROP INDEX IF EXISTS ix_taglog_tag_name"))
-
+def _taglog_index_names(engine: Engine) -> set[str]:
     with Session(engine) as session:
         rows = session.exec(
             text(
@@ -98,12 +86,75 @@ def test_migration_creates_composite_and_drops_single(tmp_path) -> None:
                 "AND tbl_name='taglog'"
             )
         ).all()
-    names = {r[0] for r in rows}
+    return {r[0] for r in rows}
+
+
+def test_migration_creates_composite_and_drops_single(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # #4033: exercise the REAL migration function, not a hand-copied duplicate of
+    # its SQL — a copy passes even if _migrate_historian_indexes is deleted.
+    # Seed a DB with the OLD schema: a standalone single-column tag_name index.
+    engine = create_engine(f"sqlite:///{tmp_path / 'hist.db'}")
+    SQLModel.metadata.create_all(engine)
+    with engine.begin() as conn:
+        conn.execute(
+            text("CREATE INDEX IF NOT EXISTS ix_taglog_tag_name ON taglog (tag_name)")
+        )
+    assert "ix_taglog_tag_name" in _taglog_index_names(engine)
+
+    monkeypatch.setattr(database, "engine", engine)
+    database._migrate_historian_indexes()
+
+    names = _taglog_index_names(engine)
     assert "ix_taglog_tag_name_timestamp" in names
     assert "ix_taglog_tag_name" not in names
 
 
-def test_trend_query_uses_composite_index(tmp_path) -> None:
+def test_migration_is_idempotent(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # Runs on every boot against an already-migrated, populated DB.
+    engine = create_engine(f"sqlite:///{tmp_path / 'idem.db'}")
+    SQLModel.metadata.create_all(engine)
+    monkeypatch.setattr(database, "engine", engine)
+    database._migrate_historian_indexes()
+    database._migrate_historian_indexes()
+    assert "ix_taglog_tag_name_timestamp" in _taglog_index_names(engine)
+
+
+def test_enable_incremental_autovacuum_converts_legacy_db(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    # #4006: bounded incremental_vacuum chunks replace the unbounded VACUUM in
+    # the periodic sweep, which only works if the file is in INCREMENTAL mode.
+    engine = create_engine(f"sqlite:///{tmp_path / 'autovac.db'}")
+    SQLModel.metadata.create_all(engine)  # legacy file: auto_vacuum = NONE
+    with engine.connect() as conn:
+        assert int(conn.exec_driver_sql("PRAGMA auto_vacuum").scalar()) == 0
+
+    monkeypatch.setattr(database, "engine", engine)
+    database._enable_incremental_autovacuum()
+
+    with engine.connect() as conn:
+        assert int(conn.exec_driver_sql("PRAGMA auto_vacuum").scalar()) == 2
+
+
+def test_enable_incremental_autovacuum_is_best_effort(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'autovac2.db'}")
+    SQLModel.metadata.create_all(engine)
+    monkeypatch.setattr(database, "engine", engine)
+
+    def _boom() -> None:
+        raise RuntimeError("locked")
+
+    monkeypatch.setattr(database.engine, "connect", _boom)
+    database._enable_incremental_autovacuum()  # must not raise
+
+
+def test_trend_query_uses_composite_index(tmp_path: Path) -> None:
     # The composite index must actually serve the trend query plan (no temp sort).
     engine = create_engine(f"sqlite:///{tmp_path / 'plan.db'}")
     SQLModel.metadata.create_all(engine)  # model now declares the composite index

@@ -35,13 +35,41 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Historian Retention, Timezone and Data-Explorer Correctness
+
+- The periodic historian retention sweep no longer freezes the controller. It runs on a
+  worker thread instead of the asyncio event loop, so the poll loop, the websocket
+  broadcast and every HTTP endpoint — E-stop included — stay responsive while it works.
+  Disk is reclaimed in bounded `incremental_vacuum` chunks rather than a whole-file
+  `VACUUM`, so no unattended maintenance step takes an open-ended lock; a legacy
+  database is converted to `auto_vacuum=INCREMENTAL` once at startup, before the
+  controller goes live. A failed sweep is logged and retried next interval.
+- Historian timestamps are stored and returned as timezone-aware UTC. Bounds supplied
+  with an explicit offset are honoured, an offset-less bound means UTC, and every
+  timestamp on the API boundary (capture status, CSV export, trends, Data Explorer
+  signal list) carries an explicit offset. Previously the offset was discarded on both
+  write and read, so a browser re-parsed the offset-less strings as local time and an
+  "export everything" window silently started hours late on a non-UTC host.
+- The size cap is enforced as two independently-tracked budgets — one for the tag
+  historian, one for the event log — each charged against its own on-disk footprint.
+  A large event log can no longer inflate the tag historian's cost-per-row and erase
+  trend history sweep after sweep. The event log also gains age-based retention, having
+  previously had none, and every purge logs what it deleted and why.
+- The Data Explorer decides whether a historian selection fits its memory budget from
+  row counts _before_ reading any rows, rather than after materialising them, and honours
+  the per-tag `max_points` the HMI already sends by decimating server-side as it streams.
+  Peak memory is now proportional to the returned dataset rather than to the time range.
+- A dataset export with unequal-length columns is rejected up front as a 400. Previously
+  the mismatch was only detected when no index was supplied — after the response had
+  begun — so the client received a truncated CSV body behind an HTTP 200.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
