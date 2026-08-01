@@ -26,6 +26,19 @@ PID_STRIDE = 10  # registers per PID block
 PID_SETPOINT_OFFSET = 2  # setpoint is the 3rd field (regs +2, +3)
 INTERLOCK_BASE = 300  # 32 tags x 8 regs (lolo/low/high/hihi)
 PID_COUNT = 4
+# Host-liveness watchdog. The firmware proves the host is alive from a CHANGE
+# to this register (the value itself is meaningless), not from its content. If
+# it sees neither a Modbus TCP connection nor a heartbeat change for
+# HEARTBEAT_TIMEOUT_S it drives all analog outputs to 0 %, opens the heater
+# relay, asserts Inhibit and holds the PID loops. The backend must therefore
+# bump it once per successful scan — see AsyncModbusManager.write_heartbeat.
+HOST_HEARTBEAT_REGISTER = 560
+HEARTBEAT_TIMEOUT_S = 2.0  # firmware-side watchdog window
+
+# Plant wiring: the DC power supply's analog command rides PID loop 0. Named
+# here so the shutdown safe-state and the power-supply service agree on which
+# loop must be zeroed to de-energize the supply.
+POWER_SUPPLY_PID_INDEX = 0
 
 # ---- Coils ------------------------------------------------------------
 SAVE_TO_FLASH_COIL = 0
