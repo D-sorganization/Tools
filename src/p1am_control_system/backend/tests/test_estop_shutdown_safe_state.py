@@ -26,7 +26,11 @@ from unittest.mock import AsyncMock, MagicMock, patch
 import pytest
 
 os.environ.setdefault("PLC_DRIVER", "modbus")
-os.environ["P1AM_DEV_NO_AUTH"] = "1"
+# No auth fixture here on purpose: this module drives the lifespan and the
+# safe-state seams directly and issues no HTTP request, so it needs no
+# credential posture. It deliberately does NOT set P1AM_DEV_NO_AUTH at import
+# time either — that mutation would leak into every suite collected after this
+# one and make THEIR auth posture collection-order dependent (#4061).
 
 pytest.importorskip("sqlmodel")
 pytest.importorskip("fastapi")

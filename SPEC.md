@@ -72,6 +72,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   watchdog, which drives all outputs safe if it sees no host activity within its
   timeout window. The heartbeat is deliberately exempt from the E-stop latch: it
   reports that the host is alive, not that an output should move.
+- The new endpoint tests configure their credential posture per test rather than
+  by mutating the process environment when the module is imported. Import-time
+  mutation made the posture depend on collection order and worker assignment, so
+  a suite could report green purely because it was ordered favourably — an
+  unacceptable failure mode for the tests standing over an E-stop write path.
 
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 

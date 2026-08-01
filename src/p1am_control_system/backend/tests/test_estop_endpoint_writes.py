@@ -19,7 +19,6 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 os.environ.setdefault("PLC_DRIVER", "modbus")
-os.environ["P1AM_DEV_NO_AUTH"] = "1"
 
 pytest.importorskip("sqlmodel")
 pytest.importorskip("httpx")
@@ -29,7 +28,29 @@ from fastapi.testclient import TestClient  # noqa: E402
 from main import app, backup_simulator, control_context, modbus_manager  # noqa: E402
 from models import PIDConfig  # noqa: E402
 
-client = TestClient(app)
+
+@pytest.fixture(autouse=True)
+def _bench_no_auth(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Re-establish the bench auth bypass for EVERY test in this module.
+
+    This must NOT be a bare ``os.environ`` assignment at import time: ``settings``
+    is a module-level singleton read once at first import, so whether the
+    variable lands before or after that import depends on collection order and
+    xdist worker assignment. A sibling suite that clears the variable at *its*
+    import time (``tests/p1am_control_system/test_backend_security.py``) then
+    silently disables the bypass for this whole module and these tests fail with
+    503 — or pass, under a lucky ordering, which is the dangerous direction over
+    an E-stop write path (#4061). A per-test ``monkeypatch`` is immune to that
+    and unwinds cleanly afterwards.
+    """
+    monkeypatch.setenv("P1AM_DEV_NO_AUTH", "1")
+
+
+# The HMI marker header: cors_config.RequestGuardMiddleware (#4037) refuses a
+# state-changing request carrying no preflight-forcing signal, because a bodyless
+# control POST is otherwise a CORS-"simple" request any page can make. Inert
+# today, set here so this file matches the fleet convention.
+client = TestClient(app, headers={"X-Requested-With": "p1am-hmi"})
 
 
 @pytest.fixture(autouse=True)
