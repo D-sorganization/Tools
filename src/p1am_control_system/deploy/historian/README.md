@@ -54,7 +54,10 @@ apply order and the mandatory check before enabling retention.
 
 ```bash
 cd ../../backend/timescale
-export HISTORIAN_DSN="postgresql://historian_admin:PASSWORD@localhost:5432/plant_history"
+# PGPASSWORD rather than a password in the DSN: anything on a command line is
+# visible in `ps` and lands in shell history.
+read -rs -p "historian_admin password: " PGPASSWORD && export PGPASSWORD
+export HISTORIAN_DSN="postgresql://historian_admin@localhost:5432/plant_history"
 psql "$HISTORIAN_DSN" -v ON_ERROR_STOP=1 -f 001_schema.sql
 psql "$HISTORIAN_DSN" -v ON_ERROR_STOP=1 -f 002_continuous_aggregates.sql
 psql "$HISTORIAN_DSN" -v ON_ERROR_STOP=1 -f 003_compression.sql
@@ -76,8 +79,14 @@ It drops raw chunks; running it early loses history permanently.
 
 ```bash
 export P1AM_TIMESCALE_ENABLED=true
-export P1AM_TIMESCALE_DSN="postgresql://historian_rw:PASSWORD@historian-host:5432/plant_history"
+export P1AM_TIMESCALE_DSN="postgresql://historian_rw:PASSWORD@historian-host:5432/plant_history"  # pragma: allowlist secret
 ```
+
+This one does carry the password inline — it is the single configuration value
+the backend reads. Put it in the systemd unit's `EnvironmentFile=` with mode
+`0600` and owned by the service user, not in a shell profile. The backend never
+logs it in full (see `timescale_writer.redact_dsn`), so it should not appear in
+a log bundle; do not paste it into an issue either.
 
 Restart the backend. Startup fails loudly if `ENABLED=true` and the DSN is
 empty — a historian everyone believes is recording but is not is worse than one

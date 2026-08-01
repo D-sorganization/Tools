@@ -106,10 +106,15 @@ def test_stats_for_a_disabled_shipper_are_a_clean_disabled_snapshot() -> None:
 @pytest.mark.parametrize(
     ("dsn", "must_not_contain"),
     [
-        ("postgresql://user:sup3rs3cret@host:5432/db", "sup3rs3cret"),
-        ("postgres://admin:p%40ssw0rd@10.0.0.5/historian", "p%40ssw0rd"),
-        ("host=10.0.0.5 user=admin password=hunter2 dbname=historian", "hunter2"),
-        ("host=10.0.0.5 PASSWORD=Hunter2 dbname=historian", "Hunter2"),
+        # These DSNs carry password-shaped values on purpose: stripping them is
+        # the entire contract under test. The allowlist pragmas keep
+        # detect-secrets from treating the fixtures as leaked credentials.
+        # Kept short so line + pragma stays inside the 88-char limit; what is
+        # under test is the URI/key-value shape, not the length.
+        ("postgresql://u:s3cret@h:5432/db", "s3cret"),  # pragma: allowlist secret
+        ("postgres://a:p%40ss@10.0.0.5/db", "p%40ss"),  # pragma: allowlist secret
+        ("host=10.0.0.5 user=a password=hunter2 db=h", "hunter2"),
+        ("host=10.0.0.5 PASSWORD=Hunter2 db=h", "Hunter2"),
     ],
 )
 def test_redaction_removes_the_password(dsn: str, must_not_contain: str) -> None:
