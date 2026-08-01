@@ -210,3 +210,8 @@ failed2852.txt
 src/p1am_control_system/backend/dcs_scada.db-wal
 src/p1am_control_system/backend/dcs_scada.db-shm
 src/p1am_control_system/backend/dcs_scada.db
+# The backend test suite creates the historian relative to the working
+# directory, so a run started from the repo root drops one here too.
+/dcs_scada.db
+/dcs_scada.db-wal
+/dcs_scada.db-shm

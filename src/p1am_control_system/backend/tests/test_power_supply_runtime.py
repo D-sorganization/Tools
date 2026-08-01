@@ -65,7 +65,11 @@ class TestCurrentSetpoint:
     def test_setpoint_ignored_in_idle_state(self) -> None:
         c = fresh_idle_controller()
         applied = c.set_current_setpoint(25.0)
-        assert applied == 25.0  # value clamped + returned
+        # The setter reports the setpoint now IN EFFECT, not the request. This
+        # used to echo 25.0 back, so the HMI showed a command the controller had
+        # discarded and the operator went looking for a fault in the load
+        # instead of noticing the supply was never armed (issue #4017).
+        assert applied == 0.0
         assert c.state == PowerSupplyState.IDLE  # but not applied
         cmd = c.tick(0.0, 0.0, 25.0)
         assert cmd == 0.0

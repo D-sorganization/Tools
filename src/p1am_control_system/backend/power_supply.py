@@ -123,15 +123,18 @@ class PowerSupplyController(SafetyStateMachine[PowerSupplyState]):
 
         The value is clamped to [current_setpoint_min_a, current_setpoint_max_a]
         before being applied. Setpoint application is rejected in IDLE and
-        TRIPPED states (returns clamped value but does not change internal
-        setpoint).
+        TRIPPED states.
 
         Precondition: value_a is finite numeric.
         Postcondition:
             - If state was ARMED / RUNNING: internal setpoint_a == clamped value;
               mode == CURRENT; setpoint_w == None
             - If clamped > 0 and state was ARMED: state -> RUNNING
-            - Returns the clamped value that would be applied.
+            - Returns the setpoint now IN EFFECT. On a rejected request that is
+              the unchanged existing setpoint, not the value asked for --
+              reporting the request back made a rejected command look applied
+              and sent operators troubleshooting the load instead of the trip
+              (issue #4017).
 
         Raises:
             TypeError: if value_a is not numeric.
@@ -172,7 +175,12 @@ class PowerSupplyController(SafetyStateMachine[PowerSupplyState]):
                 "acknowledge first",
                 clamped,
             )
-        return clamped
+        # Report the setpoint now IN EFFECT. On a rejected request that is the
+        # unchanged existing setpoint, not the value asked for: echoing the
+        # request made a rejected command look applied, so an operator saw
+        # "40 A applied" on a latched controller sitting at 0 A and went off
+        # troubleshooting the load instead of the trip (issue #4017).
+        return float(self._setpoint_a)
 
     def set_power_setpoint(self, value_w: float) -> float:
         """Apply a power setpoint (Watts).
@@ -240,7 +248,24 @@ class PowerSupplyController(SafetyStateMachine[PowerSupplyState]):
                 "power setpoint %.1f W ignored — controller TRIPPED; acknowledge first",
                 w,
             )
+        else:
+            # Rejected: report what is still in effect, not the request
+            # (issue #4017).
+            return float(self._setpoint_w) if self._setpoint_w is not None else 0.0
         return achievable_w
+
+    def signal_sensor_fault(self, reason: str) -> None:
+        """Latch SENSOR_FAULT: feedback is missing or unusable.
+
+        Distinct from a reading of zero. A tag that is absent, or non-finite,
+        means the interlocks have nothing to evaluate -- so the safe response
+        is to trip, not to substitute 0.0 and report a confident, cold-looking
+        supply while the output stays energized (issue #4016).
+        """
+        if "SENSOR_FAULT" not in self._trips:
+            logger.error("power supply SENSOR_FAULT: %s", reason)
+        self._trips.add("SENSOR_FAULT")
+        self._latch_trips(log_context=reason)
 
     def _evaluate_trips(self, measured_power_w: float) -> None:
         """Latch trips based on the latest power and temperature; flips

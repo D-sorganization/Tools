@@ -35,13 +35,40 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Power Supply and Temperature: Units Contract and Sensor Faults
+
+- `hardware.THERMOCOUPLE_FULL_SCALE_C` plus `percent_to_celsius()` /
+  `celsius_to_percent()` are the single definition of the firmware's
+  percent-of-full-scale thermocouple encoding. `tests/test_units_contract.py`
+  parses the firmware source and fails if the two halves drift. Previously the
+  constant existed in three places (firmware, `temperature_models`,
+  `thermocouple_filter`) with only a comment holding them together.
+- The power-supply service now converts its thermocouple tag from percent to
+  degC. It had passed the raw tag through as if it were already degC while
+  scaling current and voltage correctly, which made the HH_TEMP trip — a degC
+  threshold — unreachable by any physically possible reading.
+- `PowerSupplyConfig.temp_full_scale_c` is new (defaults to the firmware
+  contract value).
+- A scan whose power-supply feedback is absent or non-finite now latches a new
+  `SENSOR_FAULT` trip and drives the output safe, instead of substituting 0.0
+  and reporting a confident, cold-looking supply with both HH trips disabled.
+  A genuine zero reading is still a reading.
+- `set_current_setpoint` / `set_power_setpoint` return the setpoint **in
+  effect**, not the request. A command rejected in IDLE or TRIPPED is no longer
+  reported to the operator as applied, nor persisted for HMI pre-fill.
+- Thermocouple deglitch filters are constructed per channel from that channel's
+  configured range, and rebuilt when the config changes. Both were previously
+  pinned to the default 1400 C full scale, so a shorter-range channel's
+  high-side burnout rail sat above any reachable reading and an open
+  thermocouple was accepted as a genuine measurement.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 

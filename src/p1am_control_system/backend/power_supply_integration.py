@@ -17,9 +17,11 @@ permissive and re-commands a setpoint.
 from __future__ import annotations
 
 import logging
+import math
 from collections.abc import Callable
 from typing import Any
 
+import hardware
 from auth_config import require_admin_key
 from config_store import load_config, load_model, save_model
 from fastapi import APIRouter, Depends, HTTPException
@@ -43,6 +45,14 @@ __all__ = [
 # constants (DRY) so the service and any future reader agree on the exact names.
 _CONFIG_KEY = "power_config"
 _SETPOINT_KEY = "power_setpoint"
+
+
+class SensorFeedbackError(RuntimeError):
+    """Raised when a scan's power-supply feedback is absent or unusable.
+
+    Distinguishes "no reading" from "a reading of zero" so the caller can trip
+    rather than act on fabricated data (issue #4016).
+    """
 
 
 class PowerSupplyService:
@@ -103,8 +113,18 @@ class PowerSupplyService:
         self._estop_active = active
 
     async def poll(self, tags: dict[str, float] | None) -> PowerSupplyStatus:
-        """Feed measured tags into the controller and write the AO command."""
-        current_a, voltage_v, temp_c = self._inputs_from_tags(tags)
+        """Feed measured tags into the controller and write the AO command.
+
+        A scan with unusable feedback latches SENSOR_FAULT and drives the
+        output to its safe state rather than substituting zeros, which would
+        leave the supply energized against interlocks that can no longer fire.
+        """
+        try:
+            current_a, voltage_v, temp_c = self._inputs_from_tags(tags)
+        except SensorFeedbackError as err:
+            self.controller.signal_sensor_fault(str(err))
+            await self._write_pid_setpoint(0, 0.0)
+            return self.controller.status()
         command_percent = self.controller.tick(
             measured_current_a=current_a,
             measured_voltage_v=voltage_v,
@@ -171,16 +191,22 @@ class PowerSupplyService:
             value_a: Desired current setpoint in amps.
 
         Returns:
-            The clamped current the controller would apply.
+            The current setpoint now in effect. On a rejected request (IDLE or
+            TRIPPED) that is the unchanged existing setpoint, not the request.
 
         Raises:
             TypeError: if ``value_a`` is not numeric.
             ValueError: if ``value_a`` is NaN or infinite.
         """
         applied = float(self.controller.set_current_setpoint(value_a))
-        self._record_setpoint(
-            PowerSupplyLastSetpoint(mode=PowerSupplyMode.CURRENT, value_a=value_a)
-        )
+        # Persist only what actually took effect. Recording the raw request
+        # meant a setpoint the controller rejected was written to durable
+        # storage and pre-filled into the HMI after the next restart, so the
+        # operator was shown a value the plant never ran at (issue #4017).
+        if applied == float(value_a):
+            self._record_setpoint(
+                PowerSupplyLastSetpoint(mode=PowerSupplyMode.CURRENT, value_a=applied)
+            )
         return applied
 
     def set_power_setpoint(self, value_w: float) -> float:
@@ -267,16 +293,60 @@ class PowerSupplyService:
         self,
         tags: dict[str, float] | None,
     ) -> tuple[float, float, float]:
-        if not tags:
-            return 0.0, 0.0, 0.0
-
         cfg = self.controller.config
-        current_pct = float(tags.get(cfg.current_feedback_tag, 0.0))
-        voltage_pct = float(tags.get(cfg.voltage_feedback_tag, 0.0))
-        temp_c = float(tags.get(cfg.temp_tag, 0.0))
+        missing = self._missing_feedback_tags(tags)
+        if missing:
+            # Fabricating 0.0 here made both HH trips permanently un-trippable
+            # and reported a confident, cold-looking supply while the output
+            # stayed energized. Missing data is a fault, not a measurement
+            # (issue #4016). Raising keeps the safe path in one place -- poll()
+            # catches it and latches SENSOR_FAULT.
+            raise SensorFeedbackError(
+                "power supply feedback unavailable: " + ", ".join(missing)
+            )
+
+        # An empty `missing` proves every required tag is present and finite;
+        # restate it so the type checker sees the narrowing too.
+        assert tags is not None
+        current_pct = float(tags[cfg.current_feedback_tag])
+        voltage_pct = float(tags[cfg.voltage_feedback_tag])
+        temp_pct = float(tags[cfg.temp_tag])
         current_a = current_pct * cfg.current_full_scale_a / 100.0
         voltage_v = voltage_pct * cfg.voltage_full_scale_v / 100.0
+        # The firmware publishes thermocouples as PERCENT of full scale, not
+        # degrees C. Passing the raw tag through as though it were already degC
+        # made the HH_TEMP trip -- a degC threshold -- unreachable by any
+        # physically possible reading (issue #4003). Converted through the one
+        # shared helper so this cannot drift from the temperature service.
+        temp_c = hardware.percent_to_celsius(temp_pct, cfg.temp_full_scale_c)
         return current_a, voltage_v, temp_c
+
+    def _missing_feedback_tags(self, tags: dict[str, float] | None) -> list[str]:
+        """Names of feedback tags that are absent or unusable this scan.
+
+        A tag that is present but non-finite is just as unusable as one that is
+        absent -- a NaN compares False against every threshold, so it would
+        silently defeat the trips rather than raise them.
+        """
+        cfg = self.controller.config
+        required = (
+            cfg.current_feedback_tag,
+            cfg.voltage_feedback_tag,
+            cfg.temp_tag,
+        )
+        if not tags:
+            return list(required)
+        missing: list[str] = []
+        for name in required:
+            if name not in tags:
+                missing.append(f"{name} (absent)")
+                continue
+            value = tags[name]
+            if not isinstance(value, int | float) or isinstance(value, bool):
+                missing.append(f"{name} (non-numeric)")
+            elif not math.isfinite(float(value)):
+                missing.append(f"{name} (non-finite)")
+        return missing
 
     async def _write_pid_setpoint(self, pid_index: int, value: float) -> bool:
         """Command a PID setpoint via the client's public seam.
