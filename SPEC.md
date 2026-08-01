@@ -2671,3 +2671,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+### Version 1.1.251
+
+- 2025-12-14: fix(security) - Fixed a resource leak vulnerability in `src/document_processing/pdf_renamer/src/pdf_renamer/cache.py` by wrapping `sqlite3.connect` with `contextlib.closing`. This guarantees connection closure and prevents potential Denial of Service (DoS) due to file descriptor exhaustion.
