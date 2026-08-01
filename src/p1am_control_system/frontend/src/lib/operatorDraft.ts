@@ -19,10 +19,9 @@
  * `TemperatureControl` already had the right shape (a pure decision helper plus
  * an `operatorTouchedRef` latch); this is that decision, shared.
  *
- * NOTE: `TemperatureControl.recallSetpointText` still carries its own copy of
- * this logic. Folding it onto this helper is a one-line change, but that file
- * is 1975 lines — 475 over the repo's source-size budget — so any edit to it
- * fails the file-size guardrail until it is split. Tracked separately.
+ * `TemperatureControl.recallSetpointText` now delegates here: it kept its own
+ * copy of this logic only because the 1975-line file could not be edited without
+ * failing the file-size guardrail, which the split of that component resolved.
  */
 
 /**
