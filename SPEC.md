@@ -2642,6 +2642,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 ## 1.1.410 - Palette Micro-UX Improvement
 
 - **2026-06-14**: feat(ux) — added `readonly` attribute to the "To" result input field in the unit converter application (`src/web_applications/unit_converter/unit-converter-app/index.html`) to prevent user confusion, alongside visual styling (`styles.css`) indicating the field's uneditable nature.
+- **2026-08-01**: feat(ux) — added ARIA roles (`tablist`, `tab`, `tabpanel`), `aria-selected`, `aria-controls`, and `aria-labelledby` to the tab navigation in the Pressure Drop Calculator (`src/pressure_drop_calculator/web/src/components/PressureDropCalculator.tsx`) to improve screen reader support.
 
 ### Security
 
