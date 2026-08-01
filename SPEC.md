@@ -35,13 +35,44 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Plant Historian Forwarding (TimescaleDB)
+
+- `src/p1am_control_system/backend/historian_sink.py` introduces a
+  `HistorianSink` protocol and a `HistorianWriter` that composes the capture
+  throttle, the local SQLite write, and best-effort remote forwarding. The local
+  write remains on the caller's session so historian rows and alarm events still
+  commit together in `_poll_once`; sinks are a forwarding interface only and can
+  never affect local durability.
+- `src/p1am_control_system/backend/historian_shipper.py` adds
+  `StoreAndForwardSink`: a bounded in-memory queue drained by a daemon worker
+  that owns all network I/O. The scan loop only ever performs a non-blocking
+  `put_nowait`, so an unreachable plant historian cannot add latency to the
+  10 Hz control loop. Overflow drops oldest and is counted. Delivery is
+  at-most-once by design; SQLite remains the authoritative local store.
+- `src/p1am_control_system/backend/timescale_writer.py` implements the remote
+  half against TimescaleDB with a lazily imported `psycopg`, COPY-based batch
+  insert, tag-name to surrogate-id resolution, and DSN password redaction.
+- `src/p1am_control_system/backend/timescale/*.sql` define the historian schema:
+  a `tag_sample` hypertable, `compress_segmentby = tag_id` compression, 1-minute
+  and hierarchical 1-hour continuous aggregates carrying min/max/sum/count,
+  retention policies that downsample rather than delete, an `event_log`
+  hypertable for alarm analytics, and least-privilege `grafana_ro` /
+  `historian_rw` roles.
+- `src/p1am_control_system/backend/settings.py` adds the `P1AM_TIMESCALE_*`
+  surface. Forwarding is **off by default**; enabling it without a DSN is
+  rejected at startup rather than silently forwarding nowhere.
+- `GET /api/historian/shipper` reports queue depth, lag, and drop counters so a
+  gap in a plant trend can be identified as a forwarding gap rather than
+  misread as a real process measurement. Engineering diagnostic only —
+  deliberately excluded from the operator alarm surface.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
