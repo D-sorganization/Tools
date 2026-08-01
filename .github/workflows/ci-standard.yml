@@ -390,7 +390,7 @@ jobs:
           fi
 
       - name: Security Scan (pip-audit)
-        timeout-minutes: 5
+        timeout-minutes: 15
         run: |
           # CVE-2026-4539: pygments 2.19.2 vulnerability with no fix version available yet.
           # Ignored until a patched release is published upstream.

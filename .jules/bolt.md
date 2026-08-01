@@ -88,3 +88,6 @@
 ## 2026-08-01 - Avoid pip timeout errors on self hosted runners
 **Learning:** Installing python dependencies on self-hosted runners using `pip install` frequently leads to `ReadTimeoutError` due to network drops.
 **Action:** Set `PIP_DEFAULT_TIMEOUT="1000"` (or `1000`) and `PIP_RETRIES="8"` instead of using lower values like `120` to prevent workflow aborts during dependency downloads on constrained networks.
+## 2026-08-01 - Avoid pip-audit timeout on large environments
+**Learning:** The `pip-audit` security scan can exceed a 5-minute timeout on self-hosted runners when resolving very large dependency trees via PyPI API, particularly in heavily populated CI virtual environments.
+**Action:** Increase `timeout-minutes` to at least `15` for the `Security Scan (pip-audit)` step in GitHub Action workflows to prevent false-negative job cancellations.
