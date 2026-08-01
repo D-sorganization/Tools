@@ -46,3 +46,6 @@
 ## 2024-07-30 - Added focus-visible states to Rotation Converter
 **Learning:** Found an accessibility issue pattern where inputs and buttons in Rotation Converter have `outline-none` but lack focus indicators, making keyboard navigation difficult.
 **Action:** Replace `outline-none` with `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to preserve keyboard accessibility while styling interactive elements.
+## 2024-08-01 - Improve Accessibility for Pressure Drop Calculator Tabs
+**Learning:** React state-driven tab interfaces built with Tailwind CSS often lack native semantic meaning. Screen readers cannot deduce tab structure from `className` changes alone, leaving users confused about the current view and available options.
+**Action:** Always wrap custom tab navigations in a `role="tablist"` container. Apply `role="tab"`, `aria-selected`, and `aria-controls` to the tab buttons, and ensure the rendered content sections are marked as `role="tabpanel"` with matching `id`s to ensure robust accessibility for state-driven UI components.

@@ -280,9 +280,13 @@ export function PressureDropCalculator() {
 
   return (
     <div className="space-y-6">
-      <div className="flex space-x-4 border-b border-slate-700">
+      <div className="flex space-x-4 border-b border-slate-700" role="tablist" aria-label="Calculator views">
         {(['input', 'results', 'chart'] as const).map(tab => (
           <button key={tab} onClick={() => setActiveTab(tab)}
+            role="tab"
+            aria-selected={activeTab === tab}
+            aria-controls={`tabpanel-${tab}`}
+            id={`tab-${tab}`}
             className={`px-4 py-2 font-medium capitalize ${activeTab === tab ? 'text-blue-400 border-b-2 border-blue-400' : 'text-slate-400 hover:text-slate-300'}`}>
             {tab}
           </button>
@@ -290,7 +294,7 @@ export function PressureDropCalculator() {
       </div>
 
       {activeTab === 'input' && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div role="tabpanel" id="tabpanel-input" aria-labelledby="tab-input" className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Pipe Parameters */}
           <div className="bg-slate-800 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-white mb-4">Pipe Parameters</h3>
@@ -384,7 +388,7 @@ export function PressureDropCalculator() {
       )}
 
       {activeTab === 'results' && results && (
-        <div className="space-y-6">
+        <div role="tabpanel" id="tabpanel-results" aria-labelledby="tab-results" className="space-y-6">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <div className="bg-slate-800 rounded-lg p-4">
               <div className="text-slate-400 text-sm">Total Pressure Drop</div>
@@ -450,7 +454,7 @@ export function PressureDropCalculator() {
       )}
 
       {activeTab === 'chart' && results && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div role="tabpanel" id="tabpanel-chart" aria-labelledby="tab-chart" className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-slate-800 rounded-lg p-4">
             <h3 className="text-lg font-semibold text-white mb-4">Pressure Profile</h3>
             <div className="h-64">
@@ -484,7 +488,7 @@ export function PressureDropCalculator() {
       )}
 
       {(activeTab === 'results' || activeTab === 'chart') && !results && (
-        <div className="bg-slate-800 rounded-lg p-12 text-center">
+        <div role="tabpanel" id={`tabpanel-${activeTab}`} aria-labelledby={`tab-${activeTab}`} className="bg-slate-800 rounded-lg p-12 text-center">
           <p className="text-slate-400">No results yet. Configure inputs and click "Calculate Pressure Drop".</p>
         </div>
       )}
