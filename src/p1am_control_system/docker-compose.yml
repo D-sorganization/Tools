@@ -1,4 +1,15 @@
 version: "3.8"
+# Container deployment of the P1AM control system.
+#
+# Credentials are REQUIRED, not defaulted: the `:?` syntax makes compose refuse
+# to start unless both keys are supplied (put them in a git-ignored .env beside
+# this file, or export them). An unauthenticated SCADA backend that reaches a
+# P1AM PLC, a DC power supply and a 110 V heater is not a valid configuration.
+#
+#   P1AM_API_KEY=...          # operator tier: telemetry stream, alarm ack
+#   P1AM_ADMIN_API_KEY=...    # admin tier: E-stop clear, tag writes, setpoints
+#   P1AM_PLC_IP=192.168.1.177
+#   P1AM_CORS_ORIGINS=http://localhost:3002
 
 services:
   backend:
@@ -7,12 +18,27 @@ services:
       dockerfile: Dockerfile
     container_name: dcs_scada_backend
     ports:
-      - "8000:8000"
+      # The container binds 0.0.0.0 internally (see backend/Dockerfile); the
+      # network boundary is drawn HERE, on the host's loopback only.
+      - "127.0.0.1:8000:8000"
     environment:
-      - PLC_HOST=192.168.1.177
-      - PLC_PORT=502
+      # These names must match the validation_alias values in backend/settings.py.
+      # The previous `PLC_HOST` was read by nothing, so the driver silently fell
+      # back to the simulator and the HMI showed fabricated data an operator
+      # could not distinguish from the plant (issue #4030).
+      - P1AM_PLC_DRIVER=modbus
+      - P1AM_PLC_IP=${P1AM_PLC_IP:-192.168.1.177}
+      - P1AM_PLC_PORT=${P1AM_PLC_PORT:-502}
+      - P1AM_API_KEY=${P1AM_API_KEY:?set P1AM_API_KEY (operator credential)}
+      - P1AM_ADMIN_API_KEY=${P1AM_ADMIN_API_KEY:?set P1AM_ADMIN_API_KEY (admin credential)}
+      - P1AM_REQUIRE_READ_AUTH=1
+      - P1AM_CORS_ORIGINS=${P1AM_CORS_ORIGINS:-http://localhost:3002}
+      - P1AM_ENV=production
     volumes:
-      - dcs_db_data:/app
+      # Mounted at /data, NOT /app: mounting over /app hid the source the
+      # Dockerfile had just copied in, so every rebuild was silently discarded
+      # until someone removed the volume — which also destroyed the historian.
+      - dcs_db_data:/data
     restart: always
 
   frontend:

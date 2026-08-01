@@ -65,6 +65,22 @@ Try again in a moment, or check the services from a terminal:
   exit 1
 fi
 
+# 2b) Seed the HMI's credential.
+#
+# The backend now requires an API key on every control action and on the
+# telemetry WebSocket (issue #4007). The HMI stores the key per browser profile;
+# hand it over once via the URL *fragment*, which is client-side only — it is
+# never sent to any server and the HMI strips it from the address bar on load.
+# Falls back to the plain URL when the env file is unreadable (e.g. a --bench
+# install, which has no credential at all), and the HMI then prompts.
+ENV_FILE="${P1AM_ENV_FILE:-/etc/p1am/backend.env}"
+if [ -r "$ENV_FILE" ]; then
+  api_key="$(sed -n 's/^P1AM_API_KEY=//p' "$ENV_FILE" | head -n1)"
+  if [ -n "${api_key:-}" ]; then
+    HMI_URL="${HMI_URL}/#apikey=${api_key}"
+  fi
+fi
+
 # The HMI is up. Note (non-fatal) if the backend/PLC link isn't answering yet —
 # the HMI itself shows the connection state, so we still open it.
 if ! curl -fsS -o /dev/null --max-time 2 "$BACKEND_URL" 2>/dev/null; then

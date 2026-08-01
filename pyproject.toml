@@ -141,6 +141,29 @@ video-analyzer = [
     "opencv-python>=4.8.0",
     "mediapipe>=0.10.0",
 ]
+# P1AM SCADA control-system backend runtime (issue #4014).
+#
+# THE single source of truth for what the FastAPI backend needs in order to
+# import and run. `deploy/install-services.sh` installs `.[p1am]` into the
+# venv the systemd unit executes, and `backend/Dockerfile` mirrors this list as
+# exact pins (its build context cannot see this file). The mirror is kept
+# honest by tests/test_deployment_hardening.py, which fails if the two drift.
+#
+# Nothing here is optional at runtime: omitting pydantic-settings (imported by
+# settings.py) or python-multipart (required by main.py's File(...) upload)
+# makes the app raise ModuleNotFoundError at import, which under
+# `restart: always` is an invisible crash loop.
+p1am = [
+    "fastapi>=0.115.0,<0.140.0",
+    "uvicorn[standard]>=0.30.0,<0.50.0",
+    "pydantic>=2.7.0,<3.0.0",
+    "pydantic-settings>=2.2.0,<3.0.0",
+    "sqlmodel>=0.0.22,<0.1.0",
+    "pymodbus>=3.6.0,<4.0.0",
+    "websockets>=12.0,<17.0",
+    "python-multipart>=0.0.9,<0.1.0",
+    "numpy>=2.0.1,<2.4.0",
+]
 # Test/runtime dependencies imported during full-suite collection.
 test = [
     "ezdxf[draw]>=1.4.3",

@@ -22,9 +22,17 @@ export default defineConfig({
   // `vite preview` serves the minified production build (dist/) — far lighter on
   // the Raspberry Pi than the dev server (no HMR/transpile) and this is what the
   // p1am-frontend systemd service runs in production.
+  //
+  // SECURITY (#4007): host MUST stay loopback. The backend is deliberately bound
+  // to 127.0.0.1, but this preview server also proxies /api and the WebSocket to
+  // it — so `host: true` here bound every interface and handed the whole plant
+  // VLAN an unauthenticated path to E-stop clear, tag writes and the DB wipe
+  // (`curl -X POST http://<pi-ip>:3002/api/estop/clear`). The kiosk Chromium runs
+  // on the Pi itself, so loopback is all it needs. To reach the HMI from another
+  // machine, forward a port over SSH rather than widening this bind.
   preview: {
     port: 3002,
-    host: true,
+    host: "127.0.0.1",
     proxy: apiProxy,
   },
   build: {

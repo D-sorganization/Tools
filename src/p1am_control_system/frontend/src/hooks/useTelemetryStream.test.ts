@@ -8,9 +8,12 @@ class MockWebSocket {
   static instances: MockWebSocket[] = [];
   onopen: (() => void) | null = null;
   onmessage: ((e: { data: string }) => void) | null = null;
-  onclose: (() => void) | null = null;
+  onclose: ((e?: { code?: number }) => void) | null = null;
   onerror: (() => void) | null = null;
   close = vi.fn();
+  // The hook authenticates by sending the stored API key as its first frame
+  // (#4007), so the stand-in must accept a send().
+  send = vi.fn();
   constructor(public url: string) {
     MockWebSocket.instances.push(this);
   }

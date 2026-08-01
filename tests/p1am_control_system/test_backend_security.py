@@ -21,8 +21,12 @@ from collections.abc import Generator
 import pytest
 
 os.environ["PLC_DRIVER"] = "modbus"
-# Import the app WITHOUT dev-no-auth so the real gate is active for this suite.
-os.environ.pop("P1AM_DEV_NO_AUTH", None)
+# NOTE: the dev-no-auth bypass is cleared per test by the ``_clear_auth_env``
+# fixture below, NOT here. Popping it at import time permanently disabled the
+# bypass for sibling suites that set it at *their* import time, so whichever
+# module was collected last silently decided whether seven endpoint tests
+# passed or 503'd (#4061). Auth is resolved per request, so a fixture is both
+# sufficient and order-independent.
 
 pytest.importorskip("sqlmodel")
 pytest.importorskip("httpx")
@@ -70,7 +74,12 @@ def _override_get_session() -> Generator[Session, None, None]:
 
 
 app.dependency_overrides[get_session] = _override_get_session
-client = TestClient(app)
+# The HMI marker header: cors_config.RequestGuardMiddleware refuses a
+# state-changing request carrying no preflight-forcing signal, because a
+# bodyless control POST is otherwise a CORS-"simple" request any page can
+# make (#4037). Setting it here keeps this suite measuring the AUTH gate
+# rather than tripping the CSRF guard first.
+client = TestClient(app, headers={"X-Requested-With": "p1am-hmi"})
 
 
 @pytest.fixture(autouse=True)

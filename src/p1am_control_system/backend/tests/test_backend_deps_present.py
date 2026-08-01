@@ -43,10 +43,13 @@ def test_backend_dependency_importable_in_ci(module_name: str) -> None:
 
 
 @pytest.mark.skipif(not _IN_CI, reason="app-import gate only enforced in CI")
-def test_backend_app_imports_in_ci() -> None:
+def test_backend_app_imports_in_ci(monkeypatch: pytest.MonkeyPatch) -> None:
     """The FastAPI ``main`` app must import in CI so its endpoint tests run."""
-    os.environ.setdefault("PLC_DRIVER", "simulator")
-    os.environ.setdefault("P1AM_DEV_NO_AUTH", "1")
+    # monkeypatch, not os.environ: a bare setdefault leaks into every suite that
+    # runs after this one and makes their auth posture collection-order
+    # dependent (#4061).
+    monkeypatch.setenv("PLC_DRIVER", "simulator")
+    monkeypatch.setenv("P1AM_DEV_NO_AUTH", "1")
     sys.path.insert(0, str(Path(__file__).parent.parent))
     try:
         main = importlib.import_module("main")

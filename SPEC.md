@@ -35,13 +35,82 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Control System Deployment Security Hardening
+
+The in-source authorization was already correct — every hardware-mutating route
+carried `require_admin_key`, the WebSocket was authenticated, key comparisons
+used `hmac.compare_digest`, and `cors_config.py` failed closed. Every
+exploitable defect was in the deployment or in the client's inability to
+authenticate. This change closes all of them.
+
+- **Production installs no longer disable authentication (#4007).**
+  `deploy/install-services.sh` hardcoded `Environment=P1AM_DEV_NO_AUTH=1` into
+  the systemd unit, short-circuiting `require_api_key`, `require_admin_key` and
+  `verify_operator_key`. It now generates random operator/admin credentials into
+  a root-owned `EnvironmentFile` (`/etc/p1am/backend.env`, mode 0640, preserved
+  across re-runs), refuses to write a unit without one, and gates the bypass
+  behind an explicit `--bench` flag.
+- **The HMI can authenticate (#4007).** `frontend/src/api/credentials.ts` stores
+  the key per browser profile; `apiFetch` attaches `X-API-Key`, and
+  `useTelemetryStream` sends the key as the **first WebSocket frame** rather
+  than a query parameter (which would land in proxy logs). The kiosk launcher
+  seeds it via a URL fragment the HMI strips on load. Without this the bypass
+  flag was the only way to make the shipped product work.
+- **`vite preview` binds loopback (#4007).** `frontend/vite.config.ts` set
+  `preview: { host: true }` while also proxying `/api` and the WebSocket to the
+  loopback-bound backend, so `curl -X POST http://<pi-ip>:3002/api/estop/clear`
+  reached the control API from anywhere on the plant VLAN.
+- **Nested credential tiers (#4041).** `auth_config.verify_operator_key` keyed
+  off `P1AM_API_KEY` alone, so an admin-only deployment had full hardware
+  control behind a dead display (`/api/stream` closing 1008, alarm
+  acknowledgement 503). A configured admin key is now a valid operator
+  credential; the reverse is still refused. `log_auth_configuration` reports the
+  resolved posture at boot.
+- **Read surface gated by default (#4037).** `settings.require_read_auth`
+  defaults to `True`, and `require_read_auth` (moved to `auth_config.py` so the
+  service routers can attach it without importing the app) now covers
+  `/api/routing`, `/api/alarms/active`, `/api/capture/*`, `/api/performance`,
+  `/api/alicats` and the power-supply/temperature `/config` + `/status` pairs.
+- **CSRF / cross-origin guard (#4037).** `cors_config.RequestGuardMiddleware`
+  refuses a state-changing request whose `Origin` is outside the allowlist, and
+  requires a non-simple signal (`X-Requested-With`, `X-API-Key`, or
+  `Content-Type: application/json`) so the browser is forced into a preflight.
+  Bodyless control POSTs were otherwise CORS-"simple" and executable by any page
+  the kiosk Chromium opened. `POST /api/estop` is exempt from preflight forcing
+  only, so a panic stop stays reachable from a bare shell.
+- **Append-only audit trail (#4029).** `backend/audit.py` adds an `AuditEvent`
+  table and a pure-ASGI middleware recording route, redacted payload, resolved
+  credential tier, non-reversible key fingerprint, client IP and status for every
+  mutating request — middleware so a _new_ endpoint is audited by default. The
+  table is unreachable from the client-writable `POST /api/events` and untouched
+  by `POST /api/capture/clear`, so the trail can be neither forged nor erased.
+  Rows are mirrored to journald.
+- **Route-gating regression suite (#4028).**
+  `backend/tests/test_route_authz_matrix.py` boots the real app with credentials
+  set and `P1AM_DEV_NO_AUTH` cleared, driving an explicit
+  `(method, path, tier)` table. An unclassified route fails the suite, so a new
+  endpoint cannot ship ungated. Configuration is set explicitly per test so the
+  suite cannot pass vacuously through import-order coupling (#4061).
+- **Deployment can actually work (#4014/#4030/#4036).** A `p1am` extra in
+  `pyproject.toml` is the single source of truth for the backend runtime
+  dependencies (adding the previously missing `pydantic-settings` and
+  `python-multipart`); `backend/Dockerfile` mirrors it as exact pins, with drift
+  caught by `backend/tests/test_deployment_hardening.py`. The container binds
+  `0.0.0.0` internally and is isolated at the publish layer
+  (`127.0.0.1:8000:8000`); `docker-compose.yml` uses the env-var names
+  `settings.py` reads and mounts the historian at `/data` instead of over the
+  source tree; the HMI bundle is built at install time and both units carry
+  `Nice=`/`CPUWeight=`; `requirements-lock.txt` no longer contradicts
+  `requirements.txt`'s numpy bound; and `PLCFactory` logs an unmissable banner
+  when the simulator is driving the HMI's "live" values.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 

@@ -1,4 +1,5 @@
 import type { ZodType } from "zod";
+import { authHeaders } from "./credentials";
 
 /**
  * Shared typed HTTP client for the P1AM SCADA backend.
@@ -64,6 +65,11 @@ export async function apiFetch<T = unknown>(
 
   const init: RequestInit = { ...rest };
   const finalHeaders = new Headers(headers);
+  // Attach the stored credential and the preflight-forcing marker (#4007).
+  // Caller-supplied headers win, so a call can still override either.
+  for (const [name, value] of Object.entries(authHeaders())) {
+    if (!finalHeaders.has(name)) finalHeaders.set(name, value);
+  }
   if (json !== undefined) {
     init.body = JSON.stringify(json);
     if (!finalHeaders.has("Content-Type")) {

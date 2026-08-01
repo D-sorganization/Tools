@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { TAG_COUNT } from "../lib/tags";
 import { SAMPLES_PER_SECOND } from "../lib/trendTime";
 import { telemetryFrameSchema } from "../api/schemas";
+import { authHeaders, getApiKey, promptForApiKey } from "../api/credentials";
 import type { PowerSupplyStatus } from "../components/PowerSupplyControl";
 import type { TemperatureStatus } from "../components/TemperatureControl";
 import type { AlicatMFCState, ActiveAlarm } from "../api/schemas";
@@ -231,6 +232,12 @@ export function useTelemetryStream(
       wsRef.current = ws;
 
       ws.onopen = () => {
+        // Authenticate with the FIRST frame rather than an `api_key` query
+        // parameter: a query string lands in proxy/access logs and browser
+        // history, a frame does not (#4007). Send an empty frame when we have
+        // no key so the backend closes with 1008 straight away instead of
+        // leaving a silently unauthorized socket open.
+        ws.send(getApiKey() ?? "");
         setIsConnected(true);
         onConnectRef.current?.();
       };
@@ -243,7 +250,13 @@ export function useTelemetryStream(
         }
       };
 
-      ws.onclose = () => {
+      ws.onclose = (event) => {
+        // 1008 = policy violation: the backend rejected our credential. Ask for
+        // it once before reconnecting, otherwise we reconnect-and-fail forever
+        // and the operator only sees a dead display (#4007).
+        if (!disposed && event?.code === 1008) {
+          promptForApiKey();
+        }
         if (!disposed) {
           reconnectTimer = setTimeout(connect, 3000);
         }
@@ -259,7 +272,8 @@ export function useTelemetryStream(
     const pollIfStale = async () => {
       if (disposed || Date.now() - lastFrameAt < STALE_MS) return;
       try {
-        const res = await fetch("/api/snapshot");
+        // /api/snapshot is now credential-gated by default (#4037).
+        const res = await fetch("/api/snapshot", { headers: authHeaders() });
         if (res.ok && applyFrame(await res.json())) return;
         setIsConnected(false);
       } catch {
