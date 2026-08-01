@@ -85,3 +85,6 @@
 ## 2024-08-01 - Avoid spread operator for calculating min/max on large datasets
 **Learning:** Using `Math.min(...values)` and `Math.max(...values)` on large numeric arrays (like trend datasets) causes "Maximum call stack size exceeded" range errors and creates significant intermediate memory allocations and garbage collection pressure in hot rendering paths.
 **Action:** Replace `Math.min(...values)` and `Math.max(...values)` with a single-pass `for` loop to compute the min and max dynamically, preventing stack overflow and improving render times on large arrays.
+## 2026-08-01 - Avoid pip timeout errors on self hosted runners
+**Learning:** Installing python dependencies on self-hosted runners using `pip install` frequently leads to `ReadTimeoutError` due to network drops.
+**Action:** Set `PIP_DEFAULT_TIMEOUT="1000"` (or `1000`) and `PIP_RETRIES="8"` instead of using lower values like `120` to prevent workflow aborts during dependency downloads on constrained networks.

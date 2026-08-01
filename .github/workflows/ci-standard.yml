@@ -123,7 +123,7 @@ jobs:
       # the same packages on every run.  Path is host-stable and safe for concurrent
       # runners on the same machine.  See issue #2160.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
-      PIP_DEFAULT_TIMEOUT: "120"
+      PIP_DEFAULT_TIMEOUT: "1000"
       PIP_RETRIES: "8"
       PYTHONNOUSERSITE: "1"
     steps:
@@ -466,7 +466,7 @@ jobs:
     env:
       # Shared wheel/download cache — mirrors quality-gate setting.  See issue #2160.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
-      PIP_DEFAULT_TIMEOUT: "120"
+      PIP_DEFAULT_TIMEOUT: "1000"
       PIP_RETRIES: "8"
       # Keep matrix jobs isolated from stale runner-user packages. Python 3.12
       # was resolving pytest/pluggy from ~/.local while native deps came from
