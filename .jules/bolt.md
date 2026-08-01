@@ -82,3 +82,6 @@
 ## 2024-05-24 - Avoid chained map and every array iterations for parsing
 **Learning:** Multiple array methods (`.map()`, `.every()`, `.filter()`) chained together for iterating over datasets cause unnecessary intermediate array allocations, adding up to increased garbage collection pressure.
 **Action:** Replace multiple chained array passes with a single-pass `for` loop that pre-allocates arrays or calculates results inline.
+## 2026-08-01 - Avoid CI timeouts due to self-hosted runners download hangs
+**Learning:** During parallel jobs spanning many runners (like the CI matrix for Python tests), heavy dependency installations (`pip install`) and repository downloads can cause severe starvation and network hangups (e.g. `urllib3` read timeouts) on self hosted runners. These lead to hard 1h30m test suite cancellations or 5m security scan hangs.
+**Action:** When debugging self-hosted runner network timeouts, verify that workflow level pip timeout environments (`PIP_DEFAULT_TIMEOUT` and `PIP_RETRIES`) are properly set, and if a specific action (like `pip-audit`) is consistently timing out, increase its job or step-specific `timeout-minutes` to allow it to recover from the saturated network.
