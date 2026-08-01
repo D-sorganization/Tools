@@ -1,0 +1,100 @@
+# Plant historian stack — TimescaleDB + Grafana.
+#
+# THIS RUNS ON A SEPARATE HOST FROM THE CONTROL PI.
+#
+# Do not merge these services into src/p1am_control_system/docker-compose.yml.
+# TimescaleDB and Grafana are both memory- and CPU-hungry; co-locating them with
+# a 10 Hz control loop on a Raspberry Pi 5 causes scan overruns. The control node
+# runs the backend, the HMI, and its local SQLite historian, and nothing else.
+#
+# Data flows one way: Pi -> historian. Nothing here initiates a connection back
+# to the control network. That is the point of the Purdue layering — a
+# compromised Grafana must not become a path to the PLC.
+#
+# Usage:
+#   cp .env.example .env    # then edit; .env is gitignored
+#   docker compose up -d
+#
+# Image tags are pinned. Floating tags on a plant historian mean an unplanned
+# major-version upgrade during an unrelated restart.
+
+services:
+  timescaledb:
+    image: timescale/timescaledb:2.17.2-pg16
+    container_name: plant_historian_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${HISTORIAN_DB:-plant_history}
+      POSTGRES_USER: ${HISTORIAN_SUPERUSER:?set HISTORIAN_SUPERUSER in .env}
+      POSTGRES_PASSWORD: ${HISTORIAN_SUPERUSER_PASSWORD:?set HISTORIAN_SUPERUSER_PASSWORD in .env}
+      # Reasonable starting point for a dedicated 8-16 GB historian host.
+      # Tune against real ingest before treating these as final.
+      TIMESCALEDB_TELEMETRY: "off"
+    command:
+      - postgres
+      - -c
+      - shared_buffers=2GB
+      - -c
+      - effective_cache_size=6GB
+      - -c
+      - maintenance_work_mem=512MB
+      - -c
+      - max_wal_size=4GB
+      - -c
+      - checkpoint_completion_target=0.9
+    ports:
+      # Bound to loopback by default. The shipper reaches this over the host's
+      # private interface or a VPN — never expose 5432 to the plant network.
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - historian_data:/var/lib/postgresql/data
+      # Migrations are mounted read-only for convenience. They are NOT
+      # auto-applied: docker-entrypoint-initdb.d is deliberately not used, so a
+      # container restart can never re-run DDL against a populated database.
+      - ../../backend/timescale:/migrations:ro
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${HISTORIAN_SUPERUSER} -d ${HISTORIAN_DB:-plant_history}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  grafana:
+    image: grafana/grafana-oss:11.4.0
+    container_name: plant_historian_grafana
+    restart: unless-stopped
+    depends_on:
+      timescaledb:
+        condition: service_healthy
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:?set GRAFANA_ADMIN_USER in .env}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?set GRAFANA_ADMIN_PASSWORD in .env}
+      # Anonymous access off. A plant historian is not a public dashboard.
+      GF_AUTH_ANONYMOUS_ENABLED: "false"
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      # Grafana phones home by default; a plant network should not.
+      GF_ANALYTICS_REPORTING_ENABLED: "false"
+      GF_ANALYTICS_CHECK_FOR_UPDATES: "false"
+      # Consumed by the provisioned datasource. Read-only role — see
+      # backend/timescale/006_roles.sql.
+      HISTORIAN_DB: ${HISTORIAN_DB:-plant_history}
+      GRAFANA_RO_USER: ${GRAFANA_RO_USER:-grafana_ro}
+      GRAFANA_RO_PASSWORD: ${GRAFANA_RO_PASSWORD:?set GRAFANA_RO_PASSWORD in .env}
+    ports:
+      - "${GRAFANA_BIND:-127.0.0.1}:3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      # Provisioning is mounted read-only: dashboards live in git, not in
+      # Grafana's own database. A dashboard edited through the UI is
+      # unreviewable and unreproducible, which a plant record cannot be.
+      - ../grafana/provisioning:/etc/grafana/provisioning:ro
+      - ../grafana/dashboards:/var/lib/grafana/dashboards:ro
+
+volumes:
+  historian_data:
+    driver: local
+  grafana_data:
+    driver: local

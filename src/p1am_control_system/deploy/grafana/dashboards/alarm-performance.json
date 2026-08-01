@@ -1,0 +1,198 @@
+{
+  "uid": "plant-alarm-performance",
+  "title": "Alarm Performance (EEMUA 191 / ISA-18.2)",
+  "tags": ["plant", "alarms", "compliance"],
+  "timezone": "utc",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": false,
+  "refresh": "5m",
+  "time": { "from": "now-7d", "to": "now" },
+  "description": "Retrospective alarm-system performance against EEMUA 191 targets. Read-only: this dashboard does not acknowledge, shelve, or suppress anything, and is not a substitute for the operator alarm banner in the HMI.",
+  "panels": [
+    {
+      "type": "text",
+      "title": "How to read this",
+      "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+      "options": {
+        "mode": "markdown",
+        "content": "EEMUA 191 targets: **< 6 alarms/operator/hour** (long-term target ~1), **< 10 alarms per 10-minute window**, **< 1% of time in flood**, and the **top 10 alarms should account for < 5%** of total load. Exceeding these is an alarm-rationalisation finding, not a process fault. A red panel here means the alarm system needs review, not that the plant is unsafe."
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Alarms per hour (EEMUA target < 6)",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "drawStyle": "bars", "fillOpacity": 60 },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 6 },
+              { "color": "red", "value": 12 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time_bucket('1 hour', ts) AS time,\n       count(*)::float AS \"alarms/hour\"\nFROM event_log\nWHERE event_type = 'ALARM' AND $__timeFilter(ts)\nGROUP BY 1\nORDER BY 1"
+        }
+      ]
+    },
+    {
+      "type": "timeseries",
+      "title": "Peak alarms per 10 minutes (EEMUA target < 10)",
+      "description": "Windows above 10 are alarm floods. Sustained floods are the condition under which operators stop reading alarms at all.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short",
+          "custom": { "drawStyle": "bars", "fillOpacity": 60 },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 10 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time_bucket('10 minutes', ts) AS time,\n       count(*)::float AS \"alarms/10min\"\nFROM event_log\nWHERE event_type = 'ALARM' AND $__timeFilter(ts)\nGROUP BY 1\nORDER BY 1"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Time in alarm flood (EEMUA target < 1%)",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 12 },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH windows AS (\n  SELECT time_bucket('10 minutes', ts) AS bucket, count(*) AS n\n  FROM event_log\n  WHERE event_type = 'ALARM' AND $__timeFilter(ts)\n  GROUP BY 1\n)\nSELECT 100.0 * count(*) FILTER (WHERE n >= 10) / NULLIF(count(*), 0)\n       AS \"flood %\"\nFROM windows"
+        }
+      ]
+    },
+    {
+      "type": "stat",
+      "title": "Average alarms/hour",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 12 },
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              { "color": "green", "value": null },
+              { "color": "orange", "value": 6 },
+              { "color": "red", "value": 12 }
+            ]
+          }
+        }
+      },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*)::float\n       / NULLIF(EXTRACT(EPOCH FROM ($__timeTo()::timestamptz - $__timeFrom()::timestamptz)) / 3600.0, 0)\n       AS \"alarms/hour\"\nFROM event_log\nWHERE event_type = 'ALARM' AND $__timeFilter(ts)"
+        }
+      ]
+    },
+    {
+      "type": "piechart",
+      "title": "Priority distribution (target ~80/15/5)",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 6, "w": 12, "x": 12, "y": 12 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT CASE severity\n         WHEN 0 THEN 'Low (normal)'\n         WHEN 1 THEN 'Medium (Hi/Lo)'\n         WHEN 2 THEN 'High (HiHi/LoLo)'\n         ELSE 'Unclassified'\n       END AS metric,\n       count(*)::float AS value\nFROM event_log\nWHERE event_type = 'ALARM' AND $__timeFilter(ts)\nGROUP BY 1\nORDER BY 2 DESC"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Top 10 bad actors (should be < 5% of total load)",
+      "description": "The classic alarm-rationalisation starting point. In most unrationalised plants a handful of tags generate the majority of alarms; fixing those has more effect than anything else.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 9, "w": 12, "x": 0, "y": 18 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH total AS (\n  SELECT count(*)::float AS n\n  FROM event_log\n  WHERE event_type = 'ALARM' AND $__timeFilter(ts)\n)\nSELECT e.description        AS \"Alarm\",\n       t.name               AS \"Tag\",\n       count(*)             AS \"Count\",\n       round(100.0 * count(*) / NULLIF((SELECT n FROM total), 0), 1)\n                            AS \"% of load\"\nFROM event_log e\nLEFT JOIN tag_definition t ON t.id = e.tag_id\nWHERE e.event_type = 'ALARM' AND $__timeFilter(e.ts)\nGROUP BY e.description, t.name\nORDER BY count(*) DESC\nLIMIT 10"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Chattering alarms (repeat within 60 s)",
+      "description": "An alarm that re-fires within a minute of clearing is almost always a deadband or filtering problem, not a real repeated excursion.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 9, "w": 12, "x": 12, "y": 18 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH gaps AS (\n  SELECT description,\n         ts,\n         lag(ts) OVER (PARTITION BY description ORDER BY ts) AS prev_ts\n  FROM event_log\n  WHERE event_type = 'ALARM' AND $__timeFilter(ts)\n)\nSELECT description AS \"Alarm\",\n       count(*)    AS \"Rapid repeats\"\nFROM gaps\nWHERE prev_ts IS NOT NULL\n  AND ts - prev_ts < INTERVAL '60 seconds'\nGROUP BY description\nORDER BY 2 DESC\nLIMIT 10"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Alarms with no acknowledge within 24 h (standing/stale)",
+      "description": "EEMUA target is ~zero standing alarms. A permanently active alarm trains operators to ignore the banner.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 27 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT a.ts          AS \"Raised\",\n       a.description AS \"Alarm\",\n       t.name        AS \"Tag\",\n       a.severity    AS \"Severity\"\nFROM event_log a\nLEFT JOIN tag_definition t ON t.id = a.tag_id\nWHERE a.event_type = 'ALARM'\n  AND $__timeFilter(a.ts)\n  AND NOT EXISTS (\n    SELECT 1 FROM event_log k\n    WHERE k.event_type = 'ACKNOWLEDGE'\n      AND k.tag_id IS NOT DISTINCT FROM a.tag_id\n      AND k.ts > a.ts\n      AND k.ts < a.ts + INTERVAL '24 hours'\n  )\nORDER BY a.ts DESC\nLIMIT 200"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Alarms raised while the tag had no valid sample",
+      "description": "Detection control for the class of defect where a non-finite reading drives alarm state. An alarm whose tag has no finite sample within +/- 5 s of the event is suspicious and should be investigated. Empty is the expected result.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 9, "w": 24, "x": 0, "y": 36 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT e.ts          AS \"Event\",\n       e.event_type  AS \"Type\",\n       e.description AS \"Alarm\",\n       t.name        AS \"Tag\"\nFROM event_log e\nJOIN tag_definition t ON t.id = e.tag_id\nWHERE e.event_type IN ('ALARM', 'ACKNOWLEDGE')\n  AND $__timeFilter(e.ts)\n  AND NOT EXISTS (\n    SELECT 1 FROM tag_sample s\n    WHERE s.tag_id = e.tag_id\n      AND s.ts BETWEEN e.ts - INTERVAL '5 seconds'\n                   AND e.ts + INTERVAL '5 seconds'\n  )\nORDER BY e.ts DESC\nLIMIT 200"
+        }
+      ]
+    }
+  ]
+}

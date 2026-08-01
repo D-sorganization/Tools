@@ -13,11 +13,11 @@ screen of the operator interface.
 
 ## 1. What this system controls
 
-| Subsystem | Actuator | Feedback | Purpose |
-| --- | --- | --- | --- |
+| Subsystem           | Actuator                                         | Feedback                      | Purpose                                     |
+| ------------------- | ------------------------------------------------ | ----------------------------- | ------------------------------------------- |
 | **Crucible heater** | 110 V AC resistive element via a 24 V DO → relay | Type-K + type-R thermocouples | Heat the crucible to a setpoint (0–1400 °C) |
-| **Power supply** | Programmable supply via 0–5 V analog command | Current + voltage monitor | Deliver a commanded current/power |
-| **Mass flow** | Alicat MFCs (serial) | Flow / pressure / temperature | Meter process gas |
+| **Power supply**    | Programmable supply via 0–5 V analog command     | Current + voltage monitor     | Deliver a commanded current/power           |
+| **Mass flow**       | Alicat MFCs (serial)                             | Flow / pressure / temperature | Meter process gas                           |
 
 The **heater is the primary controlled process**: a resistive element wraps the
 crucible; the PLC switches it on and off through a relay, using thermocouple
@@ -74,19 +74,19 @@ micro, acting as a Modbus-TCP **server** at `192.168.1.100:502`. Firmware FQBN:
 
 **Coils (discrete commands from the backend):**
 
-| Coil | Function |
-| --- | --- |
-| 0 | Save-to-flash |
-| 1 | E-stop reset |
+| Coil  | Function                                          |
+| ----- | ------------------------------------------------- |
+| 0     | Save-to-flash                                     |
+| 1     | E-stop reset                                      |
 | **2** | **Heater relay command** (temperature controller) |
 
 **Modules on the backplane and their tag mapping:**
 
-| Slot | Module | Channels → tags | Notes |
-| --- | --- | --- | --- |
-| THM | **P1-04THM** | Ch1 (type K) → `TAG_0`, Ch2 (type R) → `TAG_1`, Ch3–4 (type K) → `TAG_2/3` | Celsius, **low-side burnout**, on-module linearization |
-| DO | **P1-08TD2** | Heater relay = **coil 2** | 24 V discrete out → relay → 110 V heater |
-| ANA | **P1-4ADL2DAL** | AI0/AI1 → `TAG_12/13`, AO0/AO1 ← `TAG_10/11` | Power-supply monitor + command |
+| Slot | Module          | Channels → tags                                                            | Notes                                                  |
+| ---- | --------------- | -------------------------------------------------------------------------- | ------------------------------------------------------ |
+| THM  | **P1-04THM**    | Ch1 (type K) → `TAG_0`, Ch2 (type R) → `TAG_1`, Ch3–4 (type K) → `TAG_2/3` | Celsius, **low-side burnout**, on-module linearization |
+| DO   | **P1-08TD2**    | Heater relay = **coil 2**                                                  | 24 V discrete out → relay → 110 V heater               |
+| ANA  | **P1-4ADL2DAL** | AI0/AI1 → `TAG_12/13`, AO0/AO1 ← `TAG_10/11`                               | Power-supply monitor + command                         |
 
 **Signal scaling.** Every analog channel is carried as **0–100 % of full scale**.
 The P1-04THM does per-type linearization on-module and the firmware reads degrees C
@@ -132,11 +132,13 @@ read, displayed, and plotted, and the non-controlling one is used as an independ
 safety reference.
 
 ### Selecting and switching
+
 Switching the controlling probe (K ↔ R) is **smooth** — it does not stop the heater.
 The live value of each probe is shown next to its selector so a dead or stuck sensor
 is obvious at a glance.
 
 ### Failure modes and what they look like
+
 - **Reads 0 °C:** the P1-04THM's **low-side burnout** response to an **open input**
   (loose/broken connection, or a high-resistance/degraded element).
 - **Stuck near ambient while the vessel is hot:** the junction is not thermally
@@ -147,6 +149,7 @@ is obvious at a glance.
   breakdown inside the sheath. This is a **wiring/probe** fault, not a control bug.
 
 ### High-temperature notes
+
 At ~1300 °C type K is near the top of its practical range; elements can develop
 high-resistance or intermittent opens. For sustained high-temperature work, prefer
 an **ungrounded (isolated) junction**, adequate wire gauge, and a probe rated for the
@@ -217,6 +220,7 @@ settings.
 ## 8. Operating procedures
 
 ### Start a heat run
+
 1. Confirm the HMI header shows **CONNECTED** and the E-stop is clear.
 2. Open **Heater Controls**. Check both thermocouple readings are live and sane.
 3. Select the controlling thermocouple (default **type K**).
@@ -225,12 +229,14 @@ settings.
    fit window.
 
 ### Recover from a trip
+
 1. Read the banner / **Events & Alarms** to see which trip fired (HH, TC_FAULT,
    TC_DISAGREE).
 2. Resolve the cause (let it cool below HH, fix the sensor, etc.).
 3. **Acknowledge** the trip, then Start again.
 
 ### Redeploy after a code/config change
+
 The services must restart to load new backend code or a new HMI build. A restart
 stops the heater (it returns **IDLE** with the setpoint recalled). Coordinate it for
 a moment the heater can pause, then:
@@ -246,21 +252,22 @@ The frontend rebuilds on start; give it ~30 s to bind port 3002.
 
 ## 9. Troubleshooting
 
-| Symptom | Likely cause | Action |
-| --- | --- | --- |
-| Reading drops to **0 °C** | Open input → module burnout | Check the probe/connections; the deglitch filter protects control meanwhile |
-| Drops only at **high temp** | Connection/element opens with thermal expansion; insulation breakdown | Re-terminate hot-side joints; inspect/replace the element; use an isolated-junction probe |
-| Probe stuck near **ambient** while hot | Junction not coupled / leads reversed | Re-seat/insert the probe; verify polarity and extension-wire type |
-| Heater **won't start** | Not permissive, tripped, or E-stopped | Acknowledge trips, clear E-stop, press Start |
-| HMI shows **OFFLINE** | Backend/PLC comms down | Check services (`systemctl`), the PLC network, and Modbus at `192.168.1.100:502` |
-| **TC_DISAGREE** trip | Control probe reads cold while other reads hot | Don't control off a dead probe; fix the sensor |
+| Symptom                                | Likely cause                                                          | Action                                                                                    |
+| -------------------------------------- | --------------------------------------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Reading drops to **0 °C**              | Open input → module burnout                                           | Check the probe/connections; the deglitch filter protects control meanwhile               |
+| Drops only at **high temp**            | Connection/element opens with thermal expansion; insulation breakdown | Re-terminate hot-side joints; inspect/replace the element; use an isolated-junction probe |
+| Probe stuck near **ambient** while hot | Junction not coupled / leads reversed                                 | Re-seat/insert the probe; verify polarity and extension-wire type                         |
+| Heater **won't start**                 | Not permissive, tripped, or E-stopped                                 | Acknowledge trips, clear E-stop, press Start                                              |
+| HMI shows **OFFLINE**                  | Backend/PLC comms down                                                | Check services (`systemctl`), the PLC network, and Modbus at `192.168.1.100:502`          |
+| **TC_DISAGREE** trip                   | Control probe reads cold while other reads hot                        | Don't control off a dead probe; fix the sensor                                            |
 
 ### Is a thermocouple problem the PLC, the sampling rate, or the setup?
+
 The burnout-zeros are the **module's open-circuit detection** reporting an open
 input, so the answer is usually the **field side**, not the sampling rate:
 
 - **Sampling rate is not the cause of the zeros.** Firmware reads at 10 Hz, faster
-  than the P1-04THM's own conversion, so you *oversample* the module — this changes
+  than the P1-04THM's own conversion, so you _oversample_ the module — this changes
   how many zeros you observe, not whether they occur.
 - **With tight connections, suspect the probe's high-temperature electrical
   behavior:** rising loop resistance or insulation-resistance breakdown at high
@@ -274,7 +281,7 @@ input, so the answer is usually the **field side**, not the sampling rate:
 ## 10. Deployment and maintenance
 
 - **Services:** `p1am-backend` (FastAPI/uvicorn) and `p1am-frontend` (`vite
-  preview`), both `Restart=always` under systemd. Install via
+preview`), both `Restart=always` under systemd. Install via
   `deploy/install-services.sh`.
 - **Bench mode:** `P1AM_DEV_NO_AUTH=1` (admin endpoints unauthenticated),
   `PLC_DRIVER=modbus`. When the PLC is offline the backend runs a simulator so the
@@ -284,7 +291,80 @@ input, so the answer is usually the **field side**, not the sampling rate:
 - **Tuning knobs (env):** `P1AM_POLL_INTERVAL_S` (default 0.1 s), the lightweight
   poll interval, and the capture/log-throttle interval.
 
+## 11. The plant historian and Grafana (optional)
+
+The system can forward its process data to a separate **plant historian**
+(TimescaleDB) with **Grafana** dashboards on top. This is off by default. When
+it is on, nothing about how you operate the plant changes.
+
+### What Grafana is — and is not
+
+- **It is** a place to look at long-horizon history, compare campaigns, and
+  review alarm-system performance. It goes back years; the HMI trend does not.
+- **It is not** an HMI. It cannot start, stop, or adjust anything. It has
+  read-only access to the database and no connection to the PLC at all.
+- **If Grafana and the HMI disagree, the HMI is right.** The HMI reads the
+  controller directly. Grafana reads a copy that arrived over the network.
+
+Grafana is never the thing you act on during an upset. Use the HMI.
+
+### The one thing you must know
+
+A flat line in Grafana has two possible causes:
+
+1. The value genuinely did not change, or
+2. **No data arrived.**
+
+These look identical. Before concluding anything from a flat or missing trend,
+open the **Historian Health (ingest)** dashboard. If "ingest lag" is large, you
+are looking at a gap in the recording, not a quiet process.
+
+This matters because forwarding is deliberately best-effort: if the network or
+the historian is down, the control system keeps running and keeps recording
+locally, and the copy sent to the historian is simply skipped. **The local
+record on the Pi is always the complete one.** Nothing is lost from the control
+system itself.
+
+### The dashboards
+
+| Dashboard               | Answers                                                                                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Process Overview**    | What did this tag do over hours, weeks, or years? Includes a min/max envelope, so brief excursions stay visible instead of being averaged away.                     |
+| **Campaign Comparison** | Is this run behaving like a known-good run? Overlays a past campaign on the current one.                                                                            |
+| **Alarm Performance**   | Is the alarm system helping or drowning the operator? Alarm rate, flood periods, worst-offender alarms, chattering, and standing alarms, against EEMUA 191 targets. |
+| **Historian Health**    | Is data actually arriving? Check this before trusting a gap.                                                                                                        |
+
+The Alarm Performance dashboard is a review tool, not a live one. It does not
+acknowledge, shelve, or silence anything — the alarm banner in the HMI remains
+the only place alarms are handled.
+
+### Choosing the right resolution
+
+Process Overview has a **Resolution** selector because the historian keeps
+different amounts of detail at different ages:
+
+| Looking back   | Choose   |
+| -------------- | -------- |
+| Up to 90 days  | Raw      |
+| Up to 2 years  | 1 minute |
+| Anything older | 1 hour   |
+
+If you pick a resolution that does not cover your time range the chart comes
+back empty. Empty means "wrong selector", not "the plant was off".
+
+### Turning it off
+
+One environment variable on the Pi and a restart:
+
+```bash
+P1AM_TIMESCALE_ENABLED=false
+```
+
+The control system carries on exactly as before with its local historian. Full
+setup, troubleshooting, and rollback detail is in
+`deploy/historian/README.md`.
+
 ---
 
-*This manual is the full version of the in-app Help. Open any tab and press the
-Help button (📖) for that tab's quick reference.*
+_This manual is the full version of the in-app Help. Open any tab and press the
+Help button (📖) for that tab's quick reference._

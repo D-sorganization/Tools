@@ -1,0 +1,34 @@
+# Grafana datasource for the plant historian.
+#
+# The credentials here are the READ-ONLY role from
+# backend/timescale/006_roles.sql. Grafana must never hold write credentials to
+# the process record — a misconfigured or compromised dashboard should not be
+# able to alter plant history.
+#
+# No secrets are committed: values come from the environment (see
+# deploy/historian/.env.example).
+
+apiVersion: 1
+
+datasources:
+  - name: PlantHistorian
+    uid: plant-historian
+    type: postgres
+    access: proxy
+    url: timescaledb:5432
+    user: ${GRAFANA_RO_USER}
+    database: ${HISTORIAN_DB}
+    secureJsonData:
+      password: ${GRAFANA_RO_PASSWORD}
+    jsonData:
+      sslmode: disable # container-to-container on a private network
+      postgresVersion: 1600
+      # Tells Grafana it may use time_bucket() and other Timescale functions.
+      timescaledb: true
+      maxOpenConns: 10
+      maxIdleConns: 5
+      connMaxLifetime: 14400
+    # Editable false: the datasource definition lives in git. Changing it
+    # through the UI would silently diverge from the reviewed configuration.
+    editable: false
+    isDefault: true

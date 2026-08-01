@@ -1,0 +1,88 @@
+{
+  "uid": "plant-campaign-comparison",
+  "title": "Campaign Comparison (golden batch)",
+  "tags": ["plant", "process", "campaign"],
+  "timezone": "utc",
+  "schemaVersion": 39,
+  "version": 1,
+  "editable": false,
+  "time": { "from": "now-7d", "to": "now" },
+  "description": "Overlay the current campaign against a reference ('golden') run by shifting the reference in time. Use to answer 'is this run behaving like the good one?' — the question a live trend cannot answer.",
+  "templating": {
+    "list": [
+      {
+        "name": "offset",
+        "label": "Reference offset",
+        "type": "custom",
+        "description": "How far back the reference campaign sits. The reference series is shifted forward by this amount so both runs line up on the same axis.",
+        "query": "1 day,7 days,14 days,30 days,90 days,180 days,365 days",
+        "current": { "text": "30 days", "value": "30 days" },
+        "options": [],
+        "includeAll": false,
+        "multi": false
+      },
+      {
+        "name": "tag",
+        "label": "Tag",
+        "type": "query",
+        "datasource": { "type": "postgres", "uid": "plant-historian" },
+        "query": "SELECT name AS __text, id AS __value FROM tag_definition ORDER BY name",
+        "refresh": 1,
+        "includeAll": false,
+        "multi": true
+      }
+    ]
+  },
+  "panels": [
+    {
+      "type": "text",
+      "title": "Reading this",
+      "gridPos": { "h": 3, "w": 24, "x": 0, "y": 0 },
+      "options": {
+        "mode": "markdown",
+        "content": "Solid = **current** window. Dashed/suffixed `(ref)` = the same window shifted back by **$offset**. Divergence between the two is the signal; absolute values are secondary.\n\nBoth series come from `tag_sample_1m`, so this works back to two years. Beyond that, switch the queries to `tag_sample_1h`."
+      }
+    },
+    {
+      "type": "timeseries",
+      "title": "Current vs reference ($offset ago) — mean",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 12, "w": 24, "x": 0, "y": 3 },
+      "fieldConfig": {
+        "defaults": { "custom": { "drawStyle": "line", "lineWidth": 1 } },
+        "overrides": [
+          {
+            "matcher": { "id": "byRegexp", "options": ".*\\(ref\\)$" },
+            "properties": [
+              {
+                "id": "custom.lineStyle",
+                "value": { "fill": "dash", "dash": [10, 10] }
+              }
+            ]
+          }
+        ]
+      },
+      "targets": [
+        {
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT time_bucket('$__interval', a.bucket) AS time,\n       t.name                                AS metric,\n       sum(a.sum_value) / NULLIF(sum(a.sample_count), 0) AS value\nFROM tag_sample_1m a\nJOIN tag_definition t ON t.id = a.tag_id\nWHERE $__timeFilter(a.bucket)\n  AND a.tag_id IN ($tag)\nGROUP BY 1, 2\n\nUNION ALL\n\n-- Reference run, shifted forward so it overlays the current window.\nSELECT time_bucket('$__interval', a.bucket + INTERVAL '$offset') AS time,\n       t.name || ' (ref)'                                        AS metric,\n       sum(a.sum_value) / NULLIF(sum(a.sample_count), 0)         AS value\nFROM tag_sample_1m a\nJOIN tag_definition t ON t.id = a.tag_id\nWHERE a.bucket BETWEEN $__timeFrom()::timestamptz - INTERVAL '$offset'\n                   AND $__timeTo()::timestamptz   - INTERVAL '$offset'\n  AND a.tag_id IN ($tag)\nGROUP BY 1, 2\n\nORDER BY 1"
+        }
+      ]
+    },
+    {
+      "type": "table",
+      "title": "Campaign statistics — current vs reference",
+      "description": "Whole-window summary. A shifted mean with an unchanged min/max usually indicates a setpoint change; a widened min/max with an unchanged mean usually indicates degraded control.",
+      "datasource": { "type": "postgres", "uid": "plant-historian" },
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 15 },
+      "targets": [
+        {
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH current_window AS (\n  SELECT a.tag_id,\n         sum(a.sum_value) / NULLIF(sum(a.sample_count), 0) AS mean,\n         min(a.min_value) AS lo,\n         max(a.max_value) AS hi\n  FROM tag_sample_1m a\n  WHERE $__timeFilter(a.bucket) AND a.tag_id IN ($tag)\n  GROUP BY a.tag_id\n),\nreference AS (\n  SELECT a.tag_id,\n         sum(a.sum_value) / NULLIF(sum(a.sample_count), 0) AS mean,\n         min(a.min_value) AS lo,\n         max(a.max_value) AS hi\n  FROM tag_sample_1m a\n  WHERE a.bucket BETWEEN $__timeFrom()::timestamptz - INTERVAL '$offset'\n                     AND $__timeTo()::timestamptz   - INTERVAL '$offset'\n    AND a.tag_id IN ($tag)\n  GROUP BY a.tag_id\n)\nSELECT t.name                                    AS \"Tag\",\n       round(c.mean::numeric, 3)                 AS \"Mean (now)\",\n       round(r.mean::numeric, 3)                 AS \"Mean (ref)\",\n       round((c.mean - r.mean)::numeric, 3)      AS \"Delta\",\n       round(c.lo::numeric, 3)                   AS \"Min (now)\",\n       round(c.hi::numeric, 3)                   AS \"Max (now)\",\n       round(r.lo::numeric, 3)                   AS \"Min (ref)\",\n       round(r.hi::numeric, 3)                   AS \"Max (ref)\"\nFROM current_window c\nFULL OUTER JOIN reference r ON r.tag_id = c.tag_id\nJOIN tag_definition t ON t.id = COALESCE(c.tag_id, r.tag_id)\nORDER BY t.name"
+        }
+      ]
+    }
+  ]
+}

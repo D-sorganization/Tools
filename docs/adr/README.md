@@ -25,3 +25,4 @@ This directory stores architecture decisions for cross-tool boundaries and share
 | [ADR-004](ADR-004-ruff-formatter.md)                  | Accepted | Why ruff format was chosen over Black as the canonical Python formatter.                           |
 | [ADR-005](ADR-005-plugin-discovery-vs-registry.md)    | Accepted | Dual-mode plugin registration: per-tool manifests merged with centralized tools.json.              |
 | [ADR-006](ADR-006-type-safety-mypy-strict.md)         | Accepted | Type safety enforcement strategy using mypy delta CI and py.typed marker.                          |
+| [ADR-007](ADR-007-plant-historian-timescaledb.md)     | Accepted | TimescaleDB + Grafana as the P1AM plant historian, above an untouched control path.                |
