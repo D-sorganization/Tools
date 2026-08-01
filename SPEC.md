@@ -35,13 +35,13 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
@@ -2671,3 +2671,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+## 2026-07-31 P1AM frontend test setup: conforming localStorage
+
+- **2026-07-31**: fix(test) — `src/p1am_control_system/frontend/src/test/setup.ts` installs a spec-shaped in-memory `Storage` as `globalThis.localStorage`, fixing 15 tests across `panelLayout.test.ts`, `usePanelLayout.test.ts` and `PanelStack.test.tsx` that failed with `TypeError: localStorage.clear is not a function`. Vitest 1.6's `populateGlobal` only copies a jsdom global over an already-present Node global when the key is in its own curated `KEYS` list; neither `localStorage` nor `sessionStorage` is in that list, and Node 22+ defines both on `globalThis`, so jsdom's `Storage` is never installed. Node's `sessionStorage` is in-memory and behaves, which is why only `localStorage` broke — Node's `localStorage` is backed by `--localstorage-file` and degrades to a bare object with no `getItem`/`setItem`/`removeItem`/`clear` when no valid path is given. Pinning the environment is not a fix: jsdom's own `localStorage` works but is unreachable, and vitest 1.6 exposes no lever to extend that key list. Installed unconditionally rather than behind a conformance guard, since this file only runs under the test runner, a fresh `Storage` per test file is the isolation wanted, and merely probing Node's lazy `localStorage` emits a `--localstorage-file` warning in every worker. Frontend suite: 44 files / 381 tests pass.
