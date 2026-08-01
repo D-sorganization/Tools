@@ -8,9 +8,12 @@ from __future__ import annotations
 import csv
 import logging
 import os
+import queue
 import sqlite3
+import threading
+import time
 from contextlib import closing
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any
 
 from PyQt6.QtCore import QDateTime, Qt
@@ -43,6 +46,149 @@ except ImportError:
 
 logger = logging.getLogger(__name__)
 
+_INSERT_SQL = """
+    INSERT INTO event_logs (
+        timestamp, event_type, severity, operator, description, details
+    )
+    VALUES (?, ?, ?, ?, ?, ?)
+    """
+
+
+class BatchedEventWriter:
+    """Serialise event rows onto a background thread with one open connection.
+
+    The desktop HMI used to open a fresh SQLite connection, insert and
+    fsync-commit on the Qt GUI thread for *every* alarm transition. With a tag
+    dithering on its trip point that is ~10 commits/second of blocking I/O on
+    the thread that repaints the E-stop button (issue #4022).
+
+    Rows submitted here are queued (non-blocking for the caller), drained by a
+    daemon thread, and committed in batches through a single persistent
+    connection.
+    """
+
+    def __init__(
+        self,
+        db_path: str,
+        flush_interval_s: float = 0.25,
+        max_batch: int = 200,
+    ) -> None:
+        """Start the writer thread.
+
+        Args:
+            db_path: SQLite file to write to.
+            flush_interval_s: Maximum time a queued row waits before commit.
+            max_batch: Maximum rows coalesced into one transaction.
+
+        Raises:
+            TypeError: If ``db_path`` is not a string.
+            ValueError: If ``flush_interval_s`` or ``max_batch`` is not > 0.
+        """
+        if not isinstance(db_path, str):
+            raise TypeError(f"db_path must be a str, got {type(db_path).__name__}")
+        if flush_interval_s <= 0:
+            raise ValueError(f"flush_interval_s must be > 0, got {flush_interval_s}")
+        if max_batch <= 0:
+            raise ValueError(f"max_batch must be > 0, got {max_batch}")
+
+        self.db_path = db_path
+        self.flush_interval_s = float(flush_interval_s)
+        self.max_batch = int(max_batch)
+
+        self._queue: queue.Queue[tuple[Any, ...] | None] = queue.Queue()
+        self._lock = threading.Lock()
+        self._drained = threading.Condition(self._lock)
+        self._pending = 0
+        self._stopping = threading.Event()
+        self.thread = threading.Thread(
+            target=self._run, name="p1am-event-log-writer", daemon=True
+        )
+        self.thread.start()
+
+    def submit(self, row: tuple[Any, ...]) -> None:
+        """Queue one already-validated row. Never blocks the caller.
+
+        Raises:
+            TypeError: If ``row`` is not a 6-tuple.
+        """
+        if not isinstance(row, tuple) or len(row) != 6:
+            raise TypeError("row must be a 6-tuple of insert parameters")
+        if self._stopping.is_set():
+            raise RuntimeError("writer is stopped")
+        with self._lock:
+            self._pending += 1
+        self._queue.put(row)
+
+    def flush(self, timeout: float = 5.0) -> bool:
+        """Block until every queued row has been committed.
+
+        Returns:
+            ``True`` if the writer went idle within ``timeout``.
+        """
+        with self._drained:
+            return self._drained.wait_for(lambda: self._pending <= 0, timeout)
+
+    def stop(self, timeout: float = 5.0) -> None:
+        """Drain and shut the writer thread down."""
+        if self._stopping.is_set():
+            return
+        self._stopping.set()
+        self._queue.put(None)
+        self.thread.join(timeout)
+
+    def _run(self) -> None:
+        conn: sqlite3.Connection | None = None
+        try:
+            conn = sqlite3.connect(self.db_path, check_same_thread=False)
+            while True:
+                item = self._queue.get()
+                if item is None:
+                    break
+                batch = [item]
+                stopping = False
+                deadline = time.monotonic() + self.flush_interval_s
+                while len(batch) < self.max_batch:
+                    remaining = deadline - time.monotonic()
+                    if remaining <= 0:
+                        break
+                    try:
+                        nxt = self._queue.get(timeout=remaining)
+                    except queue.Empty:
+                        break
+                    if nxt is None:
+                        stopping = True
+                        break
+                    batch.append(nxt)
+                self._commit(conn, batch)
+                self._settle(len(batch))
+                if stopping:
+                    return
+        except Exception:  # pragma: no cover - background thread safety net
+            logger.exception("Event-log writer thread failed")
+        finally:
+            self._settle(self._pending)
+            if conn is not None:
+                conn.close()
+
+    def _settle(self, completed: int) -> None:
+        """Decrement the in-flight count and wake any waiting :meth:`flush`."""
+        with self._drained:
+            self._pending = max(0, self._pending - max(0, completed))
+            if self._pending <= 0:
+                self._drained.notify_all()
+
+    @staticmethod
+    def _commit(conn: sqlite3.Connection, batch: list[tuple[Any, ...]]) -> None:
+        try:
+            conn.executemany(_INSERT_SQL, batch)
+            conn.commit()
+        except Exception:
+            logger.exception("Failed to persist %d event rows", len(batch))
+            try:
+                conn.rollback()
+            except Exception:  # pragma: no cover - defensive
+                logger.exception("Event-log rollback failed")
+
 
 class EventLogger:
     """Manages the SQLite database for event logs, executing parameterized queries."""
@@ -57,6 +203,7 @@ class EventLogger:
         if db_path is None:
             db_path = os.environ.get("EVENT_LOG_DB_PATH", "p1am_event_log.db")
         self.db_path = db_path
+        self._writer: BatchedEventWriter | None = None
         self._init_db()
 
     def _init_db(self) -> None:
@@ -97,27 +244,120 @@ class EventLogger:
             details: Optional stringified metadata/parameters.
             timestamp: Event time. Defaults to now.
         """
+        row = self._build_row(
+            event_type, severity, operator, description, details, timestamp
+        )
+
+        with closing(sqlite3.connect(self.db_path)) as conn:
+            cursor = conn.cursor()
+            cursor.execute(_INSERT_SQL, row)
+            conn.commit()
+
+    @staticmethod
+    def _build_row(
+        event_type: str,
+        severity: str,
+        operator: str | None,
+        description: str,
+        details: str | None,
+        timestamp: datetime | None,
+    ) -> tuple[Any, ...]:
+        """Validate and normalise one insert row.
+
+        Raises:
+            ValueError: If ``event_type``, ``severity`` or ``description`` is
+                empty.
+        """
         if not event_type or not severity or not description:
             raise ValueError(
                 "event_type, severity, and description must be non-empty strings"
             )
+        stamp = datetime.now() if timestamp is None else timestamp
+        return (
+            stamp.isoformat(),
+            event_type,
+            severity,
+            operator,
+            description,
+            details,
+        )
 
-        if timestamp is None:
-            timestamp = datetime.now()
-        timestamp_str = timestamp.isoformat()
+    @property
+    def async_writer(self) -> BatchedEventWriter:
+        """The lazily-started background writer backing :meth:`log_event_async`."""
+        if self._writer is None:
+            self._writer = BatchedEventWriter(self.db_path)
+        return self._writer
 
+    def log_event_async(
+        self,
+        event_type: str,
+        severity: str,
+        operator: str | None,
+        description: str,
+        details: str | None = None,
+        timestamp: datetime | None = None,
+    ) -> None:
+        """Queue an event for batched insertion on the writer thread.
+
+        Same validation and semantics as :meth:`log_event`, but the SQLite
+        connect/insert/commit never runs on the caller's thread. Use this from
+        GUI slots; use :meth:`log_event` when the row must be readable
+        immediately.
+
+        Raises:
+            ValueError: If ``event_type``, ``severity`` or ``description`` is
+                empty.
+        """
+        row = self._build_row(
+            event_type, severity, operator, description, details, timestamp
+        )
+        self.async_writer.submit(row)
+
+    def flush_async(self, timeout: float = 5.0) -> bool:
+        """Block until queued async events have been committed."""
+        if self._writer is None:
+            return True
+        return self._writer.flush(timeout)
+
+    def close(self) -> None:
+        """Drain and stop the background writer. Idempotent."""
+        if self._writer is not None:
+            self._writer.stop()
+            self._writer = None
+
+    def purge_older_than(self, retention_days: int) -> int:
+        """Delete event rows older than ``retention_days``.
+
+        A 10 Hz plant logs enough alarm traffic to grow the SQLite file without
+        bound on a Raspberry Pi's SD card; the History tab's full-table requery
+        then gets slower forever (issue #4022).
+
+        Args:
+            retention_days: Age threshold in days. ``0`` deletes everything
+                older than now.
+
+        Returns:
+            Number of rows deleted.
+
+        Raises:
+            TypeError: If ``retention_days`` is not an int.
+            ValueError: If ``retention_days`` is negative.
+        """
+        if isinstance(retention_days, bool) or not isinstance(retention_days, int):
+            raise TypeError(
+                f"retention_days must be an int, got {type(retention_days).__name__}"
+            )
+        if retention_days < 0:
+            raise ValueError(f"retention_days must be >= 0, got {retention_days}")
+
+        cutoff = (datetime.now() - timedelta(days=retention_days)).isoformat()
         with closing(sqlite3.connect(self.db_path)) as conn:
             cursor = conn.cursor()
-            cursor.execute(
-                """
-                INSERT INTO event_logs (
-                    timestamp, event_type, severity, operator, description, details
-                )
-                VALUES (?, ?, ?, ?, ?, ?)
-                """,
-                (timestamp_str, event_type, severity, operator, description, details),
-            )
+            cursor.execute("DELETE FROM event_logs WHERE timestamp < ?", (cutoff,))
+            deleted = cursor.rowcount
             conn.commit()
+        return max(0, deleted)
 
     def log_button_click(self, operator: str | None, button_name: str) -> None:
         """Log a button click event."""

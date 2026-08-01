@@ -35,13 +35,45 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Desktop HMI Alarm, E-Stop and Event-Log Behaviour
+
+- The desktop operator HMI annunciator now follows standard alarm management:
+  the ACK button's **colour** reflects whether the process condition is
+  currently present, while **flashing versus steady** reflects whether an
+  operator has acknowledged it. Acknowledging a still-active alarm silences the
+  flash but keeps the alarm visible; a value returning to its normal band drops
+  the alarm from both the active and unacknowledged sets so a long-cleared alarm
+  no longer flashes forever. Acknowledging applies only to the alarms the header
+  was displaying, so an alarm arriving between the repaint and the click is not
+  silently acknowledged.
+- High-High and Low-Low severity is taken from the deployed `hihi_limit` and
+  `lolo_limit` interlock setpoints instead of being synthesised as
+  `high_limit ± 5`, so the HMI's severity matches the trip points the firmware
+  enforces. A routing configuration whose limits are not ordered
+  `lolo <= low <= high <= hihi` is rejected at load with a critical dialog and an
+  ALARM event rather than being used.
+- The PLC connection label is derived from each telemetry frame rather than
+  hardcoded. The HMI reports "Simulating" only when the frame positively says
+  the values are simulated, so a desktop driving a live plant is never
+  mislabelled as a bench simulation.
+- Clearing the E-Stop now requires the Admin role and a modal confirmation — the
+  same gate ordinary PLC tag writes already carry — and a declined or denied
+  clear latches the button back to its tripped state.
+- Alarm events are coalesced before being written: a tag chattering on its trip
+  point produces one event with a repeat count instead of one per scan. Event
+  rows are committed in batches on a background thread over a single persistent
+  connection, the History table is requeried only while that tab is on screen,
+  and rows older than the retention window (`EVENT_LOG_RETENTION_DAYS`, default
+  90 days) are purged at startup. The operator interface stays responsive while
+  an alarm is active.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 

@@ -20,6 +20,7 @@ from PyQt6.QtWidgets import (
 )
 
 from .control_tab_mpc import ControlTabMpcMixin
+from .guards import require_admin
 from .plot_compat import pg
 from .workers import HttpWorker, start_http_request
 
@@ -258,15 +259,10 @@ class ControlTab(ControlTabMpcMixin, QWidget):
         """Return ``True`` if the current role may perform *action*.
 
         Shows an Access Denied dialog and returns ``False`` for non-Admins.
+        Delegates to :func:`desktop.guards.require_admin` so every plant-
+        affecting call site (including the E-stop clear) shares one gate.
         """
-        if self.user_role != "Admin":
-            QMessageBox.critical(
-                self,
-                "Access Denied",
-                f"Only Admin users can {action}.",
-            )
-            return False
-        return True
+        return require_admin(self, self.user_role, action, QMessageBox)
 
     def _on_connection_error(self, err_msg: str) -> None:
         QMessageBox.critical(
