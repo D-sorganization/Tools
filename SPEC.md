@@ -35,13 +35,46 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Control System Poll-Loop Data Integrity and Cadence
+
+- `src/p1am_control_system/backend/poll_runtime.py` no longer feeds held or
+  simulated values to the control laws, the alarm engine or the historian. A
+  scan is classified by `models.DataSource` (`live` / `simulated` / `held` /
+  `fault`); only a real measurement drives control and alarms, so a link flap
+  can no longer clear an active HiHi to Normal. `TagLog` gains a `quality`
+  column (migrated in `database._migrate_taglog_quality_column`) so an outage
+  records a gap rather than fabricated continuity. The backup simulator is
+  wired into the scan path only when `settings.plc_driver` is a simulator
+  driver. Frames now carry `data_source`, `plc_connected` and `simulated`, and
+  a successful live scan strokes the firmware host-alive heartbeat.
+- `src/p1am_control_system/backend/performance.py` splits cadence in two: the
+  new `ScanScheduler` owns the fixed control period from
+  `settings.poll_interval_s` and schedules against a monotonic deadline with
+  overrun counting and phase resynchronisation, while `PerformanceController`
+  only decimates the WebSocket broadcast (`broadcast_every_n`). A hidden
+  browser tab can no longer change the PLC scan, alarm, heater-relay or E-stop
+  re-assert period. `/api/performance` reports both cadences plus the overrun
+  and historian-failure counters.
+- `src/p1am_control_system/backend/poll_runtime.py` adds `HistorianWriter`: a
+  bounded queue drained by a dedicated task via `asyncio.to_thread`, batching
+  several scans per transaction, retrying `OperationalError` so alarm
+  transitions survive a `VACUUM` lock, and dropping only resamplable tag
+  samples under backpressure.
+- `src/p1am_control_system/backend/main.py` `ConnectionManager` serialises each
+  frame once and hands it to a bounded per-client queue drained by its own
+  task, dropping the oldest frame when a client falls behind; the control loop
+  never awaits a socket.
+- `src/p1am_control_system/backend/modbus_client.py` passes an explicit
+  `timeout` sized to the scan period instead of inheriting pymodbus's 3 s
+  default, and the failure backoff is computed from the active control period.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 

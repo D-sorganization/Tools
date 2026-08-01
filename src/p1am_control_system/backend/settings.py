@@ -10,6 +10,34 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 SQLITE_SYNCHRONOUS_MODES = {"OFF", "NORMAL", "FULL", "EXTRA"}
 
+#: Drivers backed by real field hardware. Everything else that ``PLCFactory``
+#: can resolve produces a simulator, so this is the authoritative allow-list
+#: rather than an ever-growing list of simulator names (issue #4004).
+REAL_PLC_DRIVERS = frozenset({"p1am", "modbus"})
+
+#: Floor for the Modbus round-trip timeout. pymodbus defaults to 3 s, which
+#: silently stretches a 0.1 s control period to 3.1 s on one dropped frame
+#: (issue #4009); a scan-sized timeout bounds the damage, but going below this
+#: would trip on normal Pi jitter.
+MIN_MODBUS_TIMEOUT_S = 0.25
+
+
+def is_simulated_driver(driver: str) -> bool:
+    """Whether ``driver`` resolves to a simulator instead of real hardware.
+
+    Args:
+        driver: A ``plc_driver`` value (case/whitespace insensitive).
+
+    Returns:
+        True unless the driver names real field hardware.
+
+    Raises:
+        TypeError: If ``driver`` is not a string.
+    """
+    if not isinstance(driver, str):
+        raise TypeError(f"driver must be a str, got {type(driver).__name__}")
+    return driver.strip().lower() not in REAL_PLC_DRIVERS
+
 
 class P1AMSettings(BaseSettings):
     """Validated runtime configuration for the P1AM backend.
@@ -41,7 +69,25 @@ class P1AMSettings(BaseSettings):
         validation_alias=AliasChoices("P1AM_PLC_PORT", "PLC_PORT"),
     )
     poll_interval_s: float = Field(
-        default=0.1, gt=0.0, validation_alias="P1AM_POLL_INTERVAL_S"
+        default=0.1,
+        gt=0.0,
+        validation_alias="P1AM_POLL_INTERVAL_S",
+        description=(
+            "THE control period: seconds between PLC scans, alarm evaluations, "
+            "heater-relay decisions and E-stop re-asserts. Deliberately "
+            "independent of the HMI performance mode — a browser tab must never "
+            "be able to slow the control loop (issue #4008)."
+        ),
+    )
+    modbus_timeout_s: float | None = Field(
+        default=None,
+        gt=0.0,
+        validation_alias="P1AM_MODBUS_TIMEOUT_S",
+        description=(
+            "Explicit Modbus round-trip timeout. When unset it is sized to the "
+            "scan period (floored at MIN_MODBUS_TIMEOUT_S) instead of inheriting "
+            "pymodbus's 3 s default."
+        ),
     )
     lightweight_poll_interval_s: float = Field(
         default=2.0,
@@ -93,6 +139,18 @@ class P1AMSettings(BaseSettings):
             "P1AM_DEV_NO_AUTH is off) a valid operator/admin API key is required."
         ),
     )
+
+    @property
+    def plc_driver_is_simulated(self) -> bool:
+        """Whether the configured driver is a simulator rather than hardware."""
+        return is_simulated_driver(self.plc_driver)
+
+    @property
+    def resolved_modbus_timeout_s(self) -> float:
+        """Modbus round-trip timeout, sized to the scan period (issue #4009)."""
+        if self.modbus_timeout_s is not None:
+            return float(self.modbus_timeout_s)
+        return max(MIN_MODBUS_TIMEOUT_S, float(self.poll_interval_s))
 
     @field_validator("plc_driver", mode="before")
     @classmethod

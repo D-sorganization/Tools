@@ -14,7 +14,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from models import TagLog
+from models import DataSource, TagLog
 
 try:
     from datetime import UTC
@@ -29,6 +29,7 @@ def log_scan(
     tags: dict[str, float],
     *,
     timestamp: datetime | None = None,
+    quality: str = DataSource.LIVE.value,
 ) -> int:
     """Bulk-insert one scan's tag samples; return the number of rows written.
 
@@ -38,14 +39,18 @@ def log_scan(
         tags: Mapping of tag name -> value for this scan.
         timestamp: Sample time for every row; defaults to now (UTC). One shared
             timestamp keeps a scan atomic in time and avoids 32 clock reads.
+        quality: Provenance stamped on every row (see ``models.DataSource``).
+            The caller must not persist held or faulted scans at all — a gap is
+            the truthful record of an outage (issue #4004).
 
     Returns:
         Number of rows inserted (0 for an empty mapping).
 
     Raises:
-        TypeError: If ``session`` is not a Session, ``tags`` is not a dict, or
-            ``timestamp`` is not a datetime/None.
-        ValueError: If any tag value is not finite/convertible to float.
+        TypeError: If ``session`` is not a Session, ``tags`` is not a dict,
+            ``timestamp`` is not a datetime/None, or ``quality`` is not a str.
+        ValueError: If ``quality`` is blank or any tag value is not
+            finite/convertible to float.
     """
     if not isinstance(session, Session):
         raise TypeError(f"session must be a Session, got {type(session).__name__}")
@@ -53,6 +58,10 @@ def log_scan(
         raise TypeError(f"tags must be a dict, got {type(tags).__name__}")
     if timestamp is not None and not isinstance(timestamp, datetime):
         raise TypeError(f"timestamp must be a datetime or None, got {type(timestamp)}")
+    if not isinstance(quality, str):
+        raise TypeError(f"quality must be a str, got {type(quality).__name__}")
+    if not quality.strip():
+        raise ValueError("quality must be a non-empty string")
 
     if not tags:
         return 0
@@ -65,7 +74,14 @@ def log_scan(
             numeric = float(value)
         except (TypeError, ValueError) as exc:
             raise ValueError(f"tag {name!r} has non-numeric value {value!r}") from exc
-        rows.append({"tag_name": str(name), "value": numeric, "timestamp": ts})
+        rows.append(
+            {
+                "tag_name": str(name),
+                "value": numeric,
+                "timestamp": ts,
+                "quality": str(quality),
+            }
+        )
 
     session.execute(insert(TagLog), rows)
     return len(rows)

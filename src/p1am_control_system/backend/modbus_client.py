@@ -18,6 +18,7 @@ from modbus_codec import (
 from models import RoutingConfig
 from plc_interface import BasePLCClient
 from pymodbus.client import AsyncModbusTcpClient
+from settings import get_settings
 
 logger = logging.getLogger("dcs_backend.modbus_client")
 
@@ -25,10 +26,20 @@ logger = logging.getLogger("dcs_backend.modbus_client")
 class AsyncModbusManager(BasePLCClient):
     """Manages asynchronous Modbus TCP communication with the P1AM PLC."""
 
-    def __init__(self, host: str, port: int = 502) -> None:
+    def __init__(
+        self, host: str, port: int = 502, *, timeout_s: float | None = None
+    ) -> None:
         super().__init__()
         self.host = host
         self.port = port
+        # pymodbus defaults to a 3 s round-trip timeout, so ONE dropped frame
+        # silently stretched a 0.1 s control period to 3.1 s. Size the timeout to
+        # the scan period instead (issue #4009).
+        self.timeout_s = (
+            float(timeout_s)
+            if timeout_s is not None
+            else get_settings().resolved_modbus_timeout_s
+        )
         self.client: AsyncModbusTcpClient | None = None
         self._connected = False
 
@@ -78,7 +89,9 @@ class AsyncModbusManager(BasePLCClient):
     def _get_client(self) -> AsyncModbusTcpClient:
         """Lazily initialize the AsyncModbusTcpClient instance."""
         if self.client is None:
-            self.client = AsyncModbusTcpClient(host=self.host, port=self.port)
+            self.client = AsyncModbusTcpClient(
+                host=self.host, port=self.port, timeout=self.timeout_s
+            )
         return self.client
 
     async def connect(self) -> bool:

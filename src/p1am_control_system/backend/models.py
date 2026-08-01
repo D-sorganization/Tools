@@ -10,10 +10,51 @@ from pydantic import BaseModel, field_validator
 from sqlalchemy import Index
 from sqlmodel import Field, SQLModel
 
+from shared.python.compatibility import StrEnum
+
 
 def utc_now() -> datetime:
     """Return an aware UTC timestamp for database defaults."""
     return datetime.now(UTC)
+
+
+# Spelled as literals so the wire values stay greppable and so the table default
+# below does not depend on enum attribute access (which the repo's
+# ``--follow-imports=skip`` mypy pass cannot see through).
+DATA_SOURCE_LIVE = "live"
+DATA_SOURCE_SIMULATED = "simulated"
+DATA_SOURCE_HELD = "held"
+DATA_SOURCE_FAULT = "fault"
+
+
+class DataSource(StrEnum):
+    """Provenance of a scan's tag values (issue #4004).
+
+    Safety-critical distinction: only :attr:`LIVE` (and :attr:`SIMULATED` on a
+    bench where the operator *chose* a simulator driver) is a measurement. A
+    :attr:`HELD` or :attr:`FAULT` scan carries no fresh reading and must never
+    be routed into the control laws, the alarm engine or the historian's tag
+    series — a gap in the trend is truthful, fabricated continuity is not.
+    """
+
+    LIVE = DATA_SOURCE_LIVE
+    SIMULATED = DATA_SOURCE_SIMULATED
+    HELD = DATA_SOURCE_HELD
+    FAULT = DATA_SOURCE_FAULT
+
+    @property
+    def is_measurement(self) -> bool:
+        """True when the values may drive control, alarms and the historian."""
+        return self in (DataSource.LIVE, DataSource.SIMULATED)
+
+
+#: Severity attached to the EventLog row emitted on a data-source transition.
+DATA_SOURCE_SEVERITY: dict[str, int] = {
+    DATA_SOURCE_LIVE: 0,
+    DATA_SOURCE_SIMULATED: 1,
+    DATA_SOURCE_HELD: 1,
+    DATA_SOURCE_FAULT: 2,
+}
 
 
 def _validate_loop_tag(value: str) -> str:
@@ -43,6 +84,12 @@ class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
     ``tag_name``-only lookups, so no separate single-column ``tag_name`` index is
     needed. ``timestamp`` keeps its own index for the retention sweep's
     ``timestamp``-only range deletes.
+
+    ``quality`` records the provenance of the sample (see :class:`DataSource`)
+    so an analyst reading the trend a year later can tell a real measurement
+    from a bench simulation. Rows are only ever written for values that were
+    actually measured (or deliberately simulated): a comms outage leaves a gap
+    rather than a fabricated continuation of the last reading (issue #4004).
     """
 
     __table_args__ = (Index("ix_taglog_tag_name_timestamp", "tag_name", "timestamp"),)
@@ -50,6 +97,7 @@ class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
     id: int | None = Field(default=None, primary_key=True)
     tag_name: str
     value: float
+    quality: str = Field(default=DATA_SOURCE_LIVE, max_length=16)
     timestamp: datetime = Field(
         default_factory=utc_now,
         index=True,

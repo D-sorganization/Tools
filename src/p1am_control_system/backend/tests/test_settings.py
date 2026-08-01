@@ -56,3 +56,38 @@ def test_model_timestamp_defaults_are_aware_utc() -> None:
     assert event.timestamp.tzinfo is not None
     assert tag.timestamp.utcoffset() == timedelta(0)
     assert event.timestamp.utcoffset() == timedelta(0)
+
+
+def test_simulated_driver_classification_is_by_real_hardware_allowlist() -> None:
+    """#4004: only a named hardware driver counts as real; the rest simulate."""
+    from settings import is_simulated_driver
+
+    assert P1AMSettings(PLC_DRIVER="modbus").plc_driver_is_simulated is False
+    assert P1AMSettings(PLC_DRIVER="p1am").plc_driver_is_simulated is False
+    assert P1AMSettings(PLC_DRIVER="simulator").plc_driver_is_simulated is True
+    assert P1AMSettings(PLC_DRIVER="neural").plc_driver_is_simulated is True
+    # An unrecognised driver resolves to a simulator in PLCFactory, so it must
+    # classify as one here too — never as trustworthy hardware.
+    assert P1AMSettings(PLC_DRIVER="typo").plc_driver_is_simulated is True
+    assert is_simulated_driver("  MODBUS ") is False
+
+
+def test_simulated_driver_rejects_a_non_string() -> None:
+    from settings import is_simulated_driver
+
+    with pytest.raises(TypeError):
+        is_simulated_driver(None)
+
+
+def test_modbus_timeout_is_sized_to_the_scan_period() -> None:
+    """#4009: pymodbus's 3 s default must not stretch a 0.1 s control period."""
+    from settings import MIN_MODBUS_TIMEOUT_S
+
+    fast = P1AMSettings(P1AM_POLL_INTERVAL_S="0.1")
+    assert fast.resolved_modbus_timeout_s == MIN_MODBUS_TIMEOUT_S
+
+    slow = P1AMSettings(P1AM_POLL_INTERVAL_S="1.5")
+    assert slow.resolved_modbus_timeout_s == 1.5
+
+    explicit = P1AMSettings(P1AM_MODBUS_TIMEOUT_S="0.05")
+    assert explicit.resolved_modbus_timeout_s == 0.05

@@ -9,6 +9,7 @@ composite-index migration that turns the trend-read hot path from an index-scan
 from __future__ import annotations
 
 import sqlite3
+from pathlib import Path
 
 import pytest
 
@@ -20,7 +21,7 @@ from sqlalchemy import text  # noqa: E402
 from sqlmodel import Session, SQLModel, create_engine  # noqa: E402
 
 
-def test_configure_sqlite_sets_wal_and_size_limit(tmp_path) -> None:
+def test_configure_sqlite_sets_wal_and_size_limit(tmp_path: Path) -> None:
     db_file = tmp_path / "pragma.db"
     conn = sqlite3.connect(db_file)
     try:
@@ -32,7 +33,7 @@ def test_configure_sqlite_sets_wal_and_size_limit(tmp_path) -> None:
         conn.close()
 
 
-def test_configure_sqlite_sets_read_perf_pragmas(tmp_path) -> None:
+def test_configure_sqlite_sets_read_perf_pragmas(tmp_path: Path) -> None:
     # The read-performance pragmas must be applied on every fresh connection.
     db_file = tmp_path / "readperf.db"
     conn = sqlite3.connect(db_file)
@@ -48,7 +49,9 @@ def test_configure_sqlite_sets_read_perf_pragmas(tmp_path) -> None:
         conn.close()
 
 
-def test_optimize_planner_statistics_is_best_effort(tmp_path, monkeypatch) -> None:
+def test_optimize_planner_statistics_is_best_effort(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
     # PRAGMA optimize must run without raising and must never block startup even
     # when the driver call fails (best-effort contract).
     engine = create_engine(f"sqlite:///{tmp_path / 'optimize.db'}")
@@ -65,14 +68,14 @@ def test_optimize_planner_statistics_is_best_effort(tmp_path, monkeypatch) -> No
         def __enter__(self) -> _BoomConn:
             return self
 
-        def __exit__(self, *_exc: object) -> bool:
-            return False
+        def __exit__(self, *_exc: object) -> None:
+            return None
 
     monkeypatch.setattr(database.engine, "connect", lambda: _BoomConn())
     database._optimize_planner_statistics()  # must not raise
 
 
-def test_migration_creates_composite_and_drops_single(tmp_path) -> None:
+def test_migration_creates_composite_and_drops_single(tmp_path: Path) -> None:
     # Seed a DB with the OLD schema: a standalone single-column tag_name index.
     engine = create_engine(f"sqlite:///{tmp_path / 'hist.db'}")
     SQLModel.metadata.create_all(engine)
@@ -103,7 +106,7 @@ def test_migration_creates_composite_and_drops_single(tmp_path) -> None:
     assert "ix_taglog_tag_name" not in names
 
 
-def test_trend_query_uses_composite_index(tmp_path) -> None:
+def test_trend_query_uses_composite_index(tmp_path: Path) -> None:
     # The composite index must actually serve the trend query plan (no temp sort).
     engine = create_engine(f"sqlite:///{tmp_path / 'plan.db'}")
     SQLModel.metadata.create_all(engine)  # model now declares the composite index
@@ -116,3 +119,28 @@ def test_trend_query_uses_composite_index(tmp_path) -> None:
     plan_text = " ".join(str(row) for row in plan).lower()
     assert "ix_taglog_tag_name_timestamp" in plan_text
     assert "temp b-tree" not in plan_text  # index provides the order — no sort
+
+
+def test_quality_column_migration_backfills_a_legacy_historian(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """#4004: an existing bench DB must accept the new provenance column."""
+    engine = create_engine(f"sqlite:///{tmp_path / 'legacy.db'}")
+    with engine.begin() as conn:
+        conn.exec_driver_sql(
+            "CREATE TABLE taglog ("
+            "id INTEGER PRIMARY KEY, tag_name VARCHAR, value FLOAT, timestamp DATETIME)"
+        )
+        conn.exec_driver_sql(
+            "INSERT INTO taglog (tag_name, value, timestamp) "
+            "VALUES ('TAG_0', 1.0, '2026-07-31T00:00:00')"
+        )
+    monkeypatch.setattr(database, "engine", engine)
+
+    database._migrate_taglog_quality_column()
+    database._migrate_taglog_quality_column()  # idempotent
+
+    with engine.connect() as conn:
+        columns = {row[1] for row in conn.exec_driver_sql("PRAGMA table_info(taglog)")}
+        assert "quality" in columns
+        assert conn.exec_driver_sql("SELECT quality FROM taglog").scalar() == "live"
