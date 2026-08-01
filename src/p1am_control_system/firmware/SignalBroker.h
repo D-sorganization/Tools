@@ -34,6 +34,12 @@ class SignalBroker {
   // Postcondition: The tag value is updated and clamped to [0.0, 100.0]
   void SetTag(int tag_id, float value);
 
+  // True if this tag is the target of an input route or the source of an
+  // output route -- i.e. it carries a real signal rather than sitting at its
+  // 0.0 default. The interlock uses this to avoid tripping on unrouted tags.
+  // Precondition: none. Out-of-range ids are simply not routed.
+  bool IsTagRouted(int tag_id) const;
+
   // Set input routing: map hardware input channel to tag ID.
   // Precondition: 0 <= channel < kNumInputs
   // Precondition: tag_id is in [0, kNumTags-1] OR is kUnmappedTag

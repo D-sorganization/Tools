@@ -91,6 +91,23 @@ int SignalBroker::GetOutputRouting(int channel) const {
   return output_routing_[channel];
 }
 
+bool SignalBroker::IsTagRouted(int tag_id) const {
+  if (!IsValidTagId(tag_id)) {
+    return false;
+  }
+  for (int i = 0; i < kNumInputs; ++i) {
+    if (input_routing_[i] == tag_id) {
+      return true;
+    }
+  }
+  for (int i = 0; i < kNumOutputs; ++i) {
+    if (output_routing_[i] == tag_id) {
+      return true;
+    }
+  }
+  return false;
+}
+
 void SignalBroker::ReadHardwareInputs(HardwareInterface& hw) {
   // Read and scale 4 Thermocouples (channels 0 to 3).
   // Full scale is declared once in SignalBroker.h; see the contract note there.

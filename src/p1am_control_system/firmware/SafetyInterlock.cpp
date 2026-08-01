@@ -24,12 +24,33 @@ void SafetyInterlock::Reset() {
   }
 }
 
+bool SafetyInterlock::IsLimitEffective(float limit) {
+  if (!std::isfinite(limit)) {
+    return false;
+  }
+  // Matches the broker's tag domain; see SignalBroker::SetTag.
+  return limit >= 0.0f && limit <= 100.0f;
+}
+
 void SafetyInterlock::Evaluate(SignalBroker& broker, HardwareInterface& hw) {
   bool trip_detected = false;
 
   for (int i = 0; i < SignalBroker::kNumTags; ++i) {
+    // An unrouted tag holds 0.0 and is not a measurement of anything. The
+    // stock config writes a lolo floor to all 32 tags, so evaluating unrouted
+    // tags latched the plant off the moment that config was deployed.
+    if (!broker.IsTagRouted(i)) {
+      continue;
+    }
     float val = broker.GetTag(i);
-    if (val > high_limits_[i] || val < low_limits_[i]) {
+    // Trip on the hihi/lolo tier. A limit outside the tag domain is either the
+    // "never trip" sentinel or an unreachable entry; skip it either way rather
+    // than comparing against a threshold that can never be crossed.
+    if (IsLimitEffective(hihi_limits_[i]) && val >= hihi_limits_[i]) {
+      trip_detected = true;
+      break;
+    }
+    if (IsLimitEffective(lolo_limits_[i]) && val <= lolo_limits_[i]) {
       trip_detected = true;
       break;
     }

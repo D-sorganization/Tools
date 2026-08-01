@@ -15,6 +15,7 @@
 #include "PIDController.h"
 #include "SafetyInterlock.h"
 #include "StorageManager.h"
+#include "CommsWatchdog.h"
 
 // Helper to check approximate equality for floats
 bool FloatEquals(float a, float b, float epsilon = 0.001f) {
@@ -115,9 +116,13 @@ void TestSafetyInterlock() {
   broker.SetOutputRouting(0, 10);
   broker.SetTag(10, 80.0f);
 
-  // Set limits for Tag 5
-  interlock.SetHighLimit(5, 75.0f);
-  interlock.SetLowLimit(5, 10.0f);
+  // Tag 5 must be routed to be evaluated at all (issue #4001).
+  broker.SetInputRouting(0, 5);
+
+  // Set the trip band for Tag 5. This test previously used the low/high pair;
+  // those are the warning tier and no longer trip (issue #4001).
+  interlock.SetHihiLimit(5, 75.0f);
+  interlock.SetLoloLimit(5, 10.0f);
 
   // Tag 5 is 50.0 (OK)
   broker.SetTag(5, 50.0f);
@@ -288,6 +293,225 @@ void TestSoftFailRuntimeContracts() {
   std::cout << "TestSoftFailRuntimeContracts PASSED!" << std::endl;
 }
 
+// --------------------------------------------------------------------------
+// Safety regressions (issues #3999, #4001, #4002, #4032)
+// --------------------------------------------------------------------------
+
+// #4001: the trip must fire on the HIHI/LOLO tier, not on low/high.
+// low/high is the SCADA layer's severity-1 *warning* band; tripping the plant
+// on a warning is what made the stock config unrunnable.
+void TestInterlockTripsOnHihiLoloNotHighLow() {
+  std::cout << "Running TestInterlockTripsOnHihiLoloNotHighLow..." << std::endl;
+  MockHardware hw;
+  SignalBroker broker;
+  SafetyInterlock interlock;
+
+  // Route tag 5 as a measurement so it is eligible for evaluation.
+  broker.SetInputRouting(0, 5);
+  broker.SetOutputRouting(0, 10);
+  broker.SetTag(10, 80.0f);
+
+  interlock.SetLoloLimit(5, 2.0f);
+  interlock.SetLowLimit(5, 10.0f);
+  interlock.SetHighLimit(5, 90.0f);
+  interlock.SetHihiLimit(5, 95.0f);
+
+  // Inside the warning band (above high, below hihi): must NOT trip.
+  broker.SetTag(5, 92.0f);
+  interlock.Evaluate(broker, hw);
+  assert(!interlock.IsTripped());
+  assert(!hw.GetInhibitActive());
+
+  // Below low but above lolo: still a warning, must NOT trip.
+  broker.SetTag(5, 5.0f);
+  interlock.Evaluate(broker, hw);
+  assert(!interlock.IsTripped());
+
+  // Above hihi: MUST trip.
+  broker.SetTag(5, 96.0f);
+  interlock.Evaluate(broker, hw);
+  assert(interlock.IsTripped());
+  assert(hw.GetInhibitActive());
+  assert(FloatEquals(hw.GetAnalogOutput(0), 0.0f));
+
+  std::cout << "TestInterlockTripsOnHihiLoloNotHighLow PASSED!" << std::endl;
+}
+
+// #4001: an unrouted tag sits at 0.0 and is not a process measurement. The
+// stock config writes lolo=0/low=5 to all 32 tags, so evaluating unrouted tags
+// latched the plant off the moment that config was deployed.
+void TestInterlockIgnoresUnroutedTags() {
+  std::cout << "Running TestInterlockIgnoresUnroutedTags..." << std::endl;
+  MockHardware hw;
+  SignalBroker broker;
+  SafetyInterlock interlock;
+
+  // Stock-config shape: a lolo floor on every tag.
+  for (int i = 0; i < SignalBroker::kNumTags; ++i) {
+    interlock.SetLoloLimit(i, 5.0f);
+    interlock.SetHihiLimit(i, 95.0f);
+  }
+
+  // Only tag 4 is routed, and it reads healthily.
+  broker.SetInputRouting(0, 4);
+  broker.SetTag(4, 50.0f);
+
+  interlock.Evaluate(broker, hw);
+
+  // Every other tag is unrouted and reads 0.0 (below the 5.0 lolo) but must
+  // not be able to trip the plant.
+  assert(!interlock.IsTripped());
+  assert(!hw.GetInhibitActive());
+
+  std::cout << "TestInterlockIgnoresUnroutedTags PASSED!" << std::endl;
+}
+
+// #4001: ClearTrip must actually be reachable and must restore control once
+// the condition is gone -- and must NOT clear while the condition persists.
+void TestInterlockTripIsRecoverable() {
+  std::cout << "Running TestInterlockTripIsRecoverable..." << std::endl;
+  MockHardware hw;
+  SignalBroker broker;
+  SafetyInterlock interlock;
+
+  broker.SetInputRouting(0, 5);
+  broker.SetOutputRouting(0, 10);
+  interlock.SetHihiLimit(5, 95.0f);
+
+  broker.SetTag(5, 99.0f);
+  interlock.Evaluate(broker, hw);
+  assert(interlock.IsTripped());
+
+  // Clearing while still over-limit must re-trip on the very next scan.
+  interlock.ClearTrip();
+  interlock.Evaluate(broker, hw);
+  assert(interlock.IsTripped());
+
+  // With the condition removed, clearing sticks and outputs are driven again.
+  broker.SetTag(5, 50.0f);
+  interlock.ClearTrip();
+  broker.SetTag(10, 42.0f);
+  interlock.Evaluate(broker, hw);
+  assert(!interlock.IsTripped());
+  assert(!hw.GetInhibitActive());
+  assert(FloatEquals(hw.GetAnalogOutput(0), 42.0f));
+
+  std::cout << "TestInterlockTripIsRecoverable PASSED!" << std::endl;
+}
+
+// #4002: zeroing the setpoint is the only part of the host E-stop that reaches
+// the plant. If the integral survives, the AO holds full output for tens of
+// seconds after a commanded emergency stop.
+void TestPidResetsIntegralOnSetpointChange() {
+  std::cout << "Running TestPidResetsIntegralOnSetpointChange..." << std::endl;
+  SignalBroker broker;
+  PIDController pid;
+
+  pid.SetPvTagId(3);
+  pid.SetCvTagId(4);
+  pid.SetSetpoint(100.0f);
+  pid.SetKp(0.0f);
+  pid.SetKi(1.0f);  // integral-only, so the wind-up is unambiguous
+  pid.SetKd(0.0f);
+
+  // Wind the integral to its clamp against a large sustained error.
+  broker.SetTag(3, 0.0f);
+  for (int i = 0; i < 200; ++i) {
+    pid.Compute(broker, 0.1f);
+  }
+  assert(FloatEquals(broker.GetTag(4), 100.0f));
+
+  // Commanding the setpoint to zero must drop the output on the NEXT scan,
+  // not decay towards it over many seconds.
+  pid.SetSetpoint(0.0f);
+  pid.Compute(broker, 0.1f);
+  assert(FloatEquals(broker.GetTag(4), 0.0f));
+
+  std::cout << "TestPidResetsIntegralOnSetpointChange PASSED!" << std::endl;
+}
+
+// #4002: a tripped plant must not wind up a controller that would then slam
+// the output the moment the trip clears.
+void TestPidDoesNotIntegrateWhileTripped() {
+  std::cout << "Running TestPidDoesNotIntegrateWhileTripped..." << std::endl;
+  SignalBroker broker;
+  PIDController pid;
+
+  pid.SetPvTagId(3);
+  pid.SetCvTagId(4);
+  pid.SetSetpoint(100.0f);
+  pid.SetKp(0.0f);
+  pid.SetKi(1.0f);
+  pid.SetKd(0.0f);
+  broker.SetTag(3, 0.0f);
+
+  pid.Hold();  // interlock tripped: freeze the loop and shed accumulated state
+  for (int i = 0; i < 200; ++i) {
+    pid.Compute(broker, 0.1f);
+  }
+  assert(FloatEquals(broker.GetTag(4), 0.0f));
+
+  // Releasing the hold starts from a clean integral, so the first scan after
+  // recovery contributes one step -- not 200 scans' worth.
+  pid.Release();
+  pid.Compute(broker, 0.1f);
+  assert(FloatEquals(broker.GetTag(4), 10.0f));  // ki * error * dt = 1*100*0.1
+
+  std::cout << "TestPidDoesNotIntegrateWhileTripped PASSED!" << std::endl;
+}
+
+// #3999: no dead-man timer meant the heater relay and analog outputs held
+// their last command forever once the host died.
+void TestCommsWatchdog() {
+  std::cout << "Running TestCommsWatchdog..." << std::endl;
+  CommsWatchdog watchdog(2000);  // 2 s against a nominal 100 ms scan
+
+  watchdog.Begin(1000);
+  assert(!watchdog.IsExpired(1000));
+  assert(!watchdog.IsExpired(2999));
+
+  // Exactly at the timeout counts as expired -- fail safe, not fail late.
+  assert(watchdog.IsExpired(3000));
+  assert(watchdog.IsExpired(50000));
+
+  // Traffic re-arms it.
+  watchdog.RecordActivity(50000);
+  assert(!watchdog.IsExpired(51999));
+  assert(watchdog.IsExpired(52000));
+
+  // millis() wraps at ~49.7 days. Unsigned subtraction must carry the
+  // watchdog across the wrap rather than disarming it for another 49 days.
+  const unsigned long kNearWrap = 0xFFFFFF00UL;
+  watchdog.RecordActivity(kNearWrap);
+  assert(!watchdog.IsExpired(kNearWrap + 1999UL));
+  assert(watchdog.IsExpired(kNearWrap + 2000UL));  // wraps past zero
+
+  std::cout << "TestCommsWatchdog PASSED!" << std::endl;
+}
+
+// #4032: broker tags are clamped to [0,100], so a limit above 100 can never be
+// crossed and its trip is silently dead. The firmware must be able to tell a
+// deliberate "disabled" sentinel from an unreachable operator entry.
+void TestInterlockLimitDomain() {
+  std::cout << "Running TestInterlockLimitDomain..." << std::endl;
+
+  // The disabled sentinels are legitimate: they mean "never trip".
+  assert(SafetyInterlock::IsLimitEffective(99999.0f) == false);
+  assert(SafetyInterlock::IsLimitEffective(-99999.0f) == false);
+
+  // Anything inside the broker's tag domain is a real, reachable limit.
+  assert(SafetyInterlock::IsLimitEffective(0.0f));
+  assert(SafetyInterlock::IsLimitEffective(95.0f));
+  assert(SafetyInterlock::IsLimitEffective(100.0f));
+
+  // A limit outside the tag domain but not a sentinel is unreachable -- e.g.
+  // an operator entering 900 meaning 900 degC on a percent-scaled tag.
+  assert(SafetyInterlock::IsLimitEffective(900.0f) == false);
+  assert(SafetyInterlock::IsLimitEffective(-5.0f) == false);
+
+  std::cout << "TestInterlockLimitDomain PASSED!" << std::endl;
+}
+
 int main() {
   std::cout << "=== DCS CORE FIRMWARE TDD TEST RUNNER ===" << std::endl;
   TestSignalBroker();
@@ -295,6 +519,13 @@ int main() {
   TestSafetyInterlock();
   TestStorageManager();
   TestSoftFailRuntimeContracts();
+  TestInterlockTripsOnHihiLoloNotHighLow();
+  TestInterlockIgnoresUnroutedTags();
+  TestInterlockTripIsRecoverable();
+  TestPidResetsIntegralOnSetpointChange();
+  TestPidDoesNotIntegrateWhileTripped();
+  TestCommsWatchdog();
+  TestInterlockLimitDomain();
   std::cout << "All C++ Core Firmware Tests Passed Successfully!" << std::endl;
   return 0;
 }
