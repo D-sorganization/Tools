@@ -35,13 +35,55 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-07-31 P1AM Control System PID Tuning and MPC Control Math
+
+- `src/p1am_control_system/backend/pid_tuning.py` no longer clamps recommended
+  PID gains to be non-negative. A reverse-acting process (identified `Kp < 0`)
+  tunes to negative Cohen-Coon gains; these are now reported with their sign
+  intact and `status="warning"`, with a message instructing the operator to
+  configure the loop reverse-acting before applying them. Previously the clamp
+  turned such a recommendation into `kp=ki=kd=0` and still reported success,
+  presenting an open-loop controller as a tuned one.
+- FOPDT identification now uses the published two-point 28.3%/63.2% pair with
+  `tau = 1.5*(t63 - t28)` and `theta = t63 - tau`. The former 10%/63.2% pair
+  biased dead time high and the time constant low by roughly `0.105*tau` each.
+- A tuning result is reported as `status="success"` only when it is
+  trustworthy. The identification is rejected outright, with zero gains, when
+  the first threshold crossing falls within two sample intervals of the step
+  (dead time unresolvable at the recorded sample rate), when both thresholds
+  are crossed on the same sample, when the process value never responds or
+  never crosses the thresholds, or when the process gain is too small to
+  invert. It is downgraded to `status="warning"` while still reporting gains
+  when the process is reverse-acting, when the dead time lands on the
+  minimum-time floor, when the step was too small to measure, when the
+  dead-time ratio falls outside the Cohen-Coon validity band, or when a gain
+  exceeds the sanity bound. Because `Kc` scales with `tau/theta`, an
+  under-resolved dead time previously inflated the recommendation by an order
+  of magnitude and offered it to the PLC as a success.
+- `src/p1am_control_system/backend/mpc.py` solves the Dynamic Matrix Control
+  problem for control _moves_ rather than absolute control values. The free
+  response already contains the full predicted effect of holding the current
+  CV, so optimising over the absolute CV counted the current input twice and
+  left the MPC trace of `/api/mpc/simulate` with a large permanent offset at
+  any nonzero operating point. The solver now starts from zero moves, bounds
+  the moves, and the caller integrates and clamps to the 0-100% output range.
+  At steady state on setpoint the optimal move is zero.
+- Every non-success tuning response now carries a diagnostic `message`
+  naming the specific guard that fired and, where applicable, the measured
+  quantity that failed it (crossing time, sample interval, dead-time ratio,
+  gain magnitude). Operators previously saw only a generic success string,
+  so a rejected or downgraded identification was indistinguishable from a
+  good one at the API surface.
+- The Cohen-Coon coefficient formulas themselves are unchanged and remain as
+  published in Cohen & Coon (1953).
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
