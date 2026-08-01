@@ -36,6 +36,34 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-07-31 P1AM Temperature Controller Split Into Focused Modules
+
+- `src/p1am_control_system/frontend/src/components/TemperatureControl.tsx` was
+  1975 lines — 475 over the repo's 1500-line source budget — so the
+  `fleet-fast-guardrails` hook rejected any commit touching it. The heater
+  screen was therefore the one operator surface that could not be corrected
+  without first being restructured. It is now the container only: it owns the
+  controller state, the rolling trend buffer and every `/api/temperature/*`
+  call, and renders prop-driven sections (the shape PR #4053 used for
+  `TuningPanel`). No behaviour changes.
+- The extracted modules are `TemperatureTrend.tsx` (the SVG trend and its own
+  view state), `TemperatureStatusHeader.tsx`, `ThermocoupleSelector.tsx`,
+  `TemperatureConfigPanel.tsx`, `HeaterStartStopButton.tsx`, and the pure
+  sample/readout math in `lib/temperatureTrend.ts`. Every file is now well
+  under the budget, and the pure helpers are testable without a component
+  import.
+- The Start/Stop command button existed as two byte-identical copies on the
+  same screen (status header and setpoint card). On a control that energizes a
+  heater, that is two buttons that could come to disagree about whether a
+  command is safe to send; there is now one component, with the header/setpoint
+  variants differing only by an appended CSS class.
+- `TemperatureControl.recallSetpointText` now delegates to the shared
+  `seedDraftText` rule in `lib/operatorDraft.ts` instead of carrying its own
+  copy of the operator-ownership decision; the duplication had been left in
+  place only because the file could not be edited. The heater's domain types
+  moved to `src/types.ts`, which removes the import cycle that had
+  `useTelemetryStream` importing `TemperatureStatus` from a component.
+
 ### 2026-07-31 P1AM Operator HMI Truthfulness and Setpoint Ownership
 
 - The HMI reports telemetry liveness as a **data age**, not as a boolean. Every

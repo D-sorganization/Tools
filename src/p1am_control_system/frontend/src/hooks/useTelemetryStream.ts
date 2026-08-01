@@ -12,7 +12,7 @@ import {
   type DataFreshness,
 } from "../lib/dataAge";
 import type { PowerSupplyStatus } from "../components/PowerSupplyControl";
-import type { TemperatureStatus } from "../components/TemperatureControl";
+import type { TemperatureStatus } from "../types";
 import type { AlicatMFCState, ActiveAlarm } from "../api/schemas";
 
 /**

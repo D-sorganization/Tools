@@ -4,146 +4,33 @@ import {
   startStopView,
   setpointOutcome,
   resolveStartTarget,
+  hasHighHighTrip,
 } from "../lib/heaterControls";
-import {
-  type AxisRange,
-  defaultAxisRange,
-  resolveRange,
-  axisTicks,
-} from "../lib/trendAxis";
-import {
-  MAX_TREND_SAMPLES,
-  MAX_WINDOW_SECONDS,
-  TREND_BACKFILL_MAX_POINTS,
-  downsample,
-  formatWindow,
-  formatClock,
-  timeSeriesPath,
-  timeToX,
-} from "../lib/trendTime";
-import { nearestIndexByX } from "../lib/plotCursor";
-import {
-  fitSeries,
-  NO_FIT_ID,
-  pointsInLastWindow,
-  heatUpRateFromFit,
-  formatHeatUpRate,
-  type FitPoint,
-} from "../lib/curveFit";
-import { useTrendBackfill } from "../hooks/useTrendBackfill";
-import { useTrendViewport } from "../hooks/useTrendViewport";
-import { useNonPassiveWheel } from "../hooks/useNonPassiveWheel";
-import { TrendAxisControls } from "./TrendAxisControls";
-import { TrendTimeControls } from "./TrendTimeControls";
-import { TrendFitControls } from "./TrendFitControls";
-import {
-  TrendTimeAxis,
-  TrendFitOverlay,
-  TrendCrosshair,
-  type CrosshairSeries,
-} from "./TrendPlotOverlays";
+import { MAX_TREND_SAMPLES } from "../lib/trendTime";
+import { seedDraftText } from "../lib/operatorDraft";
+import type { TempSample } from "../lib/temperatureTrend";
 import { ExportButton } from "./ExportButton";
-import { SnapshotButton } from "./SnapshotButton";
 import { CollapsibleSection } from "./CollapsibleSection";
-import { EditableValue } from "./EditableValue";
+import { HeaterStartStopButton } from "./HeaterStartStopButton";
+import { TemperatureConfigPanel } from "./TemperatureConfigPanel";
+import { TemperatureStatusHeader } from "./TemperatureStatusHeader";
+import { TempTrend } from "./TemperatureTrend";
+import { ThermocoupleSelector } from "./ThermocoupleSelector";
+import type { TcType, TemperatureConfig, TemperatureStatus } from "../types";
 import "./TemperatureControl.css";
+
+// Re-exported so existing importers of these types keep working now that they
+// live in the shared types module (type-only: erased at build time).
+export type {
+  TcType,
+  ThermocoupleChannel,
+  TemperatureConfig,
+  TemperatureStatus,
+} from "../types";
 
 // Rolling trend buffer: deep enough for the longest selectable window
 // (up to 1 h); the plot slices to the chosen window by real time.
 const TREND_MAX_POINTS = MAX_TREND_SAMPLES;
-const DEFAULT_WINDOW_SECONDS = 3600; // 60 minutes
-
-/** One temperature sample: epoch-ms timestamp + BOTH thermocouple readings (°C,
- * null when a channel has not reported) + the heater relay state at that instant.
- * Timestamping the buffer makes the window, axis, and fit slope accurate at any
- * poll rate; keeping both channels lets the trend plot K and R together (and spot
- * a dead sensor) even while only one is controlling. */
-interface TempSample {
-  t: number;
-  /** Latest Type-K reading (°C), or null when the channel has not reported. */
-  k: number | null;
-  /** Latest Type-R reading (°C), or null when the channel has not reported. */
-  r: number | null;
-  /** Heater relay closed at this sample (for the heater-status band). */
-  relayOn: boolean;
-}
-
-/** Pick the reading of one thermocouple channel from a sample (LOD: the trend
- * math never reaches into the sample shape directly). */
-function tcSampleValue(sample: TempSample, tcType: TcType): number | null {
-  return tcType === "K" ? sample.k : sample.r;
-}
-
-/**
- * Format a single live thermocouple reading for the selector readout.
- *
- * Pure so it can be unit-tested without rendering. Returns the value to one
- * decimal with a "°C" suffix, or an em-dash placeholder when the channel has
- * not reported (null/undefined) or is not a finite number (e.g. NaN from a
- * stuck/broken sensor).
- */
-// Small pure helper co-located with the component it serves so it can be
-// unit-tested; not a component, so it never participates in fast refresh.
-// eslint-disable-next-line react-refresh/only-export-components
-export function formatTcReadout(value: number | null | undefined): string {
-  if (typeof value !== "number" || !Number.isFinite(value)) return "—";
-  return `${value.toFixed(1)} °C`;
-}
-
-/** The text a heat-up-rate readout box should show for the current selection. */
-export interface HeatUpRateReadout {
-  /** Ramp rate line, e.g. "+12.3 °C/min · +740 °C/hr" or "—" when no fit. */
-  rate: string;
-  /** Fit-quality line, e.g. "R² = 0.987", or "" when there is no fit. */
-  r2: string;
-  /** True when a linear fit was found over the windowed active-TC series. */
-  hasFit: boolean;
-}
-
-/**
- * Build the heat-up-rate readout from the rolling buffer + operator choices.
- *
- * Pure so it can be unit-tested without rendering. It projects the ACTIVE
- * thermocouple's readings into {@link FitPoint}s (x = epoch ms, y = °C), keeps
- * only the last `fitWindowMin` minutes via {@link pointsInLastWindow}, fits with
- * the chosen method via {@link fitSeries}, then formats the ramp rate and R²
- * using the shared curveFit helpers (DRY — no rate/window math is duplicated
- * here). Null readings are dropped so a gap never poisons the regression.
- *
- * Returns a neutral placeholder (`rate: "—"`, empty `r2`, `hasFit: false`) when
- * no method is selected, there are too few points, or the fit is not linear.
- *
- * @param samples - the rolling trend buffer (ascending timestamps).
- * @param activeTcType - which channel is controlling ("K" | "R").
- * @param fitMethodId - selected curveFit method id (NO_FIT_ID for none).
- * @param fitWindowMin - regression look-back in MINUTES (<= 0 means "no window").
- * @throws TypeError if `fitWindowMin` is not a finite number.
- */
-// eslint-disable-next-line react-refresh/only-export-components
-export function heatUpRateReadout(
-  samples: TempSample[],
-  activeTcType: TcType,
-  fitMethodId: string,
-  fitWindowMin: number,
-): HeatUpRateReadout {
-  if (typeof fitWindowMin !== "number" || !Number.isFinite(fitWindowMin)) {
-    throw new TypeError("heatUpRateReadout: fitWindowMin must be a finite number");
-  }
-  const points: FitPoint[] = samples
-    .map((sample) => ({ x: sample.t, y: tcSampleValue(sample, activeTcType) }))
-    .filter((p): p is FitPoint => typeof p.y === "number" && Number.isFinite(p.y));
-  const windowed = pointsInLastWindow(points, fitWindowMin * 60000);
-  const fit = fitSeries(windowed, fitMethodId);
-  if (!fit) {
-    return { rate: "—", r2: "", hasFit: false };
-  }
-  // x is in ms (Date.now()), so msPerXUnit = 1.
-  return {
-    rate: formatHeatUpRate(heatUpRateFromFit(fit, 1)),
-    r2: `R² = ${fit.r2.toFixed(3)}`,
-    hasFit: true,
-  };
-}
 
 /**
  * Temperature controller tab.
@@ -166,64 +53,13 @@ export function heatUpRateReadout(
  *    pressing Enter (or the ± steps) — there is no separate apply step. While
  *    stopped a typed target is staged and takes effect on Start (server enforces
  *    that a setpoint only applies once the controller is started).
+ *
+ * This file owns the controller's state and every REST call. The screen's
+ * sections — status header, thermocouple selector, trend and config editor —
+ * are prop-driven components (see the TuningPanel split, #4053); the file was
+ * 1975 lines, 475 over the repo's source budget, which made it uneditable
+ * without tripping the file-size guardrail.
  */
-
-/** Thermocouple type selectable for the heater control. */
-export type TcType = "K" | "R";
-
-export interface ThermocoupleChannel {
-  tag: string;
-  full_scale_c: number;
-  label: string;
-}
-
-export interface TemperatureConfig {
-  type_k: ThermocoupleChannel;
-  type_r: ThermocoupleChannel;
-  active_tc_type: TcType;
-  /** Derived (read-only) from the active channel — see backend computed fields. */
-  temp_tag: string;
-  temp_full_scale_c: number;
-  active_tc_label: string;
-  setpoint_min_c: number;
-  setpoint_max_c: number;
-  deadband_c: number;
-  min_on_time_s: number;
-  min_off_time_s: number;
-  hh_limit_c: number;
-  heater_label: string;
-}
-
-export interface TemperatureStatus {
-  state: "idle" | "armed" | "running" | "tripped";
-  permissive: boolean;
-  setpoint_c: number;
-  measured_temp_c: number;
-  relay_on: boolean;
-  trips: string[];
-  hh_limit_c: number;
-  deadband_c: number;
-  min_on_time_s: number;
-  min_off_time_s: number;
-  active_tc_type: TcType;
-  active_tc_label: string;
-  /** Operator's setpoint from the last session, recalled by the backend on
-   * restart (null when none was ever persisted). Used to pre-fill the entry. */
-  last_setpoint_c?: number | null;
-  /** Latest type-K reading (deg C), regardless of which TC is controlling, so
-   * the HMI can show/plot both channels. null/undefined before the first scan. */
-  type_k_temp_c?: number | null;
-  /** Latest type-R reading (deg C), regardless of which TC is controlling, so
-   * the HMI can show/plot both channels. null/undefined before the first scan. */
-  type_r_temp_c?: number | null;
-  /** True while the deglitch filter is holding the control thermocouple's
-   * last-good value through a live dropout — a hint the control sensor is
-   * intermittently faulting (a sustained fault escalates to a TC_FAULT trip). */
-  control_sensor_holding?: boolean;
-  /** P1-04THM open-circuit fail direction. True = high-side (an open reads full
-   * scale -> heater shuts off, fail-safe); false = low-side (an open reads cold). */
-  burnout_high_side?: boolean;
-}
 
 /**
  * Decide the text to pre-fill the setpoint entry with on recall.
@@ -232,6 +68,10 @@ export interface TemperatureStatus {
  * (one-decimal) string when a persisted last setpoint should be shown, or
  * `null` when nothing should change — i.e. the operator has already typed this
  * session (`operatorTouched`) or the recalled value is not a finite number.
+ *
+ * Thin wrapper over the shared {@link seedDraftText} rule (#4013, #4020): this
+ * entry is one of several that must show the device's value until the operator
+ * takes ownership, and the policy now lives in exactly one place.
  *
  * @param lastSetpointC - recalled last-session setpoint (may be null/undefined).
  * @param operatorTouched - true once the operator has edited the field.
@@ -244,38 +84,12 @@ export function recallSetpointText(
   lastSetpointC: number | null | undefined,
   operatorTouched: boolean,
 ): string | null {
-  if (typeof operatorTouched !== "boolean") {
-    throw new TypeError("operatorTouched must be a boolean");
-  }
-  if (operatorTouched) return null;
-  if (typeof lastSetpointC !== "number" || !Number.isFinite(lastSetpointC)) {
-    return null;
-  }
-  return lastSetpointC.toFixed(1);
+  return seedDraftText(lastSetpointC, operatorTouched, 1);
 }
 
 interface Props {
   /** Status pushed each scan via the parent's WebSocket; undefined while waiting. */
   liveStatus?: TemperatureStatus;
-}
-
-const STATE_LABELS: Record<TemperatureStatus["state"], string> = {
-  idle: "IDLE",
-  armed: "ARMED",
-  running: "RUNNING",
-  tripped: "TRIPPED",
-};
-
-const STATE_HINTS: Record<TemperatureStatus["state"], string> = {
-  idle: "stopped · press Start",
-  armed: "started · set a target",
-  running: "heating to setpoint",
-  tripped: "latched · acknowledge",
-};
-
-/** True when any trip name looks like a high-high temperature cutoff. */
-function hasHighHighTrip(trips: string[]): boolean {
-  return trips.some((t) => /(hh|high.?high|over.?temp)/i.test(t));
 }
 
 const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
@@ -687,99 +501,21 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
   return (
     <div className="tc">
       {/* ---- Status header ---- */}
-      <div className={`tc-status is-${state}`}>
-        <div className="tc-state">
-          <span className="tc-state-badge">{STATE_LABELS[state]}</span>
-          <span className="tc-state-sub">{STATE_HINTS[state]}</span>
-        </div>
-
-        <div className="tc-status-metrics">
-          <div className="tc-metric">
-            <span className="tc-metric-label">Measured</span>
-            <span className={`tc-metric-value ${tempWarn ? "is-warning" : ""}`}>
-              {s ? s.measured_temp_c.toFixed(1) : "—"} °C
-            </span>
-          </div>
-          <div className="tc-metric">
-            <span className="tc-metric-label">Setpoint</span>
-            <span className="tc-metric-value">
-              {s ? s.setpoint_c.toFixed(1) : "—"} °C
-            </span>
-          </div>
-          <div className="tc-metric">
-            <span className="tc-metric-label">HH limit</span>
-            <EditableValue
-              className="tc-metric-value is-warning"
-              value={hhLimit}
-              label="High-high cutoff"
-              unit="°C"
-              format={(v) => v.toFixed(0)}
-              min={0}
-              max={config.temp_full_scale_c}
-              step={10}
-              title="High-high cutoff — click to edit"
-              onCommit={commitHhLimit}
-            />
-          </div>
-          <div className="tc-metric">
-            <span className="tc-metric-label">Thermocouple</span>
-            <span className="tc-metric-value">
-              {s?.active_tc_label ?? config.active_tc_label ?? "—"}
-            </span>
-          </div>
-        </div>
-
-        <div className="tc-status-actions">
-          {/* Prominent heater relay indicator */}
-          <div
-            className={`tc-relay ${relayOn ? "is-on" : ""}`}
-            title={`${config.heater_label} relay`}
-            aria-label={`Heater relay ${relayOn ? "on" : "off"}`}
-          >
-            <span className="tc-relay-coil" />
-            <span className="tc-relay-text">
-              HEATER {relayOn ? "ON" : "OFF"}
-            </span>
-          </div>
-
-          {tripped && (
-            <button
-              className={`btn tc-btn-danger ${busy ? "tc-disabled" : ""}`}
-              onClick={acknowledgeTrip}
-              disabled={busy}
-            >
-              Acknowledge Trip
-            </button>
-          )}
-          <button
-            className="tc-permissive"
-            onClick={startStop.command === "start" ? handleStart : handleStop}
-            disabled={busy || startStop.disabled}
-            style={{
-              background:
-                startStop.command === "stop"
-                  ? "var(--color-error)"
-                  : "var(--color-success)",
-              color: "#04141b",
-              borderColor: "transparent",
-            }}
-            title={
-              busy
-                ? "Applying — please wait…"
-                : startStop.command === "start"
-                  ? "Start the heater — arm and heat to the target"
-                  : "Stop the heater — the relay opens immediately"
-            }
-          >
-            <span className="dot" />
-            {busy
-              ? "APPLYING…"
-              : startStop.command === "stop"
-                ? "■ STOP"
-                : "▶ START"}
-          </button>
-        </div>
-      </div>
+      <TemperatureStatusHeader
+        status={s}
+        config={config}
+        state={state}
+        relayOn={relayOn}
+        hhLimit={hhLimit}
+        tempWarn={tempWarn}
+        tripped={tripped}
+        busy={busy}
+        startStop={startStop}
+        onCommitHhLimit={commitHhLimit}
+        onAcknowledgeTrip={acknowledgeTrip}
+        onStart={handleStart}
+        onStop={handleStop}
+      />
 
       {/* ---- Setpoint (prominent, always-visible primary control) ---- */}
       <div className="tc-card tc-setpoint-card">
@@ -821,33 +557,13 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
             </button>
           </div>
 
-          <button
-            className="tc-permissive tc-setpoint-startstop"
-            onClick={startStop.command === "start" ? handleStart : handleStop}
-            disabled={busy || startStop.disabled}
-            style={{
-              background:
-                startStop.command === "stop"
-                  ? "var(--color-error)"
-                  : "var(--color-success)",
-              color: "#04141b",
-              borderColor: "transparent",
-            }}
-            title={
-              busy
-                ? "Applying — please wait…"
-                : startStop.command === "start"
-                  ? "Start the heater — arm and heat to the target"
-                  : "Stop the heater — the relay opens immediately"
-            }
-          >
-            <span className="dot" />
-            {busy
-              ? "APPLYING…"
-              : startStop.command === "stop"
-                ? "■ STOP"
-                : "▶ START"}
-          </button>
+          <HeaterStartStopButton
+            view={startStop}
+            busy={busy}
+            onStart={handleStart}
+            onStop={handleStop}
+            className="tc-setpoint-startstop"
+          />
         </div>
 
         <div className="tc-setpoint-controls">
@@ -920,170 +636,14 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
       </CollapsibleSection>
 
       {/* ---- Thermocouple selector (Type K / Type R) ---- */}
-      <CollapsibleSection
-        className="tc-card"
-        title="Thermocouple — heater temperature source"
-      >
-        <div
-          role="group"
-          aria-label="Thermocouple type"
-          style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}
-        >
-          {(["K", "R"] as const).map((tc) => {
-            const ch = tc === "K" ? config.type_k : config.type_r;
-            const isActive = activeTcType === tc;
-            const reading = tc === "K" ? s?.type_k_temp_c : s?.type_r_temp_c;
-            return (
-              <button
-                key={tc}
-                type="button"
-                onClick={() => !isActive && setActiveTcType(tc)}
-                disabled={busy || isActive}
-                aria-pressed={isActive}
-                title={`${ch.label} on ${ch.tag} — live ${formatTcReadout(reading)}`}
-                style={{
-                  flex: "1 1 0",
-                  minWidth: "8rem",
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "flex-start",
-                  gap: "0.15rem",
-                  padding: "0.5rem 0.75rem",
-                  borderRadius: "6px",
-                  cursor: isActive ? "default" : "pointer",
-                  border: "2px solid",
-                  borderColor: isActive ? "var(--accent-cyan)" : "var(--panel-border)",
-                  background: isActive ? "var(--cell-hover-bg)" : "var(--input-bg)",
-                  color: isActive ? "var(--accent-cyan)" : "var(--text-secondary)",
-                }}
-              >
-                <span
-                  style={{
-                    display: "flex",
-                    alignItems: "baseline",
-                    justifyContent: "space-between",
-                    gap: "0.5rem",
-                    width: "100%",
-                  }}
-                >
-                  <strong style={{ fontSize: "0.95rem" }}>
-                    Type {tc}
-                    {isActive ? " ✓" : ""}
-                  </strong>
-                  <span
-                    className="tc-tc-reading"
-                    aria-label={`Type ${tc} live reading`}
-                    style={{
-                      fontFamily: "var(--font-mono)",
-                      fontSize: "1.05rem",
-                      fontWeight: 700,
-                      // Emphasize the active channel; dim the other so a dead/stuck
-                      // sensor is still visible but reads as secondary.
-                      color: isActive ? "var(--accent-cyan)" : "var(--text-primary)",
-                      opacity: isActive ? 1 : 0.75,
-                    }}
-                  >
-                    {formatTcReadout(reading)}
-                  </span>
-                </span>
-                <span style={{ fontSize: "0.7rem", color: "var(--text-muted)" }}>
-                  {ch.label} · {ch.tag}
-                  {isActive ? " · controlling" : ""}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-        <p
-          style={{
-            fontSize: "0.72rem",
-            color: "var(--text-secondary)",
-            margin: "0.5rem 0 0",
-            lineHeight: 1.5,
-          }}
-        >
-          The selected thermocouple drives <strong>all</strong> heater control —
-          setpoint band, HH cutoff and trends. Switching re-clamps the limits to
-          the chosen channel's range. (Type R is wired to a separate THM channel.)
-        </p>
-
-        {/* ---- Open-circuit (burnout) fail direction ---- */}
-        <div
-          style={{
-            marginTop: "0.85rem",
-            paddingTop: "0.75rem",
-            borderTop: "1px solid var(--panel-border)",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: "0.5rem",
-              flexWrap: "wrap",
-            }}
-          >
-            <span style={{ fontSize: "0.78rem", fontWeight: 600 }}>
-              On a broken thermocouple, read:
-            </span>
-            <div
-              style={{
-                display: "inline-flex",
-                borderRadius: "6px",
-                overflow: "hidden",
-                border: "1px solid var(--panel-border)",
-              }}
-            >
-              {(
-                [
-                  { high: true, label: "Hot (fail-safe)" },
-                  { high: false, label: "Cold" },
-                ] as const
-              ).map(({ high, label }) => {
-                const active = (s?.burnout_high_side ?? true) === high;
-                return (
-                  <button
-                    key={label}
-                    type="button"
-                    disabled={busy || active}
-                    onClick={() => setBurnoutMode(high)}
-                    aria-pressed={active}
-                    style={{
-                      border: "none",
-                      padding: "0.3rem 0.75rem",
-                      fontSize: "0.75rem",
-                      fontWeight: 600,
-                      cursor: active ? "default" : "pointer",
-                      background: active
-                        ? high
-                          ? "var(--accent-cyan)"
-                          : "var(--accent-amber, #f59e0b)"
-                        : "var(--input-bg)",
-                      color: active ? "#0f172a" : "var(--text-secondary)",
-                    }}
-                  >
-                    {label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-          <p
-            style={{
-              fontSize: "0.7rem",
-              color: "var(--text-muted)",
-              margin: "0.45rem 0 0",
-              lineHeight: 1.5,
-            }}
-          >
-            Sets the P1-04THM open-circuit (burnout) direction. <strong>Hot</strong>{" "}
-            makes an open sensor read full-scale so the heater shuts off
-            (recommended). <strong>Cold</strong> makes it read 0&nbsp;°C. The deglitch
-            filter rides out brief dropouts either way and trips on a sustained fault.
-          </p>
-        </div>
-      </CollapsibleSection>
+      <ThermocoupleSelector
+        config={config}
+        status={s}
+        activeTcType={activeTcType}
+        busy={busy}
+        onSelectTcType={setActiveTcType}
+        onSetBurnoutMode={setBurnoutMode}
+      />
 
       {/* ---- High-high cutoff banner ---- */}
       {hhTripped && (
@@ -1126,103 +686,12 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
       </CollapsibleSection>
 
       {/* ---- Advanced config ---- */}
-      <details className="tc-card tc-config">
-        <summary>Calibration &amp; limits</summary>
-
-        <p className="tc-hint" style={{ marginTop: "0.8rem" }}>
-          The thermocouple module reports temperature directly. These limits set
-          the safe operating envelope — the server clamps setpoints to the band and
-          latches the heater OFF at the high-high cutoff.
-        </p>
-
-        <div className="tc-config-grid">
-          <ConfigField
-            label="Deadband (°C, ± half-band)"
-            value={configDraft.deadband_c}
-            onChange={(v) => setConfigDraft({ ...configDraft, deadband_c: v })}
-          />
-          <ConfigField
-            label="Min ON time (s)"
-            value={configDraft.min_on_time_s}
-            onChange={(v) => setConfigDraft({ ...configDraft, min_on_time_s: v })}
-          />
-          <ConfigField
-            label="Min OFF time (s)"
-            value={configDraft.min_off_time_s}
-            onChange={(v) => setConfigDraft({ ...configDraft, min_off_time_s: v })}
-          />
-          <ConfigField
-            label="High-high cutoff (°C)"
-            value={configDraft.hh_limit_c}
-            onChange={(v) => setConfigDraft({ ...configDraft, hh_limit_c: v })}
-          />
-          <ConfigField
-            label="Max setpoint (°C)"
-            value={configDraft.setpoint_max_c}
-            onChange={(v) => setConfigDraft({ ...configDraft, setpoint_max_c: v })}
-          />
-          <ConfigField
-            label="Type-K tag"
-            value={configDraft.type_k.tag}
-            stringMode
-            onChange={(v) =>
-              setConfigDraft({
-                ...configDraft,
-                type_k: { ...configDraft.type_k, tag: v as unknown as string },
-              })
-            }
-          />
-          <ConfigField
-            label="Type-K full scale (°C)"
-            value={configDraft.type_k.full_scale_c}
-            onChange={(v) =>
-              setConfigDraft({
-                ...configDraft,
-                type_k: { ...configDraft.type_k, full_scale_c: v },
-              })
-            }
-          />
-          <ConfigField
-            label="Type-R tag"
-            value={configDraft.type_r.tag}
-            stringMode
-            onChange={(v) =>
-              setConfigDraft({
-                ...configDraft,
-                type_r: { ...configDraft.type_r, tag: v as unknown as string },
-              })
-            }
-          />
-          <ConfigField
-            label="Type-R full scale (°C)"
-            value={configDraft.type_r.full_scale_c}
-            onChange={(v) =>
-              setConfigDraft({
-                ...configDraft,
-                type_r: { ...configDraft.type_r, full_scale_c: v },
-              })
-            }
-          />
-          <ConfigField
-            label="Heater label"
-            value={configDraft.heater_label}
-            stringMode
-            onChange={(v) =>
-              setConfigDraft({ ...configDraft, heater_label: v as unknown as string })
-            }
-          />
-        </div>
-
-        <div style={{ marginTop: "1rem" }}>
-          <button
-            className={`btn ${busy ? "tc-disabled" : ""}`}
-            onClick={saveConfig}
-            disabled={busy}
-          >
-            Save Configuration
-          </button>
-        </div>
-      </details>
+      <TemperatureConfigPanel
+        draft={configDraft}
+        busy={busy}
+        onDraftChange={setConfigDraft}
+        onSave={saveConfig}
+      />
 
       {info && <div className="tc-toast is-info">{info}</div>}
       {error && <div className="tc-toast is-error">{error}</div>}
@@ -1236,707 +705,6 @@ const TemperatureControlImpl: React.FC<Props> = ({ liveStatus }) => {
  */
 export const TemperatureControl = React.memo(TemperatureControlImpl);
 
-/**
- * Compact single-trace temperature trend for the controller screen: measured
- * temperature plotted against a 0–full-scale °C Y axis, with the setpoint and
- * high-high cutoff drawn as horizontal reference lines.
- *
- * Self-contained SVG (no chart lib): the parent accumulates a rolling sample
- * buffer from the live status and passes it in.
- */
-const TREND_W = 600;
-const TREND_H = 188;
-const TREND_PAD_L = 40;
-const TREND_PAD_R = 10;
-const TREND_PAD_T = 10;
-const TREND_PAD_B = 26; // room for the X-axis time labels
-const TREND_PLOT_H = TREND_H - TREND_PAD_T - TREND_PAD_B;
-
-const K_COLOR = "var(--color-error)"; // Type-K trace (also the historian backfill)
-const R_COLOR = "var(--accent-magenta)"; // Type-R trace
-const SETPOINT_COLOR = "var(--accent-cyan)";
-const HH_COLOR = "var(--color-warning)";
-const RELAY_BAND_COLOR = "var(--color-error)";
-
-/** Default look-back (minutes) for the heat-up-rate regression. */
-const DEFAULT_FIT_WINDOW_MIN = 5;
-
-/**
- * Split a series into contiguous runs of finite (non-null) points, so a trace is
- * drawn as separate path segments across gaps instead of a straight line through
- * a dead-sensor hole. Pure and generic over the timed sample shape.
- */
-function timedSegments(
-  points: { t: number; v: number | null }[],
-): { t: number; v: number }[][] {
-  const runs: { t: number; v: number }[][] = [];
-  let run: { t: number; v: number }[] = [];
-  for (const p of points) {
-    if (typeof p.v === "number" && Number.isFinite(p.v)) {
-      run.push({ t: p.t, v: p.v });
-    } else if (run.length) {
-      runs.push(run);
-      run = [];
-    }
-  }
-  if (run.length) runs.push(run);
-  return runs;
-}
-
-/**
- * Contiguous [start, end] time spans (epoch ms) where `on(sample)` holds — used
- * to draw the heater-status band as shaded rectangles. Each span extends to the
- * next sample's timestamp so a single-scan pulse is still visible.
- */
-function activeSpans(
-  samples: TempSample[],
-  on: (s: TempSample) => boolean,
-): { start: number; end: number }[] {
-  const spans: { start: number; end: number }[] = [];
-  let start: number | null = null;
-  for (let i = 0; i < samples.length; i++) {
-    if (on(samples[i])) {
-      if (start === null) start = samples[i].t;
-    } else if (start !== null) {
-      spans.push({ start, end: samples[i].t });
-      start = null;
-    }
-  }
-  if (start !== null) {
-    const lastT = samples[samples.length - 1].t;
-    spans.push({ start, end: lastT });
-  }
-  return spans;
-}
-
-/**
- * Map a plot-area pixel (0…plotW) to a time within the resolved [t0,t1] window.
- * Pure so the wheel / drag-zoom mapping is unit-testable without a DOM, and the
- * inverse of the SVG's X placement. Linear because the trend SVG uses
- * preserveAspectRatio="none" (x scales with the rendered width). Degenerates to
- * t0 for a zero-width plot (DbC — callers get a valid time, never NaN).
- */
-// Pure helper, not a component, so it never participates in fast refresh.
-// eslint-disable-next-line react-refresh/only-export-components
-export function plotPxToTime(
-  px: number,
-  plotW: number,
-  t0: number,
-  t1: number,
-): number {
-  if (plotW <= 0) return t0;
-  return t0 + (px / plotW) * (t1 - t0);
-}
-
-interface TrendProps {
-  samples: TempSample[];
-  /** Tag index backing the temperature (for historian backfill). */
-  tagId: number;
-  fullScale: number;
-  setpoint: number;
-  hhLimit: number;
-  /** Which thermocouple is controlling — emphasized and used for the fit. */
-  activeTcType: TcType;
-}
-
-const TempTrend: React.FC<TrendProps> = ({
-  samples,
-  tagId,
-  fullScale,
-  setpoint,
-  hhLimit,
-  activeTcType,
-}) => {
-  const [axis, setAxis] = useState<AxisRange>(defaultAxisRange(0, fullScale));
-  const [fitMethodId, setFitMethodId] = useState<string>(NO_FIT_ID);
-  const [fitWindowMin, setFitWindowMin] = useState<number>(DEFAULT_FIT_WINDOW_MIN);
-
-  // Signal picker: default every trace + the heater-status band visible.
-  const [showK, setShowK] = useState(true);
-  const [showR, setShowR] = useState(true);
-  const [showRelay, setShowRelay] = useState(true);
-
-  // Pan / zoom / pause come from the shared, tested viewport model (DRY). The
-  // domain is epoch ms; the visible window (seconds) is DERIVED from its span so
-  // it still drives the historian backfill depth and the "last …" label.
-  const view = useTrendViewport({
-    defaultSpan: DEFAULT_WINDOW_SECONDS * 1000,
-    minSpan: 1000,
-    maxSpan: MAX_WINDOW_SECONDS * 1000,
-  });
-  const windowSeconds = view.viewport.span / 1000;
-
-  // While paused, plot a frozen snapshot of the samples captured at pause time
-  // so incoming live data never slides the view out from under the operator.
-  const [frozen, setFrozen] = useState<TempSample[]>([]);
-  // Plot pixel X of the hover crosshair, or null when not hovering.
-  const [hoverPx, setHoverPx] = useState<number | null>(null);
-  const svgRef = useRef<SVGSVGElement | null>(null);
-
-  // Backfill from the historian so widening the window immediately shows past
-  // data (stored tag is a 0–100 %, so scale it to °C). The historian carries the
-  // ACTIVE channel's tag only, so merge it into that channel of the buffer
-  // (anything older than the live buffer) ahead of the live samples.
-  const backfill = useTrendBackfill(
-    tagId,
-    windowSeconds,
-    fullScale / 100,
-    TREND_BACKFILL_MAX_POINTS,
-  );
-  // Freeze swaps the live prop for the snapshot captured at pause time; either
-  // way backfill merges in ahead of it, so windowing/backfill stay unchanged.
-  const source = view.paused ? frozen : samples;
-  const liveStart = source.length ? source[0].t : Infinity;
-  const older = backfill.filter((b) => b.t < liveStart);
-  const series: TempSample[] = older.length
-    ? [
-        ...older.map((b) => ({
-          t: b.t,
-          k: activeTcType === "K" ? b.v : null,
-          r: activeTcType === "R" ? b.v : null,
-          relayOn: false,
-        })),
-        ...source,
-      ]
-    : source;
-
-  // The viewport decides which slice of real wall-clock time is on screen. Its
-  // bounds are the full data extent; resolve() clamps the visible [t0,t1] for
-  // the current span (zoom) and offset (pan), then we window the samples to it.
-  const bounds = {
-    min: series[0]?.t ?? 0,
-    max: series[series.length - 1]?.t ?? Date.now(),
-  };
-  const { start: t0, end: t1 } = view.resolve(bounds);
-  const windowed = series.filter((s) => s.t >= t0 && s.t <= t1);
-  const plotted = downsample(windowed);
-
-  // Plot-pixel ↔ time mapping for wheel / drag-zoom. preserveAspectRatio="none"
-  // means x scales with the rendered width, so convert client px → viewBox px →
-  // plot px, and (via the pure helper) plot px → time within the window.
-  const plotW = TREND_W - TREND_PAD_L - TREND_PAD_R;
-  const plotPx = (clientX: number): number => {
-    const el = svgRef.current;
-    if (!el) return 0;
-    const r = el.getBoundingClientRect();
-    if (!r.width) return 0;
-    const x = ((clientX - r.left) / r.width) * TREND_W;
-    return Math.max(0, Math.min(plotW, x - TREND_PAD_L));
-  };
-  const pxToUnit = (px: number): number => plotPxToTime(px, plotW, t0, t1);
-
-  // Wheel zoom about the cursor, attached as a NON-passive native listener (see
-  // useNonPassiveWheel) so preventDefault suppresses page scroll — React's
-  // onWheel is passive under React 18.
-  const handleWheel = (e: WheelEvent): void => {
-    e.preventDefault();
-    view.zoomBy(e.deltaY > 0 ? 1.15 : 0.87, pxToUnit(plotPx(e.clientX)), bounds);
-  };
-  useNonPassiveWheel(svgRef, handleWheel);
-
-  // Resolve the Y range against BOTH channels so neither trace clips.
-  const plottedC = plotted
-    .flatMap((s) => [s.k, s.r])
-    .filter((v): v is number => typeof v === "number" && Number.isFinite(v));
-  const { min, max } = resolveRange(axis, plottedC, { min: 0, max: fullScale });
-
-  // Latest reading of each channel (for the legend), and the active reading.
-  const lastSample = windowed.length ? windowed[windowed.length - 1] : undefined;
-  const lastK = lastSample?.k ?? null;
-  const lastR = lastSample?.r ?? null;
-
-  const refY = (value: number): number => {
-    const frac = Math.max(0, Math.min(1, (value - min) / (max - min)));
-    return TREND_PAD_T + (1 - frac) * TREND_PLOT_H;
-  };
-
-  // Position traces by real timestamp (not array index) so they are time-accurate
-  // even when sparse historian backfill is merged with dense live samples. The X
-  // axis spans the viewport's resolved [t0,t1] window, so zoom / pan / window
-  // changes rescale the axis immediately.
-  const geom = {
-    t0,
-    t1,
-    min,
-    max,
-    x0: TREND_PAD_L,
-    x1: TREND_W - TREND_PAD_R,
-    yTop: TREND_PAD_T,
-    plotH: TREND_PLOT_H,
-  } as const;
-
-  // Build each channel as gap-aware path segments (a null skips the line).
-  const kSegments = timedSegments(plotted.map((s) => ({ t: s.t, v: s.k })));
-  const rSegments = timedSegments(plotted.map((s) => ({ t: s.t, v: s.r })));
-  const kPaths = kSegments.map((seg) => timeSeriesPath(seg, geom));
-  const rPaths = rSegments.map((seg) => timeSeriesPath(seg, geom));
-
-  // Heater-status band: shaded spans where the relay was closed.
-  const relaySpans = activeSpans(plotted, (s) => s.relayOn);
-
-  // Resolve the hover crosshair: snap to the nearest sample by time and read
-  // each visible channel's °C there, placing markers with the same refY mapping
-  // the traces use (DRY). Channels that are null at that sample are skipped.
-  const hover: { px: number; series: CrosshairSeries[]; xLabel: string } | null =
-    (() => {
-      if (hoverPx === null || plotted.length < 2) return null;
-      const idx = nearestIndexByX(
-        plotted.map((s) => s.t),
-        pxToUnit(hoverPx),
-      );
-      if (idx === null) return null;
-      const s = plotted[idx];
-      const series: CrosshairSeries[] = [];
-      if (showK && typeof s.k === "number" && Number.isFinite(s.k)) {
-        series.push({ label: "K", color: K_COLOR, text: `${s.k.toFixed(1)} °C`, py: refY(s.k) });
-      }
-      if (showR && typeof s.r === "number" && Number.isFinite(s.r)) {
-        series.push({ label: "R", color: R_COLOR, text: `${s.r.toFixed(1)} °C`, py: refY(s.r) });
-      }
-      if (series.length === 0) return null;
-      return {
-        px: timeToX(s.t, t0, t1, TREND_PAD_L, TREND_W - TREND_PAD_R),
-        series,
-        xLabel: formatClock(s.t),
-      };
-    })();
-
-  // Curve fit runs over the ACTIVE thermocouple series, restricted to the last
-  // `fitWindowMin` minutes (the operator-chosen regression window). x is epoch
-  // ms so the shared heat-up-rate helpers (called with msPerXUnit = 1) convert
-  // the slope to °C/min and °C/hr — no rate math is duplicated here (DRY).
-  const activePoints: FitPoint[] = plotted
-    .map((s) => ({ x: s.t, y: tcSampleValue(s, activeTcType) }))
-    .filter((p): p is FitPoint => typeof p.y === "number" && Number.isFinite(p.y));
-  const windowedFitPoints = pointsInLastWindow(activePoints, fitWindowMin * 60000);
-  const fit = fitSeries(windowedFitPoints, fitMethodId);
-  const rateReadout = heatUpRateReadout(
-    plotted,
-    activeTcType,
-    fitMethodId,
-    fitWindowMin,
-  );
-  // The fit's x IS the epoch-ms timestamp, so both the X position (p.t) and the
-  // value fed to fit.predict (p.x) are that same timestamp.
-  const fitOverlayPoints = windowedFitPoints.map((p) => ({ t: p.x, x: p.x }));
-
-  const activeColor = activeTcType === "K" ? K_COLOR : R_COLOR;
-
-  // CSV export of the plotted K/R samples (empty cell for a channel gap; relay
-  // as 0/1). Hidden (undefined) until the window holds at least one point.
-  const snapshotCsv = plotted.length
-    ? {
-        headers: ["t_ms", "type_k_c", "type_r_c", "relay_on"],
-        rows: plotted.map((s) => [
-          s.t,
-          s.k ?? "",
-          s.r ?? "",
-          s.relayOn ? 1 : 0,
-        ]),
-      }
-    : undefined;
-
-  return (
-    <div className="tc-trend">
-      <div className="tc-trend-legend">
-        <label
-          className="tc-trend-key tc-trend-toggle"
-          title="Show / hide the Type-K trace"
-        >
-          <input
-            type="checkbox"
-            checked={showK}
-            onChange={(e) => setShowK(e.target.checked)}
-            aria-label="Show Type K trace"
-          />
-          <span
-            className="swatch"
-            style={{
-              background: K_COLOR,
-              opacity: activeTcType === "K" ? 1 : 0.55,
-            }}
-          />
-          Type K{activeTcType === "K" ? " (active)" : ""}
-          <strong>{formatTcReadout(lastK)}</strong>
-        </label>
-        <label
-          className="tc-trend-key tc-trend-toggle"
-          title="Show / hide the Type-R trace"
-        >
-          <input
-            type="checkbox"
-            checked={showR}
-            onChange={(e) => setShowR(e.target.checked)}
-            aria-label="Show Type R trace"
-          />
-          <span
-            className="swatch"
-            style={{
-              background: R_COLOR,
-              opacity: activeTcType === "R" ? 1 : 0.55,
-            }}
-          />
-          Type R{activeTcType === "R" ? " (active)" : ""}
-          <strong>{formatTcReadout(lastR)}</strong>
-        </label>
-        <label
-          className="tc-trend-key tc-trend-toggle"
-          title="Shade the periods when the heater relay was ON"
-        >
-          <input
-            type="checkbox"
-            checked={showRelay}
-            onChange={(e) => setShowRelay(e.target.checked)}
-            aria-label="Show heater ON band"
-          />
-          <span
-            className="swatch"
-            style={{ background: RELAY_BAND_COLOR, opacity: 0.25 }}
-          />
-          Heater ON
-        </label>
-        <span className="tc-trend-key">
-          <span className="swatch" style={{ background: SETPOINT_COLOR }} />
-          Setpoint
-          <strong>{setpoint.toFixed(1)} °C</strong>
-        </span>
-        <span className="tc-trend-key">
-          <span className="swatch" style={{ background: HH_COLOR }} />
-          HH cutoff
-          <strong>{hhLimit.toFixed(0)} °C</strong>
-        </span>
-        {!view.live && (
-          <span
-            className="tc-trend-key"
-            style={{
-              color: "var(--color-warning)",
-              border: "1px solid var(--color-warning)",
-              borderRadius: "3px",
-              padding: "0.05rem 0.3rem",
-              fontSize: "0.66rem",
-              fontWeight: 600,
-              letterSpacing: "0.5px",
-              textTransform: "uppercase",
-            }}
-            title={
-              view.paused
-                ? "Plot frozen — live updates paused"
-                : "Scrolled back in time — not following the live edge"
-            }
-          >
-            {view.paused ? "Frozen" : "Panned"}
-          </span>
-        )}
-        <span className="tc-trend-window">
-          last {formatWindow(windowSeconds)} · {min.toFixed(0)}–{max.toFixed(0)} °C
-        </span>
-      </div>
-
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: "1rem",
-          margin: "0.1rem 0 0.3rem",
-          flexWrap: "wrap",
-        }}
-      >
-        <div
-          style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}
-          role="group"
-          aria-label="Trend pan, zoom and pause controls"
-        >
-          <button
-            type="button"
-            className="btn"
-            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
-            onClick={() => {
-              if (!view.paused) setFrozen(samples);
-              view.togglePause();
-            }}
-            title={view.paused ? "Resume live streaming" : "Pause / freeze the plot"}
-            aria-label={view.paused ? "Resume live" : "Pause"}
-          >
-            {view.paused ? "Live" : "Pause"}
-          </button>
-          <button
-            type="button"
-            className="btn"
-            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
-            onClick={() => view.panBy((t1 - t0) * 0.3, bounds)}
-            title="Scroll back in time"
-            aria-label="Pan back in time"
-          >
-            ◀
-          </button>
-          <button
-            type="button"
-            className="btn"
-            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
-            onClick={() => view.panBy(-(t1 - t0) * 0.3, bounds)}
-            title="Scroll forward in time"
-            aria-label="Pan forward in time"
-          >
-            ▶
-          </button>
-          <button
-            type="button"
-            className="btn"
-            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
-            onClick={() => view.zoomBy(0.7, (t0 + t1) / 2, bounds)}
-            title="Zoom in (narrow the time window)"
-            aria-label="Zoom in"
-          >
-            +
-          </button>
-          <button
-            type="button"
-            className="btn"
-            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
-            onClick={() => view.zoomBy(1.43, (t0 + t1) / 2, bounds)}
-            title="Zoom out (widen the time window)"
-            aria-label="Zoom out"
-          >
-            −
-          </button>
-          <button
-            type="button"
-            className="btn"
-            style={{ padding: "0.2rem 0.45rem", fontSize: "0.72rem" }}
-            onClick={() => view.reset()}
-            title="Reset zoom / pan and resume live"
-            aria-label="Reset view"
-          >
-            Reset
-          </button>
-        </div>
-        <TrendTimeControls
-          value={windowSeconds}
-          onChange={(seconds) => view.setSpan(seconds * 1000)}
-        />
-        <TrendAxisControls value={axis} onChange={setAxis} unit="°C" />
-        <TrendFitControls value={fitMethodId} onChange={setFitMethodId} />
-        <label
-          className="tc-trend-fitwindow"
-          title="How many recent minutes the linear regression covers"
-        >
-          <span>Fit window (min)</span>
-          <input
-            type="number"
-            min={0.1}
-            step={0.5}
-            value={fitWindowMin}
-            onChange={(e) => {
-              const v = Number.parseFloat(e.target.value);
-              setFitWindowMin(Number.isFinite(v) && v > 0 ? v : DEFAULT_FIT_WINDOW_MIN);
-            }}
-            aria-label="Fit window in minutes"
-          />
-        </label>
-        <SnapshotButton
-          targetRef={svgRef}
-          filename="temperature_trend"
-          csv={snapshotCsv}
-          label="Export temperature trend snapshot"
-        />
-      </div>
-
-      {/* Heat-up-rate readout box: ramp rate (°/min · °/hr) + fit quality. */}
-      <div
-        className={`tc-rate-readout ${rateReadout.hasFit ? "has-fit" : ""}`}
-        aria-label="Heat-up rate readout"
-      >
-        <span className="tc-rate-label">
-          Heat-up rate (Type {activeTcType}, last {fitWindowMin} min)
-        </span>
-        <span className="tc-rate-value">{rateReadout.rate}</span>
-        <span className="tc-rate-r2">
-          {rateReadout.hasFit
-            ? rateReadout.r2
-            : "select a fit method to read the ramp rate"}
-        </span>
-      </div>
-
-      <svg
-        ref={svgRef}
-        className="tc-trend-svg"
-        viewBox={`0 0 ${TREND_W} ${TREND_H}`}
-        preserveAspectRatio="none"
-        role="img"
-        aria-label="Temperature trend"
-        style={{
-          cursor: view.selectionPx ? "ew-resize" : "crosshair",
-          touchAction: "none",
-        }}
-        onPointerDown={(e) => {
-          setHoverPx(null); // a drag-zoom gesture supersedes the hover readout
-          view.startSelect(plotPx(e.clientX));
-        }}
-        onPointerMove={(e) => {
-          if (view.selectionPx) {
-            view.moveSelect(plotPx(e.clientX));
-            return;
-          }
-          setHoverPx(plotPx(e.clientX)); // hover: value readout at the cursor
-        }}
-        onPointerUp={() => view.endSelect(bounds, pxToUnit)}
-        onPointerLeave={() => {
-          view.cancelSelect();
-          setHoverPx(null);
-        }}
-      >
-        {/* heater-ON status band behind everything else */}
-        {showRelay &&
-          relaySpans.map((span, i) => {
-            const xa = timeToX(span.start, t0, t1, TREND_PAD_L, TREND_W - TREND_PAD_R);
-            const xb = timeToX(span.end, t0, t1, TREND_PAD_L, TREND_W - TREND_PAD_R);
-            return (
-              <rect
-                key={i}
-                x={xa}
-                y={TREND_PAD_T}
-                width={Math.max(0.5, xb - xa)}
-                height={TREND_PLOT_H}
-                className="tc-trend-relay-band"
-                fill={RELAY_BAND_COLOR}
-              />
-            );
-          })}
-
-        {/* gridlines + °C axis labels across the resolved [min, max] range */}
-        {axisTicks(min, max, 4).map((tick, i) => {
-          const y = TREND_PAD_T + (1 - (tick - min) / (max - min)) * TREND_PLOT_H;
-          return (
-            <g key={i}>
-              <line
-                x1={TREND_PAD_L}
-                y1={y}
-                x2={TREND_W - TREND_PAD_R}
-                y2={y}
-                className="tc-trend-grid"
-              />
-              <text
-                x={TREND_PAD_L - 6}
-                y={y + 3}
-                className="tc-trend-axis"
-                textAnchor="end"
-              >
-                {tick.toFixed(0)}
-              </text>
-            </g>
-          );
-        })}
-
-        {/* setpoint + HH reference lines (only when within the visible range) */}
-        {max > min && (
-          <>
-            <line
-              x1={TREND_PAD_L}
-              y1={refY(setpoint)}
-              x2={TREND_W - TREND_PAD_R}
-              y2={refY(setpoint)}
-              className="tc-trend-ref"
-              stroke={SETPOINT_COLOR}
-            />
-            <line
-              x1={TREND_PAD_L}
-              y1={refY(hhLimit)}
-              x2={TREND_W - TREND_PAD_R}
-              y2={refY(hhLimit)}
-              className="tc-trend-ref"
-              stroke={HH_COLOR}
-            />
-          </>
-        )}
-
-        <TrendTimeAxis
-          x0={TREND_PAD_L}
-          x1={TREND_W - TREND_PAD_R}
-          yBottom={TREND_PAD_T + TREND_PLOT_H}
-          spanSeconds={windowSeconds}
-        />
-
-        {plotted.length < 2 ? (
-          <text
-            x={TREND_W / 2}
-            y={TREND_H / 2}
-            className="tc-trend-empty"
-            textAnchor="middle"
-          >
-            waiting for live data…
-          </text>
-        ) : (
-          <>
-            {/* Non-active channel dimmer; active channel bold/solid. Draw the
-                inactive one first so the active trace sits on top. */}
-            {showR &&
-              rPaths.map((d, i) => (
-                <path
-                  key={`r-${i}`}
-                  d={d}
-                  className="tc-trend-line"
-                  stroke={R_COLOR}
-                  opacity={activeTcType === "R" ? 1 : 0.5}
-                  strokeWidth={activeTcType === "R" ? 2.4 : 1.4}
-                />
-              ))}
-            {showK &&
-              kPaths.map((d, i) => (
-                <path
-                  key={`k-${i}`}
-                  d={d}
-                  className="tc-trend-line"
-                  stroke={K_COLOR}
-                  opacity={activeTcType === "K" ? 1 : 0.5}
-                  strokeWidth={activeTcType === "K" ? 2.4 : 1.4}
-                />
-              ))}
-            {fit && (
-              <TrendFitOverlay
-                fit={fit}
-                points={fitOverlayPoints}
-                t0={t0}
-                t1={t1}
-                x0={TREND_PAD_L}
-                x1={TREND_W - TREND_PAD_R}
-                yScale={refY}
-                color={activeColor}
-              />
-            )}
-          </>
-        )}
-
-        {/* Hover crosshair + value tooltip (shared overlay). */}
-        {hover && (
-          <TrendCrosshair
-            px={hover.px}
-            yTop={TREND_PAD_T}
-            yBottom={TREND_PAD_T + TREND_PLOT_H}
-            plotLeft={TREND_PAD_L}
-            plotRight={TREND_W - TREND_PAD_R}
-            series={hover.series}
-            xLabel={hover.xLabel}
-          />
-        )}
-
-        {/* Drag-to-zoom selection: translucent band over the plot area. */}
-        {view.selectionPx && (
-          <rect
-            x={TREND_PAD_L + Math.min(view.selectionPx.fromPx, view.selectionPx.toPx)}
-            y={TREND_PAD_T}
-            width={Math.abs(view.selectionPx.toPx - view.selectionPx.fromPx)}
-            height={TREND_PLOT_H}
-            fill="var(--accent-cyan)"
-            fillOpacity={0.18}
-            stroke="var(--accent-cyan)"
-            strokeOpacity={0.6}
-          />
-        )}
-      </svg>
-    </div>
-  );
-};
-
 const Readout: React.FC<{ label: string; value: string; warning?: boolean }> = ({
   label,
   value,
@@ -1946,30 +714,4 @@ const Readout: React.FC<{ label: string; value: string; warning?: boolean }> = (
     <div className="tc-readout-label">{label}</div>
     <div className="tc-readout-value">{value}</div>
   </div>
-);
-
-interface ConfigFieldProps {
-  label: string;
-  value: number | string;
-  stringMode?: boolean;
-  onChange: (v: number) => void;
-}
-const ConfigField: React.FC<ConfigFieldProps> = ({
-  label,
-  value,
-  stringMode,
-  onChange,
-}) => (
-  <label className="tc-field">
-    <span>{label}</span>
-    <input
-      type={stringMode ? "text" : "number"}
-      value={value}
-      onChange={(e) =>
-        onChange(
-          (stringMode ? e.target.value : Number.parseFloat(e.target.value)) as number,
-        )
-      }
-    />
-  </label>
 );
