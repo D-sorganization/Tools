@@ -82,3 +82,6 @@
 ## 2024-05-24 - Avoid chained map and every array iterations for parsing
 **Learning:** Multiple array methods (`.map()`, `.every()`, `.filter()`) chained together for iterating over datasets cause unnecessary intermediate array allocations, adding up to increased garbage collection pressure.
 **Action:** Replace multiple chained array passes with a single-pass `for` loop that pre-allocates arrays or calculates results inline.
+## 2025-02-17 - Avoid Math.min/max spread for large data arrays
+**Learning:** Using `Math.min(...values)` and `Math.max(...values)` on large dynamically loaded arrays (like chart data points or signals) allocates intermediate memory for the arguments array and frequently throws 'Maximum call stack size exceeded' RangeErrors in JavaScript engines.
+**Action:** Always replace the spread operator in `Math.min/max` with a single-pass `for` loop that manually computes the bounds when working with potentially large numeric arrays.
