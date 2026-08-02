@@ -129,7 +129,8 @@ else
   if [ -z "$existing_api_key" ]; then
     command -v openssl >/dev/null 2>&1 || {
       echo "ERROR: openssl is required to generate credentials." >&2; exit 1; }
-    existing_api_key="P1AM_API_KEY=$(openssl rand -hex 32)"
+    # The value is generated at install time; no credential is stored in source.
+    existing_api_key="P1AM_API_KEY=$(openssl rand -hex 32)" # pragma: allowlist secret
     echo "    generated a new operator credential"
   fi
   if [ -z "$existing_admin_key" ]; then
