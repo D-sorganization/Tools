@@ -85,3 +85,6 @@
 ## 2024-07-31 - Avoid spread operator with Math.min/max on large data arrays
 **Learning:** Using `Math.min(...values)` or `Math.max(...values)` on large arrays (like chart data points) allocates intermediate memory and can throw a 'Maximum call stack size exceeded' RangeError.
 **Action:** Replace `Math.min(...array)` and `Math.max(...array)` with a single-pass `for` loop when parsing large numeric data arrays to improve performance and stability.
+## 2024-08-02 - Spread Operator Bottleneck in Chart Trends
+**Learning:** The `p1am_control_system` trend charts process very large arrays of data points (e.g. in `trendAxis.ts`). Using the spread operator (`Math.min(...values)`) on these arrays allocates significant intermediate memory and can trigger a 'Maximum call stack size exceeded' RangeError.
+**Action:** When calculating min/max bounds for trend axes or parsing large data arrays in the charting utilities, always use a single-pass `for` loop instead of `Math.min(...values)` or `Math.max(...values)`.
