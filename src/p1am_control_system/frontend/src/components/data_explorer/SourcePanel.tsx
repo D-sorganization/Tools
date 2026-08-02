@@ -68,10 +68,19 @@ export const SourcePanel: React.FC<SourcePanelProps> = ({
   const applyPreset = (seconds: number | "all") => {
     const now = Date.now();
     if (seconds === "all") {
-      const starts = signals
-        .map((s) => (s.start_time ? Date.parse(s.start_time) : NaN))
-        .filter((t) => Number.isFinite(t));
-      const start = starts.length ? Math.min(...starts) : now - 3600_000;
+      let start = now - 3600_000;
+      let hasStart = false;
+      for (let i = 0; i < signals.length; i++) {
+        if (signals[i].start_time) {
+          const t = Date.parse(signals[i].start_time!);
+          if (Number.isFinite(t)) {
+            if (!hasStart || t < start) {
+              start = t;
+              hasStart = true;
+            }
+          }
+        }
+      }
       onHistorianChange({
         ...historian,
         start: toLocalInput(start),
