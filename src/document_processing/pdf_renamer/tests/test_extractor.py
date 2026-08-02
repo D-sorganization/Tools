@@ -14,6 +14,7 @@ def test_title_from_metadata(tmp_path: Path) -> None:
         mock_reader.metadata.title = "Metadata Title"
         mock_reader_cls.return_value = mock_reader
 
+
         result = title_from_metadata(pdf_path)
         assert result.title == "Metadata Title"
         assert result.method == "metadata"
@@ -23,10 +24,11 @@ def test_title_from_metadata_missing(tmp_path: Path) -> None:
     pdf_path = tmp_path / "test.pdf"
     pdf_path.touch()
 
-    with patch("pypdf.PdfReader", create=True) as mock_reader_cls:
+    with patch("pypdf.PdfReader") as mock_reader_cls:
         mock_reader = MagicMock()
         mock_reader.metadata = {}  # Empty metadata
         mock_reader_cls.return_value = mock_reader
+
 
         result = title_from_metadata(pdf_path)
         assert result.title is None
@@ -74,10 +76,10 @@ def test_title_from_first_page_empty(tmp_path: Path) -> None:
     pdf_path = tmp_path / "test.pdf"
     pdf_path.touch()
 
-    with patch("fitz.open", create=True) as mock_fitz:
+    with patch("fitz.open") as mock_fitz:
         mock_doc = MagicMock()
         mock_doc.page_count = 0
-        mock_fitz.open.return_value = mock_doc
+        mock_fitz.return_value = mock_doc
 
         result = title_from_first_page(pdf_path)
         assert result.title is None
