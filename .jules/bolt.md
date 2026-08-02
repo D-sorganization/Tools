@@ -91,3 +91,6 @@
 ## 2026-08-01 - Avoid pip-audit timeout on large environments
 **Learning:** The `pip-audit` security scan can exceed a 5-minute timeout on self-hosted runners when resolving very large dependency trees via PyPI API, particularly in heavily populated CI virtual environments.
 **Action:** Increase `timeout-minutes` to at least `15` for the `Security Scan (pip-audit)` step in GitHub Action workflows to prevent false-negative job cancellations.
+## 2026-08-01 - Avoid CI tests job timeouts
+**Learning:** The `tests` job in `ci-standard.yml` may exceed the maximum execution time of 90 minutes when running on self-hosted runners, especially when downloading heavy test dependencies and resolving matrices.
+**Action:** Increase `timeout-minutes` from `90` to `120` for the `tests` job in `.github/workflows/ci-standard.yml` to prevent false-negative job cancellations.
