@@ -75,7 +75,7 @@ export function ReferenceFrameConverter() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
-      <div className="bg-slate-800 rounded-lg p-6 space-y-4 text-white">
+      <form onSubmit={(e) => { e.preventDefault(); handleCompute(); }} className="bg-slate-800 rounded-lg p-6 space-y-4 text-white">
         <h2 className="text-xl font-semibold border-b border-slate-700 pb-2">
           Reference-Frame Operations
         </h2>
@@ -189,12 +189,12 @@ export function ReferenceFrameConverter() {
         )}
 
         <button
-          onClick={handleCompute}
+          type="submit"
           className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
         >
           Compute
         </button>
-      </div>
+      </form>
 
       <div className="bg-slate-800 rounded-lg p-6 text-white space-y-4">
         <h2 className="text-xl font-semibold border-b border-slate-700 pb-2">Educational Output</h2>

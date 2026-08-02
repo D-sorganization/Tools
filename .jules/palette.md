@@ -46,3 +46,6 @@
 ## 2024-07-30 - Added focus-visible states to Rotation Converter
 **Learning:** Found an accessibility issue pattern where inputs and buttons in Rotation Converter have `outline-none` but lack focus indicators, making keyboard navigation difficult.
 **Action:** Replace `outline-none` with `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to preserve keyboard accessibility while styling interactive elements.
+## 2024-05-24 - Form Submissions for Keyboard Users
+**Learning:** Wrapping a collection of data entry fields in a native `<form>` element instead of a `<div>` instantly enables native "Enter" key form submission, which is critical for heavy data-entry applications. Users don't need to manually tab to the calculate button.
+**Action:** For all data-entry calculators or settings panels, always use a `<form onSubmit={...}>` structure instead of binding `onClick` directly to the submit button.
