@@ -84,7 +84,7 @@ export function RotationConverter() {
                     <select
                         value={inputType}
                         onChange={(e) => setInputType(e.target.value)}
-                        className="w-full bg-slate-700 rounded px-3 py-2 border border-slate-600 focus:border-blue-500 outline-none"
+                        className="w-full bg-slate-700 rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                     >
                         <option value="quaternion">Quaternion (w, x, y, z)</option>
                         <option value="euler">Euler Angles</option>
@@ -107,7 +107,7 @@ export function RotationConverter() {
                                         setQuaternion(newQ);
                                     }}
                                     step="0.01"
-                                    className="w-full bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 outline-none"
+                                    className="w-full bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                                 />
                             </div>
                         ))}
@@ -123,7 +123,7 @@ export function RotationConverter() {
                                 value={eulerConvention}
                                 onChange={(e) => setEulerConvention(e.target.value)}
                                 placeholder="xyz"
-                                className="w-full bg-slate-700 rounded px-3 py-2 text-sm border border-slate-600 outline-none"
+                                className="w-full bg-slate-700 rounded px-3 py-2 text-sm border border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                             />
                         </div>
                         <div className="grid grid-cols-3 gap-2">
@@ -139,7 +139,7 @@ export function RotationConverter() {
                                             setEuler(newE);
                                         }}
                                         step="0.01"
-                                        className="w-full bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 outline-none"
+                                        className="w-full bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                                     />
                                 </div>
                             ))}
@@ -161,7 +161,7 @@ export function RotationConverter() {
                                         setAxisAngle(newA);
                                     }}
                                     step="0.01"
-                                    className="w-full bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 outline-none"
+                                    className="w-full bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                                 />
                             </div>
                         ))}
@@ -182,7 +182,7 @@ export function RotationConverter() {
                                         setRodrigues(newR);
                                     }}
                                     step="0.01"
-                                    className="w-full bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 outline-none"
+                                    className="w-full bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                                 />
                             </div>
                         ))}
@@ -192,7 +192,7 @@ export function RotationConverter() {
                 <div className="pt-4">
                     <button
                         onClick={handleCalculate}
-                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors"
+                        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
                     >
                         Compute Equivalents
                     </button>
