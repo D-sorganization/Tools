@@ -82,3 +82,6 @@
 ## 2024-05-24 - Avoid chained map and every array iterations for parsing
 **Learning:** Multiple array methods (`.map()`, `.every()`, `.filter()`) chained together for iterating over datasets cause unnecessary intermediate array allocations, adding up to increased garbage collection pressure.
 **Action:** Replace multiple chained array passes with a single-pass `for` loop that pre-allocates arrays or calculates results inline.
+## 2024-08-02 - Spread Operator Bottleneck in Chart Trends
+**Learning:** The `p1am_control_system` trend charts process very large arrays of data points (e.g. in `trendAxis.ts`). Using the spread operator (`Math.min(...values)`) on these arrays allocates significant intermediate memory and can trigger a 'Maximum call stack size exceeded' RangeError.
+**Action:** When calculating min/max bounds for trend axes or parsing large data arrays in the charting utilities, always use a single-pass `for` loop instead of `Math.min(...values)` or `Math.max(...values)`.

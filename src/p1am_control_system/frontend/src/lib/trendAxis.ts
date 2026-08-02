@@ -44,8 +44,13 @@ export function resolveRange(
     };
   }
   if (values.length === 0) return defaults;
-  let lo = Math.min(...values);
-  let hi = Math.max(...values);
+  // ⚡ Bolt Optimization: Avoid spread operator on large arrays to prevent Maximum call stack size exceeded and intermediate allocations.
+  let lo = values[0];
+  let hi = values[0];
+  for (let i = 1; i < values.length; i++) {
+    if (values[i] < lo) lo = values[i];
+    if (values[i] > hi) hi = values[i];
+  }
   if (hi - lo < 1e-9) {
     lo -= 1;
     hi += 1;
