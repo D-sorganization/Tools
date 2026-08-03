@@ -44,8 +44,15 @@ export function resolveRange(
     };
   }
   if (values.length === 0) return defaults;
-  let lo = Math.min(...values);
-  let hi = Math.max(...values);
+  // ⚡ Bolt Optimization: Use a single-pass loop instead of Math.min/max with spread operator
+  // to avoid 'Maximum call stack size exceeded' on large subsets and reduce GC pressure.
+  let lo = Infinity;
+  let hi = -Infinity;
+  for (let i = 0; i < values.length; i++) {
+    const v = values[i];
+    if (v < lo) lo = v;
+    if (v > hi) hi = v;
+  }
   if (hi - lo < 1e-9) {
     lo -= 1;
     hi += 1;

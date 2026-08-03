@@ -86,3 +86,6 @@
 ## 2024-08-01 - Avoid allocating string arrays for SVG paths
 **Learning:** In high-frequency chart updates, building SVG `d` paths using `.map(p => '...').join(' ')` allocates a new array of strings on every frame, causing unnecessary garbage collection pressure and main thread stalls.
 **Action:** Build SVG `d` paths using a single-pass `for` loop and string concatenation to eliminate intermediate array allocations.
+## 2024-07-28 - Replace Math.min/max spread with loops for dynamic scales
+**Learning:** Using `Math.min(...activeValues)` and `Math.max(...activeValues)` on large streams of extracted subset data frequently leads to "Maximum call stack size exceeded" errors.
+**Action:** Use a single-pass `for` loop that computes `realMin` and `realMax` dynamically, avoiding massive call stack allocations and garbage collection pressure.
