@@ -82,12 +82,50 @@ def init_db() -> None:
     try:
         SQLModel.metadata.create_all(engine)
         install_append_only_guards(engine)
+        _migrate_historian_quality_columns()
         _migrate_historian_indexes()
         _optimize_planner_statistics()
         logger.info("Database tables initialized successfully.")
     except Exception as e:
         logger.error(f"Failed to initialize database: {e}")
         raise
+
+
+def _migrate_historian_quality_columns() -> None:
+    """Add signal provenance columns without discarding legacy historian rows."""
+    from sqlalchemy import text
+
+    definitions = {
+        "source_timestamp": "DATETIME",
+        "quality": "VARCHAR NOT NULL DEFAULT 'uncertain'",
+        "diagnostic_reason": "VARCHAR DEFAULT 'legacy_unqualified'",
+        "sequence": "INTEGER NOT NULL DEFAULT 0",
+        "source": "VARCHAR NOT NULL DEFAULT 'legacy.adapter'",
+    }
+    with engine.begin() as connection:
+        columns = {
+            row[1] for row in connection.exec_driver_sql("PRAGMA table_info(taglog)")
+        }
+        for name, definition in definitions.items():
+            if name not in columns:
+                connection.execute(
+                    text(f"ALTER TABLE taglog ADD COLUMN {name} {definition}")
+                )
+        connection.execute(
+            text(
+                "UPDATE taglog SET source_timestamp = timestamp "
+                "WHERE source_timestamp IS NULL"
+            )
+        )
+        connection.execute(
+            text("CREATE INDEX IF NOT EXISTS ix_taglog_quality ON taglog (quality)")
+        )
+        connection.execute(
+            text("CREATE INDEX IF NOT EXISTS ix_taglog_sequence ON taglog (sequence)")
+        )
+        connection.execute(
+            text("CREATE INDEX IF NOT EXISTS ix_taglog_source ON taglog (source)")
+        )
 
 
 def _migrate_historian_indexes() -> None:

@@ -24,6 +24,7 @@ import { NotificationBanner } from "./components/NotificationBanner";
 import { TabBar } from "./components/TabBar";
 import { HelpModal } from "./components/HelpModal";
 import { CsvExporter } from "./components/CsvExporter";
+import { CommsQualityBadge } from "./components/CommsQualityBadge";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
 import {
   TABS,
@@ -142,6 +143,7 @@ export const App: React.FC = () => {
     eStopActive,
     powerSupplyStatus,
     temperatureStatus,
+    commsHealth,
     isConnected,
     setAlicats,
     setActiveAlarms,
@@ -678,22 +680,10 @@ export const App: React.FC = () => {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "0.3rem" }}>
-            <span
-              className={`status-indicator ${
-                isConnected ? "status-connected" : "status-disconnected"
-              }`}
-            />
-            <span
-              style={{
-                fontSize: "0.8rem",
-                fontWeight: 700,
-                color: "var(--text-secondary)",
-              }}
-            >
-              {isConnected ? "CONNECTED" : "OFFLINE"}
-            </span>
-          </div>
+          <CommsQualityBadge
+            transportConnected={isConnected}
+            health={commsHealth}
+          />
 
           <button
             type="button"

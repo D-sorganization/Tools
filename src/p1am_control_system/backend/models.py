@@ -50,10 +50,15 @@ class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
     id: int | None = Field(default=None, primary_key=True)
     tag_name: str
     value: float
+    source_timestamp: datetime | None = Field(default_factory=utc_now)
     timestamp: datetime = Field(
         default_factory=utc_now,
         index=True,
     )
+    quality: str = Field(default="uncertain", index=True)
+    diagnostic_reason: str | None = Field(default="legacy_unqualified")
+    sequence: int = Field(default=0, index=True)
+    source: str = Field(default="legacy.adapter", index=True)
 
 
 class PlantArea(SQLModel, table=True):  # type: ignore[call-arg]

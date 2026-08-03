@@ -72,6 +72,34 @@ export type ActiveAlarm = z.infer<typeof activeAlarmSchema>;
 
 export const activeAlarmsSchema = z.array(activeAlarmSchema);
 
+export const signalQualitySchema = z.enum([
+  "good",
+  "uncertain",
+  "bad",
+  "stale",
+  "simulated",
+]);
+
+export const signalSampleSchema = z.object({
+  value: z.number(),
+  source_timestamp: z.string(),
+  server_timestamp: z.string(),
+  quality: signalQualitySchema,
+  diagnostic_reason: z.string().nullable(),
+  sequence: z.number().int().positive(),
+  source: z.string().min(1),
+});
+export type SignalSample = z.infer<typeof signalSampleSchema>;
+
+export const commsHealthSchema = z.object({
+  quality: signalQualitySchema,
+  diagnostic_reason: z.string().nullable(),
+  sequence: z.number().int().positive().nullable(),
+  server_timestamp: z.string().nullable(),
+  source: z.string().min(1),
+});
+export type CommsHealth = z.infer<typeof commsHealthSchema>;
+
 /**
  * Live telemetry frame pushed over the `/api/stream` WebSocket.
  *
@@ -87,6 +115,11 @@ export const activeAlarmsSchema = z.array(activeAlarmSchema);
 export const telemetryFrameSchema = z.object({
   tags: z.array(z.number()).optional().catch(undefined),
   tags_dict: z.record(z.string(), z.number()).optional().catch(undefined),
+  tag_samples: z
+    .record(z.string(), signalSampleSchema)
+    .optional()
+    .catch(undefined),
+  comms_health: commsHealthSchema.optional().catch(undefined),
   alicats: z.array(alicatMfcStateSchema).optional().catch(undefined),
   active_alarms: z
     .record(z.string(), activeAlarmSchema)

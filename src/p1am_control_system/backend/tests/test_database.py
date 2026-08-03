@@ -123,6 +123,54 @@ def test_init_db_installs_append_only_audit_guards(tmp_path, monkeypatch) -> Non
     assert trigger_names == {"auditlog_no_delete", "auditlog_no_update"}
 
 
+def test_historian_quality_migration_preserves_legacy_rows(
+    tmp_path, monkeypatch
+) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'legacy-quality.db'}")
+    with engine.begin() as connection:
+        connection.execute(
+            text(
+                "CREATE TABLE taglog (id INTEGER PRIMARY KEY, tag_name VARCHAR "
+                "NOT NULL, value FLOAT NOT NULL, timestamp DATETIME NOT NULL)"
+            )
+        )
+        connection.execute(
+            text(
+                "INSERT INTO taglog(tag_name, value, timestamp) "
+                "VALUES ('TAG_0', 1.5, '2026-08-03 12:00:00')"
+            )
+        )
+    monkeypatch.setattr(database, "engine", engine)
+
+    database._migrate_historian_quality_columns()
+    database._migrate_historian_quality_columns()
+
+    with engine.connect() as connection:
+        columns = {
+            row[1] for row in connection.exec_driver_sql("PRAGMA table_info(taglog)")
+        }
+        row = connection.execute(
+            text(
+                "SELECT quality, diagnostic_reason, sequence, source, "
+                "source_timestamp FROM taglog"
+            )
+        ).one()
+    assert {
+        "quality",
+        "diagnostic_reason",
+        "sequence",
+        "source",
+        "source_timestamp",
+    } <= columns
+    assert tuple(row) == (
+        "uncertain",
+        "legacy_unqualified",
+        0,
+        "legacy.adapter",
+        "2026-08-03 12:00:00",
+    )
+
+
 def test_trend_query_uses_composite_index(tmp_path) -> None:
     # The composite index must actually serve the trend query plan (no temp sort).
     engine = create_engine(f"sqlite:///{tmp_path / 'plan.db'}")

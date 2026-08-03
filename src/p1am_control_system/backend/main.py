@@ -83,6 +83,7 @@ from project_import import import_project_archive
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from settings import get_settings
+from signal_quality import SignalFrame
 from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
 from state import SystemState
@@ -176,9 +177,18 @@ perf_controller = PerformanceController(
 )
 
 
-def _throttled_log_scan(session: Session, tags: dict[str, float]) -> int:
+def _throttled_log_scan(
+    session: Session,
+    tags: dict[str, float],
+    *,
+    signal_frame: SignalFrame | None = None,
+) -> int:
     """Persist a scan to the historian only when the throttle says it's due."""
-    return historian.log_scan(session, tags) if capture_throttle.due() else 0
+    return (
+        historian.log_scan(session, tags, signal_frame=signal_frame)
+        if capture_throttle.due()
+        else 0
+    )
 
 
 class ConnectionManager:
@@ -887,6 +897,37 @@ def get_events(
     return list(results)
 
 
+def _trend_signal_metadata(
+    db: Session,
+    tag_name: str,
+    sample_times: list[datetime],
+) -> dict[str, list[Any]]:
+    if not sample_times:
+        return {
+            "qualities": [],
+            "diagnostic_reasons": [],
+            "source_timestamps": [],
+            "sequences": [],
+            "sources": [],
+        }
+    rows = db.exec(
+        select(TagLog)
+        .where(col(TagLog.tag_name) == tag_name)
+        .where(col(TagLog.timestamp).in_(sample_times))
+    ).all()
+    by_timestamp = {row.timestamp: row for row in rows}
+    ordered = [by_timestamp[timestamp] for timestamp in sample_times]
+    return {
+        "qualities": [row.quality for row in ordered],
+        "diagnostic_reasons": [row.diagnostic_reason for row in ordered],
+        "source_timestamps": [
+            (row.source_timestamp or row.timestamp).isoformat() for row in ordered
+        ],
+        "sequences": [row.sequence for row in ordered],
+        "sources": [row.source for row in ordered],
+    }
+
+
 @app.get("/api/trends", dependencies=[Depends(require_read_auth)])
 def get_trends(
     tag_id: str,
@@ -937,7 +978,12 @@ def get_trends(
     elif smoothing == "exponential_smoothing" and values:
         values = exponential_smoothing(values, alpha)
 
-    return {"timestamps": timestamps, "values": values, "truncated": truncated}
+    return {
+        "timestamps": timestamps,
+        "values": values,
+        **_trend_signal_metadata(db, tag_name, sample_times),
+        "truncated": truncated,
+    }
 
 
 @app.get("/api/export", dependencies=[Depends(require_read_auth)])

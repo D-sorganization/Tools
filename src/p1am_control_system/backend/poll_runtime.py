@@ -15,9 +15,30 @@ import historian
 from alarm_processing import process_alarm_events
 from models import RoutingConfig
 from power_supply_passthrough import ensure_power_supply_passthrough
+from signal_quality import SignalFrame, SignalFrameFactory, SignalQuality
 from sqlmodel import Session
 
 logger = logging.getLogger("dcs_backend.poll_runtime")
+_default_signal_frames = SignalFrameFactory()
+
+
+def _health_payload(frame: SignalFrame | None) -> dict[str, object]:
+    if frame is None:
+        return {
+            "quality": SignalQuality.BAD.value,
+            "diagnostic_reason": "no_data",
+            "sequence": None,
+            "server_timestamp": None,
+            "source": "unavailable",
+        }
+    sample = next(iter(frame.samples.values()))
+    return {
+        "quality": sample.quality.value,
+        "diagnostic_reason": sample.diagnostic_reason,
+        "sequence": frame.sequence,
+        "server_timestamp": frame.server_timestamp.isoformat(),
+        "source": sample.source,
+    }
 
 
 def _reengage_service_estop(service: Any) -> None:
@@ -120,6 +141,7 @@ async def _poll_once(
         [Any, dict[str, float], dict[str, dict[str, Any]]],
         list[Any],
     ] = process_alarm_events,
+    signal_frames: SignalFrameFactory | None = None,
 ) -> dict[str, Any]:
     """Run one PLC scan, broadcast it, and persist historian/alarm rows."""
     if not isinstance(latest_tag_values, dict):
@@ -131,6 +153,8 @@ async def _poll_once(
             f"active_alarm_map must be a dict, got {type(active_alarm_map).__name__}"
         )
 
+    frame_factory = signal_frames or _default_signal_frames
+    frame: SignalFrame | None = None
     tags = None
     if plc.connected:
         tags = await plc.read_tags()
@@ -145,11 +169,20 @@ async def _poll_once(
             # and by the connection dropping (which routes to the sim below).
             if latest_tag_values:
                 tags = dict(latest_tag_values)
+                frame = frame_factory.stale(
+                    tags,
+                    source="plc.driver",
+                    reason="read_timeout",
+                )
+        else:
+            frame = frame_factory.good(tags, source="plc.driver")
     if tags is None and not plc.connected:
         # No live PLC (offline / dev, or the connection has dropped) — the
         # simulator drives the plant so the HMI still animates. On real hardware
         # the background connect loop is reconnecting in parallel.
         tags = await backup.read_tags()
+        if tags is not None:
+            frame = frame_factory.simulated(tags, source="synthetic.simulator")
     if tags is not None and not isinstance(tags, dict):
         raise TypeError(f"poll tags must be a dict or None, got {type(tags).__name__}")
 
@@ -188,6 +221,8 @@ async def _poll_once(
     payload = {
         "tags": tag_list,
         "tags_dict": tags if tags is not None else {},
+        "tag_samples": frame.to_payload() if frame is not None else {},
+        "comms_health": _health_payload(frame),
         "alicats": alicats.get_devices_data(),
         "active_alarms": active_alarm_map,
         "e_stop_active": estop_active,
@@ -201,9 +236,10 @@ async def _poll_once(
         db_session = None
         try:
             db_session = next(session_factory())
-            log_scan(db_session, tags)
-            for event_log in process_events(alarm_engine, tags, active_alarm_map):
-                db_session.add(event_log)
+            log_scan(db_session, tags, signal_frame=frame)
+            if frame is not None and frame.alarm_eligible:
+                for event_log in process_events(alarm_engine, tags, active_alarm_map):
+                    db_session.add(event_log)
             db_session.commit()
         except Exception as db_err:
             if db_session:
