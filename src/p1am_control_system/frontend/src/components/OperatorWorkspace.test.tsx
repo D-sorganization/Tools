@@ -9,6 +9,8 @@ vi.mock("../api/endpoints", () => ({
   getRepresentativeAssetHealth: vi.fn(),
   getShiftEntries: vi.fn(),
   getProductStatus: vi.fn(),
+  getRepresentativeAdvisory: vi.fn(),
+  recordAdvisoryDisposition: vi.fn(),
 }));
 
 const overview = {
@@ -154,6 +156,31 @@ const productStatus = {
   not_for_live_control: true as const,
 };
 
+const representativeAdvisory = {
+  advisory_id: "ADV-0123456789abcdef",
+  generated_at: "2026-08-03T21:00:00Z",
+  model: {
+    model_id: "SYNTHETIC.MODEL.ADVISORY" as const,
+    version: "1.0.0",
+    algorithm: "representative bounded linear projection",
+    artifact_sha256: "a".repeat(64),
+  },
+  data: {
+    dataset_id: "SYNTHETIC.DATASET.REPRESENTATIVE-RUN",
+    content_sha256: "b".repeat(64),
+    feature_names: ["observed_throughput", "observed_energy", "requested_throughput"],
+  },
+  constraints: { minimum: 40, maximum: 80, unit: "synthetic energy index" },
+  confidence: { level: 0.9, lower: 46.6, estimate: 49.1, upper: 51.6 },
+  recommended_setpoint: 49.1,
+  recommendation: "Review bounded synthetic setpoint in scenario",
+  limitation: "Representative linear projection only; unable to issue commands.",
+  replay: { input_sha256: "c".repeat(64), result_sha256: "d".repeat(64), verified: true as const },
+  authoritative_write_available: false as const,
+  data_classification: "synthetic" as const,
+  not_for_live_control: true as const,
+};
+
 describe("OperatorWorkspace", () => {
   beforeEach(() => {
     vi.mocked(api.getOperatorOverview).mockResolvedValue(overview);
@@ -161,6 +188,7 @@ describe("OperatorWorkspace", () => {
     vi.mocked(api.getRepresentativeAssetHealth).mockResolvedValue(assetHealth);
     vi.mocked(api.getShiftEntries).mockResolvedValue([]);
     vi.mocked(api.getProductStatus).mockResolvedValue(productStatus);
+    vi.mocked(api.getRepresentativeAdvisory).mockResolvedValue(representativeAdvisory);
   });
 
   it("navigates from a multi-area overview to a consistent faceplate", async () => {
@@ -194,5 +222,8 @@ describe("OperatorWorkspace", () => {
     expect(screen.getByText(/Signed entries are append-only/i)).toBeInTheDocument();
     expect(screen.getByText(/Procedure state:/i)).toHaveTextContent("idle");
     expect(screen.getByText(/RTO 300s \/ RPO 30s/i)).toBeInTheDocument();
+    expect(screen.getByText(/Advisory optimization & digital twin/i)).toBeInTheDocument();
+    expect(screen.getByText(/90% confidence: 46.6–51.6/i)).toBeInTheDocument();
+    expect(screen.getByText(/No authoritative write path/i)).toBeInTheDocument();
   });
 });

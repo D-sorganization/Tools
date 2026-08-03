@@ -22,6 +22,8 @@ import {
   assetHealthReportSchema,
   shiftEntriesSchema,
   productStatusSchema,
+  advisoryResultSchema,
+  advisoryDispositionSchema,
   type CaptureStatus,
   type CaptureClearResult,
   type CaptureConfig,
@@ -43,6 +45,8 @@ import {
   type AssetHealthReport,
   type ShiftEntry,
   type ProductStatus,
+  type AdvisoryResult,
+  type AdvisoryDisposition,
 } from "./schemas";
 
 /**
@@ -153,6 +157,27 @@ export function getShiftEntries(query = ""): Promise<ShiftEntry[]> {
 
 export function getProductStatus(): Promise<ProductStatus> {
   return apiFetch("/operator/product-status", { schema: productStatusSchema });
+}
+
+export function getRepresentativeAdvisory(): Promise<AdvisoryResult> {
+  return apiFetch("/operator/advisories/representative", {
+    schema: advisoryResultSchema,
+  });
+}
+
+export function recordAdvisoryDisposition(
+  advisoryId: string,
+  decision: "accepted_for_review" | "rejected" | "deferred",
+  reason: string,
+): Promise<AdvisoryDisposition> {
+  return apiFetch(
+    `/operator/advisories/${encodeURIComponent(advisoryId)}/dispositions`,
+    {
+      method: "POST",
+      json: { decision, reason },
+      schema: advisoryDispositionSchema,
+    },
+  );
 }
 
 export function sendProcedureCommand(command: string, reason: string): Promise<unknown> {
