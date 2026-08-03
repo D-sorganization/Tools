@@ -102,6 +102,30 @@ def identity_service():
     return _identity_provider.get()
 
 
+def resolve_optional_principal(
+    api_key: str | None,
+    authorization: str | None,
+) -> Principal | None:
+    """Resolve request credentials for attribution without authorizing an action."""
+    if _dev_no_auth():
+        return _development_principal
+    try:
+        service = identity_service()
+    except (TypeError, ValueError):
+        return None
+    if service is None:
+        return None
+    bearer: HTTPAuthorizationCredentials | None = None
+    if authorization:
+        scheme, separator, credential = authorization.partition(" ")
+        if separator and scheme.lower() == "bearer" and credential:
+            bearer = HTTPAuthorizationCredentials(
+                scheme=scheme,
+                credentials=credential,
+            )
+    return service.resolve(api_key, bearer)
+
+
 def _unconfigured() -> HTTPException:
     return HTTPException(
         status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
@@ -165,6 +189,19 @@ def require_api_key(
         )
         return _development_principal
     return _require_role(Role.OPERATOR, api_key, bearer)
+
+
+def require_engineer_key(
+    api_key: ApiKey = None,
+    bearer: BearerCredential = None,
+) -> Principal:
+    """FastAPI dependency enforcing an engineer-or-higher named role."""
+    if _dev_no_auth():
+        logger.warning(
+            "P1AM_DEV_NO_AUTH is enabled: engineer authentication is DISABLED."
+        )
+        return _development_principal
+    return _require_role(Role.ENGINEER, api_key, bearer)
 
 
 def require_admin_key(

@@ -32,6 +32,8 @@ from auth_config import (  # noqa: E402
     identity_service,
     require_admin_key,
     require_api_key,
+    require_engineer_key,
+    resolve_optional_principal,
     verify_operator_key,
 )
 from fastapi import HTTPException, status  # noqa: E402
@@ -195,6 +197,21 @@ def test_named_engineer_can_operate_but_cannot_admin(
     assert excinfo.value.status_code == status.HTTP_403_FORBIDDEN
 
 
+def test_engineer_gate_rejects_named_operator(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv(
+        "P1AM_PRINCIPALS_JSON",
+        '[{"subject":"op.1","display_name":"Operator One",'
+        '"role":"operator","api_key":"operator-key-12345"}]',
+    )
+
+    with pytest.raises(HTTPException) as excinfo:
+        require_engineer_key(api_key="operator-key-12345", bearer=None)
+
+    assert excinfo.value.status_code == status.HTTP_403_FORBIDDEN
+
+
 def test_operator_gate_accepts_short_lived_bearer_session(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
@@ -221,6 +238,18 @@ def test_invalid_bearer_does_not_fall_back_to_valid_api_key(
     with pytest.raises(HTTPException) as excinfo:
         require_api_key(api_key=_OPERATOR_KEY, bearer=bearer)
     assert excinfo.value.status_code == status.HTTP_401_UNAUTHORIZED
+
+
+def test_optional_principal_resolver_supports_audit_attribution(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("P1AM_API_KEY", _OPERATOR_KEY)
+
+    principal = resolve_optional_principal(_OPERATOR_KEY, None)
+
+    assert principal is not None
+    assert principal.subject == "legacy.single-key"
+    assert resolve_optional_principal("invalid", None) is None
 
 
 # --------------------------------------------------------------------------- #

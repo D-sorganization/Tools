@@ -14,11 +14,15 @@ from typing import Any, cast
 
 import historian
 from alicat_manager import AlicatManager, AlicatMFC
+from audit_middleware import MutationAuditMiddleware
+from audit_router import create_audit_router
 from auth_config import (
     CREDENTIAL_HEADER_NAME,
     identity_service,
     require_admin_key,
     require_api_key,
+    require_engineer_key,
+    resolve_optional_principal,
     verify_operator_key,
 )
 from config_store import load_config, load_model, save_config, save_model
@@ -44,6 +48,7 @@ from fastapi import (
     File,
     HTTPException,
     Query,
+    Request,
     Security,
     UploadFile,
     WebSocket,
@@ -52,6 +57,7 @@ from fastapi import (
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.security import APIKeyHeader
+from identity import Principal
 from identity_router import create_identity_router
 from models import (
     AlicatGasPayload,
@@ -510,6 +516,7 @@ app = FastAPI(
 )
 app.state.control_context = control_context
 app.include_router(create_identity_router(identity_service))
+app.include_router(create_audit_router(get_session, require_engineer_key))
 app.include_router(create_power_supply_router(power_supply_service))
 app.include_router(create_temperature_router(temperature_service))
 
@@ -536,6 +543,25 @@ app.add_middleware(
     allow_credentials=_cors.allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+
+def _audit_principal(request: Request) -> Principal | None:
+    return resolve_optional_principal(
+        request.headers.get(CREDENTIAL_HEADER_NAME),
+        request.headers.get("Authorization"),
+    )
+
+
+def _configuration_revision() -> str:
+    return os.environ.get("P1AM_CONFIG_REVISION", "unversioned")
+
+
+app.add_middleware(
+    MutationAuditMiddleware,
+    engine=engine,
+    principal_resolver=_audit_principal,
+    configuration_revision=_configuration_revision,
 )
 
 
