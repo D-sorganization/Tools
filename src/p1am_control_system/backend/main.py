@@ -14,6 +14,7 @@ except ImportError:
 from typing import Any, cast
 
 import historian
+from advisory_router import create_advisory_router
 from alarm_router import create_alarm_router
 from alarm_service import AlarmService, manager_from_routing
 from alicat_manager import AlicatManager, AlicatMFC
@@ -683,6 +684,12 @@ app.include_router(
         representative_product.connectors,
         representative_product.notifications,
         representative_product.availability,
+        operator_dependency=require_api_key,
+    )
+)
+app.include_router(
+    create_advisory_router(
+        representative_product.advisories,
         operator_dependency=require_api_key,
     )
 )

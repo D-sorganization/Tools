@@ -50,7 +50,11 @@ recovery states with attributable transitions.
 degrades only its own tags and all failed commands are rejected closed.
 - Notification and recovery summaries show escalation recipients, delivery
 controls, single command authority, clock reliability, and explicit RTO/RPO.
-These are representative contracts, not claims of redundant deployed hardware.`,
+- The advisory workspace identifies the synthetic model and data, shows bounded
+constraints and confidence, verifies replay checksums, and records attributable
+operator review dispositions. It has no authoritative command or write path.
+These are representative contracts, not claims of deployed redundant hardware,
+validated plant models, or approved advanced control.`,
   },
 
   temperature: {

@@ -1,0 +1,56 @@
+"""REST tests for advisory review without an authoritative write path."""
+
+from __future__ import annotations
+
+from datetime import UTC, datetime
+
+from advisory_router import create_advisory_router
+from advisory_workspace import AdvisoryService
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
+from identity import Principal, Role
+
+
+def _client() -> tuple[TestClient, FastAPI]:
+    app = FastAPI()
+    service = AdvisoryService(now=lambda: datetime(2026, 8, 3, 21, 0, tzinfo=UTC))
+    app.include_router(
+        create_advisory_router(
+            service,
+            operator_dependency=lambda: Principal(
+                "operator.one", "Operator One", Role.OPERATOR
+            ),
+        )
+    )
+    return TestClient(app), app
+
+
+def test_representative_advisory_and_disposition_are_review_only() -> None:
+    client, app = _client()
+
+    response = client.get("/api/operator/advisories/representative")
+    assert response.status_code == 200
+    advisory = response.json()
+    assert advisory["authoritative_write_available"] is False
+    assert advisory["replay"]["verified"] is True
+
+    disposition = client.post(
+        f"/api/operator/advisories/{advisory['advisory_id']}/dispositions",
+        json={"decision": "accepted_for_review", "reason": "Use in synthetic study"},
+    )
+    assert disposition.status_code == 200
+    assert disposition.json()["applied_to_control"] is False
+
+    advisory_paths = {route.path for route in app.routes if "/advisories" in route.path}
+    assert all("command" not in path and "write" not in path for path in advisory_paths)
+
+
+def test_unknown_advisory_cannot_receive_a_disposition() -> None:
+    client, _ = _client()
+
+    response = client.post(
+        "/api/operator/advisories/unknown/dispositions",
+        json={"decision": "rejected", "reason": "No matching result"},
+    )
+
+    assert response.status_code == 404

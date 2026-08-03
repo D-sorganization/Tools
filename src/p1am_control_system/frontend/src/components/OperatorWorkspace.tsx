@@ -5,6 +5,8 @@ import {
   getRepresentativeAssetHealth,
   getShiftEntries,
   getProductStatus,
+  getRepresentativeAdvisory,
+  recordAdvisoryDisposition,
 } from "../api/endpoints";
 import type {
   AssetFaceplate,
@@ -12,6 +14,7 @@ import type {
   ProcessOverview,
   ProtectionSnapshot,
   ProductStatus,
+  AdvisoryResult,
   ShiftEntry,
 } from "../api/schemas";
 
@@ -87,6 +90,8 @@ export function OperatorWorkspace() {
   const [assetHealth, setAssetHealth] = useState<AssetHealthReport | null>(null);
   const [shiftEntries, setShiftEntries] = useState<ShiftEntry[]>([]);
   const [productStatus, setProductStatus] = useState<ProductStatus | null>(null);
+  const [advisory, setAdvisory] = useState<AdvisoryResult | null>(null);
+  const [dispositionStatus, setDispositionStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -97,14 +102,16 @@ export function OperatorWorkspace() {
       getRepresentativeAssetHealth(),
       getShiftEntries(),
       getProductStatus(),
+      getRepresentativeAdvisory(),
     ])
-      .then(([nextOverview, nextProtections, nextHealth, nextEntries, nextProduct]) => {
+      .then(([nextOverview, nextProtections, nextHealth, nextEntries, nextProduct, nextAdvisory]) => {
         if (active) {
           setOverview(nextOverview);
           setProtections(nextProtections);
           setAssetHealth(nextHealth);
           setShiftEntries(nextEntries);
           setProductStatus(nextProduct);
+          setAdvisory(nextAdvisory);
         }
       })
       .catch((reason: unknown) => {
@@ -114,7 +121,22 @@ export function OperatorWorkspace() {
   }, []);
 
   if (error) return <div role="alert">{error}</div>;
-  if (!overview || !protections || !assetHealth || !productStatus) return <div>Loading representative operator workspace…</div>;
+  if (!overview || !protections || !assetHealth || !productStatus || !advisory) return <div>Loading representative operator workspace…</div>;
+
+  const disposition = async (
+    decision: "accepted_for_review" | "rejected" | "deferred",
+  ) => {
+    try {
+      const record = await recordAdvisoryDisposition(
+        advisory.advisory_id,
+        decision,
+        "Operator disposition from representative advisory workspace",
+      );
+      setDispositionStatus(`${record.decision.replace(/_/g, " ")} by ${record.actor}; no control value applied.`);
+    } catch (reason: unknown) {
+      setDispositionStatus(reason instanceof Error ? reason.message : "Disposition failed");
+    }
+  };
 
   return (
     <main aria-labelledby="operator-workspace-heading">
@@ -186,6 +208,24 @@ export function OperatorWorkspace() {
         <p>
           Recovery objectives: RTO {productStatus.availability.recovery_time_objective_seconds}s / RPO {productStatus.availability.recovery_point_objective_seconds}s. One command authority; energizing commands fail closed without the HMI.
         </p>
+      </section>
+      <section aria-labelledby="advisory-heading" style={{ marginTop: "1rem" }}>
+        <h3 id="advisory-heading">Advisory optimization &amp; digital twin</h3>
+        <p><strong>Review only. No authoritative write path.</strong> Synthetic demonstration; not validated against a plant.</p>
+        <p>
+          Model {advisory.model.model_id} v{advisory.model.version}; dataset {advisory.data.dataset_id}.
+        </p>
+        <p>
+          Recommendation: {advisory.recommended_setpoint} {advisory.constraints.unit} within {advisory.constraints.minimum}–{advisory.constraints.maximum}.
+          {" "}{advisory.confidence.level * 100}% confidence: {advisory.confidence.lower}–{advisory.confidence.upper}.
+        </p>
+        <p>Replay verified: {String(advisory.replay.verified)}; result checksum {advisory.replay.result_sha256.slice(0, 12)}…</p>
+        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+          <button type="button" onClick={() => void disposition("accepted_for_review")}>Accept for review</button>
+          <button type="button" onClick={() => void disposition("deferred")}>Defer</button>
+          <button type="button" onClick={() => void disposition("rejected")}>Reject</button>
+        </div>
+        {dispositionStatus && <p role="status">{dispositionStatus}</p>}
       </section>
       {selected && <Faceplate asset={selected} onClose={() => setSelected(null)} />}
     </main>

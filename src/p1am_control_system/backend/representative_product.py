@@ -6,6 +6,7 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime, timedelta
 
+from advisory_workspace import AdvisoryService
 from availability import AvailabilityPolicy, AvailabilityService
 from connector_plugins import ConnectorDescriptor, ConnectorManager
 from notification_policy import NotificationPolicy, NotificationService
@@ -59,6 +60,7 @@ class RepresentativeProduct:
     connectors: ConnectorManager
     notifications: NotificationService
     availability: AvailabilityService
+    advisories: AdvisoryService
 
 
 def build_representative_product(now: Callable[[], datetime]) -> RepresentativeProduct:
@@ -84,4 +86,5 @@ def build_representative_product(now: Callable[[], datetime]) -> RepresentativeP
                 buffer_capacity=1000,
             )
         ),
+        advisories=AdvisoryService(now=now),
     )

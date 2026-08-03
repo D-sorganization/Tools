@@ -145,11 +145,28 @@ bundle pass; ESLint has zero errors and two unchanged pre-existing hook warnings
 
 ### Phase D — Advanced differentiation
 
-- [ ] F16 advisory optimization, digital-twin, and advanced-control workspace
+- [x] F16 advisory optimization, digital-twin, and advanced-control workspace
 
 Exit criterion: model outputs are reproducible, versioned, uncertainty-aware,
 reviewable, and unable to write authoritative commands without a separately
 approved integration.
+
+Phase D TDD evidence: the RED run failed collection because the advisory domain
+and router did not exist. GREEN added five passing domain/API contract tests for
+deterministic results, model and data provenance, bounded constraints,
+confidence intervals, replay checksums, attributable dispositions, invalid
+input rejection, and the absence of command/write routes. REFACTOR introduced
+canonical hashing, immutable contracts, retained identical evaluations, strict
+dependency checks, and shared schema validation while preserving the no-write
+boundary.
+
+Phase D release-gate evidence: Ruff, formatting, and strict mypy checks pass for
+the advisory domain and API; the complete backend suite passes with 1,015 tests
+and 6 CI-only dependency checks skipped; all 394 frontend tests, TypeScript, and
+the production bundle pass; ESLint has zero errors and two unchanged
+pre-existing hook warnings. The UI and in-app help label the model and data as
+synthetic, disclose that the representative linear projection is not validated
+against a plant, and state that no authoritative write path exists.
 
 ## Feature acceptance matrix
 

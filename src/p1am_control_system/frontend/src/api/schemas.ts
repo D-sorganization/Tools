@@ -348,6 +348,56 @@ export const productStatusSchema = z.object({
 });
 export type ProductStatus = z.infer<typeof productStatusSchema>;
 
+const sha256Schema = z.string().regex(/^[0-9a-f]{64}$/);
+export const advisoryResultSchema = z.object({
+  advisory_id: z.string().startsWith("ADV-"),
+  generated_at: z.string(),
+  model: z.object({
+    model_id: z.literal("SYNTHETIC.MODEL.ADVISORY"),
+    version: z.string(),
+    algorithm: z.string(),
+    artifact_sha256: sha256Schema,
+  }),
+  data: z.object({
+    dataset_id: z.string().startsWith("SYNTHETIC."),
+    content_sha256: sha256Schema,
+    feature_names: z.array(z.string()),
+  }),
+  constraints: z.object({
+    minimum: z.number(),
+    maximum: z.number(),
+    unit: z.string(),
+  }),
+  confidence: z.object({
+    level: z.number().gt(0).lt(1),
+    lower: z.number(),
+    estimate: z.number(),
+    upper: z.number(),
+  }),
+  recommended_setpoint: z.number(),
+  recommendation: z.string(),
+  limitation: z.string(),
+  replay: z.object({
+    input_sha256: sha256Schema,
+    result_sha256: sha256Schema,
+    verified: z.literal(true),
+  }),
+  authoritative_write_available: z.literal(false),
+  data_classification: z.literal("synthetic"),
+  not_for_live_control: z.literal(true),
+});
+export type AdvisoryResult = z.infer<typeof advisoryResultSchema>;
+
+export const advisoryDispositionSchema = z.object({
+  advisory_id: z.string(),
+  decision: z.enum(["accepted_for_review", "rejected", "deferred"]),
+  reason: z.string(),
+  actor: z.string(),
+  recorded_at: z.string(),
+  applied_to_control: z.literal(false),
+});
+export type AdvisoryDisposition = z.infer<typeof advisoryDispositionSchema>;
+
 /**
  * Live telemetry frame pushed over the `/api/stream` WebSocket.
  *
