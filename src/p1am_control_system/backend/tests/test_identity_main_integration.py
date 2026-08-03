@@ -28,6 +28,10 @@ def test_main_application_mounts_identity_session_routes() -> None:
     assert "POST" in methods_by_path["/api/alarm-management/{tag}/shelf"]
     assert "POST" in methods_by_path["/api/configurations/drafts"]
     assert "POST" in methods_by_path["/api/configurations/{revision_id}/activate"]
+    assert "GET" in methods_by_path["/api/system/identity"]
+    assert "GET" in methods_by_path["/api/system/health"]
+    assert "POST" in methods_by_path["/api/system/backups"]
+    assert "POST" in methods_by_path["/api/system/restores"]
 
 
 def test_main_application_registers_automatic_mutation_audit() -> None:

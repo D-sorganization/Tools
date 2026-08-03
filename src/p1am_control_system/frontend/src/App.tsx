@@ -27,6 +27,7 @@ import { CsvExporter } from "./components/CsvExporter";
 import { CommsQualityBadge } from "./components/CommsQualityBadge";
 import { ProfessionalAlarmPanel } from "./components/ProfessionalAlarmPanel";
 import { ConfigurationWorkflowPanel } from "./components/ConfigurationWorkflowPanel";
+import { SystemHealthPanel } from "./components/SystemHealthPanel";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
 import {
   TABS,
@@ -1057,6 +1058,9 @@ export const App: React.FC = () => {
 
           {activeTab === "events" && visibleTabs.events && (
             <div style={{ display: "grid", gap: "1rem" }}>
+              <div className="glass-panel">
+                <SystemHealthPanel />
+              </div>
               <div className="glass-panel">
                 <ProfessionalAlarmPanel />
               </div>

@@ -160,6 +160,27 @@ export const configurationDiffSchema = z.array(
 export type ConfigurationRevision = z.infer<typeof configurationRevisionSchema>;
 export type ConfigurationDiffEntry = z.infer<typeof configurationDiffSchema>[number];
 
+export const deploymentIdentitySchema = z.object({
+  software_revision: z.string(),
+  configuration_revision: z.string(),
+  configuration_sha256: z.string().nullable(),
+  configuration_state: z.string(),
+});
+export const systemHealthSchema = z.object({
+  generated_at: z.string(),
+  overall: z.enum(["good", "degraded", "bad"]),
+  identity: deploymentIdentitySchema,
+  checks: z.array(
+    z.object({
+      name: z.string(),
+      status: z.enum(["good", "degraded", "bad"]),
+      detail: z.string(),
+    }),
+  ),
+});
+export type DeploymentIdentity = z.infer<typeof deploymentIdentitySchema>;
+export type SystemHealth = z.infer<typeof systemHealthSchema>;
+
 /**
  * Live telemetry frame pushed over the `/api/stream` WebSocket.
  *

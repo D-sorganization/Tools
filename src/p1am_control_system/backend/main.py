@@ -87,11 +87,14 @@ from power_supply_integration import PowerSupplyService, create_power_supply_rou
 from project_import import import_project_archive
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
+from recovery_package import RecoveryPackageService
 from settings import get_settings
 from signal_quality import SignalFrame
 from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
 from state import SystemState
+from system_health import SystemHealthService
+from system_router import create_system_router
 from temperature_integration import (
     TemperatureService,
     create_temperature_router,
@@ -353,6 +356,19 @@ configuration_workflow = ConfigurationWorkflow(
     SqliteRevisionRepository(_config_session),
     _deploy_approved_routing,
 )
+software_revision = os.environ.get("P1AM_SOFTWARE_REVISION", "development-unidentified")
+recovery_service = RecoveryPackageService(
+    configuration_workflow,
+    software_revision=software_revision,
+)
+system_health_service = SystemHealthService(
+    workflow=configuration_workflow,
+    recovery=recovery_service,
+    engine=engine,
+    software_revision=software_revision,
+    plc_connected=lambda: plc_client.connected,
+    simulator_available=lambda: True,
+)
 
 
 async def modbus_connect_background() -> None:
@@ -584,6 +600,14 @@ app.include_router(
 app.include_router(
     create_configuration_router(
         configuration_workflow,
+        engineer_dependency=require_engineer_key,
+        admin_dependency=require_admin_key,
+    )
+)
+app.include_router(
+    create_system_router(
+        recovery_service,
+        system_health_service,
         engineer_dependency=require_engineer_key,
         admin_dependency=require_admin_key,
     )

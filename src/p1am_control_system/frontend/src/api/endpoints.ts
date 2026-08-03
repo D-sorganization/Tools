@@ -1,4 +1,4 @@
-import { apiFetch } from "./client";
+import { apiFetch, apiResponse } from "./client";
 import {
   ladderExplorerSchema,
   alicatListSchema,
@@ -16,6 +16,7 @@ import {
   configurationDiffSchema,
   configurationRevisionSchema,
   configurationRevisionsSchema,
+  systemHealthSchema,
   type CaptureStatus,
   type CaptureClearResult,
   type CaptureConfig,
@@ -31,6 +32,7 @@ import {
   type ProfessionalAlarm,
   type ConfigurationDiffEntry,
   type ConfigurationRevision,
+  type SystemHealth,
 } from "./schemas";
 
 /**
@@ -109,6 +111,53 @@ export function rollbackConfiguration(
     json: { reason },
     schema: configurationRevisionSchema,
   });
+}
+
+// --- System identity, health, and recovery ----------------------------------
+
+export function getSystemHealth(): Promise<SystemHealth> {
+  return apiFetch("/system/health", { schema: systemHealthSchema });
+}
+
+export type RecoveryDownload = {
+  payload: Blob;
+  sha256: string;
+  configurationRevision: string;
+};
+
+export async function downloadRecoveryPackage(): Promise<RecoveryDownload> {
+  const response = await apiResponse("/system/backups", { method: "POST" });
+  const sha256 = response.headers.get("X-Artifact-SHA256");
+  const configurationRevision = response.headers.get("X-Configuration-Revision");
+  if (!sha256 || !configurationRevision) {
+    throw new Error("Recovery response omitted identity headers");
+  }
+  return {
+    payload: await response.blob(),
+    sha256,
+    configurationRevision,
+  };
+}
+
+export async function restoreRecoveryPackage(
+  payload: Blob,
+  sha256: string,
+  reason: string,
+): Promise<ConfigurationRevision> {
+  const response = await apiResponse("/system/restores", {
+    method: "POST",
+    body: payload,
+    headers: {
+      "Content-Type": "application/octet-stream",
+      "X-Artifact-SHA256": sha256,
+      "X-Change-Reason": reason,
+    },
+  });
+  const parsed = configurationRevisionSchema.safeParse(await response.json());
+  if (!parsed.success) {
+    throw new Error("Restore response did not match the revision contract");
+  }
+  return parsed.data;
 }
 
 // --- Tags --------------------------------------------------------------------
