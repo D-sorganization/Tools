@@ -4,12 +4,14 @@ import {
   getProtectionSnapshot,
   getRepresentativeAssetHealth,
   getShiftEntries,
+  getProductStatus,
 } from "../api/endpoints";
 import type {
   AssetFaceplate,
   AssetHealthReport,
   ProcessOverview,
   ProtectionSnapshot,
+  ProductStatus,
   ShiftEntry,
 } from "../api/schemas";
 
@@ -84,6 +86,7 @@ export function OperatorWorkspace() {
   const [selected, setSelected] = useState<AssetFaceplate | null>(null);
   const [assetHealth, setAssetHealth] = useState<AssetHealthReport | null>(null);
   const [shiftEntries, setShiftEntries] = useState<ShiftEntry[]>([]);
+  const [productStatus, setProductStatus] = useState<ProductStatus | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -93,13 +96,15 @@ export function OperatorWorkspace() {
       getProtectionSnapshot(),
       getRepresentativeAssetHealth(),
       getShiftEntries(),
+      getProductStatus(),
     ])
-      .then(([nextOverview, nextProtections, nextHealth, nextEntries]) => {
+      .then(([nextOverview, nextProtections, nextHealth, nextEntries, nextProduct]) => {
         if (active) {
           setOverview(nextOverview);
           setProtections(nextProtections);
           setAssetHealth(nextHealth);
           setShiftEntries(nextEntries);
+          setProductStatus(nextProduct);
         }
       })
       .catch((reason: unknown) => {
@@ -109,7 +114,7 @@ export function OperatorWorkspace() {
   }, []);
 
   if (error) return <div role="alert">{error}</div>;
-  if (!overview || !protections || !assetHealth) return <div>Loading representative operator workspace…</div>;
+  if (!overview || !protections || !assetHealth || !productStatus) return <div>Loading representative operator workspace…</div>;
 
   return (
     <main aria-labelledby="operator-workspace-heading">
@@ -162,6 +167,25 @@ export function OperatorWorkspace() {
           <ul>{shiftEntries.map((entry) => <li key={entry.entry_id}>{entry.summary}</li>)}</ul>
         )}
         <p>Signed entries are append-only; receiving operators acknowledge unresolved work explicitly.</p>
+      </section>
+      <section aria-labelledby="product-heading" style={{ marginTop: "1rem" }}>
+        <h3 id="product-heading">Reusable control product</h3>
+        <p>Procedure state: <strong>{productStatus.procedure_state}</strong>. Simulator-only transitions are bounded and attributable.</p>
+        <ul>
+          {productStatus.connectors.map((connector) => {
+            const samples = Object.values(productStatus.samples).filter(
+              (sample) => sample.connector_id === connector.connector_id,
+            );
+            const quality = samples.some((sample) => sample.quality === "bad") ? "bad" : "good";
+            return <li key={connector.connector_id}>{connector.connector_id}: {quality}</li>;
+          })}
+        </ul>
+        <p>
+          Notifications escalate from {productStatus.notification_policy.primary_recipient} to {productStatus.notification_policy.escalation_recipient}; deliveries are delayed, suppressed, rate-limited, redacted, and audited.
+        </p>
+        <p>
+          Recovery objectives: RTO {productStatus.availability.recovery_time_objective_seconds}s / RPO {productStatus.availability.recovery_point_objective_seconds}s. One command authority; energizing commands fail closed without the HMI.
+        </p>
       </section>
       {selected && <Faceplate asset={selected} onClose={() => setSelected(null)} />}
     </main>

@@ -93,11 +93,13 @@ from plant_model import TagDefinition
 from plc_factory import PLCFactory
 from poll_runtime import _connect_once, _poll_once
 from power_supply_integration import PowerSupplyService, create_power_supply_router
+from product_router import create_product_router
 from project_import import import_project_archive
 from protection_management import ProtectionService, representative_protections
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from recovery_package import RecoveryPackageService
+from representative_product import build_representative_product
 from saved_investigation import InvestigationService, SqliteInvestigationRepository
 from scenario_router import create_scenario_router
 from settings import get_settings
@@ -342,6 +344,7 @@ professional_alarm_service = AlarmService(
 protection_service = ProtectionService(
     representative_protections(), now=lambda: datetime.now(UTC)
 )
+representative_product = build_representative_product(lambda: datetime.now(UTC))
 
 
 def _apply_control_config(config: RoutingConfig) -> None:
@@ -671,6 +674,15 @@ app.include_router(
         investigation_service,
         shift_log_service,
         asset_report_provider=_representative_asset_health,
+        operator_dependency=require_api_key,
+    )
+)
+app.include_router(
+    create_product_router(
+        representative_product.procedure,
+        representative_product.connectors,
+        representative_product.notifications,
+        representative_product.availability,
         operator_dependency=require_api_key,
     )
 )

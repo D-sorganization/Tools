@@ -301,6 +301,53 @@ export const shiftEntriesSchema = z.array(shiftEntrySchema);
 export type AssetHealthReport = z.infer<typeof assetHealthReportSchema>;
 export type ShiftEntry = z.infer<typeof shiftEntrySchema>;
 
+export const productStatusSchema = z.object({
+  procedure_state: z.enum([
+    "idle",
+    "starting",
+    "running",
+    "holding",
+    "stopping",
+    "aborted",
+    "recovering",
+  ]),
+  procedure_events: z.array(z.unknown()),
+  connectors: z.array(
+    z.object({
+      connector_id: z.string().startsWith("SYNTHETIC."),
+      version: z.string(),
+      details: z.record(z.string(), z.unknown()),
+    }),
+  ),
+  samples: z.record(
+    z.string(),
+    z.object({
+      value: z.number().nullable(),
+      quality: z.enum(["good", "bad"]),
+      diagnostic: z.string(),
+      connector_id: z.string().startsWith("SYNTHETIC."),
+    }),
+  ),
+  notification_policy: z.object({
+    primary_recipient: z.string(),
+    escalation_recipient: z.string(),
+  }).passthrough(),
+  notification_audit: z.array(z.unknown()),
+  availability: z.object({
+    recovery_time_objective_seconds: z.number().positive(),
+    recovery_point_objective_seconds: z.number().positive(),
+    clock_ordering_reliable: z.boolean(),
+    command_authority: z.string().nullable(),
+    transport_available: z.boolean(),
+    hmi_available: z.boolean(),
+    buffered_samples: z.number().int().nonnegative(),
+    data_classification: z.literal("synthetic"),
+  }),
+  data_classification: z.literal("synthetic"),
+  not_for_live_control: z.literal(true),
+});
+export type ProductStatus = z.infer<typeof productStatusSchema>;
+
 /**
  * Live telemetry frame pushed over the `/api/stream` WebSocket.
  *

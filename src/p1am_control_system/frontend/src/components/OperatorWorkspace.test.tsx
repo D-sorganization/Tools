@@ -8,6 +8,7 @@ vi.mock("../api/endpoints", () => ({
   getProtectionSnapshot: vi.fn(),
   getRepresentativeAssetHealth: vi.fn(),
   getShiftEntries: vi.fn(),
+  getProductStatus: vi.fn(),
 }));
 
 const overview = {
@@ -116,12 +117,50 @@ const assetHealth = {
   data_classification: "synthetic" as const,
 };
 
+const productStatus = {
+  procedure_state: "idle" as const,
+  procedure_events: [],
+  connectors: [
+    {
+      connector_id: "SYNTHETIC.CONNECTOR.DEMO",
+      version: "1.0",
+      details: { state: "online" },
+    },
+  ],
+  samples: {
+    "SYNTHETIC.DEMO.PV": {
+      value: 1,
+      quality: "good" as const,
+      diagnostic: "",
+      connector_id: "SYNTHETIC.CONNECTOR.DEMO",
+    },
+  },
+  notification_policy: {
+    primary_recipient: "synthetic.primary",
+    escalation_recipient: "synthetic.escalation",
+  },
+  notification_audit: [],
+  availability: {
+    recovery_time_objective_seconds: 300,
+    recovery_point_objective_seconds: 30,
+    clock_ordering_reliable: true,
+    command_authority: null,
+    transport_available: true,
+    hmi_available: true,
+    buffered_samples: 0,
+    data_classification: "synthetic" as const,
+  },
+  data_classification: "synthetic" as const,
+  not_for_live_control: true as const,
+};
+
 describe("OperatorWorkspace", () => {
   beforeEach(() => {
     vi.mocked(api.getOperatorOverview).mockResolvedValue(overview);
     vi.mocked(api.getProtectionSnapshot).mockResolvedValue(protections);
     vi.mocked(api.getRepresentativeAssetHealth).mockResolvedValue(assetHealth);
     vi.mocked(api.getShiftEntries).mockResolvedValue([]);
+    vi.mocked(api.getProductStatus).mockResolvedValue(productStatus);
   });
 
   it("navigates from a multi-area overview to a consistent faceplate", async () => {
@@ -153,5 +192,7 @@ describe("OperatorWorkspace", () => {
     expect(screen.getByText(/calibration due date has passed/i)).toBeInTheDocument();
     expect(screen.getByText(/Saved synthetic investigations retain/i)).toBeInTheDocument();
     expect(screen.getByText(/Signed entries are append-only/i)).toBeInTheDocument();
+    expect(screen.getByText(/Procedure state:/i)).toHaveTextContent("idle");
+    expect(screen.getByText(/RTO 300s \/ RPO 30s/i)).toBeInTheDocument();
   });
 });

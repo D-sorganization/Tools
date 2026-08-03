@@ -41,7 +41,16 @@ mode, alarm, interlock, and trend-drill-down context.
 - Protection cards keep control, interlock, and independent-protection
 categories distinct and show deterministic first-out consequences.
 - Any managed bypass is displayed in a persistent banner with actor, reason,
-and expiry. Items marked **Non-bypassable** cannot be bypassed through this UI.`,
+and expiry. Items marked **Non-bypassable** cannot be bypassed through this UI.
+
+### Reusable product demonstrations
+- Simulator-only procedures expose bounded start, run, hold, stop, abort, and
+recovery states with attributable transitions.
+- Connector health identifies the responsible plugin; a failed connector
+degrades only its own tags and all failed commands are rejected closed.
+- Notification and recovery summaries show escalation recipients, delivery
+controls, single command authority, clock reliability, and explicit RTO/RPO.
+These are representative contracts, not claims of redundant deployed hardware.`,
   },
 
   temperature: {
