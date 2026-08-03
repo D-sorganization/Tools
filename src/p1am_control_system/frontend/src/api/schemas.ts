@@ -100,6 +100,30 @@ export const commsHealthSchema = z.object({
 });
 export type CommsHealth = z.infer<typeof commsHealthSchema>;
 
+export const professionalAlarmSchema = z.object({
+  tag: z.string(),
+  priority: z.enum(["critical", "high", "medium", "low"]),
+  lifecycle: z.enum([
+    "inactive",
+    "unacknowledged",
+    "acknowledged",
+    "returned_unacknowledged",
+    "shelved",
+    "suppressed",
+  ]),
+  condition: z.string(),
+  acknowledged_by: z.string().nullable(),
+  shelved_by: z.string().nullable(),
+  shelf_reason: z.string().nullable(),
+  shelf_until: z.string().nullable(),
+  suppression_rule: z.string().nullable(),
+  first_out_sequence: z.number().int().positive().nullable(),
+  active_since: z.string().nullable(),
+  help_text: z.string(),
+});
+export const professionalAlarmsSchema = z.array(professionalAlarmSchema);
+export type ProfessionalAlarm = z.infer<typeof professionalAlarmSchema>;
+
 /**
  * Live telemetry frame pushed over the `/api/stream` WebSocket.
  *

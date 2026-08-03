@@ -25,6 +25,7 @@ import { TabBar } from "./components/TabBar";
 import { HelpModal } from "./components/HelpModal";
 import { CsvExporter } from "./components/CsvExporter";
 import { CommsQualityBadge } from "./components/CommsQualityBadge";
+import { ProfessionalAlarmPanel } from "./components/ProfessionalAlarmPanel";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
 import {
   TABS,
@@ -1046,8 +1047,13 @@ export const App: React.FC = () => {
           )}
 
           {activeTab === "events" && visibleTabs.events && (
-            <div className="glass-panel h-96">
-              <EventLogView events={eventsHistory} />
+            <div style={{ display: "grid", gap: "1rem" }}>
+              <div className="glass-panel">
+                <ProfessionalAlarmPanel />
+              </div>
+              <div className="glass-panel h-96">
+                <EventLogView events={eventsHistory} />
+              </div>
             </div>
           )}
 

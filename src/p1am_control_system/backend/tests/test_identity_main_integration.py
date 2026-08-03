@@ -24,6 +24,8 @@ def test_main_application_mounts_identity_session_routes() -> None:
     assert "DELETE" in methods_by_path["/api/auth/session"]
     assert "GET" in methods_by_path["/api/auth/me"]
     assert "GET" in methods_by_path["/api/audit"]
+    assert "GET" in methods_by_path["/api/alarm-management/active"]
+    assert "POST" in methods_by_path["/api/alarm-management/{tag}/shelf"]
 
 
 def test_main_application_registers_automatic_mutation_audit() -> None:

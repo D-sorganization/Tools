@@ -93,6 +93,18 @@ def test_authorized_shelving_requires_reason_and_expires() -> None:
     with pytest.raises(ValueError, match="reason"):
         manager.shelve("TAG_0", OPERATOR, "", NOW + timedelta(minutes=1), NOW)
 
+    manager.shelve(
+        "TAG_0",
+        OPERATOR,
+        "Short check",
+        NOW + timedelta(minutes=20),
+        NOW + timedelta(minutes=11),
+    )
+    assert (
+        manager.unshelve("TAG_0", OPERATOR, NOW + timedelta(minutes=12)).lifecycle
+        is AlarmLifecycle.UNACKNOWLEDGED
+    )
+
 
 def test_only_designed_suppression_rules_can_hide_alarm() -> None:
     manager = AlarmManager([_definition()])

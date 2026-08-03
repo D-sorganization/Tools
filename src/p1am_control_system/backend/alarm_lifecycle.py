@@ -296,6 +296,20 @@ class AlarmManager:
         runtime.suppression_rule = rule_id if active else None
         return self._snapshot(tag, _aware(now, "now"))
 
+    def unshelve(
+        self,
+        tag: str,
+        principal: Principal,
+        now: datetime,
+    ) -> AlarmSnapshot:
+        if not isinstance(principal, Principal) or not principal.allows(Role.OPERATOR):
+            raise PermissionError("alarm unshelving requires operator role")
+        runtime = self._runtime[self._definition(tag).tag]
+        runtime.shelved_by = None
+        runtime.shelf_reason = None
+        runtime.shelf_until = None
+        return self._snapshot(tag, _aware(now, "now"))
+
     def snapshot(self, tag: str, now: datetime) -> AlarmSnapshot:
         return self._snapshot(tag, _aware(now, "now"))
 

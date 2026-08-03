@@ -11,6 +11,8 @@ import {
   captureClearResultSchema,
   captureConfigSchema,
   performanceConfigSchema,
+  professionalAlarmSchema,
+  professionalAlarmsSchema,
   type CaptureStatus,
   type CaptureClearResult,
   type CaptureConfig,
@@ -23,6 +25,7 @@ import {
   type TuningResult,
   type MpcSimResult,
   type HierarchicalArea,
+  type ProfessionalAlarm,
 } from "./schemas";
 
 /**
@@ -77,6 +80,40 @@ export function getEvents(limit = 50): Promise<EventLogEntry[]> {
 
 export function acknowledgeAlarm(tagId: string): Promise<unknown> {
   return apiFetch(`/alarms/${tagId}/acknowledge`, { method: "POST" });
+}
+
+export function getProfessionalAlarms(): Promise<ProfessionalAlarm[]> {
+  return apiFetch("/alarm-management/active", {
+    schema: professionalAlarmsSchema,
+  });
+}
+
+export function acknowledgeProfessionalAlarm(
+  tag: string,
+): Promise<ProfessionalAlarm> {
+  return apiFetch(`/alarm-management/${encodeURIComponent(tag)}/acknowledge`, {
+    method: "POST",
+    schema: professionalAlarmSchema,
+  });
+}
+
+export function shelfProfessionalAlarm(
+  tag: string,
+  reason: string,
+  durationSeconds: number,
+): Promise<ProfessionalAlarm> {
+  return apiFetch(`/alarm-management/${encodeURIComponent(tag)}/shelf`, {
+    method: "POST",
+    json: { reason, duration_seconds: durationSeconds },
+    schema: professionalAlarmSchema,
+  });
+}
+
+export function unshelveProfessionalAlarm(tag: string): Promise<ProfessionalAlarm> {
+  return apiFetch(`/alarm-management/${encodeURIComponent(tag)}/shelf`, {
+    method: "DELETE",
+    schema: professionalAlarmSchema,
+  });
 }
 
 // --- Alicat mass-flow controllers --------------------------------------------

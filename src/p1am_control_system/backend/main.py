@@ -13,6 +13,8 @@ except ImportError:
 from typing import Any, cast
 
 import historian
+from alarm_router import create_alarm_router
+from alarm_service import AlarmService, manager_from_routing
 from alicat_manager import AlicatManager, AlicatMFC
 from audit_middleware import MutationAuditMiddleware
 from audit_router import create_audit_router
@@ -314,6 +316,16 @@ def build_alarm_engine(config: RoutingConfig) -> Any:
 
 control_context = SystemState(alarm_engine_factory=build_alarm_engine)
 control_context.attach_clients(plc_client, backup_simulator)
+professional_alarm_service = AlarmService(
+    manager_from_routing(control_context.active_config)
+)
+
+
+def _apply_control_config(config: RoutingConfig) -> None:
+    """Synchronize proven controls and the supervisory alarm workspace."""
+    alarm_manager = manager_from_routing(config)
+    control_context.apply_config(config, plc_client, backup_simulator)
+    professional_alarm_service.reconfigure(alarm_manager)
 
 
 async def modbus_connect_background() -> None:
@@ -342,7 +354,7 @@ def _publish_active_config(config: RoutingConfig) -> None:
     """
     if _persisted_routing is not None:
         config = config.model_copy(update={"interlocks": _persisted_routing.interlocks})
-    control_context.apply_config(config, plc_client, backup_simulator)
+    _apply_control_config(config)
 
 
 def require_read_auth(
@@ -410,6 +422,9 @@ async def poll_plc_loop() -> None:
             # the reference is atomic, so a concurrent reader sees a whole frame.
             if frame:
                 latest_frame = frame
+                quality = frame.get("comms_health", {}).get("quality")
+                if quality in {"good", "uncertain", "simulated"}:
+                    professional_alarm_service.observe(frame.get("tags_dict", {}))
             consecutive_failures = 0
         except Exception as loop_err:
             consecutive_failures += 1
@@ -464,7 +479,7 @@ def _restore_persisted_settings(session: Session) -> None:
         routing = load_model(session, "routing", RoutingConfig)
         if routing is not None:
             _persisted_routing = routing
-            control_context.apply_config(routing, plc_client, backup_simulator)
+            _apply_control_config(routing)
             logger.info("Recalled persisted routing (alarm setpoints + PID).")
     except Exception as exc:  # noqa: BLE001 - never block boot on a bad blob
         logger.warning("Routing recall skipped: %s", exc)
@@ -527,6 +542,13 @@ app = FastAPI(
 app.state.control_context = control_context
 app.include_router(create_identity_router(identity_service))
 app.include_router(create_audit_router(get_session, require_engineer_key))
+app.include_router(
+    create_alarm_router(
+        professional_alarm_service,
+        operator_dependency=require_api_key,
+        engineer_dependency=require_engineer_key,
+    )
+)
 app.include_router(create_power_supply_router(power_supply_service))
 app.include_router(create_temperature_router(temperature_service))
 
@@ -683,7 +705,7 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
     Returns:
         JSON response indicating success.
     """
-    control_context.apply_config(config, plc_client, backup_simulator)
+    _apply_control_config(config)
 
     # Persist the SCADA-authoritative routing (interlocks/alarm setpoints + PID)
     # so it survives a restart independent of PLC flash, and refresh the overlay.
