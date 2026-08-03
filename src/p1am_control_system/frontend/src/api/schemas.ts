@@ -246,6 +246,61 @@ export type AssetFaceplate = z.infer<typeof assetFaceplateSchema>;
 export type ProcessOverview = z.infer<typeof processOverviewSchema>;
 export type ProtectionSnapshot = z.infer<typeof protectionSnapshotSchema>;
 
+export const assetHealthReportSchema = z.object({
+  asset_id: z.string().startsWith("SYNTHETIC."),
+  generated_at: z.string(),
+  counters: z.object({
+    runtime_seconds: z.number().nonnegative(),
+    start_count: z.number().int().nonnegative(),
+  }),
+  statistics: z.object({
+    sample_count: z.number().int().positive(),
+    minimum: z.number(),
+    maximum: z.number(),
+    mean: z.number(),
+    standard_deviation: z.number().nonnegative(),
+  }),
+  advisories: z.array(
+    z.object({
+      code: z.enum([
+        "calibration_due",
+        "drift",
+        "flatline",
+        "command_feedback_mismatch",
+        "noisy_signal",
+      ]),
+      asset_id: z.string().startsWith("SYNTHETIC."),
+      detected_at: z.string(),
+      detail: z.string(),
+      classification: z.literal("maintenance_advisory"),
+      authoritative_trip: z.literal(false),
+    }),
+  ),
+  data_classification: z.literal("synthetic"),
+});
+export const shiftEntrySchema = z.object({
+  entry_id: z.string(),
+  shift_id: z.string().startsWith("SYNTHETIC."),
+  run_id: z.string().startsWith("SYNTHETIC."),
+  summary: z.string(),
+  unresolved_actions: z.array(z.string()),
+  event_references: z.array(
+    z.object({ event_id: z.string().startsWith("SYNTHETIC."), occurred_at: z.string() }),
+  ),
+  trend_references: z.array(
+    z.object({
+      investigation_id: z.string().startsWith("SYNTHETIC."),
+      content_sha256: z.string().regex(/^[0-9a-f]{64}$/),
+    }),
+  ),
+  created_by: z.string(),
+  created_at: z.string(),
+  data_classification: z.literal("synthetic"),
+});
+export const shiftEntriesSchema = z.array(shiftEntrySchema);
+export type AssetHealthReport = z.infer<typeof assetHealthReportSchema>;
+export type ShiftEntry = z.infer<typeof shiftEntrySchema>;
+
 /**
  * Live telemetry frame pushed over the `/api/stream` WebSocket.
  *

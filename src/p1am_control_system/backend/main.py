@@ -5,7 +5,7 @@ import shutil
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 try:
     from datetime import UTC
@@ -17,6 +17,12 @@ import historian
 from alarm_router import create_alarm_router
 from alarm_service import AlarmService, manager_from_routing
 from alicat_manager import AlicatManager, AlicatMFC
+from asset_health import (
+    AssetHealthPolicy,
+    AssetHealthReport,
+    AssetHealthService,
+    AssetObservation,
+)
 from audit_middleware import MutationAuditMiddleware
 from audit_router import create_audit_router
 from auth_config import (
@@ -79,6 +85,7 @@ from models import (
     TagLog,
 )
 from mpc import simulate_pid_vs_mpc
+from operations_router import create_operations_router
 from operator_router import create_operator_router
 from performance import PerformanceConfig, PerformanceController, PerformanceMode
 from pid_tuning import identify_fopdt_and_tune
@@ -91,8 +98,11 @@ from protection_management import ProtectionService, representative_protections
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from recovery_package import RecoveryPackageService
+from saved_investigation import InvestigationService, SqliteInvestigationRepository
 from scenario_router import create_scenario_router
 from settings import get_settings
+from shift_log import ShiftLogService
+from shift_log_repository import SqliteShiftLogRepository
 from signal_quality import SignalFrame
 from simulator_client import SimulatedPLCClient
 from sqlmodel import Session, col, select
@@ -363,6 +373,39 @@ configuration_workflow = ConfigurationWorkflow(
     SqliteRevisionRepository(_config_session),
     _deploy_approved_routing,
 )
+investigation_service = InvestigationService(
+    SqliteInvestigationRepository(_config_session)
+)
+shift_log_service = ShiftLogService(SqliteShiftLogRepository(_config_session))
+asset_health_service = AssetHealthService(AssetHealthPolicy(), now=lambda: datetime.now(UTC))
+
+
+def _representative_asset_health() -> AssetHealthReport:
+    """Return invented maintenance context; no field identity or value is used."""
+    now = datetime.now(UTC)
+    observations = (
+        AssetObservation(
+            observed_at=now - timedelta(minutes=10),
+            value=15.0,
+            reference=10.0,
+            command=True,
+            feedback=False,
+            running=True,
+        ),
+        AssetObservation(
+            observed_at=now,
+            value=15.0,
+            reference=10.0,
+            command=True,
+            feedback=False,
+            running=True,
+        ),
+    )
+    return asset_health_service.assess(
+        "SYNTHETIC.FEED.PUMP",
+        observations,
+        calibration_due_at=now - timedelta(days=1),
+    )
 software_revision = os.environ.get("P1AM_SOFTWARE_REVISION", "development-unidentified")
 recovery_service = RecoveryPackageService(
     configuration_workflow,
@@ -621,6 +664,14 @@ app.include_router(
     create_operator_router(
         protection_service,
         engineer_dependency=require_engineer_key,
+    )
+)
+app.include_router(
+    create_operations_router(
+        investigation_service,
+        shift_log_service,
+        asset_report_provider=_representative_asset_health,
+        operator_dependency=require_api_key,
     )
 )
 app.include_router(
