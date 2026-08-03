@@ -6,10 +6,10 @@ from collections.abc import Callable
 
 from configuration_workflow import ConfigurationRevision, ConfigurationState
 from sqlalchemy import func
-from sqlmodel import Field, Session, SQLModel, select
+from sqlmodel import Field, Session, SQLModel, col, select
 
 
-class ConfigurationRevisionRecord(SQLModel, table=True):  # type: ignore[call-arg]
+class ConfigurationRevisionRecord(SQLModel, table=True):
     """Durable revision envelope; the JSON document is canonically validated."""
 
     revision_id: str = Field(primary_key=True)
@@ -83,7 +83,7 @@ class SqliteRevisionRepository:
         with self._session_factory() as session:
             records = session.exec(
                 select(ConfigurationRevisionRecord).order_by(
-                    ConfigurationRevisionRecord.version
+                    col(ConfigurationRevisionRecord.version)
                 )
             ).all()
             return [self._revision(record) for record in records]

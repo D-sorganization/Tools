@@ -78,8 +78,9 @@ identity, data validity, active configuration, or evidence.
 | F05 | Recovery archives verify package and entry SHA-256 values, exclude energized state and runtime/database data, and restore only as a draft. Identity and health report software/configuration, database, clock, storage, service, driver, primary transport, simulator, and recovery-verification status independently. |
 | F12 | Machine-marked synthetic scenarios can access only the isolated in-memory adapter. Evidence archives contain scenario/software/configuration hashes, expected and observed states, synthetic alarm and audit records, timing windows/results, limitations, overall result, and blank sign-off fields. |
 
-Phase A release-gate evidence: Ruff and formatting pass; the complete backend
-suite passes with 971 tests and 6 CI-only dependency checks skipped; the
+Phase A release-gate evidence: Ruff, formatting, and strict mypy checks for all
+new foundation modules pass; the complete backend suite passes with 971 tests
+and 6 CI-only dependency checks skipped; the
 complete frontend suite, TypeScript build, and production bundle pass; ESLint
 has zero errors and two unchanged pre-existing hook warnings. No database,
 runtime recovery archive, credential, or private control artifact is committed.

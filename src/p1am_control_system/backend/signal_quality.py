@@ -6,9 +6,8 @@ import math
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from enum import StrEnum
 from types import MappingProxyType
-
-from shared.python.compatibility import StrEnum
 
 try:
     from datetime import UTC

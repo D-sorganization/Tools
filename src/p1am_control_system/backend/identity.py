@@ -10,8 +10,8 @@ import threading
 from collections.abc import Callable, Sequence
 from dataclasses import InitVar, dataclass, field
 from datetime import datetime, timedelta, timezone
-
-from shared.python.compatibility import StrEnum
+from enum import StrEnum
+from typing import cast, overload
 
 try:
     from datetime import UTC
@@ -102,7 +102,7 @@ def _parse_record(raw: object) -> CredentialRecord:
     if not isinstance(raw, dict):
         raise TypeError("each principal configuration entry must be an object")
     try:
-        role = Role(raw.get("role"))
+        role = Role(_required_text(raw.get("role"), "role"))
     except (TypeError, ValueError) as exc:
         raise ValueError("role must be viewer, operator, engineer, or admin") from exc
     return CredentialRecord(
@@ -136,7 +136,13 @@ def parse_principal_config(raw_json: str) -> tuple[CredentialRecord, ...]:
 class CredentialRegistry:
     """Authenticate credentials against a validated immutable principal set."""
 
-    def __init__(self, records: Sequence[CredentialRecord]) -> None:
+    @overload
+    def __init__(self, records: Sequence[CredentialRecord]) -> None: ...
+
+    @overload
+    def __init__(self, records: object) -> None: ...
+
+    def __init__(self, records: object) -> None:
         if not isinstance(records, Sequence) or isinstance(records, (str, bytes)):
             raise TypeError("records must be a sequence of CredentialRecord")
         normalized = tuple(records)
@@ -145,7 +151,7 @@ class CredentialRegistry:
         if not all(isinstance(record, CredentialRecord) for record in normalized):
             raise TypeError("records must contain only CredentialRecord values")
         self._reject_duplicate_credentials(normalized)
-        self._records = normalized
+        self._records = cast(tuple[CredentialRecord, ...], normalized)
 
     @staticmethod
     def _reject_duplicate_credentials(records: Sequence[CredentialRecord]) -> None:

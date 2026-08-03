@@ -47,7 +47,7 @@ class ScenarioStep(BaseModel):
 class ScenarioDefinition(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    schema_id: Literal[SCENARIO_SCHEMA] = SCENARIO_SCHEMA
+    schema_id: Literal["p1am.synthetic-scenario/v1"] = "p1am.synthetic-scenario/v1"
     name: str = Field(min_length=1, max_length=200)
     data_classification: Literal["synthetic"]
     not_for_live_control: Literal[True]
@@ -121,7 +121,7 @@ class EvidenceSignoff(BaseModel):
 class ScenarioEvidence(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    schema_id: Literal[EVIDENCE_SCHEMA] = EVIDENCE_SCHEMA
+    schema_id: Literal["p1am.acceptance-evidence/v1"] = "p1am.acceptance-evidence/v1"
     evidence_id: str
     scenario_name: str
     scenario_sha256: str = Field(pattern=r"^[0-9a-f]{64}$")

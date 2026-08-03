@@ -5,10 +5,9 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from enum import StrEnum
 
 from identity import Principal, Role
-
-from shared.python.compatibility import StrEnum
 
 
 class AlarmPriority(StrEnum):
@@ -64,17 +63,17 @@ class AlarmDefinition:
         if not isinstance(self.priority, AlarmPriority):
             raise TypeError("priority must be an AlarmPriority")
         for name in ("low_limit", "high_limit", "deadband"):
-            value = float(getattr(self, name))
-            if not math.isfinite(value):
+            numeric_value = float(getattr(self, name))
+            if not math.isfinite(numeric_value):
                 raise ValueError(f"{name} must be finite")
-            object.__setattr__(self, name, value)
+            object.__setattr__(self, name, numeric_value)
         if self.low_limit >= self.high_limit:
             raise ValueError("low_limit must be below high_limit")
         if self.deadband < 0 or self.deadband * 2 >= self.high_limit - self.low_limit:
             raise ValueError("deadband must be nonnegative and smaller than alarm span")
         for name in ("on_delay", "off_delay"):
-            value = getattr(self, name)
-            if not isinstance(value, timedelta) or value < timedelta(0):
+            delay_value = getattr(self, name)
+            if not isinstance(delay_value, timedelta) or delay_value < timedelta(0):
                 raise ValueError(f"{name} must be a nonnegative timedelta")
         rules = frozenset(
             _required_text(rule, "suppression rule") for rule in self.suppression_rules

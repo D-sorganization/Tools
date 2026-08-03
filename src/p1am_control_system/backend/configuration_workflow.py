@@ -3,19 +3,19 @@
 from __future__ import annotations
 
 import asyncio
+import builtins
 import hashlib
 import json
 import threading
 from collections.abc import Awaitable, Callable, Mapping
 from datetime import datetime, timezone
+from enum import StrEnum
 from typing import Protocol
 
 from alarm_service import manager_from_routing
 from identity import Principal, Role
 from models import RoutingConfig
 from pydantic import BaseModel, ConfigDict, Field
-
-from shared.python.compatibility import StrEnum
 
 try:
     from datetime import UTC
@@ -268,7 +268,7 @@ class ConfigurationWorkflow:
 
     def diff(
         self, revision_id: str, base_revision_id: str | None = None
-    ) -> list[ConfigurationDiff]:
+    ) -> builtins.list[ConfigurationDiff]:
         revision = self.get(revision_id)
         base = self.get(base_revision_id) if base_revision_id else self.active()
         before = _flatten(base.payload.model_dump(mode="json")) if base else {}

@@ -23,7 +23,7 @@ MAX_PACKAGE_BYTES = 5_000_000
 class EvidencePackageManifest(BaseModel):
     model_config = ConfigDict(frozen=True)
 
-    schema_id: Literal[PACKAGE_SCHEMA] = PACKAGE_SCHEMA
+    schema_id: Literal["p1am.acceptance-package/v1"] = "p1am.acceptance-package/v1"
     evidence_id: str
     data_classification: Literal["synthetic"] = "synthetic"
     not_for_live_control: Literal[True] = True

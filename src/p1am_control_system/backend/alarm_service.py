@@ -90,7 +90,8 @@ class AlarmService:
 
     def active(self) -> list[AlarmSnapshot]:
         with self._lock:
-            return self._manager.active_snapshots(self._now())
+            snapshots: list[AlarmSnapshot] = self._manager.active_snapshots(self._now())
+            return snapshots
 
     def acknowledge(self, tag: str, principal: Principal) -> AlarmSnapshot:
         with self._lock:
