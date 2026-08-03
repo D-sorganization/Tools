@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
-import { getOperatorOverview, getProtectionSnapshot } from "../api/endpoints";
+import {
+  getOperatorOverview,
+  getProtectionSnapshot,
+  getRepresentativeAssetHealth,
+  getShiftEntries,
+} from "../api/endpoints";
 import type {
   AssetFaceplate,
+  AssetHealthReport,
   ProcessOverview,
   ProtectionSnapshot,
+  ShiftEntry,
 } from "../api/schemas";
 
 const cardStyle = {
@@ -75,15 +82,24 @@ export function OperatorWorkspace() {
   const [overview, setOverview] = useState<ProcessOverview | null>(null);
   const [protections, setProtections] = useState<ProtectionSnapshot | null>(null);
   const [selected, setSelected] = useState<AssetFaceplate | null>(null);
+  const [assetHealth, setAssetHealth] = useState<AssetHealthReport | null>(null);
+  const [shiftEntries, setShiftEntries] = useState<ShiftEntry[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     let active = true;
-    Promise.all([getOperatorOverview(), getProtectionSnapshot()])
-      .then(([nextOverview, nextProtections]) => {
+    Promise.all([
+      getOperatorOverview(),
+      getProtectionSnapshot(),
+      getRepresentativeAssetHealth(),
+      getShiftEntries(),
+    ])
+      .then(([nextOverview, nextProtections, nextHealth, nextEntries]) => {
         if (active) {
           setOverview(nextOverview);
           setProtections(nextProtections);
+          setAssetHealth(nextHealth);
+          setShiftEntries(nextEntries);
         }
       })
       .catch((reason: unknown) => {
@@ -93,7 +109,7 @@ export function OperatorWorkspace() {
   }, []);
 
   if (error) return <div role="alert">{error}</div>;
-  if (!overview || !protections) return <div>Loading representative operator workspace…</div>;
+  if (!overview || !protections || !assetHealth) return <div>Loading representative operator workspace…</div>;
 
   return (
     <main aria-labelledby="operator-workspace-heading">
@@ -119,6 +135,34 @@ export function OperatorWorkspace() {
         ))}
       </div>
       <ProtectionView snapshot={protections} />
+      <section aria-labelledby="maintenance-heading" style={{ marginTop: "1rem" }}>
+        <h3 id="maintenance-heading">Asset health & maintenance</h3>
+        <p>
+          {assetHealth.asset_id}: {assetHealth.counters.runtime_seconds} runtime seconds, {assetHealth.counters.start_count} starts.
+          Advisories are maintenance records, never authoritative trips.
+        </p>
+        <ul>
+          {assetHealth.advisories.map((advisory) => (
+            <li key={advisory.code}><strong>{advisory.code.replace(/_/g, " ")}</strong>: {advisory.detail}</li>
+          ))}
+        </ul>
+      </section>
+      <section aria-labelledby="investigation-heading" style={{ marginTop: "1rem" }}>
+        <h3 id="investigation-heading">Investigations & reporting</h3>
+        <p>
+          Saved synthetic investigations retain query bounds, tag metadata, transformations,
+          charts, annotations, event context, explicit bad-data handling, and export checksums.
+        </p>
+      </section>
+      <section aria-labelledby="handover-heading" style={{ marginTop: "1rem" }}>
+        <h3 id="handover-heading">Shift log & handover</h3>
+        {shiftEntries.length === 0 ? (
+          <p>No synthetic handover entries.</p>
+        ) : (
+          <ul>{shiftEntries.map((entry) => <li key={entry.entry_id}>{entry.summary}</li>)}</ul>
+        )}
+        <p>Signed entries are append-only; receiving operators acknowledge unresolved work explicitly.</p>
+      </section>
       {selected && <Faceplate asset={selected} onClose={() => setSelected(null)} />}
     </main>
   );

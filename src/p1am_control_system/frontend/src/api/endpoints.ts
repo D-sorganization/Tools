@@ -19,6 +19,8 @@ import {
   systemHealthSchema,
   processOverviewSchema,
   protectionSnapshotSchema,
+  assetHealthReportSchema,
+  shiftEntriesSchema,
   type CaptureStatus,
   type CaptureClearResult,
   type CaptureConfig,
@@ -37,6 +39,8 @@ import {
   type SystemHealth,
   type ProcessOverview,
   type ProtectionSnapshot,
+  type AssetHealthReport,
+  type ShiftEntry,
 } from "./schemas";
 
 /**
@@ -131,6 +135,18 @@ export function getOperatorOverview(): Promise<ProcessOverview> {
 
 export function getProtectionSnapshot(): Promise<ProtectionSnapshot> {
   return apiFetch("/operator/protections", { schema: protectionSnapshotSchema });
+}
+
+export function getRepresentativeAssetHealth(): Promise<AssetHealthReport> {
+  return apiFetch("/operator/assets/health/representative", {
+    schema: assetHealthReportSchema,
+  });
+}
+
+export function getShiftEntries(query = ""): Promise<ShiftEntry[]> {
+  return apiFetch(`/operator/shift-log?query=${encodeURIComponent(query)}`, {
+    schema: shiftEntriesSchema,
+  });
 }
 
 export type RecoveryDownload = {

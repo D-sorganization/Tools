@@ -6,6 +6,8 @@ import { OperatorWorkspace } from "./OperatorWorkspace";
 vi.mock("../api/endpoints", () => ({
   getOperatorOverview: vi.fn(),
   getProtectionSnapshot: vi.fn(),
+  getRepresentativeAssetHealth: vi.fn(),
+  getShiftEntries: vi.fn(),
 }));
 
 const overview = {
@@ -90,10 +92,36 @@ const protections = {
   ],
 };
 
+const assetHealth = {
+  asset_id: "SYNTHETIC.FEED.PUMP",
+  generated_at: "2026-08-03T20:00:00Z",
+  counters: { runtime_seconds: 600, start_count: 1 },
+  statistics: {
+    sample_count: 2,
+    minimum: 15,
+    maximum: 15,
+    mean: 15,
+    standard_deviation: 0,
+  },
+  advisories: [
+    {
+      code: "calibration_due" as const,
+      asset_id: "SYNTHETIC.FEED.PUMP",
+      detected_at: "2026-08-03T20:00:00Z",
+      detail: "Calibration due date has passed",
+      classification: "maintenance_advisory" as const,
+      authoritative_trip: false as const,
+    },
+  ],
+  data_classification: "synthetic" as const,
+};
+
 describe("OperatorWorkspace", () => {
   beforeEach(() => {
     vi.mocked(api.getOperatorOverview).mockResolvedValue(overview);
     vi.mocked(api.getProtectionSnapshot).mockResolvedValue(protections);
+    vi.mocked(api.getRepresentativeAssetHealth).mockResolvedValue(assetHealth);
+    vi.mocked(api.getShiftEntries).mockResolvedValue([]);
   });
 
   it("navigates from a multi-area overview to a consistent faceplate", async () => {
@@ -122,5 +150,8 @@ describe("OperatorWorkspace", () => {
     expect(screen.getByText("interlock", { selector: "strong" })).toBeInTheDocument();
     expect(screen.getByText("independent protection", { selector: "strong" })).toBeInTheDocument();
     expect(screen.getByText("Non-bypassable")).toBeInTheDocument();
+    expect(screen.getByText(/calibration due date has passed/i)).toBeInTheDocument();
+    expect(screen.getByText(/Saved synthetic investigations retain/i)).toBeInTheDocument();
+    expect(screen.getByText(/Signed entries are append-only/i)).toBeInTheDocument();
   });
 });

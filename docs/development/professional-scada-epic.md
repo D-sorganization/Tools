@@ -89,15 +89,33 @@ than inferred from an available wall clock.
 
 ### Phase B — Professional operator experience
 
-- [ ] F06 generic process overview and reusable high-performance faceplates
-- [ ] F07 interlock, permissive, first-out, and managed-bypass view
-- [ ] F08 historian context, annotations, comparisons, and reporting
-- [ ] F10 asset health, calibration, and maintenance workspace
-- [ ] F13 shift log, run/campaign context, and handover reporting
+- [x] F06 generic process overview and reusable high-performance faceplates
+- [x] F07 interlock, permissive, first-out, and managed-bypass view
+- [x] F08 historian context, annotations, comparisons, and reporting
+- [x] F10 asset health, calibration, and maintenance workspace
+- [x] F13 shift log, run/campaign context, and handover reporting
 
 Exit criterion: an operator can navigate the synthetic process from overview
 to cause, understand abnormal conditions, and hand off unresolved work with
 traceable context.
+
+#### Phase B verification — 2026-08-03
+
+| Feature | Direct evidence |
+| --- | --- |
+| F06 | The machine-marked synthetic feed, reaction, and separation areas use a reusable accessible faceplate contract with value, timestamp, quality, mode, alarm, interlock, asset-detail, and trend-drill-down context. |
+| F07 | Protection definitions preserve control/interlock/independent-protection categories, deterministic group first-out and consequences, and managed bypasses with engineer role, reason, 24-hour maximum expiry, persistent banner flag, automatic expiry, audit-covered REST mutation, and a non-bypassable policy. |
+| F08 | Immutable SQLite-backed saved investigations reproduce time-bounded queries, tag metadata, transformations, charts, annotations, exact events, context, and an explicit preserve-or-exclude bad-data policy. Deterministic ZIP exports carry entry and package SHA-256 values; interpolation is not an accepted policy. |
+| F10 | Deterministic reports cover calibration due, drift, flatline, command/feedback mismatch, noise, runtime, starts, and device statistics. Every finding is explicitly a maintenance advisory with `authoritative_trip=false`. |
+| F13 | SQLite-backed entries attribute author, shift, run, unresolved actions, exact event times, and investigation checksums; search is deterministic. Sign-off hashes the entry and installs database guards against update/delete, while handover acknowledgment is a separate attributable append. |
+
+Phase B release-gate evidence: Ruff, formatting, and strict mypy checks for all
+new domain, persistence, and API modules pass; the complete backend suite passes
+with 995 tests and 6 CI-only dependency checks skipped; all 394 frontend tests,
+TypeScript, and the production bundle pass; ESLint has zero errors and two
+unchanged pre-existing hook warnings. The operator workspace and every new
+record are explicitly synthetic and not a representation of confidential plant
+logic, identifiers, limits, or operating values.
 
 ### Phase C — Reusable control product
 
