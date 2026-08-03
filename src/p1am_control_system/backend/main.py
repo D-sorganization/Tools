@@ -79,6 +79,7 @@ from models import (
     TagLog,
 )
 from mpc import simulate_pid_vs_mpc
+from operator_router import create_operator_router
 from performance import PerformanceConfig, PerformanceController, PerformanceMode
 from pid_tuning import identify_fopdt_and_tune
 from plant_model import TagDefinition
@@ -86,6 +87,7 @@ from plc_factory import PLCFactory
 from poll_runtime import _connect_once, _poll_once
 from power_supply_integration import PowerSupplyService, create_power_supply_router
 from project_import import import_project_archive
+from protection_management import ProtectionService, representative_protections
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from recovery_package import RecoveryPackageService
@@ -326,6 +328,9 @@ control_context = SystemState(alarm_engine_factory=build_alarm_engine)
 control_context.attach_clients(plc_client, backup_simulator)
 professional_alarm_service = AlarmService(
     manager_from_routing(control_context.active_config)
+)
+protection_service = ProtectionService(
+    representative_protections(), now=lambda: datetime.now(UTC)
 )
 
 
@@ -609,6 +614,12 @@ app.include_router(
     create_alarm_router(
         professional_alarm_service,
         operator_dependency=require_api_key,
+        engineer_dependency=require_engineer_key,
+    )
+)
+app.include_router(
+    create_operator_router(
+        protection_service,
         engineer_dependency=require_engineer_key,
     )
 )

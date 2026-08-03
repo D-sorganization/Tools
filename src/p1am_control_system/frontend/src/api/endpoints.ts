@@ -17,6 +17,8 @@ import {
   configurationRevisionSchema,
   configurationRevisionsSchema,
   systemHealthSchema,
+  processOverviewSchema,
+  protectionSnapshotSchema,
   type CaptureStatus,
   type CaptureClearResult,
   type CaptureConfig,
@@ -33,6 +35,8 @@ import {
   type ConfigurationDiffEntry,
   type ConfigurationRevision,
   type SystemHealth,
+  type ProcessOverview,
+  type ProtectionSnapshot,
 } from "./schemas";
 
 /**
@@ -117,6 +121,16 @@ export function rollbackConfiguration(
 
 export function getSystemHealth(): Promise<SystemHealth> {
   return apiFetch("/system/health", { schema: systemHealthSchema });
+}
+
+// --- Representative operator workspace -------------------------------------
+
+export function getOperatorOverview(): Promise<ProcessOverview> {
+  return apiFetch("/operator/overview", { schema: processOverviewSchema });
+}
+
+export function getProtectionSnapshot(): Promise<ProtectionSnapshot> {
+  return apiFetch("/operator/protections", { schema: protectionSnapshotSchema });
 }
 
 export type RecoveryDownload = {

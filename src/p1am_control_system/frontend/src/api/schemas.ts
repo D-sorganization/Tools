@@ -181,6 +181,71 @@ export const systemHealthSchema = z.object({
 export type DeploymentIdentity = z.infer<typeof deploymentIdentitySchema>;
 export type SystemHealth = z.infer<typeof systemHealthSchema>;
 
+// --- Representative operator workspace -------------------------------------
+
+export const faceplateValueSchema = z.object({
+  value: z.number(),
+  unit: z.string().min(1),
+  source_timestamp: z.string(),
+});
+export const assetFaceplateSchema = z.object({
+  asset_id: z.string().startsWith("SYNTHETIC."),
+  label: z.string(),
+  asset_type: z.enum(["pump", "valve", "vessel", "heater", "separator"]),
+  primary_value: faceplateValueSchema,
+  quality: z.enum(["good", "uncertain", "bad", "stale", "simulated"]),
+  mode: z.enum(["off", "manual", "automatic", "unavailable"]),
+  alarm_state: z.enum(["normal", "active", "shelved", "suppressed"]),
+  interlock_state: z.enum(["clear", "permissive_missing", "tripped"]),
+  detail_route: z.string(),
+  trend_tags: z.array(z.string().startsWith("SYNTHETIC.")).min(1),
+});
+export const processOverviewSchema = z.object({
+  overview_id: z.string().startsWith("SYNTHETIC."),
+  title: z.string(),
+  areas: z.array(
+    z.object({
+      area_id: z.string().startsWith("SYNTHETIC."),
+      label: z.string(),
+      detail_route: z.string(),
+      assets: z.array(assetFaceplateSchema),
+    }),
+  ),
+  data_classification: z.literal("synthetic"),
+  not_for_live_control: z.literal(true),
+});
+export const protectionDefinitionSchema = z.object({
+  protection_id: z.string().startsWith("SYNTHETIC."),
+  category: z.enum(["control", "interlock", "independent_protection"]),
+  consequences: z.array(z.string()).min(1),
+  bypassable: z.boolean(),
+});
+export const tripRecordSchema = z.object({
+  protection_id: z.string().startsWith("SYNTHETIC."),
+  group_id: z.string(),
+  category: z.enum(["control", "interlock", "independent_protection"]),
+  consequences: z.array(z.string()),
+  occurred_at: z.string(),
+  first_out: z.boolean(),
+});
+export const managedBypassSchema = z.object({
+  protection_id: z.string().startsWith("SYNTHETIC."),
+  actor: z.string(),
+  reason: z.string(),
+  requested_at: z.string(),
+  expires_at: z.string(),
+  banner_required: z.literal(true),
+  active: z.literal(true),
+});
+export const protectionSnapshotSchema = z.object({
+  definitions: z.array(protectionDefinitionSchema),
+  trips: z.array(tripRecordSchema),
+  active_bypasses: z.array(managedBypassSchema),
+});
+export type AssetFaceplate = z.infer<typeof assetFaceplateSchema>;
+export type ProcessOverview = z.infer<typeof processOverviewSchema>;
+export type ProtectionSnapshot = z.infer<typeof protectionSnapshotSchema>;
+
 /**
  * Live telemetry frame pushed over the `/api/stream` WebSocket.
  *
