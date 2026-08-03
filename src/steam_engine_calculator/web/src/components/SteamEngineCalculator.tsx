@@ -262,7 +262,7 @@ function SteamEngineCalculator() {
             <select
               value={mode}
               onChange={(e) => setMode(e.target.value as CalculationMode)}
-              className="w-full px-4 py-3 rounded-lg"
+              className="w-full px-4 py-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89b4fa]"
               style={{ backgroundColor: colors.surface0, color: colors.text, border: `1px solid ${colors.surface1}` }}
             >
               <option value="tp">Temperature & Pressure</option>
@@ -281,7 +281,7 @@ function SteamEngineCalculator() {
                 value={temperature}
                 onChange={(e) => setTemperature(Number(e.target.value))}
                 disabled={mode === 'sat_p'}
-                className="flex-1 px-3 py-2 rounded"
+                className="flex-1 px-3 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89b4fa]"
                 style={{
                   backgroundColor: mode === 'sat_p' ? colors.surface1 : colors.surface0,
                   color: colors.text,
@@ -291,7 +291,7 @@ function SteamEngineCalculator() {
               <select
                 value={tempUnit}
                 onChange={(e) => setTempUnit(e.target.value as 'K' | 'C')}
-                className="w-20 px-2 py-2 rounded"
+                className="w-20 px-2 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89b4fa]"
                 style={{ backgroundColor: colors.surface0, color: colors.text, border: `1px solid ${colors.surface1}` }}
               >
                 <option value="K">K</option>
@@ -307,7 +307,7 @@ function SteamEngineCalculator() {
                 value={pressure}
                 onChange={(e) => setPressure(Number(e.target.value))}
                 disabled={mode === 'sat_t'}
-                className="flex-1 px-3 py-2 rounded"
+                className="flex-1 px-3 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89b4fa]"
                 style={{
                   backgroundColor: mode === 'sat_t' ? colors.surface1 : colors.surface0,
                   color: colors.text,
@@ -317,7 +317,7 @@ function SteamEngineCalculator() {
               <select
                 value={pressureUnit}
                 onChange={(e) => setPressureUnit(e.target.value as 'Pa' | 'kPa' | 'bar' | 'MPa')}
-                className="w-20 px-2 py-2 rounded"
+                className="w-20 px-2 py-2 rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89b4fa]"
                 style={{ backgroundColor: colors.surface0, color: colors.text, border: `1px solid ${colors.surface1}` }}
               >
                 <option value="Pa">Pa</option>
@@ -332,7 +332,7 @@ function SteamEngineCalculator() {
           <button
             onClick={calculate}
             disabled={loading}
-            className="w-full py-4 rounded-lg font-bold text-lg"
+            className="w-full py-4 rounded-lg font-bold text-lg transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#89b4fa] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1e1e2e]"
             style={{
               backgroundColor: loading ? colors.surface1 : colors.blue,
               color: colors.base,

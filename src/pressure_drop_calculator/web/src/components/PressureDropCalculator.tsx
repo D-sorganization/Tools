@@ -297,29 +297,29 @@ export function PressureDropCalculator() {
             <div className="space-y-3">
               <div>
                 <label className="block text-sm text-slate-400 mb-1">Nominal Size (in)</label>
-                <select value={pipeSize} onChange={e => setPipeSize(e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2">
+                <select value={pipeSize} onChange={e => setPipeSize(e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                   {PIPE_SIZES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm text-slate-400 mb-1">Schedule</label>
-                <select value={pipeSchedule} onChange={e => setPipeSchedule(e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2">
+                <select value={pipeSchedule} onChange={e => setPipeSchedule(e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                   {PIPE_SCHEDULES.map(s => <option key={s} value={s}>{s}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm text-slate-400 mb-1">Length (m)</label>
-                <input type="number" value={pipeLength} onChange={e => setPipeLength(+e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2" />
+                <input type="number" value={pipeLength} onChange={e => setPipeLength(+e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
               </div>
               <div>
                 <label className="block text-sm text-slate-400 mb-1">Material</label>
-                <select value={material} onChange={e => setMaterial(e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2">
+                <select value={material} onChange={e => setMaterial(e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                   {Object.keys(MATERIALS).map(m => <option key={m} value={m}>{m}</option>)}
                 </select>
               </div>
               <div>
                 <label className="block text-sm text-slate-400 mb-1">Elevation Change (m)</label>
-                <input type="number" value={elevation} onChange={e => setElevation(+e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2" />
+                <input type="number" value={elevation} onChange={e => setElevation(+e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
               </div>
             </div>
           </div>
@@ -331,26 +331,26 @@ export function PressureDropCalculator() {
               <div className="grid grid-cols-2 gap-2">
                 <div>
                   <label className="block text-sm text-slate-400 mb-1">Flow Rate</label>
-                  <input type="number" value={flowRate} onChange={e => setFlowRate(+e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2" />
+                  <input type="number" value={flowRate} onChange={e => setFlowRate(+e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
                 </div>
                 <div>
                   <label className="block text-sm text-slate-400 mb-1">Unit</label>
-                  <select value={flowUnit} onChange={e => setFlowUnit(e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2">
+                  <select value={flowUnit} onChange={e => setFlowUnit(e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                     {FLOW_UNITS.map(u => <option key={u} value={u}>{u}</option>)}
                   </select>
                 </div>
               </div>
               <div>
                 <label className="block text-sm text-slate-400 mb-1">Inlet Pressure (bar)</label>
-                <input type="number" value={pressure} onChange={e => setPressure(+e.target.value)} step="0.1" className="w-full bg-slate-700 text-white rounded px-3 py-2" />
+                <input type="number" value={pressure} onChange={e => setPressure(+e.target.value)} step="0.1" className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
               </div>
               <div>
                 <label className="block text-sm text-slate-400 mb-1">Temperature (K)</label>
-                <input type="number" value={temperature} onChange={e => setTemperature(+e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2" />
+                <input type="number" value={temperature} onChange={e => setTemperature(+e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
               </div>
               <div>
                 <label className="block text-sm text-slate-400 mb-1">Friction Method</label>
-                <select value={frictionMethod} onChange={e => setFrictionMethod(e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2">
+                <select value={frictionMethod} onChange={e => setFrictionMethod(e.target.value)} className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">
                   {FRICTION_METHODS.map(m => <option key={m} value={m}>{m}</option>)}
                 </select>
               </div>
@@ -364,7 +364,7 @@ export function PressureDropCalculator() {
               {(Object.keys(gasComp) as (keyof GasComp)[]).map(key => (
                 <div key={key}>
                   <label className="block text-sm text-slate-400 mb-1">{key}</label>
-                  <input type="number" value={gasComp[key]} onChange={e => updateGas(key, +e.target.value)} min="0" max="100" step="0.1" className="w-full bg-slate-700 text-white rounded px-3 py-2" />
+                  <input type="number" value={gasComp[key]} onChange={e => updateGas(key, +e.target.value)} min="0" max="100" step="0.1" className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500" />
                 </div>
               ))}
             </div>
@@ -376,7 +376,7 @@ export function PressureDropCalculator() {
           </div>
 
           <div className="lg:col-span-3">
-            <button onClick={calculate} className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700">
+            <button onClick={calculate} className="w-full py-3 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800">
               Calculate Pressure Drop
             </button>
           </div>
