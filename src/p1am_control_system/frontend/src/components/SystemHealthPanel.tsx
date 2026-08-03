@@ -59,6 +59,24 @@ export function SystemHealthPanel() {
     }
   };
 
+  const runAcceptance = async () => {
+    setBusy(true);
+    try {
+      const artifact = await api.runRepresentativeScenario();
+      const url = URL.createObjectURL(artifact.payload);
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = `${artifact.evidenceId}.zip`;
+      anchor.click();
+      URL.revokeObjectURL(url);
+      setError(artifact.passed ? null : "Scenario completed with failed evidence");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Scenario run failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <section aria-label="System health and recovery" style={{ padding: "1rem" }}>
       <div className="panel-header">
@@ -85,6 +103,9 @@ export function SystemHealthPanel() {
       </p>
       <button className="btn btn-primary" onClick={() => void backup()} disabled={busy}>
         Download Verified Recovery Package
+      </button>
+      <button className="btn" onClick={() => void runAcceptance()} disabled={busy}>
+        Run Synthetic Acceptance Scenario
       </button>
       <div style={{ display: "grid", gap: "0.5rem", marginTop: "0.75rem" }}>
         <label>

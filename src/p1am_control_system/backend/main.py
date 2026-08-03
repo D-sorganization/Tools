@@ -88,6 +88,7 @@ from project_import import import_project_archive
 from pydantic import BaseModel
 from pydantic import Field as PydanticField
 from recovery_package import RecoveryPackageService
+from scenario_router import create_scenario_router
 from settings import get_settings
 from signal_quality import SignalFrame
 from simulator_client import SimulatedPLCClient
@@ -371,6 +372,13 @@ system_health_service = SystemHealthService(
 )
 
 
+def _acceptance_identity() -> tuple[str, str]:
+    identity = system_health_service.identity()
+    if identity.configuration_sha256 is None:
+        raise ValueError("an identified active configuration is required")
+    return identity.software_revision, identity.configuration_revision
+
+
 async def modbus_connect_background() -> None:
     """Periodically attempts to connect to PLC in background without blocking polling loop."""
     logger.info("Starting background PLC connection task...")
@@ -609,6 +617,12 @@ app.include_router(
         recovery_service,
         system_health_service,
         engineer_dependency=require_engineer_key,
+        admin_dependency=require_admin_key,
+    )
+)
+app.include_router(
+    create_scenario_router(
+        identity_provider=_acceptance_identity,
         admin_dependency=require_admin_key,
     )
 )

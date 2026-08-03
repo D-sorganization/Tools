@@ -7,6 +7,7 @@ vi.mock("../api/endpoints", () => ({
   getSystemHealth: vi.fn(),
   downloadRecoveryPackage: vi.fn(),
   restoreRecoveryPackage: vi.fn(),
+  runRepresentativeScenario: vi.fn(),
 }));
 
 const health = {
@@ -33,6 +34,9 @@ describe("SystemHealthPanel", () => {
     expect(await screen.findByText(/software-test-1/)).toBeInTheDocument();
     expect(screen.getByText(/primary_transport: degraded/)).toBeInTheDocument();
     expect(screen.getByText(/restore into a draft only/i)).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Run Synthetic Acceptance Scenario" }),
+    ).toBeInTheDocument();
   });
 
   it("refuses restore without a package and checksum", async () => {

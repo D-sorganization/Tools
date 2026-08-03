@@ -32,6 +32,8 @@ def test_main_application_mounts_identity_session_routes() -> None:
     assert "GET" in methods_by_path["/api/system/health"]
     assert "POST" in methods_by_path["/api/system/backups"]
     assert "POST" in methods_by_path["/api/system/restores"]
+    assert "GET" in methods_by_path["/api/acceptance/scenarios/representative"]
+    assert "POST" in methods_by_path["/api/acceptance/scenarios/run"]
 
 
 def test_main_application_registers_automatic_mutation_audit() -> None:

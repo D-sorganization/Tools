@@ -160,6 +160,34 @@ export async function restoreRecoveryPackage(
   return parsed.data;
 }
 
+export type EvidenceDownload = {
+  payload: Blob;
+  sha256: string;
+  evidenceId: string;
+  passed: boolean;
+};
+
+export async function runRepresentativeScenario(): Promise<EvidenceDownload> {
+  const scenario = await apiFetch("/acceptance/scenarios/representative");
+  const response = await apiResponse("/acceptance/scenarios/run", {
+    method: "POST",
+    body: JSON.stringify(scenario),
+    headers: { "Content-Type": "application/json" },
+  });
+  const sha256 = response.headers.get("X-Artifact-SHA256");
+  const evidenceId = response.headers.get("X-Evidence-ID");
+  const passed = response.headers.get("X-Evidence-Passed");
+  if (!sha256 || !evidenceId || !passed) {
+    throw new Error("Acceptance response omitted evidence identity headers");
+  }
+  return {
+    payload: await response.blob(),
+    sha256,
+    evidenceId,
+    passed: passed === "true",
+  };
+}
+
 // --- Tags --------------------------------------------------------------------
 
 export function getLadderExplorer(): Promise<LadderTagInfo[]> {
