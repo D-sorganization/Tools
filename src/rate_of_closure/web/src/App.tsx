@@ -67,6 +67,12 @@ const RESULT_ROWS: { key: string; label: string; unit: string }[] = [
     unit: " mph",
   },
   { key: "speedDeltaMph", label: "Delivered speed change", unit: " mph" },
+  { key: "closureRateDps", label: "Closure rate (CCV)", unit: " °/s" },
+  {
+    key: "normalizedClosureDegPerFt",
+    label: "Normalized closure",
+    unit: " °/ft",
+  },
   {
     key: "closureDuringContactDeg",
     label: "Face closure during contact",
@@ -164,10 +170,12 @@ export default function App() {
               })}
             </dl>
             <p className="mt-3 text-xs text-slate-500">
-              Negative path deviation = the impact point travels left of the
-              reported (reference-point) path. Rate presets are
-              representative of published 3-D golf studies; enter your own
-              measured values.
+              Sign convention follows TrackMan: club path positive =
+              in-to-out (right of target); negative path deviation = the
+              impact point travels left of the reported geometric-center
+              path. Defaults are dossier-sourced (Cheetham 2014 tour HTV
+              1,307 ± 304 °/s about the shaft; CCV ≈ 2,100 °/s; 40 mm
+              GC-to-face offset) — enter your own measured values.
             </p>
           </div>
 

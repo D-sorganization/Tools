@@ -58,13 +58,21 @@ function apply(m: number[][], v: Vec3): Vec3 {
   ];
 }
 
-/** Orthographic projection with a fixed pleasant viewing angle. */
+/**
+ * Orthographic projection with a fixed pleasant viewing angle.
+ *
+ * Model frame is the AffineDrift convention (x target, y up, z right);
+ * the projection treats z as across, x as depth, and y as vertical.
+ */
 function project(v: Vec3, w: number, h: number): [number, number] {
   const yaw = -0.6;
   const pitch = 0.35;
-  const x1 = v[0] * Math.cos(yaw) - v[1] * Math.sin(yaw);
-  const y1 = v[0] * Math.sin(yaw) + v[1] * Math.cos(yaw);
-  const z1 = v[2] * Math.cos(pitch) - y1 * Math.sin(pitch);
+  const across = v[2];
+  const depth = v[0];
+  const up = v[1];
+  const x1 = across * Math.cos(yaw) - depth * Math.sin(yaw);
+  const y1 = across * Math.sin(yaw) + depth * Math.cos(yaw);
+  const z1 = up * Math.cos(pitch) - y1 * Math.sin(pitch);
   const scale = Math.min(w, h) * 1.6;
   return [w / 2 + x1 * scale, h * 0.62 - z1 * scale];
 }
@@ -73,23 +81,23 @@ function headParts(scenario: ImpactScenario) {
   const d = scenario.comToFaceMm / 1000;
   const lie = (scenario.lieAngleDeg * Math.PI) / 180;
   const face: Vec3[] = [
-    [-FACE_W, d, -FACE_H],
-    [FACE_W, d, -FACE_H],
-    [FACE_W, d, FACE_H],
-    [-FACE_W, d, FACE_H],
-    [-FACE_W, d, -FACE_H],
+    [d, -FACE_H, -FACE_W],
+    [d, -FACE_H, FACE_W],
+    [d, FACE_H, FACE_W],
+    [d, FACE_H, -FACE_W],
+    [d, -FACE_H, -FACE_W],
   ];
-  const back = face.map((p): Vec3 => [p[0], p[1] - BODY_DEPTH, p[2]]);
-  const hosel: Vec3 = [-FACE_W, d - 0.02, FACE_H];
+  const back = face.map((p): Vec3 => [p[0] - BODY_DEPTH, p[1], p[2]]);
+  const hosel: Vec3 = [d - 0.02, FACE_H, -FACE_W];
   const shaftEnd: Vec3 = [
-    hosel[0] - Math.cos(lie) * SHAFT_LEN,
-    hosel[1],
-    hosel[2] + Math.sin(lie) * SHAFT_LEN,
+    hosel[0],
+    hosel[1] + Math.sin(lie) * SHAFT_LEN,
+    hosel[2] - Math.cos(lie) * SHAFT_LEN,
   ];
   const impact: Vec3 = [
-    scenario.impactOffsetToeMm / 1000,
     d,
     scenario.impactOffsetHighMm / 1000,
+    scenario.impactOffsetToeMm / 1000,
   ];
   return { face, back, hosel, shaftEnd, impact };
 }
@@ -148,7 +156,7 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
         ctx.fill();
       };
       const vRefMps = scenario.clubheadSpeedMph * 0.44704;
-      arrow([0, 0, 0], [0, vRefMps, 0], COLORS.vRef);
+      arrow([0, 0, 0], [vRefMps, 0, 0], COLORS.vRef);
       arrow(
         apply(rot, parts.impact),
         result.pointVelocityMps,

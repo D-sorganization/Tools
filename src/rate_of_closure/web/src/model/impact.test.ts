@@ -31,6 +31,7 @@ describe("forum commenter case (35 mm, 2000 deg/s, vertical axis)", () => {
     omegaPlaneDps: 0,
     omegaShaftDps: 2000,
     lieAngleDeg: 90,
+    comToFaceMm: 35,
   });
 
   it("tangential velocity is 2.733 mph (1.22 m/s misread as mph)", () => {
@@ -43,16 +44,43 @@ describe("forum commenter case (35 mm, 2000 deg/s, vertical axis)", () => {
 });
 
 describe("tour representative case — parity with pytest", () => {
+  const legacyTour = scenario({
+    omegaPlaneDps: 2200,
+    omegaShaftDps: 1700,
+    comToFaceMm: 35,
+  });
+
   it("matches the Python model to two decimals", () => {
-    const result = solve(scenario());
+    const result = solve(legacyTour);
     expect(result.pathDeviationDeg).toBeCloseTo(-1.7, 1);
     expect(result.aoaDeviationDeg).toBeCloseTo(0.63, 1);
   });
 
   it("closure during contact is about a degree", () => {
-    const result = solve(scenario());
+    const result = solve(legacyTour);
     expect(result.closureDuringContactDeg).toBeGreaterThan(0.8);
     expect(result.closureDuringContactDeg).toBeLessThan(1.6);
+  });
+});
+
+describe("AffineDrift dossier alignment — parity with pytest", () => {
+  it("default CCV reproduces the ~2,100 deg/s tour mean", () => {
+    const result = solve(scenario());
+    expect(result.closureRateDps).toBeCloseTo(2100, -1);
+  });
+
+  it("normalized closure is omega over v in deg/ft", () => {
+    const result = solve(scenario());
+    const speedFts = (120.0 / 3600.0) * 5280.0;
+    expect(result.normalizedClosureDegPerFt).toBeCloseTo(
+      result.closureRateDps / speedFts,
+      9,
+    );
+  });
+
+  it("TrackMan worked example reproduces the ~3 degree gap", () => {
+    const result = solve(scenario({ omegaShaftDps: 3575 }));
+    expect(result.pathDeviationDeg).toBeCloseTo(-3.0, 1);
   });
 });
 

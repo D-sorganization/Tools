@@ -5,9 +5,10 @@ how different is the velocity (path, attack angle, speed) of the actual
 impact point from the velocity of the tracked reference point (COM or
 geometric center)?
 
-Frame convention under test (documented in model.py):
-+Y toward target, +Z up, +X to a right-handed golfer's trail side (right
-of the target line). Negative horizontal deviation = path moving LEFT.
+Frame convention under test — the AffineDrift house convention
+(Launch Monitor Technology Review, sections/02-parameters.tex): x along
+the target line, y up, z right of target. Club path positive =
+in-to-out (right); negative horizontal deviation = path moving LEFT.
 """
 
 from __future__ import annotations
@@ -173,6 +174,55 @@ class TestSweep:
         for value, expected in zip(omegas, swept, strict=True):
             single = solve(_scenario(omega_shaft_dps=float(value)))
             assert expected == pytest.approx(single.path_deviation_deg, abs=1e-9)
+
+
+class TestAffineDriftAlignment:
+    """Pins against the AffineDrift closure-rate dossier and derivation."""
+
+    def test_closure_rate_is_the_ccv_reconciliation(self) -> None:
+        """closure_rate must equal CCV = HTV*sin(lie) + SPV*cos(lie)."""
+        scenario = _scenario(omega_plane_dps=1870.0, omega_shaft_dps=1307.0)
+        result = solve(scenario)
+        expected = 1307.0 * math.sin(math.radians(58.0)) + 1870.0 * math.cos(
+            math.radians(58.0)
+        )
+        assert result.closure_rate_dps == pytest.approx(expected, abs=1e-9)
+
+    def test_default_scenario_reproduces_dossier_ccv_mean(self) -> None:
+        """Defaults (HTV 1,307, SPV 1,870, lie 58) give CCV ~ 2,100 deg/s."""
+        result = solve(ImpactScenario(clubhead_speed_mph=120.0))
+        assert result.closure_rate_dps == pytest.approx(2100.0, abs=5.0)
+
+    def test_normalized_closure_is_omega_over_v_in_deg_per_ft(self) -> None:
+        """The speed-invariant unit: deg/ft = closure rate / speed [ft/s]."""
+        result = solve(ImpactScenario(clubhead_speed_mph=120.0))
+        speed_fts = (120.0 / 3600.0) * 5280.0
+        assert result.normalized_closure_deg_per_ft == pytest.approx(
+            result.closure_rate_dps / speed_fts, abs=1e-9
+        )
+
+    def test_path_gap_tracks_normalized_closure_across_speeds(self) -> None:
+        """The path gap is d / R_ISA and 1 / R_ISA = omega / v, so the
+        deviation scales with deg/ft, not with either rate or speed
+        alone — the dossier's argument for the unit."""
+        slow = solve(_scenario(clubhead_speed_mph=60.0))
+        fast = solve(_scenario(clubhead_speed_mph=120.0))
+        assert slow.path_deviation_deg / fast.path_deviation_deg == pytest.approx(
+            slow.normalized_closure_deg_per_ft / fast.normalized_closure_deg_per_ft,
+            rel=0.02,
+        )
+
+    def test_trackman_worked_example_reproduces_3_degree_gap(self) -> None:
+        """TrackMan's published ~3 deg GC-vs-face-center path gap, d=40mm."""
+        result = solve(
+            ImpactScenario(
+                clubhead_speed_mph=120.0,
+                omega_plane_dps=1870.0,
+                omega_shaft_dps=3575.0,
+                com_to_face_mm=40.0,
+            )
+        )
+        assert result.path_deviation_deg == pytest.approx(-3.0, abs=0.02)
 
 
 class TestGeometryOutputs:

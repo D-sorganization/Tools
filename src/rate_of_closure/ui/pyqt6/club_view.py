@@ -61,36 +61,49 @@ def _rodrigues(axis_omega: np.ndarray, dt: float) -> np.ndarray:
 
 
 def _head_wireframe(scenario: ImpactScenario) -> dict[str, np.ndarray]:
-    """Line strips describing the head at square impact, reference at origin."""
+    """Line strips describing the head at square impact, reference at origin.
+
+    AffineDrift frame: x along the target line, y up, z right of target
+    (toe side for a right-handed golfer).
+    """
     d = scenario.com_to_face_mm / 1000.0
     w, h = _FACE_HALF_WIDTH, _FACE_HALF_HEIGHT
     face = np.array(
         [
-            [-w, d, -h],
-            [w, d, -h],
-            [w, d, h],
-            [-w, d, h],
-            [-w, d, -h],
+            [d, -h, -w],
+            [d, -h, w],
+            [d, h, w],
+            [d, h, -w],
+            [d, -h, -w],
         ]
     )
-    back = face - np.array([0.0, _BODY_DEPTH, 0.0])
+    back = face - np.array([_BODY_DEPTH, 0.0, 0.0])
     shaft_dir = np.array(
         [
-            -np.cos(np.radians(scenario.lie_angle_deg)),
             0.0,
             np.sin(np.radians(scenario.lie_angle_deg)),
+            -np.cos(np.radians(scenario.lie_angle_deg)),
         ]
     )
-    hosel = np.array([-w, d - 0.02, h])
+    hosel = np.array([d - 0.02, h, -w])
     shaft = np.vstack([hosel, hosel + shaft_dir * _SHAFT_STUB])
     impact = np.array(
         [
-            scenario.impact_offset_toe_mm / 1000.0,
             d,
             scenario.impact_offset_high_mm / 1000.0,
+            scenario.impact_offset_toe_mm / 1000.0,
         ]
     )
     return {"face": face, "back": back, "shaft": shaft, "impact": impact}
+
+
+def _display(points: np.ndarray) -> np.ndarray:
+    """Model frame (x target, y up, z right) -> matplotlib display axes.
+
+    Matplotlib draws its z axis vertically, so plot (z, x, y): right of
+    target across, target line into the page, up truly up.
+    """
+    return np.asarray(points)[..., [2, 0, 1]]
 
 
 class Club3DView(QWidget):
@@ -145,26 +158,26 @@ class Club3DView(QWidget):
             ("back", _COL_BODY, 1.2),
             ("shaft", _COL_SHAFT, 2.0),
         ):
-            pts = parts[key] @ rotation.T
+            pts = _display(parts[key] @ rotation.T)
             axes.plot(pts[:, 0], pts[:, 1], pts[:, 2], color=color, lw=width)
         for a, b in zip(parts["face"], parts["back"], strict=True):
-            seg = np.vstack([a, b]) @ rotation.T
+            seg = _display(np.vstack([a, b]) @ rotation.T)
             axes.plot(seg[:, 0], seg[:, 1], seg[:, 2], color=_COL_BODY, lw=0.8)
 
         impact = parts["impact"] @ rotation.T
-        axes.scatter(*impact, color=_COL_IMPACT, s=45, zorder=5)
+        axes.scatter(*_display(impact), color=_COL_IMPACT, s=45, zorder=5)
         axes.scatter(0.0, 0.0, 0.0, color=_COL_BODY, s=30)
 
         scale = 0.0035  # m per (m/s): keeps arrows inside the box
-        v_ref = np.array([0.0, result.reference_speed_mph, 0.0]) * 0.44704
+        v_ref = np.array([result.reference_speed_mph, 0.0, 0.0]) * 0.44704
         v_point = np.array(result.point_velocity_mps)
         for origin, vec, color, label in (
-            (np.zeros(3), v_ref, _COL_V_REF, "reference path"),
+            (np.zeros(3), v_ref, _COL_V_REF, "reference (GC) path"),
             (impact, v_point, _COL_V_POINT, "impact-point path"),
         ):
             axes.quiver(
-                *origin,
-                *(vec * scale),
+                *_display(origin),
+                *_display(vec * scale),
                 color=color,
                 lw=2.0,
                 arrow_length_ratio=0.12,
@@ -175,9 +188,9 @@ class Club3DView(QWidget):
         axes.set_xlim(-limit, limit)
         axes.set_ylim(-limit * 0.6, limit * 1.4)
         axes.set_zlim(-limit * 0.6, limit * 1.4)
-        axes.set_xlabel("X — toe side [m]")
-        axes.set_ylabel("Y — target [m]")
-        axes.set_zlabel("Z — up [m]")
+        axes.set_xlabel("z — right of target [m]")
+        axes.set_ylabel("x — target line [m]")
+        axes.set_zlabel("y — up [m]")
         axes.set_title(
             f"Path Δ {result.path_deviation_deg:+.2f}°   "
             f"AoA Δ {result.aoa_deviation_deg:+.2f}°"

@@ -60,10 +60,10 @@ class TestMainWindow:
         assert text.startswith(("+0.00", "-0.00"))
 
     def test_tour_preset_reports_leftward_deviation(self, window) -> None:  # type: ignore[no-untyped-def]
-        window._controls.apply_preset("Tour representative")
+        window._controls.apply_preset("Cheetham tour median (HTV 1,307)")
         text = window._results_labels["path_deviation_deg"].text()
-        assert text.startswith("-1.7")
+        assert text.startswith("-1.5")
 
     def test_status_bar_narrates_direction(self, window) -> None:  # type: ignore[no-untyped-def]
-        window._controls.apply_preset("Tour representative")
+        window._controls.apply_preset("Cheetham tour median (HTV 1,307)")
         assert "left" in window.statusBar().currentMessage()

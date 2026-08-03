@@ -53,6 +53,8 @@ _RESULT_ROWS: tuple[tuple[str, str], ...] = (
     ("aoa_deviation_deg", "Attack-angle change"),
     ("tangential_speed_mph", "Rotation-induced velocity"),
     ("speed_delta_mph", "Delivered speed change"),
+    ("closure_rate_dps", "Closure rate (CCV)"),
+    ("normalized_closure_deg_per_ft", "Normalized closure"),
     ("closure_during_contact_deg", "Face closure during contact"),
     ("loft_gain_during_contact_deg", "Dynamic loft gained in contact"),
 )
@@ -62,6 +64,8 @@ _UNITS: dict[str, str] = {
     "aoa_deviation_deg": "°",
     "tangential_speed_mph": " mph",
     "speed_delta_mph": " mph",
+    "closure_rate_dps": " °/s",
+    "normalized_closure_deg_per_ft": " °/ft",
     "closure_during_contact_deg": "°",
     "loft_gain_during_contact_deg": "°",
 }
