@@ -64,18 +64,19 @@ function buildPath(
   px: (v: number) => number,
   py: (v: number) => number,
 ): string {
-  const segments: string[] = [];
+  let d = "";
   let penDown = false;
   for (const [dx, dy] of points) {
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) {
       penDown = false;
       continue;
     }
+    if (d.length > 0) d += " ";
     const cmd = penDown ? "L" : "M";
-    segments.push(`${cmd}${px(dx)},${py(dy)}`);
+    d += `${cmd}${px(dx)},${py(dy)}`;
     penDown = true;
   }
-  return segments.join(" ");
+  return d;
 }
 
 /** Multi-series line plot. Forwards a ref to the root `<svg>`. */
