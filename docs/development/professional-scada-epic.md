@@ -119,14 +119,29 @@ logic, identifiers, limits, or operating values.
 
 ### Phase C — Reusable control product
 
-- [ ] F09 generic sequence/state and procedure demonstration
-- [ ] F11 driver/plugin framework and device diagnostics
-- [ ] F14 notification and escalation policies
-- [ ] F15 high availability, time synchronization, and disaster-recovery mode
+- [x] F09 generic sequence/state and procedure demonstration
+- [x] F11 driver/plugin framework and device diagnostics
+- [x] F14 notification and escalation policies
+- [x] F15 high availability, time synchronization, and disaster-recovery mode
 
 Exit criterion: a representative unit and connector can be added through
 documented contracts, commissioned with scenarios, and operated through defined
 infrastructure faults.
+
+#### Phase C verification — 2026-08-03
+
+| Feature | Direct evidence |
+| --- | --- |
+| F09 | A simulator-only state machine deterministically covers start, run, hold, resume, stop, completion, abort, recovery, and timeout. Transitional states have explicit deadlines; invalid transitions and viewer commands fail closed; every event carries actor, reason, sequence, before/after, and synthetic/non-live markings. |
+| F11 | Versioned connector descriptors declare owned read/write tags. Poll and command boundaries isolate exceptions, degrade only owned tags, reject unknown/failed commands closed, identify the responsible connector, validate finite values/tag ownership, and redact diagnostic secret fields. |
+| F14 | Deterministic policy tests prove initial delay, designed suppression, escalation, acknowledgment cancellation, rate limiting, secret redaction, and an audit record for every delivery or policy outcome. The representative channel has no external delivery side effect. |
+| F15 | Availability contracts enforce one command-authority lease, strictly ordered sequences/timestamps, bounded offline buffering and one-time reconciliation, clock-skew reliability, explicit RTO/RPO, and rejection of energizing commands while the HMI is unavailable. The UI states that these contracts do not claim deployed redundant hardware. |
+
+Phase C release-gate evidence: Ruff, formatting, and strict mypy checks for all
+new procedure, connector, notification, availability, composition, and API
+modules pass; the complete backend suite passes with 1,010 tests and 6 CI-only
+dependency checks skipped; all 394 frontend tests, TypeScript, and the production
+bundle pass; ESLint has zero errors and two unchanged pre-existing hook warnings.
 
 ### Phase D — Advanced differentiation
 

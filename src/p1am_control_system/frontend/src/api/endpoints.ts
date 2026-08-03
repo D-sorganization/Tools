@@ -21,6 +21,7 @@ import {
   protectionSnapshotSchema,
   assetHealthReportSchema,
   shiftEntriesSchema,
+  productStatusSchema,
   type CaptureStatus,
   type CaptureClearResult,
   type CaptureConfig,
@@ -41,6 +42,7 @@ import {
   type ProtectionSnapshot,
   type AssetHealthReport,
   type ShiftEntry,
+  type ProductStatus,
 } from "./schemas";
 
 /**
@@ -146,6 +148,17 @@ export function getRepresentativeAssetHealth(): Promise<AssetHealthReport> {
 export function getShiftEntries(query = ""): Promise<ShiftEntry[]> {
   return apiFetch(`/operator/shift-log?query=${encodeURIComponent(query)}`, {
     schema: shiftEntriesSchema,
+  });
+}
+
+export function getProductStatus(): Promise<ProductStatus> {
+  return apiFetch("/operator/product-status", { schema: productStatusSchema });
+}
+
+export function sendProcedureCommand(command: string, reason: string): Promise<unknown> {
+  return apiFetch(`/operator/procedure/commands/${encodeURIComponent(command)}`, {
+    method: "POST",
+    json: { reason },
   });
 }
 
