@@ -2381,6 +2381,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.599
+
+- 2026-08-03: perf(trendAxis): Replaced Math.min/max spread with single-pass loop for trend axis scaling to prevent call stack size exceeded errors and reduce memory allocation.
+
 ### Version 1.1.598
 
 - 2026-06-18: fix(data-processor, #3745) — keep cross-correlation importable
