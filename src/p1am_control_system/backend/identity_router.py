@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, TypeAlias
 
 from fastapi import APIRouter, Depends, HTTPException, Response, Security, status
 from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
@@ -20,6 +20,8 @@ BearerCredential = Annotated[
     HTTPAuthorizationCredentials | None,
     Security(_bearer),
 ]
+IdentityServiceProvider = Callable[[], "IdentityService | None"]
+IdentityServiceSource: TypeAlias = "IdentityService | IdentityServiceProvider"
 
 
 class PrincipalResponse(BaseModel):
@@ -85,20 +87,32 @@ def _unauthorized() -> HTTPException:
     )
 
 
+def _configured_service(source: IdentityServiceSource) -> IdentityService:
+    service = source() if callable(source) else source
+    if service is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Server identity service is not configured.",
+        )
+    if not isinstance(service, IdentityService):
+        raise TypeError("identity service provider returned an invalid value")
+    return service
+
+
 def require_role(
-    service: IdentityService,
+    service: IdentityServiceSource,
     required_role: Role,
 ) -> Callable[..., Principal]:
     """Build a dependency enforcing a named principal and minimum role."""
-    if not isinstance(service, IdentityService):
-        raise TypeError("service must be an IdentityService")
+    if not isinstance(service, IdentityService) and not callable(service):
+        raise TypeError("service must be an IdentityService or provider")
     if not isinstance(required_role, Role):
         raise TypeError("required_role must be a Role")
 
     def dependency(
         api_key: ApiKey = None, bearer: BearerCredential = None
     ) -> Principal:
-        principal = service.resolve(api_key, bearer)
+        principal = _configured_service(service).resolve(api_key, bearer)
         if principal is None:
             raise _unauthorized()
         if not principal.allows(required_role):
@@ -119,16 +133,16 @@ def _session_response(issued: IssuedSession) -> SessionResponse:
     )
 
 
-def create_identity_router(service: IdentityService) -> APIRouter:
+def create_identity_router(service: IdentityServiceSource) -> APIRouter:
     """Create the named-session API router for one identity service."""
-    if not isinstance(service, IdentityService):
-        raise TypeError("service must be an IdentityService")
+    if not isinstance(service, IdentityService) and not callable(service):
+        raise TypeError("service must be an IdentityService or provider")
     router = APIRouter(prefix="/api/auth", tags=["identity"])
     authenticated = require_role(service, Role.VIEWER)
 
     @router.post("/session", status_code=status.HTTP_201_CREATED)
     async def create_session(api_key: ApiKey = None) -> SessionResponse:
-        issued = service.login(api_key)
+        issued = _configured_service(service).login(api_key)
         if issued is None:
             raise _unauthorized()
         return _session_response(issued)
@@ -141,7 +155,7 @@ def create_identity_router(service: IdentityService) -> APIRouter:
 
     @router.delete("/session", status_code=status.HTTP_204_NO_CONTENT)
     async def delete_session(bearer: BearerCredential = None) -> Response:
-        if not service.revoke(bearer):
+        if not _configured_service(service).revoke(bearer):
             raise _unauthorized()
         return Response(status_code=status.HTTP_204_NO_CONTENT)
 

@@ -16,6 +16,7 @@ import historian
 from alicat_manager import AlicatManager, AlicatMFC
 from auth_config import (
     CREDENTIAL_HEADER_NAME,
+    identity_service,
     require_admin_key,
     require_api_key,
     verify_operator_key,
@@ -51,6 +52,7 @@ from fastapi import (
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import HTMLResponse, StreamingResponse
 from fastapi.security import APIKeyHeader
+from identity_router import create_identity_router
 from models import (
     AlicatGasPayload,
     AlicatMFCState,
@@ -507,6 +509,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 app.state.control_context = control_context
+app.include_router(create_identity_router(identity_service))
 app.include_router(create_power_supply_router(power_supply_service))
 app.include_router(create_temperature_router(temperature_service))
 

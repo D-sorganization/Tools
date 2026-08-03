@@ -8,7 +8,7 @@ import json
 import secrets
 import threading
 from collections.abc import Callable, Sequence
-from dataclasses import dataclass, field
+from dataclasses import InitVar, dataclass, field
 from datetime import datetime, timedelta, timezone
 
 from shared.python.compatibility import StrEnum
@@ -82,14 +82,17 @@ class CredentialRecord:
 
     principal: Principal
     api_key: str = field(repr=False)
+    minimum_length: InitVar[int] = MINIMUM_CREDENTIAL_LENGTH
 
-    def __post_init__(self) -> None:
+    def __post_init__(self, minimum_length: int) -> None:
         if not isinstance(self.principal, Principal):
             raise TypeError("principal must be a Principal")
+        if not isinstance(minimum_length, int) or minimum_length < 1:
+            raise ValueError("minimum_length must be a positive integer")
         secret = _required_text(self.api_key, "api_key")
-        if len(secret) < MINIMUM_CREDENTIAL_LENGTH:
+        if len(secret) < minimum_length:
             raise ValueError(
-                f"api_key must contain at least {MINIMUM_CREDENTIAL_LENGTH} characters"
+                f"api_key must contain at least {minimum_length} characters"
             )
         object.__setattr__(self, "api_key", secret)
 

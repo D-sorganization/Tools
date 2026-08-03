@@ -11,7 +11,10 @@ from fastapi.security import HTTPAuthorizationCredentials
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from identity import Role  # noqa: E402
-from identity_config import load_identity_service  # noqa: E402
+from identity_config import (  # noqa: E402
+    EnvironmentIdentityProvider,
+    load_identity_service,
+)
 
 _OPERATOR_KEY = "operator-config-secret"  # pragma: allowlist secret
 _ADMIN_KEY = "administrator-secret"  # pragma: allowlist secret
@@ -98,3 +101,28 @@ def test_resolve_rejects_invalid_bearer_without_falling_back_to_key() -> None:
     )
 
     assert resolved is None
+
+
+def test_provider_preserves_sessions_until_identity_environment_changes() -> None:
+    env = {"P1AM_API_KEY": "legacy-short-key"}
+    provider = EnvironmentIdentityProvider(lambda: env)
+    first = provider.get()
+    assert first is not None
+    issued = first.login("legacy-short-key")
+    assert issued is not None
+
+    assert provider.get() is first
+    bearer = HTTPAuthorizationCredentials(scheme="Bearer", credentials=issued.token)
+    assert provider.get().resolve(None, bearer) == issued.principal
+
+    env["P1AM_API_KEY"] = "replacement-short-key"
+    replacement = provider.get()
+    assert replacement is not None
+    assert replacement is not first
+    assert replacement.resolve(None, bearer) is None
+
+
+def test_legacy_keys_preserve_existing_nonempty_length_contract() -> None:
+    service = load_identity_service({"P1AM_API_KEY": "short-key"})
+    assert service is not None
+    assert service.login("short-key") is not None

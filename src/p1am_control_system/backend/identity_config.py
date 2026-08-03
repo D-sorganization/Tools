@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+import threading
+from collections.abc import Callable, Mapping
 from datetime import timedelta
 
 from identity import (
@@ -79,6 +80,7 @@ def _legacy_record(
     return CredentialRecord(
         principal=Principal(subject=subject, display_name=display_name, role=role),
         api_key=api_key,
+        minimum_length=1,
     )
 
 
@@ -94,3 +96,37 @@ def load_identity_service(env: Mapping[str, str]) -> IdentityService | None:
         CredentialRegistry(records),
         SessionStore(ttl=_session_ttl(env)),
     )
+
+
+_IDENTITY_VARIABLES = (
+    PRINCIPALS_VARIABLE,
+    OPERATOR_KEY_VARIABLE,
+    ADMIN_KEY_VARIABLE,
+    SESSION_TTL_VARIABLE,
+)
+
+
+class EnvironmentIdentityProvider:
+    """Keep one session service while its identity configuration is unchanged."""
+
+    def __init__(self, environment: Callable[[], Mapping[str, str]]) -> None:
+        if not callable(environment):
+            raise TypeError("environment must be callable")
+        self._environment = environment
+        self._fingerprint: tuple[str | None, ...] | None = None
+        self._service: IdentityService | None = None
+        self._lock = threading.Lock()
+
+    @staticmethod
+    def _configuration(env: Mapping[str, str]) -> tuple[str | None, ...]:
+        return tuple(env.get(name) for name in _IDENTITY_VARIABLES)
+
+    def get(self) -> IdentityService | None:
+        """Return the stable service, rebuilding only after a configuration change."""
+        env = self._environment()
+        fingerprint = self._configuration(env)
+        with self._lock:
+            if fingerprint != self._fingerprint:
+                self._service = load_identity_service(env)
+                self._fingerprint = fingerprint
+            return self._service

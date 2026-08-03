@@ -143,3 +143,19 @@ def test_role_dependency_accepts_named_api_key_during_migration() -> None:
     response = client.post("/operator", headers={"X-API-Key": _OPERATOR_KEY})
 
     assert response.status_code == 200
+
+
+def test_router_resolves_service_provider_at_request_time() -> None:
+    configured: IdentityService | None = None
+    app = FastAPI()
+    app.include_router(create_identity_router(lambda: configured))
+    client = TestClient(app)
+
+    assert client.post("/api/auth/session").status_code == 503
+    configured = _service()
+    assert (
+        client.post(
+            "/api/auth/session", headers={"X-API-Key": _OPERATOR_KEY}
+        ).status_code
+        == 201
+    )

@@ -32,9 +32,12 @@ from __future__ import annotations
 import hmac
 import logging
 import os
+from typing import Annotated
 
 from fastapi import HTTPException, Security, status
-from fastapi.security import APIKeyHeader
+from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
+from identity import Principal, Role
+from identity_config import EnvironmentIdentityProvider
 
 logger = logging.getLogger("dcs_backend.auth")
 
@@ -43,6 +46,19 @@ _TRUTHY = {"1", "true", "yes", "on"}
 
 # auto_error=False so we can return our own 401/503 with consistent messaging.
 _api_key_header = APIKeyHeader(name=CREDENTIAL_HEADER_NAME, auto_error=False)
+_bearer = HTTPBearer(auto_error=False)
+ApiKey = Annotated[str | None, Security(_api_key_header)]
+BearerCredential = Annotated[
+    HTTPAuthorizationCredentials | None,
+    Security(_bearer),
+]
+
+_identity_provider = EnvironmentIdentityProvider(lambda: os.environ)
+_development_principal = Principal(
+    subject="development.bypass",
+    display_name="Development Bypass",
+    role=Role.ADMIN,
+)
 
 
 def _dev_no_auth() -> bool:
@@ -71,18 +87,71 @@ def verify_operator_key(provided: str | None) -> bool:
     """
     if _dev_no_auth():
         return True
-    operator = _operator_key()
-    if operator is None:
+    try:
+        service = identity_service()
+    except (TypeError, ValueError):
         return False
-    if provided and _constant_time_eq(provided, operator):
-        return True
-    admin = _admin_key()
-    return bool(provided and admin and _constant_time_eq(provided, admin))
+    if service is None:
+        return False
+    principal = service.resolve(provided, None)
+    return bool(principal and principal.allows(Role.OPERATOR))
+
+
+def identity_service():
+    """Return the stable configured identity service, if one exists."""
+    return _identity_provider.get()
+
+
+def _unconfigured() -> HTTPException:
+    return HTTPException(
+        status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+        detail=(
+            "Server credential not configured. Set P1AM_PRINCIPALS_JSON or "
+            "P1AM_API_KEY/P1AM_ADMIN_API_KEY, or set P1AM_DEV_NO_AUTH=1 for "
+            "bench use."
+        ),
+    )
+
+
+def _resolve_principal(
+    api_key: str | None,
+    bearer: HTTPAuthorizationCredentials | None,
+) -> Principal:
+    try:
+        service = identity_service()
+    except (TypeError, ValueError) as exc:
+        logger.error("Identity configuration is invalid: %s", type(exc).__name__)
+        raise _unconfigured() from exc
+    if service is None:
+        raise _unconfigured()
+    principal = service.resolve(api_key, bearer)
+    if principal is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Missing or invalid credential.",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return principal
+
+
+def _require_role(
+    required_role: Role,
+    api_key: str | None,
+    bearer: HTTPAuthorizationCredentials | None,
+) -> Principal:
+    principal = _resolve_principal(api_key, bearer)
+    if not principal.allows(required_role):
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=f"This operation requires the {required_role.value} role.",
+        )
+    return principal
 
 
 def require_api_key(
-    api_key: str | None = Security(_api_key_header),
-) -> None:
+    api_key: ApiKey = None,
+    bearer: BearerCredential = None,
+) -> Principal:
     """FastAPI dependency enforcing a valid operator (or admin) API key.
 
     Raises:
@@ -94,27 +163,14 @@ def require_api_key(
             "P1AM_DEV_NO_AUTH is enabled: API authentication is DISABLED. "
             "Do not use this in production."
         )
-        return
-    if _operator_key() is None:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=(
-                "Server credential not configured. Set P1AM_API_KEY (and "
-                "optionally P1AM_ADMIN_API_KEY), or set P1AM_DEV_NO_AUTH=1 for "
-                "bench use."
-            ),
-        )
-    if not verify_operator_key(api_key):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing or invalid API key.",
-            headers={"WWW-Authenticate": CREDENTIAL_HEADER_NAME},
-        )
+        return _development_principal
+    return _require_role(Role.OPERATOR, api_key, bearer)
 
 
 def require_admin_key(
-    api_key: str | None = Security(_api_key_header),
-) -> None:
+    api_key: ApiKey = None,
+    bearer: BearerCredential = None,
+) -> Principal:
     """FastAPI dependency enforcing the elevated admin API key.
 
     If ``P1AM_ADMIN_API_KEY`` is set, only that key is accepted. Otherwise the
@@ -123,34 +179,14 @@ def require_admin_key(
     """
     if _dev_no_auth():
         logger.warning("P1AM_DEV_NO_AUTH is enabled: admin authentication is DISABLED.")
-        return
-
-    admin = _admin_key()
-    operator = _operator_key()
-
-    if admin is None and operator is None:
-        raise HTTPException(
-            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
-            detail=(
-                "Server credential not configured. Set P1AM_API_KEY/"
-                "P1AM_ADMIN_API_KEY, or set P1AM_DEV_NO_AUTH=1 for bench use."
-            ),
-        )
-
-    if admin is not None:
-        if api_key and _constant_time_eq(api_key, admin):
-            return
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="This operation requires the admin API key.",
-            headers={"WWW-Authenticate": CREDENTIAL_HEADER_NAME},
-        )
-
-    # No admin key configured: accept the operator key.
-    if operator is not None and api_key and _constant_time_eq(api_key, operator):
-        return
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Missing or invalid API key.",
-        headers={"WWW-Authenticate": CREDENTIAL_HEADER_NAME},
-    )
+        return _development_principal
+    try:
+        return _require_role(Role.ADMIN, api_key, bearer)
+    except HTTPException as exc:
+        if exc.status_code == status.HTTP_401_UNAUTHORIZED and _admin_key() is not None:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="This operation requires the admin role.",
+                headers={"WWW-Authenticate": "Bearer"},
+            ) from exc
+        raise
