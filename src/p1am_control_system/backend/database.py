@@ -3,6 +3,7 @@ from collections.abc import Generator
 from typing import Any
 
 from audit_log import install_append_only_guards
+from configuration_repository import ConfigurationRevisionRecord  # noqa: F401
 from settings import P1AMSettings, get_settings
 from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine

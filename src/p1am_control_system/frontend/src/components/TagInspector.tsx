@@ -337,7 +337,7 @@ export const TagInspector: React.FC<{
               marginTop: "0.5rem",
             }}
           >
-            {deploying ? "Deploying Configuration..." : "Commit Safety Limits"}
+            {deploying ? "Creating Draft..." : "Create Protected Limits Draft"}
           </button>
         </div>
       )}

@@ -13,6 +13,9 @@ import {
   performanceConfigSchema,
   professionalAlarmSchema,
   professionalAlarmsSchema,
+  configurationDiffSchema,
+  configurationRevisionSchema,
+  configurationRevisionsSchema,
   type CaptureStatus,
   type CaptureClearResult,
   type CaptureConfig,
@@ -26,6 +29,8 @@ import {
   type MpcSimResult,
   type HierarchicalArea,
   type ProfessionalAlarm,
+  type ConfigurationDiffEntry,
+  type ConfigurationRevision,
 } from "./schemas";
 
 /**
@@ -44,8 +49,66 @@ export function getRouting(): Promise<unknown> {
   return apiFetch("/routing");
 }
 
-export function deployRouting(payload: unknown): Promise<unknown> {
-  return apiFetch("/routing", { method: "POST", json: payload });
+export function createConfigurationDraft(
+  payload: unknown,
+  reason: string,
+): Promise<ConfigurationRevision> {
+  return apiFetch("/configurations/drafts", {
+    method: "POST",
+    json: { payload, reason },
+    schema: configurationRevisionSchema,
+  });
+}
+
+export function getConfigurationRevisions(): Promise<ConfigurationRevision[]> {
+  return apiFetch("/configurations", { schema: configurationRevisionsSchema });
+}
+
+export function getConfigurationDiff(
+  revisionId: string,
+): Promise<ConfigurationDiffEntry[]> {
+  return apiFetch(`/configurations/${encodeURIComponent(revisionId)}/diff`, {
+    schema: configurationDiffSchema,
+  });
+}
+
+function transitionConfiguration(
+  revisionId: string,
+  transition: "validate" | "review" | "activate",
+): Promise<ConfigurationRevision> {
+  return apiFetch(
+    `/configurations/${encodeURIComponent(revisionId)}/${transition}`,
+    { method: "POST", schema: configurationRevisionSchema },
+  );
+}
+
+export const validateConfiguration = (revisionId: string) =>
+  transitionConfiguration(revisionId, "validate");
+export const reviewConfiguration = (revisionId: string) =>
+  transitionConfiguration(revisionId, "review");
+export const activateConfiguration = (revisionId: string) =>
+  transitionConfiguration(revisionId, "activate");
+
+export function approveConfiguration(
+  revisionId: string,
+  reason: string,
+): Promise<ConfigurationRevision> {
+  return apiFetch(`/configurations/${encodeURIComponent(revisionId)}/approve`, {
+    method: "POST",
+    json: { reason },
+    schema: configurationRevisionSchema,
+  });
+}
+
+export function rollbackConfiguration(
+  revisionId: string,
+  reason: string,
+): Promise<ConfigurationRevision> {
+  return apiFetch(`/configurations/${encodeURIComponent(revisionId)}/rollback`, {
+    method: "POST",
+    json: { reason },
+    schema: configurationRevisionSchema,
+  });
 }
 
 // --- Tags --------------------------------------------------------------------

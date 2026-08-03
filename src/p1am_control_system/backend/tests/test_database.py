@@ -123,6 +123,25 @@ def test_init_db_installs_append_only_audit_guards(tmp_path, monkeypatch) -> Non
     assert trigger_names == {"auditlog_no_delete", "auditlog_no_update"}
 
 
+def test_init_db_creates_versioned_configuration_store_idempotently(
+    tmp_path, monkeypatch
+) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'init-configuration.db'}")
+    monkeypatch.setattr(database, "engine", engine)
+
+    database.init_db()
+    database.init_db()
+
+    with engine.connect() as connection:
+        table = connection.execute(
+            text(
+                "SELECT name FROM sqlite_master WHERE type='table' "
+                "AND name='configurationrevisionrecord'"
+            )
+        ).scalar_one()
+    assert table == "configurationrevisionrecord"
+
+
 def test_historian_quality_migration_preserves_legacy_rows(
     tmp_path, monkeypatch
 ) -> None:

@@ -26,6 +26,7 @@ import { HelpModal } from "./components/HelpModal";
 import { CsvExporter } from "./components/CsvExporter";
 import { CommsQualityBadge } from "./components/CommsQualityBadge";
 import { ProfessionalAlarmPanel } from "./components/ProfessionalAlarmPanel";
+import { ConfigurationWorkflowPanel } from "./components/ConfigurationWorkflowPanel";
 import { useTelemetryStream } from "./hooks/useTelemetryStream";
 import {
   TABS,
@@ -353,7 +354,8 @@ export const App: React.FC = () => {
     }
   };
 
-  // Deploy configuration & write to NVRAM
+  // Create a protected draft. Validation, review, approval, and activation are
+  // intentionally separate operator actions in the workflow panel.
   const handleDeploy = async () => {
     setDeploying(true);
     try {
@@ -377,9 +379,12 @@ export const App: React.FC = () => {
         })(),
       };
 
-      await api.deployRouting(payload);
+      const revision = await api.createConfigurationDraft(
+        payload,
+        "HMI protected configuration draft",
+      );
       triggerNotification(
-        "Configuration deployed & written to NVRAM successfully.",
+        `Draft ${revision.revision_id} created; review it in the protected workflow.`,
         "success",
       );
     } catch (err) {
@@ -1043,6 +1048,10 @@ export const App: React.FC = () => {
                   deploying={deploying}
                 />
               </div>
+
+              <div className="glass-panel">
+                <ConfigurationWorkflowPanel />
+              </div>
             </div>
           )}
 
@@ -1583,7 +1592,7 @@ export const App: React.FC = () => {
                   className="btn btn-primary"
                   style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
                 >
-                  {deploying ? "Deploying Configuration..." : "Commit PID Tuning"}
+                  {deploying ? "Creating Draft..." : "Create Protected PID Draft"}
                 </button>
               </div>
             )}
@@ -1615,7 +1624,7 @@ export const App: React.FC = () => {
                   className="btn btn-primary"
                   style={{ width: "100%", padding: "0.5rem", fontSize: "0.85rem", marginTop: "0.5rem" }}
                 >
-                  {deploying ? "Deploying Configuration..." : "Commit Matrix Mapping"}
+                  {deploying ? "Creating Draft..." : "Create Protected Matrix Draft"}
                 </button>
               </div>
             )}

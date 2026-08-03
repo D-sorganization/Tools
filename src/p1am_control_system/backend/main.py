@@ -27,7 +27,10 @@ from auth_config import (
     resolve_optional_principal,
     verify_operator_key,
 )
-from config_store import load_config, load_model, save_config, save_model
+from config_store import load_config, load_model, save_config
+from configuration_repository import SqliteRevisionRepository
+from configuration_router import create_configuration_router
+from configuration_workflow import ConfigurationWorkflow
 from cors_config import resolve_cors_settings
 from data_capture import (
     TRENDS_MAX_POINTS,
@@ -328,6 +331,30 @@ def _apply_control_config(config: RoutingConfig) -> None:
     professional_alarm_service.reconfigure(alarm_manager)
 
 
+async def _deploy_approved_routing(config: RoutingConfig) -> None:
+    """Deploy one approved revision before publishing it to runtime readers."""
+    if not isinstance(config, RoutingConfig):
+        raise TypeError("config must be a RoutingConfig")
+    if plc_client.connected:
+        if not await plc_client.write_routing(config):
+            raise RuntimeError("PLC rejected the approved configuration")
+        if not await plc_client.save_to_flash():
+            raise RuntimeError("PLC configuration was not saved to flash")
+    if not await backup_simulator.write_routing(config):
+        raise RuntimeError("simulator rejected the approved configuration")
+    if not await backup_simulator.save_to_flash():
+        raise RuntimeError("simulator configuration was not saved")
+    _apply_control_config(config)
+    global _persisted_routing
+    _persisted_routing = config
+
+
+configuration_workflow = ConfigurationWorkflow(
+    SqliteRevisionRepository(_config_session),
+    _deploy_approved_routing,
+)
+
+
 async def modbus_connect_background() -> None:
     """Periodically attempts to connect to PLC in background without blocking polling loop."""
     logger.info("Starting background PLC connection task...")
@@ -476,11 +503,16 @@ def _restore_persisted_settings(session: Session) -> None:
     """
     global _persisted_routing
     try:
-        routing = load_model(session, "routing", RoutingConfig)
+        active_revision = configuration_workflow.active()
+        routing = (
+            active_revision.payload
+            if active_revision is not None
+            else load_model(session, "routing", RoutingConfig)
+        )
         if routing is not None:
             _persisted_routing = routing
             _apply_control_config(routing)
-            logger.info("Recalled persisted routing (alarm setpoints + PID).")
+            logger.info("Recalled de-energized configuration settings.")
     except Exception as exc:  # noqa: BLE001 - never block boot on a bad blob
         logger.warning("Routing recall skipped: %s", exc)
     try:
@@ -549,6 +581,13 @@ app.include_router(
         engineer_dependency=require_engineer_key,
     )
 )
+app.include_router(
+    create_configuration_router(
+        configuration_workflow,
+        engineer_dependency=require_engineer_key,
+        admin_dependency=require_admin_key,
+    )
+)
 app.include_router(create_power_supply_router(power_supply_service))
 app.include_router(create_temperature_router(temperature_service))
 
@@ -586,6 +625,9 @@ def _audit_principal(request: Request) -> Principal | None:
 
 
 def _configuration_revision() -> str:
+    active = configuration_workflow.active()
+    if active is not None and active.activation_identity:
+        return active.activation_identity
     return os.environ.get("P1AM_CONFIG_REVISION", "unversioned")
 
 
@@ -697,57 +739,15 @@ async def get_routing() -> RoutingConfig:
 
 @app.post("/api/routing", dependencies=[Depends(require_admin_key)])
 async def update_routing(config: RoutingConfig) -> dict[str, str]:
-    """Write new routing configurations to the PLC.
-
-    Args:
-        config: RoutingConfig model.
-
-    Returns:
-        JSON response indicating success.
-    """
-    _apply_control_config(config)
-
-    # Persist the SCADA-authoritative routing (interlocks/alarm setpoints + PID)
-    # so it survives a restart independent of PLC flash, and refresh the overlay.
-    global _persisted_routing
-    _persisted_routing = config
-    try:
-        with _config_session() as s:
-            save_model(s, "routing", config)
-    except Exception as exc:  # noqa: BLE001 - persistence must not fail a deploy
-        logger.warning("Persisting routing failed (non-fatal): %s", exc)
-
-    if not plc_client.connected:
-        await backup_simulator.write_routing(config)
-        return {
-            "status": "success",
-            "message": "Configuration successfully applied to simulated PLC.",
-        }
-
-    success = await plc_client.write_routing(config)
-    await backup_simulator.write_routing(config)
-
-    if not success:
-        raise HTTPException(
-            status_code=500,
-            detail="Failed to write routing parameters to PLC registers.",
-        )
-
-    save_success = await plc_client.save_to_flash()
-    await backup_simulator.save_to_flash()
-
-    if not save_success:
-        raise HTTPException(
-            status_code=500,
-            detail=(
-                "Config registers written, but failed to trigger 'Save to Flash' coil."
-            ),
-        )
-
-    return {
-        "status": "success",
-        "message": ("Configuration successfully deployed and saved to PLC NVRAM."),
-    }
+    """Reject the retired direct-activation path without applying the payload."""
+    del config
+    raise HTTPException(
+        status_code=409,
+        detail=(
+            "Direct configuration activation is disabled; use the protected "
+            "draft, validation, review, approval, and activation workflow."
+        ),
+    )
 
 
 # NOTE: E-stop *activation* is intentionally left unauthenticated so a panic

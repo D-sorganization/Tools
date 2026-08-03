@@ -124,6 +124,42 @@ export const professionalAlarmSchema = z.object({
 export const professionalAlarmsSchema = z.array(professionalAlarmSchema);
 export type ProfessionalAlarm = z.infer<typeof professionalAlarmSchema>;
 
+export const configurationStateSchema = z.enum([
+  "draft",
+  "validated",
+  "in_review",
+  "approved",
+  "active",
+  "superseded",
+]);
+export const configurationRevisionSchema = z.object({
+  revision_id: z.string(),
+  version: z.number().int().positive(),
+  state: configurationStateSchema,
+  payload: z.unknown(),
+  payload_sha256: z.string().regex(/^[0-9a-f]{64}$/),
+  reason: z.string(),
+  created_by: z.string(),
+  created_at: z.string(),
+  validated_by: z.string().nullable(),
+  reviewed_by: z.string().nullable(),
+  approved_by: z.string().nullable(),
+  activated_by: z.string().nullable(),
+  activated_at: z.string().nullable(),
+  activation_identity: z.string().nullable(),
+  source_revision_id: z.string().nullable(),
+});
+export const configurationRevisionsSchema = z.array(configurationRevisionSchema);
+export const configurationDiffSchema = z.array(
+  z.object({
+    path: z.string(),
+    before: z.unknown().nullable(),
+    after: z.unknown().nullable(),
+  }),
+);
+export type ConfigurationRevision = z.infer<typeof configurationRevisionSchema>;
+export type ConfigurationDiffEntry = z.infer<typeof configurationDiffSchema>[number];
+
 /**
  * Live telemetry frame pushed over the `/api/stream` WebSocket.
  *
