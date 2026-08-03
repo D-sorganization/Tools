@@ -2,6 +2,7 @@ import logging
 from collections.abc import Generator
 from typing import Any
 
+from audit_log import install_append_only_guards
 from settings import P1AMSettings, get_settings
 from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine
@@ -80,6 +81,7 @@ def init_db() -> None:
     """
     try:
         SQLModel.metadata.create_all(engine)
+        install_append_only_guards(engine)
         _migrate_historian_indexes()
         _optimize_planner_statistics()
         logger.info("Database tables initialized successfully.")

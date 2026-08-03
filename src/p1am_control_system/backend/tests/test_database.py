@@ -15,6 +15,7 @@ import pytest
 pytest.importorskip("sqlmodel")
 
 import database  # noqa: E402
+from audit_log import AuditLog  # noqa: E402,F401  (registers audit metadata)
 from models import TagLog  # noqa: E402,F401  (registers the table in metadata)
 from sqlalchemy import text  # noqa: E402
 from sqlmodel import Session, SQLModel, create_engine  # noqa: E402
@@ -101,6 +102,25 @@ def test_migration_creates_composite_and_drops_single(tmp_path) -> None:
     names = {r[0] for r in rows}
     assert "ix_taglog_tag_name_timestamp" in names
     assert "ix_taglog_tag_name" not in names
+
+
+def test_init_db_installs_append_only_audit_guards(tmp_path, monkeypatch) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'init-audit.db'}")
+    monkeypatch.setattr(database, "engine", engine)
+
+    database.init_db()
+
+    with engine.connect() as connection:
+        trigger_names = {
+            row[0]
+            for row in connection.execute(
+                text(
+                    "SELECT name FROM sqlite_master WHERE type='trigger' "
+                    "AND tbl_name='auditlog'"
+                )
+            )
+        }
+    assert trigger_names == {"auditlog_no_delete", "auditlog_no_update"}
 
 
 def test_trend_query_uses_composite_index(tmp_path) -> None:
