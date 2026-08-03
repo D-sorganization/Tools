@@ -10,8 +10,8 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from evidence_package import EvidencePackageService  # noqa: E402
 from scenario_evidence import (  # noqa: E402
-    EvidencePackageService,
     RepresentativeScenarioAdapter,
     ScenarioDefinition,
     ScenarioRunner,
@@ -66,6 +66,9 @@ async def test_synthetic_fault_and_recovery_emit_self_contained_evidence() -> No
 
     assert evidence.passed is True
     assert [result.passed for result in evidence.results] == [True, True]
+    assert all(result.alarms for result in evidence.results)
+    assert all(result.audit_events for result in evidence.results)
+    assert evidence.results[0].alarms[0].alarm_id.startswith("SYNTHETIC.")
     assert evidence.signoff.prepared_by is None
     assert evidence.signoff.approved_by is None
     assert verified.evidence.evidence_id == evidence.evidence_id

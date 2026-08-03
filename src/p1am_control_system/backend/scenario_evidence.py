@@ -3,11 +3,8 @@
 from __future__ import annotations
 
 import hashlib
-import io
 import json
-import zipfile
 from collections.abc import Callable
-from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Literal, Protocol
 
@@ -20,9 +17,6 @@ except ImportError:
 
 SCENARIO_SCHEMA = "p1am.synthetic-scenario/v1"
 EVIDENCE_SCHEMA = "p1am.acceptance-evidence/v1"
-PACKAGE_SCHEMA = "p1am.acceptance-package/v1"
-PACKAGE_ENTRIES = frozenset({"manifest.json", "scenario.json", "evidence.json"})
-MAX_PACKAGE_BYTES = 5_000_000
 
 ScenarioAction = Literal[
     "set_value",
@@ -65,6 +59,25 @@ class ScenarioDefinition(BaseModel):
     )
 
 
+class SyntheticAlarmRecord(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    alarm_id: str
+    lifecycle: Literal["unacknowledged", "returned_unacknowledged"]
+    priority: Literal["high"] = "high"
+    source: Literal["synthetic_scenario"] = "synthetic_scenario"
+
+
+class SyntheticAuditRecord(BaseModel):
+    model_config = ConfigDict(frozen=True)
+
+    actor: Literal["synthetic.scenario.runner"] = "synthetic.scenario.runner"
+    action: ScenarioAction
+    target: str
+    outcome: Literal["succeeded"] = "succeeded"
+    timestamp: datetime
+
+
 class StepObservation(BaseModel):
     model_config = ConfigDict(frozen=True)
 
@@ -72,6 +85,8 @@ class StepObservation(BaseModel):
     started_at: datetime
     completed_at: datetime
     observed: dict[str, object]
+    alarms: tuple[SyntheticAlarmRecord, ...] = ()
+    audit_events: tuple[SyntheticAuditRecord, ...] = ()
 
 
 class StepEvidence(BaseModel):
@@ -85,6 +100,8 @@ class StepEvidence(BaseModel):
     duration_ms: float = Field(ge=0)
     expected: dict[str, object]
     observed: dict[str, object]
+    alarms: tuple[SyntheticAlarmRecord, ...]
+    audit_events: tuple[SyntheticAuditRecord, ...]
     behavior_matched: bool
     within_timing_window: bool
     passed: bool
@@ -118,40 +135,15 @@ class ScenarioEvidence(BaseModel):
     signoff: EvidenceSignoff = EvidenceSignoff()
 
 
-class EvidencePackageManifest(BaseModel):
-    model_config = ConfigDict(frozen=True)
-
-    schema_id: Literal[PACKAGE_SCHEMA] = PACKAGE_SCHEMA
-    evidence_id: str
-    data_classification: Literal["synthetic"] = "synthetic"
-    not_for_live_control: Literal[True] = True
-    entries: dict[str, str]
-
-
-@dataclass(frozen=True)
-class EvidenceArtifact:
-    payload: bytes = field(repr=False)
-    sha256: str
-    manifest: EvidencePackageManifest
-
-
-@dataclass(frozen=True)
-class VerifiedEvidencePackage:
-    manifest: EvidencePackageManifest
-    scenario: ScenarioDefinition
-    evidence: ScenarioEvidence
-    package_sha256: str
-
-
 class ScenarioAdapter(Protocol):
     async def execute(self, step: ScenarioStep) -> StepObservation: ...
 
 
-def _hash(payload: bytes) -> str:
+def sha256_bytes(payload: bytes) -> str:
     return hashlib.sha256(payload).hexdigest()
 
 
-def _canonical(model: BaseModel) -> bytes:
+def canonical_model_bytes(model: BaseModel) -> bytes:
     return json.dumps(
         model.model_dump(mode="json"), sort_keys=True, separators=(",", ":")
     ).encode("utf-8")
@@ -198,11 +190,34 @@ class RepresentativeScenarioAdapter:
                 raise ValueError("set_quality requires a canonical quality")
             state["quality"] = quality
         completed = self._now()
+        returned = step.action in {"transport_recover"} or (
+            step.action == "set_quality" and state.get("quality") == "good"
+        )
+        alarm_id = (
+            "SYNTHETIC.COMMUNICATIONS"
+            if step.action.startswith("transport_")
+            else "SYNTHETIC.DATA_QUALITY"
+        )
         return StepObservation(
             step_id=step.step_id,
             started_at=started,
             completed_at=completed,
             observed=dict(state),
+            alarms=(
+                SyntheticAlarmRecord(
+                    alarm_id=alarm_id,
+                    lifecycle=(
+                        "returned_unacknowledged" if returned else "unacknowledged"
+                    ),
+                ),
+            ),
+            audit_events=(
+                SyntheticAuditRecord(
+                    action=step.action,
+                    target=step.target,
+                    timestamp=completed,
+                ),
+            ),
         )
 
 
@@ -264,6 +279,8 @@ class ScenarioRunner:
             duration_ms=duration,
             expected=step.expected,
             observed=observation.observed,
+            alarms=observation.alarms,
+            audit_events=observation.audit_events,
             behavior_matched=behavior,
             within_timing_window=timing,
             passed=passed,
@@ -281,13 +298,13 @@ class ScenarioRunner:
             ]
         )
         completed = self._now()
-        scenario_sha = _hash(_canonical(scenario))
+        scenario_sha = sha256_bytes(canonical_model_bytes(scenario))
         identity_material = (
             f"{scenario_sha}|{started.isoformat()}|{self._software_revision}|"
             f"{self._configuration_revision}"
         ).encode()
         return ScenarioEvidence(
-            evidence_id=f"evidence-{_hash(identity_material)[:20]}",
+            evidence_id=f"evidence-{sha256_bytes(identity_material)[:20]}",
             scenario_name=scenario.name,
             scenario_sha256=scenario_sha,
             software_revision=self._software_revision,
@@ -298,63 +315,3 @@ class ScenarioRunner:
             results=results,
             limitations=scenario.limitations,
         )
-
-
-class EvidencePackageService:
-    def create(
-        self, scenario: ScenarioDefinition, evidence: ScenarioEvidence
-    ) -> EvidenceArtifact:
-        scenario_payload = _canonical(scenario)
-        evidence_payload = _canonical(evidence)
-        if evidence.scenario_sha256 != _hash(scenario_payload):
-            raise ValueError("evidence does not identify the supplied scenario")
-        manifest = EvidencePackageManifest(
-            evidence_id=evidence.evidence_id,
-            entries={
-                "scenario.json": _hash(scenario_payload),
-                "evidence.json": _hash(evidence_payload),
-            },
-        )
-        output = io.BytesIO()
-        with zipfile.ZipFile(output, "w", compression=zipfile.ZIP_DEFLATED) as archive:
-            archive.writestr("manifest.json", manifest.model_dump_json(indent=2))
-            archive.writestr("scenario.json", scenario_payload)
-            archive.writestr("evidence.json", evidence_payload)
-        payload = output.getvalue()
-        return EvidenceArtifact(payload, _hash(payload), manifest)
-
-    def verify(
-        self, payload: bytes, expected_sha256: str | None = None
-    ) -> VerifiedEvidencePackage:
-        if (
-            not isinstance(payload, bytes)
-            or not payload
-            or len(payload) > MAX_PACKAGE_BYTES
-        ):
-            raise ValueError("evidence package size is outside the allowed boundary")
-        package_sha = _hash(payload)
-        if expected_sha256 is not None and package_sha != expected_sha256.lower():
-            raise ValueError("evidence package checksum does not match")
-        try:
-            with zipfile.ZipFile(io.BytesIO(payload), "r") as archive:
-                if frozenset(archive.namelist()) != PACKAGE_ENTRIES:
-                    raise ValueError("evidence package entries are not allowed")
-                manifest_payload = archive.read("manifest.json")
-                scenario_payload = archive.read("scenario.json")
-                evidence_payload = archive.read("evidence.json")
-        except (zipfile.BadZipFile, RuntimeError) as exc:
-            raise ValueError("evidence package is not a valid archive") from exc
-        manifest = EvidencePackageManifest.model_validate_json(manifest_payload)
-        for name, content in (
-            ("scenario.json", scenario_payload),
-            ("evidence.json", evidence_payload),
-        ):
-            if manifest.entries.get(name) != _hash(content):
-                raise ValueError(f"{name} checksum does not match")
-        scenario = ScenarioDefinition.model_validate_json(scenario_payload)
-        evidence = ScenarioEvidence.model_validate_json(evidence_payload)
-        if evidence.scenario_sha256 != _hash(_canonical(scenario)):
-            raise ValueError("evidence scenario identity does not match")
-        if evidence.evidence_id != manifest.evidence_id:
-            raise ValueError("evidence identity does not match the manifest")
-        return VerifiedEvidencePackage(manifest, scenario, evidence, package_sha)

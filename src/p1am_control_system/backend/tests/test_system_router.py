@@ -64,6 +64,10 @@ async def _client() -> TestClient:
         "software-test-1",
         plc_connected=lambda: False,
         simulator_available=lambda: True,
+        clock_synchronized=lambda: None,
+        storage_free_bytes=lambda: 2_000_000_000,
+        service_running=lambda: True,
+        driver_identity=lambda: "representative.test.driver",
     )
     app = FastAPI()
     app.include_router(

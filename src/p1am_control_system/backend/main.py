@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import shutil
 import time
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -369,6 +370,12 @@ system_health_service = SystemHealthService(
     software_revision=software_revision,
     plc_connected=lambda: plc_client.connected,
     simulator_available=lambda: True,
+    clock_synchronized=lambda: None,
+    storage_free_bytes=lambda: shutil.disk_usage(".").free,
+    service_running=lambda: not shutdown_event.is_set(),
+    driver_identity=lambda: (
+        f"{plc_client.__class__.__module__}.{plc_client.__class__.__name__}"
+    ),
 )
 
 

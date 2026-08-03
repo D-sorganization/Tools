@@ -67,6 +67,10 @@ class SystemHealthService:
         software_revision: str,
         plc_connected: Callable[[], bool],
         simulator_available: Callable[[], bool],
+        clock_synchronized: Callable[[], bool | None],
+        storage_free_bytes: Callable[[], int],
+        service_running: Callable[[], bool],
+        driver_identity: Callable[[], str],
         clock: Callable[[], datetime] | None = None,
     ) -> None:
         if not isinstance(workflow, ConfigurationWorkflow):
@@ -75,7 +79,15 @@ class SystemHealthService:
             raise TypeError("recovery must be a RecoveryPackageService")
         if not isinstance(engine, Engine):
             raise TypeError("engine must be an Engine")
-        if not callable(plc_connected) or not callable(simulator_available):
+        providers = (
+            plc_connected,
+            simulator_available,
+            clock_synchronized,
+            storage_free_bytes,
+            service_running,
+            driver_identity,
+        )
+        if not all(callable(provider) for provider in providers):
             raise TypeError("health providers must be callable")
         self._workflow = workflow
         self._recovery = recovery
@@ -83,6 +95,10 @@ class SystemHealthService:
         self._software_revision = _required_revision(software_revision)
         self._plc_connected = plc_connected
         self._simulator_available = simulator_available
+        self._clock_synchronized = clock_synchronized
+        self._storage_free_bytes = storage_free_bytes
+        self._service_running = service_running
+        self._driver_identity = driver_identity
         self._clock = clock or (lambda: datetime.now(UTC))
 
     def _now(self) -> datetime:
@@ -124,6 +140,30 @@ class SystemHealthService:
         identity = self.identity()
         primary_connected = bool(self._plc_connected())
         simulator_available = bool(self._simulator_available())
+        clock_synchronized = self._clock_synchronized()
+        free_bytes = self._storage_free_bytes()
+        if not isinstance(free_bytes, int) or free_bytes < 0:
+            raise ValueError(
+                "storage_free_bytes provider must return a non-negative int"
+            )
+        service_running = bool(self._service_running())
+        driver_identity = self._driver_identity()
+        if not isinstance(driver_identity, str) or not driver_identity.strip():
+            raise ValueError("driver_identity provider must return a non-empty string")
+        storage_status = (
+            HealthStatus.GOOD
+            if free_bytes >= 1_000_000_000
+            else HealthStatus.DEGRADED
+            if free_bytes >= 100_000_000
+            else HealthStatus.BAD
+        )
+        clock_status = (
+            HealthStatus.GOOD
+            if clock_synchronized is True
+            else HealthStatus.BAD
+            if clock_synchronized is False
+            else HealthStatus.DEGRADED
+        )
         checks = (
             self._database_check(),
             HealthCheck(
@@ -137,6 +177,34 @@ class SystemHealthService:
                 name="simulator",
                 status=(HealthStatus.GOOD if simulator_available else HealthStatus.BAD),
                 detail=("Available" if simulator_available else "Unavailable"),
+            ),
+            HealthCheck(
+                name="clock",
+                status=clock_status,
+                detail=(
+                    "Synchronized"
+                    if clock_synchronized is True
+                    else "Not synchronized"
+                    if clock_synchronized is False
+                    else "Synchronization source not verified"
+                ),
+            ),
+            HealthCheck(
+                name="storage",
+                status=storage_status,
+                detail=f"{free_bytes} bytes free",
+            ),
+            HealthCheck(
+                name="service",
+                status=HealthStatus.GOOD if service_running else HealthStatus.BAD,
+                detail="Running" if service_running else "Stopped",
+            ),
+            HealthCheck(
+                name="driver",
+                status=(
+                    HealthStatus.GOOD if primary_connected else HealthStatus.DEGRADED
+                ),
+                detail=driver_identity.strip(),
             ),
             HealthCheck(
                 name="configuration_identity",

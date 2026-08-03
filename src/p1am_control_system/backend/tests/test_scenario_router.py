@@ -10,8 +10,8 @@ from fastapi.testclient import TestClient
 
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
+from evidence_package import EvidencePackageService  # noqa: E402
 from identity import Principal, Role  # noqa: E402
-from scenario_evidence import EvidencePackageService  # noqa: E402
 from scenario_router import create_scenario_router  # noqa: E402
 
 

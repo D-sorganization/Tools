@@ -56,16 +56,35 @@ must never be committed or uploaded.
 
 ### Phase A — Trustworthy foundation
 
-- [ ] F01 named-user identity, role-based access, and append-only audit trail
-- [ ] F02 end-to-end signal quality and communications health
-- [ ] F03 professional alarm lifecycle and performance management
-- [ ] F04 versioned configuration, approval, deployment, and rollback
-- [ ] F05 backup, restore, deployment identity, and system-health center
-- [ ] F12 FAT/HIL scenario runner and acceptance-evidence packages
+- [x] F01 named-user identity, role-based access, and append-only audit trail
+- [x] F02 end-to-end signal quality and communications health
+- [x] F03 professional alarm lifecycle and performance management
+- [x] F04 versioned configuration, approval, deployment, and rollback
+- [x] F05 backup, restore, deployment identity, and system-health center
+- [x] F12 FAT/HIL scenario runner and acceptance-evidence packages
 
 Exit criterion: the synthetic system can be operated, changed, faulted,
 audited, backed up, restored, and regression-tested without ambiguity about
 identity, data validity, active configuration, or evidence.
+
+#### Phase A verification — 2026-08-03
+
+| Feature | Direct evidence |
+| --- | --- |
+| F01 | Named principals, short-lived digest-only sessions, server-side role gates, append-only SQLite audit guards, automatic success/failure mutation capture, redaction, and paginated audit query tests. |
+| F02 | Canonical qualified signal samples propagate value, source/server timestamps, quality, diagnostic, sequence, and source through poll frames, WebSocket/API schemas, historian migration/query, alarm eligibility, and HMI communications status. |
+| F03 | Deterministic lifecycle domain and REST/HMI workflows cover priority, acknowledgment, timed shelving/unshelving, designed suppression, first-out, deadband/delay, help, and performance metrics. The panel is explicitly supervisory and not independent protection. |
+| F04 | Immutable SQLite revisions and protected draft, validation, diff, review, approval, activation, supersession, and rollback workflows are role-gated and audited. The former direct route returns `409` without touching an adapter. Failed deployment never publishes runtime configuration. |
+| F05 | Recovery archives verify package and entry SHA-256 values, exclude energized state and runtime/database data, and restore only as a draft. Identity and health report software/configuration, database, clock, storage, service, driver, primary transport, simulator, and recovery-verification status independently. |
+| F12 | Machine-marked synthetic scenarios can access only the isolated in-memory adapter. Evidence archives contain scenario/software/configuration hashes, expected and observed states, synthetic alarm and audit records, timing windows/results, limitations, overall result, and blank sign-off fields. |
+
+Phase A release-gate evidence: Ruff and formatting pass; the complete backend
+suite passes with 971 tests and 6 CI-only dependency checks skipped; the
+complete frontend suite, TypeScript build, and production bundle pass; ESLint
+has zero errors and two unchanged pre-existing hook warnings. No database,
+runtime recovery archive, credential, or private control artifact is committed.
+Unverified clock synchronization is intentionally reported as degraded rather
+than inferred from an available wall clock.
 
 ### Phase B — Professional operator experience
 

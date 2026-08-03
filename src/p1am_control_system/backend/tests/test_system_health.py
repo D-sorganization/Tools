@@ -43,6 +43,10 @@ def _service(plc_connected: bool = False) -> SystemHealthService:
         software_revision="software-test-1",
         plc_connected=lambda: plc_connected,
         simulator_available=lambda: True,
+        clock_synchronized=lambda: None,
+        storage_free_bytes=lambda: 2_000_000_000,
+        service_running=lambda: True,
+        driver_identity=lambda: "representative.test.driver",
         clock=lambda: datetime(2026, 8, 3, tzinfo=UTC),
     )
 
@@ -64,3 +68,7 @@ def test_health_distinguishes_primary_transport_from_simulator_availability() ->
     assert checks["primary_transport"].status is HealthStatus.DEGRADED
     assert checks["simulator"].status is HealthStatus.GOOD
     assert checks["configuration_identity"].status is HealthStatus.DEGRADED
+    assert checks["clock"].status is HealthStatus.DEGRADED
+    assert checks["storage"].status is HealthStatus.GOOD
+    assert checks["service"].status is HealthStatus.GOOD
+    assert checks["driver"].detail == "representative.test.driver"

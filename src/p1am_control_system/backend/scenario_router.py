@@ -4,10 +4,10 @@ from __future__ import annotations
 
 from collections.abc import Callable
 
+from evidence_package import EvidencePackageService
 from fastapi import APIRouter, Depends, HTTPException, Response
 from identity import Principal
 from scenario_evidence import (
-    EvidencePackageService,
     RepresentativeScenarioAdapter,
     ScenarioDefinition,
     ScenarioRunner,
