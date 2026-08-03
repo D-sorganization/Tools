@@ -88,6 +88,11 @@ const PlantHierarchy = lazy(() =>
     default: m.PlantHierarchy,
   })),
 );
+const OperatorWorkspace = lazy(() =>
+  import("./components/OperatorWorkspace").then((m) => ({
+    default: m.OperatorWorkspace,
+  })),
+);
 
 // Re-export domain types for back-compat with existing importers (AlarmsHeader,
 // EventLogView, InterlocksPanel, RoutingMatrix, ControlDashboard).
@@ -796,6 +801,10 @@ export const App: React.FC = () => {
               </div>
             }
           >
+          {activeTab === "operator" && visibleTabs.operator && (
+            <OperatorWorkspace />
+          )}
+
           {activeTab === "powerSupply" && visibleTabs.powerSupply && (
             <PowerSupplyControl
               liveStatus={powerSupplyStatus}

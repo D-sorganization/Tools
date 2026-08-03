@@ -30,6 +30,20 @@ live data to this browser HMI over a WebSocket.
 in/out (power-supply monitor and command). Full details are in \`USER_MANUAL.md\`.`;
 
 export const HELP: Record<TabId, HelpDoc> = {
+  operator: {
+    title: "Representative Operator Overview",
+    body: `A **synthetic, non-live-control** workspace demonstrating professional
+overview-to-detail navigation without plant names, parameters, or control logic.
+
+### Navigation and state
+- Select a generic asset to open its reusable faceplate with value, quality,
+mode, alarm, interlock, and trend-drill-down context.
+- Protection cards keep control, interlock, and independent-protection
+categories distinct and show deterministic first-out consequences.
+- Any managed bypass is displayed in a persistent banner with actor, reason,
+and expiry. Items marked **Non-bypassable** cannot be bypassed through this UI.`,
+  },
+
   temperature: {
     title: "Heater Controls",
     body: `Controls the **110 V resistive crucible heater** through a single 24 V
