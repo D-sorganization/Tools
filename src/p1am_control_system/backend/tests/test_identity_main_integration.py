@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import sys
+from collections.abc import Iterable
 from pathlib import Path
 
 os.environ.setdefault("PLC_DRIVER", "modbus")
@@ -13,12 +14,24 @@ from audit_middleware import MutationAuditMiddleware  # noqa: E402
 from main import _configuration_revision, app, configuration_workflow  # noqa: E402
 
 
-def test_main_application_mounts_identity_session_routes() -> None:
+def _methods_by_path(routes: Iterable[object]) -> dict[str, set[str]]:
     methods_by_path: dict[str, set[str]] = {}
-    for route in app.routes:
-        methods_by_path.setdefault(route.path, set()).update(
+    for route in routes:
+        path = getattr(route, "path", None)
+        if not isinstance(path, str):
+            continue
+        methods_by_path.setdefault(path, set()).update(
             getattr(route, "methods", set())
         )
+    return methods_by_path
+
+
+def test_route_inventory_ignores_optional_pathless_router_markers() -> None:
+    assert _methods_by_path((object(),)) == {}
+
+
+def test_main_application_mounts_identity_session_routes() -> None:
+    methods_by_path = _methods_by_path(app.routes)
 
     assert "POST" in methods_by_path["/api/auth/session"]
     assert "DELETE" in methods_by_path["/api/auth/session"]
