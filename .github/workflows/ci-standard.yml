@@ -210,9 +210,13 @@ jobs:
           fi
 
       - name: Install Dependencies
-        env:
-          PIP_CACHE_DIR: ${{ runner.temp }}/pip-quality-gate
-          PIP_NO_CACHE_DIR: "1"
+        # Download caching stays ON (job-level PIP_CACHE_DIR points at the
+        # host-shared persistent cache): the force-reinstall guards below
+        # protect against a corrupted *installed* toolcache package, which
+        # is orthogonal to pip's *download* cache. Disabling the download
+        # cache here made quality-gate re-fetch the full dependency set
+        # (85 MB PyQt6-Qt6 included) every run, which blew the 60-minute
+        # job budget whenever the fleet's uplink was slow.
         # Force-reinstall sortedcontainers (and hypothesis) before anything
         # else: the shared self-hosted runner toolcache occasionally carries a
         # half-installed `sortedcontainers` where pip metadata claims 2.4.0 but
