@@ -12,17 +12,17 @@ const mockChild = vi.fn();
 
 vi.mock('pino', () => {
   const pinoFn = () => ({
-    debug: mockDebug,
-    info: mockInfo,
-    warn: mockWarn,
-    error: mockError,
-    child: mockChild.mockReturnValue({
-      debug: mockDebug,
-      info: mockInfo,
-      warn: mockWarn,
-      error: mockError,
-      child: mockChild,
-    }),
+    debug: (...args: any[]) => mockDebug(...args),
+    info: (...args: any[]) => mockInfo(...args),
+    warn: (...args: any[]) => mockWarn(...args),
+    error: (...args: any[]) => mockError(...args),
+    child: (...args: any[]) => mockChild.mockReturnValue({
+      debug: (...args: any[]) => mockDebug(...args),
+      info: (...args: any[]) => mockInfo(...args),
+      warn: (...args: any[]) => mockWarn(...args),
+      error: (...args: any[]) => mockError(...args),
+      child: (...args: any[]) => mockChild(...args),
+    })(...args),
   });
 
   pinoFn.stdTimeFunctions = {

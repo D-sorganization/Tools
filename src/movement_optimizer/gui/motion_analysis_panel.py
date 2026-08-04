@@ -57,9 +57,7 @@ class MotionAnalysisPanel(QWidget):
 
         self.figure = Figure(figsize=(8.0, 5.0), facecolor=Palette.BG)
         self.canvas = FigureCanvasQTAgg(self.figure)
-        self.canvas.setMinimumSize(
-            self._minimum_canvas_width(), self._minimum_canvas_height()
-        )
+        self.canvas.setMinimumSize(self._minimum_canvas_width(), self._minimum_canvas_height())
         self.canvas.setSizePolicy(
             QSizePolicy.Policy.MinimumExpanding,
             QSizePolicy.Policy.MinimumExpanding,

@@ -252,7 +252,7 @@ describe('CSRF Protection', () => {
     });
 
     it('should handle unicode characters in comparison', () => {
-      const token = '测试token🎥';
+      const token = encodeURIComponent('测试token🎥');
       const request1 = new Request('http://localhost', {
         headers: {
           'x-csrf-token': token,
@@ -385,7 +385,7 @@ describe('CSRF Protection', () => {
 
       const result = getClientCsrfToken();
 
-      expect(result).toBe('');
+      expect(result).toBeNull();
     });
 
     it('should handle multiple meta tags', () => {

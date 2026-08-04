@@ -212,9 +212,7 @@ class WorkspaceRegistry:
                         continue
                     try:
                         subscription.callback(queued_event, queued_name)
-                    except (
-                        Exception
-                    ):  # noqa: BLE001 - subscribers must not break notify
+                    except Exception:  # noqa: BLE001 - subscribers must not break notify
                         _logger.exception(
                             "Workspace subscriber raised on %s '%s'",
                             queued_event,

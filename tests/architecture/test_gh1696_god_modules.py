@@ -241,15 +241,15 @@ def test_signal_toolkit_uses_lazy_import_pattern() -> None:
         "signal_toolkit must contain a LAZY dispatch table in __init__.py "
         "or _lazy_map.py"
     )
-    assert (
-        SIGNAL_TOOLKIT_LAZY_MAP.exists()
-    ), "_lazy_map.py must exist alongside __init__.py (issue #1696 refactor)"
-    assert (
-        "def __getattr__" in init_source
-    ), "signal_toolkit/__init__.py must define __getattr__ for lazy loading"
-    assert (
-        "importlib.import_module" in init_source
-    ), "signal_toolkit/__init__.py must use importlib.import_module in __getattr__"
+    assert SIGNAL_TOOLKIT_LAZY_MAP.exists(), (
+        "_lazy_map.py must exist alongside __init__.py (issue #1696 refactor)"
+    )
+    assert "def __getattr__" in init_source, (
+        "signal_toolkit/__init__.py must define __getattr__ for lazy loading"
+    )
+    assert "importlib.import_module" in init_source, (
+        "signal_toolkit/__init__.py must use importlib.import_module in __getattr__"
+    )
 
 
 @pytest.mark.unit
@@ -270,9 +270,9 @@ def test_signal_toolkit_lazy_attribute_loads_on_access() -> None:
     assert obj is not None, "signal_toolkit.SeriesExpansion should not be None"
 
     # After access, should be cached in globals
-    assert (
-        "SeriesExpansion" in signal_toolkit.__dict__
-    ), "After access, SeriesExpansion must be cached in signal_toolkit.__dict__"
+    assert "SeriesExpansion" in signal_toolkit.__dict__, (
+        "After access, SeriesExpansion must be cached in signal_toolkit.__dict__"
+    )
 
 
 @pytest.mark.unit
@@ -284,9 +284,9 @@ def test_signal_toolkit_all_exports_accessible() -> None:
         attr = getattr(signal_toolkit, name, None)
         # HAS_* flags and optional widgets may be None (no PyQt6 in CI)
         if name not in {"PolynomialGeneratorWidget", "SignalToolkitWidget"}:
-            assert (
-                attr is not None
-            ), f"signal_toolkit.{name} is None — lazy import may be broken"
+            assert attr is not None, (
+                f"signal_toolkit.{name} is None — lazy import may be broken"
+            )
 
 
 @pytest.mark.unit

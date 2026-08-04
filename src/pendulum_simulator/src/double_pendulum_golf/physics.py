@@ -261,9 +261,7 @@ def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndar
 # ---------------------------------------------------------------------------
 
 
-def friction_torque_vector(
-    dtheta1: float, dphi: float, params: PendulumParams
-) -> np.ndarray:
+def friction_torque_vector(dtheta1: float, dphi: float, params: PendulumParams) -> np.ndarray:
     """Compute dissipative torque vector (viscous + Coulomb).
 
     Pre: dtheta1, dphi finite.
@@ -496,9 +494,7 @@ def equations_of_motion(
 
     tau_limits = np.zeros(2)
     if limits is not None:
-        tau_limits = joint_limit_torque(
-            phi, dphi, limits, theta1=theta1, dtheta1=dtheta1
-        )
+        tau_limits = joint_limit_torque(phi, dphi, limits, theta1=theta1, dtheta1=dtheta1)
 
     rhs = tau_drive + tau_friction + tau_limits - C - G
     cond = np.linalg.cond(M)
@@ -599,28 +595,15 @@ def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     awy = params.L1 * (np.sin(theta1) * qdd1 + np.cos(theta1) * dtheta1**2)
 
     # Tip acceleration (clubhead)
-    atx = awx + params.L2 * (
-        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
-    )
-    aty = awy + params.L2 * (
-        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
-    )
+    atx = awx + params.L2 * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
+    aty = awy + params.L2 * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
 
     # Shaft COM at L2/2 from wrist
-    asx = awx + (params.L2 / 2) * (
-        np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2
-    )
-    asy = awy + (params.L2 / 2) * (
-        np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2
-    )
+    asx = awx + (params.L2 / 2) * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
+    asy = awy + (params.L2 / 2) * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
 
     fx = params.m1 * ax1 + params.m2 * asx + params.mClub * atx
-    fy = (
-        params.m1 * ay1
-        + params.m2 * asy
-        + params.mClub * aty
-        - (params.m1 + me) * params.g
-    )
+    fy = params.m1 * ay1 + params.m2 * asy + params.mClub * aty - (params.m1 + me) * params.g
 
     return {
         "fx": float(fx),
@@ -681,9 +664,7 @@ def control_vector(
 # ---------------------------------------------------------------------------
 
 
-def linear_accelerations(
-    state: State, qddot: np.ndarray, params: PendulumParams
-) -> dict:
+def linear_accelerations(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     """Compute linear accelerations of joints in world coordinates."""
     if not (state.shape == (4,) and qddot.shape == (2,)):
         raise ValueError("state must be (4,) and qddot must be (2,)")

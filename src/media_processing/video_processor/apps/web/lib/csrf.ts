@@ -184,7 +184,8 @@ export function getClientCsrfToken(): string | null {
   }
 
   const meta = document.querySelector('meta[name="csrf-token"]');
-  return meta?.getAttribute('content') || null;
+  const content = meta?.getAttribute('content');
+  return content !== null && content !== undefined ? content : null;
 }
 
 /**

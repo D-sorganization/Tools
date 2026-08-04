@@ -20,9 +20,7 @@ from .chain_dynamics import (
 
 FloatArray: TypeAlias = NDArray[np.float64]
 Policy: TypeAlias = Callable[["SwingSetState", float], "SwingControlAction"]
-ProgressCallback: TypeAlias = Callable[
-    [int, int, float, "CyclicPolicyParameters"], None
-]
+ProgressCallback: TypeAlias = Callable[[int, int, float, "CyclicPolicyParameters"], None]
 
 DEFAULT_CHAIN_SEGMENTS: Final[int] = 14
 DEFAULT_CHAIN_LENGTH_M: Final[float] = 2.4
@@ -311,12 +309,8 @@ class CyclicPolicySearchSpace:
 
     def __post_init__(self) -> None:
         _require_range("frequency_hz", self.frequency_hz_min, self.frequency_hz_max)
-        _require_range(
-            "hip_rate_rad_s", self.hip_rate_min_rad_s, self.hip_rate_max_rad_s
-        )
-        _require_range(
-            "torso_rate_rad_s", self.torso_rate_min_rad_s, self.torso_rate_max_rad_s
-        )
+        _require_range("hip_rate_rad_s", self.hip_rate_min_rad_s, self.hip_rate_max_rad_s)
+        _require_range("torso_rate_rad_s", self.torso_rate_min_rad_s, self.torso_rate_max_rad_s)
         _require_range("knee_ratio", self.knee_ratio_min, self.knee_ratio_max)
         for name, value in (
             ("frequency_samples", self.frequency_samples),
@@ -356,9 +350,7 @@ class CyclicPolicyBounds:
         if phase_lower < 0.0:
             raise ValueError("phase_rad_min must be non-negative")
         if phase_upper < phase_lower:
-            raise ValueError(
-                "phase_rad_max must be greater than or equal to phase_rad_min"
-            )
+            raise ValueError("phase_rad_max must be greater than or equal to phase_rad_min")
 
     def as_list(self) -> list[tuple[float, float]]:
         """Return bounds ordered to match the optimizer parameter vector."""
@@ -468,11 +460,7 @@ def _arm_elbow_point(
     forearm_length = config.forearm.length_m
     delta = hand - shoulder
     distance = float(np.linalg.norm(delta))
-    unit = (
-        delta / distance
-        if distance > 1e-9
-        else np.asarray([0.0, 1.0], dtype=np.float64)
-    )
+    unit = delta / distance if distance > 1e-9 else np.asarray([0.0, 1.0], dtype=np.float64)
     minimum_reach = abs(upper_length - forearm_length) + 1e-9
     maximum_reach = upper_length + forearm_length - 1e-9
     effective_distance = _clamp(distance, minimum_reach, maximum_reach)
@@ -501,9 +489,7 @@ def _elbow_offset_bias(elbow_bias_rad: float) -> float:
         ``elbow_bias_rad`` is finite.
     """
 
-    clamped = constrain_swing_pose(
-        SwingPose(elbow_angle_rad=elbow_bias_rad)
-    ).elbow_angle_rad
+    clamped = constrain_swing_pose(SwingPose(elbow_angle_rad=elbow_bias_rad)).elbow_angle_rad
     lower, upper = SWING_ELBOW_LIMITS_RAD
     span = upper - lower
     if span <= 0.0:
@@ -655,9 +641,7 @@ def cyclic_pumping_policy(parameters: CyclicPolicyParameters) -> Policy:
             torso_lean_rate_rad_s=-parameters.torso_rate_amplitude_rad_s * driver,
             hip_rate_rad_s=parameters.hip_rate_amplitude_rad_s * driver,
             knee_rate_rad_s=(
-                -parameters.knee_rate_ratio
-                * parameters.hip_rate_amplitude_rad_s
-                * driver
+                -parameters.knee_rate_ratio * parameters.hip_rate_amplitude_rad_s * driver
             ),
             shoulder_rate_rad_s=-0.1 * driver,
             elbow_rate_rad_s=0.12 * driver,
@@ -682,9 +666,7 @@ def cyclic_policy_controls(
         raise ValueError("steps must be at least 1")
     _require_positive("dt_s", dt_s)
     times = np.arange(steps, dtype=np.float64) * dt_s
-    driver = np.sin(
-        2.0 * np.pi * parameters.frequency_hz * times + parameters.phase_rad
-    )
+    driver = np.sin(2.0 * np.pi * parameters.frequency_hz * times + parameters.phase_rad)
     return np.column_stack(
         (
             -parameters.torso_rate_amplitude_rad_s * driver,
@@ -728,9 +710,7 @@ def simulate_swingset_controls(
         or control_array.shape[1] != CONTROL_DIMENSION
         or not np.all(np.isfinite(control_array))
     ):
-        raise ValueError(
-            "controls must have shape (N >= 1, 5) and contain finite values"
-        )
+        raise ValueError("controls must have shape (N >= 1, 5) and contain finite values")
     _require_positive("dt_s", dt_s)
     states = [replace(initial_state, pose=constrain_swing_pose(initial_state.pose))]
     snapshots = [build_swingset_snapshot(config, initial_state.pose)]
@@ -825,9 +805,7 @@ def optimize_cyclic_policy(
             best_params = parameters
             best_rollout = rollout
             best_score = score
-        if (
-            best_rollout is None
-        ):  # pragma: no cover - defensive guard for malformed searches.
+        if best_rollout is None:  # pragma: no cover - defensive guard for malformed searches.
             raise RuntimeError("Policy search did not evaluate a rollout")
         trace.append(
             CyclicPolicyTraceSample(
@@ -840,9 +818,7 @@ def optimize_cyclic_policy(
         )
         if progress_callback is not None:
             progress_callback(index, len(candidates), best_score, best_params)
-    if (
-        best_rollout is None
-    ):  # pragma: no cover - defensive guard for malformed searches.
+    if best_rollout is None:  # pragma: no cover - defensive guard for malformed searches.
         raise RuntimeError("Policy search did not evaluate a rollout")
     return CyclicPolicySearchResult(
         best_params,
@@ -854,9 +830,7 @@ def optimize_cyclic_policy(
     )
 
 
-def _params_from_vector(
-    vector: FloatArray, bounds: CyclicPolicyBounds
-) -> CyclicPolicyParameters:
+def _params_from_vector(vector: FloatArray, bounds: CyclicPolicyBounds) -> CyclicPolicyParameters:
     """Build clamped policy parameters from an optimizer vector.
 
     Clamping matters because the local-refinement stage (Nelder-Mead) is not
@@ -864,8 +838,7 @@ def _params_from_vector(
     """
     limits = bounds.as_list()
     clamped = [
-        _clamp(float(value), low, high)
-        for value, (low, high) in zip(vector, limits, strict=True)
+        _clamp(float(value), low, high) for value, (low, high) in zip(vector, limits, strict=True)
     ]
     return CyclicPolicyParameters(
         frequency_hz=clamped[0],
@@ -990,9 +963,7 @@ def optimize_cyclic_policy_iterative(
             options={"maxfev": budget - eval_count, "xatol": 1e-4, "fatol": 1e-6},
         )
 
-    if (
-        best_rollout is None or best_params is None
-    ):  # pragma: no cover - budget>=1 guarantees one.
+    if best_rollout is None or best_params is None:  # pragma: no cover - budget>=1 guarantees one.
         raise RuntimeError("Iterative policy search did not evaluate a rollout")
     return CyclicPolicySearchResult(
         best_params,
@@ -1023,9 +994,7 @@ def estimate_swingset_joint_torques(
         return np.zeros((0, CONTROL_DIMENSION), dtype=np.float64)
     inertias = _policy_joint_inertias(config)
     accelerations = (
-        np.gradient(controls, dt_s, axis=0)
-        if controls.shape[0] > 1
-        else np.zeros_like(controls)
+        np.gradient(controls, dt_s, axis=0) if controls.shape[0] > 1 else np.zeros_like(controls)
     )
     damping = 0.08 * inertias * controls
     return accelerations * inertias + damping
@@ -1035,14 +1004,12 @@ def _policy_joint_inertias(config: SwingSetConfig) -> FloatArray:
     torso = config.torso.mass_kg * config.torso.length_m**2 / 3.0
     hip = 2.0 * (
         config.thigh.mass_kg * config.thigh.length_m**2 / 3.0
-        + config.shank.mass_kg
-        * (config.thigh.length_m + 0.5 * config.shank.length_m) ** 2
+        + config.shank.mass_kg * (config.thigh.length_m + 0.5 * config.shank.length_m) ** 2
     )
     knee = 2.0 * config.shank.mass_kg * config.shank.length_m**2 / 3.0
     shoulder = 2.0 * (
         config.upper_arm.mass_kg * config.upper_arm.length_m**2 / 3.0
-        + config.forearm.mass_kg
-        * (config.upper_arm.length_m + 0.5 * config.forearm.length_m) ** 2
+        + config.forearm.mass_kg * (config.upper_arm.length_m + 0.5 * config.forearm.length_m) ** 2
     )
     elbow = 2.0 * config.forearm.mass_kg * config.forearm.length_m**2 / 3.0
     return np.asarray([torso, hip, knee, shoulder, elbow], dtype=np.float64)
