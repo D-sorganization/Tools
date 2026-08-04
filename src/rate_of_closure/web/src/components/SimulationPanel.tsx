@@ -23,6 +23,7 @@ import {
 } from "../model/simulation";
 import { FIELD_GUIDANCE } from "../model/units";
 import { type ImpactScenario } from "../model/impact";
+import { SolverPanel } from "./SolverPanel";
 
 const RATE_PRESETS: Array<{ label: string; rate: number }> = [
   { label: "0.1×", rate: 0.1 },
@@ -46,9 +47,10 @@ const LAUNCH_ROWS: Array<{ key: keyof SimulationRunTs["launch"]; label: string; 
 interface Props {
   scenario: ImpactScenario;
   loftDeg: number;
+  onScenarioChange: (updates: Partial<ImpactScenario>) => void;
 }
 
-export function SimulationPanel({ scenario, loftDeg }: Props) {
+export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) {
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
   const [tilts, setTilts] = useState({ yaw: 0, side: -45, forward: 0 });
   const [tauMs, setTauMs] = useState<number | null>(null);
@@ -368,6 +370,8 @@ export function SimulationPanel({ scenario, loftDeg }: Props) {
             WASM kernels in P7.
           </p>
         </div>
+
+        <SolverPanel onApply={onScenarioChange} />
       </section>
 
       <section className="space-y-3">

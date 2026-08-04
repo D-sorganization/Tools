@@ -17,6 +17,7 @@ builds :class:`SimulationConfig` objects for the session layer.
 
 from __future__ import annotations
 
+import dataclasses
 import logging
 import math
 
@@ -42,7 +43,7 @@ from PyQt6.QtWidgets import (
 
 from rate_of_closure.club import club_names, get_club
 from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
-from rate_of_closure.model import ImpactScenario
+from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
 from rate_of_closure.simulation import (
     SOURCE_KINDS,
     SimulationConfig,
@@ -54,6 +55,7 @@ from rate_of_closure.simulation import (
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
 from rate_of_closure.ui.pyqt6.result_row import ResultRow
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
+from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.units import FIELD_GUIDANCE
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.types import PlaneOrientation
@@ -107,6 +109,8 @@ class SimulationTab(QWidget):
 
         self._view = SimulationView()
         self._inspector = InspectorView()
+        self._solver_panel = SolverPanel()
+        self._solver_panel.applyRequested.connect(self.apply_solver_solution)
 
         left = QWidget()
         left_layout = QVBoxLayout(left)
@@ -120,6 +124,7 @@ class SimulationTab(QWidget):
         right = QTabWidget()
         right.addTab(self._view, "Scene")
         right.addTab(self._inspector, "Inspector")
+        right.addTab(self._solver_panel, "Solver")
 
         splitter = QSplitter()
         splitter.addWidget(left)
@@ -289,9 +294,62 @@ class SimulationTab(QWidget):
         """The run-data inspector."""
         return self._inspector
 
+    def solver_panel(self) -> SolverPanel:
+        """The goal-driven Solver panel (worker lifecycle lives on it)."""
+        return self._solver_panel
+
+    def apply_solver_solution(
+        self, result: object, use_swing_source: bool
+    ) -> SimulationRun | None:
+        """Load a SolverResult's variables into the session and rerun.
+
+        Mapping (documented deviation — the session's delivery convention
+        is a square face at the club's loft, so face angle / dynamic loft
+        solutions inform the goal table but are not replayed):
+
+        * both modes: the solved impact offsets land in the scenario;
+        * delivery mode: the manual constant-twist source is selected and
+          the solved clubhead speed becomes the scenario reference speed;
+        * swing-source mode: the double-pendulum source is selected, the
+          solved plane tilts drive the tilt inputs, and the solved
+          impact-time offset shifts tau off the peak-speed instant.
+        """
+        variables: dict[str, float] = result.variables  # type: ignore[attr-defined]
+        updates = {
+            "impact_offset_toe_mm": variables["impact_offset_toe_mm"],
+            "impact_offset_high_mm": variables["impact_offset_high_mm"],
+        }
+        if use_swing_source:
+            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
+            for attr, var in (
+                ("yaw_deg", "swing_yaw_deg"),
+                ("side_tilt_deg", "swing_side_tilt_deg"),
+                ("forward_tilt_deg", "swing_forward_tilt_deg"),
+            ):
+                spin = self._tilt_spins[attr]
+                spin.blockSignals(True)
+                spin.setValue(variables[var])
+                spin.blockSignals(False)
+        else:
+            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("manual"))
+            updates["clubhead_speed_mph"] = (
+                variables["clubhead_speed_mps"] * MPH_PER_MPS
+            )
+        self._scenario = dataclasses.replace(self._scenario, **updates)
+        self._invalidate_source()
+        self._tau = None  # auto: impact at maximum clubhead speed
+        run = self.run_now()
+        offset = variables.get("swing_impact_time_offset_s", 0.0)
+        if run is not None and use_swing_source and abs(offset) > 1e-9:
+            source = self._ensure_source()
+            self._tau = min(max(run.impact_time_s + offset, 0.0), source.duration)
+            run = self.run_now()
+        return run
+
     def stop(self) -> None:
-        """Stop the playback timer (window close and tests)."""
+        """Stop the playback timer and solver worker (close and tests)."""
         self._view.stop()
+        self._solver_panel.stop()
 
     # ── internals ──────────────────────────────────────────────────
     def _ensure_source(self):  # type: ignore[no-untyped-def]

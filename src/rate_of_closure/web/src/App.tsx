@@ -239,7 +239,13 @@ export default function App() {
       {tab === TABS[2] ? (
         // Static loft mirrors the desktop default driver; the full club
         // picker joins the web simulation with the P7 WASM port.
-        <SimulationPanel scenario={scenario} loftDeg={10.5} />
+        <SimulationPanel
+          scenario={scenario}
+          loftDeg={10.5}
+          onScenarioChange={(updates) =>
+            setScenario((s) => ({ ...s, ...updates }))
+          }
+        />
       ) : tab === TABS[1] ? (
         <Derivation scenario={scenario} />
       ) : (

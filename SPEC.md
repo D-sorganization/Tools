@@ -35,6 +35,51 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-04 Rate of Closure solver panel — goal-driven optimization UI (epic #4103, #4109 #4110)
+
+- PyQt6: new "Solver" tab inside the Simulation tab's right-hand tab
+  stack (`ui/pyqt6/solver_panel.py`, editor spec tables in
+  `solver_specs.py`): checkbox-enabled weighted goal targets over every
+  `swing_sim.solver` goal quantity, a per-variable Optimize
+  (min/max bounds) | Fix (value) partition editor with a swing-source
+  mode toggle that swaps the derived delivery variables for the
+  double-pendulum swing variables, a start-count spinner, and Run /
+  Cancel. Every new input carries sourced hover guidance
+  ("Suggested range … Source: …", test-enforced); theming stays with
+  the shared ThemeManager palette (no hard-coded colors).
+- The solve runs on a `QThread` worker (`solver_worker.py`) — the UI
+  never blocks; the solver's `ProgressReport` callback drives the
+  progress bar (evaluation count against the multi-start budget) and a
+  status line with best cost and the stall heuristic; Cancel sets the
+  cooperative `cancel_event`, and in-flight starts unwind at their next
+  residual evaluation.
+- Results view: achieved-vs-goal table with per-goal errors, residual
+  norm + convergence flag + evaluation counts in the summary, and
+  expandable per-start diagnostics (cost, evals, status, message,
+  solution vector). Apply loads the solved variables back into the
+  simulation session and reruns so the optimized swing/impact shows in
+  the 3D scene: both modes land the solved impact offsets in the
+  scenario; delivery mode selects the manual source and sets the
+  scenario clubhead speed; swing-source mode selects the double
+  pendulum, drives the plane-tilt inputs, and shifts tau by the solved
+  impact-time offset. Documented deviation: the session's delivery
+  convention is a square face at the club's loft, so solved face-angle
+  / dynamic-loft values inform the goal table but are not replayed.
+- DbC validation errors (no goals checked, inverted bounds, …) surface
+  as friendly status-line messages, never tracebacks.
+- Web (practical parity): `model/solver.ts` reuses the parity-ported TS
+  physics as the objective — goals limited to what it computes
+  (path/face/AoA/loft, ball speed, launch angles, spin, carry) over the
+  delivery variables, solved with a bounded Nelder-Mead (candidates
+  clamped into bounds) and a small deterministic multi-start; the
+  `SolverPanel` section in the Simulation tab mirrors the goal /
+  partition editors, results table, and an Apply that loads the solved
+  clubhead speed and impact offsets into the scenario. Parity-tested
+  against the pytest-pinned easy case (150 mph ball-speed goal solves
+  to ~45.825 m/s clubhead speed in both implementations). Progress,
+  cancellation, the swing-source mode, and a web-worker/WASM objective
+  land with the P7 kernels (deliberate deferral).
+
 ### 2026-08-04 Swing impact-parameter solver (epic #4103, #4109)
 
 - New self-facaded subpackage `src/shared/python/swing_sim/solver/`:
@@ -1993,6 +2038,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-04 | 1.9.0 | feat(rate_of_closure, #4109 #4110): solver panel — goal-driven optimization UI. PyQt6 Solver tab in the Simulation tab (checkbox-enabled weighted ImpactGoal targets, Optimize-with-bounds / Fix VariablePartition editor with a double-pendulum swing-source mode, start-count spinner, Run/Cancel on a QThread worker with ProgressReport-driven progress bar and cooperative cancel_event, achieved-vs-goal table with per-goal errors / residual norm / convergence / expandable per-start diagnostics, Apply loading solved variables into the simulation session and rerunning the 3D scene; sourced tooltips throughout, DbC errors as friendly status messages). Web: model/solver.ts bounded Nelder-Mead over the TS-physics objective (delivery variables, deterministic multi-start) + SolverPanel section with apply-to-scenario, parity-pinned against the pytest easy case (150 mph ball speed -> ~45.825 m/s clubhead speed); WASM/worker upgrade deferred to P7. |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
 | 2026-08-04 | 1.8.0 | feat(rate_of_closure, epic #4103): simulation session integrating swing_sim into the app — app-frame swing sources (manual constant twist, shared double pendulum, new triple pendulum), swing → impact (gear effect + bulge/roll callable) → flight orchestration into one exportable SimulationRun, fixed-ball impact-time scrubber, thin ISA adapter over the rotation converter with a toggleable screw-axis overlay, PyQt6 Simulation tab (sourced-guidance inputs, launch rows with explanations, ball/ground toggles, flight polyline, full video playback with 1×-real-time rate presets, sortable inspector, CSV/JSON export) and a parity-pinned web Simulation tab (pendulum/impact/flight TS port, scrubber, playback, JSON download; WASM supersedes in P7). |
 | 2026-08-04 | 1.8.0 | feat(swing_sim, #4109): add the impact-parameter solver subpackage `src/shared/python/swing_sim/solver/` — goal-driven robust optimization (`ImpactGoal` weighted targets over launch-monitor quantities incl. carry; `VariablePartition` free-with-bounds vs fixed delivery/swing variables, with a double-pendulum swing-source mode covering the three plane tilts, impact-time offset, and damping); pure residual builder with the documented Rust-portable `evaluate_candidate` seam; bounded scipy trf multi-start driver (Latin-hypercube starts, parallel via concurrent.futures, movement_optimizer-shaped ProgressReport/cancel_event plumbing, per-start diagnostics in `SolverResult`). Scaffolding modeled on UpstreamDrift's movement_optimizer. |
