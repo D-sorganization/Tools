@@ -1,82 +1,91 @@
 /**
  * Rate of Closure Impact Explorer — shareable web version.
  *
- * Mirrors the PyQt6 tool: scenario inputs on the left, clickable results
- * with explanations and the animated 3D clubhead on the right, and a
- * Derivation & Traceability tab typesetting the whole calculation with
- * live numbers. All physics lives in model/impact.ts, which is pinned
- * test-for-test against the Python implementation.
+ * Mirrors the PyQt6 tool: scenario inputs on the left (typed entries
+ * with hover guidance, unit drop-downs in the UpstreamDrift style),
+ * clickable results with explanations, common literature closure
+ * metrics, the animated 3D clubhead, and a Derivation & Traceability
+ * tab typesetting the whole calculation with live numbers. All physics
+ * lives in model/impact.ts, pinned test-for-test against Python.
  */
 
 import { useMemo, useState } from "react";
 
 import { ClubCanvas } from "./components/ClubCanvas";
 import { Derivation } from "./components/Derivation";
-import { RESULT_EXPLANATIONS } from "./model/derivation";
+import {
+  METRIC_EXPLANATIONS,
+  RESULT_EXPLANATIONS,
+} from "./model/derivation";
 import {
   BOUNDS,
+  closureMetrics,
   DEFAULT_SCENARIO,
   solve,
   type ImpactScenario,
 } from "./model/impact";
+import {
+  FIELD_GUIDANCE,
+  fromCanonical,
+  QUANTITY_UNITS,
+  toCanonical,
+  type Quantity,
+} from "./model/units";
 
 interface FieldSpec {
   key: keyof ImpactScenario;
   label: string;
-  unit: string;
+  quantity?: Quantity;
+  fixedUnit?: string;
   step: number;
 }
 
 const FIELDS: FieldSpec[] = [
-  { key: "clubheadSpeedMph", label: "Clubhead Speed", unit: "mph", step: 1 },
+  { key: "clubheadSpeedMph", label: "Clubhead Speed", quantity: "speed", step: 1 },
   {
     key: "omegaPlaneDps",
     label: "In-Plane Rotation (SPV)",
-    unit: "deg/s",
+    quantity: "rotation",
     step: 50,
   },
   {
     key: "omegaShaftDps",
     label: "About-Shaft Rotation (HTV)",
-    unit: "deg/s",
+    quantity: "rotation",
     step: 50,
   },
-  { key: "lieAngleDeg", label: "Shaft Lie at Impact", unit: "deg", step: 1 },
-  { key: "comToFaceMm", label: "GC to Face Center", unit: "mm", step: 1 },
-  { key: "impactOffsetToeMm", label: "Impact Toward Toe", unit: "mm", step: 1 },
+  { key: "lieAngleDeg", label: "Shaft Lie at Impact", fixedUnit: "deg", step: 1 },
+  { key: "comToFaceMm", label: "GC to Face Center", quantity: "length", step: 1 },
+  {
+    key: "impactOffsetToeMm",
+    label: "Impact Toward Toe",
+    quantity: "length",
+    step: 1,
+  },
   {
     key: "impactOffsetHighMm",
     label: "Impact Above Center",
-    unit: "mm",
+    quantity: "length",
     step: 1,
   },
-  { key: "contactDurationUs", label: "Contact Duration", unit: "µs", step: 10 },
+  { key: "contactDurationUs", label: "Contact Duration", fixedUnit: "µs", step: 10 },
 ];
 
-const RESULT_ROWS: { key: string; label: string; unit: string }[] = [
-  {
-    key: "pathDeviationDeg",
-    label: "Impact-Point Path vs Reference",
-    unit: "°",
-  },
+interface RowSpec {
+  key: string;
+  label: string;
+  unit?: string;
+  quantity?: Quantity;
+}
+
+const RESULT_ROWS: RowSpec[] = [
+  { key: "pathDeviationDeg", label: "Impact-Point Path vs Reference", unit: "°" },
   { key: "aoaDeviationDeg", label: "Attack-Angle Change", unit: "°" },
-  {
-    key: "tangentialSpeedMph",
-    label: "Rotation-Induced Velocity",
-    unit: " mph",
-  },
-  { key: "speedDeltaMph", label: "Delivered Speed Change", unit: " mph" },
-  { key: "closureRateDps", label: "Closure Rate (CCV)", unit: " °/s" },
-  {
-    key: "normalizedClosureDegPerFt",
-    label: "Normalized Closure",
-    unit: " °/ft",
-  },
-  {
-    key: "closureDuringContactDeg",
-    label: "Face Closure During Contact",
-    unit: "°",
-  },
+  { key: "tangentialSpeedMph", label: "Rotation-Induced Velocity", quantity: "speed" },
+  { key: "speedDeltaMph", label: "Delivered Speed Change", quantity: "speed" },
+  { key: "closureRateDps", label: "Closure Rate (CCV)", quantity: "rotation" },
+  { key: "normalizedClosureDegPerFt", label: "Normalized Closure", unit: " °/ft" },
+  { key: "closureDuringContactDeg", label: "Face Closure During Contact", unit: "°" },
   {
     key: "loftGainDuringContactDeg",
     label: "Dynamic Loft Gained During Contact",
@@ -84,25 +93,104 @@ const RESULT_ROWS: { key: string; label: string; unit: string }[] = [
   },
 ];
 
+const METRIC_ROWS: RowSpec[] = [
+  { key: "ccvDps", label: "Club Closure Velocity (CCV)", quantity: "rotation" },
+  { key: "closureDegPerFt", label: "Closure per Foot of Travel", unit: " °/ft" },
+  { key: "closureDegPerInch", label: "Closure per Inch of Travel", unit: " °/in" },
+  { key: "closureDegPerMs", label: "Closure per Millisecond", unit: " °/ms" },
+  { key: "rIsaFt", label: "Distance to Screw Axis (R_ISA)", unit: " ft" },
+  { key: "rIsaM", label: "Distance to Screw Axis (Metric)", unit: " m" },
+  {
+    key: "timeToSquareFrom1DegOpenMs",
+    label: "Time to Square From 1° Open",
+    unit: " ms",
+  },
+  {
+    key: "toeHeelSpeedDeltaMph",
+    label: "Toe vs Heel Speed Difference",
+    quantity: "speed",
+  },
+];
+
+const UNIT_LABELS: Record<Quantity, string> = {
+  speed: "Speed",
+  rotation: "Rotation",
+  length: "Length",
+};
+
 const TABS = ["Explorer", "Derivation & Traceability"] as const;
 
 export default function App() {
   const [scenario, setScenario] = useState<ImpactScenario>(DEFAULT_SCENARIO);
   const [tab, setTab] = useState<(typeof TABS)[number]>(TABS[0]);
   const [explained, setExplained] = useState<string>("pathDeviationDeg");
+  const [units, setUnits] = useState<Record<Quantity, string>>({
+    speed: "mph",
+    rotation: "deg/s",
+    length: "mm",
+  });
   const result = useMemo(() => solve(scenario), [scenario]);
+  const metrics = useMemo(() => closureMetrics(scenario), [scenario]);
 
-  const update = (key: keyof ImpactScenario, raw: string) => {
-    const value = Number(raw);
-    if (!Number.isFinite(value)) return;
+  const update = (key: keyof ImpactScenario, quantity: Quantity | undefined, raw: string) => {
+    const displayed = Number(raw);
+    if (!Number.isFinite(displayed)) return;
+    const canonical = quantity
+      ? toCanonical(quantity, units[quantity], displayed)
+      : displayed;
     const [low, high] = BOUNDS[key];
     setScenario((s) => ({
       ...s,
-      [key]: Math.min(high, Math.max(low, value)),
+      [key]: Math.min(high, Math.max(low, canonical)),
     }));
   };
 
-  const explainedLabel = RESULT_ROWS.find((r) => r.key === explained)?.label;
+  const formatRow = (
+    spec: RowSpec,
+    value: number,
+  ): string => {
+    if (!Number.isFinite(value)) return "∞ (not closing)";
+    if (spec.quantity) {
+      const unit = units[spec.quantity];
+      const displayed = fromCanonical(spec.quantity, unit, value);
+      return `${displayed >= 0 ? "+" : ""}${displayed.toFixed(2)} ${unit}`;
+    }
+    return `${value >= 0 ? "+" : ""}${value.toFixed(2)}${spec.unit ?? ""}`;
+  };
+
+  const allRows = [...RESULT_ROWS, ...METRIC_ROWS];
+  const explainedLabel = allRows.find((r) => r.key === explained)?.label;
+  const explanation =
+    RESULT_EXPLANATIONS[explained] ?? METRIC_EXPLANATIONS[explained];
+
+  const rowButton = (spec: RowSpec, value: number) => {
+    const active = explained === spec.key;
+    return (
+      <button
+        key={spec.key}
+        type="button"
+        onClick={() => setExplained(spec.key)}
+        aria-pressed={active}
+        className={
+          "flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm transition-colors " +
+          (active
+            ? "border-blue-500 bg-blue-500/10"
+            : "border-slate-800 bg-slate-900 hover:border-slate-600")
+        }
+      >
+        <span className="text-slate-400">{spec.label}</span>
+        <span
+          className={
+            spec.key === "pathDeviationDeg"
+              ? "font-semibold text-amber-300"
+              : "font-semibold text-slate-100"
+          }
+        >
+          {formatRow(spec, value)}
+        </span>
+      </button>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-slate-950 p-6 text-slate-100">
@@ -143,28 +231,67 @@ export default function App() {
         <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
           <section
             aria-label="Scenario inputs"
-            className="rounded-lg border border-slate-800 bg-slate-900 p-4"
+            className="space-y-4"
           >
-            <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
-              Scenario
-            </h2>
-            {FIELDS.map(({ key, label, unit, step }) => (
-              <label key={key} className="mb-3 block text-sm">
-                <span className="mb-1 flex justify-between text-slate-300">
-                  <span>{label}</span>
-                  <span className="text-slate-500">{unit}</span>
-                </span>
-                <input
-                  type="number"
-                  step={step}
-                  value={scenario[key]}
-                  min={BOUNDS[key][0]}
-                  max={BOUNDS[key][1]}
-                  onChange={(e) => update(key, e.target.value)}
-                  className="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
-                />
-              </label>
-            ))}
+            <div className="rounded-lg border border-slate-800 bg-slate-900 p-4">
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+                Units
+              </h2>
+              {(Object.keys(QUANTITY_UNITS) as Quantity[]).map((quantity) => (
+                <label
+                  key={quantity}
+                  className="mb-2 flex items-center justify-between text-sm"
+                >
+                  <span className="text-slate-300">{UNIT_LABELS[quantity]}</span>
+                  <select
+                    value={units[quantity]}
+                    onChange={(e) =>
+                      setUnits((u) => ({ ...u, [quantity]: e.target.value }))
+                    }
+                    className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus:outline-none"
+                  >
+                    {Object.keys(QUANTITY_UNITS[quantity]).map((unit) => (
+                      <option key={unit} value={unit}>
+                        {unit}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              ))}
+            </div>
+
+            <div className="rounded-lg border border-slate-800 bg-slate-900 p-4">
+              <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+                Scenario
+              </h2>
+              {FIELDS.map(({ key, label, quantity, fixedUnit, step }) => {
+                const unit = quantity ? units[quantity] : fixedUnit ?? "";
+                const displayed = quantity
+                  ? fromCanonical(quantity, units[quantity], scenario[key])
+                  : scenario[key];
+                return (
+                  <label
+                    key={key}
+                    title={FIELD_GUIDANCE[key]}
+                    className="mb-3 block text-sm"
+                  >
+                    <span className="mb-1 flex justify-between text-slate-300">
+                      <span>{label}</span>
+                      <span className="text-slate-500">{unit}</span>
+                    </span>
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      step={step}
+                      value={Number(displayed.toFixed(4))}
+                      onChange={(e) => update(key, quantity, e.target.value)}
+                      title={FIELD_GUIDANCE[key]}
+                      className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
+                    />
+                  </label>
+                );
+              })}
+            </div>
           </section>
 
           <section className="space-y-6">
@@ -176,37 +303,23 @@ export default function App() {
                 Impact-Point Deviation — Click a Value for Its Explanation
               </h2>
               <div className="grid gap-2 sm:grid-cols-2">
-                {RESULT_ROWS.map(({ key, label, unit }) => {
-                  const value = result[key as keyof typeof result] as number;
-                  const active = explained === key;
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => setExplained(key)}
-                      aria-pressed={active}
-                      className={
-                        "flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm transition-colors " +
-                        (active
-                          ? "border-blue-500 bg-blue-500/10"
-                          : "border-slate-800 bg-slate-900 hover:border-slate-600")
-                      }
-                    >
-                      <span className="text-slate-400">{label}</span>
-                      <span
-                        className={
-                          key === "pathDeviationDeg"
-                            ? "font-semibold text-amber-300"
-                            : "font-semibold text-slate-100"
-                        }
-                      >
-                        {value >= 0 ? "+" : ""}
-                        {value.toFixed(2)}
-                        {unit}
-                      </span>
-                    </button>
-                  );
-                })}
+                {RESULT_ROWS.map((spec) =>
+                  rowButton(
+                    spec,
+                    result[spec.key as keyof typeof result] as number,
+                  ),
+                )}
+              </div>
+              <h2 className="mb-3 mt-5 text-sm font-semibold uppercase tracking-wide text-slate-400">
+                Common Closure Metrics
+              </h2>
+              <div className="grid gap-2 sm:grid-cols-2">
+                {METRIC_ROWS.map((spec) =>
+                  rowButton(
+                    spec,
+                    metrics[spec.key as keyof typeof metrics],
+                  ),
+                )}
               </div>
               {explainedLabel && (
                 <div
@@ -216,7 +329,7 @@ export default function App() {
                   <span className="font-semibold text-slate-200">
                     {explainedLabel}.{" "}
                   </span>
-                  {RESULT_EXPLANATIONS[explained]}
+                  {explanation}
                 </div>
               )}
               <p className="mt-3 text-xs text-slate-500">
@@ -225,7 +338,8 @@ export default function App() {
                 path deviation = the impact point travels left of the
                 reported geometric-center path. Defaults are dossier-sourced
                 (Cheetham 2014 tour HTV 1,307 ± 304 °/s about the shaft;
-                CCV ≈ 2,100 °/s; 40 mm GC-to-face offset) — enter your own
+                CCV ≈ 2,100 °/s; 40 mm GC-to-face offset) — hover any input
+                for its suggested range and source, and enter your own
                 measured values.
               </p>
             </div>

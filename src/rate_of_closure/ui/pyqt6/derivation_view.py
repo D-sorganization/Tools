@@ -42,6 +42,7 @@ class _FormulaCanvas(FigureCanvas):
         super().__init__(figure)
         self.setStyleSheet("background: transparent;")
         self.setFixedHeight(_FORMULA_HEIGHT_PX)
+        self.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         axes = figure.add_axes((0.0, 0.0, 1.0, 1.0))
         axes.set_axis_off()
         try:
@@ -50,6 +51,14 @@ class _FormulaCanvas(FigureCanvas):
         except ValueError:  # malformed mathtext must never break the tab
             logger.exception("mathtext rendering failed")
             axes.text(0.02, 0.5, latex.replace("$", ""), fontsize=10)
+
+    def wheelEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
+        """Pass wheel events through so the surrounding tab scrolls.
+
+        Matplotlib's Qt canvas normally accepts wheel events for its own
+        zoom/scroll machinery, which silently ate scrolling on this tab.
+        """
+        event.ignore()
 
 
 class DerivationView(QWidget):

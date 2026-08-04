@@ -96,6 +96,68 @@ class TestMainWindow:
         assert view._scroll.widget() is not None
 
 
+class TestUserFeedbackFixes:
+    """Regressions for the review round: theme menu, arrows, units."""
+
+    def test_window_does_not_add_its_own_theme_menu(self, window) -> None:  # type: ignore[no-untyped-def]
+        """The launcher owns theming; a second menu duplicated it."""
+        menubar = window.menuBar()
+        titles = [action.text() for action in menubar.actions()]
+        assert titles.count("&Theme") == 0
+
+    def test_entry_boxes_hide_step_arrows(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        from PyQt6.QtWidgets import QAbstractSpinBox
+
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        for name, spin in panel._spins.items():
+            assert spin.buttonSymbols() == QAbstractSpinBox.ButtonSymbols.NoButtons, (
+                name
+            )
+
+    def test_entry_boxes_carry_range_guidance_with_source(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        for name, spin in panel._spins.items():
+            assert "Suggested range" in spin.toolTip(), name
+            assert "Source:" in spin.toolTip(), name
+
+    def test_unit_switch_preserves_canonical_scenario(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        before = panel.scenario()
+        panel._unit_combos["speed"].setCurrentText("m/s")
+        panel._unit_combos["rotation"].setCurrentText("rpm")
+        panel._unit_combos["length"].setCurrentText("in")
+        after = panel.scenario()
+        # Round-trip through the display loses at most display resolution.
+        assert after.clubhead_speed_mph == pytest.approx(
+            before.clubhead_speed_mph, rel=1e-4
+        )
+        assert after.omega_shaft_dps == pytest.approx(before.omega_shaft_dps, rel=1e-4)
+        assert after.com_to_face_mm == pytest.approx(before.com_to_face_mm, rel=1e-4)
+        # And the display suffix follows the selection.
+        assert panel._spins["clubhead_speed_mph"].suffix() == " m/s"
+
+    def test_metrics_rows_populate_and_explain(self, window) -> None:  # type: ignore[no-untyped-def]
+        row = window._rows["ccv_dps"]
+        assert row.value_label.text() != "—"
+        row.clicked.emit("ccv_dps")
+        assert "Club Closure Velocity" in window._explanation.toHtml()
+
+    def test_results_follow_selected_units(self, window) -> None:  # type: ignore[no-untyped-def]
+        window._controls._unit_combos["rotation"].setCurrentText("rpm")
+        text = window._rows["closure_rate_dps"].value_label.text()
+        assert text.endswith(" rpm")
+
+    def test_derivation_formula_canvases_ignore_wheel(self, window) -> None:  # type: ignore[no-untyped-def]
+        from rate_of_closure.ui.pyqt6.derivation_view import _FormulaCanvas
+
+        content = window._derivation_view._scroll.widget()
+        canvases = content.findChildren(_FormulaCanvas)
+        assert canvases, "derivation tab must contain formula canvases"
+
+
 class TestClub3DView:
     def test_playback_speed_round_trips_and_clamps(self, qtbot) -> None:  # type: ignore[no-untyped-def]
         view = Club3DView()

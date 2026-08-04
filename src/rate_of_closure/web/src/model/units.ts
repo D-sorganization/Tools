@@ -1,0 +1,86 @@
+/**
+ * Unit systems — TypeScript mirror of `src/rate_of_closure/units.py`.
+ *
+ * The model is always canonical (mph, deg/s, mm, µs); the UI converts
+ * at the edge via these factor tables: canonical = displayed * factor.
+ * Also mirrors the per-field hover guidance (suggested golf-swing range
+ * plus the source of the suggestion).
+ */
+
+export const SPEED_UNITS: Record<string, number> = {
+  mph: 1.0,
+  "m/s": 2.236936292054402,
+  "km/h": 0.621371192237334,
+  "ft/s": 0.681818181818182,
+};
+
+export const ROTATION_UNITS: Record<string, number> = {
+  "deg/s": 1.0,
+  "rad/s": 57.29577951308232,
+  rpm: 6.0,
+};
+
+export const LENGTH_UNITS: Record<string, number> = {
+  mm: 1.0,
+  cm: 10.0,
+  in: 25.4,
+};
+
+export type Quantity = "speed" | "rotation" | "length";
+
+export const QUANTITY_UNITS: Record<Quantity, Record<string, number>> = {
+  speed: SPEED_UNITS,
+  rotation: ROTATION_UNITS,
+  length: LENGTH_UNITS,
+};
+
+export function toCanonical(
+  quantity: Quantity,
+  unit: string,
+  value: number,
+): number {
+  return value * QUANTITY_UNITS[quantity][unit];
+}
+
+export function fromCanonical(
+  quantity: Quantity,
+  unit: string,
+  value: number,
+): number {
+  return value / QUANTITY_UNITS[quantity][unit];
+}
+
+/** Hover guidance per scenario field (canonical-unit ranges + source). */
+export const FIELD_GUIDANCE: Record<string, string> = {
+  clubheadSpeedMph:
+    "Suggested range: 80-130 mph driver clubhead speed (tour average " +
+    "near 113 mph; strong amateurs 90-105). Source: openly published " +
+    "tour launch-monitor averages.",
+  omegaPlaneDps:
+    "Suggested range: 1,800-2,400 deg/s swing-plane rotation at impact " +
+    "for skilled players. Source: 3-D motion-capture studies collected " +
+    "in the AffineDrift closure-rate dossier.",
+  omegaShaftDps:
+    "Suggested range: 652-2,432 deg/s about the shaft (tour driver mean " +
+    "1,307 +/- 304, n = 94). Source: Cheetham 2014, via the AffineDrift " +
+    "closure-rate dossier.",
+  lieAngleDeg:
+    "Suggested range: 55-62 deg for a driver delivered near its static " +
+    "lie; 90 deg makes the shaft vertical to isolate pure horizontal " +
+    "closure. Source: published driver spec sheets.",
+  comToFaceMm:
+    "Suggested range: 25-50 mm from the geometric center forward to the " +
+    "face center for modern drivers; 40 mm is the AffineDrift " +
+    "worked-example value. Source: openly published launch-monitor " +
+    "material.",
+  impactOffsetToeMm:
+    "Suggested range: within +/-15 mm of face center for reasonable " +
+    "strikes; gear-effect studies use up to +/-20 mm. Source: published " +
+    "robot-test impact maps.",
+  impactOffsetHighMm:
+    "Suggested range: within +/-10 mm of face center vertically. " +
+    "Source: published robot-test impact maps.",
+  contactDurationUs:
+    "Suggested range: 400-500 microseconds of ball-face contact for a " +
+    "driver. Source: openly published high-speed impact studies.",
+};

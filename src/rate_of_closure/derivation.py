@@ -22,7 +22,12 @@ from dataclasses import dataclass
 from ._contracts import ensure
 from .model import ImpactResult, ImpactScenario, solve
 
-__all__ = ["RESULT_EXPLANATIONS", "DerivationStep", "derivation_steps"]
+__all__ = [
+    "METRIC_EXPLANATIONS",
+    "RESULT_EXPLANATIONS",
+    "DerivationStep",
+    "derivation_steps",
+]
 
 
 @dataclass(frozen=True)
@@ -99,6 +104,58 @@ RESULT_EXPLANATIONS: dict[str, str] = {
         "Dynamic loft gained during contact: the heel-toe component of "
         "omega times the contact duration. The swing-plane rotation "
         "keeps adding loft while the ball is on the face."
+    ),
+}
+
+
+#: Click-through explanation for every common-literature closure metric.
+METRIC_EXPLANATIONS: dict[str, str] = {
+    "ccv_dps": (
+        "Club closure velocity in degrees per second — the most common "
+        "way golf research reports rate of closure. Identical to the "
+        "closure rate above: CCV = HTV sin(lie) + SPV cos(lie). Tour "
+        "driver mean near 2,100 deg/s (Cheetham 2014 dossier)."
+    ),
+    "closure_deg_per_ft": (
+        "Closure per foot of clubhead travel — the speed-invariant "
+        "normalization preferred in the AffineDrift derivation "
+        "(omega / v = 1 / R_ISA). Two deliveries with the same deg/ft "
+        "have identical path-gap geometry at any speed."
+    ),
+    "closure_deg_per_inch": (
+        "The same speed-invariant closure quoted per inch of travel — a "
+        "framing club fitters use when discussing strike-to-strike face "
+        "variation across the hitting area."
+    ),
+    "closure_deg_per_ms": (
+        "Closure per millisecond — the timing framing: how much the face "
+        "angle changes for every millisecond of timing error in the "
+        "release. Roughly 2 degrees/ms at tour closure rates, which is "
+        "why closure rate behaves as a dispersion term."
+    ),
+    "r_isa_m": (
+        "Distance from the clubhead to the instantaneous screw axis, "
+        "v / omega, in metres. The smaller this radius, the faster the "
+        "face sweeps for the same clubhead speed. Infinite when the face "
+        "is not closing."
+    ),
+    "r_isa_ft": (
+        "The same instantaneous-screw-axis distance in feet. The openly "
+        "published ~3 degree GC-vs-face-center gap implies roughly "
+        "2.5 ft at a 40 mm offset — closer than the hub radius, the "
+        "tension the AffineDrift derivation documents."
+    ),
+    "time_to_square_from_1deg_open_ms": (
+        "How long before impact the face was one degree open, at the "
+        "current closure rate. At tour rates this is about half a "
+        "millisecond — the timing window behind the classic 'a degree "
+        "per half-millisecond' framing of release timing."
+    ),
+    "toe_heel_speed_delta_mph": (
+        "Speed difference between the toe and heel ends of a 117 mm "
+        "face due to rotation alone. The toe outruns the heel on every "
+        "closing delivery — the same rigid-body effect that produces "
+        "the reference-point path gap."
     ),
 }
 

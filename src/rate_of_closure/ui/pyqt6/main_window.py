@@ -14,6 +14,7 @@ it never reaches into widgets or model internals (LoD).
 from __future__ import annotations
 
 import logging
+import math
 
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
@@ -31,11 +32,15 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.derivation import RESULT_EXPLANATIONS
-from rate_of_closure.model import ImpactScenario, solve
+from rate_of_closure.derivation import (
+    METRIC_EXPLANATIONS,
+    RESULT_EXPLANATIONS,
+)
+from rate_of_closure.model import ImpactScenario, closure_metrics, solve
 from rate_of_closure.ui.pyqt6.club_view import Club3DView, SweepView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
+from rate_of_closure.units import convert_from_canonical
 
 logger = logging.getLogger(__name__)
 
@@ -69,15 +74,41 @@ _RESULT_ROWS: tuple[tuple[str, str], ...] = (
     ("loft_gain_during_contact_deg", "Dynamic Loft Gained During Contact"),
 )
 
+#: (metric field, Title Case label) for the Common Closure Metrics box.
+_METRIC_ROWS: tuple[tuple[str, str], ...] = (
+    ("ccv_dps", "Club Closure Velocity (CCV)"),
+    ("closure_deg_per_ft", "Closure per Foot of Travel"),
+    ("closure_deg_per_inch", "Closure per Inch of Travel"),
+    ("closure_deg_per_ms", "Closure per Millisecond"),
+    ("r_isa_ft", "Distance to Screw Axis (R_ISA)"),
+    ("r_isa_m", "Distance to Screw Axis (Metric)"),
+    ("time_to_square_from_1deg_open_ms", "Time to Square From 1° Open"),
+    ("toe_heel_speed_delta_mph", "Toe vs Heel Speed Difference"),
+)
+
+#: Fixed unit suffix per row; rows keyed in _QUANTITY_ROWS follow the
+#: user's selected display unit instead.
 _UNITS: dict[str, str] = {
     "path_deviation_deg": "°",
     "aoa_deviation_deg": "°",
-    "tangential_speed_mph": " mph",
-    "speed_delta_mph": " mph",
-    "closure_rate_dps": " °/s",
     "normalized_closure_deg_per_ft": " °/ft",
     "closure_during_contact_deg": "°",
     "loft_gain_during_contact_deg": "°",
+    "closure_deg_per_ft": " °/ft",
+    "closure_deg_per_inch": " °/in",
+    "closure_deg_per_ms": " °/ms",
+    "r_isa_ft": " ft",
+    "r_isa_m": " m",
+    "time_to_square_from_1deg_open_ms": " ms",
+}
+
+#: result/metric field -> the units drop-down quantity it follows.
+_QUANTITY_ROWS: dict[str, str] = {
+    "tangential_speed_mph": "speed",
+    "speed_delta_mph": "speed",
+    "toe_heel_speed_delta_mph": "speed",
+    "closure_rate_dps": "rotation",
+    "ccv_dps": "rotation",
 }
 
 
@@ -141,7 +172,12 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
         left_layout.addWidget(self._controls)
-        left_layout.addWidget(self._build_results_box())
+        left_layout.addWidget(
+            self._build_rows_box("Impact-Point Deviation", _RESULT_ROWS)
+        )
+        left_layout.addWidget(
+            self._build_rows_box("Common Closure Metrics", _METRIC_ROWS)
+        )
         left_layout.addWidget(self._build_explanation_box())
         left_layout.addStretch(1)
         left = QScrollArea()
@@ -168,17 +204,20 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         )
 
         self._controls.scenarioChanged.connect(self._on_scenario)
-        if _THEME_AVAILABLE:
-            self.setup_theme_support(settings_app="RateOfClosure")
+        # Theming is applied by the shared launcher (setup_themed_app),
+        # which also owns the single Theme menu — calling
+        # setup_theme_support() here as well would add a duplicate.
         self._on_scenario(self._controls.scenario())
         self._show_explanation(_RESULT_ROWS[0][0])
 
     # ── construction ────────────────────────────────────────────────
-    def _build_results_box(self) -> QGroupBox:
-        box = QGroupBox("Impact-Point Deviation")
+    def _build_rows_box(
+        self, title: str, rows: tuple[tuple[str, str], ...]
+    ) -> QGroupBox:
+        box = QGroupBox(title)
         layout = QVBoxLayout(box)
         layout.setSpacing(4)
-        for field, label in _RESULT_ROWS:
+        for field, label in rows:
             row = _ResultRow(field, label)
             row.clicked.connect(self._show_explanation)
             self._rows[field] = row
@@ -197,15 +236,32 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
 
     # ── behaviour ───────────────────────────────────────────────────
     def _show_explanation(self, field: str) -> None:
-        label = dict(_RESULT_ROWS)[field]
-        text = RESULT_EXPLANATIONS.get(field, "")
-        self._explanation.setHtml(f"<b>{label}</b><br/>{text}")
+        labels = dict(_RESULT_ROWS) | dict(_METRIC_ROWS)
+        text = RESULT_EXPLANATIONS.get(field) or METRIC_EXPLANATIONS.get(field, "")
+        self._explanation.setHtml(f"<b>{labels[field]}</b><br/>{text}")
+
+    def _format_row(self, field: str, value: float) -> str:
+        """Format one row's value in the user's selected display unit."""
+        if not math.isfinite(value):
+            return "∞ (not closing)"
+        quantity = _QUANTITY_ROWS.get(field)
+        if quantity is None:
+            return f"{value:+.2f}{_UNITS[field]}"
+        unit = self._controls.unit_for(quantity)
+        displayed = convert_from_canonical(quantity, unit, value)
+        return f"{displayed:+.2f} {unit}"
 
     def _on_scenario(self, scenario: ImpactScenario) -> None:
         result = solve(scenario)
+        metrics = closure_metrics(scenario)
         for field, _ in _RESULT_ROWS:
-            value = getattr(result, field)
-            self._rows[field].value_label.setText(f"{value:+.2f}{_UNITS[field]}")
+            self._rows[field].value_label.setText(
+                self._format_row(field, getattr(result, field))
+            )
+        for field, _ in _METRIC_ROWS:
+            self._rows[field].value_label.setText(
+                self._format_row(field, getattr(metrics, field))
+            )
         self._club_view.set_scenario(scenario)
         self._sweep_view.set_scenario(scenario)
         self._derivation_view.set_scenario(scenario)

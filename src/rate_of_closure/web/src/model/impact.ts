@@ -42,6 +42,21 @@ export interface ImpactResult {
 export const MPH_PER_MPS = 1.0 / 0.44704;
 const DEG = Math.PI / 180.0;
 
+/** Heel-to-toe face length of a modern driver [m] (toe-heel metric). */
+const FACE_LENGTH_M = 0.117;
+
+/** Common closure parameters reported across the golf literature. */
+export interface ClosureMetrics {
+  ccvDps: number;
+  closureDegPerFt: number;
+  closureDegPerInch: number;
+  closureDegPerMs: number;
+  rIsaM: number;
+  rIsaFt: number;
+  timeToSquareFrom1DegOpenMs: number;
+  toeHeelSpeedDeltaMph: number;
+}
+
 type Vec3 = [number, number, number];
 
 /** Inclusive physical bounds per field, matching the Python model. */
@@ -103,6 +118,31 @@ export function frame(lieAngleDeg: number): { shaft: Vec3; normal: Vec3 } {
   const raw = cross([1.0, 0.0, 0.0], shaft);
   const n = norm(raw);
   return { shaft, normal: [raw[0] / n, raw[1] / n, raw[2] / n] };
+}
+
+/**
+ * Restate one delivery as the closure parameters the golf literature
+ * uses — every value an algebraic restatement of the solved delivery.
+ * Ratio metrics are Infinity when the face is not closing.
+ */
+export function closureMetrics(scenario: ImpactScenario): ClosureMetrics {
+  const result = solve(scenario);
+  const ccv = result.closureRateDps;
+  const speedMps = result.referenceSpeedMph / MPH_PER_MPS;
+  const omega = result.omegaDps.map((c) => c * DEG) as Vec3;
+  const toeHeel = norm(cross(omega, [0, 0, FACE_LENGTH_M]));
+  const closing = Math.abs(ccv) > 1e-12;
+  const rIsaM = closing ? speedMps / Math.abs(ccv * DEG) : Infinity;
+  return {
+    ccvDps: ccv,
+    closureDegPerFt: result.normalizedClosureDegPerFt,
+    closureDegPerInch: result.normalizedClosureDegPerFt / 12.0,
+    closureDegPerMs: ccv / 1000.0,
+    rIsaM,
+    rIsaFt: rIsaM / 0.3048,
+    timeToSquareFrom1DegOpenMs: closing ? 1000.0 / Math.abs(ccv) : Infinity,
+    toeHeelSpeedDeltaMph: toeHeel * MPH_PER_MPS,
+  };
 }
 
 /** Solve one scenario for the impact point's delivery deviation. */

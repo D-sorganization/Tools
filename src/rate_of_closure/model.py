@@ -60,8 +60,10 @@ from ._contracts import ensure, require, require_finite
 
 __all__ = [
     "MPH_PER_MPS",
+    "ClosureMetrics",
     "ImpactResult",
     "ImpactScenario",
+    "closure_metrics",
     "solve",
     "sweep",
 ]
@@ -287,6 +289,81 @@ def solve(scenario: ImpactScenario) -> ImpactResult:
         "all scalar outputs must be finite",
     )
     return result
+
+
+#: Heel-to-toe face length of a modern driver, metres — used only for
+#: the toe-vs-heel speed differential metric (about 4.6 in is typical
+#: of published head geometries).
+_FACE_LENGTH_M = 0.117
+
+
+@dataclass(frozen=True)
+class ClosureMetrics:
+    """Common closure parameters reported across the golf literature.
+
+    Every value is an algebraic restatement of the solved delivery —
+    no additional empirical inputs — so each stays traceable to the
+    same twist model. Rates appear per second, per millisecond, per
+    foot, and per inch because different sources prefer different
+    normalizations; R_ISA and the time-to-square figures restate the
+    same rotation as a geometry and as a timing.
+
+    Attributes:
+        ccv_dps: Club closure velocity (the model's closure rate).
+        closure_deg_per_ft: Closure per foot of travel (omega / v).
+        closure_deg_per_inch: Closure per inch of travel.
+        closure_deg_per_ms: Closure per millisecond.
+        r_isa_m: Distance to the instantaneous screw axis, metres
+            (v / omega). ``inf`` when the face is not closing.
+        r_isa_ft: The same distance in feet.
+        time_to_square_from_1deg_open_ms: How long before impact the
+            face was one degree open, milliseconds. ``inf`` when the
+            face is not closing.
+        toe_heel_speed_delta_mph: Speed difference between the toe and
+            heel ends of the face due to rotation (117 mm face length).
+    """
+
+    ccv_dps: float
+    closure_deg_per_ft: float
+    closure_deg_per_inch: float
+    closure_deg_per_ms: float
+    r_isa_m: float
+    r_isa_ft: float
+    time_to_square_from_1deg_open_ms: float
+    toe_heel_speed_delta_mph: float
+
+
+def closure_metrics(scenario: ImpactScenario) -> ClosureMetrics:
+    """Restate one delivery as the closure parameters the literature uses.
+
+    Args:
+        scenario: The delivery to evaluate.
+
+    Returns:
+        The derived metric set. Ratio metrics are ``inf`` when the
+        closure rate is zero (a non-closing face never squares).
+    """
+    result = solve(scenario)
+    ccv = result.closure_rate_dps
+    speed_mps = result.reference_speed_mph / MPH_PER_MPS
+    omega = np.radians(np.array(result.omega_dps))
+    # Toe and heel sit +/- half the face length along +/-z; their speed
+    # difference is |omega x (L z_hat)|.
+    toe_heel = float(
+        np.linalg.norm(np.cross(omega, np.array([0.0, 0.0, _FACE_LENGTH_M])))
+    )
+    closing = abs(ccv) > 1e-12
+    r_isa_m = speed_mps / abs(math.radians(ccv)) if closing else math.inf
+    return ClosureMetrics(
+        ccv_dps=ccv,
+        closure_deg_per_ft=result.normalized_closure_deg_per_ft,
+        closure_deg_per_inch=result.normalized_closure_deg_per_ft / 12.0,
+        closure_deg_per_ms=ccv / 1000.0,
+        r_isa_m=r_isa_m,
+        r_isa_ft=r_isa_m / 0.3048,
+        time_to_square_from_1deg_open_ms=(1000.0 / abs(ccv) if closing else math.inf),
+        toe_heel_speed_delta_mph=toe_heel * MPH_PER_MPS,
+    )
 
 
 def sweep(scenario: ImpactScenario, field_name: str, values: np.ndarray) -> np.ndarray:

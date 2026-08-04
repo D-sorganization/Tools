@@ -63,6 +63,49 @@ export const RESULT_EXPLANATIONS: Record<string, string> = {
     "loft while the ball is on the face.",
 };
 
+/** Click-through explanation for every common-literature metric. */
+export const METRIC_EXPLANATIONS: Record<string, string> = {
+  ccvDps:
+    "Club closure velocity in degrees per second — the most common way " +
+    "golf research reports rate of closure. Identical to the closure " +
+    "rate above: CCV = HTV sin(lie) + SPV cos(lie). Tour driver mean " +
+    "near 2,100 deg/s (Cheetham 2014 dossier).",
+  closureDegPerFt:
+    "Closure per foot of clubhead travel — the speed-invariant " +
+    "normalization preferred in the AffineDrift derivation (omega / v = " +
+    "1 / R_ISA). Two deliveries with the same deg/ft have identical " +
+    "path-gap geometry at any speed.",
+  closureDegPerInch:
+    "The same speed-invariant closure quoted per inch of travel — a " +
+    "framing club fitters use when discussing strike-to-strike face " +
+    "variation across the hitting area.",
+  closureDegPerMs:
+    "Closure per millisecond — the timing framing: how much the face " +
+    "angle changes for every millisecond of timing error in the " +
+    "release. Roughly 2 degrees/ms at tour closure rates, which is why " +
+    "closure rate behaves as a dispersion term.",
+  rIsaM:
+    "Distance from the clubhead to the instantaneous screw axis, " +
+    "v / omega, in metres. The smaller this radius, the faster the face " +
+    "sweeps for the same clubhead speed. Infinite when the face is not " +
+    "closing.",
+  rIsaFt:
+    "The same instantaneous-screw-axis distance in feet. The openly " +
+    "published ~3 degree GC-vs-face-center gap implies roughly 2.5 ft " +
+    "at a 40 mm offset — closer than the hub radius, the tension the " +
+    "AffineDrift derivation documents.",
+  timeToSquareFrom1DegOpenMs:
+    "How long before impact the face was one degree open, at the " +
+    "current closure rate. At tour rates this is about half a " +
+    "millisecond — the timing window behind the classic 'a degree per " +
+    "half-millisecond' framing of release timing.",
+  toeHeelSpeedDeltaMph:
+    "Speed difference between the toe and heel ends of a 117 mm face " +
+    "due to rotation alone. The toe outruns the heel on every closing " +
+    "delivery — the same rigid-body effect that produces the " +
+    "reference-point path gap.",
+};
+
 const fmtVec = (v: readonly number[], decimals = 3): string =>
   "(" + v.map((c) => c.toFixed(decimals)).join(",\\ ") + ")";
 
