@@ -103,9 +103,9 @@ class TestSessionFileHelpers:
         # No leftover .tmp file after atomic replaces.
         assert not (path.parent / f"{path.name}.tmp").exists()
         final = path.read_text(encoding="utf-8")
-        assert final in candidates, (
-            f"expected exactly one of {candidates!r}, got {final!r}"
-        )
+        assert (
+            final in candidates
+        ), f"expected exactly one of {candidates!r}, got {final!r}"
 
     def test_atomic_write_leaves_no_tmp_file(self, tmp_path: Path) -> None:
         """Atomic write cleans up the .tmp file after replace."""
