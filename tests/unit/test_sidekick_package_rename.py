@@ -56,21 +56,18 @@ def _assert_import_probe_succeeds(result: subprocess.CompletedProcess[str]) -> N
 @pytest.mark.unit
 def test_sidekick_package_importable() -> None:
     """The new canonical name must be importable."""
-    result = _run_import_probe(
-        """
+    result = _run_import_probe("""
         import sidekick
 
         assert sidekick is not None
-        """
-    )
+        """)
     _assert_import_probe_succeeds(result)
 
 
 @pytest.mark.unit
 def test_upstream_drift_tools_shim_imports() -> None:
     """Old name still works (backward compat) and emits a DeprecationWarning."""
-    result = _run_import_probe(
-        """
+    result = _run_import_probe("""
         import warnings
 
         with warnings.catch_warnings(record=True) as caught:
@@ -87,16 +84,14 @@ def test_upstream_drift_tools_shim_imports() -> None:
             "Expected at least one DeprecationWarning about 'deprecated' from "
             f"the shim, but got: {[str(warning.message) for warning in caught]}"
         )
-        """
-    )
+        """)
     _assert_import_probe_succeeds(result)
 
 
 @pytest.mark.unit
 def test_shim_and_canonical_are_same_object() -> None:
     """Shim re-exports point to the same canonical sidekick objects (no duplication)."""
-    result = _run_import_probe(
-        """
+    result = _run_import_probe("""
         import warnings
 
         import sidekick.data_processing
@@ -109,8 +104,7 @@ def test_shim_and_canonical_are_same_object() -> None:
             "sidekick.data_processing and upstream_drift_tools.data_processing "
             "must be the same module object (shim must proxy, not copy)"
         )
-        """
-    )
+        """)
     _assert_import_probe_succeeds(result)
 
 
