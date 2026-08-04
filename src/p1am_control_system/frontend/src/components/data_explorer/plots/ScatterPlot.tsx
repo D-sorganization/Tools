@@ -119,17 +119,20 @@ function buildPath(
   px: (v: number) => number,
   py: (v: number) => number,
 ): string {
-  const segments: string[] = [];
+  // ⚡ Bolt Optimization: Use a single string with concatenation to build SVG path directly
+  // avoiding intermediate array allocation and .join() overhead on each re-render
+  let d = "";
   let penDown = false;
   for (const [dx, dy] of points) {
     if (!Number.isFinite(dx) || !Number.isFinite(dy)) {
       penDown = false;
       continue;
     }
-    segments.push(`${penDown ? "L" : "M"}${px(dx)},${py(dy)}`);
+    if (d.length > 0) d += " ";
+    d += `${penDown ? "L" : "M"}${px(dx)},${py(dy)}`;
     penDown = true;
   }
-  return segments.join(" ");
+  return d;
 }
 
 /** Scatter plot with optional trendline. Forwards a ref to the root `<svg>`. */
