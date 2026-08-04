@@ -15,6 +15,7 @@ import { ClubCanvas } from "./components/ClubCanvas";
 import { FlightExplorerPanel } from "./components/FlightExplorerPanel";
 import { PlotsPanel } from "./components/PlotsPanel";
 import { SimulationPanel } from "./components/SimulationPanel";
+import { VariationPanel } from "./components/VariationPanel";
 import { ClubPanel } from "./components/ClubPanel";
 import { Derivation } from "./components/Derivation";
 import { type HeadMesh } from "./model/mesh";
@@ -129,6 +130,7 @@ const TABS = [
   "Simulation",
   "Plots",
   "Flight Explorer",
+  "Variation",
 ] as const;
 
 export default function App() {
@@ -244,7 +246,9 @@ export default function App() {
         ))}
       </nav>
 
-      {tab === TABS[4] ? (
+      {tab === TABS[5] ? (
+        <VariationPanel />
+      ) : tab === TABS[4] ? (
         <FlightExplorerPanel />
       ) : tab === TABS[3] ? (
         // Static loft mirrors the desktop default driver (same note as
