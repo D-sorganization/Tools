@@ -41,7 +41,9 @@ from p1am_control_system.desktop.event_logger import EventLogger
 class _Interlock:
     """Minimal stand-in for ``backend.models.InterlockConfig``."""
 
-    def __init__(self, lolo: float, low: float, high: float, hihi: float) -> None:  # noqa: D107
+    def __init__(
+        self, lolo: float, low: float, high: float, hihi: float
+    ) -> None:  # noqa: D107
         self.lolo_limit = lolo
         self.low_limit = low
         self.high_limit = high
