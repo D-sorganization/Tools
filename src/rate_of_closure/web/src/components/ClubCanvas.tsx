@@ -71,14 +71,19 @@ function add(a: Vec3, b: Vec3): Vec3 {
 }
 
 /**
- * Orthographic projection with a fixed pleasant viewing angle.
+ * Orthographic projection under a user-controlled orbit camera.
  *
  * Model frame is the AffineDrift convention (x target, y up, z right);
  * the projection treats z as across, x as depth, and y as vertical.
  */
-function project(v: Vec3, w: number, h: number, zoom: number): [number, number] {
-  const yaw = -0.6;
-  const pitch = 0.35;
+function project(
+  v: Vec3,
+  w: number,
+  h: number,
+  zoom: number,
+  yaw: number,
+  pitch: number,
+): [number, number] {
   const across = v[2];
   const depth = v[0];
   const up = v[1];
@@ -117,6 +122,11 @@ function headParts(scenario: ImpactScenario) {
 export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const phaseRef = useRef(0);
+  // Orbit camera state lives in refs so dragging never re-runs effects.
+  const yawRef = useRef(-0.6);
+  const pitchRef = useRef(0.35);
+  const zoomRef = useRef(1.0);
+  const dragRef = useRef<{ x: number; y: number } | null>(null);
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState(1.0);
   const [mode, setMode] = useState<ViewMode>(VIEW_MODES[0]);
@@ -131,7 +141,7 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
     const omega = result.omegaDps.map((c) => (c * Math.PI) / 180) as Vec3;
     const parts = headParts(scenario);
     const moving = mode === VIEW_MODES[1];
-    const zoom = moving ? 0.9 : 1.6;
+    const baseZoom = moving ? 0.9 : 1.6;
     const speedMps = scenario.clubheadSpeedMph * 0.44704;
 
     const draw = () => {
@@ -142,13 +152,16 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
       const rot = rodrigues(omega, timeS);
       const offset: Vec3 = moving ? [speedMps * timeS, 0, 0] : [0, 0, 0];
       const place = (p: Vec3): Vec3 => add(apply(rot, p), offset);
+      const zoom = baseZoom * zoomRef.current;
+      const yaw = yawRef.current;
+      const pitch = pitchRef.current;
 
       const line = (pts: Vec3[], color: string, lw: number) => {
         ctx.strokeStyle = color;
         ctx.lineWidth = lw;
         ctx.beginPath();
         pts.forEach((p, i) => {
-          const [px, py] = project(p, w, h, zoom);
+          const [px, py] = project(p, w, h, zoom, yaw, pitch);
           if (i === 0) ctx.moveTo(px, py);
           else ctx.lineTo(px, py);
         });
@@ -183,7 +196,7 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
           origin[2] + vec[2] * scale,
         ];
         line([origin, tip], color, 2.5);
-        const [tx, ty] = project(tip, w, h, zoom);
+        const [tx, ty] = project(tip, w, h, zoom, yaw, pitch);
         ctx.fillStyle = color;
         ctx.beginPath();
         ctx.arc(tx, ty, 4, 0, Math.PI * 2);
@@ -193,7 +206,7 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
       arrow(offset, [vRefMps, 0, 0], COLORS.vRef);
       arrow(place(parts.impact), result.pointVelocityMps, COLORS.vPoint);
 
-      const [ix, iy] = project(place(parts.impact), w, h, zoom);
+      const [ix, iy] = project(place(parts.impact), w, h, zoom, yaw, pitch);
       ctx.fillStyle = COLORS.impact;
       ctx.beginPath();
       ctx.arc(ix, iy, 5, 0, Math.PI * 2);
@@ -258,10 +271,39 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
         ref={canvasRef}
         width={560}
         height={420}
-        className="w-full rounded-lg border border-slate-700 bg-slate-900"
+        className="w-full cursor-grab touch-none rounded-lg border border-slate-700 bg-slate-900 active:cursor-grabbing"
         role="img"
-        aria-label="Animated 3D clubhead rotating under the scenario's angular velocity"
+        aria-label="Animated 3D clubhead rotating under the scenario's angular velocity. Drag to orbit; scroll to zoom."
+        onPointerDown={(e) => {
+          dragRef.current = { x: e.clientX, y: e.clientY };
+          e.currentTarget.setPointerCapture(e.pointerId);
+        }}
+        onPointerMove={(e) => {
+          if (!dragRef.current) return;
+          yawRef.current -= (e.clientX - dragRef.current.x) * 0.008;
+          pitchRef.current = Math.max(
+            -1.4,
+            Math.min(1.4, pitchRef.current + (e.clientY - dragRef.current.y) * 0.008),
+          );
+          dragRef.current = { x: e.clientX, y: e.clientY };
+        }}
+        onPointerUp={(e) => {
+          dragRef.current = null;
+          e.currentTarget.releasePointerCapture(e.pointerId);
+        }}
+        onPointerLeave={() => {
+          dragRef.current = null;
+        }}
+        onWheel={(e) => {
+          zoomRef.current = Math.max(
+            0.3,
+            Math.min(4.0, zoomRef.current * (e.deltaY < 0 ? 1.1 : 1 / 1.1)),
+          );
+        }}
       />
+      <p className="text-xs text-slate-500">
+        Drag the view to orbit; scroll to zoom.
+      </p>
     </div>
   );
 }

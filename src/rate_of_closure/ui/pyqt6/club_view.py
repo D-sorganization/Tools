@@ -11,6 +11,9 @@ Playback is user-controllable: play/pause, a 0.1x-3x speed multiplier,
 and two display modes — "Head Fixed in Place" (rotation only, easiest
 to read) and "Head Moving Through Space" (the head also translates
 along the target line at the delivery speed, showing the true motion).
+The camera is too: drag to orbit (the view angles survive the
+animation's redraws) and scroll to zoom; the sweep plot carries the
+standard matplotlib navigation toolbar for zoom and pan.
 """
 
 from __future__ import annotations
@@ -20,6 +23,7 @@ from typing import cast
 
 import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
+from matplotlib.backends.backend_qtagg import NavigationToolbar2QT
 from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
@@ -144,9 +148,13 @@ class Club3DView(QWidget):
         self._scenario: ImpactScenario | None = None
         self._phase = 0.0
         self._speed = 1.0
+        self._zoom = 1.0
         self._timer = QTimer(self)
         self._timer.setInterval(_TIMER_INTERVAL_MS)
         self._timer.timeout.connect(self._advance)
+        # Scroll-to-zoom; drag-to-orbit is native to Axes3D and the view
+        # angles are captured/restored across animation redraws.
+        self._canvas.mpl_connect("scroll_event", self._on_scroll)
 
     # ── construction ────────────────────────────────────────────────
     def _build_playback_bar(self) -> QHBoxLayout:
@@ -211,11 +219,23 @@ class Club3DView(QWidget):
         """The active display mode name."""
         return self._mode_combo.currentText()
 
+    def set_zoom(self, factor: float) -> None:
+        """Set the camera zoom factor (0.3-4.0; larger = closer)."""
+        self._zoom = max(0.3, min(4.0, factor))
+        self._draw()
+
+    def zoom(self) -> float:
+        """Current camera zoom factor."""
+        return self._zoom
+
     def stop(self) -> None:
         """Stop the animation timer (used on window close and in tests)."""
         self._timer.stop()
 
     # ── internals ──────────────────────────────────────────────────
+    def _on_scroll(self, event) -> None:  # type: ignore[no-untyped-def]
+        self.set_zoom(self._zoom * (1.1 if event.button == "up" else 1.0 / 1.1))
+
     def _on_play_toggled(self, paused: bool) -> None:
         self._play_button.setText("Play" if paused else "Pause")
         if paused:
@@ -245,6 +265,8 @@ class Club3DView(QWidget):
 
         parts = _head_wireframe(scenario)
         axes = self._axes
+        # Preserve the user's orbit angles across the animation redraw.
+        elev, azim = float(axes.elev), float(axes.azim)
         axes.clear()
         for key, color, width in (
             ("face", _COL_FACE, 2.2),
@@ -289,10 +311,11 @@ class Club3DView(QWidget):
                 label=label,
             )
 
-        limit = 0.24 if not moving else 0.42
+        limit = (0.24 if not moving else 0.42) / self._zoom
         axes.set_xlim(-limit, limit)
         axes.set_ylim(-limit * 0.6, limit * 1.4)
         axes.set_zlim(-limit * 0.6, limit * 1.4)
+        axes.view_init(elev=elev, azim=azim)
         axes.set_xlabel("z — right of target [m]")
         axes.set_ylabel("x — target line [m]")
         axes.set_zlabel("y — up [m]")
@@ -306,15 +329,21 @@ class Club3DView(QWidget):
 
 
 class SweepView(QWidget):
-    """Path deviation as a function of about-shaft rotation rate."""
+    """Path deviation as a function of about-shaft rotation rate.
+
+    Carries the standard matplotlib navigation toolbar so the plot can
+    be zoomed, panned, and reset like every other chart in the fleet.
+    """
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._figure = Figure(figsize=(5, 3.4), tight_layout=True)
         self._canvas = FigureCanvas(self._figure)
         self._axes = self._figure.add_subplot(111)
+        self._toolbar = NavigationToolbar2QT(self._canvas, self)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(self._toolbar)
         layout.addWidget(self._canvas)
 
     def set_scenario(self, scenario: ImpactScenario) -> None:

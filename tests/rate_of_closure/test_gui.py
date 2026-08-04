@@ -168,6 +168,28 @@ class TestClub3DView:
         assert view.playback_speed() == pytest.approx(3.0)
         view.stop()
 
+    def test_zoom_api_clamps_and_redraws(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        view = Club3DView()
+        qtbot.addWidget(view)
+        view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+        view.set_zoom(2.0)
+        assert view.zoom() == pytest.approx(2.0)
+        view.set_zoom(99.0)
+        assert view.zoom() == pytest.approx(4.0)
+        view.set_zoom(0.01)
+        assert view.zoom() == pytest.approx(0.3)
+        view.stop()
+
+    def test_user_orbit_angles_survive_animation_redraw(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        view = Club3DView()
+        qtbot.addWidget(view)
+        view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+        view._axes.view_init(elev=55.0, azim=12.0)
+        view._draw()
+        assert float(view._axes.elev) == pytest.approx(55.0)
+        assert float(view._axes.azim) == pytest.approx(12.0)
+        view.stop()
+
     def test_view_modes_switch(self, qtbot) -> None:  # type: ignore[no-untyped-def]
         view = Club3DView()
         qtbot.addWidget(view)
