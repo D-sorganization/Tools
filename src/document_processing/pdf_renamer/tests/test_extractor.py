@@ -14,6 +14,7 @@ def test_title_from_metadata(tmp_path: Path) -> None:
         mock_reader.metadata.title = "Metadata Title"
         mock_reader_cls.return_value = mock_reader
 
+
         result = title_from_metadata(pdf_path)
         assert result.title == "Metadata Title"
         assert result.method == "metadata"
@@ -27,6 +28,7 @@ def test_title_from_metadata_missing(tmp_path: Path) -> None:
         mock_reader = MagicMock()
         mock_reader.metadata = {}  # Empty metadata
         mock_reader_cls.return_value = mock_reader
+
 
         result = title_from_metadata(pdf_path)
         assert result.title is None

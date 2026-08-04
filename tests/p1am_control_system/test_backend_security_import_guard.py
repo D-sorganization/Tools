@@ -40,9 +40,9 @@ def test_backend_import_guard_only_catches_module_not_found() -> None:
             "bare 'except:' would swallow real backend defects and skip the "
             "security suite"
         )
-        assert isinstance(
-            exc_type, ast.Name
-        ), "import guard must catch a single named exception, not a tuple/attr"
+        assert isinstance(exc_type, ast.Name), (
+            "import guard must catch a single named exception, not a tuple/attr"
+        )
         assert exc_type.id == "ModuleNotFoundError", (
             "backend import guard must narrow to ModuleNotFoundError so that a "
             "NameError/SyntaxError/ImportError in the backend fails loudly "

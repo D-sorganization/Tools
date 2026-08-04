@@ -257,9 +257,7 @@ class TestExportExcel:
         export_to_excel(r, str(path))
         wb = openpyxl.load_workbook(str(path))
         ws = wb["Summary"]
-        all_values = [
-            str(cell.value) for row in ws.iter_rows() for cell in row if cell.value
-        ]
+        all_values = [str(cell.value) for row in ws.iter_rows() for cell in row if cell.value]
         assert any("Peak" in v for v in all_values)
 
     def test_statistics_sheet_contains_recommendations(self, tmp_path):
@@ -272,9 +270,7 @@ class TestExportExcel:
         export_to_excel(r, str(path))
         wb = openpyxl.load_workbook(str(path))
         ws = wb["Statistics"]
-        all_values = [
-            str(cell.value) for row in ws.iter_rows() for cell in row if cell.value
-        ]
+        all_values = [str(cell.value) for row in ws.iter_rows() for cell in row if cell.value]
         assert "Recommendations" in all_values
 
     def test_raises_on_none_result(self, tmp_path):

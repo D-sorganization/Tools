@@ -190,16 +190,12 @@ export const TrendFitOverlay: React.FC<{
   color?: string;
 }> = ({ fit, points, t0, t1, x0, x1, yScale, color = "var(--text-primary)" }) => {
   if (points.length < 2 || !(t1 > t0)) return null;
-
-  // ⚡ Bolt Optimization: Build the SVG path string in a single pass instead of
-  // allocating an intermediate array of segment strings with .map().join(" ").
-  let d = "";
-  for (let i = 0; i < points.length; i++) {
-    const p = points[i];
-    const px = timeToX(p.t, t0, t1, x0, x1);
-    const py = yScale(fit.predict(p.x));
-    if (i > 0) d += " ";
-    d += (i === 0 ? "M" : "L") + px.toFixed(1) + "," + py.toFixed(1);
-  }
+  const d = points
+    .map((p, i) => {
+      const px = timeToX(p.t, t0, t1, x0, x1);
+      const py = yScale(fit.predict(p.x));
+      return `${i === 0 ? "M" : "L"}${px.toFixed(1)},${py.toFixed(1)}`;
+    })
+    .join(" ");
   return <path d={d} fill="none" stroke={color} strokeWidth={1.5} strokeDasharray="5 4" />;
 };

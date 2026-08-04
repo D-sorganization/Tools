@@ -92,12 +92,12 @@ def _assert_result_finite(result: OptimizationResult, n_eval: int) -> None:
 def _assert_inner_bos(result: OptimizationResult, body: BodyModel) -> None:
     """COM must respect the inner-BOS hard constraint (with loose slack)."""
     com_x = result.com[:, 0]
-    assert np.all(
-        com_x >= body.inner_heel - _BOS_TOL_M
-    ), f"COM below inner_heel: min={com_x.min():.4f}, bound={body.inner_heel:.4f}"
-    assert np.all(
-        com_x <= body.inner_toe + _BOS_TOL_M
-    ), f"COM above inner_toe: max={com_x.max():.4f}, bound={body.inner_toe:.4f}"
+    assert np.all(com_x >= body.inner_heel - _BOS_TOL_M), (
+        f"COM below inner_heel: min={com_x.min():.4f}, bound={body.inner_heel:.4f}"
+    )
+    assert np.all(com_x <= body.inner_toe + _BOS_TOL_M), (
+        f"COM above inner_toe: max={com_x.max():.4f}, bound={body.inner_toe:.4f}"
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -248,9 +248,9 @@ class TestZeroRangeOfMotion:
         _assert_result_finite(result, opt.n_eval)
         # Each joint should travel less than ~3 degrees from the constant pose.
         max_travel_rad = float(np.max(np.abs(result.q - qs)))
-        assert max_travel_rad < np.radians(
-            15.0
-        ), f"Zero-ROM trajectory drifted {np.degrees(max_travel_rad):.2f} deg"
+        assert max_travel_rad < np.radians(15.0), (
+            f"Zero-ROM trajectory drifted {np.degrees(max_travel_rad):.2f} deg"
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -267,9 +267,7 @@ class TestMultistartCount:
         _assert_result_finite(result, opt.n_eval)
         assert result.success
 
-    @pytest.mark.xfail(
-        reason="SLSQP multistart convergence is unstable on some platforms"
-    )
+    @pytest.mark.xfail(reason="SLSQP multistart convergence is unstable on some platforms")
     def test_many_multistarts(self) -> None:
         """A larger n_starts exercises the parallel path and must succeed."""
         body = BodyModel(75.0, 1.75)
@@ -337,16 +335,7 @@ class TestConstructorPreconditions:
         dyn, qs, qe, qb = make_squat_config(body, 60.0)
         with pytest.raises(ValueError, match=r">= 4 waypoints"):
             TrajectoryOptimizer(
-                body,
-                dyn,
-                "squat",
-                60.0,
-                qs,
-                qe,
-                qb,
-                n_waypoints=3,
-                n_eval=20,
-                n_starts=1,
+                body, dyn, "squat", 60.0, qs, qe, qb, n_waypoints=3, n_eval=20, n_starts=1
             )
 
     def test_minimum_waypoints_accepted(self) -> None:
