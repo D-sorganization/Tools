@@ -66,12 +66,12 @@ class TestDefaultDarkTheme:
         ensure_default_theme_seeded()
 
         s = QSettings("D-sorganization", "PendulumSimulator")
-        assert s.value(_INITIAL_FLAG) is not None, (
-            "first_launch_initialized flag should be set after seeding"
-        )
-        assert s.value(_THEME_KEY) == "Dark", (
-            f"Default theme should be 'Dark', got {s.value(_THEME_KEY)!r}"
-        )
+        assert (
+            s.value(_INITIAL_FLAG) is not None
+        ), "first_launch_initialized flag should be set after seeding"
+        assert (
+            s.value(_THEME_KEY) == "Dark"
+        ), f"Default theme should be 'Dark', got {s.value(_THEME_KEY)!r}"
 
     def test_existing_user_preference_is_not_overwritten(self, qapp) -> None:
         """If a user already chose 'Light', do not stomp it."""
@@ -86,9 +86,9 @@ class TestDefaultDarkTheme:
 
         ensure_default_theme_seeded()
 
-        assert s.value(_THEME_KEY) == "Light", (
-            "User-chosen 'Light' theme must not be overwritten"
-        )
+        assert (
+            s.value(_THEME_KEY) == "Light"
+        ), "User-chosen 'Light' theme must not be overwritten"
 
     def test_seeding_is_idempotent(self, qapp) -> None:
         """Calling ensure_default_theme_seeded twice does not flip

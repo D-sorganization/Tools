@@ -255,9 +255,9 @@ def switch_provider(
     history_before = dock._message_history
     snapshot_before = list(history_before)
     _controller_for(dock).switch_provider(name, model, thinking_level)
-    assert dock._message_history is history_before, (
-        "switch_provider invariant: _message_history must remain the same list"
-    )
-    assert dock._message_history == snapshot_before, (
-        "switch_provider invariant: _message_history contents must not change"
-    )
+    assert (
+        dock._message_history is history_before
+    ), "switch_provider invariant: _message_history must remain the same list"
+    assert (
+        dock._message_history == snapshot_before
+    ), "switch_provider invariant: _message_history contents must not change"
