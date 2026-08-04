@@ -72,7 +72,9 @@ class TestPlotRenderer:
         plot_angles(mock_ax, dummy_result)
         assert mock_ax.plot.call_count == 3
         mock_ax.set_title.assert_called_once_with(
-            "Joint Angles", color=mock_ax.set_title.call_args[1].get("color"), fontsize=10
+            "Joint Angles",
+            color=mock_ax.set_title.call_args[1].get("color"),
+            fontsize=10,
         )
 
     def test_plot_torques(self, mock_ax, dummy_result):
@@ -117,7 +119,9 @@ class TestPlotRenderer:
     def test_plot_spine_loads(self, mock_ax, dummy_result, body):
         ax_comp = MagicMock()
         ax_shear = MagicMock()
-        plot_spine_loads(ax_comp, ax_shear, dummy_result, body, bar_mass=20.0, name="squat")
+        plot_spine_loads(
+            ax_comp, ax_shear, dummy_result, body, bar_mass=20.0, name="squat"
+        )
 
         ax_comp.plot.assert_called_once()
         ax_comp.axhline.assert_called_once()
@@ -200,6 +204,8 @@ class TestPlotSpineLoadsExerciseAlias:
 
         ax_comp = MagicMock()
         ax_shear = MagicMock()
-        plot_spine_loads(ax_comp, ax_shear, dummy_result, body, 60.0, "Bottoms Up Squat")
+        plot_spine_loads(
+            ax_comp, ax_shear, dummy_result, body, 60.0, "Bottoms Up Squat"
+        )
         assert ax_comp.plot.called
         assert ax_shear.plot.called
