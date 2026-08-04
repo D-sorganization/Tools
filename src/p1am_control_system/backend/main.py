@@ -377,7 +377,9 @@ investigation_service = InvestigationService(
     SqliteInvestigationRepository(_config_session)
 )
 shift_log_service = ShiftLogService(SqliteShiftLogRepository(_config_session))
-asset_health_service = AssetHealthService(AssetHealthPolicy(), now=lambda: datetime.now(UTC))
+asset_health_service = AssetHealthService(
+    AssetHealthPolicy(), now=lambda: datetime.now(UTC)
+)
 
 
 def _representative_asset_health() -> AssetHealthReport:
@@ -406,6 +408,8 @@ def _representative_asset_health() -> AssetHealthReport:
         observations,
         calibration_due_at=now - timedelta(days=1),
     )
+
+
 software_revision = os.environ.get("P1AM_SOFTWARE_REVISION", "development-unidentified")
 recovery_service = RecoveryPackageService(
     configuration_workflow,
