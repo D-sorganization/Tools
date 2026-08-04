@@ -40,6 +40,7 @@ from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
+from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 from rate_of_closure.units import convert_from_canonical
 
 logger = logging.getLogger(__name__)
@@ -126,6 +127,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._sweep_view = SweepView()
         self._derivation_view = DerivationView()
         self._simulation_tab = SimulationTab()
+        self._variation_tab = VariationTab()
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -149,6 +151,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         tabs.addTab(self._sweep_view, "Closure Sweep")
         tabs.addTab(self._derivation_view, "Derivation && Traceability")
         tabs.addTab(self._simulation_tab, "Simulation")
+        tabs.addTab(self._variation_tab, "Variation")
 
         splitter = QSplitter()
         splitter.addWidget(left)
@@ -244,6 +247,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._sweep_view.set_scenario(scenario)
         self._derivation_view.set_scenario(scenario)
         self._simulation_tab.set_scenario(scenario)
+        self._variation_tab.set_scenario(scenario)
         status_bar = self.statusBar()
         if status_bar is None:  # pragma: no cover - Qt always provides one here
             return
@@ -260,4 +264,5 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         """Stop the animation timers before the window goes away."""
         self._club_view.stop()
         self._simulation_tab.stop()
+        self._variation_tab.stop()
         super().closeEvent(event)

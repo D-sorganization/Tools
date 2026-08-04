@@ -35,6 +35,78 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-04 Shared variation / Monte-Carlo engine + Variation tab (epic #4120, phase V3)
+
+- New shared engine `src/shared/python/swing_sim/variation/` (not
+  re-exported from `swing_sim`'s top level, same policy as `solver`):
+  - `registry.py` — ONE namespaced 'how parameters vary' vocabulary:
+    `VariableDef` entries keyed `<category>.<name>` across
+    `swing_sim.impact.delivery` (8 delivery variables),
+    `swing_sim.swing` (pendulum plane tilts, impact timing, damping),
+    `swing_sim.club` (head mass / MOI / COR into the impact solve), and
+    `swing_sim.flight.launch` (direct launch conditions); each entry
+    carries a label, unit, default, typical noise scale, and sourced
+    guidance. `register_variable` is the extension seam so other
+    packages adopt the same scheme instead of another one-off.
+  - `spec.py` — frozen `NoiseSpec` (normal | uniform | triangular,
+    additive scale, optional clip truncation) and `VariationPlan`
+    (mode `delivery`/`swing`/`launch`, base overrides, noise list,
+    `n_runs`, `seed`, flight model) with lossless JSON round-trip
+    (`schema_version` 1) for reproducible studies.
+  - `engine.py` / `pipeline.py` — seeded (`numpy` `default_rng` with
+    per-variable, subset-stable seed sequences keyed
+    `[seed, crc32(key)]` — deliberately not the surveyed `base_seed+i`
+    idiom), chunked `concurrent.futures` N-run executor over the
+    appropriate pipeline slice (delivery→impact→flight,
+    pendulum→impact→flight, or launch→flight) collecting a
+    `VariationDataset` (inputs matrix, outputs matrix incl. delivery,
+    launch, carry/lateral/apex/landing columns, per-run success flags —
+    failed runs recorded as NaN rows, never batch aborts). Reuses the
+    solver's `ProgressReport`/`CancelledError`/`cancel_event` shapes
+    verbatim so GUI plumbing is identical; results are worker-count
+    invariant (test-pinned).
+  - `analysis.py` — per-output mean/std/percentiles; one-at-a-time
+    sensitivity (rerun with a single spec active, paired draws via the
+    per-variable streams) producing raw + column-normalized matrices
+    (which input drives which output); Spearman rank correlation as a
+    cheap global-sensitivity cross-check; 2-sigma landing-dispersion
+    ellipse from the carry/lateral covariance eigen-decomposition.
+  - `dataset_io.py` — documented CSV + JSON dataset schemas with
+    import back (JSON embeds the plan; CSV import takes it).
+  - Overlap review (credited in module docstrings): UpstreamDrift
+    `EnhancedBallFlightSimulator.monte_carlo_simulation` (seeded-loop
+    shape), `perturbation/` `PerturbationConfig`/`MetricStatistics`/
+    failure-capture semantics, `pendulum_simulator/perturbation_analysis`
+    noise generators, `movement_optimizer` parallel/progress/cancel
+    machinery (already mirrored in `swing_sim.solver.solve`). Genuinely
+    new: per-variable NoiseSpec vocabulary with truncation, namespaced
+    registry, OAT sensitivity + Spearman (no sensitivity analysis
+    existed anywhere in the surveyed prior art), landing ellipse.
+- PyQt6: new top-level "Variation" tab (`ui/pyqt6/variation_tab.py`,
+  rows editor `variation_rows.py`, results widgets
+  `variation_results.py`, `QThread` worker `variation_worker.py`):
+  pipeline mode + base-scenario source (registry defaults or current
+  explorer scenario), registry-driven noise rows (grouped variable
+  picker, distribution, unit-aware scale with sourced tooltips,
+  optional clipping), runs + seed, Run/Cancel with live progress and a
+  sensitivity phase, results tabs (summary stats table, sensitivity
+  heat table, Spearman table, landing scatter with 2σ ellipse on the
+  tab's own small themed matplotlib canvas), CSV/JSON dataset export
+  and plan save/load. Tooltips on every input (test-enforced).
+- Web (practical parity): `model/variation.ts` + `variationRegistry.ts`
+  + `variationAnalysis.ts` and a "Variation" tab (`VariationPanel.tsx`,
+  `VariationLanding.tsx`): the same plan JSON schema (desktop plans
+  load in the browser and vice versa), seeded mulberry32 PRNG with
+  Box–Muller normals and FNV-1a per-variable streams (documented:
+  exact numpy-PCG64 parity deliberately not attempted), delivery +
+  launch modes over the existing TS physics (swing mode and the club
+  category stay desktop-only until the P7 WASM kernels), worker-less
+  bounded runs (≤ 500, UI-capped), summary + sensitivity heat tables,
+  landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pin: a
+  Python-generated fixture (`model/__fixtures__/variation_parity.json`)
+  is re-checked tightly by pytest and loosely (statistical band) by
+  vitest for the same plan+seed.
+
 ### 2026-08-04 Rate of Closure solver panel — goal-driven optimization UI (epic #4103, #4109 #4110)
 
 - PyQt6: new "Solver" tab inside the Simulation tab's right-hand tab
@@ -3002,3 +3074,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+## 1.7.1 - Shared variation/Monte-Carlo engine + Variation tab (epic #4120 V3)
+
+- **2026-08-04**: feat(swing_sim) — add `shared/python/swing_sim/variation/` (namespaced variable registry, NoiseSpec/VariationPlan JSON schema, seeded parallel N-run engine with solver-shaped progress/cancel, dispersion + one-at-a-time sensitivity + Spearman + 2σ landing ellipse, CSV/JSON dataset IO), the PyQt6 "Variation" tab in the Rate of Closure explorer, and the web mirror (seeded mulberry32 engine, capped ≤500 runs, shared plan schema, statistical parity fixture vs the Python engine). Prior-art survey of UpstreamDrift Monte-Carlo/perturbation/movement_optimizer machinery credited in module docstrings.

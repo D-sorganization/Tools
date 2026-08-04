@@ -1,0 +1,257 @@
+/**
+ * Analysis + export over web variation datasets (epic #4120, V3).
+ *
+ * TypeScript mirror of shared/python/swing_sim/variation/analysis.py and
+ * dataset_io.py: per-output summary statistics, one-at-a-time
+ * sensitivity (paired draws via the engine's per-variable RNG streams),
+ * Spearman rank correlation, the 2-sigma landing-dispersion ellipse,
+ * and CSV/JSON dataset serialization in the documented Python schema.
+ */
+
+import {
+  planToJson,
+  runVariation,
+  SCHEMA_VERSION,
+  type VariationDatasetTs,
+  type VariationPlanTs,
+} from "./variation";
+
+export interface OutputStatsTs {
+  name: string;
+  mean: number;
+  std: number;
+  p5: number;
+  p50: number;
+  p95: number;
+  n: number;
+}
+
+const okColumn = (dataset: VariationDatasetTs, j: number): number[] => {
+  const values: number[] = [];
+  dataset.outputs.forEach((row, i) => {
+    const v = row[j];
+    if (dataset.success[i] && v !== null && Number.isFinite(v)) values.push(v);
+  });
+  return values;
+};
+
+const percentile = (sorted: number[], q: number): number => {
+  if (sorted.length === 0) return NaN;
+  const pos = (sorted.length - 1) * q;
+  const lo = Math.floor(pos);
+  const hi = Math.ceil(pos);
+  return sorted[lo] + (sorted[hi] - sorted[lo]) * (pos - lo);
+};
+
+const sampleStd = (values: number[], mean: number): number => {
+  if (values.length < 2) return NaN;
+  const ss = values.reduce((acc, v) => acc + (v - mean) ** 2, 0);
+  return Math.sqrt(ss / (values.length - 1));
+};
+
+/** Per-output mean/std/percentiles over the successful runs. */
+export function summaryStats(dataset: VariationDatasetTs): OutputStatsTs[] {
+  return dataset.outputNames.map((name, j) => {
+    const values = okColumn(dataset, j);
+    const n = values.length;
+    if (n === 0) {
+      return { name, mean: NaN, std: NaN, p5: NaN, p50: NaN, p95: NaN, n: 0 };
+    }
+    const mean = values.reduce((a, v) => a + v, 0) / n;
+    const sorted = [...values].sort((a, b) => a - b);
+    return {
+      name,
+      mean,
+      std: sampleStd(values, mean),
+      p5: percentile(sorted, 0.05),
+      p50: percentile(sorted, 0.5),
+      p95: percentile(sorted, 0.95),
+      n,
+    };
+  });
+}
+
+export interface SensitivityResultTs {
+  inputKeys: string[];
+  outputNames: string[];
+  matrix: number[][]; // std induced per (input, output)
+  normalized: number[][]; // column-normalized, 1 = dominant input
+}
+
+/** One-at-a-time sensitivity: rerun with a single spec active at a time. */
+export function oneAtATimeSensitivity(
+  plan: VariationPlanTs,
+): SensitivityResultTs {
+  const rows: number[][] = [];
+  let outputNames: string[] = [];
+  for (const spec of plan.noise) {
+    const dataset = runVariation({ ...plan, noise: [spec] });
+    outputNames = dataset.outputNames;
+    rows.push(
+      dataset.outputNames.map((_name, j) => {
+        const values = okColumn(dataset, j);
+        const mean = values.reduce((a, v) => a + v, 0) / (values.length || 1);
+        return sampleStd(values, mean);
+      }),
+    );
+  }
+  const normalized = rows.map((row) => row.slice());
+  for (let j = 0; j < outputNames.length; j += 1) {
+    let max = 0;
+    for (const row of rows) {
+      const v = Math.abs(row[j]);
+      if (Number.isFinite(v) && v > max) max = v;
+    }
+    for (let i = 0; i < rows.length; i += 1) {
+      normalized[i][j] = max > 0 ? Math.abs(rows[i][j]) / max : 0;
+    }
+  }
+  return {
+    inputKeys: plan.noise.map((s) => s.variableKey),
+    outputNames,
+    matrix: rows,
+    normalized,
+  };
+}
+
+const ranks = (values: number[]): number[] => {
+  const order = values
+    .map((v, i) => [v, i] as const)
+    .sort((a, b) => a[0] - b[0]);
+  const out = new Array<number>(values.length);
+  let i = 0;
+  while (i < order.length) {
+    let j = i;
+    while (j + 1 < order.length && order[j + 1][0] === order[i][0]) j += 1;
+    const avg = (i + j) / 2 + 1;
+    for (let k = i; k <= j; k += 1) out[order[k][1]] = avg;
+    i = j + 1;
+  }
+  return out;
+};
+
+/** Spearman rank correlation, inputs (rows) x outputs (columns). */
+export function spearmanMatrix(dataset: VariationDatasetTs): number[][] {
+  const okRows: number[] = [];
+  dataset.success.forEach((ok, i) => {
+    if (ok) okRows.push(i);
+  });
+  const shapeRows = dataset.inputNames.length;
+  const shapeCols = dataset.outputNames.length;
+  if (okRows.length < 3) {
+    return Array.from({ length: shapeRows }, () =>
+      new Array<number>(shapeCols).fill(NaN),
+    );
+  }
+  const inRanks = dataset.inputNames.map((_k, col) =>
+    ranks(okRows.map((i) => dataset.inputs[i][col])),
+  );
+  const outRanks = dataset.outputNames.map((_k, col) =>
+    ranks(okRows.map((i) => dataset.outputs[i][col] as number)),
+  );
+  const stats = (r: number[]): { mean: number; std: number } => {
+    const mean = r.reduce((a, v) => a + v, 0) / r.length;
+    const std = Math.sqrt(r.reduce((a, v) => a + (v - mean) ** 2, 0) / r.length);
+    return { mean, std };
+  };
+  return inRanks.map((ri) => {
+    const si = stats(ri);
+    return outRanks.map((rj) => {
+      const sj = stats(rj);
+      if (si.std <= 0 || sj.std <= 0) return NaN;
+      let cov = 0;
+      for (let k = 0; k < ri.length; k += 1) {
+        cov += (ri[k] - si.mean) * (rj[k] - sj.mean);
+      }
+      cov /= ri.length;
+      return cov / (si.std * sj.std);
+    });
+  });
+}
+
+export interface DispersionEllipseTs {
+  centerCarryM: number;
+  centerLateralM: number;
+  semiMajorM: number;
+  semiMinorM: number;
+  angleDeg: number; // CCW from the carry axis toward + lateral
+  n: number;
+}
+
+/** 2-sigma landing ellipse from the carry/lateral sample covariance. */
+export function dispersionEllipse(
+  dataset: VariationDatasetTs,
+  nSigma = 2.0,
+): DispersionEllipseTs | null {
+  const jc = dataset.outputNames.indexOf("carry_m");
+  const jl = dataset.outputNames.indexOf("lateral_m");
+  const carry = okColumn(dataset, jc);
+  const lateral = okColumn(dataset, jl);
+  const n = Math.min(carry.length, lateral.length);
+  if (jc < 0 || jl < 0 || n < 2) return null;
+  const mc = carry.reduce((a, v) => a + v, 0) / n;
+  const ml = lateral.reduce((a, v) => a + v, 0) / n;
+  let sxx = 0;
+  let syy = 0;
+  let sxy = 0;
+  for (let i = 0; i < n; i += 1) {
+    sxx += (carry[i] - mc) ** 2;
+    syy += (lateral[i] - ml) ** 2;
+    sxy += (carry[i] - mc) * (lateral[i] - ml);
+  }
+  sxx /= n - 1;
+  syy /= n - 1;
+  sxy /= n - 1;
+  // Closed-form 2x2 symmetric eigen-decomposition.
+  const trace = sxx + syy;
+  const det = sxx * syy - sxy * sxy;
+  const disc = Math.sqrt(Math.max((trace * trace) / 4 - det, 0));
+  const l1 = trace / 2 + disc; // major
+  const l2 = Math.max(trace / 2 - disc, 0); // minor
+  const angleRad =
+    Math.abs(sxy) < 1e-15 && sxx >= syy ? 0 : Math.atan2(l1 - sxx, sxy);
+  return {
+    centerCarryM: mc,
+    centerLateralM: ml,
+    semiMajorM: nSigma * Math.sqrt(Math.max(l1, 0)),
+    semiMinorM: nSigma * Math.sqrt(l2),
+    angleDeg: (angleRad * 180.0) / Math.PI,
+    n,
+  };
+}
+
+/** CSV in the Python dataset_io.write_csv schema. */
+export function datasetToCsv(dataset: VariationDatasetTs): string {
+  const header = ["run", "success", ...dataset.inputNames, ...dataset.outputNames];
+  const lines = [header.join(",")];
+  for (let i = 0; i < dataset.plan.nRuns; i += 1) {
+    lines.push(
+      [
+        i,
+        dataset.success[i] ? 1 : 0,
+        ...dataset.inputs[i],
+        ...dataset.outputs[i].map((v) => (v === null ? "" : v)),
+      ].join(","),
+    );
+  }
+  return `${lines.join("\n")}\n`;
+}
+
+/** JSON in the Python dataset_io.to_json_dict schema. */
+export function datasetToJson(dataset: VariationDatasetTs): string {
+  return JSON.stringify(
+    {
+      schema_version: SCHEMA_VERSION,
+      // Reuse the plan serializer for the snake_case schema.
+      plan: JSON.parse(planToJson(dataset.plan)) as unknown,
+      input_names: dataset.inputNames,
+      output_names: dataset.outputNames,
+      inputs: dataset.inputs,
+      outputs: dataset.outputs,
+      success: dataset.success,
+      elapsed_s: 0.0,
+    },
+    null,
+    2,
+  );
+}
