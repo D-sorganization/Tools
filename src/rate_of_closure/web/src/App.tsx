@@ -25,6 +25,7 @@ import {
   RESULT_EXPLANATIONS,
 } from "./model/derivation";
 import { FIELD_TO_TERM } from "./model/glossary";
+import { HELP_TEXTS } from "./model/helptext";
 import {
   BOUNDS,
   closureMetrics,
@@ -249,6 +250,20 @@ export default function App() {
           </button>
         ))}
       </nav>
+
+      <details
+        className="mb-5 rounded-xl border border-slate-800/80 bg-slate-900/60 px-5 py-3 text-sm shadow-lg shadow-black/20 backdrop-blur"
+        title="Usage instructions for this page"
+      >
+        <summary className="cursor-pointer font-semibold text-slate-300 hover:text-slate-100">
+          {HELP_TEXTS[tab].title}
+        </summary>
+        {HELP_TEXTS[tab].paragraphs.map((paragraph, index) => (
+          <p key={index} className="mt-2 max-w-3xl text-slate-400">
+            {paragraph}
+          </p>
+        ))}
+      </details>
 
       {tab === TABS[6] ? (
         <GlossaryPanel key={glossaryTerm ?? "none"} initialTerm={glossaryTerm} />

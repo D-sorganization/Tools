@@ -18,7 +18,9 @@ from __future__ import annotations
 import logging
 import math
 
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
+    QDialog,
     QFrame,
     QGroupBox,
     QMainWindow,
@@ -27,6 +29,7 @@ from PyQt6.QtWidgets import (
     QStatusBar,
     QTabWidget,
     QTextBrowser,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
@@ -36,6 +39,7 @@ from rate_of_closure.derivation import (
     METRIC_EXPLANATIONS,
     RESULT_EXPLANATIONS,
 )
+from rate_of_closure.helptext import HELP_TEXTS
 from rate_of_closure.model import ImpactScenario, closure_metrics, solve
 from rate_of_closure.ui.pyqt6.club_view import Club3DView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
@@ -112,6 +116,17 @@ _UNITS: dict[str, str] = {
     "time_to_square_from_1deg_open_ms": " ms",
 }
 
+#: Tab index -> helptext key (order matches the addTab calls below).
+_TAB_HELP_KEYS: tuple[str, ...] = (
+    "clubhead",
+    "plots",
+    "calculation_description",
+    "simulation",
+    "flight_explorer",
+    "variation",
+    "glossary",
+)
+
 #: result/metric field -> the units drop-down quantity it follows.
 _QUANTITY_ROWS: dict[str, str] = {
     "tangential_speed_mph": "speed",
@@ -169,6 +184,17 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         tabs.addTab(self._variation_tab, "Variation")
         tabs.addTab(self._glossary_tab, "Glossary")
         self._tabs = tabs
+        # Per-tab help (#4120 V4): the '?' corner button opens detailed
+        # usage help for whichever tab is current.
+        help_button = QToolButton()
+        help_button.setText("?")
+        help_button.setToolTip(
+            "Open detailed help for the current tab: what it does, the "
+            "workflow, and a control reference."
+        )
+        help_button.clicked.connect(self.show_help)
+        tabs.setCornerWidget(help_button, Qt.Corner.TopRightCorner)
+        self._help_dialog: QDialog | None = None
 
         splitter = QSplitter()
         splitter.addWidget(left)
@@ -236,6 +262,21 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         if not text.startswith("glossary:"):
             return
         self.open_glossary(text.partition(":")[2])
+
+    def show_help(self) -> None:
+        """Open the rich-text help panel for the current tab (V4)."""
+        entry = HELP_TEXTS[_TAB_HELP_KEYS[self._tabs.currentIndex()]]
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Help — {entry.title}")
+        dialog.resize(560, 520)
+        layout = QVBoxLayout(dialog)
+        browser = QTextBrowser()
+        browser.setObjectName("helpBrowser")
+        browser.setOpenExternalLinks(False)
+        browser.setHtml(f"<h2>{entry.title}</h2>{entry.html}")
+        layout.addWidget(browser)
+        self._help_dialog = dialog
+        dialog.show()
 
     def open_glossary(self, term: str) -> None:
         """Show the Glossary tab, pre-selecting ``term`` when known."""
