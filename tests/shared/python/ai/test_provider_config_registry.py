@@ -14,9 +14,9 @@ from src.shared.python.ai.gui._provider_registry_data import AIProvider  # noqa:
 
 def test_default_registrations_cover_all_providers(qapp) -> None:
     for provider in AIProvider:
-        assert ProviderConfigRegistry.is_registered(
-            provider.name
-        ), f"missing registration for {provider}"
+        assert ProviderConfigRegistry.is_registered(provider.name), (
+            f"missing registration for {provider}"
+        )
 
 
 def test_get_widget_returns_distinct_instances(qapp) -> None:

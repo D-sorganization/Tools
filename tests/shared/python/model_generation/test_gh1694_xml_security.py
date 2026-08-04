@@ -265,6 +265,6 @@ class TestValidateMJCFXXE:
 
         source = inspect.getsource(format_utils)
         # The fallback branch must not use StdET.ParseError
-        assert (
-            "StdET" not in source
-        ), "format_utils.py must not reference StdET — use DefusedET.ParseError instead"
+        assert "StdET" not in source, (
+            "format_utils.py must not reference StdET — use DefusedET.ParseError instead"
+        )

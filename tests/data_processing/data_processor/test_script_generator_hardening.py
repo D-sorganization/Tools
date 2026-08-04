@@ -91,9 +91,9 @@ def test_batch_script_path_metacharacters_are_safely_serialized() -> None:
             and node.targets[0].id == "input_patterns"
         ):
             value = ast.literal_eval(node.value)
-            assert value == [
-                dangerous_path
-            ], f"Path did not round-trip safely: got {value!r}"
+            assert value == [dangerous_path], (
+                f"Path did not round-trip safely: got {value!r}"
+            )
             found = True
             break
     assert found, "input_patterns assignment not found in generated script"
