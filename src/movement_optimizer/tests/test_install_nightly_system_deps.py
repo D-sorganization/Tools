@@ -13,7 +13,9 @@ def _completed_process(
     stdout: str = "",
     stderr: str = "",
 ) -> subprocess.CompletedProcess[str]:
-    return subprocess.CompletedProcess(command, returncode, stdout=stdout, stderr=stderr)
+    return subprocess.CompletedProcess(
+        command, returncode, stdout=stdout, stderr=stderr
+    )
 
 
 def test_run_with_lock_retries_retries_until_dpkg_lock_clears() -> None:
