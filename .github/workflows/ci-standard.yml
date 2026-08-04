@@ -117,7 +117,7 @@ jobs:
     runs-on: d-sorg-fleet
     # A cold setup-python download has taken 22 minutes on the local fleet.
     # Keep enough budget for the quality checks that follow the bootstrap.
-    timeout-minutes: 60
+    timeout-minutes: 120
     env:
       # Shared wheel/download cache for self-hosted runners — avoids re-downloading
       # the same packages on every run.  Path is host-stable and safe for concurrent
@@ -444,7 +444,7 @@ jobs:
   tests:
     # The required 3.11 lane must survive a first-use Python download plus
     # dependency installation, Rust-wheel build, and the actual test suite.
-    timeout-minutes: 90
+    timeout-minutes: 180
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the

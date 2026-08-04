@@ -402,9 +402,9 @@ class BasePendulumWidget(QWidget):
         if not isinstance(event, QMouseEvent):
             return
         if event.button() == Qt.MouseButton.LeftButton:
-            if hasattr(
-                self, "_handle_zoom_button_click"
-            ) and self._handle_zoom_button_click(event.pos()):
+            if hasattr(self, "_handle_zoom_button_click") and self._handle_zoom_button_click(
+                event.pos()
+            ):
                 return
             self._drag_start = event.pos()
             self._drag_pan_start = (self._pan_x, self._pan_y)
@@ -536,9 +536,7 @@ class BasePendulumWidget(QWidget):
     # Off-screen detection / recovery overlay
     # ------------------------------------------------------------------
 
-    def _world_points_in_view(
-        self, points: list[tuple[float, float]]
-    ) -> tuple[bool, QPointF]:
+    def _world_points_in_view(self, points: list[tuple[float, float]]) -> tuple[bool, QPointF]:
         """Check if any of the given world points lies inside the widget.
 
         Returns ``(any_visible, centroid_pixel)`` where the centroid is
@@ -560,9 +558,7 @@ class BasePendulumWidget(QWidget):
                 any_visible = True
         return any_visible, QPointF(sum_x / n, sum_y / n)
 
-    def _draw_offscreen_indicator(
-        self, painter: QPainter, system_centroid: QPointF
-    ) -> None:
+    def _draw_offscreen_indicator(self, painter: QPainter, system_centroid: QPointF) -> None:
         """Draw a banner + arrow when the system is fully off-screen.
 
         Always-visible recovery affordance: tells the user where to look
@@ -1024,9 +1020,7 @@ class BasePendulumWidget(QWidget):
     # Image export (#1779)
     # ------------------------------------------------------------------
 
-    def export_image(
-        self, file_path: str, width: int = 1920, height: int = 1080
-    ) -> None:
+    def export_image(self, file_path: str, width: int = 1920, height: int = 1080) -> None:
         """Export the current visualization as a high-resolution image.
 
         Supports PNG, SVG, and PDF formats based on file extension.
