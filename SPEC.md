@@ -35,6 +35,43 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-04 Swing simulation ball-flight package (epic #4103, #4107)
+
+- New self-facaded subpackage `src/shared/python/swing_sim/flight/` porting
+  UpstreamDrift's pure-Python flight stack (`physics/flight_models.py`):
+  `FlightModelRegistry` with all 7 literature models (Waterloo/Penner
+  quadratic-Cd + power-law-Cl, MacDonald-Hanzely spin decay, and the five
+  constant-coefficient presets — Nathan, Ballantyne, J. Cole, Rospie DL,
+  Charry L3 — keeping their `ConstantCoefficientSpec`
+  name/description/reference citation metadata), scipy `solve_ivp` RK45
+  integration with a terminal ground event, and `FlightResult` metrics
+  (carry, max height, flight time, landing angle, lateral deviation).
+  Constants are vendored with citations into `flight/_constants.py`.
+- Public launch deriver `derive_launch_conditions` (port of the pipeline
+  `_LaunchConditionsDeriver` in UpstreamDrift's
+  `swing_ball_flight_pipeline.py`): post-impact ball velocity/spin vectors
+  → speed, launch angle, azimuth, spin rate [RPM], unit spin axis; the
+  optional `LaunchConditions.spin_axis` override makes the derivation
+  round-trip exactly through `get_initial_velocity`/`get_spin_vector`.
+- Frame adapters `to_flight_frame`/`from_flight_frame` between the app
+  frame (x target, y up, z right) and the UpstreamDrift flight frame
+  (x forward, y left, z up), tested for round-trip and handedness.
+- Graceful Rust fast path (`flight/_rust_facade.py`, aerodynamics-facade
+  posture — scipy is a fully supported fallback, unlike the strict swing
+  facade): `is_rust_available()` + `simulate_trajectory_rust()` over the
+  canonical `rust_core/tools-core/src/ball_flight.rs` RK4 kernel, which now
+  exposes `simulate_trajectory`/`analyze_trajectory` pyfunctions plus
+  property setters (ball/environment scalars, spin axis, wind) and
+  trajectory velocity getters; results are converted into the flight frame.
+  Parity tests compare Rust vs the Python Penner model (tight for zero-spin
+  drag, banded for spinning shots whose lift laws differ) and skip cleanly
+  when the wheel is absent or predates the new bindings.
+- Pipeline seam `flight/pipeline.py`: runtime-checkable
+  `FlightSimulatorProtocol` (satisfied by every registry model) and a
+  `simulate(launch, model_name="waterloo_penner")` convenience mirroring
+  UpstreamDrift's DI design so the impact stage (#4106) plugs in directly.
+  The parent `swing_sim` facade is unchanged.
+
 ### 2026-08-04 Swing simulation foundation (epic #4103, P0 #4104)
 
 - New Rust workspace member `rust_core/swing-core` (Python wheel `swing_core`
@@ -1743,6 +1780,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4104): add the swing simulation foundation — new `rust_core/swing-core` workspace crate (double-pendulum EOM with plane-oriented in-plane gravity, PyO3 wheel `swing_core` + wasm-bindgen bindings) and shared `src/shared/python/swing_sim` package (DbC value types, `SwingSource` protocol, `DoublePendulumSwing`, strict Rust façade with pure-Python parity oracle); wire swing-core into the rust quality gate's wasm build and add the `maturin-swing-core.yml` build/import/parity workflow. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |
 | 2026-07-26 | 1.5.3 | fix(ci): isolate both protected Python jobs in per-job virtual environments after validating the persistent setup-python runtime; repair and import-probe the matrix NumPy/SciPy stack with compatible bounds, and reinstall OpenCV without dependency resolution so it cannot replace the verified NumPy wheel. |
