@@ -182,10 +182,12 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._controls.scenarioChanged.connect(self._on_scenario)
         self._controls.clubHeadRequested.connect(self._on_club_head)
         self._simulation_tab.glossaryRequested.connect(self.open_glossary)
+        self._simulation_tab.configChanged.connect(self._derivation_view.set_config)
         self._flight_explorer_tab.glossaryRequested.connect(self.open_glossary)
         # Theming is applied by the shared launcher (setup_themed_app),
         # which also owns the single Theme menu — calling
         # setup_theme_support() here as well would add a duplicate.
+        self._derivation_view.set_config(self._simulation_tab.derivation_config())
         self._on_scenario(self._controls.scenario())
         self._show_explanation(_RESULT_ROWS[0][0])
 

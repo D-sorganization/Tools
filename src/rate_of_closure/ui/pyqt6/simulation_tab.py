@@ -45,6 +45,7 @@ from PyQt6.QtWidgets import (
 
 from rate_of_closure.club import club_names, get_club
 from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
+from rate_of_closure.derivation_models import DerivationConfig
 from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
 from rate_of_closure.simulation import (
     SOURCE_KINDS,
@@ -104,6 +105,10 @@ class SimulationTab(QWidget):
     runCompleted = pyqtSignal(object)  # noqa: N815 - Qt signal convention
     #: Emitted with a glossary term key when an explanation link is used.
     glossaryRequested = pyqtSignal(str)  # noqa: N815 - Qt signal convention
+    #: Emitted with a DerivationConfig whenever the model configuration
+    #: changes (swing source, flight model, plane tilts) — drives the
+    #: conditional sections of the Calculation Description tab (V4).
+    configChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -193,6 +198,10 @@ class SimulationTab(QWidget):
         self._flight_combo.addItems([m.value for m in FlightModelType])
         self._flight_combo.setCurrentText("waterloo_penner")
         self._flight_combo.setToolTip(FIELD_GUIDANCE["flight_model"])
+        self._flight_combo.currentIndexChanged.connect(self._emit_config)
+        self._source_combo.currentIndexChanged.connect(self._emit_config)
+        for spin in self._tilt_spins.values():
+            spin.valueChanged.connect(self._emit_config)
         form.addRow("Flight Model", self._flight_combo)
 
         self._run_button = QPushButton("Run Simulation")
@@ -277,6 +286,23 @@ class SimulationTab(QWidget):
     def source_kind(self) -> str:
         """The selected swing-source kind."""
         return str(SOURCE_KINDS[int(self._source_combo.currentIndex())])
+
+    def derivation_config(self) -> DerivationConfig:
+        """The DerivationConfig described by the current controls."""
+        plane = self.plane()
+        return DerivationConfig(
+            flight_model=self._flight_combo.currentText(),
+            swing_source=self.source_kind(),
+            gear_effect=True,  # the session pipeline always applies it
+            plane_tilts_deg=(
+                plane.yaw_deg,
+                plane.side_tilt_deg,
+                plane.forward_tilt_deg,
+            ),
+        )
+
+    def _emit_config(self, *_args: object) -> None:
+        self.configChanged.emit(self.derivation_config())
 
     def config(self) -> SimulationConfig:
         """The simulation request described by the controls."""
