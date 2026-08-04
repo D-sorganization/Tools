@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import timedelta
+from typing import cast
 
 from alarm_lifecycle import AlarmPerformanceReport, AlarmSnapshot
 from alarm_service import AlarmService
@@ -45,7 +46,7 @@ def create_alarm_router(
 
     @router.get("/active")
     async def active() -> list[AlarmSnapshot]:
-        return service.active()
+        return cast(list[AlarmSnapshot], service.active())
 
     @router.post("/{tag}/acknowledge")
     async def acknowledge(

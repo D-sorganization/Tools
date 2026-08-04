@@ -5,6 +5,7 @@ from __future__ import annotations
 import threading
 from collections.abc import Callable, Mapping
 from datetime import timedelta
+from typing import cast
 
 from identity import (
     DEFAULT_SESSION_TTL,
@@ -26,7 +27,7 @@ SESSION_TTL_VARIABLE = "P1AM_SESSION_TTL_S"
 def _session_ttl(env: Mapping[str, str]) -> timedelta:
     raw = env.get(SESSION_TTL_VARIABLE)
     if raw is None or not raw.strip():
-        return DEFAULT_SESSION_TTL
+        return cast(timedelta, DEFAULT_SESSION_TTL)
     try:
         seconds = int(raw)
     except ValueError as exc:
@@ -57,6 +58,7 @@ def _legacy_records(env: Mapping[str, str]) -> tuple[CredentialRecord, ...]:
             ),
         )
     if operator_key == admin_key:
+        assert operator_key is not None
         return (
             _legacy_record(
                 "legacy.single-key", "Legacy User", Role.ADMIN, operator_key

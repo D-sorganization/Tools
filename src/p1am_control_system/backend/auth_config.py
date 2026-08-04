@@ -38,6 +38,7 @@ from fastapi import HTTPException, Security, status
 from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
 from identity import Principal, Role
 from identity_config import EnvironmentIdentityProvider
+from identity_router import IdentityService
 
 logger = logging.getLogger("dcs_backend.auth")
 
@@ -97,7 +98,7 @@ def verify_operator_key(provided: str | None) -> bool:
     return bool(principal and principal.allows(Role.OPERATOR))
 
 
-def identity_service():
+def identity_service() -> IdentityService | None:
     """Return the stable configured identity service, if one exists."""
     return _identity_provider.get()
 

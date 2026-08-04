@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from datetime import datetime
-from typing import Annotated, TypeAlias
+from typing import Annotated, TypeAlias, cast
 
 from fastapi import APIRouter, Depends, HTTPException, Response, Security, status
 from fastapi.security import APIKeyHeader, HTTPAuthorizationCredentials, HTTPBearer
@@ -76,7 +76,7 @@ class IdentityService:
         """Revoke a bearer session when it is present and validly shaped."""
         if bearer is None or bearer.scheme.lower() != "bearer":
             return False
-        return self._sessions.revoke(bearer.credentials)
+        return cast(bool, self._sessions.revoke(bearer.credentials))
 
 
 def _unauthorized() -> HTTPException:

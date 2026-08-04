@@ -34,7 +34,7 @@ def _validate_loop_tag(value: str) -> str:
     return value
 
 
-class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
+class TagLog(SQLModel, table=True):
     """SQLModel representing a logged tag state in the database.
 
     The composite ``(tag_name, timestamp)`` index serves the historian read hot
@@ -61,14 +61,14 @@ class TagLog(SQLModel, table=True):  # type: ignore[call-arg]
     source: str = Field(default="legacy.adapter", index=True)
 
 
-class PlantArea(SQLModel, table=True):  # type: ignore[call-arg]
+class PlantArea(SQLModel, table=True):
     """SQLModel representing a physical plant area."""
 
     id: int | None = Field(default=None, primary_key=True)
     name: str = Field(index=True, unique=True)
 
 
-class PlantUnit(SQLModel, table=True):  # type: ignore[call-arg]
+class PlantUnit(SQLModel, table=True):
     """SQLModel representing a plant unit within an area."""
 
     id: int | None = Field(default=None, primary_key=True)
@@ -76,7 +76,7 @@ class PlantUnit(SQLModel, table=True):  # type: ignore[call-arg]
     area_id: int = Field(foreign_key="plantarea.id")
 
 
-class PlantEquipment(SQLModel, table=True):  # type: ignore[call-arg]
+class PlantEquipment(SQLModel, table=True):
     """SQLModel representing an equipment module within a unit."""
 
     id: int | None = Field(default=None, primary_key=True)
@@ -84,7 +84,7 @@ class PlantEquipment(SQLModel, table=True):  # type: ignore[call-arg]
     unit_id: int = Field(foreign_key="plantunit.id")
 
 
-class TagDefinitionDb(SQLModel, table=True):  # type: ignore[call-arg]
+class TagDefinitionDb(SQLModel, table=True):
     """SQLModel representing a DB-backed tag definition."""
 
     id: int | None = Field(default=None, primary_key=True)
@@ -99,7 +99,7 @@ class TagDefinitionDb(SQLModel, table=True):  # type: ignore[call-arg]
     equipment_id: int | None = Field(default=None, foreign_key="plantequipment.id")
 
 
-class EventLog(SQLModel, table=True):  # type: ignore[call-arg]
+class EventLog(SQLModel, table=True):
     """SQLModel representing an event or alarm log in the database."""
 
     id: int | None = Field(default=None, primary_key=True)

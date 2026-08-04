@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Awaitable, Callable
+from typing import cast
 
 from configuration_workflow import (
     ConfigurationDiff,
@@ -64,7 +65,7 @@ def create_configuration_router(
 
     @router.get("")
     async def revisions() -> list[ConfigurationRevision]:
-        return workflow.list()
+        return cast(list[ConfigurationRevision], workflow.list())
 
     @router.get("/active")
     async def active() -> ConfigurationRevision | None:
@@ -89,7 +90,10 @@ def create_configuration_router(
         base_revision_id: str | None = Query(default=None),
     ) -> list[ConfigurationDiff]:
         try:
-            return workflow.diff(revision_id, base_revision_id)
+            return cast(
+                list[ConfigurationDiff],
+                workflow.diff(revision_id, base_revision_id),
+            )
         except KeyError as exc:
             raise HTTPException(status_code=404, detail=str(exc)) from exc
 

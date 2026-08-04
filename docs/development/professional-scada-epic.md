@@ -1,9 +1,12 @@
 # Professional SCADA Product Epic
 
-**Status:** approved for implementation against synthetic data and simulated
-equipment only
+**Status:** implemented on the consolidated development branch; local release
+gates passed; remote protected-branch gates pending
 
 **Scope:** `src/p1am_control_system`
+
+**Delivery:** all phases are consolidated on GitHub PR #4091. Earlier stacked
+phase PRs are superseded and must not be merged independently.
 
 **Safety boundary:** this epic does not authorize connection to or modification
 of a live plant or independent protection system
@@ -201,6 +204,28 @@ against a plant, and state that no authoritative write path exists.
 - Restore and fault scenarios produce evidence packages.
 - Documentation, operator help, API schema, and specification match behavior.
 - Each child issue is closed only by a merged PR or an approved exempt label.
+
+### Consolidated single-PR evidence — 2026-08-04
+
+- Phase A through Phase D are present together on one development branch and
+  one PR, with the original pre-epic recovery ref and verified external backup
+  package retained.
+- The complete backend suite passes with 1,016 tests and 6 CI-only dependency
+  checks skipped locally.
+- All 394 frontend tests pass; ESLint reports zero errors and two unchanged
+  hook warnings; TypeScript and the production Vite build pass.
+- All 41 changed production Python modules pass strict mypy. The complete
+  P1AM Python surface passes Ruff lint and Ruff formatting.
+- The repository detect-secrets baseline contract passes all 23 tests. The two
+  keyword detections are explicit synthetic redaction fixtures with line-level
+  allowlist annotations; no runtime database, credential, real tag/address,
+  plant limit, recipe, sequence, or native controls artifact is included.
+- Focused identity, configuration, qualified-signal, alarm, connector,
+  operator, reusable-product, and advisory route regressions pass after the
+  final consolidation refactor.
+- Black is not used to rewrite the changed files because the repository's
+  authoritative Ruff formatter targets Python 3.14 and the local Black safety
+  check runs under Python 3.13; Ruff formatting is the enforced project gate.
 
 ## Completion rule
 

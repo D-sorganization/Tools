@@ -38,7 +38,7 @@ class FailedConnector:
     )
 
     def read(self) -> dict[str, float]:
-        raise ConnectionError("secret=field-password")
+        raise ConnectionError("secret=field-password")  # pragma: allowlist secret
 
     def write(self, tag: str, value: float) -> None:
         raise ConnectionError("token=field-token")

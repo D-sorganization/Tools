@@ -46,7 +46,10 @@ class _UnavailableConnector:
         raise ConnectionError("representative offline connector")
 
     def diagnostics(self) -> dict[str, object]:
-        return {"state": "offline", "password": "demonstration-redaction-value"}
+        return {  # pragma: allowlist secret
+            "state": "offline",
+            "password": "demonstration-redaction-value",
+        }
 
 
 class _AuditOnlyChannel:

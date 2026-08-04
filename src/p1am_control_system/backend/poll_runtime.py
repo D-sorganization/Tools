@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import logging
 from collections.abc import Callable, Iterator
-from typing import Any
+from typing import Any, Protocol
 
 import historian
 from alarm_processing import process_alarm_events
@@ -20,6 +20,18 @@ from sqlmodel import Session
 
 logger = logging.getLogger("dcs_backend.poll_runtime")
 _default_signal_frames = SignalFrameFactory()
+
+
+class ScanLogger(Protocol):
+    """Historian write seam that preserves qualified signal metadata."""
+
+    def __call__(
+        self,
+        session: Session,
+        tags: dict[str, float],
+        *,
+        signal_frame: SignalFrame | None = None,
+    ) -> int: ...
 
 
 def _health_payload(frame: SignalFrame | None) -> dict[str, object]:
@@ -136,7 +148,7 @@ async def _poll_once(
     active_alarm_map: dict[str, dict[str, Any]],
     session_factory: Callable[[], Iterator[Session]],
     estop_active: bool,
-    log_scan: Callable[[Session, dict[str, float]], int] = historian.log_scan,
+    log_scan: ScanLogger = historian.log_scan,
     process_events: Callable[
         [Any, dict[str, float], dict[str, dict[str, Any]]],
         list[Any],
