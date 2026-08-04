@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.6.0                                      |
-| **Spec Version**        | 1.6.0                                      |
+| **Current Version**     | 1.7.0                                      |
+| **Spec Version**        | 1.7.0                                      |
 | **Last Spec Update**    | 2026-08-04                                 |
 
 ## 2. Purpose & Mission
@@ -105,6 +105,44 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `simulate(launch, model_name="waterloo_penner")` convenience mirroring
   UpstreamDrift's DI design so the impact stage (#4106) plugs in directly.
   The parent `swing_sim` facade is unchanged.
+
+### 2026-08-04 Swing impact package (epic #4103, #4106)
+
+- New self-façaded subpackage `src/shared/python/swing_sim/impact/`
+  (types/models/solver/utils split mirroring UpstreamDrift's
+  `physics/impact_model`, all constants vendored with citations into
+  `constants.py`): rigid-body COR impulse model with the 2/7 rolling-cap
+  friction spin derivation, spring-damper (Kelvin-Voigt) model,
+  finite-time model, energy-balance validator, and `ImpactRecorder` /
+  `ImpactSolverAPI`. The parent `swing_sim/__init__.py` façade is
+  deliberately untouched (epic integration wires it later).
+- Three defect fixes relative to the UpstreamDrift source: (a)
+  `solve_with_gear_effect` no longer drops `impact_offset` when computing
+  the base impulse — off-center hits now get the MOI effective-mass
+  reduction (regression test pins off-center ball speed < center); (b)
+  opt-in full 3-D inertia treatment via a 3x3 `clubhead_moi_tensor`
+  (`1/m_eff = 1/m + (r x n)^T I^-1 (r x n)`; a diagonal tensor matching
+  the scalar MOI reproduces the scalar path exactly); (c) friction-spin
+  axis sign corrected to `t x n` (the ported `n x t` spun lofted strikes
+  toward topspin and contradicted its own slip-reduction cap logic).
+- New `delivery.py` front-end: launch-monitor delivery numbers (club
+  path/face/attack/dynamic loft/lie deg, clubhead speed, toe/high offsets
+  in mm) → impact-model vectors in the AffineDrift frame (x target,
+  y up, z right; path + = in-to-out, face + = open), with spin-loft and
+  D-plane diagnostics (`spin_axis = unit(v x n)`, signed tilt; + = fade).
+- New physics-based `gear_effect.py` replacing the old three-empirical-
+  constants version: head rotation recoil `I^-1 (r x (-J n))` with the
+  CG-depth lever arm (`DRIVER_CG_DEPTH_M`), time-averaged tangential
+  face-surface sweep, and the same 2/7-capped friction impulse converting
+  it to ball spin. Bulge/roll enters through an app-agnostic
+  `face_normal_at_offset(toe_m, high_m)` callable seam (club package, PR
+  #4112). Signature tests: toe hit → draw-side spin, high hit → reduced
+  backspin, bulge partially offsetting toe-hit pull.
+- In-package tests (`unit` / `physics` / `regression` / `contract`
+  markers): hand-computed impulse pins, COR monotonicity, spin cap,
+  energy balance vs `1/2 mu v^2 (1-e^2)`, both bug-fix regressions,
+  delivery round-trips, gear-effect signatures, and a contract test
+  pinning the `swing_sim.impact` public API.
 
 ### 2026-08-04 Swing simulation foundation (epic #4103, P0 #4104)
 
@@ -1862,6 +1900,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
+| 2026-08-04 | 1.7.0 | feat(swing_sim, #4106): add the impact physics subpackage `src/shared/python/swing_sim/impact/` — rigid-body COR impulse model (2/7 rolling-cap friction spin) + spring-damper + finite-time models, energy-balance validator, and recorder ported self-contained from UpstreamDrift's `physics/impact_model` with three fixes (off-center base impulse no longer drops `impact_offset`; opt-in 3x3 club MOI tensor effective mass `1/m_eff = 1/m + (r x n)^T I^-1 (r x n)`; friction-spin axis sign corrected to `t x n`); new launch-monitor delivery front-end (`delivery.py`, AffineDrift frame, spin-loft + D-plane diagnostics) and physics-based gear effect (`gear_effect.py`, head recoil × CG-depth lever arm, bulge/roll via `face_normal_at_offset` callable seam) replacing the empirical three-constant version. |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4104): add the swing simulation foundation — new `rust_core/swing-core` workspace crate (double-pendulum EOM with plane-oriented in-plane gravity, PyO3 wheel `swing_core` + wasm-bindgen bindings) and shared `src/shared/python/swing_sim` package (DbC value types, `SwingSource` protocol, `DoublePendulumSwing`, strict Rust façade with pure-Python parity oracle); wire swing-core into the rust quality gate's wasm build and add the `maturin-swing-core.yml` build/import/parity workflow. |
 | 2026-08-04 | 1.5.6 | feat(rate_of_closure): club library, inertial model, and parametric head with bulge & roll (P2, #4106) — frozen SI ClubSpec with DbC bounds, 15-club library normalized from typical published specs (UpstreamDrift club_configurations.py source), head+shaft+grip composite inertia (balance point, grip-axis and shaft-axis MOI), deterministic superellipse-loft parametric head whose face honors bulge/roll sagitta and loft tilt with mass-scaled envelope, face_normal_at_offset exposed for the future impact package in Python and TypeScript with pinned parity tests, PyQt6 Club group (picker drives GC-to-face/lie with overrides preserved; sourced tooltips) and web ClubPanel generating heads client-side into the existing mesh render paths. |
 | 2026-08-03 | 1.5.5 | feat(rate_of_closure): optional photorealistic STL clubhead rendering — pure-numpy binary/ASCII STL parser with head-envelope normalization (mesh.py), PyQt6 Load Clubhead STL/Procedural Head playback-bar controls with lambert-shaded Poly3DCollection rendering, web-clone FileReader STL input with painter's-algorithm flat-shaded triangles (TS parser parity-tested against pytest), and a programmatically generated example driver-head STL free of licensing risk. |
