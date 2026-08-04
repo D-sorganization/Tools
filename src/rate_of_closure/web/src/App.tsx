@@ -126,7 +126,7 @@ const UNIT_LABELS: Record<Quantity, string> = {
 
 const TABS = [
   "Explorer",
-  "Derivation & Traceability",
+  "Calculation Description",
   "Simulation",
   "Plots",
   "Flight Explorer",

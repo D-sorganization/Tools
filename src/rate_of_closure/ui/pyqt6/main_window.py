@@ -5,7 +5,7 @@ results and an explanation panel below them, and a tab stack on the
 right: the animated 3D clubhead (with playback speed and fixed/moving
 display modes), the investigative Plots tab (built-in advanced plots,
 the Custom Plot wizard, and exports — it absorbed the old Closure
-Sweep tab), and the Derivation & Traceability tab that typesets the
+Sweep tab), and the Calculation Description tab that typesets the
 whole calculation with live numbers.
 
 The window consumes complete :class:`~rate_of_closure.model.ImpactScenario`
@@ -157,7 +157,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         tabs = QTabWidget()
         tabs.addTab(self._club_view, "3D Clubhead")
         tabs.addTab(self._plots_tab, "Plots")
-        tabs.addTab(self._derivation_view, "Derivation && Traceability")
+        tabs.addTab(self._derivation_view, "Calculation Description")
         tabs.addTab(self._simulation_tab, "Simulation")
         tabs.addTab(self._flight_explorer_tab, "Flight Explorer")
         tabs.addTab(self._variation_tab, "Variation")

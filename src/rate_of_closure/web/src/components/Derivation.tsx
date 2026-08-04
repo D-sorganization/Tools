@@ -1,5 +1,5 @@
 /**
- * Derivation & Traceability tab — the calculation, step by step.
+ * Calculation Description tab — the calculation, step by step.
  *
  * Renders model/derivation.ts with KaTeX (bundled locally; no CDN),
  * substituting the live scenario so every number in the results panel

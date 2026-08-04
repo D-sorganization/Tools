@@ -1,6 +1,6 @@
 """Step-by-step derivation of the impact-point calculation.
 
-Single source of truth for the "Derivation & Traceability" tab: every
+Single source of truth for the "Calculation Description" tab: every
 step carries the symbolic formula (matplotlib-mathtext-compatible
 LaTeX), a plain-language narrative, and the numeric substitution for
 the *live* scenario, so a user can follow each number in the results

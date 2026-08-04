@@ -1,4 +1,4 @@
-"""Derivation & Traceability tab — the calculation, step by step.
+"""Calculation Description tab — the calculation, step by step.
 
 Renders :func:`rate_of_closure.derivation.derivation_steps` as a
 scrollable sequence: Title Case heading, plain-language narrative, and
