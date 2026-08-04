@@ -35,6 +35,61 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-04 Rate of Closure investigative plotting suite (epic #4120, phase V1)
+
+- `src/rate_of_closure/plotting/` adds the plotting suite behind the new
+  Plots tab: `catalog.py` is a DbC-validated registry of all 40
+  plottable variables of a `SimulationRun` (key, Title Case label,
+  unit, category Input | Swing Sample | Impact | Launch | Flight |
+  Metric, extractor callable, axis-scale hint) with the key list pinned
+  by contract test; `spec.py` defines the frozen `PlotSpec` (x_key,
+  y_keys, optional series key, kind line | scatter | sweep | histogram,
+  title, log flags, sweep range) with JSON round-trip under the
+  `rate_of_closure.plot_spec/1` schema shared verbatim with the web
+  clone; `render.py` is the one compute/render pipeline (`sweep` kind
+  re-runs the full swing → impact → flight simulation per grid point;
+  themed matplotlib rendering via the shared `get_chart_color` palette;
+  CSV/JSON exports of exactly the plotted data); `builtins.py` ships
+  the built-in advanced plots as PlotSpec factories — the migrated
+  closure sweep, delivery-vs-τ sweep (path/AoA/face-to-path over the
+  impact-time offset), launch-vs-toe and launch-vs-high offset maps
+  (ball speed/spin), the swing time series, and side/top-down flight
+  profiles.
+- Documented deviation: the swing time series plots clubhead speed and
+  clubhead angular speed rather than pendulum joint angles θ/ω —
+  `SimulationRun` stores clubhead poses/twists, not joint states.
+- PyQt6: the new Plots tab (`ui/pyqt6/plots_tab.py`) replaces and
+  absorbs the Closure Sweep tab — managed plot list (add built-in /
+  duplicate / remove), the 3-step Custom Plot wizard
+  (`ui/pyqt6/plot_wizard.py`: data-source scope → X/Y from the catalog
+  grouped by category (+ sweep range) → style/kind with a live
+  preview), themed canvas with the standard navigation toolbar, and
+  export buttons (PNG, SVG, data CSV/JSON, save/load plot definition
+  .json). The tab adopts each Simulation-tab run as its reference run
+  and lazily builds a manual-source run otherwise; rendering defers
+  while hidden so explorer keystrokes stay cheap. Tooltips on every new
+  control.
+- Web parity (practical): `web/src/model/plotcatalog.ts` mirrors the
+  catalog key-for-key (pinned against the pytest-exported
+  `plotcatalog.fixture.json`; entries the TS physics port cannot
+  extract yet — clubhead angular state, impact-model diagnostics — are
+  marked unsupported and hidden from the builder, P7 WASM territory);
+  `plotspec.ts` ports the spec schema, validation, and compute pipeline
+  (sweeps re-run the TS simulation); the Plots tab (`PlotsPanel.tsx`)
+  offers the built-in picker, a simplified custom builder (X/Y selects
+  over series categories), canvas line/scatter rendering with axis
+  labels/units, PNG via `canvas.toBlob`, CSV/JSON downloads, and
+  plot-definition import/export interoperable with the desktop app.
+- Tests: `tests/rate_of_closure/test_plotting.py` (pinned catalog keys
+  + fixture parity, extractor shapes/finiteness, PlotSpec validation +
+  JSON round-trip, every builtin rendering headlessly on Agg, closure
+  sweep numerically matching `model.sweep()`, well-formed CSV / JSON /
+  PNG / SVG exports) and `test_plots_gui.py` (tab replaces the sweep
+  tab, list management, wizard completion for line/sweep/histogram
+  scopes, export files in tmp, tooltip coverage); web
+  `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
+  builtins, exports).
+
 ### 2026-08-04 Rate of Closure solver panel — goal-driven optimization UI (epic #4103, #4109 #4110)
 
 - PyQt6: new "Solver" tab inside the Simulation tab's right-hand tab
@@ -2038,6 +2093,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V1): investigative plotting suite — `plotting/` package (40-variable DbC data catalog with pinned keys, frozen JSON-round-trip PlotSpec `rate_of_closure.plot_spec/1`, one compute/render pipeline with full-simulation sweeps and themed palette, built-in advanced plots: migrated closure sweep, delivery-vs-τ, launch-vs-toe/high offset maps, swing time series, side/top-down flight profiles); PyQt6 Plots tab replacing the Closure Sweep tab (plot list add/duplicate/remove, 3-step Custom Plot wizard with live preview, navigation toolbar, PNG/SVG/CSV/JSON + save/load definition exports, tooltips everywhere); web parity via plotcatalog.ts (key list pinned against the pytest-exported fixture), plotspec.ts (shared schema + pipeline), and a Plots tab with built-in picker, simplified custom builder, canvas rendering, PNG/CSV/JSON downloads, and definition import/export interoperable with the desktop app. |
 | 2026-08-04 | 1.9.0 | feat(rate_of_closure, #4109 #4110): solver panel — goal-driven optimization UI. PyQt6 Solver tab in the Simulation tab (checkbox-enabled weighted ImpactGoal targets, Optimize-with-bounds / Fix VariablePartition editor with a double-pendulum swing-source mode, start-count spinner, Run/Cancel on a QThread worker with ProgressReport-driven progress bar and cooperative cancel_event, achieved-vs-goal table with per-goal errors / residual norm / convergence / expandable per-start diagnostics, Apply loading solved variables into the simulation session and rerunning the 3D scene; sourced tooltips throughout, DbC errors as friendly status messages). Web: model/solver.ts bounded Nelder-Mead over the TS-physics objective (delivery variables, deterministic multi-start) + SolverPanel section with apply-to-scenario, parity-pinned against the pytest easy case (150 mph ball speed -> ~45.825 m/s clubhead speed); WASM/worker upgrade deferred to P7. |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
 | 2026-08-04 | 1.8.0 | feat(rate_of_closure, epic #4103): simulation session integrating swing_sim into the app — app-frame swing sources (manual constant twist, shared double pendulum, new triple pendulum), swing → impact (gear effect + bulge/roll callable) → flight orchestration into one exportable SimulationRun, fixed-ball impact-time scrubber, thin ISA adapter over the rotation converter with a toggleable screw-axis overlay, PyQt6 Simulation tab (sourced-guidance inputs, launch rows with explanations, ball/ground toggles, flight polyline, full video playback with 1×-real-time rate presets, sortable inspector, CSV/JSON export) and a parity-pinned web Simulation tab (pendulum/impact/flight TS port, scrubber, playback, JSON download; WASM supersedes in P7). |

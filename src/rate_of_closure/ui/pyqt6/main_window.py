@@ -3,8 +3,10 @@
 Layout: controls on the left (scenario inputs + presets), clickable
 results and an explanation panel below them, and a tab stack on the
 right: the animated 3D clubhead (with playback speed and fixed/moving
-display modes), the closure sweep, and the Derivation & Traceability
-tab that typesets the whole calculation with live numbers.
+display modes), the investigative Plots tab (built-in advanced plots,
+the Custom Plot wizard, and exports — it absorbed the old Closure
+Sweep tab), and the Derivation & Traceability tab that typesets the
+whole calculation with live numbers.
 
 The window consumes complete :class:`~rate_of_closure.model.ImpactScenario`
 objects from the controls panel and hands them to the model and views —
@@ -35,9 +37,10 @@ from rate_of_closure.derivation import (
     RESULT_EXPLANATIONS,
 )
 from rate_of_closure.model import ImpactScenario, closure_metrics, solve
-from rate_of_closure.ui.pyqt6.club_view import Club3DView, SweepView
+from rate_of_closure.ui.pyqt6.club_view import Club3DView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
+from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 from rate_of_closure.units import convert_from_canonical
@@ -123,9 +126,10 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._controls = ControlsPanel()
         self._rows: dict[str, _ResultRow] = {}
         self._club_view = Club3DView()
-        self._sweep_view = SweepView()
+        self._plots_tab = PlotsTab()
         self._derivation_view = DerivationView()
         self._simulation_tab = SimulationTab()
+        self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -146,7 +150,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
 
         tabs = QTabWidget()
         tabs.addTab(self._club_view, "3D Clubhead")
-        tabs.addTab(self._sweep_view, "Closure Sweep")
+        tabs.addTab(self._plots_tab, "Plots")
         tabs.addTab(self._derivation_view, "Derivation && Traceability")
         tabs.addTab(self._simulation_tab, "Simulation")
 
@@ -241,7 +245,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
                 self._format_row(field, getattr(metrics, field))
             )
         self._club_view.set_scenario(scenario)
-        self._sweep_view.set_scenario(scenario)
+        self._plots_tab.set_scenario(scenario)
         self._derivation_view.set_scenario(scenario)
         self._simulation_tab.set_scenario(scenario)
         status_bar = self.statusBar()
