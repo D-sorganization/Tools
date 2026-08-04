@@ -16,12 +16,9 @@ from __future__ import annotations
 import logging
 import math
 
-from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QFrame,
     QGroupBox,
-    QHBoxLayout,
-    QLabel,
     QMainWindow,
     QScrollArea,
     QSplitter,
@@ -41,6 +38,8 @@ from rate_of_closure.model import ImpactScenario, closure_metrics, solve
 from rate_of_closure.ui.pyqt6.club_view import Club3DView, SweepView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
+from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
+from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 from rate_of_closure.units import convert_from_canonical
 
 logger = logging.getLogger(__name__)
@@ -113,49 +112,6 @@ _QUANTITY_ROWS: dict[str, str] = {
 }
 
 
-class _ResultRow(QFrame):
-    """A clickable result box: label left, live value right.
-
-    Clicking (or keyboard-activating) the row emits ``clicked`` with the
-    result field name so the window can show the explanation.
-    """
-
-    clicked = pyqtSignal(str)
-
-    def __init__(self, field: str, label: str) -> None:
-        super().__init__()
-        self._field = field
-        self.setObjectName("resultRow")
-        self.setFrameShape(QFrame.Shape.StyledPanel)
-        self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setFocusPolicy(Qt.FocusPolicy.TabFocus)
-        self.setToolTip("Click for the explanation and derivation trace")
-        self.setAccessibleName(label)
-
-        row = QHBoxLayout(self)
-        row.setContentsMargins(10, 6, 10, 6)
-        name = QLabel(label)
-        row.addWidget(name)
-        row.addStretch(1)
-        self.value_label = QLabel("—")
-        font = self.value_label.font()
-        font.setBold(True)
-        self.value_label.setFont(font)
-        row.addWidget(self.value_label)
-
-    def mousePressEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
-        """Emit the field name; keep default frame behaviour."""
-        self.clicked.emit(self._field)
-        super().mousePressEvent(event)
-
-    def keyPressEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
-        """Space/Return activate the row, matching button conventions."""
-        if event.key() in (Qt.Key.Key_Space, Qt.Key.Key_Return):
-            self.clicked.emit(self._field)
-            return
-        super().keyPressEvent(event)
-
-
 class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
     """Interactive explorer for rotation-induced impact-point deviations."""
 
@@ -169,6 +125,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._club_view = Club3DView()
         self._sweep_view = SweepView()
         self._derivation_view = DerivationView()
+        self._simulation_tab = SimulationTab()
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -191,6 +148,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         tabs.addTab(self._club_view, "3D Clubhead")
         tabs.addTab(self._sweep_view, "Closure Sweep")
         tabs.addTab(self._derivation_view, "Derivation && Traceability")
+        tabs.addTab(self._simulation_tab, "Simulation")
 
         splitter = QSplitter()
         splitter.addWidget(left)
@@ -285,6 +243,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._club_view.set_scenario(scenario)
         self._sweep_view.set_scenario(scenario)
         self._derivation_view.set_scenario(scenario)
+        self._simulation_tab.set_scenario(scenario)
         status_bar = self.statusBar()
         if status_bar is None:  # pragma: no cover - Qt always provides one here
             return
@@ -298,6 +257,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         )
 
     def closeEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
-        """Stop the animation timer before the window goes away."""
+        """Stop the animation timers before the window goes away."""
         self._club_view.stop()
+        self._simulation_tab.stop()
         super().closeEvent(event)

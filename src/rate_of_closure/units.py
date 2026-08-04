@@ -144,4 +144,55 @@ FIELD_GUIDANCE: dict[str, str] = {
         "usually similar to bulge on drivers. Source: typical published "
         "fitting values."
     ),
+    "swing_source": (
+        "Suggested range: Manual Scenario replays the explorer's "
+        "constant-twist delivery; Double and Triple Pendulum generate a "
+        "gravity-driven swing on the oriented plane. Source: classic "
+        "double-pendulum golf models (Cochran & Stobbs; Jorgensen, The "
+        "Physics of Golf)."
+    ),
+    "plane_yaw_deg": (
+        "Suggested range: -20 to +20 deg rotation of the swing plane "
+        "about the vertical (aim left/right of the target line). "
+        "Source: 3-D swing-plane studies collected in the AffineDrift "
+        "closure-rate dossier."
+    ),
+    "plane_side_tilt_deg": (
+        "Suggested range: -60 to -35 deg side tilt for a driver (a "
+        "vertical plane is 0; tour driver swing planes lean roughly "
+        "45-55 deg from vertical). Source: published 3-D swing-plane "
+        "measurements."
+    ),
+    "plane_forward_tilt_deg": (
+        "Suggested range: -10 to +10 deg forward/back tilt of the "
+        "in-plane upright axis. Source: published 3-D swing-plane "
+        "measurements."
+    ),
+    "impact_time_scrub": (
+        "Suggested range: anywhere inside the swing; the default is the "
+        "instant of maximum clubhead speed. Scrubbing moves the swing "
+        "relative to the fixed ball so the clubhead meets it at the "
+        "chosen instant. Source: launch-monitor impact-timing "
+        "convention (maximum-compression reference)."
+    ),
+    "flight_model": (
+        "Suggested range: Waterloo/Penner for driver work; the other "
+        "entries are literature models useful for cross-checks. "
+        "Source: Penner (2003) and the citations carried on each model "
+        "in the shared flight package."
+    ),
+    "ball_visible": (
+        "Suggested range: on to show the ball at its fixed impact "
+        "position. Source: launch-monitor convention of a fixed ball "
+        "and a swing delivered to it."
+    ),
+    "ground_visible": (
+        "Suggested range: on to show the ground plane for spatial "
+        "reference. Source: standard 3-D golf-scene convention."
+    ),
+    "screw_axis_visible": (
+        "Suggested range: on to overlay the clubhead's instantaneous "
+        "screw axis near the playback instant. Source: the AffineDrift "
+        "closure-rate derivation (omega/v = 1/R_ISA)."
+    ),
 }

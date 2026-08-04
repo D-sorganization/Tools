@@ -23,6 +23,7 @@ from ._contracts import ensure
 from .model import ImpactResult, ImpactScenario, solve
 
 __all__ = [
+    "LAUNCH_EXPLANATIONS",
     "METRIC_EXPLANATIONS",
     "RESULT_EXPLANATIONS",
     "DerivationStep",
@@ -156,6 +157,53 @@ METRIC_EXPLANATIONS: dict[str, str] = {
         "face due to rotation alone. The toe outruns the heel on every "
         "closing delivery — the same rigid-body effect that produces "
         "the reference-point path gap."
+    ),
+}
+
+
+#: Click-through explanation for every simulation launch-number row.
+LAUNCH_EXPLANATIONS: dict[str, str] = {
+    "ball_speed_mph": (
+        "Post-impact ball speed from the rigid-body COR impulse solve "
+        "(swing_sim.impact): the effective-mass momentum exchange along "
+        "the delivered face normal, reduced for off-center strikes by "
+        "the clubhead MOI. Divided by clubhead speed this is the smash "
+        "factor (~1.48-1.50 for a well-struck driver)."
+    ),
+    "launch_angle_deg": (
+        "Vertical angle of the ball's launch velocity above the ground "
+        "plane. The D-plane compromise: the ball leaves close to the "
+        "delivered face normal (dynamic loft), pulled slightly toward "
+        "the club path — typically 10-16 deg for a driver."
+    ),
+    "launch_azimuth_deg": (
+        "Horizontal launch direction relative to the target line "
+        "(positive = right, matching the club-path sign convention). "
+        "Dominated by the delivered face angle, with a smaller path "
+        "contribution."
+    ),
+    "spin_rpm": (
+        "Total spin rate from the friction impulse of the impact solve "
+        "(2/7 rolling-cap Coulomb model) plus gear-effect spin from the "
+        "head's rotation recoil on off-center strikes. Driver band "
+        "roughly 2,000-3,500 rpm."
+    ),
+    "carry_m": (
+        "Carry distance from the selected literature flight model "
+        "(swing_sim.flight): the integrated trajectory's horizontal "
+        "distance at the terminal ground event, no roll-out."
+    ),
+    "max_height_m": (
+        "Apex height of the integrated trajectory — the peak of the "
+        "lift-vs-gravity balance; typical driver apex is 25-40 m."
+    ),
+    "flight_time_s": (
+        "Total time aloft from launch to the terminal ground event of "
+        "the flight integration (typically 5-7 s for a driver)."
+    ),
+    "landing_angle_deg": (
+        "Descent angle below horizontal at the terminal ground event; "
+        "steeper landings stop faster (driver band roughly 35-45 deg)."
     ),
 }
 
