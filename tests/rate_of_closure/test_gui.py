@@ -194,9 +194,10 @@ class TestClub3DView:
         view = Club3DView()
         qtbot.addWidget(view)
         view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+        # Head Moving Through Space is the default display.
+        assert view.view_mode() == VIEW_MODES[1]
+        view.set_view_mode(VIEW_MODES[0])
         assert view.view_mode() == VIEW_MODES[0]
-        view.set_view_mode(VIEW_MODES[1])
-        assert view.view_mode() == VIEW_MODES[1]
         view.set_view_mode("nonsense")  # ignored, logged
-        assert view.view_mode() == VIEW_MODES[1]
+        assert view.view_mode() == VIEW_MODES[0]
         view.stop()

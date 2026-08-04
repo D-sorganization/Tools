@@ -133,7 +133,7 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
   const dragRef = useRef<{ x: number; y: number } | null>(null);
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState(1.0);
-  const [mode, setMode] = useState<ViewMode>(VIEW_MODES[0]);
+  const [mode, setMode] = useState<ViewMode>(VIEW_MODES[1]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -223,11 +223,32 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
           origin[1] + vec[1] * scale,
           origin[2] + vec[2] * scale,
         ];
-        line([origin, tip], color, 2.5);
+        const [ox, oy] = project(origin, w, h, zoom, yaw, pitch);
         const [tx, ty] = project(tip, w, h, zoom, yaw, pitch);
+        const angle = Math.atan2(ty - oy, tx - ox);
+        const headLen = 11 * dpr;
+        // Stop the shaft short so the filled head forms a clean point.
+        const bx = tx - Math.cos(angle) * headLen * 0.7;
+        const by = ty - Math.sin(angle) * headLen * 0.7;
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5 * dpr;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(ox, oy);
+        ctx.lineTo(bx, by);
+        ctx.stroke();
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(tx, ty, 4 * dpr, 0, Math.PI * 2);
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(
+          tx - headLen * Math.cos(angle - 0.45),
+          ty - headLen * Math.sin(angle - 0.45),
+        );
+        ctx.lineTo(
+          tx - headLen * Math.cos(angle + 0.45),
+          ty - headLen * Math.sin(angle + 0.45),
+        );
+        ctx.closePath();
         ctx.fill();
       };
       const vRefMps = scenario.clubheadSpeedMph * 0.44704;

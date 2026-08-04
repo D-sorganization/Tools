@@ -181,6 +181,7 @@ class Club3DView(QWidget):
         bar.addWidget(QLabel("Display"))
         self._mode_combo = QComboBox()
         self._mode_combo.addItems(VIEW_MODES)
+        self._mode_combo.setCurrentIndex(1)  # Head Moving is the default
         self._mode_combo.setToolTip(
             "Fixed: rotation only, easiest to read.\n"
             "Moving: the head also translates down the target line at the "
@@ -307,7 +308,7 @@ class Club3DView(QWidget):
                 *_display(vec * scale),
                 color=color,
                 lw=2.0,
-                arrow_length_ratio=0.12,
+                arrow_length_ratio=0.22,
                 label=label,
             )
 
