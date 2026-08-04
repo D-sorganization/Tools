@@ -7,11 +7,19 @@
  * scenario's angular velocity. Playback is user-controllable —
  * play/pause, 0.1x-3x speed, and Head Fixed vs Head Moving display
  * modes — matching the desktop app.
+ *
+ * Optional photorealistic mode: an STL file input (client-side
+ * FileReader, nothing uploaded) swaps the procedural wireframe for the
+ * user's clubhead mesh, normalized onto the same envelope and rendered
+ * as flat-shaded painter's-algorithm triangles — depth-sorted by
+ * distance along the camera's forward axis, shaded by |normal · light|
+ * with the same fixed world light as the desktop app.
  */
 
 import { useEffect, useRef, useState } from "react";
 
 import { solve, type ImpactScenario } from "../model/impact";
+import { HEAD_DEPTH_M, loadHeadMesh, type HeadMesh } from "../model/mesh";
 
 type Vec3 = [number, number, number];
 
@@ -36,6 +44,12 @@ const COLORS = {
   vPoint: "#FF375F",
   impact: "#FFD60A",
 };
+
+// STL-mesh shading constants — identical to the PyQt6 club view.
+const LIGHT_LEN = Math.hypot(0.3, 0.8, 0.5);
+const LIGHT_DIR: Vec3 = [0.3 / LIGHT_LEN, 0.8 / LIGHT_LEN, 0.5 / LIGHT_LEN];
+const MESH_BASE_RGB = [0.62, 0.66, 0.72] as const;
+const MESH_AMBIENT = 0.25;
 
 function rodrigues(omega: Vec3, dt: number): number[][] {
   const mag = Math.hypot(...omega);
@@ -131,9 +145,27 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
   const pitchRef = useRef((30 * Math.PI) / 180);
   const zoomRef = useRef(1.0);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [playing, setPlaying] = useState(true);
   const [speed, setSpeed] = useState(1.0);
   const [mode, setMode] = useState<ViewMode>(VIEW_MODES[1]);
+  const [mesh, setMesh] = useState<HeadMesh | null>(null);
+  const [meshError, setMeshError] = useState<string | null>(null);
+
+  const onStlChosen = (file: File | undefined) => {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      try {
+        setMesh(loadHeadMesh(reader.result as ArrayBuffer));
+        setMeshError(null);
+      } catch (err) {
+        setMeshError(err instanceof Error ? err.message : String(err));
+      }
+    };
+    reader.onerror = () => setMeshError("could not read the selected file");
+    reader.readAsArrayBuffer(file);
+  };
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -209,11 +241,56 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
         ctx.setLineDash([]);
       }
 
-      line(parts.face.map(place), COLORS.face, 2.5);
-      line(parts.back.map(place), COLORS.body, 1.2);
-      parts.face.forEach((p, i) =>
-        line([place(p), place(parts.back[i])], COLORS.body, 0.8),
-      );
+      if (mesh) {
+        // Painter's algorithm: camera forward axis from the orbit
+        // angles (same basis as project()); triangles sorted by
+        // centroid depth along it, farthest drawn first.
+        const fwd: Vec3 = [
+          Math.cos(pitch) * Math.cos(yaw),
+          Math.sin(pitch),
+          Math.cos(pitch) * Math.sin(yaw),
+        ];
+        const d = scenario.comToFaceMm / 1000;
+        const shift: Vec3 = [d - HEAD_DEPTH_M / 2, 0, 0];
+        const shaded = mesh.triangles.map((tri, t) => {
+          const placed = tri.map((v) => place(add(v, shift))) as [
+            Vec3,
+            Vec3,
+            Vec3,
+          ];
+          const cx = (placed[0][0] + placed[1][0] + placed[2][0]) / 3;
+          const cy = (placed[0][1] + placed[1][1] + placed[2][1]) / 3;
+          const cz = (placed[0][2] + placed[1][2] + placed[2][2]) / 3;
+          const depth = cx * fwd[0] + cy * fwd[1] + cz * fwd[2];
+          const n = apply(rot, mesh.normals[t]);
+          const lambert = Math.abs(
+            n[0] * LIGHT_DIR[0] + n[1] * LIGHT_DIR[1] + n[2] * LIGHT_DIR[2],
+          );
+          const intensity = MESH_AMBIENT + (1 - MESH_AMBIENT) * lambert;
+          return { placed, depth, intensity };
+        });
+        shaded.sort((a, b) => a.depth - b.depth);
+        for (const { placed, intensity } of shaded) {
+          const rgb = MESH_BASE_RGB.map((c) =>
+            Math.round(Math.min(1, c * intensity) * 255),
+          );
+          ctx.fillStyle = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
+          ctx.beginPath();
+          placed.forEach((p, i) => {
+            const [px, py] = project(p, w, h, zoom, yaw, pitch);
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+          });
+          ctx.closePath();
+          ctx.fill();
+        }
+      } else {
+        line(parts.face.map(place), COLORS.face, 2.5);
+        line(parts.back.map(place), COLORS.body, 1.2);
+        parts.face.forEach((p, i) =>
+          line([place(p), place(parts.back[i])], COLORS.body, 0.8),
+        );
+      }
       line([place(parts.hosel), place(parts.shaftEnd)], COLORS.shaft, 2.5);
 
       const arrow = (origin: Vec3, vec: Vec3, color: string) => {
@@ -276,7 +353,7 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
     const timer = window.setInterval(draw, 40);
     draw();
     return () => window.clearInterval(timer);
-  }, [scenario, playing, speed, mode]);
+  }, [scenario, playing, speed, mode, mesh]);
 
   return (
     <div className="space-y-2">
@@ -318,6 +395,43 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
             ))}
           </select>
         </label>
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept=".stl"
+          className="hidden"
+          aria-hidden="true"
+          tabIndex={-1}
+          onChange={(e) => {
+            onStlChosen(e.target.files?.[0]);
+            e.target.value = "";
+          }}
+        />
+        <button
+          type="button"
+          onClick={() => fileInputRef.current?.click()}
+          title="Render a user-supplied STL clubhead mesh in place of the procedural wireframe (read locally, never uploaded)."
+          className="rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1 font-medium transition-colors hover:border-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+        >
+          Load Clubhead STL…
+        </button>
+        <button
+          type="button"
+          disabled={!mesh}
+          onClick={() => {
+            setMesh(null);
+            setMeshError(null);
+          }}
+          title="Return to the default wireframe head."
+          className="rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1 font-medium transition-colors enabled:hover:border-sky-400 disabled:opacity-40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+        >
+          Procedural Head
+        </button>
+        {meshError && (
+          <span role="alert" className="text-xs text-rose-400">
+            STL load failed: {meshError}
+          </span>
+        )}
       </div>
       <canvas
         ref={canvasRef}

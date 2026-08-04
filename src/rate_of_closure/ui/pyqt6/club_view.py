@@ -14,6 +14,14 @@ along the target line at the delivery speed, showing the true motion).
 The camera is too: drag to orbit (the view angles survive the
 animation's redraws) and scroll to zoom; the sweep plot carries the
 standard matplotlib navigation toolbar for zoom and pan.
+
+An optional photorealistic mode replaces the procedural head with a
+user-supplied STL mesh ("Load Clubhead STL…" in the playback bar).
+The mesh is normalized onto the wireframe's envelope (see
+:mod:`rate_of_closure.mesh`), rendered as a Poly3DCollection with
+lambert-ish flat shading from the triangle normals, and rotated and
+translated by exactly the same Rodrigues transform as the wireframe.
+"Procedural Head" restores the default wireframe.
 """
 
 from __future__ import annotations
@@ -25,17 +33,21 @@ import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.backends.backend_qtagg import NavigationToolbar2QT
 from matplotlib.figure import Figure
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
     QComboBox,
+    QFileDialog,
     QHBoxLayout,
     QLabel,
+    QMessageBox,
     QPushButton,
     QSlider,
     QVBoxLayout,
     QWidget,
 )
 
+from rate_of_closure.mesh import HEAD_DEPTH_M, HeadMesh, load_head_mesh
 from rate_of_closure.model import ImpactScenario, solve, sweep
 
 logger = logging.getLogger(__name__)
@@ -56,6 +68,12 @@ _FACE_HALF_WIDTH = 0.058
 _FACE_HALF_HEIGHT = 0.028
 _BODY_DEPTH = 0.11
 _SHAFT_STUB = 0.35
+
+# STL-mesh shading: fixed world-frame light and a steel-gray base tint.
+# Kept identical to the web clone (src/components/ClubCanvas.tsx).
+_LIGHT_DIR = np.array([0.3, 0.8, 0.5]) / np.linalg.norm([0.3, 0.8, 0.5])
+_MESH_BASE_RGB = np.array([0.62, 0.66, 0.72])
+_MESH_AMBIENT = 0.25
 
 _ANIMATION_SPAN_MS = 8.0
 _ANIMATION_STEPS = 48
@@ -146,6 +164,7 @@ class Club3DView(QWidget):
         layout.addWidget(self._canvas)
 
         self._scenario: ImpactScenario | None = None
+        self._mesh: HeadMesh | None = None
         self._phase = 0.0
         self._speed = 1.0
         self._zoom = 1.0
@@ -189,6 +208,20 @@ class Club3DView(QWidget):
         )
         self._mode_combo.currentTextChanged.connect(lambda _t: self._draw())
         bar.addWidget(self._mode_combo)
+
+        self._load_mesh_button = QPushButton("Load Clubhead STL…")
+        self._load_mesh_button.setToolTip(
+            "Render a user-supplied STL clubhead mesh in place of the "
+            "procedural wireframe (normalized to the head envelope)."
+        )
+        self._load_mesh_button.clicked.connect(self._on_load_mesh_clicked)
+        bar.addWidget(self._load_mesh_button)
+
+        self._reset_mesh_button = QPushButton("Procedural Head")
+        self._reset_mesh_button.setToolTip("Return to the default wireframe head.")
+        self._reset_mesh_button.setEnabled(False)
+        self._reset_mesh_button.clicked.connect(self.clear_mesh)
+        bar.addWidget(self._reset_mesh_button)
         return bar
 
     # ── public API ──────────────────────────────────────────────────
@@ -229,11 +262,43 @@ class Club3DView(QWidget):
         """Current camera zoom factor."""
         return self._zoom
 
+    def load_mesh(self, path: str) -> None:
+        """Load an STL clubhead mesh and switch to photorealistic mode.
+
+        Raises the mesh module's contract errors on unparseable or
+        degenerate files; the button handler wraps this in a dialog.
+        """
+        self._mesh = load_head_mesh(path)
+        self._reset_mesh_button.setEnabled(True)
+        self._draw()
+
+    def clear_mesh(self) -> None:
+        """Discard any loaded STL mesh and restore the procedural head."""
+        self._mesh = None
+        self._reset_mesh_button.setEnabled(False)
+        self._draw()
+
+    def has_mesh(self) -> bool:
+        """Whether an STL mesh is currently rendered."""
+        return self._mesh is not None
+
     def stop(self) -> None:
         """Stop the animation timer (used on window close and in tests)."""
         self._timer.stop()
 
     # ── internals ──────────────────────────────────────────────────
+    def _on_load_mesh_clicked(self) -> None:
+        path, _filter = QFileDialog.getOpenFileName(
+            self, "Load Clubhead STL", "", "STL meshes (*.stl);;All files (*)"
+        )
+        if not path:
+            return
+        try:
+            self.load_mesh(path)
+        except Exception as exc:  # noqa: BLE001 — surface any parse failure
+            logger.warning("STL load failed: %s", exc)
+            QMessageBox.warning(self, "STL Load Failed", str(exc))
+
     def _on_scroll(self, event) -> None:  # type: ignore[no-untyped-def]
         self.set_zoom(self._zoom * (1.1 if event.button == "up" else 1.0 / 1.1))
 
@@ -269,16 +334,21 @@ class Club3DView(QWidget):
         # Preserve the user's orbit angles across the animation redraw.
         elev, azim = float(axes.elev), float(axes.azim)
         axes.clear()
-        for key, color, width in (
-            ("face", _COL_FACE, 2.2),
-            ("back", _COL_BODY, 1.2),
-            ("shaft", _COL_SHAFT, 2.0),
-        ):
-            pts = _display(parts[key] @ rotation.T + offset)
-            axes.plot(pts[:, 0], pts[:, 1], pts[:, 2], color=color, lw=width)
-        for a, b in zip(parts["face"], parts["back"], strict=True):
-            seg = _display(np.vstack([a, b]) @ rotation.T + offset)
-            axes.plot(seg[:, 0], seg[:, 1], seg[:, 2], color=_COL_BODY, lw=0.8)
+        if self._mesh is not None:
+            self._draw_mesh(self._mesh, scenario, rotation, offset)
+            pts = _display(parts["shaft"] @ rotation.T + offset)
+            axes.plot(pts[:, 0], pts[:, 1], pts[:, 2], color=_COL_SHAFT, lw=2.0)
+        else:
+            for key, color, width in (
+                ("face", _COL_FACE, 2.2),
+                ("back", _COL_BODY, 1.2),
+                ("shaft", _COL_SHAFT, 2.0),
+            ):
+                pts = _display(parts[key] @ rotation.T + offset)
+                axes.plot(pts[:, 0], pts[:, 1], pts[:, 2], color=color, lw=width)
+            for a, b in zip(parts["face"], parts["back"], strict=True):
+                seg = _display(np.vstack([a, b]) @ rotation.T + offset)
+                axes.plot(seg[:, 0], seg[:, 1], seg[:, 2], color=_COL_BODY, lw=0.8)
 
         impact = parts["impact"] @ rotation.T + offset
         axes.scatter(*_display(impact), color=_COL_IMPACT, s=45, zorder=5)
@@ -327,6 +397,36 @@ class Club3DView(QWidget):
         )
         axes.legend(loc="upper left", fontsize=8)
         self._canvas.draw_idle()
+
+    def _draw_mesh(
+        self,
+        mesh: HeadMesh,
+        scenario: ImpactScenario,
+        rotation: np.ndarray,
+        offset: np.ndarray,
+    ) -> None:
+        """Shaded STL head under the same transform as the wireframe.
+
+        The normalized mesh is centered on the origin, so it is first
+        shifted along +x until its face plane sits at ``com_to_face``
+        (where the wireframe's face plate is), then rotated about the
+        reference point and translated with the head. Shading is flat
+        lambert-ish: intensity = ambient + (1 - ambient) * |n . L| with
+        a fixed world light, evaluated on the rotated normals. Depth
+        ordering is matplotlib's own Poly3DCollection z-sort (average
+        triangle depth), the painter's algorithm it applies natively.
+        """
+        d = scenario.com_to_face_mm / 1000.0
+        head_shift = np.array([d - HEAD_DEPTH_M / 2.0, 0.0, 0.0])
+        tris = (mesh.triangles + head_shift) @ rotation.T + offset
+        normals = mesh.normals @ rotation.T
+        lambert = np.abs(normals @ _LIGHT_DIR)
+        intensity = _MESH_AMBIENT + (1.0 - _MESH_AMBIENT) * lambert
+        colors = np.clip(intensity[:, None] * _MESH_BASE_RGB[None, :], 0.0, 1.0)
+        collection = Poly3DCollection(
+            _display(tris), facecolors=colors, edgecolors="none", linewidths=0.0
+        )
+        self._axes.add_collection3d(collection)
 
 
 class SweepView(QWidget):

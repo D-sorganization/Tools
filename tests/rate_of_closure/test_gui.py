@@ -190,6 +190,46 @@ class TestClub3DView:
         assert float(view._axes.azim) == pytest.approx(12.0)
         view.stop()
 
+    def test_stl_load_and_reset(self, qtbot, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        from rate_of_closure.mesh import write_binary_stl
+        from rate_of_closure.scripts.generate_example_head import build_example_head
+
+        stl_path = tmp_path / "head.stl"
+        stl_path.write_bytes(write_binary_stl(build_example_head()))
+
+        view = Club3DView()
+        qtbot.addWidget(view)
+        view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+        assert not view.has_mesh()
+        assert not view._reset_mesh_button.isEnabled()
+
+        view.load_mesh(str(stl_path))
+        assert view.has_mesh()
+        assert view._reset_mesh_button.isEnabled()
+        # The shaded head renders as a Poly3DCollection on the axes.
+        from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+        view._draw()
+        assert any(
+            isinstance(artist, Poly3DCollection) for artist in view._axes.collections
+        )
+
+        view.clear_mesh()
+        assert not view.has_mesh()
+        assert not view._reset_mesh_button.isEnabled()
+        view._draw()  # procedural head draws again without error
+        view.stop()
+
+    def test_stl_load_rejects_bad_file(self, qtbot, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        bad = tmp_path / "bad.stl"
+        bad.write_bytes(b"not an stl")
+        view = Club3DView()
+        qtbot.addWidget(view)
+        with pytest.raises(Exception, match="STL"):
+            view.load_mesh(str(bad))
+        assert not view.has_mesh()
+        view.stop()
+
     def test_view_modes_switch(self, qtbot) -> None:  # type: ignore[no-untyped-def]
         view = Club3DView()
         qtbot.addWidget(view)

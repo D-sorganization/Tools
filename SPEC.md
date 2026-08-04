@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.4                                      |
-| **Spec Version**        | 1.5.4                                      |
+| **Current Version**     | 1.5.5                                      |
+| **Spec Version**        | 1.5.5                                      |
 | **Last Spec Update**    | 2026-08-03                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,29 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-03 Rate of Closure STL Clubhead Rendering
+
+- `src/rate_of_closure/mesh.py` adds an optional photorealistic-clubhead
+  mode: a dependency-free pure-numpy STL parser/writer (binary and
+  ASCII) with DbC contracts that normalizes any user-supplied mesh onto
+  the procedural head envelope — degenerate triangles dropped, axes
+  permuted by bounding-box extent so the face plate points +x (largest
+  extent to z/width, middle to x/depth, smallest to y/height), bounding
+  box centered and scaled to the canonical 0.11 m depth. The PyQt6 club
+  view grows "Load Clubhead STL…" / "Procedural Head" playback-bar
+  buttons and renders loaded meshes as a Poly3DCollection with flat
+  lambert-ish shading (ambient + |normal . light|), driven by the same
+  Rodrigues rotation and translation as the wireframe; the web clone
+  mirrors it with a client-side FileReader STL input
+  (`web/src/model/mesh.ts`, parity-tested in vitest against the pinned
+  pytest numbers) and flat-shaded painter's-algorithm triangles
+  depth-sorted along the camera's forward axis on the existing canvas.
+  A stylized example driver head is generated programmatically
+  (`scripts/generate_example_head.py`, superellipse loft — no licensed
+  geometry) and shipped as `assets/example_driver_head.stl`; tests in
+  `tests/rate_of_closure/test_mesh.py` plus GUI load/reset smoke tests.
+
+
 ### 2026-08-03 Rate of Closure Impact Explorer
 
 - `src/rate_of_closure/` adds a new Biomechanics tool quantifying the
@@ -1741,6 +1764,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-03 | 1.5.5 | feat(rate_of_closure): optional photorealistic STL clubhead rendering — pure-numpy binary/ASCII STL parser with head-envelope normalization (mesh.py), PyQt6 Load Clubhead STL/Procedural Head playback-bar controls with lambert-shaded Poly3DCollection rendering, web-clone FileReader STL input with painter's-algorithm flat-shaded triangles (TS parser parity-tested against pytest), and a programmatically generated example driver-head STL free of licensing risk. |
 | 2026-08-03 | 1.5.4 | feat(rate_of_closure): add the Rate of Closure Impact Explorer (twist-based impact-point deviation model, PyQt6 3D clubhead + closure sweep, parity-tested React/Vite/Tauri web clone) aligned to the AffineDrift launch-monitor conventions and Cheetham closure-rate data; playback controls with head-fixed/head-moving display modes, clickable result explanations, a live-substituted Derivation & Traceability tab (mathtext / KaTeX), independent cross-validation tests, PyInstaller/Tauri packaging, and brand-neutral program strings; review round adds unit drop-downs (speed/rotation/length) with a canonical-unit model core, arrow-free typed inputs with sourced golf-swing range tooltips, a Common Closure Metrics panel (CCV, deg/ft, deg/in, deg/ms, R_ISA, time-to-square, toe-heel speed delta), a derivation-tab scroll fix, and removal of the duplicated Theme menu. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |
 | 2026-07-26 | 1.5.3 | fix(ci): isolate both protected Python jobs in per-job virtual environments after validating the persistent setup-python runtime; repair and import-probe the matrix NumPy/SciPy stack with compatible bounds, and reinstall OpenCV without dependency resolution so it cannot replace the verified NumPy wheel. |
