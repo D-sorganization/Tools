@@ -16,6 +16,13 @@ Orchestrates a full swing -> impact -> flight run:
 from __future__ import annotations
 
 from .export import run_to_json_dict, write_csv, write_json
+from .flight_explorer import (
+    EXPLORER_METRIC_KEYS,
+    FlightExploration,
+    explore_flight,
+    launch_from_delivery,
+    launch_from_direct,
+)
 from .isa import screw_axis_samples
 from .session import (
     BALL_POSITION_M,
@@ -35,14 +42,19 @@ from .sources import (
 
 __all__ = [
     "BALL_POSITION_M",
+    "EXPLORER_METRIC_KEYS",
     "SOURCE_KINDS",
     "AppFrameSwing",
+    "FlightExploration",
     "ManualSwingSource",
     "SimulationConfig",
     "SimulationRun",
     "TriplePendulumParameters",
     "TriplePendulumSwing",
     "delivery_at",
+    "explore_flight",
+    "launch_from_delivery",
+    "launch_from_direct",
     "make_source",
     "run_simulation",
     "run_to_json_dict",

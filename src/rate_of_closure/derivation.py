@@ -205,6 +205,13 @@ LAUNCH_EXPLANATIONS: dict[str, str] = {
         "Descent angle below horizontal at the terminal ground event; "
         "steeper landings stop faster (driver band roughly 35-45 deg)."
     ),
+    "lateral_m": (
+        "Sideways landing offset from the target line (+ = right of "
+        "target for a right-handed player): the integrated effect of "
+        "launch azimuth plus spin-axis-tilt curvature (the D-plane's "
+        "Magnus component), reported the way launch monitors report "
+        "carry offline."
+    ),
 }
 
 

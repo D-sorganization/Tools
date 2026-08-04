@@ -12,6 +12,7 @@
 import { useMemo, useState } from "react";
 
 import { ClubCanvas } from "./components/ClubCanvas";
+import { FlightExplorerPanel } from "./components/FlightExplorerPanel";
 import { PlotsPanel } from "./components/PlotsPanel";
 import { SimulationPanel } from "./components/SimulationPanel";
 import { ClubPanel } from "./components/ClubPanel";
@@ -127,6 +128,7 @@ const TABS = [
   "Derivation & Traceability",
   "Simulation",
   "Plots",
+  "Flight Explorer",
 ] as const;
 
 export default function App() {
@@ -242,7 +244,9 @@ export default function App() {
         ))}
       </nav>
 
-      {tab === TABS[3] ? (
+      {tab === TABS[4] ? (
+        <FlightExplorerPanel />
+      ) : tab === TABS[3] ? (
         // Static loft mirrors the desktop default driver (same note as
         // the Simulation tab; the full club picker joins with P7 WASM).
         <PlotsPanel scenario={scenario} loftDeg={10.5} />

@@ -89,6 +89,66 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   scopes, export files in tmp, tooltip coverage); web
   `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
   builtins, exports).
+### 2026-08-04 Rate of Closure scale-separated viewers + standalone Flight Explorer (epic #4120, V2)
+
+- Three purpose-built, scale-separated viewers replace the single
+  mixed-scale scene in the Simulation tab's display area (sub-tabs
+  Strike / Swing / Flight, each with its own display-parameter
+  checklist whose state persists for the session):
+  - `ui/pyqt6/strike_view.py` — impact-zone view at FACE scale
+    (millimetres, hard-capped at ±120 mm — `STRIKE_MAX_EXTENT_MM`;
+    never shows flight): superellipse face outline sized from the
+    club's mass envelope, bulge/roll sagitta contours when the face is
+    curved, impact-offset marker plus a strike-history scatter, the
+    delivered club-path / face-normal / attack-angle vectors projected
+    into the face plane, and a club-info annotation.
+  - Swing view (`simulation_view.py`) — the existing 3D scene scoped
+    to SWING scale: the flight polyline is removed from the default
+    display and the scene extent stays at the swing envelope; a new
+    'Show Ball Flight' checkbox (default OFF, with guidance warning
+    that the flight envelope dwarfs the swing) opts back into the old
+    expand-to-flight behaviour.
+  - `ui/pyqt6/flight_view.py` — dedicated FLIGHT-scale viewer: side
+    profile (height vs carry) + top-down (lateral vs carry) 2D panels
+    plus the 3D polyline, landing point and apex annotated, reusable
+    with a bare trajectory (no swing) via `set_trajectory`.
+- Standalone Ball-Flight Explorer: new top-level PyQt6 tab
+  (`ui/pyqt6/flight_explorer_tab.py`) over a pure logic layer
+  (`simulation/flight_explorer.py`): direct entry of launch conditions
+  (ball speed with mph / m/s unit drop-down, launch angle, azimuth,
+  spin rpm, spin-axis tilt — app signs: + = right of target / fade
+  side) OR impact-delivery parameters run through
+  `swing_sim.impact.delivery` + the rigid-body impact model, a model
+  picker across all 7 literature flight models, rendering in the
+  flight viewer, and clickable result rows (carry, apex, flight time,
+  landing angle, lateral — `lateral_m` explanation added to
+  `LAUNCH_EXPLANATIONS`). No swing required.
+- Small-window layout defect fixed: window minimum lowered to
+  1024×700 (registration updated), every control column scrolls
+  (`QScrollArea`), typed entries carry minimum widths (≥ 84 px spins),
+  result-row labels tooltip their full text and values keep a minimum
+  width; `tests/rate_of_closure/test_layout_minsize.py` resizes the
+  window to 1024×700 headlessly, walks every (nested) tab, and asserts
+  every visible QLineEdit/QDoubleSpinBox is ≥ 64 px wide with no
+  zero-height visible widgets.
+- Web practical parity: Strike / Swing / Flight segmented views in the
+  Simulation panel (strike-zone canvas with face outline + offset
+  marker + delivery vectors; side + top-down flight profile canvases
+  with landing annotations), a 'Show Ball Flight' toggle separated
+  from the swing canvas scale, and a standalone Flight Explorer tab
+  (`model/flightExplorer.ts` + `components/FlightExplorerPanel.tsx`)
+  parity-banded against the pytest pinned case (167 mph / 10.9° /
+  2,686 rpm → carry ≈ 247.5 m under Waterloo/Penner); responsive
+  min-widths (`min-w-*`, truncation with title attributes). The
+  7-model picker and delivery mode stay Python-side until P7 WASM.
+- Tests: viewer scale invariants (strike extents never exceed face
+  scale; the flight toggle changes the swing-view limits and restores
+  them), flight-explorer end-to-end pins in both entry modes, sign
+  conventions (+ azimuth / fade tilt land right), all-7-model runs, TS
+  parity pins, GUI smoke for every new tab, sourced tooltips
+  test-enforced on every new control. Non-goals here: the Closure
+  Sweep plotting suite (V1, separate branch), the Monte Carlo
+  variation engine (V3), and the help system (V4).
 
 ### 2026-08-04 Rate of Closure solver panel — goal-driven optimization UI (epic #4103, #4109 #4110)
 
@@ -2094,6 +2154,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V1): investigative plotting suite — `plotting/` package (40-variable DbC data catalog with pinned keys, frozen JSON-round-trip PlotSpec `rate_of_closure.plot_spec/1`, one compute/render pipeline with full-simulation sweeps and themed palette, built-in advanced plots: migrated closure sweep, delivery-vs-τ, launch-vs-toe/high offset maps, swing time series, side/top-down flight profiles); PyQt6 Plots tab replacing the Closure Sweep tab (plot list add/duplicate/remove, 3-step Custom Plot wizard with live preview, navigation toolbar, PNG/SVG/CSV/JSON + save/load definition exports, tooltips everywhere); web parity via plotcatalog.ts (key list pinned against the pytest-exported fixture), plotspec.ts (shared schema + pipeline), and a Plots tab with built-in picker, simplified custom builder, canvas rendering, PNG/CSV/JSON downloads, and definition import/export interoperable with the desktop app. |
+| 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V2): scale-separated viewers + standalone Flight Explorer + small-window layout fixes. PyQt6: Strike/Swing/Flight display sub-tabs in the Simulation tab — new face-scale StrikeView (superellipse face outline sized from the club mass envelope, bulge/roll sagitta contours, impact marker + strike-history scatter, path/face/AoA vectors in the face plane, club info; extents hard-capped at ±120 mm), swing view scoped to swing scale with the flight polyline behind a default-OFF 'Show Ball Flight' checkbox (guidance warns flight dwarfs the swing), new flight-scale FlightView (side + top-down profiles + 3D polyline, landing/apex annotated); new top-level Flight Explorer tab over `simulation/flight_explorer.py` (direct launch entry with unit drop-down or impact-delivery entry through swing_sim.impact + rigid-body solve, 7-model picker, result rows with explanations incl. new lateral_m); window minimum lowered to 1024×700 with scrolling control columns, ≥84 px entry minimums, and a headless small-window layout test. Web: Strike/Swing/Flight segmented views (strike + flight profile canvases), separated Show-Ball-Flight toggle, standalone Flight Explorer panel parity-banded against the pytest pinned case (167 mph / 10.9° / 2686 rpm → ~247.5 m carry); responsive min-widths with title-attribute truncation. |
 | 2026-08-04 | 1.9.0 | feat(rate_of_closure, #4109 #4110): solver panel — goal-driven optimization UI. PyQt6 Solver tab in the Simulation tab (checkbox-enabled weighted ImpactGoal targets, Optimize-with-bounds / Fix VariablePartition editor with a double-pendulum swing-source mode, start-count spinner, Run/Cancel on a QThread worker with ProgressReport-driven progress bar and cooperative cancel_event, achieved-vs-goal table with per-goal errors / residual norm / convergence / expandable per-start diagnostics, Apply loading solved variables into the simulation session and rerunning the 3D scene; sourced tooltips throughout, DbC errors as friendly status messages). Web: model/solver.ts bounded Nelder-Mead over the TS-physics objective (delivery variables, deterministic multi-start) + SolverPanel section with apply-to-scenario, parity-pinned against the pytest easy case (150 mph ball speed -> ~45.825 m/s clubhead speed); WASM/worker upgrade deferred to P7. |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
 | 2026-08-04 | 1.8.0 | feat(rate_of_closure, epic #4103): simulation session integrating swing_sim into the app — app-frame swing sources (manual constant twist, shared double pendulum, new triple pendulum), swing → impact (gear effect + bulge/roll callable) → flight orchestration into one exportable SimulationRun, fixed-ball impact-time scrubber, thin ISA adapter over the rotation converter with a toggleable screw-axis overlay, PyQt6 Simulation tab (sourced-guidance inputs, launch rows with explanations, ball/ground toggles, flight polyline, full video playback with 1×-real-time rate presets, sortable inspector, CSV/JSON export) and a parity-pinned web Simulation tab (pendulum/impact/flight TS port, scrubber, playback, JSON download; WASM supersedes in P7). |

@@ -134,4 +134,39 @@ export const FIELD_GUIDANCE: Record<string, string> = {
   groundVisible:
     "Suggested range: on to show the ground line for spatial reference. " +
     "Source: standard golf-scene convention.",
+  swingFlightToggle:
+    "Off by default: the flight envelope (100+ m) dwarfs the swing " +
+    "envelope (~3 m), collapsing the swing to a dot when both share one " +
+    "scale. Turn on only to see the full trajectory in context. Source: " +
+    "typical driver carry (Penner 2003) vs. club length (published " +
+    "manufacturer specs).",
+  strikeVectorsVisible:
+    "Delivered club path, face normal, and attack-angle directions " +
+    "projected into the face plane. Source: standard launch-monitor " +
+    "D-plane presentation (TrackMan literature; Jorgensen, The Physics " +
+    "of Golf).",
+  fxBallSpeed:
+    "Suggested range: 120-190 mph ball speed (tour driver average near " +
+    "167 mph; strong amateurs 140-160). Source: openly published tour " +
+    "launch-monitor averages.",
+  fxLaunchAngle:
+    "Suggested range: 8-16 deg launch for drivers (tour average near " +
+    "10.9 deg); higher for irons and wedges. Source: openly published " +
+    "tour launch-monitor averages.",
+  fxAzimuth:
+    "Suggested range: within +/-10 deg of the target line; + = right of " +
+    "target. Source: standard launch-monitor sign convention (launch " +
+    "direction).",
+  fxSpinRpm:
+    "Suggested range: 2,000-3,500 rpm total spin for drivers (tour " +
+    "average near 2,686 rpm); 4,000-10,000+ for irons and wedges. " +
+    "Source: openly published tour launch-monitor averages.",
+  fxSpinAxisTilt:
+    "Suggested range: within +/-20 deg spin-axis tilt; + = fade/slice " +
+    "side (curves right for a right-handed player), - = draw/hook side. " +
+    "Source: TrackMan D-plane literature.",
+  fxSpeedUnit:
+    "Suggested range: mph for launch-monitor style entry, m/s for SI " +
+    "work; the model always computes in SI. Source: launch-monitor " +
+    "display convention.",
 };

@@ -90,6 +90,7 @@ def _spin(
     spin.setRange(lo, hi)
     spin.setSuffix(suffix)
     spin.setValue(value)
+    spin.setMinimumWidth(84)  # readable at small windows (#4120)
     return spin
 
 
@@ -237,6 +238,7 @@ class SolverPanel(QWidget):
         self._starts_spin.setRange(1, 64)
         self._starts_spin.setValue(DEFAULT_N_STARTS)
         self._starts_spin.setToolTip(_STARTS_GUIDANCE)
+        self._starts_spin.setMinimumWidth(64)  # readable at small windows
         row.addWidget(self._starts_spin)
         self._run_button = QPushButton("Run Solver")
         self._run_button.setToolTip(

@@ -15,7 +15,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 import {
-  BALL_POSITION,
   runSimulation,
   type SimulationInput,
   type SimulationRunTs,
@@ -23,7 +22,14 @@ import {
 } from "../model/simulation";
 import { FIELD_GUIDANCE } from "../model/units";
 import { type ImpactScenario } from "../model/impact";
+import { FlightCanvases } from "./FlightCanvases";
 import { SolverPanel } from "./SolverPanel";
+import { StrikeCanvas } from "./StrikeCanvas";
+import { drawSwingScene } from "./swingSceneDraw";
+
+/** Scale-separated display views (epic #4120): face / swing / flight. */
+const VIEWS = ["Strike", "Swing", "Flight"] as const;
+type ViewName = (typeof VIEWS)[number];
 
 const RATE_PRESETS: Array<{ label: string; rate: number }> = [
   { label: "0.1×", rate: 0.1 },
@@ -61,7 +67,27 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
   const [time, setTime] = useState(0);
   const [showBall, setShowBall] = useState(true);
   const [showGround, setShowGround] = useState(true);
+  // Scale separation (#4120): flight display in the swing view is
+  // opt-in — its envelope dwarfs the swing envelope.
+  const [showFlight, setShowFlight] = useState(false);
+  const [view, setView] = useState<ViewName>("Swing");
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+
+  // Delivered path / attack angle at impact, for the strike view.
+  const deliveryAngles = useMemo(() => {
+    if (!run) return null;
+    const dt = run.swing[1].t - run.swing[0].t;
+    const index = Math.min(
+      run.swing.length - 1,
+      Math.round(run.impactTimeS / dt),
+    );
+    const v = run.swing[index].velocity;
+    const degOf = (r: number) => (r * 180.0) / Math.PI;
+    return {
+      pathDeg: degOf(Math.atan2(v[2], v[0])),
+      aoaDeg: degOf(Math.atan2(v[1], Math.hypot(v[0], v[2]))),
+    };
+  }, [run]);
 
   const input: SimulationInput = useMemo(
     () => ({
@@ -110,106 +136,12 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
     return () => cancelAnimationFrame(raf);
   }, [playing, run, rate, loop]);
 
-  // Scene drawing: side-on orthographic projection (x right, y up).
+  // Scene drawing: swing-scale renderer (see swingSceneDraw.ts).
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    const { width, height } = canvas;
-    ctx.clearRect(0, 0, width, height);
-    if (!run) {
-      ctx.fillStyle = "#64748b";
-      ctx.font = "14px sans-serif";
-      ctx.fillText("Run a simulation to populate the scene.", 16, 28);
-      return;
-    }
-
-    const swingEnd = run.swing[run.swing.length - 1].t;
-    const inFlight = time > run.impactTimeS;
-    // Extent: swing envelope near impact, flight envelope once airborne.
-    const extentX = inFlight
-      ? Math.max(10, ...run.flight.map((p) => Math.abs(p.position[0]))) * 1.05
-      : Math.max(1.5, ...run.swing.map((p) => Math.abs(p.position[0]))) * 1.15;
-    const extentY = inFlight
-      ? Math.max(5, ...run.flight.map((p) => p.position[1])) * 1.3
-      : Math.max(1.5, ...run.swing.map((p) => Math.abs(p.position[1]))) * 1.15;
-    const originX = inFlight ? 30 : width / 2;
-    const scaleX = (width - 60) / (inFlight ? extentX : 2 * extentX);
-    const scaleY = (height - 40) / (inFlight ? extentY : 2 * extentY);
-    const s = Math.min(scaleX, scaleY);
-    const groundY = inFlight ? height - 24 : height / 2 + extentY * s * 0.5;
-    const px = (x: number) => originX + x * s;
-    const py = (y: number) => groundY - y * s;
-
-    if (showGround) {
-      ctx.strokeStyle = "#475569";
-      ctx.beginPath();
-      ctx.moveTo(0, py(0));
-      ctx.lineTo(width, py(0));
-      ctx.stroke();
-    }
-    if (showBall) {
-      ctx.fillStyle = "#facc15";
-      ctx.beginPath();
-      ctx.arc(px(BALL_POSITION[0]), py(BALL_POSITION[1]), 4, 0, 2 * Math.PI);
-      ctx.fill();
-    }
-
-    // Swing path (faint full arc + traversed portion + head marker).
-    const drawPath = (
-      points: Array<{ position: [number, number, number] }>,
-      color: string,
-      widthPx: number,
-    ) => {
-      if (points.length < 2) return;
-      ctx.strokeStyle = color;
-      ctx.lineWidth = widthPx;
-      ctx.beginPath();
-      points.forEach((point, index) => {
-        const cx = px(point.position[0]);
-        const cy = py(point.position[1]);
-        if (index === 0) ctx.moveTo(cx, cy);
-        else ctx.lineTo(cx, cy);
-      });
-      ctx.stroke();
-      ctx.lineWidth = 1;
-    };
-    drawPath(run.swing, "rgba(56,189,248,0.25)", 1);
-    const swingIndex = Math.min(
-      run.swing.length - 1,
-      Math.round((Math.min(time, swingEnd) / swingEnd) * (run.swing.length - 1)),
-    );
-    drawPath(run.swing.slice(0, swingIndex + 1), "#38bdf8", 2);
-    const head = run.swing[swingIndex].position;
-    ctx.fillStyle = "#f472b6";
-    ctx.beginPath();
-    ctx.arc(px(head[0]), py(head[1]), 4, 0, 2 * Math.PI);
-    ctx.fill();
-
-    // Flight trajectory polyline (faint + traversed).
-    drawPath(run.flight, "rgba(52,211,153,0.25)", 1);
-    if (inFlight) {
-      const flightT = time - run.impactTimeS;
-      const upto = run.flight.filter((p) => p.time <= flightT);
-      drawPath(upto, "#34d399", 2);
-      if (upto.length) {
-        const ball = upto[upto.length - 1].position;
-        ctx.fillStyle = "#facc15";
-        ctx.beginPath();
-        ctx.arc(px(ball[0]), py(ball[1]), 3, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-    }
-
-    ctx.fillStyle = "#94a3b8";
-    ctx.font = "12px sans-serif";
-    ctx.fillText(
-      `t = ${time.toFixed(3)} s (${inFlight ? "flight" : "swing"}) — impact at ${run.impactTimeS.toFixed(3)} s`,
-      12,
-      16,
-    );
-  }, [run, time, showBall, showGround]);
+    drawSwingScene(canvas, run, { time, showBall, showGround, showFlight });
+  }, [run, time, showBall, showGround, showFlight, view]);
 
   const exportJson = () => {
     if (!run) return;
@@ -374,8 +306,48 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
         <SolverPanel onApply={onScenarioChange} />
       </section>
 
-      <section className="space-y-3">
+      <section className="min-w-0 space-y-3">
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
+          <div
+            className="mb-3 flex gap-2"
+            role="tablist"
+            aria-label="Display views (scale-separated)"
+          >
+            {VIEWS.map((name) => (
+              <button
+                key={name}
+                type="button"
+                role="tab"
+                aria-selected={view === name}
+                onClick={() => setView(name)}
+                className={
+                  "rounded-full border px-4 py-1 text-sm font-medium transition-all " +
+                  (view === name
+                    ? "border-sky-400/60 bg-sky-500/10 text-sky-300"
+                    : "border-slate-700/80 bg-slate-900/60 text-slate-300 hover:border-slate-500")
+                }
+              >
+                {name}
+              </button>
+            ))}
+          </div>
+          {view === "Strike" && (
+            <StrikeCanvas
+              toeMm={scenario.impactOffsetToeMm}
+              highMm={scenario.impactOffsetHighMm}
+              loftDeg={loftDeg}
+              pathDeg={deliveryAngles?.pathDeg}
+              aoaDeg={deliveryAngles?.aoaDeg}
+            />
+          )}
+          {view === "Flight" && (
+            <FlightCanvases
+              points={run?.flight ?? []}
+              emptyText="Run a simulation to populate the flight view."
+            />
+          )}
+          {view === "Swing" && (
+            <>
           <div className="mb-2 flex flex-wrap items-center gap-2 text-sm">
             <button
               type="button"
@@ -459,14 +431,30 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
               />
               Ground
             </label>
+            <label
+              className="flex items-center gap-1 text-amber-300/90"
+              title={
+                "Warning: expands the scene to flight scale, dwarfing " +
+                "the swing. " + FIELD_GUIDANCE.swingFlightToggle
+              }
+            >
+              <input
+                type="checkbox"
+                checked={showFlight}
+                onChange={(e) => setShowFlight(e.target.checked)}
+              />
+              Show Ball Flight
+            </label>
           </div>
           <canvas
             ref={canvasRef}
             width={860}
             height={480}
-            className="w-full rounded-lg border border-slate-800 bg-slate-950/60"
-            aria-label="Simulation scene (side view)"
+            className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
+            aria-label="Simulation scene (side view, swing scale)"
           />
+            </>
+          )}
         </div>
       </section>
     </div>
