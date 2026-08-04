@@ -60,11 +60,16 @@ export function useTrendBackfill(
         if (cancelled || !d?.timestamps) return;
         const ts: string[] = d.timestamps;
         const vs: number[] = d.values ?? [];
-        setPoints(
-          ts
-            .map((iso, i) => ({ t: parseHistorianTs(iso), v: (vs[i] ?? 0) * scale }))
-            .filter((p) => Number.isFinite(p.t)),
-        );
+        // ⚡ Bolt Optimization: Replace chained .map().filter() passes with a single-pass for loop
+        // to avoid intermediate array allocations and closure overhead on large historian backfill arrays.
+        const pts: BackfillPoint[] = [];
+        for (let i = 0; i < ts.length; i++) {
+          const t = parseHistorianTs(ts[i]);
+          if (Number.isFinite(t)) {
+            pts.push({ t, v: (vs[i] ?? 0) * scale });
+          }
+        }
+        setPoints(pts);
       })
       .catch(() => {
         if (!cancelled) setPoints([]);
