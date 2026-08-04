@@ -19,13 +19,6 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
-    # Cheap pre-filter, evaluated by GitHub before any runner is requested: a
-    # skipped job consumes no fleet capacity. Without it, EVERY issue comment
-    # in this repo occupied two d-sorg-fleet runners (pick-runner, then
-    # check-mention) just to discover the comment did not mention @jules.
-    # `contains` is case-insensitive and deliberately looser than the
-    # word-boundary grep in check-mention, which remains the precise arbiter.
-    if: contains(github.event.comment.body, '@jules')
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
