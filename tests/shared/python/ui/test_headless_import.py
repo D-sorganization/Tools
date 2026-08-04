@@ -15,8 +15,7 @@ import textwrap
 
 def test_ui_imports_without_pyqt6() -> None:
     """Importing ``ui`` succeeds with PyQt6 forced absent; widgets are None."""
-    script = textwrap.dedent(
-        """
+    script = textwrap.dedent("""
         import sys
         import importlib.abc
 
@@ -42,8 +41,7 @@ def test_ui_imports_without_pyqt6() -> None:
         assert "AutoCompleteLineEdit" in ui.__all__
         assert "HoverCopyTextBrowser" in ui.__all__
         print("HEADLESS_UI_IMPORT_OK")
-        """
-    )
+        """)
     result = subprocess.run(
         [sys.executable, "-c", script],
         capture_output=True,
@@ -51,9 +49,9 @@ def test_ui_imports_without_pyqt6() -> None:
         check=False,
         cwd=_repo_src_dir(),
     )
-    assert result.returncode == 0, (
-        f"headless ui import failed:\nstdout={result.stdout}\nstderr={result.stderr}"
-    )
+    assert (
+        result.returncode == 0
+    ), f"headless ui import failed:\nstdout={result.stdout}\nstderr={result.stderr}"
     assert "HEADLESS_UI_IMPORT_OK" in result.stdout
 
 

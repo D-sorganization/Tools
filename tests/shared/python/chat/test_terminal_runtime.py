@@ -246,9 +246,9 @@ def test_default_session_env_excludes_credential_variables(
 
     env = _build_default_session_env()
 
-    assert var_name not in env, (
-        f"{var_name!r} must not appear in the default session env"
-    )
+    assert (
+        var_name not in env
+    ), f"{var_name!r} must not appear in the default session env"
 
 
 def test_default_session_env_includes_path(monkeypatch: pytest.MonkeyPatch) -> None:
