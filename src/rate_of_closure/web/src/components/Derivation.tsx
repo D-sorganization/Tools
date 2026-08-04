@@ -36,7 +36,7 @@ export function Derivation({ scenario }: { scenario: ImpactScenario }) {
   return (
     <section
       aria-label="Derivation and traceability"
-      className="rounded-lg border border-slate-800 bg-slate-900 p-5"
+      className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-6 shadow-lg shadow-black/20 backdrop-blur"
     >
       <p className="mb-4 max-w-3xl text-sm text-slate-400">
         Every result traces to one of the steps below; the second line of
@@ -48,7 +48,7 @@ export function Derivation({ scenario }: { scenario: ImpactScenario }) {
       <ol className="space-y-6">
         {steps.map((step, index) => (
           <li key={step.title}>
-            <h3 className="text-sm font-semibold text-slate-200">
+            <h3 className="text-sm font-semibold tracking-wide text-sky-200">
               Step {index + 1} — {step.title}
             </h3>
             <p className="mt-1 max-w-3xl text-sm text-slate-400">

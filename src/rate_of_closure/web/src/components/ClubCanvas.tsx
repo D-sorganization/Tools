@@ -73,25 +73,28 @@ function add(a: Vec3, b: Vec3): Vec3 {
 /**
  * Orthographic projection under a user-controlled orbit camera.
  *
- * Model frame is the AffineDrift convention (x target, y up, z right);
- * the projection treats z as across, x as depth, and y as vertical.
+ * Model frame is the AffineDrift convention (x target, y up, z right).
+ * The camera orbits the origin at `azimuth` (radians around the up
+ * axis, measured from +x toward +z) and `elevation`. The defaults
+ * (150 deg, 30 deg) match the PyQt view: behind the ball on the toe
+ * side, so a right-handed club reads as right-handed.
  */
 function project(
   v: Vec3,
   w: number,
   h: number,
   zoom: number,
-  yaw: number,
-  pitch: number,
+  azimuth: number,
+  elevation: number,
 ): [number, number] {
-  const across = v[2];
-  const depth = v[0];
-  const up = v[1];
-  const x1 = across * Math.cos(yaw) - depth * Math.sin(yaw);
-  const y1 = across * Math.sin(yaw) + depth * Math.cos(yaw);
-  const z1 = up * Math.cos(pitch) - y1 * Math.sin(pitch);
+  const sinA = Math.sin(azimuth);
+  const cosA = Math.cos(azimuth);
+  const sinE = Math.sin(elevation);
+  const cosE = Math.cos(elevation);
+  const sx = v[0] * sinA - v[2] * cosA;
+  const sy = -sinE * cosA * v[0] + cosE * v[1] - sinE * sinA * v[2];
   const scale = Math.min(w, h) * zoom;
-  return [w / 2 + x1 * scale, h * 0.62 - z1 * scale];
+  return [w / 2 + sx * scale, h * 0.62 - sy * scale];
 }
 
 function headParts(scenario: ImpactScenario) {
@@ -123,8 +126,9 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const phaseRef = useRef(0);
   // Orbit camera state lives in refs so dragging never re-runs effects.
-  const yawRef = useRef(-0.6);
-  const pitchRef = useRef(0.35);
+  // Defaults match the PyQt view (azimuth 150 deg, elevation 30 deg).
+  const yawRef = useRef((150 * Math.PI) / 180);
+  const pitchRef = useRef((30 * Math.PI) / 180);
   const zoomRef = useRef(1.0);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
   const [playing, setPlaying] = useState(true);
@@ -145,8 +149,30 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
     const speedMps = scenario.clubheadSpeedMph * 0.44704;
 
     const draw = () => {
+      // Render at device resolution so the canvas stays sharp on
+      // high-DPI displays and at any layout width.
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      const bw = Math.max(1, Math.round(rect.width * dpr));
+      const bh = Math.max(1, Math.round(rect.width * 0.68 * dpr));
+      if (canvas.width !== bw || canvas.height !== bh) {
+        canvas.width = bw;
+        canvas.height = bh;
+      }
       const { width: w, height: h } = canvas;
       ctx.clearRect(0, 0, w, h);
+      const backdrop = ctx.createRadialGradient(
+        w / 2,
+        h * 0.55,
+        h * 0.1,
+        w / 2,
+        h * 0.55,
+        h * 0.9,
+      );
+      backdrop.addColorStop(0, "rgba(30, 41, 59, 0.55)");
+      backdrop.addColorStop(1, "rgba(2, 6, 23, 0)");
+      ctx.fillStyle = backdrop;
+      ctx.fillRect(0, 0, w, h);
       const phase = phaseRef.current - 0.5;
       const timeS = (phase * SPAN_MS) / 1000;
       const rot = rodrigues(omega, timeS);
@@ -158,7 +184,9 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
 
       const line = (pts: Vec3[], color: string, lw: number) => {
         ctx.strokeStyle = color;
-        ctx.lineWidth = lw;
+        ctx.lineWidth = lw * dpr;
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
         ctx.beginPath();
         pts.forEach((p, i) => {
           const [px, py] = project(p, w, h, zoom, yaw, pitch);
@@ -199,7 +227,7 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
         const [tx, ty] = project(tip, w, h, zoom, yaw, pitch);
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(tx, ty, 4, 0, Math.PI * 2);
+        ctx.arc(tx, ty, 4 * dpr, 0, Math.PI * 2);
         ctx.fill();
       };
       const vRefMps = scenario.clubheadSpeedMph * 0.44704;
@@ -208,13 +236,16 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
 
       const [ix, iy] = project(place(parts.impact), w, h, zoom, yaw, pitch);
       ctx.fillStyle = COLORS.impact;
+      ctx.shadowColor = "rgba(255, 214, 10, 0.6)";
+      ctx.shadowBlur = 8 * dpr;
       ctx.beginPath();
-      ctx.arc(ix, iy, 5, 0, Math.PI * 2);
+      ctx.arc(ix, iy, 5 * dpr, 0, Math.PI * 2);
       ctx.fill();
+      ctx.shadowBlur = 0;
 
       ctx.fillStyle = "#94a3b8";
-      ctx.font = "12px sans-serif";
-      ctx.fillText(`t = ${(timeS * 1000).toFixed(1)} ms`, 12, h - 12);
+      ctx.font = `${12 * dpr}px ui-sans-serif, system-ui, sans-serif`;
+      ctx.fillText(`t = ${(timeS * 1000).toFixed(1)} ms`, 12 * dpr, h - 12 * dpr);
 
       if (playing) {
         phaseRef.current = (phaseRef.current + speed / STEPS) % 1.0;
@@ -230,12 +261,12 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
     <div className="space-y-2">
       <div
         aria-label="Playback controls"
-        className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-800 bg-slate-900 px-3 py-2 text-sm"
+        className="flex flex-wrap items-center gap-3 rounded-xl border border-slate-800/80 bg-slate-900/60 px-4 py-2.5 text-sm shadow-lg shadow-black/20 backdrop-blur"
       >
         <button
           type="button"
           onClick={() => setPlaying((p) => !p)}
-          className="w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1 hover:border-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-blue-500"
+          className="w-16 rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1 font-medium transition-colors hover:border-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
         >
           {playing ? "Pause" : "Play"}
         </button>
@@ -269,9 +300,9 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
       </div>
       <canvas
         ref={canvasRef}
-        width={560}
-        height={420}
-        className="w-full cursor-grab touch-none rounded-lg border border-slate-700 bg-slate-900 active:cursor-grabbing"
+        width={840}
+        height={571}
+        className="w-full cursor-grab touch-none rounded-xl border border-slate-800/80 bg-slate-950/80 shadow-lg shadow-black/30 active:cursor-grabbing"
         role="img"
         aria-label="Animated 3D clubhead rotating under the scenario's angular velocity. Drag to orbit; scroll to zoom."
         onPointerDown={(e) => {

@@ -20,4 +20,30 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  /* Layered ambient glow over the slate base — subtle, GPU-cheap. */
+  background:
+    radial-gradient(60rem 40rem at 85% -10%, rgba(14, 165, 233, 0.12), transparent 60%),
+    radial-gradient(50rem 35rem at -10% 100%, rgba(52, 211, 153, 0.08), transparent 60%),
+    #020617;
+  background-attachment: fixed;
+  min-height: 100vh;
+}
+
+::selection {
+  background: rgba(56, 189, 248, 0.35);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 5px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.65);
 }

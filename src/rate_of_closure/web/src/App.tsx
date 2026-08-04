@@ -172,18 +172,18 @@ export default function App() {
         onClick={() => setExplained(spec.key)}
         aria-pressed={active}
         className={
-          "flex items-center justify-between rounded-md border px-3 py-2 text-left text-sm transition-colors " +
+          "flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition-all " +
           (active
-            ? "border-blue-500 bg-blue-500/10"
-            : "border-slate-800 bg-slate-900 hover:border-slate-600")
+            ? "border-sky-400/60 bg-sky-500/10 shadow-[0_0_14px_rgba(56,189,248,0.15)]"
+            : "border-slate-800/80 bg-slate-900/50 hover:border-slate-600 hover:bg-slate-800/50")
         }
       >
         <span className="text-slate-400">{spec.label}</span>
         <span
           className={
             spec.key === "pathDeviationDeg"
-              ? "font-semibold text-amber-300"
-              : "font-semibold text-slate-100"
+              ? "font-semibold tabular-nums text-amber-300"
+              : "font-semibold tabular-nums text-slate-100"
           }
         >
           {formatRow(spec, value)}
@@ -193,9 +193,9 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 p-6 text-slate-100">
+    <div className="mx-auto min-h-screen max-w-7xl p-5 text-slate-100 sm:p-8">
       <header className="mb-4">
-        <h1 className="text-2xl font-semibold">
+        <h1 className="bg-gradient-to-r from-sky-300 via-teal-200 to-emerald-300 bg-clip-text text-3xl font-bold tracking-tight text-transparent">
           Rate of Closure Impact Explorer
         </h1>
         <p className="mt-1 max-w-3xl text-sm text-slate-400">
@@ -214,10 +214,10 @@ export default function App() {
             onClick={() => setTab(name)}
             aria-current={tab === name}
             className={
-              "rounded-md border px-3 py-1.5 text-sm transition-colors " +
+              "rounded-full border px-4 py-1.5 text-sm font-medium transition-all " +
               (tab === name
-                ? "border-blue-500 bg-blue-500/10 text-blue-300"
-                : "border-slate-700 bg-slate-900 text-slate-300 hover:border-slate-500")
+                ? "border-sky-400/60 bg-sky-500/10 text-sky-300 shadow-[0_0_18px_rgba(56,189,248,0.25)]"
+                : "border-slate-700/80 bg-slate-900/60 text-slate-300 hover:border-slate-500 hover:text-slate-100")
             }
           >
             {name}
@@ -233,7 +233,7 @@ export default function App() {
             aria-label="Scenario inputs"
             className="space-y-4"
           >
-            <div className="rounded-lg border border-slate-800 bg-slate-900 p-4">
+            <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
               <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
                 Units
               </h2>
@@ -260,7 +260,7 @@ export default function App() {
               ))}
             </div>
 
-            <div className="rounded-lg border border-slate-800 bg-slate-900 p-4">
+            <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
               <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
                 Scenario
               </h2>
@@ -297,7 +297,7 @@ export default function App() {
           <section className="space-y-6">
             <div
               aria-label="Results"
-              className="rounded-lg border border-slate-800 bg-slate-900 p-4"
+              className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur"
             >
               <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
                 Impact-Point Deviation — Click a Value for Its Explanation
@@ -348,6 +348,20 @@ export default function App() {
           </section>
         </div>
       )}
+      <footer className="mt-10 border-t border-slate-800/60 pt-4 text-xs text-slate-500">
+        Companion tool to the{" "}
+        <a
+          href="https://www.affinedrift.com"
+          target="_blank"
+          rel="noreferrer"
+          className="text-sky-400 underline-offset-2 hover:underline"
+        >
+          AffineDrift
+        </a>{" "}
+        launch-monitor research. Physics parity-tested against the canonical
+        Python implementation; rate data from openly published sources
+        (Cheetham 2014; published launch-monitor material). MIT licensed.
+      </footer>
     </div>
   );
 }
