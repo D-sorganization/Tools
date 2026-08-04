@@ -18,11 +18,13 @@ import { SimulationPanel } from "./components/SimulationPanel";
 import { VariationPanel } from "./components/VariationPanel";
 import { ClubPanel } from "./components/ClubPanel";
 import { Derivation } from "./components/Derivation";
+import { GlossaryPanel } from "./components/GlossaryPanel";
 import { type HeadMesh } from "./model/mesh";
 import {
   METRIC_EXPLANATIONS,
   RESULT_EXPLANATIONS,
 } from "./model/derivation";
+import { FIELD_TO_TERM } from "./model/glossary";
 import {
   BOUNDS,
   closureMetrics,
@@ -131,6 +133,7 @@ const TABS = [
   "Plots",
   "Flight Explorer",
   "Variation",
+  "Glossary",
 ] as const;
 
 export default function App() {
@@ -143,6 +146,7 @@ export default function App() {
     length: "mm",
   });
   const [generatedMesh, setGeneratedMesh] = useState<HeadMesh | null>(null);
+  const [glossaryTerm, setGlossaryTerm] = useState<string | undefined>(undefined);
   const result = useMemo(() => solve(scenario), [scenario]);
   const metrics = useMemo(() => closureMetrics(scenario), [scenario]);
 
@@ -195,7 +199,7 @@ export default function App() {
         className={
           "flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition-all " +
           (active
-            ? "border-sky-400/60 bg-sky-500/10 shadow-[0_0_14px_rgba(56,189,248,0.15)]"
+            ? "border-sky-400 bg-sky-500/20 ring-1 ring-sky-400/60 shadow-[0_0_14px_rgba(56,189,248,0.25)]"
             : "border-slate-800/80 bg-slate-900/50 hover:border-slate-600 hover:bg-slate-800/50")
         }
       >
@@ -246,7 +250,9 @@ export default function App() {
         ))}
       </nav>
 
-      {tab === TABS[5] ? (
+      {tab === TABS[6] ? (
+        <GlossaryPanel key={glossaryTerm ?? "none"} initialTerm={glossaryTerm} />
+      ) : tab === TABS[5] ? (
         <VariationPanel />
       ) : tab === TABS[4] ? (
         <FlightExplorerPanel />
@@ -370,10 +376,21 @@ export default function App() {
                   aria-live="polite"
                   className="mt-3 rounded-md border border-slate-800 bg-slate-950/60 p-3 text-xs text-slate-400"
                 >
-                  <span className="font-semibold text-slate-200">
-                    {explainedLabel}.{" "}
-                  </span>
+                  <h3 className="mb-1 text-sm font-bold text-sky-200">
+                    {explainedLabel}
+                  </h3>
                   {explanation}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGlossaryTerm(FIELD_TO_TERM[explained]);
+                      setTab("Glossary");
+                    }}
+                    title="Open the glossary, pre-selecting the matching term"
+                    className="mt-2 block text-sky-400 underline-offset-2 hover:underline"
+                  >
+                    Glossary →
+                  </button>
                 </div>
               )}
               <p className="mt-3 text-xs text-slate-500">

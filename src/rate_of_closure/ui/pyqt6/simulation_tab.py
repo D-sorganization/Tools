@@ -56,7 +56,7 @@ from rate_of_closure.simulation import (
 )
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
-from rate_of_closure.ui.pyqt6.result_row import ResultRow
+from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
@@ -102,6 +102,8 @@ class SimulationTab(QWidget):
 
     #: Emitted with the SimulationRun after every successful run.
     runCompleted = pyqtSignal(object)  # noqa: N815 - Qt signal convention
+    #: Emitted with a glossary term key when an explanation link is used.
+    glossaryRequested = pyqtSignal(str)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -247,6 +249,12 @@ class SimulationTab(QWidget):
         layout = QVBoxLayout(box)
         self._explanation = QTextBrowser()
         self._explanation.setOpenExternalLinks(False)
+        self._explanation.setOpenLinks(False)
+        self._explanation.setToolTip(
+            "Explanation of the selected row; the Glossary link jumps "
+            "to the matching term."
+        )
+        self._explanation.anchorClicked.connect(self._on_explanation_link)
         self._explanation.setMinimumHeight(90)
         self._explanation.setMaximumHeight(150)
         layout.addWidget(self._explanation)
@@ -452,4 +460,15 @@ class SimulationTab(QWidget):
     def _show_explanation(self, field: str) -> None:
         labels = {key: label for key, label, _unit in LAUNCH_ROWS}
         text = LAUNCH_EXPLANATIONS.get(field, "")
-        self._explanation.setHtml(f"<b>{labels.get(field, field)}</b><br/>{text}")
+        # Persistent single selection across the launch rows (#4120 V4).
+        for row_field, row in self._rows.items():
+            row.set_selected(row_field == field)
+        self._explanation.setHtml(
+            explanation_html(labels.get(field, field), text, field)
+        )
+
+    def _on_explanation_link(self, url) -> None:  # type: ignore[no-untyped-def]
+        """Forward ``glossary:<term>`` links to the main window."""
+        text = url.toString()
+        if text.startswith("glossary:"):
+            self.glossaryRequested.emit(text.partition(":")[2])

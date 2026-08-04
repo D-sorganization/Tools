@@ -41,8 +41,13 @@ from rate_of_closure.ui.pyqt6.club_view import Club3DView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
 from rate_of_closure.ui.pyqt6.flight_explorer_tab import FlightExplorerTab
+from rate_of_closure.ui.pyqt6.glossary_tab import GlossaryTab
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
+from rate_of_closure.ui.pyqt6.result_row import (
+    explanation_html,
+    selection_stylesheet,
+)
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 from rate_of_closure.units import convert_from_canonical
@@ -136,6 +141,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._variation_tab = VariationTab()
+        self._glossary_tab = GlossaryTab()
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -161,6 +167,8 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         tabs.addTab(self._simulation_tab, "Simulation")
         tabs.addTab(self._flight_explorer_tab, "Flight Explorer")
         tabs.addTab(self._variation_tab, "Variation")
+        tabs.addTab(self._glossary_tab, "Glossary")
+        self._tabs = tabs
 
         splitter = QSplitter()
         splitter.addWidget(left)
@@ -169,13 +177,12 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         splitter.setStretchFactor(1, 1)
         self.setCentralWidget(splitter)
         self.setStatusBar(QStatusBar())
-        self.setStyleSheet(
-            "QFrame#resultRow { border-radius: 6px; }"
-            "QFrame#resultRow:hover { border: 1px solid palette(highlight); }"
-        )
+        self.setStyleSheet(selection_stylesheet(self.palette()))
 
         self._controls.scenarioChanged.connect(self._on_scenario)
         self._controls.clubHeadRequested.connect(self._on_club_head)
+        self._simulation_tab.glossaryRequested.connect(self.open_glossary)
+        self._flight_explorer_tab.glossaryRequested.connect(self.open_glossary)
         # Theming is applied by the shared launcher (setup_themed_app),
         # which also owns the single Theme menu — calling
         # setup_theme_support() here as well would add a duplicate.
@@ -201,6 +208,12 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         layout = QVBoxLayout(box)
         self._explanation = QTextBrowser()
         self._explanation.setOpenExternalLinks(False)
+        self._explanation.setOpenLinks(False)
+        self._explanation.setToolTip(
+            "Explanation of the selected result row; the Glossary link "
+            "jumps to the matching term."
+        )
+        self._explanation.anchorClicked.connect(self._on_explanation_link)
         self._explanation.setMinimumHeight(110)
         self._explanation.setMaximumHeight(170)
         layout.addWidget(self._explanation)
@@ -210,7 +223,23 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
     def _show_explanation(self, field: str) -> None:
         labels = dict(_RESULT_ROWS) | dict(_METRIC_ROWS)
         text = RESULT_EXPLANATIONS.get(field) or METRIC_EXPLANATIONS.get(field, "")
-        self._explanation.setHtml(f"<b>{labels[field]}</b><br/>{text}")
+        # Persistent single selection across both row groups (#4120 V4).
+        for row_field, row in self._rows.items():
+            row.set_selected(row_field == field)
+        self._explanation.setHtml(explanation_html(labels[field], text, field))
+
+    def _on_explanation_link(self, url) -> None:  # type: ignore[no-untyped-def]
+        """Route ``glossary:<term>`` links to the Glossary tab."""
+        text = url.toString()
+        if not text.startswith("glossary:"):
+            return
+        self.open_glossary(text.partition(":")[2])
+
+    def open_glossary(self, term: str) -> None:
+        """Show the Glossary tab, pre-selecting ``term`` when known."""
+        self._tabs.setCurrentWidget(self._glossary_tab)
+        if term:
+            self._glossary_tab.select_term(term)
 
     def _format_row(self, field: str, value: float) -> str:
         """Format one row's value in the user's selected display unit."""
