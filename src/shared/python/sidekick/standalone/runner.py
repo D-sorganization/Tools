@@ -246,9 +246,9 @@ def run_calculator(
         *calculator* must be a non-empty string.
         *inputs_path* must point to a readable JSON file.
     """
-    assert isinstance(calculator, str) and calculator, (
-        "calculator name must be non-empty"
-    )
+    assert (
+        isinstance(calculator, str) and calculator
+    ), "calculator name must be non-empty"
     assert isinstance(inputs_path, str) and inputs_path, "inputs_path must be non-empty"
 
     _ensure_registered()
