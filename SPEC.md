@@ -35,6 +35,49 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-04 Swing impact-parameter solver (epic #4103, #4109)
+
+- New self-facaded subpackage `src/shared/python/swing_sim/solver/`:
+  goal-driven robust optimization over golf delivery/swing variables.
+  Scaffolding modeled on UpstreamDrift's
+  `src/shared/python/movement_optimizer` (pure cost module, multi-start
+  parallel driver, `ProgressReport`/`cancel_event` plumbing, named tuning
+  constants) with golf-impact semantics replacing the barbell/balance
+  costs.
+- `goals.py`: `ImpactGoal` — optionally weighted targets over any subset
+  of club_path/face_angle/attack_angle/dynamic_loft [deg], ball_speed
+  [mph], launch_angle/launch_azimuth [deg], spin [RPM], spin-axis tilt
+  [deg, + = fade side], carry [m] — and `VariablePartition`, which splits
+  the delivery front-end variables (plus toe/high impact offsets) into
+  optimizer-controlled (bounded) vs user-fixed, with DbC validation
+  (disjointness, finite bounds, unknown names). A swing-source mode swaps
+  in double-pendulum variables (the three sequential plane tilts, the
+  impact-time offset relative to peak clubhead speed, and the damping
+  parameters) and derives clubhead speed/path/attack angle from the
+  sampled pendulum twist.
+- `objective.py`: pure residual builder — candidate variables run
+  delivery → rigid-body impact with physics-based gear effect (→ launch
+  derivation → ball flight only when the goal requires it) and score as
+  `weight * (achieved - target) / scale` with launch-monitor-resolution
+  scales from `tuning.py`. `evaluate_candidate(variables, partition,
+  goal) -> residuals` is the documented seam a later Rust port replaces
+  behind a facade (no Rust added in this PR).
+- `solve.py`: bounded `scipy.optimize.least_squares` (trf) multi-start
+  driver — Latin-hypercube starts across the bounds (start 0 = caller
+  `x0` or midpoint), parallel starts via `concurrent.futures`,
+  thread-safe progress tracking with the movement_optimizer
+  `ProgressReport` shape and stall heuristic, cooperative cancellation
+  via `threading.Event` (`CancelledError`), best-of selection, and a
+  `SolverResult` carrying the solution variables, achieved quantities,
+  per-goal errors, residual norm, eval counts, elapsed time, convergence
+  flag, and all per-start summaries.
+- In-package tests (`unit` / `physics` / `contract` markers):
+  exact-recovery from a cold start, underdetermined and conflicting-goal
+  behaviour, bounds enforcement, cancellation (pre-set and mid-solve),
+  progress-report shape, partition validation errors, and a contract
+  test pinning the `swing_sim.solver` public API. The parent
+  `swing_sim/__init__.py` facade is deliberately untouched.
+
 ### 2026-08-04 Rate of Closure Simulation Session (epic #4103 — #4105 #4107 #4108 #4110)
 
 - `src/rate_of_closure/simulation/` integrates the swing_sim packages
@@ -1952,6 +1995,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | ---- | ------- | ------- |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
 | 2026-08-04 | 1.8.0 | feat(rate_of_closure, epic #4103): simulation session integrating swing_sim into the app — app-frame swing sources (manual constant twist, shared double pendulum, new triple pendulum), swing → impact (gear effect + bulge/roll callable) → flight orchestration into one exportable SimulationRun, fixed-ball impact-time scrubber, thin ISA adapter over the rotation converter with a toggleable screw-axis overlay, PyQt6 Simulation tab (sourced-guidance inputs, launch rows with explanations, ball/ground toggles, flight polyline, full video playback with 1×-real-time rate presets, sortable inspector, CSV/JSON export) and a parity-pinned web Simulation tab (pendulum/impact/flight TS port, scrubber, playback, JSON download; WASM supersedes in P7). |
+| 2026-08-04 | 1.8.0 | feat(swing_sim, #4109): add the impact-parameter solver subpackage `src/shared/python/swing_sim/solver/` — goal-driven robust optimization (`ImpactGoal` weighted targets over launch-monitor quantities incl. carry; `VariablePartition` free-with-bounds vs fixed delivery/swing variables, with a double-pendulum swing-source mode covering the three plane tilts, impact-time offset, and damping); pure residual builder with the documented Rust-portable `evaluate_candidate` seam; bounded scipy trf multi-start driver (Latin-hypercube starts, parallel via concurrent.futures, movement_optimizer-shaped ProgressReport/cancel_event plumbing, per-start diagnostics in `SolverResult`). Scaffolding modeled on UpstreamDrift's movement_optimizer. |
 | 2026-08-04 | 1.7.0 | feat(swing_sim, #4106): add the impact physics subpackage `src/shared/python/swing_sim/impact/` — rigid-body COR impulse model (2/7 rolling-cap friction spin) + spring-damper + finite-time models, energy-balance validator, and recorder ported self-contained from UpstreamDrift's `physics/impact_model` with three fixes (off-center base impulse no longer drops `impact_offset`; opt-in 3x3 club MOI tensor effective mass `1/m_eff = 1/m + (r x n)^T I^-1 (r x n)`; friction-spin axis sign corrected to `t x n`); new launch-monitor delivery front-end (`delivery.py`, AffineDrift frame, spin-loft + D-plane diagnostics) and physics-based gear effect (`gear_effect.py`, head recoil × CG-depth lever arm, bulge/roll via `face_normal_at_offset` callable seam) replacing the empirical three-constant version. |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4104): add the swing simulation foundation — new `rust_core/swing-core` workspace crate (double-pendulum EOM with plane-oriented in-plane gravity, PyO3 wheel `swing_core` + wasm-bindgen bindings) and shared `src/shared/python/swing_sim` package (DbC value types, `SwingSource` protocol, `DoublePendulumSwing`, strict Rust façade with pure-Python parity oracle); wire swing-core into the rust quality gate's wasm build and add the `maturin-swing-core.yml` build/import/parity workflow. |
 | 2026-08-04 | 1.5.6 | feat(rate_of_closure): club library, inertial model, and parametric head with bulge & roll (P2, #4106) — frozen SI ClubSpec with DbC bounds, 15-club library normalized from typical published specs (UpstreamDrift club_configurations.py source), head+shaft+grip composite inertia (balance point, grip-axis and shaft-axis MOI), deterministic superellipse-loft parametric head whose face honors bulge/roll sagitta and loft tilt with mass-scaled envelope, face_normal_at_offset exposed for the future impact package in Python and TypeScript with pinned parity tests, PyQt6 Club group (picker drives GC-to-face/lie with overrides preserved; sourced tooltips) and web ClubPanel generating heads client-side into the existing mesh render paths. |
