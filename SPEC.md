@@ -26,15 +26,41 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.3                                      |
-| **Spec Version**        | 1.5.3                                      |
-| **Last Spec Update**    | 2026-07-26                                 |
+| **Current Version**     | 1.6.0                                      |
+| **Spec Version**        | 1.6.0                                      |
+| **Last Spec Update**    | 2026-08-04                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-04 Swing simulation foundation (epic #4103, P0 #4104)
+
+- New Rust workspace member `rust_core/swing-core` (Python wheel `swing_core`
+  via maturin, WASM NPM package via wasm-pack): double-pendulum swing
+  equations of motion ported from UpstreamDrift's `double_pendulum.py`
+  (mass matrix, Coriolis/centripetal, gravity, viscous damping, RK4),
+  generalised so gravity enters as an in-plane 2-vector computed from a
+  swing-plane pose built by three sequential intrinsic tilts (yaw about
+  world-up, side tilt about the rotated axis, forward/back tilt). Feature
+  contract (`python` / `extension-module` / `wasm`, cdylib+rlib, per-crate
+  maturin pyproject, dual `#[cfg_attr]` bindings split under `py_bindings/`
+  and `wasm_bindings/`) copies `tools-core` exactly.
+- New shared Python package `src/shared/python/swing_sim/`: frozen DbC
+  dataclasses (`PlaneOrientation`, `PendulumParameters`, `PendulumState`,
+  `SwingSample` with SE(3) pose + 6-twist, `SwingTrajectory`), the
+  `SwingSource` protocol with a `DoublePendulumSwing` implementation, a
+  strict Rust façade (`_rust_facade.py`, bilateral_rust posture: raise at
+  call time when the wheel is missing for hot loops) and a pure-Python
+  reference implementation used as the Rust parity oracle and one-shot
+  fallback. In-package tests carry `unit` / `parity` / `contract` markers.
+- CI: `ci-standard.yml` rust-quality-gate change filter also watches
+  `src/shared/python/swing_sim/**` and builds/verifies the swing-core WASM
+  package; new `maturin-swing-core.yml` per-crate workflow builds the wheel
+  on Python 3.10–3.12, asserts the extension imports, and runs the parity
+  suite non-skipped. NPM publishing is deferred to epic P7.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
@@ -1717,6 +1743,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-04 | 1.6.0 | feat(swing_sim, #4104): add the swing simulation foundation — new `rust_core/swing-core` workspace crate (double-pendulum EOM with plane-oriented in-plane gravity, PyO3 wheel `swing_core` + wasm-bindgen bindings) and shared `src/shared/python/swing_sim` package (DbC value types, `SwingSource` protocol, `DoublePendulumSwing`, strict Rust façade with pure-Python parity oracle); wire swing-core into the rust quality gate's wasm build and add the `maturin-swing-core.yml` build/import/parity workflow. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |
 | 2026-07-26 | 1.5.3 | fix(ci): isolate both protected Python jobs in per-job virtual environments after validating the persistent setup-python runtime; repair and import-probe the matrix NumPy/SciPy stack with compatible bounds, and reinstall OpenCV without dependency resolution so it cannot replace the verified NumPy wheel. |
 | 2026-07-26 | 1.5.3 | fix(import-aliases, #3936): make canonical shared-module aliases satisfy `runpy` code lookup so packaged compatibility commands such as `python -m sidekick` execute their parent-owned `shared.python` implementation; include `contracts` in the identity-coalescing alias set and keep Sidekick agent DbC imports on the canonical shared path. |
