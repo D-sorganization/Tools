@@ -16,9 +16,7 @@ from .golfer_kinematics import forward_kinematics
 from .physics_golfer import GolferParams, N_DOF, State
 
 
-def _mass_point_positions(
-    q: np.ndarray, p: GolferParams
-) -> list[tuple[float, Callable]]:
+def _mass_point_positions(q: np.ndarray, p: GolferParams) -> list[tuple[float, Callable]]:
     """Return list of (mass, position_function) for all point masses."""
     if not isinstance(q, np.ndarray):
         raise TypeError("q must be a numpy ndarray")
@@ -135,9 +133,7 @@ class _TrigCache:
         self.cos_club = np.cos(q[7])
 
 
-def _hub_and_shoulder_jacobians(
-    p: GolferParams, tc: _TrigCache
-) -> dict[str, np.ndarray]:
+def _hub_and_shoulder_jacobians(p: GolferParams, tc: _TrigCache) -> dict[str, np.ndarray]:
     """Compute Jacobians for hub, right shoulder, and left shoulder."""
     if p is None:
         raise ValueError("p must be provided")
@@ -194,9 +190,7 @@ def _right_arm_chain_jacobian(
     return J_re, J_rh, J_rh
 
 
-def _left_arm_chain_jacobian(
-    p: GolferParams, tc: _TrigCache
-) -> tuple[np.ndarray, np.ndarray]:
+def _left_arm_chain_jacobian(p: GolferParams, tc: _TrigCache) -> tuple[np.ndarray, np.ndarray]:
     """Compute Jacobians for LE, LH along the left arm kinematic chain."""
     # LE (left elbow): depends on q[0], q[4]
     if p is None:
@@ -488,6 +482,4 @@ def total_energy(state: State, p: GolferParams) -> float:
 
     q = state[:N_DOF]
     qdot = state[N_DOF:]
-    return total_energy_from_parts(
-        kinetic_energy(q, qdot, p), potential_energy(state, p)
-    )
+    return total_energy_from_parts(kinetic_energy(q, qdot, p), potential_energy(state, p))

@@ -25,10 +25,7 @@ from PyQt6.QtWidgets import (
 )
 
 from movement_optimizer.gui import motion_tabs, motion_tabs_chain, policy_worker
-from movement_optimizer.gui.app_icon import (
-    movement_optimizer_icon,
-    movement_optimizer_icon_path,
-)
+from movement_optimizer.gui.app_icon import movement_optimizer_icon, movement_optimizer_icon_path
 from movement_optimizer.gui.main_window import MainWindow
 from movement_optimizer.gui.motion_tabs import (
     ChainDynamicsTab,
@@ -39,9 +36,7 @@ from movement_optimizer.gui.motion_tabs import (
 from movement_optimizer.gui.policy_trace_canvas import PolicyTraceCanvas
 
 
-def _wait_for_policy_worker(
-    qapp, swingset: SwingsetTab, timeout_s: float = 10.0
-) -> None:
+def _wait_for_policy_worker(qapp, swingset: SwingsetTab, timeout_s: float = 10.0) -> None:
     deadline = time.monotonic() + timeout_s
     while swingset._policy_worker is not None and time.monotonic() < deadline:
         qapp.processEvents()
@@ -75,9 +70,7 @@ def _assert_reserved_legend_rows_do_not_cover_plots(panel) -> None:
 def test_main_window_preserves_barbell_tabs_and_adds_motion_tabs(qapp) -> None:
     window = MainWindow()
 
-    tab_names = [
-        window.tabs.tabText(index).strip() for index in range(window.tabs.count())
-    ]
+    tab_names = [window.tabs.tabText(index).strip() for index in range(window.tabs.count())]
 
     assert tab_names[:7] == [
         "Bottoms Up Squat",
@@ -223,9 +216,7 @@ def test_swingset_tab_exposes_policy_tuning_and_progress(qapp) -> None:
         "phase_samples",
     ):
         assert key in swingset._controls
-    swingset.iterative_checkbox.setChecked(
-        False
-    )  # exercise the grid-search fallback path.
+    swingset.iterative_checkbox.setChecked(False)  # exercise the grid-search fallback path.
     swingset._controls["cycles"].set_value(1)
     swingset._controls["freq_samples"].set_value(2)
     swingset._controls["hip_samples"].set_value(1)
@@ -249,9 +240,7 @@ def test_swingset_policy_terminology_is_not_walking(qapp) -> None:
     swingset = SwingsetTab()
 
     visible_text = " ".join(
-        widget.text()
-        for widget in swingset.findChildren((QLabel, QPushButton))
-        if widget.text()
+        widget.text() for widget in swingset.findChildren((QLabel, QPushButton)) if widget.text()
     )
 
     assert "walking" not in visible_text.lower()
@@ -266,9 +255,7 @@ def test_motion_tab_parameter_panels_are_scrollable_and_not_compressed(qapp) -> 
         assert scroll_area is not None
         assert scroll_area.widgetResizable()
         assert tab.control_panel_visible()
-        assert all(
-            line_edit.minimumHeight() >= 28 for line_edit in tab.findChildren(QLineEdit)
-        )
+        assert all(line_edit.minimumHeight() >= 28 for line_edit in tab.findChildren(QLineEdit))
 
         tab.set_control_panel_visible(False)
         assert not tab.control_panel_visible()
@@ -285,9 +272,7 @@ def test_swingset_optimize_policy_action_is_sticky_above_scroll_area(qapp) -> No
     assert swingset.optimize_button.property("class") == "primary"
     assert swingset.optimize_button.minimumHeight() >= 48
     assert swingset.optimize_button.minimumWidth() >= 220
-    assert swingset.optimize_button not in scroll_area.widget().findChildren(
-        QPushButton
-    )
+    assert swingset.optimize_button not in scroll_area.widget().findChildren(QPushButton)
 
 
 def test_swingset_autoplay_after_policy_optimization_is_configurable(qapp) -> None:
@@ -313,9 +298,7 @@ def test_swingset_autoplay_after_policy_optimization_is_configurable(qapp) -> No
 def test_swingset_policy_trace_canvas_accepts_optimization_samples(qapp) -> None:
     swingset = SwingsetTab()
     swingset.autoplay_checkbox.setChecked(False)
-    swingset.iterative_checkbox.setChecked(
-        False
-    )  # exercise the grid-search fallback path.
+    swingset.iterative_checkbox.setChecked(False)  # exercise the grid-search fallback path.
     swingset._controls["cycles"].set_value(1)
     swingset._controls["freq_samples"].set_value(2)
     swingset._controls["hip_samples"].set_value(1)
@@ -342,9 +325,7 @@ def test_swingset_policy_trace_canvas_handles_sparse_series(qapp) -> None:
     pixmap = QPixmap(120, 80)
     painter = QPainter(pixmap)
     try:
-        swingset.policy_trace_canvas._draw_normalized_series(
-            painter, "missing", QColor("white"), 1
-        )
+        swingset.policy_trace_canvas._draw_normalized_series(painter, "missing", QColor("white"), 1)
     finally:
         painter.end()
 
@@ -603,9 +584,7 @@ def test_chain_rollout_keeps_physical_anchor_fixed(qapp) -> None:
     np.testing.assert_allclose(chain._rollout.positions[:, 0, :], 0.0)
 
 
-def test_chain_tab_reports_invalid_inputs_and_covers_playback_branches(
-    qapp, monkeypatch
-) -> None:
+def test_chain_tab_reports_invalid_inputs_and_covers_playback_branches(qapp, monkeypatch) -> None:
     chain = ChainDynamicsTab()
     chain.autoplay_checkbox.setChecked(False)
     chain.tie_segments.setChecked(False)
@@ -670,13 +649,10 @@ def test_swingset_iterative_optimize_populates_panel_and_overlays(qapp) -> None:
     assert 0 < swingset.policy_trace_canvas.sample_count() <= 50
     # Analysis plots populated.
     assert swingset.analysis_panel.axes["torques"].get_lines()
-    assert all(
-        axes.get_legend() is None for axes in swingset.analysis_panel.axes.values()
-    )
+    assert all(axes.get_legend() is None for axes in swingset.analysis_panel.axes.values())
     assert swingset.analysis_panel._figure_legend is None
     assert any(
-        axes.get_legend() is not None
-        for axes in swingset.analysis_panel.legend_axes.values()
+        axes.get_legend() is not None for axes in swingset.analysis_panel.legend_axes.values()
     )
     # Force overlay drawn (all toggles default-on).
     assert swingset.canvas._overlay.arrows or swingset.canvas._overlay.com_markers
@@ -736,9 +712,7 @@ def test_swingset_playback_uses_cached_force_fields(qapp, monkeypatch) -> None:
     _wait_for_policy_worker(qapp, swingset)
 
     def fail_recompute(*_args, **_kwargs):
-        raise AssertionError(
-            "playback must not recompute rollout-wide swing force fields"
-        )
+        raise AssertionError("playback must not recompute rollout-wide swing force fields")
 
     monkeypatch.setattr(motion_tabs, "swing_force_fields", fail_recompute)
 
@@ -765,10 +739,7 @@ def test_chain_simulate_populates_panel_and_overlays(qapp) -> None:
     assert chain.analysis_panel.axes["tension"].get_lines()
     assert all(axes.get_legend() is None for axes in chain.analysis_panel.axes.values())
     assert chain.analysis_panel._figure_legend is None
-    assert any(
-        axes.get_legend() is not None
-        for axes in chain.analysis_panel.legend_axes.values()
-    )
+    assert any(axes.get_legend() is not None for axes in chain.analysis_panel.legend_axes.values())
     assert chain.canvas._overlay.arrows
 
 
@@ -810,9 +781,7 @@ def test_chain_playback_uses_cached_force_fields(qapp, monkeypatch) -> None:
     chain._simulate()
 
     def fail_recompute(*_args, **_kwargs):
-        raise AssertionError(
-            "playback must not recompute rollout-wide chain force fields"
-        )
+        raise AssertionError("playback must not recompute rollout-wide chain force fields")
 
     monkeypatch.setattr(motion_tabs_chain, "chain_force_fields", fail_recompute)
 
@@ -1005,8 +974,6 @@ def test_policy_trace_iteration_label_stays_below_plot_area(qapp) -> None:
 
     label_rect = trace._iteration_label_rect()
 
-    assert (
-        label_rect.top() >= trace._plot_bottom() + trace._AXIS_LABEL_TOP_PADDING_PX - 1
-    )
+    assert label_rect.top() >= trace._plot_bottom() + trace._AXIS_LABEL_TOP_PADDING_PX - 1
     assert trace._plot_bottom() - trace._top_margin() >= trace._MINIMUM_PLOT_HEIGHT_PX
     trace.grab()  # repaint with bottom-axis label must not raise

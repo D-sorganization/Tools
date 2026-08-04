@@ -124,9 +124,7 @@ class DataLoader:
         try:
             loader_class = self._import_high_performance_loader()
             return loader_class()
-        except (
-            Exception
-        ) as exc:  # noqa: BLE001 - optional accelerator, any failure degrades
+        except Exception as exc:  # noqa: BLE001 - optional accelerator, any failure degrades
             logger.warning(
                 "High-performance loader unavailable; using standard loader: %s",
                 exc,

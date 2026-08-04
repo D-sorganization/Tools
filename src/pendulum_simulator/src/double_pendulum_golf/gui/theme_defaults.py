@@ -77,9 +77,7 @@ def ensure_default_theme_seeded() -> str:
         if not has_initial_flag:
             settings.setValue(_INITIAL_FLAG_KEY, "1")
             settings.sync()
-        active = (
-            str(existing_theme) if existing_theme is not None else DEFAULT_THEME_NAME
-        )
+        active = str(existing_theme) if existing_theme is not None else DEFAULT_THEME_NAME
         logger.debug(
             "Theme already initialised (theme=%s, flag=%s); not seeding",
             active,

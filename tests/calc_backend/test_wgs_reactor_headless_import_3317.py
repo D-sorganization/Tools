@@ -22,7 +22,8 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 
 # Program run in a clean subprocess: block PyQt6 (and the theme layer that wraps
 # it), then import the engine and assert success + no Qt/theme leakage.
-_PROGRAM = textwrap.dedent("""
+_PROGRAM = textwrap.dedent(
+    """
     import importlib.abc
     import importlib.machinery
     import sys
@@ -56,7 +57,8 @@ _PROGRAM = textwrap.dedent("""
     assert "PyQt6" not in sys.modules
 
     print("HEADLESS_OK")
-    """)
+    """
+)
 
 
 @pytest.mark.unit
