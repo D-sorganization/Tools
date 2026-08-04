@@ -46,3 +46,6 @@
 ## 2024-07-30 - Added focus-visible states to Rotation Converter
 **Learning:** Found an accessibility issue pattern where inputs and buttons in Rotation Converter have `outline-none` but lack focus indicators, making keyboard navigation difficult.
 **Action:** Replace `outline-none` with `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to preserve keyboard accessibility while styling interactive elements.
+## 2024-08-04 - Native Form Wrappers for Calculators
+**Learning:** React calculators in this codebase frequently use `<div>` wrappers instead of `<form>` elements, which breaks native 'Enter' key submission and degrades keyboard accessibility.
+**Action:** Always wrap data-entry panels and calculators in a `<form onSubmit={...}>` and use `type="submit"` on the primary action button to enable native form submission via the keyboard.

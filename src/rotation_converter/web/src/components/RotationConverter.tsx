@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, FormEvent } from 'react';
 
 // Common interfaces mapping to the FastAPI Response/Request
 interface RotationRepresentations {
@@ -28,7 +28,8 @@ export function RotationConverter() {
     const [results, setResults] = useState<RotationRepresentations | null>(null);
     const [error, setError] = useState<string | null>(null);
 
-    const handleCalculate = useCallback(async () => {
+    const handleCalculate = useCallback(async (e?: FormEvent) => {
+        if (e) e.preventDefault();
         setError(null);
         let payloadValue: number[] = quaternion;
 
@@ -70,7 +71,7 @@ export function RotationConverter() {
     return (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-4">
             {/* Input Panel */}
-            <div className="bg-slate-800 rounded-lg p-6 space-y-4 text-white">
+            <form onSubmit={handleCalculate} className="bg-slate-800 rounded-lg p-6 space-y-4 text-white">
                 <h2 className="text-xl font-semibold mb-4 border-b border-slate-700 pb-2">Input Orientation</h2>
 
                 {error && (
@@ -191,13 +192,13 @@ export function RotationConverter() {
 
                 <div className="pt-4">
                     <button
-                        onClick={handleCalculate}
+                        type="submit"
                         className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-800"
                     >
                         Compute Equivalents
                     </button>
                 </div>
-            </div>
+            </form>
 
             {/* Results Panel */}
             <div className="bg-slate-800 rounded-lg p-6 space-y-4 text-white">
