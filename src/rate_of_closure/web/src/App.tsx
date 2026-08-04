@@ -12,6 +12,7 @@
 import { useMemo, useState } from "react";
 
 import { ClubCanvas } from "./components/ClubCanvas";
+import { SimulationPanel } from "./components/SimulationPanel";
 import { ClubPanel } from "./components/ClubPanel";
 import { Derivation } from "./components/Derivation";
 import { type HeadMesh } from "./model/mesh";
@@ -120,7 +121,7 @@ const UNIT_LABELS: Record<Quantity, string> = {
   length: "Length",
 };
 
-const TABS = ["Explorer", "Derivation & Traceability"] as const;
+const TABS = ["Explorer", "Derivation & Traceability", "Simulation"] as const;
 
 export default function App() {
   const [scenario, setScenario] = useState<ImpactScenario>(DEFAULT_SCENARIO);
@@ -235,7 +236,11 @@ export default function App() {
         ))}
       </nav>
 
-      {tab === TABS[1] ? (
+      {tab === TABS[2] ? (
+        // Static loft mirrors the desktop default driver; the full club
+        // picker joins the web simulation with the P7 WASM port.
+        <SimulationPanel scenario={scenario} loftDeg={10.5} />
+      ) : tab === TABS[1] ? (
         <Derivation scenario={scenario} />
       ) : (
         <div className="grid gap-6 lg:grid-cols-[340px_1fr]">

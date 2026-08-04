@@ -104,4 +104,34 @@ export const FIELD_GUIDANCE: Record<string, string> = {
     "Suggested range: 250-330 mm vertical (crown-sole) face radius, " +
     "usually similar to bulge on drivers. Source: typical published " +
     "fitting values.",
+  swingSource:
+    "Suggested range: Manual Scenario replays the explorer's " +
+    "constant-twist delivery; Double Pendulum generates a gravity-driven " +
+    "swing on the oriented plane. Source: classic double-pendulum golf " +
+    "models (Cochran & Stobbs; Jorgensen, The Physics of Golf).",
+  planeYawDeg:
+    "Suggested range: -20 to +20 deg rotation of the swing plane about " +
+    "the vertical (aim left/right of the target line). Source: 3-D " +
+    "swing-plane studies collected in the AffineDrift closure-rate " +
+    "dossier.",
+  planeSideTiltDeg:
+    "Suggested range: -60 to -35 deg side tilt for a driver (a vertical " +
+    "plane is 0; tour driver swing planes lean roughly 45-55 deg from " +
+    "vertical). Source: published 3-D swing-plane measurements.",
+  planeForwardTiltDeg:
+    "Suggested range: -10 to +10 deg forward/back tilt of the in-plane " +
+    "upright axis. Source: published 3-D swing-plane measurements.",
+  impactTimeScrub:
+    "Suggested range: anywhere inside the swing; the default is the " +
+    "instant of maximum clubhead speed. Scrubbing moves the swing " +
+    "relative to the fixed ball so the clubhead meets it at the chosen " +
+    "instant. Source: launch-monitor impact-timing convention " +
+    "(maximum-compression reference).",
+  ballVisible:
+    "Suggested range: on to show the ball at its fixed impact position. " +
+    "Source: launch-monitor convention of a fixed ball and a swing " +
+    "delivered to it.",
+  groundVisible:
+    "Suggested range: on to show the ground line for spatial reference. " +
+    "Source: standard golf-scene convention.",
 };

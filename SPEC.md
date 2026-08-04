@@ -35,6 +35,57 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-04 Rate of Closure Simulation Session (epic #4103 — #4105 #4107 #4108 #4110)
+
+- `src/rate_of_closure/simulation/` integrates the swing_sim packages
+  into the app: app-frame swing sources (`sources.py` — a manual
+  constant-twist source wrapping the explorer's `ImpactScenario`, the
+  shared `DoublePendulumSwing` behind an `AppFrameSwing` frame adapter,
+  and a NEW planar triple pendulum with an absolute-angle n-link EOM,
+  RK4, energy-conservation-tested); `session.py` orchestrating swing →
+  delivery → `swing_sim.impact` rigid-body solve with gear effect (the
+  club package's `face_normal_at_offset` bulge/roll callable wired in)
+  → `swing_sim.flight` launch derivation + literature flight model,
+  producing one exportable `SimulationRun` (time-stamped swing samples
+  with SE(3) poses + twists, impact instant + delivery diagnostics,
+  launch summary, flight trajectory). The impact-time scrubber keeps
+  the ball at a FIXED world position and translates the swing so the
+  clubhead at τ meets it, with delivery numbers updating live;
+  `isa.py` is the single thin adapter over
+  `rotation_converter.screw_visualization.extract_screw_axes_from_trajectory`
+  (DeprecationWarning confined, per-step θ divided by dt into deg/s,
+  R_ISA from the midpoint-to-axis distance); `export.py` writes the
+  phase-tagged CSV time series and a JSON summary/params document.
+- The PyQt6 app grows a Simulation tab: source/plane-tilt/club/flight
+  pickers (sourced hover guidance on every new input), scrub slider
+  with auto (max-clubhead-speed) reset, launch result rows
+  (ball speed, launch angle/azimuth, spin, carry, apex, flight time,
+  landing angle) with click-through explanations added to
+  `derivation.LAUNCH_EXPLANATIONS`, a 3D scene (ball and ground behind
+  independent checkboxes, flight trajectory polyline, toggleable
+  screw-axis overlay annotated with rate/pitch/R_ISA) with full video
+  playback — play/pause, whole-timeline scrub, frame step ±, loop, and
+  rate presets (0.1×/0.25×/0.5×/1× real-time/2×) — plus a sortable
+  run-data inspector with CSV/JSON export. Scene colors come from the
+  shared theme palette (`get_chart_color`) only. The clickable result
+  row is extracted to `ui/pyqt6/result_row.py` and shared with the
+  main window.
+- Web parity (practical degree): `web/src/model/simulation.ts` +
+  `flight.ts` port the minimal physics (double-pendulum RK4 from
+  `reference.py`, scalar-MOI rigid-body impact with the 2/7 friction
+  cap, launch derivation, Waterloo/Penner flight on fixed-step RK4)
+  with vitest parity pins against the pytest numbers (tight for the
+  formula-for-formula ports, banded for RK45-vs-RK4 flight); a
+  Simulation tab hosts source/tilt inputs, the τ scrubber, ball/ground
+  toggles, a canvas scene with the trajectory polyline, video playback
+  with the same rate presets, and JSON export as a download. The WASM
+  kernels replace the hand port in P7, which also brings gear effect,
+  the triple pendulum, and the screw-axis overlay to the web (noted in
+  code). Tests: `tests/rate_of_closure/test_simulation.py` (sources,
+  session bands, scrubber coincidence, ISA vs `twist_to_screw`, export
+  round-trips) and `test_simulation_gui.py` (tab smoke, playback,
+  toggles, guidance, inspector).
+
 ### 2026-08-04 Rate of Closure Club Library, Inertial Model & Parametric Head (P2, #4106)
 
 - `src/rate_of_closure/club/` adds the club-modeling package: a frozen
@@ -1900,6 +1951,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
+| 2026-08-04 | 1.8.0 | feat(rate_of_closure, epic #4103): simulation session integrating swing_sim into the app — app-frame swing sources (manual constant twist, shared double pendulum, new triple pendulum), swing → impact (gear effect + bulge/roll callable) → flight orchestration into one exportable SimulationRun, fixed-ball impact-time scrubber, thin ISA adapter over the rotation converter with a toggleable screw-axis overlay, PyQt6 Simulation tab (sourced-guidance inputs, launch rows with explanations, ball/ground toggles, flight polyline, full video playback with 1×-real-time rate presets, sortable inspector, CSV/JSON export) and a parity-pinned web Simulation tab (pendulum/impact/flight TS port, scrubber, playback, JSON download; WASM supersedes in P7). |
 | 2026-08-04 | 1.7.0 | feat(swing_sim, #4106): add the impact physics subpackage `src/shared/python/swing_sim/impact/` — rigid-body COR impulse model (2/7 rolling-cap friction spin) + spring-damper + finite-time models, energy-balance validator, and recorder ported self-contained from UpstreamDrift's `physics/impact_model` with three fixes (off-center base impulse no longer drops `impact_offset`; opt-in 3x3 club MOI tensor effective mass `1/m_eff = 1/m + (r x n)^T I^-1 (r x n)`; friction-spin axis sign corrected to `t x n`); new launch-monitor delivery front-end (`delivery.py`, AffineDrift frame, spin-loft + D-plane diagnostics) and physics-based gear effect (`gear_effect.py`, head recoil × CG-depth lever arm, bulge/roll via `face_normal_at_offset` callable seam) replacing the empirical three-constant version. |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4104): add the swing simulation foundation — new `rust_core/swing-core` workspace crate (double-pendulum EOM with plane-oriented in-plane gravity, PyO3 wheel `swing_core` + wasm-bindgen bindings) and shared `src/shared/python/swing_sim` package (DbC value types, `SwingSource` protocol, `DoublePendulumSwing`, strict Rust façade with pure-Python parity oracle); wire swing-core into the rust quality gate's wasm build and add the `maturin-swing-core.yml` build/import/parity workflow. |
 | 2026-08-04 | 1.5.6 | feat(rate_of_closure): club library, inertial model, and parametric head with bulge & roll (P2, #4106) — frozen SI ClubSpec with DbC bounds, 15-club library normalized from typical published specs (UpstreamDrift club_configurations.py source), head+shaft+grip composite inertia (balance point, grip-axis and shaft-axis MOI), deterministic superellipse-loft parametric head whose face honors bulge/roll sagitta and loft tilt with mass-scaled envelope, face_normal_at_offset exposed for the future impact package in Python and TypeScript with pinned parity tests, PyQt6 Club group (picker drives GC-to-face/lie with overrides preserved; sourced tooltips) and web ClubPanel generating heads client-side into the existing mesh render paths. |
