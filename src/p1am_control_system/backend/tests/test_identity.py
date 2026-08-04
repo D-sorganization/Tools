@@ -53,7 +53,7 @@ def test_principal_rejects_blank_identity() -> None:
 def test_parse_principal_config_builds_named_registry_without_secret_repr() -> None:
     config = (
         '[{"subject":"operator.one","display_name":"Operator One",'
-        '"role":"operator","api_key":"operator-test-secret"}]'
+        '"role":"operator","api_key":"operator-test-secret"}]'  # noqa: E501  # pragma: allowlist secret
     )
 
     records = parse_principal_config(config)
@@ -71,15 +71,15 @@ def test_parse_principal_config_builds_named_registry_without_secret_repr() -> N
         ("[]", ValueError, "at least one"),
         (
             '[{"subject":"same","display_name":"One","role":"viewer",'
-            '"api_key":"a-long-enough-secret"},'
+            '"api_key":"a-long-enough-secret"},'  # noqa: E501  # pragma: allowlist secret
             '{"subject":"same","display_name":"Two","role":"operator",'
-            '"api_key":"another-long-secret"}]',
+            '"api_key":"another-long-secret"}]',  # noqa: E501  # pragma: allowlist secret
             ValueError,
             "duplicate subject",
         ),
         (
             '[{"subject":"short","display_name":"Short","role":"viewer",'
-            '"api_key":"tiny"}]',
+            '"api_key":"tiny"}]',  # noqa: E501  # pragma: allowlist secret
             ValueError,
             "at least",
         ),
@@ -95,9 +95,9 @@ def test_parse_principal_config_rejects_unsafe_contracts(
 def test_registry_authenticates_named_principal() -> None:
     records = parse_principal_config(
         '[{"subject":"operator.one","display_name":"Operator One",'
-        '"role":"operator","api_key":"operator-test-secret"},'
+        '"role":"operator","api_key":"operator-test-secret"},'  # noqa: E501  # pragma: allowlist secret
         '{"subject":"engineer.one","display_name":"Engineer One",'
-        '"role":"engineer","api_key":"engineer-test-secret"}]'
+        '"role":"engineer","api_key":"engineer-test-secret"}]'  # noqa: E501  # pragma: allowlist secret
     )
     registry = CredentialRegistry(records)
 
@@ -110,9 +110,9 @@ def test_registry_authenticates_named_principal() -> None:
 def test_registry_rejects_duplicate_credentials() -> None:
     config = (
         '[{"subject":"operator.one","display_name":"Operator One",'
-        '"role":"operator","api_key":"operator-test-secret"},'
+        '"role":"operator","api_key":"operator-test-secret"},'  # noqa: E501  # pragma: allowlist secret
         '{"subject":"operator.two","display_name":"Operator Two",'
-        '"role":"operator","api_key":"operator-test-secret"}]'
+        '"role":"operator","api_key":"operator-test-secret"}]'  # noqa: E501  # pragma: allowlist secret
     )
     with pytest.raises(ValueError, match="duplicate credential"):
         CredentialRegistry(parse_principal_config(config))

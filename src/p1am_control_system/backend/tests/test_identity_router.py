@@ -29,9 +29,9 @@ _ENGINEER_KEY = "engineer-test-secret"  # pragma: allowlist secret
 def _service() -> IdentityService:
     records = parse_principal_config(
         '[{"subject":"operator.one","display_name":"Operator One",'
-        '"role":"operator","api_key":"operator-test-secret"},'
+        '"role":"operator","api_key":"operator-test-secret"},'  # noqa: E501  # pragma: allowlist secret
         '{"subject":"engineer.one","display_name":"Engineer One",'
-        '"role":"engineer","api_key":"engineer-test-secret"}]'
+        '"role":"engineer","api_key":"engineer-test-secret"}]'  # noqa: E501  # pragma: allowlist secret
     )
     return IdentityService(
         CredentialRegistry(records),

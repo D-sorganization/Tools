@@ -25,7 +25,7 @@ def test_named_principal_configuration_takes_precedence() -> None:
         {
             "P1AM_PRINCIPALS_JSON": (
                 '[{"subject":"engineer.one","display_name":"Engineer One",'
-                '"role":"engineer","api_key":"engineer-config-secret"}]'
+                '"role":"engineer","api_key":"engineer-config-secret"}]'  # noqa: E501  # pragma: allowlist secret
             ),
             "P1AM_API_KEY": _OPERATOR_KEY,
         }
@@ -104,7 +104,7 @@ def test_resolve_rejects_invalid_bearer_without_falling_back_to_key() -> None:
 
 
 def test_provider_preserves_sessions_until_identity_environment_changes() -> None:
-    env = {"P1AM_API_KEY": "legacy-short-key"}
+    env = {"P1AM_API_KEY": "legacy-short-key"}  # pragma: allowlist secret
     provider = EnvironmentIdentityProvider(lambda: env)
     first = provider.get()
     assert first is not None
@@ -115,7 +115,7 @@ def test_provider_preserves_sessions_until_identity_environment_changes() -> Non
     bearer = HTTPAuthorizationCredentials(scheme="Bearer", credentials=issued.token)
     assert provider.get().resolve(None, bearer) == issued.principal
 
-    env["P1AM_API_KEY"] = "replacement-short-key"
+    env["P1AM_API_KEY"] = "replacement-short-key"  # pragma: allowlist secret
     replacement = provider.get()
     assert replacement is not None
     assert replacement is not first
@@ -123,6 +123,6 @@ def test_provider_preserves_sessions_until_identity_environment_changes() -> Non
 
 
 def test_legacy_keys_preserve_existing_nonempty_length_contract() -> None:
-    service = load_identity_service({"P1AM_API_KEY": "short-key"})
+    service = load_identity_service({"P1AM_API_KEY": "short-key"})  # noqa: E501  # pragma: allowlist secret
     assert service is not None
     assert service.login("short-key") is not None

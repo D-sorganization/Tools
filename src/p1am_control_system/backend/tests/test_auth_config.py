@@ -188,12 +188,12 @@ def test_named_engineer_can_operate_but_cannot_admin(
     monkeypatch.setenv(
         "P1AM_PRINCIPALS_JSON",
         '[{"subject":"eng.1","display_name":"Engineer One",'
-        '"role":"engineer","api_key":"engineer-key-12345"}]',
+        '"role":"engineer","api_key":"engineer-key-12345"}]',  # noqa: E501  # pragma: allowlist secret
     )
     principal = require_api_key(api_key="engineer-key-12345", bearer=None)
     assert principal.subject == "eng.1"
     with pytest.raises(HTTPException) as excinfo:
-        require_admin_key(api_key="engineer-key-12345", bearer=None)
+        require_admin_key(api_key="engineer-key-12345", bearer=None)  # noqa: E501  # pragma: allowlist secret
     assert excinfo.value.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -203,11 +203,11 @@ def test_engineer_gate_rejects_named_operator(
     monkeypatch.setenv(
         "P1AM_PRINCIPALS_JSON",
         '[{"subject":"op.1","display_name":"Operator One",'
-        '"role":"operator","api_key":"operator-key-12345"}]',
+        '"role":"operator","api_key":"operator-key-12345"}]',  # noqa: E501  # pragma: allowlist secret
     )
 
     with pytest.raises(HTTPException) as excinfo:
-        require_engineer_key(api_key="operator-key-12345", bearer=None)
+        require_engineer_key(api_key="operator-key-12345", bearer=None)  # noqa: E501  # pragma: allowlist secret
 
     assert excinfo.value.status_code == status.HTTP_403_FORBIDDEN
 
@@ -218,7 +218,7 @@ def test_operator_gate_accepts_short_lived_bearer_session(
     monkeypatch.setenv(
         "P1AM_PRINCIPALS_JSON",
         '[{"subject":"op.1","display_name":"Operator One",'
-        '"role":"operator","api_key":"operator-key-12345"}]',
+        '"role":"operator","api_key":"operator-key-12345"}]',  # noqa: E501  # pragma: allowlist secret
     )
     service = identity_service()
     assert service is not None
