@@ -30,9 +30,9 @@ class TestTrimeshGeometryContracts:
         box = trimesh.creation.box((1.0, 2.0, 3.0))
 
         assert box.is_watertight, "Box mesh must be watertight for URDF/physics use"
-        assert box.volume == pytest.approx(6.0, rel=1e-4), (
-            f"Expected volume 6.0, got {box.volume}"
-        )
+        assert box.volume == pytest.approx(
+            6.0, rel=1e-4
+        ), f"Expected volume 6.0, got {box.volume}"
         assert len(box.vertices) > 0
         assert len(box.faces) > 0
 
@@ -75,16 +75,16 @@ class TestSignalProcessingStack:
         freq = w / (2 * np.pi)
         # Passband gain at DC should be ~1.0
         dc_gain = abs(h[0])
-        assert dc_gain == pytest.approx(1.0, abs=0.01), (
-            f"DC gain should be 1.0, got {dc_gain}"
-        )
+        assert dc_gain == pytest.approx(
+            1.0, abs=0.01
+        ), f"DC gain should be 1.0, got {dc_gain}"
 
         # Stopband attenuation at 0.5 should be < -20 dB
         stop_idx = int(0.5 * len(freq))
         stop_gain_db = 20 * np.log10(abs(h[stop_idx]) + 1e-12)
-        assert stop_gain_db < -20, (
-            f"Expected > 20 dB attenuation, got {stop_gain_db:.1f} dB"
-        )
+        assert (
+            stop_gain_db < -20
+        ), f"Expected > 20 dB attenuation, got {stop_gain_db:.1f} dB"
 
     def test_fft_roundtrip(self) -> None:
         """FFT→IFFT roundtrip preserves signal — fundamental DSP contract."""
