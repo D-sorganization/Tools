@@ -560,7 +560,10 @@ class ConsoleEnvironment:
             _screen_source_for_escapes(code)
             # Execute within current namespace so imports/functions are persistent
             exec(code, self.namespace)  # nosec B102
-        except (SecurityError, *USER_CODE_ERROR_TYPES) as e:  # noqa: BLE001 — user library code may raise anything; report and continue
+        except (
+            SecurityError,
+            *USER_CODE_ERROR_TYPES,
+        ) as e:  # noqa: BLE001 — user library code may raise anything; report and continue
             sys.stderr.write(f"Error loading user library: {e}\n")
             sys.stderr.flush()
 
