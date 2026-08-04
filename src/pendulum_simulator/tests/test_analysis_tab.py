@@ -145,8 +145,8 @@ def test_analysis_tab_surface(qapp, monkeypatch) -> Any:
     tab._on_plot_surface()
 
     # test double exception path LinAlgError
-    tab._get_surface_evaluator = lambda z: (
-        lambda q: np.linalg.cond(np.array([[0, 0], [0, 0]]))
+    tab._get_surface_evaluator = lambda z: lambda q: np.linalg.cond(
+        np.array([[0, 0], [0, 0]])
     )
     tab._on_plot_surface()
     del tab._get_surface_evaluator  # restore
