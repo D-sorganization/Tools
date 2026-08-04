@@ -44,10 +44,17 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   closure sweep, ThemedWindowMixin) plus a React/Vite/Tauri web clone in
   `src/rate_of_closure/web/` whose TypeScript model is pinned test-for-test
   against the Python implementation. Conventions and rate data follow the
-  AffineDrift launch-monitor research: TrackMan frame (x target, y up,
-  z right), Cheetham 2014 tour HTV 1,307 +/- 304 deg/s, CCV = HTV sin(lie)
-  + SPV cos(lie) ~ 2,100 deg/s, deg/ft normalized closure (omega/v =
-  1/R_ISA), and TrackMan's ~3 degree GC-vs-face-center worked example.
+  AffineDrift launch-monitor research: the standard launch-monitor frame
+  (x target, y up, z right), Cheetham 2014 tour HTV 1,307 +/- 304 deg/s,
+  CCV = HTV sin(lie) + SPV cos(lie) ~ 2,100 deg/s, deg/ft normalized
+  closure (omega/v = 1/R_ISA), and the openly published ~3 degree
+  GC-vs-face-center worked example; brand names are kept out of program
+  strings. Both UIs carry playback controls (speed, play/pause, head
+  fixed vs moving through space), clickable result rows with
+  explanations, and a Derivation & Traceability tab typesetting the full
+  calculation with live numeric substitution (matplotlib mathtext on
+  desktop, bundled KaTeX on web). `build_executable.py` packages the
+  desktop app with PyInstaller; the web app packages via Tauri.
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
 
@@ -1734,7 +1741,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-03 | 1.5.4 | feat(rate_of_closure): add the Rate of Closure Impact Explorer (twist-based impact-point deviation model, PyQt6 3D clubhead + closure sweep, parity-tested React/Vite/Tauri web clone) aligned to the AffineDrift launch-monitor conventions and Cheetham closure-rate data. |
+| 2026-08-03 | 1.5.4 | feat(rate_of_closure): add the Rate of Closure Impact Explorer (twist-based impact-point deviation model, PyQt6 3D clubhead + closure sweep, parity-tested React/Vite/Tauri web clone) aligned to the AffineDrift launch-monitor conventions and Cheetham closure-rate data; playback controls with head-fixed/head-moving display modes, clickable result explanations, a live-substituted Derivation & Traceability tab (mathtext / KaTeX), independent cross-validation tests, PyInstaller/Tauri packaging, and brand-neutral program strings. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |
 | 2026-07-26 | 1.5.3 | fix(ci): isolate both protected Python jobs in per-job virtual environments after validating the persistent setup-python runtime; repair and import-probe the matrix NumPy/SciPy stack with compatible bounds, and reinstall OpenCV without dependency resolution so it cannot replace the verified NumPy wheel. |
 | 2026-07-26 | 1.5.3 | fix(import-aliases, #3936): make canonical shared-module aliases satisfy `runpy` code lookup so packaged compatibility commands such as `python -m sidekick` execute their parent-owned `shared.python` implementation; include `contracts` in the identity-coalescing alias set and keep Sidekick agent DbC imports on the canonical shared path. |

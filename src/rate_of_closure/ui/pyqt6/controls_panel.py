@@ -30,14 +30,14 @@ __all__ = ["ControlsPanel"]
 
 #: field name -> (label, unit suffix, decimals, single step)
 _FIELD_SPECS: dict[str, tuple[str, str, int, float]] = {
-    "clubhead_speed_mph": ("Clubhead speed", " mph", 1, 1.0),
-    "omega_plane_dps": ("In-plane rotation", " deg/s", 0, 50.0),
-    "omega_shaft_dps": ("About-shaft rotation", " deg/s", 0, 50.0),
-    "lie_angle_deg": ("Shaft lie at impact", " deg", 1, 1.0),
-    "com_to_face_mm": ("Reference to face center", " mm", 1, 1.0),
-    "impact_offset_toe_mm": ("Impact toward toe", " mm", 1, 1.0),
-    "impact_offset_high_mm": ("Impact above center", " mm", 1, 1.0),
-    "contact_duration_us": ("Contact duration", " µs", 0, 10.0),
+    "clubhead_speed_mph": ("Clubhead Speed", " mph", 1, 1.0),
+    "omega_plane_dps": ("In-Plane Rotation (SPV)", " deg/s", 0, 50.0),
+    "omega_shaft_dps": ("About-Shaft Rotation (HTV)", " deg/s", 0, 50.0),
+    "lie_angle_deg": ("Shaft Lie at Impact", " deg", 1, 1.0),
+    "com_to_face_mm": ("GC to Face Center", " mm", 1, 1.0),
+    "impact_offset_toe_mm": ("Impact Toward Toe", " mm", 1, 1.0),
+    "impact_offset_high_mm": ("Impact Above Center", " mm", 1, 1.0),
+    "contact_duration_us": ("Contact Duration", " µs", 0, 10.0),
 }
 
 _GROUPS: tuple[tuple[str, tuple[str, ...]], ...] = (

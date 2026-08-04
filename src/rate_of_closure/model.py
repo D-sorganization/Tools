@@ -27,7 +27,8 @@ so the model's closure rate and the literature's club closure velocity
 (CCV, ~2,100 deg/s tour mean) are the same quantity by construction.
 
 Frame convention — the AffineDrift house convention (Launch Monitor
-Technology Review, ``sections/02-parameters.tex``, following TrackMan):
+Technology Review, ``sections/02-parameters.tex``, following the
+standard launch-monitor definitions):
     x along the target line, y vertical (up), z to the right of the
     target line looking down it. Angles positive right and up; club
     path + = in-to-out (right of target for a right-handed golfer).
@@ -36,7 +37,7 @@ The reference point — the launch monitor's geometric center (GC; the CG
 lies within ~6 mm of it) — travels dead at the target with zero attack
 angle by construction, so every output is a *deviation from the
 reported delivery* at the instant of maximum compression. That is
-exactly the reference-point question: TrackMan's own material puts the
+exactly the reference-point question: openly published launch-monitor material puts the
 GC-path vs face-center-path gap at roughly 3 degrees for a driver.
 Equivalently the gap is d / R_ISA (offset over distance to the
 instantaneous screw axis), which is why the speed-invariant closure
@@ -99,7 +100,7 @@ class ImpactScenario:
         lie_angle_deg: Shaft angle from horizontal at impact, degrees.
             90 puts the shaft vertical (isolates pure horizontal closure).
         com_to_face_mm: Distance from the reference point (GC) forward
-            to the face center, millimetres. TrackMan cites 25-50 for
+            to the face center, millimetres. published head data cites 25-50 for
             drivers; 40 is the AffineDrift worked-example value.
         impact_offset_toe_mm: Impact-point offset from face center toward
             the toe (positive) or heel (negative), millimetres.
@@ -146,7 +147,7 @@ class ImpactResult:
             point — the rotation-induced velocity.
         path_deviation_deg: Horizontal angle between the impact point's
             path and the reference path. Positive = right (in-to-out);
-            negative = left, per the AffineDrift/TrackMan convention.
+            negative = left, per the AffineDrift launch-monitor convention.
         aoa_deviation_deg: Vertical angle difference. Positive = the
             impact point is travelling more upward (shallower).
         closure_during_contact_deg: Face closure accumulated over the

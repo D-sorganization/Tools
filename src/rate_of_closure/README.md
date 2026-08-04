@@ -23,7 +23,7 @@ reports is **degrees per foot of travel**.
 ## Conventions and Sources
 
 * **Frame** (AffineDrift house convention, `sections/02-parameters.tex`,
-  following TrackMan): x along the target line, y up, z right of target.
+  following standard launch-monitor definitions): x along the target line, y up, z right of target.
   Angles positive right and up; club path + = in-to-out. Negative path
   deviation = the impact point travels left of the reported GC path.
   Delivery is referenced at the instant of maximum compression.
@@ -33,10 +33,10 @@ reports is **degrees per foot of travel**.
   global club closure velocity CCV ≈ 2,100 °/s, reconciling as
   `CCV = HTV·sin(lie) + SPV·cos(lie)`. The model's closure rate *is*
   this CCV by construction.
-* **Geometry**: TrackMan cites a 25–50 mm GC-to-face offset for drivers;
+* **Geometry**: openly published head data cites a 25–50 mm GC-to-face offset for drivers;
   the default 40 mm is the AffineDrift worked-example value.
-* **Calibration cross-check**: TrackMan's own material puts the GC-path
-  vs face-center-path gap at roughly 3° for a driver; the "TrackMan ~3°
+* **Calibration cross-check**: openly published launch-monitor material puts the GC-path
+  vs face-center-path gap at roughly 3° for a driver; the "Published ~3°
   worked example" preset back-solves it (the implied closure exceeds the
   Cheetham range — the R_ISA ≈ 0.77 m tension the derivation documents).
 
@@ -69,6 +69,22 @@ The web app builds to a static bundle (`npm run build`) that can be hosted
 anywhere as a link, and carries the same Tauri scripts as the other web
 tools for desktop packaging.
 
+## Build a Standalone Executable
+
+Users can package the explorer and experiment without a Python
+environment:
+
+```bash
+# Desktop (PyQt6) — requires: pip install pyinstaller
+python src/rate_of_closure/build_executable.py            # one-folder app
+python src/rate_of_closure/build_executable.py --onefile  # single file
+
+# Web shell (Tauri) — from src/rate_of_closure/web
+npm run tauri build
+```
+
+The PyInstaller output lands in `dist/RateOfClosureExplorer`.
+
 ## Structure
 
 ```
@@ -81,5 +97,5 @@ tests/ (repo level)   # tests/rate_of_closure/: model, contracts, GUI smoke
 
 Both implementations pin the same numeric cases (the 2.733 mph / −1.30°
 forum example, the −1.70° legacy tour case, the ~2,100 °/s default CCV,
-and the −3.0° TrackMan worked example), so they cannot drift apart
+and the −3.0° published worked example), so they cannot drift apart
 silently.

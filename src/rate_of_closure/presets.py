@@ -45,10 +45,10 @@ PRESETS: dict[str, ImpactScenario] = {
         omega_plane_dps=1870.0,
         omega_shaft_dps=2432.0,
     ),
-    # Back-solves TrackMan's published ~3 degree GC-vs-face-center path
+    # Back-solves the openly published ~3 degree GC-vs-face-center path
     # gap at d = 40 mm — the implied closure exceeds the Cheetham range,
     # the tension the AffineDrift derivation documents (R_ISA ~ 0.77 m).
-    "TrackMan ~3 deg worked example": ImpactScenario(
+    "Published ~3 deg worked example": ImpactScenario(
         clubhead_speed_mph=120.0,
         omega_plane_dps=1870.0,
         omega_shaft_dps=3575.0,

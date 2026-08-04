@@ -78,7 +78,7 @@ describe("AffineDrift dossier alignment — parity with pytest", () => {
     );
   });
 
-  it("TrackMan worked example reproduces the ~3 degree gap", () => {
+  it("published worked example reproduces the ~3 degree gap", () => {
     const result = solve(scenario({ omegaShaftDps: 3575 }));
     expect(result.pathDeviationDeg).toBeCloseTo(-3.0, 1);
   });

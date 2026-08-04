@@ -213,7 +213,7 @@ class TestAffineDriftAlignment:
         )
 
     def test_trackman_worked_example_reproduces_3_degree_gap(self) -> None:
-        """TrackMan's published ~3 deg GC-vs-face-center path gap, d=40mm."""
+        """the openly published ~3 deg GC-vs-face-center path gap, d=40mm."""
         result = solve(
             ImpactScenario(
                 clubhead_speed_mph=120.0,
@@ -223,6 +223,88 @@ class TestAffineDriftAlignment:
             )
         )
         assert result.path_deviation_deg == pytest.approx(-3.0, abs=0.02)
+
+
+class TestCrossValidation:
+    """Independent checks of the analytic solution.
+
+    The model computes v_P = v_ref + omega x r in closed form. These
+    tests recompute the same quantities by entirely different routes -
+    finite-difference rotation of the actual point, and the Lagrange
+    identity for the cross-product magnitude - so an algebra or sign
+    slip in either path cannot pass both.
+    """
+
+    @staticmethod
+    def _rotation_matrix(omega: np.ndarray, dt: float) -> np.ndarray:
+        """Rodrigues rotation - independent of the model's cross product."""
+        theta = float(np.linalg.norm(omega)) * dt
+        if theta == 0.0:
+            return np.eye(3)
+        axis = omega / np.linalg.norm(omega)
+        k = np.array(
+            [
+                [0.0, -axis[2], axis[1]],
+                [axis[2], 0.0, -axis[0]],
+                [-axis[1], axis[0], 0.0],
+            ]
+        )
+        return np.eye(3) + math.sin(theta) * k + (1.0 - math.cos(theta)) * (k @ k)
+
+    def test_point_velocity_matches_finite_difference_rotation(self) -> None:
+        """d/dt [R(t) r + v t] at t=0 must equal v + omega x r."""
+        scenario = _scenario(impact_offset_toe_mm=12.0, impact_offset_high_mm=6.0)
+        result = solve(scenario)
+        omega = np.radians(np.array(result.omega_dps))
+        lever = (
+            np.array(
+                [
+                    scenario.com_to_face_mm,
+                    scenario.impact_offset_high_mm,
+                    scenario.impact_offset_toe_mm,
+                ]
+            )
+            / 1000.0
+        )
+        v_ref = np.array([scenario.clubhead_speed_mph * 0.44704, 0.0, 0.0])
+        dt = 1e-7
+        forward = self._rotation_matrix(omega, dt) @ lever + v_ref * dt
+        backward = self._rotation_matrix(omega, -dt) @ lever - v_ref * dt
+        numeric = (forward - backward) / (2.0 * dt)
+        assert numeric == pytest.approx(np.array(result.point_velocity_mps), abs=1e-6)
+
+    def test_tangential_magnitude_matches_lagrange_identity(self) -> None:
+        """|omega x r|^2 = |omega|^2 |r|^2 - (omega . r)^2."""
+        scenario = _scenario(impact_offset_toe_mm=-9.0, impact_offset_high_mm=4.0)
+        result = solve(scenario)
+        omega = np.radians(np.array(result.omega_dps))
+        lever = (
+            np.array(
+                [
+                    scenario.com_to_face_mm,
+                    scenario.impact_offset_high_mm,
+                    scenario.impact_offset_toe_mm,
+                ]
+            )
+            / 1000.0
+        )
+        expected_sq = (omega @ omega) * (lever @ lever) - (omega @ lever) ** 2
+        tangential_mps = result.tangential_speed_mph * 0.44704
+        assert tangential_mps**2 == pytest.approx(expected_sq, rel=1e-9)
+
+    def test_pure_vertical_axis_matches_closed_form(self) -> None:
+        """Lie 90, no plane rotation: path = -atan(omega d / v) exactly."""
+        scenario = _scenario(
+            omega_plane_dps=0.0, omega_shaft_dps=2000.0, lie_angle_deg=90.0
+        )
+        result = solve(scenario)
+        omega = math.radians(2000.0)
+        d = scenario.com_to_face_mm / 1000.0
+        v = scenario.clubhead_speed_mph * 0.44704
+        assert result.path_deviation_deg == pytest.approx(
+            -math.degrees(math.atan(omega * d / v)), abs=1e-9
+        )
+        assert result.aoa_deviation_deg == pytest.approx(0.0, abs=1e-9)
 
 
 class TestGeometryOutputs:

@@ -6,7 +6,7 @@
  * cannot drift apart silently.
  *
  * Frame convention — the AffineDrift house convention (Launch Monitor
- * Technology Review, sections/02-parameters.tex, following TrackMan):
+ * Technology Review, sections/02-parameters.tex, following standard launch-monitor definitions):
  * x along the target line, y up, z right of target. Club path + =
  * in-to-out (right); negative path deviation = LEFT.
  */
@@ -58,7 +58,7 @@ export const BOUNDS: Record<keyof ImpactScenario, [number, number]> = {
 
 // Defaults are dossier-sourced: Cheetham tour-median HTV 1,307 deg/s
 // about the shaft, SPV 1,870 chosen so CCV = HTV sin(lie) + SPV cos(lie)
-// ~ 2,100 deg/s at lie 58, and TrackMan's 40 mm GC-to-face offset.
+// ~ 2,100 deg/s at lie 58, and the published 40 mm GC-to-face offset.
 export const DEFAULT_SCENARIO: ImpactScenario = {
   clubheadSpeedMph: 120.0,
   omegaPlaneDps: 1870.0,
