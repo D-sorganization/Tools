@@ -125,6 +125,8 @@ jobs:
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
       PIP_DEFAULT_TIMEOUT: "1000"
       PIP_RETRIES: "8"
+      CARGO_NET_RETRY: "10"
+      CARGO_NET_TIMEOUT: "120"
       PYTHONNOUSERSITE: "1"
     steps:
       - name: Git HTTP/1.1 workaround
@@ -468,6 +470,8 @@ jobs:
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
       PIP_DEFAULT_TIMEOUT: "1000"
       PIP_RETRIES: "8"
+      CARGO_NET_RETRY: "10"
+      CARGO_NET_TIMEOUT: "120"
       # Keep matrix jobs isolated from stale runner-user packages. Python 3.12
       # was resolving pytest/pluggy from ~/.local while native deps came from
       # the per-job tool cache, producing repeatable exit-134 aborts.
@@ -900,6 +904,8 @@ jobs:
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
       CARGO_TERM_COLOR: always
+      CARGO_NET_RETRY: "10"
+      CARGO_NET_TIMEOUT: "120"
       RUST_MIN_STACK: "268435456"
     steps:
       - name: Git HTTP/1.1 workaround

@@ -299,9 +299,9 @@ class TestPeerReviewConfigDialog:
 
         dlg = self._dialog_cls()
         combos = dlg.findChildren(QComboBox)
-        assert (
-            len(combos) >= 2
-        ), "Dialog must have at least two QComboBoxes (provider + model)"
+        assert len(combos) >= 2, (
+            "Dialog must have at least two QComboBoxes (provider + model)"
+        )
         dlg.close()
 
     def test_dialog_returns_selected_config(self) -> None:
@@ -311,8 +311,8 @@ class TestPeerReviewConfigDialog:
         assert isinstance(config, tuple), "get_config() must return a tuple"
         assert len(config) == 2, "get_config() must return (provider, model)"
         provider, model = config
-        assert (
-            isinstance(provider, str) and provider
-        ), "provider must be a non-empty str"
+        assert isinstance(provider, str) and provider, (
+            "provider must be a non-empty str"
+        )
         assert isinstance(model, str) and model, "model must be a non-empty str"
         dlg.close()

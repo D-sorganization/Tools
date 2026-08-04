@@ -282,18 +282,13 @@ export function timeSeriesPath(
 ): string {
   const { t0, t1, min, max, x0, x1, yTop, plotH } = geom;
   if (points.length < 2 || !(t1 > t0) || !(max > min)) return "";
-
-  // ⚡ Bolt Optimization: Build the SVG path string in a single pass instead of
-  // allocating an intermediate array of segment strings with .map().join(" ").
-  let d = "";
-  for (let i = 0; i < points.length; i++) {
-    const p = points[i];
-    const x = timeToX(p.t, t0, t1, x0, x1);
-    const y = valueToY(p.v, min, max, yTop, plotH);
-    if (i > 0) d += " ";
-    d += (i === 0 ? "M" : "L") + x.toFixed(1) + "," + y.toFixed(1);
-  }
-  return d;
+  return points
+    .map((p, i) => {
+      const x = timeToX(p.t, t0, t1, x0, x1);
+      const y = valueToY(p.v, min, max, yTop, plotH);
+      return `${i === 0 ? "M" : "L"}${x.toFixed(1)},${y.toFixed(1)}`;
+    })
+    .join(" ");
 }
 
 /**
