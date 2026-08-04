@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.6                                      |
-| **Spec Version**        | 1.5.6                                      |
+| **Current Version**     | 1.6.0                                      |
+| **Spec Version**        | 1.6.0                                      |
 | **Last Spec Update**    | 2026-08-04                                 |
 
 ## 2. Purpose & Mission
@@ -68,6 +68,69 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   Tests: `tests/rate_of_closure/test_club.py` (inertia hand-computed
   cases, sagitta-vs-circle-formula, mesh determinism, Python↔TS
   parity pins) plus Club-group GUI smoke tests.
+
+### 2026-08-04 Swing simulation ball-flight package (epic #4103, #4107)
+
+- New self-facaded subpackage `src/shared/python/swing_sim/flight/` porting
+  UpstreamDrift's pure-Python flight stack (`physics/flight_models.py`):
+  `FlightModelRegistry` with all 7 literature models (Waterloo/Penner
+  quadratic-Cd + power-law-Cl, MacDonald-Hanzely spin decay, and the five
+  constant-coefficient presets — Nathan, Ballantyne, J. Cole, Rospie DL,
+  Charry L3 — keeping their `ConstantCoefficientSpec`
+  name/description/reference citation metadata), scipy `solve_ivp` RK45
+  integration with a terminal ground event, and `FlightResult` metrics
+  (carry, max height, flight time, landing angle, lateral deviation).
+  Constants are vendored with citations into `flight/_constants.py`.
+- Public launch deriver `derive_launch_conditions` (port of the pipeline
+  `_LaunchConditionsDeriver` in UpstreamDrift's
+  `swing_ball_flight_pipeline.py`): post-impact ball velocity/spin vectors
+  → speed, launch angle, azimuth, spin rate [RPM], unit spin axis; the
+  optional `LaunchConditions.spin_axis` override makes the derivation
+  round-trip exactly through `get_initial_velocity`/`get_spin_vector`.
+- Frame adapters `to_flight_frame`/`from_flight_frame` between the app
+  frame (x target, y up, z right) and the UpstreamDrift flight frame
+  (x forward, y left, z up), tested for round-trip and handedness.
+- Graceful Rust fast path (`flight/_rust_facade.py`, aerodynamics-facade
+  posture — scipy is a fully supported fallback, unlike the strict swing
+  facade): `is_rust_available()` + `simulate_trajectory_rust()` over the
+  canonical `rust_core/tools-core/src/ball_flight.rs` RK4 kernel, which now
+  exposes `simulate_trajectory`/`analyze_trajectory` pyfunctions plus
+  property setters (ball/environment scalars, spin axis, wind) and
+  trajectory velocity getters; results are converted into the flight frame.
+  Parity tests compare Rust vs the Python Penner model (tight for zero-spin
+  drag, banded for spinning shots whose lift laws differ) and skip cleanly
+  when the wheel is absent or predates the new bindings.
+- Pipeline seam `flight/pipeline.py`: runtime-checkable
+  `FlightSimulatorProtocol` (satisfied by every registry model) and a
+  `simulate(launch, model_name="waterloo_penner")` convenience mirroring
+  UpstreamDrift's DI design so the impact stage (#4106) plugs in directly.
+  The parent `swing_sim` facade is unchanged.
+
+### 2026-08-04 Swing simulation foundation (epic #4103, P0 #4104)
+
+- New Rust workspace member `rust_core/swing-core` (Python wheel `swing_core`
+  via maturin, WASM NPM package via wasm-pack): double-pendulum swing
+  equations of motion ported from UpstreamDrift's `double_pendulum.py`
+  (mass matrix, Coriolis/centripetal, gravity, viscous damping, RK4),
+  generalised so gravity enters as an in-plane 2-vector computed from a
+  swing-plane pose built by three sequential intrinsic tilts (yaw about
+  world-up, side tilt about the rotated axis, forward/back tilt). Feature
+  contract (`python` / `extension-module` / `wasm`, cdylib+rlib, per-crate
+  maturin pyproject, dual `#[cfg_attr]` bindings split under `py_bindings/`
+  and `wasm_bindings/`) copies `tools-core` exactly.
+- New shared Python package `src/shared/python/swing_sim/`: frozen DbC
+  dataclasses (`PlaneOrientation`, `PendulumParameters`, `PendulumState`,
+  `SwingSample` with SE(3) pose + 6-twist, `SwingTrajectory`), the
+  `SwingSource` protocol with a `DoublePendulumSwing` implementation, a
+  strict Rust façade (`_rust_facade.py`, bilateral_rust posture: raise at
+  call time when the wheel is missing for hot loops) and a pure-Python
+  reference implementation used as the Rust parity oracle and one-shot
+  fallback. In-package tests carry `unit` / `parity` / `contract` markers.
+- CI: `ci-standard.yml` rust-quality-gate change filter also watches
+  `src/shared/python/swing_sim/**` and builds/verifies the swing-core WASM
+  package; new `maturin-swing-core.yml` per-crate workflow builds the wheel
+  on Python 3.10–3.12, asserts the extension imports, and runs the parity
+  suite non-skipped. NPM publishing is deferred to epic P7.
 
 ### 2026-08-03 Rate of Closure STL Clubhead Rendering
 
@@ -1798,6 +1861,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
+| 2026-08-04 | 1.6.0 | feat(swing_sim, #4104): add the swing simulation foundation — new `rust_core/swing-core` workspace crate (double-pendulum EOM with plane-oriented in-plane gravity, PyO3 wheel `swing_core` + wasm-bindgen bindings) and shared `src/shared/python/swing_sim` package (DbC value types, `SwingSource` protocol, `DoublePendulumSwing`, strict Rust façade with pure-Python parity oracle); wire swing-core into the rust quality gate's wasm build and add the `maturin-swing-core.yml` build/import/parity workflow. |
 | 2026-08-04 | 1.5.6 | feat(rate_of_closure): club library, inertial model, and parametric head with bulge & roll (P2, #4106) — frozen SI ClubSpec with DbC bounds, 15-club library normalized from typical published specs (UpstreamDrift club_configurations.py source), head+shaft+grip composite inertia (balance point, grip-axis and shaft-axis MOI), deterministic superellipse-loft parametric head whose face honors bulge/roll sagitta and loft tilt with mass-scaled envelope, face_normal_at_offset exposed for the future impact package in Python and TypeScript with pinned parity tests, PyQt6 Club group (picker drives GC-to-face/lie with overrides preserved; sourced tooltips) and web ClubPanel generating heads client-side into the existing mesh render paths. |
 | 2026-08-03 | 1.5.5 | feat(rate_of_closure): optional photorealistic STL clubhead rendering — pure-numpy binary/ASCII STL parser with head-envelope normalization (mesh.py), PyQt6 Load Clubhead STL/Procedural Head playback-bar controls with lambert-shaded Poly3DCollection rendering, web-clone FileReader STL input with painter's-algorithm flat-shaded triangles (TS parser parity-tested against pytest), and a programmatically generated example driver-head STL free of licensing risk. |
 | 2026-08-03 | 1.5.4 | feat(rate_of_closure): add the Rate of Closure Impact Explorer (twist-based impact-point deviation model, PyQt6 3D clubhead + closure sweep, parity-tested React/Vite/Tauri web clone) aligned to the AffineDrift launch-monitor conventions and Cheetham closure-rate data; playback controls with head-fixed/head-moving display modes, clickable result explanations, a live-substituted Derivation & Traceability tab (mathtext / KaTeX), independent cross-validation tests, PyInstaller/Tauri packaging, and brand-neutral program strings; review round adds unit drop-downs (speed/rotation/length) with a canonical-unit model core, arrow-free typed inputs with sourced golf-swing range tooltips, a Common Closure Metrics panel (CCV, deg/ft, deg/in, deg/ms, R_ISA, time-to-square, toe-heel speed delta), a derivation-tab scroll fix, and removal of the duplicated Theme menu. |

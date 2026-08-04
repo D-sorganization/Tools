@@ -915,11 +915,11 @@ jobs:
             if [ -z "$BASE_SHA" ]; then
               BASE_SHA="${{ github.event.pull_request.base.sha }}"
             fi
-            RUST_FILES=$(git diff --name-only "$BASE_SHA" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || true)
+            RUST_FILES=$(git diff --name-only "$BASE_SHA" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' 'src/shared/python/swing_sim/**' || true)
           elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            RUST_FILES=$(git diff --name-only "${{ github.event.before }}" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || true)
+            RUST_FILES=$(git diff --name-only "${{ github.event.before }}" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' 'src/shared/python/swing_sim/**' || true)
           else
-            RUST_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || echo "")
+            RUST_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' 'src/shared/python/swing_sim/**' || echo "")
           fi
 
           if [ -n "$RUST_FILES" ]; then
@@ -1029,13 +1029,24 @@ jobs:
           echo "wasm-pack build completed"
           ls pkg/
 
+      - name: Build WASM Module — swing-core (wasm-pack)
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        run: |
+          cd rust_core/swing-core
+          wasm-pack build --target web --features wasm --no-default-features
+          echo "wasm-pack build (swing-core) completed"
+          ls pkg/
+
       - name: Verify WASM Module
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          # Verify the WASM package was produced with expected files
+          # Verify the WASM packages were produced with expected files
           test -f rust_core/tools-core/pkg/tools_core_bg.wasm && echo "✅ WASM binary exists"
           test -f rust_core/tools-core/pkg/package.json && echo "✅ package.json exists"
           test -f rust_core/tools-core/pkg/tools_core.js && echo "✅ JS glue exists"
+          test -f rust_core/swing-core/pkg/swing_core_bg.wasm && echo "✅ swing-core WASM binary exists"
+          test -f rust_core/swing-core/pkg/package.json && echo "✅ swing-core package.json exists"
+          test -f rust_core/swing-core/pkg/swing_core.js && echo "✅ swing-core JS glue exists"
 
       - name: Run Benchmarks (Criterion)
         if: steps.rust-changes.outputs.has_changes == 'true'
