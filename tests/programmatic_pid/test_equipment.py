@@ -108,9 +108,9 @@ def test_draw_equipment_symbol_uses_registry():
     for eq_type in ["hopper", "fan", "gate_valve", "control_valve", "pump"]:
         initial_count = len(list(msp))
         draw_equipment_symbol(msp, _eq(etype=eq_type), "EQUIPMENT")
-        assert len(list(msp)) > initial_count, (
-            f"{eq_type} should add entities to modelspace"
-        )
+        assert (
+            len(list(msp)) > initial_count
+        ), f"{eq_type} should add entities to modelspace"
 
 
 def test_draw_equipment_symbol_fallback_to_box():
