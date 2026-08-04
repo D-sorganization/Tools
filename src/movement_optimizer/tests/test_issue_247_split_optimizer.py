@@ -12,10 +12,17 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from movement_optimizer.models import BodyModel, make_bench_press_config, make_squat_config
+from movement_optimizer.models import (
+    BodyModel,
+    make_bench_press_config,
+    make_squat_config,
+)
 from movement_optimizer.trajectory import TrajectoryOptimizer
 from movement_optimizer.trajectory.optimizer_bench import compute_bench_bar_cost
-from movement_optimizer.trajectory.optimizer_spline import build_splines, eval_trajectory
+from movement_optimizer.trajectory.optimizer_spline import (
+    build_splines,
+    eval_trajectory,
+)
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -105,12 +112,12 @@ class TestBuildSplines:
         q_start_eval = spline(t0)
         q_end_eval = spline(tf)
         for j in range(a["n_dof"]):
-            assert abs(float(q_start_eval[j]) - a["q_start"][j]) < 1e-10, (
-                f"DOF {j}: spline does not pass through q_start"
-            )
-            assert abs(float(q_end_eval[j]) - a["q_end"][j]) < 1e-10, (
-                f"DOF {j}: spline does not pass through q_end"
-            )
+            assert (
+                abs(float(q_start_eval[j]) - a["q_start"][j]) < 1e-10
+            ), f"DOF {j}: spline does not pass through q_start"
+            assert (
+                abs(float(q_end_eval[j]) - a["q_end"][j]) < 1e-10
+            ), f"DOF {j}: spline does not pass through q_end"
 
     def test_splines_with_via_point(self) -> None:
         """Via-point variant must also honour boundary conditions."""
