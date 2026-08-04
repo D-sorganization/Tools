@@ -109,9 +109,7 @@ class InvalidStateFileError(ValueError):
 def _require_mapping(data: Any, context: str) -> dict[str, Any]:
     """Return ``data`` as a dict or raise with a descriptive context."""
     if not isinstance(data, dict):
-        raise InvalidStateFileError(
-            f"{context}: expected JSON object, got {type(data).__name__}"
-        )
+        raise InvalidStateFileError(f"{context}: expected JSON object, got {type(data).__name__}")
     return data
 
 
@@ -144,9 +142,7 @@ def _require_type(value: Any, expected: type | tuple[type, ...], field: str) -> 
 def _require_range(value: float, bounds: tuple[float, float], field: str) -> None:
     low, high = bounds
     if not (low <= value <= high):
-        raise InvalidStateFileError(
-            f"field '{field}': value {value} out of range [{low}, {high}]"
-        )
+        raise InvalidStateFileError(f"field '{field}': value {value} out of range [{low}, {high}]")
 
 
 def _validate_schema_version(data: dict[str, Any], context: str) -> None:
@@ -189,9 +185,7 @@ def _validate_metadata_block(metadata: Any, context: str) -> None:
     }
     for key, expected in required_types.items():
         if key not in meta_dict:
-            raise InvalidStateFileError(
-                f"{context}: missing required metadata key '{key}'"
-            )
+            raise InvalidStateFileError(f"{context}: missing required metadata key '{key}'")
         # ``success`` is bool and must be checked separately to avoid the
         # numeric-bool guard in ``_require_type``.
         if expected is bool:
@@ -273,9 +267,7 @@ def _validate_app_state_schema(data: dict[str, Any]) -> None:
             )
         sub = _require_mapping(payload, f"results.{etype}")
         if "arrays" not in sub or "metadata" not in sub:
-            raise InvalidStateFileError(
-                f"results.{etype}: must contain 'arrays' and 'metadata'"
-            )
+            raise InvalidStateFileError(f"results.{etype}: must contain 'arrays' and 'metadata'")
         _validate_arrays_block(sub["arrays"], f"results.{etype}")
         _validate_metadata_block(sub["metadata"], f"results.{etype}")
 
@@ -406,9 +398,7 @@ def save_app_state(
         slider_values maps slider_name -> float value.
     """
     state_path = (
-        load_app_paths().state_file
-        if state_dir is None
-        else Path(state_dir) / "last_state.json"
+        load_app_paths().state_file if state_dir is None else Path(state_dir) / "last_state.json"
     )
     state_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -436,9 +426,7 @@ def load_app_state(*, state_dir: str | Path | None = None) -> dict[str, Any] | N
     state is incompatible rather than being silently discarded.
     """
     state_path = (
-        load_app_paths().state_file
-        if state_dir is None
-        else Path(state_dir) / "last_state.json"
+        load_app_paths().state_file if state_dir is None else Path(state_dir) / "last_state.json"
     )
 
     if not state_path.exists():
