@@ -48,6 +48,6 @@ def _import_under_consumer_contract(dotted: str) -> subprocess.CompletedProcess[
 def test_top_level_packages_import_under_repo_root_only(package: str) -> None:
     """``import src.<package>`` must succeed with only the repo root on path."""
     result = _import_under_consumer_contract(f"src.{package}")
-    assert result.returncode == 0, (
-        f"import src.{package} failed under repo-root-only sys.path:\n{result.stderr}"
-    )
+    assert (
+        result.returncode == 0
+    ), f"import src.{package} failed under repo-root-only sys.path:\n{result.stderr}"
