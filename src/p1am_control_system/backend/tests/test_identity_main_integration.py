@@ -20,9 +20,7 @@ def _methods_by_path(routes: Iterable[object]) -> dict[str, set[str]]:
         path = getattr(route, "path", None)
         if not isinstance(path, str):
             continue
-        methods_by_path.setdefault(path, set()).update(
-            getattr(route, "methods", set())
-        )
+        methods_by_path.setdefault(path, set()).update(getattr(route, "methods", set()))
     return methods_by_path
 
 
