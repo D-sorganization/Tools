@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.7.0                                      |
-| **Spec Version**        | 1.7.0                                      |
+| **Current Version**     | 1.11.0                                     |
+| **Spec Version**        | 1.11.0                                     |
 | **Last Spec Update**    | 2026-08-04                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,63 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-04 Rate of Closure glossary, help system & full-model derivations (epic #4120, phase V4)
+
+- Selected-value clarity: clicking any result/metric/launch row applies
+  a persistent selected state (PyQt6: `ResultRow.set_selected` dynamic
+  property + a palette-derived stylesheet — highlight color at low
+  alpha, no hard-coded colors; web: the aria-pressed row styling
+  strengthened with a ring + stronger tint). One selection at a time
+  across all row groups per host, and every explanation panel now leads
+  with the selected row's NAME as a prominent header
+  (`explanation_html`). Test-enforced (exclusivity, header-matches-
+  label, palette-only styling).
+- Glossary: `src/rate_of_closure/glossary.py` — a DbC dict of 60
+  sourced terms covering the whole app vocabulary (delivery terms,
+  CCV/HTV/SPV, R_ISA/ISA/screw pitch/twist, D-plane/spin loft, COR/
+  effective mass/MOI tensor/CG depth/gear effect/bulge/roll, 2/7
+  friction cap, launch/flight terms, Monte-Carlo/sensitivity/Spearman/
+  2-sigma ellipse/NoiseSpec distributions, pendulum mass matrix/
+  Coriolis/plane inclination, ...), each definition naming its source.
+  PyQt6: searchable Glossary tab (`ui/pyqt6/glossary_tab.py`) with
+  `select_term` deep-linking; every explanation panel carries a
+  `glossary:<term>` link that jumps there pre-selected
+  (`FIELD_TO_TERM` maps EVERY explanation field, contract-tested).
+  Web: generated `model/glossary.ts` mirror + Glossary tab with search
+  + links from the explanation card; the key list is pinned key-for-key
+  by a Python-generated fixture checked from both test suites.
+- Tab rename: 'Derivation && Traceability' -> 'Calculation Description'
+  (both UIs, docstrings/strings updated).
+- Full-model derivations: `derivation_models.py` (DerivationConfig +
+  DerivationSection) assembles sectioned coverage from per-domain
+  content modules under the 500-LOC budget — (a) the existing closure
+  chain, (b) `derivation_impact.py`: impulse-momentum with COR,
+  MOI-tensor triple-product effective mass, the 2/7 friction spin cap,
+  D-plane, and the gear-effect recoil derivation (sourced from the
+  swing_sim.impact docstrings), (c) `derivation_flight.py`: flight EOM
+  with drag/lift/Magnus plus the ACTIVE literature model's coefficient
+  law and citation pulled live from the flight registry metadata, and
+  spin decay, (d) `derivation_swing.py`: double-pendulum Lagrangian
+  (mass matrix, Coriolis, plane-tilt gravity projection substituting
+  the live tilts) with a conditional triple-pendulum step. Sections
+  render conditionally per the current configuration — SimulationTab
+  emits `configChanged` and the DerivationView re-renders. Web mirror
+  `derivationModels.ts` + sectioned `Derivation.tsx`; parity tests pin
+  section keys/toggling and the in-plane-gravity mirror; every formula
+  parses as matplotlib mathtext (pytest) and strict KaTeX (vitest).
+- Help system: `helptext.py` — cold-user help per tab (what it does,
+  workflow, control reference, tips); a '?' corner button on the PyQt6
+  tab bar opens the current tab's rich-text help panel. Web:
+  `helptext.ts` + a collapsible 'How to Use This Page' section at the
+  top of every tab. Contract tests assert every tab has substantive
+  help (>300 chars) with workflow coverage.
+- Hover-hint completeness sweep: PyQt6 headless walk over every
+  (nested) tab asserting an effective tooltip on all interactive
+  widgets; web vitest render-and-assert title/aria-label on the
+  interactive elements of every panel. Gaps found by the tests fixed
+  across both UIs (playback, presets, tab nav, unit selects, result
+  rows, run/export/solver controls).
+
 ### 2026-08-04 Shared variation / Monte-Carlo engine + Variation tab (epic #4120, phase V3)
 
 - New shared engine `src/shared/python/swing_sim/variation/` (not
@@ -2225,6 +2282,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-04 | 1.11.0 | feat(rate_of_closure, #4120 V4): investigation-suite polish — persistent selected-row highlight (palette-derived, both UIs) with the row name leading every explanation panel; 60-term sourced DbC glossary with searchable PyQt6 tab / web section, explanation-panel deep links, and a fixture-pinned TS mirror; Derivation & Traceability renamed Calculation Description; sectioned full-model derivations (closure chain + impact impulse/COR/MOI-tensor/2-7 cap/D-plane/gear effect + flight EOM with the active literature model's cited coefficient law + pendulum Lagrangian with live plane-tilt gravity) rendering conditionally per configuration in mathtext/KaTeX; per-tab cold-user help (PyQt6 '?' corner button, web collapsible How-to sections) contract-tested >300 chars; hover-hint completeness sweeps test-enforced across every interactive widget/element of both UIs. |
 | 2026-08-04 | 1.10.0 | feat(swing_sim, rate_of_closure, #4120 V3): shared variation/Monte-Carlo engine — `shared/python/swing_sim/variation/` (namespaced variable registry, NoiseSpec/VariationPlan JSON schema, seeded parallel N-run engine with solver-shaped progress/cancel, dispersion + one-at-a-time sensitivity + Spearman + 2-sigma landing ellipse, CSV/JSON dataset IO), the PyQt6 "Variation" tab in the Rate of Closure explorer, and the web mirror (seeded mulberry32 engine, capped <=500 runs, shared plan schema, statistical parity fixture vs the Python engine). Prior-art survey of UpstreamDrift Monte-Carlo/perturbation/movement_optimizer machinery credited in module docstrings. |
 | 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V1): investigative plotting suite — `plotting/` package (40-variable DbC data catalog with pinned keys, frozen JSON-round-trip PlotSpec `rate_of_closure.plot_spec/1`, one compute/render pipeline with full-simulation sweeps and themed palette, built-in advanced plots: migrated closure sweep, delivery-vs-τ, launch-vs-toe/high offset maps, swing time series, side/top-down flight profiles); PyQt6 Plots tab replacing the Closure Sweep tab (plot list add/duplicate/remove, 3-step Custom Plot wizard with live preview, navigation toolbar, PNG/SVG/CSV/JSON + save/load definition exports, tooltips everywhere); web parity via plotcatalog.ts (key list pinned against the pytest-exported fixture), plotspec.ts (shared schema + pipeline), and a Plots tab with built-in picker, simplified custom builder, canvas rendering, PNG/CSV/JSON downloads, and definition import/export interoperable with the desktop app. |
 | 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V2): scale-separated viewers + standalone Flight Explorer + small-window layout fixes. PyQt6: Strike/Swing/Flight display sub-tabs in the Simulation tab — new face-scale StrikeView (superellipse face outline sized from the club mass envelope, bulge/roll sagitta contours, impact marker + strike-history scatter, path/face/AoA vectors in the face plane, club info; extents hard-capped at ±120 mm), swing view scoped to swing scale with the flight polyline behind a default-OFF 'Show Ball Flight' checkbox (guidance warns flight dwarfs the swing), new flight-scale FlightView (side + top-down profiles + 3D polyline, landing/apex annotated); new top-level Flight Explorer tab over `simulation/flight_explorer.py` (direct launch entry with unit drop-down or impact-delivery entry through swing_sim.impact + rigid-body solve, 7-model picker, result rows with explanations incl. new lateral_m); window minimum lowered to 1024×700 with scrolling control columns, ≥84 px entry minimums, and a headless small-window layout test. Web: Strike/Swing/Flight segmented views (strike + flight profile canvases), separated Show-Ball-Flight toggle, standalone Flight Explorer panel parity-banded against the pytest pinned case (167 mph / 10.9° / 2686 rpm → ~247.5 m carry); responsive min-widths with title-attribute truncation. |
