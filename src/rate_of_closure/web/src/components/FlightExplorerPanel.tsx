@@ -146,6 +146,7 @@ export function FlightExplorerPanel() {
           <button
             type="button"
             onClick={run}
+            title="Integrate the ball flight for the entered launch conditions"
             className="mt-1 w-full rounded-lg border border-sky-400/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-300 transition-all hover:bg-sky-500/20"
           >
             Run Flight

@@ -386,6 +386,7 @@ export function ClubCanvas({
         <button
           type="button"
           onClick={() => setPlaying((p) => !p)}
+          title="Play or pause the impact animation"
           className="w-16 rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1 font-medium transition-colors hover:border-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
         >
           {playing ? "Pause" : "Play"}
@@ -407,6 +408,7 @@ export function ClubCanvas({
           <span className="text-slate-400">Display</span>
           <select
             value={mode}
+            title="Display mode: head fixed in place or moving through space"
             onChange={(e) => setMode(e.target.value as ViewMode)}
             className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus:outline-none"
           >

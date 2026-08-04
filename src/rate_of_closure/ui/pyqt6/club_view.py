@@ -179,6 +179,10 @@ class Club3DView(QWidget):
         bar.setContentsMargins(4, 4, 4, 0)
 
         self._play_button = QPushButton("Pause")
+        self._play_button.setToolTip(
+            "Play or pause the impact animation (the label shows the "
+            "action the button will take)."
+        )
         self._play_button.setCheckable(True)
         self._play_button.setFixedWidth(72)
         self._play_button.toggled.connect(self._on_play_toggled)

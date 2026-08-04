@@ -261,6 +261,7 @@ export function SolverPanel({ onApply }: Props) {
               <input
                 type="checkbox"
                 checked={state.enabled}
+                title={`Enable the ${row.label} goal`}
                 onChange={(e) => setGoal(row.key, { enabled: e.target.checked })}
               />
               <span className="flex-1">
@@ -300,6 +301,7 @@ export function SolverPanel({ onApply }: Props) {
                   type="radio"
                   name={`solver-var-${row.key}`}
                   checked={state.optimize}
+                  title="Optimize this variable within the bounds"
                   onChange={() => setVar(row.key, { optimize: true })}
                 />
                 Optimize
@@ -315,6 +317,7 @@ export function SolverPanel({ onApply }: Props) {
                   type="radio"
                   name={`solver-var-${row.key}`}
                   checked={!state.optimize}
+                  title="Fix this variable at the given value"
                   onChange={() => setVar(row.key, { optimize: false })}
                 />
                 Fix
@@ -331,6 +334,7 @@ export function SolverPanel({ onApply }: Props) {
         <button
           type="button"
           onClick={runSolver}
+          title="Run the bounded multi-start optimization over the enabled goals"
           className="flex-1 rounded-lg border border-sky-400/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-300 transition-all hover:bg-sky-500/20"
         >
           Run Solver
@@ -339,6 +343,7 @@ export function SolverPanel({ onApply }: Props) {
           type="button"
           onClick={applySolution}
           disabled={!result}
+          title="Load the solved variables into the scenario and rerun"
           className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 hover:border-slate-500 disabled:opacity-40"
         >
           Apply to Scenario

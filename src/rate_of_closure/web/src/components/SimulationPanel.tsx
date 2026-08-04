@@ -253,6 +253,7 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
             <button
               type="button"
               onClick={doRun}
+              title="Generate the swing, solve the impact at the scrubbed instant, and integrate the ball flight"
               className="flex-1 rounded-lg border border-sky-400/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-300 transition-all hover:bg-sky-500/20"
             >
               Run Simulation
@@ -263,6 +264,7 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
                 setTauMs(null);
                 doRun();
               }}
+              title="Reset the impact instant to the moment of maximum clubhead speed"
               className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 hover:border-slate-500"
             >
               Auto τ
@@ -271,6 +273,7 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
               type="button"
               onClick={exportJson}
               disabled={!run}
+              title="Download the full run (delivery, launch numbers, trajectory) as JSON"
               className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 hover:border-slate-500 disabled:opacity-40"
             >
               Export JSON
@@ -320,6 +323,7 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
                 role="tab"
                 aria-selected={view === name}
                 onClick={() => setView(name)}
+                title={`Switch the display to the ${name}-scale view`}
                 className={
                   "rounded-full border px-4 py-1 text-sm font-medium transition-all " +
                   (view === name
@@ -353,6 +357,7 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
               type="button"
               onClick={() => setPlaying((p) => !p && run !== null)}
               disabled={!run}
+              title="Play or pause the swing playback"
               className="rounded border border-slate-700 bg-slate-800 px-3 py-1 text-slate-200 hover:border-slate-500 disabled:opacity-40"
             >
               {playing ? "Pause" : "Play"}
@@ -361,6 +366,7 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
               type="button"
               onClick={() => setTime((t) => Math.max(0, t - 0.001))}
               disabled={!run}
+              title="Step the playback one millisecond backward"
               className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-300 disabled:opacity-40"
             >
               −1 frame
@@ -371,6 +377,7 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
                 setTime((t) => Math.min(run?.totalDurationS ?? 0, t + 0.001))
               }
               disabled={!run}
+              title="Step the playback one millisecond forward"
               className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-300 disabled:opacity-40"
             >
               +1 frame
@@ -393,6 +400,7 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
               <input
                 type="checkbox"
                 checked={loop}
+                title="Restart the playback automatically when it reaches the end"
                 onChange={(e) => setLoop(e.target.checked)}
               />
               Loop

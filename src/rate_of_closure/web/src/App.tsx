@@ -197,6 +197,9 @@ export default function App() {
         type="button"
         onClick={() => setExplained(spec.key)}
         aria-pressed={active}
+        title={
+          RESULT_EXPLANATIONS[spec.key] ?? METRIC_EXPLANATIONS[spec.key]
+        }
         className={
           "flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition-all " +
           (active
@@ -239,6 +242,7 @@ export default function App() {
             type="button"
             onClick={() => setTab(name)}
             aria-current={tab === name}
+            title={`Switch to the ${name} view`}
             className={
               "rounded-full border px-4 py-1.5 text-sm font-medium transition-all " +
               (tab === name
@@ -305,6 +309,7 @@ export default function App() {
                   <span className="text-slate-300">{UNIT_LABELS[quantity]}</span>
                   <select
                     value={units[quantity]}
+                    title={`Display unit for ${UNIT_LABELS[quantity].toLowerCase()} values`}
                     onChange={(e) =>
                       setUnits((u) => ({ ...u, [quantity]: e.target.value }))
                     }

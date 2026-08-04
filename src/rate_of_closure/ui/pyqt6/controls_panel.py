@@ -106,6 +106,11 @@ class ControlsPanel(QWidget):
         form = QFormLayout(box)
         self._preset_combo = QComboBox()
         self._preset_combo.addItems(preset_names())
+        self._preset_combo.setToolTip(
+            "Load a sourced scenario preset (Cheetham 2014 tour data, "
+            "the forum worked example, zero-rotation control, ...); "
+            "every input stays editable afterwards."
+        )
         self._preset_combo.currentTextChanged.connect(self.apply_preset)
         form.addRow("Scenario", self._preset_combo)
         return box
