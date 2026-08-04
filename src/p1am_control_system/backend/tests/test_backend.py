@@ -41,6 +41,7 @@ def override_get_session() -> Generator[Session, None, None]:
 
 app.dependency_overrides[get_session] = override_get_session
 
+
 @pytest.fixture(autouse=True)
 def _bench_no_auth(monkeypatch: pytest.MonkeyPatch) -> None:
     """Keep the endpoint tests on the explicit bench auth posture (#4061)."""

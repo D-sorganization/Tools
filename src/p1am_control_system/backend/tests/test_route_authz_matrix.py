@@ -204,9 +204,9 @@ def test_suite_is_actually_authenticated() -> None:
     from auth_config import resolve_auth_config
 
     resolved = resolve_auth_config()
-    assert resolved.dev_no_auth is False, (
-        "P1AM_DEV_NO_AUTH is active — this suite would pass vacuously."
-    )
+    assert (
+        resolved.dev_no_auth is False
+    ), "P1AM_DEV_NO_AUTH is active — this suite would pass vacuously."
     assert resolved.operator_key_configured is True
     assert resolved.admin_key_configured is True
     assert resolved.read_auth_required is True

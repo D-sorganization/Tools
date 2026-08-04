@@ -135,9 +135,9 @@ def test_installer_locks_down_the_environment_file() -> None:
 def test_installer_refuses_to_write_a_unit_without_a_credential() -> None:
     text = _read(_INSTALLER)
     assert "exit 1" in text
-    assert re.search(r"refus|ERROR:.*credential", text, re.IGNORECASE), (
-        "the installer must fail closed when neither key is present (#4007)"
-    )
+    assert re.search(
+        r"refus|ERROR:.*credential", text, re.IGNORECASE
+    ), "the installer must fail closed when neither key is present (#4007)"
 
 
 def test_installer_configures_the_cors_allowlist() -> None:

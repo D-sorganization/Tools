@@ -146,9 +146,11 @@ class AuthConfiguration:
         tier = (
             "admin key also serves the operator tier"
             if self.admin_only
-            else "operator and admin tiers are distinct"
-            if self.operator_key_configured and self.admin_key_configured
-            else "single-key deployment (operator key serves both tiers)"
+            else (
+                "operator and admin tiers are distinct"
+                if self.operator_key_configured and self.admin_key_configured
+                else "single-key deployment (operator key serves both tiers)"
+            )
         )
         read = "required" if self.read_auth_required else "PUBLIC"
         return (
