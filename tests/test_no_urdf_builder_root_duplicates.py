@@ -75,9 +75,9 @@ class TestNoRootLevelDuplicates:
             "preview_generator.py",
         ]
         missing = [m for m in essential if not (_CANONICAL_PKG / m).exists()]
-        assert not missing, (
-            "Canonical package is missing essential modules: " + ", ".join(missing)
-        )
+        assert (
+            not missing
+        ), "Canonical package is missing essential modules: " + ", ".join(missing)
 
     def test_path_bridge_uses_insert_not_append(self) -> None:
         """__init__.py must use __path__.insert(0, …) not append (#3346).
