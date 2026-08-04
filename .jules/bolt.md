@@ -86,3 +86,6 @@
 ## 2024-08-01 - Avoid allocating string arrays for SVG paths
 **Learning:** In high-frequency chart updates, building SVG `d` paths using `.map(p => '...').join(' ')` allocates a new array of strings on every frame, causing unnecessary garbage collection pressure and main thread stalls.
 **Action:** Build SVG `d` paths using a single-pass `for` loop and string concatenation to eliminate intermediate array allocations.
+## 2026-08-04 - Fix GitHub Actions detect-secrets CI timeout/failure
+**Learning:** On self-hosted runners, the `actions/setup-python` action may not successfully alias `python` to `python3`. This results in `python: command not found` (exit code 127) when executing `python -m pip` or `python -m detect_secrets`.
+**Action:** Always use `python3` instead of `python` inside GitHub Action runner scripts.
