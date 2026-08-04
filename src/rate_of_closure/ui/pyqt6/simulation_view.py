@@ -1,10 +1,15 @@
-"""3D scene + full video playback controls for the simulation session.
+"""Swing-scale 3D scene + full video playback controls (the Swing view).
 
-Renders one :class:`~rate_of_closure.simulation.session.SimulationRun`:
-the swing path with the clubhead marker at the playback instant, the
-fixed ball (own checkbox), the ground plane (own checkbox), the flight
-trajectory polyline, and a toggleable instantaneous-screw-axis overlay
-computed through the one thin ISA adapter (recon #4108).
+Renders one :class:`~rate_of_closure.simulation.session.SimulationRun`
+at SWING scale (epic #4120, V2): the swing path with the clubhead
+marker at the playback instant, the fixed ball (own checkbox), the
+ground plane (own checkbox), and a toggleable instantaneous-screw-axis
+overlay computed through the one thin ISA adapter (recon #4108). The
+flight polyline is OFF by default — a 'Show Ball Flight' checkbox
+expands the scene to flight scale, with guidance warning that the
+flight envelope dwarfs the swing; the dedicated
+:class:`~rate_of_closure.ui.pyqt6.flight_view.FlightView` is the
+flight-scale display.
 
 Playback is a full video bar — play/pause, a scrub slider over the
 whole swing + flight timeline, frame step +/-, a loop toggle, and rate
@@ -153,7 +158,21 @@ class SimulationView(QWidget):
         self._screw_check = QCheckBox("Screw Axis")
         self._screw_check.setChecked(False)
         self._screw_check.setToolTip(FIELD_GUIDANCE["screw_axis_visible"])
-        for check in (self._ball_check, self._ground_check, self._screw_check):
+        # Scale separation (epic #4120): flight display is opt-in here
+        # because its envelope dwarfs the swing envelope.
+        self._flight_check = QCheckBox("Show Ball Flight")
+        self._flight_check.setChecked(False)
+        self._flight_check.setToolTip(
+            "Warning: turning this on expands the scene to flight scale "
+            "(100+ m), which dwarfs the ~3 m swing. "
+            + FIELD_GUIDANCE["swing_flight_toggle"]
+        )
+        for check in (
+            self._ball_check,
+            self._ground_check,
+            self._screw_check,
+            self._flight_check,
+        ):
             check.toggled.connect(lambda _checked: self._draw())
             bar.addWidget(check)
         bar.addStretch(1)
@@ -207,6 +226,19 @@ class SimulationView(QWidget):
     def set_looping(self, looping: bool) -> None:
         """Set the loop toggle."""
         self._loop_check.setChecked(looping)
+
+    def flight_shown(self) -> bool:
+        """Whether the flight-scale 'Show Ball Flight' toggle is on."""
+        return self._flight_check.isChecked()
+
+    def set_flight_shown(self, shown: bool) -> None:
+        """Set the 'Show Ball Flight' toggle (default off: swing scale)."""
+        self._flight_check.setChecked(shown)
+
+    def scene_extent_m(self) -> float:
+        """Current axis half-extent [m] — the scale-invariant seam."""
+        x0, x1 = self._axes.get_xlim()
+        return abs(float(x1) - float(x0)) / 2.0
 
     def stop(self) -> None:
         """Stop the playback timer (window close and tests)."""
@@ -339,9 +371,11 @@ class SimulationView(QWidget):
         )
         index = min(index, len(run.swing_times) - 1)
 
-        # Scene extent: the swing envelope, or the flight envelope once
-        # the playback instant is past impact.
-        if in_flight and len(run.flight_positions):
+        # Scene extent: the swing envelope. Only the opt-in 'Show Ball
+        # Flight' toggle expands to the flight envelope past impact —
+        # flight scale dwarfs the swing (epic #4120 scale separation).
+        show_flight = self._flight_check.isChecked() and bool(len(run.flight_positions))
+        if in_flight and show_flight:
             extent = max(5.0, float(np.max(np.abs(run.flight_positions))) * 1.05)
         else:
             extent = max(
@@ -376,8 +410,8 @@ class SimulationView(QWidget):
         head = self._display(run.swing_positions[index])
         axes.scatter(*head, color=get_chart_color(1), s=45, zorder=5)
 
-        # Flight trajectory: traversed portion once past impact.
-        if len(run.flight_positions):
+        # Flight trajectory: opt-in only (see the toggle's guidance).
+        if show_flight:
             flight_t = self._time - run.impact_time_s
             n_flight = int(np.searchsorted(run.flight_times, flight_t, side="right"))
             traj = self._display(run.flight_positions)
@@ -407,7 +441,7 @@ class SimulationView(QWidget):
 
         axes.set_xlim(-extent, extent)
         axes.set_ylim(-extent, extent)
-        axes.set_zlim(0.0 if in_flight else -extent * 0.4, extent)
+        axes.set_zlim(0.0 if (in_flight and show_flight) else -extent * 0.4, extent)
         axes.view_init(elev=elev, azim=azim)
         axes.set_xlabel("z — right of target [m]")
         axes.set_ylabel("x — target line [m]")

@@ -28,11 +28,13 @@ from PyQt6.QtWidgets import (
     QComboBox,
     QDoubleSpinBox,
     QFormLayout,
+    QFrame,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QMessageBox,
     QPushButton,
+    QScrollArea,
     QSlider,
     QSplitter,
     QTabWidget,
@@ -52,10 +54,12 @@ from rate_of_closure.simulation import (
     make_source,
     run_simulation,
 )
+from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
 from rate_of_closure.ui.pyqt6.result_row import ResultRow
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
+from rate_of_closure.ui.pyqt6.strike_view import StrikeView
 from rate_of_closure.units import FIELD_GUIDANCE
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.types import PlaneOrientation
@@ -108,23 +112,38 @@ class SimulationTab(QWidget):
         self._rows: dict[str, ResultRow] = {}
 
         self._view = SimulationView()
+        self._strike_view = StrikeView()
+        self._flight_view = FlightView()
         self._inspector = InspectorView()
         self._solver_panel = SolverPanel()
         self._solver_panel.applyRequested.connect(self.apply_solver_solution)
 
-        left = QWidget()
-        left_layout = QVBoxLayout(left)
+        left_content = QWidget()
+        left_layout = QVBoxLayout(left_content)
         left_layout.addWidget(self._build_setup_box())
         left_layout.addWidget(self._build_scrub_box())
         left_layout.addWidget(self._build_launch_box())
         left_layout.addWidget(self._build_explanation_box())
         left_layout.addStretch(1)
-        left.setMinimumWidth(320)
+        # Small-window robustness (#4120): the control column scrolls
+        # instead of crushing its entry widgets below readability.
+        left = QScrollArea()
+        left.setWidgetResizable(True)
+        left.setFrameShape(QFrame.Shape.NoFrame)
+        left.setWidget(left_content)
+        left.setMinimumWidth(300)
 
+        # Scale-separated viewers as sub-tabs of the display area
+        # (epic #4120 V2): strike (face scale), swing (metres), flight
+        # (tens of metres) — each with its own display checklist whose
+        # state persists for the session (plain widget state).
         right = QTabWidget()
-        right.addTab(self._view, "Scene")
+        right.addTab(self._strike_view, "Strike")
+        right.addTab(self._view, "Swing")
+        right.addTab(self._flight_view, "Flight")
         right.addTab(self._inspector, "Inspector")
         right.addTab(self._solver_panel, "Solver")
+        right.setCurrentWidget(self._view)
 
         splitter = QSplitter()
         splitter.addWidget(left)
@@ -156,6 +175,7 @@ class SimulationTab(QWidget):
             spin.setDecimals(1)
             spin.setRange(-90.0, 90.0)
             spin.setSuffix(" deg")
+            spin.setMinimumWidth(84)  # stays readable at small windows
             spin.setToolTip(FIELD_GUIDANCE[guidance_key])
             spin.valueChanged.connect(self._invalidate_source)
             self._tilt_spins[attr] = spin
@@ -273,6 +293,8 @@ class SimulationTab(QWidget):
         self._tau = run.impact_time_s
         self._sync_scrub_slider(run.impact_time_s)
         self._view.set_run(run)
+        self._strike_view.set_run(run)
+        self._flight_view.set_run(run)
         self._inspector.set_run(run)
         for field, _label, unit in LAUNCH_ROWS:
             value = run.launch[field]
@@ -287,8 +309,16 @@ class SimulationTab(QWidget):
         return self._run
 
     def view(self) -> SimulationView:
-        """The 3D scene (playback controls live on it)."""
+        """The swing-scale 3D scene (playback controls live on it)."""
         return self._view
+
+    def strike_view(self) -> StrikeView:
+        """The face-scale impact-zone viewer."""
+        return self._strike_view
+
+    def flight_view(self) -> FlightView:
+        """The flight-scale trajectory viewer."""
+        return self._flight_view
 
     def inspector(self) -> InspectorView:
         """The run-data inspector."""

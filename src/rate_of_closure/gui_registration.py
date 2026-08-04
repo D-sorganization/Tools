@@ -21,7 +21,7 @@ GUI_INFO = {
         "class": "RateOfClosureMainWindow",
         "dependencies": ["PyQt6", "matplotlib", "numpy"],
         "settings_app": "RateOfClosure",
-        "min_size": [1200, 780],
+        "min_size": [1024, 700],
     },
     "web": {
         "port": 5193,

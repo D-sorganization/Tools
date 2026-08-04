@@ -32,12 +32,17 @@ class ResultRow(QFrame):
         row = QHBoxLayout(self)
         row.setContentsMargins(10, 6, 10, 6)
         name = QLabel(label)
+        # Small-window robustness (#4120): long labels may be clipped by
+        # the layout, so the full text always rides on the tooltip, and
+        # the value keeps a readable minimum width.
+        name.setToolTip(label)
         row.addWidget(name)
         row.addStretch(1)
         self.value_label = QLabel("—")
         font = self.value_label.font()
         font.setBold(True)
         self.value_label.setFont(font)
+        self.value_label.setMinimumWidth(64)
         row.addWidget(self.value_label)
 
     def mousePressEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802

@@ -195,4 +195,110 @@ FIELD_GUIDANCE: dict[str, str] = {
         "screw axis near the playback instant. Source: the AffineDrift "
         "closure-rate derivation (omega/v = 1/R_ISA)."
     ),
+    "swing_flight_toggle": (
+        "Off by default: the flight envelope (100+ m) dwarfs the "
+        "swing envelope (~3 m), collapsing the swing to a dot when both "
+        "share one scale. Turn on only to see the full trajectory in "
+        "context. Source: typical driver carry (Penner 2003) vs. club "
+        "length (published manufacturer specs)."
+    ),
+    "strike_curvature_visible": (
+        "Suggested range: on for curved-face clubs to contour the "
+        "bulge/roll set-back across the face (sagitta, mm). Source: "
+        "typical published fitting references (10-13 in driver bulge)."
+    ),
+    "strike_vectors_visible": (
+        "Suggested range: on to draw the delivered club path, face "
+        "normal, and attack-angle directions projected into the face "
+        "plane. Source: standard launch-monitor D-plane presentation "
+        "(TrackMan literature; Jorgensen, The Physics of Golf)."
+    ),
+    "strike_history_visible": (
+        "Suggested range: on to keep a scatter of previous impact "
+        "locations for dispersion context. Source: published robot-test "
+        "impact maps (strike dispersion within +/-15 mm of center)."
+    ),
+    "strike_club_info_visible": (
+        "Suggested range: on to annotate the selected club's name, "
+        "loft, and face curvature radii. Source: typical published "
+        "manufacturer spec sheets."
+    ),
+    "flight_side_visible": (
+        "Suggested range: on for the side profile (height vs carry) — "
+        "the classic trajectory presentation. Source: launch-monitor "
+        "trajectory displays; Penner (2003)."
+    ),
+    "flight_top_visible": (
+        "Suggested range: on for the top-down view (lateral vs carry) "
+        "showing curvature and dispersion. Source: launch-monitor "
+        "dispersion displays; TrackMan D-plane literature."
+    ),
+    "flight_3d_visible": (
+        "Suggested range: on for the 3-D trajectory polyline at flight "
+        "scale. Source: standard 3-D golf-scene convention."
+    ),
+    "flight_landing_visible": (
+        "Suggested range: on to annotate the landing point with carry "
+        "and lateral numbers. Source: launch-monitor carry/offline "
+        "reporting convention."
+    ),
+    "flight_apex_visible": (
+        "Suggested range: on to mark the apex (maximum height). "
+        "Source: launch-monitor apex reporting convention."
+    ),
+    "fx_mode": (
+        "Suggested range: Direct Launch to type launch-monitor ball "
+        "numbers; Impact Delivery to type club delivery numbers and run "
+        "them through the impact model first. Source: launch-monitor "
+        "convention of ball data vs. club data (TrackMan literature)."
+    ),
+    "fx_ball_speed": (
+        "Suggested range: 120-190 mph ball speed (tour driver average "
+        "near 167 mph; strong amateurs 140-160). Source: openly "
+        "published tour launch-monitor averages."
+    ),
+    "fx_launch_angle": (
+        "Suggested range: 8-16 deg launch for drivers (tour average "
+        "near 10.9 deg); higher for irons and wedges. Source: openly "
+        "published tour launch-monitor averages."
+    ),
+    "fx_azimuth": (
+        "Suggested range: within +/-10 deg of the target line; + = "
+        "right of target. Source: standard launch-monitor sign "
+        "convention (launch direction)."
+    ),
+    "fx_spin_rpm": (
+        "Suggested range: 2,000-3,500 rpm total spin for drivers (tour "
+        "average near 2,686 rpm); 4,000-10,000+ for irons and wedges. "
+        "Source: openly published tour launch-monitor averages."
+    ),
+    "fx_spin_axis_tilt": (
+        "Suggested range: within +/-20 deg spin-axis tilt; + = "
+        "fade/slice side (curves right for a right-handed player), - = "
+        "draw/hook side. Source: TrackMan D-plane literature."
+    ),
+    "fx_speed_unit": (
+        "Suggested range: mph for launch-monitor style entry, m/s for "
+        "SI work; the model always computes in SI. Source: launch-"
+        "monitor display convention."
+    ),
+    "fx_club_path": (
+        "Suggested range: within +/-8 deg club path; + = in-to-out. "
+        "Source: openly published tour launch-monitor averages."
+    ),
+    "fx_face_angle": (
+        "Suggested range: within +/-5 deg face angle; + = open (right "
+        "of target). Source: openly published tour launch-monitor "
+        "averages."
+    ),
+    "fx_attack_angle": (
+        "Suggested range: -5 to +5 deg attack angle for drivers (+ = "
+        "hitting up); negative for irons. Source: openly published tour "
+        "launch-monitor averages."
+    ),
+    "fx_dynamic_loft": (
+        "Suggested range: 8-16 deg dynamic loft for drivers, up to "
+        "45+ deg for wedges. Source: openly published tour launch-"
+        "monitor averages."
+    ),
 }

@@ -38,6 +38,7 @@ from rate_of_closure.model import ImpactScenario, closure_metrics, solve
 from rate_of_closure.ui.pyqt6.club_view import Club3DView, SweepView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
+from rate_of_closure.ui.pyqt6.flight_explorer_tab import FlightExplorerTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 from rate_of_closure.units import convert_from_canonical
@@ -118,7 +119,9 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.setWindowTitle("Rate of Closure Impact Explorer")
-        self.setMinimumSize(1240, 800)
+        # Small-window support (#4120): layouts scroll and elide below
+        # this size instead of crushing entries into unreadability.
+        self.setMinimumSize(1024, 700)
 
         self._controls = ControlsPanel()
         self._rows: dict[str, _ResultRow] = {}
@@ -126,6 +129,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._sweep_view = SweepView()
         self._derivation_view = DerivationView()
         self._simulation_tab = SimulationTab()
+        self._flight_explorer_tab = FlightExplorerTab()
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -142,13 +146,14 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         left.setWidgetResizable(True)
         left.setFrameShape(QFrame.Shape.NoFrame)
         left.setWidget(left_content)
-        left.setMinimumWidth(390)
+        left.setMinimumWidth(320)
 
         tabs = QTabWidget()
         tabs.addTab(self._club_view, "3D Clubhead")
         tabs.addTab(self._sweep_view, "Closure Sweep")
         tabs.addTab(self._derivation_view, "Derivation && Traceability")
         tabs.addTab(self._simulation_tab, "Simulation")
+        tabs.addTab(self._flight_explorer_tab, "Flight Explorer")
 
         splitter = QSplitter()
         splitter.addWidget(left)
