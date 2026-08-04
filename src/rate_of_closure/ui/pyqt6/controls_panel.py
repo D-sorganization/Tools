@@ -15,19 +15,22 @@ always stays canonical (mph, deg/s, mm, µs).
 from __future__ import annotations
 
 import logging
-from dataclasses import fields
+from dataclasses import fields, replace
 
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QAbstractSpinBox,
+    QCheckBox,
     QComboBox,
     QDoubleSpinBox,
     QFormLayout,
     QGroupBox,
+    QPushButton,
     QVBoxLayout,
     QWidget,
 )
 
+from rate_of_closure.club import ClubSpec, club_names, get_club
 from rate_of_closure.model import _BOUNDS, ImpactScenario
 from rate_of_closure.presets import PRESETS, preset_names
 from rate_of_closure.units import (
@@ -75,6 +78,8 @@ class ControlsPanel(QWidget):
     """Scenario inputs grouped the way the model is parameterised."""
 
     scenarioChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
+    #: Emitted with a ClubSpec when the user asks for a parametric head.
+    clubHeadRequested = pyqtSignal(object)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -88,6 +93,7 @@ class ControlsPanel(QWidget):
 
         layout = QVBoxLayout(self)
         layout.addWidget(self._build_preset_box())
+        layout.addWidget(self._build_club_box())
         layout.addWidget(self._build_units_box())
         for title, names in _GROUPS:
             layout.addWidget(self._build_group(title, names))
@@ -102,6 +108,56 @@ class ControlsPanel(QWidget):
         self._preset_combo.addItems(preset_names())
         self._preset_combo.currentTextChanged.connect(self.apply_preset)
         form.addRow("Scenario", self._preset_combo)
+        return box
+
+    def _build_club_box(self) -> QGroupBox:
+        box = QGroupBox("Club")
+        form = QFormLayout(box)
+
+        self._club_combo = QComboBox()
+        self._club_combo.addItems(club_names())
+        self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
+        self._club_combo.currentTextChanged.connect(self._on_club_changed)
+        form.addRow("Club", self._club_combo)
+
+        self._loft_spin = QDoubleSpinBox()
+        self._loft_spin.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
+        self._loft_spin.setKeyboardTracking(False)
+        self._loft_spin.setDecimals(1)
+        self._loft_spin.setRange(0.0, 70.0)
+        self._loft_spin.setSuffix(" deg")
+        self._loft_spin.setToolTip(FIELD_GUIDANCE["club_loft_deg"])
+        form.addRow("Loft", self._loft_spin)
+
+        self._curvature_check = QCheckBox("Curved Face (Bulge && Roll)")
+        self._curvature_check.setToolTip(FIELD_GUIDANCE["face_curvature_enabled"])
+        self._curvature_check.toggled.connect(self._on_curvature_toggled)
+        form.addRow(self._curvature_check)
+
+        self._bulge_spin = QDoubleSpinBox()
+        self._roll_spin = QDoubleSpinBox()
+        for spin, key, label in (
+            (self._bulge_spin, "face_bulge_radius_mm", "Bulge Radius"),
+            (self._roll_spin, "face_roll_radius_mm", "Roll Radius"),
+        ):
+            spin.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
+            spin.setKeyboardTracking(False)
+            spin.setDecimals(0)
+            spin.setRange(100.0, 2000.0)
+            spin.setSuffix(" mm")
+            spin.setToolTip(FIELD_GUIDANCE[key])
+            form.addRow(label, spin)
+
+        self._generate_button = QPushButton("Generate Representative Head")
+        self._generate_button.setToolTip(
+            "Build a parametric head mesh from the selected club spec "
+            "(loft, mass envelope, bulge && roll) and render it in the "
+            "3D view in place of the wireframe."
+        )
+        self._generate_button.clicked.connect(self._on_generate_head)
+        form.addRow(self._generate_button)
+
+        self._on_club_changed(self._club_combo.currentText())
         return box
 
     def _build_units_box(self) -> QGroupBox:
@@ -185,6 +241,55 @@ class ControlsPanel(QWidget):
         finally:
             self._updating = False
         self._emit()
+
+    # ── club group ──────────────────────────────────────────────────
+    def club_spec(self) -> ClubSpec:
+        """The library spec under the current loft and curvature overrides."""
+        base = get_club(self._club_combo.currentText())
+        curved = self._curvature_check.isChecked()
+        return replace(
+            base,
+            loft_deg=self._loft_spin.value(),
+            face_bulge_radius_m=(self._bulge_spin.value() / 1000.0 if curved else None),
+            face_roll_radius_m=self._roll_spin.value() / 1000.0 if curved else None,
+        )
+
+    def _on_club_changed(self, name: str) -> None:
+        """Adopt a library club: loft/curvature defaults, scenario plumbing.
+
+        GC-to-face and lie are driven from the spec (the CG lies within
+        a few millimetres of the geometric center, so ``cg_depth`` is
+        the representative GC-to-face distance); the spins stay fully
+        editable afterwards, preserving user overrides.
+        """
+        spec = get_club(name)
+        self._loft_spin.setValue(spec.loft_deg)
+        self._curvature_check.setChecked(spec.has_curved_face)
+        if spec.face_bulge_radius_m is not None:
+            self._bulge_spin.setValue(spec.face_bulge_radius_m * 1000.0)
+        if spec.face_roll_radius_m is not None:
+            self._roll_spin.setValue(spec.face_roll_radius_m * 1000.0)
+        self._on_curvature_toggled(self._curvature_check.isChecked())
+        for field_name, canonical in (
+            ("com_to_face_mm", spec.cg_depth_m * 1000.0),
+            ("lie_angle_deg", spec.lie_deg),
+        ):
+            spin = self._spins.get(field_name)
+            if spin is None:  # construction order: scenario spins come later
+                continue
+            quantity = self._quantity_of(field_name)
+            spin.setValue(
+                canonical
+                if quantity is None
+                else convert_from_canonical(quantity, self._units[quantity], canonical)
+            )
+
+    def _on_curvature_toggled(self, enabled: bool) -> None:
+        self._bulge_spin.setEnabled(enabled)
+        self._roll_spin.setEnabled(enabled)
+
+    def _on_generate_head(self) -> None:
+        self.clubHeadRequested.emit(self.club_spec())
 
     # ── behaviour ───────────────────────────────────────────────────
     def apply_preset(self, name: str) -> None:

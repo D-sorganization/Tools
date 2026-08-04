@@ -47,7 +47,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.mesh import HEAD_DEPTH_M, HeadMesh, load_head_mesh
+from rate_of_closure.mesh import HeadMesh, load_head_mesh
 from rate_of_closure.model import ImpactScenario, solve, sweep
 
 logger = logging.getLogger(__name__)
@@ -268,7 +268,16 @@ class Club3DView(QWidget):
         Raises the mesh module's contract errors on unparseable or
         degenerate files; the button handler wraps this in a dialog.
         """
-        self._mesh = load_head_mesh(path)
+        self.set_head_mesh(load_head_mesh(path))
+
+    def set_head_mesh(self, mesh: HeadMesh) -> None:
+        """Render a prepared head mesh (STL or parametric) in the view.
+
+        The shared endpoint of both mesh sources: "Load Clubhead STL…"
+        normalizes a user file into a :class:`HeadMesh`, and the Club
+        group's "Generate Representative Head" builds one parametrically.
+        """
+        self._mesh = mesh
         self._reset_mesh_button.setEnabled(True)
         self._draw()
 
@@ -407,17 +416,20 @@ class Club3DView(QWidget):
     ) -> None:
         """Shaded STL head under the same transform as the wireframe.
 
-        The normalized mesh is centered on the origin, so it is first
-        shifted along +x until its face plane sits at ``com_to_face``
-        (where the wireframe's face plate is), then rotated about the
-        reference point and translated with the head. Shading is flat
+        The mesh is centered near the origin, so it is first shifted
+        along +x until its face plane (its forward extent) sits at
+        ``com_to_face`` (where the wireframe's face plate is), then
+        rotated about the reference point and translated with the head.
+        For a normalized STL the forward extent is exactly half the
+        canonical depth; parametric heads keep their mass-scaled and
+        loft-tilted extent. Shading is flat
         lambert-ish: intensity = ambient + (1 - ambient) * |n . L| with
         a fixed world light, evaluated on the rotated normals. Depth
         ordering is matplotlib's own Poly3DCollection z-sort (average
         triangle depth), the painter's algorithm it applies natively.
         """
         d = scenario.com_to_face_mm / 1000.0
-        head_shift = np.array([d - HEAD_DEPTH_M / 2.0, 0.0, 0.0])
+        head_shift = np.array([d - float(mesh.triangles[..., 0].max()), 0.0, 0.0])
         tris = (mesh.triangles + head_shift) @ rotation.T + offset
         normals = mesh.normals @ rotation.T
         lambert = np.abs(normals @ _LIGHT_DIR)

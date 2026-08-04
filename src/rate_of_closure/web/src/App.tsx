@@ -12,7 +12,9 @@
 import { useMemo, useState } from "react";
 
 import { ClubCanvas } from "./components/ClubCanvas";
+import { ClubPanel } from "./components/ClubPanel";
 import { Derivation } from "./components/Derivation";
+import { type HeadMesh } from "./model/mesh";
 import {
   METRIC_EXPLANATIONS,
   RESULT_EXPLANATIONS,
@@ -129,8 +131,16 @@ export default function App() {
     rotation: "deg/s",
     length: "mm",
   });
+  const [generatedMesh, setGeneratedMesh] = useState<HeadMesh | null>(null);
   const result = useMemo(() => solve(scenario), [scenario]);
   const metrics = useMemo(() => closureMetrics(scenario), [scenario]);
+
+  // Scenario plumbing: GC-to-face and lie follow the selected club's
+  // spec (the CG sits within a few mm of the geometric center); both
+  // stay fully editable afterwards, preserving user overrides.
+  const driveScenarioFromClub = (comToFaceMm: number, lieAngleDeg: number) => {
+    setScenario((s) => ({ ...s, comToFaceMm, lieAngleDeg }));
+  };
 
   const update = (key: keyof ImpactScenario, quantity: Quantity | undefined, raw: string) => {
     const displayed = Number(raw);
@@ -260,6 +270,11 @@ export default function App() {
               ))}
             </div>
 
+            <ClubPanel
+              onDriveScenario={driveScenarioFromClub}
+              onGenerate={setGeneratedMesh}
+            />
+
             <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
               <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
                 Scenario
@@ -344,7 +359,7 @@ export default function App() {
               </p>
             </div>
 
-            <ClubCanvas scenario={scenario} />
+            <ClubCanvas scenario={scenario} externalMesh={generatedMesh} />
           </section>
         </div>
       )}

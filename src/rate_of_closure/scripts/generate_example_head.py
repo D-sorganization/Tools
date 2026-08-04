@@ -19,6 +19,13 @@ from pathlib import Path
 import numpy as np
 
 from rate_of_closure._contracts import ensure
+from rate_of_closure.club.geometry import (
+    RING_POINTS,
+    cap_fan,
+    loft_band,
+    superellipse_ring,
+)
+from rate_of_closure.club.parametric_head import BASE_SECTIONS
 from rate_of_closure.mesh import write_binary_stl
 
 __all__ = ["ASSET_PATH", "build_example_head", "main"]
@@ -28,50 +35,29 @@ ASSET_PATH = (
     Path(__file__).resolve().parent.parent / "assets" / ("example_driver_head.stl")
 )
 
-_RING_POINTS = 24
-_SUPERELLIPSE_EXPONENT = 4.0
-
-#: Loft cross-sections: (x [m], half-height [m], half-width [m]).
-_SECTIONS: tuple[tuple[float, float, float], ...] = (
-    (0.055, 0.028, 0.058),  # face plate
-    (0.010, 0.031, 0.062),  # crown bulge
-    (-0.035, 0.024, 0.048),  # rear taper
-    (-0.055, 0.010, 0.020),  # tail
-)
-
-
-def _ring(x: float, half_height: float, half_width: float) -> np.ndarray:
-    """Superellipse cross-section ring in the (y, z) plane at ``x``."""
-    theta = np.linspace(0.0, 2.0 * np.pi, _RING_POINTS, endpoint=False)
-    power = 2.0 / _SUPERELLIPSE_EXPONENT
-    y = half_height * np.sign(np.sin(theta)) * np.abs(np.sin(theta)) ** power
-    z = half_width * np.sign(np.cos(theta)) * np.abs(np.cos(theta)) ** power
-    return np.column_stack([np.full(_RING_POINTS, x), y, z])
+#: Loft cross-sections: (x [m], half-height [m], half-width [m]) —
+#: shared with the parametric generator (the 200 g reference envelope).
+_SECTIONS = BASE_SECTIONS
 
 
 def build_example_head() -> np.ndarray:
     """Triangles ``(n, 3, 3)`` of the stylized driver head, meters."""
-    rings = [_ring(*section) for section in _SECTIONS]
+    rings = [superellipse_ring(*section) for section in _SECTIONS]
     triangles: list[np.ndarray] = []
 
     # Side bands: two triangles per quad between consecutive rings.
     for ring_a, ring_b in zip(rings[:-1], rings[1:], strict=True):
-        for i in range(_RING_POINTS):
-            j = (i + 1) % _RING_POINTS
-            triangles.append(np.array([ring_a[i], ring_b[i], ring_b[j]]))
-            triangles.append(np.array([ring_a[i], ring_b[j], ring_a[j]]))
+        triangles.extend(loft_band(ring_a, ring_b))
 
     # Caps: triangle fans to the section centers (face and tail).
     face_center = np.array([_SECTIONS[0][0], 0.0, 0.0])
     tail_center = np.array([_SECTIONS[-1][0], 0.0, 0.0])
-    for i in range(_RING_POINTS):
-        j = (i + 1) % _RING_POINTS
-        triangles.append(np.array([face_center, rings[0][j], rings[0][i]]))
-        triangles.append(np.array([tail_center, rings[-1][i], rings[-1][j]]))
+    triangles.extend(cap_fan(face_center, rings[0], outward_x=True))
+    triangles.extend(cap_fan(tail_center, rings[-1], outward_x=False))
 
     mesh = np.array(triangles)
     # (sections-1) bands of 2*N triangles plus two N-triangle caps.
-    ensure(mesh.shape[0] == len(_SECTIONS) * 2 * _RING_POINTS, "loft closed")
+    ensure(mesh.shape[0] == len(_SECTIONS) * 2 * RING_POINTS, "loft closed")
     return mesh
 
 

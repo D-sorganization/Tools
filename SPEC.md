@@ -26,15 +26,49 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.5                                      |
-| **Spec Version**        | 1.5.5                                      |
-| **Last Spec Update**    | 2026-08-03                                 |
+| **Current Version**     | 1.5.6                                      |
+| **Spec Version**        | 1.5.6                                      |
+| **Last Spec Update**    | 2026-08-04                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-04 Rate of Closure Club Library, Inertial Model & Parametric Head (P2, #4106)
+
+- `src/rate_of_closure/club/` adds the club-modeling package: a frozen
+  SI `ClubSpec` dataclass with DbC bounds (`types.py`); a 15-club
+  library (driver 9.5/10.5/12°, 3/5-wood, 3-hybrid, 3/5/7/9-irons,
+  PW/GW/SW/LW, putter) normalized to SI from typical published
+  manufacturer specs via UpstreamDrift's MuJoCo
+  `club_configurations.py` imperial/CGS table (`library.py`); a
+  composite head+shaft+grip inertial model (total mass, balance point,
+  MOI about the grip and shaft axes from point-mass + rod + sleeve
+  composition with the parallel-axis theorem, `inertia.py`); shared
+  superellipse-loft mesh helpers (`geometry.py`, now also backing the
+  example-head script); and a deterministic parametric head generator
+  (`parametric_head.py`) whose envelope scales as cbrt(head mass /
+  200 g) and whose face patch honors bulge (horizontal) and roll
+  (vertical) curvature via the circular sagitta R - sqrt(R² - t²) with
+  loft tilting the face plane. `face_normal_at_offset(spec, toe_mm,
+  high_mm)` exposes the face-curvature normal (gradient of the
+  curved-face surface, loft-rotated) for the future impact package —
+  in Python AND TypeScript with pinned parity tests; flat face when
+  bulge/roll are off (curvature does not affect impact physics yet).
+  The PyQt6 controls panel grows a Club group (library picker driving
+  GC-to-face and lie with overrides preserved, loft override,
+  bulge/roll toggle + radius entries, "Generate Representative Head"
+  loading the parametric mesh through the existing mesh render path),
+  every new input carrying sourced hover guidance in the
+  FIELD_GUIDANCE pattern. The web clone mirrors all of it —
+  `web/src/model/club.ts` (spec/library/inertia/parametric head,
+  vitest-pinned against pytest), a ClubPanel component, and
+  client-side head generation into the existing canvas mesh path.
+  Tests: `tests/rate_of_closure/test_club.py` (inertia hand-computed
+  cases, sagitta-vs-circle-formula, mesh determinism, Python↔TS
+  parity pins) plus Club-group GUI smoke tests.
+
 ### 2026-08-03 Rate of Closure STL Clubhead Rendering
 
 - `src/rate_of_closure/mesh.py` adds an optional photorealistic-clubhead
@@ -1764,6 +1798,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-04 | 1.5.6 | feat(rate_of_closure): club library, inertial model, and parametric head with bulge & roll (P2, #4106) — frozen SI ClubSpec with DbC bounds, 15-club library normalized from typical published specs (UpstreamDrift club_configurations.py source), head+shaft+grip composite inertia (balance point, grip-axis and shaft-axis MOI), deterministic superellipse-loft parametric head whose face honors bulge/roll sagitta and loft tilt with mass-scaled envelope, face_normal_at_offset exposed for the future impact package in Python and TypeScript with pinned parity tests, PyQt6 Club group (picker drives GC-to-face/lie with overrides preserved; sourced tooltips) and web ClubPanel generating heads client-side into the existing mesh render paths. |
 | 2026-08-03 | 1.5.5 | feat(rate_of_closure): optional photorealistic STL clubhead rendering — pure-numpy binary/ASCII STL parser with head-envelope normalization (mesh.py), PyQt6 Load Clubhead STL/Procedural Head playback-bar controls with lambert-shaded Poly3DCollection rendering, web-clone FileReader STL input with painter's-algorithm flat-shaded triangles (TS parser parity-tested against pytest), and a programmatically generated example driver-head STL free of licensing risk. |
 | 2026-08-03 | 1.5.4 | feat(rate_of_closure): add the Rate of Closure Impact Explorer (twist-based impact-point deviation model, PyQt6 3D clubhead + closure sweep, parity-tested React/Vite/Tauri web clone) aligned to the AffineDrift launch-monitor conventions and Cheetham closure-rate data; playback controls with head-fixed/head-moving display modes, clickable result explanations, a live-substituted Derivation & Traceability tab (mathtext / KaTeX), independent cross-validation tests, PyInstaller/Tauri packaging, and brand-neutral program strings; review round adds unit drop-downs (speed/rotation/length) with a canonical-unit model core, arrow-free typed inputs with sourced golf-swing range tooltips, a Common Closure Metrics panel (CCV, deg/ft, deg/in, deg/ms, R_ISA, time-to-square, toe-heel speed delta), a derivation-tab scroll fix, and removal of the duplicated Theme menu. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |

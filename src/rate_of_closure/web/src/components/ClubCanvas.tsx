@@ -19,7 +19,7 @@
 import { useEffect, useRef, useState } from "react";
 
 import { solve, type ImpactScenario } from "../model/impact";
-import { HEAD_DEPTH_M, loadHeadMesh, type HeadMesh } from "../model/mesh";
+import { loadHeadMesh, type HeadMesh } from "../model/mesh";
 
 type Vec3 = [number, number, number];
 
@@ -136,7 +136,15 @@ function headParts(scenario: ImpactScenario) {
   return { face, back, hosel, shaftEnd, impact };
 }
 
-export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
+export function ClubCanvas({
+  scenario,
+  externalMesh = null,
+}: {
+  scenario: ImpactScenario;
+  /** A generated head (e.g. parametric club head) to render; the STL
+   *  loader and the Procedural Head reset keep working alongside it. */
+  externalMesh?: HeadMesh | null;
+}) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const phaseRef = useRef(0);
   // Orbit camera state lives in refs so dragging never re-runs effects.
@@ -151,6 +159,13 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
   const [mode, setMode] = useState<ViewMode>(VIEW_MODES[1]);
   const [mesh, setMesh] = useState<HeadMesh | null>(null);
   const [meshError, setMeshError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (externalMesh) {
+      setMesh(externalMesh);
+      setMeshError(null);
+    }
+  }, [externalMesh]);
 
   const onStlChosen = (file: File | undefined) => {
     if (!file) return;
@@ -250,8 +265,15 @@ export function ClubCanvas({ scenario }: { scenario: ImpactScenario }) {
           Math.sin(pitch),
           Math.cos(pitch) * Math.sin(yaw),
         ];
+        // Put the mesh's forward extent (its face plane) at com_to_face
+        // — exactly HEAD_DEPTH_M/2 for a normalized STL; parametric
+        // heads keep their mass-scaled, loft-tilted extent.
         const d = scenario.comToFaceMm / 1000;
-        const shift: Vec3 = [d - HEAD_DEPTH_M / 2, 0, 0];
+        let xMax = -Infinity;
+        for (const tri of mesh.triangles) {
+          for (const v of tri) if (v[0] > xMax) xMax = v[0];
+        }
+        const shift: Vec3 = [d - xMax, 0, 0];
         const shaded = mesh.triangles.map((tri, t) => {
           const placed = tri.map((v) => place(add(v, shift))) as [
             Vec3,

@@ -1,0 +1,90 @@
+"""Shared superellipse-loft mesh helpers.
+
+The procedural clubhead meshes (the bundled example head and the
+parametric heads generated from a :class:`~rate_of_closure.club.types.
+ClubSpec`) are all built the same way: superellipse cross-section rings
+lofted along the face-to-back axis, banded with quads split into
+triangles, and capped with triangle fans. These helpers own that
+geometry so both generators stay DRY.
+
+Frame: the AffineDrift head frame — x face-forward (target), y up,
+z toward the toe (right of target for a right-handed golfer).
+
+Winding: every helper produces outward-facing triangles given rings
+ordered face (+x) to tail (-x) with vertices circling as
+:func:`superellipse_ring` emits them.
+"""
+
+from __future__ import annotations
+
+import numpy as np
+
+from rate_of_closure._contracts import require
+
+__all__ = [
+    "RING_POINTS",
+    "SUPERELLIPSE_EXPONENT",
+    "cap_fan",
+    "loft_band",
+    "superellipse_ring",
+]
+
+#: Vertices per cross-section ring.
+RING_POINTS = 24
+#: Superellipse exponent (4 = rounded-rectangle sections).
+SUPERELLIPSE_EXPONENT = 4.0
+
+
+def superellipse_ring(
+    x: float,
+    half_height: float,
+    half_width: float,
+    points: int = RING_POINTS,
+    exponent: float = SUPERELLIPSE_EXPONENT,
+) -> np.ndarray:
+    """Superellipse cross-section ring in the (y, z) plane at ``x``.
+
+    Returns ``(points, 3)`` vertices circling from the toe (+z at
+    theta 0) through the crown (+y).
+    """
+    require(half_height > 0.0 and half_width > 0.0, "ring half-extents positive")
+    require(points >= 3, "a ring needs at least 3 points", points)
+    theta = np.linspace(0.0, 2.0 * np.pi, points, endpoint=False)
+    power = 2.0 / exponent
+    y = half_height * np.sign(np.sin(theta)) * np.abs(np.sin(theta)) ** power
+    z = half_width * np.sign(np.cos(theta)) * np.abs(np.cos(theta)) ** power
+    return np.column_stack([np.full(points, x), y, z])
+
+
+def loft_band(ring_a: np.ndarray, ring_b: np.ndarray) -> list[np.ndarray]:
+    """Two triangles per quad between consecutive rings, outward-facing.
+
+    ``ring_a`` is the ring nearer the face (+x) — or the outer ring of
+    a face patch — and ``ring_b`` the next ring toward the tail (or
+    face center).
+    """
+    require(ring_a.shape == ring_b.shape, "rings must match", ring_a.shape)
+    n = ring_a.shape[0]
+    triangles: list[np.ndarray] = []
+    for i in range(n):
+        j = (i + 1) % n
+        triangles.append(np.array([ring_a[i], ring_b[i], ring_b[j]]))
+        triangles.append(np.array([ring_a[i], ring_b[j], ring_a[j]]))
+    return triangles
+
+
+def cap_fan(center: np.ndarray, ring: np.ndarray, outward_x: bool) -> list[np.ndarray]:
+    """Triangle fan from ``center`` to ``ring``.
+
+    ``outward_x=True`` winds the fan so its normals point +x (a face
+    cap); ``False`` points them -x (a tail cap).
+    """
+    n = ring.shape[0]
+    triangles: list[np.ndarray] = []
+    for i in range(n):
+        j = (i + 1) % n
+        if outward_x:
+            triangles.append(np.array([center, ring[j], ring[i]]))
+        else:
+            triangles.append(np.array([center, ring[i], ring[j]]))
+    return triangles

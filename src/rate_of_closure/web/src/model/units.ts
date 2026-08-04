@@ -83,4 +83,25 @@ export const FIELD_GUIDANCE: Record<string, string> = {
   contactDurationUs:
     "Suggested range: 400-500 microseconds of ball-face contact for a " +
     "driver. Source: openly published high-speed impact studies.",
+  clubSelection:
+    "Suggested range: pick the club closest to yours; selecting one " +
+    "drives GC-to-face and lie from its spec (your overrides are kept). " +
+    "Source: typical published manufacturer specs, normalized to SI in " +
+    "the club library.",
+  clubLoftDeg:
+    "Suggested range: 8-13 deg drivers, 15-19 deg fairway woods and " +
+    "hybrids, 21-45 deg irons, 46-64 deg wedges. Source: typical " +
+    "published manufacturer spec sheets.",
+  faceCurvatureEnabled:
+    "Suggested range: on for drivers, fairway woods, and hybrids " +
+    "(curved faces); off for irons, wedges, and putters (flat faces). " +
+    "Source: typical published fitting references.",
+  faceBulgeRadiusMm:
+    "Suggested range: 250-330 mm horizontal (heel-toe) face radius for " +
+    "a modern driver (10-13 in). Source: typical published fitting " +
+    "values.",
+  faceRollRadiusMm:
+    "Suggested range: 250-330 mm vertical (crown-sole) face radius, " +
+    "usually similar to bulge on drivers. Source: typical published " +
+    "fitting values.",
 };

@@ -111,9 +111,9 @@ class TestUserFeedbackFixes:
         panel = ControlsPanel()
         qtbot.addWidget(panel)
         for name, spin in panel._spins.items():
-            assert (
-                spin.buttonSymbols() == QAbstractSpinBox.ButtonSymbols.NoButtons
-            ), name
+            assert spin.buttonSymbols() == QAbstractSpinBox.ButtonSymbols.NoButtons, (
+                name
+            )
 
     def test_entry_boxes_carry_range_guidance_with_source(self, qtbot) -> None:  # type: ignore[no-untyped-def]
         panel = ControlsPanel()
@@ -156,6 +156,89 @@ class TestUserFeedbackFixes:
         content = window._derivation_view._scroll.widget()
         canvases = content.findChildren(_FormulaCanvas)
         assert canvases, "derivation tab must contain formula canvases"
+
+
+class TestClubGroup:
+    """Smoke tests for the Club group: picker, curvature, generation."""
+
+    def test_picker_lists_the_full_library(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        from rate_of_closure.club import club_names
+
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        items = [
+            panel._club_combo.itemText(i) for i in range(panel._club_combo.count())
+        ]
+        assert items == club_names()
+
+    def test_selecting_a_club_drives_com_and_lie(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        panel._club_combo.setCurrentText("7-Iron")
+        scenario = panel.scenario()
+        assert scenario.com_to_face_mm == pytest.approx(13.0)
+        assert scenario.lie_angle_deg == pytest.approx(62.5)
+        # User override is preserved: the spin stays editable.
+        panel._spins["com_to_face_mm"].setValue(40.0)
+        assert panel.scenario().com_to_face_mm == pytest.approx(40.0)
+
+    def test_curvature_toggle_gates_the_radius_entries(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        panel._club_combo.setCurrentText("7-Iron")  # flat face
+        assert not panel._curvature_check.isChecked()
+        assert not panel._bulge_spin.isEnabled()
+        panel._club_combo.setCurrentText("Driver 10.5°")
+        assert panel._curvature_check.isChecked()
+        assert panel._bulge_spin.isEnabled()
+        assert panel._bulge_spin.value() == pytest.approx(300.0)
+        assert panel._roll_spin.value() == pytest.approx(280.0)
+
+    def test_club_spec_reflects_overrides(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        panel._club_combo.setCurrentText("Driver 10.5°")
+        panel._loft_spin.setValue(9.0)
+        panel._bulge_spin.setValue(280.0)
+        spec = panel.club_spec()
+        assert spec.loft_deg == pytest.approx(9.0)
+        assert spec.face_bulge_radius_m == pytest.approx(0.280)
+        panel._curvature_check.setChecked(False)
+        assert panel.club_spec().face_bulge_radius_m is None
+
+    def test_generate_button_emits_a_club_spec(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        from rate_of_closure.club import ClubSpec
+
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        with qtbot.waitSignal(panel.clubHeadRequested, timeout=2000) as blocker:
+            panel._generate_button.click()
+        assert isinstance(blocker.args[0], ClubSpec)
+
+    def test_generate_loads_a_parametric_head_into_the_view(
+        self, window, qtbot
+    ) -> None:  # type: ignore[no-untyped-def]
+        assert not window._club_view.has_mesh()
+        window._controls._generate_button.click()
+        assert window._club_view.has_mesh()
+        message = window.statusBar().currentMessage()
+        assert "Representative head generated" in message
+        # Procedural Head still restores the wireframe.
+        window._club_view.clear_mesh()
+        assert not window._club_view.has_mesh()
+
+    def test_club_inputs_carry_sourced_guidance(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        for widget in (
+            panel._club_combo,
+            panel._loft_spin,
+            panel._curvature_check,
+            panel._bulge_spin,
+            panel._roll_spin,
+        ):
+            assert "Suggested range" in widget.toolTip()
+            assert "Source:" in widget.toolTip()
 
 
 class TestClub3DView:

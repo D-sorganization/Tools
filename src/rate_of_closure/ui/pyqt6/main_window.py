@@ -32,6 +32,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from rate_of_closure.club import ClubSpec, parametric_head_mesh
 from rate_of_closure.derivation import (
     METRIC_EXPLANATIONS,
     RESULT_EXPLANATIONS,
@@ -204,6 +205,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         )
 
         self._controls.scenarioChanged.connect(self._on_scenario)
+        self._controls.clubHeadRequested.connect(self._on_club_head)
         # Theming is applied by the shared launcher (setup_themed_app),
         # which also owns the single Theme menu — calling
         # setup_theme_support() here as well would add a duplicate.
@@ -250,6 +252,24 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         unit = self._controls.unit_for(quantity)
         displayed = convert_from_canonical(quantity, unit, value)
         return f"{displayed:+.2f} {unit}"
+
+    def _on_club_head(self, spec: ClubSpec) -> None:
+        """Build the parametric head for a club spec and display it."""
+        self._club_view.set_head_mesh(parametric_head_mesh(spec))
+        status_bar = self.statusBar()
+        if status_bar is not None:
+            status_bar.showMessage(
+                f"Representative head generated: {spec.name} — loft "
+                f"{spec.loft_deg:.1f}°, "
+                + (
+                    "curved face (bulge "
+                    f"{spec.face_bulge_radius_m * 1000.0:.0f} mm, roll "
+                    f"{spec.face_roll_radius_m * 1000.0:.0f} mm)"
+                    if spec.face_bulge_radius_m is not None
+                    and spec.face_roll_radius_m is not None
+                    else "flat face"
+                )
+            )
 
     def _on_scenario(self, scenario: ImpactScenario) -> None:
         result = solve(scenario)
