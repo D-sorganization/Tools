@@ -1,4 +1,4 @@
-"""3D animated clubhead view and the rate-sweep plot.
+"""3D animated clubhead view.
 
 The 3D view draws a simplified driver head (face plate, crown outline,
 shaft stub) at impact orientation and animates its rotation under the
@@ -12,8 +12,7 @@ and two display modes — "Head Fixed in Place" (rotation only, easiest
 to read) and "Head Moving Through Space" (the head also translates
 along the target line at the delivery speed, showing the true motion).
 The camera is too: drag to orbit (the view angles survive the
-animation's redraws) and scroll to zoom; the sweep plot carries the
-standard matplotlib navigation toolbar for zoom and pan.
+animation's redraws) and scroll to zoom.
 
 An optional photorealistic mode replaces the procedural head with a
 user-supplied STL mesh ("Load Clubhead STL…" in the playback bar).
@@ -31,7 +30,6 @@ from typing import cast
 
 import numpy as np
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from PyQt6.QtCore import Qt, QTimer
@@ -48,11 +46,11 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.mesh import HeadMesh, load_head_mesh
-from rate_of_closure.model import ImpactScenario, solve, sweep
+from rate_of_closure.model import ImpactScenario, solve
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["VIEW_MODES", "Club3DView", "SweepView"]
+__all__ = ["VIEW_MODES", "Club3DView"]
 
 # Fallback palette (theme-neutral, matches shared CHART_COLORS hues).
 _COL_FACE = "#0A84FF"
@@ -439,44 +437,3 @@ class Club3DView(QWidget):
             _display(tris), facecolors=colors, edgecolors="none", linewidths=0.0
         )
         self._axes.add_collection3d(collection)
-
-
-class SweepView(QWidget):
-    """Path deviation as a function of about-shaft rotation rate.
-
-    Carries the standard matplotlib navigation toolbar so the plot can
-    be zoomed, panned, and reset like every other chart in the fleet.
-    """
-
-    def __init__(self, parent: QWidget | None = None) -> None:
-        super().__init__(parent)
-        self._figure = Figure(figsize=(5, 3.4), tight_layout=True)
-        self._canvas = FigureCanvas(self._figure)
-        self._axes = self._figure.add_subplot(111)
-        self._toolbar = NavigationToolbar2QT(self._canvas, self)
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self._toolbar)
-        layout.addWidget(self._canvas)
-
-    def set_scenario(self, scenario: ImpactScenario) -> None:
-        """Redraw the sweep for a new scenario."""
-        rates = np.linspace(0.0, 4000.0, 81)
-        deviations = sweep(scenario, "omega_shaft_dps", rates)
-        current = solve(scenario)
-
-        axes = self._axes
-        axes.clear()
-        axes.plot(rates, deviations, color=_COL_FACE, lw=2.0)
-        axes.axvline(scenario.omega_shaft_dps, color=_COL_V_POINT, lw=1.0, ls="--")
-        axes.scatter(
-            [scenario.omega_shaft_dps],
-            [current.path_deviation_deg],
-            color=_COL_V_POINT,
-            zorder=5,
-        )
-        axes.axhline(0.0, color=_COL_BODY, lw=0.8)
-        axes.set_xlabel("About-Shaft Rotation Rate [deg/s]")
-        axes.set_ylabel("Impact-Point Path Deviation [deg]")
-        axes.grid(alpha=0.25)
-        self._canvas.draw_idle()
