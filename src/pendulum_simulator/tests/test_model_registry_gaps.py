@@ -55,7 +55,9 @@ class TestRegisterModelOverwrite:
         cfg2 = _make_config("Second Version", n_dof=3)
 
         register_model("__test_overwrite__", cfg1)
-        with caplog.at_level(logging.WARNING, logger="double_pendulum_golf.model_registry"):
+        with caplog.at_level(
+            logging.WARNING, logger="double_pendulum_golf.model_registry"
+        ):
             register_model("__test_overwrite__", cfg2)
 
         assert "Overwriting existing model registration" in caplog.text
@@ -64,7 +66,9 @@ class TestRegisterModelOverwrite:
 
     def test_no_warn_first_registration(self, caplog: pytest.LogCaptureFixture) -> None:
         """First registration should not warn."""
-        with caplog.at_level(logging.WARNING, logger="double_pendulum_golf.model_registry"):
+        with caplog.at_level(
+            logging.WARNING, logger="double_pendulum_golf.model_registry"
+        ):
             register_model("__test_first__", _make_config())
         assert "Overwriting" not in caplog.text
 
@@ -90,7 +94,9 @@ class TestRegisterBuiltinsImportError:
         monkeypatch.setitem(sys.modules, "double_pendulum_golf.physics_triple", None)
         monkeypatch.setitem(sys.modules, "double_pendulum_golf.physics_golfer", None)
 
-        with caplog.at_level(logging.DEBUG, logger="double_pendulum_golf.model_registry"):
+        with caplog.at_level(
+            logging.DEBUG, logger="double_pendulum_golf.model_registry"
+        ):
             model_registry._register_builtins()
 
         # All 3 modules should fail to import and log at DEBUG level
