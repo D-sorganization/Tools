@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.4                                      |
-| **Spec Version**        | 1.5.4                                      |
-| **Last Spec Update**    | 2026-08-04                                 |
+| **Current Version**     | 1.5.5                                      |
+| **Spec Version**        | 1.5.5                                      |
+| **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
 
@@ -2385,6 +2385,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.5.5
+
+- 2026-08-05: fix(rotation-converter) — update application navigation tabs
+  with accessible roles and unique IDs, linking buttons to tab panels via
+  `aria-controls` and `aria-labelledby` for screen reader semantic correctness.
 
 ### Version 1.5.4
 
