@@ -126,3 +126,35 @@ class TestDynamics:
         s = PendulumState(theta1=0.1, theta2=0.0, omega1=0.0, omega2=0.0)
         with pytest.raises(ValueError, match="dt"):
             reference.rk4_step(p, s, (0.0, -G), 0.0)
+
+    def test_forced_derivatives_add_generalized_joint_torques(self) -> None:
+        p = PendulumParameters.golf_default()
+        state = PendulumState(theta1=0.2, theta2=-0.1, omega1=0.3, omega2=-0.2)
+        g_inplane = (0.0, -G)
+        passive = reference.derivatives(p, state, g_inplane)
+        forced = reference.derivatives_forced(p, state, g_inplane, (4.0, -1.5))
+        expected_delta = np.linalg.solve(
+            reference.mass_matrix(p, state.theta2), [4.0, -1.5]
+        )
+        np.testing.assert_allclose(forced[:2], passive[:2], rtol=0.0, atol=0.0)
+        np.testing.assert_allclose(
+            np.asarray(forced[2:]) - np.asarray(passive[2:]),
+            expected_delta,
+            rtol=1e-12,
+            atol=1e-12,
+        )
+
+    def test_zero_forced_simulation_matches_passive_reference(self) -> None:
+        p = PendulumParameters.golf_default()
+        state = PendulumState(theta1=0.5, theta2=-0.2, omega1=0.1, omega2=0.0)
+        g_inplane = (0.0, -G)
+        passive = reference.simulate(p, state, g_inplane, dt=0.001, n_steps=20)
+        forced = reference.simulate_forced(
+            p,
+            state,
+            g_inplane,
+            dt=0.001,
+            n_steps=20,
+            torque_at=lambda _time_s: (0.0, 0.0),
+        )
+        np.testing.assert_allclose(forced, passive, rtol=0.0, atol=0.0)

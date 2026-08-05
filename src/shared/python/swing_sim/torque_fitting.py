@@ -10,6 +10,7 @@ from numpy.typing import ArrayLike, NDArray
 
 from shared.python.contracts import require
 
+from ._torque_profile_validation import finite_float
 from .torque_profiles import FitMetadata, TorquePolynomial
 
 
@@ -68,14 +69,30 @@ def _condition_number(times: NDArray[np.float64], degree: int) -> float:
 
 
 def fit_torque_polynomial(
-    times_s: ArrayLike, torque_nm: ArrayLike, degree: int
+    times_s: ArrayLike,
+    torque_nm: ArrayLike,
+    degree: int,
+    *,
+    max_condition_number: float = 1.0e8,
 ) -> TorquePolynomial:
     """Fit ascending coefficients in physical seconds.
 
     The least-squares solve uses normalized time for conditioning and then
     converts the result back to the ordinary physical-time power basis.
     """
+    condition_limit = finite_float(max_condition_number, "max_condition_number")
+    require(
+        condition_limit >= 1.0,
+        "max_condition_number must be >= 1",
+        condition_limit,
+    )
     times, torques = _fit_arrays(times_s, torque_nm, degree)
+    condition_number = _condition_number(times, degree)
+    require(
+        condition_number <= condition_limit,
+        "polynomial fit condition number exceeds configured limit",
+        condition_number,
+    )
     fitted = Polynomial.fit(times, torques, degree, domain=[times[0], times[-1]])
     physical = fitted.convert()
     predicted = np.asarray(physical(times), dtype=np.float64)
@@ -85,7 +102,7 @@ def fit_torque_polynomial(
         rmse_nm=float(np.sqrt(np.mean(residuals**2))),
         max_abs_error_nm=float(np.max(np.abs(residuals))),
         r_squared=_r_squared(torques, residuals),
-        condition_number=_condition_number(times, degree),
+        condition_number=condition_number,
         original_sample_sha256=_sample_sha256(times, torques),
     )
     coefficients = tuple(float(value) for value in physical.coef)

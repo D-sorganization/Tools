@@ -14,6 +14,7 @@ unoptimised Python.
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 
 import numpy as np
 
@@ -141,6 +142,27 @@ def derivatives(
     return state.omega1, state.omega2, acc1, acc2
 
 
+def derivatives_forced(
+    p: PendulumParameters,
+    state: PendulumState,
+    g_inplane: tuple[float, float],
+    torques_nm: tuple[float, float],
+) -> tuple[float, float, float, float]:
+    """State derivatives with shoulder/wrist generalized torques in N*m."""
+    require(len(torques_nm) == 2, "torques_nm must contain two joint torques")
+    tau1, tau2 = float(torques_nm[0]), float(torques_nm[1])
+    require(
+        math.isfinite(tau1) and math.isfinite(tau2),
+        "joint torques must be finite",
+        torques_nm,
+    )
+    passive = derivatives(p, state, g_inplane)
+    inv_m = _invert_mass_matrix(p, state.theta2)
+    delta1 = inv_m[0, 0] * tau1 + inv_m[0, 1] * tau2
+    delta2 = inv_m[1, 0] * tau1 + inv_m[1, 1] * tau2
+    return passive[0], passive[1], passive[2] + delta1, passive[3] + delta2
+
+
 def rk4_step(
     p: PendulumParameters,
     state: PendulumState,
@@ -165,6 +187,45 @@ def rk4_step(
     k2 = f(add(y, dt / 2.0, k1))
     k3 = f(add(y, dt / 2.0, k2))
     k4 = f(add(y, dt, k3))
+    out = [
+        y[i] + dt / 6.0 * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]) for i in range(4)
+    ]
+    return PendulumState(theta1=out[0], theta2=out[1], omega1=out[2], omega2=out[3])
+
+
+def rk4_step_forced(
+    p: PendulumParameters,
+    state: PendulumState,
+    g_inplane: tuple[float, float],
+    time_s: float,
+    dt: float,
+    torque_at: Callable[[float], tuple[float, float]],
+) -> PendulumState:
+    """Advance a non-autonomous prescribed-torque state by one RK4 step."""
+    require(math.isfinite(time_s), "time_s must be finite", time_s)
+    require(math.isfinite(dt) and dt > 0.0, "dt must be finite and > 0", dt)
+    y = (state.theta1, state.theta2, state.omega1, state.omega2)
+
+    def f(
+        sample_time: float, values: tuple[float, ...]
+    ) -> tuple[float, float, float, float]:
+        sample_state = PendulumState(
+            theta1=values[0],
+            theta2=values[1],
+            omega1=values[2],
+            omega2=values[3],
+        )
+        return derivatives_forced(p, sample_state, g_inplane, torque_at(sample_time))
+
+    def add(
+        a: tuple[float, ...], scale: float, b: tuple[float, ...]
+    ) -> tuple[float, ...]:
+        return tuple(ai + scale * bi for ai, bi in zip(a, b, strict=True))
+
+    k1 = f(time_s, y)
+    k2 = f(time_s + dt / 2.0, add(y, dt / 2.0, k1))
+    k3 = f(time_s + dt / 2.0, add(y, dt / 2.0, k2))
+    k4 = f(time_s + dt, add(y, dt, k3))
     out = [
         y[i] + dt / 6.0 * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]) for i in range(4)
     ]
@@ -209,5 +270,25 @@ def simulate(
     current = initial
     for i in range(n_steps):
         current = rk4_step(p, current, g_inplane, dt)
+        out[i + 1] = (current.theta1, current.theta2, current.omega1, current.omega2)
+    return out
+
+
+def simulate_forced(
+    p: PendulumParameters,
+    initial: PendulumState,
+    g_inplane: tuple[float, float],
+    dt: float,
+    n_steps: int,
+    torque_at: Callable[[float], tuple[float, float]],
+) -> np.ndarray:
+    """Simulate prescribed generalized torques on the existing RK4 grid."""
+    require(n_steps >= 0, "n_steps must be >= 0", n_steps)
+    require(callable(torque_at), "torque_at must be callable", torque_at)
+    out = np.empty((n_steps + 1, 4), dtype=np.float64)
+    out[0] = (initial.theta1, initial.theta2, initial.omega1, initial.omega2)
+    current = initial
+    for i in range(n_steps):
+        current = rk4_step_forced(p, current, g_inplane, i * dt, dt, torque_at)
         out[i + 1] = (current.theta1, current.theta2, current.omega1, current.omega2)
     return out
