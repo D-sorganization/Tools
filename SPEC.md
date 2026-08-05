@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.1                                     |
-| **Spec Version**        | 1.13.1                                     |
+| **Current Version**     | 1.13.2                                     |
+| **Spec Version**        | 1.13.2                                     |
 | **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,24 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-05 Rate of Closure interaction and rendering hardening
+
+- Every directional engineering entry now exposes a visible, clickable
+  reference-frame disclosure, and launch-number rows expose their definitions
+  as whole-row buttons in the web interface. Web numeric editing uses a
+  draft/commit control that selects the complete value on focus, preserves
+  intermediate empty/minus/decimal states, accepts negative spin-axis tilt,
+  clamps only at commit, and provides a full-field focus treatment.
+- Swing sessions carry explicit joint positions. Both renderers draw the
+  complete double- or triple-pendulum skeleton, the web implementation adds
+  the parity-pinned triple-pendulum source, and the initial simulation runs
+  automatically so the Swing view is never an unexplained blank canvas.
+- Both interfaces start with a representative 10.5-degree driver and visible
+  engineering-style CG target. Parametric heads use 64-point rings, refined
+  body stations, and five face rings (1,792 driver triangles), with matched
+  deterministic Python/TypeScript geometry, watertight volumetrics, steel
+  shading, specular highlights, and a regenerated bundled example STL.
+
 ### 2026-08-04 Course showcase — golf-course scene, target optimization, launcher styling, yards units (epic #4125, H7 + H6)
 
 - **H7a golf-course scene**: the simulation/flight displays render as a
@@ -2489,6 +2507,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.13.2 | feat(rate_of_closure): harden both standalone interfaces with clickable reference-frame guidance, draft-based signed numeric editing, negative spin-axis tilt support, auto-populated Swing views, complete double/triple-pendulum skeletons, a parity-pinned web triple-pendulum model, default generated driver heads, engineering CG targets, and higher-resolution watertight clubhead meshes with polished lighting. |
 | 2026-08-05 | 1.13.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
 | 2026-08-04 | 1.13.0 | feat(rate_of_closure, swing_sim, #4125 H6-H7): course showcase — H7a themed golf-course scene (palette-derived grass family, fairway strip, green + hole/flag at a configurable distance, tee marker; Course Elements toggle; both UIs incl. web canvas mirrors with a shared chart-palette module); H7b target regions (`solver/targets.py` green circle / fairway corridor with exact signed distance + containment, additive ImpactGoal region residual with centering term, Optimize-to-Target on both solver UIs reusing partition/progress/cancel, target editing reflected live in the course scene, Variation landing-scatter overlay with the hold-% headline via hold_fraction, TS parity mirror pinned test-for-test); H6 launcher-language styling (palette-only QSS: button hover/pressed + subtle shadow, launcher-card group boxes, hover tabs; web accents aligned onto the shared palette) and the yards-default Distance quantity (yd/m drop-down in both UIs, SI-canonical internals, applied to flight/putting result rows, view axes, plotting catalog distance variables incl. exports, variation stats, and target entries; conversion + default-is-yards tests). |
 | 2026-08-04 | 1.12.0 | feat(rate_of_closure, swing_sim, #4125 H1-H3): H1 realistic type-specific parametric heads — per-type `head_profiles` (woods/hybrids/iron+wedge blades with cavity-back recess, generic mallet + anser-style blade putters), divergence-theorem `volumetrics` (watertightness-gated volume/centroid, cube-exact + sphere <1% validation, per-type COG-vs-spec bands), hosel-true shaft attachment in both renderers, 'Show CG' volumetric-COG markers in both UIs, 16-club library with Blade/Mallet putter entries, consistent outward mesh winding, TS parity (`clubHeads.ts`, `volumetrics.ts`) with volume/COG/hosel pins. H2 swing kinetics — `simulation/kinetics.py` per-sample inverse dynamics over the double-pendulum swing (net/gravity/damping/applied torque breakdown, joint powers, Newton–Euler reaction forces, clubhead-force estimate, documented sign convention, `simulate_forced` round-trip/energy/statics tests, public `DoublePendulumSwing.state_at`); 'Kinetics' catalog category (11 series keys) + Joint Torques/Power/Reaction Forces built-ins in both UIs; PyQt6 'Show Kinetics' 3D overlay + Kinetics sub-tab (plots, downswing-timed peak table); web `kinetics.ts` mirror parity-pinned vs a pytest fixture (web playback overlay and triple-pendulum kinetics deferred, documented). H3 putting vertical — self-façaded `shared/python/swing_sim/putting/` package (COR impulse with the 2/7 rolling-cap derivation, stimpmeter-derived rolling resistance with exact round-trip, sloped-green RK4 with break and the lip-capture bound, Holmes 1991 cited); 'Putting' tab in both UIs with phase-coded green view and capture-bound plot; additive putting plot catalog; Python↔TS parity pins on reference putts; UpstreamDrift putting assets credited. Glossary union across the three verticals: 76 terms, TS mirror + fixture regenerated. |

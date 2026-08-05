@@ -235,6 +235,13 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         # setup_theme_support() here as well would add a duplicate.
         self._derivation_view.set_config(self._simulation_tab.derivation_config())
         self._on_scenario(self._controls.scenario())
+        # A share-ready scene should never open as a placeholder wireframe.
+        # Load the selected representative driver immediately; users can still
+        # regenerate another library head or load a measured STL.
+        self._on_club_head(self._controls.club_spec())
+        # Match the web experience: the Swing view opens with a meaningful
+        # result instead of empty axes that look like a rendering failure.
+        self._simulation_tab.run_now()
         self._show_explanation(_RESULT_ROWS[0][0])
 
     # ── construction ────────────────────────────────────────────────

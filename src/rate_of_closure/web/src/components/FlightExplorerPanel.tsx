@@ -11,6 +11,8 @@
 
 import { useState } from "react";
 
+import { DecimalInput } from "./DecimalInput";
+import { FieldInfo } from "./FieldInfo";
 import { FlightCanvases } from "./FlightCanvases";
 import {
   directLaunch,
@@ -93,15 +95,12 @@ export function FlightExplorerPanel({
               </span>
             </span>
             <span className="flex min-w-0 gap-2">
-              <input
-                type="number"
-                inputMode="decimal"
+              <DecimalInput
                 value={speed}
+                aria-label="Ball Speed"
                 title={FIELD_GUIDANCE.fxBallSpeed}
-                onChange={(e) => {
-                  const parsed = Number(e.target.value);
-                  if (Number.isFinite(parsed)) setSpeed(parsed);
-                }}
+                min={0.1}
+                onCommit={setSpeed}
                 className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
               />
               <select
@@ -128,22 +127,17 @@ export function FlightExplorerPanel({
           {FIELDS.map(({ key, label, unit, guidance }) => (
             <label key={key} className="mb-2 block text-sm" title={FIELD_GUIDANCE[guidance]}>
               <span className="mb-1 flex justify-between text-slate-300">
-                <span className="truncate" title={label}>
-                  {label}
+                <span className="flex items-center truncate" title={label}>
+                  {label}<FieldInfo label={label} guidance={FIELD_GUIDANCE[guidance]} />
                 </span>
                 <span className="text-slate-500">{unit}</span>
               </span>
-              <input
-                type="number"
-                inputMode="decimal"
+              <DecimalInput
                 value={fields[key]}
+                aria-label={label}
                 title={FIELD_GUIDANCE[guidance]}
-                onChange={(e) => {
-                  const parsed = Number(e.target.value);
-                  if (Number.isFinite(parsed)) {
-                    setFields((f) => ({ ...f, [key]: parsed }));
-                  }
-                }}
+                min={key === "spinRpm" ? 0 : undefined}
+                onCommit={(value) => setFields((f) => ({ ...f, [key]: value }))}
                 className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
               />
             </label>

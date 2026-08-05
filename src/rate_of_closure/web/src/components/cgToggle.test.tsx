@@ -4,13 +4,14 @@
  * 3D club canvas and the strike canvas.
  */
 
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { getClub } from "../model/club";
 import { DEFAULT_SCENARIO } from "../model/impact";
 import { ClubCanvas } from "./ClubCanvas";
 import { StrikeCanvas } from "./StrikeCanvas";
+import App from "../App";
 
 beforeAll(() => {
   const ctx: unknown = new Proxy(function () {} as object, {
@@ -27,12 +28,18 @@ beforeAll(() => {
 afterEach(cleanup);
 
 describe("Show CG toggles", () => {
-  it("defaults off and toggles in the club canvas", () => {
+  it("loads a representative driver head in the initial explorer scene", async () => {
+    render(<App />);
+    const reset = screen.getByRole("button", { name: "Procedural Head" });
+    await waitFor(() => expect(reset).toBeEnabled());
+  });
+
+  it("defaults on and toggles in the club canvas", () => {
     render(<ClubCanvas scenario={DEFAULT_SCENARIO} />);
     const check = screen.getByLabelText("Show CG") as HTMLInputElement;
-    expect(check.checked).toBe(false);
-    fireEvent.click(check);
     expect(check.checked).toBe(true);
+    fireEvent.click(check);
+    expect(check.checked).toBe(false);
   });
 
   it("enables with a club spec and toggles in the strike canvas", () => {

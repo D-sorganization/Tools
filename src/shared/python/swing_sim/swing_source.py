@@ -170,6 +170,19 @@ class DoublePendulumSwing:
         theta1, theta2, omega1, omega2 = self._state_at(t)
         return PendulumState(theta1=theta1, theta2=theta2, omega1=omega1, omega2=omega2)
 
+    def joint_positions(self, t: float) -> np.ndarray:
+        """Pivot, wrist, and clubhead positions in the swing world frame."""
+        state = self.state_at(t)
+        p = self._parameters
+        t12 = state.theta1 + state.theta2
+        x_axis = self._plane_r[:, 0]
+        up_axis = self._plane_r[:, 2]
+        wrist = p.l1 * (
+            math.sin(state.theta1) * x_axis - math.cos(state.theta1) * up_axis
+        )
+        tip = wrist + p.l2 * (math.sin(t12) * x_axis - math.cos(t12) * up_axis)
+        return np.vstack([np.zeros(3), wrist, tip])
+
     def sample(self, t: float) -> SwingSample:
         """Return the clubhead :class:`SwingSample` at time ``t``.
 

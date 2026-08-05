@@ -1,22 +1,9 @@
-"""Swing-scale 3D scene + full video playback controls (the Swing view).
+"""Swing-scale 3D scene and playback controls.
 
-Renders one :class:`~rate_of_closure.simulation.session.SimulationRun`
-at SWING scale (epic #4120, V2): the swing path with the clubhead
-marker at the playback instant, the fixed ball (own checkbox), the
-ground plane (own checkbox), and a toggleable instantaneous-screw-axis
-overlay computed through the one thin ISA adapter (recon #4108). The
-flight polyline is OFF by default — a 'Show Ball Flight' checkbox
-expands the scene to flight scale, with guidance warning that the
-flight envelope dwarfs the swing; the dedicated
-:class:`~rate_of_closure.ui.pyqt6.flight_view.FlightView` is the
-flight-scale display.
-
-Playback is a full video bar — play/pause, a scrub slider over the
-whole swing + flight timeline, frame step +/-, a loop toggle, and rate
-presets where 1x maps animation wall time to simulated time.
-
-Colors come from the shared UpstreamDrift theme palette
-(``get_chart_color``); no app colors are hard-coded here.
+The view renders the physical swing skeleton, clubhead path, ball, ground,
+and optional instantaneous-screw-axis and ball-flight overlays.  Playback
+supports scrubbing, stepping, looping, and simulated-time rate presets.
+Colors come from the shared UpstreamDrift theme palette.
 """
 
 from __future__ import annotations
@@ -49,6 +36,7 @@ from rate_of_closure.simulation.isa import MIN_RATE_DPS
 from rate_of_closure.ui.course import CourseLayout
 from rate_of_closure.ui.pyqt6.course_scene import draw_course_ground_3d
 from rate_of_closure.ui.pyqt6.kinetics_overlay import overlay_frame
+from rate_of_closure.ui.pyqt6.pendulum_scene import draw_pendulum_skeleton
 from rate_of_closure.ui.pyqt6.simulation_specs import RATE_PRESETS
 from rate_of_closure.units import FIELD_GUIDANCE
 
@@ -421,9 +409,15 @@ class SimulationView(QWidget):
         if in_flight and show_flight:
             extent = max(5.0, float(np.max(np.abs(run.flight_positions))) * 1.05)
         else:
+            joint_extent = (
+                float(np.max(np.abs(run.swing_joints)))
+                if run.swing_joints.size
+                else 0.0
+            )
             extent = max(
                 1.0,
                 float(np.max(np.abs(run.swing_positions))) * 1.1,
+                joint_extent * 1.1,
             )
 
         if self._ground_check.isChecked():
@@ -452,6 +446,13 @@ class SimulationView(QWidget):
         )
         head = self._display(run.swing_positions[index])
         axes.scatter(*head, color=get_chart_color(1), s=45, zorder=5)
+
+        # Physically sampled articulated skeleton. Each point comes from
+        # the same integrated joint state as the clubhead path; no visual
+        # approximation or screen-space reconstruction is involved.
+        if run.swing_joints.shape[1] >= 2:
+            joints = self._display(run.swing_joints[index])
+            draw_pendulum_skeleton(axes, joints, get_chart_color)
 
         # Flight trajectory: opt-in only (see the toggle's guidance).
         if show_flight:

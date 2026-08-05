@@ -76,15 +76,18 @@ export const FIELD_GUIDANCE: Record<string, string> = {
   clubheadSpeedMph:
     "Suggested range: 80-130 mph driver clubhead speed (tour average " +
     "near 113 mph; strong amateurs 90-105). Source: openly published " +
-    "tour launch-monitor averages.",
+    "tour launch-monitor averages. Reference frame: speed magnitude of " +
+    "the clubhead reference point; +x is down the target line.",
   omegaPlaneDps:
     "Suggested range: 1,800-2,400 deg/s swing-plane rotation at impact " +
     "for skilled players. Source: 3-D motion-capture studies collected " +
-    "in the AffineDrift closure-rate dossier.",
+    "in the AffineDrift closure-rate dossier. Reference frame: right-hand " +
+    "rotation about the oriented swing-plane normal (SPV).",
   omegaShaftDps:
     "Suggested range: 652-2,432 deg/s about the shaft (tour driver mean " +
     "1,307 +/- 304, n = 94). Source: Cheetham 2014, via the AffineDrift " +
-    "closure-rate dossier.",
+    "closure-rate dossier. Reference frame: right-hand rotation about " +
+    "the shaft axis from grip toward clubhead (HTV).",
   lieAngleDeg:
     "Suggested range: 55-62 deg for a driver delivered near its static " +
     "lie; 90 deg makes the shaft vertical to isolate pure horizontal " +
@@ -127,21 +130,26 @@ export const FIELD_GUIDANCE: Record<string, string> = {
     "fitting values.",
   swingSource:
     "Suggested range: Manual Scenario replays the explorer's " +
-    "constant-twist delivery; Double Pendulum generates a gravity-driven " +
+    "constant-twist delivery; Double and Triple Pendulum generate gravity-driven " +
     "swing on the oriented plane. Source: classic double-pendulum golf " +
     "models (Cochran & Stobbs; Jorgensen, The Physics of Golf).",
   planeYawDeg:
     "Suggested range: -20 to +20 deg rotation of the swing plane about " +
     "the vertical (aim left/right of the target line). Source: 3-D " +
     "swing-plane studies collected in the AffineDrift closure-rate " +
-    "dossier.",
+    "dossier. Reference frame: rotate the plane about world +y (up); " +
+    "+x is the target line and +z is right of target.",
   planeSideTiltDeg:
     "Suggested range: -60 to -35 deg side tilt for a driver (a vertical " +
     "plane is 0; tour driver swing planes lean roughly 45-55 deg from " +
-    "vertical). Source: published 3-D swing-plane measurements.",
+    "vertical). Source: published 3-D swing-plane measurements. Reference " +
+    "frame: roll about the plane's downrange axis after yaw; negative " +
+    "leans a right-handed driver's plane toward the golfer.",
   planeForwardTiltDeg:
     "Suggested range: -10 to +10 deg forward/back tilt of the in-plane " +
-    "upright axis. Source: published 3-D swing-plane measurements.",
+    "upright axis. Source: published 3-D swing-plane measurements. " +
+    "Reference frame: pitch about the yawed-and-side-tilted plane's local " +
+    "lateral axis; positive tips the upright axis downrange.",
   impactTimeScrub:
     "Suggested range: anywhere inside the swing; the default is the " +
     "instant of maximum clubhead speed. Scrubbing moves the swing " +
@@ -190,7 +198,8 @@ export const FIELD_GUIDANCE: Record<string, string> = {
   fxAzimuth:
     "Suggested range: within +/-10 deg of the target line; + = right of " +
     "target. Source: standard launch-monitor sign convention (launch " +
-    "direction).",
+    "direction). Reference frame: horizontal angle from +x target line " +
+    "toward +z right of target.",
   fxSpinRpm:
     "Suggested range: 2,000-3,500 rpm total spin for drivers (tour " +
     "average near 2,686 rpm); 4,000-10,000+ for irons and wedges. " +
@@ -198,7 +207,9 @@ export const FIELD_GUIDANCE: Record<string, string> = {
   fxSpinAxisTilt:
     "Suggested range: within +/-20 deg spin-axis tilt; + = fade/slice " +
     "side (curves right for a right-handed player), - = draw/hook side. " +
-    "Source: TrackMan D-plane literature.",
+    "Source: TrackMan D-plane literature. Reference frame: viewed from " +
+    "behind the ball toward the target; 0 deg is pure backspin, positive " +
+    "tilts the axis toward fade/slice curvature.",
   fxSpeedUnit:
     "Suggested range: mph for launch-monitor style entry, m/s for SI " +
     "work; the model always computes in SI. Source: launch-monitor " +

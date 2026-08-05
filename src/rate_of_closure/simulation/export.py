@@ -138,6 +138,7 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
         "series": {
             "columns": list(CSV_COLUMNS),
             "rows": [list(row) for row in series_rows(run)],
+            "swing_joints_app_m": run.swing_joints.tolist(),
         },
     }
 

@@ -55,6 +55,17 @@ class TestUnitConversions:
             assert "Suggested range" in guidance, field.name
             assert "Source:" in guidance, field.name
 
+    def test_directional_inputs_document_their_reference_frame(self) -> None:
+        for key in (
+            "clubhead_speed_mph",
+            "omega_plane_dps",
+            "omega_shaft_dps",
+            "plane_yaw_deg",
+            "plane_side_tilt_deg",
+            "plane_forward_tilt_deg",
+        ):
+            assert "Reference frame:" in FIELD_GUIDANCE[key], key
+
 
 class TestClosureMetrics:
     def test_metrics_restate_the_solved_delivery(self) -> None:

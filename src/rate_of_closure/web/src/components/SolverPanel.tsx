@@ -15,6 +15,8 @@
 
 import { useState } from "react";
 
+import { DecimalInput } from "./DecimalInput";
+
 import { type ImpactScenario } from "../model/impact";
 import { MPH_PER_MPS } from "../model/simulation";
 import {
@@ -234,17 +236,13 @@ export function SolverPanel({ onApply, target }: Props) {
     title: string,
     onChange: (value: number) => void,
   ) => (
-    <input
-      type="number"
-      inputMode="decimal"
+    <DecimalInput
       value={value}
       disabled={disabled}
       title={title}
+      aria-label={title}
       aria-disabled={disabled}
-      onChange={(e) => {
-        const parsed = Number(e.target.value);
-        if (Number.isFinite(parsed)) onChange(parsed);
-      }}
+      onCommit={onChange}
       className={inputClass}
     />
   );

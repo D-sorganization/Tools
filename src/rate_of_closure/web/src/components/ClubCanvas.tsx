@@ -22,15 +22,19 @@ import { solve, type ImpactScenario } from "../model/impact";
 import { loadHeadMesh, type HeadMesh } from "../model/mesh";
 import { getChartColor } from "../model/theme";
 import { FIELD_GUIDANCE } from "../model/units";
-
-type Vec3 = [number, number, number];
+import {
+  SHAFT_LEN,
+  add,
+  apply,
+  headParts,
+  project,
+  rodrigues,
+  type Vec3,
+} from "./clubCanvasGeometry";
+import { drawEngineeringCgSymbol } from "./engineeringSymbols";
 
 const SPAN_MS = 8.0;
 const STEPS = 48;
-const FACE_W = 0.058;
-const FACE_H = 0.028;
-const BODY_DEPTH = 0.11;
-const SHAFT_LEN = 0.3;
 
 export const VIEW_MODES = [
   "Head Fixed in Place",
@@ -53,93 +57,11 @@ const COLORS = {
 // STL-mesh shading constants — identical to the PyQt6 club view.
 const LIGHT_LEN = Math.hypot(0.3, 0.8, 0.5);
 const LIGHT_DIR: Vec3 = [0.3 / LIGHT_LEN, 0.8 / LIGHT_LEN, 0.5 / LIGHT_LEN];
-const MESH_BASE_RGB = [0.62, 0.66, 0.72] as const;
-const MESH_AMBIENT = 0.25;
+const MESH_BASE_RGB = [0.56, 0.62, 0.7] as const;
+const MESH_AMBIENT = 0.22;
+const MESH_SPECULAR = 0.32;
 
-function rodrigues(omega: Vec3, dt: number): number[][] {
-  const mag = Math.hypot(...omega);
-  const theta = mag * dt;
-  if (Math.abs(theta) < 1e-12) {
-    return [
-      [1, 0, 0],
-      [0, 1, 0],
-      [0, 0, 1],
-    ];
-  }
-  const [x, y, z] = omega.map((c) => c / mag);
-  const c = Math.cos(theta);
-  const s = Math.sin(theta);
-  const t = 1 - c;
-  return [
-    [t * x * x + c, t * x * y - s * z, t * x * z + s * y],
-    [t * x * y + s * z, t * y * y + c, t * y * z - s * x],
-    [t * x * z - s * y, t * y * z + s * x, t * z * z + c],
-  ];
-}
 
-function apply(m: number[][], v: Vec3): Vec3 {
-  return [
-    m[0][0] * v[0] + m[0][1] * v[1] + m[0][2] * v[2],
-    m[1][0] * v[0] + m[1][1] * v[1] + m[1][2] * v[2],
-    m[2][0] * v[0] + m[2][1] * v[1] + m[2][2] * v[2],
-  ];
-}
-
-function add(a: Vec3, b: Vec3): Vec3 {
-  return [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-}
-
-/**
- * Orthographic projection under a user-controlled orbit camera.
- *
- * Model frame is the AffineDrift convention (x target, y up, z right).
- * The camera orbits the origin at `azimuth` (radians around the up
- * axis, measured from +x toward +z) and `elevation`. The defaults
- * (150 deg, 30 deg) match the PyQt view: behind the ball on the toe
- * side, so a right-handed club reads as right-handed.
- */
-function project(
-  v: Vec3,
-  w: number,
-  h: number,
-  zoom: number,
-  azimuth: number,
-  elevation: number,
-): [number, number] {
-  const sinA = Math.sin(azimuth);
-  const cosA = Math.cos(azimuth);
-  const sinE = Math.sin(elevation);
-  const cosE = Math.cos(elevation);
-  const sx = v[0] * sinA - v[2] * cosA;
-  const sy = -sinE * cosA * v[0] + cosE * v[1] - sinE * sinA * v[2];
-  const scale = Math.min(w, h) * zoom;
-  return [w / 2 + sx * scale, h * 0.62 - sy * scale];
-}
-
-function headParts(scenario: ImpactScenario) {
-  const d = scenario.comToFaceMm / 1000;
-  const lie = (scenario.lieAngleDeg * Math.PI) / 180;
-  const face: Vec3[] = [
-    [d, -FACE_H, -FACE_W],
-    [d, -FACE_H, FACE_W],
-    [d, FACE_H, FACE_W],
-    [d, FACE_H, -FACE_W],
-    [d, -FACE_H, -FACE_W],
-  ];
-  const back = face.map((p): Vec3 => [p[0] - BODY_DEPTH, p[1], p[2]]);
-  const hosel: Vec3 = [d - 0.02, FACE_H, -FACE_W];
-  const shaftEnd: Vec3 = [
-    hosel[0],
-    hosel[1] + Math.sin(lie) * SHAFT_LEN,
-    hosel[2] - Math.cos(lie) * SHAFT_LEN,
-  ];
-  const impact: Vec3 = [
-    d,
-    scenario.impactOffsetHighMm / 1000,
-    scenario.impactOffsetToeMm / 1000,
-  ];
-  return { face, back, hosel, shaftEnd, impact };
-}
 
 export function ClubCanvas({
   scenario,
@@ -170,7 +92,7 @@ export function ClubCanvas({
   const [mode, setMode] = useState<ViewMode>(VIEW_MODES[1]);
   const [mesh, setMesh] = useState<HeadMesh | null>(null);
   const [meshError, setMeshError] = useState<string | null>(null);
-  const [showCg, setShowCg] = useState(false);
+  const [showCg, setShowCg] = useState(true);
 
   useEffect(() => {
     if (externalMesh) {
@@ -302,7 +224,9 @@ export function ClubCanvas({
           const lambert = Math.abs(
             n[0] * LIGHT_DIR[0] + n[1] * LIGHT_DIR[1] + n[2] * LIGHT_DIR[2],
           );
-          const intensity = MESH_AMBIENT + (1 - MESH_AMBIENT) * lambert;
+          const diffuse = (1 - MESH_AMBIENT - MESH_SPECULAR) * lambert;
+          const specular = MESH_SPECULAR * lambert ** 20;
+          const intensity = MESH_AMBIENT + diffuse + specular;
           return { placed, depth, intensity };
         });
         shaded.sort((a, b) => a.depth - b.depth);
@@ -350,18 +274,11 @@ export function ClubCanvas({
         const cgModel: Vec3 =
           generated && cogPoint ? add(cogPoint, shift) : [0, 0, 0];
         const [cx, cy] = project(place(cgModel), w, h, zoom, yaw, pitch);
-        ctx.strokeStyle = COLORS.cog;
-        ctx.lineWidth = 2.5 * dpr;
-        ctx.beginPath();
         const r = 5 * dpr;
-        ctx.moveTo(cx - r, cy - r);
-        ctx.lineTo(cx + r, cy + r);
-        ctx.moveTo(cx - r, cy + r);
-        ctx.lineTo(cx + r, cy - r);
-        ctx.stroke();
+        drawEngineeringCgSymbol(ctx, cx, cy, r, COLORS.cog);
         ctx.fillStyle = COLORS.cog;
         ctx.font = `${11 * dpr}px ui-sans-serif, system-ui, sans-serif`;
-        ctx.fillText("CG", cx + 7 * dpr, cy - 7 * dpr);
+        ctx.fillText("CG", cx + 9 * dpr, cy - 8 * dpr);
       }
 
       const arrow = (origin: Vec3, vec: Vec3, color: string) => {

@@ -8,26 +8,18 @@
 
 import { useEffect, useState } from "react";
 
+import { DecimalInput } from "./DecimalInput";
+import { FieldInfo } from "./FieldInfo";
 import {
   CLUB_LIBRARY,
   getClub,
-  parametricHeadMesh,
   type ClubSpec,
-  type Vec3,
 } from "../model/club";
-import { hoselPoint } from "../model/clubHeads";
-import { type HeadMesh } from "../model/mesh";
+import {
+  generatedHeadFor,
+  type GeneratedHead,
+} from "../model/clubHeadGeneration";
 import { FIELD_GUIDANCE } from "../model/units";
-import { headCog } from "../model/volumetrics";
-
-/** A generated representative head with its hosel and volumetric COG. */
-export interface GeneratedHead {
-  mesh: HeadMesh;
-  /** Per-type hosel point — the shaft line attaches here (H1). */
-  hosel: Vec3;
-  /** Divergence-theorem volumetric COG of the generated head (H1). */
-  cog: Vec3;
-}
 
 const INPUT_CLASS =
   "no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 " +
@@ -76,11 +68,7 @@ export function ClubPanel({
 
   const onGenerateHead = () => {
     const spec = effectiveSpec();
-    onGenerate({
-      mesh: parametricHeadMesh(spec),
-      hosel: hoselPoint(spec),
-      cog: headCog(spec).cog,
-    });
+    onGenerate(generatedHeadFor(spec));
   };
 
   return (
@@ -105,20 +93,16 @@ export function ClubPanel({
       </label>
       <label title={FIELD_GUIDANCE.clubLoftDeg} className="mb-3 block text-sm">
         <span className="mb-1 flex justify-between text-slate-300">
-          <span>Loft</span>
+          <span className="flex items-center">Loft<FieldInfo label="Loft" guidance={FIELD_GUIDANCE.clubLoftDeg} /></span>
           <span className="text-slate-500">deg</span>
         </span>
-        <input
-          type="number"
-          inputMode="decimal"
+        <DecimalInput
           step={0.5}
           min={0}
           max={70}
           value={loftDeg}
-          onChange={(e) => {
-            const v = Number(e.target.value);
-            if (Number.isFinite(v)) setLoftDeg(Math.min(70, Math.max(0, v)));
-          }}
+          aria-label="Loft deg"
+          onCommit={setLoftDeg}
           title={FIELD_GUIDANCE.clubLoftDeg}
           className={INPUT_CLASS}
         />
@@ -147,21 +131,17 @@ export function ClubPanel({
           className="mb-3 block text-sm"
         >
           <span className="mb-1 flex justify-between text-slate-300">
-            <span>{label}</span>
+            <span className="flex items-center">{label}<FieldInfo label={label} guidance={FIELD_GUIDANCE[guidanceKey]} /></span>
             <span className="text-slate-500">mm</span>
           </span>
-          <input
-            type="number"
-            inputMode="decimal"
+          <DecimalInput
             step={10}
             min={100}
             max={2000}
             value={value}
             disabled={!curvedFace}
-            onChange={(e) => {
-              const v = Number(e.target.value);
-              if (Number.isFinite(v)) setValue(Math.min(2000, Math.max(100, v)));
-            }}
+            aria-label={`${label} mm`}
+            onCommit={setValue}
             title={FIELD_GUIDANCE[guidanceKey]}
             className={INPUT_CLASS}
           />

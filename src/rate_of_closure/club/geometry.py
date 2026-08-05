@@ -30,8 +30,9 @@ __all__ = [
     "superellipse_ring",
 ]
 
-#: Vertices per cross-section ring.
-RING_POINTS = 24
+#: Vertices per cross-section ring. Sixty-four keeps silhouettes smooth on
+#: high-DPI displays while remaining inexpensive for interactive redraws.
+RING_POINTS = 64
 #: Superellipse exponent (4 = rounded-rectangle sections).
 SUPERELLIPSE_EXPONENT = 4.0
 

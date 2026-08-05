@@ -201,7 +201,8 @@ class TestParametricHead:
         driver = get_club(_DRIVER)
         first = build_parametric_head(driver)
         second = build_parametric_head(driver)
-        assert first.shape == (12 * RING_POINTS, 3, 3)
+        # Ten refined body sections, five face rings, and two cap fans.
+        assert first.shape == (28 * RING_POINTS, 3, 3)
         assert np.array_equal(first, second)
 
     def test_envelope_scales_with_head_mass(self) -> None:
@@ -238,12 +239,15 @@ class TestParametricHead:
             get_club(_DRIVER), face_bulge_radius_m=None, face_roll_radius_m=None
         )
         mesh = parametric_head_mesh(spec)
-        centroids = mesh.triangles.mean(axis=1)
-        face = centroids[:, 0] > 0.045
+        lam = math.radians(spec.loft_deg)
+        expected = np.array([math.cos(lam), math.sin(lam), 0.0])
+        face_center = np.array([0.055, 0.0, 0.0])
+        signed_distance = (mesh.triangles - face_center) @ expected
+        face = np.max(np.abs(signed_distance), axis=1) < 1e-10
+        assert np.count_nonzero(face) == 9 * RING_POINTS
         mean = mesh.normals[face].mean(axis=0)
         mean /= np.linalg.norm(mean)
-        lam = math.radians(spec.loft_deg)
-        np.testing.assert_allclose(mean, [math.cos(lam), math.sin(lam), 0.0], atol=1e-9)
+        np.testing.assert_allclose(mean, expected, atol=1e-9)
 
     def test_head_mesh_carries_unit_normals(self) -> None:
         mesh = parametric_head_mesh(get_club("3-Wood"))

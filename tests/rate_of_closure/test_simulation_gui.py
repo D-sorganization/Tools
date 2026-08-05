@@ -50,6 +50,8 @@ class TestSimulationTab:
         try:
             tabs = window.centralWidget().findChildren(SimulationTab)
             assert tabs, "main window must host the Simulation tab"
+            assert isinstance(window._simulation_tab.last_run(), SimulationRun)
+            assert window._simulation_tab.view()._run is not None
         finally:
             window._club_view.stop()
             window._simulation_tab.stop()
@@ -57,6 +59,9 @@ class TestSimulationTab:
     def test_every_launch_row_has_an_explanation(self) -> None:
         for field, _label, _unit in LAUNCH_ROWS:
             assert field in LAUNCH_EXPLANATIONS, field
+
+    def test_default_simulation_club_is_representative_driver(self, tab) -> None:  # type: ignore[no-untyped-def]
+        assert tab._club_combo.currentText() == "Driver 10.5°"
 
     def test_run_populates_launch_rows(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         assert isinstance(ran_tab.last_run(), SimulationRun)
@@ -103,6 +108,15 @@ class TestSimulationTab:
             run = tab.run_now()
         assert run is not None
         assert run.config.source_kind == "double_pendulum"
+
+    def test_source_change_discards_stale_manual_impact_time(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        assert ran_tab.last_run().impact_time_s == pytest.approx(0.0)
+        ran_tab._source_combo.setCurrentIndex(2)  # triple pendulum
+        assert ran_tab._tau is None
+        run = ran_tab.run_now()
+        assert run is not None
+        assert run.config.source_kind == "triple_pendulum"
+        assert run.swing_joints.shape[1] == 4
 
 
 class TestSimulationView:

@@ -1,15 +1,8 @@
-/**
- * Putting tab (epic #4125, H3) — putter, stroke, green, roll-out.
- *
- * Physics in model/putting.ts (pinned test-for-test against Python).
- * The SVG top-down green view adapts UI concepts from UpstreamDrift's
- * `ui/src/pages/PuttingGreen.tsx` (SVG-only green, hole circle, path
- * polyline) with the skid/pure-roll phases colour-coded per this
- * app's model. Distances are SI metres end to end through the single
- * `formatM` chokepoint (units-quantity pass, H6, hooks in there).
- */
+/** Putting controls and an SVG green view with phase-coded roll-out. */
 
 import { useMemo, useState } from "react";
+
+import { DecimalInput } from "./DecimalInput";
 
 import { CLUB_LIBRARY } from "../model/club";
 import { FIELD_TO_TERM } from "../model/glossary";
@@ -173,15 +166,12 @@ export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelPr
     <label className="mb-2 flex items-center justify-between gap-2 text-sm">
       <span className="text-slate-300">{label}</span>
       <span className="flex items-center gap-1">
-        <input
-          type="number"
+        <DecimalInput
           value={value}
           step={step}
+          aria-label={`${label} ${suffix}`.trim()}
           title={title}
-          onChange={(e) => {
-            const next = Number(e.target.value);
-            if (Number.isFinite(next)) set(next);
-          }}
+          onCommit={set}
           className="w-24 rounded border border-slate-700 bg-slate-800 px-2 py-1 text-right text-slate-100 focus:border-blue-500 focus:outline-none"
         />
         <span className="text-slate-400">{suffix}</span>
