@@ -1,9 +1,12 @@
 import { useState } from "react";
 
-import { type SimulationRunTs } from "../model/simulation";
+import {
+  type SimulationLaunchTs,
+  type SimulationRunTs,
+} from "../model/simulation";
 import { formatDistanceM } from "../model/units";
 
-const ROWS: Array<{ key: keyof SimulationRunTs["launch"]; label: string; unit: string }> = [
+const ROWS: Array<{ key: keyof SimulationLaunchTs; label: string; unit: string }> = [
   { key: "ballSpeedMph", label: "Ball Speed", unit: "mph" },
   { key: "launchAngleDeg", label: "Launch Angle", unit: "°" },
   { key: "launchAzimuthDeg", label: "Launch Azimuth", unit: "°" },
@@ -14,7 +17,7 @@ const ROWS: Array<{ key: keyof SimulationRunTs["launch"]; label: string; unit: s
   { key: "landingAngleDeg", label: "Landing Angle", unit: "°" },
 ];
 
-const GUIDANCE: Record<keyof SimulationRunTs["launch"], string> = {
+const GUIDANCE: Record<keyof SimulationLaunchTs, string> = {
   ballSpeedMph: "Ball speed immediately after separation. Reference frame: scalar speed magnitude in the ground-fixed app frame.",
   launchAngleDeg: "Vertical launch angle above the ground plane. Reference frame: positive from horizontal toward world +y (up).",
   launchAzimuthDeg: "Horizontal launch direction. Reference frame: 0° follows +x target line; positive points toward +z, right of target.",
@@ -32,10 +35,18 @@ export function SimulationLaunchNumbers({
   run: SimulationRunTs | null;
   distanceUnit: string;
 }) {
-  const [explained, setExplained] = useState<keyof SimulationRunTs["launch"]>("ballSpeedMph");
+  const [explained, setExplained] =
+    useState<keyof SimulationLaunchTs>("ballSpeedMph");
+  const launch = run?.launch;
   return (
     <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
       <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Launch Numbers</h2>
+      {run?.impactOutcome.status === "miss" && (
+        <p role="status" className="mb-3 rounded-lg border border-amber-500/30 bg-amber-950/20 p-3 text-sm text-amber-200">
+          No impact occurred. Launch and flight values are intentionally
+          absent; the complete swing and closest-approach result are retained.
+        </p>
+      )}
       <div className="grid gap-2">
         {ROWS.map(({ key, label, unit }) => (
           <button
@@ -48,10 +59,10 @@ export function SimulationLaunchNumbers({
           >
             <span className="text-slate-300">{label} <span className="text-[10px] font-semibold uppercase text-sky-400">Details ›</span></span>
             <span className="font-semibold tabular-nums text-slate-100">
-              {run
+              {launch
                 ? key === "carryM"
-                  ? formatDistanceM(run.launch[key], distanceUnit)
-                  : `${run.launch[key].toFixed(1)} ${unit}`
+                  ? formatDistanceM(launch[key], distanceUnit)
+                  : `${launch[key].toFixed(1)} ${unit}`
                 : "—"}
             </span>
           </button>

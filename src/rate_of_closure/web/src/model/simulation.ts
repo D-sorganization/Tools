@@ -27,6 +27,12 @@ import {
   type FlightPoint,
 } from "./flight";
 import { golfTripleParameters, simulateTriplePendulum } from "./triplePendulum";
+import {
+  assessFixedContact,
+  deliveryInspectionOutcome,
+  type ContactMode,
+  type ImpactOutcomeTs,
+} from "./contact";
 
 export { deriveLaunch, simulateFlight } from "./flight";
 export type { FlightPoint, FlightResult, Launch } from "./flight";
@@ -334,30 +340,35 @@ export interface SimulationInput {
   impactTimeS: number | null; // null = auto (max clubhead speed)
   swingDurationS: number;
   club?: ImpactClubProperties;
+  /** Defaults to delivery inspection for backward-compatible studies. */
+  contactMode?: ContactMode;
 }
 
 export interface SwingSampleTs {
   t: number;
-  position: Vec3; // app frame, ball-aligned
+  position: Vec3; // app frame; aligned only in delivery-inspection mode
   velocity: Vec3;
-  joints: Vec3[]; // pivot -> articulated joints -> clubhead, ball-aligned
+  joints: Vec3[]; // pivot -> articulated joints -> clubhead
+}
+
+export interface SimulationLaunchTs {
+  ballSpeedMph: number;
+  launchAngleDeg: number;
+  launchAzimuthDeg: number;
+  spinRpm: number;
+  carryM: number;
+  maxHeightM: number;
+  flightTimeS: number;
+  landingAngleDeg: number;
 }
 
 export interface SimulationRunTs {
   sourceKind: WebSourceKind;
   swing: SwingSampleTs[];
-  impactTimeS: number;
+  impactOutcome: ImpactOutcomeTs;
+  impactTimeS: number | null;
   totalDurationS: number;
-  launch: {
-    ballSpeedMph: number;
-    launchAngleDeg: number;
-    launchAzimuthDeg: number;
-    spinRpm: number;
-    carryM: number;
-    maxHeightM: number;
-    flightTimeS: number;
-    landingAngleDeg: number;
-  };
+  launch: SimulationLaunchTs | null;
   flight: FlightPoint[]; // app frame, ball-aligned positions
 }
 
@@ -472,14 +483,39 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
     impactIndex = Math.round(clamped / (swing[1].t - swing[0].t));
   }
   const impactSample = swing[impactIndex];
-  const offset = sub(BALL_POSITION, impactSample.position);
-  const aligned = swing.map((sample) => ({
-    ...sample,
-    position: add(sample.position, offset),
-    joints: sample.joints.map((joint) => add(joint, offset)),
-  }));
+  const contactMode = input.contactMode ?? "delivery_inspection";
+  const impactOutcome =
+    contactMode === "fixed_ball_contact"
+      ? assessFixedContact(swing, BALL_POSITION, GOLF_BALL_RADIUS_M)
+      : deliveryInspectionOutcome(
+          impactSample.t,
+          BALL_POSITION,
+          GOLF_BALL_RADIUS_M,
+        );
+  const candidate = swing.reduce((best, sample) =>
+    Math.abs(sample.t - impactOutcome.candidateTimeS) <
+    Math.abs(best.t - impactOutcome.candidateTimeS)
+      ? sample
+      : best,
+  );
+  const aligned =
+    contactMode === "fixed_ball_contact"
+      ? swing
+      : alignSwingToBall(swing, candidate.position);
 
-  const v = impactSample.velocity;
+  if (impactOutcome.status === "miss") {
+    return {
+      sourceKind: input.sourceKind,
+      swing: aligned,
+      impactOutcome,
+      impactTimeS: null,
+      totalDurationS: aligned[aligned.length - 1].t,
+      launch: null,
+      flight: [],
+    };
+  }
+
+  const v = candidate.velocity;
   const speed = norm(v);
   const delivery: DeliveryInput = {
     clubheadSpeedMps: speed,
@@ -506,7 +542,8 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   return {
     sourceKind: input.sourceKind,
     swing: aligned,
-    impactTimeS: impactSample.t,
+    impactOutcome,
+    impactTimeS: candidate.t,
     totalDurationS: aligned[aligned.length - 1].t + flightResult.flightTimeS,
     launch: {
       ballSpeedMph: launch.ballSpeedMps * MPH_PER_MPS,
@@ -520,4 +557,16 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
     },
     flight,
   };
+}
+
+function alignSwingToBall(
+  swing: readonly SwingSampleTs[],
+  candidatePosition: Vec3,
+): SwingSampleTs[] {
+  const offset = sub(BALL_POSITION, candidatePosition);
+  return swing.map((sample) => ({
+    ...sample,
+    position: add(sample.position, offset),
+    joints: sample.joints.map((joint) => add(joint, offset)),
+  }));
 }

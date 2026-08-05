@@ -119,7 +119,7 @@ export function KineticsSection({ input, run }: Props) {
 
   useEffect(() => {
     if (!series || !run) return;
-    const tau = run.impactTimeS;
+    const tau = run.impactTimeS ?? run.swing[run.swing.length - 1].t;
     if (torqueRef.current)
       drawChart(
         torqueRef.current,
@@ -176,7 +176,7 @@ export function KineticsSection({ input, run }: Props) {
     );
   }
 
-  const tau = run.impactTimeS;
+  const tau = run.impactTimeS ?? run.swing[run.swing.length - 1].t;
   const rows = [
     {
       name: "shoulder",
@@ -199,6 +199,13 @@ export function KineticsSection({ input, run }: Props) {
   ];
   return (
     <div className="space-y-3">
+      {run.impactTimeS === null && (
+        <p role="status" className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-3 text-sm text-amber-200">
+          No club–ball impact occurred. Kinetics remain available for the
+          complete simulated swing; peak timing is referenced to the end of
+          that swing instead of a fabricated impact instant.
+        </p>
+      )}
       {[torqueRef, powerRef, forceRef].map((ref, index) => (
         <canvas
           key={index}

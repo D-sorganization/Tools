@@ -43,9 +43,10 @@ export function drawSwingScene(
   }
 
   const swingEnd = run.swing[run.swing.length - 1].t;
+  const impactTime = run.impactTimeS;
   // Scale separation (#4120): the scene stays at swing scale unless
   // the opt-in 'Show Ball Flight' toggle expands it past impact.
-  const inFlight = time > run.impactTimeS && showFlight;
+  const inFlight = impactTime !== null && time > impactTime && showFlight;
   const extentX = inFlight
     ? Math.max(10, ...run.flight.map((p) => Math.abs(p.position[0]))) * 1.05
     : Math.max(
@@ -174,7 +175,7 @@ export function drawSwingScene(
   // Flight trajectory polyline: opt-in only (scale separation).
   if (showFlight) drawPath(run.flight, "rgba(52,211,153,0.25)", 1);
   if (inFlight) {
-    const flightT = time - run.impactTimeS;
+    const flightT = time - (impactTime ?? 0);
     const upto = run.flight.filter((p) => p.time <= flightT);
     drawPath(upto, "#34d399", 2);
     if (upto.length) {
@@ -189,7 +190,9 @@ export function drawSwingScene(
   ctx.fillStyle = "#94a3b8";
   ctx.font = "12px sans-serif";
   ctx.fillText(
-    `t = ${time.toFixed(3)} s (${inFlight ? "flight" : "swing"}) — impact at ${run.impactTimeS.toFixed(3)} s`,
+    impactTime === null
+      ? `t = ${time.toFixed(3)} s (swing) — no impact; closest approach at ${run.impactOutcome.candidateTimeS.toFixed(3)} s`
+      : `t = ${time.toFixed(3)} s (${inFlight ? "flight" : "swing"}) — impact at ${impactTime.toFixed(3)} s`,
     12,
     16,
   );

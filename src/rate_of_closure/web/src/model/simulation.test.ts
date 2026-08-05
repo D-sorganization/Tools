@@ -20,7 +20,9 @@ import {
   simulatePendulum,
   solveImpact,
   toFlightFrame,
+  type SimulationLaunchTs,
   type SimulationInput,
+  type SimulationRunTs,
 } from "./simulation";
 
 const MANUAL_INPUT: SimulationInput = {
@@ -36,6 +38,13 @@ const MANUAL_INPUT: SimulationInput = {
   impactTimeS: null,
   swingDurationS: 1.5,
 };
+
+function requireLaunch(run: SimulationRunTs): SimulationLaunchTs {
+  expect(run.impactOutcome.status).toBe("hit");
+  expect(run.launch).not.toBeNull();
+  if (run.launch === null) throw new Error("Expected a launch-producing hit");
+  return run.launch;
+}
 
 describe("pendulum parity (Python reference.py pins)", () => {
   it("matches the golf-default derived parameters", () => {
@@ -169,8 +178,10 @@ describe("session orchestration", () => {
       ...offCenter,
       club: { headMassKg: 0.35, moiAboutShaftKgM2: 1.2e-3 },
     });
-    expect(heavy.launch.ballSpeedMph).toBeGreaterThan(light.launch.ballSpeedMph);
-    expect(heavy.launch.carryM).toBeGreaterThan(light.launch.carryM);
+    const lightLaunch = requireLaunch(light);
+    const heavyLaunch = requireLaunch(heavy);
+    expect(heavyLaunch.ballSpeedMph).toBeGreaterThan(lightLaunch.ballSpeedMph);
+    expect(heavyLaunch.carryM).toBeGreaterThan(lightLaunch.carryM);
   });
 
   it("exports ball-aligned double-pendulum joints ending at the clubhead", () => {
@@ -197,19 +208,21 @@ describe("session orchestration", () => {
 
   it("manual run produces plausible driver numbers (Python band)", () => {
     const run = runSimulation(MANUAL_INPUT);
-    expect(run.launch.ballSpeedMph).toBeGreaterThan(130);
-    expect(run.launch.ballSpeedMph).toBeLessThan(185);
-    expect(run.launch.launchAngleDeg).toBeGreaterThan(5);
-    expect(run.launch.launchAngleDeg).toBeLessThan(20);
-    expect(run.launch.spinRpm).toBeGreaterThan(1000);
-    expect(run.launch.spinRpm).toBeLessThan(5000);
-    expect(run.launch.carryM).toBeGreaterThan(150);
-    expect(run.launch.carryM).toBeLessThan(320);
+    const launch = requireLaunch(run);
+    expect(launch.ballSpeedMph).toBeGreaterThan(130);
+    expect(launch.ballSpeedMph).toBeLessThan(185);
+    expect(launch.launchAngleDeg).toBeGreaterThan(5);
+    expect(launch.launchAngleDeg).toBeLessThan(20);
+    expect(launch.spinRpm).toBeGreaterThan(1000);
+    expect(launch.spinRpm).toBeLessThan(5000);
+    expect(launch.carryM).toBeGreaterThan(150);
+    expect(launch.carryM).toBeLessThan(320);
   });
 
   it("scrubbing tau makes the clubhead meet the fixed ball", () => {
     for (const tau of [0.01, 0.03, 0.045]) {
       const run = runSimulation({ ...MANUAL_INPUT, impactTimeS: tau });
+      expect(run.impactTimeS).not.toBeNull();
       expect(run.impactTimeS).toBeCloseTo(tau, 9);
       const index = run.swing.findIndex(
         (sample) => Math.abs(sample.t - tau) < 5e-4,
@@ -226,10 +239,42 @@ describe("session orchestration", () => {
       ...MANUAL_INPUT,
       sourceKind: "double_pendulum",
     });
-    expect(run.launch.ballSpeedMph).toBeGreaterThan(0);
-    expect(run.launch.carryM).toBeGreaterThan(0);
+    const launch = requireLaunch(run);
+    expect(launch.ballSpeedMph).toBeGreaterThan(0);
+    expect(launch.carryM).toBeGreaterThan(0);
     expect(run.flight.length).toBeGreaterThan(2);
-    expect(run.totalDurationS).toBeGreaterThan(run.impactTimeS);
+    expect(run.impactTimeS).not.toBeNull();
+    expect(run.totalDurationS).toBeGreaterThan(run.impactTimeS ?? Infinity);
+  });
+
+  it("retains an unaligned swing and honest empty phases when the club misses", () => {
+    const run = runSimulation({
+      ...MANUAL_INPUT,
+      sourceKind: "double_pendulum",
+      swingDurationS: 0.05,
+      contactMode: "fixed_ball_contact",
+    });
+    expect(run.impactOutcome.status).toBe("miss");
+    expect(run.impactOutcome.contactMarginM).toBeLessThan(0);
+    expect(run.impactOutcome.geometryLimitations).toContain("clubhead mesh");
+    expect(run.impactTimeS).toBeNull();
+    expect(run.launch).toBeNull();
+    expect(run.flight).toEqual([]);
+    expect(run.totalDurationS).toBeCloseTo(0.05, 9);
+    expect(run.swing[0].position).toEqual(
+      run.swing[0].joints[run.swing[0].joints.length - 1],
+    );
+  });
+
+  it("detects a fixed-ball manual contact without translating its path", () => {
+    const run = runSimulation({
+      ...MANUAL_INPUT,
+      contactMode: "fixed_ball_contact",
+    });
+    expect(run.impactOutcome.status).toBe("hit");
+    expect(run.swing[0].position[1]).toBe(0);
+    expect(run.swing[0].position[1]).not.toBe(BALL_POSITION[1]);
+    expect(run.impactOutcome.closestApproachM).toBeCloseTo(BALL_POSITION[1], 12);
   });
 
   it("flight starts at the ball position (app frame)", () => {

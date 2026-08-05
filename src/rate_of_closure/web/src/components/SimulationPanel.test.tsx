@@ -1,4 +1,4 @@
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import { getClub, type ClubSpec } from "../model/club";
@@ -54,6 +54,35 @@ describe("SimulationPanel impact club", () => {
     expect(
       screen.getByRole("note", { name: "Impact club physics" }),
     ).toHaveTextContent(/default driver/i);
+  });
+
+  it("marks results stale as soon as a simulation input changes", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    fireEvent.change(screen.getByLabelText("Swing Source"), {
+      target: { value: "double_pendulum" },
+    });
+    expect(screen.getByText("Inputs changed — run required")).toBeInTheDocument();
+  });
+
+  it("reports a fixed-ball miss without launch values or an editable impact time", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    fireEvent.change(screen.getByLabelText("Swing Source"), {
+      target: { value: "double_pendulum" },
+    });
+    fireEvent.change(screen.getByLabelText("Contact Policy"), {
+      target: { value: "fixed_ball_contact" },
+    });
+    expect(screen.getByRole("slider", { name: "Impact Time" })).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Run Simulation" }));
+    expect(
+      screen.getByText("Completed — no club–ball impact"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/Launch and flight values are intentionally absent/),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /Ball Speed/ })).toHaveTextContent(
+      "—",
+    );
   });
 
   it("passes the selected club mass and MOI into the simulation", () => {

@@ -31,6 +31,7 @@ import {
   type CourseLayout,
 } from "../model/course";
 import { type TargetRegionTs } from "../model/targets";
+import { type ContactMode } from "../model/contact";
 import { FlightCanvases } from "./FlightCanvases";
 import { TargetSection } from "./TargetSection";
 import { KineticsSection } from "./KineticsSection";
@@ -39,6 +40,8 @@ import { StrikeCanvas } from "./StrikeCanvas";
 import { drawSwingScene } from "./swingSceneDraw";
 import { SimulationLaunchNumbers } from "./SimulationLaunchNumbers";
 import { SwingPlaybackControls } from "./SwingPlaybackControls";
+import { ContactPolicyControl } from "./ContactPolicyControl";
+import { SimulationStatusHeader } from "./SimulationStatusHeader";
 
 const SWING_TOGGLE_GUIDANCE = {
   ball: FIELD_GUIDANCE.ballVisible,
@@ -75,9 +78,13 @@ export function SimulationPanel({
   distanceUnit = "yd",
 }: Props) {
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
+  const [contactMode, setContactMode] =
+    useState<ContactMode>("delivery_inspection");
   const [tilts, setTilts] = useState({ yaw: 0, side: -45, forward: 0 });
   const [tauMs, setTauMs] = useState<number | null>(null);
   const [run, setRun] = useState<SimulationRunTs | null>(null);
+  const [lastRunSignature, setLastRunSignature] = useState<string | null>(null);
+  const [runError, setRunError] = useState<string | null>(null);
   const [playing, setPlaying] = useState(false);
   const [loop, setLoop] = useState(false);
   const [rate, setRate] = useState(1.0);
@@ -118,7 +125,7 @@ export function SimulationPanel({
 
   // Delivered path / attack angle at impact, for the strike view.
   const deliveryAngles = useMemo(() => {
-    if (!run) return null;
+    if (!run || run.impactTimeS === null) return null;
     const dt = run.swing[1].t - run.swing[0].t;
     const index = Math.min(
       run.swing.length - 1,
@@ -146,20 +153,39 @@ export function SimulationPanel({
       impactTimeS: tauMs === null ? null : tauMs / 1000.0,
       swingDurationS: 1.5,
       club: clubSpec ?? undefined,
+      contactMode,
     }),
-    [sourceKind, scenario, effectiveLoftDeg, tilts, tauMs, clubSpec],
+    [sourceKind, scenario, effectiveLoftDeg, tilts, tauMs, clubSpec, contactMode],
   );
+  const inputSignature = useMemo(() => JSON.stringify(input), [input]);
 
   const clubPhysicsGuidance = clubSpec
     ? `Impact physics uses ${clubSpec.name}: ${clubSpec.headMassKg.toFixed(3)} kg head mass, ${clubSpec.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${clubSpec.loftDeg.toFixed(1)}° nominal loft. COR uses the ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} driver default because the club library does not yet define measured COR.`
     : `No selected club specification was provided. Impact physics uses the default driver: ${DEFAULT_IMPACT_CLUB.headMassKg.toFixed(3)} kg head mass, ${DEFAULT_IMPACT_CLUB.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} COR.`;
 
   const doRun = () => {
-    const result = runSimulation(input);
-    setRun(result);
-    setTime(0);
-    setPlaying(false);
+    try {
+      const result = runSimulation(input);
+      setRun(result);
+      setLastRunSignature(inputSignature);
+      setRunError(null);
+      setTime(0);
+      setPlaying(false);
+    } catch (error) {
+      setRunError(error instanceof Error ? error.message : String(error));
+      setPlaying(false);
+    }
   };
+  const runIsStale = run !== null && lastRunSignature !== inputSignature;
+  const runStatus = runError
+    ? `Run failed: ${runError}`
+    : runIsStale
+      ? "Inputs changed — run required"
+      : run?.impactOutcome.status === "miss"
+        ? "Completed — no club–ball impact"
+        : run
+          ? "Completed — impact and flight available"
+          : "Not run";
 
   // Populate the default Swing view immediately instead of presenting a
   // blank canvas that depends on discovering the Run button first.
@@ -208,8 +234,9 @@ export function SimulationPanel({
   const exportJson = () => {
     if (!run) return;
     const doc = {
-      format: "rate_of_closure.simulation_run.web/1",
+      format: "rate_of_closure.simulation_run.web/2",
       parameters: input,
+      impactOutcome: run.impactOutcome,
       launch: run.launch,
       impactTimeS: run.impactTimeS,
       series: {
@@ -252,6 +279,15 @@ export function SimulationPanel({
 
   return (
     <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
+      <SimulationStatusHeader
+        sourceKind={sourceKind}
+        status={runStatus}
+        warning={
+          Boolean(runError) ||
+          runIsStale ||
+          run?.impactOutcome.status === "miss"
+        }
+      />
       <section aria-label="Simulation setup" className="space-y-4">
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
@@ -273,6 +309,13 @@ export function SimulationPanel({
               <option value="triple_pendulum">Triple Pendulum</option>
             </select>
           </label>
+          <ContactPolicyControl
+            value={contactMode}
+            onChange={(mode) => {
+              setContactMode(mode);
+              if (mode === "fixed_ball_contact") setTauMs(null);
+            }}
+          />
           <p
             role="note"
             aria-label="Impact club physics"
@@ -305,16 +348,28 @@ export function SimulationPanel({
             </span>
             <input
               type="range"
+              aria-label="Impact Time"
               min={0}
               max={swingDuration * 1000}
               step={1}
-              value={tauMs ?? (run ? run.impactTimeS * 1000 : swingDuration * 500)}
+              value={
+                tauMs ??
+                (run
+                  ? (run.impactTimeS ?? run.impactOutcome.candidateTimeS) * 1000
+                  : swingDuration * 500)
+              }
+              disabled={contactMode === "fixed_ball_contact"}
               title={FIELD_GUIDANCE.impactTimeScrub}
               onChange={(e) => setTauMs(Number(e.target.value))}
               onMouseUp={doRun}
               onTouchEnd={doRun}
-              className="w-full"
+              className="w-full disabled:cursor-not-allowed disabled:opacity-40"
             />
+            {contactMode === "fixed_ball_contact" && (
+              <span className="mt-1 block text-xs text-amber-300/90">
+                Impact time is detected from closest approach in this mode.
+              </span>
+            )}
           </label>
           <div className="flex gap-2">
             <button
