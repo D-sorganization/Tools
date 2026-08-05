@@ -82,6 +82,12 @@ class SimulationConfig:
                 self.torque_library is not None,
                 "prescribed torque requires a profile library",
             )
+        if self.swing_run_config.joint_locks.has_locks:
+            require(
+                self.source_kind == "double_pendulum",
+                "joint locks currently require the double-pendulum source",
+                self.source_kind,
+            )
         FlightModelType(self.flight_model)
         _validate_optional_impact_time(self.impact_time_s)
         require(

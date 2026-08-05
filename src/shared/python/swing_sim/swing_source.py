@@ -24,6 +24,7 @@ from .run_config import (
     SHOULDER_JOINT_ID,
     WRIST_JOINT_ID,
     DoublePendulumRunConfig,
+    JointLockConfig,
     SwingRunMode,
 )
 from .torque_library import TorqueProfileLibrary
@@ -37,6 +38,11 @@ from .types import (
 )
 
 Backend = Literal["auto", "rust", "python"]
+
+
+def _zero_joint_torques(_time_s: float) -> tuple[float, float]:
+    """Passive applied-torque callback for the locked-coordinate solver."""
+    return 0.0, 0.0
 
 
 def _resolve_prescribed_profile(
@@ -156,6 +162,7 @@ class DoublePendulumSwing:
         self._n_steps = int(round(duration / dt))
         self._duration = self._n_steps * self._dt
         self._run_config = config
+        self._validate_locked_initial_velocity(config.joint_locks)
         self._torque_profile = _resolve_prescribed_profile(
             config, torque_library, self._duration
         )
@@ -164,12 +171,33 @@ class DoublePendulumSwing:
             self._plane.yaw_rad, self._plane.side_tilt_rad, self._plane.forward_tilt_rad
         )
         self._g_inplane = reference.in_plane_gravity(self._plane_r, gravity_m_s2)
+        self._backend: Backend
 
-        require(
-            not (self._torque_profile is not None and backend == "rust"),
-            "prescribed torque integration is not supported by the Rust backend",
-        )
-        if self._torque_profile is not None:
+        if config.joint_locks.has_locks:
+            require(
+                backend != "rust",
+                "locked joint integration is not supported by the Rust backend",
+            )
+            torque_at = (
+                self._prescribed_torque_tuple
+                if self._torque_profile is not None
+                else _zero_joint_torques
+            )
+            self._states = reference.simulate_locked(
+                self._parameters,
+                self._initial_state,
+                self._g_inplane,
+                self._dt,
+                self._n_steps,
+                torque_at,
+                config.joint_locks.mask,
+            )
+            self._backend = "python"
+        elif self._torque_profile is not None:
+            require(
+                backend != "rust",
+                "prescribed torque integration is not supported by the Rust backend",
+            )
             self._states = reference.simulate_forced(
                 self._parameters,
                 self._initial_state,
@@ -178,7 +206,7 @@ class DoublePendulumSwing:
                 self._n_steps,
                 self._prescribed_torque_tuple,
             )
-            self._backend: Backend = "python"
+            self._backend = "python"
         elif backend == "rust" or (backend == "auto" and _rust_facade.rust_available()):
             self._states = _rust_facade.simulate_rust(
                 self._parameters,
@@ -214,6 +242,11 @@ class DoublePendulumSwing:
         return DOUBLE_PENDULUM_JOINT_IDS
 
     @property
+    def locked_joint_ids(self) -> tuple[str, ...]:
+        """Stable IDs of ideal coordinate locks active for this trajectory."""
+        return self._run_config.joint_locks.locked_joint_ids
+
+    @property
     def parameters(self) -> PendulumParameters:
         """Pendulum parameters used for the integration."""
         return self._parameters
@@ -242,6 +275,20 @@ class DoublePendulumSwing:
         sample_time = min(max(time_s, 0.0), self._duration)
         values = profile.evaluate(sample_time)
         return values[SHOULDER_JOINT_ID], values[WRIST_JOINT_ID]
+
+    def _validate_locked_initial_velocity(self, locks: JointLockConfig) -> None:
+        """Reject lock activation that would require an unmodelled impulse."""
+        state = self._initial_state
+        require(
+            not locks.is_locked(SHOULDER_JOINT_ID) or state.omega1 == 0.0,
+            "locked shoulder initial relative velocity must be zero",
+            state.omega1,
+        )
+        require(
+            not locks.is_locked(WRIST_JOINT_ID) or state.omega2 == 0.0,
+            "locked wrist initial relative velocity must be zero",
+            state.omega2,
+        )
 
     def joint_torques_at(self, t: float) -> dict[str, float]:
         """Return stable-ID joint torques at a time within the run."""

@@ -7,10 +7,12 @@ import pytest
 
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.run_config import (
+    DOUBLE_PENDULUM_JOINT_IDS,
     DOUBLE_PENDULUM_MODEL_ID,
     SHOULDER_JOINT_ID,
     WRIST_JOINT_ID,
     DoublePendulumRunConfig,
+    JointLockConfig,
     SwingRunMode,
 )
 from shared.python.swing_sim.swing_source import DoublePendulumSwing
@@ -100,6 +102,33 @@ class TestRunConfig:
             DoublePendulumRunConfig(mode="prescribed")  # type: ignore[arg-type]
 
 
+class TestJointLockConfig:
+    def test_normalizes_supported_ids_to_canonical_order(self) -> None:
+        locks = JointLockConfig((WRIST_JOINT_ID, SHOULDER_JOINT_ID))
+        assert locks.locked_joint_ids == (SHOULDER_JOINT_ID, WRIST_JOINT_ID)
+        assert locks.is_locked(SHOULDER_JOINT_ID)
+        assert locks.is_locked(WRIST_JOINT_ID)
+
+    @pytest.mark.parametrize(
+        "joint_ids",
+        [
+            ("joint.unknown",),
+            (SHOULDER_JOINT_ID, SHOULDER_JOINT_ID),
+            ("contains spaces",),
+        ],
+    )
+    def test_rejects_unknown_duplicate_or_unstable_ids(
+        self, joint_ids: tuple[str, ...]
+    ) -> None:
+        with pytest.raises(ContractViolationError, match="joint"):
+            JointLockConfig(joint_ids)
+
+    def test_is_immutable(self) -> None:
+        locks = JointLockConfig((SHOULDER_JOINT_ID,))
+        with pytest.raises((AttributeError, TypeError)):
+            locks.locked_joint_ids += (WRIST_JOINT_ID,)  # type: ignore[misc]
+
+
 class TestPrescribedSwing:
     def test_passive_default_keeps_existing_integration_path(
         self, monkeypatch: pytest.MonkeyPatch
@@ -109,6 +138,9 @@ class TestPrescribedSwing:
 
         monkeypatch.setattr(
             "shared.python.swing_sim.reference.simulate_forced", fail_forced
+        )
+        monkeypatch.setattr(
+            "shared.python.swing_sim.reference.simulate_locked", fail_forced
         )
         swing = DoublePendulumSwing(duration=0.01, dt=0.001, backend="python")
         assert swing.run_mode is SwingRunMode.PASSIVE
@@ -148,6 +180,73 @@ class TestPrescribedSwing:
         second = _prescribed_swing()
         for time_s in np.linspace(0.0, first.duration, 11):
             assert first.state_at(float(time_s)) == second.state_at(float(time_s))
+
+    @pytest.mark.parametrize(
+        ("locked_joint_id", "coordinate", "velocity", "moving_coordinate"),
+        [
+            (SHOULDER_JOINT_ID, "theta1", "omega1", "theta2"),
+            (WRIST_JOINT_ID, "theta2", "omega2", "theta1"),
+        ],
+    )
+    def test_single_joint_lock_holds_coordinate_and_zero_velocity(
+        self,
+        locked_joint_id: str,
+        coordinate: str,
+        velocity: str,
+        moving_coordinate: str,
+    ) -> None:
+        initial = PendulumState(0.4, -0.25, 0.0, 0.0)
+        config = DoublePendulumRunConfig(
+            joint_locks=JointLockConfig((locked_joint_id,))
+        )
+        swing = DoublePendulumSwing(
+            initial_state=initial,
+            duration=0.1,
+            dt=0.001,
+            backend="python",
+            run_config=config,
+        )
+        states = [swing.state_at(float(t)) for t in np.linspace(0.0, 0.1, 11)]
+        assert all(
+            getattr(state, coordinate) == getattr(initial, coordinate)
+            for state in states
+        )
+        assert all(getattr(state, velocity) == 0.0 for state in states)
+        assert getattr(states[-1], moving_coordinate) != pytest.approx(
+            getattr(initial, moving_coordinate)
+        )
+
+    def test_both_locks_hold_the_complete_initial_state_despite_torque(self) -> None:
+        initial = PendulumState(0.4, -0.25, 0.0, 0.0)
+        config = DoublePendulumRunConfig(
+            mode=SwingRunMode.PRESCRIBED,
+            prescribed_profile_id=_profile().profile_id,
+            joint_locks=JointLockConfig(DOUBLE_PENDULUM_JOINT_IDS),
+        )
+        swing = _prescribed_swing(initial_state=initial, run_config=config)
+        for time_s in np.linspace(0.0, swing.duration, 11):
+            assert swing.state_at(float(time_s)) == initial
+
+    def test_lock_rejects_nonzero_initial_velocity_without_impulse_model(self) -> None:
+        config = DoublePendulumRunConfig(
+            joint_locks=JointLockConfig((SHOULDER_JOINT_ID,))
+        )
+        with pytest.raises(ContractViolationError, match="initial.*velocity"):
+            DoublePendulumSwing(
+                initial_state=PendulumState(0.4, -0.25, 0.1, 0.0),
+                duration=0.1,
+                dt=0.001,
+                backend="python",
+                run_config=config,
+            )
+
+    def test_locked_auto_uses_python_and_locked_rust_fails_loudly(self) -> None:
+        config = DoublePendulumRunConfig(joint_locks=JointLockConfig((WRIST_JOINT_ID,)))
+        swing = _prescribed_swing(run_config=config, backend="auto")
+        assert swing.backend == "python"
+        assert swing.locked_joint_ids == (WRIST_JOINT_ID,)
+        with pytest.raises(ContractViolationError, match="locked.*Rust"):
+            _prescribed_swing(run_config=config, backend="rust")
 
     def test_rust_prescribed_mode_fails_instead_of_silently_ignoring_torque(
         self,

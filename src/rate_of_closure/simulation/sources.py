@@ -478,6 +478,12 @@ def make_source(
         A source whose samples are in the app frame.
     """
     require(kind in SOURCE_KINDS, f"unknown swing source kind {kind!r}", kind)
+    execution = run_config or DoublePendulumRunConfig()
+    require(
+        kind == "double_pendulum" or not execution.joint_locks.has_locks,
+        "joint locks are unsupported outside the double-pendulum source",
+        kind,
+    )
     if kind == "manual":
         return ManualSwingSource(scenario)
     if kind == "double_pendulum":
@@ -491,7 +497,7 @@ def make_source(
                 initial_state=start,
                 duration=duration,
                 backend="auto",
-                run_config=run_config,
+                run_config=execution,
                 torque_library=torque_library,
             )
         )

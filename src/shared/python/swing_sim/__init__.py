@@ -17,6 +17,7 @@ from .run_config import (
     SHOULDER_JOINT_ID,
     WRIST_JOINT_ID,
     DoublePendulumRunConfig,
+    JointLockConfig,
     SwingRunMode,
 )
 from .swing_source import DoublePendulumSwing, SwingSource
@@ -54,6 +55,7 @@ __all__ = [
     "DoublePendulumRunConfig",
     "FitMetadata",
     "JointTorqueAssignment",
+    "JointLockConfig",
     "PendulumParameters",
     "PendulumState",
     "PlaneOrientation",

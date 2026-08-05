@@ -13,6 +13,7 @@ from rate_of_closure.simulation import (
     ContactMode,
     ImpactStatus,
     SimulationConfig,
+    compute_kinetics,
     fit_run_torque_profile,
     run_simulation,
     run_to_json_dict,
@@ -24,6 +25,7 @@ from shared.python.swing_sim.run_config import (
     SHOULDER_JOINT_ID,
     WRIST_JOINT_ID,
     DoublePendulumRunConfig,
+    JointLockConfig,
 )
 from shared.python.swing_sim.torque_library import TorqueProfileLibrary
 from shared.python.swing_sim.torque_profiles import (
@@ -184,3 +186,92 @@ def test_json_v2_and_csv_include_applied_torque_history(
     assert {
         row["applied_torque_nm"] for row in rows if row["joint_id"] == WRIST_JOINT_ID
     } == {"-3.0"}
+
+
+def test_rate_exports_shoulder_lock_and_retains_locked_miss_geometry() -> None:
+    locks = JointLockConfig((SHOULDER_JOINT_ID,))
+    run = run_simulation(
+        SimulationConfig(
+            scenario=_SCENARIO,
+            club=_DRIVER,
+            source_kind="double_pendulum",
+            swing_duration_s=_DURATION_S,
+            contact_mode=ContactMode.FIXED_BALL_CONTACT,
+            swing_run_config=DoublePendulumRunConfig(joint_locks=locks),
+        )
+    )
+    assert run.impact_outcome.status is ImpactStatus.MISS
+    np.testing.assert_allclose(
+        run.swing_joints[:, 1],
+        np.tile(run.swing_joints[0, 1], (len(run.swing_times), 1)),
+        rtol=0.0,
+        atol=0.0,
+    )
+    assert run_to_json_dict(run)["parameters"]["locked_joint_ids"] == [
+        SHOULDER_JOINT_ID
+    ]
+    kinetics = compute_kinetics(
+        run, analysis_time_s=run.impact_outcome.candidate_time_s
+    )
+    assert kinetics is not None
+    np.testing.assert_array_equal(kinetics.torque_applied_nm, 0.0)
+    assert np.abs(kinetics.torque_constraint_reaction_nm[:, 0]).max() > 0.0
+    np.testing.assert_allclose(
+        kinetics.torque_applied_nm + kinetics.torque_constraint_reaction_nm,
+        kinetics.torque_inertial_nm
+        - kinetics.torque_gravity_nm
+        - kinetics.torque_damping_nm,
+        rtol=0.0,
+        atol=1e-12,
+    )
+
+
+def test_locked_kinetics_keep_commanded_and_constraint_torques_separate() -> None:
+    profile = _prescribed_profile()
+    run = run_simulation(
+        SimulationConfig(
+            scenario=_SCENARIO,
+            club=_DRIVER,
+            source_kind="double_pendulum",
+            swing_duration_s=_DURATION_S,
+            contact_mode=ContactMode.FIXED_BALL_CONTACT,
+            swing_run_config=DoublePendulumRunConfig.prescribed(
+                profile.profile_id,
+                joint_locks=JointLockConfig((SHOULDER_JOINT_ID,)),
+            ),
+            torque_library=TorqueProfileLibrary((profile,)),
+        )
+    )
+    kinetics = compute_kinetics(
+        run, analysis_time_s=run.impact_outcome.candidate_time_s
+    )
+    assert kinetics is not None
+    np.testing.assert_array_equal(
+        kinetics.torque_applied_nm, run.swing_applied_torques_nm
+    )
+    assert np.abs(kinetics.torque_constraint_reaction_nm[:, 0]).max() > 0.0
+
+
+def test_rate_rejects_joint_locks_for_unsupported_triple_source() -> None:
+    with pytest.raises(ContractViolationError, match="locks.*double-pendulum"):
+        SimulationConfig(
+            scenario=_SCENARIO,
+            club=_DRIVER,
+            source_kind="triple_pendulum",
+            swing_run_config=DoublePendulumRunConfig(
+                joint_locks=JointLockConfig((WRIST_JOINT_ID,))
+            ),
+        )
+
+
+def test_source_factory_rejects_joint_locks_for_unsupported_triple_source() -> None:
+    from rate_of_closure.simulation.sources import make_source
+
+    with pytest.raises(ContractViolationError, match="locks.*unsupported"):
+        make_source(
+            "triple_pendulum",
+            _SCENARIO,
+            run_config=DoublePendulumRunConfig(
+                joint_locks=JointLockConfig((WRIST_JOINT_ID,))
+            ),
+        )

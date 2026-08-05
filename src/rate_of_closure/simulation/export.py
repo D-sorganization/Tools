@@ -166,6 +166,9 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
             "contact_mode": config.contact_mode.value,
             "swing_run_mode": config.swing_run_config.mode.value,
             "prescribed_profile_id": config.swing_run_config.prescribed_profile_id,
+            "locked_joint_ids": list(
+                config.swing_run_config.joint_locks.locked_joint_ids
+            ),
             "impact_time_s": run.impact_time_s,
             "swing_duration_s": config.swing_duration_s,
             "plane_tilts_deg": {

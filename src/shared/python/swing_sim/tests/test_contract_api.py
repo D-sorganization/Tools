@@ -20,6 +20,7 @@ EXPECTED_PUBLIC_API = {
     "DoublePendulumRunConfig",
     "FitMetadata",
     "JointTorqueAssignment",
+    "JointLockConfig",
     "PendulumParameters",
     "PendulumState",
     "PlaneOrientation",
