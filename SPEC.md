@@ -26,15 +26,16 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.7.0                                      |
-| **Spec Version**        | 1.7.0                                      |
-| **Last Spec Update**    | 2026-08-04                                 |
+| **Current Version**     | 1.9.1                                      |
+| **Spec Version**        | 1.9.1                                      |
+| **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
 ### 2026-08-04 Rate of Closure solver panel — goal-driven optimization UI (epic #4103, #4109 #4110)
 
 - PyQt6: new "Solver" tab inside the Simulation tab's right-hand tab
@@ -105,7 +106,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   derivation → ball flight only when the goal requires it) and score as
   `weight * (achieved - target) / scale` with launch-monitor-resolution
   scales from `tuning.py`. `evaluate_candidate(variables, partition,
-  goal) -> residuals` is the documented seam a later Rust port replaces
+goal) -> residuals` is the documented seam a later Rust port replaces
   behind a facade (no Rust added in this PR).
 - `solve.py`: bounded `scipy.optimize.least_squares` (trf) multi-start
   driver — Latin-hypercube starts across the bounds (start 0 = caller
@@ -191,7 +192,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   200 g) and whose face patch honors bulge (horizontal) and roll
   (vertical) curvature via the circular sagitta R - sqrt(R² - t²) with
   loft tilting the face plane. `face_normal_at_offset(spec, toe_mm,
-  high_mm)` exposes the face-curvature normal (gradient of the
+high_mm)` exposes the face-curvature normal (gradient of the
   curved-face surface, loft-rotated) for the future impact package —
   in Python AND TypeScript with pinned parity tests; flat face when
   bulge/roll are off (curvature does not affect impact physics yet).
@@ -331,7 +332,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   geometry) and shipped as `assets/example_driver_head.stl`; tests in
   `tests/rate_of_closure/test_mesh.py` plus GUI load/reset smoke tests.
 
-
 ### 2026-08-03 Rate of Closure Impact Explorer
 
 - `src/rate_of_closure/` adds a new Biomechanics tool quantifying the
@@ -355,14 +355,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
 
-
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
@@ -2038,6 +2036,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.9.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
 | 2026-08-04 | 1.9.0 | feat(rate_of_closure, #4109 #4110): solver panel — goal-driven optimization UI. PyQt6 Solver tab in the Simulation tab (checkbox-enabled weighted ImpactGoal targets, Optimize-with-bounds / Fix VariablePartition editor with a double-pendulum swing-source mode, start-count spinner, Run/Cancel on a QThread worker with ProgressReport-driven progress bar and cooperative cancel_event, achieved-vs-goal table with per-goal errors / residual norm / convergence / expandable per-start diagnostics, Apply loading solved variables into the simulation session and rerunning the 3D scene; sourced tooltips throughout, DbC errors as friendly status messages). Web: model/solver.ts bounded Nelder-Mead over the TS-physics objective (delivery variables, deterministic multi-start) + SolverPanel section with apply-to-scenario, parity-pinned against the pytest easy case (150 mph ball speed -> ~45.825 m/s clubhead speed); WASM/worker upgrade deferred to P7. |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
 | 2026-08-04 | 1.8.0 | feat(rate_of_closure, epic #4103): simulation session integrating swing_sim into the app — app-frame swing sources (manual constant twist, shared double pendulum, new triple pendulum), swing → impact (gear effect + bulge/roll callable) → flight orchestration into one exportable SimulationRun, fixed-ball impact-time scrubber, thin ISA adapter over the rotation converter with a toggleable screw-axis overlay, PyQt6 Simulation tab (sourced-guidance inputs, launch rows with explanations, ball/ground toggles, flight polyline, full video playback with 1×-real-time rate presets, sortable inspector, CSV/JSON export) and a parity-pinned web Simulation tab (pendulum/impact/flight TS port, scrubber, playback, JSON download; WASM supersedes in P7). |
