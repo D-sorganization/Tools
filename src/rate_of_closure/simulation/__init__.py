@@ -17,7 +17,7 @@ Orchestrates a full swing -> impact -> flight run:
 from __future__ import annotations
 
 from .contact import ContactMode, ImpactOutcome, ImpactStatus
-from .export import run_to_json_dict, write_csv, write_json
+from .export import run_to_json_dict, write_csv, write_json, write_torque_csv
 from .flight_explorer import (
     EXPLORER_METRIC_KEYS,
     FlightExploration,
@@ -49,6 +49,7 @@ from .sources import (
     TriplePendulumSwing,
     make_source,
 )
+from .torque_history import fit_run_torque_profile
 
 __all__ = [
     "BALL_POSITION_M",
@@ -69,6 +70,7 @@ __all__ = [
     "compute_kinetics",
     "delivery_at",
     "explore_flight",
+    "fit_run_torque_profile",
     "inverse_dynamics",
     "kinetics_for_run",
     "simulate_forced",
@@ -80,4 +82,5 @@ __all__ = [
     "screw_axis_samples",
     "write_csv",
     "write_json",
+    "write_torque_csv",
 ]

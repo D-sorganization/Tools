@@ -8,7 +8,7 @@ from typing import cast
 
 import numpy as np
 
-from rate_of_closure._contracts import ensure
+from rate_of_closure._contracts import ensure, require
 from rate_of_closure.club import face_normal_at_offset
 from rate_of_closure.model import MPH_PER_MPS
 from rate_of_closure.simulation.contact import (
@@ -50,6 +50,8 @@ class _SwingSeries:
     poses: np.ndarray
     twists: np.ndarray
     joints: np.ndarray
+    joint_ids: tuple[str, ...]
+    applied_torques_nm: np.ndarray
 
     @property
     def positions(self) -> np.ndarray:
@@ -63,7 +65,14 @@ class _SwingSeries:
         poses[:, :3, 3] += offset_m
         if joints.shape[1] > 0:
             joints += offset_m
-        return _SwingSeries(self.times, poses, self.twists, joints)
+        return _SwingSeries(
+            self.times,
+            poses,
+            self.twists,
+            joints,
+            self.joint_ids,
+            self.applied_torques_nm,
+        )
 
 
 @dataclass(frozen=True)
@@ -121,7 +130,35 @@ def _sample_swing(source: SwingSource) -> _SwingSeries:
         if callable(joint_sampler)
         else np.zeros((len(times), 0, 3))
     )
-    return _SwingSeries(times, poses, twists, joints)
+    joint_ids = tuple(getattr(source, "joint_ids", ()))
+    applied_torques_nm = _sample_applied_torques(source, times, joint_ids)
+    return _SwingSeries(
+        times,
+        poses,
+        twists,
+        joints,
+        joint_ids,
+        applied_torques_nm,
+    )
+
+
+def _sample_applied_torques(
+    source: SwingSource, times: np.ndarray, joint_ids: tuple[str, ...]
+) -> np.ndarray:
+    """Sample one stable-ID torque mapping per swing time."""
+    torque_sampler = getattr(source, "joint_torques_at", None)
+    if not joint_ids or not callable(torque_sampler):
+        return np.zeros((len(times), 0), dtype=np.float64)
+    rows: list[list[float]] = []
+    for time_s in times:
+        values = torque_sampler(float(time_s))
+        require(
+            isinstance(values, dict) and set(values) == set(joint_ids),
+            "joint torque samples must match stable joint IDs exactly",
+            values,
+        )
+        rows.append([float(values[joint_id]) for joint_id in joint_ids])
+    return np.asarray(rows, dtype=np.float64)
 
 
 def _select_contact(
@@ -270,6 +307,8 @@ def _assemble_run(
         swing_poses=swing.poses,
         swing_twists=swing.twists,
         swing_joints=swing.joints,
+        swing_joint_ids=swing.joint_ids,
+        swing_applied_torques_nm=swing.applied_torques_nm,
         impact_outcome=outcome,
         impact_time_s=impact_time_s,
         delivery=products.delivery,

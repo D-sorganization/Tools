@@ -209,6 +209,11 @@ class DoublePendulumSwing:
         return self._run_config.mode
 
     @property
+    def joint_ids(self) -> tuple[str, str]:
+        """Stable kernel ordering for generalized joint torques."""
+        return DOUBLE_PENDULUM_JOINT_IDS
+
+    @property
     def parameters(self) -> PendulumParameters:
         """Pendulum parameters used for the integration."""
         return self._parameters

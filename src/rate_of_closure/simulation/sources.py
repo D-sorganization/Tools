@@ -127,6 +127,19 @@ class AppFrameSwing:
         positions: np.ndarray = np.asarray(sampler(t), dtype=float) @ APP_FROM_SWING.T
         return positions
 
+    @property
+    def joint_ids(self) -> tuple[str, ...]:
+        """Stable joint IDs exposed by the wrapped source, if supported."""
+        identifiers = getattr(self._inner, "joint_ids", ())
+        return tuple(cast(tuple[str, ...], identifiers))
+
+    def joint_torques_at(self, t: float) -> dict[str, float]:
+        """Forward generalized torques; scalar joint values are frame-invariant."""
+        torque_sampler = getattr(self._inner, "joint_torques_at", None)
+        require(callable(torque_sampler), "inner source has no joint torque history")
+        sampler = cast(Callable[[float], dict[str, float]], torque_sampler)
+        return sampler(t)
+
 
 class ManualSwingSource:
     """Constant-twist source built from an :class:`ImpactScenario` (app frame).

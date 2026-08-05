@@ -5,6 +5,8 @@ One :class:`~rate_of_closure.simulation.session.SimulationRun` becomes:
 * a CSV with one row per sample — swing rows (clubhead position and
   speed) followed by flight rows (ball position and speed), phase-tagged
   so the two series stay distinguishable in a flat file; and
+* an optional long-form torque CSV with one row per swing sample and
+  stable joint ID (empty for sources without applied-torque histories); and
 * a JSON document carrying the request parameters, the delivery and
   launch summaries, and both time series.
 
@@ -25,7 +27,16 @@ import numpy as np
 from rate_of_closure._contracts import require
 from rate_of_closure.simulation.session import SimulationRun
 
-__all__ = ["CSV_COLUMNS", "run_to_json_dict", "series_rows", "write_csv", "write_json"]
+__all__ = [
+    "CSV_COLUMNS",
+    "TORQUE_CSV_COLUMNS",
+    "run_to_json_dict",
+    "series_rows",
+    "torque_series_rows",
+    "write_csv",
+    "write_json",
+    "write_torque_csv",
+]
 
 #: CSV column order (kept stable for downstream consumers).
 CSV_COLUMNS: tuple[str, ...] = (
@@ -42,6 +53,8 @@ CSV_COLUMNS: tuple[str, ...] = (
     "closest_approach_m",
     "contact_margin_m",
 )
+
+TORQUE_CSV_COLUMNS: tuple[str, ...] = ("t_s", "joint_id", "applied_torque_nm")
 
 
 def series_rows(
@@ -83,6 +96,15 @@ def series_rows(
     return rows
 
 
+def torque_series_rows(run: SimulationRun) -> list[tuple[float, str, float]]:
+    """Return long-form applied torque rows keyed by stable joint ID."""
+    return [
+        (float(time_s), joint_id, float(run.swing_applied_torques_nm[row, column]))
+        for row, time_s in enumerate(run.swing_times)
+        for column, joint_id in enumerate(run.swing_joint_ids)
+    ]
+
+
 def _contact_columns(
     run: SimulationRun,
 ) -> tuple[int, int, float | None, float, float, float]:
@@ -112,6 +134,15 @@ def write_csv(run: SimulationRun, path: str | Path) -> None:
         writer.writerows(series_rows(run))
 
 
+def write_torque_csv(run: SimulationRun, path: str | Path) -> None:
+    """Write a separate long-form applied joint-torque history CSV."""
+    require(isinstance(run, SimulationRun), "run must be a SimulationRun", run)
+    with Path(path).open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(TORQUE_CSV_COLUMNS)
+        writer.writerows(torque_series_rows(run))
+
+
 def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
     """The run as a JSON-serialisable dictionary.
 
@@ -133,6 +164,8 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
             "club": config.club.name,
             "flight_model": config.flight_model,
             "contact_mode": config.contact_mode.value,
+            "swing_run_mode": config.swing_run_config.mode.value,
+            "prescribed_profile_id": config.swing_run_config.prescribed_profile_id,
             "impact_time_s": run.impact_time_s,
             "swing_duration_s": config.swing_duration_s,
             "plane_tilts_deg": {
@@ -158,6 +191,11 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
             "columns": list(CSV_COLUMNS),
             "rows": [list(row) for row in series_rows(run)],
             "swing_joints_app_m": run.swing_joints.tolist(),
+            "swing_applied_joint_torques": {
+                "unit": "N*m",
+                "joint_ids": list(run.swing_joint_ids),
+                "values": run.swing_applied_torques_nm.tolist(),
+            },
         },
     }
 

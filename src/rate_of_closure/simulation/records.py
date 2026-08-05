@@ -18,6 +18,7 @@ from shared.python.swing_sim.impact import (
     PostImpactState,
 )
 from shared.python.swing_sim.run_config import (
+    DOUBLE_PENDULUM_JOINT_IDS,
     DoublePendulumRunConfig,
     SwingRunMode,
 )
@@ -100,6 +101,8 @@ class SimulationRun:
     swing_poses: np.ndarray
     swing_twists: np.ndarray
     swing_joints: np.ndarray
+    swing_joint_ids: tuple[str, ...]
+    swing_applied_torques_nm: np.ndarray
     impact_outcome: ImpactOutcome
     impact_time_s: float | None
     delivery: DeliveryDerived | None
@@ -176,6 +179,41 @@ def _validate_swing_shapes(run: SimulationRun) -> None:
         and run.swing_joints.shape[2] == 3,
         "swing_joints must have shape (N, J, 3)",
         run.swing_joints.shape,
+    )
+    _validate_torque_history(run, sample_count)
+
+
+def _validate_torque_history(run: SimulationRun, sample_count: int) -> None:
+    """Require source-compatible, finite, sample-aligned applied torques."""
+    require(
+        all(
+            isinstance(joint_id, str) and bool(joint_id.strip())
+            for joint_id in run.swing_joint_ids
+        ),
+        "swing_joint_ids must contain nonempty stable identifiers",
+        run.swing_joint_ids,
+    )
+    require(
+        len(set(run.swing_joint_ids)) == len(run.swing_joint_ids),
+        "swing_joint_ids must be unique",
+        run.swing_joint_ids,
+    )
+    require(
+        run.swing_applied_torques_nm.shape == (sample_count, len(run.swing_joint_ids)),
+        "swing_applied_torques_nm must have shape (N, len(swing_joint_ids))",
+        run.swing_applied_torques_nm.shape,
+    )
+    require(
+        bool(np.all(np.isfinite(run.swing_applied_torques_nm))),
+        "swing_applied_torques_nm must be finite",
+    )
+    expected_joint_ids = (
+        DOUBLE_PENDULUM_JOINT_IDS if run.config.source_kind == "double_pendulum" else ()
+    )
+    require(
+        run.swing_joint_ids == expected_joint_ids,
+        "applied torque joint IDs are incompatible with the swing source",
+        run.swing_joint_ids,
     )
 
 
