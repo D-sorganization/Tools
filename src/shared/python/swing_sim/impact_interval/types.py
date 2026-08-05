@@ -69,7 +69,7 @@ class ClubRigidBody:
     def shaft_axis_body(self) -> np.ndarray:
         """Unit axis from club CG toward the grip attachment."""
         vector = np.asarray(self.cg_to_attachment_body_m, dtype=float)
-        return vector / np.linalg.norm(vector)
+        return np.asarray(vector / float(np.linalg.norm(vector)), dtype=float)
 
 
 @dataclass
@@ -227,7 +227,7 @@ class ImpactIntervalResult:
             )
         }
         try:
-            return channels[name]
+            return np.asarray(channels[name])
         except KeyError as exc:
             raise ValueError(f"Unknown impact-interval channel: {name}") from exc
 

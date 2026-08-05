@@ -50,7 +50,7 @@ def _kinetic_energy(state: _State, club: ClubRigidBody) -> float:
     ) + 0.5 * GOLF_BALL_MOMENT_OF_INERTIA_KG_M2 * float(
         np.dot(state.ball_omega, state.ball_omega)
     )
-    return club_energy + ball_energy
+    return float(club_energy + ball_energy)
 
 
 def _contact_state(

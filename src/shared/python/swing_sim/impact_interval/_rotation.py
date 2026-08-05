@@ -18,7 +18,7 @@ def exp_rotation(rotation_vector: np.ndarray) -> np.ndarray:
     angle = float(np.linalg.norm(rotation_vector))
     matrix = skew(rotation_vector)
     if angle < 1.0e-10:
-        return np.eye(3) + matrix + 0.5 * matrix @ matrix
+        return np.asarray(np.eye(3) + matrix + 0.5 * matrix @ matrix, dtype=float)
     axis_matrix = matrix / angle
     return (
         np.eye(3)
