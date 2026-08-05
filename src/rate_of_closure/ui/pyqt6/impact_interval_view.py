@@ -73,8 +73,11 @@ class ImpactIntervalView(QWidget):
         if interval is None:
             return 0
         fraction = self._position_slider.value() / _SLIDER_STEPS
-        return min(
-            round(fraction * (len(interval.time_s) - 1)), len(interval.time_s) - 1
+        return int(
+            min(
+                round(fraction * (len(interval.time_s) - 1)),
+                len(interval.time_s) - 1,
+            )
         )
 
     def _draw_scene(self, index: int) -> None:

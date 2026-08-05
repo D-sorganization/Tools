@@ -35,6 +35,7 @@ curvature off the corresponding component is zero — a flat lofted face.
 from __future__ import annotations
 
 import math
+from typing import cast
 
 import numpy as np
 
@@ -120,12 +121,15 @@ def face_sagitta(spec: ClubSpec, toe_m: float, high_m: float) -> float:
 def _loft_rotation(loft_deg: float) -> np.ndarray:
     """Rotation about +z tilting the face normal up by the loft angle."""
     lam = math.radians(loft_deg)
-    return np.array(
-        [
-            [math.cos(lam), -math.sin(lam), 0.0],
-            [math.sin(lam), math.cos(lam), 0.0],
-            [0.0, 0.0, 1.0],
-        ]
+    return cast(
+        np.ndarray,
+        np.array(
+            [
+                [math.cos(lam), -math.sin(lam), 0.0],
+                [math.sin(lam), math.cos(lam), 0.0],
+                [0.0, 0.0, 1.0],
+            ]
+        ),
     )
 
 
@@ -192,7 +196,7 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
         x, hh, hw, yc = section
         ring = superellipse_ring(x, hh, hw)
         ring[:, 1] += yc
-        return ring
+        return cast(np.ndarray, ring)
 
     rings = [body_ring(section) for section in sections]
     face_x, _hh0, _hw0, face_yc = sections[0]
@@ -206,7 +210,7 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
         scaled[:, 2] *= fraction
         for row in scaled:
             row[0] = face_x - face_sagitta(spec, float(row[2]), float(row[1] - face_yc))
-        return np.asarray((scaled - center) @ rotation.T + center)
+        return cast(np.ndarray, np.asarray((scaled - center) @ rotation.T + center))
 
     face_rings = [face_ring(fraction) for fraction in _FACE_FRACTIONS]
     face_center = center.copy()  # sagitta at (0, 0) is zero; loft fixes c
@@ -233,7 +237,7 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
     expected = (2 * (len(sections) - 1) + 2 * (len(face_rings) - 1) + 2) * RING_POINTS
     ensure(mesh.shape[0] == expected, "parametric head is closed")
     ensure(bool(np.isfinite(mesh).all()), "parametric head vertices finite")
-    return mesh
+    return cast(np.ndarray, mesh)
 
 
 def parametric_head_mesh(spec: ClubSpec) -> HeadMesh:

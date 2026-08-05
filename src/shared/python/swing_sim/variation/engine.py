@@ -31,6 +31,7 @@ import time
 import zlib
 from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass, field
+from typing import cast
 
 import numpy as np
 
@@ -112,7 +113,10 @@ class VariationDataset:
     def output_column(self, name: str) -> np.ndarray:
         """Successful-run values of one output column."""
         require(name in self.output_names, "unknown output column", name)
-        return np.asarray(self.outputs[self.success, self.output_names.index(name)])
+        return cast(
+            np.ndarray,
+            np.asarray(self.outputs[self.success, self.output_names.index(name)]),
+        )
 
 
 def _stream_for(seed: int, spec: NoiseSpec) -> np.random.Generator:
@@ -148,7 +152,7 @@ def sample_inputs(plan: VariationPlan) -> np.ndarray:
         lo = -np.inf if spec.lower is None else spec.lower
         hi = np.inf if spec.upper is None else spec.upper
         columns.append(np.clip(values, lo, hi))
-    return np.column_stack(columns)
+    return cast(np.ndarray, np.column_stack(columns))
 
 
 class _Progress:
@@ -260,7 +264,7 @@ def run_variation(
     names = outputs_for_mode(plan.mode)
     inputs = sample_inputs(plan)
     outputs = np.full((plan.n_runs, len(names)), np.nan)
-    success = np.zeros(plan.n_runs, dtype=bool)
+    success: np.ndarray = np.zeros(plan.n_runs, dtype=bool)
     progress = _Progress(progress_cb, plan.n_runs)
 
     workers = min(n_workers, plan.n_runs)

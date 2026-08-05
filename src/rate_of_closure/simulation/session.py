@@ -23,6 +23,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
+from typing import cast
 
 import numpy as np
 
@@ -260,7 +261,10 @@ def _face_normal_callable(club: ClubSpec):  # type: ignore[no-untyped-def]
     """Bulge/roll callable seam ``(toe_m, high_m) -> normal`` for the club."""
 
     def _normal(toe_m: float, high_m: float) -> np.ndarray:
-        return np.array(face_normal_at_offset(club, toe_m * 1e3, high_m * 1e3))
+        return cast(
+            np.ndarray,
+            np.array(face_normal_at_offset(club, toe_m * 1e3, high_m * 1e3)),
+        )
 
     return _normal
 

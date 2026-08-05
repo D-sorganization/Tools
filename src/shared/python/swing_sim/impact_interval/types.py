@@ -5,6 +5,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 from enum import Enum
+from typing import cast
 
 import numpy as np
 
@@ -19,7 +20,7 @@ def _vector(value: np.ndarray, name: str) -> np.ndarray:
         raise ValueError(f"{name} must have shape (3,)")
     if not np.all(np.isfinite(array)):
         raise ValueError(f"{name} must be finite")
-    return array
+    return cast(np.ndarray, array)
 
 
 def _matrix(value: np.ndarray, name: str) -> np.ndarray:
@@ -28,7 +29,7 @@ def _matrix(value: np.ndarray, name: str) -> np.ndarray:
         raise ValueError(f"{name} must have shape (3, 3)")
     if not np.all(np.isfinite(array)):
         raise ValueError(f"{name} must be finite")
-    return array
+    return cast(np.ndarray, array)
 
 
 class BoundaryKind(Enum):
@@ -69,7 +70,10 @@ class ClubRigidBody:
     def shaft_axis_body(self) -> np.ndarray:
         """Unit axis from club CG toward the grip attachment."""
         vector = np.asarray(self.cg_to_attachment_body_m, dtype=float)
-        return np.asarray(vector / float(np.linalg.norm(vector)), dtype=float)
+        return cast(
+            np.ndarray,
+            np.asarray(vector / float(np.linalg.norm(vector)), dtype=float),
+        )
 
 
 @dataclass
@@ -227,7 +231,7 @@ class ImpactIntervalResult:
             )
         }
         try:
-            return np.asarray(channels[name])
+            return cast(np.ndarray, np.asarray(channels[name]))
         except KeyError as exc:
             raise ValueError(f"Unknown impact-interval channel: {name}") from exc
 

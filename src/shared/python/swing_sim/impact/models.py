@@ -32,6 +32,7 @@ from __future__ import annotations
 
 import math
 from abc import ABC, abstractmethod
+from typing import cast
 
 import numpy as np
 
@@ -165,7 +166,7 @@ class RigidBodyImpactModel(ImpactModel):
         """
         if pre_state is None:
             raise ValueError("pre_state must be provided")
-        m_club = pre_state.clubhead_mass
+        m_club = float(pre_state.clubhead_mass)
         if pre_state.impact_offset is None:
             return m_club
 
@@ -184,7 +185,9 @@ class RigidBodyImpactModel(ImpactModel):
             return 1.0 / (1.0 / m_club + angular_term)
 
         if pre_state.clubhead_moi > 0:
-            return 1.0 / (1.0 / m_club + r_offset**2 / pre_state.clubhead_moi)
+            return float(
+                1.0 / (1.0 / m_club + r_offset**2 / float(pre_state.clubhead_moi))
+            )
         return m_club
 
     def _compute_impulse(
@@ -219,7 +222,10 @@ class RigidBodyImpactModel(ImpactModel):
         v_tangent = v_rel - v_approach * n
         tangent_mag = _norm(v_tangent)
         if tangent_mag <= 1e-6:
-            return pre_state.ball_angular_velocity.copy()
+            return cast(
+                np.ndarray,
+                np.asarray(pre_state.ball_angular_velocity, dtype=float).copy(),
+            )
 
         tangent_dir = v_tangent / tangent_mag
         # Spin axis: friction drags the ball's contact surface along the
@@ -245,7 +251,13 @@ class RigidBodyImpactModel(ImpactModel):
         spin_magnitude = j_friction / (
             GOLF_BALL_MOMENT_OF_INERTIA_KG_M2 / GOLF_BALL_RADIUS_M
         )
-        return pre_state.ball_angular_velocity + spin_magnitude * spin_axis
+        return cast(
+            np.ndarray,
+            np.asarray(
+                pre_state.ball_angular_velocity + spin_magnitude * spin_axis,
+                dtype=float,
+            ),
+        )
 
     def _compute_energy_transfer(
         self,
@@ -265,7 +277,7 @@ class RigidBodyImpactModel(ImpactModel):
             * GOLF_BALL_MASS_KG
             * float(np.dot(post_ball_velocity, post_ball_velocity))
         )
-        return ke_post - ke_pre
+        return float(ke_post - ke_pre)
 
     @precondition(
         lambda self, pre_state, params: pre_state.clubhead_mass > 0,

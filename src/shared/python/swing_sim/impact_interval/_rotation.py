@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from typing import cast
 
 import numpy as np
 
@@ -10,7 +11,7 @@ import numpy as np
 def skew(vector: np.ndarray) -> np.ndarray:
     """Cross-product matrix for a three-vector."""
     x, y, z = vector
-    return np.array([[0.0, -z, y], [z, 0.0, -x], [-y, x, 0.0]])
+    return cast(np.ndarray, np.array([[0.0, -z, y], [z, 0.0, -x], [-y, x, 0.0]]))
 
 
 def exp_rotation(rotation_vector: np.ndarray) -> np.ndarray:
@@ -18,12 +19,18 @@ def exp_rotation(rotation_vector: np.ndarray) -> np.ndarray:
     angle = float(np.linalg.norm(rotation_vector))
     matrix = skew(rotation_vector)
     if angle < 1.0e-10:
-        return np.asarray(np.eye(3) + matrix + 0.5 * matrix @ matrix, dtype=float)
+        return cast(
+            np.ndarray,
+            np.asarray(np.eye(3) + matrix + 0.5 * matrix @ matrix, dtype=float),
+        )
     axis_matrix = matrix / angle
-    return (
-        np.eye(3)
-        + math.sin(angle) * axis_matrix
-        + (1.0 - math.cos(angle)) * axis_matrix @ axis_matrix
+    return cast(
+        np.ndarray,
+        (
+            np.eye(3)
+            + math.sin(angle) * axis_matrix
+            + (1.0 - math.cos(angle)) * axis_matrix @ axis_matrix
+        ),
     )
 
 
@@ -39,8 +46,8 @@ def log_rotation(rotation: np.ndarray) -> np.ndarray:
         ]
     )
     if angle < 1.0e-9:
-        return 0.5 * vector
-    return angle * vector / (2.0 * math.sin(angle))
+        return cast(np.ndarray, 0.5 * vector)
+    return cast(np.ndarray, angle * vector / (2.0 * math.sin(angle)))
 
 
 __all__: list[str] = []
