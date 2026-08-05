@@ -2673,3 +2673,4 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
 - 2026-08-04: perf(p1am) - Replaced chained .map().filter() in useTrendBackfill with a single pass for loop to reduce GC overhead.
+- 2026-08-04: fix(ci) - Update detect-secrets.yml to use python3 explicitly to resolve self-hosted runner path issue.
