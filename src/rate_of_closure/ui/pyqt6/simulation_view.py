@@ -49,6 +49,7 @@ from rate_of_closure.simulation.isa import MIN_RATE_DPS
 from rate_of_closure.ui.course import CourseLayout
 from rate_of_closure.ui.pyqt6.course_scene import draw_course_ground_3d
 from rate_of_closure.ui.pyqt6.kinetics_overlay import overlay_frame
+from rate_of_closure.ui.pyqt6.simulation_specs import RATE_PRESETS
 from rate_of_closure.units import FIELD_GUIDANCE
 
 try:  # Theme palette (optional in standalone/vendored use).
@@ -63,16 +64,6 @@ except ImportError:  # pragma: no cover - theme package always ships in-repo
 logger = logging.getLogger(__name__)
 
 __all__ = ["RATE_PRESETS", "SimulationView"]
-
-#: Playback-rate presets, in combo order. 1x is real time: one second
-#: of wall clock advances one second of simulated time.
-RATE_PRESETS: tuple[tuple[str, float], ...] = (
-    ("0.1×", 0.1),
-    ("0.25×", 0.25),
-    ("0.5×", 0.5),
-    ("1× real-time", 1.0),
-    ("2×", 2.0),
-)
 
 _TIMER_INTERVAL_MS = 40
 _SLIDER_STEPS = 1000
@@ -224,7 +215,8 @@ class SimulationView(QWidget):
 
     def playback_rate(self) -> float:
         """The selected playback-rate multiplier."""
-        return RATE_PRESETS[self._rate_combo.currentIndex()][1]
+        index = int(self._rate_combo.currentIndex())
+        return float(RATE_PRESETS[index][1])
 
     def set_playback_rate(self, multiplier: float) -> None:
         """Select the nearest rate preset to ``multiplier``."""

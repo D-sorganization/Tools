@@ -50,6 +50,12 @@ from rate_of_closure.ui.pyqt6.impact_interval_view import ImpactIntervalView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
 from rate_of_closure.ui.pyqt6.kinetics_panel import KineticsPanel
 from rate_of_closure.ui.pyqt6.result_row import ResultRow
+from rate_of_closure.ui.pyqt6.simulation_specs import (
+    IMPACT_MODEL_LABELS,
+    LAUNCH_ROWS,
+    SOURCE_LABELS,
+    TILT_SPECS,
+)
 from rate_of_closure.ui.pyqt6.simulation_tab_logic import (
     apply_solver_solution as apply_solution_logic,
 )
@@ -79,37 +85,6 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["LAUNCH_ROWS", "SOURCE_LABELS", "SimulationTab"]
 
-#: Source kind -> Title Case combo label (order matches SOURCE_KINDS).
-SOURCE_LABELS: dict[str, str] = {
-    "manual": "Manual Scenario (Constant Twist)",
-    "double_pendulum": "Double Pendulum",
-    "triple_pendulum": "Triple Pendulum",
-}
-
-IMPACT_MODEL_LABELS: dict[str, str] = {
-    "instantaneous": "Instantaneous Impulse (Fast)",
-    "impact_interval": "Impact Interval (6-DOF)",
-}
-
-#: (launch field, Title Case label, unit suffix) in display order. Every
-#: field must have an entry in LAUNCH_EXPLANATIONS (test-enforced).
-LAUNCH_ROWS: tuple[tuple[str, str, str], ...] = (
-    ("ball_speed_mph", "Ball Speed", " mph"),
-    ("launch_angle_deg", "Launch Angle", "°"),
-    ("launch_azimuth_deg", "Launch Azimuth", "°"),
-    ("spin_rpm", "Total Spin", " rpm"),
-    ("carry_m", "Carry Distance", " m"),
-    ("max_height_m", "Apex Height", " m"),
-    ("flight_time_s", "Flight Time", " s"),
-    ("landing_angle_deg", "Landing Angle", "°"),
-)
-
-_TILT_SPECS: tuple[tuple[str, str, str], ...] = (
-    ("yaw_deg", "Plane Yaw", "plane_yaw_deg"),
-    ("side_tilt_deg", "Plane Side Tilt", "plane_side_tilt_deg"),
-    ("forward_tilt_deg", "Plane Forward Tilt", "plane_forward_tilt_deg"),
-)
-
 _SCRUB_STEPS = 1000
 
 
@@ -120,9 +95,7 @@ class SimulationTab(QWidget):
     runCompleted = pyqtSignal(object)  # noqa: N815 - Qt signal convention
     #: Emitted with a glossary term key when an explanation link is used.
     glossaryRequested = pyqtSignal(str)  # noqa: N815 - Qt signal convention
-    #: Emitted with a DerivationConfig whenever the model configuration
-    #: changes (swing source, flight model, plane tilts) — drives the
-    #: conditional sections of the Calculation Description tab (V4).
+    #: Drives conditional Calculation Description sections from model changes.
     configChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -143,9 +116,7 @@ class SimulationTab(QWidget):
         self._inspector = InspectorView()
         self._solver_panel = SolverPanel()
         self._solver_panel.applyRequested.connect(self.apply_solver_solution)
-        # Target region (#4125 H7b): editing the target moves the course
-        # green/fairway in the H7a scene and overlays the region in the
-        # flight top-down view.
+        # Keep the course scene and flight overlay aligned with target edits.
         self._solver_panel.target_panel().regionChanged.connect(
             self._on_target_region_changed
         )
@@ -157,8 +128,7 @@ class SimulationTab(QWidget):
         left_layout.addWidget(self._build_launch_box())
         left_layout.addWidget(self._build_explanation_box())
         left_layout.addStretch(1)
-        # Small-window robustness (#4120): the control column scrolls
-        # instead of crushing its entry widgets below readability.
+        # Scrolling preserves readable entries in small windows.
         left = QScrollArea()
         left.setWidgetResizable(True)
         left.setFrameShape(QFrame.Shape.NoFrame)
@@ -201,7 +171,7 @@ class SimulationTab(QWidget):
         self._source_combo.currentIndexChanged.connect(self._invalidate_source)
         form.addRow("Swing Source", self._source_combo)
         self._tilt_spins: dict[str, QDoubleSpinBox] = {}
-        for attr, label, guidance_key in _TILT_SPECS:
+        for attr, label, guidance_key in TILT_SPECS:
             spin = QDoubleSpinBox()
             spin.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
             spin.setKeyboardTracking(False)
