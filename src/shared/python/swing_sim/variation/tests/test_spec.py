@@ -8,6 +8,7 @@ from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
+    CATEGORY_IMPACT_INTERVAL,
     CATEGORY_LAUNCH,
     CATEGORY_SWING,
     SWING_DERIVED_KEYS,
@@ -77,6 +78,12 @@ class TestRegistryContract:
     def test_launch_mode_is_launch_only(self) -> None:
         keys = keys_for_mode("launch")
         assert all(key.startswith(CATEGORY_LAUNCH) for key in keys)
+
+    def test_interval_mode_exposes_delivery_club_and_contact_parameters(self) -> None:
+        keys = keys_for_mode("impact_interval")
+        assert f"{CATEGORY_DELIVERY}.clubhead_speed_mps" in keys
+        assert f"{CATEGORY_IMPACT_INTERVAL}.contact_stiffness_n_per_m" in keys
+        assert f"{CATEGORY_IMPACT_INTERVAL}.friction_coefficient" in keys
 
     def test_registry_is_extensible_but_rejects_duplicates(self) -> None:
         definition = VariableDef(

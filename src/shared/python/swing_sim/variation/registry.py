@@ -15,13 +15,14 @@ from types import MappingProxyType
 
 from shared.python.contracts import require
 
-MODES: tuple[str, ...] = ("delivery", "swing", "launch")
+MODES: tuple[str, ...] = ("delivery", "swing", "impact_interval", "launch")
 """Pipeline slices a plan can exercise (see :class:`VariationPlan`)."""
 
 CATEGORY_DELIVERY = "swing_sim.impact.delivery"
 CATEGORY_SWING = "swing_sim.swing"
 CATEGORY_CLUB = "swing_sim.club"
 CATEGORY_LAUNCH = "swing_sim.flight.launch"
+CATEGORY_IMPACT_INTERVAL = "swing_sim.impact_interval"
 
 
 @dataclass(frozen=True)
@@ -253,6 +254,36 @@ def _register_builtins() -> None:
             0.005,
             f"Face-to-face COR spread near the 0.83 limit. {src_club}",
         ),
+        # ── swing_sim.impact_interval (Tools #4130) ───────────────────────
+        (
+            f"{CATEGORY_IMPACT_INTERVAL}.contact_stiffness_n_per_m",
+            "Contact Stiffness",
+            "N/m",
+            2.0e6,
+            2.0e5,
+            "Kelvin-Voigt normal stiffness. Suggested studies should retain "
+            "a converged sub-microsecond time step. Source: Tools #4130 "
+            "impact-interval formulation.",
+        ),
+        (
+            f"{CATEGORY_IMPACT_INTERVAL}.friction_coefficient",
+            "Face Friction Coefficient",
+            "",
+            0.4,
+            0.03,
+            "Regularized Coulomb coefficient during ball-face contact. "
+            "Source: shared swing_sim impact default; treat as a sensitivity "
+            "input unless measured for the face/ball pair.",
+        ),
+        (
+            f"{CATEGORY_IMPACT_INTERVAL}.cg_depth_m",
+            "CG Depth",
+            "m",
+            0.035,
+            0.003,
+            "Clubhead CG distance behind the face plane. Source: shared "
+            "swing_sim driver constant and the selected club specification.",
+        ),
         # ── swing_sim.flight.launch (LaunchConditions front-end) ─────────
         (
             f"{CATEGORY_LAUNCH}.ball_speed_mph",
@@ -315,6 +346,11 @@ MODE_CATEGORIES: Mapping[str, tuple[str, ...]] = MappingProxyType(
     {
         "delivery": (CATEGORY_DELIVERY, CATEGORY_CLUB),
         "swing": (CATEGORY_SWING, CATEGORY_DELIVERY, CATEGORY_CLUB),
+        "impact_interval": (
+            CATEGORY_DELIVERY,
+            CATEGORY_CLUB,
+            CATEGORY_IMPACT_INTERVAL,
+        ),
         "launch": (CATEGORY_LAUNCH,),
     }
 )
@@ -343,6 +379,7 @@ __all__ = [
     "CATEGORY_CLUB",
     "CATEGORY_DELIVERY",
     "CATEGORY_LAUNCH",
+    "CATEGORY_IMPACT_INTERVAL",
     "CATEGORY_SWING",
     "MODES",
     "MODE_CATEGORIES",

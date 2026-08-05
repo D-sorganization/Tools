@@ -8,7 +8,7 @@ from enum import Enum
 
 import numpy as np
 
-from shared.python.swing_sim.impact import PostImpactState
+from shared.python.swing_sim.impact import GOLF_BALL_MASS_KG, PostImpactState
 
 from .contact import KelvinVoigtContactLaw
 
@@ -254,10 +254,14 @@ class ImpactIntervalResult:
 
     def to_post_impact_state(self) -> PostImpactState:
         """Adapt the final interval state to the established impact façade."""
-        ball_pre_ke = 0.0
+        ball_pre_ke = (
+            0.5
+            * GOLF_BALL_MASS_KG
+            * float(np.dot(self.ball_velocity_mps[0], self.ball_velocity_mps[0]))
+        )
         ball_post_ke = (
             0.5
-            * 0.04593
+            * GOLF_BALL_MASS_KG
             * float(np.dot(self.ball_velocity_mps[-1], self.ball_velocity_mps[-1]))
         )
         return PostImpactState(

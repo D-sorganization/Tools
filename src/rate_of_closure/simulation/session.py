@@ -403,6 +403,7 @@ def run_simulation(config: SimulationConfig) -> SimulationRun:
     if config.impact_model == "impact_interval":
         interval_result = _solve_interval(config, delivery)
         post = interval_result.to_post_impact_state()
+        post.impact_location = delivery.impact_offset.copy()
     else:
         solver = ImpactSolverAPI(
             ImpactModelType.RIGID_BODY,

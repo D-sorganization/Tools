@@ -111,6 +111,10 @@ class TestSimulationTab:
         assert run is not None
         assert run.config.impact_model == "impact_interval"
         assert run.impact_interval is not None
+        assert tab.impact_interval_view().run() is run
+        assert tab.impact_interval_view()._position_slider.isEnabled()
+        tab.impact_interval_view()._position_slider.setValue(500)
+        assert "µs" in tab.impact_interval_view()._time_label.text()
 
 
 class TestSimulationView:

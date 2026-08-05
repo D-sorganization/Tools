@@ -9,6 +9,7 @@ import pytest
 
 from shared.python.swing_sim.variation import (
     CATEGORY_DELIVERY,
+    CATEGORY_IMPACT_INTERVAL,
     CATEGORY_LAUNCH,
     CATEGORY_SWING,
     CancelledError,
@@ -18,6 +19,26 @@ from shared.python.swing_sim.variation import (
     run_variation,
     sample_inputs,
 )
+
+
+def test_impact_interval_variation_returns_contact_audit_outputs() -> None:
+    plan = VariationPlan(
+        mode="impact_interval",
+        noise=(
+            NoiseSpec(
+                f"{CATEGORY_IMPACT_INTERVAL}.contact_stiffness_n_per_m",
+                scale=1.0e5,
+            ),
+        ),
+        n_runs=4,
+        seed=19,
+    )
+    dataset = run_variation(plan, n_workers=1)
+    assert dataset.n_success == 4
+    assert "peak_normal_force_n" in dataset.output_names
+    assert "energy_residual_j" in dataset.output_names
+    assert np.all(dataset.output_column("integrated_normal_impulse_n_s") > 0.0)
+
 
 pytestmark = pytest.mark.physics
 

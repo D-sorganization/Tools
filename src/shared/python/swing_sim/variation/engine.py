@@ -41,6 +41,7 @@ from ..solver.solve import CancelledError, ProgressCallback, ProgressReport
 from .pipeline import (
     DELIVERY_OUTPUTS,
     FLIGHT_OUTPUTS,
+    IMPACT_INTERVAL_OUTPUTS,
     LAUNCH_OUTPUTS,
     evaluate_run,
     outputs_for_mode,
@@ -304,6 +305,7 @@ __all__ = [
     "DELIVERY_OUTPUTS",
     "FLIGHT_OUTPUTS",
     "LAUNCH_OUTPUTS",
+    "IMPACT_INTERVAL_OUTPUTS",
     "CancelledError",
     "ProgressReport",
     "VariationDataset",
