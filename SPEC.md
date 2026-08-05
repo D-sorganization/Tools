@@ -1722,6 +1722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.5.5 | feat(golf-club, #4147): add the canonical shared golf-club domain facade with immutable SI/frame-explicit component roles, physically realizable mass properties, rigid transforms, assembled mass/CG/full inertia, declared club-length references, and strict deterministic versioned JSON migration contracts. |
 | 2026-08-04 | 1.5.4 | docs(agent-handoff, Repository_Management#1390): add root `AGENT_HANDOFF.md` plus per-tool `AGENT_HANDOFF.md` under `src/rate_of_closure`, `src/pendulum_simulator`, and `src/rotation_converter`; add `docs/AGENT_HANDOFF_TEMPLATE.md` for future tools; add the "Agent Handoff & PR Policy" section to `CLAUDE.md`. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |
 | 2026-07-26 | 1.5.3 | fix(ci): isolate both protected Python jobs in per-job virtual environments after validating the persistent setup-python runtime; repair and import-probe the matrix NumPy/SciPy stack with compatible bounds, and reinstall OpenCV without dependency resolution so it cannot replace the verified NumPy wheel. |

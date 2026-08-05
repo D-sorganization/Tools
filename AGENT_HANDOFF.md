@@ -19,6 +19,11 @@ stack of golf-simulation epics:
 | #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
 | #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model) | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands. |
 
+The separate shared Club Builder epic #4146 is active. Its first dependency
+slice, #4147, lives on `feat/4147-club-builder-core` and establishes the
+UI-independent assembly mass/CG/inertia, frame, length-datum, and persistence
+contracts that the later shaft, CAD, export, fitting, and UI issues consume.
+
 See `src/rate_of_closure/AGENT_HANDOFF.md` for the detailed stack breakdown
 and architecture pointers for this tool specifically.
 
