@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -83,27 +83,31 @@ class ClubAssembly:
         """Return the current versioned JSON-compatible representation."""
         from .serialization import assembly_to_json_dict
 
-        return assembly_to_json_dict(self)
+        payload: dict[str, Any] = assembly_to_json_dict(self)
+        return payload
 
     def to_json(self) -> str:
         """Return deterministic compact JSON for persistence or hashing."""
         from .serialization import assembly_to_json
 
-        return assembly_to_json(self)
+        payload: str = assembly_to_json(self)
+        return payload
 
     @classmethod
     def from_json_dict(cls, data: Mapping[str, Any]) -> ClubAssembly:
         """Load and validate current or supported legacy assembly data."""
         from .serialization import assembly_from_json_dict
 
-        return assembly_from_json_dict(data)
+        assembly: ClubAssembly = assembly_from_json_dict(data)
+        return assembly
 
     @classmethod
     def from_json(cls, text: str) -> ClubAssembly:
         """Parse, migrate, and validate a JSON assembly document."""
         from .serialization import assembly_from_json
 
-        return assembly_from_json(text)
+        assembly: ClubAssembly = assembly_from_json(text)
+        return assembly
 
 
 def _require_components(components: object) -> tuple[ClubComponent, ...]:
@@ -168,12 +172,16 @@ def _dict_to_tensor(values: Mapping[str, float]) -> np.ndarray:
     """Adapt canonical inertia components back to a symmetric matrix."""
     if set(values) != set(_INERTIA_KEYS):
         raise AssertionError("parallel_axis returned an incomplete inertia tensor")
-    return np.array(
-        [
-            [values["ixx"], values["ixy"], values["ixz"]],
-            [values["ixy"], values["iyy"], values["iyz"]],
-            [values["ixz"], values["iyz"], values["izz"]],
-        ]
+    return cast(
+        np.ndarray,
+        np.array(
+            [
+                [values["ixx"], values["ixy"], values["ixz"]],
+                [values["ixy"], values["iyy"], values["iyz"]],
+                [values["ixz"], values["iyz"], values["izz"]],
+            ],
+            dtype=float,
+        ),
     )
 
 

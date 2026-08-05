@@ -12,12 +12,12 @@ closure-rate calculator into a full swing → impact → ball-flight simulation
 platform under **Repository_Management#1390** (this handoff rollout) and a
 stack of golf-simulation epics:
 
-| Epic | Status (one line) |
-| --- | --- |
-| #4103 — Swing–Impact–Ball-Flight Simulation Platform | Phases 0-6 implemented on branch `feat/impact-simulation-platform`, consolidated into PR **#4119** (open, auto-merge armed, awaiting review). Phase 7 (WASM web parity swap, Pages CI) still open. |
-| #4120 — Investigation & Variation Suite (plotting/viewers/Monte Carlo/help) | V1-V4 implemented, stacked on #4119, consolidated into PR **#4124** (open, draft-for-review, no auto-merge yet — targets `feat/investigation-suite`, itself stacked on #4119). |
+| Epic                                                                          | Status (one line)                                                                                                                                                                                                   |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #4103 — Swing–Impact–Ball-Flight Simulation Platform                          | Phases 0-6 implemented on branch `feat/impact-simulation-platform`, consolidated into PR **#4119** (open, auto-merge armed, awaiting review). Phase 7 (WASM web parity swap, Pages CI) still open.                  |
+| #4120 — Investigation & Variation Suite (plotting/viewers/Monte Carlo/help)   | V1-V4 implemented, stacked on #4119, consolidated into PR **#4124** (open, draft-for-review, no auto-merge yet — targets `feat/investigation-suite`, itself stacked on #4119).                                      |
 | #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
-| #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model) | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands. |
+| #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model)     | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands.                                                                                                    |
 
 The separate shared Club Builder epic #4146 is active. Its first dependency
 slice, #4147, lives on `feat/4147-club-builder-core` and establishes the

@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping, Sequence
 from numbers import Real
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -124,7 +124,7 @@ def _numeric_array(value: object, name: str) -> np.ndarray:
     ):
         raise TypeError(f"{name} must be a numeric sequence")
     try:
-        return np.array(value, dtype=float, copy=True)
+        return cast(np.ndarray, np.array(value, dtype=float, copy=True))
     except (TypeError, ValueError) as error:
         raise TypeError(f"{name} must contain real numbers") from error
 

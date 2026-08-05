@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.5                                      |
-| **Spec Version**        | 1.5.5                                      |
+| **Current Version**     | 1.5.6                                      |
+| **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,14 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-05 Golf Club assembly type-checking compatibility
+
+- Shared golf-club assembly validation returns explicitly typed NumPy arrays
+  from the numeric-sequence and inertia-tensor adaptation seams, preserving the
+  new assembly physics contracts while satisfying the changed-file mypy gate.
+  Serialization facade methods keep typed local return values so narrow mypy
+  runs agree with full-repository type information.
 
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
