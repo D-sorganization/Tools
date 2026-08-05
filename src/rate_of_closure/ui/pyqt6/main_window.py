@@ -47,6 +47,7 @@ from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
 from rate_of_closure.ui.pyqt6.flight_explorer_tab import FlightExplorerTab
 from rate_of_closure.ui.pyqt6.glossary_tab import GlossaryTab
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
+from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
 from rate_of_closure.ui.pyqt6.result_row import (
     explanation_html,
@@ -124,6 +125,7 @@ _TAB_HELP_KEYS: tuple[str, ...] = (
     "simulation",
     "flight_explorer",
     "variation",
+    "putting",
     "glossary",
 )
 
@@ -156,6 +158,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._variation_tab = VariationTab()
+        self._putting_tab = PuttingTab()
         self._glossary_tab = GlossaryTab()
 
         left_content = QWidget()
@@ -182,6 +185,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         tabs.addTab(self._simulation_tab, "Simulation")
         tabs.addTab(self._flight_explorer_tab, "Flight Explorer")
         tabs.addTab(self._variation_tab, "Variation")
+        tabs.addTab(self._putting_tab, "Putting")
         tabs.addTab(self._glossary_tab, "Glossary")
         self._tabs = tabs
         # Per-tab help (#4120 V4): the '?' corner button opens detailed
@@ -210,6 +214,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._simulation_tab.glossaryRequested.connect(self.open_glossary)
         self._simulation_tab.configChanged.connect(self._derivation_view.set_config)
         self._flight_explorer_tab.glossaryRequested.connect(self.open_glossary)
+        self._putting_tab.glossaryRequested.connect(self.open_glossary)
         # Theming is applied by the shared launcher (setup_themed_app),
         # which also owns the single Theme menu — calling
         # setup_theme_support() here as well would add a duplicate.

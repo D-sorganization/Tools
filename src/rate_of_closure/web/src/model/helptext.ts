@@ -120,6 +120,27 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
         "further analysis.",
     ],
   },
+  Putting: {
+    title: "How to Use This Page",
+    paragraphs: [
+      "A putting laboratory on a uniform sloped green. Pick a putter " +
+        "(the club-library putter by default), set the stroke pace — " +
+        "clubhead speed directly, or a backstroke length through the " +
+        "pendulum proxy v = A·sqrt(g/L) — then dial in the green: " +
+        "stimp (6 slow to 14 tournament fast), slope grade in percent, " +
+        "and the downhill direction relative to the putt line (+90° " +
+        "puts the low side on your left). Set the distance to the " +
+        "hole and everything recomputes live.",
+      "Read the result rows — roll-out, skid distance and share, time, " +
+        "break, speed at the hole, and holed/miss margin — and click " +
+        "any row for its plain-language explanation with glossary " +
+        "links. The top-down green view colour-codes the skid phase " +
+        "and the pure-roll phase along the path and marks the hole " +
+        "and the downhill direction; the speed-vs-distance plot " +
+        "shows the capture-speed bound the ball must be under when " +
+        "it crosses the hole to drop.",
+    ],
+  },
   Glossary: {
     title: "How to Use This Page",
     paragraphs: [

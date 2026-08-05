@@ -1,10 +1,11 @@
 {
-  "schema": "rate_of_closure.glossary_fixture/1",
   "keys": [
     "apex",
     "attack_angle",
     "ball_speed",
+    "break",
     "bulge",
+    "capture_speed",
     "carry",
     "ccv",
     "cg_depth",
@@ -44,11 +45,13 @@
     "one_at_a_time_sensitivity",
     "pitch",
     "plane_inclination",
+    "pure_roll",
     "r_isa",
     "roll",
     "screw_axis",
     "seed",
     "sensitivity_analysis",
+    "skid",
     "smash_factor",
     "spearman",
     "spin_axis_tilt",
@@ -56,6 +59,7 @@
     "spin_loft",
     "spin_rate",
     "spv",
+    "stimp",
     "time_to_square",
     "triangular_distribution",
     "triple_pendulum",
@@ -87,6 +91,13 @@
     "maxHeightM": "apex",
     "flightTimeS": "flight_time",
     "landingAngleDeg": "landing_angle",
-    "lateralM": "lateral_offset"
+    "lateralM": "lateral_offset",
+    "puttRolloutM": "stimp",
+    "puttSkidM": "skid",
+    "puttSkidPct": "skid",
+    "puttTimeS": "pure_roll",
+    "puttBreakM": "break",
+    "puttSpeedAtHoleMps": "capture_speed",
+    "puttMargin": "capture_speed"
   }
 }

@@ -16,6 +16,12 @@ from rate_of_closure.plotting.catalog import (
     extract,
     variables_by_category,
 )
+from rate_of_closure.plotting.putting_catalog import (
+    PUTTING_CATALOG,
+    PuttingVariableSpec,
+    extract_putting,
+    putting_catalog_keys,
+)
 from rate_of_closure.plotting.render import (
     PlotData,
     compute_plot_data,
@@ -36,13 +42,17 @@ __all__ = [
     "CATALOG",
     "CATEGORIES",
     "PLOT_KINDS",
+    "PUTTING_CATALOG",
     "PlotData",
     "PlotSpec",
+    "PuttingVariableSpec",
     "VariableSpec",
     "builtin_spec",
     "catalog_keys",
     "compute_plot_data",
     "extract",
+    "extract_putting",
+    "putting_catalog_keys",
     "plot_data_rows",
     "render_plot",
     "spec_from_json",
