@@ -168,6 +168,29 @@ describe("impact + launch parity (Python impact/models.py pins)", () => {
 });
 
 describe("session orchestration", () => {
+  it("uses configured ball elevation for alignment, flight, and contact classification", () => {
+    const teeHeightM = 0.0381;
+    const inspection = runSimulation({
+      ...MANUAL_INPUT,
+      ballSetup: { supportMode: "tee", teeHeightM },
+    });
+    expect(inspection.ballPositionM[1]).toBeCloseTo(BALL_POSITION[1] + teeHeightM, 12);
+    expect(inspection.flight[0].position[1]).toBeCloseTo(inspection.ballPositionM[1], 12);
+    const impactSample = inspection.swing.find(
+      (sample) => sample.t === inspection.impactTimeS,
+    );
+    expect(impactSample?.position[1]).toBeCloseTo(inspection.ballPositionM[1], 12);
+
+    const fixed = runSimulation({
+      ...MANUAL_INPUT,
+      contactMode: "fixed_ball_contact",
+      ballSetup: { supportMode: "tee", teeHeightM },
+    });
+    expect(fixed.impactOutcome.status).toBe("miss");
+    expect(fixed.launch).toBeNull();
+    expect(fixed.flight).toEqual([]);
+  });
+
   it("propagates selected club properties into launch results", () => {
     const offCenter = { ...MANUAL_INPUT, impactOffsetToeMm: 20 };
     const light = runSimulation({

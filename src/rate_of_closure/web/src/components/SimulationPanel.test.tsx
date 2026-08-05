@@ -18,7 +18,10 @@ beforeAll(() => {
   );
 });
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  if (typeof window.localStorage.clear === "function") window.localStorage.clear();
+});
 
 function renderPanel(clubSpec?: ClubSpec | null) {
   return render(
@@ -49,6 +52,63 @@ function displayedLaunchAngle(): number {
 }
 
 describe("SimulationPanel impact club", () => {
+  it("applies club defaults, preserves explicit overrides, and can restore the default", () => {
+    const driver = getClub("Driver 10.5°");
+    const view = renderPanel(driver);
+    expect(screen.getByRole("radio", { name: "Tee" })).toBeChecked();
+    expect(screen.getByRole("textbox", { name: "Tee Height" })).toHaveValue("38.1");
+
+    fireEvent.click(screen.getByRole("radio", { name: "Ground" }));
+    expect(screen.getByRole("textbox", { name: "Tee Height" })).toBeDisabled();
+    expect(screen.getByText(/Ground mode.*effective tee height is 0 mm/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("radio", { name: "Tee" }));
+    expect(screen.getByRole("textbox", { name: "Tee Height" })).toHaveValue("38.1");
+
+    view.rerender(
+      <SimulationPanel
+        scenario={{ ...DEFAULT_SCENARIO, impactOffsetToeMm: 20 }}
+        loftDeg={34}
+        clubSpec={getClub("7-Iron")}
+        onScenarioChange={() => undefined}
+        target={DEFAULT_TARGET}
+        onTargetChange={() => undefined}
+      />,
+    );
+    expect(screen.getByRole("radio", { name: "Tee" })).toBeChecked();
+    expect(screen.getByText(/Explicit Override/i)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Use Club Default" }));
+    expect(screen.getByText(/Club Default/i)).toBeInTheDocument();
+    expect(screen.getByRole("radio", { name: "Ground" })).toBeChecked();
+  });
+
+  it("uses whole-field decimal editing and shows actionable negative validation", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    const field = screen.getByRole("textbox", { name: "Tee Height" });
+    fireEvent.focus(field);
+    expect((field as HTMLInputElement).selectionStart).toBe(0);
+    expect((field as HTMLInputElement).selectionEnd).toBe("38.1".length);
+    fireEvent.change(field, { target: { value: "-2" } });
+    fireEvent.blur(field);
+    expect(screen.getByRole("alert")).toHaveTextContent(/Tee height.*finite.*non-negative/i);
+    expect(screen.getByRole("textbox", { name: "Tee Height" })).toHaveValue("38.1");
+  });
+
+  it("defaults non-drivers to Ground and imports old exports as Ground", async () => {
+    renderPanel(getClub("7-Iron"));
+    expect(screen.getByRole("radio", { name: "Ground" })).toBeChecked();
+    const file = new File([
+      JSON.stringify({
+        format: "rate_of_closure.simulation_run.web/2",
+        parameters: { sourceKind: "manual" },
+      }),
+    ], "old-run.json", { type: "application/json" });
+    fireEvent.change(screen.getByLabelText("Import Simulation JSON"), {
+      target: { files: [file] },
+    });
+    await screen.findByText(/Imported Ground ball setup/i);
+    expect(screen.getByRole("radio", { name: "Ground" })).toBeChecked();
+  });
+
   it("announces when impact physics falls back to the default driver", () => {
     renderPanel(null);
     expect(

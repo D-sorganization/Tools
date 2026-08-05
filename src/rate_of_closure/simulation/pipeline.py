@@ -17,11 +17,7 @@ from rate_of_closure.simulation.contact import (
     forced_alignment_outcome,
 )
 from rate_of_closure.simulation.delivery import delivery_at
-from rate_of_closure.simulation.records import (
-    BALL_POSITION_M,
-    SimulationConfig,
-    SimulationRun,
-)
+from rate_of_closure.simulation.records import SimulationConfig, SimulationRun
 from rate_of_closure.simulation.sources import MANUAL_SWING_DURATION_S
 from shared.python.swing_sim.flight import (
     derive_launch_conditions,
@@ -182,26 +178,27 @@ def _select_contact(
     config: SimulationConfig, source: SwingSource, swing: _SwingSeries
 ) -> tuple[ImpactOutcome, float | None, _SwingSeries]:
     """Choose forced inspection alignment or sampled fixed-ball contact."""
+    ball_position_m = config.ball_position_m
     if config.contact_mode is ContactMode.FIXED_BALL_CONTACT:
         outcome = assess_fixed_contact(
-            swing.times, swing.positions, BALL_POSITION_M, GOLF_BALL_RADIUS_M
+            swing.times, swing.positions, ball_position_m, GOLF_BALL_RADIUS_M
         )
         impact_time_s = outcome.candidate_time_s if outcome.is_hit else None
         return outcome, impact_time_s, swing
     impact_time_s = _inspection_time(config, source, swing)
-    offset = BALL_POSITION_M - source.sample(impact_time_s).pose[:3, 3]
+    offset = ball_position_m - source.sample(impact_time_s).pose[:3, 3]
     ensure(
         bool(
             np.allclose(
                 source.sample(impact_time_s).pose[:3, 3] + offset,
-                BALL_POSITION_M,
+                ball_position_m,
                 atol=1e-9,
             )
         ),
         "clubhead at tau must coincide with the ball position",
     )
     outcome = forced_alignment_outcome(
-        impact_time_s, BALL_POSITION_M, GOLF_BALL_RADIUS_M
+        impact_time_s, ball_position_m, GOLF_BALL_RADIUS_M
     )
     return outcome, impact_time_s, swing.translated(offset)
 
@@ -236,7 +233,7 @@ def _solve_hit(
         record=False,
     )
     flight = _simulate_flight(post, config.flight_model)
-    times, positions, velocities = _flight_arrays(flight)
+    times, positions, velocities = _flight_arrays(flight, config.ball_position_m)
     return _ImpactProducts(
         delivery,
         post,
@@ -265,13 +262,15 @@ def _simulate_flight(post: PostImpactState, model_name: str):  # type: ignore[no
     return flight_simulate(launch, model_name=model_name)
 
 
-def _flight_arrays(flight: object) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+def _flight_arrays(
+    flight: object, ball_position_m: np.ndarray
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
     """Convert flight-model output to app-frame arrays."""
     trajectory = flight.trajectory  # type: ignore[attr-defined]
     times = np.array([point.time for point in trajectory])
     if not trajectory:
         return times, np.zeros((0, 3)), np.zeros((0, 3))
-    positions = from_flight_frame(flight.to_position_array()) + BALL_POSITION_M  # type: ignore[attr-defined]
+    positions = from_flight_frame(flight.to_position_array()) + ball_position_m  # type: ignore[attr-defined]
     velocities = from_flight_frame(np.array([point.velocity for point in trajectory]))
     return times, positions, velocities
 

@@ -8,9 +8,14 @@ from dataclasses import dataclass, field
 import numpy as np
 
 from rate_of_closure._contracts import require
-from rate_of_closure.club import ClubSpec
+from rate_of_closure.club import ClubSpec, ClubType
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation.contact import ContactMode, ImpactOutcome
+from shared.python.swing_sim.ball_setup import (
+    DEFAULT_DRIVER_TEE_HEIGHT_M,
+    BallSetup,
+    BallSupportMode,
+)
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.impact import (
     GOLF_BALL_RADIUS_M,
@@ -28,6 +33,9 @@ from shared.python.swing_sim.types import PlaneOrientation
 __all__ = ["BALL_POSITION_M", "SimulationConfig", "SimulationRun"]
 
 BALL_POSITION_M = np.array([0.0, GOLF_BALL_RADIUS_M, 0.0])
+"""Legacy ground-ball position; canonical simulations use ``ball_setup``."""
+
+_AUTO_BALL_SETUP = BallSetup()
 
 
 @dataclass(frozen=True)
@@ -41,6 +49,7 @@ class SimulationConfig:
 
     scenario: ImpactScenario
     club: ClubSpec
+    ball_setup: BallSetup = _AUTO_BALL_SETUP
     source_kind: str = "manual"
     plane: PlaneOrientation = field(default_factory=PlaneOrientation)
     impact_time_s: float | None = None
@@ -60,6 +69,17 @@ class SimulationConfig:
             self.scenario,
         )
         require(isinstance(self.club, ClubSpec), "club must be a ClubSpec", self.club)
+        resolved_setup = (
+            _default_ball_setup(self.club)
+            if self.ball_setup is _AUTO_BALL_SETUP
+            else self.ball_setup
+        )
+        require(
+            isinstance(resolved_setup, BallSetup),
+            "ball_setup must be a BallSetup",
+            resolved_setup,
+        )
+        object.__setattr__(self, "ball_setup", resolved_setup)
         object.__setattr__(self, "contact_mode", _contact_mode(self.contact_mode))
         require(
             isinstance(self.swing_run_config, DoublePendulumRunConfig),
@@ -95,6 +115,18 @@ class SimulationConfig:
             "swing_duration_s must be finite and > 0",
             self.swing_duration_s,
         )
+
+    @property
+    def ball_position_m(self) -> np.ndarray:
+        """Return a new ball-center vector for geometry calculations."""
+        return np.asarray(self.ball_setup.ball_center_m, dtype=float)
+
+
+def _default_ball_setup(club: ClubSpec) -> BallSetup:
+    """Return the representative setup for a newly selected club."""
+    if club.club_type is ClubType.DRIVER:
+        return BallSetup(BallSupportMode.TEE, DEFAULT_DRIVER_TEE_HEIGHT_M)
+    return BallSetup(BallSupportMode.GROUND, 0.0)
 
 
 @dataclass(frozen=True)

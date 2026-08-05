@@ -49,7 +49,7 @@ const triangularDraw = (rng: () => number): number => {
 
 export const resolvedBase = (plan: VariationPlanTs): Record<string, number> => {
   const base: Record<string, number> = {};
-  for (const key of keysForMode(plan.mode)) {
+  for (const key of keysForMode(plan.mode, plan.ballSetup)) {
     base[key] = variableDef(key)!.default;
   }
   return { ...base, ...plan.baseVariables };

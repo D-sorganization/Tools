@@ -6,8 +6,11 @@
  * and club categories are desktop-only until the P7 WASM kernels land).
  */
 
+import type { BallSetup } from "./ballSetup";
+
 export const CATEGORY_DELIVERY = "swing_sim.impact.delivery";
 export const CATEGORY_LAUNCH = "swing_sim.flight.launch";
+export const TEE_HEIGHT_VARIATION_KEY = "swing_sim.ball_setup.tee_height_m";
 
 export type VariationMode = "delivery" | "launch";
 
@@ -18,10 +21,20 @@ export interface VariableDefTs {
   default: number;
   typicalScale: number;
   guidance: string;
+  applicability?: "tee_only";
 }
 
 /** Mirror of the Python registry (delivery + launch categories). */
 export const VARIABLE_REGISTRY: VariableDefTs[] = [
+  {
+    key: TEE_HEIGHT_VARIATION_KEY,
+    label: "Tee Height",
+    unit: "m",
+    default: 0.0381,
+    typicalScale: 0.003,
+    guidance: "Ground-plane clearance to the bottom of the ball; Tee mode only.",
+    applicability: "tee_only",
+  },
   {
     key: `${CATEGORY_DELIVERY}.clubhead_speed_mps`,
     label: "Clubhead Speed",
@@ -123,11 +136,15 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
 
 const REGISTRY_BY_KEY = new Map(VARIABLE_REGISTRY.map((d) => [d.key, d]));
 
-export function keysForMode(mode: VariationMode): string[] {
+export function keysForMode(mode: VariationMode, ballSetup?: BallSetup): string[] {
   const category = mode === "launch" ? CATEGORY_LAUNCH : CATEGORY_DELIVERY;
-  return VARIABLE_REGISTRY.filter((d) => d.key.startsWith(category)).map(
+  const keys = VARIABLE_REGISTRY.filter((d) => d.key.startsWith(category)).map(
     (d) => d.key,
   );
+  if (mode === "delivery" && ballSetup?.supportMode === "tee") {
+    keys.push(TEE_HEIGHT_VARIATION_KEY);
+  }
+  return keys;
 }
 
 export const variableLabel = (key: string): string =>

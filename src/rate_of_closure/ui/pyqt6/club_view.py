@@ -11,7 +11,6 @@ import logging
 from typing import cast
 
 import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from PyQt6.QtCore import Qt, QTimer
@@ -32,6 +31,9 @@ from rate_of_closure.club.volumetrics import is_watertight, mesh_volume_centroid
 from rate_of_closure.mesh import HeadMesh, load_head_mesh
 from rate_of_closure.model import ImpactScenario, solve
 from rate_of_closure.ui.pyqt6.engineering_markers import draw_cg_marker
+from rate_of_closure.ui.pyqt6.figure_canvas import (
+    LifecycleSafeFigureCanvas as FigureCanvas,
+)
 from rate_of_closure.units import FIELD_GUIDANCE
 
 logger = logging.getLogger(__name__)

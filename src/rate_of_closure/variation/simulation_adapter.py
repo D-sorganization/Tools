@@ -12,12 +12,18 @@ import logging
 import math
 import time
 from collections.abc import Callable, Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from types import MappingProxyType
 
 import numpy as np
 
-from rate_of_closure.simulation import SimulationConfig, SimulationRun, run_simulation
+from rate_of_closure.simulation import (
+    BallSetup,
+    BallSupportMode,
+    SimulationConfig,
+    SimulationRun,
+    run_simulation,
+)
 from rate_of_closure.simulation.pipeline import configured_swing_sample_times
 from rate_of_closure.variation.simulation_types import (
     ALL_OUTPUT_NAMES,
@@ -36,8 +42,12 @@ from rate_of_closure.variation.simulation_types import (
 from shared.python.contracts import ContractViolationError, require
 from shared.python.swing_sim.variation.engine import VariationDataset
 from shared.python.swing_sim.variation.ensemble_types import EnsemblePositionTraces
+from shared.python.swing_sim.variation.registry import CATEGORY_BALL_SETUP
+from shared.python.swing_sim.variation.spec import VariationPlan
 
 logger = logging.getLogger(__name__)
+
+TEE_HEIGHT_VARIABLE_KEY = f"{CATEGORY_BALL_SETUP}.tee_height_m"
 
 _TRIAL_FAILURES = (
     ValueError,
@@ -74,6 +84,38 @@ class _TrialCapture:
 
 
 SimulationExecutor = Callable[[SimulationConfig], SimulationRun]
+
+
+def apply_ball_setup_sample(
+    config: SimulationConfig,
+    plan: VariationPlan,
+    sampled_row: np.ndarray,
+) -> SimulationConfig:
+    """Apply the context-specific tee-height value from one sampled row.
+
+    Other sampled variables are intentionally left to their owning adapters.
+    This narrow seam prevents the scalar variation evaluator from pretending a
+    tee-height perturbation affects its geometry-free impact calculation.
+    """
+    require(isinstance(config, SimulationConfig), "config must be SimulationConfig")
+    require(isinstance(plan, VariationPlan), "plan must be a VariationPlan")
+    row = np.asarray(sampled_row, dtype=float)
+    require(
+        row.shape == (len(plan.noise),),
+        "sampled_row must align with plan.noise",
+        row.shape,
+    )
+    require(bool(np.all(np.isfinite(row))), "sampled_row must be finite")
+    keys = tuple(spec.variable_key for spec in plan.noise)
+    if TEE_HEIGHT_VARIABLE_KEY not in keys:
+        return config
+    require(
+        config.ball_setup.support_mode is BallSupportMode.TEE,
+        "tee_height_m variation requires Tee support",
+        config.ball_setup.support_mode,
+    )
+    height_m = float(row[keys.index(TEE_HEIGHT_VARIABLE_KEY)])
+    return replace(config, ball_setup=BallSetup(BallSupportMode.TEE, height_m))
 
 
 def spatial_point_ids(run: SimulationRun) -> tuple[str, ...]:
@@ -308,6 +350,8 @@ __all__ = [
     "SimulationEnsembleResult",
     "SimulationTrialOutcome",
     "TrialEvaluationStatus",
+    "TEE_HEIGHT_VARIABLE_KEY",
+    "apply_ball_setup_sample",
     "run_simulation_ensemble",
     "spatial_point_ids",
 ]

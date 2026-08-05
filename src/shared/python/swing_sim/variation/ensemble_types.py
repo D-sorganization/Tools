@@ -24,7 +24,7 @@ def immutable_array(value: np.ndarray, dtype: Any) -> np.ndarray:
     return result
 
 
-def _require_frame_id(coordinate_frame: str) -> None:
+def require_coordinate_frame_id(coordinate_frame: str) -> None:
     """Require an unambiguous stable coordinate-frame identifier."""
     require(
         isinstance(coordinate_frame, str)
@@ -35,16 +35,34 @@ def _require_frame_id(coordinate_frame: str) -> None:
     )
 
 
-def _require_point_ids(point_ids: tuple[str, ...]) -> None:
+def require_point_ids(point_ids: tuple[str, ...]) -> None:
     """Require a non-empty ordered set of stable modeled-point IDs."""
     require(len(point_ids) > 0, "point_ids must be non-empty", point_ids)
     valid_ids = all(
-        isinstance(point_id, str) and point_id.strip() for point_id in point_ids
+        isinstance(point_id, str) and bool(point_id) and point_id == point_id.strip()
+        for point_id in point_ids
     )
-    require(valid_ids, "point_ids must contain non-empty strings", point_ids)
+    require(valid_ids, "point_ids must contain non-empty, trimmed strings", point_ids)
     require(
         len(set(point_ids)) == len(point_ids), "point_ids must be unique", point_ids
     )
+
+
+def validated_sample_times(sample_times_s: np.ndarray) -> np.ndarray:
+    """Validate and return a finite, strictly increasing 1-D sample grid."""
+    times = np.asarray(sample_times_s, dtype=float)
+    require(
+        times.ndim == 1 and times.size > 0,
+        "sample times must be 1-D and non-empty",
+        times.shape,
+    )
+    require(np.all(np.isfinite(times)), "sample times must be finite", times)
+    require(
+        np.all(np.diff(times) > 0.0),
+        "sample times must be strictly increasing",
+        times,
+    )
+    return times
 
 
 @dataclass(frozen=True)
@@ -71,20 +89,8 @@ def _trace_arrays(trace: EnsemblePositionTraces) -> _TraceArrays:
 
 def _validate_trace_grid(arrays: _TraceArrays) -> None:
     """Validate the shared sample coordinate and stable point identifiers."""
-    require(
-        arrays.times.ndim == 1 and arrays.times.size > 0,
-        "sample_times_s must be 1-D and non-empty",
-        arrays.times.shape,
-    )
-    require(
-        np.all(np.isfinite(arrays.times)), "sample_times_s must be finite", arrays.times
-    )
-    require(
-        np.all(np.diff(arrays.times) > 0.0),
-        "sample_times_s must be strictly increasing",
-        arrays.times,
-    )
-    _require_point_ids(arrays.point_ids)
+    validated_sample_times(arrays.times)
+    require_point_ids(arrays.point_ids)
 
 
 def _validate_trace_shapes(arrays: _TraceArrays, n_trials: int) -> None:
@@ -171,7 +177,7 @@ class EnsemblePositionTraces:
             "variation must be a VariationDataset",
             type(self.variation).__name__,
         )
-        _require_frame_id(self.coordinate_frame)
+        require_coordinate_frame_id(self.coordinate_frame)
         arrays = _trace_arrays(self)
         _validate_trace_grid(arrays)
         _validate_trace_shapes(arrays, self.variation.plan.n_runs)
@@ -209,20 +215,9 @@ class EnsemblePositionTraces:
 
 def _dispersion_shape(dispersion: PositionDispersion) -> tuple[int, int]:
     """Validate dispersion identifiers and return its sample/point shape."""
-    times = np.asarray(dispersion.sample_times_s, dtype=float)
-    require(
-        times.ndim == 1 and times.size > 0,
-        "sample_times_s must be 1-D and non-empty",
-        times.shape,
-    )
-    require(np.all(np.isfinite(times)), "sample_times_s must be finite", times)
-    require(
-        np.all(np.diff(times) > 0.0),
-        "sample_times_s must be strictly increasing",
-        times,
-    )
-    _require_frame_id(dispersion.coordinate_frame)
-    _require_point_ids(tuple(dispersion.point_ids))
+    times = validated_sample_times(dispersion.sample_times_s)
+    require_coordinate_frame_id(dispersion.coordinate_frame)
+    require_point_ids(tuple(dispersion.point_ids))
     return int(times.size), len(dispersion.point_ids)
 
 
@@ -335,4 +330,7 @@ __all__ = [
     "LowVariabilityInterval",
     "PositionDispersion",
     "immutable_array",
+    "require_coordinate_frame_id",
+    "require_point_ids",
+    "validated_sample_times",
 ]

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import math
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -12,10 +13,12 @@ from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.plotting import extract
 from rate_of_closure.simulation import (
-    BALL_POSITION_M,
+    BallSetup,
+    BallSupportMode,
     ContactMode,
     ImpactStatus,
     SimulationConfig,
+    SimulationRun,
     kinetics_for_run,
     make_source,
     run_simulation,
@@ -41,7 +44,9 @@ def test_delivery_inspection_remains_default_and_forces_alignment() -> None:
     assert run.impact_outcome.geometry_model == "forced_reference_point_alignment"
     assert run.impact_time_s == pytest.approx(tau)
     index = int(np.argmin(np.abs(run.swing_times - tau)))
-    np.testing.assert_allclose(run.swing_positions[index], BALL_POSITION_M, atol=1e-9)
+    np.testing.assert_allclose(
+        run.swing_positions[index], run.config.ball_position_m, atol=1e-9
+    )
     assert run.delivery is not None
     assert run.post_impact is not None
     assert run.launch is not None
@@ -52,6 +57,7 @@ def test_fixed_ball_contact_hit_does_not_translate_swing() -> None:
     config = SimulationConfig(
         scenario=_SCENARIO,
         club=_DRIVER,
+        ball_setup=BallSetup(BallSupportMode.GROUND),
         contact_mode=ContactMode.FIXED_BALL_CONTACT,
     )
     run = run_simulation(config)
@@ -63,19 +69,20 @@ def test_fixed_ball_contact_hit_does_not_translate_swing() -> None:
     assert run.impact_outcome.status is ImpactStatus.HIT
     assert run.impact_time_s == pytest.approx(source.duration / 2.0)
     assert run.impact_outcome.closest_approach_m == pytest.approx(
-        np.linalg.norm(BALL_POSITION_M)
+        np.linalg.norm(config.ball_position_m)
     )
     assert run.impact_outcome.contact_margin_m == pytest.approx(0.0, abs=1e-12)
     np.testing.assert_allclose(run.swing_positions, expected, atol=1e-12)
 
 
 @pytest.fixture()
-def fixed_ball_miss():  # type: ignore[no-untyped-def]
+def fixed_ball_miss() -> SimulationRun:
     """A short pendulum swing stays well away from the fixed ball."""
     return run_simulation(
         SimulationConfig(
             scenario=_SCENARIO,
             club=_DRIVER,
+            ball_setup=BallSetup(BallSupportMode.GROUND),
             source_kind="double_pendulum",
             swing_duration_s=0.05,
             contact_mode=ContactMode.FIXED_BALL_CONTACT,
@@ -84,7 +91,7 @@ def fixed_ball_miss():  # type: ignore[no-untyped-def]
 
 
 def test_fixed_ball_miss_retains_complete_swing_without_impact(
-    fixed_ball_miss,  # type: ignore[no-untyped-def]
+    fixed_ball_miss: SimulationRun,
 ) -> None:
     """No-contact is a typed result, not an exception or fabricated impact."""
     run = fixed_ball_miss
@@ -104,8 +111,8 @@ def test_fixed_ball_miss_retains_complete_swing_without_impact(
 
 
 def test_fixed_ball_miss_exports_honest_json_and_csv(
-    fixed_ball_miss,
-    tmp_path,  # type: ignore[no-untyped-def]
+    fixed_ball_miss: SimulationRun,
+    tmp_path: Path,
 ) -> None:
     """Miss exports retain swing samples and explicitly mark absent phases."""
     run = fixed_ball_miss
@@ -129,7 +136,7 @@ def test_fixed_ball_miss_exports_honest_json_and_csv(
 
 
 def test_fixed_ball_miss_downstream_properties_are_null_safe(
-    fixed_ball_miss,  # type: ignore[no-untyped-def]
+    fixed_ball_miss: SimulationRun,
 ) -> None:
     """Backend consumers use empty series or NaN instead of dereferencing None."""
     run = fixed_ball_miss

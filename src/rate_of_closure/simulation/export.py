@@ -19,6 +19,7 @@ from __future__ import annotations
 import csv
 import json
 import math
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -26,10 +27,12 @@ import numpy as np
 
 from rate_of_closure._contracts import require
 from rate_of_closure.simulation.session import SimulationRun
+from shared.python.swing_sim.ball_setup import BallSetup
 
 __all__ = [
     "CSV_COLUMNS",
     "TORQUE_CSV_COLUMNS",
+    "ball_setup_from_json_dict",
     "run_to_json_dict",
     "series_rows",
     "torque_series_rows",
@@ -55,6 +58,29 @@ CSV_COLUMNS: tuple[str, ...] = (
 )
 
 TORQUE_CSV_COLUMNS: tuple[str, ...] = ("t_s", "joint_id", "applied_torque_nm")
+
+
+def ball_setup_from_json_dict(data: Mapping[str, Any]) -> BallSetup:
+    """Import ball geometry from a run or parameter mapping.
+
+    Run documents written before ball setup was persisted intentionally migrate
+    to Ground/0 so replay retains their original fixed-ball geometry, including
+    for drivers whose *new-run* default is now Tee.
+    """
+    require(isinstance(data, Mapping), "simulation JSON must be a mapping", data)
+    parameters = data.get("parameters", data)
+    require(
+        isinstance(parameters, Mapping),
+        "simulation parameters must be a mapping",
+        parameters,
+    )
+    setup = parameters.get("ball_setup")
+    require(
+        setup is None or isinstance(setup, Mapping),
+        "ball_setup must be a mapping when present",
+        setup,
+    )
+    return BallSetup.from_json_dict(setup)
 
 
 def series_rows(
@@ -162,6 +188,7 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
         "parameters": {
             "source_kind": config.source_kind,
             "club": config.club.name,
+            "ball_setup": config.ball_setup.to_json_dict(),
             "flight_model": config.flight_model,
             "contact_mode": config.contact_mode.value,
             "swing_run_mode": config.swing_run_config.mode.value,

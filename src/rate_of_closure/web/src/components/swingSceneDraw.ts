@@ -12,14 +12,14 @@ import {
   DEFAULT_COURSE_LAYOUT,
   type CourseLayout,
 } from "../model/course";
-import { BALL_POSITION, type SimulationRunTs } from "../model/simulation";
+import { GOLF_BALL_RADIUS_M, type SimulationRunTs } from "../model/simulation";
 import { withAlpha } from "../model/theme";
 
 export interface SwingSceneOptions {
   time: number;
   showBall: boolean;
   showGround: boolean;
-  /** Course furniture (#4125 H7a): green + flag + tee on the ground. */
+  /** Course furniture (#4125 H7a): green and flag. */
   showCourse: boolean;
   /** Opt-in flight display; off keeps the scene at swing scale. */
   showFlight: boolean;
@@ -74,7 +74,7 @@ export function drawSwingScene(
   const py = (y: number) => groundY - y * s;
 
   // Course-styled ground (#4125 H7a): grass fill below the ground line,
-  // with the green band + flag + tee once 'Course Elements' is on. All
+  // with the green band + flag once 'Course Elements' is on. All
   // tones derive from the shared chart palette (model/course.ts).
   const course = courseColors();
   const courseLayout = layout ?? DEFAULT_COURSE_LAYOUT;
@@ -106,14 +106,36 @@ export function drawSwingScene(
       ctx.closePath();
       ctx.fill();
     }
-    // Tee marker at the origin.
-    ctx.fillStyle = course.tee;
-    ctx.fillRect(px(0) - 2, py(0) - 2, 4, 4);
+  }
+  const ballPosition = run.ballPositionM;
+  if (showBall && run.ballSetup.supportMode === "tee") {
+    const ballBottomY = ballPosition[1] - GOLF_BALL_RADIUS_M;
+    const centerX = px(ballPosition[0]);
+    const ground = py(0);
+    const cup = py(ballBottomY) + 2;
+    const gradient = ctx.createLinearGradient(centerX - 3, 0, centerX + 3, 0);
+    gradient.addColorStop(0, "#7f1d1d");
+    gradient.addColorStop(0.5, course.tee);
+    gradient.addColorStop(1, "#7f1d1d");
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(centerX - 2, ground);
+    ctx.lineTo(centerX - 1, cup);
+    ctx.lineTo(centerX + 1, cup);
+    ctx.lineTo(centerX + 2, ground);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = course.tee;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(centerX, cup - 2, 7, 0.15 * Math.PI, 0.85 * Math.PI);
+    ctx.stroke();
+    ctx.lineWidth = 1;
   }
   if (showBall) {
     ctx.fillStyle = "#facc15";
     ctx.beginPath();
-    ctx.arc(px(BALL_POSITION[0]), py(BALL_POSITION[1]), 4, 0, 2 * Math.PI);
+    ctx.arc(px(ballPosition[0]), py(ballPosition[1]), 4, 0, 2 * Math.PI);
     ctx.fill();
   }
 

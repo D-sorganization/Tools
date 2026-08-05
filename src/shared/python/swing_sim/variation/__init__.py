@@ -41,7 +41,14 @@ from .ensemble_geometry import (
     find_low_variability_intervals,
 )
 from .group_spec import PerturbationGroup
+from .propagation import (
+    CommonReferenceTrace,
+    PairedIntervention,
+    PropagationResult,
+    analyze_paired_intervention,
+)
 from .spec import (
+    CATEGORY_BALL_SETUP,
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
     CATEGORY_LAUNCH,
@@ -60,6 +67,7 @@ from .spec import (
 )
 
 __all__ = [
+    "CATEGORY_BALL_SETUP",
     "CATEGORY_CLUB",
     "CATEGORY_DELIVERY",
     "CATEGORY_LAUNCH",
@@ -72,13 +80,16 @@ __all__ = [
     "MODE_CATEGORIES",
     "SWING_DERIVED_KEYS",
     "CancelledError",
+    "CommonReferenceTrace",
     "DispersionEllipse",
     "EnsemblePositionTraces",
     "LowVariabilityCriteria",
     "LowVariabilityInterval",
     "NoiseSpec",
     "OutputStats",
+    "PairedIntervention",
     "ProgressReport",
+    "PropagationResult",
     "PositionDispersion",
     "PerturbationGroup",
     "SensitivityResult",
@@ -86,6 +97,7 @@ __all__ = [
     "VariationDataset",
     "VariationPlan",
     "dispersion_ellipse",
+    "analyze_paired_intervention",
     "compute_position_dispersion",
     "evaluate_run",
     "keys_for_mode",

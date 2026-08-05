@@ -21,7 +21,6 @@ import pytest
 from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation import (
-    BALL_POSITION_M,
     SOURCE_KINDS,
     ManualSwingSource,
     SimulationConfig,
@@ -179,7 +178,9 @@ class TestSession:
             )
             assert run.impact_time_s == pytest.approx(tau)
             index = int(np.argmin(np.abs(run.swing_times - tau)))
-            assert np.allclose(run.swing_positions[index], BALL_POSITION_M, atol=1e-6)
+            assert np.allclose(
+                run.swing_positions[index], run.config.ball_position_m, atol=1e-6
+            )
 
     def test_scrubber_delivery_updates_live(self) -> None:
         source = make_source("double_pendulum", _SCENARIO, duration=0.8)
@@ -188,7 +189,9 @@ class TestSession:
         assert not np.allclose(d1.clubhead_velocity, d2.clubhead_velocity)
 
     def test_flight_starts_at_ball_position(self, manual_run: SimulationRun) -> None:
-        assert np.allclose(manual_run.flight_positions[0], BALL_POSITION_M, atol=1e-9)
+        assert np.allclose(
+            manual_run.flight_positions[0], manual_run.config.ball_position_m, atol=1e-9
+        )
 
     def test_bad_flight_model_rejected(self) -> None:
         with pytest.raises(ValueError, match="not a valid"):

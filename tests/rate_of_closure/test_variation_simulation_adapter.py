@@ -10,6 +10,8 @@ import pytest
 from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation import (
+    BallSetup,
+    BallSupportMode,
     ContactMode,
     SimulationConfig,
     SimulationRun,
@@ -21,11 +23,13 @@ from rate_of_closure.variation.simulation_adapter import (
     EVALUATED_NO_IMPACT,
     NUMERICAL_FAILURE,
     SimulationEnsembleRequest,
+    apply_ball_setup_sample,
     run_simulation_ensemble,
     spatial_point_ids,
 )
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
+    CATEGORY_BALL_SETUP,
     CATEGORY_DELIVERY,
     NoiseSpec,
     VariationPlan,
@@ -35,6 +39,7 @@ from shared.python.swing_sim.variation import (
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
 _FACE = f"{CATEGORY_DELIVERY}.face_angle_deg"
+_TEE_HEIGHT = f"{CATEGORY_BALL_SETUP}.tee_height_m"
 _DRIVER = get_club("Driver 10.5°")
 
 
@@ -236,3 +241,32 @@ def test_request_rejects_sample_shape_that_does_not_match_plan() -> None:
                 _config(ContactMode.FIXED_BALL_CONTACT),
             ),
         )
+
+
+def test_tee_height_sample_updates_only_a_tee_setup() -> None:
+    plan = VariationPlan(
+        mode="delivery",
+        noise=(NoiseSpec(_TEE_HEIGHT, scale=0.002),),
+        n_runs=1,
+    )
+
+    updated = apply_ball_setup_sample(
+        _config(ContactMode.FIXED_BALL_CONTACT), plan, np.array([0.031])
+    )
+
+    assert updated.ball_setup == BallSetup(BallSupportMode.TEE, 0.031)
+
+
+def test_tee_height_sample_rejects_ground_support() -> None:
+    plan = VariationPlan(
+        mode="delivery",
+        noise=(NoiseSpec(_TEE_HEIGHT, scale=0.002),),
+        n_runs=1,
+    )
+    ground = replace(
+        _config(ContactMode.FIXED_BALL_CONTACT),
+        ball_setup=BallSetup(BallSupportMode.GROUND),
+    )
+
+    with pytest.raises(ContractViolationError, match="requires Tee support"):
+        apply_ball_setup_sample(ground, plan, np.array([0.031]))

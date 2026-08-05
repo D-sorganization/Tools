@@ -16,7 +16,7 @@ import {
   validatePlan,
   type VariationPlanTs,
 } from "./variationSchema";
-import type { VariationMode } from "./variationRegistry";
+import { TEE_HEIGHT_VARIATION_KEY, type VariationMode } from "./variationRegistry";
 
 export {
   CATEGORY_DELIVERY,
@@ -172,6 +172,12 @@ export interface VariationDatasetTs {
 /** Execute a plan synchronously through the browser's scalar evaluator. */
 export function runVariation(plan: VariationPlanTs): VariationDatasetTs {
   validatePlan(plan);
+  if (plan.noise.some((spec) => spec.variableKey === TEE_HEIGHT_VARIATION_KEY)) {
+    throw new Error(
+      "Tee Height variation requires the complete Rate simulation ensemble; " +
+      "the scalar browser delivery evaluator has no contact geometry.",
+    );
+  }
   const localized = plan.noise.filter((spec) => !isGlobalSpec(spec)).map(stableSpecId);
   if (localized.length > 0) {
     throw new Error(

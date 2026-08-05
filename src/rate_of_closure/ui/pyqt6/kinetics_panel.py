@@ -18,7 +18,6 @@ from __future__ import annotations
 import logging
 
 import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
@@ -35,6 +34,9 @@ from rate_of_closure.derivation import KINETICS_EXPLANATIONS
 from rate_of_closure.simulation import (
     KineticsSeries,
     SimulationRun,
+)
+from rate_of_closure.ui.pyqt6.figure_canvas import (
+    LifecycleSafeFigureCanvas as FigureCanvas,
 )
 from rate_of_closure.ui.pyqt6.presentation_kinetics import kinetics_for_presentation
 from rate_of_closure.ui.pyqt6.result_row import explanation_html

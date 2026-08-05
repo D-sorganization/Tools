@@ -15,9 +15,17 @@ from rate_of_closure.simulation.records import (
     SimulationConfig,
     SimulationRun,
 )
+from shared.python.swing_sim.ball_setup import (
+    DEFAULT_DRIVER_TEE_HEIGHT_M,
+    BallSetup,
+    BallSupportMode,
+)
 
 __all__ = [
     "BALL_POSITION_M",
+    "DEFAULT_DRIVER_TEE_HEIGHT_M",
+    "BallSetup",
+    "BallSupportMode",
     "ContactMode",
     "ImpactOutcome",
     "SimulationConfig",

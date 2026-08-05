@@ -8,6 +8,7 @@ import pytest
 
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
+    CATEGORY_BALL_SETUP,
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
     CATEGORY_LAUNCH,
@@ -24,6 +25,8 @@ from shared.python.swing_sim.variation import (
 from shared.python.swing_sim.variation.spec import PerturbationGroup
 
 pytestmark = pytest.mark.unit
+
+_TEE_HEIGHT = f"{CATEGORY_BALL_SETUP}.tee_height_m"
 
 
 class TestRegistryContract:
@@ -64,6 +67,16 @@ class TestRegistryContract:
             "spin_rpm",
             "spin_axis_deg",
         )
+
+    def test_tee_height_is_registered_with_tee_only_applicability(self) -> None:
+        definition = variable_registry()[_TEE_HEIGHT]
+
+        assert definition.label == "Tee Height"
+        assert definition.unit == "m"
+        assert definition.applicability == "tee_only"
+        assert _TEE_HEIGHT in keys_for_mode("delivery")
+        assert _TEE_HEIGHT in keys_for_mode("swing")
+        assert _TEE_HEIGHT not in keys_for_mode("launch")
 
     def test_every_entry_has_label_unit_guidance_and_scale(self) -> None:
         for definition in variable_registry().values():

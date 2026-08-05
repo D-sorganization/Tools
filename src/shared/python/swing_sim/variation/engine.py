@@ -1,10 +1,6 @@
 """Seeded, parallel N-run variation executor (epic #4120, V3).
 
-Runs a :class:`~shared.python.swing_sim.variation.spec.VariationPlan`:
-samples every noisy variable per run, pushes each sampled variable set
-through its pipeline slice (:mod:`.pipeline`), and collects a
-:class:`VariationDataset` (inputs matrix, outputs matrix, success flags).
-
+Runs a variation plan through its pipeline and collects a seeded dataset.
 Prior art (surveyed, credited)
 ------------------------------
 - UpstreamDrift ``physics/ball_enhanced_simulator.monte_carlo_simulation``:
@@ -46,6 +42,7 @@ from .pipeline import (
     evaluate_run,
     outputs_for_mode,
 )
+from .registry import variable_registry
 from .spec import NoiseSpec, VariationPlan
 
 logger = logging.getLogger(__name__)
@@ -313,6 +310,19 @@ def run_variation(
         CancelledError: If ``cancel_event`` is (or becomes) set.
     """
     require(n_workers >= 1, "n_workers must be >= 1", n_workers)
+    explicitly_selected = set(plan.base_variables)
+    explicitly_selected.update(spec.variable_key for spec in plan.noise)
+    context_specific = tuple(
+        key
+        for key in explicitly_selected
+        if variable_registry()[key].applicability != "always"
+    )
+    require(
+        not context_specific,
+        "scalar evaluator cannot apply context-specific variables; use the "
+        "canonical simulation adapter",
+        context_specific,
+    )
     localized = tuple(spec.spec_id for spec in plan.noise if not spec.is_global)
     require(
         not localized,

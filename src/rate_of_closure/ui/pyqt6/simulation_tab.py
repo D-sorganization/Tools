@@ -33,6 +33,7 @@ from rate_of_closure.derivation_models import DerivationConfig
 from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
 from rate_of_closure.simulation import (
     SOURCE_KINDS,
+    BallSetup,
     ContactMode,
     SimulationConfig,
     SimulationRun,
@@ -41,6 +42,7 @@ from rate_of_closure.simulation import (
     run_simulation,
 )
 from rate_of_closure.simulation.targets import TargetRegion, layout_for_region
+from rate_of_closure.ui.pyqt6.ball_setup_control import BallSetupControl
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
 from rate_of_closure.ui.pyqt6.kinetics_panel import KineticsPanel
@@ -176,8 +178,14 @@ class SimulationTab(QWidget):
         self._club_combo.addItems(club_names())
         self._club_combo.setCurrentText("Driver 10.5°")
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
-        self._club_combo.currentIndexChanged.connect(self._emit_config)
+        self._club_combo.currentTextChanged.connect(self._on_club_changed)
         form.addRow("Club", self._club_combo)
+
+        club = get_club(self._club_combo.currentText())
+        default_setup = SimulationConfig(scenario=self._scenario, club=club).ball_setup
+        self._ball_setup_control = BallSetupControl(default_setup, club.name)
+        self._ball_setup_control.setupChanged.connect(self._emit_config)
+        form.addRow(self._ball_setup_control)
 
         self._contact_combo = QComboBox()
         self._contact_combo.addItem(
@@ -322,6 +330,13 @@ class SimulationTab(QWidget):
         self._mark_stale()
         self.configChanged.emit(self.derivation_config())
 
+    def _on_club_changed(self, name: str) -> None:
+        """Apply the canonical club default unless the user owns an override."""
+        club = get_club(name)
+        default_setup = SimulationConfig(scenario=self._scenario, club=club).ball_setup
+        self._ball_setup_control.apply_club_default(default_setup, club.name)
+        self._emit_config()
+
     def contact_mode(self) -> ContactMode:
         """The selected contact policy."""
         return self._contact_combo.currentData()
@@ -345,6 +360,7 @@ class SimulationTab(QWidget):
         return SimulationConfig(
             scenario=self._scenario,
             club=get_club(self._club_combo.currentText()),
+            ball_setup=self._ball_setup_control.setup(),
             source_kind=source_kind,
             plane=self.plane(),
             impact_time_s=(
@@ -422,6 +438,15 @@ class SimulationTab(QWidget):
     def last_run(self) -> SimulationRun | None:
         """The most recent successful run, if any."""
         return self._run
+
+    def ball_setup_control(self) -> BallSetupControl:
+        """Return the canonical Ground/Tee editor hosted by this session."""
+        return self._ball_setup_control
+
+    def set_ball_setup(self, setup: BallSetup) -> None:
+        """Load a canonical persisted setup without introducing a UI schema."""
+        self._ball_setup_control.set_setup(setup)
+        self._emit_config()
 
     def view(self) -> SimulationView:
         """The swing-scale 3D scene (playback controls live on it)."""

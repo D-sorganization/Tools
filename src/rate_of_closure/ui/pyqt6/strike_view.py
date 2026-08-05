@@ -20,13 +20,15 @@ import logging
 import math
 
 import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QVBoxLayout, QWidget
 
 from rate_of_closure.club import ClubSpec, face_sagitta, head_cog
 from rate_of_closure.club.head_profiles import mass_scale, profile_for
 from rate_of_closure.simulation import SimulationRun
+from rate_of_closure.ui.pyqt6.figure_canvas import (
+    LifecycleSafeFigureCanvas as FigureCanvas,
+)
 from rate_of_closure.units import FIELD_GUIDANCE
 
 try:  # Theme palette (optional in standalone/vendored use).

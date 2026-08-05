@@ -19,7 +19,6 @@ from __future__ import annotations
 import logging
 import math
 
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from matplotlib.patches import Circle
 from PyQt6.QtCore import pyqtSignal
@@ -38,6 +37,9 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.putting import PUTT_EXPLANATIONS, putter_specs
+from rate_of_closure.ui.pyqt6.figure_canvas import (
+    LifecycleSafeFigureCanvas as FigureCanvas,
+)
 from rate_of_closure.ui.pyqt6.flight_view import distance_axis
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.units import format_distance_m

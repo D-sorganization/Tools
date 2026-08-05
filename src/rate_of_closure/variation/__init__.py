@@ -10,10 +10,12 @@ from .simulation_adapter import (
     IMPACT_OUTPUT_NAMES,
     NUMERICAL_FAILURE,
     SHOT_OUTPUT_NAMES,
+    TEE_HEIGHT_VARIABLE_KEY,
     SimulationEnsembleRequest,
     SimulationEnsembleResult,
     SimulationTrialOutcome,
     TrialEvaluationStatus,
+    apply_ball_setup_sample,
     run_simulation_ensemble,
     spatial_point_ids,
 )
@@ -30,6 +32,8 @@ __all__ = [
     "SimulationEnsembleResult",
     "SimulationTrialOutcome",
     "TrialEvaluationStatus",
+    "TEE_HEIGHT_VARIABLE_KEY",
+    "apply_ball_setup_sample",
     "run_simulation_ensemble",
     "spatial_point_ids",
 ]

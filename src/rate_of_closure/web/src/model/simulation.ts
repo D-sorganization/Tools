@@ -19,8 +19,6 @@
  * the UpstreamDrift flight frame (x forward, y left, z up).
  */
 
-export type Vec3 = [number, number, number];
-
 import {
   deriveLaunch,
   simulateFlight,
@@ -42,6 +40,25 @@ import {
   type ContactMode,
   type ImpactOutcomeTs,
 } from "./contact";
+import {
+  GOLF_BALL_RADIUS_M,
+  ballCenterPosition,
+  resolveBallSetup,
+  type BallSetup,
+} from "./ballSetup";
+import {
+  MPH_PER_MPS,
+  add,
+  fromFlightFrame,
+  norm,
+  scale,
+  solveImpact,
+  sub,
+  toFlightFrame,
+  type DeliveryInput,
+  type ImpactClubProperties,
+  type Vec3,
+} from "./impactPhysics";
 
 export { deriveLaunch, simulateFlight } from "./flight";
 export type { FlightPoint, FlightResult, Launch } from "./flight";
@@ -52,166 +69,10 @@ export {
   simulatePendulum,
 } from "./doublePendulum";
 export type { PendulumParams, PendulumState } from "./doublePendulum";
-
-// --- Constants (vendored, same citations as the Python packages) --------
-export const GRAVITY_M_S2 = 9.80665;
-export const AIR_DENSITY_KG_M3 = 1.225;
-export const GOLF_BALL_MASS_KG = 0.04593;
-export const GOLF_BALL_RADIUS_M = 0.04267 / 2.0;
-export const GOLF_BALL_MOI_KG_M2 =
-  (2.0 / 5.0) * GOLF_BALL_MASS_KG * GOLF_BALL_RADIUS_M ** 2;
-export const DRIVER_COR = 0.83;
-export const DRIVER_MASS_KG = 0.2;
-export const DRIVER_MOI_KG_M2 = 4.5e-4;
-export const MAX_LIFT_COEFFICIENT = 0.155;
-export const MPH_PER_MPS = 1.0 / 0.44704;
-const SPHERE_ROLLING_CAP = 2.0 / 7.0;
-const FRICTION_COEFFICIENT = 0.4;
-
-/** Club properties consumed by the scalar-MOI impact model. */
-export interface ImpactClubProperties {
-  headMassKg: number;
-  moiAboutShaftKgM2: number;
-  /** Optional until the club library carries measured COR values. */
-  coefficientOfRestitution?: number;
-}
-
-type ResolvedImpactClubProperties = Required<ImpactClubProperties>;
-
-/** Legacy driver values used when a direct caller does not provide a club. */
-export const DEFAULT_IMPACT_CLUB: Readonly<ResolvedImpactClubProperties> =
-  Object.freeze({
-    headMassKg: DRIVER_MASS_KG,
-    moiAboutShaftKgM2: DRIVER_MOI_KG_M2,
-    coefficientOfRestitution: DRIVER_COR,
-  });
-
-// --- Small vector helpers ------------------------------------------------
-export const dot = (a: Vec3, b: Vec3): number => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
-export const cross = (a: Vec3, b: Vec3): Vec3 => [
-  a[1] * b[2] - a[2] * b[1],
-  a[2] * b[0] - a[0] * b[2],
-  a[0] * b[1] - a[1] * b[0],
-];
-export const norm = (a: Vec3): number => Math.hypot(a[0], a[1], a[2]);
-export const scale = (a: Vec3, s: number): Vec3 => [a[0] * s, a[1] * s, a[2] * s];
-export const add = (a: Vec3, b: Vec3): Vec3 => [a[0] + b[0], a[1] + b[1], a[2] + b[2]];
-export const sub = (a: Vec3, b: Vec3): Vec3 => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
-
-/** App frame (x target, y up, z right) -> flight frame (x fwd, y left, z up). */
-export const toFlightFrame = (v: Vec3): Vec3 => [v[0], -v[2], v[1]];
-/** Flight frame -> app frame. */
-export const fromFlightFrame = (v: Vec3): Vec3 => [v[0], v[2], -v[1]];
-
-// --- Impact (scalar-MOI path of swing_sim/impact/models.py) --------------
-
-export interface DeliveryInput {
-  clubheadSpeedMps: number;
-  clubPathDeg: number;
-  faceAngleDeg: number;
-  attackAngleDeg: number;
-  dynamicLoftDeg: number;
-  impactOffsetToeMm: number;
-  impactOffsetHighMm: number;
-  club?: ImpactClubProperties;
-}
-
-export interface ImpactOutput {
-  ballVelocity: Vec3; // app frame [m/s]
-  ballAngularVelocity: Vec3; // app frame [rad/s]
-}
-
 const rad = (deg: number): number => (deg * Math.PI) / 180.0;
 const deg = (r: number): number => (r * 180.0) / Math.PI;
-
-function resolveImpactClub(
-  club?: ImpactClubProperties,
-): ResolvedImpactClubProperties {
-  const resolved = {
-    headMassKg: club?.headMassKg ?? DEFAULT_IMPACT_CLUB.headMassKg,
-    moiAboutShaftKgM2:
-      club?.moiAboutShaftKgM2 ?? DEFAULT_IMPACT_CLUB.moiAboutShaftKgM2,
-    coefficientOfRestitution:
-      club?.coefficientOfRestitution ??
-      DEFAULT_IMPACT_CLUB.coefficientOfRestitution,
-  };
-  if (!Number.isFinite(resolved.headMassKg) || resolved.headMassKg <= 0) {
-    throw new RangeError("Club head mass must be a positive finite value.");
-  }
-  if (
-    !Number.isFinite(resolved.moiAboutShaftKgM2) ||
-    resolved.moiAboutShaftKgM2 <= 0
-  ) {
-    throw new RangeError("Club MOI must be a positive finite value.");
-  }
-  if (
-    !Number.isFinite(resolved.coefficientOfRestitution) ||
-    resolved.coefficientOfRestitution < 0 ||
-    resolved.coefficientOfRestitution > 1
-  ) {
-    throw new RangeError("Club coefficient of restitution must be between 0 and 1.");
-  }
-  return resolved;
-}
-
-/**
- * Rigid-body COR impulse solve in the app frame (ball initially at rest).
- * Off-center offsets reduce the effective club mass via the scalar MOI;
- * friction spin uses the 2/7 rolling cap with the t x n axis (bug-fixed
- * sign, matching the Python port). Gear effect: P7 (WASM).
- */
-export function solveImpact(input: DeliveryInput): ImpactOutput {
-  const club = resolveImpactClub(input.club);
-  const path = rad(input.clubPathDeg);
-  const face = rad(input.faceAngleDeg);
-  const aoa = rad(input.attackAngleDeg);
-  const loft = rad(input.dynamicLoftDeg);
-
-  const vHat: Vec3 = [
-    Math.cos(aoa) * Math.cos(path),
-    Math.sin(aoa),
-    Math.cos(aoa) * Math.sin(path),
-  ];
-  const n: Vec3 = [
-    Math.cos(loft) * Math.cos(face),
-    Math.sin(loft),
-    Math.cos(loft) * Math.sin(face),
-  ];
-  const vClub = scale(vHat, input.clubheadSpeedMps);
-
-  const rOffset = Math.hypot(
-    input.impactOffsetToeMm / 1000.0,
-    input.impactOffsetHighMm / 1000.0,
-  );
-  const mClubEff =
-    rOffset > 1e-6
-      ? 1.0 /
-        (1.0 / club.headMassKg +
-          (rOffset * rOffset) / club.moiAboutShaftKgM2)
-      : club.headMassKg;
-
-  const vApproach = dot(vClub, n);
-  const mEff =
-    (GOLF_BALL_MASS_KG * mClubEff) / (GOLF_BALL_MASS_KG + mClubEff);
-  const j = (1.0 + club.coefficientOfRestitution) * mEff * vApproach;
-  const ballVelocity = scale(n, j / GOLF_BALL_MASS_KG);
-
-  // Friction spin (2/7 rolling cap, axis t x n).
-  const vTangent = sub(vClub, scale(n, vApproach));
-  const tangentMag = norm(vTangent);
-  let ballAngularVelocity: Vec3 = [0, 0, 0];
-  if (tangentMag > 1e-6) {
-    const tDir = scale(vTangent, 1.0 / tangentMag);
-    const spinAxis = cross(tDir, n);
-    const jFriction = Math.min(
-      FRICTION_COEFFICIENT * j,
-      GOLF_BALL_MASS_KG * tangentMag * SPHERE_ROLLING_CAP,
-    );
-    const spinMagnitude = jFriction / (GOLF_BALL_MOI_KG_M2 / GOLF_BALL_RADIUS_M);
-    ballAngularVelocity = scale(spinAxis, spinMagnitude);
-  }
-  return { ballVelocity, ballAngularVelocity };
-}
+export * from "./impactPhysics";
+export { GOLF_BALL_RADIUS_M } from "./ballSetup";
 
 // --- Session orchestration ----------------------------------------------
 
@@ -238,6 +99,8 @@ export interface SimulationInput {
   doublePendulumRun?: DoublePendulumRunConfig;
   /** θ1, θ2 [rad], then their relative angular rates [rad/s]. */
   doublePendulumInitialState?: PendulumState;
+  /** Defaults to Ground for backward compatibility with older saved scenarios. */
+  ballSetup?: BallSetup;
 }
 
 export interface SwingSampleTs {
@@ -267,6 +130,8 @@ export interface SimulationRunTs {
   totalDurationS: number;
   launch: SimulationLaunchTs | null;
   flight: FlightPoint[]; // app frame, ball-aligned positions
+  ballSetup: BallSetup;
+  ballPositionM: Vec3;
 }
 
 const clampAngle = (value: number): number => Math.max(-89, Math.min(89, value));
@@ -377,6 +242,8 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
 
 /** Run the full swing -> impact -> flight pipeline (web parity port). */
 export function runSimulation(input: SimulationInput): SimulationRunTs {
+  const ballSetup = resolveBallSetup(input.ballSetup);
+  const ballPositionM = ballCenterPosition(ballSetup);
   const swing = swingSamples(input);
   const torqueRun = summarizeDoublePendulumRun(
     input.doublePendulumRun,
@@ -405,10 +272,10 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   const contactMode = input.contactMode ?? "delivery_inspection";
   const impactOutcome =
     contactMode === "fixed_ball_contact"
-      ? assessFixedContact(swing, BALL_POSITION, GOLF_BALL_RADIUS_M)
+      ? assessFixedContact(swing, ballPositionM, GOLF_BALL_RADIUS_M)
       : deliveryInspectionOutcome(
           impactSample.t,
-          BALL_POSITION,
+          ballPositionM,
           GOLF_BALL_RADIUS_M,
         );
   const candidate = swing.reduce((best, sample) =>
@@ -420,7 +287,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   const aligned =
     contactMode === "fixed_ball_contact"
       ? swing
-      : alignSwingToBall(swing, candidate.position);
+      : alignSwingToBall(swing, candidate.position, ballPositionM);
 
   if (impactOutcome.status === "miss") {
     return {
@@ -432,6 +299,8 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
       totalDurationS: aligned[aligned.length - 1].t,
       launch: null,
       flight: [],
+      ballSetup,
+      ballPositionM,
     };
   }
 
@@ -455,7 +324,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   const flightResult = simulateFlight(launch);
   const flight = flightResult.trajectory.map((point) => ({
     ...point,
-    position: add(fromFlightFrame(point.position), BALL_POSITION),
+    position: add(fromFlightFrame(point.position), ballPositionM),
     velocity: fromFlightFrame(point.velocity),
   }));
 
@@ -477,14 +346,17 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
       landingAngleDeg: flightResult.landingAngleDeg,
     },
     flight,
+    ballSetup,
+    ballPositionM,
   };
 }
 
 function alignSwingToBall(
   swing: readonly SwingSampleTs[],
   candidatePosition: Vec3,
+  ballPositionM: Vec3,
 ): SwingSampleTs[] {
-  const offset = sub(BALL_POSITION, candidatePosition);
+  const offset = sub(ballPositionM, candidatePosition);
   return swing.map((sample) => ({
     ...sample,
     position: add(sample.position, offset),

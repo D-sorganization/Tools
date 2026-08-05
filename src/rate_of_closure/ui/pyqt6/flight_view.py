@@ -17,7 +17,6 @@ from __future__ import annotations
 import logging
 
 import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QVBoxLayout, QWidget
 
@@ -29,6 +28,9 @@ from rate_of_closure.ui.pyqt6.course_scene import (
     draw_course_side,
     draw_course_top,
     draw_target_region_top,
+)
+from rate_of_closure.ui.pyqt6.figure_canvas import (
+    LifecycleSafeFigureCanvas as FigureCanvas,
 )
 from rate_of_closure.units import (
     DISTANCE_UNITS,

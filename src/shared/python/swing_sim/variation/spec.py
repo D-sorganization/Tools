@@ -27,6 +27,7 @@ from shared.python.contracts import require
 
 from .group_spec import PerturbationGroup
 from .registry import (
+    CATEGORY_BALL_SETUP,
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
     CATEGORY_LAUNCH,
@@ -357,6 +358,7 @@ class VariationPlan:
 
 
 __all__ = [
+    "CATEGORY_BALL_SETUP",
     "CATEGORY_CLUB",
     "CATEGORY_DELIVERY",
     "CATEGORY_LAUNCH",

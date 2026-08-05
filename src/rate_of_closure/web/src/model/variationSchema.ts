@@ -1,5 +1,7 @@
 import { validateGroupMatrix } from "./variationGroups";
 import { keysForMode, type VariationMode } from "./variationRegistry";
+import { ballSetupFromJson, ballSetupToJson, type BallSetup } from "./ballSetup";
+import { TEE_HEIGHT_VARIATION_KEY } from "./variationRegistry";
 
 export const SCHEMA_VERSION = 2;
 export const MAX_RUNS = 500;
@@ -38,6 +40,8 @@ export interface VariationPlanTs {
   flightModel: string;
   /** Optional for source compatibility with v1 callers; normalized to [] on import. */
   groups?: PerturbationGroupTs[];
+  /** Physical context required when Tee Height is a varied input. */
+  ballSetup?: BallSetup;
 }
 
 export const stableSpecId = (spec: NoiseSpecTs): string =>
@@ -151,7 +155,13 @@ export function validatePlan(plan: VariationPlanTs): void {
   }
   if (plan.noise.length === 0) throw new Error("plan must vary at least one variable");
 
-  const legal = new Set(keysForMode(plan.mode));
+  const legal = new Set(keysForMode(plan.mode, plan.ballSetup));
+  if (
+    plan.noise.some((spec) => spec.variableKey === TEE_HEIGHT_VARIATION_KEY) &&
+    plan.ballSetup?.supportMode !== "tee"
+  ) {
+    throw new Error("Tee Height cannot vary in Ground mode; select Tee in Simulation first.");
+  }
   const seenVariables = new Set<string>();
   const specsById = new Map<string, NoiseSpecTs>();
   for (const spec of plan.noise) {
@@ -200,6 +210,7 @@ export function planToJson(plan: VariationPlanTs): string {
         matrix_kind: group.matrixKind,
         matrix: group.matrix,
       })),
+      ball_setup: plan.ballSetup === undefined ? undefined : ballSetupToJson(plan.ballSetup),
     },
     null,
     2,
@@ -218,6 +229,7 @@ export function planFromJson(text: string): VariationPlanTs {
     ? []
     : ((data.groups ?? []) as Array<Record<string, unknown>>);
   const baseRaw = (data.base_variables ?? {}) as Record<string, unknown>;
+  const ballRaw = data.ball_setup as Record<string, unknown> | undefined;
   const plan: VariationPlanTs = {
     mode: String(data.mode) as VariationMode,
     baseVariables: Object.fromEntries(
@@ -248,6 +260,9 @@ export function planFromJson(text: string): VariationPlanTs {
         Array.from(row, Number),
       ),
     })),
+    ...(ballRaw === undefined ? {} : {
+      ballSetup: ballSetupFromJson(ballRaw),
+    }),
   };
   validatePlan(plan);
   return plan;

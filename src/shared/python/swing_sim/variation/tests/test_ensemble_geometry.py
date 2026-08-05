@@ -102,6 +102,7 @@ class TestEnsemblePositionTraces:
         [
             ("sample_times_s", np.array([0.0, 0.0, 1.0]), "strictly increasing"),
             ("point_ids", ("swing.pivot", "swing.pivot"), "unique"),
+            ("point_ids", (" swing.pivot", "swing.clubhead"), "trimmed"),
             (
                 "positions_m",
                 np.zeros((3, 3, 2, 2)),

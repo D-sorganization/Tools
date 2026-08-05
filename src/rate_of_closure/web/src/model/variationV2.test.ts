@@ -11,6 +11,8 @@ import {
   type VariationPlanTs,
 } from "./variation";
 import { datasetToJson, oneAtATimeSensitivity } from "./variationAnalysis";
+import { DRIVER_TEE_HEIGHT_M } from "./ballSetup";
+import { TEE_HEIGHT_VARIATION_KEY } from "./variationRegistry";
 
 const BALL = `${CATEGORY_LAUNCH}.ball_speed_mph`;
 const ANGLE = `${CATEGORY_LAUNCH}.launch_angle_deg`;
@@ -81,6 +83,31 @@ const sampleCorrelation = (rows: number[][]): number => {
 };
 
 describe("variation plan schema v2", () => {
+  it("round-trips Tee Height only for an active Tee setup", () => {
+    const teePlan = groupedPlan();
+    teePlan.mode = "delivery";
+    teePlan.ballSetup = { supportMode: "tee", teeHeightM: DRIVER_TEE_HEIGHT_M };
+    teePlan.baseVariables = { [TEE_HEIGHT_VARIATION_KEY]: DRIVER_TEE_HEIGHT_M };
+    teePlan.noise = [{
+      variableKey: TEE_HEIGHT_VARIATION_KEY,
+      distribution: "normal",
+      scale: 0.002,
+      lower: 0,
+      upper: 0.1,
+      specId: TEE_HEIGHT_VARIATION_KEY,
+      timeWindowS: null,
+      pointIds: [],
+    }];
+    teePlan.groups = [];
+    expect(planFromJson(planToJson(teePlan))).toEqual(teePlan);
+    expect(() => runVariation(teePlan)).toThrow(/complete Rate simulation ensemble.*contact geometry/i);
+
+    expect(() => validatePlan({
+      ...teePlan,
+      ballSetup: { supportMode: "ground", teeHeightM: 0 },
+    })).toThrow(/Tee Height.*Ground.*select Tee/i);
+  });
+
   it("migrates v1 defaults while retaining base variables and flight model", () => {
     const migrated = planFromJson(
       JSON.stringify({
