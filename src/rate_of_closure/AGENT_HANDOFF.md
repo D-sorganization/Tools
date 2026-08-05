@@ -75,9 +75,10 @@ with UpstreamDrift via the established shared-module arrow):
   decay), citations in registry metadata.
 - `swing_sim/impact/` — impact model ported from UpstreamDrift (offset-drop
   fix, opt-in 3×3 MOI tensor, inverted friction spin axis fix), gear effect,
-  `SpringDamperImpactModel` (Kelvin-Voigt contact force history, 1e-7s steps)
-  — this is the contact-force law epic #4130 will extend for the full
-  contact-interval integration rather than duplicate.
+  and `SpringDamperImpactModel`; its Kelvin-Voigt law is now the canonical law
+  shared with #4130 rather than a duplicate.
+- `swing_sim/impact_interval/` — #4130 full rigid-club/ball state integration,
+  free/pinned/torsional boundaries, stable query façade, and scientific audit.
 - `swing_sim/solver/` — goal-driven multi-start least-squares solver;
   `targets.py` (added in #4129) adds `TargetRegion` for green/fairway
   optimization goals.
@@ -85,10 +86,9 @@ with UpstreamDrift via the established shared-module arrow):
   `NoiseSpec`/`VariationPlan`, seeded parallel N-run Monte Carlo engine,
   dispersion/OAT sensitivity/Spearman/landing-ellipse stats.
 
-Epic #4130 (Impact-Interval Club Dynamics) will add `impact_interval/` to
-this same package — its home is explicitly `swing_sim` so UpstreamDrift
-reaches it via vendor, per that epic's F2 phase description. Not started yet
-(foundation-only epic, no PR).
+The explorer selects the interval model from Simulation Setup, visualizes its
+sub-microsecond history, exports its audit, and runs seeded interval variation.
+UpstreamDrift reaches it via vendor; the public façade must remain stable.
 
 ## How #4103/#4120/#4125/#4130 Relate to This Tool
 
@@ -96,25 +96,12 @@ All four are rate_of_closure epics specifically (unlike the wider-monorepo
 epics tracked in the root `AGENT_HANDOFF.md`, e.g. SCADA #4085-#4089).
 #4103 is the foundation platform; #4120, #4125 are sequential feature waves
 stacked directly on its PR; #4130 is a physics-depth epic that extends the
-impact model #4103 introduced (contact-interval integration replacing the
-instantaneous-impulse approximation) — foundation phase only so far.
-
-## Web Mirror + GitHub Pages
-
-The web mirror (`src/rate_of_closure/web/`, React/Vite/TS) is pinned
-test-for-test against the PyQt6 model today (TS mirrors hand-written, not yet
-WASM — that swap is explicitly deferred to Phase 7 of #4103). It builds to a
-static bundle (`npm run build`) and carries Tauri scripts for desktop
-packaging, same as other web tools in the repo.
-
-**There is no automated GitHub Pages CI deploy for this tool yet.** No
-`.github/workflows/*.yml` references `rate_of_closure` or Pages deploy
-actions as of this writing. The only Pages-publishing precedent in the repo
-is `src/web_applications/unit_converter/unit-converter-app/DEPLOYMENT.md`'s
-manual branch-folder publish (Settings → Pages → select branch/folder).
-Phase 7 of #4103 ("GitHub Pages mirror updated (public share link), parity
-tests as deploy gates") owns building a real workflow — do not improvise one
-in an unrelated PR.
+impact model #4103 introduced. #4130's Tools-owned F1-F4 reference scope is
+implemented on `feat/impact-interval-dynamics`; the UpstreamDrift 3-D putt
+consumer remains a downstream vendor-update step, and advanced shaft/contact
+laws plus Rust/WASM are explicit future work. The web remains on the fast
+impulse path until the planned single-source WASM swap; do not hand-copy the
+interval solver into TS.
 
 ## Must-Read Architecture Pointers
 
@@ -157,8 +144,8 @@ python3 -m mypy src/rate_of_closure src/shared/python/swing_sim
 ## Roadmap (ordered)
 
 1. Merge #4119, then #4124, then #4129 in order.
-2. Start epic #4130 Phase F1 (formulation document) — six-DOF rigid-club
-   contact-interval derivation, validation program design.
-3. Phase 7 of #4103: WASM swap + real Pages CI deploy workflow.
+2. Review and land the #4130 stacked PR; retain its analytic-limit tests and
+   explicit limitations.
+3. Phase 7 of #4103: Rust/WASM interval parity + real Pages CI deploy workflow.
 4. #4125 H4/H5: AffineDrift putting research content and the public
    release-management repo (both cross-repo, not started).

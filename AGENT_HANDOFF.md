@@ -17,7 +17,7 @@ stack of golf-simulation epics:
 | #4103 — Swing–Impact–Ball-Flight Simulation Platform | Phases 0-6 implemented on branch `feat/impact-simulation-platform`, consolidated into PR **#4119** (open, auto-merge armed, awaiting review). Phase 7 (WASM web parity swap, Pages CI) still open. |
 | #4120 — Investigation & Variation Suite (plotting/viewers/Monte Carlo/help) | V1-V4 implemented, stacked on #4119, consolidated into PR **#4124** (open, draft-for-review, no auto-merge yet — targets `feat/investigation-suite`, itself stacked on #4119). |
 | #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
-| #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model) | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands. |
+| #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model) | Tools-owned F1-F4 reference scope implemented on `feat/impact-interval-dynamics`, stacked on #4129: formulation, six-DOF solver/audits, explorer/viewer, and variation pipeline. The UpstreamDrift 3-D putt consumer follows after its vendor pointer can advance; Rust/WASM and F5 shaft/contact models remain future work. |
 
 See `src/rate_of_closure/AGENT_HANDOFF.md` for the detailed stack breakdown
 and architecture pointers for this tool specifically.
@@ -42,6 +42,7 @@ main
  └─ feat/impact-simulation-platform   (PR #4119, epic #4103, auto-merge armed)
      └─ feat/investigation-suite      (PR #4124, epic #4120, stacked on #4119)
          └─ feat/course-showcase      (PR #4129, epic #4125, stacked on #4124)
+             └─ feat/impact-interval-dynamics (epic #4130, stacked on #4129)
 docs/agent-handoff-1390               (this branch, off origin/main, Repository_Management#1390)
 ```
 
@@ -96,7 +97,8 @@ any PR touching `src/**`, `tests/**`, `config/**`, `pyproject.toml`,
    → cascades onto #4119.
 3. Get #4129 out of draft-for-review and merge into `feat/course-showcase`
    → cascades onto #4124.
-4. Start #4130 Phase F1 (formulation document) once #4125's stack is in.
+4. Review and land #4130 after #4129; preserve its analytic validation limits
+   and explicit Rust/WASM and advanced-contact deferrals.
 5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy for
    `rate_of_closure/web`.
 6. #4125 H5: stand up the public release-management repo (cross-repo, not
