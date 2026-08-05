@@ -21,6 +21,7 @@ import {
   type WebSourceKind,
 } from "../model/simulation";
 import { FIELD_GUIDANCE } from "../model/units";
+import { type ClubSpec } from "../model/club";
 import { type ImpactScenario } from "../model/impact";
 import { FlightCanvases } from "./FlightCanvases";
 import { SolverPanel } from "./SolverPanel";
@@ -53,10 +54,17 @@ const LAUNCH_ROWS: Array<{ key: keyof SimulationRunTs["launch"]; label: string; 
 interface Props {
   scenario: ImpactScenario;
   loftDeg: number;
+  /** Effective club spec from the Club group (H1: CG marker source). */
+  clubSpec?: ClubSpec | null;
   onScenarioChange: (updates: Partial<ImpactScenario>) => void;
 }
 
-export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) {
+export function SimulationPanel({
+  scenario,
+  loftDeg,
+  clubSpec = null,
+  onScenarioChange,
+}: Props) {
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
   const [tilts, setTilts] = useState({ yaw: 0, side: -45, forward: 0 });
   const [tauMs, setTauMs] = useState<number | null>(null);
@@ -342,6 +350,7 @@ export function SimulationPanel({ scenario, loftDeg, onScenarioChange }: Props) 
               loftDeg={loftDeg}
               pathDeg={deliveryAngles?.pathDeg}
               aoaDeg={deliveryAngles?.aoaDeg}
+              clubSpec={clubSpec}
             />
           )}
           {view === "Flight" && (

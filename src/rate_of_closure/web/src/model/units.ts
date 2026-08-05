@@ -145,6 +145,13 @@ export const FIELD_GUIDANCE: Record<string, string> = {
     "projected into the face plane. Source: standard launch-monitor " +
     "D-plane presentation (TrackMan literature; Jorgensen, The Physics " +
     "of Golf).",
+  showCgMarker:
+    "Suggested range: on to mark the head's center of gravity — the " +
+    "geometric centroid of the generated head computed from its closed " +
+    "mesh by the divergence theorem (falls back to the spec CG for " +
+    "loaded STLs that are not watertight). Source: divergence-theorem " +
+    "solid centroid (standard vector calculus); typical published CG " +
+    "specs for the per-type bands.",
   fxBallSpeed:
     "Suggested range: 120-190 mph ball speed (tour driver average near " +
     "167 mph; strong amateurs 140-160). Source: openly published tour " +

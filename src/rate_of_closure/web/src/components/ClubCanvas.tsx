@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { solve, type ImpactScenario } from "../model/impact";
 import { loadHeadMesh, type HeadMesh } from "../model/mesh";
+import { FIELD_GUIDANCE } from "../model/units";
 
 type Vec3 = [number, number, number];
 
@@ -43,6 +44,7 @@ const COLORS = {
   vRef: "#30D158",
   vPoint: "#FF375F",
   impact: "#FFD60A",
+  cog: "#FF9F0A",
 };
 
 // STL-mesh shading constants — identical to the PyQt6 club view.
@@ -139,11 +141,17 @@ function headParts(scenario: ImpactScenario) {
 export function ClubCanvas({
   scenario,
   externalMesh = null,
+  hoselPoint = null,
+  cogPoint = null,
 }: {
   scenario: ImpactScenario;
   /** A generated head (e.g. parametric club head) to render; the STL
    *  loader and the Procedural Head reset keep working alongside it. */
   externalMesh?: HeadMesh | null;
+  /** Generated head's hosel — the shaft line attaches there (H1). */
+  hoselPoint?: Vec3 | null;
+  /** Generated head's divergence-theorem volumetric COG (H1). */
+  cogPoint?: Vec3 | null;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const phaseRef = useRef(0);
@@ -159,6 +167,7 @@ export function ClubCanvas({
   const [mode, setMode] = useState<ViewMode>(VIEW_MODES[1]);
   const [mesh, setMesh] = useState<HeadMesh | null>(null);
   const [meshError, setMeshError] = useState<string | null>(null);
+  const [showCg, setShowCg] = useState(false);
 
   useEffect(() => {
     if (externalMesh) {
@@ -256,6 +265,17 @@ export function ClubCanvas({
         ctx.setLineDash([]);
       }
 
+      // Put the mesh's forward extent (its face plane) at com_to_face
+      // — exactly HEAD_DEPTH_M/2 for a normalized STL; parametric
+      // heads keep their mass-scaled, loft-tilted extent.
+      let shift: Vec3 = [0, 0, 0];
+      if (mesh) {
+        let xMax = -Infinity;
+        for (const tri of mesh.triangles) {
+          for (const v of tri) if (v[0] > xMax) xMax = v[0];
+        }
+        shift = [scenario.comToFaceMm / 1000 - xMax, 0, 0];
+      }
       if (mesh) {
         // Painter's algorithm: camera forward axis from the orbit
         // angles (same basis as project()); triangles sorted by
@@ -265,15 +285,6 @@ export function ClubCanvas({
           Math.sin(pitch),
           Math.cos(pitch) * Math.sin(yaw),
         ];
-        // Put the mesh's forward extent (its face plane) at com_to_face
-        // — exactly HEAD_DEPTH_M/2 for a normalized STL; parametric
-        // heads keep their mass-scaled, loft-tilted extent.
-        const d = scenario.comToFaceMm / 1000;
-        let xMax = -Infinity;
-        for (const tri of mesh.triangles) {
-          for (const v of tri) if (v[0] > xMax) xMax = v[0];
-        }
-        const shift: Vec3 = [d - xMax, 0, 0];
         const shaded = mesh.triangles.map((tri, t) => {
           const placed = tri.map((v) => place(add(v, shift))) as [
             Vec3,
@@ -313,7 +324,42 @@ export function ClubCanvas({
           line([place(p), place(parts.back[i])], COLORS.body, 0.8),
         );
       }
-      line([place(parts.hosel), place(parts.shaftEnd)], COLORS.shaft, 2.5);
+      // Hosel-true shaft (H1): a generated head attaches the shaft
+      // line at its per-type hosel point, along the lie angle.
+      const generated = mesh !== null && mesh === externalMesh;
+      let hosel = parts.hosel;
+      let shaftEnd = parts.shaftEnd;
+      if (generated && hoselPoint) {
+        hosel = add(hoselPoint, shift);
+        const lie = (scenario.lieAngleDeg * Math.PI) / 180;
+        shaftEnd = [
+          hosel[0],
+          hosel[1] + Math.sin(lie) * SHAFT_LEN,
+          hosel[2] - Math.cos(lie) * SHAFT_LEN,
+        ];
+      }
+      line([place(hosel), place(shaftEnd)], COLORS.shaft, 2.5);
+
+      if (showCg) {
+        // Volumetric COG marker (divergence theorem); wireframe and
+        // non-watertight STLs fall back to the reference point, which
+        // is the spec CG location.
+        const cgModel: Vec3 =
+          generated && cogPoint ? add(cogPoint, shift) : [0, 0, 0];
+        const [cx, cy] = project(place(cgModel), w, h, zoom, yaw, pitch);
+        ctx.strokeStyle = COLORS.cog;
+        ctx.lineWidth = 2.5 * dpr;
+        ctx.beginPath();
+        const r = 5 * dpr;
+        ctx.moveTo(cx - r, cy - r);
+        ctx.lineTo(cx + r, cy + r);
+        ctx.moveTo(cx - r, cy + r);
+        ctx.lineTo(cx + r, cy - r);
+        ctx.stroke();
+        ctx.fillStyle = COLORS.cog;
+        ctx.font = `${11 * dpr}px ui-sans-serif, system-ui, sans-serif`;
+        ctx.fillText("CG", cx + 7 * dpr, cy - 7 * dpr);
+      }
 
       const arrow = (origin: Vec3, vec: Vec3, color: string) => {
         const scale = 0.0035;
@@ -375,7 +421,7 @@ export function ClubCanvas({
     const timer = window.setInterval(draw, 40);
     draw();
     return () => window.clearInterval(timer);
-  }, [scenario, playing, speed, mode, mesh]);
+  }, [scenario, playing, speed, mode, mesh, externalMesh, hoselPoint, cogPoint, showCg]);
 
   return (
     <div className="space-y-2">
@@ -439,6 +485,18 @@ export function ClubCanvas({
         >
           Load Clubhead STL…
         </button>
+        <label
+          title={FIELD_GUIDANCE.showCgMarker}
+          className="flex items-center gap-2 text-slate-300"
+        >
+          <input
+            type="checkbox"
+            checked={showCg}
+            onChange={(e) => setShowCg(e.target.checked)}
+            aria-label="Show CG"
+          />
+          Show CG
+        </label>
         <button
           type="button"
           disabled={!mesh}

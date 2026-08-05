@@ -21,7 +21,7 @@ from dataclasses import dataclass, fields
 
 from rate_of_closure._contracts import require, require_finite
 
-__all__ = ["SPEC_BOUNDS", "ClubSpec", "ClubType"]
+__all__ = ["SPEC_BOUNDS", "ClubSpec", "ClubType", "HeadStyle"]
 
 
 class ClubType(enum.Enum):
@@ -33,6 +33,20 @@ class ClubType(enum.Enum):
     IRON = "Iron"
     WEDGE = "Wedge"
     PUTTER = "Putter"
+
+
+class HeadStyle(enum.Enum):
+    """Head-shape refinement within a club type (putters, H1 #4125).
+
+    ``AUTO`` means "the canonical shape for the club type"; putters may
+    pick ``MALLET`` (deep rounded body) or ``BLADE`` (anser-style
+    shallow rectangle with a plumber's-neck hosel — a generic form, no
+    brand geometry).
+    """
+
+    AUTO = "Auto"
+    MALLET = "Mallet"
+    BLADE = "Blade"
 
 
 #: Inclusive physical bounds per numeric spec field: (low, high).
@@ -75,6 +89,9 @@ class ClubSpec:
         face_roll_radius_m: Vertical (crown-sole) face curvature
             radius, meters, or ``None`` for a flat face. Typically
             similar to bulge on drivers.
+        head_style: Head-shape refinement (:class:`HeadStyle`);
+            ``AUTO`` selects the canonical shape for the club type
+            (putters resolve to the blade form).
     """
 
     name: str
@@ -88,8 +105,14 @@ class ClubSpec:
     cg_height_m: float
     face_bulge_radius_m: float | None = None
     face_roll_radius_m: float | None = None
+    head_style: HeadStyle = HeadStyle.AUTO
 
     def __post_init__(self) -> None:
+        require(
+            isinstance(self.head_style, HeadStyle),
+            "head_style must be a HeadStyle",
+            self.head_style,
+        )
         require(
             isinstance(self.name, str) and len(self.name) > 0,
             "name must be a non-empty string",
@@ -101,7 +124,7 @@ class ClubSpec:
             self.club_type,
         )
         for field in fields(self):
-            if field.name in ("name", "club_type"):
+            if field.name in ("name", "club_type", "head_style"):
                 continue
             value = getattr(self, field.name)
             optional = field.name in ("face_bulge_radius_m", "face_roll_radius_m")

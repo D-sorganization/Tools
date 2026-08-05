@@ -91,15 +91,24 @@ class TestStrikeViewScale:
 
     def test_display_checklist_toggles_redraw(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         strike = ran_tab.strike_view()
-        for name in ("curvature", "vectors", "history", "club_info"):
+        for name in ("curvature", "vectors", "history", "club_info", "show_cg"):
             check = strike.display_check(name)
             check.setChecked(not check.isChecked())
             check.setChecked(not check.isChecked())
 
     def test_every_display_control_has_sourced_guidance(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         strike = ran_tab.strike_view()
-        for name in ("curvature", "vectors", "history", "club_info"):
+        for name in ("curvature", "vectors", "history", "club_info", "show_cg"):
             assert "Source:" in strike.display_check(name).toolTip(), name
+
+    def test_show_cg_defaults_off_and_marks_the_volumetric_cog(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        """H1 (#4125): the strike view's CG marker toggles on demand."""
+        strike = ran_tab.strike_view()
+        check = strike.display_check("show_cg")
+        assert not check.isChecked()
+        check.setChecked(True)
+        labels = [text.get_text() for text in strike._axes.get_legend().get_texts()]
+        assert any("volumetric CG" in label for label in labels)
 
 
 class TestSwingViewFlightToggle:
