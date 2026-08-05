@@ -367,6 +367,10 @@ def solve(
     solution = partition.assemble(best.x)
     achieved = achieved_quantities(solution, partition, goal, config)
     per_goal = {name: achieved[name] - term.target for name, term in goal.items()}
+    if goal.target_region is not None:
+        # Region "error" (#4125 H7b): signed distance to the region
+        # boundary at the achieved landing point (<= 0 means holding).
+        per_goal["target_region_m"] = achieved["target_distance_m"]
     res_vec = residuals(best.x, partition, goal, config)
     residual_norm = float(np.linalg.norm(res_vec))
     require(

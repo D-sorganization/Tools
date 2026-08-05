@@ -9,17 +9,32 @@
  * lives in model/impact.ts, pinned test-for-test against Python.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ClubCanvas } from "./components/ClubCanvas";
+import { DecimalInput } from "./components/DecimalInput";
+import { FieldInfo } from "./components/FieldInfo";
+import { FlightExplorerPanel } from "./components/FlightExplorerPanel";
+import { PlotsPanel } from "./components/PlotsPanel";
+import { PuttingPanel } from "./components/PuttingPanel";
+import { PrimaryViewTabs } from "./components/PrimaryViewTabs";
+import { DEFAULT_TARGET, type TargetRegionTs } from "./model/targets";
 import { SimulationPanel } from "./components/SimulationPanel";
+import { VariationPanel } from "./components/VariationPanel";
 import { ClubPanel } from "./components/ClubPanel";
+import {
+  generatedHeadFor,
+  type GeneratedHead,
+} from "./model/clubHeadGeneration";
 import { Derivation } from "./components/Derivation";
-import { type HeadMesh } from "./model/mesh";
+import { GlossaryPanel } from "./components/GlossaryPanel";
+import { getClub, type ClubSpec } from "./model/club";
 import {
   METRIC_EXPLANATIONS,
   RESULT_EXPLANATIONS,
 } from "./model/derivation";
+import { FIELD_TO_TERM } from "./model/glossary";
+import { HELP_TEXTS } from "./model/helptext";
 import {
   BOUNDS,
   closureMetrics,
@@ -34,6 +49,13 @@ import {
   toCanonical,
   type Quantity,
 } from "./model/units";
+import {
+  loadPrimaryViewState,
+  primaryViewLabel,
+  savePrimaryViewState,
+  type PrimaryViewId,
+  type PrimaryViewState,
+} from "./model/viewPreferences";
 
 interface FieldSpec {
   key: keyof ImpactScenario;
@@ -119,22 +141,43 @@ const UNIT_LABELS: Record<Quantity, string> = {
   speed: "Speed",
   rotation: "Rotation",
   length: "Length",
+  distance: "Distance",
 };
 
-const TABS = ["Explorer", "Derivation & Traceability", "Simulation"] as const;
-
 export default function App() {
+  const defaultDriver = useMemo(() => getClub("Driver 10.5°"), []);
   const [scenario, setScenario] = useState<ImpactScenario>(DEFAULT_SCENARIO);
-  const [tab, setTab] = useState<(typeof TABS)[number]>(TABS[0]);
+  // Target region (#4125 H7b): shared by the Simulation flight view /
+  // solver and the Variation landing overlay (hold-% headline).
+  const [target, setTarget] = useState<TargetRegionTs>(DEFAULT_TARGET);
+  const [viewState, setViewState] = useState<PrimaryViewState>(
+    loadPrimaryViewState,
+  );
   const [explained, setExplained] = useState<string>("pathDeviationDeg");
   const [units, setUnits] = useState<Record<Quantity, string>>({
     speed: "mph",
     rotation: "deg/s",
     length: "mm",
+    // Ball-flight distances (#4125 H6): yards by default.
+    distance: "yd",
   });
-  const [generatedMesh, setGeneratedMesh] = useState<HeadMesh | null>(null);
+  const [generatedHead, setGeneratedHead] = useState<GeneratedHead>(() =>
+    generatedHeadFor(defaultDriver),
+  );
+  const [clubSpec, setClubSpec] = useState<ClubSpec>(defaultDriver);
+  const [glossaryTerm, setGlossaryTerm] = useState<string | undefined>(undefined);
   const result = useMemo(() => solve(scenario), [scenario]);
   const metrics = useMemo(() => closureMetrics(scenario), [scenario]);
+  const tab = viewState.active;
+  const tabLabel = primaryViewLabel(tab);
+
+  useEffect(() => {
+    savePrimaryViewState(viewState);
+  }, [viewState]);
+
+  const setTab = (active: PrimaryViewId) => {
+    setViewState((state) => ({ ...state, active }));
+  };
 
   // Scenario plumbing: GC-to-face and lie follow the selected club's
   // spec (the CG sits within a few mm of the geometric center); both
@@ -182,14 +225,22 @@ export default function App() {
         type="button"
         onClick={() => setExplained(spec.key)}
         aria-pressed={active}
+        title={
+          RESULT_EXPLANATIONS[spec.key] ?? METRIC_EXPLANATIONS[spec.key]
+        }
         className={
           "flex items-center justify-between rounded-lg border px-3 py-2 text-left text-sm transition-all " +
           (active
-            ? "border-sky-400/60 bg-sky-500/10 shadow-[0_0_14px_rgba(56,189,248,0.15)]"
+            ? "border-sky-400 bg-sky-500/20 ring-1 ring-sky-400/60 shadow-[0_0_14px_rgba(56,189,248,0.25)]"
             : "border-slate-800/80 bg-slate-900/50 hover:border-slate-600 hover:bg-slate-800/50")
         }
       >
-        <span className="text-slate-400">{spec.label}</span>
+        <span className="flex items-center gap-2 text-slate-300">
+          {spec.label}
+          <span aria-hidden="true" className="text-[10px] font-semibold uppercase tracking-wide text-sky-400">
+            Details ›
+          </span>
+        </span>
         <span
           className={
             spec.key === "pathDeviationDeg"
@@ -217,36 +268,64 @@ export default function App() {
         </p>
       </header>
 
-      <nav aria-label="Views" className="mb-5 flex gap-2">
-        {TABS.map((name) => (
-          <button
-            key={name}
-            type="button"
-            onClick={() => setTab(name)}
-            aria-current={tab === name}
-            className={
-              "rounded-full border px-4 py-1.5 text-sm font-medium transition-all " +
-              (tab === name
-                ? "border-sky-400/60 bg-sky-500/10 text-sky-300 shadow-[0_0_18px_rgba(56,189,248,0.25)]"
-                : "border-slate-700/80 bg-slate-900/60 text-slate-300 hover:border-slate-500 hover:text-slate-100")
-            }
-          >
-            {name}
-          </button>
-        ))}
-      </nav>
+      <PrimaryViewTabs
+        state={viewState}
+        onActiveChange={setTab}
+        onOrderChange={(order) => setViewState((state) => ({ ...state, order }))}
+      />
 
-      {tab === TABS[2] ? (
+      <details
+        className="mb-5 rounded-xl border border-slate-800/80 bg-slate-900/60 px-5 py-3 text-sm shadow-lg shadow-black/20 backdrop-blur"
+        title="Usage instructions for this page"
+      >
+        <summary className="cursor-pointer font-semibold text-slate-300 hover:text-slate-100">
+          {HELP_TEXTS[tabLabel].title}
+        </summary>
+        {HELP_TEXTS[tabLabel].paragraphs.map((paragraph, index) => (
+          <p key={index} className="mt-2 max-w-3xl text-slate-400">
+            {paragraph}
+          </p>
+        ))}
+      </details>
+
+      <main
+        id={`primary-panel-${tab}`}
+        role="tabpanel"
+        aria-labelledby={`primary-tab-${tab}`}
+      >
+      {tab === "glossary" ? (
+        <GlossaryPanel key={glossaryTerm ?? "none"} initialTerm={glossaryTerm} />
+      ) : tab === "putting" ? (
+        <PuttingPanel
+          distanceUnit={units.distance}
+          onGlossary={(term) => {
+            setGlossaryTerm(term);
+            setTab("glossary");
+          }}
+        />
+      ) : tab === "variation" ? (
+        <VariationPanel target={target} distanceUnit={units.distance} />
+      ) : tab === "flight" ? (
+        <FlightExplorerPanel distanceUnit={units.distance} />
+      ) : tab === "plots" ? (
+        // Static loft mirrors the desktop default driver (same note as
+        // the Simulation tab; the full club picker joins with P7 WASM).
+        <PlotsPanel scenario={scenario} loftDeg={10.5} />
+      ) : tab === "simulation" ? (
         // Static loft mirrors the desktop default driver; the full club
         // picker joins the web simulation with the P7 WASM port.
         <SimulationPanel
           scenario={scenario}
           loftDeg={10.5}
+          clubSpec={clubSpec}
           onScenarioChange={(updates) =>
             setScenario((s) => ({ ...s, ...updates }))
           }
+          target={target}
+          onTargetChange={setTarget}
+          distanceUnit={units.distance}
         />
-      ) : tab === TABS[1] ? (
+      ) : tab === "calculation" ? (
         <Derivation scenario={scenario} />
       ) : (
         <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
@@ -266,6 +345,7 @@ export default function App() {
                   <span className="text-slate-300">{UNIT_LABELS[quantity]}</span>
                   <select
                     value={units[quantity]}
+                    title={`Display unit for ${UNIT_LABELS[quantity].toLowerCase()} values`}
                     onChange={(e) =>
                       setUnits((u) => ({ ...u, [quantity]: e.target.value }))
                     }
@@ -283,7 +363,8 @@ export default function App() {
 
             <ClubPanel
               onDriveScenario={driveScenarioFromClub}
-              onGenerate={setGeneratedMesh}
+              onGenerate={setGeneratedHead}
+              onSpecChange={setClubSpec}
             />
 
             <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
@@ -302,15 +383,17 @@ export default function App() {
                     className="mb-3 block text-sm"
                   >
                     <span className="mb-1 flex justify-between text-slate-300">
-                      <span>{label}</span>
+                      <span className="flex items-center">
+                        {label}
+                        <FieldInfo label={label} guidance={FIELD_GUIDANCE[key]} />
+                      </span>
                       <span className="text-slate-500">{unit}</span>
                     </span>
-                    <input
-                      type="number"
-                      inputMode="decimal"
+                    <DecimalInput
                       step={step}
                       value={Number(displayed.toFixed(4))}
-                      onChange={(e) => update(key, quantity, e.target.value)}
+                      aria-label={`${label} ${unit}`.trim()}
+                      onCommit={(value) => update(key, quantity, String(value))}
                       title={FIELD_GUIDANCE[key]}
                       className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
                     />
@@ -352,10 +435,21 @@ export default function App() {
                   aria-live="polite"
                   className="mt-3 rounded-md border border-slate-800 bg-slate-950/60 p-3 text-xs text-slate-400"
                 >
-                  <span className="font-semibold text-slate-200">
-                    {explainedLabel}.{" "}
-                  </span>
+                  <h3 className="mb-1 text-sm font-bold text-sky-200">
+                    {explainedLabel}
+                  </h3>
                   {explanation}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGlossaryTerm(FIELD_TO_TERM[explained]);
+                      setTab("glossary");
+                    }}
+                    title="Open the glossary, pre-selecting the matching term"
+                    className="mt-2 block text-sky-400 underline-offset-2 hover:underline"
+                  >
+                    Glossary →
+                  </button>
                 </div>
               )}
               <p className="mt-3 text-xs text-slate-500">
@@ -370,10 +464,16 @@ export default function App() {
               </p>
             </div>
 
-            <ClubCanvas scenario={scenario} externalMesh={generatedMesh} />
+            <ClubCanvas
+              scenario={scenario}
+              externalMesh={generatedHead?.mesh ?? null}
+              hoselPoint={generatedHead?.hosel ?? null}
+              cogPoint={generatedHead?.cog ?? null}
+            />
           </section>
         </div>
       )}
+      </main>
       <footer className="mt-10 border-t border-slate-800/60 pt-4 text-xs text-slate-500">
         Companion tool to the{" "}
         <a

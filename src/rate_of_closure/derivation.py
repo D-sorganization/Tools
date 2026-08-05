@@ -1,6 +1,6 @@
 """Step-by-step derivation of the impact-point calculation.
 
-Single source of truth for the "Derivation & Traceability" tab: every
+Single source of truth for the "Calculation Description" tab: every
 step carries the symbolic formula (matplotlib-mathtext-compatible
 LaTeX), a plain-language narrative, and the numeric substitution for
 the *live* scenario, so a user can follow each number in the results
@@ -23,6 +23,7 @@ from ._contracts import ensure
 from .model import ImpactResult, ImpactScenario, solve
 
 __all__ = [
+    "KINETICS_EXPLANATIONS",
     "LAUNCH_EXPLANATIONS",
     "METRIC_EXPLANATIONS",
     "RESULT_EXPLANATIONS",
@@ -204,6 +205,53 @@ LAUNCH_EXPLANATIONS: dict[str, str] = {
     "landing_angle_deg": (
         "Descent angle below horizontal at the terminal ground event; "
         "steeper landings stop faster (driver band roughly 35-45 deg)."
+    ),
+    "lateral_m": (
+        "Sideways landing offset from the target line (+ = right of "
+        "target for a right-handed player): the integrated effect of "
+        "launch azimuth plus spin-axis-tilt curvature (the D-plane's "
+        "Magnus component), reported the way launch monitors report "
+        "carry offline."
+    ),
+}
+
+
+#: Click-through explanations for the swing-kinetics panel (#4125 H2).
+KINETICS_EXPLANATIONS: dict[str, str] = {
+    "joint_torques": (
+        "Net joint torques from per-sample inverse dynamics over the "
+        "double-pendulum EOM (swing_sim.reference mass matrix / "
+        "Coriolis / gravity / damping surfaces): M(θ)·α + C(θ, ω). "
+        "The swing source is passive, so gravity is the driver — the "
+        "gravity-torque traces show what accelerates each joint while "
+        "damping resists. Positive torque acts counter-clockwise about "
+        "the swing-plane normal (increasing joint angle)."
+    ),
+    "joint_power": (
+        "Power delivered to each joint coordinate, τ·ω (net torque "
+        "times joint angular rate) — the movement-optimizer 'Joint "
+        "Power' convention. The sum over joints equals the rate of "
+        "change of the swing's kinetic energy (test-pinned), so the "
+        "area under the total curve up to impact is the kinetic energy "
+        "delivered to the club."
+    ),
+    "reaction_forces": (
+        "Joint reaction forces from Newton-Euler on each segment: the "
+        "force the proximal side exerts on the distal side (gravity "
+        "included, so a static hang shows the supporting force). The "
+        "clubhead trace is a point-mass estimate at the club tip "
+        "(shared 0.20 kg head mass). Peak shoulder loads of hundreds "
+        "of N through the downswing are the centripetal cost of "
+        "clubhead speed."
+    ),
+    "zero_torque_counterfactual": (
+        "The Zero-Torque Counterfactual (ZTCF) sets commanded shoulder and "
+        "wrist torques to zero at each recorded (q, qdot) state, then solves "
+        "the same forward dynamics with gravity, damping, velocity coupling, "
+        "and ideal joint locks intact. The resulting torque and force curves "
+        "isolate passive drift at the original state. Each sample is "
+        "state-matched; the displayed series is not one continuously "
+        "integrated alternate swing."
     ),
 }
 

@@ -1,4 +1,4 @@
-"""A 15-club reference library in SI units.
+"""A 16-club reference library in SI units.
 
 Values are conservative representative numbers normalized to SI from
 typical published manufacturer specs. The primary numeric source is the
@@ -26,7 +26,7 @@ from __future__ import annotations
 
 from rate_of_closure._contracts import ensure, require
 
-from .types import ClubSpec, ClubType
+from .types import ClubSpec, ClubType, HeadStyle
 
 __all__ = ["CLUB_LIBRARY", "club_names", "get_club"]
 
@@ -53,6 +53,7 @@ def _spec(
     cg_height_mm: float,
     bulge_m: float | None = None,
     roll_m: float | None = None,
+    head_style: HeadStyle = HeadStyle.AUTO,
 ) -> ClubSpec:
     """Normalize one imperial/CGS source row into an SI ``ClubSpec``."""
     return ClubSpec(
@@ -67,10 +68,11 @@ def _spec(
         cg_height_m=cg_height_mm * 1.0e-3,
         face_bulge_radius_m=bulge_m,
         face_roll_radius_m=roll_m,
+        head_style=head_style,
     )
 
 
-#: Ordered name -> spec mapping; exactly 15 clubs, driver through putter.
+#: Ordered name -> spec mapping; exactly 16 clubs, driver through putters.
 CLUB_LIBRARY: dict[str, ClubSpec] = {
     spec.name: spec
     for spec in (
@@ -160,10 +162,37 @@ CLUB_LIBRARY: dict[str, ClubSpec] = {
         _spec("Gap Wedge", ClubType.WEDGE, 35.25, 295, 52.0, 64.0, 2000, 10, 17),
         _spec("Sand Wedge", ClubType.WEDGE, 35.0, 300, 56.0, 64.0, 1900, 10, 16),
         _spec("Lob Wedge", ClubType.WEDGE, 35.0, 305, 60.0, 64.0, 1850, 9, 16),
-        _spec("Putter", ClubType.PUTTER, 35.0, 350, 3.0, 70.0, 2500, 5, 15),
+        # Putters (H1, #4125): typical published values — ~34 in length,
+        # 3° loft, 70° lie; blades ~350 g with a shallow CG close to the
+        # face, mallets ~360 g with a deeper CG and higher head MOI
+        # (typical published putter fitting references, SI-normalized).
+        _spec(
+            "Blade Putter",
+            ClubType.PUTTER,
+            34.0,
+            350,
+            3.0,
+            70.0,
+            2500,
+            12,
+            14,
+            head_style=HeadStyle.BLADE,
+        ),
+        _spec(
+            "Mallet Putter",
+            ClubType.PUTTER,
+            34.0,
+            360,
+            3.0,
+            70.0,
+            4500,
+            35,
+            14,
+            head_style=HeadStyle.MALLET,
+        ),
     )
 }
-ensure(len(CLUB_LIBRARY) == 15, "library must hold exactly 15 clubs")
+ensure(len(CLUB_LIBRARY) == 16, "library must hold exactly 16 clubs")
 
 
 def club_names() -> list[str]:

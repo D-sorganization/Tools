@@ -3,8 +3,10 @@
 Layout: controls on the left (scenario inputs + presets), clickable
 results and an explanation panel below them, and a tab stack on the
 right: the animated 3D clubhead (with playback speed and fixed/moving
-display modes), the closure sweep, and the Derivation & Traceability
-tab that typesets the whole calculation with live numbers.
+display modes), the investigative Plots tab (built-in advanced plots,
+the Custom Plot wizard, and exports — it absorbed the old Closure
+Sweep tab), and the Calculation Description tab that typesets the
+whole calculation with live numbers.
 
 The window consumes complete :class:`~rate_of_closure.model.ImpactScenario`
 objects from the controls panel and hands them to the model and views —
@@ -13,34 +15,54 @@ it never reaches into widgets or model internals (LoD).
 
 from __future__ import annotations
 
+import json
 import logging
 import math
+from typing import Protocol
 
+from PyQt6.QtCore import QSettings, Qt
 from PyQt6.QtWidgets import (
+    QDialog,
     QFrame,
     QGroupBox,
     QMainWindow,
     QScrollArea,
     QSplitter,
     QStatusBar,
+    QTabBar,
     QTabWidget,
     QTextBrowser,
+    QToolButton,
     QVBoxLayout,
     QWidget,
 )
 
-from rate_of_closure.club import ClubSpec, parametric_head_mesh
+from rate_of_closure.club import (
+    ClubSpec,
+    head_cog,
+    hosel_point,
+    parametric_head_mesh,
+)
 from rate_of_closure.derivation import (
     METRIC_EXPLANATIONS,
     RESULT_EXPLANATIONS,
 )
+from rate_of_closure.helptext import HELP_TEXTS
 from rate_of_closure.model import ImpactScenario, closure_metrics, solve
-from rate_of_closure.ui.pyqt6.club_view import Club3DView, SweepView
+from rate_of_closure.ui.pyqt6.app_style import showcase_stylesheet
+from rate_of_closure.ui.pyqt6.club_view import Club3DView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
+from rate_of_closure.ui.pyqt6.flight_explorer_tab import FlightExplorerTab
+from rate_of_closure.ui.pyqt6.glossary_tab import GlossaryTab
+from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
+from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
+from rate_of_closure.ui.pyqt6.result_row import explanation_html
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
+from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 from rate_of_closure.units import convert_from_canonical
+from shared.python.swing_sim.variation import VariationDataset
 
 logger = logging.getLogger(__name__)
 
@@ -102,6 +124,35 @@ _UNITS: dict[str, str] = {
     "time_to_square_from_1deg_open_ms": " ms",
 }
 
+#: Stable IDs for primary tabs in their first-run order.
+_DEFAULT_TAB_IDS: tuple[str, ...] = (
+    "clubhead",
+    "plots",
+    "calculation_description",
+    "simulation",
+    "flight_explorer",
+    "variation",
+    "putting",
+    "glossary",
+)
+#: Compatibility export used by the help-content contract tests.
+_TAB_HELP_KEYS = _DEFAULT_TAB_IDS
+_NAVIGATION_SETTINGS_ORG = "D-sorganization"
+_NAVIGATION_SETTINGS_APP = "RateOfClosureImpactExplorer"
+_NAVIGATION_STATE_KEY = "ui/primary-tabs/v1"
+_NAVIGATION_STATE_VERSION = 1
+
+
+class _Settings(Protocol):
+    """Minimal QSettings seam used by primary-tab persistence."""
+
+    def value(self, key: str, default_value: object = None) -> object:
+        """Return a persisted value."""
+
+    def setValue(self, key: str, value: object) -> None:  # noqa: N802
+        """Persist a value."""
+
+
 #: result/metric field -> the units drop-down quantity it follows.
 _QUANTITY_ROWS: dict[str, str] = {
     "tangential_speed_mph": "speed",
@@ -115,17 +166,33 @@ _QUANTITY_ROWS: dict[str, str] = {
 class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
     """Interactive explorer for rotation-induced impact-point deviations."""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        *,
+        navigation_settings: _Settings | None = None,
+    ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Rate of Closure Impact Explorer")
-        self.setMinimumSize(1240, 800)
+        # Small-window support (#4120): layouts scroll and elide below
+        # this size instead of crushing entries into unreadability.
+        self.setMinimumSize(1024, 700)
 
         self._controls = ControlsPanel()
         self._rows: dict[str, _ResultRow] = {}
         self._club_view = Club3DView()
-        self._sweep_view = SweepView()
+        self._plots_tab = PlotsTab()
         self._derivation_view = DerivationView()
         self._simulation_tab = SimulationTab()
+        self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
+        self._flight_explorer_tab = FlightExplorerTab()
+        self._variation_tab = VariationTab()
+        # Variation -> course-view tie-in (#4125 H7b): a completed study
+        # overlays its landing scatter on the flight top-down view, where
+        # the target hold-% headline is reported when a target is set.
+        self._variation_tab.studyCompleted.connect(self._on_variation_study)
+        self._putting_tab = PuttingTab()
+        self._glossary_tab = GlossaryTab()
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -142,13 +209,56 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         left.setWidgetResizable(True)
         left.setFrameShape(QFrame.Shape.NoFrame)
         left.setWidget(left_content)
-        left.setMinimumWidth(390)
+        left.setMinimumWidth(320)
 
+        self._navigation_settings = (
+            navigation_settings
+            if navigation_settings is not None
+            else QSettings(_NAVIGATION_SETTINGS_ORG, _NAVIGATION_SETTINGS_APP)
+        )
         tabs = QTabWidget()
-        tabs.addTab(self._club_view, "3D Clubhead")
-        tabs.addTab(self._sweep_view, "Closure Sweep")
-        tabs.addTab(self._derivation_view, "Derivation && Traceability")
-        tabs.addTab(self._simulation_tab, "Simulation")
+        tab_bar = tabs.tabBar()
+        if tab_bar is None:  # pragma: no cover - Qt always creates its tab bar
+            raise RuntimeError("Primary tab bar was not created")
+        primary_tabs = (
+            ("clubhead", self._club_view, "3D Clubhead"),
+            ("plots", self._plots_tab, "Plots"),
+            (
+                "calculation_description",
+                self._derivation_view,
+                "Calculation Description",
+            ),
+            ("simulation", self._simulation_tab, "Simulation"),
+            ("flight_explorer", self._flight_explorer_tab, "Flight Explorer"),
+            ("variation", self._variation_tab, "Variation"),
+            ("putting", self._putting_tab, "Putting"),
+            ("glossary", self._glossary_tab, "Glossary"),
+        )
+        for tab_id, widget, label in primary_tabs:
+            index = tabs.addTab(widget, label)
+            tab_bar.setTabData(index, tab_id)
+        tabs.setMovable(True)
+        tab_bar.setElideMode(Qt.TextElideMode.ElideNone)
+        tabs.setUsesScrollButtons(True)
+        tab_bar.setToolTip(
+            "Drag tabs to reorder the workspace. Tab order and the active "
+            "view are saved for the next session."
+        )
+        self._tabs = tabs
+        self._restore_primary_navigation()
+        tab_bar.tabMoved.connect(self._persist_primary_navigation)
+        tabs.currentChanged.connect(self._persist_primary_navigation)
+        # Per-tab help (#4120 V4): the '?' corner button opens detailed
+        # usage help for whichever tab is current.
+        help_button = QToolButton()
+        help_button.setText("?")
+        help_button.setToolTip(
+            "Open detailed help for the current tab: what it does, the "
+            "workflow, and a control reference."
+        )
+        help_button.clicked.connect(self.show_help)
+        tabs.setCornerWidget(help_button, Qt.Corner.TopRightCorner)
+        self._help_dialog: QDialog | None = None
 
         splitter = QSplitter()
         splitter.addWidget(left)
@@ -157,17 +267,33 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         splitter.setStretchFactor(1, 1)
         self.setCentralWidget(splitter)
         self.setStatusBar(QStatusBar())
-        self.setStyleSheet(
-            "QFrame#resultRow { border-radius: 6px; }"
-            "QFrame#resultRow:hover { border: 1px solid palette(highlight); }"
-        )
+        # H6 (#4125): the UpstreamDrift launcher visual language —
+        # hover-highlighted buttons with subtle shadows, rounded group
+        # boxes/tabs — all palette-derived (includes the V4 selected-row
+        # styling, superseding the bare selection_stylesheet here).
+        self.setStyleSheet(showcase_stylesheet(self.palette()))
 
         self._controls.scenarioChanged.connect(self._on_scenario)
         self._controls.clubHeadRequested.connect(self._on_club_head)
+        # Distance display unit (#4125 H6): yards default; switching
+        # re-renders every distance surface across the tabs.
+        self._controls.distanceUnitChanged.connect(self._on_distance_unit)
+        self._simulation_tab.glossaryRequested.connect(self.open_glossary)
+        self._simulation_tab.configChanged.connect(self._derivation_view.set_config)
+        self._flight_explorer_tab.glossaryRequested.connect(self.open_glossary)
+        self._putting_tab.glossaryRequested.connect(self.open_glossary)
         # Theming is applied by the shared launcher (setup_themed_app),
         # which also owns the single Theme menu — calling
         # setup_theme_support() here as well would add a duplicate.
+        self._derivation_view.set_config(self._simulation_tab.derivation_config())
         self._on_scenario(self._controls.scenario())
+        # A share-ready scene should never open as a placeholder wireframe.
+        # Load the selected representative driver immediately; users can still
+        # regenerate another library head or load a measured STL.
+        self._on_club_head(self._controls.club_spec())
+        # Match the web experience: the Swing view opens with a meaningful
+        # result instead of empty axes that look like a rendering failure.
+        self._simulation_tab.run_now()
         self._show_explanation(_RESULT_ROWS[0][0])
 
     # ── construction ────────────────────────────────────────────────
@@ -189,6 +315,12 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         layout = QVBoxLayout(box)
         self._explanation = QTextBrowser()
         self._explanation.setOpenExternalLinks(False)
+        self._explanation.setOpenLinks(False)
+        self._explanation.setToolTip(
+            "Explanation of the selected result row; the Glossary link "
+            "jumps to the matching term."
+        )
+        self._explanation.anchorClicked.connect(self._on_explanation_link)
         self._explanation.setMinimumHeight(110)
         self._explanation.setMaximumHeight(170)
         layout.addWidget(self._explanation)
@@ -198,7 +330,109 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
     def _show_explanation(self, field: str) -> None:
         labels = dict(_RESULT_ROWS) | dict(_METRIC_ROWS)
         text = RESULT_EXPLANATIONS.get(field) or METRIC_EXPLANATIONS.get(field, "")
-        self._explanation.setHtml(f"<b>{labels[field]}</b><br/>{text}")
+        # Persistent single selection across both row groups (#4120 V4).
+        for row_field, row in self._rows.items():
+            row.set_selected(row_field == field)
+        self._explanation.setHtml(explanation_html(labels[field], text, field))
+
+    def _on_explanation_link(self, url) -> None:  # type: ignore[no-untyped-def]
+        """Route ``glossary:<term>`` links to the Glossary tab."""
+        text = url.toString()
+        if not text.startswith("glossary:"):
+            return
+        self.open_glossary(text.partition(":")[2])
+
+    def show_help(self) -> None:
+        """Open the rich-text help panel for the current tab (V4)."""
+        entry = HELP_TEXTS[self._current_primary_tab_id()]
+        dialog = QDialog(self)
+        dialog.setWindowTitle(f"Help — {entry.title}")
+        dialog.resize(560, 520)
+        layout = QVBoxLayout(dialog)
+        browser = QTextBrowser()
+        browser.setObjectName("helpBrowser")
+        browser.setOpenExternalLinks(False)
+        browser.setHtml(f"<h2>{entry.title}</h2>{entry.html}")
+        layout.addWidget(browser)
+        self._help_dialog = dialog
+        dialog.show()
+
+    def _on_distance_unit(self, _unit: str) -> None:
+        """Re-render distance surfaces in the new display unit (H6)."""
+        self._simulation_tab.refresh_units()
+        self._flight_explorer_tab.refresh_units()
+        self._putting_tab.refresh_units()
+
+    def _on_variation_study(self, dataset: VariationDataset) -> None:
+        """Forward a completed study's landing scatter (#4125 H7b)."""
+        names = dataset.output_names
+        if "carry_m" not in names or "lateral_m" not in names:
+            return  # impact-only study: no landing plane to overlay
+        self._simulation_tab.set_landing_scatter(
+            dataset.output_column("carry_m"), dataset.output_column("lateral_m")
+        )
+
+    def open_glossary(self, term: str) -> None:
+        """Show the Glossary tab, pre-selecting ``term`` when known."""
+        self._tabs.setCurrentWidget(self._glossary_tab)
+        if term:
+            self._glossary_tab.select_term(term)
+
+    def primary_tab_ids(self) -> list[str]:
+        """Return stable primary-tab IDs in their current visual order."""
+        bar = self._primary_tab_bar()
+        return [str(bar.tabData(index)) for index in range(self._tabs.count())]
+
+    def _current_primary_tab_id(self) -> str:
+        """Return the stable ID for the selected tab."""
+        tab_id = str(self._primary_tab_bar().tabData(self._tabs.currentIndex()))
+        return tab_id if tab_id in _DEFAULT_TAB_IDS else _DEFAULT_TAB_IDS[0]
+
+    def _primary_tab_bar(self) -> QTabBar:
+        """Return the main tab bar, enforcing the QTabWidget invariant."""
+        bar = self._tabs.tabBar()
+        if bar is None:  # pragma: no cover - Qt always creates its tab bar
+            raise RuntimeError("Primary tab bar is unavailable")
+        return bar
+
+    def _restore_primary_navigation(self) -> None:
+        """Restore a valid tab order and selection; ignore corrupt state."""
+        raw = self._navigation_settings.value(_NAVIGATION_STATE_KEY)
+        if not isinstance(raw, str):
+            return
+        try:
+            state = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            logger.warning("Ignoring corrupt primary-tab navigation state")
+            return
+        if (
+            not isinstance(state, dict)
+            or state.get("version") != _NAVIGATION_STATE_VERSION
+        ):
+            return
+        supplied = state.get("order")
+        if not isinstance(supplied, list):
+            supplied = []
+        order = list(
+            dict.fromkeys(tab_id for tab_id in supplied if tab_id in _DEFAULT_TAB_IDS)
+        )
+        order.extend(tab_id for tab_id in _DEFAULT_TAB_IDS if tab_id not in order)
+        bar = self._primary_tab_bar()
+        for destination, tab_id in enumerate(order):
+            source = self.primary_tab_ids().index(tab_id)
+            bar.moveTab(source, destination)
+        active = state.get("active")
+        if active in _DEFAULT_TAB_IDS:
+            self._tabs.setCurrentIndex(self.primary_tab_ids().index(active))
+
+    def _persist_primary_navigation(self, _index: int = -1) -> None:
+        """Persist stable IDs so label changes cannot invalidate layout."""
+        state = {
+            "version": _NAVIGATION_STATE_VERSION,
+            "order": self.primary_tab_ids(),
+            "active": self._current_primary_tab_id(),
+        }
+        self._navigation_settings.setValue(_NAVIGATION_STATE_KEY, json.dumps(state))
 
     def _format_row(self, field: str, value: float) -> str:
         """Format one row's value in the user's selected display unit."""
@@ -212,8 +446,18 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         return f"{displayed:+.2f} {unit}"
 
     def _on_club_head(self, spec: ClubSpec) -> None:
-        """Build the parametric head for a club spec and display it."""
-        self._club_view.set_head_mesh(parametric_head_mesh(spec))
+        """Build the parametric head for a club spec and display it.
+
+        The generated head carries its per-type hosel point (the shaft
+        line attaches there) and its divergence-theorem volumetric COG
+        for the "Show CG" marker.
+        """
+        report = head_cog(spec)
+        self._club_view.set_head_mesh(
+            parametric_head_mesh(spec),
+            hosel_point=hosel_point(spec),
+            cog_point=report.cog,
+        )
         status_bar = self.statusBar()
         if status_bar is not None:
             status_bar.showMessage(
@@ -241,9 +485,10 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
                 self._format_row(field, getattr(metrics, field))
             )
         self._club_view.set_scenario(scenario)
-        self._sweep_view.set_scenario(scenario)
+        self._plots_tab.set_scenario(scenario)
         self._derivation_view.set_scenario(scenario)
         self._simulation_tab.set_scenario(scenario)
+        self._variation_tab.set_scenario(scenario)
         status_bar = self.statusBar()
         if status_bar is None:  # pragma: no cover - Qt always provides one here
             return
@@ -258,6 +503,8 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
 
     def closeEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
         """Stop the animation timers before the window goes away."""
+        self._persist_primary_navigation()
         self._club_view.stop()
         self._simulation_tab.stop()
+        self._variation_tab.stop()
         super().closeEvent(event)

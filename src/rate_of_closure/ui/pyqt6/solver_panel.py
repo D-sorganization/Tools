@@ -21,18 +21,13 @@ import logging
 
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
-    QAbstractSpinBox,
-    QButtonGroup,
     QCheckBox,
-    QDoubleSpinBox,
     QFrame,
-    QGridLayout,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QProgressBar,
     QPushButton,
-    QRadioButton,
     QScrollArea,
     QSpinBox,
     QSplitter,
@@ -44,13 +39,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.ui.pyqt6.solver_specs import (
-    GOAL_SPECS,
-    VARIABLE_SPECS,
-    GoalSpec,
-    VariableSpec,
-)
+from rate_of_closure.ui.pyqt6.solver_rows import GoalRow, VariableRow
+from rate_of_closure.ui.pyqt6.solver_specs import GOAL_SPECS, VARIABLE_SPECS
 from rate_of_closure.ui.pyqt6.solver_worker import SolverWorker
+from rate_of_closure.ui.pyqt6.target_panel import TargetPanel
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.solver.goals import (
     SWING_DERIVED_VARIABLES,
@@ -79,91 +71,6 @@ _STARTS_GUIDANCE = (
 )
 
 
-def _spin(
-    lo: float, hi: float, value: float, decimals: int, suffix: str
-) -> QDoubleSpinBox:
-    """A no-arrow, typed QDoubleSpinBox in the app's input style."""
-    spin = QDoubleSpinBox()
-    spin.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
-    spin.setKeyboardTracking(False)
-    spin.setDecimals(decimals)
-    spin.setRange(lo, hi)
-    spin.setSuffix(suffix)
-    spin.setValue(value)
-    return spin
-
-
-class _GoalRow(QWidget):
-    """One goal quantity: enable checkbox + target + weight entries."""
-
-    def __init__(self, spec: GoalSpec) -> None:
-        super().__init__()
-        self.spec = spec
-        self.enabled = QCheckBox(spec.label)
-        self.enabled.setToolTip(spec.guidance)
-        self.target = _spin(
-            spec.spin_range[0], spec.spin_range[1], spec.default_target, 1, spec.unit
-        )
-        self.target.setToolTip(spec.guidance)
-        self.weight = _spin(0.01, 100.0, 1.0, 2, "")
-        self.weight.setToolTip(
-            "Suggested range: 0.1-10 relative weight (1 default); larger "
-            "weights make the optimizer trade other goals away to hit "
-            "this one. Source: shared swing_sim solver tuning "
-            "documentation (launch-monitor-resolution residual scales)."
-        )
-        layout = QHBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(self.enabled, stretch=1)
-        layout.addWidget(self.target)
-        layout.addWidget(QLabel("w"))
-        layout.addWidget(self.weight)
-        for widget in (self.target, self.weight):
-            widget.setEnabled(False)
-        self.enabled.toggled.connect(self.target.setEnabled)
-        self.enabled.toggled.connect(self.weight.setEnabled)
-
-
-class _VariableRow(QWidget):
-    """One variable: radio Optimize (min/max bounds) | Fix (value)."""
-
-    def __init__(self, spec: VariableSpec) -> None:
-        super().__init__()
-        self.spec = spec
-        lo, hi = spec.spin_range
-        self.optimize = QRadioButton("Optimize")
-        self.fix = QRadioButton("Fix")
-        self._group = QButtonGroup(self)
-        self._group.addButton(self.optimize)
-        self._group.addButton(self.fix)
-        # NOTE: not named "lower"/"raise_" — those are QWidget methods.
-        self.low = _spin(lo, hi, spec.default_bounds[0], spec.decimals, spec.unit)
-        self.high = _spin(lo, hi, spec.default_bounds[1], spec.decimals, spec.unit)
-        self.fixed_value = _spin(lo, hi, spec.default_value, spec.decimals, spec.unit)
-        label = QLabel(spec.label)
-        for widget in (label, self.optimize, self.fix, self.low, self.high):
-            widget.setToolTip(spec.guidance)
-        self.fixed_value.setToolTip(spec.guidance)
-
-        layout = QGridLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.addWidget(label, 0, 0, 1, 4)
-        layout.addWidget(self.optimize, 1, 0)
-        layout.addWidget(self.low, 1, 1)
-        layout.addWidget(self.high, 1, 2)
-        layout.addWidget(self.fix, 1, 3)
-        layout.addWidget(self.fixed_value, 1, 4)
-        self.optimize.toggled.connect(self._sync_enabled)
-        self.fix.setChecked(True)
-        self._sync_enabled()
-
-    def _sync_enabled(self, *_args: object) -> None:
-        free = self.optimize.isChecked()
-        self.low.setEnabled(free)
-        self.high.setEnabled(free)
-        self.fixed_value.setEnabled(not free)
-
-
 class SolverPanel(QWidget):
     """Goal editor + variable partition + run/cancel + results + apply."""
 
@@ -174,12 +81,16 @@ class SolverPanel(QWidget):
         super().__init__(parent)
         self._worker: SolverWorker | None = None
         self._result: SolverResult | None = None
-        self._goal_rows: dict[str, _GoalRow] = {}
-        self._var_rows: dict[str, _VariableRow] = {}
+        self._goal_rows: dict[str, GoalRow] = {}
+        self._var_rows: dict[str, VariableRow] = {}
 
         left = QWidget()
         left_layout = QVBoxLayout(left)
         left_layout.addWidget(self._build_goal_box())
+        # Target region (#4125 H7b): region goal + 'Optimize to Target'.
+        self._target_panel = TargetPanel()
+        self._target_panel.optimizeRequested.connect(self._on_run_target)
+        left_layout.addWidget(self._target_panel)
         left_layout.addWidget(self._build_variable_box())
         left_layout.addWidget(self._build_run_box())
         left_layout.addStretch(1)
@@ -209,7 +120,7 @@ class SolverPanel(QWidget):
         layout = QVBoxLayout(box)
         layout.setSpacing(2)
         for spec in GOAL_SPECS:
-            row = _GoalRow(spec)
+            row = GoalRow(spec)
             self._goal_rows[spec.name] = row
             layout.addWidget(row)
         return box
@@ -223,7 +134,7 @@ class SolverPanel(QWidget):
         self._swing_check.toggled.connect(self._sync_mode_rows)
         layout.addWidget(self._swing_check)
         for spec in VARIABLE_SPECS:
-            row = _VariableRow(spec)
+            row = VariableRow(spec)
             self._var_rows[spec.name] = row
             layout.addWidget(row)
         return box
@@ -237,6 +148,7 @@ class SolverPanel(QWidget):
         self._starts_spin.setRange(1, 64)
         self._starts_spin.setValue(DEFAULT_N_STARTS)
         self._starts_spin.setToolTip(_STARTS_GUIDANCE)
+        self._starts_spin.setMinimumWidth(64)  # readable at small windows
         row.addWidget(self._starts_spin)
         self._run_button = QPushButton("Run Solver")
         self._run_button.setToolTip(
@@ -304,6 +216,10 @@ class SolverPanel(QWidget):
         """Whether swing-source mode is selected."""
         return self._swing_check.isChecked()
 
+    def target_panel(self) -> TargetPanel:
+        """The target-region editor (#4125 H7b) — wiring/test seam."""
+        return self._target_panel
+
     def _sync_mode_rows(self, *_args: object) -> None:
         """Show only the variables valid for the selected mode."""
         swing = self.use_swing_source()
@@ -313,13 +229,23 @@ class SolverPanel(QWidget):
             elif name in SWING_DERIVED_VARIABLES:
                 row.setVisible(not swing)
 
-    def build_goal(self) -> ImpactGoal:
-        """The ImpactGoal described by the checked rows (DbC-validated)."""
+    def build_goal(self, include_target: bool = False) -> ImpactGoal:
+        """The ImpactGoal described by the checked rows (DbC-validated).
+
+        With ``include_target`` the target panel's region joins the goal
+        additively (#4125 H7b) — any checked quantity goals still apply.
+        """
         targets = {
             name: (row.target.value(), row.weight.value())
             for name, row in self._goal_rows.items()
             if row.enabled.isChecked()
         }
+        if include_target:
+            return ImpactGoal.of(
+                target_region=self._target_panel.region(),
+                target_region_weight=self._target_panel.weight(),
+                **targets,
+            )
         return ImpactGoal.of(**targets)
 
     def build_partition(self) -> VariablePartition:
@@ -339,10 +265,17 @@ class SolverPanel(QWidget):
 
     # ── run / cancel ────────────────────────────────────────────────
     def _on_run(self) -> None:
+        self._run(include_target=False)
+
+    def _on_run_target(self) -> None:
+        """'Optimize to Target' (#4125 H7b): region goal + checked goals."""
+        self._run(include_target=True)
+
+    def _run(self, include_target: bool) -> None:
         if self._worker is not None and self._worker.isRunning():
             return
         try:
-            goal = self.build_goal()
+            goal = self.build_goal(include_target)
             partition = self.build_partition()
         except (ContractViolationError, ValueError) as exc:
             self._status.setText(f"Cannot solve: {exc}")
@@ -350,6 +283,7 @@ class SolverPanel(QWidget):
         self._result = None
         self._apply_button.setEnabled(False)
         self._run_button.setEnabled(False)
+        self._target_panel.set_running(True)
         self._cancel_button.setEnabled(True)
         worker = SolverWorker(goal, partition, self._starts_spin.value())
         worker.progressed.connect(self._on_progress)
@@ -402,6 +336,7 @@ class SolverPanel(QWidget):
 
     def _on_finished(self) -> None:
         self._run_button.setEnabled(True)
+        self._target_panel.set_running(False)
         self._cancel_button.setEnabled(False)
         self._progress.setValue(self._progress.maximum())
 
@@ -409,12 +344,16 @@ class SolverPanel(QWidget):
     def _populate_results(self, result: SolverResult) -> None:
         goals = list(result.per_goal_errors)
         labels = {spec.name: (spec.label, spec.unit) for spec in GOAL_SPECS}
+        # Region "error" row (#4125 H7b): signed distance, target <= 0.
+        labels["target_region_m"] = ("Target Region (signed dist)", " m")
         rows = self._goal_rows
         self._table.setRowCount(len(goals))
         for i, name in enumerate(goals):
             label, unit = labels[name]
-            target = rows[name].target.value()
-            achieved = result.achieved[name]
+            target = 0.0 if name == "target_region_m" else rows[name].target.value()
+            achieved = result.achieved[
+                "target_distance_m" if name == "target_region_m" else name
+            ]
             error = result.per_goal_errors[name]
             for col, text in enumerate(
                 (

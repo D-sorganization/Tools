@@ -6,14 +6,19 @@
  * client-side into the existing mesh render path.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
+import { DecimalInput } from "./DecimalInput";
+import { FieldInfo } from "./FieldInfo";
 import {
   CLUB_LIBRARY,
   getClub,
-  parametricHeadMesh,
+  type ClubSpec,
 } from "../model/club";
-import { type HeadMesh } from "../model/mesh";
+import {
+  generatedHeadFor,
+  type GeneratedHead,
+} from "../model/clubHeadGeneration";
 import { FIELD_GUIDANCE } from "../model/units";
 
 const INPUT_CLASS =
@@ -24,17 +29,32 @@ const INPUT_CLASS =
 export function ClubPanel({
   onDriveScenario,
   onGenerate,
+  onSpecChange,
 }: {
   /** Scenario plumbing: adopt the selected club's GC-to-face and lie. */
   onDriveScenario: (comToFaceMm: number, lieAngleDeg: number) => void;
-  /** Deliver a freshly generated parametric head mesh. */
-  onGenerate: (mesh: HeadMesh) => void;
+  /** Deliver a generated head with its hosel and volumetric COG. */
+  onGenerate: (head: GeneratedHead) => void;
+  /** Track the effective club spec (overrides applied) as it changes. */
+  onSpecChange?: (spec: ClubSpec) => void;
 }) {
   const [clubName, setClubName] = useState<string>(CLUB_LIBRARY[1].name);
   const [loftDeg, setLoftDeg] = useState<number>(CLUB_LIBRARY[1].loftDeg);
   const [curvedFace, setCurvedFace] = useState<boolean>(true);
   const [bulgeMm, setBulgeMm] = useState<number>(300);
   const [rollMm, setRollMm] = useState<number>(280);
+
+  const effectiveSpec = (): ClubSpec => ({
+    ...getClub(clubName),
+    loftDeg,
+    faceBulgeRadiusM: curvedFace ? bulgeMm / 1000 : null,
+    faceRollRadiusM: curvedFace ? rollMm / 1000 : null,
+  });
+
+  useEffect(() => {
+    onSpecChange?.(effectiveSpec());
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- state-derived
+  }, [clubName, loftDeg, curvedFace, bulgeMm, rollMm]);
 
   const onClubChange = (name: string) => {
     const club = getClub(name);
@@ -47,14 +67,8 @@ export function ClubPanel({
   };
 
   const onGenerateHead = () => {
-    onGenerate(
-      parametricHeadMesh({
-        ...getClub(clubName),
-        loftDeg,
-        faceBulgeRadiusM: curvedFace ? bulgeMm / 1000 : null,
-        faceRollRadiusM: curvedFace ? rollMm / 1000 : null,
-      }),
-    );
+    const spec = effectiveSpec();
+    onGenerate(generatedHeadFor(spec));
   };
 
   return (
@@ -79,20 +93,16 @@ export function ClubPanel({
       </label>
       <label title={FIELD_GUIDANCE.clubLoftDeg} className="mb-3 block text-sm">
         <span className="mb-1 flex justify-between text-slate-300">
-          <span>Loft</span>
+          <span className="flex items-center">Loft<FieldInfo label="Loft" guidance={FIELD_GUIDANCE.clubLoftDeg} /></span>
           <span className="text-slate-500">deg</span>
         </span>
-        <input
-          type="number"
-          inputMode="decimal"
+        <DecimalInput
           step={0.5}
           min={0}
           max={70}
           value={loftDeg}
-          onChange={(e) => {
-            const v = Number(e.target.value);
-            if (Number.isFinite(v)) setLoftDeg(Math.min(70, Math.max(0, v)));
-          }}
+          aria-label="Loft deg"
+          onCommit={setLoftDeg}
           title={FIELD_GUIDANCE.clubLoftDeg}
           className={INPUT_CLASS}
         />
@@ -121,21 +131,17 @@ export function ClubPanel({
           className="mb-3 block text-sm"
         >
           <span className="mb-1 flex justify-between text-slate-300">
-            <span>{label}</span>
+            <span className="flex items-center">{label}<FieldInfo label={label} guidance={FIELD_GUIDANCE[guidanceKey]} /></span>
             <span className="text-slate-500">mm</span>
           </span>
-          <input
-            type="number"
-            inputMode="decimal"
+          <DecimalInput
             step={10}
             min={100}
             max={2000}
             value={value}
             disabled={!curvedFace}
-            onChange={(e) => {
-              const v = Number(e.target.value);
-              if (Number.isFinite(v)) setValue(Math.min(2000, Math.max(100, v)));
-            }}
+            aria-label={`${label} mm`}
+            onCommit={setValue}
             title={FIELD_GUIDANCE[guidanceKey]}
             className={INPUT_CLASS}
           />

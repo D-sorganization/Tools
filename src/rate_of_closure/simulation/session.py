@@ -1,349 +1,42 @@
-"""Simulation session: swing -> impact -> flight, one exportable record.
+"""Public orchestration seam for swing, contact, impact, and flight.
 
-The orchestration seam of the epic (#4103): a :class:`SimulationConfig`
-selects a swing source (manual constant-twist scenario, double pendulum,
-or triple pendulum), a swing-plane orientation, a club, and a flight
-model; :func:`run_simulation` samples the swing, forms the delivery at
-the impact instant, solves the impact through ``swing_sim.impact`` (with
-the club package's bulge/roll face-normal callable wired in), derives
-launch conditions, and integrates the flight through
-``swing_sim.flight``.
-
-Impact-time scrubber convention: the ball sits at the FIXED world
-position :data:`BALL_POSITION_M`; scrubbing the impact time ``tau``
-translates the whole swing so the clubhead at ``tau`` meets the ball
-(``offset = ball - clubhead(tau)``). :func:`delivery_at` returns the
-live delivery numbers for any ``tau`` without running impact + flight.
-
-Everything here is in the app frame (x target, y up, z right); frame
-adapters convert at the flight boundary.
+The default ``delivery_inspection`` mode preserves legacy behavior by
+translating the swing so its selected clubhead reference point meets the
+fixed ball.  Opt-in ``fixed_ball_contact`` retains the source trajectory and
+returns a typed hit or miss before running contact-dependent phases.
 """
 
 from __future__ import annotations
 
-import math
-from dataclasses import dataclass, field
-
-import numpy as np
-
-from rate_of_closure._contracts import ensure, require
-from rate_of_closure.club import ClubSpec, face_normal_at_offset
-from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
-from rate_of_closure.simulation.sources import make_source
-from shared.python.swing_sim.flight import (
-    derive_launch_conditions,
-    from_flight_frame,
-    to_flight_frame,
+from rate_of_closure.simulation.contact import ContactMode, ImpactOutcome
+from rate_of_closure.simulation.delivery import delivery_at
+from rate_of_closure.simulation.records import (
+    BALL_POSITION_M,
+    SimulationConfig,
+    SimulationRun,
 )
-from shared.python.swing_sim.flight import simulate as flight_simulate
-from shared.python.swing_sim.flight.registry import FlightModelType
-from shared.python.swing_sim.impact import (
-    GOLF_BALL_RADIUS_M,
-    DeliveryDerived,
-    DeliveryParameters,
-    ImpactModelType,
-    ImpactParameters,
-    ImpactSolverAPI,
-    PostImpactState,
-    derive_delivery,
+from shared.python.swing_sim.ball_setup import (
+    DEFAULT_DRIVER_TEE_HEIGHT_M,
+    BallSetup,
+    BallSupportMode,
 )
-from shared.python.swing_sim.swing_source import SwingSource
-from shared.python.swing_sim.types import PlaneOrientation
 
 __all__ = [
     "BALL_POSITION_M",
+    "DEFAULT_DRIVER_TEE_HEIGHT_M",
+    "BallSetup",
+    "BallSupportMode",
+    "ContactMode",
+    "ImpactOutcome",
     "SimulationConfig",
     "SimulationRun",
     "delivery_at",
     "run_simulation",
 ]
 
-#: Fixed world position of the ball (app frame): on the target line at
-#: the origin, resting on the ground plane.
-BALL_POSITION_M = np.array([0.0, GOLF_BALL_RADIUS_M, 0.0])
-
-#: Delivery angles are clamped inside the impact package's ±89° domain.
-_MAX_DELIVERY_ANGLE_DEG = 89.0
-
-#: Uniform sampling step for the stored swing time series [s]. Dense
-#: enough for screw-axis extraction near impact (recon #4108).
-_SAMPLE_DT_S = 1e-3
-
-
-@dataclass(frozen=True)
-class SimulationConfig:
-    """One simulation request.
-
-    Args:
-        scenario: The explorer scenario — the manual source wraps it as a
-            constant twist; every source takes its impact offsets from it.
-        club: Club spec used for loft, head mass, MOI, CG depth, and the
-            bulge/roll face-normal callable.
-        source_kind: ``"manual"``, ``"double_pendulum"``, or
-            ``"triple_pendulum"``.
-        plane: Swing-plane orientation (three sequential tilts).
-        impact_time_s: Impact instant tau within the swing, seconds; the
-            scrubber drives this. ``None`` picks the instant of maximum
-            clubhead speed.
-        flight_model: ``swing_sim.flight`` registry model name.
-        swing_duration_s: Pendulum integration length [s].
-    """
-
-    scenario: ImpactScenario
-    club: ClubSpec
-    source_kind: str = "manual"
-    plane: PlaneOrientation = field(default_factory=PlaneOrientation)
-    impact_time_s: float | None = None
-    flight_model: str = "waterloo_penner"
-    swing_duration_s: float = 1.5
-
-    def __post_init__(self) -> None:
-        require(
-            isinstance(self.scenario, ImpactScenario),
-            "scenario must be an ImpactScenario",
-            self.scenario,
-        )
-        require(isinstance(self.club, ClubSpec), "club must be a ClubSpec", self.club)
-        FlightModelType(self.flight_model)  # raises ValueError on unknown names
-        if self.impact_time_s is not None:
-            require(
-                math.isfinite(self.impact_time_s) and self.impact_time_s >= 0.0,
-                "impact_time_s must be finite and >= 0",
-                self.impact_time_s,
-            )
-        require(
-            math.isfinite(self.swing_duration_s) and self.swing_duration_s > 0.0,
-            "swing_duration_s must be finite and > 0",
-            self.swing_duration_s,
-        )
-
-
-@dataclass(frozen=True)
-class SimulationRun:
-    """One complete swing -> impact -> flight record (app frame).
-
-    Attributes:
-        config: The request that produced this run.
-        swing_times: (N,) swing sample times [s].
-        swing_positions: (N, 3) clubhead positions, ball-aligned (the
-            swing is translated so the clubhead meets the ball at tau).
-        swing_poses: (N, 4, 4) ball-aligned SE(3) clubhead poses.
-        swing_twists: (N, 6) world twists ``[wx, wy, wz, vx, vy, vz]``.
-        impact_time_s: The impact instant tau actually used.
-        delivery: Delivery numbers + D-plane diagnostics at tau.
-        post_impact: Post-impact ball and club state.
-        launch: Launch summary (mph / deg / rpm plus flight metrics).
-        flight_times: (M,) flight sample times [s] (from impact).
-        flight_positions: (M, 3) ball positions from the ball position.
-        flight_velocities: (M, 3) ball velocities.
-    """
-
-    config: SimulationConfig
-    swing_times: np.ndarray
-    swing_positions: np.ndarray
-    swing_poses: np.ndarray
-    swing_twists: np.ndarray
-    impact_time_s: float
-    delivery: DeliveryDerived
-    post_impact: PostImpactState
-    launch: dict[str, float]
-    flight_times: np.ndarray
-    flight_positions: np.ndarray
-    flight_velocities: np.ndarray
-
-    @property
-    def total_duration_s(self) -> float:
-        """Swing duration plus flight time — the playback timeline span."""
-        flight_span = float(self.flight_times[-1]) if len(self.flight_times) else 0.0
-        return float(self.swing_times[-1]) + flight_span
-
-
-def _clamped_angle(value_deg: float) -> float:
-    """Clamp an angle into the impact package's delivery domain."""
-    return max(-_MAX_DELIVERY_ANGLE_DEG, min(_MAX_DELIVERY_ANGLE_DEG, value_deg))
-
-
-def _delivery_parameters(
-    velocity: np.ndarray, scenario: ImpactScenario, club: ClubSpec
-) -> DeliveryParameters:
-    """Delivery numbers from a sampled clubhead velocity (app frame).
-
-    The face is delivered square to the target (face angle 0) with the
-    club's static loft as dynamic loft; path and attack angles come from
-    the sampled velocity direction. Impact offsets carry over from the
-    scenario. Residual lie rotation is zero — the offsets are already
-    expressed in the face's toe/high axes.
-    """
-    speed = float(np.linalg.norm(velocity))
-    require(speed > 1e-6, "clubhead speed at impact must be > 0", speed)
-    path_deg = math.degrees(math.atan2(float(velocity[2]), float(velocity[0])))
-    aoa_deg = math.degrees(
-        math.atan2(
-            float(velocity[1]), math.hypot(float(velocity[0]), float(velocity[2]))
-        )
-    )
-    return DeliveryParameters(
-        clubhead_speed_mps=speed,
-        club_path_deg=_clamped_angle(path_deg),
-        face_angle_deg=0.0,
-        attack_angle_deg=_clamped_angle(aoa_deg),
-        dynamic_loft_deg=_clamped_angle(club.loft_deg),
-        lie_deg=0.0,
-        impact_offset_toe_mm=scenario.impact_offset_toe_mm,
-        impact_offset_high_mm=scenario.impact_offset_high_mm,
-    )
-
-
-def delivery_at(
-    source: SwingSource,
-    tau: float,
-    scenario: ImpactScenario,
-    club: ClubSpec,
-) -> DeliveryDerived:
-    """Live delivery numbers for the scrubber at impact time ``tau``.
-
-    Args:
-        source: An app-frame swing source.
-        tau: Impact instant within ``[0, source.duration]``.
-        scenario: Scenario carrying the impact offsets.
-        club: Club providing the dynamic loft.
-
-    Returns:
-        The delivery vectors + D-plane diagnostics at ``tau``.
-    """
-    sample = source.sample(tau)
-    params = _delivery_parameters(sample.twist[3:], scenario, club)
-    return derive_delivery(params, clubhead_angular_velocity=sample.twist[:3])
-
-
-def _auto_impact_time(source: SwingSource, times: np.ndarray) -> float:
-    """The sampled instant of maximum clubhead speed."""
-    speeds = [float(np.linalg.norm(source.sample(float(t)).twist[3:])) for t in times]
-    return float(times[int(np.argmax(speeds))])
-
-
-def _face_normal_callable(club: ClubSpec):  # type: ignore[no-untyped-def]
-    """Bulge/roll callable seam ``(toe_m, high_m) -> normal`` for the club."""
-
-    def _normal(toe_m: float, high_m: float) -> np.ndarray:
-        return np.array(face_normal_at_offset(club, toe_m * 1e3, high_m * 1e3))
-
-    return _normal
-
-
-def _launch_summary(
-    post: PostImpactState, delivery: DeliveryDerived, flight: object
-) -> dict[str, float]:
-    """Flatten launch + flight numbers into the exportable summary dict."""
-    launch = derive_launch_conditions(
-        to_flight_frame(post.ball_velocity),
-        to_flight_frame(post.ball_angular_velocity),
-    )
-    return {
-        "ball_speed_mph": launch.ball_speed * MPH_PER_MPS,
-        "launch_angle_deg": math.degrees(launch.launch_angle),
-        # Flight-frame azimuth is + toward +y (left); app convention is
-        # + right of target, so the sign flips.
-        "launch_azimuth_deg": -math.degrees(launch.azimuth_angle),
-        "spin_rpm": launch.spin_rate,
-        "spin_axis_tilt_deg": delivery.spin_axis_tilt_deg,
-        "carry_m": float(flight.carry_distance),  # type: ignore[attr-defined]
-        "max_height_m": float(flight.max_height),  # type: ignore[attr-defined]
-        "flight_time_s": float(flight.flight_time),  # type: ignore[attr-defined]
-        "landing_angle_deg": float(flight.landing_angle),  # type: ignore[attr-defined]
-    }
-
 
 def run_simulation(config: SimulationConfig) -> SimulationRun:
-    """Run one full swing -> impact -> flight simulation.
+    """Run a complete swing and any contact-dependent downstream phases."""
+    from rate_of_closure.simulation.pipeline import execute_simulation
 
-    Args:
-        config: The simulation request.
-
-    Returns:
-        A complete, exportable :class:`SimulationRun`.
-    """
-    source = make_source(
-        config.source_kind,
-        config.scenario,
-        plane=config.plane,
-        duration=config.swing_duration_s,
-    )
-    n = int(round(source.duration / _SAMPLE_DT_S))
-    times = np.linspace(0.0, source.duration, max(n, 2) + 1)
-
-    tau = (
-        min(max(config.impact_time_s, 0.0), source.duration)
-        if config.impact_time_s is not None
-        else _auto_impact_time(source, times)
-    )
-
-    # Scrubber math: translate the swing so the clubhead at tau meets
-    # the fixed ball.
-    impact_sample = source.sample(tau)
-    offset = BALL_POSITION_M - impact_sample.pose[:3, 3]
-
-    samples = [source.sample(float(t)) for t in times]
-    poses = np.stack([s.pose for s in samples])
-    poses[:, :3, 3] += offset
-    positions = poses[:, :3, 3].copy()
-    twists = np.stack([s.twist for s in samples])
-
-    delivery = delivery_at(source, tau, config.scenario, config.club)
-    solver = ImpactSolverAPI(
-        ImpactModelType.RIGID_BODY,
-        ImpactParameters(cg_depth=config.club.cg_depth_m),
-    )
-    post = solver.solve_with_gear_effect(
-        timestamp=tau,
-        clubhead_velocity=delivery.clubhead_velocity,
-        clubhead_orientation=delivery.face_normal,
-        impact_offset=delivery.impact_offset,
-        clubhead_mass=config.club.head_mass_kg,
-        clubhead_moi=config.club.moi_about_shaft_kg_m2,
-        face_normal_at_offset=_face_normal_callable(config.club),
-        record=False,
-    )
-
-    flight = flight_simulate(
-        derive_launch_conditions(
-            to_flight_frame(post.ball_velocity),
-            to_flight_frame(post.ball_angular_velocity),
-        ),
-        model_name=config.flight_model,
-    )
-    flight_times = np.array([p.time for p in flight.trajectory])
-    flight_positions = (
-        from_flight_frame(flight.to_position_array()) + BALL_POSITION_M
-        if len(flight.trajectory)
-        else np.zeros((0, 3))
-    )
-    flight_velocities = (
-        from_flight_frame(np.array([p.velocity for p in flight.trajectory]))
-        if len(flight.trajectory)
-        else np.zeros((0, 3))
-    )
-
-    run = SimulationRun(
-        config=config,
-        swing_times=times,
-        swing_positions=positions,
-        swing_poses=poses,
-        swing_twists=twists,
-        impact_time_s=tau,
-        delivery=delivery,
-        post_impact=post,
-        launch=_launch_summary(post, delivery, flight),
-        flight_times=flight_times,
-        flight_positions=flight_positions,
-        flight_velocities=flight_velocities,
-    )
-    ensure(
-        bool(
-            np.allclose(
-                source.sample(tau).pose[:3, 3] + offset, BALL_POSITION_M, atol=1e-9
-            )
-        ),
-        "clubhead at tau must coincide with the ball position",
-    )
-    return run
+    return execute_simulation(config)

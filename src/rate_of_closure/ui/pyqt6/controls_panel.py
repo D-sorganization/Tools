@@ -38,6 +38,7 @@ from rate_of_closure.units import (
     QUANTITY_UNITS,
     convert_from_canonical,
     convert_to_canonical,
+    set_display_distance_unit,
 )
 
 logger = logging.getLogger(__name__)
@@ -71,6 +72,7 @@ _UNIT_LABELS: dict[str, str] = {
     "speed": "Speed",
     "rotation": "Rotation",
     "length": "Length",
+    "distance": "Distance",
 }
 
 
@@ -80,6 +82,9 @@ class ControlsPanel(QWidget):
     scenarioChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
     #: Emitted with a ClubSpec when the user asks for a parametric head.
     clubHeadRequested = pyqtSignal(object)  # noqa: N815 - Qt signal convention
+    #: Emitted with the new unit when the Distance display unit changes
+    #: (#4125 H6) so distance surfaces across the app re-render.
+    distanceUnitChanged = pyqtSignal(str)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -106,6 +111,11 @@ class ControlsPanel(QWidget):
         form = QFormLayout(box)
         self._preset_combo = QComboBox()
         self._preset_combo.addItems(preset_names())
+        self._preset_combo.setToolTip(
+            "Load a sourced scenario preset (Cheetham 2014 tour data, "
+            "the forum worked example, zero-rotation control, ...); "
+            "every input stays editable afterwards."
+        )
         self._preset_combo.currentTextChanged.connect(self.apply_preset)
         form.addRow("Scenario", self._preset_combo)
         return box
@@ -116,6 +126,7 @@ class ControlsPanel(QWidget):
 
         self._club_combo = QComboBox()
         self._club_combo.addItems(club_names())
+        self._club_combo.setCurrentText("Driver 10.5°")
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
         self._club_combo.currentTextChanged.connect(self._on_club_changed)
         form.addRow("Club", self._club_combo)
@@ -127,6 +138,7 @@ class ControlsPanel(QWidget):
         self._loft_spin.setRange(0.0, 70.0)
         self._loft_spin.setSuffix(" deg")
         self._loft_spin.setToolTip(FIELD_GUIDANCE["club_loft_deg"])
+        self._loft_spin.setMinimumWidth(84)  # readable at small windows
         form.addRow("Loft", self._loft_spin)
 
         self._curvature_check = QCheckBox("Curved Face (Bulge && Roll)")
@@ -146,6 +158,7 @@ class ControlsPanel(QWidget):
             spin.setRange(100.0, 2000.0)
             spin.setSuffix(" mm")
             spin.setToolTip(FIELD_GUIDANCE[key])
+            spin.setMinimumWidth(84)  # readable at small windows
             form.addRow(label, spin)
 
         self._generate_button = QPushButton("Generate Representative Head")
@@ -187,6 +200,7 @@ class ControlsPanel(QWidget):
             spin.setKeyboardTracking(False)
             spin.setDecimals(decimals)
             spin.setToolTip(FIELD_GUIDANCE[name])
+            spin.setMinimumWidth(84)  # readable at small windows
             self._configure_spin_range(spin, name)
             spin.valueChanged.connect(self._on_value_changed)
             self._spins[name] = spin
@@ -226,6 +240,14 @@ class ControlsPanel(QWidget):
         """Re-display every affected field in the new unit, same value."""
         previous = self._units[quantity]
         if unit == previous:
+            return
+        if quantity == "distance":
+            # Ball-flight distances (#4125 H6): a session-wide display
+            # preference — every distance surface re-reads it on render.
+            set_display_distance_unit(unit)
+            self._units[quantity] = unit
+            self.distanceUnitChanged.emit(unit)
+            self._emit()
             return
         self._updating = True
         try:

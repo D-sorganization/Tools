@@ -21,7 +21,6 @@ import pytest
 from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation import (
-    BALL_POSITION_M,
     SOURCE_KINDS,
     ManualSwingSource,
     SimulationConfig,
@@ -154,6 +153,10 @@ class TestSession:
         assert run.launch["ball_speed_mph"] > speed * 2.23694
         assert run.launch["carry_m"] > 0.0
         assert run.total_duration_s > run.impact_time_s
+        assert run.swing_joints.shape == (len(run.swing_times), 3, 3)
+        np.testing.assert_allclose(
+            run.swing_joints[:, -1], run.swing_positions, atol=1e-10
+        )
 
     def test_triple_pendulum_run_end_to_end(self) -> None:
         run = run_simulation(
@@ -163,6 +166,10 @@ class TestSession:
         )
         assert run.launch["ball_speed_mph"] > 0.0
         assert len(run.flight_positions) > 2
+        assert run.swing_joints.shape == (len(run.swing_times), 4, 3)
+        np.testing.assert_allclose(
+            run.swing_joints[:, -1], run.swing_positions, atol=1e-10
+        )
 
     def test_scrubber_tau_shift_gives_clubhead_ball_coincidence(self) -> None:
         for tau in (0.010, 0.030, 0.045):
@@ -171,7 +178,9 @@ class TestSession:
             )
             assert run.impact_time_s == pytest.approx(tau)
             index = int(np.argmin(np.abs(run.swing_times - tau)))
-            assert np.allclose(run.swing_positions[index], BALL_POSITION_M, atol=1e-6)
+            assert np.allclose(
+                run.swing_positions[index], run.config.ball_position_m, atol=1e-6
+            )
 
     def test_scrubber_delivery_updates_live(self) -> None:
         source = make_source("double_pendulum", _SCENARIO, duration=0.8)
@@ -180,7 +189,9 @@ class TestSession:
         assert not np.allclose(d1.clubhead_velocity, d2.clubhead_velocity)
 
     def test_flight_starts_at_ball_position(self, manual_run: SimulationRun) -> None:
-        assert np.allclose(manual_run.flight_positions[0], BALL_POSITION_M, atol=1e-9)
+        assert np.allclose(
+            manual_run.flight_positions[0], manual_run.config.ball_position_m, atol=1e-9
+        )
 
     def test_bad_flight_model_rejected(self) -> None:
         with pytest.raises(ValueError, match="not a valid"):
@@ -237,7 +248,20 @@ class TestExport:
         write_csv(run, path)
         with path.open(newline="", encoding="utf-8") as handle:
             rows = list(csv.reader(handle))
-        assert rows[0] == ["phase", "t_s", "x_m", "y_m", "z_m", "speed_mps"]
+        assert rows[0] == [
+            "phase",
+            "t_s",
+            "x_m",
+            "y_m",
+            "z_m",
+            "speed_mps",
+            "is_fixed_ball_contact",
+            "impact_occurred",
+            "impact_time_s",
+            "candidate_time_s",
+            "closest_approach_m",
+            "contact_margin_m",
+        ]
         assert len(rows) - 1 == len(run.swing_times) + len(run.flight_times)
         phases = {row[0] for row in rows[1:]}
         assert phases == {"swing", "flight"}

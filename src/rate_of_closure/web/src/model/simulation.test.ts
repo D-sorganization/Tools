@@ -11,6 +11,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   BALL_POSITION,
+  DEFAULT_IMPACT_CLUB,
   deriveLaunch,
   golfDefaultParams,
   inPlaneGravity,
@@ -19,7 +20,9 @@ import {
   simulatePendulum,
   solveImpact,
   toFlightFrame,
+  type SimulationLaunchTs,
   type SimulationInput,
+  type SimulationRunTs,
 } from "./simulation";
 
 const MANUAL_INPUT: SimulationInput = {
@@ -35,6 +38,13 @@ const MANUAL_INPUT: SimulationInput = {
   impactTimeS: null,
   swingDurationS: 1.5,
 };
+
+function requireLaunch(run: SimulationRunTs): SimulationLaunchTs {
+  expect(run.impactOutcome.status).toBe("hit");
+  expect(run.launch).not.toBeNull();
+  if (run.launch === null) throw new Error("Expected a launch-producing hit");
+  return run.launch;
+}
 
 describe("pendulum parity (Python reference.py pins)", () => {
   it("matches the golf-default derived parameters", () => {
@@ -74,7 +84,7 @@ describe("pendulum parity (Python reference.py pins)", () => {
 });
 
 describe("impact + launch parity (Python impact/models.py pins)", () => {
-  const impact = solveImpact({
+  const delivery = {
     clubheadSpeedMps: 50.51552,
     clubPathDeg: 2.0,
     faceAngleDeg: 0.0,
@@ -82,6 +92,35 @@ describe("impact + launch parity (Python impact/models.py pins)", () => {
     dynamicLoftDeg: 10.5,
     impactOffsetToeMm: 0,
     impactOffsetHighMm: 0,
+  };
+  const impact = solveImpact(delivery);
+
+  it("keeps the explicit default club identical to the legacy implicit default", () => {
+    const explicit = solveImpact({ ...delivery, club: DEFAULT_IMPACT_CLUB });
+    expect(explicit.ballVelocity).toEqual(impact.ballVelocity);
+    expect(explicit.ballAngularVelocity).toEqual(impact.ballAngularVelocity);
+  });
+
+  it("independently uses selected head mass and MOI in the impact impulse", () => {
+    const offCenter = { ...delivery, impactOffsetToeMm: 20 };
+    const baseline = solveImpact({
+      ...offCenter,
+      club: { headMassKg: 0.2, moiAboutShaftKgM2: 4.5e-4 },
+    });
+    const heavier = solveImpact({
+      ...offCenter,
+      club: { headMassKg: 0.35, moiAboutShaftKgM2: 4.5e-4 },
+    });
+    const higherMoi = solveImpact({
+      ...offCenter,
+      club: { headMassKg: 0.2, moiAboutShaftKgM2: 1.2e-3 },
+    });
+    expect(Math.hypot(...heavier.ballVelocity)).toBeGreaterThan(
+      Math.hypot(...baseline.ballVelocity),
+    );
+    expect(Math.hypot(...higherMoi.ballVelocity)).toBeGreaterThan(
+      Math.hypot(...baseline.ballVelocity),
+    );
   });
 
   it("pins the post-impact ball velocity", () => {
@@ -129,21 +168,84 @@ describe("impact + launch parity (Python impact/models.py pins)", () => {
 });
 
 describe("session orchestration", () => {
+  it("uses configured ball elevation for alignment, flight, and contact classification", () => {
+    const teeHeightM = 0.0381;
+    const inspection = runSimulation({
+      ...MANUAL_INPUT,
+      ballSetup: { supportMode: "tee", teeHeightM },
+    });
+    expect(inspection.ballPositionM[1]).toBeCloseTo(BALL_POSITION[1] + teeHeightM, 12);
+    expect(inspection.flight[0].position[1]).toBeCloseTo(inspection.ballPositionM[1], 12);
+    const impactSample = inspection.swing.find(
+      (sample) => sample.t === inspection.impactTimeS,
+    );
+    expect(impactSample?.position[1]).toBeCloseTo(inspection.ballPositionM[1], 12);
+
+    const fixed = runSimulation({
+      ...MANUAL_INPUT,
+      contactMode: "fixed_ball_contact",
+      ballSetup: { supportMode: "tee", teeHeightM },
+    });
+    expect(fixed.impactOutcome.status).toBe("miss");
+    expect(fixed.launch).toBeNull();
+    expect(fixed.flight).toEqual([]);
+  });
+
+  it("propagates selected club properties into launch results", () => {
+    const offCenter = { ...MANUAL_INPUT, impactOffsetToeMm: 20 };
+    const light = runSimulation({
+      ...offCenter,
+      club: { headMassKg: 0.15, moiAboutShaftKgM2: 2.0e-4 },
+    });
+    const heavy = runSimulation({
+      ...offCenter,
+      club: { headMassKg: 0.35, moiAboutShaftKgM2: 1.2e-3 },
+    });
+    const lightLaunch = requireLaunch(light);
+    const heavyLaunch = requireLaunch(heavy);
+    expect(heavyLaunch.ballSpeedMph).toBeGreaterThan(lightLaunch.ballSpeedMph);
+    expect(heavyLaunch.carryM).toBeGreaterThan(lightLaunch.carryM);
+  });
+
+  it("exports ball-aligned double-pendulum joints ending at the clubhead", () => {
+    const run = runSimulation({ ...MANUAL_INPUT, sourceKind: "double_pendulum" });
+    expect(run.sourceKind).toBe("double_pendulum");
+    expect(run.swing[0].joints).toHaveLength(3);
+    for (const sample of [run.swing[0], run.swing[500], run.swing[run.swing.length - 1]]) {
+      const tip = sample.joints[sample.joints.length - 1];
+      expect(tip[0]).toBeCloseTo(sample.position[0], 10);
+      expect(tip[1]).toBeCloseTo(sample.position[1], 10);
+      expect(tip[2]).toBeCloseTo(sample.position[2], 10);
+    }
+  });
+
+  it("exports a four-point triple-pendulum skeleton", () => {
+    const run = runSimulation({ ...MANUAL_INPUT, sourceKind: "triple_pendulum" });
+    expect(run.swing[0].joints).toHaveLength(4);
+    const sample = run.swing[500];
+    const tip = sample.joints[sample.joints.length - 1];
+    expect(tip[0]).toBeCloseTo(sample.position[0], 10);
+    expect(tip[1]).toBeCloseTo(sample.position[1], 10);
+    expect(tip[2]).toBeCloseTo(sample.position[2], 10);
+  });
+
   it("manual run produces plausible driver numbers (Python band)", () => {
     const run = runSimulation(MANUAL_INPUT);
-    expect(run.launch.ballSpeedMph).toBeGreaterThan(130);
-    expect(run.launch.ballSpeedMph).toBeLessThan(185);
-    expect(run.launch.launchAngleDeg).toBeGreaterThan(5);
-    expect(run.launch.launchAngleDeg).toBeLessThan(20);
-    expect(run.launch.spinRpm).toBeGreaterThan(1000);
-    expect(run.launch.spinRpm).toBeLessThan(5000);
-    expect(run.launch.carryM).toBeGreaterThan(150);
-    expect(run.launch.carryM).toBeLessThan(320);
+    const launch = requireLaunch(run);
+    expect(launch.ballSpeedMph).toBeGreaterThan(130);
+    expect(launch.ballSpeedMph).toBeLessThan(185);
+    expect(launch.launchAngleDeg).toBeGreaterThan(5);
+    expect(launch.launchAngleDeg).toBeLessThan(20);
+    expect(launch.spinRpm).toBeGreaterThan(1000);
+    expect(launch.spinRpm).toBeLessThan(5000);
+    expect(launch.carryM).toBeGreaterThan(150);
+    expect(launch.carryM).toBeLessThan(320);
   });
 
   it("scrubbing tau makes the clubhead meet the fixed ball", () => {
     for (const tau of [0.01, 0.03, 0.045]) {
       const run = runSimulation({ ...MANUAL_INPUT, impactTimeS: tau });
+      expect(run.impactTimeS).not.toBeNull();
       expect(run.impactTimeS).toBeCloseTo(tau, 9);
       const index = run.swing.findIndex(
         (sample) => Math.abs(sample.t - tau) < 5e-4,
@@ -160,10 +262,42 @@ describe("session orchestration", () => {
       ...MANUAL_INPUT,
       sourceKind: "double_pendulum",
     });
-    expect(run.launch.ballSpeedMph).toBeGreaterThan(0);
-    expect(run.launch.carryM).toBeGreaterThan(0);
+    const launch = requireLaunch(run);
+    expect(launch.ballSpeedMph).toBeGreaterThan(0);
+    expect(launch.carryM).toBeGreaterThan(0);
     expect(run.flight.length).toBeGreaterThan(2);
-    expect(run.totalDurationS).toBeGreaterThan(run.impactTimeS);
+    expect(run.impactTimeS).not.toBeNull();
+    expect(run.totalDurationS).toBeGreaterThan(run.impactTimeS ?? Infinity);
+  });
+
+  it("retains an unaligned swing and honest empty phases when the club misses", () => {
+    const run = runSimulation({
+      ...MANUAL_INPUT,
+      sourceKind: "double_pendulum",
+      swingDurationS: 0.05,
+      contactMode: "fixed_ball_contact",
+    });
+    expect(run.impactOutcome.status).toBe("miss");
+    expect(run.impactOutcome.contactMarginM).toBeLessThan(0);
+    expect(run.impactOutcome.geometryLimitations).toContain("clubhead mesh");
+    expect(run.impactTimeS).toBeNull();
+    expect(run.launch).toBeNull();
+    expect(run.flight).toEqual([]);
+    expect(run.totalDurationS).toBeCloseTo(0.05, 9);
+    expect(run.swing[0].position).toEqual(
+      run.swing[0].joints[run.swing[0].joints.length - 1],
+    );
+  });
+
+  it("detects a fixed-ball manual contact without translating its path", () => {
+    const run = runSimulation({
+      ...MANUAL_INPUT,
+      contactMode: "fixed_ball_contact",
+    });
+    expect(run.impactOutcome.status).toBe("hit");
+    expect(run.swing[0].position[1]).toBe(0);
+    expect(run.swing[0].position[1]).not.toBe(BALL_POSITION[1]);
+    expect(run.impactOutcome.closestApproachM).toBeCloseTo(BALL_POSITION[1], 12);
   });
 
   it("flight starts at the ball position (app frame)", () => {

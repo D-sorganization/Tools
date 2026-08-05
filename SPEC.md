@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.9.1                                      |
-| **Spec Version**        | 1.9.1                                      |
+| **Current Version**     | 1.13.3                                     |
+| **Spec Version**        | 1.13.3                                     |
 | **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,505 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-05 Rate of Closure Python 3.10 CI compatibility
+
+- Rate of Closure and shared swing simulation string enums use Python 3.10-safe
+  `str, Enum` declarations instead of the Python 3.11-only standard library
+  `StrEnum`, preserving string-valued enum behavior across contact outcomes,
+  variation statuses, run configuration, torque profiles, and the torque
+  profile controller.
+
+### 2026-08-05 Rate of Closure physical ball setup and variation workflows
+
+- Simulation configuration now carries a canonical ground/tee support record.
+  Tee height is the ground-plane clearance to the bottom of the ball; drivers
+  default to Tee at 38.1 mm and other clubs default to Ground. Explicit user
+  overrides survive club changes, legacy runs migrate to Ground, and the
+  derived ball center drives contact, alignment, impact records, flight origin,
+  and both standalone renderers.
+- Variation plans retain their complete v2 schema and can be saved, loaded,
+  duplicated, and deleted from a versioned local library. Users can select
+  simultaneous, one-at-a-time, or combined analyses, while paired common-
+  reference propagation reports time/frame/point-aligned geometric displacement
+  without discarding valid miss trajectories.
+- Shared Matplotlib canvases own and cancel their deferred draw timers during
+  Qt teardown, preventing stale callbacks from touching deleted widgets across
+  all Rate of Closure plot views.
+
+### 2026-08-05 Rate of Closure interaction and rendering hardening
+
+- Every directional engineering entry now exposes a visible, clickable
+  reference-frame disclosure, and launch-number rows expose their definitions
+  as whole-row buttons in the web interface. Web numeric editing uses a
+  draft/commit control that selects the complete value on focus, preserves
+  intermediate empty/minus/decimal states, accepts negative spin-axis tilt,
+  clamps only at commit, and provides a full-field focus treatment.
+- Swing sessions carry explicit joint positions. Both renderers draw the
+  complete double- or triple-pendulum skeleton, the web implementation adds
+  the parity-pinned triple-pendulum source, and the initial simulation runs
+  automatically so the Swing view is never an unexplained blank canvas.
+- Both interfaces start with a representative 10.5-degree driver and visible
+  engineering-style CG target. Parametric heads use 64-point rings, refined
+  body stations, and five face rings (1,792 driver triangles), with matched
+  deterministic Python/TypeScript geometry, watertight volumetrics, steel
+  shading, specular highlights, and a regenerated bundled example STL.
+
+### 2026-08-04 Course showcase — golf-course scene, target optimization, launcher styling, yards units (epic #4125, H7 + H6)
+
+- **H7a golf-course scene**: the simulation/flight displays render as a
+  course. `rate_of_closure/ui/course.py` derives every scene tone from
+  the shared chart palette (blends of the palette green toward
+  black/white — rough/fairway/green one grass family, hole/flag/tee
+  from palette red/yellow; no widget hex) with a configurable
+  `CourseLayout` (green distance/radius, fairway half-width);
+  `ui/pyqt6/course_scene.py` paints the swing 3D ground plane, the
+  side-profile ground band + green/flagstick, and the top-down
+  rough/fairway/green/hole/tee. Ball/Ground checkboxes stay; a new
+  'Course Elements' checkbox (sourced guidance) gates the furniture in
+  the swing scene and FlightView. Web mirror: `model/theme.ts` (shared
+  chartColors + blend/withAlpha) and `model/course.ts` (same blend
+  fractions, parity-tested) drive course-styled `swingSceneDraw` and
+  `FlightCanvases` with the same checkbox.
+- **H7b target optimization**: `swing_sim/solver/targets.py`
+  `TargetRegion` — green (circle at distance, optional lateral offset,
+  radius) or fairway (distance band × half-width corridor) with an
+  exact signed distance (negative inside), containment test, and a
+  residual = distance-outside-region (0 inside) + a small centering
+  term. `ImpactGoal` gains an additive `target_region` (+weight); the
+  objective appends one carry-scaled residual and `solve()` reports
+  `landing_lateral_m` / `target_distance_m` (+ a `target_region_m`
+  per-goal entry). App facade `simulation/targets.py` adds
+  `hold_stats`/`hold_fraction` (Variation headline: share of
+  Monte-Carlo landings holding the target) and the course-layout
+  bridge. PyQt6: `TargetPanel` on the Solver panel (kind/geometry/
+  weight entries — the cheap place/edit seam, the flight top-down view
+  renders the region live — plus 'Optimize to Target' reusing the
+  partition/progress/cancel machinery; solver row widgets split into
+  `solver_rows.py` for the 500-LOC budget); FlightView overlays the
+  dashed region + the Variation landing scatter with an
+  "N/M shots hold the target (x%)" title (VariationTab
+  `studyCompleted` → main-window wiring). Web: `model/targets.ts`
+  parity mirror pinned against the Python tests, the TS solver
+  extended with the region goal ('Optimize to Target' button + signed-
+  distance result row), a `TargetSection` (entries + containment
+  readout) on the flight view, dashed target on the top-down canvas,
+  and the Variation landing canvas colored by containment with the
+  hold-% headline. Tests: signed-distance inside/boundary/outside pins
+  for both kinds (both languages), optimizer reaching a reachable
+  green from a cold start (both solvers), hand-counted 3-of-5 hold
+  fixture matching `hold_fraction`.
+- **H6 showcase styling + yards**: `ui/pyqt6/app_style.py` applies the
+  UpstreamDrift launcher's visual language app-wide (hover-highlighted
+  buttons with a subtle bottom-edge shadow, rounded launcher-card
+  group boxes, hover/selected tabs), all colors derived from the live
+  QPalette (tests pin: no hex, palette/rgba only); web accent hexes in
+  KineticsSection/ClubCanvas aligned onto the shared `model/theme.ts`
+  palette. New 'Distance' quantity: `DISTANCE_UNITS` (yd default, m
+  selectable; canonical stays SI metres) joins `QUANTITY_UNITS` — a
+  Distance drop-down in both UIs' Units sections — applied to flight
+  result rows (carry/lateral/putt roll-out; apex stays metres),
+  FlightView + putting axes (tick formatters, canonical data),
+  plotting-catalog flight/putting distance variables (`DISTANCE_KEYS`
+  - render-pipeline conversion incl. CSV headers), variation output
+    stats, and the target-region entries (canonical round-trip).
+    Conversion + default-is-yards tests both sides.
+
+### 2026-08-04 Realistic type-specific heads, volumetric COG, putters, hosel-true shafts (epic #4125, H1)
+
+- `src/rate_of_closure/club/head_profiles.py` — per-club-type parametric
+  head profiles (superellipse loft cross-sections with per-section
+  vertical centers, at a per-type reference mass): woods keep the
+  historical rounded-crown envelope; hybrids are an intermediate ~70%
+  depth silhouette; irons are blade profiles (thin topline, ~22 mm
+  face-to-back vs ~110 mm for a wood, cavity-back recess via an inset
+  tail-cap fan); wedges are iron-like with rear mass biased toward the
+  sole; putters come in two generic, unbranded forms — a deep
+  semicircular-plan **mallet** and an anser-style **blade** (shallow
+  rectangle, lower flange back, plumber's-neck hosel offset ~9.5 mm
+  behind the face). `ClubSpec` gains a `HeadStyle` enum
+  (`AUTO`/`MALLET`/`BLADE`); `profile_for`/`mass_scale`/
+  `face_center_point`/`hosel_point` are the public seams.
+- `parametric_head.build_parametric_head` now drives off the type
+  profile and winds the whole solid consistently outward (body bands
+  were previously wound inward — invisible under `|n·L|` shading but
+  fatal to signed-volume integrals); wood meshes are bit-identical to
+  the previous generator, so all prior parity pins stand.
+- `src/rate_of_closure/club/volumetrics.py` — closed-mesh volume and
+  centroid via the divergence theorem (signed tetrahedra to the
+  origin), DbC-gated by a combinatorial watertightness check (every
+  directed edge exactly once with its reverse present) and a positive/
+  sane-volume postcondition; validated against analytic solids (cube
+  exact, UV sphere <1%); `head_cog(spec)` reports the geometric COG in
+  spec-sheet convention (depth back from the face, height above the
+  sole) alongside the spec's published-typical CG values, and a test
+  asserts both land in per-type plausible bands.
+- Hosel-true shafts: both renderers (PyQt6 `Club3DView`, web
+  `ClubCanvas`) attach the shaft line at the generated head's per-type
+  hosel point along the lie angle (heel-top for irons/wedges/putters
+  with the blade putter's plumber's-neck set-back, heel-crown
+  transition for woods/hybrids); a GUI test pins shaft attachment ==
+  hosel point under the face-plane shift.
+- 'Show CG' checkboxes (sourced tooltip: divergence-theorem centroid)
+  in the 3D clubhead view and the strike views of both UIs — marker at
+  the volumetric COG (themed `get_chart_color`; spec-CG/reference-point
+  fallback for non-watertight loaded STLs).
+- Library grows to 16 clubs: the generic "Putter" is replaced by
+  "Blade Putter" (350 g, 2500 g·cm², CG 12/14 mm) and "Mallet Putter"
+  (360 g, 4500 g·cm², CG 35/14 mm) — typical published values, SI.
+- Glossary: hosel, plumber's neck, bounce, mallet/blade putter,
+  centroid, divergence theorem (67 terms; TS mirror + fixture
+  regenerated).
+- Web parity: `clubHeads.ts` (profiles/hosel) + `volumetrics.ts`
+  (same algorithm), volume/COG/hosel parity-pinned against pytest on
+  the driver and blade-putter fixtures; CG checkbox on ClubCanvas and
+  StrikeCanvas; strike-view face extents now per-type. Tests:
+  `tests/rate_of_closure/test_club_heads.py`, `web/src/model/
+heads.test.ts`, `web/src/model/volumetrics.test.ts`, GUI smokes in
+  `test_gui.py`/`test_viewers_gui.py`.
+
+### 2026-08-04 Swing kinetics — torques, forces, powers with plots and 3D overlays (epic #4125, H2)
+
+- Kinetics core: `rate_of_closure/simulation/kinetics.py` — per-sample
+  inverse dynamics over the double-pendulum swing using the swing_sim
+  EOM surfaces (mass_matrix / coriolis_vector / gravity_vector /
+  damping_vector): a frozen `KineticsSeries` (t, net / gravity /
+  damping / applied torque breakdown per joint, joint powers τ·ω,
+  Newton–Euler joint reaction forces in the app frame, point-mass
+  clubhead-force estimate, ball-aligned joint geometry). Sign
+  convention documented (positive torque counter-clockwise about the
+  swing-plane normal — introduced here; the movement optimizer states
+  none). `simulate_forced` (RK4 with an applied torque profile) backs
+  the test suite: inverse-dynamics round trip recovers a known torque
+  profile to O(dt²), applied power integrates to ΔE (undamped forced),
+  net joint power integrates to ΔKE (passive), static-hang force pin.
+  New public `DoublePendulumSwing.state_at` accessor exposes the joint
+  trajectory (additive swing_sim change).
+- Presentation pattern-matched to the movement optimizer
+  (`src/movement_optimizer/gui/plot_renderer.py`, `vector_overlay.py`,
+  `models/swingset_forces.py` — credited in docstrings): "Time (s)" /
+  "Torque (N·m)" / "Power (W)" / "Force (N)" axis labels
+  (parenthesised units, middle dot), unit-suffixed field names, faint
+  zero lines on signed series, dashed total overlay on the power plot,
+  chart-cycle per-joint colors, 270°-sweep torque arcs with sign as
+  direction and capped auto-scaled force arrows.
+- Plotting catalog: new series category "Kinetics" (11 keys: net /
+  gravity / damping torques, powers, force magnitudes per joint) wired
+  into the custom wizard on both UIs; extractors yield all-NaN for
+  sources without joint states (manual / triple pendulum) rather than
+  fabricating numbers. Built-in plots 'Joint Torques', 'Joint Power',
+  'Reaction Forces'. Parity fixture regenerated (51 keys).
+- PyQt6: 'Show Kinetics' checkbox in the swing viewer drawing
+  per-joint torque arcs (radius ∝ |τ|, sweep direction by sign) and
+  capped force arrows at the joint positions each frame with a
+  magnitude-carrying legend (`ui/pyqt6/kinetics_overlay.py`); Kinetics
+  sub-tab in the Simulation tab (`ui/pyqt6/kinetics_panel.py`) with
+  the three plots, a peak table (peak |torque| / |power| / |force| per
+  joint with timing as % of the downswing), and glossary-linked
+  explanations (KINETICS_EXPLANATIONS; new glossary terms
+  inverse_dynamics, joint_reaction_force, moment_of_force, power).
+- Web parity: `model/kinetics.ts` mirrors the inverse dynamics /
+  breakdown / powers / force magnitudes, parity-pinned tightly against
+  the pytest-generated `__fixtures__/kinetics_parity.json`; Kinetics
+  view in the Simulation panel (three canvas charts + peak table);
+  catalog keys mirrored. DEVIATIONS: the 3D playback overlay is
+  deferred to the P7 WASM pass (the web scene has no pose-level
+  drawing yet); triple-pendulum kinetics deferred (separate
+  absolute-angle formulation — kinetics return None/NaN for it);
+  the issue text's `joint_torque_breakdown` helper did not exist in
+  swing_sim — the breakdown is computed here from the EOM surfaces.
+
+### 2026-08-04 Putting vertical — impact, skid/roll, green sim, Putting tab (epic #4125, H3)
+
+- Physics: new self-façaded subpackage
+  `src/shared/python/swing_sim/putting/` (parent `swing_sim/__init__.py`
+  untouched, same policy as `impact`/`variation`), all derivations from
+  first principles in the module docstrings.
+  (a) `impact.py`: putter-ball impact — 1-D COR impulse along the
+  lofted face normal (putter-face COR 0.78, typical published value)
+  plus the 2/7 rolling-cap tangential transfer giving launch angle and
+  the initial backspin "slide" state; pendulum backstroke→speed proxy
+  `v = A·sqrt(g/L)`; H3-local `MINIMAL_PUTTERS` clearly marked for H1
+  club-library reconciliation.
+  (b) `roll.py`: skid phase closed forms (`dv/dt = -μ_k g`,
+  `dω/dt = (5/2)μ_k g/r`, pure roll at `v = ωr` ⇒
+  `v_roll = (5v₀+2ω₀r)/7`); stimpmeter green speed derived from the
+  USGA geometry (36 in ramp, 20° release, V-groove inertia ⇒ release
+  speed ≈ 1.83 m/s) inverted to `μ_r = v²/(2gS)` — the stimp → μ_r →
+  roll-out chain round-trips exactly (test-enforced).
+  (c) `green.py`: uniform planar slope (grade % + downhill aspect),
+  deterministic fixed-step RK4 (2 ms) with a SLIDING/ROLLING mode
+  machine; break, skid/roll split, and a geometric lip-capture bound
+  (ball must fall half a diameter crossing the hole mouth ⇒
+  `v_capture = R·sqrt(g/2r) ≈ 0.82 m/s`; Holmes 1991 cited for the
+  full-chord ~1.6 m/s variant).
+- App: 'Putting' tab in both UIs. PyQt6
+  `ui/pyqt6/putting_tab.py` (putter picker preferring the H1 library
+  putter via `rate_of_closure/putting.py`, clubhead-speed or
+  backstroke pace input, stimp/grade/aspect/distance controls with
+  sourced tooltips, clickable result rows → explanations with glossary
+  links, matplotlib top-down green with phase-coded path + downhill
+  arrow over a speed-vs-distance plot with the capture bound). Web
+  `web/src/model/putting.ts` mirror (same constants, same RK4) with
+  `components/PuttingPanel.tsx` (SVG green view adapting UpstreamDrift
+  `PuttingGreen.tsx` concepts, credited) — parity pins in
+  `putting.test.ts` mirror `tests/rate_of_closure/test_putting.py`
+  value-for-value.
+- Additive registrations: `plotting/putting_catalog.py` (PuttResult-
+  scoped variable registry, pinned SimulationRun catalog untouched);
+  5 new glossary terms (stimp, skid, pure_roll, capture_speed, break)
+  in new `glossary_entries_putting.py` + TS mirror + regenerated
+  parity fixture; `helptext.py`/`helptext.ts` Putting entries;
+  `FIELD_TO_TERM` putt-field mappings.
+- Tests: skid→roll continuity (v = ωr), stimp round-trip, slope
+  mirror symmetry, capture-bound behaviour (dying putt drops, slammed
+  putt runs past), flat-green speed monotonicity, determinism,
+  Python↔TS parity pins on reference putts, GUI smoke + tooltip and
+  help sweeps extended to the new tab.
+
+### 2026-08-04 Rate of Closure glossary, help system & full-model derivations (epic #4120, phase V4)
+
+- Selected-value clarity: clicking any result/metric/launch row applies
+  a persistent selected state (PyQt6: `ResultRow.set_selected` dynamic
+  property + a palette-derived stylesheet — highlight color at low
+  alpha, no hard-coded colors; web: the aria-pressed row styling
+  strengthened with a ring + stronger tint). One selection at a time
+  across all row groups per host, and every explanation panel now leads
+  with the selected row's NAME as a prominent header
+  (`explanation_html`). Test-enforced (exclusivity, header-matches-
+  label, palette-only styling).
+- Glossary: `src/rate_of_closure/glossary.py` — a DbC dict of 60
+  sourced terms covering the whole app vocabulary (delivery terms,
+  CCV/HTV/SPV, R_ISA/ISA/screw pitch/twist, D-plane/spin loft, COR/
+  effective mass/MOI tensor/CG depth/gear effect/bulge/roll, 2/7
+  friction cap, launch/flight terms, Monte-Carlo/sensitivity/Spearman/
+  2-sigma ellipse/NoiseSpec distributions, pendulum mass matrix/
+  Coriolis/plane inclination, ...), each definition naming its source.
+  PyQt6: searchable Glossary tab (`ui/pyqt6/glossary_tab.py`) with
+  `select_term` deep-linking; every explanation panel carries a
+  `glossary:<term>` link that jumps there pre-selected
+  (`FIELD_TO_TERM` maps EVERY explanation field, contract-tested).
+  Web: generated `model/glossary.ts` mirror + Glossary tab with search
+  - links from the explanation card; the key list is pinned key-for-key
+    by a Python-generated fixture checked from both test suites.
+- Tab rename: 'Derivation && Traceability' -> 'Calculation Description'
+  (both UIs, docstrings/strings updated).
+- Full-model derivations: `derivation_models.py` (DerivationConfig +
+  DerivationSection) assembles sectioned coverage from per-domain
+  content modules under the 500-LOC budget — (a) the existing closure
+  chain, (b) `derivation_impact.py`: impulse-momentum with COR,
+  MOI-tensor triple-product effective mass, the 2/7 friction spin cap,
+  D-plane, and the gear-effect recoil derivation (sourced from the
+  swing_sim.impact docstrings), (c) `derivation_flight.py`: flight EOM
+  with drag/lift/Magnus plus the ACTIVE literature model's coefficient
+  law and citation pulled live from the flight registry metadata, and
+  spin decay, (d) `derivation_swing.py`: double-pendulum Lagrangian
+  (mass matrix, Coriolis, plane-tilt gravity projection substituting
+  the live tilts) with a conditional triple-pendulum step. Sections
+  render conditionally per the current configuration — SimulationTab
+  emits `configChanged` and the DerivationView re-renders. Web mirror
+  `derivationModels.ts` + sectioned `Derivation.tsx`; parity tests pin
+  section keys/toggling and the in-plane-gravity mirror; every formula
+  parses as matplotlib mathtext (pytest) and strict KaTeX (vitest).
+- Help system: `helptext.py` — cold-user help per tab (what it does,
+  workflow, control reference, tips); a '?' corner button on the PyQt6
+  tab bar opens the current tab's rich-text help panel. Web:
+  `helptext.ts` + a collapsible 'How to Use This Page' section at the
+  top of every tab. Contract tests assert every tab has substantive
+  help (>300 chars) with workflow coverage.
+- Hover-hint completeness sweep: PyQt6 headless walk over every
+  (nested) tab asserting an effective tooltip on all interactive
+  widgets; web vitest render-and-assert title/aria-label on the
+  interactive elements of every panel. Gaps found by the tests fixed
+  across both UIs (playback, presets, tab nav, unit selects, result
+  rows, run/export/solver controls).
+
+### 2026-08-04 Shared variation / Monte-Carlo engine + Variation tab (epic #4120, phase V3)
+
+- New shared engine `src/shared/python/swing_sim/variation/` (not
+  re-exported from `swing_sim`'s top level, same policy as `solver`):
+  - `registry.py` — ONE namespaced 'how parameters vary' vocabulary:
+    `VariableDef` entries keyed `<category>.<name>` across
+    `swing_sim.impact.delivery` (8 delivery variables),
+    `swing_sim.swing` (pendulum plane tilts, impact timing, damping),
+    `swing_sim.club` (head mass / MOI / COR into the impact solve), and
+    `swing_sim.flight.launch` (direct launch conditions); each entry
+    carries a label, unit, default, typical noise scale, and sourced
+    guidance. `register_variable` is the extension seam so other
+    packages adopt the same scheme instead of another one-off.
+  - `spec.py` — frozen `NoiseSpec` (normal | uniform | triangular,
+    additive scale, optional clip truncation) and `VariationPlan`
+    (mode `delivery`/`swing`/`launch`, base overrides, noise list,
+    `n_runs`, `seed`, flight model) with lossless JSON round-trip
+    (`schema_version` 1) for reproducible studies.
+  - `engine.py` / `pipeline.py` — seeded (`numpy` `default_rng` with
+    per-variable, subset-stable seed sequences keyed
+    `[seed, crc32(key)]` — deliberately not the surveyed `base_seed+i`
+    idiom), chunked `concurrent.futures` N-run executor over the
+    appropriate pipeline slice (delivery→impact→flight,
+    pendulum→impact→flight, or launch→flight) collecting a
+    `VariationDataset` (inputs matrix, outputs matrix incl. delivery,
+    launch, carry/lateral/apex/landing columns, per-run success flags —
+    failed runs recorded as NaN rows, never batch aborts). Reuses the
+    solver's `ProgressReport`/`CancelledError`/`cancel_event` shapes
+    verbatim so GUI plumbing is identical; results are worker-count
+    invariant (test-pinned).
+  - `analysis.py` — per-output mean/std/percentiles; one-at-a-time
+    sensitivity (rerun with a single spec active, paired draws via the
+    per-variable streams) producing raw + column-normalized matrices
+    (which input drives which output); Spearman rank correlation as a
+    cheap global-sensitivity cross-check; 2-sigma landing-dispersion
+    ellipse from the carry/lateral covariance eigen-decomposition.
+  - `dataset_io.py` — documented CSV + JSON dataset schemas with
+    import back (JSON embeds the plan; CSV import takes it).
+  - Overlap review (credited in module docstrings): UpstreamDrift
+    `EnhancedBallFlightSimulator.monte_carlo_simulation` (seeded-loop
+    shape), `perturbation/` `PerturbationConfig`/`MetricStatistics`/
+    failure-capture semantics, `pendulum_simulator/perturbation_analysis`
+    noise generators, `movement_optimizer` parallel/progress/cancel
+    machinery (already mirrored in `swing_sim.solver.solve`). Genuinely
+    new: per-variable NoiseSpec vocabulary with truncation, namespaced
+    registry, OAT sensitivity + Spearman (no sensitivity analysis
+    existed anywhere in the surveyed prior art), landing ellipse.
+- PyQt6: new top-level "Variation" tab (`ui/pyqt6/variation_tab.py`,
+  rows editor `variation_rows.py`, results widgets
+  `variation_results.py`, `QThread` worker `variation_worker.py`):
+  pipeline mode + base-scenario source (registry defaults or current
+  explorer scenario), registry-driven noise rows (grouped variable
+  picker, distribution, unit-aware scale with sourced tooltips,
+  optional clipping), runs + seed, Run/Cancel with live progress and a
+  sensitivity phase, results tabs (summary stats table, sensitivity
+  heat table, Spearman table, landing scatter with 2σ ellipse on the
+  tab's own small themed matplotlib canvas), CSV/JSON dataset export
+  and plan save/load. Tooltips on every input (test-enforced).
+- Web (practical parity): `model/variation.ts` + `variationRegistry.ts`
+  - `variationAnalysis.ts` and a "Variation" tab (`VariationPanel.tsx`,
+    `VariationLanding.tsx`): the same plan JSON schema (desktop plans
+    load in the browser and vice versa), seeded mulberry32 PRNG with
+    Box–Muller normals and FNV-1a per-variable streams (documented:
+    exact numpy-PCG64 parity deliberately not attempted), delivery +
+    launch modes over the existing TS physics (swing mode and the club
+    category stay desktop-only until the P7 WASM kernels), worker-less
+    bounded runs (≤ 500, UI-capped), summary + sensitivity heat tables,
+    landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pin: a
+    Python-generated fixture (`model/__fixtures__/variation_parity.json`)
+    is re-checked tightly by pytest and loosely (statistical band) by
+    vitest for the same plan+seed.
+
+### 2026-08-04 Rate of Closure investigative plotting suite (epic #4120, phase V1)
+
+- `src/rate_of_closure/plotting/` adds the plotting suite behind the new
+  Plots tab: `catalog.py` is a DbC-validated registry of all 40
+  plottable variables of a `SimulationRun` (key, Title Case label,
+  unit, category Input | Swing Sample | Impact | Launch | Flight |
+  Metric, extractor callable, axis-scale hint) with the key list pinned
+  by contract test; `spec.py` defines the frozen `PlotSpec` (x_key,
+  y_keys, optional series key, kind line | scatter | sweep | histogram,
+  title, log flags, sweep range) with JSON round-trip under the
+  `rate_of_closure.plot_spec/1` schema shared verbatim with the web
+  clone; `render.py` is the one compute/render pipeline (`sweep` kind
+  re-runs the full swing → impact → flight simulation per grid point;
+  themed matplotlib rendering via the shared `get_chart_color` palette;
+  CSV/JSON exports of exactly the plotted data); `builtins.py` ships
+  the built-in advanced plots as PlotSpec factories — the migrated
+  closure sweep, delivery-vs-τ sweep (path/AoA/face-to-path over the
+  impact-time offset), launch-vs-toe and launch-vs-high offset maps
+  (ball speed/spin), the swing time series, and side/top-down flight
+  profiles.
+- Documented deviation: the swing time series plots clubhead speed and
+  clubhead angular speed rather than pendulum joint angles θ/ω —
+  `SimulationRun` stores clubhead poses/twists, not joint states.
+- PyQt6: the new Plots tab (`ui/pyqt6/plots_tab.py`) replaces and
+  absorbs the Closure Sweep tab — managed plot list (add built-in /
+  duplicate / remove), the 3-step Custom Plot wizard
+  (`ui/pyqt6/plot_wizard.py`: data-source scope → X/Y from the catalog
+  grouped by category (+ sweep range) → style/kind with a live
+  preview), themed canvas with the standard navigation toolbar, and
+  export buttons (PNG, SVG, data CSV/JSON, save/load plot definition
+  .json). The tab adopts each Simulation-tab run as its reference run
+  and lazily builds a manual-source run otherwise; rendering defers
+  while hidden so explorer keystrokes stay cheap. Tooltips on every new
+  control.
+- Web parity (practical): `web/src/model/plotcatalog.ts` mirrors the
+  catalog key-for-key (pinned against the pytest-exported
+  `plotcatalog.fixture.json`; entries the TS physics port cannot
+  extract yet — clubhead angular state, impact-model diagnostics — are
+  marked unsupported and hidden from the builder, P7 WASM territory);
+  `plotspec.ts` ports the spec schema, validation, and compute pipeline
+  (sweeps re-run the TS simulation); the Plots tab (`PlotsPanel.tsx`)
+  offers the built-in picker, a simplified custom builder (X/Y selects
+  over series categories), canvas line/scatter rendering with axis
+  labels/units, PNG via `canvas.toBlob`, CSV/JSON downloads, and
+  plot-definition import/export interoperable with the desktop app.
+- Tests: `tests/rate_of_closure/test_plotting.py` (pinned catalog keys
+  - fixture parity, extractor shapes/finiteness, PlotSpec validation +
+    JSON round-trip, every builtin rendering headlessly on Agg, closure
+    sweep numerically matching `model.sweep()`, well-formed CSV / JSON /
+    PNG / SVG exports) and `test_plots_gui.py` (tab replaces the sweep
+    tab, list management, wizard completion for line/sweep/histogram
+    scopes, export files in tmp, tooltip coverage); web
+    `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
+    builtins, exports).
+
+### 2026-08-04 Rate of Closure scale-separated viewers + standalone Flight Explorer (epic #4120, V2)
+
+- Three purpose-built, scale-separated viewers replace the single
+  mixed-scale scene in the Simulation tab's display area (sub-tabs
+  Strike / Swing / Flight, each with its own display-parameter
+  checklist whose state persists for the session):
+  - `ui/pyqt6/strike_view.py` — impact-zone view at FACE scale
+    (millimetres, hard-capped at ±120 mm — `STRIKE_MAX_EXTENT_MM`;
+    never shows flight): superellipse face outline sized from the
+    club's mass envelope, bulge/roll sagitta contours when the face is
+    curved, impact-offset marker plus a strike-history scatter, the
+    delivered club-path / face-normal / attack-angle vectors projected
+    into the face plane, and a club-info annotation.
+  - Swing view (`simulation_view.py`) — the existing 3D scene scoped
+    to SWING scale: the flight polyline is removed from the default
+    display and the scene extent stays at the swing envelope; a new
+    'Show Ball Flight' checkbox (default OFF, with guidance warning
+    that the flight envelope dwarfs the swing) opts back into the old
+    expand-to-flight behaviour.
+  - `ui/pyqt6/flight_view.py` — dedicated FLIGHT-scale viewer: side
+    profile (height vs carry) + top-down (lateral vs carry) 2D panels
+    plus the 3D polyline, landing point and apex annotated, reusable
+    with a bare trajectory (no swing) via `set_trajectory`.
+- Standalone Ball-Flight Explorer: new top-level PyQt6 tab
+  (`ui/pyqt6/flight_explorer_tab.py`) over a pure logic layer
+  (`simulation/flight_explorer.py`): direct entry of launch conditions
+  (ball speed with mph / m/s unit drop-down, launch angle, azimuth,
+  spin rpm, spin-axis tilt — app signs: + = right of target / fade
+  side) OR impact-delivery parameters run through
+  `swing_sim.impact.delivery` + the rigid-body impact model, a model
+  picker across all 7 literature flight models, rendering in the
+  flight viewer, and clickable result rows (carry, apex, flight time,
+  landing angle, lateral — `lateral_m` explanation added to
+  `LAUNCH_EXPLANATIONS`). No swing required.
+- Small-window layout defect fixed: window minimum lowered to
+  1024×700 (registration updated), every control column scrolls
+  (`QScrollArea`), typed entries carry minimum widths (≥ 84 px spins),
+  result-row labels tooltip their full text and values keep a minimum
+  width; `tests/rate_of_closure/test_layout_minsize.py` resizes the
+  window to 1024×700 headlessly, walks every (nested) tab, and asserts
+  every visible QLineEdit/QDoubleSpinBox is ≥ 64 px wide with no
+  zero-height visible widgets.
+- Web practical parity: Strike / Swing / Flight segmented views in the
+  Simulation panel (strike-zone canvas with face outline + offset
+  marker + delivery vectors; side + top-down flight profile canvases
+  with landing annotations), a 'Show Ball Flight' toggle separated
+  from the swing canvas scale, and a standalone Flight Explorer tab
+  (`model/flightExplorer.ts` + `components/FlightExplorerPanel.tsx`)
+  parity-banded against the pytest pinned case (167 mph / 10.9° /
+  2,686 rpm → carry ≈ 247.5 m under Waterloo/Penner); responsive
+  min-widths (`min-w-*`, truncation with title attributes). The
+  7-model picker and delivery mode stay Python-side until P7 WASM.
+- Tests: viewer scale invariants (strike extents never exceed face
+  scale; the flight toggle changes the swing-view limits and restores
+  them), flight-explorer end-to-end pins in both entry modes, sign
+  conventions (+ azimuth / fade tilt land right), all-7-model runs, TS
+  parity pins, GUI smoke for every new tab, sourced tooltips
+  test-enforced on every new control. Non-goals here: the Closure
+  Sweep plotting suite (V1, separate branch), the Monte Carlo
+  variation engine (V3), and the help system (V4).
 
 ### 2026-08-04 Rate of Closure solver panel — goal-driven optimization UI (epic #4103, #4109 #4110)
 
@@ -2036,7 +2535,15 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-05 | 1.9.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
+| 2026-08-05 | 1.13.3 | feat(rate_of_closure, swing_sim, #4135 #4142 #4143): add canonical ground/tee ball setup with club defaults and physical propagation through simulation/export/rendering, complete persistent v2 variation-plan workflows and paired common-reference propagation analysis, and make every Rate Matplotlib canvas lifecycle-safe during Qt teardown. |
+| 2026-08-05 | 1.13.2 | feat(rate_of_closure): harden both standalone interfaces with clickable reference-frame guidance, draft-based signed numeric editing, negative spin-axis tilt support, auto-populated Swing views, complete double/triple-pendulum skeletons, a parity-pinned web triple-pendulum model, default generated driver heads, engineering CG targets, and higher-resolution watertight clubhead meshes with polished lighting. |
+| 2026-08-05 | 1.13.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
+| 2026-08-04 | 1.13.0 | feat(rate_of_closure, swing_sim, #4125 H6-H7): course showcase — H7a themed golf-course scene (palette-derived grass family, fairway strip, green + hole/flag at a configurable distance, tee marker; Course Elements toggle; both UIs incl. web canvas mirrors with a shared chart-palette module); H7b target regions (`solver/targets.py` green circle / fairway corridor with exact signed distance + containment, additive ImpactGoal region residual with centering term, Optimize-to-Target on both solver UIs reusing partition/progress/cancel, target editing reflected live in the course scene, Variation landing-scatter overlay with the hold-% headline via hold_fraction, TS parity mirror pinned test-for-test); H6 launcher-language styling (palette-only QSS: button hover/pressed + subtle shadow, launcher-card group boxes, hover tabs; web accents aligned onto the shared palette) and the yards-default Distance quantity (yd/m drop-down in both UIs, SI-canonical internals, applied to flight/putting result rows, view axes, plotting catalog distance variables incl. exports, variation stats, and target entries; conversion + default-is-yards tests). |
+| 2026-08-04 | 1.12.0 | feat(rate_of_closure, swing_sim, #4125 H1-H3): H1 realistic type-specific parametric heads — per-type `head_profiles` (woods/hybrids/iron+wedge blades with cavity-back recess, generic mallet + anser-style blade putters), divergence-theorem `volumetrics` (watertightness-gated volume/centroid, cube-exact + sphere <1% validation, per-type COG-vs-spec bands), hosel-true shaft attachment in both renderers, 'Show CG' volumetric-COG markers in both UIs, 16-club library with Blade/Mallet putter entries, consistent outward mesh winding, TS parity (`clubHeads.ts`, `volumetrics.ts`) with volume/COG/hosel pins. H2 swing kinetics — `simulation/kinetics.py` per-sample inverse dynamics over the double-pendulum swing (net/gravity/damping/applied torque breakdown, joint powers, Newton–Euler reaction forces, clubhead-force estimate, documented sign convention, `simulate_forced` round-trip/energy/statics tests, public `DoublePendulumSwing.state_at`); 'Kinetics' catalog category (11 series keys) + Joint Torques/Power/Reaction Forces built-ins in both UIs; PyQt6 'Show Kinetics' 3D overlay + Kinetics sub-tab (plots, downswing-timed peak table); web `kinetics.ts` mirror parity-pinned vs a pytest fixture (web playback overlay and triple-pendulum kinetics deferred, documented). H3 putting vertical — self-façaded `shared/python/swing_sim/putting/` package (COR impulse with the 2/7 rolling-cap derivation, stimpmeter-derived rolling resistance with exact round-trip, sloped-green RK4 with break and the lip-capture bound, Holmes 1991 cited); 'Putting' tab in both UIs with phase-coded green view and capture-bound plot; additive putting plot catalog; Python↔TS parity pins on reference putts; UpstreamDrift putting assets credited. Glossary union across the three verticals: 76 terms, TS mirror + fixture regenerated. |
+| 2026-08-04 | 1.11.0 | feat(rate_of_closure, #4120 V4): investigation-suite polish — persistent selected-row highlight (palette-derived, both UIs) with the row name leading every explanation panel; 60-term sourced DbC glossary with searchable PyQt6 tab / web section, explanation-panel deep links, and a fixture-pinned TS mirror; Derivation & Traceability renamed Calculation Description; sectioned full-model derivations (closure chain + impact impulse/COR/MOI-tensor/2-7 cap/D-plane/gear effect + flight EOM with the active literature model's cited coefficient law + pendulum Lagrangian with live plane-tilt gravity) rendering conditionally per configuration in mathtext/KaTeX; per-tab cold-user help (PyQt6 '?' corner button, web collapsible How-to sections) contract-tested >300 chars; hover-hint completeness sweeps test-enforced across every interactive widget/element of both UIs. |
+| 2026-08-04 | 1.10.0 | feat(swing_sim, rate_of_closure, #4120 V3): shared variation/Monte-Carlo engine — `shared/python/swing_sim/variation/` (namespaced variable registry, NoiseSpec/VariationPlan JSON schema, seeded parallel N-run engine with solver-shaped progress/cancel, dispersion + one-at-a-time sensitivity + Spearman + 2-sigma landing ellipse, CSV/JSON dataset IO), the PyQt6 "Variation" tab in the Rate of Closure explorer, and the web mirror (seeded mulberry32 engine, capped <=500 runs, shared plan schema, statistical parity fixture vs the Python engine). Prior-art survey of UpstreamDrift Monte-Carlo/perturbation/movement_optimizer machinery credited in module docstrings. |
+| 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V1): investigative plotting suite — `plotting/` package (40-variable DbC data catalog with pinned keys, frozen JSON-round-trip PlotSpec `rate_of_closure.plot_spec/1`, one compute/render pipeline with full-simulation sweeps and themed palette, built-in advanced plots: migrated closure sweep, delivery-vs-τ, launch-vs-toe/high offset maps, swing time series, side/top-down flight profiles); PyQt6 Plots tab replacing the Closure Sweep tab (plot list add/duplicate/remove, 3-step Custom Plot wizard with live preview, navigation toolbar, PNG/SVG/CSV/JSON + save/load definition exports, tooltips everywhere); web parity via plotcatalog.ts (key list pinned against the pytest-exported fixture), plotspec.ts (shared schema + pipeline), and a Plots tab with built-in picker, simplified custom builder, canvas rendering, PNG/CSV/JSON downloads, and definition import/export interoperable with the desktop app. |
+| 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V2): scale-separated viewers + standalone Flight Explorer + small-window layout fixes. PyQt6: Strike/Swing/Flight display sub-tabs in the Simulation tab — new face-scale StrikeView (superellipse face outline sized from the club mass envelope, bulge/roll sagitta contours, impact marker + strike-history scatter, path/face/AoA vectors in the face plane, club info; extents hard-capped at ±120 mm), swing view scoped to swing scale with the flight polyline behind a default-OFF 'Show Ball Flight' checkbox (guidance warns flight dwarfs the swing), new flight-scale FlightView (side + top-down profiles + 3D polyline, landing/apex annotated); new top-level Flight Explorer tab over `simulation/flight_explorer.py` (direct launch entry with unit drop-down or impact-delivery entry through swing_sim.impact + rigid-body solve, 7-model picker, result rows with explanations incl. new lateral_m); window minimum lowered to 1024×700 with scrolling control columns, ≥84 px entry minimums, and a headless small-window layout test. Web: Strike/Swing/Flight segmented views (strike + flight profile canvases), separated Show-Ball-Flight toggle, standalone Flight Explorer panel parity-banded against the pytest pinned case (167 mph / 10.9° / 2686 rpm → ~247.5 m carry); responsive min-widths with title-attribute truncation. |
 | 2026-08-04 | 1.9.0 | feat(rate_of_closure, #4109 #4110): solver panel — goal-driven optimization UI. PyQt6 Solver tab in the Simulation tab (checkbox-enabled weighted ImpactGoal targets, Optimize-with-bounds / Fix VariablePartition editor with a double-pendulum swing-source mode, start-count spinner, Run/Cancel on a QThread worker with ProgressReport-driven progress bar and cooperative cancel_event, achieved-vs-goal table with per-goal errors / residual norm / convergence / expandable per-start diagnostics, Apply loading solved variables into the simulation session and rerunning the 3D scene; sourced tooltips throughout, DbC errors as friendly status messages). Web: model/solver.ts bounded Nelder-Mead over the TS-physics objective (delivery variables, deterministic multi-start) + SolverPanel section with apply-to-scenario, parity-pinned against the pytest easy case (150 mph ball speed -> ~45.825 m/s clubhead speed); WASM/worker upgrade deferred to P7. |
 | 2026-08-04 | 1.6.0 | feat(swing_sim, #4107): add the ball-flight package `src/shared/python/swing_sim/flight/` — 7 literature flight models (Waterloo/Penner, MacDonald-Hanzely, and five cited constant-coefficient presets) behind `FlightModelRegistry` with scipy RK45 + terminal ground event; public `derive_launch_conditions` (post-impact velocity/spin → launch conditions with exact round-trip); app↔flight frame adapters; graceful Rust fast path over `tools-core`'s canonical `ball_flight.rs` kernel (new `simulate_trajectory`/`analyze_trajectory` pyfunctions, property setters, velocity getters) with parity tests; `FlightSimulatorProtocol` + `simulate()` pipeline seam for the impact stage. |
 | 2026-08-04 | 1.8.0 | feat(rate_of_closure, epic #4103): simulation session integrating swing_sim into the app — app-frame swing sources (manual constant twist, shared double pendulum, new triple pendulum), swing → impact (gear effect + bulge/roll callable) → flight orchestration into one exportable SimulationRun, fixed-ball impact-time scrubber, thin ISA adapter over the rotation converter with a toggleable screw-axis overlay, PyQt6 Simulation tab (sourced-guidance inputs, launch rows with explanations, ball/ground toggles, flight polyline, full video playback with 1×-real-time rate presets, sortable inspector, CSV/JSON export) and a parity-pinned web Simulation tab (pendulum/impact/flight TS port, scrubber, playback, JSON download; WASM supersedes in P7). |

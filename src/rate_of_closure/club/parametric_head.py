@@ -4,9 +4,11 @@ Extends the superellipse-loft generator behind the bundled example head
 (:mod:`rate_of_closure.scripts.generate_example_head`) into a spec-driven
 one. Given a :class:`~rate_of_closure.club.types.ClubSpec`:
 
-* The **envelope** is the example head's four cross-sections scaled
-  uniformly by ``(head_mass / 0.200 kg)^(1/3)`` — constant-density mass
-  scaling around the 200 g driver head the base proportions represent.
+* The **envelope** comes from the club type's cross-section profile
+  (:mod:`~rate_of_closure.club.head_profiles` — woods, hybrids,
+  iron/wedge blades, mallet and blade putters), scaled uniformly by
+  ``(head_mass / reference_mass)^(1/3)`` — constant-density mass
+  scaling around the reference head each profile represents.
 * The **face** is a patch of concentric superellipse rings. When bulge
   (horizontal curvature) and/or roll (vertical curvature) radii are
   specified, each face vertex is set back by the circular sagitta
@@ -40,6 +42,7 @@ from rate_of_closure._contracts import ensure, require, require_finite
 from rate_of_closure.mesh import HeadMesh, triangle_normals
 
 from .geometry import RING_POINTS, cap_fan, loft_band, superellipse_ring
+from .head_profiles import mass_scale, profile_for
 from .types import ClubSpec
 
 __all__ = [
@@ -51,11 +54,12 @@ __all__ = [
     "parametric_head_mesh",
 ]
 
-#: Head mass the base envelope proportions represent (a 200 g driver).
+#: Head mass the wood envelope proportions represent (a 200 g driver).
 REFERENCE_HEAD_MASS_KG = 0.200
 
-#: Loft cross-sections at reference mass: (x [m], half-height, half-width).
-#: Identical to the bundled example head's proportions.
+#: Wood loft cross-sections at reference mass: (x, half-height,
+#: half-width). Kept for the strike view's face-extent derivation;
+#: type-specific profiles live in :mod:`.head_profiles`.
 BASE_SECTIONS: tuple[tuple[float, float, float], ...] = (
     (0.055, 0.028, 0.058),  # face plate
     (0.010, 0.031, 0.062),  # crown bulge
@@ -64,12 +68,26 @@ BASE_SECTIONS: tuple[tuple[float, float, float], ...] = (
 )
 
 #: Concentric face-patch rings as fractions of the face boundary.
-_FACE_FRACTIONS: tuple[float, ...] = (1.0, 2.0 / 3.0, 1.0 / 3.0)
+_FACE_FRACTIONS: tuple[float, ...] = (1.0, 0.8, 0.6, 0.4, 0.2)
+#: Longitudinal subdivisions between authored profile stations.
+_BODY_SUBDIVISIONS = 3
 
 
-def _mass_scale(spec: ClubSpec) -> float:
-    """Uniform envelope scale: constant-density mass scaling."""
-    return float((spec.head_mass_kg / REFERENCE_HEAD_MASS_KG) ** (1.0 / 3.0))
+def _refined_sections(
+    sections: list[tuple[float, float, float, float]],
+) -> list[tuple[float, float, float, float]]:
+    """Linearly subdivide profile stations without changing the envelope."""
+    refined: list[tuple[float, float, float, float]] = []
+    for first, second in zip(sections[:-1], sections[1:], strict=True):
+        for step in range(_BODY_SUBDIVISIONS):
+            fraction = step / _BODY_SUBDIVISIONS
+            refined.append(
+                tuple(
+                    a + fraction * (b - a) for a, b in zip(first, second, strict=True)
+                )
+            )
+    refined.append(sections[-1])
+    return refined
 
 
 def _sagitta(radius_m: float | None, offset_m: float) -> float:
@@ -156,44 +174,65 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
     """Representative head triangles ``(n, 3, 3)`` for a spec, meters.
 
     Deterministic: identical specs produce bit-identical arrays. The
-    mesh is closed — 3 body bands, 2 face-patch bands, and 2 fans of
-    :data:`~rate_of_closure.club.geometry.RING_POINTS` triangles each
-    (``12 * RING_POINTS`` total).
+    cross-sections come from the club type's :class:`~rate_of_closure.
+    club.head_profiles.HeadProfile` (woods, hybrids, iron/wedge blades,
+    mallet and blade putters), so the silhouette is recognizably
+    type-specific. The mesh is always closed: for ``n`` sections it has
+    ``(2 (n - 1) + 6) * RING_POINTS`` triangles — body bands, two
+    face-patch bands, and the face/tail fans.
     """
-    scale = _mass_scale(spec)
-    sections = [(x * scale, hh * scale, hw * scale) for x, hh, hw in BASE_SECTIONS]
-    rings = [superellipse_ring(*section) for section in sections]
+    profile = profile_for(spec)
+    scale = mass_scale(spec)
+    authored_sections = [
+        (x * scale, hh * scale, hw * scale, yc * scale)
+        for x, hh, hw, yc in profile.sections
+    ]
+    sections = _refined_sections(authored_sections)
 
-    face_x = sections[0][0]
-    center = np.array([face_x, 0.0, 0.0])
+    def body_ring(section: tuple[float, float, float, float]) -> np.ndarray:
+        x, hh, hw, yc = section
+        ring = superellipse_ring(x, hh, hw)
+        ring[:, 1] += yc
+        return ring
+
+    rings = [body_ring(section) for section in sections]
+    face_x, _hh0, _hw0, face_yc = sections[0]
+    center = np.array([face_x, face_yc, 0.0])
     rotation = _loft_rotation(spec.loft_deg)
 
     def face_ring(fraction: float) -> np.ndarray:
         """One concentric face ring: curvature set-back, then loft tilt."""
         scaled = rings[0].copy()
-        scaled[:, 1:] *= fraction
+        scaled[:, 1] = face_yc + (scaled[:, 1] - face_yc) * fraction
+        scaled[:, 2] *= fraction
         for row in scaled:
-            row[0] = face_x - face_sagitta(spec, float(row[2]), float(row[1]))
+            row[0] = face_x - face_sagitta(spec, float(row[2]), float(row[1] - face_yc))
         return np.asarray((scaled - center) @ rotation.T + center)
 
     face_rings = [face_ring(fraction) for fraction in _FACE_FRACTIONS]
     face_center = center.copy()  # sagitta at (0, 0) is zero; loft fixes c
 
     triangles: list[np.ndarray] = []
-    # Body: lofted bands from the (tilted) face boundary back to the tail.
+    # Body: lofted bands from the (tilted) face boundary back to the
+    # tail, flipped so they face radially outward — with the outward
+    # face patch and caps this makes the whole solid consistently
+    # outward-wound, as the divergence-theorem volumetrics require.
     body_rings = [face_rings[0], *rings[1:]]
     for ring_a, ring_b in zip(body_rings[:-1], body_rings[1:], strict=True):
-        triangles.extend(loft_band(ring_a, ring_b))
+        triangles.extend(loft_band(ring_a, ring_b, flip=True))
     # Face patch: concentric bands closing onto the center fan.
     for outer, inner in zip(face_rings[:-1], face_rings[1:], strict=True):
         triangles.extend(loft_band(outer, inner))
     triangles.extend(cap_fan(face_center, face_rings[-1], outward_x=True))
-    # Tail cap.
-    tail_center = np.array([sections[-1][0], 0.0, 0.0])
+    # Tail cap; a positive recess pulls the fan center inward (+x),
+    # forming the cavity-back recess on irons.
+    tail_x, _hh, _hw, tail_yc = sections[-1]
+    tail_center = np.array([tail_x + profile.rear_recess_m * scale, tail_yc, 0.0])
     triangles.extend(cap_fan(tail_center, rings[-1], outward_x=False))
 
     mesh = np.array(triangles)
-    ensure(mesh.shape[0] == 12 * RING_POINTS, "parametric head is closed")
+    expected = (2 * (len(sections) - 1) + 2 * (len(face_rings) - 1) + 2) * RING_POINTS
+    ensure(mesh.shape[0] == expected, "parametric head is closed")
     ensure(bool(np.isfinite(mesh).all()), "parametric head vertices finite")
     return mesh
 
