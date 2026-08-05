@@ -44,7 +44,7 @@ SHOT_OUTPUT_NAMES: tuple[str, ...] = (
 ALL_OUTPUT_NAMES = CONTACT_OUTPUT_NAMES + IMPACT_OUTPUT_NAMES + SHOT_OUTPUT_NAMES
 
 
-class TrialEvaluationStatus(str, Enum):
+class TrialEvaluationStatus(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
     """Mutually exclusive outcome of attempting one configured trial."""
 
     EVALUATED_HIT = "evaluated_hit"

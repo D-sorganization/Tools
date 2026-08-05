@@ -24,7 +24,7 @@ DEFAULT_DRIVER_TEE_HEIGHT_M = 0.0381
 HEIGHT_REFERENCE = "ground_plane_to_ball_bottom"
 
 
-class BallSupportMode(str, Enum):
+class BallSupportMode(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
     """Physical support under the ball."""
 
     GROUND = "ground"

@@ -33,14 +33,14 @@ FORCED_ALIGNMENT_LIMITATION = (
 _CONTACT_ABS_TOLERANCE_M = 1e-9
 
 
-class ContactMode(str, Enum):
+class ContactMode(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
     """Supported policies for selecting or detecting an impact candidate."""
 
     DELIVERY_INSPECTION = "delivery_inspection"
     FIXED_BALL_CONTACT = "fixed_ball_contact"
 
 
-class ImpactStatus(str, Enum):
+class ImpactStatus(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
     """Whether the selected contact policy produced a physical-impact candidate."""
 
     HIT = "hit"

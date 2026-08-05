@@ -25,7 +25,7 @@ from shared.python.swing_sim.torque_profiles import (
 )
 
 
-class RunMode(str, Enum):
+class RunMode(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
     """User-selected simulation input mode."""
 
     OPTIMIZED_DEFAULT = "optimized_default"

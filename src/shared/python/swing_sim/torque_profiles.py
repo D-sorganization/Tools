@@ -78,7 +78,7 @@ _FIT_FIELDS = frozenset(
 )
 
 
-class TorqueProfileSource(str, Enum):
+class TorqueProfileSource(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
     """Provenance category for a prescribed torque profile."""
 
     DIRECT = "direct"

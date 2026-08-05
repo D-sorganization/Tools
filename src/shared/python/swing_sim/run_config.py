@@ -15,7 +15,7 @@ WRIST_JOINT_ID = "joint.wrist"
 DOUBLE_PENDULUM_JOINT_IDS = (SHOULDER_JOINT_ID, WRIST_JOINT_ID)
 
 
-class SwingRunMode(str, Enum):
+class SwingRunMode(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
     """Supported execution modes for the shared double-pendulum source."""
 
     PASSIVE = "passive"
