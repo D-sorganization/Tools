@@ -6,8 +6,7 @@ Orchestrates a full swing -> impact -> flight run:
   double pendulum via ``swing_sim``, and a planar triple pendulum).
 * :mod:`.session` — the :class:`~rate_of_closure.simulation.session.
   SimulationRun` record and the orchestration entry points, including
-  the impact-time scrubber math (the swing translates so the clubhead
-  at time tau meets the fixed ball).
+  both legacy delivery inspection and fixed-ball contact outcomes.
 * :mod:`.isa` — thin adapter over the rotation converter's screw-axis
   extraction (one file to touch when the Rust surface lands, #4108).
 * :mod:`.kinetics` — inverse dynamics over the pendulum swing: joint
@@ -17,6 +16,7 @@ Orchestrates a full swing -> impact -> flight run:
 
 from __future__ import annotations
 
+from .contact import ContactMode, ImpactOutcome, ImpactStatus
 from .export import run_to_json_dict, write_csv, write_json
 from .flight_explorer import (
     EXPLORER_METRIC_KEYS,
@@ -52,12 +52,15 @@ from .sources import (
 
 __all__ = [
     "BALL_POSITION_M",
+    "ContactMode",
     "EXPLORER_METRIC_KEYS",
     "KINETIC_JOINT_NAMES",
     "SOURCE_KINDS",
     "AppFrameSwing",
     "FlightExploration",
     "KineticsSeries",
+    "ImpactOutcome",
+    "ImpactStatus",
     "ManualSwingSource",
     "SimulationConfig",
     "SimulationRun",

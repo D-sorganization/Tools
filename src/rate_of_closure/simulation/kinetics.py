@@ -403,7 +403,7 @@ def compute_kinetics(
         "clubhead_mass_kg must be finite and > 0",
         clubhead_mass_kg,
     )
-    if run.config.source_kind != "double_pendulum":
+    if run.config.source_kind != "double_pendulum" or run.impact_time_s is None:
         return None
 
     # Rebuild the deterministic source (session does not retain it).

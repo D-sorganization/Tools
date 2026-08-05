@@ -245,7 +245,20 @@ class TestExport:
         write_csv(run, path)
         with path.open(newline="", encoding="utf-8") as handle:
             rows = list(csv.reader(handle))
-        assert rows[0] == ["phase", "t_s", "x_m", "y_m", "z_m", "speed_mps"]
+        assert rows[0] == [
+            "phase",
+            "t_s",
+            "x_m",
+            "y_m",
+            "z_m",
+            "speed_mps",
+            "is_fixed_ball_contact",
+            "impact_occurred",
+            "impact_time_s",
+            "candidate_time_s",
+            "closest_approach_m",
+            "contact_margin_m",
+        ]
         assert len(rows) - 1 == len(run.swing_times) + len(run.flight_times)
         phases = {row[0] for row in rows[1:]}
         assert phases == {"swing", "flight"}

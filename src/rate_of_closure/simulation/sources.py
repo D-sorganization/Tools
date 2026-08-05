@@ -23,7 +23,9 @@ Sources:
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
+from typing import cast
 
 import numpy as np
 
@@ -119,7 +121,9 @@ class AppFrameSwing:
         """Articulated joints in the app frame, when the source exposes them."""
         joint_positions = getattr(self._inner, "joint_positions", None)
         require(callable(joint_positions), "inner source has no joint geometry")
-        return np.asarray(joint_positions(t)) @ APP_FROM_SWING.T
+        sampler = cast(Callable[[float], np.ndarray], joint_positions)
+        positions: np.ndarray = np.asarray(sampler(t), dtype=float) @ APP_FROM_SWING.T
+        return positions
 
 
 class ManualSwingSource:

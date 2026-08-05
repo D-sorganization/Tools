@@ -35,14 +35,21 @@ CSV_COLUMNS: tuple[str, ...] = (
     "y_m",
     "z_m",
     "speed_mps",
+    "is_fixed_ball_contact",
+    "impact_occurred",
+    "impact_time_s",
+    "candidate_time_s",
+    "closest_approach_m",
+    "contact_margin_m",
 )
 
 
 def series_rows(
     run: SimulationRun,
-) -> list[tuple[str, float, float, float, float, float]]:
+) -> list[tuple[Any, ...]]:
     """Flatten the swing and flight series into phase-tagged rows."""
-    rows: list[tuple[str, float, float, float, float, float]] = []
+    rows: list[tuple[Any, ...]] = []
+    contact_columns = _contact_columns(run)
     for t, pos, twist in zip(
         run.swing_times, run.swing_positions, run.swing_twists, strict=True
     ):
@@ -54,12 +61,14 @@ def series_rows(
                 float(pos[1]),
                 float(pos[2]),
                 float(np.linalg.norm(twist[3:])),
+                *contact_columns,
             )
         )
     t0 = run.impact_time_s
     for t, pos, vel in zip(
         run.flight_times, run.flight_positions, run.flight_velocities, strict=True
     ):
+        assert t0 is not None
         rows.append(
             (
                 "flight",
@@ -68,9 +77,25 @@ def series_rows(
                 float(pos[1]),
                 float(pos[2]),
                 float(np.linalg.norm(vel)),
+                *contact_columns,
             )
         )
     return rows
+
+
+def _contact_columns(
+    run: SimulationRun,
+) -> tuple[int, int, float | None, float, float, float]:
+    """Return numeric contact metadata repeated on each flat CSV row."""
+    outcome = run.impact_outcome
+    return (
+        int(outcome.mode.value == "fixed_ball_contact"),
+        int(outcome.is_hit),
+        run.impact_time_s,
+        outcome.candidate_time_s,
+        outcome.closest_approach_m,
+        outcome.contact_margin_m,
+    )
 
 
 def write_csv(run: SimulationRun, path: str | Path) -> None:
@@ -101,15 +126,13 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
     config = run.config
     scenario = config.scenario
 
-    def _clean(value: float) -> float | None:
-        return float(value) if math.isfinite(value) else None
-
     return {
-        "format": "rate_of_closure.simulation_run/1",
+        "format": "rate_of_closure.simulation_run/2",
         "parameters": {
             "source_kind": config.source_kind,
             "club": config.club.name,
             "flight_model": config.flight_model,
+            "contact_mode": config.contact_mode.value,
             "impact_time_s": run.impact_time_s,
             "swing_duration_s": config.swing_duration_s,
             "plane_tilts_deg": {
@@ -128,18 +151,37 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
                 "contact_duration_us": scenario.contact_duration_us,
             },
         },
-        "delivery": {
-            "clubhead_speed_mps": float(np.linalg.norm(run.delivery.clubhead_velocity)),
-            "spin_loft_deg": run.delivery.spin_loft_deg,
-            "face_to_path_deg": run.delivery.face_to_path_deg,
-            "spin_axis_tilt_deg": run.delivery.spin_axis_tilt_deg,
-        },
-        "launch": {key: _clean(value) for key, value in run.launch.items()},
+        "impact_outcome": run.impact_outcome.to_dict(),
+        "delivery": _delivery_dict(run),
+        "launch": _launch_dict(run),
         "series": {
             "columns": list(CSV_COLUMNS),
             "rows": [list(row) for row in series_rows(run)],
             "swing_joints_app_m": run.swing_joints.tolist(),
         },
+    }
+
+
+def _delivery_dict(run: SimulationRun) -> dict[str, float] | None:
+    """Serialize delivery fields only when contact occurred."""
+    delivery = run.delivery
+    if delivery is None:
+        return None
+    return {
+        "clubhead_speed_mps": float(np.linalg.norm(delivery.clubhead_velocity)),
+        "spin_loft_deg": delivery.spin_loft_deg,
+        "face_to_path_deg": delivery.face_to_path_deg,
+        "spin_axis_tilt_deg": delivery.spin_axis_tilt_deg,
+    }
+
+
+def _launch_dict(run: SimulationRun) -> dict[str, float | None] | None:
+    """Serialize finite launch fields only when contact occurred."""
+    if run.launch is None:
+        return None
+    return {
+        key: float(value) if math.isfinite(value) else None
+        for key, value in run.launch.items()
     }
 
 
