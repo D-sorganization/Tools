@@ -123,7 +123,7 @@ jobs:
       # the same packages on every run.  Path is host-stable and safe for concurrent
       # runners on the same machine.  See issue #2160.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
-      PIP_DEFAULT_TIMEOUT: "120"
+      PIP_DEFAULT_TIMEOUT: "1000"
       PIP_RETRIES: "8"
       PYTHONNOUSERSITE: "1"
     steps:
@@ -444,7 +444,7 @@ jobs:
   tests:
     # The required 3.11 lane must survive a first-use Python download plus
     # dependency installation, Rust-wheel build, and the actual test suite.
-    timeout-minutes: 90
+    timeout-minutes: 120
     # Parallelized: tests do not consume any quality-gate outputs (quality-gate
     # declares no `outputs:` block, and no step in this job references
     # `needs.quality-gate.*`). Fanning out after pick-runner removes the
@@ -466,7 +466,7 @@ jobs:
     env:
       # Shared wheel/download cache — mirrors quality-gate setting.  See issue #2160.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
-      PIP_DEFAULT_TIMEOUT: "120"
+      PIP_DEFAULT_TIMEOUT: "1000"
       PIP_RETRIES: "8"
       # Keep matrix jobs isolated from stale runner-user packages. Python 3.12
       # was resolving pytest/pluggy from ~/.local while native deps came from
