@@ -28,13 +28,14 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.11.0                                     |
 | **Spec Version**        | 1.11.0                                     |
-| **Last Spec Update**    | 2026-08-04                                 |
+| **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
 ### 2026-08-04 Rate of Closure glossary, help system & full-model derivations (epic #4120, phase V4)
 
 - Selected-value clarity: clicking any result/metric/launch row applies
@@ -58,8 +59,8 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `glossary:<term>` link that jumps there pre-selected
   (`FIELD_TO_TERM` maps EVERY explanation field, contract-tested).
   Web: generated `model/glossary.ts` mirror + Glossary tab with search
-  + links from the explanation card; the key list is pinned key-for-key
-  by a Python-generated fixture checked from both test suites.
+  - links from the explanation card; the key list is pinned key-for-key
+    by a Python-generated fixture checked from both test suites.
 - Tab rename: 'Derivation && Traceability' -> 'Calculation Description'
   (both UIs, docstrings/strings updated).
 - Full-model derivations: `derivation_models.py` (DerivationConfig +
@@ -151,18 +152,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   tab's own small themed matplotlib canvas), CSV/JSON dataset export
   and plan save/load. Tooltips on every input (test-enforced).
 - Web (practical parity): `model/variation.ts` + `variationRegistry.ts`
-  + `variationAnalysis.ts` and a "Variation" tab (`VariationPanel.tsx`,
-  `VariationLanding.tsx`): the same plan JSON schema (desktop plans
-  load in the browser and vice versa), seeded mulberry32 PRNG with
-  Box–Muller normals and FNV-1a per-variable streams (documented:
-  exact numpy-PCG64 parity deliberately not attempted), delivery +
-  launch modes over the existing TS physics (swing mode and the club
-  category stay desktop-only until the P7 WASM kernels), worker-less
-  bounded runs (≤ 500, UI-capped), summary + sensitivity heat tables,
-  landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pin: a
-  Python-generated fixture (`model/__fixtures__/variation_parity.json`)
-  is re-checked tightly by pytest and loosely (statistical band) by
-  vitest for the same plan+seed.
+  - `variationAnalysis.ts` and a "Variation" tab (`VariationPanel.tsx`,
+    `VariationLanding.tsx`): the same plan JSON schema (desktop plans
+    load in the browser and vice versa), seeded mulberry32 PRNG with
+    Box–Muller normals and FNV-1a per-variable streams (documented:
+    exact numpy-PCG64 parity deliberately not attempted), delivery +
+    launch modes over the existing TS physics (swing mode and the club
+    category stay desktop-only until the P7 WASM kernels), worker-less
+    bounded runs (≤ 500, UI-capped), summary + sensitivity heat tables,
+    landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pin: a
+    Python-generated fixture (`model/__fixtures__/variation_parity.json`)
+    is re-checked tightly by pytest and loosely (statistical band) by
+    vitest for the same plan+seed.
 
 ### 2026-08-04 Rate of Closure investigative plotting suite (epic #4120, phase V1)
 
@@ -210,14 +211,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   labels/units, PNG via `canvas.toBlob`, CSV/JSON downloads, and
   plot-definition import/export interoperable with the desktop app.
 - Tests: `tests/rate_of_closure/test_plotting.py` (pinned catalog keys
-  + fixture parity, extractor shapes/finiteness, PlotSpec validation +
-  JSON round-trip, every builtin rendering headlessly on Agg, closure
-  sweep numerically matching `model.sweep()`, well-formed CSV / JSON /
-  PNG / SVG exports) and `test_plots_gui.py` (tab replaces the sweep
-  tab, list management, wizard completion for line/sweep/histogram
-  scopes, export files in tmp, tooltip coverage); web
-  `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
-  builtins, exports).
+  - fixture parity, extractor shapes/finiteness, PlotSpec validation +
+    JSON round-trip, every builtin rendering headlessly on Agg, closure
+    sweep numerically matching `model.sweep()`, well-formed CSV / JSON /
+    PNG / SVG exports) and `test_plots_gui.py` (tab replaces the sweep
+    tab, list management, wizard completion for line/sweep/histogram
+    scopes, export files in tmp, tooltip coverage); web
+    `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
+    builtins, exports).
+
 ### 2026-08-04 Rate of Closure scale-separated viewers + standalone Flight Explorer (epic #4120, V2)
 
 - Three purpose-built, scale-separated viewers replace the single
@@ -349,7 +351,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   derivation → ball flight only when the goal requires it) and score as
   `weight * (achieved - target) / scale` with launch-monitor-resolution
   scales from `tuning.py`. `evaluate_candidate(variables, partition,
-  goal) -> residuals` is the documented seam a later Rust port replaces
+goal) -> residuals` is the documented seam a later Rust port replaces
   behind a facade (no Rust added in this PR).
 - `solve.py`: bounded `scipy.optimize.least_squares` (trf) multi-start
   driver — Latin-hypercube starts across the bounds (start 0 = caller
@@ -435,7 +437,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   200 g) and whose face patch honors bulge (horizontal) and roll
   (vertical) curvature via the circular sagitta R - sqrt(R² - t²) with
   loft tilting the face plane. `face_normal_at_offset(spec, toe_mm,
-  high_mm)` exposes the face-curvature normal (gradient of the
+high_mm)` exposes the face-curvature normal (gradient of the
   curved-face surface, loft-rotated) for the future impact package —
   in Python AND TypeScript with pinned parity tests; flat face when
   bulge/roll are off (curvature does not affect impact physics yet).
@@ -575,7 +577,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   geometry) and shipped as `assets/example_driver_head.stl`; tests in
   `tests/rate_of_closure/test_mesh.py` plus GUI load/reset smoke tests.
 
-
 ### 2026-08-03 Rate of Closure Impact Explorer
 
 - `src/rate_of_closure/` adds a new Biomechanics tool quantifying the
@@ -599,14 +600,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
 
-
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
@@ -2282,6 +2281,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.9.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
 | 2026-08-04 | 1.11.0 | feat(rate_of_closure, #4120 V4): investigation-suite polish — persistent selected-row highlight (palette-derived, both UIs) with the row name leading every explanation panel; 60-term sourced DbC glossary with searchable PyQt6 tab / web section, explanation-panel deep links, and a fixture-pinned TS mirror; Derivation & Traceability renamed Calculation Description; sectioned full-model derivations (closure chain + impact impulse/COR/MOI-tensor/2-7 cap/D-plane/gear effect + flight EOM with the active literature model's cited coefficient law + pendulum Lagrangian with live plane-tilt gravity) rendering conditionally per configuration in mathtext/KaTeX; per-tab cold-user help (PyQt6 '?' corner button, web collapsible How-to sections) contract-tested >300 chars; hover-hint completeness sweeps test-enforced across every interactive widget/element of both UIs. |
 | 2026-08-04 | 1.10.0 | feat(swing_sim, rate_of_closure, #4120 V3): shared variation/Monte-Carlo engine — `shared/python/swing_sim/variation/` (namespaced variable registry, NoiseSpec/VariationPlan JSON schema, seeded parallel N-run engine with solver-shaped progress/cancel, dispersion + one-at-a-time sensitivity + Spearman + 2-sigma landing ellipse, CSV/JSON dataset IO), the PyQt6 "Variation" tab in the Rate of Closure explorer, and the web mirror (seeded mulberry32 engine, capped <=500 runs, shared plan schema, statistical parity fixture vs the Python engine). Prior-art survey of UpstreamDrift Monte-Carlo/perturbation/movement_optimizer machinery credited in module docstrings. |
 | 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V1): investigative plotting suite — `plotting/` package (40-variable DbC data catalog with pinned keys, frozen JSON-round-trip PlotSpec `rate_of_closure.plot_spec/1`, one compute/render pipeline with full-simulation sweeps and themed palette, built-in advanced plots: migrated closure sweep, delivery-vs-τ, launch-vs-toe/high offset maps, swing time series, side/top-down flight profiles); PyQt6 Plots tab replacing the Closure Sweep tab (plot list add/duplicate/remove, 3-step Custom Plot wizard with live preview, navigation toolbar, PNG/SVG/CSV/JSON + save/load definition exports, tooltips everywhere); web parity via plotcatalog.ts (key list pinned against the pytest-exported fixture), plotspec.ts (shared schema + pipeline), and a Plots tab with built-in picker, simplified custom builder, canvas rendering, PNG/CSV/JSON downloads, and definition import/export interoperable with the desktop app. |

@@ -58,6 +58,20 @@ def test_each_downstream_declares_its_required_sparse_scope() -> None:
     assert "ui" not in upstream_scope
 
 
+def test_upstreamdrift_install_uses_editable_mode_without_ci_release_hooks() -> None:
+    workflow = _workflow()
+    downstreams = workflow["jobs"]["downstream-consumer-contracts"]["strategy"][
+        "matrix"
+    ]["downstream"]
+    upstream = next(
+        downstream
+        for downstream in downstreams
+        if downstream["repo"] == "D-sorganization/UpstreamDrift"
+    )
+
+    assert upstream["install"].startswith("CI= pip install -e ")
+
+
 def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
     workflow = _workflow()
     steps = workflow["jobs"]["downstream-consumer-contracts"]["steps"]
