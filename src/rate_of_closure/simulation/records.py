@@ -17,6 +17,11 @@ from shared.python.swing_sim.impact import (
     DeliveryDerived,
     PostImpactState,
 )
+from shared.python.swing_sim.run_config import (
+    DoublePendulumRunConfig,
+    SwingRunMode,
+)
+from shared.python.swing_sim.torque_library import TorqueProfileLibrary
 from shared.python.swing_sim.types import PlaneOrientation
 
 __all__ = ["BALL_POSITION_M", "SimulationConfig", "SimulationRun"]
@@ -41,6 +46,10 @@ class SimulationConfig:
     flight_model: str = "waterloo_penner"
     swing_duration_s: float = 1.5
     contact_mode: ContactMode = ContactMode.DELIVERY_INSPECTION
+    swing_run_config: DoublePendulumRunConfig = field(
+        default_factory=DoublePendulumRunConfig
+    )
+    torque_library: TorqueProfileLibrary | None = None
 
     def __post_init__(self) -> None:
         """Validate and normalize the immutable request."""
@@ -51,6 +60,27 @@ class SimulationConfig:
         )
         require(isinstance(self.club, ClubSpec), "club must be a ClubSpec", self.club)
         object.__setattr__(self, "contact_mode", _contact_mode(self.contact_mode))
+        require(
+            isinstance(self.swing_run_config, DoublePendulumRunConfig),
+            "swing_run_config must be a DoublePendulumRunConfig",
+            self.swing_run_config,
+        )
+        require(
+            self.torque_library is None
+            or isinstance(self.torque_library, TorqueProfileLibrary),
+            "torque_library must be a TorqueProfileLibrary",
+            self.torque_library,
+        )
+        if self.swing_run_config.mode is SwingRunMode.PRESCRIBED:
+            require(
+                self.source_kind == "double_pendulum",
+                "prescribed torque currently requires the double-pendulum source",
+                self.source_kind,
+            )
+            require(
+                self.torque_library is not None,
+                "prescribed torque requires a profile library",
+            )
         FlightModelType(self.flight_model)
         _validate_optional_impact_time(self.impact_time_s)
         require(

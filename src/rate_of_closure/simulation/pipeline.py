@@ -102,6 +102,8 @@ def _make_source(config: SimulationConfig) -> SwingSource:
             config.scenario,
             plane=config.plane,
             duration=config.swing_duration_s,
+            run_config=config.swing_run_config,
+            torque_library=config.torque_library,
         ),
     )
 

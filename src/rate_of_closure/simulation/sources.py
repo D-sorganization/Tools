@@ -32,7 +32,9 @@ import numpy as np
 from rate_of_closure._contracts import require
 from rate_of_closure.model import ImpactScenario, solve
 from shared.python.swing_sim import reference
+from shared.python.swing_sim.run_config import DoublePendulumRunConfig
 from shared.python.swing_sim.swing_source import DoublePendulumSwing, SwingSource
+from shared.python.swing_sim.torque_library import TorqueProfileLibrary
 from shared.python.swing_sim.types import (
     PendulumState,
     PlaneOrientation,
@@ -445,6 +447,8 @@ def make_source(
     scenario: ImpactScenario,
     plane: PlaneOrientation | None = None,
     duration: float = 1.5,
+    run_config: DoublePendulumRunConfig | None = None,
+    torque_library: TorqueProfileLibrary | None = None,
 ) -> SwingSource:
     """Build an app-frame swing source by kind.
 
@@ -454,6 +458,8 @@ def make_source(
             pendulum kinds use it only for impact offsets downstream).
         plane: Swing-plane orientation for the pendulum kinds.
         duration: Pendulum integration length [s].
+        run_config: Passive or prescribed double-pendulum execution policy.
+        torque_library: Canonical profiles used by prescribed execution.
 
     Returns:
         A source whose samples are in the app frame.
@@ -468,7 +474,12 @@ def make_source(
         start = PendulumState(theta1=-math.pi / 2.0, theta2=0.0, omega1=0.0, omega2=0.0)
         return AppFrameSwing(
             DoublePendulumSwing(
-                plane=plane, initial_state=start, duration=duration, backend="auto"
+                plane=plane,
+                initial_state=start,
+                duration=duration,
+                backend="auto",
+                run_config=run_config,
+                torque_library=torque_library,
             )
         )
     return AppFrameSwing(TriplePendulumSwing(plane=plane, duration=duration))

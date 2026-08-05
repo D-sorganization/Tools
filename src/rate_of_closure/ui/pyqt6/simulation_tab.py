@@ -53,8 +53,11 @@ from rate_of_closure.ui.pyqt6.simulation_specs import (
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
+from rate_of_closure.ui.pyqt6.torque_profile_controller import RunMode
+from rate_of_closure.ui.pyqt6.torque_profile_panel import TorqueProfilePanel
 from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
 from shared.python.swing_sim.flight.registry import FlightModelType
+from shared.python.swing_sim.run_config import DoublePendulumRunConfig
 from shared.python.swing_sim.types import PlaneOrientation
 
 logger = logging.getLogger(__name__)
@@ -89,6 +92,13 @@ class SimulationTab(QWidget):
         self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)
         self._inspector = InspectorView()
         self._solver_panel = SolverPanel()
+        self._torque_profile_panel = TorqueProfilePanel()
+        self._torque_profile_panel.runModeChanged.connect(
+            self._on_torque_selection_changed
+        )
+        self._torque_profile_panel.profileChanged.connect(
+            self._on_torque_selection_changed
+        )
         self._solver_panel.applyRequested.connect(self.apply_solver_solution)
         # Keep the course scene and flight overlay aligned with target edits.
         self._solver_panel.target_panel().regionChanged.connect(
@@ -117,6 +127,7 @@ class SimulationTab(QWidget):
         right.addTab(self._flight_view, "Flight")
         right.addTab(self._inspector, "Inspector")
         right.addTab(self._solver_panel, "Solver")
+        right.addTab(self._torque_profile_panel, "Torque Profiles")
         right.setCurrentWidget(self._view)
 
         splitter = QSplitter()
@@ -270,13 +281,27 @@ class SimulationTab(QWidget):
 
     def config(self) -> SimulationConfig:
         """The simulation request described by the controls."""
+        selection = self._torque_profile_panel.selection()
+        run_config = DoublePendulumRunConfig()
+        torque_library = None
+        source_kind = self.source_kind()
+        if selection.mode is RunMode.PRESCRIBED_TORQUE:
+            if not selection.execution_ready or selection.profile is None:
+                raise ValueError(selection.validation_message)
+            source_kind = "double_pendulum"
+            run_config = DoublePendulumRunConfig.prescribed(
+                selection.profile.profile_id
+            )
+            torque_library = self._torque_profile_panel.canonical_library()
         return SimulationConfig(
             scenario=self._scenario,
             club=get_club(self._club_combo.currentText()),
-            source_kind=self.source_kind(),
+            source_kind=source_kind,
             plane=self.plane(),
             impact_time_s=self._tau,
             flight_model=self._flight_combo.currentText(),
+            swing_run_config=run_config,
+            torque_library=torque_library,
         )
 
     def run_now(self) -> SimulationRun | None:
@@ -297,6 +322,10 @@ class SimulationTab(QWidget):
         self._inspector.set_run(run)
         self._refresh_launch_rows()
         self._update_delivery_label(run.impact_time_s)
+        if run.config.swing_run_config.prescribed_profile_id is not None:
+            self._torque_profile_panel.set_execution_status(
+                "Prescribed profile executed in the double-pendulum dynamics kernel."
+            )
         self.runCompleted.emit(run)
         return run
 
@@ -418,10 +447,27 @@ class SimulationTab(QWidget):
 
     def _ensure_source(self):  # type: ignore[no-untyped-def]
         if self._source is None:
+            config = self.config()
             self._source = make_source(
-                self.source_kind(), self._scenario, plane=self.plane()
+                config.source_kind,
+                self._scenario,
+                plane=self.plane(),
+                duration=config.swing_duration_s,
+                run_config=config.swing_run_config,
+                torque_library=config.torque_library,
             )
         return self._source
+
+    def _on_torque_selection_changed(self, *_args: object) -> None:
+        """Keep the visible source and cached dynamics aligned with run mode."""
+        selection = self._torque_profile_panel.selection()
+        if (
+            selection.mode is RunMode.PRESCRIBED_TORQUE
+            and selection.profile is not None
+            and selection.profile.model_id == "model.double_pendulum.v1"
+        ):
+            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
+        self._invalidate_source()
 
     def _invalidate_source(self, *_args: object) -> None:
         self._source = None
