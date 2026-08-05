@@ -11,7 +11,6 @@ from __future__ import annotations
 import logging
 
 import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
@@ -26,17 +25,20 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.simulation import (
-    BALL_POSITION_M,
     KineticsSeries,
     SimulationRun,
-    kinetics_for_run,
     screw_axis_samples,
 )
 from rate_of_closure.simulation.isa import MIN_RATE_DPS
 from rate_of_closure.ui.course import CourseLayout
+from rate_of_closure.ui.pyqt6.ball_setup_scene import draw_representative_tee
 from rate_of_closure.ui.pyqt6.course_scene import draw_course_ground_3d
+from rate_of_closure.ui.pyqt6.figure_canvas import (
+    LifecycleSafeFigureCanvas as FigureCanvas,
+)
 from rate_of_closure.ui.pyqt6.kinetics_overlay import overlay_frame
 from rate_of_closure.ui.pyqt6.pendulum_scene import draw_pendulum_skeleton
+from rate_of_closure.ui.pyqt6.presentation_kinetics import kinetics_for_presentation
 from rate_of_closure.ui.pyqt6.simulation_specs import RATE_PRESETS
 from rate_of_closure.units import FIELD_GUIDANCE
 
@@ -73,6 +75,8 @@ class SimulationView(QWidget):
         # None = not resolved yet; False = source has no joint states.
         self._kinetics: KineticsSeries | None | bool = None
         self._time = 0.0
+        self._rendered_ball_center_m: np.ndarray | None = None
+        self._tee_artist_count = 0
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -220,7 +224,7 @@ class SimulationView(QWidget):
 
     def is_playing(self) -> bool:
         """Whether the playback timer is running."""
-        return self._timer.isActive()
+        return bool(self._timer.isActive())
 
     def set_looping(self, looping: bool) -> None:
         """Set the loop toggle."""
@@ -228,7 +232,7 @@ class SimulationView(QWidget):
 
     def flight_shown(self) -> bool:
         """Whether the flight-scale 'Show Ball Flight' toggle is on."""
-        return self._flight_check.isChecked()
+        return bool(self._flight_check.isChecked())
 
     def set_flight_shown(self, shown: bool) -> None:
         """Set the 'Show Ball Flight' toggle (default off: swing scale)."""
@@ -245,12 +249,22 @@ class SimulationView(QWidget):
 
     def course_elements_shown(self) -> bool:
         """Whether the 'Course Elements' toggle is on."""
-        return self._course_check.isChecked()
+        return bool(self._course_check.isChecked())
 
     def scene_extent_m(self) -> float:
         """Current axis half-extent [m] — the scale-invariant seam."""
         x0, x1 = self._axes.get_xlim()
         return abs(float(x1) - float(x0)) / 2.0
+
+    def rendered_ball_center_m(self) -> np.ndarray:
+        """Return the canonical ball center used by the latest scene draw."""
+        if self._rendered_ball_center_m is None:
+            return np.zeros(3, dtype=float)
+        return self._rendered_ball_center_m.copy()
+
+    def tee_visible(self) -> bool:
+        """Return whether the latest scene draw contains tee geometry."""
+        return self._tee_artist_count > 0
 
     def stop(self) -> None:
         """Stop the playback timer (window close and tests)."""
@@ -308,13 +322,14 @@ class SimulationView(QWidget):
         """App frame (x target, y up, z right) -> matplotlib display axes."""
         return np.asarray(points)[..., [2, 0, 1]]
 
-    def _draw_ball(self) -> None:
+    def _draw_ball(self, center_m: np.ndarray) -> None:
+        self._rendered_ball_center_m = np.asarray(center_m, dtype=float).copy()
         u = np.linspace(0.0, 2.0 * np.pi, 16)
         v = np.linspace(0.0, np.pi, 12)
         r = _BALL_DRAW_RADIUS_M
-        x = BALL_POSITION_M[0] + r * np.outer(np.cos(u), np.sin(v))
-        y = BALL_POSITION_M[1] + r * np.outer(np.sin(u), np.sin(v))
-        z = BALL_POSITION_M[2] + r * np.outer(np.ones_like(u), np.cos(v))
+        x = center_m[0] + r * np.outer(np.cos(u), np.sin(v))
+        y = center_m[1] + r * np.outer(np.sin(u), np.sin(v))
+        z = center_m[2] + r * np.outer(np.ones_like(u), np.cos(v))
         pts = self._display(np.stack([x, y, z], axis=-1))
         self._axes.plot_surface(
             pts[..., 0],
@@ -346,7 +361,7 @@ class SimulationView(QWidget):
         if self._run is None:
             return
         if self._kinetics is None:
-            self._kinetics = kinetics_for_run(self._run) or False
+            self._kinetics = kinetics_for_presentation(self._run) or False
         if not isinstance(self._kinetics, KineticsSeries):
             return  # unsupported source (manual / triple pendulum)
         frame = overlay_frame(self._kinetics, index)
@@ -389,6 +404,8 @@ class SimulationView(QWidget):
         axes = self._axes
         elev, azim = float(axes.elev), float(axes.azim)
         axes.clear()
+        self._rendered_ball_center_m = None
+        self._tee_artist_count = 0
         run = self._run
         if run is None:
             axes.set_title("Run a simulation to populate the scene")
@@ -396,7 +413,8 @@ class SimulationView(QWidget):
             return
 
         swing_end = float(run.swing_times[-1])
-        in_flight = self._time > run.impact_time_s
+        impact_time_s = run.impact_time_s
+        in_flight = impact_time_s is not None and self._time > impact_time_s
         index = int(
             np.searchsorted(run.swing_times, min(self._time, swing_end), side="left")
         )
@@ -422,8 +440,15 @@ class SimulationView(QWidget):
 
         if self._ground_check.isChecked():
             self._draw_ground(extent)
+        tee_artists = draw_representative_tee(
+            axes,
+            run.config.ball_setup,
+            self._display,
+            get_chart_color(6),
+        )
+        self._tee_artist_count = len(tee_artists)
         if self._ball_check.isChecked():
-            self._draw_ball()
+            self._draw_ball(run.config.ball_position_m)
 
         # Swing path: full arc faint, traversed portion solid, head marker.
         full = self._display(run.swing_positions)
@@ -456,7 +481,8 @@ class SimulationView(QWidget):
 
         # Flight trajectory: opt-in only (see the toggle's guidance).
         if show_flight:
-            flight_t = self._time - run.impact_time_s
+            assert impact_time_s is not None
+            flight_t = self._time - impact_time_s
             n_flight = int(np.searchsorted(run.flight_times, flight_t, side="right"))
             traj = self._display(run.flight_positions)
             axes.plot(
@@ -493,8 +519,16 @@ class SimulationView(QWidget):
         axes.set_ylabel("x — target line [m]")
         axes.set_zlabel("y — up [m]")
         phase = "flight" if in_flight else "swing"
-        axes.set_title(
-            f"t = {self._time:.3f} s ({phase}) — impact at {run.impact_time_s:.3f} s"
-        )
+        if impact_time_s is None:
+            closest = run.impact_outcome.candidate_time_s
+            title = (
+                f"t = {self._time:.3f} s ({phase}) — no impact; "
+                f"closest approach at {closest:.3f} s"
+            )
+        else:
+            title = (
+                f"t = {self._time:.3f} s ({phase}) — impact at {impact_time_s:.3f} s"
+            )
+        axes.set_title(title)
         axes.legend(loc="upper left", fontsize=8)
         self._canvas.draw_idle()

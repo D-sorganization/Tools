@@ -126,3 +126,119 @@ class TestDynamics:
         s = PendulumState(theta1=0.1, theta2=0.0, omega1=0.0, omega2=0.0)
         with pytest.raises(ValueError, match="dt"):
             reference.rk4_step(p, s, (0.0, -G), 0.0)
+
+    def test_forced_derivatives_add_generalized_joint_torques(self) -> None:
+        p = PendulumParameters.golf_default()
+        state = PendulumState(theta1=0.2, theta2=-0.1, omega1=0.3, omega2=-0.2)
+        g_inplane = (0.0, -G)
+        passive = reference.derivatives(p, state, g_inplane)
+        forced = reference.derivatives_forced(p, state, g_inplane, (4.0, -1.5))
+        expected_delta = np.linalg.solve(
+            reference.mass_matrix(p, state.theta2), [4.0, -1.5]
+        )
+        np.testing.assert_allclose(forced[:2], passive[:2], rtol=0.0, atol=0.0)
+        np.testing.assert_allclose(
+            np.asarray(forced[2:]) - np.asarray(passive[2:]),
+            expected_delta,
+            rtol=1e-12,
+            atol=1e-12,
+        )
+
+    def test_zero_forced_simulation_matches_passive_reference(self) -> None:
+        p = PendulumParameters.golf_default()
+        state = PendulumState(theta1=0.5, theta2=-0.2, omega1=0.1, omega2=0.0)
+        g_inplane = (0.0, -G)
+        passive = reference.simulate(p, state, g_inplane, dt=0.001, n_steps=20)
+        forced = reference.simulate_forced(
+            p,
+            state,
+            g_inplane,
+            dt=0.001,
+            n_steps=20,
+            torque_at=lambda _time_s: (0.0, 0.0),
+        )
+        np.testing.assert_allclose(forced, passive, rtol=0.0, atol=0.0)
+
+    @pytest.mark.parametrize("locked", [(True, False), (False, True), (True, True)])
+    def test_locked_derivatives_zero_locked_rates_and_accelerations(
+        self, locked: tuple[bool, bool]
+    ) -> None:
+        p = PendulumParameters.golf_default()
+        state = PendulumState(theta1=0.4, theta2=-0.25, omega1=0.0, omega2=0.0)
+        result = reference.derivatives_locked(
+            p,
+            state,
+            (0.0, -G),
+            (12.0, -3.0),
+            locked,
+        )
+        if locked[0]:
+            assert result[0] == 0.0
+            assert result[2] == 0.0
+        else:
+            assert result[2] != 0.0
+        if locked[1]:
+            assert result[1] == 0.0
+            assert result[3] == 0.0
+        else:
+            assert result[3] != 0.0
+
+    def test_locked_simulation_is_deterministic_and_exactly_projects_locks(
+        self,
+    ) -> None:
+        p = PendulumParameters.golf_default()
+        initial = PendulumState(theta1=0.4, theta2=-0.25, omega1=0.0, omega2=0.0)
+        kwargs = {
+            "p": p,
+            "initial": initial,
+            "g_inplane": (0.0, -G),
+            "dt": 0.001,
+            "n_steps": 100,
+            "torque_at": lambda _time_s: (12.0, -3.0),
+            "locked": (True, False),
+        }
+        first = reference.simulate_locked(**kwargs)  # type: ignore[arg-type]
+        second = reference.simulate_locked(**kwargs)  # type: ignore[arg-type]
+        np.testing.assert_array_equal(first, second)
+        np.testing.assert_array_equal(first[:, 0], initial.theta1)
+        np.testing.assert_array_equal(first[:, 2], 0.0)
+
+    @pytest.mark.parametrize(
+        ("locked", "irrelevant_torque_index"),
+        [((True, False), 0), ((False, True), 1)],
+    )
+    def test_torque_on_locked_coordinate_changes_reaction_not_free_acceleration(
+        self,
+        locked: tuple[bool, bool],
+        irrelevant_torque_index: int,
+    ) -> None:
+        p = PendulumParameters.golf_default()
+        state = PendulumState(theta1=0.4, theta2=-0.25, omega1=0.0, omega2=0.0)
+        baseline_torque = [12.0, -3.0]
+        changed_torque = baseline_torque.copy()
+        changed_torque[irrelevant_torque_index] += 1000.0
+        baseline = reference.derivatives_locked(
+            p, state, (0.0, -G), tuple(baseline_torque), locked
+        )
+        changed = reference.derivatives_locked(
+            p, state, (0.0, -G), tuple(changed_torque), locked
+        )
+        assert changed == baseline
+
+    @pytest.mark.parametrize("locked", [(True, False), (False, True)])
+    def test_single_lock_uses_the_reduced_mass_matrix_equation(
+        self, locked: tuple[bool, bool]
+    ) -> None:
+        p = PendulumParameters.golf_default()
+        state = PendulumState(theta1=0.4, theta2=-0.25, omega1=0.0, omega2=0.0)
+        torques = (12.0, -3.0)
+        result = reference.derivatives_locked(p, state, (0.0, -G), torques, locked)
+        c = reference.coriolis_vector(p, state.theta2, state.omega1, state.omega2)
+        g = reference.gravity_vector(p, state.theta1, state.theta2, (0.0, -G))
+        d = reference.damping_vector(p, state.omega1, state.omega2)
+        rhs = np.asarray(torques) - np.asarray(c) - np.asarray(g) - np.asarray(d)
+        mass = reference.mass_matrix(p, state.theta2)
+        free_index = 1 if locked[0] else 0
+        assert result[2 + free_index] == pytest.approx(
+            rhs[free_index] / mass[free_index, free_index]
+        )

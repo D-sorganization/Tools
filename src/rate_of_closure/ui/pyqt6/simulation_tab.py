@@ -17,7 +17,6 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
-    QMessageBox,
     QPushButton,
     QScrollArea,
     QSlider,
@@ -34,6 +33,8 @@ from rate_of_closure.derivation_models import DerivationConfig
 from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
 from rate_of_closure.simulation import (
     SOURCE_KINDS,
+    BallSetup,
+    ContactMode,
     SimulationConfig,
     SimulationRun,
     delivery_at,
@@ -41,6 +42,7 @@ from rate_of_closure.simulation import (
     run_simulation,
 )
 from rate_of_closure.simulation.targets import TargetRegion, layout_for_region
+from rate_of_closure.ui.pyqt6.ball_setup_control import BallSetupControl
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
 from rate_of_closure.ui.pyqt6.kinetics_panel import KineticsPanel
@@ -53,8 +55,11 @@ from rate_of_closure.ui.pyqt6.simulation_specs import (
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
+from rate_of_closure.ui.pyqt6.torque_profile_controller import RunMode
+from rate_of_closure.ui.pyqt6.torque_profile_panel import TorqueProfilePanel
 from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
 from shared.python.swing_sim.flight.registry import FlightModelType
+from shared.python.swing_sim.run_config import DoublePendulumRunConfig
 from shared.python.swing_sim.types import PlaneOrientation
 
 logger = logging.getLogger(__name__)
@@ -89,6 +94,17 @@ class SimulationTab(QWidget):
         self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)
         self._inspector = InspectorView()
         self._solver_panel = SolverPanel()
+        self._torque_profile_panel = TorqueProfilePanel()
+        self._torque_profile_panel.runModeChanged.connect(
+            self._on_torque_selection_changed
+        )
+        self._torque_profile_panel.profileChanged.connect(
+            self._on_torque_selection_changed
+        )
+        self._torque_profile_panel.jointLocksChanged.connect(
+            self._on_joint_locks_changed
+        )
+        self._torque_profile_panel.fitCurrentRunRequested.connect(self._fit_current_run)
         self._solver_panel.applyRequested.connect(self.apply_solver_solution)
         # Keep the course scene and flight overlay aligned with target edits.
         self._solver_panel.target_panel().regionChanged.connect(
@@ -98,7 +114,8 @@ class SimulationTab(QWidget):
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
         left_layout.addWidget(self._build_setup_box())
-        left_layout.addWidget(self._build_scrub_box())
+        self._scrub_box = self._build_scrub_box()
+        left_layout.addWidget(self._scrub_box)
         left_layout.addWidget(self._build_launch_box())
         left_layout.addWidget(self._build_explanation_box())
         left_layout.addStretch(1)
@@ -117,6 +134,7 @@ class SimulationTab(QWidget):
         right.addTab(self._flight_view, "Flight")
         right.addTab(self._inspector, "Inspector")
         right.addTab(self._solver_panel, "Solver")
+        right.addTab(self._torque_profile_panel, "Torque Profiles")
         right.setCurrentWidget(self._view)
 
         splitter = QSplitter()
@@ -138,6 +156,9 @@ class SimulationTab(QWidget):
         self._source_combo.addItems([SOURCE_LABELS[kind] for kind in SOURCE_KINDS])
         self._source_combo.setToolTip(FIELD_GUIDANCE["swing_source"])
         self._source_combo.currentIndexChanged.connect(self._invalidate_source)
+        self._source_combo.currentIndexChanged.connect(
+            self._reconcile_joint_locks_for_source
+        )
         form.addRow("Swing Source", self._source_combo)
         self._tilt_spins: dict[str, QDoubleSpinBox] = {}
         for attr, label, guidance_key in TILT_SPECS:
@@ -157,7 +178,35 @@ class SimulationTab(QWidget):
         self._club_combo.addItems(club_names())
         self._club_combo.setCurrentText("Driver 10.5°")
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
+        self._club_combo.currentTextChanged.connect(self._on_club_changed)
         form.addRow("Club", self._club_combo)
+
+        club = get_club(self._club_combo.currentText())
+        default_setup = SimulationConfig(scenario=self._scenario, club=club).ball_setup
+        self._ball_setup_control = BallSetupControl(default_setup, club.name)
+        self._ball_setup_control.setupChanged.connect(self._emit_config)
+        form.addRow(self._ball_setup_control)
+
+        self._contact_combo = QComboBox()
+        self._contact_combo.addItem(
+            "Delivery Inspection (Forced Alignment)",
+            ContactMode.DELIVERY_INSPECTION,
+        )
+        self._contact_combo.addItem(
+            "Fixed Ball Contact (Detect Hit / Miss)",
+            ContactMode.FIXED_BALL_CONTACT,
+        )
+        self._contact_combo.setToolTip(
+            "Choose forced delivery inspection or sampled fixed-ball contact. "
+            "Suggested use: inspection for delivery studies; fixed-ball contact "
+            "for honest hit/miss evaluation. Source: Rate of Closure contact "
+            "contract; sampled contact is a point-to-sphere approximation."
+        )
+        self._contact_combo.currentIndexChanged.connect(self._on_contact_mode_changed)
+        form.addRow("Contact Policy", self._contact_combo)
+        self._contact_description = QLabel()
+        self._contact_description.setWordWrap(True)
+        form.addRow(self._contact_description)
 
         self._flight_combo = QComboBox()
         self._flight_combo.addItems([m.value for m in FlightModelType])
@@ -176,6 +225,18 @@ class SimulationTab(QWidget):
         )
         self._run_button.clicked.connect(self.run_now)
         form.addRow(self._run_button)
+        self._run_status = QLabel(
+            "Stale — Run Simulation to calculate the current configuration."
+        )
+        self._run_status.setWordWrap(True)
+        self._run_status.setFrameShape(QFrame.Shape.StyledPanel)
+        self._run_status.setMargin(8)
+        font = self._run_status.font()
+        font.setBold(True)
+        self._run_status.setFont(font)
+        self._run_status.setAccessibleName("Simulation Run Status")
+        form.addRow(self._run_status)
+        self._update_contact_controls()
         return box
 
     def _build_scrub_box(self) -> QGroupBox:
@@ -266,17 +327,51 @@ class SimulationTab(QWidget):
         )
 
     def _emit_config(self, *_args: object) -> None:
+        self._mark_stale()
         self.configChanged.emit(self.derivation_config())
+
+    def _on_club_changed(self, name: str) -> None:
+        """Apply the canonical club default unless the user owns an override."""
+        club = get_club(name)
+        default_setup = SimulationConfig(scenario=self._scenario, club=club).ball_setup
+        self._ball_setup_control.apply_club_default(default_setup, club.name)
+        self._emit_config()
+
+    def contact_mode(self) -> ContactMode:
+        """The selected contact policy."""
+        return self._contact_combo.currentData()
 
     def config(self) -> SimulationConfig:
         """The simulation request described by the controls."""
+        selection = self._torque_profile_panel.selection()
+        joint_locks = self._torque_profile_panel.joint_locks()
+        run_config = DoublePendulumRunConfig(joint_locks=joint_locks)
+        torque_library = None
+        source_kind = self.source_kind()
+        if selection.mode is RunMode.PRESCRIBED_TORQUE:
+            if not selection.execution_ready or selection.profile is None:
+                raise ValueError(selection.validation_message)
+            source_kind = "double_pendulum"
+            run_config = DoublePendulumRunConfig.prescribed(
+                selection.profile.profile_id,
+                joint_locks=joint_locks,
+            )
+            torque_library = self._torque_profile_panel.canonical_library()
         return SimulationConfig(
             scenario=self._scenario,
             club=get_club(self._club_combo.currentText()),
-            source_kind=self.source_kind(),
+            ball_setup=self._ball_setup_control.setup(),
+            source_kind=source_kind,
             plane=self.plane(),
-            impact_time_s=self._tau,
+            impact_time_s=(
+                self._tau
+                if self.contact_mode() is ContactMode.DELIVERY_INSPECTION
+                else None
+            ),
             flight_model=self._flight_combo.currentText(),
+            contact_mode=self.contact_mode(),
+            swing_run_config=run_config,
+            torque_library=torque_library,
         )
 
     def run_now(self) -> SimulationRun | None:
@@ -285,18 +380,24 @@ class SimulationTab(QWidget):
             run = run_simulation(self.config())
         except Exception as exc:  # noqa: BLE001 — surface physics failures
             logger.warning("simulation failed: %s", exc)
-            QMessageBox.warning(self, "Simulation Failed", str(exc))
+            self._set_run_status(f"Error — Simulation failed: {exc}", "error")
             return None
         self._run = run
         self._tau = run.impact_time_s
-        self._sync_scrub_slider(run.impact_time_s)
+        self._sync_scrub_after_run(run)
         self._view.set_run(run)
         self._strike_view.set_run(run)
         self._kinetics_panel.set_run(run)
         self._flight_view.set_run(run)
         self._inspector.set_run(run)
         self._refresh_launch_rows()
-        self._update_delivery_label(run.impact_time_s)
+        self._update_outcome_labels(run)
+        self._set_completed_status(run)
+        if run.config.swing_run_config.prescribed_profile_id is not None:
+            self._torque_profile_panel.set_execution_status(
+                "Prescribed profile executed in the double-pendulum dynamics kernel; "
+                f"{self._torque_profile_panel.joint_lock_summary()}."
+            )
         self.runCompleted.emit(run)
         return run
 
@@ -305,6 +406,14 @@ class SimulationTab(QWidget):
         (#4125 H6 — yards default; apex stays in metres)."""
         run = self._run
         if run is None:
+            return
+        if run.launch is None:
+            for row in self._rows.values():
+                row.value_label.setText("N/A — No Impact")
+                row.setToolTip(
+                    "No launch value exists because fixed-ball contact was not "
+                    "detected."
+                )
             return
         for field, _label, unit in LAUNCH_ROWS:
             value = run.launch[field]
@@ -315,17 +424,29 @@ class SimulationTab(QWidget):
             else:
                 text = f"{value:+.1f}{unit}"
             self._rows[field].value_label.setText(text)
+            self._rows[field].setToolTip(
+                "Click for the explanation and derivation trace"
+            )
 
     def refresh_units(self) -> None:
         """Re-render distance surfaces after a display-unit change."""
         self._refresh_launch_rows()
         self._solver_panel.target_panel().refresh_units()
         # Redraw the flight view so its axes pick up the new unit.
-        self._flight_view.set_trajectory(self._flight_view.trajectory())
+        self._flight_view.set_run(self._run)
 
     def last_run(self) -> SimulationRun | None:
         """The most recent successful run, if any."""
         return self._run
+
+    def ball_setup_control(self) -> BallSetupControl:
+        """Return the canonical Ground/Tee editor hosted by this session."""
+        return self._ball_setup_control
+
+    def set_ball_setup(self, setup: BallSetup) -> None:
+        """Load a canonical persisted setup without introducing a UI schema."""
+        self._ball_setup_control.set_setup(setup)
+        self._emit_config()
 
     def view(self) -> SimulationView:
         """The swing-scale 3D scene (playback controls live on it)."""
@@ -405,7 +526,12 @@ class SimulationTab(QWidget):
         self._tau = None  # auto: impact at maximum clubhead speed
         run = self.run_now()
         offset = variables.get("swing_impact_time_offset_s", 0.0)
-        if run is not None and use_swing_source and abs(offset) > 1e-9:
+        if (
+            run is not None
+            and run.impact_time_s is not None
+            and use_swing_source
+            and abs(offset) > 1e-9
+        ):
             source = self._ensure_source()
             self._tau = min(max(run.impact_time_s + offset, 0.0), source.duration)
             run = self.run_now()
@@ -418,10 +544,86 @@ class SimulationTab(QWidget):
 
     def _ensure_source(self):  # type: ignore[no-untyped-def]
         if self._source is None:
+            config = self.config()
             self._source = make_source(
-                self.source_kind(), self._scenario, plane=self.plane()
+                config.source_kind,
+                self._scenario,
+                plane=self.plane(),
+                duration=config.swing_duration_s,
+                run_config=config.swing_run_config,
+                torque_library=config.torque_library,
             )
         return self._source
+
+    def _on_torque_selection_changed(self, *_args: object) -> None:
+        """Keep the visible source and cached dynamics aligned with run mode."""
+        selection = self._torque_profile_panel.selection()
+        if (
+            selection.mode is RunMode.PRESCRIBED_TORQUE
+            and selection.profile is not None
+            and selection.profile.model_id == "model.double_pendulum.v1"
+        ):
+            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
+        self._invalidate_source()
+
+    def _on_joint_locks_changed(self, *_args: object) -> None:
+        """Select the compatible kernel whenever an ideal lock is enabled."""
+        if self._torque_profile_panel.joint_locks().has_locks:
+            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
+        self._invalidate_source()
+
+    def _reconcile_joint_locks_for_source(self, *_args: object) -> None:
+        """Clear constraints when the user explicitly leaves the supported source."""
+        if self.source_kind() != "double_pendulum":
+            self._torque_profile_panel.clear_joint_locks(emit=False)
+
+    def _fit_current_run(self, degree: int) -> None:
+        """Fit the current retained double-pendulum torque history non-modally."""
+        if self._run is None:
+            self._torque_profile_panel.set_fit_error(
+                "run a double-pendulum simulation first."
+            )
+            return
+        self._torque_profile_panel.fit_current_run(self._run, degree)
+
+    def _on_contact_mode_changed(self, *_args: object) -> None:
+        """Reset incompatible impact-time state and explain the active policy."""
+        self._tau = None
+        self._update_contact_controls()
+        self._mark_stale()
+        self._emit_config()
+
+    def _update_contact_controls(self) -> None:
+        fixed_ball = self.contact_mode() is ContactMode.FIXED_BALL_CONTACT
+        if fixed_ball:
+            description = (
+                "Retains the swing in its original frame and detects sampled "
+                "clubhead-reference-point proximity to the fixed ball. A miss is "
+                "a valid completed result; mesh contact and swept collision are "
+                "not modeled."
+            )
+        else:
+            description = (
+                "Forced alignment translates the swing onto the ball at the "
+                "selected inspection time. Use this to inspect delivery; it is "
+                "not geometric contact detection."
+            )
+        self._contact_description.setText(description)
+        if not hasattr(self, "_scrub_slider"):
+            return
+        self._scrub_slider.setEnabled(not fixed_ball)
+        self._auto_tau_button.setEnabled(not fixed_ball)
+        if fixed_ball:
+            self._scrub_box.setTitle("Contact Detection (Fixed Ball)")
+            self._scrub_label.setText("fixed-ball")
+            self._delivery_label.setText(
+                "Impact time is detected from sampled fixed-ball proximity; "
+                "manual scrubbing is unavailable."
+            )
+        else:
+            self._scrub_box.setTitle("Impact Time (Scrub the Swing Onto the Ball)")
+            self._scrub_label.setText("auto")
+            self._delivery_label.setText("Awaiting updated simulation")
 
     def _invalidate_source(self, *_args: object) -> None:
         self._source = None
@@ -429,8 +631,8 @@ class SimulationTab(QWidget):
         self._tau = None
         # Tilt controls emit before the scrub box exists during construction.
         if hasattr(self, "_scrub_label"):
-            self._scrub_label.setText("auto")
-            self._delivery_label.setText("Awaiting updated simulation")
+            self._update_contact_controls()
+            self._mark_stale()
 
     def _scrub_time(self, value: int) -> float:
         source = self._ensure_source()
@@ -445,6 +647,36 @@ class SimulationTab(QWidget):
         self._scrub_slider.setValue(value)
         self._scrub_slider.blockSignals(False)
         self._scrub_label.setText(f"{tau * 1000.0:.1f} ms")
+
+    def _sync_scrub_after_run(self, run: SimulationRun) -> None:
+        """Reflect a detected impact or closest-approach sample without fabrication."""
+        if run.impact_time_s is not None:
+            self._sync_scrub_slider(run.impact_time_s)
+            return
+        source = self._ensure_source()
+        candidate = run.impact_outcome.candidate_time_s
+        value = (
+            round(candidate / source.duration * _SCRUB_STEPS)
+            if source.duration > 0.0
+            else 0
+        )
+        self._scrub_slider.blockSignals(True)
+        self._scrub_slider.setValue(value)
+        self._scrub_slider.blockSignals(False)
+        self._scrub_label.setText(f"closest {candidate * 1000.0:.1f} ms")
+
+    def _update_outcome_labels(self, run: SimulationRun) -> None:
+        """Show delivery for hits and proximity diagnostics for misses."""
+        if run.impact_time_s is not None:
+            self._update_delivery_label(run.impact_time_s)
+            return
+        outcome = run.impact_outcome
+        miss_distance_mm = outcome.closest_approach_m * 1000.0
+        threshold_mm = outcome.contact_threshold_m * 1000.0
+        self._delivery_label.setText(
+            f"No impact detected — closest sampled approach {miss_distance_mm:.1f} "
+            f"mm; contact threshold {threshold_mm:.1f} mm."
+        )
 
     def _update_delivery_label(self, tau: float) -> None:
         try:
@@ -466,6 +698,8 @@ class SimulationTab(QWidget):
         )
 
     def _on_scrub_moved(self, value: int) -> None:
+        if self.contact_mode() is ContactMode.FIXED_BALL_CONTACT:
+            return
         tau = self._scrub_time(value)
         self._tau = tau
         self._scrub_label.setText(f"{tau * 1000.0:.1f} ms")
@@ -476,12 +710,51 @@ class SimulationTab(QWidget):
             self.run_now()
 
     def _on_scrub_released(self) -> None:
+        if self.contact_mode() is ContactMode.FIXED_BALL_CONTACT:
+            return
         if self._run is not None:
             self.run_now()
 
     def _on_auto_tau(self) -> None:
+        if self.contact_mode() is ContactMode.FIXED_BALL_CONTACT:
+            return
         self._tau = None
         self.run_now()
+
+    def _set_completed_status(self, run: SimulationRun) -> None:
+        outcome = run.impact_outcome
+        lock_summary = self._torque_profile_panel.joint_lock_summary()
+        if outcome.is_hit:
+            assert run.impact_time_s is not None
+            text = (
+                f"Completed — Hit at {run.impact_time_s * 1000.0:.1f} ms. "
+                "Swing, impact, launch, and flight results are current. "
+                f"Joint constraints: {lock_summary}."
+            )
+            self._set_run_status(text, "hit")
+            return
+        clearance_mm = -outcome.contact_margin_m * 1000.0
+        text = (
+            "Completed — No Impact. The closest approach remained "
+            f"{clearance_mm:.1f} mm outside the sampled contact threshold. "
+            "Swing playback and pendulum kinetics remain available; impact, "
+            "launch, and flight values are unavailable. "
+            f"Joint constraints: {lock_summary}."
+        )
+        self._set_run_status(text, "miss")
+
+    def _mark_stale(self) -> None:
+        if not hasattr(self, "_run_status"):
+            return
+        self._set_run_status(
+            "Stale — Configuration changed. Run Simulation to refresh results.",
+            "stale",
+        )
+
+    def _set_run_status(self, text: str, state: str) -> None:
+        self._run_status.setText(text)
+        self._run_status.setProperty("runState", state)
+        self._run_status.setAccessibleDescription(text)
 
     def _show_explanation(self, field: str) -> None:
         labels = {key: label for key, label, _unit in LAUNCH_ROWS}

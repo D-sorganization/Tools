@@ -19,7 +19,7 @@ import {
   scale,
   sub,
   type Vec3,
-} from "./simulation";
+} from "./impactPhysics";
 
 const RPM_TO_RAD_S = (2.0 * Math.PI) / 60.0;
 const deg = (r: number): number => (r * 180.0) / Math.PI;

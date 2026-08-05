@@ -20,7 +20,6 @@ from __future__ import annotations
 import dataclasses
 import logging
 
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -45,6 +44,9 @@ from rate_of_closure.plotting.catalog import CATALOG, variables_by_category
 from rate_of_closure.plotting.render import compute_plot_data, render_plot
 from rate_of_closure.plotting.spec import PlotSpec
 from rate_of_closure.simulation.session import SimulationRun
+from rate_of_closure.ui.pyqt6.figure_canvas import (
+    LifecycleSafeFigureCanvas as FigureCanvas,
+)
 
 logger = logging.getLogger(__name__)
 

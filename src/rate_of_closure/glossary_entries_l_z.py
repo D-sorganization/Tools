@@ -273,4 +273,13 @@ ENTRIES: dict[str, GlossaryEntry] = {
         "probability — used in variation studies when only hard limits, "
         "not a central tendency, are known (swing_sim.variation.spec).",
     ),
+    "zero_torque_counterfactual": _entry(
+        "Zero-Torque Counterfactual (ZTCF)",
+        "A passive-drift diagnostic that evaluates the model at a recorded "
+        "state with commanded actuator torques set to zero while gravity, "
+        "damping, velocity-dependent coupling, and active ideal constraints "
+        "remain. Rate of Closure reports the pointwise state-matched form, "
+        "not a single continuously integrated alternate trajectory "
+        "(UpstreamDrift counterfactual convention; AffineDrift ZTCF theory).",
+    ),
 }

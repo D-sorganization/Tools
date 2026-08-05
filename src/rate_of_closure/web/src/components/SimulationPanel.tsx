@@ -1,22 +1,8 @@
-/**
- * Simulation tab for the web clone (epic #4103, practical parity).
- *
- * Mirrors the PyQt6 Simulation tab where practical: swing-source picker
- * (manual constant twist / double or triple pendulum), plane-tilt inputs with
- * sourced hover guidance, impact-time scrubber (fixed ball, the swing
- * translates so the clubhead at tau meets it, delivery updating live),
- * launch-number readout, a canvas scene with ball/ground toggles + the
- * flight trajectory polyline, video-style playback (play/pause, timeline
- * scrub, rate presets incl. 1x real-time, loop), and JSON export as a
- * download. Screw-axis overlay is deliberately absent on web — it lands
- * with the WASM kernels in P7 (see model/simulation.ts).
- */
+/** Web swing-to-impact simulation with scale-separated playback and exports. */
+import { useEffect, useMemo, useState } from "react";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-
-import { DecimalInput } from "./DecimalInput";
-import { FieldInfo } from "./FieldInfo";
 import {
+  DEFAULT_IMPACT_CLUB,
   runSimulation,
   type SimulationInput,
   type SimulationRunTs,
@@ -25,31 +11,34 @@ import {
 import { FIELD_GUIDANCE } from "../model/units";
 import { type ClubSpec } from "../model/club";
 import { type ImpactScenario } from "../model/impact";
-import {
-  DEFAULT_COURSE_LAYOUT,
-  type CourseLayout,
-} from "../model/course";
 import { type TargetRegionTs } from "../model/targets";
-import { FlightCanvases } from "./FlightCanvases";
-import { TargetSection } from "./TargetSection";
-import { KineticsSection } from "./KineticsSection";
+import { type ContactMode } from "../model/contact";
 import { SolverPanel } from "./SolverPanel";
-import { StrikeCanvas } from "./StrikeCanvas";
-import { drawSwingScene } from "./swingSceneDraw";
 import { SimulationLaunchNumbers } from "./SimulationLaunchNumbers";
-import { SwingPlaybackControls } from "./SwingPlaybackControls";
-
-const SWING_TOGGLE_GUIDANCE = {
-  ball: FIELD_GUIDANCE.ballVisible,
-  ground: FIELD_GUIDANCE.groundVisible,
-  course: FIELD_GUIDANCE.courseVisible,
-  flight: `Warning: expands the scene to flight scale, dwarfing the swing. ${FIELD_GUIDANCE.swingFlightToggle}`,
-};
-
-/** Scale-separated display views (epic #4120): face / swing / flight. */
-const VIEWS = ["Strike", "Swing", "Kinetics", "Flight"] as const;
-type ViewName = (typeof VIEWS)[number];
-
+import { ContactPolicyControl } from "./ContactPolicyControl";
+import { SimulationStatusHeader } from "./SimulationStatusHeader";
+import { PlaneTiltControls } from "./PlaneTiltControls";
+import { TorqueProfilePanel } from "./TorqueProfilePanel";
+import { JointLockControls } from "./JointLockControls";
+import { BallSetupControl } from "./BallSetupControl";
+import { SimulationDisplay } from "./SimulationDisplay";
+import {
+  defaultBallSetupForClub,
+  type BallSetup,
+} from "../model/ballSetup";
+import {
+  ballSetupFromSimulationDocument,
+  createSimulationRunDocument,
+  loadBallSetupPreference,
+  saveBallSetupPreference,
+} from "../model/ballSetupPersistence";
+import {
+  PASSIVE_DOUBLE_PENDULUM_RUN,
+  SHOULDER_JOINT_ID,
+  WRIST_JOINT_ID,
+  type DoublePendulumRunConfig,
+  type PendulumState,
+} from "../model/doublePendulum";
 
 interface Props {
   scenario: ImpactScenario;
@@ -64,6 +53,16 @@ interface Props {
   distanceUnit?: string;
 }
 
+const readFileText = (file: File): Promise<string> => {
+  if (typeof file.text === "function") return file.text();
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.onerror = () => reject(reader.error ?? new Error("Could not read file."));
+    reader.readAsText(file);
+  });
+};
+
 export function SimulationPanel({
   scenario,
   loftDeg,
@@ -73,69 +72,48 @@ export function SimulationPanel({
   onTargetChange,
   distanceUnit = "yd",
 }: Props) {
+  const clubDefaultSetup = defaultBallSetupForClub(clubSpec);
+  const [initialBallPreference] = useState(() => {
+    const loaded = loadBallSetupPreference(undefined, clubDefaultSetup);
+    return !loaded.userOverridden && loaded.warning === null
+      ? { ...loaded, setup: clubDefaultSetup }
+      : loaded;
+  });
+  const [ballSetup, setBallSetup] = useState<BallSetup>(initialBallPreference.setup);
+  const [ballSetupOverridden, setBallSetupOverridden] = useState(
+    initialBallPreference.userOverridden,
+  );
+  const [ballSetupMessage, setBallSetupMessage] = useState<string | null>(
+    initialBallPreference.warning,
+  );
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
+  const [contactMode, setContactMode] =
+    useState<ContactMode>("delivery_inspection");
+  const [doublePendulumRun, setDoublePendulumRun] =
+    useState<DoublePendulumRunConfig>(PASSIVE_DOUBLE_PENDULUM_RUN);
+  const [doublePendulumInitialState, setDoublePendulumInitialState] =
+    useState<PendulumState>([-Math.PI / 2, 0, 0, 0]);
   const [tilts, setTilts] = useState({ yaw: 0, side: -45, forward: 0 });
   const [tauMs, setTauMs] = useState<number | null>(null);
   const [run, setRun] = useState<SimulationRunTs | null>(null);
-  const [playing, setPlaying] = useState(false);
-  const [loop, setLoop] = useState(false);
-  const [rate, setRate] = useState(1.0);
-  const [time, setTime] = useState(0);
-  const [showBall, setShowBall] = useState(true);
-  const [showGround, setShowGround] = useState(true);
-  // Course scene (#4125 H7a): fairway strip, green + flag, tee marker.
-  const [showCourse, setShowCourse] = useState(true);
-  // Target region (#4125 H7b): drives the course green + solver goal.
-  const targetLayout = useMemo<CourseLayout>(
-    () =>
-      target.kind === "green"
-        ? {
-            ...DEFAULT_COURSE_LAYOUT,
-            greenDistanceM: target.distanceM,
-            greenRadiusM: target.radiusM,
-          }
-        : {
-            ...DEFAULT_COURSE_LAYOUT,
-            greenDistanceM: target.distanceM + target.bandHalfLengthM,
-            fairwayHalfWidthM: target.halfWidthM,
-          },
-    [target],
-  );
-  // Latest landing point (carry, + right lateral) for containment stats.
-  const landing = useMemo(() => {
-    const flight = run?.flight ?? [];
-    if (flight.length < 2) return null;
-    const last = flight[flight.length - 1].position;
-    return { carryM: last[0], lateralM: last[2] };
-  }, [run]);
-  // Scale separation (#4120): flight display in the swing view is
-  // opt-in — its envelope dwarfs the swing envelope.
-  const [showFlight, setShowFlight] = useState(false);
-  const [view, setView] = useState<ViewName>("Swing");
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [lastRunSignature, setLastRunSignature] = useState<string | null>(null);
+  const [runError, setRunError] = useState<string | null>(null);
+  const effectiveLoftDeg = clubSpec?.loftDeg ?? loftDeg;
 
-  // Delivered path / attack angle at impact, for the strike view.
-  const deliveryAngles = useMemo(() => {
-    if (!run) return null;
-    const dt = run.swing[1].t - run.swing[0].t;
-    const index = Math.min(
-      run.swing.length - 1,
-      Math.round(run.impactTimeS / dt),
-    );
-    const v = run.swing[index].velocity;
-    const degOf = (r: number) => (r * 180.0) / Math.PI;
-    return {
-      pathDeg: degOf(Math.atan2(v[2], v[0])),
-      aoaDeg: degOf(Math.atan2(v[1], Math.hypot(v[0], v[2]))),
-    };
-  }, [run]);
+  useEffect(() => {
+    if (ballSetupOverridden) return;
+    const next = defaultBallSetupForClub(clubSpec);
+    setBallSetup(next);
+    const warning = saveBallSetupPreference({ setup: next, userOverridden: false });
+    if (warning) setBallSetupMessage(warning);
+  }, [clubSpec, ballSetupOverridden]);
 
   const input: SimulationInput = useMemo(
     () => ({
       sourceKind,
       clubheadSpeedMph: scenario.clubheadSpeedMph,
       omegaDps: [0, 0, 0],
-      loftDeg,
+      loftDeg: effectiveLoftDeg,
       impactOffsetToeMm: scenario.impactOffsetToeMm,
       impactOffsetHighMm: scenario.impactOffsetHighMm,
       planeYawDeg: tilts.yaw,
@@ -143,16 +121,63 @@ export function SimulationPanel({
       planeForwardTiltDeg: tilts.forward,
       impactTimeS: tauMs === null ? null : tauMs / 1000.0,
       swingDurationS: 1.5,
+      club: clubSpec ?? undefined,
+      contactMode,
+      doublePendulumRun,
+      doublePendulumInitialState,
+      ballSetup,
     }),
-    [sourceKind, scenario, loftDeg, tilts, tauMs],
+    [
+      sourceKind,
+      scenario,
+      effectiveLoftDeg,
+      tilts,
+      tauMs,
+      clubSpec,
+      contactMode,
+      doublePendulumRun,
+      doublePendulumInitialState,
+      ballSetup,
+    ],
   );
+  const inputSignature = useMemo(() => JSON.stringify(input), [input]);
+
+  const clubPhysicsGuidance = clubSpec
+    ? `Impact physics uses ${clubSpec.name}: ${clubSpec.headMassKg.toFixed(3)} kg head mass, ${clubSpec.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${clubSpec.loftDeg.toFixed(1)}° nominal loft. COR uses the ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} driver default because the club library does not yet define measured COR.`
+    : `No selected club specification was provided. Impact physics uses the default driver: ${DEFAULT_IMPACT_CLUB.headMassKg.toFixed(3)} kg head mass, ${DEFAULT_IMPACT_CLUB.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} COR.`;
 
   const doRun = () => {
-    const result = runSimulation(input);
-    setRun(result);
-    setTime(0);
-    setPlaying(false);
+    try {
+      const result = runSimulation(input);
+      setRun(result);
+      setLastRunSignature(inputSignature);
+      setRunError(null);
+    } catch (error) {
+      setRunError(error instanceof Error ? error.message : String(error));
+    }
   };
+  const runIsStale = run !== null && lastRunSignature !== inputSignature;
+  const completedStatus = run?.impactOutcome.status === "miss"
+    ? "Completed — no club–ball impact"
+    : "Completed — impact and flight available";
+  const completedDetails = run
+    ? [
+        run.torqueRun.mode === "prescribed"
+          ? `prescribed torque profile ${run.torqueRun.profileId}`
+          : null,
+        run.torqueRun.lockedJointIds.includes(SHOULDER_JOINT_ID)
+          ? "Shoulder locked (absolute ground frame)"
+          : null,
+        run.torqueRun.lockedJointIds.includes(WRIST_JOINT_ID)
+          ? "Wrist locked (relative upper-segment frame)"
+          : null,
+      ].filter((detail): detail is string => detail !== null)
+    : [];
+  const runStatus = runError
+    ? `Run failed: ${runError}`
+    : runIsStale
+      ? "Inputs changed — run required"
+      : run ? [completedStatus, ...completedDetails].join("; ") : "Not run";
 
   // Populate the default Swing view immediately instead of presenting a
   // blank canvas that depends on discovering the Run button first.
@@ -162,54 +187,15 @@ export function SimulationPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Playback clock: advance simulated time at the selected rate.
-  useEffect(() => {
-    if (!playing || !run) return undefined;
-    let last = performance.now();
-    let raf = 0;
-    const tick = (now: number) => {
-      const dt = ((now - last) / 1000.0) * rate;
-      last = now;
-      setTime((t) => {
-        const next = t + dt;
-        if (next > run.totalDurationS) {
-          if (loop) return 0;
-          setPlaying(false);
-          return run.totalDurationS;
-        }
-        return next;
-      });
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [playing, run, rate, loop]);
-
-  // Scene drawing: swing-scale renderer (see swingSceneDraw.ts).
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
-    drawSwingScene(canvas, run, {
-      time,
-      showBall,
-      showGround,
-      showCourse,
-      showFlight,
-    });
-  }, [run, time, showBall, showGround, showCourse, showFlight, view]);
-
   const exportJson = () => {
     if (!run) return;
-    const doc = {
-      format: "rate_of_closure.simulation_run.web/1",
-      parameters: input,
-      launch: run.launch,
-      impactTimeS: run.impactTimeS,
-      series: {
-        swing: run.swing,
-        flight: run.flight,
-      },
-    };
+    const doc = createSimulationRunDocument(
+      input,
+      run,
+      doublePendulumRun.mode === "prescribed"
+        ? doublePendulumRun.profile.toJsonObject()
+        : null,
+    );
     const blob = new Blob([JSON.stringify(doc, null, 2)], {
       type: "application/json",
     });
@@ -221,62 +207,89 @@ export function SimulationPanel({
     URL.revokeObjectURL(url);
   };
 
-  const swingDuration = run ? run.swing[run.swing.length - 1].t : 1.5;
-  const numberInput = (
-    label: string,
-    value: number,
-    guidanceKey: string,
-    onChange: (value: number) => void,
-  ) => (
-    <label className="mb-2 block text-sm" title={FIELD_GUIDANCE[guidanceKey]}>
-      <span className="mb-1 flex justify-between text-slate-300">
-        <span className="flex items-center">{label}<FieldInfo label={label} guidance={FIELD_GUIDANCE[guidanceKey]} /></span>
-        <span className="text-slate-500">deg</span>
-      </span>
-      <DecimalInput
-        value={value}
-        aria-label={`${label} deg`}
-        title={FIELD_GUIDANCE[guidanceKey]}
-        onCommit={onChange}
-        className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
-      />
-    </label>
-  );
+  const importJson = async (file?: File) => {
+    if (!file) return;
+    try {
+      const imported = ballSetupFromSimulationDocument(JSON.parse(await readFileText(file)));
+      setBallSetup(imported);
+      setBallSetupOverridden(true);
+      const warning = saveBallSetupPreference({ setup: imported, userOverridden: true });
+      setBallSetupMessage(
+        warning ?? `Imported ${imported.supportMode === "tee" ? "Tee" : "Ground"} ball setup.`,
+      );
+    } catch (error) {
+      setBallSetupMessage(`Cannot import ball setup: ${(error as Error).message}`);
+    }
+  };
 
+  const swingDuration = run ? run.swing[run.swing.length - 1].t : 1.5;
   return (
     <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
+      <SimulationStatusHeader
+        sourceKind={sourceKind}
+        onSourceKindChange={(next) => {
+          setSourceKind(next);
+          if (next !== "double_pendulum") {
+            setDoublePendulumRun(PASSIVE_DOUBLE_PENDULUM_RUN);
+          }
+        }}
+        status={runStatus}
+        warning={
+          Boolean(runError) ||
+          runIsStale ||
+          run?.impactOutcome.status === "miss"
+        }
+      />
       <section aria-label="Simulation setup" className="space-y-4">
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             Simulation Setup
           </h2>
-          <label
-            className="mb-3 block text-sm"
-            title={FIELD_GUIDANCE.swingSource}
+          <ContactPolicyControl
+            value={contactMode}
+            onChange={(mode) => {
+              setContactMode(mode);
+              if (mode === "fixed_ball_contact") setTauMs(null);
+            }}
+          />
+          <BallSetupControl
+            setup={ballSetup}
+            userOverridden={ballSetupOverridden}
+            onChange={(next) => {
+              setBallSetup(next);
+              setBallSetupOverridden(true);
+              setBallSetupMessage(
+                saveBallSetupPreference({ setup: next, userOverridden: true }),
+              );
+            }}
+            onUseClubDefault={() => {
+              const next = defaultBallSetupForClub(clubSpec);
+              setBallSetup(next);
+              setBallSetupOverridden(false);
+              setBallSetupMessage(
+                saveBallSetupPreference({ setup: next, userOverridden: false }),
+              );
+            }}
+          />
+          {ballSetupMessage && (
+            <p role="status" className="mb-3 text-xs text-sky-300">{ballSetupMessage}</p>
+          )}
+          <p
+            role="note"
+            aria-label="Impact club physics"
+            title={clubPhysicsGuidance}
+            className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/50 px-3 py-2 text-xs leading-relaxed text-slate-400"
           >
-            <span className="mb-1 block text-slate-300">Swing Source</span>
-            <select
-              value={sourceKind}
-              title={FIELD_GUIDANCE.swingSource}
-              onChange={(e) => setSourceKind(e.target.value as WebSourceKind)}
-              className="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
-            >
-              <option value="manual">Manual Scenario (Constant Twist)</option>
-              <option value="double_pendulum">Double Pendulum</option>
-              <option value="triple_pendulum">Triple Pendulum</option>
-            </select>
-          </label>
-          {numberInput("Plane Yaw", tilts.yaw, "planeYawDeg", (v) =>
-            setTilts((t) => ({ ...t, yaw: v })),
-          )}
-          {numberInput("Plane Side Tilt", tilts.side, "planeSideTiltDeg", (v) =>
-            setTilts((t) => ({ ...t, side: v })),
-          )}
-          {numberInput(
-            "Plane Forward Tilt",
-            tilts.forward,
-            "planeForwardTiltDeg",
-            (v) => setTilts((t) => ({ ...t, forward: v })),
+            {clubPhysicsGuidance}
+          </p>
+          <PlaneTiltControls tilts={tilts} onChange={setTilts} />
+          {sourceKind === "double_pendulum" && (
+            <JointLockControls
+              initialState={doublePendulumInitialState}
+              runConfig={doublePendulumRun}
+              onInitialStateChange={setDoublePendulumInitialState}
+              onRunConfigChange={setDoublePendulumRun}
+            />
           )}
           <label
             className="mb-3 block text-sm"
@@ -290,16 +303,28 @@ export function SimulationPanel({
             </span>
             <input
               type="range"
+              aria-label="Impact Time"
               min={0}
               max={swingDuration * 1000}
               step={1}
-              value={tauMs ?? (run ? run.impactTimeS * 1000 : swingDuration * 500)}
+              value={
+                tauMs ??
+                (run
+                  ? (run.impactTimeS ?? run.impactOutcome.candidateTimeS) * 1000
+                  : swingDuration * 500)
+              }
+              disabled={contactMode === "fixed_ball_contact"}
               title={FIELD_GUIDANCE.impactTimeScrub}
               onChange={(e) => setTauMs(Number(e.target.value))}
               onMouseUp={doRun}
               onTouchEnd={doRun}
-              className="w-full"
+              className="w-full disabled:cursor-not-allowed disabled:opacity-40"
             />
+            {contactMode === "fixed_ball_contact" && (
+              <span className="mt-1 block text-xs text-amber-300/90">
+                Impact time is detected from closest approach in this mode.
+              </span>
+            )}
           </label>
           <div className="flex gap-2">
             <button
@@ -330,98 +355,44 @@ export function SimulationPanel({
             >
               Export JSON
             </button>
+            <label className="cursor-pointer rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 hover:border-slate-500">
+              Import JSON
+              <input
+                type="file"
+                accept="application/json,.json"
+                aria-label="Import Simulation JSON"
+                className="sr-only"
+                onChange={(event) => {
+                  void importJson(event.target.files?.[0]);
+                  event.currentTarget.value = "";
+                }}
+              />
+            </label>
           </div>
         </div>
+
+        <TorqueProfilePanel
+          sourceKind={sourceKind}
+          runConfig={doublePendulumRun}
+          onRunConfigChange={setDoublePendulumRun}
+          run={run}
+        />
 
         <SimulationLaunchNumbers run={run} distanceUnit={distanceUnit} />
 
         <SolverPanel onApply={onScenarioChange} target={target} />
       </section>
 
-      <section className="min-w-0 space-y-3">
-        <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
-          <div
-            className="mb-3 flex gap-2"
-            role="tablist"
-            aria-label="Display views (scale-separated)"
-          >
-            {VIEWS.map((name) => (
-              <button
-                key={name}
-                type="button"
-                role="tab"
-                aria-selected={view === name}
-                onClick={() => setView(name)}
-                title={`Switch the display to the ${name}-scale view`}
-                className={
-                  "rounded-full border px-4 py-1 text-sm font-medium transition-all " +
-                  (view === name
-                    ? "border-sky-400/60 bg-sky-500/10 text-sky-300"
-                    : "border-slate-700/80 bg-slate-900/60 text-slate-300 hover:border-slate-500")
-                }
-              >
-                {name}
-              </button>
-            ))}
-          </div>
-          {view === "Strike" && (
-            <StrikeCanvas
-              toeMm={scenario.impactOffsetToeMm}
-              highMm={scenario.impactOffsetHighMm}
-              loftDeg={loftDeg}
-              pathDeg={deliveryAngles?.pathDeg}
-              aoaDeg={deliveryAngles?.aoaDeg}
-              clubSpec={clubSpec}
-            />
-          )}
-          {view === "Kinetics" && <KineticsSection input={input} run={run} />}
-          {view === "Flight" && (
-            <>
-              <TargetSection
-                target={target}
-                onChange={onTargetChange}
-                landing={landing ?? undefined}
-                unit={distanceUnit}
-              />
-              <FlightCanvases
-                points={run?.flight ?? []}
-                emptyText="Run a simulation to populate the flight view."
-                layout={targetLayout}
-                target={target}
-                distanceUnit={distanceUnit}
-              />
-            </>
-          )}
-          {view === "Swing" && (
-            <>
-          <SwingPlaybackControls
-            run={run}
-            playing={playing}
-            setPlaying={setPlaying}
-            time={time}
-            setTime={setTime}
-            loop={loop}
-            setLoop={setLoop}
-            rate={rate}
-            setRate={setRate}
-            toggles={[
-              ["Ball", showBall, setShowBall, SWING_TOGGLE_GUIDANCE.ball, "text-slate-300"],
-              ["Ground", showGround, setShowGround, SWING_TOGGLE_GUIDANCE.ground, "text-slate-300"],
-              ["Course Elements", showCourse, setShowCourse, SWING_TOGGLE_GUIDANCE.course, "text-slate-300"],
-              ["Show Ball Flight", showFlight, setShowFlight, SWING_TOGGLE_GUIDANCE.flight, "text-amber-300/90"],
-            ]}
-          />
-          <canvas
-            ref={canvasRef}
-            width={860}
-            height={480}
-            className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
-            aria-label="Simulation scene (side view, swing scale)"
-          />
-            </>
-          )}
-        </div>
-      </section>
+      <SimulationDisplay
+        run={run}
+        input={input}
+        scenario={scenario}
+        effectiveLoftDeg={effectiveLoftDeg}
+        clubSpec={clubSpec}
+        target={target}
+        onTargetChange={onTargetChange}
+        distanceUnit={distanceUnit}
+      />
     </div>
   );
 }

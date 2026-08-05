@@ -26,6 +26,7 @@ from rate_of_closure.simulation import (
     kinetics_for_run,
     run_simulation,
     simulate_forced,
+    zero_torque_counterfactual,
 )
 from shared.python.swing_sim import reference
 from shared.python.swing_sim.types import PendulumParameters, PendulumState
@@ -165,6 +166,54 @@ class TestEnergyConsistency:
         assert work == pytest.approx(delta_ke, abs=0.05)
 
 
+class TestZeroTorqueCounterfactual:
+    def test_unlocked_pointwise_identity_matches_passive_loads(self) -> None:
+        p = _params()
+        start = PendulumState(theta1=-1.1, theta2=0.25, omega1=0.8, omega2=-0.3)
+        states = simulate_forced(
+            p,
+            start,
+            _G_FLAT,
+            _DT,
+            50,
+            lambda _t: (8.0, -3.0),
+        )
+        ztcf = zero_torque_counterfactual(p, states, _G_FLAT)
+        inverse = inverse_dynamics(p, states, _G_FLAT, _DT)
+
+        # With no constraints and zero commanded torque, the net inertial
+        # torque equals the passive gravity+damping generalized torque at the
+        # exact same state, independent of the torque that created that state.
+        np.testing.assert_allclose(
+            ztcf["inertial_torque"],
+            inverse["gravity"] + inverse["damping"],
+            atol=1e-12,
+        )
+        assert ztcf["acceleration"].shape == (51, 2)
+        assert np.isfinite(ztcf["acceleration"]).all()
+
+    def test_locked_coordinate_keeps_zero_counterfactual_acceleration(self) -> None:
+        p = _params()
+        states = np.tile((-1.0, 0.2, 0.0, -0.4), (4, 1))
+        ztcf = zero_torque_counterfactual(
+            p,
+            states,
+            _G_FLAT,
+            locked=(True, False),
+        )
+        np.testing.assert_array_equal(ztcf["acceleration"][:, 0], 0.0)
+        assert np.any(np.abs(ztcf["acceleration"][:, 1]) > 0.0)
+
+    def test_rejects_nonfinite_or_malformed_states(self) -> None:
+        p = _params()
+        with pytest.raises(Exception, match="N>=1"):
+            zero_torque_counterfactual(p, np.zeros((0, 4)), _G_FLAT)
+        bad = np.zeros((1, 4))
+        bad[0, 2] = np.nan
+        with pytest.raises(Exception, match="finite"):
+            zero_torque_counterfactual(p, bad, _G_FLAT)
+
+
 class TestReactionForces:
     def test_static_hang_supports_the_weight(self) -> None:
         """At rest hanging straight down, the shoulder carries the full
@@ -204,6 +253,10 @@ class TestRunIntegration:
         n = pendulum_run.swing_times.shape[0]
         assert series.t.shape == (n,)
         assert series.torque_gravity_nm.shape == (n, 2)
+        assert series.ztcf_acceleration_rad_s2.shape == (n, 2)
+        assert series.ztcf_inertial_torque_nm.shape == (n, 2)
+        assert series.ztcf_shoulder_force_n.shape == (n, 3)
+        assert np.isfinite(series.ztcf_inertial_torque_nm).all()
         assert np.isfinite(series.power_w).all()
         assert series.impact_time_s == pendulum_run.impact_time_s
 
@@ -300,11 +353,16 @@ class TestCatalogRegistration:
             "kinetics.wrist_gravity_torque_nm",
             "kinetics.shoulder_damping_torque_nm",
             "kinetics.wrist_damping_torque_nm",
+            "kinetics.shoulder_ztcf_torque_nm",
+            "kinetics.wrist_ztcf_torque_nm",
             "kinetics.shoulder_power_w",
             "kinetics.wrist_power_w",
             "kinetics.shoulder_force_n",
             "kinetics.wrist_force_n",
             "kinetics.clubhead_force_n",
+            "kinetics.shoulder_ztcf_force_n",
+            "kinetics.wrist_ztcf_force_n",
+            "kinetics.clubhead_ztcf_force_n",
         ]
         for key in keys:
             assert CATALOG[key].is_series, key

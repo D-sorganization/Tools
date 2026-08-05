@@ -5,6 +5,8 @@ One :class:`~rate_of_closure.simulation.session.SimulationRun` becomes:
 * a CSV with one row per sample — swing rows (clubhead position and
   speed) followed by flight rows (ball position and speed), phase-tagged
   so the two series stay distinguishable in a flat file; and
+* an optional long-form torque CSV with one row per swing sample and
+  stable joint ID (empty for sources without applied-torque histories); and
 * a JSON document carrying the request parameters, the delivery and
   launch summaries, and both time series.
 
@@ -17,6 +19,7 @@ from __future__ import annotations
 import csv
 import json
 import math
+from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
@@ -24,8 +27,19 @@ import numpy as np
 
 from rate_of_closure._contracts import require
 from rate_of_closure.simulation.session import SimulationRun
+from shared.python.swing_sim.ball_setup import BallSetup
 
-__all__ = ["CSV_COLUMNS", "run_to_json_dict", "series_rows", "write_csv", "write_json"]
+__all__ = [
+    "CSV_COLUMNS",
+    "TORQUE_CSV_COLUMNS",
+    "ball_setup_from_json_dict",
+    "run_to_json_dict",
+    "series_rows",
+    "torque_series_rows",
+    "write_csv",
+    "write_json",
+    "write_torque_csv",
+]
 
 #: CSV column order (kept stable for downstream consumers).
 CSV_COLUMNS: tuple[str, ...] = (
@@ -35,14 +49,46 @@ CSV_COLUMNS: tuple[str, ...] = (
     "y_m",
     "z_m",
     "speed_mps",
+    "is_fixed_ball_contact",
+    "impact_occurred",
+    "impact_time_s",
+    "candidate_time_s",
+    "closest_approach_m",
+    "contact_margin_m",
 )
+
+TORQUE_CSV_COLUMNS: tuple[str, ...] = ("t_s", "joint_id", "applied_torque_nm")
+
+
+def ball_setup_from_json_dict(data: Mapping[str, Any]) -> BallSetup:
+    """Import ball geometry from a run or parameter mapping.
+
+    Run documents written before ball setup was persisted intentionally migrate
+    to Ground/0 so replay retains their original fixed-ball geometry, including
+    for drivers whose *new-run* default is now Tee.
+    """
+    require(isinstance(data, Mapping), "simulation JSON must be a mapping", data)
+    parameters = data.get("parameters", data)
+    require(
+        isinstance(parameters, Mapping),
+        "simulation parameters must be a mapping",
+        parameters,
+    )
+    setup = parameters.get("ball_setup")
+    require(
+        setup is None or isinstance(setup, Mapping),
+        "ball_setup must be a mapping when present",
+        setup,
+    )
+    return BallSetup.from_json_dict(setup)
 
 
 def series_rows(
     run: SimulationRun,
-) -> list[tuple[str, float, float, float, float, float]]:
+) -> list[tuple[Any, ...]]:
     """Flatten the swing and flight series into phase-tagged rows."""
-    rows: list[tuple[str, float, float, float, float, float]] = []
+    rows: list[tuple[Any, ...]] = []
+    contact_columns = _contact_columns(run)
     for t, pos, twist in zip(
         run.swing_times, run.swing_positions, run.swing_twists, strict=True
     ):
@@ -54,12 +100,14 @@ def series_rows(
                 float(pos[1]),
                 float(pos[2]),
                 float(np.linalg.norm(twist[3:])),
+                *contact_columns,
             )
         )
     t0 = run.impact_time_s
     for t, pos, vel in zip(
         run.flight_times, run.flight_positions, run.flight_velocities, strict=True
     ):
+        assert t0 is not None
         rows.append(
             (
                 "flight",
@@ -68,9 +116,34 @@ def series_rows(
                 float(pos[1]),
                 float(pos[2]),
                 float(np.linalg.norm(vel)),
+                *contact_columns,
             )
         )
     return rows
+
+
+def torque_series_rows(run: SimulationRun) -> list[tuple[float, str, float]]:
+    """Return long-form applied torque rows keyed by stable joint ID."""
+    return [
+        (float(time_s), joint_id, float(run.swing_applied_torques_nm[row, column]))
+        for row, time_s in enumerate(run.swing_times)
+        for column, joint_id in enumerate(run.swing_joint_ids)
+    ]
+
+
+def _contact_columns(
+    run: SimulationRun,
+) -> tuple[int, int, float | None, float, float, float]:
+    """Return numeric contact metadata repeated on each flat CSV row."""
+    outcome = run.impact_outcome
+    return (
+        int(outcome.mode.value == "fixed_ball_contact"),
+        int(outcome.is_hit),
+        run.impact_time_s,
+        outcome.candidate_time_s,
+        outcome.closest_approach_m,
+        outcome.contact_margin_m,
+    )
 
 
 def write_csv(run: SimulationRun, path: str | Path) -> None:
@@ -87,6 +160,15 @@ def write_csv(run: SimulationRun, path: str | Path) -> None:
         writer.writerows(series_rows(run))
 
 
+def write_torque_csv(run: SimulationRun, path: str | Path) -> None:
+    """Write a separate long-form applied joint-torque history CSV."""
+    require(isinstance(run, SimulationRun), "run must be a SimulationRun", run)
+    with Path(path).open("w", newline="", encoding="utf-8") as handle:
+        writer = csv.writer(handle)
+        writer.writerow(TORQUE_CSV_COLUMNS)
+        writer.writerows(torque_series_rows(run))
+
+
 def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
     """The run as a JSON-serialisable dictionary.
 
@@ -101,15 +183,19 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
     config = run.config
     scenario = config.scenario
 
-    def _clean(value: float) -> float | None:
-        return float(value) if math.isfinite(value) else None
-
     return {
-        "format": "rate_of_closure.simulation_run/1",
+        "format": "rate_of_closure.simulation_run/2",
         "parameters": {
             "source_kind": config.source_kind,
             "club": config.club.name,
+            "ball_setup": config.ball_setup.to_json_dict(),
             "flight_model": config.flight_model,
+            "contact_mode": config.contact_mode.value,
+            "swing_run_mode": config.swing_run_config.mode.value,
+            "prescribed_profile_id": config.swing_run_config.prescribed_profile_id,
+            "locked_joint_ids": list(
+                config.swing_run_config.joint_locks.locked_joint_ids
+            ),
             "impact_time_s": run.impact_time_s,
             "swing_duration_s": config.swing_duration_s,
             "plane_tilts_deg": {
@@ -128,18 +214,42 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
                 "contact_duration_us": scenario.contact_duration_us,
             },
         },
-        "delivery": {
-            "clubhead_speed_mps": float(np.linalg.norm(run.delivery.clubhead_velocity)),
-            "spin_loft_deg": run.delivery.spin_loft_deg,
-            "face_to_path_deg": run.delivery.face_to_path_deg,
-            "spin_axis_tilt_deg": run.delivery.spin_axis_tilt_deg,
-        },
-        "launch": {key: _clean(value) for key, value in run.launch.items()},
+        "impact_outcome": run.impact_outcome.to_dict(),
+        "delivery": _delivery_dict(run),
+        "launch": _launch_dict(run),
         "series": {
             "columns": list(CSV_COLUMNS),
             "rows": [list(row) for row in series_rows(run)],
             "swing_joints_app_m": run.swing_joints.tolist(),
+            "swing_applied_joint_torques": {
+                "unit": "N*m",
+                "joint_ids": list(run.swing_joint_ids),
+                "values": run.swing_applied_torques_nm.tolist(),
+            },
         },
+    }
+
+
+def _delivery_dict(run: SimulationRun) -> dict[str, float] | None:
+    """Serialize delivery fields only when contact occurred."""
+    delivery = run.delivery
+    if delivery is None:
+        return None
+    return {
+        "clubhead_speed_mps": float(np.linalg.norm(delivery.clubhead_velocity)),
+        "spin_loft_deg": delivery.spin_loft_deg,
+        "face_to_path_deg": delivery.face_to_path_deg,
+        "spin_axis_tilt_deg": delivery.spin_axis_tilt_deg,
+    }
+
+
+def _launch_dict(run: SimulationRun) -> dict[str, float | None] | None:
+    """Serialize finite launch fields only when contact occurred."""
+    if run.launch is None:
+        return None
+    return {
+        key: float(value) if math.isfinite(value) else None
+        for key, value in run.launch.items()
     }
 
 

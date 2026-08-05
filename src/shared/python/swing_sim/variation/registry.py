@@ -1,7 +1,7 @@
 """Namespaced variable registry for the variation engine (#4120 V3).
 
 The single shared vocabulary of perturbable variables: built-in
-``swing_sim`` categories (delivery, swing, club, launch) plus the
+``swing_sim`` categories (delivery, swing, club, ball setup, launch) plus the
 :func:`register_variable` extension seam other packages use to adopt
 the same scheme. See :mod:`.spec` for the study value types.
 """
@@ -15,6 +15,8 @@ from types import MappingProxyType
 
 from shared.python.contracts import require
 
+from ..ball_setup import DEFAULT_DRIVER_TEE_HEIGHT_M
+
 MODES: tuple[str, ...] = ("delivery", "swing", "launch")
 """Pipeline slices a plan can exercise (see :class:`VariationPlan`)."""
 
@@ -22,6 +24,9 @@ CATEGORY_DELIVERY = "swing_sim.impact.delivery"
 CATEGORY_SWING = "swing_sim.swing"
 CATEGORY_CLUB = "swing_sim.club"
 CATEGORY_LAUNCH = "swing_sim.flight.launch"
+CATEGORY_BALL_SETUP = "swing_sim.ball_setup"
+
+APPLICABILITIES: tuple[str, ...] = ("always", "tee_only")
 
 
 @dataclass(frozen=True)
@@ -36,6 +41,8 @@ class VariableDef:
         typical_scale: A sensible noise scale in the variable's unit
             (seed for UI defaults and tooltips).
         guidance: Sourced hover guidance in the FIELD_GUIDANCE style.
+        applicability: Context gate for variables that only have physical
+            meaning under a particular model configuration.
     """
 
     key: str
@@ -44,6 +51,7 @@ class VariableDef:
     default: float
     typical_scale: float
     guidance: str
+    applicability: str = "always"
 
     def __post_init__(self) -> None:
         require("." in self.key, "key must be namespaced (category.name)", self.key)
@@ -52,6 +60,11 @@ class VariableDef:
             math.isfinite(self.typical_scale) and self.typical_scale > 0.0,
             "typical_scale must be finite and > 0",
             self.typical_scale,
+        )
+        require(
+            self.applicability in APPLICABILITIES,
+            f"applicability must be one of {APPLICABILITIES}",
+            self.applicability,
         )
 
     @property
@@ -306,6 +319,20 @@ def _register_builtins() -> None:
                 guidance=guidance,
             )
         )
+    register_variable(
+        VariableDef(
+            key=f"{CATEGORY_BALL_SETUP}.tee_height_m",
+            label="Tee Height",
+            unit="m",
+            default=DEFAULT_DRIVER_TEE_HEIGHT_M,
+            typical_scale=0.003,
+            guidance=(
+                "Applicable only when Ball Support is Tee. Height is measured "
+                "from the ground plane to the bottom of the ball."
+            ),
+            applicability="tee_only",
+        )
+    )
 
 
 _register_builtins()
@@ -313,8 +340,13 @@ _register_builtins()
 #: Registry categories whose variables are legal per pipeline mode.
 MODE_CATEGORIES: Mapping[str, tuple[str, ...]] = MappingProxyType(
     {
-        "delivery": (CATEGORY_DELIVERY, CATEGORY_CLUB),
-        "swing": (CATEGORY_SWING, CATEGORY_DELIVERY, CATEGORY_CLUB),
+        "delivery": (CATEGORY_DELIVERY, CATEGORY_CLUB, CATEGORY_BALL_SETUP),
+        "swing": (
+            CATEGORY_SWING,
+            CATEGORY_DELIVERY,
+            CATEGORY_CLUB,
+            CATEGORY_BALL_SETUP,
+        ),
         "launch": (CATEGORY_LAUNCH,),
     }
 )
@@ -340,6 +372,8 @@ def keys_for_mode(mode: str) -> tuple[str, ...]:
 
 
 __all__ = [
+    "APPLICABILITIES",
+    "CATEGORY_BALL_SETUP",
     "CATEGORY_CLUB",
     "CATEGORY_DELIVERY",
     "CATEGORY_LAUNCH",

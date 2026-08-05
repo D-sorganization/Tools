@@ -68,7 +68,15 @@ class TestKineticsPanel:
         assert table.item(0, 2).text().endswith("%")
         assert len(panel._figure.axes) == 3
         titles = [axis.get_title() for axis in panel._figure.axes]
-        assert titles == ["Joint Torques", "Joint Power", "Reaction Forces"]
+        assert titles == [
+            "Joint Torques and State-Matched ZTCF",
+            "Joint Power",
+            "Reaction Forces and State-Matched ZTCF",
+        ]
+        assert any(
+            "ZTCF" in str(line.get_label()) for line in panel._figure.axes[0].lines
+        )
+        assert "not one continuously integrated" in panel._explanation.toPlainText()
         # Movement-optimizer label conventions (plot_renderer.py).
         assert panel._figure.axes[0].get_ylabel() == "Torque (N·m)"
         assert panel._figure.axes[1].get_ylabel() == "Power (W)"

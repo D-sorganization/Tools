@@ -15,10 +15,12 @@ it never reaches into widgets or model internals (LoD).
 
 from __future__ import annotations
 
+import json
 import logging
 import math
+from typing import Protocol
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QSettings, Qt
 from PyQt6.QtWidgets import (
     QDialog,
     QFrame,
@@ -27,6 +29,7 @@ from PyQt6.QtWidgets import (
     QScrollArea,
     QSplitter,
     QStatusBar,
+    QTabBar,
     QTabWidget,
     QTextBrowser,
     QToolButton,
@@ -121,8 +124,8 @@ _UNITS: dict[str, str] = {
     "time_to_square_from_1deg_open_ms": " ms",
 }
 
-#: Tab index -> helptext key (order matches the addTab calls below).
-_TAB_HELP_KEYS: tuple[str, ...] = (
+#: Stable IDs for primary tabs in their first-run order.
+_DEFAULT_TAB_IDS: tuple[str, ...] = (
     "clubhead",
     "plots",
     "calculation_description",
@@ -132,6 +135,23 @@ _TAB_HELP_KEYS: tuple[str, ...] = (
     "putting",
     "glossary",
 )
+#: Compatibility export used by the help-content contract tests.
+_TAB_HELP_KEYS = _DEFAULT_TAB_IDS
+_NAVIGATION_SETTINGS_ORG = "D-sorganization"
+_NAVIGATION_SETTINGS_APP = "RateOfClosureImpactExplorer"
+_NAVIGATION_STATE_KEY = "ui/primary-tabs/v1"
+_NAVIGATION_STATE_VERSION = 1
+
+
+class _Settings(Protocol):
+    """Minimal QSettings seam used by primary-tab persistence."""
+
+    def value(self, key: str, default_value: object = None) -> object:
+        """Return a persisted value."""
+
+    def setValue(self, key: str, value: object) -> None:  # noqa: N802
+        """Persist a value."""
+
 
 #: result/metric field -> the units drop-down quantity it follows.
 _QUANTITY_ROWS: dict[str, str] = {
@@ -146,7 +166,12 @@ _QUANTITY_ROWS: dict[str, str] = {
 class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
     """Interactive explorer for rotation-induced impact-point deviations."""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        *,
+        navigation_settings: _Settings | None = None,
+    ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Rate of Closure Impact Explorer")
         # Small-window support (#4120): layouts scroll and elide below
@@ -186,16 +211,43 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         left.setWidget(left_content)
         left.setMinimumWidth(320)
 
+        self._navigation_settings = (
+            navigation_settings
+            if navigation_settings is not None
+            else QSettings(_NAVIGATION_SETTINGS_ORG, _NAVIGATION_SETTINGS_APP)
+        )
         tabs = QTabWidget()
-        tabs.addTab(self._club_view, "3D Clubhead")
-        tabs.addTab(self._plots_tab, "Plots")
-        tabs.addTab(self._derivation_view, "Calculation Description")
-        tabs.addTab(self._simulation_tab, "Simulation")
-        tabs.addTab(self._flight_explorer_tab, "Flight Explorer")
-        tabs.addTab(self._variation_tab, "Variation")
-        tabs.addTab(self._putting_tab, "Putting")
-        tabs.addTab(self._glossary_tab, "Glossary")
+        tab_bar = tabs.tabBar()
+        if tab_bar is None:  # pragma: no cover - Qt always creates its tab bar
+            raise RuntimeError("Primary tab bar was not created")
+        primary_tabs = (
+            ("clubhead", self._club_view, "3D Clubhead"),
+            ("plots", self._plots_tab, "Plots"),
+            (
+                "calculation_description",
+                self._derivation_view,
+                "Calculation Description",
+            ),
+            ("simulation", self._simulation_tab, "Simulation"),
+            ("flight_explorer", self._flight_explorer_tab, "Flight Explorer"),
+            ("variation", self._variation_tab, "Variation"),
+            ("putting", self._putting_tab, "Putting"),
+            ("glossary", self._glossary_tab, "Glossary"),
+        )
+        for tab_id, widget, label in primary_tabs:
+            index = tabs.addTab(widget, label)
+            tab_bar.setTabData(index, tab_id)
+        tabs.setMovable(True)
+        tab_bar.setElideMode(Qt.TextElideMode.ElideNone)
+        tabs.setUsesScrollButtons(True)
+        tab_bar.setToolTip(
+            "Drag tabs to reorder the workspace. Tab order and the active "
+            "view are saved for the next session."
+        )
         self._tabs = tabs
+        self._restore_primary_navigation()
+        tab_bar.tabMoved.connect(self._persist_primary_navigation)
+        tabs.currentChanged.connect(self._persist_primary_navigation)
         # Per-tab help (#4120 V4): the '?' corner button opens detailed
         # usage help for whichever tab is current.
         help_button = QToolButton()
@@ -292,7 +344,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
 
     def show_help(self) -> None:
         """Open the rich-text help panel for the current tab (V4)."""
-        entry = HELP_TEXTS[_TAB_HELP_KEYS[self._tabs.currentIndex()]]
+        entry = HELP_TEXTS[self._current_primary_tab_id()]
         dialog = QDialog(self)
         dialog.setWindowTitle(f"Help — {entry.title}")
         dialog.resize(560, 520)
@@ -325,6 +377,62 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._tabs.setCurrentWidget(self._glossary_tab)
         if term:
             self._glossary_tab.select_term(term)
+
+    def primary_tab_ids(self) -> list[str]:
+        """Return stable primary-tab IDs in their current visual order."""
+        bar = self._primary_tab_bar()
+        return [str(bar.tabData(index)) for index in range(self._tabs.count())]
+
+    def _current_primary_tab_id(self) -> str:
+        """Return the stable ID for the selected tab."""
+        tab_id = str(self._primary_tab_bar().tabData(self._tabs.currentIndex()))
+        return tab_id if tab_id in _DEFAULT_TAB_IDS else _DEFAULT_TAB_IDS[0]
+
+    def _primary_tab_bar(self) -> QTabBar:
+        """Return the main tab bar, enforcing the QTabWidget invariant."""
+        bar = self._tabs.tabBar()
+        if bar is None:  # pragma: no cover - Qt always creates its tab bar
+            raise RuntimeError("Primary tab bar is unavailable")
+        return bar
+
+    def _restore_primary_navigation(self) -> None:
+        """Restore a valid tab order and selection; ignore corrupt state."""
+        raw = self._navigation_settings.value(_NAVIGATION_STATE_KEY)
+        if not isinstance(raw, str):
+            return
+        try:
+            state = json.loads(raw)
+        except (json.JSONDecodeError, TypeError):
+            logger.warning("Ignoring corrupt primary-tab navigation state")
+            return
+        if (
+            not isinstance(state, dict)
+            or state.get("version") != _NAVIGATION_STATE_VERSION
+        ):
+            return
+        supplied = state.get("order")
+        if not isinstance(supplied, list):
+            supplied = []
+        order = list(
+            dict.fromkeys(tab_id for tab_id in supplied if tab_id in _DEFAULT_TAB_IDS)
+        )
+        order.extend(tab_id for tab_id in _DEFAULT_TAB_IDS if tab_id not in order)
+        bar = self._primary_tab_bar()
+        for destination, tab_id in enumerate(order):
+            source = self.primary_tab_ids().index(tab_id)
+            bar.moveTab(source, destination)
+        active = state.get("active")
+        if active in _DEFAULT_TAB_IDS:
+            self._tabs.setCurrentIndex(self.primary_tab_ids().index(active))
+
+    def _persist_primary_navigation(self, _index: int = -1) -> None:
+        """Persist stable IDs so label changes cannot invalidate layout."""
+        state = {
+            "version": _NAVIGATION_STATE_VERSION,
+            "order": self.primary_tab_ids(),
+            "active": self._current_primary_tab_id(),
+        }
+        self._navigation_settings.setValue(_NAVIGATION_STATE_KEY, json.dumps(state))
 
     def _format_row(self, field: str, value: float) -> str:
         """Format one row's value in the user's selected display unit."""
@@ -395,6 +503,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
 
     def closeEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
         """Stop the animation timers before the window goes away."""
+        self._persist_primary_navigation()
         self._club_view.stop()
         self._simulation_tab.stop()
         self._variation_tab.stop()

@@ -244,6 +244,15 @@ KINETICS_EXPLANATIONS: dict[str, str] = {
         "of N through the downswing are the centripetal cost of "
         "clubhead speed."
     ),
+    "zero_torque_counterfactual": (
+        "The Zero-Torque Counterfactual (ZTCF) sets commanded shoulder and "
+        "wrist torques to zero at each recorded (q, qdot) state, then solves "
+        "the same forward dynamics with gravity, damping, velocity coupling, "
+        "and ideal joint locks intact. The resulting torque and force curves "
+        "isolate passive drift at the original state. Each sample is "
+        "state-matched; the displayed series is not one continuously "
+        "integrated alternate swing."
+    ),
 }
 
 

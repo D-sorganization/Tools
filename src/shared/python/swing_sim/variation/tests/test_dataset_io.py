@@ -19,6 +19,7 @@ from shared.python.swing_sim.variation.dataset_io import (
     write_csv,
     write_json,
 )
+from shared.python.swing_sim.variation.spec import PerturbationGroup
 
 pytestmark = pytest.mark.physics
 
@@ -51,6 +52,34 @@ class TestJsonRoundTrip:
         np.testing.assert_array_equal(loaded.outputs, dataset.outputs)
         np.testing.assert_array_equal(loaded.success, dataset.success)
         assert loaded.elapsed_s == dataset.elapsed_s
+
+    def test_grouped_v2_plan_is_retained_in_dataset_json(self, tmp_path: Path) -> None:
+        speed = f"{CATEGORY_LAUNCH}.ball_speed_mph"
+        spin = f"{CATEGORY_LAUNCH}.spin_rpm"
+        plan = VariationPlan(
+            mode="launch",
+            noise=(
+                NoiseSpec(speed, scale=2.0, spec_id="speed"),
+                NoiseSpec(spin, scale=100.0, spec_id="spin"),
+            ),
+            groups=(
+                PerturbationGroup(
+                    group_id="launch-correlation",
+                    spec_ids=("speed", "spin"),
+                    matrix=((1.0, 0.25), (0.25, 1.0)),
+                ),
+            ),
+            n_runs=6,
+            seed=4,
+        )
+        original = run_variation(plan, n_workers=2)
+        path = tmp_path / "grouped-study.json"
+
+        write_json(original, path)
+        loaded = read_json(path)
+
+        assert loaded.plan == plan
+        np.testing.assert_array_equal(loaded.inputs, original.inputs)
 
 
 class TestCsvRoundTrip:

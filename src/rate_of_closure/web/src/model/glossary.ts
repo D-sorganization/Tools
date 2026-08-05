@@ -52,6 +52,7 @@ export const FIELD_TO_TERM: Record<string, string> = {
   jointTorques: "inverse_dynamics",
   jointPower: "power",
   reactionForces: "joint_reaction_force",
+  zeroTorqueCounterfactual: "zero_torque_counterfactual",
   puttRolloutM: "stimp",
   puttSkidM: "skid",
   puttSkidPct: "skid",

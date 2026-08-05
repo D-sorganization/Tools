@@ -11,7 +11,6 @@ import logging
 from typing import cast
 
 import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from PyQt6.QtCore import Qt, QTimer
@@ -32,6 +31,9 @@ from rate_of_closure.club.volumetrics import is_watertight, mesh_volume_centroid
 from rate_of_closure.mesh import HeadMesh, load_head_mesh
 from rate_of_closure.model import ImpactScenario, solve
 from rate_of_closure.ui.pyqt6.engineering_markers import draw_cg_marker
+from rate_of_closure.ui.pyqt6.figure_canvas import (
+    LifecycleSafeFigureCanvas as FigureCanvas,
+)
 from rate_of_closure.units import FIELD_GUIDANCE
 
 logger = logging.getLogger(__name__)
@@ -168,7 +170,7 @@ class Club3DView(QWidget):
         bar = QHBoxLayout()
         bar.setContentsMargins(4, 4, 4, 0)
 
-        self._play_button = QPushButton("Pause")
+        self._play_button = QPushButton("Play")
         self._play_button.setToolTip(
             "Play or pause the impact animation (the label shows the "
             "action the button will take)."
@@ -224,11 +226,9 @@ class Club3DView(QWidget):
 
     # ── public API ──────────────────────────────────────────────────
     def set_scenario(self, scenario: ImpactScenario) -> None:
-        """Adopt a new scenario and restart the rotation animation."""
+        """Adopt a new scenario without starting background animation."""
         self._scenario = scenario
         self._phase = 0.0
-        if not self._timer.isActive() and not self._play_button.isChecked():
-            self._timer.start()
         self._draw()
 
     def set_playback_speed(self, multiplier: float) -> None:
@@ -239,6 +239,10 @@ class Club3DView(QWidget):
     def playback_speed(self) -> float:
         """Current animation speed multiplier."""
         return self._speed
+
+    def is_playing(self) -> bool:
+        """Whether the clubhead animation timer is running."""
+        return self._timer.isActive()
 
     def set_view_mode(self, mode: str) -> None:
         """Select a display mode by name (see :data:`VIEW_MODES`)."""
@@ -332,6 +336,7 @@ class Club3DView(QWidget):
     def stop(self) -> None:
         """Stop the animation timer (used on window close and in tests)."""
         self._timer.stop()
+        self._play_button.setChecked(False)
 
     # ── internals ──────────────────────────────────────────────────
     def _on_load_mesh_clicked(self) -> None:
@@ -349,12 +354,12 @@ class Club3DView(QWidget):
     def _on_scroll(self, event) -> None:  # type: ignore[no-untyped-def]
         self.set_zoom(self._zoom * (1.1 if event.button == "up" else 1.0 / 1.1))
 
-    def _on_play_toggled(self, paused: bool) -> None:
-        self._play_button.setText("Play" if paused else "Pause")
-        if paused:
-            self._timer.stop()
-        else:
+    def _on_play_toggled(self, playing: bool) -> None:
+        self._play_button.setText("Pause" if playing else "Play")
+        if playing and self._scenario is not None:
             self._timer.start()
+        else:
+            self._timer.stop()
 
     def _on_speed_changed(self, value: int) -> None:
         self._speed = value / 100.0

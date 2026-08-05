@@ -15,7 +15,6 @@ parity fixture.
 
 from __future__ import annotations
 
-import math
 from collections.abc import Callable
 from dataclasses import dataclass
 
@@ -23,6 +22,7 @@ import numpy as np
 
 from rate_of_closure._contracts import ensure, require
 from rate_of_closure.model import solve
+from rate_of_closure.plotting import optional_values
 from rate_of_closure.simulation.kinetics import KineticsSeries, kinetics_for_run
 from rate_of_closure.simulation.session import SimulationRun
 
@@ -120,16 +120,6 @@ def _speed_series(vectors: np.ndarray) -> np.ndarray:
     return np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
 
 
-def _path_deg(run: SimulationRun) -> float:
-    v = run.delivery.clubhead_velocity
-    return math.degrees(math.atan2(float(v[2]), float(v[0])))
-
-
-def _aoa_deg(run: SimulationRun) -> float:
-    v = run.delivery.clubhead_velocity
-    return math.degrees(math.atan2(float(v[1]), math.hypot(float(v[0]), float(v[2]))))
-
-
 def _kinetics_series(picker: Callable[[KineticsSeries], np.ndarray]) -> Extractor:
     """Kinetics extractor factory: joint kinetics need the pendulum
     joint states, so sources without them (manual, triple pendulum)
@@ -209,7 +199,12 @@ def _entries() -> list[VariableSpec]:
             "deg",
             lambda r: float(r.config.plane.forward_tilt_deg),
         ),
-        ("impact_time_s", "Impact Time (τ)", "s", lambda r: float(r.impact_time_s)),
+        (
+            "impact_time_s",
+            "Impact Time (τ)",
+            "s",
+            lambda r: optional_values.optional_float(r.impact_time_s),
+        ),
     ]
     swing: list[tuple[str, str, str, Extractor]] = [
         ("time_s", "Swing Time", "s", lambda r: np.asarray(r.swing_times, float)),
@@ -282,6 +277,18 @@ def _entries() -> list[VariableSpec]:
             _kinetics_series(lambda k: k.torque_damping_nm[:, 1]),
         ),
         (
+            "shoulder_ztcf_torque_nm",
+            "Shoulder ZTCF Inertial Torque",
+            "N·m",
+            _kinetics_series(lambda k: k.ztcf_inertial_torque_nm[:, 0]),
+        ),
+        (
+            "wrist_ztcf_torque_nm",
+            "Wrist ZTCF Inertial Torque",
+            "N·m",
+            _kinetics_series(lambda k: k.ztcf_inertial_torque_nm[:, 1]),
+        ),
+        (
             "shoulder_power_w",
             "Shoulder Power",
             "W",
@@ -311,39 +318,62 @@ def _entries() -> list[VariableSpec]:
             "N",
             _kinetics_series(lambda k: k.force_magnitude_n("clubhead")),
         ),
+        (
+            "shoulder_ztcf_force_n",
+            "Shoulder ZTCF Reaction Force",
+            "N",
+            _kinetics_series(lambda k: k.ztcf_force_magnitude_n("shoulder")),
+        ),
+        (
+            "wrist_ztcf_force_n",
+            "Wrist ZTCF Reaction Force",
+            "N",
+            _kinetics_series(lambda k: k.ztcf_force_magnitude_n("wrist")),
+        ),
+        (
+            "clubhead_ztcf_force_n",
+            "Clubhead ZTCF Force",
+            "N",
+            _kinetics_series(lambda k: k.ztcf_force_magnitude_n("clubhead")),
+        ),
     ]
     impact: list[tuple[str, str, str, Extractor]] = [
         (
             "clubhead_speed_mps",
             "Delivered Clubhead Speed",
             "m/s",
-            lambda r: float(np.linalg.norm(r.delivery.clubhead_velocity)),
+            optional_values.delivered_speed,
         ),
-        ("club_path_deg", "Club Path", "deg", _path_deg),
-        ("attack_angle_deg", "Attack Angle", "deg", _aoa_deg),
+        ("club_path_deg", "Club Path", "deg", optional_values.path_deg),
+        (
+            "attack_angle_deg",
+            "Attack Angle",
+            "deg",
+            optional_values.attack_angle_deg,
+        ),
         (
             "spin_loft_deg",
             "Spin Loft",
             "deg",
-            lambda r: float(r.delivery.spin_loft_deg),
+            lambda r: optional_values.delivery_scalar(r, "spin_loft_deg"),
         ),
         (
             "face_to_path_deg",
             "Face to Path",
             "deg",
-            lambda r: float(r.delivery.face_to_path_deg),
+            lambda r: optional_values.delivery_scalar(r, "face_to_path_deg"),
         ),
         (
             "spin_axis_tilt_deg",
             "Spin Axis Tilt",
             "deg",
-            lambda r: float(r.delivery.spin_axis_tilt_deg),
+            lambda r: optional_values.delivery_scalar(r, "spin_axis_tilt_deg"),
         ),
         (
             "energy_transfer_j",
             "Impact Energy Transfer",
             "J",
-            lambda r: float(r.post_impact.energy_transfer),
+            optional_values.impact_energy,
         ),
     ]
     launch: list[tuple[str, str, str, Extractor]] = [
@@ -351,21 +381,26 @@ def _entries() -> list[VariableSpec]:
             "ball_speed_mph",
             "Ball Speed",
             "mph",
-            lambda r: float(r.launch["ball_speed_mph"]),
+            lambda r: optional_values.launch_scalar(r, "ball_speed_mph"),
         ),
         (
             "launch_angle_deg",
             "Launch Angle",
             "deg",
-            lambda r: float(r.launch["launch_angle_deg"]),
+            lambda r: optional_values.launch_scalar(r, "launch_angle_deg"),
         ),
         (
             "launch_azimuth_deg",
             "Launch Azimuth",
             "deg",
-            lambda r: float(r.launch["launch_azimuth_deg"]),
+            lambda r: optional_values.launch_scalar(r, "launch_azimuth_deg"),
         ),
-        ("spin_rpm", "Total Spin", "rpm", lambda r: float(r.launch["spin_rpm"])),
+        (
+            "spin_rpm",
+            "Total Spin",
+            "rpm",
+            lambda r: optional_values.launch_scalar(r, "spin_rpm"),
+        ),
     ]
     flight: list[tuple[str, str, str, Extractor]] = [
         ("time_s", "Flight Time", "s", lambda r: np.asarray(r.flight_times, float)),
@@ -390,19 +425,29 @@ def _entries() -> list[VariableSpec]:
         ),
     ]
     metric: list[tuple[str, str, str, Extractor]] = [
-        ("carry_m", "Carry Distance", "m", lambda r: float(r.launch["carry_m"])),
-        ("max_height_m", "Apex Height", "m", lambda r: float(r.launch["max_height_m"])),
+        (
+            "carry_m",
+            "Carry Distance",
+            "m",
+            lambda r: optional_values.launch_scalar(r, "carry_m"),
+        ),
+        (
+            "max_height_m",
+            "Apex Height",
+            "m",
+            lambda r: optional_values.launch_scalar(r, "max_height_m"),
+        ),
         (
             "flight_time_s",
             "Flight Time",
             "s",
-            lambda r: float(r.launch["flight_time_s"]),
+            lambda r: optional_values.launch_scalar(r, "flight_time_s"),
         ),
         (
             "landing_angle_deg",
             "Landing Angle",
             "deg",
-            lambda r: float(r.launch["landing_angle_deg"]),
+            lambda r: optional_values.launch_scalar(r, "landing_angle_deg"),
         ),
         (
             "path_deviation_deg",

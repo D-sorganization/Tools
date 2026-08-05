@@ -30,10 +30,10 @@ not state one for torque):
   y up, z right). Gravity is included (a static hang shows the
   supporting force, not zero).
 
-The swing sources are passive (gravity-driven), so the net applied
-torque recovered by inverse dynamics is ~0 up to integration error;
-the physically interesting series are the gravity / damping / inertial
-breakdown, the reaction forces, and the joint powers.
+Passive and prescribed swing sources are supported. Ideal joint locks
+introduce generalized constraint reactions: those reactions are kept
+separate from the commanded applied-torque history so a lock is never
+misreported as actuator torque.
 """
 
 from __future__ import annotations
@@ -63,6 +63,7 @@ __all__ = [
     "inverse_dynamics",
     "kinetics_for_run",
     "simulate_forced",
+    "zero_torque_counterfactual",
 ]
 
 #: Joint names in coordinate order (proximal to distal), mirroring the
@@ -86,7 +87,8 @@ class KineticsSeries:
     sign convention documented in the module docstring. The torque
     breakdown satisfies (per sample, per joint)::
 
-        torque_applied = torque_inertial - torque_gravity - torque_damping
+        torque_applied + torque_constraint_reaction
+            = torque_inertial - torque_gravity - torque_damping
 
     with ``torque_inertial = M(q)·q̈ + C(q, q̇)`` (what actually
     accelerates the segments), ``torque_gravity = -G(q)`` (gravity's
@@ -96,18 +98,34 @@ class KineticsSeries:
     Attributes:
         t: (N,) sample times [s].
         joint_names: Joint labels in column order.
-        torque_applied_nm: (N, 2) net applied joint torque from inverse
-            dynamics (~0 for the passive swing sources).
+        torque_applied_nm: (N, 2) commanded applied joint torque retained by
+            the run (~0 for passive swing sources).
+        torque_constraint_reaction_nm: (N, 2) ideal generalized reaction
+            torque enforcing active locks; exactly zero for unlocked runs.
         torque_gravity_nm: (N, 2) gravity torque per joint.
         torque_damping_nm: (N, 2) viscous damping torque per joint.
         torque_inertial_nm: (N, 2) net inertial (intersegmental)
             torque per joint — the plotted "net torque".
+        ztcf_acceleration_rad_s2: (N, 2) instantaneous acceleration obtained by
+            setting commanded joint torques to zero at each recorded state while
+            preserving gravity, damping, velocity coupling, and ideal locks. This
+            is a pointwise state-matched counterfactual, not one integrated
+            alternate trajectory.
+        ztcf_inertial_torque_nm: (N, 2) ``M(q)·qdd_ztcf + C(q, qdot)``.
+            For an unlocked model this equals gravity plus damping torque; locked
+            coordinates can additionally carry ideal constraint reactions.
         power_w: (N, 2) joint power ``τ_net · ω`` per coordinate; the
             row sum equals d(kinetic energy)/dt.
         shoulder_force_n: (N, 3) app-frame reaction force at the pivot.
         wrist_force_n: (N, 3) app-frame reaction force at the wrist.
         clubhead_force_n: (N, 3) app-frame point-mass force estimate on
             the clubhead (mass :data:`CLUBHEAD_MASS_KG` at the tip).
+        ztcf_shoulder_force_n: (N, 3) state-matched shoulder reaction force
+            under the ZTCF acceleration.
+        ztcf_wrist_force_n: (N, 3) state-matched wrist reaction force under
+            the ZTCF acceleration.
+        ztcf_clubhead_force_n: (N, 3) state-matched clubhead point-force
+            estimate under the ZTCF acceleration.
         pivot_position_m: (3,) app-frame, ball-aligned pivot position.
         wrist_positions_m: (N, 3) app-frame, ball-aligned wrist path.
         clubhead_positions_m: (N, 3) app-frame, ball-aligned head path.
@@ -119,13 +137,19 @@ class KineticsSeries:
     t: np.ndarray = field(repr=False)
     joint_names: tuple[str, ...]
     torque_applied_nm: np.ndarray = field(repr=False)
+    torque_constraint_reaction_nm: np.ndarray = field(repr=False)
     torque_gravity_nm: np.ndarray = field(repr=False)
     torque_damping_nm: np.ndarray = field(repr=False)
     torque_inertial_nm: np.ndarray = field(repr=False)
+    ztcf_acceleration_rad_s2: np.ndarray = field(repr=False)
+    ztcf_inertial_torque_nm: np.ndarray = field(repr=False)
     power_w: np.ndarray = field(repr=False)
     shoulder_force_n: np.ndarray = field(repr=False)
     wrist_force_n: np.ndarray = field(repr=False)
     clubhead_force_n: np.ndarray = field(repr=False)
+    ztcf_shoulder_force_n: np.ndarray = field(repr=False)
+    ztcf_wrist_force_n: np.ndarray = field(repr=False)
+    ztcf_clubhead_force_n: np.ndarray = field(repr=False)
     pivot_position_m: np.ndarray = field(repr=False)
     wrist_positions_m: np.ndarray = field(repr=False)
     clubhead_positions_m: np.ndarray = field(repr=False)
@@ -140,9 +164,12 @@ class KineticsSeries:
         require(j >= 2, "kinetics needs at least 2 joints", j)
         for name in (
             "torque_applied_nm",
+            "torque_constraint_reaction_nm",
             "torque_gravity_nm",
             "torque_damping_nm",
             "torque_inertial_nm",
+            "ztcf_acceleration_rad_s2",
+            "ztcf_inertial_torque_nm",
             "power_w",
         ):
             require(
@@ -154,6 +181,9 @@ class KineticsSeries:
             "shoulder_force_n",
             "wrist_force_n",
             "clubhead_force_n",
+            "ztcf_shoulder_force_n",
+            "ztcf_wrist_force_n",
+            "ztcf_clubhead_force_n",
             "wrist_positions_m",
             "clubhead_positions_m",
         ):
@@ -185,6 +215,16 @@ class KineticsSeries:
             which,
         )
         vectors = getattr(self, f"{which}_force_n")
+        return np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
+
+    def ztcf_force_magnitude_n(self, which: str) -> np.ndarray:
+        """(N,) state-matched ZTCF magnitude for one force series."""
+        require(
+            which in ("shoulder", "wrist", "clubhead"),
+            "unknown ZTCF force series",
+            which,
+        )
+        vectors = getattr(self, f"ztcf_{which}_force_n")
         return np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
 
 
@@ -266,6 +306,71 @@ def inverse_dynamics(
         "damping": -damping,
         "inertial": inertial,
         "alpha": alpha,
+    }
+
+
+def zero_torque_counterfactual(
+    p: PendulumParameters,
+    states: np.ndarray,
+    g_inplane: tuple[float, float],
+    *,
+    locked: tuple[bool, bool] = (False, False),
+) -> dict[str, np.ndarray]:
+    """Evaluate the pointwise Zero-Torque Counterfactual (ZTCF).
+
+    Each row starts from the corresponding measured/simulated ``(q, qdot)``
+    state and evaluates forward dynamics with commanded actuator torque set to
+    zero. Rows are deliberately independent: this preserves the actual state
+    for causal decomposition and must not be interpreted as one continuously
+    integrated zero-torque trajectory.
+
+    Returns ``acceleration`` [rad/s^2] and the resulting ``inertial_torque``
+    [N*m], where the latter is ``M(q) @ qdd_ztcf + C(q, qdot)``. Ideal joint
+    constraints remain active when ``locked`` is supplied, so their passive
+    reaction is retained rather than silently discarded.
+    """
+    states = np.asarray(states, dtype=float)
+    require(
+        states.ndim == 2 and states.shape[1] == 4 and states.shape[0] >= 1,
+        "states must be an (N>=1, 4) array",
+        states.shape,
+    )
+    require(bool(np.all(np.isfinite(states))), "states must be finite", None)
+    require(
+        len(locked) == 2 and all(type(value) is bool for value in locked),
+        "locked must contain two boolean flags",
+        locked,
+    )
+
+    acceleration = np.empty((states.shape[0], 2))
+    inertial_torque = np.empty_like(acceleration)
+    for index, row in enumerate(states):
+        state = PendulumState(
+            theta1=float(row[0]),
+            theta2=float(row[1]),
+            omega1=float(row[2]),
+            omega2=float(row[3]),
+        )
+        derivative = (
+            reference.derivatives_locked(p, state, g_inplane, (0.0, 0.0), locked)
+            if any(locked)
+            else reference.derivatives(p, state, g_inplane)
+        )
+        acceleration[index] = derivative[2:]
+        coriolis = np.asarray(
+            reference.coriolis_vector(p, state.theta2, state.omega1, state.omega2)
+        )
+        inertial_torque[index] = (
+            reference.mass_matrix(p, state.theta2) @ acceleration[index] + coriolis
+        )
+    ensure(
+        bool(np.all(np.isfinite(acceleration)))
+        and bool(np.all(np.isfinite(inertial_torque))),
+        "ZTCF outputs must be finite",
+    )
+    return {
+        "acceleration": acceleration,
+        "inertial_torque": inertial_torque,
     }
 
 
@@ -375,7 +480,10 @@ def _to_app(plane_r: np.ndarray, vectors: np.ndarray) -> np.ndarray:
 
 
 def compute_kinetics(
-    run: SimulationRun, clubhead_mass_kg: float = CLUBHEAD_MASS_KG
+    run: SimulationRun,
+    clubhead_mass_kg: float = CLUBHEAD_MASS_KG,
+    *,
+    analysis_time_s: float | None = None,
 ) -> KineticsSeries | None:
     """Swing kinetics of a run, or ``None`` when unsupported.
 
@@ -393,6 +501,10 @@ def compute_kinetics(
     Args:
         run: A completed simulation run.
         clubhead_mass_kg: Point mass for the clubhead-force estimate.
+        analysis_time_s: Optional presentation reference marker for a completed
+            miss. The returned arrays still span the complete sampled swing.
+            The canonical :func:`kinetics_for_run` contract continues to
+            return ``None`` when there is no impact.
 
     Returns:
         The kinetics series, or ``None`` for unsupported sources.
@@ -403,8 +515,17 @@ def compute_kinetics(
         "clubhead_mass_kg must be finite and > 0",
         clubhead_mass_kg,
     )
-    if run.config.source_kind != "double_pendulum":
+    reference_time_s = (
+        run.impact_time_s if analysis_time_s is None else float(analysis_time_s)
+    )
+    if run.config.source_kind != "double_pendulum" or reference_time_s is None:
         return None
+    require(
+        math.isfinite(reference_time_s)
+        and 0.0 <= reference_time_s <= float(run.swing_times[-1]),
+        "analysis_time_s must lie within the sampled swing",
+        reference_time_s,
+    )
 
     # Rebuild the deterministic source (session does not retain it).
     source = make_source(
@@ -412,6 +533,8 @@ def compute_kinetics(
         run.config.scenario,
         plane=run.config.plane,
         duration=run.config.swing_duration_s,
+        run_config=run.config.swing_run_config,
+        torque_library=run.config.torque_library,
     )
     assert isinstance(source, AppFrameSwing)
     pendulum = source.inner
@@ -436,9 +559,31 @@ def compute_kinetics(
     g_inplane = reference.in_plane_gravity(plane_r, reference_g())
 
     torques = inverse_dynamics(p, states, g_inplane, dt)
+    if run.config.swing_run_config.joint_locks.has_locks:
+        applied = np.asarray(run.swing_applied_torques_nm, dtype=float)
+        constraint_reaction = torques["applied"] - applied
+    else:
+        # Preserve the inverse-dynamics estimate (and its existing numerical
+        # round-trip contract) when no constraint reactions can exist.
+        applied = torques["applied"]
+        constraint_reaction = np.zeros_like(applied)
     theta, omega, alpha = states[:, :2], states[:, 2:], torques["alpha"]
     f_shoulder, f_wrist, f_head = _reaction_forces(
         p, theta, omega, alpha, g_inplane, clubhead_mass_kg
+    )
+    ztcf = zero_torque_counterfactual(
+        p,
+        states,
+        g_inplane,
+        locked=run.config.swing_run_config.joint_locks.mask,
+    )
+    ztcf_f_shoulder, ztcf_f_wrist, ztcf_f_head = _reaction_forces(
+        p,
+        theta,
+        omega,
+        ztcf["acceleration"],
+        g_inplane,
+        clubhead_mass_kg,
     )
     net = torques["inertial"]
     power = net * omega  # τ_net · ω per coordinate; sums to dKE/dt
@@ -455,20 +600,26 @@ def compute_kinetics(
     return KineticsSeries(
         t=times,
         joint_names=KINETIC_JOINT_NAMES,
-        torque_applied_nm=torques["applied"],
+        torque_applied_nm=applied,
+        torque_constraint_reaction_nm=constraint_reaction,
         torque_gravity_nm=torques["gravity"],
         torque_damping_nm=torques["damping"],
         torque_inertial_nm=net,
+        ztcf_acceleration_rad_s2=ztcf["acceleration"],
+        ztcf_inertial_torque_nm=ztcf["inertial_torque"],
         power_w=power,
         shoulder_force_n=_to_app(plane_r, f_shoulder),
         wrist_force_n=_to_app(plane_r, f_wrist),
         clubhead_force_n=_to_app(plane_r, f_head),
+        ztcf_shoulder_force_n=_to_app(plane_r, ztcf_f_shoulder),
+        ztcf_wrist_force_n=_to_app(plane_r, ztcf_f_wrist),
+        ztcf_clubhead_force_n=_to_app(plane_r, ztcf_f_head),
         pivot_position_m=np.asarray(offset, dtype=float),
         wrist_positions_m=_to_app(plane_r, wrist_local) + offset,
         clubhead_positions_m=np.asarray(run.swing_positions, dtype=float),
         plane_x_app=np.asarray(APP_FROM_SWING @ plane_r[:, 0]),
         plane_up_app=np.asarray(APP_FROM_SWING @ plane_r[:, 2]),
-        impact_time_s=float(run.impact_time_s),
+        impact_time_s=reference_time_s,
     )
 
 

@@ -14,13 +14,13 @@ Three read-only views over a
 from __future__ import annotations
 
 import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QWidget
 
+from rate_of_closure.ui.pyqt6.figure_canvas import LifecycleSafeFigureCanvas
 from rate_of_closure.units import DISTANCE_UNITS, display_distance_unit
 from shared.python.swing_sim.variation import (
     DispersionEllipse,
@@ -140,7 +140,7 @@ class SensitivityTable(QTableWidget):
         self.resizeColumnsToContents()
 
 
-class LandingCanvas(FigureCanvasQTAgg):
+class LandingCanvas(LifecycleSafeFigureCanvas):
     """Top-down landing scatter (lateral vs carry) with the 2σ ellipse."""
 
     def __init__(self, parent: QWidget | None = None) -> None:

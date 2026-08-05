@@ -49,6 +49,9 @@ export interface PlotVariable {
 const deg = (r: number): number => (r * 180.0) / Math.PI;
 
 const impactVelocity = (ctx: PlotContext): [number, number, number] => {
+  if (ctx.run.impactTimeS === null) {
+    return [Number.NaN, Number.NaN, Number.NaN];
+  }
   const { swing } = ctx.run;
   let best = swing[0];
   let bestDt = Infinity;
@@ -66,6 +69,11 @@ const clubPathDeg = (ctx: PlotContext): number => {
   const v = impactVelocity(ctx);
   return deg(Math.atan2(v[2], v[0]));
 };
+
+const launchValue = (
+  ctx: PlotContext,
+  key: keyof NonNullable<SimulationRunTs["launch"]>,
+): number => ctx.run.launch?.[key] ?? Number.NaN;
 
 const v = (
   key: string,
@@ -114,7 +122,7 @@ export const PLOT_CATALOG: PlotVariable[] = [
   v("input.plane_forward_tilt_deg", "Plane Forward Tilt", "deg", "Input",
     (c) => c.input.planeForwardTiltDeg),
   v("input.impact_time_s", "Impact Time (τ)", "s", "Input",
-    (c) => c.run.impactTimeS),
+    (c) => c.run.impactTimeS ?? Number.NaN),
   v("swing.time_s", "Swing Time", "s", "Swing Sample",
     (c) => c.run.swing.map((s) => s.t)),
   v("swing.x_m", "Clubhead X (Target Line)", "m", "Swing Sample",
@@ -143,6 +151,10 @@ export const PLOT_CATALOG: PlotVariable[] = [
     (k) => k.shoulderDampingTorqueNm),
   kv("kinetics.wrist_damping_torque_nm", "Wrist Damping Torque", "N·m",
     (k) => k.wristDampingTorqueNm),
+  kv("kinetics.shoulder_ztcf_torque_nm", "Shoulder ZTCF Inertial Torque", "N·m",
+    (k) => k.shoulderZtcfTorqueNm),
+  kv("kinetics.wrist_ztcf_torque_nm", "Wrist ZTCF Inertial Torque", "N·m",
+    (k) => k.wristZtcfTorqueNm),
   kv("kinetics.shoulder_power_w", "Shoulder Power", "W",
     (k) => k.shoulderPowerW),
   kv("kinetics.wrist_power_w", "Wrist Power", "W", (k) => k.wristPowerW),
@@ -152,6 +164,12 @@ export const PLOT_CATALOG: PlotVariable[] = [
     (k) => k.wristForceN),
   kv("kinetics.clubhead_force_n", "Clubhead Force", "N",
     (k) => k.clubheadForceN),
+  kv("kinetics.shoulder_ztcf_force_n", "Shoulder ZTCF Reaction Force", "N",
+    (k) => k.shoulderZtcfForceN),
+  kv("kinetics.wrist_ztcf_force_n", "Wrist ZTCF Reaction Force", "N",
+    (k) => k.wristZtcfForceN),
+  kv("kinetics.clubhead_ztcf_force_n", "Clubhead ZTCF Force", "N",
+    (k) => k.clubheadZtcfForceN),
   v("impact.clubhead_speed_mps", "Delivered Clubhead Speed", "m/s", "Impact",
     (c) => norm(impactVelocity(c))),
   v("impact.club_path_deg", "Club Path", "deg", "Impact", clubPathDeg),
@@ -167,13 +185,13 @@ export const PLOT_CATALOG: PlotVariable[] = [
   v("impact.spin_axis_tilt_deg", "Spin Axis Tilt", "deg", "Impact", null),
   v("impact.energy_transfer_j", "Impact Energy Transfer", "J", "Impact", null),
   v("launch.ball_speed_mph", "Ball Speed", "mph", "Launch",
-    (c) => c.run.launch.ballSpeedMph),
+    (c) => launchValue(c, "ballSpeedMph")),
   v("launch.launch_angle_deg", "Launch Angle", "deg", "Launch",
-    (c) => c.run.launch.launchAngleDeg),
+    (c) => launchValue(c, "launchAngleDeg")),
   v("launch.launch_azimuth_deg", "Launch Azimuth", "deg", "Launch",
-    (c) => c.run.launch.launchAzimuthDeg),
+    (c) => launchValue(c, "launchAzimuthDeg")),
   v("launch.spin_rpm", "Total Spin", "rpm", "Launch",
-    (c) => c.run.launch.spinRpm),
+    (c) => launchValue(c, "spinRpm")),
   v("flight.time_s", "Flight Time", "s", "Flight",
     (c) => c.run.flight.map((p) => p.time)),
   v("flight.x_m", "Downrange Distance", "m", "Flight",
@@ -185,13 +203,13 @@ export const PLOT_CATALOG: PlotVariable[] = [
   v("flight.speed_mps", "Ball Speed", "m/s", "Flight",
     (c) => c.run.flight.map((p) => norm(p.velocity))),
   v("metric.carry_m", "Carry Distance", "m", "Metric",
-    (c) => c.run.launch.carryM),
+    (c) => launchValue(c, "carryM")),
   v("metric.max_height_m", "Apex Height", "m", "Metric",
-    (c) => c.run.launch.maxHeightM),
+    (c) => launchValue(c, "maxHeightM")),
   v("metric.flight_time_s", "Flight Time", "s", "Metric",
-    (c) => c.run.launch.flightTimeS),
+    (c) => launchValue(c, "flightTimeS")),
   v("metric.landing_angle_deg", "Landing Angle", "deg", "Metric",
-    (c) => c.run.launch.landingAngleDeg),
+    (c) => launchValue(c, "landingAngleDeg")),
   v("metric.path_deviation_deg", "Impact-Point Path Deviation", "deg",
     "Metric", (c) => solve(c.scenario).pathDeviationDeg),
   v("metric.closure_rate_dps", "Closure Rate (CCV)", "deg/s", "Metric",

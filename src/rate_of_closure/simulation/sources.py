@@ -23,14 +23,18 @@ Sources:
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
+from typing import cast
 
 import numpy as np
 
 from rate_of_closure._contracts import require
 from rate_of_closure.model import ImpactScenario, solve
 from shared.python.swing_sim import reference
+from shared.python.swing_sim.run_config import DoublePendulumRunConfig
 from shared.python.swing_sim.swing_source import DoublePendulumSwing, SwingSource
+from shared.python.swing_sim.torque_library import TorqueProfileLibrary
 from shared.python.swing_sim.types import (
     PendulumState,
     PlaneOrientation,
@@ -39,6 +43,7 @@ from shared.python.swing_sim.types import (
 
 __all__ = [
     "SOURCE_KINDS",
+    "MANUAL_SWING_DURATION_S",
     "APP_FROM_SWING",
     "AppFrameSwing",
     "ManualSwingSource",
@@ -49,6 +54,9 @@ __all__ = [
 
 #: Swing-source kinds accepted by :func:`make_source`, in UI order.
 SOURCE_KINDS: tuple[str, ...] = ("manual", "double_pendulum", "triple_pendulum")
+
+#: Canonical duration of the manual source's centered inspection window [s].
+MANUAL_SWING_DURATION_S = 0.06
 
 #: Rotation taking swing/flight-frame vectors (x fwd, y left, z up) into
 #: app-frame vectors (x target, y up, z right): app y = swing z,
@@ -119,7 +127,22 @@ class AppFrameSwing:
         """Articulated joints in the app frame, when the source exposes them."""
         joint_positions = getattr(self._inner, "joint_positions", None)
         require(callable(joint_positions), "inner source has no joint geometry")
-        return np.asarray(joint_positions(t)) @ APP_FROM_SWING.T
+        sampler = cast(Callable[[float], np.ndarray], joint_positions)
+        positions: np.ndarray = np.asarray(sampler(t), dtype=float) @ APP_FROM_SWING.T
+        return positions
+
+    @property
+    def joint_ids(self) -> tuple[str, ...]:
+        """Stable joint IDs exposed by the wrapped source, if supported."""
+        identifiers = getattr(self._inner, "joint_ids", ())
+        return tuple(cast(tuple[str, ...], identifiers))
+
+    def joint_torques_at(self, t: float) -> dict[str, float]:
+        """Forward generalized torques; scalar joint values are frame-invariant."""
+        torque_sampler = getattr(self._inner, "joint_torques_at", None)
+        require(callable(torque_sampler), "inner source has no joint torque history")
+        sampler = cast(Callable[[float], dict[str, float]], torque_sampler)
+        return sampler(t)
 
 
 class ManualSwingSource:
@@ -133,7 +156,11 @@ class ManualSwingSource:
     of maximum compression" convention.
     """
 
-    def __init__(self, scenario: ImpactScenario, duration: float = 0.06) -> None:
+    def __init__(
+        self,
+        scenario: ImpactScenario,
+        duration: float = MANUAL_SWING_DURATION_S,
+    ) -> None:
         require(
             isinstance(scenario, ImpactScenario),
             "scenario must be an ImpactScenario",
@@ -441,6 +468,8 @@ def make_source(
     scenario: ImpactScenario,
     plane: PlaneOrientation | None = None,
     duration: float = 1.5,
+    run_config: DoublePendulumRunConfig | None = None,
+    torque_library: TorqueProfileLibrary | None = None,
 ) -> SwingSource:
     """Build an app-frame swing source by kind.
 
@@ -450,11 +479,19 @@ def make_source(
             pendulum kinds use it only for impact offsets downstream).
         plane: Swing-plane orientation for the pendulum kinds.
         duration: Pendulum integration length [s].
+        run_config: Passive or prescribed double-pendulum execution policy.
+        torque_library: Canonical profiles used by prescribed execution.
 
     Returns:
         A source whose samples are in the app frame.
     """
     require(kind in SOURCE_KINDS, f"unknown swing source kind {kind!r}", kind)
+    execution = run_config or DoublePendulumRunConfig()
+    require(
+        kind == "double_pendulum" or not execution.joint_locks.has_locks,
+        "joint locks are unsupported outside the double-pendulum source",
+        kind,
+    )
     if kind == "manual":
         return ManualSwingSource(scenario)
     if kind == "double_pendulum":
@@ -464,7 +501,12 @@ def make_source(
         start = PendulumState(theta1=-math.pi / 2.0, theta2=0.0, omega1=0.0, omega2=0.0)
         return AppFrameSwing(
             DoublePendulumSwing(
-                plane=plane, initial_state=start, duration=duration, backend="auto"
+                plane=plane,
+                initial_state=start,
+                duration=duration,
+                backend="auto",
+                run_config=execution,
+                torque_library=torque_library,
             )
         )
     return AppFrameSwing(TriplePendulumSwing(plane=plane, duration=duration))

@@ -7,7 +7,9 @@ import threading
 import numpy as np
 import pytest
 
+from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
+    CATEGORY_BALL_SETUP,
     CATEGORY_DELIVERY,
     CATEGORY_LAUNCH,
     CATEGORY_SWING,
@@ -24,6 +26,7 @@ pytestmark = pytest.mark.physics
 _FACE = f"{CATEGORY_DELIVERY}.face_angle_deg"
 _SPEED = f"{CATEGORY_DELIVERY}.clubhead_speed_mps"
 _BALL = f"{CATEGORY_LAUNCH}.ball_speed_mph"
+_TEE_HEIGHT = f"{CATEGORY_BALL_SETUP}.tee_height_m"
 
 
 def _delivery_plan(n_runs: int = 8, seed: int = 3) -> VariationPlan:
@@ -90,6 +93,16 @@ class TestSampling:
 
 
 class TestRunVariation:
+    def test_scalar_engine_rejects_tee_only_context_variable(self) -> None:
+        plan = VariationPlan(
+            mode="delivery",
+            noise=(NoiseSpec(_TEE_HEIGHT, scale=0.002),),
+            n_runs=2,
+        )
+
+        with pytest.raises(ContractViolationError, match="context-specific"):
+            run_variation(plan)
+
     def test_same_plan_and_seed_gives_identical_dataset(self) -> None:
         plan = _delivery_plan()
         a = run_variation(plan, n_workers=2)

@@ -10,6 +10,7 @@ and offers CSV / JSON export through the shared
 from __future__ import annotations
 
 import logging
+from typing import Any
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -57,6 +58,17 @@ class _NumericItem(QTableWidgetItem):
         if isinstance(mine, float) and isinstance(theirs, float):
             return mine < theirs
         return super().__lt__(other)
+
+
+def _series_item(value: Any) -> QTableWidgetItem:
+    """Build a sortable numeric item or an honest unavailable cell."""
+    if value is None:
+        item = QTableWidgetItem("—")
+        item.setFlags(item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+        item.setToolTip("Unavailable for this phase or contact outcome")
+        return item
+    numeric = float(value)
+    return _NumericItem(numeric, f"{numeric:.4f}")
 
 
 class InspectorView(QWidget):
@@ -111,13 +123,25 @@ class InspectorView(QWidget):
             return
 
         launch = run.launch
-        parts = [
-            f"{label} {launch[key]:.1f} {unit}" for key, label, unit in _SUMMARY_ORDER
-        ]
-        self._summary_label.setText(
-            f"{run.config.club.name} — {run.config.source_kind.replace('_', ' ')} "
-            f"swing, impact at {run.impact_time_s:.3f} s.  " + " · ".join(parts)
-        )
+        source = run.config.source_kind.replace("_", " ")
+        if launch is None:
+            outcome = run.impact_outcome
+            self._summary_label.setText(
+                f"{run.config.club.name} — {source} swing completed with no "
+                f"impact. Closest sampled approach "
+                f"{outcome.closest_approach_m * 1000.0:.1f} mm at "
+                f"{outcome.candidate_time_s:.3f} s; launch and flight are absent."
+            )
+        else:
+            parts = [
+                f"{label} {launch[key]:.1f} {unit}"
+                for key, label, unit in _SUMMARY_ORDER
+            ]
+            assert run.impact_time_s is not None
+            self._summary_label.setText(
+                f"{run.config.club.name} — {source} swing, impact at "
+                f"{run.impact_time_s:.3f} s.  " + " · ".join(parts)
+            )
 
         rows = series_rows(run)
         self._table.setRowCount(len(rows))
@@ -126,7 +150,7 @@ class InspectorView(QWidget):
             phase_item.setFlags(phase_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self._table.setItem(r, 0, phase_item)
             for c, value in enumerate(row[1:], start=1):
-                self._table.setItem(r, c, _NumericItem(float(value), f"{value:.4f}"))
+                self._table.setItem(r, c, _series_item(value))
         self._table.setSortingEnabled(True)
 
     def run(self) -> SimulationRun | None:

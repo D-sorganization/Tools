@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.2                                     |
-| **Spec Version**        | 1.13.2                                     |
+| **Current Version**     | 1.13.3                                     |
+| **Spec Version**        | 1.13.3                                     |
 | **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,31 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-05 Rate of Closure Python 3.10 CI compatibility
+
+- Rate of Closure and shared swing simulation string enums use Python 3.10-safe
+  `str, Enum` declarations instead of the Python 3.11-only standard library
+  `StrEnum`, preserving string-valued enum behavior across contact outcomes,
+  variation statuses, run configuration, torque profiles, and the torque
+  profile controller.
+
+### 2026-08-05 Rate of Closure physical ball setup and variation workflows
+
+- Simulation configuration now carries a canonical ground/tee support record.
+  Tee height is the ground-plane clearance to the bottom of the ball; drivers
+  default to Tee at 38.1 mm and other clubs default to Ground. Explicit user
+  overrides survive club changes, legacy runs migrate to Ground, and the
+  derived ball center drives contact, alignment, impact records, flight origin,
+  and both standalone renderers.
+- Variation plans retain their complete v2 schema and can be saved, loaded,
+  duplicated, and deleted from a versioned local library. Users can select
+  simultaneous, one-at-a-time, or combined analyses, while paired common-
+  reference propagation reports time/frame/point-aligned geometric displacement
+  without discarding valid miss trajectories.
+- Shared Matplotlib canvases own and cancel their deferred draw timers during
+  Qt teardown, preventing stale callbacks from touching deleted widgets across
+  all Rate of Closure plot views.
+
 ### 2026-08-05 Rate of Closure interaction and rendering hardening
 
 - Every directional engineering entry now exposes a visible, clickable
@@ -109,9 +134,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   result rows (carry/lateral/putt roll-out; apex stays metres),
   FlightView + putting axes (tick formatters, canonical data),
   plotting-catalog flight/putting distance variables (`DISTANCE_KEYS`
-  + render-pipeline conversion incl. CSV headers), variation output
-  stats, and the target-region entries (canonical round-trip).
-  Conversion + default-is-yards tests both sides.
+  - render-pipeline conversion incl. CSV headers), variation output
+    stats, and the target-region entries (canonical round-trip).
+    Conversion + default-is-yards tests both sides.
 
 ### 2026-08-04 Realistic type-specific heads, volumetric COG, putters, hosel-true shafts (epic #4125, H1)
 
@@ -163,8 +188,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   the driver and blade-putter fixtures; CG checkbox on ClubCanvas and
   StrikeCanvas; strike-view face extents now per-type. Tests:
   `tests/rate_of_closure/test_club_heads.py`, `web/src/model/
-  heads.test.ts`, `web/src/model/volumetrics.test.ts`, GUI smokes in
+heads.test.ts`, `web/src/model/volumetrics.test.ts`, GUI smokes in
   `test_gui.py`/`test_viewers_gui.py`.
+
 ### 2026-08-04 Swing kinetics — torques, forces, powers with plots and 3D overlays (epic #4125, H2)
 
 - Kinetics core: `rate_of_closure/simulation/kinetics.py` — per-sample
@@ -263,6 +289,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   putt runs past), flat-green speed monotonicity, determinism,
   Python↔TS parity pins on reference putts, GUI smoke + tooltip and
   help sweeps extended to the new tab.
+
 ### 2026-08-04 Rate of Closure glossary, help system & full-model derivations (epic #4120, phase V4)
 
 - Selected-value clarity: clicking any result/metric/launch row applies
@@ -286,8 +313,8 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `glossary:<term>` link that jumps there pre-selected
   (`FIELD_TO_TERM` maps EVERY explanation field, contract-tested).
   Web: generated `model/glossary.ts` mirror + Glossary tab with search
-  + links from the explanation card; the key list is pinned key-for-key
-  by a Python-generated fixture checked from both test suites.
+  - links from the explanation card; the key list is pinned key-for-key
+    by a Python-generated fixture checked from both test suites.
 - Tab rename: 'Derivation && Traceability' -> 'Calculation Description'
   (both UIs, docstrings/strings updated).
 - Full-model derivations: `derivation_models.py` (DerivationConfig +
@@ -379,18 +406,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   tab's own small themed matplotlib canvas), CSV/JSON dataset export
   and plan save/load. Tooltips on every input (test-enforced).
 - Web (practical parity): `model/variation.ts` + `variationRegistry.ts`
-  + `variationAnalysis.ts` and a "Variation" tab (`VariationPanel.tsx`,
-  `VariationLanding.tsx`): the same plan JSON schema (desktop plans
-  load in the browser and vice versa), seeded mulberry32 PRNG with
-  Box–Muller normals and FNV-1a per-variable streams (documented:
-  exact numpy-PCG64 parity deliberately not attempted), delivery +
-  launch modes over the existing TS physics (swing mode and the club
-  category stay desktop-only until the P7 WASM kernels), worker-less
-  bounded runs (≤ 500, UI-capped), summary + sensitivity heat tables,
-  landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pin: a
-  Python-generated fixture (`model/__fixtures__/variation_parity.json`)
-  is re-checked tightly by pytest and loosely (statistical band) by
-  vitest for the same plan+seed.
+  - `variationAnalysis.ts` and a "Variation" tab (`VariationPanel.tsx`,
+    `VariationLanding.tsx`): the same plan JSON schema (desktop plans
+    load in the browser and vice versa), seeded mulberry32 PRNG with
+    Box–Muller normals and FNV-1a per-variable streams (documented:
+    exact numpy-PCG64 parity deliberately not attempted), delivery +
+    launch modes over the existing TS physics (swing mode and the club
+    category stay desktop-only until the P7 WASM kernels), worker-less
+    bounded runs (≤ 500, UI-capped), summary + sensitivity heat tables,
+    landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pin: a
+    Python-generated fixture (`model/__fixtures__/variation_parity.json`)
+    is re-checked tightly by pytest and loosely (statistical band) by
+    vitest for the same plan+seed.
 
 ### 2026-08-04 Rate of Closure investigative plotting suite (epic #4120, phase V1)
 
@@ -438,14 +465,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   labels/units, PNG via `canvas.toBlob`, CSV/JSON downloads, and
   plot-definition import/export interoperable with the desktop app.
 - Tests: `tests/rate_of_closure/test_plotting.py` (pinned catalog keys
-  + fixture parity, extractor shapes/finiteness, PlotSpec validation +
-  JSON round-trip, every builtin rendering headlessly on Agg, closure
-  sweep numerically matching `model.sweep()`, well-formed CSV / JSON /
-  PNG / SVG exports) and `test_plots_gui.py` (tab replaces the sweep
-  tab, list management, wizard completion for line/sweep/histogram
-  scopes, export files in tmp, tooltip coverage); web
-  `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
-  builtins, exports).
+  - fixture parity, extractor shapes/finiteness, PlotSpec validation +
+    JSON round-trip, every builtin rendering headlessly on Agg, closure
+    sweep numerically matching `model.sweep()`, well-formed CSV / JSON /
+    PNG / SVG exports) and `test_plots_gui.py` (tab replaces the sweep
+    tab, list management, wizard completion for line/sweep/histogram
+    scopes, export files in tmp, tooltip coverage); web
+    `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
+    builtins, exports).
+
 ### 2026-08-04 Rate of Closure scale-separated viewers + standalone Flight Explorer (epic #4120, V2)
 
 - Three purpose-built, scale-separated viewers replace the single
@@ -577,7 +605,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   derivation → ball flight only when the goal requires it) and score as
   `weight * (achieved - target) / scale` with launch-monitor-resolution
   scales from `tuning.py`. `evaluate_candidate(variables, partition,
-  goal) -> residuals` is the documented seam a later Rust port replaces
+goal) -> residuals` is the documented seam a later Rust port replaces
   behind a facade (no Rust added in this PR).
 - `solve.py`: bounded `scipy.optimize.least_squares` (trf) multi-start
   driver — Latin-hypercube starts across the bounds (start 0 = caller
@@ -663,7 +691,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   200 g) and whose face patch honors bulge (horizontal) and roll
   (vertical) curvature via the circular sagitta R - sqrt(R² - t²) with
   loft tilting the face plane. `face_normal_at_offset(spec, toe_mm,
-  high_mm)` exposes the face-curvature normal (gradient of the
+high_mm)` exposes the face-curvature normal (gradient of the
   curved-face surface, loft-rotated) for the future impact package —
   in Python AND TypeScript with pinned parity tests; flat face when
   bulge/roll are off (curvature does not affect impact physics yet).
@@ -2507,6 +2535,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.13.3 | feat(rate_of_closure, swing_sim, #4135 #4142 #4143): add canonical ground/tee ball setup with club defaults and physical propagation through simulation/export/rendering, complete persistent v2 variation-plan workflows and paired common-reference propagation analysis, and make every Rate Matplotlib canvas lifecycle-safe during Qt teardown. |
 | 2026-08-05 | 1.13.2 | feat(rate_of_closure): harden both standalone interfaces with clickable reference-frame guidance, draft-based signed numeric editing, negative spin-axis tilt support, auto-populated Swing views, complete double/triple-pendulum skeletons, a parity-pinned web triple-pendulum model, default generated driver heads, engineering CG targets, and higher-resolution watertight clubhead meshes with polished lighting. |
 | 2026-08-05 | 1.13.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
 | 2026-08-04 | 1.13.0 | feat(rate_of_closure, swing_sim, #4125 H6-H7): course showcase — H7a themed golf-course scene (palette-derived grass family, fairway strip, green + hole/flag at a configurable distance, tee marker; Course Elements toggle; both UIs incl. web canvas mirrors with a shared chart-palette module); H7b target regions (`solver/targets.py` green circle / fairway corridor with exact signed distance + containment, additive ImpactGoal region residual with centering term, Optimize-to-Target on both solver UIs reusing partition/progress/cancel, target editing reflected live in the course scene, Variation landing-scatter overlay with the hold-% headline via hold_fraction, TS parity mirror pinned test-for-test); H6 launcher-language styling (palette-only QSS: button hover/pressed + subtle shadow, launcher-card group boxes, hover tabs; web accents aligned onto the shared palette) and the yards-default Distance quantity (yd/m drop-down in both UIs, SI-canonical internals, applied to flight/putting result rows, view axes, plotting catalog distance variables incl. exports, variation stats, and target entries; conversion + default-is-yards tests). |

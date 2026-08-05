@@ -85,7 +85,9 @@ export function oneAtATimeSensitivity(
   const rows: number[][] = [];
   let outputNames: string[] = [];
   for (const spec of plan.noise) {
-    const dataset = runVariation({ ...plan, noise: [spec] });
+    // A one-at-a-time study evaluates the selected marginal independently;
+    // retaining a multi-member correlation group would leave dangling IDs.
+    const dataset = runVariation({ ...plan, noise: [spec], groups: [] });
     outputNames = dataset.outputNames;
     rows.push(
       dataset.outputNames.map((_name, j) => {

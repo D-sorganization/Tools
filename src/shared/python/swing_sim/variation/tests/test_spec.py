@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
+    CATEGORY_BALL_SETUP,
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
     CATEGORY_LAUNCH,
@@ -19,8 +22,11 @@ from shared.python.swing_sim.variation import (
     variable_registry,
     variables_in_category,
 )
+from shared.python.swing_sim.variation.spec import PerturbationGroup
 
 pytestmark = pytest.mark.unit
+
+_TEE_HEIGHT = f"{CATEGORY_BALL_SETUP}.tee_height_m"
 
 
 class TestRegistryContract:
@@ -61,6 +67,16 @@ class TestRegistryContract:
             "spin_rpm",
             "spin_axis_deg",
         )
+
+    def test_tee_height_is_registered_with_tee_only_applicability(self) -> None:
+        definition = variable_registry()[_TEE_HEIGHT]
+
+        assert definition.label == "Tee Height"
+        assert definition.unit == "m"
+        assert definition.applicability == "tee_only"
+        assert _TEE_HEIGHT in keys_for_mode("delivery")
+        assert _TEE_HEIGHT in keys_for_mode("swing")
+        assert _TEE_HEIGHT not in keys_for_mode("launch")
 
     def test_every_entry_has_label_unit_guidance_and_scale(self) -> None:
         for definition in variable_registry().values():
@@ -120,8 +136,77 @@ class TestNoiseSpec:
             scale=1.5,
             lower=-4.0,
             upper=4.0,
+            spec_id="address-yaw",
+            time_window_s=(0.1, 0.3),
+            point_ids=("swing.wrist",),
         )
         assert NoiseSpec.from_json_dict(spec.to_json_dict()) == spec
+
+    def test_default_spec_id_preserves_the_stable_v1_stream_key(self) -> None:
+        variable_key = f"{CATEGORY_SWING}.yaw_deg"
+        assert NoiseSpec(variable_key).spec_id == variable_key
+
+    @pytest.mark.parametrize(
+        ("kwargs", "message"),
+        [
+            ({"spec_id": "  "}, "spec_id"),
+            ({"time_window_s": (0.3, 0.1)}, "time_window_s"),
+            ({"point_ids": ("swing.wrist", "swing.wrist")}, "point_ids"),
+        ],
+    )
+    def test_rejects_invalid_stable_id_or_locus_metadata(
+        self, kwargs: dict[str, object], message: str
+    ) -> None:
+        with pytest.raises(ContractViolationError, match=message):
+            NoiseSpec(f"{CATEGORY_SWING}.yaw_deg", **kwargs)
+
+
+class TestPerturbationGroup:
+    _IDS = ("face", "speed")
+
+    def test_correlation_and_covariance_round_trip(self) -> None:
+        for matrix_kind, matrix in (
+            ("correlation", ((1.0, 0.6), (0.6, 1.0))),
+            ("covariance", ((4.0, 0.3), (0.3, 1.0))),
+        ):
+            group = PerturbationGroup(
+                group_id=f"delivery-{matrix_kind}",
+                spec_ids=self._IDS,
+                matrix=matrix,
+                matrix_kind=matrix_kind,
+            )
+            assert PerturbationGroup.from_json_dict(group.to_json_dict()) == group
+
+    @pytest.mark.parametrize(
+        ("matrix", "kind", "message"),
+        [
+            (((1.0, 0.2), (0.3, 1.0)), "correlation", "symmetric"),
+            (((2.0, 0.2), (0.2, 1.0)), "correlation", "unit diagonal"),
+            (((1.0, 2.0), (2.0, 1.0)), "correlation", "positive semidefinite"),
+            (((1.0, 0.0), (0.0, -1.0)), "covariance", "positive semidefinite"),
+        ],
+    )
+    def test_rejects_invalid_matrix_semantics(
+        self,
+        matrix: tuple[tuple[float, ...], ...],
+        kind: str,
+        message: str,
+    ) -> None:
+        with pytest.raises(ContractViolationError, match=message):
+            PerturbationGroup(
+                group_id="delivery-group",
+                spec_ids=self._IDS,
+                matrix=matrix,
+                matrix_kind=kind,
+            )
+
+    def test_rejects_ragged_matrix_with_a_contract_error(self) -> None:
+        with pytest.raises(ContractViolationError, match="numeric square matrix"):
+            PerturbationGroup(
+                group_id="delivery-group",
+                spec_ids=self._IDS,
+                matrix=((1.0, 0.2), (0.2,)),
+            )
 
 
 class TestVariationPlan:
@@ -147,6 +232,55 @@ class TestVariationPlan:
         plan = self._plan()
         assert VariationPlan.loads(plan.dumps()) == plan
 
+    def test_v2_grouped_plan_json_round_trip_is_lossless(self) -> None:
+        specs = (
+            NoiseSpec(
+                f"{CATEGORY_DELIVERY}.face_angle_deg",
+                scale=2.0,
+                spec_id="face",
+            ),
+            NoiseSpec(
+                f"{CATEGORY_DELIVERY}.clubhead_speed_mps",
+                scale=1.0,
+                spec_id="speed",
+            ),
+        )
+        plan = VariationPlan(
+            mode="delivery",
+            noise=specs,
+            groups=(
+                PerturbationGroup(
+                    group_id="delivery-correlation",
+                    spec_ids=("face", "speed"),
+                    matrix=((1.0, -0.4), (-0.4, 1.0)),
+                ),
+            ),
+            n_runs=64,
+            seed=7,
+        )
+
+        encoded = plan.to_json_dict()
+
+        assert encoded["schema_version"] == 2
+        assert VariationPlan.loads(json.dumps(encoded)) == plan
+
+    def test_v1_plan_migrates_with_stable_ids_and_no_groups(self) -> None:
+        old = self._plan().to_json_dict()
+        old["schema_version"] = 1
+        old.pop("groups", None)
+        for spec in old["noise"]:
+            spec.pop("spec_id", None)
+            spec.pop("time_window_s", None)
+            spec.pop("point_ids", None)
+
+        migrated = VariationPlan.from_json_dict(old)
+
+        assert migrated.groups == ()
+        assert tuple(spec.spec_id for spec in migrated.noise) == tuple(
+            spec.variable_key for spec in migrated.noise
+        )
+        assert migrated.to_json_dict()["schema_version"] == 2
+
     def test_rejects_variables_illegal_for_the_mode(self) -> None:
         with pytest.raises(ContractViolationError):
             VariationPlan(
@@ -165,6 +299,91 @@ class TestVariationPlan:
             VariationPlan(mode="delivery", noise=(spec, spec))
         with pytest.raises(ContractViolationError):
             VariationPlan(mode="delivery", noise=())
+
+    def test_rejects_duplicate_spec_ids_and_duplicate_variable_keys(self) -> None:
+        face = f"{CATEGORY_DELIVERY}.face_angle_deg"
+        speed = f"{CATEGORY_DELIVERY}.clubhead_speed_mps"
+        with pytest.raises(ContractViolationError, match="duplicate spec_id"):
+            VariationPlan(
+                mode="delivery",
+                noise=(
+                    NoiseSpec(face, spec_id="same"),
+                    NoiseSpec(speed, spec_id="same"),
+                ),
+            )
+        with pytest.raises(ContractViolationError, match="duplicate variable_key"):
+            VariationPlan(
+                mode="delivery",
+                noise=(
+                    NoiseSpec(face, spec_id="first"),
+                    NoiseSpec(face, spec_id="second"),
+                ),
+            )
+
+    def test_group_references_and_covariance_scales_are_validated(self) -> None:
+        specs = (
+            NoiseSpec(f"{CATEGORY_DELIVERY}.face_angle_deg", scale=2.0, spec_id="face"),
+            NoiseSpec(
+                f"{CATEGORY_DELIVERY}.clubhead_speed_mps", scale=1.0, spec_id="speed"
+            ),
+        )
+        with pytest.raises(ContractViolationError, match="unknown spec_id"):
+            VariationPlan(
+                mode="delivery",
+                noise=specs,
+                groups=(
+                    PerturbationGroup(
+                        group_id="bad-ref",
+                        spec_ids=("face", "missing"),
+                        matrix=((1.0, 0.0), (0.0, 1.0)),
+                    ),
+                ),
+            )
+        with pytest.raises(ContractViolationError, match="diagonal.*scale"):
+            VariationPlan(
+                mode="delivery",
+                noise=specs,
+                groups=(
+                    PerturbationGroup(
+                        group_id="bad-covariance",
+                        spec_ids=("face", "speed"),
+                        matrix=((1.0, 0.0), (0.0, 1.0)),
+                        matrix_kind="covariance",
+                    ),
+                ),
+            )
+
+    def test_grouped_specs_must_use_normal_distributions(self) -> None:
+        face = NoiseSpec(
+            f"{CATEGORY_DELIVERY}.face_angle_deg",
+            distribution="uniform",
+            spec_id="face",
+        )
+        speed = NoiseSpec(f"{CATEGORY_DELIVERY}.clubhead_speed_mps", spec_id="speed")
+        group = PerturbationGroup(
+            group_id="delivery",
+            spec_ids=("face", "speed"),
+            matrix=((1.0, 0.2), (0.2, 1.0)),
+        )
+        with pytest.raises(ContractViolationError, match="normal distributions"):
+            VariationPlan(mode="delivery", noise=(face, speed), groups=(group,))
+
+    def test_a_spec_cannot_belong_to_overlapping_groups(self) -> None:
+        specs = (
+            NoiseSpec(f"{CATEGORY_DELIVERY}.face_angle_deg", spec_id="face"),
+            NoiseSpec(f"{CATEGORY_DELIVERY}.clubhead_speed_mps", spec_id="speed"),
+            NoiseSpec(f"{CATEGORY_DELIVERY}.club_path_deg", spec_id="path"),
+        )
+        matrix = ((1.0, 0.2), (0.2, 1.0))
+        with pytest.raises(ContractViolationError, match="only one group"):
+            VariationPlan(
+                mode="delivery",
+                noise=specs,
+                groups=(
+                    PerturbationGroup("face-speed", ("face", "speed"), matrix),
+                    PerturbationGroup("speed-path", ("speed", "path"), matrix),
+                ),
+            )
 
     def test_resolved_base_overlays_defaults(self) -> None:
         base = self._plan().resolved_base()

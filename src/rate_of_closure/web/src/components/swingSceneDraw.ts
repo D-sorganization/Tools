@@ -12,14 +12,14 @@ import {
   DEFAULT_COURSE_LAYOUT,
   type CourseLayout,
 } from "../model/course";
-import { BALL_POSITION, type SimulationRunTs } from "../model/simulation";
+import { GOLF_BALL_RADIUS_M, type SimulationRunTs } from "../model/simulation";
 import { withAlpha } from "../model/theme";
 
 export interface SwingSceneOptions {
   time: number;
   showBall: boolean;
   showGround: boolean;
-  /** Course furniture (#4125 H7a): green + flag + tee on the ground. */
+  /** Course furniture (#4125 H7a): green and flag. */
   showCourse: boolean;
   /** Opt-in flight display; off keeps the scene at swing scale. */
   showFlight: boolean;
@@ -41,11 +41,18 @@ export function drawSwingScene(
     ctx.fillText("Run a simulation to populate the scene.", 16, 28);
     return;
   }
+  if (run.swing.length === 0) {
+    ctx.fillStyle = "#f59e0b";
+    ctx.font = "14px sans-serif";
+    ctx.fillText("This run contains no swing samples.", 16, 28);
+    return;
+  }
 
   const swingEnd = run.swing[run.swing.length - 1].t;
+  const impactTime = run.impactTimeS;
   // Scale separation (#4120): the scene stays at swing scale unless
   // the opt-in 'Show Ball Flight' toggle expands it past impact.
-  const inFlight = time > run.impactTimeS && showFlight;
+  const inFlight = impactTime !== null && time > impactTime && showFlight;
   const extentX = inFlight
     ? Math.max(10, ...run.flight.map((p) => Math.abs(p.position[0]))) * 1.05
     : Math.max(
@@ -67,7 +74,7 @@ export function drawSwingScene(
   const py = (y: number) => groundY - y * s;
 
   // Course-styled ground (#4125 H7a): grass fill below the ground line,
-  // with the green band + flag + tee once 'Course Elements' is on. All
+  // with the green band + flag once 'Course Elements' is on. All
   // tones derive from the shared chart palette (model/course.ts).
   const course = courseColors();
   const courseLayout = layout ?? DEFAULT_COURSE_LAYOUT;
@@ -99,14 +106,36 @@ export function drawSwingScene(
       ctx.closePath();
       ctx.fill();
     }
-    // Tee marker at the origin.
-    ctx.fillStyle = course.tee;
-    ctx.fillRect(px(0) - 2, py(0) - 2, 4, 4);
+  }
+  const ballPosition = run.ballPositionM;
+  if (showBall && run.ballSetup.supportMode === "tee") {
+    const ballBottomY = ballPosition[1] - GOLF_BALL_RADIUS_M;
+    const centerX = px(ballPosition[0]);
+    const ground = py(0);
+    const cup = py(ballBottomY) + 2;
+    const gradient = ctx.createLinearGradient(centerX - 3, 0, centerX + 3, 0);
+    gradient.addColorStop(0, "#7f1d1d");
+    gradient.addColorStop(0.5, course.tee);
+    gradient.addColorStop(1, "#7f1d1d");
+    ctx.fillStyle = gradient;
+    ctx.beginPath();
+    ctx.moveTo(centerX - 2, ground);
+    ctx.lineTo(centerX - 1, cup);
+    ctx.lineTo(centerX + 1, cup);
+    ctx.lineTo(centerX + 2, ground);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = course.tee;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(centerX, cup - 2, 7, 0.15 * Math.PI, 0.85 * Math.PI);
+    ctx.stroke();
+    ctx.lineWidth = 1;
   }
   if (showBall) {
     ctx.fillStyle = "#facc15";
     ctx.beginPath();
-    ctx.arc(px(BALL_POSITION[0]), py(BALL_POSITION[1]), 4, 0, 2 * Math.PI);
+    ctx.arc(px(ballPosition[0]), py(ballPosition[1]), 4, 0, 2 * Math.PI);
     ctx.fill();
   }
 
@@ -130,10 +159,12 @@ export function drawSwingScene(
     ctx.lineWidth = 1;
   };
   drawPath(run.swing, "rgba(56,189,248,0.25)", 1);
-  const swingIndex = Math.min(
+  const boundedTime = Number.isFinite(time) ? Math.max(0, Math.min(time, swingEnd)) : 0;
+  const progress = swingEnd > 0 ? boundedTime / swingEnd : 0;
+  const swingIndex = Math.max(0, Math.min(
     run.swing.length - 1,
-    Math.round((Math.min(time, swingEnd) / swingEnd) * (run.swing.length - 1)),
-  );
+    Math.round(progress * (run.swing.length - 1)),
+  ));
   drawPath(run.swing.slice(0, swingIndex + 1), "#38bdf8", 2);
   const head = run.swing[swingIndex].position;
   ctx.fillStyle = "#f472b6";
@@ -174,7 +205,7 @@ export function drawSwingScene(
   // Flight trajectory polyline: opt-in only (scale separation).
   if (showFlight) drawPath(run.flight, "rgba(52,211,153,0.25)", 1);
   if (inFlight) {
-    const flightT = time - run.impactTimeS;
+    const flightT = time - (impactTime ?? 0);
     const upto = run.flight.filter((p) => p.time <= flightT);
     drawPath(upto, "#34d399", 2);
     if (upto.length) {
@@ -189,7 +220,9 @@ export function drawSwingScene(
   ctx.fillStyle = "#94a3b8";
   ctx.font = "12px sans-serif";
   ctx.fillText(
-    `t = ${time.toFixed(3)} s (${inFlight ? "flight" : "swing"}) — impact at ${run.impactTimeS.toFixed(3)} s`,
+    impactTime === null
+      ? `t = ${time.toFixed(3)} s (swing) — no impact; closest approach at ${run.impactOutcome.candidateTimeS.toFixed(3)} s`
+      : `t = ${time.toFixed(3)} s (${inFlight ? "flight" : "swing"}) — impact at ${impactTime.toFixed(3)} s`,
     12,
     16,
   );

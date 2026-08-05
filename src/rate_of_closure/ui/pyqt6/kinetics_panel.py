@@ -18,7 +18,6 @@ from __future__ import annotations
 import logging
 
 import numpy as np
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
@@ -35,8 +34,11 @@ from rate_of_closure.derivation import KINETICS_EXPLANATIONS
 from rate_of_closure.simulation import (
     KineticsSeries,
     SimulationRun,
-    kinetics_for_run,
 )
+from rate_of_closure.ui.pyqt6.figure_canvas import (
+    LifecycleSafeFigureCanvas as FigureCanvas,
+)
+from rate_of_closure.ui.pyqt6.presentation_kinetics import kinetics_for_presentation
 from rate_of_closure.ui.pyqt6.result_row import explanation_html
 
 try:  # Theme palette (optional in standalone/vendored use).
@@ -124,6 +126,10 @@ class KineticsPanel(QWidget):
                     ("joint_torques", "Joint Torques"),
                     ("joint_power", "Joint Power"),
                     ("reaction_forces", "Reaction Forces"),
+                    (
+                        "zero_torque_counterfactual",
+                        "Zero-Torque Counterfactual (ZTCF)",
+                    ),
                 )
             )
         )
@@ -140,7 +146,7 @@ class KineticsPanel(QWidget):
     # ── public API ──────────────────────────────────────────────────
     def set_run(self, run: SimulationRun | None) -> None:
         """Adopt a run (or clear with ``None``) and redraw."""
-        series = kinetics_for_run(run) if run is not None else None
+        series = kinetics_for_presentation(run) if run is not None else None
         if series is None:
             self._status.setText(_UNAVAILABLE_TEXT)
             self._status.setVisible(True)
@@ -148,8 +154,17 @@ class KineticsPanel(QWidget):
             self._canvas.draw_idle()
             self._table.setRowCount(0)
             return
-        self._status.setVisible(False)
-        self._draw(series)
+        is_miss = run is not None and not run.impact_outcome.is_hit
+        if is_miss:
+            self._status.setText(
+                "No impact occurred. Complete-swing kinetics remain available; "
+                "the dashed closest approach marker is a timing reference, not "
+                "an impact."
+            )
+            self._status.setVisible(True)
+        else:
+            self._status.setVisible(False)
+        self._draw(series, "Closest Approach" if is_miss else "Impact")
         self._fill_table(series)
 
     def table(self) -> QTableWidget:
@@ -165,7 +180,7 @@ class KineticsPanel(QWidget):
         ax.grid(True, alpha=0.12)
         ax.legend(fontsize=7, loc="best")
 
-    def _draw(self, series: KineticsSeries) -> None:
+    def _draw(self, series: KineticsSeries, reference_label: str) -> None:
         self._figure.clear()
         axes = self._figure.subplots(3, 1, sharex=True)
         t, tau = series.t, series.impact_time_s
@@ -188,9 +203,22 @@ class KineticsPanel(QWidget):
                 alpha=0.7,
                 label=f"{name} gravity",
             )
+            axes[0].plot(
+                t,
+                series.ztcf_inertial_torque_nm[:, j],
+                color=get_chart_color(j),
+                lw=1.2,
+                ls="--",
+                alpha=0.9,
+                label=f"{name} ZTCF",
+            )
         axes[0].axhline(0, lw=0.5, alpha=0.3)
-        axes[0].axvline(tau, ls="--", lw=1.5, alpha=0.8, label="Impact")
-        self._styled_axis(axes[0], "Torque (N·m)", "Joint Torques")
+        axes[0].axvline(tau, ls="--", lw=1.5, alpha=0.8, label=reference_label)
+        self._styled_axis(
+            axes[0],
+            "Torque (N·m)",
+            "Joint Torques and State-Matched ZTCF",
+        )
 
         for j, name in enumerate(names):
             axes[1].plot(
@@ -221,8 +249,21 @@ class KineticsPanel(QWidget):
                 lw=1.8,
                 label=which,
             )
+            axes[2].plot(
+                t,
+                series.ztcf_force_magnitude_n(which),
+                color=get_chart_color(j),
+                lw=1.1,
+                ls="--",
+                alpha=0.85,
+                label=f"{which} ZTCF",
+            )
         axes[2].axvline(tau, ls="--", lw=1.5, alpha=0.8)
-        self._styled_axis(axes[2], "Force (N)", "Reaction Forces")
+        self._styled_axis(
+            axes[2],
+            "Force (N)",
+            "Reaction Forces and State-Matched ZTCF",
+        )
         self._canvas.draw_idle()
 
     def _fill_table(self, series: KineticsSeries) -> None:
