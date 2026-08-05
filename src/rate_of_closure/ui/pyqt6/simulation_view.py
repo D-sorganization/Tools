@@ -29,7 +29,6 @@ from rate_of_closure.simulation import (
     BALL_POSITION_M,
     KineticsSeries,
     SimulationRun,
-    kinetics_for_run,
     screw_axis_samples,
 )
 from rate_of_closure.simulation.isa import MIN_RATE_DPS
@@ -37,6 +36,7 @@ from rate_of_closure.ui.course import CourseLayout
 from rate_of_closure.ui.pyqt6.course_scene import draw_course_ground_3d
 from rate_of_closure.ui.pyqt6.kinetics_overlay import overlay_frame
 from rate_of_closure.ui.pyqt6.pendulum_scene import draw_pendulum_skeleton
+from rate_of_closure.ui.pyqt6.presentation_kinetics import kinetics_for_presentation
 from rate_of_closure.ui.pyqt6.simulation_specs import RATE_PRESETS
 from rate_of_closure.units import FIELD_GUIDANCE
 
@@ -346,7 +346,7 @@ class SimulationView(QWidget):
         if self._run is None:
             return
         if self._kinetics is None:
-            self._kinetics = kinetics_for_run(self._run) or False
+            self._kinetics = kinetics_for_presentation(self._run) or False
         if not isinstance(self._kinetics, KineticsSeries):
             return  # unsupported source (manual / triple pendulum)
         frame = overlay_frame(self._kinetics, index)
@@ -396,7 +396,8 @@ class SimulationView(QWidget):
             return
 
         swing_end = float(run.swing_times[-1])
-        in_flight = self._time > run.impact_time_s
+        impact_time_s = run.impact_time_s
+        in_flight = impact_time_s is not None and self._time > impact_time_s
         index = int(
             np.searchsorted(run.swing_times, min(self._time, swing_end), side="left")
         )
@@ -456,7 +457,8 @@ class SimulationView(QWidget):
 
         # Flight trajectory: opt-in only (see the toggle's guidance).
         if show_flight:
-            flight_t = self._time - run.impact_time_s
+            assert impact_time_s is not None
+            flight_t = self._time - impact_time_s
             n_flight = int(np.searchsorted(run.flight_times, flight_t, side="right"))
             traj = self._display(run.flight_positions)
             axes.plot(
@@ -493,8 +495,17 @@ class SimulationView(QWidget):
         axes.set_ylabel("x — target line [m]")
         axes.set_zlabel("y — up [m]")
         phase = "flight" if in_flight else "swing"
-        axes.set_title(
-            f"t = {self._time:.3f} s ({phase}) — impact at {run.impact_time_s:.3f} s"
-        )
+        if impact_time_s is None:
+            closest = run.impact_outcome.candidate_time_s
+            title = (
+                f"t = {self._time:.3f} s ({phase}) — no impact; "
+                f"closest approach at {closest:.3f} s"
+            )
+        else:
+            title = (
+                f"t = {self._time:.3f} s ({phase}) — "
+                f"impact at {impact_time_s:.3f} s"
+            )
+        axes.set_title(title)
         axes.legend(loc="upper left", fontsize=8)
         self._canvas.draw_idle()

@@ -35,8 +35,8 @@ from rate_of_closure.derivation import KINETICS_EXPLANATIONS
 from rate_of_closure.simulation import (
     KineticsSeries,
     SimulationRun,
-    kinetics_for_run,
 )
+from rate_of_closure.ui.pyqt6.presentation_kinetics import kinetics_for_presentation
 from rate_of_closure.ui.pyqt6.result_row import explanation_html
 
 try:  # Theme palette (optional in standalone/vendored use).
@@ -140,7 +140,7 @@ class KineticsPanel(QWidget):
     # ── public API ──────────────────────────────────────────────────
     def set_run(self, run: SimulationRun | None) -> None:
         """Adopt a run (or clear with ``None``) and redraw."""
-        series = kinetics_for_run(run) if run is not None else None
+        series = kinetics_for_presentation(run) if run is not None else None
         if series is None:
             self._status.setText(_UNAVAILABLE_TEXT)
             self._status.setVisible(True)
@@ -148,8 +148,17 @@ class KineticsPanel(QWidget):
             self._canvas.draw_idle()
             self._table.setRowCount(0)
             return
-        self._status.setVisible(False)
-        self._draw(series)
+        is_miss = run is not None and not run.impact_outcome.is_hit
+        if is_miss:
+            self._status.setText(
+                "No impact occurred. Complete-swing kinetics remain available; "
+                "the dashed closest approach marker is a timing reference, not "
+                "an impact."
+            )
+            self._status.setVisible(True)
+        else:
+            self._status.setVisible(False)
+        self._draw(series, "Closest Approach" if is_miss else "Impact")
         self._fill_table(series)
 
     def table(self) -> QTableWidget:
@@ -165,7 +174,7 @@ class KineticsPanel(QWidget):
         ax.grid(True, alpha=0.12)
         ax.legend(fontsize=7, loc="best")
 
-    def _draw(self, series: KineticsSeries) -> None:
+    def _draw(self, series: KineticsSeries, reference_label: str) -> None:
         self._figure.clear()
         axes = self._figure.subplots(3, 1, sharex=True)
         t, tau = series.t, series.impact_time_s
@@ -189,7 +198,9 @@ class KineticsPanel(QWidget):
                 label=f"{name} gravity",
             )
         axes[0].axhline(0, lw=0.5, alpha=0.3)
-        axes[0].axvline(tau, ls="--", lw=1.5, alpha=0.8, label="Impact")
+        axes[0].axvline(
+            tau, ls="--", lw=1.5, alpha=0.8, label=reference_label
+        )
         self._styled_axis(axes[0], "Torque (N·m)", "Joint Torques")
 
         for j, name in enumerate(names):

@@ -91,6 +91,7 @@ class FlightView(QWidget):
         self._canvas = FigureCanvas(self._figure)
 
         self._positions: np.ndarray = np.zeros((0, 3))
+        self._run: SimulationRun | None = None
         self._checks: dict[str, QCheckBox] = {}
         self._course_layout = CourseLayout()
         self._target_region: TargetRegion | None = None
@@ -119,7 +120,11 @@ class FlightView(QWidget):
     # ── public API ──────────────────────────────────────────────────
     def set_run(self, run: SimulationRun | None) -> None:
         """Adopt the flight trajectory of a full simulation run."""
-        self.set_trajectory(None if run is None else run.flight_positions)
+        self._run = run
+        self._positions = (
+            np.zeros((0, 3)) if run is None else run.flight_positions.copy()
+        )
+        self._draw()
 
     def set_trajectory(self, positions: np.ndarray | None) -> None:
         """Adopt an (N, 3) app-frame trajectory (or clear with ``None``).
@@ -127,6 +132,7 @@ class FlightView(QWidget):
         App frame: x downrange along the target line [m], y up [m],
         z right of target [m].
         """
+        self._run = None
         self._positions = (
             np.zeros((0, 3)) if positions is None else np.asarray(positions, float)
         )
@@ -332,11 +338,16 @@ class FlightView(QWidget):
             axes = self._figure.add_subplot(111)
             axes.set_xticks([])
             axes.set_yticks([])
-            axes.set_title(
-                "Run a flight to populate the view"
-                if not len(pos)
-                else "Enable a panel to display the flight"
-            )
+            if not len(pos) and self._run is not None:
+                title = (
+                    "No Flight — fixed-ball contact was missed; "
+                    "the swing remains available"
+                )
+            elif not len(pos):
+                title = "Run a flight to populate the view"
+            else:
+                title = "Enable a panel to display the flight"
+            axes.set_title(title)
             self._canvas.draw_idle()
             return
 

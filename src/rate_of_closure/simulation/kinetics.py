@@ -30,10 +30,10 @@ not state one for torque):
   y up, z right). Gravity is included (a static hang shows the
   supporting force, not zero).
 
-The swing sources are passive (gravity-driven), so the net applied
-torque recovered by inverse dynamics is ~0 up to integration error;
-the physically interesting series are the gravity / damping / inertial
-breakdown, the reaction forces, and the joint powers.
+Passive and prescribed swing sources are supported. Ideal joint locks
+introduce generalized constraint reactions: those reactions are kept
+separate from the commanded applied-torque history so a lock is never
+misreported as actuator torque.
 """
 
 from __future__ import annotations
@@ -86,7 +86,8 @@ class KineticsSeries:
     sign convention documented in the module docstring. The torque
     breakdown satisfies (per sample, per joint)::
 
-        torque_applied = torque_inertial - torque_gravity - torque_damping
+        torque_applied + torque_constraint_reaction
+            = torque_inertial - torque_gravity - torque_damping
 
     with ``torque_inertial = M(q)·q̈ + C(q, q̇)`` (what actually
     accelerates the segments), ``torque_gravity = -G(q)`` (gravity's
@@ -96,8 +97,10 @@ class KineticsSeries:
     Attributes:
         t: (N,) sample times [s].
         joint_names: Joint labels in column order.
-        torque_applied_nm: (N, 2) net applied joint torque from inverse
-            dynamics (~0 for the passive swing sources).
+        torque_applied_nm: (N, 2) commanded applied joint torque retained by
+            the run (~0 for passive swing sources).
+        torque_constraint_reaction_nm: (N, 2) ideal generalized reaction
+            torque enforcing active locks; exactly zero for unlocked runs.
         torque_gravity_nm: (N, 2) gravity torque per joint.
         torque_damping_nm: (N, 2) viscous damping torque per joint.
         torque_inertial_nm: (N, 2) net inertial (intersegmental)
@@ -119,6 +122,7 @@ class KineticsSeries:
     t: np.ndarray = field(repr=False)
     joint_names: tuple[str, ...]
     torque_applied_nm: np.ndarray = field(repr=False)
+    torque_constraint_reaction_nm: np.ndarray = field(repr=False)
     torque_gravity_nm: np.ndarray = field(repr=False)
     torque_damping_nm: np.ndarray = field(repr=False)
     torque_inertial_nm: np.ndarray = field(repr=False)
@@ -140,6 +144,7 @@ class KineticsSeries:
         require(j >= 2, "kinetics needs at least 2 joints", j)
         for name in (
             "torque_applied_nm",
+            "torque_constraint_reaction_nm",
             "torque_gravity_nm",
             "torque_damping_nm",
             "torque_inertial_nm",
@@ -375,7 +380,10 @@ def _to_app(plane_r: np.ndarray, vectors: np.ndarray) -> np.ndarray:
 
 
 def compute_kinetics(
-    run: SimulationRun, clubhead_mass_kg: float = CLUBHEAD_MASS_KG
+    run: SimulationRun,
+    clubhead_mass_kg: float = CLUBHEAD_MASS_KG,
+    *,
+    analysis_time_s: float | None = None,
 ) -> KineticsSeries | None:
     """Swing kinetics of a run, or ``None`` when unsupported.
 
@@ -393,6 +401,10 @@ def compute_kinetics(
     Args:
         run: A completed simulation run.
         clubhead_mass_kg: Point mass for the clubhead-force estimate.
+        analysis_time_s: Optional presentation reference marker for a completed
+            miss. The returned arrays still span the complete sampled swing.
+            The canonical :func:`kinetics_for_run` contract continues to
+            return ``None`` when there is no impact.
 
     Returns:
         The kinetics series, or ``None`` for unsupported sources.
@@ -403,8 +415,17 @@ def compute_kinetics(
         "clubhead_mass_kg must be finite and > 0",
         clubhead_mass_kg,
     )
-    if run.config.source_kind != "double_pendulum" or run.impact_time_s is None:
+    reference_time_s = (
+        run.impact_time_s if analysis_time_s is None else float(analysis_time_s)
+    )
+    if run.config.source_kind != "double_pendulum" or reference_time_s is None:
         return None
+    require(
+        math.isfinite(reference_time_s)
+        and 0.0 <= reference_time_s <= float(run.swing_times[-1]),
+        "analysis_time_s must lie within the sampled swing",
+        reference_time_s,
+    )
 
     # Rebuild the deterministic source (session does not retain it).
     source = make_source(
@@ -412,6 +433,8 @@ def compute_kinetics(
         run.config.scenario,
         plane=run.config.plane,
         duration=run.config.swing_duration_s,
+        run_config=run.config.swing_run_config,
+        torque_library=run.config.torque_library,
     )
     assert isinstance(source, AppFrameSwing)
     pendulum = source.inner
@@ -436,6 +459,14 @@ def compute_kinetics(
     g_inplane = reference.in_plane_gravity(plane_r, reference_g())
 
     torques = inverse_dynamics(p, states, g_inplane, dt)
+    if run.config.swing_run_config.joint_locks.has_locks:
+        applied = np.asarray(run.swing_applied_torques_nm, dtype=float)
+        constraint_reaction = torques["applied"] - applied
+    else:
+        # Preserve the inverse-dynamics estimate (and its existing numerical
+        # round-trip contract) when no constraint reactions can exist.
+        applied = torques["applied"]
+        constraint_reaction = np.zeros_like(applied)
     theta, omega, alpha = states[:, :2], states[:, 2:], torques["alpha"]
     f_shoulder, f_wrist, f_head = _reaction_forces(
         p, theta, omega, alpha, g_inplane, clubhead_mass_kg
@@ -455,7 +486,8 @@ def compute_kinetics(
     return KineticsSeries(
         t=times,
         joint_names=KINETIC_JOINT_NAMES,
-        torque_applied_nm=torques["applied"],
+        torque_applied_nm=applied,
+        torque_constraint_reaction_nm=constraint_reaction,
         torque_gravity_nm=torques["gravity"],
         torque_damping_nm=torques["damping"],
         torque_inertial_nm=net,
@@ -468,7 +500,7 @@ def compute_kinetics(
         clubhead_positions_m=np.asarray(run.swing_positions, dtype=float),
         plane_x_app=np.asarray(APP_FROM_SWING @ plane_r[:, 0]),
         plane_up_app=np.asarray(APP_FROM_SWING @ plane_r[:, 2]),
-        impact_time_s=float(run.impact_time_s),
+        impact_time_s=reference_time_s,
     )
 
 

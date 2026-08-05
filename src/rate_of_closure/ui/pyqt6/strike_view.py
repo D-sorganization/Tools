@@ -119,7 +119,7 @@ class StrikeView(QWidget):
     def set_run(self, run: SimulationRun | None) -> None:
         """Adopt a run (or clear with ``None``); records strike history."""
         self._run = run
-        if run is not None:
+        if run is not None and run.impact_outcome.is_hit:
             strike = (
                 run.config.scenario.impact_offset_toe_mm,
                 run.config.scenario.impact_offset_high_mm,
@@ -180,7 +180,10 @@ class StrikeView(QWidget):
         self._axes.clabel(contours, inline=True, fontsize=6, fmt="%.1f mm")
 
     def _draw_vectors(self, run: SimulationRun, extent: float) -> None:
-        velocity = run.delivery.clubhead_velocity
+        delivery = run.delivery
+        if delivery is None:
+            return
+        velocity = delivery.clubhead_velocity
         speed = float(np.linalg.norm(velocity))
         if speed <= 0.0:
             return
@@ -205,8 +208,8 @@ class StrikeView(QWidget):
                 f"club path {path_deg:+.1f}° / AoA {aoa_deg:+.1f}°",
             ),
             (
-                float(run.delivery.face_normal[2]) * length,
-                float(run.delivery.face_normal[1]) * length,
+                float(delivery.face_normal[2]) * length,
+                float(delivery.face_normal[1]) * length,
                 3,
                 f"face normal (loft {run.config.club.loft_deg:.1f}°)",
             ),
@@ -301,23 +304,31 @@ class StrikeView(QWidget):
                 alpha=0.45,
                 label="previous strikes",
             )
-        if self._checks["vectors"].isChecked():
+        is_hit = run.impact_outcome.is_hit
+        if self._checks["vectors"].isChecked() and is_hit:
             self._draw_vectors(run, extent)
         if self._checks["show_cg"].isChecked():
             self._draw_cg(club)
 
-        toe_mm = run.config.scenario.impact_offset_toe_mm
-        high_mm = run.config.scenario.impact_offset_high_mm
-        axes.scatter(
-            [toe_mm],
-            [high_mm],
-            s=70,
-            color=get_chart_color(4),
-            zorder=5,
-            label=f"impact ({toe_mm:+.1f}, {high_mm:+.1f}) mm",
-        )
+        if is_hit:
+            toe_mm = run.config.scenario.impact_offset_toe_mm
+            high_mm = run.config.scenario.impact_offset_high_mm
+            axes.scatter(
+                [toe_mm],
+                [high_mm],
+                s=70,
+                color=get_chart_color(4),
+                zorder=5,
+                label=f"impact ({toe_mm:+.1f}, {high_mm:+.1f}) mm",
+            )
 
-        if self._checks["club_info"].isChecked():
+        if not is_hit:
+            closest_mm = run.impact_outcome.closest_approach_m * 1000.0
+            axes.set_title(
+                f"No Impact — closest sampled approach {closest_mm:.1f} mm",
+                fontsize=9,
+            )
+        elif self._checks["club_info"].isChecked():
             axes.set_title(self._club_info_text(club), fontsize=9)
         axes.set_xlim(-extent, extent)
         axes.set_ylim(-extent, extent)
