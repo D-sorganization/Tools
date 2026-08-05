@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 
 import numpy as np
 
@@ -25,7 +25,7 @@ _IDENTITY: Matrix3 = (
 _ZERO_VECTOR: Vector3 = (0.0, 0.0, 0.0)
 
 
-class ComponentRole(StrEnum):
+class ComponentRole(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
     """Stable physical role of one club assembly component."""
 
     HEAD = "head"
@@ -36,7 +36,7 @@ class ComponentRole(StrEnum):
     ADDED_WEIGHT = "added_weight"
 
 
-class ClubLengthConvention(StrEnum):
+class ClubLengthConvention(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
     """Declared reference convention used by a length measurement.
 
     The record stores a measured value and its datum identifiers. It does not
