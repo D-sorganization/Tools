@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import cast
 
 import numpy as np
 
@@ -23,6 +22,7 @@ from rate_of_closure.simulation.records import (
     SimulationConfig,
     SimulationRun,
 )
+from rate_of_closure.simulation.sources import MANUAL_SWING_DURATION_S
 from shared.python.swing_sim.flight import (
     derive_launch_conditions,
     from_flight_frame,
@@ -39,7 +39,28 @@ from shared.python.swing_sim.impact import (
 )
 from shared.python.swing_sim.swing_source import SwingSource
 
-_SAMPLE_DT_S = 1e-3
+SWING_SAMPLE_DT_S = 1e-3
+
+
+def swing_sample_times(duration_s: float) -> np.ndarray:
+    """Return the canonical uniformly sampled swing grid for a duration."""
+    require(
+        math.isfinite(duration_s) and duration_s > 0.0,
+        "duration_s must be finite and > 0",
+        duration_s,
+    )
+    sample_count = int(round(duration_s / SWING_SAMPLE_DT_S))
+    return np.linspace(0.0, duration_s, max(sample_count, 2) + 1)
+
+
+def configured_swing_sample_times(config: SimulationConfig) -> np.ndarray:
+    """Return the exact grid produced by a validated simulation config."""
+    if config.source_kind == "manual":
+        return swing_sample_times(MANUAL_SWING_DURATION_S)
+    source_duration_s = (
+        round(config.swing_duration_s / SWING_SAMPLE_DT_S) * SWING_SAMPLE_DT_S
+    )
+    return swing_sample_times(source_duration_s)
 
 
 @dataclass(frozen=True)
@@ -104,23 +125,19 @@ def _make_source(config: SimulationConfig) -> SwingSource:
     """Construct the configured app-frame swing source."""
     from rate_of_closure.simulation.sources import make_source
 
-    return cast(
-        SwingSource,
-        make_source(
-            config.source_kind,
-            config.scenario,
-            plane=config.plane,
-            duration=config.swing_duration_s,
-            run_config=config.swing_run_config,
-            torque_library=config.torque_library,
-        ),
+    return make_source(
+        config.source_kind,
+        config.scenario,
+        plane=config.plane,
+        duration=config.swing_duration_s,
+        run_config=config.swing_run_config,
+        torque_library=config.torque_library,
     )
 
 
 def _sample_swing(source: SwingSource) -> _SwingSeries:
     """Retain all source samples independently of the contact result."""
-    sample_count = int(round(source.duration / _SAMPLE_DT_S))
-    times = np.linspace(0.0, source.duration, max(sample_count, 2) + 1)
+    times = swing_sample_times(source.duration)
     samples = [source.sample(float(time_s)) for time_s in times]
     poses = np.stack([sample.pose for sample in samples])
     twists = np.stack([sample.twist for sample in samples])

@@ -111,7 +111,7 @@ describe("plan schema interop", () => {
         { variableKey: BALL, distribution: "triangular", scale: 2, lower: 150, upper: 160 },
       ],
     });
-    expect(planFromJson(planToJson(plan))).toEqual(plan);
+    expect(planFromJson(planToJson(plan))).toMatchObject(plan);
   });
 
   it("parses the Python-generated fixture plan verbatim", () => {
@@ -221,7 +221,7 @@ describe("analysis + export", () => {
     expect(header).toBe(`run,success,${BALL},${dataset.outputNames.join(",")}`);
     expect(rows).toHaveLength(4);
     const json = JSON.parse(datasetToJson(dataset)) as Record<string, unknown>;
-    expect(json.schema_version).toBe(1);
+    expect(json.schema_version).toBe(2);
     expect((json.plan as Record<string, unknown>).n_runs).toBe(4);
   });
 

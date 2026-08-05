@@ -43,6 +43,7 @@ from shared.python.swing_sim.types import (
 
 __all__ = [
     "SOURCE_KINDS",
+    "MANUAL_SWING_DURATION_S",
     "APP_FROM_SWING",
     "AppFrameSwing",
     "ManualSwingSource",
@@ -53,6 +54,9 @@ __all__ = [
 
 #: Swing-source kinds accepted by :func:`make_source`, in UI order.
 SOURCE_KINDS: tuple[str, ...] = ("manual", "double_pendulum", "triple_pendulum")
+
+#: Canonical duration of the manual source's centered inspection window [s].
+MANUAL_SWING_DURATION_S = 0.06
 
 #: Rotation taking swing/flight-frame vectors (x fwd, y left, z up) into
 #: app-frame vectors (x target, y up, z right): app y = swing z,
@@ -152,7 +156,11 @@ class ManualSwingSource:
     of maximum compression" convention.
     """
 
-    def __init__(self, scenario: ImpactScenario, duration: float = 0.06) -> None:
+    def __init__(
+        self,
+        scenario: ImpactScenario,
+        duration: float = MANUAL_SWING_DURATION_S,
+    ) -> None:
         require(
             isinstance(scenario, ImpactScenario),
             "scenario must be an ImpactScenario",

@@ -132,7 +132,10 @@ def one_at_a_time_sensitivity(
     outputs = None
     rows: list[np.ndarray] = []
     for spec in plan.noise:
-        sub_plan = dataclasses.replace(plan, noise=(spec,))
+        # OAT is an intervention on one marginal at a time. Retaining a
+        # multivariate group would reference removed specs and change the
+        # method's meaning, so grouped dependence is deliberately absent.
+        sub_plan = dataclasses.replace(plan, noise=(spec,), groups=())
         dataset = run_variation(
             sub_plan, config=config, n_workers=n_workers, cancel_event=cancel_event
         )

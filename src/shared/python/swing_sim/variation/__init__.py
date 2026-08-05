@@ -40,6 +40,7 @@ from .ensemble_geometry import (
     compute_position_dispersion,
     find_low_variability_intervals,
 )
+from .group_spec import PerturbationGroup
 from .spec import (
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
@@ -79,6 +80,7 @@ __all__ = [
     "OutputStats",
     "ProgressReport",
     "PositionDispersion",
+    "PerturbationGroup",
     "SensitivityResult",
     "VariableDef",
     "VariationDataset",

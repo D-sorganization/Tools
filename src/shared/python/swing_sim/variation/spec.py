@@ -1,43 +1,15 @@
-"""Shared 'how parameters vary' vocabulary for the variation engine.
+"""Shared, namespaced perturbation vocabulary for variation studies.
 
-Epic #4120 (V3). This module is the single, namespaced registry of
-variables that any package in the repo can perturb, plus the frozen
-:class:`NoiseSpec` / :class:`VariationPlan` value types that describe a
-reproducible Monte-Carlo study over them.
+The frozen :class:`NoiseSpec`, :class:`PerturbationGroup`, and
+:class:`VariationPlan` types describe reproducible independent or jointly
+normal studies. Version 2 adds stable spec IDs, locus metadata, and validated
+correlation/covariance groups while migrating version-1 plans losslessly.
 
-Prior art (surveyed, credited)
-------------------------------
-- UpstreamDrift ``physics/aerodynamics/_config.py`` ``RandomizationConfig``
-  and ``_environment.py`` ``EnvironmentRandomizer``: per-quantity Gaussian
-  scales with ad-hoc clamping. Generalized here into per-variable
-  :class:`NoiseSpec` with a distribution choice and explicit truncation.
-- UpstreamDrift ``perturbation/config.py`` ``PerturbationConfig``: one
-  global scalar ``noise_amplitude`` + noise-colour string. The per-variable
-  spec list replaces that single knob so different inputs can carry
-  different, unit-aware scales — the epic's core "one shared theme".
-- Variable names and defaults come from
-  :mod:`shared.python.swing_sim.solver.goals` (delivery + swing variables),
-  :mod:`shared.python.swing_sim.impact` (club constants), and
-  :mod:`shared.python.swing_sim.flight` (launch conditions), so the solver,
-  the simulation session, and the variation engine speak one vocabulary.
-
-Registry scheme
----------------
-Keys are namespaced ``<category>.<name>`` strings, e.g.
-``swing_sim.impact.delivery.face_angle_deg``. Built-in categories:
-
-- ``swing_sim.impact.delivery`` — clubhead delivery front-end variables;
-- ``swing_sim.swing`` — double-pendulum swing-plane tilts, impact timing,
-  and joint damping (delivery speed/path/attack derived from the swing);
-- ``swing_sim.club`` — clubhead mass / MOI / COR fed to the impact solve;
-- ``swing_sim.flight.launch`` — direct launch conditions (flight only).
-
-Other packages adopt the same scheme by calling :func:`register_variable`
-with their own category prefix; the engine only ever sees registry keys.
-
-JSON round-trip: :meth:`VariationPlan.to_json_dict` /
-:meth:`VariationPlan.from_json_dict` (schema mirrored bit-for-bit by the
-web port in ``rate_of_closure/web/src/model/variation.ts``).
+Registry keys remain ``<category>.<name>`` strings shared with the solver,
+impact, and flight packages. Other packages may extend the vocabulary through
+:func:`register_variable`. The current web port implements only the v1 schema;
+v2 parity requires a deliberate TypeScript migration before exchanging newly
+serialized plans.
 """
 
 from __future__ import annotations
@@ -47,10 +19,13 @@ import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
 from types import MappingProxyType
-from typing import Any
+from typing import Any, cast
+
+import numpy as np
 
 from shared.python.contracts import require
 
+from .group_spec import PerturbationGroup
 from .registry import (
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
@@ -69,7 +44,36 @@ from .registry import (
 DISTRIBUTIONS: tuple[str, ...] = ("normal", "uniform", "triangular")
 """Supported sampling distributions (see :class:`NoiseSpec.scale`)."""
 
-_SCHEMA_VERSION = 1
+_SCHEMA_VERSION = 2
+_SUPPORTED_SCHEMA_VERSIONS = (1, 2)
+
+
+def _normalize_locus(
+    time_window_s: tuple[float, float] | None,
+    point_ids: tuple[str, ...],
+) -> tuple[tuple[float, float] | None, tuple[str, ...]]:
+    """Validate and normalize optional temporal/spatial locus metadata."""
+    window = None if time_window_s is None else tuple(time_window_s)
+    if window is not None:
+        require(
+            len(window) == 2
+            and all(math.isfinite(float(value)) for value in window)
+            and float(window[0]) < float(window[1]),
+            "time_window_s must contain finite start < end",
+            window,
+        )
+        window = (float(window[0]), float(window[1]))
+    points = tuple(point_ids)
+    valid = all(
+        isinstance(point, str) and bool(point) and point == point.strip()
+        for point in points
+    )
+    require(
+        valid and len(set(points)) == len(points),
+        "point_ids must be unique, non-empty stable IDs",
+        points,
+    )
+    return window, points
 
 
 @dataclass(frozen=True)
@@ -94,6 +98,9 @@ class NoiseSpec:
     scale: float = 1.0
     lower: float | None = None
     upper: float | None = None
+    spec_id: str | None = None
+    time_window_s: tuple[float, float] | None = None
+    point_ids: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         require(
@@ -124,6 +131,23 @@ class NoiseSpec:
                 "truncation bounds must satisfy lower < upper",
                 (self.lower, self.upper),
             )
+        stable_id = self.variable_key if self.spec_id is None else self.spec_id
+        require(
+            isinstance(stable_id, str)
+            and bool(stable_id)
+            and stable_id == stable_id.strip(),
+            "spec_id must be a non-empty, trimmed stable ID",
+            stable_id,
+        )
+        window, points = _normalize_locus(self.time_window_s, self.point_ids)
+        object.__setattr__(self, "spec_id", stable_id)
+        object.__setattr__(self, "time_window_s", window)
+        object.__setattr__(self, "point_ids", points)
+
+    @property
+    def is_global(self) -> bool:
+        """Whether the scalar evaluator can apply this perturbation globally."""
+        return self.time_window_s is None and not self.point_ids
 
     def to_json_dict(self) -> dict[str, Any]:
         """Plain-JSON representation (schema shared with the web port)."""
@@ -133,6 +157,11 @@ class NoiseSpec:
             "scale": self.scale,
             "lower": self.lower,
             "upper": self.upper,
+            "spec_id": self.spec_id,
+            "time_window_s": None
+            if self.time_window_s is None
+            else list(self.time_window_s),
+            "point_ids": list(self.point_ids),
         }
 
     @classmethod
@@ -144,7 +173,59 @@ class NoiseSpec:
             scale=float(data.get("scale", 1.0)),
             lower=None if data.get("lower") is None else float(data["lower"]),
             upper=None if data.get("upper") is None else float(data["upper"]),
+            spec_id=None if data.get("spec_id") is None else str(data["spec_id"]),
+            time_window_s=cast(
+                tuple[float, float] | None,
+                None
+                if data.get("time_window_s") is None
+                else tuple(float(value) for value in data["time_window_s"]),
+            ),
+            point_ids=tuple(str(value) for value in data.get("point_ids", [])),
         )
+
+
+def _validate_plan_groups(
+    specs: tuple[NoiseSpec, ...], groups: tuple[PerturbationGroup, ...]
+) -> None:
+    """Validate group references, disjointness, marginals, and scale semantics."""
+    by_id = {spec.spec_id: spec for spec in specs}
+    known_ids = set(by_id)
+    assigned: set[str] = set()
+    group_ids: set[str] = set()
+    for group in groups:
+        require(
+            isinstance(group, PerturbationGroup),
+            "groups entries must be PerturbationGroup",
+            group,
+        )
+        require(group.group_id not in group_ids, "duplicate group_id", group.group_id)
+        members = set(group.spec_ids)
+        require(
+            members <= known_ids,
+            "group references unknown spec_id",
+            members - known_ids,
+        )
+        require(
+            not members & assigned,
+            "a spec_id may belong to only one group",
+            members & assigned,
+        )
+        member_specs = tuple(by_id[spec_id] for spec_id in group.spec_ids)
+        require(
+            all(spec.distribution == "normal" for spec in member_specs),
+            "grouped specs must use normal distributions",
+            group.spec_ids,
+        )
+        if group.matrix_kind == "covariance":
+            diagonal = np.diag(np.asarray(group.matrix, dtype=float))
+            expected = np.square([spec.scale for spec in member_specs])
+            require(
+                np.allclose(diagonal, expected, rtol=1e-9, atol=1e-12),
+                "covariance diagonal must equal each NoiseSpec scale squared",
+                (diagonal, expected),
+            )
+        assigned.update(members)
+        group_ids.add(group.group_id)
 
 
 @dataclass(frozen=True)
@@ -171,6 +252,7 @@ class VariationPlan:
     n_runs: int = 200
     seed: int = 0
     flight_model: str = "waterloo_penner"
+    groups: tuple[PerturbationGroup, ...] = ()
 
     def __post_init__(self) -> None:
         require(self.mode in MODES, f"mode must be one of {MODES}", self.mode)
@@ -183,7 +265,8 @@ class VariationPlan:
             require(key in legal, f"base variable not legal in {self.mode} mode", key)
             require(math.isfinite(value), "base value must be finite", (key, value))
         specs = tuple(self.noise)
-        seen: set[str] = set()
+        seen_variables: set[str] = set()
+        seen_spec_ids: set[str] = set()
         for spec in specs:
             require(
                 isinstance(spec, NoiseSpec), "noise entries must be NoiseSpec", spec
@@ -194,13 +277,23 @@ class VariationPlan:
                 spec.variable_key,
             )
             require(
-                spec.variable_key not in seen,
-                "duplicate noise spec for variable",
+                spec.variable_key not in seen_variables,
+                "duplicate variable_key would overwrite a scalar evaluator input",
                 spec.variable_key,
             )
-            seen.add(spec.variable_key)
+            require(
+                spec.spec_id not in seen_spec_ids,
+                "duplicate spec_id",
+                spec.spec_id,
+            )
+            seen_variables.add(spec.variable_key)
+            assert spec.spec_id is not None
+            seen_spec_ids.add(spec.spec_id)
+        groups = tuple(self.groups)
+        _validate_plan_groups(specs, groups)
         object.__setattr__(self, "base_variables", MappingProxyType(base))
         object.__setattr__(self, "noise", specs)
+        object.__setattr__(self, "groups", groups)
 
     def resolved_base(self) -> dict[str, float]:
         """Full base mapping: registry defaults overlaid with overrides."""
@@ -219,13 +312,18 @@ class VariationPlan:
             "n_runs": self.n_runs,
             "seed": self.seed,
             "flight_model": self.flight_model,
+            "groups": [group.to_json_dict() for group in self.groups],
         }
 
     @classmethod
     def from_json_dict(cls, data: Mapping[str, Any]) -> VariationPlan:
         """Inverse of :meth:`to_json_dict` (DbC-validated)."""
-        version = int(data.get("schema_version", _SCHEMA_VERSION))
-        require(version == _SCHEMA_VERSION, "unsupported schema_version", version)
+        version = int(data.get("schema_version", 1))
+        require(
+            version in _SUPPORTED_SCHEMA_VERSIONS,
+            "unsupported schema_version",
+            version,
+        )
         return cls(
             mode=str(data["mode"]),
             base_variables={
@@ -238,6 +336,14 @@ class VariationPlan:
             n_runs=int(data.get("n_runs", 200)),
             seed=int(data.get("seed", 0)),
             flight_model=str(data.get("flight_model", "waterloo_penner")),
+            groups=(
+                ()
+                if version == 1
+                else tuple(
+                    PerturbationGroup.from_json_dict(entry)
+                    for entry in data.get("groups", [])
+                )
+            ),
         )
 
     def dumps(self) -> str:
@@ -260,6 +366,7 @@ __all__ = [
     "MODE_CATEGORIES",
     "SWING_DERIVED_KEYS",
     "NoiseSpec",
+    "PerturbationGroup",
     "VariableDef",
     "VariationPlan",
     "keys_for_mode",

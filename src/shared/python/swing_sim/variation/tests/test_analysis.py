@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import math
 
 import numpy as np
@@ -11,6 +12,7 @@ from shared.python.swing_sim.variation import (
     CATEGORY_DELIVERY,
     CATEGORY_LAUNCH,
     NoiseSpec,
+    PerturbationGroup,
     VariationDataset,
     VariationPlan,
     dispersion_ellipse,
@@ -75,6 +77,33 @@ class TestSensitivity:
         assert result.matrix[face_row, lat] > 10.0 * result.matrix[speed_row, lat]
         # Normalization: the dominant input scores 1.0 per output column.
         assert result.normalized[face_row, lat] == pytest.approx(1.0)
+
+    def test_grouped_plan_oat_runs_each_spec_as_an_independent_intervention(
+        self,
+    ) -> None:
+        plan = _planted_plan(n_runs=8)
+        grouped = dataclasses.replace(
+            plan,
+            noise=tuple(
+                dataclasses.replace(spec, spec_id=f"spec-{index}")
+                for index, spec in enumerate(plan.noise)
+            ),
+            groups=(
+                PerturbationGroup(
+                    group_id="delivery-correlation",
+                    spec_ids=("spec-0", "spec-1"),
+                    matrix=((1.0, 0.25), (0.25, 1.0)),
+                ),
+            ),
+        )
+
+        result = one_at_a_time_sensitivity(grouped, n_workers=1)
+
+        assert result.input_keys == tuple(spec.variable_key for spec in grouped.noise)
+        assert result.matrix.shape == (
+            len(grouped.noise),
+            len(result.output_names),
+        )
 
     def test_spearman_corroborates_the_planted_dominance(self) -> None:
         dataset = run_variation(_planted_plan(), n_workers=4)
