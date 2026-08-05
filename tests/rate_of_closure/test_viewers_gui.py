@@ -211,7 +211,8 @@ class TestFlightExplorerTab:
         # Defaults are the pinned tour-driver case (167 mph / 10.9 deg /
         # 2686 rpm, waterloo_penner) from test_flight_explorer.py.
         assert exploration.metrics["carry_m"] == pytest.approx(247.484, abs=0.05)
-        assert "247.5 m" in explorer._rows["carry_m"].value_label.text().replace(
+        # H6 (#4125): 247.5 m reads as 270.7 yd (yards default).
+        assert "270.7 yd" in explorer._rows["carry_m"].value_label.text().replace(
             "+", ""
         )
         assert len(explorer.flight_view().trajectory()) > 2

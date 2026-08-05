@@ -30,7 +30,12 @@ from rate_of_closure.ui.pyqt6.course_scene import (
     draw_course_top,
     draw_target_region_top,
 )
-from rate_of_closure.units import FIELD_GUIDANCE
+from rate_of_closure.units import (
+    DISTANCE_UNITS,
+    FIELD_GUIDANCE,
+    display_distance_unit,
+    format_distance_m,
+)
 
 try:  # Theme palette (optional in standalone/vendored use).
     from shared.python.theme.matplotlib_style import get_chart_color
@@ -60,6 +65,21 @@ _DISPLAY_PARAMS: tuple[tuple[str, str, str, bool], ...] = (
     ("apex", "Apex", "flight_apex_visible", True),
     ("course", "Course Elements", "course_visible", True),
 )
+
+
+def distance_axis(axes: object, which: str) -> str:
+    """Format a metres axis in the display distance unit (#4125 H6).
+
+    Data stays in canonical metres; only tick labels convert. Returns
+    the axis label text (e.g. ``carry [yd]``).
+    """
+    from matplotlib.ticker import FuncFormatter
+
+    unit = display_distance_unit()
+    factor = DISTANCE_UNITS[unit]
+    formatter = FuncFormatter(lambda value, _pos: f"{value / factor:.0f}")
+    getattr(axes, f"{which}axis").set_major_formatter(formatter)
+    return str(unit)
 
 
 class FlightView(QWidget):
@@ -217,11 +237,11 @@ class FlightView(QWidget):
             )
         if self._checks["landing"].isChecked():
             self._annotate_landing(
-                axes, pos[-1, 0], pos[-1, 1], f"carry {pos[-1, 0]:.1f} m"
+                axes, pos[-1, 0], pos[-1, 1], f"carry {format_distance_m(pos[-1, 0])}"
             )
         axes.set_xlim(0.0, carry_ext)
         axes.set_ylim(0.0, height_ext)
-        axes.set_xlabel("carry [m]", fontsize=8)
+        axes.set_xlabel(f"carry [{distance_axis(axes, 'x')}]", fontsize=8)
         axes.set_ylabel("height [m]", fontsize=8)
         axes.set_title("Side profile", fontsize=9)
         axes.tick_params(labelsize=7)
@@ -240,7 +260,11 @@ class FlightView(QWidget):
         axes.axhline(0.0, color=get_chart_color(7), lw=0.6, alpha=0.6)
         if self._checks["landing"].isChecked():
             self._annotate_landing(
-                axes, pos[-1, 0], pos[-1, 2], f"lateral {pos[-1, 2]:+.1f} m"
+                axes,
+                pos[-1, 0],
+                pos[-1, 2],
+                f"lateral {'+' if pos[-1, 2] >= 0 else '-'}"
+                f"{format_distance_m(abs(pos[-1, 2]))}",
             )
         title = "Top-down"
         # Target region + Variation landing scatter (#4125 H7b).
@@ -263,8 +287,8 @@ class FlightView(QWidget):
                 title = f"Top-down — {held}/{total} shots hold the target ({pct:.0f}%)"
         axes.set_xlim(0.0, carry_ext)
         axes.set_ylim(-lateral_ext, lateral_ext)
-        axes.set_xlabel("carry [m]", fontsize=8)
-        axes.set_ylabel("right (+) [m]", fontsize=8)
+        axes.set_xlabel(f"carry [{distance_axis(axes, 'x')}]", fontsize=8)
+        axes.set_ylabel(f"right (+) [{distance_axis(axes, 'y')}]", fontsize=8)
         axes.set_title(title, fontsize=9)
         axes.tick_params(labelsize=7)
 
@@ -290,8 +314,8 @@ class FlightView(QWidget):
         axes.set_xlim(-lateral_ext, lateral_ext)
         axes.set_ylim(0.0, carry_ext)
         axes.set_zlim(0.0, height_ext)
-        axes.set_xlabel("z — right [m]", fontsize=7)
-        axes.set_ylabel("x — target [m]", fontsize=7)
+        axes.set_xlabel(f"z — right [{distance_axis(axes, 'x')}]", fontsize=7)
+        axes.set_ylabel(f"x — target [{distance_axis(axes, 'y')}]", fontsize=7)
         axes.set_zlabel("y — up [m]", fontsize=7)
         axes.set_title("3D trajectory", fontsize=9)
         axes.tick_params(labelsize=6)

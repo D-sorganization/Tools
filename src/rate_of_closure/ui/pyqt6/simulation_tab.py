@@ -62,7 +62,7 @@ from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
-from rate_of_closure.units import FIELD_GUIDANCE
+from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.types import PlaneOrientation
 
@@ -339,13 +339,33 @@ class SimulationTab(QWidget):
         self._kinetics_panel.set_run(run)
         self._flight_view.set_run(run)
         self._inspector.set_run(run)
-        for field, _label, unit in LAUNCH_ROWS:
-            value = run.launch[field]
-            text = f"{value:+.1f}{unit}" if math.isfinite(value) else "—"
-            self._rows[field].value_label.setText(text)
+        self._refresh_launch_rows()
         self._update_delivery_label(run.impact_time_s)
         self.runCompleted.emit(run)
         return run
+
+    def _refresh_launch_rows(self) -> None:
+        """Format launch rows; carry follows the distance display unit
+        (#4125 H6 — yards default; apex stays in metres)."""
+        run = self._run
+        if run is None:
+            return
+        for field, _label, unit in LAUNCH_ROWS:
+            value = run.launch[field]
+            if not math.isfinite(value):
+                text = "—"
+            elif field == "carry_m":
+                text = f"+{format_distance_m(value)}"
+            else:
+                text = f"{value:+.1f}{unit}"
+            self._rows[field].value_label.setText(text)
+
+    def refresh_units(self) -> None:
+        """Re-render distance surfaces after a display-unit change."""
+        self._refresh_launch_rows()
+        self._solver_panel.target_panel().refresh_units()
+        # Redraw the flight view so its axes pick up the new unit.
+        self._flight_view.set_trajectory(self._flight_view.trajectory())
 
     def last_run(self) -> SimulationRun | None:
         """The most recent successful run, if any."""

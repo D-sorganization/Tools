@@ -20,7 +20,7 @@ import {
   type SimulationRunTs,
   type WebSourceKind,
 } from "../model/simulation";
-import { FIELD_GUIDANCE } from "../model/units";
+import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
 import { type ClubSpec } from "../model/club";
 import { type ImpactScenario } from "../model/impact";
 import {
@@ -67,6 +67,8 @@ interface Props {
   /** Target region (#4125 H7b), lifted to App for the Variation tie-in. */
   target: TargetRegionTs;
   onTargetChange: (target: TargetRegionTs) => void;
+  /** Ball-flight distance display unit (#4125 H6): yards default. */
+  distanceUnit?: string;
 }
 
 export function SimulationPanel({
@@ -76,6 +78,7 @@ export function SimulationPanel({
   onScenarioChange,
   target,
   onTargetChange,
+  distanceUnit = "yd",
 }: Props) {
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
   const [tilts, setTilts] = useState({ yaw: 0, side: -45, forward: 0 });
@@ -344,7 +347,11 @@ export function SimulationPanel({
               >
                 <span className="text-slate-400">{label}</span>
                 <span className="font-semibold tabular-nums text-slate-100">
-                  {run ? `${run.launch[key].toFixed(1)} ${unit}` : "—"}
+                  {run
+                    ? key === "carryM"
+                      ? formatDistanceM(run.launch[key], distanceUnit)
+                      : `${run.launch[key].toFixed(1)} ${unit}`
+                    : "—"}
                 </span>
               </div>
             ))}
@@ -403,12 +410,14 @@ export function SimulationPanel({
                 target={target}
                 onChange={onTargetChange}
                 landing={landing ?? undefined}
+                unit={distanceUnit}
               />
               <FlightCanvases
                 points={run?.flight ?? []}
                 emptyText="Run a simulation to populate the flight view."
                 layout={targetLayout}
                 target={target}
+                distanceUnit={distanceUnit}
               />
             </>
           )}

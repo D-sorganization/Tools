@@ -47,7 +47,7 @@ from rate_of_closure.simulation import (
 )
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
-from rate_of_closure.units import FIELD_GUIDANCE
+from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.impact import DeliveryParameters
 
@@ -71,6 +71,10 @@ EXPLORER_ROWS: tuple[tuple[str, str, str], ...] = (
     ("landing_angle_deg", "Landing Angle", "°"),
     ("lateral_m", "Lateral Landing Offset", " m"),
 )
+
+#: Rows following the user's distance display unit (#4125 H6). Apex
+#: stays in the metres height convention deliberately.
+_DISTANCE_ROWS: frozenset[str] = frozenset({"carry_m", "lateral_m"})
 
 #: Direct-mode fields: (attr, label, guidance key, low, high, default,
 #: decimals, suffix).
@@ -320,11 +324,31 @@ class FlightExplorerTab(QWidget):
             return None
         self._exploration = exploration
         self._flight_view.set_trajectory(exploration.positions)
-        for key, _label, unit in EXPLORER_ROWS:
-            value = exploration.metrics[key]
-            text = f"{value:+.1f}{unit}" if math.isfinite(value) else "—"
-            self._rows[key].value_label.setText(text)
+        self._refresh_rows()
         return exploration
+
+    def _refresh_rows(self) -> None:
+        """Format the result rows; carry/lateral follow the distance
+        display unit (#4125 H6 — yards default, apex stays metres)."""
+        if self._exploration is None:
+            return
+        for key, _label, unit in EXPLORER_ROWS:
+            value = self._exploration.metrics[key]
+            if not math.isfinite(value):
+                text = "—"
+            elif key in _DISTANCE_ROWS:
+                text = (
+                    f"+{format_distance_m(value)}"
+                    if value >= 0
+                    else (f"-{format_distance_m(-value)}")
+                )
+            else:
+                text = f"{value:+.1f}{unit}"
+            self._rows[key].value_label.setText(text)
+
+    def refresh_units(self) -> None:
+        """Re-render distance rows after a display-unit change."""
+        self._refresh_rows()
 
     # ── internals ──────────────────────────────────────────────────
     def _on_mode_changed(self, index: int) -> None:

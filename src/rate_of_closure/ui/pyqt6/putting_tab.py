@@ -38,7 +38,9 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.putting import PUTT_EXPLANATIONS, putter_specs
+from rate_of_closure.ui.pyqt6.flight_view import distance_axis
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
+from rate_of_closure.units import format_distance_m
 from shared.python.swing_sim.putting import (
     GreenConditions,
     PuttResult,
@@ -296,12 +298,19 @@ class PuttingTab(QWidget):
 
     @staticmethod
     def _format_m(value: float) -> str:
-        """Single distance-format chokepoint (SI; H6 units pass hook)."""
-        return f"{value:.2f} m"
+        """Single distance-format chokepoint — follows the session's
+        distance display unit (#4125 H6: yards default, metres option)."""
+        return str(format_distance_m(value, decimals=2))
 
     def result(self) -> PuttResult | None:
         """The last computed putt (LoD seam for tests)."""
         return self._result
+
+    def refresh_units(self) -> None:
+        """Re-render rows and axes in the distance display unit (H6)."""
+        if self._result is not None:
+            self._update_rows(self._result)
+            self._redraw(self._result)
 
     def _recompute(self) -> None:
         putter = self._putters[self._putter_combo.currentText()]
@@ -335,7 +344,7 @@ class PuttingTab(QWidget):
             "putt_margin": (
                 f"HOLED (+{result.margin_mps:.2f} m/s under bound)"
                 if result.holed and result.margin_mps is not None
-                else f"miss by {result.miss_distance_m:.2f} m"
+                else f"miss by {self._format_m(result.miss_distance_m)}"
                 if result.miss_distance_m is not None
                 else "—"
             ),
@@ -386,8 +395,8 @@ class PuttingTab(QWidget):
                 color="grey",
                 fontsize=8,
             )
-        top.set_xlabel("Along putt line [m]")
-        top.set_ylabel("Lateral [m] (left +)")
+        top.set_xlabel(f"Along putt line [{distance_axis(top, 'x')}]")
+        top.set_ylabel(f"Lateral [{distance_axis(top, 'y')}] (left +)")
         top.set_title("Top-down green")
         top.axis("equal")
         top.legend(loc="best", fontsize=8)
@@ -414,7 +423,7 @@ class PuttingTab(QWidget):
             linewidth=1.0,
             label="Skid → roll",
         )
-        bottom.set_xlabel("Distance rolled [m]")
+        bottom.set_xlabel(f"Distance rolled [{distance_axis(bottom, 'x')}]")
         bottom.set_ylabel("Speed [m/s]")
         bottom.legend(loc="best", fontsize=8)
         self._canvas.draw_idle()

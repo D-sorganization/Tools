@@ -17,13 +17,18 @@ pytest.importorskip("pytestqt")
 from rate_of_closure.simulation.targets import TargetRegion  # noqa: E402
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab  # noqa: E402
 from rate_of_closure.ui.pyqt6.target_panel import TargetPanel  # noqa: E402
+from rate_of_closure.units import set_display_distance_unit  # noqa: E402
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
 
 @pytest.fixture
 def panel(qtbot):  # type: ignore[no-untyped-def]
+    # Metres display keeps the entry-value pins exact; the yards
+    # default itself is covered by TestDistanceUnits below.
+    set_display_distance_unit("m")
     widget = TargetPanel()
+    widget.refresh_units()
     qtbot.addWidget(widget)
     return widget
 
@@ -63,7 +68,9 @@ class TestTargetPanel:
 
 class TestSimulationTabWiring:
     def test_target_edit_moves_the_course_green(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        set_display_distance_unit("m")
         tab = SimulationTab()
+        tab.solver_panel().target_panel().refresh_units()
         qtbot.addWidget(tab)
         target_panel = tab.solver_panel().target_panel()
         target_panel._distance.setValue(150.0)
@@ -106,3 +113,23 @@ class TestFlightViewOverlay:
         assert carry_ext >= 215.0
         flight.set_landing_scatter(None)
         tab.stop()
+
+
+class TestDistanceUnits:
+    def test_entries_default_to_yards_and_report_canonical_metres(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        """H6: target entries display yards by default; region stays SI."""
+        widget = TargetPanel()
+        qtbot.addWidget(widget)
+        assert widget._distance.suffix() == " yd"
+        # 230 m default reads as ~251.5 yd but reports metres.
+        assert widget._distance.value() == pytest.approx(251.5, abs=0.1)
+        assert widget.region().distance_m == pytest.approx(230.0, abs=0.1)
+
+    def test_switching_to_metres_round_trips(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        widget = TargetPanel()
+        qtbot.addWidget(widget)
+        canonical = widget.region().distance_m
+        set_display_distance_unit("m")
+        widget.refresh_units()
+        assert widget._distance.suffix() == " m"
+        assert widget.region().distance_m == pytest.approx(canonical, abs=0.1)

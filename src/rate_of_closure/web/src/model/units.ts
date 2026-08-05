@@ -26,13 +26,34 @@ export const LENGTH_UNITS: Record<string, number> = {
   in: 25.4,
 };
 
-export type Quantity = "speed" | "rotation" | "length";
+/**
+ * Ball-flight distances (#4125 H6): displayed * factor = canonical
+ * metres — internal physics stays SI. Yards listed FIRST: the
+ * drop-downs default to the first entry, so distances read in yards
+ * out of the box (user direction).
+ */
+export const DISTANCE_UNITS: Record<string, number> = {
+  yd: 0.9144,
+  m: 1.0,
+};
+
+export type Quantity = "speed" | "rotation" | "length" | "distance";
 
 export const QUANTITY_UNITS: Record<Quantity, Record<string, number>> = {
   speed: SPEED_UNITS,
   rotation: ROTATION_UNITS,
   length: LENGTH_UNITS,
+  distance: DISTANCE_UNITS,
 };
+
+/** A canonical-metres distance formatted in the given display unit. */
+export function formatDistanceM(
+  valueM: number,
+  unit: string,
+  decimals = 1,
+): string {
+  return `${(valueM / DISTANCE_UNITS[unit]).toFixed(decimals)} ${unit}`;
+}
 
 export function toCanonical(
   quantity: Quantity,

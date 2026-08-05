@@ -8,7 +8,9 @@ import { describe, expect, it } from "vitest";
 import { METRIC_EXPLANATIONS } from "./derivation";
 import { closureMetrics, DEFAULT_SCENARIO, solve } from "./impact";
 import {
+  DISTANCE_UNITS,
   FIELD_GUIDANCE,
+  formatDistanceM,
   fromCanonical,
   QUANTITY_UNITS,
   toCanonical,
@@ -85,6 +87,33 @@ describe("closure metrics — parity with pytest", () => {
       expect(METRIC_EXPLANATIONS[key], key).toBeDefined();
       expect(METRIC_EXPLANATIONS[key].length, key).toBeGreaterThan(80);
       expect(METRIC_EXPLANATIONS[key], key).not.toContain("TrackMan");
+    }
+  });
+});
+
+describe("distance quantity (H6, Python parity)", () => {
+  it("defaults to yards with SI-metre canonical", () => {
+    expect(Object.keys(DISTANCE_UNITS)[0]).toBe("yd");
+    expect(QUANTITY_UNITS.distance).toBe(DISTANCE_UNITS);
+    expect(DISTANCE_UNITS.m).toBe(1.0);
+    expect(DISTANCE_UNITS.yd).toBeCloseTo(0.9144, 12);
+  });
+
+  it("converts and formats in the selected unit", () => {
+    expect(toCanonical("distance", "yd", 100)).toBeCloseTo(91.44, 9);
+    expect(fromCanonical("distance", "yd", 91.44)).toBeCloseTo(100, 9);
+    expect(formatDistanceM(91.44, "yd")).toBe("100.0 yd");
+    expect(formatDistanceM(91.44, "m")).toBe("91.4 m");
+  });
+
+  it("round trips exactly to float precision", () => {
+    for (const unit of Object.keys(DISTANCE_UNITS)) {
+      const back = fromCanonical(
+        "distance",
+        unit,
+        toCanonical("distance", unit, 123.4),
+      );
+      expect(back).toBeCloseTo(123.4, 10);
     }
   });
 });

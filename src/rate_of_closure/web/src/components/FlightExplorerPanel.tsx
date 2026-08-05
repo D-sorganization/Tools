@@ -17,7 +17,7 @@ import {
   exploreFlight,
   type FlightExplorationTs,
 } from "../model/flightExplorer";
-import { FIELD_GUIDANCE } from "../model/units";
+import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
 
 const SPEED_UNITS: Record<string, number> = { mph: 1.0, "m/s": 2.236936292054402 };
 
@@ -47,7 +47,12 @@ const FIELDS: FieldSpec[] = [
   { key: "spinAxisTiltDeg", label: "Spin-Axis Tilt", unit: "deg", guidance: "fxSpinAxisTilt" },
 ];
 
-export function FlightExplorerPanel() {
+export function FlightExplorerPanel({
+  distanceUnit = "yd",
+}: {
+  /** Ball-flight distance display unit (#4125 H6): yards default. */
+  distanceUnit?: string;
+} = {}) {
   const [speed, setSpeed] = useState(167.0);
   const [speedUnit, setSpeedUnit] = useState("mph");
   const [fields, setFields] = useState({
@@ -179,7 +184,12 @@ export function FlightExplorerPanel() {
                 </span>
                 <span className="ml-2 min-w-16 text-right font-semibold tabular-nums text-slate-100">
                   {result
-                    ? `${result.metrics[key] >= 0 ? "+" : ""}${result.metrics[key].toFixed(1)} ${unit}`
+                    ? key === "carryM" || key === "lateralM"
+                      ? `${result.metrics[key] >= 0 ? "+" : "-"}${formatDistanceM(
+                          Math.abs(result.metrics[key]),
+                          distanceUnit,
+                        )}`
+                      : `${result.metrics[key] >= 0 ? "+" : ""}${result.metrics[key].toFixed(1)} ${unit}`
                     : "—"}
                 </span>
               </div>

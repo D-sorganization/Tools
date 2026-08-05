@@ -16,6 +16,7 @@ import {
 } from "../model/course";
 import { type FlightPoint } from "../model/flight";
 import { type TargetRegionTs } from "../model/targets";
+import { formatDistanceM } from "../model/units";
 import { withAlpha } from "../model/theme";
 
 interface Props {
@@ -28,6 +29,8 @@ interface Props {
   showCourse?: boolean;
   /** Target region (#4125 H7b): dashed boundary in the top-down view. */
   target?: TargetRegionTs;
+  /** Ball-flight distance display unit (#4125 H6): yards default. */
+  distanceUnit?: string;
 }
 
 const MIN_CARRY_M = 10.0;
@@ -119,6 +122,7 @@ function drawPanel(
   layout: CourseLayout,
   showCourse: boolean,
   target?: TargetRegionTs,
+  distanceUnit = "yd",
 ): void {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -179,15 +183,21 @@ function drawPanel(
   ctx.fill();
   ctx.fillStyle = "#94a3b8";
   ctx.font = "11px sans-serif";
+  // Landing annotation follows the distance display unit (#4125 H6).
   const label =
     vertical === "height"
-      ? `carry ${last.position[0].toFixed(1)} m`
-      : `lateral ${last.position[2] >= 0 ? "+" : ""}${last.position[2].toFixed(1)} m`;
+      ? `carry ${formatDistanceM(last.position[0], distanceUnit)}`
+      : `lateral ${last.position[2] >= 0 ? "+" : "-"}${formatDistanceM(
+          Math.abs(last.position[2]),
+          distanceUnit,
+        )}`;
   ctx.textAlign = "right";
   ctx.fillText(label, px(last.position[0]) - 8, py(value(last)) - 8);
   ctx.textAlign = "left";
   ctx.fillText(
-    vertical === "height" ? "Side profile (height vs carry)" : "Top-down (right + vs carry)",
+    vertical === "height"
+      ? `Side profile (height [m] vs carry [${distanceUnit}])`
+      : `Top-down (right + vs carry [${distanceUnit}])`,
     10,
     16,
   );
@@ -199,6 +209,7 @@ export function FlightCanvases({
   layout,
   showCourse,
   target,
+  distanceUnit = "yd",
 }: Props) {
   const sideRef = useRef<HTMLCanvasElement | null>(null);
   const topRef = useRef<HTMLCanvasElement | null>(null);
@@ -215,6 +226,8 @@ export function FlightCanvases({
         placeholder,
         courseLayout,
         course,
+        undefined,
+        distanceUnit,
       );
     if (topRef.current)
       drawPanel(
@@ -225,8 +238,9 @@ export function FlightCanvases({
         courseLayout,
         course,
         target,
+        distanceUnit,
       );
-  }, [points, placeholder, courseLayout, course, target]);
+  }, [points, placeholder, courseLayout, course, target, distanceUnit]);
 
   return (
     <div className="grid min-w-0 gap-3">

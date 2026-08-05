@@ -22,6 +22,7 @@ import {
   simulatePutt,
   strike,
 } from "../model/putting";
+import { formatDistanceM } from "../model/units";
 
 /** Library putters first (H1 reconciliation), minimal specs fallback. */
 function putterChoices(): PutterSpec[] {
@@ -97,16 +98,20 @@ const ROWS: { key: string; label: string; explanation: string }[] = [
   },
 ];
 
-/** Single distance-format chokepoint (SI; H6 units pass hook). */
-function formatM(value: number): string {
-  return `${value.toFixed(2)} m`;
+/** Single distance-format chokepoint — follows the session distance
+ * display unit (#4125 H6: yards default, metres option). */
+function formatDistance(value: number, unit: string): string {
+  return formatDistanceM(value, unit, 2);
 }
 
 interface PuttingPanelProps {
   onGlossary?: (term: string) => void;
+  /** Ball-flight distance display unit (#4125 H6): yards default. */
+  distanceUnit?: string;
 }
 
-export function PuttingPanel({ onGlossary }: PuttingPanelProps) {
+export function PuttingPanel({ onGlossary, distanceUnit = "yd" }: PuttingPanelProps) {
+  const formatM = (value: number) => formatDistance(value, distanceUnit);
   const putters = useMemo(putterChoices, []);
   const [putterName, setPutterName] = useState(putters[0].name);
   const [paceMode, setPaceMode] = useState<"speed" | "backstroke">("speed");
@@ -152,7 +157,7 @@ export function PuttingPanel({ onGlossary }: PuttingPanelProps) {
             : "— (never reached)",
         puttMargin: result.holed
           ? `HOLED (+${(result.marginMps ?? 0).toFixed(2)} m/s under bound)`
-          : `miss by ${(result.missDistanceM ?? 0).toFixed(2)} m`,
+          : `miss by ${formatM(result.missDistanceM ?? 0)}`,
       }
     : {};
   const explainedRow = ROWS.find((r) => r.key === explained) ?? ROWS[0];

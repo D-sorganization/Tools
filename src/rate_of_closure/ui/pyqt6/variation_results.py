@@ -21,6 +21,7 @@ from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QWidget
 
+from rate_of_closure.units import DISTANCE_UNITS, display_distance_unit
 from shared.python.swing_sim.variation import (
     DispersionEllipse,
     OutputStats,
@@ -65,16 +66,25 @@ class SummaryTable(QTableWidget):
         )
 
     def set_stats(self, stats: tuple[OutputStats, ...]) -> None:
-        """Populate from :func:`swing_sim.variation.summary_stats` output."""
+        """Populate from :func:`swing_sim.variation.summary_stats` output.
+
+        Landing distances (carry/lateral) follow the session's distance
+        display unit (#4125 H6 — yards default; the row name gains the
+        unit so the numbers are unambiguous). Apex stays in metres.
+        """
         self.setRowCount(len(stats))
         for i, s in enumerate(stats):
+            distance = s.name in ("carry_m", "lateral_m")
+            unit = display_distance_unit() if distance else ""
+            factor = DISTANCE_UNITS[unit] if distance else 1.0
+            name = f"{s.name} [{unit}]" if distance else s.name
             cells = (
-                s.name,
-                f"{s.mean:+.2f}",
-                f"{s.std:.3f}",
-                f"{s.p5:+.2f}",
-                f"{s.p50:+.2f}",
-                f"{s.p95:+.2f}",
+                name,
+                f"{s.mean / factor:+.2f}",
+                f"{s.std / factor:.3f}",
+                f"{s.p5 / factor:+.2f}",
+                f"{s.p50 / factor:+.2f}",
+                f"{s.p95 / factor:+.2f}",
                 str(s.n),
             )
             for col, text in enumerate(cells):

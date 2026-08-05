@@ -306,7 +306,8 @@ class TestExports:
         write_plot_csv(data, path)
         with path.open(encoding="utf-8") as handle:
             rows = list(csv.reader(handle))
-        assert rows[0] == ["Downrange Distance [m]", "Height"]
+        # H6 (#4125): exported flight distances follow the yards default.
+        assert rows[0] == ["Downrange Distance [yd]", "Height"]
         assert len(rows) == data.x.size + 1
         assert float(rows[1][0]) == pytest.approx(float(data.x[0]))
 

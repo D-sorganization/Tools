@@ -127,6 +127,7 @@ const UNIT_LABELS: Record<Quantity, string> = {
   speed: "Speed",
   rotation: "Rotation",
   length: "Length",
+  distance: "Distance",
 };
 
 const TABS = [
@@ -151,6 +152,8 @@ export default function App() {
     speed: "mph",
     rotation: "deg/s",
     length: "mm",
+    // Ball-flight distances (#4125 H6): yards by default.
+    distance: "yd",
   });
   const [generatedHead, setGeneratedHead] = useState<GeneratedHead | null>(
     null,
@@ -282,15 +285,16 @@ export default function App() {
         <GlossaryPanel key={glossaryTerm ?? "none"} initialTerm={glossaryTerm} />
       ) : tab === TABS[6] ? (
         <PuttingPanel
+          distanceUnit={units.distance}
           onGlossary={(term) => {
             setGlossaryTerm(term);
             setTab(TABS[7]);
           }}
         />
       ) : tab === TABS[5] ? (
-        <VariationPanel target={target} />
+        <VariationPanel target={target} distanceUnit={units.distance} />
       ) : tab === TABS[4] ? (
-        <FlightExplorerPanel />
+        <FlightExplorerPanel distanceUnit={units.distance} />
       ) : tab === TABS[3] ? (
         // Static loft mirrors the desktop default driver (same note as
         // the Simulation tab; the full club picker joins with P7 WASM).
@@ -307,6 +311,7 @@ export default function App() {
           }
           target={target}
           onTargetChange={setTarget}
+          distanceUnit={units.distance}
         />
       ) : tab === TABS[1] ? (
         <Derivation scenario={scenario} />

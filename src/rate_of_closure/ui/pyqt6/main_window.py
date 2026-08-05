@@ -46,6 +46,7 @@ from rate_of_closure.derivation import (
 )
 from rate_of_closure.helptext import HELP_TEXTS
 from rate_of_closure.model import ImpactScenario, closure_metrics, solve
+from rate_of_closure.ui.pyqt6.app_style import showcase_stylesheet
 from rate_of_closure.ui.pyqt6.club_view import Club3DView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
@@ -54,10 +55,7 @@ from rate_of_closure.ui.pyqt6.glossary_tab import GlossaryTab
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
-from rate_of_closure.ui.pyqt6.result_row import (
-    explanation_html,
-    selection_stylesheet,
-)
+from rate_of_closure.ui.pyqt6.result_row import explanation_html
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 from rate_of_closure.units import convert_from_canonical
@@ -217,10 +215,17 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         splitter.setStretchFactor(1, 1)
         self.setCentralWidget(splitter)
         self.setStatusBar(QStatusBar())
-        self.setStyleSheet(selection_stylesheet(self.palette()))
+        # H6 (#4125): the UpstreamDrift launcher visual language —
+        # hover-highlighted buttons with subtle shadows, rounded group
+        # boxes/tabs — all palette-derived (includes the V4 selected-row
+        # styling, superseding the bare selection_stylesheet here).
+        self.setStyleSheet(showcase_stylesheet(self.palette()))
 
         self._controls.scenarioChanged.connect(self._on_scenario)
         self._controls.clubHeadRequested.connect(self._on_club_head)
+        # Distance display unit (#4125 H6): yards default; switching
+        # re-renders every distance surface across the tabs.
+        self._controls.distanceUnitChanged.connect(self._on_distance_unit)
         self._simulation_tab.glossaryRequested.connect(self.open_glossary)
         self._simulation_tab.configChanged.connect(self._derivation_view.set_config)
         self._flight_explorer_tab.glossaryRequested.connect(self.open_glossary)
@@ -292,6 +297,12 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         layout.addWidget(browser)
         self._help_dialog = dialog
         dialog.show()
+
+    def _on_distance_unit(self, _unit: str) -> None:
+        """Re-render distance surfaces in the new display unit (H6)."""
+        self._simulation_tab.refresh_units()
+        self._flight_explorer_tab.refresh_units()
+        self._putting_tab.refresh_units()
 
     def _on_variation_study(self, dataset: VariationDataset) -> None:
         """Forward a completed study's landing scatter (#4125 H7b)."""

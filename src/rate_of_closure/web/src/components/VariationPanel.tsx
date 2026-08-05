@@ -24,6 +24,7 @@ import {
   type VariationPlanTs,
 } from "../model/variation";
 import { type TargetRegionTs } from "../model/targets";
+import { DISTANCE_UNITS } from "../model/units";
 import { LandingCanvas } from "./VariationLanding";
 import {
   datasetToCsv,
@@ -76,9 +77,12 @@ const buttonClass =
 
 export function VariationPanel({
   target,
+  distanceUnit = "yd",
 }: {
   /** Target region (#4125 H7b): landing overlay + hold-% headline. */
   target?: TargetRegionTs;
+  /** Ball-flight distance display unit (#4125 H6): yards default. */
+  distanceUnit?: string;
 } = {}): JSX.Element {
   const [mode, setMode] = useState<VariationMode>("delivery");
   const [noise, setNoise] = useState<NoiseSpecTs[]>([defaultSpec("delivery")]);
@@ -402,17 +406,27 @@ export function VariationPanel({
                   </tr>
                 </thead>
                 <tbody>
-                  {stats.map((s) => (
-                    <tr key={s.name} className="border-t border-slate-800/60">
-                      <td className="px-2 py-1 text-slate-200">{s.name}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.mean.toFixed(2)}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.std.toFixed(3)}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.p5.toFixed(2)}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.p50.toFixed(2)}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.p95.toFixed(2)}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.n}</td>
-                    </tr>
-                  ))}
+                  {stats.map((s) => {
+                    // Landing distances follow the distance display
+                    // unit (#4125 H6); apex stays in metres.
+                    const isDistance =
+                      s.name === "carry_m" || s.name === "lateral_m";
+                    const f = isDistance ? DISTANCE_UNITS[distanceUnit] : 1.0;
+                    const name = isDistance
+                      ? `${s.name} [${distanceUnit}]`
+                      : s.name;
+                    return (
+                      <tr key={s.name} className="border-t border-slate-800/60">
+                        <td className="px-2 py-1 text-slate-200">{name}</td>
+                        <td className="px-2 py-1 tabular-nums">{(s.mean / f).toFixed(2)}</td>
+                        <td className="px-2 py-1 tabular-nums">{(s.std / f).toFixed(3)}</td>
+                        <td className="px-2 py-1 tabular-nums">{(s.p5 / f).toFixed(2)}</td>
+                        <td className="px-2 py-1 tabular-nums">{(s.p50 / f).toFixed(2)}</td>
+                        <td className="px-2 py-1 tabular-nums">{(s.p95 / f).toFixed(2)}</td>
+                        <td className="px-2 py-1 tabular-nums">{s.n}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>

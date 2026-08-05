@@ -16,6 +16,7 @@ import { useEffect, useMemo, useRef } from "react";
 
 import { kineticsForInput, type KineticsSeriesTs } from "../model/kinetics";
 import { type SimulationInput, type SimulationRunTs } from "../model/simulation";
+import { getChartColor } from "../model/theme";
 
 interface Props {
   input: SimulationInput;
@@ -23,7 +24,9 @@ interface Props {
 }
 
 const MARGIN = 36;
-const COLORS = ["#0A84FF", "#FF9F0A", "#30D158"];
+// H6 accent alignment (#4125): draw from the shared chart palette
+// (model/theme.ts) instead of widget-local hex.
+const COLORS = [getChartColor(0), getChartColor(2), getChartColor(1)];
 
 interface Trace {
   label: string;

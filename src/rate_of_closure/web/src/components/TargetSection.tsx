@@ -12,19 +12,23 @@ import {
   type TargetKind,
   type TargetRegionTs,
 } from "../model/targets";
+import { DISTANCE_UNITS, formatDistanceM } from "../model/units";
 
 interface Props {
   target: TargetRegionTs;
   onChange: (target: TargetRegionTs) => void;
   /** Latest landing point (carry, + right lateral) [m], if a run exists. */
   landing?: { carryM: number; lateralM: number };
+  /** Distance display unit (#4125 H6, yards default); region stays SI. */
+  unit?: string;
 }
 
 const inputClass =
   "no-spinner w-20 rounded border border-slate-700 bg-slate-800 px-2 " +
   "py-1 text-slate-100 focus:border-blue-500 focus:outline-none";
 
-export function TargetSection({ target, onChange, landing }: Props) {
+export function TargetSection({ target, onChange, landing, unit = "yd" }: Props) {
+  const factor = DISTANCE_UNITS[unit] ?? 1.0;
   const patch = (updates: Partial<TargetRegionTs>) =>
     onChange({ ...target, ...updates });
 
@@ -35,18 +39,19 @@ export function TargetSection({ target, onChange, landing }: Props) {
     key: keyof TargetRegionTs,
   ) => (
     <label className="flex items-center gap-1 text-slate-300" title={title}>
-      {label}
+      {label} ({unit})
       <input
         type="number"
         inputMode="decimal"
-        value={value}
+        value={Number((value / factor).toFixed(1))}
         title={title}
         onChange={(e) => {
           const parsed = Number(e.target.value);
           // Geometry entries must stay positive; lateral may be signed.
           const valid =
             Number.isFinite(parsed) && (key === "lateralM" || parsed > 0);
-          if (valid) patch({ [key]: parsed });
+          // Entries display in the session unit; state stays SI metres.
+          if (valid) patch({ [key]: parsed * factor });
         }}
         className={inputClass}
       />
@@ -122,8 +127,8 @@ export function TargetSection({ target, onChange, landing }: Props) {
           }
         >
           {distance <= 0
-            ? `Holding the target (${(-distance).toFixed(1)} m inside)`
-            : `Outside the target by ${distance.toFixed(1)} m`}
+            ? `Holding the target (${formatDistanceM(-distance, unit)} inside)`
+            : `Outside the target by ${formatDistanceM(distance, unit)}`}
         </span>
       )}
     </div>

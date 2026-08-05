@@ -27,13 +27,14 @@ import numpy as np
 from matplotlib.figure import Figure
 
 from rate_of_closure._contracts import ensure, require
-from rate_of_closure.plotting.catalog import CATALOG, extract
+from rate_of_closure.plotting.catalog import CATALOG, DISTANCE_KEYS, extract
 from rate_of_closure.plotting.spec import PlotSpec
 from rate_of_closure.simulation.session import (
     SimulationConfig,
     SimulationRun,
     run_simulation,
 )
+from rate_of_closure.units import DISTANCE_UNITS, display_distance_unit
 
 # ── Theme integration (optional — graceful fallback) ───────────────
 try:
@@ -115,10 +116,35 @@ def _config_with(config: SimulationConfig, key: str, value: float) -> Simulation
     return dataclasses.replace(config, impact_time_s=float(value))
 
 
+def _display_factor(key: str) -> float:
+    """Canonical -> display divide factor for one catalog variable.
+
+    Ball-flight distance variables (#4125 H6) follow the session's
+    Distance display unit (yards default); everything else is 1.
+    """
+    if key in DISTANCE_KEYS:
+        return float(DISTANCE_UNITS[display_distance_unit()])
+    return 1.0
+
+
+def _display_unit(key: str) -> str:
+    """The display unit string for one catalog variable."""
+    if key in DISTANCE_KEYS:
+        return str(display_distance_unit())
+    return str(CATALOG[key].unit)
+
+
+def _axis_label(key: str) -> str:
+    """Axis label in the display unit (#4125 H6)."""
+    unit = _display_unit(key)
+    label = str(CATALOG[key].label)
+    return f"{label} [{unit}]" if unit else label
+
+
 def _shared_y_label(y_keys: tuple[str, ...]) -> str:
-    units = {CATALOG[key].unit for key in y_keys}
+    units = {_display_unit(key) for key in y_keys}
     if len(y_keys) == 1:
-        return str(CATALOG[y_keys[0]].axis_label)
+        return _axis_label(y_keys[0])
     if len(units) == 1:
         return f"Value [{units.pop()}]" if "" not in units else "Value"
     return "Value (Mixed Units)"
@@ -142,10 +168,12 @@ def _sweep_data(spec: PlotSpec, run: SimulationRun) -> PlotData:
         spec=spec,
         x=np.asarray(kept, dtype=float),
         series={
-            CATALOG[key].label: np.asarray(columns[key], dtype=float)
+            CATALOG[key].label: (
+                np.asarray(columns[key], dtype=float) / _display_factor(key)
+            )
             for key in spec.y_keys
         },
-        x_label=CATALOG[spec.x_key].axis_label,
+        x_label=_axis_label(spec.x_key),
         y_label=_shared_y_label(spec.y_keys),
     )
 
@@ -164,24 +192,26 @@ def compute_plot_data(spec: PlotSpec, run: SimulationRun) -> PlotData:
     require(isinstance(run, SimulationRun), "run must be a SimulationRun", run)
     if spec.kind == "sweep":
         return _sweep_data(spec, run)
-    x = np.asarray(extract(run, spec.x_key), dtype=float)
+    x = np.asarray(extract(run, spec.x_key), dtype=float) / _display_factor(spec.x_key)
     if spec.kind == "histogram":
         return PlotData(
             spec=spec,
             x=x,
             series={},
-            x_label=CATALOG[spec.x_key].axis_label,
+            x_label=_axis_label(spec.x_key),
             y_label="Count",
         )
     series = {
-        CATALOG[key].label: np.asarray(extract(run, key), dtype=float)
+        CATALOG[key].label: (
+            np.asarray(extract(run, key), dtype=float) / _display_factor(key)
+        )
         for key in spec.y_keys
     }
     return PlotData(
         spec=spec,
         x=x,
         series=series,
-        x_label=CATALOG[spec.x_key].axis_label,
+        x_label=_axis_label(spec.x_key),
         y_label=_shared_y_label(spec.y_keys),
     )
 

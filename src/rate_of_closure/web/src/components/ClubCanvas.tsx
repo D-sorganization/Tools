@@ -20,6 +20,7 @@ import { useEffect, useRef, useState } from "react";
 
 import { solve, type ImpactScenario } from "../model/impact";
 import { loadHeadMesh, type HeadMesh } from "../model/mesh";
+import { getChartColor } from "../model/theme";
 import { FIELD_GUIDANCE } from "../model/units";
 
 type Vec3 = [number, number, number];
@@ -37,14 +38,16 @@ export const VIEW_MODES = [
 ] as const;
 export type ViewMode = (typeof VIEW_MODES)[number];
 
+// H6 accent alignment (#4125): chart-palette accents come from the
+// shared model/theme.ts palette; only the neutral body tone is local.
 const COLORS = {
-  face: "#0A84FF",
+  face: getChartColor(0),
   body: "#8b949e",
-  shaft: "#AC8E68",
-  vRef: "#30D158",
-  vPoint: "#FF375F",
-  impact: "#FFD60A",
-  cog: "#FF9F0A",
+  shaft: getChartColor(7),
+  vRef: getChartColor(1),
+  vPoint: getChartColor(3),
+  impact: getChartColor(6),
+  cog: getChartColor(2),
 };
 
 // STL-mesh shading constants — identical to the PyQt6 club view.

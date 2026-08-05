@@ -99,6 +99,23 @@ class VariableSpec:
         return f"{self.label} [{self.unit}]" if self.unit else self.label
 
 
+#: Ball-flight distance variables that follow the user's Distance
+#: display unit (#4125 H6 — yards default). Heights (flight.y_m,
+#: metric.max_height_m) and swing-scale positions stay in metres.
+DISTANCE_KEYS: frozenset[str] = frozenset(
+    {
+        "flight.x_m",
+        "flight.z_m",
+        "metric.carry_m",
+        "putting.path_x",
+        "putting.path_y",
+        "putting.rollout",
+        "putting.skid_distance",
+        "putting.break",
+    }
+)
+
+
 def _speed_series(vectors: np.ndarray) -> np.ndarray:
     return np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
 

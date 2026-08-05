@@ -98,7 +98,8 @@ class TestPlotList:
         tab.refresh()
         data = tab.current_data()
         assert data is not None
-        assert data.x_label == "Downrange Distance [m]"
+        # H6 (#4125): flight distances render in yards by default.
+        assert data.x_label == "Downrange Distance [yd]"
         assert tab._figure.axes, "figure must carry rendered axes"
 
 

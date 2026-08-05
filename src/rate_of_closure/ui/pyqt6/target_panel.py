@@ -25,6 +25,7 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.simulation.targets import TargetRegion
+from rate_of_closure.units import DISTANCE_UNITS, display_distance_unit
 
 logger = logging.getLogger(__name__)
 
@@ -157,23 +158,51 @@ class TargetPanel(QGroupBox):
             spin.valueChanged.connect(self._emit_region)
         self._kind.currentIndexChanged.connect(self._emit_region)
         self._sync_kind()
+        # Distance display unit (#4125 H6): entries follow the session
+        # unit (yards default); region() always reports canonical metres.
+        self._distance_unit = "m"
+        self.refresh_units()
 
     # ── public API ──────────────────────────────────────────────────
     def region(self) -> TargetRegion:
-        """The TargetRegion described by the entries (DbC-validated)."""
+        """The TargetRegion described by the entries (DbC-validated).
+
+        Entries display in the session distance unit; the region is
+        always canonical SI metres.
+        """
+        factor = DISTANCE_UNITS[self._distance_unit]
         if self._kind.currentIndex() == 0:
             return TargetRegion(
                 kind="green",
-                distance_m=self._distance.value(),
-                radius_m=self._radius.value(),
-                lateral_m=self._lateral.value(),
+                distance_m=self._distance.value() * factor,
+                radius_m=self._radius.value() * factor,
+                lateral_m=self._lateral.value() * factor,
             )
         return TargetRegion(
             kind="fairway",
-            distance_m=self._distance.value(),
-            band_half_length_m=self._band.value(),
-            half_width_m=self._width.value(),
+            distance_m=self._distance.value() * factor,
+            band_half_length_m=self._band.value() * factor,
+            half_width_m=self._width.value() * factor,
         )
+
+    def refresh_units(self) -> None:
+        """Re-display the geometry entries in the session distance unit."""
+        unit = display_distance_unit()
+        if unit == self._distance_unit:
+            return
+        old = DISTANCE_UNITS[self._distance_unit]
+        new = DISTANCE_UNITS[unit]
+        spins = (self._distance, self._radius, self._lateral, self._band, self._width)
+        for spin in spins:
+            spin.blockSignals(True)
+            canonical = spin.value() * old
+            low, high = spin.minimum() * old, spin.maximum() * old
+            spin.setRange(low / new, high / new)
+            spin.setValue(canonical / new)
+            spin.setSuffix(f" {unit}")
+            spin.blockSignals(False)
+        self._distance_unit = unit
+        self._emit_region()
 
     def weight(self) -> float:
         """The region-goal weight."""

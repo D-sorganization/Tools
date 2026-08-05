@@ -17,6 +17,7 @@ from __future__ import annotations
 from ._contracts import require
 
 __all__ = [
+    "DISTANCE_UNITS",
     "FIELD_GUIDANCE",
     "LENGTH_UNITS",
     "QUANTITY_UNITS",
@@ -24,6 +25,9 @@ __all__ = [
     "SPEED_UNITS",
     "convert_from_canonical",
     "convert_to_canonical",
+    "display_distance_unit",
+    "format_distance_m",
+    "set_display_distance_unit",
 ]
 
 #: Display unit -> factor to the canonical unit (mph).
@@ -48,6 +52,15 @@ LENGTH_UNITS: dict[str, float] = {
     "in": 25.4,
 }
 
+#: Ball-flight distances (#4125 H6): display unit -> factor to the
+#: canonical unit (metres — internal physics stays SI). Listed with
+#: yards FIRST: the drop-down convention takes the first entry as the
+#: default, so golf distances read in yards out of the box.
+DISTANCE_UNITS: dict[str, float] = {
+    "yd": 0.9144,
+    "m": 1.0,
+}
+
 #: Quantity name -> its unit table. Angles and times stay fixed
 #: (degrees / microseconds) — they have no common alternates in the
 #: golf-delivery literature.
@@ -55,7 +68,36 @@ QUANTITY_UNITS: dict[str, dict[str, float]] = {
     "speed": SPEED_UNITS,
     "rotation": ROTATION_UNITS,
     "length": LENGTH_UNITS,
+    "distance": DISTANCE_UNITS,
 }
+
+#: The session's selected ball-flight distance display unit. Yards by
+#: default (user direction, #4125 H6); the Units drop-downs of both
+#: UIs switch it. Internal canonical values remain SI metres always —
+#: this only affects presentation (result rows, view axes, plot
+#: variables, variation outputs, target entries).
+_DISPLAY_DISTANCE_UNIT: list[str] = ["yd"]
+
+
+def display_distance_unit() -> str:
+    """The selected ball-flight distance display unit (``yd`` default)."""
+    return _DISPLAY_DISTANCE_UNIT[0]
+
+
+def set_display_distance_unit(unit: str) -> None:
+    """Select the ball-flight distance display unit (``yd`` or ``m``)."""
+    require(unit in DISTANCE_UNITS, f"unknown distance unit {unit!r}")
+    _DISPLAY_DISTANCE_UNIT[0] = unit
+
+
+def format_distance_m(value_m: float, decimals: int = 1) -> str:
+    """A canonical-metres distance formatted in the display unit.
+
+    >>> set_display_distance_unit("yd"); format_distance_m(91.44)
+    '100.0 yd'
+    """
+    unit = display_distance_unit()
+    return f"{value_m / DISTANCE_UNITS[unit]:.{decimals}f} {unit}"
 
 
 def convert_to_canonical(quantity: str, unit: str, value: float) -> float:
