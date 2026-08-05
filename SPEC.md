@@ -26,22 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.3                                      |
-| **Spec Version**        | 1.5.3                                      |
-| **Last Spec Update**    | 2026-07-26                                 |
+| **Current Version**     | 1.5.4                                      |
+| **Spec Version**        | 1.5.4                                      |
+| **Last Spec Update**    | 2026-08-04                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
@@ -952,6 +952,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Provide MATLAB scientific code integration and wrappers
 - Maintain fleet theme system for consistent UI across all tools
 - Support multiple Python versions (3.11, 3.12) with comprehensive test matrix
+- Keep the required generic quality gate on hosted compute when the local
+  fleet is operating under a WAN-constrained capacity policy
+- Keep self-hosted jobs on durable per-host dependency caches without
+  GitHub Actions cache uploads or unconditional cache purges, so post-job
+  network traffic cannot monopolize a persistent runner
 
 ### Non-Goals
 
@@ -2380,6 +2385,13 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.5.4
+
+- 2026-08-04: ci — route the required generic PR quality gate to a hosted
+  Ubuntu runner, retain hardware and integration tests on their explicit local
+  lanes, preserve the setup-python pip cache instead of purging it, and narrow
+  the local-only policy exception to `ci-standard.yml::quality-gate`.
 
 ### Version 1.1.598
 
