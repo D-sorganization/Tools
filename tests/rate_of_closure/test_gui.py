@@ -246,6 +246,22 @@ class TestClubGroup:
 
 
 class TestClub3DView:
+    def test_animation_waits_for_explicit_play(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        view = Club3DView()
+        qtbot.addWidget(view)
+        view.set_scenario(ImpactScenario(clubhead_speed_mph=120.0))
+
+        assert not view.is_playing()
+        assert view._play_button.text() == "Play"
+
+        view._play_button.click()
+        assert view.is_playing()
+        assert view._play_button.text() == "Pause"
+
+        view._play_button.click()
+        assert not view.is_playing()
+        assert view._play_button.text() == "Play"
+
     def test_playback_speed_round_trips_and_clamps(self, qtbot) -> None:  # type: ignore[no-untyped-def]
         view = Club3DView()
         qtbot.addWidget(view)

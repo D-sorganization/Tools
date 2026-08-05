@@ -190,13 +190,29 @@ class TorqueProfilePanel(QWidget):
         box = QGroupBox("Profile Details")
         form = QFormLayout(box)
         self._profile_id_edit = QLineEdit("profile.rate_of_closure.driver.v1")
+        self._profile_id_edit.setToolTip(
+            "Stable machine-readable identifier written to canonical torque-profile "
+            "JSON. Keep it unique and change it when creating a distinct reusable "
+            "profile."
+        )
         self._name_edit = QLineEdit("Driver Torque Profile")
+        self._name_edit.setToolTip(
+            "Human-readable profile name shown in the persistent library and exports."
+        )
         self._description_edit = QLineEdit(
             "Prescribed driver-swing joint torques authored in Rate of Closure."
+        )
+        self._description_edit.setToolTip(
+            "Describe the profile's purpose, provenance, assumptions, or intended use."
         )
         self._model_combo = QComboBox()
         self._model_combo.addItem("Double Pendulum", "model.double_pendulum.v1")
         self._model_combo.addItem("Triple Pendulum", "model.triple_pendulum.v1")
+        self._model_combo.setToolTip(
+            "Select the model-specific joint schema. Double-pendulum profiles can be "
+            "executed here; triple-pendulum profiles can be authored and exchanged "
+            "but are not yet executable in this workbench."
+        )
         self._model_combo.currentIndexChanged.connect(self._rebuild_assignment_rows)
         self._time_start_spin = QDoubleSpinBox()
         self._time_end_spin = QDoubleSpinBox()
@@ -205,6 +221,16 @@ class TorqueProfilePanel(QWidget):
             spin.setDecimals(4)
             spin.setValue(value)
             spin.setSuffix(" s")
+        self._time_start_spin.setToolTip(
+            "Start of the polynomial torque profile's physical time domain, in "
+            "seconds. The domain must cover the complete simulation when executing "
+            "the profile."
+        )
+        self._time_end_spin.setToolTip(
+            "End of the polynomial torque profile's physical time domain, in "
+            "seconds. It must be later than the start and cover the complete "
+            "simulation when executing the profile."
+        )
         form.addRow("Profile ID", self._profile_id_edit)
         form.addRow("Name", self._name_edit)
         form.addRow("Description", self._description_edit)
