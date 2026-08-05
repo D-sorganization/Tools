@@ -124,17 +124,20 @@ FIELD_GUIDANCE: dict[str, str] = {
     "clubhead_speed_mph": (
         "Suggested range: 80-130 mph driver clubhead speed (tour average "
         "near 113 mph; strong amateurs 90-105). Source: openly published "
-        "tour launch-monitor averages."
+        "tour launch-monitor averages. Reference frame: speed magnitude "
+        "of the clubhead reference point; +x is down the target line."
     ),
     "omega_plane_dps": (
         "Suggested range: 1,800-2,400 deg/s swing-plane rotation at "
         "impact for skilled players. Source: 3-D motion-capture studies "
-        "collected in the AffineDrift closure-rate dossier."
+        "collected in the AffineDrift closure-rate dossier. Reference frame: "
+        "right-hand rotation about the oriented swing-plane normal (SPV)."
     ),
     "omega_shaft_dps": (
         "Suggested range: 652-2,432 deg/s about the shaft (tour driver "
         "mean 1,307 +/- 304, n = 94). Source: Cheetham 2014, via the "
-        "AffineDrift closure-rate dossier."
+        "AffineDrift closure-rate dossier. Reference frame: right-hand "
+        "rotation about the shaft axis from grip toward clubhead (HTV)."
     ),
     "lie_angle_deg": (
         "Suggested range: 55-62 deg for a driver delivered near its "
@@ -197,18 +200,22 @@ FIELD_GUIDANCE: dict[str, str] = {
         "Suggested range: -20 to +20 deg rotation of the swing plane "
         "about the vertical (aim left/right of the target line). "
         "Source: 3-D swing-plane studies collected in the AffineDrift "
-        "closure-rate dossier."
+        "closure-rate dossier. Reference frame: rotate the plane about "
+        "world +y (up); +x is the target line and +z is right of target."
     ),
     "plane_side_tilt_deg": (
         "Suggested range: -60 to -35 deg side tilt for a driver (a "
         "vertical plane is 0; tour driver swing planes lean roughly "
         "45-55 deg from vertical). Source: published 3-D swing-plane "
-        "measurements."
+        "measurements. Reference frame: roll about the plane's downrange "
+        "axis after yaw; negative leans a right-handed driver's plane "
+        "toward the golfer."
     ),
     "plane_forward_tilt_deg": (
         "Suggested range: -10 to +10 deg forward/back tilt of the "
         "in-plane upright axis. Source: published 3-D swing-plane "
-        "measurements."
+        "measurements. Reference frame: pitch about the yawed-and-side-tilted "
+        "plane's local lateral axis; positive tips the upright axis downrange."
     ),
     "impact_time_scrub": (
         "Suggested range: anywhere inside the swing; the default is the "

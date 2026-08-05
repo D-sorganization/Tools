@@ -271,16 +271,16 @@ class TestVolumetricsParity:
         volume, centroid = mesh_volume_centroid(
             build_parametric_head(get_club("Driver 10.5°"))
         )
-        assert volume == pytest.approx(5.713864825174431e-4, rel=1e-12)
-        assert centroid[0] == pytest.approx(6.867533458253036e-3, rel=1e-12)
-        assert centroid[1] == pytest.approx(-6.598125640208495e-4, rel=1e-12)
-        assert centroid[2] == pytest.approx(-1.035457116425388e-6, rel=1e-9)
+        assert volume == pytest.approx(5.795797642950598e-4, rel=1e-12)
+        assert centroid[0] == pytest.approx(7.031455482617099e-3, rel=1e-12)
+        assert centroid[1] == pytest.approx(-5.048316491848659e-4, rel=1e-12)
+        assert centroid[2] == pytest.approx(2.6277706394935406e-8, abs=1e-12)
 
     def test_blade_putter_volume_and_cog_pinned(self) -> None:
         volume, centroid = mesh_volume_centroid(build_parametric_head(get_club(_BLADE)))
-        assert volume == pytest.approx(4.601486227358806e-5, rel=1e-12)
-        assert centroid[0] == pytest.approx(1.025352642901628e-3, rel=1e-12)
-        assert centroid[1] == pytest.approx(-2.017195987009723e-3, rel=1e-12)
+        assert volume == pytest.approx(4.6406452308838505e-5, rel=1e-12)
+        assert centroid[0] == pytest.approx(1.0267310067905715e-3, rel=1e-12)
+        assert centroid[1] == pytest.approx(-2.017822009425427e-3, rel=1e-12)
 
     def test_blade_putter_hosel_pinned(self) -> None:
         x, y, z = hosel_point(get_club(_BLADE))

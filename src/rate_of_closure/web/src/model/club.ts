@@ -239,9 +239,31 @@ export function faceNormalAtOffset(
 // ── Parametric head mesh (superellipse loft; see Python geometry.py) ──
 
 export const REFERENCE_HEAD_MASS_KG = 0.2;
-const RING_POINTS = 24;
+const RING_POINTS = 64;
 const SUPERELLIPSE_EXPONENT = 4.0;
-const FACE_FRACTIONS = [1.0, 2.0 / 3.0, 1.0 / 3.0];
+const FACE_FRACTIONS = [1.0, 0.8, 0.6, 0.4, 0.2];
+const BODY_SUBDIVISIONS = 3;
+
+type HeadSection = readonly [number, number, number, number];
+
+function refinedSections(sections: HeadSection[]): HeadSection[] {
+  const refined: HeadSection[] = [];
+  for (let index = 0; index < sections.length - 1; index += 1) {
+    const first = sections[index];
+    const second = sections[index + 1];
+    for (let step = 0; step < BODY_SUBDIVISIONS; step += 1) {
+      const fraction = step / BODY_SUBDIVISIONS;
+      refined.push([
+        first[0] + fraction * (second[0] - first[0]),
+        first[1] + fraction * (second[1] - first[1]),
+        first[2] + fraction * (second[2] - first[2]),
+        first[3] + fraction * (second[3] - first[3]),
+      ]);
+    }
+  }
+  refined.push(sections[sections.length - 1]);
+  return refined;
+}
 
 function superellipseRing(
   x: number,
@@ -304,9 +326,10 @@ function capFan(center: Vec3, ring: Vec3[], outwardX: boolean): Triangle[] {
 export function buildParametricHead(club: ClubSpec): Triangle[] {
   const profile = profileFor(club);
   const scale = massScale(club);
-  const sections = profile.sections.map(
+  const authoredSections = profile.sections.map(
     ([x, hh, hw, yc]) => [x * scale, hh * scale, hw * scale, yc * scale] as const,
   );
+  const sections = refinedSections(authoredSections);
   const rings = sections.map(([x, hh, hw, yc]) => superellipseRing(x, hh, hw, yc));
 
   const faceX = sections[0][0];
@@ -342,7 +365,9 @@ export function buildParametricHead(club: ClubSpec): Triangle[] {
       false,
     ),
   );
-  if (triangles.length !== (2 * (sections.length - 1) + 6) * RING_POINTS) {
+  const expected =
+    (2 * (sections.length - 1) + 2 * (faceRings.length - 1) + 2) * RING_POINTS;
+  if (triangles.length !== expected) {
     throw new Error("parametric head must be closed");
   }
   return triangles;

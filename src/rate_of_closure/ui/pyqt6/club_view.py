@@ -1,24 +1,8 @@
-"""3D animated clubhead view.
+"""Animated 3D clubhead view.
 
-The 3D view draws a simplified driver head (face plate, crown outline,
-shaft stub) at impact orientation and animates its rotation under the
-scenario's angular velocity across a few milliseconds either side of
-impact, with the reference-point and impact-point velocity vectors drawn
-to scale. Matplotlib 3D embedded in Qt, the house pattern for in-window
-3D rendering.
-
-Playback is user-controllable: play/pause, a 0.1x-3x speed multiplier,
-and two display modes — "Head Fixed in Place" (rotation only) and
-"Head Moving Through Space" (the head also translates along the target
-line at the delivery speed). Drag to orbit; scroll to zoom.
-
-An optional photorealistic mode replaces the procedural head with a
-user-supplied STL ("Load Clubhead STL…") or a generated parametric
-head, lambert-shaded under the same Rodrigues transform as the
-wireframe. Generated heads carry their per-type hosel point (the
-shaft line attaches there, along the lie) and their volumetric COG,
-shown by the "Show CG" marker (spec-CG fallback for non-watertight
-STLs). "Procedural Head" restores the default wireframe.
+The view renders procedural or STL geometry under the delivery transform,
+with playback, fixed/moving display modes, velocity vectors, hosel/shaft
+alignment, and an engineering-style center-of-gravity marker.
 """
 
 from __future__ import annotations
@@ -47,6 +31,7 @@ from PyQt6.QtWidgets import (
 from rate_of_closure.club.volumetrics import is_watertight, mesh_volume_centroid
 from rate_of_closure.mesh import HeadMesh, load_head_mesh
 from rate_of_closure.model import ImpactScenario, solve
+from rate_of_closure.ui.pyqt6.engineering_markers import draw_cg_marker
 from rate_of_closure.units import FIELD_GUIDANCE
 
 logger = logging.getLogger(__name__)
@@ -72,8 +57,9 @@ _SHAFT_STUB = 0.35
 # STL-mesh shading: fixed world-frame light and a steel-gray base tint.
 # Kept identical to the web clone (src/components/ClubCanvas.tsx).
 _LIGHT_DIR = np.array([0.3, 0.8, 0.5]) / np.linalg.norm([0.3, 0.8, 0.5])
-_MESH_BASE_RGB = np.array([0.62, 0.66, 0.72])
-_MESH_AMBIENT = 0.25
+_MESH_BASE_RGB = np.array([0.56, 0.62, 0.70])
+_MESH_AMBIENT = 0.22
+_MESH_SPECULAR = 0.32
 
 _ANIMATION_SPAN_MS = 8.0
 _ANIMATION_STEPS = 48
@@ -230,6 +216,7 @@ class Club3DView(QWidget):
         bar.addWidget(self._reset_mesh_button)
 
         self._show_cg_check = QCheckBox("Show CG")
+        self._show_cg_check.setChecked(True)
         self._show_cg_check.setToolTip(FIELD_GUIDANCE["show_cg_marker"])
         self._show_cg_check.toggled.connect(lambda _checked: self._draw())
         bar.addWidget(self._show_cg_check)
@@ -423,8 +410,7 @@ class Club3DView(QWidget):
         cg_point = self.cg_marker_point()
         if cg_point is not None:
             placed = _display(cg_point @ rotation.T + offset)
-            cg_style = {"color": _COL_COG, "s": 60, "marker": "X", "zorder": 6}
-            axes.scatter(*placed, label="volumetric CG", **cg_style)
+            draw_cg_marker(axes, placed, _COL_COG)
 
         if moving:
             # Target line on the ground plane, for spatial reference.
@@ -489,7 +475,9 @@ class Club3DView(QWidget):
         tris = (mesh.triangles + self._head_shift(mesh, scenario)) @ rotation.T + offset
         normals = mesh.normals @ rotation.T
         lambert = np.abs(normals @ _LIGHT_DIR)
-        intensity = _MESH_AMBIENT + (1.0 - _MESH_AMBIENT) * lambert
+        diffuse = (1.0 - _MESH_AMBIENT - _MESH_SPECULAR) * lambert
+        specular = _MESH_SPECULAR * lambert**20
+        intensity = _MESH_AMBIENT + diffuse + specular
         colors = np.clip(intensity[:, None] * _MESH_BASE_RGB[None, :], 0.0, 1.0)
         collection = Poly3DCollection(
             _display(tris), facecolors=colors, edgecolors="none", linewidths=0.0

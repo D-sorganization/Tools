@@ -83,6 +83,12 @@ class ResultRow(QFrame):
         self.value_label.setFont(font)
         self.value_label.setMinimumWidth(64)
         row.addWidget(self.value_label)
+        affordance = QLabel("ⓘ")
+        affordance.setToolTip(
+            "Open the engineering definition and reference-frame notes"
+        )
+        affordance.setAccessibleName(f"Explain {label}")
+        row.addWidget(affordance)
 
     @property
     def field(self) -> str:

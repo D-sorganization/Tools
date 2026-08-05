@@ -48,10 +48,16 @@ export function drawSwingScene(
   const inFlight = time > run.impactTimeS && showFlight;
   const extentX = inFlight
     ? Math.max(10, ...run.flight.map((p) => Math.abs(p.position[0]))) * 1.05
-    : Math.max(1.5, ...run.swing.map((p) => Math.abs(p.position[0]))) * 1.15;
+    : Math.max(
+        1.5,
+        ...run.swing.flatMap((p) => [p.position, ...p.joints].map((v) => Math.abs(v[0]))),
+      ) * 1.15;
   const extentY = inFlight
     ? Math.max(5, ...run.flight.map((p) => p.position[1])) * 1.3
-    : Math.max(1.5, ...run.swing.map((p) => Math.abs(p.position[1]))) * 1.15;
+    : Math.max(
+        1.5,
+        ...run.swing.flatMap((p) => [p.position, ...p.joints].map((v) => Math.abs(v[1]))),
+      ) * 1.15;
   const originX = inFlight ? 30 : width / 2;
   const scaleX = (width - 60) / (inFlight ? extentX : 2 * extentX);
   const scaleY = (height - 40) / (inFlight ? extentY : 2 * extentY);
@@ -134,6 +140,36 @@ export function drawSwingScene(
   ctx.beginPath();
   ctx.arc(px(head[0]), py(head[1]), 4, 0, 2 * Math.PI);
   ctx.fill();
+
+  const joints = run.swing[swingIndex].joints;
+  if (joints.length >= 2) {
+    joints.slice(0, -1).forEach((joint, linkIndex) => {
+      const next = joints[linkIndex + 1];
+      ctx.strokeStyle = linkIndex === joints.length - 2 ? "#cbd5e1" : "#a78bfa";
+      ctx.lineWidth = linkIndex === joints.length - 2 ? 5 : 8;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(px(joint[0]), py(joint[1]));
+      ctx.lineTo(px(next[0]), py(next[1]));
+      ctx.stroke();
+    });
+    for (const joint of joints) {
+      ctx.fillStyle = "#f8fafc";
+      ctx.strokeStyle = "#7c3aed";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(px(joint[0]), py(joint[1]), 5, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+    }
+    ctx.fillStyle = "#c4b5fd";
+    ctx.font = "600 12px sans-serif";
+    ctx.fillText(
+      `${run.sourceKind === "double_pendulum" ? "Double" : "Triple"} Pendulum — articulated links`,
+      12,
+      34,
+    );
+  }
 
   // Flight trajectory polyline: opt-in only (scale separation).
   if (showFlight) drawPath(run.flight, "rgba(52,211,153,0.25)", 1);

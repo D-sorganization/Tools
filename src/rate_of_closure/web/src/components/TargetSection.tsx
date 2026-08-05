@@ -13,6 +13,7 @@ import {
   type TargetRegionTs,
 } from "../model/targets";
 import { DISTANCE_UNITS, formatDistanceM } from "../model/units";
+import { DecimalInput } from "./DecimalInput";
 
 interface Props {
   target: TargetRegionTs;
@@ -40,19 +41,12 @@ export function TargetSection({ target, onChange, landing, unit = "yd" }: Props)
   ) => (
     <label className="flex items-center gap-1 text-slate-300" title={title}>
       {label} ({unit})
-      <input
-        type="number"
-        inputMode="decimal"
+      <DecimalInput
         value={Number((value / factor).toFixed(1))}
+        aria-label={`${label} ${unit}`}
+        min={key === "lateralM" ? undefined : Number.EPSILON}
         title={title}
-        onChange={(e) => {
-          const parsed = Number(e.target.value);
-          // Geometry entries must stay positive; lateral may be signed.
-          const valid =
-            Number.isFinite(parsed) && (key === "lateralM" || parsed > 0);
-          // Entries display in the session unit; state stays SI metres.
-          if (valid) patch({ [key]: parsed * factor });
-        }}
+        onCommit={(parsed) => patch({ [key]: parsed * factor })}
         className={inputClass}
       />
     </label>

@@ -12,16 +12,22 @@
 import { useMemo, useState } from "react";
 
 import { ClubCanvas } from "./components/ClubCanvas";
+import { DecimalInput } from "./components/DecimalInput";
+import { FieldInfo } from "./components/FieldInfo";
 import { FlightExplorerPanel } from "./components/FlightExplorerPanel";
 import { PlotsPanel } from "./components/PlotsPanel";
 import { PuttingPanel } from "./components/PuttingPanel";
 import { DEFAULT_TARGET, type TargetRegionTs } from "./model/targets";
 import { SimulationPanel } from "./components/SimulationPanel";
 import { VariationPanel } from "./components/VariationPanel";
-import { ClubPanel, type GeneratedHead } from "./components/ClubPanel";
+import { ClubPanel } from "./components/ClubPanel";
+import {
+  generatedHeadFor,
+  type GeneratedHead,
+} from "./model/clubHeadGeneration";
 import { Derivation } from "./components/Derivation";
 import { GlossaryPanel } from "./components/GlossaryPanel";
-import { type ClubSpec } from "./model/club";
+import { getClub, type ClubSpec } from "./model/club";
 import {
   METRIC_EXPLANATIONS,
   RESULT_EXPLANATIONS,
@@ -142,6 +148,7 @@ const TABS = [
 ] as const;
 
 export default function App() {
+  const defaultDriver = useMemo(() => getClub("Driver 10.5°"), []);
   const [scenario, setScenario] = useState<ImpactScenario>(DEFAULT_SCENARIO);
   // Target region (#4125 H7b): shared by the Simulation flight view /
   // solver and the Variation landing overlay (hold-% headline).
@@ -155,10 +162,10 @@ export default function App() {
     // Ball-flight distances (#4125 H6): yards by default.
     distance: "yd",
   });
-  const [generatedHead, setGeneratedHead] = useState<GeneratedHead | null>(
-    null,
+  const [generatedHead, setGeneratedHead] = useState<GeneratedHead>(() =>
+    generatedHeadFor(defaultDriver),
   );
-  const [clubSpec, setClubSpec] = useState<ClubSpec | null>(null);
+  const [clubSpec, setClubSpec] = useState<ClubSpec>(defaultDriver);
   const [glossaryTerm, setGlossaryTerm] = useState<string | undefined>(undefined);
   const result = useMemo(() => solve(scenario), [scenario]);
   const metrics = useMemo(() => closureMetrics(scenario), [scenario]);
@@ -219,7 +226,12 @@ export default function App() {
             : "border-slate-800/80 bg-slate-900/50 hover:border-slate-600 hover:bg-slate-800/50")
         }
       >
-        <span className="text-slate-400">{spec.label}</span>
+        <span className="flex items-center gap-2 text-slate-300">
+          {spec.label}
+          <span aria-hidden="true" className="text-[10px] font-semibold uppercase tracking-wide text-sky-400">
+            Details ›
+          </span>
+        </span>
         <span
           className={
             spec.key === "pathDeviationDeg"
@@ -371,15 +383,17 @@ export default function App() {
                     className="mb-3 block text-sm"
                   >
                     <span className="mb-1 flex justify-between text-slate-300">
-                      <span>{label}</span>
+                      <span className="flex items-center">
+                        {label}
+                        <FieldInfo label={label} guidance={FIELD_GUIDANCE[key]} />
+                      </span>
                       <span className="text-slate-500">{unit}</span>
                     </span>
-                    <input
-                      type="number"
-                      inputMode="decimal"
+                    <DecimalInput
                       step={step}
                       value={Number(displayed.toFixed(4))}
-                      onChange={(e) => update(key, quantity, e.target.value)}
+                      aria-label={`${label} ${unit}`.trim()}
+                      onCommit={(value) => update(key, quantity, String(value))}
                       title={FIELD_GUIDANCE[key]}
                       className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
                     />

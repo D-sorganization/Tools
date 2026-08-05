@@ -83,19 +83,19 @@ describe("Python parity pins", () => {
     const { volumeM3, cog } = meshVolumeCentroid(
       buildParametricHead(getClub("Driver 10.5°")),
     );
-    expect(volumeM3).toBeCloseTo(5.713864825174431e-4, 15);
-    expect(cog[0]).toBeCloseTo(6.867533458253036e-3, 14);
-    expect(cog[1]).toBeCloseTo(-6.598125640208495e-4, 14);
-    expect(cog[2]).toBeCloseTo(-1.035457116425388e-6, 13);
+    expect(volumeM3).toBeCloseTo(5.795797642950598e-4, 15);
+    expect(cog[0]).toBeCloseTo(7.031455482617099e-3, 14);
+    expect(cog[1]).toBeCloseTo(-5.048316491848659e-4, 14);
+    expect(cog[2]).toBeCloseTo(2.6277706394935406e-8, 13);
   });
 
   it("pins the blade putter volume and COG", () => {
     const { volumeM3, cog } = meshVolumeCentroid(
       buildParametricHead(getClub("Blade Putter")),
     );
-    expect(volumeM3).toBeCloseTo(4.601486227358806e-5, 15);
-    expect(cog[0]).toBeCloseTo(1.025352642901628e-3, 14);
-    expect(cog[1]).toBeCloseTo(-2.017195987009723e-3, 14);
+    expect(volumeM3).toBeCloseTo(4.6406452308838505e-5, 15);
+    expect(cog[0]).toBeCloseTo(1.0267310067905715e-3, 14);
+    expect(cog[1]).toBeCloseTo(-2.017822009425427e-3, 14);
   });
 
   it("reports both geometric and spec CG values", () => {

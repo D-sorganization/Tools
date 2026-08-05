@@ -136,7 +136,7 @@ describe("parametric head", () => {
   it("is closed and deterministic", () => {
     const first = buildParametricHead(getClub(DRIVER));
     const second = buildParametricHead(getClub(DRIVER));
-    expect(first).toHaveLength(288);
+    expect(first).toHaveLength(1792);
     expect(first).toEqual(second);
   });
 

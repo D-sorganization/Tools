@@ -126,6 +126,7 @@ class ControlsPanel(QWidget):
 
         self._club_combo = QComboBox()
         self._club_combo.addItems(club_names())
+        self._club_combo.setCurrentText("Driver 10.5°")
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
         self._club_combo.currentTextChanged.connect(self._on_club_changed)
         form.addRow("Club", self._club_combo)

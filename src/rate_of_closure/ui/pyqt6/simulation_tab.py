@@ -135,10 +135,7 @@ class SimulationTab(QWidget):
         left.setWidget(left_content)
         left.setMinimumWidth(300)
 
-        # Scale-separated viewers as sub-tabs of the display area
-        # (epic #4120 V2): strike (face scale), swing (metres), flight
-        # (tens of metres) — each with its own display checklist whose
-        # state persists for the session (plain widget state).
+        # Scale-separated face, swing, kinetics, and flight displays.
         right = QTabWidget()
         right.addTab(self._strike_view, "Strike")
         right.addTab(self._impact_interval_view, "Impact Interval")
@@ -160,7 +157,6 @@ class SimulationTab(QWidget):
 
         self._show_explanation(LAUNCH_ROWS[0][0])
 
-    # ── construction ────────────────────────────────────────────────
     def _build_setup_box(self) -> QGroupBox:
         box = QGroupBox("Simulation Setup")
         form = QFormLayout(box)
@@ -186,6 +182,7 @@ class SimulationTab(QWidget):
         self._tilt_spins["side_tilt_deg"].setValue(-45.0)
         self._club_combo = QComboBox()
         self._club_combo.addItems(club_names())
+        self._club_combo.setCurrentText("Driver 10.5°")
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
         form.addRow("Club", self._club_combo)
 
@@ -273,7 +270,6 @@ class SimulationTab(QWidget):
         layout.addWidget(self._explanation)
         return box
 
-    # ── public API ──────────────────────────────────────────────────
     def set_scenario(self, scenario: ImpactScenario) -> None:
         """Adopt the explorer's scenario (drives the manual source)."""
         self._scenario = scenario
@@ -415,7 +411,6 @@ class SimulationTab(QWidget):
         self._view.stop()
         self._solver_panel.stop()
 
-    # ── internals ──────────────────────────────────────────────────
     def _ensure_source(self):  # type: ignore[no-untyped-def]
         if self._source is None:
             self._source = make_source(
@@ -425,8 +420,12 @@ class SimulationTab(QWidget):
 
     def _invalidate_source(self, *_args: object) -> None:
         self._source = None
-        if self._tau is not None:
-            self._update_delivery_label(self._tau)
+        # Recompute at maximum speed; tau is source-specific.
+        self._tau = None
+        # Tilt controls emit before the scrub box exists during construction.
+        if hasattr(self, "_scrub_label"):
+            self._scrub_label.setText("auto")
+            self._delivery_label.setText("Awaiting updated simulation")
 
     def _scrub_time(self, value: int) -> float:
         source = self._ensure_source()

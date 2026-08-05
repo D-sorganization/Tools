@@ -68,7 +68,25 @@ BASE_SECTIONS: tuple[tuple[float, float, float], ...] = (
 )
 
 #: Concentric face-patch rings as fractions of the face boundary.
-_FACE_FRACTIONS: tuple[float, ...] = (1.0, 2.0 / 3.0, 1.0 / 3.0)
+_FACE_FRACTIONS: tuple[float, ...] = (1.0, 0.8, 0.6, 0.4, 0.2)
+#: Longitudinal subdivisions between authored profile stations.
+_BODY_SUBDIVISIONS = 3
+
+
+def _refined_sections(
+    sections: list[tuple[float, float, float, float]],
+) -> list[tuple[float, float, float, float]]:
+    """Linearly subdivide profile stations without changing the envelope."""
+    refined: list[tuple[float, float, float, float]] = []
+    for first, second in zip(sections[:-1], sections[1:], strict=True):
+        for step in range(_BODY_SUBDIVISIONS):
+            fraction = step / _BODY_SUBDIVISIONS
+            values = tuple(
+                a + fraction * (b - a) for a, b in zip(first, second, strict=True)
+            )
+            refined.append((values[0], values[1], values[2], values[3]))
+    refined.append(sections[-1])
+    return refined
 
 
 def _sagitta(radius_m: float | None, offset_m: float) -> float:
@@ -164,10 +182,11 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
     """
     profile = profile_for(spec)
     scale = mass_scale(spec)
-    sections = [
+    authored_sections = [
         (x * scale, hh * scale, hw * scale, yc * scale)
         for x, hh, hw, yc in profile.sections
     ]
+    sections = _refined_sections(authored_sections)
 
     def body_ring(section: tuple[float, float, float, float]) -> np.ndarray:
         x, hh, hw, yc = section
@@ -211,7 +230,7 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
     triangles.extend(cap_fan(tail_center, rings[-1], outward_x=False))
 
     mesh = np.array(triangles)
-    expected = (2 * (len(sections) - 1) + 6) * RING_POINTS
+    expected = (2 * (len(sections) - 1) + 2 * (len(face_rings) - 1) + 2) * RING_POINTS
     ensure(mesh.shape[0] == expected, "parametric head is closed")
     ensure(bool(np.isfinite(mesh).all()), "parametric head vertices finite")
     return mesh

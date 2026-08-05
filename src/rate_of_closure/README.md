@@ -88,6 +88,14 @@ tools for desktop packaging. The new interval kernel is currently Python-only;
 the web surface retains the fast impulse model until the already-planned
 `swing-core` WASM parity swap, avoiding a second hand-maintained physics copy.
 
+Both interfaces open with a generated driver head and its engineering CG
+target visible. The Simulation view runs immediately and supports manual,
+double-pendulum, and triple-pendulum sources; pendulum modes draw every joint
+and link rather than only the clubhead trace. Directional entries include
+clickable reference-frame notes. Web numeric fields select the complete value
+on focus and accept intermediate signed decimal drafts (for example, `-12.5`
+degrees of spin-axis tilt) before committing on Enter or focus loss.
+
 ## Build a Standalone Executable
 
 Users can package the explorer and experiment without a Python

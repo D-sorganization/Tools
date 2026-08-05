@@ -12,9 +12,8 @@
  * where scipy RK45 and this RK4 differ by integration error only).
  *
  * NOTE (P7): this hand port is a stopgap — the swing-core / tools-core
- * WASM kernels replace this module in epic phase P7, which also brings the
- * gear-effect model, the triple pendulum, and the screw-axis overlay to
- * the web. Skipped here on purpose.
+ * WASM kernels replace the double/triple RK4 kernels in epic phase P7 and
+ * add the gear-effect model plus screw-axis overlay to the web.
  *
  * Frames: app frame is x target, y up, z right; the flight math runs in
  * the UpstreamDrift flight frame (x forward, y left, z up).
@@ -27,6 +26,7 @@ import {
   simulateFlight,
   type FlightPoint,
 } from "./flight";
+import { golfTripleParameters, simulateTriplePendulum } from "./triplePendulum";
 
 export { deriveLaunch, simulateFlight } from "./flight";
 export type { FlightPoint, FlightResult, Launch } from "./flight";
@@ -267,7 +267,7 @@ export function solveImpact(input: DeliveryInput): ImpactOutput {
 
 export const BALL_POSITION: Vec3 = [0.0, GOLF_BALL_RADIUS_M, 0.0];
 
-export type WebSourceKind = "manual" | "double_pendulum";
+export type WebSourceKind = "manual" | "double_pendulum" | "triple_pendulum";
 
 export interface SimulationInput {
   sourceKind: WebSourceKind;
@@ -287,9 +287,11 @@ export interface SwingSampleTs {
   t: number;
   position: Vec3; // app frame, ball-aligned
   velocity: Vec3;
+  joints: Vec3[]; // pivot -> articulated joints -> clubhead, ball-aligned
 }
 
 export interface SimulationRunTs {
+  sourceKind: WebSourceKind;
   swing: SwingSampleTs[];
   impactTimeS: number;
   totalDurationS: number;
@@ -324,19 +326,23 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
         t,
         position: [speed * rel, 0, 0],
         velocity: [speed, 0, 0],
+        joints: [],
       });
     }
     return samples;
   }
-  // Double pendulum on the oriented plane (swing frame), adapted to app.
-  const p = golfDefaultParams();
+  // Pendulum on the oriented plane (swing frame), adapted to app.
+  const doubleParameters = golfDefaultParams();
   const g = inPlaneGravity(
     rad(input.planeYawDeg),
     rad(input.planeSideTiltDeg),
     rad(input.planeForwardTiltDeg),
   );
   const nSteps = Math.round(input.swingDurationS / dt);
-  const states = simulatePendulum(p, [-Math.PI / 2, 0, 0, 0], g, dt, nSteps);
+  const states =
+    input.sourceKind === "double_pendulum"
+      ? simulatePendulum(doubleParameters, [-Math.PI / 2, 0, 0, 0], g, dt, nSteps)
+      : simulateTriplePendulum(g, dt, nSteps);
   // Plane axes in the swing world frame, then app frame via
   // (x, y, z)_app = (x, z, -y)_swing.
   const yaw = rad(input.planeYawDeg);
@@ -354,16 +360,38 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
   const xAxis = fromFlightFrame(xAxisSwing);
   const upAxis = fromFlightFrame(upAxisSwing);
   return states.map((state, index) => {
-    const [th1, th2, w1, w2] = state;
-    const t12 = th1 + th2;
-    const x = p.l1 * Math.sin(th1) + p.l2 * Math.sin(t12);
-    const yLoc = -(p.l1 * Math.cos(th1) + p.l2 * Math.cos(t12));
-    const vx = p.l1 * Math.cos(th1) * w1 + p.l2 * Math.cos(t12) * (w1 + w2);
-    const vy = p.l1 * Math.sin(th1) * w1 + p.l2 * Math.sin(t12) * (w1 + w2);
+    const triple = golfTripleParameters();
+    const angles = input.sourceKind === "double_pendulum"
+      ? [state[0], state[0] + state[1]]
+      : state.slice(0, 3);
+    const rates = input.sourceKind === "double_pendulum"
+      ? [state[2], state[2] + state[3]]
+      : state.slice(3, 6);
+    const lengths = input.sourceKind === "double_pendulum"
+      ? [doubleParameters.l1, doubleParameters.l2]
+      : triple.length;
+    const localJoints: Array<[number, number]> = [[0, 0]];
+    let x = 0;
+    let yLoc = 0;
+    let vx = 0;
+    let vy = 0;
+    angles.forEach((angle, linkIndex) => {
+      const length = lengths[linkIndex];
+      x += length * Math.sin(angle);
+      yLoc -= length * Math.cos(angle);
+      vx += length * Math.cos(angle) * rates[linkIndex];
+      vy += length * Math.sin(angle) * rates[linkIndex];
+      localJoints.push([x, yLoc]);
+    });
     return {
       t: index * dt,
       position: add(scale(xAxis, x), scale(upAxis, yLoc)),
       velocity: add(scale(xAxis, vx), scale(upAxis, vy)),
+      joints: [
+        ...localJoints.map(([jointX, jointY]) =>
+          add(scale(xAxis, jointX), scale(upAxis, jointY)),
+        ),
+      ],
     };
   });
 }
@@ -395,6 +423,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   const aligned = swing.map((sample) => ({
     ...sample,
     position: add(sample.position, offset),
+    joints: sample.joints.map((joint) => add(joint, offset)),
   }));
 
   const v = impactSample.velocity;
@@ -421,6 +450,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   }));
 
   return {
+    sourceKind: input.sourceKind,
     swing: aligned,
     impactTimeS: impactSample.t,
     totalDurationS: aligned[aligned.length - 1].t + flightResult.flightTimeS,

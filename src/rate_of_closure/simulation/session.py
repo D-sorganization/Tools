@@ -159,6 +159,8 @@ class SimulationRun:
             swing is translated so the clubhead meets the ball at tau).
         swing_poses: (N, 4, 4) ball-aligned SE(3) clubhead poses.
         swing_twists: (N, 6) world twists ``[wx, wy, wz, vx, vy, vz]``.
+        swing_joints: (N, J, 3) ball-aligned articulated joint positions;
+            J=0 for manual, 3 for double, and 4 for triple pendulum.
         impact_time_s: The impact instant tau actually used.
         delivery: Delivery numbers + D-plane diagnostics at tau.
         post_impact: Post-impact ball and club state.
@@ -173,6 +175,7 @@ class SimulationRun:
     swing_positions: np.ndarray
     swing_poses: np.ndarray
     swing_twists: np.ndarray
+    swing_joints: np.ndarray
     impact_time_s: float
     delivery: DeliveryDerived
     post_impact: PostImpactState
@@ -397,6 +400,12 @@ def run_simulation(config: SimulationConfig) -> SimulationRun:
     poses[:, :3, 3] += offset
     positions = poses[:, :3, 3].copy()
     twists = np.stack([s.twist for s in samples])
+    joint_sampler = getattr(source, "joint_positions", None)
+    swing_joints = (
+        np.stack([np.asarray(joint_sampler(float(t))) + offset for t in times])
+        if callable(joint_sampler)
+        else np.zeros((len(times), 0, 3))
+    )
 
     delivery = delivery_at(source, tau, config.scenario, config.club)
     interval_result: ImpactIntervalResult | None = None
@@ -445,6 +454,7 @@ def run_simulation(config: SimulationConfig) -> SimulationRun:
         swing_positions=positions,
         swing_poses=poses,
         swing_twists=twists,
+        swing_joints=swing_joints,
         impact_time_s=tau,
         delivery=delivery,
         post_impact=post,

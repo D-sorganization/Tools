@@ -154,6 +154,10 @@ class TestSession:
         assert run.launch["ball_speed_mph"] > speed * 2.23694
         assert run.launch["carry_m"] > 0.0
         assert run.total_duration_s > run.impact_time_s
+        assert run.swing_joints.shape == (len(run.swing_times), 3, 3)
+        np.testing.assert_allclose(
+            run.swing_joints[:, -1], run.swing_positions, atol=1e-10
+        )
 
     def test_triple_pendulum_run_end_to_end(self) -> None:
         run = run_simulation(
@@ -163,6 +167,10 @@ class TestSession:
         )
         assert run.launch["ball_speed_mph"] > 0.0
         assert len(run.flight_positions) > 2
+        assert run.swing_joints.shape == (len(run.swing_times), 4, 3)
+        np.testing.assert_allclose(
+            run.swing_joints[:, -1], run.swing_positions, atol=1e-10
+        )
 
     def test_scrubber_tau_shift_gives_clubhead_ball_coincidence(self) -> None:
         for tau in (0.010, 0.030, 0.045):

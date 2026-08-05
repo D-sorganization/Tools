@@ -9,6 +9,8 @@
 
 import { useMemo, useState } from "react";
 
+import { DecimalInput } from "./DecimalInput";
+
 import {
   MAX_RUNS,
   keysForMode,
@@ -185,16 +187,12 @@ export function VariationPanel({
               title={`Monte-Carlo runs per study (browser-capped at ${MAX_RUNS}; the sensitivity pass repeats this once per noise row). The WASM + web-worker upgrade removes the cap.`}
             >
               <span className="mb-1 block text-slate-300">Runs (≤ {MAX_RUNS})</span>
-              <input
-                type="number"
+              <DecimalInput
                 min={2}
                 max={MAX_RUNS}
                 value={nRuns}
-                onChange={(e) =>
-                  setNRuns(
-                    Math.max(2, Math.min(MAX_RUNS, Number(e.target.value) || 2)),
-                  )
-                }
+                aria-label="Runs"
+                onCommit={(value) => setNRuns(Math.round(value))}
                 className={inputClass}
               />
             </label>
@@ -203,11 +201,11 @@ export function VariationPanel({
               title="Master RNG seed — the same plan and seed always reproduce the same dataset (per-variable seeded streams)."
             >
               <span className="mb-1 block text-slate-300">Seed</span>
-              <input
-                type="number"
+              <DecimalInput
                 min={0}
                 value={seed}
-                onChange={(e) => setSeed(Math.max(0, Number(e.target.value) || 0))}
+                aria-label="Seed"
+                onCommit={(value) => setSeed(Math.round(value))}
                 className={inputClass}
               />
             </label>
@@ -272,11 +270,11 @@ export function VariationPanel({
                       </option>
                     ))}
                   </select>
-                  <input
-                    type="number"
+                  <DecimalInput
                     step="any"
                     value={spec.scale}
-                    onChange={(e) => setSpec(index, { scale: Number(e.target.value) })}
+                    aria-label={`${variableLabel(spec.variableKey)} noise scale`}
+                    onCommit={(value) => setSpec(index, { scale: value })}
                     title={`Noise scale [${def?.unit ?? ""}]. ${def?.guidance ?? ""}`}
                     className={inputClass}
                   />
