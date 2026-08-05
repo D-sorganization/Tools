@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.12.0                                     |
-| **Spec Version**        | 1.12.0                                     |
+| **Current Version**     | 1.13.0                                     |
+| **Spec Version**        | 1.13.0                                     |
 | **Last Spec Update**    | 2026-08-04                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,66 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-04 Course showcase — golf-course scene, target optimization, launcher styling, yards units (epic #4125, H7 + H6)
+
+- **H7a golf-course scene**: the simulation/flight displays render as a
+  course. `rate_of_closure/ui/course.py` derives every scene tone from
+  the shared chart palette (blends of the palette green toward
+  black/white — rough/fairway/green one grass family, hole/flag/tee
+  from palette red/yellow; no widget hex) with a configurable
+  `CourseLayout` (green distance/radius, fairway half-width);
+  `ui/pyqt6/course_scene.py` paints the swing 3D ground plane, the
+  side-profile ground band + green/flagstick, and the top-down
+  rough/fairway/green/hole/tee. Ball/Ground checkboxes stay; a new
+  'Course Elements' checkbox (sourced guidance) gates the furniture in
+  the swing scene and FlightView. Web mirror: `model/theme.ts` (shared
+  chartColors + blend/withAlpha) and `model/course.ts` (same blend
+  fractions, parity-tested) drive course-styled `swingSceneDraw` and
+  `FlightCanvases` with the same checkbox.
+- **H7b target optimization**: `swing_sim/solver/targets.py`
+  `TargetRegion` — green (circle at distance, optional lateral offset,
+  radius) or fairway (distance band × half-width corridor) with an
+  exact signed distance (negative inside), containment test, and a
+  residual = distance-outside-region (0 inside) + a small centering
+  term. `ImpactGoal` gains an additive `target_region` (+weight); the
+  objective appends one carry-scaled residual and `solve()` reports
+  `landing_lateral_m` / `target_distance_m` (+ a `target_region_m`
+  per-goal entry). App facade `simulation/targets.py` adds
+  `hold_stats`/`hold_fraction` (Variation headline: share of
+  Monte-Carlo landings holding the target) and the course-layout
+  bridge. PyQt6: `TargetPanel` on the Solver panel (kind/geometry/
+  weight entries — the cheap place/edit seam, the flight top-down view
+  renders the region live — plus 'Optimize to Target' reusing the
+  partition/progress/cancel machinery; solver row widgets split into
+  `solver_rows.py` for the 500-LOC budget); FlightView overlays the
+  dashed region + the Variation landing scatter with an
+  "N/M shots hold the target (x%)" title (VariationTab
+  `studyCompleted` → main-window wiring). Web: `model/targets.ts`
+  parity mirror pinned against the Python tests, the TS solver
+  extended with the region goal ('Optimize to Target' button + signed-
+  distance result row), a `TargetSection` (entries + containment
+  readout) on the flight view, dashed target on the top-down canvas,
+  and the Variation landing canvas colored by containment with the
+  hold-% headline. Tests: signed-distance inside/boundary/outside pins
+  for both kinds (both languages), optimizer reaching a reachable
+  green from a cold start (both solvers), hand-counted 3-of-5 hold
+  fixture matching `hold_fraction`.
+- **H6 showcase styling + yards**: `ui/pyqt6/app_style.py` applies the
+  UpstreamDrift launcher's visual language app-wide (hover-highlighted
+  buttons with a subtle bottom-edge shadow, rounded launcher-card
+  group boxes, hover/selected tabs), all colors derived from the live
+  QPalette (tests pin: no hex, palette/rgba only); web accent hexes in
+  KineticsSection/ClubCanvas aligned onto the shared `model/theme.ts`
+  palette. New 'Distance' quantity: `DISTANCE_UNITS` (yd default, m
+  selectable; canonical stays SI metres) joins `QUANTITY_UNITS` — a
+  Distance drop-down in both UIs' Units sections — applied to flight
+  result rows (carry/lateral/putt roll-out; apex stays metres),
+  FlightView + putting axes (tick formatters, canonical data),
+  plotting-catalog flight/putting distance variables (`DISTANCE_KEYS`
+  + render-pipeline conversion incl. CSV headers), variation output
+  stats, and the target-region entries (canonical round-trip).
+  Conversion + default-is-yards tests both sides.
+
 ### 2026-08-04 Realistic type-specific heads, volumetric COG, putters, hosel-true shafts (epic #4125, H1)
 
 - `src/rate_of_closure/club/head_profiles.py` — per-club-type parametric
@@ -2432,6 +2492,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-04 | 1.13.0 | feat(rate_of_closure, swing_sim, #4125 H6-H7): course showcase — H7a themed golf-course scene (palette-derived grass family, fairway strip, green + hole/flag at a configurable distance, tee marker; Course Elements toggle; both UIs incl. web canvas mirrors with a shared chart-palette module); H7b target regions (`solver/targets.py` green circle / fairway corridor with exact signed distance + containment, additive ImpactGoal region residual with centering term, Optimize-to-Target on both solver UIs reusing partition/progress/cancel, target editing reflected live in the course scene, Variation landing-scatter overlay with the hold-% headline via hold_fraction, TS parity mirror pinned test-for-test); H6 launcher-language styling (palette-only QSS: button hover/pressed + subtle shadow, launcher-card group boxes, hover tabs; web accents aligned onto the shared palette) and the yards-default Distance quantity (yd/m drop-down in both UIs, SI-canonical internals, applied to flight/putting result rows, view axes, plotting catalog distance variables incl. exports, variation stats, and target entries; conversion + default-is-yards tests). |
 | 2026-08-04 | 1.12.0 | feat(rate_of_closure, swing_sim, #4125 H1-H3): H1 realistic type-specific parametric heads — per-type `head_profiles` (woods/hybrids/iron+wedge blades with cavity-back recess, generic mallet + anser-style blade putters), divergence-theorem `volumetrics` (watertightness-gated volume/centroid, cube-exact + sphere <1% validation, per-type COG-vs-spec bands), hosel-true shaft attachment in both renderers, 'Show CG' volumetric-COG markers in both UIs, 16-club library with Blade/Mallet putter entries, consistent outward mesh winding, TS parity (`clubHeads.ts`, `volumetrics.ts`) with volume/COG/hosel pins. H2 swing kinetics — `simulation/kinetics.py` per-sample inverse dynamics over the double-pendulum swing (net/gravity/damping/applied torque breakdown, joint powers, Newton–Euler reaction forces, clubhead-force estimate, documented sign convention, `simulate_forced` round-trip/energy/statics tests, public `DoublePendulumSwing.state_at`); 'Kinetics' catalog category (11 series keys) + Joint Torques/Power/Reaction Forces built-ins in both UIs; PyQt6 'Show Kinetics' 3D overlay + Kinetics sub-tab (plots, downswing-timed peak table); web `kinetics.ts` mirror parity-pinned vs a pytest fixture (web playback overlay and triple-pendulum kinetics deferred, documented). H3 putting vertical — self-façaded `shared/python/swing_sim/putting/` package (COR impulse with the 2/7 rolling-cap derivation, stimpmeter-derived rolling resistance with exact round-trip, sloped-green RK4 with break and the lip-capture bound, Holmes 1991 cited); 'Putting' tab in both UIs with phase-coded green view and capture-bound plot; additive putting plot catalog; Python↔TS parity pins on reference putts; UpstreamDrift putting assets credited. Glossary union across the three verticals: 76 terms, TS mirror + fixture regenerated. |
 | 2026-08-04 | 1.11.0 | feat(rate_of_closure, #4120 V4): investigation-suite polish — persistent selected-row highlight (palette-derived, both UIs) with the row name leading every explanation panel; 60-term sourced DbC glossary with searchable PyQt6 tab / web section, explanation-panel deep links, and a fixture-pinned TS mirror; Derivation & Traceability renamed Calculation Description; sectioned full-model derivations (closure chain + impact impulse/COR/MOI-tensor/2-7 cap/D-plane/gear effect + flight EOM with the active literature model's cited coefficient law + pendulum Lagrangian with live plane-tilt gravity) rendering conditionally per configuration in mathtext/KaTeX; per-tab cold-user help (PyQt6 '?' corner button, web collapsible How-to sections) contract-tested >300 chars; hover-hint completeness sweeps test-enforced across every interactive widget/element of both UIs. |
 | 2026-08-04 | 1.10.0 | feat(swing_sim, rate_of_closure, #4120 V3): shared variation/Monte-Carlo engine — `shared/python/swing_sim/variation/` (namespaced variable registry, NoiseSpec/VariationPlan JSON schema, seeded parallel N-run engine with solver-shaped progress/cancel, dispersion + one-at-a-time sensitivity + Spearman + 2-sigma landing ellipse, CSV/JSON dataset IO), the PyQt6 "Variation" tab in the Rate of Closure explorer, and the web mirror (seeded mulberry32 engine, capped <=500 runs, shared plan schema, statistical parity fixture vs the Python engine). Prior-art survey of UpstreamDrift Monte-Carlo/perturbation/movement_optimizer machinery credited in module docstrings. |
