@@ -277,6 +277,18 @@ def _entries() -> list[VariableSpec]:
             _kinetics_series(lambda k: k.torque_damping_nm[:, 1]),
         ),
         (
+            "shoulder_ztcf_torque_nm",
+            "Shoulder ZTCF Inertial Torque",
+            "N·m",
+            _kinetics_series(lambda k: k.ztcf_inertial_torque_nm[:, 0]),
+        ),
+        (
+            "wrist_ztcf_torque_nm",
+            "Wrist ZTCF Inertial Torque",
+            "N·m",
+            _kinetics_series(lambda k: k.ztcf_inertial_torque_nm[:, 1]),
+        ),
+        (
             "shoulder_power_w",
             "Shoulder Power",
             "W",
@@ -305,6 +317,24 @@ def _entries() -> list[VariableSpec]:
             "Clubhead Force",
             "N",
             _kinetics_series(lambda k: k.force_magnitude_n("clubhead")),
+        ),
+        (
+            "shoulder_ztcf_force_n",
+            "Shoulder ZTCF Reaction Force",
+            "N",
+            _kinetics_series(lambda k: k.ztcf_force_magnitude_n("shoulder")),
+        ),
+        (
+            "wrist_ztcf_force_n",
+            "Wrist ZTCF Reaction Force",
+            "N",
+            _kinetics_series(lambda k: k.ztcf_force_magnitude_n("wrist")),
+        ),
+        (
+            "clubhead_ztcf_force_n",
+            "Clubhead ZTCF Force",
+            "N",
+            _kinetics_series(lambda k: k.ztcf_force_magnitude_n("clubhead")),
         ),
     ]
     impact: list[tuple[str, str, str, Extractor]] = [

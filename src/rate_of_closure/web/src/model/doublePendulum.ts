@@ -1,14 +1,23 @@
 /** Passive and prescribed-torque double-pendulum integration. */
 
 import { PrescribedTorqueProfile } from "./torqueProfiles";
-
-export const DOUBLE_PENDULUM_MODEL_ID = "model.double_pendulum.v1";
-export const SHOULDER_JOINT_ID = "joint.shoulder";
-export const WRIST_JOINT_ID = "joint.wrist";
-export const DOUBLE_PENDULUM_JOINT_IDS = Object.freeze([
+import {
+  DOUBLE_PENDULUM_JOINT_IDS,
+  DOUBLE_PENDULUM_MODEL_ID,
+  JointLockConfig,
+  NO_JOINT_LOCKS,
   SHOULDER_JOINT_ID,
   WRIST_JOINT_ID,
-] as const);
+} from "./jointLocks";
+
+export {
+  DOUBLE_PENDULUM_JOINT_IDS,
+  DOUBLE_PENDULUM_MODEL_ID,
+  JointLockConfig,
+  NO_JOINT_LOCKS,
+  SHOULDER_JOINT_ID,
+  WRIST_JOINT_ID,
+} from "./jointLocks";
 
 export interface PendulumParams {
   m1: number;
@@ -27,12 +36,17 @@ export type PendulumState = [number, number, number, number];
 export type JointTorquesNm = readonly [number, number];
 
 export type DoublePendulumRunConfig =
-  | Readonly<{ mode: "passive" }>
-  | Readonly<{ mode: "prescribed"; profile: PrescribedTorqueProfile }>;
+  | Readonly<{ mode: "passive"; jointLocks: JointLockConfig }>
+  | Readonly<{
+      mode: "prescribed";
+      profile: PrescribedTorqueProfile;
+      jointLocks: JointLockConfig;
+    }>;
 
 export interface DoublePendulumRunSummary {
   mode: "passive" | "prescribed";
   profileId: string | null;
+  lockedJointIds: readonly string[];
   appliedTorqueHistory: readonly AppliedTorqueSample[];
 }
 
@@ -42,15 +56,31 @@ export interface AppliedTorqueSample {
 }
 
 export const PASSIVE_DOUBLE_PENDULUM_RUN: DoublePendulumRunConfig =
-  Object.freeze({ mode: "passive" });
+  Object.freeze({ mode: "passive", jointLocks: NO_JOINT_LOCKS });
+
+export function passiveDoublePendulumRun(
+  jointLocks: JointLockConfig = NO_JOINT_LOCKS,
+): DoublePendulumRunConfig {
+  return Object.freeze({ mode: "passive", jointLocks });
+}
 
 export function prescribedDoublePendulumRun(
   profile: PrescribedTorqueProfile,
+  jointLocks: JointLockConfig = NO_JOINT_LOCKS,
 ): DoublePendulumRunConfig {
   if (!(profile instanceof PrescribedTorqueProfile)) {
     throw new Error("prescribed mode requires a torque profile");
   }
-  return Object.freeze({ mode: "prescribed", profile });
+  return Object.freeze({ mode: "prescribed", profile, jointLocks });
+}
+
+export function withJointLocks(
+  config: DoublePendulumRunConfig,
+  jointLocks: JointLockConfig,
+): DoublePendulumRunConfig {
+  return config.mode === "prescribed"
+    ? prescribedDoublePendulumRun(config.profile, jointLocks)
+    : passiveDoublePendulumRun(jointLocks);
 }
 
 export function summarizeDoublePendulumRun(
@@ -69,7 +99,12 @@ export function summarizeDoublePendulumRun(
       });
     }));
   if (config.mode === "passive") {
-    return { mode: "passive", profileId: null, appliedTorqueHistory: history(() => [0, 0]) };
+    return {
+      mode: "passive",
+      profileId: null,
+      lockedJointIds: config.jointLocks.lockedJointIds,
+      appliedTorqueHistory: history(() => [0, 0]),
+    };
   }
   if (config.mode !== "prescribed" || !(config.profile instanceof PrescribedTorqueProfile)) {
     throw new Error("invalid double-pendulum run configuration");
@@ -77,6 +112,7 @@ export function summarizeDoublePendulumRun(
   return {
     mode: "prescribed",
     profileId: config.profile.profileId,
+    lockedJointIds: config.jointLocks.lockedJointIds,
     appliedTorqueHistory: history((timeS) => {
       const values = config.profile.evaluate(timeS);
       return [values[SHOULDER_JOINT_ID], values[WRIST_JOINT_ID]];
@@ -117,12 +153,20 @@ export function inPlaneGravity(
   ];
 }
 
-function pendulumDerivatives(
+interface PendulumSystem {
+  m11: number;
+  m12: number;
+  m22: number;
+  rhs1: number;
+  rhs2: number;
+}
+
+function pendulumSystem(
   p: PendulumParams,
   state: PendulumState,
   gravity: [number, number],
   torques: JointTorquesNm,
-): PendulumState {
+): PendulumSystem {
   const [theta1, theta2, omega1, omega2] = state;
   const cos2 = Math.cos(theta2);
   const m11 = p.i1 + p.i2 + p.m2 * p.l1 ** 2 + 2 * p.m2 * p.l1 * p.lc2 * cos2;
@@ -140,6 +184,22 @@ function pendulumDerivatives(
   const g2 = -club * (gx * Math.cos(totalAngle) + gy * Math.sin(totalAngle));
   const rhs1 = torques[0] - (c1 + g1 + p.d1 * omega1);
   const rhs2 = torques[1] - (c2 + g2 + p.d2 * omega2);
+  return { m11, m12, m22, rhs1, rhs2 };
+}
+
+function pendulumDerivatives(
+  p: PendulumParams,
+  state: PendulumState,
+  gravity: [number, number],
+  torques: JointTorquesNm,
+): PendulumState {
+  const [, , omega1, omega2] = state;
+  const { m11, m12, m22, rhs1, rhs2 } = pendulumSystem(
+    p,
+    state,
+    gravity,
+    torques,
+  );
   const det = m11 * m22 - m12 ** 2;
   return [
     omega1,
@@ -149,6 +209,25 @@ function pendulumDerivatives(
   ];
 }
 
+function lockedPendulumDerivatives(
+  params: PendulumParams,
+  state: PendulumState,
+  gravity: [number, number],
+  torques: JointTorquesNm,
+  locked: readonly [boolean, boolean],
+): PendulumState {
+  if (locked[0] && state[2] !== 0) {
+    throw new Error("locked shoulder requires zero initial relative velocity");
+  }
+  if (locked[1] && state[3] !== 0) {
+    throw new Error("locked wrist requires zero initial relative velocity");
+  }
+  if (locked[0] && locked[1]) return [0, 0, 0, 0];
+  const system = pendulumSystem(params, state, gravity, torques);
+  if (locked[0]) return [0, state[3], 0, system.rhs2 / system.m22];
+  return [state[2], 0, system.rhs1 / system.m11, 0];
+}
+
 const addScaled = (
   state: PendulumState,
   scale: number,
@@ -156,6 +235,21 @@ const addScaled = (
 ): PendulumState => state.map((value, index) =>
   value + scale * slope[index],
 ) as PendulumState;
+
+function rk4WithSlope(
+  state: PendulumState,
+  timeS: number,
+  dt: number,
+  slope: (timeS: number, state: PendulumState) => PendulumState,
+): PendulumState {
+  const k1 = slope(timeS, state);
+  const k2 = slope(timeS + dt / 2, addScaled(state, dt / 2, k1));
+  const k3 = slope(timeS + dt / 2, addScaled(state, dt / 2, k2));
+  const k4 = slope(timeS + dt, addScaled(state, dt, k3));
+  return state.map((value, index) => value + (dt / 6) * (
+    k1[index] + 2 * k2[index] + 2 * k3[index] + k4[index]
+  )) as PendulumState;
+}
 
 export function pendulumRk4StepForced(
   params: PendulumParams,
@@ -175,13 +269,32 @@ export function pendulumRk4StepForced(
     }
     return pendulumDerivatives(params, value, gravity, torque);
   };
-  const k1 = slope(timeS, state);
-  const k2 = slope(timeS + dt / 2, addScaled(state, dt / 2, k1));
-  const k3 = slope(timeS + dt / 2, addScaled(state, dt / 2, k2));
-  const k4 = slope(timeS + dt, addScaled(state, dt, k3));
-  return state.map((value, index) => value + (dt / 6) * (
-    k1[index] + 2 * k2[index] + 2 * k3[index] + k4[index]
-  )) as PendulumState;
+  return rk4WithSlope(state, timeS, dt, slope);
+}
+
+function pendulumRk4StepLocked(
+  params: PendulumParams,
+  state: PendulumState,
+  gravity: [number, number],
+  timeS: number,
+  dt: number,
+  torqueAt: (timeS: number) => JointTorquesNm,
+  locked: readonly [boolean, boolean],
+): PendulumState {
+  const slope = (time: number, value: PendulumState): PendulumState => {
+    const torque = torqueAt(time);
+    if (torque.length !== 2 || torque.some((item) => !Number.isFinite(item))) {
+      throw new Error("joint torques must contain two finite values");
+    }
+    return lockedPendulumDerivatives(params, value, gravity, torque, locked);
+  };
+  const values = rk4WithSlope(state, timeS, dt, slope);
+  return [
+    locked[0] ? state[0] : values[0],
+    locked[1] ? state[1] : values[1],
+    locked[0] ? 0 : values[2],
+    locked[1] ? 0 : values[3],
+  ];
 }
 
 export function pendulumRk4Step(
@@ -233,21 +346,36 @@ export function simulateConfiguredPendulum(
   nSteps: number,
   config: DoublePendulumRunConfig = PASSIVE_DOUBLE_PENDULUM_RUN,
 ): PendulumState[] {
-  if (config.mode === "passive") {
+  if (!(config.jointLocks instanceof JointLockConfig)) {
+    throw new Error("jointLocks must be a JointLockConfig");
+  }
+  const locked = config.jointLocks.mask;
+  if (locked[0] && initial[2] !== 0) {
+    throw new Error("locked shoulder initial relative velocity must be zero");
+  }
+  if (locked[1] && initial[3] !== 0) {
+    throw new Error("locked wrist initial relative velocity must be zero");
+  }
+  if (config.mode === "passive" && !locked.some(Boolean)) {
     return simulatePendulum(params, initial, gravity, dt, nSteps);
   }
   const durationS = nSteps * dt;
-  validateProfile(config.profile, durationS);
+  if (config.mode === "prescribed") validateProfile(config.profile, durationS);
   const torqueAt = (timeS: number): JointTorquesNm => {
+    if (config.mode === "passive") return [0, 0];
     const values = config.profile.evaluate(Math.min(Math.max(timeS, 0), durationS));
     return [values[SHOULDER_JOINT_ID], values[WRIST_JOINT_ID]];
   };
   const output: PendulumState[] = [initial];
   let current = initial;
   for (let index = 0; index < nSteps; index += 1) {
-    current = pendulumRk4StepForced(
-      params, current, gravity, index * dt, dt, torqueAt,
-    );
+    current = locked.some(Boolean)
+      ? pendulumRk4StepLocked(
+          params, current, gravity, index * dt, dt, torqueAt, locked,
+        )
+      : pendulumRk4StepForced(
+          params, current, gravity, index * dt, dt, torqueAt,
+        );
     output.push(current);
   }
   return output;

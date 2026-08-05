@@ -13,6 +13,8 @@ from shared.python.contracts import require
 from ._torque_profile_validation import finite_float
 from .torque_profiles import FitMetadata, TorquePolynomial
 
+_FLOAT_ROUNDOFF_FACTOR = 64.0
+
 
 def _fit_arrays(
     times_s: ArrayLike, torque_nm: ArrayLike, degree: int
@@ -58,7 +60,11 @@ def _r_squared(torques: NDArray[np.float64], residuals: NDArray[np.float64]) -> 
     ss_total = float(np.dot(centered, centered))
     if ss_total > 0.0:
         return 1.0 - ss_residual / ss_total
-    return 1.0 if ss_residual == 0.0 else 0.0
+    torque_scale = max(1.0, float(np.max(np.abs(torques))))
+    roundoff_tolerance = (
+        np.finfo(np.float64).eps * _FLOAT_ROUNDOFF_FACTOR * torque_scale
+    )
+    return 1.0 if bool(np.all(np.abs(residuals) <= roundoff_tolerance)) else 0.0
 
 
 def _condition_number(times: NDArray[np.float64], degree: int) -> float:
@@ -105,7 +111,9 @@ def fit_torque_polynomial(
         condition_number=condition_number,
         original_sample_sha256=_sample_sha256(times, torques),
     )
-    coefficients = tuple(float(value) for value in physical.coef)
+    coefficients_array = np.zeros(degree + 1, dtype=np.float64)
+    coefficients_array[: len(physical.coef)] = physical.coef
+    coefficients = tuple(float(value) for value in coefficients_array)
     return TorquePolynomial(coefficients, metadata)
 
 

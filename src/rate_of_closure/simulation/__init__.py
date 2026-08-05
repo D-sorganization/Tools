@@ -33,6 +33,7 @@ from .kinetics import (
     inverse_dynamics,
     kinetics_for_run,
     simulate_forced,
+    zero_torque_counterfactual,
 )
 from .session import (
     BALL_POSITION_M,
@@ -74,6 +75,7 @@ __all__ = [
     "inverse_dynamics",
     "kinetics_for_run",
     "simulate_forced",
+    "zero_torque_counterfactual",
     "launch_from_delivery",
     "launch_from_direct",
     "make_source",

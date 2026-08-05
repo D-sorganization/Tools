@@ -244,6 +244,45 @@ class TestPolynomialFit:
         )
         assert FitMetadata.from_json_dict(metadata.to_json_dict()) == metadata
 
+    @pytest.mark.parametrize(
+        "torque_nm",
+        [
+            np.zeros(21),
+            np.full(21, 7.5),
+            2.0 + 3.0 * np.linspace(0.0, 1.0, 21),
+        ],
+        ids=("zero", "constant", "lower-order"),
+    )
+    def test_requested_degree_survives_zero_leading_terms_and_json(
+        self, torque_nm: np.ndarray
+    ) -> None:
+        times_s = np.linspace(0.0, 1.0, 21)
+        polynomial = fit_torque_polynomial(times_s, torque_nm, degree=3)
+
+        assert len(polynomial.coefficients) == 4
+        assert polynomial.coefficients[2:] == pytest.approx((0.0, 0.0), abs=1e-12)
+        assert polynomial.fit_metadata is not None
+        assert polynomial.fit_metadata.degree == 3
+        assert polynomial.fit_metadata.rmse_nm < 1e-12
+        assert polynomial.fit_metadata.max_abs_error_nm < 1e-12
+        assert polynomial.fit_metadata.r_squared == pytest.approx(1.0)
+        assert polynomial.fit_metadata.condition_number >= 1.0
+        assert polynomial.fit_metadata.original_sample_sha256 is not None
+
+        profile = PrescribedTorqueProfile(
+            profile_id="profile.degree_preservation.v1",
+            model_id="model.double_pendulum.v1",
+            name="Degree Preservation",
+            description="Regression fixture for zero high-order fit terms.",
+            source=TorqueProfileSource.FITTED_RUN,
+            source_metadata={"application": "test_suite"},
+            created_at_utc="2026-08-05T12:00:00Z",
+            modified_at_utc="2026-08-05T12:00:00Z",
+            time_domain_s=(0.0, 1.0),
+            assignments=(JointTorqueAssignment("joint.shoulder", polynomial),),
+        )
+        assert PrescribedTorqueProfile.loads(profile.dumps()) == profile
+
     def test_fit_metadata_rejects_r_squared_above_one(self) -> None:
         with pytest.raises(ContractViolationError):
             FitMetadata(

@@ -9,7 +9,7 @@
  * lives in model/impact.ts, pinned test-for-test against Python.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { ClubCanvas } from "./components/ClubCanvas";
 import { DecimalInput } from "./components/DecimalInput";
@@ -17,6 +17,7 @@ import { FieldInfo } from "./components/FieldInfo";
 import { FlightExplorerPanel } from "./components/FlightExplorerPanel";
 import { PlotsPanel } from "./components/PlotsPanel";
 import { PuttingPanel } from "./components/PuttingPanel";
+import { PrimaryViewTabs } from "./components/PrimaryViewTabs";
 import { DEFAULT_TARGET, type TargetRegionTs } from "./model/targets";
 import { SimulationPanel } from "./components/SimulationPanel";
 import { VariationPanel } from "./components/VariationPanel";
@@ -48,6 +49,13 @@ import {
   toCanonical,
   type Quantity,
 } from "./model/units";
+import {
+  loadPrimaryViewState,
+  primaryViewLabel,
+  savePrimaryViewState,
+  type PrimaryViewId,
+  type PrimaryViewState,
+} from "./model/viewPreferences";
 
 interface FieldSpec {
   key: keyof ImpactScenario;
@@ -136,24 +144,15 @@ const UNIT_LABELS: Record<Quantity, string> = {
   distance: "Distance",
 };
 
-const TABS = [
-  "Explorer",
-  "Calculation Description",
-  "Simulation",
-  "Plots",
-  "Flight Explorer",
-  "Variation",
-  "Putting",
-  "Glossary",
-] as const;
-
 export default function App() {
   const defaultDriver = useMemo(() => getClub("Driver 10.5°"), []);
   const [scenario, setScenario] = useState<ImpactScenario>(DEFAULT_SCENARIO);
   // Target region (#4125 H7b): shared by the Simulation flight view /
   // solver and the Variation landing overlay (hold-% headline).
   const [target, setTarget] = useState<TargetRegionTs>(DEFAULT_TARGET);
-  const [tab, setTab] = useState<(typeof TABS)[number]>(TABS[0]);
+  const [viewState, setViewState] = useState<PrimaryViewState>(
+    loadPrimaryViewState,
+  );
   const [explained, setExplained] = useState<string>("pathDeviationDeg");
   const [units, setUnits] = useState<Record<Quantity, string>>({
     speed: "mph",
@@ -169,6 +168,16 @@ export default function App() {
   const [glossaryTerm, setGlossaryTerm] = useState<string | undefined>(undefined);
   const result = useMemo(() => solve(scenario), [scenario]);
   const metrics = useMemo(() => closureMetrics(scenario), [scenario]);
+  const tab = viewState.active;
+  const tabLabel = primaryViewLabel(tab);
+
+  useEffect(() => {
+    savePrimaryViewState(viewState);
+  }, [viewState]);
+
+  const setTab = (active: PrimaryViewId) => {
+    setViewState((state) => ({ ...state, active }));
+  };
 
   // Scenario plumbing: GC-to-face and lie follow the selected club's
   // spec (the CG sits within a few mm of the geometric center); both
@@ -259,59 +268,50 @@ export default function App() {
         </p>
       </header>
 
-      <nav aria-label="Views" className="mb-5 flex gap-2">
-        {TABS.map((name) => (
-          <button
-            key={name}
-            type="button"
-            onClick={() => setTab(name)}
-            aria-current={tab === name}
-            title={`Switch to the ${name} view`}
-            className={
-              "rounded-full border px-4 py-1.5 text-sm font-medium transition-all " +
-              (tab === name
-                ? "border-sky-400/60 bg-sky-500/10 text-sky-300 shadow-[0_0_18px_rgba(56,189,248,0.25)]"
-                : "border-slate-700/80 bg-slate-900/60 text-slate-300 hover:border-slate-500 hover:text-slate-100")
-            }
-          >
-            {name}
-          </button>
-        ))}
-      </nav>
+      <PrimaryViewTabs
+        state={viewState}
+        onActiveChange={setTab}
+        onOrderChange={(order) => setViewState((state) => ({ ...state, order }))}
+      />
 
       <details
         className="mb-5 rounded-xl border border-slate-800/80 bg-slate-900/60 px-5 py-3 text-sm shadow-lg shadow-black/20 backdrop-blur"
         title="Usage instructions for this page"
       >
         <summary className="cursor-pointer font-semibold text-slate-300 hover:text-slate-100">
-          {HELP_TEXTS[tab].title}
+          {HELP_TEXTS[tabLabel].title}
         </summary>
-        {HELP_TEXTS[tab].paragraphs.map((paragraph, index) => (
+        {HELP_TEXTS[tabLabel].paragraphs.map((paragraph, index) => (
           <p key={index} className="mt-2 max-w-3xl text-slate-400">
             {paragraph}
           </p>
         ))}
       </details>
 
-      {tab === TABS[7] ? (
+      <main
+        id={`primary-panel-${tab}`}
+        role="tabpanel"
+        aria-labelledby={`primary-tab-${tab}`}
+      >
+      {tab === "glossary" ? (
         <GlossaryPanel key={glossaryTerm ?? "none"} initialTerm={glossaryTerm} />
-      ) : tab === TABS[6] ? (
+      ) : tab === "putting" ? (
         <PuttingPanel
           distanceUnit={units.distance}
           onGlossary={(term) => {
             setGlossaryTerm(term);
-            setTab(TABS[7]);
+            setTab("glossary");
           }}
         />
-      ) : tab === TABS[5] ? (
+      ) : tab === "variation" ? (
         <VariationPanel target={target} distanceUnit={units.distance} />
-      ) : tab === TABS[4] ? (
+      ) : tab === "flight" ? (
         <FlightExplorerPanel distanceUnit={units.distance} />
-      ) : tab === TABS[3] ? (
+      ) : tab === "plots" ? (
         // Static loft mirrors the desktop default driver (same note as
         // the Simulation tab; the full club picker joins with P7 WASM).
         <PlotsPanel scenario={scenario} loftDeg={10.5} />
-      ) : tab === TABS[2] ? (
+      ) : tab === "simulation" ? (
         // Static loft mirrors the desktop default driver; the full club
         // picker joins the web simulation with the P7 WASM port.
         <SimulationPanel
@@ -325,7 +325,7 @@ export default function App() {
           onTargetChange={setTarget}
           distanceUnit={units.distance}
         />
-      ) : tab === TABS[1] ? (
+      ) : tab === "calculation" ? (
         <Derivation scenario={scenario} />
       ) : (
         <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
@@ -443,7 +443,7 @@ export default function App() {
                     type="button"
                     onClick={() => {
                       setGlossaryTerm(FIELD_TO_TERM[explained]);
-                      setTab("Glossary");
+                      setTab("glossary");
                     }}
                     title="Open the glossary, pre-selecting the matching term"
                     className="mt-2 block text-sky-400 underline-offset-2 hover:underline"
@@ -473,6 +473,7 @@ export default function App() {
           </section>
         </div>
       )}
+      </main>
       <footer className="mt-10 border-t border-slate-800/60 pt-4 text-xs text-slate-500">
         Companion tool to the{" "}
         <a

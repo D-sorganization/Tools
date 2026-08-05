@@ -148,4 +148,69 @@ describe("SimulationPanel impact club", () => {
       screen.getByRole("note", { name: "Impact club physics" }),
     ).toHaveTextContent("16.0° nominal loft");
   });
+
+  it("presents reference-frame-aware joint locks and reconciles velocity", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    fireEvent.change(screen.getByLabelText("Swing Source"), {
+      target: { value: "double_pendulum" },
+    });
+
+    const shoulderLock = screen.getByRole("checkbox", {
+      name: "Lock Shoulder Joint",
+    });
+    const wristLock = screen.getByRole("checkbox", {
+      name: "Lock Wrist Joint",
+    });
+    expect(shoulderLock).toHaveAttribute("title", expect.stringMatching(/absolute.*ground/i));
+    expect(wristLock).toHaveAttribute("title", expect.stringMatching(/relative.*upper segment/i));
+
+    const shoulderVelocity = screen.getByRole("textbox", {
+      name: "Shoulder Initial Angular Velocity",
+    });
+    fireEvent.focus(shoulderVelocity);
+    fireEvent.change(shoulderVelocity, { target: { value: "35" } });
+    fireEvent.blur(shoulderVelocity);
+    expect(shoulderVelocity).toHaveValue("35");
+
+    fireEvent.click(shoulderLock);
+    expect(shoulderVelocity).toBeDisabled();
+    expect(shoulderVelocity).toHaveValue("0");
+    expect(wristLock).not.toBeChecked();
+    expect(screen.getByRole("status", { name: "Joint lock status" }))
+      .toHaveTextContent(/shoulder.*absolute.*locked.*wrist.*free/i);
+
+    fireEvent.click(screen.getByRole("button", { name: "Run Simulation" }));
+    expect(screen.getByText(/Completed.*Shoulder locked.*absolute/i))
+      .toBeInTheDocument();
+    expect(screen.queryByText(/Run failed/)).not.toBeInTheDocument();
+  });
+
+  it("clears incompatible locks when leaving the double-pendulum model", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    const source = screen.getByLabelText("Swing Source");
+    fireEvent.change(source, { target: { value: "double_pendulum" } });
+    fireEvent.click(screen.getByRole("checkbox", { name: "Lock Wrist Joint" }));
+    fireEvent.change(source, { target: { value: "triple_pendulum" } });
+    expect(screen.queryByRole("checkbox", { name: "Lock Wrist Joint" }))
+      .not.toBeInTheDocument();
+    fireEvent.change(source, { target: { value: "double_pendulum" } });
+    expect(screen.getByRole("checkbox", { name: "Lock Wrist Joint" }))
+      .not.toBeChecked();
+  });
+
+  it("preserves locks when changing torque execution mode", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    fireEvent.change(screen.getByLabelText("Swing Source"), {
+      target: { value: "double_pendulum" },
+    });
+    fireEvent.click(screen.getByRole("checkbox", { name: "Lock Wrist Joint" }));
+    fireEvent.change(screen.getByRole("combobox", { name: "Torque execution mode" }), {
+      target: { value: "prescribed" },
+    });
+    expect(screen.getByRole("checkbox", { name: "Lock Wrist Joint" }))
+      .toBeChecked();
+    fireEvent.click(screen.getByRole("button", { name: "Run Simulation" }));
+    expect(screen.getByText(/Completed.*prescribed torque profile.*Wrist locked.*relative/i))
+      .toBeInTheDocument();
+  });
 });

@@ -124,6 +124,10 @@ class KineticsPanel(QWidget):
                     ("joint_torques", "Joint Torques"),
                     ("joint_power", "Joint Power"),
                     ("reaction_forces", "Reaction Forces"),
+                    (
+                        "zero_torque_counterfactual",
+                        "Zero-Torque Counterfactual (ZTCF)",
+                    ),
                 )
             )
         )
@@ -197,11 +201,22 @@ class KineticsPanel(QWidget):
                 alpha=0.7,
                 label=f"{name} gravity",
             )
+            axes[0].plot(
+                t,
+                series.ztcf_inertial_torque_nm[:, j],
+                color=get_chart_color(j),
+                lw=1.2,
+                ls="--",
+                alpha=0.9,
+                label=f"{name} ZTCF",
+            )
         axes[0].axhline(0, lw=0.5, alpha=0.3)
-        axes[0].axvline(
-            tau, ls="--", lw=1.5, alpha=0.8, label=reference_label
+        axes[0].axvline(tau, ls="--", lw=1.5, alpha=0.8, label=reference_label)
+        self._styled_axis(
+            axes[0],
+            "Torque (N·m)",
+            "Joint Torques and State-Matched ZTCF",
         )
-        self._styled_axis(axes[0], "Torque (N·m)", "Joint Torques")
 
         for j, name in enumerate(names):
             axes[1].plot(
@@ -232,8 +247,21 @@ class KineticsPanel(QWidget):
                 lw=1.8,
                 label=which,
             )
+            axes[2].plot(
+                t,
+                series.ztcf_force_magnitude_n(which),
+                color=get_chart_color(j),
+                lw=1.1,
+                ls="--",
+                alpha=0.85,
+                label=f"{which} ZTCF",
+            )
         axes[2].axvline(tau, ls="--", lw=1.5, alpha=0.8)
-        self._styled_axis(axes[2], "Force (N)", "Reaction Forces")
+        self._styled_axis(
+            axes[2],
+            "Force (N)",
+            "Reaction Forces and State-Matched ZTCF",
+        )
         self._canvas.draw_idle()
 
     def _fill_table(self, series: KineticsSeries) -> None:

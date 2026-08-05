@@ -114,8 +114,10 @@ export function KineticsSection({ input, run }: Props) {
     [input, run],
   );
   const torqueRef = useRef<HTMLCanvasElement | null>(null);
+  const ztcfTorqueRef = useRef<HTMLCanvasElement | null>(null);
   const powerRef = useRef<HTMLCanvasElement | null>(null);
   const forceRef = useRef<HTMLCanvasElement | null>(null);
+  const ztcfForceRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
     if (!series || !run) return;
@@ -151,6 +153,18 @@ export function KineticsSection({ input, run }: Props) {
         "Joint Power",
         tau,
       );
+    if (ztcfTorqueRef.current)
+      drawChart(
+        ztcfTorqueRef.current,
+        series.tS,
+        [
+          { label: "shoulder ZTCF", values: series.shoulderZtcfTorqueNm },
+          { label: "wrist ZTCF", values: series.wristZtcfTorqueNm },
+        ],
+        "Torque (N·m)",
+        "State-Matched ZTCF Torque",
+        tau,
+      );
     if (forceRef.current)
       drawChart(
         forceRef.current,
@@ -162,6 +176,19 @@ export function KineticsSection({ input, run }: Props) {
         ],
         "Force (N)",
         "Reaction Forces",
+        tau,
+      );
+    if (ztcfForceRef.current)
+      drawChart(
+        ztcfForceRef.current,
+        series.tS,
+        [
+          { label: "shoulder ZTCF", values: series.shoulderZtcfForceN },
+          { label: "wrist ZTCF", values: series.wristZtcfForceN },
+          { label: "clubhead ZTCF", values: series.clubheadZtcfForceN },
+        ],
+        "Force (N)",
+        "State-Matched ZTCF Reaction Forces",
         tau,
       );
   }, [series, run]);
@@ -206,7 +233,14 @@ export function KineticsSection({ input, run }: Props) {
           that swing instead of a fabricated impact instant.
         </p>
       )}
-      {[torqueRef, powerRef, forceRef].map((ref, index) => (
+      <p className="rounded-lg border border-sky-500/30 bg-sky-950/20 p-3 text-sm text-sky-100">
+        <strong>Zero-Torque Counterfactual (ZTCF):</strong> at every recorded
+        state, commanded shoulder and wrist torques are set to zero while
+        gravity, damping, and velocity-dependent coupling remain active. Each
+        sample is evaluated at the original state; this is a passive-drift
+        diagnostic, not one continuously integrated alternate swing.
+      </p>
+      {[torqueRef, ztcfTorqueRef, powerRef, forceRef, ztcfForceRef].map((ref, index) => (
         <canvas
           key={index}
           ref={ref}
@@ -214,9 +248,13 @@ export function KineticsSection({ input, run }: Props) {
           height={190}
           className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
           aria-label={
-            ["Joint torques chart", "Joint power chart", "Reaction forces chart"][
-              index
-            ]
+            [
+              "Joint torques chart",
+              "Zero-torque counterfactual torques chart",
+              "Joint power chart",
+              "Reaction forces chart",
+              "Zero-torque counterfactual forces chart",
+            ][index]
           }
         />
       ))}

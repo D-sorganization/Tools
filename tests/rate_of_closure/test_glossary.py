@@ -61,6 +61,7 @@ MAJOR_TERMS: tuple[str, ...] = (
     "triangular_distribution",
     "twist",
     "uniform_distribution",
+    "zero_torque_counterfactual",
 )
 
 

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 
 import {
-  PASSIVE_DOUBLE_PENDULUM_RUN,
+  passiveDoublePendulumRun,
   prescribedDoublePendulumRun,
   DOUBLE_PENDULUM_MODEL_ID,
   SHOULDER_JOINT_ID,
@@ -141,15 +141,15 @@ export function TorqueProfilePanel({
     setFit(null);
     setMessage(`Loaded ${profile.name} into the editor.`);
     if (runConfig.mode === "prescribed") {
-      onRunConfigChange(prescribedDoublePendulumRun(profile));
+      onRunConfigChange(prescribedDoublePendulumRun(profile, runConfig.jointLocks));
     }
   };
 
   const selectMode = (mode: string) => {
     if (mode === "passive") {
-      onRunConfigChange(PASSIVE_DOUBLE_PENDULUM_RUN);
+      onRunConfigChange(passiveDoublePendulumRun(runConfig.jointLocks));
     } else if (prescribedAvailable) {
-      onRunConfigChange(prescribedDoublePendulumRun(selected));
+      onRunConfigChange(prescribedDoublePendulumRun(selected, runConfig.jointLocks));
     }
   };
 
@@ -199,7 +199,7 @@ export function TorqueProfilePanel({
       setSelectedId(profile.profileId);
       setEditor(editorFor(profile));
       if (runConfig.mode === "prescribed") {
-        onRunConfigChange(prescribedDoublePendulumRun(profile));
+        onRunConfigChange(prescribedDoublePendulumRun(profile, runConfig.jointLocks));
       }
       setMessage(`Saved ${profile.name}; the simulation is now dirty until rerun.`);
     } catch (error) {

@@ -29,9 +29,13 @@ import { ContactPolicyControl } from "./ContactPolicyControl";
 import { SimulationStatusHeader } from "./SimulationStatusHeader";
 import { PlaneTiltControls } from "./PlaneTiltControls";
 import { TorqueProfilePanel } from "./TorqueProfilePanel";
+import { JointLockControls } from "./JointLockControls";
 import {
   PASSIVE_DOUBLE_PENDULUM_RUN,
+  SHOULDER_JOINT_ID,
+  WRIST_JOINT_ID,
   type DoublePendulumRunConfig,
+  type PendulumState,
 } from "../model/doublePendulum";
 
 const SWING_TOGGLE_GUIDANCE = {
@@ -70,6 +74,8 @@ export function SimulationPanel({
     useState<ContactMode>("delivery_inspection");
   const [doublePendulumRun, setDoublePendulumRun] =
     useState<DoublePendulumRunConfig>(PASSIVE_DOUBLE_PENDULUM_RUN);
+  const [doublePendulumInitialState, setDoublePendulumInitialState] =
+    useState<PendulumState>([-Math.PI / 2, 0, 0, 0]);
   const [tilts, setTilts] = useState({ yaw: 0, side: -45, forward: 0 });
   const [tauMs, setTauMs] = useState<number | null>(null);
   const [run, setRun] = useState<SimulationRunTs | null>(null);
@@ -145,8 +151,19 @@ export function SimulationPanel({
       club: clubSpec ?? undefined,
       contactMode,
       doublePendulumRun,
+      doublePendulumInitialState,
     }),
-    [sourceKind, scenario, effectiveLoftDeg, tilts, tauMs, clubSpec, contactMode, doublePendulumRun],
+    [
+      sourceKind,
+      scenario,
+      effectiveLoftDeg,
+      tilts,
+      tauMs,
+      clubSpec,
+      contactMode,
+      doublePendulumRun,
+      doublePendulumInitialState,
+    ],
   );
   const inputSignature = useMemo(() => JSON.stringify(input), [input]);
 
@@ -171,13 +188,24 @@ export function SimulationPanel({
   const completedStatus = run?.impactOutcome.status === "miss"
     ? "Completed — no club–ball impact"
     : "Completed — impact and flight available";
+  const completedDetails = run
+    ? [
+        run.torqueRun.mode === "prescribed"
+          ? `prescribed torque profile ${run.torqueRun.profileId}`
+          : null,
+        run.torqueRun.lockedJointIds.includes(SHOULDER_JOINT_ID)
+          ? "Shoulder locked (absolute ground frame)"
+          : null,
+        run.torqueRun.lockedJointIds.includes(WRIST_JOINT_ID)
+          ? "Wrist locked (relative upper-segment frame)"
+          : null,
+      ].filter((detail): detail is string => detail !== null)
+    : [];
   const runStatus = runError
     ? `Run failed: ${runError}`
     : runIsStale
       ? "Inputs changed — run required"
-      : run?.torqueRun.mode === "prescribed"
-        ? `${completedStatus}; prescribed torque profile ${run.torqueRun.profileId}`
-        : run ? completedStatus : "Not run";
+      : run ? [completedStatus, ...completedDetails].join("; ") : "Not run";
 
   // Populate the default Swing view immediately instead of presenting a
   // blank canvas that depends on discovering the Run button first.
@@ -256,6 +284,12 @@ export function SimulationPanel({
     <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
       <SimulationStatusHeader
         sourceKind={sourceKind}
+        onSourceKindChange={(next) => {
+          setSourceKind(next);
+          if (next !== "double_pendulum") {
+            setDoublePendulumRun(PASSIVE_DOUBLE_PENDULUM_RUN);
+          }
+        }}
         status={runStatus}
         warning={
           Boolean(runError) ||
@@ -268,26 +302,6 @@ export function SimulationPanel({
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             Simulation Setup
           </h2>
-          <label
-            className="mb-3 block text-sm"
-            title={FIELD_GUIDANCE.swingSource}
-          >
-            <span className="mb-1 block text-slate-300">Swing Source</span>
-            <select
-              value={sourceKind}
-              title={FIELD_GUIDANCE.swingSource}
-              onChange={(e) => {
-                const next = e.target.value as WebSourceKind;
-                setSourceKind(next);
-                if (next !== "double_pendulum") setDoublePendulumRun(PASSIVE_DOUBLE_PENDULUM_RUN);
-              }}
-              className="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
-            >
-              <option value="manual">Manual Scenario (Constant Twist)</option>
-              <option value="double_pendulum">Double Pendulum</option>
-              <option value="triple_pendulum">Triple Pendulum</option>
-            </select>
-          </label>
           <ContactPolicyControl
             value={contactMode}
             onChange={(mode) => {
@@ -304,6 +318,14 @@ export function SimulationPanel({
             {clubPhysicsGuidance}
           </p>
           <PlaneTiltControls tilts={tilts} onChange={setTilts} />
+          {sourceKind === "double_pendulum" && (
+            <JointLockControls
+              initialState={doublePendulumInitialState}
+              runConfig={doublePendulumRun}
+              onInitialStateChange={setDoublePendulumInitialState}
+              onRunConfigChange={setDoublePendulumRun}
+            />
+          )}
           <label
             className="mb-3 block text-sm"
             title={FIELD_GUIDANCE.impactTimeScrub}

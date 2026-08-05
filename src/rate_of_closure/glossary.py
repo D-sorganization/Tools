@@ -65,6 +65,7 @@ FIELD_TO_TERM: dict[str, str] = {
     "joint_torques": "inverse_dynamics",
     "joint_power": "power",
     "reaction_forces": "joint_reaction_force",
+    "zero_torque_counterfactual": "zero_torque_counterfactual",
     # PUTT_EXPLANATIONS fields (#4125 H3)
     "putt_rollout_m": "stimp",
     "putt_skid_m": "skid",

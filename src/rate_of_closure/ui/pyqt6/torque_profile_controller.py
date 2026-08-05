@@ -8,6 +8,8 @@ from enum import StrEnum
 from pathlib import Path
 from urllib.parse import quote
 
+from rate_of_closure.simulation.records import SimulationRun
+from rate_of_closure.simulation.torque_history import fit_run_torque_profile
 from shared.python.swing_sim.run_config import (
     DOUBLE_PENDULUM_JOINT_IDS,
     DOUBLE_PENDULUM_MODEL_ID,
@@ -148,6 +150,42 @@ class TorqueProfileLibraryAdapter:
     def import_profile(self, path: Path) -> PrescribedTorqueProfile:
         """Validate and add one canonical profile JSON file."""
         profile = PrescribedTorqueProfile.loads(path.read_text(encoding="utf-8"))
+        self._library = self._library.with_profile(profile)
+        self._active_profile_id = profile.profile_id
+        return profile
+
+    def fit_run(
+        self,
+        draft: ProfileDraft,
+        run: SimulationRun,
+        degree: int,
+    ) -> PrescribedTorqueProfile:
+        """Fit retained applied torques and select the canonical result."""
+        previous = next(
+            (
+                profile
+                for profile in self._library.profiles
+                if profile.profile_id == draft.profile_id
+            ),
+            None,
+        )
+        timestamp = _utc_now()
+        lock_ids = run.config.swing_run_config.joint_locks.locked_joint_ids
+        profile = fit_run_torque_profile(
+            run,
+            profile_id=draft.profile_id,
+            name=draft.name,
+            description=draft.description,
+            degree=degree,
+            source_metadata={
+                "application": "rate_of_closure",
+                "source_kind": run.config.source_kind,
+                "contact_outcome": run.impact_outcome.status.value,
+                "joint_locks": ",".join(lock_ids) if lock_ids else "none",
+            },
+            created_at_utc=(timestamp if previous is None else previous.created_at_utc),
+            modified_at_utc=timestamp,
+        )
         self._library = self._library.with_profile(profile)
         self._active_profile_id = profile.profile_id
         return profile

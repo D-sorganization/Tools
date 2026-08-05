@@ -99,6 +99,10 @@ class SimulationTab(QWidget):
         self._torque_profile_panel.profileChanged.connect(
             self._on_torque_selection_changed
         )
+        self._torque_profile_panel.jointLocksChanged.connect(
+            self._on_joint_locks_changed
+        )
+        self._torque_profile_panel.fitCurrentRunRequested.connect(self._fit_current_run)
         self._solver_panel.applyRequested.connect(self.apply_solver_solution)
         # Keep the course scene and flight overlay aligned with target edits.
         self._solver_panel.target_panel().regionChanged.connect(
@@ -150,6 +154,9 @@ class SimulationTab(QWidget):
         self._source_combo.addItems([SOURCE_LABELS[kind] for kind in SOURCE_KINDS])
         self._source_combo.setToolTip(FIELD_GUIDANCE["swing_source"])
         self._source_combo.currentIndexChanged.connect(self._invalidate_source)
+        self._source_combo.currentIndexChanged.connect(
+            self._reconcile_joint_locks_for_source
+        )
         form.addRow("Swing Source", self._source_combo)
         self._tilt_spins: dict[str, QDoubleSpinBox] = {}
         for attr, label, guidance_key in TILT_SPECS:
@@ -187,9 +194,7 @@ class SimulationTab(QWidget):
             "for honest hit/miss evaluation. Source: Rate of Closure contact "
             "contract; sampled contact is a point-to-sphere approximation."
         )
-        self._contact_combo.currentIndexChanged.connect(
-            self._on_contact_mode_changed
-        )
+        self._contact_combo.currentIndexChanged.connect(self._on_contact_mode_changed)
         form.addRow("Contact Policy", self._contact_combo)
         self._contact_description = QLabel()
         self._contact_description.setWordWrap(True)
@@ -324,7 +329,8 @@ class SimulationTab(QWidget):
     def config(self) -> SimulationConfig:
         """The simulation request described by the controls."""
         selection = self._torque_profile_panel.selection()
-        run_config = DoublePendulumRunConfig()
+        joint_locks = self._torque_profile_panel.joint_locks()
+        run_config = DoublePendulumRunConfig(joint_locks=joint_locks)
         torque_library = None
         source_kind = self.source_kind()
         if selection.mode is RunMode.PRESCRIBED_TORQUE:
@@ -332,7 +338,8 @@ class SimulationTab(QWidget):
                 raise ValueError(selection.validation_message)
             source_kind = "double_pendulum"
             run_config = DoublePendulumRunConfig.prescribed(
-                selection.profile.profile_id
+                selection.profile.profile_id,
+                joint_locks=joint_locks,
             )
             torque_library = self._torque_profile_panel.canonical_library()
         return SimulationConfig(
@@ -372,7 +379,8 @@ class SimulationTab(QWidget):
         self._set_completed_status(run)
         if run.config.swing_run_config.prescribed_profile_id is not None:
             self._torque_profile_panel.set_execution_status(
-                "Prescribed profile executed in the double-pendulum dynamics kernel."
+                "Prescribed profile executed in the double-pendulum dynamics kernel; "
+                f"{self._torque_profile_panel.joint_lock_summary()}."
             )
         self.runCompleted.emit(run)
         return run
@@ -533,6 +541,26 @@ class SimulationTab(QWidget):
             self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
         self._invalidate_source()
 
+    def _on_joint_locks_changed(self, *_args: object) -> None:
+        """Select the compatible kernel whenever an ideal lock is enabled."""
+        if self._torque_profile_panel.joint_locks().has_locks:
+            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
+        self._invalidate_source()
+
+    def _reconcile_joint_locks_for_source(self, *_args: object) -> None:
+        """Clear constraints when the user explicitly leaves the supported source."""
+        if self.source_kind() != "double_pendulum":
+            self._torque_profile_panel.clear_joint_locks(emit=False)
+
+    def _fit_current_run(self, degree: int) -> None:
+        """Fit the current retained double-pendulum torque history non-modally."""
+        if self._run is None:
+            self._torque_profile_panel.set_fit_error(
+                "run a double-pendulum simulation first."
+            )
+            return
+        self._torque_profile_panel.fit_current_run(self._run, degree)
+
     def _on_contact_mode_changed(self, *_args: object) -> None:
         """Reset incompatible impact-time state and explain the active policy."""
         self._tau = None
@@ -670,11 +698,13 @@ class SimulationTab(QWidget):
 
     def _set_completed_status(self, run: SimulationRun) -> None:
         outcome = run.impact_outcome
+        lock_summary = self._torque_profile_panel.joint_lock_summary()
         if outcome.is_hit:
             assert run.impact_time_s is not None
             text = (
                 f"Completed — Hit at {run.impact_time_s * 1000.0:.1f} ms. "
-                "Swing, impact, launch, and flight results are current."
+                "Swing, impact, launch, and flight results are current. "
+                f"Joint constraints: {lock_summary}."
             )
             self._set_run_status(text, "hit")
             return
@@ -683,7 +713,8 @@ class SimulationTab(QWidget):
             "Completed — No Impact. The closest approach remained "
             f"{clearance_mm:.1f} mm outside the sampled contact threshold. "
             "Swing playback and pendulum kinetics remain available; impact, "
-            "launch, and flight values are unavailable."
+            "launch, and flight values are unavailable. "
+            f"Joint constraints: {lock_summary}."
         )
         self._set_run_status(text, "miss")
 

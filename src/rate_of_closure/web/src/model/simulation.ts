@@ -34,6 +34,7 @@ import {
   simulateConfiguredPendulum,
   summarizeDoublePendulumRun,
   type DoublePendulumRunConfig,
+  type PendulumState,
 } from "./doublePendulum";
 import {
   assessFixedContact,
@@ -235,6 +236,8 @@ export interface SimulationInput {
   contactMode?: ContactMode;
   /** Defaults to passive; prescribed mode is valid only for double pendulum. */
   doublePendulumRun?: DoublePendulumRunConfig;
+  /** θ1, θ2 [rad], then their relative angular rates [rad/s]. */
+  doublePendulumInitialState?: PendulumState;
 }
 
 export interface SwingSampleTs {
@@ -271,8 +274,11 @@ const clampAngle = (value: number): number => Math.max(-89, Math.min(89, value))
 function swingSamples(input: SimulationInput): SwingSampleTs[] {
   const dt = 1e-3;
   const runConfig = input.doublePendulumRun ?? PASSIVE_DOUBLE_PENDULUM_RUN;
-  if (runConfig.mode === "prescribed" && input.sourceKind !== "double_pendulum") {
-    throw new Error("prescribed torque requires the double-pendulum source");
+  if (
+    input.sourceKind !== "double_pendulum" &&
+    (runConfig.mode === "prescribed" || runConfig.jointLocks.lockedJointIds.length > 0)
+  ) {
+    throw new Error("prescribed torque and joint locks require the double-pendulum source");
   }
   if (input.sourceKind === "manual") {
     const duration = 0.06;
@@ -301,11 +307,15 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
     rad(input.planeForwardTiltDeg),
   );
   const nSteps = Math.round(input.swingDurationS / dt);
+  const initialState = input.doublePendulumInitialState ?? [-Math.PI / 2, 0, 0, 0];
+  if (initialState.some((value) => !Number.isFinite(value))) {
+    throw new Error("double-pendulum initial state must contain four finite values");
+  }
   const states =
     input.sourceKind === "double_pendulum"
       ? simulateConfiguredPendulum(
           doubleParameters,
-          [-Math.PI / 2, 0, 0, 0],
+          initialState,
           g,
           dt,
           nSteps,
