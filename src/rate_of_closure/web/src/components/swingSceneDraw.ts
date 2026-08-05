@@ -41,6 +41,12 @@ export function drawSwingScene(
     ctx.fillText("Run a simulation to populate the scene.", 16, 28);
     return;
   }
+  if (run.swing.length === 0) {
+    ctx.fillStyle = "#f59e0b";
+    ctx.font = "14px sans-serif";
+    ctx.fillText("This run contains no swing samples.", 16, 28);
+    return;
+  }
 
   const swingEnd = run.swing[run.swing.length - 1].t;
   const impactTime = run.impactTimeS;
@@ -131,10 +137,12 @@ export function drawSwingScene(
     ctx.lineWidth = 1;
   };
   drawPath(run.swing, "rgba(56,189,248,0.25)", 1);
-  const swingIndex = Math.min(
+  const boundedTime = Number.isFinite(time) ? Math.max(0, Math.min(time, swingEnd)) : 0;
+  const progress = swingEnd > 0 ? boundedTime / swingEnd : 0;
+  const swingIndex = Math.max(0, Math.min(
     run.swing.length - 1,
-    Math.round((Math.min(time, swingEnd) / swingEnd) * (run.swing.length - 1)),
-  );
+    Math.round(progress * (run.swing.length - 1)),
+  ));
   drawPath(run.swing.slice(0, swingIndex + 1), "#38bdf8", 2);
   const head = run.swing[swingIndex].position;
   ctx.fillStyle = "#f472b6";

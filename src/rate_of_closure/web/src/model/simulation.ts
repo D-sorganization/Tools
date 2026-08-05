@@ -28,6 +28,14 @@ import {
 } from "./flight";
 import { golfTripleParameters, simulateTriplePendulum } from "./triplePendulum";
 import {
+  PASSIVE_DOUBLE_PENDULUM_RUN,
+  golfDefaultParams,
+  inPlaneGravity,
+  simulateConfiguredPendulum,
+  summarizeDoublePendulumRun,
+  type DoublePendulumRunConfig,
+} from "./doublePendulum";
+import {
   assessFixedContact,
   deliveryInspectionOutcome,
   type ContactMode,
@@ -36,6 +44,13 @@ import {
 
 export { deriveLaunch, simulateFlight } from "./flight";
 export type { FlightPoint, FlightResult, Launch } from "./flight";
+export {
+  golfDefaultParams,
+  inPlaneGravity,
+  pendulumRk4Step,
+  simulatePendulum,
+} from "./doublePendulum";
+export type { PendulumParams, PendulumState } from "./doublePendulum";
 
 // --- Constants (vendored, same citations as the Python packages) --------
 export const GRAVITY_M_S2 = 9.80665;
@@ -86,130 +101,6 @@ export const sub = (a: Vec3, b: Vec3): Vec3 => [a[0] - b[0], a[1] - b[1], a[2] -
 export const toFlightFrame = (v: Vec3): Vec3 => [v[0], -v[2], v[1]];
 /** Flight frame -> app frame. */
 export const fromFlightFrame = (v: Vec3): Vec3 => [v[0], v[2], -v[1]];
-
-// --- Double pendulum (port of swing_sim/reference.py) --------------------
-
-export interface PendulumParams {
-  m1: number;
-  l1: number;
-  lc1: number;
-  i1: number;
-  m2: number;
-  l2: number;
-  lc2: number;
-  i2: number;
-  d1: number;
-  d2: number;
-}
-
-/** UpstreamDrift golf defaults — same segment formulas as the Rust kernel. */
-export function golfDefaultParams(): PendulumParams {
-  const m1 = 7.5;
-  const l1 = 0.75;
-  const lc1 = l1 * 0.45;
-  const i1 = (1.0 / 12.0) * m1 * l1 * l1 + m1 * lc1 * lc1;
-  const l2 = 1.0;
-  const ms = 0.15;
-  const mh = 0.2;
-  const m2 = ms + mh;
-  const shaftCom = l2 * 0.43;
-  const lc2 = (shaftCom * ms + l2 * mh) / m2;
-  const iShaft = (1.0 / 12.0) * ms * l2 * l2;
-  const parallel = ms * (shaftCom - lc2) ** 2 + mh * (l2 - lc2) ** 2;
-  const i2 = iShaft + parallel + m2 * lc2 * lc2;
-  return { m1, l1, lc1, i1, m2, l2, lc2, i2, d1: 0.4, d2: 0.25 };
-}
-
-export type PendulumState = [number, number, number, number]; // th1, th2, w1, w2
-
-/** In-plane gravity components for the three sequential plane tilts (rad). */
-export function inPlaneGravity(
-  yaw: number,
-  sideTilt: number,
-  fwdTilt: number,
-  g = GRAVITY_M_S2,
-): [number, number] {
-  // g_world = (0, 0, -g) projected on the local x (col 0) and up (col 2)
-  // axes of Rz(yaw) Rx(side) Ry(fwd). Yaw (about world z) drops out of
-  // the world-z row: R[2][0] = -cos(side) sin(fwd), R[2][2] =
-  // cos(side) cos(fwd).
-  void yaw;
-  const cs = Math.cos(sideTilt);
-  const cf = Math.cos(fwdTilt);
-  const sf = Math.sin(fwdTilt);
-  return [g * cs * sf, -g * cs * cf];
-}
-
-function pendulumDerivatives(
-  p: PendulumParams,
-  y: PendulumState,
-  gInplane: [number, number],
-): PendulumState {
-  const [th1, th2, w1, w2] = y;
-  const cos2 = Math.cos(th2);
-  const m11 = p.i1 + p.i2 + p.m2 * p.l1 * p.l1 + 2.0 * p.m2 * p.l1 * p.lc2 * cos2;
-  const m12 = p.i2 + p.m2 * p.l1 * p.lc2 * cos2;
-  const m22 = p.i2;
-  const h = -p.m2 * p.l1 * p.lc2 * Math.sin(th2);
-  const c1 = h * (2.0 * w1 * w2 + w2 * w2);
-  const c2 = -h * w1 * w1;
-  const [gx, gy] = gInplane;
-  const t12 = th1 + th2;
-  const a1 = p.m1 * p.lc1 + p.m2 * p.l1;
-  const a2 = p.m2 * p.lc2;
-  const g1 =
-    -a1 * (gx * Math.cos(th1) + gy * Math.sin(th1)) -
-    a2 * (gx * Math.cos(t12) + gy * Math.sin(t12));
-  const g2 = -a2 * (gx * Math.cos(t12) + gy * Math.sin(t12));
-  const d1 = p.d1 * w1;
-  const d2 = p.d2 * w2;
-  const det = m11 * m22 - m12 * m12;
-  const rhs1 = -(c1 + g1 + d1);
-  const rhs2 = -(c2 + g2 + d2);
-  const acc1 = (m22 * rhs1 - m12 * rhs2) / det;
-  const acc2 = (-m12 * rhs1 + m11 * rhs2) / det;
-  return [w1, w2, acc1, acc2];
-}
-
-/** One classical RK4 step (same evaluation order as the Python oracle). */
-export function pendulumRk4Step(
-  p: PendulumParams,
-  y: PendulumState,
-  gInplane: [number, number],
-  dt: number,
-): PendulumState {
-  const f = (v: PendulumState) => pendulumDerivatives(p, v, gInplane);
-  const addS = (a: PendulumState, s: number, b: PendulumState): PendulumState => [
-    a[0] + s * b[0],
-    a[1] + s * b[1],
-    a[2] + s * b[2],
-    a[3] + s * b[3],
-  ];
-  const k1 = f(y);
-  const k2 = f(addS(y, dt / 2.0, k1));
-  const k3 = f(addS(y, dt / 2.0, k2));
-  const k4 = f(addS(y, dt, k3));
-  return [0, 1, 2, 3].map(
-    (i) => y[i] + (dt / 6.0) * (k1[i] + 2.0 * k2[i] + 2.0 * k3[i] + k4[i]),
-  ) as PendulumState;
-}
-
-/** Integrate nSteps RK4 steps; returns nSteps + 1 states incl. the initial. */
-export function simulatePendulum(
-  p: PendulumParams,
-  initial: PendulumState,
-  gInplane: [number, number],
-  dt: number,
-  nSteps: number,
-): PendulumState[] {
-  const out: PendulumState[] = [initial];
-  let current = initial;
-  for (let i = 0; i < nSteps; i += 1) {
-    current = pendulumRk4Step(p, current, gInplane, dt);
-    out.push(current);
-  }
-  return out;
-}
 
 // --- Impact (scalar-MOI path of swing_sim/impact/models.py) --------------
 
@@ -342,6 +233,8 @@ export interface SimulationInput {
   club?: ImpactClubProperties;
   /** Defaults to delivery inspection for backward-compatible studies. */
   contactMode?: ContactMode;
+  /** Defaults to passive; prescribed mode is valid only for double pendulum. */
+  doublePendulumRun?: DoublePendulumRunConfig;
 }
 
 export interface SwingSampleTs {
@@ -364,6 +257,7 @@ export interface SimulationLaunchTs {
 
 export interface SimulationRunTs {
   sourceKind: WebSourceKind;
+  torqueRun: ReturnType<typeof summarizeDoublePendulumRun>;
   swing: SwingSampleTs[];
   impactOutcome: ImpactOutcomeTs;
   impactTimeS: number | null;
@@ -376,6 +270,10 @@ const clampAngle = (value: number): number => Math.max(-89, Math.min(89, value))
 
 function swingSamples(input: SimulationInput): SwingSampleTs[] {
   const dt = 1e-3;
+  const runConfig = input.doublePendulumRun ?? PASSIVE_DOUBLE_PENDULUM_RUN;
+  if (runConfig.mode === "prescribed" && input.sourceKind !== "double_pendulum") {
+    throw new Error("prescribed torque requires the double-pendulum source");
+  }
   if (input.sourceKind === "manual") {
     const duration = 0.06;
     const speed = input.clubheadSpeedMph / MPH_PER_MPS;
@@ -405,7 +303,14 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
   const nSteps = Math.round(input.swingDurationS / dt);
   const states =
     input.sourceKind === "double_pendulum"
-      ? simulatePendulum(doubleParameters, [-Math.PI / 2, 0, 0, 0], g, dt, nSteps)
+      ? simulateConfiguredPendulum(
+          doubleParameters,
+          [-Math.PI / 2, 0, 0, 0],
+          g,
+          dt,
+          nSteps,
+          runConfig,
+        )
       : simulateTriplePendulum(g, dt, nSteps);
   // Plane axes in the swing world frame, then app frame via
   // (x, y, z)_app = (x, z, -y)_swing.
@@ -463,6 +368,10 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
 /** Run the full swing -> impact -> flight pipeline (web parity port). */
 export function runSimulation(input: SimulationInput): SimulationRunTs {
   const swing = swingSamples(input);
+  const torqueRun = summarizeDoublePendulumRun(
+    input.doublePendulumRun,
+    input.sourceKind === "double_pendulum" ? swing.map((sample) => sample.t) : [],
+  );
   let impactIndex: number;
   if (input.impactTimeS === null) {
     let best = 0;
@@ -506,6 +415,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   if (impactOutcome.status === "miss") {
     return {
       sourceKind: input.sourceKind,
+      torqueRun,
       swing: aligned,
       impactOutcome,
       impactTimeS: null,
@@ -541,6 +451,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
 
   return {
     sourceKind: input.sourceKind,
+    torqueRun,
     swing: aligned,
     impactOutcome,
     impactTimeS: candidate.t,

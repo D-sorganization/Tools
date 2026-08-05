@@ -64,6 +64,25 @@ describe("SimulationPanel impact club", () => {
     expect(screen.getByText("Inputs changed — run required")).toBeInTheDocument();
   });
 
+  it("resets prescribed torque atomically when leaving double pendulum", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    fireEvent.change(screen.getByLabelText("Swing Source"), {
+      target: { value: "double_pendulum" },
+    });
+    fireEvent.change(screen.getByRole("combobox", { name: "Torque execution mode" }), {
+      target: { value: "prescribed" },
+    });
+    expect(screen.getByRole("status", { name: "Torque execution status" }))
+      .toHaveTextContent(/prescribed/i);
+    fireEvent.change(screen.getByLabelText("Swing Source"), {
+      target: { value: "manual" },
+    });
+    expect(screen.getByRole("status", { name: "Torque execution status" }))
+      .toHaveTextContent(/passive/i);
+    fireEvent.click(screen.getByRole("button", { name: "Run Simulation" }));
+    expect(screen.queryByText(/Run failed/)).not.toBeInTheDocument();
+  });
+
   it("reports a fixed-ball miss without launch values or an editable impact time", () => {
     renderPanel(getClub("Driver 10.5°"));
     fireEvent.change(screen.getByLabelText("Swing Source"), {
@@ -83,6 +102,12 @@ describe("SimulationPanel impact club", () => {
     expect(screen.getByRole("button", { name: /Ball Speed/ })).toHaveTextContent(
       "—",
     );
+    const timeline = screen.getByRole("slider", { name: "Playback timeline" });
+    const play = screen.getByRole("button", { name: "Play" });
+    expect(timeline).toBeEnabled();
+    expect(play).toBeEnabled();
+    fireEvent.click(play);
+    expect(screen.getByRole("button", { name: "Pause" })).toBeInTheDocument();
   });
 
   it("passes the selected club mass and MOI into the simulation", () => {

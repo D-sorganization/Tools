@@ -1,21 +1,6 @@
-/**
- * Simulation tab for the web clone (epic #4103, practical parity).
- *
- * Mirrors the PyQt6 Simulation tab where practical: swing-source picker
- * (manual constant twist / double or triple pendulum), plane-tilt inputs with
- * sourced hover guidance, impact-time scrubber (fixed ball, the swing
- * translates so the clubhead at tau meets it, delivery updating live),
- * launch-number readout, a canvas scene with ball/ground toggles + the
- * flight trajectory polyline, video-style playback (play/pause, timeline
- * scrub, rate presets incl. 1x real-time, loop), and JSON export as a
- * download. Screw-axis overlay is deliberately absent on web — it lands
- * with the WASM kernels in P7 (see model/simulation.ts).
- */
-
+/** Web swing-to-impact simulation with scale-separated playback and exports. */
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { DecimalInput } from "./DecimalInput";
-import { FieldInfo } from "./FieldInfo";
 import {
   DEFAULT_IMPACT_CLUB,
   runSimulation,
@@ -42,6 +27,12 @@ import { SimulationLaunchNumbers } from "./SimulationLaunchNumbers";
 import { SwingPlaybackControls } from "./SwingPlaybackControls";
 import { ContactPolicyControl } from "./ContactPolicyControl";
 import { SimulationStatusHeader } from "./SimulationStatusHeader";
+import { PlaneTiltControls } from "./PlaneTiltControls";
+import { TorqueProfilePanel } from "./TorqueProfilePanel";
+import {
+  PASSIVE_DOUBLE_PENDULUM_RUN,
+  type DoublePendulumRunConfig,
+} from "../model/doublePendulum";
 
 const SWING_TOGGLE_GUIDANCE = {
   ball: FIELD_GUIDANCE.ballVisible,
@@ -50,11 +41,8 @@ const SWING_TOGGLE_GUIDANCE = {
   flight: `Warning: expands the scene to flight scale, dwarfing the swing. ${FIELD_GUIDANCE.swingFlightToggle}`,
 };
 
-/** Scale-separated display views (epic #4120): face / swing / flight. */
 const VIEWS = ["Strike", "Swing", "Kinetics", "Flight"] as const;
 type ViewName = (typeof VIEWS)[number];
-
-
 interface Props {
   scenario: ImpactScenario;
   loftDeg: number;
@@ -80,6 +68,8 @@ export function SimulationPanel({
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
   const [contactMode, setContactMode] =
     useState<ContactMode>("delivery_inspection");
+  const [doublePendulumRun, setDoublePendulumRun] =
+    useState<DoublePendulumRunConfig>(PASSIVE_DOUBLE_PENDULUM_RUN);
   const [tilts, setTilts] = useState({ yaw: 0, side: -45, forward: 0 });
   const [tauMs, setTauMs] = useState<number | null>(null);
   const [run, setRun] = useState<SimulationRunTs | null>(null);
@@ -125,7 +115,7 @@ export function SimulationPanel({
 
   // Delivered path / attack angle at impact, for the strike view.
   const deliveryAngles = useMemo(() => {
-    if (!run || run.impactTimeS === null) return null;
+    if (!run || run.impactTimeS === null || run.swing.length < 2) return null;
     const dt = run.swing[1].t - run.swing[0].t;
     const index = Math.min(
       run.swing.length - 1,
@@ -154,8 +144,9 @@ export function SimulationPanel({
       swingDurationS: 1.5,
       club: clubSpec ?? undefined,
       contactMode,
+      doublePendulumRun,
     }),
-    [sourceKind, scenario, effectiveLoftDeg, tilts, tauMs, clubSpec, contactMode],
+    [sourceKind, scenario, effectiveLoftDeg, tilts, tauMs, clubSpec, contactMode, doublePendulumRun],
   );
   const inputSignature = useMemo(() => JSON.stringify(input), [input]);
 
@@ -177,15 +168,16 @@ export function SimulationPanel({
     }
   };
   const runIsStale = run !== null && lastRunSignature !== inputSignature;
+  const completedStatus = run?.impactOutcome.status === "miss"
+    ? "Completed — no club–ball impact"
+    : "Completed — impact and flight available";
   const runStatus = runError
     ? `Run failed: ${runError}`
     : runIsStale
       ? "Inputs changed — run required"
-      : run?.impactOutcome.status === "miss"
-        ? "Completed — no club–ball impact"
-        : run
-          ? "Completed — impact and flight available"
-          : "Not run";
+      : run?.torqueRun.mode === "prescribed"
+        ? `${completedStatus}; prescribed torque profile ${run.torqueRun.profileId}`
+        : run ? completedStatus : "Not run";
 
   // Populate the default Swing view immediately instead of presenting a
   // blank canvas that depends on discovering the Run button first.
@@ -239,6 +231,10 @@ export function SimulationPanel({
       impactOutcome: run.impactOutcome,
       launch: run.launch,
       impactTimeS: run.impactTimeS,
+      torqueRun: run.torqueRun,
+      prescribedTorqueProfile: doublePendulumRun.mode === "prescribed"
+        ? doublePendulumRun.profile.toJsonObject()
+        : null,
       series: {
         swing: run.swing,
         flight: run.flight,
@@ -256,27 +252,6 @@ export function SimulationPanel({
   };
 
   const swingDuration = run ? run.swing[run.swing.length - 1].t : 1.5;
-  const numberInput = (
-    label: string,
-    value: number,
-    guidanceKey: string,
-    onChange: (value: number) => void,
-  ) => (
-    <label className="mb-2 block text-sm" title={FIELD_GUIDANCE[guidanceKey]}>
-      <span className="mb-1 flex justify-between text-slate-300">
-        <span className="flex items-center">{label}<FieldInfo label={label} guidance={FIELD_GUIDANCE[guidanceKey]} /></span>
-        <span className="text-slate-500">deg</span>
-      </span>
-      <DecimalInput
-        value={value}
-        aria-label={`${label} deg`}
-        title={FIELD_GUIDANCE[guidanceKey]}
-        onCommit={onChange}
-        className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
-      />
-    </label>
-  );
-
   return (
     <div className="grid gap-6 lg:grid-cols-[340px_1fr]">
       <SimulationStatusHeader
@@ -301,7 +276,11 @@ export function SimulationPanel({
             <select
               value={sourceKind}
               title={FIELD_GUIDANCE.swingSource}
-              onChange={(e) => setSourceKind(e.target.value as WebSourceKind)}
+              onChange={(e) => {
+                const next = e.target.value as WebSourceKind;
+                setSourceKind(next);
+                if (next !== "double_pendulum") setDoublePendulumRun(PASSIVE_DOUBLE_PENDULUM_RUN);
+              }}
               className="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
             >
               <option value="manual">Manual Scenario (Constant Twist)</option>
@@ -324,18 +303,7 @@ export function SimulationPanel({
           >
             {clubPhysicsGuidance}
           </p>
-          {numberInput("Plane Yaw", tilts.yaw, "planeYawDeg", (v) =>
-            setTilts((t) => ({ ...t, yaw: v })),
-          )}
-          {numberInput("Plane Side Tilt", tilts.side, "planeSideTiltDeg", (v) =>
-            setTilts((t) => ({ ...t, side: v })),
-          )}
-          {numberInput(
-            "Plane Forward Tilt",
-            tilts.forward,
-            "planeForwardTiltDeg",
-            (v) => setTilts((t) => ({ ...t, forward: v })),
-          )}
+          <PlaneTiltControls tilts={tilts} onChange={setTilts} />
           <label
             className="mb-3 block text-sm"
             title={FIELD_GUIDANCE.impactTimeScrub}
@@ -402,6 +370,13 @@ export function SimulationPanel({
             </button>
           </div>
         </div>
+
+        <TorqueProfilePanel
+          sourceKind={sourceKind}
+          runConfig={doublePendulumRun}
+          onRunConfigChange={setDoublePendulumRun}
+          run={run}
+        />
 
         <SimulationLaunchNumbers run={run} distanceUnit={distanceUnit} />
 
