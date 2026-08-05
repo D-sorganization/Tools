@@ -19,6 +19,7 @@ import json
 import logging
 
 import numpy as np
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -76,6 +77,10 @@ _MAX_RUNS = 5000
 
 class VariationTab(QWidget):
     """Monte-Carlo variation tab (controls left, results right)."""
+
+    #: Emitted with the VariationDataset after a successful study
+    #: (#4125 H7b: the course view overlays the landing scatter).
+    studyCompleted = pyqtSignal(object)  # noqa: N815 — Qt convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -392,6 +397,7 @@ class VariationTab(QWidget):
             f"Done: {dataset.n_success}/{dataset.plan.n_runs} runs in "
             f"{dataset.elapsed_s:.1f} s{note}."
         )
+        self.studyCompleted.emit(dataset)
 
     def _on_cancelled(self) -> None:
         self._status.setText("Cancelled.")

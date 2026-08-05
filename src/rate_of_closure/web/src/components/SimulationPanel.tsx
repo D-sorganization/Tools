@@ -23,7 +23,13 @@ import {
 import { FIELD_GUIDANCE } from "../model/units";
 import { type ClubSpec } from "../model/club";
 import { type ImpactScenario } from "../model/impact";
+import {
+  DEFAULT_COURSE_LAYOUT,
+  type CourseLayout,
+} from "../model/course";
+import { type TargetRegionTs } from "../model/targets";
 import { FlightCanvases } from "./FlightCanvases";
+import { TargetSection } from "./TargetSection";
 import { KineticsSection } from "./KineticsSection";
 import { SolverPanel } from "./SolverPanel";
 import { StrikeCanvas } from "./StrikeCanvas";
@@ -58,6 +64,9 @@ interface Props {
   /** Effective club spec from the Club group (H1: CG marker source). */
   clubSpec?: ClubSpec | null;
   onScenarioChange: (updates: Partial<ImpactScenario>) => void;
+  /** Target region (#4125 H7b), lifted to App for the Variation tie-in. */
+  target: TargetRegionTs;
+  onTargetChange: (target: TargetRegionTs) => void;
 }
 
 export function SimulationPanel({
@@ -65,6 +74,8 @@ export function SimulationPanel({
   loftDeg,
   clubSpec = null,
   onScenarioChange,
+  target,
+  onTargetChange,
 }: Props) {
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
   const [tilts, setTilts] = useState({ yaw: 0, side: -45, forward: 0 });
@@ -78,6 +89,29 @@ export function SimulationPanel({
   const [showGround, setShowGround] = useState(true);
   // Course scene (#4125 H7a): fairway strip, green + flag, tee marker.
   const [showCourse, setShowCourse] = useState(true);
+  // Target region (#4125 H7b): drives the course green + solver goal.
+  const targetLayout = useMemo<CourseLayout>(
+    () =>
+      target.kind === "green"
+        ? {
+            ...DEFAULT_COURSE_LAYOUT,
+            greenDistanceM: target.distanceM,
+            greenRadiusM: target.radiusM,
+          }
+        : {
+            ...DEFAULT_COURSE_LAYOUT,
+            greenDistanceM: target.distanceM + target.bandHalfLengthM,
+            fairwayHalfWidthM: target.halfWidthM,
+          },
+    [target],
+  );
+  // Latest landing point (carry, + right lateral) for containment stats.
+  const landing = useMemo(() => {
+    const flight = run?.flight ?? [];
+    if (flight.length < 2) return null;
+    const last = flight[flight.length - 1].position;
+    return { carryM: last[0], lateralM: last[2] };
+  }, [run]);
   // Scale separation (#4120): flight display in the swing view is
   // opt-in — its envelope dwarfs the swing envelope.
   const [showFlight, setShowFlight] = useState(false);
@@ -323,7 +357,7 @@ export function SimulationPanel({
           </p>
         </div>
 
-        <SolverPanel onApply={onScenarioChange} />
+        <SolverPanel onApply={onScenarioChange} target={target} />
       </section>
 
       <section className="min-w-0 space-y-3">
@@ -364,10 +398,19 @@ export function SimulationPanel({
           )}
           {view === "Kinetics" && <KineticsSection input={input} run={run} />}
           {view === "Flight" && (
-            <FlightCanvases
-              points={run?.flight ?? []}
-              emptyText="Run a simulation to populate the flight view."
-            />
+            <>
+              <TargetSection
+                target={target}
+                onChange={onTargetChange}
+                landing={landing ?? undefined}
+              />
+              <FlightCanvases
+                points={run?.flight ?? []}
+                emptyText="Run a simulation to populate the flight view."
+                layout={targetLayout}
+                target={target}
+              />
+            </>
           )}
           {view === "Swing" && (
             <>

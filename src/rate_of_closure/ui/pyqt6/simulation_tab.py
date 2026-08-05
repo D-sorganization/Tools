@@ -54,6 +54,7 @@ from rate_of_closure.simulation import (
     make_source,
     run_simulation,
 )
+from rate_of_closure.simulation.targets import TargetRegion, layout_for_region
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
 from rate_of_closure.ui.pyqt6.kinetics_panel import KineticsPanel
@@ -126,6 +127,12 @@ class SimulationTab(QWidget):
         self._inspector = InspectorView()
         self._solver_panel = SolverPanel()
         self._solver_panel.applyRequested.connect(self.apply_solver_solution)
+        # Target region (#4125 H7b): editing the target moves the course
+        # green/fairway in the H7a scene and overlays the region in the
+        # flight top-down view.
+        self._solver_panel.target_panel().regionChanged.connect(
+            self._on_target_region_changed
+        )
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -367,6 +374,19 @@ class SimulationTab(QWidget):
     def solver_panel(self) -> SolverPanel:
         """The goal-driven Solver panel (worker lifecycle lives on it)."""
         return self._solver_panel
+
+    def _on_target_region_changed(self, region: TargetRegion) -> None:
+        """H7b: reflect the edited target in the course scene + overlay."""
+        layout = layout_for_region(region)
+        self._flight_view.set_course_layout(layout)
+        self._flight_view.set_target_region(region)
+        self._view.set_course_layout(layout)
+
+    def set_landing_scatter(
+        self, carries_m: np.ndarray | None, laterals_m: np.ndarray | None = None
+    ) -> None:
+        """Variation tie-in (#4125 H7b): forward the landing scatter."""
+        self._flight_view.set_landing_scatter(carries_m, laterals_m)
 
     def apply_solver_solution(
         self, result: object, use_swing_source: bool

@@ -23,6 +23,7 @@ import {
   type VariationMode,
   type VariationPlanTs,
 } from "../model/variation";
+import { type TargetRegionTs } from "../model/targets";
 import { LandingCanvas } from "./VariationLanding";
 import {
   datasetToCsv,
@@ -73,7 +74,12 @@ const inputClass =
 const buttonClass =
   "rounded border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-200 transition-colors hover:border-slate-500 disabled:opacity-40";
 
-export function VariationPanel(): JSX.Element {
+export function VariationPanel({
+  target,
+}: {
+  /** Target region (#4125 H7b): landing overlay + hold-% headline. */
+  target?: TargetRegionTs;
+} = {}): JSX.Element {
   const [mode, setMode] = useState<VariationMode>("delivery");
   const [noise, setNoise] = useState<NoiseSpecTs[]>([defaultSpec("delivery")]);
   const [nRuns, setNRuns] = useState(200);
@@ -462,7 +468,7 @@ export function VariationPanel(): JSX.Element {
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
               Landing Dispersion (2σ Ellipse)
             </h2>
-            <LandingCanvas dataset={dataset} />
+            <LandingCanvas dataset={dataset} target={target} />
           </div>
         )}
 

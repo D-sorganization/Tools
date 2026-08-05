@@ -61,6 +61,7 @@ from rate_of_closure.ui.pyqt6.result_row import (
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 from rate_of_closure.units import convert_from_canonical
+from shared.python.swing_sim.variation import VariationDataset
 
 logger = logging.getLogger(__name__)
 
@@ -163,6 +164,10 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._variation_tab = VariationTab()
+        # Variation -> course-view tie-in (#4125 H7b): a completed study
+        # overlays its landing scatter on the flight top-down view, where
+        # the target hold-% headline is reported when a target is set.
+        self._variation_tab.studyCompleted.connect(self._on_variation_study)
         self._putting_tab = PuttingTab()
         self._glossary_tab = GlossaryTab()
 
@@ -287,6 +292,15 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         layout.addWidget(browser)
         self._help_dialog = dialog
         dialog.show()
+
+    def _on_variation_study(self, dataset: VariationDataset) -> None:
+        """Forward a completed study's landing scatter (#4125 H7b)."""
+        names = dataset.output_names
+        if "carry_m" not in names or "lateral_m" not in names:
+            return  # impact-only study: no landing plane to overlay
+        self._simulation_tab.set_landing_scatter(
+            dataset.output_column("carry_m"), dataset.output_column("lateral_m")
+        )
 
     def open_glossary(self, term: str) -> None:
         """Show the Glossary tab, pre-selecting ``term`` when known."""

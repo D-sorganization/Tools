@@ -15,6 +15,7 @@ import {
   type CourseLayout,
 } from "../model/course";
 import { type FlightPoint } from "../model/flight";
+import { type TargetRegionTs } from "../model/targets";
 import { withAlpha } from "../model/theme";
 
 interface Props {
@@ -25,6 +26,8 @@ interface Props {
   layout?: CourseLayout;
   /** Render the fairway/green/flag course elements (default on). */
   showCourse?: boolean;
+  /** Target region (#4125 H7b): dashed boundary in the top-down view. */
+  target?: TargetRegionTs;
 }
 
 const MIN_CARRY_M = 10.0;
@@ -85,6 +88,29 @@ function drawCourse(
   ctx.fillRect(px(0) - 2, py(0) - 2, 4, 4);
 }
 
+function drawTarget(
+  ctx: CanvasRenderingContext2D,
+  target: TargetRegionTs,
+  px: (x: number) => number,
+  py: (v: number) => number,
+): void {
+  // Dashed target boundary (#4125 H7b), palette flag tone.
+  ctx.strokeStyle = courseColors().flag;
+  ctx.setLineDash([6, 4]);
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  if (target.kind === "green") {
+    const { distanceM: d, radiusM: r, lateralM: z } = target;
+    ctx.ellipse(px(d), py(z), px(d + r) - px(d), py(0) - py(r), 0, 0, 2 * Math.PI);
+  } else {
+    const { distanceM: d, bandHalfLengthM: b, halfWidthM: w } = target;
+    ctx.rect(px(d - b), py(w), px(d + b) - px(d - b), py(-w) - py(w));
+  }
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.lineWidth = 1;
+}
+
 function drawPanel(
   canvas: HTMLCanvasElement,
   points: FlightPoint[],
@@ -92,6 +118,7 @@ function drawPanel(
   emptyText: string,
   layout: CourseLayout,
   showCourse: boolean,
+  target?: TargetRegionTs,
 ): void {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -131,6 +158,7 @@ function drawPanel(
   ctx.lineTo(width, py(0));
   ctx.stroke();
   if (showCourse) drawCourse(ctx, vertical, px, py, width, layout);
+  if (target && vertical === "lateral") drawTarget(ctx, target, px, py);
 
   // Trajectory polyline.
   ctx.strokeStyle = "#34d399";
@@ -165,7 +193,13 @@ function drawPanel(
   );
 }
 
-export function FlightCanvases({ points, emptyText, layout, showCourse }: Props) {
+export function FlightCanvases({
+  points,
+  emptyText,
+  layout,
+  showCourse,
+  target,
+}: Props) {
   const sideRef = useRef<HTMLCanvasElement | null>(null);
   const topRef = useRef<HTMLCanvasElement | null>(null);
   const placeholder = emptyText ?? "Run a flight to populate the view.";
@@ -174,10 +208,25 @@ export function FlightCanvases({ points, emptyText, layout, showCourse }: Props)
 
   useEffect(() => {
     if (sideRef.current)
-      drawPanel(sideRef.current, points, "height", placeholder, courseLayout, course);
+      drawPanel(
+        sideRef.current,
+        points,
+        "height",
+        placeholder,
+        courseLayout,
+        course,
+      );
     if (topRef.current)
-      drawPanel(topRef.current, points, "lateral", placeholder, courseLayout, course);
-  }, [points, placeholder, courseLayout, course]);
+      drawPanel(
+        topRef.current,
+        points,
+        "lateral",
+        placeholder,
+        courseLayout,
+        course,
+        target,
+      );
+  }, [points, placeholder, courseLayout, course, target]);
 
   return (
     <div className="grid min-w-0 gap-3">

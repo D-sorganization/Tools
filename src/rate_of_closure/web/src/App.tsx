@@ -15,6 +15,7 @@ import { ClubCanvas } from "./components/ClubCanvas";
 import { FlightExplorerPanel } from "./components/FlightExplorerPanel";
 import { PlotsPanel } from "./components/PlotsPanel";
 import { PuttingPanel } from "./components/PuttingPanel";
+import { DEFAULT_TARGET, type TargetRegionTs } from "./model/targets";
 import { SimulationPanel } from "./components/SimulationPanel";
 import { VariationPanel } from "./components/VariationPanel";
 import { ClubPanel, type GeneratedHead } from "./components/ClubPanel";
@@ -141,6 +142,9 @@ const TABS = [
 
 export default function App() {
   const [scenario, setScenario] = useState<ImpactScenario>(DEFAULT_SCENARIO);
+  // Target region (#4125 H7b): shared by the Simulation flight view /
+  // solver and the Variation landing overlay (hold-% headline).
+  const [target, setTarget] = useState<TargetRegionTs>(DEFAULT_TARGET);
   const [tab, setTab] = useState<(typeof TABS)[number]>(TABS[0]);
   const [explained, setExplained] = useState<string>("pathDeviationDeg");
   const [units, setUnits] = useState<Record<Quantity, string>>({
@@ -284,7 +288,7 @@ export default function App() {
           }}
         />
       ) : tab === TABS[5] ? (
-        <VariationPanel />
+        <VariationPanel target={target} />
       ) : tab === TABS[4] ? (
         <FlightExplorerPanel />
       ) : tab === TABS[3] ? (
@@ -301,6 +305,8 @@ export default function App() {
           onScenarioChange={(updates) =>
             setScenario((s) => ({ ...s, ...updates }))
           }
+          target={target}
+          onTargetChange={setTarget}
         />
       ) : tab === TABS[1] ? (
         <Derivation scenario={scenario} />

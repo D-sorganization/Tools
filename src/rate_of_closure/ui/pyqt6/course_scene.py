@@ -17,14 +17,16 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
-from matplotlib.patches import Circle
+from matplotlib.patches import Circle, Rectangle
 
 from rate_of_closure.ui.course import CourseColors, CourseLayout, course_colors
+from shared.python.swing_sim.solver import TargetRegion
 
 __all__ = [
     "draw_course_ground_3d",
     "draw_course_side",
     "draw_course_top",
+    "draw_target_region_top",
 ]
 
 _FLAG_HEIGHT_M = 2.5  # regulation-ish flagstick, tall enough to read
@@ -102,6 +104,44 @@ def draw_course_side(
             [d], [0.0], marker="^", ms=5, color=tones.flag, clip_on=False, zorder=4
         )
     axes.plot([0.0], [0.0], marker="s", ms=4, color=tones.tee, zorder=4)
+
+
+def draw_target_region_top(
+    axes: Any,
+    region: TargetRegion,
+    *,
+    colors: CourseColors | None = None,
+) -> None:
+    """Dashed target-region boundary on a top-down (carry-x) panel.
+
+    #4125 H7b: green targets draw a dashed circle at (distance,
+    lateral); fairway targets a dashed corridor rectangle. The boundary
+    uses the palette flag tone so it reads against the grass fills.
+    """
+    tones = colors or course_colors()
+    style = {
+        "fill": False,
+        "linestyle": "--",
+        "linewidth": 1.6,
+        "edgecolor": tones.flag,
+        "zorder": 5,
+    }
+    if region.kind == "green":
+        axes.add_patch(
+            Circle((region.distance_m, region.lateral_m), region.radius_m, **style)
+        )
+    else:
+        axes.add_patch(
+            Rectangle(
+                (
+                    region.distance_m - region.band_half_length_m,
+                    -region.half_width_m,
+                ),
+                2.0 * region.band_half_length_m,
+                2.0 * region.half_width_m,
+                **style,
+            )
+        )
 
 
 def draw_course_top(

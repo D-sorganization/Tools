@@ -26,6 +26,7 @@ import {
   type VariablePartitionTs,
   VARIABLE_DEFAULTS,
 } from "../model/solver";
+import { type TargetRegionTs } from "../model/targets";
 import { FIELD_GUIDANCE } from "../model/units";
 
 interface GoalRowSpec {
@@ -138,6 +139,8 @@ interface VarState {
 
 interface Props {
   onApply: (updates: Partial<ImpactScenario>) => void;
+  /** Target region (#4125 H7b): enables 'Optimize to Target'. */
+  target?: TargetRegionTs;
 }
 
 const inputClass =
@@ -145,7 +148,7 @@ const inputClass =
   "py-1 text-slate-100 focus:border-blue-500 focus:outline-none " +
   "disabled:opacity-40";
 
-export function SolverPanel({ onApply }: Props) {
+export function SolverPanel({ onApply, target }: Props) {
   const [goals, setGoals] = useState<Record<string, GoalState>>(() =>
     Object.fromEntries(
       GOAL_ROWS.map((row) => [
@@ -179,7 +182,7 @@ export function SolverPanel({ onApply }: Props) {
   const setVar = (key: string, patch: Partial<VarState>) =>
     setVars((v) => ({ ...v, [key]: { ...v[key], ...patch } }));
 
-  const runSolver = () => {
+  const runSolver = (includeTarget = false) => {
     const goal: SolverGoalTs = {};
     for (const row of GOAL_ROWS) {
       const state = goals[row.key];
@@ -194,7 +197,12 @@ export function SolverPanel({ onApply }: Props) {
       else partition.fixed[row.key] = state.value;
     }
     try {
-      const solved = solveGoals(goal, partition);
+      const solved = solveGoals(
+        goal,
+        partition,
+        400,
+        includeTarget ? target : undefined,
+      );
       setResult(solved);
       setMessage(
         `${solved.converged ? "Converged" : "Did NOT converge"} — residual ` +
@@ -333,12 +341,26 @@ export function SolverPanel({ onApply }: Props) {
       <div className="mb-3 flex gap-2">
         <button
           type="button"
-          onClick={runSolver}
+          onClick={() => runSolver(false)}
           title="Run the bounded multi-start optimization over the enabled goals"
           className="flex-1 rounded-lg border border-sky-400/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-300 transition-all hover:bg-sky-500/20"
         >
           Run Solver
         </button>
+        {target && (
+          <button
+            type="button"
+            onClick={() => runSolver(true)}
+            title={
+              "Run the solver with the flight view's target region added " +
+              "as a goal: the residual is the landing point's distance " +
+              "outside the region (0 inside, small centering pull)."
+            }
+            className="flex-1 rounded-lg border border-emerald-400/60 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-300 transition-all hover:bg-emerald-500/20"
+          >
+            Optimize to Target
+          </button>
+        )}
         <button
           type="button"
           onClick={applySolution}
@@ -382,6 +404,22 @@ export function SolverPanel({ onApply }: Props) {
                   </td>
                 </tr>
               ))}
+              {result.achieved.targetDistanceM !== undefined && (
+                <tr className="border-t border-slate-800/70">
+                  <td className="py-1 pr-2 text-slate-400">
+                    Target Region (signed dist)
+                  </td>
+                  <td className="py-1 pr-2 tabular-nums">≤ 0.0 m</td>
+                  <td className="py-1 pr-2 tabular-nums">
+                    {result.achieved.targetDistanceM.toFixed(1)} m
+                  </td>
+                  <td className="py-1 tabular-nums">
+                    {result.achieved.targetDistanceM <= 0
+                      ? "holding"
+                      : "outside"}
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
           <p className="mt-2 text-xs text-slate-500">

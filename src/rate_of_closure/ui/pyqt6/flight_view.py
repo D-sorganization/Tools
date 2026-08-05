@@ -22,11 +22,13 @@ from matplotlib.figure import Figure
 from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QVBoxLayout, QWidget
 
 from rate_of_closure.simulation import SimulationRun
+from rate_of_closure.simulation.targets import TargetRegion, hold_stats
 from rate_of_closure.ui.course import CourseLayout
 from rate_of_closure.ui.pyqt6.course_scene import (
     draw_course_ground_3d,
     draw_course_side,
     draw_course_top,
+    draw_target_region_top,
 )
 from rate_of_closure.units import FIELD_GUIDANCE
 
@@ -71,6 +73,9 @@ class FlightView(QWidget):
         self._positions: np.ndarray = np.zeros((0, 3))
         self._checks: dict[str, QCheckBox] = {}
         self._course_layout = CourseLayout()
+        self._target_region: TargetRegion | None = None
+        # (carry, lateral) landing scatter [m] from the Variation engine.
+        self._scatter: tuple[np.ndarray, np.ndarray] | None = None
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -124,15 +129,50 @@ class FlightView(QWidget):
         self._course_layout = layout
         self._draw()
 
+    def set_target_region(self, region: TargetRegion | None) -> None:
+        """Show (or clear) the target-region boundary in the top-down view."""
+        self._target_region = region
+        self._draw()
+
+    def target_region(self) -> TargetRegion | None:
+        """The target region currently overlaid, if any."""
+        return self._target_region
+
+    def set_landing_scatter(
+        self, carries_m: np.ndarray | None, laterals_m: np.ndarray | None = None
+    ) -> None:
+        """Overlay a Variation landing scatter (or clear with ``None``).
+
+        #4125 H7b tie-in: when a target region is set, the top-down
+        title reports the share of shots holding the target — the
+        headline Monte-Carlo output.
+        """
+        if carries_m is None or laterals_m is None:
+            self._scatter = None
+        else:
+            self._scatter = (
+                np.asarray(carries_m, float),
+                np.asarray(laterals_m, float),
+            )
+        self._draw()
+
     def extents_m(self) -> tuple[float, float, float]:
         """(carry, height, lateral) plot extents [m] — flight regime."""
         pos = self._positions
         if not len(pos):
             return (_MIN_CARRY_M, _MIN_HEIGHT_M, _MIN_LATERAL_M)
+        carry = max(_MIN_CARRY_M, float(np.max(pos[:, 0])) * 1.05)
+        lateral = max(_MIN_LATERAL_M, float(np.max(np.abs(pos[:, 2]))) * 1.3)
+        if self._scatter is not None and len(self._scatter[0]):
+            carries, laterals = self._scatter
+            finite = np.isfinite(carries) & np.isfinite(laterals)
+            if np.any(finite):
+                carry = max(carry, float(np.max(carries[finite])) * 1.05)
+                lateral = max(lateral, float(np.max(np.abs(laterals[finite]))) * 1.1)
         return (
-            max(_MIN_CARRY_M, float(np.max(pos[:, 0])) * 1.05),
+            carry,
             max(_MIN_HEIGHT_M, float(np.max(pos[:, 1])) * 1.2),
-            max(_MIN_LATERAL_M, float(np.max(np.abs(pos[:, 2]))) * 1.3),
+            lateral,
         )
 
     # ── drawing ─────────────────────────────────────────────────────
@@ -202,11 +242,30 @@ class FlightView(QWidget):
             self._annotate_landing(
                 axes, pos[-1, 0], pos[-1, 2], f"lateral {pos[-1, 2]:+.1f} m"
             )
+        title = "Top-down"
+        # Target region + Variation landing scatter (#4125 H7b).
+        if self._target_region is not None:
+            draw_target_region_top(axes, self._target_region)
+        if self._scatter is not None:
+            carries, laterals = self._scatter
+            axes.scatter(
+                carries,
+                laterals,
+                s=10,
+                alpha=0.55,
+                color=get_chart_color(0),
+                edgecolors="none",
+                zorder=4,
+            )
+            if self._target_region is not None:
+                held, total = hold_stats(carries, laterals, self._target_region)
+                pct = 100.0 * held / total if total else float("nan")
+                title = f"Top-down — {held}/{total} shots hold the target ({pct:.0f}%)"
         axes.set_xlim(0.0, carry_ext)
         axes.set_ylim(-lateral_ext, lateral_ext)
         axes.set_xlabel("carry [m]", fontsize=8)
         axes.set_ylabel("right (+) [m]", fontsize=8)
-        axes.set_title("Top-down", fontsize=9)
+        axes.set_title(title, fontsize=9)
         axes.tick_params(labelsize=7)
 
     def _draw_3d(self, axes, pos: np.ndarray, extents) -> None:  # type: ignore[no-untyped-def]
