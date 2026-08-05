@@ -6,15 +6,28 @@
  * client-side into the existing mesh render path.
  */
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
   CLUB_LIBRARY,
   getClub,
   parametricHeadMesh,
+  type ClubSpec,
+  type Vec3,
 } from "../model/club";
+import { hoselPoint } from "../model/clubHeads";
 import { type HeadMesh } from "../model/mesh";
 import { FIELD_GUIDANCE } from "../model/units";
+import { headCog } from "../model/volumetrics";
+
+/** A generated representative head with its hosel and volumetric COG. */
+export interface GeneratedHead {
+  mesh: HeadMesh;
+  /** Per-type hosel point — the shaft line attaches here (H1). */
+  hosel: Vec3;
+  /** Divergence-theorem volumetric COG of the generated head (H1). */
+  cog: Vec3;
+}
 
 const INPUT_CLASS =
   "no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 " +
@@ -24,17 +37,32 @@ const INPUT_CLASS =
 export function ClubPanel({
   onDriveScenario,
   onGenerate,
+  onSpecChange,
 }: {
   /** Scenario plumbing: adopt the selected club's GC-to-face and lie. */
   onDriveScenario: (comToFaceMm: number, lieAngleDeg: number) => void;
-  /** Deliver a freshly generated parametric head mesh. */
-  onGenerate: (mesh: HeadMesh) => void;
+  /** Deliver a generated head with its hosel and volumetric COG. */
+  onGenerate: (head: GeneratedHead) => void;
+  /** Track the effective club spec (overrides applied) as it changes. */
+  onSpecChange?: (spec: ClubSpec) => void;
 }) {
   const [clubName, setClubName] = useState<string>(CLUB_LIBRARY[1].name);
   const [loftDeg, setLoftDeg] = useState<number>(CLUB_LIBRARY[1].loftDeg);
   const [curvedFace, setCurvedFace] = useState<boolean>(true);
   const [bulgeMm, setBulgeMm] = useState<number>(300);
   const [rollMm, setRollMm] = useState<number>(280);
+
+  const effectiveSpec = (): ClubSpec => ({
+    ...getClub(clubName),
+    loftDeg,
+    faceBulgeRadiusM: curvedFace ? bulgeMm / 1000 : null,
+    faceRollRadiusM: curvedFace ? rollMm / 1000 : null,
+  });
+
+  useEffect(() => {
+    onSpecChange?.(effectiveSpec());
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- state-derived
+  }, [clubName, loftDeg, curvedFace, bulgeMm, rollMm]);
 
   const onClubChange = (name: string) => {
     const club = getClub(name);
@@ -47,14 +75,12 @@ export function ClubPanel({
   };
 
   const onGenerateHead = () => {
-    onGenerate(
-      parametricHeadMesh({
-        ...getClub(clubName),
-        loftDeg,
-        faceBulgeRadiusM: curvedFace ? bulgeMm / 1000 : null,
-        faceRollRadiusM: curvedFace ? rollMm / 1000 : null,
-      }),
-    );
+    const spec = effectiveSpec();
+    onGenerate({
+      mesh: parametricHeadMesh(spec),
+      hosel: hoselPoint(spec),
+      cog: headCog(spec).cog,
+    });
   };
 
   return (

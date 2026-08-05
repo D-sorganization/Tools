@@ -234,6 +234,22 @@ ENTRIES: dict[str, GlossaryEntry] = {
         "relation v_P = v_ref + ω × r gives every point's velocity from "
         "one twist (screw theory; the core of the closure model).",
     ),
+    "mallet_putter": _entry(
+        "Mallet Putter",
+        "A putter with a deep, rounded body extending well behind the "
+        "face — the extra depth moves the center of gravity back and "
+        "raises head MOI versus a blade, per typical published putter "
+        "fitting references (modeled generically in "
+        "rate_of_closure.club.head_profiles).",
+    ),
+    "plumbers_neck": _entry(
+        "Plumber's Neck",
+        "The common putter hosel bend that sets the shaft axis a small "
+        "offset (roughly one shaft diameter) ahead of the face while "
+        "attaching at the heel — giving the hands a slight lead at "
+        "address. Modeled as the blade putter's hosel set-back "
+        "(typical published putter fitting references).",
+    ),
     "uniform_distribution": _entry(
         "Uniform Distribution",
         "A distribution giving every value in a bounded interval equal "

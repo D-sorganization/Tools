@@ -8,19 +8,17 @@ to scale. Matplotlib 3D embedded in Qt, the house pattern for in-window
 3D rendering.
 
 Playback is user-controllable: play/pause, a 0.1x-3x speed multiplier,
-and two display modes — "Head Fixed in Place" (rotation only, easiest
-to read) and "Head Moving Through Space" (the head also translates
-along the target line at the delivery speed, showing the true motion).
-The camera is too: drag to orbit (the view angles survive the
-animation's redraws) and scroll to zoom.
+and two display modes — "Head Fixed in Place" (rotation only) and
+"Head Moving Through Space" (the head also translates along the target
+line at the delivery speed). Drag to orbit; scroll to zoom.
 
 An optional photorealistic mode replaces the procedural head with a
-user-supplied STL mesh ("Load Clubhead STL…" in the playback bar).
-The mesh is normalized onto the wireframe's envelope (see
-:mod:`rate_of_closure.mesh`), rendered as a Poly3DCollection with
-lambert-ish flat shading from the triangle normals, and rotated and
-translated by exactly the same Rodrigues transform as the wireframe.
-"Procedural Head" restores the default wireframe.
+user-supplied STL ("Load Clubhead STL…") or a generated parametric
+head, lambert-shaded under the same Rodrigues transform as the
+wireframe. Generated heads carry their per-type hosel point (the
+shaft line attaches there, along the lie) and their volumetric COG,
+shown by the "Show CG" marker (spec-CG fallback for non-watertight
+STLs). "Procedural Head" restores the default wireframe.
 """
 
 from __future__ import annotations
@@ -34,6 +32,7 @@ from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QFileDialog,
     QHBoxLayout,
@@ -45,8 +44,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from rate_of_closure.club.volumetrics import is_watertight, mesh_volume_centroid
 from rate_of_closure.mesh import HeadMesh, load_head_mesh
 from rate_of_closure.model import ImpactScenario, solve
+from rate_of_closure.units import FIELD_GUIDANCE
 
 logger = logging.getLogger(__name__)
 
@@ -60,6 +61,7 @@ _COL_V_REF = "#30D158"
 _COL_V_POINT = "#FF375F"
 _COL_IMPACT = "#FFD60A"
 _COL_GROUND = "#8b949e"
+_COL_COG = "#FF9F0A"
 
 # Simplified driver-head dimensions [m].
 _FACE_HALF_WIDTH = 0.058
@@ -163,6 +165,8 @@ class Club3DView(QWidget):
 
         self._scenario: ImpactScenario | None = None
         self._mesh: HeadMesh | None = None
+        self._hosel: np.ndarray | None = None
+        self._cog: np.ndarray | None = None
         self._phase = 0.0
         self._speed = 1.0
         self._zoom = 1.0
@@ -224,6 +228,11 @@ class Club3DView(QWidget):
         self._reset_mesh_button.setEnabled(False)
         self._reset_mesh_button.clicked.connect(self.clear_mesh)
         bar.addWidget(self._reset_mesh_button)
+
+        self._show_cg_check = QCheckBox("Show CG")
+        self._show_cg_check.setToolTip(FIELD_GUIDANCE["show_cg_marker"])
+        self._show_cg_check.toggled.connect(lambda _checked: self._draw())
+        bar.addWidget(self._show_cg_check)
         return bar
 
     # ── public API ──────────────────────────────────────────────────
@@ -267,27 +276,67 @@ class Club3DView(QWidget):
     def load_mesh(self, path: str) -> None:
         """Load an STL clubhead mesh and switch to photorealistic mode.
 
-        Raises the mesh module's contract errors on unparseable or
-        degenerate files; the button handler wraps this in a dialog.
-        """
-        self.set_head_mesh(load_head_mesh(path))
+        Raises the mesh module's contract errors on unparseable files
+        (the button handler wraps them in a dialog). A watertight STL
+        gets its volumetric COG; otherwise the CG marker falls back to
+        the reference point (the spec CG)."""
+        mesh = load_head_mesh(path)
+        cog: tuple[float, float, float] | None = None
+        if is_watertight(mesh.triangles):
+            _volume, centroid = mesh_volume_centroid(mesh.triangles)
+            cog = (float(centroid[0]), float(centroid[1]), float(centroid[2]))
+        self.set_head_mesh(mesh, cog_point=cog)
 
-    def set_head_mesh(self, mesh: HeadMesh) -> None:
+    def set_head_mesh(
+        self,
+        mesh: HeadMesh,
+        hosel_point: tuple[float, float, float] | None = None,
+        cog_point: tuple[float, float, float] | None = None,
+    ) -> None:
         """Render a prepared head mesh (STL or parametric) in the view.
 
-        The shared endpoint of both mesh sources: "Load Clubhead STL…"
-        normalizes a user file into a :class:`HeadMesh`, and the Club
-        group's "Generate Representative Head" builds one parametrically.
+        The Club group's "Generate Representative Head" passes its
+        per-type hosel point (where the shaft line attaches) and its
+        volumetric COG; STL loads leave them ``None``.
         """
         self._mesh = mesh
+        self._hosel = None if hosel_point is None else np.asarray(hosel_point)
+        self._cog = None if cog_point is None else np.asarray(cog_point)
         self._reset_mesh_button.setEnabled(True)
         self._draw()
 
     def clear_mesh(self) -> None:
         """Discard any loaded STL mesh and restore the procedural head."""
         self._mesh = None
+        self._hosel = None
+        self._cog = None
         self._reset_mesh_button.setEnabled(False)
         self._draw()
+
+    def show_cg_check(self) -> QCheckBox:
+        """The 'Show CG' checkbox (test seam)."""
+        return self._show_cg_check
+
+    def shaft_attachment(self) -> np.ndarray | None:
+        """Model-frame shaft attachment: the generated head's hosel
+        shifted with the mesh; ``None`` for the wireframe hosel."""
+        if self._scenario is None or self._mesh is None or self._hosel is None:
+            return None
+        return np.asarray(self._hosel + self._head_shift(self._mesh, self._scenario))
+
+    def cg_marker_point(self) -> np.ndarray | None:
+        """Model-frame CG marker location, or ``None`` when hidden."""
+        if self._scenario is None or not self._show_cg_check.isChecked():
+            return None
+        if self._mesh is None or self._cog is None:
+            return np.zeros(3)  # spec CG fallback: the reference point
+        return np.asarray(self._cog + self._head_shift(self._mesh, self._scenario))
+
+    @staticmethod
+    def _head_shift(mesh: HeadMesh, scenario: ImpactScenario) -> np.ndarray:
+        """+x shift placing the mesh's face plane at GC-to-face."""
+        d = scenario.com_to_face_mm / 1000.0
+        return np.array([d - float(mesh.triangles[..., 0].max()), 0.0, 0.0])
 
     def has_mesh(self) -> bool:
         """Whether an STL mesh is currently rendered."""
@@ -347,7 +396,14 @@ class Club3DView(QWidget):
         axes.clear()
         if self._mesh is not None:
             self._draw_mesh(self._mesh, scenario, rotation, offset)
-            pts = _display(parts["shaft"] @ rotation.T + offset)
+            shaft = parts["shaft"]
+            attachment = self.shaft_attachment()
+            if attachment is not None:
+                # Hosel-true shaft: attach at the per-type hosel point.
+                lie = np.radians(scenario.lie_angle_deg)
+                shaft_dir = np.array([0.0, np.sin(lie), -np.cos(lie)])
+                shaft = np.vstack([attachment, attachment + shaft_dir * _SHAFT_STUB])
+            pts = _display(shaft @ rotation.T + offset)
             axes.plot(pts[:, 0], pts[:, 1], pts[:, 2], color=_COL_SHAFT, lw=2.0)
         else:
             for key, color, width in (
@@ -364,6 +420,11 @@ class Club3DView(QWidget):
         impact = parts["impact"] @ rotation.T + offset
         axes.scatter(*_display(impact), color=_COL_IMPACT, s=45, zorder=5)
         axes.scatter(*_display(offset), color=_COL_BODY, s=30)
+        cg_point = self.cg_marker_point()
+        if cg_point is not None:
+            placed = _display(cg_point @ rotation.T + offset)
+            cg_style = {"color": _COL_COG, "s": 60, "marker": "X", "zorder": 6}
+            axes.scatter(*placed, label="volumetric CG", **cg_style)
 
         if moving:
             # Target line on the ground plane, for spatial reference.
@@ -418,21 +479,14 @@ class Club3DView(QWidget):
     ) -> None:
         """Shaded STL head under the same transform as the wireframe.
 
-        The mesh is centered near the origin, so it is first shifted
-        along +x until its face plane (its forward extent) sits at
-        ``com_to_face`` (where the wireframe's face plate is), then
-        rotated about the reference point and translated with the head.
-        For a normalized STL the forward extent is exactly half the
-        canonical depth; parametric heads keep their mass-scaled and
-        loft-tilted extent. Shading is flat
-        lambert-ish: intensity = ambient + (1 - ambient) * |n . L| with
-        a fixed world light, evaluated on the rotated normals. Depth
-        ordering is matplotlib's own Poly3DCollection z-sort (average
-        triangle depth), the painter's algorithm it applies natively.
+        The mesh is shifted by :meth:`_head_shift` so its face plane
+        sits at ``com_to_face``, then rotated about the reference point
+        and translated with the head. Shading is flat lambert-ish:
+        ``ambient + (1 - ambient) * |n . L|`` with a fixed world light
+        on the rotated normals; depth ordering is Poly3DCollection's
+        native painter's-algorithm z-sort.
         """
-        d = scenario.com_to_face_mm / 1000.0
-        head_shift = np.array([d - float(mesh.triangles[..., 0].max()), 0.0, 0.0])
-        tris = (mesh.triangles + head_shift) @ rotation.T + offset
+        tris = (mesh.triangles + self._head_shift(mesh, scenario)) @ rotation.T + offset
         normals = mesh.normals @ rotation.T
         lambert = np.abs(normals @ _LIGHT_DIR)
         intensity = _MESH_AMBIENT + (1.0 - _MESH_AMBIENT) * lambert

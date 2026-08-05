@@ -223,6 +223,14 @@ FIELD_GUIDANCE: dict[str, str] = {
         "loft, and face curvature radii. Source: typical published "
         "manufacturer spec sheets."
     ),
+    "show_cg_marker": (
+        "Suggested range: on to mark the head's center of gravity — "
+        "the geometric centroid of the generated head computed from "
+        "its closed mesh by the divergence theorem (falls back to the "
+        "spec CG for loaded STLs that are not watertight). Source: "
+        "divergence-theorem solid centroid (standard vector calculus); "
+        "typical published CG specs for the per-type bands."
+    ),
     "flight_side_visible": (
         "Suggested range: on for the side profile (height vs carry) — "
         "the classic trajectory presentation. Source: launch-monitor "

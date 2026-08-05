@@ -233,4 +233,44 @@ ENTRIES: dict[str, GlossaryEntry] = {
         "angle with a smaller club-path contribution (D-plane "
         "literature).",
     ),
+    "blade_putter": _entry(
+        "Blade Putter",
+        "A putter with a shallow, roughly rectangular head — thin "
+        "face-to-back, a lower flange behind the face, and usually a "
+        "plumber's-neck hosel (the classic anser-style form, modeled "
+        "generically in rate_of_closure.club.head_profiles without any "
+        "brand geometry).",
+    ),
+    "bounce": _entry(
+        "Bounce Angle",
+        "The angle between a wedge's sole leading edge and the ground "
+        "when the shaft is vertical: bounce keeps the leading edge from "
+        "digging by presenting the trailing sole first. Typical "
+        "published wedge bounce is 4-14 deg (manufacturer wedge spec "
+        "sheets).",
+    ),
+    "centroid": _entry(
+        "Centroid (Geometric COG)",
+        "The volume-averaged center of a solid — for a uniform-density "
+        "clubhead, its center of gravity. The app computes it from the "
+        "closed head mesh via the divergence theorem "
+        "(rate_of_closure.club.volumetrics) and reconciles it with the "
+        "published-typical CG depth/height in each club spec.",
+    ),
+    "divergence_theorem": _entry(
+        "Divergence Theorem (Mesh Volume)",
+        "Gauss's theorem turning a volume integral into a surface "
+        "integral: summing the signed tetrahedra each outward-wound "
+        "surface triangle forms with the origin gives the exact "
+        "enclosed volume and centroid of a watertight mesh (standard "
+        "vector calculus; rate_of_closure.club.volumetrics).",
+    ),
+    "hosel": _entry(
+        "Hosel",
+        "The socket where the shaft joins the clubhead — at the heel. "
+        "Its location sets how the shaft line meets the head: heel-top "
+        "for irons, wedges, and putters, and the heel-crown transition "
+        "for woods and hybrids (club-design literature; "
+        "rate_of_closure.club.head_profiles per-type hosel points).",
+    ),
 }

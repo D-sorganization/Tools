@@ -10,9 +10,10 @@ geometry so both generators stay DRY.
 Frame: the AffineDrift head frame — x face-forward (target), y up,
 z toward the toe (right of target for a right-handed golfer).
 
-Winding: every helper produces outward-facing triangles given rings
-ordered face (+x) to tail (-x) with vertices circling as
-:func:`superellipse_ring` emits them.
+Winding: :func:`cap_fan` picks its facing explicitly; :func:`loft_band`
+defaults to the face-patch orientation and takes ``flip=True`` for
+radially-outward body bands (see its docstring), so a generator can
+produce a consistently outward-wound, watertight solid.
 """
 
 from __future__ import annotations
@@ -56,20 +57,30 @@ def superellipse_ring(
     return np.column_stack([np.full(points, x), y, z])
 
 
-def loft_band(ring_a: np.ndarray, ring_b: np.ndarray) -> list[np.ndarray]:
-    """Two triangles per quad between consecutive rings, outward-facing.
+def loft_band(
+    ring_a: np.ndarray, ring_b: np.ndarray, flip: bool = False
+) -> list[np.ndarray]:
+    """Two triangles per quad between consecutive rings.
 
     ``ring_a`` is the ring nearer the face (+x) — or the outer ring of
     a face patch — and ``ring_b`` the next ring toward the tail (or
-    face center).
+    face center). With the default winding the band faces +x-ward
+    (face-patch orientation); ``flip=True`` reverses each triangle so a
+    body band between successive loft sections faces radially outward
+    — the orientation the watertight volumetrics require.
     """
     require(ring_a.shape == ring_b.shape, "rings must match", ring_a.shape)
     n = ring_a.shape[0]
     triangles: list[np.ndarray] = []
     for i in range(n):
         j = (i + 1) % n
-        triangles.append(np.array([ring_a[i], ring_b[i], ring_b[j]]))
-        triangles.append(np.array([ring_a[i], ring_b[j], ring_a[j]]))
+        quad = (
+            (np.array([ring_a[i], ring_b[i], ring_b[j]])),
+            (np.array([ring_a[i], ring_b[j], ring_a[j]])),
+        )
+        if flip:
+            quad = (quad[0][::-1].copy(), quad[1][::-1].copy())
+        triangles.extend(quad)
     return triangles
 
 

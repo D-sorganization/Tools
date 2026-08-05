@@ -34,7 +34,12 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.club import ClubSpec, parametric_head_mesh
+from rate_of_closure.club import (
+    ClubSpec,
+    head_cog,
+    hosel_point,
+    parametric_head_mesh,
+)
 from rate_of_closure.derivation import (
     METRIC_EXPLANATIONS,
     RESULT_EXPLANATIONS,
@@ -296,8 +301,18 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         return f"{displayed:+.2f} {unit}"
 
     def _on_club_head(self, spec: ClubSpec) -> None:
-        """Build the parametric head for a club spec and display it."""
-        self._club_view.set_head_mesh(parametric_head_mesh(spec))
+        """Build the parametric head for a club spec and display it.
+
+        The generated head carries its per-type hosel point (the shaft
+        line attaches there) and its divergence-theorem volumetric COG
+        for the "Show CG" marker.
+        """
+        report = head_cog(spec)
+        self._club_view.set_head_mesh(
+            parametric_head_mesh(spec),
+            hosel_point=hosel_point(spec),
+            cog_point=report.cog,
+        )
         status_bar = self.statusBar()
         if status_bar is not None:
             status_bar.showMessage(

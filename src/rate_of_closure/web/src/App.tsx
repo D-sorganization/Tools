@@ -16,10 +16,10 @@ import { FlightExplorerPanel } from "./components/FlightExplorerPanel";
 import { PlotsPanel } from "./components/PlotsPanel";
 import { SimulationPanel } from "./components/SimulationPanel";
 import { VariationPanel } from "./components/VariationPanel";
-import { ClubPanel } from "./components/ClubPanel";
+import { ClubPanel, type GeneratedHead } from "./components/ClubPanel";
 import { Derivation } from "./components/Derivation";
 import { GlossaryPanel } from "./components/GlossaryPanel";
-import { type HeadMesh } from "./model/mesh";
+import { type ClubSpec } from "./model/club";
 import {
   METRIC_EXPLANATIONS,
   RESULT_EXPLANATIONS,
@@ -146,7 +146,10 @@ export default function App() {
     rotation: "deg/s",
     length: "mm",
   });
-  const [generatedMesh, setGeneratedMesh] = useState<HeadMesh | null>(null);
+  const [generatedHead, setGeneratedHead] = useState<GeneratedHead | null>(
+    null,
+  );
+  const [clubSpec, setClubSpec] = useState<ClubSpec | null>(null);
   const [glossaryTerm, setGlossaryTerm] = useState<string | undefined>(undefined);
   const result = useMemo(() => solve(scenario), [scenario]);
   const metrics = useMemo(() => closureMetrics(scenario), [scenario]);
@@ -285,6 +288,7 @@ export default function App() {
         <SimulationPanel
           scenario={scenario}
           loftDeg={10.5}
+          clubSpec={clubSpec}
           onScenarioChange={(updates) =>
             setScenario((s) => ({ ...s, ...updates }))
           }
@@ -327,7 +331,8 @@ export default function App() {
 
             <ClubPanel
               onDriveScenario={driveScenarioFromClub}
-              onGenerate={setGeneratedMesh}
+              onGenerate={setGeneratedHead}
+              onSpecChange={setClubSpec}
             />
 
             <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
@@ -425,7 +430,12 @@ export default function App() {
               </p>
             </div>
 
-            <ClubCanvas scenario={scenario} externalMesh={generatedMesh} />
+            <ClubCanvas
+              scenario={scenario}
+              externalMesh={generatedHead?.mesh ?? null}
+              hoselPoint={generatedHead?.hosel ?? null}
+              cogPoint={generatedHead?.cog ?? null}
+            />
           </section>
         </div>
       )}

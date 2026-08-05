@@ -24,12 +24,8 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
 from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QVBoxLayout, QWidget
 
-from rate_of_closure.club import (
-    REFERENCE_HEAD_MASS_KG,
-    ClubSpec,
-    face_sagitta,
-)
-from rate_of_closure.club.parametric_head import BASE_SECTIONS
+from rate_of_closure.club import ClubSpec, face_sagitta, head_cog
+from rate_of_closure.club.head_profiles import mass_scale, profile_for
 from rate_of_closure.simulation import SimulationRun
 from rate_of_closure.units import FIELD_GUIDANCE
 
@@ -71,18 +67,19 @@ _DISPLAY_PARAMS: tuple[tuple[str, str, str, bool], ...] = (
     ("vectors", "Delivery Vectors", "strike_vectors_visible", True),
     ("history", "Strike History", "strike_history_visible", True),
     ("club_info", "Club Info", "strike_club_info_visible", True),
+    ("show_cg", "Show CG", "show_cg_marker", False),
 )
 
 
 def face_half_extents_mm(club: ClubSpec) -> tuple[float, float]:
     """(half-width, half-height) of the club's face plate, millimetres.
 
-    Derived from the parametric head's face-plate cross-section scaled
+    Derived from the club type's head-profile face cross-section scaled
     by the club's constant-density mass factor — the same envelope the
-    3D head mesh uses.
+    3D head mesh uses, so an iron face reads narrower than a driver's.
     """
-    scale = float((club.head_mass_kg / REFERENCE_HEAD_MASS_KG) ** (1.0 / 3.0))
-    _x, half_h, half_w = BASE_SECTIONS[0]
+    scale = mass_scale(club)
+    _x, half_h, half_w, _yc = profile_for(club).sections[0]
     return half_w * scale * 1000.0, half_h * scale * 1000.0
 
 
@@ -229,6 +226,30 @@ class StrikeView(QWidget):
                 [], [], color=get_chart_color(color_index), lw=1.6, label=label
             )
 
+    def _draw_cg(self, club: ClubSpec) -> None:
+        """Volumetric COG projected into the face plane (themed marker).
+
+        Horizontal = the centroid's toe (z) coordinate; vertical = its
+        height relative to the face-plate center — the same head frame
+        the 3D view uses, computed by the divergence-theorem
+        volumetrics on the generated head.
+        """
+        report = head_cog(club)
+        toe_mm = report.cog[2] * 1000.0
+        high_mm = (report.cog[1] - report.face_center[1]) * 1000.0
+        self._axes.scatter(
+            [toe_mm],
+            [high_mm],
+            s=55,
+            marker="X",
+            color=get_chart_color(5),
+            zorder=6,
+            label=(
+                f"volumetric CG (depth {report.cg_depth_m * 1000.0:.0f} mm, "
+                f"height {report.cg_height_m * 1000.0:.0f} mm)"
+            ),
+        )
+
     def _club_info_text(self, club: ClubSpec) -> str:
         if club.face_bulge_radius_m is not None and club.face_roll_radius_m is not None:
             curvature = (
@@ -282,6 +303,8 @@ class StrikeView(QWidget):
             )
         if self._checks["vectors"].isChecked():
             self._draw_vectors(run, extent)
+        if self._checks["show_cg"].isChecked():
+            self._draw_cg(club)
 
         toe_mm = run.config.scenario.impact_offset_toe_mm
         high_mm = run.config.scenario.impact_offset_high_mm
