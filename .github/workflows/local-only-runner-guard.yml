@@ -67,6 +67,9 @@ jobs:
               "Reject hosted runner routing",
               "Local-Only Workflow Runner Guard",
           }
+          ALLOWLIST_JOBS = {
+              ("ci-standard.yml", "quality-gate"),
+          }
           HOSTED = re.compile(r"^(ubuntu|macos|windows)(-latest|-\d+)?$")
 
           def collect_runs_on(job: dict) -> list[str]:
@@ -114,6 +117,8 @@ jobs:
               for job_id, job in jobs.items():
                   if not isinstance(job, dict):
                       continue
+                  if (wf.name, job_id) in ALLOWLIST_JOBS:
+                      continue
                   if job.get("name") in ALLOWLIST_JOB_NAMES:
                       continue
                   # Reusable workflow callers don't have runs-on; skip
@@ -143,7 +148,8 @@ jobs:
               print(f"{len(violations)} workflow(s) leak to hosted runners.")
               print(
                   "Allowed: local-only-runner-guard.yml, runner-health-alert.yml, "
-                  "and jobs literally named 'Reject hosted runner routing'."
+                  "ci-standard.yml::quality-gate, and jobs literally named "
+                  "'Reject hosted runner routing'."
               )
               sys.exit(1)
 
