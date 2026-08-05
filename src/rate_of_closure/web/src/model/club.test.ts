@@ -20,10 +20,11 @@ import {
 const DRIVER = "Driver 10.5°";
 
 describe("club library", () => {
-  it("holds exactly fifteen clubs in ladder order", () => {
-    expect(CLUB_LIBRARY).toHaveLength(15);
+  it("holds exactly sixteen clubs in ladder order", () => {
+    expect(CLUB_LIBRARY).toHaveLength(16);
     expect(CLUB_LIBRARY[0].name).toBe("Driver 9.5°");
-    expect(CLUB_LIBRARY[14].name).toBe("Putter");
+    expect(CLUB_LIBRARY[14].name).toBe("Blade Putter");
+    expect(CLUB_LIBRARY[15].name).toBe("Mallet Putter");
   });
 
   it("normalizes the driver source row to SI", () => {
@@ -135,7 +136,7 @@ describe("parametric head", () => {
   it("is closed and deterministic", () => {
     const first = buildParametricHead(getClub(DRIVER));
     const second = buildParametricHead(getClub(DRIVER));
-    expect(first).toHaveLength(288);
+    expect(first).toHaveLength(1792);
     expect(first).toEqual(second);
   });
 
@@ -155,9 +156,9 @@ describe("parametric head", () => {
   });
 
   it("scales the envelope with head mass", () => {
-    const wedge = getClub("Sand Wedge");
-    const scale = (wedge.headMassKg / REFERENCE_HEAD_MASS_KG) ** (1 / 3);
-    const flat = buildParametricHead(wedge).flat();
+    const wood = getClub("3-Wood");
+    const scale = (wood.headMassKg / REFERENCE_HEAD_MASS_KG) ** (1 / 3);
+    const flat = buildParametricHead(wood).flat();
     const zs = flat.map((v) => v[2]);
     expect(Math.max(...zs) - Math.min(...zs)).toBeCloseTo(0.124 * scale, 12);
   });

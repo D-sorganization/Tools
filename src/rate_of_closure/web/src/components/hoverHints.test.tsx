@@ -10,10 +10,12 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import App from "../App";
 import { DEFAULT_SCENARIO } from "../model/impact";
+import { DEFAULT_TARGET } from "../model/targets";
 import { Derivation } from "./Derivation";
 import { FlightExplorerPanel } from "./FlightExplorerPanel";
 import { GlossaryPanel } from "./GlossaryPanel";
 import { PlotsPanel } from "./PlotsPanel";
+import { PuttingPanel } from "./PuttingPanel";
 import { SimulationPanel } from "./SimulationPanel";
 import { VariationPanel } from "./VariationPanel";
 
@@ -95,9 +97,16 @@ describe("hover-hint completeness", () => {
         scenario={DEFAULT_SCENARIO}
         loftDeg={10.5}
         onScenarioChange={() => undefined}
+        target={DEFAULT_TARGET}
+        onTargetChange={() => undefined}
       />,
     );
     assertHints(container, "SimulationPanel");
+  });
+
+  it("PuttingPanel", () => {
+    const { container } = render(<PuttingPanel />);
+    assertHints(container, "PuttingPanel");
   });
 
   it("Derivation renders (read-only page, no unlabeled controls)", () => {

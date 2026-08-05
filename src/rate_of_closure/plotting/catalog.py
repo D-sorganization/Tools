@@ -23,6 +23,7 @@ import numpy as np
 
 from rate_of_closure._contracts import ensure, require
 from rate_of_closure.model import solve
+from rate_of_closure.simulation.kinetics import KineticsSeries, kinetics_for_run
 from rate_of_closure.simulation.session import SimulationRun
 
 __all__ = [
@@ -39,6 +40,7 @@ __all__ = [
 CATEGORIES: tuple[str, ...] = (
     "Input",
     "Swing Sample",
+    "Kinetics",
     "Impact",
     "Launch",
     "Flight",
@@ -46,7 +48,7 @@ CATEGORIES: tuple[str, ...] = (
 )
 
 #: Categories whose extractors return per-sample arrays.
-SERIES_CATEGORIES: frozenset[str] = frozenset({"Swing Sample", "Flight"})
+SERIES_CATEGORIES: frozenset[str] = frozenset({"Swing Sample", "Kinetics", "Flight"})
 
 #: Axis-scale hints accepted by :class:`VariableSpec`.
 SCALE_HINTS: tuple[str, ...] = ("linear", "log")
@@ -97,6 +99,23 @@ class VariableSpec:
         return f"{self.label} [{self.unit}]" if self.unit else self.label
 
 
+#: Ball-flight distance variables that follow the user's Distance
+#: display unit (#4125 H6 — yards default). Heights (flight.y_m,
+#: metric.max_height_m) and swing-scale positions stay in metres.
+DISTANCE_KEYS: frozenset[str] = frozenset(
+    {
+        "flight.x_m",
+        "flight.z_m",
+        "metric.carry_m",
+        "putting.path_x",
+        "putting.path_y",
+        "putting.rollout",
+        "putting.skid_distance",
+        "putting.break",
+    }
+)
+
+
 def _speed_series(vectors: np.ndarray) -> np.ndarray:
     return np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
 
@@ -109,6 +128,21 @@ def _path_deg(run: SimulationRun) -> float:
 def _aoa_deg(run: SimulationRun) -> float:
     v = run.delivery.clubhead_velocity
     return math.degrees(math.atan2(float(v[1]), math.hypot(float(v[0]), float(v[2]))))
+
+
+def _kinetics_series(picker: Callable[[KineticsSeries], np.ndarray]) -> Extractor:
+    """Kinetics extractor factory: joint kinetics need the pendulum
+    joint states, so sources without them (manual, triple pendulum)
+    yield an all-NaN series of matching length (#4125 H2 — the plots
+    render empty rather than lying)."""
+
+    def _extract(run: SimulationRun) -> np.ndarray:
+        series = kinetics_for_run(run)
+        if series is None:
+            return np.full(run.swing_times.shape[0], np.nan)
+        return np.asarray(picker(series), dtype=float)
+
+    return _extract
 
 
 def _entries() -> list[VariableSpec]:
@@ -208,6 +242,74 @@ def _entries() -> list[VariableSpec]:
             "Clubhead Angular Speed",
             "deg/s",
             lambda r: np.degrees(_speed_series(r.swing_twists[:, :3])),
+        ),
+    ]
+    kinetics: list[tuple[str, str, str, Extractor]] = [
+        (
+            "shoulder_torque_nm",
+            "Shoulder Net Torque",
+            "N·m",
+            _kinetics_series(lambda k: k.torque_inertial_nm[:, 0]),
+        ),
+        (
+            "wrist_torque_nm",
+            "Wrist Net Torque",
+            "N·m",
+            _kinetics_series(lambda k: k.torque_inertial_nm[:, 1]),
+        ),
+        (
+            "shoulder_gravity_torque_nm",
+            "Shoulder Gravity Torque",
+            "N·m",
+            _kinetics_series(lambda k: k.torque_gravity_nm[:, 0]),
+        ),
+        (
+            "wrist_gravity_torque_nm",
+            "Wrist Gravity Torque",
+            "N·m",
+            _kinetics_series(lambda k: k.torque_gravity_nm[:, 1]),
+        ),
+        (
+            "shoulder_damping_torque_nm",
+            "Shoulder Damping Torque",
+            "N·m",
+            _kinetics_series(lambda k: k.torque_damping_nm[:, 0]),
+        ),
+        (
+            "wrist_damping_torque_nm",
+            "Wrist Damping Torque",
+            "N·m",
+            _kinetics_series(lambda k: k.torque_damping_nm[:, 1]),
+        ),
+        (
+            "shoulder_power_w",
+            "Shoulder Power",
+            "W",
+            _kinetics_series(lambda k: k.power_w[:, 0]),
+        ),
+        (
+            "wrist_power_w",
+            "Wrist Power",
+            "W",
+            _kinetics_series(lambda k: k.power_w[:, 1]),
+        ),
+        (
+            "shoulder_force_n",
+            "Shoulder Reaction Force",
+            "N",
+            _kinetics_series(lambda k: k.force_magnitude_n("shoulder")),
+        ),
+        (
+            "wrist_force_n",
+            "Wrist Reaction Force",
+            "N",
+            _kinetics_series(lambda k: k.force_magnitude_n("wrist")),
+        ),
+        (
+            "clubhead_force_n",
+            "Clubhead Force",
+            "N",
+            _kinetics_series(lambda k: k.force_magnitude_n("clubhead")),
         ),
     ]
     impact: list[tuple[str, str, str, Extractor]] = [
@@ -318,6 +420,7 @@ def _entries() -> list[VariableSpec]:
     groups: list[tuple[str, str, list[tuple[str, str, str, Extractor]]]] = [
         ("input", "Input", inputs),
         ("swing", "Swing Sample", swing),
+        ("kinetics", "Kinetics", kinetics),
         ("impact", "Impact", impact),
         ("launch", "Launch", launch),
         ("flight", "Flight", flight),

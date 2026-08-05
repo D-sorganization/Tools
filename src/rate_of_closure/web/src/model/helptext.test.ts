@@ -6,6 +6,7 @@
 import { describe, expect, it } from "vitest";
 
 import { HELP_TEXTS } from "./helptext";
+import { FIELD_GUIDANCE } from "./units";
 
 /** The App's TABS labels (pinned; App.tsx renders HELP_TEXTS[tab]). */
 const TABS = [
@@ -15,10 +16,26 @@ const TABS = [
   "Plots",
   "Flight Explorer",
   "Variation",
+  "Putting",
   "Glossary",
 ] as const;
 
 describe("per-tab help", () => {
+  it("documents reference frames for directional engineering inputs", () => {
+    for (const key of [
+      "clubheadSpeedMph",
+      "omegaPlaneDps",
+      "omegaShaftDps",
+      "planeYawDeg",
+      "planeSideTiltDeg",
+      "planeForwardTiltDeg",
+      "fxAzimuth",
+      "fxSpinAxisTilt",
+    ]) {
+      expect(FIELD_GUIDANCE[key], key).toContain("Reference frame:");
+    }
+  });
+
   it("every tab has an entry", () => {
     for (const tab of TABS) {
       expect(HELP_TEXTS[tab], tab).toBeDefined();

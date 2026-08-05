@@ -9,13 +9,14 @@
 
 import { ENTRIES as ENTRIES_A_L } from "./glossaryEntriesAL";
 import { ENTRIES as ENTRIES_L_Z } from "./glossaryEntriesLZ";
+import { ENTRIES as ENTRIES_PUTTING } from "./glossaryEntriesPutting";
 import type { GlossaryEntry } from "./glossaryTypes";
 
 export type { GlossaryEntry } from "./glossaryTypes";
 
 /** Every term used across the app, keyed snake_case (Python parity). */
 export const GLOSSARY: Record<string, GlossaryEntry> = Object.fromEntries(
-  Object.entries({ ...ENTRIES_A_L, ...ENTRIES_L_Z }).sort(([a], [b]) =>
+  Object.entries({ ...ENTRIES_A_L, ...ENTRIES_L_Z, ...ENTRIES_PUTTING }).sort(([a], [b]) =>
     a < b ? -1 : a > b ? 1 : 0,
   ),
 );
@@ -47,6 +48,17 @@ export const FIELD_TO_TERM: Record<string, string> = {
   flightTimeS: "flight_time",
   landingAngleDeg: "landing_angle",
   lateralM: "lateral_offset",
+  // Kinetics panel fields (#4125 H2)
+  jointTorques: "inverse_dynamics",
+  jointPower: "power",
+  reactionForces: "joint_reaction_force",
+  puttRolloutM: "stimp",
+  puttSkidM: "skid",
+  puttSkidPct: "skid",
+  puttTimeS: "pure_roll",
+  puttBreakM: "break",
+  puttSpeedAtHoleMps: "capture_speed",
+  puttMargin: "capture_speed",
 };
 
 /** Glossary keys whose term or definition matches `query`. */

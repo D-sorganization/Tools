@@ -1,19 +1,4 @@
-"""The Simulation tab: swing source, plane tilts, club, scrub, run.
-
-Hosts the whole simulation session UI (epic #4103): swing-source picker
-(manual scenario / double pendulum / triple pendulum), the three
-sequential plane-tilt inputs, a club picker (reusing the shared club
-library), the flight-model picker, the Run button, the impact-time
-scrubber (the ball is fixed; scrubbing tau translates the swing so the
-clubhead at tau meets it, with delivery numbers updating live), the 3D
-scene with playback + toggles (:class:`SimulationView`), the launch
-result rows with click-through explanations, and the run-data inspector
-with CSV/JSON export (:class:`InspectorView`).
-
-Every input carries sourced hover guidance (FIELD_GUIDANCE pattern);
-the tab consumes complete scenarios from the main window (LoD) and
-builds :class:`SimulationConfig` objects for the session layer.
-"""
+"""Simulation session UI for source setup, playback, results, and inspection."""
 
 from __future__ import annotations
 
@@ -55,45 +40,26 @@ from rate_of_closure.simulation import (
     make_source,
     run_simulation,
 )
+from rate_of_closure.simulation.targets import TargetRegion, layout_for_region
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
+from rate_of_closure.ui.pyqt6.kinetics_panel import KineticsPanel
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
+from rate_of_closure.ui.pyqt6.simulation_specs import (
+    LAUNCH_ROWS,
+    SOURCE_LABELS,
+    TILT_SPECS,
+)
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
-from rate_of_closure.units import FIELD_GUIDANCE
+from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.types import PlaneOrientation
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["LAUNCH_ROWS", "SOURCE_LABELS", "SimulationTab"]
-
-#: Source kind -> Title Case combo label (order matches SOURCE_KINDS).
-SOURCE_LABELS: dict[str, str] = {
-    "manual": "Manual Scenario (Constant Twist)",
-    "double_pendulum": "Double Pendulum",
-    "triple_pendulum": "Triple Pendulum",
-}
-
-#: (launch field, Title Case label, unit suffix) in display order. Every
-#: field must have an entry in LAUNCH_EXPLANATIONS (test-enforced).
-LAUNCH_ROWS: tuple[tuple[str, str, str], ...] = (
-    ("ball_speed_mph", "Ball Speed", " mph"),
-    ("launch_angle_deg", "Launch Angle", "°"),
-    ("launch_azimuth_deg", "Launch Azimuth", "°"),
-    ("spin_rpm", "Total Spin", " rpm"),
-    ("carry_m", "Carry Distance", " m"),
-    ("max_height_m", "Apex Height", " m"),
-    ("flight_time_s", "Flight Time", " s"),
-    ("landing_angle_deg", "Landing Angle", "°"),
-)
-
-_TILT_SPECS: tuple[tuple[str, str, str], ...] = (
-    ("yaw_deg", "Plane Yaw", "plane_yaw_deg"),
-    ("side_tilt_deg", "Plane Side Tilt", "plane_side_tilt_deg"),
-    ("forward_tilt_deg", "Plane Forward Tilt", "plane_forward_tilt_deg"),
-)
 
 _SCRUB_STEPS = 1000
 
@@ -105,9 +71,7 @@ class SimulationTab(QWidget):
     runCompleted = pyqtSignal(object)  # noqa: N815 - Qt signal convention
     #: Emitted with a glossary term key when an explanation link is used.
     glossaryRequested = pyqtSignal(str)  # noqa: N815 - Qt signal convention
-    #: Emitted with a DerivationConfig whenever the model configuration
-    #: changes (swing source, flight model, plane tilts) — drives the
-    #: conditional sections of the Calculation Description tab (V4).
+    #: Drives conditional Calculation Description sections from model changes.
     configChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -121,9 +85,15 @@ class SimulationTab(QWidget):
         self._view = SimulationView()
         self._strike_view = StrikeView()
         self._flight_view = FlightView()
+        self._kinetics_panel = KineticsPanel()
+        self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)
         self._inspector = InspectorView()
         self._solver_panel = SolverPanel()
         self._solver_panel.applyRequested.connect(self.apply_solver_solution)
+        # Keep the course scene and flight overlay aligned with target edits.
+        self._solver_panel.target_panel().regionChanged.connect(
+            self._on_target_region_changed
+        )
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -132,21 +102,18 @@ class SimulationTab(QWidget):
         left_layout.addWidget(self._build_launch_box())
         left_layout.addWidget(self._build_explanation_box())
         left_layout.addStretch(1)
-        # Small-window robustness (#4120): the control column scrolls
-        # instead of crushing its entry widgets below readability.
+        # Scrolling preserves readable entries in small windows.
         left = QScrollArea()
         left.setWidgetResizable(True)
         left.setFrameShape(QFrame.Shape.NoFrame)
         left.setWidget(left_content)
         left.setMinimumWidth(300)
 
-        # Scale-separated viewers as sub-tabs of the display area
-        # (epic #4120 V2): strike (face scale), swing (metres), flight
-        # (tens of metres) — each with its own display checklist whose
-        # state persists for the session (plain widget state).
+        # Scale-separated face, swing, kinetics, and flight displays.
         right = QTabWidget()
         right.addTab(self._strike_view, "Strike")
         right.addTab(self._view, "Swing")
+        right.addTab(self._kinetics_panel, "Kinetics")
         right.addTab(self._flight_view, "Flight")
         right.addTab(self._inspector, "Inspector")
         right.addTab(self._solver_panel, "Solver")
@@ -163,7 +130,6 @@ class SimulationTab(QWidget):
 
         self._show_explanation(LAUNCH_ROWS[0][0])
 
-    # ── construction ────────────────────────────────────────────────
     def _build_setup_box(self) -> QGroupBox:
         box = QGroupBox("Simulation Setup")
         form = QFormLayout(box)
@@ -173,9 +139,8 @@ class SimulationTab(QWidget):
         self._source_combo.setToolTip(FIELD_GUIDANCE["swing_source"])
         self._source_combo.currentIndexChanged.connect(self._invalidate_source)
         form.addRow("Swing Source", self._source_combo)
-
         self._tilt_spins: dict[str, QDoubleSpinBox] = {}
-        for attr, label, guidance_key in _TILT_SPECS:
+        for attr, label, guidance_key in TILT_SPECS:
             spin = QDoubleSpinBox()
             spin.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
             spin.setKeyboardTracking(False)
@@ -188,9 +153,9 @@ class SimulationTab(QWidget):
             self._tilt_spins[attr] = spin
             form.addRow(label, spin)
         self._tilt_spins["side_tilt_deg"].setValue(-45.0)
-
         self._club_combo = QComboBox()
         self._club_combo.addItems(club_names())
+        self._club_combo.setCurrentText("Driver 10.5°")
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
         form.addRow("Club", self._club_combo)
 
@@ -269,7 +234,6 @@ class SimulationTab(QWidget):
         layout.addWidget(self._explanation)
         return box
 
-    # ── public API ──────────────────────────────────────────────────
     def set_scenario(self, scenario: ImpactScenario) -> None:
         """Adopt the explorer's scenario (drives the manual source)."""
         self._scenario = scenario
@@ -328,15 +292,36 @@ class SimulationTab(QWidget):
         self._sync_scrub_slider(run.impact_time_s)
         self._view.set_run(run)
         self._strike_view.set_run(run)
+        self._kinetics_panel.set_run(run)
         self._flight_view.set_run(run)
         self._inspector.set_run(run)
-        for field, _label, unit in LAUNCH_ROWS:
-            value = run.launch[field]
-            text = f"{value:+.1f}{unit}" if math.isfinite(value) else "—"
-            self._rows[field].value_label.setText(text)
+        self._refresh_launch_rows()
         self._update_delivery_label(run.impact_time_s)
         self.runCompleted.emit(run)
         return run
+
+    def _refresh_launch_rows(self) -> None:
+        """Format launch rows; carry follows the distance display unit
+        (#4125 H6 — yards default; apex stays in metres)."""
+        run = self._run
+        if run is None:
+            return
+        for field, _label, unit in LAUNCH_ROWS:
+            value = run.launch[field]
+            if not math.isfinite(value):
+                text = "—"
+            elif field == "carry_m":
+                text = f"+{format_distance_m(value)}"
+            else:
+                text = f"{value:+.1f}{unit}"
+            self._rows[field].value_label.setText(text)
+
+    def refresh_units(self) -> None:
+        """Re-render distance surfaces after a display-unit change."""
+        self._refresh_launch_rows()
+        self._solver_panel.target_panel().refresh_units()
+        # Redraw the flight view so its axes pick up the new unit.
+        self._flight_view.set_trajectory(self._flight_view.trajectory())
 
     def last_run(self) -> SimulationRun | None:
         """The most recent successful run, if any."""
@@ -354,6 +339,10 @@ class SimulationTab(QWidget):
         """The flight-scale trajectory viewer."""
         return self._flight_view
 
+    def kinetics_panel(self) -> KineticsPanel:
+        """The kinetics plots + peak-table sub-tab (#4125 H2)."""
+        return self._kinetics_panel
+
     def inspector(self) -> InspectorView:
         """The run-data inspector."""
         return self._inspector
@@ -361,6 +350,19 @@ class SimulationTab(QWidget):
     def solver_panel(self) -> SolverPanel:
         """The goal-driven Solver panel (worker lifecycle lives on it)."""
         return self._solver_panel
+
+    def _on_target_region_changed(self, region: TargetRegion) -> None:
+        """H7b: reflect the edited target in the course scene + overlay."""
+        layout = layout_for_region(region)
+        self._flight_view.set_course_layout(layout)
+        self._flight_view.set_target_region(region)
+        self._view.set_course_layout(layout)
+
+    def set_landing_scatter(
+        self, carries_m: np.ndarray | None, laterals_m: np.ndarray | None = None
+    ) -> None:
+        """Variation tie-in (#4125 H7b): forward the landing scatter."""
+        self._flight_view.set_landing_scatter(carries_m, laterals_m)
 
     def apply_solver_solution(
         self, result: object, use_swing_source: bool
@@ -396,9 +398,8 @@ class SimulationTab(QWidget):
                 spin.blockSignals(False)
         else:
             self._source_combo.setCurrentIndex(SOURCE_KINDS.index("manual"))
-            updates["clubhead_speed_mph"] = (
-                variables["clubhead_speed_mps"] * MPH_PER_MPS
-            )
+            speed_mph = variables["clubhead_speed_mps"] * MPH_PER_MPS
+            updates["clubhead_speed_mph"] = speed_mph
         self._scenario = dataclasses.replace(self._scenario, **updates)
         self._invalidate_source()
         self._tau = None  # auto: impact at maximum clubhead speed
@@ -415,7 +416,6 @@ class SimulationTab(QWidget):
         self._view.stop()
         self._solver_panel.stop()
 
-    # ── internals ──────────────────────────────────────────────────
     def _ensure_source(self):  # type: ignore[no-untyped-def]
         if self._source is None:
             self._source = make_source(
@@ -425,8 +425,12 @@ class SimulationTab(QWidget):
 
     def _invalidate_source(self, *_args: object) -> None:
         self._source = None
-        if self._tau is not None:
-            self._update_delivery_label(self._tau)
+        # Recompute at maximum speed; tau is source-specific.
+        self._tau = None
+        # Tilt controls emit before the scrub box exists during construction.
+        if hasattr(self, "_scrub_label"):
+            self._scrub_label.setText("auto")
+            self._delivery_label.setText("Awaiting updated simulation")
 
     def _scrub_time(self, value: int) -> float:
         source = self._ensure_source()
@@ -452,14 +456,10 @@ class SimulationTab(QWidget):
             self._delivery_label.setText(f"No delivery at this instant ({exc})")
             return
         velocity = delivery.clubhead_velocity
-        speed_mph = float(np.linalg.norm(velocity)) * 2.2369362920544025
-        path = math.degrees(math.atan2(float(velocity[2]), float(velocity[0])))
-        aoa = math.degrees(
-            math.atan2(
-                float(velocity[1]),
-                math.hypot(float(velocity[0]), float(velocity[2])),
-            )
-        )
+        vx, vy, vz = (float(component) for component in velocity)
+        speed_mph = float(np.linalg.norm(velocity)) * MPH_PER_MPS
+        path = math.degrees(math.atan2(vz, vx))
+        aoa = math.degrees(math.atan2(vy, math.hypot(vx, vz)))
         self._delivery_label.setText(
             f"Delivery at τ: {speed_mph:.1f} mph, path {path:+.1f}°, "
             f"AoA {aoa:+.1f}°, spin loft {delivery.spin_loft_deg:.1f}°"
@@ -489,9 +489,8 @@ class SimulationTab(QWidget):
         # Persistent single selection across the launch rows (#4120 V4).
         for row_field, row in self._rows.items():
             row.set_selected(row_field == field)
-        self._explanation.setHtml(
-            explanation_html(labels.get(field, field), text, field)
-        )
+        html = explanation_html(labels.get(field, field), text, field)
+        self._explanation.setHtml(html)
 
     def _on_explanation_link(self, url) -> None:  # type: ignore[no-untyped-def]
         """Forward ``glossary:<term>`` links to the main window."""

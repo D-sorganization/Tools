@@ -69,6 +69,14 @@ The web app builds to a static bundle (`npm run build`) that can be hosted
 anywhere as a link, and carries the same Tauri scripts as the other web
 tools for desktop packaging.
 
+Both interfaces open with a generated driver head and its engineering CG
+target visible. The Simulation view runs immediately and supports manual,
+double-pendulum, and triple-pendulum sources; pendulum modes draw every joint
+and link rather than only the clubhead trace. Directional entries include
+clickable reference-frame notes. Web numeric fields select the complete value
+on focus and accept intermediate signed decimal drafts (for example, `-12.5`
+degrees of spin-axis tilt) before committing on Enter or focus loss.
+
 ## Build a Standalone Executable
 
 Users can package the explorer and experiment without a Python

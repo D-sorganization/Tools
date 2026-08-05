@@ -9,6 +9,8 @@
 
 import { useMemo, useState } from "react";
 
+import { DecimalInput } from "./DecimalInput";
+
 import {
   MAX_RUNS,
   keysForMode,
@@ -23,6 +25,8 @@ import {
   type VariationMode,
   type VariationPlanTs,
 } from "../model/variation";
+import { type TargetRegionTs } from "../model/targets";
+import { DISTANCE_UNITS } from "../model/units";
 import { LandingCanvas } from "./VariationLanding";
 import {
   datasetToCsv,
@@ -73,7 +77,15 @@ const inputClass =
 const buttonClass =
   "rounded border border-slate-700 bg-slate-800 px-3 py-1.5 text-sm text-slate-200 transition-colors hover:border-slate-500 disabled:opacity-40";
 
-export function VariationPanel(): JSX.Element {
+export function VariationPanel({
+  target,
+  distanceUnit = "yd",
+}: {
+  /** Target region (#4125 H7b): landing overlay + hold-% headline. */
+  target?: TargetRegionTs;
+  /** Ball-flight distance display unit (#4125 H6): yards default. */
+  distanceUnit?: string;
+} = {}): JSX.Element {
   const [mode, setMode] = useState<VariationMode>("delivery");
   const [noise, setNoise] = useState<NoiseSpecTs[]>([defaultSpec("delivery")]);
   const [nRuns, setNRuns] = useState(200);
@@ -175,16 +187,12 @@ export function VariationPanel(): JSX.Element {
               title={`Monte-Carlo runs per study (browser-capped at ${MAX_RUNS}; the sensitivity pass repeats this once per noise row). The WASM + web-worker upgrade removes the cap.`}
             >
               <span className="mb-1 block text-slate-300">Runs (≤ {MAX_RUNS})</span>
-              <input
-                type="number"
+              <DecimalInput
                 min={2}
                 max={MAX_RUNS}
                 value={nRuns}
-                onChange={(e) =>
-                  setNRuns(
-                    Math.max(2, Math.min(MAX_RUNS, Number(e.target.value) || 2)),
-                  )
-                }
+                aria-label="Runs"
+                onCommit={(value) => setNRuns(Math.round(value))}
                 className={inputClass}
               />
             </label>
@@ -193,11 +201,11 @@ export function VariationPanel(): JSX.Element {
               title="Master RNG seed — the same plan and seed always reproduce the same dataset (per-variable seeded streams)."
             >
               <span className="mb-1 block text-slate-300">Seed</span>
-              <input
-                type="number"
+              <DecimalInput
                 min={0}
                 value={seed}
-                onChange={(e) => setSeed(Math.max(0, Number(e.target.value) || 0))}
+                aria-label="Seed"
+                onCommit={(value) => setSeed(Math.round(value))}
                 className={inputClass}
               />
             </label>
@@ -262,11 +270,11 @@ export function VariationPanel(): JSX.Element {
                       </option>
                     ))}
                   </select>
-                  <input
-                    type="number"
+                  <DecimalInput
                     step="any"
                     value={spec.scale}
-                    onChange={(e) => setSpec(index, { scale: Number(e.target.value) })}
+                    aria-label={`${variableLabel(spec.variableKey)} noise scale`}
+                    onCommit={(value) => setSpec(index, { scale: value })}
                     title={`Noise scale [${def?.unit ?? ""}]. ${def?.guidance ?? ""}`}
                     className={inputClass}
                   />
@@ -396,17 +404,27 @@ export function VariationPanel(): JSX.Element {
                   </tr>
                 </thead>
                 <tbody>
-                  {stats.map((s) => (
-                    <tr key={s.name} className="border-t border-slate-800/60">
-                      <td className="px-2 py-1 text-slate-200">{s.name}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.mean.toFixed(2)}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.std.toFixed(3)}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.p5.toFixed(2)}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.p50.toFixed(2)}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.p95.toFixed(2)}</td>
-                      <td className="px-2 py-1 tabular-nums">{s.n}</td>
-                    </tr>
-                  ))}
+                  {stats.map((s) => {
+                    // Landing distances follow the distance display
+                    // unit (#4125 H6); apex stays in metres.
+                    const isDistance =
+                      s.name === "carry_m" || s.name === "lateral_m";
+                    const f = isDistance ? DISTANCE_UNITS[distanceUnit] : 1.0;
+                    const name = isDistance
+                      ? `${s.name} [${distanceUnit}]`
+                      : s.name;
+                    return (
+                      <tr key={s.name} className="border-t border-slate-800/60">
+                        <td className="px-2 py-1 text-slate-200">{name}</td>
+                        <td className="px-2 py-1 tabular-nums">{(s.mean / f).toFixed(2)}</td>
+                        <td className="px-2 py-1 tabular-nums">{(s.std / f).toFixed(3)}</td>
+                        <td className="px-2 py-1 tabular-nums">{(s.p5 / f).toFixed(2)}</td>
+                        <td className="px-2 py-1 tabular-nums">{(s.p50 / f).toFixed(2)}</td>
+                        <td className="px-2 py-1 tabular-nums">{(s.p95 / f).toFixed(2)}</td>
+                        <td className="px-2 py-1 tabular-nums">{s.n}</td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -462,7 +480,7 @@ export function VariationPanel(): JSX.Element {
             <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
               Landing Dispersion (2σ Ellipse)
             </h2>
-            <LandingCanvas dataset={dataset} />
+            <LandingCanvas dataset={dataset} target={target} />
           </div>
         )}
 

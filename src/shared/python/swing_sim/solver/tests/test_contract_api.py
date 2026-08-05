@@ -26,6 +26,7 @@ EXPECTED_PUBLIC_API = {
     "ProgressReport",
     "SolverResult",
     "StartSummary",
+    "TargetRegion",  # landing target regions (#4125 H7b)
     "VariablePartition",
     "achieved_quantities",
     "detect_stall",

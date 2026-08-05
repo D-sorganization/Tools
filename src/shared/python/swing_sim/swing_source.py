@@ -151,6 +151,38 @@ class DoublePendulumSwing:
         row = (1.0 - frac) * self._states[i0] + frac * self._states[i1]
         return float(row[0]), float(row[1]), float(row[2]), float(row[3])
 
+    def state_at(self, t: float) -> PendulumState:
+        """Interpolated joint state at time ``t`` (public, for kinetics).
+
+        Exposes the integrated joint trajectory so downstream inverse
+        dynamics (rate_of_closure swing kinetics, epic #4125 H2) can
+        evaluate the EOM surfaces without re-integrating.
+
+        Preconditions: ``0 <= t <= duration`` (within float tolerance).
+        """
+        require(math.isfinite(t), "t must be finite", t)
+        require(
+            -1e-9 <= t <= self._duration + 1e-9,
+            "t must be within [0, duration]",
+            t,
+        )
+        t = min(max(t, 0.0), self._duration)
+        theta1, theta2, omega1, omega2 = self._state_at(t)
+        return PendulumState(theta1=theta1, theta2=theta2, omega1=omega1, omega2=omega2)
+
+    def joint_positions(self, t: float) -> np.ndarray:
+        """Pivot, wrist, and clubhead positions in the swing world frame."""
+        state = self.state_at(t)
+        p = self._parameters
+        t12 = state.theta1 + state.theta2
+        x_axis = self._plane_r[:, 0]
+        up_axis = self._plane_r[:, 2]
+        wrist = p.l1 * (
+            math.sin(state.theta1) * x_axis - math.cos(state.theta1) * up_axis
+        )
+        tip = wrist + p.l2 * (math.sin(t12) * x_axis - math.cos(t12) * up_axis)
+        return np.vstack([np.zeros(3), wrist, tip])
+
     def sample(self, t: float) -> SwingSample:
         """Return the clubhead :class:`SwingSample` at time ``t``.
 

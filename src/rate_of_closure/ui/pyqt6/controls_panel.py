@@ -38,6 +38,7 @@ from rate_of_closure.units import (
     QUANTITY_UNITS,
     convert_from_canonical,
     convert_to_canonical,
+    set_display_distance_unit,
 )
 
 logger = logging.getLogger(__name__)
@@ -71,6 +72,7 @@ _UNIT_LABELS: dict[str, str] = {
     "speed": "Speed",
     "rotation": "Rotation",
     "length": "Length",
+    "distance": "Distance",
 }
 
 
@@ -80,6 +82,9 @@ class ControlsPanel(QWidget):
     scenarioChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
     #: Emitted with a ClubSpec when the user asks for a parametric head.
     clubHeadRequested = pyqtSignal(object)  # noqa: N815 - Qt signal convention
+    #: Emitted with the new unit when the Distance display unit changes
+    #: (#4125 H6) so distance surfaces across the app re-render.
+    distanceUnitChanged = pyqtSignal(str)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -121,6 +126,7 @@ class ControlsPanel(QWidget):
 
         self._club_combo = QComboBox()
         self._club_combo.addItems(club_names())
+        self._club_combo.setCurrentText("Driver 10.5°")
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
         self._club_combo.currentTextChanged.connect(self._on_club_changed)
         form.addRow("Club", self._club_combo)
@@ -234,6 +240,14 @@ class ControlsPanel(QWidget):
         """Re-display every affected field in the new unit, same value."""
         previous = self._units[quantity]
         if unit == previous:
+            return
+        if quantity == "distance":
+            # Ball-flight distances (#4125 H6): a session-wide display
+            # preference — every distance surface re-reads it on render.
+            set_display_distance_unit(unit)
+            self._units[quantity] = unit
+            self.distanceUnitChanged.emit(unit)
+            self._emit()
             return
         self._updating = True
         try:

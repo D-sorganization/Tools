@@ -12,8 +12,8 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
     term: "Lever Arm",
     definition:
       "The vector r from the reference point (GC or CG) to the struck " +
-      "point. It converts rotation into extra point velocity (\u03c9 \u00d7 r) in the " +
-      "closure model and impulse into recoil torque (r \u00d7 Jn) in the impact " +
+      "point. It converts rotation into extra point velocity (ω × r) in the " +
+      "closure model and impulse into recoil torque (r × Jn) in the impact " +
       "model.",
   },
   lie_angle: {
@@ -40,11 +40,19 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
       "axis curves it sideways. It enters the flight EOM through the lift " +
       "term (swing_sim.flight; Penner 2003).",
   },
+  mallet_putter: {
+    term: "Mallet Putter",
+    definition:
+      "A putter with a deep, rounded body extending well behind the face — " +
+      "the extra depth moves the center of gravity back and raises head MOI " +
+      "versus a blade, per typical published putter fitting references " +
+      "(modeled generically in rate_of_closure.club.head_profiles).",
+  },
   mass_matrix: {
     term: "Mass Matrix",
     definition:
-      "The configuration-dependent 2x2 (or 3x3) inertia matrix M(\u03b8) of the " +
-      "pendulum equations M(\u03b8)\u00b7\u03b1 + C(\u03b8, \u03c9) + G(\u03b8) + D(\u03c9) = 0; its " +
+      "The configuration-dependent 2x2 (or 3x3) inertia matrix M(θ) of the " +
+      "pendulum equations M(θ)·α + C(θ, ω) + G(θ) + D(ω) = 0; its " +
       "off-diagonal terms couple the links through the elbow/wrist angle " +
       "(swing_sim.reference.mass_matrix).",
   },
@@ -53,7 +61,7 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
     definition:
       "A body's resistance to angular acceleration about an axis. The " +
       "clubhead MOI (scalar or full 3x3 tensor) sets how much an off-center " +
-      "impulse twists the head instead of launching the ball \u2014 the " +
+      "impulse twists the head instead of launching the ball — the " +
       "club-side term of the effective mass (swing_sim.impact.models).",
   },
   moi_tensor: {
@@ -61,8 +69,16 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
     definition:
       "The full 3x3 inertia tensor I of the clubhead. The exact off-center " +
       "effective mass uses the triple-product form (r x n)^T I^-1 (r x n); " +
-      "a diagonal I\u00b7eye(3) reproduces the scalar-MOI fallback 1/m + |r|\u00b2/I " +
+      "a diagonal I·eye(3) reproduces the scalar-MOI fallback 1/m + |r|²/I " +
       "exactly (swing_sim.impact.models derivation).",
+  },
+  moment_of_force: {
+    term: "Moment of Force (Torque)",
+    definition:
+      "The turning effect of a force about an axis, τ = r × F [N·m]. " +
+      "In the swing kinetics, positive torque acts counter-clockwise about " +
+      "the swing-plane normal — the direction of increasing joint angle " +
+      "(rate_of_closure.simulation.kinetics sign convention).",
   },
   monte_carlo: {
     term: "Monte Carlo Simulation",
@@ -84,7 +100,7 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
     term: "Normal Distribution",
     definition:
       "The bell-curve distribution parameterized by mean and standard " +
-      "deviation \u2014 the default noise family for delivery variables in " +
+      "deviation — the default noise family for delivery variables in " +
       "variation studies, matching how measurement scatter is usually " +
       "reported (swing_sim.variation registry guidance).",
   },
@@ -106,17 +122,36 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
   plane_inclination: {
     term: "Swing-Plane Inclination",
     definition:
-      "The orientation of the pendulum swing plane in space \u2014 yaw, side " +
+      "The orientation of the pendulum swing plane in space — yaw, side " +
       "tilt, and forward tilt. Gravity is projected into the plane " +
       "(g_inplane = R^T (0, 0, -g)), so steeper planes feel more in-plane " +
       "gravity (swing_sim.reference.in_plane_gravity).",
   },
+  plumbers_neck: {
+    term: "Plumber's Neck",
+    definition:
+      "The common putter hosel bend that sets the shaft axis a small offset " +
+      "(roughly one shaft diameter) ahead of the face while attaching at " +
+      "the heel — giving the hands a slight lead at address. Modeled as the " +
+      "blade putter's hosel set-back (typical published putter fitting " +
+      "references).",
+  },
+  power: {
+    term: "Joint Power",
+    definition:
+      "The rate of mechanical work at a joint, P = τ·ω [W] (torque times " +
+      "joint angular rate). Summed over the pendulum's joints it equals " +
+      "the rate of change of the swing's kinetic energy, so its time " +
+      "integral to impact is the energy delivered to the club " +
+      "(rate_of_closure.simulation.kinetics; movement-optimizer " +
+      "joint-power convention).",
+  },
   r_isa: {
     term: "Distance to the Screw Axis (R_ISA)",
     definition:
-      "The distance v/\u03c9 from the clubhead to the instantaneous screw axis. " +
+      "The distance v/ω from the clubhead to the instantaneous screw axis. " +
       "Closure per foot equals 1 / R_ISA, and the path gap between two " +
-      "reference points separated by d is d / R_ISA \u2014 independent of " +
+      "reference points separated by d is d / R_ISA — independent of " +
       "clubhead speed (AffineDrift closure derivation).",
   },
   roll: {
@@ -154,7 +189,7 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
   smash_factor: {
     term: "Smash Factor",
     definition:
-      "Ball speed divided by clubhead speed \u2014 the standard efficiency " +
+      "Ball speed divided by clubhead speed — the standard efficiency " +
       "measure of an impact. A well-struck driver reaches about 1.48-1.50; " +
       "off-center hits lose smash through the reduced effective mass " +
       "(launch-monitor norms).",
@@ -186,14 +221,14 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
     term: "Spin Loft",
     definition:
       "The 3-D angle between the delivered face normal and the club path " +
-      "vector: spin_loft = arccos(v\u0302 \u00b7 n\u0302). It sets how much of the impact " +
+      "vector: spin_loft = arccos(v̂ · n̂). It sets how much of the impact " +
       "goes into spin instead of speed (swing_sim.impact.delivery; TrackMan " +
       "conventions).",
   },
   spin_rate: {
     term: "Spin Rate",
     definition:
-      "The ball's total rotation rate in rpm \u2014 the friction impulse of the " +
+      "The ball's total rotation rate in rpm — the friction impulse of the " +
       "impact solve (capped at the 2/7 rolling limit) plus gear-effect " +
       "spin. Driver band roughly 2,000-3,500 rpm (swing_sim.impact; " +
       "launch-monitor norms).",
@@ -201,7 +236,7 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
   spv: {
     term: "Swing-Plane Velocity (SPV)",
     definition:
-      "The clubhead's angular velocity about the swing-plane normal \u2014 the " +
+      "The clubhead's angular velocity about the swing-plane normal — the " +
       "in-plane rotation of the swing arc. Together with HTV it assembles " +
       "the full angular velocity vector (Cheetham 2014 3-D motion studies).",
   },
@@ -209,13 +244,13 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
     term: "Time to Square",
     definition:
       "How long before impact the face was one degree open at the current " +
-      "closure rate \u2014 about half a millisecond at tour rates, the classic " +
+      "closure rate — about half a millisecond at tour rates, the classic " +
       "framing of release-timing tolerance (closure-rate dossier).",
   },
   triangular_distribution: {
     term: "Triangular Distribution",
     definition:
-      "A bounded distribution rising linearly to a peak and falling back \u2014 " +
+      "A bounded distribution rising linearly to a peak and falling back — " +
       "a practical choice in variation studies when only a min / " +
       "most-likely / max estimate is available (swing_sim.variation.spec).",
   },
@@ -230,16 +265,16 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
   twist: {
     term: "Twist",
     definition:
-      "A rigid body's instantaneous motion state \u2014 angular velocity plus " +
+      "A rigid body's instantaneous motion state — angular velocity plus " +
       "the linear velocity of a reference point. The twist relation v_P = " +
-      "v_ref + \u03c9 \u00d7 r gives every point's velocity from one twist (screw " +
+      "v_ref + ω × r gives every point's velocity from one twist (screw " +
       "theory; the core of the closure model).",
   },
   uniform_distribution: {
     term: "Uniform Distribution",
     definition:
       "A distribution giving every value in a bounded interval equal " +
-      "probability \u2014 used in variation studies when only hard limits, not a " +
+      "probability — used in variation studies when only hard limits, not a " +
       "central tendency, are known (swing_sim.variation.spec).",
   },
 };

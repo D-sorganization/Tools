@@ -13,6 +13,26 @@
   appearance: textfield;
 }
 
+/* Numeric editors read as one large, deliberate interaction target. */
+.numeric-input {
+  transition:
+    border-color 150ms ease,
+    background-color 150ms ease,
+    box-shadow 150ms ease;
+}
+.numeric-input:hover {
+  border-color: rgb(100 116 139);
+  background-color: rgb(30 41 59);
+}
+.numeric-input:focus {
+  border-color: rgb(56 189 248);
+  background-color: rgb(15 23 42);
+  box-shadow:
+    0 0 0 3px rgba(56, 189, 248, 0.2),
+    inset 0 0 0 1px rgba(125, 211, 252, 0.18);
+  outline: none;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",

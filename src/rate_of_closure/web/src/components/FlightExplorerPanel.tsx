@@ -11,13 +11,15 @@
 
 import { useState } from "react";
 
+import { DecimalInput } from "./DecimalInput";
+import { FieldInfo } from "./FieldInfo";
 import { FlightCanvases } from "./FlightCanvases";
 import {
   directLaunch,
   exploreFlight,
   type FlightExplorationTs,
 } from "../model/flightExplorer";
-import { FIELD_GUIDANCE } from "../model/units";
+import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
 
 const SPEED_UNITS: Record<string, number> = { mph: 1.0, "m/s": 2.236936292054402 };
 
@@ -47,7 +49,12 @@ const FIELDS: FieldSpec[] = [
   { key: "spinAxisTiltDeg", label: "Spin-Axis Tilt", unit: "deg", guidance: "fxSpinAxisTilt" },
 ];
 
-export function FlightExplorerPanel() {
+export function FlightExplorerPanel({
+  distanceUnit = "yd",
+}: {
+  /** Ball-flight distance display unit (#4125 H6): yards default. */
+  distanceUnit?: string;
+} = {}) {
   const [speed, setSpeed] = useState(167.0);
   const [speedUnit, setSpeedUnit] = useState("mph");
   const [fields, setFields] = useState({
@@ -88,15 +95,12 @@ export function FlightExplorerPanel() {
               </span>
             </span>
             <span className="flex min-w-0 gap-2">
-              <input
-                type="number"
-                inputMode="decimal"
+              <DecimalInput
                 value={speed}
+                aria-label="Ball Speed"
                 title={FIELD_GUIDANCE.fxBallSpeed}
-                onChange={(e) => {
-                  const parsed = Number(e.target.value);
-                  if (Number.isFinite(parsed)) setSpeed(parsed);
-                }}
+                min={0.1}
+                onCommit={setSpeed}
                 className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
               />
               <select
@@ -123,22 +127,17 @@ export function FlightExplorerPanel() {
           {FIELDS.map(({ key, label, unit, guidance }) => (
             <label key={key} className="mb-2 block text-sm" title={FIELD_GUIDANCE[guidance]}>
               <span className="mb-1 flex justify-between text-slate-300">
-                <span className="truncate" title={label}>
-                  {label}
+                <span className="flex items-center truncate" title={label}>
+                  {label}<FieldInfo label={label} guidance={FIELD_GUIDANCE[guidance]} />
                 </span>
                 <span className="text-slate-500">{unit}</span>
               </span>
-              <input
-                type="number"
-                inputMode="decimal"
+              <DecimalInput
                 value={fields[key]}
+                aria-label={label}
                 title={FIELD_GUIDANCE[guidance]}
-                onChange={(e) => {
-                  const parsed = Number(e.target.value);
-                  if (Number.isFinite(parsed)) {
-                    setFields((f) => ({ ...f, [key]: parsed }));
-                  }
-                }}
+                min={key === "spinRpm" ? 0 : undefined}
+                onCommit={(value) => setFields((f) => ({ ...f, [key]: value }))}
                 className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
               />
             </label>
@@ -179,7 +178,12 @@ export function FlightExplorerPanel() {
                 </span>
                 <span className="ml-2 min-w-16 text-right font-semibold tabular-nums text-slate-100">
                   {result
-                    ? `${result.metrics[key] >= 0 ? "+" : ""}${result.metrics[key].toFixed(1)} ${unit}`
+                    ? key === "carryM" || key === "lateralM"
+                      ? `${result.metrics[key] >= 0 ? "+" : "-"}${formatDistanceM(
+                          Math.abs(result.metrics[key]),
+                          distanceUnit,
+                        )}`
+                      : `${result.metrics[key] >= 0 ? "+" : ""}${result.metrics[key].toFixed(1)} ${unit}`
                     : "—"}
                 </span>
               </div>

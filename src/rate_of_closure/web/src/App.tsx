@@ -12,14 +12,22 @@
 import { useMemo, useState } from "react";
 
 import { ClubCanvas } from "./components/ClubCanvas";
+import { DecimalInput } from "./components/DecimalInput";
+import { FieldInfo } from "./components/FieldInfo";
 import { FlightExplorerPanel } from "./components/FlightExplorerPanel";
 import { PlotsPanel } from "./components/PlotsPanel";
+import { PuttingPanel } from "./components/PuttingPanel";
+import { DEFAULT_TARGET, type TargetRegionTs } from "./model/targets";
 import { SimulationPanel } from "./components/SimulationPanel";
 import { VariationPanel } from "./components/VariationPanel";
 import { ClubPanel } from "./components/ClubPanel";
+import {
+  generatedHeadFor,
+  type GeneratedHead,
+} from "./model/clubHeadGeneration";
 import { Derivation } from "./components/Derivation";
 import { GlossaryPanel } from "./components/GlossaryPanel";
-import { type HeadMesh } from "./model/mesh";
+import { getClub, type ClubSpec } from "./model/club";
 import {
   METRIC_EXPLANATIONS,
   RESULT_EXPLANATIONS,
@@ -125,6 +133,7 @@ const UNIT_LABELS: Record<Quantity, string> = {
   speed: "Speed",
   rotation: "Rotation",
   length: "Length",
+  distance: "Distance",
 };
 
 const TABS = [
@@ -134,19 +143,29 @@ const TABS = [
   "Plots",
   "Flight Explorer",
   "Variation",
+  "Putting",
   "Glossary",
 ] as const;
 
 export default function App() {
+  const defaultDriver = useMemo(() => getClub("Driver 10.5°"), []);
   const [scenario, setScenario] = useState<ImpactScenario>(DEFAULT_SCENARIO);
+  // Target region (#4125 H7b): shared by the Simulation flight view /
+  // solver and the Variation landing overlay (hold-% headline).
+  const [target, setTarget] = useState<TargetRegionTs>(DEFAULT_TARGET);
   const [tab, setTab] = useState<(typeof TABS)[number]>(TABS[0]);
   const [explained, setExplained] = useState<string>("pathDeviationDeg");
   const [units, setUnits] = useState<Record<Quantity, string>>({
     speed: "mph",
     rotation: "deg/s",
     length: "mm",
+    // Ball-flight distances (#4125 H6): yards by default.
+    distance: "yd",
   });
-  const [generatedMesh, setGeneratedMesh] = useState<HeadMesh | null>(null);
+  const [generatedHead, setGeneratedHead] = useState<GeneratedHead>(() =>
+    generatedHeadFor(defaultDriver),
+  );
+  const [clubSpec, setClubSpec] = useState<ClubSpec>(defaultDriver);
   const [glossaryTerm, setGlossaryTerm] = useState<string | undefined>(undefined);
   const result = useMemo(() => solve(scenario), [scenario]);
   const metrics = useMemo(() => closureMetrics(scenario), [scenario]);
@@ -207,7 +226,12 @@ export default function App() {
             : "border-slate-800/80 bg-slate-900/50 hover:border-slate-600 hover:bg-slate-800/50")
         }
       >
-        <span className="text-slate-400">{spec.label}</span>
+        <span className="flex items-center gap-2 text-slate-300">
+          {spec.label}
+          <span aria-hidden="true" className="text-[10px] font-semibold uppercase tracking-wide text-sky-400">
+            Details ›
+          </span>
+        </span>
         <span
           className={
             spec.key === "pathDeviationDeg"
@@ -269,12 +293,20 @@ export default function App() {
         ))}
       </details>
 
-      {tab === TABS[6] ? (
+      {tab === TABS[7] ? (
         <GlossaryPanel key={glossaryTerm ?? "none"} initialTerm={glossaryTerm} />
+      ) : tab === TABS[6] ? (
+        <PuttingPanel
+          distanceUnit={units.distance}
+          onGlossary={(term) => {
+            setGlossaryTerm(term);
+            setTab(TABS[7]);
+          }}
+        />
       ) : tab === TABS[5] ? (
-        <VariationPanel />
+        <VariationPanel target={target} distanceUnit={units.distance} />
       ) : tab === TABS[4] ? (
-        <FlightExplorerPanel />
+        <FlightExplorerPanel distanceUnit={units.distance} />
       ) : tab === TABS[3] ? (
         // Static loft mirrors the desktop default driver (same note as
         // the Simulation tab; the full club picker joins with P7 WASM).
@@ -285,9 +317,13 @@ export default function App() {
         <SimulationPanel
           scenario={scenario}
           loftDeg={10.5}
+          clubSpec={clubSpec}
           onScenarioChange={(updates) =>
             setScenario((s) => ({ ...s, ...updates }))
           }
+          target={target}
+          onTargetChange={setTarget}
+          distanceUnit={units.distance}
         />
       ) : tab === TABS[1] ? (
         <Derivation scenario={scenario} />
@@ -327,7 +363,8 @@ export default function App() {
 
             <ClubPanel
               onDriveScenario={driveScenarioFromClub}
-              onGenerate={setGeneratedMesh}
+              onGenerate={setGeneratedHead}
+              onSpecChange={setClubSpec}
             />
 
             <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
@@ -346,15 +383,17 @@ export default function App() {
                     className="mb-3 block text-sm"
                   >
                     <span className="mb-1 flex justify-between text-slate-300">
-                      <span>{label}</span>
+                      <span className="flex items-center">
+                        {label}
+                        <FieldInfo label={label} guidance={FIELD_GUIDANCE[key]} />
+                      </span>
                       <span className="text-slate-500">{unit}</span>
                     </span>
-                    <input
-                      type="number"
-                      inputMode="decimal"
+                    <DecimalInput
                       step={step}
                       value={Number(displayed.toFixed(4))}
-                      onChange={(e) => update(key, quantity, e.target.value)}
+                      aria-label={`${label} ${unit}`.trim()}
+                      onCommit={(value) => update(key, quantity, String(value))}
                       title={FIELD_GUIDANCE[key]}
                       className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
                     />
@@ -425,7 +464,12 @@ export default function App() {
               </p>
             </div>
 
-            <ClubCanvas scenario={scenario} externalMesh={generatedMesh} />
+            <ClubCanvas
+              scenario={scenario}
+              externalMesh={generatedHead?.mesh ?? null}
+              hoselPoint={generatedHead?.hosel ?? null}
+              cogPoint={generatedHead?.cog ?? null}
+            />
           </section>
         </div>
       )}

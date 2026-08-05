@@ -129,6 +129,28 @@ describe("impact + launch parity (Python impact/models.py pins)", () => {
 });
 
 describe("session orchestration", () => {
+  it("exports ball-aligned double-pendulum joints ending at the clubhead", () => {
+    const run = runSimulation({ ...MANUAL_INPUT, sourceKind: "double_pendulum" });
+    expect(run.sourceKind).toBe("double_pendulum");
+    expect(run.swing[0].joints).toHaveLength(3);
+    for (const sample of [run.swing[0], run.swing[500], run.swing[run.swing.length - 1]]) {
+      const tip = sample.joints[sample.joints.length - 1];
+      expect(tip[0]).toBeCloseTo(sample.position[0], 10);
+      expect(tip[1]).toBeCloseTo(sample.position[1], 10);
+      expect(tip[2]).toBeCloseTo(sample.position[2], 10);
+    }
+  });
+
+  it("exports a four-point triple-pendulum skeleton", () => {
+    const run = runSimulation({ ...MANUAL_INPUT, sourceKind: "triple_pendulum" });
+    expect(run.swing[0].joints).toHaveLength(4);
+    const sample = run.swing[500];
+    const tip = sample.joints[sample.joints.length - 1];
+    expect(tip[0]).toBeCloseTo(sample.position[0], 10);
+    expect(tip[1]).toBeCloseTo(sample.position[1], 10);
+    expect(tip[2]).toBeCloseTo(sample.position[2], 10);
+  });
+
   it("manual run produces plausible driver numbers (Python band)", () => {
     const run = runSimulation(MANUAL_INPUT);
     expect(run.launch.ballSpeedMph).toBeGreaterThan(130);

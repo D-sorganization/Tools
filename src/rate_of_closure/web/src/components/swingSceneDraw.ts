@@ -7,20 +7,29 @@
  * envelope past impact (scale separation — flight dwarfs the swing).
  */
 
+import {
+  courseColors,
+  DEFAULT_COURSE_LAYOUT,
+  type CourseLayout,
+} from "../model/course";
 import { BALL_POSITION, type SimulationRunTs } from "../model/simulation";
+import { withAlpha } from "../model/theme";
 
 export interface SwingSceneOptions {
   time: number;
   showBall: boolean;
   showGround: boolean;
+  /** Course furniture (#4125 H7a): green + flag + tee on the ground. */
+  showCourse: boolean;
   /** Opt-in flight display; off keeps the scene at swing scale. */
   showFlight: boolean;
+  layout?: CourseLayout;
 }
 
 export function drawSwingScene(
   canvas: HTMLCanvasElement,
   run: SimulationRunTs | null,
-  { time, showBall, showGround, showFlight }: SwingSceneOptions,
+  { time, showBall, showGround, showCourse, showFlight, layout }: SwingSceneOptions,
 ): void {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -39,10 +48,16 @@ export function drawSwingScene(
   const inFlight = time > run.impactTimeS && showFlight;
   const extentX = inFlight
     ? Math.max(10, ...run.flight.map((p) => Math.abs(p.position[0]))) * 1.05
-    : Math.max(1.5, ...run.swing.map((p) => Math.abs(p.position[0]))) * 1.15;
+    : Math.max(
+        1.5,
+        ...run.swing.flatMap((p) => [p.position, ...p.joints].map((v) => Math.abs(v[0]))),
+      ) * 1.15;
   const extentY = inFlight
     ? Math.max(5, ...run.flight.map((p) => p.position[1])) * 1.3
-    : Math.max(1.5, ...run.swing.map((p) => Math.abs(p.position[1]))) * 1.15;
+    : Math.max(
+        1.5,
+        ...run.swing.flatMap((p) => [p.position, ...p.joints].map((v) => Math.abs(v[1]))),
+      ) * 1.15;
   const originX = inFlight ? 30 : width / 2;
   const scaleX = (width - 60) / (inFlight ? extentX : 2 * extentX);
   const scaleY = (height - 40) / (inFlight ? extentY : 2 * extentY);
@@ -51,12 +66,42 @@ export function drawSwingScene(
   const px = (x: number) => originX + x * s;
   const py = (y: number) => groundY - y * s;
 
+  // Course-styled ground (#4125 H7a): grass fill below the ground line,
+  // with the green band + flag + tee once 'Course Elements' is on. All
+  // tones derive from the shared chart palette (model/course.ts).
+  const course = courseColors();
+  const courseLayout = layout ?? DEFAULT_COURSE_LAYOUT;
   if (showGround) {
-    ctx.strokeStyle = "#475569";
+    ctx.fillStyle = withAlpha(course.rough, 0.35);
+    ctx.fillRect(0, py(0), width, height - py(0));
+    ctx.strokeStyle = course.fairway;
     ctx.beginPath();
     ctx.moveTo(0, py(0));
     ctx.lineTo(width, py(0));
     ctx.stroke();
+  }
+  if (showCourse) {
+    const { greenDistanceM: d, greenRadiusM: r } = courseLayout;
+    if (px(d - r) <= width) {
+      // Green band + flagstick at the hole (side-on projection).
+      ctx.fillStyle = withAlpha(course.green, 0.85);
+      ctx.fillRect(px(d - r), py(0) - 2, px(d + r) - px(d - r), 4);
+      ctx.strokeStyle = course.flag;
+      ctx.beginPath();
+      ctx.moveTo(px(d), py(0));
+      ctx.lineTo(px(d), py(0) - 14);
+      ctx.stroke();
+      ctx.fillStyle = course.flag;
+      ctx.beginPath();
+      ctx.moveTo(px(d), py(0) - 14);
+      ctx.lineTo(px(d) + 7, py(0) - 11);
+      ctx.lineTo(px(d), py(0) - 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // Tee marker at the origin.
+    ctx.fillStyle = course.tee;
+    ctx.fillRect(px(0) - 2, py(0) - 2, 4, 4);
   }
   if (showBall) {
     ctx.fillStyle = "#facc15";
@@ -95,6 +140,36 @@ export function drawSwingScene(
   ctx.beginPath();
   ctx.arc(px(head[0]), py(head[1]), 4, 0, 2 * Math.PI);
   ctx.fill();
+
+  const joints = run.swing[swingIndex].joints;
+  if (joints.length >= 2) {
+    joints.slice(0, -1).forEach((joint, linkIndex) => {
+      const next = joints[linkIndex + 1];
+      ctx.strokeStyle = linkIndex === joints.length - 2 ? "#cbd5e1" : "#a78bfa";
+      ctx.lineWidth = linkIndex === joints.length - 2 ? 5 : 8;
+      ctx.lineCap = "round";
+      ctx.beginPath();
+      ctx.moveTo(px(joint[0]), py(joint[1]));
+      ctx.lineTo(px(next[0]), py(next[1]));
+      ctx.stroke();
+    });
+    for (const joint of joints) {
+      ctx.fillStyle = "#f8fafc";
+      ctx.strokeStyle = "#7c3aed";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(px(joint[0]), py(joint[1]), 5, 0, 2 * Math.PI);
+      ctx.fill();
+      ctx.stroke();
+    }
+    ctx.fillStyle = "#c4b5fd";
+    ctx.font = "600 12px sans-serif";
+    ctx.fillText(
+      `${run.sourceKind === "double_pendulum" ? "Double" : "Triple"} Pendulum — articulated links`,
+      12,
+      34,
+    );
+  }
 
   // Flight trajectory polyline: opt-in only (scale separation).
   if (showFlight) drawPath(run.flight, "rgba(52,211,153,0.25)", 1);

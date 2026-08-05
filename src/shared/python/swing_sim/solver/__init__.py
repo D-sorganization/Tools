@@ -29,6 +29,7 @@ from .goals import (
     SWING_VARIABLE_DEFAULTS,
     GoalTerm,
     ImpactGoal,
+    TargetRegion,
     VariablePartition,
 )
 from .objective import (
@@ -60,6 +61,7 @@ __all__ = [
     "ProgressReport",
     "SolverResult",
     "StartSummary",
+    "TargetRegion",
     "VariablePartition",
     "achieved_quantities",
     "detect_stall",

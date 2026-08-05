@@ -7,9 +7,11 @@
  * StrikeView. Never shows swing or flight scale content.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
+import { type ClubSpec } from "../model/club";
 import { FIELD_GUIDANCE } from "../model/units";
+import { headCog } from "../model/volumetrics";
 
 interface Props {
   toeMm: number;
@@ -19,6 +21,8 @@ interface Props {
   pathDeg?: number;
   /** Delivered attack angle [deg, + up]; undefined until a run. */
   aoaDeg?: number;
+  /** Effective club spec — enables the volumetric CG marker (H1). */
+  clubSpec?: ClubSpec | null;
 }
 
 /** Driver face half-extents [mm] (200 g reference envelope). */
@@ -27,8 +31,16 @@ const HALF_H_MM = 28;
 const EXTENT_MM = Math.max(HALF_W_MM, HALF_H_MM) * 1.35;
 const ARROW_MM = EXTENT_MM * 0.55;
 
-export function StrikeCanvas({ toeMm, highMm, loftDeg, pathDeg, aoaDeg }: Props) {
+export function StrikeCanvas({
+  toeMm,
+  highMm,
+  loftDeg,
+  pathDeg,
+  aoaDeg,
+  clubSpec = null,
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const [showCg, setShowCg] = useState(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -109,6 +121,32 @@ export function StrikeCanvas({ toeMm, highMm, loftDeg, pathDeg, aoaDeg }: Props)
       0,
     );
 
+    // Volumetric CG marker (H1): the divergence-theorem centroid of
+    // the generated head projected into the face plane (toe, height
+    // relative to the face-plate center).
+    if (showCg && clubSpec) {
+      const report = headCog(clubSpec);
+      const cx = px(report.cog[2] * 1000);
+      const cy = py((report.cog[1] - report.faceCenter[1]) * 1000);
+      ctx.strokeStyle = "#fb923c";
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(cx - 5, cy - 5);
+      ctx.lineTo(cx + 5, cy + 5);
+      ctx.moveTo(cx - 5, cy + 5);
+      ctx.lineTo(cx + 5, cy - 5);
+      ctx.stroke();
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "#fb923c";
+      ctx.font = "11px sans-serif";
+      ctx.fillText(
+        `CG (depth ${(report.cgDepthM * 1000).toFixed(0)} mm, ` +
+          `height ${(report.cgHeightM * 1000).toFixed(0)} mm)`,
+        cx + 8,
+        cy - 8,
+      );
+    }
+
     // Impact marker.
     ctx.fillStyle = "#facc15";
     ctx.beginPath();
@@ -123,16 +161,31 @@ export function StrikeCanvas({ toeMm, highMm, loftDeg, pathDeg, aoaDeg }: Props)
       10,
       16,
     );
-  }, [toeMm, highMm, loftDeg, pathDeg, aoaDeg]);
+  }, [toeMm, highMm, loftDeg, pathDeg, aoaDeg, clubSpec, showCg]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={860}
-      height={480}
-      title={FIELD_GUIDANCE.strikeVectorsVisible}
-      className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
-      aria-label="Strike zone (face plane, millimetres)"
-    />
+    <div className="space-y-2">
+      <canvas
+        ref={canvasRef}
+        width={860}
+        height={480}
+        title={FIELD_GUIDANCE.strikeVectorsVisible}
+        className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
+        aria-label="Strike zone (face plane, millimetres)"
+      />
+      <label
+        title={FIELD_GUIDANCE.showCgMarker}
+        className="flex items-center gap-2 text-sm text-slate-300"
+      >
+        <input
+          type="checkbox"
+          checked={showCg}
+          disabled={!clubSpec}
+          onChange={(e) => setShowCg(e.target.checked)}
+          aria-label="Show CG"
+        />
+        Show CG
+      </label>
+    </div>
   );
 }

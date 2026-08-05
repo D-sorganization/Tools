@@ -34,27 +34,32 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.club import ClubSpec, parametric_head_mesh
+from rate_of_closure.club import (
+    ClubSpec,
+    head_cog,
+    hosel_point,
+    parametric_head_mesh,
+)
 from rate_of_closure.derivation import (
     METRIC_EXPLANATIONS,
     RESULT_EXPLANATIONS,
 )
 from rate_of_closure.helptext import HELP_TEXTS
 from rate_of_closure.model import ImpactScenario, closure_metrics, solve
+from rate_of_closure.ui.pyqt6.app_style import showcase_stylesheet
 from rate_of_closure.ui.pyqt6.club_view import Club3DView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
 from rate_of_closure.ui.pyqt6.flight_explorer_tab import FlightExplorerTab
 from rate_of_closure.ui.pyqt6.glossary_tab import GlossaryTab
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
+from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
-from rate_of_closure.ui.pyqt6.result_row import (
-    explanation_html,
-    selection_stylesheet,
-)
+from rate_of_closure.ui.pyqt6.result_row import explanation_html
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 from rate_of_closure.units import convert_from_canonical
+from shared.python.swing_sim.variation import VariationDataset
 
 logger = logging.getLogger(__name__)
 
@@ -124,6 +129,7 @@ _TAB_HELP_KEYS: tuple[str, ...] = (
     "simulation",
     "flight_explorer",
     "variation",
+    "putting",
     "glossary",
 )
 
@@ -156,6 +162,11 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._variation_tab = VariationTab()
+        # Variation -> course-view tie-in (#4125 H7b): a completed study
+        # overlays its landing scatter on the flight top-down view, where
+        # the target hold-% headline is reported when a target is set.
+        self._variation_tab.studyCompleted.connect(self._on_variation_study)
+        self._putting_tab = PuttingTab()
         self._glossary_tab = GlossaryTab()
 
         left_content = QWidget()
@@ -182,6 +193,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         tabs.addTab(self._simulation_tab, "Simulation")
         tabs.addTab(self._flight_explorer_tab, "Flight Explorer")
         tabs.addTab(self._variation_tab, "Variation")
+        tabs.addTab(self._putting_tab, "Putting")
         tabs.addTab(self._glossary_tab, "Glossary")
         self._tabs = tabs
         # Per-tab help (#4120 V4): the '?' corner button opens detailed
@@ -203,18 +215,33 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         splitter.setStretchFactor(1, 1)
         self.setCentralWidget(splitter)
         self.setStatusBar(QStatusBar())
-        self.setStyleSheet(selection_stylesheet(self.palette()))
+        # H6 (#4125): the UpstreamDrift launcher visual language —
+        # hover-highlighted buttons with subtle shadows, rounded group
+        # boxes/tabs — all palette-derived (includes the V4 selected-row
+        # styling, superseding the bare selection_stylesheet here).
+        self.setStyleSheet(showcase_stylesheet(self.palette()))
 
         self._controls.scenarioChanged.connect(self._on_scenario)
         self._controls.clubHeadRequested.connect(self._on_club_head)
+        # Distance display unit (#4125 H6): yards default; switching
+        # re-renders every distance surface across the tabs.
+        self._controls.distanceUnitChanged.connect(self._on_distance_unit)
         self._simulation_tab.glossaryRequested.connect(self.open_glossary)
         self._simulation_tab.configChanged.connect(self._derivation_view.set_config)
         self._flight_explorer_tab.glossaryRequested.connect(self.open_glossary)
+        self._putting_tab.glossaryRequested.connect(self.open_glossary)
         # Theming is applied by the shared launcher (setup_themed_app),
         # which also owns the single Theme menu — calling
         # setup_theme_support() here as well would add a duplicate.
         self._derivation_view.set_config(self._simulation_tab.derivation_config())
         self._on_scenario(self._controls.scenario())
+        # A share-ready scene should never open as a placeholder wireframe.
+        # Load the selected representative driver immediately; users can still
+        # regenerate another library head or load a measured STL.
+        self._on_club_head(self._controls.club_spec())
+        # Match the web experience: the Swing view opens with a meaningful
+        # result instead of empty axes that look like a rendering failure.
+        self._simulation_tab.run_now()
         self._show_explanation(_RESULT_ROWS[0][0])
 
     # ── construction ────────────────────────────────────────────────
@@ -278,6 +305,21 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._help_dialog = dialog
         dialog.show()
 
+    def _on_distance_unit(self, _unit: str) -> None:
+        """Re-render distance surfaces in the new display unit (H6)."""
+        self._simulation_tab.refresh_units()
+        self._flight_explorer_tab.refresh_units()
+        self._putting_tab.refresh_units()
+
+    def _on_variation_study(self, dataset: VariationDataset) -> None:
+        """Forward a completed study's landing scatter (#4125 H7b)."""
+        names = dataset.output_names
+        if "carry_m" not in names or "lateral_m" not in names:
+            return  # impact-only study: no landing plane to overlay
+        self._simulation_tab.set_landing_scatter(
+            dataset.output_column("carry_m"), dataset.output_column("lateral_m")
+        )
+
     def open_glossary(self, term: str) -> None:
         """Show the Glossary tab, pre-selecting ``term`` when known."""
         self._tabs.setCurrentWidget(self._glossary_tab)
@@ -296,8 +338,18 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         return f"{displayed:+.2f} {unit}"
 
     def _on_club_head(self, spec: ClubSpec) -> None:
-        """Build the parametric head for a club spec and display it."""
-        self._club_view.set_head_mesh(parametric_head_mesh(spec))
+        """Build the parametric head for a club spec and display it.
+
+        The generated head carries its per-type hosel point (the shaft
+        line attaches there) and its divergence-theorem volumetric COG
+        for the "Show CG" marker.
+        """
+        report = head_cog(spec)
+        self._club_view.set_head_mesh(
+            parametric_head_mesh(spec),
+            hosel_point=hosel_point(spec),
+            cog_point=report.cog,
+        )
         status_bar = self.statusBar()
         if status_bar is not None:
             status_bar.showMessage(

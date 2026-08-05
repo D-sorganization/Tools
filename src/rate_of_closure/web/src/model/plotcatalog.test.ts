@@ -47,6 +47,7 @@ describe("plot catalog — parity with the Python catalog", () => {
     const prefixes: Record<string, string> = {
       Input: "input.",
       "Swing Sample": "swing.",
+      Kinetics: "kinetics.",
       Impact: "impact.",
       Launch: "launch.",
       Flight: "flight.",
@@ -74,6 +75,7 @@ describe("plot catalog — parity with the Python catalog", () => {
     const ctx = context();
     const lengths: Record<string, number> = {
       "Swing Sample": ctx.run.swing.length,
+      Kinetics: ctx.run.swing.length,
       Flight: ctx.run.flight.length,
     };
     for (const entry of PLOT_CATALOG) {
@@ -94,7 +96,7 @@ describe("plot catalog — parity with the Python catalog", () => {
       "impact.spin_axis_tilt_deg",
       "impact.energy_transfer_j",
     ]);
-    for (const category of ["Swing Sample", "Flight"] as const) {
+    for (const category of ["Swing Sample", "Kinetics", "Flight"] as const) {
       expect(supportedByCategory(category).length).toBeGreaterThan(0);
     }
   });

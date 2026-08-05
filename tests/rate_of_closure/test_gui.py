@@ -170,6 +170,7 @@ class TestClubGroup:
             panel._club_combo.itemText(i) for i in range(panel._club_combo.count())
         ]
         assert items == club_names()
+        assert panel._club_combo.currentText() == "Driver 10.5°"
 
     def test_selecting_a_club_drives_com_and_lie(self, qtbot) -> None:  # type: ignore[no-untyped-def]
         panel = ControlsPanel()
@@ -218,6 +219,9 @@ class TestClubGroup:
     def test_generate_loads_a_parametric_head_into_the_view(
         self, window, qtbot
     ) -> None:  # type: ignore[no-untyped-def]
+        # The selected representative driver is share-ready on first paint.
+        assert window._club_view.has_mesh()
+        window._club_view.clear_mesh()
         assert not window._club_view.has_mesh()
         window._controls._generate_button.click()
         assert window._club_view.has_mesh()
@@ -324,3 +328,45 @@ class TestClub3DView:
         view.set_view_mode("nonsense")  # ignored, logged
         assert view.view_mode() == VIEW_MODES[0]
         view.stop()
+
+
+class TestCgAndHosel:
+    """H1 (#4125): Show CG marker and hosel-true shaft attachment."""
+
+    def test_show_cg_defaults_on_and_toggles(self, qtbot) -> None:  # type: ignore[no-untyped-def]
+        view = Club3DView()
+        qtbot.addWidget(view)
+        view.set_scenario(ImpactScenario(clubhead_speed_mph=113.0))
+        assert view.show_cg_check().isChecked()
+        # Wireframe mode falls back to the reference point (spec CG).
+        marker = view.cg_marker_point()
+        assert marker is not None and not marker.any()
+        view.show_cg_check().setChecked(False)
+        assert view.cg_marker_point() is None
+        assert "Source:" in view.show_cg_check().toolTip()
+        view.stop()
+
+    def test_generated_head_attaches_shaft_at_the_hosel(self, window) -> None:  # type: ignore[no-untyped-def]
+        import numpy as np
+
+        from rate_of_closure.club import head_cog, hosel_point
+
+        window._controls._generate_button.click()
+        view = window._club_view
+        spec = window._controls.club_spec()
+        attachment = view.shaft_attachment()
+        assert attachment is not None
+        shift = view._head_shift(view._mesh, view._scenario)
+        expected = np.asarray(hosel_point(spec)) + shift
+        np.testing.assert_allclose(attachment, expected, atol=1e-12)
+        assert attachment[2] < 0.0  # heel side after the face shift too
+
+        view.show_cg_check().setChecked(True)
+        marker = view.cg_marker_point()
+        assert marker is not None
+        np.testing.assert_allclose(
+            marker, np.asarray(head_cog(spec).cog) + shift, atol=1e-12
+        )
+        # Clearing the mesh restores wireframe hosel behavior.
+        view.clear_mesh()
+        assert view.shaft_attachment() is None

@@ -10,6 +10,8 @@ Orchestrates a full swing -> impact -> flight run:
   at time tau meets the fixed ball).
 * :mod:`.isa` — thin adapter over the rotation converter's screw-axis
   extraction (one file to touch when the Rust surface lands, #4108).
+* :mod:`.kinetics` — inverse dynamics over the pendulum swing: joint
+  torques, reaction forces, and powers per sample (#4125 H2).
 * :mod:`.export` — CSV time-series and JSON summary export.
 """
 
@@ -24,6 +26,14 @@ from .flight_explorer import (
     launch_from_direct,
 )
 from .isa import screw_axis_samples
+from .kinetics import (
+    KINETIC_JOINT_NAMES,
+    KineticsSeries,
+    compute_kinetics,
+    inverse_dynamics,
+    kinetics_for_run,
+    simulate_forced,
+)
 from .session import (
     BALL_POSITION_M,
     SimulationConfig,
@@ -43,16 +53,22 @@ from .sources import (
 __all__ = [
     "BALL_POSITION_M",
     "EXPLORER_METRIC_KEYS",
+    "KINETIC_JOINT_NAMES",
     "SOURCE_KINDS",
     "AppFrameSwing",
     "FlightExploration",
+    "KineticsSeries",
     "ManualSwingSource",
     "SimulationConfig",
     "SimulationRun",
     "TriplePendulumParameters",
     "TriplePendulumSwing",
+    "compute_kinetics",
     "delivery_at",
     "explore_flight",
+    "inverse_dynamics",
+    "kinetics_for_run",
+    "simulate_forced",
     "launch_from_delivery",
     "launch_from_direct",
     "make_source",

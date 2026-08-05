@@ -77,6 +77,14 @@ ENTRIES: dict[str, GlossaryEntry] = {
         "scalar-MOI fallback 1/m + |r|²/I exactly "
         "(swing_sim.impact.models derivation).",
     ),
+    "moment_of_force": _entry(
+        "Moment of Force (Torque)",
+        "The turning effect of a force about an axis, τ = r × F "
+        "[N·m]. In the swing kinetics, positive torque acts "
+        "counter-clockwise about the swing-plane normal — the "
+        "direction of increasing joint angle "
+        "(rate_of_closure.simulation.kinetics sign convention).",
+    ),
     "monte_carlo": _entry(
         "Monte Carlo Simulation",
         "Running the simulation many times with randomized inputs drawn "
@@ -120,6 +128,15 @@ ENTRIES: dict[str, GlossaryEntry] = {
         "side tilt, and forward tilt. Gravity is projected into the "
         "plane (g_inplane = R^T (0, 0, -g)), so steeper planes feel more "
         "in-plane gravity (swing_sim.reference.in_plane_gravity).",
+    ),
+    "power": _entry(
+        "Joint Power",
+        "The rate of mechanical work at a joint, P = τ·ω [W] (torque "
+        "times joint angular rate). Summed over the pendulum's joints "
+        "it equals the rate of change of the swing's kinetic energy, "
+        "so its time integral to impact is the energy delivered to the "
+        "club (rate_of_closure.simulation.kinetics; movement-optimizer "
+        "joint-power convention).",
     ),
     "r_isa": _entry(
         "Distance to the Screw Axis (R_ISA)",
@@ -233,6 +250,22 @@ ENTRIES: dict[str, GlossaryEntry] = {
         "plus the linear velocity of a reference point. The twist "
         "relation v_P = v_ref + ω × r gives every point's velocity from "
         "one twist (screw theory; the core of the closure model).",
+    ),
+    "mallet_putter": _entry(
+        "Mallet Putter",
+        "A putter with a deep, rounded body extending well behind the "
+        "face — the extra depth moves the center of gravity back and "
+        "raises head MOI versus a blade, per typical published putter "
+        "fitting references (modeled generically in "
+        "rate_of_closure.club.head_profiles).",
+    ),
+    "plumbers_neck": _entry(
+        "Plumber's Neck",
+        "The common putter hosel bend that sets the shaft axis a small "
+        "offset (roughly one shaft diameter) ahead of the face while "
+        "attaching at the heel — giving the hands a slight lead at "
+        "address. Modeled as the blade putter's hosel set-back "
+        "(typical published putter fitting references).",
     ),
     "uniform_distribution": _entry(
         "Uniform Distribution",

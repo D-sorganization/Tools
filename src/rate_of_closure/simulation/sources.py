@@ -115,6 +115,12 @@ class AppFrameSwing:
         twist = np.concatenate([c @ s.twist[:3], c @ s.twist[3:]])
         return SwingSample(t=s.t, pose=pose, twist=twist)
 
+    def joint_positions(self, t: float) -> np.ndarray:
+        """Articulated joints in the app frame, when the source exposes them."""
+        joint_positions = getattr(self._inner, "joint_positions", None)
+        require(callable(joint_positions), "inner source has no joint geometry")
+        return np.asarray(joint_positions(t)) @ APP_FROM_SWING.T
+
 
 class ManualSwingSource:
     """Constant-twist source built from an :class:`ImpactScenario` (app frame).
@@ -361,6 +367,30 @@ class TriplePendulumSwing:
         k4 = f(y + dt * k3)
         return np.asarray(y + dt / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4))
 
+    def state_at(self, t: float) -> np.ndarray:
+        """Interpolated absolute-angle joint state at ``t``."""
+        require(math.isfinite(t), "t must be finite", t)
+        require(-1e-9 <= t <= self._duration + 1e-9, "t within duration", t)
+        t = min(max(t, 0.0), self._duration)
+        idx = t / self._dt
+        i0 = min(int(idx), self._n_steps)
+        i1 = min(i0 + 1, self._n_steps)
+        frac = idx - i0
+        return np.asarray((1.0 - frac) * self._states[i0] + frac * self._states[i1])
+
+    def joint_positions(self, t: float) -> np.ndarray:
+        """Pivot and each link endpoint in the oriented swing frame."""
+        phi = self.state_at(t)[:3]
+        x_axis, up_axis = self._plane_r[:, 0], self._plane_r[:, 2]
+        points = [np.zeros(3)]
+        current = np.zeros(3)
+        for length, angle in zip(self._p.l, phi, strict=True):
+            current = current + length * (
+                math.sin(float(angle)) * x_axis - math.cos(float(angle)) * up_axis
+            )
+            points.append(current.copy())
+        return np.vstack(points)
+
     @property
     def parameters(self) -> TriplePendulumParameters:
         """Pendulum parameters used for the integration."""
@@ -385,11 +415,7 @@ class TriplePendulumSwing:
             t,
         )
         t = min(max(t, 0.0), self._duration)
-        idx = t / self._dt
-        i0 = min(int(idx), self._n_steps)
-        i1 = min(i0 + 1, self._n_steps)
-        frac = idx - i0
-        row = (1.0 - frac) * self._states[i0] + frac * self._states[i1]
+        row = self.state_at(t)
         phi, dphi = row[:3], row[3:]
 
         lengths = np.array(self._p.l)

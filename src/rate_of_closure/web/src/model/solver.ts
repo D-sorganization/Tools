@@ -23,6 +23,7 @@
 
 import { deriveLaunch, simulateFlight } from "./flight";
 import { MPH_PER_MPS, solveImpact, toFlightFrame } from "./simulation";
+import { residualM, signedDistance, type TargetRegionTs } from "./targets";
 
 export const SOLVER_GOAL_KEYS = [
   "clubPathDeg",
@@ -79,6 +80,12 @@ export interface GoalTermTs {
 
 export type SolverGoalTs = Partial<Record<SolverGoalKey, GoalTermTs>>;
 
+/** Achieved quantities + optional landing-plane extras (#4125 H7b). */
+export type AchievedTs = Partial<Record<SolverGoalKey, number>> & {
+  landingLateralM?: number;
+  targetDistanceM?: number;
+};
+
 export interface VariablePartitionTs {
   free: Partial<Record<SolverVariableKey, [number, number]>>;
   fixed: Partial<Record<SolverVariableKey, number>>;
@@ -86,7 +93,7 @@ export interface VariablePartitionTs {
 
 export interface SolverResultTs {
   variables: Record<SolverVariableKey, number>;
-  achieved: Partial<Record<SolverGoalKey, number>>;
+  achieved: AchievedTs;
   perGoalErrors: Partial<Record<SolverGoalKey, number>>;
   residualNorm: number;
   cost: number;
@@ -102,10 +109,11 @@ const clampAngle = (v: number): number =>
 export function validateInputs(
   goal: SolverGoalTs,
   partition: VariablePartitionTs,
+  targetRegion?: TargetRegionTs,
 ): void {
   const goalKeys = Object.keys(goal) as SolverGoalKey[];
-  if (goalKeys.length === 0) {
-    throw new Error("at least one goal quantity must be targeted");
+  if (goalKeys.length === 0 && !targetRegion) {
+    throw new Error("at least one goal quantity or a target region is required");
   }
   for (const key of goalKeys) {
     const term = goal[key];
@@ -159,8 +167,9 @@ export function assembleVariables(
 export function achievedQuantities(
   variables: Record<SolverVariableKey, number>,
   goal: SolverGoalTs,
-): Partial<Record<SolverGoalKey, number>> {
-  const achieved: Partial<Record<SolverGoalKey, number>> = {
+  targetRegion?: TargetRegionTs,
+): AchievedTs {
+  const achieved: AchievedTs = {
     clubPathDeg: clampAngle(variables.clubPathDeg),
     faceAngleDeg: clampAngle(variables.faceAngleDeg),
     attackAngleDeg: clampAngle(variables.attackAngleDeg),
@@ -171,7 +180,8 @@ export function achievedQuantities(
     goal.launchAngleDeg !== undefined ||
     goal.launchAzimuthDeg !== undefined ||
     goal.spinRpm !== undefined ||
-    goal.carryM !== undefined;
+    goal.carryM !== undefined ||
+    targetRegion !== undefined;
   if (!needsLaunch) return achieved;
 
   const impact = solveImpact({
@@ -192,8 +202,18 @@ export function achievedQuantities(
   // Flight-frame azimuth is + toward +y (left); goals use + = right.
   achieved.launchAzimuthDeg = (-launch.azimuthRad * 180.0) / Math.PI;
   achieved.spinRpm = launch.spinRpm;
-  if (goal.carryM !== undefined) {
-    achieved.carryM = simulateFlight(launch).carryM;
+  if (goal.carryM !== undefined || targetRegion !== undefined) {
+    const flight = simulateFlight(launch);
+    achieved.carryM = flight.carryM;
+    // Flight lateral is + left; regions use + right of the target line.
+    achieved.landingLateralM = -flight.lateralM;
+    if (targetRegion !== undefined) {
+      achieved.targetDistanceM = signedDistance(
+        targetRegion,
+        flight.carryM,
+        -flight.lateralM,
+      );
+    }
   }
   return achieved;
 }
@@ -204,16 +224,24 @@ function costOf(
   freeKeys: SolverVariableKey[],
   partition: VariablePartitionTs,
   goal: SolverGoalTs,
+  targetRegion?: TargetRegionTs,
+  targetRegionWeight = 1.0,
 ): number {
-  const achieved = achievedQuantities(
-    assembleVariables(x, freeKeys, partition),
-    goal,
-  );
+  const variables = assembleVariables(x, freeKeys, partition);
+  const achieved = achievedQuantities(variables, goal, targetRegion);
   let cost = 0.0;
   for (const key of Object.keys(goal) as SolverGoalKey[]) {
     const term = goal[key]!;
     const r =
       (term.weight * (achieved[key]! - term.target)) / RESIDUAL_SCALES[key];
+    cost += r * r;
+  }
+  if (targetRegion !== undefined) {
+    // Additive region residual (#4125 H7b), carry-scaled like Python.
+    const r =
+      (targetRegionWeight *
+        residualM(targetRegion, achieved.carryM!, achieved.landingLateralM!)) /
+      RESIDUAL_SCALES.carryM;
     cost += r * r;
   }
   return 0.5 * cost;
@@ -308,12 +336,15 @@ export function solveGoals(
   goal: SolverGoalTs,
   partition: VariablePartitionTs,
   maxEvalsPerStart = 400,
+  targetRegion?: TargetRegionTs,
+  targetRegionWeight = 1.0,
 ): SolverResultTs {
-  validateInputs(goal, partition);
+  validateInputs(goal, partition, targetRegion);
   const freeKeys = Object.keys(partition.free) as SolverVariableKey[];
   const lo = freeKeys.map((key) => partition.free[key]![0]);
   const hi = freeKeys.map((key) => partition.free[key]![1]);
-  const f = (x: number[]): number => costOf(x, freeKeys, partition, goal);
+  const f = (x: number[]): number =>
+    costOf(x, freeKeys, partition, goal, targetRegion, targetRegionWeight);
 
   let best: ReturnType<typeof nelderMead> | null = null;
   let totalEvals = 0;
@@ -327,7 +358,7 @@ export function solveGoals(
     if (best === null || run.cost < best.cost) best = run;
   }
   const variables = assembleVariables(best!.x, freeKeys, partition);
-  const achieved = achievedQuantities(variables, goal);
+  const achieved = achievedQuantities(variables, goal, targetRegion);
   const perGoalErrors: Partial<Record<SolverGoalKey, number>> = {};
   for (const key of Object.keys(goal) as SolverGoalKey[]) {
     perGoalErrors[key] = achieved[key]! - goal[key]!.target;

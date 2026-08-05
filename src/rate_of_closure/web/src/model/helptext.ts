@@ -61,10 +61,12 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
         "spin, carry…) appear as rows on the left.",
       "Use the impact-time slider to scrub impact earlier or later in " +
         "the swing — the delivery readout updates live. The Strike / " +
-        "Swing / Flight buttons switch between the face-scale impact " +
-        "zone (with the delivered path/face/AoA vectors), the swing-" +
-        "scale scene with playback, and the flight profiles (side and " +
-        "top-down). 'Show Ball Flight' expands the swing scene to " +
+        "Swing / Kinetics / Flight buttons switch between the face-" +
+        "scale impact zone (with the delivered path/face/AoA vectors), " +
+        "the swing-scale scene with playback, the joint torque / power " +
+        "/ reaction-force charts of the pendulum swing, and the flight " +
+        "profiles (side and top-down). 'Show Ball Flight' expands the " +
+        "swing scene to " +
         "flight scale — expect the swing to look tiny. The Solver " +
         "section searches for deliveries that hit goal launch numbers, " +
         "and the JSON download captures the whole run.",
@@ -118,6 +120,27 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
         "landing scatter with its 2σ dispersion ellipse (roughly the " +
         "95% landing zone). Export the dataset as CSV or JSON for " +
         "further analysis.",
+    ],
+  },
+  Putting: {
+    title: "How to Use This Page",
+    paragraphs: [
+      "A putting laboratory on a uniform sloped green. Pick a putter " +
+        "(the club-library putter by default), set the stroke pace — " +
+        "clubhead speed directly, or a backstroke length through the " +
+        "pendulum proxy v = A·sqrt(g/L) — then dial in the green: " +
+        "stimp (6 slow to 14 tournament fast), slope grade in percent, " +
+        "and the downhill direction relative to the putt line (+90° " +
+        "puts the low side on your left). Set the distance to the " +
+        "hole and everything recomputes live.",
+      "Read the result rows — roll-out, skid distance and share, time, " +
+        "break, speed at the hole, and holed/miss margin — and click " +
+        "any row for its plain-language explanation with glossary " +
+        "links. The top-down green view colour-codes the skid phase " +
+        "and the pure-roll phase along the path and marks the hole " +
+        "and the downhill direction; the speed-vs-distance plot " +
+        "shows the capture-speed bound the ball must be under when " +
+        "it crosses the hole to drop.",
     ],
   },
   Glossary: {

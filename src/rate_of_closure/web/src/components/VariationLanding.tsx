@@ -6,13 +6,22 @@
 
 import { useEffect, useRef } from "react";
 
+import {
+  holdStats,
+  signedDistance,
+  type TargetRegionTs,
+} from "../model/targets";
+import { courseColors } from "../model/course";
 import { type VariationDatasetTs } from "../model/variation";
 import { dispersionEllipse } from "../model/variationAnalysis";
 
 export function LandingCanvas({
   dataset,
+  target,
 }: {
   dataset: VariationDatasetTs;
+  /** Target region (#4125 H7b): dashed overlay + hold-% headline. */
+  target?: TargetRegionTs;
 }): JSX.Element {
   const ref = useRef<HTMLCanvasElement | null>(null);
   useEffect(() => {
@@ -36,10 +45,24 @@ export function LandingCanvas({
     const ys = points.map((p) => p[1]);
     const pad = 2.0;
     const reach = ellipse ? ellipse.semiMajorM : 0;
-    const minX = Math.min(...xs, (ellipse?.centerLateralM ?? 0) - reach) - pad;
-    const maxX = Math.max(...xs, (ellipse?.centerLateralM ?? 0) + reach) + pad;
-    const minY = Math.min(...ys, (ellipse?.centerCarryM ?? 0) - reach) - pad;
-    const maxY = Math.max(...ys, (ellipse?.centerCarryM ?? 0) + reach) + pad;
+    // Window includes the target region so its boundary never clips.
+    const tx = target
+      ? target.kind === "green"
+        ? [target.lateralM - target.radiusM, target.lateralM + target.radiusM]
+        : [-target.halfWidthM, target.halfWidthM]
+      : [];
+    const ty = target
+      ? target.kind === "green"
+        ? [target.distanceM - target.radiusM, target.distanceM + target.radiusM]
+        : [
+            target.distanceM - target.bandHalfLengthM,
+            target.distanceM + target.bandHalfLengthM,
+          ]
+      : [];
+    const minX = Math.min(...xs, ...tx, (ellipse?.centerLateralM ?? 0) - reach) - pad;
+    const maxX = Math.max(...xs, ...tx, (ellipse?.centerLateralM ?? 0) + reach) + pad;
+    const minY = Math.min(...ys, ...ty, (ellipse?.centerCarryM ?? 0) - reach) - pad;
+    const maxY = Math.max(...ys, ...ty, (ellipse?.centerCarryM ?? 0) + reach) + pad;
     const scale = Math.min(
       (width - 40) / (maxX - minX || 1),
       (height - 40) / (maxY - minY || 1),
@@ -47,11 +70,55 @@ export function LandingCanvas({
     const px = (x: number) => 20 + (x - minX) * scale;
     const py = (y: number) => height - 20 - (y - minY) * scale;
 
-    ctx.fillStyle = "rgba(56, 189, 248, 0.65)";
+    const course = courseColors();
     for (const [x, y] of points) {
+      // Landing scatter: color by target containment when a target is
+      // set (#4125 H7b) — holding shots in the green tone.
+      ctx.fillStyle = target
+        ? signedDistance(target, y, x) <= 0
+          ? course.green
+          : "rgba(56, 189, 248, 0.65)"
+        : "rgba(56, 189, 248, 0.65)";
       ctx.beginPath();
       ctx.arc(px(x), py(y), 3, 0, 2 * Math.PI);
       ctx.fill();
+    }
+    if (target) {
+      // Dashed target boundary (canvas x = lateral, y = carry).
+      ctx.strokeStyle = course.flag;
+      ctx.setLineDash([6, 4]);
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      if (target.kind === "green") {
+        ctx.ellipse(
+          px(target.lateralM),
+          py(target.distanceM),
+          target.radiusM * scale,
+          target.radiusM * scale,
+          0,
+          0,
+          2 * Math.PI,
+        );
+      } else {
+        ctx.rect(
+          px(-target.halfWidthM),
+          py(target.distanceM + target.bandHalfLengthM),
+          2 * target.halfWidthM * scale,
+          2 * target.bandHalfLengthM * scale,
+        );
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+      // Hold-% headline: fraction of shots inside the target.
+      const { held, total } = holdStats(
+        points.map((p) => p[1]),
+        points.map((p) => p[0]),
+        target,
+      );
+      const pct = total ? ((100 * held) / total).toFixed(0) : "–";
+      ctx.fillStyle = "#94a3b8";
+      ctx.font = "12px sans-serif";
+      ctx.fillText(`${held}/${total} shots hold the target (${pct}%)`, 8, 14);
     }
     if (ellipse) {
       ctx.strokeStyle = "#eb6a3c";
@@ -79,7 +146,7 @@ export function LandingCanvas({
     ctx.rotate(-Math.PI / 2);
     ctx.fillText("carry [m] →", 0, 0);
     ctx.restore();
-  }, [dataset]);
+  }, [dataset, target]);
   return (
     <canvas
       ref={ref}

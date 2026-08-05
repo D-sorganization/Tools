@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.11.0                                     |
-| **Spec Version**        | 1.11.0                                     |
+| **Current Version**     | 1.13.2                                     |
+| **Spec Version**        | 1.13.2                                     |
 | **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
@@ -35,7 +35,234 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-05 Rate of Closure interaction and rendering hardening
 
+- Every directional engineering entry now exposes a visible, clickable
+  reference-frame disclosure, and launch-number rows expose their definitions
+  as whole-row buttons in the web interface. Web numeric editing uses a
+  draft/commit control that selects the complete value on focus, preserves
+  intermediate empty/minus/decimal states, accepts negative spin-axis tilt,
+  clamps only at commit, and provides a full-field focus treatment.
+- Swing sessions carry explicit joint positions. Both renderers draw the
+  complete double- or triple-pendulum skeleton, the web implementation adds
+  the parity-pinned triple-pendulum source, and the initial simulation runs
+  automatically so the Swing view is never an unexplained blank canvas.
+- Both interfaces start with a representative 10.5-degree driver and visible
+  engineering-style CG target. Parametric heads use 64-point rings, refined
+  body stations, and five face rings (1,792 driver triangles), with matched
+  deterministic Python/TypeScript geometry, watertight volumetrics, steel
+  shading, specular highlights, and a regenerated bundled example STL.
+
+### 2026-08-04 Course showcase — golf-course scene, target optimization, launcher styling, yards units (epic #4125, H7 + H6)
+
+- **H7a golf-course scene**: the simulation/flight displays render as a
+  course. `rate_of_closure/ui/course.py` derives every scene tone from
+  the shared chart palette (blends of the palette green toward
+  black/white — rough/fairway/green one grass family, hole/flag/tee
+  from palette red/yellow; no widget hex) with a configurable
+  `CourseLayout` (green distance/radius, fairway half-width);
+  `ui/pyqt6/course_scene.py` paints the swing 3D ground plane, the
+  side-profile ground band + green/flagstick, and the top-down
+  rough/fairway/green/hole/tee. Ball/Ground checkboxes stay; a new
+  'Course Elements' checkbox (sourced guidance) gates the furniture in
+  the swing scene and FlightView. Web mirror: `model/theme.ts` (shared
+  chartColors + blend/withAlpha) and `model/course.ts` (same blend
+  fractions, parity-tested) drive course-styled `swingSceneDraw` and
+  `FlightCanvases` with the same checkbox.
+- **H7b target optimization**: `swing_sim/solver/targets.py`
+  `TargetRegion` — green (circle at distance, optional lateral offset,
+  radius) or fairway (distance band × half-width corridor) with an
+  exact signed distance (negative inside), containment test, and a
+  residual = distance-outside-region (0 inside) + a small centering
+  term. `ImpactGoal` gains an additive `target_region` (+weight); the
+  objective appends one carry-scaled residual and `solve()` reports
+  `landing_lateral_m` / `target_distance_m` (+ a `target_region_m`
+  per-goal entry). App facade `simulation/targets.py` adds
+  `hold_stats`/`hold_fraction` (Variation headline: share of
+  Monte-Carlo landings holding the target) and the course-layout
+  bridge. PyQt6: `TargetPanel` on the Solver panel (kind/geometry/
+  weight entries — the cheap place/edit seam, the flight top-down view
+  renders the region live — plus 'Optimize to Target' reusing the
+  partition/progress/cancel machinery; solver row widgets split into
+  `solver_rows.py` for the 500-LOC budget); FlightView overlays the
+  dashed region + the Variation landing scatter with an
+  "N/M shots hold the target (x%)" title (VariationTab
+  `studyCompleted` → main-window wiring). Web: `model/targets.ts`
+  parity mirror pinned against the Python tests, the TS solver
+  extended with the region goal ('Optimize to Target' button + signed-
+  distance result row), a `TargetSection` (entries + containment
+  readout) on the flight view, dashed target on the top-down canvas,
+  and the Variation landing canvas colored by containment with the
+  hold-% headline. Tests: signed-distance inside/boundary/outside pins
+  for both kinds (both languages), optimizer reaching a reachable
+  green from a cold start (both solvers), hand-counted 3-of-5 hold
+  fixture matching `hold_fraction`.
+- **H6 showcase styling + yards**: `ui/pyqt6/app_style.py` applies the
+  UpstreamDrift launcher's visual language app-wide (hover-highlighted
+  buttons with a subtle bottom-edge shadow, rounded launcher-card
+  group boxes, hover/selected tabs), all colors derived from the live
+  QPalette (tests pin: no hex, palette/rgba only); web accent hexes in
+  KineticsSection/ClubCanvas aligned onto the shared `model/theme.ts`
+  palette. New 'Distance' quantity: `DISTANCE_UNITS` (yd default, m
+  selectable; canonical stays SI metres) joins `QUANTITY_UNITS` — a
+  Distance drop-down in both UIs' Units sections — applied to flight
+  result rows (carry/lateral/putt roll-out; apex stays metres),
+  FlightView + putting axes (tick formatters, canonical data),
+  plotting-catalog flight/putting distance variables (`DISTANCE_KEYS`
+  + render-pipeline conversion incl. CSV headers), variation output
+  stats, and the target-region entries (canonical round-trip).
+  Conversion + default-is-yards tests both sides.
+
+### 2026-08-04 Realistic type-specific heads, volumetric COG, putters, hosel-true shafts (epic #4125, H1)
+
+- `src/rate_of_closure/club/head_profiles.py` — per-club-type parametric
+  head profiles (superellipse loft cross-sections with per-section
+  vertical centers, at a per-type reference mass): woods keep the
+  historical rounded-crown envelope; hybrids are an intermediate ~70%
+  depth silhouette; irons are blade profiles (thin topline, ~22 mm
+  face-to-back vs ~110 mm for a wood, cavity-back recess via an inset
+  tail-cap fan); wedges are iron-like with rear mass biased toward the
+  sole; putters come in two generic, unbranded forms — a deep
+  semicircular-plan **mallet** and an anser-style **blade** (shallow
+  rectangle, lower flange back, plumber's-neck hosel offset ~9.5 mm
+  behind the face). `ClubSpec` gains a `HeadStyle` enum
+  (`AUTO`/`MALLET`/`BLADE`); `profile_for`/`mass_scale`/
+  `face_center_point`/`hosel_point` are the public seams.
+- `parametric_head.build_parametric_head` now drives off the type
+  profile and winds the whole solid consistently outward (body bands
+  were previously wound inward — invisible under `|n·L|` shading but
+  fatal to signed-volume integrals); wood meshes are bit-identical to
+  the previous generator, so all prior parity pins stand.
+- `src/rate_of_closure/club/volumetrics.py` — closed-mesh volume and
+  centroid via the divergence theorem (signed tetrahedra to the
+  origin), DbC-gated by a combinatorial watertightness check (every
+  directed edge exactly once with its reverse present) and a positive/
+  sane-volume postcondition; validated against analytic solids (cube
+  exact, UV sphere <1%); `head_cog(spec)` reports the geometric COG in
+  spec-sheet convention (depth back from the face, height above the
+  sole) alongside the spec's published-typical CG values, and a test
+  asserts both land in per-type plausible bands.
+- Hosel-true shafts: both renderers (PyQt6 `Club3DView`, web
+  `ClubCanvas`) attach the shaft line at the generated head's per-type
+  hosel point along the lie angle (heel-top for irons/wedges/putters
+  with the blade putter's plumber's-neck set-back, heel-crown
+  transition for woods/hybrids); a GUI test pins shaft attachment ==
+  hosel point under the face-plane shift.
+- 'Show CG' checkboxes (sourced tooltip: divergence-theorem centroid)
+  in the 3D clubhead view and the strike views of both UIs — marker at
+  the volumetric COG (themed `get_chart_color`; spec-CG/reference-point
+  fallback for non-watertight loaded STLs).
+- Library grows to 16 clubs: the generic "Putter" is replaced by
+  "Blade Putter" (350 g, 2500 g·cm², CG 12/14 mm) and "Mallet Putter"
+  (360 g, 4500 g·cm², CG 35/14 mm) — typical published values, SI.
+- Glossary: hosel, plumber's neck, bounce, mallet/blade putter,
+  centroid, divergence theorem (67 terms; TS mirror + fixture
+  regenerated).
+- Web parity: `clubHeads.ts` (profiles/hosel) + `volumetrics.ts`
+  (same algorithm), volume/COG/hosel parity-pinned against pytest on
+  the driver and blade-putter fixtures; CG checkbox on ClubCanvas and
+  StrikeCanvas; strike-view face extents now per-type. Tests:
+  `tests/rate_of_closure/test_club_heads.py`, `web/src/model/
+  heads.test.ts`, `web/src/model/volumetrics.test.ts`, GUI smokes in
+  `test_gui.py`/`test_viewers_gui.py`.
+### 2026-08-04 Swing kinetics — torques, forces, powers with plots and 3D overlays (epic #4125, H2)
+
+- Kinetics core: `rate_of_closure/simulation/kinetics.py` — per-sample
+  inverse dynamics over the double-pendulum swing using the swing_sim
+  EOM surfaces (mass_matrix / coriolis_vector / gravity_vector /
+  damping_vector): a frozen `KineticsSeries` (t, net / gravity /
+  damping / applied torque breakdown per joint, joint powers τ·ω,
+  Newton–Euler joint reaction forces in the app frame, point-mass
+  clubhead-force estimate, ball-aligned joint geometry). Sign
+  convention documented (positive torque counter-clockwise about the
+  swing-plane normal — introduced here; the movement optimizer states
+  none). `simulate_forced` (RK4 with an applied torque profile) backs
+  the test suite: inverse-dynamics round trip recovers a known torque
+  profile to O(dt²), applied power integrates to ΔE (undamped forced),
+  net joint power integrates to ΔKE (passive), static-hang force pin.
+  New public `DoublePendulumSwing.state_at` accessor exposes the joint
+  trajectory (additive swing_sim change).
+- Presentation pattern-matched to the movement optimizer
+  (`src/movement_optimizer/gui/plot_renderer.py`, `vector_overlay.py`,
+  `models/swingset_forces.py` — credited in docstrings): "Time (s)" /
+  "Torque (N·m)" / "Power (W)" / "Force (N)" axis labels
+  (parenthesised units, middle dot), unit-suffixed field names, faint
+  zero lines on signed series, dashed total overlay on the power plot,
+  chart-cycle per-joint colors, 270°-sweep torque arcs with sign as
+  direction and capped auto-scaled force arrows.
+- Plotting catalog: new series category "Kinetics" (11 keys: net /
+  gravity / damping torques, powers, force magnitudes per joint) wired
+  into the custom wizard on both UIs; extractors yield all-NaN for
+  sources without joint states (manual / triple pendulum) rather than
+  fabricating numbers. Built-in plots 'Joint Torques', 'Joint Power',
+  'Reaction Forces'. Parity fixture regenerated (51 keys).
+- PyQt6: 'Show Kinetics' checkbox in the swing viewer drawing
+  per-joint torque arcs (radius ∝ |τ|, sweep direction by sign) and
+  capped force arrows at the joint positions each frame with a
+  magnitude-carrying legend (`ui/pyqt6/kinetics_overlay.py`); Kinetics
+  sub-tab in the Simulation tab (`ui/pyqt6/kinetics_panel.py`) with
+  the three plots, a peak table (peak |torque| / |power| / |force| per
+  joint with timing as % of the downswing), and glossary-linked
+  explanations (KINETICS_EXPLANATIONS; new glossary terms
+  inverse_dynamics, joint_reaction_force, moment_of_force, power).
+- Web parity: `model/kinetics.ts` mirrors the inverse dynamics /
+  breakdown / powers / force magnitudes, parity-pinned tightly against
+  the pytest-generated `__fixtures__/kinetics_parity.json`; Kinetics
+  view in the Simulation panel (three canvas charts + peak table);
+  catalog keys mirrored. DEVIATIONS: the 3D playback overlay is
+  deferred to the P7 WASM pass (the web scene has no pose-level
+  drawing yet); triple-pendulum kinetics deferred (separate
+  absolute-angle formulation — kinetics return None/NaN for it);
+  the issue text's `joint_torque_breakdown` helper did not exist in
+  swing_sim — the breakdown is computed here from the EOM surfaces.
+
+### 2026-08-04 Putting vertical — impact, skid/roll, green sim, Putting tab (epic #4125, H3)
+
+- Physics: new self-façaded subpackage
+  `src/shared/python/swing_sim/putting/` (parent `swing_sim/__init__.py`
+  untouched, same policy as `impact`/`variation`), all derivations from
+  first principles in the module docstrings.
+  (a) `impact.py`: putter-ball impact — 1-D COR impulse along the
+  lofted face normal (putter-face COR 0.78, typical published value)
+  plus the 2/7 rolling-cap tangential transfer giving launch angle and
+  the initial backspin "slide" state; pendulum backstroke→speed proxy
+  `v = A·sqrt(g/L)`; H3-local `MINIMAL_PUTTERS` clearly marked for H1
+  club-library reconciliation.
+  (b) `roll.py`: skid phase closed forms (`dv/dt = -μ_k g`,
+  `dω/dt = (5/2)μ_k g/r`, pure roll at `v = ωr` ⇒
+  `v_roll = (5v₀+2ω₀r)/7`); stimpmeter green speed derived from the
+  USGA geometry (36 in ramp, 20° release, V-groove inertia ⇒ release
+  speed ≈ 1.83 m/s) inverted to `μ_r = v²/(2gS)` — the stimp → μ_r →
+  roll-out chain round-trips exactly (test-enforced).
+  (c) `green.py`: uniform planar slope (grade % + downhill aspect),
+  deterministic fixed-step RK4 (2 ms) with a SLIDING/ROLLING mode
+  machine; break, skid/roll split, and a geometric lip-capture bound
+  (ball must fall half a diameter crossing the hole mouth ⇒
+  `v_capture = R·sqrt(g/2r) ≈ 0.82 m/s`; Holmes 1991 cited for the
+  full-chord ~1.6 m/s variant).
+- App: 'Putting' tab in both UIs. PyQt6
+  `ui/pyqt6/putting_tab.py` (putter picker preferring the H1 library
+  putter via `rate_of_closure/putting.py`, clubhead-speed or
+  backstroke pace input, stimp/grade/aspect/distance controls with
+  sourced tooltips, clickable result rows → explanations with glossary
+  links, matplotlib top-down green with phase-coded path + downhill
+  arrow over a speed-vs-distance plot with the capture bound). Web
+  `web/src/model/putting.ts` mirror (same constants, same RK4) with
+  `components/PuttingPanel.tsx` (SVG green view adapting UpstreamDrift
+  `PuttingGreen.tsx` concepts, credited) — parity pins in
+  `putting.test.ts` mirror `tests/rate_of_closure/test_putting.py`
+  value-for-value.
+- Additive registrations: `plotting/putting_catalog.py` (PuttResult-
+  scoped variable registry, pinned SimulationRun catalog untouched);
+  5 new glossary terms (stimp, skid, pure_roll, capture_speed, break)
+  in new `glossary_entries_putting.py` + TS mirror + regenerated
+  parity fixture; `helptext.py`/`helptext.ts` Putting entries;
+  `FIELD_TO_TERM` putt-field mappings.
+- Tests: skid→roll continuity (v = ωr), stimp round-trip, slope
+  mirror symmetry, capture-bound behaviour (dying putt drops, slammed
+  putt runs past), flat-green speed monotonicity, determinism,
+  Python↔TS parity pins on reference putts, GUI smoke + tooltip and
+  help sweeps extended to the new tab.
 ### 2026-08-04 Rate of Closure glossary, help system & full-model derivations (epic #4120, phase V4)
 
 - Selected-value clarity: clicking any result/metric/launch row applies
@@ -59,8 +286,8 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `glossary:<term>` link that jumps there pre-selected
   (`FIELD_TO_TERM` maps EVERY explanation field, contract-tested).
   Web: generated `model/glossary.ts` mirror + Glossary tab with search
-  - links from the explanation card; the key list is pinned key-for-key
-    by a Python-generated fixture checked from both test suites.
+  + links from the explanation card; the key list is pinned key-for-key
+  by a Python-generated fixture checked from both test suites.
 - Tab rename: 'Derivation && Traceability' -> 'Calculation Description'
   (both UIs, docstrings/strings updated).
 - Full-model derivations: `derivation_models.py` (DerivationConfig +
@@ -152,18 +379,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   tab's own small themed matplotlib canvas), CSV/JSON dataset export
   and plan save/load. Tooltips on every input (test-enforced).
 - Web (practical parity): `model/variation.ts` + `variationRegistry.ts`
-  - `variationAnalysis.ts` and a "Variation" tab (`VariationPanel.tsx`,
-    `VariationLanding.tsx`): the same plan JSON schema (desktop plans
-    load in the browser and vice versa), seeded mulberry32 PRNG with
-    Box–Muller normals and FNV-1a per-variable streams (documented:
-    exact numpy-PCG64 parity deliberately not attempted), delivery +
-    launch modes over the existing TS physics (swing mode and the club
-    category stay desktop-only until the P7 WASM kernels), worker-less
-    bounded runs (≤ 500, UI-capped), summary + sensitivity heat tables,
-    landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pin: a
-    Python-generated fixture (`model/__fixtures__/variation_parity.json`)
-    is re-checked tightly by pytest and loosely (statistical band) by
-    vitest for the same plan+seed.
+  + `variationAnalysis.ts` and a "Variation" tab (`VariationPanel.tsx`,
+  `VariationLanding.tsx`): the same plan JSON schema (desktop plans
+  load in the browser and vice versa), seeded mulberry32 PRNG with
+  Box–Muller normals and FNV-1a per-variable streams (documented:
+  exact numpy-PCG64 parity deliberately not attempted), delivery +
+  launch modes over the existing TS physics (swing mode and the club
+  category stay desktop-only until the P7 WASM kernels), worker-less
+  bounded runs (≤ 500, UI-capped), summary + sensitivity heat tables,
+  landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pin: a
+  Python-generated fixture (`model/__fixtures__/variation_parity.json`)
+  is re-checked tightly by pytest and loosely (statistical band) by
+  vitest for the same plan+seed.
 
 ### 2026-08-04 Rate of Closure investigative plotting suite (epic #4120, phase V1)
 
@@ -211,15 +438,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   labels/units, PNG via `canvas.toBlob`, CSV/JSON downloads, and
   plot-definition import/export interoperable with the desktop app.
 - Tests: `tests/rate_of_closure/test_plotting.py` (pinned catalog keys
-  - fixture parity, extractor shapes/finiteness, PlotSpec validation +
-    JSON round-trip, every builtin rendering headlessly on Agg, closure
-    sweep numerically matching `model.sweep()`, well-formed CSV / JSON /
-    PNG / SVG exports) and `test_plots_gui.py` (tab replaces the sweep
-    tab, list management, wizard completion for line/sweep/histogram
-    scopes, export files in tmp, tooltip coverage); web
-    `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
-    builtins, exports).
-
+  + fixture parity, extractor shapes/finiteness, PlotSpec validation +
+  JSON round-trip, every builtin rendering headlessly on Agg, closure
+  sweep numerically matching `model.sweep()`, well-formed CSV / JSON /
+  PNG / SVG exports) and `test_plots_gui.py` (tab replaces the sweep
+  tab, list management, wizard completion for line/sweep/histogram
+  scopes, export files in tmp, tooltip coverage); web
+  `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
+  builtins, exports).
 ### 2026-08-04 Rate of Closure scale-separated viewers + standalone Flight Explorer (epic #4120, V2)
 
 - Three purpose-built, scale-separated viewers replace the single
@@ -351,7 +577,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   derivation → ball flight only when the goal requires it) and score as
   `weight * (achieved - target) / scale` with launch-monitor-resolution
   scales from `tuning.py`. `evaluate_candidate(variables, partition,
-goal) -> residuals` is the documented seam a later Rust port replaces
+  goal) -> residuals` is the documented seam a later Rust port replaces
   behind a facade (no Rust added in this PR).
 - `solve.py`: bounded `scipy.optimize.least_squares` (trf) multi-start
   driver — Latin-hypercube starts across the bounds (start 0 = caller
@@ -437,7 +663,7 @@ goal) -> residuals` is the documented seam a later Rust port replaces
   200 g) and whose face patch honors bulge (horizontal) and roll
   (vertical) curvature via the circular sagitta R - sqrt(R² - t²) with
   loft tilting the face plane. `face_normal_at_offset(spec, toe_mm,
-high_mm)` exposes the face-curvature normal (gradient of the
+  high_mm)` exposes the face-curvature normal (gradient of the
   curved-face surface, loft-rotated) for the future impact package —
   in Python AND TypeScript with pinned parity tests; flat face when
   bulge/roll are off (curvature does not affect impact physics yet).
@@ -2281,7 +2507,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-05 | 1.9.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
+| 2026-08-05 | 1.13.2 | feat(rate_of_closure): harden both standalone interfaces with clickable reference-frame guidance, draft-based signed numeric editing, negative spin-axis tilt support, auto-populated Swing views, complete double/triple-pendulum skeletons, a parity-pinned web triple-pendulum model, default generated driver heads, engineering CG targets, and higher-resolution watertight clubhead meshes with polished lighting. |
+| 2026-08-05 | 1.13.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
+| 2026-08-04 | 1.13.0 | feat(rate_of_closure, swing_sim, #4125 H6-H7): course showcase — H7a themed golf-course scene (palette-derived grass family, fairway strip, green + hole/flag at a configurable distance, tee marker; Course Elements toggle; both UIs incl. web canvas mirrors with a shared chart-palette module); H7b target regions (`solver/targets.py` green circle / fairway corridor with exact signed distance + containment, additive ImpactGoal region residual with centering term, Optimize-to-Target on both solver UIs reusing partition/progress/cancel, target editing reflected live in the course scene, Variation landing-scatter overlay with the hold-% headline via hold_fraction, TS parity mirror pinned test-for-test); H6 launcher-language styling (palette-only QSS: button hover/pressed + subtle shadow, launcher-card group boxes, hover tabs; web accents aligned onto the shared palette) and the yards-default Distance quantity (yd/m drop-down in both UIs, SI-canonical internals, applied to flight/putting result rows, view axes, plotting catalog distance variables incl. exports, variation stats, and target entries; conversion + default-is-yards tests). |
+| 2026-08-04 | 1.12.0 | feat(rate_of_closure, swing_sim, #4125 H1-H3): H1 realistic type-specific parametric heads — per-type `head_profiles` (woods/hybrids/iron+wedge blades with cavity-back recess, generic mallet + anser-style blade putters), divergence-theorem `volumetrics` (watertightness-gated volume/centroid, cube-exact + sphere <1% validation, per-type COG-vs-spec bands), hosel-true shaft attachment in both renderers, 'Show CG' volumetric-COG markers in both UIs, 16-club library with Blade/Mallet putter entries, consistent outward mesh winding, TS parity (`clubHeads.ts`, `volumetrics.ts`) with volume/COG/hosel pins. H2 swing kinetics — `simulation/kinetics.py` per-sample inverse dynamics over the double-pendulum swing (net/gravity/damping/applied torque breakdown, joint powers, Newton–Euler reaction forces, clubhead-force estimate, documented sign convention, `simulate_forced` round-trip/energy/statics tests, public `DoublePendulumSwing.state_at`); 'Kinetics' catalog category (11 series keys) + Joint Torques/Power/Reaction Forces built-ins in both UIs; PyQt6 'Show Kinetics' 3D overlay + Kinetics sub-tab (plots, downswing-timed peak table); web `kinetics.ts` mirror parity-pinned vs a pytest fixture (web playback overlay and triple-pendulum kinetics deferred, documented). H3 putting vertical — self-façaded `shared/python/swing_sim/putting/` package (COR impulse with the 2/7 rolling-cap derivation, stimpmeter-derived rolling resistance with exact round-trip, sloped-green RK4 with break and the lip-capture bound, Holmes 1991 cited); 'Putting' tab in both UIs with phase-coded green view and capture-bound plot; additive putting plot catalog; Python↔TS parity pins on reference putts; UpstreamDrift putting assets credited. Glossary union across the three verticals: 76 terms, TS mirror + fixture regenerated. |
 | 2026-08-04 | 1.11.0 | feat(rate_of_closure, #4120 V4): investigation-suite polish — persistent selected-row highlight (palette-derived, both UIs) with the row name leading every explanation panel; 60-term sourced DbC glossary with searchable PyQt6 tab / web section, explanation-panel deep links, and a fixture-pinned TS mirror; Derivation & Traceability renamed Calculation Description; sectioned full-model derivations (closure chain + impact impulse/COR/MOI-tensor/2-7 cap/D-plane/gear effect + flight EOM with the active literature model's cited coefficient law + pendulum Lagrangian with live plane-tilt gravity) rendering conditionally per configuration in mathtext/KaTeX; per-tab cold-user help (PyQt6 '?' corner button, web collapsible How-to sections) contract-tested >300 chars; hover-hint completeness sweeps test-enforced across every interactive widget/element of both UIs. |
 | 2026-08-04 | 1.10.0 | feat(swing_sim, rate_of_closure, #4120 V3): shared variation/Monte-Carlo engine — `shared/python/swing_sim/variation/` (namespaced variable registry, NoiseSpec/VariationPlan JSON schema, seeded parallel N-run engine with solver-shaped progress/cancel, dispersion + one-at-a-time sensitivity + Spearman + 2-sigma landing ellipse, CSV/JSON dataset IO), the PyQt6 "Variation" tab in the Rate of Closure explorer, and the web mirror (seeded mulberry32 engine, capped <=500 runs, shared plan schema, statistical parity fixture vs the Python engine). Prior-art survey of UpstreamDrift Monte-Carlo/perturbation/movement_optimizer machinery credited in module docstrings. |
 | 2026-08-04 | 1.10.0 | feat(rate_of_closure, #4120 V1): investigative plotting suite — `plotting/` package (40-variable DbC data catalog with pinned keys, frozen JSON-round-trip PlotSpec `rate_of_closure.plot_spec/1`, one compute/render pipeline with full-simulation sweeps and themed palette, built-in advanced plots: migrated closure sweep, delivery-vs-τ, launch-vs-toe/high offset maps, swing time series, side/top-down flight profiles); PyQt6 Plots tab replacing the Closure Sweep tab (plot list add/duplicate/remove, 3-step Custom Plot wizard with live preview, navigation toolbar, PNG/SVG/CSV/JSON + save/load definition exports, tooltips everywhere); web parity via plotcatalog.ts (key list pinned against the pytest-exported fixture), plotspec.ts (shared schema + pipeline), and a Plots tab with built-in picker, simplified custom builder, canvas rendering, PNG/CSV/JSON downloads, and definition import/export interoperable with the desktop app. |

@@ -80,11 +80,11 @@ class TestClubSpec:
 
 
 class TestLibrary:
-    def test_holds_exactly_fifteen_clubs_in_ladder_order(self) -> None:
+    def test_holds_exactly_sixteen_clubs_in_ladder_order(self) -> None:
         names = club_names()
-        assert len(names) == 15
+        assert len(names) == 16
         assert names[0] == "Driver 9.5°"
-        assert names[-1] == "Putter"
+        assert names[-2:] == ["Blade Putter", "Mallet Putter"]
 
     def test_driver_normalizes_source_row_to_si(self) -> None:
         """Source row: 45.5 in, 200 g, 5200 g·cm², CG 25 mm."""
@@ -96,7 +96,7 @@ class TestLibrary:
         assert driver.lie_deg == pytest.approx(56.0)
 
     def test_loft_ladder_is_monotonic_driver_through_lob_wedge(self) -> None:
-        lofts = [CLUB_LIBRARY[name].loft_deg for name in club_names()[:-1]]
+        lofts = [CLUB_LIBRARY[name].loft_deg for name in club_names()[:-2]]
         assert lofts == sorted(lofts)
 
     def test_woods_are_curved_irons_are_flat(self) -> None:
@@ -201,14 +201,15 @@ class TestParametricHead:
         driver = get_club(_DRIVER)
         first = build_parametric_head(driver)
         second = build_parametric_head(driver)
-        assert first.shape == (12 * RING_POINTS, 3, 3)
+        # Ten refined body sections, five face rings, and two cap fans.
+        assert first.shape == (28 * RING_POINTS, 3, 3)
         assert np.array_equal(first, second)
 
     def test_envelope_scales_with_head_mass(self) -> None:
         """Constant-density scaling: cbrt(m / 0.200 kg) on every axis."""
-        wedge = get_club("Sand Wedge")
-        scale = (wedge.head_mass_kg / REFERENCE_HEAD_MASS_KG) ** (1.0 / 3.0)
-        flat = build_parametric_head(wedge).reshape(-1, 3)
+        wood = get_club("3-Wood")
+        scale = (wood.head_mass_kg / REFERENCE_HEAD_MASS_KG) ** (1.0 / 3.0)
+        flat = build_parametric_head(wood).reshape(-1, 3)
         assert flat[:, 2].max() - flat[:, 2].min() == pytest.approx(0.124 * scale)
         assert flat[:, 1].max() - flat[:, 1].min() == pytest.approx(0.062 * scale)
 
@@ -238,12 +239,15 @@ class TestParametricHead:
             get_club(_DRIVER), face_bulge_radius_m=None, face_roll_radius_m=None
         )
         mesh = parametric_head_mesh(spec)
-        centroids = mesh.triangles.mean(axis=1)
-        face = centroids[:, 0] > 0.045
+        lam = math.radians(spec.loft_deg)
+        expected = np.array([math.cos(lam), math.sin(lam), 0.0])
+        face_center = np.array([0.055, 0.0, 0.0])
+        signed_distance = (mesh.triangles - face_center) @ expected
+        face = np.max(np.abs(signed_distance), axis=1) < 1e-10
+        assert np.count_nonzero(face) == 9 * RING_POINTS
         mean = mesh.normals[face].mean(axis=0)
         mean /= np.linalg.norm(mean)
-        lam = math.radians(spec.loft_deg)
-        np.testing.assert_allclose(mean, [math.cos(lam), math.sin(lam), 0.0], atol=1e-9)
+        np.testing.assert_allclose(mean, expected, atol=1e-9)
 
     def test_head_mesh_carries_unit_normals(self) -> None:
         mesh = parametric_head_mesh(get_club("3-Wood"))

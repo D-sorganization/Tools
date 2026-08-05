@@ -270,6 +270,13 @@ def achieved_quantities(
             dt=cfg.flight_dt_s,
         )
         achieved["carry_m"] = result.carry_distance
+        # Landing point for target-region goals (#4125 H7b). Flight
+        # lateral is + left; goals/regions use + right of the target.
+        achieved["landing_lateral_m"] = -result.lateral_deviation
+        if goal.target_region is not None:
+            achieved["target_distance_m"] = goal.target_region.signed_distance(
+                result.carry_distance, -result.lateral_deviation
+            )
     return achieved
 
 
@@ -288,12 +295,21 @@ def evaluate_candidate(
     from :mod:`.tuning`.
     """
     achieved = achieved_quantities(variables, partition, goal, config)
-    return np.array(
-        [
-            term.weight * (achieved[name] - term.target) / _RESIDUAL_SCALES[name]
-            for name, term in goal.items()
-        ]
-    )
+    values = [
+        term.weight * (achieved[name] - term.target) / _RESIDUAL_SCALES[name]
+        for name, term in goal.items()
+    ]
+    if goal.target_region is not None:
+        # Additive region residual (#4125 H7b): distance outside the
+        # region (0 inside) + a small centering term, carry-scaled.
+        values.append(
+            goal.target_region_weight
+            * goal.target_region.residual_m(
+                achieved["carry_m"], achieved["landing_lateral_m"]
+            )
+            / SCALE_CARRY_M
+        )
+    return np.array(values)
 
 
 def residuals(

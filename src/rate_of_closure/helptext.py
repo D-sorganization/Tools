@@ -123,8 +123,9 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "delivery readout updates live and the run recomputes on "
         "release.</li>"
         "<li>Read the launch rows (click one for its explanation) and "
-        "explore the Strike (face scale), Swing (metres), and Flight "
-        "(tens of metres) viewer sub-tabs.</li>"
+        "explore the Strike (face scale), Swing (metres), Kinetics "
+        "(joint torques/powers/forces of the pendulum swing), and "
+        "Flight (tens of metres) viewer sub-tabs.</li>"
         "<li>Use the Inspector for the raw run data (CSV/JSON export) "
         "and the Solver to find deliveries that hit goal launch "
         "numbers.</li></ol>"
@@ -187,6 +188,37 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "variable streams), and plans saved here load in the web app. "
         "Failed runs are recorded as NaN rows, never aborting the "
         "batch.</p>",
+    ),
+    "putting": _entry(
+        "Putting",
+        "<h3>What this tab does</h3>"
+        "<p>A putting laboratory on a uniform sloped green: pick a "
+        "putter, set the stroke pace (directly or as a pendulum "
+        "backstroke length), dial in the green speed (stimp) and the "
+        "slope, and read the full story of the putt — roll-out, the "
+        "skid-to-roll transition, time, break, and whether the ball "
+        "drops or how far it misses.</p>"
+        "<h3>Workflow</h3>"
+        "<ol><li>Choose a putter (the club-library putter by default) "
+        "and how you want to set the pace: clubhead speed at impact, "
+        "or a backstroke length through the pendulum-stroke "
+        "proxy.</li>"
+        "<li>Set the green: stimp (6 slow — 14 tournament fast), "
+        "slope grade in percent, and the downhill direction relative "
+        "to the putt line (+90° = low side on your left).</li>"
+        "<li>Set the distance to the hole and read the result rows — "
+        "click any row for its plain-language explanation with "
+        "glossary links.</li>"
+        "<li>Watch the top-down green view: the skid phase and the "
+        "pure-roll phase are colour-coded along the path, the arrow "
+        "shows the downhill direction, and the speed-vs-distance "
+        "plot marks the capture-speed bound at the hole.</li></ol>"
+        "<h3>Tips</h3>"
+        "<p>A putt only drops if it crosses the hole at or below the "
+        "capture speed (the ball must fall half its diameter while "
+        "crossing the lip) — dying the ball in beats charging it. "
+        "On a cross-slope, note how most of the break happens in the "
+        "last third of the putt, where the ball is slowest.</p>",
     ),
     "glossary": _entry(
         "Glossary",

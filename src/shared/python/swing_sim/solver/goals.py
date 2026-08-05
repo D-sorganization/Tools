@@ -56,6 +56,8 @@ import numpy as np
 
 from shared.python.contracts import require
 
+from .targets import TargetRegion
+
 GOAL_QUANTITIES: tuple[str, ...] = (
     "club_path_deg",
     "face_angle_deg",
@@ -152,27 +154,55 @@ class ImpactGoal:
     spin_rpm: GoalTerm | None = None
     spin_axis_deg: GoalTerm | None = None
     carry_m: GoalTerm | None = None
+    #: Landing target region (#4125 H7b) — additive: any quantity goals
+    #: still apply; the region contributes one extra residual (distance
+    #: outside the region, 0 inside, plus a small centering term).
+    target_region: TargetRegion | None = None
+    target_region_weight: float = 1.0
 
     def __post_init__(self) -> None:
         require(
-            any(getattr(self, name) is not None for name in GOAL_QUANTITIES),
-            "ImpactGoal must target at least one quantity",
+            self.target_region is not None
+            or any(getattr(self, name) is not None for name in GOAL_QUANTITIES),
+            "ImpactGoal must target at least one quantity or a region",
             None,
         )
         for spec in fields(self):
+            if spec.name in ("target_region", "target_region_weight"):
+                continue
             value = getattr(self, spec.name)
             require(
                 value is None or isinstance(value, GoalTerm),
                 f"{spec.name} must be a GoalTerm or None (use ImpactGoal.of)",
                 value,
             )
+        require(
+            self.target_region is None or isinstance(self.target_region, TargetRegion),
+            "target_region must be a TargetRegion or None",
+            self.target_region,
+        )
+        require(
+            math.isfinite(self.target_region_weight)
+            and self.target_region_weight > 0.0,
+            "target_region_weight must be finite and > 0",
+            self.target_region_weight,
+        )
 
     @classmethod
-    def of(cls, **targets: GoalTerm | float | tuple[float, float]) -> ImpactGoal:
+    def of(
+        cls,
+        target_region: TargetRegion | None = None,
+        target_region_weight: float = 1.0,
+        **targets: GoalTerm | float | tuple[float, float],
+    ) -> ImpactGoal:
         """Build a goal from floats, ``(target, weight)`` tuples, or terms."""
         unknown = set(targets) - set(GOAL_QUANTITIES)
         require(not unknown, "unknown goal quantities", sorted(unknown))
-        return cls(**{name: _as_term(value) for name, value in targets.items()})
+        return cls(
+            target_region=target_region,
+            target_region_weight=target_region_weight,
+            **{name: _as_term(value) for name, value in targets.items()},
+        )
 
     def items(self) -> tuple[tuple[str, GoalTerm], ...]:
         """Targeted ``(quantity, term)`` pairs in canonical order."""
@@ -184,13 +214,13 @@ class ImpactGoal:
 
     @property
     def needs_flight(self) -> bool:
-        """True when a ball-flight simulation is required (carry goals)."""
-        return self.carry_m is not None
+        """True when a ball-flight simulation is required."""
+        return self.carry_m is not None or self.target_region is not None
 
     @property
     def needs_launch(self) -> bool:
         """True when the impact -> launch derivation is required."""
-        return any(
+        return self.target_region is not None or any(
             getattr(self, name) is not None
             for name in (
                 "ball_speed_mph",
@@ -312,5 +342,6 @@ __all__ = [
     "SWING_VARIABLE_DEFAULTS",
     "GoalTerm",
     "ImpactGoal",
+    "TargetRegion",
     "VariablePartition",
 ]

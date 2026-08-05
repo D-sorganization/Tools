@@ -94,6 +94,50 @@ def _swing_time_series(run: SimulationRun | None) -> PlotSpec:
     )
 
 
+def _joint_torques(run: SimulationRun | None) -> PlotSpec:
+    """Kinetics (#4125 H2): per-joint net + gravity torques vs time.
+
+    Axis-label / styling conventions mirror the movement optimizer's
+    ``plot_swing_joint_torques`` (src/movement_optimizer/gui/
+    plot_renderer.py): "Time (s)" x-axis, N·m with the middle dot.
+    """
+    return PlotSpec(
+        kind="line",
+        x_key="swing.time_s",
+        y_keys=(
+            "kinetics.shoulder_torque_nm",
+            "kinetics.wrist_torque_nm",
+            "kinetics.shoulder_gravity_torque_nm",
+            "kinetics.wrist_gravity_torque_nm",
+        ),
+        title="Joint Torques",
+    )
+
+
+def _joint_power(run: SimulationRun | None) -> PlotSpec:
+    """Per-joint power (movement-optimizer 'Joint Power' convention)."""
+    return PlotSpec(
+        kind="line",
+        x_key="swing.time_s",
+        y_keys=("kinetics.shoulder_power_w", "kinetics.wrist_power_w"),
+        title="Joint Power",
+    )
+
+
+def _reaction_forces(run: SimulationRun | None) -> PlotSpec:
+    """Joint reaction force magnitudes ('Force (N)' convention)."""
+    return PlotSpec(
+        kind="line",
+        x_key="swing.time_s",
+        y_keys=(
+            "kinetics.shoulder_force_n",
+            "kinetics.wrist_force_n",
+            "kinetics.clubhead_force_n",
+        ),
+        title="Reaction Forces",
+    )
+
+
 def _flight_profile_side(run: SimulationRun | None) -> PlotSpec:
     return PlotSpec(
         kind="line",
@@ -119,6 +163,9 @@ BUILTIN_PLOTS: dict[str, tuple[str, BuiltinFactory]] = {
     "launch_vs_toe_offset": ("Launch vs Toe Offset", _launch_vs_toe),
     "launch_vs_high_offset": ("Launch vs High Offset", _launch_vs_high),
     "swing_time_series": ("Swing Time Series", _swing_time_series),
+    "joint_torques": ("Joint Torques", _joint_torques),
+    "joint_power": ("Joint Power", _joint_power),
+    "reaction_forces": ("Reaction Forces", _reaction_forces),
     "flight_profile_side": ("Flight Profile (Side)", _flight_profile_side),
     "flight_profile_top": ("Flight Profile (Top-Down)", _flight_profile_top),
 }

@@ -91,15 +91,24 @@ class TestStrikeViewScale:
 
     def test_display_checklist_toggles_redraw(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         strike = ran_tab.strike_view()
-        for name in ("curvature", "vectors", "history", "club_info"):
+        for name in ("curvature", "vectors", "history", "club_info", "show_cg"):
             check = strike.display_check(name)
             check.setChecked(not check.isChecked())
             check.setChecked(not check.isChecked())
 
     def test_every_display_control_has_sourced_guidance(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         strike = ran_tab.strike_view()
-        for name in ("curvature", "vectors", "history", "club_info"):
+        for name in ("curvature", "vectors", "history", "club_info", "show_cg"):
             assert "Source:" in strike.display_check(name).toolTip(), name
+
+    def test_show_cg_defaults_off_and_marks_the_volumetric_cog(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        """H1 (#4125): the strike view's CG marker toggles on demand."""
+        strike = ran_tab.strike_view()
+        check = strike.display_check("show_cg")
+        assert not check.isChecked()
+        check.setChecked(True)
+        labels = [text.get_text() for text in strike._axes.get_legend().get_texts()]
+        assert any("volumetric CG" in label for label in labels)
 
 
 class TestSwingViewFlightToggle:
@@ -119,6 +128,19 @@ class TestSwingViewFlightToggle:
         view.set_flight_shown(False)
         assert view.scene_extent_m() == pytest.approx(swing_extent)
 
+    def test_course_elements_toggle_defaults_on_with_guidance(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        """H7a: the swing scene's Course Elements toggle + layout seam."""
+        from rate_of_closure.ui.course import CourseLayout
+
+        view = ran_tab.view()
+        assert view.course_elements_shown() is True
+        assert "Source:" in view._course_check.toolTip()
+        view._course_check.setChecked(False)
+        assert view.course_elements_shown() is False
+        view._course_check.setChecked(True)
+        view.set_course_layout(CourseLayout(green_distance_m=180.0))
+        assert view.course_layout().green_distance_m == 180.0
+
     def test_toggle_carries_a_scale_warning_tooltip(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         tooltip = ran_tab.view()._flight_check.toolTip()
         assert "dwarfs" in tooltip
@@ -137,11 +159,22 @@ class TestFlightView:
 
     def test_display_checklist_and_guidance(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         flight = ran_tab.flight_view()
-        for name in ("side", "top", "three_d", "landing", "apex"):
+        for name in ("side", "top", "three_d", "landing", "apex", "course"):
             check = flight.display_check(name)
             assert "Source:" in check.toolTip(), name
             check.setChecked(not check.isChecked())
             check.setChecked(not check.isChecked())
+
+    def test_course_scene_toggle_and_layout_seam(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        """H7a: course elements default on; the layout seam redraws."""
+        from rate_of_closure.ui.course import CourseLayout
+
+        flight = ran_tab.flight_view()
+        assert flight.display_check("course").isChecked()
+        flight.display_check("course").setChecked(False)
+        flight.display_check("course").setChecked(True)
+        flight.set_course_layout(CourseLayout(green_distance_m=150.0))
+        assert flight.course_layout().green_distance_m == 150.0
 
     def test_all_panels_off_shows_placeholder_without_crashing(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         flight = ran_tab.flight_view()
@@ -178,7 +211,8 @@ class TestFlightExplorerTab:
         # Defaults are the pinned tour-driver case (167 mph / 10.9 deg /
         # 2686 rpm, waterloo_penner) from test_flight_explorer.py.
         assert exploration.metrics["carry_m"] == pytest.approx(247.484, abs=0.05)
-        assert "247.5 m" in explorer._rows["carry_m"].value_label.text().replace(
+        # H6 (#4125): 247.5 m reads as 270.7 yd (yards default).
+        assert "270.7 yd" in explorer._rows["carry_m"].value_label.text().replace(
             "+", ""
         )
         assert len(explorer.flight_view().trajectory()) > 2

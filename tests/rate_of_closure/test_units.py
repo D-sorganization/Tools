@@ -9,10 +9,14 @@ import pytest
 
 from rate_of_closure.model import ImpactScenario, closure_metrics, solve
 from rate_of_closure.units import (
+    DISTANCE_UNITS,
     FIELD_GUIDANCE,
     QUANTITY_UNITS,
     convert_from_canonical,
     convert_to_canonical,
+    display_distance_unit,
+    format_distance_m,
+    set_display_distance_unit,
 )
 
 pytestmark = pytest.mark.unit
@@ -50,6 +54,17 @@ class TestUnitConversions:
             guidance = FIELD_GUIDANCE[field.name]
             assert "Suggested range" in guidance, field.name
             assert "Source:" in guidance, field.name
+
+    def test_directional_inputs_document_their_reference_frame(self) -> None:
+        for key in (
+            "clubhead_speed_mph",
+            "omega_plane_dps",
+            "omega_shaft_dps",
+            "plane_yaw_deg",
+            "plane_side_tilt_deg",
+            "plane_forward_tilt_deg",
+        ):
+            assert "Reference frame:" in FIELD_GUIDANCE[key], key
 
 
 class TestClosureMetrics:
@@ -103,3 +118,35 @@ class TestClosureMetrics:
         assert metrics.toe_heel_speed_delta_mph * 0.44704 == pytest.approx(
             expected, rel=1e-9
         )
+
+
+class TestDistanceQuantity:
+    """H6 (#4125): the ball-flight Distance quantity — yards default."""
+
+    def test_default_display_unit_is_yards(self) -> None:
+        assert display_distance_unit() == "yd"
+        assert next(iter(DISTANCE_UNITS)) == "yd"
+        assert QUANTITY_UNITS["distance"] is DISTANCE_UNITS
+
+    def test_canonical_stays_si_metres(self) -> None:
+        # Factor converts displayed -> canonical metres exactly.
+        assert DISTANCE_UNITS["m"] == 1.0
+        assert DISTANCE_UNITS["yd"] == pytest.approx(0.9144)
+        assert convert_to_canonical("distance", "yd", 100.0) == pytest.approx(91.44)
+        assert convert_from_canonical("distance", "yd", 91.44) == pytest.approx(100.0)
+
+    def test_round_trip_is_exact_to_float(self) -> None:
+        for unit in DISTANCE_UNITS:
+            back = convert_from_canonical(
+                "distance", unit, convert_to_canonical("distance", unit, 123.4)
+            )
+            assert back == pytest.approx(123.4, rel=1e-12)
+
+    def test_format_follows_the_selected_unit(self) -> None:
+        assert format_distance_m(91.44) == "100.0 yd"
+        set_display_distance_unit("m")
+        assert format_distance_m(91.44) == "91.4 m"
+
+    def test_unknown_unit_rejected(self) -> None:
+        with pytest.raises(ValueError):
+            set_display_distance_unit("furlong")
