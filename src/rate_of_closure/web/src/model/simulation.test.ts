@@ -11,6 +11,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   BALL_POSITION,
+  DEFAULT_IMPACT_CLUB,
   deriveLaunch,
   golfDefaultParams,
   inPlaneGravity,
@@ -74,7 +75,7 @@ describe("pendulum parity (Python reference.py pins)", () => {
 });
 
 describe("impact + launch parity (Python impact/models.py pins)", () => {
-  const impact = solveImpact({
+  const delivery = {
     clubheadSpeedMps: 50.51552,
     clubPathDeg: 2.0,
     faceAngleDeg: 0.0,
@@ -82,6 +83,35 @@ describe("impact + launch parity (Python impact/models.py pins)", () => {
     dynamicLoftDeg: 10.5,
     impactOffsetToeMm: 0,
     impactOffsetHighMm: 0,
+  };
+  const impact = solveImpact(delivery);
+
+  it("keeps the explicit default club identical to the legacy implicit default", () => {
+    const explicit = solveImpact({ ...delivery, club: DEFAULT_IMPACT_CLUB });
+    expect(explicit.ballVelocity).toEqual(impact.ballVelocity);
+    expect(explicit.ballAngularVelocity).toEqual(impact.ballAngularVelocity);
+  });
+
+  it("independently uses selected head mass and MOI in the impact impulse", () => {
+    const offCenter = { ...delivery, impactOffsetToeMm: 20 };
+    const baseline = solveImpact({
+      ...offCenter,
+      club: { headMassKg: 0.2, moiAboutShaftKgM2: 4.5e-4 },
+    });
+    const heavier = solveImpact({
+      ...offCenter,
+      club: { headMassKg: 0.35, moiAboutShaftKgM2: 4.5e-4 },
+    });
+    const higherMoi = solveImpact({
+      ...offCenter,
+      club: { headMassKg: 0.2, moiAboutShaftKgM2: 1.2e-3 },
+    });
+    expect(Math.hypot(...heavier.ballVelocity)).toBeGreaterThan(
+      Math.hypot(...baseline.ballVelocity),
+    );
+    expect(Math.hypot(...higherMoi.ballVelocity)).toBeGreaterThan(
+      Math.hypot(...baseline.ballVelocity),
+    );
   });
 
   it("pins the post-impact ball velocity", () => {
@@ -129,6 +159,20 @@ describe("impact + launch parity (Python impact/models.py pins)", () => {
 });
 
 describe("session orchestration", () => {
+  it("propagates selected club properties into launch results", () => {
+    const offCenter = { ...MANUAL_INPUT, impactOffsetToeMm: 20 };
+    const light = runSimulation({
+      ...offCenter,
+      club: { headMassKg: 0.15, moiAboutShaftKgM2: 2.0e-4 },
+    });
+    const heavy = runSimulation({
+      ...offCenter,
+      club: { headMassKg: 0.35, moiAboutShaftKgM2: 1.2e-3 },
+    });
+    expect(heavy.launch.ballSpeedMph).toBeGreaterThan(light.launch.ballSpeedMph);
+    expect(heavy.launch.carryM).toBeGreaterThan(light.launch.carryM);
+  });
+
   it("exports ball-aligned double-pendulum joints ending at the clubhead", () => {
     const run = runSimulation({ ...MANUAL_INPUT, sourceKind: "double_pendulum" });
     expect(run.sourceKind).toBe("double_pendulum");

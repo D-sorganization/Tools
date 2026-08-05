@@ -17,6 +17,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { DecimalInput } from "./DecimalInput";
 import { FieldInfo } from "./FieldInfo";
 import {
+  DEFAULT_IMPACT_CLUB,
   runSimulation,
   type SimulationInput,
   type SimulationRunTs,
@@ -113,6 +114,7 @@ export function SimulationPanel({
   const [showFlight, setShowFlight] = useState(false);
   const [view, setView] = useState<ViewName>("Swing");
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const effectiveLoftDeg = clubSpec?.loftDeg ?? loftDeg;
 
   // Delivered path / attack angle at impact, for the strike view.
   const deliveryAngles = useMemo(() => {
@@ -135,7 +137,7 @@ export function SimulationPanel({
       sourceKind,
       clubheadSpeedMph: scenario.clubheadSpeedMph,
       omegaDps: [0, 0, 0],
-      loftDeg,
+      loftDeg: effectiveLoftDeg,
       impactOffsetToeMm: scenario.impactOffsetToeMm,
       impactOffsetHighMm: scenario.impactOffsetHighMm,
       planeYawDeg: tilts.yaw,
@@ -143,9 +145,14 @@ export function SimulationPanel({
       planeForwardTiltDeg: tilts.forward,
       impactTimeS: tauMs === null ? null : tauMs / 1000.0,
       swingDurationS: 1.5,
+      club: clubSpec ?? undefined,
     }),
-    [sourceKind, scenario, loftDeg, tilts, tauMs],
+    [sourceKind, scenario, effectiveLoftDeg, tilts, tauMs, clubSpec],
   );
+
+  const clubPhysicsGuidance = clubSpec
+    ? `Impact physics uses ${clubSpec.name}: ${clubSpec.headMassKg.toFixed(3)} kg head mass, ${clubSpec.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${clubSpec.loftDeg.toFixed(1)}° nominal loft. COR uses the ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} driver default because the club library does not yet define measured COR.`
+    : `No selected club specification was provided. Impact physics uses the default driver: ${DEFAULT_IMPACT_CLUB.headMassKg.toFixed(3)} kg head mass, ${DEFAULT_IMPACT_CLUB.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} COR.`;
 
   const doRun = () => {
     const result = runSimulation(input);
@@ -266,6 +273,14 @@ export function SimulationPanel({
               <option value="triple_pendulum">Triple Pendulum</option>
             </select>
           </label>
+          <p
+            role="note"
+            aria-label="Impact club physics"
+            title={clubPhysicsGuidance}
+            className="mb-3 rounded-lg border border-slate-700/80 bg-slate-950/50 px-3 py-2 text-xs leading-relaxed text-slate-400"
+          >
+            {clubPhysicsGuidance}
+          </p>
           {numberInput("Plane Yaw", tilts.yaw, "planeYawDeg", (v) =>
             setTilts((t) => ({ ...t, yaw: v })),
           )}
@@ -368,7 +383,7 @@ export function SimulationPanel({
             <StrikeCanvas
               toeMm={scenario.impactOffsetToeMm}
               highMm={scenario.impactOffsetHighMm}
-              loftDeg={loftDeg}
+              loftDeg={effectiveLoftDeg}
               pathDeg={deliveryAngles?.pathDeg}
               aoaDeg={deliveryAngles?.aoaDeg}
               clubSpec={clubSpec}

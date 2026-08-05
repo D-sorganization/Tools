@@ -46,6 +46,24 @@ export const MPH_PER_MPS = 1.0 / 0.44704;
 const SPHERE_ROLLING_CAP = 2.0 / 7.0;
 const FRICTION_COEFFICIENT = 0.4;
 
+/** Club properties consumed by the scalar-MOI impact model. */
+export interface ImpactClubProperties {
+  headMassKg: number;
+  moiAboutShaftKgM2: number;
+  /** Optional until the club library carries measured COR values. */
+  coefficientOfRestitution?: number;
+}
+
+type ResolvedImpactClubProperties = Required<ImpactClubProperties>;
+
+/** Legacy driver values used when a direct caller does not provide a club. */
+export const DEFAULT_IMPACT_CLUB: Readonly<ResolvedImpactClubProperties> =
+  Object.freeze({
+    headMassKg: DRIVER_MASS_KG,
+    moiAboutShaftKgM2: DRIVER_MOI_KG_M2,
+    coefficientOfRestitution: DRIVER_COR,
+  });
+
 // --- Small vector helpers ------------------------------------------------
 export const dot = (a: Vec3, b: Vec3): number => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
 export const cross = (a: Vec3, b: Vec3): Vec3 => [
@@ -197,6 +215,7 @@ export interface DeliveryInput {
   dynamicLoftDeg: number;
   impactOffsetToeMm: number;
   impactOffsetHighMm: number;
+  club?: ImpactClubProperties;
 }
 
 export interface ImpactOutput {
@@ -207,6 +226,36 @@ export interface ImpactOutput {
 const rad = (deg: number): number => (deg * Math.PI) / 180.0;
 const deg = (r: number): number => (r * 180.0) / Math.PI;
 
+function resolveImpactClub(
+  club?: ImpactClubProperties,
+): ResolvedImpactClubProperties {
+  const resolved = {
+    headMassKg: club?.headMassKg ?? DEFAULT_IMPACT_CLUB.headMassKg,
+    moiAboutShaftKgM2:
+      club?.moiAboutShaftKgM2 ?? DEFAULT_IMPACT_CLUB.moiAboutShaftKgM2,
+    coefficientOfRestitution:
+      club?.coefficientOfRestitution ??
+      DEFAULT_IMPACT_CLUB.coefficientOfRestitution,
+  };
+  if (!Number.isFinite(resolved.headMassKg) || resolved.headMassKg <= 0) {
+    throw new RangeError("Club head mass must be a positive finite value.");
+  }
+  if (
+    !Number.isFinite(resolved.moiAboutShaftKgM2) ||
+    resolved.moiAboutShaftKgM2 <= 0
+  ) {
+    throw new RangeError("Club MOI must be a positive finite value.");
+  }
+  if (
+    !Number.isFinite(resolved.coefficientOfRestitution) ||
+    resolved.coefficientOfRestitution < 0 ||
+    resolved.coefficientOfRestitution > 1
+  ) {
+    throw new RangeError("Club coefficient of restitution must be between 0 and 1.");
+  }
+  return resolved;
+}
+
 /**
  * Rigid-body COR impulse solve in the app frame (ball initially at rest).
  * Off-center offsets reduce the effective club mass via the scalar MOI;
@@ -214,6 +263,7 @@ const deg = (r: number): number => (r * 180.0) / Math.PI;
  * sign, matching the Python port). Gear effect: P7 (WASM).
  */
 export function solveImpact(input: DeliveryInput): ImpactOutput {
+  const club = resolveImpactClub(input.club);
   const path = rad(input.clubPathDeg);
   const face = rad(input.faceAngleDeg);
   const aoa = rad(input.attackAngleDeg);
@@ -237,13 +287,15 @@ export function solveImpact(input: DeliveryInput): ImpactOutput {
   );
   const mClubEff =
     rOffset > 1e-6
-      ? 1.0 / (1.0 / DRIVER_MASS_KG + (rOffset * rOffset) / DRIVER_MOI_KG_M2)
-      : DRIVER_MASS_KG;
+      ? 1.0 /
+        (1.0 / club.headMassKg +
+          (rOffset * rOffset) / club.moiAboutShaftKgM2)
+      : club.headMassKg;
 
   const vApproach = dot(vClub, n);
   const mEff =
     (GOLF_BALL_MASS_KG * mClubEff) / (GOLF_BALL_MASS_KG + mClubEff);
-  const j = (1.0 + DRIVER_COR) * mEff * vApproach;
+  const j = (1.0 + club.coefficientOfRestitution) * mEff * vApproach;
   const ballVelocity = scale(n, j / GOLF_BALL_MASS_KG);
 
   // Friction spin (2/7 rolling cap, axis t x n).
@@ -281,6 +333,7 @@ export interface SimulationInput {
   planeForwardTiltDeg: number;
   impactTimeS: number | null; // null = auto (max clubhead speed)
   swingDurationS: number;
+  club?: ImpactClubProperties;
 }
 
 export interface SwingSampleTs {
@@ -436,6 +489,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
     dynamicLoftDeg: input.loftDeg,
     impactOffsetToeMm: input.impactOffsetToeMm,
     impactOffsetHighMm: input.impactOffsetHighMm,
+    club: input.club,
   };
   const impact = solveImpact(delivery);
   const launch = deriveLaunch(
