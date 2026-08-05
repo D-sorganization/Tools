@@ -155,4 +155,3 @@ claiming external predictive accuracy.
 
 No numerical parameter in the reference implementation is presented as fitted
 to those papers unless the corresponding code/docstring explicitly says so.
-
