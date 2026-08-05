@@ -104,6 +104,14 @@ class TestSimulationTab:
         assert run is not None
         assert run.config.source_kind == "double_pendulum"
 
+    def test_impact_model_selector_runs_interval_physics(self, tab, qtbot) -> None:  # type: ignore[no-untyped-def]
+        tab._impact_model_combo.setCurrentText("Impact Interval (6-DOF)")
+        with qtbot.waitSignal(tab.runCompleted, timeout=10000):
+            run = tab.run_now()
+        assert run is not None
+        assert run.config.impact_model == "impact_interval"
+        assert run.impact_interval is not None
+
 
 class TestSimulationView:
     def test_rate_presets_cover_spec_and_round_trip(self, ran_tab) -> None:  # type: ignore[no-untyped-def]

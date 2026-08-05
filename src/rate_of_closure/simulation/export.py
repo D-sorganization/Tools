@@ -110,6 +110,7 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
             "source_kind": config.source_kind,
             "club": config.club.name,
             "flight_model": config.flight_model,
+            "impact_model": config.impact_model,
             "impact_time_s": run.impact_time_s,
             "swing_duration_s": config.swing_duration_s,
             "plane_tilts_deg": {
@@ -135,6 +136,24 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
             "spin_axis_tilt_deg": run.delivery.spin_axis_tilt_deg,
         },
         "launch": {key: _clean(value) for key, value in run.launch.items()},
+        "impact_interval": (
+            {
+                "contact_duration_s": run.impact_interval.contact_duration_s,
+                "audit": {
+                    key: _clean(float(value))
+                    for key, value in vars(run.impact_interval.audit).items()
+                },
+                "channels": {
+                    "time_s": run.impact_interval.time_s.tolist(),
+                    "normal_force_n": run.impact_interval.normal_force_n.tolist(),
+                    "face_angle_deg": run.impact_interval.face_angle_deg.tolist(),
+                    "dynamic_loft_deg": run.impact_interval.dynamic_loft_deg.tolist(),
+                    "twist_angle_rad": run.impact_interval.twist_angle_rad.tolist(),
+                },
+            }
+            if run.impact_interval is not None
+            else None
+        ),
         "series": {
             "columns": list(CSV_COLUMNS),
             "rows": [list(row) for row in series_rows(run)],

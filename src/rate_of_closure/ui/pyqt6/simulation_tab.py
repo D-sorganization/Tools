@@ -77,6 +77,11 @@ SOURCE_LABELS: dict[str, str] = {
     "triple_pendulum": "Triple Pendulum",
 }
 
+IMPACT_MODEL_LABELS: dict[str, str] = {
+    "instantaneous": "Instantaneous Impulse (Fast)",
+    "impact_interval": "Impact Interval (6-DOF)",
+}
+
 #: (launch field, Title Case label, unit suffix) in display order. Every
 #: field must have an entry in LAUNCH_EXPLANATIONS (test-enforced).
 LAUNCH_ROWS: tuple[tuple[str, str, str], ...] = (
@@ -212,6 +217,15 @@ class SimulationTab(QWidget):
             spin.valueChanged.connect(self._emit_config)
         form.addRow("Flight Model", self._flight_combo)
 
+        self._impact_model_combo = QComboBox()
+        self._impact_model_combo.addItems(list(IMPACT_MODEL_LABELS.values()))
+        self._impact_model_combo.setToolTip(
+            "Suggested use: choose the fast impulse model for broad sweeps and "
+            "Impact Interval for sub-microsecond club/ball state histories. "
+            "Source: Tools #4130 formulation and the shared Kelvin-Voigt law."
+        )
+        form.addRow("Impact Model", self._impact_model_combo)
+
         self._run_button = QPushButton("Run Simulation")
         self._run_button.setToolTip(
             "Generate the swing, solve the impact at the scrubbed instant, "
@@ -321,6 +335,11 @@ class SimulationTab(QWidget):
             plane=self.plane(),
             impact_time_s=self._tau,
             flight_model=self._flight_combo.currentText(),
+            impact_model=next(
+                key
+                for key, label in IMPACT_MODEL_LABELS.items()
+                if label == self._impact_model_combo.currentText()
+            ),
         )
 
     def run_now(self) -> SimulationRun | None:

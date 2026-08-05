@@ -188,6 +188,30 @@ class TestSession:
                 scenario=_SCENARIO, club=_DRIVER, flight_model="warp_drive"
             )
 
+    def test_interval_model_produces_queryable_contact_history(self) -> None:
+        run = run_simulation(
+            SimulationConfig(
+                scenario=_SCENARIO,
+                club=_DRIVER,
+                impact_model="impact_interval",
+            )
+        )
+        assert run.impact_interval is not None
+        assert run.impact_interval.did_contact
+        assert run.impact_interval.contact_duration_s > 0.0
+        np.testing.assert_allclose(
+            run.post_impact.ball_velocity,
+            run.impact_interval.ball_velocity_mps[-1],
+        )
+
+    def test_unknown_impact_model_is_rejected(self) -> None:
+        with pytest.raises(ValueError, match="impact_model"):
+            SimulationConfig(
+                scenario=_SCENARIO,
+                club=_DRIVER,
+                impact_model="instant_magic",
+            )
+
 
 # ── ISA adapter ─────────────────────────────────────────────────────
 
@@ -258,3 +282,17 @@ class TestExport:
         assert len(loaded["series"]["rows"]) == len(run.swing_times) + len(
             run.flight_times
         )
+
+    def test_interval_export_includes_model_and_energy_audit(self) -> None:
+        run = run_simulation(
+            SimulationConfig(
+                scenario=_SCENARIO,
+                club=_DRIVER,
+                impact_model="impact_interval",
+            )
+        )
+        exported = run_to_json_dict(run)
+        assert exported["parameters"]["impact_model"] == "impact_interval"
+        audit = exported["impact_interval"]["audit"]
+        assert audit["integrated_normal_impulse_n_s"] > 0.0
+        assert abs(audit["energy_residual_j"]) < 0.1

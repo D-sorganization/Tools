@@ -46,6 +46,16 @@ from shared.python.swing_sim.impact import (
     ImpactSolverAPI,
     PostImpactState,
     derive_delivery,
+    face_basis,
+)
+from shared.python.swing_sim.impact_interval import (
+    BoundaryKind,
+    ClubRigidBody,
+    ImpactIntervalConfig,
+    ImpactIntervalInitialState,
+    ImpactIntervalResult,
+    KelvinVoigtContactLaw,
+    solve_impact_interval,
 )
 from shared.python.swing_sim.swing_source import SwingSource
 from shared.python.swing_sim.types import PlaneOrientation
@@ -96,6 +106,9 @@ class SimulationConfig:
     impact_time_s: float | None = None
     flight_model: str = "waterloo_penner"
     swing_duration_s: float = 1.5
+    impact_model: str = "instantaneous"
+    impact_interval_config: ImpactIntervalConfig | None = None
+    impact_interval_club: ClubRigidBody | None = None
 
     def __post_init__(self) -> None:
         require(
@@ -116,6 +129,23 @@ class SimulationConfig:
             "swing_duration_s must be finite and > 0",
             self.swing_duration_s,
         )
+        require(
+            self.impact_model in ("instantaneous", "impact_interval"),
+            "impact_model must be 'instantaneous' or 'impact_interval'",
+            self.impact_model,
+        )
+        if self.impact_interval_config is not None:
+            require(
+                isinstance(self.impact_interval_config, ImpactIntervalConfig),
+                "impact_interval_config must be an ImpactIntervalConfig",
+                self.impact_interval_config,
+            )
+        if self.impact_interval_club is not None:
+            require(
+                isinstance(self.impact_interval_club, ClubRigidBody),
+                "impact_interval_club must be a ClubRigidBody",
+                self.impact_interval_club,
+            )
 
 
 @dataclass(frozen=True)
@@ -146,6 +176,7 @@ class SimulationRun:
     impact_time_s: float
     delivery: DeliveryDerived
     post_impact: PostImpactState
+    impact_interval: ImpactIntervalResult | None
     launch: dict[str, float]
     flight_times: np.ndarray
     flight_positions: np.ndarray
@@ -231,6 +262,84 @@ def _face_normal_callable(club: ClubSpec):  # type: ignore[no-untyped-def]
     return _normal
 
 
+def _default_interval_config(config: SimulationConfig) -> ImpactIntervalConfig:
+    """Calibrate the compliant law to scenario contact time and driver COR."""
+    duration = config.scenario.contact_duration_us * 1.0e-6
+    require(duration > 0.0, "impact-interval contact duration must be > 0", duration)
+    ball_mass = 0.04593
+    reduced_mass = (
+        ball_mass * config.club.head_mass_kg / (ball_mass + config.club.head_mass_kg)
+    )
+    restitution = ImpactParameters().cor
+    log_e = math.log(restitution)
+    damping_ratio = -log_e / math.sqrt(math.pi**2 + log_e**2)
+    natural_frequency = math.pi / (duration * math.sqrt(1.0 - damping_ratio**2))
+    stiffness = reduced_mass * natural_frequency**2
+    law = KelvinVoigtContactLaw.from_restitution(
+        stiffness_n_per_m=stiffness,
+        restitution=restitution,
+        effective_mass_kg=reduced_mass,
+    )
+    return ImpactIntervalConfig(
+        contact_law=law,
+        time_step_s=min(1.0e-7, duration / 2_000.0),
+        maximum_time_s=max(3.0 * duration, 1.0e-3),
+        friction_coefficient=ImpactParameters().friction_coefficient,
+    )
+
+
+def _default_interval_club(delivery: DeliveryDerived, club: ClubSpec) -> ClubRigidBody:
+    """Adapt the scalar club catalog to a replaceable full-tensor body."""
+    toe_m, high_m = delivery.impact_offset
+    return ClubRigidBody(
+        mass_kg=club.head_mass_kg,
+        # Catalogs currently expose one measured axis. Isotropic expansion is
+        # explicit and replaceable through SimulationConfig.impact_interval_club.
+        inertia_body_kg_m2=club.moi_about_shaft_kg_m2 * np.eye(3),
+        cg_to_contact_body_m=np.array([club.cg_depth_m, high_m, toe_m]),
+        cg_to_attachment_body_m=np.array([0.0, club.length_m, 0.0]),
+        face_normal_body=np.array([1.0, 0.0, 0.0]),
+    )
+
+
+def _solve_interval(
+    config: SimulationConfig, delivery: DeliveryDerived
+) -> ImpactIntervalResult:
+    """Build a contact-consistent initial state and run the interval façade."""
+    interval_config = config.impact_interval_config or _default_interval_config(config)
+    body = config.impact_interval_club or _default_interval_club(delivery, config.club)
+    toe_axis, up_axis = face_basis(delivery.face_normal)
+    orientation = np.column_stack((delivery.face_normal, up_axis, toe_axis))
+    contact_offset = orientation @ body.cg_to_contact_body_m
+    club_position = (
+        BALL_POSITION_M - GOLF_BALL_RADIUS_M * delivery.face_normal - contact_offset
+    )
+    club_omega = delivery.clubhead_angular_velocity.copy()
+    club_velocity = delivery.clubhead_velocity.copy()
+    if interval_config.boundary is not BoundaryKind.FREE:
+        r_attachment = orientation @ body.cg_to_attachment_body_m
+        pivot_to_contact = contact_offset - r_attachment
+        radius_sq = float(np.dot(pivot_to_contact, pivot_to_contact))
+        require(radius_sq > 1.0e-12, "attachment and contact must be distinct")
+        driven_omega = (
+            np.cross(pivot_to_contact, delivery.clubhead_velocity) / radius_sq
+        )
+        shaft_axis = orientation @ body.shaft_axis_body
+        axial_omega = float(np.dot(club_omega, shaft_axis)) * shaft_axis
+        club_omega = driven_omega + axial_omega
+        club_velocity = -np.cross(club_omega, r_attachment)
+    initial = ImpactIntervalInitialState(
+        club_position_m=club_position,
+        club_orientation=orientation,
+        club_velocity_mps=club_velocity,
+        club_angular_velocity_rad_s=club_omega,
+        ball_position_m=BALL_POSITION_M.copy(),
+        ball_velocity_mps=np.zeros(3),
+        ball_angular_velocity_rad_s=np.zeros(3),
+    )
+    return solve_impact_interval(initial, body, interval_config)
+
+
 def _launch_summary(
     post: PostImpactState, delivery: DeliveryDerived, flight: object
 ) -> dict[str, float]:
@@ -290,20 +399,25 @@ def run_simulation(config: SimulationConfig) -> SimulationRun:
     twists = np.stack([s.twist for s in samples])
 
     delivery = delivery_at(source, tau, config.scenario, config.club)
-    solver = ImpactSolverAPI(
-        ImpactModelType.RIGID_BODY,
-        ImpactParameters(cg_depth=config.club.cg_depth_m),
-    )
-    post = solver.solve_with_gear_effect(
-        timestamp=tau,
-        clubhead_velocity=delivery.clubhead_velocity,
-        clubhead_orientation=delivery.face_normal,
-        impact_offset=delivery.impact_offset,
-        clubhead_mass=config.club.head_mass_kg,
-        clubhead_moi=config.club.moi_about_shaft_kg_m2,
-        face_normal_at_offset=_face_normal_callable(config.club),
-        record=False,
-    )
+    interval_result: ImpactIntervalResult | None = None
+    if config.impact_model == "impact_interval":
+        interval_result = _solve_interval(config, delivery)
+        post = interval_result.to_post_impact_state()
+    else:
+        solver = ImpactSolverAPI(
+            ImpactModelType.RIGID_BODY,
+            ImpactParameters(cg_depth=config.club.cg_depth_m),
+        )
+        post = solver.solve_with_gear_effect(
+            timestamp=tau,
+            clubhead_velocity=delivery.clubhead_velocity,
+            clubhead_orientation=delivery.face_normal,
+            impact_offset=delivery.impact_offset,
+            clubhead_mass=config.club.head_mass_kg,
+            clubhead_moi=config.club.moi_about_shaft_kg_m2,
+            face_normal_at_offset=_face_normal_callable(config.club),
+            record=False,
+        )
 
     flight = flight_simulate(
         derive_launch_conditions(
@@ -333,6 +447,7 @@ def run_simulation(config: SimulationConfig) -> SimulationRun:
         impact_time_s=tau,
         delivery=delivery,
         post_impact=post,
+        impact_interval=interval_result,
         launch=_launch_summary(post, delivery, flight),
         flight_times=flight_times,
         flight_positions=flight_positions,
