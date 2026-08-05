@@ -151,6 +151,25 @@ class DoublePendulumSwing:
         row = (1.0 - frac) * self._states[i0] + frac * self._states[i1]
         return float(row[0]), float(row[1]), float(row[2]), float(row[3])
 
+    def state_at(self, t: float) -> PendulumState:
+        """Interpolated joint state at time ``t`` (public, for kinetics).
+
+        Exposes the integrated joint trajectory so downstream inverse
+        dynamics (rate_of_closure swing kinetics, epic #4125 H2) can
+        evaluate the EOM surfaces without re-integrating.
+
+        Preconditions: ``0 <= t <= duration`` (within float tolerance).
+        """
+        require(math.isfinite(t), "t must be finite", t)
+        require(
+            -1e-9 <= t <= self._duration + 1e-9,
+            "t must be within [0, duration]",
+            t,
+        )
+        t = min(max(t, 0.0), self._duration)
+        theta1, theta2, omega1, omega2 = self._state_at(t)
+        return PendulumState(theta1=theta1, theta2=theta2, omega1=omega1, omega2=omega2)
+
     def sample(self, t: float) -> SwingSample:
         """Return the clubhead :class:`SwingSample` at time ``t``.
 

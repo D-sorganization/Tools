@@ -255,6 +255,26 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
       "with COR e and effective mass m_eff; friction supplies the " +
       "tangential (spin) impulse (swing_sim.impact.models).",
   },
+  inverse_dynamics: {
+    term: "Inverse Dynamics",
+    definition:
+      "Computing the joint torques that must have acted, given an observed " +
+      "motion: with the pendulum equations M(θ)·α + C(θ, ω) + G(θ) + " +
+      "D(ω) = τ, sample θ, ω, α along the swing and solve for τ per " +
+      "joint. The passive swing recovers τ ≈ 0, exposing the " +
+      "gravity/damping/inertial breakdown " +
+      "(rate_of_closure.simulation.kinetics; standard robotics formulation).",
+  },
+  joint_reaction_force: {
+    term: "Joint Reaction Force",
+    definition:
+      "The force transmitted through a joint — what the proximal segment " +
+      "exerts on the distal segment — from Newton-Euler on each segment: " +
+      "F = m·(a_com - g), summed up the chain. It is dominated by the " +
+      "centripetal cost of swinging mass on an arc " +
+      "(rate_of_closure.simulation.kinetics; classical biomechanics " +
+      "inverse dynamics).",
+  },
   landing_angle: {
     term: "Landing Angle",
     definition:

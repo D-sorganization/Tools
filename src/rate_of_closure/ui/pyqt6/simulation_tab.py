@@ -1,14 +1,13 @@
 """The Simulation tab: swing source, plane tilts, club, scrub, run.
 
-Hosts the whole simulation session UI (epic #4103): swing-source picker
-(manual scenario / double pendulum / triple pendulum), the three
-sequential plane-tilt inputs, a club picker (reusing the shared club
-library), the flight-model picker, the Run button, the impact-time
-scrubber (the ball is fixed; scrubbing tau translates the swing so the
-clubhead at tau meets it, with delivery numbers updating live), the 3D
-scene with playback + toggles (:class:`SimulationView`), the launch
-result rows with click-through explanations, and the run-data inspector
-with CSV/JSON export (:class:`InspectorView`).
+Hosts the whole simulation session UI (epic #4103): swing-source and
+club/flight-model pickers, the three sequential plane-tilt inputs, the
+Run button, the impact-time scrubber (the ball is fixed; scrubbing tau
+translates the swing so the clubhead at tau meets it, with delivery
+numbers updating live), the 3D scene with playback + toggles
+(:class:`SimulationView`), the kinetics sub-tab (#4125 H2), the launch
+result rows with click-through explanations, and the run-data
+inspector with CSV/JSON export (:class:`InspectorView`).
 
 Every input carries sourced hover guidance (FIELD_GUIDANCE pattern);
 the tab consumes complete scenarios from the main window (LoD) and
@@ -57,6 +56,7 @@ from rate_of_closure.simulation import (
 )
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
+from rate_of_closure.ui.pyqt6.kinetics_panel import KineticsPanel
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
@@ -121,6 +121,8 @@ class SimulationTab(QWidget):
         self._view = SimulationView()
         self._strike_view = StrikeView()
         self._flight_view = FlightView()
+        self._kinetics_panel = KineticsPanel()
+        self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)
         self._inspector = InspectorView()
         self._solver_panel = SolverPanel()
         self._solver_panel.applyRequested.connect(self.apply_solver_solution)
@@ -147,6 +149,7 @@ class SimulationTab(QWidget):
         right = QTabWidget()
         right.addTab(self._strike_view, "Strike")
         right.addTab(self._view, "Swing")
+        right.addTab(self._kinetics_panel, "Kinetics")
         right.addTab(self._flight_view, "Flight")
         right.addTab(self._inspector, "Inspector")
         right.addTab(self._solver_panel, "Solver")
@@ -173,7 +176,6 @@ class SimulationTab(QWidget):
         self._source_combo.setToolTip(FIELD_GUIDANCE["swing_source"])
         self._source_combo.currentIndexChanged.connect(self._invalidate_source)
         form.addRow("Swing Source", self._source_combo)
-
         self._tilt_spins: dict[str, QDoubleSpinBox] = {}
         for attr, label, guidance_key in _TILT_SPECS:
             spin = QDoubleSpinBox()
@@ -188,7 +190,6 @@ class SimulationTab(QWidget):
             self._tilt_spins[attr] = spin
             form.addRow(label, spin)
         self._tilt_spins["side_tilt_deg"].setValue(-45.0)
-
         self._club_combo = QComboBox()
         self._club_combo.addItems(club_names())
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
@@ -328,6 +329,7 @@ class SimulationTab(QWidget):
         self._sync_scrub_slider(run.impact_time_s)
         self._view.set_run(run)
         self._strike_view.set_run(run)
+        self._kinetics_panel.set_run(run)
         self._flight_view.set_run(run)
         self._inspector.set_run(run)
         for field, _label, unit in LAUNCH_ROWS:
@@ -353,6 +355,10 @@ class SimulationTab(QWidget):
     def flight_view(self) -> FlightView:
         """The flight-scale trajectory viewer."""
         return self._flight_view
+
+    def kinetics_panel(self) -> KineticsPanel:
+        """The kinetics plots + peak-table sub-tab (#4125 H2)."""
+        return self._kinetics_panel
 
     def inspector(self) -> InspectorView:
         """The run-data inspector."""
@@ -396,9 +402,8 @@ class SimulationTab(QWidget):
                 spin.blockSignals(False)
         else:
             self._source_combo.setCurrentIndex(SOURCE_KINDS.index("manual"))
-            updates["clubhead_speed_mph"] = (
-                variables["clubhead_speed_mps"] * MPH_PER_MPS
-            )
+            speed_mph = variables["clubhead_speed_mps"] * MPH_PER_MPS
+            updates["clubhead_speed_mph"] = speed_mph
         self._scenario = dataclasses.replace(self._scenario, **updates)
         self._invalidate_source()
         self._tau = None  # auto: impact at maximum clubhead speed
@@ -452,14 +457,10 @@ class SimulationTab(QWidget):
             self._delivery_label.setText(f"No delivery at this instant ({exc})")
             return
         velocity = delivery.clubhead_velocity
-        speed_mph = float(np.linalg.norm(velocity)) * 2.2369362920544025
-        path = math.degrees(math.atan2(float(velocity[2]), float(velocity[0])))
-        aoa = math.degrees(
-            math.atan2(
-                float(velocity[1]),
-                math.hypot(float(velocity[0]), float(velocity[2])),
-            )
-        )
+        vx, vy, vz = (float(component) for component in velocity)
+        speed_mph = float(np.linalg.norm(velocity)) * MPH_PER_MPS
+        path = math.degrees(math.atan2(vz, vx))
+        aoa = math.degrees(math.atan2(vy, math.hypot(vx, vz)))
         self._delivery_label.setText(
             f"Delivery at τ: {speed_mph:.1f} mph, path {path:+.1f}°, "
             f"AoA {aoa:+.1f}°, spin loft {delivery.spin_loft_deg:.1f}°"
@@ -489,9 +490,8 @@ class SimulationTab(QWidget):
         # Persistent single selection across the launch rows (#4120 V4).
         for row_field, row in self._rows.items():
             row.set_selected(row_field == field)
-        self._explanation.setHtml(
-            explanation_html(labels.get(field, field), text, field)
-        )
+        html = explanation_html(labels.get(field, field), text, field)
+        self._explanation.setHtml(html)
 
     def _on_explanation_link(self, url) -> None:  # type: ignore[no-untyped-def]
         """Forward ``glossary:<term>`` links to the main window."""

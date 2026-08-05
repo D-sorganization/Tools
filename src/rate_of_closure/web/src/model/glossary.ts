@@ -47,6 +47,10 @@ export const FIELD_TO_TERM: Record<string, string> = {
   flightTimeS: "flight_time",
   landingAngleDeg: "landing_angle",
   lateralM: "lateral_offset",
+  // Kinetics panel fields (#4125 H2)
+  jointTorques: "inverse_dynamics",
+  jointPower: "power",
+  reactionForces: "joint_reaction_force",
 };
 
 /** Glossary keys whose term or definition matches `query`. */

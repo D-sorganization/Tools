@@ -42,7 +42,7 @@ interface ManagedPlot {
   spec: PlotSpec;
 }
 
-const CUSTOM_CATEGORIES = ["Swing Sample", "Flight"] as const;
+const CUSTOM_CATEGORIES = ["Swing Sample", "Kinetics", "Flight"] as const;
 
 function download(name: string, blob: Blob): void {
   const url = URL.createObjectURL(blob);

@@ -58,6 +58,10 @@ FIELD_TO_TERM: dict[str, str] = {
     "flight_time_s": "flight_time",
     "landing_angle_deg": "landing_angle",
     "lateral_m": "lateral_offset",
+    # KINETICS_EXPLANATIONS fields (#4125 H2)
+    "joint_torques": "inverse_dynamics",
+    "joint_power": "power",
+    "reaction_forces": "joint_reaction_force",
 }
 
 

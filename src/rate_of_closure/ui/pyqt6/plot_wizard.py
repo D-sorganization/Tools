@@ -80,12 +80,14 @@ _X_CATEGORIES: dict[str, tuple[str, ...]] = {
     "swing": ("Swing Sample",),
     "flight": ("Flight",),
     "sweep": ("Input",),
-    "histogram": ("Swing Sample", "Flight"),
+    "histogram": ("Swing Sample", "Kinetics", "Flight"),
 }
 
 #: scope id -> categories offered for Y (empty = no Y step content).
+#: Kinetics series share the swing sample grid (#4125 H2), so they are
+#: offered as Y variables of the swing scope.
 _Y_CATEGORIES: dict[str, tuple[str, ...]] = {
-    "swing": ("Swing Sample",),
+    "swing": ("Swing Sample", "Kinetics"),
     "flight": ("Flight",),
     "sweep": ("Impact", "Launch", "Metric"),
     "histogram": (),

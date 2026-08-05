@@ -24,12 +24,13 @@ import { FIELD_GUIDANCE } from "../model/units";
 import { type ClubSpec } from "../model/club";
 import { type ImpactScenario } from "../model/impact";
 import { FlightCanvases } from "./FlightCanvases";
+import { KineticsSection } from "./KineticsSection";
 import { SolverPanel } from "./SolverPanel";
 import { StrikeCanvas } from "./StrikeCanvas";
 import { drawSwingScene } from "./swingSceneDraw";
 
 /** Scale-separated display views (epic #4120): face / swing / flight. */
-const VIEWS = ["Strike", "Swing", "Flight"] as const;
+const VIEWS = ["Strike", "Swing", "Kinetics", "Flight"] as const;
 type ViewName = (typeof VIEWS)[number];
 
 const RATE_PRESETS: Array<{ label: string; rate: number }> = [
@@ -353,6 +354,7 @@ export function SimulationPanel({
               clubSpec={clubSpec}
             />
           )}
+          {view === "Kinetics" && <KineticsSection input={input} run={run} />}
           {view === "Flight" && (
             <FlightCanvases
               points={run?.flight ?? []}

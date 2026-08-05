@@ -40,10 +40,13 @@ from PyQt6.QtWidgets import (
 
 from rate_of_closure.simulation import (
     BALL_POSITION_M,
+    KineticsSeries,
     SimulationRun,
+    kinetics_for_run,
     screw_axis_samples,
 )
 from rate_of_closure.simulation.isa import MIN_RATE_DPS
+from rate_of_closure.ui.pyqt6.kinetics_overlay import overlay_frame
 from rate_of_closure.units import FIELD_GUIDANCE
 
 try:  # Theme palette (optional in standalone/vendored use).
@@ -85,6 +88,8 @@ class SimulationView(QWidget):
 
         self._run: SimulationRun | None = None
         self._screws: list[dict] | None = None
+        # None = not resolved yet; False = source has no joint states.
+        self._kinetics: KineticsSeries | None | bool = None
         self._time = 0.0
 
         layout = QVBoxLayout(self)
@@ -158,6 +163,10 @@ class SimulationView(QWidget):
         self._screw_check = QCheckBox("Screw Axis")
         self._screw_check.setChecked(False)
         self._screw_check.setToolTip(FIELD_GUIDANCE["screw_axis_visible"])
+        # Kinetics overlay (#4125 H2): torque arcs + force arrows.
+        self._kinetics_check = QCheckBox("Show Kinetics")
+        self._kinetics_check.setChecked(False)
+        self._kinetics_check.setToolTip(FIELD_GUIDANCE["kinetics_visible"])
         # Scale separation (epic #4120): flight display is opt-in here
         # because its envelope dwarfs the swing envelope.
         self._flight_check = QCheckBox("Show Ball Flight")
@@ -171,6 +180,7 @@ class SimulationView(QWidget):
             self._ball_check,
             self._ground_check,
             self._screw_check,
+            self._kinetics_check,
             self._flight_check,
         ):
             check.toggled.connect(lambda _checked: self._draw())
@@ -183,6 +193,7 @@ class SimulationView(QWidget):
         """Adopt a run (or clear with ``None``) and reset the timeline."""
         self._run = run
         self._screws = None
+        self._kinetics = None
         self._time = 0.0
         self._sync_slider()
         self._draw()
@@ -329,6 +340,30 @@ class SimulationView(QWidget):
             shade=False,
         )
 
+    def _draw_kinetics(self, index: int) -> None:
+        """Torque arcs + capped force arrows at the joints (#4125 H2).
+
+        Geometry from :mod:`~rate_of_closure.ui.pyqt6.kinetics_overlay`
+        (adapted from the movement optimizer's vector_overlay); legend
+        labels carry the live magnitudes as the tooltip legend.
+        """
+        if self._run is None:
+            return
+        if self._kinetics is None:
+            self._kinetics = kinetics_for_run(self._run) or False
+        if not isinstance(self._kinetics, KineticsSeries):
+            return  # unsupported source (manual / triple pendulum)
+        frame = overlay_frame(self._kinetics, index)
+        for j, (label, points) in enumerate(frame.arcs):
+            pts = self._display(points).T
+            color = get_chart_color(3 + j)
+            self._axes.plot(*pts, color=color, lw=2.2, label=label)
+        style = {"lw": 1.6, "arrow_length_ratio": 0.18}
+        for j, (label, start, vector) in enumerate(frame.arrows):
+            s, v = self._display(start), self._display(vector)
+            color = get_chart_color(6 + j % 2)
+            self._axes.quiver(*s, *v, color=color, label=label, **style)
+
     def _draw_screw_axis(self, index: int, extent: float) -> None:
         entries = self._screw_entries()
         if not entries:
@@ -438,6 +473,8 @@ class SimulationView(QWidget):
 
         if self._screw_check.isChecked() and not in_flight:
             self._draw_screw_axis(index, extent)
+        if self._kinetics_check.isChecked() and not in_flight:
+            self._draw_kinetics(index)
 
         axes.set_xlim(-extent, extent)
         axes.set_ylim(-extent, extent)
