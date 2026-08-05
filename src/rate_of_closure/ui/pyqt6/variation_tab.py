@@ -1,17 +1,4 @@
-"""The Variation tab: Monte-Carlo dispersion & sensitivity UI (#4120 V3).
-
-Controls on the left — pipeline mode, base-scenario source, flight
-model, noise rows (variable picker from the shared registry grouped by
-category, distribution, unit-aware scale, optional truncation), run
-count + seed, Run/Cancel with live progress — and results on the right:
-summary statistics, the one-at-a-time sensitivity heat table (which
-input drives which output), the Spearman rank-correlation check, the
-landing scatter with its 2-sigma ellipse, and CSV/JSON dataset export
-plus plan save/load for reproducible studies.
-
-The engine is :mod:`shared.python.swing_sim.variation`; the worker
-thread mirrors the Solver panel's plumbing (movement_optimizer shapes).
-"""
+"""Monte-Carlo dispersion and sensitivity UI for the shared variation engine."""
 
 from __future__ import annotations
 
