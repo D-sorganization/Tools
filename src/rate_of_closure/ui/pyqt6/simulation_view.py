@@ -46,6 +46,8 @@ from rate_of_closure.simulation import (
     screw_axis_samples,
 )
 from rate_of_closure.simulation.isa import MIN_RATE_DPS
+from rate_of_closure.ui.course import CourseLayout
+from rate_of_closure.ui.pyqt6.course_scene import draw_course_ground_3d
 from rate_of_closure.ui.pyqt6.kinetics_overlay import overlay_frame
 from rate_of_closure.units import FIELD_GUIDANCE
 
@@ -86,6 +88,7 @@ class SimulationView(QWidget):
         self._canvas = FigureCanvas(self._figure)
         self._axes = self._figure.add_subplot(111, projection="3d")
 
+        self._course_layout = CourseLayout()
         self._run: SimulationRun | None = None
         self._screws: list[dict] | None = None
         # None = not resolved yet; False = source has no joint states.
@@ -160,6 +163,10 @@ class SimulationView(QWidget):
         self._ground_check = QCheckBox("Ground")
         self._ground_check.setChecked(True)
         self._ground_check.setToolTip(FIELD_GUIDANCE["ground_visible"])
+        # Course scene (#4125 H7a): fairway strip, green + flag, tee.
+        self._course_check = QCheckBox("Course Elements")
+        self._course_check.setChecked(True)
+        self._course_check.setToolTip(FIELD_GUIDANCE["course_visible"])
         self._screw_check = QCheckBox("Screw Axis")
         self._screw_check.setChecked(False)
         self._screw_check.setToolTip(FIELD_GUIDANCE["screw_axis_visible"])
@@ -179,6 +186,7 @@ class SimulationView(QWidget):
         for check in (
             self._ball_check,
             self._ground_check,
+            self._course_check,
             self._screw_check,
             self._kinetics_check,
             self._flight_check,
@@ -245,6 +253,19 @@ class SimulationView(QWidget):
     def set_flight_shown(self, shown: bool) -> None:
         """Set the 'Show Ball Flight' toggle (default off: swing scale)."""
         self._flight_check.setChecked(shown)
+
+    def course_layout(self) -> CourseLayout:
+        """The course furniture layout rendered by the ground painter."""
+        return self._course_layout
+
+    def set_course_layout(self, layout: CourseLayout) -> None:
+        """Adopt a course layout (H7b target edits drive this) and redraw."""
+        self._course_layout = layout
+        self._draw()
+
+    def course_elements_shown(self) -> bool:
+        """Whether the 'Course Elements' toggle is on."""
+        return self._course_check.isChecked()
 
     def scene_extent_m(self) -> float:
         """Current axis half-extent [m] — the scale-invariant seam."""
@@ -326,18 +347,13 @@ class SimulationView(QWidget):
         )
 
     def _draw_ground(self, extent: float) -> None:
-        grid = np.linspace(-extent, extent, 2)
-        gx, gz = np.meshgrid(grid, grid)
-        gy = np.zeros_like(gx)
-        pts = self._display(np.stack([gx, gy, gz], axis=-1))
-        self._axes.plot_surface(
-            pts[..., 0],
-            pts[..., 1],
-            pts[..., 2],
-            color=get_chart_color(7),
-            alpha=0.12,
-            linewidth=0.0,
-            shade=False,
+        """Course-styled grass ground (#4125 H7a): rough plane, plus
+        fairway/green/flag/tee when 'Course Elements' is on."""
+        draw_course_ground_3d(
+            self._axes,
+            extent,
+            layout=self._course_layout,
+            elements=self._course_check.isChecked(),
         )
 
     def _draw_kinetics(self, index: int) -> None:

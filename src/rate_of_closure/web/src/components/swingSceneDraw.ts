@@ -7,20 +7,29 @@
  * envelope past impact (scale separation — flight dwarfs the swing).
  */
 
+import {
+  courseColors,
+  DEFAULT_COURSE_LAYOUT,
+  type CourseLayout,
+} from "../model/course";
 import { BALL_POSITION, type SimulationRunTs } from "../model/simulation";
+import { withAlpha } from "../model/theme";
 
 export interface SwingSceneOptions {
   time: number;
   showBall: boolean;
   showGround: boolean;
+  /** Course furniture (#4125 H7a): green + flag + tee on the ground. */
+  showCourse: boolean;
   /** Opt-in flight display; off keeps the scene at swing scale. */
   showFlight: boolean;
+  layout?: CourseLayout;
 }
 
 export function drawSwingScene(
   canvas: HTMLCanvasElement,
   run: SimulationRunTs | null,
-  { time, showBall, showGround, showFlight }: SwingSceneOptions,
+  { time, showBall, showGround, showCourse, showFlight, layout }: SwingSceneOptions,
 ): void {
   const ctx = canvas.getContext("2d");
   if (!ctx) return;
@@ -51,12 +60,42 @@ export function drawSwingScene(
   const px = (x: number) => originX + x * s;
   const py = (y: number) => groundY - y * s;
 
+  // Course-styled ground (#4125 H7a): grass fill below the ground line,
+  // with the green band + flag + tee once 'Course Elements' is on. All
+  // tones derive from the shared chart palette (model/course.ts).
+  const course = courseColors();
+  const courseLayout = layout ?? DEFAULT_COURSE_LAYOUT;
   if (showGround) {
-    ctx.strokeStyle = "#475569";
+    ctx.fillStyle = withAlpha(course.rough, 0.35);
+    ctx.fillRect(0, py(0), width, height - py(0));
+    ctx.strokeStyle = course.fairway;
     ctx.beginPath();
     ctx.moveTo(0, py(0));
     ctx.lineTo(width, py(0));
     ctx.stroke();
+  }
+  if (showCourse) {
+    const { greenDistanceM: d, greenRadiusM: r } = courseLayout;
+    if (px(d - r) <= width) {
+      // Green band + flagstick at the hole (side-on projection).
+      ctx.fillStyle = withAlpha(course.green, 0.85);
+      ctx.fillRect(px(d - r), py(0) - 2, px(d + r) - px(d - r), 4);
+      ctx.strokeStyle = course.flag;
+      ctx.beginPath();
+      ctx.moveTo(px(d), py(0));
+      ctx.lineTo(px(d), py(0) - 14);
+      ctx.stroke();
+      ctx.fillStyle = course.flag;
+      ctx.beginPath();
+      ctx.moveTo(px(d), py(0) - 14);
+      ctx.lineTo(px(d) + 7, py(0) - 11);
+      ctx.lineTo(px(d), py(0) - 8);
+      ctx.closePath();
+      ctx.fill();
+    }
+    // Tee marker at the origin.
+    ctx.fillStyle = course.tee;
+    ctx.fillRect(px(0) - 2, py(0) - 2, 4, 4);
   }
   if (showBall) {
     ctx.fillStyle = "#facc15";

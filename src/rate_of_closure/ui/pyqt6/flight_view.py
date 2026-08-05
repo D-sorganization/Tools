@@ -22,6 +22,12 @@ from matplotlib.figure import Figure
 from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QVBoxLayout, QWidget
 
 from rate_of_closure.simulation import SimulationRun
+from rate_of_closure.ui.course import CourseLayout
+from rate_of_closure.ui.pyqt6.course_scene import (
+    draw_course_ground_3d,
+    draw_course_side,
+    draw_course_top,
+)
 from rate_of_closure.units import FIELD_GUIDANCE
 
 try:  # Theme palette (optional in standalone/vendored use).
@@ -50,6 +56,7 @@ _DISPLAY_PARAMS: tuple[tuple[str, str, str, bool], ...] = (
     ("three_d", "3D Trajectory", "flight_3d_visible", True),
     ("landing", "Landing Point", "flight_landing_visible", True),
     ("apex", "Apex", "flight_apex_visible", True),
+    ("course", "Course Elements", "course_visible", True),
 )
 
 
@@ -63,6 +70,7 @@ class FlightView(QWidget):
 
         self._positions: np.ndarray = np.zeros((0, 3))
         self._checks: dict[str, QCheckBox] = {}
+        self._course_layout = CourseLayout()
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -107,6 +115,15 @@ class FlightView(QWidget):
         """The display-parameter checkbox for ``name`` (test seam)."""
         return self._checks[name]
 
+    def course_layout(self) -> CourseLayout:
+        """The course furniture layout rendered behind the flight."""
+        return self._course_layout
+
+    def set_course_layout(self, layout: CourseLayout) -> None:
+        """Adopt a course layout (H7b target edits drive this) and redraw."""
+        self._course_layout = layout
+        self._draw()
+
     def extents_m(self) -> tuple[float, float, float]:
         """(carry, height, lateral) plot extents [m] — flight regime."""
         pos = self._positions
@@ -133,8 +150,14 @@ class FlightView(QWidget):
 
     def _draw_side(self, axes, pos: np.ndarray, extents) -> None:  # type: ignore[no-untyped-def]
         carry_ext, height_ext, _ = extents
+        # Course-styled ground (#4125 H7a): grass band + green/flag.
+        draw_course_side(
+            axes,
+            carry_ext,
+            layout=self._course_layout,
+            elements=self._checks["course"].isChecked(),
+        )
         axes.plot(pos[:, 0], pos[:, 1], color=get_chart_color(2), lw=1.6)
-        axes.axhline(0.0, color=get_chart_color(7), lw=0.6, alpha=0.6)
         if self._checks["apex"].isChecked():
             apex_index = int(np.argmax(pos[:, 1]))
             axes.scatter(
@@ -165,6 +188,14 @@ class FlightView(QWidget):
 
     def _draw_top(self, axes, pos: np.ndarray, extents) -> None:  # type: ignore[no-untyped-def]
         carry_ext, _, lateral_ext = extents
+        # Course-styled ground (#4125 H7a): rough, fairway strip, green.
+        draw_course_top(
+            axes,
+            carry_ext,
+            lateral_ext,
+            layout=self._course_layout,
+            elements=self._checks["course"].isChecked(),
+        )
         axes.plot(pos[:, 0], pos[:, 2], color=get_chart_color(2), lw=1.6)
         axes.axhline(0.0, color=get_chart_color(7), lw=0.6, alpha=0.6)
         if self._checks["landing"].isChecked():
@@ -180,6 +211,13 @@ class FlightView(QWidget):
 
     def _draw_3d(self, axes, pos: np.ndarray, extents) -> None:  # type: ignore[no-untyped-def]
         carry_ext, height_ext, lateral_ext = extents
+        # Course-styled ground plane (#4125 H7a).
+        draw_course_ground_3d(
+            axes,
+            carry_ext,
+            layout=self._course_layout,
+            elements=self._checks["course"].isChecked(),
+        )
         # Display axes: (z right, x downrange, y up) like the swing view.
         axes.plot(pos[:, 2], pos[:, 0], pos[:, 1], color=get_chart_color(2), lw=1.6)
         if self._checks["landing"].isChecked():

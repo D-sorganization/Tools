@@ -76,6 +76,8 @@ export function SimulationPanel({
   const [time, setTime] = useState(0);
   const [showBall, setShowBall] = useState(true);
   const [showGround, setShowGround] = useState(true);
+  // Course scene (#4125 H7a): fairway strip, green + flag, tee marker.
+  const [showCourse, setShowCourse] = useState(true);
   // Scale separation (#4120): flight display in the swing view is
   // opt-in — its envelope dwarfs the swing envelope.
   const [showFlight, setShowFlight] = useState(false);
@@ -149,8 +151,14 @@ export function SimulationPanel({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-    drawSwingScene(canvas, run, { time, showBall, showGround, showFlight });
-  }, [run, time, showBall, showGround, showFlight, view]);
+    drawSwingScene(canvas, run, {
+      time,
+      showBall,
+      showGround,
+      showCourse,
+      showFlight,
+    });
+  }, [run, time, showBall, showGround, showCourse, showFlight, view]);
 
   const exportJson = () => {
     if (!run) return;
@@ -449,6 +457,17 @@ export function SimulationPanel({
                 onChange={(e) => setShowGround(e.target.checked)}
               />
               Ground
+            </label>
+            <label
+              className="flex items-center gap-1 text-slate-300"
+              title={FIELD_GUIDANCE.courseVisible}
+            >
+              <input
+                type="checkbox"
+                checked={showCourse}
+                onChange={(e) => setShowCourse(e.target.checked)}
+              />
+              Course Elements
             </label>
             <label
               className="flex items-center gap-1 text-amber-300/90"

@@ -128,6 +128,19 @@ class TestSwingViewFlightToggle:
         view.set_flight_shown(False)
         assert view.scene_extent_m() == pytest.approx(swing_extent)
 
+    def test_course_elements_toggle_defaults_on_with_guidance(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        """H7a: the swing scene's Course Elements toggle + layout seam."""
+        from rate_of_closure.ui.course import CourseLayout
+
+        view = ran_tab.view()
+        assert view.course_elements_shown() is True
+        assert "Source:" in view._course_check.toolTip()
+        view._course_check.setChecked(False)
+        assert view.course_elements_shown() is False
+        view._course_check.setChecked(True)
+        view.set_course_layout(CourseLayout(green_distance_m=180.0))
+        assert view.course_layout().green_distance_m == 180.0
+
     def test_toggle_carries_a_scale_warning_tooltip(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         tooltip = ran_tab.view()._flight_check.toolTip()
         assert "dwarfs" in tooltip
@@ -146,11 +159,22 @@ class TestFlightView:
 
     def test_display_checklist_and_guidance(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         flight = ran_tab.flight_view()
-        for name in ("side", "top", "three_d", "landing", "apex"):
+        for name in ("side", "top", "three_d", "landing", "apex", "course"):
             check = flight.display_check(name)
             assert "Source:" in check.toolTip(), name
             check.setChecked(not check.isChecked())
             check.setChecked(not check.isChecked())
+
+    def test_course_scene_toggle_and_layout_seam(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        """H7a: course elements default on; the layout seam redraws."""
+        from rate_of_closure.ui.course import CourseLayout
+
+        flight = ran_tab.flight_view()
+        assert flight.display_check("course").isChecked()
+        flight.display_check("course").setChecked(False)
+        flight.display_check("course").setChecked(True)
+        flight.set_course_layout(CourseLayout(green_distance_m=150.0))
+        assert flight.course_layout().green_distance_m == 150.0
 
     def test_all_panels_off_shows_placeholder_without_crashing(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         flight = ran_tab.flight_view()

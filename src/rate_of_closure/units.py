@@ -190,6 +190,13 @@ FIELD_GUIDANCE: dict[str, str] = {
         "Suggested range: on to show the ground plane for spatial "
         "reference. Source: standard 3-D golf-scene convention."
     ),
+    "course_visible": (
+        "Suggested range: on to render the course furniture — fairway "
+        "strip along the target line, putting green with hole and flag "
+        "at the configurable green distance, tee marker at the origin. "
+        "Source: standard golf-course presentation; tones derived from "
+        "the active theme palette."
+    ),
     "screw_axis_visible": (
         "Suggested range: on to overlay the clubhead's instantaneous "
         "screw axis near the playback instant. Source: the AffineDrift "

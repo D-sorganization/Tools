@@ -134,6 +134,12 @@ export const FIELD_GUIDANCE: Record<string, string> = {
   groundVisible:
     "Suggested range: on to show the ground line for spatial reference. " +
     "Source: standard golf-scene convention.",
+  courseVisible:
+    "Suggested range: on to render the course furniture — fairway strip " +
+    "along the target line, putting green with hole and flag at the " +
+    "configurable green distance, tee marker at the origin. Source: " +
+    "standard golf-course presentation; tones derived from the theme " +
+    "palette.",
   swingFlightToggle:
     "Off by default: the flight envelope (100+ m) dwarfs the swing " +
     "envelope (~3 m), collapsing the swing to a dot when both share one " +
