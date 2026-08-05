@@ -2381,6 +2381,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 ## 9. Changelog
 
+### Version 1.1.599
+
+- 2026-08-05: fix(rotation-converter) — update application navigation tabs
+  with accessible roles and unique IDs, linking buttons to tab panels via
+  `aria-controls` and `aria-labelledby` for screen reader semantic correctness.
+
 ### Version 1.1.598
 
 - 2026-06-18: fix(data-processor, #3745) — keep cross-correlation importable
