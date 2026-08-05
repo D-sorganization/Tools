@@ -57,6 +57,10 @@ function representativeSubset<T>(values: readonly T[], limit: number): readonly 
     values[Math.round((index * (values.length - 1)) / (limit - 1))]));
 }
 
+function displayNumber(value: number): string {
+  return String(Number(value.toFixed(3)));
+}
+
 function coefficients(profile: PrescribedTorqueProfile, jointId: string): string {
   const values = profile.assignments.find((item) => item.jointId === jointId)
     ?.polynomial.coefficients ?? [];
@@ -397,10 +401,14 @@ export function TorqueProfilePanel({
               : ""}
             Table showing {visiblePreviewRows.length} of {previewRows.length} editor rows.
           </p>
-          <table aria-label="Torque sample preview" className="mt-2 w-full text-right text-xs text-slate-300">
-            <thead><tr><th>Time (s)</th><th>Shoulder</th><th>Wrist</th></tr></thead>
+          <table aria-label="Torque sample preview" className="mt-2 w-full table-fixed text-right text-xs tabular-nums text-slate-300">
+            <thead><tr><th className="px-2 py-1">Time (s)</th><th className="px-2 py-1">Shoulder</th><th className="px-2 py-1">Wrist</th></tr></thead>
             <tbody>{visiblePreviewRows.map((row) => (
-              <tr key={row.timeS}><td>{row.timeS}</td><td>{row.shoulderNm}</td><td>{row.wristNm}</td></tr>
+              <tr key={row.timeS}>
+                <td className="whitespace-nowrap px-2 py-0.5">{displayNumber(row.timeS)}</td>
+                <td className="whitespace-nowrap px-2 py-0.5">{displayNumber(row.shoulderNm)}</td>
+                <td className="whitespace-nowrap px-2 py-0.5">{displayNumber(row.wristNm)}</td>
+              </tr>
             ))}</tbody>
           </table>
           </>

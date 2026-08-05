@@ -104,6 +104,22 @@ describe("TorqueProfilePanel", () => {
     expect(storage.getItem(TORQUE_PROFILE_STORAGE_KEY)).toContain('"source":"drawn"');
   });
 
+  it("formats preview cells without changing the editable sample precision", async () => {
+    const user = userEvent.setup();
+    render(<Harness />);
+    const samples = screen.getByRole("textbox", { name: "Torque sample rows" });
+    const precise = "0.311541219999999999,12.3456789,-4.5678912\n1,13,0";
+    await user.clear(samples);
+    await user.type(samples, precise);
+
+    expect(samples).toHaveValue(precise);
+    const table = screen.getByRole("table", { name: "Torque sample preview" });
+    expect(within(table).getByText("0.312")).toBeInTheDocument();
+    expect(within(table).getByText("12.346")).toHaveClass("px-2", "whitespace-nowrap");
+    expect(table).toHaveClass("tabular-nums", "table-fixed");
+    expect(table).not.toHaveTextContent("0.311541219999999999");
+  });
+
   it("marks a current-run fit as fitted-run provenance", async () => {
     const user = userEvent.setup();
     const run = {
