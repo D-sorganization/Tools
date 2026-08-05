@@ -11,7 +11,7 @@ import json
 import math
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 from typing import Any
 
 from shared.python.contracts import require
@@ -78,7 +78,7 @@ _FIT_FIELDS = frozenset(
 )
 
 
-class TorqueProfileSource(StrEnum):
+class TorqueProfileSource(str, Enum):
     """Provenance category for a prescribed torque profile."""
 
     DIRECT = "direct"

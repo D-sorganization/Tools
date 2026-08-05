@@ -5,7 +5,7 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from enum import StrEnum
+from enum import Enum
 from types import MappingProxyType
 
 import numpy as np
@@ -44,7 +44,7 @@ SHOT_OUTPUT_NAMES: tuple[str, ...] = (
 ALL_OUTPUT_NAMES = CONTACT_OUTPUT_NAMES + IMPACT_OUTPUT_NAMES + SHOT_OUTPUT_NAMES
 
 
-class TrialEvaluationStatus(StrEnum):
+class TrialEvaluationStatus(str, Enum):
     """Mutually exclusive outcome of attempting one configured trial."""
 
     EVALUATED_HIT = "evaluated_hit"

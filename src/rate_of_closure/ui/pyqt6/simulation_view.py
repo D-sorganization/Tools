@@ -220,7 +220,7 @@ class SimulationView(QWidget):
 
     def is_playing(self) -> bool:
         """Whether the playback timer is running."""
-        return self._timer.isActive()
+        return bool(self._timer.isActive())
 
     def set_looping(self, looping: bool) -> None:
         """Set the loop toggle."""
@@ -228,7 +228,7 @@ class SimulationView(QWidget):
 
     def flight_shown(self) -> bool:
         """Whether the flight-scale 'Show Ball Flight' toggle is on."""
-        return self._flight_check.isChecked()
+        return bool(self._flight_check.isChecked())
 
     def set_flight_shown(self, shown: bool) -> None:
         """Set the 'Show Ball Flight' toggle (default off: swing scale)."""
@@ -245,7 +245,7 @@ class SimulationView(QWidget):
 
     def course_elements_shown(self) -> bool:
         """Whether the 'Course Elements' toggle is on."""
-        return self._course_check.isChecked()
+        return bool(self._course_check.isChecked())
 
     def scene_extent_m(self) -> float:
         """Current axis half-extent [m] — the scale-invariant seam."""
@@ -503,8 +503,7 @@ class SimulationView(QWidget):
             )
         else:
             title = (
-                f"t = {self._time:.3f} s ({phase}) — "
-                f"impact at {impact_time_s:.3f} s"
+                f"t = {self._time:.3f} s ({phase}) — impact at {impact_time_s:.3f} s"
             )
         axes.set_title(title)
         axes.legend(loc="upper left", fontsize=8)

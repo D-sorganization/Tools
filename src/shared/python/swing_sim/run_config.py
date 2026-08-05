@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import StrEnum
+from enum import Enum
 
 from shared.python.contracts import require
 
@@ -15,7 +15,7 @@ WRIST_JOINT_ID = "joint.wrist"
 DOUBLE_PENDULUM_JOINT_IDS = (SHOULDER_JOINT_ID, WRIST_JOINT_ID)
 
 
-class SwingRunMode(StrEnum):
+class SwingRunMode(str, Enum):
     """Supported execution modes for the shared double-pendulum source."""
 
     PASSIVE = "passive"

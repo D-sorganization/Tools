@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 from typing import Any
 
 import numpy as np
@@ -33,14 +33,14 @@ FORCED_ALIGNMENT_LIMITATION = (
 _CONTACT_ABS_TOLERANCE_M = 1e-9
 
 
-class ContactMode(StrEnum):
+class ContactMode(str, Enum):
     """Supported policies for selecting or detecting an impact candidate."""
 
     DELIVERY_INSPECTION = "delivery_inspection"
     FIXED_BALL_CONTACT = "fixed_ball_contact"
 
 
-class ImpactStatus(StrEnum):
+class ImpactStatus(str, Enum):
     """Whether the selected contact policy produced a physical-impact candidate."""
 
     HIT = "hit"

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from enum import StrEnum
+from enum import Enum
 from pathlib import Path
 from urllib.parse import quote
 
@@ -25,7 +25,7 @@ from shared.python.swing_sim.torque_profiles import (
 )
 
 
-class RunMode(StrEnum):
+class RunMode(str, Enum):
     """User-selected simulation input mode."""
 
     OPTIMIZED_DEFAULT = "optimized_default"

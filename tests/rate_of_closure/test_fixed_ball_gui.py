@@ -104,9 +104,7 @@ def test_default_hit_remains_fully_inspectable(tab, qtbot) -> None:  # type: ign
     assert "Carry" in tab.inspector()._summary_label.text()
 
 
-def test_changed_configuration_is_stale_and_errors_are_inline(
-    tab, monkeypatch
-) -> None:  # type: ignore[no-untyped-def]
+def test_changed_configuration_is_stale_and_errors_are_inline(tab, monkeypatch) -> None:  # type: ignore[no-untyped-def]
     tab.run_now()
     next_index = (tab._club_combo.currentIndex() + 1) % tab._club_combo.count()
     tab._club_combo.setCurrentIndex(next_index)
