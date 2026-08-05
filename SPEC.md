@@ -954,6 +954,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Support multiple Python versions (3.11, 3.12) with comprehensive test matrix
 - Keep the required generic quality gate on hosted compute when the local
   fleet is operating under a WAN-constrained capacity policy
+- Keep self-hosted jobs on durable per-host dependency caches without
+  GitHub Actions cache uploads or unconditional cache purges, so post-job
+  network traffic cannot monopolize a persistent runner
 
 ### Non-Goals
 

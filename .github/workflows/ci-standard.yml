@@ -430,7 +430,9 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
     env:
-      # Shared wheel/download cache — mirrors quality-gate setting.  See issue #2160.
+      # Persistent per-host download cache.  Do not also enable setup-python's
+      # Actions cache on this self-hosted lane: its post-job upload can occupy a
+      # runner for tens of minutes on the constrained WAN.
       PIP_CACHE_DIR: /home/dieterolson/actions-runners/.shared-tool-cache/pip
       PIP_DEFAULT_TIMEOUT: "120"
       PIP_RETRIES: "8"
@@ -465,7 +467,6 @@ jobs:
       - uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
-          cache: pip
 
       - name: Verify Python runtime
         env:
@@ -502,8 +503,6 @@ jobs:
         if: ${{ matrix.python-version == '3.11' }}
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
 
-      - name: Purge pip cache
-        run: python -m pip cache purge || true
       - name: Reject Raw Merge Conflict Markers
         run: |
           conflict_marker='<<<<<'
@@ -933,10 +932,7 @@ jobs:
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
-          cache: pip
 
-      - name: Purge pip cache
-        run: python -m pip cache purge || true
       - name: Format Check (rustfmt)
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: cargo fmt --all -- --check
