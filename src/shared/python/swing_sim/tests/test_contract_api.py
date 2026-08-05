@@ -12,15 +12,25 @@ import pytest
 import shared.python.swing_sim as swing_sim
 
 EXPECTED_PUBLIC_API = {
+    "COEFFICIENT_ORDER",
     "DEFAULT_GRAVITY_M_S2",
     "DoublePendulumSwing",
+    "FitMetadata",
+    "JointTorqueAssignment",
     "PendulumParameters",
     "PendulumState",
     "PlaneOrientation",
+    "PrescribedTorqueProfile",
     "SwingSample",
     "SwingSource",
     "SwingTrajectory",
+    "TORQUE_UNIT",
+    "TORQUE_PROFILE_SCHEMA_VERSION",
+    "TorquePolynomial",
+    "TorqueProfileSource",
     "__version__",
+    "evaluate_ascending_polynomial",
+    "fit_torque_polynomial",
     "rust_available",
 }
 

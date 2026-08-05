@@ -12,6 +12,18 @@ from __future__ import annotations
 
 from ._rust_facade import rust_available
 from .swing_source import DoublePendulumSwing, SwingSource
+from .torque_fitting import fit_torque_polynomial
+from .torque_profiles import (
+    COEFFICIENT_ORDER,
+    TORQUE_PROFILE_SCHEMA_VERSION,
+    TORQUE_UNIT,
+    FitMetadata,
+    JointTorqueAssignment,
+    PrescribedTorqueProfile,
+    TorquePolynomial,
+    TorqueProfileSource,
+    evaluate_ascending_polynomial,
+)
 from .types import (
     DEFAULT_GRAVITY_M_S2,
     PendulumParameters,
@@ -25,13 +37,23 @@ __version__ = "0.1.0"
 
 __all__ = [
     "DEFAULT_GRAVITY_M_S2",
+    "COEFFICIENT_ORDER",
     "DoublePendulumSwing",
+    "FitMetadata",
+    "JointTorqueAssignment",
     "PendulumParameters",
     "PendulumState",
     "PlaneOrientation",
+    "PrescribedTorqueProfile",
     "SwingSample",
     "SwingSource",
     "SwingTrajectory",
+    "TORQUE_UNIT",
+    "TORQUE_PROFILE_SCHEMA_VERSION",
+    "TorquePolynomial",
+    "TorqueProfileSource",
     "__version__",
+    "evaluate_ascending_polynomial",
+    "fit_torque_polynomial",
     "rust_available",
 ]
