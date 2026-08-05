@@ -11,6 +11,7 @@
  */
 
 import { solve, type ImpactScenario } from "./impact";
+import { kineticsForInput, type KineticsSeriesTs } from "./kinetics";
 import {
   norm,
   type SimulationInput,
@@ -20,6 +21,7 @@ import {
 export type PlotCategory =
   | "Input"
   | "Swing Sample"
+  | "Kinetics"
   | "Impact"
   | "Launch"
   | "Flight"
@@ -74,6 +76,19 @@ const v = (
   scale: PlotScale = "linear",
 ): PlotVariable => ({ key, label, unit, category, scale, extractor });
 
+/** Kinetics entry: picks one series, NaN-filled when unsupported. */
+const kv = (
+  key: string,
+  label: string,
+  unit: string,
+  pick: (k: KineticsSeriesTs) => number[],
+): PlotVariable =>
+  v(key, label, unit, "Kinetics", (c) => {
+    const series = kineticsForInput(c.input);
+    if (!series) return c.run.swing.map(() => Number.NaN);
+    return pick(series);
+  });
+
 /** The catalog, in the pinned display order. */
 export const PLOT_CATALOG: PlotVariable[] = [
   v("input.clubhead_speed_mph", "Clubhead Speed", "mph", "Input",
@@ -113,6 +128,30 @@ export const PLOT_CATALOG: PlotVariable[] = [
   // Angular clubhead state is not sampled by the TS port (P7 WASM).
   v("swing.angular_speed_dps", "Clubhead Angular Speed", "deg/s",
     "Swing Sample", null),
+  // Kinetics (#4125 H2): joint torques / powers / reaction forces from
+  // the TS inverse-dynamics mirror; NaN for sources without joint
+  // states (manual), matching the Python catalog.
+  kv("kinetics.shoulder_torque_nm", "Shoulder Net Torque", "N·m",
+    (k) => k.shoulderTorqueNm),
+  kv("kinetics.wrist_torque_nm", "Wrist Net Torque", "N·m",
+    (k) => k.wristTorqueNm),
+  kv("kinetics.shoulder_gravity_torque_nm", "Shoulder Gravity Torque", "N·m",
+    (k) => k.shoulderGravityTorqueNm),
+  kv("kinetics.wrist_gravity_torque_nm", "Wrist Gravity Torque", "N·m",
+    (k) => k.wristGravityTorqueNm),
+  kv("kinetics.shoulder_damping_torque_nm", "Shoulder Damping Torque", "N·m",
+    (k) => k.shoulderDampingTorqueNm),
+  kv("kinetics.wrist_damping_torque_nm", "Wrist Damping Torque", "N·m",
+    (k) => k.wristDampingTorqueNm),
+  kv("kinetics.shoulder_power_w", "Shoulder Power", "W",
+    (k) => k.shoulderPowerW),
+  kv("kinetics.wrist_power_w", "Wrist Power", "W", (k) => k.wristPowerW),
+  kv("kinetics.shoulder_force_n", "Shoulder Reaction Force", "N",
+    (k) => k.shoulderForceN),
+  kv("kinetics.wrist_force_n", "Wrist Reaction Force", "N",
+    (k) => k.wristForceN),
+  kv("kinetics.clubhead_force_n", "Clubhead Force", "N",
+    (k) => k.clubheadForceN),
   v("impact.clubhead_speed_mps", "Delivered Clubhead Speed", "m/s", "Impact",
     (c) => norm(impactVelocity(c))),
   v("impact.club_path_deg", "Club Path", "deg", "Impact", clubPathDeg),
@@ -181,7 +220,11 @@ export const axisLabel = (key: string): string => {
 /** True when the variable yields a per-sample series. */
 export const isSeries = (key: string): boolean => {
   const category = catalogVariable(key).category;
-  return category === "Swing Sample" || category === "Flight";
+  return (
+    category === "Swing Sample" ||
+    category === "Kinetics" ||
+    category === "Flight"
+  );
 };
 
 /** Entries of one category the web port can actually extract. */

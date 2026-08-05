@@ -65,6 +65,17 @@ EXPECTED_KEYS: tuple[str, ...] = (
     "swing.z_m",
     "swing.speed_mps",
     "swing.angular_speed_dps",
+    "kinetics.shoulder_torque_nm",
+    "kinetics.wrist_torque_nm",
+    "kinetics.shoulder_gravity_torque_nm",
+    "kinetics.wrist_gravity_torque_nm",
+    "kinetics.shoulder_damping_torque_nm",
+    "kinetics.wrist_damping_torque_nm",
+    "kinetics.shoulder_power_w",
+    "kinetics.wrist_power_w",
+    "kinetics.shoulder_force_n",
+    "kinetics.wrist_force_n",
+    "kinetics.clubhead_force_n",
     "impact.clubhead_speed_mps",
     "impact.club_path_deg",
     "impact.attack_angle_deg",
@@ -128,6 +139,7 @@ class TestCatalog:
         prefixes = {
             "Input": "input.",
             "Swing Sample": "swing.",
+            "Kinetics": "kinetics.",
             "Impact": "impact.",
             "Launch": "launch.",
             "Flight": "flight.",
@@ -155,9 +167,16 @@ class TestCatalog:
                 continue
             values = extract(run, key)
             assert isinstance(values, np.ndarray) and values.ndim == 1, key
-            expected = n_swing if spec.category == "Swing Sample" else n_flight
+            expected = n_flight if spec.category == "Flight" else n_swing
             assert values.shape == (expected,), key
-            assert np.isfinite(values).all(), key
+            if spec.category == "Kinetics":
+                # The manual reference run has no joint states, so the
+                # kinetics extractors yield all-NaN (#4125 H2); the
+                # finite double-pendulum case is pinned in
+                # test_kinetics.py.
+                assert np.isnan(values).all(), key
+            else:
+                assert np.isfinite(values).all(), key
 
     def test_unknown_key_is_rejected(self, run) -> None:  # type: ignore[no-untyped-def]
         with pytest.raises(Exception, match="unknown catalog key"):

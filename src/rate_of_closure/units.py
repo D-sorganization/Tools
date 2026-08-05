@@ -195,6 +195,14 @@ FIELD_GUIDANCE: dict[str, str] = {
         "screw axis near the playback instant. Source: the AffineDrift "
         "closure-rate derivation (omega/v = 1/R_ISA)."
     ),
+    "kinetics_visible": (
+        "Suggested range: on (double-pendulum source only) to overlay "
+        "per-joint torque arcs (radius grows with torque magnitude, "
+        "sweep direction follows its sign) and reaction-force arrows "
+        "at the shoulder and wrist during playback. Source: inverse "
+        "dynamics over the pendulum EOM (swing_sim.reference), "
+        "presented per the movement-optimizer overlay conventions."
+    ),
     "swing_flight_toggle": (
         "Off by default: the flight envelope (100+ m) dwarfs the "
         "swing envelope (~3 m), collapsing the swing to a dot when both "

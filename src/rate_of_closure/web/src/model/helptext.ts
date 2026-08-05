@@ -61,10 +61,12 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
         "spin, carry…) appear as rows on the left.",
       "Use the impact-time slider to scrub impact earlier or later in " +
         "the swing — the delivery readout updates live. The Strike / " +
-        "Swing / Flight buttons switch between the face-scale impact " +
-        "zone (with the delivered path/face/AoA vectors), the swing-" +
-        "scale scene with playback, and the flight profiles (side and " +
-        "top-down). 'Show Ball Flight' expands the swing scene to " +
+        "Swing / Kinetics / Flight buttons switch between the face-" +
+        "scale impact zone (with the delivered path/face/AoA vectors), " +
+        "the swing-scale scene with playback, the joint torque / power " +
+        "/ reaction-force charts of the pendulum swing, and the flight " +
+        "profiles (side and top-down). 'Show Ball Flight' expands the " +
+        "swing scene to " +
         "flight scale — expect the swing to look tiny. The Solver " +
         "section searches for deliveries that hit goal launch numbers, " +
         "and the JSON download captures the whole run.",

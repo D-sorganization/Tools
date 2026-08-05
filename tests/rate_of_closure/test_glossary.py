@@ -11,6 +11,7 @@ from __future__ import annotations
 import pytest
 
 from rate_of_closure.derivation import (
+    KINETICS_EXPLANATIONS,
     LAUNCH_EXPLANATIONS,
     METRIC_EXPLANATIONS,
     RESULT_EXPLANATIONS,
@@ -87,6 +88,7 @@ class TestGlossaryContract:
             set(RESULT_EXPLANATIONS)
             | set(METRIC_EXPLANATIONS)
             | set(LAUNCH_EXPLANATIONS)
+            | set(KINETICS_EXPLANATIONS)
         )
         unmapped = fields - set(FIELD_TO_TERM)
         assert unmapped == set()

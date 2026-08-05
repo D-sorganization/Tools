@@ -27,6 +27,8 @@
     "geometric_center",
     "htv",
     "impulse_momentum",
+    "inverse_dynamics",
+    "joint_reaction_force",
     "landing_angle",
     "lateral_offset",
     "launch_angle",
@@ -38,12 +40,14 @@
     "mass_matrix",
     "moi",
     "moi_tensor",
+    "moment_of_force",
     "monte_carlo",
     "noise_spec",
     "normal_distribution",
     "one_at_a_time_sensitivity",
     "pitch",
     "plane_inclination",
+    "power",
     "r_isa",
     "roll",
     "screw_axis",
@@ -87,6 +91,9 @@
     "maxHeightM": "apex",
     "flightTimeS": "flight_time",
     "landingAngleDeg": "landing_angle",
-    "lateralM": "lateral_offset"
+    "lateralM": "lateral_offset",
+    "jointTorques": "inverse_dynamics",
+    "jointPower": "power",
+    "reactionForces": "joint_reaction_force"
   }
 }

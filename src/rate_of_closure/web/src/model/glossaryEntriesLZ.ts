@@ -64,6 +64,14 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
       "a diagonal I\u00b7eye(3) reproduces the scalar-MOI fallback 1/m + |r|\u00b2/I " +
       "exactly (swing_sim.impact.models derivation).",
   },
+  moment_of_force: {
+    term: "Moment of Force (Torque)",
+    definition:
+      "The turning effect of a force about an axis, τ = r × F [N·m]. " +
+      "In the swing kinetics, positive torque acts counter-clockwise about " +
+      "the swing-plane normal — the direction of increasing joint angle " +
+      "(rate_of_closure.simulation.kinetics sign convention).",
+  },
   monte_carlo: {
     term: "Monte Carlo Simulation",
     definition:
@@ -110,6 +118,16 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
       "tilt, and forward tilt. Gravity is projected into the plane " +
       "(g_inplane = R^T (0, 0, -g)), so steeper planes feel more in-plane " +
       "gravity (swing_sim.reference.in_plane_gravity).",
+  },
+  power: {
+    term: "Joint Power",
+    definition:
+      "The rate of mechanical work at a joint, P = τ·ω [W] (torque times " +
+      "joint angular rate). Summed over the pendulum's joints it equals " +
+      "the rate of change of the swing's kinetic energy, so its time " +
+      "integral to impact is the energy delivered to the club " +
+      "(rate_of_closure.simulation.kinetics; movement-optimizer " +
+      "joint-power convention).",
   },
   r_isa: {
     term: "Distance to the Screw Axis (R_ISA)",
