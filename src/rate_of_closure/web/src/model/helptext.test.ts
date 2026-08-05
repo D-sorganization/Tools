@@ -15,6 +15,7 @@ const TABS = [
   "Plots",
   "Flight Explorer",
   "Variation",
+  "Putting",
   "Glossary",
 ] as const;
 

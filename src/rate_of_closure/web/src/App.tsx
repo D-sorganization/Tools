@@ -14,6 +14,7 @@ import { useMemo, useState } from "react";
 import { ClubCanvas } from "./components/ClubCanvas";
 import { FlightExplorerPanel } from "./components/FlightExplorerPanel";
 import { PlotsPanel } from "./components/PlotsPanel";
+import { PuttingPanel } from "./components/PuttingPanel";
 import { SimulationPanel } from "./components/SimulationPanel";
 import { VariationPanel } from "./components/VariationPanel";
 import { ClubPanel, type GeneratedHead } from "./components/ClubPanel";
@@ -134,6 +135,7 @@ const TABS = [
   "Plots",
   "Flight Explorer",
   "Variation",
+  "Putting",
   "Glossary",
 ] as const;
 
@@ -272,8 +274,15 @@ export default function App() {
         ))}
       </details>
 
-      {tab === TABS[6] ? (
+      {tab === TABS[7] ? (
         <GlossaryPanel key={glossaryTerm ?? "none"} initialTerm={glossaryTerm} />
+      ) : tab === TABS[6] ? (
+        <PuttingPanel
+          onGlossary={(term) => {
+            setGlossaryTerm(term);
+            setTab(TABS[7]);
+          }}
+        />
       ) : tab === TABS[5] ? (
         <VariationPanel />
       ) : tab === TABS[4] ? (

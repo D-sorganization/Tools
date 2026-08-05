@@ -19,12 +19,15 @@ from __future__ import annotations
 from ._contracts import ensure
 from .glossary_entries_a_l import ENTRIES as _ENTRIES_A_L
 from .glossary_entries_l_z import ENTRIES as _ENTRIES_L_Z
+from .glossary_entries_putting import ENTRIES as _ENTRIES_PUTTING
 from .glossary_types import GlossaryEntry
 
 __all__ = ["FIELD_TO_TERM", "GLOSSARY", "GlossaryEntry", "search_terms"]
 
 #: Every term used across the app, keyed snake_case. Sorted by key.
-GLOSSARY: dict[str, GlossaryEntry] = dict(sorted((_ENTRIES_A_L | _ENTRIES_L_Z).items()))
+GLOSSARY: dict[str, GlossaryEntry] = dict(
+    sorted((_ENTRIES_A_L | _ENTRIES_L_Z | _ENTRIES_PUTTING).items())
+)
 
 
 #: Explanation field -> the glossary term it pre-selects, for every
@@ -62,6 +65,14 @@ FIELD_TO_TERM: dict[str, str] = {
     "joint_torques": "inverse_dynamics",
     "joint_power": "power",
     "reaction_forces": "joint_reaction_force",
+    # PUTT_EXPLANATIONS fields (#4125 H3)
+    "putt_rollout_m": "stimp",
+    "putt_skid_m": "skid",
+    "putt_skid_pct": "skid",
+    "putt_time_s": "pure_roll",
+    "putt_break_m": "break",
+    "putt_speed_at_hole_mps": "capture_speed",
+    "putt_margin": "capture_speed",
 }
 
 
