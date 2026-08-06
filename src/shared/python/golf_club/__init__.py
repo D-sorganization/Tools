@@ -50,6 +50,27 @@ from .types import (
     ComponentRole,
     RigidTransform,
 )
+from .wedge_cad import WedgeMeasuredMetrics, WedgeSolidResult, build_wedge_solid
+from .wedge_export import (
+    WEDGE_EXPORT_FORMAT,
+    WedgeExportArtifact,
+    WedgeExportFormat,
+    WedgeExportRequest,
+    WedgeExportResult,
+    export_wedge_artifacts,
+)
+from .wedge_parameters import (
+    Handedness,
+    WedgeGeometryProvenance,
+    WedgeHeadParameters,
+    WedgePreset,
+    wedge_preset,
+)
+from .wedge_serialization import (
+    WEDGE_PARAMETERS_FORMAT,
+    wedge_parameters_from_json,
+    wedge_parameters_to_json,
+)
 
 __all__ = [
     "CURRENT_FORMAT",
@@ -62,6 +83,7 @@ __all__ = [
     "ComponentMassProperties",
     "ComponentRole",
     "ExtrapolationPolicy",
+    "Handedness",
     "RigidTransform",
     "SHAFT_PROFILE_FORMAT",
     "ShaftProfile",
@@ -72,11 +94,24 @@ __all__ = [
     "ShaftModalSettings",
     "ShaftTipLoad",
     "ShaftTipResponse",
+    "WedgeHeadParameters",
+    "WedgeGeometryProvenance",
+    "WEDGE_EXPORT_FORMAT",
+    "WedgeExportArtifact",
+    "WedgeExportFormat",
+    "WedgeExportRequest",
+    "WedgeExportResult",
+    "WedgeMeasuredMetrics",
+    "WedgePreset",
+    "WedgeSolidResult",
+    "WEDGE_PARAMETERS_FORMAT",
     "assemble_mass_properties",
     "assembly_from_json",
     "assembly_from_json_dict",
     "assembly_to_json",
     "assembly_to_json_dict",
+    "build_wedge_solid",
+    "export_wedge_artifacts",
     "scale_shaft_profile",
     "shaft_component_mass_properties",
     "shaft_profile_from_csv",
@@ -87,4 +122,7 @@ __all__ = [
     "shaft_profile_to_json_dict",
     "solve_shaft_bending_modes",
     "solve_cantilever_tip_response",
+    "wedge_preset",
+    "wedge_parameters_from_json",
+    "wedge_parameters_to_json",
 ]

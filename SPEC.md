@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.7                                      |
-| **Spec Version**        | 1.5.7                                      |
+| **Current Version**     | 1.5.8                                      |
+| **Spec Version**        | 1.5.8                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,22 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-05 Exact modern-wedge CAD foundation
+
+- `shared.python.golf_club` defines a provenance-bearing, immutable modern-wedge
+  family with editable handedness, loft, lie, bounce, face dimensions, sole
+  width, topline, leading-edge radius, rear curvature, face progression, hollow
+  hosel geometry, density, and target mass.
+- The pinned build123d/OpenCascade stack generates one valid exact solid and
+  independently recovers loft, lie, bounce, face span, volume, mass, and target
+  residual from its B-Rep.
+- Strict versioned parameter JSON and deterministic STEP, BREP, and configurable
+  STL export include units, kernel metadata, provenance, requested values, and
+  measured residuals. STEP re-import and byte-determinism are regression tested.
+- `docs/specs/GOLF_CLUB_WEDGE_CAD.md` defines frames, datums, supported claims,
+  dependency/licensing evidence, and the remaining grind/cavity/optimization
+  release boundary.
 
 ### 2026-08-05 Measured golf-shaft profiles and flexible reference models
 
