@@ -65,6 +65,8 @@ def build_result_tabs() -> tuple[
     landing = LandingCanvas()
     scatter = DatasetScatterView()
     arcs = ArcOverlayView()
+    scatter.selectionChanged.connect(arcs.set_selected_trial)
+    arcs.selectionChanged.connect(scatter.set_selected_trial)
     for widget, label in (
         (summary, "Summary"),
         (sensitivity, "Sensitivity"),

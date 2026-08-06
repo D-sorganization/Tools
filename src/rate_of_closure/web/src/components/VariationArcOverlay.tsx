@@ -1,34 +1,82 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import type { Vec3 } from "../model/simulation";
-import type {
-  SwingTrialStatusTs,
-  SwingVariationResultTs,
-} from "../model/variationSwingEnsemble";
-import { BUTTON_CLASS, INPUT_CLASS } from "./variationUi";
+import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
+import type { SwingTrialStatusTs } from "../model/variationSwingEnsemble";
+import {
+  geometricVariability,
+  swingTraceRows,
+  type SwingPointKindTs,
+} from "../model/variationGeometry";
+import {
+  makeVariationPlotDefinition,
+  variationPlotDefinitionToJson,
+  variationResultFingerprint,
+} from "../model/variationPlotDefinition";
+import { VariationVariabilityTimeline } from "./VariationVariabilityTimeline";
+import {
+  drawVariationArcScene,
+  type VariationCameraState,
+} from "./VariationArcDrawing";
+import {
+  BUTTON_CLASS,
+  downloadBlob,
+  downloadSvgElement,
+  downloadText,
+  INPUT_CLASS,
+} from "./variationUi";
 
 interface VariationArcOverlayProps {
   ensemble: SwingVariationResultTs;
+  selectedTrialIndex: number | null;
+  onSelectedTrialChange: (trialIndex: number | null) => void;
 }
 
-type PointKind = "pivot" | "wrist" | "clubhead";
-interface CameraState { yaw: number; pitch: number; zoom: number }
-
-const INITIAL_CAMERA: CameraState = { yaw: -0.65, pitch: 0.38, zoom: 1 };
+const INITIAL_CAMERA: VariationCameraState = { yaw: -0.65, pitch: 0.38, zoom: 1 };
 const MAX_VERTICES = 200_000;
 
-export function VariationArcOverlay({ ensemble }: VariationArcOverlayProps): JSX.Element {
+export function VariationArcOverlay({
+  ensemble,
+  selectedTrialIndex,
+  onSelectedTrialChange,
+}: VariationArcOverlayProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const variabilitySvgRef = useRef<SVGSVGElement>(null);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
-  const [pointKind, setPointKind] = useState<PointKind>("clubhead");
-  const [camera, setCamera] = useState<CameraState>(INITIAL_CAMERA);
-  const traces = useMemo(
-    () => traceRows(ensemble, pointKind),
-    [ensemble, pointKind],
+  const [pointKind, setPointKind] = useState<SwingPointKindTs>("clubhead");
+  const [quietThresholdMm, setQuietThresholdMm] = useState(5);
+  const [outcomeFilter, setOutcomeFilter] = useState<"all" | SwingTrialStatusTs>("all");
+  const [phaseEndPercent, setPhaseEndPercent] = useState(100);
+  const [sourceKey, setSourceKey] = useState("all");
+  const [sourceBand, setSourceBand] = useState("all");
+  const [camera, setCamera] = useState<VariationCameraState>(INITIAL_CAMERA);
+  const traces = useMemo(() => {
+    const rows = swingTraceRows(ensemble, pointKind);
+    const sourceIndex = ensemble.dataset.inputNames.indexOf(sourceKey);
+    const ranked = sourceIndex < 0 ? [] : ensemble.dataset.inputs
+      .map((row, trialIndex) => ({ trialIndex, value: row[sourceIndex] }))
+      .filter((item) => Number.isFinite(item.value))
+      .sort((a, b) => a.value - b.value || a.trialIndex - b.trialIndex);
+    const bandByTrial = new Map(ranked.map((item, rank) => [
+      item.trialIndex,
+      rank < ranked.length / 3 ? "lower" : rank < 2 * ranked.length / 3 ? "middle" : "upper",
+    ]));
+    return rows.filter((row) => {
+      if (outcomeFilter !== "all" && row.status !== outcomeFilter) return false;
+      if (sourceIndex < 0 || sourceBand === "all") return true;
+      return bandByTrial.get(row.trialIndex) === sourceBand;
+    }).map((row) => {
+      const count = Math.max(2, Math.ceil(row.points.length * phaseEndPercent / 100));
+      return { ...row, points: row.points.slice(0, count), timesS: row.timesS.slice(0, count) };
+    });
+  }, [ensemble, outcomeFilter, phaseEndPercent, pointKind, sourceBand, sourceKey]);
+  const variability = useMemo(
+    () => geometricVariability(traces, quietThresholdMm / 1000),
+    [quietThresholdMm, traces],
   );
   const validCount = traces.length;
   const rawVertices = traces.reduce((total, trace) => total + trace.points.length, 0);
   const stride = Math.max(1, Math.ceil(rawVertices / MAX_VERTICES));
+  const resultId = variationResultFingerprint(ensemble);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -40,8 +88,10 @@ export function VariationArcOverlay({ ensemble }: VariationArcOverlayProps): JSX
     canvas.width = Math.round(width * ratio);
     canvas.height = Math.round(height * ratio);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    drawScene(context, width, height, traces, camera, stride);
-  }, [camera, stride, traces]);
+    drawVariationArcScene(
+      context, width, height, traces, variability, camera, stride, selectedTrialIndex,
+    );
+  }, [camera, selectedTrialIndex, stride, traces, variability]);
 
   const rotate = (dx: number, dy: number) => setCamera((current) => ({
     ...current,
@@ -62,11 +112,61 @@ export function VariationArcOverlay({ ensemble }: VariationArcOverlayProps): JSX
             aria-label="Arc modeled point"
             className={INPUT_CLASS}
             value={pointKind}
-            onChange={(event) => setPointKind(event.target.value as PointKind)}
+            onChange={(event) => setPointKind(event.target.value as SwingPointKindTs)}
           >
             <option value="clubhead">Clubhead Reference</option>
             <option value="wrist">Wrist</option>
             <option value="pivot">Pivot</option>
+          </select>
+        </label>
+        <label className="min-w-48 flex-1 text-xs text-slate-300">
+          <span className="mb-1 block">Quiet-Zone RMS Threshold [mm]</span>
+          <input
+            aria-label="Quiet-zone RMS threshold millimetres"
+            className={INPUT_CLASS}
+            type="number"
+            min="0.01"
+            max="1000"
+            step="0.1"
+            value={quietThresholdMm}
+            onChange={(event) => {
+              const value = Number(event.target.value);
+              if (Number.isFinite(value) && value > 0) setQuietThresholdMm(value);
+            }}
+          />
+        </label>
+        <label className="min-w-48 flex-1 text-xs text-slate-300">
+          <span className="mb-1 block">Outcome Cohort</span>
+          <select aria-label="Arc outcome cohort" className={INPUT_CLASS} value={outcomeFilter} onChange={(event) => setOutcomeFilter(event.target.value as "all" | SwingTrialStatusTs)}>
+            <option value="all">All Outcomes</option><option value="evaluated_hit">Hits</option><option value="evaluated_no_impact">No Impact</option><option value="numerical_failure">Numerical Failures</option>
+          </select>
+        </label>
+        <label className="min-w-48 flex-1 text-xs text-slate-300">
+          <span className="mb-1 block">Perturbation Source</span>
+          <select aria-label="Arc perturbation source" className={INPUT_CLASS} value={sourceKey} onChange={(event) => setSourceKey(event.target.value)}>
+            <option value="all">All Sources</option>{ensemble.dataset.inputNames.map((name) => <option key={name} value={name}>{name}</option>)}
+          </select>
+        </label>
+        <label className="min-w-40 flex-1 text-xs text-slate-300">
+          <span className="mb-1 block">Source Quantile Band</span>
+          <select aria-label="Arc perturbation band" className={INPUT_CLASS} value={sourceBand} onChange={(event) => setSourceBand(event.target.value)} disabled={sourceKey === "all"}>
+            <option value="all">All Values</option><option value="lower">Lower Third</option><option value="middle">Middle Third</option><option value="upper">Upper Third</option>
+          </select>
+        </label>
+        <label className="min-w-56 flex-1 text-xs text-slate-300">
+          <span className="mb-1 block">Displayed Swing Phase: 0–{phaseEndPercent}%</span>
+          <input aria-label="Arc phase end percent" className="w-full" type="range" min="5" max="100" step="1" value={phaseEndPercent} onChange={(event) => setPhaseEndPercent(Number(event.target.value))} />
+        </label>
+        <label className="min-w-48 flex-1 text-xs text-slate-300">
+          <span className="mb-1 block">Highlighted Trial (Linked Across Plots)</span>
+          <select
+            aria-label="Arc highlighted trial"
+            className={INPUT_CLASS}
+            value={selectedTrialIndex ?? ""}
+            onChange={(event) => onSelectedTrialChange(event.target.value === "" ? null : Number(event.target.value))}
+          >
+            <option value="">All Trials</option>
+            {traces.map((trace) => <option key={trace.trialIndex} value={trace.trialIndex}>Trial {trace.trialIndex + 1}</option>)}
           </select>
         </label>
         <button
@@ -78,8 +178,55 @@ export function VariationArcOverlay({ ensemble }: VariationArcOverlayProps): JSX
         </button>
       </div>
       <p className="text-xs text-slate-400" aria-live="polite">
-        {validCount}/{ensemble.runs.length} trials shown · {Math.ceil(rawVertices / stride).toLocaleString()}/{rawVertices.toLocaleString()} vertices · Frame: {ensemble.coordinateFrame}. Drag to rotate; scroll or use +/− to zoom.
+        {validCount}/{ensemble.runs.length} trials shown · {Math.ceil(rawVertices / stride).toLocaleString()}/{rawVertices.toLocaleString()} vertices · {variability.quietMask.filter(Boolean).length}/{variability.quietMask.length} quiet samples · Frame: {ensemble.coordinateFrame}; alignment: common simulation time. Drag to rotate; scroll or use +/− to zoom.
       </p>
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          className={BUTTON_CLASS}
+          onClick={() => canvasRef.current?.toBlob((blob) => {
+            if (blob) downloadBlob(`${resultId}-swing-arcs.png`, blob);
+          }, "image/png")}
+        >
+          Swing Arcs PNG
+        </button>
+        <button
+          type="button"
+          className={BUTTON_CLASS}
+          onClick={() => variabilitySvgRef.current
+            && downloadSvgElement(`${resultId}-geometric-variability.svg`, variabilitySvgRef.current)}
+        >
+          Variability SVG
+        </button>
+        <button
+          type="button"
+          className={BUTTON_CLASS}
+          onClick={() => downloadText(
+            `${resultId}-swing-arcs.plot.json`,
+            variationPlotDefinitionToJson(makeVariationPlotDefinition(ensemble, {
+              plotType: "swing_arc_overlay",
+              coordinateFrame: ensemble.coordinateFrame,
+              xVariableKey: null,
+              yVariableKey: null,
+              pointId: `swing.${pointKind === "clubhead" ? "clubhead.reference" : pointKind}`,
+              positionUnit: "m",
+              alignmentBasis: variability.alignmentBasis,
+              quietThresholdM: variability.quietThresholdM,
+              selectedTrialIndex,
+              cameraYawDeg: camera.yaw * 180 / Math.PI,
+              cameraPitchDeg: camera.pitch * 180 / Math.PI,
+              cameraZoom: camera.zoom,
+              outcomeFilter,
+              phaseEndFraction: phaseEndPercent / 100,
+              perturbationSourceKey: sourceKey === "all" ? null : sourceKey,
+              perturbationBand: sourceBand === "all" ? null : sourceBand,
+            })),
+            "application/json",
+          )}
+        >
+          Arc Plot Definition JSON
+        </button>
+      </div>
       <canvas
         ref={canvasRef}
         className="h-auto min-h-96 w-full touch-none rounded-lg border border-slate-800 bg-slate-950/70"
@@ -112,139 +259,7 @@ export function VariationArcOverlay({ ensemble }: VariationArcOverlayProps): JSX
           event.preventDefault();
         }}
       />
+      <VariationVariabilityTimeline data={variability} svgRef={variabilitySvgRef} />
     </div>
   );
-}
-
-interface TraceRow {
-  points: Vec3[];
-  status: SwingTrialStatusTs;
-}
-
-function traceRows(
-  ensemble: SwingVariationResultTs,
-  pointKind: PointKind,
-): TraceRow[] {
-  return ensemble.runs.flatMap((trial) => {
-    if (trial.run === null) return [];
-    const points = trial.run.swing.map((sample) => {
-      if (pointKind === "clubhead") return sample.position;
-      const index = pointKind === "pivot" ? 0 : Math.max(sample.joints.length - 2, 0);
-      return sample.joints[index] ?? sample.position;
-    });
-    return [{ points, status: trial.status }];
-  });
-}
-
-function drawScene(
-  context: CanvasRenderingContext2D,
-  width: number,
-  height: number,
-  traces: TraceRow[],
-  camera: CameraState,
-  stride: number,
-): void {
-  context.clearRect(0, 0, width, height);
-  context.fillStyle = "#07101f";
-  context.fillRect(0, 0, width, height);
-  if (traces.length === 0) {
-    context.fillStyle = "#94a3b8";
-    context.textAlign = "center";
-    context.fillText("No evaluated swing traces", width / 2, height / 2);
-    return;
-  }
-  const allPoints = traces.flatMap((trace) => trace.points);
-  const center = boundsCenter(allPoints);
-  const radius = Math.max(...allPoints.map((point) => distance(point, center)), 1e-6);
-  const project = (point: Vec3): [number, number] => {
-    const rotated = rotatePoint(point, center, camera);
-    const scale = 0.42 * Math.min(width, height) * camera.zoom / radius;
-    return [width / 2 + rotated[0] * scale, height / 2 - rotated[1] * scale];
-  };
-  drawAxes(context, center, radius, project);
-  traces.forEach((trace) => {
-    context.beginPath();
-    context.strokeStyle = trace.status === "evaluated_hit" ? "#38bdf8" : "#f59e0b";
-    context.globalAlpha = 0.28;
-    context.lineWidth = 1;
-    trace.points.forEach((point, index) => {
-      if (index % stride !== 0 && index !== trace.points.length - 1) return;
-      const [x, y] = project(point);
-      if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
-    });
-    context.stroke();
-  });
-  const median = medianTrace(traces.map((trace) => trace.points));
-  context.beginPath();
-  context.strokeStyle = "#f8fafc";
-  context.globalAlpha = 0.95;
-  context.lineWidth = 2.4;
-  median.forEach((point, index) => {
-    if (index % stride !== 0 && index !== median.length - 1) return;
-    const [x, y] = project(point);
-    if (index === 0) context.moveTo(x, y); else context.lineTo(x, y);
-  });
-  context.stroke();
-  context.globalAlpha = 1;
-}
-
-function rotatePoint(point: Vec3, center: Vec3, camera: CameraState): Vec3 {
-  const x = point[0] - center[0];
-  const y = point[1] - center[1];
-  const z = point[2] - center[2];
-  const cy = Math.cos(camera.yaw);
-  const sy = Math.sin(camera.yaw);
-  const cp = Math.cos(camera.pitch);
-  const sp = Math.sin(camera.pitch);
-  const yawX = cy * x - sy * z;
-  const yawZ = sy * x + cy * z;
-  return [yawX, cp * y - sp * yawZ, sp * y + cp * yawZ];
-}
-
-function boundsCenter(points: Vec3[]): Vec3 {
-  const bounds = [0, 1, 2].map((axis) => {
-    const values = points.map((point) => point[axis]);
-    return (Math.min(...values) + Math.max(...values)) / 2;
-  });
-  return bounds as Vec3;
-}
-
-const distance = (point: Vec3, center: Vec3): number => Math.hypot(
-  point[0] - center[0], point[1] - center[1], point[2] - center[2],
-);
-
-function medianTrace(traces: Vec3[][]): Vec3[] {
-  const count = Math.min(...traces.map((trace) => trace.length));
-  return Array.from({ length: count }, (_, sampleIndex) => [0, 1, 2].map((axis) => {
-    const values = traces.map((trace) => trace[sampleIndex][axis]).sort((a, b) => a - b);
-    const middle = Math.floor(values.length / 2);
-    return values.length % 2 ? values[middle] : (values[middle - 1] + values[middle]) / 2;
-  }) as Vec3);
-}
-
-function drawAxes(
-  context: CanvasRenderingContext2D,
-  center: Vec3,
-  radius: number,
-  project: (point: Vec3) => [number, number],
-): void {
-  const axes: Array<{ end: Vec3; color: string; label: string }> = [
-    { end: [center[0] + radius * 0.4, center[1], center[2]], color: "#ef6464", label: "x Target" },
-    { end: [center[0], center[1] + radius * 0.4, center[2]], color: "#4ade80", label: "y Up" },
-    { end: [center[0], center[1], center[2] + radius * 0.4], color: "#60a5fa", label: "z Right" },
-  ];
-  const origin = project(center);
-  context.globalAlpha = 0.85;
-  context.font = "12px system-ui";
-  axes.forEach((axis) => {
-    const end = project(axis.end);
-    context.beginPath();
-    context.strokeStyle = axis.color;
-    context.moveTo(...origin);
-    context.lineTo(...end);
-    context.stroke();
-    context.fillStyle = axis.color;
-    context.fillText(axis.label, end[0] + 4, end[1] - 4);
-  });
-  context.globalAlpha = 1;
 }

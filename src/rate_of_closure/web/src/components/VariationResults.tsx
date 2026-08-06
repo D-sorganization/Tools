@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import type { TargetRegionTs } from "../model/targets";
 import { DISTANCE_UNITS } from "../model/units";
@@ -29,6 +29,7 @@ export function VariationResults({
   distanceUnit,
   ensemble = null,
 }: VariationResultsProps): JSX.Element {
+  const [selectedTrialIndex, setSelectedTrialIndex] = useState<number | null>(null);
   const stats = useMemo(() => dataset ? summaryStats(dataset) : [], [dataset]);
   const spearman = useMemo(() => dataset ? spearmanMatrix(dataset) : null, [dataset]);
 
@@ -39,7 +40,12 @@ export function VariationResults({
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             Impact and Shot-Outcome Scatter
           </h2>
-          <VariationScatter dataset={dataset} ensemble={ensemble} />
+          <VariationScatter
+            dataset={dataset}
+            ensemble={ensemble}
+            selectedTrialIndex={selectedTrialIndex}
+            onSelectedTrialChange={setSelectedTrialIndex}
+          />
         </div>
       )}
 
@@ -48,7 +54,11 @@ export function VariationResults({
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             All Swing Arcs — Interactive 3D Overlay
           </h2>
-          <VariationArcOverlay ensemble={ensemble} />
+          <VariationArcOverlay
+            ensemble={ensemble}
+            selectedTrialIndex={selectedTrialIndex}
+            onSelectedTrialChange={setSelectedTrialIndex}
+          />
         </div>
       )}
 

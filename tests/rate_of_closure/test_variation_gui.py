@@ -193,7 +193,8 @@ class TestRunAndResults:
         assert tab.ensemble_result() is not None
         assert tab._sensitivity_table.rowCount() == 1
         assert tab._ensemble_scatter._canvas.axes.collections
-        assert len(tab._arc_overlay._canvas.axes.lines) == 4
+        assert len(tab._arc_overlay._canvas.axes.lines) >= 4
+        assert tab._arc_overlay._variability_canvas.axes.lines
         assert "3/3 trials" in tab._arc_overlay._status.text()
         assert tab._export_trace_csv.isEnabled()
         assert tab._export_ensemble_json.isEnabled()

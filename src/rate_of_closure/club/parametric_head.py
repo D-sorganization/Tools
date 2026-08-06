@@ -82,8 +82,11 @@ def _refined_sections(
         for step in range(_BODY_SUBDIVISIONS):
             fraction = step / _BODY_SUBDIVISIONS
             refined.append(
-                tuple(
-                    a + fraction * (b - a) for a, b in zip(first, second, strict=True)
+                (
+                    first[0] + fraction * (second[0] - first[0]),
+                    first[1] + fraction * (second[1] - first[1]),
+                    first[2] + fraction * (second[2] - first[2]),
+                    first[3] + fraction * (second[3] - first[3]),
                 )
             )
     refined.append(sections[-1])

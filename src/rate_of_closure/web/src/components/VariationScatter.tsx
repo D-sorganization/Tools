@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 
 import type { VariationDatasetTs } from "../model/variation";
 import {
@@ -6,7 +6,12 @@ import {
   buildScalarScatter,
   type ScalarPlotVariableTs,
 } from "../model/variationPlotData";
-import { INPUT_CLASS } from "./variationUi";
+import {
+  makeVariationPlotDefinition,
+  variationPlotDefinitionToJson,
+  variationResultFingerprint,
+} from "../model/variationPlotDefinition";
+import { BUTTON_CLASS, downloadSvgElement, downloadText, INPUT_CLASS } from "./variationUi";
 import type {
   SwingTrialStatusTs,
   SwingVariationResultTs,
@@ -15,6 +20,8 @@ import type {
 interface VariationScatterProps {
   dataset: VariationDatasetTs;
   ensemble?: SwingVariationResultTs | null;
+  selectedTrialIndex: number | null;
+  onSelectedTrialChange: (trialIndex: number | null) => void;
 }
 
 const WIDTH = 640;
@@ -24,7 +31,13 @@ const MARGIN = { left: 66, right: 24, top: 28, bottom: 62 };
 const axisLabel = (variable: ScalarPlotVariableTs): string =>
   variable.unit ? `${variable.label} [${variable.unit}]` : variable.label;
 
-export function VariationScatter({ dataset, ensemble = null }: VariationScatterProps): JSX.Element {
+export function VariationScatter({
+  dataset,
+  ensemble = null,
+  selectedTrialIndex,
+  onSelectedTrialChange,
+}: VariationScatterProps): JSX.Element {
+  const svgRef = useRef<SVGSVGElement>(null);
   const variables = useMemo(() => buildScalarPlotVariables(dataset), [dataset]);
   const defaultX = variables.find((item) => item.kind === "input")?.key ?? variables[0].key;
   const defaultY = variables.find((item) => item.key === "output:carry_m")?.key
@@ -50,6 +63,8 @@ export function VariationScatter({ dataset, ensemble = null }: VariationScatterP
     const plotted = scatter.points.filter((point) => cohort(point.trialIndex) === status).length;
     return { status, total, plotted, unavailable: total - plotted };
   });
+  const result = ensemble ?? dataset;
+  const resultId = variationResultFingerprint(result);
 
   return (
     <div className="space-y-3">
@@ -67,12 +82,55 @@ export function VariationScatter({ dataset, ensemble = null }: VariationScatterP
           onChange={setYKey}
         />
       </div>
+      <TrialSelect
+        trialIndices={scatter.points.map((point) => point.trialIndex)}
+        selectedTrialIndex={selectedTrialIndex}
+        onSelectedTrialChange={onSelectedTrialChange}
+      />
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          className={BUTTON_CLASS}
+          onClick={() => svgRef.current && downloadSvgElement(`${resultId}-scatter.svg`, svgRef.current)}
+        >
+          Scatter SVG
+        </button>
+        <button
+          type="button"
+          className={BUTTON_CLASS}
+          onClick={() => downloadText(
+            `${resultId}-scatter.plot.json`,
+            variationPlotDefinitionToJson(makeVariationPlotDefinition(result, {
+              plotType: "scalar_scatter",
+              coordinateFrame: ensemble?.coordinateFrame ?? null,
+              xVariableKey: safeX,
+              yVariableKey: safeY,
+              pointId: null,
+              positionUnit: null,
+              alignmentBasis: null,
+              quietThresholdM: null,
+              selectedTrialIndex,
+              cameraYawDeg: null,
+              cameraPitchDeg: null,
+              cameraZoom: null,
+              outcomeFilter: null,
+              phaseEndFraction: null,
+              perturbationSourceKey: null,
+              perturbationBand: null,
+            })),
+            "application/json",
+          )}
+        >
+          Scatter Plot Definition JSON
+        </button>
+      </div>
       <p className="text-xs text-slate-400" aria-live="polite">
         {ensembleCounts
           ? ensembleCounts.map((entry) => `${cohortLabel(entry.status)}: ${entry.plotted}/${entry.total} plotted${entry.unavailable ? `, ${entry.unavailable} unavailable` : ""}`).join(" · ")
           : `Evaluated: ${scatter.cohorts.evaluated.plotted}/${scatter.cohorts.evaluated.total} plotted · Failures: ${scatter.cohorts.failure.plotted}/${scatter.cohorts.failure.total} plotted${scatter.cohorts.failure.unavailable ? `, ${scatter.cohorts.failure.unavailable} unavailable` : ""}. Scalar studies do not expose a geometric no-impact cohort.`}
       </p>
       <svg
+        ref={svgRef}
         viewBox={`0 0 ${WIDTH} ${HEIGHT}`}
         className="h-auto w-full rounded-lg border border-slate-800 bg-slate-950/60"
         role="img"
@@ -80,18 +138,34 @@ export function VariationScatter({ dataset, ensemble = null }: VariationScatterP
       >
         <line x1={MARGIN.left} y1={HEIGHT - MARGIN.bottom} x2={WIDTH - MARGIN.right} y2={HEIGHT - MARGIN.bottom} stroke="#64748b" />
         <line x1={MARGIN.left} y1={MARGIN.top} x2={MARGIN.left} y2={HEIGHT - MARGIN.bottom} stroke="#64748b" />
-        {scatter.points.map((point) => (
+        {scatter.points.map((point) => {
+          const selected = point.trialIndex === selectedTrialIndex;
+          const select = () => onSelectedTrialChange(selected ? null : point.trialIndex);
+          return (
           <circle
             key={point.trialIndex}
             cx={scaleX(point.x, bounds)}
             cy={scaleY(point.y, bounds)}
-            r="4"
+            r={selected ? 7 : 4}
             fill={cohortColor(cohort(point.trialIndex))}
-            opacity="0.78"
+            opacity={selectedTrialIndex === null || selected ? "0.9" : "0.32"}
+            stroke={selected ? "#f8fafc" : "none"}
+            strokeWidth={selected ? "2" : "0"}
+            role="button"
+            tabIndex={0}
+            aria-label={`Select Trial ${point.trialIndex + 1}`}
+            onClick={select}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                select();
+              }
+            }}
           >
             <title>{`Trial ${point.trialIndex + 1}: ${point.x.toPrecision(5)}, ${point.y.toPrecision(5)}`}</title>
           </circle>
-        ))}
+          );
+        })}
         <text x={(MARGIN.left + WIDTH - MARGIN.right) / 2} y={HEIGHT - 18} textAnchor="middle" fill="#cbd5e1" fontSize="13">
           {axisLabel(scatter.xVariable)}
         </text>
@@ -104,7 +178,54 @@ export function VariationScatter({ dataset, ensemble = null }: VariationScatterP
           </text>
         )}
       </svg>
+      <details>
+        <summary className="cursor-pointer text-xs text-slate-300">
+          Accessible Plotted-Trial Data ({scatter.points.length})
+        </summary>
+        <div className="mt-2 max-h-64 overflow-auto rounded border border-slate-800">
+          <table className="w-full text-left text-xs text-slate-300">
+            <thead className="sticky top-0 bg-slate-950">
+              <tr><th className="px-2 py-1">Trial</th><th className="px-2 py-1">Cohort</th><th className="px-2 py-1">{axisLabel(scatter.xVariable)}</th><th className="px-2 py-1">{axisLabel(scatter.yVariable)}</th></tr>
+            </thead>
+            <tbody>
+              {scatter.points.map((point) => (
+                <tr key={point.trialIndex} className={point.trialIndex === selectedTrialIndex ? "bg-sky-900/40" : "border-t border-slate-800/60"}>
+                  <td className="px-2 py-1"><button type="button" className="underline" onClick={() => onSelectedTrialChange(point.trialIndex)}>Trial {point.trialIndex + 1}</button></td>
+                  <td className="px-2 py-1">{cohort(point.trialIndex).replace(/_/g, " ")}</td>
+                  <td className="px-2 py-1 tabular-nums">{point.x.toPrecision(7)}</td>
+                  <td className="px-2 py-1 tabular-nums">{point.y.toPrecision(7)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </details>
     </div>
+  );
+}
+
+function TrialSelect({
+  trialIndices,
+  selectedTrialIndex,
+  onSelectedTrialChange,
+}: {
+  trialIndices: number[];
+  selectedTrialIndex: number | null;
+  onSelectedTrialChange: (trialIndex: number | null) => void;
+}): JSX.Element {
+  return (
+    <label className="block text-xs text-slate-300">
+      <span className="mb-1 block">Highlighted Trial (Linked Across Plots)</span>
+      <select
+        aria-label="Highlighted trial"
+        className={INPUT_CLASS}
+        value={selectedTrialIndex ?? ""}
+        onChange={(event) => onSelectedTrialChange(event.target.value === "" ? null : Number(event.target.value))}
+      >
+        <option value="">All Trials</option>
+        {trialIndices.map((trialIndex) => <option key={trialIndex} value={trialIndex}>Trial {trialIndex + 1}</option>)}
+      </select>
+    </label>
   );
 }
 

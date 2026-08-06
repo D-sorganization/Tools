@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterable
-
 import numpy as np
-from matplotlib.figure import Figure
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QComboBox,
+    QDoubleSpinBox,
     QFormLayout,
     QHBoxLayout,
     QLabel,
@@ -15,16 +14,31 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.ui.pyqt6.figure_canvas import LifecycleSafeFigureCanvas
+from rate_of_closure.ui.pyqt6.variation_geometry_rendering import (
+    draw_principal_spread,
+    draw_variability_timeline,
+)
+from rate_of_closure.ui.pyqt6.variation_plot_canvas import VariationPlotCanvas
+from rate_of_closure.ui.pyqt6.variation_plot_exports import (
+    VariationPlotExportControls,
+    arc_plot_definition,
+    scatter_plot_definition,
+)
+from rate_of_closure.ui.pyqt6.variation_plot_helpers import (
+    availability_text,
+    axis_label,
+    cohort_label,
+    dataset_values,
+    equal_3d_axes,
+    point_label,
+)
 from rate_of_closure.variation.plot_data import (
-    ArcOverlayData,
-    CohortAvailability,
     EnsemblePlotDataset,
     ScalarPlotVariable,
     scalar_plot_variables,
 )
 from rate_of_closure.variation.simulation_types import TrialEvaluationStatus
-from shared.python.swing_sim.variation import VariationDataset
+from shared.python.swing_sim.variation import LowVariabilityCriteria, VariationDataset
 
 _COHORT_COLORS = {
     TrialEvaluationStatus.EVALUATED_HIT: "#2f8bd6",
@@ -33,38 +47,22 @@ _COHORT_COLORS = {
 }
 
 
-class _PlotCanvas(LifecycleSafeFigureCanvas):
-    """Lifecycle-safe Matplotlib canvas exposing its one axes to tests/views."""
-
-    def __init__(self, *, projection: str | None = None) -> None:
-        figure = Figure(figsize=(6.0, 4.5), layout="constrained")
-        super().__init__(figure)
-        self.axes = figure.add_subplot(111, projection=projection)
-
-    def apply_theme(self) -> None:
-        """Apply the current Qt palette to figure, axes, and labels."""
-        window = self.palette().window().color().name()
-        text = self.palette().text().color().name()
-        self.figure.set_facecolor(window)
-        self.axes.set_facecolor(self.palette().window().color().lighter(105).name())
-        self.axes.tick_params(colors=text, labelsize=8)
-        axes = [self.axes.xaxis, self.axes.yaxis]
-        if hasattr(self.axes, "zaxis"):
-            axes.append(self.axes.zaxis)
-        for axis in axes:
-            axis.label.set_color(text)
-        self.axes.title.set_color(text)
-
-
 class DatasetScatterView(QWidget):
     """Selectable input/impact/shot scatter with cohort availability counts."""
+
+    selectionChanged = pyqtSignal(object)
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._dataset: EnsemblePlotDataset | None = None
         self._variation: VariationDataset | None = None
+        self._selected_trial: int | None = None
         self._x_combo = QComboBox()
         self._y_combo = QComboBox()
+        self._trial_combo = QComboBox()
+        self._trial_combo.setToolTip(
+            "Highlight one trial here and in every linked variation result view."
+        )
         self._x_combo.setToolTip(
             "Select any sampled input or available contact, impact, or shot scalar "
             "for the horizontal axis."
@@ -75,30 +73,49 @@ class DatasetScatterView(QWidget):
         )
         self._availability = QLabel("Run a trace-capable variation study.")
         self._availability.setWordWrap(True)
-        self._canvas = _PlotCanvas()
+        self._canvas = VariationPlotCanvas()
+        self._exports = VariationPlotExportControls(
+            lambda: self._canvas.figure,
+            lambda: scatter_plot_definition(
+                self._dataset,
+                self._variation,
+                str(self._x_combo.currentData()),
+                str(self._y_combo.currentData()),
+                self._selected_trial,
+            ),
+            "variation-scatter",
+        )
+        self._exports.setEnabled(False)
         selectors = QFormLayout()
         selectors.addRow("Horizontal Axis", self._x_combo)
         selectors.addRow("Vertical Axis", self._y_combo)
+        selectors.addRow("Highlighted Trial", self._trial_combo)
         layout = QVBoxLayout(self)
         layout.addLayout(selectors)
         layout.addWidget(self._availability)
+        layout.addWidget(self._exports)
         layout.addWidget(self._canvas, stretch=1)
         self._x_combo.currentIndexChanged.connect(self._redraw)
         self._y_combo.currentIndexChanged.connect(self._redraw)
+        self._trial_combo.currentIndexChanged.connect(self._selection_changed)
         self._clear()
 
     def set_plot_dataset(self, dataset: EnsemblePlotDataset) -> None:
         """Populate selectors and render the default paired scatter."""
         self._dataset = dataset
         self._variation = dataset.result.variation
+        self._set_trials(dataset.result.variation.plan.n_runs)
         self._set_variables(dataset.variables)
+        self._exports.setEnabled(True)
         self._redraw()
 
     def set_variation_dataset(self, dataset: VariationDataset) -> None:
         """Render scalar-only delivery/launch studies with failure accounting."""
         self._dataset = None
         self._variation = dataset
+        self._set_trials(dataset.plan.n_runs)
         self._set_variables(scalar_plot_variables(dataset))
+        self._exports.setEnabled(True)
         self._redraw()
 
     def _set_variables(self, variables: tuple[ScalarPlotVariable, ...]) -> None:
@@ -107,10 +124,32 @@ class DatasetScatterView(QWidget):
             combo.blockSignals(True)
             combo.clear()
             for variable in variables:
-                combo.addItem(_axis_label(variable), variable.key)
+                combo.addItem(axis_label(variable), variable.key)
             combo.blockSignals(False)
         self._select_default(self._x_combo, "input:")
         self._select_default(self._y_combo, "output:carry_m")
+
+    def _set_trials(self, count: int) -> None:
+        self._trial_combo.blockSignals(True)
+        self._trial_combo.clear()
+        self._trial_combo.addItem("All Trials", None)
+        for trial_index in range(count):
+            self._trial_combo.addItem(f"Trial {trial_index + 1}", trial_index)
+        self._trial_combo.blockSignals(False)
+
+    def set_selected_trial(self, trial_index: int | None) -> None:
+        """Apply a linked trial selection without creating a signal loop."""
+        self._selected_trial = trial_index
+        index = self._trial_combo.findData(trial_index)
+        self._trial_combo.blockSignals(True)
+        self._trial_combo.setCurrentIndex(max(index, 0))
+        self._trial_combo.blockSignals(False)
+        self._redraw()
+
+    def _selection_changed(self) -> None:
+        self._selected_trial = self._trial_combo.currentData()
+        self.selectionChanged.emit(self._selected_trial)
+        self._redraw()
 
     @staticmethod
     def _select_default(combo: QComboBox, prefix: str) -> None:
@@ -153,18 +192,27 @@ class DatasetScatterView(QWidget):
                     scatter.y[mask],
                     s=20,
                     alpha=0.72,
-                    label=_cohort_label(cohort),
+                    label=cohort_label(cohort),
                     color=_COHORT_COLORS[cohort],
                     edgecolors="none",
                 )
-        axes.set_xlabel(_axis_label(scatter.x_variable))
-        axes.set_ylabel(_axis_label(scatter.y_variable))
+        if self._selected_trial is not None:
+            selected = scatter.trial_indices == self._selected_trial
+            axes.scatter(
+                scatter.x[selected],
+                scatter.y[selected],
+                s=72,
+                facecolors="none",
+                edgecolors="#f2f4f8",
+                linewidths=1.8,
+                label=f"Trial {self._selected_trial + 1}",
+            )
+        axes.set_xlabel(axis_label(scatter.x_variable))
+        axes.set_ylabel(axis_label(scatter.y_variable))
         axes.set_title("Variation Effects Across Typed Trial Outcomes")
         if axes.collections:
             axes.legend(loc="best", fontsize=8)
-        self._availability.setText(
-            _availability_text(scatter.cohort_summaries.values())
-        )
+        self._availability.setText(availability_text(scatter.cohort_summaries.values()))
         self._canvas.draw_idle()
 
     def _redraw_scalar(self, dataset: VariationDataset) -> None:
@@ -173,8 +221,8 @@ class DatasetScatterView(QWidget):
         by_key = {variable.key: variable for variable in variables}
         x_variable = by_key[str(self._x_combo.currentData())]
         y_variable = by_key[str(self._y_combo.currentData())]
-        x_values = _dataset_values(dataset, x_variable)
-        y_values = _dataset_values(dataset, y_variable)
+        x_values = dataset_values(dataset, x_variable)
+        y_values = dataset_values(dataset, y_variable)
         finite = np.isfinite(x_values) & np.isfinite(y_values)
         axes = self._canvas.axes
         axes.clear()
@@ -188,8 +236,8 @@ class DatasetScatterView(QWidget):
             edgecolors="none",
             label="Evaluated",
         )
-        axes.set_xlabel(_axis_label(x_variable))
-        axes.set_ylabel(_axis_label(y_variable))
+        axes.set_xlabel(axis_label(x_variable))
+        axes.set_ylabel(axis_label(y_variable))
         axes.set_title("Variation Effects Across Evaluated Trials")
         if axes.collections:
             axes.legend(loc="best", fontsize=8)
@@ -206,36 +254,94 @@ class DatasetScatterView(QWidget):
 class ArcOverlayView(QWidget):
     """Rotatable all-trial 3-D swing arcs with a median reference trace."""
 
+    selectionChanged = pyqtSignal(object)
+
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._dataset: EnsemblePlotDataset | None = None
+        self._selected_trial: int | None = None
         self._point_combo = QComboBox()
+        self._trial_combo = QComboBox()
+        self._trial_combo.setToolTip(
+            "Highlight one trial here and in every linked variation result view."
+        )
         self._point_combo.setToolTip(
             "Choose which modeled point to overlay across every variation trial."
         )
         self._status = QLabel("Run a trace-capable swing variation study.")
         self._status.setWordWrap(True)
-        self._canvas = _PlotCanvas(projection="3d")
+        self._canvas = VariationPlotCanvas(projection="3d")
+        self._variability_canvas = VariationPlotCanvas()
+        self._quiet_threshold = QDoubleSpinBox()
+        self._quiet_threshold.setRange(0.01, 1000.0)
+        self._quiet_threshold.setDecimals(2)
+        self._quiet_threshold.setSuffix(" mm")
+        self._quiet_threshold.setValue(5.0)
+        self._quiet_threshold.setToolTip(
+            "Maximum RMS positional radius used to identify contiguous quiet zones."
+        )
+        self._exports = VariationPlotExportControls(
+            lambda: self._canvas.figure,
+            lambda: arc_plot_definition(
+                self._dataset,
+                str(self._point_combo.currentData()),
+                self._quiet_threshold.value() / 1000.0,
+                self._selected_trial,
+                float(self._canvas.axes.azim),
+                float(self._canvas.axes.elev),
+            ),
+            "variation-swing-arcs",
+        )
+        self._exports.setEnabled(False)
         controls = QHBoxLayout()
         controls.addWidget(QLabel("Modeled Point"))
         controls.addWidget(self._point_combo, stretch=1)
+        controls.addWidget(QLabel("Highlighted Trial"))
+        controls.addWidget(self._trial_combo, stretch=1)
+        controls.addWidget(QLabel("Quiet Threshold"))
+        controls.addWidget(self._quiet_threshold)
         layout = QVBoxLayout(self)
         layout.addLayout(controls)
         layout.addWidget(self._status)
+        layout.addWidget(self._exports)
         layout.addWidget(self._canvas, stretch=1)
+        layout.addWidget(self._variability_canvas, stretch=1)
         self._point_combo.currentIndexChanged.connect(self._redraw)
+        self._quiet_threshold.valueChanged.connect(self._redraw)
+        self._trial_combo.currentIndexChanged.connect(self._selection_changed)
         self._clear()
 
     def set_plot_dataset(self, dataset: EnsemblePlotDataset) -> None:
         """Populate modeled points and render every valid trial arc."""
         self._dataset = dataset
+        self._exports.setEnabled(True)
         self._point_combo.blockSignals(True)
         self._point_combo.clear()
         for point_id in dataset.result.traces.point_ids:
-            self._point_combo.addItem(_point_label(point_id), point_id)
+            self._point_combo.addItem(point_label(point_id), point_id)
         self._point_combo.blockSignals(False)
+        self._trial_combo.blockSignals(True)
+        self._trial_combo.clear()
+        self._trial_combo.addItem("All Trials", None)
+        for trial_index in range(dataset.result.variation.plan.n_runs):
+            self._trial_combo.addItem(f"Trial {trial_index + 1}", trial_index)
+        self._trial_combo.blockSignals(False)
         clubhead = self._point_combo.findData("swing.clubhead.reference")
         self._point_combo.setCurrentIndex(max(clubhead, 0))
+        self._redraw()
+
+    def set_selected_trial(self, trial_index: int | None) -> None:
+        """Apply a linked selection without re-emitting it."""
+        self._selected_trial = trial_index
+        index = self._trial_combo.findData(trial_index)
+        self._trial_combo.blockSignals(True)
+        self._trial_combo.setCurrentIndex(max(index, 0))
+        self._trial_combo.blockSignals(False)
+        self._redraw()
+
+    def _selection_changed(self) -> None:
+        self._selected_trial = self._trial_combo.currentData()
+        self.selectionChanged.emit(self._selected_trial)
         self._redraw()
 
     def _clear(self) -> None:
@@ -244,28 +350,45 @@ class ArcOverlayView(QWidget):
         self._canvas.axes.set_title("All-Trial Swing Arc Overlay")
         self._set_axes()
         self._canvas.draw_idle()
+        self._variability_canvas.axes.clear()
+        self._variability_canvas.apply_theme()
+        self._variability_canvas.axes.set_title("Geometric Variability and Quiet Zones")
+        self._variability_canvas.draw_idle()
 
     def _redraw(self, *_args: object) -> None:
         if self._dataset is None or self._point_combo.currentIndex() < 0:
             return
         overlay = self._dataset.arc_overlay(str(self._point_combo.currentData()))
+        variability = self._dataset.geometric_variability(
+            overlay.point_id,
+            LowVariabilityCriteria(
+                max_rms_radius_m=self._quiet_threshold.value() / 1000.0
+            ),
+        )
         axes = self._canvas.axes
         axes.clear()
         self._canvas.apply_theme()
-        for positions, valid, cohort in zip(
-            overlay.positions_m,
-            overlay.sample_valid,
-            overlay.cohorts,
-            strict=True,
+        for trial_index, (positions, valid, cohort) in enumerate(
+            zip(
+                overlay.positions_m,
+                overlay.sample_valid,
+                overlay.cohorts,
+                strict=True,
+            )
         ):
             if np.any(valid):
+                selected = trial_index == self._selected_trial
                 axes.plot(
                     positions[valid, 0],
                     positions[valid, 2],
                     positions[valid, 1],
                     color=_COHORT_COLORS[cohort],
-                    linewidth=0.8,
-                    alpha=0.34,
+                    linewidth=2.8 if selected else 0.8,
+                    alpha=(
+                        1.0
+                        if selected
+                        else (0.12 if self._selected_trial is not None else 0.34)
+                    ),
                 )
         reference = overlay.reference_positions_m
         axes.plot(
@@ -276,78 +399,28 @@ class ArcOverlayView(QWidget):
             linewidth=2.2,
             label="Median Reference",
         )
-        axes.set_title(f"All Trials — {_point_label(overlay.point_id)}")
+        draw_principal_spread(axes, variability)
+        axes.set_title(f"All Trials — {point_label(overlay.point_id)}")
         self._set_axes()
-        _equal_3d_axes(axes, overlay)
+        equal_3d_axes(axes, overlay)
         valid_trials = sum(bool(np.any(row)) for row in overlay.sample_valid)
         self._status.setText(
             f"{valid_trials}/{len(overlay.cohorts)} trials shown; "
             f"{overlay.rendered_vertex_count:,}/{overlay.raw_vertex_count:,} vertices. "
-            f"Frame: {overlay.coordinate_frame}. Drag to rotate; scroll to zoom."
+            f"{variability.n_quiet_samples}/{variability.sample_times_s.size} quiet "
+            f"samples at <= {self._quiet_threshold.value():g} mm RMS. "
+            f"Frame: {overlay.coordinate_frame}; alignment: common simulation time. "
+            "Drag to rotate; scroll to zoom."
         )
         axes.legend(loc="best", fontsize=8)
         self._canvas.draw_idle()
+        draw_variability_timeline(self._variability_canvas, variability)
 
     def _set_axes(self) -> None:
         """Apply the app-frame labels while plotting y-up as visual z."""
         self._canvas.axes.set_xlabel("Target, x [m]")
         self._canvas.axes.set_ylabel("Right, z [m]")
-        self._canvas.axes.set_zlabel("Up, y [m]")  # type: ignore[attr-defined]
-
-
-def _axis_label(variable: ScalarPlotVariable) -> str:
-    """Return a compact, unit-bearing plot label."""
-    return f"{variable.label} [{variable.unit}]" if variable.unit else variable.label
-
-
-def _cohort_label(cohort: TrialEvaluationStatus) -> str:
-    """Return the concise UI label for a typed trial cohort."""
-    return {
-        TrialEvaluationStatus.EVALUATED_HIT: "Hit",
-        TrialEvaluationStatus.EVALUATED_NO_IMPACT: "No Impact",
-        TrialEvaluationStatus.NUMERICAL_FAILURE: "Numerical Failure",
-    }[cohort]
-
-
-def _availability_text(summaries: Iterable[CohortAvailability]) -> str:
-    """Describe plotted/unavailable counts without selection bias."""
-    return " · ".join(
-        f"{_cohort_label(summary.cohort)}: {summary.plotted}/{summary.total} plotted"
-        + (f", {summary.unavailable} unavailable" if summary.unavailable else "")
-        for summary in summaries
-    )
-
-
-def _point_label(point_id: str) -> str:
-    """Convert a stable spatial point ID into a title-case label."""
-    return point_id.rsplit(".", 1)[-1].replace("_", " ").title()
-
-
-def _dataset_values(
-    dataset: VariationDataset,
-    variable: ScalarPlotVariable,
-) -> np.ndarray:
-    """Return one all-row scalar column without silently dropping failures."""
-    source, name = variable.key.split(":", 1)
-    if source == "input":
-        return np.asarray(dataset.inputs[:, dataset.input_names.index(name)])
-    return np.asarray(dataset.outputs[:, dataset.output_names.index(name)])
-
-
-def _equal_3d_axes(axes, overlay: ArcOverlayData) -> None:  # type: ignore[no-untyped-def]
-    """Set one physical scale across all three spatial axes."""
-    finite = overlay.positions_m[np.isfinite(overlay.positions_m).all(axis=-1)]
-    if finite.size == 0:
-        return
-    plot_xyz = finite[:, [0, 2, 1]]
-    low = np.min(plot_xyz, axis=0)
-    high = np.max(plot_xyz, axis=0)
-    center = (low + high) / 2.0
-    radius = max(float(np.max(high - low)) / 2.0, 1e-6)
-    axes.set_xlim(center[0] - radius, center[0] + radius)
-    axes.set_ylim(center[1] - radius, center[1] + radius)
-    axes.set_zlim(center[2] - radius, center[2] + radius)
-    axes.set_box_aspect((1.0, 1.0, 1.0))
+        self._canvas.axes.set_zlabel("Up, y [m]")
 
 
 __all__ = ["ArcOverlayView", "DatasetScatterView"]

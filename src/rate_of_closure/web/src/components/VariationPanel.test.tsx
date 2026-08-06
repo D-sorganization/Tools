@@ -177,6 +177,8 @@ describe("VariationPanel analysis execution policy", () => {
     expect(screen.getByRole("combobox", { name: "Scatter horizontal axis" })).toBeInTheDocument();
     expect(screen.getByRole("combobox", { name: "Scatter vertical axis" })).toBeInTheDocument();
     expect(screen.getByRole("img", { name: /variation scatter/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Scatter SVG" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Scatter Plot Definition JSON" })).toBeEnabled();
     expect(screen.queryByText(/One-at-a-Time Sensitivity/i)).not.toBeInTheDocument();
 
     await user.selectOptions(selector, "individual");
@@ -207,8 +209,28 @@ describe("VariationPanel analysis execution policy", () => {
 
     expect(screen.getByRole("heading", { name: /All Swing Arcs/i })).toBeInTheDocument();
     expect(screen.getByRole("combobox", { name: "Arc modeled point" })).toBeInTheDocument();
-    expect(screen.getByRole("img", { name: /interactive all-trial swing arcs/i })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Arc outcome cohort" })).toHaveValue("all");
+    const source = screen.getByRole("combobox", { name: "Arc perturbation source" });
+    const band = screen.getByRole("combobox", { name: "Arc perturbation band" });
     expect(screen.getByText(/2\/2 trials shown/i)).toBeInTheDocument();
+    expect(band).toBeDisabled();
+    await user.selectOptions(source, "swing_sim.swing.yaw_deg");
+    expect(band).toBeEnabled();
+    await user.selectOptions(band, "lower");
+    fireEvent.change(screen.getByRole("slider", { name: "Arc phase end percent" }), {
+      target: { value: "75" },
+    });
+    expect(screen.getByText(/Displayed Swing Phase: 0–75%/i)).toBeInTheDocument();
+    expect(screen.getByRole("spinbutton", { name: "Quiet-zone RMS threshold millimetres" })).toHaveValue(5);
+    expect(screen.getByRole("img", { name: /interactive all-trial swing arcs/i })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /RMS positional variability and quiet zones/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Swing Arcs PNG" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Variability SVG" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Arc Plot Definition JSON" })).toBeEnabled();
+    expect(screen.getByText(/1\/2 trials shown/i)).toBeInTheDocument();
+    expect(screen.getByText(/quiet samples .*common simulation time/i)).toBeInTheDocument();
+    await user.selectOptions(screen.getByRole("combobox", { name: "Highlighted trial" }), "0");
+    expect(screen.getByRole("combobox", { name: "Arc highlighted trial" })).toHaveValue("0");
     expect(screen.getByRole("button", { name: "Swing Traces CSV" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Swing Ensemble JSON" })).toBeEnabled();
     expect(screen.getByText(/Hits: .*No impact: .*Numerical failures:/i)).toBeInTheDocument();

@@ -29,6 +29,7 @@ from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.variation import (
     CATEGORY_DELIVERY,
     EnsemblePositionTraces,
+    LowVariabilityCriteria,
     NoiseSpec,
     VariationDataset,
     VariationPlan,
@@ -165,6 +166,36 @@ def test_arc_overlay_retains_rows_and_limits_vertices() -> None:
     assert overlay.rendered_vertex_count == 9
     assert overlay.coordinate_frame == plot.coordinate_frame
     assert overlay.position_unit == "m"
+
+
+def test_geometric_variability_pins_covariance_envelope_and_quiet_zone() -> None:
+    plot = build_ensemble_plot_dataset(_result())
+    variability = plot.geometric_variability(
+        _POINT,
+        LowVariabilityCriteria(max_rms_radius_m=0.6, min_samples=5),
+    )
+
+    np.testing.assert_allclose(variability.rms_radius_m, 0.5)
+    np.testing.assert_allclose(variability.principal_sigma_m[:, 0], np.sqrt(0.5))
+    np.testing.assert_allclose(variability.principal_sigma_m[:, 1:], 0.0, atol=1e-12)
+    np.testing.assert_array_equal(variability.valid_trial_count, 2)
+    assert variability.n_quiet_samples == 5
+    assert len(variability.quiet_intervals) == 1
+    assert variability.quiet_intervals[0].start_time_s == 0.0
+    assert variability.quiet_intervals[0].end_time_s == pytest.approx(0.04)
+    assert variability.alignment_basis == "common_simulation_time_s"
+
+
+def test_geometric_variability_keeps_nonqualifying_samples_visible() -> None:
+    plot = build_ensemble_plot_dataset(_result())
+    variability = plot.geometric_variability(
+        _POINT,
+        LowVariabilityCriteria(max_rms_radius_m=0.4),
+    )
+
+    assert variability.n_quiet_samples == 0
+    assert variability.quiet_intervals == ()
+    np.testing.assert_allclose(variability.rms_radius_m, 0.5)
 
 
 def test_plot_contract_rejects_unknown_axes_points_and_invalid_budgets() -> None:

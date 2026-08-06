@@ -15,6 +15,10 @@ from types import MappingProxyType
 
 import numpy as np
 
+from rate_of_closure.variation.geometric_plot_data import (
+    GeometricVariabilityData,
+    build_geometric_variability,
+)
 from rate_of_closure.variation.plot_labels import OUTPUT_LABELS, OUTPUT_UNITS
 from rate_of_closure.variation.simulation_types import (
     CONTACT_OUTPUT_NAMES,
@@ -26,6 +30,7 @@ from rate_of_closure.variation.simulation_types import (
 from shared.python.contracts import require
 from shared.python.swing_sim.variation import (
     SCHEMA_VERSION,
+    LowVariabilityCriteria,
     PositionDispersion,
     VariationDataset,
     compute_position_dispersion,
@@ -197,6 +202,12 @@ class EnsemblePlotDataset:
     def cohorts(self) -> tuple[TrialEvaluationStatus, ...]:
         """Typed cohort for every trial row in stable trial order."""
         return tuple(outcome.status for outcome in self.result.outcomes)
+
+    def geometric_variability(
+        self, point_id: str, criteria: LowVariabilityCriteria
+    ) -> GeometricVariabilityData:
+        """Return one point's RMS envelope, principal spread, and quiet zones."""
+        return build_geometric_variability(self.dispersion, point_id, criteria)
 
     def variable(self, key: str) -> ScalarPlotVariable:
         """Return a scalar descriptor by stable prefixed key."""
