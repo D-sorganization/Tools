@@ -15,23 +15,35 @@ import shared.python.swing_sim.flight as flight
 
 EXPECTED_PUBLIC_API = {
     "DEFAULT_BACKSPIN_AXIS",
+    "AvailabilityReason",
     "BallFlightModel",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
     "FlightModelRegistry",
     "FlightModelType",
+    "FlightMetricCatalog",
+    "FlightMetricDefinition",
+    "FlightMetricId",
+    "FlightMetricInputs",
+    "FlightMetricResult",
+    "FlightMetricValue",
     "FlightResult",
+    "FlightRunManifest",
     "FlightSimulatorProtocol",
+    "GroundModelResult",
     "LaunchConditions",
     "LaunchDirection",
     "LaunchDirectionConvention",
     "LAUNCH_DIRECTION_DEFINITIONS",
     "MacDonaldHanzelyModel",
+    "MetricTrajectoryPoint",
     "TrajectoryPoint",
     "WaterlooPennerModel",
     "compare_models",
     "compute_flight_metrics",
     "derive_launch_conditions",
+    "derive_flight_metric_result",
+    "flight_metric_catalog",
     "from_flight_frame",
     "is_rust_available",
     "launch_direction_from_mapping",
@@ -41,6 +53,7 @@ EXPECTED_PUBLIC_API = {
     "simulate",
     "simulate_trajectory_rust",
     "to_flight_frame",
+    "ValueStatus",
 }
 
 
@@ -71,6 +84,14 @@ def test_value_types_are_frozen_dataclasses() -> None:
         flight.FlightResult,
         flight.ConstantCoefficientSpec,
         flight.LaunchDirection,
+        flight.FlightMetricDefinition,
+        flight.FlightMetricCatalog,
+        flight.MetricTrajectoryPoint,
+        flight.FlightMetricInputs,
+        flight.FlightMetricValue,
+        flight.FlightMetricResult,
+        flight.FlightRunManifest,
+        flight.GroundModelResult,
     ):
         assert dataclasses.is_dataclass(cls), f"{cls.__name__} not a dataclass"
         assert cls.__dataclass_params__.frozen, f"{cls.__name__} must be frozen"
