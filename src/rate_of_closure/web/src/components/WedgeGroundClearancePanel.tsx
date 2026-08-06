@@ -74,7 +74,7 @@ export function WedgeGroundClearancePanel({ run, scenario, club }: Props) {
         </div>)}
       </dl>
       <p className="mt-2 text-xs leading-relaxed text-slate-400">
-        <b className="text-slate-300">Geometry Basis:</b> {result.geometryBasis}. {result.provenance}{" "}
+        <b className="text-slate-300">Geometry Basis:</b> {titleCaseFeature(result.geometryBasis)}. {result.provenance}{" "}
         <b className="text-slate-300">Model Boundary:</b> {result.limitations}
       </p>
     </aside>
