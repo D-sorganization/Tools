@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import time
+import tracemalloc
 
 import numpy as np
 import pytest
@@ -90,11 +91,17 @@ def test_geometry_preparation_meets_500_trial_interactive_budget() -> None:
     directions = np.array([1.0, -0.4, 0.2])[None, None, None, :]
     positions = base + offsets * directions
 
-    started = time.perf_counter()
-    dispersion = compute_position_dispersion(_traces(positions))
-    elapsed_s = time.perf_counter() - started
+    tracemalloc.start()
+    try:
+        started = time.perf_counter()
+        dispersion = compute_position_dispersion(_traces(positions))
+        elapsed_s = time.perf_counter() - started
+        _current_bytes, peak_bytes = tracemalloc.get_traced_memory()
+    finally:
+        tracemalloc.stop()
 
     assert elapsed_s < 5.0
     assert positions.nbytes < 5_000_000
+    assert peak_bytes < 100_000_000
     assert dispersion.rms_radius_m.shape == (samples, 1)
     assert np.all(np.isfinite(dispersion.rms_radius_m))

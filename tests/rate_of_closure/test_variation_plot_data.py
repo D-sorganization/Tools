@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import json
 from pathlib import Path
 from types import MappingProxyType
@@ -34,6 +35,7 @@ from shared.python.swing_sim.variation import (
     VariationDataset,
     VariationPlan,
 )
+from shared.python.swing_sim.variation.spec import PerturbationGroup
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -240,6 +242,74 @@ def test_geometric_variability_keeps_nonqualifying_samples_visible() -> None:
     assert variability.n_quiet_samples == 0
     assert variability.quiet_intervals == ()
     np.testing.assert_allclose(variability.rms_radius_m, 0.5)
+
+
+def test_plot_facade_accepts_all_supported_plan_topologies_and_partial_traces() -> None:
+    base = _result()
+    speed = f"{CATEGORY_DELIVERY}.clubhead_speed_mps"
+    face = NoiseSpec(_FACE, scale=1.0, spec_id="face")
+    speed_spec = NoiseSpec(speed, scale=0.5, spec_id="speed")
+    plans = (
+        VariationPlan(mode="delivery", noise=(face,), n_runs=3, seed=17),
+        VariationPlan(mode="delivery", noise=(face, speed_spec), n_runs=3, seed=17),
+        VariationPlan(
+            mode="delivery",
+            noise=(face, speed_spec),
+            groups=(
+                PerturbationGroup(
+                    group_id="delivery",
+                    spec_ids=("face", "speed"),
+                    matrix=((1.0, 0.5), (0.5, 1.0)),
+                ),
+            ),
+            n_runs=3,
+            seed=17,
+        ),
+        VariationPlan(
+            mode="delivery",
+            noise=(
+                dataclasses.replace(
+                    face,
+                    time_window_s=(0.01, 0.03),
+                    point_ids=(_POINT,),
+                ),
+            ),
+            n_runs=3,
+            seed=17,
+        ),
+    )
+    for plan in plans:
+        input_names = tuple(spec.variable_key for spec in plan.noise)
+        inputs = np.column_stack([np.linspace(-1.0, 1.0, 3) for _spec in plan.noise])
+        variation = VariationDataset(
+            plan=plan,
+            input_names=input_names,
+            inputs=inputs,
+            output_names=base.variation.output_names,
+            outputs=base.variation.outputs,
+            success=base.variation.success,
+        )
+        positions = base.traces.positions_m.copy()
+        sample_valid = base.traces.sample_valid.copy()
+        positions[1, 2, 0] = np.nan
+        sample_valid[1, 2] = False
+        traces = dataclasses.replace(
+            base.traces,
+            variation=variation,
+            positions_m=positions,
+            sample_valid=sample_valid,
+        )
+        result = SimulationEnsembleResult(base.outcomes, variation, traces)
+
+        plot = build_ensemble_plot_dataset(result)
+        overlay = plot.arc_overlay(_POINT)
+
+        assert overlay.cohorts == (
+            EVALUATED_HIT,
+            EVALUATED_NO_IMPACT,
+            NUMERICAL_FAILURE,
+        )
+        assert not overlay.sample_valid[1, 2]
 
 
 def test_plot_contract_rejects_unknown_axes_points_and_invalid_budgets() -> None:
