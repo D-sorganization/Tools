@@ -26,13 +26,14 @@ from rate_of_closure.ui.pyqt6.variation_plot_canvas import VariationPlotCanvas
 from rate_of_closure.ui.pyqt6.variation_plot_exports import (
     VariationPlotExportControls,
     arc_plot_definition,
+    geometric_variability_plot_definition,
     scatter_plot_definition,
 )
 from rate_of_closure.ui.pyqt6.variation_plot_helpers import (
     availability_text,
     axis_label,
     cohort_label,
-    dataset_values,
+    draw_scalar_study_scatter,
     equal_3d_axes,
     point_label,
 )
@@ -224,34 +225,14 @@ class DatasetScatterView(QWidget):
         by_key = {variable.key: variable for variable in variables}
         x_variable = by_key[str(self._x_combo.currentData())]
         y_variable = by_key[str(self._y_combo.currentData())]
-        x_values = dataset_values(dataset, x_variable)
-        y_values = dataset_values(dataset, y_variable)
-        finite = np.isfinite(x_values) & np.isfinite(y_values)
-        axes = self._canvas.axes
-        axes.clear()
-        self._canvas.apply_theme()
-        axes.scatter(
-            x_values[finite],
-            y_values[finite],
-            s=20,
-            alpha=0.72,
-            color="#2f8bd6",
-            edgecolors="none",
-            label="Evaluated",
-        )
-        axes.set_xlabel(axis_label(x_variable))
-        axes.set_ylabel(axis_label(y_variable))
-        axes.set_title("Variation Effects Across Evaluated Trials")
-        if axes.collections:
-            axes.legend(loc="best", fontsize=8)
-        unavailable = int(dataset.plan.n_runs - np.count_nonzero(finite))
-        failed = int(dataset.plan.n_runs - dataset.n_success)
         self._availability.setText(
-            f"Evaluated: {np.count_nonzero(finite)}/{dataset.plan.n_runs} plotted"
-            f" · {unavailable} paired values unavailable · {failed} failures. "
-            "This scalar evaluator has no geometric no-impact cohort."
+            draw_scalar_study_scatter(
+                self._canvas,
+                dataset,
+                x_variable,
+                y_variable,
+            )
         )
-        self._canvas.draw_idle()
 
 
 class ArcOverlayView(QWidget):
@@ -301,6 +282,20 @@ class ArcOverlayView(QWidget):
             "variation-swing-arcs",
         )
         self._exports.setEnabled(False)
+        self._variability_exports = VariationPlotExportControls(
+            lambda: self._variability_canvas.figure,
+            lambda: geometric_variability_plot_definition(
+                self._dataset,
+                str(self._point_combo.currentData()),
+                self._quiet_threshold.value() / 1000.0,
+                self._filters.outcome_filter,
+                self._filters.phase_percent / 100.0,
+                self._filters.perturbation_source_key,
+                self._filters.perturbation_band,
+            ),
+            "variation-geometric-variability",
+        )
+        self._variability_exports.setEnabled(False)
         controls = QHBoxLayout()
         controls.addWidget(QLabel("Modeled Point"))
         controls.addWidget(self._point_combo, stretch=1)
@@ -313,6 +308,7 @@ class ArcOverlayView(QWidget):
         layout.addWidget(self._status)
         layout.addWidget(self._filters)
         layout.addWidget(self._exports)
+        layout.addWidget(self._variability_exports)
         layout.addWidget(self._canvas, stretch=1)
         layout.addWidget(self._variability_canvas, stretch=1)
         self._point_combo.currentIndexChanged.connect(self._redraw)
@@ -326,6 +322,7 @@ class ArcOverlayView(QWidget):
         self._dataset = dataset
         self._filters.set_dataset(dataset)
         self._exports.setEnabled(True)
+        self._variability_exports.setEnabled(True)
         self._point_combo.blockSignals(True)
         self._point_combo.clear()
         for point_id in dataset.result.traces.point_ids:

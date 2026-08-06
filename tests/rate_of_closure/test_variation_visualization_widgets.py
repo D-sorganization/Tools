@@ -100,6 +100,15 @@ def test_arc_overlay_draws_every_valid_trial_and_reference(qtbot, tmp_path) -> N
     assert definition["coordinate_frame"] == "app_frame:x_target,y_up,z_right"
     assert definition["quiet_threshold_m"] == pytest.approx(0.005)
     assert definition["camera_yaw_deg"] is not None
+    timeline_svg = tmp_path / "variability.svg"
+    timeline_definition = tmp_path / "variability.plot.json"
+    view._variability_exports.write_svg(timeline_svg)
+    view._variability_exports.write_definition(timeline_definition)
+    assert "<svg" in timeline_svg.read_text(encoding="utf-8")
+    assert (
+        json.loads(timeline_definition.read_text(encoding="utf-8"))["plot_type"]
+        == "geometric_variability"
+    )
 
     view._filters._source.setCurrentIndex(1)
     view._filters._band.setCurrentIndex(1)

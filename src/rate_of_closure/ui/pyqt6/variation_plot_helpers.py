@@ -55,6 +55,44 @@ def dataset_values(
     return np.asarray(dataset.outputs[:, dataset.output_names.index(name)])
 
 
+def draw_scalar_study_scatter(
+    canvas: Any,
+    dataset: VariationDataset,
+    x_variable: ScalarPlotVariable,
+    y_variable: ScalarPlotVariable,
+) -> str:
+    """Draw finite scalar pairs and return an honest availability summary."""
+    x_values = dataset_values(dataset, x_variable)
+    y_values = dataset_values(dataset, y_variable)
+    finite = np.isfinite(x_values) & np.isfinite(y_values)
+    axes = canvas.axes
+    axes.clear()
+    canvas.apply_theme()
+    axes.scatter(
+        x_values[finite],
+        y_values[finite],
+        s=20,
+        alpha=0.72,
+        color="#2f8bd6",
+        edgecolors="none",
+        label="Evaluated",
+    )
+    axes.set_xlabel(axis_label(x_variable))
+    axes.set_ylabel(axis_label(y_variable))
+    axes.set_title("Variation Effects Across Evaluated Trials")
+    if axes.collections:
+        axes.legend(loc="best", fontsize=8)
+    plotted = int(np.count_nonzero(finite))
+    unavailable = dataset.plan.n_runs - plotted
+    failed = dataset.plan.n_runs - dataset.n_success
+    canvas.draw_idle()
+    return (
+        f"Evaluated: {plotted}/{dataset.plan.n_runs} plotted"
+        f" · {unavailable} paired values unavailable · {failed} failures. "
+        "This scalar evaluator has no geometric no-impact cohort."
+    )
+
+
 def equal_3d_axes(axes: Any, overlay: ArcOverlayData) -> None:
     """Set one physical scale across all three spatial axes."""
     finite = overlay.positions_m[np.isfinite(overlay.positions_m).all(axis=-1)]
@@ -76,6 +114,7 @@ __all__ = [
     "axis_label",
     "cohort_label",
     "dataset_values",
+    "draw_scalar_study_scatter",
     "equal_3d_axes",
     "point_label",
 ]

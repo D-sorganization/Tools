@@ -134,6 +134,33 @@ def arc_plot_definition(
     )
 
 
+def geometric_variability_plot_definition(
+    dataset: EnsemblePlotDataset | None,
+    point_id: str,
+    quiet_threshold_m: float,
+    outcome_filter: str | None,
+    phase_end_fraction: float,
+    perturbation_source_key: str | None,
+    perturbation_band: str | None,
+) -> PlotDefinition:
+    """Build a definition for the filtered RMS/quiet-zone timeline."""
+    if dataset is None:
+        raise RuntimeError("no swing ensemble is loaded")
+    return PlotDefinition(
+        result_id=dataset.result_id,
+        plot_type="geometric_variability",
+        coordinate_frame=dataset.coordinate_frame,
+        point_id=point_id,
+        position_unit="m",
+        alignment_basis="common_simulation_time_s",
+        quiet_threshold_m=quiet_threshold_m,
+        outcome_filter=outcome_filter,
+        phase_end_fraction=phase_end_fraction,
+        perturbation_source_key=perturbation_source_key,
+        perturbation_band=perturbation_band,
+    )
+
+
 class VariationPlotExportControls(QWidget):
     """Compact export bar whose write methods also support headless tests."""
 
@@ -214,5 +241,6 @@ __all__ = [
     "arc_plot_definition",
     "distribution_matrix_csv",
     "distribution_matrix_plot_definition",
+    "geometric_variability_plot_definition",
     "scatter_plot_definition",
 ]
