@@ -27,6 +27,20 @@ from .direction import (
     migrate_launch_direction_mapping,
 )
 from .frames import from_flight_frame, to_flight_frame
+from .impact_solution_adapter import CenteredClubDeliveryAdapter
+from .impact_solution_contract import (
+    ClubProfileId,
+    ForwardEvaluation,
+    ForwardStatus,
+    ImpactSolutionRequest,
+    ImpactSolutionResult,
+    ModelAvailability,
+    ModelManifest,
+)
+from .impact_solution_solver import (
+    ImpactForwardEvaluator,
+    solve_impact_solution_families,
+)
 from .inverse_contract import (
     DecisionVariable,
     EvaluatedMetric,
@@ -83,6 +97,8 @@ __all__ = [
     "BallFlightModel",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
+    "CenteredClubDeliveryAdapter",
+    "ClubProfileId",
     "DecisionVariable",
     "EvaluatedMetric",
     "EvaluationStatus",
@@ -99,7 +115,12 @@ __all__ = [
     "FlightRunManifest",
     "FlightSimulatorProtocol",
     "ForwardEvaluator",
+    "ForwardEvaluation",
+    "ForwardStatus",
     "GroundModelResult",
+    "ImpactForwardEvaluator",
+    "ImpactSolutionRequest",
+    "ImpactSolutionResult",
     "InverseFlightRequest",
     "InverseFlightResult",
     "LaunchConditions",
@@ -108,6 +129,8 @@ __all__ = [
     "LAUNCH_DIRECTION_DEFINITIONS",
     "MacDonaldHanzelyModel",
     "MetricTrajectoryPoint",
+    "ModelAvailability",
+    "ModelManifest",
     "ObjectiveMode",
     "ObjectiveResidual",
     "ParameterValue",
@@ -130,6 +153,7 @@ __all__ = [
     "simulate",
     "simulate_trajectory_rust",
     "solve_inverse_flight",
+    "solve_impact_solution_families",
     "to_flight_frame",
     "ValueStatus",
 ]
