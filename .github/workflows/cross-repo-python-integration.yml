@@ -78,13 +78,19 @@ jobs:
               tests/shared_contracts
           - repo: D-sorganization/UpstreamDrift
             path: _downstream
-            install: CI= pip install -e ".[dev,gui-test]"
+            install: pip install -e ".[dev,gui-test]"
             test_command: xvfb-run --auto-servernum pytest tests/shared_contracts/ --timeout=60 --timeout-method=thread -v --tb=short
             env_name: REQUIRE_REAL_TOOLS_REPO
             sparse_checkout: |
+              chat
+              contracts.py
+              python/src/utils
+              shared
+              sidekick
               src/shared/python
               tests/shared_contracts
               tests/support
+              vendor/ud-tools
 
     steps:
       - name: Checkout Tools
@@ -101,6 +107,11 @@ jobs:
           fetch-depth: 1
           sparse-checkout: ${{ matrix.downstream.sparse_checkout }}
           sparse-checkout-cone-mode: true
+
+      - name: Initialize pinned Tools submodule
+        if: steps.checkout_downstream.outcome == 'success' && matrix.downstream.repo == 'D-sorganization/UpstreamDrift'
+        working-directory: ${{ matrix.downstream.path }}
+        run: git submodule update --init --depth 1 vendor/ud-tools
 
       - name: Select persistent Python tool cache
         run: |

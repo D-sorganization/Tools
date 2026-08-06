@@ -14,9 +14,15 @@ REQUIRED_SPARSE_PATHS = {
         "tests/shared_contracts",
     },
     "D-sorganization/UpstreamDrift": {
+        "chat",
+        "contracts.py",
+        "python/src/utils",
+        "shared",
+        "sidekick",
         "src/shared/python",
         "tests/shared_contracts",
         "tests/support",
+        "vendor/ud-tools",
     },
 }
 
@@ -58,7 +64,7 @@ def test_each_downstream_declares_its_required_sparse_scope() -> None:
     assert "ui" not in upstream_scope
 
 
-def test_upstreamdrift_install_uses_editable_mode_without_ci_release_hooks() -> None:
+def test_upstream_scope_includes_every_release_build_package_root() -> None:
     workflow = _workflow()
     downstreams = workflow["jobs"]["downstream-consumer-contracts"]["strategy"][
         "matrix"
@@ -69,7 +75,40 @@ def test_upstreamdrift_install_uses_editable_mode_without_ci_release_hooks() -> 
         if downstream["repo"] == "D-sorganization/UpstreamDrift"
     )
 
-    assert upstream["install"].startswith("CI= pip install -e ")
+    scope = set(upstream["sparse_checkout"].splitlines())
+    assert {
+        "chat",
+        "contracts.py",
+        "python/src/utils",
+        "shared",
+        "sidekick",
+        "vendor/ud-tools",
+    } <= scope
+
+
+def test_upstream_initializes_the_pinned_tools_submodule_before_install() -> None:
+    workflow = _workflow()
+    steps = workflow["jobs"]["downstream-consumer-contracts"]["steps"]
+    initialize_index = next(
+        index
+        for index, step in enumerate(steps)
+        if step.get("name") == "Initialize pinned Tools submodule"
+    )
+    initialize = steps[initialize_index]
+    install_index = next(
+        index
+        for index, step in enumerate(steps)
+        if step.get("name") == "Install downstream dependencies"
+    )
+
+    assert initialize_index < install_index
+    assert initialize["working-directory"] == "${{ matrix.downstream.path }}"
+    expected_if = (
+        "steps.checkout_downstream.outcome == 'success' && "
+        "matrix.downstream.repo == 'D-sorganization/UpstreamDrift'"
+    )
+    assert initialize["if"] == expected_if
+    assert "git submodule update --init --depth 1 vendor/ud-tools" in initialize["run"]
 
 
 def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
