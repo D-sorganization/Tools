@@ -4,7 +4,7 @@ import type { SolverEvaluation } from "./inverseFlightContract";
 export type { SolverEvaluation } from "./inverseFlightContract";
 import { covarianceFactor } from "./capabilityMath";
 
-export type CapabilityObjective = "maximize_carry" | "minimize_expected_miss" | "maximize_target_hold" | "distance_control_pareto";
+export type CapabilityObjective = "maximize_carry" | "minimize_expected_miss" | "maximize_target_hold" | "minimize_variability" | "minimize_downside" | "distance_control_pareto";
 export interface CapabilityParameter {
   readonly parameterId: string; readonly unit: string;
   readonly lowerBound: number; readonly upperBound: number;
@@ -145,7 +145,7 @@ export function parseOptimizationRequest(value: unknown): OptimizationRequest {
   exact(item, ["alternatives_count", "candidate_budget", "club_ids", "cvar_alpha", "ensemble_size", "minimum_success_fraction", "objective", "problem_id", "schema_version", "seed", "target"], "optimization request");
   if (item.schema_version !== "capability-optimization-request/v1" || !Array.isArray(item.club_ids)) throw new RangeError("unsupported request schema or club_ids");
   const objective = text(item.objective, "objective") as CapabilityObjective;
-  if (!["maximize_carry", "minimize_expected_miss", "maximize_target_hold", "distance_control_pareto"].includes(objective)) throw new RangeError("unsupported capability objective");
+  if (!["maximize_carry", "minimize_expected_miss", "maximize_target_hold", "minimize_variability", "minimize_downside", "distance_control_pareto"].includes(objective)) throw new RangeError("unsupported capability objective");
   const clubIds = Object.freeze(item.club_ids.map((club) => text(club, "request club_id")));
   if (clubIds.length === 0 || new Set(clubIds).size !== clubIds.length) throw new RangeError("request club IDs must be nonempty and unique");
   const candidateBudget = integer(item.candidate_budget, "candidate_budget");

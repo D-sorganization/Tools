@@ -23,6 +23,8 @@ class CapabilityObjective(StrEnum):
     MAXIMIZE_CARRY = "maximize_carry"
     MINIMIZE_EXPECTED_MISS = "minimize_expected_miss"
     MAXIMIZE_TARGET_HOLD = "maximize_target_hold"
+    MINIMIZE_VARIABILITY = "minimize_variability"
+    MINIMIZE_DOWNSIDE = "minimize_downside"
     DISTANCE_CONTROL_PARETO = "distance_control_pareto"
 
 
