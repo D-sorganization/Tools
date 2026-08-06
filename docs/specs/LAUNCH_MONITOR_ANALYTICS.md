@@ -1,6 +1,6 @@
 # Launch Monitor Analytics
 
-Issue: [Tools #4205](https://github.com/D-sorganization/Tools/issues/4205)  
+Issue: [Tools #4205](https://github.com/D-sorganization/Tools/issues/4205)
 Program epic: [UpstreamDrift #8364](https://github.com/D-sorganization/UpstreamDrift/issues/8364)
 
 ## Purpose
