@@ -120,6 +120,21 @@ def test_all_robust_objectives_are_deterministic(
         assert best.pareto_efficient
 
 
+def test_variability_and_downside_use_distinct_robust_risk_scores() -> None:
+    variability = optimize_capability(
+        _profile(), _request(CapabilityObjective.MINIMIZE_VARIABILITY), _evaluator
+    ).alternatives[0]
+    downside = optimize_capability(
+        _profile(), _request(CapabilityObjective.MINIMIZE_DOWNSIDE), _evaluator
+    ).alternatives[0]
+
+    assert variability.score == pytest.approx(variability.dispersion_rms_m)
+    assert downside.score == pytest.approx(
+        downside.cvar_miss_m + downside.downside_carry_m
+    )
+    assert variability.score != pytest.approx(variability.expected_miss_m)
+
+
 def test_profile_fails_closed_for_invalid_evidence_and_covariance() -> None:
     with pytest.raises(ValueError, match="evidence"):
         CapabilityParameter("speed", "m/s", 40, 60, 20, 50, 45, 0, 1)
@@ -184,3 +199,24 @@ def test_shared_fixture_round_trip_and_parity() -> None:
     assert result.alternatives[0].target_hold_probability == pytest.approx(
         expected["target_hold_probability"]
     )
+    for objective in (
+        CapabilityObjective.MINIMIZE_VARIABILITY,
+        CapabilityObjective.MINIMIZE_DOWNSIDE,
+    ):
+        objective_result = optimize_capability(
+            profile, replace(request, objective=objective), _evaluator
+        ).alternatives[0]
+        objective_expected = fixture["objective_expectations"][objective.value]
+        assert objective_result.club_id == objective_expected["best_club_id"]
+        assert objective_result.score == pytest.approx(objective_expected["score"])
+        if objective is CapabilityObjective.MINIMIZE_VARIABILITY:
+            assert objective_result.dispersion_rms_m == pytest.approx(
+                objective_expected["dispersion_rms_m"]
+            )
+        else:
+            assert objective_result.cvar_miss_m == pytest.approx(
+                objective_expected["cvar_miss_m"]
+            )
+            assert objective_result.downside_carry_m == pytest.approx(
+                objective_expected["downside_carry_m"]
+            )

@@ -24,6 +24,11 @@ const PROVENANCE = Object.freeze({
 interface Landing { readonly carryM: number; readonly offlineM: number }
 interface Counts { readonly completed: number; readonly noImpact: number; readonly failed: number }
 interface CandidateSummary { readonly alternative: OptimizationAlternative | null; readonly counts: Counts }
+interface RiskMetrics {
+  readonly meanCarryM: number; readonly expectedMissM: number;
+  readonly holdProbability: number; readonly dispersionRmsM: number;
+  readonly cvarMissM: number; readonly downsideCarryM: number;
+}
 
 const clubById = (profile: PlayerCapabilityProfile, clubId: string): ClubCapability => {
   const club = profile.clubs.find((item) => item.clubId === clubId);
@@ -102,16 +107,15 @@ const limitingConstraints = (
 
 const objectiveScore = (
   objective: CapabilityObjective,
-  meanCarry: number,
-  expectedMiss: number,
-  holdProbability: number,
-  dispersion: number,
+  risk: RiskMetrics,
   targetDistance: number,
 ): number => {
-  if (objective === "maximize_carry") return -meanCarry;
-  if (objective === "minimize_expected_miss") return expectedMiss;
-  if (objective === "maximize_target_hold") return -holdProbability + expectedMiss * 1e-6;
-  return Math.abs(meanCarry - targetDistance) + dispersion;
+  if (objective === "maximize_carry") return -risk.meanCarryM;
+  if (objective === "minimize_expected_miss") return risk.expectedMissM;
+  if (objective === "maximize_target_hold") return -risk.holdProbability + risk.expectedMissM * 1e-6;
+  if (objective === "minimize_variability") return risk.dispersionRmsM;
+  if (objective === "minimize_downside") return risk.cvarMissM + risk.downsideCarryM;
+  return Math.abs(risk.meanCarryM - targetDistance) + risk.dispersionRmsM;
 };
 
 const summarize = (
@@ -134,19 +138,21 @@ const summarize = (
   const dispersion = Math.sqrt(landings.reduce((sum, item) =>
     sum + (item.carryM - meanCarry) ** 2 + (item.offlineM - meanOffline) ** 2, 0) / landings.length);
   const holdProbability = landings.filter((item) => contains(target, item.carryM, item.offlineM)).length / landings.length;
+  const cvarMissM = tailMean(misses, request.cvarAlpha, true);
+  const downsideCarryM = Math.max(0, target.distanceM - tailMean(carries, request.cvarAlpha, false));
+  const risk = { meanCarryM: meanCarry, expectedMissM: expectedMiss, holdProbability, dispersionRmsM: dispersion, cvarMissM, downsideCarryM };
   const successFraction = counts.completed / request.ensembleSize;
   const failureFraction = 1 - successFraction;
   const extrapolated = club.parameters.some((item) =>
     nominal[item.parameterId] < item.evidenceLowerBound || nominal[item.parameterId] > item.evidenceUpperBound);
   const confidence = profile.confidence * club.confidence * successFraction * (extrapolated ? 0.5 : 1);
-  let score = objectiveScore(request.objective, meanCarry, expectedMiss, holdProbability, dispersion, target.distanceM);
+  let score = objectiveScore(request.objective, risk, target.distanceM);
   if (successFraction < request.minimumSuccessFraction) score += FAILURE_PENALTY * (request.minimumSuccessFraction - successFraction);
   return Object.freeze({
     rank: 1, clubId: club.clubId,
     parameters: Object.freeze(Object.entries(nominal).map(([parameterId, value]) => Object.freeze({ parameterId, value }))),
     score, meanCarryM: meanCarry, expectedMissM: expectedMiss, dispersionRmsM: dispersion,
-    targetHoldProbability: holdProbability, cvarMissM: tailMean(misses, request.cvarAlpha, true),
-    downsideCarryM: Math.max(0, target.distanceM - tailMean(carries, request.cvarAlpha, false)),
+    targetHoldProbability: holdProbability, cvarMissM, downsideCarryM,
     sampleCount: request.ensembleSize, successfulCount: counts.completed,
     noImpactCount: counts.noImpact, failedCount: counts.failed, failureFraction, confidence,
     limitingConstraints: limitingConstraints(club, nominal, successFraction, extrapolated, request),

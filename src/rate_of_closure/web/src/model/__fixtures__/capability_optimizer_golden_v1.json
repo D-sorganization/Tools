@@ -48,5 +48,18 @@
     "best_club_id": "iron-7",
     "mean_carry_m": 104.76578665071469,
     "target_hold_probability": 1
+  },
+  "objective_expectations": {
+    "minimize_variability": {
+      "best_club_id": "iron-7",
+      "dispersion_rms_m": 2.4280232713346392,
+      "score": 2.4280232713346392
+    },
+    "minimize_downside": {
+      "best_club_id": "iron-7",
+      "cvar_miss_m": 3.438275017892135,
+      "downside_carry_m": 2.654986005748597,
+      "score": 6.093261023640732
+    }
   }
 }

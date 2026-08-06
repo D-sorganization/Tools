@@ -23,9 +23,11 @@ The v1 request supports:
 - `maximize_carry`;
 - `minimize_expected_miss` from the configured target center;
 - `maximize_target_hold` using the shared green/fairway target geometry;
+- `minimize_variability`, ranked by RMS two-dimensional landing dispersion about the ensemble mean rather than target miss;
+- `minimize_downside`, ranked by the sum of worst-tail miss-distance CVaR and worst-tail carry shortfall relative to the target center;
 - `distance_control_pareto`, comparing absolute mean-distance error and landing dispersion and explicitly marking nondominated alternatives.
 
-Every returned alternative includes mean carry, expected miss, RMS landing dispersion, target-hold probability, miss-distance CVaR, downside carry, ensemble counts, no-impact and failure fractions, confidence, limiting constraints, extrapolation, and Pareto membership. Ranking is deterministic for a deterministic evaluator. Candidates below the configured minimum success fraction receive a dominating penalty but remain visible when the alternatives budget permits, preserving failure evidence.
+Every returned alternative includes mean carry, expected miss, RMS landing dispersion, target-hold probability, miss-distance CVaR, downside carry, ensemble counts, no-impact and failure fractions, confidence, limiting constraints, extrapolation, and Pareto membership. Downside carry is the positive shortfall between the target-center distance and the mean of the lowest `(1 - cvar_alpha)` carry tail; miss CVaR is the mean of the corresponding highest miss-distance tail. Ranking is deterministic for a deterministic evaluator. Candidates below the configured minimum success fraction receive a dominating penalty but remain visible when the alternatives budget permits, preserving failure evidence.
 
 ## Interpretation And Limitations
 
@@ -38,4 +40,4 @@ Every returned alternative includes mean carry, expected miss, RMS landing dispe
 
 ## Cross-Runtime Parity
 
-Python and TypeScript share `capability_optimizer_golden_v1.json`. It pins the profile, request, selected club, mean carry, and target-hold probability for an analytic evaluator. Runtime tests also exercise all four objectives and strict contract validation.
+Python and TypeScript share `capability_optimizer_golden_v1.json`. It pins the profile, request, selected club, mean carry, target-hold probability, variability score, and downside-tail score for an analytic evaluator. Runtime tests exercise all six objectives and strict contract validation.

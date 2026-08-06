@@ -43,6 +43,18 @@ class _Landing:
 
 
 @dataclass(frozen=True)
+class _RiskMetrics:
+    """Robust landing summaries consumed by objective scoring."""
+
+    mean_carry_m: float
+    expected_miss_m: float
+    hold_probability: float
+    dispersion_rms_m: float
+    cvar_miss_m: float
+    downside_carry_m: float
+
+
+@dataclass(frozen=True)
 class _Counts:
     completed: int = 0
     no_impact: int = 0
@@ -115,19 +127,20 @@ def _limiting_constraints(
 
 def _score(
     objective: CapabilityObjective,
-    mean_carry: float,
-    expected_miss: float,
-    hold_probability: float,
-    dispersion: float,
+    risk: _RiskMetrics,
     target_distance: float,
 ) -> float:
     if objective is CapabilityObjective.MAXIMIZE_CARRY:
-        return -mean_carry
+        return -risk.mean_carry_m
     if objective is CapabilityObjective.MINIMIZE_EXPECTED_MISS:
-        return expected_miss
+        return risk.expected_miss_m
     if objective is CapabilityObjective.MAXIMIZE_TARGET_HOLD:
-        return -hold_probability + expected_miss * 1e-6
-    return abs(mean_carry - target_distance) + dispersion
+        return -risk.hold_probability + risk.expected_miss_m * 1e-6
+    if objective is CapabilityObjective.MINIMIZE_VARIABILITY:
+        return risk.dispersion_rms_m
+    if objective is CapabilityObjective.MINIMIZE_DOWNSIDE:
+        return risk.cvar_miss_m + risk.downside_carry_m
+    return abs(risk.mean_carry_m - target_distance) + risk.dispersion_rms_m
 
 
 def _summarize(
@@ -165,6 +178,7 @@ def _summarize(
     downside = max(
         0.0, center_carry - _tail_mean(carries, request.cvar_alpha, reverse=False)
     )
+    risk = _RiskMetrics(mean_carry, expected_miss, hold, dispersion, cvar, downside)
     success_fraction = counts.completed / request.ensemble_size
     failure_fraction = 1.0 - success_fraction
     extrapolated = any(
@@ -182,9 +196,7 @@ def _summarize(
     constraints = _limiting_constraints(
         club, nominal, success_fraction, extrapolated, request
     )
-    score = _score(
-        request.objective, mean_carry, expected_miss, hold, dispersion, center_carry
-    )
+    score = _score(request.objective, risk, center_carry)
     if success_fraction < request.minimum_success_fraction:
         score += _FAILURE_PENALTY * (
             request.minimum_success_fraction - success_fraction

@@ -31,12 +31,29 @@ describe("capability optimizer", () => {
     expect(result.alternatives[0].meanCarryM).toBeCloseTo(fixture.expected.mean_carry_m, 10);
     expect(result.alternatives[0].targetHoldProbability).toBeCloseTo(fixture.expected.target_hold_probability, 10);
     expect(parseOptimizationResult(JSON.parse(JSON.stringify(result)))).toEqual(result);
+    (["minimize_variability", "minimize_downside"] as const).forEach((objective) => {
+      const objectiveResult = optimizeCapability(
+        profile, parseOptimizationRequest({ ...fixture.request, objective }), evaluator,
+      ).alternatives[0];
+      if (objective === "minimize_variability") {
+        const expected = fixture.objective_expectations.minimize_variability;
+        expect(objectiveResult.clubId).toBe(expected.best_club_id);
+        expect(objectiveResult.score).toBeCloseTo(expected.score, 10);
+        expect(objectiveResult.dispersionRmsM).toBeCloseTo(expected.dispersion_rms_m, 10);
+      } else {
+        const expected = fixture.objective_expectations.minimize_downside;
+        expect(objectiveResult.clubId).toBe(expected.best_club_id);
+        expect(objectiveResult.score).toBeCloseTo(expected.score, 10);
+        expect(objectiveResult.cvarMissM).toBeCloseTo(expected.cvar_miss_m, 10);
+        expect(objectiveResult.downsideCarryM).toBeCloseTo(expected.downside_carry_m, 10);
+      }
+    });
   });
 
   it("supports every robust objective deterministically", () => {
     const profile = parsePlayerCapabilityProfile(fixture.profile);
     const base = fixture.request;
-    (["maximize_carry", "minimize_expected_miss", "maximize_target_hold", "distance_control_pareto"] as const)
+    (["maximize_carry", "minimize_expected_miss", "maximize_target_hold", "minimize_variability", "minimize_downside", "distance_control_pareto"] as const)
       .forEach((objective) => {
         const request = parseOptimizationRequest({ ...base, objective });
         const first = optimizeCapability(profile, request, evaluator);
@@ -44,6 +61,15 @@ describe("capability optimizer", () => {
         expect(first).toEqual(second);
         expect(first.alternatives.length).toBeGreaterThan(0);
         expect(first.alternatives[0].cvarMissM).toBeGreaterThanOrEqual(first.alternatives[0].expectedMissM);
+        if (objective === "minimize_variability") {
+          expect(first.alternatives[0].score).toBeCloseTo(first.alternatives[0].dispersionRmsM, 12);
+          expect(first.alternatives[0].score).not.toBeCloseTo(first.alternatives[0].expectedMissM, 6);
+        }
+        if (objective === "minimize_downside") {
+          expect(first.alternatives[0].score).toBeCloseTo(
+            first.alternatives[0].cvarMissM + first.alternatives[0].downsideCarryM, 12,
+          );
+        }
         if (objective === "distance_control_pareto") expect(first.alternatives[0].paretoEfficient).toBe(true);
       });
   });
