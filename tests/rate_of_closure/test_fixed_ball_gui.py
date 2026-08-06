@@ -66,6 +66,11 @@ def test_fixed_ball_miss_populates_all_null_safe_consumers(tab, qtbot) -> None: 
 
     view = tab.view()
     assert view.run() is run
+    assert view._inspection_button.text() == "Jump to Closest Approach"
+    assert "Closest Approach Kinematics" in view._impact_kinematics_readout.text()
+    assert "no shaft-twist degree of freedom" in view._impact_kinematics_readout.text()
+    view._inspection_button.click()
+    assert view.playback_time() == pytest.approx(run.inspection_time_s)
     view.set_playback_time(run.total_duration_s)
     assert view.playback_time() == pytest.approx(run.swing_times[-1])
     assert "no impact" in view._axes.get_title().lower()

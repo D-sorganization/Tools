@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.3                                     |
-| **Spec Version**        | 1.13.3                                     |
+| **Current Version**     | 1.13.4                                     |
+| **Spec Version**        | 1.13.4                                     |
 | **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,26 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-05 Shared impact-event inspection and wedge kinematics
+
+- Every retained simulation run has one canonical inspection event: physical
+  impact for a hit, or explicitly labeled sampled closest approach for a miss.
+- PyQt6 and React provide an exact jump control for that event and pause
+  playback before moving the timeline.
+- The Rate adapter maps retained twist, pose, club/contact geometry, and either
+  the scenario shaft datum or measured articulated wrist-to-head line into the
+  shared `golf_club` wedge-kinematics engine.
+- Readouts report contact/reference AoA, the remove-shaft counterfactual,
+  shaft-induced vertical velocity, shaft rate, face-normal rate, leading-edge
+  relative rate where available, screw-axis distance, geometry provenance, and
+  model limitations.
+- A pendulum with no shaft-twist degree of freedom must report that limitation;
+  it must not fabricate shaft rotation. A miss must not be labeled impact.
+- When maximum reference speed is a flat plateau, automatic inspection selects
+  the temporal midpoint. This makes the manual source's auto event coincide
+  with its documented square-pose instant at 30 ms.
+
 ### 2026-08-05 Rate of Closure Python 3.10 CI compatibility
 
 - Rate of Closure and shared swing simulation string enums use Python 3.10-safe
@@ -2595,6 +2615,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.13.4 | feat(rate_of_closure, golf-club, #4158 #4160 #4163): integrate frame-explicit wedge contact/shaft kinematics into retained Rate runs; add honest impact-or-closest-approach jump controls and engineering readouts to PyQt6 and React; restore manual web angular velocity; and select the documented 30 ms square pose for flat automatic speed plateaus. |
 | 2026-08-05 | 1.13.3 | feat(rate_of_closure, swing_sim, #4135 #4142 #4143): add canonical ground/tee ball setup with club defaults and physical propagation through simulation/export/rendering, complete persistent v2 variation-plan workflows and paired common-reference propagation analysis, and make every Rate Matplotlib canvas lifecycle-safe during Qt teardown. |
 | 2026-08-05 | 1.13.2 | feat(rate_of_closure): harden both standalone interfaces with clickable reference-frame guidance, draft-based signed numeric editing, negative spin-axis tilt support, auto-populated Swing views, complete double/triple-pendulum skeletons, a parity-pinned web triple-pendulum model, default generated driver heads, engineering CG targets, and higher-resolution watertight clubhead meshes with polished lighting. |
 | 2026-08-05 | 1.13.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |

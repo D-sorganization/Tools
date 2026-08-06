@@ -26,6 +26,12 @@ const buttonClass =
 
 export function SwingPlaybackControls(props: Props) {
   const { run, playing, setPlaying, time, setTime, loop, setLoop, rate, setRate, toggles } = props;
+  const inspectionLabel = run?.impactOutcome.status === "miss"
+    ? "Closest Approach"
+    : "Impact";
+  const inspectionTime = run === null
+    ? 0
+    : (run.impactTimeS ?? run.impactOutcome.candidateTimeS);
   return (
     <div className="mb-2 flex flex-wrap items-center gap-2 text-sm">
       <button
@@ -51,6 +57,19 @@ export function SwingPlaybackControls(props: Props) {
         title="Step the playback one millisecond forward"
         className={buttonClass}
       >+1 frame</button>
+      <button
+        type="button"
+        onClick={() => {
+          setPlaying(false);
+          setTime(inspectionTime);
+        }}
+        disabled={!run}
+        title={run?.impactOutcome.status === "miss"
+          ? "Jump to the sampled closest approach; no impact occurred"
+          : "Jump to the exact impact event"}
+        data-event-time={inspectionTime}
+        className={buttonClass}
+      >Jump to {inspectionLabel}</button>
       <input
         type="range"
         min={0}

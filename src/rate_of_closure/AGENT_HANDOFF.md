@@ -1,7 +1,41 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-05
+
+## 2026-08-05 Wedge Impact Inspector Integration
+
+Branch `feat/4163-impact-inspector` integrates the draft variation branch with
+the shared golf-club stack through wedge kinematics PR #4172. It adds the first
+bounded implementation slice for wedge epic #4158 / impact-inspector issue
+#4163:
+
+- Canonical inspection time and event label on every `SimulationRun`: impact
+  for hits, closest approach for misses.
+- Exact `Jump to Impact` / `Jump to Closest Approach` controls in PyQt6 and
+  React, with playback paused before the jump.
+- `simulation/impact_kinematics.py`, which adapts retained pose/twist/contact
+  data to `shared.python.golf_club.WedgeKinematicState` and preserves geometry
+  provenance and model limitations.
+- Engineering readouts in both clients for contact/reference AoA, remove-shaft
+  counterfactual, shaft rotation and vertical velocity, face-normal rate,
+  leading-edge/arc rate where available, and screw-axis distance.
+- Restored manual angular velocity in the React simulation path; the previous
+  hard-coded zero made all closure and shaft metrics false zeros.
+- Deterministic midpoint tie-breaking for a flat maximum-speed plateau, so the
+  manual source's automatic event is its documented square pose at 30 ms.
+
+Physics boundary: articulated pendulum runs expose the measured wrist-to-head
+shaft line but have no shaft-twist degree of freedom. The inspector reports
+that absence rather than inventing torsional motion. The web mirror still does
+not retain full head pose; its readout declares that limitation until WASM or a
+canonical backend replaces the temporary TypeScript mirror.
+
+Focused evidence before the first push: 35 Python/PyQt tests, 35 React/model
+tests, Ruff, TypeScript, ESLint, and Vite production build passed. Browser QA
+verified the 1,307 deg/s manual fixture and a 1.430 s closest-approach miss with
+zero console warnings/errors. Native-window QA confirmed the control and
+readout are visible in the standalone PyQt6 app.
 
 ## Status Note
 

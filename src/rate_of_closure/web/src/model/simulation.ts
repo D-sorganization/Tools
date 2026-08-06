@@ -267,9 +267,13 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   if (input.impactTimeS === null) {
     let best = 0;
     let bestSpeed = -1;
+    const midpoint = swing[swing.length - 1].t / 2;
     swing.forEach((sample, index) => {
       const speed = norm(sample.velocity);
-      if (speed > bestSpeed) {
+      const isHigher = speed > bestSpeed + 1e-12;
+      const isEqualAndMoreCentral = Math.abs(speed - bestSpeed) <= 1e-12 &&
+        Math.abs(sample.t - midpoint) < Math.abs(swing[best].t - midpoint);
+      if (isHigher || isEqualAndMoreCentral) {
         bestSpeed = speed;
         best = index;
       }

@@ -34,6 +34,7 @@ from .flight_explorer import (
     launch_from_delivery,
     launch_from_direct,
 )
+from .impact_kinematics import ImpactKinematicSnapshot, impact_kinematics_for_run
 from .isa import screw_axis_samples
 from .kinetics import (
     KINETIC_JOINT_NAMES,
@@ -79,6 +80,7 @@ __all__ = [
     "FlightExploration",
     "KineticsSeries",
     "ImpactOutcome",
+    "ImpactKinematicSnapshot",
     "ImpactStatus",
     "ManualSwingSource",
     "SimulationConfig",
@@ -90,6 +92,7 @@ __all__ = [
     "explore_flight",
     "fit_run_torque_profile",
     "inverse_dynamics",
+    "impact_kinematics_for_run",
     "kinetics_for_run",
     "simulate_forced",
     "zero_torque_counterfactual",

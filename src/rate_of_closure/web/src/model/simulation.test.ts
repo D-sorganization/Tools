@@ -168,6 +168,10 @@ describe("impact + launch parity (Python impact/models.py pins)", () => {
 });
 
 describe("session orchestration", () => {
+  it("uses the midpoint of a constant-speed plateau for automatic inspection", () => {
+    expect(runSimulation(MANUAL_INPUT).impactTimeS).toBeCloseTo(0.03, 12);
+  });
+
   it("uses configured ball elevation for alignment, flight, and contact classification", () => {
     const teeHeightM = 0.0381;
     const inspection = runSimulation({

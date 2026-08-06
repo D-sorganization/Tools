@@ -110,7 +110,7 @@ class TestSimulationTab:
         assert run.config.source_kind == "double_pendulum"
 
     def test_source_change_discards_stale_manual_impact_time(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
-        assert ran_tab.last_run().impact_time_s == pytest.approx(0.0)
+        assert ran_tab.last_run().impact_time_s == pytest.approx(0.03)
         ran_tab._source_combo.setCurrentIndex(2)  # triple pendulum
         assert ran_tab._tau is None
         run = ran_tab.run_now()
@@ -145,6 +145,19 @@ class TestSimulationView:
         assert view.playback_time() == pytest.approx(total)
         view.set_playback_time(-1.0)
         assert view.playback_time() == pytest.approx(0.0)
+
+    def test_jump_to_impact_uses_the_canonical_inspection_event(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        view = ran_tab.view()
+        run = ran_tab.last_run()
+        view.set_playback_time(0.0)
+
+        view._inspection_button.click()
+
+        assert view.playback_time() == pytest.approx(run.inspection_time_s)
+        assert view._inspection_button.text() == "Jump to Impact"
+        assert "Contact-Point AoA" in view._impact_kinematics_readout.text()
+        assert "Shaft AoA Contribution" in view._impact_kinematics_readout.text()
+        assert "Geometry Basis" in view._impact_kinematics_readout.text()
 
     def test_play_pause_and_loop_toggle(self, ran_tab, qtbot) -> None:  # type: ignore[no-untyped-def]
         view = ran_tab.view()

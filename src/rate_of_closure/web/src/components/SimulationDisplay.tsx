@@ -8,6 +8,7 @@ import type { TargetRegionTs } from "../model/targets";
 import { FIELD_GUIDANCE } from "../model/units";
 import { BallSetupDiagram } from "./BallSetupDiagram";
 import { FlightCanvases } from "./FlightCanvases";
+import { ImpactKinematicsPanel } from "./ImpactKinematicsPanel";
 import { KineticsSection } from "./KineticsSection";
 import { StrikeCanvas } from "./StrikeCanvas";
 import { SwingPlaybackControls } from "./SwingPlaybackControls";
@@ -170,6 +171,9 @@ export function SimulationDisplay({
               ["Screw Axis", showScrew, setShowScrew, TOGGLE_GUIDANCE.screw, "text-fuchsia-300"],
               ["Show Ball Flight", showFlight, setShowFlight, TOGGLE_GUIDANCE.flight, "text-amber-300/90"],
             ]} />
+          {run && clubSpec && (
+            <ImpactKinematicsPanel run={run} scenario={scenario} club={clubSpec} />
+          )}
           {showScrew && (
             <div className="mb-3 grid gap-3 rounded-lg border border-fuchsia-400/30 bg-fuchsia-950/10 p-3 md:grid-cols-[190px_1fr]">
               <label className="text-sm font-medium text-fuchsia-200">

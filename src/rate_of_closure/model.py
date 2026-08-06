@@ -182,7 +182,7 @@ class ImpactResult:
     plane_normal: tuple[float, float, float]
 
 
-def _frame(lie_angle_deg: float) -> tuple[np.ndarray, np.ndarray]:
+def impact_frame(lie_angle_deg: float) -> tuple[np.ndarray, np.ndarray]:
     """Shaft axis and swing-plane normal for a given impact lie angle.
 
     The shaft points from the head up toward the hands: up (+y) and
@@ -200,14 +200,14 @@ def _frame(lie_angle_deg: float) -> tuple[np.ndarray, np.ndarray]:
 
 def _omega_rad(scenario: ImpactScenario) -> np.ndarray:
     """Angular velocity vector in rad/s from the two reported components."""
-    shaft, normal = _frame(scenario.lie_angle_deg)
+    shaft, normal = impact_frame(scenario.lie_angle_deg)
     return np.asarray(
         math.radians(scenario.omega_plane_dps) * normal
         + math.radians(scenario.omega_shaft_dps) * shaft
     )
 
 
-def _impact_lever_m(scenario: ImpactScenario) -> np.ndarray:
+def impact_lever_m(scenario: ImpactScenario) -> np.ndarray:
     """Vector from the reference point to the impact point, metres."""
     return (
         np.array(
@@ -240,7 +240,7 @@ def solve(scenario: ImpactScenario) -> ImpactResult:
 
     v_ref = np.array([scenario.clubhead_speed_mph / MPH_PER_MPS, 0.0, 0.0])
     omega = _omega_rad(scenario)
-    tangential = np.cross(omega, _impact_lever_m(scenario))
+    tangential = np.cross(omega, impact_lever_m(scenario))
     v_point = v_ref + tangential
 
     ref_speed = float(np.linalg.norm(v_ref))
@@ -259,7 +259,7 @@ def solve(scenario: ImpactScenario) -> ImpactResult:
     speed_fts = ref_speed / 0.3048
     normalized_closure = closure_rate / speed_fts if speed_fts else 0.0
 
-    shaft, normal = _frame(scenario.lie_angle_deg)
+    shaft, normal = impact_frame(scenario.lie_angle_deg)
     result = ImpactResult(
         reference_speed_mph=ref_speed * MPH_PER_MPS,
         point_speed_mph=point_speed * MPH_PER_MPS,

@@ -186,6 +186,18 @@ class SimulationRun:
         flight_span = float(self.flight_times[-1]) if len(self.flight_times) else 0.0
         return float(self.swing_times[-1]) + flight_span
 
+    @property
+    def inspection_time_s(self) -> float:
+        """Return impact time, or the explicitly labeled closest approach for a miss."""
+        if self.impact_time_s is not None:
+            return float(self.impact_time_s)
+        return float(self.impact_outcome.candidate_time_s)
+
+    @property
+    def inspection_event_label(self) -> str:
+        """Return the honest event label paired with :attr:`inspection_time_s`."""
+        return "Impact" if self.impact_outcome.is_hit else "Closest Approach"
+
 
 def _contact_mode(value: ContactMode) -> ContactMode:
     """Normalize a contact mode while preserving useful validation errors."""
