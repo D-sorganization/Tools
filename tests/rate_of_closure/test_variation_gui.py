@@ -21,6 +21,7 @@ from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker  # noqa: E
 from shared.python.swing_sim.variation import (  # noqa: E402
     CATEGORY_DELIVERY,
     CATEGORY_LAUNCH,
+    MODES,
     NoiseSpec,
     VariationPlan,
     keys_for_mode,
@@ -74,7 +75,7 @@ class TestConstruction:
         assert keys == keys_for_mode("delivery")
 
     def test_mode_switch_repopulates_rows(self, tab: VariationTab) -> None:
-        tab._mode_combo.setCurrentIndex(2)  # launch
+        tab._mode_combo.setCurrentIndex(MODES.index("launch"))
         row = tab._rows[0]
         keys = tuple(row.variable.itemData(i) for i in range(row.variable.count()))
         assert keys == keys_for_mode("launch")

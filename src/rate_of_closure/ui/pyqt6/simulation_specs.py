@@ -2,12 +2,23 @@
 
 from __future__ import annotations
 
-__all__ = ["LAUNCH_ROWS", "RATE_PRESETS", "SOURCE_LABELS", "TILT_SPECS"]
+__all__ = [
+    "IMPACT_MODEL_LABELS",
+    "LAUNCH_ROWS",
+    "RATE_PRESETS",
+    "SOURCE_LABELS",
+    "TILT_SPECS",
+]
 
 SOURCE_LABELS: dict[str, str] = {
     "manual": "Manual Scenario (Constant Twist)",
     "double_pendulum": "Double Pendulum",
     "triple_pendulum": "Triple Pendulum",
+}
+
+IMPACT_MODEL_LABELS: dict[str, str] = {
+    "instantaneous": "Instantaneous Impulse (Fast)",
+    "impact_interval": "Impact Interval (6-DOF)",
 }
 
 # (launch field, Title Case label, unit suffix) in display order.

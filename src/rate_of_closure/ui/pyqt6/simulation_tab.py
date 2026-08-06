@@ -1,8 +1,13 @@
-"""Simulation session UI for source setup, playback, results, and inspection."""
+"""Simulation controls and scale-separated result views.
+
+The tab consumes complete scenarios (LoD), builds validated
+:class:`SimulationConfig` requests, and hosts swing, impact-interval,
+kinetics, strike, flight, solver, and inspector surfaces. Inputs retain the
+project's sourced FIELD_GUIDANCE hover pattern.
+"""
 
 from __future__ import annotations
 
-import dataclasses
 import logging
 import math
 
@@ -28,27 +33,46 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.club import club_names, get_club
+from rate_of_closure.club import club_names
 from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
 from rate_of_closure.derivation_models import DerivationConfig
-from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
+from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation import (
     SOURCE_KINDS,
     SimulationConfig,
     SimulationRun,
-    delivery_at,
     make_source,
     run_simulation,
 )
 from rate_of_closure.simulation.targets import TargetRegion, layout_for_region
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
+from rate_of_closure.ui.pyqt6.impact_interval_view import ImpactIntervalView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
 from rate_of_closure.ui.pyqt6.kinetics_panel import KineticsPanel
-from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
+from rate_of_closure.ui.pyqt6.result_row import ResultRow
 from rate_of_closure.ui.pyqt6.simulation_specs import (
+    IMPACT_MODEL_LABELS,
     LAUNCH_ROWS,
     SOURCE_LABELS,
     TILT_SPECS,
+)
+from rate_of_closure.ui.pyqt6.simulation_tab_logic import (
+    apply_solver_solution as apply_solution_logic,
+)
+from rate_of_closure.ui.pyqt6.simulation_tab_logic import (
+    derivation_config as build_derivation_config,
+)
+from rate_of_closure.ui.pyqt6.simulation_tab_logic import (
+    show_explanation as show_explanation_logic,
+)
+from rate_of_closure.ui.pyqt6.simulation_tab_logic import (
+    simulation_config as build_simulation_config,
+)
+from rate_of_closure.ui.pyqt6.simulation_tab_logic import (
+    sync_scrub_slider as sync_scrub_slider_logic,
+)
+from rate_of_closure.ui.pyqt6.simulation_tab_logic import (
+    update_delivery_label as update_delivery_label_logic,
 )
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
@@ -77,6 +101,7 @@ class SimulationTab(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._scenario = ImpactScenario(clubhead_speed_mph=113.0)
+        self._launch_explanations = LAUNCH_EXPLANATIONS
         self._run: SimulationRun | None = None
         self._tau: float | None = None  # None = auto (max clubhead speed)
         self._source = None  # cached app-frame source for live scrubbing
@@ -84,6 +109,7 @@ class SimulationTab(QWidget):
 
         self._view = SimulationView()
         self._strike_view = StrikeView()
+        self._impact_interval_view = ImpactIntervalView()
         self._flight_view = FlightView()
         self._kinetics_panel = KineticsPanel()
         self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)
@@ -112,6 +138,7 @@ class SimulationTab(QWidget):
         # Scale-separated face, swing, kinetics, and flight displays.
         right = QTabWidget()
         right.addTab(self._strike_view, "Strike")
+        right.addTab(self._impact_interval_view, "Impact Interval")
         right.addTab(self._view, "Swing")
         right.addTab(self._kinetics_panel, "Kinetics")
         right.addTab(self._flight_view, "Flight")
@@ -168,6 +195,15 @@ class SimulationTab(QWidget):
         for spin in self._tilt_spins.values():
             spin.valueChanged.connect(self._emit_config)
         form.addRow("Flight Model", self._flight_combo)
+
+        self._impact_model_combo = QComboBox()
+        self._impact_model_combo.addItems(list(IMPACT_MODEL_LABELS.values()))
+        self._impact_model_combo.setToolTip(
+            "Suggested use: choose the fast impulse model for broad sweeps and "
+            "Impact Interval for sub-microsecond club/ball state histories. "
+            "Source: Tools #4130 formulation and the shared Kelvin-Voigt law."
+        )
+        form.addRow("Impact Model", self._impact_model_combo)
 
         self._run_button = QPushButton("Run Simulation")
         self._run_button.setToolTip(
@@ -253,31 +289,14 @@ class SimulationTab(QWidget):
 
     def derivation_config(self) -> DerivationConfig:
         """The DerivationConfig described by the current controls."""
-        plane = self.plane()
-        return DerivationConfig(
-            flight_model=self._flight_combo.currentText(),
-            swing_source=self.source_kind(),
-            gear_effect=True,  # the session pipeline always applies it
-            plane_tilts_deg=(
-                plane.yaw_deg,
-                plane.side_tilt_deg,
-                plane.forward_tilt_deg,
-            ),
-        )
+        return build_derivation_config(self)
 
     def _emit_config(self, *_args: object) -> None:
         self.configChanged.emit(self.derivation_config())
 
     def config(self) -> SimulationConfig:
         """The simulation request described by the controls."""
-        return SimulationConfig(
-            scenario=self._scenario,
-            club=get_club(self._club_combo.currentText()),
-            source_kind=self.source_kind(),
-            plane=self.plane(),
-            impact_time_s=self._tau,
-            flight_model=self._flight_combo.currentText(),
-        )
+        return build_simulation_config(self, IMPACT_MODEL_LABELS)
 
     def run_now(self) -> SimulationRun | None:
         """Run the simulation and populate the scene + inspector."""
@@ -292,6 +311,7 @@ class SimulationTab(QWidget):
         self._sync_scrub_slider(run.impact_time_s)
         self._view.set_run(run)
         self._strike_view.set_run(run)
+        self._impact_interval_view.set_run(run)
         self._kinetics_panel.set_run(run)
         self._flight_view.set_run(run)
         self._inspector.set_run(run)
@@ -334,6 +354,10 @@ class SimulationTab(QWidget):
     def strike_view(self) -> StrikeView:
         """The face-scale impact-zone viewer."""
         return self._strike_view
+
+    def impact_interval_view(self) -> ImpactIntervalView:
+        """The sub-microsecond force, orientation, and slow-motion viewer."""
+        return self._impact_interval_view
 
     def flight_view(self) -> FlightView:
         """The flight-scale trajectory viewer."""
@@ -380,36 +404,7 @@ class SimulationTab(QWidget):
           solved plane tilts drive the tilt inputs, and the solved
           impact-time offset shifts tau off the peak-speed instant.
         """
-        variables: dict[str, float] = result.variables  # type: ignore[attr-defined]
-        updates = {
-            "impact_offset_toe_mm": variables["impact_offset_toe_mm"],
-            "impact_offset_high_mm": variables["impact_offset_high_mm"],
-        }
-        if use_swing_source:
-            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
-            for attr, var in (
-                ("yaw_deg", "swing_yaw_deg"),
-                ("side_tilt_deg", "swing_side_tilt_deg"),
-                ("forward_tilt_deg", "swing_forward_tilt_deg"),
-            ):
-                spin = self._tilt_spins[attr]
-                spin.blockSignals(True)
-                spin.setValue(variables[var])
-                spin.blockSignals(False)
-        else:
-            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("manual"))
-            speed_mph = variables["clubhead_speed_mps"] * MPH_PER_MPS
-            updates["clubhead_speed_mph"] = speed_mph
-        self._scenario = dataclasses.replace(self._scenario, **updates)
-        self._invalidate_source()
-        self._tau = None  # auto: impact at maximum clubhead speed
-        run = self.run_now()
-        offset = variables.get("swing_impact_time_offset_s", 0.0)
-        if run is not None and use_swing_source and abs(offset) > 1e-9:
-            source = self._ensure_source()
-            self._tau = min(max(run.impact_time_s + offset, 0.0), source.duration)
-            run = self.run_now()
-        return run
+        return apply_solution_logic(self, result, use_swing_source)
 
     def stop(self) -> None:
         """Stop the playback timer and solver worker (close and tests)."""
@@ -437,33 +432,10 @@ class SimulationTab(QWidget):
         return value / _SCRUB_STEPS * float(source.duration)
 
     def _sync_scrub_slider(self, tau: float) -> None:
-        source = self._ensure_source()
-        value = (
-            round(tau / source.duration * _SCRUB_STEPS) if source.duration > 0.0 else 0
-        )
-        self._scrub_slider.blockSignals(True)
-        self._scrub_slider.setValue(value)
-        self._scrub_slider.blockSignals(False)
-        self._scrub_label.setText(f"{tau * 1000.0:.1f} ms")
+        sync_scrub_slider_logic(self, tau, _SCRUB_STEPS)
 
     def _update_delivery_label(self, tau: float) -> None:
-        try:
-            source = self._ensure_source()
-            delivery = delivery_at(
-                source, tau, self._scenario, get_club(self._club_combo.currentText())
-            )
-        except Exception as exc:  # noqa: BLE001 — zero-speed instants etc.
-            self._delivery_label.setText(f"No delivery at this instant ({exc})")
-            return
-        velocity = delivery.clubhead_velocity
-        vx, vy, vz = (float(component) for component in velocity)
-        speed_mph = float(np.linalg.norm(velocity)) * MPH_PER_MPS
-        path = math.degrees(math.atan2(vz, vx))
-        aoa = math.degrees(math.atan2(vy, math.hypot(vx, vz)))
-        self._delivery_label.setText(
-            f"Delivery at τ: {speed_mph:.1f} mph, path {path:+.1f}°, "
-            f"AoA {aoa:+.1f}°, spin loft {delivery.spin_loft_deg:.1f}°"
-        )
+        update_delivery_label_logic(self, tau)
 
     def _on_scrub_moved(self, value: int) -> None:
         tau = self._scrub_time(value)
@@ -484,13 +456,7 @@ class SimulationTab(QWidget):
         self.run_now()
 
     def _show_explanation(self, field: str) -> None:
-        labels = {key: label for key, label, _unit in LAUNCH_ROWS}
-        text = LAUNCH_EXPLANATIONS.get(field, "")
-        # Persistent single selection across the launch rows (#4120 V4).
-        for row_field, row in self._rows.items():
-            row.set_selected(row_field == field)
-        html = explanation_html(labels.get(field, field), text, field)
-        self._explanation.setHtml(html)
+        show_explanation_logic(self, field, LAUNCH_ROWS)
 
     def _on_explanation_link(self, url) -> None:  # type: ignore[no-untyped-def]
         """Forward ``glossary:<term>`` links to the main window."""

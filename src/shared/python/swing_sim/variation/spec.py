@@ -54,6 +54,7 @@ from shared.python.contracts import require
 from .registry import (
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
+    CATEGORY_IMPACT_INTERVAL,
     CATEGORY_LAUNCH,
     CATEGORY_SWING,
     MODE_CATEGORIES,
@@ -254,6 +255,7 @@ __all__ = [
     "CATEGORY_CLUB",
     "CATEGORY_DELIVERY",
     "CATEGORY_LAUNCH",
+    "CATEGORY_IMPACT_INTERVAL",
     "CATEGORY_SWING",
     "DISTRIBUTIONS",
     "MODES",

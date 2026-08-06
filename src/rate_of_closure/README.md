@@ -49,6 +49,23 @@ reports is **degrees per foot of travel**.
 | What is the speed-invariant closure? | ~12 °/ft |
 | How much does the face close *during* the 450 µs of contact? | ~0.9° |
 
+The last row is the original unforced-rotation estimate. The Simulation tab's
+**Impact Interval (6-DOF)** model replaces that approximation with loaded
+Newton-Euler dynamics through contact. It records the moving face normal,
+force, compression, club/ball state, face angle, dynamic loft, shaft-axis
+twist, integrated impulse, and energy ledger at sub-microsecond resolution.
+The **Impact Interval** display tab provides force/orientation plots and a
+slow-motion contact scrubber. The Variation tab exposes a dedicated
+**Delivery → Impact Interval → Flight** pipeline for seeded sensitivity work.
+
+The public API is `shared.python.swing_sim.impact_interval`; callers may supply
+a full inertia tensor, contact and attachment locations, custom contact law,
+time step, friction, and one of three grip boundaries (free, pinned, or
+torsional grip). See
+`docs/physics/IMPACT_INTERVAL_DYNAMICS.md` for equations, dimensionless
+timescales, validation limits, audit definitions, and explicit model
+limitations.
+
 A "1 percent" lateral velocity is not a 1 percent effect: it is over a
 degree of path, which at driver speeds is several yards of curvature —
 comparable to the club-path precision claimed by launch monitors, and per
@@ -67,7 +84,9 @@ cd src/rate_of_closure/web && npm install && npm run dev
 
 The web app builds to a static bundle (`npm run build`) that can be hosted
 anywhere as a link, and carries the same Tauri scripts as the other web
-tools for desktop packaging.
+tools for desktop packaging. The new interval kernel is currently Python-only;
+the web surface retains the fast impulse model until the already-planned
+`swing-core` WASM parity swap, avoiding a second hand-maintained physics copy.
 
 Both interfaces open with a generated driver head and its engineering CG
 target visible. The Simulation view runs immediately and supports manual,
@@ -98,7 +117,8 @@ The PyInstaller output lands in `dist/RateOfClosureExplorer`.
 ```
 model.py              # twist physics, DbC contracts, numpy — no Qt
 presets.py            # dossier-sourced named scenarios
-ui/pyqt6/             # ThemedWindowMixin window, controls, 3D + sweep views
+simulation/           # swing -> selectable impact -> flight orchestration
+ui/pyqt6/             # themed controls, state/history viewers, plots
 web/                  # React/Vite/TS clone; model mirrored + parity-tested
 tests/ (repo level)   # tests/rate_of_closure/: model, contracts, GUI smoke
 ```

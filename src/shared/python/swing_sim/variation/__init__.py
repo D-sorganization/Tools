@@ -23,6 +23,7 @@ from .analysis import (
 from .engine import (
     DELIVERY_OUTPUTS,
     FLIGHT_OUTPUTS,
+    IMPACT_INTERVAL_OUTPUTS,
     LAUNCH_OUTPUTS,
     CancelledError,
     ProgressReport,
@@ -35,6 +36,7 @@ from .engine import (
 from .spec import (
     CATEGORY_CLUB,
     CATEGORY_DELIVERY,
+    CATEGORY_IMPACT_INTERVAL,
     CATEGORY_LAUNCH,
     CATEGORY_SWING,
     DISTRIBUTIONS,
@@ -54,10 +56,12 @@ __all__ = [
     "CATEGORY_CLUB",
     "CATEGORY_DELIVERY",
     "CATEGORY_LAUNCH",
+    "CATEGORY_IMPACT_INTERVAL",
     "CATEGORY_SWING",
     "DELIVERY_OUTPUTS",
     "DISTRIBUTIONS",
     "FLIGHT_OUTPUTS",
+    "IMPACT_INTERVAL_OUTPUTS",
     "LAUNCH_OUTPUTS",
     "MODES",
     "MODE_CATEGORIES",

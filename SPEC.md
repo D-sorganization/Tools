@@ -17,6 +17,26 @@
   Write clearly, use concrete examples, and avoid ambiguity.
 -->
 
+### 2026-08-05 Impact-Interval Club Dynamics (Epic #4130)
+
+- `shared/python/swing_sim/impact_interval/` is the self-facaded reference
+  implementation for full club and ball state through contact. It supports a
+  full body-frame inertia tensor, moving contact point/normal, regularized
+  friction, and free, pinned, or torsional-grip attachment hypotheses.
+- The canonical unilateral `KelvinVoigtContactLaw` lives in
+  `swing_sim/impact/contact.py` and is consumed by both the existing translating
+  spring-damper model and the six-DOF interval solver.
+- Every interval result retains aligned state, force, angle, compression, and
+  attachment histories plus energy, impulse, and momentum audits. Stable
+  `channel()` and `at_time()` seams allow custom engineering interrogation.
+- Rate of Closure adds an Impact Model selector, a themed Impact Interval tab
+  with a sub-microsecond scrubber, strict JSON audit/history export, and a
+  seeded `impact_interval` variation pipeline with registered contact inputs.
+- The binding formulation, dimensionless timescales, validation program,
+  provenance map, and model limitations are in
+  `docs/physics/IMPACT_INTERVAL_DYNAMICS.md`. The web mirror intentionally stays
+  on the fast impulse path until the planned Rust/WASM single-source kernel.
+
 ## 1. Identity
 
 | Field                   | Value                                      |
@@ -2507,6 +2527,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.14.0 | feat(swing_sim, rate_of_closure, #4130): add queryable six-DOF impact-interval dynamics with full-tensor rigid-club state, shared unilateral Kelvin-Voigt law, moving contact/friction forces, free/pinned/torsional-grip boundaries, impulse/energy/momentum audits, instantaneous-limit and symmetry validation, selectable Rate of Closure integration, sub-microsecond themed viewer, JSON trace export, and seeded interval-variation pipeline; document formulation, provenance, limits, and Rust/WASM extension seam. |
 | 2026-08-05 | 1.13.2 | feat(rate_of_closure): harden both standalone interfaces with clickable reference-frame guidance, draft-based signed numeric editing, negative spin-axis tilt support, auto-populated Swing views, complete double/triple-pendulum skeletons, a parity-pinned web triple-pendulum model, default generated driver heads, engineering CG targets, and higher-resolution watertight clubhead meshes with polished lighting. |
 | 2026-08-05 | 1.13.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
 | 2026-08-04 | 1.13.0 | feat(rate_of_closure, swing_sim, #4125 H6-H7): course showcase — H7a themed golf-course scene (palette-derived grass family, fairway strip, green + hole/flag at a configurable distance, tee marker; Course Elements toggle; both UIs incl. web canvas mirrors with a shared chart-palette module); H7b target regions (`solver/targets.py` green circle / fairway corridor with exact signed distance + containment, additive ImpactGoal region residual with centering term, Optimize-to-Target on both solver UIs reusing partition/progress/cancel, target editing reflected live in the course scene, Variation landing-scatter overlay with the hold-% headline via hold_fraction, TS parity mirror pinned test-for-test); H6 launcher-language styling (palette-only QSS: button hover/pressed + subtle shadow, launcher-card group boxes, hover tabs; web accents aligned onto the shared palette) and the yards-default Distance quantity (yd/m drop-down in both UIs, SI-canonical internals, applied to flight/putting result rows, view axes, plotting catalog distance variables incl. exports, variation stats, and target entries; conversion + default-is-yards tests). |

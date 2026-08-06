@@ -56,6 +56,7 @@ __all__ = ["VariationTab"]
 _MODE_LABELS: dict[str, str] = {
     "delivery": "Delivery → Impact → Flight",
     "swing": "Pendulum Swing → Impact → Flight",
+    "impact_interval": "Delivery → Impact Interval → Flight",
     "launch": "Launch Conditions → Flight",
 }
 _BASE_SOURCES = ("Registry Defaults", "Explorer Scenario")
@@ -273,9 +274,13 @@ class VariationTab(QWidget):
         base: dict[str, float] = {
             key: value for key, value in self._loaded_base.items() if key in legal
         }
-        if self._base_combo.currentIndex() == 1 and mode in ("delivery", "swing"):
+        if self._base_combo.currentIndex() == 1 and mode in (
+            "delivery",
+            "swing",
+            "impact_interval",
+        ):
             s = self._scenario
-            if mode == "delivery":
+            if mode in ("delivery", "impact_interval"):
                 key = f"{CATEGORY_DELIVERY}.clubhead_speed_mps"
                 base[key] = s.clubhead_speed_mph / MPH_PER_MPS
             base[f"{CATEGORY_DELIVERY}.impact_offset_toe_mm"] = s.impact_offset_toe_mm
