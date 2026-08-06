@@ -48,4 +48,22 @@ describe("reduced passive turf contact", () => {
       0.3,
     )).toThrow(RangeError);
   });
+
+  it("rejects malformed profile identity, status, and velocity shape", () => {
+    expect(() => simulateReducedTurfContact(
+      { ...FIRM_FAIRWAY_TURF, profileId: "  " },
+      [13, -2, 0.5],
+      0.3,
+    )).toThrow(/profileId/);
+    expect(() => simulateReducedTurfContact(
+      { ...FIRM_FAIRWAY_TURF, calibrationStatus: "unknown" as "calibrated" },
+      [13, -2, 0.5],
+      0.3,
+    )).toThrow(/calibrationStatus/);
+    expect(() => simulateReducedTurfContact(
+      FIRM_FAIRWAY_TURF,
+      [13, -2] as unknown as [number, number, number],
+      0.3,
+    )).toThrow(/three finite components/);
+  });
 });

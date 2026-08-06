@@ -28,6 +28,8 @@ retained swing under the computed turf wrench.
 - Reproducibility metadata: plan schema, seed, stable noise IDs, candidate ID,
   objective ID, turf profile/calibration state, solver ID, sampling-design and
   inference-method IDs, frame, and explicit limitations.
+- Target-specific objective IDs preserve up to nine decimal places in SI units;
+  distinct custom targets are not collapsed by three-decimal display rounding.
 
 ## Mutually Exclusive Trial Cohorts
 
@@ -46,6 +48,12 @@ tail risk use the configured trial count as their denominator. A miss or
 failure is never dropped, converted to a zero, or given a fabricated landing.
 Optional physical metrics retain `null`/`None`, plus explicit support and
 unavailable counts.
+
+Reduced-turf `outside_calibrated_domain` and `step_limit` states are retained
+on the affected trial, receive the declared unsupported-turf penalty, and are
+constraint violations. Any ordinary exception while post-processing one
+retained Python run becomes that trial's diagnostic numerical-failure record;
+it cannot discard the remaining configured population.
 
 ## Physical Metrics
 
@@ -99,7 +107,8 @@ configurations, wedge/ground/turf/loss contracts, all trial records including
 turf status, diagnostics, metrics, summary confidence/tail/convergence
 evidence, and limitations. CSV contains one row per configured trial with
 stable candidate/objective/turf/sampling identifiers and unavailable metrics
-left blank.
+left blank. Both JSON and CSV exports fail closed if any number in the retained
+study has become nonfinite.
 
 The browser is capped at 500 trials but currently performs the retained swing
 and forgiveness analysis synchronously. Large-run worker execution,

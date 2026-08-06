@@ -178,12 +178,7 @@ class VariationWorker(QThread):
             wedge_parameters=parameters,
             ground=GroundPlane(),
             turf_profile=turf_profile_preset(TurfPreset.FIRM_FAIRWAY),
-            loss_model=ChipLossModel(
-                objective_id=(
-                    f"chip-target-{self._chip_target_carry_m:.3f}m-balanced-v1"
-                ),
-                target_carry_m=self._chip_target_carry_m,
-            ),
+            loss_model=ChipLossModel(target_carry_m=self._chip_target_carry_m),
         )
         return analyze_chip_forgiveness_ensemble(
             study_request,

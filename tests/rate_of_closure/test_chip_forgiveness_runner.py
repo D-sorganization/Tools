@@ -180,7 +180,9 @@ def test_retained_postprocessing_failure_remains_one_all_trial_record(
     ensemble = run_simulation_ensemble(request.ensemble)
 
     def fail_postprocessing(*_args: object) -> object:
-        raise ValueError("planted post-processing failure")
+        # KeyError is intentionally outside the execution failure allow-list.
+        # The retained-run adapter must still preserve the all-trial denominator.
+        raise KeyError("planted post-processing failure")
 
     monkeypatch.setattr(forgiveness_runner, "_trial_metrics", fail_postprocessing)
     study = analyze_chip_forgiveness_ensemble(request, ensemble)
@@ -193,6 +195,41 @@ def test_retained_postprocessing_failure_remains_one_all_trial_record(
         "planted post-processing failure" in (record.diagnostic or "")
         for record in study.records
     )
+
+
+def test_retained_analysis_preserves_unsupported_turf_status(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    request = _request((_config(30.0),))
+    ensemble = run_simulation_ensemble(request.ensemble)
+    metrics = dict.fromkeys(forgiveness_runner.CHIP_METRIC_NAMES)
+    metrics.update(carry_m=27.432, lateral_m=0.0)
+
+    monkeypatch.setattr(
+        forgiveness_runner,
+        "_trial_metrics",
+        lambda *_args: (
+            ChipTrialCohort.BALL_ONLY,
+            metrics,
+            "outside_calibrated_domain",
+        ),
+    )
+
+    study = analyze_chip_forgiveness_ensemble(request, ensemble)
+
+    record = study.records[0]
+    assert record.turf_contact_status == "outside_calibrated_domain"
+    assert record.constraint_violated is True
+    assert record.loss == pytest.approx(request.loss_model.unsupported_turf_penalty)
+
+
+def test_objective_identity_does_not_alias_distinct_custom_targets() -> None:
+    first = ChipLossModel(target_carry_m=20.0004)
+    second = ChipLossModel(target_carry_m=20.0005)
+
+    assert first.objective_id == "chip-target-20.0004m-balanced-v1"
+    assert second.objective_id == "chip-target-20.0005m-balanced-v1"
+    assert first.objective_id != second.objective_id
 
 
 def test_loss_contract_penalizes_ground_first_and_declared_constraints() -> None:

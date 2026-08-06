@@ -88,6 +88,9 @@ function result(arguments_: ResultArguments): ReducedTurfContactResultTs {
 function validateInputs(
   profile: TurfContactProfileTs, velocity: Vec3, massKg: number, timeStepS: number,
 ): void {
+  if (profile === null || typeof profile !== "object") {
+    throw new TypeError("profile must be a turf contact profile");
+  }
   const profileValues = [
     profile.normalStiffnessNM,
     profile.normalDampingNsM,
@@ -96,7 +99,9 @@ function validateInputs(
     profile.maxPenetrationM,
   ];
   if (!profileValues.every(Number.isFinite)) throw new RangeError("turf profile must be finite");
-  if (profile.profileId.trim().length === 0) throw new RangeError("profileId must be nonempty");
+  if (typeof profile.profileId !== "string" || profile.profileId.trim().length === 0) {
+    throw new RangeError("profileId must be nonempty");
+  }
   if (profile.normalStiffnessNM < 0 || profile.normalStiffnessNM > MAX_STIFFNESS_N_M) {
     throw new RangeError(`normalStiffnessNM must be in [0, ${MAX_STIFFNESS_N_M}]`);
   }
@@ -115,7 +120,9 @@ function validateInputs(
   if (!["uncalibrated", "illustrative", "calibrated"].includes(profile.calibrationStatus)) {
     throw new RangeError("calibrationStatus is invalid");
   }
-  if (!velocity.every(Number.isFinite)) throw new RangeError("velocity must be finite");
+  if (!Array.isArray(velocity) || velocity.length !== 3 || !velocity.every(Number.isFinite)) {
+    throw new RangeError("velocity must contain three finite components");
+  }
   if (!Number.isFinite(massKg) || massKg <= 0) throw new RangeError("massKg must be > 0");
   if (!Number.isFinite(timeStepS) || timeStepS <= 0) {
     throw new RangeError("timeStepS must be > 0");
