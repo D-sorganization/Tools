@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.10                                    |
-| **Spec Version**        | 1.13.10                                    |
+| **Current Version**     | 1.13.11                                    |
+| **Spec Version**        | 1.13.11                                    |
 | **Last Spec Update**    | 2026-08-06                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,22 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+### 2026-08-06 Reproducible ball-flight wind physics
+
+- One versioned Python/TypeScript wind scenario defines wind-to velocity in
+  the flight frame, with an explicit meteorological from-bearing adapter,
+  vertical wind, altitude shear, declared smooth gusts, deterministic seeded
+  turbulence, and provenance.
+- Every supported flight integrator evaluates relative air speed at physical
+  trajectory time and position. Dynamic wind is not silently collapsed into a
+  steady vector for the Rust fast path.
+- React and PyQt6 run common-input no-wind and selected-wind trajectories,
+  show both paths, and report wind-minus-calm deltas. Two-dimensional and
+  three-dimensional flight plots use locked physical scale.
+- The shared golden fixture pins wind-field parity. The synthetic turbulence
+  model is reproducible decision-support input, not a claim of site-specific
+  atmospheric prediction.
+
 ### 2026-08-06 Launch-monitor convention registry
 
 - Python and TypeScript expose the same immutable, versioned catalog for app,

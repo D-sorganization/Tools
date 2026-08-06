@@ -18,6 +18,7 @@ import {
   fromFlightFrame,
   type Vec3,
 } from "./simulation";
+import type { WindScenario } from "./wind";
 
 const rad = (d: number): number => (d * Math.PI) / 180.0;
 const deg = (r: number): number => (r * 180.0) / Math.PI;
@@ -73,6 +74,16 @@ export interface FlightExplorationTs {
   };
 }
 
+export interface WindComparisonTs {
+  /** Identical launch evaluated with no wind for a controlled comparison. */
+  calm: FlightExplorationTs;
+  /** Identical launch evaluated with the declared wind scenario. */
+  wind: FlightExplorationTs;
+  deltas: Pick<FlightExplorationTs["metrics"],
+    "carryM" | "maxHeightM" | "flightTimeS" | "landingAngleDeg" | "lateralM">;
+  scenario: WindScenario;
+}
+
 /** Twin of `explore_flight` (Waterloo/Penner only on web). */
 export function exploreFlight(launch: Launch): FlightExplorationTs {
   const result = simulateFlight(launch);
@@ -96,5 +107,23 @@ export function exploreFlight(launch: Launch): FlightExplorationTs {
       // Flight lateral + = left; app lateral + = right.
       lateralM: -result.lateralM,
     },
+  };
+}
+
+/** Run common-input no-wind and wind trajectories and retain auditable deltas. */
+export function compareWind(launch: Launch, scenario: WindScenario): WindComparisonTs {
+  const calm = exploreFlight({ ...launch, windScenario: undefined });
+  const wind = exploreFlight({ ...launch, windScenario: scenario });
+  return {
+    calm,
+    wind,
+    deltas: {
+      carryM: wind.metrics.carryM - calm.metrics.carryM,
+      maxHeightM: wind.metrics.maxHeightM - calm.metrics.maxHeightM,
+      flightTimeS: wind.metrics.flightTimeS - calm.metrics.flightTimeS,
+      landingAngleDeg: wind.metrics.landingAngleDeg - calm.metrics.landingAngleDeg,
+      lateralM: wind.metrics.lateralM - calm.metrics.lateralM,
+    },
+    scenario,
   };
 }

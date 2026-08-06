@@ -32,6 +32,10 @@ from rate_of_closure.ui.pyqt6.course_scene import (
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
+from rate_of_closure.ui.pyqt6.flight_wind_overlay import (
+    plot_wind_pair_2d,
+    plot_wind_pair_3d,
+)
 from rate_of_closure.units import (
     DISTANCE_UNITS,
     FIELD_GUIDANCE,
@@ -93,6 +97,7 @@ class FlightView(QWidget):
         self._canvas = FigureCanvas(self._figure)
 
         self._positions: np.ndarray = np.zeros((0, 3))
+        self.comparison_positions: np.ndarray = np.zeros((0, 3))
         self._run: SimulationRun | None = None
         self._checks: dict[str, QCheckBox] = {}
         self._course_layout = CourseLayout()
@@ -123,6 +128,7 @@ class FlightView(QWidget):
     def set_run(self, run: SimulationRun | None) -> None:
         """Adopt the flight trajectory of a full simulation run."""
         self._run = run
+        self.comparison_positions = np.zeros((0, 3))
         self._positions = (
             np.zeros((0, 3)) if run is None else run.flight_positions.copy()
         )
@@ -135,7 +141,15 @@ class FlightView(QWidget):
         z right of target [m].
         """
         self._run = None
+        self.comparison_positions = np.zeros((0, 3))
         self._positions = (
+            np.zeros((0, 3)) if positions is None else np.asarray(positions, float)
+        )
+        self._draw()
+
+    def set_comparison_trajectory(self, positions: np.ndarray | None) -> None:
+        """Overlay an optional common-input no-wind trajectory."""
+        self.comparison_positions = (
             np.zeros((0, 3)) if positions is None else np.asarray(positions, float)
         )
         self._draw()
@@ -189,8 +203,13 @@ class FlightView(QWidget):
         pos = self._positions
         if not len(pos):
             return (_MIN_CARRY_M, _MIN_HEIGHT_M, _MIN_LATERAL_M)
-        carry = max(_MIN_CARRY_M, float(np.max(pos[:, 0])) * 1.05)
-        lateral = max(_MIN_LATERAL_M, float(np.max(np.abs(pos[:, 2]))) * 1.3)
+        all_positions = (
+            np.vstack((pos, self.comparison_positions))
+            if len(self.comparison_positions)
+            else pos
+        )
+        carry = max(_MIN_CARRY_M, float(np.max(all_positions[:, 0])) * 1.05)
+        lateral = max(_MIN_LATERAL_M, float(np.max(np.abs(all_positions[:, 2]))) * 1.3)
         if self._scatter is not None and len(self._scatter[0]):
             carries, laterals = self._scatter
             finite = np.isfinite(carries) & np.isfinite(laterals)
@@ -199,7 +218,7 @@ class FlightView(QWidget):
                 lateral = max(lateral, float(np.max(np.abs(laterals[finite]))) * 1.1)
         return (
             carry,
-            max(_MIN_HEIGHT_M, float(np.max(pos[:, 1])) * 1.2),
+            max(_MIN_HEIGHT_M, float(np.max(all_positions[:, 1])) * 1.2),
             lateral,
         )
 
@@ -225,7 +244,7 @@ class FlightView(QWidget):
             layout=self._course_layout,
             elements=self._checks["course"].isChecked(),
         )
-        axes.plot(pos[:, 0], pos[:, 1], color=get_chart_color(2), lw=1.6)
+        plot_wind_pair_2d(axes, pos, self.comparison_positions, 1)
         if self._checks["apex"].isChecked():
             apex_index = int(np.argmax(pos[:, 1]))
             axes.scatter(
@@ -249,9 +268,12 @@ class FlightView(QWidget):
             )
         axes.set_xlim(0.0, carry_ext)
         axes.set_ylim(0.0, height_ext)
+        axes.set_aspect("equal", adjustable="box")
         axes.set_xlabel(f"carry [{distance_axis(axes, 'x')}]", fontsize=8)
         axes.set_ylabel("height [m]", fontsize=8)
         axes.set_title("Side profile", fontsize=9)
+        if len(self.comparison_positions):
+            axes.legend(fontsize=7)
         axes.tick_params(labelsize=7)
 
     def _draw_top(self, axes, pos: np.ndarray, extents) -> None:  # type: ignore[no-untyped-def]
@@ -264,7 +286,7 @@ class FlightView(QWidget):
             layout=self._course_layout,
             elements=self._checks["course"].isChecked(),
         )
-        axes.plot(pos[:, 0], pos[:, 2], color=get_chart_color(2), lw=1.6)
+        plot_wind_pair_2d(axes, pos, self.comparison_positions, 2)
         axes.axhline(0.0, color=get_chart_color(7), lw=0.6, alpha=0.6)
         if self._checks["landing"].isChecked():
             self._annotate_landing(
@@ -295,9 +317,12 @@ class FlightView(QWidget):
                 title = f"Top-down — {held}/{total} shots hold the target ({pct:.0f}%)"
         axes.set_xlim(0.0, carry_ext)
         axes.set_ylim(-lateral_ext, lateral_ext)
+        axes.set_aspect("equal", adjustable="box")
         axes.set_xlabel(f"carry [{distance_axis(axes, 'x')}]", fontsize=8)
         axes.set_ylabel(f"right (+) [{distance_axis(axes, 'y')}]", fontsize=8)
         axes.set_title(title, fontsize=9)
+        if len(self.comparison_positions):
+            axes.legend(fontsize=7)
         axes.tick_params(labelsize=7)
 
     def _draw_3d(self, axes, pos: np.ndarray, extents) -> None:  # type: ignore[no-untyped-def]
@@ -310,7 +335,7 @@ class FlightView(QWidget):
             elements=self._checks["course"].isChecked(),
         )
         # Display axes: (z right, x downrange, y up) like the swing view.
-        axes.plot(pos[:, 2], pos[:, 0], pos[:, 1], color=get_chart_color(2), lw=1.6)
+        plot_wind_pair_3d(axes, pos, self.comparison_positions)
         if self._checks["landing"].isChecked():
             axes.scatter(
                 [pos[-1, 2]],
@@ -322,10 +347,13 @@ class FlightView(QWidget):
         axes.set_xlim(-lateral_ext, lateral_ext)
         axes.set_ylim(0.0, carry_ext)
         axes.set_zlim(0.0, height_ext)
+        axes.set_box_aspect((2.0 * lateral_ext, carry_ext, height_ext))
         axes.set_xlabel(f"z — right [{distance_axis(axes, 'x')}]", fontsize=7)
         axes.set_ylabel(f"x — target [{distance_axis(axes, 'y')}]", fontsize=7)
         axes.set_zlabel("y — up [m]", fontsize=7)
         axes.set_title("3D trajectory", fontsize=9)
+        if len(self.comparison_positions):
+            axes.legend(fontsize=7)
         axes.tick_params(labelsize=6)
 
     def _draw(self) -> None:

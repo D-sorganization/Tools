@@ -169,7 +169,6 @@ class WaterlooPennerModel(BallFlightModel):
         cd0, cd1, cd2, cl0, cl1, cl2, cl_max = self.params
         omega_v = launch.get_spin_vector()
         omega_m = math.hypot(omega_v[0], omega_v[1], omega_v[2])
-        wind_v = launch.get_wind_vector()
         area = math.pi * launch.ball_radius**2
 
         def derivatives(t: float, y: np.ndarray) -> np.ndarray:
@@ -177,6 +176,7 @@ class WaterlooPennerModel(BallFlightModel):
             if t is None:
                 raise ValueError("t must be provided")
             v_val = cast(np.ndarray, y[3:])
+            wind_v = launch.get_wind_vector(t, y[:3])
             v_rel = v_val - wind_v
             speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
             if speed < MIN_SPEED_THRESHOLD_M_S:
@@ -247,7 +247,6 @@ class MacDonaldHanzelyModel(BallFlightModel):
         spin_norm = math.hypot(spin_axis[0], spin_axis[1], spin_axis[2])
         if spin_norm > 0:
             spin_axis = spin_axis / spin_norm
-        wind_v = launch.get_wind_vector()
         area = math.pi * launch.ball_radius**2
         k_drag = 0.5 * launch.air_density * area * self.cd / launch.ball_mass
 
@@ -256,6 +255,7 @@ class MacDonaldHanzelyModel(BallFlightModel):
             if t is None:
                 raise ValueError("t must be provided")
             v_val = cast(np.ndarray, y[3:])
+            wind_v = launch.get_wind_vector(t, y[:3])
             v_rel = v_val - wind_v
             speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
             if speed < MIN_SPEED_THRESHOLD_M_S:
@@ -341,7 +341,6 @@ class ConstantCoefficientModel(BallFlightModel):
         spin_norm = math.hypot(spin_axis[0], spin_axis[1], spin_axis[2])
         if spin_norm > 0:
             spin_axis = spin_axis / spin_norm
-        wind_v = launch.get_wind_vector()
         area = math.pi * launch.ball_radius**2
         k_drag = 0.5 * launch.air_density * area * self._spec.cd / launch.ball_mass
 
@@ -350,6 +349,7 @@ class ConstantCoefficientModel(BallFlightModel):
             if t is None:
                 raise ValueError("t must be provided")
             v_val = cast(np.ndarray, y[3:])
+            wind_v = launch.get_wind_vector(t, y[:3])
             v_rel = v_val - wind_v
             speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
             if speed < MIN_SPEED_THRESHOLD_M_S:

@@ -133,6 +133,11 @@ def simulate_trajectory_rust(
         )
     if launch is None:
         raise ValueError("launch must be provided")
+    if launch.wind_scenario is not None and not launch.wind_scenario.is_steady:
+        raise ValueError(
+            "Rust flight currently supports steady wind only; use a Python "
+            "model for shear, gusts, or turbulence"
+        )
     if launch.ball_speed <= 0.0:
         raise ValueError(f"ball_speed must be > 0; got {launch.ball_speed!r}")
     if not (math.isfinite(max_time) and max_time > 0.0):

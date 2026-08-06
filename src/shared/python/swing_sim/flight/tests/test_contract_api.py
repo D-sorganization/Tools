@@ -25,7 +25,10 @@ EXPECTED_PUBLIC_API = {
     "LaunchConditions",
     "MacDonaldHanzelyModel",
     "TrajectoryPoint",
+    "WIND_SCHEMA_VERSION",
     "WaterlooPennerModel",
+    "WindGust",
+    "WindScenario",
     "compare_models",
     "compute_flight_metrics",
     "derive_launch_conditions",
@@ -63,6 +66,8 @@ def test_value_types_are_frozen_dataclasses() -> None:
         flight.TrajectoryPoint,
         flight.FlightResult,
         flight.ConstantCoefficientSpec,
+        flight.WindGust,
+        flight.WindScenario,
     ):
         assert dataclasses.is_dataclass(cls), f"{cls.__name__} not a dataclass"
         assert cls.__dataclass_params__.frozen, f"{cls.__name__} must be frozen"

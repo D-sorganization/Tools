@@ -27,6 +27,7 @@ from ._constants import (
     MPH_TO_MPS,
     RPM_TO_RAD_S,
 )
+from .wind import WindScenario
 
 DEFAULT_BACKSPIN_AXIS = (0.0, -1.0, 0.0)
 """Pure-backspin unit axis in the flight frame (x fwd / y left / z up)."""
@@ -58,6 +59,7 @@ class LaunchConditions:
     gravity: float = GRAVITY_M_S2
     wind_speed: float = 0.0
     wind_direction: float = 0.0
+    wind_scenario: WindScenario | None = None
 
     def __post_init__(self) -> None:
         """Validate finiteness, signs, and angle ranges (DbC preconditions)."""
@@ -98,6 +100,10 @@ class LaunchConditions:
                 raise ValueError(f"spin_axis must be a unit vector; |axis|={norm!r}")
             object.__setattr__(
                 self, "spin_axis", (float(axis[0]), float(axis[1]), float(axis[2]))
+            )
+        if self.wind_scenario is not None and self.wind_speed != 0.0:
+            raise ValueError(
+                "provide either wind_scenario or legacy wind_speed, not both"
             )
 
     @classmethod
@@ -152,8 +158,14 @@ class LaunchConditions:
             ]
         )
 
-    def get_wind_vector(self) -> np.ndarray:
-        """Compute the 3D wind velocity vector from speed and direction."""
+    def get_wind_vector(
+        self, time_s: float = 0.0, position_m: object = (0.0, 0.0, 0.0)
+    ) -> np.ndarray:
+        """Return wind-to velocity at physical time and flight-frame position."""
+        if self.wind_scenario is not None:
+            return np.asarray(
+                self.wind_scenario.velocity_at(time_s, position_m), dtype=float
+            )
         return np.array(
             [
                 -self.wind_speed * math.cos(self.wind_direction),

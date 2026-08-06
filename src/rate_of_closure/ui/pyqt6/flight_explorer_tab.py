@@ -41,11 +41,13 @@ from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
 from rate_of_closure.model import MPH_PER_MPS
 from rate_of_closure.simulation import (
     FlightExploration,
-    explore_flight,
+    WindComparison,
+    explore_with_optional_wind,
     launch_from_delivery,
     launch_from_direct,
 )
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
+from rate_of_closure.ui.pyqt6.flight_wind_controls import FlightWindControls
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
 from shared.python.swing_sim.flight.registry import FlightModelType
@@ -148,6 +150,7 @@ class FlightExplorerTab(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._exploration: FlightExploration | None = None
+        self.wind_comparison: WindComparison | None = None
         self._rows: dict[str, ResultRow] = {}
         self._direct_spins: dict[str, QDoubleSpinBox] = {}
         self._delivery_spins: dict[str, QDoubleSpinBox] = {}
@@ -156,6 +159,8 @@ class FlightExplorerTab(QWidget):
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
         left_layout.addWidget(self._build_entry_box())
+        self.wind_controls = FlightWindControls()
+        left_layout.addWidget(self.wind_controls)
         left_layout.addWidget(self._build_results_box())
         left_layout.addWidget(self._build_explanation_box())
         left_layout.addStretch(1)
@@ -317,13 +322,20 @@ class FlightExplorerTab(QWidget):
                         ].value(),
                     )
                 )
-            exploration = explore_flight(launch, self._model_combo.currentText())
+            model_name = self._model_combo.currentText()
+            exploration, comparison = explore_with_optional_wind(
+                launch, self.wind_controls.optional_scenario(), model_name
+            )
         except Exception as exc:  # noqa: BLE001 — surface physics failures
             logger.warning("flight exploration failed: %s", exc)
             QMessageBox.warning(self, "Flight Failed", str(exc))
             return None
         self._exploration = exploration
+        self.wind_comparison = comparison
+        self.wind_controls.set_comparison(comparison)
         self._flight_view.set_trajectory(exploration.positions)
+        calm = None if comparison is None else comparison.calm.positions
+        self._flight_view.set_comparison_trajectory(calm)
         self._refresh_rows()
         return exploration
 

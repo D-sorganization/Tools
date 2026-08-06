@@ -33,6 +33,7 @@ from .types import (
     TrajectoryPoint,
     compute_flight_metrics,
 )
+from .wind import WIND_SCHEMA_VERSION, WindGust, WindScenario
 
 __all__ = [
     "DEFAULT_BACKSPIN_AXIS",
@@ -47,6 +48,9 @@ __all__ = [
     "MacDonaldHanzelyModel",
     "TrajectoryPoint",
     "WaterlooPennerModel",
+    "WIND_SCHEMA_VERSION",
+    "WindGust",
+    "WindScenario",
     "compare_models",
     "compute_flight_metrics",
     "derive_launch_conditions",
