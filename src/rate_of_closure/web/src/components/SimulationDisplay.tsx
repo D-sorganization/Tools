@@ -4,6 +4,7 @@ import type { ClubSpec } from "../model/club";
 import { DEFAULT_COURSE_LAYOUT, type CourseLayout } from "../model/course";
 import type { ImpactScenario } from "../model/impact";
 import type { SimulationInput, SimulationRunTs } from "../model/simulation";
+import { wedgeGroundClearance } from "../model/wedgeGroundClearance";
 import type { TargetRegionTs } from "../model/targets";
 import { FIELD_GUIDANCE } from "../model/units";
 import { BallSetupDiagram } from "./BallSetupDiagram";
@@ -69,6 +70,9 @@ export function SimulationDisplay({
   const screwData = useMemo(() =>
     run && showScrew ? screwPresentation(run, time, screwEntityId) : null,
   [run, time, showScrew, screwEntityId]);
+  const wedgeClearance = useMemo(() =>
+    run && clubSpec ? wedgeGroundClearance(run, scenario, clubSpec) : null,
+  [run, scenario, clubSpec]);
 
   const targetLayout = useMemo<CourseLayout>(() =>
     target.kind === "green"
@@ -122,12 +126,12 @@ export function SimulationDisplay({
     if (canvasRef.current) {
       drawSwingScene(canvasRef.current, run, {
         time, showBall, showGround, showCourse, showFlight,
-        showScrew, screwEntityId,
+        showScrew, screwEntityId, wedgeClearance,
       });
     }
   }, [
     run, time, showBall, showGround, showCourse, showFlight,
-    showScrew, screwEntityId, view,
+    showScrew, screwEntityId, view, wedgeClearance,
   ]);
 
   return (
@@ -175,7 +179,7 @@ export function SimulationDisplay({
           {run && clubSpec && (
             <>
               <ImpactKinematicsPanel run={run} scenario={scenario} club={clubSpec} />
-              <WedgeGroundClearancePanel run={run} scenario={scenario} club={clubSpec} />
+              <WedgeGroundClearancePanel result={wedgeClearance} />
             </>
           )}
           {showScrew && (

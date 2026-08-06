@@ -111,6 +111,10 @@ The React swing view applies the same wedge-only policy and presents an
 accessible contact-order timeline, sequence state, and eight engineering
 metrics. Its retained head orientations use shortest-arc SLERP during the
 swept analysis rather than treating the reference point as an unrotated head.
+The swing canvas draws the minimum-clearance sole envelope, signed live
+clearance, ball-contact point, refined first-ground-contact point, and swept
+low-point marker. The playback controls include a direct Jump to Impact action,
+so the annotated impact state can be inspected without manual scrubbing.
 
 ## Verification
 
@@ -130,4 +134,4 @@ the wedge-only rendering boundary, sequence, metrics, provenance, and limits.
 
 The next fidelity layers are continuous sole-patch/B-Rep collision, turf
 contact mechanics with documented material parameters, uncertainty propagation,
-and direct graphical envelope/contact overlays in both interactive views.
+and a matching graphical envelope/contact overlay in the PyQt view.

@@ -1,12 +1,10 @@
-import type { ClubSpec } from "../model/club";
-import type { ImpactScenario } from "../model/impact";
-import type { SimulationRunTs } from "../model/simulation";
-import { wedgeGroundClearance, type ContactSequence } from "../model/wedgeGroundClearance";
+import type {
+  ContactSequence,
+  WedgeGroundClearancePayloadTs,
+} from "../model/wedgeGroundClearance";
 
 interface Props {
-  run: SimulationRunTs;
-  scenario: ImpactScenario;
-  club: ClubSpec;
+  result: WedgeGroundClearancePayloadTs | null;
 }
 
 const sequenceLabels: Record<ContactSequence, string> = {
@@ -32,8 +30,7 @@ const metric = (value: number | null, scale: number, unit: string, decimals: num
 const titleCaseFeature = (value: string) => value
   .split("_").map((word) => word[0].toUpperCase() + word.slice(1)).join(" ");
 
-export function WedgeGroundClearancePanel({ run, scenario, club }: Props) {
-  const result = wedgeGroundClearance(run, scenario, club);
+export function WedgeGroundClearancePanel({ result }: Props) {
   if (result === null) return null;
   const entries = [
     ["Leading-Edge Clearance at Ball", metric(result.metrics.leadingEdgeClearanceAtBallM, 1000, "mm", 2)],
