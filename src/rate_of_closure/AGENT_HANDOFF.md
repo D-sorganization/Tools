@@ -5,10 +5,10 @@
 
 ## 2026-08-05 Wedge Impact Inspector Integration
 
-Branch `feat/4163-impact-inspector` integrates the draft variation branch with
-the shared golf-club stack through wedge kinematics PR #4172. It adds the first
-bounded implementation slice for wedge epic #4158 / impact-inspector issue
-#4163:
+Draft PR #4173 (`feat/4163-impact-inspector`) integrates the draft variation
+branch with the shared golf-club stack through wedge kinematics PR #4172. It
+adds the first bounded implementation slice for wedge epic #4158 /
+impact-inspector issue #4163:
 
 - Canonical inspection time and event label on every `SimulationRun`: impact
   for hits, closest approach for misses.
@@ -31,11 +31,13 @@ that absence rather than inventing torsional motion. The web mirror still does
 not retain full head pose; its readout declares that limitation until WASM or a
 canonical backend replaces the temporary TypeScript mirror.
 
-Focused evidence before the first push: 35 Python/PyQt tests, 35 React/model
-tests, Ruff, TypeScript, ESLint, and Vite production build passed. Browser QA
-verified the 1,307 deg/s manual fixture and a 1.430 s closest-approach miss with
-zero console warnings/errors. Native-window QA confirmed the control and
-readout are visible in the standalone PyQt6 app.
+Current-head release evidence: 1,006 Python/PyQt/shared-swing tests passed with
+five optional Rust-wheel parity skips; 334 React/model tests and 12 swing-core
+Rust tests passed; Vite production build, TypeScript, ESLint, Ruff, formatting,
+and mypy across 165 source files passed. A focused post-refactor PyQt run passed
+46 tests. Browser QA verified the 1,307 deg/s manual fixture at 30 ms and a
+1.430 s closest-approach miss with zero console warnings/errors. Native-window
+QA confirmed the control and readout are visible in the standalone PyQt6 app.
 
 ## Status Note
 
