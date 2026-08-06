@@ -90,6 +90,7 @@ jobs:
               src/shared/python
               tests/shared_contracts
               tests/support
+              vendor/ud-tools
 
     steps:
       - name: Checkout Tools
@@ -106,6 +107,11 @@ jobs:
           fetch-depth: 1
           sparse-checkout: ${{ matrix.downstream.sparse_checkout }}
           sparse-checkout-cone-mode: true
+
+      - name: Initialize pinned Tools submodule
+        if: steps.checkout_downstream.outcome == 'success' && matrix.downstream.repo == 'D-sorganization/UpstreamDrift'
+        working-directory: ${{ matrix.downstream.path }}
+        run: git submodule update --init --depth 1 vendor/ud-tools
 
       - name: Select persistent Python tool cache
         run: |
