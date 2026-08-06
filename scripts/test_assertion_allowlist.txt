@@ -16,3 +16,6 @@ src/movement_optimizer/tests/**/__init__.py
 src/movement_optimizer/tests/**/conftest.py
 # P1AM power-supply test construction helpers shared by split runtime tests.
 src/p1am_control_system/backend/tests/_power_supply_helpers.py
+# Swing simulator namespace package markers; behavioral assertions live in sibling test modules.
+src/shared/python/swing_sim/tests/__init__.py
+src/shared/python/swing_sim/**/tests/__init__.py
