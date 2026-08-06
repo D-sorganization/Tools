@@ -7,12 +7,25 @@ if [[ ! "$requested_minor" =~ ^[0-9]+\.[0-9]+$ ]]; then
   exit 2
 fi
 
-cache_roots=(
-  "${AGENT_TOOLSDIRECTORY:-}"
-  "/opt/runner-tool-cache"
-  "/home/dieterolson/actions-runners/.shared-tool-cache"
-  "/home/dieterolson/actions-runners-nvme/.shared-tool-cache"
-)
+require_link_library=false
+if [ "${2:-}" = "--require-link-library" ]; then
+  require_link_library=true
+elif [ -n "${2:-}" ]; then
+  echo "::error::Unknown option: $2"
+  exit 2
+fi
+
+if [ -n "${PYTHON_TOOLCACHE_ROOTS:-}" ]; then
+  IFS=':' read -r -a cache_roots <<< "$PYTHON_TOOLCACHE_ROOTS"
+else
+  cache_roots=(
+    "${AGENT_TOOLSDIRECTORY:-}"
+    "/opt/hostedtoolcache"
+    "/opt/runner-tool-cache"
+    "/home/dieterolson/actions-runners/.shared-tool-cache"
+    "/home/dieterolson/actions-runners-nvme/.shared-tool-cache"
+  )
+fi
 
 clean_cache_entry() {
   local arch_dir="$1"
@@ -64,9 +77,27 @@ for cache_root in "${cache_roots[@]}"; do
       if [ "$python_version" != "$expected_version" ] ||
         [[ "$pip_version" != pip\ *" from "* ]]; then
         clean_cache_entry "$arch_dir"
-      else
-        echo "Directory $arch_dir is healthy."
+        continue
       fi
+
+      if $require_link_library; then
+        mapfile -t library_metadata < <(
+          LD_LIBRARY_PATH="$arch_dir/lib${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}" \
+            "$py_bin" -c \
+            'import sysconfig; print(sysconfig.get_config_var("LIBDIR") or ""); print(sysconfig.get_config_var("LDLIBRARY") or "")' \
+            2>/dev/null
+        )
+        library_dir="${library_metadata[0]:-}"
+        library_name="${library_metadata[1]:-}"
+        if [ -z "$library_dir" ] || [ -z "$library_name" ] ||
+          [ ! -e "$library_dir/$library_name" ]; then
+          echo "Python link library is missing: $library_dir/$library_name"
+          clean_cache_entry "$arch_dir"
+          continue
+        fi
+      fi
+
+      echo "Directory $arch_dir is healthy."
     done
   done
 done
