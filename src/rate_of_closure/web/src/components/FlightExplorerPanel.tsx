@@ -14,6 +14,7 @@ import { useState } from "react";
 import { DecimalInput } from "./DecimalInput";
 import { FieldInfo } from "./FieldInfo";
 import { FlightCanvases } from "./FlightCanvases";
+import { FlightPlayback3D } from "./FlightPlayback3D";
 import {
   compareWind,
   directLaunch,
@@ -323,6 +324,12 @@ export function FlightExplorerPanel({
             comparisonPoints={windComparison?.calm.points ?? []}
             emptyText="Enter launch conditions and press Run Flight."
           />
+          <div className="mt-4 border-t border-slate-800 pt-4">
+            <FlightPlayback3D
+              points={result?.points ?? []}
+              comparisonPoints={windComparison?.calm.points ?? []}
+            />
+          </div>
         </div>
       </section>
     </div>
