@@ -59,6 +59,13 @@ from .wedge_export import (
     WedgeExportResult,
     export_wedge_artifacts,
 )
+from .wedge_kinematics import (
+    InstantaneousScrewAxis,
+    WedgeKinematicAnalysis,
+    WedgeKinematicState,
+    analyze_wedge_kinematics,
+    angle_of_attack_deg,
+)
 from .wedge_parameters import (
     Handedness,
     WedgeGeometryProvenance,
@@ -84,6 +91,7 @@ __all__ = [
     "ComponentRole",
     "ExtrapolationPolicy",
     "Handedness",
+    "InstantaneousScrewAxis",
     "RigidTransform",
     "SHAFT_PROFILE_FORMAT",
     "ShaftProfile",
@@ -95,6 +103,8 @@ __all__ = [
     "ShaftTipLoad",
     "ShaftTipResponse",
     "WedgeHeadParameters",
+    "WedgeKinematicAnalysis",
+    "WedgeKinematicState",
     "WedgeGeometryProvenance",
     "WEDGE_EXPORT_FORMAT",
     "WedgeExportArtifact",
@@ -106,6 +116,8 @@ __all__ = [
     "WedgeSolidResult",
     "WEDGE_PARAMETERS_FORMAT",
     "assemble_mass_properties",
+    "analyze_wedge_kinematics",
+    "angle_of_attack_deg",
     "assembly_from_json",
     "assembly_from_json_dict",
     "assembly_to_json",

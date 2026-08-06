@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.8                                      |
-| **Spec Version**        | 1.5.8                                      |
+| **Current Version**     | 1.5.9                                      |
+| **Spec Version**        | 1.5.9                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,21 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-05 Wedge impact-point kinematics and AoA attribution
+
+- `shared.python.golf_club` defines an immutable, frame-explicit rigid-body
+  state at a declared contact point and physical shaft-axis line.
+- Contact velocity decomposes exactly into shaft-datum translation, shaft-axis
+  rotation, and all other rotation, independent of the selected twist reference
+  point.
+- The analysis reports direct and Shapley shaft contributions to angle of
+  attack, signed vertical share, leading-edge rates relative to ground and arc,
+  full 3D face-normal rate, and instantaneous screw-axis/contact clearance.
+- Undefined geometries return typed missing metrics rather than fabricated
+  angles; strict unit-vector and orthogonality contracts reject ambiguous input.
+- `docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md` documents equations, frames, the
+  worked example, sign dependence, verification, and simulation-adapter limits.
 
 ### 2026-08-05 Exact modern-wedge CAD foundation
 
@@ -1763,6 +1778,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.5.9 | feat(golf-club, #4160): add exact physical-shaft-axis contact velocity decomposition, counterfactual and Shapley AoA attribution, ground/arc leading-edge rates, 3D face-normal rate, screw-axis clearance, strict frame contracts, and the -10 degree worked example. |
 | 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
 | 2026-08-05 | 1.5.6 | feat(golf-club, #4147): add the canonical shared golf-club domain facade with immutable SI/frame-explicit component roles, physically realizable mass properties, rigid transforms, assembled mass/CG/full inertia, declared club-length references, and strict deterministic versioned JSON migration contracts. |
 | 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |
