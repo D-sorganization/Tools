@@ -14,14 +14,17 @@ import {
 import { courseColors } from "../model/course";
 import { type VariationDatasetTs } from "../model/variation";
 import { dispersionEllipse } from "../model/variationAnalysis";
+import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 
 export function LandingCanvas({
   dataset,
   target,
+  ensemble,
 }: {
   dataset: VariationDatasetTs;
   /** Target region (#4125 H7b): dashed overlay + hold-% headline. */
   target?: TargetRegionTs;
+  ensemble?: SwingVariationResultTs | null;
 }): JSX.Element {
   const ref = useRef<HTMLCanvasElement | null>(null);
   useEffect(() => {
@@ -147,13 +150,29 @@ export function LandingCanvas({
     ctx.fillText("carry [m] →", 0, 0);
     ctx.restore();
   }, [dataset, target]);
+  const counts = ensemble && {
+    hits: ensemble.runs.filter((run) => run.status === "evaluated_hit").length,
+    misses: ensemble.runs.filter((run) => run.status === "evaluated_no_impact").length,
+    failures: ensemble.runs.filter((run) => run.status === "numerical_failure").length,
+  };
+  const carryIndex = dataset.outputNames.indexOf("carry_m");
+  const landingCount = dataset.outputs.filter(
+    (row) => row[carryIndex] !== null && Number.isFinite(row[carryIndex]),
+  ).length;
   return (
-    <canvas
-      ref={ref}
-      width={560}
-      height={420}
-      className="w-full rounded-lg border border-slate-800 bg-slate-950/60"
-      title="Landing positions of every successful run, viewed from above; the dashed ellipse is the 2-sigma dispersion fit."
-    />
+    <div className="space-y-2">
+      <canvas
+        ref={ref}
+        width={560}
+        height={420}
+        className="w-full rounded-lg border border-slate-800 bg-slate-950/60"
+        title="Landing positions of every evaluated hit, viewed from above; the dashed ellipse is the 2-sigma dispersion fit."
+      />
+      <p className="text-xs text-slate-400" role="status">
+        {counts
+          ? `Hits: ${counts.hits} · No impact: ${counts.misses} · Numerical failures: ${counts.failures} · Plotted landings: ${landingCount}. Misses and failures have no fabricated landing coordinates.`
+          : `Evaluated landings: ${landingCount}/${dataset.plan.nRuns}. Scalar studies do not expose a geometric no-impact cohort.`}
+      </p>
+    </div>
   );
 }

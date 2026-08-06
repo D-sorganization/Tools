@@ -13,6 +13,8 @@ Three read-only views over a
 
 from __future__ import annotations
 
+from collections import Counter
+
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.patches import Ellipse
@@ -22,6 +24,7 @@ from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem, QWidget
 
 from rate_of_closure.ui.pyqt6.figure_canvas import LifecycleSafeFigureCanvas
 from rate_of_closure.units import DISTANCE_UNITS, display_distance_unit
+from rate_of_closure.variation.simulation_types import TrialEvaluationStatus
 from shared.python.swing_sim.variation import (
     DispersionEllipse,
     OutputStats,
@@ -149,6 +152,7 @@ class LandingCanvas(LifecycleSafeFigureCanvas):
         if parent is not None:
             self.setParent(parent)
         self._axes = figure.add_subplot(111)
+        self._outcome_counts: Counter[TrialEvaluationStatus] | None = None
         self.setToolTip(
             "Landing positions of every successful run, viewed from above "
             "(x = lateral, + right of target; y = carry). The dashed "
@@ -156,6 +160,10 @@ class LandingCanvas(LifecycleSafeFigureCanvas):
         )
         self._apply_theme()
         self.clear_view()
+
+    def set_outcomes(self, outcomes: tuple[TrialEvaluationStatus, ...]) -> None:
+        """Retain typed trial counts for the next landing render."""
+        self._outcome_counts = Counter(outcomes)
 
     def _apply_theme(self) -> None:
         """Follow the widget palette so light/dark themes both read well."""
@@ -212,10 +220,18 @@ class LandingCanvas(LifecycleSafeFigureCanvas):
                 markersize=10,
                 color="#eb6a3c",
             )
-        self._axes.set_title(
-            f"Landing dispersion — {dataset.n_success}/{dataset.plan.n_runs} "
-            "runs (2σ ellipse)"
-        )
+        if self._outcome_counts is None:
+            summary = f"{carry.size} landings / {dataset.plan.n_runs} trials"
+        else:
+            summary = (
+                f"Hits {self._outcome_counts[TrialEvaluationStatus.EVALUATED_HIT]} · "
+                "No Impact "
+                f"{self._outcome_counts[TrialEvaluationStatus.EVALUATED_NO_IMPACT]} · "
+                "Failures "
+                f"{self._outcome_counts[TrialEvaluationStatus.NUMERICAL_FAILURE]} · "
+                f"Landings {carry.size}"
+            )
+        self._axes.set_title(f"Landing dispersion — {summary} (2σ ellipse)")
         self._axes.set_xlabel("Lateral [m] (+ right)")
         self._axes.set_ylabel("Carry [m]")
         self._axes.set_aspect("equal", adjustable="datalim")

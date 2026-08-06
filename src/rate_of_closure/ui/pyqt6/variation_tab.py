@@ -107,7 +107,6 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
 
         self._add_row()
 
-    # ── construction ────────────────────────────────────────────────
     def _build_setup_box(self) -> QGroupBox:
         box = QGroupBox("Study Setup")
         form = QFormLayout(box)
@@ -213,7 +212,6 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         layout.addWidget(self._status)
         return box
 
-    # ── public API ──────────────────────────────────────────────────
     def set_scenario(self, scenario: ImpactScenario) -> None:
         """Adopt the explorer's scenario (base-source 'Explorer Scenario')."""
         self._scenario = scenario
@@ -265,7 +263,6 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             self._worker.cancel()
             self._worker.wait(10_000)
 
-    # ── noise rows ──────────────────────────────────────────────────
     def _add_row(self) -> NoiseRow:
         row = NoiseRow(self.mode(), self._remove_row)
         self._rows.append(row)
@@ -367,6 +364,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
     def _on_ensemble_succeeded(self, result: SimulationEnsembleResult) -> None:
         """Populate complete-trace views before the scalar completion callback."""
         self._ensemble_result = result
+        self._landing.set_outcomes(tuple(outcome.status for outcome in result.outcomes))
         self._export_trace_csv.setEnabled(True)
         self._export_ensemble_json.setEnabled(True)
         plot_dataset = build_ensemble_plot_dataset(result)

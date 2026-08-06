@@ -162,7 +162,7 @@ export function VariationResults({
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             Landing Dispersion (2σ Ellipse)
           </h2>
-          <LandingCanvas dataset={dataset} target={target} />
+          <LandingCanvas dataset={dataset} target={target} ensemble={ensemble} />
         </div>
       )}
 

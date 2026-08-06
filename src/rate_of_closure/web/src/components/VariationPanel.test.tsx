@@ -242,6 +242,6 @@ describe("VariationPanel analysis execution policy", () => {
     expect(screen.getByRole("combobox", { name: "Arc highlighted trial" })).toHaveValue("0");
     expect(screen.getByRole("button", { name: "Swing Traces CSV" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Swing Ensemble JSON" })).toBeEnabled();
-    expect(screen.getByText(/Hits: .*No impact: .*Numerical failures:/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hits: .*Plotted landings: .*no fabricated landing/i)).toBeInTheDocument();
   });
 });

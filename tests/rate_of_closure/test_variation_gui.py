@@ -196,6 +196,9 @@ class TestRunAndResults:
         assert len(tab._arc_overlay._canvas.axes.lines) >= 4
         assert tab._arc_overlay._variability_canvas.axes.lines
         assert "3/3 trials" in tab._arc_overlay._status.text()
+        assert "Hits 3 · No Impact 0 · Failures 0 · Landings 3" in (
+            tab._landing._axes.get_title()
+        )
         assert tab._export_trace_csv.isEnabled()
         assert tab._export_ensemble_json.isEnabled()
 
