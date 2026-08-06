@@ -24,6 +24,11 @@ slice, #4147, lives on `feat/4147-club-builder-core` and establishes the
 UI-independent assembly mass/CG/inertia, frame, length-datum, and persistence
 contracts that the later shaft, CAD, export, fitting, and UI issues consume.
 
+Active infrastructure repair: #4155 hardens the Rust/PyO3 job against
+incomplete setup-python cache entries whose interpreter works but whose
+declared link library is missing. The repair is isolated on
+`fix/4155-rust-libpython-cache` and does not change simulation code.
+
 See `src/rate_of_closure/AGENT_HANDOFF.md` for the detailed stack breakdown
 and architecture pointers for this tool specifically.
 

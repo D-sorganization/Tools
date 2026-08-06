@@ -925,6 +925,10 @@ jobs:
           shared-key: ci-standard-rust-quality-gate
           cache-on-failure: true
 
+      - name: Force-clean incomplete Python tool cache for PyO3
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        run: bash .github/scripts/clean-python-toolcache.sh '3.11' --require-link-library
+
       - name: Set up Python for wheel checks
         env:
           AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
