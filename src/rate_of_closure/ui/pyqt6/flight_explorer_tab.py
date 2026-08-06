@@ -21,6 +21,7 @@ import math
 from typing import cast
 
 from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtGui import QStandardItemModel
 from PyQt6.QtWidgets import (
     QComboBox,
     QDoubleSpinBox,
@@ -156,6 +157,18 @@ class FlightExplorerTab(QWidget):
         self._direction_convention_combo.addItem(
             "TrackMan-Comparable (+ Right)",
             LaunchDirectionConvention.TRACKMAN_COMPARABLE,
+        )
+        self._direction_convention_combo.addItem(
+            "Foresight-Comparable (Sign Unavailable)"
+        )
+        foresight_item = cast(
+            QStandardItemModel, self._direction_convention_combo.model()
+        ).item(2)
+        assert foresight_item is not None
+        foresight_item.setEnabled(False)
+        foresight_item.setToolTip(
+            "Unavailable: the general public sign convention is not established "
+            "independently of player handedness."
         )
         self._direction_convention_combo.setAccessibleName(
             "Launch Direction Convention"

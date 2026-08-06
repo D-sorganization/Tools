@@ -33,13 +33,21 @@ import { meteorologicalWind } from "../model/wind";
 const SPEED_UNITS: Record<string, number> = { mph: 1.0, "m/s": 2.236936292054402 };
 
 const DIRECTION_CONVENTIONS: Array<{
-  value: LaunchDirectionConvention;
+  value: string;
   label: string;
+  disabled?: boolean;
+  title?: string;
 }> = [
   { value: "app_native", label: "App Native (+ Right)" },
   {
     value: "trackman_comparable",
     label: "TrackMan-Comparable (+ Right)",
+  },
+  {
+    value: "foresight_comparable",
+    label: "Foresight-Comparable (Sign Unavailable)",
+    disabled: true,
+    title: "Unavailable: the general public sign convention is not established independently of player handedness.",
   },
 ];
 
@@ -165,8 +173,10 @@ export function FlightExplorerPanel({
               }
               className="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100"
             >
-              {DIRECTION_CONVENTIONS.map(({ value, label }) => (
-                <option key={value} value={value}>{label}</option>
+              {DIRECTION_CONVENTIONS.map(({ value, label, disabled, title }) => (
+                <option key={label} value={value} disabled={disabled} title={title}>
+                  {label}
+                </option>
               ))}
             </select>
             <span className="mt-1 block text-xs text-slate-500" data-testid="direction-sign-example">

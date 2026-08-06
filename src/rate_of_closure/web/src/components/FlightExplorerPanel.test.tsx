@@ -24,6 +24,14 @@ describe("FlightExplorerPanel input editing", () => {
     expect(screen.getByLabelText("Launch Direction Convention")).toHaveValue(
       "app_native",
     );
+    const foresight = screen.getByRole("option", {
+      name: "Foresight-Comparable (Sign Unavailable)",
+    });
+    expect(foresight).toBeDisabled();
+    expect(foresight).toHaveAttribute(
+      "title",
+      expect.stringMatching(/public sign convention/i),
+    );
     expect(screen.getByTestId("direction-sign-example")).toHaveTextContent(
       "0° = straight · + = right of the target line",
     );
