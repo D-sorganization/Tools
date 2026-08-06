@@ -27,6 +27,7 @@ from ._constants import (
     MPH_TO_MPS,
     RPM_TO_RAD_S,
 )
+from .wind import WindScenario
 
 DEFAULT_BACKSPIN_AXIS = (0.0, -1.0, 0.0)
 """Pure-backspin unit axis in the flight frame (x fwd / y left / z up)."""
@@ -58,6 +59,7 @@ class LaunchConditions:
     gravity: float = GRAVITY_M_S2
     wind_speed: float = 0.0
     wind_direction: float = 0.0
+    wind_scenario: WindScenario | None = None
 
     def __post_init__(self) -> None:
         """Validate finiteness, signs, and angle ranges (DbC preconditions)."""
@@ -99,6 +101,10 @@ class LaunchConditions:
             object.__setattr__(
                 self, "spin_axis", (float(axis[0]), float(axis[1]), float(axis[2]))
             )
+        if self.wind_scenario is not None and self.wind_speed != 0.0:
+            raise ValueError(
+                "provide either wind_scenario or legacy wind_speed, not both"
+            )
 
     @classmethod
     def from_imperial(
@@ -128,9 +134,10 @@ class LaunchConditions:
         """Compute the 3D initial velocity vector from launch angles and speed."""
         ca, sa = math.cos(self.azimuth_angle), math.sin(self.azimuth_angle)
         cv, sv = math.cos(self.launch_angle), math.sin(self.launch_angle)
-        return np.array(
+        velocity: np.ndarray = np.array(
             [self.ball_speed * cv * ca, self.ball_speed * cv * sa, self.ball_speed * sv]
         )
+        return velocity
 
     def get_spin_vector(self) -> np.ndarray:
         """Compute the 3D spin vector [rad/s] in the flight frame.
@@ -141,26 +148,36 @@ class LaunchConditions:
         """
         omega = self.spin_rate * RPM_TO_RAD_S
         if self.spin_axis is not None:
-            return omega * np.asarray(self.spin_axis, dtype=float)
+            spin_vector: np.ndarray = omega * np.asarray(self.spin_axis, dtype=float)
+            return spin_vector
         backspin = omega * math.cos(self.spin_axis_angle)
         sidespin = omega * math.sin(self.spin_axis_angle)
-        return np.array(
+        spin_vector = np.array(
             [
                 sidespin * math.sin(self.azimuth_angle),
                 -backspin,
                 sidespin * math.cos(self.azimuth_angle),
             ]
         )
+        return spin_vector
 
-    def get_wind_vector(self) -> np.ndarray:
-        """Compute the 3D wind velocity vector from speed and direction."""
-        return np.array(
+    def get_wind_vector(
+        self, time_s: float = 0.0, position_m: object = (0.0, 0.0, 0.0)
+    ) -> np.ndarray:
+        """Return wind-to velocity at physical time and flight-frame position."""
+        if self.wind_scenario is not None:
+            wind_vector: np.ndarray = np.asarray(
+                self.wind_scenario.velocity_at(time_s, position_m), dtype=float
+            )
+            return wind_vector
+        wind_vector = np.array(
             [
                 -self.wind_speed * math.cos(self.wind_direction),
                 -self.wind_speed * math.sin(self.wind_direction),
                 0.0,
             ]
         )
+        return wind_vector
 
 
 @dataclass(frozen=True)
@@ -211,7 +228,8 @@ class FlightResult:
         """Convert trajectory to an Nx3 position array."""
         if not self.trajectory:
             return np.zeros((0, 3))
-        return np.array([p.position for p in self.trajectory])
+        positions: np.ndarray = np.array([p.position for p in self.trajectory])
+        return positions
 
 
 def compute_flight_metrics(

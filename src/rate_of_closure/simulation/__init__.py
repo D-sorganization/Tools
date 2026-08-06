@@ -30,7 +30,10 @@ from .export import (
 from .flight_explorer import (
     EXPLORER_METRIC_KEYS,
     FlightExploration,
+    WindComparison,
+    compare_wind,
     explore_flight,
+    explore_with_optional_wind,
     launch_from_delivery,
     launch_from_direct,
 )
@@ -91,6 +94,7 @@ __all__ = [
     "SCREW_CSV_COLUMNS",
     "AppFrameSwing",
     "FlightExploration",
+    "WindComparison",
     "KineticsSeries",
     "ImpactOutcome",
     "IMPACT_SCENE_FORMAT",
@@ -107,6 +111,8 @@ __all__ = [
     "TriplePendulumParameters",
     "TriplePendulumSwing",
     "compute_kinetics",
+    "compare_wind",
+    "explore_with_optional_wind",
     "delivery_at",
     "explore_flight",
     "fit_run_torque_profile",

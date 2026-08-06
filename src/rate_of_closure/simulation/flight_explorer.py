@@ -17,7 +17,7 @@ tilt is + fade-side (curves right), matching the D-plane diagnostics in
 from __future__ import annotations
 
 import math
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 
@@ -28,6 +28,7 @@ from shared.python.swing_sim.flight import (
     LaunchConditions,
     LaunchDirection,
     LaunchDirectionConvention,
+    WindScenario,
     derive_launch_conditions,
     from_flight_frame,
     launch_direction_to_flight_azimuth,
@@ -44,6 +45,8 @@ from shared.python.swing_sim.impact import (
 __all__ = [
     "EXPLORER_METRIC_KEYS",
     "FlightExploration",
+    "WindComparison",
+    "compare_wind",
     "explore_flight",
     "launch_from_delivery",
     "launch_from_direct",
@@ -83,6 +86,16 @@ class FlightExploration:
     times: np.ndarray
     positions: np.ndarray
     metrics: dict[str, float]
+
+
+@dataclass(frozen=True)
+class WindComparison:
+    """Common-input no-wind and selected-wind trajectories and deltas."""
+
+    calm: FlightExploration
+    wind: FlightExploration
+    scenario: WindScenario
+    deltas: dict[str, float]
 
 
 def launch_from_direct(
@@ -169,10 +182,11 @@ def launch_from_delivery(params: DeliveryParameters) -> LaunchConditions:
         impact_offset=derived.impact_offset,
         record=False,
     )
-    return derive_launch_conditions(
+    launch: LaunchConditions = derive_launch_conditions(
         to_flight_frame(post.ball_velocity),
         to_flight_frame(post.ball_angular_velocity),
     )
+    return launch
 
 
 def explore_flight(
@@ -220,3 +234,38 @@ def explore_flight(
         positions=np.asarray(positions),
         metrics=metrics,
     )
+
+
+def compare_wind(
+    launch: LaunchConditions,
+    scenario: WindScenario,
+    model_name: str = "waterloo_penner",
+) -> WindComparison:
+    """Evaluate identical launch inputs with no wind and selected wind."""
+    require(launch is not None, "launch must be provided", launch)
+    require(scenario is not None, "scenario must be provided", scenario)
+    calm_launch = replace(launch, wind_speed=0.0, wind_scenario=None)
+    wind_launch = replace(launch, wind_speed=0.0, wind_scenario=scenario)
+    calm = explore_flight(calm_launch, model_name)
+    wind = explore_flight(wind_launch, model_name)
+    delta_keys = (
+        "carry_m",
+        "max_height_m",
+        "flight_time_s",
+        "landing_angle_deg",
+        "lateral_m",
+    )
+    deltas = {key: wind.metrics[key] - calm.metrics[key] for key in delta_keys}
+    return WindComparison(calm=calm, wind=wind, scenario=scenario, deltas=deltas)
+
+
+def explore_with_optional_wind(
+    launch: LaunchConditions,
+    scenario: WindScenario | None,
+    model_name: str,
+) -> tuple[FlightExploration, WindComparison | None]:
+    """Run one flight or a common-input calm/selected-wind pair."""
+    if scenario is None:
+        return explore_flight(launch, model_name), None
+    comparison = compare_wind(launch, scenario, model_name)
+    return comparison.wind, comparison

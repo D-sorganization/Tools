@@ -22,6 +22,8 @@ import { withAlpha } from "../model/theme";
 interface Props {
   /** App-frame trajectory (x downrange, y up, z right), tee-origin. */
   points: FlightPoint[];
+  /** Optional common-input no-wind trajectory rendered as a dashed ghost. */
+  comparisonPoints?: FlightPoint[];
   emptyText?: string;
   /** Course furniture layout (#4125 H7a); defaults to the driver hole. */
   layout?: CourseLayout;
@@ -117,6 +119,7 @@ function drawTarget(
 function drawPanel(
   canvas: HTMLCanvasElement,
   points: FlightPoint[],
+  comparisonPoints: FlightPoint[],
   vertical: "height" | "lateral",
   emptyText: string,
   layout: CourseLayout,
@@ -128,6 +131,7 @@ function drawPanel(
   if (!ctx) return;
   const { width, height } = canvas;
   ctx.clearRect(0, 0, width, height);
+  const allPoints = [...points, ...comparisonPoints];
   if (points.length < 2) {
     ctx.fillStyle = "#64748b";
     ctx.font = "13px sans-serif";
@@ -135,17 +139,19 @@ function drawPanel(
     return;
   }
 
-  const carryExt = Math.max(MIN_CARRY_M, ...points.map((p) => p.position[0])) * 1.05;
+  const carryExt = Math.max(MIN_CARRY_M, ...allPoints.map((p) => p.position[0])) * 1.05;
   const value = (p: FlightPoint) =>
     vertical === "height" ? p.position[1] : p.position[2];
   const vertExt =
     vertical === "height"
-      ? Math.max(MIN_HEIGHT_M, ...points.map((p) => p.position[1])) * 1.2
-      : Math.max(MIN_LATERAL_M, ...points.map((p) => Math.abs(p.position[2]))) * 1.3;
+      ? Math.max(MIN_HEIGHT_M, ...allPoints.map((p) => p.position[1])) * 1.2
+      : Math.max(MIN_LATERAL_M, ...allPoints.map((p) => Math.abs(p.position[2]))) * 1.3;
   const zeroY = vertical === "height" ? height - MARGIN : height / 2;
-  const spanY = vertical === "height" ? height - 2 * MARGIN : height / 2 - MARGIN;
-  const px = (x: number) => MARGIN + (x / carryExt) * (width - 2 * MARGIN);
-  const py = (v: number) => zeroY - (v / vertExt) * spanY;
+  const usableY = vertical === "height" ? height - 2 * MARGIN : height / 2 - MARGIN;
+  // A single metres-to-pixels scale prevents trajectory distortion.
+  const physicalScale = Math.min((width - 2 * MARGIN) / carryExt, usableY / vertExt);
+  const px = (x: number) => MARGIN + x * physicalScale;
+  const py = (v: number) => zeroY - v * physicalScale;
 
   // Course-styled ground (#4125 H7a): grass fill + ground/target line.
   const course = courseColors();
@@ -164,7 +170,21 @@ function drawPanel(
   if (showCourse) drawCourse(ctx, vertical, px, py, width, layout);
   if (target && vertical === "lateral") drawTarget(ctx, target, px, py);
 
-  // Trajectory polyline.
+  if (comparisonPoints.length >= 2) {
+    ctx.strokeStyle = "#60a5fa";
+    ctx.setLineDash([7, 5]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    comparisonPoints.forEach((point, index) => {
+      const verticalValue = value(point);
+      if (index === 0) ctx.moveTo(px(point.position[0]), py(verticalValue));
+      else ctx.lineTo(px(point.position[0]), py(verticalValue));
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Selected-wind trajectory polyline.
   ctx.strokeStyle = "#34d399";
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -201,10 +221,17 @@ function drawPanel(
     10,
     16,
   );
+  if (comparisonPoints.length >= 2) {
+    ctx.fillStyle = "#60a5fa";
+    ctx.fillText("- - No wind", width - 142, 16);
+    ctx.fillStyle = "#34d399";
+    ctx.fillText("— Selected wind", width - 76, 16);
+  }
 }
 
 export function FlightCanvases({
   points,
+  comparisonPoints = [],
   emptyText,
   layout,
   showCourse,
@@ -222,6 +249,7 @@ export function FlightCanvases({
       drawPanel(
         sideRef.current,
         points,
+        comparisonPoints,
         "height",
         placeholder,
         courseLayout,
@@ -233,6 +261,7 @@ export function FlightCanvases({
       drawPanel(
         topRef.current,
         points,
+        comparisonPoints,
         "lateral",
         placeholder,
         courseLayout,
@@ -240,7 +269,7 @@ export function FlightCanvases({
         target,
         distanceUnit,
       );
-  }, [points, placeholder, courseLayout, course, target, distanceUnit]);
+  }, [points, comparisonPoints, placeholder, courseLayout, course, target, distanceUnit]);
 
   return (
     <div className="grid min-w-0 gap-3">

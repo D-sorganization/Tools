@@ -15,10 +15,12 @@ import pytest
 from rate_of_closure.simulation import (
     BALL_POSITION_M,
     EXPLORER_METRIC_KEYS,
+    compare_wind,
     explore_flight,
     launch_from_delivery,
     launch_from_direct,
 )
+from shared.python.swing_sim.flight import WindScenario
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.impact import DeliveryParameters
 
@@ -127,3 +129,16 @@ class TestExploreFlight:
         launch = launch_from_direct(150.0, 12.0, 0.0, 2700.0, 0.0)
         with pytest.raises(ValueError):
             explore_flight(launch, "no_such_model")
+
+    def test_wind_comparison_uses_identical_launch_and_explicit_deltas(self) -> None:
+        launch = launch_from_direct(150.0, 12.0, 0.0, 2700.0, 0.0)
+        comparison = compare_wind(
+            launch,
+            WindScenario.from_meteorological(8.0, 0.0),
+        )
+
+        assert comparison.wind.metrics["carry_m"] < comparison.calm.metrics["carry_m"]
+        assert comparison.deltas["carry_m"] == pytest.approx(
+            comparison.wind.metrics["carry_m"] - comparison.calm.metrics["carry_m"]
+        )
+        assert comparison.wind.launch.ball_speed == comparison.calm.launch.ball_speed

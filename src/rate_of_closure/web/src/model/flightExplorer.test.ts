@@ -9,8 +9,9 @@
 
 import { describe, expect, it } from "vitest";
 
-import { directLaunch, exploreFlight } from "./flightExplorer";
+import { compareWind, directLaunch, exploreFlight } from "./flightExplorer";
 import { BALL_POSITION } from "./simulation";
+import { meteorologicalWind } from "./wind";
 
 const PINNED = {
   ballSpeedMph: 167.0,
@@ -78,5 +79,21 @@ describe("exploreFlight", () => {
     const last = points[points.length - 1];
     expect(last.position[0]).toBeGreaterThan(100.0);
     expect(last.position[1]).toBeLessThan(1.0); // back at the ground
+  });
+});
+
+describe("compareWind", () => {
+  it("uses common launch inputs and reports explicit wind-minus-calm deltas", () => {
+    const comparison = compareWind(
+      directLaunch(PINNED),
+      meteorologicalWind(8, 0),
+    );
+    expect(comparison.wind.metrics.carryM).toBeLessThan(comparison.calm.metrics.carryM);
+    expect(comparison.deltas.carryM).toBeCloseTo(
+      comparison.wind.metrics.carryM - comparison.calm.metrics.carryM,
+      12,
+    );
+    expect(comparison.calm.metrics.ballSpeedMph)
+      .toBe(comparison.wind.metrics.ballSpeedMph);
   });
 });
