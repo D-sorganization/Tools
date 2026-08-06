@@ -36,8 +36,8 @@ exports must preserve that status.
 ## Comparison Contract
 
 Two values may be subtracted directly only when their parameter, reference
-point, event time, frame, unit, and availability contracts match. A mismatch is
-a typed result, not a warning hidden in prose.
+point, event time, frame, geometry, sign rule, unit, and availability contracts
+match. A mismatch is a typed result, not a warning hidden in prose.
 
 Changing a rigid body's reference point uses
 
@@ -60,7 +60,11 @@ maximum-compression event.
 The Foresight-comparable policies use Foresight Sports' public club-head and
 ball-launch definition pages. Where a public source does not provide enough
 detail to establish direct equivalence, the catalog retains a distinct datum or
-event and the comparison contract reports the mismatch.
+event and the comparison contract reports the mismatch. In particular, the
+general ball-launch definition describes horizontal azimuth but does not define
+one handedness-independent numeric sign. Its launch-direction sign is therefore
+`unspecified`, and direct signed comparison fails closed instead of assuming
+TrackMan's absolute positive-right convention.
 
 Primary sources:
 

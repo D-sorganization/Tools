@@ -58,6 +58,19 @@ describe("launch-monitor convention registry", () => {
       .toEqual([COMPARABILITY_REASON.geometry]);
   });
 
+  it("reports sign-rule incompatibility", () => {
+    const definition = conventionRegistry().definition("app_native", "launch_direction");
+    const unspecified = { ...definition, signRule: "unspecified" as const };
+    expect(compareDefinitions(definition, unspecified).reasons)
+      .toEqual([COMPARABILITY_REASON.signRule]);
+  });
+
+  it("does not invent an absolute Foresight launch-direction sign", () => {
+    const definition = conventionRegistry()
+      .definition("foresight_comparable", "launch_direction");
+    expect(definition.signRule).toBe("unspecified");
+  });
+
   it("performs exact point and proper-frame transforms", () => {
     expect(shiftPointVelocity([50, 1, 0], [0, 20, 0], [0.04, 0, 0.02]))
       .toEqual(expect.arrayContaining([
