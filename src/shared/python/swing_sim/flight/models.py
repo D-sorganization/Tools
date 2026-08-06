@@ -15,7 +15,6 @@ import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import cast
 
 import numpy as np
 from scipy.integrate import solve_ivp
@@ -38,7 +37,7 @@ def _capped_lift_coefficient(value: float) -> float:
     """Return a physically bounded golf-ball lift coefficient."""
     if value <= 0.0:
         return 0.0
-    return min(MAX_GOLF_BALL_LIFT_COEFFICIENT, value)
+    return float(min(MAX_GOLF_BALL_LIFT_COEFFICIENT, value))
 
 
 def _spin_ratio_lift_coefficient(spin_ratio: float, max_coefficient: float) -> float:
@@ -175,15 +174,15 @@ class WaterlooPennerModel(BallFlightModel):
             """Compute state derivatives using quadratic Cd/Cl aerodynamics."""
             if t is None:
                 raise ValueError("t must be provided")
-            v_val = cast(np.ndarray, y[3:])
+            v_val = y[3:]
             wind_v = launch.get_wind_vector(t, y[:3])
             v_rel = v_val - wind_v
             speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
             if speed < MIN_SPEED_THRESHOLD_M_S:
-                return np.array(
+                derivative: np.ndarray = np.array(
                     [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity]
                 )
-
+                return derivative
             vu = v_rel / speed
             s = (omega_m * launch.ball_radius) / speed
             cd = cd0 + cd1 * s + cd2 * s**2
@@ -208,7 +207,10 @@ class WaterlooPennerModel(BallFlightModel):
                     ) * (cross / cross_norm)
 
             acc[2] -= launch.gravity
-            return np.array([v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]])
+            derivative = np.array(
+                [v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]]
+            )
+            return derivative
 
         return self._run_ode_simulation(launch, derivatives, max_time, dt)
 
@@ -254,15 +256,15 @@ class MacDonaldHanzelyModel(BallFlightModel):
             """Compute state derivatives with exponential spin decay."""
             if t is None:
                 raise ValueError("t must be provided")
-            v_val = cast(np.ndarray, y[3:])
+            v_val = y[3:]
             wind_v = launch.get_wind_vector(t, y[:3])
             v_rel = v_val - wind_v
             speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
             if speed < MIN_SPEED_THRESHOLD_M_S:
-                return np.array(
+                derivative: np.ndarray = np.array(
                     [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity]
                 )
-
+                return derivative
             omega = omega_0 * math.exp(-self.decay * t)
             vu = v_rel / speed
             acc = -k_drag * speed**2 * vu
@@ -283,7 +285,10 @@ class MacDonaldHanzelyModel(BallFlightModel):
                     ) * (cross / cross_norm)
 
             acc[2] -= launch.gravity
-            return np.array([v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]])
+            derivative = np.array(
+                [v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]]
+            )
+            return derivative
 
         return self._run_ode_simulation(launch, derivatives, max_time, dt)
 
@@ -348,14 +353,15 @@ class ConstantCoefficientModel(BallFlightModel):
             """Compute state derivatives with constant coefficients and decay."""
             if t is None:
                 raise ValueError("t must be provided")
-            v_val = cast(np.ndarray, y[3:])
+            v_val = y[3:]
             wind_v = launch.get_wind_vector(t, y[:3])
             v_rel = v_val - wind_v
             speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
             if speed < MIN_SPEED_THRESHOLD_M_S:
-                return np.array(
+                derivative: np.ndarray = np.array(
                     [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity]
                 )
+                return derivative
 
             omega = omega_0 * math.exp(-self._spec.spin_decay * t)
             vu = v_rel / speed
@@ -377,7 +383,10 @@ class ConstantCoefficientModel(BallFlightModel):
                     ) * (cross / cross_norm)
 
             acc[2] -= launch.gravity
-            return np.array([v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]])
+            derivative = np.array(
+                [v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]]
+            )
+            return derivative
 
         return self._run_ode_simulation(launch, derivatives, max_time, dt)
 

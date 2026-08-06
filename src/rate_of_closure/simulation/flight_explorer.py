@@ -155,10 +155,11 @@ def launch_from_delivery(params: DeliveryParameters) -> LaunchConditions:
         impact_offset=derived.impact_offset,
         record=False,
     )
-    return derive_launch_conditions(
+    launch: LaunchConditions = derive_launch_conditions(
         to_flight_frame(post.ball_velocity),
         to_flight_frame(post.ball_angular_velocity),
     )
+    return launch
 
 
 def explore_flight(

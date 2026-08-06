@@ -223,7 +223,7 @@ class FlightView(QWidget):
         )
 
     # ── drawing ─────────────────────────────────────────────────────
-    def _annotate_landing(self, axes, x: float, y: float, text: str) -> None:  # type: ignore[no-untyped-def]
+    def _annotate_landing(self, axes, x: object, y: object, text: str) -> None:  # type: ignore[no-untyped-def]
         axes.scatter([x], [y], s=45, color=get_chart_color(4), zorder=5)
         axes.annotate(
             text,
