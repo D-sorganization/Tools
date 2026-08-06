@@ -23,6 +23,9 @@ EXPECTED_PUBLIC_API = {
     "FlightResult",
     "FlightSimulatorProtocol",
     "LaunchConditions",
+    "LaunchDirection",
+    "LaunchDirectionConvention",
+    "LAUNCH_DIRECTION_DEFINITIONS",
     "MacDonaldHanzelyModel",
     "TrajectoryPoint",
     "WaterlooPennerModel",
@@ -31,6 +34,9 @@ EXPECTED_PUBLIC_API = {
     "derive_launch_conditions",
     "from_flight_frame",
     "is_rust_available",
+    "launch_direction_from_mapping",
+    "launch_direction_to_flight_azimuth",
+    "migrate_launch_direction_mapping",
     "simulate",
     "simulate_trajectory_rust",
     "to_flight_frame",
@@ -63,6 +69,7 @@ def test_value_types_are_frozen_dataclasses() -> None:
         flight.TrajectoryPoint,
         flight.FlightResult,
         flight.ConstantCoefficientSpec,
+        flight.LaunchDirection,
     ):
         assert dataclasses.is_dataclass(cls), f"{cls.__name__} not a dataclass"
         assert cls.__dataclass_params__.frozen, f"{cls.__name__} must be frozen"

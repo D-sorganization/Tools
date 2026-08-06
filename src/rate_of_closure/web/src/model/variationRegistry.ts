@@ -184,7 +184,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
   },
   {
     key: `${CATEGORY_LAUNCH}.launch_azimuth_deg`,
-    label: "Launch Azimuth",
+    label: "Launch Direction",
     unit: "deg",
     default: 0.0,
     typicalScale: 0.8,

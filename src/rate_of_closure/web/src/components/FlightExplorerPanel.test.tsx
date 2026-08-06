@@ -16,6 +16,21 @@ beforeAll(() => {
 });
 
 describe("FlightExplorerPanel input editing", () => {
+  it("uses launch-monitor terminology and exposes a working definition", () => {
+    render(<FlightExplorerPanel />);
+
+    expect(screen.queryByText("Launch Azimuth")).not.toBeInTheDocument();
+    expect(screen.getByLabelText("Launch Direction")).toBeInTheDocument();
+    expect(screen.getByLabelText("Launch Direction Convention")).toHaveValue(
+      "app_native",
+    );
+    expect(screen.getByTestId("direction-sign-example")).toHaveTextContent(
+      "0° = straight · + = right of the target line",
+    );
+    fireEvent.click(screen.getByLabelText("Explain Launch Direction"));
+    expect(screen.getByText(/positive values start right of the target line/i)).toBeVisible();
+  });
+
   it("accepts and preserves a negative spin-axis tilt", () => {
     render(<FlightExplorerPanel />);
     const input = screen.getByLabelText("Spin-Axis Tilt") as HTMLInputElement;

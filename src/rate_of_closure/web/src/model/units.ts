@@ -202,11 +202,19 @@ export const FIELD_GUIDANCE: Record<string, string> = {
     "Suggested range: 8-16 deg launch for drivers (tour average near " +
     "10.9 deg); higher for irons and wedges. Source: openly published " +
     "tour launch-monitor averages.",
+  fxLaunchDirection:
+    "Suggested range: within +/-10 deg of the target line; positive values " +
+    "start right of the target line, negative values start left, and zero " +
+    "starts on target. Source: TrackMan's published Launch Direction " +
+    "definition. Reference frame: horizontal ball-CG motion relative to " +
+    "the target line immediately after separation.",
+  // Compatibility alias for older UI/plugin callers.
   fxAzimuth:
-    "Suggested range: within +/-10 deg of the target line; + = right of " +
-    "target. Source: standard launch-monitor sign convention (launch " +
-    "direction). Reference frame: horizontal angle from +x target line " +
-    "toward +z right of target.",
+    "Suggested range: within +/-10 deg of the target line; positive values " +
+    "start right of the target line, negative values start left, and zero " +
+    "starts on target. Source: TrackMan's published Launch Direction " +
+    "definition. Reference frame: horizontal ball-CG motion relative to " +
+    "the target line immediately after separation.",
   fxSpinRpm:
     "Suggested range: 2,000-3,500 rpm total spin for drivers (tour " +
     "average near 2,686 rpm); 4,000-10,000+ for irons and wedges. " +

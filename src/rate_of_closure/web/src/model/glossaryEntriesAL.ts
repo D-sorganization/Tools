@@ -196,7 +196,7 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
     definition:
       "The horizontal direction of the delivered face normal relative to " +
       "the target line: positive = open (pointing right of target). The " +
-      "dominant contributor to launch azimuth (launch-monitor conventions; " +
+      "dominant contributor to launch direction (launch-monitor conventions; " +
       "AffineDrift 02-parameters).",
   },
   flight_time: {
@@ -286,7 +286,7 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
     term: "Lateral Landing Offset",
     definition:
       "The sideways distance from the target line at landing (+ = right of " +
-      "target): the integrated effect of launch azimuth plus the curvature " +
+      "target): the integrated effect of launch direction plus the curvature " +
       "from spin-axis tilt — the way launch monitors report carry offline " +
       "(swing_sim.flight metrics).",
   },
@@ -299,7 +299,7 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
       "conventions).",
   },
   launch_azimuth: {
-    term: "Launch Azimuth",
+    term: "Launch Direction",
     definition:
       "The horizontal direction of the ball's initial velocity relative to " +
       "the target line (+ = right). Dominated by the delivered face angle " +

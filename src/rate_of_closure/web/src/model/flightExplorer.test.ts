@@ -15,7 +15,7 @@ import { BALL_POSITION } from "./simulation";
 const PINNED = {
   ballSpeedMph: 167.0,
   launchAngleDeg: 10.9,
-  azimuthDeg: 0.0,
+  launchDirectionDeg: 0.0,
   spinRpm: 2686.0,
   spinAxisTiltDeg: 0.0,
 };
@@ -53,9 +53,9 @@ describe("exploreFlight", () => {
     expect(Math.abs(metrics.lateralM)).toBeLessThan(0.5);
   });
 
-  it("keeps app sign conventions: + azimuth and + tilt land right", () => {
+  it("keeps app sign conventions: + direction and + tilt land right", () => {
     const right = exploreFlight(
-      directLaunch({ ...PINNED, azimuthDeg: 5.0 }),
+      directLaunch({ ...PINNED, launchDirectionDeg: 5.0 }),
     ).metrics;
     const fade = exploreFlight(
       directLaunch({ ...PINNED, spinAxisTiltDeg: 10.0 }),
@@ -64,6 +64,7 @@ describe("exploreFlight", () => {
       directLaunch({ ...PINNED, spinAxisTiltDeg: -10.0 }),
     ).metrics;
     expect(right.lateralM).toBeGreaterThan(1.0);
+    expect(right.launchDirectionDeg).toBeCloseTo(5.0, 8);
     expect(right.launchAzimuthDeg).toBeCloseTo(5.0, 8);
     expect(fade.lateralM).toBeGreaterThan(1.0);
     expect(draw.lateralM).toBeLessThan(-1.0);

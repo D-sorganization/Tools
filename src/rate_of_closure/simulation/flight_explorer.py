@@ -3,13 +3,13 @@
 Logic layer of the V2 Flight Explorer (epic #4120): build
 :class:`~shared.python.swing_sim.flight.types.LaunchConditions` either
 directly from launch-monitor ball numbers (ball speed, launch angle,
-azimuth, spin, spin-axis tilt) or from club delivery numbers run through
+launch direction, spin, spin-axis tilt) or from club delivery numbers run through
 ``swing_sim.impact.delivery`` and the rigid-body impact model, then
 integrate the flight with any of the 7 literature models in
 ``swing_sim.flight`` and return an app-frame trajectory + metrics.
 
 Sign conventions match the simulation session (app frame: x target,
-y up, z right): azimuth and lateral are + right of target; spin-axis
+y up, z right): launch direction and lateral are + right of target; spin-axis
 tilt is + fade-side (curves right), matching the D-plane diagnostics in
 ``swing_sim.impact.delivery``.
 """
@@ -26,8 +26,11 @@ from rate_of_closure.model import MPH_PER_MPS
 from rate_of_closure.simulation.session import BALL_POSITION_M
 from shared.python.swing_sim.flight import (
     LaunchConditions,
+    LaunchDirection,
+    LaunchDirectionConvention,
     derive_launch_conditions,
     from_flight_frame,
+    launch_direction_to_flight_azimuth,
     to_flight_frame,
 )
 from shared.python.swing_sim.flight import simulate as flight_simulate
@@ -50,6 +53,8 @@ __all__ = [
 EXPLORER_METRIC_KEYS: tuple[str, ...] = (
     "ball_speed_mph",
     "launch_angle_deg",
+    "launch_direction_deg",
+    # Deprecated persistence alias retained for lossless older exports.
     "launch_azimuth_deg",
     "spin_rpm",
     "carry_m",
@@ -83,20 +88,28 @@ class FlightExploration:
 def launch_from_direct(
     ball_speed_mph: float,
     launch_angle_deg: float,
-    azimuth_deg: float,
-    spin_rpm: float,
-    spin_axis_tilt_deg: float,
+    launch_direction_deg: float | None = None,
+    spin_rpm: float | None = None,
+    spin_axis_tilt_deg: float | None = None,
+    *,
+    azimuth_deg: float | None = None,
+    direction_convention: LaunchDirectionConvention = (
+        LaunchDirectionConvention.APP_NATIVE
+    ),
 ) -> LaunchConditions:
-    """Launch conditions from launch-monitor ball numbers (app signs).
+    """Launch conditions from right-positive launch-monitor ball numbers.
 
     Args:
         ball_speed_mph: Ball speed [mph], > 0.
         launch_angle_deg: Launch angle above horizontal [deg].
-        azimuth_deg: Launch direction [deg]; + = right of target.
+        launch_direction_deg: Horizontal launch direction [deg]; positive
+            starts right and negative starts left of the target line.
         spin_rpm: Total spin rate [rpm], >= 0.
         spin_axis_tilt_deg: Spin-axis tilt [deg]; + = fade-side (curves
             right for a right-handed player), matching the D-plane tilt
             reported by ``swing_sim.impact.delivery``.
+        azimuth_deg: Deprecated app-native alias for imported/caller data.
+        direction_convention: Explicit convention of ``launch_direction_deg``.
 
     Returns:
         Flight-frame :class:`LaunchConditions`.
@@ -106,7 +119,21 @@ def launch_from_direct(
         "ball_speed_mph must be finite and > 0",
         ball_speed_mph,
     )
-    # App azimuth + = right; flight-frame azimuth + = left (+y): flip.
+    # Accept the historical keyword without silently choosing between conflicts.
+    if launch_direction_deg is None:
+        if azimuth_deg is None:
+            raise TypeError("launch_direction_deg is required")
+        launch_direction_deg = azimuth_deg
+    elif azimuth_deg is not None and not math.isclose(
+        launch_direction_deg, azimuth_deg, rel_tol=0.0, abs_tol=1e-12
+    ):
+        raise ValueError("conflicting launch-direction and legacy azimuth values")
+    if spin_rpm is None or spin_axis_tilt_deg is None:
+        raise TypeError("spin_rpm and spin_axis_tilt_deg are required")
+    flight_azimuth_deg = launch_direction_to_flight_azimuth(
+        LaunchDirection(launch_direction_deg, direction_convention)
+    )
+    # App direction + = right; flight-frame azimuth + = left (+y): flip.
     # Fade-side tilt (+) needs a downward (-z flight) sidespin component,
     # which the legacy spin_axis_angle decomposition produces for a
     # negative angle — hence both signs flip here.
@@ -114,7 +141,7 @@ def launch_from_direct(
         ball_speed_mph=ball_speed_mph,
         launch_angle_deg=launch_angle_deg,
         spin_rate_rpm=spin_rpm,
-        azimuth_angle_deg=-azimuth_deg,
+        azimuth_angle_deg=flight_azimuth_deg,
         spin_axis_angle_deg=-spin_axis_tilt_deg,
     )
 
@@ -171,7 +198,8 @@ def explore_flight(
     metrics = {
         "ball_speed_mph": launch.ball_speed * MPH_PER_MPS,
         "launch_angle_deg": math.degrees(launch.launch_angle),
-        # Flight azimuth + = left; app convention + = right of target.
+        # Flight azimuth + = left; public launch direction + = right.
+        "launch_direction_deg": -math.degrees(launch.azimuth_angle),
         "launch_azimuth_deg": -math.degrees(launch.azimuth_angle),
         "spin_rpm": launch.spin_rate,
         "carry_m": float(flight.carry_distance),

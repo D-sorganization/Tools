@@ -4,13 +4,18 @@
  * TypeScript twin of `rate_of_closure/simulation/flight_explorer.py`,
  * parity-banded by `flightExplorer.test.ts` against the pytest pinned
  * case: build flight-frame launch conditions from launch-monitor ball
- * numbers (app signs: azimuth and lateral + = right of target, spin
+ * numbers (app signs: launch direction and lateral + = right of target, spin
  * axis tilt + = fade side) and integrate with the Waterloo/Penner
  * model. The full 7-model picker stays Python-side until the P7 WASM
  * kernels land.
  */
 
 import { simulateFlight, type FlightPoint, type Launch } from "./flight";
+import {
+  launchDirectionFromRecord,
+  launchDirectionToFlightAzimuth,
+  type LaunchDirectionConvention,
+} from "./launchDirection";
 import {
   BALL_POSITION,
   MPH_PER_MPS,
@@ -25,7 +30,11 @@ const deg = (r: number): number => (r * 180.0) / Math.PI;
 export interface DirectLaunchInput {
   ballSpeedMph: number;
   launchAngleDeg: number;
-  azimuthDeg: number; // + = right of target (app convention)
+  /** Canonical positive-right horizontal direction. */
+  launchDirectionDeg?: number;
+  /** @deprecated Lossless import compatibility for pre-#4193 callers. */
+  azimuthDeg?: number;
+  launchDirectionConvention?: LaunchDirectionConvention;
   spinRpm: number;
   spinAxisTiltDeg: number; // + = fade side (curves right)
 }
@@ -35,11 +44,14 @@ export function directLaunch(input: DirectLaunchInput): Launch {
   if (!(input.ballSpeedMph > 0)) {
     throw new Error("ballSpeedMph must be > 0");
   }
-  // App azimuth + = right; flight-frame azimuth + = left: flip. The
+  const direction = launchDirectionFromRecord(input as unknown as Record<string, unknown>);
+  // App direction + = right; flight-frame azimuth + = left: flip. The
   // fade-side tilt (+) needs a downward (-z flight) sidespin component,
   // so the legacy spin-axis-angle decomposition gets the flipped angle
   // too (same derivation as the Python twin).
-  const azimuthRad = -rad(input.azimuthDeg);
+  const azimuthRad = rad(
+    launchDirectionToFlightAzimuth(direction.degrees, direction.convention),
+  );
   const axisAngle = -rad(input.spinAxisTiltDeg);
   const backspin = Math.cos(axisAngle);
   const sidespin = Math.sin(axisAngle);
@@ -63,6 +75,8 @@ export interface FlightExplorationTs {
   metrics: {
     ballSpeedMph: number;
     launchAngleDeg: number;
+    launchDirectionDeg: number; // + = right of target
+    /** @deprecated Persistence alias retained for older exports. */
     launchAzimuthDeg: number; // + = right of target
     spinRpm: number;
     carryM: number;
@@ -86,7 +100,8 @@ export function exploreFlight(launch: Launch): FlightExplorationTs {
     metrics: {
       ballSpeedMph: launch.ballSpeedMps * MPH_PER_MPS,
       launchAngleDeg: deg(launch.launchAngleRad),
-      // Flight azimuth + = left; app convention + = right of target.
+      // Flight azimuth + = left; public launch direction + = right.
+      launchDirectionDeg: -deg(launch.azimuthRad),
       launchAzimuthDeg: -deg(launch.azimuthRad),
       spinRpm: launch.spinRpm,
       carryM: result.carryM,

@@ -81,7 +81,7 @@ const OUTPUT_LABELS: Record<string, string> = {
   dynamic_loft_deg: "Dynamic Loft",
   ball_speed_mph: "Ball Speed",
   launch_angle_deg: "Launch Angle",
-  launch_azimuth_deg: "Launch Azimuth",
+  launch_azimuth_deg: "Launch Direction",
   spin_rpm: "Spin Rate",
   spin_axis_deg: "Spin-Axis Tilt",
   carry_m: "Carry",
