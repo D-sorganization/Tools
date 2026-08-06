@@ -12,6 +12,9 @@ pytest.importorskip("pytestqt")
 from rate_of_closure.club import get_club  # noqa: E402
 from rate_of_closure.model import ImpactScenario  # noqa: E402
 from rate_of_closure.simulation import SimulationConfig  # noqa: E402
+from rate_of_closure.ui.pyqt6.variation_distribution_matrix import (  # noqa: E402
+    DistributionMatrixView,
+)
 from rate_of_closure.ui.pyqt6.variation_visualizations import (  # noqa: E402
     ArcOverlayView,
     DatasetScatterView,
@@ -118,3 +121,15 @@ def test_trial_selection_links_scatter_and_arc_views(qtbot) -> None:  # type: ig
         collection.get_linewidths().max() >= 1.8
         for collection in scatter._canvas.axes.collections
     )
+
+
+def test_distribution_matrix_draws_histograms_and_paired_scatter(qtbot) -> None:  # type: ignore[no-untyped-def]
+    view = DistributionMatrixView()
+    qtbot.addWidget(view)
+
+    view.set_plot_dataset(_plot_dataset())
+
+    assert len(view._figure.axes) == 16
+    assert any(axis.patches for axis in view._figure.axes)
+    assert any(axis.collections for axis in view._figure.axes)
+    assert "canonical exports retain every miss/failure row" in view._status.text()

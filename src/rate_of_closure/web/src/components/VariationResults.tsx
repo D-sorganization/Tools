@@ -11,6 +11,7 @@ import {
 import { LandingCanvas } from "./VariationLanding";
 import { VariationScatter } from "./VariationScatter";
 import { VariationArcOverlay } from "./VariationArcOverlay";
+import { VariationDistributionMatrix } from "./VariationDistributionMatrix";
 import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 import { PANEL_CLASS, sensitivityHeat } from "./variationUi";
 
@@ -35,6 +36,13 @@ export function VariationResults({
 
   return (
     <section aria-label="Variation results" className="space-y-6">
+      {dataset && (
+        <div className={PANEL_CLASS}>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Scatter Matrix and Marginal Distributions</h2>
+          <VariationDistributionMatrix dataset={dataset} />
+        </div>
+      )}
+
       {dataset && (
         <div className={PANEL_CLASS}>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">

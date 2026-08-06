@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import type { VariationDatasetTs } from "./variation";
 import {
+  buildScalarMarginal,
   buildScalarPlotVariables,
   buildScalarScatter,
 } from "./variationPlotData";
@@ -56,5 +57,14 @@ describe("variation plot data", () => {
       evaluated: { total: 2, plotted: 2, unavailable: 0 },
       failure: { total: 1, plotted: 0, unavailable: 1 },
     });
+  });
+
+  it("builds deterministic marginals without fabricating missing outputs", () => {
+    const marginal = buildScalarMarginal(dataset(), "output:carry_m", 2);
+
+    expect(marginal.binEdges).toEqual([100, 105, 110]);
+    expect(marginal.counts).toEqual([1, 1]);
+    expect(marginal.nAvailable).toBe(2);
+    expect(marginal.nMissing).toBe(1);
   });
 });

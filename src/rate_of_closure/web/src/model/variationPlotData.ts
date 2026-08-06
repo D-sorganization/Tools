@@ -32,6 +32,14 @@ export interface ScalarScatterDataTs {
   cohorts: Record<ScalarCohortTs, CohortAvailabilityTs>;
 }
 
+export interface ScalarMarginalDataTs {
+  variable: ScalarPlotVariableTs;
+  binEdges: number[];
+  counts: number[];
+  nAvailable: number;
+  nMissing: number;
+}
+
 const OUTPUT_UNITS: Record<string, string> = {
   candidate_time_s: "s",
   closest_approach_m: "m",
@@ -132,7 +140,7 @@ export function buildScalarPlotVariables(
   return [...inputs, ...outputs];
 }
 
-const scalarValues = (
+export const scalarValues = (
   dataset: VariationDatasetTs,
   variable: ScalarPlotVariableTs,
 ): Array<number | null> => {
@@ -146,6 +154,37 @@ const scalarValues = (
   if (source !== "output" || column < 0) throw new Error(`unknown output axis ${name}`);
   return dataset.outputs.map((row) => row[column]);
 };
+
+export function buildScalarMarginal(
+  dataset: VariationDatasetTs,
+  key: string,
+  binCount = 12,
+): ScalarMarginalDataTs {
+  if (!Number.isInteger(binCount) || binCount < 2 || binCount > 100) {
+    throw new Error("binCount must be an integer in [2, 100]");
+  }
+  const variable = buildScalarPlotVariables(dataset).find((item) => item.key === key);
+  if (!variable) throw new Error(`unknown marginal variable ${key}`);
+  const values = scalarValues(dataset, variable).filter(
+    (value): value is number => value !== null && Number.isFinite(value),
+  );
+  if (values.length === 0) {
+    return { variable, binEdges: [], counts: [], nAvailable: 0, nMissing: dataset.success.length };
+  }
+  const low = Math.min(...values);
+  const high = Math.max(...values);
+  const span = high - low || Math.max(Math.abs(low), 1) * 1e-9;
+  const binEdges = Array.from({ length: binCount + 1 }, (_, index) => low + span * index / binCount);
+  const counts = Array(binCount).fill(0) as number[];
+  values.forEach((value) => {
+    const index = Math.min(Math.floor((value - low) / span * binCount), binCount - 1);
+    counts[index] += 1;
+  });
+  return {
+    variable, binEdges, counts, nAvailable: values.length,
+    nMissing: dataset.success.length - values.length,
+  };
+}
 
 export function buildScalarScatter(
   dataset: VariationDatasetTs,

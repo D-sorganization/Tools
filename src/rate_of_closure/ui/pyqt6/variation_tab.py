@@ -354,6 +354,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         )
         if self._ensemble_result is None:
             self._ensemble_scatter.set_variation_dataset(dataset)
+            self._distribution_matrix.set_variation_dataset(dataset)
         self._populate_results()
         failures = dataset.plan.n_runs - dataset.n_success
         note = f" ({failures} runs failed)" if failures else ""
@@ -370,6 +371,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         self._export_ensemble_json.setEnabled(True)
         plot_dataset = build_ensemble_plot_dataset(result)
         self._ensemble_scatter.set_plot_dataset(plot_dataset)
+        self._distribution_matrix.set_plot_dataset(plot_dataset)
         self._arc_overlay.set_plot_dataset(plot_dataset)
 
     def _on_cancelled(self) -> None:
