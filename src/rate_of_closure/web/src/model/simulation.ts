@@ -50,6 +50,7 @@ import {
 import {
   MPH_PER_MPS,
   add,
+  cross,
   fromFlightFrame,
   norm,
   scale,
@@ -112,6 +113,7 @@ export interface SwingSampleTs {
   t: number;
   position: Vec3; // app frame; aligned only in delivery-inspection mode
   velocity: Vec3;
+  angularVelocity: Vec3; // app frame, rad/s, for club screw-axis analysis
   joints: Vec3[]; // pivot -> articulated joints -> clubhead
 }
 
@@ -164,6 +166,7 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
         t,
         position: [speed * rel, 0, 0],
         velocity: [speed, 0, 0],
+        angularVelocity: omega,
         joints: [],
       });
     }
@@ -208,6 +211,7 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
   const upAxisSwing: Vec3 = [cy * sf + sy * ss * cf, sy * sf - cy * ss * cf, cs * cf];
   const xAxis = fromFlightFrame(xAxisSwing);
   const upAxis = fromFlightFrame(upAxisSwing);
+  const planeNormal = cross(upAxis, xAxis);
   return states.map((state, index) => {
     const triple = golfTripleParameters();
     const angles = input.sourceKind === "double_pendulum"
@@ -236,6 +240,7 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
       t: index * dt,
       position: add(scale(xAxis, x), scale(upAxis, yLoc)),
       velocity: add(scale(xAxis, vx), scale(upAxis, vy)),
+      angularVelocity: scale(planeNormal, rates[rates.length - 1]),
       joints: [
         ...localJoints.map(([jointX, jointY]) =>
           add(scale(xAxis, jointX), scale(upAxis, jointY)),

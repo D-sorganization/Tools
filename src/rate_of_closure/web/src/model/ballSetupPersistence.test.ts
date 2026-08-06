@@ -42,6 +42,11 @@ describe("ball setup persistence", () => {
       height_reference: "ground_plane_to_ball_bottom",
       ball_center_m: [0, 0.059435, 0],
     });
+    expect(document.series.clubScrewMotion).toMatchObject({
+      frame: "app/world",
+      units: "SI",
+    });
+    expect(document.series.clubScrewMotion.rows).toHaveLength(document.series.swing.length);
   });
 
   it("round-trips the setup, override policy, and reference metadata", () => {
