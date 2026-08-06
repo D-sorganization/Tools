@@ -11,7 +11,7 @@ from pathlib import Path
 
 import numpy as np
 from matplotlib.figure import Figure
-from PyQt6.QtCore import Qt, QTimer
+from PyQt6.QtCore import QSettings, Qt, QTimer
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -64,13 +64,26 @@ __all__ = ["RATE_PRESETS", "SimulationView"]
 
 _TIMER_INTERVAL_MS = 40
 _SLIDER_STEPS = 1000
+_IMPACT_LAYER_SETTINGS_ORG = "RateOfClosure"
+_IMPACT_LAYER_SETTINGS_APP = "ImpactScene"
+_IMPACT_LAYER_SETTINGS_KEY = "visible_layers_v1"
+_DEFAULT_IMPACT_LAYERS = frozenset(
+    {"face_normal", "face_center_travel", "dplane_normal", "spin_loft_sector"}
+)
 
 
 class SimulationView(QWidget):
     """Animated 3D scene of one simulation run with video controls."""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        impact_settings: QSettings | None = None,
+    ) -> None:
         super().__init__(parent)
+        self._impact_settings = impact_settings or QSettings(
+            _IMPACT_LAYER_SETTINGS_ORG, _IMPACT_LAYER_SETTINGS_APP
+        )
         self._figure = Figure(figsize=(5, 5), tight_layout=True)
         self._canvas = FigureCanvas(self._figure)
         self._axes = self._figure.add_subplot(111, projection="3d")
@@ -204,6 +217,42 @@ class SimulationView(QWidget):
             "face normal, leading edge, arc tangent, screw axis, and velocity "
             "decomposition."
         )
+        saved_layers = self._load_impact_layers()
+        self._impact_layer_checks: dict[str, QCheckBox] = {}
+        for key, label, tooltip in (
+            (
+                "face_normal",
+                "Face Normal",
+                "Show the delivered face-center normal in the app frame.",
+            ),
+            (
+                "face_center_travel",
+                "Face-Center Travel",
+                "Show rigid-body face-center travel including omega cross r.",
+            ),
+            (
+                "dplane_normal",
+                "D-Plane Normal",
+                "Show the normal to the plane spanned by face-center travel "
+                "and normal.",
+            ),
+            (
+                "spin_loft_sector",
+                "Spin Loft",
+                "Show the shaded exact 3D angle between face-center travel and normal.",
+            ),
+        ):
+            check = QCheckBox(label)
+            check.setChecked(key in saved_layers)
+            check.setToolTip(
+                "Suggested range: on for engineering review; turn off to isolate "
+                "other layers. "
+                + tooltip
+                + " Source: standard 3D D-plane geometry. Frame: x target, "
+                "y up, z right."
+            )
+            check.toggled.connect(self._on_impact_layer_toggled)
+            self._impact_layer_checks[key] = check
         self._impact_view = QComboBox()
         self._impact_view.setAccessibleName("Impact Camera View")
         self._impact_view.addItem("Isometric", (30.0, -60.0))
@@ -251,11 +300,41 @@ class SimulationView(QWidget):
         ):
             check.toggled.connect(lambda _checked: self._draw())
             bar.addWidget(check)
+        for check in self._impact_layer_checks.values():
+            bar.addWidget(check)
         bar.addWidget(self._screw_entity)
         bar.addWidget(self._impact_view)
         bar.addWidget(self._impact_export_button)
         bar.addStretch(1)
         return bar
+
+    def _load_impact_layers(self) -> frozenset[str]:
+        raw = self._impact_settings.value(_IMPACT_LAYER_SETTINGS_KEY)
+        if not isinstance(raw, str):
+            return _DEFAULT_IMPACT_LAYERS
+        try:
+            values = json.loads(raw)
+        except (TypeError, ValueError):
+            return _DEFAULT_IMPACT_LAYERS
+        allowed = _DEFAULT_IMPACT_LAYERS
+        if not isinstance(values, list) or not all(
+            isinstance(value, str) and value in allowed for value in values
+        ):
+            return _DEFAULT_IMPACT_LAYERS
+        return frozenset(values)
+
+    def _on_impact_layer_toggled(self, _checked: bool) -> None:
+        self._impact_settings.setValue(
+            _IMPACT_LAYER_SETTINGS_KEY,
+            json.dumps(sorted(self.impact_visible_layers())),
+        )
+        self._draw()
+
+    def impact_visible_layers(self) -> frozenset[str]:
+        """Return persisted, independently toggleable impact layers."""
+        return frozenset(
+            key for key, check in self._impact_layer_checks.items() if check.isChecked()
+        )
 
     # ── public API ──────────────────────────────────────────────────
     def set_run(self, run: SimulationRun | None) -> None:
@@ -373,10 +452,16 @@ class SimulationView(QWidget):
         path = Path(file_path)
         suffix = path.suffix.lower()
         if suffix == ".json":
+            payload = self._impact_scene.to_json_dict()
+            payload["render_preferences"] = {
+                "visible_layers": sorted(self.impact_visible_layers()),
+                "camera": {
+                    "elevation_deg": float(self._axes.elev),
+                    "azimuth_deg": float(self._axes.azim),
+                },
+            }
             path.write_text(
-                json.dumps(
-                    self._impact_scene.to_json_dict(), indent=2, allow_nan=False
-                ),
+                json.dumps(payload, indent=2, allow_nan=False),
                 encoding="utf-8",
             )
             return path

@@ -8,11 +8,32 @@ import { impactKinematics } from "../model/impactKinematics";
 import type { SimulationRunTs } from "../model/simulation";
 import { project } from "./clubCanvasGeometry";
 import { impactSceneGeometry } from "./impactSceneGeometry";
+import { impactSceneExportPayload, type ImpactCameraTs } from "./impactSceneExport";
 import { impactSceneSvg } from "./impactSceneSvg";
 
-interface Camera { yaw: number; pitch: number; zoom: number }
+type Camera = ImpactCameraTs;
 const ISOMETRIC: Camera = { yaw: 2.62, pitch: 0.52, zoom: 2.2 };
-const VECTOR_KEYS = ["total", "axisTranslation", "shaftRotation", "otherRotation", "withoutShaft"] as const;
+const VELOCITY_KEYS = ["total", "axisTranslation", "shaftRotation", "otherRotation", "withoutShaft"] as const;
+const DPLANE_LAYERS = [
+  ["faceNormal", "Face-Center Normal", "Delivered face-center normal in the app frame."],
+  ["faceCenterTravel", "Face-Center Travel", "Rigid-body face-center velocity direction including omega cross r."],
+  ["dplaneNormal", "D-Plane Normal", "Normal to the plane spanned by face-center travel and face normal."],
+  ["projectedPath", "Projected Path", "Face-center travel projected onto the ground plane."],
+  ["spinLoftSector", "Spin-Loft Sector", "Shaded exact 3D angle between face-center travel and face normal."],
+] as const;
+const PREFERENCE_KEY = "rate-of-closure.impact-scene-layers.v1";
+const DEFAULT_VISIBLE = [...VELOCITY_KEYS, ...DPLANE_LAYERS.map(([key]) => key)];
+
+function initialVisible(): ReadonlySet<string> {
+  try {
+    if (typeof localStorage?.getItem !== "function") return new Set(DEFAULT_VISIBLE);
+    const stored = JSON.parse(localStorage.getItem(PREFERENCE_KEY) ?? "null");
+    if (Array.isArray(stored) && stored.every((value) => typeof value === "string")) {
+      return new Set(stored);
+    }
+  } catch { /* Ignore corrupt local preference and restore declared defaults. */ }
+  return new Set(DEFAULT_VISIBLE);
+}
 
 function download(name: string, contents: Blob): void {
   const link = document.createElement("a");
@@ -30,9 +51,17 @@ export function ImpactSceneCanvas({ run, scenario, club }: {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
   const [camera, setCamera] = useState(ISOMETRIC);
-  const [visible, setVisible] = useState<ReadonlySet<string>>(() => new Set(VECTOR_KEYS));
+  const [visible, setVisible] = useState<ReadonlySet<string>>(initialVisible);
   const scene = useMemo(() => impactKinematics(run, scenario, club), [run, scenario, club]);
   const geometry = useMemo(() => impactSceneGeometry(scene, visible), [scene, visible]);
+
+  useEffect(() => {
+    try {
+      if (typeof localStorage?.setItem === "function") {
+        localStorage.setItem(PREFERENCE_KEY, JSON.stringify([...visible].sort()));
+      }
+    } catch { /* Storage denial must not disable impact inspection. */ }
+  }, [visible]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -45,6 +74,18 @@ export function ImpactSceneCanvas({ run, scenario, club }: {
     context.clearRect(0, 0, canvas.width, canvas.height);
     context.fillStyle = "#020617";
     context.fillRect(0, 0, canvas.width, canvas.height);
+    for (const fill of geometry.fills) {
+      const points = fill.points.map((point) => project(
+        point, canvas.width, canvas.height, camera.zoom, camera.yaw, camera.pitch,
+      ));
+      context.beginPath();
+      points.forEach(([x, y], index) => index === 0 ? context.moveTo(x, y) : context.lineTo(x, y));
+      context.closePath();
+      context.globalAlpha = fill.alpha;
+      context.fillStyle = fill.color;
+      context.fill();
+      context.globalAlpha = 1;
+    }
     for (const line of geometry.lines) {
       const points = line.points.map((point) => project(
         point, canvas.width, canvas.height, camera.zoom, camera.yaw, camera.pitch,
@@ -105,6 +146,13 @@ export function ImpactSceneCanvas({ run, scenario, club }: {
         </div>
       </div>
       <div className="flex flex-wrap gap-3 text-xs">
+        {DPLANE_LAYERS.map(([key, label, meaning]) => <label key={key} title={meaning} className="flex cursor-pointer items-center gap-1 text-slate-300">
+          <input type="checkbox" checked={visible.has(key)} onChange={() => setVisible((current) => {
+            const next = new Set(current);
+            if (next.has(key)) next.delete(key); else next.add(key);
+            return next;
+          })} /> {label}
+        </label>)}
         {scene.vectors.map((vector) => <label key={vector.key} title={vector.meaning} className="flex cursor-pointer items-center gap-1 text-slate-300">
           <input type="checkbox" checked={visible.has(vector.key)} onChange={() => setVisible((current) => {
             const next = new Set(current);
@@ -113,6 +161,11 @@ export function ImpactSceneCanvas({ run, scenario, club }: {
           })} /> {vector.label}
         </label>)}
       </div>
+      <p className="text-xs text-cyan-200" aria-live="polite">
+        <b>Face-Center Spin Loft:</b> {scene.faceCenterDPlane.spinLoft3dDeg?.toFixed(2) ?? "Unavailable"}° (exact 3D) ·{" "}
+        {scene.faceCenterDPlane.planarSpinLoftDeg?.toFixed(2) ?? "Unavailable"}° planar approximation · residual{" "}
+        {scene.faceCenterDPlane.spinLoftResidualDeg?.toFixed(2) ?? "Unavailable"}°. Positive D-plane tilt is face-right and fade-side only under the current right-handed display convention.
+      </p>
       <canvas
         ref={canvasRef}
         tabIndex={0}
@@ -138,7 +191,7 @@ export function ImpactSceneCanvas({ run, scenario, club }: {
       <div className="flex flex-wrap gap-2">
         <button type="button" onClick={() => canvasRef.current?.toBlob((blob) => { if (blob) download("wedge-impact.png", blob); }, "image/png")} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Export High-Resolution PNG</button>
         <button type="button" onClick={() => download("wedge-impact.svg", new Blob([impactSceneSvg(geometry, camera)], { type: "image/svg+xml" }))} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Export Vector SVG</button>
-        <button type="button" onClick={() => download("wedge-impact.json", new Blob([JSON.stringify(scene, null, 2)], { type: "application/json" }))} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Export Scene Data</button>
+        <button type="button" onClick={() => download("wedge-impact.json", new Blob([JSON.stringify(impactSceneExportPayload(scene, visible, camera), null, 2)], { type: "application/json" }))} className="rounded border border-slate-600 px-2 py-1 text-xs hover:border-sky-400">Export Scene Data</button>
       </div>
     </section>
   );

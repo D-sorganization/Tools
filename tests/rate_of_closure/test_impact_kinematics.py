@@ -88,6 +88,43 @@ def test_curved_face_leading_edge_is_projected_into_the_tangent_plane() -> None:
         snapshot.state.face_normal_unit,
         snapshot.state.leading_edge_tangent_unit,
     ) == pytest.approx(0.0, abs=1e-12)
+    assert snapshot.contact_dplane.face_angle_deg != pytest.approx(
+        snapshot.face_center_dplane.face_angle_deg
+    )
+
+
+def test_face_center_dplane_uses_rigid_body_point_velocity() -> None:
+    scenario = ImpactScenario(
+        clubhead_speed_mph=30.0,
+        lie_angle_deg=64.0,
+        omega_plane_dps=0.0,
+        omega_shaft_dps=1307.0,
+        com_to_face_mm=20.0,
+        impact_offset_toe_mm=12.0,
+        impact_offset_high_mm=5.0,
+    )
+    run = run_simulation(
+        SimulationConfig(scenario=scenario, club=get_club("Driver 10.5°"))
+    )
+
+    snapshot = impact_kinematics_for_run(run)
+    pose = snapshot.state
+    reference_velocity = np.asarray(pose.reference_velocity_mps)
+    angular_velocity = np.asarray(pose.angular_velocity_rad_s)
+    lever = np.asarray(snapshot.face_center_point_m) - np.asarray(
+        pose.reference_position_m
+    )
+    expected = reference_velocity + np.cross(angular_velocity, lever)
+
+    np.testing.assert_allclose(snapshot.face_center_velocity_mps, expected, atol=1e-12)
+    np.testing.assert_allclose(
+        snapshot.face_center_dplane.travel_direction_unit,
+        expected / np.linalg.norm(expected),
+        atol=1e-12,
+    )
+    assert snapshot.face_center_dplane.frame_id == "app_frame:x_target,y_up,z_right"
+    assert snapshot.face_center_dplane.spin_loft_3d_deg is not None
+    assert snapshot.face_center_dplane.planar_spin_loft_deg is not None
 
 
 def test_impact_adapter_interpolates_an_off_grid_event_state() -> None:

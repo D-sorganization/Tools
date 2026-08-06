@@ -9,10 +9,14 @@ guidance on every new input, and export-button gating.
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
+
+from PyQt6.QtCore import QSettings  # noqa: E402
 
 from rate_of_closure.derivation import LAUNCH_EXPLANATIONS  # noqa: E402
 from rate_of_closure.model import ImpactScenario  # noqa: E402
@@ -22,7 +26,10 @@ from rate_of_closure.ui.pyqt6.simulation_tab import (  # noqa: E402
     LAUNCH_ROWS,
     SimulationTab,
 )
-from rate_of_closure.ui.pyqt6.simulation_view import RATE_PRESETS  # noqa: E402
+from rate_of_closure.ui.pyqt6.simulation_view import (  # noqa: E402
+    RATE_PRESETS,
+    SimulationView,
+)
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -84,6 +91,7 @@ class TestSimulationTab:
             tab.view()._ball_check,
             tab.view()._ground_check,
             tab.view()._screw_check,
+            *tab.view()._impact_layer_checks.values(),
         ]
         for widget in widgets:
             assert "Suggested range" in widget.toolTip(), widget
@@ -182,6 +190,8 @@ class TestSimulationView:
     ) -> None:  # type: ignore[no-untyped-def]
         view = ran_tab.view()
         view._impact_check.setChecked(True)
+        for check in view._impact_layer_checks.values():
+            check.setChecked(True)
         view.jump_to_inspection_event()
 
         labels = {str(line.get_label()) for line in view._axes.lines}
@@ -189,12 +199,48 @@ class TestSimulationView:
             "Physical Shaft Axis",
             "Wedge Face",
             "Leading Edge",
-            "Face Normal",
+            "Face-Center Normal",
+            "Face-Center Travel",
+            "D-Plane Normal",
             "Arc Tangent",
             "Total Contact Velocity",
             "Rotation About Shaft",
             "Without Shaft Rotation",
         } <= labels
+        collection_labels = {
+            str(collection.get_label()) for collection in view._axes.collections
+        }
+        assert "3D Spin-Loft Sector" in collection_labels
+
+        view._impact_layer_checks["face_normal"].setChecked(False)
+        view._impact_layer_checks["face_center_travel"].setChecked(False)
+        view._impact_layer_checks["dplane_normal"].setChecked(False)
+        view._impact_layer_checks["spin_loft_sector"].setChecked(False)
+        labels = {str(line.get_label()) for line in view._axes.lines}
+        collection_labels = {
+            str(collection.get_label()) for collection in view._axes.collections
+        }
+        assert "Face-Center Normal" not in labels
+        assert "Face-Center Travel" not in labels
+        assert "D-Plane Normal" not in labels
+        assert "3D Spin-Loft Sector" not in collection_labels
+
+    def test_impact_layers_are_independent_and_persisted(self, qtbot, tmp_path) -> None:  # type: ignore[no-untyped-def]
+        settings_path = tmp_path / "impact-layers.ini"
+        first_settings = QSettings(str(settings_path), QSettings.Format.IniFormat)
+        first = SimulationView(impact_settings=first_settings)
+        qtbot.addWidget(first)
+        first._impact_layer_checks["spin_loft_sector"].setChecked(False)
+        first._impact_layer_checks["face_center_travel"].setChecked(False)
+        first_settings.sync()
+
+        second_settings = QSettings(str(settings_path), QSettings.Format.IniFormat)
+        second = SimulationView(impact_settings=second_settings)
+        qtbot.addWidget(second)
+
+        assert not second._impact_layer_checks["spin_loft_sector"].isChecked()
+        assert not second._impact_layer_checks["face_center_travel"].isChecked()
+        assert second._impact_layer_checks["face_normal"].isChecked()
 
     def test_impact_scene_exports_strict_data_and_true_vector_artwork(
         self, ran_tab, tmp_path
@@ -203,9 +249,17 @@ class TestSimulationView:
         data_path = view.export_impact_scene(tmp_path / "impact.json")
         vector_path = view.export_impact_scene(tmp_path / "impact.svg")
 
-        assert '"format": "rate-of-closure.impact-scene/v1"' in data_path.read_text(
+        assert '"format": "rate-of-closure.impact-scene/v2"' in data_path.read_text(
             encoding="utf-8"
         )
+        payload = json.loads(data_path.read_text(encoding="utf-8"))
+        assert payload["render_preferences"]["visible_layers"] == sorted(
+            view.impact_visible_layers()
+        )
+        assert set(payload["render_preferences"]["camera"]) == {
+            "elevation_deg",
+            "azimuth_deg",
+        }
         svg = vector_path.read_text(encoding="utf-8")
         assert "<svg" in svg
         assert "Physical Shaft Axis" in svg

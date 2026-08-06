@@ -17,7 +17,11 @@ it("exports labeled, locked-scale impact geometry as true SVG primitives", () =>
   });
   const scene = impactKinematics(run, scenario, getClub("Pitching Wedge"));
   const geometry = impactSceneGeometry(
-    scene, new Set(scene.vectors.map((vector) => vector.key)),
+    scene, new Set([
+      ...scene.vectors.map((vector) => vector.key),
+      "faceNormal", "faceCenterTravel", "dplaneNormal", "projectedPath",
+      "spinLoftSector",
+    ]),
   );
 
   const svg = impactSceneSvg(geometry, { yaw: 2.62, pitch: 0.52, zoom: 2.2 });
@@ -26,5 +30,9 @@ it("exports labeled, locked-scale impact geometry as true SVG primitives", () =>
   expect(svg).toContain("<polyline");
   expect(svg).toContain("Physical Shaft Axis");
   expect(svg).toContain("Declared Contact Point");
+  expect(svg).toContain("Face-Center Normal");
+  expect(svg).toContain("Face-Center Travel");
+  expect(svg).toContain("3D Spin Loft");
+  expect(svg).toContain("<polygon");
   expect(svg).not.toContain("<image");
 });

@@ -65,7 +65,7 @@ import numpy as np
 from shared.python.contracts import require
 
 from .constants import DRIVER_MASS_KG, DRIVER_MOI_KG_M2
-from .models import _norm
+from .dplane import DPlaneAnalysis, analyze_dplane
 from .types import PreImpactState
 
 _MM_TO_M = 1e-3
@@ -140,6 +140,9 @@ class DeliveryDerived:
         face_to_path_deg: Face angle minus club path [deg] (horizontal)
         spin_axis: Unit D-plane spin axis (3,); +z = pure backspin
         spin_axis_tilt_deg: Signed spin-axis tilt [deg]; + = fade side
+        dplane: Typed, frame-explicit full 3-D geometry.  Its normal is
+            unavailable for collinear vectors; the legacy ``spin_axis`` field
+            retains the historical pure-backspin fallback for compatibility.
     """
 
     clubhead_velocity: np.ndarray
@@ -150,6 +153,7 @@ class DeliveryDerived:
     face_to_path_deg: float
     spin_axis: np.ndarray
     spin_axis_tilt_deg: float
+    dplane: DPlaneAnalysis
 
 
 def derive_delivery(
@@ -197,18 +201,18 @@ def derive_delivery(
         [toe_m * cos_l - high_m * sin_l, toe_m * sin_l + high_m * cos_l]
     )
 
-    # D-plane diagnostics (see module docstring for the derivation).
-    cos_spin_loft = float(np.clip(np.dot(v_hat, n_hat), -1.0, 1.0))
-    spin_loft_deg = math.degrees(math.acos(cos_spin_loft))
-
-    axis_raw = np.cross(v_hat, n_hat)
-    axis_mag = _norm(axis_raw)
-    if axis_mag > 1e-12:
-        spin_axis = axis_raw / axis_mag
-    else:  # Zero spin loft: degenerate D-plane, report pure-backspin axis.
+    dplane = analyze_dplane(clubhead_velocity, n_hat)
+    assert dplane.spin_loft_3d_deg is not None
+    spin_loft_deg = dplane.spin_loft_3d_deg
+    if dplane.dplane_normal_unit is None:
+        # Compatibility only: the typed D-plane result above explicitly marks
+        # this axis unavailable instead of presenting the fallback as geometry.
         spin_axis = np.array([0.0, 0.0, 1.0])
-    horizontal = math.hypot(float(spin_axis[0]), float(spin_axis[2]))
-    spin_axis_tilt_deg = math.degrees(math.atan2(-float(spin_axis[1]), horizontal))
+        spin_axis_tilt_deg = 0.0
+    else:
+        spin_axis = np.asarray(dplane.dplane_normal_unit)
+        assert dplane.dplane_tilt_deg is not None
+        spin_axis_tilt_deg = dplane.dplane_tilt_deg
 
     omega = (
         np.asarray(clubhead_angular_velocity, dtype=float)
@@ -225,6 +229,7 @@ def derive_delivery(
         face_to_path_deg=params.face_angle_deg - params.club_path_deg,
         spin_axis=spin_axis,
         spin_axis_tilt_deg=spin_axis_tilt_deg,
+        dplane=dplane,
     )
 
 

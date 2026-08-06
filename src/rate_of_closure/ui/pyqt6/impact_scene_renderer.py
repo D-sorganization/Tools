@@ -6,6 +6,7 @@ from collections.abc import Callable
 from typing import Any
 
 import numpy as np
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 from rate_of_closure.simulation import ImpactScene
 
@@ -30,11 +31,37 @@ def _line(
     axes.plot(shown[:, 0], shown[:, 1], shown[:, 2], **style)
 
 
+def _arrowhead(
+    axes: Any,
+    display: Callable[[np.ndarray], np.ndarray],
+    start: np.ndarray,
+    end: np.ndarray,
+    *,
+    color: str,
+) -> None:
+    """Draw a camera-correct 3-D arrowhead without duplicating legend entries."""
+    shown = display(np.vstack([start, end]))
+    delta = shown[1] - shown[0]
+    axes.quiver(
+        shown[0, 0],
+        shown[0, 1],
+        shown[0, 2],
+        delta[0],
+        delta[1],
+        delta[2],
+        color=color,
+        arrow_length_ratio=0.45,
+        linewidth=1.8,
+        normalize=False,
+    )
+
+
 def draw_impact_scene_3d(
     axes: Any,
     scene: ImpactScene,
     display: Callable[[np.ndarray], np.ndarray],
     chart_color: Callable[[int], str],
+    visible_layers: frozenset[str] | None = None,
 ) -> None:
     """Draw the frame-explicit club geometry and velocity decomposition."""
     contact = np.asarray(scene.contact_point_m)
@@ -43,6 +70,19 @@ def draw_impact_scene_3d(
     face_normal = np.asarray(scene.face_normal_unit)
     leading_edge = np.asarray(scene.leading_edge_unit)
     face_up = np.cross(leading_edge, face_normal)
+    face_center = np.asarray(scene.face_center_point_m)
+    layers = (
+        frozenset(
+            {
+                "face_normal",
+                "face_center_travel",
+                "dplane_normal",
+                "spin_loft_sector",
+            }
+        )
+        if visible_layers is None
+        else visible_layers
+    )
 
     _line(
         axes,
@@ -81,7 +121,6 @@ def draw_impact_scene_3d(
         label="Leading Edge",
     )
     for label, direction, color in (
-        ("Face Normal", face_normal, chart_color(2)),
         ("Arc Tangent", np.asarray(scene.arc_tangent_unit), chart_color(5)),
     ):
         _line(
@@ -92,6 +131,86 @@ def draw_impact_scene_3d(
             lw=2.0,
             label=label,
         )
+    if "face_normal" in layers:
+        center_normal = np.asarray(scene.face_center_normal_unit)
+        endpoint = face_center + 0.15 * center_normal
+        _line(
+            axes,
+            display,
+            np.vstack([face_center, endpoint]),
+            color=chart_color(2),
+            lw=2.6,
+            label="Face-Center Normal",
+        )
+        _arrowhead(
+            axes,
+            display,
+            face_center + 0.115 * center_normal,
+            endpoint,
+            color=chart_color(2),
+        )
+    if (
+        "face_center_travel" in layers
+        and scene.face_center_dplane.travel_direction_unit is not None
+    ):
+        travel = np.asarray(scene.face_center_dplane.travel_direction_unit)
+        endpoint = face_center + 0.15 * travel
+        _line(
+            axes,
+            display,
+            np.vstack([face_center, endpoint]),
+            color="#f59e0b",
+            lw=2.6,
+            label="Face-Center Travel",
+        )
+        _arrowhead(
+            axes,
+            display,
+            face_center + 0.115 * travel,
+            endpoint,
+            color="#f59e0b",
+        )
+    if (
+        "dplane_normal" in layers
+        and scene.face_center_dplane.dplane_normal_unit is not None
+    ):
+        normal = np.asarray(scene.face_center_dplane.dplane_normal_unit)
+        endpoint = face_center + 0.13 * normal
+        _line(
+            axes,
+            display,
+            np.vstack([face_center, endpoint]),
+            color="#14b8a6",
+            lw=2.0,
+            label="D-Plane Normal",
+        )
+        _arrowhead(
+            axes,
+            display,
+            face_center + 0.098 * normal,
+            endpoint,
+            color="#14b8a6",
+        )
+    if "spin_loft_sector" in layers and scene.spin_loft_sector_unit:
+        sector = np.vstack(
+            [
+                face_center,
+                *(
+                    face_center + 0.12 * np.asarray(direction)
+                    for direction in scene.spin_loft_sector_unit
+                ),
+            ]
+        )
+        shown_sector = display(sector)
+        collection = Poly3DCollection(
+            [shown_sector],
+            facecolors="#22d3ee",
+            edgecolors="#67e8f9",
+            alpha=0.22,
+            linewidths=0.8,
+            label="3D Spin-Loft Sector",
+        )
+        axes.add_collection3d(collection)
 
     max_speed = max(float(np.linalg.norm(vector.vector)) for vector in scene.vectors)
     arrow_scale = 0.18 / max(max_speed, 1e-12)

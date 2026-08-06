@@ -8,6 +8,7 @@ from typing import Any
 
 from rate_of_closure.simulation.impact_kinematics import impact_kinematics_for_run
 from rate_of_closure.simulation.records import SimulationRun
+from shared.python.swing_sim.impact import DPlaneAnalysis, spin_loft_sector_directions
 
 __all__ = [
     "IMPACT_SCENE_FORMAT",
@@ -17,7 +18,7 @@ __all__ = [
     "impact_scene_for_run",
 ]
 
-IMPACT_SCENE_FORMAT = "rate-of-closure.impact-scene/v1"
+IMPACT_SCENE_FORMAT = "rate-of-closure.impact-scene/v2"
 Vector3 = tuple[float, float, float]
 
 
@@ -75,6 +76,9 @@ class ImpactScene:
     model_limitations: str
     reference_point_m: Vector3
     contact_point_m: Vector3
+    face_center_point_m: Vector3
+    face_center_velocity_mps: Vector3
+    face_center_normal_unit: Vector3
     shaft_axis_point_m: Vector3
     shaft_axis_unit: Vector3
     face_normal_unit: Vector3
@@ -82,6 +86,10 @@ class ImpactScene:
     ground_up_unit: Vector3
     arc_tangent_unit: Vector3
     ball_center_m: Vector3
+    reference_dplane: DPlaneAnalysis
+    face_center_dplane: DPlaneAnalysis
+    contact_dplane: DPlaneAnalysis
+    spin_loft_sector_unit: tuple[Vector3, ...]
     vectors: tuple[ImpactSceneVector, ...]
     metrics: tuple[ImpactSceneMetric, ...]
     screw_axis: ImpactSceneScrewAxis | None
@@ -114,6 +122,11 @@ def _metrics(run: SimulationRun) -> tuple[ImpactSceneMetric, ...]:
         "AoA is nonlinear, so contributions are counterfactual or Shapley values."
     )
     to_degrees = 180.0 / 3.141592653589793
+    dplane = snapshot.face_center_dplane
+    dplane_assumptions = (
+        "Exact face-center rigid-body velocity including omega cross r; geometry "
+        "only, with no standalone launch or ball-spin prediction."
+    )
     return (
         _metric(
             "total_aoa",
@@ -122,6 +135,48 @@ def _metrics(run: SimulationRun) -> tuple[ImpactSceneMetric, ...]:
             "deg",
             "atan2(v·up, |v-(v·up)up|)",
             frame,
+        ),
+        _metric(
+            "spin_loft_3d",
+            "Face-Center Spin Loft (3D)",
+            dplane.spin_loft_3d_deg,
+            "deg",
+            "acos(unit(v_face_center) dot n_face_center)",
+            dplane_assumptions,
+        ),
+        _metric(
+            "spin_loft_planar",
+            "Planar Spin-Loft Approximation",
+            dplane.planar_spin_loft_deg,
+            "deg",
+            "abs(dynamic_loft - attack_angle)",
+            dplane_assumptions,
+        ),
+        _metric(
+            "spin_loft_residual",
+            "3D Minus Planar Spin Loft",
+            dplane.spin_loft_residual_deg,
+            "deg",
+            "spin_loft_3d - abs(dynamic_loft - attack_angle)",
+            dplane_assumptions,
+        ),
+        _metric(
+            "dplane_tilt",
+            "D-Plane Normal Tilt",
+            dplane.dplane_tilt_deg,
+            "deg",
+            "atan2(-(n_D dot up), |horizontal(n_D)|)",
+            dplane_assumptions
+            + " Positive is face-right; in the current right-handed display this "
+            "is fade-side, but geometry alone does not predict curvature.",
+        ),
+        _metric(
+            "dplane_inclination",
+            "D-Plane Inclination to Ground",
+            dplane.dplane_inclination_deg,
+            "deg",
+            "acos(abs(n_D dot up))",
+            dplane_assumptions,
         ),
         _metric(
             "axis_translation_aoa",
@@ -267,21 +322,28 @@ def impact_scene_for_run(run: SimulationRun) -> ImpactScene:
         )
     )
     return ImpactScene(
-        snapshot.event_label,
-        snapshot.event_time_s,
-        state.frame_id,
-        snapshot.geometry_basis,
-        snapshot.model_limitations,
-        state.reference_position_m,
-        state.contact_point_m,
-        state.shaft_axis_point_m,
-        state.shaft_axis_unit,
-        state.face_normal_unit,
-        state.leading_edge_tangent_unit,
-        state.ground_up_unit,
-        state.arc_tangent_unit,
-        _vector3(run.config.ball_position_m),
-        vectors,
-        _metrics(run),
-        screw_scene,
+        event_label=snapshot.event_label,
+        event_time_s=snapshot.event_time_s,
+        frame_id=state.frame_id,
+        geometry_basis=snapshot.geometry_basis,
+        model_limitations=snapshot.model_limitations,
+        reference_point_m=state.reference_position_m,
+        contact_point_m=state.contact_point_m,
+        face_center_point_m=snapshot.face_center_point_m,
+        face_center_velocity_mps=snapshot.face_center_velocity_mps,
+        face_center_normal_unit=snapshot.face_center_normal_unit,
+        shaft_axis_point_m=state.shaft_axis_point_m,
+        shaft_axis_unit=state.shaft_axis_unit,
+        face_normal_unit=state.face_normal_unit,
+        leading_edge_unit=state.leading_edge_tangent_unit,
+        ground_up_unit=state.ground_up_unit,
+        arc_tangent_unit=state.arc_tangent_unit,
+        ball_center_m=_vector3(run.config.ball_position_m),
+        reference_dplane=snapshot.reference_dplane,
+        face_center_dplane=snapshot.face_center_dplane,
+        contact_dplane=snapshot.contact_dplane,
+        spin_loft_sector_unit=spin_loft_sector_directions(snapshot.face_center_dplane),
+        vectors=vectors,
+        metrics=_metrics(run),
+        screw_axis=screw_scene,
     )

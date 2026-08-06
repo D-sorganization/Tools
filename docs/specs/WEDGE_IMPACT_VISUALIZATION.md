@@ -52,6 +52,9 @@ Both interfaces show the same engineering entities:
 - physical shaft datum and declared face contact point;
 - ball center and locked-scale ground grid/plane;
 - face normal, leading edge, and arc tangent;
+- rigid-body face-center travel (`v_reference + omega x r_face_center`), the
+  face-center normal, D-plane normal, ground-projected path, and the exact
+  shaded 3D spin-loft sector;
 - finite instantaneous screw axis when available;
 - total contact velocity, shaft-axis translation, shaft-rotation velocity,
   other-rotation velocity, and the no-shaft counterfactual.
@@ -67,7 +70,9 @@ isometric/face-on/down-the-line views, reset, and individual velocity toggles.
 It exports a device-resolution PNG, true SVG primitives, and the complete scene
 as JSON. The PyQt6 swing view remains freely rotatable, adds the same named
 camera presets and vector layer, and exports 300-DPI PNG, Matplotlib vector SVG,
-or `rate-of-closure.impact-scene/v1` JSON.
+or `rate-of-closure.impact-scene/v2` JSON. Layer visibility is persisted as a
+user preference; PNG/SVG geometry honors the active layers, and the complete
+JSON scene records the active layers and camera for reproducible rendering.
 
 Every metric card is keyboard-focusable and visibly labeled “Click for
 Definition.” Its expanded content gives the equation, frame, units,

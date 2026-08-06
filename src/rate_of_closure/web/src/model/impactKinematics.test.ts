@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { getClub } from "./club";
+import { add, cross, norm, sub } from "./impactPhysics";
 import { DEFAULT_SCENARIO, solve } from "./impact";
 import { exactEventSample, impactKinematics } from "./impactKinematics";
 import { runSimulation, type SimulationInput } from "./simulation";
@@ -68,5 +69,34 @@ describe("impact kinematics", () => {
     expect(sample.t).toBeCloseTo(eventTime, 12);
     expect(sample.position[0]).toBeCloseTo(eventIndex + 0.75, 12);
     expect(sample.velocity[0]).toBeCloseTo(2 * (eventIndex + 0.75), 12);
+  });
+
+  it("uses rigid-body face-center travel and location-dependent curved-face geometry", () => {
+    const curvedScenario = {
+      ...scenario,
+      impactOffsetToeMm: 12,
+      impactOffsetHighMm: 5,
+    };
+    const run = runSimulation({
+      ...input,
+      impactOffsetToeMm: 12,
+      impactOffsetHighMm: 5,
+    });
+    const sample = exactEventSample(run);
+    const metrics = impactKinematics(run, curvedScenario, getClub("Driver 10.5°"));
+    const lever = sub(metrics.faceCenterPointM, sample.position);
+    const expectedVelocity = add(sample.velocity, cross(sample.angularVelocity, lever));
+
+    expectedVelocity.forEach((value, index) =>
+      expect(metrics.faceCenterVelocityMps[index]).toBeCloseTo(value, 10));
+    const expectedDirection = expectedVelocity.map((value) =>
+      value / norm(expectedVelocity)) as [number, number, number];
+    expectedDirection.forEach((value, index) =>
+      expect(metrics.faceCenterDPlane.travelDirectionUnit![index]).toBeCloseTo(value, 10));
+    expect(metrics.contactDPlane.faceAngleDeg).not.toBeCloseTo(
+      metrics.faceCenterDPlane.faceAngleDeg!, 6,
+    );
+    expect(metrics.faceCenterDPlane.spinLoft3dDeg).not.toBeNull();
+    expect(metrics.faceCenterDPlane.planarSpinLoftDeg).not.toBeNull();
   });
 });

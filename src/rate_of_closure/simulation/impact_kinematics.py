@@ -19,6 +19,7 @@ from shared.python.golf_club._wedge_sweep import (
     interpolated_pose,
     interpolated_twist,
 )
+from shared.python.swing_sim.impact import DPlaneAnalysis, analyze_dplane
 
 __all__ = ["ImpactKinematicSnapshot", "impact_kinematics_for_run"]
 
@@ -37,6 +38,12 @@ class ImpactKinematicSnapshot:
     geometry_basis: str
     model_limitations: str
     sample_index: int
+    face_center_point_m: tuple[float, float, float]
+    face_center_velocity_mps: tuple[float, float, float]
+    face_center_normal_unit: tuple[float, float, float]
+    reference_dplane: DPlaneAnalysis
+    face_center_dplane: DPlaneAnalysis
+    contact_dplane: DPlaneAnalysis
     state: WedgeKinematicState
     analysis: WedgeKinematicAnalysis
 
@@ -158,6 +165,14 @@ def impact_kinematics_for_run(run: SimulationRun) -> ImpactKinematicSnapshot:
         "leading-edge face tangent",
     )
     arc_tangent, arc_rate = _arc_tangent_rate(run, index, event_time_s)
+    face_center_lever = rotation @ np.array(
+        [run.config.scenario.com_to_face_mm / 1000.0, 0.0, 0.0]
+    )
+    face_center_point = reference + face_center_lever
+    face_center_velocity = twist[3:] + np.cross(twist[:3], face_center_lever)
+    face_center_normal = rotation @ np.asarray(
+        face_normal_at_offset(run.config.club, 0.0, 0.0)
+    )
     state = WedgeKinematicState(
         frame_id=_APP_FRAME_ID,
         reference_position_m=_xyz(reference),
@@ -172,12 +187,19 @@ def impact_kinematics_for_run(run: SimulationRun) -> ImpactKinematicSnapshot:
         arc_tangent_unit=_xyz(arc_tangent),
         arc_tangent_rate_per_s=_xyz(arc_rate),
     )
+    analysis = analyze_wedge_kinematics(state)
     return ImpactKinematicSnapshot(
         event_time_s=event_time_s,
         event_label=run.inspection_event_label,
         geometry_basis=basis,
         model_limitations=limitations,
         sample_index=index,
+        face_center_point_m=_xyz(face_center_point),
+        face_center_velocity_mps=_xyz(face_center_velocity),
+        face_center_normal_unit=_xyz(face_center_normal),
+        reference_dplane=analyze_dplane(twist[3:], face_center_normal),
+        face_center_dplane=analyze_dplane(face_center_velocity, face_center_normal),
+        contact_dplane=analyze_dplane(analysis.contact_velocity_mps, face_normal),
         state=state,
-        analysis=analyze_wedge_kinematics(state),
+        analysis=analysis,
     )

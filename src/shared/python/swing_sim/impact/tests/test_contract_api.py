@@ -16,6 +16,8 @@ import pytest
 import shared.python.swing_sim.impact as impact
 
 EXPECTED_PUBLIC_API = {
+    "DPlaneAnalysis",
+    "DPlaneStatus",
     "DRIVER_CG_DEPTH_M",
     "DRIVER_COR",
     "DRIVER_MASS_KG",
@@ -40,12 +42,14 @@ EXPECTED_PUBLIC_API = {
     "PreImpactState",
     "RigidBodyImpactModel",
     "SpringDamperImpactModel",
+    "analyze_dplane",
     "compute_gear_effect",
     "create_impact_model",
     "derive_delivery",
     "face_basis",
     "offset_to_face_vector",
     "resolve_contact_normal",
+    "spin_loft_sector_directions",
     "to_pre_impact_state",
     "validate_energy_balance",
 }

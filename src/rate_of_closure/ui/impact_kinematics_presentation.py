@@ -61,12 +61,31 @@ def format_impact_kinematics(snapshot: ImpactKinematicSnapshot) -> str:
             _degrees_per_second(analysis.leading_edge_relative_arc_heading_rate_rad_s),
         ),
         ("Contact-to-Screw-Axis Distance", _number(screw_distance, "m", 4)),
+        (
+            "Face-Center Spin Loft (3D)",
+            _number(snapshot.face_center_dplane.spin_loft_3d_deg, "°"),
+        ),
+        (
+            "Planar Spin-Loft Approximation",
+            _number(snapshot.face_center_dplane.planar_spin_loft_deg, "°"),
+        ),
+        (
+            "3D Minus Planar Residual",
+            _number(snapshot.face_center_dplane.spin_loft_residual_deg, "°"),
+        ),
+        (
+            "D-Plane Normal Tilt",
+            _number(snapshot.face_center_dplane.dplane_tilt_deg, "°"),
+        ),
     )
     metric_html = " • ".join(f"<b>{label}:</b> {value}" for label, value in metrics)
     return (
         f"<b>{snapshot.event_label} Kinematics</b> at "
         f"{snapshot.event_time_s:.3f} s — {metric_html}<br>"
         f"<b>Geometry Basis:</b> {snapshot.geometry_basis}. "
+        "<b>D-Plane Basis:</b> exact rigid-body face-center travel including "
+        "ω × r versus the face-center normal; positive normal tilt is face-right "
+        "and fade-side only under the current right-handed display convention. "
         f"<b>Model Boundary:</b> {snapshot.model_limitations}"
     )
 

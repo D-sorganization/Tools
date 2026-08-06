@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.7                                     |
-| **Spec Version**        | 1.13.7                                     |
+| **Current Version**     | 1.13.9                                     |
+| **Spec Version**        | 1.13.9                                     |
 | **Last Spec Update**    | 2026-08-06                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,24 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+### 2026-08-06 Comprehensive 3D D-plane geometry
+
+- One shared, frame-explicit kernel computes the D-plane from the declared
+  travel vector and face normal, including exact three-dimensional spin loft,
+  the planar `|dynamic loft - attack angle|` approximation, and its residual.
+- Results retain typed zero-speed, parallel, and antiparallel states; no spin
+  axis or shaded plane is fabricated when the defining cross product is
+  singular.
+- Impact inspection distinguishes reference-point, rigid-body face-center, and
+  actual contact-point D-planes. Face-center velocity always includes
+  `omega x r`, and curved-face contact normals use the declared impact offset.
+- PyQt6 and React provide independently persistent face-normal,
+  face-center-travel, D-plane-normal, projected-path, and shaded spin-loft
+  layers with locked physical scaling and vector/data export support.
+- D-plane geometry alone is not described as a complete prediction of ball
+  launch or spin; collision interval, friction, impact location, gear effect,
+  and aerodynamic models remain explicit downstream boundaries.
+
 ### 2026-08-05 Exact-event wedge impact visualization
 
 - Impact geometry and kinematic vectors are evaluated at the exact inspection
@@ -2704,6 +2722,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
 | 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
 | 2026-08-06 | 1.13.6 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |
 | 2026-08-06 | 1.13.5 | refactor(gui, ci): deduplicate Rotation Converter plot helpers and extract Movement Optimizer motion helpers, restoring the protected module-size budget inherited by the stacked Rate PRs. |

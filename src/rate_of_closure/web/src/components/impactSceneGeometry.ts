@@ -1,6 +1,7 @@
 /** UI-neutral 3-D primitives for the interactive impact inspection still. */
 
 import { add, cross, norm, scale, sub, type Vec3 } from "../model/impactPhysics";
+import { spinLoftSectorDirections } from "../model/dPlane";
 import type { ImpactKinematicsTs } from "../model/impactKinematics";
 
 export interface ImpactSceneLineTs {
@@ -15,6 +16,7 @@ export interface ImpactSceneLineTs {
 
 export interface ImpactSceneGeometryTs {
   lines: ImpactSceneLineTs[];
+  fills: Array<{ key: string; label: string; points: Vec3[]; color: string; alpha: number }>;
   contactPoint: Vec3;
   ballCenter: Vec3;
 }
@@ -22,6 +24,7 @@ export interface ImpactSceneGeometryTs {
 const COLORS = {
   shaft: "#cbd5e1", face: "#38bdf8", edge: "#facc15",
   normal: "#22c55e", arc: "#a78bfa", screw: "#e879f9",
+  travel: "#f59e0b", dplane: "#14b8a6", sector: "#22d3ee",
   total: "#fb7185", axisTranslation: "#38bdf8", shaftRotation: "#f97316",
   otherRotation: "#c084fc", withoutShaft: "#94a3b8", ground: "#334155",
 };
@@ -36,6 +39,7 @@ export function impactSceneGeometry(
   const contact: Vec3 = [0, 0, 0];
   const shaftPoint = centered(scene.shaftAxisPointM, center);
   const faceUp = cross(scene.leadingEdgeUnit, scene.faceNormalUnit);
+  const faceCenter = centered(scene.faceCenterPointM, center);
   const faceCorners = [
     add(scale(scene.leadingEdgeUnit, -0.06), scale(faceUp, -0.035)),
     add(scale(scene.leadingEdgeUnit, 0.06), scale(faceUp, -0.035)),
@@ -55,9 +59,41 @@ export function impactSceneGeometry(
     { key: "edge", label: "Leading Edge", points: [
       scale(scene.leadingEdgeUnit, -0.06), scale(scene.leadingEdgeUnit, 0.06),
     ], color: COLORS.edge, width: 3 },
-    { key: "normal", label: "Face Normal", points: [contact, scale(scene.faceNormalUnit, 0.15)], color: COLORS.normal, width: 2, arrow: true },
     { key: "arc", label: "Arc Tangent", points: [contact, scale(scene.arcTangentUnit, 0.15)], color: COLORS.arc, width: 2, arrow: true },
   ];
+  const fills: ImpactSceneGeometryTs["fills"] = [];
+  if (visibleVectors.has("faceNormal")) {
+    lines.push({ key: "faceNormal", label: "Face-Center Normal", points: [
+      faceCenter, add(faceCenter, scale(scene.faceCenterNormalUnit, 0.15)),
+    ], color: COLORS.normal, width: 3, arrow: true });
+  }
+  if (visibleVectors.has("faceCenterTravel") && scene.faceCenterDPlane.travelDirectionUnit) {
+    lines.push({ key: "faceCenterTravel", label: "Face-Center Travel", points: [
+      faceCenter, add(faceCenter, scale(scene.faceCenterDPlane.travelDirectionUnit, 0.15)),
+    ], color: COLORS.travel, width: 3, arrow: true });
+  }
+  if (visibleVectors.has("dplaneNormal") && scene.faceCenterDPlane.dplaneNormalUnit) {
+    lines.push({ key: "dplaneNormal", label: "D-Plane Normal", points: [
+      faceCenter, add(faceCenter, scale(scene.faceCenterDPlane.dplaneNormalUnit, 0.13)),
+    ], color: COLORS.dplane, width: 2, arrow: true });
+  }
+  if (visibleVectors.has("projectedPath") && scene.faceCenterDPlane.travelDirectionUnit) {
+    const travel = scene.faceCenterDPlane.travelDirectionUnit;
+    const projected: Vec3 = [travel[0], 0, travel[2]];
+    if (norm(projected) > 1e-12) lines.push({
+      key: "projectedPath", label: "Ground-Projected Face-Center Path",
+      points: [faceCenter, add(faceCenter, scale(projected, 0.15 / norm(projected)))],
+      color: "#fbbf24", width: 1.5, dash: [5, 4], arrow: true,
+    });
+  }
+  if (visibleVectors.has("spinLoftSector")) {
+    const directions = spinLoftSectorDirections(scene.faceCenterDPlane);
+    if (directions.length > 0) fills.push({
+      key: "spinLoftSector", label: `3D Spin Loft (${scene.faceCenterDPlane.spinLoft3dDeg!.toFixed(2)}°)`,
+      points: [faceCenter, ...directions.map((direction) =>
+        add(faceCenter, scale(direction, 0.12)))], color: COLORS.sector, alpha: 0.22,
+    });
+  }
   for (let index = 0; index < 4; index += 1) {
     lines.push({
       key: `body-${index}`,
@@ -96,7 +132,7 @@ export function impactSceneGeometry(
     });
   }
   return {
-    lines,
+    lines, fills,
     contactPoint: contact,
     ballCenter: centered(scene.ballCenterM, center),
   };

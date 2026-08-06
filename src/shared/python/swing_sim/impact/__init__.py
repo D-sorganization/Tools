@@ -30,6 +30,12 @@ from .delivery import (
     derive_delivery,
     to_pre_impact_state,
 )
+from .dplane import (
+    DPlaneAnalysis,
+    DPlaneStatus,
+    analyze_dplane,
+    spin_loft_sector_directions,
+)
 from .gear_effect import (
     FaceNormalAtOffset,
     GearEffectResult,
@@ -57,6 +63,8 @@ from .types import (
 from .utils import validate_energy_balance
 
 __all__ = [
+    "DPlaneAnalysis",
+    "DPlaneStatus",
     "DRIVER_CG_DEPTH_M",
     "DRIVER_COR",
     "DRIVER_MASS_KG",
@@ -81,12 +89,14 @@ __all__ = [
     "PreImpactState",
     "RigidBodyImpactModel",
     "SpringDamperImpactModel",
+    "analyze_dplane",
     "compute_gear_effect",
     "create_impact_model",
     "derive_delivery",
     "face_basis",
     "offset_to_face_vector",
     "resolve_contact_normal",
+    "spin_loft_sector_directions",
     "to_pre_impact_state",
     "validate_energy_balance",
 ]

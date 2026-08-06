@@ -14,7 +14,28 @@ const number = (value: number | null, unit: string, decimals = 2) =>
 
 export function ImpactKinematicsPanel({ run, scenario, club }: Props) {
   const metrics = impactKinematics(run, scenario, club);
+  const dplane = metrics.faceCenterDPlane;
   const entries = [
+    { label: "Face-Center Club Path", value: number(dplane.clubPathDeg, "°"),
+      equation: "atan2(v_face_center · right, v_face_center · target)", detail: "Horizontal heading of the rigid-body face-center velocity; positive is right/in-to-out in the app convention." },
+    { label: "Face-Center Attack Angle", value: number(dplane.attackAngleDeg, "°"),
+      equation: "atan2(v_face_center · up, |v_horizontal|)", detail: "Positive is ascending and negative is descending in the app frame." },
+    { label: "Face Angle", value: number(dplane.faceAngleDeg, "°"),
+      equation: "atan2(n_face · right, n_face · target)", detail: "Horizontal heading of the face-center normal; positive points right/open in the app convention." },
+    { label: "Dynamic Loft", value: number(dplane.dynamicLoftDeg, "°"),
+      equation: "atan2(n_face · up, |n_face,horizontal|)", detail: "Vertical elevation of the delivered face-center normal." },
+    { label: "Face to Path", value: number(dplane.faceToPathDeg, "°"),
+      equation: "wrap(face_angle − club_path)", detail: "Positive means the face points right/open relative to the face-center path." },
+    { label: "Spin Loft (Exact 3D)", value: number(dplane.spinLoft3dDeg, "°"),
+      equation: "acos(unit(v_face_center) · n_face_center)", detail: "Coordinate-free included angle that defines the displayed shaded sector." },
+    { label: "Spin Loft (Planar Approximation)", value: number(dplane.planarSpinLoftDeg, "°"),
+      equation: "|dynamic_loft − attack_angle|", detail: "Two-dimensional approximation; use the reported residual to assess its error." },
+    { label: "3D Minus Planar Residual", value: number(dplane.spinLoftResidualDeg, "°"),
+      equation: "spin_loft_3D − |dynamic_loft − attack_angle|", detail: "Difference created by the full horizontal and vertical geometry." },
+    { label: "D-Plane Normal Tilt", value: number(dplane.dplaneTiltDeg, "°"),
+      equation: "atan2(−n_D · up, |n_D,horizontal|)", detail: "Positive is face-right; that is fade-side only under the current right-handed display convention. Geometry alone does not predict curvature. Unavailable for a degenerate D-plane." },
+    { label: "D-Plane Inclination", value: number(dplane.dplaneInclinationDeg, "°"),
+      equation: "acos(|n_D · up|)", detail: "Unsigned angle between the D-plane and the ground plane." },
     { label: "Reference-Point AoA", value: number(metrics.referenceAoaDeg, "°"),
       equation: "AoA(v_axis)", detail: "Signed descent angle of the physical shaft-axis datum relative to the ground plane." },
     { label: "Contact-Point AoA", value: number(metrics.contactAoaDeg, "°"),
@@ -64,6 +85,7 @@ export function ImpactKinematicsPanel({ run, scenario, club }: Props) {
       <p className="mt-2 text-xs text-slate-400">
         <b className="text-slate-300">Geometry Basis:</b> {metrics.geometryBasis}.{" "}
         <b className="text-slate-300">Model Boundary:</b> {metrics.modelLimitations}
+        {" "}<b className="text-slate-300">D-Plane State:</b> {dplane.status.split("_").join(" ")}. Geometry alone does not predict launch or ball spin without the declared collision model.
       </p>
     </aside>
   );

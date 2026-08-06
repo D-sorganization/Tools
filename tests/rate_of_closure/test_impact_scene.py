@@ -51,6 +51,11 @@ def test_scene_exposes_frame_explicit_geometry_and_velocity_identity() -> None:
     )
     np.testing.assert_allclose(reconstructed, vectors["total"].vector, atol=1e-12)
     assert all(vector.units == "m/s" for vector in scene.vectors)
+    expected_face_center_velocity = np.asarray(scene.face_center_velocity_mps)
+    np.testing.assert_allclose(
+        scene.face_center_dplane.travel_direction_unit,
+        expected_face_center_velocity / np.linalg.norm(expected_face_center_velocity),
+    )
 
 
 def test_scene_metrics_are_self_describing_and_strict_json_safe() -> None:
@@ -62,7 +67,11 @@ def test_scene_metrics_are_self_describing_and_strict_json_safe() -> None:
     assert metrics["shaft_rotation_rate"].units == "deg/s"
     payload = scene.to_json_dict()
     assert json.dumps(payload, allow_nan=False)
-    assert payload["format"] == "rate-of-closure.impact-scene/v1"
+    assert payload["format"] == "rate-of-closure.impact-scene/v2"
+    assert payload["face_center_dplane"]["status"] == "defined"
+    assert metrics["spin_loft_3d"].units == "deg"
+    assert metrics["spin_loft_planar"].equation
+    assert metrics["spin_loft_residual"].assumptions
 
 
 def test_scene_contains_engineering_orientation_and_screw_geometry() -> None:
@@ -74,3 +83,9 @@ def test_scene_contains_engineering_orientation_and_screw_geometry() -> None:
     )
     assert scene.screw_axis is not None
     assert scene.screw_axis.contact_distance_m >= 0.0
+    assert len(scene.spin_loft_sector_unit) == 25
+    normal = np.asarray(scene.face_center_dplane.dplane_normal_unit)
+    assert all(
+        np.dot(normal, np.asarray(direction)) == pytest.approx(0.0, abs=1e-12)
+        for direction in scene.spin_loft_sector_unit
+    )

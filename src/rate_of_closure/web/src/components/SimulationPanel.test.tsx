@@ -7,6 +7,16 @@ import { DEFAULT_TARGET } from "../model/targets";
 import { SimulationPanel } from "./SimulationPanel";
 
 beforeAll(() => {
+  const stored = new Map<string, string>();
+  Object.defineProperty(window, "localStorage", {
+    configurable: true,
+    value: {
+      clear: () => stored.clear(),
+      getItem: (key: string) => stored.get(key) ?? null,
+      removeItem: (key: string) => stored.delete(key),
+      setItem: (key: string, value: string) => stored.set(key, value),
+    },
+  });
   const context: unknown = new Proxy(function () {} as object, {
     get: (_target, property) =>
       property === "measureText" ? () => ({ width: 0 }) : () => context,
@@ -219,8 +229,36 @@ describe("SimulationPanel impact club", () => {
     })).toHaveAttribute("tabindex", "0");
     expect(screen.getByRole("button", { name: "Export Vector SVG" }))
       .toBeEnabled();
+    expect(screen.getByRole("checkbox", { name: "Face-Center Normal" }))
+      .toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "Face-Center Travel" }))
+      .toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "Spin-Loft Sector" }))
+      .toBeChecked();
+    expect(screen.getByText(/Face-Center Spin Loft:/).closest("p")).toHaveTextContent(
+      /exact 3D.*planar approximation.*residual/i,
+    );
     fireEvent.click(screen.getByText("Contact-Point AoA"));
     expect(screen.getByText(/atan2\(v_contact/)).toBeVisible();
+  });
+
+  it("persists independently toggleable D-plane layers", () => {
+    const first = renderPanel(getClub("Driver 10.5°"));
+    const spinSector = screen.getByRole("checkbox", { name: "Spin-Loft Sector" });
+    const faceTravel = screen.getByRole("checkbox", { name: "Face-Center Travel" });
+    fireEvent.click(spinSector);
+    fireEvent.click(faceTravel);
+    expect(spinSector).not.toBeChecked();
+    expect(faceTravel).not.toBeChecked();
+    first.unmount();
+
+    renderPanel(getClub("Driver 10.5°"));
+    expect(screen.getByRole("checkbox", { name: "Spin-Loft Sector" }))
+      .not.toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "Face-Center Travel" }))
+      .not.toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "Face-Center Normal" }))
+      .toBeChecked();
   });
 
   it("passes the selected club mass and MOI into the simulation", () => {

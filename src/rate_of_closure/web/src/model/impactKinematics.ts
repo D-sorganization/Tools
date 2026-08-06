@@ -1,6 +1,7 @@
 /** Frame-explicit exact-event impact kinematics for the web simulation mirror. */
 
-import type { ClubSpec } from "./club";
+import { faceNormalAtOffset, type ClubSpec } from "./club";
+import { analyzeDPlane, type DPlaneAnalysisTs } from "./dPlane";
 import { add, cross, dot, norm, scale, sub, type Vec3 } from "./impactPhysics";
 import { frame, type ImpactScenario } from "./impact";
 import { applyRotation, slerpRotation } from "./rotation";
@@ -35,6 +36,9 @@ export interface ImpactKinematicsTs {
   ballCenterM: Vec3;
   shaftAxisPointM: Vec3;
   shaftAxisUnit: Vec3;
+  faceCenterPointM: Vec3;
+  faceCenterVelocityMps: Vec3;
+  faceCenterNormalUnit: Vec3;
   faceNormalUnit: Vec3;
   leadingEdgeUnit: Vec3;
   arcTangentUnit: Vec3;
@@ -49,6 +53,9 @@ export interface ImpactKinematicsTs {
   shaftVerticalVelocityShare: number | null;
   faceNormalRateDps: number;
   leadingEdgeRateDps: number;
+  referenceDPlane: DPlaneAnalysisTs;
+  faceCenterDPlane: DPlaneAnalysisTs;
+  contactDPlane: DPlaneAnalysisTs;
 }
 
 const unit = (vector: Vec3, name: string): Vec3 => {
@@ -140,6 +147,13 @@ export function impactKinematics(
     scenario.impactOffsetToeMm / 1000,
   ];
   const contact = add(sample.position, applyRotation(sample.rotation, leverLocal));
+  const faceCenterLever = applyRotation(
+    sample.rotation, [scenario.comToFaceMm / 1000, 0, 0],
+  );
+  const faceCenter = add(sample.position, faceCenterLever);
+  const faceCenterVelocity = add(
+    sample.velocity, cross(sample.angularVelocity, faceCenterLever),
+  );
   const axisVelocity = add(
     sample.velocity,
     cross(sample.angularVelocity, sub(shaft.point, sample.position)),
@@ -153,8 +167,13 @@ export function impactKinematics(
   const contactVelocity = add(withoutShaft, shaftVelocity);
   const totalAoa = aoaDeg(contactVelocity);
   const noShaftAoa = aoaDeg(withoutShaft);
-  const loft = club.loftDeg * Math.PI / 180;
-  const faceNormal = unit(applyRotation(sample.rotation, [Math.cos(loft), Math.sin(loft), 0]), "face normal");
+  const faceCenterNormal = unit(
+    applyRotation(sample.rotation, faceNormalAtOffset(club, 0, 0)),
+    "face-center normal",
+  );
+  const faceNormal = unit(applyRotation(sample.rotation, faceNormalAtOffset(
+    club, scenario.impactOffsetToeMm, scenario.impactOffsetHighMm,
+  )), "contact face normal");
   const nominalEdge = applyRotation(sample.rotation, [0, 0, 1]);
   const leadingEdge = unit(sub(nominalEdge, scale(faceNormal, dot(nominalEdge, faceNormal))), "leading edge");
   const totalVertical = contactVelocity[1];
@@ -176,6 +195,9 @@ export function impactKinematics(
     ballCenterM: run.ballPositionM,
     shaftAxisPointM: shaft.point,
     shaftAxisUnit: shaft.axis,
+    faceCenterPointM: faceCenter,
+    faceCenterVelocityMps: faceCenterVelocity,
+    faceCenterNormalUnit: faceCenterNormal,
     faceNormalUnit: faceNormal,
     leadingEdgeUnit: leadingEdge,
     arcTangentUnit: unit(sample.velocity, "arc tangent"),
@@ -192,5 +214,8 @@ export function impactKinematics(
       Math.abs(totalVertical) <= EPSILON ? null : shaftVelocity[1] / totalVertical,
     faceNormalRateDps: norm(cross(sample.angularVelocity, faceNormal)) * RAD_TO_DEG,
     leadingEdgeRateDps: norm(cross(sample.angularVelocity, leadingEdge)) * RAD_TO_DEG,
+    referenceDPlane: analyzeDPlane(sample.velocity, faceCenterNormal),
+    faceCenterDPlane: analyzeDPlane(faceCenterVelocity, faceCenterNormal),
+    contactDPlane: analyzeDPlane(contactVelocity, faceNormal),
   };
 }

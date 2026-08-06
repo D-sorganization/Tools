@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
 
@@ -127,6 +127,7 @@ class SimulationSceneRenderer:
                 view._impact_scene,
                 view._display,
                 self._chart_color,
+                view.impact_visible_layers(),
             )
         self._finish_axes(extent, elev, azim, in_flight, show_flight)
 
@@ -282,7 +283,7 @@ class SimulationSceneRenderer:
             view._joint_motion = analyze_joint_motion(
                 run.swing_times, run.swing_joints, identifiers
             )
-        return view._joint_motion
+        return cast(JointMotionSeries, view._joint_motion)
 
     def _selected_motion(self, index: int) -> tuple[str, ScrewMotion, float | None]:
         """Return label, motion, and optional joint reconstruction residual."""
