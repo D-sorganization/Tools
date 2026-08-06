@@ -118,7 +118,7 @@ class VariationDataset:
         values = np.asarray(
             self.outputs[self.success, self.output_names.index(name)], dtype=float
         )
-        return values[np.isfinite(values)]
+        return np.asarray(values[np.isfinite(values)], dtype=float)
 
 
 def _stream_for(seed: int, spec: NoiseSpec) -> np.random.Generator:

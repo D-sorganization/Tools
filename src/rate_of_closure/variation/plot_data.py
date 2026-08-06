@@ -334,7 +334,7 @@ def _sample_indices(n_trials: int, n_samples: int, max_vertices: int) -> np.ndar
     if allowed_samples >= n_samples:
         return np.arange(n_samples, dtype=int)
     indices = np.linspace(0, n_samples - 1, allowed_samples, dtype=int)
-    return np.unique(indices)
+    return np.asarray(np.unique(indices), dtype=int)
 
 
 def _kind_for_output(name: str) -> ScalarVariableKind:

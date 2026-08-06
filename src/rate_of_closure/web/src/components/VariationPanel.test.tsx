@@ -83,6 +83,18 @@ afterEach(() => {
 });
 
 describe("VariationPanel v2 plan persistence", () => {
+  it("presents a complete results workspace before the first run", () => {
+    render(<VariationPanel storage={storage} />);
+
+    expect(screen.getByRole("region", { name: "Variation results" })).toHaveClass("min-w-0");
+    expect(screen.getByRole("heading", { name: "Ready to Analyze Variation" })).toBeVisible();
+    expect(screen.getByText("Distribution Matrix")).toBeVisible();
+    expect(screen.getByText("Swing Geometry")).toBeVisible();
+    expect(screen.getByText("Impact and Flight")).toBeVisible();
+    expect(screen.getByText("Sensitivity")).toBeVisible();
+    expect(screen.getByText(/fabricated landing coordinates/)).toBeVisible();
+  });
+
   it("offers Tee Height only for the persisted Tee support context", () => {
     saveBallSetupPreference({
       setup: { supportMode: "ground", teeHeightM: 0 },

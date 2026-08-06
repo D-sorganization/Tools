@@ -35,7 +35,7 @@ export function VariationResults({
   const spearman = useMemo(() => dataset ? spearmanMatrix(dataset) : null, [dataset]);
 
   return (
-    <section aria-label="Variation results" className="space-y-6">
+    <section aria-label="Variation results" className="min-w-0 space-y-6">
       {dataset && (
         <div className={PANEL_CLASS}>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Scatter Matrix and Marginal Distributions</h2>
@@ -167,9 +167,53 @@ export function VariationResults({
       )}
 
       {!dataset && !sensitivity && (
-        <div className={`${PANEL_CLASS} text-sm text-slate-400`}>
-          Configure noise rows, select the analyses to execute, and run the study.
-          Plan files and the named library retain the complete v2 physical plan.
+        <div className={`${PANEL_CLASS} flex h-full min-h-[720px] flex-col`}>
+          <div className="max-w-3xl">
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-sky-400">
+              Analysis Workspace
+            </p>
+            <h2 className="mt-3 text-2xl font-semibold text-slate-100">
+              Ready to Analyze Variation
+            </h2>
+            <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-400">
+              Configure the noise model, choose the analyses, and run the study. The resulting
+              views share trial selection so an observation can be followed from its input draw
+              through swing geometry, impact, and landing.
+            </p>
+          </div>
+
+          <div className="mt-8 grid gap-4 md:grid-cols-2">
+            {[
+              ["Distribution Matrix", "Inputs, outputs, marginal distributions, and linked trial selection."],
+              ["Swing Geometry", "Rotatable 3D traces, principal spread, RMS dispersion, and quiet zones."],
+              ["Impact and Flight", "Typed hits, no-impact runs, numerical failures, and landing dispersion."],
+              ["Sensitivity", "Paired one-at-a-time effects and rank correlations with explicit units."],
+            ].map(([title, description], index) => (
+              <article
+                key={title}
+                className="rounded-xl border border-slate-800 bg-slate-950/45 p-4"
+              >
+                <div className="flex items-start gap-3">
+                  <span
+                    aria-hidden="true"
+                    className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-sky-500/40 bg-sky-500/10 text-xs font-semibold text-sky-300"
+                  >
+                    {index + 1}
+                  </span>
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-200">{title}</h3>
+                    <p className="mt-1 text-xs leading-5 text-slate-500">{description}</p>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+
+          <div className="mt-auto border-t border-slate-800/80 pt-5 text-xs leading-5 text-slate-500">
+            Plan files and the named library retain the complete v2 physical plan. Every trial
+            keeps its typed outcome; misses and numerical failures are never converted into
+            fabricated landing coordinates.
+          </div>
         </div>
       )}
     </section>
