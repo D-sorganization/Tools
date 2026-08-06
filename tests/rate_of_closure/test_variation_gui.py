@@ -62,6 +62,8 @@ class TestConstruction:
             tab._runs_spin,
             tab._seed_spin,
             tab._sens_check,
+            tab._forgiveness_check,
+            tab._chip_target_yd,
             tab._run_button,
             tab._cancel_button,
             tab._export_csv,
@@ -201,6 +203,11 @@ class TestRunAndResults:
         )
         assert tab._export_trace_csv.isEnabled()
         assert tab._export_ensemble_json.isEnabled()
+        assert tab._forgiveness_view.summary() is not None
+        assert tab._forgiveness_view._scatter._canvas.axes.collections
+        assert "illustrative" in tab._forgiveness_view.scope_text().lower()
+        assert tab._export_forgiveness_csv.isEnabled()
+        assert tab._export_forgiveness_json.isEnabled()
 
     def test_export_json_round_trips_from_the_tab(
         self, qtbot, tab: VariationTab, tmp_path: Path, monkeypatch

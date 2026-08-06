@@ -44,6 +44,7 @@ export interface ImpactKinematicsTs {
   contactAoaDeg: number | null;
   withoutShaftAoaDeg: number | null;
   shaftAoaContributionDeg: number | null;
+  shaftAoaShapleyDeg: number | null;
   shaftRotationRateDps: number;
   shaftVerticalVelocityMps: number;
   shaftVerticalVelocityShare: number | null;
@@ -153,6 +154,15 @@ export function impactKinematics(
   const contactVelocity = add(withoutShaft, shaftVelocity);
   const totalAoa = aoaDeg(contactVelocity);
   const noShaftAoa = aoaDeg(withoutShaft);
+  const baseAoa = aoaDeg(axisVelocity);
+  const shaftOnlyAoa = aoaDeg(add(axisVelocity, shaftVelocity));
+  const otherOnlyAoa = aoaDeg(add(axisVelocity, otherVelocity));
+  const shaftAoaShapley = [baseAoa, shaftOnlyAoa, otherOnlyAoa, totalAoa]
+    .every((value) => value !== null)
+    ? 0.5 * (
+        (shaftOnlyAoa! - baseAoa!) + (totalAoa! - otherOnlyAoa!)
+      )
+    : null;
   const loft = club.loftDeg * Math.PI / 180;
   const faceNormal = unit(applyRotation(sample.rotation, [Math.cos(loft), Math.sin(loft), 0]), "face normal");
   const nominalEdge = applyRotation(sample.rotation, [0, 0, 1]);
@@ -186,6 +196,7 @@ export function impactKinematics(
     withoutShaftAoaDeg: noShaftAoa,
     shaftAoaContributionDeg:
       totalAoa === null || noShaftAoa === null ? null : totalAoa - noShaftAoa,
+    shaftAoaShapleyDeg: shaftAoaShapley,
     shaftRotationRateDps: shaftRate * RAD_TO_DEG,
     shaftVerticalVelocityMps: shaftVelocity[1],
     shaftVerticalVelocityShare:

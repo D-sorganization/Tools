@@ -19,10 +19,24 @@ from dataclasses import replace
 import numpy as np
 from PyQt6.QtCore import QThread, pyqtSignal
 
-from rate_of_closure.simulation import SimulationConfig
+from rate_of_closure.simulation import (
+    SimulationConfig,
+    representative_wedge_parameters_for_club,
+)
 from rate_of_closure.variation import (
+    ChipForgivenessRequest,
+    ChipForgivenessStudy,
+    ChipLossModel,
+    SimulationEnsembleRequest,
+    SimulationEnsembleResult,
+    analyze_chip_forgiveness_ensemble,
     build_simulation_ensemble_request,
     run_simulation_ensemble,
+)
+from shared.python.golf_club import (
+    GroundPlane,
+    TurfPreset,
+    turf_profile_preset,
 )
 from shared.python.swing_sim.variation import (
     CancelledError,
@@ -57,6 +71,7 @@ class VariationWorker(QThread):
     cancelled = pyqtSignal()  # noqa: N815
     failed = pyqtSignal(str)  # noqa: N815
     ensembleSucceeded = pyqtSignal(object)  # noqa: N815
+    forgivenessSucceeded = pyqtSignal(object)  # noqa: N815
 
     def __init__(
         self,
@@ -64,6 +79,8 @@ class VariationWorker(QThread):
         compute_sensitivity: bool = True,
         n_workers: int = 4,
         base_simulation_config: SimulationConfig | None = None,
+        compute_forgiveness: bool = True,
+        chip_target_carry_m: float = 27.432,
     ) -> None:
         super().__init__()
         self._plan = plan
@@ -71,6 +88,8 @@ class VariationWorker(QThread):
         self._n_workers = int(n_workers)
         self._cancel_event = threading.Event()
         self._base_simulation_config = base_simulation_config
+        self._compute_forgiveness = bool(compute_forgiveness)
+        self._chip_target_carry_m = float(chip_target_carry_m)
 
     @property
     def cancel_event(self) -> threading.Event:
@@ -93,6 +112,7 @@ class VariationWorker(QThread):
                 raise CancelledError
             self.phaseChanged.emit("Running…")
             ensemble = None
+            forgiveness = None
             if self._plan.mode == "swing":
                 if self._base_simulation_config is None:
                     raise ValueError("swing trace studies require a simulation config")
@@ -105,6 +125,7 @@ class VariationWorker(QThread):
                     cancel_event=self._cancel_event,
                 )
                 dataset = ensemble.variation
+                forgiveness = self._forgiveness_study(request, ensemble)
             else:
                 dataset = run_variation(
                     self._plan,
@@ -132,7 +153,43 @@ class VariationWorker(QThread):
         else:
             if ensemble is not None:
                 self.ensembleSucceeded.emit(ensemble)
+            if forgiveness is not None:
+                self.forgivenessSucceeded.emit(forgiveness)
             self.succeeded.emit(dataset, sensitivity)
+
+    def _forgiveness_study(
+        self,
+        request: SimulationEnsembleRequest,
+        ensemble: SimulationEnsembleResult,
+    ) -> ChipForgivenessStudy | None:
+        """Build the optional wedge-only decision study on the worker thread."""
+        assert self._base_simulation_config is not None
+        if not self._compute_forgiveness:
+            return None
+        parameters = representative_wedge_parameters_for_club(
+            self._base_simulation_config.club
+        )
+        if parameters is None:
+            return None
+        self.phaseChanged.emit("Chip Forgiveness…")
+        study_request = ChipForgivenessRequest(
+            candidate_id=parameters.head_id,
+            ensemble=request,
+            wedge_parameters=parameters,
+            ground=GroundPlane(),
+            turf_profile=turf_profile_preset(TurfPreset.FIRM_FAIRWAY),
+            loss_model=ChipLossModel(
+                objective_id=(
+                    f"chip-target-{self._chip_target_carry_m:.3f}m-balanced-v1"
+                ),
+                target_carry_m=self._chip_target_carry_m,
+            ),
+        )
+        return analyze_chip_forgiveness_ensemble(
+            study_request,
+            ensemble,
+            cancel_event=self._cancel_event,
+        )
 
     def _simulation_sensitivity(self) -> SensitivityResult:
         """Run trace-capable one-at-a-time studies through the same simulator."""

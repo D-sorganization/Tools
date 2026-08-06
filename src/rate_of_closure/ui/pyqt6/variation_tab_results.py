@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import QTabWidget
 from rate_of_closure.ui.pyqt6.variation_distribution_matrix import (
     DistributionMatrixView,
 )
+from rate_of_closure.ui.pyqt6.variation_forgiveness_view import ChipForgivenessView
 from rate_of_closure.ui.pyqt6.variation_results import (
     LandingCanvas,
     SensitivityTable,
@@ -40,6 +41,7 @@ class VariationTabResultsMixin:
             self._ensemble_scatter,
             self._distribution_matrix,
             self._arc_overlay,
+            self._forgiveness_view,
         ) = build_result_tabs()
         return tabs
 
@@ -53,6 +55,7 @@ def build_result_tabs() -> tuple[
     DatasetScatterView,
     DistributionMatrixView,
     ArcOverlayView,
+    ChipForgivenessView,
 ]:
     """Build every result view and return stable widget references."""
     tabs = QTabWidget()
@@ -71,6 +74,7 @@ def build_result_tabs() -> tuple[
     scatter = DatasetScatterView()
     matrix = DistributionMatrixView()
     arcs = ArcOverlayView()
+    forgiveness = ChipForgivenessView()
     scatter.selectionChanged.connect(arcs.set_selected_trial)
     scatter.selectionChanged.connect(matrix.set_selected_trial)
     arcs.selectionChanged.connect(scatter.set_selected_trial)
@@ -85,9 +89,20 @@ def build_result_tabs() -> tuple[
         (scatter, "Impact / Shot Scatter"),
         (matrix, "Scatter Matrix / Marginals"),
         (arcs, "All Swing Arcs"),
+        (forgiveness, "Chip Forgiveness"),
     ):
         tabs.addTab(widget, label)
-    return tabs, summary, sensitivity, spearman, landing, scatter, matrix, arcs
+    return (
+        tabs,
+        summary,
+        sensitivity,
+        spearman,
+        landing,
+        scatter,
+        matrix,
+        arcs,
+        forgiveness,
+    )
 
 
 def populate_result_views(
