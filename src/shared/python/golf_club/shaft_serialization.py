@@ -6,7 +6,7 @@ import csv
 import io
 import json
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, cast
 
 from ._validation import reject_unknown_fields, require_mapping
 from .shaft_profile import ShaftProfile, ShaftProfileProvenance, ShaftStation
@@ -126,13 +126,13 @@ def shaft_profile_from_json_dict(data: Mapping[str, Any]) -> ShaftProfile:
     if not isinstance(station_values, list):
         raise TypeError("stations must be a JSON array")
     return ShaftProfile(
-        shaft_id=source.get("shaft_id"),  # type: ignore[arg-type]
-        frame_id=source.get("frame_id"),  # type: ignore[arg-type]
-        raw_length_m=source.get("raw_length_m"),  # type: ignore[arg-type]
-        cut_length_m=source.get("cut_length_m"),  # type: ignore[arg-type]
-        tip_trim_m=source.get("tip_trim_m"),  # type: ignore[arg-type]
-        butt_trim_m=source.get("butt_trim_m"),  # type: ignore[arg-type]
-        insertion_depth_m=source.get("insertion_depth_m"),  # type: ignore[arg-type]
+        shaft_id=cast(Any, source.get("shaft_id")),
+        frame_id=cast(Any, source.get("frame_id")),
+        raw_length_m=cast(Any, source.get("raw_length_m")),
+        cut_length_m=cast(Any, source.get("cut_length_m")),
+        tip_trim_m=cast(Any, source.get("tip_trim_m")),
+        butt_trim_m=cast(Any, source.get("butt_trim_m")),
+        insertion_depth_m=cast(Any, source.get("insertion_depth_m")),
         stations=tuple(_station_from_dict(value) for value in station_values),
         provenance=_provenance_from_dict(provenance_data),
     )
@@ -204,7 +204,8 @@ def _station_to_dict(station: ShaftStation) -> dict[str, float]:
 def _station_from_dict(value: object) -> ShaftStation:
     data = require_mapping(value, "shaft station")
     reject_unknown_fields(data, frozenset(_STATION_FIELDS), "shaft station")
-    return ShaftStation(**{field: data.get(field) for field in _STATION_FIELDS})  # type: ignore[arg-type]
+    values = {field: cast(Any, data.get(field)) for field in _STATION_FIELDS}
+    return ShaftStation(**values)
 
 
 def _provenance_from_dict(data: Mapping[str, Any]) -> ShaftProfileProvenance:

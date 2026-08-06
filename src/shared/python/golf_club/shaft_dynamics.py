@@ -117,8 +117,8 @@ def _solve_axis(
     element_count = settings.element_count
     element_length = profile.flexible_length_m / element_count
     degrees = 2 * (element_count + 1)
-    stiffness = np.zeros((degrees, degrees), dtype=float)
-    mass = np.zeros((degrees, degrees), dtype=float)
+    stiffness: np.ndarray = np.zeros((degrees, degrees), dtype=float)
+    mass: np.ndarray = np.zeros((degrees, degrees), dtype=float)
     start = profile.butt_trim_m
     for element in range(element_count):
         midpoint = start + (element + 0.5) * element_length
@@ -144,7 +144,7 @@ def _solve_axis(
 
 def _beam_stiffness(ei_n_m2: float, length_m: float) -> np.ndarray:
     length_squared = length_m**2
-    return (
+    result: np.ndarray = np.asarray(
         ei_n_m2
         / length_m**3
         * np.array(
@@ -166,11 +166,12 @@ def _beam_stiffness(ei_n_m2: float, length_m: float) -> np.ndarray:
             ]
         )
     )
+    return result
 
 
 def _beam_mass(linear_density_kg_m: float, length_m: float) -> np.ndarray:
     length_squared = length_m**2
-    return (
+    result: np.ndarray = np.asarray(
         linear_density_kg_m
         * length_m
         / 420.0
@@ -193,6 +194,7 @@ def _beam_mass(linear_density_kg_m: float, length_m: float) -> np.ndarray:
             ]
         )
     )
+    return result
 
 
 def _generalized_eigenvalues(stiffness: np.ndarray, mass: np.ndarray) -> np.ndarray:
@@ -200,7 +202,8 @@ def _generalized_eigenvalues(stiffness: np.ndarray, mass: np.ndarray) -> np.ndar
     left_solved = np.linalg.solve(factor, stiffness)
     transformed = np.linalg.solve(factor, left_solved.T).T
     symmetric = 0.5 * (transformed + transformed.T)
-    return np.linalg.eigvalsh(symmetric)
+    eigenvalues: np.ndarray = np.asarray(np.linalg.eigvalsh(symmetric))
+    return eigenvalues
 
 
 __all__ = [
