@@ -30,6 +30,12 @@ def test_wedge_run_adds_ground_clearance_to_engineering_readout(qtbot) -> None: 
     assert "Sole-Entry Margin" in text
     assert "Bounce-Utilization Angle Margin" in text
     assert "Illustrative 10-degree mid-bounce sole" in text
+    labels = [artist.get_label() for artist in view._axes.lines]
+    labels.extend(artist.get_label() for artist in view._axes.collections)
+    assert "Wedge Sole Envelope" in labels
+    assert "Ball Contact" in labels
+    assert "Ground Contact" in labels
+    assert "Swept Low Point" in labels
 
 
 def test_non_wedge_run_does_not_claim_wedge_ground_clearance(qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -39,3 +45,5 @@ def test_non_wedge_run_does_not_claim_wedge_ground_clearance(qtbot) -> None:  # 
     view.set_run(_run("Driver 10.5°"))
 
     assert "Wedge Ground-Clearance" not in view._impact_kinematics_readout.text()
+    labels = [artist.get_label() for artist in view._axes.lines]
+    assert "Wedge Sole Envelope" not in labels

@@ -15,7 +15,12 @@ from rate_of_closure.simulation import (
 )
 from shared.python.golf_club import GroundPlane
 
-__all__ = ["format_impact_kinematics", "format_simulation_engineering_readout"]
+__all__ = [
+    "format_impact_kinematics",
+    "format_simulation_engineering_readout",
+    "ground_clearance_snapshot_for_scene",
+    "simulation_ground_clearance_snapshot",
+]
 
 
 def _number(value: float | None, unit: str, decimals: int = 2) -> str:
@@ -115,22 +120,45 @@ def _format_ground_clearance(snapshot: RunGroundClearanceSnapshot) -> str:
     )
 
 
+def simulation_ground_clearance_snapshot(
+    run: SimulationRun,
+) -> RunGroundClearanceSnapshot | None:
+    """Return the shared wedge snapshot used by text and scene presentation."""
+    parameters = representative_wedge_parameters_for_club(run.config.club)
+    if parameters is None:
+        return None
+    return ground_clearance_for_run(
+        run,
+        parameters,
+        GroundPlane(frame_id="app_frame:x_target,y_up,z_right"),
+    )
+
+
+def ground_clearance_snapshot_for_scene(
+    run: SimulationRun | None,
+) -> RunGroundClearanceSnapshot | None:
+    """Resolve optional scene geometry without letting invalid input break drawing."""
+    if run is None:
+        return None
+    try:
+        return simulation_ground_clearance_snapshot(run)
+    except ValueError:
+        return None
+
+
 def format_simulation_engineering_readout(run: SimulationRun) -> str:
     """Format impact metrics and wedge-only swept ground-clearance metrics."""
     impact_html = format_impact_kinematics(impact_kinematics_for_run(run))
-    parameters = representative_wedge_parameters_for_club(run.config.club)
-    if parameters is None:
-        return impact_html
     try:
-        ground_snapshot = ground_clearance_for_run(
-            run,
-            parameters,
-            GroundPlane(frame_id="app_frame:x_target,y_up,z_right"),
-        )
+        ground_snapshot = simulation_ground_clearance_snapshot(run)
     except ValueError as error:
         return (
             impact_html
             + "<br><b>Wedge Ground-Clearance:</b> Unavailable — "
             + escape(str(error))
         )
-    return impact_html + _format_ground_clearance(ground_snapshot)
+    return (
+        impact_html
+        if ground_snapshot is None
+        else impact_html + _format_ground_clearance(ground_snapshot)
+    )

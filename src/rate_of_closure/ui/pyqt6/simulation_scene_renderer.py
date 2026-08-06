@@ -23,6 +23,7 @@ from rate_of_closure.ui.pyqt6.screw_overlay import (
     ScrewOverlayRenderer,
     format_screw_readout,
 )
+from rate_of_closure.ui.pyqt6.wedge_ground_scene import draw_wedge_ground_overlay_3d
 
 __all__ = ["SimulationSceneRenderer", "fallback_joint_ids", "joint_label"]
 
@@ -107,6 +108,14 @@ class SimulationSceneRenderer:
             self._draw_screw_axis(index, extent)
         if view._kinetics_check.isChecked() and not in_flight:
             self._draw_kinetics(index)
+        if view._wedge_clearance is not None and not in_flight:
+            draw_wedge_ground_overlay_3d(
+                axes,
+                view._wedge_clearance,
+                min(view._time, swing_end),
+                view._display,
+                self._chart_color,
+            )
         self._finish_axes(extent, elev, azim, in_flight, show_flight)
 
     def _scene_extent(self, in_flight: bool, show_flight: bool) -> float:

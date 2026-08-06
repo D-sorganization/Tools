@@ -31,6 +31,7 @@ from rate_of_closure.simulation.screw_analysis import (
 from rate_of_closure.ui.course import CourseLayout
 from rate_of_closure.ui.impact_kinematics_presentation import (
     format_simulation_engineering_readout,
+    ground_clearance_snapshot_for_scene,
 )
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
@@ -72,8 +73,8 @@ class SimulationView(QWidget):
         self._course_layout = CourseLayout()
         self._run: SimulationRun | None = None
         self._joint_motion: JointMotionSeries | None = None
-        # None = not resolved yet; False = source has no joint states.
         self._kinetics: KineticsSeries | None | bool = None
+        self._wedge_clearance = None
         self._time = 0.0
         self._rendered_ball_center_m: np.ndarray | None = None
         self._tee_artist_count = 0
@@ -117,7 +118,6 @@ class SimulationView(QWidget):
         self._timer.setInterval(_TIMER_INTERVAL_MS)
         self._timer.timeout.connect(self._advance)
 
-    # ── construction ────────────────────────────────────────────────
     def _build_playback_bar(self) -> QHBoxLayout:
         bar = QHBoxLayout()
         bar.setContentsMargins(4, 4, 4, 0)
@@ -231,6 +231,7 @@ class SimulationView(QWidget):
         self._run = run
         self._joint_motion = None
         self._kinetics = None
+        self._wedge_clearance = ground_clearance_snapshot_for_scene(run)
         self._time = 0.0
         self._inspection_button.setEnabled(run is not None)
         self._inspection_button.setText(

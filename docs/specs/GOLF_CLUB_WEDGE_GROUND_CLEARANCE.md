@@ -107,6 +107,9 @@ ground contact, utilization margin, provenance, and model limitations to its
 selectable engineering readout. Non-wedge selections do not show wedge claims.
 The illustrative adapter preserves the selected Rate wedge loft, lie, and mass
 but clearly labels its generic 10-degree mid-bounce sole as unmeasured.
+Its rotatable 3-D scene uses that same cached snapshot to draw the sole envelope,
+live clearance, ball-contact point, refined ground-contact point, and swept low
+point; no duplicate scene-only contact calculation is introduced.
 The React swing view applies the same wedge-only policy and presents an
 accessible contact-order timeline, sequence state, and eight engineering
 metrics. Its retained head orientations use shortest-arc SLERP during the
@@ -133,5 +136,5 @@ and 481-sample envelope against Python results. React component tests cover
 the wedge-only rendering boundary, sequence, metrics, provenance, and limits.
 
 The next fidelity layers are continuous sole-patch/B-Rep collision, turf
-contact mechanics with documented material parameters, uncertainty propagation,
-and a matching graphical envelope/contact overlay in the PyQt view.
+contact mechanics with documented material parameters, and uncertainty
+propagation.
