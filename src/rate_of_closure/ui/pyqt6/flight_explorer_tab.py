@@ -1,16 +1,7 @@
-"""Standalone Ball-Flight Explorer tab — launch entry to flight, no swing.
+"""Standalone launch-to-flight explorer with plots and 3D playback.
 
-Epic #4120 (V2): type launch conditions directly (ball speed with a
-unit drop-down, launch angle, azimuth, spin, spin-axis tilt) OR club
-delivery numbers run through ``swing_sim.impact.delivery`` and the
-rigid-body impact model, pick any of the 7 literature flight models,
-and render the result in the dedicated flight-scale
-:class:`~rate_of_closure.ui.pyqt6.flight_view.FlightView` with result
-rows (carry, apex, flight time, landing angle, lateral) that click
-through to explanations. Every control carries sourced hover guidance.
-
-The physics lives in :mod:`rate_of_closure.simulation.flight_explorer`;
-this widget is presentation only.
+Physics lives in :mod:`rate_of_closure.simulation.flight_explorer`; this
+widget presents direct/delivery entry, results, wind pairs, and playback.
 """
 
 from __future__ import annotations
@@ -46,6 +37,7 @@ from rate_of_closure.simulation import (
     launch_from_delivery,
     launch_from_direct,
 )
+from rate_of_closure.ui.pyqt6.flight_playback_controls import FlightPlaybackPanel
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.flight_wind_controls import FlightWindControls
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
@@ -155,6 +147,7 @@ class FlightExplorerTab(QWidget):
         self._direct_spins: dict[str, QDoubleSpinBox] = {}
         self._delivery_spins: dict[str, QDoubleSpinBox] = {}
         self._flight_view = FlightView()
+        self._flight_panel = FlightPlaybackPanel(self._flight_view)
 
         left_content = QWidget()
         left_layout = QVBoxLayout(left_content)
@@ -172,7 +165,7 @@ class FlightExplorerTab(QWidget):
 
         splitter = QSplitter()
         splitter.addWidget(left)
-        splitter.addWidget(self._flight_view)
+        splitter.addWidget(self._flight_panel)
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
         layout = QHBoxLayout(self)
@@ -333,9 +326,13 @@ class FlightExplorerTab(QWidget):
         self._exploration = exploration
         self.wind_comparison = comparison
         self.wind_controls.set_comparison(comparison)
-        self._flight_view.set_trajectory(exploration.positions)
-        calm = None if comparison is None else comparison.calm.positions
-        self._flight_view.set_comparison_trajectory(calm)
+        self._flight_view.set_timed_trajectory(exploration.times, exploration.positions)
+        if comparison is None:
+            self._flight_view.set_comparison_timed_trajectory(None, None)
+        else:
+            self._flight_view.set_comparison_timed_trajectory(
+                comparison.calm.times, comparison.calm.positions
+            )
         self._refresh_rows()
         return exploration
 
