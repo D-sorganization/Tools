@@ -48,11 +48,11 @@ from movement_optimizer.models.swingset_forces import (
     swing_force_fields,
     swing_force_history,
 )
-from movement_optimizer.rendering import Palette, get_chart_color
 
 from . import plot_renderer
 from .motion_analysis_panel import MotionAnalysisPanel
 from .motion_controls import NumericControl, scrollable_control_panel
+from .motion_helpers import build_motion_colors, chain_path_length
 from .policy_trace_canvas import PolicyTraceCanvas, refresh_policy_trace_palette
 from .policy_worker import PolicyOptimizationWorker
 from .vector_overlay import (
@@ -65,23 +65,10 @@ from .vector_overlay import (
     draw_overlay_scene,
 )
 
-
 # Canvas colours are sourced from the fleet shared theme (via rendering.Palette
 # and the shared chart-colour cycle) so the swingset/chain canvases recolour with
 # the rest of the app. ``refresh_motion_palette`` rebinds these on theme change.
-def _build_motion_colors() -> dict[str, QColor]:
-    return {
-        "ACCENT": QColor(Palette.GREEN),
-        "CHAIN": QColor(Palette.FG_DIM),
-        "BODY": QColor(get_chart_color(0)),
-        "LEG": QColor(get_chart_color(1)),
-        "ARM": QColor(get_chart_color(2)),
-        "SURFACE": QColor(Palette.BG),
-        "GRID": QColor(Palette.BG_INPUT),
-    }
-
-
-_MOTION_COLORS = _build_motion_colors()
+_MOTION_COLORS = build_motion_colors()
 ACCENT = _MOTION_COLORS["ACCENT"]
 CHAIN = _MOTION_COLORS["CHAIN"]
 BODY = _MOTION_COLORS["BODY"]
@@ -94,7 +81,7 @@ GRID = _MOTION_COLORS["GRID"]
 def refresh_motion_palette() -> None:
     """Rebind the motion-canvas colours from the active theme palette."""
     global ACCENT, CHAIN, BODY, LEG, ARM, SURFACE, GRID
-    colors = _build_motion_colors()
+    colors = build_motion_colors()
     ACCENT = colors["ACCENT"]
     CHAIN = colors["CHAIN"]
     BODY = colors["BODY"]
@@ -120,18 +107,12 @@ def _swing_overlay_scene(
     origin = (float(field.com_m[0]), float(field.com_m[1]))
     if gravity:
         gravity_vec = (float(field.gravity_n[0]), float(field.gravity_n[1]))
-        arrows.append(
-            ForceArrow(origin, gravity_vec, VectorStyle(LEG, label="gravity"))
-        )
+        arrows.append(ForceArrow(origin, gravity_vec, VectorStyle(LEG, label="gravity")))
     if tension:
         tension_vec = (float(field.chain_tension_n[0]), float(field.chain_tension_n[1]))
-        arrows.append(
-            ForceArrow(origin, tension_vec, VectorStyle(CHAIN, label="tension"))
-        )
+        arrows.append(ForceArrow(origin, tension_vec, VectorStyle(CHAIN, label="tension")))
     if torque:
-        for joint, magnitude in zip(
-            SWING_POLICY_JOINT_NAMES, field.joint_torque_nm, strict=True
-        ):
+        for joint, magnitude in zip(SWING_POLICY_JOINT_NAMES, field.joint_torque_nm, strict=True):
             point = field.joint_points_m[joint]
             arcs.append(
                 TorqueArc(
@@ -142,9 +123,7 @@ def _swing_overlay_scene(
             )
     if com:
         markers.append(ComMarker(origin, VectorStyle(ACCENT)))
-    return OverlayScene(
-        arrows=tuple(arrows), torque_arcs=tuple(arcs), com_markers=tuple(markers)
-    )
+    return OverlayScene(arrows=tuple(arrows), torque_arcs=tuple(arcs), com_markers=tuple(markers))
 
 
 def _chain_overlay_scene(
@@ -221,7 +200,7 @@ class MotionCanvas(QWidget):
     ) -> None:
         self._chain_nodes = chain_nodes
         self._body_points = body_points or {}
-        self._path_length_m = self._compute_chain_path_length(chain_nodes)
+        self._path_length_m = chain_path_length(chain_nodes)
         self.update()
 
     def set_overlays(self, scene: OverlayScene) -> None:
@@ -291,14 +270,6 @@ class MotionCanvas(QWidget):
 
     def _chain_path_length(self) -> float:
         return self._path_length_m
-
-    @staticmethod
-    def _compute_chain_path_length(chain_nodes: list[tuple[float, float]]) -> float:
-        distances = [
-            np.hypot(end[0] - start[0], end[1] - start[1])
-            for start, end in pairwise(chain_nodes)
-        ]
-        return max(float(sum(distances)), 0.5)
 
     def _draw_grid(self, painter: QPainter) -> None:
         painter.setPen(QPen(GRID, 1))
@@ -739,30 +710,16 @@ class SwingsetTab(_MotionViewMixin, QWidget):
             integer=True,
             tooltip="Time steps simulated per evaluation when cycles are not used (up to 2000).",
         )
-        self._add_control(
-            form, "freq_min", "Freq min Hz", 0.2, 2.0, 0.45, refresh=False
-        )
-        self._add_control(
-            form, "freq_max", "Freq max Hz", 0.2, 2.0, 0.75, refresh=False
-        )
+        self._add_control(form, "freq_min", "Freq min Hz", 0.2, 2.0, 0.45, refresh=False)
+        self._add_control(form, "freq_max", "Freq max Hz", 0.2, 2.0, 0.75, refresh=False)
         self._add_control(
             form, "freq_samples", "Freq samples", 1, 8, 3, integer=True, refresh=False
         )
-        self._add_control(
-            form, "hip_rate_min", "Hip min rad/s", 0.0, 3.0, 0.5, refresh=False
-        )
-        self._add_control(
-            form, "hip_rate_max", "Hip max rad/s", 0.0, 3.0, 1.3, refresh=False
-        )
-        self._add_control(
-            form, "hip_samples", "Hip samples", 1, 8, 2, integer=True, refresh=False
-        )
-        self._add_control(
-            form, "torso_rate_min", "Torso min rad/s", 0.0, 3.0, 0.3, refresh=False
-        )
-        self._add_control(
-            form, "torso_rate_max", "Torso max rad/s", 0.0, 3.0, 1.1, refresh=False
-        )
+        self._add_control(form, "hip_rate_min", "Hip min rad/s", 0.0, 3.0, 0.5, refresh=False)
+        self._add_control(form, "hip_rate_max", "Hip max rad/s", 0.0, 3.0, 1.3, refresh=False)
+        self._add_control(form, "hip_samples", "Hip samples", 1, 8, 2, integer=True, refresh=False)
+        self._add_control(form, "torso_rate_min", "Torso min rad/s", 0.0, 3.0, 0.3, refresh=False)
+        self._add_control(form, "torso_rate_max", "Torso max rad/s", 0.0, 3.0, 1.1, refresh=False)
         self._add_control(
             form,
             "torso_samples",
@@ -773,12 +730,8 @@ class SwingsetTab(_MotionViewMixin, QWidget):
             integer=True,
             refresh=False,
         )
-        self._add_control(
-            form, "knee_ratio_min", "Knee ratio min", 0.0, 1.5, 0.25, refresh=False
-        )
-        self._add_control(
-            form, "knee_ratio_max", "Knee ratio max", 0.0, 1.5, 0.65, refresh=False
-        )
+        self._add_control(form, "knee_ratio_min", "Knee ratio min", 0.0, 1.5, 0.25, refresh=False)
+        self._add_control(form, "knee_ratio_max", "Knee ratio max", 0.0, 1.5, 0.65, refresh=False)
         self._add_control(
             form, "knee_samples", "Knee samples", 1, 8, 2, integer=True, refresh=False
         )
@@ -792,9 +745,7 @@ class SwingsetTab(_MotionViewMixin, QWidget):
             integer=True,
             refresh=False,
         )
-        self._add_control(
-            form, "speed", "Playback speed", 0.25, 4.0, 1.0, refresh=False
-        )
+        self._add_control(form, "speed", "Playback speed", 0.25, 4.0, 1.0, refresh=False)
         layout.addLayout(form)
         return group
 
@@ -1044,23 +995,15 @@ class SwingsetTab(_MotionViewMixin, QWidget):
     def _populate_analysis_panel(self) -> None:
         if self._rollout is None:
             return
-        history = swing_force_history(
-            self._config(), self._rollout, DEFAULT_POLICY_DT_S
-        )
+        history = swing_force_history(self._config(), self._rollout, DEFAULT_POLICY_DT_S)
         self._force_history = history
-        self._force_fields = swing_force_fields(
-            self._config(), self._rollout, DEFAULT_POLICY_DT_S
-        )
+        self._force_fields = swing_force_fields(self._config(), self._rollout, DEFAULT_POLICY_DT_S)
         panel = self.analysis_panel
         panel.clear()
-        plot_renderer.plot_swing_joint_torques(
-            panel.axes["torques"], history, legend=False
-        )
+        plot_renderer.plot_swing_joint_torques(panel.axes["torques"], history, legend=False)
         plot_renderer.plot_swing_joint_power(panel.axes["power"], history, legend=False)
         plot_renderer.plot_swing_angle(panel.axes["angle"], history, legend=False)
-        plot_renderer.plot_swing_com_height(
-            panel.axes["com_height"], history, legend=False
-        )
+        plot_renderer.plot_swing_com_height(panel.axes["com_height"], history, legend=False)
         plot_renderer.plot_swing_energy(panel.axes["energy"], history, legend=False)
         plot_renderer.plot_swing_com_path(panel.axes["com_path"], history, legend=False)
         self._apply_plot_legend_visibility()
