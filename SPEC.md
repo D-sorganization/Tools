@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.16                                    |
-| **Spec Version**        | 1.13.16                                    |
+| **Current Version**     | 1.14.1                                     |
+| **Spec Version**        | 1.14.1                                     |
 | **Last Spec Update**    | 2026-08-06                                 |
 
 ## 2. Purpose & Mission
@@ -138,6 +138,17 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   and zooms the 3D view; paired calm and selected-wind paths remain visible.
 - Playback uses one cancellable animation loop and resets deterministically
   when a new trajectory replaces the current run.
+
+### 2026-08-06 Spatial Target Contract
+
+- One immutable version-1 target contract defines canonical app-frame
+  downrange, elevation, and right coordinates plus explicit source-frame
+  provenance and exact flight-frame conversion.
+- Surface circles and corridors and 3D spheres and boxes report deterministic
+  acceptance, signed closest-point miss vectors, and strict Python/TypeScript
+  serialization with explicit legacy green/fairway migration.
+- The contract is UI-neutral; interactive editing, terrain-relative targets,
+  storage workflows, and solver coupling remain tracked downstream work.
 
 ### 2026-08-06 Launch-monitor convention registry
 
@@ -2852,6 +2863,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-06 | 1.13.11 | feat(swing_sim, rate_of_closure, #4194): add the canonical source-backed flight-result metric catalog, analytic landing/trajectory derivation, typed unavailable and qualified-ground boundaries, complete run manifests, deterministic Python/TypeScript exports, and cross-client parity fixtures. |
 | 2026-08-06 | 1.13.12 | feat(ball-flight, #4198 #4199): add Python/TypeScript deterministic true-versus-estimated wind ensembles, correlated under/overestimation, common-random-number club/aim strategy trials, landing scatter cohorts, and expected-cost/regret summaries. |
 | 2026-08-06 | 1.13.12 | feat(rate_of_closure, #4200): add deterministic timestamp interpolation and accessible play/pause/scrub/speed/restart/Launch/Apex/Landing controls to PyQt6 and React; preserve Matplotlib camera state with mutable markers; add a dependency-free rotatable/zoomable orthographic web canvas with a locked physical metre scale and one cancellable animation loop. |
+| 2026-08-06 | 1.14.0 | feat(swing_sim, rate_of_closure, #4192): add the UI-neutral `swing_sim.spatial_target` version-1 contract with canonical app-frame downrange/elevation/right coordinates, source-frame provenance and flight-frame conversion, surface-circle/corridor and 3D sphere/box acceptance geometry, signed closest-point miss vectors, deterministic Python/TypeScript serialization, and explicit legacy green/fairway migration. |
 | 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
 | 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
 | 2026-08-06 | 1.13.6 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |
