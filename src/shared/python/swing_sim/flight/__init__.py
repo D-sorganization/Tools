@@ -15,6 +15,17 @@ Import from this facade only; module layout underneath is private.
 from __future__ import annotations
 
 from ._rust_facade import is_rust_available, simulate_trajectory_rust
+from .capability_contract import (
+    CapabilityObjective,
+    CapabilityParameter,
+    ClubCapability,
+    OptimizationAlternative,
+    OptimizationRequest,
+    OptimizationResult,
+    PlayerCapabilityProfile,
+    TargetDefinition,
+)
+from .capability_optimizer import CapabilityEvaluator, optimize_capability
 from .direction import (
     DEFINITIONS as LAUNCH_DIRECTION_DEFINITIONS,
 )
@@ -114,6 +125,10 @@ __all__ = [
     "DEFAULT_BACKSPIN_AXIS",
     "AvailabilityReason",
     "BallFlightModel",
+    "CapabilityEvaluator",
+    "CapabilityObjective",
+    "CapabilityParameter",
+    "ClubCapability",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
     "CenteredClubDeliveryAdapter",
@@ -152,10 +167,15 @@ __all__ = [
     "ModelManifest",
     "ObjectiveMode",
     "ObjectiveResidual",
+    "OptimizationAlternative",
+    "OptimizationRequest",
+    "OptimizationResult",
     "ParameterValue",
+    "PlayerCapabilityProfile",
     "SolutionCandidate",
     "SolverEvaluation",
     "SolverStatus",
+    "TargetDefinition",
     "TrajectoryPoint",
     "WaterlooPennerModel",
     "WIND_SCHEMA_VERSION",
@@ -185,6 +205,7 @@ __all__ = [
     "launch_direction_sign_labels",
     "launch_direction_to_flight_azimuth",
     "migrate_launch_direction_mapping",
+    "optimize_capability",
     "simulate",
     "simulate_trajectory_rust",
     "solve_inverse_flight",
