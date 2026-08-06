@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 import numpy as np
 
 from ._validation import require_rotation
@@ -54,10 +56,93 @@ def _interval(times: np.ndarray, time_s: float) -> tuple[int, float]:
     return index, min(max(float(alpha), 0.0), 1.0)
 
 
+def _rotation_to_quaternion(rotation: np.ndarray) -> np.ndarray:
+    """Convert a proper rotation matrix to a scalar-first unit quaternion."""
+    trace = float(np.trace(rotation))
+    if trace > 0.0:
+        scale = 2.0 * math.sqrt(trace + 1.0)
+        values = (
+            0.25 * scale,
+            (rotation[2, 1] - rotation[1, 2]) / scale,
+            (rotation[0, 2] - rotation[2, 0]) / scale,
+            (rotation[1, 0] - rotation[0, 1]) / scale,
+        )
+    else:
+        diagonal = np.diag(rotation)
+        axis = int(np.argmax(diagonal))
+        first = axis
+        second = (axis + 1) % 3
+        third = (axis + 2) % 3
+        scale = 2.0 * math.sqrt(
+            max(
+                1.0
+                + float(rotation[first, first])
+                - float(rotation[second, second])
+                - float(rotation[third, third]),
+                0.0,
+            )
+        )
+        vector = np.zeros(3)
+        vector[first] = 0.25 * scale
+        vector[second] = (rotation[second, first] + rotation[first, second]) / scale
+        vector[third] = (rotation[third, first] + rotation[first, third]) / scale
+        scalar = (rotation[third, second] - rotation[second, third]) / scale
+        values = (scalar, vector[0], vector[1], vector[2])
+    quaternion = np.asarray(values, dtype=float)
+    result: np.ndarray = quaternion / float(np.linalg.norm(quaternion))
+    return result
+
+
+def _quaternion_to_rotation(quaternion: np.ndarray) -> np.ndarray:
+    scalar, x_value, y_value, z_value = quaternion
+    result: np.ndarray = np.array(
+        [
+            [
+                1.0 - 2.0 * (y_value * y_value + z_value * z_value),
+                2.0 * (x_value * y_value - scalar * z_value),
+                2.0 * (x_value * z_value + scalar * y_value),
+            ],
+            [
+                2.0 * (x_value * y_value + scalar * z_value),
+                1.0 - 2.0 * (x_value * x_value + z_value * z_value),
+                2.0 * (y_value * z_value - scalar * x_value),
+            ],
+            [
+                2.0 * (x_value * z_value - scalar * y_value),
+                2.0 * (y_value * z_value + scalar * x_value),
+                1.0 - 2.0 * (x_value * x_value + y_value * y_value),
+            ],
+        ]
+    )
+    return result
+
+
+def _slerp_rotation(start: np.ndarray, end: np.ndarray, alpha: float) -> np.ndarray:
+    """Interpolate proper rotations along the shortest constant-rate arc."""
+    start_quaternion = _rotation_to_quaternion(start)
+    end_quaternion = _rotation_to_quaternion(end)
+    dot = float(np.dot(start_quaternion, end_quaternion))
+    if dot < 0.0:
+        end_quaternion = -end_quaternion
+        dot = -dot
+    dot = min(max(dot, -1.0), 1.0)
+    if dot > 1.0 - 1e-10:
+        blended = (1.0 - alpha) * start_quaternion + alpha * end_quaternion
+    else:
+        angle = math.acos(dot)
+        sine = math.sin(angle)
+        blended = (
+            math.sin((1.0 - alpha) * angle) / sine * start_quaternion
+            + math.sin(alpha * angle) / sine * end_quaternion
+        )
+    blended /= float(np.linalg.norm(blended))
+    return _quaternion_to_rotation(blended)
+
+
 def interpolated_pose(
     times: np.ndarray, poses: np.ndarray, time_s: float
 ) -> np.ndarray:
-    """Interpolate translation and project the blended rotation onto SO(3)."""
+    """Interpolate translation and orientation at constant interval rates."""
     index, alpha = _interval(times, time_s)
     if alpha <= 0.0:
         result: np.ndarray = poses[index].copy()
@@ -65,14 +150,10 @@ def interpolated_pose(
     if alpha >= 1.0:
         result = poses[index + 1].copy()
         return result
-    blended = (1.0 - alpha) * poses[index, :3, :3] + alpha * poses[index + 1, :3, :3]
-    left, _, right = np.linalg.svd(blended)
-    rotation = left @ right
-    if float(np.linalg.det(rotation)) < 0.0:
-        left[:, -1] *= -1.0
-        rotation = left @ right
     pose = np.eye(4)
-    pose[:3, :3] = rotation
+    pose[:3, :3] = _slerp_rotation(
+        poses[index, :3, :3], poses[index + 1, :3, :3], alpha
+    )
     pose[:3, 3] = (1.0 - alpha) * poses[index, :3, 3] + alpha * poses[index + 1, :3, 3]
     return pose
 

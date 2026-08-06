@@ -36,19 +36,19 @@ engineering datums, not a continuous collision mesh or pressure patch.
 ## Swept Event Detection
 
 Every retained simulation interval is subdivided into eight audit intervals.
-Translation and twist are linearly interpolated. The blended orientation is
-projected onto `SO(3)` with a polar decomposition. When a candidate changes
-from positive clearance to zero or negative clearance, 48 bisection iterations
-refine the first crossing. The event velocity at candidate point `P` is
+Translation and twist are linearly interpolated. Orientation uses shortest-arc
+unit-quaternion spherical interpolation (SLERP), including stable exact
+half-turn handling. When a candidate changes from positive clearance to zero
+or negative clearance, 48 bisection iterations refine the first crossing. The
+event velocity at candidate point `P` is
 
 `v_P = v_R + omega x (P - R)`.
 
 Normal velocity is the dot product with the ground normal; the remaining
-vector is the tangential velocity. The current projected rotation interpolation
-is intended for the dense retained swing samples. It is not a constant-angular-
-velocity integration scheme and is ambiguous for an exact 180-degree interval.
-Production callers must retain sufficiently dense rotations and avoid such a
-discontinuous interval.
+vector is the tangential velocity. SLERP follows the shortest orientation arc
+at a constant angular rate within each retained interval. The retained twists
+remain independent reported simulation data; interpolation does not overwrite
+or infer them from adjacent poses.
 
 ## Reported Metrics
 
@@ -74,9 +74,9 @@ Tests cover the candidate taxonomy, bounce monotonicity, analytic between-frame
 crossing, nonlevel heel/toe selection, all hit/miss sequence classes, event
 velocity, clearance and bounce metrics, invalid retained states, common-frame
 translation invariance, time-origin invariance, and timestep refinement for a
-linear crossing. The public facade and Rate adapter are contract-tested.
+linear crossing. Exact half-turn and endpoint/translation interpolation are
+also pinned. The public facade and Rate adapter are contract-tested.
 
-The next fidelity layers are continuous sole-patch/B-Rep collision, exact
-rotation interpolation, turf contact mechanics with documented material
-parameters, uncertainty propagation, and React/PyQt visualization of the
-shared payload.
+The next fidelity layers are continuous sole-patch/B-Rep collision, turf
+contact mechanics with documented material parameters, uncertainty propagation,
+and React/PyQt visualization of the shared payload.
