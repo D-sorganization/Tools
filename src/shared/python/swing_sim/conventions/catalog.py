@@ -45,6 +45,7 @@ class _Policy:
     status: QuantityStatus
     availability: AvailabilityRule
     source: str
+    sign: SignRule | None = None
 
 
 _IDENTITIES = {
@@ -256,6 +257,7 @@ _FORESIGHT_POLICIES = {
         QuantityStatus.MEASURED_COMPARABLE,
         AvailabilityRule.COLLISION_COMPLETE,
         _FORESIGHT_BALL_SOURCE,
+        SignRule.UNSPECIFIED,
     ),
 }
 
@@ -285,7 +287,7 @@ def convention_registry() -> ConventionRegistry:
                     policy.event,
                     _FRAME,
                     identity.geometry,
-                    identity.sign,
+                    policy.sign or identity.sign,
                     identity.unit,
                     policy.status,
                     policy.availability,

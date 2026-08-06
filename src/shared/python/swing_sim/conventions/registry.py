@@ -57,6 +57,7 @@ class EventTime(StrEnum):
 class SignRule(StrEnum):
     """Typed direction rule instead of an undocumented signed scalar."""
 
+    UNSPECIFIED = "unspecified"
     NONNEGATIVE = "nonnegative"
     POSITIVE_RIGHT = "positive_right"
     POSITIVE_UP = "positive_up"
@@ -87,6 +88,7 @@ class ComparabilityReason(StrEnum):
     EVENT_TIME = "event_time"
     FRAME = "frame"
     GEOMETRY = "geometry"
+    SIGN_RULE = "sign_rule"
     UNIT = "unit"
     AVAILABILITY = "availability"
 
@@ -243,6 +245,7 @@ def compare_definitions(
             first.geometry_contract,
             second.geometry_contract,
         ),
+        (ComparabilityReason.SIGN_RULE, first.sign_rule, second.sign_rule),
         (ComparabilityReason.UNIT, first.unit, second.unit),
         (ComparabilityReason.AVAILABILITY, first.availability, second.availability),
     )
