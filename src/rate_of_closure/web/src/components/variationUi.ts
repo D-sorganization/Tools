@@ -9,6 +9,7 @@ import type { BallSetup } from "../model/ballSetup";
 
 export const MODE_LABELS: Record<VariationMode, string> = {
   delivery: "Delivery → Impact → Flight",
+  swing: "Pendulum Swing → Impact → Flight",
   launch: "Launch Conditions → Flight",
 };
 

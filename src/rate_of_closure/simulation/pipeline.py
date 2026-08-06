@@ -128,6 +128,7 @@ def _make_source(config: SimulationConfig) -> SwingSource:
         duration=config.swing_duration_s,
         run_config=config.swing_run_config,
         torque_library=config.torque_library,
+        pendulum_parameters=config.pendulum_parameters,
     )
 
 
@@ -210,7 +211,13 @@ def _inspection_time(
     if config.impact_time_s is not None:
         return min(max(float(config.impact_time_s), 0.0), float(source.duration))
     speeds = np.linalg.norm(swing.twists[:, 3:], axis=1)
-    return float(swing.times[int(np.argmax(speeds))])
+    peak_time_s = float(swing.times[int(np.argmax(speeds))])
+    return float(
+        min(
+            max(peak_time_s + config.impact_time_offset_s, 0.0),
+            float(source.duration),
+        )
+    )
 
 
 def _solve_hit(

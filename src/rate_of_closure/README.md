@@ -107,3 +107,53 @@ Both implementations pin the same numeric cases (the 2.733 mph / −1.30°
 forum example, the −1.70° legacy tour case, the ~2,100 °/s default CCV,
 and the −3.0° published worked example), so they cannot drift apart
 silently.
+
+## Variation Study Visualizations
+
+The **Variation** view supports delivery, launch, and complete double-pendulum
+swing ensembles. Every run retains its sampled inputs and scalar outputs. A
+complete swing ensemble additionally retains the common-time-grid positions of
+the pivot, wrist, and clubhead reference, including evaluated trials that miss
+the ball and explicit invalid rows for numerical failures.
+
+The Impact and Shot-Outcome Scatter view lets either axis select any available
+input, contact, impact, or shot scalar. Axis labels always include units. Swing
+studies report three disjoint cohorts: evaluated hit, evaluated no impact, and
+numerical failure. A value that is physically unavailable is omitted from the
+plot and counted as unavailable; it is never replaced by zero. Scalar-only
+delivery and launch studies cannot identify a geometric no-impact event and say
+so in the view.
+
+The All Swing Arcs view overlays every valid trial plus the pointwise median.
+Select the pivot, wrist, or clubhead reference; drag to rotate, use the mouse
+wheel or `+`/`-` to zoom, arrow keys to rotate from the keyboard, and Reset View
+to restore the engineering view. The plot uses one isotropic spatial scale, so
+changing the viewport cannot stretch one physical axis relative to another.
+Rendering uses deterministic vertex decimation when the study exceeds its
+display budget; exports always retain the full resolution.
+
+Spatial data use the stable application frame
+`app_frame:x_target,y_up,z_right`: x points down the target line, y points up,
+and z points right of target. Position and time units are metres and seconds.
+This is an application frame, not a camera frame; rotating the display does not
+change the data coordinates.
+
+Exports are intentionally split by purpose:
+
+* **Dataset CSV/JSON** contains sampled inputs, scalar outputs, success flags,
+  and the reproducible plan.
+* **Swing Traces CSV** is long-form data with one row per trial, sample, and
+  modeled point, including typed status, impact marker, units in column names,
+  and coordinate-frame ID.
+* **Swing Ensemble JSON** is the lossless document containing the plan, scalar
+  dataset, typed outcomes, complete position traces, validity mask, and impact
+  sample indices.
+
+One-at-a-time sensitivity reruns each selected input through the same execution
+path as the joint study. For swing mode this means the complete simulator, not
+the scalar approximation. Misses remain part of contact-level statistics while
+impact and shot columns use only their finite hit values.
+
+Current scope: complete trace ensembles require the double-pendulum source and
+global perturbations. Local time-window or point-targeted perturbations are
+rejected before execution rather than being accepted without a modeled effect.

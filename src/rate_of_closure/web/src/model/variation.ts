@@ -17,10 +17,12 @@ import {
   type VariationPlanTs,
 } from "./variationSchema";
 import { TEE_HEIGHT_VARIATION_KEY, type VariationMode } from "./variationRegistry";
+import { runSwingVariation } from "./variationSwingEnsemble";
 
 export {
   CATEGORY_DELIVERY,
   CATEGORY_LAUNCH,
+  CATEGORY_SWING,
   keysForMode,
   variableDef,
   variableLabel,
@@ -64,6 +66,12 @@ export const FLIGHT_OUTPUTS = [
 ] as const;
 
 export function outputsForMode(mode: VariationMode): string[] {
+  if (mode === "swing") return [
+    "candidate_time_s", "closest_approach_m", "contact_margin_m",
+    "impact_time_s", "clubhead_speed_mps", "ball_speed_mph",
+    "launch_angle_deg", "launch_azimuth_deg", "spin_rpm", "carry_m",
+    "lateral_m", "max_height_m", "flight_time_s", "landing_angle_deg",
+  ];
   return mode === "launch"
     ? [...LAUNCH_OUTPUTS, ...FLIGHT_OUTPUTS]
     : [...DELIVERY_OUTPUTS, ...LAUNCH_OUTPUTS, ...FLIGHT_OUTPUTS];
@@ -172,6 +180,7 @@ export interface VariationDatasetTs {
 /** Execute a plan synchronously through the browser's scalar evaluator. */
 export function runVariation(plan: VariationPlanTs): VariationDatasetTs {
   validatePlan(plan);
+  if (plan.mode === "swing") return runSwingVariation(plan).dataset;
   if (plan.noise.some((spec) => spec.variableKey === TEE_HEIGHT_VARIATION_KEY)) {
     throw new Error(
       "Tee Height variation requires the complete Rate simulation ensemble; " +

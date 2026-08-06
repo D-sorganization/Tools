@@ -121,11 +121,11 @@ describe("plan schema interop", () => {
     expect(plan.noise).toHaveLength(4);
   });
 
-  it("rejects unsupported modes, oversize runs, and illegal keys", () => {
+  it("rejects unknown modes, oversize runs, and illegal keys", () => {
     expect(() => runVariation(launchPlan({ nRuns: MAX_RUNS + 1 }))).toThrow(/nRuns/);
     expect(() =>
-      runVariation({ ...launchPlan(), mode: "swing" as never }),
-    ).toThrow(/desktop-only/);
+      runVariation({ ...launchPlan(), mode: "unsupported" as never }),
+    ).toThrow(/mode/);
     expect(() =>
       runVariation(
         launchPlan({

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import logging
 import math
+import threading
 import time
 from collections.abc import Callable, Mapping
 from dataclasses import dataclass, replace
@@ -40,10 +41,17 @@ from rate_of_closure.variation.simulation_types import (
     TrialEvaluationStatus,
 )
 from shared.python.contracts import ContractViolationError, require
+from shared.python.swing_sim.solver.solve import (
+    CancelledError,
+    ProgressCallback,
+    ProgressReport,
+)
 from shared.python.swing_sim.variation.engine import VariationDataset
 from shared.python.swing_sim.variation.ensemble_types import EnsemblePositionTraces
 from shared.python.swing_sim.variation.registry import CATEGORY_BALL_SETUP
 from shared.python.swing_sim.variation.spec import VariationPlan
+
+from .request_builder import build_simulation_ensemble_request
 
 logger = logging.getLogger(__name__)
 
@@ -140,6 +148,8 @@ def spatial_point_ids(run: SimulationRun) -> tuple[str, ...]:
 def run_simulation_ensemble(
     request: SimulationEnsembleRequest,
     executor: SimulationExecutor = run_simulation,
+    progress_cb: ProgressCallback | None = None,
+    cancel_event: threading.Event | None = None,
 ) -> SimulationEnsembleResult:
     """Execute complete configs and retain hits, misses, and failures.
 
@@ -153,11 +163,32 @@ def run_simulation_ensemble(
     )
     require(callable(executor), "executor must be callable")
     started = time.monotonic()
-    captures = tuple(_capture(config, executor) for config in request.configs)
-    reference = next((item.run for item in captures if item.run is not None), None)
-    outcomes = tuple(_outcome(index, capture) for index, capture in enumerate(captures))
+    cancellation = cancel_event or threading.Event()
+    captures: list[_TrialCapture] = []
+    failed = 0
+    for index, config in enumerate(request.configs):
+        if cancellation.is_set():
+            raise CancelledError
+        capture = _capture(config, executor)
+        captures.append(capture)
+        failed += int(capture.run is None)
+        if progress_cb is not None:
+            progress_cb(
+                ProgressReport(
+                    iteration=index + 1,
+                    cost=float(failed),
+                    best_cost=0.0,
+                    improvement_pct=0.0,
+                    elapsed_s=time.monotonic() - started,
+                )
+            )
+    capture_tuple = tuple(captures)
+    reference = next((item.run for item in capture_tuple if item.run is not None), None)
+    outcomes = tuple(
+        _outcome(index, capture) for index, capture in enumerate(capture_tuple)
+    )
     variation = _variation_dataset(request, outcomes, time.monotonic() - started)
-    traces = _ensemble_traces(request, variation, captures, reference)
+    traces = _ensemble_traces(request, variation, capture_tuple, reference)
     return SimulationEnsembleResult(outcomes, variation, traces)
 
 
@@ -352,6 +383,7 @@ __all__ = [
     "TrialEvaluationStatus",
     "TEE_HEIGHT_VARIABLE_KEY",
     "apply_ball_setup_sample",
+    "build_simulation_ensemble_request",
     "run_simulation_ensemble",
     "spatial_point_ids",
 ]

@@ -33,6 +33,7 @@ import {
   summarizeDoublePendulumRun,
   type DoublePendulumRunConfig,
   type PendulumState,
+  type PendulumParams,
 } from "./doublePendulum";
 import {
   assessFixedContact,
@@ -92,6 +93,10 @@ export interface SimulationInput {
   planeForwardTiltDeg: number;
   impactTimeS: number | null; // null = auto (max clubhead speed)
   swingDurationS: number;
+  /** Optional passive double-pendulum parameters for trace studies. */
+  pendulumParameters?: PendulumParams;
+  /** Offset from the automatic peak-speed inspection time [s]. */
+  impactTimeOffsetS?: number;
   club?: ImpactClubProperties;
   /** Defaults to delivery inspection for backward-compatible studies. */
   contactMode?: ContactMode;
@@ -165,7 +170,7 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
     return samples;
   }
   // Pendulum on the oriented plane (swing frame), adapted to app.
-  const doubleParameters = golfDefaultParams();
+  const doubleParameters = input.pendulumParameters ?? golfDefaultParams();
   const g = inPlaneGravity(
     rad(input.planeYawDeg),
     rad(input.planeSideTiltDeg),
@@ -245,6 +250,10 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
   const ballSetup = resolveBallSetup(input.ballSetup);
   const ballPositionM = ballCenterPosition(ballSetup);
   const swing = swingSamples(input);
+  const impactTimeOffsetS = input.impactTimeOffsetS ?? 0;
+  if (!Number.isFinite(impactTimeOffsetS)) {
+    throw new Error("impactTimeOffsetS must be finite");
+  }
   const torqueRun = summarizeDoublePendulumRun(
     input.doublePendulumRun,
     input.sourceKind === "double_pendulum" ? swing.map((sample) => sample.t) : [],
@@ -266,6 +275,11 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
       0,
       Math.min(input.impactTimeS, swing[swing.length - 1].t),
     );
+    impactIndex = Math.round(clamped / (swing[1].t - swing[0].t));
+  }
+  if (impactTimeOffsetS !== 0) {
+    const shifted = swing[impactIndex].t + impactTimeOffsetS;
+    const clamped = Math.max(0, Math.min(shifted, swing[swing.length - 1].t));
     impactIndex = Math.round(clamped / (swing[1].t - swing[0].t));
   }
   const impactSample = swing[impactIndex];

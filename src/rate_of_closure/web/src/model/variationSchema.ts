@@ -144,8 +144,8 @@ const validateGroups = (
 
 /** DbC-style validation mirroring the Python variation plan. */
 export function validatePlan(plan: VariationPlanTs): void {
-  if (plan.mode !== "delivery" && plan.mode !== "launch") {
-    throw new Error(`mode ${plan.mode} is not supported in the browser (desktop-only)`);
+  if (plan.mode !== "delivery" && plan.mode !== "swing" && plan.mode !== "launch") {
+    throw new Error(`mode ${plan.mode} is not supported in the browser`);
   }
   if (!Number.isInteger(plan.nRuns) || plan.nRuns < 2 || plan.nRuns > MAX_RUNS) {
     throw new Error(`nRuns must be an integer in [2, ${MAX_RUNS}]`);

@@ -36,6 +36,7 @@ from shared.python.swing_sim.run_config import DoublePendulumRunConfig
 from shared.python.swing_sim.swing_source import DoublePendulumSwing, SwingSource
 from shared.python.swing_sim.torque_library import TorqueProfileLibrary
 from shared.python.swing_sim.types import (
+    PendulumParameters,
     PendulumState,
     PlaneOrientation,
     SwingSample,
@@ -470,6 +471,7 @@ def make_source(
     duration: float = 1.5,
     run_config: DoublePendulumRunConfig | None = None,
     torque_library: TorqueProfileLibrary | None = None,
+    pendulum_parameters: PendulumParameters | None = None,
 ) -> SwingSource:
     """Build an app-frame swing source by kind.
 
@@ -502,6 +504,7 @@ def make_source(
         return AppFrameSwing(
             DoublePendulumSwing(
                 plane=plane,
+                parameters=pendulum_parameters,
                 initial_state=start,
                 duration=duration,
                 backend="auto",

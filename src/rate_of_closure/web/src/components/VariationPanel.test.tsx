@@ -173,6 +173,10 @@ describe("VariationPanel analysis execution policy", () => {
     await user.selectOptions(selector, "all_together");
     await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
     expect(screen.getByText(/Summary — Dispersion/i)).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: /Impact and Shot-Outcome Scatter/i })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Scatter horizontal axis" })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Scatter vertical axis" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /variation scatter/i })).toBeInTheDocument();
     expect(screen.queryByText(/One-at-a-Time Sensitivity/i)).not.toBeInTheDocument();
 
     await user.selectOptions(selector, "individual");
@@ -184,5 +188,29 @@ describe("VariationPanel analysis execution policy", () => {
     await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
     expect(screen.getByText(/Summary — Dispersion/i)).toBeInTheDocument();
     expect(screen.getByText(/One-at-a-Time Sensitivity/i)).toBeInTheDocument();
+  });
+
+  it("renders every swing trial in the interactive arc inspector", async () => {
+    const user = userEvent.setup();
+    render(<VariationPanel storage={storage} />);
+    await user.selectOptions(screen.getByRole("combobox", { name: "Pipeline" }), "swing");
+    fireEvent.change(screen.getByRole("textbox", { name: "Runs" }), {
+      target: { value: "2" },
+    });
+    fireEvent.blur(screen.getByRole("textbox", { name: "Runs" }));
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Analysis execution" }),
+      "all_together",
+    );
+
+    await user.click(screen.getByRole("button", { name: "Run Variation Study" }));
+
+    expect(screen.getByRole("heading", { name: /All Swing Arcs/i })).toBeInTheDocument();
+    expect(screen.getByRole("combobox", { name: "Arc modeled point" })).toBeInTheDocument();
+    expect(screen.getByRole("img", { name: /interactive all-trial swing arcs/i })).toBeInTheDocument();
+    expect(screen.getByText(/2\/2 trials shown/i)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Swing Traces CSV" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Swing Ensemble JSON" })).toBeEnabled();
+    expect(screen.getByText(/Hits: .*No impact: .*Numerical failures:/i)).toBeInTheDocument();
   });
 });

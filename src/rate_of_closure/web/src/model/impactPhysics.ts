@@ -64,6 +64,42 @@ export interface ImpactOutput {
   ballAngularVelocity: Vec3;
 }
 
+export interface DeliveryDiagnostics {
+  spinLoftDeg: number;
+  faceToPathDeg: number;
+  spinAxisTiltDeg: number;
+}
+
+/** Derive the 3-D D-plane diagnostics used by both simulations and plots. */
+export function deliveryDiagnostics(input: DeliveryInput): DeliveryDiagnostics {
+  const path = rad(input.clubPathDeg);
+  const face = rad(input.faceAngleDeg);
+  const attack = rad(input.attackAngleDeg);
+  const loft = rad(input.dynamicLoftDeg);
+  const velocityDirection: Vec3 = [
+    Math.cos(attack) * Math.cos(path),
+    Math.sin(attack),
+    Math.cos(attack) * Math.sin(path),
+  ];
+  const normal: Vec3 = [
+    Math.cos(loft) * Math.cos(face),
+    Math.sin(loft),
+    Math.cos(loft) * Math.sin(face),
+  ];
+  const cosine = Math.max(-1, Math.min(1, dot(velocityDirection, normal)));
+  const axisRaw = cross(velocityDirection, normal);
+  const axisMagnitude = norm(axisRaw);
+  const axis = axisMagnitude > 1e-12
+    ? scale(axisRaw, 1 / axisMagnitude)
+    : [0, 0, 1] as Vec3;
+  return {
+    spinLoftDeg: Math.acos(cosine) * 180 / Math.PI,
+    faceToPathDeg: input.faceAngleDeg - input.clubPathDeg,
+    spinAxisTiltDeg: Math.atan2(-axis[1], Math.hypot(axis[0], axis[2]))
+      * 180 / Math.PI,
+  };
+}
+
 const rad = (degrees: number): number => degrees * Math.PI / 180;
 
 function resolveImpactClub(club?: ImpactClubProperties): ResolvedImpactClubProperties {

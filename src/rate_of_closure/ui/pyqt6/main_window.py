@@ -489,6 +489,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._derivation_view.set_scenario(scenario)
         self._simulation_tab.set_scenario(scenario)
         self._variation_tab.set_scenario(scenario)
+        self._variation_tab.set_simulation_config(self._simulation_tab.config())
         status_bar = self.statusBar()
         if status_bar is None:  # pragma: no cover - Qt always provides one here
             return

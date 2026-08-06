@@ -7,9 +7,8 @@ correlation/covariance groups while migrating version-1 plans losslessly.
 
 Registry keys remain ``<category>.<name>`` strings shared with the solver,
 impact, and flight packages. Other packages may extend the vocabulary through
-:func:`register_variable`. The current web port implements only the v1 schema;
-v2 parity requires a deliberate TypeScript migration before exchanging newly
-serialized plans.
+:func:`register_variable`. The web port consumes the same v2 schema and stable
+spec/group identifiers.
 """
 
 from __future__ import annotations
@@ -45,7 +44,7 @@ from .registry import (
 DISTRIBUTIONS: tuple[str, ...] = ("normal", "uniform", "triangular")
 """Supported sampling distributions (see :class:`NoiseSpec.scale`)."""
 
-_SCHEMA_VERSION = 2
+SCHEMA_VERSION = 2
 _SUPPORTED_SCHEMA_VERSIONS = (1, 2)
 
 
@@ -306,7 +305,7 @@ class VariationPlan:
     def to_json_dict(self) -> dict[str, Any]:
         """Plain-JSON representation (schema shared with the web port)."""
         return {
-            "schema_version": _SCHEMA_VERSION,
+            "schema_version": SCHEMA_VERSION,
             "mode": self.mode,
             "base_variables": dict(self.base_variables),
             "noise": [spec.to_json_dict() for spec in self.noise],
@@ -366,6 +365,7 @@ __all__ = [
     "DISTRIBUTIONS",
     "MODES",
     "MODE_CATEGORIES",
+    "SCHEMA_VERSION",
     "SWING_DERIVED_KEYS",
     "NoiseSpec",
     "PerturbationGroup",

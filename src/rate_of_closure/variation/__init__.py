@@ -16,6 +16,7 @@ from .simulation_adapter import (
     SimulationTrialOutcome,
     TrialEvaluationStatus,
     apply_ball_setup_sample,
+    build_simulation_ensemble_request,
     run_simulation_ensemble,
     spatial_point_ids,
 )
@@ -34,6 +35,7 @@ __all__ = [
     "TrialEvaluationStatus",
     "TEE_HEIGHT_VARIABLE_KEY",
     "apply_ball_setup_sample",
+    "build_simulation_ensemble_request",
     "run_simulation_ensemble",
     "spatial_point_ids",
 ]

@@ -2,15 +2,12 @@
 
 from __future__ import annotations
 
-import json
 import logging
 
-import numpy as np
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
-    QFileDialog,
     QFormLayout,
     QFrame,
     QGroupBox,
@@ -21,19 +18,25 @@ from PyQt6.QtWidgets import (
     QScrollArea,
     QSpinBox,
     QSplitter,
-    QTabWidget,
     QVBoxLayout,
     QWidget,
 )
-
-from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
-from rate_of_closure.ui.pyqt6.variation_results import (
-    LandingCanvas,
-    SensitivityTable,
-    SummaryTable,
+from PyQt6.QtWidgets import (
+    QFileDialog as QFileDialog,
 )
+
+from rate_of_closure.club import get_club
+from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
+from rate_of_closure.simulation import SimulationConfig
 from rate_of_closure.ui.pyqt6.variation_rows import NoiseRow
+from rate_of_closure.ui.pyqt6.variation_tab_io import VariationTabIoMixin
+from rate_of_closure.ui.pyqt6.variation_tab_results import (
+    VariationTabResultsMixin,
+    populate_result_views,
+)
 from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker
+from rate_of_closure.variation.plot_data import build_ensemble_plot_dataset
+from rate_of_closure.variation.simulation_types import SimulationEnsembleResult
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.variation import (
@@ -42,16 +45,12 @@ from shared.python.swing_sim.variation import (
     SensitivityResult,
     VariationDataset,
     VariationPlan,
-    dispersion_ellipse,
     keys_for_mode,
-    spearman_matrix,
-    summary_stats,
 )
-from shared.python.swing_sim.variation.dataset_io import write_csv, write_json
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["VariationTab"]
+__all__ = ["QFileDialog", "VariationTab"]
 
 _MODE_LABELS: dict[str, str] = {
     "delivery": "Delivery → Impact → Flight",
@@ -62,7 +61,7 @@ _BASE_SOURCES = ("Registry Defaults", "Explorer Scenario")
 _MAX_RUNS = 5000
 
 
-class VariationTab(QWidget):
+class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
     """Monte-Carlo variation tab (controls left, results right)."""
 
     #: Emitted with the VariationDataset after a successful study
@@ -76,6 +75,12 @@ class VariationTab(QWidget):
         self._worker: VariationWorker | None = None
         self._dataset: VariationDataset | None = None
         self._sensitivity: SensitivityResult | None = None
+        self._ensemble_result: SimulationEnsembleResult | None = None
+        self._base_simulation_config = SimulationConfig(
+            scenario=self._scenario,
+            club=get_club("Driver 10.5°"),
+            source_kind="double_pendulum",
+        )
         self._rows: list[NoiseRow] = []
 
         left = QWidget()
@@ -208,59 +213,16 @@ class VariationTab(QWidget):
         layout.addWidget(self._status)
         return box
 
-    def _build_export_box(self) -> QGroupBox:
-        box = QGroupBox("Export / Reproduce")
-        layout = QHBoxLayout(box)
-        self._export_csv = QPushButton("Dataset CSV")
-        self._export_csv.setToolTip(
-            "Export the runs table (inputs, outputs, success flags) as CSV."
-        )
-        self._export_csv.clicked.connect(self._on_export_csv)
-        self._export_json = QPushButton("Dataset JSON")
-        self._export_json.setToolTip(
-            "Export the full dataset + plan as JSON (documented, re-importable)."
-        )
-        self._export_json.clicked.connect(self._on_export_json)
-        save_plan = QPushButton("Save Plan")
-        save_plan.setToolTip(
-            "Save just the plan as JSON — the schema the web tab also reads."
-        )
-        save_plan.clicked.connect(self._on_save_plan)
-        load_plan = QPushButton("Load Plan")
-        load_plan.setToolTip("Load a plan JSON back into the editors.")
-        load_plan.clicked.connect(self._on_load_plan)
-        for button in (self._export_csv, self._export_json):
-            button.setEnabled(False)
-        for button in (self._export_csv, self._export_json, save_plan, load_plan):
-            layout.addWidget(button)
-        return box
-
-    def _build_results_tabs(self) -> QTabWidget:
-        tabs = QTabWidget()
-        self._summary_table = SummaryTable()
-        self._sensitivity_table = SensitivityTable()
-        self._sensitivity_table.setToolTip(
-            "One-at-a-time sensitivity: std induced in each output "
-            "(column) when only that input's (row) noise is active. "
-            "Hot cells dominate their column."
-        )
-        self._spearman_table = SensitivityTable()
-        self._spearman_table.setToolTip(
-            "Spearman rank correlation between each sampled input and "
-            "each output over the full study — a cheap global-sensitivity "
-            "cross-check of the one-at-a-time matrix."
-        )
-        self._landing = LandingCanvas()
-        tabs.addTab(self._summary_table, "Summary")
-        tabs.addTab(self._sensitivity_table, "Sensitivity")
-        tabs.addTab(self._spearman_table, "Rank Correlation")
-        tabs.addTab(self._landing, "Landing Dispersion")
-        return tabs
-
     # ── public API ──────────────────────────────────────────────────
     def set_scenario(self, scenario: ImpactScenario) -> None:
         """Adopt the explorer's scenario (base-source 'Explorer Scenario')."""
         self._scenario = scenario
+
+    def set_simulation_config(self, config: SimulationConfig) -> None:
+        """Set the complete base request used by trace-capable swing studies."""
+        if not isinstance(config, SimulationConfig):
+            raise TypeError("config must be a SimulationConfig")
+        self._base_simulation_config = config
 
     def mode(self) -> str:
         """The selected pipeline mode."""
@@ -292,6 +254,10 @@ class VariationTab(QWidget):
     def dataset(self) -> VariationDataset | None:
         """The most recent completed dataset, if any."""
         return self._dataset
+
+    def ensemble_result(self) -> SimulationEnsembleResult | None:
+        """Return the most recent complete trace ensemble, when requested."""
+        return self._ensemble_result
 
     def stop(self) -> None:
         """Cancel and join any running worker (window close and tests)."""
@@ -331,11 +297,17 @@ class VariationTab(QWidget):
             return
         self._dataset = None
         self._sensitivity = None
+        self._ensemble_result = None
         self._set_running(True)
-        worker = VariationWorker(plan, compute_sensitivity=self._sens_check.isChecked())
+        worker = VariationWorker(
+            plan,
+            compute_sensitivity=self._sens_check.isChecked(),
+            base_simulation_config=self._base_simulation_config,
+        )
         worker.progressed.connect(self._on_progress)
         worker.phaseChanged.connect(self._on_phase)
         worker.succeeded.connect(self._on_succeeded)
+        worker.ensembleSucceeded.connect(self._on_ensemble_succeeded)
         worker.cancelled.connect(self._on_cancelled)
         worker.failed.connect(self._on_failed)
         worker.finished.connect(self._on_finished)
@@ -350,6 +322,9 @@ class VariationTab(QWidget):
         self._cancel_button.setEnabled(running)
         self._export_csv.setEnabled(not running and self._dataset is not None)
         self._export_json.setEnabled(not running and self._dataset is not None)
+        has_ensemble = self._ensemble_result is not None
+        self._export_trace_csv.setEnabled(not running and has_ensemble)
+        self._export_ensemble_json.setEnabled(not running and has_ensemble)
 
     def _on_cancel(self) -> None:
         if self._worker is not None:
@@ -377,6 +352,8 @@ class VariationTab(QWidget):
         self._sensitivity = (
             sensitivity if isinstance(sensitivity, SensitivityResult) else None
         )
+        if self._ensemble_result is None:
+            self._ensemble_scatter.set_variation_dataset(dataset)
         self._populate_results()
         failures = dataset.plan.n_runs - dataset.n_success
         note = f" ({failures} runs failed)" if failures else ""
@@ -385,6 +362,15 @@ class VariationTab(QWidget):
             f"{dataset.elapsed_s:.1f} s{note}."
         )
         self.studyCompleted.emit(dataset)
+
+    def _on_ensemble_succeeded(self, result: SimulationEnsembleResult) -> None:
+        """Populate complete-trace views before the scalar completion callback."""
+        self._ensemble_result = result
+        self._export_trace_csv.setEnabled(True)
+        self._export_ensemble_json.setEnabled(True)
+        plot_dataset = build_ensemble_plot_dataset(result)
+        self._ensemble_scatter.set_plot_dataset(plot_dataset)
+        self._arc_overlay.set_plot_dataset(plot_dataset)
 
     def _on_cancelled(self) -> None:
         self._status.setText("Cancelled.")
@@ -402,88 +388,13 @@ class VariationTab(QWidget):
         dataset = self._dataset
         if dataset is None:
             return
-        self._summary_table.set_stats(summary_stats(dataset))
-        rho = spearman_matrix(dataset)
-        self._spearman_table.set_matrix(
-            dataset.input_names,
-            dataset.output_names,
-            rho,
-            np.abs(rho),
-            value_format="{:+.2f}",
+        populate_result_views(
+            dataset,
+            self._sensitivity,
+            self._summary_table,
+            self._sensitivity_table,
+            self._spearman_table,
+            self._landing,
         )
-        if self._sensitivity is not None:
-            self._sensitivity_table.set_matrix(
-                self._sensitivity.input_keys,
-                self._sensitivity.output_names,
-                self._sensitivity.matrix,
-                self._sensitivity.normalized,
-            )
-        try:
-            ellipse = dispersion_ellipse(dataset)
-        except (ContractViolationError, ValueError):
-            ellipse = None
-        self._landing.set_dataset(dataset, ellipse)
 
     # ── export / plan IO ────────────────────────────────────────────
-    def _on_export_csv(self) -> None:
-        if self._dataset is None:
-            return
-        path, _filter = QFileDialog.getSaveFileName(
-            self, "Export Dataset CSV", "variation_dataset.csv", "CSV (*.csv)"
-        )
-        if path:
-            write_csv(self._dataset, path)
-            self._status.setText(f"Dataset CSV written to {path}.")
-
-    def _on_export_json(self) -> None:
-        if self._dataset is None:
-            return
-        path, _filter = QFileDialog.getSaveFileName(
-            self, "Export Dataset JSON", "variation_dataset.json", "JSON (*.json)"
-        )
-        if path:
-            write_json(self._dataset, path)
-            self._status.setText(f"Dataset JSON written to {path}.")
-
-    def _on_save_plan(self) -> None:
-        try:
-            plan = self.build_plan()
-        except (ContractViolationError, ValueError) as exc:
-            self._status.setText(f"Cannot save plan: {exc}")
-            return
-        path, _filter = QFileDialog.getSaveFileName(
-            self, "Save Variation Plan", "variation_plan.json", "JSON (*.json)"
-        )
-        if path:
-            with open(path, "w", encoding="utf-8") as handle:
-                handle.write(plan.dumps())
-            self._status.setText(f"Plan saved to {path}.")
-
-    def _on_load_plan(self) -> None:
-        path, _filter = QFileDialog.getOpenFileName(
-            self, "Load Variation Plan", "", "JSON (*.json)"
-        )
-        if not path:
-            return
-        try:
-            with open(path, encoding="utf-8") as handle:
-                plan = VariationPlan.loads(handle.read())
-        except (ContractViolationError, ValueError, json.JSONDecodeError) as exc:
-            self._status.setText(f"Cannot load plan: {exc}")
-            return
-        self.load_plan(plan)
-        self._status.setText(f"Plan loaded from {path}.")
-
-    def load_plan(self, plan: VariationPlan) -> None:
-        """Drive all editors from a plan (used by Load Plan and tests)."""
-        self._mode_combo.setCurrentIndex(MODES.index(plan.mode))
-        self._runs_spin.setValue(plan.n_runs)
-        self._seed_spin.setValue(plan.seed)
-        self._flight_combo.setCurrentText(plan.flight_model)
-        self._base_combo.setCurrentIndex(0)  # the plan's own base values win
-        self._loaded_base = dict(plan.base_variables)
-        while len(self._rows) > 1:
-            self._remove_row(self._rows[-1])
-        for i, spec in enumerate(plan.noise):
-            row = self._rows[0] if i == 0 else self._add_row()
-            row.load_spec(spec)

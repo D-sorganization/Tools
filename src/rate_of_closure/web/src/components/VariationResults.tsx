@@ -9,6 +9,9 @@ import {
   type SensitivityResultTs,
 } from "../model/variationAnalysis";
 import { LandingCanvas } from "./VariationLanding";
+import { VariationScatter } from "./VariationScatter";
+import { VariationArcOverlay } from "./VariationArcOverlay";
+import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 import { PANEL_CLASS, sensitivityHeat } from "./variationUi";
 
 interface VariationResultsProps {
@@ -16,6 +19,7 @@ interface VariationResultsProps {
   sensitivity: SensitivityResultTs | null;
   target?: TargetRegionTs;
   distanceUnit: string;
+  ensemble?: SwingVariationResultTs | null;
 }
 
 export function VariationResults({
@@ -23,12 +27,31 @@ export function VariationResults({
   sensitivity,
   target,
   distanceUnit,
+  ensemble = null,
 }: VariationResultsProps): JSX.Element {
   const stats = useMemo(() => dataset ? summaryStats(dataset) : [], [dataset]);
   const spearman = useMemo(() => dataset ? spearmanMatrix(dataset) : null, [dataset]);
 
   return (
     <section aria-label="Variation results" className="space-y-6">
+      {dataset && (
+        <div className={PANEL_CLASS}>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+            Impact and Shot-Outcome Scatter
+          </h2>
+          <VariationScatter dataset={dataset} ensemble={ensemble} />
+        </div>
+      )}
+
+      {ensemble && (
+        <div className={PANEL_CLASS}>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+            All Swing Arcs — Interactive 3D Overlay
+          </h2>
+          <VariationArcOverlay ensemble={ensemble} />
+        </div>
+      )}
+
       {dataset && (
         <div className={PANEL_CLASS}>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">

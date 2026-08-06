@@ -12,6 +12,11 @@ import {
   type VariationAnalysisExecution,
 } from "../model/variationAnalysisPolicy";
 import type { SensitivityResultTs } from "../model/variationAnalysis";
+import { oneAtATimeSensitivity } from "../model/variationAnalysis";
+import {
+  runSwingVariation,
+  type SwingVariationResultTs,
+} from "../model/variationSwingEnsemble";
 import {
   deleteVariationPlan,
   duplicateVariationPlan,
@@ -59,6 +64,7 @@ export function VariationPanel({
     useState<VariationAnalysisExecution>("both");
   const [dataset, setDataset] = useState<VariationDatasetTs | null>(null);
   const [sensitivity, setSensitivity] = useState<SensitivityResultTs | null>(null);
+  const [ensemble, setEnsemble] = useState<SwingVariationResultTs | null>(null);
   const [library, setLibrary] = useState<NamedVariationPlan[]>(initialLibrary.plans);
   const [selectedId, setSelectedId] = useState("");
   const [planName, setPlanName] = useState("");
@@ -69,6 +75,7 @@ export function VariationPanel({
   const clearResults = () => {
     setDataset(null);
     setSensitivity(null);
+    setEnsemble(null);
   };
 
   const persistLibrary = (next: NamedVariationPlan[], message: string) => {
@@ -84,9 +91,23 @@ export function VariationPanel({
   const run = () => {
     clearResults();
     try {
-      const result = executeVariationAnalyses(plan, analysisExecution);
+      const runTogether = analysisExecution !== "individual";
+      const traceResult = plan.mode === "swing" && runTogether
+        ? runSwingVariation(plan)
+        : null;
+      const result = executeVariationAnalyses(
+        plan,
+        analysisExecution,
+        traceResult === null
+          ? undefined
+          : {
+              runTogether: () => traceResult.dataset,
+              runIndividually: oneAtATimeSensitivity,
+            },
+      );
       setDataset(result.dataset);
       setSensitivity(result.sensitivity);
+      setEnsemble(traceResult);
       if (result.dataset) {
         const succeeded = result.dataset.success.filter(Boolean).length;
         const failed = plan.nRuns - succeeded;
@@ -173,6 +194,7 @@ export function VariationPanel({
         <VariationActions
           plan={plan}
           dataset={dataset}
+          ensemble={ensemble}
           status={status}
           onRun={run}
           onImportText={importPlan}
@@ -195,6 +217,7 @@ export function VariationPanel({
         sensitivity={sensitivity}
         target={target}
         distanceUnit={distanceUnit}
+        ensemble={ensemble}
       />
     </div>
   );
