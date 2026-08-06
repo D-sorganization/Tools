@@ -14,9 +14,13 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from rate_of_closure.ui.pyqt6.variation_arc_filters import ArcFilterControls
 from rate_of_closure.ui.pyqt6.variation_geometry_rendering import (
+    clear_arc_views,
+    draw_arc_trials,
     draw_principal_spread,
     draw_variability_timeline,
+    set_app_frame_axes,
 )
 from rate_of_closure.ui.pyqt6.variation_plot_canvas import VariationPlotCanvas
 from rate_of_closure.ui.pyqt6.variation_plot_exports import (
@@ -138,7 +142,6 @@ class DatasetScatterView(QWidget):
         self._trial_combo.blockSignals(False)
 
     def set_selected_trial(self, trial_index: int | None) -> None:
-        """Apply a linked trial selection without creating a signal loop."""
         self._selected_trial = trial_index
         index = self._trial_combo.findData(trial_index)
         self._trial_combo.blockSignals(True)
@@ -280,6 +283,7 @@ class ArcOverlayView(QWidget):
         self._quiet_threshold.setToolTip(
             "Maximum RMS positional radius used to identify contiguous quiet zones."
         )
+        self._filters = ArcFilterControls()
         self._exports = VariationPlotExportControls(
             lambda: self._canvas.figure,
             lambda: arc_plot_definition(
@@ -289,6 +293,10 @@ class ArcOverlayView(QWidget):
                 self._selected_trial,
                 float(self._canvas.axes.azim),
                 float(self._canvas.axes.elev),
+                self._filters.outcome_filter,
+                self._filters.phase_percent / 100.0,
+                self._filters.perturbation_source_key,
+                self._filters.perturbation_band,
             ),
             "variation-swing-arcs",
         )
@@ -303,17 +311,20 @@ class ArcOverlayView(QWidget):
         layout = QVBoxLayout(self)
         layout.addLayout(controls)
         layout.addWidget(self._status)
+        layout.addWidget(self._filters)
         layout.addWidget(self._exports)
         layout.addWidget(self._canvas, stretch=1)
         layout.addWidget(self._variability_canvas, stretch=1)
         self._point_combo.currentIndexChanged.connect(self._redraw)
         self._quiet_threshold.valueChanged.connect(self._redraw)
         self._trial_combo.currentIndexChanged.connect(self._selection_changed)
-        self._clear()
+        self._filters.changed.connect(self._redraw)
+        clear_arc_views(self._canvas, self._variability_canvas)
 
     def set_plot_dataset(self, dataset: EnsemblePlotDataset) -> None:
         """Populate modeled points and render every valid trial arc."""
         self._dataset = dataset
+        self._filters.set_dataset(dataset)
         self._exports.setEnabled(True)
         self._point_combo.blockSignals(True)
         self._point_combo.clear()
@@ -331,7 +342,6 @@ class ArcOverlayView(QWidget):
         self._redraw()
 
     def set_selected_trial(self, trial_index: int | None) -> None:
-        """Apply a linked selection without re-emitting it."""
         self._selected_trial = trial_index
         index = self._trial_combo.findData(trial_index)
         self._trial_combo.blockSignals(True)
@@ -344,68 +354,38 @@ class ArcOverlayView(QWidget):
         self.selectionChanged.emit(self._selected_trial)
         self._redraw()
 
-    def _clear(self) -> None:
-        self._canvas.axes.clear()
-        self._canvas.apply_theme()
-        self._canvas.axes.set_title("All-Trial Swing Arc Overlay")
-        self._set_axes()
-        self._canvas.draw_idle()
-        self._variability_canvas.axes.clear()
-        self._variability_canvas.apply_theme()
-        self._variability_canvas.axes.set_title("Geometric Variability and Quiet Zones")
-        self._variability_canvas.draw_idle()
-
     def _redraw(self, *_args: object) -> None:
         if self._dataset is None or self._point_combo.currentIndex() < 0:
             return
-        overlay = self._dataset.arc_overlay(str(self._point_combo.currentData()))
+        trial_indices = self._filters.trial_indices(self._dataset)
+        sample_count = self._filters.sample_count(
+            self._dataset.result.traces.sample_times_s.size
+        )
+        overlay = self._dataset.arc_overlay(
+            str(self._point_combo.currentData()),
+            trial_indices=trial_indices,
+            sample_count=sample_count,
+        )
         variability = self._dataset.geometric_variability(
             overlay.point_id,
             LowVariabilityCriteria(
                 max_rms_radius_m=self._quiet_threshold.value() / 1000.0
             ),
+            trial_indices=trial_indices,
+            sample_count=sample_count,
         )
         axes = self._canvas.axes
         axes.clear()
         self._canvas.apply_theme()
-        for trial_index, (positions, valid, cohort) in enumerate(
-            zip(
-                overlay.positions_m,
-                overlay.sample_valid,
-                overlay.cohorts,
-                strict=True,
-            )
-        ):
-            if np.any(valid):
-                selected = trial_index == self._selected_trial
-                axes.plot(
-                    positions[valid, 0],
-                    positions[valid, 2],
-                    positions[valid, 1],
-                    color=_COHORT_COLORS[cohort],
-                    linewidth=2.8 if selected else 0.8,
-                    alpha=(
-                        1.0
-                        if selected
-                        else (0.12 if self._selected_trial is not None else 0.34)
-                    ),
-                )
-        reference = overlay.reference_positions_m
-        axes.plot(
-            reference[:, 0],
-            reference[:, 2],
-            reference[:, 1],
-            color="#f2f4f8",
-            linewidth=2.2,
-            label="Median Reference",
-        )
+        draw_arc_trials(axes, overlay, self._selected_trial, _COHORT_COLORS)
         draw_principal_spread(axes, variability)
         axes.set_title(f"All Trials — {point_label(overlay.point_id)}")
-        self._set_axes()
+        set_app_frame_axes(axes)
         equal_3d_axes(axes, overlay)
         valid_trials = sum(bool(np.any(row)) for row in overlay.sample_valid)
         self._status.setText(
-            f"{valid_trials}/{len(overlay.cohorts)} trials shown; "
+            f"{valid_trials}/{len(self._dataset.cohorts)} trials shown; "
+            f"phase 0–{self._filters.phase_percent}%; "
             f"{overlay.rendered_vertex_count:,}/{overlay.raw_vertex_count:,} vertices. "
             f"{variability.n_quiet_samples}/{variability.sample_times_s.size} quiet "
             f"samples at <= {self._quiet_threshold.value():g} mm RMS. "
@@ -415,12 +395,6 @@ class ArcOverlayView(QWidget):
         axes.legend(loc="best", fontsize=8)
         self._canvas.draw_idle()
         draw_variability_timeline(self._variability_canvas, variability)
-
-    def _set_axes(self) -> None:
-        """Apply the app-frame labels while plotting y-up as visual z."""
-        self._canvas.axes.set_xlabel("Target, x [m]")
-        self._canvas.axes.set_ylabel("Right, z [m]")
-        self._canvas.axes.set_zlabel("Up, y [m]")
 
 
 __all__ = ["ArcOverlayView", "DatasetScatterView"]

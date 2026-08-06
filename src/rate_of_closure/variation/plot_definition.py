@@ -30,6 +30,10 @@ class PlotDefinition:
     camera_yaw_deg: float | None = None
     camera_pitch_deg: float | None = None
     camera_zoom: float | None = None
+    outcome_filter: str | None = None
+    phase_end_fraction: float | None = None
+    perturbation_source_key: str | None = None
+    perturbation_band: str | None = None
 
     def __post_init__(self) -> None:
         require(bool(self.result_id.strip()), "result_id must be non-empty")
@@ -44,6 +48,10 @@ class PlotDefinition:
         require(
             self.camera_zoom is None or self.camera_zoom > 0,
             "camera_zoom must be greater than zero",
+        )
+        require(
+            self.phase_end_fraction is None or 0 < self.phase_end_fraction <= 1,
+            "phase_end_fraction must be in (0, 1]",
         )
         if self.plot_type == "scalar_scatter":
             require(bool(self.x_variable_key), "scatter requires x_variable_key")

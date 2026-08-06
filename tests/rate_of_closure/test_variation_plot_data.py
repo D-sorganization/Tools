@@ -168,6 +168,50 @@ def test_arc_overlay_retains_rows_and_limits_vertices() -> None:
     assert overlay.position_unit == "m"
 
 
+def test_filtered_arc_and_variability_share_exact_trial_and_time_view() -> None:
+    plot = build_ensemble_plot_dataset(_result())
+    selected = np.array([1], dtype=int)
+
+    overlay = plot.arc_overlay(_POINT, trial_indices=selected, sample_count=3)
+    variability = plot.geometric_variability(
+        _POINT,
+        LowVariabilityCriteria(max_rms_radius_m=1.0),
+        trial_indices=selected,
+        sample_count=3,
+    )
+
+    np.testing.assert_array_equal(overlay.trial_indices, selected)
+    assert overlay.positions_m.shape == (1, 3, 3)
+    assert overlay.cohorts == (EVALUATED_NO_IMPACT,)
+    assert overlay.raw_vertex_count == 3
+    np.testing.assert_array_equal(variability.valid_trial_count, [1, 1, 1])
+    np.testing.assert_allclose(variability.sample_times_s, [0.0, 0.01, 0.02])
+    assert variability.n_quiet_samples == 0
+
+
+@pytest.mark.parametrize(
+    ("trial_indices", "sample_count", "message"),
+    [
+        (np.array([], dtype=int), None, "at least one trial"),
+        (np.array([0, 0], dtype=int), None, "must be unique"),
+        (np.array([0], dtype=int), 0, "invalid sample_count"),
+    ],
+)
+def test_filtered_arc_rejects_invalid_trial_and_time_views(
+    trial_indices: np.ndarray,
+    sample_count: int | None,
+    message: str,
+) -> None:
+    plot = build_ensemble_plot_dataset(_result())
+
+    with pytest.raises(ContractViolationError, match=message):
+        plot.arc_overlay(
+            _POINT,
+            trial_indices=trial_indices,
+            sample_count=sample_count,
+        )
+
+
 def test_geometric_variability_pins_covariance_envelope_and_quiet_zone() -> None:
     plot = build_ensemble_plot_dataset(_result())
     variability = plot.geometric_variability(

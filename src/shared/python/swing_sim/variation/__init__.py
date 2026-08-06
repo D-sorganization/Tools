@@ -38,6 +38,7 @@ from .ensemble_geometry import (
     LowVariabilityInterval,
     PositionDispersion,
     compute_position_dispersion,
+    compute_position_dispersion_view,
     find_low_variability_intervals,
 )
 from .group_spec import PerturbationGroup
@@ -101,6 +102,7 @@ __all__ = [
     "dispersion_ellipse",
     "analyze_paired_intervention",
     "compute_position_dispersion",
+    "compute_position_dispersion_view",
     "evaluate_run",
     "keys_for_mode",
     "find_low_variability_intervals",

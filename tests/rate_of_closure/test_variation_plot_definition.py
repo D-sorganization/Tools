@@ -28,6 +28,10 @@ def test_plot_definition_round_trips_complete_geometric_state(tmp_path) -> None:
         camera_yaw_deg=-37.0,
         camera_pitch_deg=22.0,
         camera_zoom=1.2,
+        outcome_filter="evaluated_hit",
+        phase_end_fraction=0.75,
+        perturbation_source_key="swing_sim.swing.yaw_deg",
+        perturbation_band="Upper Third",
     )
     destination = tmp_path / "plot-definition.json"
 
@@ -38,6 +42,7 @@ def test_plot_definition_round_trips_complete_geometric_state(tmp_path) -> None:
     assert document["result_id"] == "ensemble-123"
     assert document["quiet_threshold_m"] == pytest.approx(0.005)
     assert document["selected_trial_index"] == 2
+    assert document["phase_end_fraction"] == pytest.approx(0.75)
 
 
 @pytest.mark.parametrize(

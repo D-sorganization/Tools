@@ -34,6 +34,7 @@ from shared.python.swing_sim.variation import (
     PositionDispersion,
     VariationDataset,
     compute_position_dispersion,
+    compute_position_dispersion_view,
     variable_registry,
 )
 from shared.python.swing_sim.variation.ensemble_types import immutable_array
@@ -146,6 +147,7 @@ class ArcOverlayData:
     coordinate_frame: str
     position_unit: str
     sample_indices: np.ndarray = field(repr=False)
+    trial_indices: np.ndarray = field(repr=False)
     sample_times_s: np.ndarray = field(repr=False)
     positions_m: np.ndarray = field(repr=False)
     sample_valid: np.ndarray = field(repr=False)
@@ -157,17 +159,20 @@ class ArcOverlayData:
 
     def __post_init__(self) -> None:
         indices = np.asarray(self.sample_indices, dtype=int)
+        trial_indices = np.asarray(self.trial_indices, dtype=int)
         times = np.asarray(self.sample_times_s, dtype=float)
         positions = np.asarray(self.positions_m, dtype=float)
         valid = np.asarray(self.sample_valid, dtype=bool)
         reference = np.asarray(self.reference_positions_m, dtype=float)
-        expected = (len(self.cohorts), indices.size)
+        require(trial_indices.shape == (len(self.cohorts),), "invalid trial_indices")
+        expected = (trial_indices.size, indices.size)
         require(times.shape == (indices.size,), "sample_times_s must align")
         require(positions.shape == expected + (3,), "positions_m has invalid shape")
         require(valid.shape == expected, "sample_valid has invalid shape")
         require(reference.shape == (indices.size, 3), "reference has invalid shape")
         require(self.rendered_vertex_count <= self.raw_vertex_count, "invalid budget")
         object.__setattr__(self, "sample_indices", immutable_array(indices, int))
+        object.__setattr__(self, "trial_indices", immutable_array(trial_indices, int))
         object.__setattr__(self, "sample_times_s", immutable_array(times, float))
         object.__setattr__(self, "positions_m", immutable_array(positions, float))
         object.__setattr__(self, "sample_valid", immutable_array(valid, bool))
@@ -204,10 +209,23 @@ class EnsemblePlotDataset:
         return tuple(outcome.status for outcome in self.result.outcomes)
 
     def geometric_variability(
-        self, point_id: str, criteria: LowVariabilityCriteria
+        self,
+        point_id: str,
+        criteria: LowVariabilityCriteria,
+        trial_indices: np.ndarray | None = None,
+        sample_count: int | None = None,
     ) -> GeometricVariabilityData:
         """Return one point's RMS envelope, principal spread, and quiet zones."""
-        return build_geometric_variability(self.dispersion, point_id, criteria)
+        dispersion = (
+            self.dispersion
+            if trial_indices is None and sample_count is None
+            else compute_position_dispersion_view(
+                self.result.traces,
+                trial_indices=trial_indices,
+                sample_count=sample_count,
+            )
+        )
+        return build_geometric_variability(dispersion, point_id, criteria)
 
     def variable(self, key: str) -> ScalarPlotVariable:
         """Return a scalar descriptor by stable prefixed key."""
@@ -243,19 +261,32 @@ class EnsemblePlotDataset:
         self,
         point_id: str,
         budget: PlotBudget | None = None,
+        trial_indices: np.ndarray | None = None,
+        sample_count: int | None = None,
     ) -> ArcOverlayData:
         """Prepare every trial arc with deterministic sample-axis decimation."""
         traces = self.result.traces
         require(point_id in traces.point_ids, "unknown point_id", point_id)
+        indices = (
+            np.arange(traces.n_trials, dtype=int)
+            if trial_indices is None
+            else np.asarray(trial_indices, dtype=int)
+        )
+        count = traces.sample_times_s.size if sample_count is None else sample_count
+        dispersion = compute_position_dispersion_view(
+            traces,
+            trial_indices=indices,
+            sample_count=count,
+        )
         point_index = traces.point_index(point_id)
         selected_budget = budget or DEFAULT_PLOT_BUDGET
         sample_indices = _sample_indices(
-            traces.n_trials,
-            traces.sample_times_s.size,
+            indices.size,
+            count,
             selected_budget.max_arc_vertices,
         )
-        positions = traces.positions_m[:, sample_indices, point_index, :]
-        valid = traces.sample_valid[:, sample_indices]
+        positions = traces.positions_m[indices][:, sample_indices, point_index, :]
+        valid = traces.sample_valid[indices][:, sample_indices]
         with warnings.catch_warnings():
             warnings.simplefilter("ignore", category=RuntimeWarning)
             reference = np.nanmedian(positions, axis=0)
@@ -264,14 +295,15 @@ class EnsemblePlotDataset:
             coordinate_frame=traces.coordinate_frame,
             position_unit="m",
             sample_indices=sample_indices,
+            trial_indices=indices,
             sample_times_s=traces.sample_times_s[sample_indices],
             positions_m=positions,
             sample_valid=valid,
             reference_positions_m=reference,
-            cohorts=self.cohorts,
-            dispersion=self.dispersion,
-            raw_vertex_count=traces.n_trials * traces.sample_times_s.size,
-            rendered_vertex_count=traces.n_trials * sample_indices.size,
+            cohorts=tuple(self.cohorts[index] for index in indices),
+            dispersion=dispersion,
+            raw_vertex_count=indices.size * count,
+            rendered_vertex_count=indices.size * sample_indices.size,
         )
 
     def _scalar_values(self, variable: ScalarPlotVariable) -> np.ndarray:

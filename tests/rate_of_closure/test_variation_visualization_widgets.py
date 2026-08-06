@@ -101,6 +101,19 @@ def test_arc_overlay_draws_every_valid_trial_and_reference(qtbot, tmp_path) -> N
     assert definition["quiet_threshold_m"] == pytest.approx(0.005)
     assert definition["camera_yaw_deg"] is not None
 
+    view._filters._source.setCurrentIndex(1)
+    view._filters._band.setCurrentIndex(1)
+    view._filters._phase.setValue(50)
+    selected_count = view._filters.trial_indices(plot_dataset).size
+    assert f"{selected_count}/3 trials shown" in view._status.text()
+    assert "phase 0–50%" in view._status.text()
+    filtered_path = tmp_path / "filtered-arc.plot.json"
+    view._exports.write_definition(filtered_path)
+    filtered_definition = json.loads(filtered_path.read_text(encoding="utf-8"))
+    assert filtered_definition["phase_end_fraction"] == pytest.approx(0.5)
+    assert filtered_definition["perturbation_source_key"] == _YAW
+    assert filtered_definition["perturbation_band"] == "Lower Third"
+
 
 def test_trial_selection_links_scatter_and_arc_views(qtbot) -> None:  # type: ignore[no-untyped-def]
     plot_dataset = _plot_dataset()
