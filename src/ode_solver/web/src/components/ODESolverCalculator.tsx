@@ -38,12 +38,17 @@ export function ODESolverCalculator() {
   const [error, setError] = useState<string | null>(null)
 
   const parseKeyValue = useCallback((text: string): Record<string, string> => {
+    // ⚡ Bolt Optimization: Replace chained .split(':') and rest/join array allocations with single-pass indexOf and substring
     const result: Record<string, string> = {}
-    for (const line of text.split('\n')) {
-      const trimmed = line.trim()
-      if (!trimmed || !trimmed.includes(':')) continue
-      const [key, ...rest] = trimmed.split(':')
-      result[key.trim()] = rest.join(':').trim()
+    const lines = text.split('\n')
+    for (let i = 0; i < lines.length; i++) {
+      const trimmed = lines[i].trim()
+      if (!trimmed) continue
+      const colonIdx = trimmed.indexOf(':')
+      if (colonIdx === -1) continue
+      const key = trimmed.substring(0, colonIdx).trim()
+      const val = trimmed.substring(colonIdx + 1).trim()
+      result[key] = val
     }
     return result
   }, [])

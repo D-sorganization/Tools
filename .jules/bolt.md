@@ -86,3 +86,6 @@
 ## 2024-08-01 - Avoid allocating string arrays for SVG paths
 **Learning:** In high-frequency chart updates, building SVG `d` paths using `.map(p => '...').join(' ')` allocates a new array of strings on every frame, causing unnecessary garbage collection pressure and main thread stalls.
 **Action:** Build SVG `d` paths using a single-pass `for` loop and string concatenation to eliminate intermediate array allocations.
+## 2024-05-24 - Avoid split/join arrays for simple key-value parsing
+**Learning:** Parsing simple string formats using `.split().join()` or `[...rest]` allocations creates unnecessary array allocations and adds to increased garbage collection pressure.
+**Action:** Replace string processing array chains with single-pass `indexOf` and `substring` operations to eliminate array allocations and minimize object creations.
