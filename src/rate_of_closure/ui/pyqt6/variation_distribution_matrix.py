@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, cast
 
 import numpy as np
+from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
@@ -46,6 +47,7 @@ class DistributionMatrixView(QWidget):
         self._outcomes: tuple[str, ...] = ()
         self._selected_trial: int | None = None
         self._variables: tuple[ScalarPlotVariable, ...] = ()
+        self._artist_trial_indices: dict[int, np.ndarray] = {}
         self._selectors = [QComboBox() for _ in range(4)]
         form = QFormLayout()
         for index, selector in enumerate(self._selectors, start=1):
@@ -128,11 +130,12 @@ class DistributionMatrixView(QWidget):
         selected = [by_key[str(selector.currentData())] for selector in self._selectors]
         values = [dataset_values(self._variation, variable) for variable in selected]
         self._figure.clear()
+        self._artist_trial_indices.clear()
         axes = self._figure.subplots(4, 4, squeeze=False)
         missing_total = 0
         for row in range(4):
             for column in range(4):
-                axis = axes[row, column]
+                axis = cast(Axes, axes[row, column])
                 x_values = values[column]
                 y_values = values[row]
                 if row == column:
@@ -160,7 +163,9 @@ class DistributionMatrixView(QWidget):
                             edgecolors="none",
                             picker=5,
                         )
-                        collection._variation_trial_indices = trial_indices[cohort]
+                        self._artist_trial_indices[id(collection)] = trial_indices[
+                            cohort
+                        ]
                     if (
                         self._selected_trial is not None
                         and finite[self._selected_trial]
@@ -205,7 +210,7 @@ class DistributionMatrixView(QWidget):
         self._redraw()
 
     def _point_picked(self, event: Any) -> None:
-        indices = getattr(event.artist, "_variation_trial_indices", None)
+        indices = self._artist_trial_indices.get(id(event.artist))
         if indices is None or not event.ind:
             return
         trial_index = int(indices[event.ind[0]])

@@ -51,8 +51,12 @@ def dataset_values(
     """Return one all-row scalar column without silently dropping failures."""
     source, name = variable.key.split(":", 1)
     if source == "input":
-        return np.asarray(dataset.inputs[:, dataset.input_names.index(name)])
-    return np.asarray(dataset.outputs[:, dataset.output_names.index(name)])
+        values: np.ndarray = np.asarray(
+            dataset.inputs[:, dataset.input_names.index(name)]
+        )
+        return values
+    values = np.asarray(dataset.outputs[:, dataset.output_names.index(name)])
+    return values
 
 
 def draw_scalar_study_scatter(

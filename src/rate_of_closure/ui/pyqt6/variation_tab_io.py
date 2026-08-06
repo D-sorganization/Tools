@@ -6,11 +6,13 @@ import json
 from typing import cast
 
 from PyQt6.QtWidgets import (
+    QComboBox,
     QFileDialog,
     QGroupBox,
     QHBoxLayout,
     QLabel,
     QPushButton,
+    QSpinBox,
     QWidget,
 )
 
@@ -33,11 +35,11 @@ class VariationTabIoMixin:
     _dataset: VariationDataset | None
     _ensemble_result: SimulationEnsembleResult | None
     _status: QLabel
-    _mode_combo: object
-    _runs_spin: object
-    _seed_spin: object
-    _flight_combo: object
-    _base_combo: object
+    _mode_combo: QComboBox
+    _runs_spin: QSpinBox
+    _seed_spin: QSpinBox
+    _flight_combo: QComboBox
+    _base_combo: QComboBox
     _loaded_base: dict[str, float]
     _rows: list[NoiseRow]
 
@@ -184,11 +186,11 @@ class VariationTabIoMixin:
 
     def load_plan(self, plan: VariationPlan) -> None:
         """Drive all editors from a plan (used by Load Plan and tests)."""
-        self._mode_combo.setCurrentIndex(MODES.index(plan.mode))  # type: ignore[attr-defined]
-        self._runs_spin.setValue(plan.n_runs)  # type: ignore[attr-defined]
-        self._seed_spin.setValue(plan.seed)  # type: ignore[attr-defined]
-        self._flight_combo.setCurrentText(plan.flight_model)  # type: ignore[attr-defined]
-        self._base_combo.setCurrentIndex(0)  # type: ignore[attr-defined]
+        self._mode_combo.setCurrentIndex(MODES.index(plan.mode))
+        self._runs_spin.setValue(plan.n_runs)
+        self._seed_spin.setValue(plan.seed)
+        self._flight_combo.setCurrentText(plan.flight_model)
+        self._base_combo.setCurrentIndex(0)
         self._loaded_base = dict(plan.base_variables)
         while len(self._rows) > 1:
             self._remove_row(self._rows[-1])
