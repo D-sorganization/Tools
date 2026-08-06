@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import Any
+from typing import Any, cast
 
 from ._validation import reject_unknown_fields, require_mapping
 from .wedge_parameters import (
@@ -121,23 +121,23 @@ def _parameters_from_dict(value: object) -> WedgeHeadParameters:
     except ValueError as error:
         raise ValueError(f"unknown handedness {handedness_value!r}") from error
     return WedgeHeadParameters(
-        head_id=data.get("head_id"),  # type: ignore[arg-type]
+        head_id=cast(Any, data.get("head_id")),
         handedness=handedness,
-        loft_deg=data.get("loft_deg"),  # type: ignore[arg-type]
-        lie_deg=data.get("lie_deg"),  # type: ignore[arg-type]
-        bounce_deg=data.get("bounce_deg"),  # type: ignore[arg-type]
-        face_length_m=data.get("face_length_m"),  # type: ignore[arg-type]
-        face_height_m=data.get("face_height_m"),  # type: ignore[arg-type]
-        sole_width_m=data.get("sole_width_m"),  # type: ignore[arg-type]
-        topline_thickness_m=data.get("topline_thickness_m"),  # type: ignore[arg-type]
-        leading_edge_radius_m=data.get("leading_edge_radius_m"),  # type: ignore[arg-type]
-        rear_curve_depth_fraction=data.get("rear_curve_depth_fraction"),  # type: ignore[arg-type]
-        face_progression_m=data.get("face_progression_m"),  # type: ignore[arg-type]
-        hosel_outer_diameter_m=data.get("hosel_outer_diameter_m"),  # type: ignore[arg-type]
-        hosel_bore_diameter_m=data.get("hosel_bore_diameter_m"),  # type: ignore[arg-type]
-        hosel_length_m=data.get("hosel_length_m"),  # type: ignore[arg-type]
-        material_density_kg_m3=data.get("material_density_kg_m3"),  # type: ignore[arg-type]
-        target_mass_kg=data.get("target_mass_kg"),  # type: ignore[arg-type]
+        loft_deg=cast(Any, data.get("loft_deg")),
+        lie_deg=cast(Any, data.get("lie_deg")),
+        bounce_deg=cast(Any, data.get("bounce_deg")),
+        face_length_m=cast(Any, data.get("face_length_m")),
+        face_height_m=cast(Any, data.get("face_height_m")),
+        sole_width_m=cast(Any, data.get("sole_width_m")),
+        topline_thickness_m=cast(Any, data.get("topline_thickness_m")),
+        leading_edge_radius_m=cast(Any, data.get("leading_edge_radius_m")),
+        rear_curve_depth_fraction=cast(Any, data.get("rear_curve_depth_fraction")),
+        face_progression_m=cast(Any, data.get("face_progression_m")),
+        hosel_outer_diameter_m=cast(Any, data.get("hosel_outer_diameter_m")),
+        hosel_bore_diameter_m=cast(Any, data.get("hosel_bore_diameter_m")),
+        hosel_length_m=cast(Any, data.get("hosel_length_m")),
+        material_density_kg_m3=cast(Any, data.get("material_density_kg_m3")),
+        target_mass_kg=cast(Any, data.get("target_mass_kg")),
         provenance=_provenance_from_dict(data.get("provenance")),
     )
 
@@ -146,9 +146,9 @@ def _provenance_from_dict(value: object) -> WedgeGeometryProvenance:
     data = require_mapping(value, "wedge provenance")
     reject_unknown_fields(data, _PROVENANCE_FIELDS, "wedge provenance")
     return WedgeGeometryProvenance(
-        source_name=data.get("source_name"),  # type: ignore[arg-type]
-        geometry_basis=data.get("geometry_basis"),  # type: ignore[arg-type]
-        uncertainty_note=data.get("uncertainty_note"),  # type: ignore[arg-type]
+        source_name=cast(Any, data.get("source_name")),
+        geometry_basis=cast(Any, data.get("geometry_basis")),
+        uncertainty_note=cast(Any, data.get("uncertainty_note")),
         source_uri=data.get("source_uri"),
         data_license=data.get("data_license"),
     )
