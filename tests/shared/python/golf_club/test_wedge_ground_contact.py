@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from dataclasses import replace
 
 import numpy as np
 import pytest
@@ -10,6 +11,7 @@ import pytest
 from shared.python.golf_club import (
     ContactSequence,
     GroundPlane,
+    Handedness,
     WedgeContactFeature,
     WedgePreset,
     analyze_wedge_ground_clearance,
@@ -71,6 +73,31 @@ def test_contact_candidates_cover_leading_primary_and_trailing_regions() -> None
     assert high_trailing.local_point_m[1] > low_trailing.local_point_m[1]
 
 
+def test_handedness_mirrors_heel_and_toe_candidate_datums() -> None:
+    right = wedge_preset(WedgePreset.MID_BOUNCE)
+    left = replace(right, handedness=Handedness.LEFT)
+
+    right_by_feature = {
+        candidate.feature: candidate.local_point_m
+        for candidate in wedge_contact_candidates(right)
+    }
+    left_by_feature = {
+        candidate.feature: candidate.local_point_m
+        for candidate in wedge_contact_candidates(left)
+    }
+
+    for right_feature, left_feature in (
+        (WedgeContactFeature.LEADING_EDGE_HEEL, WedgeContactFeature.LEADING_EDGE_HEEL),
+        (WedgeContactFeature.LEADING_EDGE_TOE, WedgeContactFeature.LEADING_EDGE_TOE),
+        (WedgeContactFeature.PRIMARY_SOLE_HEEL, WedgeContactFeature.PRIMARY_SOLE_HEEL),
+        (WedgeContactFeature.TRAILING_SOLE_TOE, WedgeContactFeature.TRAILING_SOLE_TOE),
+    ):
+        right_point = right_by_feature[right_feature]
+        left_point = left_by_feature[left_feature]
+        assert left_point[:2] == pytest.approx(right_point[:2])
+        assert left_point[2] == pytest.approx(-right_point[2])
+
+
 def test_between_frame_crossing_is_refined_to_the_analytic_time() -> None:
     poses = np.stack([_pose(height_m=0.01), _pose(height_m=-0.01)])
 
@@ -127,6 +154,7 @@ def test_ball_contact_metrics_report_clearance_low_point_and_bounce() -> None:
     parameters = wedge_preset(WedgePreset.HIGH_BOUNCE)
     poses = np.stack([_pose(height_m=0.02), _pose(height_m=0.01)])
     twists = np.zeros((2, 6))
+    twists[:, 3] = 10.0
     twists[:, 4] = -0.01
 
     result = analyze_wedge_ground_clearance(
@@ -143,6 +171,29 @@ def test_ball_contact_metrics_report_clearance_low_point_and_bounce() -> None:
     assert result.low_point_time_s == pytest.approx(1.0)
     assert result.low_point_world_m[1] == pytest.approx(0.01)
     assert result.delivered_bounce_deg_at_ball == pytest.approx(parameters.bounce_deg)
+    assert result.sole_entry_margin_m == pytest.approx(
+        0.015
+        + parameters.leading_edge_radius_m
+        + 0.5 * parameters.sole_width_m * math.sin(math.radians(parameters.bounce_deg))
+    )
+    assert result.path_projected_effective_bounce_deg_at_ball == pytest.approx(
+        parameters.bounce_deg
+    )
+    expected_aoa = math.degrees(math.atan2(-0.01, 10.0))
+    assert result.reference_aoa_deg_at_ball == pytest.approx(expected_aoa)
+    assert result.bounce_utilization_margin_deg == pytest.approx(
+        parameters.bounce_deg + expected_aoa
+    )
+
+
+def test_path_projected_metrics_are_unavailable_without_horizontal_motion() -> None:
+    poses = np.stack([_pose(height_m=0.02), _pose(height_m=0.01)])
+
+    result = _sweep(poses, ball_contact_time_s=0.5)
+
+    assert result.path_projected_effective_bounce_deg_at_ball is None
+    assert result.reference_aoa_deg_at_ball is None
+    assert result.bounce_utilization_margin_deg is None
 
 
 def test_invalid_pose_and_time_contracts_fail_actionably() -> None:
@@ -199,6 +250,51 @@ def test_clearance_is_invariant_when_sweep_and_ground_translate_together() -> No
     )
     assert np.asarray(translated.low_point_world_m) == pytest.approx(
         np.asarray(baseline.low_point_world_m) + offset
+    )
+
+
+def test_analysis_is_equivariant_under_common_rigid_frame_rotation() -> None:
+    parameters = wedge_preset(WedgePreset.MID_BOUNCE)
+    poses = np.stack([_pose(height_m=0.01), _pose(height_m=-0.01)])
+    twists = np.zeros((2, 6))
+    twists[:, 4] = -0.02
+    baseline = analyze_wedge_ground_clearance(
+        parameters,
+        (0.0, 1.0),
+        poses,
+        twists,
+        GroundPlane(),
+        ball_contact_time_s=0.25,
+    )
+    angle = math.radians(37.0)
+    cosine, sine = math.cos(angle), math.sin(angle)
+    frame_rotation = np.array(
+        [[cosine, -sine, 0.0], [sine, cosine, 0.0], [0.0, 0.0, 1.0]]
+    )
+    rotated_poses = poses.copy()
+    rotated_poses[:, :3, :3] = frame_rotation @ poses[:, :3, :3]
+    rotated_poses[:, :3, 3] = (frame_rotation @ poses[:, :3, 3].T).T
+    rotated_twists = twists.copy()
+    rotated_twists[:, :3] = (frame_rotation @ twists[:, :3].T).T
+    rotated_twists[:, 3:] = (frame_rotation @ twists[:, 3:].T).T
+
+    rotated = analyze_wedge_ground_clearance(
+        parameters,
+        (0.0, 1.0),
+        rotated_poses,
+        rotated_twists,
+        GroundPlane(normal_unit=tuple(frame_rotation @ np.array((0.0, 1.0, 0.0)))),
+        ball_contact_time_s=0.25,
+    )
+
+    assert rotated.first_ground_contact is not None
+    assert baseline.first_ground_contact is not None
+    assert rotated.first_ground_contact.feature is baseline.first_ground_contact.feature
+    assert rotated.first_ground_contact.time_s == pytest.approx(
+        baseline.first_ground_contact.time_s
+    )
+    assert np.asarray(rotated.first_ground_contact.world_point_m) == pytest.approx(
+        frame_rotation @ np.asarray(baseline.first_ground_contact.world_point_m)
     )
 
 

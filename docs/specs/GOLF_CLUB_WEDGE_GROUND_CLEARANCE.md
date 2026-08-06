@@ -60,22 +60,48 @@ The immutable result includes:
 - explicit `ball_first`, `ground_first`, `simultaneous`, `ball_only`,
   `ground_only_miss`, or `no_contact_miss` sequencing;
 - leading-edge clearance at an actual ball contact;
+- sole-entry margin: the minimum primary/trailing named-sole clearance at ball
+  contact;
 - minimum pre-ball named-feature clearance;
 - ground-contact lead/lag relative to ball contact;
 - swept low-point time, point, and feature; and
-- delivered central-sole bounce relative to the supplied ground normal.
+- delivered central-sole bounce relative to the supplied ground normal;
+- path-projected effective bounce in the vertical plane containing the
+  reference-point horizontal velocity;
+- reference-point AoA at ball contact; and
+- bounce-utilization angle margin, defined as path-projected effective bounce
+  plus signed reference AoA.
+
+The utilization margin is positive when the delivered sole angle exceeds the
+magnitude of a descending reference path under this geometric convention. It
+is a kinematic angle margin, not a prediction that the sole will react, skid,
+or prevent digging. Path-projected metrics return `None` when horizontal speed
+is zero instead of inventing a travel direction.
 
 The low point and minimum clearance apply to the named candidate set and swept
 audit grid. They are not an analytic minimum over a continuous B-Rep.
+
+## Shared Visualization Payload
+
+`wedge_ground_clearance_to_json_dict` emits the versioned
+`upstreamdrift.wedge-ground-clearance/v1` contract. The JSON-ready document
+contains explicit units and frame ID, every envelope sample, the complete
+first-contact event and transform, low-point geometry, sequence, ball time,
+metrics, and limitations. Missing contacts and path-dependent metrics remain
+JSON `null`; non-finite placeholders are never emitted. React and PyQt adapters
+must render this payload rather than reimplementing the contact physics.
 
 ## Verification
 
 Tests cover the candidate taxonomy, bounce monotonicity, analytic between-frame
 crossing, nonlevel heel/toe selection, all hit/miss sequence classes, event
 velocity, clearance and bounce metrics, invalid retained states, common-frame
-translation invariance, time-origin invariance, and timestep refinement for a
-linear crossing. Exact half-turn and endpoint/translation interpolation are
-also pinned. The public facade and Rate adapter are contract-tested.
+translation and rotation behavior, handedness mirroring, time-origin
+invariance, and timestep refinement for a linear crossing. Exact half-turn and
+endpoint/translation interpolation are also pinned. The public facade and Rate
+adapter are contract-tested.
+The versioned payload is checked for completeness, deterministic structure,
+strict finite JSON serialization, and missing-contact preservation.
 
 The next fidelity layers are continuous sole-patch/B-Rep collision, turf
 contact mechanics with documented material parameters, uncertainty propagation,

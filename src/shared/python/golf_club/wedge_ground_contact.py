@@ -14,6 +14,7 @@ from ._validation import (
     require_identifier,
     require_vector3,
 )
+from ._wedge_delivery_metrics import delivered_bounce_deg, path_projected_metrics
 from ._wedge_sweep import (
     interpolated_pose,
     interpolated_twist,
@@ -108,6 +109,10 @@ class WedgeGroundClearanceAnalysis:
     low_point_world_m: Vector3
     low_point_feature: WedgeContactFeature
     delivered_bounce_deg_at_ball: float | None
+    sole_entry_margin_m: float | None
+    path_projected_effective_bounce_deg_at_ball: float | None
+    reference_aoa_deg_at_ball: float | None
+    bounce_utilization_margin_deg: float | None
     limitations: str = _LIMITATIONS
 
 
@@ -239,23 +244,6 @@ def _sequence(
     )
 
 
-def _delivered_bounce_deg(
-    parameters: WedgeHeadParameters, pose: np.ndarray, ground: GroundPlane
-) -> float:
-    bounce = math.radians(parameters.bounce_deg)
-    local_sole = np.array(
-        [
-            -parameters.sole_width_m * math.cos(bounce),
-            parameters.sole_width_m * math.sin(bounce),
-            0.0,
-        ]
-    )
-    world_sole = pose[:3, :3] @ local_sole
-    vertical = float(np.dot(world_sole, ground.normal_unit))
-    horizontal = world_sole - vertical * np.asarray(ground.normal_unit)
-    return math.degrees(math.atan2(vertical, float(np.linalg.norm(horizontal))))
-
-
 def analyze_wedge_ground_clearance(
     parameters: WedgeHeadParameters,
     times_s: object,
@@ -312,6 +300,10 @@ def analyze_wedge_ground_clearance(
     leading_at_ball: float | None = None
     minimum_pre_ball: float | None = None
     delivered_bounce: float | None = None
+    sole_entry_margin: float | None = None
+    effective_bounce: float | None = None
+    reference_aoa: float | None = None
+    bounce_utilization: float | None = None
     if ball_contact_time_s is not None:
         ball_pose, _, ball_clearances = _candidate_values(
             ball_contact_time_s, times, pose_array, candidates, ground
@@ -322,13 +314,24 @@ def analyze_wedge_ground_clearance(
             if candidate.feature.value.startswith("leading_edge")
         ]
         leading_at_ball = float(np.min(ball_clearances[leading_indices]))
+        sole_indices = [
+            index
+            for index, candidate in enumerate(candidates)
+            if not candidate.feature.value.startswith("leading_edge")
+        ]
+        sole_entry_margin = float(np.min(ball_clearances[sole_indices]))
         prior = [
             sample.minimum_clearance_m
             for sample in envelope
             if sample.time_s <= ball_contact_time_s
         ]
         minimum_pre_ball = min(prior + [float(np.min(ball_clearances))])
-        delivered_bounce = _delivered_bounce_deg(parameters, ball_pose, ground)
+        ground_normal = np.asarray(ground.normal_unit)
+        delivered_bounce = delivered_bounce_deg(parameters, ball_pose, ground_normal)
+        ball_twist = interpolated_twist(times, twist_array, ball_contact_time_s)
+        effective_bounce, reference_aoa, bounce_utilization = path_projected_metrics(
+            parameters, ball_pose, ball_twist, ground_normal
+        )
     margin = (
         None
         if ball_contact_time_s is None or event is None
@@ -347,6 +350,10 @@ def analyze_wedge_ground_clearance(
         low_point_world_m=low.world_point_m,
         low_point_feature=low.feature,
         delivered_bounce_deg_at_ball=delivered_bounce,
+        sole_entry_margin_m=sole_entry_margin,
+        path_projected_effective_bounce_deg_at_ball=effective_bounce,
+        reference_aoa_deg_at_ball=reference_aoa,
+        bounce_utilization_margin_deg=bounce_utilization,
     )
 
 

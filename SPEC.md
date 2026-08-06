@@ -895,13 +895,19 @@ high_mm)` exposes the face-curvature normal (gradient of the
 - Retained rigid-head poses are swept between samples; planar crossings are
   refined, and first-contact feature, time, pose, normal velocity, tangential
   velocity, low point, ball/ground sequence, and clearance margins are typed.
+- Ball-contact metrics distinguish leading-edge clearance, sole-entry margin,
+  delivered bounce, path-projected effective bounce, reference AoA, and the
+  explicitly geometric bounce-utilization angle margin.
 - Common-frame translation, time-origin, and linear timestep-refinement
   invariants are regression tested alongside all hit/miss sequence classes.
 - The Rate adapter passes complete retained poses/twists and only a real impact
   time, so closest approach remains an explicitly labeled miss.
+- A versioned, unit- and frame-explicit JSON payload carries the complete swept
+  envelope, event transform/velocity, sequence, metrics, and limitations to
+  React and PyQt without duplicating physics in presentation code.
 - `docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md` specifies frames, algorithms,
-  metrics, test evidence, rotation-interpolation limits, and the strict boundary
-  between rigid geometric clearance and future turf-contact mechanics.
+  metrics, test evidence, shortest-arc SLERP, and the strict boundary between
+  rigid geometric clearance and future turf-contact mechanics.
 
 ### 2026-08-05 Exact modern-wedge CAD foundation
 
