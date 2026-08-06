@@ -1,4 +1,5 @@
 import { type ImpactScenario } from "../model/impact";
+import { applyRotation, rodrigues } from "../model/rotation";
 
 export type Vec3 = [number, number, number];
 
@@ -7,28 +8,8 @@ const FACE_H = 0.028;
 const BODY_DEPTH = 0.11;
 export const SHAFT_LEN = 0.3;
 
-export function rodrigues(omega: Vec3, dt: number): number[][] {
-  const magnitude = Math.hypot(...omega);
-  const theta = magnitude * dt;
-  if (Math.abs(theta) < 1e-12) return [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
-  const [x, y, z] = omega.map((component) => component / magnitude);
-  const cosine = Math.cos(theta);
-  const sine = Math.sin(theta);
-  const complement = 1 - cosine;
-  return [
-    [complement * x * x + cosine, complement * x * y - sine * z, complement * x * z + sine * y],
-    [complement * x * y + sine * z, complement * y * y + cosine, complement * y * z - sine * x],
-    [complement * x * z - sine * y, complement * y * z + sine * x, complement * z * z + cosine],
-  ];
-}
-
-export function apply(matrix: number[][], vector: Vec3): Vec3 {
-  return [
-    matrix[0][0] * vector[0] + matrix[0][1] * vector[1] + matrix[0][2] * vector[2],
-    matrix[1][0] * vector[0] + matrix[1][1] * vector[1] + matrix[1][2] * vector[2],
-    matrix[2][0] * vector[0] + matrix[2][1] * vector[1] + matrix[2][2] * vector[2],
-  ];
-}
+export { rodrigues };
+export const apply = applyRotation;
 
 export const add = (first: Vec3, second: Vec3): Vec3 => [
   first[0] + second[0], first[1] + second[1], first[2] + second[2],

@@ -13,6 +13,7 @@ import { KineticsSection } from "./KineticsSection";
 import { StrikeCanvas } from "./StrikeCanvas";
 import { SwingPlaybackControls } from "./SwingPlaybackControls";
 import { TargetSection } from "./TargetSection";
+import { WedgeGroundClearancePanel } from "./WedgeGroundClearancePanel";
 import { drawSwingScene } from "./swingSceneDraw";
 import {
   screwEntityOptions,
@@ -172,7 +173,10 @@ export function SimulationDisplay({
               ["Show Ball Flight", showFlight, setShowFlight, TOGGLE_GUIDANCE.flight, "text-amber-300/90"],
             ]} />
           {run && clubSpec && (
-            <ImpactKinematicsPanel run={run} scenario={scenario} club={clubSpec} />
+            <>
+              <ImpactKinematicsPanel run={run} scenario={scenario} club={clubSpec} />
+              <WedgeGroundClearancePanel run={run} scenario={scenario} club={clubSpec} />
+            </>
           )}
           {showScrew && (
             <div className="mb-3 grid gap-3 rounded-lg border border-fuchsia-400/30 bg-fuchsia-950/10 p-3 md:grid-cols-[190px_1fr]">

@@ -95,8 +95,11 @@ audit grid. They are not an analytic minimum over a continuous B-Rep.
 contains explicit units and frame ID, every envelope sample, the complete
 first-contact event and transform, low-point geometry, sequence, ball time,
 metrics, and limitations. Missing contacts and path-dependent metrics remain
-JSON `null`; non-finite placeholders are never emitted. React and PyQt adapters
-must render this payload rather than reimplementing the contact physics.
+JSON `null`; non-finite placeholders are never emitted. PyQt consumes the
+Python snapshot directly. The standalone React application uses a pure
+TypeScript parity port that emits the same format, frame, sequence, event,
+metric, envelope, provenance, and limitation fields; presentation components
+render that model payload and contain no contact calculations.
 
 The PyQt swing view consumes the registered snapshot for wedge selections and
 adds sequence, leading-edge/sole margins, delivered/effective bounce, first
@@ -104,6 +107,10 @@ ground contact, utilization margin, provenance, and model limitations to its
 selectable engineering readout. Non-wedge selections do not show wedge claims.
 The illustrative adapter preserves the selected Rate wedge loft, lie, and mass
 but clearly labels its generic 10-degree mid-bounce sole as unmeasured.
+The React swing view applies the same wedge-only policy and presents an
+accessible contact-order timeline, sequence state, and eight engineering
+metrics. Its retained head orientations use shortest-arc SLERP during the
+swept analysis rather than treating the reference point as an unrotated head.
 
 ## Verification
 
@@ -116,7 +123,11 @@ endpoint/translation interpolation are also pinned. The public facade and Rate
 adapter are contract-tested.
 The versioned payload is checked for completeness, deterministic structure,
 strict finite JSON serialization, and missing-contact preservation.
+The web parity suite pins the representative 30 mph pitching-wedge event time,
+leading-edge clearance, ground-contact lag, effective bounce, reference AoA,
+and 481-sample envelope against Python results. React component tests cover
+the wedge-only rendering boundary, sequence, metrics, provenance, and limits.
 
 The next fidelity layers are continuous sole-patch/B-Rep collision, turf
 contact mechanics with documented material parameters, uncertainty propagation,
-and React/PyQt visualization of the shared payload.
+and direct graphical envelope/contact overlays in both interactive views.
