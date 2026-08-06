@@ -16,6 +16,7 @@ from shared.python.golf_club import (
     WedgePreset,
     analyze_wedge_ground_clearance,
     wedge_contact_candidates,
+    wedge_face_contact_point_m,
     wedge_preset,
 )
 
@@ -96,6 +97,35 @@ def test_handedness_mirrors_heel_and_toe_candidate_datums() -> None:
         left_point = left_by_feature[left_feature]
         assert left_point[:2] == pytest.approx(right_point[:2])
         assert left_point[2] == pytest.approx(-right_point[2])
+
+
+def test_face_contact_point_uses_lofted_high_and_handed_toe_offsets() -> None:
+    right = wedge_preset(WedgePreset.MID_BOUNCE)
+    left = replace(right, handedness=Handedness.LEFT)
+    center = np.asarray(wedge_face_contact_point_m(right, 0.0, 0.0))
+    high = np.asarray(wedge_face_contact_point_m(right, 0.0, 0.005))
+    right_toe = wedge_face_contact_point_m(right, 0.010, 0.0)
+    left_toe = wedge_face_contact_point_m(left, 0.010, 0.0)
+    face_tangent = np.array(
+        [
+            -math.sin(math.radians(right.loft_deg)),
+            math.cos(math.radians(right.loft_deg)),
+            0.0,
+        ]
+    )
+
+    np.testing.assert_allclose(high - center, 0.005 * face_tangent, atol=1e-12)
+    assert right_toe[2] == pytest.approx(0.010)
+    assert left_toe[2] == pytest.approx(-0.010)
+
+
+def test_face_contact_point_rejects_offsets_outside_the_face() -> None:
+    parameters = wedge_preset(WedgePreset.MID_BOUNCE)
+
+    with pytest.raises(ValueError, match="toe_offset_m"):
+        wedge_face_contact_point_m(parameters, parameters.face_length_m, 0.0)
+    with pytest.raises(ValueError, match="high_offset_m"):
+        wedge_face_contact_point_m(parameters, 0.0, parameters.face_height_m)
 
 
 def test_between_frame_crossing_is_refined_to_the_analytic_time() -> None:

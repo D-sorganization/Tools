@@ -33,6 +33,13 @@ candidates are evaluated:
 Candidate names and ordering are deterministic. They represent auditable
 engineering datums, not a continuous collision mesh or pressure patch.
 
+The Rate adapter does not equate its tracked reference point with the wedge
+datum. It registers the requested canonical face contact point to the scenario
+impact lever and shifts the retained linear twist to the new wedge datum with
+`v_new = v_reference + omega x r_shift`. Ball timing and its limitations remain
+those of the selected Rate contact policy; the adapter publishes that policy in
+its snapshot rather than upgrading a point surrogate into face-mesh contact.
+
 ## Swept Event Detection
 
 Every retained simulation interval is subdivided into eight audit intervals.
@@ -90,6 +97,13 @@ first-contact event and transform, low-point geometry, sequence, ball time,
 metrics, and limitations. Missing contacts and path-dependent metrics remain
 JSON `null`; non-finite placeholders are never emitted. React and PyQt adapters
 must render this payload rather than reimplementing the contact physics.
+
+The PyQt swing view consumes the registered snapshot for wedge selections and
+adds sequence, leading-edge/sole margins, delivered/effective bounce, first
+ground contact, utilization margin, provenance, and model limitations to its
+selectable engineering readout. Non-wedge selections do not show wedge claims.
+The illustrative adapter preserves the selected Rate wedge loft, lie, and mass
+but clearly labels its generic 10-degree mid-bounce sole as unmeasured.
 
 ## Verification
 

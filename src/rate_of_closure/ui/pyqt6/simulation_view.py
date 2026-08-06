@@ -24,14 +24,13 @@ from PyQt6.QtWidgets import (
 from rate_of_closure.simulation import (
     KineticsSeries,
     SimulationRun,
-    impact_kinematics_for_run,
 )
 from rate_of_closure.simulation.screw_analysis import (
     JointMotionSeries,
 )
 from rate_of_closure.ui.course import CourseLayout
 from rate_of_closure.ui.impact_kinematics_presentation import (
-    format_impact_kinematics,
+    format_simulation_engineering_readout,
 )
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
@@ -104,11 +103,12 @@ class SimulationView(QWidget):
             "border-radius: 5px; }"
         )
         self._impact_kinematics_readout.setAccessibleName(
-            "Impact Kinematics Engineering Readout"
+            "Impact and Wedge Engineering Readout"
         )
         self._impact_kinematics_readout.setToolTip(
             "Frame-explicit contact-point, shaft-rotation, face-normal, leading-edge, "
-            "and screw-axis metrics. Misses are evaluated only at closest approach."
+            "screw-axis, and wedge ground-clearance metrics. Misses are evaluated "
+            "only at closest approach; ground clearance remains geometry-only."
         )
         layout.addWidget(self._impact_kinematics_readout)
         layout.addWidget(self._canvas)
@@ -239,7 +239,7 @@ class SimulationView(QWidget):
             else "Jump to Impact"
         )
         self._impact_kinematics_readout.setText(
-            format_impact_kinematics(impact_kinematics_for_run(run))
+            format_simulation_engineering_readout(run)
             if run is not None
             else "Run a simulation to inspect impact kinematics."
         )

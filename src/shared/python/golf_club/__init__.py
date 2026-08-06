@@ -64,6 +64,7 @@ from .wedge_geometry import (
     WedgeContactFeature,
     wedge_body_profile_m,
     wedge_contact_candidates,
+    wedge_face_contact_point_m,
 )
 from .wedge_ground_contact import (
     ContactSequence,
@@ -164,6 +165,7 @@ __all__ = [
     "wedge_preset",
     "wedge_body_profile_m",
     "wedge_contact_candidates",
+    "wedge_face_contact_point_m",
     "wedge_ground_clearance_to_json_dict",
     "wedge_parameters_from_json",
     "wedge_parameters_to_json",

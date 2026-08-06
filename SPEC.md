@@ -905,6 +905,10 @@ high_mm)` exposes the face-curvature normal (gradient of the
 - A versioned, unit- and frame-explicit JSON payload carries the complete swept
   envelope, event transform/velocity, sequence, metrics, and limitations to
   React and PyQt without duplicating physics in presentation code.
+- The Rate adapter registers the canonical face point to its scenario lever and
+  shifts the retained twist to the wedge datum; the PyQt engineering readout
+  exposes the resulting sequence and margins only for wedge selections while
+  labeling its generic mid-bounce geometry and inherited contact limitations.
 - `docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md` specifies frames, algorithms,
   metrics, test evidence, shortest-arc SLERP, and the strict boundary between
   rigid geometric clearance and future turf-contact mechanics.

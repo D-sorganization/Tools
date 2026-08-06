@@ -6,7 +6,7 @@ import math
 from dataclasses import dataclass
 from enum import Enum
 
-from ._validation import Vector3, require_vector3
+from ._validation import Vector3, require_finite_float, require_vector3
 from .wedge_parameters import Handedness, WedgeHeadParameters
 
 
@@ -115,9 +115,35 @@ def wedge_contact_candidates(
     return tuple(candidates)
 
 
+def wedge_face_contact_point_m(
+    parameters: WedgeHeadParameters,
+    toe_offset_m: float,
+    high_offset_m: float,
+) -> Vector3:
+    """Map signed face-center offsets to one canonical head-frame point."""
+    if not isinstance(parameters, WedgeHeadParameters):
+        raise TypeError("parameters must be WedgeHeadParameters")
+    toe_offset = require_finite_float(toe_offset_m, "toe_offset_m")
+    high_offset = require_finite_float(high_offset_m, "high_offset_m")
+    if abs(toe_offset) > 0.5 * parameters.face_length_m:
+        raise ValueError("toe_offset_m must remain within the face span")
+    if abs(high_offset) > 0.5 * parameters.face_height_m:
+        raise ValueError("high_offset_m must remain within the face height")
+    loft = math.radians(parameters.loft_deg)
+    distance = 0.5 * parameters.face_height_m + high_offset
+    leading = wedge_body_profile_m(parameters)[0]
+    toe_sign = 1.0 if parameters.handedness is Handedness.RIGHT else -1.0
+    return (
+        leading[0] - distance * math.sin(loft),
+        leading[1] + distance * math.cos(loft),
+        toe_sign * toe_offset,
+    )
+
+
 __all__ = [
     "WedgeContactCandidate",
     "WedgeContactFeature",
     "wedge_body_profile_m",
     "wedge_contact_candidates",
+    "wedge_face_contact_point_m",
 ]

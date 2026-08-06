@@ -87,6 +87,7 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "wedge_parameters_to_json",
         "wedge_body_profile_m",
         "wedge_contact_candidates",
+        "wedge_face_contact_point_m",
         "wedge_ground_clearance_to_json_dict",
         "wedge_preset",
     }
