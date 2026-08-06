@@ -14,6 +14,7 @@ import { DEFAULT_TARGET } from "../model/targets";
 import { Derivation } from "./Derivation";
 import { FlightExplorerPanel } from "./FlightExplorerPanel";
 import { GlossaryPanel } from "./GlossaryPanel";
+import { LaunchMonitorAnalyticsPanel } from "./LaunchMonitorAnalyticsPanel";
 import { PlotsPanel } from "./PlotsPanel";
 import { PuttingPanel } from "./PuttingPanel";
 import { SimulationPanel } from "./SimulationPanel";
@@ -82,6 +83,11 @@ describe("hover-hint completeness", () => {
   it("VariationPanel", () => {
     const { container } = render(<VariationPanel />);
     assertHints(container, "VariationPanel");
+  });
+
+  it("LaunchMonitorAnalyticsPanel", () => {
+    const { container } = render(<LaunchMonitorAnalyticsPanel />);
+    assertHints(container, "LaunchMonitorAnalyticsPanel");
   });
 
   it("PlotsPanel", () => {

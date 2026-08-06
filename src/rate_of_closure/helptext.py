@@ -160,6 +160,28 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "models by re-running with a different model at identical "
         "launch conditions.</p>",
     ),
+    "launch_monitor_analytics": _entry(
+        "Launch Monitor Analytics",
+        "<h3>What this tab does</h3>"
+        "<p>Imports local CSV or JSON launch-monitor records without dropping "
+        "source columns, then runs flexible correlation, multivariable ordinary "
+        "least-squares regression, uncertainty, residual, and grouped analysis. "
+        "The built-in demonstration data lets you inspect the workflow before "
+        "loading a file.</p>"
+        "<h3>Workflow</h3>"
+        "<ol><li>Import data and confirm the retained row and column counts.</li>"
+        "<li>Choose the documented interpretation convention, outcome, any "
+        "number of predictors, missing-data policy, method, and grouping.</li>"
+        "<li>Run the analysis and inspect pair counts, corrected p-values, OLS "
+        "coefficient intervals, fit metrics, residual diagnostics, group results, "
+        "and the SHA-256 dataset fingerprint.</li>"
+        "<li>Export retained records and the complete analysis JSON.</li></ol>"
+        "<h3>Tips and Scientific Boundary</h3>"
+        "<p>Association and predictive fit do not establish causality. Aggregate "
+        "records never enter regression. TrackMan-Comparable and Foresight-"
+        "Comparable describe sourced definition frames; they do not emulate or "
+        "certify vendor devices.</p>",
+    ),
     "variation": _entry(
         "Variation",
         "<h3>What this tab does</h3>"
