@@ -133,7 +133,8 @@ class SimulationConfig:
     @property
     def ball_position_m(self) -> np.ndarray:
         """Return a new ball-center vector for geometry calculations."""
-        return np.asarray(self.ball_setup.ball_center_m, dtype=float)
+        position: np.ndarray = np.asarray(self.ball_setup.ball_center_m, dtype=float)
+        return position
 
 
 def _default_ball_setup(club: ClubSpec) -> BallSetup:

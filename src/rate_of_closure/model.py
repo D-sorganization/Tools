@@ -201,15 +201,16 @@ def impact_frame(lie_angle_deg: float) -> tuple[np.ndarray, np.ndarray]:
 def _omega_rad(scenario: ImpactScenario) -> np.ndarray:
     """Angular velocity vector in rad/s from the two reported components."""
     shaft, normal = impact_frame(scenario.lie_angle_deg)
-    return np.asarray(
+    omega: np.ndarray = np.asarray(
         math.radians(scenario.omega_plane_dps) * normal
         + math.radians(scenario.omega_shaft_dps) * shaft
     )
+    return omega
 
 
 def impact_lever_m(scenario: ImpactScenario) -> np.ndarray:
     """Vector from the reference point to the impact point, metres."""
-    return (
+    lever: np.ndarray = (
         np.array(
             [
                 scenario.com_to_face_mm,
@@ -219,6 +220,7 @@ def impact_lever_m(scenario: ImpactScenario) -> np.ndarray:
         )
         / 1000.0
     )
+    return lever
 
 
 def solve(scenario: ImpactScenario) -> ImpactResult:
@@ -397,4 +399,5 @@ def sweep(scenario: ImpactScenario, field_name: str, values: np.ndarray) -> np.n
         ).path_deviation_deg
         for value in array.ravel()
     ]
-    return np.asarray(flat).reshape(array.shape)
+    result: np.ndarray = np.asarray(flat).reshape(array.shape)
+    return result

@@ -44,6 +44,12 @@ def _unit(vector: np.ndarray, name: str) -> np.ndarray:
     return normalized
 
 
+def _xyz(vector: np.ndarray) -> tuple[float, float, float]:
+    """Convert a validated 3-vector to the shared immutable wire type."""
+    require(vector.shape == (3,), "vector must contain exactly three components")
+    return (float(vector[0]), float(vector[1]), float(vector[2]))
+
+
 def _event_index(run: SimulationRun) -> int:
     return int(np.argmin(np.abs(run.swing_times - run.inspection_time_s)))
 
@@ -130,17 +136,17 @@ def impact_kinematics_for_run(run: SimulationRun) -> ImpactKinematicSnapshot:
     arc_tangent, arc_rate = _arc_tangent_rate(run, index)
     state = WedgeKinematicState(
         frame_id=_APP_FRAME_ID,
-        reference_position_m=reference,
-        reference_velocity_mps=twist[3:],
-        angular_velocity_rad_s=twist[:3],
-        shaft_axis_point_m=shaft_point,
-        shaft_axis_unit=shaft_axis,
-        contact_point_m=reference + lever,
-        face_normal_unit=face_normal,
-        leading_edge_tangent_unit=leading_edge,
-        ground_up_unit=_GROUND_UP,
-        arc_tangent_unit=arc_tangent,
-        arc_tangent_rate_per_s=arc_rate,
+        reference_position_m=_xyz(reference),
+        reference_velocity_mps=_xyz(twist[3:]),
+        angular_velocity_rad_s=_xyz(twist[:3]),
+        shaft_axis_point_m=_xyz(shaft_point),
+        shaft_axis_unit=_xyz(shaft_axis),
+        contact_point_m=_xyz(reference + lever),
+        face_normal_unit=_xyz(face_normal),
+        leading_edge_tangent_unit=_xyz(leading_edge),
+        ground_up_unit=_xyz(_GROUND_UP),
+        arc_tangent_unit=_xyz(arc_tangent),
+        arc_tangent_rate_per_s=_xyz(arc_rate),
     )
     return ImpactKinematicSnapshot(
         event_time_s=run.inspection_time_s,
