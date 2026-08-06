@@ -17,6 +17,7 @@ const INITIAL_CAMERA: PlaybackCamera = {
   zoom: 1,
 };
 const SPEEDS = [0.25, 0.5, 1, 2, 4];
+const PLAYBACK_CANVAS_SIZE = { width: 860, height: 420 } as const;
 
 export function FlightPlayback3D({ points, comparisonPoints = [] }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -173,8 +174,13 @@ export function FlightPlayback3D({ points, comparisonPoints = [] }: Props) {
       </div>
       <canvas
         ref={canvasRef}
-        width={860}
-        height={420}
+        width={PLAYBACK_CANVAS_SIZE.width}
+        height={PLAYBACK_CANVAS_SIZE.height}
+        style={{
+          width: "100%",
+          height: "auto",
+          aspectRatio: `${PLAYBACK_CANVAS_SIZE.width} / ${PLAYBACK_CANVAS_SIZE.height}`,
+        }}
         tabIndex={0}
         aria-label="Interactive 3D ball-flight playback"
         title="Drag to rotate; use the mouse wheel to zoom. App frame: x target, y up, z right; SI metres and seconds."
