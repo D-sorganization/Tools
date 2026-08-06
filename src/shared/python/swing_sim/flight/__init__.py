@@ -26,6 +26,23 @@ from .models import (
 )
 from .pipeline import FlightSimulatorProtocol, simulate
 from .registry import FlightModelRegistry, FlightModelType, compare_models
+from .result_contract import (
+    AvailabilityReason,
+    FlightMetricCatalog,
+    FlightMetricDefinition,
+    FlightMetricId,
+    ValueStatus,
+    flight_metric_catalog,
+)
+from .result_metrics import (
+    FlightMetricInputs,
+    FlightMetricResult,
+    FlightMetricValue,
+    FlightRunManifest,
+    GroundModelResult,
+    MetricTrajectoryPoint,
+    derive_flight_metric_result,
+)
 from .types import (
     DEFAULT_BACKSPIN_AXIS,
     FlightResult,
@@ -36,23 +53,36 @@ from .types import (
 
 __all__ = [
     "DEFAULT_BACKSPIN_AXIS",
+    "AvailabilityReason",
     "BallFlightModel",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
     "FlightModelRegistry",
     "FlightModelType",
+    "FlightMetricCatalog",
+    "FlightMetricDefinition",
+    "FlightMetricId",
+    "FlightMetricInputs",
+    "FlightMetricResult",
+    "FlightMetricValue",
     "FlightResult",
+    "FlightRunManifest",
     "FlightSimulatorProtocol",
+    "GroundModelResult",
     "LaunchConditions",
     "MacDonaldHanzelyModel",
+    "MetricTrajectoryPoint",
     "TrajectoryPoint",
     "WaterlooPennerModel",
     "compare_models",
     "compute_flight_metrics",
     "derive_launch_conditions",
+    "derive_flight_metric_result",
+    "flight_metric_catalog",
     "from_flight_frame",
     "is_rust_available",
     "simulate",
     "simulate_trajectory_rust",
     "to_flight_frame",
+    "ValueStatus",
 ]
