@@ -49,3 +49,6 @@
 ## 2024-05-31 - Tab Roles vs aria-pressed
 **Learning:** When implementing custom tab components in React, use `role="tab"` paired strictly with `aria-selected` (not `aria-pressed`, which is intended for toggle buttons) and ensure `aria-controls` points to a valid `role="tabpanel"` container whose `aria-labelledby` points back to the tab.
 **Action:** When adding accessible properties to custom tabs, replace `aria-pressed` with `aria-selected`, ensure a `role="tablist"` wrapper is present, and correctly cross-reference `aria-controls` with the tab panel IDs.
+## 2024-08-06 - Native Enter Key Submission
+**Learning:** React data-entry panels or calculators often rely solely on `onClick` handlers for their submit buttons, breaking native keyboard accessibility (submitting with the 'Enter' key).
+**Action:** Wrap the inputs and submit button in a native `<form onSubmit={...}>` element and ensure the submit button uses `type="submit"` rather than relying solely on an `onClick` handler.
