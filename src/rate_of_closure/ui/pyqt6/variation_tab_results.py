@@ -72,7 +72,11 @@ def build_result_tabs() -> tuple[
     matrix = DistributionMatrixView()
     arcs = ArcOverlayView()
     scatter.selectionChanged.connect(arcs.set_selected_trial)
+    scatter.selectionChanged.connect(matrix.set_selected_trial)
     arcs.selectionChanged.connect(scatter.set_selected_trial)
+    arcs.selectionChanged.connect(matrix.set_selected_trial)
+    matrix.selectionChanged.connect(scatter.set_selected_trial)
+    matrix.selectionChanged.connect(arcs.set_selected_trial)
     for widget, label in (
         (summary, "Summary"),
         (sensitivity, "Sensitivity"),

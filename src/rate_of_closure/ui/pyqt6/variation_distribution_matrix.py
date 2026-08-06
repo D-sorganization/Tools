@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 from matplotlib.figure import Figure
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QAbstractItemView,
     QComboBox,
@@ -27,15 +30,21 @@ from rate_of_closure.variation.plot_data import (
     ScalarPlotVariable,
     scalar_plot_variables,
 )
+from rate_of_closure.variation.simulation_types import TrialEvaluationStatus
 from shared.python.swing_sim.variation import VariationDataset
 
 
 class DistributionMatrixView(QWidget):
     """Four-variable matrix: histograms on diagonal, paired scatter elsewhere."""
 
+    selectionChanged = pyqtSignal(object)
+
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
+        self._plot_dataset: EnsemblePlotDataset | None = None
         self._variation: VariationDataset | None = None
+        self._outcomes: tuple[str, ...] = ()
+        self._selected_trial: int | None = None
         self._variables: tuple[ScalarPlotVariable, ...] = ()
         self._selectors = [QComboBox() for _ in range(4)]
         form = QFormLayout()
@@ -63,11 +72,11 @@ class DistributionMatrixView(QWidget):
         self._exports = VariationPlotExportControls(
             lambda: self._figure,
             lambda: distribution_matrix_plot_definition(
-                self._variation, self._selected_keys()
+                self._plot_dataset, self._variation, self._selected_keys()
             ),
             "variation-distribution-matrix",
             csv_data=lambda: distribution_matrix_csv(
-                self._variation, self._selected_keys()
+                self._variation, self._selected_keys(), self._outcomes
             ),
         )
         self._exports.setEnabled(False)
@@ -77,13 +86,21 @@ class DistributionMatrixView(QWidget):
         layout.addWidget(self._exports)
         layout.addWidget(self._canvas, stretch=1)
         layout.addWidget(self._table)
+        self._table.cellClicked.connect(self._table_selected)
+        self._canvas.mpl_connect("pick_event", self._point_picked)
 
     def set_plot_dataset(self, dataset: EnsemblePlotDataset) -> None:
         """Populate from the universal trace-capable facade."""
+        self._plot_dataset = dataset
+        self._outcomes = tuple(cohort.value for cohort in dataset.cohorts)
         self._set_dataset(dataset.result.variation, dataset.variables)
 
     def set_variation_dataset(self, dataset: VariationDataset) -> None:
         """Populate from a scalar-only variation result."""
+        self._plot_dataset = None
+        self._outcomes = tuple(
+            "evaluated" if success else "failure" for success in dataset.success
+        )
         self._set_dataset(dataset, scalar_plot_variables(dataset))
 
     def _set_dataset(
@@ -124,14 +141,38 @@ class DistributionMatrixView(QWidget):
                     missing_total += int(np.count_nonzero(~finite))
                 else:
                     finite = np.isfinite(x_values) & np.isfinite(y_values)
-                    axis.scatter(
-                        x_values[finite],
-                        y_values[finite],
-                        s=8,
-                        alpha=0.55,
-                        color="#2f8bd6",
-                        edgecolors="none",
-                    )
+                    trial_indices = np.flatnonzero(finite)
+                    for outcome in dict.fromkeys(self._outcomes):
+                        cohort = np.array(
+                            [
+                                self._outcomes[index] == outcome
+                                for index in trial_indices
+                            ]
+                        )
+                        if not np.any(cohort):
+                            continue
+                        collection = axis.scatter(
+                            x_values[trial_indices[cohort]],
+                            y_values[trial_indices[cohort]],
+                            s=8,
+                            alpha=0.55,
+                            color=_OUTCOME_COLORS.get(outcome, "#2f8bd6"),
+                            edgecolors="none",
+                            picker=5,
+                        )
+                        collection._variation_trial_indices = trial_indices[cohort]
+                    if (
+                        self._selected_trial is not None
+                        and finite[self._selected_trial]
+                    ):
+                        axis.scatter(
+                            [x_values[self._selected_trial]],
+                            [y_values[self._selected_trial]],
+                            s=36,
+                            facecolors="none",
+                            edgecolors="#f2f4f8",
+                            linewidths=1.3,
+                        )
                 axis.tick_params(labelsize=6)
                 if row == 3:
                     axis.set_xlabel(axis_label(selected[column]), fontsize=7)
@@ -149,6 +190,30 @@ class DistributionMatrixView(QWidget):
         """Return the stable variable keys currently defining the matrix."""
         return tuple(str(selector.currentData()) for selector in self._selectors)
 
+    def set_selected_trial(self, trial_index: int | None) -> None:
+        """Apply linked trial selection without emitting a signal loop."""
+        self._selected_trial = trial_index
+        if trial_index is None:
+            self._table.clearSelection()
+        else:
+            self._table.selectRow(trial_index)
+        self._redraw()
+
+    def _table_selected(self, row: int, _column: int) -> None:
+        self._selected_trial = row
+        self.selectionChanged.emit(row)
+        self._redraw()
+
+    def _point_picked(self, event: Any) -> None:
+        indices = getattr(event.artist, "_variation_trial_indices", None)
+        if indices is None or not event.ind:
+            return
+        trial_index = int(indices[event.ind[0]])
+        self._selected_trial = trial_index
+        self._table.selectRow(trial_index)
+        self.selectionChanged.emit(trial_index)
+        self._redraw()
+
     def _populate_accessible_table(
         self,
         selected: list[ScalarPlotVariable],
@@ -163,12 +228,12 @@ class DistributionMatrixView(QWidget):
         self._table.setHorizontalHeaderLabels(
             ["Trial", "Status", *(axis_label(variable) for variable in selected)]
         )
-        for trial_index, success in enumerate(variation.success):
+        for trial_index, _success in enumerate(variation.success):
             self._table.setItem(trial_index, 0, QTableWidgetItem(str(trial_index + 1)))
             self._table.setItem(
                 trial_index,
                 1,
-                QTableWidgetItem("Evaluated" if success else "Failure"),
+                QTableWidgetItem(self._outcomes[trial_index].replace("_", " ").title()),
             )
             for column_index, column in enumerate(values, start=2):
                 value = column[trial_index]
@@ -197,3 +262,12 @@ def _default_indices(
 
 
 __all__ = ["DistributionMatrixView"]
+
+
+_OUTCOME_COLORS = {
+    TrialEvaluationStatus.EVALUATED_HIT.value: "#2f8bd6",
+    TrialEvaluationStatus.EVALUATED_NO_IMPACT.value: "#eb9f3c",
+    TrialEvaluationStatus.NUMERICAL_FAILURE.value: "#d35f5f",
+    "evaluated": "#2f8bd6",
+    "failure": "#d35f5f",
+}

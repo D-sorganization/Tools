@@ -7,6 +7,7 @@ import {
   buildScalarScatter,
   distributionMatrixToCsv,
   distributionMatrixToSvg,
+  matrixCohortColor,
   scalarValues,
 } from "../model/variationPlotData";
 import {
@@ -15,12 +16,23 @@ import {
   variationResultFingerprint,
 } from "../model/variationPlotDefinition";
 import { BUTTON_CLASS, downloadText, INPUT_CLASS } from "./variationUi";
+import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 
-interface Props { dataset: VariationDatasetTs }
+interface Props {
+  dataset: VariationDatasetTs;
+  ensemble?: SwingVariationResultTs | null;
+  selectedTrialIndex: number | null;
+  onSelectedTrialChange: (trialIndex: number | null) => void;
+}
 const SIZE = 150;
 const PAD = 14;
 
-export function VariationDistributionMatrix({ dataset }: Props): JSX.Element {
+export function VariationDistributionMatrix({
+  dataset,
+  ensemble = null,
+  selectedTrialIndex,
+  onSelectedTrialChange,
+}: Props): JSX.Element {
   const variables = useMemo(() => buildScalarPlotVariables(dataset), [dataset]);
   const defaults = useMemo(() => {
     const input = variables.find((item) => item.kind === "input");
@@ -33,7 +45,9 @@ export function VariationDistributionMatrix({ dataset }: Props): JSX.Element {
   const selected = keys.map((key) => variables.find((item) => item.key === key) ?? variables[0]);
   const selectedKeys = selected.map((item) => item.key);
   const selectedColumns = selected.map((variable) => scalarValues(dataset, variable));
-  const resultId = variationResultFingerprint(dataset);
+  const result = ensemble ?? dataset;
+  const resultId = variationResultFingerprint(result);
+  const outcomes = ensemble?.runs.map((run) => run.status);
   return (
     <div className="space-y-3">
       <div className="grid gap-2 md:grid-cols-4">
@@ -49,18 +63,18 @@ export function VariationDistributionMatrix({ dataset }: Props): JSX.Element {
       <div className="flex flex-wrap gap-2">
         <button type="button" className={BUTTON_CLASS} onClick={() => downloadText(
           `${resultId}-distribution-matrix.svg`,
-          distributionMatrixToSvg(dataset, selectedKeys),
+          distributionMatrixToSvg(dataset, selectedKeys, outcomes),
           "image/svg+xml;charset=utf-8",
         )}>Matrix SVG</button>
         <button type="button" className={BUTTON_CLASS} onClick={() => downloadText(
           `${resultId}-distribution-matrix.csv`,
-          distributionMatrixToCsv(dataset, selectedKeys),
+          distributionMatrixToCsv(dataset, selectedKeys, outcomes),
           "text/csv;charset=utf-8",
         )}>Matrix Selected CSV</button>
         <button type="button" className={BUTTON_CLASS} onClick={() => downloadText(
           `${resultId}-distribution-matrix.plot.json`,
-          variationPlotDefinitionToJson(makeVariationPlotDefinition(dataset, {
-            plotType: "distribution_matrix", coordinateFrame: null,
+          variationPlotDefinitionToJson(makeVariationPlotDefinition(result, {
+            plotType: "distribution_matrix", coordinateFrame: ensemble?.coordinateFrame ?? null,
             xVariableKey: null, yVariableKey: null, pointId: null,
             positionUnit: null, alignmentBasis: null, quietThresholdM: null,
             selectedTrialIndex: null, cameraYawDeg: null, cameraPitchDeg: null,
@@ -74,7 +88,7 @@ export function VariationDistributionMatrix({ dataset }: Props): JSX.Element {
       <div className="overflow-auto">
         <div className="grid min-w-max" style={{ gridTemplateColumns: `repeat(${selected.length}, ${SIZE}px)` }} role="group" aria-label="Scatter matrix with marginal histograms">
           {selected.flatMap((row, rowIndex) => selected.map((column, columnIndex) => (
-            <MatrixCell key={`${row.key}:${column.key}`} dataset={dataset} xKey={column.key} yKey={row.key} diagonal={rowIndex === columnIndex} />
+            <MatrixCell key={`${row.key}:${column.key}`} dataset={dataset} xKey={column.key} yKey={row.key} diagonal={rowIndex === columnIndex} outcomes={outcomes} selectedTrialIndex={selectedTrialIndex} onSelectedTrialChange={onSelectedTrialChange} />
           )))}
         </div>
       </div>
@@ -83,9 +97,9 @@ export function VariationDistributionMatrix({ dataset }: Props): JSX.Element {
         <summary className="cursor-pointer">Accessible Selected Matrix Data</summary>
         <div className="mt-2 overflow-auto">
           <table className="w-full text-left">
-            <thead><tr><th>Trial</th><th>Status</th>{selected.map((variable) => <th key={variable.key}>{variable.label} [{variable.unit || "unitless"}]</th>)}</tr></thead>
+            <thead><tr><th>Trial</th><th>Outcome</th>{selected.map((variable) => <th key={variable.key}>{variable.label} [{variable.unit || "unitless"}]</th>)}</tr></thead>
             <tbody>{dataset.success.map((success, trialIndex) => <tr key={trialIndex}>
-              <td>{trialIndex + 1}</td><td>{success ? "Evaluated" : "Failure"}</td>
+              <td><button type="button" className="underline" aria-label={`Select matrix trial ${trialIndex + 1}`} onClick={() => onSelectedTrialChange(trialIndex)}>{trialIndex + 1}</button></td><td>{outcomes?.[trialIndex]?.split("_").join(" ") ?? (success ? "Evaluated" : "Failure")}</td>
               {selectedColumns.map((column, index) => <td key={selected[index].key}>{column[trialIndex] ?? "Unavailable"}</td>)}
             </tr>)}</tbody>
           </table>
@@ -95,7 +109,7 @@ export function VariationDistributionMatrix({ dataset }: Props): JSX.Element {
   );
 }
 
-function MatrixCell({ dataset, xKey, yKey, diagonal }: { dataset: VariationDatasetTs; xKey: string; yKey: string; diagonal: boolean }): JSX.Element {
+function MatrixCell({ dataset, xKey, yKey, diagonal, outcomes, selectedTrialIndex, onSelectedTrialChange }: { dataset: VariationDatasetTs; xKey: string; yKey: string; diagonal: boolean; outcomes?: string[]; selectedTrialIndex: number | null; onSelectedTrialChange: (trialIndex: number | null) => void }): JSX.Element {
   if (diagonal) {
     const marginal = buildScalarMarginal(dataset, xKey);
     const maximum = Math.max(...marginal.counts, 1);
@@ -108,6 +122,6 @@ function MatrixCell({ dataset, xKey, yKey, diagonal }: { dataset: VariationDatas
   const ys = scatter.points.map((point) => point.y);
   const scale = (value: number, values: number[]) => PAD + (value - Math.min(...values)) / Math.max(Math.max(...values) - Math.min(...values), 1e-12) * (SIZE - 2 * PAD);
   return <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={`${scatter.xVariable.label} versus ${scatter.yVariable.label}; ${scatter.points.length} paired trials`} className="border border-slate-800 bg-slate-950/60">
-    {scatter.points.map((point) => <circle key={point.trialIndex} cx={scale(point.x, xs)} cy={SIZE - scale(point.y, ys)} r="2.3" fill={point.cohort === "evaluated" ? "#38bdf8" : "#ef6464"} opacity="0.65"><title>{`Trial ${point.trialIndex + 1}`}</title></circle>)}
+    {scatter.points.map((point) => <circle key={point.trialIndex} cx={scale(point.x, xs)} cy={SIZE - scale(point.y, ys)} r={point.trialIndex === selectedTrialIndex ? "4" : "2.3"} fill={matrixCohortColor(outcomes?.[point.trialIndex] ?? point.cohort)} stroke={point.trialIndex === selectedTrialIndex ? "#f8fafc" : "none"} opacity="0.65" role="button" tabIndex={0} aria-label={`Select trial ${point.trialIndex + 1} in matrix`} onClick={() => onSelectedTrialChange(point.trialIndex)} onKeyDown={(event) => { if (event.key === "Enter" || event.key === " ") onSelectedTrialChange(point.trialIndex); }}><title>{`Trial ${point.trialIndex + 1}`}</title></circle>)}
   </svg>;
 }

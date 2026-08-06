@@ -77,10 +77,10 @@ describe("variation plot data", () => {
     ]);
 
     expect(csv.split("\n")).toEqual([
-      `trial_index,success,input:${SPEED},output:carry_m`,
-      "0,true,44,100",
-      "1,false,45,",
-      "2,true,46,110",
+      `trial_index,outcome,input:${SPEED},output:carry_m`,
+      "0,evaluated,44,100",
+      "1,failure,45,",
+      "2,evaluated,46,110",
     ]);
     expect(distributionMatrixToSvg(dataset(), [
       `input:${SPEED}`,

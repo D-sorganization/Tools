@@ -115,25 +115,37 @@ def test_arc_overlay_draws_every_valid_trial_and_reference(qtbot, tmp_path) -> N
     assert filtered_definition["perturbation_band"] == "Lower Third"
 
 
-def test_trial_selection_links_scatter_and_arc_views(qtbot) -> None:  # type: ignore[no-untyped-def]
+def test_trial_selection_links_scatter_matrix_and_arc_views(qtbot) -> None:  # type: ignore[no-untyped-def]
     plot_dataset = _plot_dataset()
     scatter = DatasetScatterView()
     arcs = ArcOverlayView()
+    matrix = DistributionMatrixView()
     qtbot.addWidget(scatter)
     qtbot.addWidget(arcs)
+    qtbot.addWidget(matrix)
     scatter.selectionChanged.connect(arcs.set_selected_trial)
+    scatter.selectionChanged.connect(matrix.set_selected_trial)
     arcs.selectionChanged.connect(scatter.set_selected_trial)
+    arcs.selectionChanged.connect(matrix.set_selected_trial)
+    matrix.selectionChanged.connect(scatter.set_selected_trial)
+    matrix.selectionChanged.connect(arcs.set_selected_trial)
     scatter.set_plot_dataset(plot_dataset)
     arcs.set_plot_dataset(plot_dataset)
+    matrix.set_plot_dataset(plot_dataset)
 
     scatter._trial_combo.setCurrentIndex(scatter._trial_combo.findData(1))
 
     assert arcs._trial_combo.currentData() == 1
+    assert matrix._table.currentRow() == 1
     assert max(line.get_linewidth() for line in arcs._canvas.axes.lines) >= 2.8
     assert any(
         collection.get_linewidths().max() >= 1.8
         for collection in scatter._canvas.axes.collections
     )
+
+    matrix._table.cellClicked.emit(0, 0)
+    assert scatter._trial_combo.currentData() == 0
+    assert arcs._trial_combo.currentData() == 0
 
 
 def test_distribution_matrix_draws_and_exports_selected_raw_rows(
@@ -156,7 +168,8 @@ def test_distribution_matrix_draws_and_exports_selected_raw_rows(
     view._exports.write_definition(definition_path)
     rows = csv_path.read_text(encoding="utf-8").splitlines()
     assert len(rows) == 4
-    assert rows[0].startswith("trial_index,success,")
+    assert rows[0].startswith("trial_index,outcome,")
+    assert "evaluated_hit" in rows[1]
     definition = json.loads(definition_path.read_text(encoding="utf-8"))
     assert definition["plot_type"] == "distribution_matrix"
     assert len(definition["variable_keys"]) == 4

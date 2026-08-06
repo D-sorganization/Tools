@@ -234,6 +234,10 @@ describe("VariationPanel analysis execution policy", () => {
     expect(screen.getByRole("button", { name: "Arc Plot Definition JSON" })).toBeEnabled();
     expect(screen.getByText(/1\/2 trials shown/i)).toBeInTheDocument();
     expect(screen.getByText(/quiet samples .*common simulation time/i)).toBeInTheDocument();
+    await user.click(screen.getByText("Accessible Selected Matrix Data"));
+    await user.click(screen.getByRole("button", { name: "Select matrix trial 1" }));
+    expect(screen.getByRole("combobox", { name: "Highlighted trial" })).toHaveValue("0");
+    expect(screen.getByRole("combobox", { name: "Arc highlighted trial" })).toHaveValue("0");
     await user.selectOptions(screen.getByRole("combobox", { name: "Highlighted trial" }), "0");
     expect(screen.getByRole("combobox", { name: "Arc highlighted trial" })).toHaveValue("0");
     expect(screen.getByRole("button", { name: "Swing Traces CSV" })).toBeEnabled();

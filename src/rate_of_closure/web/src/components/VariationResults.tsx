@@ -39,7 +39,12 @@ export function VariationResults({
       {dataset && (
         <div className={PANEL_CLASS}>
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">Scatter Matrix and Marginal Distributions</h2>
-          <VariationDistributionMatrix dataset={dataset} />
+          <VariationDistributionMatrix
+            dataset={dataset}
+            ensemble={ensemble}
+            selectedTrialIndex={selectedTrialIndex}
+            onSelectedTrialChange={setSelectedTrialIndex}
+          />
         </div>
       )}
 

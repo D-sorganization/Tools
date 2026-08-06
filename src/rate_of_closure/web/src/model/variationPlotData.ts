@@ -224,19 +224,23 @@ export function buildScalarScatter(
 export function distributionMatrixToCsv(
   dataset: VariationDatasetTs,
   variableKeys: string[],
+  outcomes?: string[],
 ): string {
   const selected = selectedMatrixVariables(dataset, variableKeys);
   const columns = selected.map((variable) => scalarValues(dataset, variable));
+  if (outcomes !== undefined && outcomes.length !== dataset.success.length) {
+    throw new Error("matrix outcomes must align with dataset trials");
+  }
   const rows = dataset.success.map((success, trialIndex) => [
     String(trialIndex),
-    String(success),
+    outcomes?.[trialIndex] ?? (success ? "evaluated" : "failure"),
     ...columns.map((column) => {
       const value = column[trialIndex];
       return value === null || !Number.isFinite(value) ? "" : String(value);
     }),
   ]);
   return [
-    ["trial_index", "success", ...variableKeys],
+    ["trial_index", "outcome", ...variableKeys],
     ...rows,
   ].map((row) => row.map(csvCell).join(",")).join("\n");
 }
@@ -244,6 +248,7 @@ export function distributionMatrixToCsv(
 export function distributionMatrixToSvg(
   dataset: VariationDatasetTs,
   variableKeys: string[],
+  outcomes?: string[],
 ): string {
   const selected = selectedMatrixVariables(dataset, variableKeys);
   const size = 150;
@@ -269,7 +274,7 @@ export function distributionMatrixToSvg(
         const xs = points.map((point) => point.x);
         const ys = points.map((point) => point.y);
         marks = points.map((point) =>
-          `<circle cx="${matrixScale(point.x, xs, pad, size)}" cy="${size - matrixScale(point.y, ys, pad, size)}" r="2.3" fill="${point.cohort === "evaluated" ? "#38bdf8" : "#ef6464"}" opacity="0.65"><title>Trial ${point.trialIndex + 1}</title></circle>`,
+          `<circle cx="${matrixScale(point.x, xs, pad, size)}" cy="${size - matrixScale(point.y, ys, pad, size)}" r="2.3" fill="${matrixCohortColor(outcomes?.[point.trialIndex] ?? point.cohort)}" opacity="0.65"><title>Trial ${point.trialIndex + 1}</title></circle>`,
         ).join("");
       }
       const label = rowIndex === columnIndex
@@ -312,6 +317,14 @@ const xmlEscape = (value: string): string => value
   .split("&").join("&amp;")
   .split("<").join("&lt;")
   .split(">").join("&gt;");
+
+export const matrixCohortColor = (cohort: string): string => ({
+  evaluated_hit: "#38bdf8",
+  evaluated_no_impact: "#f59e0b",
+  numerical_failure: "#ef6464",
+  evaluated: "#38bdf8",
+  failure: "#ef6464",
+}[cohort] ?? "#38bdf8");
 
 const csvCell = (value: string): string =>
   /[",\r\n]/.test(value) ? `"${value.split('"').join('""')}"` : value;

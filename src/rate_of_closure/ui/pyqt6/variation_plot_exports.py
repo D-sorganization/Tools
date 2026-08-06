@@ -24,6 +24,7 @@ from shared.python.swing_sim.variation import VariationDataset
 
 
 def distribution_matrix_plot_definition(
+    dataset: EnsemblePlotDataset | None,
     variation: VariationDataset | None,
     variable_keys: tuple[str, ...],
 ) -> PlotDefinition:
@@ -31,8 +32,13 @@ def distribution_matrix_plot_definition(
     if variation is None:
         raise RuntimeError("no variation result is loaded")
     return PlotDefinition(
-        result_id=f"variation-{variation.plan.seed}-{variation.plan.n_runs}",
+        result_id=(
+            dataset.result_id
+            if dataset is not None
+            else f"variation-{variation.plan.seed}-{variation.plan.n_runs}"
+        ),
         plot_type="distribution_matrix",
+        coordinate_frame=dataset.coordinate_frame if dataset is not None else None,
         variable_keys=variable_keys,
     )
 
@@ -40,6 +46,7 @@ def distribution_matrix_plot_definition(
 def distribution_matrix_csv(
     variation: VariationDataset | None,
     variable_keys: tuple[str, ...],
+    outcomes: tuple[str, ...] | None = None,
 ) -> str:
     """Serialize every trial row for the selected matrix variables."""
     if variation is None:
@@ -48,13 +55,18 @@ def distribution_matrix_csv(
     selected = [variables[key] for key in variable_keys]
     output = StringIO(newline="")
     writer = csv.writer(output, lineterminator="\n")
-    writer.writerow(("trial_index", "success", *variable_keys))
+    cohort_labels = outcomes or tuple(
+        "evaluated" if success else "failure" for success in variation.success
+    )
+    if len(cohort_labels) != variation.plan.n_runs:
+        raise ValueError("outcomes must align with variation trials")
+    writer.writerow(("trial_index", "outcome", *variable_keys))
     columns = [dataset_values(variation, variable) for variable in selected]
-    for trial_index, success in enumerate(variation.success):
+    for trial_index, outcome in enumerate(cohort_labels):
         writer.writerow(
             (
                 trial_index,
-                str(bool(success)).lower(),
+                outcome,
                 *(
                     "" if not np.isfinite(column[trial_index]) else column[trial_index]
                     for column in columns
