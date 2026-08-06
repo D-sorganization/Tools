@@ -15,6 +15,7 @@ import { ClubCanvas } from "./components/ClubCanvas";
 import { DecimalInput } from "./components/DecimalInput";
 import { FieldInfo } from "./components/FieldInfo";
 import { FlightExplorerPanel } from "./components/FlightExplorerPanel";
+import { LaunchMonitorAnalyticsPanel } from "./components/LaunchMonitorAnalyticsPanel";
 import { PlotsPanel } from "./components/PlotsPanel";
 import { PuttingPanel } from "./components/PuttingPanel";
 import { PrimaryViewTabs } from "./components/PrimaryViewTabs";
@@ -307,6 +308,8 @@ export default function App() {
         <VariationPanel target={target} distanceUnit={units.distance} />
       ) : tab === "flight" ? (
         <FlightExplorerPanel distanceUnit={units.distance} />
+      ) : tab === "launch-monitor-analytics" ? (
+        <LaunchMonitorAnalyticsPanel />
       ) : tab === "plots" ? (
         // Static loft mirrors the desktop default driver (same note as
         // the Simulation tab; the full club picker joins with P7 WASM).

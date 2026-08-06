@@ -47,6 +47,7 @@ describe("primary view preferences", () => {
     const loaded = loadPrimaryViewState(storage);
     expect(loaded.order.slice(0, 2)).toEqual(["plots", "simulation"]);
     expect(new Set(loaded.order)).toEqual(new Set(PRIMARY_VIEW_IDS));
+    expect(loaded.order).toContain("launch-monitor-analytics");
   });
 
   it("round-trips a valid reordered state", () => {
