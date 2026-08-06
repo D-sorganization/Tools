@@ -14,7 +14,7 @@ SOURCE_LABELS: dict[str, str] = {
 LAUNCH_ROWS: tuple[tuple[str, str, str], ...] = (
     ("ball_speed_mph", "Ball Speed", " mph"),
     ("launch_angle_deg", "Launch Angle", "°"),
-    ("launch_azimuth_deg", "Launch Azimuth", "°"),
+    ("launch_azimuth_deg", "Launch Direction", "°"),
     ("spin_rpm", "Total Spin", " rpm"),
     ("carry_m", "Carry Distance", " m"),
     ("max_height_m", "Apex Height", " m"),

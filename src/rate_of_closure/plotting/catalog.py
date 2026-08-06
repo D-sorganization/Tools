@@ -391,7 +391,7 @@ def _entries() -> list[VariableSpec]:
         ),
         (
             "launch_azimuth_deg",
-            "Launch Azimuth",
+            "Launch Direction",
             "deg",
             lambda r: optional_values.launch_scalar(r, "launch_azimuth_deg"),
         ),

@@ -110,7 +110,7 @@ GOAL_SPECS: tuple[GoalSpec, ...] = (
     ),
     GoalSpec(
         "launch_azimuth_deg",
-        "Launch Azimuth",
+        "Launch Direction",
         "°",
         0.0,
         (-45.0, 45.0),

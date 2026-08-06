@@ -285,7 +285,7 @@ def _register_builtins() -> None:
         ),
         (
             f"{CATEGORY_LAUNCH}.launch_azimuth_deg",
-            "Launch Azimuth",
+            "Launch Direction",
             "deg",
             0.0,
             0.8,

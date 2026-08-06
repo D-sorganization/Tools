@@ -45,7 +45,7 @@ OUTPUT_LABELS: Mapping[str, str] = MappingProxyType(
         "spin_axis_tilt_deg": "Spin-Axis Tilt",
         "ball_speed_mph": "Ball Speed",
         "launch_angle_deg": "Launch Angle",
-        "launch_azimuth_deg": "Launch Azimuth",
+        "launch_azimuth_deg": "Launch Direction",
         "spin_rpm": "Spin Rate",
         "carry_m": "Carry",
         "lateral_m": "Lateral Landing Position",

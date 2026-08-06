@@ -160,7 +160,7 @@ ENTRIES: dict[str, GlossaryEntry] = {
         "Face Angle",
         "The horizontal direction of the delivered face normal relative "
         "to the target line: positive = open (pointing right of target). "
-        "The dominant contributor to launch azimuth (launch-monitor "
+        "The dominant contributor to launch direction (launch-monitor "
         "conventions; AffineDrift 02-parameters).",
     ),
     "flight_time": _entry(
@@ -234,7 +234,7 @@ ENTRIES: dict[str, GlossaryEntry] = {
     "lateral_offset": _entry(
         "Lateral Landing Offset",
         "The sideways distance from the target line at landing (+ = "
-        "right of target): the integrated effect of launch azimuth plus "
+        "right of target): the integrated effect of launch direction plus "
         "the curvature from spin-axis tilt — the way launch monitors "
         "report carry offline (swing_sim.flight metrics).",
     ),
@@ -246,7 +246,7 @@ ENTRIES: dict[str, GlossaryEntry] = {
         "(launch-monitor conventions).",
     ),
     "launch_azimuth": _entry(
-        "Launch Azimuth",
+        "Launch Direction",
         "The horizontal direction of the ball's initial velocity relative "
         "to the target line (+ = right). Dominated by the delivered face "
         "angle with a smaller club-path contribution (D-plane "

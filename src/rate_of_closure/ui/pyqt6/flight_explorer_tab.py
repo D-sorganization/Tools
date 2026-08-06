@@ -1,7 +1,7 @@
 """Standalone Ball-Flight Explorer tab — launch entry to flight, no swing.
 
 Epic #4120 (V2): type launch conditions directly (ball speed with a
-unit drop-down, launch angle, azimuth, spin, spin-axis tilt) OR club
+unit drop-down, launch angle, launch direction, spin, spin-axis tilt) OR club
 delivery numbers run through ``swing_sim.impact.delivery`` and the
 rigid-body impact model, pick any of the 7 literature flight models,
 and render the result in the dedicated flight-scale
@@ -27,13 +27,16 @@ from PyQt6.QtWidgets import (
     QFrame,
     QGroupBox,
     QHBoxLayout,
+    QLabel,
     QMessageBox,
     QPushButton,
     QScrollArea,
     QSplitter,
     QStackedWidget,
     QTextBrowser,
+    QToolButton,
     QVBoxLayout,
+    QWhatsThis,
     QWidget,
 )
 
@@ -48,6 +51,11 @@ from rate_of_closure.simulation import (
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
+from shared.python.swing_sim.flight import (
+    LAUNCH_DIRECTION_DEFINITIONS,
+    LaunchDirectionConvention,
+    launch_direction_sign_labels,
+)
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.impact import DeliveryParameters
 
@@ -80,7 +88,16 @@ _DISTANCE_ROWS: frozenset[str] = frozenset({"carry_m", "lateral_m"})
 #: decimals, suffix).
 _DIRECT_FIELDS: tuple[tuple[str, str, str, float, float, float, int, str], ...] = (
     ("launch_angle_deg", "Launch Angle", "fx_launch_angle", -89.0, 89.0, 10.9, 1, "°"),
-    ("azimuth_deg", "Launch Azimuth", "fx_azimuth", -45.0, 45.0, 0.0, 1, "°"),
+    (
+        "launch_direction_deg",
+        "Launch Direction",
+        "fx_launch_direction",
+        -45.0,
+        45.0,
+        0.0,
+        1,
+        "°",
+    ),
     ("spin_rpm", "Total Spin", "fx_spin_rpm", 0.0, 15000.0, 2686.0, 0, " rpm"),
     (
         "spin_axis_tilt_deg",
@@ -137,6 +154,29 @@ def _make_spin(
     spin.setToolTip(tooltip)
     spin.setMinimumWidth(84)  # stays readable at small windows
     return spin
+
+
+def _field_label(label: str, attr: str, guidance: str) -> QWidget:
+    """Return a visibly clickable field label with non-modal guidance."""
+    container = QWidget()
+    row = QHBoxLayout(container)
+    row.setContentsMargins(0, 0, 0, 0)
+    row.setSpacing(4)
+    row.addWidget(QLabel(label))
+    button = QToolButton()
+    button.setText("Details")
+    button.setAutoRaise(True)
+    button.setObjectName(f"{attr.removesuffix('_deg')}_info")
+    button.setAccessibleName(f"Explain {label}")
+    button.setAccessibleDescription(guidance)
+    button.setToolTip(guidance)
+    button.clicked.connect(
+        lambda _checked=False: QWhatsThis.showText(
+            button.mapToGlobal(button.rect().bottomLeft()), guidance, button
+        )
+    )
+    row.addWidget(button)
+    return container
 
 
 class FlightExplorerTab(QWidget):
@@ -207,6 +247,32 @@ class FlightExplorerTab(QWidget):
         self._mode_combo.currentIndexChanged.connect(self._on_mode_changed)
         layout.addWidget(self._stack)
 
+        direction_form = QFormLayout()
+        self._direction_convention_combo = QComboBox()
+        self._direction_convention_combo.addItem(
+            "App Native (+ Right)", LaunchDirectionConvention.APP_NATIVE
+        )
+        self._direction_convention_combo.addItem(
+            "TrackMan-Comparable (+ Right)",
+            LaunchDirectionConvention.TRACKMAN_COMPARABLE,
+        )
+        self._direction_convention_combo.setAccessibleName(
+            "Launch Direction Convention"
+        )
+        self._direction_convention_combo.setToolTip(
+            "Choose how entered Launch Direction values are interpreted."
+        )
+        self._direction_convention_combo.currentIndexChanged.connect(
+            self._refresh_direction_example
+        )
+        direction_form.addRow("Direction Convention", self._direction_convention_combo)
+        self._direction_example = QLabel()
+        self._direction_example.setWordWrap(True)
+        self._direction_example.setAccessibleName("Launch Direction Sign Example")
+        direction_form.addRow("", self._direction_example)
+        layout.addLayout(direction_form)
+        self._refresh_direction_example()
+
         model_form = QFormLayout()
         self._model_combo = QComboBox()
         self._model_combo.addItems([m.value for m in FlightModelType])
@@ -239,7 +305,7 @@ class FlightExplorerTab(QWidget):
                 low, high, default, decimals, suffix, FIELD_GUIDANCE[guidance_key]
             )
             target[attr] = spin
-            form.addRow(label, spin)
+            form.addRow(_field_label(label, attr, FIELD_GUIDANCE[guidance_key]), spin)
         return page
 
     def _build_results_box(self) -> QGroupBox:
@@ -293,9 +359,12 @@ class FlightExplorerTab(QWidget):
                 launch = launch_from_direct(
                     ball_speed_mph=self.speed_mps() * MPH_PER_MPS,
                     launch_angle_deg=self._direct_spins["launch_angle_deg"].value(),
-                    azimuth_deg=self._direct_spins["azimuth_deg"].value(),
+                    launch_direction_deg=self._direct_spins[
+                        "launch_direction_deg"
+                    ].value(),
                     spin_rpm=self._direct_spins["spin_rpm"].value(),
                     spin_axis_tilt_deg=self._direct_spins["spin_axis_tilt_deg"].value(),
+                    direction_convention=self._direction_convention_combo.currentData(),
                 )
             else:
                 launch = launch_from_delivery(
@@ -372,6 +441,15 @@ class FlightExplorerTab(QWidget):
         self._speed_spin.blockSignals(True)
         self._speed_spin.setValue(mps / _SPEED_UNITS[unit])
         self._speed_spin.blockSignals(False)
+
+    def _refresh_direction_example(self) -> None:
+        convention = self._direction_convention_combo.currentData()
+        definition = LAUNCH_DIRECTION_DEFINITIONS[convention]
+        positive, negative = launch_direction_sign_labels(convention)
+        self._direction_example.setText(
+            f"0° = straight · + = {positive} · − = {negative} · "
+            f"{definition.quantity_status.value}"
+        )
 
     def _show_explanation(self, key: str) -> None:
         labels = {row_key: label for row_key, label, _unit in EXPLORER_ROWS}

@@ -188,7 +188,7 @@ export const PLOT_CATALOG: PlotVariable[] = [
     (c) => launchValue(c, "ballSpeedMph")),
   v("launch.launch_angle_deg", "Launch Angle", "deg", "Launch",
     (c) => launchValue(c, "launchAngleDeg")),
-  v("launch.launch_azimuth_deg", "Launch Azimuth", "deg", "Launch",
+  v("launch.launch_azimuth_deg", "Launch Direction", "deg", "Launch",
     (c) => launchValue(c, "launchAzimuthDeg")),
   v("launch.spin_rpm", "Total Spin", "rpm", "Launch",
     (c) => launchValue(c, "spinRpm")),

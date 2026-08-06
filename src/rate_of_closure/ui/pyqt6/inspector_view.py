@@ -40,7 +40,7 @@ __all__ = ["InspectorView"]
 _SUMMARY_ORDER: tuple[tuple[str, str, str], ...] = (
     ("ball_speed_mph", "Ball Speed", "mph"),
     ("launch_angle_deg", "Launch Angle", "°"),
-    ("launch_azimuth_deg", "Launch Azimuth", "°"),
+    ("launch_azimuth_deg", "Launch Direction", "°"),
     ("spin_rpm", "Spin", "rpm"),
     ("carry_m", "Carry", "m"),
     ("max_height_m", "Apex", "m"),

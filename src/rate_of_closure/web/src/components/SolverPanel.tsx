@@ -45,7 +45,7 @@ const GOAL_ROWS: GoalRowSpec[] = [
   { key: "dynamicLoftDeg", label: "Dynamic Loft", unit: "°", target: 12 },
   { key: "ballSpeedMph", label: "Ball Speed", unit: "mph", target: 150 },
   { key: "launchAngleDeg", label: "Launch Angle", unit: "°", target: 12 },
-  { key: "launchAzimuthDeg", label: "Launch Azimuth", unit: "°", target: 0 },
+  { key: "launchAzimuthDeg", label: "Launch Direction", unit: "°", target: 0 },
   { key: "spinRpm", label: "Total Spin", unit: "rpm", target: 2600 },
   { key: "carryM", label: "Carry Distance", unit: "m", target: 230 },
 ];

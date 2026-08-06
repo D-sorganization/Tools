@@ -15,6 +15,17 @@ Import from this facade only; module layout underneath is private.
 from __future__ import annotations
 
 from ._rust_facade import is_rust_available, simulate_trajectory_rust
+from .direction import (
+    DEFINITIONS as LAUNCH_DIRECTION_DEFINITIONS,
+)
+from .direction import (
+    LaunchDirection,
+    LaunchDirectionConvention,
+    launch_direction_from_mapping,
+    launch_direction_sign_labels,
+    launch_direction_to_flight_azimuth,
+    migrate_launch_direction_mapping,
+)
 from .frames import from_flight_frame, to_flight_frame
 from .launch import derive_launch_conditions
 from .models import (
@@ -44,6 +55,9 @@ __all__ = [
     "FlightResult",
     "FlightSimulatorProtocol",
     "LaunchConditions",
+    "LaunchDirection",
+    "LaunchDirectionConvention",
+    "LAUNCH_DIRECTION_DEFINITIONS",
     "MacDonaldHanzelyModel",
     "TrajectoryPoint",
     "WaterlooPennerModel",
@@ -52,6 +66,10 @@ __all__ = [
     "derive_launch_conditions",
     "from_flight_frame",
     "is_rust_available",
+    "launch_direction_from_mapping",
+    "launch_direction_sign_labels",
+    "launch_direction_to_flight_azimuth",
+    "migrate_launch_direction_mapping",
     "simulate",
     "simulate_trajectory_rust",
     "to_flight_frame",
