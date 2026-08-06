@@ -23,7 +23,6 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import Any, cast
 
 import numpy as np
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
@@ -52,54 +51,33 @@ from PyQt6.QtWidgets import (
 
 import rotation_converter as rc
 from rotation_converter.ui.pyqt6.console_tab import CommandConsoleTab
+from rotation_converter.ui.pyqt6.plot_helpers import (
+    EULER_CONVENTIONS,
+)
+from rotation_converter.ui.pyqt6.plot_helpers import (
+    fmt_mat as _fmt_mat,
+)
+from rotation_converter.ui.pyqt6.plot_helpers import (
+    fmt_vec as _fmt_vec,
+)
+from rotation_converter.ui.pyqt6.plot_helpers import (
+    get_plot_colors as _get_plot_colors,
+)
+from rotation_converter.ui.pyqt6.plot_helpers import (
+    parse_vec as _parse_vec,
+)
+from rotation_converter.ui.pyqt6.plot_helpers import (
+    style_figure as _style_figure,
+)
 from rotation_converter.ui.pyqt6.reference_frame_tab import ReferenceFrameTab
 from shared.python.theme.integration import ThemedWindowMixin, get_theme_manager
 from shared.python.theme.matplotlib_style import apply_plot_theme
 
 logger = logging.getLogger(__name__)
 
-# ── Theme integration (optional -- graceful fallback) ──────────────
-_THEME_AVAILABLE = False
-try:
-    from shared.python.theme import get_theme_manager
-
-    _THEME_AVAILABLE = True
-except ImportError:
-    pass
-
-# ── Default theme colors (fallback if theme unavailable) ──────────────
-_DARK_BG: str = "#1e1e1e"
-_DARK_FG: str = "#e0e0e0"
-_DARK_ACCENT: str = "#2196f3"
-_DARK_SURFACE: str = "#2d2d2d"
-_AXIS_COLORS: list[str] = ["#ff6b6b", "#51cf66", "#4ecdc4"]
-
-# ── Default Euler conventions ──────────────────────────────────────
-EULER_CONVENTIONS: list[str] = [
-    "xyz",
-    "xyx",
-    "xzy",
-    "xzx",
-    "yzx",
-    "yzy",
-    "yxz",
-    "yxy",
-    "zxy",
-    "zxz",
-    "zyx",
-    "zyz",
-]
-
 # ── Rotation and Transform imports ──────────────────────────────────
 from rotation_converter import Rotation  # noqa: E402
 from rotation_converter.rigid_transform import RigidTransform  # noqa: E402
-
-
-# ── Helper function for theme detection ──────────────────────────────
-def is_dark_theme(theme_name: str) -> bool:
-    """Check if the given theme name is a dark theme."""
-    return "dark" in theme_name.lower()
-
 
 # Re-export tab classes for backward compatibility
 __all__ = [
@@ -109,82 +87,6 @@ __all__ = [
     "TrajectoryPlotsTab",
     "ScrewVisualiserTab",
 ]
-
-
-# =====================================================================
-# Helpers
-# =====================================================================
-
-
-def _fmt_vec(v: np.ndarray, decimals: int = 6) -> str:
-    """Format a numpy vector as a readable string."""
-    return "  ".join(f"{x: .{decimals}f}" for x in v)
-
-
-def _fmt_mat(M: np.ndarray, decimals: int = 6) -> str:
-    """Format a numpy matrix as a multi-line string."""
-    if M is None:
-        raise ValueError("M must be provided")
-    lines = []
-    for row in M:
-        lines.append("  ".join(f"{x: .{decimals}f}" for x in row))
-    return "\n".join(lines)
-
-
-def _parse_vec(text: str) -> np.ndarray | None:
-    """Parse a whitespace/comma separated string into a numpy array."""
-    try:
-        parts = text.replace(",", " ").split()
-        return cast(np.ndarray, np.array([float(p) for p in parts]))
-    except (ValueError, TypeError):
-        return None
-
-
-def _get_plot_colors() -> dict[str, Any]:
-    """Get current plot colours from theme or defaults."""
-    if _THEME_AVAILABLE:
-        try:
-            from shared.python.theme.colors import CHART_COLORS
-
-            mgr = get_theme_manager()
-            colors = mgr.get_current_colors()
-            _dark = is_dark_theme(colors.get("name", "dark"))
-            return {
-                "bg": colors.get("bg", _DARK_BG),
-                "fg": colors.get("text", _DARK_FG),
-                "accent": colors.get("accent", _DARK_ACCENT),
-                "surface": colors.get("group_bg", _DARK_SURFACE),
-                "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
-            }
-        except (
-            Exception
-        ):  # noqa: BLE001 — theme import is optional; fall back to defaults
-            pass
-    return {
-        "bg": _DARK_BG,
-        "fg": _DARK_FG,
-        "accent": _DARK_ACCENT,
-        "surface": _DARK_SURFACE,
-        "axes": _AXIS_COLORS,
-    }
-
-
-def _style_figure(fig: Figure, ax: Any = None) -> None:
-    """Apply current theme colours to a matplotlib figure."""
-    if fig is None:
-        raise ValueError("fig must be provided")
-    c = _get_plot_colors()
-    fig.set_facecolor(c["bg"])
-    if ax is not None:
-        axes = [ax] if not isinstance(ax, (list, np.ndarray)) else list(ax)
-        for a in axes:
-            a.set_facecolor(c["surface"])
-            a.tick_params(colors=c["fg"], labelsize=8)
-            a.xaxis.label.set_color(c["fg"])
-            a.yaxis.label.set_color(c["fg"])
-            a.title.set_color(c["fg"])
-            for spine in a.spines.values():
-                spine.set_edgecolor(c["fg"])
 
 
 # =====================================================================
@@ -340,9 +242,7 @@ class RotationConverterTab(QWidget):
                 rot = Rotation.from_rotation_matrix(R)
             else:
                 return
-        except (
-            Exception
-        ) as e:  # noqa: BLE001 — user input can raise any error; display it
+        except Exception as e:  # noqa: BLE001 — user input can raise any error; display it
             self._output_text.setPlainText(f"Error: {e}")
             return
 
@@ -372,9 +272,7 @@ class RotationConverterTab(QWidget):
             else:
                 res = ""
             self._main_result.setText(res)
-        except (
-            Exception
-        ) as e:  # noqa: BLE001 — rotation conversion may raise any arithmetic error
+        except Exception as e:  # noqa: BLE001 — rotation conversion may raise any arithmetic error
             self._main_result.setText(f"Error: {e}")
 
     def _display_all(self, rot: Rotation, conv: str) -> None:
@@ -396,9 +294,7 @@ class RotationConverterTab(QWidget):
                 e = rot.as_euler(c)
                 marker = " ◀" if c == conv else ""
                 lines.append(f"  {c}: {e[0]: .6f}  {e[1]: .6f}  {e[2]: .6f}{marker}")
-            except (
-                Exception
-            ):  # noqa: BLE001 — Euler conversion may fail for degenerate rotations
+            except Exception:  # noqa: BLE001 — Euler conversion may fail for degenerate rotations
                 lines.append(f"  {c}: (error)")
         lines += [
             "",
@@ -581,9 +477,7 @@ class RigidTransformTab(QWidget):
                 T = RigidTransform.from_matrix(v.reshape(4, 4), source=src, target=tgt)
             else:
                 return
-        except (
-            Exception
-        ) as e:  # noqa: BLE001 — user input can raise any error; display it
+        except Exception as e:  # noqa: BLE001 — user input can raise any error; display it
             self._tf_output.setPlainText(f"Error: {e}")
             return
 
@@ -641,9 +535,7 @@ class RigidTransformTab(QWidget):
                 f"  pitch: {screw['pitch']:.6f}",
                 f"  theta: {screw['theta']:.6f} rad",
             ]
-        except (
-            Exception
-        ):  # noqa: BLE001 — screw decomposition is optional display; skip on error
+        except Exception:  # noqa: BLE001 — screw decomposition is optional display; skip on error
             pass
 
         self._tf_output.setPlainText("\n".join(lines))
@@ -1274,14 +1166,13 @@ class RotationConverterMainWindow(ThemedWindowMixin, QMainWindow):
         help_menu.addAction(about)
 
     def _apply_theme(self) -> None:
-        if _THEME_AVAILABLE:
-            try:
-                mgr = get_theme_manager()
-                mgr.apply_theme_to_window(self)
-                mgr.themeChanged.connect(self._on_theme_changed)
-            except (AttributeError, RuntimeError, TypeError, ValueError):
-                # Theme system is optional; window still works without it.
-                logger.exception("Failed to apply optional rotation converter theme")
+        try:
+            mgr = get_theme_manager()
+            mgr.apply_theme_to_window(self)
+            mgr.themeChanged.connect(self._on_theme_changed)
+        except (AttributeError, RuntimeError, TypeError, ValueError):
+            # Theme system is optional; window still works without it.
+            logger.exception("Failed to apply optional rotation converter theme")
 
     def _on_theme_changed(self, theme_name: str) -> None:
         """Refresh all plots when the theme changes."""
