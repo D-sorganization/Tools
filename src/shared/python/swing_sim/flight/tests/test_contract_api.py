@@ -35,6 +35,7 @@ EXPECTED_PUBLIC_API = {
     "from_flight_frame",
     "is_rust_available",
     "launch_direction_from_mapping",
+    "launch_direction_sign_labels",
     "launch_direction_to_flight_azimuth",
     "migrate_launch_direction_mapping",
     "simulate",

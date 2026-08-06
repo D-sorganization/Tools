@@ -21,6 +21,7 @@ import {
 } from "../model/flightExplorer";
 import {
   LAUNCH_DIRECTION_DEFINITIONS,
+  launchDirectionSignLabels,
   type LaunchDirectionConvention,
 } from "../model/launchDirection";
 import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
@@ -33,7 +34,7 @@ const DIRECTION_CONVENTIONS: Array<{
 }> = [
   { value: "app_native", label: "App Native (+ Right)" },
   {
-    value: "launch_monitor_comparable",
+    value: "trackman_comparable",
     label: "TrackMan-Comparable (+ Right)",
   },
 ];
@@ -82,6 +83,7 @@ export function FlightExplorerPanel({
   });
   const [result, setResult] = useState<FlightExplorationTs | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const directionSigns = launchDirectionSignLabels(directionConvention);
 
   const run = () => {
     try {
@@ -157,7 +159,7 @@ export function FlightExplorerPanel({
               ))}
             </select>
             <span className="mt-1 block text-xs text-slate-500" data-testid="direction-sign-example">
-              0° = straight · + = {LAUNCH_DIRECTION_DEFINITIONS[directionConvention].positiveDirection} · − = {LAUNCH_DIRECTION_DEFINITIONS[directionConvention].negativeDirection}
+              0° = straight · + = {directionSigns.positive} · − = {directionSigns.negative} · {LAUNCH_DIRECTION_DEFINITIONS[directionConvention].quantityStatus}
             </span>
           </label>
           {FIELDS.map(({ key, label, unit, guidance }) => (

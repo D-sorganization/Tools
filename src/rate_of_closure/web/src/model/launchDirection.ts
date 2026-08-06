@@ -1,59 +1,38 @@
-/** Explicit launch-direction conventions and lossless legacy migration. */
+/** Registry-backed launch-direction conversion and lossless legacy migration. */
 
+import {
+  conventionRegistry,
+  type ConventionId,
+  type ParameterDefinitionTs,
+} from "./launchMonitorConventions";
+
+const SUPPORTED_DIRECTION_CONVENTIONS = [
+  "app_native",
+  "trackman_comparable",
+] as const satisfies readonly ConventionId[];
 export type LaunchDirectionConvention =
-  | "app_native"
-  | "launch_monitor_comparable"
-  | "flight_frame";
+  (typeof SUPPORTED_DIRECTION_CONVENTIONS)[number];
 
 export interface LaunchDirectionValue {
   degrees: number;
   convention: LaunchDirectionConvention;
 }
 
-export interface LaunchDirectionDefinition {
-  positiveDirection: string;
-  negativeDirection: string;
-  reference: string;
-  sourceUrl?: string;
-  retrievedOn?: string;
-  definitionVersion: string;
-  comparabilityStatus: string;
-}
+const registry = conventionRegistry();
 
-export const LAUNCH_DIRECTION_DEFINITIONS: Record<
-  LaunchDirectionConvention,
-  LaunchDirectionDefinition
-> = {
-  app_native: {
-    positiveDirection: "right of the target line",
-    negativeDirection: "left of the target line",
-    reference: "horizontal angle from the target line",
-    definitionVersion: "roc-launch-direction-v1",
-    comparabilityStatus: "canonical",
-  },
-  launch_monitor_comparable: {
-    positiveDirection: "right of the target line",
-    negativeDirection: "left of the target line",
-    reference: "horizontal ball-CG motion relative to the target line after separation",
-    sourceUrl: "https://www.trackman.com/blog/golf/what-is-launch-direction",
-    retrievedOn: "2026-08-06",
-    definitionVersion: "trackman-public-definition-2026-08-06",
-    comparabilityStatus: "definition-and-sign-comparable",
-  },
-  flight_frame: {
-    positiveDirection: "left of the target line (+y flight)",
-    negativeDirection: "right of the target line (-y flight)",
-    reference: "horizontal angle from +x in the internal flight frame",
-    definitionVersion: "swing-sim-flight-frame-v1",
-    comparabilityStatus: "internal-only",
-  },
-};
+export const LAUNCH_DIRECTION_DEFINITIONS: Readonly<
+  Record<LaunchDirectionConvention, ParameterDefinitionTs>
+> = Object.freeze(
+  Object.fromEntries(
+    SUPPORTED_DIRECTION_CONVENTIONS.map((convention) => [
+      convention,
+      registry.definition(convention, "launch_direction"),
+    ]),
+  ) as Record<LaunchDirectionConvention, ParameterDefinitionTs>,
+);
 
-const CONVENTIONS = new Set<LaunchDirectionConvention>([
-  "app_native",
-  "launch_monitor_comparable",
-  "flight_frame",
-]);
+const LEGACY_CONVENTIONS: Readonly<Record<string, LaunchDirectionConvention>> =
+  Object.freeze({ launch_monitor_comparable: "trackman_comparable" });
 
 function validatedDegrees(value: unknown): number {
   if (typeof value !== "number" || !Number.isFinite(value)) {
@@ -66,10 +45,25 @@ function validatedDegrees(value: unknown): number {
 }
 
 function validatedConvention(value: unknown): LaunchDirectionConvention {
-  if (typeof value !== "string" || !CONVENTIONS.has(value as LaunchDirectionConvention)) {
+  if (typeof value !== "string") {
     throw new RangeError(`unknown launch-direction convention: ${String(value)}`);
   }
-  return value as LaunchDirectionConvention;
+  const canonical = LEGACY_CONVENTIONS[value] ?? value;
+  if (
+    !SUPPORTED_DIRECTION_CONVENTIONS.includes(
+      canonical as LaunchDirectionConvention,
+    )
+  ) {
+    throw new RangeError(`unknown launch-direction convention: ${String(value)}`);
+  }
+  const convention = canonical as LaunchDirectionConvention;
+  const definition = LAUNCH_DIRECTION_DEFINITIONS[convention];
+  if (definition.signRule !== "positive_right") {
+    throw new RangeError(
+      `unsupported launch-direction sign rule: ${definition.signRule}`,
+    );
+  }
+  return convention;
 }
 
 export function convertLaunchDirection(
@@ -80,15 +74,25 @@ export function convertLaunchDirection(
   const validDegrees = validatedDegrees(degrees);
   validatedConvention(source);
   validatedConvention(target);
-  const rightPositive = source === "flight_frame" ? -validDegrees : validDegrees;
-  return target === "flight_frame" ? -rightPositive : rightPositive;
+  return validDegrees;
 }
 
 export function launchDirectionToFlightAzimuth(
   degrees: number,
   convention: LaunchDirectionConvention,
 ): number {
-  return convertLaunchDirection(degrees, convention, "flight_frame");
+  validatedConvention(convention);
+  return -validatedDegrees(degrees);
+}
+
+export function launchDirectionSignLabels(
+  convention: LaunchDirectionConvention,
+): Readonly<{ positive: string; negative: string }> {
+  validatedConvention(convention);
+  return Object.freeze({
+    positive: "right of the target line",
+    negative: "left of the target line",
+  });
 }
 
 export function migrateLaunchDirectionRecord(
@@ -104,7 +108,9 @@ export function migrateLaunchDirectionRecord(
   const [firstKey, firstValue] = present[0];
   for (const [key, value] of present.slice(1)) {
     if (Math.abs(firstValue - value) > 1e-12) {
-      throw new Error(`conflicting launch-direction values in '${firstKey}' and '${key}'`);
+      throw new Error(
+        `conflicting launch-direction values in '${firstKey}' and '${key}'`,
+      );
     }
   }
   const convention = validatedConvention(

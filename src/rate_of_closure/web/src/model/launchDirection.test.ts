@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  LAUNCH_DIRECTION_DEFINITIONS,
   convertLaunchDirection,
   launchDirectionFromRecord,
   launchDirectionToFlightAzimuth,
@@ -10,8 +11,7 @@ import {
 
 const CONVENTIONS: LaunchDirectionConvention[] = [
   "app_native",
-  "launch_monitor_comparable",
-  "flight_frame",
+  "trackman_comparable",
 ];
 
 describe("launch-direction conventions", () => {
@@ -29,6 +29,14 @@ describe("launch-direction conventions", () => {
 
   it("maps right-positive app direction to left-positive flight azimuth", () => {
     expect(launchDirectionToFlightAzimuth(6, "app_native")).toBe(-6);
+  });
+
+  it("uses the canonical registry definition", () => {
+    expect(LAUNCH_DIRECTION_DEFINITIONS.trackman_comparable).toMatchObject({
+      parameterId: "launch_direction",
+      signRule: "positive_right",
+      retrievedOn: "2026-08-05",
+    });
   });
 });
 
@@ -55,6 +63,24 @@ describe("launch-direction migration", () => {
     expect(() =>
       migrateLaunchDirectionRecord({ launchDirectionDeg: 2, azimuthDeg: -2 }),
     ).toThrow(/conflicting launch-direction/);
+  });
+
+  it("migrates the legacy generic convention name to the registry ID", () => {
+    expect(
+      migrateLaunchDirectionRecord({
+        launchDirectionDeg: 2,
+        launchDirectionConvention: "launch_monitor_comparable",
+      }),
+    ).toMatchObject({ launchDirectionConvention: "trackman_comparable" });
+  });
+
+  it("does not activate the unverified Foresight sign in this adapter", () => {
+    expect(() =>
+      migrateLaunchDirectionRecord({
+        launchDirectionDeg: 2,
+        launchDirectionConvention: "foresight_comparable",
+      }),
+    ).toThrow(/unknown launch-direction convention/);
   });
 
   it.each([Number.NaN, Number.POSITIVE_INFINITY, 181])("rejects invalid value %s", (value) => {

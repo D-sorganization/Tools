@@ -1,9 +1,10 @@
-"""Canonical launch-direction conventions and lossless legacy migration.
+"""Registry-backed launch-direction conversion and legacy migration.
 
-Launch Direction is the horizontal angle at launch relative to the target
-line.  The application and launch-monitor-comparable conventions use
-positive right / negative left.  The internal flight frame uses +y left,
-so its azimuth has the opposite sign.
+Public conventions are owned by :mod:`shared.python.swing_sim.conventions`.
+Every catalogued launch direction is target-frame, degree-valued, and
+positive right.  The internal flight frame is x forward / y left / z up,
+so conversion to its azimuth is an explicit sign flip rather than another
+vendor convention.
 """
 
 from __future__ import annotations
@@ -11,72 +12,42 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass
-from enum import StrEnum
 from numbers import Real
-from typing import Final
+from types import MappingProxyType
+from typing import Final, TypeAlias
 
-TRACKMAN_LAUNCH_DIRECTION_SOURCE: Final = (
-    "https://www.trackman.com/blog/golf/what-is-launch-direction"
+from shared.python.swing_sim.conventions import (
+    ConventionId,
+    ParameterDefinition,
+    ParameterId,
+    SignRule,
+    convention_registry,
 )
+
 CANONICAL_DIRECTION_KEY: Final = "launch_direction_deg"
 CONVENTION_KEY: Final = "launch_direction_convention"
 SCHEMA_VERSION_KEY: Final = "launch_direction_schema_version"
 SCHEMA_VERSION: Final = 1
 LEGACY_DIRECTION_KEYS: Final = ("launch_azimuth_deg", "azimuth_deg")
 
+# Backward-compatible public type name, now an alias to the canonical registry ID.
+LaunchDirectionConvention: TypeAlias = ConventionId
 
-class LaunchDirectionConvention(StrEnum):
-    """Supported numeric sign conventions for horizontal launch direction."""
-
-    APP_NATIVE = "app_native"
-    LAUNCH_MONITOR_COMPARABLE = "launch_monitor_comparable"
-    FLIGHT_FRAME = "flight_frame"
-
-
-@dataclass(frozen=True)
-class LaunchDirectionDefinition:
-    """Human-readable convention metadata carried beside numeric values."""
-
-    positive_direction: str
-    negative_direction: str
-    reference: str
-    source_url: str | None
-    retrieved_on: str | None
-    definition_version: str
-    comparability_status: str
-
-
-DEFINITIONS: Final[dict[LaunchDirectionConvention, LaunchDirectionDefinition]] = {
-    LaunchDirectionConvention.APP_NATIVE: LaunchDirectionDefinition(
-        positive_direction="right of the target line",
-        negative_direction="left of the target line",
-        reference="horizontal angle from the target line",
-        source_url=None,
-        retrieved_on=None,
-        definition_version="roc-launch-direction-v1",
-        comparability_status="canonical",
-    ),
-    LaunchDirectionConvention.LAUNCH_MONITOR_COMPARABLE: LaunchDirectionDefinition(
-        positive_direction="right of the target line",
-        negative_direction="left of the target line",
-        reference=(
-            "horizontal ball-CG motion relative to the target line after separation"
-        ),
-        source_url=TRACKMAN_LAUNCH_DIRECTION_SOURCE,
-        retrieved_on="2026-08-06",
-        definition_version="trackman-public-definition-2026-08-06",
-        comparability_status="definition-and-sign-comparable",
-    ),
-    LaunchDirectionConvention.FLIGHT_FRAME: LaunchDirectionDefinition(
-        positive_direction="left of the target line (+y flight)",
-        negative_direction="right of the target line (-y flight)",
-        reference="horizontal angle from +x in the internal flight frame",
-        source_url=None,
-        retrieved_on=None,
-        definition_version="swing-sim-flight-frame-v1",
-        comparability_status="internal-only",
-    ),
+_LEGACY_CONVENTION_ALIASES: Final = {
+    "launch_monitor_comparable": ConventionId.TRACKMAN_COMPARABLE.value,
 }
+_SUPPORTED_CONVENTIONS: Final = (
+    ConventionId.APP_NATIVE,
+    ConventionId.TRACKMAN_COMPARABLE,
+)
+
+_registry = convention_registry()
+DEFINITIONS: Final[Mapping[ConventionId, ParameterDefinition]] = MappingProxyType(
+    {
+        convention: _registry.definition(convention, ParameterId.LAUNCH_DIRECTION)
+        for convention in _SUPPORTED_CONVENTIONS
+    }
+)
 
 
 def _validated_degrees(value: object) -> float:
@@ -90,47 +61,57 @@ def _validated_degrees(value: object) -> float:
     return degrees
 
 
-def _right_positive(degrees: float, convention: LaunchDirectionConvention) -> float:
-    return -degrees if convention is LaunchDirectionConvention.FLIGHT_FRAME else degrees
+def _validated_convention(value: object) -> ConventionId:
+    if not isinstance(value, (str, ConventionId)):
+        raise ValueError(f"unknown launch-direction convention: {value!r}")
+    canonical = _LEGACY_CONVENTION_ALIASES.get(str(value), str(value))
+    try:
+        convention = ConventionId(canonical)
+        definition = DEFINITIONS[convention]
+    except (KeyError, ValueError) as exc:
+        raise ValueError(f"unsupported launch-direction convention: {value!r}") from exc
+    if definition.sign_rule is not SignRule.POSITIVE_RIGHT:
+        raise ValueError(
+            f"unsupported launch-direction sign rule: {definition.sign_rule.value}"
+        )
+    return convention
 
 
 @dataclass(frozen=True)
 class LaunchDirection:
-    """A direction value whose sign convention cannot be implicit."""
+    """A direction value tied to one source-backed registry convention."""
 
     degrees: float
-    convention: LaunchDirectionConvention
+    convention: ConventionId
 
     def __post_init__(self) -> None:
         object.__setattr__(self, "degrees", _validated_degrees(self.degrees))
-        if not isinstance(self.convention, LaunchDirectionConvention):
-            raise TypeError("convention must be a LaunchDirectionConvention")
+        object.__setattr__(self, "convention", _validated_convention(self.convention))
 
-    def to(self, target: LaunchDirectionConvention) -> LaunchDirection:
-        """Convert to *target* without changing the represented direction."""
-        if not isinstance(target, LaunchDirectionConvention):
-            raise TypeError("target must be a LaunchDirectionConvention")
-        canonical = _right_positive(self.degrees, self.convention)
-        converted = (
-            -canonical
-            if target is LaunchDirectionConvention.FLIGHT_FRAME
-            else canonical
-        )
-        return LaunchDirection(converted, target)
+    @property
+    def definition(self) -> ParameterDefinition:
+        """Return the canonical provenance and geometry definition."""
+        return DEFINITIONS[self.convention]
+
+    def to(self, target: ConventionId) -> LaunchDirection:
+        """Convert through registry sign rules without changing physical state."""
+        return LaunchDirection(self.degrees, _validated_convention(target))
 
 
 def launch_direction_to_flight_azimuth(direction: LaunchDirection) -> float:
     """Return the internal left-positive flight-frame azimuth in degrees."""
-    return direction.to(LaunchDirectionConvention.FLIGHT_FRAME).degrees
+    _validated_convention(direction.convention)
+    return -direction.degrees
+
+
+def launch_direction_sign_labels(convention: ConventionId) -> tuple[str, str]:
+    """Return positive/negative labels derived from the registry sign rule."""
+    _validated_convention(convention)
+    return "right of the target line", "left of the target line"
 
 
 def migrate_launch_direction_mapping(values: Mapping[str, object]) -> dict[str, object]:
-    """Add canonical direction fields while preserving every imported field.
-
-    Legacy fields are interpreted as the historical app-native convention.
-    Duplicate aliases are accepted only when they agree, preventing silent
-    corruption during mixed-version imports.
-    """
+    """Add canonical fields while preserving all imported fields and aliases."""
     migrated = dict(values)
     present = [
         (key, _validated_degrees(values[key]))
@@ -145,17 +126,9 @@ def migrate_launch_direction_mapping(values: Mapping[str, object]) -> dict[str, 
             raise ValueError(
                 f"conflicting launch-direction values in {first_key!r} and {key!r}"
             )
-    raw_convention = values.get(
-        CONVENTION_KEY, LaunchDirectionConvention.APP_NATIVE.value
+    convention = _validated_convention(
+        values.get(CONVENTION_KEY, ConventionId.APP_NATIVE.value)
     )
-    if not isinstance(raw_convention, str):
-        raise ValueError(f"unknown launch-direction convention: {raw_convention!r}")
-    try:
-        convention = LaunchDirectionConvention(raw_convention)
-    except (TypeError, ValueError) as exc:
-        raise ValueError(
-            f"unknown launch-direction convention: {raw_convention!r}"
-        ) from exc
     migrated[CANONICAL_DIRECTION_KEY] = first_value
     migrated[CONVENTION_KEY] = convention.value
     migrated[SCHEMA_VERSION_KEY] = SCHEMA_VERSION
@@ -165,10 +138,9 @@ def migrate_launch_direction_mapping(values: Mapping[str, object]) -> dict[str, 
 def launch_direction_from_mapping(values: Mapping[str, object]) -> LaunchDirection:
     """Parse canonical or legacy imported fields as a typed direction."""
     migrated = migrate_launch_direction_mapping(values)
-    degrees = _validated_degrees(migrated[CANONICAL_DIRECTION_KEY])
     return LaunchDirection(
-        degrees,
-        LaunchDirectionConvention(str(migrated[CONVENTION_KEY])),
+        _validated_degrees(migrated[CANONICAL_DIRECTION_KEY]),
+        _validated_convention(migrated[CONVENTION_KEY]),
     )
 
 
@@ -179,11 +151,10 @@ __all__ = [
     "LEGACY_DIRECTION_KEYS",
     "SCHEMA_VERSION",
     "SCHEMA_VERSION_KEY",
-    "TRACKMAN_LAUNCH_DIRECTION_SOURCE",
     "LaunchDirection",
     "LaunchDirectionConvention",
-    "LaunchDirectionDefinition",
     "launch_direction_from_mapping",
+    "launch_direction_sign_labels",
     "launch_direction_to_flight_azimuth",
     "migrate_launch_direction_mapping",
 ]

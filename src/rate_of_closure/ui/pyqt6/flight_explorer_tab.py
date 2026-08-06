@@ -54,6 +54,7 @@ from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
 from shared.python.swing_sim.flight import (
     LAUNCH_DIRECTION_DEFINITIONS,
     LaunchDirectionConvention,
+    launch_direction_sign_labels,
 )
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.impact import DeliveryParameters
@@ -253,7 +254,7 @@ class FlightExplorerTab(QWidget):
         )
         self._direction_convention_combo.addItem(
             "TrackMan-Comparable (+ Right)",
-            LaunchDirectionConvention.LAUNCH_MONITOR_COMPARABLE,
+            LaunchDirectionConvention.TRACKMAN_COMPARABLE,
         )
         self._direction_convention_combo.setAccessibleName(
             "Launch Direction Convention"
@@ -444,9 +445,10 @@ class FlightExplorerTab(QWidget):
     def _refresh_direction_example(self) -> None:
         convention = self._direction_convention_combo.currentData()
         definition = LAUNCH_DIRECTION_DEFINITIONS[convention]
+        positive, negative = launch_direction_sign_labels(convention)
         self._direction_example.setText(
-            f"0° = straight · + = {definition.positive_direction} · "
-            f"− = {definition.negative_direction}"
+            f"0° = straight · + = {positive} · − = {negative} · "
+            f"{definition.quantity_status.value}"
         )
 
     def _show_explanation(self, key: str) -> None:
