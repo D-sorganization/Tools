@@ -16,6 +16,21 @@ from __future__ import annotations
 
 from ._rust_facade import is_rust_available, simulate_trajectory_rust
 from .frames import from_flight_frame, to_flight_frame
+from .inverse_contract import (
+    DecisionVariable,
+    EvaluatedMetric,
+    EvaluationStatus,
+    FlightObjective,
+    InverseFlightRequest,
+    InverseFlightResult,
+    ObjectiveMode,
+    ObjectiveResidual,
+    ParameterValue,
+    SolutionCandidate,
+    SolverEvaluation,
+    SolverStatus,
+)
+from .inverse_solver import ForwardEvaluator, solve_inverse_flight
 from .launch import derive_launch_conditions
 from .models import (
     BallFlightModel,
@@ -57,6 +72,10 @@ __all__ = [
     "BallFlightModel",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
+    "DecisionVariable",
+    "EvaluatedMetric",
+    "EvaluationStatus",
+    "FlightObjective",
     "FlightModelRegistry",
     "FlightModelType",
     "FlightMetricCatalog",
@@ -68,10 +87,19 @@ __all__ = [
     "FlightResult",
     "FlightRunManifest",
     "FlightSimulatorProtocol",
+    "ForwardEvaluator",
     "GroundModelResult",
+    "InverseFlightRequest",
+    "InverseFlightResult",
     "LaunchConditions",
     "MacDonaldHanzelyModel",
     "MetricTrajectoryPoint",
+    "ObjectiveMode",
+    "ObjectiveResidual",
+    "ParameterValue",
+    "SolutionCandidate",
+    "SolverEvaluation",
+    "SolverStatus",
     "TrajectoryPoint",
     "WaterlooPennerModel",
     "compare_models",
@@ -83,6 +111,7 @@ __all__ = [
     "is_rust_available",
     "simulate",
     "simulate_trajectory_rust",
+    "solve_inverse_flight",
     "to_flight_frame",
     "ValueStatus",
 ]
