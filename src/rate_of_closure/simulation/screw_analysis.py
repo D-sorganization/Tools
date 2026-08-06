@@ -12,7 +12,7 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass
-from enum import StrEnum
+from enum import Enum
 from types import MappingProxyType
 
 import numpy as np
@@ -42,7 +42,7 @@ _DEFAULT_DIRECTIONS = MappingProxyType(
 )
 
 
-class MotionKind(StrEnum):
+class MotionKind(str, Enum):  # noqa: UP042 - Python 3.10 compatibility
     """Truthful geometric state of an instantaneous rigid-body motion."""
 
     FINITE = "finite"
@@ -103,7 +103,7 @@ class JointMotionSeries:
 
 def _vector3(value: np.ndarray, name: str) -> np.ndarray:
     """Return a finite three-vector after enforcing the public contract."""
-    vector = np.asarray(value, dtype=float)
+    vector: np.ndarray = np.asarray(value, dtype=float)
     require(vector.shape == (3,), f"{name} must have shape (3,)", vector.shape)
     require(bool(np.all(np.isfinite(vector))), f"{name} must be finite", vector)
     return vector
@@ -179,7 +179,8 @@ def _unit_direction(value: np.ndarray, name: str) -> np.ndarray:
     direction = _vector3(value, name)
     magnitude = float(np.linalg.norm(direction))
     require(magnitude > _MOTION_EPS, f"{name} must be nonzero", direction)
-    return direction / magnitude
+    unit: np.ndarray = direction / magnitude
+    return unit
 
 
 def project_motion(

@@ -411,7 +411,8 @@ class SimulationView(QWidget):
     @staticmethod
     def _display(points: np.ndarray) -> np.ndarray:
         """App frame (x target, y up, z right) -> matplotlib display axes."""
-        return np.asarray(points)[..., [2, 0, 1]]
+        display: np.ndarray = np.asarray(points)[..., [2, 0, 1]]
+        return display
 
     def _draw_ball(self, center_m: np.ndarray) -> None:
         self._rendered_ball_center_m = np.asarray(center_m, dtype=float).copy()

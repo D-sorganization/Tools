@@ -35,6 +35,17 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-06 Rate of Closure ensemble visualization contracts
+
+- Variation results retain every hit, miss, and numerical-failure cohort while
+  drawing linked scatter, distribution-matrix, swing-arc, and pointwise
+  variability views from one canonical dataset. Trial selection, filters,
+  camera state, performance caps, and deterministic exports are shared across
+  the professional PyQt and web inspection workflows.
+- All visualization calculations remain outside widget/rendering code, preserve
+  stable point and variable identifiers, disclose unavailable downstream
+  values, and keep reproducible sampling seeds and exact cohort counts.
+
 ### 2026-08-05 Rate of Closure Python 3.10 CI compatibility
 
 - Rate of Closure and shared swing simulation string enums use Python 3.10-safe
