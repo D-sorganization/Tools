@@ -218,7 +218,10 @@ class TestFlightExplorerTab:
         assert button.accessibleName() == "Explain Launch Direction"
         combo = explorer._direction_convention_combo
         assert combo.accessibleName() == "Launch Direction Convention"
-        assert combo.count() == 2
+        assert combo.count() == 3
+        assert combo.itemText(2) == "Foresight-Comparable (Sign Unavailable)"
+        assert not combo.model().item(2).isEnabled()
+        assert "public sign convention" in combo.model().item(2).toolTip()
         assert "0° = straight" in explorer._direction_example.text()
 
     def test_direct_mode_end_to_end_matches_the_pinned_case(self, explorer) -> None:  # type: ignore[no-untyped-def]
