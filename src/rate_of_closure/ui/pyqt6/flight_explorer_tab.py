@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import logging
 import math
+from typing import cast
 
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
@@ -238,11 +239,13 @@ class FlightExplorerTab(QWidget):
     # ── public API ──────────────────────────────────────────────────
     def speed_mps(self) -> float:
         """The entered speed converted to m/s."""
-        return self._speed_spin.value() * SPEED_UNITS[self._speed_unit]
+        speed = cast(float, self._speed_spin.value())
+        factor: float = SPEED_UNITS[self._speed_unit]
+        return speed * factor
 
     def mode(self) -> str:
         """The selected entry mode label."""
-        return ENTRY_MODES[self._mode_combo.currentIndex()]
+        return str(ENTRY_MODES[self._mode_combo.currentIndex()])
 
     def flight_view(self) -> FlightView:
         """The embedded flight-scale viewer."""
