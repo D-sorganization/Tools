@@ -69,6 +69,7 @@ from .sources import (
     make_source,
 )
 from .torque_history import fit_run_torque_profile
+from .turf_interaction import RunTurfInteractionSnapshot, turf_interaction_for_run
 
 __all__ = [
     "BALL_POSITION_M",
@@ -89,6 +90,7 @@ __all__ = [
     "ImpactStatus",
     "ManualSwingSource",
     "RunGroundClearanceSnapshot",
+    "RunTurfInteractionSnapshot",
     "SimulationConfig",
     "SimulationRun",
     "TriplePendulumParameters",
@@ -108,6 +110,7 @@ __all__ = [
     "make_source",
     "run_simulation",
     "representative_wedge_parameters_for_club",
+    "turf_interaction_for_run",
     "run_to_json_dict",
     "screw_axis_samples",
     "screw_series_rows",

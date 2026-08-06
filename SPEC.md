@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.4                                     |
-| **Spec Version**        | 1.13.4                                     |
+| **Current Version**     | 1.13.5                                     |
+| **Spec Version**        | 1.13.5                                     |
 | **Last Spec Update**    | 2026-08-06                                 |
 
 ## 2. Purpose & Mission
@@ -922,6 +922,28 @@ high_mm)` exposes the face-curvature normal (gradient of the
 - `docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md` specifies frames, algorithms,
   metrics, test evidence, shortest-arc SLERP, and the strict boundary between
   rigid geometric clearance and future turf-contact mechanics.
+
+### 2026-08-05 Passive wedge/turf interaction foundation
+
+- `shared.python.golf_club` provides a replaceable unilateral Kelvin-Voigt
+  normal law with regularized Coulomb friction, explicit ground frames, force
+  and moment, stored energy, dissipation, penetration limits, and typed status.
+- Generic firm-fairway, soft-turf, and sand-like profiles are visibly
+  illustrative and uncalibrated; strict versioned JSON preserves their
+  calibration state, parameter basis, uncertainty, and source URI.
+- A nine-point quadrature evaluates the shared named leading-edge and sole
+  candidates, aggregates the wrench at the head origin, supports sloped planes,
+  and gates turf-supported rankings on an explicitly calibrated profile.
+- The reduced effective-mass diagnostic supports cooperative cancellation,
+  caller-controlled timesteps, explicit unilateral separation loss, and an
+  auditable coarse-to-fine convergence study for impulse, peak penetration,
+  and dissipated energy.
+- The Rate adapter consumes registered retained poses and twists at first
+  geometric ground contact while stating that it does not replay the swing
+  under turf force. `evaluate_wedge_turf_wrench` is the separate force-coupling
+  seam for a full dynamics solver.
+- `docs/specs/GOLF_CLUB_TURF_CONTACT.md` defines equations, signs, units,
+  evidence gates, tests, integration boundaries, and remaining calibration.
 
 ### 2026-08-05 Exact modern-wedge CAD foundation
 
@@ -2650,6 +2672,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.13.5 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |
 | 2026-08-05 | 1.13.4 | feat(rate_of_closure, golf-club, #4158 #4160 #4163): integrate frame-explicit wedge contact/shaft kinematics into retained Rate runs; add honest impact-or-closest-approach jump controls and engineering readouts to PyQt6 and React; restore manual web angular velocity; and select the documented 30 ms square pose for flat automatic speed plateaus. |
 | 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |
 | 2026-08-05 | 1.13.3 | feat(rate_of_closure, swing_sim, #4135 #4142 #4143): add canonical ground/tee ball setup with club defaults and physical propagation through simulation/export/rendering, complete persistent v2 variation-plan workflows and paired common-reference propagation analysis, and make every Rate Matplotlib canvas lifecycle-safe during Qt teardown. |
