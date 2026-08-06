@@ -58,9 +58,9 @@ keep self-hosted CI load down (see `CLAUDE.md` — these are big diffs).
   (`swing_sim/solver/targets.py`, `TargetRegion`, `ImpactGoal.target_region`),
   and H6 showcase styling (`ui/pyqt6/app_style.py`, UpstreamDrift launcher
   visual language) + yards-default distance units. 413 pytest + 309 swing_sim
-  + 174 vitest passing. H4 (AffineDrift putting research content) and H5
-  (public release-management repo) are cross-repo and tracked in #4125
-  directly, not in this PR.
+  - 174 vitest passing. H4 (AffineDrift putting research content) and H5
+    (public release-management repo) are cross-repo and tracked in #4125
+    directly, not in this PR.
 
 **Do not merge #4124 or #4129 before their base merges** — SPEC.md sections
 were unioned assuming sequential merge order; merging out of order will

@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.5                                      |
-| **Spec Version**        | 1.5.5                                      |
+| **Current Version**     | 1.5.6                                      |
+| **Spec Version**        | 1.5.6                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,14 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-05 Golf Club assembly type-checking compatibility
+
+- Shared golf-club assembly validation returns explicitly typed NumPy arrays
+  from the numeric-sequence and inertia-tensor adaptation seams, preserving the
+  new assembly physics contracts while satisfying the changed-file mypy gate.
+  Serialization facade methods keep typed local return values so narrow mypy
+  runs agree with full-repository type information.
 
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
@@ -1722,6 +1730,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
+| 2026-08-05 | 1.5.6 | feat(golf-club, #4147): add the canonical shared golf-club domain facade with immutable SI/frame-explicit component roles, physically realizable mass properties, rigid transforms, assembled mass/CG/full inertia, declared club-length references, and strict deterministic versioned JSON migration contracts. |
 | 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |
 | 2026-08-04 | 1.5.4 | docs(agent-handoff, Repository_Management#1390): add root `AGENT_HANDOFF.md` plus per-tool `AGENT_HANDOFF.md` under `src/rate_of_closure`, `src/pendulum_simulator`, and `src/rotation_converter`; add `docs/AGENT_HANDOFF_TEMPLATE.md` for future tools; add the "Agent Handoff & PR Policy" section to `CLAUDE.md`. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |

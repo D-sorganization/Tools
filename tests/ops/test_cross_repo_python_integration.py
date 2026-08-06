@@ -14,6 +14,11 @@ REQUIRED_SPARSE_PATHS = {
         "tests/shared_contracts",
     },
     "D-sorganization/UpstreamDrift": {
+        "chat",
+        "contracts.py",
+        "python/src/utils",
+        "shared",
+        "sidekick",
         "src/shared/python",
         "tests/shared_contracts",
         "tests/support",
@@ -56,6 +61,27 @@ def test_each_downstream_declares_its_required_sparse_scope() -> None:
     upstream_scope = actual["D-sorganization/UpstreamDrift"]
     assert "src" not in upstream_scope
     assert "ui" not in upstream_scope
+
+
+def test_upstream_scope_includes_every_release_build_package_root() -> None:
+    workflow = _workflow()
+    downstreams = workflow["jobs"]["downstream-consumer-contracts"]["strategy"][
+        "matrix"
+    ]["downstream"]
+    upstream = next(
+        downstream
+        for downstream in downstreams
+        if downstream["repo"] == "D-sorganization/UpstreamDrift"
+    )
+
+    scope = set(upstream["sparse_checkout"].splitlines())
+    assert {
+        "chat",
+        "contracts.py",
+        "python/src/utils",
+        "shared",
+        "sidekick",
+    } <= scope
 
 
 def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
