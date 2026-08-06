@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.6                                      |
-| **Spec Version**        | 1.5.6                                      |
+| **Current Version**     | 1.5.7                                      |
+| **Spec Version**        | 1.5.7                                      |
 | **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,23 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-05 Measured golf-shaft profiles and flexible reference models
+
+- `shared.python.golf_club` defines immutable, station-based shaft profiles in
+  SI units, including geometry, linear density, directional bending stiffness,
+  torsional stiffness, damping, spine orientation, trimming, insertion depth,
+  and measurement provenance.
+- Profiles support strict, versioned JSON and self-contained CSV interchange,
+  explicit what-if scaling, cut-shaft mass/inertia integration, and a static
+  Euler-Bernoulli/Saint-Venant cantilever reference.
+- A consistent-mass Euler-Bernoulli finite-element eigenproblem returns
+  auditable undamped bending modes on both transverse axes. It is validated
+  against the uniform-cantilever closed form and explicitly excludes nonlinear
+  swing dynamics, shear deformation, material-property inference, and
+  uncalibrated head/grip boundary dynamics.
+- The frame, validation behavior, formulas, interchange contract, and known
+  limits are specified in `docs/specs/GOLF_CLUB_SHAFT_PROFILES.md`.
 
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 
