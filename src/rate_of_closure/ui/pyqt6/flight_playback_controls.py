@@ -38,6 +38,7 @@ class FlightPlaybackControls(QWidget):
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._duration_s = 0.0
+        self._apex_time_s = 0.0
         self._current_time_s = 0.0
         self._speed = 1.0
         self._elapsed = QElapsedTimer()
@@ -53,19 +54,21 @@ class FlightPlaybackControls(QWidget):
         self.launch_button = self._button("Launch", self.jump_to_launch)
         self.play_button = self._button("Play", self._toggle)
         self.restart_button = self._button("Restart", self.restart)
-        self.impact_button = self._button("Impact", self.jump_to_impact)
+        self.apex_button = self._button("Apex", self.jump_to_apex)
+        self.landing_button = self._button("Landing", self.jump_to_landing)
         for button in (
             self.launch_button,
             self.play_button,
             self.restart_button,
-            self.impact_button,
+            self.apex_button,
+            self.landing_button,
         ):
             row.addWidget(button)
         self.scrubber = QSlider(Qt.Orientation.Horizontal)
         self.scrubber.setRange(0, _SLIDER_STEPS)
         self.scrubber.setAccessibleName("Ball Flight Time")
         self.scrubber.setToolTip(
-            "Scrub physical trajectory time [s] from launch to ground impact. "
+            "Scrub physical trajectory time [s] from launch to landing. "
             "Source: solver trajectory timestamps; positions use the app frame "
             "(x target, y up, z right) in metres."
         )
@@ -109,15 +112,23 @@ class FlightPlaybackControls(QWidget):
         )
         return button
 
-    def set_duration(self, duration_s: float) -> None:
-        """Adopt a finite non-negative duration and reset to launch."""
+    def set_timeline(self, duration_s: float, apex_time_s: float) -> None:
+        """Adopt finite landing/apex event times and reset to launch."""
         if not math.isfinite(duration_s) or duration_s < 0.0:
             raise ValueError("duration_s must be finite and >= 0")
+        if not math.isfinite(apex_time_s) or not 0.0 <= apex_time_s <= duration_s:
+            raise ValueError("apex_time_s must be finite and within the timeline")
         self.pause()
         self._duration_s = float(duration_s)
+        self._apex_time_s = float(apex_time_s)
         self._set_time(0.0)
         enabled = duration_s > 0.0
-        for control in (self.play_button, self.restart_button, self.impact_button):
+        for control in (
+            self.play_button,
+            self.restart_button,
+            self.apex_button,
+            self.landing_button,
+        ):
             control.setEnabled(enabled)
 
     def play(self) -> None:
@@ -149,8 +160,13 @@ class FlightPlaybackControls(QWidget):
         self.pause()
         self._set_time(0.0)
 
-    def jump_to_impact(self) -> None:
-        """Pause at the ground-impact/landing sample."""
+    def jump_to_apex(self) -> None:
+        """Pause at the first maximum-height sample."""
+        self.pause()
+        self._set_time(self._apex_time_s)
+
+    def jump_to_landing(self) -> None:
+        """Pause at the terminal ground-contact/landing sample."""
         self.pause()
         self._set_time(self._duration_s)
 
@@ -208,7 +224,7 @@ class FlightPlaybackPanel(QWidget):
     def __init__(self, flight_view: FlightView, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self.controls = FlightPlaybackControls()
-        flight_view.timelineChanged.connect(self.controls.set_duration)
+        flight_view.timelineChanged.connect(self.controls.set_timeline)
         self.controls.timeChanged.connect(flight_view.set_playback_time)
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)

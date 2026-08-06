@@ -54,12 +54,10 @@ _DISPLAY_PARAMS: tuple[tuple[str, str, str, bool], ...] = (
 )
 
 
-# Repository-wide duplicate-module protection skips local import traversal, so
-# mypy cannot resolve the extracted mixin at this import boundary.
-class FlightView(FlightViewPanelsMixin, QWidget):  # type: ignore[misc]
+class FlightView(FlightViewPanelsMixin, QWidget):
     """Flight-scale trajectory viewer: side + top-down 2D panels + 3D."""
 
-    timelineChanged = pyqtSignal(float)  # noqa: N815 - Qt signal convention
+    timelineChanged = pyqtSignal(float, float)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -180,9 +178,19 @@ class FlightView(FlightViewPanelsMixin, QWidget):  # type: ignore[misc]
             0.0 if self._timed_trajectory is None else self._timed_trajectory.duration_s
         )
 
+    def playback_apex_time_s(self) -> float:
+        """Current solver trajectory apex timestamp [s], or zero if unavailable."""
+        return (
+            0.0
+            if self._timed_trajectory is None
+            else self._timed_trajectory.apex_time_s
+        )
+
     def _reset_playback(self) -> None:
         self._playback_time_s = 0.0
-        self.timelineChanged.emit(self.playback_duration_s())
+        self.timelineChanged.emit(
+            self.playback_duration_s(), self.playback_apex_time_s()
+        )
 
     def trajectory(self) -> np.ndarray:
         """The (N, 3) app-frame trajectory currently rendered."""

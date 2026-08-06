@@ -8,7 +8,7 @@ export interface PlaybackFrame {
   position: Vec3;
   lowerIndex: number;
   fraction: number;
-  isImpact: boolean;
+  isLanding: boolean;
 }
 
 function finiteVector(vector: Vec3): boolean {
@@ -41,6 +41,7 @@ function interpolate(left: Vec3, right: Vec3, fraction: number): Vec3 {
 export class PlaybackTimeline {
   private readonly points: ReadonlyArray<{ time: number; position: Vec3 }>;
   readonly duration: number;
+  readonly apexTime: number;
 
   constructor(points: readonly FlightPoint[]) {
     validatePlaybackPoints(points);
@@ -49,6 +50,10 @@ export class PlaybackTimeline {
       position: [...point.position],
     }));
     this.duration = this.points[this.points.length - 1].time;
+    const apex = this.points.reduce((best, point) =>
+      point.position[1] > best.position[1] ? point : best,
+    );
+    this.apexTime = apex.time;
   }
 
   /** Interpolate app-frame position at finite physical time, clamped to endpoints. */
@@ -73,7 +78,7 @@ export class PlaybackTimeline {
       position: interpolate(this.points[lower].position, this.points[upper].position, fraction),
       lowerIndex: lower,
       fraction,
-      isImpact: false,
+      isLanding: false,
     };
   }
 
@@ -83,7 +88,7 @@ export class PlaybackTimeline {
       position: [...this.points[index].position],
       lowerIndex: index,
       fraction: 0,
-      isImpact: index === this.points.length - 1,
+      isLanding: index === this.points.length - 1,
     };
   }
 }

@@ -31,6 +31,7 @@ export function FlightPlayback3D({ points, comparisonPoints = [] }: Props) {
     [points],
   );
   const duration = timeline?.duration ?? 0;
+  const apexTime = timeline?.apexTime ?? 0;
   useMemo(() => {
     if (comparisonPoints.length > 0) validatePlaybackPoints(comparisonPoints);
   }, [comparisonPoints]);
@@ -126,11 +127,20 @@ export function FlightPlayback3D({ points, comparisonPoints = [] }: Props) {
         <button
           type="button"
           disabled={duration <= 0}
-          onClick={() => jump(duration)}
-          aria-label="Jump to Impact"
+          onClick={() => jump(apexTime)}
+          aria-label="Jump to Apex"
           className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
         >
-          Impact
+          Apex
+        </button>
+        <button
+          type="button"
+          disabled={duration <= 0}
+          onClick={() => jump(duration)}
+          aria-label="Jump to Landing"
+          className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
+        >
+          Landing
         </button>
         <input
           type="range"

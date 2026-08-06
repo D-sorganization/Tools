@@ -6,7 +6,8 @@ import type { FlightPoint } from "../model/flight";
 
 const points: FlightPoint[] = [
   { time: 0, position: [0, 0, 0], velocity: [1, 0, 1] },
-  { time: 2, position: [20, 8, 3], velocity: [1, 0, -1] },
+  { time: 1, position: [10, 8, 2], velocity: [1, 0, 0] },
+  { time: 2, position: [20, 0, 3], velocity: [1, 0, -1] },
 ];
 
 describe("FlightPlayback3D", () => {
@@ -33,7 +34,9 @@ describe("FlightPlayback3D", () => {
     expect(screen.getByRole("slider", { name: "Ball Flight Time" }))
       .toHaveAttribute("max", "2");
     expect(screen.getByLabelText("Playback Speed")).toHaveValue("1");
-    fireEvent.click(screen.getByRole("button", { name: "Jump to Impact" }));
+    fireEvent.click(screen.getByRole("button", { name: "Jump to Apex" }));
+    expect(screen.getByText("1.00 / 2.00 s")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Jump to Landing" }));
     expect(screen.getByText("2.00 / 2.00 s")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Jump to Launch" }));
     expect(screen.getByText("0.00 / 2.00 s")).toBeInTheDocument();

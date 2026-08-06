@@ -20,7 +20,7 @@ class PlaybackFrame:
     position_m: np.ndarray = field(repr=False)
     lower_index: int
     fraction: float
-    is_impact: bool
+    is_landing: bool
 
 
 @dataclass(frozen=True)
@@ -60,8 +60,13 @@ class TimedTrajectory:
 
     @property
     def duration_s(self) -> float:
-        """Physical timestamp of impact/landing [s]."""
+        """Physical timestamp of landing [s]."""
         return float(self.times_s[-1])
+
+    @property
+    def apex_time_s(self) -> float:
+        """Physical timestamp of the first maximum-height sample [s]."""
+        return float(self.times_s[int(np.argmax(self.positions_m[:, 1]))])
 
     def frame_at(self, requested_time_s: float) -> PlaybackFrame:
         """Linearly interpolate position at a finite, endpoint-clamped time."""
@@ -89,7 +94,7 @@ class TimedTrajectory:
             position_m=self.positions_m[index].copy(),
             lower_index=index,
             fraction=fraction,
-            is_impact=index == len(self.times_s) - 1,
+            is_landing=index == len(self.times_s) - 1,
         )
 
 

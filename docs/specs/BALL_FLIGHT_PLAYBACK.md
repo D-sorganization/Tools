@@ -12,7 +12,7 @@ views. It does not change launch, impact, aerodynamics, or wind physics.
   and z right of target.
 - Samples must be finite, non-negative in time, and strictly time-ordered.
 - Playback linearly interpolates position between adjacent solver samples and
-  clamps requests before launch or after ground impact to the endpoint samples.
+  clamps requests before launch or after landing to the endpoint samples.
 - Playback speed changes wall-clock presentation only. It never changes the
   physical timestamp, trajectory, metrics, or paired wind comparison.
 
@@ -21,22 +21,22 @@ views. It does not change launch, impact, aerodynamics, or wind physics.
 PyQt6 uses the existing Matplotlib side, top-down, and mouse-interactive 3D
 panels. The moving ball is a mutable artist, so an animation tick does not clear
 the figure or reset a user's 3D camera. One `QTimer` is owned by each control
-strip and is stopped on pause, impact, or widget close.
+strip and is stopped on pause, landing, or widget close.
 
 The React view uses a local Canvas 2D orthographic projection. Pointer drag
 rotates the camera and the wheel adjusts bounded zoom. Projection fitting uses
 one scalar pixels-per-metre value for both screen axes, preserving physical
 aspect. One `requestAnimationFrame` callback is scheduled while playing and is
-cancelled on pause, impact, trajectory replacement, or unmount.
+cancelled on pause, landing, trajectory replacement, or unmount.
 
 Both interfaces expose play/pause, time scrub, 0.25x through 4x speed, restart,
-jump-to-launch, and jump-to-impact controls with accessible names and frame/unit
+jump-to-launch, jump-to-apex, and jump-to-landing controls with accessible names and frame/unit
 help. Existing static plots and calm-versus-selected-wind overlays remain visible.
 
 ## Known Boundaries
 
-- “Impact” in the flight viewer is the terminal ground-contact/landing sample,
-  not club-ball impact; “Launch” is the post-impact initial flight sample.
+- “Launch” is the post-club-impact initial flight sample; “Landing” is the
+  terminal ground-contact sample. The labels are deliberately not interchangeable.
 - The web renderer is orthographic and dependency-free; it does not provide
   terrain occlusion, shadows, video encoding, or GPU/WebGL effects.
 - Playback follows the sample horizon returned by the selected physics model.
