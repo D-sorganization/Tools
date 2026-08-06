@@ -324,9 +324,11 @@ class LaunchMonitorAnalyticsTab(QWidget):
                     "correlation",
                     "—" if item.coefficient is None else f"{item.coefficient:.6g}",
                     "—" if item.p_value is None else f"{item.p_value:.6g}",
-                    "—"
-                    if item.adjusted_p_value is None
-                    else f"{item.adjusted_p_value:.6g}",
+                    (
+                        "—"
+                        if item.adjusted_p_value is None
+                        else f"{item.adjusted_p_value:.6g}"
+                    ),
                     str(item.sample_count),
                 ]
             )

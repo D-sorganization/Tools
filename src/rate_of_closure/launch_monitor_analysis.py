@@ -150,11 +150,11 @@ def _fingerprint(frame: pd.DataFrame, selected: tuple[str, ...]) -> str:
     columns = identity + selected
     records = [
         {
-            column: None
-            if pd.isna(value)
-            else value.item()
-            if hasattr(value, "item")
-            else value
+            column: (
+                None
+                if pd.isna(value)
+                else value.item() if hasattr(value, "item") else value
+            )
             for column, value in row.items()
         }
         for row in frame[list(columns)].to_dict(orient="records")
