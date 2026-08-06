@@ -16,7 +16,8 @@ _ANGULAR_SPEED_TOLERANCE_RAD_S = 1e-12
 
 
 def _as_vector(value: Vector3) -> np.ndarray:
-    return np.asarray(value, dtype=float)
+    vector: np.ndarray = np.asarray(value, dtype=float)
+    return vector
 
 
 def _tuple3(value: np.ndarray) -> Vector3:
