@@ -32,8 +32,10 @@ from rate_of_closure.simulation import (
     run_simulation,
     run_to_json_dict,
     screw_axis_samples,
+    screw_series_rows,
     write_csv,
     write_json,
+    write_screw_csv,
 )
 from shared.python.swing_sim.types import PlaneOrientation
 
@@ -266,8 +268,29 @@ class TestExport:
         phases = {row[0] for row in rows[1:]}
         assert phases == {"swing", "flight"}
         # Times must be numeric and non-decreasing within each phase.
-        swing_ts = [float(r[1]) for r in rows[1:] if r[0] == "swing"]
+        swing_ts = [float(row[1]) for row in rows[1:] if row[0] == "swing"]
         assert swing_ts == sorted(swing_ts)
+
+    def test_screw_motion_has_dedicated_csv_and_json_series(
+        self, run: SimulationRun, tmp_path
+    ) -> None:  # type: ignore[no-untyped-def]
+        rows = screw_series_rows(run)
+        assert len(rows) == len(run.swing_times)
+        assert rows[0][1] == "finite"
+        assert rows[0][2] == pytest.approx(np.linalg.norm(run.swing_twists[0, :3]))
+        path = tmp_path / "screw-motion.csv"
+        write_screw_csv(run, path)
+        with path.open(newline="", encoding="utf-8") as handle:
+            exported = list(csv.reader(handle))
+        assert exported[0][:4] == [
+            "t_s",
+            "motion_kind",
+            "angular_rate_rad_s",
+            "pitch_m_rad",
+        ]
+        document = run_to_json_dict(run)
+        assert document["series"]["club_screw_motion"]["frame"] == "app/world"
+        assert len(document["series"]["club_screw_motion"]["rows"]) == len(rows)
 
     def test_json_round_trip(self, run: SimulationRun, tmp_path) -> None:  # type: ignore[no-untyped-def]
         path = tmp_path / "run.json"

@@ -7,6 +7,7 @@ import {
   resolveBallSetup,
   type BallSetup,
 } from "./ballSetup";
+import { analyzeTwist, type Twist6 } from "./screwAnalysis";
 import type { SimulationInput, SimulationRunTs } from "./simulation";
 
 export const BALL_SETUP_STORAGE_KEY = "rate_of_closure.ball_setup.web/v1";
@@ -110,6 +111,23 @@ export function createSimulationRunDocument(
   prescribedTorqueProfile: unknown = null,
 ) {
   const setup = resolveBallSetup(input.ballSetup);
+  const clubScrewMotion = run.swing.map((sample) => {
+    const twist: Twist6 = [...sample.angularVelocity, ...sample.velocity];
+    const motion = analyzeTwist(twist, sample.position);
+    return {
+      t_s: sample.t,
+      motion_kind: motion.kind,
+      angular_rate_rad_s: motion.angularRateRadS,
+      pitch_m_rad: motion.pitchMPerRad,
+      axial_speed_m_s: motion.axialSpeedMps,
+      r_isa_m: motion.radiusM,
+      axis_direction: motion.axisDirection,
+      axis_point_m: motion.axisPointM,
+      orbital_velocity_m_s: motion.orbitalVelocityMps,
+      axial_velocity_m_s: motion.axialVelocityMps,
+      reconstruction_residual_m_s: motion.reconstructionResidualMps,
+    };
+  });
   return {
     format: SIMULATION_EXPORT_FORMAT,
     parameters: {
@@ -123,7 +141,11 @@ export function createSimulationRunDocument(
     impactTimeS: run.impactTimeS,
     torqueRun: run.torqueRun,
     prescribedTorqueProfile,
-    series: { swing: run.swing, flight: run.flight },
+    series: {
+      swing: run.swing,
+      flight: run.flight,
+      clubScrewMotion: { frame: "app/world", units: "SI", rows: clubScrewMotion },
+    },
   };
 }
 

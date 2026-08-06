@@ -169,6 +169,13 @@ export const FIELD_GUIDANCE: Record<string, string> = {
     "configurable green distance, tee marker at the origin. Source: " +
     "standard golf-course presentation; tones derived from the theme " +
     "palette.",
+  screwAxisVisible:
+    "Suggested range: on for swing-scale engineering analysis. The magenta " +
+    "line is the directed instantaneous screw axis, the orange wrapped curve " +
+    "shows rotational handedness, and the cyan radius is R_ISA. Pure " +
+    "translation is shown as an arrow because its axis is at infinity. " +
+    "Source: Lynch and Park, Modern Robotics, Chapter 3.3.2 (twists). " +
+    "Reference frame: app/world x target, y up, z right.",
   swingFlightToggle:
     "Off by default: the flight envelope (100+ m) dwarfs the swing " +
     "envelope (~3 m), collapsing the swing to a dot when both share one " +

@@ -27,9 +27,13 @@ from PyQt6.QtWidgets import (
 from rate_of_closure.simulation import (
     KineticsSeries,
     SimulationRun,
-    screw_axis_samples,
 )
-from rate_of_closure.simulation.isa import MIN_RATE_DPS
+from rate_of_closure.simulation.screw_analysis import (
+    JointMotionSeries,
+    ScrewMotion,
+    analyze_joint_motion,
+    analyze_twist,
+)
 from rate_of_closure.ui.course import CourseLayout
 from rate_of_closure.ui.pyqt6.ball_setup_scene import draw_representative_tee
 from rate_of_closure.ui.pyqt6.course_scene import draw_course_ground_3d
@@ -39,6 +43,10 @@ from rate_of_closure.ui.pyqt6.figure_canvas import (
 from rate_of_closure.ui.pyqt6.kinetics_overlay import overlay_frame
 from rate_of_closure.ui.pyqt6.pendulum_scene import draw_pendulum_skeleton
 from rate_of_closure.ui.pyqt6.presentation_kinetics import kinetics_for_presentation
+from rate_of_closure.ui.pyqt6.screw_overlay import (
+    ScrewOverlayRenderer,
+    format_screw_readout,
+)
 from rate_of_closure.ui.pyqt6.simulation_specs import RATE_PRESETS
 from rate_of_closure.units import FIELD_GUIDANCE
 
@@ -58,6 +66,27 @@ __all__ = ["RATE_PRESETS", "SimulationView"]
 _TIMER_INTERVAL_MS = 40
 _SLIDER_STEPS = 1000
 _BALL_DRAW_RADIUS_M = 0.03  # slightly over scale so the ball stays visible
+_JOINT_LABELS = {
+    "joint.shoulder": "Shoulder Joint",
+    "joint.elbow": "Elbow Joint",
+    "joint.wrist": "Wrist Joint",
+}
+
+
+def _fallback_joint_ids(count: int) -> tuple[str, ...]:
+    """Return stable display IDs for articulated sources without torque IDs."""
+    canonical = ("joint.shoulder", "joint.elbow", "joint.wrist")
+    return tuple(
+        canonical[index] if index < len(canonical) else f"joint.{index + 1}"
+        for index in range(count)
+    )
+
+
+def _joint_label(joint_id: str) -> str:
+    """Return an engineering-facing label for one stable joint identifier."""
+    return _JOINT_LABELS.get(
+        joint_id, joint_id.removeprefix("joint.").replace("_", " ").title() + " Joint"
+    )
 
 
 class SimulationView(QWidget):
@@ -71,7 +100,7 @@ class SimulationView(QWidget):
 
         self._course_layout = CourseLayout()
         self._run: SimulationRun | None = None
-        self._screws: list[dict] | None = None
+        self._joint_motion: JointMotionSeries | None = None
         # None = not resolved yet; False = source has no joint states.
         self._kinetics: KineticsSeries | None | bool = None
         self._time = 0.0
@@ -82,6 +111,15 @@ class SimulationView(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(self._build_playback_bar())
         layout.addLayout(self._build_toggle_bar())
+        self._screw_readout = QLabel()
+        self._screw_readout.setWordWrap(True)
+        self._screw_readout.setVisible(False)
+        self._screw_readout.setToolTip(
+            "Engineering screw-motion readout in the app frame: x target, "
+            "y up, z right. Orbital + axial velocity reconstructs the selected "
+            "point velocity. Pure translation has an axis at infinity."
+        )
+        layout.addWidget(self._screw_readout)
         layout.addWidget(self._canvas)
 
         self._timer = QTimer(self)
@@ -153,6 +191,13 @@ class SimulationView(QWidget):
         self._screw_check = QCheckBox("Screw Axis")
         self._screw_check.setChecked(False)
         self._screw_check.setToolTip(FIELD_GUIDANCE["screw_axis_visible"])
+        self._screw_entity = QComboBox()
+        self._screw_entity.addItem("Club", "club")
+        self._screw_entity.setToolTip(
+            "Select the club rigid body or a modeled revolute joint. "
+            "Joint glyphs show that joint's instantaneous contribution at the clubhead."
+        )
+        self._screw_entity.currentIndexChanged.connect(lambda _index: self._draw())
         # Kinetics overlay (#4125 H2): torque arcs + force arrows.
         self._kinetics_check = QCheckBox("Show Kinetics")
         self._kinetics_check.setChecked(False)
@@ -176,6 +221,7 @@ class SimulationView(QWidget):
         ):
             check.toggled.connect(lambda _checked: self._draw())
             bar.addWidget(check)
+        bar.addWidget(self._screw_entity)
         bar.addStretch(1)
         return bar
 
@@ -183,9 +229,10 @@ class SimulationView(QWidget):
     def set_run(self, run: SimulationRun | None) -> None:
         """Adopt a run (or clear with ``None``) and reset the timeline."""
         self._run = run
-        self._screws = None
+        self._joint_motion = None
         self._kinetics = None
         self._time = 0.0
+        self._populate_screw_entities()
         self._sync_slider()
         self._draw()
 
@@ -309,13 +356,57 @@ class SimulationView(QWidget):
         self._sync_slider()
         self._draw()
 
-    def _screw_entries(self) -> list[dict]:
-        if self._run is None:
-            return []
-        if self._screws is None:
-            dt = float(self._run.swing_times[1] - self._run.swing_times[0])
-            self._screws = screw_axis_samples(self._run.swing_poses, dt)
-        return self._screws
+    def _populate_screw_entities(self) -> None:
+        """Expose the club plus every articulated revolute joint in the run."""
+        selected = self._screw_entity.currentData()
+        self._screw_entity.blockSignals(True)
+        self._screw_entity.clear()
+        self._screw_entity.addItem("Club", "club")
+        if self._run is not None and self._run.swing_joints.shape[1] >= 2:
+            count = self._run.swing_joints.shape[1] - 1
+            identifiers = self._run.swing_joint_ids or _fallback_joint_ids(count)
+            for joint_id in identifiers:
+                self._screw_entity.addItem(_joint_label(joint_id), joint_id)
+        match = self._screw_entity.findData(selected)
+        self._screw_entity.setCurrentIndex(max(match, 0))
+        self._screw_entity.blockSignals(False)
+
+    def _joint_series(self) -> JointMotionSeries | None:
+        """Lazily reconstruct joint contributions for articulated sources."""
+        if self._run is None or self._run.swing_joints.shape[1] < 2:
+            return None
+        if self._joint_motion is None:
+            count = self._run.swing_joints.shape[1] - 1
+            identifiers = self._run.swing_joint_ids or _fallback_joint_ids(count)
+            self._joint_motion = analyze_joint_motion(
+                self._run.swing_times, self._run.swing_joints, identifiers
+            )
+        return self._joint_motion
+
+    def _selected_motion(self, index: int) -> tuple[str, ScrewMotion, float | None]:
+        """Return label, motion, and optional joint reconstruction residual."""
+        assert self._run is not None
+        entity = str(self._screw_entity.currentData() or "club")
+        if entity == "club":
+            motion = analyze_twist(
+                self._run.swing_twists[index], self._run.swing_positions[index]
+            )
+            return "Club", motion, None
+        series = self._joint_series()
+        assert series is not None
+        joint_index = series.joint_ids.index(entity)
+        twist = np.concatenate(
+            [
+                series.angular_velocity_rad_s[index, joint_index],
+                series.contribution_velocity_m_s[index, joint_index],
+            ]
+        )
+        motion = analyze_twist(twist, self._run.swing_positions[index])
+        return (
+            _joint_label(entity),
+            motion,
+            float(series.reconstruction_residual_m_s[index]),
+        )
 
     @staticmethod
     def _display(points: np.ndarray) -> np.ndarray:
@@ -376,28 +467,16 @@ class SimulationView(QWidget):
             self._axes.quiver(*s, *v, color=color, label=label, **style)
 
     def _draw_screw_axis(self, index: int, extent: float) -> None:
-        entries = self._screw_entries()
-        if not entries:
-            return
-        entry = entries[min(index, len(entries) - 1)]
-        if entry["rate_dps"] < MIN_RATE_DPS:
-            return
-        axis, point = entry["axis"], entry["point"]
-        length = extent * 1.2
-        line = np.vstack([point - length * axis, point + length * axis])
-        pts = self._display(line)
-        self._axes.plot(
-            pts[:, 0],
-            pts[:, 1],
-            pts[:, 2],
-            color=get_chart_color(5),
-            lw=1.6,
-            ls="--",
-            label=(
-                f"screw axis — {entry['rate_dps']:.0f} °/s, "
-                f"pitch {entry['pitch']:.3f} m/rad, "
-                f"R_ISA {entry['r_isa_m']:.2f} m"
-            ),
+        """Draw a directed axis, wrapped helix, radius, and live explanation."""
+        label, motion, residual = self._selected_motion(index)
+        assert self._run is not None
+        self._screw_readout.setText(
+            format_screw_readout(
+                label, motion, self._run.config.club.loft_deg, residual
+            )
+        )
+        ScrewOverlayRenderer(self._axes, self._display, get_chart_color).draw(
+            motion, extent, label
         )
 
     def _draw(self) -> None:
@@ -408,6 +487,7 @@ class SimulationView(QWidget):
         self._tee_artist_count = 0
         run = self._run
         if run is None:
+            self._screw_readout.setVisible(False)
             axes.set_title("Run a simulation to populate the scene")
             self._canvas.draw_idle()
             return
@@ -506,7 +586,9 @@ class SimulationView(QWidget):
                 ball = self._display(run.flight_positions[n_flight - 1])
                 axes.scatter(*ball, color=get_chart_color(4), s=25, zorder=5)
 
-        if self._screw_check.isChecked() and not in_flight:
+        show_screw = self._screw_check.isChecked() and not in_flight
+        self._screw_readout.setVisible(show_screw)
+        if show_screw:
             self._draw_screw_axis(index, extent)
         if self._kinetics_check.isChecked() and not in_flight:
             self._draw_kinetics(index)

@@ -169,7 +169,28 @@ class TestSimulationView:
         view._screw_check.setChecked(True)
         view.set_playback_time(ran_tab.last_run().impact_time_s * 0.5)
         labels = [line.get_label() for line in view._axes.lines]
-        assert any("screw axis" in str(label) for label in labels)
+        assert any("Screw Axis" in str(label) for label in labels)
+        assert any("Helical Motion" in str(label) for label in labels)
+        assert "Finite screw" in view._screw_readout.text()
+        assert "Orbital" in view._screw_readout.text()
+        assert "total = orbital + axial" in view._screw_readout.text()
+
+    def test_screw_selector_exposes_club_and_articulated_joints(
+        self, tab, qtbot
+    ) -> None:  # type: ignore[no-untyped-def]
+        tab._source_combo.setCurrentIndex(1)
+        with qtbot.waitSignal(tab.runCompleted, timeout=10000):
+            tab.run_now()
+        view = tab.view()
+        choices = [
+            view._screw_entity.itemText(i) for i in range(view._screw_entity.count())
+        ]
+        assert choices == ["Club", "Shoulder Joint", "Wrist Joint"]
+        view._screw_check.setChecked(True)
+        view._screw_entity.setCurrentIndex(1)
+        view.set_playback_time(0.5)
+        assert "Shoulder Joint" in view._screw_readout.text()
+        assert "Contribution" in view._screw_readout.text()
 
 
 class TestInspector:
@@ -178,6 +199,7 @@ class TestInspector:
         assert not fresh._export_csv_button.isEnabled() or fresh.run() is not None
         inspector = ran_tab.inspector()
         assert inspector._export_csv_button.isEnabled()
+        assert inspector._export_screw_csv_button.isEnabled()
         assert inspector._export_json_button.isEnabled()
 
     def test_table_populates_and_sorts(self, ran_tab) -> None:  # type: ignore[no-untyped-def]

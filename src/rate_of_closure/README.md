@@ -20,6 +20,11 @@ over the distance to the instantaneous screw axis, and `1 / R_ISA =
 omega / v` — which is why the speed-invariant closure unit the tool
 reports is **degrees per foot of travel**.
 
+The Simulation view also renders selectable club and joint screw-motion
+glyphs, velocity-component projections, and reconstruction residuals. See the
+[Screw-Axis Analysis and Motion Glyphs](../../docs/rate_of_closure/screw_axis_analysis.md)
+guide for equations, display semantics, degeneracy rules, and limitations.
+
 ## Conventions and Sources
 
 * **Frame** (AffineDrift house convention, `sections/02-parameters.tex`,
