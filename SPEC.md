@@ -888,6 +888,21 @@ high_mm)` exposes the face-curvature normal (gradient of the
 - `docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md` documents equations, frames, the
   worked example, sign dependence, verification, and simulation-adapter limits.
 
+### 2026-08-05 Swept wedge ground-clearance analysis
+
+- `shared.python.golf_club` derives nine stable leading-edge and sole contact
+  candidates from the same canonical profile consumed by the exact CAD build.
+- Retained rigid-head poses are swept between samples; planar crossings are
+  refined, and first-contact feature, time, pose, normal velocity, tangential
+  velocity, low point, ball/ground sequence, and clearance margins are typed.
+- Common-frame translation, time-origin, and linear timestep-refinement
+  invariants are regression tested alongside all hit/miss sequence classes.
+- The Rate adapter passes complete retained poses/twists and only a real impact
+  time, so closest approach remains an explicitly labeled miss.
+- `docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md` specifies frames, algorithms,
+  metrics, test evidence, rotation-interpolation limits, and the strict boundary
+  between rigid geometric clearance and future turf-contact mechanics.
+
 ### 2026-08-05 Exact modern-wedge CAD foundation
 
 - `shared.python.golf_club` defines a provenance-bearing, immutable modern-wedge

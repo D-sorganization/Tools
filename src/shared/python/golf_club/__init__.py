@@ -59,6 +59,20 @@ from .wedge_export import (
     WedgeExportResult,
     export_wedge_artifacts,
 )
+from .wedge_geometry import (
+    WedgeContactCandidate,
+    WedgeContactFeature,
+    wedge_body_profile_m,
+    wedge_contact_candidates,
+)
+from .wedge_ground_contact import (
+    ContactSequence,
+    GroundPlane,
+    WedgeClearanceSample,
+    WedgeGroundClearanceAnalysis,
+    WedgeGroundContactEvent,
+    analyze_wedge_ground_clearance,
+)
 from .wedge_kinematics import (
     InstantaneousScrewAxis,
     WedgeKinematicAnalysis,
@@ -89,8 +103,10 @@ __all__ = [
     "ClubLengthMeasurement",
     "ComponentMassProperties",
     "ComponentRole",
+    "ContactSequence",
     "ExtrapolationPolicy",
     "Handedness",
+    "GroundPlane",
     "InstantaneousScrewAxis",
     "RigidTransform",
     "SHAFT_PROFILE_FORMAT",
@@ -103,6 +119,11 @@ __all__ = [
     "ShaftTipLoad",
     "ShaftTipResponse",
     "WedgeHeadParameters",
+    "WedgeClearanceSample",
+    "WedgeContactCandidate",
+    "WedgeContactFeature",
+    "WedgeGroundClearanceAnalysis",
+    "WedgeGroundContactEvent",
     "WedgeKinematicAnalysis",
     "WedgeKinematicState",
     "WedgeGeometryProvenance",
@@ -117,6 +138,7 @@ __all__ = [
     "WEDGE_PARAMETERS_FORMAT",
     "assemble_mass_properties",
     "analyze_wedge_kinematics",
+    "analyze_wedge_ground_clearance",
     "angle_of_attack_deg",
     "assembly_from_json",
     "assembly_from_json_dict",
@@ -135,6 +157,8 @@ __all__ = [
     "solve_shaft_bending_modes",
     "solve_cantilever_tip_response",
     "wedge_preset",
+    "wedge_body_profile_m",
+    "wedge_contact_candidates",
     "wedge_parameters_from_json",
     "wedge_parameters_to_json",
 ]
