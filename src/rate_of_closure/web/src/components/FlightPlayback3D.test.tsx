@@ -42,6 +42,19 @@ describe("FlightPlayback3D", () => {
     expect(screen.getByText("0.00 / 2.00 s")).toBeInTheDocument();
   });
 
+  it("preserves its intrinsic aspect ratio at responsive widths", () => {
+    render(<FlightPlayback3D points={points} />);
+
+    const canvas = screen.getByLabelText("Interactive 3D ball-flight playback");
+    expect(canvas).toHaveAttribute("width", "860");
+    expect(canvas).toHaveAttribute("height", "420");
+    expect(canvas).toHaveStyle({
+      width: "100%",
+      height: "auto",
+      aspectRatio: "860 / 420",
+    });
+  });
+
   it("keeps at most one animation frame scheduled and cancels it on unmount", () => {
     let nextId = 0;
     const callbacks = new Map<number, FrameRequestCallback>();
