@@ -23,6 +23,7 @@ from PyQt6.QtWidgets import (
 
 from rate_of_closure.simulation import (
     KineticsSeries,
+    RunGroundClearanceSnapshot,
     SimulationRun,
 )
 from rate_of_closure.simulation.screw_analysis import (
@@ -54,7 +55,6 @@ except ImportError:  # pragma: no cover - theme package always ships in-repo
 
 
 logger = logging.getLogger(__name__)
-
 __all__ = ["RATE_PRESETS", "SimulationView"]
 
 _TIMER_INTERVAL_MS = 40
@@ -74,7 +74,7 @@ class SimulationView(QWidget):
         self._run: SimulationRun | None = None
         self._joint_motion: JointMotionSeries | None = None
         self._kinetics: KineticsSeries | None | bool = None
-        self._wedge_clearance = None
+        self._wedge_clearance: RunGroundClearanceSnapshot | None = None
         self._time = 0.0
         self._rendered_ball_center_m: np.ndarray | None = None
         self._tee_artist_count = 0

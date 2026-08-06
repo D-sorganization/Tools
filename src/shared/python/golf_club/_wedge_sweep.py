@@ -46,7 +46,8 @@ def swept_times(times: np.ndarray, subdivisions: int) -> np.ndarray:
             float(start + (end - start) * step / subdivisions)
             for step in range(1, subdivisions + 1)
         )
-    return np.asarray(values)
+    result: np.ndarray = np.asarray(values, dtype=float)
+    return result
 
 
 def _interval(times: np.ndarray, time_s: float) -> tuple[int, float]:
@@ -150,12 +151,13 @@ def interpolated_pose(
     if alpha >= 1.0:
         result = poses[index + 1].copy()
         return result
-    pose = np.eye(4)
+    pose: np.ndarray = np.eye(4, dtype=float)
     pose[:3, :3] = _slerp_rotation(
         poses[index, :3, :3], poses[index + 1, :3, :3], alpha
     )
     pose[:3, 3] = (1.0 - alpha) * poses[index, :3, 3] + alpha * poses[index + 1, :3, 3]
-    return pose
+    result = np.asarray(pose, dtype=float)
+    return result
 
 
 def interpolated_twist(
