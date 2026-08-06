@@ -311,9 +311,13 @@ class EnsemblePlotDataset:
         source, name = variable.key.split(":", 1)
         if source == "input":
             column = self.result.variation.input_names.index(name)
-            return np.asarray(self.result.variation.inputs[:, column], dtype=float)
+            values: np.ndarray = np.asarray(
+                self.result.variation.inputs[:, column], dtype=float
+            )
+            return values
         column = self.result.variation.output_names.index(name)
-        return np.asarray(self.result.variation.outputs[:, column], dtype=float)
+        values = np.asarray(self.result.variation.outputs[:, column], dtype=float)
+        return values
 
 
 def _cohort_availability(
@@ -334,7 +338,8 @@ def _sample_indices(n_trials: int, n_samples: int, max_vertices: int) -> np.ndar
     if allowed_samples >= n_samples:
         return np.arange(n_samples, dtype=int)
     indices = np.linspace(0, n_samples - 1, allowed_samples, dtype=int)
-    return np.asarray(np.unique(indices), dtype=int)
+    unique: np.ndarray = np.asarray(np.unique(indices), dtype=int)
+    return unique
 
 
 def _kind_for_output(name: str) -> ScalarVariableKind:

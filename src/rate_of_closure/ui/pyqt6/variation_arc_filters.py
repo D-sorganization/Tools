@@ -66,7 +66,7 @@ class ArcFilterControls(QWidget):
 
     def trial_indices(self, dataset: EnsemblePlotDataset) -> np.ndarray:
         """Return stable trial indices satisfying every active filter."""
-        indices = np.arange(len(dataset.cohorts), dtype=int)
+        indices: np.ndarray = np.arange(len(dataset.cohorts), dtype=int)
         outcome = self._outcome.currentData()
         if outcome is not None:
             indices = indices[
@@ -89,7 +89,10 @@ class ArcFilterControls(QWidget):
             for group in np.array_split(np.asarray(ranked, dtype=int), group_count)
             if group.size
         ]
-        return np.asarray(groups[min(group_index, len(groups) - 1)], dtype=int)
+        selected: np.ndarray = np.asarray(
+            groups[min(group_index, len(groups) - 1)], dtype=int
+        )
+        return selected
 
     def sample_count(self, total: int) -> int:
         """Return a non-empty leading common-time sample count."""

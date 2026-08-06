@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 import numpy as np
+from mpl_toolkits.mplot3d import Axes3D
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QComboBox,
@@ -272,8 +275,8 @@ class ArcOverlayView(QWidget):
                 str(self._point_combo.currentData()),
                 self._quiet_threshold.value() / 1000.0,
                 self._selected_trial,
-                float(self._canvas.axes.azim),
-                float(self._canvas.axes.elev),
+                float(cast(Axes3D, self._canvas.axes).azim),
+                float(cast(Axes3D, self._canvas.axes).elev),
                 self._filters.outcome_filter,
                 self._filters.phase_percent / 100.0,
                 self._filters.perturbation_source_key,
