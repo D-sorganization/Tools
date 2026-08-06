@@ -179,6 +179,9 @@ describe("VariationPanel analysis execution policy", () => {
     expect(screen.getByRole("img", { name: /variation scatter/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Scatter Matrix and Marginal/i })).toBeInTheDocument();
     expect(screen.getByRole("group", { name: /Scatter matrix with marginal histograms/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Matrix SVG" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Matrix Selected CSV" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Matrix Plot Definition JSON" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Scatter SVG" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Scatter Plot Definition JSON" })).toBeEnabled();
     expect(screen.queryByText(/One-at-a-Time Sensitivity/i)).not.toBeInTheDocument();

@@ -42,6 +42,7 @@ describe("variation plot definitions", () => {
       phaseEndFraction: 0.75,
       perturbationSourceKey: "swing_motion.yaw_deg",
       perturbationBand: "upper",
+      variableKeys: null,
     });
 
     expect(definition.schemaVersion).toBe(1);
@@ -58,6 +59,21 @@ describe("variation plot definitions", () => {
       selectedTrialIndex: null, cameraYawDeg: null, cameraPitchDeg: null, cameraZoom: null,
       outcomeFilter: null, phaseEndFraction: null,
       perturbationSourceKey: null, perturbationBand: null,
+      variableKeys: null,
     })).toThrow(/greater than zero/);
+  });
+
+  it("pins distribution-matrix variable selection", () => {
+    const ensemble = runSwingVariation(plan(2, 31));
+    const definition = makeVariationPlotDefinition(ensemble, {
+      plotType: "distribution_matrix", coordinateFrame: null,
+      xVariableKey: null, yVariableKey: null, pointId: null, positionUnit: null,
+      alignmentBasis: null, quietThresholdM: null, selectedTrialIndex: null,
+      cameraYawDeg: null, cameraPitchDeg: null, cameraZoom: null,
+      outcomeFilter: null, phaseEndFraction: null,
+      perturbationSourceKey: null, perturbationBand: null,
+      variableKeys: ["input:swing_sim.swing.yaw_deg", "output:carry_m"],
+    });
+    expect(definition.variableKeys).toHaveLength(2);
   });
 });

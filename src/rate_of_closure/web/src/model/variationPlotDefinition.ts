@@ -8,7 +8,8 @@ export const VARIATION_PLOT_DEFINITION_SCHEMA_VERSION = 1;
 export type VariationPlotTypeTs =
   | "scalar_scatter"
   | "swing_arc_overlay"
-  | "geometric_variability";
+  | "geometric_variability"
+  | "distribution_matrix";
 
 export interface VariationPlotDefinitionTs {
   schemaVersion: 1;
@@ -29,6 +30,7 @@ export interface VariationPlotDefinitionTs {
   phaseEndFraction: number | null;
   perturbationSourceKey: string | null;
   perturbationBand: string | null;
+  variableKeys: string[] | null;
 }
 
 export type VariationPlotDefinitionInputTs = Omit<
@@ -49,6 +51,16 @@ export function makeVariationPlotDefinition(
   if (input.phaseEndFraction !== null
     && (input.phaseEndFraction <= 0 || input.phaseEndFraction > 1)) {
     throw new Error("phaseEndFraction must be in (0, 1]");
+  }
+  if (input.plotType === "distribution_matrix") {
+    if (input.variableKeys === null
+      || input.variableKeys.length < 2
+      || input.variableKeys.length > 8) {
+      throw new Error("distribution matrix requires 2 to 8 variableKeys");
+    }
+    if (new Set(input.variableKeys).size !== input.variableKeys.length) {
+      throw new Error("distribution matrix variableKeys must be unique");
+    }
   }
   return {
     schemaVersion: VARIATION_PLOT_DEFINITION_SCHEMA_VERSION,

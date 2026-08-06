@@ -2,18 +2,66 @@
 
 from __future__ import annotations
 
+import csv
 from collections.abc import Callable
+from io import StringIO
 from pathlib import Path
 
+import numpy as np
 from matplotlib.figure import Figure
 from PyQt6.QtWidgets import QFileDialog, QHBoxLayout, QPushButton, QWidget
 
-from rate_of_closure.variation.plot_data import EnsemblePlotDataset
+from rate_of_closure.ui.pyqt6.variation_plot_helpers import dataset_values
+from rate_of_closure.variation.plot_data import (
+    EnsemblePlotDataset,
+    scalar_plot_variables,
+)
 from rate_of_closure.variation.plot_definition import (
     PlotDefinition,
     write_plot_definition,
 )
 from shared.python.swing_sim.variation import VariationDataset
+
+
+def distribution_matrix_plot_definition(
+    variation: VariationDataset | None,
+    variable_keys: tuple[str, ...],
+) -> PlotDefinition:
+    """Build a reproducible definition for a selected distribution matrix."""
+    if variation is None:
+        raise RuntimeError("no variation result is loaded")
+    return PlotDefinition(
+        result_id=f"variation-{variation.plan.seed}-{variation.plan.n_runs}",
+        plot_type="distribution_matrix",
+        variable_keys=variable_keys,
+    )
+
+
+def distribution_matrix_csv(
+    variation: VariationDataset | None,
+    variable_keys: tuple[str, ...],
+) -> str:
+    """Serialize every trial row for the selected matrix variables."""
+    if variation is None:
+        raise RuntimeError("no variation result is loaded")
+    variables = {item.key: item for item in scalar_plot_variables(variation)}
+    selected = [variables[key] for key in variable_keys]
+    output = StringIO(newline="")
+    writer = csv.writer(output, lineterminator="\n")
+    writer.writerow(("trial_index", "success", *variable_keys))
+    columns = [dataset_values(variation, variable) for variable in selected]
+    for trial_index, success in enumerate(variation.success):
+        writer.writerow(
+            (
+                trial_index,
+                str(bool(success)).lower(),
+                *(
+                    "" if not np.isfinite(column[trial_index]) else column[trial_index]
+                    for column in columns
+                ),
+            )
+        )
+    return output.getvalue().rstrip("\n")
 
 
 def scatter_plot_definition(
@@ -82,12 +130,14 @@ class VariationPlotExportControls(QWidget):
         figure: Callable[[], Figure],
         definition: Callable[[], PlotDefinition],
         stem: str,
+        csv_data: Callable[[], str] | None = None,
         parent: QWidget | None = None,
     ) -> None:
         super().__init__(parent)
         self._figure = figure
         self._definition = definition
         self._stem = stem
+        self._csv_data = csv_data
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         for label, kind, callback in (
@@ -104,6 +154,15 @@ class VariationPlotExportControls(QWidget):
                 lambda _checked=False, file_filter=kind, writer=callback: self._choose(
                     file_filter, writer
                 )
+            )
+            layout.addWidget(button)
+        if csv_data is not None:
+            button = QPushButton("Export Selected CSV…")
+            button.setToolTip(
+                "Save every trial row for the variables selected in this plot."
+            )
+            button.clicked.connect(
+                lambda _checked=False: self._choose("CSV (*.csv)", self.write_csv)
             )
             layout.addWidget(button)
         layout.addStretch(1)
@@ -131,9 +190,17 @@ class VariationPlotExportControls(QWidget):
         """Write the current versioned plot state."""
         write_plot_definition(self._definition(), path)
 
+    def write_csv(self, path: str | Path) -> None:
+        """Write selected raw plot rows without dropping unavailable values."""
+        if self._csv_data is None:
+            raise RuntimeError("this plot has no selected CSV export")
+        Path(path).write_text(self._csv_data() + "\n", encoding="utf-8")
+
 
 __all__ = [
     "VariationPlotExportControls",
     "arc_plot_definition",
+    "distribution_matrix_csv",
+    "distribution_matrix_plot_definition",
     "scatter_plot_definition",
 ]

@@ -136,7 +136,9 @@ def test_trial_selection_links_scatter_and_arc_views(qtbot) -> None:  # type: ig
     )
 
 
-def test_distribution_matrix_draws_histograms_and_paired_scatter(qtbot) -> None:  # type: ignore[no-untyped-def]
+def test_distribution_matrix_draws_and_exports_selected_raw_rows(
+    qtbot, tmp_path
+) -> None:  # type: ignore[no-untyped-def]
     view = DistributionMatrixView()
     qtbot.addWidget(view)
 
@@ -146,3 +148,15 @@ def test_distribution_matrix_draws_histograms_and_paired_scatter(qtbot) -> None:
     assert any(axis.patches for axis in view._figure.axes)
     assert any(axis.collections for axis in view._figure.axes)
     assert "canonical exports retain every miss/failure row" in view._status.text()
+    assert view._table.rowCount() == 3
+    assert view._table.accessibleName() == "Selected scatter matrix trial data"
+    csv_path = tmp_path / "matrix.csv"
+    definition_path = tmp_path / "matrix.plot.json"
+    view._exports.write_csv(csv_path)
+    view._exports.write_definition(definition_path)
+    rows = csv_path.read_text(encoding="utf-8").splitlines()
+    assert len(rows) == 4
+    assert rows[0].startswith("trial_index,success,")
+    definition = json.loads(definition_path.read_text(encoding="utf-8"))
+    assert definition["plot_type"] == "distribution_matrix"
+    assert len(definition["variable_keys"]) == 4

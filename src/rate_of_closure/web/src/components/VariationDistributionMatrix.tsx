@@ -5,8 +5,16 @@ import {
   buildScalarMarginal,
   buildScalarPlotVariables,
   buildScalarScatter,
+  distributionMatrixToCsv,
+  distributionMatrixToSvg,
+  scalarValues,
 } from "../model/variationPlotData";
-import { INPUT_CLASS } from "./variationUi";
+import {
+  makeVariationPlotDefinition,
+  variationPlotDefinitionToJson,
+  variationResultFingerprint,
+} from "../model/variationPlotDefinition";
+import { BUTTON_CLASS, downloadText, INPUT_CLASS } from "./variationUi";
 
 interface Props { dataset: VariationDatasetTs }
 const SIZE = 150;
@@ -23,6 +31,9 @@ export function VariationDistributionMatrix({ dataset }: Props): JSX.Element {
   }, [variables]);
   const [keys, setKeys] = useState(defaults);
   const selected = keys.map((key) => variables.find((item) => item.key === key) ?? variables[0]);
+  const selectedKeys = selected.map((item) => item.key);
+  const selectedColumns = selected.map((variable) => scalarValues(dataset, variable));
+  const resultId = variationResultFingerprint(dataset);
   return (
     <div className="space-y-3">
       <div className="grid gap-2 md:grid-cols-4">
@@ -35,6 +46,31 @@ export function VariationDistributionMatrix({ dataset }: Props): JSX.Element {
           </label>
         ))}
       </div>
+      <div className="flex flex-wrap gap-2">
+        <button type="button" className={BUTTON_CLASS} onClick={() => downloadText(
+          `${resultId}-distribution-matrix.svg`,
+          distributionMatrixToSvg(dataset, selectedKeys),
+          "image/svg+xml;charset=utf-8",
+        )}>Matrix SVG</button>
+        <button type="button" className={BUTTON_CLASS} onClick={() => downloadText(
+          `${resultId}-distribution-matrix.csv`,
+          distributionMatrixToCsv(dataset, selectedKeys),
+          "text/csv;charset=utf-8",
+        )}>Matrix Selected CSV</button>
+        <button type="button" className={BUTTON_CLASS} onClick={() => downloadText(
+          `${resultId}-distribution-matrix.plot.json`,
+          variationPlotDefinitionToJson(makeVariationPlotDefinition(dataset, {
+            plotType: "distribution_matrix", coordinateFrame: null,
+            xVariableKey: null, yVariableKey: null, pointId: null,
+            positionUnit: null, alignmentBasis: null, quietThresholdM: null,
+            selectedTrialIndex: null, cameraYawDeg: null, cameraPitchDeg: null,
+            cameraZoom: null, outcomeFilter: null, phaseEndFraction: null,
+            perturbationSourceKey: null, perturbationBand: null,
+            variableKeys: selectedKeys,
+          })),
+          "application/json",
+        )}>Matrix Plot Definition JSON</button>
+      </div>
       <div className="overflow-auto">
         <div className="grid min-w-max" style={{ gridTemplateColumns: `repeat(${selected.length}, ${SIZE}px)` }} role="group" aria-label="Scatter matrix with marginal histograms">
           {selected.flatMap((row, rowIndex) => selected.map((column, columnIndex) => (
@@ -43,6 +79,18 @@ export function VariationDistributionMatrix({ dataset }: Props): JSX.Element {
         </div>
       </div>
       <p className="text-xs text-slate-500">Diagonal cells are marginal histograms. Off-diagonal cells retain only finite paired values; misses and failures remain counted as unavailable in the canonical result and exports.</p>
+      <details className="text-xs text-slate-400">
+        <summary className="cursor-pointer">Accessible Selected Matrix Data</summary>
+        <div className="mt-2 overflow-auto">
+          <table className="w-full text-left">
+            <thead><tr><th>Trial</th><th>Status</th>{selected.map((variable) => <th key={variable.key}>{variable.label} [{variable.unit || "unitless"}]</th>)}</tr></thead>
+            <tbody>{dataset.success.map((success, trialIndex) => <tr key={trialIndex}>
+              <td>{trialIndex + 1}</td><td>{success ? "Evaluated" : "Failure"}</td>
+              {selectedColumns.map((column, index) => <td key={selected[index].key}>{column[trialIndex] ?? "Unavailable"}</td>)}
+            </tr>)}</tbody>
+          </table>
+        </div>
+      </details>
     </div>
   );
 }

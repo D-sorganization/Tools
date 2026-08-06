@@ -221,6 +221,101 @@ export function buildScalarScatter(
   };
 }
 
+export function distributionMatrixToCsv(
+  dataset: VariationDatasetTs,
+  variableKeys: string[],
+): string {
+  const selected = selectedMatrixVariables(dataset, variableKeys);
+  const columns = selected.map((variable) => scalarValues(dataset, variable));
+  const rows = dataset.success.map((success, trialIndex) => [
+    String(trialIndex),
+    String(success),
+    ...columns.map((column) => {
+      const value = column[trialIndex];
+      return value === null || !Number.isFinite(value) ? "" : String(value);
+    }),
+  ]);
+  return [
+    ["trial_index", "success", ...variableKeys],
+    ...rows,
+  ].map((row) => row.map(csvCell).join(",")).join("\n");
+}
+
+export function distributionMatrixToSvg(
+  dataset: VariationDatasetTs,
+  variableKeys: string[],
+): string {
+  const selected = selectedMatrixVariables(dataset, variableKeys);
+  const size = 150;
+  const pad = 14;
+  const cells = selected.flatMap((row, rowIndex) =>
+    selected.map((column, columnIndex) => {
+      const originX = columnIndex * size;
+      const originY = rowIndex * size;
+      const title = xmlEscape(rowIndex === columnIndex
+        ? `${row.label} marginal histogram`
+        : `${column.label} versus ${row.label}`);
+      let marks: string;
+      if (rowIndex === columnIndex) {
+        const marginal = buildScalarMarginal(dataset, row.key);
+        const maximum = Math.max(...marginal.counts, 1);
+        const width = (size - 2 * pad) / Math.max(marginal.counts.length, 1);
+        marks = marginal.counts.map((count, index) => {
+          const height = count / maximum * (size - 2 * pad);
+          return `<rect x="${pad + index * width}" y="${size - pad - height}" width="${Math.max(width - 1, 1)}" height="${height}" fill="#38bdf8" opacity="0.75"/>`;
+        }).join("");
+      } else {
+        const points = buildScalarScatter(dataset, column.key, row.key).points;
+        const xs = points.map((point) => point.x);
+        const ys = points.map((point) => point.y);
+        marks = points.map((point) =>
+          `<circle cx="${matrixScale(point.x, xs, pad, size)}" cy="${size - matrixScale(point.y, ys, pad, size)}" r="2.3" fill="${point.cohort === "evaluated" ? "#38bdf8" : "#ef6464"}" opacity="0.65"><title>Trial ${point.trialIndex + 1}</title></circle>`,
+        ).join("");
+      }
+      const label = rowIndex === columnIndex
+        ? `<text x="4" y="11" fill="#cbd5e1" font-size="8">${xmlEscape(row.label)} [${xmlEscape(row.unit || "unitless")}]</text>`
+        : "";
+      return `<g transform="translate(${originX} ${originY})"><title>${title}</title><rect width="${size}" height="${size}" fill="#020617" stroke="#1e293b"/>${marks}${label}</g>`;
+    }),
+  ).join("");
+  const extent = selected.length * size;
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${extent} ${extent}" role="img"><title>Scatter matrix with marginal histograms</title>${cells}</svg>`;
+}
+
+const selectedMatrixVariables = (
+  dataset: VariationDatasetTs,
+  variableKeys: string[],
+): ScalarPlotVariableTs[] => {
+  if (new Set(variableKeys).size !== variableKeys.length) {
+    throw new Error("matrix variable keys must be unique");
+  }
+  const variables = buildScalarPlotVariables(dataset);
+  return variableKeys.map((key) => {
+    const variable = variables.find((item) => item.key === key);
+    if (!variable) throw new Error(`unknown matrix variable ${key}`);
+    return variable;
+  });
+};
+
+const matrixScale = (
+  value: number,
+  values: number[],
+  pad: number,
+  size: number,
+): number => {
+  const low = Math.min(...values);
+  const high = Math.max(...values);
+  return pad + (value - low) / Math.max(high - low, 1e-12) * (size - 2 * pad);
+};
+
+const xmlEscape = (value: string): string => value
+  .split("&").join("&amp;")
+  .split("<").join("&lt;")
+  .split(">").join("&gt;");
+
+const csvCell = (value: string): string =>
+  /[",\r\n]/.test(value) ? `"${value.split('"').join('""')}"` : value;
+
 const availability = (total: number, plotted: number): CohortAvailabilityTs => ({
   total,
   plotted,

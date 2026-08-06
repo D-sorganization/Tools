@@ -117,6 +117,7 @@ export function VariationScatter({
               phaseEndFraction: null,
               perturbationSourceKey: null,
               perturbationBand: null,
+              variableKeys: null,
             })),
             "application/json",
           )}

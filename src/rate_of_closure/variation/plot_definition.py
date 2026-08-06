@@ -10,7 +10,12 @@ from typing import Literal
 from shared.python.contracts import require
 
 PLOT_DEFINITION_SCHEMA_VERSION = 1
-PlotType = Literal["scalar_scatter", "swing_arc_overlay", "geometric_variability"]
+PlotType = Literal[
+    "scalar_scatter",
+    "swing_arc_overlay",
+    "geometric_variability",
+    "distribution_matrix",
+]
 
 
 @dataclass(frozen=True)
@@ -34,6 +39,7 @@ class PlotDefinition:
     phase_end_fraction: float | None = None
     perturbation_source_key: str | None = None
     perturbation_band: str | None = None
+    variable_keys: tuple[str, ...] | None = None
 
     def __post_init__(self) -> None:
         require(bool(self.result_id.strip()), "result_id must be non-empty")
@@ -59,6 +65,21 @@ class PlotDefinition:
         if self.plot_type in {"swing_arc_overlay", "geometric_variability"}:
             require(bool(self.point_id), "geometric plot requires point_id")
             require(bool(self.coordinate_frame), "geometric plot requires a frame")
+        if self.plot_type == "distribution_matrix":
+            variable_keys = self.variable_keys
+            require(
+                variable_keys is not None and 2 <= len(variable_keys) <= 8,
+                "distribution matrix requires 2 to 8 variable_keys",
+            )
+            if variable_keys is not None:
+                require(
+                    len(set(variable_keys)) == len(variable_keys),
+                    "distribution matrix variable_keys must be unique",
+                )
+                require(
+                    all(bool(key.strip()) for key in variable_keys),
+                    "distribution matrix variable_keys must be non-empty",
+                )
 
     def to_json_dict(self) -> dict[str, object]:
         """Return a versioned JSON-safe mapping, preserving explicit nulls."""

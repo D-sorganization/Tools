@@ -5,6 +5,8 @@ import {
   buildScalarMarginal,
   buildScalarPlotVariables,
   buildScalarScatter,
+  distributionMatrixToCsv,
+  distributionMatrixToSvg,
 } from "./variationPlotData";
 
 const SPEED = "swing_sim.impact.delivery.clubhead_speed_mps";
@@ -66,5 +68,23 @@ describe("variation plot data", () => {
     expect(marginal.counts).toEqual([1, 1]);
     expect(marginal.nAvailable).toBe(2);
     expect(marginal.nMissing).toBe(1);
+  });
+
+  it("exports every selected matrix row including unavailable values", () => {
+    const csv = distributionMatrixToCsv(dataset(), [
+      `input:${SPEED}`,
+      "output:carry_m",
+    ]);
+
+    expect(csv.split("\n")).toEqual([
+      `trial_index,success,input:${SPEED},output:carry_m`,
+      "0,true,44,100",
+      "1,false,45,",
+      "2,true,46,110",
+    ]);
+    expect(distributionMatrixToSvg(dataset(), [
+      `input:${SPEED}`,
+      "output:carry_m",
+    ])).toContain("<svg");
   });
 });

@@ -45,11 +45,33 @@ def test_plot_definition_round_trips_complete_geometric_state(tmp_path) -> None:
     assert document["phase_end_fraction"] == pytest.approx(0.75)
 
 
+def test_distribution_matrix_definition_requires_unique_selected_variables() -> None:
+    definition = PlotDefinition(
+        result_id="variation-17-3",
+        plot_type="distribution_matrix",
+        variable_keys=("input:speed", "output:carry_m", "output:lateral_m"),
+    )
+
+    assert definition.variable_keys == (
+        "input:speed",
+        "output:carry_m",
+        "output:lateral_m",
+    )
+
+    with pytest.raises(ContractViolationError, match="unique"):
+        PlotDefinition(
+            result_id="variation-17-3",
+            plot_type="distribution_matrix",
+            variable_keys=("output:carry_m", "output:carry_m"),
+        )
+
+
 @pytest.mark.parametrize(
     "kwargs",
     [
         {"plot_type": "scalar_scatter"},
         {"plot_type": "geometric_variability", "point_id": "swing.wrist"},
+        {"plot_type": "distribution_matrix"},
         {
             "plot_type": "swing_arc_overlay",
             "point_id": "swing.wrist",

@@ -220,6 +220,7 @@ export function VariationArcOverlay({
               phaseEndFraction: phaseEndPercent / 100,
               perturbationSourceKey: sourceKey === "all" ? null : sourceKey,
               perturbationBand: sourceBand === "all" ? null : sourceBand,
+              variableKeys: null,
             })),
             "application/json",
           )}
