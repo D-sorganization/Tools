@@ -39,6 +39,16 @@ const MIN_CARRY_M = 10.0;
 const MIN_HEIGHT_M = 5.0;
 const MIN_LATERAL_M = 5.0;
 const MARGIN = 34;
+const SIDE_CANVAS_SIZE = { width: 860, height: 260 } as const;
+const TOP_CANVAS_SIZE = { width: 860, height: 220 } as const;
+
+function responsiveCanvasStyle(size: { width: number; height: number }) {
+  return {
+    width: "100%",
+    height: "auto",
+    aspectRatio: `${size.width} / ${size.height}`,
+  };
+}
 
 function drawCourse(
   ctx: CanvasRenderingContext2D,
@@ -275,15 +285,17 @@ export function FlightCanvases({
     <div className="grid min-w-0 gap-3">
       <canvas
         ref={sideRef}
-        width={860}
-        height={260}
+        width={SIDE_CANVAS_SIZE.width}
+        height={SIDE_CANVAS_SIZE.height}
+        style={responsiveCanvasStyle(SIDE_CANVAS_SIZE)}
         className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
         aria-label="Flight side profile (height vs carry)"
       />
       <canvas
         ref={topRef}
-        width={860}
-        height={220}
+        width={TOP_CANVAS_SIZE.width}
+        height={TOP_CANVAS_SIZE.height}
+        style={responsiveCanvasStyle(TOP_CANVAS_SIZE)}
         className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
         aria-label="Flight top-down view (lateral vs carry)"
       />
