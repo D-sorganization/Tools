@@ -40,6 +40,13 @@ from .ground_clearance import (
     representative_wedge_parameters_for_club,
 )
 from .impact_kinematics import ImpactKinematicSnapshot, impact_kinematics_for_run
+from .impact_scene import (
+    IMPACT_SCENE_FORMAT,
+    ImpactScene,
+    ImpactSceneMetric,
+    ImpactSceneVector,
+    impact_scene_for_run,
+)
 from .isa import screw_axis_samples
 from .kinetics import (
     KINETIC_JOINT_NAMES,
@@ -86,7 +93,11 @@ __all__ = [
     "FlightExploration",
     "KineticsSeries",
     "ImpactOutcome",
+    "IMPACT_SCENE_FORMAT",
     "ImpactKinematicSnapshot",
+    "ImpactScene",
+    "ImpactSceneMetric",
+    "ImpactSceneVector",
     "ImpactStatus",
     "ManualSwingSource",
     "RunGroundClearanceSnapshot",
@@ -102,6 +113,7 @@ __all__ = [
     "ground_clearance_for_run",
     "inverse_dynamics",
     "impact_kinematics_for_run",
+    "impact_scene_for_run",
     "kinetics_for_run",
     "simulate_forced",
     "zero_torque_counterfactual",

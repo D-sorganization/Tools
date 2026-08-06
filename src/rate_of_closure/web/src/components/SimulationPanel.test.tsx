@@ -212,6 +212,15 @@ describe("SimulationPanel impact club", () => {
     expect(screen.getByRole("complementary", {
       name: "Impact Kinematics Engineering Readout",
     })).toHaveTextContent("1307.0 °/s");
+    expect(screen.getByRole("region", { name: "Interactive Impact Scene" }))
+      .toBeInTheDocument();
+    expect(screen.getByRole("img", {
+      name: /Rotatable 3D wedge impact scene/i,
+    })).toHaveAttribute("tabindex", "0");
+    expect(screen.getByRole("button", { name: "Export Vector SVG" }))
+      .toBeEnabled();
+    fireEvent.click(screen.getByText("Contact-Point AoA"));
+    expect(screen.getByText(/atan2\(v_contact/)).toBeVisible();
   });
 
   it("passes the selected club mass and MOI into the simulation", () => {

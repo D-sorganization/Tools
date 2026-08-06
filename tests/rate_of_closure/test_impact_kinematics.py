@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 
@@ -86,3 +88,37 @@ def test_curved_face_leading_edge_is_projected_into_the_tangent_plane() -> None:
         snapshot.state.face_normal_unit,
         snapshot.state.leading_edge_tangent_unit,
     ) == pytest.approx(0.0, abs=1e-12)
+
+
+def test_impact_adapter_interpolates_an_off_grid_event_state() -> None:
+    run = run_simulation(
+        SimulationConfig(
+            scenario=ImpactScenario(clubhead_speed_mph=30.0),
+            club=get_club("Pitching Wedge"),
+            impact_time_s=0.03,
+        )
+    )
+    event_index = 4
+    event_time = float(
+        0.25 * run.swing_times[event_index] + 0.75 * run.swing_times[event_index + 1]
+    )
+    poses = np.repeat(np.eye(4)[None, :, :], len(run.swing_times), axis=0)
+    poses[:, 0, 3] = np.arange(len(run.swing_times), dtype=float)
+    twists = np.zeros_like(run.swing_twists)
+    twists[:, 3] = 2.0 * np.arange(len(run.swing_times), dtype=float)
+    exact_run = replace(
+        run,
+        impact_time_s=event_time,
+        swing_poses=poses,
+        swing_positions=poses[:, :3, 3].copy(),
+        swing_twists=twists,
+    )
+
+    snapshot = impact_kinematics_for_run(exact_run)
+
+    assert snapshot.event_time_s == pytest.approx(event_time)
+    assert snapshot.sample_index == event_index + 1
+    assert snapshot.state.reference_position_m[0] == pytest.approx(event_index + 0.75)
+    assert snapshot.state.reference_velocity_mps[0] == pytest.approx(
+        2.0 * (event_index + 0.75)
+    )

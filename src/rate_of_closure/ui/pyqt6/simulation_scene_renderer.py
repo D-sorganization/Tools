@@ -16,6 +16,7 @@ from rate_of_closure.simulation.screw_analysis import (
 )
 from rate_of_closure.ui.pyqt6.ball_setup_scene import draw_representative_tee
 from rate_of_closure.ui.pyqt6.course_scene import draw_course_ground_3d
+from rate_of_closure.ui.pyqt6.impact_scene_renderer import draw_impact_scene_3d
 from rate_of_closure.ui.pyqt6.kinetics_overlay import overlay_frame
 from rate_of_closure.ui.pyqt6.pendulum_scene import draw_pendulum_skeleton
 from rate_of_closure.ui.pyqt6.presentation_kinetics import kinetics_for_presentation
@@ -113,6 +114,17 @@ class SimulationSceneRenderer:
                 axes,
                 view._wedge_clearance,
                 min(view._time, swing_end),
+                view._display,
+                self._chart_color,
+            )
+        if (
+            view._impact_scene is not None
+            and view._impact_check.isChecked()
+            and not in_flight
+        ):
+            draw_impact_scene_3d(
+                axes,
+                view._impact_scene,
                 view._display,
                 self._chart_color,
             )
@@ -311,7 +323,9 @@ class SimulationSceneRenderer:
         axes = view._axes
         axes.set_xlim(-extent, extent)
         axes.set_ylim(-extent, extent)
-        axes.set_zlim(0.0 if (in_flight and show_flight) else -extent * 0.4, extent)
+        flight_scale = in_flight and show_flight
+        axes.set_zlim(0.0 if flight_scale else -extent * 0.4, extent)
+        axes.set_box_aspect((2.0, 2.0, 1.0 if flight_scale else 1.4))
         axes.view_init(elev=elev, azim=azim)
         axes.set_xlabel("z — right of target [m]")
         axes.set_ylabel("x — target line [m]")

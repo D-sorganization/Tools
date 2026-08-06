@@ -5,7 +5,9 @@ Renders the swing skeleton, path, ball, ground, screw axis, and flight overlays.
 
 from __future__ import annotations
 
+import json
 import logging
+from pathlib import Path
 
 import numpy as np
 from matplotlib.figure import Figure
@@ -13,6 +15,7 @@ from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
+    QFileDialog,
     QHBoxLayout,
     QLabel,
     QPushButton,
@@ -22,9 +25,11 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.simulation import (
+    ImpactScene,
     KineticsSeries,
     RunGroundClearanceSnapshot,
     SimulationRun,
+    impact_scene_for_run,
 )
 from rate_of_closure.simulation.screw_analysis import (
     JointMotionSeries,
@@ -75,6 +80,7 @@ class SimulationView(QWidget):
         self._joint_motion: JointMotionSeries | None = None
         self._kinetics: KineticsSeries | None | bool = None
         self._wedge_clearance: RunGroundClearanceSnapshot | None = None
+        self._impact_scene: ImpactScene | None = None
         self._time = 0.0
         self._rendered_ball_center_m: np.ndarray | None = None
         self._tee_artist_count = 0
@@ -191,6 +197,29 @@ class SimulationView(QWidget):
         self._screw_check = QCheckBox("Screw Axis")
         self._screw_check.setChecked(False)
         self._screw_check.setToolTip(FIELD_GUIDANCE["screw_axis_visible"])
+        self._impact_check = QCheckBox("Impact Inspector")
+        self._impact_check.setChecked(True)
+        self._impact_check.setToolTip(
+            "Show the exact event-time wedge face, physical shaft axis, contact point, "
+            "face normal, leading edge, arc tangent, screw axis, and velocity "
+            "decomposition."
+        )
+        self._impact_view = QComboBox()
+        self._impact_view.setAccessibleName("Impact Camera View")
+        self._impact_view.addItem("Isometric", (30.0, -60.0))
+        self._impact_view.addItem("Face-On", (0.0, -90.0))
+        self._impact_view.addItem("Down-the-Line", (10.0, 0.0))
+        self._impact_view.setToolTip(
+            "Select a named engineering camera; the plot remains freely rotatable."
+        )
+        self._impact_view.currentIndexChanged.connect(self._apply_impact_view)
+        self._impact_export_button = QPushButton("Export Impact…")
+        self._impact_export_button.setEnabled(False)
+        self._impact_export_button.setToolTip(
+            "Export the exact impact still as high-resolution PNG, vector SVG, "
+            "or the versioned scene data as JSON."
+        )
+        self._impact_export_button.clicked.connect(self._on_export_impact)
         self._screw_entity = QComboBox()
         self._screw_entity.addItem("Club", "club")
         self._screw_entity.setToolTip(
@@ -216,12 +245,15 @@ class SimulationView(QWidget):
             self._ground_check,
             self._course_check,
             self._screw_check,
+            self._impact_check,
             self._kinetics_check,
             self._flight_check,
         ):
             check.toggled.connect(lambda _checked: self._draw())
             bar.addWidget(check)
         bar.addWidget(self._screw_entity)
+        bar.addWidget(self._impact_view)
+        bar.addWidget(self._impact_export_button)
         bar.addStretch(1)
         return bar
 
@@ -232,8 +264,10 @@ class SimulationView(QWidget):
         self._joint_motion = None
         self._kinetics = None
         self._wedge_clearance = ground_clearance_snapshot_for_scene(run)
+        self._impact_scene = impact_scene_for_run(run) if run is not None else None
         self._time = 0.0
         self._inspection_button.setEnabled(run is not None)
+        self._impact_export_button.setEnabled(run is not None)
         self._inspection_button.setText(
             f"Jump to {run.inspection_event_label}"
             if run is not None
@@ -332,6 +366,31 @@ class SimulationView(QWidget):
         """Return whether the latest scene draw contains tee geometry."""
         return self._tee_artist_count > 0
 
+    def export_impact_scene(self, file_path: str | Path) -> Path:
+        """Export the exact-event engineering still or versioned scene data."""
+        if self._run is None or self._impact_scene is None:
+            raise RuntimeError("an impact scene requires a completed simulation")
+        path = Path(file_path)
+        suffix = path.suffix.lower()
+        if suffix == ".json":
+            path.write_text(
+                json.dumps(
+                    self._impact_scene.to_json_dict(), indent=2, allow_nan=False
+                ),
+                encoding="utf-8",
+            )
+            return path
+        if suffix not in {".png", ".svg"}:
+            raise ValueError("impact scene export must use .png, .svg, or .json")
+        self.jump_to_inspection_event()
+        self._figure.savefig(
+            path,
+            dpi=300 if suffix == ".png" else None,
+            bbox_inches="tight",
+            facecolor=self._figure.get_facecolor(),
+        )
+        return path
+
     def stop(self) -> None:
         """Stop the playback timer (window close and tests)."""
         self._timer.stop()
@@ -389,6 +448,23 @@ class SimulationView(QWidget):
         match = self._screw_entity.findData(selected)
         self._screw_entity.setCurrentIndex(max(match, 0))
         self._screw_entity.blockSignals(False)
+
+    def _apply_impact_view(self, index: int) -> None:
+        """Apply a named camera without preventing subsequent free orbit."""
+        elevation, azimuth = self._impact_view.itemData(index)
+        self._axes.view_init(elev=float(elevation), azim=float(azimuth))
+        self._draw()
+
+    def _on_export_impact(self) -> None:
+        """Choose and export an impact artifact from the desktop UI."""
+        selected, _filter = QFileDialog.getSaveFileName(
+            self,
+            "Export Impact Engineering Scene",
+            "wedge-impact.svg",
+            "Vector SVG (*.svg);;High-Resolution PNG (*.png);;Scene Data (*.json)",
+        )
+        if selected:
+            self.export_impact_scene(selected)
 
     @staticmethod
     def _display(points: np.ndarray) -> np.ndarray:

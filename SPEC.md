@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.6                                     |
-| **Spec Version**        | 1.13.6                                     |
+| **Current Version**     | 1.13.7                                     |
+| **Spec Version**        | 1.13.7                                     |
 | **Last Spec Update**    | 2026-08-06                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,28 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+### 2026-08-05 Exact-event wedge impact visualization
+
+- Impact geometry and kinematic vectors are evaluated at the exact inspection
+  time with linear twist/translation interpolation, shortest-arc orientation
+  interpolation, and articulated wrist interpolation. The nearest retained
+  sample index remains audit metadata only.
+- One versioned UI-independent scene contract provides the physical shaft line,
+  wedge face/body, declared contact point, ball, ground, leading edge, face
+  normal, arc tangent, screw axis, and the exact rigid-body identity
+  `v_contact = v_axis + v_shaft + v_other`.
+- PyQt6 and React expose orbitable, locked-scale impact views, named camera
+  presets, independently toggleable vector components, and high-resolution PNG,
+  true-vector SVG, and strict JSON data exports.
+- Every advanced metric is visibly interactive and discloses its equation,
+  frame, units, assumptions, and availability. AoA attribution must be labeled
+  as a nonlinear counterfactual or Shapley quantity, never as additive Euler
+  angles.
+- A closest-approach miss remains labeled as a miss, an articulated source
+  without a torsional head state reports shaft rotation as unavailable/limited,
+  and the visualization does not imply turf-force feedback or flexible-shaft
+  dynamics that the retained run did not solve.
+
 ### 2026-08-05 Shared impact-event inspection and wedge kinematics
 
 - Every retained simulation run has one canonical inspection event: physical
@@ -2682,6 +2704,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
 | 2026-08-06 | 1.13.6 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |
 | 2026-08-06 | 1.13.5 | refactor(gui, ci): deduplicate Rotation Converter plot helpers and extract Movement Optimizer motion helpers, restoring the protected module-size budget inherited by the stacked Rate PRs. |
 | 2026-08-05 | 1.13.4 | feat(rate_of_closure, golf-club, #4158 #4160 #4163): integrate frame-explicit wedge contact/shaft kinematics into retained Rate runs; add honest impact-or-closest-approach jump controls and engineering readouts to PyQt6 and React; restore manual web angular velocity; and select the documented 30 ms square pose for flat automatic speed plateaus. |

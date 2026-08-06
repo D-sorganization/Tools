@@ -15,6 +15,10 @@ from shared.python.golf_club import (
     WedgeKinematicState,
     analyze_wedge_kinematics,
 )
+from shared.python.golf_club._wedge_sweep import (
+    interpolated_pose,
+    interpolated_twist,
+)
 
 __all__ = ["ImpactKinematicSnapshot", "impact_kinematics_for_run"]
 
@@ -68,7 +72,19 @@ def _path_tangent(run: SimulationRun, index: int) -> np.ndarray:
     return _unit(displacement, "sampled path displacement")
 
 
-def _arc_tangent_rate(run: SimulationRun, index: int) -> tuple[np.ndarray, np.ndarray]:
+def _event_path_tangent(
+    run: SimulationRun, time_s: float, fallback_index: int
+) -> np.ndarray:
+    """Return the interpolated event velocity direction with a sampled fallback."""
+    velocity = interpolated_twist(run.swing_times, run.swing_twists, time_s)[3:]
+    if float(np.linalg.norm(velocity)) > _MIN_DIRECTION_NORM:
+        return _unit(velocity, "interpolated reference velocity")
+    return _path_tangent(run, fallback_index)
+
+
+def _arc_tangent_rate(
+    run: SimulationRun, index: int, event_time_s: float
+) -> tuple[np.ndarray, np.ndarray]:
     """Return the sampled unit path tangent and its stable finite difference."""
     if index == 0:
         first, second = 0, 1
@@ -78,17 +94,24 @@ def _arc_tangent_rate(run: SimulationRun, index: int) -> tuple[np.ndarray, np.nd
         first, second = index - 1, index + 1
     dt = float(run.swing_times[second] - run.swing_times[first])
     require(dt > 0.0, "swing sample times must increase")
-    tangent = _path_tangent(run, index)
+    tangent = _event_path_tangent(run, event_time_s, index)
     raw_rate = (_path_tangent(run, second) - _path_tangent(run, first)) / dt
     rate = raw_rate - float(np.dot(raw_rate, tangent)) * tangent
     return tangent, rate
 
 
 def _shaft_geometry(
-    run: SimulationRun, index: int, rotation: np.ndarray, reference: np.ndarray
+    run: SimulationRun,
+    event_time_s: float,
+    rotation: np.ndarray,
+    reference: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray, str, str]:
     if run.swing_joints.shape[1] >= 2:
-        wrist = run.swing_joints[index, -2]
+        wrist = interpolated_twist(
+            run.swing_times,
+            run.swing_joints[:, -2, :],
+            event_time_s,
+        )
         shaft_axis = _unit(wrist - reference, "articulated shaft line")
         return (
             wrist,
@@ -109,16 +132,17 @@ def _shaft_geometry(
 
 
 def impact_kinematics_for_run(run: SimulationRun) -> ImpactKinematicSnapshot:
-    """Analyze the retained inspection sample without fabricating contact on a miss."""
+    """Analyze the exact inspection event without fabricating contact on a miss."""
     if not isinstance(run, SimulationRun):
         raise TypeError("run must be a SimulationRun")
     index = _event_index(run)
-    pose = run.swing_poses[index]
+    event_time_s = run.inspection_time_s
+    pose = interpolated_pose(run.swing_times, run.swing_poses, event_time_s)
     rotation = pose[:3, :3]
     reference = pose[:3, 3]
-    twist = run.swing_twists[index]
+    twist = interpolated_twist(run.swing_times, run.swing_twists, event_time_s)
     shaft_point, shaft_axis, basis, limitations = _shaft_geometry(
-        run, index, rotation, reference
+        run, event_time_s, rotation, reference
     )
     lever = rotation @ impact_lever_m(run.config.scenario)
     face_normal = rotation @ np.asarray(
@@ -133,7 +157,7 @@ def impact_kinematics_for_run(run: SimulationRun) -> ImpactKinematicSnapshot:
         nominal_edge - float(np.dot(nominal_edge, face_normal)) * face_normal,
         "leading-edge face tangent",
     )
-    arc_tangent, arc_rate = _arc_tangent_rate(run, index)
+    arc_tangent, arc_rate = _arc_tangent_rate(run, index, event_time_s)
     state = WedgeKinematicState(
         frame_id=_APP_FRAME_ID,
         reference_position_m=_xyz(reference),
@@ -149,7 +173,7 @@ def impact_kinematics_for_run(run: SimulationRun) -> ImpactKinematicSnapshot:
         arc_tangent_rate_per_s=_xyz(arc_rate),
     )
     return ImpactKinematicSnapshot(
-        event_time_s=run.inspection_time_s,
+        event_time_s=event_time_s,
         event_label=run.inspection_event_label,
         geometry_basis=basis,
         model_limitations=limitations,

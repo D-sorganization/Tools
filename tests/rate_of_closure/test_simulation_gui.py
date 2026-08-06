@@ -177,6 +177,53 @@ class TestSimulationView:
         # Move into the flight phase too (different extent branch).
         view.set_playback_time(ran_tab.last_run().total_duration_s * 0.9)
 
+    def test_impact_inspector_draws_engineering_geometry_and_vectors(
+        self, ran_tab
+    ) -> None:  # type: ignore[no-untyped-def]
+        view = ran_tab.view()
+        view._impact_check.setChecked(True)
+        view.jump_to_inspection_event()
+
+        labels = {str(line.get_label()) for line in view._axes.lines}
+        assert {
+            "Physical Shaft Axis",
+            "Wedge Face",
+            "Leading Edge",
+            "Face Normal",
+            "Arc Tangent",
+            "Total Contact Velocity",
+            "Rotation About Shaft",
+            "Without Shaft Rotation",
+        } <= labels
+
+    def test_impact_scene_exports_strict_data_and_true_vector_artwork(
+        self, ran_tab, tmp_path
+    ) -> None:  # type: ignore[no-untyped-def]
+        view = ran_tab.view()
+        data_path = view.export_impact_scene(tmp_path / "impact.json")
+        vector_path = view.export_impact_scene(tmp_path / "impact.svg")
+
+        assert '"format": "rate-of-closure.impact-scene/v1"' in data_path.read_text(
+            encoding="utf-8"
+        )
+        svg = vector_path.read_text(encoding="utf-8")
+        assert "<svg" in svg
+        assert "Physical Shaft Axis" in svg
+        assert view.playback_time() == pytest.approx(
+            ran_tab.last_run().inspection_time_s
+        )
+
+    def test_named_impact_camera_preserves_locked_physical_scaling(
+        self, ran_tab
+    ) -> None:  # type: ignore[no-untyped-def]
+        view = ran_tab.view()
+        view._impact_view.setCurrentText("Face-On")
+
+        assert view._axes.azim == pytest.approx(-90.0)
+        aspect = view._axes.get_box_aspect()
+        assert aspect[0] / aspect[1] == pytest.approx(1.0)
+        assert aspect[0] / aspect[2] == pytest.approx(2.0 / 1.4)
+
     def test_screw_axis_overlay_appears_during_swing(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         view = ran_tab.view()
         view._screw_check.setChecked(True)

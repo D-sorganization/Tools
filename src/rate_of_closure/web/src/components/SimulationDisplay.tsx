@@ -10,6 +10,7 @@ import { FIELD_GUIDANCE } from "../model/units";
 import { BallSetupDiagram } from "./BallSetupDiagram";
 import { FlightCanvases } from "./FlightCanvases";
 import { ImpactKinematicsPanel } from "./ImpactKinematicsPanel";
+import { ImpactSceneCanvas } from "./ImpactSceneCanvas";
 import { KineticsSection } from "./KineticsSection";
 import { StrikeCanvas } from "./StrikeCanvas";
 import { SwingPlaybackControls } from "./SwingPlaybackControls";
@@ -179,6 +180,7 @@ export function SimulationDisplay({
           {run && clubSpec && (
             <>
               <ImpactKinematicsPanel run={run} scenario={scenario} club={clubSpec} />
+              <ImpactSceneCanvas run={run} scenario={scenario} club={clubSpec} />
               <WedgeGroundClearancePanel result={wedgeClearance} />
             </>
           )}

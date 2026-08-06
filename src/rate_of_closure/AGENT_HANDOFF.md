@@ -3,6 +3,39 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-05
 
+## 2026-08-05 Advanced Wedge Impact Visualization
+
+Branch `feat/4162-wedge-impact-visualization` extends issue #4162 on top of the
+validated turf stack. It corrects the impact adapter to evaluate pose, twist,
+and articulated wrist geometry at the exact event time rather than silently
+using the nearest retained sample. The new versioned
+`rate-of-closure.impact-scene/v1` contract carries complete scene geometry,
+velocity components, metric equations, frames, assumptions, availability, and
+screw-axis data without placing physics in either UI.
+
+PyQt6 adds an exact-event Impact Inspector layer, locked physical axis scaling,
+isometric/face-on/down-the-line cameras, and 300-DPI PNG, vector SVG, and strict
+JSON export. React adds an orbitable and keyboard-controllable impact still,
+the same named cameras and velocity toggles, visibly expandable engineering
+metric definitions, and device-resolution PNG, true-primitive SVG, and JSON
+exports. The web mirror now retains and shortest-arc interpolates the canonical
+head rotation; the older limitation note saying it lacked full head pose is no
+longer accurate for this branch.
+
+Scientific boundaries remain explicit: articulated sources do not yet have an
+independent torsional head state; the scene is rigid-body instantaneous
+kinematics; illustrative turf profiles cannot support optimal-bounce or
+forgiveness claims; and turf force is not replayed into the retained swing.
+
+Current-head verification: all 576 Rate Python/PyQt tests passed (one existing
+polynomial-generator legend warning); all 347 React/model tests passed; the
+production Vite build, TypeScript, ESLint, Ruff, formatting, changed-module
+strict mypy, and protected module-size budget passed. Headless Chrome visual QA
+at 1600×1400 exercised named views, a vector toggle, keyboard orbit, and an
+expanded metric definition with zero console exceptions/log errors. The new
+web branch is running at `http://localhost:5260/`; the current PyQt process was
+also launched successfully and remained responsive.
+
 ## 2026-08-05 Wedge Impact Inspector Integration
 
 Draft PR #4173 (`feat/4163-impact-inspector`) integrates the draft variation
