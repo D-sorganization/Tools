@@ -1,0 +1,49 @@
+{
+  "schema_version": "launch-monitor-conventions/v1",
+  "definition_count": 24,
+  "canonical_json_sha256": "528f36ba0fb065bbfac63ab1a2f041fa5d16dde458d56f159bf68a711121e61f",
+  "cases": [
+    {
+      "convention_id": "app_native",
+      "parameter_id": "club_path",
+      "reference_point": "tracked_head_reference",
+      "event_time": "inspection_event",
+      "quantity_status": "derived"
+    },
+    {
+      "convention_id": "app_native",
+      "parameter_id": "launch_direction",
+      "reference_point": "ball_center",
+      "event_time": "just_after_separation",
+      "quantity_status": "modeled"
+    },
+    {
+      "convention_id": "trackman_comparable",
+      "parameter_id": "club_speed",
+      "reference_point": "geometric_center",
+      "event_time": "just_before_first_contact",
+      "quantity_status": "measured_comparable"
+    },
+    {
+      "convention_id": "trackman_comparable",
+      "parameter_id": "face_angle",
+      "reference_point": "impact_location",
+      "event_time": "maximum_compression",
+      "quantity_status": "measured_comparable"
+    },
+    {
+      "convention_id": "foresight_comparable",
+      "parameter_id": "club_path",
+      "reference_point": "face_center",
+      "event_time": "impact",
+      "quantity_status": "measured_comparable"
+    },
+    {
+      "convention_id": "foresight_comparable",
+      "parameter_id": "launch_direction",
+      "reference_point": "ball_center",
+      "event_time": "just_after_separation",
+      "quantity_status": "measured_comparable"
+    }
+  ]
+}

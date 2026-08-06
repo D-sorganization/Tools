@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.9                                     |
-| **Spec Version**        | 1.13.9                                     |
+| **Current Version**     | 1.13.10                                    |
+| **Spec Version**        | 1.13.10                                    |
 | **Last Spec Update**    | 2026-08-06                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,22 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+### 2026-08-06 Launch-monitor convention registry
+
+- Python and TypeScript expose the same immutable, versioned catalog for app,
+  TrackMan-comparable, and Foresight-comparable club-delivery and ball-launch
+  quantities.
+- Every definition carries its reference point, event time, coordinate frame,
+  geometry contract, sign rule, unit, availability rule, quantity status,
+  primary-source URL, and retrieval date. Vendor-comparable values remain
+  explicitly distinct from device measurements.
+- Direct comparison is rejected when parameter, datum, time, frame, geometry,
+  unit, or availability contracts differ. Point changes use the exact rigid-body
+  identity `v_point = v_reference + omega x r`; frame changes require a proper
+  orthonormal rotation.
+- A canonical cross-client JSON checksum, strict deserialization, and an
+  explicit v0 field migration prevent silent schema or semantic drift.
+
 ### 2026-08-06 Comprehensive 3D D-plane geometry
 
 - One shared, frame-explicit kernel computes the D-plane from the declared
