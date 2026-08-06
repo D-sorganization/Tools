@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.14                                    |
-| **Spec Version**        | 1.13.14                                    |
+| **Current Version**     | 1.13.15                                    |
+| **Spec Version**        | 1.13.15                                    |
 | **Last Spec Update**    | 2026-08-06                                 |
 
 ## 2. Purpose & Mission
@@ -97,6 +97,21 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Complete catalog and result serialization is deterministic and pinned by a
   cross-language SHA-256 fixture. UI, API, and Rust/WASM adapters remain
   explicit downstream integration work.
+
+### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
+
+- Python and TypeScript share a versioned, golden-fixture-pinned sampler for
+  true meteorological wind and correlated player-estimation errors. Seed,
+  true-wind distributions, systematic under/overestimation, error spread,
+  speed/bearing correlation, units, frame, and provenance are explicit.
+- Club/aim strategies run on identical wind draws (common random numbers),
+  retaining completed landing scatter and explicit nonconverged/invalid
+  cohorts. Summaries report expected dimensionless miss cost, expected regret,
+  probability of best strategy, and failure counts without inventing landings.
+- The bounded foundation is deterministic decision support, not a weather
+  forecast or an automatic club recommendation. UI workflow, terrain effects,
+  measured forecast ingestion, and statistically justified player-specific
+  calibration remain follow-on work.
 
 ### 2026-08-06 Reproducible ball-flight wind physics
 
@@ -2810,6 +2825,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-06 | 1.13.13 | feat(swing_sim, rate_of_closure, #4196): map desired flight to frame-explicit centered driver/iron delivery solution families with strict cross-runtime schemas, observed intervals/correlations, local sensitivities, complete residuals, model manifests, and rejected no-impact/miss diagnostics. |
 | 2026-08-06 | 1.13.12 | feat(swing_sim, rate_of_closure, #4195): add strict desired-flight inverse-solver contracts, deterministic bounded multi-objective search, ranked residual-rich candidates, typed infeasible/no-impact/nonconverged outcomes, and Python/TypeScript parity fixtures. |
 | 2026-08-06 | 1.13.11 | feat(swing_sim, rate_of_closure, #4194): add the canonical source-backed flight-result metric catalog, analytic landing/trajectory derivation, typed unavailable and qualified-ground boundaries, complete run manifests, deterministic Python/TypeScript exports, and cross-client parity fixtures. |
+| 2026-08-06 | 1.13.12 | feat(ball-flight, #4198 #4199): add Python/TypeScript deterministic true-versus-estimated wind ensembles, correlated under/overestimation, common-random-number club/aim strategy trials, landing scatter cohorts, and expected-cost/regret summaries. |
 | 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
 | 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
 | 2026-08-06 | 1.13.6 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |

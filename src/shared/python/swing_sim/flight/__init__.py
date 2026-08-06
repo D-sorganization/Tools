@@ -91,6 +91,24 @@ from .types import (
     compute_flight_metrics,
 )
 from .wind import WIND_SCHEMA_VERSION, WindGust, WindScenario
+from .wind_strategy import (
+    StrategyAnalysisConfig,
+    StrategyAnalysisRequest,
+    StrategyShotOutcome,
+    StrategySummary,
+    TargetPoint,
+    WindStrategy,
+    WindStrategyAnalysis,
+    analyze_wind_strategies,
+)
+from .wind_uncertainty import (
+    WIND_UNCERTAINTY_SCHEMA_VERSION,
+    ScalarDistribution,
+    WindEstimateError,
+    WindTrial,
+    WindUncertaintySpec,
+    sample_wind_trials,
+)
 
 __all__ = [
     "DEFAULT_BACKSPIN_AXIS",
@@ -141,8 +159,21 @@ __all__ = [
     "TrajectoryPoint",
     "WaterlooPennerModel",
     "WIND_SCHEMA_VERSION",
+    "WIND_UNCERTAINTY_SCHEMA_VERSION",
+    "ScalarDistribution",
+    "StrategyAnalysisConfig",
+    "StrategyAnalysisRequest",
+    "StrategyShotOutcome",
+    "StrategySummary",
+    "TargetPoint",
     "WindGust",
     "WindScenario",
+    "WindEstimateError",
+    "WindStrategy",
+    "WindStrategyAnalysis",
+    "WindTrial",
+    "WindUncertaintySpec",
+    "analyze_wind_strategies",
     "compare_models",
     "compute_flight_metrics",
     "derive_launch_conditions",
@@ -158,6 +189,7 @@ __all__ = [
     "simulate_trajectory_rust",
     "solve_inverse_flight",
     "solve_impact_solution_families",
+    "sample_wind_trials",
     "to_flight_frame",
     "ValueStatus",
 ]
