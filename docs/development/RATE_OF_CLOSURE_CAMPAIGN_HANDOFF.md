@@ -15,7 +15,7 @@ branch was rewritten.
 - Published PR head before the current continuation:
   `3f79eb8d15d8558ccf53b441e3842c50ce36e16e`
 - Latest verified implementation head before this handoff update:
-  `50089b66a3eca3220d157dded040cc74d02c729a`
+  `017dbd1f103ef050999f25fb77975ebce327c126`
 
 ## Included PR stack
 
