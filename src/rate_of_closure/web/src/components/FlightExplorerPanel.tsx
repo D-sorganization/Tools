@@ -14,10 +14,14 @@ import { useState } from "react";
 import { DecimalInput } from "./DecimalInput";
 import { FieldInfo } from "./FieldInfo";
 import { FlightCanvases } from "./FlightCanvases";
+import { FlightPlayback3D } from "./FlightPlayback3D";
+import { SpatialTargetSection } from "./SpatialTargetSection";
 import {
+  compareWind,
   directLaunch,
   exploreFlight,
   type FlightExplorationTs,
+  type WindComparisonTs,
 } from "../model/flightExplorer";
 import {
   LAUNCH_DIRECTION_DEFINITIONS,
@@ -25,6 +29,8 @@ import {
   type LaunchDirectionConvention,
 } from "../model/launchDirection";
 import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
+import { meteorologicalWind } from "../model/wind";
+import type { SpatialTargetTs } from "../model/spatialTarget";
 
 const SPEED_UNITS: Record<string, number> = { mph: 1.0, "m/s": 2.236936292054402 };
 
@@ -48,7 +54,7 @@ const DIRECTION_CONVENTIONS: Array<{
 ];
 
 const RESULT_ROWS: Array<{
-  key: keyof FlightExplorationTs["metrics"];
+  key: keyof WindComparisonTs["deltas"];
   label: string;
   unit: string;
 }> = [
@@ -73,12 +79,18 @@ const FIELDS: FieldSpec[] = [
   { key: "spinAxisTiltDeg", label: "Spin-Axis Tilt", unit: "deg", guidance: "fxSpinAxisTilt" },
 ];
 
-export function FlightExplorerPanel({
-  distanceUnit = "yd",
-}: {
+interface Props {
   /** Ball-flight distance display unit (#4125 H6): yards default. */
   distanceUnit?: string;
-} = {}) {
+  spatialTarget: SpatialTargetTs;
+  onSpatialTargetChange: (target: SpatialTargetTs) => void;
+}
+
+export function FlightExplorerPanel({
+  distanceUnit = "yd",
+  spatialTarget,
+  onSpatialTargetChange,
+}: Props) {
   const [speed, setSpeed] = useState(167.0);
   const [speedUnit, setSpeedUnit] = useState("mph");
   const [directionConvention, setDirectionConvention] =
@@ -89,20 +101,27 @@ export function FlightExplorerPanel({
     spinRpm: 2686.0,
     spinAxisTiltDeg: 0.0,
   });
+  const [windEnabled, setWindEnabled] = useState(false);
+  const [windSpeedMph, setWindSpeedMph] = useState(10.0);
+  const [windFromDeg, setWindFromDeg] = useState(0.0);
   const [result, setResult] = useState<FlightExplorationTs | null>(null);
+  const [windComparison, setWindComparison] = useState<WindComparisonTs | null>(null);
   const [error, setError] = useState<string | null>(null);
   const directionSigns = launchDirectionSignLabels(directionConvention);
 
   const run = () => {
     try {
-      const exploration = exploreFlight(
-        directLaunch({
-          ballSpeedMph: speed * (SPEED_UNITS[speedUnit] / SPEED_UNITS.mph),
-          launchDirectionConvention: directionConvention,
-          ...fields,
-        }),
-      );
+      const launch = directLaunch({
+        ballSpeedMph: speed * (SPEED_UNITS[speedUnit] / SPEED_UNITS.mph),
+        launchDirectionConvention: directionConvention,
+        ...fields,
+      });
+      const comparison = windEnabled
+        ? compareWind(launch, meteorologicalWind(windSpeedMph / SPEED_UNITS["m/s"], windFromDeg))
+        : null;
+      const exploration = comparison?.wind ?? exploreFlight(launch);
       setResult(exploration);
+      setWindComparison(comparison);
       setError(null);
     } catch (exc) {
       setError(exc instanceof Error ? exc.message : String(exc));
@@ -211,6 +230,69 @@ export function FlightExplorerPanel({
           </p>
         </div>
 
+        <SpatialTargetSection target={spatialTarget} onChange={onSpatialTargetChange}
+          flightPoints={result?.points ?? []} />
+
+        <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+            Wind Comparison
+          </h2>
+          <label
+            className="mb-3 flex items-center gap-2 text-sm text-slate-300"
+            title="Run identical launch conditions with no wind and with the selected steady wind. Source: canonical wind-scenario/v1 paired-comparison contract."
+          >
+            <input
+              type="checkbox"
+              checked={windEnabled}
+              onChange={(event) => setWindEnabled(event.target.checked)}
+            />
+            Compare No Wind and Selected Wind
+          </label>
+          <label className="mb-2 block text-sm" title="Horizontal wind speed in miles per hour. Source: canonical wind-scenario/v1 meteorological adapter.">
+            <span className="mb-1 flex justify-between text-slate-300">
+              <span>Wind Speed</span><span className="text-slate-500">mph</span>
+            </span>
+            <DecimalInput
+              value={windSpeedMph}
+              min={0}
+              aria-label="Wind Speed"
+              title="Horizontal wind speed in miles per hour. Source: canonical wind-scenario/v1 meteorological adapter."
+              onCommit={setWindSpeedMph}
+              className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
+            />
+          </label>
+          <label className="mb-2 block text-sm" title="Meteorological bearing the wind comes from, clockwise from the target line. Source: canonical wind-scenario/v1 meteorological adapter.">
+            <span className="mb-1 flex justify-between text-slate-300">
+              <span>Wind From Bearing</span><span className="text-slate-500">deg</span>
+            </span>
+            <DecimalInput
+              value={windFromDeg}
+              aria-label="Wind From Bearing"
+              title="0° is a headwind from the target, 90° comes from the player's right, and 180° is a tailwind"
+              onCommit={setWindFromDeg}
+              className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
+            />
+          </label>
+          <div
+            className="mt-3 flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-950/50 px-3 py-2 text-xs text-slate-300"
+            role="img"
+            aria-label={`Wind ${windSpeedMph.toFixed(1)} miles per hour from ${windFromDeg.toFixed(1)} degrees`}
+            title="Arrow points where the air moves; the numeric bearing states where it comes from"
+          >
+            <span
+              aria-hidden="true"
+              className="inline-block text-xl text-sky-300"
+              style={{ transform: `rotate(${windFromDeg + 180}deg)` }}
+            >
+              ↑
+            </span>
+            <span>
+              {windSpeedMph.toFixed(1)} mph from {windFromDeg.toFixed(1)}°;
+              arrow shows the wind-to direction.
+            </span>
+          </div>
+        </div>
+
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             Flight Numbers
@@ -237,6 +319,22 @@ export function FlightExplorerPanel({
               </div>
             ))}
           </div>
+          {windComparison && (
+            <div className="mt-4 border-t border-slate-800 pt-3" aria-label="Wind effect deltas">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-sky-300">
+                Selected Wind Minus No Wind
+              </p>
+              {RESULT_ROWS.map(({ key, label, unit }) => (
+                <div key={`delta-${key}`} className="flex justify-between text-xs text-slate-400">
+                  <span>Δ {label}</span>
+                  <span className="tabular-nums text-slate-200">
+                    {windComparison.deltas[key] >= 0 ? "+" : ""}
+                    {windComparison.deltas[key].toFixed(2)} {unit}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
@@ -244,8 +342,17 @@ export function FlightExplorerPanel({
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
           <FlightCanvases
             points={result?.points ?? []}
+            comparisonPoints={windComparison?.calm.points ?? []}
             emptyText="Enter launch conditions and press Run Flight."
+            spatialTarget={spatialTarget}
           />
+          <div className="mt-4 border-t border-slate-800 pt-4">
+            <FlightPlayback3D
+              points={result?.points ?? []}
+              comparisonPoints={windComparison?.calm.points ?? []}
+              spatialTarget={spatialTarget}
+            />
+          </div>
         </div>
       </section>
     </div>

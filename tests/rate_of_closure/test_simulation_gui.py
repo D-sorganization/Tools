@@ -63,6 +63,22 @@ class TestSimulationTab:
             window._club_view.stop()
             window._simulation_tab.stop()
 
+    def test_simulation_club_selection_uses_the_canonical_workbench_spec(
+        self, qtbot
+    ) -> None:  # type: ignore[no-untyped-def]
+        window = RateOfClosureMainWindow()
+        qtbot.addWidget(window)
+        try:
+            window._simulation_tab._club_combo.setCurrentText("Pitching Wedge")
+            assert window._controls._club_combo.currentText() == "Pitching Wedge"
+            config = window._simulation_tab.config()
+            assert config.club == window._controls.club_spec()
+            assert config.scenario.lie_angle_deg == 64.0
+            assert config.scenario.com_to_face_mm == 11.0
+        finally:
+            window._club_view.stop()
+            window._simulation_tab.stop()
+
     def test_every_launch_row_has_an_explanation(self) -> None:
         for field, _label, _unit in LAUNCH_ROWS:
             assert field in LAUNCH_EXPLANATIONS, field

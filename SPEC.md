@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.10                                    |
-| **Spec Version**        | 1.13.10                                    |
-| **Last Spec Update**    | 2026-08-06                                 |
+| **Current Version**     | 1.14.4                                     |
+| **Spec Version**        | 1.14.4                                     |
+| **Last Spec Update**    | 2026-08-07                                 |
 
 ## 2. Purpose & Mission
 
@@ -45,6 +45,125 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+### 2026-08-06 Impact-to-Flight Solution-Family Foundation
+
+- Python and TypeScript share strict `impact-solution-request/v1` and
+  `impact-solution-result/v1` contracts that declare the target and delivery
+  frames, impact reference point and event time, canonical units, display
+  convention, club profile, impact model, flight model, and model availability.
+- The Python adapter runs centered representative driver and iron deliveries
+  through the existing delivery, rigid-body impact, frame-conversion, launch,
+  and literature-flight pipeline. It fails closed for unknown model IDs,
+  unsupported variables, and nonpositive normal approach speed.
+- The deterministic inverse solver is reused without duplicating its sampler or
+  ranking logic. Feasible candidates are separated into normalized-radius
+  families with representative launch values, launch/flight residuals,
+  observed parameter intervals, within-family correlations, bounded local
+  sensitivities, provenance, and a diagnostic for every rejected sample.
+- The representative club mass/MOI values are engineering defaults, not fitted
+  equipment certifications. Shaft, off-center contact, turf, swing-generation,
+  uncertainty, capability and UI integration remain explicit future adapters.
+
+### 2026-08-06 Desired Ball-Flight Inverse-Solver Foundation
+
+- Python and TypeScript expose the same strict `inverse-flight-request/v1` and
+  `inverse-flight-result/v1` contracts over solver-eligible canonical flight
+  metrics, including exact units, target/maximize/minimize modes, tolerances,
+  weights, hard objective bounds, and bounded model parameters.
+- An injected forward evaluator preserves separation from any specific impact,
+  flight, wind, or ground model and reports complete, no-impact, failed, and
+  nonconverged evaluations without synthetic replacement values.
+- A deterministic Halton bounded search returns feasible-first ranked
+  candidates, per-objective normalized residuals and violations, diagnostic
+  counts, termination status, and algorithm/schema provenance. Cross-runtime
+  result serialization is pinned by a shared SHA-256 fixture.
+- This foundation does not claim continuous/global optimality or prove dynamic
+  infeasibility from a finite sample. Physics adapters, warm-start/refinement,
+  uncertainty propagation, UI controls, and target-volume integration remain
+  explicit downstream work.
+
+### 2026-08-06 Canonical ball-flight result catalog
+
+- Python and TypeScript expose one versioned launch-monitor-style catalog with
+  stable metric IDs, units, definitions, frames, signs, event references,
+  provenance, typed availability, solver eligibility, and explicit convention
+  coverage.
+- A pure target-frame derivation interpolates first ground contact and computes
+  launch, carry, offline, apex, time, landing, curve, terminal, and target
+  metrics while retaining raw vectors.
+- Total, roll, bounce, and final-offline values remain typed unavailable unless
+  an identified qualified ground model supplies them; carry is never relabeled
+  as total distance.
+- Complete catalog and result serialization is deterministic and pinned by a
+  cross-language SHA-256 fixture. UI, API, and Rust/WASM adapters remain
+  explicit downstream integration work.
+
+### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
+
+- Python and TypeScript share a versioned, golden-fixture-pinned sampler for
+  true meteorological wind and correlated player-estimation errors. Seed,
+  true-wind distributions, systematic under/overestimation, error spread,
+  speed/bearing correlation, units, frame, and provenance are explicit.
+- Club/aim strategies run on identical wind draws (common random numbers),
+  retaining completed landing scatter and explicit nonconverged/invalid
+  cohorts. The v2 output distinguishes actual estimate-driven decisions, the
+  same policy evaluated with true-wind information, and hindsight selection of
+  the best declared preset; the latter is no longer presented as if it were
+  perfect information.
+- Summaries report target-circle hold probability, empirical miss-distance CVaR
+  at an explicit alpha, and short/long/left/right frequency and severity.
+  Failure cohorts remain in hold and tail-risk denominators through an explicit
+  miss-distance penalty and never receive invented landing directions.
+- The bounded foundation is deterministic decision support, not a weather
+  forecast or an automatic club recommendation. UI workflow, terrain effects,
+  measured forecast ingestion, and statistically justified player-specific
+  calibration remain follow-on work.
+
+### 2026-08-06 Reproducible ball-flight wind physics
+
+- One versioned Python/TypeScript wind scenario defines wind-to velocity in
+  the flight frame, with an explicit meteorological from-bearing adapter,
+  vertical wind, altitude shear, declared smooth gusts, deterministic seeded
+  turbulence, and provenance.
+- Every supported flight integrator evaluates relative air speed at physical
+  trajectory time and position. Dynamic wind is not silently collapsed into a
+  steady vector for the Rust fast path.
+- React and PyQt6 run common-input no-wind and selected-wind trajectories,
+  show both paths, and report wind-minus-calm deltas. Two-dimensional and
+  three-dimensional flight plots use locked physical scale.
+- The shared golden fixture pins wind-field parity. The synthetic turbulence
+  model is reproducible decision-support input, not a claim of site-specific
+  atmospheric prediction.
+
+### 2026-08-06 Interactive 3D Ball-Flight Playback
+
+- PyQt6 and React interpolate the same physical trajectory timestamps and
+  expose accessible play, pause, scrub, speed, restart, Launch, Apex, and
+  Landing controls with no ambiguous swing-impact event on a flight-only path.
+- Both clients preserve a locked physical metre scale while the user rotates
+  and zooms the 3D view; paired calm and selected-wind paths remain visible.
+- Playback uses one cancellable animation loop and resets deterministically
+  when a new trajectory replaces the current run.
+
+### 2026-08-06 Spatial Target Contract
+
+- One immutable version-1 target contract defines canonical app-frame
+  downrange, elevation, and right coordinates plus explicit source-frame
+  provenance and exact flight-frame conversion.
+- Surface circles and corridors and 3D spheres and boxes report deterministic
+  acceptance, signed closest-point miss vectors, and strict Python/TypeScript
+  serialization with explicit legacy green/fairway migration.
+- PyQt6 and React expose one canonical interactive editor across Flight
+  Explorer and integrated Simulation, render the active target in side,
+  top-down, and orbitable 3D views even before a run, and preserve it across
+  navigation, versioned run/project JSON, CSV metadata, and solver/variation
+  manifests. Invalid drafts retain the last valid target and field-linked
+  errors without interrupting a completed physics run.
+- Aerial passage uses continuous segment intersection with interpolated event
+  time; landing assessment projects the ball center onto the declared course
+  surface. Ground-only solver and variation objectives fail closed for aerial
+  targets rather than silently optimizing incompatible geometry.
+
 ### 2026-08-06 Launch-monitor convention registry
 
 - Python and TypeScript expose the same immutable, versioned catalog for app,
@@ -569,6 +688,21 @@ heads.test.ts`, `web/src/model/volumetrics.test.ts`, GUI smokes in
     scopes, export files in tmp, tooltip coverage); web
     `plotcatalog.test.ts` + `plotspec.test.ts` (parity pins, round-trip,
     builtins, exports).
+
+### 2026-08-06 Rate of Closure real-time 3D ball-flight playback (#4200)
+
+- A shared `TimedTrajectory` contract validates finite, strictly increasing
+  solver timestamps and app-frame SI positions, then deterministically
+  interpolates by physical time with launch/impact endpoint clamping.
+- PyQt6 composes `FlightView` with accessible play/pause, scrub, speed,
+  restart, launch, and impact controls in both the Simulation and standalone
+  Flight Explorer surfaces. One owned precise timer advances physical time;
+  mutable ball artists preserve the user's Matplotlib 3D rotation and zoom.
+- React adds a dependency-free orthographic 3D canvas with pointer rotation,
+  wheel zoom, the same transport controls, and a single cancellable
+  `requestAnimationFrame` lifecycle. The projection uses one pixel scale per
+  physical metre so camera rotation and responsive sizing do not distort the
+  trajectory. Existing static side/top plots and paired wind overlays remain.
 
 ### 2026-08-04 Rate of Closure scale-separated viewers + standalone Flight Explorer (epic #4120, V2)
 
@@ -2738,6 +2872,17 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-07 | 1.14.4 | feat(rate_of_closure, #4206): add validated manual reference AoA/path, targetward forward shaft lean, and tracked-reference versus registered generated-hosel shaft datums in PyQt6 and React; rotate pose, angular-rate components, and delivered face normals consistently; persist schema-v5 `manual_delivery`; export the reference-contact/reference-impact model boundary; and pin the representative Pitching Wedge decomposition in both runtimes. |
+| 2026-08-07 | 1.14.3 | fix(variation, #4144): preserve trial identity when filtering finite landing coordinates so carry/lateral values from different incomplete trials cannot form fictitious points; use one paired-row contract for Python/TypeScript ellipse analysis, PyQt/React rendering, and exact plotted-count status. Clarify that the wedge kernel's 20 mm example is synthetic and separately pin the generated Pitching Wedge face-center/hosel cross-check and current UI-state limitations. |
+| 2026-08-06 | 1.14.2 | feat(rate_of_closure, #4192 #4234): complete the shared spatial-target workflows in PyQt6 and React with canonical cross-tab state, versioned JSON/CSV/manifest persistence, no-run 2D/3D rendering, continuous aerial passage, surface-projected landing assessment, field-linked validation, stale-solver protection, high-DPI canvases, responsive wrapped PyQt forms, collapsible engineering detail/layer controls, and movable or hideable legends; keep aerial requests fail-closed where solver/variation objectives remain ground-only. |
+| 2026-08-06 | 1.14.1 | feat(ball-flight integration, #4192-#4200 #4205): integrate the canonical metric catalog, Launch Direction conventions, inverse and impact-family solvers, capability-aware objectives, spatial targets, reproducible wind and uncertainty analysis, responsive locked-aspect plots, and timestamp-accurate Launch/Apex/Landing 3D playback across the shared Python contracts and the PyQt6/React Rate of Closure clients. |
+| 2026-08-06 | 1.14.0 | feat(swing_sim, rate_of_closure, #4192): add the UI-neutral `swing_sim.spatial_target` version-1 contract with canonical app-frame downrange/elevation/right coordinates, source-frame provenance and flight-frame conversion, surface-circle/corridor and 3D sphere/box acceptance geometry, signed closest-point miss vectors, deterministic Python/TypeScript serialization, and explicit legacy green/fairway migration. |
+| 2026-08-06 | 1.13.13 | feat(swing_sim, rate_of_closure, #4196): map desired flight to frame-explicit centered driver/iron delivery solution families with strict cross-runtime schemas, observed intervals/correlations, local sensitivities, complete residuals, model manifests, and rejected no-impact/miss diagnostics. |
+| 2026-08-06 | 1.13.12 | feat(swing_sim, rate_of_closure, #4195): add strict desired-flight inverse-solver contracts, deterministic bounded multi-objective search, ranked residual-rich candidates, typed infeasible/no-impact/nonconverged outcomes, and Python/TypeScript parity fixtures. |
+| 2026-08-06 | 1.13.11 | feat(swing_sim, rate_of_closure, #4194): add the canonical source-backed flight-result metric catalog, analytic landing/trajectory derivation, typed unavailable and qualified-ground boundaries, complete run manifests, deterministic Python/TypeScript exports, and cross-client parity fixtures. |
+| 2026-08-06 | 1.13.12 | feat(ball-flight, #4198 #4199): add Python/TypeScript deterministic true-versus-estimated wind ensembles, correlated under/overestimation, common-random-number club/aim strategy trials, landing scatter cohorts, and expected-cost/regret summaries. |
+| 2026-08-06 | 1.13.13 | fix(ball-flight, #4199): migrate strategy output to v2; separate policy-fixed true-wind counterfactuals from preset-oracle regret and add failure-inclusive target-hold, miss-distance CVaR, and directional risk metrics with Python/TypeScript parity. |
+| 2026-08-06 | 1.13.12 | feat(rate_of_closure, #4200): add deterministic timestamp interpolation and accessible play/pause/scrub/speed/restart/Launch/Apex/Landing controls to PyQt6 and React; preserve Matplotlib camera state with mutable markers; add a dependency-free rotatable/zoomable orthographic web canvas with a locked physical metre scale and one cancellable animation loop. |
 | 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
 | 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
 | 2026-08-06 | 1.13.6 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |

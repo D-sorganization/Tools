@@ -18,6 +18,7 @@ from shared.python.golf_club import GroundPlane
 __all__ = [
     "format_impact_kinematics",
     "format_simulation_engineering_readout",
+    "format_simulation_key_metrics",
     "ground_clearance_snapshot_for_scene",
     "simulation_ground_clearance_snapshot",
 ]
@@ -181,3 +182,25 @@ def format_simulation_engineering_readout(run: SimulationRun) -> str:
         if ground_snapshot is None
         else impact_html + _format_ground_clearance(ground_snapshot)
     )
+
+
+def format_simulation_key_metrics(run: SimulationRun | None) -> str:
+    """Return the essential current-calculation metrics for persistent display."""
+    if run is None:
+        return "Run a simulation to inspect key impact metrics."
+    snapshot = impact_kinematics_for_run(run)
+    analysis = snapshot.analysis
+    metrics = (
+        ("Contact AoA", _number(analysis.total_aoa_deg, "°")),
+        (
+            "Shaft contribution",
+            _number(analysis.shaft_counterfactual_aoa_delta_deg, "°"),
+        ),
+        (
+            "Face-center spin loft",
+            _number(snapshot.face_center_dplane.spin_loft_3d_deg, "°"),
+        ),
+        ("D-plane tilt", _number(snapshot.face_center_dplane.dplane_tilt_deg, "°")),
+    )
+    values = " · ".join(f"<b>{label}:</b> {value}" for label, value in metrics)
+    return f"<b>{escape(snapshot.event_label)}:</b> {values}"

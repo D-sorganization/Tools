@@ -214,6 +214,24 @@ describe("analysis + export", () => {
     expect(ellipse.n).toBe(48);
   });
 
+  it("fits landing dispersion only from rows with a paired finite position", () => {
+    const dataset = {
+      plan: launchPlan({ nRuns: 4 }),
+      inputNames: [BALL],
+      inputs: [[150], [151], [152], [153]],
+      outputNames: ["carry_m", "lateral_m"],
+      outputs: [[100, 10], [1000, null], [null, 100], [300, 30]],
+      success: [true, true, true, true],
+    };
+
+    const ellipse = dispersionEllipse(dataset);
+
+    expect(ellipse).not.toBeNull();
+    expect(ellipse?.n).toBe(2);
+    expect(ellipse?.centerCarryM).toBe(200);
+    expect(ellipse?.centerLateralM).toBe(20);
+  });
+
   it("CSV/JSON exports carry the documented schemas", () => {
     const dataset = runVariation(launchPlan({ nRuns: 4 }));
     const csv = datasetToCsv(dataset);

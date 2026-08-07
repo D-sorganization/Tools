@@ -27,6 +27,7 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QMainWindow,
     QScrollArea,
+    QSizePolicy,
     QSplitter,
     QStatusBar,
     QTabBar,
@@ -200,6 +201,9 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._glossary_tab = GlossaryTab()
 
         left_content = QWidget()
+        left_content.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred
+        )
         left_layout = QVBoxLayout(left_content)
         left_layout.addWidget(self._controls)
         left_layout.addWidget(
@@ -212,6 +216,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         left_layout.addStretch(1)
         left = QScrollArea()
         left.setWidgetResizable(True)
+        left.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         left.setFrameShape(QFrame.Shape.NoFrame)
         left.setWidget(left_content)
         left.setMinimumWidth(320)
@@ -290,6 +295,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._controls.distanceUnitChanged.connect(self._on_distance_unit)
         self._simulation_tab.glossaryRequested.connect(self.open_glossary)
         self._simulation_tab.configChanged.connect(self._derivation_view.set_config)
+        self._simulation_tab.clubSelectionChanged.connect(self._controls.set_club_name)
         self._flight_explorer_tab.glossaryRequested.connect(self.open_glossary)
         self._putting_tab.glossaryRequested.connect(self.open_glossary)
         # Theming is applied by the shared launcher (setup_themed_app),
@@ -497,6 +503,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._club_view.set_scenario(scenario)
         self._plots_tab.set_scenario(scenario)
         self._derivation_view.set_scenario(scenario)
+        self._simulation_tab.set_club_spec(self._controls.club_spec())
         self._simulation_tab.set_scenario(scenario)
         self._variation_tab.set_scenario(scenario)
         self._variation_tab.set_simulation_config(self._simulation_tab.config())

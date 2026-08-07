@@ -4,8 +4,9 @@ import type { ClubSpec } from "../model/club";
 import { DEFAULT_COURSE_LAYOUT, type CourseLayout } from "../model/course";
 import type { ImpactScenario } from "../model/impact";
 import type { SimulationInput, SimulationRunTs } from "../model/simulation";
+import type { SpatialTargetTs } from "../model/spatialTarget";
+import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
 import { wedgeGroundClearance } from "../model/wedgeGroundClearance";
-import type { TargetRegionTs } from "../model/targets";
 import { FIELD_GUIDANCE } from "../model/units";
 import { BallSetupDiagram } from "./BallSetupDiagram";
 import { FlightCanvases } from "./FlightCanvases";
@@ -14,7 +15,7 @@ import { ImpactSceneCanvas } from "./ImpactSceneCanvas";
 import { KineticsSection } from "./KineticsSection";
 import { StrikeCanvas } from "./StrikeCanvas";
 import { SwingPlaybackControls } from "./SwingPlaybackControls";
-import { TargetSection } from "./TargetSection";
+import { SpatialTargetSection } from "./SpatialTargetSection";
 import { WedgeGroundClearancePanel } from "./WedgeGroundClearancePanel";
 import { drawSwingScene } from "./swingSceneDraw";
 import {
@@ -40,8 +41,8 @@ interface Props {
   scenario: ImpactScenario;
   effectiveLoftDeg: number;
   clubSpec: ClubSpec | null;
-  target: TargetRegionTs;
-  onTargetChange: (target: TargetRegionTs) => void;
+  spatialTarget: SpatialTargetTs;
+  onSpatialTargetChange: (target: SpatialTargetTs) => void;
   distanceUnit: string;
 }
 
@@ -51,8 +52,8 @@ export function SimulationDisplay({
   scenario,
   effectiveLoftDeg,
   clubSpec,
-  target,
-  onTargetChange,
+  spatialTarget,
+  onSpatialTargetChange,
   distanceUnit,
 }: Props) {
   const [playing, setPlaying] = useState(false);
@@ -75,19 +76,22 @@ export function SimulationDisplay({
     run && clubSpec ? wedgeGroundClearance(run, scenario, clubSpec) : null,
   [run, scenario, clubSpec]);
 
+  const groundTarget = useMemo(
+    () => spatialTargetForGroundWorkflow(spatialTarget, "solver").targetRegion,
+    [spatialTarget],
+  );
   const targetLayout = useMemo<CourseLayout>(() =>
-    target.kind === "green"
-      ? { ...DEFAULT_COURSE_LAYOUT, greenDistanceM: target.distanceM, greenRadiusM: target.radiusM }
+    groundTarget?.kind === "green"
+      ? { ...DEFAULT_COURSE_LAYOUT, greenDistanceM: groundTarget.distanceM, greenRadiusM: groundTarget.radiusM }
+      : groundTarget
+        ? {
+            ...DEFAULT_COURSE_LAYOUT,
+            greenDistanceM: groundTarget.distanceM + groundTarget.bandHalfLengthM,
+            fairwayHalfWidthM: groundTarget.halfWidthM,
+          }
       : {
           ...DEFAULT_COURSE_LAYOUT,
-          greenDistanceM: target.distanceM + target.bandHalfLengthM,
-          fairwayHalfWidthM: target.halfWidthM,
-        }, [target]);
-  const landing = useMemo(() => {
-    if (!run || run.flight.length < 2) return undefined;
-    const last = run.flight[run.flight.length - 1].position;
-    return { carryM: last[0], lateralM: last[2] };
-  }, [run]);
+        }, [groundTarget]);
   const deliveryAngles = useMemo(() => {
     if (!run || run.impactTimeS === null || run.swing.length < 2) return null;
     const dt = run.swing[1].t - run.swing[0].t;
@@ -161,11 +165,12 @@ export function SimulationDisplay({
         )}
         {view === "Kinetics" && <KineticsSection input={input} run={run} />}
         {view === "Flight" && <>
-          <TargetSection target={target} onChange={onTargetChange} landing={landing}
-            unit={distanceUnit} />
+          <SpatialTargetSection target={spatialTarget}
+            onChange={onSpatialTargetChange} flightPoints={run?.flight ?? []} />
           <FlightCanvases points={run?.flight ?? []}
             emptyText="Run a simulation to populate the flight view."
-            layout={targetLayout} target={target} distanceUnit={distanceUnit} />
+            layout={targetLayout}
+            spatialTarget={spatialTarget} distanceUnit={distanceUnit} />
         </>}
         {view === "Swing" && <>
           <SwingPlaybackControls run={run} playing={playing} setPlaying={setPlaying}

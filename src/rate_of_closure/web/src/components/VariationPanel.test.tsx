@@ -6,6 +6,11 @@ import { CATEGORY_LAUNCH, planFromJson, planToJson, type VariationPlanTs } from 
 import { VARIATION_PLAN_LIBRARY_KEY } from "../model/variationPlanLibrary";
 import { VariationPanel } from "./VariationPanel";
 import { saveBallSetupPreference } from "../model/ballSetupPersistence";
+import {
+  createSpatialTarget,
+  sphereTolerance,
+  targetPointFromFrame,
+} from "../model/spatialTarget";
 
 class MemoryStorage implements Storage {
   private values = new Map<string, string>();
@@ -83,6 +88,22 @@ afterEach(() => {
 });
 
 describe("VariationPanel v2 plan persistence", () => {
+  it("reports an aerial target without projecting it onto the ground", () => {
+    const target = createSpatialTarget({
+      label: "Apex gate",
+      kind: "aerial_waypoint",
+      point: targetPointFromFrame([140, 24, -3], "app"),
+      tolerance: sphereTolerance(4),
+      elevationSource: "absolute",
+    });
+    render(<VariationPanel spatialTarget={target} />);
+    const summary = screen.getByRole("status", {
+      name: "Variation current spatial target",
+    });
+    expect(summary).toHaveTextContent(/Apex gate.*140\.0 m downrange.*24\.0 m up/i);
+    expect(summary).toHaveTextContent(/elevation was not coerced to zero/i);
+  });
+
   it("presents a complete results workspace before the first run", () => {
     render(<VariationPanel storage={storage} />);
 

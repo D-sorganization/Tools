@@ -16,12 +16,17 @@ import {
 } from "../model/course";
 import { type FlightPoint } from "../model/flight";
 import { type TargetRegionTs } from "../model/targets";
+import { spatialTargetHalfExtents, type SpatialTargetTs } from "../model/spatialTarget";
 import { formatDistanceM } from "../model/units";
 import { withAlpha } from "../model/theme";
+import { canvasContext, observeCanvas, type LogicalCanvasSize } from "./canvasDisplay";
+import { spatialTargetSummary } from "./spatialTargetPresentation";
 
 interface Props {
   /** App-frame trajectory (x downrange, y up, z right), tee-origin. */
   points: FlightPoint[];
+  /** Optional common-input no-wind trajectory rendered as a dashed ghost. */
+  comparisonPoints?: FlightPoint[];
   emptyText?: string;
   /** Course furniture layout (#4125 H7a); defaults to the driver hole. */
   layout?: CourseLayout;
@@ -29,6 +34,8 @@ interface Props {
   showCourse?: boolean;
   /** Target region (#4125 H7b): dashed boundary in the top-down view. */
   target?: TargetRegionTs;
+  /** Canonical 3D target rendered in both orthographic views. */
+  spatialTarget?: SpatialTargetTs;
   /** Ball-flight distance display unit (#4125 H6): yards default. */
   distanceUnit?: string;
 }
@@ -37,6 +44,16 @@ const MIN_CARRY_M = 10.0;
 const MIN_HEIGHT_M = 5.0;
 const MIN_LATERAL_M = 5.0;
 const MARGIN = 34;
+const SIDE_CANVAS_SIZE = { width: 860, height: 260 } as const;
+const TOP_CANVAS_SIZE = { width: 860, height: 220 } as const;
+
+function responsiveCanvasStyle(size: { width: number; height: number }) {
+  return {
+    width: "100%",
+    height: "auto",
+    aspectRatio: `${size.width} / ${size.height}`,
+  };
+}
 
 function drawCourse(
   ctx: CanvasRenderingContext2D,
@@ -114,38 +131,97 @@ function drawTarget(
   ctx.lineWidth = 1;
 }
 
+function drawSpatialTarget(
+  ctx: CanvasRenderingContext2D,
+  target: SpatialTargetTs,
+  vertical: "height" | "lateral",
+  px: (value: number) => number,
+  py: (value: number) => number,
+  logicalWidth: number,
+): void {
+  const [downrange, elevation, right] = target.point.appCoordinatesM;
+  const [halfDownrange, halfElevation, halfRight] = spatialTargetHalfExtents(target);
+  const center = vertical === "height" ? elevation : right;
+  const halfVertical = vertical === "height" ? halfElevation : halfRight;
+  ctx.strokeStyle = "#f59e0b";
+  ctx.fillStyle = withAlpha("#f59e0b", 0.14);
+  ctx.setLineDash([5, 3]);
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  if (target.tolerance.kind === "sphere" || target.tolerance.kind === "surface_circle") {
+    ctx.ellipse(
+      px(downrange), py(center),
+      Math.abs(px(downrange + halfDownrange) - px(downrange)),
+      Math.max(2, Math.abs(py(center + halfVertical) - py(center))),
+      0, 0, 2 * Math.PI,
+    );
+  } else {
+    ctx.rect(
+      px(downrange - halfDownrange), py(center + halfVertical),
+      px(downrange + halfDownrange) - px(downrange - halfDownrange),
+      Math.max(4, py(center - halfVertical) - py(center + halfVertical)),
+    );
+  }
+  ctx.fill();
+  ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.lineWidth = 1;
+  ctx.fillStyle = "#fbbf24";
+  ctx.font = "bold 11px sans-serif";
+  const label = `ACTIVE · ${target.label}`;
+  const anchorX = px(downrange);
+  const proposedX = anchorX + 6;
+  const wouldClipRight = proposedX + ctx.measureText(label).width > logicalWidth - 4;
+  ctx.textAlign = wouldClipRight ? "right" : "left";
+  ctx.fillText(label, wouldClipRight ? anchorX - 6 : proposedX, Math.max(14, py(center) - 7));
+  ctx.textAlign = "left";
+}
+
 function drawPanel(
   canvas: HTMLCanvasElement,
+  logicalSize: LogicalCanvasSize,
   points: FlightPoint[],
+  comparisonPoints: FlightPoint[],
   vertical: "height" | "lateral",
   emptyText: string,
   layout: CourseLayout,
   showCourse: boolean,
   target?: TargetRegionTs,
   distanceUnit = "yd",
+  spatialTarget?: SpatialTargetTs,
 ): void {
-  const ctx = canvas.getContext("2d");
+  const ctx = canvasContext(canvas, logicalSize);
   if (!ctx) return;
-  const { width, height } = canvas;
+  const { width, height } = logicalSize;
   ctx.clearRect(0, 0, width, height);
-  if (points.length < 2) {
+  const allPoints = [...points, ...comparisonPoints];
+  if (points.length < 2 && !spatialTarget) {
     ctx.fillStyle = "#64748b";
     ctx.font = "13px sans-serif";
     ctx.fillText(emptyText, 14, 24);
     return;
   }
 
-  const carryExt = Math.max(MIN_CARRY_M, ...points.map((p) => p.position[0])) * 1.05;
+  const spatialCenter = spatialTarget?.point.appCoordinatesM;
+  const spatialExtents = spatialTarget ? spatialTargetHalfExtents(spatialTarget) : [0, 0, 0];
+  const spatialCarry = spatialCenter ? spatialCenter[0] + spatialExtents[0] : 0;
+  const carryExt = Math.max(MIN_CARRY_M, spatialCarry, ...allPoints.map((p) => p.position[0])) * 1.05;
   const value = (p: FlightPoint) =>
     vertical === "height" ? p.position[1] : p.position[2];
+  const targetVertical = spatialCenter
+    ? Math.abs(vertical === "height" ? spatialCenter[1] : spatialCenter[2]) +
+      (vertical === "height" ? spatialExtents[1] : spatialExtents[2])
+    : 0;
   const vertExt =
     vertical === "height"
-      ? Math.max(MIN_HEIGHT_M, ...points.map((p) => p.position[1])) * 1.2
-      : Math.max(MIN_LATERAL_M, ...points.map((p) => Math.abs(p.position[2]))) * 1.3;
+      ? Math.max(MIN_HEIGHT_M, targetVertical, ...allPoints.map((p) => p.position[1])) * 1.2
+      : Math.max(MIN_LATERAL_M, targetVertical, ...allPoints.map((p) => Math.abs(p.position[2]))) * 1.3;
   const zeroY = vertical === "height" ? height - MARGIN : height / 2;
-  const spanY = vertical === "height" ? height - 2 * MARGIN : height / 2 - MARGIN;
-  const px = (x: number) => MARGIN + (x / carryExt) * (width - 2 * MARGIN);
-  const py = (v: number) => zeroY - (v / vertExt) * spanY;
+  const usableY = vertical === "height" ? height - 2 * MARGIN : height / 2 - MARGIN;
+  // A single metres-to-pixels scale prevents trajectory distortion.
+  const physicalScale = Math.min((width - 2 * MARGIN) / carryExt, usableY / vertExt);
+  const px = (x: number) => MARGIN + x * physicalScale;
+  const py = (v: number) => zeroY - v * physicalScale;
 
   // Course-styled ground (#4125 H7a): grass fill + ground/target line.
   const course = courseColors();
@@ -163,8 +239,30 @@ function drawPanel(
   ctx.stroke();
   if (showCourse) drawCourse(ctx, vertical, px, py, width, layout);
   if (target && vertical === "lateral") drawTarget(ctx, target, px, py);
+  if (spatialTarget) drawSpatialTarget(ctx, spatialTarget, vertical, px, py, width);
 
-  // Trajectory polyline.
+  if (points.length < 2) {
+    ctx.fillStyle = "#64748b";
+    ctx.font = "13px sans-serif";
+    ctx.fillText(emptyText, 14, 24);
+    return;
+  }
+
+  if (comparisonPoints.length >= 2) {
+    ctx.strokeStyle = "#60a5fa";
+    ctx.setLineDash([7, 5]);
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    comparisonPoints.forEach((point, index) => {
+      const verticalValue = value(point);
+      if (index === 0) ctx.moveTo(px(point.position[0]), py(verticalValue));
+      else ctx.lineTo(px(point.position[0]), py(verticalValue));
+    });
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Selected-wind trajectory polyline.
   ctx.strokeStyle = "#34d399";
   ctx.lineWidth = 2;
   ctx.beginPath();
@@ -201,14 +299,22 @@ function drawPanel(
     10,
     16,
   );
+  if (comparisonPoints.length >= 2) {
+    ctx.fillStyle = "#60a5fa";
+    ctx.fillText("- - No wind", width - 142, 16);
+    ctx.fillStyle = "#34d399";
+    ctx.fillText("— Selected wind", width - 76, 16);
+  }
 }
 
 export function FlightCanvases({
   points,
+  comparisonPoints = [],
   emptyText,
   layout,
   showCourse,
   target,
+  spatialTarget,
   distanceUnit = "yd",
 }: Props) {
   const sideRef = useRef<HTMLCanvasElement | null>(null);
@@ -218,45 +324,69 @@ export function FlightCanvases({
   const course = showCourse ?? true;
 
   useEffect(() => {
-    if (sideRef.current)
+    const drawSide = () => {
+      if (!sideRef.current) return;
       drawPanel(
         sideRef.current,
+        SIDE_CANVAS_SIZE,
         points,
+        comparisonPoints,
         "height",
         placeholder,
         courseLayout,
         course,
         undefined,
         distanceUnit,
+        spatialTarget,
       );
-    if (topRef.current)
+    };
+    const drawTop = () => {
+      if (!topRef.current) return;
       drawPanel(
         topRef.current,
+        TOP_CANVAS_SIZE,
         points,
+        comparisonPoints,
         "lateral",
         placeholder,
         courseLayout,
         course,
         target,
         distanceUnit,
+        spatialTarget,
       );
-  }, [points, placeholder, courseLayout, course, target, distanceUnit]);
+    };
+    const stopSide = observeCanvas(sideRef, drawSide);
+    const stopTop = observeCanvas(topRef, drawTop);
+    return () => {
+      stopSide();
+      stopTop();
+    };
+  }, [points, comparisonPoints, placeholder, courseLayout, course, target, spatialTarget, distanceUnit]);
+
+  const targetDescription = spatialTarget
+    ? ` Plot includes ${spatialTargetSummary(spatialTarget)}`
+    : undefined;
 
   return (
     <div className="grid min-w-0 gap-3">
       <canvas
         ref={sideRef}
-        width={860}
-        height={260}
+        width={SIDE_CANVAS_SIZE.width}
+        height={SIDE_CANVAS_SIZE.height}
+        style={responsiveCanvasStyle(SIDE_CANVAS_SIZE)}
         className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
         aria-label="Flight side profile (height vs carry)"
+        aria-description={targetDescription}
       />
       <canvas
         ref={topRef}
-        width={860}
-        height={220}
+        width={TOP_CANVAS_SIZE.width}
+        height={TOP_CANVAS_SIZE.height}
+        style={responsiveCanvasStyle(TOP_CANVAS_SIZE)}
         className="w-full min-w-0 rounded-lg border border-slate-800 bg-slate-950/60"
         aria-label="Flight top-down view (lateral vs carry)"
+        aria-description={targetDescription}
       />
     </div>
   );

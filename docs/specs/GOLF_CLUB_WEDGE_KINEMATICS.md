@@ -91,18 +91,174 @@ axis direction, screw pitch, and perpendicular distance from contact to that
 axis. This makes the off-axis lever arm explicit instead of inferring it from a
 screen projection.
 
-## Worked Example
+## Synthetic Kernel Worked Example
 
-The regression fixture uses a right-handed target/ground frame, 64-degree lie,
-15-degree forward shaft lean, a 20 mm contact offset from the shaft line,
-1307 degrees per second of illustrative shaft-axis rotation, 30 mph contact
-speed, and total AoA of -10 degrees.
+### Declared State
 
-The evaluated shaft term is approximately
-`(0, -0.193183, -0.396084) m/s`. Removing it while holding the other terms fixed
-produces -9.18118 degrees AoA, so the direct shaft contribution is -0.81882
-degrees for this particular state. The 1307-degree-per-second value is an
-illustrative driver-derived rate, not a claimed typical wedge rate.
+The geometry-independent regression fixture uses a right-handed target/ground frame (`x` target,
+`y` up, `z` right), 64-degree lie, 15-degree forward shaft lean, a 20 mm
+face-forward contact offset from the physical shaft line, and 1,307 degrees per
+second of positive shaft-axis rotation. The final contact velocity is declared
+to be `(13.207454, -2.328830, 0) m/s`, whose magnitude is exactly 30 mph to the
+reported precision and whose AoA is -10 degrees.
+
+The 20 mm lever arm is intentionally synthetic. It proves the shared kernel's
+vector closure and attribution identities; it must not be presented as the
+geometry of the generated wedge head shown by either client.
+
+The 1,307-degree-per-second input is the mean handle twist velocity measured by
+Cheetham in 94 tour-professional **driver** swings (standard deviation 304,
+observed range 652--2,432 degrees per second). It is an illustrative sourced
+reference, not a measured or inferred typical wedge rate. No wedge-specific
+impact distribution was found in the reviewed primary literature, so the UI
+and this specification must not label it as one. See Cheetham (2014),
+[The Relationship of Club Handle Twist Velocity to Selected Biomechanical
+Characteristics of the Golf Drive](https://www.philcheetham.com/media/Phillip-Cheetham-Doctoral-Dissertation-2014.pdf),
+especially Table 2.
+
+### Translation-versus-shaft decomposition
+
+For the declared state the exact vectors are:
+
+| Term | Velocity in `(target, up, right)` [m/s] | Downward speed [m/s] |
+| --- | ---: | ---: |
+| Shaft-axis datum translation | `(13.207454, -2.135647, +0.396084)` | 2.135647 |
+| Rotation about shaft | `(0, -0.193183, -0.396084)` | 0.193183 |
+| Other rotation | `(0, 0, 0)` within numerical precision | 0 |
+| **Contact point total** | **`(13.207454, -2.328830, 0)`** | **2.328830** |
+
+Thus shaft-axis rotation supplies 8.2953% of the downward velocity and the
+shaft-datum translation supplies 91.7047%. Removing only the shaft term while
+holding the physical state otherwise fixed gives -9.18117 degrees AoA. The
+direct shaft counterfactual is therefore -0.81882 degrees, or 8.19% of the
+10-degree AoA magnitude. The velocity share and angular share answer different
+questions because AoA is an `atan2` of vertical and horizontal speed and the
+shaft term also cancels 0.396084 m/s of rightward velocity.
+
+There is no non-shaft angular component in this intentionally isolated fixture,
+so the two-factor Shapley result equals the direct shaft counterfactual. In a
+measured swing with swing-plane rotation, the non-shaft term must be retained
+and the reported angular contributions will generally not equal simple vector
+percentages.
+
+### Shaft-rate sensitivity with translation held fixed
+
+The following table varies only shaft-axis rate while keeping the above
+shaft-datum translation and geometry fixed. Values are regression-tested rather
+than obtained from a display-layer approximation.
+
+| Shaft rate [deg/s] | Total AoA [deg] | Direct shaft AoA delta [deg] | Shaft share of downward speed |
+| ---: | ---: | ---: | ---: |
+| 0 | -9.1812 | 0.0000 | 0.00% |
+| 652 | -9.5911 | -0.4099 | 4.32% |
+| 1,003 | -9.8106 | -0.6294 | 6.49% |
+| 1,307 | -10.0000 | -0.8188 | 8.30% |
+| 1,611 | -10.1887 | -1.0075 | 10.03% |
+| 2,432 | -10.6946 | -1.5134 | 14.41% |
+
+The table is a geometric sensitivity study, not a player recommendation. Rate,
+offset, lie, lean, handedness, and contact location jointly determine the sign
+and magnitude.
+
+### Representative generated-head cross-check
+
+For a geometry-specific comparison, use the Rate of Closure `Pitching Wedge`
+profile's face center and hosel rather than the synthetic 20 mm lever arm. In
+the unleaned head frame their face-center-minus-hosel vector is
+`(2.966, -24.719, 37.573) mm`. Rotating that rigid head and its 64-degree shaft
+15 degrees targetward gives:
+
+- shaft-axis unit vector `(0.232625, 0.868168, -0.438371)`;
+- hosel-axis-to-contact vector `(-3.533, -24.645, 37.573) mm`; and
+- at 1,307 degrees per second, shaft-induced contact velocity
+  `(+0.497660, -0.164057, -0.060817) m/s`.
+
+If 30 mph denotes the **total contact-point speed** at exactly -10 degrees AoA,
+the corresponding shaft-axis-datum translation is
+`(12.709794, -2.164774, +0.060817) m/s`. Rotation supplies 7.0446% of the
+downward speed. Removing only that rotation term gives -9.66594 degrees AoA,
+so the counterfactual shaft contribution is -0.33406 degrees. An alternate
+canonical-wedge CAD hosel datum produces about -0.223 m/s and -0.474 degrees;
+that spread demonstrates why the exact physical datum must accompany any
+reported attribution.
+
+At zero forward lean, the representative Rate geometry's vertical shaft term
+is only about -0.0297 m/s and its extra forward velocity can make the total AoA
+shallower. The proposed steepening mechanism is therefore mechanically
+plausible for the declared lean and hosel offset, but rotation rate alone does
+not determine its sign or magnitude.
+
+### Reproducible manual-Simulation case
+
+The standalone Simulation clients now expose manual reference attack angle,
+club path, forward shaft lean, and a `Generated Club Hosel` shaft-axis datum.
+The generated hosel is registered from the authored mesh frame into the
+tracked-reference frame as:
+
+`r_hosel = (com_to_face, 0, 0) + hosel_authored - face_center_authored`.
+
+This is essential: adding the authored hosel coordinate directly to the
+tracked reference would mix two origins and give a fictitious shaft line.
+
+With `Pitching Wedge`, 30 mph **reference-point** speed, -10-degree reference
+attack angle, zero path, 15-degree forward lean, 64-degree shaft lie, a 20 mm
+tracked-reference-to-face-center distance, 0 deg/s swing-plane angular rate,
+1,307 degrees per second about the shaft, a centered strike, and the generated
+hosel datum, both clients pin the results below. Swing-plane yaw, side tilt,
+and forward tilt are not applicable to the Manual source. The 20 mm distance
+is an explicit scenario override (the club-library Pitching Wedge default is
+11 mm), so it must be entered to reproduce this particular sensitivity case.
+The remaining run boundary is Delivery Inspection (forced alignment) at
+`t = 0.030 s`, Ground ball support, centered toe/high offsets, 450 microseconds
+contact duration, and the `waterloo_penner` flight model. Delivery Inspection
+tracks the declared reference point; this recipe is not a fixed-ball collision
+detection case.
+
+| Quantity | Current configured result |
+| --- | ---: |
+| Reference velocity | `(13.207454, -2.328830, 0) m/s` |
+| Contact velocity | `(13.155691, -2.522013, -0.410056) m/s` |
+| Contact-point AoA | `-10.847087 degrees` |
+| Without-shaft counterfactual AoA | `-10.548272 degrees` |
+| Shaft counterfactual contribution | `-0.298815 degrees` |
+| Shaft share of downward speed | `6.5050%` |
+| Rigid-impact/flight carry | `22.45855 m` (`24.56 yd`) |
+
+The manual attack control describes the tracked reference, not the contact
+point. To target exactly -10 degrees **contact-point** AoA with the other values
+held fixed, enter approximately -9.153512 degrees reference attack angle. The
+resulting shaft contribution is -0.333108 degrees and the current flight carry
+is 23.024061 m (25.18 yd), still not 30 yd.
+
+### Reconciliation with the requested 30-yard carry
+
+Carry is not a kinematic input to this decomposition. It follows only after a
+club/ball impact model supplies ball launch conditions and an aerodynamic model
+integrates the flight. As an explicit consistency check, take a nominal
+52-degree wedge and approximate 15 degrees of forward lean as 37 degrees of
+dynamic loft. With 30 mph club speed, -10 degrees AoA, centered impact, the
+current rigid-body impact model, and the `waterloo_penner` calm-flight model,
+the model predicts:
+
+| Quantity | Model result |
+| --- | ---: |
+| Ball speed | 30.449 mph |
+| Launch angle | 37.000 degrees |
+| Spin | 3,135.8 rpm |
+| Carry | 17.566 m (19.211 yd) |
+
+This model therefore does **not** predict 30 yards from that 30 mph delivery.
+Holding AoA and dynamic loft fixed, the same impact/flight chain requires
+approximately 37.887 mph club speed to carry 27.432 m (30 yd); that solution
+launches the ball at 38.454 mph with approximately 3,960 rpm spin. Conversely,
+a directly prescribed 37-degree, 3,136-rpm ball launch would need about
+40.13 mph ball speed to carry 30 yards, which is not the ball speed produced by
+the 30 mph rigid-body impact case.
+
+These results are deterministic model outputs, not validation against turf,
+grass, ball cover, groove condition, shaft compliance, or measured short-game
+launch data. The 30 mph/30-yard request should be treated as a target to be
+validated or solved, not as an assumption that overrides the forward model.
 
 For the simplified no-lean shaft direction
 `a = (0, sin(lie), -cos(lie))` and a face-forward offset
@@ -119,15 +275,27 @@ the shaft line, the analytical lie/offset formula, twist-reference invariance,
 Shapley closure, ground/arc orientation rates, screw-axis clearance, invalid
 AoA, and invalid frame geometry.
 
-This foundation is ready for model adapters but does not yet establish that an
-existing simulator's tracked point is the actual face contact point. Before a
-UI may present these metrics as simulation results, its adapter must provide:
+The manual Simulation adapter now provides the declared reference direction,
+rigid head pose, and selectable registered generated-hosel datum. The generated
+profile is representative rather than measured manufacturer CAD. The
+articulated double/triple-pendulum sources still expose a wrist-to-reference
+shaft line but no torsional shaft degree of freedom. Any future measured or
+flexible adapter must continue to provide:
 
 - the physical shaft line and true contact point in the same frame;
 - complete angular velocity including shaft twist;
 - face and leading-edge directions at that instant;
 - an impact event or an explicit no-impact result; and
 - the arc tangent and derivative used by the displayed comparison.
+
+The shaft decomposition is currently kinematic-only. Forced alignment and
+fixed-ball contact track the clubhead reference point, not swept face-mesh
+contact. The rigid impact and ball-flight pipeline consumes reference-point
+translation, not shaft-induced contact-point velocity; run exports carry these
+boundaries in machine-readable `model_limitations`. Shaft attribution therefore
+does not yet alter impact or flight. The Flight Explorer can independently
+reproduce the earlier 37-degree dynamic-loft consistency case, but that remains
+a separate prescribed-delivery calculation.
 
 No metric in this module alone predicts launch height, descent angle, turf
 clearance, bounce interaction, forgiveness, or shot outcome.

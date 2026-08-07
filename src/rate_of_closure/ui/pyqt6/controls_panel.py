@@ -33,6 +33,7 @@ from PyQt6.QtWidgets import (
 from rate_of_closure.club import ClubSpec, club_names, get_club
 from rate_of_closure.model import _BOUNDS, ImpactScenario
 from rate_of_closure.presets import PRESETS, preset_names
+from rate_of_closure.ui.pyqt6.responsive_layout import HeightForWidthGroupBox
 from rate_of_closure.units import (
     FIELD_GUIDANCE,
     QUANTITY_UNITS,
@@ -95,7 +96,6 @@ class ControlsPanel(QWidget):
             quantity: next(iter(table)) for quantity, table in QUANTITY_UNITS.items()
         }
         self._updating = False
-
         layout = QVBoxLayout(self)
         layout.addWidget(self._build_preset_box())
         layout.addWidget(self._build_club_box())
@@ -106,10 +106,18 @@ class ControlsPanel(QWidget):
         self.apply_preset(preset_names()[0])
 
     # ── construction ────────────────────────────────────────────────
+    @staticmethod
+    def _configure_form(form: QFormLayout) -> None:
+        """Let labels wrap instead of imposing a wide control rail."""
+        form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        form.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows)
+
     def _build_preset_box(self) -> QGroupBox:
-        box = QGroupBox("Preset")
+        box: QGroupBox = HeightForWidthGroupBox("Preset")
         form = QFormLayout(box)
+        self._configure_form(form)
         self._preset_combo = QComboBox()
+        self._configure_combo(self._preset_combo)
         self._preset_combo.addItems(preset_names())
         self._preset_combo.setToolTip(
             "Load a sourced scenario preset (Cheetham 2014 tour data, "
@@ -121,10 +129,12 @@ class ControlsPanel(QWidget):
         return box
 
     def _build_club_box(self) -> QGroupBox:
-        box = QGroupBox("Club")
+        box: QGroupBox = HeightForWidthGroupBox("Club")
         form = QFormLayout(box)
+        self._configure_form(form)
 
         self._club_combo = QComboBox()
+        self._configure_combo(self._club_combo)
         self._club_combo.addItems(club_names())
         self._club_combo.setCurrentText("Driver 10.5°")
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
@@ -174,10 +184,12 @@ class ControlsPanel(QWidget):
         return box
 
     def _build_units_box(self) -> QGroupBox:
-        box = QGroupBox("Units")
+        box: QGroupBox = HeightForWidthGroupBox("Units")
         form = QFormLayout(box)
+        self._configure_form(form)
         for quantity, table in QUANTITY_UNITS.items():
             combo = QComboBox()
+            self._configure_combo(combo)
             combo.addItems(list(table))
             combo.setToolTip(
                 f"Display unit for {_UNIT_LABELS[quantity].lower()} inputs "
@@ -191,8 +203,9 @@ class ControlsPanel(QWidget):
         return box
 
     def _build_group(self, title: str, names: tuple[str, ...]) -> QGroupBox:
-        box = QGroupBox(title)
+        box: QGroupBox = HeightForWidthGroupBox(title)
         form = QFormLayout(box)
+        self._configure_form(form)
         for name in names:
             label, quantity_or_suffix, decimals = _FIELD_SPECS[name]
             spin = QDoubleSpinBox()
@@ -206,6 +219,14 @@ class ControlsPanel(QWidget):
             self._spins[name] = spin
             form.addRow(label, spin)
         return box
+
+    @staticmethod
+    def _configure_combo(combo: QComboBox) -> None:
+        """Keep compact rails responsive without truncating chosen values."""
+        combo.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
+        combo.setMinimumContentsLength(10)
 
     # ── units ───────────────────────────────────────────────────────
     def unit_for(self, quantity: str) -> str:
@@ -275,6 +296,11 @@ class ControlsPanel(QWidget):
             face_bulge_radius_m=(self._bulge_spin.value() / 1000.0 if curved else None),
             face_roll_radius_m=self._roll_spin.value() / 1000.0 if curved else None,
         )
+
+    def set_club_name(self, name: str) -> None:
+        """Select one library club through the panel's canonical control."""
+        get_club(name)  # fail closed before touching the current selection
+        self._club_combo.setCurrentText(name)
 
     def _on_club_changed(self, name: str) -> None:
         """Adopt a library club: loft/curvature defaults, scenario plumbing.

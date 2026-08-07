@@ -1,12 +1,11 @@
 """Rust-accelerated swing dynamics façade (STRICT posture).
 
-Mirrors the posture of :mod:`shared.python.signal_toolkit.bilateral_rust`:
-the ``swing_core`` wheel is imported at module level; hot-loop entry points
-raise ``ImportError`` with an actionable message at call time when the wheel
-is missing. We deliberately do NOT silently substitute the ~100x slower
-pure-Python path for the integration loop — that would mask deployment
-misconfiguration. One-shot analysis calls may fall back explicitly via
-:func:`shared.python.swing_sim.reference.simulate`.
+The ``swing_core`` wheel is imported at module level and direct Rust entry
+points raise ``ImportError`` with an actionable message when it is missing.
+This low-level facade never hides an explicitly requested Rust backend.
+Higher-level callers using ``backend="auto"`` may deliberately select the
+pure-Python reference integrator after checking :func:`rust_available`; an
+explicit ``backend="rust"`` request remains fail-closed.
 
 PyO3 submodule import gotcha: ``swing_core`` exposes ``swing`` as a runtime
 PyO3 submodule (an attribute, not a filesystem module), so we must use
@@ -42,9 +41,10 @@ try:
 except ImportError:  # pragma: no cover - exercised on machines without wheel
     _rust_swing = None
     _RUST_AVAILABLE = False
-    logger.warning(
-        "swing_sim._rust_facade: swing_core wheel not available; hot-loop "
-        "calls will raise ImportError. See docs/development/rust-setup.md"
+    logger.info(
+        "Optional swing_core wheel is unavailable; the auto backend will use "
+        "the Python integrator. Explicit Rust calls still raise ImportError; "
+        "see docs/development/rust-setup.md."
     )
 
 
@@ -74,10 +74,11 @@ def _to_rust_state(s: PendulumState) -> Any:
 def plane_rotation_rust(yaw: float, side_tilt: float, fwd_tilt: float) -> np.ndarray:
     """World-from-plane rotation matrix (3x3) — Rust path."""
     rust = _require_rust()
-    return np.asarray(
+    rotation: np.ndarray = np.asarray(
         rust.plane_rotation(float(yaw), float(side_tilt), float(fwd_tilt)),
         dtype=np.float64,
     )
+    return rotation
 
 
 def in_plane_gravity_rust(
@@ -141,7 +142,11 @@ def simulate_rust(
         float(dt),
         int(n_steps),
     )
-    return np.asarray(flat, dtype=np.float64).reshape(int(n_steps) + 1, 4)
+    states: np.ndarray = np.asarray(flat, dtype=np.float64).reshape(
+        int(n_steps) + 1,
+        4,
+    )
+    return states
 
 
 def total_energy_rust(

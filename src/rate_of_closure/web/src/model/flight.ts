@@ -20,6 +20,7 @@ import {
   sub,
   type Vec3,
 } from "./impactPhysics";
+import { windVelocityAt, type WindScenario } from "./wind";
 
 const RPM_TO_RAD_S = (2.0 * Math.PI) / 60.0;
 const deg = (r: number): number => (r * 180.0) / Math.PI;
@@ -32,6 +33,7 @@ export interface Launch {
   azimuthRad: number;
   spinRpm: number;
   spinAxis: Vec3; // flight frame, unit
+  windScenario?: WindScenario;
 }
 
 /** Port of swing_sim/flight/launch.py (flight-frame inputs). */
@@ -84,7 +86,11 @@ export function simulateFlight(
   const omega = scale(launch.spinAxis, launch.spinRpm * RPM_TO_RAD_S);
   const omegaMag = norm(omega);
 
-  const accel = (v: Vec3): Vec3 => {
+  const accel = (time: number, position: Vec3, velocity: Vec3): Vec3 => {
+    const wind = launch.windScenario
+      ? windVelocityAt(launch.windScenario, time, position)
+      : [0, 0, 0] as Vec3;
+    const v = sub(velocity, wind);
     const speed = norm(v);
     if (speed < 0.1) return [0, 0, -GRAVITY_M_S2];
     const vu = scale(v, 1.0 / speed);
@@ -114,14 +120,18 @@ export function simulateFlight(
 
   while (t < maxTime) {
     // RK4 on (pos, vel).
-    const k1v = accel(vel);
+    const k1v = accel(t, pos, vel);
     const k1p = vel;
-    const k2v = accel(add(vel, scale(k1v, dt / 2)));
+    const halfTime = t + dt / 2;
+    const k2Position = add(pos, scale(k1p, dt / 2));
     const k2p = add(vel, scale(k1v, dt / 2));
-    const k3v = accel(add(vel, scale(k2v, dt / 2)));
+    const k2v = accel(halfTime, k2Position, k2p);
+    const k3Position = add(pos, scale(k2p, dt / 2));
     const k3p = add(vel, scale(k2v, dt / 2));
-    const k4v = accel(add(vel, scale(k3v, dt)));
+    const k3v = accel(halfTime, k3Position, k3p);
+    const k4Position = add(pos, scale(k3p, dt));
     const k4p = add(vel, scale(k3v, dt));
+    const k4v = accel(t + dt, k4Position, k4p);
     const nextVel = add(
       vel,
       scale(add(add(k1v, scale(add(k2v, k3v), 2)), k4v), dt / 6),

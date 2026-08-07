@@ -130,6 +130,7 @@ def _make_source(config: SimulationConfig) -> SwingSource:
         run_config=config.swing_run_config,
         torque_library=config.torque_library,
         pendulum_parameters=config.pendulum_parameters,
+        manual_delivery=config.manual_delivery,
     )
 
 
@@ -235,6 +236,12 @@ def _solve_hit(
 ) -> _ImpactProducts:
     """Run delivery, rigid-body impact, launch, and flight for one hit."""
     delivery = delivery_at(source, impact_time_s, config.scenario, config.club)
+    sample = source.sample(impact_time_s)
+    head_rotation = (
+        sample.pose[:3, :3]
+        if bool(getattr(source, "uses_declared_head_pose", False))
+        else np.eye(3)
+    )
     solver = ImpactSolverAPI(
         ImpactModelType.RIGID_BODY,
         ImpactParameters(cg_depth=config.club.cg_depth_m),
@@ -246,7 +253,7 @@ def _solve_hit(
         impact_offset=delivery.impact_offset,
         clubhead_mass=config.club.head_mass_kg,
         clubhead_moi=config.club.moi_about_shaft_kg_m2,
-        face_normal_at_offset=_face_normal_callable(config),
+        face_normal_at_offset=_face_normal_callable(config, head_rotation),
         record=False,
     )
     flight = _simulate_flight(post, config.flight_model)
@@ -261,13 +268,14 @@ def _solve_hit(
     )
 
 
-def _face_normal_callable(config: SimulationConfig):  # type: ignore[no-untyped-def]
+def _face_normal_callable(config: SimulationConfig, head_rotation: np.ndarray):  # type: ignore[no-untyped-def]
     """Return the club's bulge/roll normal callback for the impact solver."""
 
     def _normal(toe_m: float, high_m: float) -> np.ndarray:
-        normal: np.ndarray = np.array(
+        local_normal = np.array(
             face_normal_at_offset(config.club, toe_m * 1e3, high_m * 1e3)
         )
+        normal: np.ndarray = head_rotation @ local_normal
         return normal
 
     return _normal

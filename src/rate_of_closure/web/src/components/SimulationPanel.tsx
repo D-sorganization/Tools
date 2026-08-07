@@ -11,9 +11,9 @@ import {
 import { FIELD_GUIDANCE } from "../model/units";
 import { type ClubSpec } from "../model/club";
 import { solve, type ImpactScenario } from "../model/impact";
-import { type TargetRegionTs } from "../model/targets";
+import { type SpatialTargetTs } from "../model/spatialTarget";
 import { type ContactMode } from "../model/contact";
-import { SolverPanel } from "./SolverPanel";
+import { SpatialTargetSolverPanel } from "./SpatialTargetSolverPanel";
 import { SimulationLaunchNumbers } from "./SimulationLaunchNumbers";
 import { ContactPolicyControl } from "./ContactPolicyControl";
 import { SimulationStatusHeader } from "./SimulationStatusHeader";
@@ -27,8 +27,6 @@ import {
   type BallSetup,
 } from "../model/ballSetup";
 import {
-  ballSetupFromSimulationDocument,
-  createSimulationRunDocument,
   loadBallSetupPreference,
   saveBallSetupPreference,
 } from "../model/ballSetupPersistence";
@@ -39,6 +37,12 @@ import {
   type DoublePendulumRunConfig,
   type PendulumState,
 } from "../model/doublePendulum";
+import { SimulationRunFileControls } from "./SimulationRunFileControls";
+import { ManualDeliveryControls } from "./ManualDeliveryControls";
+import {
+  DEFAULT_MANUAL_DELIVERY,
+  type ManualDelivery,
+} from "../model/manualDelivery";
 
 interface Props {
   scenario: ImpactScenario;
@@ -46,30 +50,20 @@ interface Props {
   /** Effective club spec from the Club group (H1: CG marker source). */
   clubSpec?: ClubSpec | null;
   onScenarioChange: (updates: Partial<ImpactScenario>) => void;
-  /** Target region (#4125 H7b), lifted to App for the Variation tie-in. */
-  target: TargetRegionTs;
-  onTargetChange: (target: TargetRegionTs) => void;
+  /** Canonical target shared with flight, solver, variation, and persistence. */
+  spatialTarget: SpatialTargetTs;
+  onSpatialTargetChange: (target: SpatialTargetTs) => void;
   /** Ball-flight distance display unit (#4125 H6): yards default. */
   distanceUnit?: string;
 }
-
-const readFileText = (file: File): Promise<string> => {
-  if (typeof file.text === "function") return file.text();
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = () => resolve(String(reader.result ?? ""));
-    reader.onerror = () => reject(reader.error ?? new Error("Could not read file."));
-    reader.readAsText(file);
-  });
-};
 
 export function SimulationPanel({
   scenario,
   loftDeg,
   clubSpec = null,
   onScenarioChange,
-  target,
-  onTargetChange,
+  spatialTarget,
+  onSpatialTargetChange,
   distanceUnit = "yd",
 }: Props) {
   const clubDefaultSetup = defaultBallSetupForClub(clubSpec);
@@ -86,7 +80,11 @@ export function SimulationPanel({
   const [ballSetupMessage, setBallSetupMessage] = useState<string | null>(
     initialBallPreference.warning,
   );
+  const [importError, setImportError] = useState<string | null>(null);
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
+  const [manualDelivery, setManualDelivery] = useState<ManualDelivery>(
+    DEFAULT_MANUAL_DELIVERY,
+  );
   const [contactMode, setContactMode] =
     useState<ContactMode>("delivery_inspection");
   const [doublePendulumRun, setDoublePendulumRun] =
@@ -126,6 +124,7 @@ export function SimulationPanel({
       doublePendulumRun,
       doublePendulumInitialState,
       ballSetup,
+      ...manualDelivery,
     }),
     [
       sourceKind,
@@ -138,6 +137,7 @@ export function SimulationPanel({
       doublePendulumRun,
       doublePendulumInitialState,
       ballSetup,
+      manualDelivery,
     ],
   );
   const inputSignature = useMemo(() => JSON.stringify(input), [input]);
@@ -186,41 +186,6 @@ export function SimulationPanel({
     // Initial population only; explicit Run remains the calculation action.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  const exportJson = () => {
-    if (!run) return;
-    const doc = createSimulationRunDocument(
-      input,
-      run,
-      doublePendulumRun.mode === "prescribed"
-        ? doublePendulumRun.profile.toJsonObject()
-        : null,
-    );
-    const blob = new Blob([JSON.stringify(doc, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "simulation_run.json";
-    anchor.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const importJson = async (file?: File) => {
-    if (!file) return;
-    try {
-      const imported = ballSetupFromSimulationDocument(JSON.parse(await readFileText(file)));
-      setBallSetup(imported);
-      setBallSetupOverridden(true);
-      const warning = saveBallSetupPreference({ setup: imported, userOverridden: true });
-      setBallSetupMessage(
-        warning ?? `Imported ${imported.supportMode === "tee" ? "Tee" : "Ground"} ball setup.`,
-      );
-    } catch (error) {
-      setBallSetupMessage(`Cannot import ball setup: ${(error as Error).message}`);
-    }
-  };
 
   const swingDuration = run ? run.swing[run.swing.length - 1].t : 1.5;
   return (
@@ -274,6 +239,11 @@ export function SimulationPanel({
           {ballSetupMessage && (
             <p role="status" className="mb-3 text-xs text-sky-300">{ballSetupMessage}</p>
           )}
+          {importError && (
+            <p role="alert" className="mb-3 rounded-lg border border-rose-400/50 bg-rose-950/30 px-3 py-2 text-xs text-rose-200">
+              {importError}
+            </p>
+          )}
           <p
             role="note"
             aria-label="Impact club physics"
@@ -282,7 +252,16 @@ export function SimulationPanel({
           >
             {clubPhysicsGuidance}
           </p>
-          <PlaneTiltControls tilts={tilts} onChange={setTilts} />
+          <PlaneTiltControls
+            tilts={tilts}
+            enabled={sourceKind !== "manual"}
+            onChange={setTilts}
+          />
+          <ManualDeliveryControls
+            enabled={sourceKind === "manual"}
+            value={manualDelivery}
+            onChange={setManualDelivery}
+          />
           {sourceKind === "double_pendulum" && (
             <JointLockControls
               initialState={doublePendulumInitialState}
@@ -326,12 +305,12 @@ export function SimulationPanel({
               </span>
             )}
           </label>
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
               type="button"
               onClick={doRun}
               title="Generate the swing, solve the impact at the scrubbed instant, and integrate the ball flight"
-              className="flex-1 rounded-lg border border-sky-400/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-300 transition-all hover:bg-sky-500/20"
+              className="min-w-32 flex-1 rounded-lg border border-sky-400/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-300 transition-all hover:bg-sky-500/20"
             >
               Run Simulation
             </button>
@@ -346,28 +325,32 @@ export function SimulationPanel({
             >
               Auto τ
             </button>
-            <button
-              type="button"
-              onClick={exportJson}
-              disabled={!run}
-              title="Download the full run (delivery, launch numbers, trajectory) as JSON"
-              className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 hover:border-slate-500 disabled:opacity-40"
-            >
-              Export JSON
-            </button>
-            <label className="cursor-pointer rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 hover:border-slate-500">
-              Import JSON
-              <input
-                type="file"
-                accept="application/json,.json"
-                aria-label="Import Simulation JSON"
-                className="sr-only"
-                onChange={(event) => {
-                  void importJson(event.target.files?.[0]);
-                  event.currentTarget.value = "";
-                }}
-              />
-            </label>
+            <SimulationRunFileControls input={input} run={run}
+              prescribedTorqueProfile={doublePendulumRun.mode === "prescribed"
+                ? doublePendulumRun.profile.toJsonObject() : null}
+              spatialTarget={spatialTarget}
+              onImported={({
+                ballSetup: imported,
+                spatialTarget: importedTarget,
+                manualDelivery: importedManualDelivery,
+              }) => {
+                setImportError(null);
+                setBallSetup(imported);
+                setBallSetupOverridden(true);
+                setManualDelivery(importedManualDelivery);
+                onSpatialTargetChange(importedTarget);
+                const warning = saveBallSetupPreference({
+                  setup: imported,
+                  userOverridden: true,
+                });
+                setBallSetupMessage(warning ??
+                  `Imported ${imported.supportMode === "tee" ? "Tee" : "Ground"} ` +
+                  "ball setup, spatial target, and manual delivery.");
+              }}
+              onImportError={(message) => {
+                setBallSetupMessage(null);
+                setImportError(`Cannot import simulation settings: ${message}`);
+              }} />
           </div>
         </div>
 
@@ -380,7 +363,8 @@ export function SimulationPanel({
 
         <SimulationLaunchNumbers run={run} distanceUnit={distanceUnit} />
 
-        <SolverPanel onApply={onScenarioChange} target={target} />
+        <SpatialTargetSolverPanel onApply={onScenarioChange}
+          spatialTarget={spatialTarget} />
       </section>
 
       <SimulationDisplay
@@ -389,8 +373,8 @@ export function SimulationPanel({
         scenario={scenario}
         effectiveLoftDeg={effectiveLoftDeg}
         clubSpec={clubSpec}
-        target={target}
-        onTargetChange={onTargetChange}
+        spatialTarget={spatialTarget}
+        onSpatialTargetChange={onSpatialTargetChange}
         distanceUnit={distanceUnit}
       />
     </div>

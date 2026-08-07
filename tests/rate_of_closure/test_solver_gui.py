@@ -199,6 +199,14 @@ class TestApply:
             result.variables["clubhead_speed_mps"] * MPH_PER_MPS
         )
         assert config.scenario.impact_offset_toe_mm == pytest.approx(4.0)
+        assert config.manual_attack_angle_deg == pytest.approx(
+            result.variables["attack_angle_deg"]
+        )
+        assert config.manual_club_path_deg == pytest.approx(
+            result.variables["club_path_deg"]
+        )
+        expected_lean = config.club.loft_deg - result.variables["dynamic_loft_deg"]
+        assert config.manual_forward_shaft_lean_deg == pytest.approx(expected_lean)
         assert tab.last_run() is not None
 
     def test_swing_apply_selects_pendulum_and_drives_tilts(self, tab, qtbot) -> None:  # type: ignore[no-untyped-def]

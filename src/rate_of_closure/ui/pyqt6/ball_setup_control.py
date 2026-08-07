@@ -11,11 +11,11 @@ from PyQt6.QtWidgets import (
     QComboBox,
     QDoubleSpinBox,
     QFormLayout,
-    QGroupBox,
     QLabel,
     QWidget,
 )
 
+from rate_of_closure.ui.pyqt6.responsive_layout import HeightForWidthGroupBox
 from shared.python.swing_sim.ball_setup import BallSetup, BallSupportMode
 
 __all__ = ["BallSetupControl"]
@@ -62,7 +62,7 @@ class _WholeFieldSpinBox(QDoubleSpinBox):
             line_edit.selectAll()
 
 
-class BallSetupControl(QGroupBox):
+class BallSetupControl(HeightForWidthGroupBox):
     """Edit Ground/Tee support while tracking club defaults explicitly."""
 
     setupChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
@@ -116,6 +116,8 @@ class BallSetupControl(QGroupBox):
         self._status.setAccessibleName("Ball Setup Status")
 
         form = QFormLayout(self)
+        form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        form.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows)
         form.addRow(self._use_default)
         form.addRow("Support Mode", self._mode)
         form.addRow("Tee Height", self._tee_height)

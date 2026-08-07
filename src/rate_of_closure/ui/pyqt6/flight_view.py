@@ -18,39 +18,29 @@ import logging
 
 import numpy as np
 from matplotlib.figure import Figure
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QVBoxLayout, QWidget
 
 from rate_of_closure.simulation import SimulationRun
-from rate_of_closure.simulation.targets import TargetRegion, hold_stats
+from rate_of_closure.simulation.flight_playback import TimedTrajectory
+from rate_of_closure.simulation.targets import TargetRegion
 from rate_of_closure.ui.course import CourseLayout
-from rate_of_closure.ui.pyqt6.course_scene import (
-    draw_course_ground_3d,
-    draw_course_side,
-    draw_course_top,
-    draw_target_region_top,
-)
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
-from rate_of_closure.units import (
-    DISTANCE_UNITS,
-    FIELD_GUIDANCE,
-    display_distance_unit,
-    format_distance_m,
+from rate_of_closure.ui.pyqt6.flight_playback_rendering import FlightPlaybackArtists
+from rate_of_closure.ui.pyqt6.flight_view_axes import distance_axis
+from rate_of_closure.ui.pyqt6.flight_view_panels import FlightViewPanelsMixin
+from rate_of_closure.ui.pyqt6.spatial_target_rendering import spatial_target_extents
+from rate_of_closure.ui.pyqt6.spatial_target_trajectory import (
+    validate_landing_surface,
 )
-
-try:  # Theme palette (optional in standalone/vendored use).
-    from shared.python.theme.matplotlib_style import get_chart_color
-except ImportError:  # pragma: no cover - theme package always ships in-repo
-
-    def get_chart_color(index: int) -> str:
-        """Matplotlib cycle colors as a theme-neutral fallback."""
-        return f"C{index % 10}"
-
+from rate_of_closure.units import FIELD_GUIDANCE
+from shared.python.swing_sim.solver import SpatialTarget
 
 logger = logging.getLogger(__name__)
 
-__all__ = ["FlightView"]
+__all__ = ["FlightView", "distance_axis"]
 
 #: Minimum plotted extents so degenerate flights stay readable.
 _MIN_CARRY_M = 10.0
@@ -69,23 +59,10 @@ _DISPLAY_PARAMS: tuple[tuple[str, str, str, bool], ...] = (
 )
 
 
-def distance_axis(axes: object, which: str) -> str:
-    """Format a metres axis in the display distance unit (#4125 H6).
-
-    Data stays in canonical metres; only tick labels convert. Returns
-    the axis label text (e.g. ``carry [yd]``).
-    """
-    from matplotlib.ticker import FuncFormatter
-
-    unit = display_distance_unit()
-    factor = DISTANCE_UNITS[unit]
-    formatter = FuncFormatter(lambda value, _pos: f"{value / factor:.0f}")
-    getattr(axes, f"{which}axis").set_major_formatter(formatter)
-    return str(unit)
-
-
-class FlightView(QWidget):
+class FlightView(FlightViewPanelsMixin, QWidget):
     """Flight-scale trajectory viewer: side + top-down 2D panels + 3D."""
+
+    timelineChanged = pyqtSignal(float, float)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -93,10 +70,16 @@ class FlightView(QWidget):
         self._canvas = FigureCanvas(self._figure)
 
         self._positions: np.ndarray = np.zeros((0, 3))
+        self.comparison_positions: np.ndarray = np.zeros((0, 3))
+        self._timed_trajectory: TimedTrajectory | None = None
+        self._comparison_timed: TimedTrajectory | None = None
+        self._playback_time_s = 0.0
+        self._playback_artists = FlightPlaybackArtists()
         self._run: SimulationRun | None = None
         self._checks: dict[str, QCheckBox] = {}
         self._course_layout = CourseLayout()
         self._target_region: TargetRegion | None = None
+        self._spatial_target: SpatialTarget | None = None
         # (carry, lateral) landing scatter [m] from the Variation engine.
         self._scatter: tuple[np.ndarray, np.ndarray] | None = None
 
@@ -123,9 +106,17 @@ class FlightView(QWidget):
     def set_run(self, run: SimulationRun | None) -> None:
         """Adopt the flight trajectory of a full simulation run."""
         self._run = run
+        self.comparison_positions = np.zeros((0, 3))
+        self._comparison_timed = None
         self._positions = (
             np.zeros((0, 3)) if run is None else run.flight_positions.copy()
         )
+        self._timed_trajectory = (
+            None
+            if run is None or not len(run.flight_times)
+            else TimedTrajectory(run.flight_times, run.flight_positions)
+        )
+        self._reset_playback()
         self._draw()
 
     def set_trajectory(self, positions: np.ndarray | None) -> None:
@@ -135,10 +126,77 @@ class FlightView(QWidget):
         z right of target [m].
         """
         self._run = None
+        self.comparison_positions = np.zeros((0, 3))
+        self._timed_trajectory = None
+        self._comparison_timed = None
         self._positions = (
             np.zeros((0, 3)) if positions is None else np.asarray(positions, float)
         )
+        self._reset_playback()
         self._draw()
+
+    def set_timed_trajectory(
+        self, times_s: np.ndarray, positions_m: np.ndarray
+    ) -> None:
+        """Adopt a solver-timestamped app-frame trajectory for playback."""
+        self._run = None
+        self._timed_trajectory = TimedTrajectory(times_s, positions_m)
+        self._positions = self._timed_trajectory.positions_m
+        self._reset_playback()
+        self._draw()
+
+    def set_comparison_trajectory(self, positions: np.ndarray | None) -> None:
+        """Overlay an optional common-input no-wind trajectory."""
+        self._comparison_timed = None
+        self.comparison_positions = (
+            np.zeros((0, 3)) if positions is None else np.asarray(positions, float)
+        )
+        self._draw()
+
+    def set_comparison_timed_trajectory(
+        self, times_s: np.ndarray | None, positions_m: np.ndarray | None
+    ) -> None:
+        """Overlay an optional timestamped comparison trajectory."""
+        self._comparison_timed = (
+            None
+            if times_s is None or positions_m is None
+            else TimedTrajectory(times_s, positions_m)
+        )
+        self.comparison_positions = (
+            np.zeros((0, 3))
+            if self._comparison_timed is None
+            else self._comparison_timed.positions_m
+        )
+        self._draw()
+
+    def set_playback_time(self, time_s: float) -> None:
+        """Move playback markers without rebuilding axes or camera state."""
+        if self._timed_trajectory is None:
+            return
+        frame = self._timed_trajectory.frame_at(time_s)
+        self._playback_time_s = frame.time_s
+        self._playback_artists.update(frame.position_m)
+        self._canvas.draw_idle()
+
+    def playback_duration_s(self) -> float:
+        """Current solver trajectory duration [s], or zero when unavailable."""
+        return (
+            0.0 if self._timed_trajectory is None else self._timed_trajectory.duration_s
+        )
+
+    def playback_apex_time_s(self) -> float:
+        """Current solver trajectory apex timestamp [s], or zero if unavailable."""
+        return (
+            0.0
+            if self._timed_trajectory is None
+            else self._timed_trajectory.apex_time_s
+        )
+
+    def _reset_playback(self) -> None:
+        self._playback_time_s = 0.0
+        self.timelineChanged.emit(
+            self.playback_duration_s(), self.playback_apex_time_s()
+        )
 
     def trajectory(self) -> np.ndarray:
         """The (N, 3) app-frame trajectory currently rendered."""
@@ -166,6 +224,19 @@ class FlightView(QWidget):
         """The target region currently overlaid, if any."""
         return self._target_region
 
+    def set_spatial_target(self, target: SpatialTarget | None) -> None:
+        """Show a canonical target in side, top, and 3D projections."""
+        if target is not None and not isinstance(target, SpatialTarget):
+            raise TypeError("target must be a SpatialTarget or None")
+        if target is not None:
+            validate_landing_surface(target)
+        self._spatial_target = target
+        self._draw()
+
+    def spatial_target(self) -> SpatialTarget | None:
+        """Return the canonical spatial target currently rendered."""
+        return self._spatial_target
+
     def set_landing_scatter(
         self, carries_m: np.ndarray | None, laterals_m: np.ndarray | None = None
     ) -> None:
@@ -189,148 +260,39 @@ class FlightView(QWidget):
         pos = self._positions
         if not len(pos):
             return (_MIN_CARRY_M, _MIN_HEIGHT_M, _MIN_LATERAL_M)
-        carry = max(_MIN_CARRY_M, float(np.max(pos[:, 0])) * 1.05)
-        lateral = max(_MIN_LATERAL_M, float(np.max(np.abs(pos[:, 2]))) * 1.3)
+        all_positions = (
+            np.vstack((pos, self.comparison_positions))
+            if len(self.comparison_positions)
+            else pos
+        )
+        carry = max(_MIN_CARRY_M, float(np.max(all_positions[:, 0])) * 1.05)
+        lateral = max(_MIN_LATERAL_M, float(np.max(np.abs(all_positions[:, 2]))) * 1.3)
         if self._scatter is not None and len(self._scatter[0]):
             carries, laterals = self._scatter
             finite = np.isfinite(carries) & np.isfinite(laterals)
             if np.any(finite):
                 carry = max(carry, float(np.max(carries[finite])) * 1.05)
                 lateral = max(lateral, float(np.max(np.abs(laterals[finite]))) * 1.1)
-        return (
-            carry,
-            max(_MIN_HEIGHT_M, float(np.max(pos[:, 1])) * 1.2),
-            lateral,
-        )
+        height = max(_MIN_HEIGHT_M, float(np.max(all_positions[:, 1])) * 1.2)
+        if self._spatial_target is not None:
+            target_carry, target_height, target_lateral = spatial_target_extents(
+                self._spatial_target
+            )
+            carry = max(carry, target_carry * 1.05)
+            height = max(height, target_height * 1.1)
+            lateral = max(lateral, target_lateral * 1.1)
+        return (carry, height, lateral)
 
     # ── drawing ─────────────────────────────────────────────────────
-    def _annotate_landing(self, axes, x: float, y: float, text: str) -> None:  # type: ignore[no-untyped-def]
-        axes.scatter([x], [y], s=45, color=get_chart_color(4), zorder=5)
-        axes.annotate(
-            text,
-            xy=(x, y),
-            xytext=(-8, 10),
-            textcoords="offset points",
-            fontsize=7,
-            ha="right",
-            color=get_chart_color(4),
-        )
-
-    def _draw_side(self, axes, pos: np.ndarray, extents) -> None:  # type: ignore[no-untyped-def]
-        carry_ext, height_ext, _ = extents
-        # Course-styled ground (#4125 H7a): grass band + green/flag.
-        draw_course_side(
-            axes,
-            carry_ext,
-            layout=self._course_layout,
-            elements=self._checks["course"].isChecked(),
-        )
-        axes.plot(pos[:, 0], pos[:, 1], color=get_chart_color(2), lw=1.6)
-        if self._checks["apex"].isChecked():
-            apex_index = int(np.argmax(pos[:, 1]))
-            axes.scatter(
-                [pos[apex_index, 0]],
-                [pos[apex_index, 1]],
-                s=30,
-                color=get_chart_color(3),
-                zorder=5,
-            )
-            axes.annotate(
-                f"apex {pos[apex_index, 1]:.1f} m",
-                xy=(pos[apex_index, 0], pos[apex_index, 1]),
-                xytext=(4, 4),
-                textcoords="offset points",
-                fontsize=7,
-                color=get_chart_color(3),
-            )
-        if self._checks["landing"].isChecked():
-            self._annotate_landing(
-                axes, pos[-1, 0], pos[-1, 1], f"carry {format_distance_m(pos[-1, 0])}"
-            )
-        axes.set_xlim(0.0, carry_ext)
-        axes.set_ylim(0.0, height_ext)
-        axes.set_xlabel(f"carry [{distance_axis(axes, 'x')}]", fontsize=8)
-        axes.set_ylabel("height [m]", fontsize=8)
-        axes.set_title("Side profile", fontsize=9)
-        axes.tick_params(labelsize=7)
-
-    def _draw_top(self, axes, pos: np.ndarray, extents) -> None:  # type: ignore[no-untyped-def]
-        carry_ext, _, lateral_ext = extents
-        # Course-styled ground (#4125 H7a): rough, fairway strip, green.
-        draw_course_top(
-            axes,
-            carry_ext,
-            lateral_ext,
-            layout=self._course_layout,
-            elements=self._checks["course"].isChecked(),
-        )
-        axes.plot(pos[:, 0], pos[:, 2], color=get_chart_color(2), lw=1.6)
-        axes.axhline(0.0, color=get_chart_color(7), lw=0.6, alpha=0.6)
-        if self._checks["landing"].isChecked():
-            self._annotate_landing(
-                axes,
-                pos[-1, 0],
-                pos[-1, 2],
-                f"lateral {'+' if pos[-1, 2] >= 0 else '-'}"
-                f"{format_distance_m(abs(pos[-1, 2]))}",
-            )
-        title = "Top-down"
-        # Target region + Variation landing scatter (#4125 H7b).
-        if self._target_region is not None:
-            draw_target_region_top(axes, self._target_region)
-        if self._scatter is not None:
-            carries, laterals = self._scatter
-            axes.scatter(
-                carries,
-                laterals,
-                s=10,
-                alpha=0.55,
-                color=get_chart_color(0),
-                edgecolors="none",
-                zorder=4,
-            )
-            if self._target_region is not None:
-                held, total = hold_stats(carries, laterals, self._target_region)
-                pct = 100.0 * held / total if total else float("nan")
-                title = f"Top-down — {held}/{total} shots hold the target ({pct:.0f}%)"
-        axes.set_xlim(0.0, carry_ext)
-        axes.set_ylim(-lateral_ext, lateral_ext)
-        axes.set_xlabel(f"carry [{distance_axis(axes, 'x')}]", fontsize=8)
-        axes.set_ylabel(f"right (+) [{distance_axis(axes, 'y')}]", fontsize=8)
-        axes.set_title(title, fontsize=9)
-        axes.tick_params(labelsize=7)
-
-    def _draw_3d(self, axes, pos: np.ndarray, extents) -> None:  # type: ignore[no-untyped-def]
-        carry_ext, height_ext, lateral_ext = extents
-        # Course-styled ground plane (#4125 H7a).
-        draw_course_ground_3d(
-            axes,
-            carry_ext,
-            layout=self._course_layout,
-            elements=self._checks["course"].isChecked(),
-        )
-        # Display axes: (z right, x downrange, y up) like the swing view.
-        axes.plot(pos[:, 2], pos[:, 0], pos[:, 1], color=get_chart_color(2), lw=1.6)
-        if self._checks["landing"].isChecked():
-            axes.scatter(
-                [pos[-1, 2]],
-                [pos[-1, 0]],
-                [pos[-1, 1]],
-                s=40,
-                color=get_chart_color(4),
-            )
-        axes.set_xlim(-lateral_ext, lateral_ext)
-        axes.set_ylim(0.0, carry_ext)
-        axes.set_zlim(0.0, height_ext)
-        axes.set_xlabel(f"z — right [{distance_axis(axes, 'x')}]", fontsize=7)
-        axes.set_ylabel(f"x — target [{distance_axis(axes, 'y')}]", fontsize=7)
-        axes.set_zlabel("y — up [m]", fontsize=7)
-        axes.set_title("3D trajectory", fontsize=9)
-        axes.tick_params(labelsize=6)
-
     def _draw(self) -> None:
         self._figure.clear()
         pos = self._positions
+        frame = (
+            None
+            if self._timed_trajectory is None
+            else self._timed_trajectory.frame_at(self._playback_time_s)
+        )
+        self._playback_artists.reset(None if frame is None else frame.position_m)
         panels = [
             name
             for name in ("side", "top", "three_d")

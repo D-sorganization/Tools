@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 
+import numpy as np
 import pytest
 
 pytest.importorskip("PyQt6")
@@ -15,6 +16,7 @@ from rate_of_closure.simulation import SimulationConfig  # noqa: E402
 from rate_of_closure.ui.pyqt6.variation_distribution_matrix import (  # noqa: E402
     DistributionMatrixView,
 )
+from rate_of_closure.ui.pyqt6.variation_results import LandingCanvas  # noqa: E402
 from rate_of_closure.ui.pyqt6.variation_visualizations import (  # noqa: E402
     ArcOverlayView,
     DatasetScatterView,
@@ -29,7 +31,9 @@ from rate_of_closure.variation.simulation_adapter import (  # noqa: E402
 from shared.python.swing_sim.variation import (  # noqa: E402
     CATEGORY_SWING,
     NoiseSpec,
+    VariationDataset,
     VariationPlan,
+    dispersion_ellipse,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
@@ -77,6 +81,40 @@ def test_scatter_view_exposes_inputs_impact_and_shot_axes(qtbot, tmp_path) -> No
     assert "<svg" in svg_path.read_text(encoding="utf-8")
     definition = json.loads(definition_path.read_text(encoding="utf-8"))
     assert definition["schema_version"] == 1
+
+
+def test_landing_canvas_counts_only_paired_finite_coordinates(qtbot) -> None:  # type: ignore[no-untyped-def]
+    """The plot title must count exactly the rows that reach the canvas."""
+    plan = VariationPlan(
+        mode="swing",
+        noise=(NoiseSpec(_YAW, distribution="uniform", scale=0.2),),
+        n_runs=4,
+        seed=9,
+    )
+    dataset = VariationDataset(
+        plan=plan,
+        input_names=(_YAW,),
+        inputs=np.zeros((4, 1)),
+        output_names=("carry_m", "lateral_m"),
+        outputs=np.array(
+            (
+                (100.0, 10.0),
+                (1000.0, np.nan),
+                (np.nan, 100.0),
+                (300.0, 30.0),
+            )
+        ),
+        success=np.ones(4, dtype=bool),
+    )
+    view = LandingCanvas()
+    qtbot.addWidget(view)
+
+    view.set_dataset(dataset, dispersion_ellipse(dataset))
+
+    assert "2 landings / 4 trials" in view._axes.get_title()
+    plotted = view._axes.collections[0].get_offsets()
+    assert plotted.shape == (2, 2)
+    assert plotted.tolist() == [[10.0, 100.0], [30.0, 300.0]]
 
 
 def test_arc_overlay_draws_every_valid_trial_and_reference(qtbot, tmp_path) -> None:  # type: ignore[no-untyped-def]

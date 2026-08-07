@@ -245,6 +245,23 @@ class TestFlightExplorerTab:
         assert exploration.metrics["carry_m"] > 100.0
         assert exploration.metrics["ball_speed_mph"] > 112.0  # smash > 1
 
+    def test_wind_comparison_changes_physics_and_overlays_calm_path(
+        self, explorer
+    ) -> None:  # type: ignore[no-untyped-def]
+        controls = explorer.wind_controls
+        controls.enabled_check.setChecked(True)
+        controls.speed_spin.setValue(10.0)
+        controls.bearing_spin.setValue(0.0)
+
+        exploration = explorer.run_now()
+        comparison = explorer.wind_comparison
+
+        assert exploration is not None
+        assert comparison is not None
+        assert comparison.wind.metrics["carry_m"] < comparison.calm.metrics["carry_m"]
+        assert controls.delta_text("carry_m") != "—"
+        assert len(explorer.flight_view().comparison_positions) > 2
+
     def test_speed_unit_dropdown_converts_in_place(self, explorer) -> None:  # type: ignore[no-untyped-def]
         explorer._speed_spin.setValue(167.0)
         mps_before = explorer.speed_mps()

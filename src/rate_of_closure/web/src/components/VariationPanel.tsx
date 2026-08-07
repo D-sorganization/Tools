@@ -1,6 +1,7 @@
 import { useState } from "react";
 
-import type { TargetRegionTs } from "../model/targets";
+import type { SpatialTargetTs } from "../model/spatialTarget";
+import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
 import {
   planFromJson,
   planToJson,
@@ -32,6 +33,7 @@ import { VariationSetup } from "./VariationSetup";
 import { defaultVariationPlan } from "./variationUi";
 import { DRIVER_TEE_HEIGHT_M } from "../model/ballSetup";
 import { loadBallSetupPreference } from "../model/ballSetupPersistence";
+import { spatialTargetSummary } from "./spatialTargetPresentation";
 
 let generatedPlanId = 0;
 const createPlanId = (): string => {
@@ -40,17 +42,20 @@ const createPlanId = (): string => {
 };
 
 export interface VariationPanelProps {
-  target?: TargetRegionTs;
+  spatialTarget?: SpatialTargetTs;
   distanceUnit?: string;
   /** Injectable persistent storage for tests, embedded hosts, and privacy modes. */
   storage?: Storage;
 }
 
 export function VariationPanel({
-  target,
+  spatialTarget,
   distanceUnit = "yd",
   storage,
 }: VariationPanelProps = {}): JSX.Element {
+  const targetUse = spatialTarget
+    ? spatialTargetForGroundWorkflow(spatialTarget, "variation")
+    : { targetRegion: null, diagnostic: null };
   const [initialLibrary] = useState(() => loadVariationPlanLibrary(storage));
   const [initialBallSetup] = useState(() => loadBallSetupPreference(
     storage,
@@ -181,6 +186,15 @@ export function VariationPanel({
   return (
     <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
       <section aria-label="Variation setup" className="space-y-4">
+        {spatialTarget && (
+          <p role="status" aria-label="Variation current spatial target"
+            className={`rounded-lg border p-3 text-xs ${targetUse.diagnostic
+              ? "border-amber-400/40 bg-amber-950/20 text-amber-200"
+              : "border-sky-400/30 bg-sky-950/20 text-sky-200"}`}>
+            Current target: {spatialTargetSummary(spatialTarget)}
+            {targetUse.diagnostic ? ` ${targetUse.diagnostic.message}` : ""}
+          </p>
+        )}
         <VariationSetup
           plan={plan}
           onPlanChange={setPlan}
@@ -215,7 +229,7 @@ export function VariationPanel({
       <VariationResults
         dataset={dataset}
         sensitivity={sensitivity}
-        target={target}
+        target={targetUse.targetRegion ?? undefined}
         distanceUnit={distanceUnit}
         ensemble={ensemble}
       />

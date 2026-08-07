@@ -1,50 +1,21 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, screen } from "@testing-library/react";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
-import { getClub, type ClubSpec } from "../model/club";
+import { getClub } from "../model/club";
 import { DEFAULT_SCENARIO } from "../model/impact";
-import { DEFAULT_TARGET } from "../model/targets";
 import { SimulationPanel } from "./SimulationPanel";
+import {
+  defaultSpatialTarget,
+  installSimulationPanelTestEnvironment,
+  renderSimulationPanel as renderPanel,
+} from "./simulationPanelTestSupport";
 
-beforeAll(() => {
-  const stored = new Map<string, string>();
-  Object.defineProperty(window, "localStorage", {
-    configurable: true,
-    value: {
-      clear: () => stored.clear(),
-      getItem: (key: string) => stored.get(key) ?? null,
-      removeItem: (key: string) => stored.delete(key),
-      setItem: (key: string, value: string) => stored.set(key, value),
-    },
-  });
-  const context: unknown = new Proxy(function () {} as object, {
-    get: (_target, property) =>
-      property === "measureText" ? () => ({ width: 0 }) : () => context,
-    set: () => true,
-    apply: () => context,
-  });
-  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
-    context as CanvasRenderingContext2D,
-  );
-});
+beforeAll(installSimulationPanelTestEnvironment);
 
 afterEach(() => {
   cleanup();
   if (typeof window.localStorage.clear === "function") window.localStorage.clear();
 });
-
-function renderPanel(clubSpec?: ClubSpec | null) {
-  return render(
-    <SimulationPanel
-      scenario={{ ...DEFAULT_SCENARIO, impactOffsetToeMm: 20 }}
-      loftDeg={10.5}
-      clubSpec={clubSpec}
-      onScenarioChange={() => undefined}
-      target={DEFAULT_TARGET}
-      onTargetChange={() => undefined}
-    />,
-  );
-}
 
 function displayedBallSpeed(): number {
   const text = screen.getByRole("button", { name: /Ball Speed/ }).textContent ?? "";
@@ -102,8 +73,8 @@ describe("SimulationPanel impact club", () => {
         loftDeg={34}
         clubSpec={getClub("7-Iron")}
         onScenarioChange={() => undefined}
-        target={DEFAULT_TARGET}
-        onTargetChange={() => undefined}
+        spatialTarget={defaultSpatialTarget}
+        onSpatialTargetChange={() => undefined}
       />,
     );
     expect(screen.getByRole("radio", { name: "Tee" })).toBeChecked();
@@ -134,7 +105,7 @@ describe("SimulationPanel impact club", () => {
         parameters: { sourceKind: "manual" },
       }),
     ], "old-run.json", { type: "application/json" });
-    fireEvent.change(screen.getByLabelText("Import Simulation JSON"), {
+    fireEvent.change(screen.getByLabelText("Import Simulation Settings JSON"), {
       target: { files: [file] },
     });
     await screen.findByText(/Imported Ground ball setup/i);
@@ -154,6 +125,27 @@ describe("SimulationPanel impact club", () => {
       target: { value: "double_pendulum" },
     });
     expect(screen.getByText("Inputs changed — run required")).toBeInTheDocument();
+  });
+
+  it("marks plane orientation non-applicable for manual and enables it for pendulums", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    const yaw = screen.getByRole("textbox", { name: "Plane Yaw deg" });
+    const side = screen.getByRole("textbox", { name: "Plane Side Tilt deg" });
+    const forward = screen.getByRole("textbox", { name: "Plane Forward Tilt deg" });
+    expect(yaw).toBeDisabled();
+    expect(side).toBeDisabled();
+    expect(forward).toBeDisabled();
+    expect(screen.getByText(/Not applicable to Manual Constant-Twist Delivery/i))
+      .toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Swing Source"), {
+      target: { value: "double_pendulum" },
+    });
+    expect(yaw).toBeEnabled();
+    expect(side).toBeEnabled();
+    expect(forward).toBeEnabled();
+    expect(screen.getByText(/Applies to articulated pendulum swing sources/i))
+      .toBeInTheDocument();
   });
 
   it("resets prescribed torque atomically when leaving double pendulum", () => {

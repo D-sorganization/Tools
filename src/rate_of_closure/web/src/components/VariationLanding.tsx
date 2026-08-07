@@ -4,7 +4,7 @@
  * successful run with the 2-sigma dispersion ellipse overlaid.
  */
 
-import { useEffect, useRef } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 import {
   holdStats,
@@ -13,7 +13,10 @@ import {
 } from "../model/targets";
 import { courseColors } from "../model/course";
 import { type VariationDatasetTs } from "../model/variation";
-import { dispersionEllipse } from "../model/variationAnalysis";
+import {
+  dispersionEllipse,
+  pairedLandingPoints,
+} from "../model/variationAnalysis";
 import type { SwingVariationResultTs } from "../model/variationSwingEnsemble";
 
 export function LandingCanvas({
@@ -27,19 +30,15 @@ export function LandingCanvas({
   ensemble?: SwingVariationResultTs | null;
 }): JSX.Element {
   const ref = useRef<HTMLCanvasElement | null>(null);
+  const landingPoints = useMemo(() => pairedLandingPoints(dataset), [dataset]);
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
-    const jc = dataset.outputNames.indexOf("carry_m");
-    const jl = dataset.outputNames.indexOf("lateral_m");
-    const points: Array<[number, number]> = [];
-    dataset.outputs.forEach((row, i) => {
-      if (dataset.success[i] && row[jc] !== null && row[jl] !== null) {
-        points.push([row[jl] as number, row[jc] as number]); // x = lateral
-      }
-    });
+    const points: Array<[number, number]> = landingPoints.map(
+      (point) => [point.lateralM, point.carryM],
+    );
     const { width, height } = canvas;
     ctx.clearRect(0, 0, width, height);
     if (points.length === 0) return;
@@ -149,16 +148,13 @@ export function LandingCanvas({
     ctx.rotate(-Math.PI / 2);
     ctx.fillText("carry [m] →", 0, 0);
     ctx.restore();
-  }, [dataset, target]);
+  }, [dataset, landingPoints, target]);
   const counts = ensemble && {
     hits: ensemble.runs.filter((run) => run.status === "evaluated_hit").length,
     misses: ensemble.runs.filter((run) => run.status === "evaluated_no_impact").length,
     failures: ensemble.runs.filter((run) => run.status === "numerical_failure").length,
   };
-  const carryIndex = dataset.outputNames.indexOf("carry_m");
-  const landingCount = dataset.outputs.filter(
-    (row) => row[carryIndex] !== null && Number.isFinite(row[carryIndex]),
-  ).length;
+  const landingCount = landingPoints.length;
   return (
     <div className="space-y-2">
       <canvas

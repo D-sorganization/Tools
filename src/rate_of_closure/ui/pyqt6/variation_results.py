@@ -194,8 +194,9 @@ class LandingCanvas(LifecycleSafeFigureCanvas):
         """Scatter the successful landings and overlay the fit ellipse."""
         self._axes.clear()
         self._apply_theme()
-        carry = dataset.output_column("carry_m")
-        lateral = dataset.output_column("lateral_m")
+        landing_points = dataset.finite_output_rows("carry_m", "lateral_m")
+        carry = landing_points[:, 0]
+        lateral = landing_points[:, 1]
         self._axes.scatter(
             lateral, carry, s=14, alpha=0.65, color="#2f8bd6", edgecolors="none"
         )

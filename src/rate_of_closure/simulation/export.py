@@ -26,18 +26,31 @@ from typing import Any
 import numpy as np
 
 from rate_of_closure._contracts import require
+from rate_of_closure.simulation.manual_delivery import ManualDeliveryConfig
 from rate_of_closure.simulation.screw_analysis import analyze_twist
 from rate_of_closure.simulation.session import SimulationRun
+from rate_of_closure.simulation.target_persistence import (
+    TARGET_CSV_COLUMNS,
+    default_spatial_target,
+    simulation_document_format,
+    spatial_target_from_simulation_document,
+    target_csv_values,
+    target_document_fields,
+)
 from shared.python.swing_sim.ball_setup import BallSetup
+from shared.python.swing_sim.solver import SpatialTarget
 
 __all__ = [
     "CSV_COLUMNS",
     "SCREW_CSV_COLUMNS",
+    "TARGET_CSV_COLUMNS",
     "TORQUE_CSV_COLUMNS",
     "ball_setup_from_json_dict",
+    "manual_delivery_from_json_dict",
     "run_to_json_dict",
     "series_rows",
     "screw_series_rows",
+    "spatial_target_from_simulation_document",
     "torque_series_rows",
     "write_csv",
     "write_json",
@@ -85,22 +98,78 @@ SCREW_CSV_COLUMNS: tuple[str, ...] = (
     "reconstruction_residual_m_s",
 )
 
+_CURRENT_VERSION = 5
+_CURRENT_BALL_SETUP_FIELDS = frozenset(
+    ("support_mode", "tee_height_m", "height_reference", "ball_center_m")
+)
+_CURRENT_MANUAL_DELIVERY_FIELDS = frozenset(
+    (
+        "attack_angle_deg",
+        "club_path_deg",
+        "forward_shaft_lean_deg",
+        "shaft_axis_datum",
+    )
+)
+
+
+def _current_parameters(
+    data: Mapping[str, Any],
+) -> Mapping[str, Any] | None:
+    """Return strict current-v5 parameters; older inputs stay migratable."""
+    version, _is_web = simulation_document_format(data)
+    if version != _CURRENT_VERSION:
+        return None
+    parameters = data.get("parameters")
+    if not isinstance(parameters, Mapping):
+        raise ValueError(
+            f"simulation schema version {_CURRENT_VERSION} requires parameters"
+        )
+    return parameters
+
+
+def _require_current_block(
+    parameters: Mapping[str, Any],
+    block_name: str,
+    required_fields: frozenset[str],
+) -> Mapping[str, Any]:
+    """Return one complete current-native canonical settings block."""
+    block = parameters.get(block_name)
+    if block is None:
+        raise ValueError(
+            "simulation schema version "
+            f"{_CURRENT_VERSION} requires parameters.{block_name}"
+        )
+    if not isinstance(block, Mapping):
+        raise TypeError(f"{block_name} must be a mapping")
+    missing = sorted(required_fields.difference(block))
+    if missing:
+        raise ValueError(f"{block_name} requires fields: {', '.join(missing)}")
+    return block
+
 
 def ball_setup_from_json_dict(data: Mapping[str, Any]) -> BallSetup:
     """Import ball geometry from a run or parameter mapping.
 
-    Run documents written before ball setup was persisted intentionally migrate
-    to Ground/0 so replay retains their original fixed-ball geometry, including
-    for drivers whose *new-run* default is now Tee.
+    Current version-5 run documents require the complete canonical block. Older
+    documents intentionally migrate to Ground/0 so replay retains their
+    original fixed-ball geometry, including for drivers whose *new-run* default
+    is now Tee.
     """
     require(isinstance(data, Mapping), "simulation JSON must be a mapping", data)
+    current_parameters = _current_parameters(data)
     parameters = data.get("parameters", data)
     require(
         isinstance(parameters, Mapping),
         "simulation parameters must be a mapping",
         parameters,
     )
-    setup = parameters.get("ball_setup")
+    setup = (
+        _require_current_block(
+            current_parameters, "ball_setup", _CURRENT_BALL_SETUP_FIELDS
+        )
+        if current_parameters is not None
+        else parameters.get("ball_setup")
+    )
     require(
         setup is None or isinstance(setup, Mapping),
         "ball_setup must be a mapping when present",
@@ -109,12 +178,52 @@ def ball_setup_from_json_dict(data: Mapping[str, Any]) -> BallSetup:
     return BallSetup.from_json_dict(setup)
 
 
+def manual_delivery_from_json_dict(data: Mapping[str, Any]) -> ManualDeliveryConfig:
+    """Import a complete current declaration or default an older run."""
+    require(isinstance(data, Mapping), "simulation JSON must be a mapping", data)
+    current_parameters = _current_parameters(data)
+    parameters = data.get("parameters", data)
+    require(
+        isinstance(parameters, Mapping),
+        "simulation parameters must be a mapping",
+        parameters,
+    )
+    declaration = (
+        _require_current_block(
+            current_parameters,
+            "manual_delivery",
+            _CURRENT_MANUAL_DELIVERY_FIELDS,
+        )
+        if current_parameters is not None
+        else parameters.get("manual_delivery")
+    )
+    require(
+        declaration is None or isinstance(declaration, Mapping),
+        "manual_delivery must be a mapping when present",
+        declaration,
+    )
+    if declaration is None:
+        return ManualDeliveryConfig()
+    defaults = ManualDeliveryConfig()
+    return ManualDeliveryConfig(
+        attack_angle_deg=declaration.get("attack_angle_deg", defaults.attack_angle_deg),
+        club_path_deg=declaration.get("club_path_deg", defaults.club_path_deg),
+        forward_shaft_lean_deg=declaration.get(
+            "forward_shaft_lean_deg", defaults.forward_shaft_lean_deg
+        ),
+        shaft_axis_datum=declaration.get("shaft_axis_datum", defaults.shaft_axis_datum),
+    )
+
+
 def series_rows(
-    run: SimulationRun,
+    run: SimulationRun, spatial_target: SpatialTarget | None = None
 ) -> list[tuple[Any, ...]]:
     """Flatten the swing and flight series into phase-tagged rows."""
     rows: list[tuple[Any, ...]] = []
     contact_columns = _contact_columns(run)
+    target_columns = (
+        target_csv_values(spatial_target) if spatial_target is not None else ()
+    )
     for t, pos, twist in zip(
         run.swing_times, run.swing_positions, run.swing_twists, strict=True
     ):
@@ -127,6 +236,7 @@ def series_rows(
                 float(pos[2]),
                 float(np.linalg.norm(twist[3:])),
                 *contact_columns,
+                *target_columns,
             )
         )
     t0 = run.impact_time_s
@@ -143,6 +253,7 @@ def series_rows(
                 float(pos[2]),
                 float(np.linalg.norm(vel)),
                 *contact_columns,
+                *target_columns,
             )
         )
     return rows
@@ -198,18 +309,27 @@ def _contact_columns(
     )
 
 
-def write_csv(run: SimulationRun, path: str | Path) -> None:
+def write_csv(
+    run: SimulationRun,
+    path: str | Path,
+    *,
+    spatial_target: SpatialTarget | None = None,
+) -> None:
     """Write the run's time series as CSV.
 
     Args:
         run: The simulation run to export.
+        spatial_target: Canonical target to persist. When omitted, the explicit
+            default landing target is written so every native v5 document is
+            complete.
         path: Destination file path.
     """
     require(isinstance(run, SimulationRun), "run must be a SimulationRun", run)
     with Path(path).open("w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
-        writer.writerow(CSV_COLUMNS)
-        writer.writerows(series_rows(run))
+        target_header = TARGET_CSV_COLUMNS if spatial_target is not None else ()
+        writer.writerow((*CSV_COLUMNS, *target_header))
+        writer.writerows(series_rows(run, spatial_target))
 
 
 def write_torque_csv(run: SimulationRun, path: str | Path) -> None:
@@ -230,7 +350,9 @@ def write_screw_csv(run: SimulationRun, path: str | Path) -> None:
         writer.writerows(screw_series_rows(run))
 
 
-def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
+def run_to_json_dict(
+    run: SimulationRun, *, spatial_target: SpatialTarget | None = None
+) -> dict[str, Any]:
     """The run as a JSON-serialisable dictionary.
 
     Args:
@@ -244,8 +366,25 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
     config = run.config
     scenario = config.scenario
 
-    return {
-        "format": "rate_of_closure.simulation_run/2",
+    document: dict[str, Any] = {
+        "format": "rate_of_closure.simulation_run/5",
+        "model_limitations": {
+            "contact_tracking": {
+                "basis": "tracked_reference_point",
+                "description": (
+                    "Forced alignment and sampled fixed-ball contact track the "
+                    "clubhead reference point, not swept face-mesh contact."
+                ),
+            },
+            "impact_velocity": {
+                "basis": "clubhead_reference_translation",
+                "description": (
+                    "The current rigid impact and ball-flight pipeline consumes "
+                    "reference-point translation. Shaft-induced contact-point "
+                    "velocity is analyzed separately and does not alter flight."
+                ),
+            },
+        },
         "parameters": {
             "source_kind": config.source_kind,
             "club": config.club.name,
@@ -263,6 +402,12 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
                 "yaw": config.plane.yaw_deg,
                 "side_tilt": config.plane.side_tilt_deg,
                 "forward_tilt": config.plane.forward_tilt_deg,
+            },
+            "manual_delivery": {
+                "attack_angle_deg": config.manual_attack_angle_deg,
+                "club_path_deg": config.manual_club_path_deg,
+                "forward_shaft_lean_deg": config.manual_forward_shaft_lean_deg,
+                "shaft_axis_datum": config.manual_shaft_axis_datum.value,
             },
             "scenario": {
                 "clubhead_speed_mph": scenario.clubhead_speed_mph,
@@ -295,6 +440,12 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
             },
         },
     }
+    document.update(
+        target_document_fields(
+            spatial_target if spatial_target is not None else default_spatial_target()
+        )
+    )
+    return document
 
 
 def _delivery_dict(run: SimulationRun) -> dict[str, float] | None:
@@ -320,7 +471,12 @@ def _launch_dict(run: SimulationRun) -> dict[str, float | None] | None:
     }
 
 
-def write_json(run: SimulationRun, path: str | Path) -> None:
+def write_json(
+    run: SimulationRun,
+    path: str | Path,
+    *,
+    spatial_target: SpatialTarget | None = None,
+) -> None:
     """Write the run's summary + series as a JSON document.
 
     Args:
@@ -328,4 +484,6 @@ def write_json(run: SimulationRun, path: str | Path) -> None:
         path: Destination file path.
     """
     with Path(path).open("w", encoding="utf-8") as handle:
-        json.dump(run_to_json_dict(run), handle, indent=2)
+        json.dump(
+            run_to_json_dict(run, spatial_target=spatial_target), handle, indent=2
+        )

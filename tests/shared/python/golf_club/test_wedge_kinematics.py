@@ -33,7 +33,7 @@ def _state(**overrides: object) -> WedgeKinematicState:
     return WedgeKinematicState(**values)  # type: ignore[arg-type]
 
 
-def test_worked_example_attributes_shaft_twist_to_aoa() -> None:
+def _worked_example_state(rate_dps: float = 1307.0) -> WedgeKinematicState:
     lie_rad = math.radians(64.0)
     lean_rad = math.radians(15.0)
     shaft_axis = (
@@ -41,19 +41,24 @@ def test_worked_example_attributes_shaft_twist_to_aoa() -> None:
         math.cos(lean_rad) * math.sin(lie_rad),
         -math.cos(lean_rad) * math.cos(lie_rad),
     )
-    twist_rate = math.radians(1307.0)
-    shaft_omega = tuple(twist_rate * value for value in shaft_axis)
+    reference_twist_rate = math.radians(1307.0)
+    reference_shaft_omega = tuple(reference_twist_rate * value for value in shaft_axis)
     total_velocity = (13.207454, -2.328830, 0.0)
-    shaft_velocity = np.cross(shaft_omega, (0.02, 0.0, 0.0))
-    state = _state(
-        reference_velocity_mps=tuple(np.asarray(total_velocity) - shaft_velocity),
+    reference_shaft_velocity = np.cross(reference_shaft_omega, (0.02, 0.0, 0.0))
+    shaft_omega = tuple(math.radians(rate_dps) * value for value in shaft_axis)
+    return _state(
+        reference_velocity_mps=tuple(
+            np.asarray(total_velocity) - reference_shaft_velocity
+        ),
         angular_velocity_rad_s=shaft_omega,
         shaft_axis_unit=shaft_axis,
         face_normal_unit=(math.cos(lie_rad), 0.0, math.sin(lie_rad)),
         leading_edge_tangent_unit=(-math.sin(lie_rad), 0.0, math.cos(lie_rad)),
     )
 
-    result = analyze_wedge_kinematics(state)
+
+def test_worked_example_attributes_shaft_twist_to_aoa() -> None:
+    result = analyze_wedge_kinematics(_worked_example_state())
 
     assert result.total_aoa_deg == pytest.approx(-10.0, abs=2e-5)
     assert result.without_shaft_aoa_deg == pytest.approx(-9.18118, abs=2e-5)
@@ -62,6 +67,41 @@ def test_worked_example_attributes_shaft_twist_to_aoa() -> None:
     )
     assert result.shaft_rotation_velocity_mps == pytest.approx(
         (0.0, -0.193183, -0.396084), abs=2e-6
+    )
+    assert result.shaft_axis_velocity_mps == pytest.approx(
+        (13.207454, -2.135647, 0.396084), abs=2e-6
+    )
+    assert np.linalg.norm(result.contact_velocity_mps) == pytest.approx(
+        30.0 * 0.44704, abs=2e-6
+    )
+    assert result.shaft_vertical_velocity_share == pytest.approx(0.08295277, abs=1e-8)
+
+
+@pytest.mark.parametrize(
+    ("rate_dps", "total_aoa_deg", "shaft_delta_deg", "vertical_share"),
+    (
+        (0.0, -9.18117341, 0.0, 0.0),
+        (652.0, -9.59110580, -0.40993239, 0.04317608),
+        (1003.0, -9.81060610, -0.62943269, 0.06491089),
+        (1307.0, -9.99999795, -0.81882454, 0.08295277),
+        (1611.0, -10.18869313, -1.00751972, 0.10031162),
+        (2432.0, -10.69458379, -1.51341038, 0.14406769),
+    ),
+)
+def test_worked_example_rotation_sensitivity_is_pinned(
+    rate_dps: float,
+    total_aoa_deg: float,
+    shaft_delta_deg: float,
+    vertical_share: float,
+) -> None:
+    result = analyze_wedge_kinematics(_worked_example_state(rate_dps))
+
+    assert result.total_aoa_deg == pytest.approx(total_aoa_deg, abs=1e-8)
+    assert result.shaft_counterfactual_aoa_delta_deg == pytest.approx(
+        shaft_delta_deg, abs=1e-8
+    )
+    assert result.shaft_vertical_velocity_share == pytest.approx(
+        vertical_share, abs=1e-8
     )
 
 

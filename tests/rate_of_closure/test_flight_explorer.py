@@ -15,10 +15,13 @@ import pytest
 from rate_of_closure.simulation import (
     BALL_POSITION_M,
     EXPLORER_METRIC_KEYS,
+    FlightExploration,
+    compare_wind,
     explore_flight,
     launch_from_delivery,
     launch_from_direct,
 )
+from shared.python.swing_sim.flight import WindScenario
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.impact import DeliveryParameters
 
@@ -40,6 +43,7 @@ PINNED_METRICS = {
     "landing_angle_deg": 35.120,
     "lateral_m": 0.0,
 }
+MPS_PER_MPH = 0.44704
 
 
 class TestLaunchFromDirect:
@@ -100,6 +104,37 @@ class TestLaunchFromDelivery:
         assert exploration.metrics["launch_direction_deg"] > 0.5
         assert exploration.metrics["lateral_m"] > 1.0
 
+    def test_wedge_worked_example_reconciles_speed_and_carry(self) -> None:
+        def run(clubhead_speed_mph: float) -> FlightExploration:
+            return explore_flight(
+                launch_from_delivery(
+                    DeliveryParameters(
+                        clubhead_speed_mps=clubhead_speed_mph * MPS_PER_MPH,
+                        attack_angle_deg=-10.0,
+                        dynamic_loft_deg=37.0,
+                    )
+                ),
+                "waterloo_penner",
+            )
+
+        requested_speed = run(30.0)
+        assert requested_speed.metrics["ball_speed_mph"] == pytest.approx(
+            30.4491, abs=5e-4
+        )
+        assert requested_speed.metrics["spin_rpm"] == pytest.approx(3135.8, abs=0.1)
+        assert requested_speed.metrics["carry_m"] == pytest.approx(17.5663, abs=1e-4)
+
+        thirty_yard_solution = run(37.88664063)
+        assert thirty_yard_solution.metrics["ball_speed_mph"] == pytest.approx(
+            38.4538, abs=5e-4
+        )
+        assert thirty_yard_solution.metrics["spin_rpm"] == pytest.approx(
+            3960.1, abs=0.1
+        )
+        assert thirty_yard_solution.metrics["carry_m"] == pytest.approx(
+            30.0 * 0.9144, abs=1e-4
+        )
+
 
 class TestExploreFlight:
     def test_all_seven_literature_models_run(self) -> None:
@@ -127,3 +162,16 @@ class TestExploreFlight:
         launch = launch_from_direct(150.0, 12.0, 0.0, 2700.0, 0.0)
         with pytest.raises(ValueError):
             explore_flight(launch, "no_such_model")
+
+    def test_wind_comparison_uses_identical_launch_and_explicit_deltas(self) -> None:
+        launch = launch_from_direct(150.0, 12.0, 0.0, 2700.0, 0.0)
+        comparison = compare_wind(
+            launch,
+            WindScenario.from_meteorological(8.0, 0.0),
+        )
+
+        assert comparison.wind.metrics["carry_m"] < comparison.calm.metrics["carry_m"]
+        assert comparison.deltas["carry_m"] == pytest.approx(
+            comparison.wind.metrics["carry_m"] - comparison.calm.metrics["carry_m"]
+        )
+        assert comparison.wind.launch.ball_speed == comparison.calm.launch.ball_speed

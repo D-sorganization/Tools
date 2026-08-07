@@ -9,6 +9,14 @@
  * residual is the distance outside plus a small centering pull.
  */
 
+import {
+  createSpatialTarget,
+  surfaceCircleTolerance,
+  surfaceCorridorTolerance,
+  targetPointFromFrame,
+  type SpatialTargetTs,
+} from "./spatialTarget";
+
 export type TargetKind = "green" | "fairway";
 
 export interface TargetRegionTs {
@@ -87,3 +95,91 @@ export function holdStats(
   });
   return { held, total };
 }
+
+/** Lift the unchanged 2D region into an explicit course-surface target. */
+export function spatialTargetFromRegion(
+  region: TargetRegionTs,
+  surfaceElevationM = 0,
+  groundSource = "course.surface/default",
+  label?: string,
+): SpatialTargetTs {
+  if (region.kind !== "green" && region.kind !== "fairway") {
+    throw new RangeError(`unknown region kind ${String(region.kind)}`);
+  }
+  const tolerance =
+    region.kind === "green"
+      ? surfaceCircleTolerance(region.radiusM)
+      : surfaceCorridorTolerance(region.bandHalfLengthM, region.halfWidthM);
+  return createSpatialTarget({
+    label: label ?? `${region.kind[0].toUpperCase()}${region.kind.slice(1)} Target`,
+    kind: "landing_area",
+    point: targetPointFromFrame(
+      [region.distanceM, surfaceElevationM, region.kind === "green" ? region.lateralM : 0],
+      "app",
+    ),
+    tolerance,
+    elevationSource: "course_surface",
+    groundSource,
+  });
+}
+
+/** Project a course-surface target back to the stable 2D region API. */
+export function spatialTargetToRegion(targetInput: SpatialTargetTs): TargetRegionTs {
+  const target = createSpatialTarget(targetInput);
+  const [distanceM, , rightM] = target.point.appCoordinatesM;
+  if (target.tolerance.kind === "surface_circle") {
+    return {
+      kind: "green",
+      distanceM,
+      radiusM: target.tolerance.radiusM,
+      lateralM: rightM,
+      bandHalfLengthM: 15,
+      halfWidthM: 16,
+    };
+  }
+  if (target.tolerance.kind === "surface_corridor") {
+    return {
+      kind: "fairway",
+      distanceM,
+      radiusM: 10,
+      lateralM: 0,
+      bandHalfLengthM: target.tolerance.halfLengthM,
+      halfWidthM: target.tolerance.halfWidthM,
+    };
+  }
+  throw new RangeError("only landing_area surface targets have a 2D projection");
+}
+
+export {
+  boxTolerance,
+  createSpatialTarget,
+  spatialTargetMiss,
+  spatialTargetMissFromFrame,
+  sphereTolerance,
+  surfaceCircleTolerance,
+  surfaceCorridorTolerance,
+  targetPointFromFrame,
+  targetPointInFrame,
+} from "./spatialTarget";
+export type {
+  AcceptanceGeometryTs,
+  BoxToleranceTs,
+  ElevationSource,
+  SpatialTargetInput,
+  SpatialTargetKind,
+  SpatialTargetMissTs,
+  SpatialTargetTs,
+  SphereToleranceTs,
+  SurfaceCircleToleranceTs,
+  SurfaceCorridorToleranceTs,
+  TargetFrame,
+  TargetPointTs,
+  Vector3,
+} from "./spatialTarget";
+export {
+  LEGACY_GROUND_SOURCE,
+  SPATIAL_TARGET_SCHEMA,
+  SPATIAL_TARGET_SCHEMA_VERSION,
+  spatialTargetFromJson,
+  spatialTargetToJson,
+} from "./spatialTargetSerialization";

@@ -161,13 +161,13 @@ def test_prescribed_miss_retains_history_and_exports_replayable_profile() -> Non
     )
 
 
-def test_json_v2_and_csv_include_applied_torque_history(
+def test_json_v5_and_csv_include_applied_torque_history(
     tmp_path,  # type: ignore[no-untyped-def]
 ) -> None:
     run = _prescribed_miss()
     payload = run_to_json_dict(run)
     torque_series = payload["series"]["swing_applied_joint_torques"]
-    assert payload["format"] == "rate_of_closure.simulation_run/2"
+    assert payload["format"] == "rate_of_closure.simulation_run/5"
     assert torque_series == {
         "unit": "N*m",
         "joint_ids": [SHOULDER_JOINT_ID, WRIST_JOINT_ID],

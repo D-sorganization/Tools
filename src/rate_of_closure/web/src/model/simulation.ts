@@ -62,10 +62,18 @@ import {
   type Vec3,
 } from "./impactPhysics";
 import {
+  applyRotation,
+  multiplyRotations,
   rodrigues,
   rotationFromColumns,
   type Mat3,
 } from "./rotation";
+import {
+  resolveManualDelivery,
+  validateDeliveredDynamicLoft,
+  type ManualDelivery,
+  type ShaftAxisDatum,
+} from "./manualDelivery";
 
 export { deriveLaunch, simulateFlight } from "./flight";
 export type { FlightPoint, FlightResult, Launch } from "./flight";
@@ -90,7 +98,8 @@ export type WebSourceKind = "manual" | "double_pendulum" | "triple_pendulum";
 export interface SimulationInput {
   sourceKind: WebSourceKind;
   clubheadSpeedMph: number; // manual source
-  omegaDps: Vec3; // manual source angular velocity (app frame, deg/s)
+  /** Manual angular-velocity components in the zero-lean app basis [deg/s]. */
+  omegaDps: Vec3;
   loftDeg: number;
   impactOffsetToeMm: number;
   impactOffsetHighMm: number;
@@ -112,6 +121,14 @@ export interface SimulationInput {
   doublePendulumInitialState?: PendulumState;
   /** Defaults to Ground for backward compatibility with older saved scenarios. */
   ballSetup?: BallSetup;
+  /** Signed elevation of manual reference velocity; positive is upward. */
+  manualAttackAngleDeg?: number;
+  /** Signed horizontal heading; positive is right of target. */
+  manualClubPathDeg?: number;
+  /** Targetward-positive manual head lean, applied as Rz(-lean). */
+  manualForwardShaftLeanDeg?: number;
+  /** Defaults to the tracked-reference legacy shaft line. */
+  shaftAxisDatum?: ShaftAxisDatum;
 }
 
 export interface SwingSampleTs {
@@ -145,11 +162,15 @@ export interface SimulationRunTs {
   flight: FlightPoint[]; // app frame, ball-aligned positions
   ballSetup: BallSetup;
   ballPositionM: Vec3;
+  manualDelivery: ManualDelivery;
 }
 
 const clampAngle = (value: number): number => Math.max(-89, Math.min(89, value));
 
-function swingSamples(input: SimulationInput): SwingSampleTs[] {
+function swingSamples(
+  input: SimulationInput,
+  manualDelivery: ManualDelivery,
+): SwingSampleTs[] {
   const dt = 1e-3;
   const runConfig = input.doublePendulumRun ?? PASSIVE_DOUBLE_PENDULUM_RUN;
   if (
@@ -161,16 +182,31 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
   if (input.sourceKind === "manual") {
     const duration = 0.06;
     const speed = input.clubheadSpeedMph / MPH_PER_MPS;
-    const omega = scale(input.omegaDps, Math.PI / 180.0);
+    const attack = rad(manualDelivery.manualAttackAngleDeg);
+    const path = rad(manualDelivery.manualClubPathDeg);
+    const referenceVelocity: Vec3 = [
+      speed * Math.cos(attack) * Math.cos(path),
+      speed * Math.sin(attack),
+      speed * Math.cos(attack) * Math.sin(path),
+    ];
+    const leanRotation = rodrigues(
+      [0, 0, -1],
+      rad(manualDelivery.manualForwardShaftLeanDeg),
+    );
+    const omega = applyRotation(
+      leanRotation,
+      scale(input.omegaDps, Math.PI / 180.0),
+    );
     const samples: SwingSampleTs[] = [];
     for (let t = 0.0; t <= duration + 1e-9; t += dt) {
       const rel = t - duration / 2.0;
       samples.push({
         t,
-        position: [speed * rel, 0, 0],
-        velocity: [speed, 0, 0],
+        position: referenceVelocity.map((component) =>
+          component === 0 ? 0 : component * rel) as Vec3,
+        velocity: referenceVelocity,
         angularVelocity: omega,
-        rotation: rodrigues(omega, rel),
+        rotation: multiplyRotations(rodrigues(omega, rel), leanRotation),
         joints: [],
       });
     }
@@ -262,9 +298,16 @@ function swingSamples(input: SimulationInput): SwingSampleTs[] {
 
 /** Run the full swing -> impact -> flight pipeline (web parity port). */
 export function runSimulation(input: SimulationInput): SimulationRunTs {
+  const manualDelivery = resolveManualDelivery(input);
+  const manualDeliveredDynamicLoftDeg = input.sourceKind === "manual"
+    ? validateDeliveredDynamicLoft(
+        input.loftDeg,
+        manualDelivery.manualForwardShaftLeanDeg,
+      )
+    : input.loftDeg;
   const ballSetup = resolveBallSetup(input.ballSetup);
   const ballPositionM = ballCenterPosition(ballSetup);
-  const swing = swingSamples(input);
+  const swing = swingSamples(input, manualDelivery);
   const impactTimeOffsetS = input.impactTimeOffsetS ?? 0;
   if (!Number.isFinite(impactTimeOffsetS)) {
     throw new Error("impactTimeOffsetS must be finite");
@@ -334,6 +377,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
       flight: [],
       ballSetup,
       ballPositionM,
+      manualDelivery,
     };
   }
 
@@ -344,7 +388,9 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
     clubPathDeg: clampAngle(deg(Math.atan2(v[2], v[0]))),
     faceAngleDeg: 0.0,
     attackAngleDeg: clampAngle(deg(Math.atan2(v[1], Math.hypot(v[0], v[2])))),
-    dynamicLoftDeg: input.loftDeg,
+    dynamicLoftDeg: input.sourceKind === "manual"
+      ? manualDeliveredDynamicLoftDeg
+      : input.loftDeg,
     impactOffsetToeMm: input.impactOffsetToeMm,
     impactOffsetHighMm: input.impactOffsetHighMm,
     club: input.club,
@@ -381,6 +427,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
     flight,
     ballSetup,
     ballPositionM,
+    manualDelivery,
   };
 }
 

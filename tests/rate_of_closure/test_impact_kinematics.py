@@ -2,12 +2,13 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import replace
 
 import numpy as np
 import pytest
 
-from rate_of_closure.club import get_club
+from rate_of_closure.club import face_center_point, get_club, hosel_point
 from rate_of_closure.model import ImpactScenario, solve
 from rate_of_closure.simulation import (
     ContactMode,
@@ -15,8 +16,61 @@ from rate_of_closure.simulation import (
     impact_kinematics_for_run,
     run_simulation,
 )
+from shared.python.golf_club import WedgeKinematicState, analyze_wedge_kinematics
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+
+def test_documented_generated_wedge_geometry_pins_shaft_aoa_contribution() -> None:
+    """Keep the representative-head example distinct from the 20 mm fixture."""
+    club = get_club("Pitching Wedge")
+    lean_rad = math.radians(15.0)
+    lean_rotation = np.array(
+        (
+            (math.cos(-lean_rad), -math.sin(-lean_rad), 0.0),
+            (math.sin(-lean_rad), math.cos(-lean_rad), 0.0),
+            (0.0, 0.0, 1.0),
+        )
+    )
+    shaft_axis = lean_rotation @ np.array(
+        (0.0, math.sin(math.radians(64.0)), -math.cos(math.radians(64.0)))
+    )
+    contact_offset = lean_rotation @ (
+        np.asarray(face_center_point(club)) - np.asarray(hosel_point(club))
+    )
+    shaft_omega = math.radians(1307.0) * shaft_axis
+    shaft_velocity = np.cross(shaft_omega, contact_offset)
+    total_velocity = np.array(
+        (
+            30.0 * 0.44704 * math.cos(math.radians(10.0)),
+            -30.0 * 0.44704 * math.sin(math.radians(10.0)),
+            0.0,
+        )
+    )
+    state = WedgeKinematicState(
+        frame_id="target_ground",
+        reference_position_m=(0.0, 0.0, 0.0),
+        reference_velocity_mps=tuple(total_velocity - shaft_velocity),
+        angular_velocity_rad_s=tuple(shaft_omega),
+        shaft_axis_point_m=(0.0, 0.0, 0.0),
+        shaft_axis_unit=tuple(shaft_axis),
+        contact_point_m=tuple(contact_offset),
+        face_normal_unit=(1.0, 0.0, 0.0),
+        leading_edge_tangent_unit=(0.0, 0.0, 1.0),
+        ground_up_unit=(0.0, 1.0, 0.0),
+        arc_tangent_unit=(1.0, 0.0, 0.0),
+        arc_tangent_rate_per_s=(0.0, 0.0, 0.0),
+    )
+
+    result = analyze_wedge_kinematics(state)
+
+    assert contact_offset == pytest.approx((-0.00353255, -0.02464453, 0.037573))
+    assert result.shaft_rotation_velocity_mps == pytest.approx(
+        (0.49766011, -0.16405655, -0.06081723), abs=1e-8
+    )
+    assert result.shaft_vertical_velocity_share == pytest.approx(0.07044590)
+    assert result.without_shaft_aoa_deg == pytest.approx(-9.66593875)
+    assert result.shaft_counterfactual_aoa_delta_deg == pytest.approx(-0.33406125)
 
 
 def test_manual_impact_adapter_reconciles_the_existing_point_velocity() -> None:

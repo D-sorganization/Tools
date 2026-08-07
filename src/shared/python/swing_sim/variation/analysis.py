@@ -77,16 +77,18 @@ def summary_stats(dataset: VariationDataset) -> tuple[OutputStats, ...]:
                 OutputStats(name, math.nan, math.nan, math.nan, math.nan, math.nan, 0)
             )
             continue
-        p5, p50, p95 = np.percentile(values, [5.0, 50.0, 95.0])
+        percentiles: np.ndarray = np.asarray(
+            np.percentile(values, [5.0, 50.0, 95.0]), dtype=float
+        )
         std = float(np.std(values, ddof=1)) if n >= _MIN_RUNS_FOR_STATS else math.nan
         stats.append(
             OutputStats(
                 name=name,
                 mean=float(np.mean(values)),
                 std=std,
-                p5=float(p5),
-                p50=float(p50),
-                p95=float(p95),
+                p5=float(percentiles[0]),
+                p50=float(percentiles[1]),
+                p95=float(percentiles[2]),
                 n=n,
             )
         )
@@ -163,7 +165,7 @@ def one_at_a_time_sensitivity(
 def _ranks(values: np.ndarray) -> np.ndarray:
     """Average ranks (ties averaged), matching Spearman's convention."""
     order = np.argsort(values, kind="mergesort")
-    ranks = np.empty(values.size, dtype=float)
+    ranks: np.ndarray = np.empty(values.size, dtype=float)
     ranks[order] = np.arange(1, values.size + 1, dtype=float)
     # Average the ranks of exactly-tied values.
     sorted_vals = values[order]
@@ -246,15 +248,15 @@ def dispersion_ellipse(
         "n_sigma must be finite and > 0",
         n_sigma,
     )
-    carry = dataset.output_column("carry_m")
-    lateral = dataset.output_column("lateral_m")
-    n = int(carry.size)
+    points = dataset.finite_output_rows("carry_m", "lateral_m")
+    n = int(points.shape[0])
     require(
         n >= _MIN_RUNS_FOR_STATS,
-        "dispersion ellipse needs >= 2 successful runs",
+        "dispersion ellipse needs >= 2 paired finite landing rows",
         n,
     )
-    points = np.column_stack([carry, lateral])
+    carry = points[:, 0]
+    lateral = points[:, 1]
     cov = np.cov(points, rowvar=False, ddof=1)
     eigenvalues, eigenvectors = np.linalg.eigh(cov)
     # eigh sorts ascending; the last eigenpair is the principal axis.
