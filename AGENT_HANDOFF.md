@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-06
 
 ## Where This Repo Is Headed
 
@@ -18,6 +18,7 @@ stack of golf-simulation epics:
 | #4120 — Investigation & Variation Suite (plotting/viewers/Monte Carlo/help)   | V1-V4 implemented, stacked on #4119, consolidated into PR **#4124** (open, draft-for-review, no auto-merge yet — targets `feat/investigation-suite`, itself stacked on #4119).                                      |
 | #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
 | #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model)     | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands.                                                                                                    |
+| #4226 — Launch Monitor Player Analytics Platform                             | Active on `feat/4226-launch-monitor-player-platform`, stacked on `feat/4205-launch-monitor-analytics`; private campaign discovery, persistent projects, unit-aware/exportable plots, dispersion, strokes-gained proxy, session trends, and React parity are implemented. Local Python/Web gates pass; hosted exact-head checks remain the release gate. |
 
 The separate shared Club Builder epic #4146 is active. Its first dependency
 slice, #4147, lives on `feat/4147-club-builder-core` and establishes the
@@ -53,6 +54,9 @@ main
      └─ feat/investigation-suite      (PR #4124, epic #4120, stacked on #4119)
          └─ feat/course-showcase      (PR #4129, epic #4125, stacked on #4124)
 docs/agent-handoff-1390               (this branch, off origin/main, Repository_Management#1390)
+feat/4181-launch-monitor-registry
+ └─ feat/4205-launch-monitor-analytics       (PR #4212)
+     └─ feat/4226-launch-monitor-player-platform (epic #4226, active)
 ```
 
 Other active non-golf branches worth knowing about: `fix/file-size-budget-bounded-checkout`
@@ -111,3 +115,6 @@ any PR touching `src/**`, `tests/**`, `config/**`, `pyproject.toml`,
    `rate_of_closure/web`.
 6. #4125 H5: stand up the public release-management repo (cross-repo, not
    started).
+7. Complete epic #4226 only after the private-data boundary, exact calculation
+   exports, PyQt6/React parity, and exact-head validation documented in
+   `docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md` are satisfied.

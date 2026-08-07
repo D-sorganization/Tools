@@ -1,7 +1,48 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-05
+> Last updated: 2026-08-06
+
+## 2026-08-06 Launch Monitor Player Analytics Platform
+
+Epic #4226 is active on `feat/4226-launch-monitor-player-platform`, stacked on
+the launch-monitor analytics base `feat/4205-launch-monitor-analytics` (PR
+#4212) and the shared convention registry. The working tree adds sibling
+private-campaign discovery, a manifested dataset picker, source-hash-bound JSON
+projects, unit-aware Matplotlib plots with PNG/SVG/PDF plus backing CSV/JSON
+exports, directional dispersion, a Broadie-table range-shot strokes-gained
+proxy, and session/player trend summaries. React provides the matching browser
+workflow and imports private PCA/importance artifacts without bundling them.
+At the pre-push head, 594 Rate Python tests and 384 Web tests pass, together
+with Ruff, formatting, mypy, ESLint, TypeScript, and the production build;
+hosted checks must still validate the pushed exact head.
+
+The data boundary is binding. `Launch-Monitor-Data` remains the public metadata
+and provenance authority; the sibling private
+`Launch-Monitor-Flight-Model-Campaign` repository owns restricted source rows,
+normalized/cohort tables, model-shot predictions, and internal PCA/feature-
+importance artifacts. Tools discovers that repository by explicit path,
+`LAUNCH_MONITOR_CAMPAIGN_REPO`, or the standard sibling layout. It must not copy
+restricted rows into this public repository. A user-directed data export can
+contain restricted rows and therefore inherits the private source's access and
+redistribution limits.
+
+The private v1 catalog distinguishes 10,169 normalized source shots, the 8,860
+complete-case comparison cohort, and 62,020 successful model-shot prediction
+rows (seven models per cohort shot). These are different analytical units. Use
+the manifest's source/output SHA-256 values and stable shot identifier to retain
+lineage. TrackMan outputs are a proprietary predictive-system comparator, not
+independent ground truth; all convention labels remain
+`TrackMan-Comparable`/`Foresight-Comparable`, never emulation or certification.
+
+The calculation and release contract is detailed in
+`docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_ANALYTICS.md`. In particular, every
+result must expose units, formula/method, assumptions, interpretation, source,
+and the exact rows used. The TrackMan-versus-flight-model plot uses one visual
+cohort for all observed TrackMan shots and a second for the paired model
+predictions. PCA and predictive feature importance live in the private campaign
+repository; PCA is unsupervised and feature importance is associative, not a
+causal ranking.
 
 ## 2026-08-05 Advanced Wedge Impact Visualization
 
