@@ -18,6 +18,7 @@ from shared.python.swing_sim.conventions import (
     ParameterDefinition,
     ParameterId,
     ReferencePoint,
+    SignRule,
     compare_definitions,
     convention_registry,
     shift_point_velocity,
@@ -120,6 +121,27 @@ def test_comparison_reports_geometry_contract_mismatch() -> None:
     )
 
     assert result.reasons == (ComparabilityReason.GEOMETRY,)
+
+
+def test_comparison_reports_sign_rule_mismatch() -> None:
+    definition = convention_registry().definition(
+        ConventionId.APP_NATIVE, ParameterId.LAUNCH_DIRECTION
+    )
+
+    result = compare_definitions(
+        definition,
+        dataclasses.replace(definition, sign_rule=SignRule.UNSPECIFIED),
+    )
+
+    assert result.reasons == (ComparabilityReason.SIGN_RULE,)
+
+
+def test_foresight_launch_direction_does_not_invent_an_absolute_sign() -> None:
+    definition = convention_registry().definition(
+        ConventionId.FORESIGHT_COMPARABLE, ParameterId.LAUNCH_DIRECTION
+    )
+
+    assert definition.sign_rule is SignRule.UNSPECIFIED
 
 
 def test_point_shift_uses_exact_rigid_body_velocity_identity() -> None:

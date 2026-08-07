@@ -23,13 +23,14 @@ export const EVENT_TIMES = [
   "maximum_compression", "just_after_separation",
 ] as const;
 type EventTime = typeof EVENT_TIMES[number];
-type SignRule = "nonnegative" | "positive_right" | "positive_up";
+type SignRule = "unspecified" | "nonnegative" | "positive_right" | "positive_up";
 type QuantityStatus = "derived" | "modeled" | "measured_comparable";
 type AvailabilityRule = "always" | "nonzero_club_travel" | "face_geometry" | "collision_complete";
 
 export const COMPARABILITY_REASON = {
   parameter: "parameter", referencePoint: "reference_point", eventTime: "event_time",
-  frame: "frame", geometry: "geometry", unit: "unit", availability: "availability",
+  frame: "frame", geometry: "geometry", signRule: "sign_rule", unit: "unit",
+  availability: "availability",
 } as const;
 type ComparabilityReason = typeof COMPARABILITY_REASON[keyof typeof COMPARABILITY_REASON];
 
@@ -59,6 +60,7 @@ interface Identity { label: string; unit: string; signRule: SignRule; geometryCo
 interface Policy {
   referencePoint: ReferencePoint; eventTime: EventTime; quantityStatus: QuantityStatus;
   availability: AvailabilityRule; sourceUrl: string;
+  signRule?: SignRule;
 }
 
 const FRAME_ID = "target_frame:x_target,y_up,z_right";
@@ -124,7 +126,10 @@ const FORESIGHT_POLICIES: Record<ParameterId, Policy> = {
   dynamic_loft: face("impact_location", "impact", "measured_comparable", FORESIGHT_CLUB),
   face_to_path: face("mixed_club_delivery", "impact", "derived", FORESIGHT_CLUB),
   spin_loft: face("mixed_club_delivery", "impact", "derived", FORESIGHT_CLUB),
-  launch_direction: launch("measured_comparable", FORESIGHT_BALL),
+  launch_direction: {
+    ...launch("measured_comparable", FORESIGHT_BALL),
+    signRule: "unspecified",
+  },
 };
 const POLICIES: Record<ConventionId, Record<ParameterId, Policy>> = {
   app_native: APP_POLICIES,
@@ -165,6 +170,7 @@ export function compareDefinitions(first: ParameterDefinitionTs, second: Paramet
     [COMPARABILITY_REASON.eventTime, first.eventTime, second.eventTime],
     [COMPARABILITY_REASON.frame, first.frameId, second.frameId],
     [COMPARABILITY_REASON.geometry, first.geometryContract, second.geometryContract],
+    [COMPARABILITY_REASON.signRule, first.signRule, second.signRule],
     [COMPARABILITY_REASON.unit, first.unit, second.unit],
     [COMPARABILITY_REASON.availability, first.availability, second.availability],
   ];

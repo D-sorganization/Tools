@@ -5,13 +5,14 @@ from __future__ import annotations
 from typing import TypeAlias
 
 import numpy as np
+import numpy.typing as npt
 
 Vector3: TypeAlias = tuple[float, float, float]
 Matrix3: TypeAlias = tuple[Vector3, Vector3, Vector3]
 
 
-def _vector(value: object, name: str) -> np.ndarray:
-    vector = np.asarray(value, dtype=float)
+def _vector(value: object, name: str) -> npt.NDArray[np.float64]:
+    vector: npt.NDArray[np.float64] = np.asarray(value, dtype=np.float64)
     if vector.shape != (3,):
         raise ValueError(f"{name} must contain exactly three components")
     if not bool(np.all(np.isfinite(vector))):
@@ -19,7 +20,7 @@ def _vector(value: object, name: str) -> np.ndarray:
     return vector
 
 
-def _tuple(value: np.ndarray) -> Vector3:
+def _tuple(value: npt.NDArray[np.float64]) -> Vector3:
     return float(value[0]), float(value[1]), float(value[2])
 
 
