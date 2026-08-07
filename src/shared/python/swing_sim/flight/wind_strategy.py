@@ -1,4 +1,4 @@
-"""Paired wind-estimate strategy evaluation and regret summaries."""
+"""Paired wind-estimate strategy evaluation and risk contracts."""
 
 from __future__ import annotations
 
@@ -11,9 +11,9 @@ from .types import LaunchConditions
 from .wind import WindScenario
 from .wind_uncertainty import WindTrial, WindUncertaintySpec, sample_wind_trials
 
+WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION = "wind-strategy-analysis/v2"
 OutcomeStatus = Literal["completed", "nonconverged", "invalid"]
 _GROUND_TOLERANCE_M = 1e-5
-_BEST_COST_TOLERANCE = 1e-12
 
 
 def _positive_finite(value: float, name: str) -> None:
@@ -53,13 +53,15 @@ class WindStrategy:
 
 @dataclass(frozen=True)
 class StrategyAnalysisConfig:
-    """Numerical model and dimensionless miss-cost settings."""
+    """Numerical settings, miss cost, target hold, and empirical CVaR level."""
 
     model_name: str = "waterloo_penner"
     max_time_s: float = 10.0
     time_step_s: float = 0.01
     miss_scale_m: float = 20.0
     failure_cost: float = 100.0
+    target_radius_m: float = 10.0
+    miss_distance_cvar_alpha: float = 0.9
 
     def __post_init__(self) -> None:
         try:
@@ -70,6 +72,11 @@ class StrategyAnalysisConfig:
             _positive_finite(getattr(self, name), name)
         if not math.isfinite(self.failure_cost) or self.failure_cost < 0.0:
             raise ValueError("failure_cost must be finite and nonnegative")
+        if not math.isfinite(self.target_radius_m) or self.target_radius_m < 0.0:
+            raise ValueError("target_radius_m must be finite and nonnegative")
+        alpha = self.miss_distance_cvar_alpha
+        if not math.isfinite(alpha) or not 0.0 < alpha < 1.0:
+            raise ValueError("miss_distance_cvar_alpha must be in (0, 1)")
 
 
 @dataclass(frozen=True)
@@ -91,8 +98,20 @@ class StrategyAnalysisRequest:
 
 
 @dataclass(frozen=True)
+class PerfectInformationCounterfactual:
+    """Same declared strategy policy with the true wind used for its decision."""
+
+    status: OutcomeStatus
+    landing_forward_m: float | None
+    landing_right_m: float | None
+    miss_distance_m: float | None
+    cost: float
+    failure_reason: str | None = None
+
+
+@dataclass(frozen=True)
 class StrategyShotOutcome:
-    """One trial/strategy landing point, or an explicit failure cohort."""
+    """Actual and policy-fixed perfect-information results for one trial."""
 
     trial_index: int
     strategy_id: str
@@ -101,28 +120,51 @@ class StrategyShotOutcome:
     estimated_wind: WindScenario
     landing_forward_m: float | None
     landing_right_m: float | None
+    miss_distance_m: float | None
     cost: float
-    failure_reason: str | None = None
+    failure_reason: str | None
+    perfect_information: PerfectInformationCounterfactual
+    information_cost_delta: float
+
+
+@dataclass(frozen=True)
+class DirectionalRisk:
+    """Frequency and severity of one signed landing-error direction."""
+
+    probability: float
+    mean_excess_m: float
+    conditional_mean_excess_m: float
 
 
 @dataclass(frozen=True)
 class StrategySummary:
-    """Expected cost and common-random-number regret for one strategy."""
+    """Expected performance, counterfactual, and landing-risk metrics."""
 
     strategy_id: str
     label: str
     completed_trials: int
     failed_trials: int
     expected_cost: float
+    expected_perfect_information_cost: float
+    expected_information_cost_delta: float
+    expected_preset_oracle_regret: float
+    preset_oracle_probability_best: float
     expected_regret: float
     probability_best: float
+    target_hold_probability: float
+    miss_distance_cvar_m: float
+    miss_distance_cvar_alpha: float
+    short_risk: DirectionalRisk
+    long_risk: DirectionalRisk
+    left_risk: DirectionalRisk
+    right_risk: DirectionalRisk
     mean_landing_forward_m: float | None
     mean_landing_right_m: float | None
 
 
 @dataclass(frozen=True)
 class WindStrategyAnalysis:
-    """Auditable wind draws, landing scatter, and strategy summaries."""
+    """Auditable wind draws, paired counterfactuals, and strategy summaries."""
 
     schema_version: str
     provenance: str
@@ -140,23 +182,45 @@ class _TrialContext:
     estimated_wind: WindScenario
 
 
-def _aimed_launch(strategy: WindStrategy, estimate: WindScenario) -> LaunchConditions:
-    estimated_crosswind_left_mps = estimate.base_velocity_mps[1]
-    correction = strategy.crosswind_aim_gain_rad_per_mps * estimated_crosswind_left_mps
+@dataclass(frozen=True)
+class _SimulationResult:
+    status: OutcomeStatus
+    landing_forward_m: float | None
+    landing_right_m: float | None
+    miss_distance_m: float | None
+    cost: float
+    failure_reason: str | None = None
+
+
+def _aimed_launch(
+    strategy: WindStrategy, decision_wind: WindScenario
+) -> LaunchConditions:
+    crosswind_left_mps = decision_wind.base_velocity_mps[1]
+    correction = strategy.crosswind_aim_gain_rad_per_mps * crosswind_left_mps
     return replace(
-        strategy.launch,
-        azimuth_angle=strategy.launch.azimuth_angle - correction,
+        strategy.launch, azimuth_angle=strategy.launch.azimuth_angle - correction
     )
 
 
-def _completed_outcome(
+def _failure_result(
+    request: StrategyAnalysisRequest,
+    status: Literal["nonconverged", "invalid"],
+    reason: str,
+) -> _SimulationResult:
+    return _SimulationResult(
+        status, None, None, None, request.analysis.failure_cost, reason
+    )
+
+
+def _simulate_policy(
     context: _TrialContext,
     strategy: WindStrategy,
-) -> StrategyShotOutcome:
+    decision_wind: WindScenario,
+) -> _SimulationResult:
     request = context.request
     model = FlightModelRegistry.get_model(FlightModelType(request.analysis.model_name))
     launch = replace(
-        _aimed_launch(strategy, context.estimated_wind),
+        _aimed_launch(strategy, decision_wind),
         wind_scenario=context.true_wind,
     )
     result = model.simulate(
@@ -165,54 +229,63 @@ def _completed_outcome(
         dt=request.analysis.time_step_s,
     )
     if not result.trajectory or result.trajectory[-1].position[2] > _GROUND_TOLERANCE_M:
-        return _failure_outcome(
-            context,
-            strategy,
-            "nonconverged",
-            "ground not reached",
-        )
+        return _failure_result(request, "nonconverged", "ground not reached")
     landing = result.trajectory[-1].position
     forward_m = float(landing[0])
     right_m = -float(landing[1])
-    miss_squared = (forward_m - request.target.forward_m) ** 2 + (
-        right_m - request.target.right_m
-    ) ** 2
-    cost = miss_squared / request.analysis.miss_scale_m**2
+    forward_error = forward_m - request.target.forward_m
+    right_error = right_m - request.target.right_m
+    miss_distance_m = math.hypot(forward_error, right_error)
+    cost = (miss_distance_m / request.analysis.miss_scale_m) ** 2
     if not all(math.isfinite(value) for value in (forward_m, right_m, cost)):
-        return _failure_outcome(
-            context,
-            strategy,
+        return _failure_result(
+            request,
             "invalid",
             "simulation produced nonfinite landing data",
         )
-    return StrategyShotOutcome(
-        context.trial.trial_index,
-        strategy.strategy_id,
-        "completed",
-        context.true_wind,
-        context.estimated_wind,
-        forward_m,
-        right_m,
-        cost,
+    return _SimulationResult("completed", forward_m, right_m, miss_distance_m, cost)
+
+
+def _safe_simulate_policy(
+    context: _TrialContext,
+    strategy: WindStrategy,
+    decision_wind: WindScenario,
+) -> _SimulationResult:
+    try:
+        return _simulate_policy(context, strategy, decision_wind)
+    except (ArithmeticError, RuntimeError, ValueError) as exc:
+        return _failure_result(context.request, "invalid", str(exc))
+
+
+def _counterfactual(result: _SimulationResult) -> PerfectInformationCounterfactual:
+    return PerfectInformationCounterfactual(
+        result.status,
+        result.landing_forward_m,
+        result.landing_right_m,
+        result.miss_distance_m,
+        result.cost,
+        result.failure_reason,
     )
 
 
-def _failure_outcome(
-    context: _TrialContext,
-    strategy: WindStrategy,
-    status: Literal["nonconverged", "invalid"],
-    reason: str,
+def _evaluate_strategy(
+    context: _TrialContext, strategy: WindStrategy
 ) -> StrategyShotOutcome:
+    actual = _safe_simulate_policy(context, strategy, context.estimated_wind)
+    perfect = _safe_simulate_policy(context, strategy, context.true_wind)
     return StrategyShotOutcome(
         context.trial.trial_index,
         strategy.strategy_id,
-        status,
+        actual.status,
         context.true_wind,
         context.estimated_wind,
-        None,
-        None,
-        context.request.analysis.failure_cost,
-        reason,
+        actual.landing_forward_m,
+        actual.landing_right_m,
+        actual.miss_distance_m,
+        actual.cost,
+        actual.failure_reason,
+        _counterfactual(perfect),
+        actual.cost - perfect.cost,
     )
 
 
@@ -225,80 +298,32 @@ def _evaluate(
         true_wind = trial.true_scenario(request.uncertainty.provenance)
         estimated_wind = trial.estimated_scenario(request.uncertainty.provenance)
         context = _TrialContext(request, trial, true_wind, estimated_wind)
-        for strategy in request.strategies:
-            try:
-                outcome = _completed_outcome(context, strategy)
-            except (ArithmeticError, RuntimeError, ValueError) as exc:
-                outcome = _failure_outcome(
-                    context,
-                    strategy,
-                    "invalid",
-                    str(exc),
-                )
-            outcomes.append(outcome)
+        outcomes.extend(
+            _evaluate_strategy(context, item) for item in request.strategies
+        )
     return tuple(outcomes)
 
 
-def _summaries(
-    request: StrategyAnalysisRequest, outcomes: tuple[StrategyShotOutcome, ...]
-) -> tuple[StrategySummary, ...]:
-    best_by_trial = {
-        index: min(item.cost for item in outcomes if item.trial_index == index)
-        for index in range(request.uncertainty.trials)
-    }
-    summaries: list[StrategySummary] = []
-    for strategy in request.strategies:
-        cohort = [item for item in outcomes if item.strategy_id == strategy.strategy_id]
-        completed = [item for item in cohort if item.status == "completed"]
-        costs = [item.cost for item in cohort]
-        regrets = [item.cost - best_by_trial[item.trial_index] for item in cohort]
-        best_credit = sum(
-            1.0
-            / sum(
-                abs(peer.cost - best_by_trial[item.trial_index]) <= _BEST_COST_TOLERANCE
-                for peer in outcomes
-                if peer.trial_index == item.trial_index
-            )
-            for item in cohort
-            if abs(item.cost - best_by_trial[item.trial_index]) <= _BEST_COST_TOLERANCE
-        )
-        summaries.append(
-            StrategySummary(
-                strategy.strategy_id,
-                strategy.label,
-                len(completed),
-                len(cohort) - len(completed),
-                math.fsum(costs) / len(costs),
-                math.fsum(regrets) / len(regrets),
-                best_credit / len(cohort),
-                _optional_mean(completed, "landing_forward_m"),
-                _optional_mean(completed, "landing_right_m"),
-            )
-        )
-    return tuple(summaries)
-
-
-def _optional_mean(outcomes: list[StrategyShotOutcome], field: str) -> float | None:
-    values = [getattr(outcome, field) for outcome in outcomes]
-    finite_values = [value for value in values if value is not None]
-    return math.fsum(finite_values) / len(finite_values) if finite_values else None
-
-
 def analyze_wind_strategies(request: StrategyAnalysisRequest) -> WindStrategyAnalysis:
-    """Run paired common-random-number strategy trials and summarize regret."""
+    """Run paired strategy trials and summarize actual and counterfactual risk."""
+    from .wind_strategy_metrics import summarize_strategy_outcomes
+
     trials = sample_wind_trials(request.uncertainty)
     outcomes = _evaluate(request, trials)
     return WindStrategyAnalysis(
-        schema_version="wind-strategy-analysis/v1",
+        schema_version=WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION,
         provenance=request.uncertainty.provenance,
         target=request.target,
         wind_trials=trials,
         outcomes=outcomes,
-        summaries=_summaries(request, outcomes),
+        summaries=summarize_strategy_outcomes(request, outcomes),
     )
 
 
 __all__ = [
+    "WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION",
+    "DirectionalRisk",
+    "PerfectInformationCounterfactual",
     "StrategyAnalysisConfig",
     "StrategyAnalysisRequest",
     "StrategyShotOutcome",

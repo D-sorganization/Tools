@@ -106,8 +106,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   speed/bearing correlation, units, frame, and provenance are explicit.
 - Club/aim strategies run on identical wind draws (common random numbers),
   retaining completed landing scatter and explicit nonconverged/invalid
-  cohorts. Summaries report expected dimensionless miss cost, expected regret,
-  probability of best strategy, and failure counts without inventing landings.
+  cohorts. The v2 output distinguishes actual estimate-driven decisions, the
+  same policy evaluated with true-wind information, and hindsight selection of
+  the best declared preset; the latter is no longer presented as if it were
+  perfect information.
+- Summaries report target-circle hold probability, empirical miss-distance CVaR
+  at an explicit alpha, and short/long/left/right frequency and severity.
+  Failure cohorts remain in hold and tail-risk denominators through an explicit
+  miss-distance penalty and never receive invented landing directions.
 - The bounded foundation is deterministic decision support, not a weather
   forecast or an automatic club recommendation. UI workflow, terrain effects,
   measured forecast ingestion, and statistically justified player-specific
@@ -2864,6 +2870,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-06 | 1.13.12 | feat(swing_sim, rate_of_closure, #4195): add strict desired-flight inverse-solver contracts, deterministic bounded multi-objective search, ranked residual-rich candidates, typed infeasible/no-impact/nonconverged outcomes, and Python/TypeScript parity fixtures. |
 | 2026-08-06 | 1.13.11 | feat(swing_sim, rate_of_closure, #4194): add the canonical source-backed flight-result metric catalog, analytic landing/trajectory derivation, typed unavailable and qualified-ground boundaries, complete run manifests, deterministic Python/TypeScript exports, and cross-client parity fixtures. |
 | 2026-08-06 | 1.13.12 | feat(ball-flight, #4198 #4199): add Python/TypeScript deterministic true-versus-estimated wind ensembles, correlated under/overestimation, common-random-number club/aim strategy trials, landing scatter cohorts, and expected-cost/regret summaries. |
+| 2026-08-06 | 1.13.13 | fix(ball-flight, #4199): migrate strategy output to v2; separate policy-fixed true-wind counterfactuals from preset-oracle regret and add failure-inclusive target-hold, miss-distance CVaR, and directional risk metrics with Python/TypeScript parity. |
 | 2026-08-06 | 1.13.12 | feat(rate_of_closure, #4200): add deterministic timestamp interpolation and accessible play/pause/scrub/speed/restart/Launch/Apex/Landing controls to PyQt6 and React; preserve Matplotlib camera state with mutable markers; add a dependency-free rotatable/zoomable orthographic web canvas with a locked physical metre scale and one cancellable animation loop. |
 | 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
 | 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
