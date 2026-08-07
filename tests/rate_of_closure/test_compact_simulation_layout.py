@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Any
+
 import pytest
 
 pytest.importorskip("PyQt6")
@@ -11,8 +13,10 @@ from PyQt6.QtCore import Qt  # noqa: E402
 from PyQt6.QtWidgets import (  # noqa: E402
     QAbstractButton,
     QAbstractSpinBox,
+    QApplication,
     QCheckBox,
     QComboBox,
+    QFormLayout,
     QLineEdit,
     QScrollArea,
 )
@@ -22,6 +26,8 @@ from rate_of_closure.ui.pyqt6.responsive_layout import (  # noqa: E402
     HeightForWidthGroupBox,
 )
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab  # noqa: E402
+from shared.python.theme.integration import setup_themed_app  # noqa: E402
+from shared.python.theme.theme_manager import ThemeManager  # noqa: E402
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -68,8 +74,8 @@ def test_wrapped_setup_groups_reserve_readable_editor_heights(tab) -> None:  # t
 
 
 def test_swing_controls_collapse_into_readable_panels_at_compact_size(
-    tab, qtbot
-) -> None:  # type: ignore[no-untyped-def]
+    tab: SimulationTab, qtbot: Any
+) -> None:
     view = tab.view()
     view.resize(*COMPACT_SWING_SIZE)
     qtbot.wait(20)
@@ -89,8 +95,8 @@ def test_swing_controls_collapse_into_readable_panels_at_compact_size(
 
 
 def test_engineering_details_are_scrollable_and_key_metrics_remain_visible(
-    tab, qtbot
-) -> None:  # type: ignore[no-untyped-def]
+    tab: SimulationTab, qtbot: Any
+) -> None:
     assert tab.run_now() is not None
     view = tab.view()
     assert "Contact AoA" in view._impact_summary.text()
@@ -130,10 +136,22 @@ def test_legend_defaults_outside_and_can_move_or_hide(tab, qtbot) -> None:  # ty
 
 @pytest.mark.parametrize("window_size", [(1269, 731), (1280, 768)])
 def test_full_window_simulation_controls_stay_inside_viewport(
-    qtbot, window_size: tuple[int, int]
-) -> None:  # type: ignore[no-untyped-def]
+    qtbot: Any,
+    request: pytest.FixtureRequest,
+    window_size: tuple[int, int],
+) -> None:
+    app = QApplication.instance()
+    assert isinstance(app, QApplication)
+    ThemeManager.reset_instance()
+    request.addfinalizer(ThemeManager.reset_instance)
     window = RateOfClosureMainWindow()
     qtbot.addWidget(window)
+    setup_themed_app(
+        app,
+        window,
+        add_menu=False,
+        settings_app="RateOfClosureCompactLayoutTest",
+    )
     window.resize(*window_size)
     simulation_index = next(
         index
@@ -151,6 +169,31 @@ def test_full_window_simulation_controls_stay_inside_viewport(
     assert window.size().height() == window_size[1]
     assert window.devicePixelRatioF() >= 1.0
     assert tab._controls_scroll.horizontalScrollBar().maximum() == 0
+    ball_setup = tab._ball_setup_control
+    assert ball_setup.heightForWidth(ball_setup.width()) > 0
+    assert ball_setup.height() >= ball_setup.heightForWidth(ball_setup.width())
+    outer_group = ball_setup.parentWidget()
+    assert outer_group is not None
+    outer_form = outer_group.layout()
+    assert isinstance(outer_form, QFormLayout)
+    contact_label = outer_form.labelForField(tab._contact_combo)
+    assert contact_label is not None
+
+    for row_widget in (*ball_setup.interactive_widgets(), ball_setup._status):
+        if not row_widget.isVisible():
+            continue
+        row_top = row_widget.mapTo(ball_setup, row_widget.rect().topLeft())
+        row_bottom = row_widget.mapTo(ball_setup, row_widget.rect().bottomRight())
+        assert ball_setup.rect().contains(row_top)
+        assert ball_setup.rect().contains(row_bottom)
+
+    ball_bottom = ball_setup.mapTo(outer_group, ball_setup.rect().bottomLeft()).y()
+    contact_top = contact_label.mapTo(outer_group, contact_label.rect().topLeft()).y()
+    combo_top = tab._contact_combo.mapTo(
+        outer_group, tab._contact_combo.rect().topLeft()
+    ).y()
+    assert ball_bottom < contact_top
+    assert ball_bottom < combo_top
     global_controls_scroll = next(
         scroll
         for scroll in window.findChildren(QScrollArea)

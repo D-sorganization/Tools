@@ -14,8 +14,9 @@ class HeightForWidthGroupBox(QGroupBox):
     Qt layouts use a widget's ordinary size hint when distributing vertical
     space.  A wrapped ``QFormLayout`` can require substantially more height at
     a narrow width, which otherwise lets child editors collapse even inside a
-    scroll area.  This container promotes the layout's height-for-width result
-    to a real minimum height whenever its geometry changes.
+    scroll area.  This container promotes the complete widget height-for-width
+    result (including themed group title and frame chrome) to a real minimum
+    height whenever geometry or style metrics change.
     """
 
     def __init__(
@@ -28,9 +29,12 @@ class HeightForWidthGroupBox(QGroupBox):
     def event(self, event: QEvent | None) -> bool:
         handled = super().event(event)
         if event is not None and event.type() in (
+            QEvent.Type.ApplicationFontChange,
+            QEvent.Type.FontChange,
             QEvent.Type.LayoutRequest,
             QEvent.Type.Resize,
             QEvent.Type.Show,
+            QEvent.Type.StyleChange,
         ):
             self._reserve_wrapped_height()
         return handled
@@ -39,7 +43,9 @@ class HeightForWidthGroupBox(QGroupBox):
         layout: QLayout | None = self.layout()
         if layout is None or not layout.hasHeightForWidth():
             return
+        widget_height = self.heightForWidth(self.width())
         required = max(
+            widget_height if widget_height >= 0 else 0,
             layout.heightForWidth(self.width()),
             layout.minimumSize().height(),
         )
