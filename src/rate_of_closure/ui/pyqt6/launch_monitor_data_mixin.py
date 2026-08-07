@@ -210,7 +210,7 @@ class LaunchMonitorDataMixin:
 
     def import_dialog(self) -> None:
         selected, _ = QFileDialog.getOpenFileName(
-            self,  # type: ignore[arg-type]
+            self,
             "Import Launch Monitor Data",
             "",
             "Data Files (*.csv *.json)",
@@ -220,7 +220,7 @@ class LaunchMonitorDataMixin:
                 self.import_path(Path(selected))
             except (OSError, ValueError, json.JSONDecodeError) as error:
                 QMessageBox.critical(
-                    self,  # type: ignore[arg-type]
+                    self,
                     "Import Failed",
                     str(error),
                 )
@@ -259,7 +259,7 @@ class LaunchMonitorDataMixin:
 
     def save_project_dialog(self) -> None:
         selected, _ = QFileDialog.getSaveFileName(
-            self,  # type: ignore[arg-type]
+            self,
             "Save Analysis Project",
             "launch-monitor-analysis.lmproject.json",
             "Launch Monitor Project (*.lmproject.json)",
@@ -269,7 +269,7 @@ class LaunchMonitorDataMixin:
 
     def load_project_dialog(self) -> None:
         selected, _ = QFileDialog.getOpenFileName(
-            self,  # type: ignore[arg-type]
+            self,
             "Load Analysis Project",
             "",
             "Launch Monitor Project (*.lmproject.json)",
@@ -280,7 +280,7 @@ class LaunchMonitorDataMixin:
             self._load_project(load_analysis_project(Path(selected)))
         except (OSError, ValueError, json.JSONDecodeError) as error:
             QMessageBox.critical(
-                self,  # type: ignore[arg-type]
+                self,
                 "Project Load Failed",
                 str(error),
             )
@@ -367,7 +367,7 @@ class LaunchMonitorDataMixin:
 
     def export_data_dialog(self) -> None:
         selected, _ = QFileDialog.getSaveFileName(
-            self,  # type: ignore[arg-type]
+            self,
             "Export Retained Data",
             "launch-monitor-records.csv",
             "CSV (*.csv);;JSON (*.json)",
@@ -386,7 +386,7 @@ class LaunchMonitorDataMixin:
 
     def export_result_dialog(self) -> None:
         selected, _ = QFileDialog.getSaveFileName(
-            self,  # type: ignore[arg-type]
+            self,
             "Export Launch Monitor Analysis",
             "launch-monitor-analysis.json",
             "JSON (*.json)",
