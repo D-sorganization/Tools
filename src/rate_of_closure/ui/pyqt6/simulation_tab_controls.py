@@ -226,11 +226,12 @@ class SimulationTabControlsMixin:
         return group
 
     def _update_manual_delivery_controls(self, *_args: object) -> None:
-        """Enable the declaration only when the manual source consumes it."""
+        """Expose only the orientation controls consumed by the active source."""
         manual_index = SOURCE_KINDS.index("manual")
-        self._manual_delivery_group.setEnabled(
-            self._source_combo.currentIndex() == manual_index
-        )
+        is_manual = self._source_combo.currentIndex() == manual_index
+        self._manual_delivery_group.setEnabled(is_manual)
+        for spin in self._tilt_spins.values():
+            spin.setEnabled(not is_manual)
 
     @staticmethod
     def _make_combo_compact(combo: QComboBox) -> None:

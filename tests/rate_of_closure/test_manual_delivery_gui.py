@@ -46,10 +46,13 @@ def test_manual_delivery_controls_enable_only_for_manual_source(qtbot) -> None: 
     qtbot.addWidget(tab)
     try:
         assert tab._manual_delivery_group.isEnabled()
+        assert all(not spin.isEnabled() for spin in tab._tilt_spins.values())
         tab._source_combo.setCurrentIndex(1)
         assert not tab._manual_delivery_group.isEnabled()
+        assert all(spin.isEnabled() for spin in tab._tilt_spins.values())
         tab._source_combo.setCurrentIndex(0)
         assert tab._manual_delivery_group.isEnabled()
+        assert all(not spin.isEnabled() for spin in tab._tilt_spins.values())
     finally:
         tab.stop()
 
