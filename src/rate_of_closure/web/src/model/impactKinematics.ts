@@ -1,6 +1,7 @@
 /** Frame-explicit exact-event impact kinematics for the web simulation mirror. */
 
 import { faceNormalAtOffset, type ClubSpec } from "./club";
+import { faceCenterPoint, hoselPoint } from "./clubHeads";
 import { analyzeDPlane, type DPlaneAnalysisTs } from "./dPlane";
 import { add, cross, dot, norm, scale, sub, type Vec3 } from "./impactPhysics";
 import { frame, type ImpactScenario } from "./impact";
@@ -95,7 +96,12 @@ export const exactEventSample = (run: SimulationRunTs): SwingSampleTs => {
   };
 };
 
-function shaftGeometry(sample: SwingSampleTs, scenario: ImpactScenario) {
+function shaftGeometry(
+  sample: SwingSampleTs,
+  scenario: ImpactScenario,
+  run: SimulationRunTs,
+  club: ClubSpec,
+) {
   if (sample.joints.length >= 2) {
     const wrist = sample.joints[sample.joints.length - 2];
     return {
@@ -104,6 +110,29 @@ function shaftGeometry(sample: SwingSampleTs, scenario: ImpactScenario) {
       basis: "articulated_wrist_to_reference_shaft_line",
       limitations: "The articulated source has no shaft-twist degree of freedom; " +
         "the readout cannot invent torsional head motion.",
+    };
+  }
+  if (run.sourceKind === "manual" &&
+      run.manualDelivery.shaftAxisDatum === "generated_hosel") {
+    const faceCenterLocal: Vec3 = [scenario.comToFaceMm / 1000, 0, 0];
+    const authoredFaceCenter = faceCenterPoint(club);
+    const registeredHoselLever = add(
+      faceCenterLocal,
+      sub(hoselPoint(club), authoredFaceCenter),
+    );
+    return {
+      point: add(
+        sample.position,
+        applyRotation(sample.rotation, registeredHoselLever),
+      ),
+      axis: unit(
+        applyRotation(sample.rotation, frame(scenario.lieAngleDeg).shaft),
+        "generated-hosel shaft axis",
+      ),
+      basis: "generated_head_profile_hosel",
+      limitations: "The rigid shaft line passes through the selected generated " +
+        "club profile's hosel anchor after registering its authored face center " +
+        "to the tracked reference; flexible-shaft deformation is not included.",
     };
   }
   return {
@@ -140,7 +169,7 @@ export function impactKinematics(
   club: ClubSpec,
 ): ImpactKinematicsTs {
   const sample = exactEventSample(run);
-  const shaft = shaftGeometry(sample, scenario);
+  const shaft = shaftGeometry(sample, scenario, run, club);
   const leverLocal: Vec3 = [
     scenario.comToFaceMm / 1000,
     scenario.impactOffsetHighMm / 1000,

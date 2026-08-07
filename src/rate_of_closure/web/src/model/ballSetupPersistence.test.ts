@@ -50,7 +50,7 @@ describe("ball setup persistence", () => {
     };
     const run = runSimulation(input);
     const document = createSimulationRunDocument(input, run, null, aerialTarget);
-    expect(document.format).toBe("rate_of_closure.simulation_run.web/4");
+    expect(document.format).toBe("rate_of_closure.simulation_run.web/5");
     expect(document.parameters).toMatchObject({
       ball_setup: { support_mode: "tee", tee_height_m: DRIVER_TEE_HEIGHT_M },
     });

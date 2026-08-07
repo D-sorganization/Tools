@@ -9,10 +9,15 @@ import {
 } from "../model/ballSetupPersistence";
 import type { SimulationInput, SimulationRunTs } from "../model/simulation";
 import type { SpatialTargetTs } from "../model/spatialTarget";
+import {
+  manualDeliveryFromSimulationDocument,
+  type ManualDelivery,
+} from "../model/manualDelivery";
 
 interface ImportedSettings {
   readonly ballSetup: BallSetup;
   readonly spatialTarget: SpatialTargetTs;
+  readonly manualDelivery: ManualDelivery;
 }
 
 interface Props {
@@ -75,6 +80,7 @@ export function SimulationRunFileControls({
       const settings = {
         ballSetup: ballSetupFromSimulationDocument(document),
         spatialTarget: spatialTargetFromSimulationDocument(document),
+        manualDelivery: manualDeliveryFromSimulationDocument(document),
       };
       onImported(settings);
     } catch (error) {

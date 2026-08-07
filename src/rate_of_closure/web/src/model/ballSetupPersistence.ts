@@ -17,7 +17,7 @@ import {
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "./targets";
 
 export const BALL_SETUP_STORAGE_KEY = "rate_of_closure.ball_setup.web/v1";
-export const SIMULATION_EXPORT_FORMAT = "rate_of_closure.simulation_run.web/4";
+export const SIMULATION_EXPORT_FORMAT = "rate_of_closure.simulation_run.web/5";
 
 export interface BallSetupPreference {
   setup: BallSetup;
@@ -153,7 +153,17 @@ export function createSimulationRunDocument(
     parameters: {
       ...input,
       ballSetup: undefined,
+      manualAttackAngleDeg: undefined,
+      manualClubPathDeg: undefined,
+      manualForwardShaftLeanDeg: undefined,
+      shaftAxisDatum: undefined,
       ball_setup: ballSetupToJson(setup),
+      manual_delivery: {
+        attack_angle_deg: run.manualDelivery.manualAttackAngleDeg,
+        club_path_deg: run.manualDelivery.manualClubPathDeg,
+        forward_shaft_lean_deg: run.manualDelivery.manualForwardShaftLeanDeg,
+        shaft_axis_datum: run.manualDelivery.shaftAxisDatum,
+      },
     },
     ballSetupMetadata: exportBallSetupMetadata(setup),
     impactOutcome: run.impactOutcome,

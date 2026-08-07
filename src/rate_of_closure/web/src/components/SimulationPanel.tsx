@@ -38,6 +38,11 @@ import {
   type PendulumState,
 } from "../model/doublePendulum";
 import { SimulationRunFileControls } from "./SimulationRunFileControls";
+import { ManualDeliveryControls } from "./ManualDeliveryControls";
+import {
+  DEFAULT_MANUAL_DELIVERY,
+  type ManualDelivery,
+} from "../model/manualDelivery";
 
 interface Props {
   scenario: ImpactScenario;
@@ -77,6 +82,9 @@ export function SimulationPanel({
   );
   const [importError, setImportError] = useState<string | null>(null);
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
+  const [manualDelivery, setManualDelivery] = useState<ManualDelivery>(
+    DEFAULT_MANUAL_DELIVERY,
+  );
   const [contactMode, setContactMode] =
     useState<ContactMode>("delivery_inspection");
   const [doublePendulumRun, setDoublePendulumRun] =
@@ -116,6 +124,7 @@ export function SimulationPanel({
       doublePendulumRun,
       doublePendulumInitialState,
       ballSetup,
+      ...manualDelivery,
     }),
     [
       sourceKind,
@@ -128,6 +137,7 @@ export function SimulationPanel({
       doublePendulumRun,
       doublePendulumInitialState,
       ballSetup,
+      manualDelivery,
     ],
   );
   const inputSignature = useMemo(() => JSON.stringify(input), [input]);
@@ -243,6 +253,11 @@ export function SimulationPanel({
             {clubPhysicsGuidance}
           </p>
           <PlaneTiltControls tilts={tilts} onChange={setTilts} />
+          <ManualDeliveryControls
+            enabled={sourceKind === "manual"}
+            value={manualDelivery}
+            onChange={setManualDelivery}
+          />
           {sourceKind === "double_pendulum" && (
             <JointLockControls
               initialState={doublePendulumInitialState}
@@ -310,10 +325,15 @@ export function SimulationPanel({
               prescribedTorqueProfile={doublePendulumRun.mode === "prescribed"
                 ? doublePendulumRun.profile.toJsonObject() : null}
               spatialTarget={spatialTarget}
-              onImported={({ ballSetup: imported, spatialTarget: importedTarget }) => {
+              onImported={({
+                ballSetup: imported,
+                spatialTarget: importedTarget,
+                manualDelivery: importedManualDelivery,
+              }) => {
                 setImportError(null);
                 setBallSetup(imported);
                 setBallSetupOverridden(true);
+                setManualDelivery(importedManualDelivery);
                 onSpatialTargetChange(importedTarget);
                 const warning = saveBallSetupPreference({
                   setup: imported,

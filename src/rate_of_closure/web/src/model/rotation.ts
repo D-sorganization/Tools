@@ -34,6 +34,18 @@ export function applyRotation(matrix: Mat3, vector: Vec3): Vec3 {
   ];
 }
 
+/** Compose proper rotations so the right-hand operand is applied first. */
+export function multiplyRotations(left: Mat3, right: Mat3): Mat3 {
+  return [0, 1, 2].map((row) =>
+    [0, 1, 2].map((column) =>
+      left[row].reduce(
+        (total, value, index) => total + value * right[index][column],
+        0,
+      ),
+    ) as Vec3,
+  ) as Mat3;
+}
+
 export function rotationFromColumns(first: Vec3, second: Vec3, third: Vec3): Mat3 {
   return [
     [first[0], second[0], third[0]],
