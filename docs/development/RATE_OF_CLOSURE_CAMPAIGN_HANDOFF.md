@@ -14,7 +14,7 @@ branch was rewritten.
 - Published PR head before the current continuation:
   `3f79eb8d15d8558ccf53b441e3842c50ce36e16e`
 - Latest verified implementation head before this handoff update:
-  `282b1a4d3e8de0b57ded5b138546542018b5b8e6`
+  `1bc7f567c88a954731a375167e7c8e16191e4018`
 
 ## Included PR stack
 
@@ -144,6 +144,15 @@ a narrower changed-file scope and is not replacement evidence. Commit
 PR-merge-base-equivalent gate then reported `77 files already formatted`, Ruff
 clean, `59 passed`, and a clean diff. New protected checks must run on the
 published continuation head; queued work is not counted as passing.
+
+The next exact-head PR run `31135497996` confirmed the formatting fix and then
+exposed CI's pinned mypy 1.13 compatibility errors across six files. Commit
+`1bc7f567c` resolves those errors with typed NumPy/Qt scalar boundaries,
+literal narrowing for imported target kinds and analytics selections, and
+distinct correlation/coefficient variables; it does not add blanket ignores.
+The PR-equivalent 58-source-file set now passes both mypy 1.13 and the local
+mypy 1.15, Ruff reports `77 files already formatted`, and `189` affected-domain
+tests pass. Protected CI still needs to complete on the newly published head.
 
 ## Open release blockers
 
