@@ -456,8 +456,9 @@ status.
 
 ### 2026-08-07 variation export and completion audit continuation
 
-The post-toolstrip branch `feat/4144-variation-export-continuation` is based on
-exact head `c36ca36e91f34fa849d2508708bf9dd6c0cdc392`. It keeps #4279 unchanged
+The post-toolstrip branch `feat/4144-variation-export-continuation` is published
+as [draft PR #4280](https://github.com/D-sorganization/Tools/pull/4280), based
+on exact parent head `c36ca36e91f34fa849d2508708bf9dd6c0cdc392`. It keeps #4279 unchanged
 while closing one remaining #4144 parity gap: selected scalar scatter data can
 now be exported as CSV from both clients, retaining every raw trial, typed
 outcome, and unavailable cell rather than only the finite points drawn on the

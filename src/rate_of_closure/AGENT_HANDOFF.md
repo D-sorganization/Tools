@@ -21,13 +21,13 @@ factored into `variation_trial_table.py`; the scalar scatter view is isolated
 in `variation_scatter_view.py`. Changed production modules remain below 400
 lines and changed functions remain at or below 50 lines.
 
-Current exact local evidence on the continuation diff is 890
+The continuation is published as draft PR #4280. Current exact local evidence
+on implementation commit `b3b09215e` is 890
 Python/PyQt/shared swing tests passed with one expected optional-Rust skip and
 15 existing warnings, and 89 React test files / 545 tests passed. Ruff,
 formatting, Black, targeted mypy, TypeScript, zero-warning ESLint, the 166-module
 Vite build, and `git diff --check` pass. This is local evidence only; no PR,
-protected CI, review, merge, or default-branch release has yet been established
-for this continuation.
+protected CI, review, merge, or default-branch release has yet been established.
 
 Literal audit of "every many-trial simulation" found two dependent gaps that
 must remain explicit:
