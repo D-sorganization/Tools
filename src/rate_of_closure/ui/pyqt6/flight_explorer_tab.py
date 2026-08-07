@@ -352,11 +352,11 @@ class FlightExplorerTab(QWidget):
     # ── public API ──────────────────────────────────────────────────
     def speed_mps(self) -> float:
         """The entered speed converted to m/s."""
-        return self._speed_spin.value() * _SPEED_UNITS[self._speed_unit]
+        return float(self._speed_spin.value()) * _SPEED_UNITS[self._speed_unit]
 
     def mode(self) -> str:
         """The selected entry mode label."""
-        return _MODES[self._mode_combo.currentIndex()]
+        return cast(str, _MODES[self._mode_combo.currentIndex()])
 
     def flight_view(self) -> FlightView:
         """The embedded flight-scale viewer."""

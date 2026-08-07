@@ -208,7 +208,8 @@ class TestFlightExplorerTab:
             assert key in LAUNCH_EXPLANATIONS, key
 
     def test_launch_direction_has_an_obvious_clickable_definition(
-        self, explorer  # type: ignore[no-untyped-def]
+        self,
+        explorer,  # type: ignore[no-untyped-def]
     ) -> None:
         button = explorer.findChild(QToolButton, "launch_direction_info")
         assert button is not None
