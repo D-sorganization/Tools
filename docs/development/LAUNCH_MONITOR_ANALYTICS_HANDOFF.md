@@ -39,6 +39,11 @@ The first protected run on remote head `4b22e79c` exposed two deterministic issu
    high-entropy credential. The exact test-vector line now carries the scanner's
    narrow `pragma: allowlist secret` annotation; no baseline entry or broad
    exclusion was added.
+3. The next protected run reached pinned mypy 1.13 and rejected raw Qt combo-box
+   strings at three Literal-typed request boundaries, then inferred one reused
+   loop variable as incompatible correlation and coefficient types. The adapter
+   now narrows the three values at the UI boundary and uses type-specific loop
+   names; the analysis contract itself was not weakened.
 
 Local recovery evidence:
 
@@ -47,6 +52,8 @@ Local recovery evidence:
 - `launchMonitorAnalysis.test.ts`: 5 passed.
 - TypeScript type-check and ESLint with zero allowed warnings: passed.
 - Python fail-closed/missingness boundary test: 1 passed.
+- PyQt analytics tab tests: 2 passed.
+- Exact mypy 1.13 check of the corrected PyQt adapter: passed.
 - `git diff --check`: passed.
 
 The full Python analytics file is comparatively expensive in this Windows test
