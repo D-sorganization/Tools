@@ -158,5 +158,16 @@ class TestDispersionEllipse:
     def test_requires_two_successful_runs(self) -> None:
         dataset = _synthetic_launch_dataset(np.zeros((4, 2)))
         object.__setattr__(dataset, "success", np.array([True, False, False, False]))
-        with pytest.raises(Exception, match="successful runs"):
+        with pytest.raises(Exception, match="paired finite landing rows"):
             dispersion_ellipse(dataset)
+
+    def test_uses_only_paired_finite_landing_rows(self) -> None:
+        dataset = _synthetic_launch_dataset(
+            np.array(((100.0, 10.0), (1000.0, np.nan), (np.nan, 100.0), (300.0, 30.0)))
+        )
+
+        ellipse = dispersion_ellipse(dataset)
+
+        assert ellipse.n == 2
+        assert ellipse.center_carry_m == pytest.approx(200.0)
+        assert ellipse.center_lateral_m == pytest.approx(20.0)

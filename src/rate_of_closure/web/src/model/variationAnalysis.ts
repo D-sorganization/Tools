@@ -180,17 +180,47 @@ export interface DispersionEllipseTs {
   n: number;
 }
 
+export interface LandingPointTs {
+  readonly trialIndex: number;
+  readonly carryM: number;
+  readonly lateralM: number;
+}
+
+/** Return only successful rows with a paired finite landing coordinate. */
+export function pairedLandingPoints(
+  dataset: VariationDatasetTs,
+): LandingPointTs[] {
+  if (dataset.outputs.length !== dataset.success.length) {
+    throw new Error("variation outputs and success flags must align by trial");
+  }
+  const carryIndex = dataset.outputNames.indexOf("carry_m");
+  const lateralIndex = dataset.outputNames.indexOf("lateral_m");
+  if (carryIndex < 0 || lateralIndex < 0) return [];
+  const points: LandingPointTs[] = [];
+  dataset.outputs.forEach((row, trialIndex) => {
+    const carryM = row[carryIndex];
+    const lateralM = row[lateralIndex];
+    if (
+      dataset.success[trialIndex] &&
+      carryM !== null && Number.isFinite(carryM) &&
+      lateralM !== null && Number.isFinite(lateralM)
+    ) {
+      points.push({ trialIndex, carryM, lateralM });
+    }
+  });
+  return points;
+}
+
 /** 2-sigma landing ellipse from the carry/lateral sample covariance. */
 export function dispersionEllipse(
   dataset: VariationDatasetTs,
   nSigma = 2.0,
 ): DispersionEllipseTs | null {
-  const jc = dataset.outputNames.indexOf("carry_m");
-  const jl = dataset.outputNames.indexOf("lateral_m");
-  const carry = okColumn(dataset, jc);
-  const lateral = okColumn(dataset, jl);
-  const n = Math.min(carry.length, lateral.length);
-  if (jc < 0 || jl < 0 || n < 2) return null;
+  const points = pairedLandingPoints(dataset);
+  const carry = points.map((point) => point.carryM);
+  const lateral = points.map((point) => point.lateralM);
+  const n = points.length;
+  if (n < 2) return null;
   const mc = carry.reduce((a, v) => a + v, 0) / n;
   const ml = lateral.reduce((a, v) => a + v, 0) / n;
   let sxx = 0;

@@ -246,15 +246,15 @@ def dispersion_ellipse(
         "n_sigma must be finite and > 0",
         n_sigma,
     )
-    carry = dataset.output_column("carry_m")
-    lateral = dataset.output_column("lateral_m")
-    n = int(carry.size)
+    points = dataset.finite_output_rows("carry_m", "lateral_m")
+    n = int(points.shape[0])
     require(
         n >= _MIN_RUNS_FOR_STATS,
-        "dispersion ellipse needs >= 2 successful runs",
+        "dispersion ellipse needs >= 2 paired finite landing rows",
         n,
     )
-    points = np.column_stack([carry, lateral])
+    carry = points[:, 0]
+    lateral = points[:, 1]
     cov = np.cov(points, rowvar=False, ddof=1)
     eigenvalues, eigenvectors = np.linalg.eigh(cov)
     # eigh sorts ascending; the last eigenpair is the principal axis.

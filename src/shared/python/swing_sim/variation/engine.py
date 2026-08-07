@@ -121,6 +121,28 @@ class VariationDataset:
         finite: np.ndarray = np.asarray(values[np.isfinite(values)], dtype=float)
         return finite
 
+    def finite_output_rows(self, *names: str) -> np.ndarray:
+        """Return evaluated rows where every requested output is finite.
+
+        Multi-axis plots must filter values as rows, not as independent
+        columns.  Otherwise a missing carry in one trial and a missing lateral
+        value in another can be silently combined into a fictitious landing.
+        The returned column order exactly matches ``names``.
+        """
+        require(bool(names), "at least one output column is required")
+        require(
+            len(set(names)) == len(names),
+            "output column names must be unique",
+            names,
+        )
+        for name in names:
+            require(name in self.output_names, "unknown output column", name)
+        indices = [self.output_names.index(name) for name in names]
+        evaluated = np.asarray(self.outputs[self.success][:, indices], dtype=float)
+        available = np.all(np.isfinite(evaluated), axis=1)
+        rows: np.ndarray = np.asarray(evaluated[available], dtype=float)
+        return rows
+
 
 def _stream_for(seed: int, spec: NoiseSpec) -> np.random.Generator:
     """Independent, subset-stable RNG stream for one noise spec.
