@@ -206,7 +206,7 @@ class ManualSwingSource:
         return True
 
     def sample(self, t: float) -> SwingSample:
-        """Clubhead sample at ``t``; square at the window midpoint."""
+        """Clubhead sample at ``t``; at the declared pose at window midpoint."""
         require(math.isfinite(t), "t must be finite", t)
         require(
             -1e-9 <= t <= self._duration + 1e-9,

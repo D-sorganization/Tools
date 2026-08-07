@@ -25,12 +25,17 @@ def test_manual_delivery_controls_are_discoverable_and_build_config(qtbot) -> No
         assert tab._manual_delivery_spins["club_path_deg"].maximum() == 89.0
         assert tab._manual_delivery_spins["forward_shaft_lean_deg"].minimum() == -60.0
         assert tab._manual_delivery_spins["forward_shaft_lean_deg"].maximum() == 60.0
+        generated_hosel_index = tab._shaft_datum_combo.findData(
+            ShaftAxisDatum.GENERATED_HOSEL
+        )
+        assert tab._shaft_datum_combo.itemText(generated_hosel_index) == (
+            "Generated Club Hosel"
+        )
 
         tab._manual_delivery_spins["attack_angle_deg"].setValue(-10.0)
         tab._manual_delivery_spins["club_path_deg"].setValue(4.0)
         tab._manual_delivery_spins["forward_shaft_lean_deg"].setValue(15.0)
-        datum_index = tab._shaft_datum_combo.findData(ShaftAxisDatum.GENERATED_HOSEL)
-        tab._shaft_datum_combo.setCurrentIndex(datum_index)
+        tab._shaft_datum_combo.setCurrentIndex(generated_hosel_index)
 
         config = tab.config()
         assert config.manual_attack_angle_deg == -10.0
@@ -47,12 +52,29 @@ def test_manual_delivery_controls_enable_only_for_manual_source(qtbot) -> None: 
     try:
         assert tab._manual_delivery_group.isEnabled()
         assert all(not spin.isEnabled() for spin in tab._tilt_spins.values())
+        assert "Not applicable to Manual" in tab._plane_applicability.text()
         tab._source_combo.setCurrentIndex(1)
         assert not tab._manual_delivery_group.isEnabled()
         assert all(spin.isEnabled() for spin in tab._tilt_spins.values())
+        assert "Applied to" in tab._plane_applicability.text()
         tab._source_combo.setCurrentIndex(0)
         assert tab._manual_delivery_group.isEnabled()
         assert all(not spin.isEnabled() for spin in tab._tilt_spins.values())
+        assert "Not applicable to Manual" in tab._plane_applicability.text()
+    finally:
+        tab.stop()
+
+
+def test_simulation_club_selection_aligns_consumed_scenario_geometry(qtbot) -> None:  # type: ignore[no-untyped-def]
+    """The visible club must own the lie and reference-to-face defaults."""
+    tab = SimulationTab()
+    qtbot.addWidget(tab)
+    try:
+        tab._club_combo.setCurrentText("Pitching Wedge")
+        config = tab.config()
+        assert config.club.name == "Pitching Wedge"
+        assert config.scenario.lie_angle_deg == 64.0
+        assert config.scenario.com_to_face_mm == 11.0
     finally:
         tab.stop()
 
@@ -62,6 +84,7 @@ def test_v5_import_config_export_preserves_precise_manual_delivery(qtbot) -> Non
     tab = SimulationTab()
     qtbot.addWidget(tab)
     try:
+        assert tab.inspector()._import_json_button.text() == "Import Settings JSON…"
         assert tab.run_now() is not None
         document = tab.inspector().run_document()
         document["parameters"]["manual_delivery"] = {

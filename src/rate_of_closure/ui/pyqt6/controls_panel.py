@@ -297,6 +297,11 @@ class ControlsPanel(QWidget):
             face_roll_radius_m=self._roll_spin.value() / 1000.0 if curved else None,
         )
 
+    def set_club_name(self, name: str) -> None:
+        """Select one library club through the panel's canonical control."""
+        get_club(name)  # fail closed before touching the current selection
+        self._club_combo.setCurrentText(name)
+
     def _on_club_changed(self, name: str) -> None:
         """Adopt a library club: loft/curvature defaults, scenario plumbing.
 

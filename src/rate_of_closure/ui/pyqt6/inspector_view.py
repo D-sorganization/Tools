@@ -107,7 +107,7 @@ class InspectorView(QWidget):
         self._summary_label.setWordWrap(True)
         header.addWidget(self._summary_label, stretch=1)
 
-        self._import_json_button = QPushButton("Import JSON…")
+        self._import_json_button = QPushButton("Import Settings JSON…")
         self._import_json_button.setToolTip(
             "Load manual delivery, ball setup, and the canonical spatial target "
             "atomically from a current or migrated simulation project."
@@ -267,7 +267,7 @@ class InspectorView(QWidget):
     def _on_import_json(self) -> None:
         path, _selected = QFileDialog.getOpenFileName(
             self,
-            "Import Simulation Project",
+            "Import Simulation Settings",
             "",
             "JSON files (*.json);;All files (*)",
         )

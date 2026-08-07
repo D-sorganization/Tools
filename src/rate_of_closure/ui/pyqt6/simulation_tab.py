@@ -18,7 +18,7 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.club import get_club
+from rate_of_closure.club import ClubSpec, get_club
 from rate_of_closure.derivation_models import DerivationConfig
 from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
 from rate_of_closure.simulation import (
@@ -75,6 +75,8 @@ class SimulationTab(
     glossaryRequested = pyqtSignal(str)  # noqa: N815 - Qt signal convention
     #: Drives conditional Calculation Description sections from model changes.
     configChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
+    #: Requests that the owning workbench adopt a library-club selection.
+    clubSelectionChanged = pyqtSignal(str)  # noqa: N815 - Qt signal convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -195,8 +197,27 @@ class SimulationTab(
         self.configChanged.emit(self.derivation_config())
 
     def _on_club_changed(self, name: str) -> None:
-        """Apply the canonical club default unless the user owns an override."""
+        """Adopt one library club and keep its geometry internally coherent."""
         club = get_club(name)
+        self._club_spec = club
+        self._scenario = dataclasses.replace(
+            self._scenario,
+            lie_angle_deg=club.lie_deg,
+            com_to_face_mm=club.cg_depth_m * 1000.0,
+        )
+        default_setup = SimulationConfig(scenario=self._scenario, club=club).ball_setup
+        self._ball_setup_control.apply_club_default(default_setup, club.name)
+        self.clubSelectionChanged.emit(name)
+        self._emit_config()
+
+    def set_club_spec(self, club: ClubSpec) -> None:
+        """Apply the owning workbench's complete club spec without signal loops."""
+        if not isinstance(club, ClubSpec):
+            raise TypeError("club must be a ClubSpec")
+        self._club_spec = club
+        self._club_combo.blockSignals(True)
+        self._club_combo.setCurrentText(club.name)
+        self._club_combo.blockSignals(False)
         default_setup = SimulationConfig(scenario=self._scenario, club=club).ball_setup
         self._ball_setup_control.apply_club_default(default_setup, club.name)
         self._emit_config()
@@ -223,7 +244,7 @@ class SimulationTab(
             torque_library = self._torque_profile_panel.canonical_library()
         return SimulationConfig(
             scenario=self._scenario,
-            club=get_club(self._club_combo.currentText()),
+            club=self._club_spec,
             ball_setup=self._ball_setup_control.setup(),
             source_kind=source_kind,
             plane=self.plane(),

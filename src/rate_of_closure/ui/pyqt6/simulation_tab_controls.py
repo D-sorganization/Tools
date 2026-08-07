@@ -40,7 +40,7 @@ SCRUB_STEPS = 1000
 
 _SHAFT_DATUM_LABELS: tuple[tuple[str, ShaftAxisDatum], ...] = (
     ("Tracked Reference (Legacy)", ShaftAxisDatum.TRACKED_REFERENCE),
-    ("Generated Head Hosel", ShaftAxisDatum.GENERATED_HOSEL),
+    ("Generated Club Hosel", ShaftAxisDatum.GENERATED_HOSEL),
 )
 
 
@@ -108,6 +108,9 @@ class SimulationTabControlsMixin:
             self._tilt_spins[attr] = spin
             form.addRow(label, spin)
         self._tilt_spins["side_tilt_deg"].setValue(-45.0)
+        self._plane_applicability = QLabel()
+        self._plane_applicability.setWordWrap(True)
+        form.addRow(self._plane_applicability)
 
         self._club_combo = QComboBox()
         self._make_combo_compact(self._club_combo)
@@ -118,6 +121,7 @@ class SimulationTabControlsMixin:
         form.addRow("Club", self._club_combo)
 
         club = get_club(self._club_combo.currentText())
+        self._club_spec = club
         default_setup = SimulationConfig(scenario=self._scenario, club=club).ball_setup
         self._ball_setup_control = BallSetupControl(default_setup, club.name)
         self._ball_setup_control.setupChanged.connect(self._emit_config)
@@ -232,6 +236,12 @@ class SimulationTabControlsMixin:
         self._manual_delivery_group.setEnabled(is_manual)
         for spin in self._tilt_spins.values():
             spin.setEnabled(not is_manual)
+        self._plane_applicability.setText(
+            "Not applicable to Manual delivery; attack angle and club path "
+            "define its reference-point direction."
+            if is_manual
+            else "Applied to the selected pendulum swing source."
+        )
 
     @staticmethod
     def _make_combo_compact(combo: QComboBox) -> None:
