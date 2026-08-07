@@ -8,8 +8,8 @@ been pushed and no source PR branch was rewritten.
 - Worktree: `C:\Users\diete\Repositories\Tools-worktrees\ballflight-campaign-integration`
 - Branch: `codex/ballflight-campaign-integration`
 - Integration base: `626cfb64b0eddaa598a2a24dc2a050a420be25be`
-- Implementation head before this handoff-only commit:
-  `6aa5d5d4586118058c11b7f72461ed4f6ef63bea`
+- Latest implementation head before this handoff update:
+  `79627c4c3bc8bf59968390d9f6e17a3f3081675d` (merge of the #4213 v2 head)
 
 ## Included PR stack
 
@@ -25,7 +25,7 @@ the earlier commits from that PR.
 | #4215 | Impact solution families | `8e3af21672b105bcbc6f821644e013896d8293ba` |
 | #4216 | Capability optimizer, including variability and downside/CVaR objectives | `4e11182d7d72abe66fd1066ca2086c2a87df5323` |
 | #4207 | Paired wind physics and responsive locked-aspect canvases | `d668de1f1f808f7d5c8a4c5314a3ca940d71a4b9` |
-| #4213 | Wind-estimate uncertainty analysis | `cb68d876591765428af3bf9ec17d9be27bf5c7df` |
+| #4213 | Wind-estimate uncertainty analysis and v2 risk metrics | `15cc7ac5b32924f69175d85ee0bc71b736f6e856` |
 | #4214 | Interactive 3D playback, correct Launch/Apex/Landing events, responsive canvas | `a7d337155cbd74c8198d9ef7f21add1b5d52b013` |
 | #4208 | Versioned 3D spatial-target contract | `9aec34d89f91c08bf0882c556b66242d00cf3ba6` |
 | #4212 | PyQt/React Launch Monitor Analytics and split statistics modules | `4b22e79cf829bac12217e60634ffbfbea5c40d6b` |
@@ -35,6 +35,15 @@ Integration-only reconciliation commits are
 `107d8e43246d1ca545be1cb8980622f7a208a895` (Flight Explorer split),
 `91a0bba09f5fba560744d9be840787dad500b2cf` (strict typing), and
 `18fe8768fe27cc21d2d987a426e1a01fda3f5303` (spec reconciliation).
+
+The `wind-strategy-analysis/v2` result distinguishes actual estimate-driven
+outcomes, the same declared policy evaluated with true-wind information, and
+the hindsight best result among only the declared presets. Its summaries add
+failure-inclusive target-circle hold probability, empirical miss-distance
+CVaR at a declared alpha, and short/long/left/right probabilities with
+unconditional and conditional mean excess. Legacy regret/best aliases remain,
+but the precise names are preset-oracle regret/probability; the signed
+information-cost delta is not presented as EVPI.
 
 ## Launch and registration
 
@@ -56,8 +65,10 @@ backed by `ui/pyqt6/launch_monitor_analytics_tab.py`.
 
 ## Verification evidence
 
-- Python campaign suite: `740 passed, 4 skipped, 15 warnings`.
+- Full pre-v2 Python campaign suite: `740 passed, 4 skipped, 15 warnings`.
+- Post-v2 wind-uncertainty plus flight/solver contract tests: `25 passed`.
 - React/Vitest suite: `70` files and `439` tests passed.
+- Post-v2 targeted React wind-uncertainty suite: `11 passed`.
 - React production build: `tsc && vite build` passed (147 modules).
 - React `type-check` and ESLint passed.
 - Production Python mypy: no issues in 60 changed source files.
@@ -79,7 +90,7 @@ requires all of the following before any production-ready or merge claim:
 - protected CI and required reviews for the combined stack;
 - complete PyQt/React end-user workflows for spatial targets, desired-flight
   solving, solution families, capability profiles, and wind uncertainty;
-- off-main-thread execution with progress and cancellation;
+- off-main-thread wind-ensemble execution with progress and cancellation;
 - complete save/load/export integration;
 - Rust/WASM trajectory parity and installed-package/UpstreamDrift pin checks;
 - scientific validation, convergence, performance, and benchmark evidence;
