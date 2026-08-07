@@ -11,10 +11,11 @@ branch was rewritten.
 - Draft PR: [#4217](https://github.com/D-sorganization/Tools/pull/4217)
 - PR base ref: `feat/4181-launch-monitor-registry`
 - Integration base: `626cfb64b0eddaa598a2a24dc2a050a420be25be`
+- Synchronized base head: `4b659acc1f7fc183dff60daea2553009e82dbab9`
 - Published PR head before the current continuation:
   `3f79eb8d15d8558ccf53b441e3842c50ce36e16e`
 - Latest verified implementation head before this handoff update:
-  `1bc7f567c88a954731a375167e7c8e16191e4018`
+  `50089b66a3eca3220d157dded040cc74d02c729a`
 
 ## Included PR stack
 
@@ -24,7 +25,7 @@ the earlier commits from that PR.
 | PR | Capability | Exact included source head |
 | --- | --- | --- |
 | #4203 | Launch-monitor convention registry and fail-closed unknown signs | `3d899c8e95bc6808b07a1b230a21021d845c14ad` |
-| #4209 | Launch Direction convention integration and visible unavailable Foresight option | `332fabdb41443119ae5f1f29ef63a8f9d7916144` |
+| #4209 | Launch Direction convention integration and visible unavailable Foresight option | `98589174273e90e6690a08201c369004c3f568b4` (merged by `4b659acc1f7fc183dff60daea2553009e82dbab9`) |
 | #4210 | Canonical flight-result metric catalog | `e6524dbb852e9356ae666dda5307cf0fd7e36960` |
 | #4211 | Desired-flight inverse solver | `24d891cf78f5de125bb1fda602a7a9136b91f138` |
 | #4215 | Impact solution families | `8e3af21672b105bcbc6f821644e013896d8293ba` |
@@ -33,7 +34,7 @@ the earlier commits from that PR.
 | #4213 | Wind-estimate uncertainty analysis and v2 risk metrics | `15cc7ac5b32924f69175d85ee0bc71b736f6e856` |
 | #4214 | Interactive 3D playback, correct Launch/Apex/Landing events, responsive canvas | `a7d337155cbd74c8198d9ef7f21add1b5d52b013` |
 | #4208 | Versioned 3D spatial-target contract | `9aec34d89f91c08bf0882c556b66242d00cf3ba6` |
-| #4212 | PyQt/React Launch Monitor Analytics and split statistics modules | `4b22e79cf829bac12217e60634ffbfbea5c40d6b` |
+| #4212 | PyQt/React Launch Monitor Analytics and split statistics modules | `a4dcddde6122bb298c7c20d3353d45e74481ba2a` (merged by `8526f7e0ea7b08f7bd48423bf2416b2a822daf56`) |
 
 Integration-only reconciliation commits are
 `16395378ec81c6b4c623804fc65ed886ea1bde7a` (formatting),
@@ -154,6 +155,43 @@ The PR-equivalent 58-source-file set now passes both mypy 1.13 and the local
 mypy 1.15, Ruff reports `77 files already formatted`, and `189` affected-domain
 tests pass. Protected CI still needs to complete on the newly published head.
 
+### Base synchronization and file-size recovery
+
+The PR base advanced normally through #4212 merge
+`8526f7e0ea7b08f7bd48423bf2416b2a822daf56` and #4209 merge
+`4b659acc1f7fc183dff60daea2553009e82dbab9`. Local merge commit
+`778be95a682998b7b2f71b3d68aa60b8c6f46891` synchronizes that exact base into
+the child without rebasing, retargeting, or rewriting either parent.
+
+The merge had one conflict in `flight_explorer_tab.py`: the child had already
+split the shared speed-unit table into `flight_explorer_controls.py`, while the
+parent still referenced its former local constant. Resolution retains the
+child's extracted canonical table and typed Qt scalar locals, together with the
+parent's Launch Direction/analytics contracts. The analytics handoff and its
+expanded TypeScript parity test merged without conflict.
+
+Failed File Size Budget run `31136702822`, job `92737550769`, reported three
+files against the old base: `simulation_tab.py` at 774 LOC,
+`plotting/catalog.py` at 533 LOC, and `main_window.py` at 521 LOC. After the
+normal parent merges, the exact changed-only gate proved that the latter two
+were base-owned and left only `simulation_tab.py` as a child violation. Commit
+`50089b66a3eca3220d157dded040cc74d02c729a` separates controls and runtime
+behavior without changing the public `SimulationTab` API. Final formatted
+sizes are 402, 218, and 272 LOC respectively.
+
+Exact post-sync evidence against
+`origin/feat/4181-launch-monitor-registry@4b659acc1`:
+
+- CI-equivalent changed-only 500-LOC check: 55 files scanned, zero violations.
+- Repository module-size budget and `git diff --check`: passed.
+- Mypy 1.13.0: 44 changed production files passed.
+- Ruff 0.14.10 check/format: 59 changed Python files passed and already formatted.
+- High-risk PyQt simulation/navigation suite: 135 passed.
+- Shared flight/solver plus flight, playback, analytics, and help suite:
+  230 passed, four expected Rust parity skips.
+- Complete React suite: 70 files and 445 tests passed; TypeScript type-check,
+  zero-warning ESLint, and the 147-module production build passed.
+
 ## Open release blockers
 
 GitHub issue #4201 remains open. Its 2026-08-06 release checkpoint still
@@ -175,12 +213,17 @@ contracts/cores unless and until their missing UI workflows are delivered.
 
 ## Next safe steps
 
-1. Rebase or reconstruct the stack only after each parent PR is reviewed; do
-   not retarget, force-push, admin-merge, or bypass protected checks.
-2. Add the missing UI workflows against the canonical shared Python/TypeScript
+1. Publish this child continuation only through a normal push after review,
+   then require protected checks on that exact head; do not retarget,
+   force-push, admin-merge, or bypass protected checks.
+2. Keep epic #4218 and children #4219-#4225 sequenced after this
+   ball-flight/variation/wedge campaign reaches its declared completion gate.
+   The top-toolstrip/persistence work must not be used to hide #4217 release
+   blockers or intermixed with this recovery diff.
+3. Add the missing UI workflows against the canonical shared Python/TypeScript
    contracts, with one visible-control-to-state integration test per control.
-3. Add cancellation/progress, persistence/export migrations, Rust/WASM golden
+4. Add cancellation/progress, persistence/export migrations, Rust/WASM golden
    parity, performance budgets, and Playwright visual/accessibility coverage.
-4. Verify a clean installed package and the exact UpstreamDrift dependency pin.
-5. Rerun every recorded gate, inspect protected GitHub checks/reviews, and keep
+5. Verify a clean installed package and the exact UpstreamDrift dependency pin.
+6. Rerun every recorded gate, inspect protected GitHub checks/reviews, and keep
    #4201 open until every acceptance criterion has current evidence.
