@@ -91,16 +91,20 @@ axis direction, screw pitch, and perpendicular distance from contact to that
 axis. This makes the off-axis lever arm explicit instead of inferring it from a
 screen projection.
 
-## Worked Example
+## Synthetic Kernel Worked Example
 
 ### Declared State
 
-The regression fixture uses a right-handed target/ground frame (`x` target,
+The geometry-independent regression fixture uses a right-handed target/ground frame (`x` target,
 `y` up, `z` right), 64-degree lie, 15-degree forward shaft lean, a 20 mm
 face-forward contact offset from the physical shaft line, and 1,307 degrees per
 second of positive shaft-axis rotation. The final contact velocity is declared
 to be `(13.207454, -2.328830, 0) m/s`, whose magnitude is exactly 30 mph to the
 reported precision and whose AoA is -10 degrees.
+
+The 20 mm lever arm is intentionally synthetic. It proves the shared kernel's
+vector closure and attribution identities; it must not be presented as the
+geometry of the generated wedge head shown by either client.
 
 The 1,307-degree-per-second input is the mean handle twist velocity measured by
 Cheetham in 94 tour-professional **driver** swings (standard deviation 304,
@@ -156,6 +160,34 @@ The table is a geometric sensitivity study, not a player recommendation. Rate,
 offset, lie, lean, handedness, and contact location jointly determine the sign
 and magnitude.
 
+### Representative generated-head cross-check
+
+For a geometry-specific comparison, use the Rate of Closure `Pitching Wedge`
+profile's face center and hosel rather than the synthetic 20 mm lever arm. In
+the unleaned head frame their face-center-minus-hosel vector is
+`(2.966, -24.719, 37.573) mm`. Rotating that rigid head and its 64-degree shaft
+15 degrees targetward gives:
+
+- shaft-axis unit vector `(0.232625, 0.868168, -0.438371)`;
+- hosel-axis-to-contact vector `(-3.533, -24.645, 37.573) mm`; and
+- at 1,307 degrees per second, shaft-induced contact velocity
+  `(+0.497660, -0.164057, -0.060817) m/s`.
+
+If 30 mph denotes the **total contact-point speed** at exactly -10 degrees AoA,
+the corresponding shaft-axis-datum translation is
+`(12.709794, -2.164774, +0.060817) m/s`. Rotation supplies 7.0446% of the
+downward speed. Removing only that rotation term gives -9.66594 degrees AoA,
+so the counterfactual shaft contribution is -0.33406 degrees. An alternate
+canonical-wedge CAD hosel datum produces about -0.223 m/s and -0.474 degrees;
+that spread demonstrates why the exact physical datum must accompany any
+reported attribution.
+
+At zero forward lean, the representative Rate geometry's vertical shaft term
+is only about -0.0297 m/s and its extra forward velocity can make the total AoA
+shallower. The proposed steepening mechanism is therefore mechanically
+plausible for the declared lean and hosel offset, but rotation rate alone does
+not determine its sign or magnitude.
+
 ### Reconciliation with the requested 30-yard carry
 
 Carry is not a kinematic input to this decomposition. It follows only after a
@@ -201,15 +233,24 @@ the shaft line, the analytical lie/offset formula, twist-reference invariance,
 Shapley closure, ground/arc orientation rates, screw-axis clearance, invalid
 AoA, and invalid frame geometry.
 
-This foundation is ready for model adapters but does not yet establish that an
-existing simulator's tracked point is the actual face contact point. Before a
-UI may present these metrics as simulation results, its adapter must provide:
+This foundation is ready for model adapters but the current manual Simulation
+source cannot yet reproduce the representative generated-head cross-check. It
+travels horizontally, has no explicit forward-lean/head-pose input, and places
+the manual shaft axis through the tracked reference point. The articulated
+double/triple-pendulum sources expose a wrist-to-reference shaft line but no
+torsional shaft degree of freedom. Before a UI may present the representative
+case as a simulation result, its adapter must provide:
 
 - the physical shaft line and true contact point in the same frame;
 - complete angular velocity including shaft twist;
 - face and leading-edge directions at that instant;
 - an impact event or an explicit no-impact result; and
 - the arc tangent and derivative used by the displayed comparison.
+
+The Flight Explorer can independently reproduce the downstream consistency
+case by entering 30 mph, -10 degrees attack angle, and 37 degrees dynamic
+loft. That does not back-fill the missing physical pose into the Simulation
+tab.
 
 No metric in this module alone predicts launch height, descent angle, turf
 clearance, bounce interaction, forgiveness, or shot outcome.

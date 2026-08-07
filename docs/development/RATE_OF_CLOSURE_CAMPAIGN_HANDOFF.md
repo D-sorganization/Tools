@@ -1,6 +1,6 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-06. This isolated integration is published as draft
+Status verified 2026-08-07. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
@@ -22,6 +22,10 @@ branch was rewritten.
   `51bad9009ce929fe89d3a527ca0e6858795dbbb7`
 - Launcher-themed wrapped-form correction reproduced from the user's live window:
   `d813d652fc76d90582a20928820d1aa306ab8a91`
+- Published documentation continuation before the current audit:
+  `280b58622bbfedb686777173fb3b22397d3495ee`
+- Paired landing-row integrity fix in both clients:
+  `d78d2b0ea3b5662f62c24c36d675371a6ef57704`
 
 ## Included PR stack
 
@@ -170,19 +174,45 @@ through the investigation-suite ancestry.
 - The default scalar delivery study correctly reports that no geometric
   no-impact cohort exists; the pendulum result carries typed hit/no-impact/
   numerical-failure cohorts without fabricated impact or landing coordinates.
+- The continuation audit found and corrected one cross-client missing-data
+  defect: carry and lateral values were previously filtered independently, so
+  complementary missing values in different trials could be combined into a
+  fictitious landing. The shared Python dataset now exposes paired finite-row
+  selection, the Python and TypeScript ellipse fits consume those exact rows,
+  and both canvases report the exact number of points they draw.
+- Post-fix focused verification passed `21` Python engine/PyQt/registration
+  tests and `16` React analysis/component tests. Python Ruff check/format and
+  mypy passed; React TypeScript, zero-warning ESLint, and the 153-module
+  production build passed. The complete React suite independently passed
+  `79` files and `477` tests.
+- The complete Rate/PyQt suite plus shared variation and wedge-kinematics
+  contracts passed `743` tests after the paired-row and generated-head
+  cross-check additions; only the existing Hypothesis configuration and empty
+  polynomial-preview legend warnings remain.
 
 ### Wedge AoA worked example continuation
 
 Commit `cfcc99681` expands
 `docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md` and pins its numeric claims in tests.
-The declared 64-degree lie, 15-degree lean, 20 mm offset, 1,307 deg/s shaft
-rate, and 30 mph state decomposes as follows:
+The declared 64-degree lie, 15-degree lean, **synthetic** 20 mm offset,
+1,307 deg/s shaft rate, and 30 mph state decomposes as follows:
 
 - shaft-datum translation vertical speed: `-2.135647 m/s` (`91.7047%`);
 - shaft-axis rotation vertical speed: `-0.193183 m/s` (`8.2953%`);
 - total AoA: `-10.0000 deg`;
 - no-shaft counterfactual AoA: `-9.18117 deg`;
 - direct shaft contribution: `-0.81882 deg`.
+
+That fixture proves the kernel; it is not the generated head geometry. A
+separate pinned cross-check uses the Rate `Pitching Wedge` face center and
+hosel. With the same lie, lean, rate, total 30 mph contact speed, and -10-degree
+AoA, it gives shaft-induced velocity
+`(+0.497660, -0.164057, -0.060817) m/s`, 7.0446% of downward speed, and a
+`-0.33406 deg` counterfactual AoA contribution. The current manual Simulation
+UI cannot reproduce this physical state because it has no forward-lean/head-
+pose input and does not use the hosel shaft datum; articulated sources also
+lack a torsional shaft degree of freedom. This is an explicit remaining model
+input gap, not a calculation failure.
 
 The source boundary is explicit: 1,307 deg/s is Cheetham's mean for 94 tour
 **driver** swings, not a claimed wedge norm. The documented sensitivity study
