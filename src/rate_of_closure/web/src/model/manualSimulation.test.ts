@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { add } from "./impactPhysics";
-import { DEFAULT_SCENARIO } from "./impact";
+import { DEFAULT_SCENARIO, solve } from "./impact";
 import { exactEventSample, impactKinematics } from "./impactKinematics";
 import { getClub } from "./club";
 import { faceCenterPoint, hoselPoint } from "./clubHeads";
@@ -92,5 +92,57 @@ describe("manual three-dimensional delivery", () => {
     expect(metrics.modelLimitations).toMatch(/tracked-reference translation/i);
     expect(metrics.modelLimitations).toMatch(/not shaft-induced contact-point velocity/i);
     expect(metrics.modelLimitations).toMatch(/forced contact aligns.*reference point/i);
+  });
+
+  it("pins the representative 30 mph pitching-wedge decomposition", () => {
+    const club = getClub("Pitching Wedge");
+    const scenario = {
+      ...DEFAULT_SCENARIO,
+      clubheadSpeedMph: 30,
+      omegaPlaneDps: 0,
+      omegaShaftDps: 1307,
+      lieAngleDeg: 64,
+      comToFaceMm: 20,
+    };
+    const run = runSimulation({
+      ...INPUT,
+      club,
+      clubheadSpeedMph: scenario.clubheadSpeedMph,
+      omegaDps: solve(scenario).omegaDps,
+      loftDeg: club.loftDeg,
+      manualAttackAngleDeg: -10,
+      manualClubPathDeg: 0,
+      manualForwardShaftLeanDeg: 15,
+      shaftAxisDatum: "generated_hosel",
+    });
+
+    const metrics = impactKinematics(run, scenario, club);
+    const contactVelocity = metrics.vectors.find(({ key }) => key === "total")
+      ?.vectorMps;
+    if (!contactVelocity) throw new Error("expected total contact velocity vector");
+
+    expect(contactVelocity[0]).toBeCloseTo(13.155691, 6);
+    expect(contactVelocity[1]).toBeCloseTo(-2.522013, 6);
+    expect(contactVelocity[2]).toBeCloseTo(-0.410056, 6);
+    expect(metrics.contactAoaDeg).toBeCloseTo(-10.847087, 6);
+    expect(metrics.withoutShaftAoaDeg).toBeCloseTo(-10.548272, 6);
+    expect(metrics.shaftAoaContributionDeg).toBeCloseTo(-0.298815, 6);
+    expect(metrics.shaftVerticalVelocityShare).toBeCloseTo(0.065050, 6);
+    expect(requireLaunch(run).carryM).toBeCloseTo(22.45855, 4);
+
+    const contactTargetRun = runSimulation({
+      ...INPUT,
+      club,
+      clubheadSpeedMph: scenario.clubheadSpeedMph,
+      omegaDps: solve(scenario).omegaDps,
+      loftDeg: club.loftDeg,
+      manualAttackAngleDeg: -9.1535118584,
+      manualForwardShaftLeanDeg: 15,
+      shaftAxisDatum: "generated_hosel",
+    });
+    const contactTargetMetrics = impactKinematics(contactTargetRun, scenario, club);
+    expect(contactTargetMetrics.contactAoaDeg).toBeCloseTo(-10, 8);
+    expect(contactTargetMetrics.shaftAoaContributionDeg).toBeCloseTo(-0.333108, 6);
+    expect(requireLaunch(contactTargetRun).carryM).toBeCloseTo(23.024061, 4);
   });
 });

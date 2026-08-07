@@ -176,7 +176,39 @@ def test_generated_hosel_datum_uses_declared_head_geometry_in_wedge_run() -> Non
     assert math.degrees(math.asin(run.delivery.face_normal[1])) == pytest.approx(
         _WEDGE.loft_deg - 15.0
     )
-    assert snapshot.analysis.shaft_vertical_velocity_share != pytest.approx(0.0)
+    assert snapshot.analysis.contact_velocity_mps == pytest.approx(
+        (13.155691, -2.522013, -0.410056), abs=1e-6
+    )
+    assert snapshot.analysis.total_aoa_deg == pytest.approx(-10.847087, abs=1e-6)
+    assert snapshot.analysis.without_shaft_aoa_deg == pytest.approx(
+        -10.548272, abs=1e-6
+    )
+    assert snapshot.analysis.shaft_counterfactual_aoa_delta_deg == pytest.approx(
+        -0.298815, abs=1e-6
+    )
+    assert snapshot.analysis.shaft_vertical_velocity_share == pytest.approx(
+        0.065050, abs=1e-6
+    )
+    assert run.launch is not None
+    assert run.launch["carry_m"] == pytest.approx(22.45855, abs=1e-5)
+
+    contact_target_run = run_simulation(
+        SimulationConfig(
+            scenario=scenario,
+            club=_WEDGE,
+            impact_time_s=0.03,
+            manual_attack_angle_deg=-9.1535118584,
+            manual_forward_shaft_lean_deg=15.0,
+            manual_shaft_axis_datum=ShaftAxisDatum.GENERATED_HOSEL,
+        )
+    )
+    contact_target = impact_kinematics_for_run(contact_target_run).analysis
+    assert contact_target.total_aoa_deg == pytest.approx(-10.0, abs=1e-9)
+    assert contact_target.shaft_counterfactual_aoa_delta_deg == pytest.approx(
+        -0.333108, abs=1e-6
+    )
+    assert contact_target_run.launch is not None
+    assert contact_target_run.launch["carry_m"] == pytest.approx(23.024061, abs=1e-6)
 
 
 def test_run_document_persists_the_versioned_manual_delivery_contract() -> None:
