@@ -273,7 +273,10 @@ class SpatialTargetPanel(SpatialTargetPanelAccessMixin, HeightForWidthGroupBox):
                 )
 
     def _build_target(self) -> SpatialTarget:
-        frame = str(self._frame_combo.currentData())
+        frame = cast(
+            Literal["app", "flight"],
+            str(self._frame_combo.currentData()),
+        )
         coordinate_labels = COORDINATE_LABELS[frame]
         coordinates = tuple(
             finite_number(edit, label.removesuffix(" [m]"))
