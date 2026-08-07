@@ -13,7 +13,7 @@ import json
 import logging
 from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, cast
+from typing import Any
 
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
@@ -212,10 +212,11 @@ class InspectorView(QWidget):
             raise RuntimeError("run a simulation before exporting")
         if self._spatial_target is None:
             raise RuntimeError("select a valid spatial target before exporting")
-        return cast(
-            dict[str, Any],
-            run_to_json_dict(self._run, spatial_target=self._spatial_target),
+        document: dict[str, Any] = run_to_json_dict(
+            self._run,
+            spatial_target=self._spatial_target,
         )
+        return document
 
     def load_settings_document(
         self, document: object

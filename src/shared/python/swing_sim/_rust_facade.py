@@ -75,10 +75,11 @@ def _to_rust_state(s: PendulumState) -> Any:
 def plane_rotation_rust(yaw: float, side_tilt: float, fwd_tilt: float) -> np.ndarray:
     """World-from-plane rotation matrix (3x3) — Rust path."""
     rust = _require_rust()
-    return np.asarray(
+    rotation: np.ndarray = np.asarray(
         rust.plane_rotation(float(yaw), float(side_tilt), float(fwd_tilt)),
         dtype=np.float64,
     )
+    return rotation
 
 
 def in_plane_gravity_rust(
@@ -142,7 +143,11 @@ def simulate_rust(
         float(dt),
         int(n_steps),
     )
-    return np.asarray(flat, dtype=np.float64).reshape(int(n_steps) + 1, 4)
+    states: np.ndarray = np.asarray(flat, dtype=np.float64).reshape(
+        int(n_steps) + 1,
+        4,
+    )
+    return states
 
 
 def total_energy_rust(

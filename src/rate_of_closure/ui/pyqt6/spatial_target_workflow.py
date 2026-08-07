@@ -21,7 +21,7 @@ class SpatialTargetWorkflow:
             raise TypeError("view must be a FlightView")
         self._panel = panel
         self._view = view
-        self._positions = np.zeros((0, 3), dtype=float)
+        self._positions: np.ndarray = np.zeros((0, 3), dtype=float)
         panel.targetChanged.connect(self._on_target_changed)
         self._on_target_changed(panel.target())
 

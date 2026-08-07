@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal, cast
+
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QApplication,
@@ -196,7 +198,10 @@ class SpatialTargetPanel(SpatialTargetPanelAccessMixin, HeightForWidthGroupBox):
             self._loading = False
             self._set_error("Correct invalid entries before changing entry frame")
             return
-        new_frame = str(self._frame_combo.currentData())
+        new_frame = cast(
+            Literal["app", "flight"],
+            str(self._frame_combo.currentData()),
+        )
         coordinates = self._last_target.point.coordinates_in(new_frame)
         self._loading = True
         self._populate_coordinates(coordinates)
@@ -232,7 +237,10 @@ class SpatialTargetPanel(SpatialTargetPanelAccessMixin, HeightForWidthGroupBox):
         self._loading = was_loading
 
     def _sync_labels(self) -> None:
-        frame = str(self._frame_combo.currentData())
+        frame = cast(
+            Literal["app", "flight"],
+            str(self._frame_combo.currentData()),
+        )
         for key, text in zip(
             self._coordinate_labels, COORDINATE_LABELS[frame], strict=True
         ):
@@ -275,7 +283,10 @@ class SpatialTargetPanel(SpatialTargetPanelAccessMixin, HeightForWidthGroupBox):
         )
         point = TargetPoint.from_frame(coordinates, source_frame=frame)
         tolerance = self._build_tolerance()
-        kind = str(self._kind_combo.currentData())
+        kind = cast(
+            Literal["landing_area", "aerial_waypoint"],
+            str(self._kind_combo.currentData()),
+        )
         ground_source = self._ground_edit.text()
         return SpatialTarget(
             label=self._label_edit.text(),
@@ -303,7 +314,9 @@ class SpatialTargetPanel(SpatialTargetPanelAccessMixin, HeightForWidthGroupBox):
             return SurfaceCorridorTolerance(*values)
         if kind == "sphere":
             return SphereTolerance(values[0])
-        return BoxTolerance(tuple(values))
+        if len(values) != 3:
+            raise ValueError("box tolerance requires three dimensions")
+        return BoxTolerance((values[0], values[1], values[2]))
 
     def _validate_and_emit(self, *, emit: bool = True) -> None:
         if self._external_error is not None:

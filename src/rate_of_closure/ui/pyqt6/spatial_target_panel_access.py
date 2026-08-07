@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import QComboBox, QLabel, QLineEdit
 
@@ -63,12 +63,14 @@ class SpatialTargetPanelAccessMixin:
 
     def target_json(self) -> str:
         """Serialize the valid target with the shared versioned contract."""
-        return cast(str, spatial_target_to_json(self.target()))
+        serialized: str = spatial_target_to_json(self.target())
+        return serialized
 
     @staticmethod
     def serialize_target(target: SpatialTarget) -> str:
         """Serialize ``target`` through the shared deterministic contract."""
-        return cast(str, spatial_target_to_json(target))
+        serialized: str = spatial_target_to_json(target)
+        return serialized
 
     def load_target_json(self, text: str) -> None:
         """Load serialized target text, preserving the prior target on failure."""
