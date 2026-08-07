@@ -16,6 +16,16 @@ import {
   type ConventionId,
   type ParameterId,
 } from "../model/launchMonitorConventions";
+import {
+  parseLaunchMonitorProject,
+  PROJECT_CONTRACT_VERSION,
+  type LaunchMonitorProject,
+} from "../model/launchMonitorProject";
+import { metricLabel } from "../model/launchMonitorPlayerAnalytics";
+import { downloadJson, downloadSvg } from "../model/launchMonitorDownloads";
+import { ScatterPlot } from "./LaunchMonitorCharts";
+import { LaunchMonitorPlayerInsights } from "./LaunchMonitorPlayerInsights";
+import { LaunchMonitorImportedResults } from "./LaunchMonitorImportedResults";
 
 const DEMO_ROWS: LaunchMonitorRow[] = Array.from({ length: 120 }, (_, index) => {
   const clubSpeed = 38 + index * 0.11;
@@ -49,44 +59,6 @@ const conventionLabel = (id: ConventionId) => ({
   foresight_comparable: "Foresight-Comparable",
 }[id]);
 
-function download(name: string, payload: unknown) {
-  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = name;
-  anchor.click();
-  URL.revokeObjectURL(url);
-}
-
-function ScatterPlot({ rows, outcome, predictor }: {
-  rows: LaunchMonitorRow[]; outcome: string; predictor: string;
-}) {
-  const pairs = rows.map((row) => [Number(row[predictor]), Number(row[outcome])])
-    .filter(([x, y]) => Number.isFinite(x) && Number.isFinite(y));
-  if (pairs.length < 2) return <p className="text-sm text-slate-500">Select two populated variables.</p>;
-  const xs = pairs.map(([x]) => x);
-  const ys = pairs.map(([, y]) => y);
-  const xMin = Math.min(...xs); const xMax = Math.max(...xs);
-  const yMin = Math.min(...ys); const yMax = Math.max(...ys);
-  const scale = (value: number, low: number, high: number, start: number, span: number) =>
-    start + (value - low) / Math.max(Number.EPSILON, high - low) * span;
-  return (
-    <svg viewBox="0 0 640 250" role="img" aria-label={`${outcome} versus ${predictor} scatter plot`}
-      className="h-64 w-full rounded-lg border border-slate-800 bg-slate-950">
-      <line x1="52" y1="215" x2="620" y2="215" stroke="#475569" />
-      <line x1="52" y1="18" x2="52" y2="215" stroke="#475569" />
-      {pairs.map(([x, y], index) => (
-        <circle key={index} cx={scale(x, xMin, xMax, 52, 568)}
-          cy={215 - scale(y, yMin, yMax, 0, 197)} r="3" fill="#38bdf8" opacity="0.72" />
-      ))}
-      <text x="336" y="242" textAnchor="middle" fill="#94a3b8" fontSize="12">{predictor}</text>
-      <text x="15" y="116" textAnchor="middle" fill="#94a3b8" fontSize="12"
-        transform="rotate(-90 15 116)">{outcome}</text>
-    </svg>
-  );
-}
-
 export function LaunchMonitorAnalyticsPanel() {
   const [rows, setRows] = useState<LaunchMonitorRow[]>(DEMO_ROWS);
   const [sourceName, setSourceName] = useState("Built-In Demonstration Data");
@@ -99,9 +71,11 @@ export function LaunchMonitorAnalyticsPanel() {
   const [confidence, setConfidence] = useState(0.95);
   const [minSamples, setMinSamples] = useState(10);
   const [convention, setConvention] = useState<ConventionId>("app_native");
+  const [targetDistanceYards, setTargetDistanceYards] = useState(150);
   const [result, setResult] = useState<LaunchMonitorAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
+  const projectInput = useRef<HTMLInputElement>(null);
   const numeric = useMemo(() => numericLaunchMonitorColumns(rows), [rows]);
   const grouping = useMemo(() => {
     const columns = new Set(rows.flatMap((row) => Object.keys(row)));
@@ -140,6 +114,25 @@ export function LaunchMonitorAnalyticsPanel() {
     }
   };
 
+  const project = (): LaunchMonitorProject => ({
+    contractVersion: PROJECT_CONTRACT_VERSION,
+    savedAt: new Date().toISOString(), sourceName, rows,
+    settings: { outcome, predictors, mode, method, missing, groupBy, confidence, minSamples, targetDistanceYards },
+  });
+
+  const loadProject = async (file: File) => {
+    try {
+      const next = parseLaunchMonitorProject(await file.text());
+      setRows(next.rows); setSourceName(next.sourceName); setOutcome(next.settings.outcome);
+      setPredictors(next.settings.predictors); setMode(next.settings.mode); setMethod(next.settings.method);
+      setMissing(next.settings.missing); setGroupBy(next.settings.groupBy);
+      setConfidence(next.settings.confidence); setMinSamples(next.settings.minSamples);
+      setTargetDistanceYards(next.settings.targetDistanceYards); setResult(null); setError(null);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : String(caught));
+    }
+  };
+
   return (
     <section aria-label="Launch Monitor Analytics" className="space-y-5">
       <div className={card}>
@@ -156,9 +149,18 @@ export function LaunchMonitorAnalyticsPanel() {
             <input ref={input} type="file" accept=".csv,.json,text/csv,application/json"
               className="hidden" aria-label="Launch monitor CSV or JSON file"
               onChange={(event) => { const file = event.target.files?.[0]; if (file) void loadFile(file); }} />
+            <input ref={projectInput} type="file" accept=".json,application/json" className="hidden"
+              aria-label="Saved launch monitor analytics project"
+              onChange={(event) => { const file = event.target.files?.[0]; if (file) void loadProject(file); }} />
             <button type="button" title="Import a local CSV or JSON launch-monitor export"
               onClick={() => input.current?.click()}
               className="rounded-lg bg-sky-600 px-4 py-2 text-sm font-semibold hover:bg-sky-500">Import Data</button>
+            <button type="button" title="Open a versioned project containing retained data and analysis settings"
+              onClick={() => projectInput.current?.click()}
+              className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Open Project</button>
+            <button type="button" title="Save retained data and all analysis settings as a versioned JSON project"
+              onClick={() => downloadJson("launch-monitor-project.json", project())}
+              className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Save Project</button>
             <button type="button" title="Restore the built-in non-vendor demonstration dataset"
               onClick={() => { setRows(DEMO_ROWS); setSourceName("Built-In Demonstration Data"); setResult(null); }}
               className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Load Demo</button>
@@ -239,9 +241,18 @@ export function LaunchMonitorAnalyticsPanel() {
 
         <div className="space-y-5">
           <div className={card}>
-            <h3 className="mb-3 font-semibold text-slate-200">Selected Relationship</h3>
+            <div className="mb-3 flex items-center justify-between gap-3">
+              <h3 className="font-semibold text-slate-200">Selected Relationship</h3>
+              <button type="button" title="Save the selected relationship plot as a scalable SVG image"
+                onClick={() => downloadSvg("launch-monitor-relationship.svg", "launch-monitor-relationship-plot")}
+                className="rounded border border-slate-700 px-3 py-2 text-xs hover:bg-slate-800">Save Plot</button>
+            </div>
             <ScatterPlot rows={rows} outcome={outcome} predictor={predictors[0] ?? ""} />
+            <p className="mt-2 text-xs text-slate-500">Axes: {metricLabel(predictors[0] ?? "")} → {metricLabel(outcome)}. Hover a point for its exact backing values.</p>
           </div>
+          <LaunchMonitorPlayerInsights rows={rows} outcome={outcome}
+            targetDistanceYards={targetDistanceYards} setTargetDistanceYards={setTargetDistanceYards} />
+          <LaunchMonitorImportedResults rows={rows} />
           {!result ? (
             <div className={`${card} text-center text-slate-500`}>Run the analysis to populate uncertainty, diagnostics, grouping, and lineage.</div>
           ) : (
@@ -269,9 +280,9 @@ export function LaunchMonitorAnalyticsPanel() {
                 {result.warnings.map((warning) => <p key={warning} className="mt-2 text-sm text-amber-200">{warning}</p>)}
                 <div className="mt-4 flex flex-wrap gap-2">
                   <button type="button" title="Download every retained input record as JSON"
-                    onClick={() => download("launch-monitor-records.json", rows)} className="rounded border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Export Retained Data</button>
+                    onClick={() => downloadJson("launch-monitor-records.json", rows)} className="rounded border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Export Retained Data</button>
                   <button type="button" title="Download the complete request, statistics, warnings, and lineage as JSON"
-                    onClick={() => download("launch-monitor-analysis.json", result)} className="rounded border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Export Analysis</button>
+                    onClick={() => downloadJson("launch-monitor-analysis.json", result)} className="rounded border border-slate-700 px-3 py-2 text-sm hover:bg-slate-800">Export Analysis</button>
                 </div>
               </div>
             </>
