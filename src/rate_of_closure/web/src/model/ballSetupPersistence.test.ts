@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   DRIVER_TEE_HEIGHT_M,
+  ballSetupToJson,
   type BallSetup,
 } from "./ballSetup";
 import {
@@ -178,6 +179,24 @@ describe("ball setup persistence", () => {
       spatial_target: document.spatial_target,
       parameters: {},
     })).toThrow(/version 4 requires ball_setup/i);
+  });
+
+  it.each([
+    ["rate_of_closure.simulation_run.web/5", "support_mode"],
+    ["rate_of_closure.simulation_run.web/5", "tee_height_m"],
+    ["rate_of_closure.simulation_run.web/5", "height_reference"],
+    ["rate_of_closure.simulation_run.web/5", "ball_center_m"],
+    ["rate_of_closure.simulation_run/5", "support_mode"],
+    ["rate_of_closure.simulation_run/5", "tee_height_m"],
+    ["rate_of_closure.simulation_run/5", "height_reference"],
+    ["rate_of_closure.simulation_run/5", "ball_center_m"],
+  ])("rejects %s when ball_setup.%s is missing", (format, missingField) => {
+    const ballSetup: Record<string, unknown> = { ...ballSetupToJson(tee) };
+    delete ballSetup[missingField];
+    expect(() => ballSetupFromSimulationDocument({
+      format,
+      parameters: { ball_setup: ballSetup },
+    })).toThrow(new RegExp(`requires ball_setup\\.${missingField}`, "i"));
   });
 
   it("neutralizes formula-leading target text in CSV while preserving numerics", () => {

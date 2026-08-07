@@ -21,6 +21,13 @@ import { simulationDocumentFormat } from "./simulationDocumentFormat";
 export const BALL_SETUP_STORAGE_KEY = "rate_of_closure.ball_setup.web/v1";
 export const SIMULATION_EXPORT_FORMAT = "rate_of_closure.simulation_run.web/5";
 
+const CURRENT_BALL_SETUP_FIELDS = [
+  "support_mode",
+  "tee_height_m",
+  "height_reference",
+  "ball_center_m",
+] as const;
+
 export interface BallSetupPreference {
   setup: BallSetup;
   userOverridden: boolean;
@@ -241,6 +248,20 @@ export function ballSetupFromSimulationDocument(value: unknown): BallSetup {
       throw new Error(`Simulation schema version ${format.version} requires ball_setup.`);
     }
     return { ...GROUND_BALL_SETUP };
+  }
+  if (format?.version === 5) {
+    const setupRecord = record(rawSetup);
+    if (setupRecord === null) {
+      throw new Error("Current ball_setup must be an object.");
+    }
+    const missing = CURRENT_BALL_SETUP_FIELDS.find(
+      (field) => setupRecord[field] === undefined,
+    );
+    if (missing !== undefined) {
+      throw new Error(
+        `Simulation schema version ${format.version} requires ball_setup.${missing}.`,
+      );
+    }
   }
   return setupFromUnknown(rawSetup);
 }
