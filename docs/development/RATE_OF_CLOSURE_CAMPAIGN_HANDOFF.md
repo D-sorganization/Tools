@@ -1,12 +1,15 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-06. This is an isolated, local integration; it has not
-been pushed and no source PR branch was rewritten.
+Status verified 2026-08-06. This isolated integration is published as draft
+[PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
+branch was rewritten.
 
 ## Integration checkout
 
 - Worktree: `C:\Users\diete\Repositories\Tools-worktrees\ballflight-campaign-integration`
 - Branch: `codex/ballflight-campaign-integration`
+- Draft PR: [#4217](https://github.com/D-sorganization/Tools/pull/4217)
+- PR base ref: `feat/4181-launch-monitor-registry`
 - Integration base: `626cfb64b0eddaa598a2a24dc2a050a420be25be`
 - Latest implementation head before this handoff update:
   `79627c4c3bc8bf59968390d9f6e17a3f3081675d` (merge of the #4213 v2 head)
