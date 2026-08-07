@@ -62,6 +62,11 @@ def test_every_interactive_control_has_accessible_help(qtbot) -> None:  # type: 
         tab.player_controls.carry_combo,
         tab.player_controls.session_combo,
         tab.player_controls.player_combo,
+        tab.player_controls.covariation_x_combo,
+        tab.player_controls.covariation_y_combo,
+        tab.player_controls.covariation_method_combo,
+        tab.player_controls.covariation_min_samples_spin,
+        tab.player_controls.covariation_confidence_spin,
         tab.player_controls.target_distance_spin,
         tab.player_controls.start_lie_combo,
         tab.player_controls.end_lie_combo,
@@ -231,3 +236,108 @@ def test_project_hash_failure_does_not_mutate_current_data(
 
     assert target.dataset_id == "demo"
     assert target.frame.equals(before)
+
+
+def test_player_covariation_renders_units_meta_summary_and_backing_rows(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = LaunchMonitorAnalyticsTab(auto_discover_campaign=False)
+    qtbot.addWidget(tab)
+    tab.set_frame(
+        pd.DataFrame(
+            {
+                "player_id": ["A"] * 6 + ["B"] * 6,
+                "club_path_deg": [-3, -2, -1, 0, 1, 2] * 2,
+                "face_angle_deg": [-2, -1, 0, 1, 2, 3] + [2, 1, 0, -1, -2, -3],
+            }
+        )
+    )
+    controls = tab.player_controls
+    controls.plot_mode_combo.setCurrentText("Within-Player Covariation")
+    controls.player_combo.setCurrentText("player_id")
+    controls.covariation_x_combo.setCurrentText("club_path_deg")
+    controls.covariation_y_combo.setCurrentText("face_angle_deg")
+    controls.covariation_min_samples_spin.setValue(4)
+
+    tab.run_analysis()
+
+    assert "Centered Club Path Deg (deg)" == tab.plot_widget.figure.axes[0].get_xlabel()
+    assert (
+        "Centered Face Angle Deg (deg)" == tab.plot_widget.figure.axes[0].get_ylabel()
+    )
+    assert "Correlation" in tab.plot_widget.figure.axes[1].get_xlabel()
+    assert set(tab.plot_widget.backing_data["record_type"]) == {
+        "shot_backing",
+        "player_summary",
+        "meta_summary",
+    }
+    assert {"player_id", "pearson_r", "ci_lower", "ci_upper"}.issubset(
+        tab.plot_widget.backing_data.columns
+    )
+    assert set(tab.plot_widget.backing_data["x_unit"]) == {"deg"}
+    assert set(tab.plot_widget.backing_data["y_unit"]) == {"deg"}
+    assert set(tab.plot_widget.backing_data["x_column"]) == {"club_path_deg"}
+    assert set(tab.plot_widget.backing_data["y_column"]) == {"face_angle_deg"}
+    assert "within-player" in tab.details.toPlainText().lower()
+    assert "does not establish causality" in tab.guidance.toPlainText().lower()
+
+
+def test_covariation_selections_round_trip_in_project(qtbot) -> None:  # type: ignore[no-untyped-def]
+    original = LaunchMonitorAnalyticsTab(auto_discover_campaign=False)
+    qtbot.addWidget(original)
+    controls = original.player_controls
+    controls.covariation_x_combo.setCurrentText("club_path")
+    controls.covariation_y_combo.setCurrentText("ball_speed")
+    controls.covariation_method_combo.setCurrentText("Spearman")
+    controls.covariation_min_samples_spin.setValue(7)
+    controls.covariation_confidence_spin.setValue(0.9)
+    project = original._project()
+
+    restored = LaunchMonitorAnalyticsTab(auto_discover_campaign=False)
+    qtbot.addWidget(restored)
+    restored._load_project(project)
+    restored_controls = restored.player_controls
+
+    assert restored_controls.covariation_x_combo.currentText() == "club_path"
+    assert restored_controls.covariation_y_combo.currentText() == "ball_speed"
+    assert restored_controls.covariation_method_combo.currentText() == "Spearman"
+    assert restored_controls.covariation_min_samples_spin.value() == 7
+    assert restored_controls.covariation_confidence_spin.value() == pytest.approx(0.9)
+
+
+def test_player_covariation_requires_explicit_identity(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = LaunchMonitorAnalyticsTab(auto_discover_campaign=False)
+    qtbot.addWidget(tab)
+    tab.player_controls.plot_mode_combo.setCurrentText("Within-Player Covariation")
+    tab.player_controls.player_combo.setCurrentText("(all players)")
+
+    with pytest.raises(ValueError, match="explicit player identifier"):
+        tab.run_analysis()
+
+
+def test_covariation_pair_scan_ranks_all_pairs_and_exports_backing(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = LaunchMonitorAnalyticsTab(auto_discover_campaign=False)
+    qtbot.addWidget(tab)
+    tab.set_frame(
+        pd.DataFrame(
+            {
+                "player_id": ["A"] * 6 + ["B"] * 6,
+                "club_path_deg": [-3, -2, -1, 0, 1, 2] * 2,
+                "face_angle_deg": [-2, -1, 0, 1, 2, 3] * 2,
+                "ball_speed_mph": [100, 102, 104, 106, 108, 110]
+                + [110, 108, 106, 104, 102, 100],
+            }
+        )
+    )
+    controls = tab.player_controls
+    controls.plot_mode_combo.setCurrentText("Covariation Pair Scan")
+    controls.player_combo.setCurrentText("player_id")
+    controls.covariation_min_samples_spin.setValue(4)
+
+    tab.run_analysis()
+
+    assert len(tab.plot_widget.backing_data) == 3
+    assert tab.result_table.rowCount() == 3
+    assert "Correlation (unitless)" in tab.plot_widget.figure.axes[0].get_xlabel()
+    assert tab.player_payload["pair_count"] == 3
+    details = tab.details.toPlainText().lower()
+    assert "multiplicity" in details
+    assert "does not imply causation" in details

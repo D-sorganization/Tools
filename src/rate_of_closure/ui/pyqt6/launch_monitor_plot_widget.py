@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
+from typing import Any
 
 import pandas as pd
 from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
@@ -244,6 +245,83 @@ class LaunchMonitorPlotWidget(QWidget):
         self.backing_data = summary.copy()
         self.description = analysis.method_description
         self.canvas.draw_idle()
+
+    def plot_player_covariation(
+        self,
+        analysis: Any,
+        method: str,
+    ) -> None:
+        """Show player-centered pairs and player-level association estimates."""
+
+        self.figure.clear()
+        scatter_axis, forest_axis = self.figure.subplots(1, 2)
+        self._plot_covariation_pairs(scatter_axis, analysis.backing_data, analysis)
+        self._plot_covariation_forest(forest_axis, analysis.per_player, method)
+        self.backing_data = self._covariation_export_table(analysis, method)
+        self.description = analysis.method_description
+        self.canvas.draw_idle()
+
+    @staticmethod
+    def _covariation_export_table(analysis: Any, method: str) -> pd.DataFrame:
+        common = {
+            "x_column": analysis.request.x_column,
+            "y_column": analysis.request.y_column,
+            "x_unit": analysis.units["x"],
+            "y_unit": analysis.units["y"],
+            "display_method": method,
+            "calculation": analysis.method_description,
+        }
+        shots = analysis.backing_data.assign(record_type="shot_backing", **common)
+        players = analysis.per_player.assign(record_type="player_summary", **common)
+        meta = pd.DataFrame(
+            [
+                {
+                    "record_type": "meta_summary",
+                    **vars(analysis.meta_analysis),
+                    **common,
+                }
+            ]
+        )
+        return pd.concat([shots, players, meta], ignore_index=True, sort=False)
+
+    def _plot_covariation_pairs(
+        self, axis: Any, pairs: pd.DataFrame, analysis: Any
+    ) -> None:
+        request = analysis.request
+        for _player, player_pairs in pairs.groupby("player_id", sort=False):
+            axis.scatter(
+                player_pairs["centered_x"],
+                player_pairs["centered_y"],
+                s=9,
+                alpha=0.3,
+                rasterized=True,
+            )
+        x_label = request.x_column.replace("_", " ").title()
+        y_label = request.y_column.replace("_", " ").title()
+        axis.set_xlabel(f"Centered {x_label} ({analysis.units['x']})")
+        axis.set_ylabel(f"Centered {y_label} ({analysis.units['y']})")
+        axis.set_title("Player-Mean-Centered Complete Pairs")
+        axis.grid(alpha=0.2)
+
+    @staticmethod
+    def _plot_covariation_forest(
+        axis: Any, per_player: pd.DataFrame, method: str
+    ) -> None:
+        coefficient = "pearson_r" if method.lower() == "pearson" else "spearman_r"
+        valid = per_player.loc[per_player["status"] == "ok"].reset_index(drop=True)
+        positions = pd.Series(range(len(valid)), dtype=float)
+        if method.lower() == "pearson":
+            axis.hlines(positions, valid["ci_lower"], valid["ci_upper"])
+            axis.scatter(valid[coefficient], positions)
+        else:
+            axis.scatter(valid[coefficient], positions)
+        axis.axvline(0.0, color="black", linestyle="--")
+        axis.set_yticks(positions, valid["player_id"].astype(str))
+        axis.set_xlabel(f"{method} Correlation (unitless)")
+        axis.set_ylabel("Player Identifier")
+        axis.set_title("Player Association Forest")
+        axis.set_xlim(-1.05, 1.05)
+        axis.grid(alpha=0.2)
 
     def save_plot_dialog(self) -> None:
         selected, _ = QFileDialog.getSaveFileName(

@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-06
 
+## 2026-08-07 Within-Player Covariation and Population Meta-Analysis
+
+Epic #4277 is implemented on `feat/4277-player-covariation`, stacked directly
+on the merged Neural Model Lab head of `feat/4226-launch-monitor-player-platform`.
+The shared calculation seam separates pooled shot association, player-mean-
+centered association, correlation among player means, per-player Pearson/
+Spearman/regression estimates, and fixed/random Fisher-z synthesis with
+DerSimonian-Laird heterogeneity. The all-pairs scan is exploratory and does not
+turn ranked correlations into causal findings.
+
+Both interfaces require an explicitly selected identity/grouping column and
+retain the selection in their project state. Never infer player identity from
+session, club, row order, or file structure. The private TrackMan-comparable v1
+corpus has 10,169 retained source shots but no trustworthy player identifier;
+within-player and population meta-analysis must remain unavailable for that
+corpus unless a separately proven identity field is supplied. Calculation and
+interpretation details are in
+`docs/rate_of_closure/WITHIN_PLAYER_COVARIATION.md`.
+
 ## 2026-08-06 Neural Model Lab
 
 Epic #4240 is active on `feat/4240-neural-model-lab`, stacked on the player

@@ -22,6 +22,10 @@ import {
   type LaunchMonitorProject,
 } from "../model/launchMonitorProject";
 import { metricLabel } from "../model/launchMonitorPlayerAnalytics";
+import {
+  defaultCovariationSettings,
+  type CovariationUiSettings,
+} from "../model/launchMonitorCovariation";
 import { downloadJson, downloadSvg } from "../model/launchMonitorDownloads";
 import { ScatterPlot } from "./LaunchMonitorCharts";
 import { LaunchMonitorPlayerInsights } from "./LaunchMonitorPlayerInsights";
@@ -35,6 +39,7 @@ const DEMO_ROWS: LaunchMonitorRow[] = Array.from({ length: 120 }, (_, index) => 
   const ballSpeed = clubSpeed * 1.46 + attackAngle * 0.08 + Math.sin(index) * 0.25;
   return {
     shot_id: `demo-${index + 1}`,
+    player_id: `demo-player-${Math.floor(index / 40) + 1}`,
     session_id: index < 60 ? "demo-a" : "demo-b",
     monitor_vendor: index % 2 ? "FlightScope" : "TrackMan",
     observation_kind: "shot",
@@ -72,6 +77,9 @@ export function LaunchMonitorAnalyticsPanel() {
   const [minSamples, setMinSamples] = useState(10);
   const [convention, setConvention] = useState<ConventionId>("app_native");
   const [targetDistanceYards, setTargetDistanceYards] = useState(150);
+  const [covariationSettings, setCovariationSettings] = useState<CovariationUiSettings>(
+    () => defaultCovariationSettings(DEMO_ROWS),
+  );
   const [result, setResult] = useState<LaunchMonitorAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
@@ -107,6 +115,7 @@ export function LaunchMonitorAnalyticsPanel() {
       setSourceName(file.name);
       setOutcome(nextNumeric[0]);
       setPredictors([nextNumeric[1]]);
+      setCovariationSettings(defaultCovariationSettings(next));
       setResult(null);
       setError(null);
     } catch (caught) {
@@ -117,7 +126,10 @@ export function LaunchMonitorAnalyticsPanel() {
   const project = (): LaunchMonitorProject => ({
     contractVersion: PROJECT_CONTRACT_VERSION,
     savedAt: new Date().toISOString(), sourceName, rows,
-    settings: { outcome, predictors, mode, method, missing, groupBy, confidence, minSamples, targetDistanceYards },
+    settings: {
+      outcome, predictors, mode, method, missing, groupBy, confidence, minSamples,
+      targetDistanceYards, covariation: covariationSettings,
+    },
   });
 
   const loadProject = async (file: File) => {
@@ -127,7 +139,9 @@ export function LaunchMonitorAnalyticsPanel() {
       setPredictors(next.settings.predictors); setMode(next.settings.mode); setMethod(next.settings.method);
       setMissing(next.settings.missing); setGroupBy(next.settings.groupBy);
       setConfidence(next.settings.confidence); setMinSamples(next.settings.minSamples);
-      setTargetDistanceYards(next.settings.targetDistanceYards); setResult(null); setError(null);
+      setTargetDistanceYards(next.settings.targetDistanceYards);
+      setCovariationSettings(next.settings.covariation ?? defaultCovariationSettings(next.rows));
+      setResult(null); setError(null);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : String(caught));
     }
@@ -162,7 +176,10 @@ export function LaunchMonitorAnalyticsPanel() {
               onClick={() => downloadJson("launch-monitor-project.json", project())}
               className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Save Project</button>
             <button type="button" title="Restore the built-in non-vendor demonstration dataset"
-              onClick={() => { setRows(DEMO_ROWS); setSourceName("Built-In Demonstration Data"); setResult(null); }}
+              onClick={() => {
+                setRows(DEMO_ROWS); setSourceName("Built-In Demonstration Data");
+                setCovariationSettings(defaultCovariationSettings(DEMO_ROWS)); setResult(null);
+              }}
               className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800">Load Demo</button>
           </div>
         </div>
@@ -251,7 +268,8 @@ export function LaunchMonitorAnalyticsPanel() {
             <p className="mt-2 text-xs text-slate-500">Axes: {metricLabel(predictors[0] ?? "")} → {metricLabel(outcome)}. Hover a point for its exact backing values.</p>
           </div>
           <LaunchMonitorPlayerInsights rows={rows} outcome={outcome}
-            targetDistanceYards={targetDistanceYards} setTargetDistanceYards={setTargetDistanceYards} />
+            targetDistanceYards={targetDistanceYards} setTargetDistanceYards={setTargetDistanceYards}
+            covariationSettings={covariationSettings} setCovariationSettings={setCovariationSettings} />
           <LaunchMonitorImportedResults rows={rows} />
           {!result ? (
             <div className={`${card} text-center text-slate-500`}>Run the analysis to populate uncertainty, diagnostics, grouping, and lineage.</div>

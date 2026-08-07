@@ -6,6 +6,10 @@ This document is the calculation, data-boundary, and parity contract for the
 launch-monitor player analytics platform. It supplements the general analytics
 contract in `docs/specs/LAUNCH_MONITOR_ANALYTICS.md`.
 
+The arbitrary-variable, within-player, and population synthesis extension is
+specified in
+[`WITHIN_PLAYER_COVARIATION.md`](WITHIN_PLAYER_COVARIATION.md).
+
 ## Repository and Sharing Boundary
 
 Three repositories have deliberately different responsibilities:
