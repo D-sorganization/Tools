@@ -2702,3 +2702,7 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+## 1.1.415 - Palette: Improve accessible input labels for Screen Readers
+
+- **2026-08-07**: feat(ux) — Added dynamic IDs linking labels to inputs and context-aware ARIA labels to mathematical matrix grids across the Rotation Converter.
