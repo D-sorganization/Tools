@@ -93,16 +93,98 @@ screen projection.
 
 ## Worked Example
 
-The regression fixture uses a right-handed target/ground frame, 64-degree lie,
-15-degree forward shaft lean, a 20 mm contact offset from the shaft line,
-1307 degrees per second of illustrative shaft-axis rotation, 30 mph contact
-speed, and total AoA of -10 degrees.
+### Declared State
 
-The evaluated shaft term is approximately
-`(0, -0.193183, -0.396084) m/s`. Removing it while holding the other terms fixed
-produces -9.18118 degrees AoA, so the direct shaft contribution is -0.81882
-degrees for this particular state. The 1307-degree-per-second value is an
-illustrative driver-derived rate, not a claimed typical wedge rate.
+The regression fixture uses a right-handed target/ground frame (`x` target,
+`y` up, `z` right), 64-degree lie, 15-degree forward shaft lean, a 20 mm
+face-forward contact offset from the physical shaft line, and 1,307 degrees per
+second of positive shaft-axis rotation. The final contact velocity is declared
+to be `(13.207454, -2.328830, 0) m/s`, whose magnitude is exactly 30 mph to the
+reported precision and whose AoA is -10 degrees.
+
+The 1,307-degree-per-second input is the mean handle twist velocity measured by
+Cheetham in 94 tour-professional **driver** swings (standard deviation 304,
+observed range 652--2,432 degrees per second). It is an illustrative sourced
+reference, not a measured or inferred typical wedge rate. No wedge-specific
+impact distribution was found in the reviewed primary literature, so the UI
+and this specification must not label it as one. See Cheetham (2014),
+[The Relationship of Club Handle Twist Velocity to Selected Biomechanical
+Characteristics of the Golf Drive](https://www.philcheetham.com/media/Phillip-Cheetham-Doctoral-Dissertation-2014.pdf),
+especially Table 2.
+
+### Translation-versus-shaft decomposition
+
+For the declared state the exact vectors are:
+
+| Term | Velocity in `(target, up, right)` [m/s] | Downward speed [m/s] |
+| --- | ---: | ---: |
+| Shaft-axis datum translation | `(13.207454, -2.135647, +0.396084)` | 2.135647 |
+| Rotation about shaft | `(0, -0.193183, -0.396084)` | 0.193183 |
+| Other rotation | `(0, 0, 0)` within numerical precision | 0 |
+| **Contact point total** | **`(13.207454, -2.328830, 0)`** | **2.328830** |
+
+Thus shaft-axis rotation supplies 8.2953% of the downward velocity and the
+shaft-datum translation supplies 91.7047%. Removing only the shaft term while
+holding the physical state otherwise fixed gives -9.18117 degrees AoA. The
+direct shaft counterfactual is therefore -0.81882 degrees, or 8.19% of the
+10-degree AoA magnitude. The velocity share and angular share answer different
+questions because AoA is an `atan2` of vertical and horizontal speed and the
+shaft term also cancels 0.396084 m/s of rightward velocity.
+
+There is no non-shaft angular component in this intentionally isolated fixture,
+so the two-factor Shapley result equals the direct shaft counterfactual. In a
+measured swing with swing-plane rotation, the non-shaft term must be retained
+and the reported angular contributions will generally not equal simple vector
+percentages.
+
+### Shaft-rate sensitivity with translation held fixed
+
+The following table varies only shaft-axis rate while keeping the above
+shaft-datum translation and geometry fixed. Values are regression-tested rather
+than obtained from a display-layer approximation.
+
+| Shaft rate [deg/s] | Total AoA [deg] | Direct shaft AoA delta [deg] | Shaft share of downward speed |
+| ---: | ---: | ---: | ---: |
+| 0 | -9.1812 | 0.0000 | 0.00% |
+| 652 | -9.5911 | -0.4099 | 4.32% |
+| 1,003 | -9.8106 | -0.6294 | 6.49% |
+| 1,307 | -10.0000 | -0.8188 | 8.30% |
+| 1,611 | -10.1887 | -1.0075 | 10.03% |
+| 2,432 | -10.6946 | -1.5134 | 14.41% |
+
+The table is a geometric sensitivity study, not a player recommendation. Rate,
+offset, lie, lean, handedness, and contact location jointly determine the sign
+and magnitude.
+
+### Reconciliation with the requested 30-yard carry
+
+Carry is not a kinematic input to this decomposition. It follows only after a
+club/ball impact model supplies ball launch conditions and an aerodynamic model
+integrates the flight. As an explicit consistency check, take a nominal
+52-degree wedge and approximate 15 degrees of forward lean as 37 degrees of
+dynamic loft. With 30 mph club speed, -10 degrees AoA, centered impact, the
+current rigid-body impact model, and the `waterloo_penner` calm-flight model,
+the model predicts:
+
+| Quantity | Model result |
+| --- | ---: |
+| Ball speed | 30.449 mph |
+| Launch angle | 37.000 degrees |
+| Spin | 3,135.8 rpm |
+| Carry | 17.566 m (19.211 yd) |
+
+This model therefore does **not** predict 30 yards from that 30 mph delivery.
+Holding AoA and dynamic loft fixed, the same impact/flight chain requires
+approximately 37.887 mph club speed to carry 27.432 m (30 yd); that solution
+launches the ball at 38.454 mph with approximately 3,960 rpm spin. Conversely,
+a directly prescribed 37-degree, 3,136-rpm ball launch would need about
+40.13 mph ball speed to carry 30 yards, which is not the ball speed produced by
+the 30 mph rigid-body impact case.
+
+These results are deterministic model outputs, not validation against turf,
+grass, ball cover, groove condition, shaft compliance, or measured short-game
+launch data. The 30 mph/30-yard request should be treated as a target to be
+validated or solved, not as an assumption that overrides the forward model.
 
 For the simplified no-lean shaft direction
 `a = (0, sin(lie), -cos(lie))` and a face-forward offset
