@@ -109,3 +109,13 @@ def test_launch_monitor_tab_is_registered_once(qtbot, settings) -> None:  # type
             assert analytics_tab.outcome_combo.currentText() == "observed_carry_m"
     finally:
         window.close()
+
+
+def test_neural_model_lab_is_registered_once(qtbot, settings) -> None:  # type: ignore[no-untyped-def]
+    window = RateOfClosureMainWindow(navigation_settings=settings)
+    qtbot.addWidget(window)
+    try:
+        assert window.primary_tab_ids().count("neural_model_lab") == 1
+        assert window._tabs.indexOf(window._neural_model_lab_tab) >= 0
+    finally:
+        window.close()

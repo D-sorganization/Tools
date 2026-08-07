@@ -16,6 +16,7 @@ const TABS = [
   "Plots",
   "Flight Explorer",
   "Launch Monitor Analytics",
+  "Neural Model Lab",
   "Variation",
   "Putting",
   "Glossary",

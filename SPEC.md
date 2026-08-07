@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.10                                    |
-| **Spec Version**        | 1.13.10                                    |
+| **Current Version**     | 1.13.11                                    |
+| **Spec Version**        | 1.13.11                                    |
 | **Last Spec Update**    | 2026-08-06                                 |
 
 ## 2. Purpose & Mission
@@ -2738,6 +2738,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-06 | 1.13.11 | feat(rate_of_closure, #4240): add the Neural Model Lab safe JSON inference and training-request contracts, PyQt6 and React/Vite workspaces, fail-closed vendor eligibility, applicability warnings, accessible metrics/plots/provenance, and a documented private TrackMan-comparable 8,860-shot training campaign with leakage-safe 70/15/15 selection/refit/test protocol. |
 | 2026-08-06 | 1.14.0 | feat(rate_of_closure, #4226): add private campaign dataset discovery without public-row copying, source-hash-bound persistent analysis projects, unit-aware and backing-data-exportable PyQt6/React plots, signed directional dispersion, a sourced Broadie-style range-shot strokes-gained proxy, session/player trend analysis, and a documented private-repository seam for paired TrackMan/model plots plus PCA and residual feature-importance artifacts; hosted exact-head validation remains the release gate. |
 | 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
 | 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |

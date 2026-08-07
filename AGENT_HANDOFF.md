@@ -19,6 +19,7 @@ stack of golf-simulation epics:
 | #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
 | #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model)     | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands.                                                                                                    |
 | #4226 — Launch Monitor Player Analytics Platform                             | Active on `feat/4226-launch-monitor-player-platform`, stacked on `feat/4205-launch-monitor-analytics`; private campaign discovery, persistent projects, unit-aware/exportable plots, dispersion, strokes-gained proxy, session trends, and React parity are implemented. Local Python/Web gates pass; hosted exact-head checks remain the release gate. |
+| #4240 — Launch Monitor Neural Model Lab                                       | Active on `feat/4240-neural-model-lab`, stacked on #4226; public code accepts bounded non-executable bundles and creates private training requests, while private issue #9 owns the 8,860-shot TrackMan-comparable artifact. Review/validation of the public implementation remains pending. |
 
 The separate shared Club Builder epic #4146 is active. Its first dependency
 slice, #4147, lives on `feat/4147-club-builder-core` and establishes the

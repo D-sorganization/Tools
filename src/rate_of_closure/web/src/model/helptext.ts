@@ -111,6 +111,13 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
       "Results include pair-specific sample counts, multiplicity-adjusted p-values, confidence intervals, OLS coefficient uncertainty, residual diagnostics, grouped estimates, and a deterministic dataset fingerprint. TrackMan-Comparable and Foresight-Comparable labels describe documented interpretation frames only; they do not claim device emulation or certification. Export both retained records and the complete analysis evidence as JSON.",
     ],
   },
+  "Neural Model Lab": {
+    title: "How to Use This Page",
+    paragraphs: [
+      "Use this page to define a reproducible vendor-comparable neural-regression campaign and inspect its portable results. Import the current launch-monitor CSV export or a custom CSV, identify numeric feature and output columns, choose the vendor label and network settings, then export the metadata-only training request. Run that request with the documented private training procedure; the browser does not upload source rows or perform training.",
+      "Import the resulting portable model JSON to inspect its held-out metrics, learning curve, dataset digest, procedure, and limitations. Enter a single row for an immediate local prediction, or import a batch CSV with every feature column. If the batch also contains observed output columns, the app plots predicted-minus-observed residuals in the named output units and exports their exact backing rows. A vendor model requires traceable row-level targets from that vendor; aggregate evidence cannot support shot-level fitting, and every result is comparable research rather than vendor certification or proprietary algorithm reconstruction.",
+    ],
+  },
   Variation: {
     title: "How to Use This Page",
     paragraphs: [
