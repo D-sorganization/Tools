@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-06
 
+## 2026-08-06 Neural Model Lab
+
+Epic #4240 is active on `feat/4240-neural-model-lab`, stacked on the player
+analytics branch. The public implementation adds a dedicated PyQt6/React
+workspace, bounded `launch-monitor-neural-bundle/v1` parsing and inference,
+applicability warnings, metric/learning-curve/provenance inspection, and
+metadata-only training requests for the private campaign CLI. Do not add pickle,
+joblib, arbitrary command execution, or restricted training rows to Tools.
+
+Private campaign issue #9 owns the current TrackMan-comparable model: 8,860
+unique shots split deterministically into 6,196 train, 1,324 validation, and
+1,340 untouched test rows. Validation standardized RMSE selected the 64x32 ReLU
+network from a bounded three-architecture search; the final fit uses train plus
+validation, then scores test once. Foresight and FlightScope remain disabled
+because no eligible row-level target corpus exists. Current private test metrics
+and the exact schema, formulas, CLI, security limits, and scientific caveats are
+recorded in `docs/rate_of_closure/NEURAL_MODEL_LAB.md`.
+
+The private report and manifest are present and internally consistent, but this
+handoff does not claim public exact-head validation, protected checks, review,
+or release completion. Record those only after they run on the published commit.
+
 ## 2026-08-06 Launch Monitor Player Analytics Platform
 
 Epic #4226 is active on `feat/4226-launch-monitor-player-platform`, stacked on
