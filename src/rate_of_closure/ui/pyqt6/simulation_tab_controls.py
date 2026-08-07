@@ -220,7 +220,7 @@ class SimulationTabControlsMixin:
         self._shaft_datum_combo.setToolTip(FIELD_GUIDANCE["manual_shaft_axis_datum"])
         self._shaft_datum_combo.currentIndexChanged.connect(self._invalidate_source)
         self._shaft_datum_combo.currentIndexChanged.connect(self._emit_config)
-        form.addRow("Shaft-Axis Datum", self._shaft_datum_combo)
+        form.addRow("Shaft Datum", self._shaft_datum_combo)
 
         explanation = QLabel(
             "Defines the manual reference path and the rigid head pose at impact."

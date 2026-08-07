@@ -31,6 +31,10 @@ def test_manual_delivery_controls_are_discoverable_and_build_config(qtbot) -> No
         assert tab._shaft_datum_combo.itemText(tracked_reference_index) == (
             "Tracked Reference"
         )
+        shaft_datum_label = tab._manual_delivery_group.layout().labelForField(
+            tab._shaft_datum_combo
+        )
+        assert shaft_datum_label.text() == "Shaft Datum"
         generated_hosel_index = tab._shaft_datum_combo.findData(
             ShaftAxisDatum.GENERATED_HOSEL
         )
