@@ -22,19 +22,19 @@ branch was rewritten.
 The source heads were merged in dependency order. A later source head includes
 the earlier commits from that PR.
 
-| PR | Capability | Exact included source head |
-| --- | --- | --- |
-| #4203 | Launch-monitor convention registry and fail-closed unknown signs | `3d899c8e95bc6808b07a1b230a21021d845c14ad` |
+| PR    | Capability                                                                       | Exact included source head                                                                        |
+| ----- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| #4203 | Launch-monitor convention registry and fail-closed unknown signs                 | `3d899c8e95bc6808b07a1b230a21021d845c14ad`                                                        |
 | #4209 | Launch Direction convention integration and visible unavailable Foresight option | `98589174273e90e6690a08201c369004c3f568b4` (merged by `4b659acc1f7fc183dff60daea2553009e82dbab9`) |
-| #4210 | Canonical flight-result metric catalog | `e6524dbb852e9356ae666dda5307cf0fd7e36960` |
-| #4211 | Desired-flight inverse solver | `24d891cf78f5de125bb1fda602a7a9136b91f138` |
-| #4215 | Impact solution families | `8e3af21672b105bcbc6f821644e013896d8293ba` |
-| #4216 | Capability optimizer, including variability and downside/CVaR objectives | `4e11182d7d72abe66fd1066ca2086c2a87df5323` |
-| #4207 | Paired wind physics and responsive locked-aspect canvases | `d668de1f1f808f7d5c8a4c5314a3ca940d71a4b9` |
-| #4213 | Wind-estimate uncertainty analysis and v2 risk metrics | `15cc7ac5b32924f69175d85ee0bc71b736f6e856` |
-| #4214 | Interactive 3D playback, correct Launch/Apex/Landing events, responsive canvas | `a7d337155cbd74c8198d9ef7f21add1b5d52b013` |
-| #4208 | Versioned 3D spatial-target contract | `9aec34d89f91c08bf0882c556b66242d00cf3ba6` |
-| #4212 | PyQt/React Launch Monitor Analytics and split statistics modules | `a4dcddde6122bb298c7c20d3353d45e74481ba2a` (merged by `8526f7e0ea7b08f7bd48423bf2416b2a822daf56`) |
+| #4210 | Canonical flight-result metric catalog                                           | `e6524dbb852e9356ae666dda5307cf0fd7e36960`                                                        |
+| #4211 | Desired-flight inverse solver                                                    | `24d891cf78f5de125bb1fda602a7a9136b91f138`                                                        |
+| #4215 | Impact solution families                                                         | `8e3af21672b105bcbc6f821644e013896d8293ba`                                                        |
+| #4216 | Capability optimizer, including variability and downside/CVaR objectives         | `4e11182d7d72abe66fd1066ca2086c2a87df5323`                                                        |
+| #4207 | Paired wind physics and responsive locked-aspect canvases                        | `d668de1f1f808f7d5c8a4c5314a3ca940d71a4b9`                                                        |
+| #4213 | Wind-estimate uncertainty analysis and v2 risk metrics                           | `15cc7ac5b32924f69175d85ee0bc71b736f6e856`                                                        |
+| #4214 | Interactive 3D playback, correct Launch/Apex/Landing events, responsive canvas   | `a7d337155cbd74c8198d9ef7f21add1b5d52b013`                                                        |
+| #4208 | Versioned 3D spatial-target contract                                             | `9aec34d89f91c08bf0882c556b66242d00cf3ba6`                                                        |
+| #4212 | PyQt/React Launch Monitor Analytics and split statistics modules                 | `a4dcddde6122bb298c7c20d3353d45e74481ba2a` (merged by `8526f7e0ea7b08f7bd48423bf2416b2a822daf56`) |
 
 Integration-only reconciliation commits are
 `16395378ec81c6b4c623804fc65ed886ea1bde7a` (formatting),
@@ -192,6 +192,29 @@ Exact post-sync evidence against
 - Complete React suite: 70 files and 445 tests passed; TypeScript type-check,
   zero-warning ESLint, and the 147-module production build passed.
 
+### Rendered design and error-state audit
+
+Epic [#4234](https://github.com/D-sorganization/Tools/issues/4234) and child
+issues #4235-#4239 capture a read-only computer-controlled review of the live
+React application and standalone PyQt6 window. The epic is sequenced after the
+current campaign and #4218, and consumes #4224/#4225 rather than duplicating
+their plot and view-compositor contracts.
+
+Confirmed React findings include a 1,091 px tab rail at a 390 px viewport,
+30-35 px controls, non-semantic Details affordances, a single selected plot
+canvas with fixed legends, silent 0 mph to 0.1 mph coercion, and acceptance of
+-1 mph without visible or accessible validation while stale prior results
+remain visible. Negative spin-axis input itself is confirmed working: -10 deg
+produced -17.3 yd lateral, and the double-pendulum articulated skeleton rendered.
+
+At 1280 x 768, PyQt's three-column Simulation workspace clips model,
+contact-policy, and status content; swing overlay labels collapse into ambiguous
+fragments and the fixed legend obscures the plot. Native workspace switching can
+also leave the accessibility snapshot rooted in the previous Simulation tree.
+Native Flight correctly shows side, top-down, and 3D trajectories together.
+Native 150%/200% DPI and freely resized-window inspection remain explicit gaps
+owned by #4235/#4239 rather than claimed evidence.
+
 ## Open release blockers
 
 GitHub issue #4201 remains open. Its 2026-08-06 release checkpoint still
@@ -220,10 +243,14 @@ contracts/cores unless and until their missing UI workflows are delivered.
    ball-flight/variation/wedge campaign reaches its declared completion gate.
    The top-toolstrip/persistence work must not be used to hide #4217 release
    blockers or intermixed with this recovery diff.
-3. Add the missing UI workflows against the canonical shared Python/TypeScript
+3. After #4218, implement design-quality epic #4234 and children #4235-#4239.
+   Preserve its confirmed rendered findings, explicit DPI gap, Current
+   Calculation context, no-silent-coercion rule, accessibility contract, and
+   cross-interface visual-regression requirements.
+4. Add the missing UI workflows against the canonical shared Python/TypeScript
    contracts, with one visible-control-to-state integration test per control.
-4. Add cancellation/progress, persistence/export migrations, Rust/WASM golden
+5. Add cancellation/progress, persistence/export migrations, Rust/WASM golden
    parity, performance budgets, and Playwright visual/accessibility coverage.
-5. Verify a clean installed package and the exact UpstreamDrift dependency pin.
-6. Rerun every recorded gate, inspect protected GitHub checks/reviews, and keep
+6. Verify a clean installed package and the exact UpstreamDrift dependency pin.
+7. Rerun every recorded gate, inspect protected GitHub checks/reviews, and keep
    #4201 open until every acceptance criterion has current evidence.
