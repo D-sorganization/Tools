@@ -343,5 +343,34 @@ class SimulationSceneRenderer:
                 f"impact at {run.impact_time_s:.3f} s"
             )
         axes.set_title(title)
-        axes.legend(loc="upper left", fontsize=8)
+        handles, labels = axes.get_legend_handles_labels()
+        if handles and view.legend_visible():
+            location = view.legend_location()
+            if location == "outside_right":
+                # Reserve a deterministic right gutter. Axes-level legends anchored
+                # beyond a full-width 3-D axes are otherwise clipped at high DPI.
+                axes.set_position((0.05, 0.08, 0.68, 0.82))
+                axes.legend(
+                    handles,
+                    labels,
+                    loc="upper left",
+                    bbox_to_anchor=(1.02, 1.0),
+                    borderaxespad=0.0,
+                    fontsize=7,
+                )
+            else:
+                axes.set_position((0.06, 0.08, 0.88, 0.82))
+                locations = {
+                    "inside_upper_right": "upper right",
+                    "inside_lower_right": "lower right",
+                    "inside_lower_left": "lower left",
+                }
+                axes.legend(
+                    handles,
+                    labels,
+                    loc=locations.get(location, "upper right"),
+                    fontsize=7,
+                )
+        else:
+            axes.set_position((0.06, 0.08, 0.88, 0.82))
         view._canvas.draw_idle()

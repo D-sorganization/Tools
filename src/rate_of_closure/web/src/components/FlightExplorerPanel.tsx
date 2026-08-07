@@ -15,6 +15,7 @@ import { DecimalInput } from "./DecimalInput";
 import { FieldInfo } from "./FieldInfo";
 import { FlightCanvases } from "./FlightCanvases";
 import { FlightPlayback3D } from "./FlightPlayback3D";
+import { SpatialTargetSection } from "./SpatialTargetSection";
 import {
   compareWind,
   directLaunch,
@@ -29,6 +30,7 @@ import {
 } from "../model/launchDirection";
 import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
 import { meteorologicalWind } from "../model/wind";
+import type { SpatialTargetTs } from "../model/spatialTarget";
 
 const SPEED_UNITS: Record<string, number> = { mph: 1.0, "m/s": 2.236936292054402 };
 
@@ -77,12 +79,18 @@ const FIELDS: FieldSpec[] = [
   { key: "spinAxisTiltDeg", label: "Spin-Axis Tilt", unit: "deg", guidance: "fxSpinAxisTilt" },
 ];
 
-export function FlightExplorerPanel({
-  distanceUnit = "yd",
-}: {
+interface Props {
   /** Ball-flight distance display unit (#4125 H6): yards default. */
   distanceUnit?: string;
-} = {}) {
+  spatialTarget: SpatialTargetTs;
+  onSpatialTargetChange: (target: SpatialTargetTs) => void;
+}
+
+export function FlightExplorerPanel({
+  distanceUnit = "yd",
+  spatialTarget,
+  onSpatialTargetChange,
+}: Props) {
   const [speed, setSpeed] = useState(167.0);
   const [speedUnit, setSpeedUnit] = useState("mph");
   const [directionConvention, setDirectionConvention] =
@@ -222,6 +230,9 @@ export function FlightExplorerPanel({
           </p>
         </div>
 
+        <SpatialTargetSection target={spatialTarget} onChange={onSpatialTargetChange}
+          flightPoints={result?.points ?? []} />
+
         <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 shadow-lg shadow-black/20 backdrop-blur">
           <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
             Wind Comparison
@@ -333,11 +344,13 @@ export function FlightExplorerPanel({
             points={result?.points ?? []}
             comparisonPoints={windComparison?.calm.points ?? []}
             emptyText="Enter launch conditions and press Run Flight."
+            spatialTarget={spatialTarget}
           />
           <div className="mt-4 border-t border-slate-800 pt-4">
             <FlightPlayback3D
               points={result?.points ?? []}
               comparisonPoints={windComparison?.calm.points ?? []}
+              spatialTarget={spatialTarget}
             />
           </div>
         </div>

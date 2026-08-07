@@ -2,13 +2,21 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { drawFlightPlayback, type PlaybackCamera } from "./flightPlaybackDrawing";
+import {
+  drawFlightPlayback,
+  FLIGHT_PLAYBACK_LOGICAL_SIZE,
+  type PlaybackCamera,
+} from "./flightPlaybackDrawing";
 import { PlaybackTimeline, validatePlaybackPoints } from "../model/flightPlayback";
 import type { FlightPoint } from "../model/flight";
+import type { SpatialTargetTs } from "../model/spatialTarget";
+import { spatialTargetSummary } from "./spatialTargetPresentation";
+import { observeCanvas } from "./canvasDisplay";
 
 interface Props {
   points: readonly FlightPoint[];
   comparisonPoints?: readonly FlightPoint[];
+  spatialTarget?: SpatialTargetTs;
 }
 
 const INITIAL_CAMERA: PlaybackCamera = {
@@ -17,9 +25,8 @@ const INITIAL_CAMERA: PlaybackCamera = {
   zoom: 1,
 };
 const SPEEDS = [0.25, 0.5, 1, 2, 4];
-const PLAYBACK_CANVAS_SIZE = { width: 860, height: 420 } as const;
 
-export function FlightPlayback3D({ points, comparisonPoints = [] }: Props) {
+export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const timeRef = useRef(0);
@@ -70,10 +77,14 @@ export function FlightPlayback3D({ points, comparisonPoints = [] }: Props) {
   );
 
   useEffect(() => {
-    if (canvasRef.current && frame) {
-      drawFlightPlayback(canvasRef.current, points, comparisonPoints, frame.position, camera);
-    }
-  }, [points, comparisonPoints, frame, camera]);
+    const draw = () => {
+      if (!canvasRef.current || (!frame && !spatialTarget)) return;
+      drawFlightPlayback(
+        canvasRef.current, points, comparisonPoints, frame?.position ?? null, camera, spatialTarget,
+      );
+    };
+    return observeCanvas(canvasRef, draw);
+  }, [points, comparisonPoints, frame, camera, spatialTarget]);
 
   const togglePlayback = () => {
     if (playing) setPlaying(false);
@@ -174,19 +185,20 @@ export function FlightPlayback3D({ points, comparisonPoints = [] }: Props) {
       </div>
       <canvas
         ref={canvasRef}
-        width={PLAYBACK_CANVAS_SIZE.width}
-        height={PLAYBACK_CANVAS_SIZE.height}
+        width={FLIGHT_PLAYBACK_LOGICAL_SIZE.width}
+        height={FLIGHT_PLAYBACK_LOGICAL_SIZE.height}
         style={{
           width: "100%",
           height: "auto",
-          aspectRatio: `${PLAYBACK_CANVAS_SIZE.width} / ${PLAYBACK_CANVAS_SIZE.height}`,
+          aspectRatio: `${FLIGHT_PLAYBACK_LOGICAL_SIZE.width} / ${FLIGHT_PLAYBACK_LOGICAL_SIZE.height}`,
         }}
         tabIndex={0}
         aria-label="Interactive 3D ball-flight playback"
+        aria-description={spatialTarget ? `Includes ${spatialTargetSummary(spatialTarget)}` : undefined}
         title="Drag to rotate; use the mouse wheel to zoom. App frame: x target, y up, z right; SI metres and seconds."
         className="w-full touch-none rounded-lg border border-slate-800 bg-slate-950/60 outline-none focus:ring-2 focus:ring-sky-500"
         onPointerDown={(event) => {
-          event.currentTarget.setPointerCapture(event.pointerId);
+          event.currentTarget.setPointerCapture?.(event.pointerId);
           dragRef.current = { pointerId: event.pointerId, x: event.clientX, y: event.clientY };
         }}
         onPointerMove={(event) => {
@@ -212,6 +224,12 @@ export function FlightPlayback3D({ points, comparisonPoints = [] }: Props) {
           }));
         }}
       />
+      {spatialTarget && (
+        <p role="status" aria-label="Active 3D spatial target"
+          className="rounded border border-amber-400/30 bg-amber-950/20 px-3 py-2 text-xs text-amber-200">
+          Active 3D target · {spatialTargetSummary(spatialTarget)}
+        </p>
+      )}
       <p className="text-xs text-slate-500">
         Drag to rotate and wheel to zoom. Orthographic axes use one locked physical scale per metre:
         x targets downrange, y points up, and z points right. Time is solver trajectory time [s].

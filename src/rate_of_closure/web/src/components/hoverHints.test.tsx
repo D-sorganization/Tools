@@ -10,7 +10,7 @@ import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import App from "../App";
 import { DEFAULT_SCENARIO } from "../model/impact";
-import { DEFAULT_TARGET } from "../model/targets";
+import { DEFAULT_TARGET, spatialTargetFromRegion } from "../model/targets";
 import { Derivation } from "./Derivation";
 import { FlightExplorerPanel } from "./FlightExplorerPanel";
 import { GlossaryPanel } from "./GlossaryPanel";
@@ -76,7 +76,9 @@ describe("hover-hint completeness", () => {
   });
 
   it("FlightExplorerPanel", () => {
-    const { container } = render(<FlightExplorerPanel />);
+    const { container } = render(<FlightExplorerPanel
+      spatialTarget={spatialTargetFromRegion(DEFAULT_TARGET)}
+      onSpatialTargetChange={() => undefined} />);
     assertHints(container, "FlightExplorerPanel");
   });
 
@@ -103,8 +105,8 @@ describe("hover-hint completeness", () => {
         scenario={DEFAULT_SCENARIO}
         loftDeg={10.5}
         onScenarioChange={() => undefined}
-        target={DEFAULT_TARGET}
-        onTargetChange={() => undefined}
+        spatialTarget={spatialTargetFromRegion(DEFAULT_TARGET)}
+        onSpatialTargetChange={() => undefined}
       />,
     );
     assertHints(container, "SimulationPanel");

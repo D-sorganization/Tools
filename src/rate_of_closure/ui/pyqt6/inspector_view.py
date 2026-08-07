@@ -9,10 +9,13 @@ and offers CSV / JSON export through the shared
 
 from __future__ import annotations
 
+import json
 import logging
-from typing import Any
+from collections.abc import Mapping
+from pathlib import Path
+from typing import Any, cast
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QFileDialog,
     QHBoxLayout,
@@ -27,11 +30,19 @@ from PyQt6.QtWidgets import (
 
 from rate_of_closure.simulation import (
     SimulationRun,
+    ball_setup_from_json_dict,
+    run_to_json_dict,
+    spatial_target_from_simulation_document,
     write_csv,
     write_json,
     write_screw_csv,
 )
 from rate_of_closure.simulation.export import CSV_COLUMNS, series_rows
+from rate_of_closure.ui.pyqt6.spatial_target_trajectory import (
+    validate_landing_surface,
+)
+from shared.python.swing_sim.ball_setup import BallSetup
+from shared.python.swing_sim.solver import SpatialTarget
 
 logger = logging.getLogger(__name__)
 
@@ -79,9 +90,12 @@ def _series_item(value: Any) -> QTableWidgetItem:
 class InspectorView(QWidget):
     """Sortable inspector over one simulation run, with export buttons."""
 
+    settingsImported = pyqtSignal(object, object)  # noqa: N815 - Qt convention
+
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
         self._run: SimulationRun | None = None
+        self._spatial_target: SpatialTarget | None = None
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(4, 4, 4, 4)
@@ -90,6 +104,14 @@ class InspectorView(QWidget):
         self._summary_label = QLabel("Run a simulation to populate the inspector.")
         self._summary_label.setWordWrap(True)
         header.addWidget(self._summary_label, stretch=1)
+
+        self._import_json_button = QPushButton("Import JSON…")
+        self._import_json_button.setToolTip(
+            "Load ball setup and the canonical spatial target atomically from "
+            "a current or migrated simulation project."
+        )
+        self._import_json_button.clicked.connect(self._on_import_json)
+        header.addWidget(self._import_json_button)
 
         self._export_csv_button = QPushButton("Export CSV…")
         self._export_csv_button.setToolTip(
@@ -130,9 +152,10 @@ class InspectorView(QWidget):
     def set_run(self, run: SimulationRun | None) -> None:
         """Populate (or clear, with ``None``) the inspector."""
         self._run = run
-        self._export_csv_button.setEnabled(run is not None)
+        export_ready = run is not None and self._spatial_target is not None
+        self._export_csv_button.setEnabled(export_ready)
         self._export_screw_csv_button.setEnabled(run is not None)
-        self._export_json_button.setEnabled(run is not None)
+        self._export_json_button.setEnabled(export_ready)
         self._table.setSortingEnabled(False)
         self._table.setRowCount(0)
         if run is None:
@@ -174,6 +197,42 @@ class InspectorView(QWidget):
         """The run currently inspected, if any."""
         return self._run
 
+    def set_spatial_target(self, target: SpatialTarget) -> None:
+        """Adopt the active canonical target used by every run export."""
+        if not isinstance(target, SpatialTarget):
+            raise TypeError("target must be a SpatialTarget")
+        self._spatial_target = target
+        enabled = self._run is not None
+        self._export_csv_button.setEnabled(enabled)
+        self._export_json_button.setEnabled(enabled)
+
+    def run_document(self) -> dict[str, Any]:
+        """Return the active run/project document without opening a dialog."""
+        if self._run is None:
+            raise RuntimeError("run a simulation before exporting")
+        if self._spatial_target is None:
+            raise RuntimeError("select a valid spatial target before exporting")
+        return cast(
+            dict[str, Any],
+            run_to_json_dict(self._run, spatial_target=self._spatial_target),
+        )
+
+    def load_settings_document(
+        self, document: object
+    ) -> tuple[BallSetup, SpatialTarget]:
+        """Parse both settings before emitting, so import is atomic."""
+        target = spatial_target_from_simulation_document(document)
+        validate_landing_surface(target)
+        if not isinstance(document, Mapping):
+            raise TypeError("simulation document must be a mapping")
+        setup = ball_setup_from_json_dict(document)
+        self.settingsImported.emit(setup, target)
+        self._summary_label.setText(
+            f"Imported {setup.support_mode.value.title()} ball setup and spatial "
+            "target. Run Simulation to calculate the imported project."
+        )
+        return setup, target
+
     # ── internals ──────────────────────────────────────────────────
     def _export(self, kind: str) -> None:
         if self._run is None:
@@ -187,9 +246,9 @@ class InspectorView(QWidget):
             return
         try:
             if kind == "csv":
-                write_csv(self._run, path)
+                write_csv(self._run, path, spatial_target=self._spatial_target)
             else:
-                write_json(self._run, path)
+                write_json(self._run, path, spatial_target=self._spatial_target)
         except OSError as exc:  # surface disk/permission problems
             logger.warning("export failed: %s", exc)
             QMessageBox.warning(self, "Export Failed", str(exc))
@@ -199,6 +258,22 @@ class InspectorView(QWidget):
 
     def _on_export_json(self) -> None:
         self._export("json")
+
+    def _on_import_json(self) -> None:
+        path, _selected = QFileDialog.getOpenFileName(
+            self,
+            "Import Simulation Project",
+            "",
+            "JSON files (*.json);;All files (*)",
+        )
+        if not path:
+            return
+        try:
+            document = json.loads(Path(path).read_text(encoding="utf-8"))
+            self.load_settings_document(document)
+        except (OSError, TypeError, ValueError) as exc:
+            logger.warning("simulation import failed: %s", exc)
+            QMessageBox.warning(self, "Import Failed", str(exc))
 
     def _on_export_screw_csv(self) -> None:
         """Prompt for the dedicated screw-motion CSV destination."""

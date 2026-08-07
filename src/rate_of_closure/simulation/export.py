@@ -28,16 +28,25 @@ import numpy as np
 from rate_of_closure._contracts import require
 from rate_of_closure.simulation.screw_analysis import analyze_twist
 from rate_of_closure.simulation.session import SimulationRun
+from rate_of_closure.simulation.target_persistence import (
+    TARGET_CSV_COLUMNS,
+    spatial_target_from_simulation_document,
+    target_csv_values,
+    target_document_fields,
+)
 from shared.python.swing_sim.ball_setup import BallSetup
+from shared.python.swing_sim.solver import SpatialTarget
 
 __all__ = [
     "CSV_COLUMNS",
     "SCREW_CSV_COLUMNS",
+    "TARGET_CSV_COLUMNS",
     "TORQUE_CSV_COLUMNS",
     "ball_setup_from_json_dict",
     "run_to_json_dict",
     "series_rows",
     "screw_series_rows",
+    "spatial_target_from_simulation_document",
     "torque_series_rows",
     "write_csv",
     "write_json",
@@ -110,11 +119,14 @@ def ball_setup_from_json_dict(data: Mapping[str, Any]) -> BallSetup:
 
 
 def series_rows(
-    run: SimulationRun,
+    run: SimulationRun, spatial_target: SpatialTarget | None = None
 ) -> list[tuple[Any, ...]]:
     """Flatten the swing and flight series into phase-tagged rows."""
     rows: list[tuple[Any, ...]] = []
     contact_columns = _contact_columns(run)
+    target_columns = (
+        target_csv_values(spatial_target) if spatial_target is not None else ()
+    )
     for t, pos, twist in zip(
         run.swing_times, run.swing_positions, run.swing_twists, strict=True
     ):
@@ -127,6 +139,7 @@ def series_rows(
                 float(pos[2]),
                 float(np.linalg.norm(twist[3:])),
                 *contact_columns,
+                *target_columns,
             )
         )
     t0 = run.impact_time_s
@@ -143,6 +156,7 @@ def series_rows(
                 float(pos[2]),
                 float(np.linalg.norm(vel)),
                 *contact_columns,
+                *target_columns,
             )
         )
     return rows
@@ -198,7 +212,12 @@ def _contact_columns(
     )
 
 
-def write_csv(run: SimulationRun, path: str | Path) -> None:
+def write_csv(
+    run: SimulationRun,
+    path: str | Path,
+    *,
+    spatial_target: SpatialTarget | None = None,
+) -> None:
     """Write the run's time series as CSV.
 
     Args:
@@ -208,8 +227,9 @@ def write_csv(run: SimulationRun, path: str | Path) -> None:
     require(isinstance(run, SimulationRun), "run must be a SimulationRun", run)
     with Path(path).open("w", newline="", encoding="utf-8") as handle:
         writer = csv.writer(handle)
-        writer.writerow(CSV_COLUMNS)
-        writer.writerows(series_rows(run))
+        target_header = TARGET_CSV_COLUMNS if spatial_target is not None else ()
+        writer.writerow((*CSV_COLUMNS, *target_header))
+        writer.writerows(series_rows(run, spatial_target))
 
 
 def write_torque_csv(run: SimulationRun, path: str | Path) -> None:
@@ -230,7 +250,9 @@ def write_screw_csv(run: SimulationRun, path: str | Path) -> None:
         writer.writerows(screw_series_rows(run))
 
 
-def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
+def run_to_json_dict(
+    run: SimulationRun, *, spatial_target: SpatialTarget | None = None
+) -> dict[str, Any]:
     """The run as a JSON-serialisable dictionary.
 
     Args:
@@ -244,7 +266,7 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
     config = run.config
     scenario = config.scenario
 
-    return {
+    document: dict[str, Any] = {
         "format": "rate_of_closure.simulation_run/2",
         "parameters": {
             "source_kind": config.source_kind,
@@ -295,6 +317,9 @@ def run_to_json_dict(run: SimulationRun) -> dict[str, Any]:
             },
         },
     }
+    if spatial_target is not None:
+        document.update(target_document_fields(spatial_target))
+    return document
 
 
 def _delivery_dict(run: SimulationRun) -> dict[str, float] | None:
@@ -320,7 +345,12 @@ def _launch_dict(run: SimulationRun) -> dict[str, float | None] | None:
     }
 
 
-def write_json(run: SimulationRun, path: str | Path) -> None:
+def write_json(
+    run: SimulationRun,
+    path: str | Path,
+    *,
+    spatial_target: SpatialTarget | None = None,
+) -> None:
     """Write the run's summary + series as a JSON document.
 
     Args:
@@ -328,4 +358,6 @@ def write_json(run: SimulationRun, path: str | Path) -> None:
         path: Destination file path.
     """
     with Path(path).open("w", encoding="utf-8") as handle:
-        json.dump(run_to_json_dict(run), handle, indent=2)
+        json.dump(
+            run_to_json_dict(run, spatial_target=spatial_target), handle, indent=2
+        )

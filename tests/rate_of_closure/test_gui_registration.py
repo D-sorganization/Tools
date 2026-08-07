@@ -3,6 +3,10 @@
 from __future__ import annotations
 
 import importlib
+import os
+import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 
@@ -44,3 +48,24 @@ class TestGuiRegistration:
 
     def test_web_port_is_declared(self, gui_info: dict) -> None:
         assert gui_info["web"]["port"] == 5193
+
+    def test_optional_rust_accelerator_does_not_warn_during_import(self) -> None:
+        """A normal Python-backend launch must not resemble a crash."""
+        repository = Path(__file__).resolve().parents[2]
+        environment = os.environ.copy()
+        environment["PYTHONPATH"] = os.pathsep.join(
+            filter(
+                None,
+                (str(repository / "src"), environment.get("PYTHONPATH", "")),
+            )
+        )
+        completed = subprocess.run(
+            [sys.executable, "-c", "import shared.python.swing_sim"],
+            cwd=repository,
+            env=environment,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+
+        assert "swing_core wheel not available" not in completed.stderr

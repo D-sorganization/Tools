@@ -6,12 +6,12 @@ import dataclasses
 import logging
 import math
 
-import numpy as np
-from PyQt6.QtCore import pyqtSignal
+from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
     QScrollArea,
+    QSizePolicy,
     QSplitter,
     QTabWidget,
     QVBoxLayout,
@@ -19,7 +19,6 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.club import get_club
-from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
 from rate_of_closure.derivation_models import DerivationConfig
 from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
 from rate_of_closure.simulation import (
@@ -30,13 +29,12 @@ from rate_of_closure.simulation import (
     SimulationRun,
     run_simulation,
 )
-from rate_of_closure.simulation.targets import TargetRegion, layout_for_region
 from rate_of_closure.ui.pyqt6.ball_setup_control import BallSetupControl
 from rate_of_closure.ui.pyqt6.flight_playback_controls import FlightPlaybackPanel
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
 from rate_of_closure.ui.pyqt6.kinetics_panel import KineticsPanel
-from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
+from rate_of_closure.ui.pyqt6.result_row import ResultRow
 from rate_of_closure.ui.pyqt6.simulation_specs import (
     LAUNCH_ROWS,
     SOURCE_LABELS,
@@ -45,6 +43,9 @@ from rate_of_closure.ui.pyqt6.simulation_tab_controls import (
     SimulationTabControlsMixin,
 )
 from rate_of_closure.ui.pyqt6.simulation_tab_runtime import SimulationTabRuntimeMixin
+from rate_of_closure.ui.pyqt6.simulation_target_workflow import (
+    SimulationTargetWorkflowMixin,
+)
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
@@ -59,7 +60,12 @@ logger = logging.getLogger(__name__)
 __all__ = ["LAUNCH_ROWS", "SOURCE_LABELS", "SimulationTab"]
 
 
-class SimulationTab(SimulationTabControlsMixin, SimulationTabRuntimeMixin, QWidget):
+class SimulationTab(
+    SimulationTabControlsMixin,
+    SimulationTabRuntimeMixin,
+    SimulationTargetWorkflowMixin,
+    QWidget,
+):
     """Simulation session tab (controls left, scene/inspector right)."""
 
     #: Emitted with the SimulationRun after every successful run.
@@ -84,6 +90,7 @@ class SimulationTab(SimulationTabControlsMixin, SimulationTabRuntimeMixin, QWidg
         self._kinetics_panel = KineticsPanel()
         self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)
         self._inspector = InspectorView()
+        self._inspector.settingsImported.connect(self._on_imported_simulation_settings)
         self._solver_panel = SolverPanel()
         self._torque_profile_panel = TorqueProfilePanel()
         self._torque_profile_panel.runModeChanged.connect(
@@ -103,8 +110,12 @@ class SimulationTab(SimulationTabControlsMixin, SimulationTabRuntimeMixin, QWidg
         )
 
         left_content = QWidget()
+        left_content.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred
+        )
         left_layout = QVBoxLayout(left_content)
         left_layout.addWidget(self._build_setup_box())
+        left_layout.addWidget(self._build_spatial_target_control())
         self._scrub_box = self._build_scrub_box()
         left_layout.addWidget(self._scrub_box)
         left_layout.addWidget(self._build_launch_box())
@@ -114,8 +125,11 @@ class SimulationTab(SimulationTabControlsMixin, SimulationTabRuntimeMixin, QWidg
         left = QScrollArea()
         left.setWidgetResizable(True)
         left.setFrameShape(QFrame.Shape.NoFrame)
+        left.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        left.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         left.setWidget(left_content)
-        left.setMinimumWidth(300)
+        left.setMinimumWidth(310)
+        self._controls_scroll = left
 
         # Scale-separated face, swing, kinetics, and flight displays.
         right = QTabWidget()
@@ -127,12 +141,17 @@ class SimulationTab(SimulationTabControlsMixin, SimulationTabRuntimeMixin, QWidg
         right.addTab(self._solver_panel, "Solver")
         right.addTab(self._torque_profile_panel, "Torque Profiles")
         right.setCurrentWidget(self._view)
+        right.setElideMode(Qt.TextElideMode.ElideRight)
+        right.setDocumentMode(True)
+        self._display_tabs = right
 
         splitter = QSplitter()
         splitter.addWidget(left)
         splitter.addWidget(right)
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
+        splitter.setChildrenCollapsible(False)
+        splitter.setSizes([320, 720])
         layout = QHBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(splitter)
@@ -235,6 +254,7 @@ class SimulationTab(SimulationTabControlsMixin, SimulationTabRuntimeMixin, QWidg
         self._flight_view.set_run(run)
         self._inspector.set_run(run)
         self._refresh_launch_rows()
+        self._update_spatial_target_after_run(run)
         self._update_outcome_labels(run)
         self._set_completed_status(run)
         if run.config.swing_run_config.prescribed_profile_id is not None:
@@ -316,19 +336,6 @@ class SimulationTab(SimulationTabControlsMixin, SimulationTabRuntimeMixin, QWidg
         """The goal-driven Solver panel (worker lifecycle lives on it)."""
         return self._solver_panel
 
-    def _on_target_region_changed(self, region: TargetRegion) -> None:
-        """H7b: reflect the edited target in the course scene + overlay."""
-        layout = layout_for_region(region)
-        self._flight_view.set_course_layout(layout)
-        self._flight_view.set_target_region(region)
-        self._view.set_course_layout(layout)
-
-    def set_landing_scatter(
-        self, carries_m: np.ndarray | None, laterals_m: np.ndarray | None = None
-    ) -> None:
-        """Variation tie-in (#4125 H7b): forward the landing scatter."""
-        self._flight_view.set_landing_scatter(carries_m, laterals_m)
-
     def apply_solver_solution(
         self, result: object, use_swing_source: bool
     ) -> SimulationRun | None:
@@ -385,18 +392,3 @@ class SimulationTab(SimulationTabControlsMixin, SimulationTabRuntimeMixin, QWidg
         """Stop the playback timer and solver worker (close and tests)."""
         self._view.stop()
         self._solver_panel.stop()
-
-    def _show_explanation(self, field: str) -> None:
-        labels = {key: label for key, label, _unit in LAUNCH_ROWS}
-        text = LAUNCH_EXPLANATIONS.get(field, "")
-        # Persistent single selection across the launch rows (#4120 V4).
-        for row_field, row in self._rows.items():
-            row.set_selected(row_field == field)
-        html = explanation_html(labels.get(field, field), text, field)
-        self._explanation.setHtml(html)
-
-    def _on_explanation_link(self, url) -> None:  # type: ignore[no-untyped-def]
-        """Forward ``glossary:<term>`` links to the main window."""
-        text = url.toString()
-        if text.startswith("glossary:"):
-            self.glossaryRequested.emit(text.partition(":")[2])

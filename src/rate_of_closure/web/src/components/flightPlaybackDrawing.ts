@@ -2,6 +2,13 @@
 
 import type { FlightPoint } from "../model/flight";
 import type { Vec3 } from "../model/simulation";
+import {
+  spatialTargetHalfExtents,
+  type SpatialTargetTs,
+} from "../model/spatialTarget";
+import { canvasContext } from "./canvasDisplay";
+
+export const FLIGHT_PLAYBACK_LOGICAL_SIZE = { width: 860, height: 420 } as const;
 
 export interface PlaybackCamera {
   yawRad: number;
@@ -23,6 +30,11 @@ interface Projection {
 const PADDING_PX = 34;
 const MIN_EXTENT_M = 1;
 
+interface Bounds {
+  min: Vec3;
+  max: Vec3;
+}
+
 function rotate(position: Vec3, camera: PlaybackCamera, center: Vec3): ProjectedPoint {
   const forward = position[0] - center[0];
   const up = position[1] - center[1];
@@ -40,12 +52,25 @@ function rotate(position: Vec3, camera: PlaybackCamera, center: Vec3): Projected
   };
 }
 
-function extents(points: readonly FlightPoint[], comparison: readonly FlightPoint[]) {
+function extents(
+  points: readonly FlightPoint[],
+  comparison: readonly FlightPoint[],
+  target?: SpatialTargetTs,
+): Bounds {
   const positions = [...points, ...comparison].map((point) => point.position);
-  const carry = Math.max(MIN_EXTENT_M, ...positions.map((position) => position[0]));
-  const height = Math.max(MIN_EXTENT_M, ...positions.map((position) => position[1]));
-  const lateral = Math.max(MIN_EXTENT_M, ...positions.map((position) => Math.abs(position[2])));
-  return { carry, height, lateral };
+  positions.push([0, 0, 0]);
+  if (target) {
+    const center = target.point.appCoordinatesM;
+    const half = spatialTargetHalfExtents(target);
+    positions.push(
+      center.map((value, axis) => value - half[axis]) as Vec3,
+      center.map((value, axis) => value + half[axis]) as Vec3,
+    );
+  }
+  return {
+    min: [0, 1, 2].map((axis) => Math.min(...positions.map((value) => value[axis]))) as Vec3,
+    max: [0, 1, 2].map((axis) => Math.max(...positions.map((value) => value[axis]))) as Vec3,
+  };
 }
 
 function createProjection(
@@ -54,13 +79,16 @@ function createProjection(
   camera: PlaybackCamera,
   width: number,
   height: number,
+  target?: SpatialTargetTs,
 ): Projection {
-  const bounds = extents(points, comparison);
-  const center: Vec3 = [bounds.carry / 2, bounds.height / 2, 0];
+  const bounds = extents(points, comparison, target);
+  const center = bounds.min.map((value, axis) =>
+    (value + bounds.max[axis]) / 2,
+  ) as Vec3;
   const corners: Vec3[] = [];
-  for (const carry of [0, bounds.carry]) {
-    for (const up of [0, bounds.height]) {
-      for (const right of [-bounds.lateral, bounds.lateral]) corners.push([carry, up, right]);
+  for (const carry of [bounds.min[0], bounds.max[0]]) {
+    for (const up of [bounds.min[1], bounds.max[1]]) {
+      for (const right of [bounds.min[2], bounds.max[2]]) corners.push([carry, up, right]);
     }
   }
   const rotated = corners.map((position) => rotate(position, camera, center));
@@ -84,6 +112,86 @@ function createProjection(
       };
     },
   };
+}
+
+function drawPolyline(
+  context: CanvasRenderingContext2D,
+  projection: Projection,
+  positions: readonly Vec3[],
+  close = false,
+): void {
+  context.beginPath();
+  positions.forEach((position, index) => {
+    const point = projection.point(position);
+    if (index === 0) context.moveTo(point.x, point.y);
+    else context.lineTo(point.x, point.y);
+  });
+  if (close) context.closePath();
+  context.stroke();
+}
+
+function circlePoints(center: Vec3, radius: number, plane: "xy" | "xz" | "yz"): Vec3[] {
+  return Array.from({ length: 33 }, (_, index) => {
+    const angle = index / 32 * 2 * Math.PI;
+    const cosine = radius * Math.cos(angle);
+    const sine = radius * Math.sin(angle);
+    if (plane === "xy") return [center[0] + cosine, center[1] + sine, center[2]];
+    if (plane === "xz") return [center[0] + cosine, center[1], center[2] + sine];
+    return [center[0], center[1] + cosine, center[2] + sine];
+  });
+}
+
+function boxCorners(center: Vec3, half: Vec3): Vec3[] {
+  const corners: Vec3[] = [];
+  for (const x of [-1, 1]) for (const y of [-1, 1]) for (const z of [-1, 1]) {
+    corners.push([
+      center[0] + x * half[0], center[1] + y * half[1], center[2] + z * half[2],
+    ]);
+  }
+  return corners;
+}
+
+function drawBox(
+  context: CanvasRenderingContext2D,
+  projection: Projection,
+  center: Vec3,
+  half: Vec3,
+): void {
+  const corners = boxCorners(center, half);
+  const edges = [
+    [0, 1], [0, 2], [0, 4], [1, 3], [1, 5], [2, 3],
+    [2, 6], [3, 7], [4, 5], [4, 6], [5, 7], [6, 7],
+  ];
+  edges.forEach(([left, right]) => drawPolyline(
+    context, projection, [corners[left], corners[right]],
+  ));
+}
+
+function drawSpatialTarget(
+  context: CanvasRenderingContext2D,
+  projection: Projection,
+  target: SpatialTargetTs,
+): void {
+  const center: Vec3 = [...target.point.appCoordinatesM];
+  const tolerance = target.tolerance;
+  context.strokeStyle = "#f59e0b";
+  context.fillStyle = "#fbbf24";
+  context.lineWidth = 2;
+  context.setLineDash([5, 3]);
+  if (tolerance.kind === "sphere") {
+    (["xy", "xz", "yz"] as const).forEach((plane) =>
+      drawPolyline(context, projection, circlePoints(center, tolerance.radiusM, plane), true));
+  } else if (tolerance.kind === "box") {
+    drawBox(context, projection, center, [...tolerance.halfExtentsM]);
+  } else if (tolerance.kind === "surface_circle") {
+    drawPolyline(context, projection, circlePoints(center, tolerance.radiusM, "xz"), true);
+  } else {
+    drawBox(context, projection, center, [tolerance.halfLengthM, 0, tolerance.halfWidthM]);
+  }
+  context.setLineDash([]);
+  const label = projection.point(center);
+  context.font = "bold 12px sans-serif";
+  context.fillText(`ACTIVE TARGET · ${target.label}`, label.x + 7, label.y - 8);
 }
 
 function drawPath(
@@ -139,29 +247,35 @@ export function drawFlightPlayback(
   canvas: HTMLCanvasElement,
   points: readonly FlightPoint[],
   comparison: readonly FlightPoint[],
-  ballPosition: Vec3,
+  ballPosition: Vec3 | null,
   camera: PlaybackCamera,
+  spatialTarget?: SpatialTargetTs,
 ): void {
-  const context = canvas.getContext("2d");
-  if (!context || points.length === 0) return;
-  const width = canvas.width;
-  const height = canvas.height;
+  const context = canvasContext(canvas, FLIGHT_PLAYBACK_LOGICAL_SIZE);
+  if (!context || (points.length === 0 && !spatialTarget)) return;
+  const { width, height } = FLIGHT_PLAYBACK_LOGICAL_SIZE;
   context.clearRect(0, 0, width, height);
   context.fillStyle = "#020617";
   context.fillRect(0, 0, width, height);
-  const projection = createProjection(points, comparison, camera, width, height);
-  const bounds = extents(points, comparison);
-  drawGroundAxes(context, projection, bounds.carry, bounds.height, bounds.lateral);
+  const projection = createProjection(points, comparison, camera, width, height, spatialTarget);
+  const bounds = extents(points, comparison, spatialTarget);
+  const axisExtents = bounds.max.map((value, axis) =>
+    Math.max(MIN_EXTENT_M, Math.abs(value), Math.abs(bounds.min[axis])),
+  ) as Vec3;
+  drawGroundAxes(context, projection, axisExtents[0], axisExtents[1], axisExtents[2]);
   drawPath(context, comparison, projection, "#60a5fa", [7, 5]);
   drawPath(context, points, projection, "#34d399");
-  const ball = projection.point(ballPosition);
-  context.beginPath();
-  context.arc(ball.x, ball.y, 6, 0, 2 * Math.PI);
-  context.fillStyle = "#fb923c";
-  context.fill();
-  context.strokeStyle = "#f8fafc";
-  context.lineWidth = 1.5;
-  context.stroke();
+  if (spatialTarget) drawSpatialTarget(context, projection, spatialTarget);
+  if (ballPosition) {
+    const ball = projection.point(ballPosition);
+    context.beginPath();
+    context.arc(ball.x, ball.y, 6, 0, 2 * Math.PI);
+    context.fillStyle = "#fb923c";
+    context.fill();
+    context.strokeStyle = "#f8fafc";
+    context.lineWidth = 1.5;
+    context.stroke();
+  }
   context.fillStyle = "#cbd5e1";
   context.font = "12px sans-serif";
   context.fillText(

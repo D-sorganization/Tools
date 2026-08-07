@@ -92,6 +92,7 @@ class TargetPanel(QGroupBox):
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__("Target Region (Optimize to Target)", parent)
+        self._loaded_region: TargetRegion | None = None
         grid = QGridLayout(self)
         grid.setVerticalSpacing(4)
 
@@ -155,8 +156,8 @@ class TargetPanel(QGroupBox):
             self._width,
             self._weight,
         ):
-            spin.valueChanged.connect(self._emit_region)
-        self._kind.currentIndexChanged.connect(self._emit_region)
+            spin.valueChanged.connect(self._on_region_edited)
+        self._kind.currentIndexChanged.connect(self._on_region_edited)
         self._sync_kind()
         # Distance display unit (#4125 H6): entries follow the session
         # unit (yards default); region() always reports canonical metres.
@@ -170,6 +171,8 @@ class TargetPanel(QGroupBox):
         Entries display in the session distance unit; the region is
         always canonical SI metres.
         """
+        if self._loaded_region is not None:
+            return self._loaded_region
         factor = DISTANCE_UNITS[self._distance_unit]
         if self._kind.currentIndex() == 0:
             return TargetRegion(
@@ -208,6 +211,36 @@ class TargetPanel(QGroupBox):
         """The region-goal weight."""
         return float(self._weight.value())
 
+    def set_region(self, region: TargetRegion, *, emit: bool = True) -> None:
+        """Load a canonical landing projection without unit reinterpretation."""
+        if not isinstance(region, TargetRegion):
+            raise TypeError("region must be a TargetRegion")
+        factor = DISTANCE_UNITS[self._distance_unit]
+        widgets = (
+            self._kind,
+            self._distance,
+            self._radius,
+            self._lateral,
+            self._band,
+            self._width,
+        )
+        for widget in widgets:
+            widget.blockSignals(True)
+        self._kind.setCurrentIndex(0 if region.kind == "green" else 1)
+        self._distance.setValue(region.distance_m / factor)
+        if region.kind == "green":
+            self._radius.setValue(region.radius_m / factor)
+            self._lateral.setValue(region.lateral_m / factor)
+        else:
+            self._band.setValue(region.band_half_length_m / factor)
+            self._width.setValue(region.half_width_m / factor)
+        for widget in widgets:
+            widget.blockSignals(False)
+        self._loaded_region = region
+        self._sync_kind()
+        if emit:
+            self._emit_region()
+
     def optimize_button(self) -> QPushButton:
         """The 'Optimize to Target' button (test seam)."""
         return self._optimize
@@ -231,3 +264,7 @@ class TargetPanel(QGroupBox):
 
     def _emit_region(self, *_args: object) -> None:
         self.regionChanged.emit(self.region())
+
+    def _on_region_edited(self, *_args: object) -> None:
+        self._loaded_region = None
+        self._emit_region()

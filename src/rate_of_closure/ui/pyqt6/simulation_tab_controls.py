@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -21,10 +21,12 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.club import club_names, get_club
+from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation import SOURCE_KINDS, ContactMode, SimulationConfig
 from rate_of_closure.ui.pyqt6.ball_setup_control import BallSetupControl
-from rate_of_closure.ui.pyqt6.result_row import ResultRow
+from rate_of_closure.ui.pyqt6.responsive_layout import HeightForWidthGroupBox
+from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.ui.pyqt6.simulation_specs import (
     LAUNCH_ROWS,
     SOURCE_LABELS,
@@ -42,6 +44,7 @@ class SimulationTabControlsMixin:
     _scenario: ImpactScenario
     _rows: dict[str, ResultRow]
     _scrub_box: QGroupBox
+    glossaryRequested: Any
 
     if TYPE_CHECKING:
 
@@ -55,25 +58,24 @@ class SimulationTabControlsMixin:
 
         def _on_contact_mode_changed(self, *_args: object) -> None: ...
 
-        def _on_explanation_link(self, url: object) -> None: ...
-
         def _on_scrub_moved(self, value: int) -> None: ...
 
         def _on_scrub_released(self) -> None: ...
 
         def _reconcile_joint_locks_for_source(self, *_args: object) -> None: ...
 
-        def _show_explanation(self, field: str) -> None: ...
-
         def _update_contact_controls(self) -> None: ...
 
         def run_now(self) -> object: ...
 
     def _build_setup_box(self) -> QGroupBox:
-        box = QGroupBox("Simulation Setup")
+        box: QGroupBox = HeightForWidthGroupBox("Simulation Setup")
         form = QFormLayout(box)
+        form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        form.setRowWrapPolicy(QFormLayout.RowWrapPolicy.WrapLongRows)
 
         self._source_combo = QComboBox()
+        self._make_combo_compact(self._source_combo)
         self._source_combo.addItems([SOURCE_LABELS[kind] for kind in SOURCE_KINDS])
         self._source_combo.setToolTip(FIELD_GUIDANCE["swing_source"])
         self._source_combo.currentIndexChanged.connect(self._invalidate_source)
@@ -97,6 +99,7 @@ class SimulationTabControlsMixin:
         self._tilt_spins["side_tilt_deg"].setValue(-45.0)
 
         self._club_combo = QComboBox()
+        self._make_combo_compact(self._club_combo)
         self._club_combo.addItems(club_names())
         self._club_combo.setCurrentText("Driver 10.5°")
         self._club_combo.setToolTip(FIELD_GUIDANCE["club_selection"])
@@ -110,6 +113,7 @@ class SimulationTabControlsMixin:
         form.addRow(self._ball_setup_control)
 
         self._contact_combo = QComboBox()
+        self._make_combo_compact(self._contact_combo)
         self._contact_combo.addItem(
             "Delivery Inspection (Forced Alignment)",
             ContactMode.DELIVERY_INSPECTION,
@@ -131,6 +135,7 @@ class SimulationTabControlsMixin:
         form.addRow(self._contact_description)
 
         self._flight_combo = QComboBox()
+        self._make_combo_compact(self._flight_combo)
         self._flight_combo.addItems([model.value for model in FlightModelType])
         self._flight_combo.setCurrentText("waterloo_penner")
         self._flight_combo.setToolTip(FIELD_GUIDANCE["flight_model"])
@@ -160,6 +165,14 @@ class SimulationTabControlsMixin:
         form.addRow(self._run_status)
         self._update_contact_controls()
         return box
+
+    @staticmethod
+    def _make_combo_compact(combo: QComboBox) -> None:
+        """Let a long choice elide instead of widening its scroll column."""
+        combo.setSizeAdjustPolicy(
+            QComboBox.SizeAdjustPolicy.AdjustToMinimumContentsLengthWithIcon
+        )
+        combo.setMinimumContentsLength(14)
 
     def _build_scrub_box(self) -> QGroupBox:
         box = QGroupBox("Impact Time (Scrub the Swing Onto the Ball)")
@@ -216,3 +229,18 @@ class SimulationTabControlsMixin:
         self._explanation.setMaximumHeight(150)
         layout.addWidget(self._explanation)
         return box
+
+    def _show_explanation(self, field: str) -> None:
+        labels = {key: label for key, label, _unit in LAUNCH_ROWS}
+        text = LAUNCH_EXPLANATIONS.get(field, "")
+        for row_field, row in self._rows.items():
+            row.set_selected(row_field == field)
+        self._explanation.setHtml(
+            explanation_html(labels.get(field, field), text, field)
+        )
+
+    def _on_explanation_link(self, url: Any) -> None:
+        """Forward a glossary link to the main window without owning navigation."""
+        text = str(url.toString())
+        if text.startswith("glossary:"):
+            self.glossaryRequested.emit(text.partition(":")[2])

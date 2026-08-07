@@ -19,9 +19,11 @@ from __future__ import annotations
 from .contact import ContactMode, ImpactOutcome, ImpactStatus
 from .export import (
     SCREW_CSV_COLUMNS,
+    TARGET_CSV_COLUMNS,
     ball_setup_from_json_dict,
     run_to_json_dict,
     screw_series_rows,
+    spatial_target_from_simulation_document,
     write_csv,
     write_json,
     write_screw_csv,
@@ -93,6 +95,7 @@ __all__ = [
     "KINETIC_JOINT_NAMES",
     "SOURCE_KINDS",
     "SCREW_CSV_COLUMNS",
+    "TARGET_CSV_COLUMNS",
     "AppFrameSwing",
     "FlightExploration",
     "PlaybackFrame",
@@ -135,6 +138,7 @@ __all__ = [
     "run_to_json_dict",
     "screw_axis_samples",
     "screw_series_rows",
+    "spatial_target_from_simulation_document",
     "write_csv",
     "write_json",
     "write_screw_csv",

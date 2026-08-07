@@ -3,6 +3,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { FlightPlayback3D } from "./FlightPlayback3D";
 import type { FlightPoint } from "../model/flight";
+import { createSpatialTarget, sphereTolerance, targetPointFromFrame } from "../model/spatialTarget";
 
 const points: FlightPoint[] = [
   { time: 0, position: [0, 0, 0], velocity: [1, 0, 1] },
@@ -78,4 +79,67 @@ describe("FlightPlayback3D", () => {
     expect(callbacks.size).toBe(0);
     expect(cancel).toHaveBeenCalled();
   });
+
+  it("keeps the active labeled target rendered while orbiting and zooming", () => {
+    const fillText = vi.fn();
+    const context: unknown = new Proxy(function () {} as object, {
+      get: (_target, prop) => prop === "fillText" ? fillText : () => context,
+      set: () => true,
+      apply: () => context,
+    });
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+      context as CanvasRenderingContext2D,
+    );
+    const target = createSpatialTarget({
+      label: "Apex Window",
+      kind: "aerial_waypoint",
+      point: targetPointFromFrame([30, 15, 4], "app"),
+      tolerance: sphereTolerance(3),
+      elevationSource: "absolute",
+    });
+    render(<FlightPlayback3D points={points} spatialTarget={target} />);
+    const canvas = screen.getByLabelText("Interactive 3D ball-flight playback");
+
+    expect(fillText).toHaveBeenCalledWith(
+      expect.stringContaining("ACTIVE TARGET · Apex Window"),
+      expect.any(Number), expect.any(Number),
+    );
+    const initialCalls = fillText.mock.calls.length;
+    fireEvent.pointerDown(canvas, { pointerId: 1, clientX: 100, clientY: 100 });
+    fireEvent.pointerMove(canvas, { pointerId: 1, clientX: 140, clientY: 120 });
+    fireEvent.pointerUp(canvas, { pointerId: 1 });
+    fireEvent.wheel(canvas, { deltaY: -100 });
+
+    expect(fillText.mock.calls.length).toBeGreaterThan(initialCalls);
+    expect(canvas).toHaveAttribute("aria-description", expect.stringContaining("Apex Window"));
+  });
+
+  it.each([[[]], [[points[0]]]])(
+    "keeps the active target rendered with a %s-point playback",
+    (trajectory) => {
+      const fillText = vi.fn();
+      const context: unknown = new Proxy(function () {} as object, {
+        get: (_target, prop) => prop === "fillText" ? fillText : () => context,
+        set: () => true,
+        apply: () => context,
+      });
+      vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
+        context as CanvasRenderingContext2D,
+      );
+      const target = createSpatialTarget({
+        label: "Always Visible",
+        kind: "aerial_waypoint",
+        point: targetPointFromFrame([30, 15, 4], "app"),
+        tolerance: sphereTolerance(3),
+        elevationSource: "absolute",
+      });
+      render(<FlightPlayback3D points={trajectory} spatialTarget={target} />);
+      expect(fillText).toHaveBeenCalledWith(
+        expect.stringContaining("ACTIVE TARGET · Always Visible"),
+        expect.any(Number), expect.any(Number),
+      );
+      expect(screen.getByLabelText("Interactive 3D ball-flight playback"))
+        .toHaveAttribute("aria-description", expect.stringContaining("Always Visible"));
+    },
+  );
 });

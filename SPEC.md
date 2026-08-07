@@ -153,8 +153,16 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Surface circles and corridors and 3D spheres and boxes report deterministic
   acceptance, signed closest-point miss vectors, and strict Python/TypeScript
   serialization with explicit legacy green/fairway migration.
-- The contract is UI-neutral; interactive editing, terrain-relative targets,
-  storage workflows, and solver coupling remain tracked downstream work.
+- PyQt6 and React expose one canonical interactive editor across Flight
+  Explorer and integrated Simulation, render the active target in side,
+  top-down, and orbitable 3D views even before a run, and preserve it across
+  navigation, versioned run/project JSON, CSV metadata, and solver/variation
+  manifests. Invalid drafts retain the last valid target and field-linked
+  errors without interrupting a completed physics run.
+- Aerial passage uses continuous segment intersection with interpolated event
+  time; landing assessment projects the ball center onto the declared course
+  surface. Ground-only solver and variation objectives fail closed for aerial
+  targets rather than silently optimizing incompatible geometry.
 
 ### 2026-08-06 Launch-monitor convention registry
 
@@ -2864,6 +2872,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-06 | 1.14.2 | feat(rate_of_closure, #4192 #4234): complete the shared spatial-target workflows in PyQt6 and React with canonical cross-tab state, versioned JSON/CSV/manifest persistence, no-run 2D/3D rendering, continuous aerial passage, surface-projected landing assessment, field-linked validation, stale-solver protection, high-DPI canvases, responsive wrapped PyQt forms, collapsible engineering detail/layer controls, and movable or hideable legends; keep aerial requests fail-closed where solver/variation objectives remain ground-only. |
 | 2026-08-06 | 1.14.1 | feat(ball-flight integration, #4192-#4200 #4205): integrate the canonical metric catalog, Launch Direction conventions, inverse and impact-family solvers, capability-aware objectives, spatial targets, reproducible wind and uncertainty analysis, responsive locked-aspect plots, and timestamp-accurate Launch/Apex/Landing 3D playback across the shared Python contracts and the PyQt6/React Rate of Closure clients. |
 | 2026-08-06 | 1.14.0 | feat(swing_sim, rate_of_closure, #4192): add the UI-neutral `swing_sim.spatial_target` version-1 contract with canonical app-frame downrange/elevation/right coordinates, source-frame provenance and flight-frame conversion, surface-circle/corridor and 3D sphere/box acceptance geometry, signed closest-point miss vectors, deterministic Python/TypeScript serialization, and explicit legacy green/fairway migration. |
 | 2026-08-06 | 1.13.13 | feat(swing_sim, rate_of_closure, #4196): map desired flight to frame-explicit centered driver/iron delivery solution families with strict cross-runtime schemas, observed intervals/correlations, local sensitivities, complete residuals, model manifests, and rejected no-impact/miss diagnostics. |

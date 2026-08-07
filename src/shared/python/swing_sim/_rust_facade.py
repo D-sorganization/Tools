@@ -42,9 +42,10 @@ try:
 except ImportError:  # pragma: no cover - exercised on machines without wheel
     _rust_swing = None
     _RUST_AVAILABLE = False
-    logger.warning(
-        "swing_sim._rust_facade: swing_core wheel not available; hot-loop "
-        "calls will raise ImportError. See docs/development/rust-setup.md"
+    logger.info(
+        "Optional swing_core wheel is unavailable; the auto backend will use "
+        "the Python integrator. Explicit Rust calls still raise ImportError; "
+        "see docs/development/rust-setup.md."
     )
 
 

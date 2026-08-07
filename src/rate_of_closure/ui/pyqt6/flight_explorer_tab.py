@@ -1,17 +1,9 @@
 """Standalone launch-to-flight explorer with plots and 3D playback.
 
-Epic #4120 (V2): type launch conditions directly (ball speed with a
-unit drop-down, launch angle, launch direction, spin, spin-axis tilt) OR club
-delivery numbers run through ``swing_sim.impact.delivery`` and the
-rigid-body impact model, pick any of the 7 literature flight models,
-and render the result in the dedicated flight-scale
-:class:`~rate_of_closure.ui.pyqt6.flight_view.FlightView` with result
-rows (carry, apex, flight time, landing angle, lateral) that click
-through to explanations. Every control carries sourced hover guidance.
-
-The physics lives in :mod:`rate_of_closure.simulation.flight_explorer`;
-this presentation-only widget combines direct/delivery entry, wind-pair
-comparison, result explanations, and timestamp-accurate 3D playback.
+The presentation widget combines direct/delivery launch entry, seven literature
+flight models, wind-pair comparison, canonical spatial targets, result
+explanations, and timestamp-accurate 3D playback. Physics remains in
+``rate_of_closure.simulation.flight_explorer``.
 """
 
 from __future__ import annotations
@@ -63,6 +55,9 @@ from rate_of_closure.ui.pyqt6.flight_playback_controls import FlightPlaybackPane
 from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.flight_wind_controls import FlightWindControls
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
+from rate_of_closure.ui.pyqt6.spatial_target_workflow import (
+    build_spatial_target_workflow,
+)
 from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
 from shared.python.swing_sim.flight import (
     LAUNCH_DIRECTION_DEFINITIONS,
@@ -98,6 +93,10 @@ class FlightExplorerTab(QWidget):
         left_layout.addWidget(self._build_entry_box())
         self.wind_controls = FlightWindControls()
         left_layout.addWidget(self.wind_controls)
+        self._spatial_target_panel, self._target_workflow = (
+            build_spatial_target_workflow(self._flight_view)
+        )
+        left_layout.addWidget(self._spatial_target_panel)
         left_layout.addWidget(self._build_results_box())
         left_layout.addWidget(self._build_explanation_box())
         left_layout.addStretch(1)
@@ -321,6 +320,7 @@ class FlightExplorerTab(QWidget):
                 comparison.calm.times, comparison.calm.positions
             )
         self._refresh_rows()
+        self._target_workflow.set_trajectory(exploration.positions)
         return exploration
 
     def _refresh_rows(self) -> None:

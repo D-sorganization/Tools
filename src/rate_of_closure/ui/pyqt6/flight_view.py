@@ -31,7 +31,12 @@ from rate_of_closure.ui.pyqt6.figure_canvas import (
 from rate_of_closure.ui.pyqt6.flight_playback_rendering import FlightPlaybackArtists
 from rate_of_closure.ui.pyqt6.flight_view_axes import distance_axis
 from rate_of_closure.ui.pyqt6.flight_view_panels import FlightViewPanelsMixin
+from rate_of_closure.ui.pyqt6.spatial_target_rendering import spatial_target_extents
+from rate_of_closure.ui.pyqt6.spatial_target_trajectory import (
+    validate_landing_surface,
+)
 from rate_of_closure.units import FIELD_GUIDANCE
+from shared.python.swing_sim.solver import SpatialTarget
 
 logger = logging.getLogger(__name__)
 
@@ -74,6 +79,7 @@ class FlightView(FlightViewPanelsMixin, QWidget):
         self._checks: dict[str, QCheckBox] = {}
         self._course_layout = CourseLayout()
         self._target_region: TargetRegion | None = None
+        self._spatial_target: SpatialTarget | None = None
         # (carry, lateral) landing scatter [m] from the Variation engine.
         self._scatter: tuple[np.ndarray, np.ndarray] | None = None
 
@@ -218,6 +224,19 @@ class FlightView(FlightViewPanelsMixin, QWidget):
         """The target region currently overlaid, if any."""
         return self._target_region
 
+    def set_spatial_target(self, target: SpatialTarget | None) -> None:
+        """Show a canonical target in side, top, and 3D projections."""
+        if target is not None and not isinstance(target, SpatialTarget):
+            raise TypeError("target must be a SpatialTarget or None")
+        if target is not None:
+            validate_landing_surface(target)
+        self._spatial_target = target
+        self._draw()
+
+    def spatial_target(self) -> SpatialTarget | None:
+        """Return the canonical spatial target currently rendered."""
+        return self._spatial_target
+
     def set_landing_scatter(
         self, carries_m: np.ndarray | None, laterals_m: np.ndarray | None = None
     ) -> None:
@@ -254,11 +273,15 @@ class FlightView(FlightViewPanelsMixin, QWidget):
             if np.any(finite):
                 carry = max(carry, float(np.max(carries[finite])) * 1.05)
                 lateral = max(lateral, float(np.max(np.abs(laterals[finite]))) * 1.1)
-        return (
-            carry,
-            max(_MIN_HEIGHT_M, float(np.max(all_positions[:, 1])) * 1.2),
-            lateral,
-        )
+        height = max(_MIN_HEIGHT_M, float(np.max(all_positions[:, 1])) * 1.2)
+        if self._spatial_target is not None:
+            target_carry, target_height, target_lateral = spatial_target_extents(
+                self._spatial_target
+            )
+            carry = max(carry, target_carry * 1.05)
+            height = max(height, target_height * 1.1)
+            lateral = max(lateral, target_lateral * 1.1)
+        return (carry, height, lateral)
 
     # ── drawing ─────────────────────────────────────────────────────
     def _draw(self) -> None:

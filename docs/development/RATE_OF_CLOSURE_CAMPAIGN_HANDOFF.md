@@ -71,6 +71,51 @@ backed by `ui/pyqt6/launch_monitor_analytics_tab.py`.
 
 ## Verification evidence
 
+### Spatial-target and compact-layout continuation
+
+The current continuation closes the user-visible spatial-target workflow and
+the concrete 1280 x 768 PyQt Simulation defects captured in issue #4235.
+
+- PyQt6 and React now share one canonical target across Flight Explorer and
+  integrated Simulation, including app/flight-frame editing, landing/aerial
+  kinds, circle/corridor/sphere/box tolerances, visible validation, and
+  side/top/3D rendering before and after a run.
+- Versioned run/project JSON, CSV metadata, solver manifests, and variation
+  manifests carry the exact target. Imports migrate legacy documents, reject
+  incomplete version-4 documents atomically, and neutralize spreadsheet
+  formula prefixes in CSV text fields.
+- Aerial target passage is evaluated continuously between retained trajectory
+  samples with an interpolated event time. Landing assessment projects the
+  ball center onto the course surface. Ground-only solver/variation requests
+  explicitly reject aerial targets and stale solver results cannot be applied.
+- The PyQt Swing view keeps key impact metrics visible while placing layer and
+  engineering-detail controls in collapsible panels. Legends default beside
+  the data and can be moved inside or hidden. Shared height-for-width group
+  boxes reserve the real height of wrapped forms, so Ball Setup, Spatial
+  Target, and global scenario fields do not collapse in narrow scroll rails.
+- The optional `swing_core` accelerator no longer prints a crash-like warning
+  during a normal auto-backend launch. Auto mode visibly remains operational
+  through the Python integrator; explicit Rust requests continue to fail
+  closed with actionable installation guidance.
+
+Current exact local evidence after these changes:
+
+- Complete Rate of Closure Python/PyQt suite after the responsive-group and
+  quiet optional-accelerator fixes: `630 passed`, with two known non-failing
+  warnings (Hypothesis collection configuration and an empty preview legend).
+- Complete React suite: `78` files and `475` tests passed.
+- React TypeScript type-check, zero-warning ESLint, and the 153-module Vite
+  production build passed.
+- Ruff check/format passed across the affected Python domain; mypy passed on
+  `62` changed production files.
+- Changed-only 500-LOC and module-size budgets passed; `git diff --check`
+  passed. New production modules remain below 400 lines.
+- Compact/full-window tests passed at 1269 x 731 and 1280 x 768, plus the
+  1024 x 700 window floor and an explicit 125% Qt scale factor.
+- Live screenshots:
+  `C:\Users\diete\AppData\Local\Temp\rate-of-closure-final-simulation.png`
+  and the browser-controlled React app at `http://127.0.0.1:5270/`.
+
 - Full pre-v2 Python campaign suite: `740 passed, 4 skipped, 15 warnings`.
 - Post-v2 wind-uncertainty plus flight/solver contract tests: `25 passed`.
 - React/Vitest suite: `70` files and `439` tests passed.
@@ -207,13 +252,15 @@ canvas with fixed legends, silent 0 mph to 0.1 mph coercion, and acceptance of
 remain visible. Negative spin-axis input itself is confirmed working: -10 deg
 produced -17.3 yd lateral, and the double-pendulum articulated skeleton rendered.
 
-At 1280 x 768, PyQt's three-column Simulation workspace clips model,
-contact-policy, and status content; swing overlay labels collapse into ambiguous
-fragments and the fixed legend obscures the plot. Native workspace switching can
-also leave the accessibility snapshot rooted in the previous Simulation tree.
-Native Flight correctly shows side, top-down, and 3D trajectories together.
-Native 150%/200% DPI and freely resized-window inspection remain explicit gaps
-owned by #4235/#4239 rather than claimed evidence.
+The reported 1280 x 768 PyQt Simulation defects are now corrected: the control
+rails scroll vertically without horizontal overflow, wrapped forms reserve
+readable editor heights, layer labels and engineering details collapse into
+discoverable panels, key metrics remain visible, and the legend can be placed
+outside, moved inside, or hidden. Native Flight continues to show side,
+top-down, and 3D trajectories together. Automated full-window coverage now
+includes 1024 x 700, 1269 x 731, 1280 x 768, and 125% Qt scaling. A broader
+150%/200% platform matrix, keyboard traversal audit, and stable pixel-baseline
+suite remain owned by #4235/#4239.
 
 ## Open release blockers
 
@@ -221,8 +268,9 @@ GitHub issue #4201 remains open. Its 2026-08-06 release checkpoint still
 requires all of the following before any production-ready or merge claim:
 
 - protected CI and required reviews for the combined stack;
-- complete PyQt/React end-user workflows for spatial targets, desired-flight
-  solving, solution families, capability profiles, and wind uncertainty;
+- complete PyQt/React end-user workflows for desired-flight solving, solution
+  families, capability profiles, and wind uncertainty, plus native aerial
+  target objectives in the currently ground-only solver/variation paths;
 - off-main-thread wind-ensemble execution with progress and cancellation;
 - complete save/load/export integration;
 - Rust/WASM trajectory parity and installed-package/UpstreamDrift pin checks;
@@ -231,8 +279,10 @@ requires all of the following before any production-ready or merge claim:
   regression coverage.
 
 The metric catalog, inverse solver, solution families, capability optimizer,
-spatial target, and wind-uncertainty work must therefore be described as tested
-contracts/cores unless and until their missing UI workflows are delivered.
+and wind-uncertainty work must therefore be described as tested contracts/cores
+unless and until their missing UI workflows are delivered. Spatial-target
+editing, rendering, and persistence are end-user workflows; aerial optimization
+remains an explicit fail-closed boundary.
 
 ## Next safe steps
 

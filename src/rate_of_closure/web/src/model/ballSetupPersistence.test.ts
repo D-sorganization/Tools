@@ -6,14 +6,31 @@ import {
 } from "./ballSetup";
 import {
   ballSetupFromSimulationDocument,
+  createSimulationRunCsv,
   createSimulationRunDocument,
   exportBallSetupMetadata,
   loadBallSetupPreference,
   saveBallSetupPreference,
+  spatialTargetFromSimulationDocument,
 } from "./ballSetupPersistence";
 import { runSimulation, type SimulationInput } from "./simulation";
+import {
+  createSpatialTarget,
+  sphereTolerance,
+  targetPointFromFrame,
+} from "./spatialTarget";
+import { spatialTargetToJson } from "./spatialTargetSerialization";
+import { DEFAULT_TARGET, spatialTargetFromRegion } from "./targets";
 
 const tee: BallSetup = { supportMode: "tee", teeHeightM: DRIVER_TEE_HEIGHT_M };
+const landingTarget = spatialTargetFromRegion(DEFAULT_TARGET);
+const aerialTarget = createSpatialTarget({
+  label: "Apex gate",
+  kind: "aerial_waypoint",
+  point: targetPointFromFrame([140, 24, -3], "app"),
+  tolerance: sphereTolerance(4),
+  elevationSource: "absolute",
+});
 
 describe("ball setup persistence", () => {
   it("exports canonical snake-case setup plus unit and reference metadata", () => {
@@ -31,8 +48,9 @@ describe("ball setup persistence", () => {
       swingDurationS: 1.5,
       ballSetup: tee,
     };
-    const document = createSimulationRunDocument(input, runSimulation(input));
-    expect(document.format).toBe("rate_of_closure.simulation_run.web/3");
+    const run = runSimulation(input);
+    const document = createSimulationRunDocument(input, run, null, aerialTarget);
+    expect(document.format).toBe("rate_of_closure.simulation_run.web/4");
     expect(document.parameters).toMatchObject({
       ball_setup: { support_mode: "tee", tee_height_m: DRIVER_TEE_HEIGHT_M },
     });
@@ -47,6 +65,25 @@ describe("ball setup persistence", () => {
       units: "SI",
     });
     expect(document.series.clubScrewMotion.rows).toHaveLength(document.series.swing.length);
+    const canonicalTarget = JSON.parse(spatialTargetToJson(aerialTarget));
+    expect(document.spatial_target).toEqual(canonicalTarget);
+    expect(document.solver_manifest).toMatchObject({
+      schema: "swing_sim.solver_manifest",
+      schema_version: 1,
+      target: canonicalTarget,
+    });
+    expect(document.variation_manifest).toMatchObject({ target: canonicalTarget });
+
+    const csv = createSimulationRunCsv(run, aerialTarget);
+    expect(csv).toContain("target_schema,target_schema_version,target_label,target_kind");
+    expect(csv).toContain("swing_sim.spatial_target,1,Apex gate,aerial_waypoint");
+    expect(csv).toContain("140,24,-3");
+    expect(csv).toContain("target_frame,target_source_frame,target_units");
+    expect(csv).toContain(",app,app,m,absolute,");
+
+    const missInput = { ...input, contactMode: "fixed_ball_contact" as const };
+    const missCsv = createSimulationRunCsv(runSimulation(missInput), aerialTarget);
+    expect(missCsv).toContain("swing_sim.spatial_target,1,Apex gate,aerial_waypoint");
   });
 
   it("round-trips the setup, override policy, and reference metadata", () => {
@@ -89,6 +126,59 @@ describe("ball setup persistence", () => {
     expect(() => ballSetupFromSimulationDocument({
       format: "rate_of_closure.simulation_run.web/99",
     })).toThrow(/unsupported.*version 99/i);
+
+    expect(spatialTargetFromSimulationDocument({
+      format: "rate_of_closure.simulation_run.web/3",
+      parameters: { target: { ...DEFAULT_TARGET, distanceM: 205 } },
+    })).toMatchObject({
+      label: "Migrated Green Target",
+      kind: "landing_area",
+      point: { appCoordinatesM: [205, 0, 0] },
+      groundSource: "legacy.course_surface/default",
+    });
+    expect(spatialTargetFromSimulationDocument({
+      format: "rate_of_closure.simulation_run.web/3",
+      parameters: {},
+    })).toEqual(landingTarget);
+  });
+
+  it("round-trips canonical targets and rejects malformed current documents", () => {
+    const document = {
+      format: "rate_of_closure.simulation_run.web/4",
+      spatial_target: JSON.parse(spatialTargetToJson(aerialTarget)),
+    };
+    expect(spatialTargetFromSimulationDocument(document)).toEqual(aerialTarget);
+    expect(() => spatialTargetFromSimulationDocument({
+      format: "rate_of_closure.simulation_run.web/4",
+    })).toThrow(/requires spatial_target/i);
+    expect(() => spatialTargetFromSimulationDocument({
+      ...document,
+      spatial_target: { ...document.spatial_target, units: "yd" },
+    })).toThrow(/units must be 'm'/i);
+    expect(() => ballSetupFromSimulationDocument({
+      format: "rate_of_closure.simulation_run.web/4",
+      spatial_target: document.spatial_target,
+      parameters: {},
+    })).toThrow(/requires ball_setup/i);
+  });
+
+  it("neutralizes formula-leading target text in CSV while preserving numerics", () => {
+    const hostileTarget = createSpatialTarget({
+      ...landingTarget,
+      label: "=HYPERLINK(\"https://example.invalid\")",
+      groundSource: "@malicious-source",
+    });
+    const input: SimulationInput = {
+      sourceKind: "manual", clubheadSpeedMph: 100, omegaDps: [0, 0, 0],
+      loftDeg: 10.5, impactOffsetToeMm: 0, impactOffsetHighMm: 0,
+      planeYawDeg: 0, planeSideTiltDeg: -45, planeForwardTiltDeg: 0,
+      impactTimeS: null, swingDurationS: 1.5, ballSetup: tee,
+    };
+    const csv = createSimulationRunCsv(runSimulation(input), hostileTarget);
+    expect(csv).toContain("'=" + "HYPERLINK");
+    expect(csv).toContain("'@malicious-source");
+    expect(csv).toContain(",230,0,0,app,app,m,");
+    expect(csv).not.toContain("'230");
   });
 
   it("reports corrupt preferences without applying unsafe geometry", () => {

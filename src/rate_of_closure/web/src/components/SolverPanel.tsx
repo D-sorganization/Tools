@@ -13,7 +13,7 @@
  * source mode) lands with the P7 kernels.
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { DecimalInput } from "./DecimalInput";
 
@@ -145,6 +145,12 @@ interface Props {
   target?: TargetRegionTs;
 }
 
+interface SolverRunState {
+  readonly result: SolverResultTs;
+  readonly signature: string;
+  readonly mode: "goals" | "target";
+}
+
 const inputClass =
   "no-spinner w-20 rounded border border-slate-700 bg-slate-800 px-2 " +
   "py-1 text-slate-100 focus:border-blue-500 focus:outline-none " +
@@ -176,8 +182,14 @@ export function SolverPanel({ onApply, target }: Props) {
       ]),
     ),
   );
-  const [result, setResult] = useState<SolverResultTs | null>(null);
+  const [solvedRun, setSolvedRun] = useState<SolverRunState | null>(null);
   const [message, setMessage] = useState<string>("");
+  const inputSignature = useMemo(
+    () => JSON.stringify({ goals, vars, target: target ?? null }),
+    [goals, vars, target],
+  );
+  const resultIsStale = solvedRun !== null && solvedRun.signature !== inputSignature;
+  const result = solvedRun?.result ?? null;
 
   const setGoal = (key: string, patch: Partial<GoalState>) =>
     setGoals((g) => ({ ...g, [key]: { ...g[key], ...patch } }));
@@ -205,20 +217,24 @@ export function SolverPanel({ onApply, target }: Props) {
         400,
         includeTarget ? target : undefined,
       );
-      setResult(solved);
+      setSolvedRun({
+        result: solved,
+        signature: inputSignature,
+        mode: includeTarget ? "target" : "goals",
+      });
       setMessage(
         `${solved.converged ? "Converged" : "Did NOT converge"} — residual ` +
           `norm ${solved.residualNorm.toExponential(2)}, ${solved.nEvals} ` +
           "evaluations.",
       );
     } catch (error) {
-      setResult(null);
+      setSolvedRun(null);
       setMessage(`Cannot solve: ${(error as Error).message}`);
     }
   };
 
   const applySolution = () => {
-    if (!result) return;
+    if (!result || resultIsStale) return;
     onApply({
       clubheadSpeedMph: result.variables.clubheadSpeedMps * MPH_PER_MPS,
       impactOffsetToeMm: result.variables.impactOffsetToeMm,
@@ -362,7 +378,7 @@ export function SolverPanel({ onApply, target }: Props) {
         <button
           type="button"
           onClick={applySolution}
-          disabled={!result}
+          disabled={!result || resultIsStale}
           title="Load the solved variables into the scenario and rerun"
           className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 hover:border-slate-500 disabled:opacity-40"
         >
@@ -373,6 +389,12 @@ export function SolverPanel({ onApply, target }: Props) {
       {message && (
         <p aria-live="polite" className="mb-3 text-xs text-slate-400">
           {message}
+        </p>
+      )}
+
+      {resultIsStale && (
+        <p role="alert" className="mb-3 rounded border border-amber-400/40 bg-amber-950/20 px-3 py-2 text-xs text-amber-200">
+          Solver result is stale because goals, variables, or the canonical target changed. Run the solver again before applying it.
         </p>
       )}
 
@@ -421,7 +443,7 @@ export function SolverPanel({ onApply, target }: Props) {
             </tbody>
           </table>
           <p className="mt-2 text-xs text-slate-500">
-            Solved:{" "}
+            Solved in {solvedRun?.mode === "target" ? "target" : "goals-only"} mode:{" "}
             {VAR_ROWS.filter((row) => vars[row.key].optimize)
               .map(
                 (row) =>

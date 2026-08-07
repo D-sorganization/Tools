@@ -27,6 +27,7 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QMainWindow,
     QScrollArea,
+    QSizePolicy,
     QSplitter,
     QStatusBar,
     QTabBar,
@@ -200,6 +201,9 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._glossary_tab = GlossaryTab()
 
         left_content = QWidget()
+        left_content.setSizePolicy(
+            QSizePolicy.Policy.Ignored, QSizePolicy.Policy.Preferred
+        )
         left_layout = QVBoxLayout(left_content)
         left_layout.addWidget(self._controls)
         left_layout.addWidget(
@@ -212,6 +216,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         left_layout.addStretch(1)
         left = QScrollArea()
         left.setWidgetResizable(True)
+        left.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         left.setFrameShape(QFrame.Shape.NoFrame)
         left.setWidget(left_content)
         left.setMinimumWidth(320)

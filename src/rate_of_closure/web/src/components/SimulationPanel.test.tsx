@@ -1,50 +1,21 @@
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, screen } from "@testing-library/react";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 
-import { getClub, type ClubSpec } from "../model/club";
+import { getClub } from "../model/club";
 import { DEFAULT_SCENARIO } from "../model/impact";
-import { DEFAULT_TARGET } from "../model/targets";
 import { SimulationPanel } from "./SimulationPanel";
+import {
+  defaultSpatialTarget,
+  installSimulationPanelTestEnvironment,
+  renderSimulationPanel as renderPanel,
+} from "./simulationPanelTestSupport";
 
-beforeAll(() => {
-  const stored = new Map<string, string>();
-  Object.defineProperty(window, "localStorage", {
-    configurable: true,
-    value: {
-      clear: () => stored.clear(),
-      getItem: (key: string) => stored.get(key) ?? null,
-      removeItem: (key: string) => stored.delete(key),
-      setItem: (key: string, value: string) => stored.set(key, value),
-    },
-  });
-  const context: unknown = new Proxy(function () {} as object, {
-    get: (_target, property) =>
-      property === "measureText" ? () => ({ width: 0 }) : () => context,
-    set: () => true,
-    apply: () => context,
-  });
-  vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
-    context as CanvasRenderingContext2D,
-  );
-});
+beforeAll(installSimulationPanelTestEnvironment);
 
 afterEach(() => {
   cleanup();
   if (typeof window.localStorage.clear === "function") window.localStorage.clear();
 });
-
-function renderPanel(clubSpec?: ClubSpec | null) {
-  return render(
-    <SimulationPanel
-      scenario={{ ...DEFAULT_SCENARIO, impactOffsetToeMm: 20 }}
-      loftDeg={10.5}
-      clubSpec={clubSpec}
-      onScenarioChange={() => undefined}
-      target={DEFAULT_TARGET}
-      onTargetChange={() => undefined}
-    />,
-  );
-}
 
 function displayedBallSpeed(): number {
   const text = screen.getByRole("button", { name: /Ball Speed/ }).textContent ?? "";
@@ -102,8 +73,8 @@ describe("SimulationPanel impact club", () => {
         loftDeg={34}
         clubSpec={getClub("7-Iron")}
         onScenarioChange={() => undefined}
-        target={DEFAULT_TARGET}
-        onTargetChange={() => undefined}
+        spatialTarget={defaultSpatialTarget}
+        onSpatialTargetChange={() => undefined}
       />,
     );
     expect(screen.getByRole("radio", { name: "Tee" })).toBeChecked();

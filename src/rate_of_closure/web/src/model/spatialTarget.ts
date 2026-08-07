@@ -328,6 +328,22 @@ export function spatialTargetMissFromFrame(
   return spatialTargetMiss(target, point.appCoordinatesM);
 }
 
+/** Return canonical x/up/right half extents for plot bounds and projections. */
+export function spatialTargetHalfExtents(targetInput: SpatialTargetTs): Vector3 {
+  const target = createSpatialTarget(targetInput);
+  const tolerance = target.tolerance;
+  switch (tolerance.kind) {
+    case "sphere":
+      return [tolerance.radiusM, tolerance.radiusM, tolerance.radiusM];
+    case "box":
+      return tolerance.halfExtentsM;
+    case "surface_circle":
+      return [tolerance.radiusM, 0, tolerance.radiusM];
+    case "surface_corridor":
+      return [tolerance.halfLengthM, 0, tolerance.halfWidthM];
+  }
+}
+
 /** Internal decoder seam: coordinates are already canonical app-frame values. */
 export function targetPointFromCanonicalApp(
   coordinatesM: unknown,

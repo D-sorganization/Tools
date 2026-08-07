@@ -19,7 +19,8 @@ import { LaunchMonitorAnalyticsPanel } from "./components/LaunchMonitorAnalytics
 import { PlotsPanel } from "./components/PlotsPanel";
 import { PuttingPanel } from "./components/PuttingPanel";
 import { PrimaryViewTabs } from "./components/PrimaryViewTabs";
-import { DEFAULT_TARGET, type TargetRegionTs } from "./model/targets";
+import { DEFAULT_TARGET, spatialTargetFromRegion } from "./model/targets";
+import type { SpatialTargetTs } from "./model/spatialTarget";
 import { SimulationPanel } from "./components/SimulationPanel";
 import { VariationPanel } from "./components/VariationPanel";
 import { ClubPanel } from "./components/ClubPanel";
@@ -148,9 +149,11 @@ const UNIT_LABELS: Record<Quantity, string> = {
 export default function App() {
   const defaultDriver = useMemo(() => getClub("Driver 10.5°"), []);
   const [scenario, setScenario] = useState<ImpactScenario>(DEFAULT_SCENARIO);
-  // Target region (#4125 H7b): shared by the Simulation flight view /
-  // solver and the Variation landing overlay (hold-% headline).
-  const [target, setTarget] = useState<TargetRegionTs>(DEFAULT_TARGET);
+  // One canonical 3D target feeds the integrated flight view, solver,
+  // variation compatibility boundary, and versioned run persistence.
+  const [spatialTarget, setSpatialTarget] = useState<SpatialTargetTs>(() =>
+    spatialTargetFromRegion(DEFAULT_TARGET),
+  );
   const [viewState, setViewState] = useState<PrimaryViewState>(
     loadPrimaryViewState,
   );
@@ -305,9 +308,10 @@ export default function App() {
           }}
         />
       ) : tab === "variation" ? (
-        <VariationPanel target={target} distanceUnit={units.distance} />
+        <VariationPanel spatialTarget={spatialTarget} distanceUnit={units.distance} />
       ) : tab === "flight" ? (
-        <FlightExplorerPanel distanceUnit={units.distance} />
+        <FlightExplorerPanel distanceUnit={units.distance}
+          spatialTarget={spatialTarget} onSpatialTargetChange={setSpatialTarget} />
       ) : tab === "launch-monitor-analytics" ? (
         <LaunchMonitorAnalyticsPanel />
       ) : tab === "plots" ? (
@@ -324,8 +328,8 @@ export default function App() {
           onScenarioChange={(updates) =>
             setScenario((s) => ({ ...s, ...updates }))
           }
-          target={target}
-          onTargetChange={setTarget}
+          spatialTarget={spatialTarget}
+          onSpatialTargetChange={setSpatialTarget}
           distanceUnit={units.distance}
         />
       ) : tab === "calculation" ? (

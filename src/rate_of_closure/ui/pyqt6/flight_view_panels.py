@@ -21,7 +21,13 @@ from rate_of_closure.ui.pyqt6.flight_wind_overlay import (
     plot_wind_pair_2d,
     plot_wind_pair_3d,
 )
+from rate_of_closure.ui.pyqt6.spatial_target_rendering import (
+    draw_spatial_target_3d,
+    draw_spatial_target_side,
+    draw_spatial_target_top,
+)
 from rate_of_closure.units import format_distance_m
+from shared.python.swing_sim.solver import SpatialTarget
 
 try:
     from shared.python.theme.matplotlib_style import get_chart_color
@@ -39,6 +45,7 @@ class FlightViewPanelsMixin:
     _course_layout: CourseLayout
     _playback_artists: FlightPlaybackArtists
     _scatter: tuple[np.ndarray, np.ndarray] | None
+    _spatial_target: SpatialTarget | None
     _target_region: TargetRegion | None
     comparison_positions: np.ndarray
 
@@ -71,6 +78,8 @@ class FlightViewPanelsMixin:
         )
         plot_wind_pair_2d(axes, positions, self.comparison_positions, 1)
         self._playback_artists.add_2d(axes, 1)
+        if self._spatial_target is not None:
+            draw_spatial_target_side(axes, self._spatial_target)
         if self._checks["apex"].isChecked():
             apex_index = int(np.argmax(positions[:, 1]))
             axes.scatter(
@@ -132,7 +141,9 @@ class FlightViewPanelsMixin:
                 f"lateral {direction}{format_distance_m(abs(landing_lateral))}",
             )
         title = "Top-down"
-        if self._target_region is not None:
+        if self._spatial_target is not None:
+            draw_spatial_target_top(axes, self._spatial_target)
+        elif self._target_region is not None:
             draw_target_region_top(axes, self._target_region)
         if self._scatter is not None:
             carries, laterals = self._scatter
@@ -173,6 +184,8 @@ class FlightViewPanelsMixin:
         )
         plot_wind_pair_3d(axes, positions, self.comparison_positions)
         self._playback_artists.add_3d(axes)
+        if self._spatial_target is not None:
+            draw_spatial_target_3d(axes, self._spatial_target)
         if self._checks["landing"].isChecked():
             axes.scatter(
                 [positions[-1, 2]],
