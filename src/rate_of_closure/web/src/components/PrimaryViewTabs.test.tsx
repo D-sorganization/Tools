@@ -44,6 +44,7 @@ describe("PrimaryViewTabs", () => {
       "plots",
       "flight",
       "launch-monitor-analytics",
+      "neural-model-lab",
       "variation",
       "putting",
       "glossary",

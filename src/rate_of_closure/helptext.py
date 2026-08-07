@@ -182,6 +182,25 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "Comparable describe sourced definition frames; they do not emulate or "
         "certify vendor devices.</p>",
     ),
+    "neural_model_lab": _entry(
+        "Neural Model Lab",
+        "<h3>What this tab does</h3>"
+        "<p>Configures reproducible vendor-comparable neural-surrogate training "
+        "in the private campaign repository, imports safe JSON model bundles, "
+        "and supports manual or full-dataset prediction.</p>"
+        "<h3>Workflow</h3>"
+        "<ol><li>Select a manifested or custom shot-level dataset.</li>"
+        "<li>Select inputs, targets, split identity, architecture, regularization, "
+        "seed, epoch cap, and holdout fraction.</li>"
+        "<li>Launch private training and review its log, learning curve, holdout "
+        "metrics, and source provenance.</li>"
+        "<li>Import the non-executable JSON bundle, query one row, or export "
+        "batch predictions.</li></ol>"
+        "<h3>Scientific boundary</h3>"
+        "<p>Vendor-comparable is not vendor-certified. Out-of-range inputs are "
+        "extrapolations. Foresight and FlightScope training remains disabled "
+        "until reusable shot-level outcome data exists.</p>",
+    ),
     "variation": _entry(
         "Variation",
         "<h3>What this tab does</h3>"

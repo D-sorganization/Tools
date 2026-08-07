@@ -58,6 +58,7 @@ from rate_of_closure.ui.pyqt6.glossary_tab import GlossaryTab
 from rate_of_closure.ui.pyqt6.launch_monitor_analytics_tab import (
     LaunchMonitorAnalyticsTab,
 )
+from rate_of_closure.ui.pyqt6.neural_model_lab_tab import NeuralModelLabTab
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
@@ -135,6 +136,7 @@ _DEFAULT_TAB_IDS: tuple[str, ...] = (
     "simulation",
     "flight_explorer",
     "launch_monitor_analytics",
+    "neural_model_lab",
     "variation",
     "putting",
     "glossary",
@@ -191,6 +193,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._launch_monitor_analytics_tab = LaunchMonitorAnalyticsTab()
+        self._neural_model_lab_tab = NeuralModelLabTab()
         self._variation_tab = VariationTab()
         # Variation -> course-view tie-in (#4125 H7b): a completed study
         # overlays its landing scatter on the flight top-down view, where
@@ -240,6 +243,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
                 self._launch_monitor_analytics_tab,
                 "Launch Monitor Analytics",
             ),
+            ("neural_model_lab", self._neural_model_lab_tab, "Neural Model Lab"),
             ("variation", self._variation_tab, "Variation"),
             ("putting", self._putting_tab, "Putting"),
             ("glossary", self._glossary_tab, "Glossary"),
