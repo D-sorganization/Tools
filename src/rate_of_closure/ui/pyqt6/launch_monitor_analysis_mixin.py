@@ -35,6 +35,10 @@ from rate_of_closure.launch_monitor_player_metrics import (
     analyze_sessions,
     calculate_strokes_gained_proxy,
 )
+from rate_of_closure.ui.pyqt6.launch_monitor_covariation_presenter import (
+    run_covariation_presentation,
+    run_covariation_scan_presentation,
+)
 from rate_of_closure.ui.pyqt6.launch_monitor_player_controls import (
     LaunchMonitorPlayerControls,
 )
@@ -189,8 +193,16 @@ class LaunchMonitorAnalysisMixin:
             }
         elif mode == "Strokes Gained":
             self._render_strokes_gained(mode)
-        else:
+        elif mode == "Session Trend":
             self._render_session_trend(mode)
+        elif mode == "Within-Player Covariation":
+            self.player_payload = run_covariation_presentation(
+                self.frame, self.player_controls, self.plot_widget, self.result_table
+            )
+        else:
+            self.player_payload = run_covariation_scan_presentation(
+                self.frame, self.player_controls, self.plot_widget, self.result_table
+            )
 
     def _render_strokes_gained(self, mode: str) -> None:
         analysis = calculate_strokes_gained_proxy(
@@ -279,6 +291,17 @@ class LaunchMonitorAnalysisMixin:
             "displayed session, fitted independently per player. Selecting a "
             "timestamp also reports change per elapsed day. Neither adjusts for "
             "context.</p>"
+            "<p><b>Within-player covariation:</b> Pearson measures linear and "
+            "Spearman monotonic association. Player-mean centering separates "
+            "within-player from between-player patterns. Fisher-z fixed and "
+            "random effects summarize eligible player Pearson correlations; "
+            "heterogeneity means players need not share one relationship. "
+            "An explicitly selected identity column is required. Association "
+            "does not establish causality, coaching mechanism, or vendor internals.</p>"
+            "<p><b>Covariation pair scan:</b> ranks every numeric pair by absolute "
+            "random-effects Pearson correlation. It is exploratory; testing many "
+            "pairs creates multiplicity and false-positive risk. Validate findings "
+            "on held-out data. Correlation does not imply causation.</p>"
             "<p><b>Advanced model explanations:</b> private PCA and importance "
             "tables are selectable datasets. They describe association, not "
             "causality or vendor internals.</p>"

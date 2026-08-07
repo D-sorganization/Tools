@@ -196,7 +196,7 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "metrics, and source provenance.</li>"
         "<li>Import the non-executable JSON bundle, query one row, or export "
         "batch predictions.</li></ol>"
-        "<h3>Scientific boundary</h3>"
+        "<h3>Tips and scientific boundary</h3>"
         "<p>Vendor-comparable is not vendor-certified. Out-of-range inputs are "
         "extrapolations. Foresight and FlightScope training remains disabled "
         "until reusable shot-level outcome data exists.</p>",

@@ -3,7 +3,14 @@
 from __future__ import annotations
 
 import pandas as pd
-from PyQt6.QtWidgets import QComboBox, QDoubleSpinBox, QFormLayout, QGroupBox
+from PyQt6.QtWidgets import (
+    QComboBox,
+    QDoubleSpinBox,
+    QFormLayout,
+    QGroupBox,
+    QSpinBox,
+    QWidget,
+)
 
 
 class LaunchMonitorPlayerControls(QGroupBox):
@@ -11,6 +18,14 @@ class LaunchMonitorPlayerControls(QGroupBox):
 
     def __init__(self) -> None:
         super().__init__("Player Analytics")
+        self._build_controls()
+        layout = QFormLayout(self)
+        for control, label, help_text in self._control_rows():
+            control.setAccessibleName(label)
+            control.setToolTip(help_text)
+            layout.addRow(f"{label}:", control)
+
+    def _build_controls(self) -> None:
         self.plot_mode_combo = QComboBox()
         self.plot_mode_combo.addItems(
             [
@@ -18,6 +33,8 @@ class LaunchMonitorPlayerControls(QGroupBox):
                 "Directional Dispersion",
                 "Strokes Gained",
                 "Session Trend",
+                "Within-Player Covariation",
+                "Covariation Pair Scan",
             ]
         )
         self.lateral_combo = QComboBox()
@@ -25,6 +42,17 @@ class LaunchMonitorPlayerControls(QGroupBox):
         self.session_combo = QComboBox()
         self.player_combo = QComboBox()
         self.time_combo = QComboBox()
+        self.covariation_x_combo = QComboBox()
+        self.covariation_y_combo = QComboBox()
+        self.covariation_method_combo = QComboBox()
+        self.covariation_method_combo.addItems(["Pearson", "Spearman"])
+        self.covariation_min_samples_spin = QSpinBox()
+        self.covariation_min_samples_spin.setRange(4, 1_000_000)
+        self.covariation_min_samples_spin.setValue(8)
+        self.covariation_confidence_spin = QDoubleSpinBox()
+        self.covariation_confidence_spin.setRange(0.51, 0.999)
+        self.covariation_confidence_spin.setSingleStep(0.01)
+        self.covariation_confidence_spin.setValue(0.95)
         self.target_distance_spin = QDoubleSpinBox()
         self.target_distance_spin.setRange(10.0, 600.0)
         self.target_distance_spin.setSuffix(" yd")
@@ -33,7 +61,12 @@ class LaunchMonitorPlayerControls(QGroupBox):
         self.start_lie_combo.addItems(["tee", "fairway", "rough", "sand", "recovery"])
         self.end_lie_combo = QComboBox()
         self.end_lie_combo.addItems(["fairway", "rough", "sand", "recovery"])
-        controls = (
+
+    def _control_rows(self) -> tuple[tuple[QWidget, str, str], ...]:
+        return self._base_control_rows() + self._covariation_control_rows()
+
+    def _base_control_rows(self) -> tuple[tuple[QWidget, str, str], ...]:
+        return (
             (
                 self.plot_mode_combo,
                 "Plot Mode",
@@ -81,11 +114,38 @@ class LaunchMonitorPlayerControls(QGroupBox):
                 "Assume the post-shot lie; range data does not observe this",
             ),
         )
-        layout = QFormLayout(self)
-        for control, label, help_text in controls:
-            control.setAccessibleName(label)
-            control.setToolTip(help_text)
-            layout.addRow(f"{label}:", control)
+
+    def _covariation_control_rows(self) -> tuple[tuple[QWidget, str, str], ...]:
+        return (
+            (
+                self.covariation_x_combo,
+                "Covariation X Variable",
+                "Choose any numeric explanatory variable; selection does not "
+                "imply causality",
+            ),
+            (
+                self.covariation_y_combo,
+                "Covariation Y Variable",
+                "Choose any different numeric response variable; axes retain "
+                "source units",
+            ),
+            (
+                self.covariation_method_combo,
+                "Covariation Method",
+                "Pearson measures linear association; Spearman measures "
+                "monotonic rank association",
+            ),
+            (
+                self.covariation_min_samples_spin,
+                "Minimum Shots per Player",
+                "Players below this complete-pair count remain visible as insufficient",
+            ),
+            (
+                self.covariation_confidence_spin,
+                "Covariation Confidence",
+                "Set Fisher-z interval coverage for Pearson correlations",
+            ),
+        )
 
     @staticmethod
     def _select_preferred(combo: QComboBox, preferred: tuple[str, ...]) -> None:
@@ -134,6 +194,26 @@ class LaunchMonitorPlayerControls(QGroupBox):
             self.time_combo,
             ("recorded_at", "timestamp", "shot_time", "session_date", "date"),
         )
+        self._refresh_covariation_columns(numeric)
+
+    def _refresh_covariation_columns(self, numeric: list[str]) -> None:
+        for combo in (self.covariation_x_combo, self.covariation_y_combo):
+            combo.clear()
+            combo.addItems(numeric)
+        self._select_preferred(
+            self.covariation_x_combo,
+            ("club_path_deg", "club_path", "attack_angle_deg", "attack_angle"),
+        )
+        self._select_preferred(
+            self.covariation_y_combo,
+            ("face_angle_deg", "face_angle", "launch_direction_deg"),
+        )
+        if (
+            self.covariation_y_combo.currentText()
+            == self.covariation_x_combo.currentText()
+            and len(numeric) > 1
+        ):
+            self.covariation_y_combo.setCurrentIndex(1)
 
 
 __all__ = ["LaunchMonitorPlayerControls"]

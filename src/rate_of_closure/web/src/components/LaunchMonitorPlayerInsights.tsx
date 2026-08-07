@@ -8,7 +8,9 @@ import {
   strokesGainedProxy,
 } from "../model/launchMonitorPlayerAnalytics";
 import { downloadCsv, downloadSvg } from "../model/launchMonitorDownloads";
+import type { CovariationUiSettings } from "../model/launchMonitorCovariation";
 import { DispersionPlot, SessionTrendPlot } from "./LaunchMonitorCharts";
+import { LaunchMonitorCovariation } from "./LaunchMonitorCovariation";
 
 const card = "rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20";
 
@@ -16,11 +18,14 @@ const finite = (value: number | null, digits = 3) => value === null ? "—" : va
 
 export function LaunchMonitorPlayerInsights({
   rows, outcome, targetDistanceYards, setTargetDistanceYards,
+  covariationSettings, setCovariationSettings,
 }: {
   rows: LaunchMonitorRow[];
   outcome: string;
   targetDistanceYards: number;
   setTargetDistanceYards: (value: number) => void;
+  covariationSettings: CovariationUiSettings;
+  setCovariationSettings: (value: CovariationUiSettings) => void;
 }) {
   const dispersion = dispersionSummary(rows);
   const gained = strokesGainedProxy(rows, targetDistanceYards);
@@ -29,6 +34,10 @@ export function LaunchMonitorPlayerInsights({
     ? gained.reduce((sum, shot) => sum + shot.strokesGainedProxy, 0) / gained.length : null;
 
   return <div className="space-y-5">
+    <div className={card}>
+      <LaunchMonitorCovariation rows={rows} savedSettings={covariationSettings}
+        onSettingsChange={setCovariationSettings} />
+    </div>
     <div className={card}>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>

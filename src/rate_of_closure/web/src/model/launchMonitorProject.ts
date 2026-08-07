@@ -1,4 +1,5 @@
 import type { AnalysisMode, CorrelationMethod, LaunchMonitorRow, MissingPolicy } from "./launchMonitorAnalysis";
+import type { CovariationUiSettings } from "./launchMonitorCovariation";
 
 export const PROJECT_CONTRACT_VERSION = "1.0.0" as const;
 
@@ -17,6 +18,7 @@ export interface LaunchMonitorProject {
     confidence: number;
     minSamples: number;
     targetDistanceYards: number;
+    covariation?: CovariationUiSettings;
   };
 }
 
@@ -34,4 +36,3 @@ export function parseLaunchMonitorProject(text: string): LaunchMonitorProject {
   }
   return candidate as LaunchMonitorProject;
 }
-
