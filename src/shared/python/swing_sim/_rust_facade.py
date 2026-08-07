@@ -1,12 +1,11 @@
 """Rust-accelerated swing dynamics façade (STRICT posture).
 
-Mirrors the posture of :mod:`shared.python.signal_toolkit.bilateral_rust`:
-the ``swing_core`` wheel is imported at module level; hot-loop entry points
-raise ``ImportError`` with an actionable message at call time when the wheel
-is missing. We deliberately do NOT silently substitute the ~100x slower
-pure-Python path for the integration loop — that would mask deployment
-misconfiguration. One-shot analysis calls may fall back explicitly via
-:func:`shared.python.swing_sim.reference.simulate`.
+The ``swing_core`` wheel is imported at module level and direct Rust entry
+points raise ``ImportError`` with an actionable message when it is missing.
+This low-level facade never hides an explicitly requested Rust backend.
+Higher-level callers using ``backend="auto"`` may deliberately select the
+pure-Python reference integrator after checking :func:`rust_available`; an
+explicit ``backend="rust"`` request remains fail-closed.
 
 PyO3 submodule import gotcha: ``swing_core`` exposes ``swing`` as a runtime
 PyO3 submodule (an attribute, not a filesystem module), so we must use
