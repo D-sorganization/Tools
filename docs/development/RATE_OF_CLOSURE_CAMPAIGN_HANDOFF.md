@@ -16,6 +16,8 @@ branch was rewritten.
   `3f79eb8d15d8558ccf53b441e3842c50ce36e16e`
 - Latest verified implementation head before this handoff update:
   `017dbd1f103ef050999f25fb77975ebce327c126`
+- Pinned-mypy CI compatibility follow-up after exact-head log diagnosis:
+  `8d54212e85f251ac812a4edb8f50bf6bff31cb61`
 
 ## Included PR stack
 
