@@ -356,7 +356,7 @@ class FlightExplorerTab(QWidget):
 
     def mode(self) -> str:
         """The selected entry mode label."""
-        return cast(str, _MODES[self._mode_combo.currentIndex()])
+        return _MODES[self._mode_combo.currentIndex()]
 
     def flight_view(self) -> FlightView:
         """The embedded flight-scale viewer."""

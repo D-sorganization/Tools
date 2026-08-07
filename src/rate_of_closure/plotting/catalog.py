@@ -117,7 +117,8 @@ DISTANCE_KEYS: frozenset[str] = frozenset(
 
 
 def _speed_series(vectors: np.ndarray) -> np.ndarray:
-    return np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
+    speeds: np.ndarray = np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
+    return speeds
 
 
 def _kinetics_series(picker: Callable[[KineticsSeries], np.ndarray]) -> Extractor:
@@ -129,8 +130,10 @@ def _kinetics_series(picker: Callable[[KineticsSeries], np.ndarray]) -> Extracto
     def _extract(run: SimulationRun) -> np.ndarray:
         series = kinetics_for_run(run)
         if series is None:
-            return np.full(run.swing_times.shape[0], np.nan)
-        return np.asarray(picker(series), dtype=float)
+            missing: np.ndarray = np.full(run.swing_times.shape[0], np.nan)
+            return missing
+        values: np.ndarray = np.asarray(picker(series), dtype=float)
+        return values
 
     return _extract
 
@@ -523,7 +526,7 @@ def extract(run: SimulationRun, key: str) -> np.ndarray | float:
     spec = CATALOG[key]
     value = spec.extractor(run)
     if spec.is_series:
-        array = np.asarray(value, dtype=float)
+        array: np.ndarray = np.asarray(value, dtype=float)
         ensure(array.ndim == 1, f"{key} extractor must yield a 1-D array")
         return array
     ensure(isinstance(value, float), f"{key} extractor must yield a float")

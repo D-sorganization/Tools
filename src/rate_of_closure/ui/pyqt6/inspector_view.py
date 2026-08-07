@@ -10,7 +10,7 @@ and offers CSV / JSON export through the shared
 from __future__ import annotations
 
 import logging
-from typing import Any, cast
+from typing import Any
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -62,7 +62,7 @@ class _NumericItem(QTableWidgetItem):
         theirs = other.data(Qt.ItemDataRole.UserRole)
         if isinstance(mine, float) and isinstance(theirs, float):
             return mine < theirs
-        return cast(bool, super().__lt__(other))
+        return bool(super().__lt__(other))
 
 
 def _series_item(value: Any) -> QTableWidgetItem:
@@ -121,7 +121,9 @@ class InspectorView(QWidget):
         self._table = QTableWidget(0, len(CSV_COLUMNS))
         self._table.setHorizontalHeaderLabels(list(CSV_COLUMNS))
         self._table.setSortingEnabled(True)
-        self._table.verticalHeader().setVisible(False)
+        vertical_header = self._table.verticalHeader()
+        if vertical_header is not None:
+            vertical_header.setVisible(False)
         layout.addWidget(self._table)
 
     # ── public API ──────────────────────────────────────────────────
