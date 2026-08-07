@@ -11,8 +11,10 @@ branch was rewritten.
 - Draft PR: [#4217](https://github.com/D-sorganization/Tools/pull/4217)
 - PR base ref: `feat/4181-launch-monitor-registry`
 - Integration base: `626cfb64b0eddaa598a2a24dc2a050a420be25be`
-- Latest implementation head before this handoff update:
-  `79627c4c3bc8bf59968390d9f6e17a3f3081675d` (merge of the #4213 v2 head)
+- Published PR head before the current continuation:
+  `3f79eb8d15d8558ccf53b441e3842c50ce36e16e`
+- Latest verified implementation head before this handoff update:
+  `282b1a4d3e8de0b57ded5b138546542018b5b8e6`
 
 ## Included PR stack
 
@@ -84,6 +86,64 @@ backed by `ui/pyqt6/launch_monitor_analytics_tab.py`.
 - A repository-root `npm run build` is not a valid campaign gate in this
   checkout: unrelated workspaces lack `turbo`, `next`, and other dependencies.
   The authoritative Rate of Closure package build above passes.
+
+### Variation ensemble continuation
+
+Issue [#4144](https://github.com/D-sorganization/Tools/issues/4144) and draft
+PR [#4167](https://github.com/D-sorganization/Tools/pull/4167) own the universal
+multi-trial visualization contract. The integration branch includes that work
+through the investigation-suite ancestry.
+
+- Focused Python variation suite: `120 passed` across the shared engine,
+  simulation adapter, PyQt controls, complete results workspace, plots,
+  linked selection, exports, and cross-runtime fixture.
+- Focused React variation suite: `21 passed` across six files, including the
+  every-trial arc inspector and geometry performance contract.
+- Live integrated React QA at `http://127.0.0.1:5270/` ran a 200-trial
+  Delivery/Impact/Flight study and a 24-trial Pendulum/Impact/Flight study.
+- The pendulum run rendered `24/24` swing arcs, `36,024/36,024` vertices,
+  `33/1501` quiet samples at the declared 5 mm RMS threshold, linked trial
+  selection, impact/flight scatter variables, a four-variable matrix with
+  marginals, sensitivity results, and `24` honest landing coordinates.
+- The arc inspector exposes modeled point, outcome cohort, perturbation source,
+  source quantile, phase, linked highlighted trial, reset, PNG, variability SVG,
+  and versioned plot-definition export controls. Frame and alignment are shown
+  as `app_frame:x_target,y_up,z_right` and common simulation time.
+- The default scalar delivery study correctly reports that no geometric
+  no-impact cohort exists; the pendulum result carries typed hit/no-impact/
+  numerical-failure cohorts without fabricated impact or landing coordinates.
+
+### Wedge AoA worked example continuation
+
+Commit `cfcc99681` expands
+`docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md` and pins its numeric claims in tests.
+The declared 64-degree lie, 15-degree lean, 20 mm offset, 1,307 deg/s shaft
+rate, and 30 mph state decomposes as follows:
+
+- shaft-datum translation vertical speed: `-2.135647 m/s` (`91.7047%`);
+- shaft-axis rotation vertical speed: `-0.193183 m/s` (`8.2953%`);
+- total AoA: `-10.0000 deg`;
+- no-shaft counterfactual AoA: `-9.18117 deg`;
+- direct shaft contribution: `-0.81882 deg`.
+
+The source boundary is explicit: 1,307 deg/s is Cheetham's mean for 94 tour
+**driver** swings, not a claimed wedge norm. The documented sensitivity study
+pins 0, 652, 1,003, 1,307, 1,611, and 2,432 deg/s. The current impact and calm
+Waterloo-Penner flight chain predicts only `17.566 m` (`19.211 yd`) carry for a
+30 mph, -10-degree AoA, 37-degree dynamic-loft case; the same model needs
+approximately `37.887 mph` club speed to reach 30 yd. Focused wedge/flight
+verification: `31 passed`; the broader post-format regression: `59 passed`.
+
+### Current CI diagnosis
+
+At the previous published head, PR-triggered CI run `31134083167` failed its
+quality gate because Ruff 0.14.10 would reformat two files. The independently
+dispatched run `31134149702` passed its quality-gate job, but that dispatch used
+a narrower changed-file scope and is not replacement evidence. Commit
+`282b1a4d3` applies only the two reported formatter changes. A local
+PR-merge-base-equivalent gate then reported `77 files already formatted`, Ruff
+clean, `59 passed`, and a clean diff. New protected checks must run on the
+published continuation head; queued work is not counted as passing.
 
 ## Open release blockers
 
