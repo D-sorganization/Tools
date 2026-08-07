@@ -15,6 +15,7 @@ const TABS = [
   "Simulation",
   "Plots",
   "Flight Explorer",
+  "Launch Monitor Analytics",
   "Variation",
   "Putting",
   "Glossary",

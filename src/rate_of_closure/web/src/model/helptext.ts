@@ -104,6 +104,13 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
         "range and source.",
     ],
   },
+  "Launch Monitor Analytics": {
+    title: "How to Use This Page",
+    paragraphs: [
+      "Import a local CSV or JSON launch-monitor export, or begin with the built-in demonstration data. Every source column stays available. Select any compatible numeric outcome and one or more predictors, choose Pearson, Spearman, or Kendall association, and optionally fit multivariable ordinary least squares. Missing-data behavior, confidence level, minimum sample count, and grouping are explicit controls rather than hidden defaults.",
+      "Results include pair-specific sample counts, multiplicity-adjusted p-values, confidence intervals, OLS coefficient uncertainty, residual diagnostics, grouped estimates, and a deterministic dataset fingerprint. TrackMan-Comparable and Foresight-Comparable labels describe documented interpretation frames only; they do not claim device emulation or certification. Export both retained records and the complete analysis evidence as JSON.",
+    ],
+  },
   Variation: {
     title: "How to Use This Page",
     paragraphs: [

@@ -6,6 +6,7 @@ export const PRIMARY_VIEWS = [
   { id: "simulation", label: "Simulation" },
   { id: "plots", label: "Plots" },
   { id: "flight", label: "Flight Explorer" },
+  { id: "launch-monitor-analytics", label: "Launch Monitor Analytics" },
   { id: "variation", label: "Variation" },
   { id: "putting", label: "Putting" },
   { id: "glossary", label: "Glossary" },

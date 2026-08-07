@@ -91,3 +91,17 @@ def test_legacy_or_partial_order_is_sanitized(qtbot, settings) -> None:  # type:
 def test_default_qsettings_namespace_is_application_specific() -> None:
     assert _NAVIGATION_SETTINGS_ORG == "D-sorganization"
     assert _NAVIGATION_SETTINGS_APP == "RateOfClosureImpactExplorer"
+
+
+def test_launch_monitor_tab_is_registered_once(qtbot, settings) -> None:  # type: ignore[no-untyped-def]
+    window = RateOfClosureMainWindow(navigation_settings=settings)
+    qtbot.addWidget(window)
+    try:
+        assert window.primary_tab_ids().count("launch_monitor_analytics") == 1
+        assert window._tabs.indexOf(window._launch_monitor_analytics_tab) >= 0
+        assert (
+            window._launch_monitor_analytics_tab.outcome_combo.currentText()
+            == "ball_speed"
+        )
+    finally:
+        window.close()
