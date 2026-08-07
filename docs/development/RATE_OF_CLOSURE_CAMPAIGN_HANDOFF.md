@@ -18,6 +18,8 @@ branch was rewritten.
   `017dbd1f103ef050999f25fb77975ebce327c126`
 - Pinned-mypy CI compatibility follow-up after exact-head log diagnosis:
   `8d54212e85f251ac812a4edb8f50bf6bff31cb61`
+- Final target-frame literal correction from the subsequent exact-head CI run:
+  `51bad9009ce929fe89d3a527ca0e6858795dbbb7`
 
 ## Included PR stack
 
@@ -108,8 +110,10 @@ Current exact local evidence after these changes:
 - Complete React suite: `78` files and `475` tests passed.
 - React TypeScript type-check, zero-warning ESLint, and the 153-module Vite
   production build passed.
-- Ruff check/format passed across the affected Python domain; mypy passed on
-  `62` changed production files.
+- Ruff check/format passed across the affected Python domain; clean-cache
+  pinned mypy 1.13 passed on `64` changed production files and local mypy
+  passed on the corrected target editor. The final focused target GUI suite
+  passed all `25` tests.
 - Changed-only 500-LOC and module-size budgets passed; `git diff --check`
   passed. New production modules remain below 400 lines.
 - Compact/full-window tests passed at 1269 x 731 and 1280 x 768, plus the
