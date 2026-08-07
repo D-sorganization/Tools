@@ -73,12 +73,19 @@ def test_scatter_view_exposes_inputs_impact_and_shot_axes(qtbot, tmp_path) -> No
     assert "Hit" in view._availability.text()
     png_path = tmp_path / "scatter.png"
     svg_path = tmp_path / "scatter.svg"
+    csv_path = tmp_path / "scatter.csv"
     definition_path = tmp_path / "scatter.plot.json"
     view._exports.write_png(png_path)
     view._exports.write_svg(svg_path)
+    view._exports.write_csv(csv_path)
     view._exports.write_definition(definition_path)
     assert png_path.stat().st_size > 1000
     assert "<svg" in svg_path.read_text(encoding="utf-8")
+    rows = csv_path.read_text(encoding="utf-8").splitlines()
+    assert len(rows) == 4
+    assert rows[0].startswith("trial_index,outcome,input:")
+    assert view._table.rowCount() == 3
+    assert view._table.accessibleName() == "Selected scatter trial data"
     definition = json.loads(definition_path.read_text(encoding="utf-8"))
     assert definition["schema_version"] == 1
 

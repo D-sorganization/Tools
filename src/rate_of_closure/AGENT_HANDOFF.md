@@ -1,7 +1,48 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-05
+> Last updated: 2026-08-07
+
+## 2026-08-07 Universal Variation Visualization Continuation
+
+Branch `feat/4144-variation-export-continuation` is stacked on the published
+toolstrip head `c36ca36e9` and continues issue #4144 without adding unrelated
+toolstrip changes to PR #4279. The core PyQt6/React variation workspace already
+has selectable input/contact/impact/shot scatter, a scatter matrix with
+marginals, landing dispersion, and an all-trial 3D swing-arc overlay with
+reference trace, principal spread, RMS variability, quiet zones, filtering,
+and linked trial selection.
+
+This continuation closes an export/accessibility parity gap: both clients now
+export the complete selected scatter axes as CSV, including every trial,
+typed outcome, and explicit unavailable values. PyQt now also exposes the raw
+selected-axis rows in a bounded read-only table. Shared table population is
+factored into `variation_trial_table.py`; the scalar scatter view is isolated
+in `variation_scatter_view.py`. Changed production modules remain below 400
+lines and changed functions remain at or below 50 lines.
+
+Current exact local evidence on the continuation diff is 890
+Python/PyQt/shared swing tests passed with one expected optional-Rust skip and
+15 existing warnings, and 89 React test files / 545 tests passed. Ruff,
+formatting, Black, targeted mypy, TypeScript, zero-warning ESLint, the 166-module
+Vite build, and `git diff --check` pass. This is local evidence only; no PR,
+protected CI, review, merge, or default-branch release has yet been established
+for this continuation.
+
+Literal audit of "every many-trial simulation" found two dependent gaps that
+must remain explicit:
+
+- wind-strategy uncertainty retains paired per-strategy outcomes in both
+  runtimes but has no PyQt/React workflow and does not feed the universal
+  scalar plot facade;
+- the capability optimizer stores aggregate statistics but discards the
+  individual evaluation rows needed for honest scatter plots.
+
+Issue #4199 already owns the wind UI/scatter requirement. Its adapter must use
+composite row identity `(strategy_id, trial_index)`, retain completed,
+nonconverged, and invalid cohorts, and report that impact variables are
+unavailable because this runner begins at prescribed launch. Do not coerce it
+into the impact-specific cohort enum or fabricate impact/landing values.
 
 ## 2026-08-05 Advanced Wedge Impact Visualization
 

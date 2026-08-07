@@ -216,6 +216,7 @@ describe("VariationPanel analysis execution policy", () => {
     expect(screen.getByRole("button", { name: "Matrix Selected CSV" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Matrix Plot Definition JSON" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Scatter SVG" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Scatter Selected CSV" })).toBeEnabled();
     expect(screen.getByRole("button", { name: "Scatter Plot Definition JSON" })).toBeEnabled();
     expect(screen.queryByText(/One-at-a-Time Sensitivity/i)).not.toBeInTheDocument();
 

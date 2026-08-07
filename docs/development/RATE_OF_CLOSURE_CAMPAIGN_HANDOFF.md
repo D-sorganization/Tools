@@ -454,6 +454,48 @@ Auto Fit, and the opt-in trail/playback controls. These are local validation
 results only; they do not establish protected CI, review, merge, or release
 status.
 
+### 2026-08-07 variation export and completion audit continuation
+
+The post-toolstrip branch `feat/4144-variation-export-continuation` is based on
+exact head `c36ca36e91f34fa849d2508708bf9dd6c0cdc392`. It keeps #4279 unchanged
+while closing one remaining #4144 parity gap: selected scalar scatter data can
+now be exported as CSV from both clients, retaining every raw trial, typed
+outcome, and unavailable cell rather than only the finite points drawn on the
+canvas. PyQt also has a bounded read-only raw-trial table matching the web
+workflow, and the table population is shared with the matrix view.
+
+The complete post-change local gates passed:
+
+- Python/PyQt/shared swing suite: `890 passed, 1 skipped, 15 warnings`; the
+  skip is the optional `swing_core` wheel and the warnings are the existing
+  Hypothesis collection and empty polynomial-preview legend warnings.
+- React: `89` files / `545` tests passed.
+- Ruff check/format, Black, targeted mypy, TypeScript, zero-warning ESLint,
+  the `166`-module Vite production build, and `git diff --check` passed.
+- Every changed production file is below 400 lines and every changed
+  production function is at most 50 lines.
+
+A live GitHub/source reconciliation covered every requested epic in this
+campaign. No epic yet satisfies its own definition of done: most implementation
+is still on feature branches, #4119 is the only Rate platform PR targeting
+`main` and is currently dirty, #4203 and #4279 remain draft/unstable, and only
+formal club-builder child #4147 is closed. The variation request is
+substantively implemented, but #4142/#4144 remain open because bounded
+large-ensemble execution, nonlinear global sensitivity, localized execution,
+the immutable UpstreamDrift consumer pin, protected CI, and default-branch
+release are incomplete.
+
+The literal universal-runner audit also found two uncovered many-evaluation
+paths. Wind strategy analysis retains all paired outcomes but has no user
+workflow or universal plot adapter; capability optimization retains aggregates
+but not individual sample rows. The next safe model slice is a UI-neutral
+scalar-ensemble contract with unique composite row IDs, unit-bearing variable
+metadata, caller-defined cohorts, paired-finite scatter extraction, and exact
+availability accounting. Wind integration must accept both its immutable
+request and analysis so launch definitions and provenance are not inferred.
+Issue #4199 already owns the required controls, scatter, strategy table,
+progress/cancellation, and export workflow.
+
 ## Open release blockers
 
 GitHub issue #4201 remains open. Its 2026-08-06 release checkpoint still

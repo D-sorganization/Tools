@@ -9,12 +9,9 @@ from matplotlib.axes import Axes
 from matplotlib.figure import Figure
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
-    QAbstractItemView,
     QComboBox,
     QFormLayout,
     QLabel,
-    QTableWidget,
-    QTableWidgetItem,
     QVBoxLayout,
     QWidget,
 )
@@ -26,6 +23,10 @@ from rate_of_closure.ui.pyqt6.variation_plot_exports import (
     distribution_matrix_plot_definition,
 )
 from rate_of_closure.ui.pyqt6.variation_plot_helpers import axis_label, dataset_values
+from rate_of_closure.ui.pyqt6.variation_trial_table import (
+    create_trial_table,
+    populate_trial_table,
+)
 from rate_of_closure.variation.plot_data import (
     EnsemblePlotDataset,
     ScalarPlotVariable,
@@ -64,13 +65,10 @@ class DistributionMatrixView(QWidget):
         self._canvas.setAccessibleName(
             "Scatter matrix with diagonal marginal histograms"
         )
-        self._table = QTableWidget()
-        self._table.setAccessibleName("Selected scatter matrix trial data")
-        self._table.setToolTip(
-            "Accessible trial-by-trial values for the four selected matrix variables."
+        self._table = create_trial_table(
+            "Selected scatter matrix trial data",
+            "Every trial value for the four selected matrix variables.",
         )
-        self._table.setEditTriggers(QAbstractItemView.EditTrigger.NoEditTriggers)
-        self._table.setMaximumHeight(180)
         self._exports = VariationPlotExportControls(
             lambda: self._figure,
             lambda: distribution_matrix_plot_definition(
@@ -132,64 +130,93 @@ class DistributionMatrixView(QWidget):
         self._figure.clear()
         self._artist_trial_indices.clear()
         axes = self._figure.subplots(4, 4, squeeze=False)
-        missing_total = 0
-        for row in range(4):
-            for column in range(4):
-                axis = cast(Axes, axes[row, column])
-                x_values = values[column]
-                y_values = values[row]
-                if row == column:
-                    finite = np.isfinite(x_values)
-                    axis.hist(x_values[finite], bins=12, color="#2f8bd6", alpha=0.78)
-                    missing_total += int(np.count_nonzero(~finite))
-                else:
-                    finite = np.isfinite(x_values) & np.isfinite(y_values)
-                    trial_indices = np.flatnonzero(finite)
-                    for outcome in dict.fromkeys(self._outcomes):
-                        cohort = np.array(
-                            [
-                                self._outcomes[index] == outcome
-                                for index in trial_indices
-                            ]
-                        )
-                        if not np.any(cohort):
-                            continue
-                        collection = axis.scatter(
-                            x_values[trial_indices[cohort]],
-                            y_values[trial_indices[cohort]],
-                            s=8,
-                            alpha=0.55,
-                            color=_OUTCOME_COLORS.get(outcome, "#2f8bd6"),
-                            edgecolors="none",
-                            picker=5,
-                        )
-                        self._artist_trial_indices[id(collection)] = trial_indices[
-                            cohort
-                        ]
-                    if (
-                        self._selected_trial is not None
-                        and finite[self._selected_trial]
-                    ):
-                        axis.scatter(
-                            [x_values[self._selected_trial]],
-                            [y_values[self._selected_trial]],
-                            s=36,
-                            facecolors="none",
-                            edgecolors="#f2f4f8",
-                            linewidths=1.3,
-                        )
-                axis.tick_params(labelsize=6)
-                if row == 3:
-                    axis.set_xlabel(axis_label(selected[column]), fontsize=7)
-                if column == 0:
-                    axis.set_ylabel(axis_label(selected[row]), fontsize=7)
+        missing_total = self._draw_matrix(axes, selected, values)
         self._status.setText(
             f"Four-variable matrix across {self._variation.plan.n_runs} trials; "
             f"{missing_total} diagonal values unavailable. Off-diagonal cells "
             "plot finite pairs only; canonical exports retain every miss/failure row."
         )
-        self._populate_accessible_table(selected, values)
+        self._populate_accessible_table(selected)
         self._canvas.draw_idle()
+
+    def _draw_matrix(
+        self,
+        axes: np.ndarray,
+        selected: list[ScalarPlotVariable],
+        values: list[np.ndarray],
+    ) -> int:
+        """Draw every matrix cell and return missing diagonal value count."""
+        missing_total = 0
+        for row in range(4):
+            for column in range(4):
+                axis = cast(Axes, axes[row, column])
+                if row == column:
+                    missing_total += self._draw_marginal(axis, values[column])
+                else:
+                    self._draw_scatter(axis, values[column], values[row])
+                self._label_cell(axis, row, column, selected)
+        return missing_total
+
+    @staticmethod
+    def _draw_marginal(axis: Axes, values: np.ndarray) -> int:
+        """Draw a finite-only marginal and return its unavailable count."""
+        finite = np.isfinite(values)
+        axis.hist(values[finite], bins=12, color="#2f8bd6", alpha=0.78)
+        return int(np.count_nonzero(~finite))
+
+    def _draw_scatter(
+        self, axis: Axes, x_values: np.ndarray, y_values: np.ndarray
+    ) -> None:
+        """Draw one cohort-colored paired-finite matrix cell."""
+        finite = np.isfinite(x_values) & np.isfinite(y_values)
+        trial_indices = np.flatnonzero(finite)
+        for outcome in dict.fromkeys(self._outcomes):
+            cohort = np.array(
+                [self._outcomes[index] == outcome for index in trial_indices]
+            )
+            if not np.any(cohort):
+                continue
+            collection = axis.scatter(
+                x_values[trial_indices[cohort]],
+                y_values[trial_indices[cohort]],
+                s=8,
+                alpha=0.55,
+                color=_OUTCOME_COLORS.get(outcome, "#2f8bd6"),
+                edgecolors="none",
+                picker=5,
+            )
+            self._artist_trial_indices[id(collection)] = trial_indices[cohort]
+        self._draw_selected(axis, x_values, y_values, finite)
+
+    def _draw_selected(
+        self, axis: Axes, x_values: np.ndarray, y_values: np.ndarray, finite: np.ndarray
+    ) -> None:
+        """Outline the linked trial when both selected values exist."""
+        selected = self._selected_trial
+        if selected is None or not finite[selected]:
+            return
+        axis.scatter(
+            [x_values[selected]],
+            [y_values[selected]],
+            s=36,
+            facecolors="none",
+            edgecolors="#f2f4f8",
+            linewidths=1.3,
+        )
+
+    @staticmethod
+    def _label_cell(
+        axis: Axes,
+        row: int,
+        column: int,
+        selected: list[ScalarPlotVariable],
+    ) -> None:
+        """Apply compact edge labels and readable ticks to one cell."""
+        axis.tick_params(labelsize=6)
+        if row == 3:
+            axis.set_xlabel(axis_label(selected[column]), fontsize=7)
+        if column == 0:
+            axis.set_ylabel(axis_label(selected[row]), fontsize=7)
 
     def _selected_keys(self) -> tuple[str, ...]:
         """Return the stable variable keys currently defining the matrix."""
@@ -222,29 +249,17 @@ class DistributionMatrixView(QWidget):
     def _populate_accessible_table(
         self,
         selected: list[ScalarPlotVariable],
-        values: list[np.ndarray],
     ) -> None:
         """Expose every plotted or unavailable trial value without recomputation."""
         variation = self._variation
         if variation is None:
             raise RuntimeError("no variation result is loaded")
-        self._table.setRowCount(variation.plan.n_runs)
-        self._table.setColumnCount(2 + len(selected))
-        self._table.setHorizontalHeaderLabels(
-            ["Trial", "Status", *(axis_label(variable) for variable in selected)]
+        populate_trial_table(
+            self._table,
+            variation,
+            tuple(selected),
+            self._outcomes,
         )
-        for trial_index, _success in enumerate(variation.success):
-            self._table.setItem(trial_index, 0, QTableWidgetItem(str(trial_index + 1)))
-            self._table.setItem(
-                trial_index,
-                1,
-                QTableWidgetItem(self._outcomes[trial_index].replace("_", " ").title()),
-            )
-            for column_index, column in enumerate(values, start=2):
-                value = column[trial_index]
-                text = f"{value:.8g}" if np.isfinite(value) else "Unavailable"
-                self._table.setItem(trial_index, column_index, QTableWidgetItem(text))
-        self._table.resizeColumnsToContents()
 
 
 def _default_indices(
