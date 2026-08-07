@@ -7,6 +7,7 @@
 - Head branch: `feat/4205-launch-monitor-analytics`
 - Base branch: `feat/4181-launch-monitor-registry`
 - Last remote head before this CI recovery: `4b22e79cf829bac12217e60634ffbfbea5c40d6b`
+- Published CI-recovery implementation: `ee917d80f`
 - Related integration pull request: `#4217`
 - Consumer pull request: `D-sorganization/UpstreamDrift#8369`
 
@@ -55,9 +56,8 @@ are formatter-only Python and a scanner-only TypeScript comment.
 
 ## Remaining release gates
 
-- Publish the recovery commit to `feat/4205-launch-monitor-analytics`.
-- Require a new protected run on the exact published head; do not reuse results
-  from `4b22e79c`.
+- Verify that the current branch head contains `ee917d80f`, then require a new
+  protected run on that exact head; do not reuse results from `4b22e79c`.
 - Resolve any new actionable failures and wait for queued repository-runner jobs.
 - Obtain required review and resolve all review threads before undrafting or
   merging.
