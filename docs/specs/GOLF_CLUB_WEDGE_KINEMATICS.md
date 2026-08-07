@@ -188,6 +188,48 @@ shallower. The proposed steepening mechanism is therefore mechanically
 plausible for the declared lean and hosel offset, but rotation rate alone does
 not determine its sign or magnitude.
 
+### Reproducible manual-Simulation case
+
+The standalone Simulation clients now expose manual reference attack angle,
+club path, forward shaft lean, and a `Generated Club Hosel` shaft-axis datum.
+The generated hosel is registered from the authored mesh frame into the
+tracked-reference frame as:
+
+`r_hosel = (com_to_face, 0, 0) + hosel_authored - face_center_authored`.
+
+This is essential: adding the authored hosel coordinate directly to the
+tracked reference would mix two origins and give a fictitious shaft line.
+
+With `Pitching Wedge`, 30 mph **reference-point** speed, -10-degree reference
+attack angle, zero path, 15-degree forward lean, 64-degree shaft lie, a 20 mm
+tracked-reference-to-face-center distance, 0 deg/s swing-plane angular rate,
+1,307 degrees per second about the shaft, a centered strike, and the generated
+hosel datum, both clients pin the results below. Swing-plane yaw, side tilt,
+and forward tilt are not applicable to the Manual source. The 20 mm distance
+is an explicit scenario override (the club-library Pitching Wedge default is
+11 mm), so it must be entered to reproduce this particular sensitivity case.
+The remaining run boundary is Delivery Inspection (forced alignment) at
+`t = 0.030 s`, Ground ball support, centered toe/high offsets, 450 microseconds
+contact duration, and the `waterloo_penner` flight model. Delivery Inspection
+tracks the declared reference point; this recipe is not a fixed-ball collision
+detection case.
+
+| Quantity | Current configured result |
+| --- | ---: |
+| Reference velocity | `(13.207454, -2.328830, 0) m/s` |
+| Contact velocity | `(13.155691, -2.522013, -0.410056) m/s` |
+| Contact-point AoA | `-10.847087 degrees` |
+| Without-shaft counterfactual AoA | `-10.548272 degrees` |
+| Shaft counterfactual contribution | `-0.298815 degrees` |
+| Shaft share of downward speed | `6.5050%` |
+| Rigid-impact/flight carry | `22.45855 m` (`24.56 yd`) |
+
+The manual attack control describes the tracked reference, not the contact
+point. To target exactly -10 degrees **contact-point** AoA with the other values
+held fixed, enter approximately -9.153512 degrees reference attack angle. The
+resulting shaft contribution is -0.333108 degrees and the current flight carry
+is 23.024061 m (25.18 yd), still not 30 yd.
+
 ### Reconciliation with the requested 30-yard carry
 
 Carry is not a kinematic input to this decomposition. It follows only after a
@@ -233,13 +275,12 @@ the shaft line, the analytical lie/offset formula, twist-reference invariance,
 Shapley closure, ground/arc orientation rates, screw-axis clearance, invalid
 AoA, and invalid frame geometry.
 
-This foundation is ready for model adapters but the current manual Simulation
-source cannot yet reproduce the representative generated-head cross-check. It
-travels horizontally, has no explicit forward-lean/head-pose input, and places
-the manual shaft axis through the tracked reference point. The articulated
-double/triple-pendulum sources expose a wrist-to-reference shaft line but no
-torsional shaft degree of freedom. Before a UI may present the representative
-case as a simulation result, its adapter must provide:
+The manual Simulation adapter now provides the declared reference direction,
+rigid head pose, and selectable registered generated-hosel datum. The generated
+profile is representative rather than measured manufacturer CAD. The
+articulated double/triple-pendulum sources still expose a wrist-to-reference
+shaft line but no torsional shaft degree of freedom. Any future measured or
+flexible adapter must continue to provide:
 
 - the physical shaft line and true contact point in the same frame;
 - complete angular velocity including shaft twist;
@@ -247,10 +288,14 @@ case as a simulation result, its adapter must provide:
 - an impact event or an explicit no-impact result; and
 - the arc tangent and derivative used by the displayed comparison.
 
-The Flight Explorer can independently reproduce the downstream consistency
-case by entering 30 mph, -10 degrees attack angle, and 37 degrees dynamic
-loft. That does not back-fill the missing physical pose into the Simulation
-tab.
+The shaft decomposition is currently kinematic-only. Forced alignment and
+fixed-ball contact track the clubhead reference point, not swept face-mesh
+contact. The rigid impact and ball-flight pipeline consumes reference-point
+translation, not shaft-induced contact-point velocity; run exports carry these
+boundaries in machine-readable `model_limitations`. Shaft attribution therefore
+does not yet alter impact or flight. The Flight Explorer can independently
+reproduce the earlier 37-degree dynamic-loft consistency case, but that remains
+a separate prescribed-delivery calculation.
 
 No metric in this module alone predicts launch height, descent angle, turf
 clearance, bounce interaction, forgiveness, or shot outcome.

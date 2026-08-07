@@ -14,8 +14,8 @@ branch was rewritten.
 - Synchronized base head: `4b659acc1f7fc183dff60daea2553009e82dbab9`
 - Published PR head before the current continuation:
   `3f79eb8d15d8558ccf53b441e3842c50ce36e16e`
-- Latest verified implementation head before this handoff update:
-  `017dbd1f103ef050999f25fb77975ebce327c126`
+- Latest implementation commit before this documentation-only handoff update:
+  `26fe5a7176eba51988a6a4cc4553f423c5c190ed`
 - Pinned-mypy CI compatibility follow-up after exact-head log diagnosis:
   `8d54212e85f251ac812a4edb8f50bf6bff31cb61`
 - Final target-frame literal correction from the subsequent exact-head CI run:
@@ -26,6 +26,38 @@ branch was rewritten.
   `280b58622bbfedb686777173fb3b22397d3495ee`
 - Paired landing-row integrity fix in both clients:
   `d78d2b0ea3b5662f62c24c36d675371a6ef57704`
+- Pinned-mypy variation typing correction exposed by exact-head CI:
+  `ec70087e645fee4385e41d065582011fe47739ed`
+- React manual-delivery inputs, pose, geometry, and schema-v5 persistence:
+  `3eed7c4f6290dbd55f936636d6eb4bd043214e48`
+- Python/PyQt manual-delivery inputs, pose, geometry, and schema-v5 persistence:
+  `fb6f80d7d0f064a6ca9e7b54318aa138fb5af568`
+- Cross-client machine-readable reference-impact boundary:
+  `785a988662a8ca13410dfacd6802271ddbd27276`
+- React v5 self-import and delivered-loft validation:
+  `960bc158b247e5a815cd874bee8a6a23f6f78399`
+- Native six-decimal manual-delivery persistence:
+  `a11cea81a1b2beef1567dc92d01c914834fcbdca`
+- Native source-specific plane-orientation gating:
+  `8c0f5999d3ccad4aabb3cd1b2aa3a1785d23a702`
+- Cross-client source gating, native/web v5 support, and required settings blocks:
+  `b4737c60fcafef44d067a02bd03e67ae1b5135cb`
+- React field-level v5 manual-delivery validation and settings-only import wording:
+  `7e445ed52f27b4f694a3e74b320eee5e60a36268`
+- Native/web v5 fail-closed persistence and atomic native import:
+  `3255c01d29a9921361fadefab47649268c77c0a7`
+- React field-level v5 ball-setup validation:
+  `d12782393f9cacc495df9206c8956e13692adb7c`
+- Visible PyQt factor gating and canonical workbench-club synchronization:
+  `47d77156d15aba9f69179edebb7e35ec3b99416f`
+- Native schema contract correction (accepted native versions 1, 2, and 5):
+  `7ae1d2a076737ba03f30c5c97ddbed78fff21c6c`
+- Optional-Rust backend documentation correction:
+  `ed73e80b244fd4e3bf8d5921912bf3ff5474c14b`
+- Compact PyQt manual-delivery and contact-policy labels:
+  `fef649a898bbd458232290f2105d2c3e2e0879a4`
+- Compact PyQt shaft-datum row label:
+  `26fe5a7176eba51988a6a4cc4553f423c5c190ed`
 
 ## Included PR stack
 
@@ -208,11 +240,61 @@ separate pinned cross-check uses the Rate `Pitching Wedge` face center and
 hosel. With the same lie, lean, rate, total 30 mph contact speed, and -10-degree
 AoA, it gives shaft-induced velocity
 `(+0.497660, -0.164057, -0.060817) m/s`, 7.0446% of downward speed, and a
-`-0.33406 deg` counterfactual AoA contribution. The current manual Simulation
-UI cannot reproduce this physical state because it has no forward-lean/head-
-pose input and does not use the hosel shaft datum; articulated sources also
-lack a torsional shaft degree of freedom. This is an explicit remaining model
-input gap, not a calculation failure.
+`-0.33406 deg` counterfactual AoA contribution.
+
+The manual Simulation in both clients now accepts signed reference AoA/path,
+targetward-positive forward shaft lean, and tracked-reference versus registered
+generated-hosel shaft datum. The authored hosel is correctly registered through
+the authored face center and scenario face-distance datum. With the Pitching
+Wedge, 30 mph reference speed, -10-degree reference AoA, zero path, 15-degree
+lean, 64-degree lie, an explicit 20 mm reference-to-face override, zero
+swing-plane angular rate, 1,307 deg/s about the shaft, centered offsets,
+450 microseconds contact, Ground support, Delivery Inspection at `t = 0.030 s`,
+and `waterloo_penner` flight, the configured app reports -10.847087-degree
+contact AoA, -0.298815-degree shaft contribution, 6.5050% downward-speed share,
+and 22.45855 m (24.56 yd) carry. The club-library Pitching Wedge default is
+11 mm, so the 20 mm value is a declared sensitivity-case override. Entering
+-9.153512-degree reference AoA targets exactly -10-degree contact AoA and gives
+-0.333108-degree shaft contribution and 23.024061 m (25.18 yd) carry.
+
+Native and web run schemas emit version 5 with canonical nested
+`manual_delivery` fields, explicit legacy migration, atomic import, and
+machine-readable contact/impact limitations. Native import accepts only the
+versions it historically emitted (`1`, `2`, and `5`); versions `3` and `4` are
+rejected because they were web-only and never defined a native document. Web
+import accepts its historically emitted versions `1` through `5`. Current
+native/web v5 imports fail closed when the canonical spatial-target,
+ball-setup, or manual-delivery blocks or required fields are missing. The
+import command is deliberately labeled
+**Import Settings JSON**: it restores only ball setup, spatial target, and
+manual delivery, not the source, club/scenario, contact mode, flight model, or
+every other exported run input. It is therefore not yet a full deterministic
+run replay surface. Current contact detection tracks the reference point and
+rigid impact/flight uses its translation; shaft-induced contact velocity is not
+yet fed into ballflight. Articulated sources still lack torsional shaft motion.
+
+Both clients disable and explain swing-plane orientation while Manual is
+active, because manual attack angle and path own the reference direction. PyQt
+also synchronizes the Simulation club with the canonical workbench club spec,
+so the visible club, loft/curvature overrides, lie, and reference-to-face datum
+are the values consumed by the run.
+
+Final local executable-head evidence at `fef649a898bbd458232290f2105d2c3e2e0879a4`:
+the complete scoped Python/PyQt/shared suite passed `972` tests with `3`
+expected skips and `15` warnings. The skips
+are the Rust parity case when `swing_core` is absent and the wedge CAD/export
+cases when `build123d` is absent; the warnings are `14` existing Hypothesis
+collection notices and one Matplotlib empty-legend notice. Ruff check and
+format passed across all `18` changed production Python files, and pinned mypy
+reported no issues. The complete React suite passed `83` files and `521`
+tests; TypeScript, zero-warning ESLint, and the Vite production build all
+passed (`157` modules transformed). Three non-failing Vitest-worker
+`--localstorage-file` warnings are environmental: no matching option exists in
+the Rate web package or repository workflow configuration, and the live browser
+reported no warnings or errors. The later Rust-fallback docstring and compact
+PyQt label changes do not alter computation. After the final row-label change
+at `26fe5a7176eba51988a6a4cc4553f423c5c190ed`, the label-focused PyQt suite
+passed all `4` tests with Ruff, formatting, and `git diff --check` clean.
 
 The source boundary is explicit: 1,307 deg/s is Cheetham's mean for 94 tour
 **driver** swings, not a claimed wedge norm. The documented sensitivity study
@@ -223,6 +305,14 @@ approximately `37.887 mph` club speed to reach 30 yd. Focused wedge/flight
 verification: `31 passed`; the broader post-format regression: `59 passed`.
 
 ### Current CI diagnosis
+
+Exact-head run `31180951147` on commit `ef7c5f45e` passed Ruff and format, then
+failed pinned mypy 1.13 in `variation/analysis.py`: NumPy percentile tuple
+unpacking and an unannotated rank buffer were not inferable under the pinned
+stubs. Commit `ec70087e6` normalizes the percentile result to a typed array and
+annotates the rank buffer without changing runtime behavior. Mypy 1.13 on
+Python 3.12 now passes the corrected module. A new exact-head CI run is required
+after the manual-delivery continuation is published.
 
 At the previous published head, PR-triggered CI run `31134083167` failed its
 quality gate because Ruff 0.14.10 would reformat two files. The independently
