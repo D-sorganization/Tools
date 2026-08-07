@@ -39,7 +39,7 @@ from shared.python.swing_sim.flight.registry import FlightModelType
 SCRUB_STEPS = 1000
 
 _SHAFT_DATUM_LABELS: tuple[tuple[str, ShaftAxisDatum], ...] = (
-    ("Tracked Reference (Legacy)", ShaftAxisDatum.TRACKED_REFERENCE),
+    ("Tracked Reference", ShaftAxisDatum.TRACKED_REFERENCE),
     ("Generated Club Hosel", ShaftAxisDatum.GENERATED_HOSEL),
 )
 
@@ -130,11 +130,11 @@ class SimulationTabControlsMixin:
         self._contact_combo = QComboBox()
         self._make_combo_compact(self._contact_combo)
         self._contact_combo.addItem(
-            "Delivery Inspection (Forced Alignment)",
+            "Delivery Inspection",
             ContactMode.DELIVERY_INSPECTION,
         )
         self._contact_combo.addItem(
-            "Fixed Ball Contact (Detect Hit / Miss)",
+            "Fixed Ball (Detect Hit / Miss)",
             ContactMode.FIXED_BALL_CONTACT,
         )
         self._contact_combo.setToolTip(
@@ -193,7 +193,7 @@ class SimulationTabControlsMixin:
             ("club_path_deg", "Club Path", "manual_club_path_deg"),
             (
                 "forward_shaft_lean_deg",
-                "Forward Shaft Lean",
+                "Forward Lean",
                 "manual_forward_shaft_lean_deg",
             ),
         ):

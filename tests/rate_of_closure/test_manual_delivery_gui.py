@@ -25,6 +25,12 @@ def test_manual_delivery_controls_are_discoverable_and_build_config(qtbot) -> No
         assert tab._manual_delivery_spins["club_path_deg"].maximum() == 89.0
         assert tab._manual_delivery_spins["forward_shaft_lean_deg"].minimum() == -60.0
         assert tab._manual_delivery_spins["forward_shaft_lean_deg"].maximum() == 60.0
+        tracked_reference_index = tab._shaft_datum_combo.findData(
+            ShaftAxisDatum.TRACKED_REFERENCE
+        )
+        assert tab._shaft_datum_combo.itemText(tracked_reference_index) == (
+            "Tracked Reference"
+        )
         generated_hosel_index = tab._shaft_datum_combo.findData(
             ShaftAxisDatum.GENERATED_HOSEL
         )
