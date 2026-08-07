@@ -20,6 +20,8 @@ branch was rewritten.
   `8d54212e85f251ac812a4edb8f50bf6bff31cb61`
 - Final target-frame literal correction from the subsequent exact-head CI run:
   `51bad9009ce929fe89d3a527ca0e6858795dbbb7`
+- Launcher-themed wrapped-form correction reproduced from the user's live window:
+  `d813d652fc76d90582a20928820d1aa306ab8a91`
 
 ## Included PR stack
 
@@ -107,6 +109,10 @@ Current exact local evidence after these changes:
 - Complete Rate of Closure Python/PyQt suite after the responsive-group and
   quiet optional-accelerator fixes: `630 passed`, with two known non-failing
   warnings (Hypothesis collection configuration and an empty preview legend).
+- The complete `630`-test suite was repeated after correcting themed group-box
+  chrome accounting. At 1296 x 759 and 125% scaling, Ball Setup reserves its
+  full 227 px height-for-width and clears Contact Policy by 7 px; every nested
+  row remains contained.
 - Complete React suite: `78` files and `475` tests passed.
 - React TypeScript type-check, zero-warning ESLint, and the 153-module Vite
   production build passed.
@@ -119,7 +125,7 @@ Current exact local evidence after these changes:
 - Compact/full-window tests passed at 1269 x 731 and 1280 x 768, plus the
   1024 x 700 window floor and an explicit 125% Qt scale factor.
 - Live screenshots:
-  `C:\Users\diete\AppData\Local\Temp\rate-of-closure-final-simulation.png`
+  `C:\Users\diete\AppData\Local\Temp\rate-of-closure-themed-layout-fixed.png`
   and the browser-controlled React app at `http://127.0.0.1:5270/`.
 
 - Full pre-v2 Python campaign suite: `740 passed, 4 skipped, 15 warnings`.
