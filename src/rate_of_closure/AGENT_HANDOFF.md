@@ -44,8 +44,11 @@ nonconverged, and invalid cohorts, and report that impact variables are
 unavailable because this runner begins at prescribed launch. Do not coerce it
 into the impact-specific cohort enum or fabricate impact/landing values.
 
-Branch `feat/4199-wind-scalar-adapter` now supplies that first UI-neutral
-model slice on top of draft PR #4280. Python and React share the exact
+Branch `feat/4199-wind-scalar-adapter` is published as
+[draft PR #4281](https://github.com/D-sorganization/Tools/pull/4281), stacked
+on exact draft PR #4280 head `d71b0ea01b5659d3049ff05627c41f06481207e4`.
+Implementation commit `4a28114aa` supplies that first UI-neutral model slice.
+Python and React share the exact
 snake-case `scalar-ensemble/v1` wire structure: structured provenance,
 labeled stages/categories/cohorts, unit-bearing variables, RFC3986 composite
 row identity, immutable nullable raw rows, and overall/per-cohort x/y/paired

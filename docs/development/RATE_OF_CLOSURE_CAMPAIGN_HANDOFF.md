@@ -497,9 +497,11 @@ request and analysis so launch definitions and provenance are not inferred.
 Issue #4199 already owns the required controls, scatter, strategy table,
 progress/cancellation, and export workflow.
 
-The first narrow #4199 implementation slice now exists on branch
+The first narrow #4199 implementation slice is published as
+[draft PR #4281](https://github.com/D-sorganization/Tools/pull/4281) from branch
 `feat/4199-wind-scalar-adapter`, stacked on exact PR #4280 head
-`d71b0ea01b5659d3049ff05627c41f06481207e4`. It introduces an exact
+`d71b0ea01b5659d3049ff05627c41f06481207e4`. Implementation commit
+`4a28114aa` introduces an exact
 cross-runtime `scalar-ensemble/v1` wire contract and pure wind-strategy
 adapters. The contract preserves structured provenance, unit-bearing variable
 definitions, caller-defined cohorts, RFC3986 composite identities, nullable
