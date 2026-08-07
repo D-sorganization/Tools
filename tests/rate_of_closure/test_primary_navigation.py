@@ -99,9 +99,13 @@ def test_launch_monitor_tab_is_registered_once(qtbot, settings) -> None:  # type
     try:
         assert window.primary_tab_ids().count("launch_monitor_analytics") == 1
         assert window._tabs.indexOf(window._launch_monitor_analytics_tab) >= 0
-        assert (
-            window._launch_monitor_analytics_tab.outcome_combo.currentText()
-            == "ball_speed"
-        )
+        analytics_tab = window._launch_monitor_analytics_tab
+        if analytics_tab.catalog is None:
+            assert analytics_tab.dataset_id == "demo"
+            assert analytics_tab.outcome_combo.currentText() == "ball_speed"
+        else:
+            assert analytics_tab.dataset_id == "normalized"
+            assert len(analytics_tab.frame) == 10_169
+            assert analytics_tab.outcome_combo.currentText() == "observed_carry_m"
     finally:
         window.close()

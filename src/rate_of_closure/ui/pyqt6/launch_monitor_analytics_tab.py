@@ -1,120 +1,200 @@
-"""PyQt6 twin of the React Launch Monitor Analytics tab."""
+"""Full PyQt6 launch-monitor analytics and player-insight workbench."""
 
 from __future__ import annotations
 
-import json
-from pathlib import Path
-from typing import cast
-
-import numpy as np
-import pandas as pd
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QComboBox,
     QDoubleSpinBox,
-    QFileDialog,
     QFormLayout,
     QHBoxLayout,
     QLabel,
     QListWidget,
-    QMessageBox,
     QPlainTextEdit,
     QPushButton,
     QSpinBox,
     QSplitter,
     QTableWidget,
-    QTableWidgetItem,
+    QTabWidget,
+    QTextBrowser,
     QVBoxLayout,
     QWidget,
 )
 
-from rate_of_closure.launch_monitor_analysis import (
-    AnalysisMode,
-    AnalysisRequest,
-    AnalysisResult,
-    CorrelationMethod,
-    MissingPolicy,
-    analyze_launch_monitor_data,
-    numeric_columns,
+from rate_of_closure.launch_monitor_analysis import AnalysisResult
+from rate_of_closure.launch_monitor_data import CampaignDatasetCatalog
+from rate_of_closure.ui.pyqt6.launch_monitor_analysis_mixin import (
+    LaunchMonitorAnalysisMixin,
 )
-from shared.python.swing_sim.conventions import (
-    ConventionId,
-    ParameterId,
-    convention_registry,
+from rate_of_closure.ui.pyqt6.launch_monitor_data_mixin import (
+    LaunchMonitorDataMixin,
+    demo_frame,
 )
+from rate_of_closure.ui.pyqt6.launch_monitor_player_controls import (
+    LaunchMonitorPlayerControls,
+)
+from rate_of_closure.ui.pyqt6.launch_monitor_plot_widget import (
+    LaunchMonitorPlotWidget,
+)
+from shared.python.swing_sim.conventions import ConventionId
 
 
-def _demo_frame() -> pd.DataFrame:
-    index = np.arange(120)
-    club_speed = 38.0 + index * 0.11
-    attack_angle = -4.0 + (index % 17) * 0.4
-    club_path = -3.0 + (index % 13) * 0.5
-    face_angle = club_path * 0.65 + np.sin(index * 0.7) * 0.8
-    ball_speed = club_speed * 1.46 + attack_angle * 0.08 + np.sin(index) * 0.25
-    return pd.DataFrame(
-        {
-            "shot_id": [f"demo-{item + 1}" for item in index],
-            "session_id": np.where(index < 60, "demo-a", "demo-b"),
-            "monitor_vendor": np.where(index % 2, "FlightScope", "TrackMan"),
-            "observation_kind": "shot",
-            "club_speed": club_speed,
-            "attack_angle": attack_angle,
-            "club_path": club_path,
-            "face_angle": face_angle,
-            "ball_speed": ball_speed,
-            "carry_distance": ball_speed * 3.25 + attack_angle * 0.9,
-        }
-    )
+class LaunchMonitorAnalyticsTab(
+    LaunchMonitorAnalysisMixin, LaunchMonitorDataMixin, QWidget
+):
+    """Load full campaign tables and run statistical/player analyses."""
 
-
-class LaunchMonitorAnalyticsTab(QWidget):
-    """Import retained records and run arbitrary traceable analyses."""
-
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self, parent: QWidget | None = None, *, auto_discover_campaign: bool = True
+    ) -> None:
         super().__init__(parent)
-        self.frame = _demo_frame()
+        self.frame = demo_frame()
         self.source_name = "Built-In Demonstration Data"
+        self.dataset_id = "demo"
+        self.source_sha256 = ""
+        self.catalog: CampaignDatasetCatalog | None = None
         self.last_result: AnalysisResult | None = None
+        self.player_payload: dict[str, object] = {}
         self._build_ui()
         self._refresh_columns()
+        if auto_discover_campaign:
+            self.refresh_campaign_catalog()
+
+    @staticmethod
+    def _help(control: QWidget, name: str, tip: str) -> None:
+        control.setAccessibleName(name)
+        control.setToolTip(tip)
 
     def _build_ui(self) -> None:
-        heading = QLabel("Launch Monitor Analytics")
+        heading = QLabel("Launch Monitor Player Analytics")
         heading.setStyleSheet("font-size: 20px; font-weight: 600;")
         boundary = QLabel(
-            "Import CSV or JSON without dropping source columns. Correlations and "
-            "fitted models are associations, not causal evidence. TrackMan-Comparable "
-            "and Foresight-Comparable are documented frames, not device emulation "
-            "or certification."
+            "Full private campaign tables remain in their source repository. "
+            "Associations, fitted models, PCA, and feature importance are not "
+            "causal evidence or vendor-device emulation."
         )
         boundary.setWordWrap(True)
-        boundary.setAccessibleName("Launch Monitor Analytics Scientific Boundary")
         self.source_label = QLabel()
         self.source_label.setWordWrap(True)
+        toolbar = self._build_data_toolbar()
+        self._build_statistical_controls()
+        self.player_controls = LaunchMonitorPlayerControls()
+        control_tabs = QTabWidget()
+        control_tabs.addTab(self.statistics_controls, "Statistics")
+        control_tabs.addTab(self.player_controls, "Player Analytics")
+        self.run_button = QPushButton("Run Analysis and Plot")
+        self._help(
+            self.run_button,
+            "Run Analysis",
+            "Run statistics and the selected unit-aware plot",
+        )
+        left = QWidget()
+        left_layout = QVBoxLayout(left)
+        left_layout.addWidget(control_tabs)
+        left_layout.addWidget(self.run_button)
+        left_layout.addStretch(1)
+        outputs = self._build_output_tabs()
+        body = QSplitter(Qt.Orientation.Horizontal)
+        body.addWidget(left)
+        body.addWidget(outputs)
+        body.setSizes([390, 1050])
+        layout = QVBoxLayout(self)
+        layout.addWidget(heading)
+        layout.addWidget(boundary)
+        layout.addLayout(toolbar)
+        layout.addWidget(self.source_label)
+        layout.addWidget(body, 1)
+        self._connect_signals()
+        self._refresh_guidance()
 
+    def _build_data_toolbar(self) -> QHBoxLayout:
+        self.dataset_combo = QComboBox()
+        self.dataset_combo.addItem("Built-In Demonstration Data", "demo")
+        self.refresh_button = QPushButton("Refresh Campaign")
         self.import_button = QPushButton("Import Data...")
         self.demo_button = QPushButton("Load Demo")
-        self.export_data_button = QPushButton("Export Retained Data...")
+        self.save_project_button = QPushButton("Save Project...")
+        self.load_project_button = QPushButton("Load Project...")
+        self.export_data_button = QPushButton("Export Data...")
         self.export_result_button = QPushButton("Export Analysis...")
-        self.export_result_button.setEnabled(False)
-        buttons = QHBoxLayout()
-        for button in (
+        self.export_plot_button = QPushButton("Export Plot...")
+        self.export_plot_data_button = QPushButton("Export Plot Data...")
+        toolbar = QHBoxLayout()
+        toolbar.addWidget(self.dataset_combo, 1)
+        buttons = (
+            self.refresh_button,
             self.import_button,
             self.demo_button,
+            self.save_project_button,
+            self.load_project_button,
             self.export_data_button,
             self.export_result_button,
-        ):
-            buttons.addWidget(button)
-        buttons.addStretch(1)
+            self.export_plot_button,
+            self.export_plot_data_button,
+        )
+        for button in buttons:
+            toolbar.addWidget(button)
+        controls = (
+            (
+                self.dataset_combo,
+                "Campaign Dataset",
+                "Select any full private campaign CSV",
+            ),
+            (
+                self.refresh_button,
+                "Refresh Campaign",
+                "Rediscover and recatalog private data",
+            ),
+            (
+                self.import_button,
+                "Import Data",
+                "Import a local CSV or record-array JSON",
+            ),
+            (self.demo_button, "Load Demo", "Restore non-vendor demonstration shots"),
+            (
+                self.save_project_button,
+                "Save Project",
+                "Persist source identity and selections",
+            ),
+            (
+                self.load_project_button,
+                "Load Project",
+                "Reload and verify a saved project",
+            ),
+            (
+                self.export_data_button,
+                "Export Data",
+                "Export every retained row and column",
+            ),
+            (
+                self.export_result_button,
+                "Export Analysis",
+                "Export results, formulas, and backing values",
+            ),
+            (
+                self.export_plot_button,
+                "Export Plot",
+                "Save the plot as PNG, SVG, or PDF",
+            ),
+            (
+                self.export_plot_data_button,
+                "Export Plot Data",
+                "Export exact plotted rows",
+            ),
+        )
+        for control, name, tip in controls:
+            self._help(control, name, tip)
+        return toolbar
 
+    def _build_statistical_controls(self) -> None:
+        self.statistics_controls = QWidget()
         self.convention_combo = QComboBox()
-        self.convention_combo.addItem("App-Native", ConventionId.APP_NATIVE)
-        self.convention_combo.addItem(
-            "TrackMan-Comparable", ConventionId.TRACKMAN_COMPARABLE
-        )
-        self.convention_combo.addItem(
-            "Foresight-Comparable", ConventionId.FORESIGHT_COMPARABLE
-        )
+        for label, value in (
+            ("App-Native", ConventionId.APP_NATIVE),
+            ("TrackMan-Comparable", ConventionId.TRACKMAN_COMPARABLE),
+            ("Foresight-Comparable", ConventionId.FORESIGHT_COMPARABLE),
+        ):
+            self.convention_combo.addItem(label, value)
         self.convention_evidence = QLabel()
         self.convention_evidence.setWordWrap(True)
         self.convention_evidence.setOpenExternalLinks(True)
@@ -132,278 +212,111 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.group_combo = QComboBox()
         self.confidence_spin = QDoubleSpinBox()
         self.confidence_spin.setRange(0.51, 0.999)
-        self.confidence_spin.setDecimals(3)
         self.confidence_spin.setValue(0.95)
         self.min_samples_spin = QSpinBox()
         self.min_samples_spin.setRange(3, 1_000_000)
         self.min_samples_spin.setValue(10)
-        self.run_button = QPushButton("Run Analysis")
-
         controls = (
-            (self.import_button, "Import a CSV or JSON launch-monitor export"),
-            (self.demo_button, "Restore the built-in demonstration data"),
-            (self.export_data_button, "Export every retained input record"),
-            (self.export_result_button, "Export request, results, and lineage"),
-            (self.convention_combo, "Interpretation Convention"),
-            (self.outcome_combo, "Outcome Variable"),
-            (self.predictor_list, "Predictor Variables"),
-            (self.mode_combo, "Analysis Mode"),
-            (self.method_combo, "Correlation Method"),
-            (self.missing_combo, "Missing-Data Policy"),
-            (self.group_combo, "Optional Grouping Variable"),
-            (self.confidence_spin, "Confidence Level"),
-            (self.min_samples_spin, "Minimum Sample Count"),
-            (self.run_button, "Run the selected statistical analysis"),
+            (
+                self.convention_combo,
+                "Interpretation Convention",
+                "Choose a documented comparable frame",
+            ),
+            (self.outcome_combo, "Outcome Variable", "Choose any numeric outcome"),
+            (
+                self.predictor_list,
+                "Predictor Variables",
+                "Choose one or more numeric predictors",
+            ),
+            (
+                self.mode_combo,
+                "Analysis Mode",
+                "Run correlation, OLS regression, or both",
+            ),
+            (
+                self.method_combo,
+                "Correlation Method",
+                "Choose Pearson, Spearman, or Kendall",
+            ),
+            (
+                self.missing_combo,
+                "Missing-Data Policy",
+                "Choose pairwise, listwise, or fail closed",
+            ),
+            (self.group_combo, "Optional Group", "Repeat analysis within each group"),
+            (
+                self.confidence_spin,
+                "Confidence Level",
+                "Set analytical interval coverage",
+            ),
+            (
+                self.min_samples_spin,
+                "Minimum Sample Count",
+                "Reject insufficient analyses",
+            ),
         )
-        for control, description in controls:
-            control.setAccessibleName(description)
-            control.setToolTip(description)
+        form = QFormLayout(self.statistics_controls)
+        for control, name, tip in controls:
+            self._help(control, name, tip)
+            form.addRow(f"{name}:", control)
+        form.insertRow(1, self.convention_evidence)
 
-        form = QFormLayout()
-        form.addRow("Convention:", self.convention_combo)
-        form.addRow(self.convention_evidence)
-        form.addRow("Outcome:", self.outcome_combo)
-        form.addRow("Predictors:", self.predictor_list)
-        form.addRow("Analysis Mode:", self.mode_combo)
-        form.addRow("Correlation:", self.method_combo)
-        form.addRow("Missing Data:", self.missing_combo)
-        form.addRow("Group By:", self.group_combo)
-        form.addRow("Confidence:", self.confidence_spin)
-        form.addRow("Minimum N:", self.min_samples_spin)
-        form.addRow(self.run_button)
-
+    def _build_output_tabs(self) -> QTabWidget:
+        self.data_preview = QTableWidget()
+        self.data_preview.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self._help(
+            self.data_preview,
+            "Dataset Preview",
+            "Preview up to 500 rows; analysis and export retain the complete dataset",
+        )
         self.result_table = QTableWidget()
-        self.result_table.setAccessibleName("Launch Monitor Statistical Results")
         self.result_table.setEditTriggers(QTableWidget.EditTrigger.NoEditTriggers)
+        self._help(
+            self.result_table,
+            "Statistical Results",
+            "Correlation and OLS results with uncertainty",
+        )
+        self.plot_widget = LaunchMonitorPlotWidget()
         self.details = QPlainTextEdit()
         self.details.setReadOnly(True)
-        self.details.setAccessibleName("Launch Monitor Analysis Traceability")
-        output = QSplitter(Qt.Orientation.Vertical)
-        output.addWidget(self.result_table)
-        output.addWidget(self.details)
-        output.setSizes([350, 300])
+        self._help(
+            self.details,
+            "Analysis Traceability",
+            "Request, results, source hashes, and backing summaries",
+        )
+        self.guidance = QTextBrowser()
+        self.guidance.setOpenExternalLinks(True)
+        self._help(
+            self.guidance,
+            "Calculation Guide",
+            "Formulas, assumptions, interpretations, and method sources",
+        )
+        outputs = QTabWidget()
+        outputs.addTab(self.data_preview, "Dataset Preview")
+        outputs.addTab(self.result_table, "Statistical Results")
+        outputs.addTab(self.plot_widget, "Plot")
+        outputs.addTab(self.details, "Backing Data / Lineage")
+        outputs.addTab(self.guidance, "Calculations and Tips")
+        return outputs
 
-        body = QSplitter(Qt.Orientation.Horizontal)
-        controls_widget = QWidget()
-        controls_layout = QVBoxLayout(controls_widget)
-        controls_layout.addLayout(form)
-        controls_layout.addStretch(1)
-        body.addWidget(controls_widget)
-        body.addWidget(output)
-        body.setSizes([360, 900])
-
-        layout = QVBoxLayout(self)
-        layout.addWidget(heading)
-        layout.addWidget(boundary)
-        layout.addLayout(buttons)
-        layout.addWidget(self.source_label)
-        layout.addWidget(body, 1)
-
+    def _connect_signals(self) -> None:
+        self.dataset_combo.currentIndexChanged.connect(self._dataset_selected)
+        self.refresh_button.clicked.connect(self.refresh_campaign_catalog)
         self.import_button.clicked.connect(self.import_dialog)
         self.demo_button.clicked.connect(self.load_demo)
+        self.save_project_button.clicked.connect(self.save_project_dialog)
+        self.load_project_button.clicked.connect(self.load_project_dialog)
         self.export_data_button.clicked.connect(self.export_data_dialog)
         self.export_result_button.clicked.connect(self.export_result_dialog)
+        self.export_plot_button.clicked.connect(self.plot_widget.save_plot_dialog)
+        self.export_plot_data_button.clicked.connect(
+            self.plot_widget.export_backing_dialog
+        )
         self.run_button.clicked.connect(self.run_analysis_safely)
         self.convention_combo.currentIndexChanged.connect(
             self._refresh_convention_evidence
         )
         self.outcome_combo.currentTextChanged.connect(self._refresh_convention_evidence)
-
-    def _refresh_columns(self) -> None:
-        numeric = numeric_columns(self.frame)
-        previous = self.outcome_combo.currentText()
-        self.outcome_combo.clear()
-        self.outcome_combo.addItems(numeric)
-        self.outcome_combo.setCurrentText(
-            previous if previous in numeric else "ball_speed"
-        )
-        self.predictor_list.clear()
-        self.predictor_list.addItems(numeric)
-        defaults = {"club_speed", "attack_angle"}
-        for index in range(self.predictor_list.count()):
-            item = self.predictor_list.item(index)
-            if item is not None:
-                item.setSelected(item.text() in defaults)
-        groups = sorted(
-            str(column)
-            for column in self.frame.columns
-            if self.frame[column].notna().any()
-            and self.frame[column].nunique(dropna=True) <= 100
-        )
-        self.group_combo.clear()
-        self.group_combo.addItem("(none)")
-        self.group_combo.addItems(groups)
-        if "monitor_vendor" in groups:
-            self.group_combo.setCurrentText("monitor_vendor")
-        self.source_label.setText(
-            f"Source: {self.source_name} · {len(self.frame)} retained rows · "
-            f"{len(self.frame.columns)} source columns"
-        )
-        self.last_result = None
-        self.export_result_button.setEnabled(False)
-        self.result_table.clear()
-        self.details.clear()
-        self._refresh_convention_evidence()
-
-    def _refresh_convention_evidence(self) -> None:
-        convention = self.convention_combo.currentData()
-        parameter_text = self.outcome_combo.currentText()
-        try:
-            parameter = ParameterId(parameter_text)
-        except ValueError:
-            parameter = ParameterId.CLUB_SPEED
-        definition = convention_registry().definition(convention, parameter)
-        reference = definition.reference_point.value.replace("_", " ")
-        event_time = definition.event_time.value.replace("_", " ")
-        self.convention_evidence.setText(
-            f"<b>{definition.label}</b>: {reference}, {event_time}. "
-            f"<a href='{definition.source_url}'>Source definition</a>"
-        )
-
-    def set_frame(
-        self, frame: pd.DataFrame, source_name: str = "In-Memory Data"
-    ) -> None:
-        """Replace all records without discarding any source columns."""
-
-        self.frame = frame.copy()
-        self.source_name = source_name
-        self._refresh_columns()
-
-    def load_demo(self) -> None:
-        self.set_frame(_demo_frame(), "Built-In Demonstration Data")
-
-    def import_path(self, path: Path) -> None:
-        suffix = path.suffix.lower()
-        if suffix == ".csv":
-            frame = pd.read_csv(path)
-        elif suffix == ".json":
-            payload = json.loads(path.read_text(encoding="utf-8"))
-            if not isinstance(payload, list) or any(
-                not isinstance(row, dict) for row in payload
-            ):
-                raise ValueError("JSON launch-monitor data must be an array of records")
-            frame = pd.DataFrame.from_records(payload)
-        else:
-            raise ValueError("Launch-monitor import supports CSV and JSON")
-        if len(frame) < 3 or len(numeric_columns(frame)) < 2:
-            raise ValueError(
-                "The file needs at least three rows and two numeric columns"
-            )
-        self.set_frame(frame, path.name)
-
-    def import_dialog(self) -> None:
-        selected, _ = QFileDialog.getOpenFileName(
-            self, "Import Launch Monitor Data", "", "Data Files (*.csv *.json)"
-        )
-        if not selected:
-            return
-        try:
-            self.import_path(Path(selected))
-        except (OSError, ValueError, json.JSONDecodeError) as error:
-            QMessageBox.critical(self, "Import Failed", str(error))
-
-    def _selected_predictors(self) -> tuple[str, ...]:
-        return tuple(item.text() for item in self.predictor_list.selectedItems())
-
-    def run_analysis(self) -> AnalysisResult:
-        group = self.group_combo.currentText()
-        result = analyze_launch_monitor_data(
-            self.frame,
-            AnalysisRequest(
-                outcome=self.outcome_combo.currentText(),
-                predictors=self._selected_predictors(),
-                analysis_mode=cast(AnalysisMode, self.mode_combo.currentText()),
-                correlation_method=cast(
-                    CorrelationMethod, self.method_combo.currentText()
-                ),
-                missing_policy=cast(MissingPolicy, self.missing_combo.currentText()),
-                group_by=None if group == "(none)" else group,
-                confidence_level=self.confidence_spin.value(),
-                min_samples=self.min_samples_spin.value(),
-            ),
-        )
-        rows: list[list[str]] = []
-        for correlation in result.correlations:
-            rows.append(
-                [
-                    correlation.predictor,
-                    "correlation",
-                    (
-                        "—"
-                        if correlation.coefficient is None
-                        else f"{correlation.coefficient:.6g}"
-                    ),
-                    (
-                        "—"
-                        if correlation.p_value is None
-                        else f"{correlation.p_value:.6g}"
-                    ),
-                    (
-                        "—"
-                        if correlation.adjusted_p_value is None
-                        else f"{correlation.adjusted_p_value:.6g}"
-                    ),
-                    str(correlation.sample_count),
-                ]
-            )
-        if result.regression:
-            for name, coefficient in result.regression.coefficients.items():
-                rows.append(
-                    [
-                        name,
-                        "OLS coefficient",
-                        f"{coefficient.estimate:.6g}",
-                        f"{coefficient.p_value:.6g}",
-                        (f"[{coefficient.ci_lower:.6g}, {coefficient.ci_upper:.6g}]"),
-                        str(result.regression.sample_count),
-                    ]
-                )
-        headers = ["Variable", "Statistic", "Estimate", "p", "Adjusted p / CI", "N"]
-        self.result_table.setColumnCount(len(headers))
-        self.result_table.setHorizontalHeaderLabels(headers)
-        self.result_table.setRowCount(len(rows))
-        for row_index, values in enumerate(rows):
-            for column_index, value in enumerate(values):
-                self.result_table.setItem(
-                    row_index, column_index, QTableWidgetItem(value)
-                )
-        self.result_table.resizeColumnsToContents()
-        self.details.setPlainText(
-            json.dumps(result.to_wire(), indent=2, sort_keys=True)
-        )
-        self.last_result = result
-        self.export_result_button.setEnabled(True)
-        return result
-
-    def run_analysis_safely(self) -> None:
-        try:
-            self.run_analysis()
-        except ValueError as error:
-            QMessageBox.warning(self, "Analysis Not Run", str(error))
-
-    def export_data_dialog(self) -> None:
-        selected, _ = QFileDialog.getSaveFileName(
-            self, "Export Retained Data", "launch-monitor-records.json", "JSON (*.json)"
-        )
-        if selected:
-            Path(selected).write_text(
-                self.frame.to_json(orient="records", indent=2), encoding="utf-8"
-            )
-
-    def export_result_dialog(self) -> None:
-        if self.last_result is None:
-            return
-        selected, _ = QFileDialog.getSaveFileName(
-            self,
-            "Export Launch Monitor Analysis",
-            "launch-monitor-analysis.json",
-            "JSON (*.json)",
-        )
-        if selected:
-            Path(selected).write_text(
-                json.dumps(self.last_result.to_wire(), indent=2, sort_keys=True),
-                encoding="utf-8",
-            )
 
 
 __all__ = ["LaunchMonitorAnalyticsTab"]

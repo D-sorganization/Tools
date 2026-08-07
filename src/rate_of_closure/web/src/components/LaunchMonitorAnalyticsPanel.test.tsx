@@ -21,4 +21,17 @@ describe("LaunchMonitorAnalyticsPanel", () => {
       .toHaveValue("monitor_vendor");
     expect(screen.getByLabelText("Predictor Variables")).toHaveAttribute("multiple");
   });
+
+  it("shows units, documented calculations, exports, and persistent project controls", () => {
+    render(<LaunchMonitorAnalyticsPanel />);
+    expect(screen.getByRole("img", { name: /ball speed.*club speed.*scatter plot/i })).toBeInTheDocument();
+    expect(screen.getByText("Directional Dispersion")).toBeInTheDocument();
+    expect(screen.getByText("Strokes Gained Ball-Striking Proxy")).toBeInTheDocument();
+    expect(screen.getByText("Session Trend")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save Project" })).toHaveAttribute("title");
+    expect(screen.getByRole("button", { name: "Open Project" })).toHaveAttribute("title");
+    expect(screen.getAllByRole("button", { name: "Save Plot" }).length).toBeGreaterThan(1);
+    expect(screen.getByLabelText("Strokes gained target distance in yards")).toHaveAttribute("title");
+    expect(screen.getByText(/Broadie-style formula/)).toBeInTheDocument();
+  });
 });
