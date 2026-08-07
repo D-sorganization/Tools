@@ -7,6 +7,7 @@ import { add, cross, dot, norm, scale, sub, type Vec3 } from "./impactPhysics";
 import { frame, type ImpactScenario } from "./impact";
 import { applyRotation, slerpRotation } from "./rotation";
 import type { SimulationRunTs, SwingSampleTs } from "./simulation";
+import { REFERENCE_PIPELINE_LIMITATION } from "./modelLimitations";
 
 const RAD_TO_DEG = 180 / Math.PI;
 const EPSILON = 1e-12;
@@ -130,9 +131,11 @@ function shaftGeometry(
         "generated-hosel shaft axis",
       ),
       basis: "generated_head_profile_hosel",
-      limitations: "The rigid shaft line passes through the selected generated " +
-        "club profile's hosel anchor after registering its authored face center " +
-        "to the tracked reference; flexible-shaft deformation is not included.",
+      limitations: "The shaft datum uses the selected club's representative " +
+        "generated head-profile hosel after registering its authored face center " +
+        "to the tracked reference. It is not a measured manufacturer CAD datum " +
+        "or fitted shaft centerline; flexible-shaft deformation is not included. " +
+        REFERENCE_PIPELINE_LIMITATION,
     };
   }
   return {
@@ -140,7 +143,8 @@ function shaftGeometry(
     axis: unit(applyRotation(sample.rotation, frame(scenario.lieAngleDeg).shaft), "shaft axis"),
     basis: "scenario_shaft_line",
     limitations: "The shaft axis is assumed to pass through the tracked head " +
-      "reference point; flexible-shaft deformation is not included in this rigid-head state.",
+      "reference point; flexible-shaft deformation is not included in this " +
+      "rigid-head state. " + REFERENCE_PIPELINE_LIMITATION,
   };
 }
 

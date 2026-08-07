@@ -15,6 +15,7 @@ import {
   spatialTargetToJson,
 } from "./spatialTargetSerialization";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "./targets";
+import { SIMULATION_MODEL_LIMITATIONS } from "./modelLimitations";
 
 export const BALL_SETUP_STORAGE_KEY = "rate_of_closure.ball_setup.web/v1";
 export const SIMULATION_EXPORT_FORMAT = "rate_of_closure.simulation_run.web/5";
@@ -139,6 +140,7 @@ export function createSimulationRunDocument(
   });
   return {
     format: SIMULATION_EXPORT_FORMAT,
+    model_limitations: SIMULATION_MODEL_LIMITATIONS,
     spatial_target: targetRecord,
     solver_manifest: {
       schema: "swing_sim.solver_manifest",

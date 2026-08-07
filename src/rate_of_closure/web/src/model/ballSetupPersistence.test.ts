@@ -51,6 +51,16 @@ describe("ball setup persistence", () => {
     const run = runSimulation(input);
     const document = createSimulationRunDocument(input, run, null, aerialTarget);
     expect(document.format).toBe("rate_of_closure.simulation_run.web/5");
+    expect(document.model_limitations).toMatchObject({
+      contact_tracking: {
+        basis: "tracked_reference_point",
+        description: expect.stringMatching(/Forced alignment.*reference point/i),
+      },
+      impact_velocity: {
+        basis: "clubhead_reference_translation",
+        description: expect.stringMatching(/Shaft-induced contact-point velocity.*does not alter flight/i),
+      },
+    });
     expect(document.parameters).toMatchObject({
       ball_setup: { support_mode: "tee", tee_height_m: DRIVER_TEE_HEIGHT_M },
     });

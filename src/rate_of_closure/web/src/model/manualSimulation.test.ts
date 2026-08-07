@@ -74,8 +74,23 @@ describe("manual three-dimensional delivery", () => {
     );
 
     expect(metrics.geometryBasis).toBe("generated_head_profile_hosel");
+    expect(metrics.modelLimitations).toMatch(/representative generated head-profile hosel/i);
+    expect(metrics.modelLimitations).toMatch(/shaft attribution is a kinematic analysis/i);
+    expect(metrics.modelLimitations).toMatch(/forced contact aligns.*reference point/i);
     metrics.shaftAxisPointM.forEach((value, index) =>
       expect(value).toBeCloseTo(expected[index], 12));
     expect(metrics.shaftAxisPointM).not.toEqual(metrics.referencePointM);
+  });
+
+  it("states the same kinematic-only boundary for the legacy manual datum", () => {
+    const metrics = impactKinematics(
+      runSimulation(INPUT),
+      DEFAULT_SCENARIO,
+      getClub("Pitching Wedge"),
+    );
+    expect(metrics.geometryBasis).toBe("scenario_shaft_line");
+    expect(metrics.modelLimitations).toMatch(/tracked-reference translation/i);
+    expect(metrics.modelLimitations).toMatch(/not shaft-induced contact-point velocity/i);
+    expect(metrics.modelLimitations).toMatch(/forced contact aligns.*reference point/i);
   });
 });
