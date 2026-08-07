@@ -31,6 +31,8 @@ from rate_of_closure.simulation.screw_analysis import analyze_twist
 from rate_of_closure.simulation.session import SimulationRun
 from rate_of_closure.simulation.target_persistence import (
     TARGET_CSV_COLUMNS,
+    default_spatial_target,
+    simulation_document_format,
     spatial_target_from_simulation_document,
     target_csv_values,
     target_document_fields,
@@ -96,22 +98,78 @@ SCREW_CSV_COLUMNS: tuple[str, ...] = (
     "reconstruction_residual_m_s",
 )
 
+_CURRENT_VERSION = 5
+_CURRENT_BALL_SETUP_FIELDS = frozenset(
+    ("support_mode", "tee_height_m", "height_reference", "ball_center_m")
+)
+_CURRENT_MANUAL_DELIVERY_FIELDS = frozenset(
+    (
+        "attack_angle_deg",
+        "club_path_deg",
+        "forward_shaft_lean_deg",
+        "shaft_axis_datum",
+    )
+)
+
+
+def _current_parameters(
+    data: Mapping[str, Any],
+) -> Mapping[str, Any] | None:
+    """Return strict current-v5 parameters; older inputs stay migratable."""
+    version, _is_web = simulation_document_format(data)
+    if version != _CURRENT_VERSION:
+        return None
+    parameters = data.get("parameters")
+    if not isinstance(parameters, Mapping):
+        raise ValueError(
+            f"simulation schema version {_CURRENT_VERSION} requires parameters"
+        )
+    return parameters
+
+
+def _require_current_block(
+    parameters: Mapping[str, Any],
+    block_name: str,
+    required_fields: frozenset[str],
+) -> Mapping[str, Any]:
+    """Return one complete current-native canonical settings block."""
+    block = parameters.get(block_name)
+    if block is None:
+        raise ValueError(
+            "simulation schema version "
+            f"{_CURRENT_VERSION} requires parameters.{block_name}"
+        )
+    if not isinstance(block, Mapping):
+        raise TypeError(f"{block_name} must be a mapping")
+    missing = sorted(required_fields.difference(block))
+    if missing:
+        raise ValueError(f"{block_name} requires fields: {', '.join(missing)}")
+    return block
+
 
 def ball_setup_from_json_dict(data: Mapping[str, Any]) -> BallSetup:
     """Import ball geometry from a run or parameter mapping.
 
-    Run documents written before ball setup was persisted intentionally migrate
-    to Ground/0 so replay retains their original fixed-ball geometry, including
-    for drivers whose *new-run* default is now Tee.
+    Current version-5 run documents require the complete canonical block. Older
+    documents intentionally migrate to Ground/0 so replay retains their
+    original fixed-ball geometry, including for drivers whose *new-run* default
+    is now Tee.
     """
     require(isinstance(data, Mapping), "simulation JSON must be a mapping", data)
+    current_parameters = _current_parameters(data)
     parameters = data.get("parameters", data)
     require(
         isinstance(parameters, Mapping),
         "simulation parameters must be a mapping",
         parameters,
     )
-    setup = parameters.get("ball_setup")
+    setup = (
+        _require_current_block(
+            current_parameters, "ball_setup", _CURRENT_BALL_SETUP_FIELDS
+        )
+        if current_parameters is not None
+        else parameters.get("ball_setup")
+    )
     require(
         setup is None or isinstance(setup, Mapping),
         "ball_setup must be a mapping when present",
@@ -121,15 +179,24 @@ def ball_setup_from_json_dict(data: Mapping[str, Any]) -> BallSetup:
 
 
 def manual_delivery_from_json_dict(data: Mapping[str, Any]) -> ManualDeliveryConfig:
-    """Import manual delivery declarations, defaulting older runs losslessly."""
+    """Import a complete current declaration or default an older run."""
     require(isinstance(data, Mapping), "simulation JSON must be a mapping", data)
+    current_parameters = _current_parameters(data)
     parameters = data.get("parameters", data)
     require(
         isinstance(parameters, Mapping),
         "simulation parameters must be a mapping",
         parameters,
     )
-    declaration = parameters.get("manual_delivery")
+    declaration = (
+        _require_current_block(
+            current_parameters,
+            "manual_delivery",
+            _CURRENT_MANUAL_DELIVERY_FIELDS,
+        )
+        if current_parameters is not None
+        else parameters.get("manual_delivery")
+    )
     require(
         declaration is None or isinstance(declaration, Mapping),
         "manual_delivery must be a mapping when present",
@@ -252,6 +319,9 @@ def write_csv(
 
     Args:
         run: The simulation run to export.
+        spatial_target: Canonical target to persist. When omitted, the explicit
+            default landing target is written so every native v5 document is
+            complete.
         path: Destination file path.
     """
     require(isinstance(run, SimulationRun), "run must be a SimulationRun", run)
@@ -370,8 +440,11 @@ def run_to_json_dict(
             },
         },
     }
-    if spatial_target is not None:
-        document.update(target_document_fields(spatial_target))
+    document.update(
+        target_document_fields(
+            spatial_target if spatial_target is not None else default_spatial_target()
+        )
+    )
     return document
 
 

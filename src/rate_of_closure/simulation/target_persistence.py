@@ -83,6 +83,11 @@ def spatial_target_from_simulation_document(value: object) -> SpatialTarget:
     if manifest is not None:
         _validate_solver_manifest(manifest)
     raw_target = document.get("spatial_target")
+    if raw_target is None and version == 5:
+        dialect = "web " if is_web else ""
+        raise ValueError(
+            f"{dialect}simulation schema version 5 requires spatial_target"
+        )
     if raw_target is None and parameters is not None:
         raw_target = parameters.get("spatial_target", parameters.get("target"))
     if raw_target is None:
@@ -91,9 +96,16 @@ def spatial_target_from_simulation_document(value: object) -> SpatialTarget:
         raw_target = manifest.get("target")
     if raw_target is None:
         if is_web and version >= 4:
-            raise ValueError("simulation schema version 4 requires spatial_target")
-        return _default_target()
+            raise ValueError(
+                f"web simulation schema version {version} requires spatial_target"
+            )
+        return default_spatial_target()
     return spatial_target_from_json_dict(_mapping(raw_target, "spatial_target"))
+
+
+def simulation_document_format(value: object) -> tuple[int, bool]:
+    """Return ``(version, is_web)`` after validating a simulation format tag."""
+    return _simulation_format(_mapping(value, "simulation document"))
 
 
 def _simulation_format(document: Mapping[str, object]) -> tuple[int, bool]:
@@ -120,7 +132,8 @@ def _validate_solver_manifest(manifest: Mapping[str, object]) -> None:
         raise ValueError("solver_manifest schema_version must be 1")
 
 
-def _default_target() -> SpatialTarget:
+def default_spatial_target() -> SpatialTarget:
+    """Return the explicit canonical target used by target-less legacy runs."""
     return SpatialTarget.from_target_region(
         TargetRegion(kind="green", distance_m=230.0),
         ground_source="course.surface/default",
@@ -142,6 +155,8 @@ def _optional_mapping(value: object, name: str) -> Mapping[str, Any] | None:
 
 __all__ = [
     "TARGET_CSV_COLUMNS",
+    "default_spatial_target",
+    "simulation_document_format",
     "spatial_target_from_simulation_document",
     "target_csv_values",
     "target_document_fields",

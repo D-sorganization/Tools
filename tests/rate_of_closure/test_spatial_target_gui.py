@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import json
 
 import numpy as np
@@ -416,4 +417,43 @@ def test_inspector_round_trips_target_and_setup_atomically(qtbot) -> None:  # ty
         tab.inspector().load_settings_document(corrupt)
     assert panel.target() == previous_target
     assert tab._ball_setup_control.setup() == previous_setup
+    tab.stop()
+
+
+def test_inspector_rejects_truncated_native_v5_without_partial_ui_updates(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    tab = SimulationTab()
+    qtbot.addWidget(tab)
+    assert tab.run_now() is not None
+    document = tab.inspector().run_document()
+
+    previous_target = tab._spatial_target_panel.target()
+    previous_setup = tab._ball_setup_control.setup()
+    previous_delivery = tab.config().manual_delivery
+    replacement = SpatialTarget(
+        label="Rejected replacement",
+        kind="aerial_waypoint",
+        point=TargetPoint(90.0, 12.0, 3.0),
+        tolerance=SphereTolerance(2.0),
+        elevation_source="absolute",
+    )
+    truncated = copy.deepcopy(document)
+    truncated["spatial_target"] = json.loads(
+        tab._spatial_target_panel.serialize_target(replacement)
+    )
+    truncated["parameters"]["ball_setup"] = {
+        "support_mode": "ground",
+        "tee_height_m": 0.0,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.021335, 0.0],
+    }
+    truncated["parameters"]["manual_delivery"].pop("club_path_deg")
+
+    with pytest.raises(ValueError, match="manual_delivery requires.*club_path_deg"):
+        tab.inspector().load_settings_document(truncated)
+
+    assert tab._spatial_target_panel.target() == previous_target
+    assert tab._ball_setup_control.setup() == previous_setup
+    assert tab.config().manual_delivery == previous_delivery
     tab.stop()
