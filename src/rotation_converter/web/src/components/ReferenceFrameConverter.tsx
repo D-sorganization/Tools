@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useState, useId } from "react";
 
 type Operation = "twist_frame_conversion" | "homogeneous_transform" | "so3_so3_maps";
 
@@ -31,6 +31,8 @@ export function ReferenceFrameConverter() {
   const [so3Vector, setSo3Vector] = useState<number[]>([0, 0, 0.5]);
   const [result, setResult] = useState<ReferenceFrameResponse | null>(null);
   const [error, setError] = useState<string | null>(null);
+
+  const baseId = useId();
 
   const updateMatrix = useCallback(
     (setter: (rows: number[][]) => void, rows: number[][], i: number, j: number, value: number) => {
@@ -83,8 +85,9 @@ export function ReferenceFrameConverter() {
         {error && <div className="bg-red-900/40 border border-red-500 rounded p-3 text-red-200">{error}</div>}
 
         <div>
-          <label className="block text-sm text-slate-300 mb-1">Operation</label>
+          <label htmlFor={`${baseId}-operation`} className="block text-sm text-slate-300 mb-1">Operation</label>
           <select
+            id={`${baseId}-operation`}
             value={operation}
             onChange={(event) => setOperation(event.target.value as Operation)}
             className="w-full bg-slate-700 rounded px-3 py-2 border border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -104,6 +107,7 @@ export function ReferenceFrameConverter() {
                   <input
                     key={`${i}-${j}`}
                     type="number"
+                    aria-label={`Homogeneous transform row ${i + 1} column ${j + 1}`}
                     value={entry}
                     onChange={(event) => updateMatrix(setTransform, transform, i, j, Number(event.target.value))}
                     className="bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -117,6 +121,7 @@ export function ReferenceFrameConverter() {
                 <input
                   key={i}
                   type="number"
+                  aria-label={`Twist component ${["ωx", "ωy", "ωz", "vx", "vy", "vz"][i]}`}
                   value={entry}
                   onChange={(event) => {
                     const next = [...twist];
@@ -139,6 +144,7 @@ export function ReferenceFrameConverter() {
                   <input
                     key={`${i}-${j}`}
                     type="number"
+                    aria-label={`Rotation matrix row ${i + 1} column ${j + 1}`}
                     value={entry}
                     onChange={(event) =>
                       updateMatrix(setRotationMatrix, rotationMatrix, i, j, Number(event.target.value))
@@ -154,6 +160,7 @@ export function ReferenceFrameConverter() {
                 <input
                   key={i}
                   type="number"
+                  aria-label={`Translation component ${["x", "y", "z"][i]}`}
                   value={entry}
                   onChange={(event) => {
                     const next = [...translation];
@@ -175,6 +182,7 @@ export function ReferenceFrameConverter() {
                 <input
                   key={i}
                   type="number"
+                  aria-label={`so(3) vector component ${["x", "y", "z"][i]}`}
                   value={entry}
                   onChange={(event) => {
                     const next = [...so3Vector];

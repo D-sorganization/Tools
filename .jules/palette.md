@@ -49,3 +49,6 @@
 ## 2024-05-31 - Tab Roles vs aria-pressed
 **Learning:** When implementing custom tab components in React, use `role="tab"` paired strictly with `aria-selected` (not `aria-pressed`, which is intended for toggle buttons) and ensure `aria-controls` points to a valid `role="tabpanel"` container whose `aria-labelledby` points back to the tab.
 **Action:** When adding accessible properties to custom tabs, replace `aria-pressed` with `aria-selected`, ensure a `role="tablist"` wrapper is present, and correctly cross-reference `aria-controls` with the tab panel IDs.
+## 2024-06-26 - Matrix Grid Number Inputs
+**Learning:** Dynamic number inputs forming a mathematical matrix or vector lack explicit labels per cell. This creates severe accessibility barriers for screen reader users as they navigate a grid of identically presented blank inputs.
+**Action:** Always add descriptive, context-aware `aria-label` attributes to dynamically mapped input grids (e.g., `aria-label={`Row ${i + 1}, Column ${j + 1}`}`) when an explicit `<label>` cannot be used.

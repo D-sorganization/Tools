@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useState, useId } from 'react';
 
 // Common interfaces mapping to the FastAPI Response/Request
 interface RotationRepresentations {
@@ -27,6 +27,8 @@ export function RotationConverter() {
 
     const [results, setResults] = useState<RotationRepresentations | null>(null);
     const [error, setError] = useState<string | null>(null);
+
+    const baseId = useId();
 
     const handleCalculate = useCallback(async () => {
         setError(null);
@@ -80,8 +82,9 @@ export function RotationConverter() {
                 )}
 
                 <div>
-                    <label className="block text-sm text-slate-300 mb-1">Input Type</label>
+                    <label htmlFor={`${baseId}-input-type`} className="block text-sm text-slate-300 mb-1">Input Type</label>
                     <select
+                        id={`${baseId}-input-type`}
                         value={inputType}
                         onChange={(e) => setInputType(e.target.value)}
                         className="w-full bg-slate-700 rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -97,8 +100,9 @@ export function RotationConverter() {
                     <div className="grid grid-cols-4 gap-2">
                         {['w', 'x', 'y', 'z'].map((axis, i) => (
                             <div key={axis}>
-                                <label className="block text-xs text-slate-400 mb-1">{axis.toUpperCase()}</label>
+                                <label htmlFor={`${baseId}-quat-${axis}`} className="block text-xs text-slate-400 mb-1">{axis.toUpperCase()}</label>
                                 <input
+                                    id={`${baseId}-quat-${axis}`}
                                     type="number"
                                     value={quaternion[i]}
                                     onChange={(e) => {
@@ -117,8 +121,9 @@ export function RotationConverter() {
                 {inputType === 'euler' && (
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm text-slate-300 mb-1">Convention</label>
+                            <label htmlFor={`${baseId}-euler-convention`} className="block text-sm text-slate-300 mb-1">Convention</label>
                             <input
+                                id={`${baseId}-euler-convention`}
                                 type="text"
                                 value={eulerConvention}
                                 onChange={(e) => setEulerConvention(e.target.value)}
@@ -129,8 +134,9 @@ export function RotationConverter() {
                         <div className="grid grid-cols-3 gap-2">
                             {['a', 'b', 'c'].map((label, i) => (
                                 <div key={label}>
-                                    <label className="block text-xs text-slate-400 mb-1">Axis {i + 1} (rad)</label>
+                                    <label htmlFor={`${baseId}-euler-${i}`} className="block text-xs text-slate-400 mb-1">Axis {i + 1} (rad)</label>
                                     <input
+                                        id={`${baseId}-euler-${i}`}
                                         type="number"
                                         value={euler[i]}
                                         onChange={(e) => {
@@ -151,8 +157,9 @@ export function RotationConverter() {
                     <div className="grid grid-cols-4 gap-2">
                         {['x', 'y', 'z', 'angle (rad)'].map((label, i) => (
                             <div key={label}>
-                                <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                                <label htmlFor={`${baseId}-axis-angle-${i}`} className="block text-xs text-slate-400 mb-1">{label}</label>
                                 <input
+                                    id={`${baseId}-axis-angle-${i}`}
                                     type="number"
                                     value={axisAngle[i]}
                                     onChange={(e) => {
@@ -172,8 +179,9 @@ export function RotationConverter() {
                     <div className="grid grid-cols-3 gap-2">
                         {['rx', 'ry', 'rz'].map((label, i) => (
                             <div key={label}>
-                                <label className="block text-xs text-slate-400 mb-1">{label}</label>
+                                <label htmlFor={`${baseId}-rodrigues-${i}`} className="block text-xs text-slate-400 mb-1">{label}</label>
                                 <input
+                                    id={`${baseId}-rodrigues-${i}`}
                                     type="number"
                                     value={rodrigues[i]}
                                     onChange={(e) => {
