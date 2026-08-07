@@ -11,9 +11,9 @@ pendulum sources are wrapped in :class:`AppFrameSwing`.
 Sources:
 
 * :class:`ManualSwingSource` — wraps an existing
-  :class:`~rate_of_closure.model.ImpactScenario` as a trivial
-  constant-twist source: straight-line reference-point travel plus the
-  scenario's constant angular velocity, square at mid-window.
+  :class:`~rate_of_closure.model.ImpactScenario` as a declared
+  constant-twist delivery: straight-line reference travel at a selected
+  attack angle/path plus a rigid forward-lean head pose at mid-window.
 * ``DoublePendulumSwing`` (from ``swing_sim``) via :func:`make_source`.
 * :class:`TriplePendulumSwing` — planar three-link pendulum on the same
   oriented plane, integrated with the same classical RK4. New model
@@ -31,6 +31,11 @@ import numpy as np
 
 from rate_of_closure._contracts import require
 from rate_of_closure.model import ImpactScenario, solve
+from rate_of_closure.simulation.manual_delivery import (
+    ManualDeliveryConfig,
+    manual_head_rotation,
+    manual_reference_velocity,
+)
 from shared.python.swing_sim import reference
 from shared.python.swing_sim.run_config import DoublePendulumRunConfig
 from shared.python.swing_sim.swing_source import DoublePendulumSwing, SwingSource
@@ -151,18 +156,20 @@ class AppFrameSwing:
 class ManualSwingSource:
     """Constant-twist source built from an :class:`ImpactScenario` (app frame).
 
-    The clubhead reference point travels dead down the target line at the
-    scenario speed while the head spins at the scenario's constant angular
-    velocity — exactly the twist model of the explorer, extended over a
-    short time window. The head is square (identity rotation, reference at
-    the origin) at the window midpoint, matching the explorer's "instant
-    of maximum compression" convention.
+    The clubhead reference point follows the declared attack angle and path at
+    the scenario speed while the head spins at the scenario's constant angular
+    velocity. The rigid head reaches the declared forward-lean pose with its
+    reference at the origin at the window midpoint, matching the explorer's
+    "instant of maximum compression" convention. Zero-valued declarations
+    preserve the historical target-line/identity-pose source exactly.
     """
 
     def __init__(
         self,
         scenario: ImpactScenario,
         duration: float = MANUAL_SWING_DURATION_S,
+        *,
+        delivery: ManualDeliveryConfig | None = None,
     ) -> None:
         require(
             isinstance(scenario, ImpactScenario),
@@ -176,10 +183,12 @@ class ManualSwingSource:
         )
         self._scenario = scenario
         self._duration = float(duration)
+        self._delivery = delivery or ManualDeliveryConfig()
         result = solve(scenario)
-        self._omega = np.radians(np.array(result.omega_dps))
+        self._impact_rotation = manual_head_rotation(self._delivery)
+        self._omega = self._impact_rotation @ np.radians(np.array(result.omega_dps))
         speed_mps = result.reference_speed_mph * 0.44704
-        self._velocity = np.array([speed_mps, 0.0, 0.0])
+        self._velocity = manual_reference_velocity(speed_mps, self._delivery)
 
     @property
     def scenario(self) -> ImpactScenario:
@@ -190,6 +199,11 @@ class ManualSwingSource:
     def duration(self) -> float:
         """Window length [s]."""
         return self._duration
+
+    @property
+    def uses_declared_head_pose(self) -> bool:
+        """Declare that delivery extraction must honor this source's pose."""
+        return True
 
     def sample(self, t: float) -> SwingSample:
         """Clubhead sample at ``t``; square at the window midpoint."""
@@ -202,7 +216,7 @@ class ManualSwingSource:
         t = min(max(t, 0.0), self._duration)
         dt = t - self._duration / 2.0
         pose = np.eye(4)
-        pose[:3, :3] = _rodrigues(self._omega, dt)
+        pose[:3, :3] = _rodrigues(self._omega, dt) @ self._impact_rotation
         pose[:3, 3] = self._velocity * dt
         twist = np.concatenate([self._omega, self._velocity])
         return SwingSample(t=t, pose=pose, twist=twist)
@@ -482,6 +496,7 @@ def make_source(
     run_config: DoublePendulumRunConfig | None = None,
     torque_library: TorqueProfileLibrary | None = None,
     pendulum_parameters: PendulumParameters | None = None,
+    manual_delivery: ManualDeliveryConfig | None = None,
 ) -> SwingSource:
     """Build an app-frame swing source by kind.
 
@@ -505,7 +520,7 @@ def make_source(
         kind,
     )
     if kind == "manual":
-        return ManualSwingSource(scenario)
+        return ManualSwingSource(scenario, delivery=manual_delivery)
     if kind == "double_pendulum":
         # Start on the target side (theta1 = -pi/2, arm horizontal) so
         # the gravity-driven downswing carries the clubhead TOWARD the

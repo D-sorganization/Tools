@@ -7,8 +7,13 @@ from dataclasses import dataclass
 import numpy as np
 
 from rate_of_closure._contracts import require
-from rate_of_closure.club import face_normal_at_offset
+from rate_of_closure.club import (
+    face_center_point,
+    face_normal_at_offset,
+    hosel_point,
+)
 from rate_of_closure.model import impact_frame, impact_lever_m
+from rate_of_closure.simulation.manual_delivery import ShaftAxisDatum
 from rate_of_closure.simulation.records import SimulationRun
 from shared.python.golf_club import (
     WedgeKinematicAnalysis,
@@ -27,6 +32,11 @@ _APP_FRAME_ID = "app_frame:x_target,y_up,z_right"
 _GROUND_UP = np.array([0.0, 1.0, 0.0])
 _LOCAL_LEADING_EDGE = np.array([0.0, 0.0, 1.0])
 _MIN_DIRECTION_NORM = 1e-12
+_REFERENCE_IMPACT_LIMITATION = (
+    " The downstream rigid impact and ball-flight pipeline currently consumes "
+    "reference-point translation; shaft-induced contact-point velocity is an "
+    "analysis result and does not alter the simulated flight."
+)
 
 
 @dataclass(frozen=True)
@@ -129,12 +139,31 @@ def _shaft_geometry(
             "rotation attribution requires a future torsional head state.",
         )
     local_shaft, _plane_normal = impact_frame(run.config.scenario.lie_angle_deg)
+    shaft_axis = _unit(rotation @ local_shaft, "scenario shaft axis")
+    if (
+        run.config.source_kind == "manual"
+        and run.config.manual_shaft_axis_datum is ShaftAxisDatum.GENERATED_HOSEL
+    ):
+        local_hosel = np.asarray(hosel_point(run.config.club), dtype=float)
+        local_face_center = np.asarray(face_center_point(run.config.club), dtype=float)
+        registered_hosel = local_hosel - local_face_center
+        registered_hosel[0] += run.config.scenario.com_to_face_mm / 1000.0
+        return (
+            reference + rotation @ registered_hosel,
+            shaft_axis,
+            "generated_head_profile_hosel",
+            "The shaft datum uses the selected club's representative generated "
+            "head-profile hosel and local lie direction. It is not a measured "
+            "manufacturer CAD datum or a fitted shaft centerline."
+            + _REFERENCE_IMPACT_LIMITATION,
+        )
     return (
         reference,
-        _unit(rotation @ local_shaft, "scenario shaft axis"),
+        shaft_axis,
         "scenario_shaft_line",
         "The physical shaft axis is assumed to pass through the tracked head "
-        "reference point, matching the current prescribed manual twist model.",
+        "reference point, matching the current prescribed manual twist model."
+        + _REFERENCE_IMPACT_LIMITATION,
     )
 
 

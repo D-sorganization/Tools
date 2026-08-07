@@ -11,6 +11,10 @@ from rate_of_closure._contracts import require
 from rate_of_closure.club import ClubSpec, ClubType
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation.contact import ContactMode, ImpactOutcome
+from rate_of_closure.simulation.manual_delivery import (
+    ManualDeliveryConfig,
+    ShaftAxisDatum,
+)
 from shared.python.swing_sim.ball_setup import (
     DEFAULT_DRIVER_TEE_HEIGHT_M,
     BallSetup,
@@ -36,6 +40,7 @@ BALL_POSITION_M = np.array([0.0, GOLF_BALL_RADIUS_M, 0.0])
 """Legacy ground-ball position; canonical simulations use ``ball_setup``."""
 
 _AUTO_BALL_SETUP = BallSetup()
+_MAX_DELIVERED_LOFT_DEG = 89.0
 
 
 @dataclass(frozen=True)
@@ -64,6 +69,10 @@ class SimulationConfig:
     pendulum_parameters: PendulumParameters = field(
         default_factory=PendulumParameters.golf_default
     )
+    manual_attack_angle_deg: float = 0.0
+    manual_club_path_deg: float = 0.0
+    manual_forward_shaft_lean_deg: float = 0.0
+    manual_shaft_axis_datum: ShaftAxisDatum = ShaftAxisDatum.TRACKED_REFERENCE
 
     def __post_init__(self) -> None:
         """Validate and normalize the immutable request."""
@@ -85,6 +94,17 @@ class SimulationConfig:
         )
         object.__setattr__(self, "ball_setup", resolved_setup)
         object.__setattr__(self, "contact_mode", _contact_mode(self.contact_mode))
+        manual_delivery = self.manual_delivery
+        delivered_loft_deg = self.club.loft_deg - manual_delivery.forward_shaft_lean_deg
+        if self.source_kind == "manual":
+            require(
+                abs(delivered_loft_deg) <= _MAX_DELIVERED_LOFT_DEG,
+                "manual delivered dynamic loft must remain within +/-89 deg",
+                delivered_loft_deg,
+            )
+        object.__setattr__(
+            self, "manual_shaft_axis_datum", manual_delivery.shaft_axis_datum
+        )
         require(
             isinstance(self.swing_run_config, DoublePendulumRunConfig),
             "swing_run_config must be a DoublePendulumRunConfig",
@@ -135,6 +155,16 @@ class SimulationConfig:
         """Return a new ball-center vector for geometry calculations."""
         position: np.ndarray = np.asarray(self.ball_setup.ball_center_m, dtype=float)
         return position
+
+    @property
+    def manual_delivery(self) -> ManualDeliveryConfig:
+        """Return the normalized manual-source declaration as one value object."""
+        return ManualDeliveryConfig(
+            attack_angle_deg=self.manual_attack_angle_deg,
+            club_path_deg=self.manual_club_path_deg,
+            forward_shaft_lean_deg=self.manual_forward_shaft_lean_deg,
+            shaft_axis_datum=self.manual_shaft_axis_datum,
+        )
 
 
 def _default_ball_setup(club: ClubSpec) -> BallSetup:

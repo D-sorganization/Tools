@@ -196,6 +196,28 @@ FIELD_GUIDANCE: dict[str, str] = {
         "double-pendulum golf models (Cochran & Stobbs; Jorgensen, The "
         "Physics of Golf)."
     ),
+    "manual_attack_angle_deg": (
+        "Suggested range: roughly -12 to +5 deg for common full-swing "
+        "deliveries; negative is downward and positive is upward. Source: "
+        "common launch-monitor delivery conventions. Reference frame: angle "
+        "above (+) or below (-) the x-z ground plane."
+    ),
+    "manual_club_path_deg": (
+        "Suggested range: -10 to +10 deg for ordinary deliveries. Source: "
+        "common launch-monitor delivery conventions. Reference frame: positive "
+        "travels right of target (+z, in-to-out for a right-handed player)."
+    ),
+    "manual_forward_shaft_lean_deg": (
+        "Suggested range: -5 to +25 deg; positive tips the shaft toward the "
+        "target and reduces delivered loft. Source: common club-delivery "
+        "definitions. Reference frame: rigid rotation of the head about local -z."
+    ),
+    "manual_shaft_axis_datum": (
+        "Suggested range: tracked reference for legacy comparisons; generated "
+        "head hosel for representative physical geometry. Source: Rate of "
+        "Closure geometry contract. The generated hosel is a representative "
+        "profile datum, not measured manufacturer CAD."
+    ),
     "plane_yaw_deg": (
         "Suggested range: -20 to +20 deg rotation of the swing plane "
         "about the vertical (aim left/right of the target line). "

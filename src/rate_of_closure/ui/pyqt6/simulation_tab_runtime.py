@@ -70,6 +70,8 @@ class SimulationTabRuntimeMixin:
                 duration=config.swing_duration_s,
                 run_config=config.swing_run_config,
                 torque_library=config.torque_library,
+                pendulum_parameters=config.pendulum_parameters,
+                manual_delivery=config.manual_delivery,
             )
         return self._source
 

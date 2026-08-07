@@ -31,6 +31,7 @@ from PyQt6.QtWidgets import (
 from rate_of_closure.simulation import (
     SimulationRun,
     ball_setup_from_json_dict,
+    manual_delivery_from_json_dict,
     run_to_json_dict,
     spatial_target_from_simulation_document,
     write_csv,
@@ -38,6 +39,7 @@ from rate_of_closure.simulation import (
     write_screw_csv,
 )
 from rate_of_closure.simulation.export import CSV_COLUMNS, series_rows
+from rate_of_closure.simulation.manual_delivery import ManualDeliveryConfig
 from rate_of_closure.ui.pyqt6.spatial_target_trajectory import (
     validate_landing_surface,
 )
@@ -90,7 +92,7 @@ def _series_item(value: Any) -> QTableWidgetItem:
 class InspectorView(QWidget):
     """Sortable inspector over one simulation run, with export buttons."""
 
-    settingsImported = pyqtSignal(object, object)  # noqa: N815 - Qt convention
+    settingsImported = pyqtSignal(object, object, object)  # noqa: N815 - Qt convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -107,8 +109,8 @@ class InspectorView(QWidget):
 
         self._import_json_button = QPushButton("Import JSON…")
         self._import_json_button.setToolTip(
-            "Load ball setup and the canonical spatial target atomically from "
-            "a current or migrated simulation project."
+            "Load manual delivery, ball setup, and the canonical spatial target "
+            "atomically from a current or migrated simulation project."
         )
         self._import_json_button.clicked.connect(self._on_import_json)
         header.addWidget(self._import_json_button)
@@ -220,19 +222,21 @@ class InspectorView(QWidget):
 
     def load_settings_document(
         self, document: object
-    ) -> tuple[BallSetup, SpatialTarget]:
-        """Parse both settings before emitting, so import is atomic."""
+    ) -> tuple[BallSetup, SpatialTarget, ManualDeliveryConfig]:
+        """Parse all persisted settings before emitting, so import is atomic."""
         target = spatial_target_from_simulation_document(document)
         validate_landing_surface(target)
         if not isinstance(document, Mapping):
             raise TypeError("simulation document must be a mapping")
         setup = ball_setup_from_json_dict(document)
-        self.settingsImported.emit(setup, target)
+        manual_delivery = manual_delivery_from_json_dict(document)
+        self.settingsImported.emit(setup, target, manual_delivery)
         self._summary_label.setText(
-            f"Imported {setup.support_mode.value.title()} ball setup and spatial "
-            "target. Run Simulation to calculate the imported project."
+            f"Imported {setup.support_mode.value.title()} ball setup, manual "
+            "delivery, and spatial target. Run Simulation to calculate the "
+            "imported project."
         )
-        return setup, target
+        return setup, target, manual_delivery
 
     # ── internals ──────────────────────────────────────────────────
     def _export(self, kind: str) -> None:

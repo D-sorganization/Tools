@@ -24,6 +24,7 @@ from rate_of_closure.club import club_names, get_club
 from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation import SOURCE_KINDS, ContactMode, SimulationConfig
+from rate_of_closure.simulation.manual_delivery import ShaftAxisDatum
 from rate_of_closure.ui.pyqt6.ball_setup_control import BallSetupControl
 from rate_of_closure.ui.pyqt6.responsive_layout import HeightForWidthGroupBox
 from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
@@ -36,6 +37,11 @@ from rate_of_closure.units import FIELD_GUIDANCE
 from shared.python.swing_sim.flight.registry import FlightModelType
 
 SCRUB_STEPS = 1000
+
+_SHAFT_DATUM_LABELS: tuple[tuple[str, ShaftAxisDatum], ...] = (
+    ("Tracked Reference (Legacy)", ShaftAxisDatum.TRACKED_REFERENCE),
+    ("Generated Head Hosel", ShaftAxisDatum.GENERATED_HOSEL),
+)
 
 
 class SimulationTabControlsMixin:
@@ -83,6 +89,11 @@ class SimulationTabControlsMixin:
             self._reconcile_joint_locks_for_source
         )
         form.addRow("Swing Source", self._source_combo)
+        self._manual_delivery_group = self._build_manual_delivery_group()
+        form.addRow(self._manual_delivery_group)
+        self._source_combo.currentIndexChanged.connect(
+            self._update_manual_delivery_controls
+        )
         self._tilt_spins: dict[str, QDoubleSpinBox] = {}
         for attr, label, guidance_key in TILT_SPECS:
             spin = QDoubleSpinBox()
@@ -164,7 +175,59 @@ class SimulationTabControlsMixin:
         self._run_status.setAccessibleName("Simulation Run Status")
         form.addRow(self._run_status)
         self._update_contact_controls()
+        self._update_manual_delivery_controls()
         return box
+
+    def _build_manual_delivery_group(self) -> QGroupBox:
+        """Build the manual-only delivery and shaft-datum editors."""
+        group = QGroupBox("Manual Delivery & Head Pose")
+        form = QFormLayout(group)
+        form.setFieldGrowthPolicy(QFormLayout.FieldGrowthPolicy.AllNonFixedFieldsGrow)
+        self._manual_delivery_spins: dict[str, QDoubleSpinBox] = {}
+        for name, label, guidance_key in (
+            ("attack_angle_deg", "Attack Angle", "manual_attack_angle_deg"),
+            ("club_path_deg", "Club Path", "manual_club_path_deg"),
+            (
+                "forward_shaft_lean_deg",
+                "Forward Shaft Lean",
+                "manual_forward_shaft_lean_deg",
+            ),
+        ):
+            spin = QDoubleSpinBox()
+            spin.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
+            spin.setKeyboardTracking(False)
+            spin.setDecimals(1)
+            limit_deg = 60.0 if name == "forward_shaft_lean_deg" else 89.0
+            spin.setRange(-limit_deg, limit_deg)
+            spin.setSuffix(" deg")
+            spin.setToolTip(FIELD_GUIDANCE[guidance_key])
+            spin.valueChanged.connect(self._invalidate_source)
+            spin.valueChanged.connect(self._emit_config)
+            self._manual_delivery_spins[name] = spin
+            form.addRow(label, spin)
+
+        self._shaft_datum_combo = QComboBox()
+        self._make_combo_compact(self._shaft_datum_combo)
+        for label, datum in _SHAFT_DATUM_LABELS:
+            self._shaft_datum_combo.addItem(label, datum)
+        self._shaft_datum_combo.setToolTip(FIELD_GUIDANCE["manual_shaft_axis_datum"])
+        self._shaft_datum_combo.currentIndexChanged.connect(self._invalidate_source)
+        self._shaft_datum_combo.currentIndexChanged.connect(self._emit_config)
+        form.addRow("Shaft-Axis Datum", self._shaft_datum_combo)
+
+        explanation = QLabel(
+            "Defines the manual reference path and the rigid head pose at impact."
+        )
+        explanation.setWordWrap(True)
+        form.addRow(explanation)
+        return group
+
+    def _update_manual_delivery_controls(self, *_args: object) -> None:
+        """Enable the declaration only when the manual source consumes it."""
+        manual_index = SOURCE_KINDS.index("manual")
+        self._manual_delivery_group.setEnabled(
+            self._source_combo.currentIndex() == manual_index
+        )
 
     @staticmethod
     def _make_combo_compact(combo: QComboBox) -> None:

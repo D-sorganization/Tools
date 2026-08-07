@@ -25,6 +25,7 @@ from rate_of_closure.simulation import (
     SOURCE_KINDS,
     BallSetup,
     ContactMode,
+    ManualDeliveryConfig,
     SimulationConfig,
     SimulationRun,
     run_simulation,
@@ -226,6 +227,14 @@ class SimulationTab(
             ball_setup=self._ball_setup_control.setup(),
             source_kind=source_kind,
             plane=self.plane(),
+            manual_attack_angle_deg=self._manual_delivery_spins[
+                "attack_angle_deg"
+            ].value(),
+            manual_club_path_deg=self._manual_delivery_spins["club_path_deg"].value(),
+            manual_forward_shaft_lean_deg=self._manual_delivery_spins[
+                "forward_shaft_lean_deg"
+            ].value(),
+            manual_shaft_axis_datum=self._shaft_datum_combo.currentData(),
             impact_time_s=(
                 self._tau
                 if self.contact_mode() is ContactMode.DELIVERY_INSPECTION
@@ -312,6 +321,28 @@ class SimulationTab(
         self._ball_setup_control.set_setup(setup)
         self._emit_config()
 
+    def set_manual_delivery(self, delivery: ManualDeliveryConfig) -> None:
+        """Load one validated manual declaration without partial signal churn."""
+        if not isinstance(delivery, ManualDeliveryConfig):
+            raise TypeError("delivery must be a ManualDeliveryConfig")
+        values = {
+            "attack_angle_deg": delivery.attack_angle_deg,
+            "club_path_deg": delivery.club_path_deg,
+            "forward_shaft_lean_deg": delivery.forward_shaft_lean_deg,
+        }
+        for name, value in values.items():
+            spin = self._manual_delivery_spins[name]
+            spin.blockSignals(True)
+            spin.setValue(value)
+            spin.blockSignals(False)
+        datum_index = self._shaft_datum_combo.findData(delivery.shaft_axis_datum)
+        if datum_index < 0:
+            raise ValueError("manual shaft-axis datum is unavailable in this UI")
+        self._shaft_datum_combo.blockSignals(True)
+        self._shaft_datum_combo.setCurrentIndex(datum_index)
+        self._shaft_datum_combo.blockSignals(False)
+        self._invalidate_source()
+
     def view(self) -> SimulationView:
         """The swing-scale 3D scene (playback controls live on it)."""
         return self._view
@@ -341,9 +372,8 @@ class SimulationTab(
     ) -> SimulationRun | None:
         """Load a SolverResult's variables into the session and rerun.
 
-        Mapping (documented deviation — the session's delivery convention
-        is a square face at the club's loft, so face angle / dynamic loft
-        solutions inform the goal table but are not replayed):
+        Mapping (documented deviation — manual head yaw is not yet exposed,
+        so a solved face angle informs the goal table but is not replayed):
 
         * both modes: the solved impact offsets land in the scenario;
         * delivery mode: the manual constant-twist source is selected and
@@ -372,6 +402,16 @@ class SimulationTab(
             self._source_combo.setCurrentIndex(SOURCE_KINDS.index("manual"))
             speed_mph = variables["clubhead_speed_mps"] * MPH_PER_MPS
             updates["clubhead_speed_mph"] = speed_mph
+            manual_delivery = ManualDeliveryConfig(
+                attack_angle_deg=variables["attack_angle_deg"],
+                club_path_deg=variables["club_path_deg"],
+                forward_shaft_lean_deg=(
+                    get_club(self._club_combo.currentText()).loft_deg
+                    - variables["dynamic_loft_deg"]
+                ),
+                shaft_axis_datum=self._shaft_datum_combo.currentData(),
+            )
+            self.set_manual_delivery(manual_delivery)
         self._scenario = dataclasses.replace(self._scenario, **updates)
         self._invalidate_source()
         self._tau = None  # auto: impact at maximum clubhead speed

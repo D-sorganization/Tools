@@ -21,6 +21,7 @@ from .export import (
     SCREW_CSV_COLUMNS,
     TARGET_CSV_COLUMNS,
     ball_setup_from_json_dict,
+    manual_delivery_from_json_dict,
     run_to_json_dict,
     screw_series_rows,
     spatial_target_from_simulation_document,
@@ -63,6 +64,7 @@ from .kinetics import (
     simulate_forced,
     zero_torque_counterfactual,
 )
+from .manual_delivery import ManualDeliveryConfig, ShaftAxisDatum
 from .session import (
     BALL_POSITION_M,
     DEFAULT_DRIVER_TEE_HEIGHT_M,
@@ -90,6 +92,7 @@ __all__ = [
     "BallSetup",
     "BallSupportMode",
     "ball_setup_from_json_dict",
+    "manual_delivery_from_json_dict",
     "ContactMode",
     "EXPLORER_METRIC_KEYS",
     "KINETIC_JOINT_NAMES",
@@ -110,10 +113,12 @@ __all__ = [
     "ImpactSceneVector",
     "ImpactStatus",
     "ManualSwingSource",
+    "ManualDeliveryConfig",
     "RunGroundClearanceSnapshot",
     "RunTurfInteractionSnapshot",
     "SimulationConfig",
     "SimulationRun",
+    "ShaftAxisDatum",
     "TriplePendulumParameters",
     "TriplePendulumSwing",
     "compute_kinetics",

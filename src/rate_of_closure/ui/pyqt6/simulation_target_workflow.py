@@ -17,7 +17,7 @@ from rate_of_closure.ui.pyqt6.spatial_target_workflow import (
 from shared.python.swing_sim.solver import SpatialTarget
 
 if TYPE_CHECKING:
-    from rate_of_closure.simulation import SimulationRun
+    from rate_of_closure.simulation import ManualDeliveryConfig, SimulationRun
     from rate_of_closure.ui.pyqt6.ball_setup_control import BallSetupControl
     from rate_of_closure.ui.pyqt6.inspector_view import InspectorView
     from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
@@ -38,6 +38,8 @@ class SimulationTargetWorkflowMixin:
     if TYPE_CHECKING:
 
         def _emit_config(self, *_args: object) -> None: ...
+
+        def set_manual_delivery(self, delivery: ManualDeliveryConfig) -> None: ...
 
     def _build_spatial_target_control(self) -> SpatialTargetPanel:
         self._spatial_target_panel, self._target_workflow = (
@@ -76,9 +78,15 @@ class SimulationTargetWorkflowMixin:
         self._view.set_course_layout(layout)
 
     def _on_imported_simulation_settings(
-        self, setup: BallSetup, target: SpatialTarget
+        self,
+        setup: BallSetup,
+        target: SpatialTarget,
+        manual_delivery: ManualDeliveryConfig,
     ) -> None:
         """Apply a fully parsed project atomically at the UI boundary."""
+        from rate_of_closure.simulation.manual_delivery import (
+            ManualDeliveryConfig as ManualDeliveryConfigType,
+        )
         from rate_of_closure.ui.pyqt6.spatial_target_trajectory import (
             validate_landing_surface,
         )
@@ -88,9 +96,12 @@ class SimulationTargetWorkflowMixin:
             raise TypeError("setup must be a BallSetup")
         if not isinstance(target, SpatialTarget):
             raise TypeError("target must be a SpatialTarget")
+        if not isinstance(manual_delivery, ManualDeliveryConfigType):
+            raise TypeError("manual_delivery must be a ManualDeliveryConfig")
         validate_landing_surface(target)
         self._spatial_target_panel.set_target(target)
         self._ball_setup_control.set_setup(setup)
+        self.set_manual_delivery(manual_delivery)
         self._emit_config()
 
     def set_landing_scatter(

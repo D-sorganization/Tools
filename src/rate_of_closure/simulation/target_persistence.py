@@ -107,7 +107,7 @@ def _simulation_format(document: Mapping[str, object]) -> tuple[int, bool]:
         raise ValueError(f"unsupported simulation format {value!r}")
     version = int(match.group(1))
     is_web = ".web/" in value
-    maximum = 4 if is_web else 2
+    maximum = 5
     if version < 1 or version > maximum:
         raise ValueError(f"unsupported simulation schema version {version}")
     return version, is_web

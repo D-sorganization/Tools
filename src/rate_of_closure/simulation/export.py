@@ -26,6 +26,7 @@ from typing import Any
 import numpy as np
 
 from rate_of_closure._contracts import require
+from rate_of_closure.simulation.manual_delivery import ManualDeliveryConfig
 from rate_of_closure.simulation.screw_analysis import analyze_twist
 from rate_of_closure.simulation.session import SimulationRun
 from rate_of_closure.simulation.target_persistence import (
@@ -43,6 +44,7 @@ __all__ = [
     "TARGET_CSV_COLUMNS",
     "TORQUE_CSV_COLUMNS",
     "ball_setup_from_json_dict",
+    "manual_delivery_from_json_dict",
     "run_to_json_dict",
     "series_rows",
     "screw_series_rows",
@@ -116,6 +118,34 @@ def ball_setup_from_json_dict(data: Mapping[str, Any]) -> BallSetup:
         setup,
     )
     return BallSetup.from_json_dict(setup)
+
+
+def manual_delivery_from_json_dict(data: Mapping[str, Any]) -> ManualDeliveryConfig:
+    """Import manual delivery declarations, defaulting older runs losslessly."""
+    require(isinstance(data, Mapping), "simulation JSON must be a mapping", data)
+    parameters = data.get("parameters", data)
+    require(
+        isinstance(parameters, Mapping),
+        "simulation parameters must be a mapping",
+        parameters,
+    )
+    declaration = parameters.get("manual_delivery")
+    require(
+        declaration is None or isinstance(declaration, Mapping),
+        "manual_delivery must be a mapping when present",
+        declaration,
+    )
+    if declaration is None:
+        return ManualDeliveryConfig()
+    defaults = ManualDeliveryConfig()
+    return ManualDeliveryConfig(
+        attack_angle_deg=declaration.get("attack_angle_deg", defaults.attack_angle_deg),
+        club_path_deg=declaration.get("club_path_deg", defaults.club_path_deg),
+        forward_shaft_lean_deg=declaration.get(
+            "forward_shaft_lean_deg", defaults.forward_shaft_lean_deg
+        ),
+        shaft_axis_datum=declaration.get("shaft_axis_datum", defaults.shaft_axis_datum),
+    )
 
 
 def series_rows(
@@ -267,7 +297,24 @@ def run_to_json_dict(
     scenario = config.scenario
 
     document: dict[str, Any] = {
-        "format": "rate_of_closure.simulation_run/2",
+        "format": "rate_of_closure.simulation_run/5",
+        "model_limitations": {
+            "contact_tracking": {
+                "basis": "tracked_reference_point",
+                "description": (
+                    "Forced alignment and sampled fixed-ball contact track the "
+                    "clubhead reference point, not swept face-mesh contact."
+                ),
+            },
+            "impact_velocity": {
+                "basis": "clubhead_reference_translation",
+                "description": (
+                    "The current rigid impact and ball-flight pipeline consumes "
+                    "reference-point translation. Shaft-induced contact-point "
+                    "velocity is analyzed separately and does not alter flight."
+                ),
+            },
+        },
         "parameters": {
             "source_kind": config.source_kind,
             "club": config.club.name,
@@ -285,6 +332,12 @@ def run_to_json_dict(
                 "yaw": config.plane.yaw_deg,
                 "side_tilt": config.plane.side_tilt_deg,
                 "forward_tilt": config.plane.forward_tilt_deg,
+            },
+            "manual_delivery": {
+                "attack_angle_deg": config.manual_attack_angle_deg,
+                "club_path_deg": config.manual_club_path_deg,
+                "forward_shaft_lean_deg": config.manual_forward_shaft_lean_deg,
+                "shaft_axis_datum": config.manual_shaft_axis_datum.value,
             },
             "scenario": {
                 "clubhead_speed_mph": scenario.clubhead_speed_mph,
