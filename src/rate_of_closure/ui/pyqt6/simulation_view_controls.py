@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING, cast
+from typing import TYPE_CHECKING
 
 from PyQt6.QtCore import QSettings, Qt
 from PyQt6.QtWidgets import (
@@ -302,7 +302,8 @@ class SimulationViewControlsMixin:
         self._screw_readout = widgets.screw_readout
         self._impact_kinematics_readout = widgets.impact_kinematics_readout
         self._impact_details_scroll = widgets.details_scroll
-        return cast(QWidget, widgets.panel)
+        panel: QWidget = widgets.panel
+        return panel
 
     def _set_layers_expanded(self, expanded: bool) -> None:
         self._layers_panel.setVisible(expanded)
