@@ -62,10 +62,63 @@ cohorts have null landing coordinates and receive the request's explicit
 finite failure cost. They are counted in expected cost and regret, never
 silently removed from the denominator.
 
-Expected regret is computed trial-by-trial against the lowest cost among the
-strategies on that same true-wind draw. Tied best strategies divide one unit
-of probability credit. Output retains every landing point and failure cohort,
-so clients can render shot scatter and audit summary denominators.
+The `wind-strategy-analysis/v2` output records two simulations for every
+strategy and wind draw:
+
+- **Actual** uses the player's estimated wind to apply the declared aim policy,
+  while the true wind drives the ball-flight physics.
+- **Policy-fixed perfect-information counterfactual** uses the true wind both
+  for the same declared aim policy and for the physics. It does not search for
+  a new aim, club, or policy. Therefore `information_cost_delta = actual_cost -
+  perfect_information_cost` can be negative on an individual trial; it is not
+  labelled regret or a globally optimized expected value of perfect
+  information.
+
+The pre-v2 `expected_regret` metric is retained as a compatibility alias. Its
+precise name is `expected_preset_oracle_regret`: each actual outcome is compared
+with the lowest actual cost among the finite set of user-declared strategies on
+that same true-wind draw. `probability_best` similarly aliases
+`preset_oracle_probability_best`, with tied strategies sharing credit. This is
+a hindsight **preset oracle**, not a perfect-information decision policy.
+
+Output retains every actual landing, paired perfect-information result, and
+failure cohort so clients can render shot scatter and audit all denominators.
+
+## Hold, Tail, and Directional Risk
+
+Each analysis explicitly declares `target_radius_m` and
+`miss_distance_cvar_alpha` in `(0, 1)`.
+
+- `target_hold_probability` is the fraction of all requested trials with a
+  completed landing inside or on the target circle. Failed trials are misses.
+- `miss_distance_cvar_m` is the arithmetic mean of the largest
+  `ceil((1 - alpha) * trials)` effective miss distances, with at least one
+  sample in the tail. A failed simulation receives the auditable effective
+  distance `miss_scale_m * sqrt(failure_cost)`, so failures cannot disappear
+  from tail risk.
+- Short, long, left, and right risk each report probability, unconditional mean
+  excess, and conditional mean excess. The signs are relative to the declared
+  target in the app plan frame. Failed trials have no invented direction and
+  contribute zero directional excess; `failed_trials` reports that separate
+  risk cohort.
+
+## Output Migration
+
+`wind-uncertainty/v1` remains the sampling schema because its random stream did
+not change. Strategy-analysis output advances from
+`wind-strategy-analysis/v1` to `wind-strategy-analysis/v2`. Consumers must:
+
+1. accept the new schema identifier;
+2. supply target radius and CVaR alpha in TypeScript requests (Python provides
+   documented defaults for source compatibility);
+3. prefer `expected_preset_oracle_regret` and
+   `preset_oracle_probability_best` over their retained legacy aliases; and
+4. treat `expected_information_cost_delta` as a signed policy-fixed
+   counterfactual difference, not as guaranteed-nonnegative EVPI.
+
+The v2 golden risk fixture pins schema identity, failure-inclusive CVaR, target
+hold, directional failure handling, information delta, and preset-oracle
+semantics across Python and TypeScript.
 
 ## Limitations
 
@@ -82,3 +135,9 @@ so clients can render shot scatter and audit summary denominators.
 - No UI is added in this bounded foundation. PyQt6 and React can consume the
   immutable result to add controls, landing scatter, and strategy tables
   without duplicating the sampling or cost logic.
+- Analysis remains synchronous and has no progress reporting, cancellation, or
+  compute-budget enforcement. Production UI work must add those controls
+  before exposing large ensembles interactively.
+- The perfect-information result only replaces the estimate inside the
+  declared linear aim policy. It is not a continuous optimizer, an unrestricted
+  club selector, or a claim about the economic value of a weather forecast.

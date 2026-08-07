@@ -35,6 +35,9 @@ from .types import (
 )
 from .wind import WIND_SCHEMA_VERSION, WindGust, WindScenario
 from .wind_strategy import (
+    WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION,
+    DirectionalRisk,
+    PerfectInformationCounterfactual,
     StrategyAnalysisConfig,
     StrategyAnalysisRequest,
     StrategyShotOutcome,
@@ -67,7 +70,10 @@ __all__ = [
     "TrajectoryPoint",
     "WaterlooPennerModel",
     "WIND_SCHEMA_VERSION",
+    "WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION",
     "WIND_UNCERTAINTY_SCHEMA_VERSION",
+    "DirectionalRisk",
+    "PerfectInformationCounterfactual",
     "ScalarDistribution",
     "StrategyAnalysisConfig",
     "StrategyAnalysisRequest",

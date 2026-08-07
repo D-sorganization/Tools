@@ -1,15 +1,16 @@
-/** Deterministic true/estimated-wind ensembles and CRN strategy regret. */
+/** Deterministic true/estimated-wind ensembles and paired strategy risk. */
 
 import { simulateFlight, type Launch } from "./flight";
 import { meteorologicalWind, type WindScenario } from "./wind";
+import { summarizeStrategyOutcomes } from "./windStrategyMetrics";
 
 export const WIND_UNCERTAINTY_SCHEMA_VERSION = "wind-uncertainty/v1" as const;
+export const WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION = "wind-strategy-analysis/v2" as const;
 const UINT32_SCALE = 2 ** 32;
 const UINT32_MAX = 0xffffffff;
 const MIN_UNIFORM = 1 / UINT32_SCALE;
 const PRECISION_DIGITS = 9;
 const GROUND_TOLERANCE_M = 1e-5;
-const BEST_COST_TOLERANCE = 1e-12;
 
 export type DistributionKind = "fixed" | "normal" | "uniform";
 
@@ -66,10 +67,21 @@ export interface WindStrategyRequest {
     readonly time_step_s: number;
     readonly miss_scale_m: number;
     readonly failure_cost: number;
+    readonly target_radius_m: number;
+    readonly miss_distance_cvar_alpha: number;
   };
 }
 
 export type WindOutcomeStatus = "completed" | "nonconverged" | "invalid";
+
+export interface PerfectInformationCounterfactual {
+  readonly status: WindOutcomeStatus;
+  readonly landing_forward_m: number | null;
+  readonly landing_right_m: number | null;
+  readonly miss_distance_m: number | null;
+  readonly cost: number;
+  readonly failure_reason: string | null;
+}
 
 export interface WindStrategyOutcome {
   readonly trial_index: number;
@@ -79,8 +91,17 @@ export interface WindStrategyOutcome {
   readonly estimated_wind: WindScenario;
   readonly landing_forward_m: number | null;
   readonly landing_right_m: number | null;
+  readonly miss_distance_m: number | null;
   readonly cost: number;
   readonly failure_reason: string | null;
+  readonly perfect_information: PerfectInformationCounterfactual;
+  readonly information_cost_delta: number;
+}
+
+export interface DirectionalRisk {
+  readonly probability: number;
+  readonly mean_excess_m: number;
+  readonly conditional_mean_excess_m: number;
 }
 
 export interface WindStrategySummary {
@@ -89,14 +110,25 @@ export interface WindStrategySummary {
   readonly completed_trials: number;
   readonly failed_trials: number;
   readonly expected_cost: number;
+  readonly expected_perfect_information_cost: number;
+  readonly expected_information_cost_delta: number;
+  readonly expected_preset_oracle_regret: number;
+  readonly preset_oracle_probability_best: number;
   readonly expected_regret: number;
   readonly probability_best: number;
+  readonly target_hold_probability: number;
+  readonly miss_distance_cvar_m: number;
+  readonly miss_distance_cvar_alpha: number;
+  readonly short_risk: DirectionalRisk;
+  readonly long_risk: DirectionalRisk;
+  readonly left_risk: DirectionalRisk;
+  readonly right_risk: DirectionalRisk;
   readonly mean_landing_forward_m: number | null;
   readonly mean_landing_right_m: number | null;
 }
 
 export interface WindStrategyAnalysis {
-  readonly schema_version: "wind-strategy-analysis/v1";
+  readonly schema_version: typeof WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION;
   readonly provenance: string;
   readonly target: WindStrategyRequest["target"];
   readonly wind_trials: readonly WindTrial[];
@@ -110,6 +142,15 @@ interface TrialContext {
   readonly strategy: WindStrategy;
   readonly trueWind: WindScenario;
   readonly estimate: WindScenario;
+}
+
+interface SimulationOutcome {
+  readonly status: WindOutcomeStatus;
+  readonly landingForwardM: number | null;
+  readonly landingRightM: number | null;
+  readonly missDistanceM: number | null;
+  readonly cost: number;
+  readonly failureReason: string | null;
 }
 
 const finite = (value: number, name: string): number => {
@@ -256,6 +297,66 @@ function validateRequest(request: WindStrategyRequest): void {
     if (!(finite(value, "analysis value") > 0)) throw new RangeError("analysis scales must be positive");
   });
   if (finite(analysis.failure_cost, "failure_cost") < 0) throw new RangeError("failure_cost must be nonnegative");
+  if (finite(analysis.target_radius_m, "target_radius_m") < 0) {
+    throw new RangeError("target_radius_m must be nonnegative");
+  }
+  const alpha = finite(analysis.miss_distance_cvar_alpha, "miss_distance_cvar_alpha");
+  if (alpha <= 0 || alpha >= 1) {
+    throw new RangeError("miss_distance_cvar_alpha must be in (0, 1)");
+  }
+}
+
+function failureSimulation(
+  request: WindStrategyRequest,
+  status: Exclude<WindOutcomeStatus, "completed">,
+  reason: string,
+): SimulationOutcome {
+  return {
+    status, landingForwardM: null, landingRightM: null, missDistanceM: null,
+    cost: request.analysis.failure_cost, failureReason: reason,
+  };
+}
+
+function simulatePolicy(context: TrialContext, decisionWind: WindScenario): SimulationOutcome {
+  const { request, strategy, trueWind } = context;
+  const correction = strategy.crosswind_aim_gain_rad_per_mps * decisionWind.baseVelocityMps[1];
+  try {
+    const result = simulateFlight({
+      ...strategy.launch,
+      azimuthRad: strategy.launch.azimuthRad - correction,
+      windScenario: trueWind,
+    }, request.analysis.max_time_s, request.analysis.time_step_s, 10);
+    const landing = result.trajectory[result.trajectory.length - 1];
+    if (!landing || landing.position[2] > GROUND_TOLERANCE_M) {
+      return failureSimulation(request, "nonconverged", "ground not reached");
+    }
+    const forwardM = landing.position[0];
+    const rightM = -landing.position[1];
+    const missDistanceM = Math.hypot(
+      forwardM - request.target.forward_m,
+      rightM - request.target.right_m,
+    );
+    const cost = (missDistanceM / request.analysis.miss_scale_m) ** 2;
+    if (![forwardM, rightM, cost].every(Number.isFinite)) {
+      return failureSimulation(request,
+        "invalid", "simulation produced nonfinite landing data");
+    }
+    return {
+      status: "completed", landingForwardM: forwardM, landingRightM: rightM,
+      missDistanceM, cost, failureReason: null,
+    };
+  } catch (error: unknown) {
+    const reason = error instanceof Error ? error.message : "unknown simulation error";
+    return failureSimulation(request, "invalid", reason);
+  }
+}
+
+function counterfactual(result: SimulationOutcome): PerfectInformationCounterfactual {
+  return {
+    status: result.status, landing_forward_m: result.landingForwardM,
+    landing_right_m: result.landingRightM, miss_distance_m: result.missDistanceM,
+    cost: result.cost, failure_reason: result.failureReason,
+  };
 }
 
 function outcome(request: WindStrategyRequest, trial: WindTrial, strategy: WindStrategy): WindStrategyOutcome {
@@ -265,75 +366,17 @@ function outcome(request: WindStrategyRequest, trial: WindTrial, strategy: WindS
   const estimate = scenario(trial.estimated_speed_mps, trial.estimated_from_bearing_deg,
     `${provenance}/estimated/trial-${trial.trial_index}`);
   const context = { request, trial, strategy, trueWind, estimate };
-  const correction = strategy.crosswind_aim_gain_rad_per_mps * estimate.baseVelocityMps[1];
-  try {
-    const result = simulateFlight({
-      ...strategy.launch,
-      azimuthRad: strategy.launch.azimuthRad - correction,
-      windScenario: trueWind,
-    }, request.analysis.max_time_s, request.analysis.time_step_s, 10);
-    const landing = result.trajectory[result.trajectory.length - 1];
-    if (!landing || landing.position[2] > GROUND_TOLERANCE_M) {
-      return failureOutcome(context, "nonconverged", "ground not reached");
-    }
-    const forwardM = landing.position[0];
-    const rightM = -landing.position[1];
-    const missSquared = (forwardM - request.target.forward_m) ** 2 +
-      (rightM - request.target.right_m) ** 2;
-    const cost = missSquared / request.analysis.miss_scale_m ** 2;
-    if (![forwardM, rightM, cost].every(Number.isFinite)) {
-      return failureOutcome(context,
-        "invalid", "simulation produced nonfinite landing data");
-    }
-    return {
-      trial_index: trial.trial_index, strategy_id: strategy.id, status: "completed",
-      true_wind: trueWind, estimated_wind: estimate, landing_forward_m: forwardM,
-      landing_right_m: rightM, cost,
-      failure_reason: null,
-    };
-  } catch (error: unknown) {
-    const reason = error instanceof Error ? error.message : "unknown simulation error";
-    return failureOutcome(context, "invalid", reason);
-  }
-}
-
-function failureOutcome(
-  context: TrialContext,
-  status: Exclude<WindOutcomeStatus, "completed">, reason: string,
-): WindStrategyOutcome {
+  const actual = simulatePolicy(context, estimate);
+  const perfectInformation = simulatePolicy(context, trueWind);
   return {
-    trial_index: context.trial.trial_index, strategy_id: context.strategy.id, status,
-    true_wind: context.trueWind, estimated_wind: context.estimate, landing_forward_m: null,
-    landing_right_m: null, cost: context.request.analysis.failure_cost, failure_reason: reason,
+    trial_index: trial.trial_index, strategy_id: strategy.id, status: actual.status,
+    true_wind: trueWind, estimated_wind: estimate,
+    landing_forward_m: actual.landingForwardM, landing_right_m: actual.landingRightM,
+    miss_distance_m: actual.missDistanceM, cost: actual.cost,
+    failure_reason: actual.failureReason,
+    perfect_information: counterfactual(perfectInformation),
+    information_cost_delta: actual.cost - perfectInformation.cost,
   };
-}
-
-function mean(values: readonly number[]): number | null {
-  return values.length ? values.reduce((total, value) => total + value, 0) / values.length : null;
-}
-
-function summarize(request: WindStrategyRequest, outcomes: readonly WindStrategyOutcome[]): WindStrategySummary[] {
-  const bestCosts = Array.from({ length: request.uncertainty.trials }, (_, trialIndex) =>
-    Math.min(...outcomes.filter((item) => item.trial_index === trialIndex).map((item) => item.cost)));
-  return request.strategies.map((strategy) => {
-    const cohort = outcomes.filter((item) => item.strategy_id === strategy.id);
-    const completed = cohort.filter((item) => item.status === "completed");
-    const bestCredit = cohort.reduce((credit, item) => {
-      if (Math.abs(item.cost - bestCosts[item.trial_index]) > BEST_COST_TOLERANCE) return credit;
-      const ties = outcomes.filter((peer) => peer.trial_index === item.trial_index &&
-        Math.abs(peer.cost - bestCosts[item.trial_index]) <= BEST_COST_TOLERANCE).length;
-      return credit + 1 / ties;
-    }, 0);
-    return {
-      strategy_id: strategy.id, label: strategy.label, completed_trials: completed.length,
-      failed_trials: cohort.length - completed.length,
-      expected_cost: mean(cohort.map((item) => item.cost)) ?? request.analysis.failure_cost,
-      expected_regret: mean(cohort.map((item) => item.cost - bestCosts[item.trial_index])) ?? 0,
-      probability_best: bestCredit / cohort.length,
-      mean_landing_forward_m: mean(completed.flatMap((item) => item.landing_forward_m === null ? [] : [item.landing_forward_m])),
-      mean_landing_right_m: mean(completed.flatMap((item) => item.landing_right_m === null ? [] : [item.landing_right_m])),
-    };
-  });
 }
 
 export function analyzeWindStrategies(request: WindStrategyRequest): WindStrategyAnalysis {
@@ -341,8 +384,9 @@ export function analyzeWindStrategies(request: WindStrategyRequest): WindStrateg
   const windTrials = sampleWindTrials(request.uncertainty);
   const outcomes = windTrials.flatMap((trial) => request.strategies.map((strategy) => outcome(request, trial, strategy)));
   return {
-    schema_version: "wind-strategy-analysis/v1", provenance: request.uncertainty.provenance,
+    schema_version: WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION,
+    provenance: request.uncertainty.provenance,
     target: request.target, wind_trials: windTrials, outcomes,
-    summaries: summarize(request, outcomes),
+    summaries: summarizeStrategyOutcomes(request, outcomes),
   };
 }
