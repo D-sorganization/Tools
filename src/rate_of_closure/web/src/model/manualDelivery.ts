@@ -22,6 +22,24 @@ export const DEFAULT_MANUAL_DELIVERY: ManualDelivery = Object.freeze({
   shaftAxisDatum: "tracked_reference",
 });
 
+export const MAX_ABSOLUTE_DELIVERED_DYNAMIC_LOFT_DEG = 89;
+
+/** Validate the rigid manual pose's delivered loft (`nominal - forward lean`). */
+export function validateDeliveredDynamicLoft(
+  nominalLoftDeg: number,
+  forwardShaftLeanDeg: number,
+): number {
+  const deliveredDynamicLoftDeg = nominalLoftDeg - forwardShaftLeanDeg;
+  if (!Number.isFinite(deliveredDynamicLoftDeg) ||
+      Math.abs(deliveredDynamicLoftDeg) > MAX_ABSOLUTE_DELIVERED_DYNAMIC_LOFT_DEG) {
+    throw new RangeError(
+      `manual delivered dynamic loft ${String(deliveredDynamicLoftDeg)} deg ` +
+      "must be finite and within [-89, 89] deg",
+    );
+  }
+  return deliveredDynamicLoftDeg;
+}
+
 const finiteBounded = (
   value: unknown,
   name: keyof typeof MANUAL_DELIVERY_BOUNDS,

@@ -28,6 +28,13 @@ const requireLaunch = (run: SimulationRunTs) => {
 };
 
 describe("manual three-dimensional delivery", () => {
+  it("rejects invalid delivered dynamic loft before running the simulation", () => {
+    expect(() => runSimulation({
+      ...INPUT,
+      loftDeg: 46,
+      manualForwardShaftLeanDeg: -44,
+    })).toThrow(/delivered dynamic loft.*90.*\[-89, 89\]/i);
+  });
   it("propagates signed attack angle and club path into reference velocity", () => {
     const run = runSimulation({
       ...INPUT,

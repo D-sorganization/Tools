@@ -239,7 +239,7 @@ function simulationFormat(data: Record<string, unknown>): SimulationFormat | nul
   const match = text.match(/^rate_of_closure\.simulation_run(?:\.web)?\/(\d+)$/);
   if (!match) throw new Error(`Unsupported simulation format: ${text}.`);
   const format = { version: Number(match[1]), web: text.includes(".web/") };
-  const maximum = format.web ? 4 : 2;
+  const maximum = format.web ? 5 : 2;
   if (format.version < 1 || format.version > maximum) {
     throw new Error(`Unsupported simulation schema version ${format.version}.`);
   }
@@ -255,14 +255,14 @@ export function ballSetupFromSimulationDocument(value: unknown): BallSetup {
   const rawSetup = parameters?.ballSetup ?? parameters?.ball_setup ?? data?.ball_setup;
   if (rawSetup === undefined) {
     if (format?.web && format.version >= 4) {
-      throw new Error("Simulation schema version 4 requires ball_setup.");
+      throw new Error("Simulation schema version 4 or newer requires ball_setup.");
     }
     return { ...GROUND_BALL_SETUP };
   }
   return setupFromUnknown(rawSetup);
 }
 
-/** Load a canonical v4 target or migrate a legacy 2D run target/default. */
+/** Load a canonical v4+ target or migrate a legacy 2D run target/default. */
 export function spatialTargetFromSimulationDocument(value: unknown): SpatialTargetTs {
   const data = record(value);
   if (!data) throw new Error("Simulation JSON must be an object.");
@@ -272,7 +272,7 @@ export function spatialTargetFromSimulationDocument(value: unknown): SpatialTarg
     parameters?.target ?? data.target;
   if (rawTarget === undefined) {
     if (format?.web && format.version >= 4) {
-      throw new Error("Simulation schema version 4 requires spatial_target.");
+      throw new Error("Simulation schema version 4 or newer requires spatial_target.");
     }
     return spatialTargetFromRegion(DEFAULT_TARGET);
   }

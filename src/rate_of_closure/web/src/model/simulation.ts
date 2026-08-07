@@ -70,6 +70,7 @@ import {
 } from "./rotation";
 import {
   resolveManualDelivery,
+  validateDeliveredDynamicLoft,
   type ManualDelivery,
   type ShaftAxisDatum,
 } from "./manualDelivery";
@@ -298,6 +299,10 @@ function swingSamples(
 /** Run the full swing -> impact -> flight pipeline (web parity port). */
 export function runSimulation(input: SimulationInput): SimulationRunTs {
   const manualDelivery = resolveManualDelivery(input);
+  const manualDeliveredDynamicLoftDeg = validateDeliveredDynamicLoft(
+    input.loftDeg,
+    manualDelivery.manualForwardShaftLeanDeg,
+  );
   const ballSetup = resolveBallSetup(input.ballSetup);
   const ballPositionM = ballCenterPosition(ballSetup);
   const swing = swingSamples(input, manualDelivery);
@@ -381,11 +386,9 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
     clubPathDeg: clampAngle(deg(Math.atan2(v[2], v[0]))),
     faceAngleDeg: 0.0,
     attackAngleDeg: clampAngle(deg(Math.atan2(v[1], Math.hypot(v[0], v[2])))),
-    dynamicLoftDeg: input.loftDeg - (
-      input.sourceKind === "manual"
-        ? manualDelivery.manualForwardShaftLeanDeg
-        : 0
-    ),
+    dynamicLoftDeg: input.sourceKind === "manual"
+      ? manualDeliveredDynamicLoftDeg
+      : input.loftDeg,
     impactOffsetToeMm: input.impactOffsetToeMm,
     impactOffsetHighMm: input.impactOffsetHighMm,
     club: input.club,
