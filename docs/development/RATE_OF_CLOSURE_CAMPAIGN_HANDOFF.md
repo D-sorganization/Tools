@@ -497,6 +497,61 @@ request and analysis so launch definitions and provenance are not inferred.
 Issue #4199 already owns the required controls, scatter, strategy table,
 progress/cancellation, and export workflow.
 
+The first narrow #4199 implementation slice now exists on branch
+`feat/4199-wind-scalar-adapter`, stacked on exact PR #4280 head
+`d71b0ea01b5659d3049ff05627c41f06481207e4`. It introduces an exact
+cross-runtime `scalar-ensemble/v1` wire contract and pure wind-strategy
+adapters. The contract preserves structured provenance, unit-bearing variable
+definitions, caller-defined cohorts, RFC3986 composite identities, nullable
+raw rows, and exact scatter availability. The adapters validate the immutable
+request against the stored paired analysis, preserve completed,
+nonconverged, and invalid outcomes, and never invoke a flight model. React has
+an explicit mocked-integrator regression test for that boundary.
+
+Current exact local evidence is 906 Python/PyQt/shared-swing tests passed with
+one expected optional-Rust skip and 15 existing warnings, plus 91 React test
+files / 555 tests passed. Ruff, formatting, Black, focused mypy, TypeScript,
+zero-warning ESLint, the 166-module production build, `git diff --check`, and
+the production module/function budgets pass. The adapter is plot-ready model
+infrastructure, not an end-user workflow; #4199 remains open for worker,
+progress/cancellation, client controls, strategy/scatter displays,
+persistence, and exports.
+
+### 2026-08-07 ground and four-surface audit refinement
+
+The rolling-ground and cross-application parity requests remain tracked by the
+existing [ground epic #4267](https://github.com/D-sorganization/Tools/issues/4267)
+and [parity epic #4260](https://github.com/D-sorganization/Tools/issues/4260);
+no duplicate epic or child issue is required. The latest exact-path audit and
+acceptance refinements are attached to
+[the ground epic](https://github.com/D-sorganization/Tools/issues/4267#issuecomment-5222725556)
+and [the parity epic](https://github.com/D-sorganization/Tools/issues/4260#issuecomment-5222726010).
+
+The scientific implementation order is contractual: #4268 defines the
+surface/contact/trajectory/result transfer state, then #4269 corrects physical
+terrain contact and preserves terminal full angular velocity. Only then may
+#4270/#4271 qualify the 3D impulse, repeated bounce, skid, and pure-roll
+phases. Carry remains first physical contact. Final downrange, final lateral,
+horizontal displacement, surface path length, and launch-monitor-style total
+distance are distinct quantities; no implementation may silently assume
+`total distance = carry + roll distance`.
+
+Reusable UpstreamDrift scope is deliberately narrow: its split terrain
+material/elevation/normal/region package can feed a one-way versioned DTO
+adapter. Current scalar landing, heuristic putting-roll, duplicate legacy
+terrain, and Rust tangential-loss implementations are reference material, not
+the qualified physics authority. Upstream surface defaults remain illustrative
+until citations, calibration, uncertainty, and applicability are recorded.
+
+The parity matrix must distinguish seven product identities: standalone Rate
+PyQt6 and React, the Upstream Rate PyQt provider and React route, Upstream Shot
+Tracer PyQt6 and React, and the legacy Upstream ball-flight GUI. Current
+Upstream `main` (`0782853295e005af68818617e4725eb980890f43`) pins Tools at
+`ff4240217005e1415ca409fd124e50b64ee642d2`, exposes no native Rate React route,
+and contains contradictory vendor-first and sibling-first Tools resolvers.
+These facts are current audit evidence, not completion; #4260, #4267, and all
+children remain open.
+
 ## Open release blockers
 
 GitHub issue #4201 remains open. Its 2026-08-06 release checkpoint still

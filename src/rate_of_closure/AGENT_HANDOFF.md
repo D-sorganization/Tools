@@ -44,6 +44,59 @@ nonconverged, and invalid cohorts, and report that impact variables are
 unavailable because this runner begins at prescribed launch. Do not coerce it
 into the impact-specific cohort enum or fabricate impact/landing values.
 
+Branch `feat/4199-wind-scalar-adapter` now supplies that first UI-neutral
+model slice on top of draft PR #4280. Python and React share the exact
+snake-case `scalar-ensemble/v1` wire structure: structured provenance,
+labeled stages/categories/cohorts, unit-bearing variables, RFC3986 composite
+row identity, immutable nullable raw rows, and overall/per-cohort x/y/paired
+availability. The wind adapter validates deterministic request/analysis trial
+agreement, retains every actual and perfect-information status, and exposes
+true/estimated wind, launch/aim, target, landing, miss, cost, and information
+delta without invoking the flight solver. Impact variables remain honestly
+absent because this analysis begins at launch.
+
+Exact local gates for this branch are green: 906 Python/PyQt/shared-swing
+tests passed with one expected optional-Rust skip and 15 existing warnings;
+91 React files / 555 tests passed. Ruff, Ruff formatting, Black, focused mypy,
+TypeScript, zero-warning ESLint, the 166-module Vite production build, and
+`git diff --check` pass. Production Python modules remain below 400 lines and
+no changed Python function exceeds 50 lines. This contract/adapter does not
+complete #4199: the next slice still needs background execution, progress and
+cancellation, PyQt/React scatter/strategy UI, persistence, and export wiring.
+
+## 2026-08-07 Ground Model and Four-Surface Parity Revalidation
+
+The user's requested rolling-ground and site-wide parity programs already
+exist as [epic #4267](https://github.com/D-sorganization/Tools/issues/4267)
+with children #4268-#4276 and
+[epic #4260](https://github.com/D-sorganization/Tools/issues/4260) with
+children #4261-#4266. Do not create duplicate epics. A fresh repository and
+live-GitHub audit was recorded in
+[the ground comment](https://github.com/D-sorganization/Tools/issues/4267#issuecomment-5222725556)
+and [the parity comment](https://github.com/D-sorganization/Tools/issues/4260#issuecomment-5222726010).
+
+There is no qualified landing/bounce/roll implementation yet. The current
+airborne solvers stop at the relative launch plane and the shared
+`TrajectoryPoint` omits terminal angular velocity. For a teed shot, translating
+that relative trajectory into the course frame can leave the terminal ball
+center at tee elevation. Complete #4268 and #4269 before implementing or
+presenting bounce, roll, or total distance.
+
+Reuse the Tools `GroundModelResult` fail-closed boundary, putting skid/roll
+limiting cases, and turf provenance/variation/cancellation patterns. Adapt
+UpstreamDrift's split terrain material, elevation, normal, and region contracts
+through a one-way versioned DTO. Do not qualify Upstream's scalar landing
+helper, heuristic putting spin relaxation, legacy duplicate terrain model, or
+Rust `(1-friction)` contact law as production high-speed landing physics.
+
+The parity matrix must keep Rate and Upstream's separate products distinct:
+standalone Rate PyQt6/React, Upstream's Rate PyQt provider/React route, Shot
+Tracer PyQt6/React, and the legacy ball-flight GUI. Current Upstream `main`
+has no native Rate React route, and its Tools source resolvers disagree about
+vendor-first versus sibling-first precedence. A launcher tile cannot satisfy a
+calculation-parity row; #4261, #4262, and #4264 must make the runtime source,
+exact Tools pin, and support state machine-verifiable.
+
 ## 2026-08-05 Advanced Wedge Impact Visualization
 
 Branch `feat/4162-wedge-impact-visualization` extends issue #4162 on top of the
