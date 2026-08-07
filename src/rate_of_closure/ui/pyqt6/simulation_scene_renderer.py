@@ -357,10 +357,7 @@ class SimulationSceneRenderer:
                 f"t = {view._time:.3f} s ({phase}) — no impact; "
                 f"closest approach at {run.impact_outcome.candidate_time_s:.3f} s"
             )
-        return (
-            f"t = {view._time:.3f} s ({phase}) — "
-            f"impact at {run.impact_time_s:.3f} s"
-        )
+        return f"t = {view._time:.3f} s ({phase}) — impact at {run.impact_time_s:.3f} s"
 
     def _place_legend(self) -> None:
         """Apply the user-selected legend visibility and placement."""
