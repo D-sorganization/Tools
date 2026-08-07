@@ -299,10 +299,12 @@ function swingSamples(
 /** Run the full swing -> impact -> flight pipeline (web parity port). */
 export function runSimulation(input: SimulationInput): SimulationRunTs {
   const manualDelivery = resolveManualDelivery(input);
-  const manualDeliveredDynamicLoftDeg = validateDeliveredDynamicLoft(
-    input.loftDeg,
-    manualDelivery.manualForwardShaftLeanDeg,
-  );
+  const manualDeliveredDynamicLoftDeg = input.sourceKind === "manual"
+    ? validateDeliveredDynamicLoft(
+        input.loftDeg,
+        manualDelivery.manualForwardShaftLeanDeg,
+      )
+    : input.loftDeg;
   const ballSetup = resolveBallSetup(input.ballSetup);
   const ballPositionM = ballCenterPosition(ballSetup);
   const swing = swingSamples(input, manualDelivery);

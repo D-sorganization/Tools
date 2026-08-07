@@ -35,6 +35,18 @@ describe("manual three-dimensional delivery", () => {
       manualForwardShaftLeanDeg: -44,
     })).toThrow(/delivered dynamic loft.*90.*\[-89, 89\]/i);
   });
+  it.each(["double_pendulum", "triple_pendulum"] as const)(
+    "does not apply inactive manual-loft validation to %s",
+    (sourceKind) => {
+      expect(() => runSimulation({
+        ...INPUT,
+        sourceKind,
+        loftDeg: 46,
+        manualForwardShaftLeanDeg: -44,
+        swingDurationS: 0.05,
+      })).not.toThrow();
+    },
+  );
   it("propagates signed attack angle and club path into reference velocity", () => {
     const run = runSimulation({
       ...INPUT,

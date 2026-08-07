@@ -70,6 +70,23 @@ describe("manual delivery contract", () => {
       format: "rate_of_closure.simulation_run.web/3",
       parameters: { sourceKind: "manual" },
     })).toEqual(DEFAULT_MANUAL_DELIVERY);
+    expect(manualDeliveryFromSimulationDocument({
+      format: "rate_of_closure.simulation_run/4",
+      parameters: { sourceKind: "manual" },
+    })).toEqual(DEFAULT_MANUAL_DELIVERY);
+  });
+
+  it.each([
+    "rate_of_closure.simulation_run.web/5",
+    "rate_of_closure.simulation_run/5",
+  ])("rejects incomplete current document %s without required setup blocks", (format) => {
+    const incomplete = { format, parameters: {} };
+    expect(() => ballSetupFromSimulationDocument(incomplete))
+      .toThrow(/version 5 requires ball_setup/i);
+    expect(() => spatialTargetFromSimulationDocument(incomplete))
+      .toThrow(/version 5 requires spatial_target/i);
+    expect(() => manualDeliveryFromSimulationDocument(incomplete))
+      .toThrow(/version 5 requires manual_delivery/i);
   });
 
   it("exports the resolved manual delivery fields with a simulation run", () => {
@@ -117,6 +134,23 @@ describe("manual delivery contract", () => {
     expect(() => ballSetupFromSimulationDocument({
       ...document,
       format: "rate_of_closure.simulation_run.web/6",
+    })).toThrow(/unsupported.*version 6/i);
+    const nativeDocument = {
+      ...document,
+      format: "rate_of_closure.simulation_run/5",
+    };
+    expect(ballSetupFromSimulationDocument(nativeDocument)).toEqual(input.ballSetup);
+    expect(spatialTargetFromSimulationDocument(nativeDocument))
+      .toEqual(spatialTargetFromRegion(DEFAULT_TARGET));
+    expect(manualDeliveryFromSimulationDocument(nativeDocument)).toEqual({
+      manualAttackAngleDeg: -10,
+      manualClubPathDeg: 6,
+      manualForwardShaftLeanDeg: 15,
+      shaftAxisDatum: "generated_hosel",
+    });
+    expect(() => spatialTargetFromSimulationDocument({
+      ...nativeDocument,
+      format: "rate_of_closure.simulation_run/6",
     })).toThrow(/unsupported.*version 6/i);
     const legacyDefaultInput = {
       ...input,

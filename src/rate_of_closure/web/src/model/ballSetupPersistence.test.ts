@@ -133,6 +133,10 @@ describe("ball setup persistence", () => {
       format: "rate_of_closure.simulation_run/2",
       parameters: { ball_setup: { support_mode: "tee", tee_height_m: 0.04 } },
     })).toEqual({ supportMode: "tee", teeHeightM: 0.04 });
+    expect(ballSetupFromSimulationDocument({
+      format: "rate_of_closure.simulation_run/4",
+      parameters: {},
+    })).toEqual({ supportMode: "ground", teeHeightM: 0 });
     expect(() => ballSetupFromSimulationDocument({
       format: "rate_of_closure.simulation_run.web/99",
     })).toThrow(/unsupported.*version 99/i);
@@ -150,6 +154,10 @@ describe("ball setup persistence", () => {
       format: "rate_of_closure.simulation_run.web/3",
       parameters: {},
     })).toEqual(landingTarget);
+    expect(spatialTargetFromSimulationDocument({
+      format: "rate_of_closure.simulation_run/4",
+      parameters: {},
+    })).toEqual(landingTarget);
   });
 
   it("round-trips canonical targets and rejects malformed current documents", () => {
@@ -160,7 +168,7 @@ describe("ball setup persistence", () => {
     expect(spatialTargetFromSimulationDocument(document)).toEqual(aerialTarget);
     expect(() => spatialTargetFromSimulationDocument({
       format: "rate_of_closure.simulation_run.web/4",
-    })).toThrow(/requires spatial_target/i);
+    })).toThrow(/version 4 requires spatial_target/i);
     expect(() => spatialTargetFromSimulationDocument({
       ...document,
       spatial_target: { ...document.spatial_target, units: "yd" },
@@ -169,7 +177,7 @@ describe("ball setup persistence", () => {
       format: "rate_of_closure.simulation_run.web/4",
       spatial_target: document.spatial_target,
       parameters: {},
-    })).toThrow(/requires ball_setup/i);
+    })).toThrow(/version 4 requires ball_setup/i);
   });
 
   it("neutralizes formula-leading target text in CSV while preserving numerics", () => {

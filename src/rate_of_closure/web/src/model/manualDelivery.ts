@@ -1,5 +1,10 @@
 /** Frame-explicit inputs for the prescribed manual delivery source. */
 
+import {
+  CURRENT_SIMULATION_DOCUMENT_VERSION,
+  simulationDocumentFormat,
+} from "./simulationDocumentFormat";
+
 export type ShaftAxisDatum = "tracked_reference" | "generated_hosel";
 
 export interface ManualDelivery {
@@ -89,9 +94,16 @@ const record = (value: unknown, name: string): Record<string, unknown> => {
 /** Read manual settings from a versioned run; absent legacy fields use legacy defaults. */
 export function manualDeliveryFromSimulationDocument(document: unknown): ManualDelivery {
   const root = record(document, "simulation document");
+  const format = simulationDocumentFormat(root);
   const parameters = root.parameters === undefined
     ? {}
     : record(root.parameters, "parameters");
+  if (parameters.manual_delivery === undefined &&
+      format?.version === CURRENT_SIMULATION_DOCUMENT_VERSION) {
+    throw new Error(
+      `Simulation schema version ${CURRENT_SIMULATION_DOCUMENT_VERSION} requires manual_delivery.`,
+    );
+  }
   const nested = parameters.manual_delivery === undefined
     ? null
     : record(parameters.manual_delivery, "parameters.manual_delivery");

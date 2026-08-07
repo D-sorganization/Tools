@@ -127,6 +127,27 @@ describe("SimulationPanel impact club", () => {
     expect(screen.getByText("Inputs changed — run required")).toBeInTheDocument();
   });
 
+  it("marks plane orientation non-applicable for manual and enables it for pendulums", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    const yaw = screen.getByRole("textbox", { name: "Plane Yaw deg" });
+    const side = screen.getByRole("textbox", { name: "Plane Side Tilt deg" });
+    const forward = screen.getByRole("textbox", { name: "Plane Forward Tilt deg" });
+    expect(yaw).toBeDisabled();
+    expect(side).toBeDisabled();
+    expect(forward).toBeDisabled();
+    expect(screen.getByText(/Not applicable to Manual Constant-Twist Delivery/i))
+      .toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Swing Source"), {
+      target: { value: "double_pendulum" },
+    });
+    expect(yaw).toBeEnabled();
+    expect(side).toBeEnabled();
+    expect(forward).toBeEnabled();
+    expect(screen.getByText(/Applies to articulated pendulum swing sources/i))
+      .toBeInTheDocument();
+  });
+
   it("resets prescribed torque atomically when leaving double pendulum", () => {
     renderPanel(getClub("Driver 10.5°"));
     fireEvent.change(screen.getByLabelText("Swing Source"), {

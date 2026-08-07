@@ -16,6 +16,7 @@ import {
 } from "./spatialTargetSerialization";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "./targets";
 import { SIMULATION_MODEL_LIMITATIONS } from "./modelLimitations";
+import { simulationDocumentFormat } from "./simulationDocumentFormat";
 
 export const BALL_SETUP_STORAGE_KEY = "rate_of_closure.ball_setup.web/v1";
 export const SIMULATION_EXPORT_FORMAT = "rate_of_closure.simulation_run.web/5";
@@ -228,34 +229,16 @@ export function createSimulationRunCsv(
   return [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
 }
 
-interface SimulationFormat {
-  readonly version: number;
-  readonly web: boolean;
-}
-
-function simulationFormat(data: Record<string, unknown>): SimulationFormat | null {
-  if (data.format === undefined) return null;
-  const text = String(data.format);
-  const match = text.match(/^rate_of_closure\.simulation_run(?:\.web)?\/(\d+)$/);
-  if (!match) throw new Error(`Unsupported simulation format: ${text}.`);
-  const format = { version: Number(match[1]), web: text.includes(".web/") };
-  const maximum = format.web ? 5 : 2;
-  if (format.version < 1 || format.version > maximum) {
-    throw new Error(`Unsupported simulation schema version ${format.version}.`);
-  }
-  return format;
-}
-
 /** Older run documents had a fixed ground-level ball and therefore migrate to Ground. */
 export function ballSetupFromSimulationDocument(value: unknown): BallSetup {
   const data = record(value);
   if (!data) throw new Error("Simulation JSON must be an object.");
-  const format = simulationFormat(data);
+  const format = simulationDocumentFormat(data);
   const parameters = record(data?.parameters);
   const rawSetup = parameters?.ballSetup ?? parameters?.ball_setup ?? data?.ball_setup;
   if (rawSetup === undefined) {
-    if (format?.web && format.version >= 4) {
-      throw new Error("Simulation schema version 4 or newer requires ball_setup.");
+    if (format && ((format.web && format.version >= 4) || format.version >= 5)) {
+      throw new Error(`Simulation schema version ${format.version} requires ball_setup.`);
     }
     return { ...GROUND_BALL_SETUP };
   }
@@ -266,13 +249,13 @@ export function ballSetupFromSimulationDocument(value: unknown): BallSetup {
 export function spatialTargetFromSimulationDocument(value: unknown): SpatialTargetTs {
   const data = record(value);
   if (!data) throw new Error("Simulation JSON must be an object.");
-  const format = simulationFormat(data);
+  const format = simulationDocumentFormat(data);
   const parameters = record(data.parameters);
   const rawTarget = data.spatial_target ?? parameters?.spatial_target ??
     parameters?.target ?? data.target;
   if (rawTarget === undefined) {
-    if (format?.web && format.version >= 4) {
-      throw new Error("Simulation schema version 4 or newer requires spatial_target.");
+    if (format && ((format.web && format.version >= 4) || format.version >= 5)) {
+      throw new Error(`Simulation schema version ${format.version} requires spatial_target.`);
     }
     return spatialTargetFromRegion(DEFAULT_TARGET);
   }

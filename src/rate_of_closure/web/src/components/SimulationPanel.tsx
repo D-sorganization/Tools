@@ -252,7 +252,11 @@ export function SimulationPanel({
           >
             {clubPhysicsGuidance}
           </p>
-          <PlaneTiltControls tilts={tilts} onChange={setTilts} />
+          <PlaneTiltControls
+            tilts={tilts}
+            enabled={sourceKind !== "manual"}
+            onChange={setTilts}
+          />
           <ManualDeliveryControls
             enabled={sourceKind === "manual"}
             value={manualDelivery}
