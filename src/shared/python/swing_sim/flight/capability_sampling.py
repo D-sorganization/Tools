@@ -57,9 +57,9 @@ def sample_candidate_parameters(
 
 
 def _covariance_factor(club: ClubCapability) -> np.ndarray:
-    covariance = np.asarray(club.covariance_matrix(), dtype=float)
+    covariance: np.ndarray = np.asarray(club.covariance_matrix(), dtype=float)
     size = covariance.shape[0]
-    factor = np.zeros_like(covariance)
+    factor: np.ndarray = np.zeros_like(covariance)
     for row in range(size):
         for column in range(row + 1):
             residual = covariance[row, column] - float(

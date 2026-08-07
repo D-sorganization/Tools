@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
+from typing import cast
 
 import numpy as np
 import pandas as pd
@@ -28,8 +29,11 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.launch_monitor_analysis import (
+    AnalysisMode,
     AnalysisRequest,
     AnalysisResult,
+    CorrelationMethod,
+    MissingPolicy,
     analyze_launch_monitor_data,
     numeric_columns,
 )
@@ -308,39 +312,49 @@ class LaunchMonitorAnalyticsTab(QWidget):
             AnalysisRequest(
                 outcome=self.outcome_combo.currentText(),
                 predictors=self._selected_predictors(),
-                analysis_mode=self.mode_combo.currentText(),
-                correlation_method=self.method_combo.currentText(),
-                missing_policy=self.missing_combo.currentText(),
+                analysis_mode=cast(AnalysisMode, self.mode_combo.currentText()),
+                correlation_method=cast(
+                    CorrelationMethod, self.method_combo.currentText()
+                ),
+                missing_policy=cast(MissingPolicy, self.missing_combo.currentText()),
                 group_by=None if group == "(none)" else group,
                 confidence_level=self.confidence_spin.value(),
                 min_samples=self.min_samples_spin.value(),
             ),
         )
         rows: list[list[str]] = []
-        for item in result.correlations:
+        for correlation in result.correlations:
             rows.append(
                 [
-                    item.predictor,
+                    correlation.predictor,
                     "correlation",
-                    "—" if item.coefficient is None else f"{item.coefficient:.6g}",
-                    "—" if item.p_value is None else f"{item.p_value:.6g}",
                     (
                         "—"
-                        if item.adjusted_p_value is None
-                        else f"{item.adjusted_p_value:.6g}"
+                        if correlation.coefficient is None
+                        else f"{correlation.coefficient:.6g}"
                     ),
-                    str(item.sample_count),
+                    (
+                        "—"
+                        if correlation.p_value is None
+                        else f"{correlation.p_value:.6g}"
+                    ),
+                    (
+                        "—"
+                        if correlation.adjusted_p_value is None
+                        else f"{correlation.adjusted_p_value:.6g}"
+                    ),
+                    str(correlation.sample_count),
                 ]
             )
         if result.regression:
-            for name, item in result.regression.coefficients.items():
+            for name, coefficient in result.regression.coefficients.items():
                 rows.append(
                     [
                         name,
                         "OLS coefficient",
-                        f"{item.estimate:.6g}",
-                        f"{item.p_value:.6g}",
-                        f"[{item.ci_lower:.6g}, {item.ci_upper:.6g}]",
+                        f"{coefficient.estimate:.6g}",
+                        f"{coefficient.p_value:.6g}",
+                        (f"[{coefficient.ci_lower:.6g}, {coefficient.ci_upper:.6g}]"),
                         str(result.regression.sample_count),
                     ]
                 )

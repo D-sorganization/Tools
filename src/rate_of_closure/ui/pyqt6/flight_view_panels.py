@@ -89,11 +89,13 @@ class FlightViewPanelsMixin:
                 color=get_chart_color(3),
             )
         if self._checks["landing"].isChecked():
+            landing_carry = float(positions[-1, 0])
+            landing_height = float(positions[-1, 1])
             self._annotate_landing(
                 axes,
-                positions[-1, 0],
-                positions[-1, 1],
-                f"carry {format_distance_m(positions[-1, 0])}",
+                landing_carry,
+                landing_height,
+                f"carry {format_distance_m(landing_carry)}",
             )
         axes.set_xlim(0.0, carry_ext)
         axes.set_ylim(0.0, height_ext)
@@ -120,12 +122,14 @@ class FlightViewPanelsMixin:
         self._playback_artists.add_2d(axes, 2)
         axes.axhline(0.0, color=get_chart_color(7), lw=0.6, alpha=0.6)
         if self._checks["landing"].isChecked():
-            direction = "+" if positions[-1, 2] >= 0 else "-"
+            landing_carry = float(positions[-1, 0])
+            landing_lateral = float(positions[-1, 2])
+            direction = "+" if landing_lateral >= 0 else "-"
             self._annotate_landing(
                 axes,
-                positions[-1, 0],
-                positions[-1, 2],
-                f"lateral {direction}{format_distance_m(abs(positions[-1, 2]))}",
+                landing_carry,
+                landing_lateral,
+                f"lateral {direction}{format_distance_m(abs(landing_lateral))}",
             )
         title = "Top-down"
         if self._target_region is not None:

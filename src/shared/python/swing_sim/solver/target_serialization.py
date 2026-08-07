@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Literal
 
 from ._target_validation import finite_float
 from .spatial_targets import (
@@ -247,9 +247,16 @@ def _parse_legacy(data: Mapping[str, object]) -> SpatialTarget:
     unknown = set(data).difference(allowed)
     if unknown:
         raise ValueError(f"legacy target has unknown fields: {sorted(unknown)}")
-    kind = _string(_required(data, "kind"), "kind")
+    kind_value = _string(_required(data, "kind"), "kind")
+    kind: Literal["green", "fairway"]
+    if kind_value == "green":
+        kind = "green"
+    elif kind_value == "fairway":
+        kind = "fairway"
+    else:
+        raise ValueError("legacy target kind must be 'green' or 'fairway'")
     region = TargetRegion(
-        kind=kind,  # type: ignore[arg-type]
+        kind=kind,
         distance_m=_legacy_number(data, "distance_m", "distanceM", 230.0),
         radius_m=_legacy_number(data, "radius_m", "radiusM", 10.0),
         lateral_m=_legacy_number(data, "lateral_m", "lateralM", 0.0),

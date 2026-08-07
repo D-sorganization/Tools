@@ -252,7 +252,7 @@ class FlightExplorerTab(QWidget):
     # ── public API ──────────────────────────────────────────────────
     def speed_mps(self) -> float:
         """The entered speed converted to m/s."""
-        speed = cast(float, self._speed_spin.value())
+        speed: float = self._speed_spin.value()
         factor: float = SPEED_UNITS[self._speed_unit]
         return speed * factor
 

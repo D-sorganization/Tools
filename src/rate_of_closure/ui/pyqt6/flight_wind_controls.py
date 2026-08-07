@@ -93,7 +93,7 @@ class FlightWindControls(QGroupBox):
 
     def comparison_enabled(self) -> bool:
         """Return whether paired wind comparison is requested."""
-        return self.enabled_check.isChecked()
+        return bool(self.enabled_check.isChecked())
 
     def optional_scenario(self) -> WindScenario | None:
         """Return the selected wind only when paired comparison is enabled."""
@@ -111,7 +111,7 @@ class FlightWindControls(QGroupBox):
         """Return one formatted delta value for GUI integration tests."""
         if key not in self._delta_labels:
             raise KeyError(key)
-        return self._delta_labels[key].text()
+        return str(self._delta_labels[key].text())
 
     def _refresh_direction(self) -> None:
         to_bearing = (self.bearing_spin.value() + 180.0) % 360.0
