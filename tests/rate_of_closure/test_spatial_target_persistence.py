@@ -176,14 +176,19 @@ def test_current_v5_rejects_incomplete_ball_setup(
         ball_setup_from_json_dict(document)
 
 
-def test_legacy_native_documents_keep_default_migration_behavior() -> None:
-    legacy = {"format": "rate_of_closure.simulation_run/4", "parameters": {}}
+@pytest.mark.parametrize("version", [3, 4])
+def test_unemitted_native_schema_versions_are_rejected(version: int) -> None:
+    document = {
+        "format": f"rate_of_closure.simulation_run/{version}",
+        "parameters": {},
+    }
 
-    assert spatial_target_from_simulation_document(
-        legacy
-    ).point.app_coordinates_m == pytest.approx((230.0, 0.0, 0.0))
-    assert ball_setup_from_json_dict(legacy) == BallSetup(BallSupportMode.GROUND, 0.0)
-    assert manual_delivery_from_json_dict(legacy) == ManualDeliveryConfig()
+    with pytest.raises(ValueError, match=rf"unsupported.*version {version}"):
+        spatial_target_from_simulation_document(document)
+    with pytest.raises(ValueError, match=rf"unsupported.*version {version}"):
+        ball_setup_from_json_dict(document)
+    with pytest.raises(ValueError, match=rf"unsupported.*version {version}"):
+        manual_delivery_from_json_dict(document)
 
 
 def test_web_v4_keeps_setup_and_delivery_migration(

@@ -70,10 +70,10 @@ describe("manual delivery contract", () => {
       format: "rate_of_closure.simulation_run.web/3",
       parameters: { sourceKind: "manual" },
     })).toEqual(DEFAULT_MANUAL_DELIVERY);
-    expect(manualDeliveryFromSimulationDocument({
+    expect(() => manualDeliveryFromSimulationDocument({
       format: "rate_of_closure.simulation_run/4",
       parameters: { sourceKind: "manual" },
-    })).toEqual(DEFAULT_MANUAL_DELIVERY);
+    })).toThrow(/unsupported.*version 4/i);
   });
 
   it.each([

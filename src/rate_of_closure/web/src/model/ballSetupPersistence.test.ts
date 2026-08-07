@@ -134,10 +134,10 @@ describe("ball setup persistence", () => {
       format: "rate_of_closure.simulation_run/2",
       parameters: { ball_setup: { support_mode: "tee", tee_height_m: 0.04 } },
     })).toEqual({ supportMode: "tee", teeHeightM: 0.04 });
-    expect(ballSetupFromSimulationDocument({
+    expect(() => ballSetupFromSimulationDocument({
       format: "rate_of_closure.simulation_run/4",
       parameters: {},
-    })).toEqual({ supportMode: "ground", teeHeightM: 0 });
+    })).toThrow(/unsupported.*version 4/i);
     expect(() => ballSetupFromSimulationDocument({
       format: "rate_of_closure.simulation_run.web/99",
     })).toThrow(/unsupported.*version 99/i);
@@ -155,10 +155,10 @@ describe("ball setup persistence", () => {
       format: "rate_of_closure.simulation_run.web/3",
       parameters: {},
     })).toEqual(landingTarget);
-    expect(spatialTargetFromSimulationDocument({
+    expect(() => spatialTargetFromSimulationDocument({
       format: "rate_of_closure.simulation_run/4",
       parameters: {},
-    })).toEqual(landingTarget);
+    })).toThrow(/unsupported.*version 4/i);
   });
 
   it("round-trips canonical targets and rejects malformed current documents", () => {
