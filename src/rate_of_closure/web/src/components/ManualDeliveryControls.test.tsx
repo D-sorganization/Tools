@@ -62,7 +62,7 @@ describe("manual delivery controls", () => {
       },
     })], "manual-run.json", { type: "application/json" });
 
-    fireEvent.change(screen.getByLabelText("Import Simulation JSON"), {
+    fireEvent.change(screen.getByLabelText("Import Simulation Settings JSON"), {
       target: { files: [file] },
     });
 

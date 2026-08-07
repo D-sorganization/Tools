@@ -89,6 +89,29 @@ describe("manual delivery contract", () => {
       .toThrow(/version 5 requires manual_delivery/i);
   });
 
+  it.each([
+    ["rate_of_closure.simulation_run.web/5", "attack_angle_deg"],
+    ["rate_of_closure.simulation_run.web/5", "club_path_deg"],
+    ["rate_of_closure.simulation_run.web/5", "forward_shaft_lean_deg"],
+    ["rate_of_closure.simulation_run.web/5", "shaft_axis_datum"],
+    ["rate_of_closure.simulation_run/5", "attack_angle_deg"],
+    ["rate_of_closure.simulation_run/5", "club_path_deg"],
+    ["rate_of_closure.simulation_run/5", "forward_shaft_lean_deg"],
+    ["rate_of_closure.simulation_run/5", "shaft_axis_datum"],
+  ])("rejects %s when manual_delivery.%s is missing", (format, missingField) => {
+    const manualDelivery: Record<string, unknown> = {
+      attack_angle_deg: -7,
+      club_path_deg: 4,
+      forward_shaft_lean_deg: 12,
+      shaft_axis_datum: "generated_hosel",
+    };
+    delete manualDelivery[missingField];
+    expect(() => manualDeliveryFromSimulationDocument({
+      format,
+      parameters: { manual_delivery: manualDelivery },
+    })).toThrow(new RegExp(`requires manual_delivery\\.${missingField}`, "i"));
+  });
+
   it("exports the resolved manual delivery fields with a simulation run", () => {
     const input: SimulationInput = {
       sourceKind: "manual",

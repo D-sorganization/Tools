@@ -105,7 +105,7 @@ describe("SimulationPanel impact club", () => {
         parameters: { sourceKind: "manual" },
       }),
     ], "old-run.json", { type: "application/json" });
-    fireEvent.change(screen.getByLabelText("Import Simulation JSON"), {
+    fireEvent.change(screen.getByLabelText("Import Simulation Settings JSON"), {
       target: { files: [file] },
     });
     await screen.findByText(/Imported Ground ball setup/i);

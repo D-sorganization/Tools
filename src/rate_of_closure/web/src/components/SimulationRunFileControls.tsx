@@ -96,10 +96,13 @@ export function SimulationRunFileControls({
       <button type="button" onClick={exportCsv} disabled={!run}
         title="Download trajectory rows and canonical spatial target metadata as CSV"
         className={BUTTON_CLASS}>Export CSV</button>
-      <label className={`${BUTTON_CLASS} cursor-pointer`}>
-        Import JSON
+      <label
+        className={`${BUTTON_CLASS} cursor-pointer`}
+        title="Import ball setup, spatial target, and manual delivery from Simulation Settings JSON"
+      >
+        Import Settings JSON
         <input type="file" accept="application/json,.json"
-          aria-label="Import Simulation JSON" className="sr-only"
+          aria-label="Import Simulation Settings JSON" className="sr-only"
           onChange={(event) => {
             void importJson(event.target.files?.[0]);
             event.currentTarget.value = "";

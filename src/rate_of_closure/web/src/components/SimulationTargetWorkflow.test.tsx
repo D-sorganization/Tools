@@ -44,6 +44,11 @@ describe("integrated simulation spatial target workflow", () => {
   it("imports target and setup atomically and rejects incomplete v4 documents", async () => {
     const onTargetChange = vi.fn();
     renderSimulationPanel(getClub("Driver 10.5°"), onTargetChange);
+    expect(screen.getByText("Import Settings JSON").closest("label"))
+      .toHaveAttribute(
+        "title",
+        expect.stringMatching(/ball setup, spatial target, and manual delivery/i),
+      );
     const aerial = createSpatialTarget({
       label: "Apex gate",
       kind: "aerial_waypoint",
@@ -56,10 +61,12 @@ describe("integrated simulation spatial target workflow", () => {
       spatial_target: JSON.parse(spatialTargetToJson(aerial)),
       parameters: { ball_setup: { support_mode: "ground", tee_height_m: 0 } },
     })], "run.json", { type: "application/json" });
-    fireEvent.change(screen.getByLabelText("Import Simulation JSON"), {
+    fireEvent.change(screen.getByLabelText("Import Simulation Settings JSON"), {
       target: { files: [validFile] },
     });
-    await screen.findByText(/Imported Ground ball setup and spatial target/i);
+    await screen.findByText(
+      /Imported Ground ball setup, spatial target, and manual delivery/i,
+    );
     expect(onTargetChange).toHaveBeenCalledWith(aerial);
     expect(screen.getByRole("radio", { name: "Ground" })).toBeChecked();
 
@@ -68,7 +75,7 @@ describe("integrated simulation spatial target workflow", () => {
       format: "rate_of_closure.simulation_run.web/4",
       parameters: { ball_setup: { support_mode: "tee", tee_height_m: 0.05 } },
     })], "invalid-run.json", { type: "application/json" });
-    fireEvent.change(screen.getByLabelText("Import Simulation JSON"), {
+    fireEvent.change(screen.getByLabelText("Import Simulation Settings JSON"), {
       target: { files: [invalidFile] },
     });
     const alert = await screen.findByRole("alert");
@@ -82,7 +89,7 @@ describe("integrated simulation spatial target workflow", () => {
       spatial_target: JSON.parse(spatialTargetToJson(aerial)),
       parameters: {},
     })], "missing-setup.json", { type: "application/json" });
-    fireEvent.change(screen.getByLabelText("Import Simulation JSON"), {
+    fireEvent.change(screen.getByLabelText("Import Simulation Settings JSON"), {
       target: { files: [missingSetupFile] },
     });
     const setupError = await screen.findByText(/requires ball_setup/i);

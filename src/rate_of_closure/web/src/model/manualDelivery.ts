@@ -91,6 +91,13 @@ const record = (value: unknown, name: string): Record<string, unknown> => {
   return value as Record<string, unknown>;
 };
 
+const CURRENT_MANUAL_DELIVERY_FIELDS = [
+  "attack_angle_deg",
+  "club_path_deg",
+  "forward_shaft_lean_deg",
+  "shaft_axis_datum",
+] as const;
+
 /** Read manual settings from a versioned run; absent legacy fields use legacy defaults. */
 export function manualDeliveryFromSimulationDocument(document: unknown): ManualDelivery {
   const root = record(document, "simulation document");
@@ -98,15 +105,25 @@ export function manualDeliveryFromSimulationDocument(document: unknown): ManualD
   const parameters = root.parameters === undefined
     ? {}
     : record(root.parameters, "parameters");
-  if (parameters.manual_delivery === undefined &&
-      format?.version === CURRENT_SIMULATION_DOCUMENT_VERSION) {
-    throw new Error(
-      `Simulation schema version ${CURRENT_SIMULATION_DOCUMENT_VERSION} requires manual_delivery.`,
-    );
-  }
   const nested = parameters.manual_delivery === undefined
     ? null
     : record(parameters.manual_delivery, "parameters.manual_delivery");
+  if (format?.version === CURRENT_SIMULATION_DOCUMENT_VERSION) {
+    if (nested === null) {
+      throw new Error(
+        `Simulation schema version ${CURRENT_SIMULATION_DOCUMENT_VERSION} requires manual_delivery.`,
+      );
+    }
+    const missing = CURRENT_MANUAL_DELIVERY_FIELDS.find(
+      (field) => nested[field] === undefined,
+    );
+    if (missing !== undefined) {
+      throw new Error(
+        `Simulation schema version ${CURRENT_SIMULATION_DOCUMENT_VERSION} ` +
+        `requires manual_delivery.${missing}.`,
+      );
+    }
+  }
   return resolveManualDelivery({
     manualAttackAngleDeg: (nested?.attack_angle_deg ??
       parameters.manualAttackAngleDeg) as number | undefined,

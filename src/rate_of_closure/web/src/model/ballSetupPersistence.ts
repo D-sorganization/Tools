@@ -232,7 +232,7 @@ export function createSimulationRunCsv(
 /** Older run documents had a fixed ground-level ball and therefore migrate to Ground. */
 export function ballSetupFromSimulationDocument(value: unknown): BallSetup {
   const data = record(value);
-  if (!data) throw new Error("Simulation JSON must be an object.");
+  if (!data) throw new Error("Simulation Settings JSON must be an object.");
   const format = simulationDocumentFormat(data);
   const parameters = record(data?.parameters);
   const rawSetup = parameters?.ballSetup ?? parameters?.ball_setup ?? data?.ball_setup;
@@ -248,7 +248,7 @@ export function ballSetupFromSimulationDocument(value: unknown): BallSetup {
 /** Load a canonical v4+ target or migrate a legacy 2D run target/default. */
 export function spatialTargetFromSimulationDocument(value: unknown): SpatialTargetTs {
   const data = record(value);
-  if (!data) throw new Error("Simulation JSON must be an object.");
+  if (!data) throw new Error("Simulation Settings JSON must be an object.");
   const format = simulationDocumentFormat(data);
   const parameters = record(data.parameters);
   const rawTarget = data.spatial_target ?? parameters?.spatial_target ??

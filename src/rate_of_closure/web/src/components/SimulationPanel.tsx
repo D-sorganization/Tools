@@ -345,7 +345,7 @@ export function SimulationPanel({
                 });
                 setBallSetupMessage(warning ??
                   `Imported ${imported.supportMode === "tee" ? "Tee" : "Ground"} ` +
-                  "ball setup and spatial target.");
+                  "ball setup, spatial target, and manual delivery.");
               }}
               onImportError={(message) => {
                 setBallSetupMessage(null);
