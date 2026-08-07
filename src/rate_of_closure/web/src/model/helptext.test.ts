@@ -30,7 +30,7 @@ describe("per-tab help", () => {
       "planeYawDeg",
       "planeSideTiltDeg",
       "planeForwardTiltDeg",
-      "fxAzimuth",
+      "fxLaunchDirection",
       "fxSpinAxisTilt",
     ]) {
       expect(FIELD_GUIDANCE[key], key).toContain("Reference frame:");

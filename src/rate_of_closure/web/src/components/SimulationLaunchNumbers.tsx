@@ -9,7 +9,7 @@ import { formatDistanceM } from "../model/units";
 const ROWS: Array<{ key: keyof SimulationLaunchTs; label: string; unit: string }> = [
   { key: "ballSpeedMph", label: "Ball Speed", unit: "mph" },
   { key: "launchAngleDeg", label: "Launch Angle", unit: "°" },
-  { key: "launchAzimuthDeg", label: "Launch Azimuth", unit: "°" },
+  { key: "launchAzimuthDeg", label: "Launch Direction", unit: "°" },
   { key: "spinRpm", label: "Total Spin", unit: "rpm" },
   { key: "carryM", label: "Carry", unit: "m" },
   { key: "maxHeightM", label: "Apex", unit: "m" },

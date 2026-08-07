@@ -16,6 +16,8 @@ import pytest
 pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
+from PyQt6.QtWidgets import QToolButton  # noqa: E402
+
 from rate_of_closure.derivation import LAUNCH_EXPLANATIONS  # noqa: E402
 from rate_of_closure.model import ImpactScenario  # noqa: E402
 from rate_of_closure.ui.pyqt6.flight_explorer_tab import (  # noqa: E402
@@ -204,6 +206,24 @@ class TestFlightExplorerTab:
     def test_every_result_row_has_an_explanation(self) -> None:
         for key, _label, _unit in EXPLORER_ROWS:
             assert key in LAUNCH_EXPLANATIONS, key
+
+    def test_launch_direction_has_an_obvious_clickable_definition(
+        self,
+        explorer,  # type: ignore[no-untyped-def]
+    ) -> None:
+        button = explorer.findChild(QToolButton, "launch_direction_info")
+        assert button is not None
+        assert button.text() == "Details"
+        assert button.toolTip().startswith("Suggested range:")
+        assert "positive values start right" in button.toolTip()
+        assert button.accessibleName() == "Explain Launch Direction"
+        combo = explorer._direction_convention_combo
+        assert combo.accessibleName() == "Launch Direction Convention"
+        assert combo.count() == 3
+        assert combo.itemText(2) == "Foresight-Comparable (Sign Unavailable)"
+        assert not combo.model().item(2).isEnabled()
+        assert "public sign convention" in combo.model().item(2).toolTip()
+        assert "0° = straight" in explorer._direction_example.text()
 
     def test_direct_mode_end_to_end_matches_the_pinned_case(self, explorer) -> None:  # type: ignore[no-untyped-def]
         exploration = explorer.run_now()

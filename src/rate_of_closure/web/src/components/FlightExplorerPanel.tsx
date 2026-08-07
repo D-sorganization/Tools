@@ -2,7 +2,7 @@
  * Standalone Ball-Flight Explorer section (epic #4120, V2 web parity).
  *
  * Direct entry of launch conditions (ball speed with a unit drop-down,
- * launch angle, azimuth, spin, spin-axis tilt — sourced hover guidance
+ * launch angle, launch direction, spin, spin-axis tilt — sourced guidance
  * on every control) integrated with the Waterloo/Penner model and
  * rendered in the flight profile canvases with result rows. No swing
  * required. The 7-model picker and delivery mode stay Python-side
@@ -19,9 +19,33 @@ import {
   exploreFlight,
   type FlightExplorationTs,
 } from "../model/flightExplorer";
+import {
+  LAUNCH_DIRECTION_DEFINITIONS,
+  launchDirectionSignLabels,
+  type LaunchDirectionConvention,
+} from "../model/launchDirection";
 import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
 
 const SPEED_UNITS: Record<string, number> = { mph: 1.0, "m/s": 2.236936292054402 };
+
+const DIRECTION_CONVENTIONS: Array<{
+  value: string;
+  label: string;
+  disabled?: boolean;
+  title?: string;
+}> = [
+  { value: "app_native", label: "App Native (+ Right)" },
+  {
+    value: "trackman_comparable",
+    label: "TrackMan-Comparable (+ Right)",
+  },
+  {
+    value: "foresight_comparable",
+    label: "Foresight-Comparable (Sign Unavailable)",
+    disabled: true,
+    title: "Unavailable: the general public sign convention is not established independently of player handedness.",
+  },
+];
 
 const RESULT_ROWS: Array<{
   key: keyof FlightExplorationTs["metrics"];
@@ -36,7 +60,7 @@ const RESULT_ROWS: Array<{
 ];
 
 interface FieldSpec {
-  key: "launchAngleDeg" | "azimuthDeg" | "spinRpm" | "spinAxisTiltDeg";
+  key: "launchAngleDeg" | "launchDirectionDeg" | "spinRpm" | "spinAxisTiltDeg";
   label: string;
   unit: string;
   guidance: string;
@@ -44,7 +68,7 @@ interface FieldSpec {
 
 const FIELDS: FieldSpec[] = [
   { key: "launchAngleDeg", label: "Launch Angle", unit: "deg", guidance: "fxLaunchAngle" },
-  { key: "azimuthDeg", label: "Launch Azimuth", unit: "deg", guidance: "fxAzimuth" },
+  { key: "launchDirectionDeg", label: "Launch Direction", unit: "deg", guidance: "fxLaunchDirection" },
   { key: "spinRpm", label: "Total Spin", unit: "rpm", guidance: "fxSpinRpm" },
   { key: "spinAxisTiltDeg", label: "Spin-Axis Tilt", unit: "deg", guidance: "fxSpinAxisTilt" },
 ];
@@ -57,20 +81,24 @@ export function FlightExplorerPanel({
 } = {}) {
   const [speed, setSpeed] = useState(167.0);
   const [speedUnit, setSpeedUnit] = useState("mph");
+  const [directionConvention, setDirectionConvention] =
+    useState<LaunchDirectionConvention>("app_native");
   const [fields, setFields] = useState({
     launchAngleDeg: 10.9,
-    azimuthDeg: 0.0,
+    launchDirectionDeg: 0.0,
     spinRpm: 2686.0,
     spinAxisTiltDeg: 0.0,
   });
   const [result, setResult] = useState<FlightExplorationTs | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const directionSigns = launchDirectionSignLabels(directionConvention);
 
   const run = () => {
     try {
       const exploration = exploreFlight(
         directLaunch({
           ballSpeedMph: speed * (SPEED_UNITS[speedUnit] / SPEED_UNITS.mph),
+          launchDirectionConvention: directionConvention,
           ...fields,
         }),
       );
@@ -122,6 +150,26 @@ export function FlightExplorerPanel({
                   </option>
                 ))}
               </select>
+            </span>
+          </label>
+          <label className="mb-2 block text-sm text-slate-300">
+            <span className="mb-1 block">Direction Convention</span>
+            <select
+              aria-label="Launch Direction Convention"
+              value={directionConvention}
+              onChange={(event) =>
+                setDirectionConvention(event.target.value as LaunchDirectionConvention)
+              }
+              className="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100"
+            >
+              {DIRECTION_CONVENTIONS.map(({ value, label, disabled, title }) => (
+                <option key={label} value={value} disabled={disabled} title={title}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <span className="mt-1 block text-xs text-slate-500" data-testid="direction-sign-example">
+              0° = straight · + = {directionSigns.positive} · − = {directionSigns.negative} · {LAUNCH_DIRECTION_DEFINITIONS[directionConvention].quantityStatus}
             </span>
           </label>
           {FIELDS.map(({ key, label, unit, guidance }) => (

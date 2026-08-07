@@ -209,7 +209,7 @@ LAUNCH_EXPLANATIONS: dict[str, str] = {
     "lateral_m": (
         "Sideways landing offset from the target line (+ = right of "
         "target for a right-handed player): the integrated effect of "
-        "launch azimuth plus spin-axis-tilt curvature (the D-plane's "
+        "launch direction plus spin-axis-tilt curvature (the D-plane's "
         "Magnus component), reported the way launch monitors report "
         "carry offline."
     ),

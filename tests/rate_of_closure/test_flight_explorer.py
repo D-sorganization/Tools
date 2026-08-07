@@ -28,7 +28,7 @@ pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 PINNED_DIRECT = {
     "ball_speed_mph": 167.0,
     "launch_angle_deg": 10.9,
-    "azimuth_deg": 0.0,
+    "launch_direction_deg": 0.0,
     "spin_rpm": 2686.0,
     "spin_axis_tilt_deg": 0.0,
 }
@@ -54,10 +54,11 @@ class TestLaunchFromDirect:
         exploration = explore_flight(launch_from_direct(150.0, 14.0, -3.0, 3100.0, 0.0))
         assert exploration.metrics["ball_speed_mph"] == pytest.approx(150.0)
         assert exploration.metrics["launch_angle_deg"] == pytest.approx(14.0)
+        assert exploration.metrics["launch_direction_deg"] == pytest.approx(-3.0)
         assert exploration.metrics["launch_azimuth_deg"] == pytest.approx(-3.0)
         assert exploration.metrics["spin_rpm"] == pytest.approx(3100.0)
 
-    def test_positive_azimuth_lands_right_of_target(self) -> None:
+    def test_positive_launch_direction_lands_right_of_target(self) -> None:
         right = explore_flight(launch_from_direct(150.0, 12.0, 5.0, 2700.0, 0.0))
         left = explore_flight(launch_from_direct(150.0, 12.0, -5.0, 2700.0, 0.0))
         assert right.metrics["lateral_m"] > 1.0
@@ -96,7 +97,7 @@ class TestLaunchFromDelivery:
         )
         exploration = explore_flight(launch)
         # An open face starts the ball right and adds fade-side spin.
-        assert exploration.metrics["launch_azimuth_deg"] > 0.5
+        assert exploration.metrics["launch_direction_deg"] > 0.5
         assert exploration.metrics["lateral_m"] > 1.0
 
 

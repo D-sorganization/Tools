@@ -334,10 +334,20 @@ FIELD_GUIDANCE: dict[str, str] = {
         "near 10.9 deg); higher for irons and wedges. Source: openly "
         "published tour launch-monitor averages."
     ),
+    "fx_launch_direction": (
+        "Suggested range: within +/-10 deg of the target line; positive values "
+        "start right of the target line, negative values start left, and zero "
+        "starts on target. Source: TrackMan's published Launch Direction "
+        "definition. Reference frame: horizontal ball-CG motion relative to "
+        "the target line immediately after separation."
+    ),
+    # Compatibility alias for older UI/plugin callers.
     "fx_azimuth": (
-        "Suggested range: within +/-10 deg of the target line; + = "
-        "right of target. Source: standard launch-monitor sign "
-        "convention (launch direction)."
+        "Suggested range: within +/-10 deg of the target line; positive values "
+        "start right of the target line, negative values start left, and zero "
+        "starts on target. Source: TrackMan's published Launch Direction "
+        "definition. Reference frame: horizontal ball-CG motion relative to "
+        "the target line immediately after separation."
     ),
     "fx_spin_rpm": (
         "Suggested range: 2,000-3,500 rpm total spin for drivers (tour "

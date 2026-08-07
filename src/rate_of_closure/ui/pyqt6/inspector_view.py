@@ -40,7 +40,7 @@ __all__ = ["InspectorView"]
 _SUMMARY_ORDER: tuple[tuple[str, str, str], ...] = (
     ("ball_speed_mph", "Ball Speed", "mph"),
     ("launch_angle_deg", "Launch Angle", "°"),
-    ("launch_azimuth_deg", "Launch Azimuth", "°"),
+    ("launch_azimuth_deg", "Launch Direction", "°"),
     ("spin_rpm", "Spin", "rpm"),
     ("carry_m", "Carry", "m"),
     ("max_height_m", "Apex", "m"),
@@ -62,7 +62,7 @@ class _NumericItem(QTableWidgetItem):
         theirs = other.data(Qt.ItemDataRole.UserRole)
         if isinstance(mine, float) and isinstance(theirs, float):
             return mine < theirs
-        return super().__lt__(other)
+        return bool(super().__lt__(other))
 
 
 def _series_item(value: Any) -> QTableWidgetItem:
@@ -121,7 +121,9 @@ class InspectorView(QWidget):
         self._table = QTableWidget(0, len(CSV_COLUMNS))
         self._table.setHorizontalHeaderLabels(list(CSV_COLUMNS))
         self._table.setSortingEnabled(True)
-        self._table.verticalHeader().setVisible(False)  # type: ignore[union-attr]
+        vertical_header = self._table.verticalHeader()
+        if vertical_header is not None:
+            vertical_header.setVisible(False)
         layout.addWidget(self._table)
 
     # ── public API ──────────────────────────────────────────────────
