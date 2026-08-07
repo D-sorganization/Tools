@@ -152,13 +152,11 @@ class SimulationView(SimulationViewControlsMixin, QWidget):
 
     def playback_rate(self) -> float:
         """The selected playback-rate multiplier."""
-        index = int(self._rate_combo.currentIndex())
-        return float(RATE_PRESETS[index][1])
+        return float(self._rate_spin.value())
 
     def set_playback_rate(self, multiplier: float) -> None:
-        """Select the nearest rate preset to ``multiplier``."""
-        index = int(np.argmin([abs(rate - multiplier) for _, rate in RATE_PRESETS]))
-        self._rate_combo.setCurrentIndex(index)
+        """Set a granular playback multiplier, clamped to the supported range."""
+        self._rate_spin.setValue(multiplier)
 
     def step_frames(self, frames: int) -> None:
         """Step the playback instant by whole swing-sample intervals."""
@@ -173,6 +171,11 @@ class SimulationView(SimulationViewControlsMixin, QWidget):
             return
         self._play_button.setChecked(False)
         self.set_playback_time(self._run.inspection_time_s)
+
+    def restart_playback(self) -> None:
+        """Pause and return to the first frame."""
+        self._play_button.setChecked(False)
+        self.set_playback_time(0.0)
 
     def is_playing(self) -> bool:
         """Whether the playback timer is running."""
@@ -258,6 +261,10 @@ class SimulationView(SimulationViewControlsMixin, QWidget):
     def _on_play_toggled(self, playing: bool) -> None:
         self._play_button.setText("Pause" if playing else "Play")
         if playing and self._run is not None:
+            if self._time >= self._run.total_duration_s - np.finfo(float).eps:
+                self._time = 0.0
+                self._sync_slider()
+                self._draw()
             self._timer.start()
         else:
             self._timer.stop()

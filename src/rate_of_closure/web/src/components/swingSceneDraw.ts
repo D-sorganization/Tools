@@ -27,6 +27,8 @@ export interface SwingSceneOptions {
   showCourse: boolean;
   /** Opt-in flight display; off keeps the scene at swing scale. */
   showFlight: boolean;
+  /** Opt-in clubhead trajectory; off prevents the path from obscuring the mechanism. */
+  showSwingTrail: boolean;
   /** Engineering screw glyph for the selected club or joint. */
   showScrew: boolean;
   screwEntityId: string;
@@ -90,7 +92,7 @@ export function drawSwingScene(
   canvas: HTMLCanvasElement,
   run: SimulationRunTs | null,
   {
-    time, showBall, showGround, showCourse, showFlight,
+    time, showBall, showGround, showCourse, showFlight, showSwingTrail,
     showScrew, screwEntityId, layout, wedgeClearance,
   }: SwingSceneOptions,
 ): void {
@@ -221,14 +223,13 @@ export function drawSwingScene(
     ctx.stroke();
     ctx.lineWidth = 1;
   };
-  drawPath(run.swing, "rgba(56,189,248,0.25)", 1);
   const boundedTime = Number.isFinite(time) ? Math.max(0, Math.min(time, swingEnd)) : 0;
   const progress = swingEnd > 0 ? boundedTime / swingEnd : 0;
   const swingIndex = Math.max(0, Math.min(
     run.swing.length - 1,
     Math.round(progress * (run.swing.length - 1)),
   ));
-  drawPath(run.swing.slice(0, swingIndex + 1), "#38bdf8", 2);
+  if (showSwingTrail) drawPath(run.swing.slice(0, swingIndex + 1), "#38bdf8", 2);
   const head = run.swing[swingIndex].position;
   ctx.fillStyle = "#f472b6";
   ctx.beginPath();

@@ -3,30 +3,63 @@
 from __future__ import annotations
 
 import json
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from PyQt6.QtCore import QSettings, Qt
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
+    QDoubleSpinBox,
     QGridLayout,
     QHBoxLayout,
     QLabel,
     QPushButton,
-    QScrollArea,
-    QSizePolicy,
     QSlider,
     QToolButton,
     QVBoxLayout,
     QWidget,
 )
 
-from rate_of_closure.ui.pyqt6.simulation_specs import RATE_PRESETS
+from rate_of_closure.ui.pyqt6.simulation_engineering_panel import (
+    create_engineering_panel,
+)
 from rate_of_closure.units import FIELD_GUIDANCE
 
 _IMPACT_LAYER_SETTINGS_KEY = "visible_layers_v1"
 _DEFAULT_IMPACT_LAYERS = frozenset(
     {"face_normal", "face_center_travel", "dplane_normal", "spin_loft_sector"}
+)
+_SCENE_CHECK_SPECS = (
+    ("_ball_check", "Ball", True, FIELD_GUIDANCE["ball_visible"]),
+    ("_ground_check", "Ground", True, FIELD_GUIDANCE["ground_visible"]),
+    ("_course_check", "Course", True, FIELD_GUIDANCE["course_visible"]),
+    (
+        "_trail_check",
+        "Path Trail",
+        False,
+        "Show the clubhead trajectory travelled through the current frame.",
+    ),
+    ("_screw_check", "Screw Axis", False, FIELD_GUIDANCE["screw_axis_visible"]),
+    (
+        "_impact_check",
+        "Impact Inspector",
+        True,
+        "Show exact event-time club, contact, D-plane, and screw geometry.",
+    ),
+    ("_kinetics_check", "Kinetics", False, FIELD_GUIDANCE["kinetics_visible"]),
+    (
+        "_flight_check",
+        "Ball Flight",
+        False,
+        "Show flight-scale geometry; this makes the swing appear much smaller. "
+        + FIELD_GUIDANCE["swing_flight_toggle"],
+    ),
+)
+_IMPACT_LAYER_SPECS = (
+    ("face_normal", "Face Normal", "delivered face-center normal"),
+    ("face_center_travel", "Face Travel", "rigid-body face-center travel"),
+    ("dplane_normal", "D-Plane", "D-plane normal"),
+    ("spin_loft_sector", "Spin Loft", "shaded exact 3D spin-loft angle"),
 )
 
 
@@ -37,6 +70,7 @@ class SimulationViewControlsMixin:
     _ball_check: QCheckBox
     _ground_check: QCheckBox
     _course_check: QCheckBox
+    _trail_check: QCheckBox
     _screw_check: QCheckBox
     _impact_check: QCheckBox
     _kinetics_check: QCheckBox
@@ -57,6 +91,8 @@ class SimulationViewControlsMixin:
 
         def jump_to_inspection_event(self) -> None: ...
 
+        def restart_playback(self) -> None: ...
+
         def step_frames(self, frames: int) -> None: ...
 
     def _build_playback_controls(self) -> QWidget:
@@ -65,7 +101,12 @@ class SimulationViewControlsMixin:
         layout.setContentsMargins(4, 4, 4, 0)
         layout.setHorizontalSpacing(6)
         layout.setVerticalSpacing(4)
+        self._create_transport_controls(layout)
+        self._create_timeline_controls(layout)
+        return panel
 
+    def _create_transport_controls(self, layout: QGridLayout) -> None:
+        """Create the first-row playback transport and event controls."""
         self._play_button = QPushButton("Play")
         self._play_button.setCheckable(True)
         self._play_button.setMinimumWidth(60)
@@ -88,11 +129,17 @@ class SimulationViewControlsMixin:
         self._time_label.setMinimumWidth(68)
 
         layout.addWidget(self._play_button, 0, 0)
-        layout.addWidget(self._step_back_button, 0, 1)
-        layout.addWidget(self._step_forward_button, 0, 2)
-        layout.addWidget(self._inspection_button, 0, 3)
-        layout.addWidget(self._time_label, 0, 4)
+        self._restart_button = QPushButton("Restart")
+        self._restart_button.setToolTip("Pause and return to the first frame.")
+        self._restart_button.clicked.connect(self.restart_playback)
+        layout.addWidget(self._restart_button, 0, 1)
+        layout.addWidget(self._step_back_button, 0, 2)
+        layout.addWidget(self._step_forward_button, 0, 3)
+        layout.addWidget(self._inspection_button, 0, 4)
+        layout.addWidget(self._time_label, 0, 5)
 
+    def _create_timeline_controls(self, layout: QGridLayout) -> None:
+        """Create scrubbing, looping, and granular playback-rate controls."""
         self._position_slider = QSlider(Qt.Orientation.Horizontal)
         self._position_slider.setRange(0, 1000)
         self._position_slider.setToolTip(
@@ -101,50 +148,71 @@ class SimulationViewControlsMixin:
         self._position_slider.valueChanged.connect(self._on_slider_moved)
         self._loop_check = QCheckBox("Loop")
         self._loop_check.setToolTip("Restart playback when the timeline ends.")
-        self._rate_combo = QComboBox()
-        self._rate_combo.addItems([name for name, _rate in RATE_PRESETS])
-        self._rate_combo.setCurrentIndex(3)
-        self._rate_combo.setToolTip(
-            "Playback rate; 1× maps animation time to simulated time."
+        self._rate_spin = QDoubleSpinBox()
+        self._rate_spin.setRange(0.05, 4.0)
+        self._rate_spin.setSingleStep(0.05)
+        self._rate_spin.setDecimals(2)
+        self._rate_spin.setValue(1.0)
+        self._rate_spin.setSuffix("×")
+        self._rate_spin.setMinimumWidth(88)
+        rate_editor = self._rate_spin.lineEdit()
+        if rate_editor is not None:
+            rate_editor.setMinimumWidth(64)
+        self._rate_spin.setAccessibleName("Playback Speed")
+        self._rate_spin.setToolTip(
+            "Granular playback speed from 0.05× to 4× simulated real-time."
         )
-        layout.addWidget(self._position_slider, 1, 0, 1, 3)
-        layout.addWidget(self._loop_check, 1, 3)
+        layout.addWidget(self._position_slider, 1, 0, 1, 4)
+        layout.addWidget(self._loop_check, 1, 4)
         rate_row = QHBoxLayout()
         rate_row.setContentsMargins(0, 0, 0, 0)
         rate_row.addWidget(QLabel("Rate"))
-        rate_row.addWidget(self._rate_combo)
-        layout.addLayout(rate_row, 1, 4)
-        layout.setColumnStretch(3, 1)
-        return panel
+        rate_row.addWidget(self._rate_spin)
+        layout.addLayout(rate_row, 1, 5)
+        layout.setColumnStretch(4, 1)
 
     def _build_layers_control(self) -> QWidget:
         wrapper = QWidget()
         layout = QVBoxLayout(wrapper)
         layout.setContentsMargins(4, 0, 4, 0)
         layout.setSpacing(3)
-        self._layers_button = QToolButton()
-        self._layers_button.setText("Display & Layers")
-        self._layers_button.setCheckable(True)
-        self._layers_button.setArrowType(Qt.ArrowType.RightArrow)
-        self._layers_button.setToolButtonStyle(
-            Qt.ToolButtonStyle.ToolButtonTextBesideIcon
-        )
-        self._layers_button.setToolTip(
-            "Show or hide scene layers, camera, legend, and export controls."
-        )
-        self._layers_button.toggled.connect(self._set_layers_expanded)
+        self._layers_button = self._create_layers_button()
         layout.addWidget(self._layers_button)
-
         self._layers_panel = QWidget()
         grid = QGridLayout(self._layers_panel)
         grid.setContentsMargins(18, 2, 2, 4)
         grid.setHorizontalSpacing(12)
         grid.setVerticalSpacing(3)
-        self._create_scene_checks()
-        for index, check in enumerate(self._layer_checkboxes()):
-            grid.addWidget(check, index // 3, index % 3)
+        self._populate_layers_grid(grid)
+        self._layers_panel.setVisible(False)
+        layout.addWidget(self._layers_panel)
+        return wrapper
 
-        row = (len(self._layer_checkboxes()) + 2) // 3
+    def _create_layers_button(self) -> QToolButton:
+        """Create the disclosure control for secondary scene controls."""
+        button = QToolButton()
+        button.setText("Display & Layers")
+        button.setCheckable(True)
+        button.setArrowType(Qt.ArrowType.RightArrow)
+        button.setToolButtonStyle(Qt.ToolButtonStyle.ToolButtonTextBesideIcon)
+        button.setToolTip(
+            "Show or hide scene layers, camera, legend, and export controls."
+        )
+        button.toggled.connect(self._set_layers_expanded)
+        return button
+
+    def _populate_layers_grid(self, grid: QGridLayout) -> None:
+        """Lay out scene layers followed by analysis and legend controls."""
+        self._create_scene_checks()
+        layer_checks = self._layer_checkboxes()
+        for index, check in enumerate(layer_checks):
+            grid.addWidget(check, index // 3, index % 3)
+        row = (len(layer_checks) + 2) // 3
+        self._add_analysis_controls(grid, row)
+        self._add_legend_controls(grid, row + 1)
+
+    def _add_analysis_controls(self, grid: QGridLayout, row: int) -> None:
+        """Add screw-axis selection, camera presets, and impact export."""
         self._screw_entity = QComboBox()
         self._screw_entity.addItem("Club", "club")
         self._screw_entity.setToolTip(
@@ -170,6 +238,8 @@ class SimulationViewControlsMixin:
         grid.addWidget(self._impact_view, row, 1)
         grid.addWidget(self._impact_export_button, row, 2)
 
+    def _add_legend_controls(self, grid: QGridLayout, row: int) -> None:
+        """Add legend visibility and placement controls."""
         self._legend_check = QCheckBox("Legend")
         self._legend_check.setChecked(True)
         self._legend_check.setToolTip("Show or hide the plot legend.")
@@ -183,49 +253,23 @@ class SimulationViewControlsMixin:
             "Place the legend outside the data region or in a selected corner."
         )
         self._legend_position.currentIndexChanged.connect(lambda _index: self._draw())
-        grid.addWidget(self._legend_check, row + 1, 0)
-        grid.addWidget(self._legend_position, row + 1, 1, 1, 2)
-        self._layers_panel.setVisible(False)
-        layout.addWidget(self._layers_panel)
-        return wrapper
+        grid.addWidget(self._legend_check, row, 0)
+        grid.addWidget(self._legend_position, row, 1, 1, 2)
 
     def _create_scene_checks(self) -> None:
-        specs = (
-            ("_ball_check", "Ball", True, FIELD_GUIDANCE["ball_visible"]),
-            ("_ground_check", "Ground", True, FIELD_GUIDANCE["ground_visible"]),
-            ("_course_check", "Course", True, FIELD_GUIDANCE["course_visible"]),
-            ("_screw_check", "Screw Axis", False, FIELD_GUIDANCE["screw_axis_visible"]),
-            (
-                "_impact_check",
-                "Impact Inspector",
-                True,
-                "Show exact event-time club, contact, D-plane, and screw geometry.",
-            ),
-            ("_kinetics_check", "Kinetics", False, FIELD_GUIDANCE["kinetics_visible"]),
-            (
-                "_flight_check",
-                "Ball Flight",
-                False,
-                "Show flight-scale geometry; this makes the swing appear much smaller. "
-                + FIELD_GUIDANCE["swing_flight_toggle"],
-            ),
-        )
-        for name, label, checked, tooltip in specs:
+        for name, label, checked, tooltip in _SCENE_CHECK_SPECS:
             check = QCheckBox(label)
             check.setChecked(checked)
             check.setToolTip(tooltip)
             check.toggled.connect(lambda _checked: self._draw())
             setattr(self, name, check)
+        self._impact_layer_checks = self._create_impact_layer_checks()
 
-        self._impact_layer_checks = {}
+    def _create_impact_layer_checks(self) -> dict[str, QCheckBox]:
+        """Create persisted, independently toggleable impact-vector layers."""
+        checks: dict[str, QCheckBox] = {}
         saved = self._load_impact_layers()
-        layers = (
-            ("face_normal", "Face Normal", "delivered face-center normal"),
-            ("face_center_travel", "Face Travel", "rigid-body face-center travel"),
-            ("dplane_normal", "D-Plane", "D-plane normal"),
-            ("spin_loft_sector", "Spin Loft", "shaded exact 3D spin-loft angle"),
-        )
-        for key, label, description in layers:
+        for key, label, description in _IMPACT_LAYER_SPECS:
             check = QCheckBox(label)
             check.setChecked(key in saved)
             check.setToolTip(
@@ -234,7 +278,8 @@ class SimulationViewControlsMixin:
                 "z right. Source: standard 3D D-plane geometry."
             )
             check.toggled.connect(self._on_impact_layer_toggled)
-            self._impact_layer_checks[key] = check
+            checks[key] = check
+        return checks
 
     def _layer_checkboxes(self) -> tuple[QCheckBox, ...]:
         """Return scene checkboxes laid out without clipped text."""
@@ -242,6 +287,7 @@ class SimulationViewControlsMixin:
             self._ball_check,
             self._ground_check,
             self._course_check,
+            self._trail_check,
             self._screw_check,
             self._impact_check,
             self._kinetics_check,
@@ -250,71 +296,13 @@ class SimulationViewControlsMixin:
         )
 
     def _build_engineering_panel(self) -> QWidget:
-        panel = QWidget()
-        layout = QVBoxLayout(panel)
-        layout.setContentsMargins(4, 0, 4, 0)
-        layout.setSpacing(3)
-        self._impact_summary = QLabel("Run a simulation to inspect key impact metrics.")
-        self._impact_summary.setWordWrap(True)
-        self._impact_summary.setAccessibleName("Key Impact Metrics")
-        self._impact_summary.setToolTip(
-            "A compact summary of the current calculation; expand details for "
-            "provenance."
-        )
-        layout.addWidget(self._impact_summary)
-        self._details_button = QToolButton()
-        self._details_button.setText("Engineering Details")
-        self._details_button.setCheckable(True)
-        self._details_button.setArrowType(Qt.ArrowType.RightArrow)
-        self._details_button.setToolButtonStyle(
-            Qt.ToolButtonStyle.ToolButtonTextBesideIcon
-        )
-        self._details_button.setToolTip(
-            "Show detailed impact, D-plane, screw-axis, and ground-clearance metrics."
-        )
-        self._details_button.toggled.connect(self._set_details_expanded)
-        layout.addWidget(self._details_button)
-
-        content = QWidget()
-        details = QVBoxLayout(content)
-        details.setContentsMargins(2, 2, 2, 2)
-        self._screw_readout = QLabel()
-        self._screw_readout.setWordWrap(True)
-        self._screw_readout.setVisible(False)
-        self._screw_readout.setToolTip(
-            "Screw-motion readout in app frame x target, y up, z right."
-        )
-        details.addWidget(self._screw_readout)
-        self._impact_kinematics_readout = QLabel(
-            "Run a simulation to inspect impact kinematics."
-        )
-        self._impact_kinematics_readout.setWordWrap(True)
-        self._impact_kinematics_readout.setTextFormat(Qt.TextFormat.RichText)
-        self._impact_kinematics_readout.setTextInteractionFlags(
-            Qt.TextInteractionFlag.TextSelectableByMouse
-        )
-        self._impact_kinematics_readout.setAccessibleName(
-            "Impact and Wedge Engineering Readout"
-        )
-        self._impact_kinematics_readout.setToolTip(
-            "Detailed frame-explicit metrics, provenance, and model boundaries."
-        )
-        details.addWidget(self._impact_kinematics_readout)
-        details.addStretch(1)
-
-        self._impact_details_scroll = QScrollArea()
-        self._impact_details_scroll.setWidgetResizable(True)
-        self._impact_details_scroll.setHorizontalScrollBarPolicy(
-            Qt.ScrollBarPolicy.ScrollBarAlwaysOff
-        )
-        self._impact_details_scroll.setMaximumHeight(150)
-        self._impact_details_scroll.setWidget(content)
-        self._impact_details_scroll.setVisible(False)
-        self._impact_details_scroll.setSizePolicy(
-            QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred
-        )
-        layout.addWidget(self._impact_details_scroll)
-        return panel
+        widgets = create_engineering_panel(self._set_details_expanded)
+        self._impact_summary = widgets.impact_summary
+        self._details_button = widgets.details_button
+        self._screw_readout = widgets.screw_readout
+        self._impact_kinematics_readout = widgets.impact_kinematics_readout
+        self._impact_details_scroll = widgets.details_scroll
+        return cast(QWidget, widgets.panel)
 
     def _set_layers_expanded(self, expanded: bool) -> None:
         self._layers_panel.setVisible(expanded)

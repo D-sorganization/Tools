@@ -84,10 +84,25 @@ class SimulationSceneRenderer:
         show_flight = view._flight_check.isChecked() and bool(len(run.flight_positions))
         extent = self._scene_extent(in_flight, show_flight)
 
+        self._draw_scene_layers(index, extent, show_flight, impact_time_s)
+        self._draw_overlays(index, extent, in_flight, swing_end)
+        self._finish_axes(extent, elev, azim, in_flight, show_flight)
+
+    def _draw_scene_layers(
+        self,
+        index: int,
+        extent: float,
+        show_flight: bool,
+        impact_time_s: float | None,
+    ) -> None:
+        """Draw the physical scene layers selected by the user."""
+        view = self._view
+        run = view._run
+        assert run is not None
         if view._ground_check.isChecked():
             self._draw_ground(extent)
         tee_artists = draw_representative_tee(
-            axes,
+            view._axes,
             run.config.ball_setup,
             view._display,
             self._chart_color(6),
@@ -98,11 +113,16 @@ class SimulationSceneRenderer:
         self._draw_swing(index)
         if run.swing_joints.shape[1] >= 2:
             joints = view._display(run.swing_joints[index])
-            draw_pendulum_skeleton(axes, joints, self._chart_color)
+            draw_pendulum_skeleton(view._axes, joints, self._chart_color)
         if show_flight:
             assert impact_time_s is not None
             self._draw_flight(index, impact_time_s)
 
+    def _draw_overlays(
+        self, index: int, extent: float, in_flight: bool, swing_end: float
+    ) -> None:
+        """Draw optional analysis overlays for the current swing frame."""
+        view = self._view
         show_screw = view._screw_check.isChecked() and not in_flight
         view._screw_readout.setVisible(show_screw)
         if show_screw:
@@ -111,7 +131,7 @@ class SimulationSceneRenderer:
             self._draw_kinetics(index)
         if view._wedge_clearance is not None and not in_flight:
             draw_wedge_ground_overlay_3d(
-                axes,
+                view._axes,
                 view._wedge_clearance,
                 min(view._time, swing_end),
                 view._display,
@@ -123,13 +143,12 @@ class SimulationSceneRenderer:
             and not in_flight
         ):
             draw_impact_scene_3d(
-                axes,
+                view._axes,
                 view._impact_scene,
                 view._display,
                 self._chart_color,
                 view.impact_visible_layers(),
             )
-        self._finish_axes(extent, elev, azim, in_flight, show_flight)
 
     def _scene_extent(self, in_flight: bool, show_flight: bool) -> float:
         view = self._view
@@ -179,24 +198,16 @@ class SimulationSceneRenderer:
         view = self._view
         run = view._run
         assert run is not None
-        full = view._display(run.swing_positions)
-        view._axes.plot(
-            full[:, 0],
-            full[:, 1],
-            full[:, 2],
-            color=self._chart_color(0),
-            lw=0.8,
-            alpha=0.35,
-        )
-        done = view._display(run.swing_positions[: index + 1])
-        view._axes.plot(
-            done[:, 0],
-            done[:, 1],
-            done[:, 2],
-            color=self._chart_color(0),
-            lw=2.0,
-            label="clubhead path",
-        )
+        if view._trail_check.isChecked():
+            done = view._display(run.swing_positions[: index + 1])
+            view._axes.plot(
+                done[:, 0],
+                done[:, 1],
+                done[:, 2],
+                color=self._chart_color(0),
+                lw=2.0,
+                label="clubhead path",
+            )
         head = view._display(run.swing_positions[index])
         view._axes.scatter(*head, color=self._chart_color(1), s=45, zorder=5)
 
@@ -331,18 +342,30 @@ class SimulationSceneRenderer:
         axes.set_xlabel("z — right of target [m]")
         axes.set_ylabel("x — target line [m]")
         axes.set_zlabel("y — up [m]")
+        axes.set_title(self._scene_title(in_flight))
+        self._place_legend()
+        view._canvas.draw_idle()
+
+    def _scene_title(self, in_flight: bool) -> str:
+        """Build the current phase and impact-status title."""
+        view = self._view
+        run = view._run
+        assert run is not None
         phase = "flight" if in_flight else "swing"
         if run.impact_time_s is None:
-            title = (
+            return (
                 f"t = {view._time:.3f} s ({phase}) — no impact; "
                 f"closest approach at {run.impact_outcome.candidate_time_s:.3f} s"
             )
-        else:
-            title = (
-                f"t = {view._time:.3f} s ({phase}) — "
-                f"impact at {run.impact_time_s:.3f} s"
-            )
-        axes.set_title(title)
+        return (
+            f"t = {view._time:.3f} s ({phase}) — "
+            f"impact at {run.impact_time_s:.3f} s"
+        )
+
+    def _place_legend(self) -> None:
+        """Apply the user-selected legend visibility and placement."""
+        view = self._view
+        axes = view._axes
         handles, labels = axes.get_legend_handles_labels()
         if handles and view.legend_visible():
             location = view.legend_location()
@@ -373,4 +396,3 @@ class SimulationSceneRenderer:
                 )
         else:
             axes.set_position((0.06, 0.08, 0.88, 0.82))
-        view._canvas.draw_idle()

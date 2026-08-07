@@ -49,6 +49,52 @@ body {
   min-height: 100vh;
 }
 
+/*
+ * Theme bridge for legacy Tailwind utilities. New components should prefer
+ * semantic theme tokens; these scoped overrides make the existing workbench
+ * genuinely usable in light mode without affecting charts or exported media.
+ */
+html[data-theme="light"] body {
+  background:
+    radial-gradient(60rem 40rem at 85% -10%, rgba(14, 165, 233, 0.1), transparent 60%),
+    radial-gradient(50rem 35rem at -10% 100%, rgba(16, 185, 129, 0.08), transparent 60%),
+    #f8fafc;
+}
+
+html[data-theme="light"] :is(.bg-slate-950, [class*="bg-slate-950/"]) {
+  background-color: rgb(248 250 252) !important;
+}
+
+html[data-theme="light"] :is(.bg-slate-900, [class*="bg-slate-900/"]) {
+  background-color: rgb(255 255 255) !important;
+}
+
+html[data-theme="light"] :is(.bg-slate-800, [class*="bg-slate-800/"]) {
+  background-color: rgb(241 245 249) !important;
+}
+
+html[data-theme="light"] :is(.text-slate-100, .text-slate-200, .text-slate-300) {
+  color: rgb(15 23 42) !important;
+}
+
+html[data-theme="light"] :is(.text-slate-400, .text-slate-500) {
+  color: rgb(71 85 105) !important;
+}
+
+html[data-theme="light"] :is(
+  .border-slate-600,
+  .border-slate-700,
+  [class*="border-slate-700/"],
+  .border-slate-800,
+  [class*="border-slate-800/"]
+) {
+  border-color: rgb(203 213 225) !important;
+}
+
+html[data-theme="light"] [class*="shadow-black/"] {
+  --tw-shadow-color: rgb(148 163 184 / 0.22) !important;
+}
+
 ::selection {
   background: rgba(56, 189, 248, 0.35);
 }

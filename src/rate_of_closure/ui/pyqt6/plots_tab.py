@@ -1,27 +1,14 @@
-"""The Plots tab: built-ins, the Custom Plot wizard, and exports.
-
-Replaces (and absorbs) the old Closure Sweep tab (epic #4120 V1). Left:
-the managed plot list (add built-in / Custom Plot… / duplicate /
-remove) plus export buttons; right: the themed matplotlib canvas with
-the standard navigation toolbar. Exports cover the image (PNG / SVG),
-the plotted data (CSV / JSON), and the plot definition itself
-(save / load ``.json``) so investigations are reproducible.
-
-The tab renders against a reference :class:`SimulationRun`: it adopts
-every run completed in the Simulation tab and, until one exists, lazily
-builds a manual-source run from the explorer's current scenario.
-"""
+"""Managed built-in and custom plots with reproducible export support."""
 
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT
-from matplotlib.figure import Figure
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QResizeEvent, QShowEvent
 from PyQt6.QtWidgets import (
     QComboBox,
-    QFileDialog,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
@@ -30,6 +17,7 @@ from PyQt6.QtWidgets import (
     QListWidgetItem,
     QMessageBox,
     QPushButton,
+    QScrollArea,
     QSplitter,
     QVBoxLayout,
     QWidget,
@@ -43,26 +31,20 @@ from rate_of_closure.plotting import (
     PlotSpec,
     builtin_spec,
     compute_plot_data,
-    render_plot,
-    spec_from_json,
-    spec_to_json,
-    write_plot_csv,
-    write_plot_json,
 )
 from rate_of_closure.simulation import SimulationConfig, SimulationRun, run_simulation
-from rate_of_closure.ui.pyqt6.figure_canvas import (
-    LifecycleSafeFigureCanvas as FigureCanvas,
-)
+from rate_of_closure.ui.pyqt6.plot_canvas_pane import PlotCanvasPane
+from rate_of_closure.ui.pyqt6.plot_export_mixin import PlotExportMixin
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["PlotsTab"]
 
-#: Fallback club for the lazily built reference run.
 _DEFAULT_CLUB = "Driver 10.5°"
+_TWO_COLUMN_VIEWPORT_PX = 800
 
 
-class PlotsTab(QWidget):
+class PlotsTab(PlotExportMixin, QWidget):
     """Investigative plotting suite tab (plot list left, canvas right)."""
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -70,6 +52,7 @@ class PlotsTab(QWidget):
         self._scenario = ImpactScenario(clubhead_speed_mph=113.0)
         self._run: SimulationRun | None = None
         self._data: PlotData | None = None
+        self._plot_panes: list[PlotCanvasPane] = []
 
         left = QWidget()
         left_layout = QVBoxLayout(left)
@@ -81,11 +64,14 @@ class PlotsTab(QWidget):
         right = QWidget()
         right_layout = QVBoxLayout(right)
         right_layout.setContentsMargins(0, 0, 0, 0)
-        self._figure = Figure(figsize=(5.4, 3.6), tight_layout=True)
-        self._canvas = FigureCanvas(self._figure)
-        self._toolbar = NavigationToolbar2QT(self._canvas, right)
-        right_layout.addWidget(self._toolbar)
-        right_layout.addWidget(self._canvas, stretch=1)
+        self._plot_workspace = QWidget()
+        self._plot_grid = QGridLayout(self._plot_workspace)
+        self._plot_grid.setContentsMargins(4, 4, 4, 4)
+        self._plot_grid.setSpacing(8)
+        self._plot_scroll = QScrollArea()
+        self._plot_scroll.setWidgetResizable(True)
+        self._plot_scroll.setWidget(self._plot_workspace)
+        right_layout.addWidget(self._plot_scroll, stretch=1)
         self._status = QLabel("")
         self._status.setWordWrap(True)
         right_layout.addWidget(self._status)
@@ -102,7 +88,6 @@ class PlotsTab(QWidget):
         self._add_builtin("closure_sweep")
         self._plot_list.setCurrentRow(0)
 
-    # ── construction ────────────────────────────────────────────────
     def _build_list_box(self) -> QGroupBox:
         box = QGroupBox("Plots")
         layout = QVBoxLayout(box)
@@ -112,9 +97,7 @@ class PlotsTab(QWidget):
             "Your managed plots. Select one to render it on the canvas; "
             "add built-ins or build your own with Custom Plot…"
         )
-        self._plot_list.currentRowChanged.connect(
-            lambda _row: self._refresh_if_visible()
-        )
+        self._plot_list.currentRowChanged.connect(self._on_selection_changed)
         layout.addWidget(self._plot_list)
 
         row = QHBoxLayout()
@@ -155,7 +138,7 @@ class PlotsTab(QWidget):
     def _build_export_box(self) -> QGroupBox:
         box = QGroupBox("Export")
         grid = QGridLayout(box)
-        buttons: tuple[tuple[str, str, object], ...] = (
+        buttons: tuple[tuple[str, str, Callable[[], None]], ...] = (
             (
                 "PNG…",
                 "Save the rendered figure as a PNG image.",
@@ -178,20 +161,15 @@ class PlotsTab(QWidget):
                 "the investigation can be reloaded and reproduced.",
                 self._save_definition,
             ),
-            (
-                "Load Definition…",
-                "Load a saved plot definition (.json) into the list.",
-                self._load_definition,
-            ),
+            ("Load Definition…", "Load a saved plot.", self._load_definition),
         )
         for index, (text, tip, handler) in enumerate(buttons):
             button = QPushButton(text)
             button.setToolTip(tip)
-            button.clicked.connect(handler)  # type: ignore[arg-type]
+            button.clicked.connect(handler)
             grid.addWidget(button, index // 2, index % 2)
         return box
 
-    # ── public API ──────────────────────────────────────────────────
     def set_scenario(self, scenario: ImpactScenario) -> None:
         """Adopt the explorer's scenario (rebuilds the lazy run).
 
@@ -210,7 +188,7 @@ class PlotsTab(QWidget):
         self._data = None
         self._refresh_if_visible()
 
-    def showEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
+    def showEvent(self, event: QShowEvent | None) -> None:  # noqa: N802
         """Render any deferred scenario/run change on first show."""
         super().showEvent(event)
         if self._data is None:
@@ -225,13 +203,17 @@ class PlotsTab(QWidget):
 
     def add_spec(self, spec: PlotSpec, label: str | None = None) -> None:
         """Append a plot definition to the managed list and select it."""
-        item = QListWidgetItem(label or spec.title or spec.x_key)
+        display_label = label or spec.title or spec.x_key
+        item = QListWidgetItem(display_label)
         item.setData(Qt.ItemDataRole.UserRole, spec)
         item.setToolTip(
             f"{spec.kind} plot — X: {spec.x_key}; "
             f"Y: {', '.join(spec.y_keys) or '(distribution)'}"
         )
         self._plot_list.addItem(item)
+        pane = PlotCanvasPane(display_label)
+        self._plot_panes.append(pane)
+        self._reflow_panes()
         self._plot_list.setCurrentItem(item)
 
     def current_spec(self) -> PlotSpec | None:
@@ -253,28 +235,38 @@ class PlotsTab(QWidget):
                 self._status.setText(f"Reference run failed: {exc}")
         return self._run
 
+    def plot_panes(self) -> tuple[PlotCanvasPane, ...]:
+        """Return every independently controlled visible plot viewport."""
+        return tuple(self._plot_panes)
+
     def refresh(self) -> None:
         """Re-render the selected plot against the reference run."""
-        spec = self.current_spec()
-        if spec is None:
-            return
         run = self.reference_run()
         if run is None:
             return
-        try:
-            self._data = compute_plot_data(spec, run)
-            render_plot(self._data, self._figure)
-            self._canvas.draw_idle()
-            self._status.setText("")
-        except Exception as exc:  # noqa: BLE001 — plotting must not crash
-            logger.warning("plot render failed: %s", exc)
-            self._status.setText(f"Plot failed: {exc}")
+        errors: list[str] = []
+        self._data = None
+        current_row = self._plot_list.currentRow()
+        for row, pane in enumerate(self._plot_panes):
+            item = self._plot_list.item(row)
+            if item is None:
+                continue
+            spec = item.data(Qt.ItemDataRole.UserRole)
+            try:
+                data = compute_plot_data(spec, run)
+                pane.render_data(data)
+                if row == current_row:
+                    self._data = data
+            except Exception as exc:  # noqa: BLE001 — plotting must not crash
+                logger.warning("plot render failed: %s", exc)
+                errors.append(f"{item.text()}: {exc}")
+        self._sync_selected_pane()
+        self._status.setText("; ".join(errors))
 
     def current_data(self) -> PlotData | None:
         """The data behind the rendered plot (exports read this)."""
         return self._data
 
-    # ── behaviour ───────────────────────────────────────────────────
     def _add_builtin(self, name: str) -> None:
         label, _factory = BUILTIN_PLOTS[name]
         self.add_spec(builtin_spec(name, self._run), label)
@@ -306,71 +298,47 @@ class PlotsTab(QWidget):
         row = self._plot_list.currentRow()
         if row >= 0:
             self._plot_list.takeItem(row)
+            pane = self._plot_panes.pop(row)
+            pane.setParent(None)
+            pane.deleteLater()
+            self._reflow_panes()
+            self._sync_selected_pane()
 
-    # ── exports ─────────────────────────────────────────────────────
-    def _ready_for_export(self) -> bool:
-        if self._data is None:
-            self.refresh()
-        if self._data is None:
-            QMessageBox.information(
-                self, "Export", "Nothing to export yet — select a plot first."
+    def _on_selection_changed(self, _row: int) -> None:
+        self._sync_selected_pane()
+        self._refresh_if_visible()
+
+    def _sync_selected_pane(self) -> None:
+        row = self._plot_list.currentRow()
+        if not 0 <= row < len(self._plot_panes):
+            self._data = None
+            return
+        pane = self._plot_panes[row]
+        self._figure = pane.figure()
+        self._canvas = pane.canvas()
+        self._toolbar = pane.toolbar()
+
+    def _reflow_panes(self) -> None:
+        column_count = self._plot_column_count()
+        while self._plot_grid.count():
+            item = self._plot_grid.takeAt(0)
+            widget = item.widget() if item is not None else None
+            if widget is not None:
+                widget.setParent(self._plot_workspace)
+        for index, pane in enumerate(self._plot_panes):
+            self._plot_grid.addWidget(
+                pane,
+                index // column_count,
+                index % column_count,
             )
-            return False
-        return True
 
-    def _export_image(self, fmt: str) -> None:
-        if not self._ready_for_export():
-            return
-        path, _ = QFileDialog.getSaveFileName(
-            self,
-            f"Export {fmt.upper()}",
-            f"plot.{fmt}",
-            f"{fmt.upper()} image (*.{fmt})",
-        )
-        if path:
-            self.save_image(path)
+    def _plot_column_count(self) -> int:
+        """Return a readable responsive column count for the plot viewport."""
+        viewport = self._plot_scroll.viewport()
+        width = viewport.width() if viewport is not None else 0
+        return 2 if width >= _TWO_COLUMN_VIEWPORT_PX else 1
 
-    def save_image(self, path: str) -> None:
-        """Save the rendered figure (format inferred from the suffix)."""
-        self._figure.savefig(path)
-
-    def _export_csv(self) -> None:
-        if not self._ready_for_export():
-            return
-        path, _ = QFileDialog.getSaveFileName(
-            self, "Export Data CSV", "plot_data.csv", "CSV (*.csv)"
-        )
-        if path:
-            assert self._data is not None
-            write_plot_csv(self._data, path)
-
-    def _export_json(self) -> None:
-        if not self._ready_for_export():
-            return
-        path, _ = QFileDialog.getSaveFileName(
-            self, "Export Data JSON", "plot_data.json", "JSON (*.json)"
-        )
-        if path:
-            assert self._data is not None
-            write_plot_json(self._data, path)
-
-    def _save_definition(self) -> None:
-        spec = self.current_spec()
-        if spec is None:
-            return
-        path, _ = QFileDialog.getSaveFileName(
-            self, "Save Plot Definition", "plot_definition.json", "JSON (*.json)"
-        )
-        if path:
-            spec_to_json(spec, path)
-
-    def _load_definition(self) -> None:
-        path, _ = QFileDialog.getOpenFileName(
-            self, "Load Plot Definition", "", "JSON (*.json)"
-        )
-        if not path:
-            return
-        try:
-            self.add_spec(spec_from_json(path))
-        except Exception as exc:  # noqa: BLE001 — bad files reported nicely
-            QMessageBox.warning(self, "Load Plot Definition", str(exc))
+    def resizeEvent(self, event: QResizeEvent | None) -> None:  # noqa: N802
+        """Reflow plot panes when the available viewport changes."""
+        super().resizeEvent(event)
+        self._reflow_panes()

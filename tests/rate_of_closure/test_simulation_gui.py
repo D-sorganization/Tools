@@ -152,6 +152,34 @@ class TestSimulationView:
         view.set_playback_rate(1.0)
         assert view.playback_rate() == pytest.approx(1.0)
 
+    def test_playback_rate_accepts_granular_values(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        view = ran_tab.view()
+        view.set_playback_rate(1.35)
+        assert view.playback_rate() == pytest.approx(1.35)
+
+    def test_play_at_end_rewinds_and_restart_is_explicit(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        view = ran_tab.view()
+        view.set_playback_time(ran_tab.last_run().total_duration_s)
+
+        view._play_button.click()
+
+        assert view.is_playing()
+        assert view.playback_time() == pytest.approx(0.0)
+        view._restart_button.click()
+        assert not view.is_playing()
+        assert view.playback_time() == pytest.approx(0.0)
+
+    def test_path_trail_is_opt_in(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
+        view = ran_tab.view()
+        assert not view._trail_check.isChecked()
+        assert "clubhead path" not in {
+            str(line.get_label()) for line in view._axes.lines
+        }
+
+        view._trail_check.setChecked(True)
+
+        assert "clubhead path" in {str(line.get_label()) for line in view._axes.lines}
+
     def test_frame_step_moves_by_one_sample(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         view = ran_tab.view()
         run = ran_tab.last_run()

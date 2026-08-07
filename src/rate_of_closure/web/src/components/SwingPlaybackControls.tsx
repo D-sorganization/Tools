@@ -2,12 +2,7 @@ import { type Dispatch, type SetStateAction } from "react";
 
 import { type SimulationRunTs } from "../model/simulation";
 
-const RATE_PRESETS = [
-  ["0.1×", 0.1], ["0.25×", 0.25], ["0.5×", 0.5],
-  ["1× real-time", 1], ["2×", 2],
-] as const;
-
-interface Props {
+export interface SwingPlaybackControlsProps {
   run: SimulationRunTs | null;
   playing: boolean;
   setPlaying: Dispatch<SetStateAction<boolean>>;
@@ -24,7 +19,7 @@ const buttonClass =
   "rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-300 " +
   "hover:border-slate-500 disabled:opacity-40";
 
-export function SwingPlaybackControls(props: Props) {
+export function SwingPlaybackControls(props: SwingPlaybackControlsProps) {
   const { run, playing, setPlaying, time, setTime, loop, setLoop, rate, setRate, toggles } = props;
   const inspectionLabel = run?.impactOutcome.status === "miss"
     ? "Closest Approach"
@@ -32,17 +27,36 @@ export function SwingPlaybackControls(props: Props) {
   const inspectionTime = run === null
     ? 0
     : (run.impactTimeS ?? run.impactOutcome.candidateTimeS);
+  const togglePlayback = (): void => {
+    if (playing) {
+      setPlaying(false);
+      return;
+    }
+    if (!run) return;
+    if (time >= run.totalDurationS - Number.EPSILON) setTime(0);
+    setPlaying(true);
+  };
   return (
     <div className="mb-2 flex flex-wrap items-center gap-2 text-sm">
       <button
         type="button"
-        onClick={() => setPlaying((current) => !current && run !== null)}
+        onClick={togglePlayback}
         disabled={!run}
         title="Play or pause the swing playback"
         className={buttonClass}
       >
         {playing ? "Pause" : "Play"}
       </button>
+      <button
+        type="button"
+        onClick={() => {
+          setPlaying(false);
+          setTime(0);
+        }}
+        disabled={!run}
+        title="Stop playback and return to the first frame"
+        className={buttonClass}
+      >Restart</button>
       <button
         type="button"
         onClick={() => setTime((current) => Math.max(0, current - 0.001))}
@@ -91,14 +105,21 @@ export function SwingPlaybackControls(props: Props) {
         />
         Loop
       </label>
-      <select
+      <label className="flex min-w-44 items-center gap-2 text-slate-300">
+        Speed
+        <input
+        type="range"
+        min={0.05}
+        max={4}
+        step={0.05}
         value={rate}
         onChange={(event) => setRate(Number(event.target.value))}
-        className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100"
-        aria-label="Playback rate"
-      >
-        {RATE_PRESETS.map(([label, value]) => <option key={label} value={value}>{label}</option>)}
-      </select>
+        className="min-w-24 flex-1 accent-sky-400"
+        aria-label="Playback speed"
+        title="Adjust playback continuously from 0.05× to 4× real-time"
+      />
+        <output className="w-12 tabular-nums text-sky-300">{rate.toFixed(2)}×</output>
+      </label>
       {toggles.map(([label, checked, setChecked, guidance, color]) => (
         <label key={label} className={`flex items-center gap-1 ${color}`} title={guidance}>
           <input

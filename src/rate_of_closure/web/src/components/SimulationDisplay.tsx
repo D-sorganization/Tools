@@ -66,6 +66,7 @@ export function SimulationDisplay({
   const [showScrew, setShowScrew] = useState(true);
   const [screwEntityId, setScrewEntityId] = useState("club");
   const [showFlight, setShowFlight] = useState(false);
+  const [showSwingTrail, setShowSwingTrail] = useState(false);
   const [view, setView] = useState<ViewName>("Swing");
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const screwEntities = useMemo(() => screwEntityOptions(run), [run]);
@@ -130,12 +131,12 @@ export function SimulationDisplay({
   useEffect(() => {
     if (canvasRef.current) {
       drawSwingScene(canvasRef.current, run, {
-        time, showBall, showGround, showCourse, showFlight,
+        time, showBall, showGround, showCourse, showFlight, showSwingTrail,
         showScrew, screwEntityId, wedgeClearance,
       });
     }
   }, [
-    run, time, showBall, showGround, showCourse, showFlight,
+    run, time, showBall, showGround, showCourse, showFlight, showSwingTrail,
     showScrew, screwEntityId, view, wedgeClearance,
   ]);
 
@@ -180,6 +181,8 @@ export function SimulationDisplay({
               ["Ground", showGround, setShowGround, TOGGLE_GUIDANCE.ground, "text-slate-300"],
               ["Course Elements", showCourse, setShowCourse, TOGGLE_GUIDANCE.course, "text-slate-300"],
               ["Screw Axis", showScrew, setShowScrew, TOGGLE_GUIDANCE.screw, "text-fuchsia-300"],
+              ["Path Trail", showSwingTrail, setShowSwingTrail,
+                "Show the clubhead path travelled up to the current frame.", "text-sky-300"],
               ["Show Ball Flight", showFlight, setShowFlight, TOGGLE_GUIDANCE.flight, "text-amber-300/90"],
             ]} />
           {run && clubSpec && (

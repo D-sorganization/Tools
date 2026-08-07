@@ -6,7 +6,7 @@
  * schema as the desktop app — definitions travel both ways.
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 
 import { type ImpactScenario } from "../model/impact";
 import {
@@ -21,15 +21,13 @@ import {
   plotDataJson,
   specFromJson,
   specToJson,
-  type PlotData,
   type PlotSpec,
 } from "../model/plotspec";
 import {
   runSimulation,
   type SimulationInput,
 } from "../model/simulation";
-
-const PALETTE = ["#38bdf8", "#fbbf24", "#34d399", "#f472b6", "#a78bfa"];
+import { PlotCanvasCard } from "./PlotCanvasCard";
 
 interface Props {
   scenario: ImpactScenario;
@@ -53,101 +51,8 @@ function download(name: string, blob: Blob): void {
   URL.revokeObjectURL(url);
 }
 
-function drawPlot(canvas: HTMLCanvasElement, data: PlotData): void {
-  const ctx = canvas.getContext("2d");
-  if (!ctx) return;
-  const width = canvas.width;
-  const height = canvas.height;
-  ctx.clearRect(0, 0, width, height);
-  const margin = { left: 64, right: 16, top: 36, bottom: 46 };
-  const plotW = width - margin.left - margin.right;
-  const plotH = height - margin.top - margin.bottom;
-
-  const allY = data.series.flatMap((s) => s.values);
-  const ys = allY.length ? allY : [0, 1];
-  const xMin = Math.min(...data.x);
-  let xMax = Math.max(...data.x);
-  let yMin = Math.min(...ys);
-  let yMax = Math.max(...ys);
-  if (xMax === xMin) xMax = xMin + 1;
-  if (yMax === yMin) yMax = yMin + 1;
-  const pad = 0.05 * (yMax - yMin);
-  yMin -= pad;
-  yMax += pad;
-  const sx = (x: number): number =>
-    margin.left + ((x - xMin) / (xMax - xMin)) * plotW;
-  const sy = (y: number): number =>
-    margin.top + plotH - ((y - yMin) / (yMax - yMin)) * plotH;
-
-  // Frame + grid + ticks
-  ctx.strokeStyle = "rgba(148, 163, 184, 0.35)";
-  ctx.fillStyle = "#94a3b8";
-  ctx.font = "11px sans-serif";
-  ctx.lineWidth = 1;
-  const ticks = 5;
-  for (let i = 0; i <= ticks; i += 1) {
-    const fx = xMin + ((xMax - xMin) * i) / ticks;
-    const fy = yMin + ((yMax - yMin) * i) / ticks;
-    const px = sx(fx);
-    const py = sy(fy);
-    ctx.beginPath();
-    ctx.moveTo(px, margin.top);
-    ctx.lineTo(px, margin.top + plotH);
-    ctx.moveTo(margin.left, py);
-    ctx.lineTo(margin.left + plotW, py);
-    ctx.stroke();
-    ctx.textAlign = "center";
-    ctx.fillText(fx.toPrecision(3), px, margin.top + plotH + 16);
-    ctx.textAlign = "right";
-    ctx.fillText(fy.toPrecision(3), margin.left - 6, py + 4);
-  }
-
-  // Series
-  data.series.forEach((series, index) => {
-    ctx.strokeStyle = PALETTE[index % PALETTE.length];
-    ctx.fillStyle = PALETTE[index % PALETTE.length];
-    if (data.spec.kind === "scatter") {
-      for (let i = 0; i < data.x.length; i += 1) {
-        ctx.beginPath();
-        ctx.arc(sx(data.x[i]), sy(series.values[i]), 2.2, 0, 2 * Math.PI);
-        ctx.fill();
-      }
-    } else {
-      ctx.lineWidth = 1.8;
-      ctx.beginPath();
-      for (let i = 0; i < data.x.length; i += 1) {
-        const px = sx(data.x[i]);
-        const py = sy(series.values[i]);
-        if (i === 0) ctx.moveTo(px, py);
-        else ctx.lineTo(px, py);
-      }
-      ctx.stroke();
-    }
-    // Legend
-    ctx.textAlign = "left";
-    ctx.fillText(
-      series.label,
-      margin.left + 10 + index * 150,
-      margin.top - 8,
-    );
-  });
-
-  // Axis labels + title
-  ctx.fillStyle = "#cbd5e1";
-  ctx.font = "12px sans-serif";
-  ctx.textAlign = "center";
-  ctx.fillText(data.xLabel, margin.left + plotW / 2, height - 8);
-  ctx.save();
-  ctx.translate(14, margin.top + plotH / 2);
-  ctx.rotate(-Math.PI / 2);
-  ctx.fillText(data.yLabel, 0, 0);
-  ctx.restore();
-  ctx.font = "bold 13px sans-serif";
-  ctx.fillText(data.spec.title, margin.left + plotW / 2, 16);
-}
-
 export function PlotsPanel({ scenario, loftDeg }: Props) {
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasRefs = useRef(new Map<number, HTMLCanvasElement>());
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [plots, setPlots] = useState<ManagedPlot[]>(() => [
     { id: 1, label: "Closure Sweep", spec: BUILTIN_PLOTS[0].make(0.06) },
@@ -185,23 +90,16 @@ export function PlotsPanel({ scenario, loftDeg }: Props) {
   }, [scenario, loftDeg]);
 
   const selected = plots.find((p) => p.id === selectedId) ?? plots[0];
-  const computed = useMemo((): {
-    data: PlotData | null;
-    error: string | null;
-  } => {
-    if (!selected) return { data: null, error: null };
+  const computed = useMemo(() => plots.map((plot) => {
     try {
-      return { data: computePlotData(selected.spec, context), error: null };
+      return { plot, data: computePlotData(plot.spec, context), error: null };
     } catch (exc) {
-      return { data: null, error: String(exc) };
+      return { plot, data: null, error: String(exc) };
     }
-  }, [selected, context]);
-  const data = computed.data;
-  const shownError = error ?? computed.error;
-
-  useEffect(() => {
-    if (canvasRef.current && data) drawPlot(canvasRef.current, data);
-  }, [data]);
+  }), [plots, context]);
+  const selectedComputed = computed.find((entry) => entry.plot.id === selectedId);
+  const data = selectedComputed?.data ?? null;
+  const shownError = error ?? selectedComputed?.error ?? null;
 
   const addPlot = (label: string, spec: PlotSpec): void => {
     const id = nextId.current;
@@ -246,10 +144,15 @@ export function PlotsPanel({ scenario, loftDeg }: Props) {
   };
 
   const exportPng = (): void => {
-    canvasRef.current?.toBlob((blob) => {
+    canvasRefs.current.get(selectedId)?.toBlob((blob) => {
       if (blob) download("plot.png", blob);
     });
   };
+
+  const registerCanvas = useCallback((id: number, canvas: HTMLCanvasElement | null): void => {
+    if (canvas) canvasRefs.current.set(id, canvas);
+    else canvasRefs.current.delete(id);
+  }, []);
 
   const importDefinition = (file: File): void => {
     void file.text().then((text) => {
@@ -468,16 +371,23 @@ export function PlotsPanel({ scenario, loftDeg }: Props) {
         ) : null}
       </section>
       <section
-        aria-label="Plot canvas"
-        className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20"
+        aria-label="Plot workspace"
+        className="grid min-w-0 gap-4 rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 xl:grid-cols-2"
       >
-        <canvas
-          ref={canvasRef}
-          width={860}
-          height={520}
-          className="h-auto w-full rounded-lg bg-slate-950/60"
-          title="Rendered plot — export it with the PNG button."
-        />
+        {computed.map((entry) => entry.data ? (
+          <PlotCanvasCard
+            key={entry.plot.id}
+            data={entry.data}
+            label={entry.plot.label}
+            selected={entry.plot.id === selectedId}
+            onSelect={() => setSelectedId(entry.plot.id)}
+            onCanvas={(canvas) => registerCanvas(entry.plot.id, canvas)}
+          />
+        ) : (
+          <p key={entry.plot.id} role="alert" className="text-sm text-rose-300">
+            {entry.plot.label}: {entry.error}
+          </p>
+        ))}
       </section>
     </div>
   );

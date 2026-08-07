@@ -102,6 +102,50 @@ class TestPlotList:
         assert data.x_label == "Downrange Distance [yd]"
         assert tab._figure.axes, "figure must carry rendered axes"
 
+    def test_managed_plots_have_independent_visible_canvases(self, tab) -> None:  # type: ignore[no-untyped-def]
+        first_canvas = tab._canvas
+        index = tab._builtin_combo.findData("swing_time_series")
+        tab._builtin_combo.setCurrentIndex(index)
+        tab._on_add_builtin()
+
+        assert len(tab.plot_panes()) == 2
+        assert len({id(pane.canvas()) for pane in tab.plot_panes()}) == 2
+        assert first_canvas in {pane.canvas() for pane in tab.plot_panes()}
+
+    def test_each_plot_has_autofit_zoom_and_independent_legend(self, tab) -> None:  # type: ignore[no-untyped-def]
+        tab._on_duplicate()
+        tab.refresh()
+        first, second = tab.plot_panes()
+
+        first.zoom_in()
+        assert first.zoom_percent() == 125
+        assert second.zoom_percent() == 100
+        first.set_legend_placement("hidden")
+        assert first.legend_placement() == "hidden"
+        assert second.legend_placement() == "outside_right"
+        first.auto_fit()
+        assert first.zoom_percent() == 100
+
+    def test_plot_grid_collapses_to_one_column_when_viewport_is_narrow(
+        self, tab, qtbot
+    ) -> None:  # type: ignore[no-untyped-def]
+        tab._on_duplicate()
+        tab.resize(1000, 700)
+        tab.show()
+        qtbot.waitUntil(lambda: tab._plot_scroll.viewport().width() < 800)
+        tab._reflow_panes()
+
+        second_index = tab._plot_grid.indexOf(tab.plot_panes()[1])
+        row, column, _row_span, _column_span = tab._plot_grid.getItemPosition(
+            second_index
+        )
+        assert (row, column) == (1, 0)
+
+    def test_long_canvas_titles_wrap_in_the_plot_viewport(self, tab) -> None:  # type: ignore[no-untyped-def]
+        tab.refresh()
+        title = tab.plot_panes()[0].figure().axes[0].get_title()
+        assert "\n" in title
+
 
 class TestWizard:
     def test_wizard_completes_into_a_line_spec(self, qtbot, reference_run) -> None:  # type: ignore[no-untyped-def]

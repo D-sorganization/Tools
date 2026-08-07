@@ -3,9 +3,10 @@ import { useRef, type DragEvent, type KeyboardEvent } from "react";
 import {
   movePrimaryView,
   primaryViewLabel,
-  shiftPrimaryView,
+  shiftVisiblePrimaryView,
   type PrimaryViewId,
   type PrimaryViewState,
+  visiblePrimaryViewIds,
 } from "../model/viewPreferences";
 
 const DRAG_DATA_TYPE = "application/x-rate-of-closure-primary-view";
@@ -20,6 +21,7 @@ export function PrimaryViewTabs({
   onOrderChange: (order: PrimaryViewId[]) => void;
 }) {
   const dragSource = useRef<PrimaryViewId | null>(null);
+  const visibleOrder = visiblePrimaryViewIds(state);
 
   const reorderFromDrag = (event: DragEvent, destination: PrimaryViewId) => {
     event.preventDefault();
@@ -39,19 +41,19 @@ export function PrimaryViewTabs({
     if (event.altKey && horizontal) {
       event.preventDefault();
       const offset = event.key === "ArrowLeft" ? -1 : 1;
-      onOrderChange(shiftPrimaryView(state.order, view, offset));
+      onOrderChange(shiftVisiblePrimaryView(state, view, offset));
       return;
     }
     if (!horizontal && event.key !== "Home" && event.key !== "End") return;
     event.preventDefault();
-    const current = state.order.indexOf(view);
+    const current = visibleOrder.indexOf(view);
     const destination = event.key === "Home"
       ? 0
       : event.key === "End"
-        ? state.order.length - 1
-        : (current + (event.key === "ArrowLeft" ? -1 : 1) + state.order.length)
-          % state.order.length;
-    const next = state.order[destination];
+        ? visibleOrder.length - 1
+        : (current + (event.key === "ArrowLeft" ? -1 : 1) + visibleOrder.length)
+          % visibleOrder.length;
+    const next = visibleOrder[destination];
     onActiveChange(next);
     document.getElementById(`primary-tab-${next}`)?.focus();
   };
@@ -66,7 +68,7 @@ export function PrimaryViewTabs({
         aria-label="Workbench views"
         className="flex gap-2 overflow-x-auto pb-2"
       >
-        {state.order.map((view) => {
+        {visibleOrder.map((view) => {
           const label = primaryViewLabel(view);
           const selected = state.active === view;
           return (

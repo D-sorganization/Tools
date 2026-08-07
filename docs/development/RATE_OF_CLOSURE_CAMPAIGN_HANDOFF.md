@@ -394,6 +394,64 @@ includes 1024 x 700, 1269 x 731, 1280 x 768, and 125% Qt scaling. A broader
 150%/200% platform matrix, keyboard traversal audit, and stable pixel-baseline
 suite remain owned by #4235/#4239.
 
+### 2026-08-07 toolstrip, plot-workspace, and parity continuation
+
+The unpublished `feat/4218-toolstrip-workspace` continuation is based on exact
+PR #4217 head `655fea08f62bb48c6ca3498a8893936ef9370e9e`. It adds one
+UI-neutral registry for 17 File/View/Tools commands, a strict versioned
+workspace document with atomic file persistence, matched PyQt/React top
+toolstrips, persistent module visibility/order, theme and shortcut surfaces,
+and direct Impact/Swing/Flight navigation. File actions that do not yet have a
+complete client adapter remain visibly disabled with a reason rather than
+pretending to save incomplete state.
+
+The same continuation corrects the interaction defects reported against the
+live Swing and Plots views. Playback now has deterministic replay-from-end,
+Restart, granular 0.05x through 4.00x speed, pause, and loop behavior. The
+full swing path is opt-in so a persistent trail does not obscure the current
+frame. Each managed plot now owns a distinct figure/canvas, zoom state,
+Auto Fit action, wheel zoom, and independently movable or hideable legend;
+the plot workspace presents all managed plots instead of reusing one selected
+canvas. PyQt small-window testing caught the new playback editor compressing
+below the 64 px readability floor; the explicit editor minimum fixes that case
+and the three-case layout suite passes.
+
+Two read-only cross-repository audits are now tracked as separate programs:
+
+- [#4260](https://github.com/D-sorganization/Tools/issues/4260), with
+  #4261-#4266, establishes one impact/flight authority and a machine-readable
+  parity contract across Tools PyQt, Tools React, UpstreamDrift PyQt, and
+  UpstreamDrift React.
+- [#4267](https://github.com/D-sorganization/Tools/issues/4267), with
+  #4268-#4276, defines qualified landing, bounce, skid, roll, and total-distance
+  modeling with editable ground profiles and exact UpstreamDrift adapters.
+
+The parity audit found that UpstreamDrift PyQt reuses Tools, while the
+UpstreamDrift React launcher has no native Rate React route. UpstreamDrift's
+Tools gitlink `ff4240217005e1415ca409fd124e50b64ee642d2` also predates the
+current integration head by 184 commits, and its sibling/vendor resolution is
+ambiguous. The ground audit found a useful existing fail-closed
+`GroundModelResult` boundary plus reusable putting/terrain primitives, but no
+qualified end-to-end ground solver. Before bounce can be correct, airborne
+flight must terminate against physical terrain plus ball radius and preserve
+the full terminal angular-velocity vector; the current relative launch-plane
+event and spin-free trajectory state do neither. Those prerequisites are
+explicit in #4269 and must not be hidden by UI-derived estimates.
+
+The final local verification pass is green. The complete Rate-of-Closure and
+shared swing-model run passed 890 tests with one expected skip because the
+optional `swing_core` Rust wheel is not installed; the remaining 15 warnings
+are the existing Hypothesis collection warning. React passed 89 files / 545
+tests, zero-warning ESLint, TypeScript checking, and the production Vite build.
+Ruff, Black, targeted mypy, `git diff --check`, and the repository structural
+limits also pass: every changed production Python file is at most 400 lines and
+every changed production Python function is at most 50 lines. Rendered PyQt
+inspection confirmed independent plot canvases, responsive single-column
+reflow at the tested desktop width, independent 125%/100% zoom state, working
+Auto Fit, and the opt-in trail/playback controls. These are local validation
+results only; they do not establish protected CI, review, merge, or release
+status.
+
 ## Open release blockers
 
 GitHub issue #4201 remains open. Its 2026-08-06 release checkpoint still

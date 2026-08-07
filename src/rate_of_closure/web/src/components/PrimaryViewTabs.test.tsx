@@ -65,4 +65,27 @@ describe("PrimaryViewTabs", () => {
     });
     expect(onActiveChange).toHaveBeenCalledWith("calculation");
   });
+
+  it("omits hidden modules and skips them during keyboard navigation", () => {
+    const onActiveChange = vi.fn();
+    render(
+      <PrimaryViewTabs
+        state={{
+          ...DEFAULT_PRIMARY_VIEW_STATE,
+          visible: DEFAULT_PRIMARY_VIEW_STATE.visible.filter(
+            (id) => id !== "calculation",
+          ),
+        }}
+        onActiveChange={onActiveChange}
+        onOrderChange={() => undefined}
+      />,
+    );
+
+    expect(screen.queryByRole("tab", { name: "Calculation Description" }))
+      .not.toBeInTheDocument();
+    fireEvent.keyDown(screen.getByRole("tab", { name: "Explorer" }), {
+      key: "ArrowRight",
+    });
+    expect(onActiveChange).toHaveBeenCalledWith("simulation");
+  });
 });
