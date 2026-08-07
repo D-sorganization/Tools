@@ -196,7 +196,10 @@ class SimulationTabControlsMixin:
             spin = QDoubleSpinBox()
             spin.setButtonSymbols(QAbstractSpinBox.ButtonSymbols.NoButtons)
             spin.setKeyboardTracking(False)
-            spin.setDecimals(1)
+            # Six decimal places preserve machine-authored delivery declarations
+            # (including the pinned wedge contact-target example) when a v5 run
+            # document is imported and exported through the native UI.
+            spin.setDecimals(6)
             limit_deg = 60.0 if name == "forward_shaft_lean_deg" else 89.0
             spin.setRange(-limit_deg, limit_deg)
             spin.setSuffix(" deg")
