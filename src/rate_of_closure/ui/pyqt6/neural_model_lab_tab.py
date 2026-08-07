@@ -166,8 +166,11 @@ class NeuralModelLabTab(QWidget):
                 descriptor.dataset_id,
             )
         self.dataset_combo.blockSignals(False)
+        cohort = self.dataset_combo.findData("cohort")
         normalized = self.dataset_combo.findData("normalized")
-        self.dataset_combo.setCurrentIndex(max(0, normalized))
+        self.dataset_combo.setCurrentIndex(
+            cohort if cohort >= 0 else max(0, normalized)
+        )
         self._dataset_selected(self.dataset_combo.currentIndex())
 
     def _dataset_selected(self, index: int) -> None:
@@ -206,7 +209,30 @@ class NeuralModelLabTab(QWidget):
         for column in columns:
             self.controls.feature_list.addItem(QListWidgetItem(column))
             self.controls.target_list.addItem(QListWidgetItem(column))
+        self._select_modeling_defaults()
         self._enable_trackman_if_supported()
+
+    def _select_modeling_defaults(self) -> None:
+        feature_names = {
+            "ball_speed_mph",
+            "launch_angle_deg",
+            "launch_direction_deg",
+            "spin_rate_rpm",
+            "spin_axis_deg",
+        }
+        target_names = {
+            "observed_carry_m",
+            "observed_lateral_m",
+            "observed_apex_m",
+            "observed_landing_angle_deg",
+            "observed_flight_time_s",
+        }
+        for index in range(self.controls.feature_list.count()):
+            item = self.controls.feature_list.item(index)
+            item.setSelected(item.text() in feature_names)
+        for index in range(self.controls.target_list.count()):
+            item = self.controls.target_list.item(index)
+            item.setSelected(item.text() in target_names)
 
     def _enable_trackman_if_supported(self) -> None:
         combo = self.controls.vendor_combo

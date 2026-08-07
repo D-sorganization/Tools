@@ -127,3 +127,29 @@ def test_vendor_without_shot_level_targets_is_disabled_with_reason(qtbot) -> Non
     assert foresight >= 0
     assert not bool(combo.model().item(foresight).isEnabled())
     assert "shot-level" in combo.itemData(foresight, 3).lower()
+
+
+def test_modeling_cohort_defaults_are_preselected(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = NeuralModelLabTab(auto_discover_campaign=False)
+    qtbot.addWidget(tab)
+    features = {
+        "ball_speed_mph",
+        "launch_angle_deg",
+        "launch_direction_deg",
+        "spin_rate_rpm",
+        "spin_axis_deg",
+    }
+    targets = {
+        "observed_carry_m",
+        "observed_lateral_m",
+        "observed_apex_m",
+        "observed_landing_angle_deg",
+        "observed_flight_time_s",
+    }
+    frame = pd.DataFrame({name: [1.0, 2.0, 3.0] for name in features | targets})
+    frame.insert(0, "shot_id", ["a", "b", "c"])
+
+    tab.set_dataset(frame, source_name="Cohort")
+
+    assert set(tab._selected(tab.controls.feature_list)) == features
+    assert set(tab._selected(tab.controls.target_list)) == targets

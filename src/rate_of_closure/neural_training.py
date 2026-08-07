@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import hashlib
 import os
-import re
 import sys
 from dataclasses import dataclass
 from pathlib import Path
@@ -37,7 +36,6 @@ class TrainingRequest:
     config_path: Path
 
 
-_NAME = re.compile(r"^[A-Za-z_][A-Za-z0-9_.-]*$")
 NEURAL_CAMPAIGN_ENVIRONMENT_VARIABLE = "LAUNCH_MONITOR_NEURAL_REPO"
 
 
@@ -84,8 +82,10 @@ def _quoted(value: str) -> str:
 
 
 def _names(values: tuple[str, ...], label: str) -> str:
-    if not values or any(not _NAME.fullmatch(value) for value in values):
-        raise ValueError(f"{label} must contain safe, named dataset columns")
+    if not values or any(
+        not value.strip() or not value.isprintable() for value in values
+    ):
+        raise ValueError(f"{label} must contain printable, named dataset columns")
     return "[" + ", ".join(_quoted(value) for value in values) + "]"
 
 
