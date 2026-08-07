@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import os
 from pathlib import Path
-from typing import cast
 
 import pandas as pd
 from PyQt6.QtCore import QProcess, QProcessEnvironment
@@ -229,9 +228,13 @@ class NeuralModelLabTab(QWidget):
         }
         for index in range(self.controls.feature_list.count()):
             item = self.controls.feature_list.item(index)
+            if item is None:
+                raise RuntimeError("feature list returned an invalid item")
             item.setSelected(item.text() in feature_names)
         for index in range(self.controls.target_list.count()):
             item = self.controls.target_list.item(index)
+            if item is None:
+                raise RuntimeError("target list returned an invalid item")
             item.setSelected(item.text() in target_names)
 
     def _enable_trackman_if_supported(self) -> None:
@@ -385,13 +388,19 @@ class NeuralModelLabTab(QWidget):
     def model_summary(self) -> QPlainTextEdit:
         """Expose the summary widget for presentation contracts."""
 
-        return cast(QPlainTextEdit, self.outputs.model_summary)
+        summary = self.outputs.model_summary
+        if not isinstance(summary, QPlainTextEdit):
+            raise RuntimeError("model summary widget has an invalid type")
+        return summary
 
     @property
     def export_predictions_button(self) -> QPushButton:
         """Expose the export control for presentation contracts."""
 
-        return cast(QPushButton, self.outputs.export_predictions_button)
+        button = self.outputs.export_predictions_button
+        if not isinstance(button, QPushButton):
+            raise RuntimeError("export button has an invalid type")
+        return button
 
 
 __all__ = ["NeuralModelLabTab"]
