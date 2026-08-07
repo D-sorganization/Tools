@@ -396,8 +396,10 @@ suite remain owned by #4235/#4239.
 
 ### 2026-08-07 toolstrip, plot-workspace, and parity continuation
 
-The unpublished `feat/4218-toolstrip-workspace` continuation is based on exact
-PR #4217 head `655fea08f62bb48c6ca3498a8893936ef9370e9e`. It adds one
+The `feat/4218-toolstrip-workspace` continuation is published as
+[draft PR #4279](https://github.com/D-sorganization/Tools/pull/4279) against
+`feat/4181-launch-monitor-registry`, the current stacked base after PR #4217
+was squash-merged there. It adds one
 UI-neutral registry for 17 File/View/Tools commands, a strict versioned
 workspace document with atomic file persistence, matched PyQt/React top
 toolstrips, persistent module visibility/order, theme and shortcut surfaces,
