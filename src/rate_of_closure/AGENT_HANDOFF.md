@@ -3,6 +3,55 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-08
 
+## 2026-08-08 COMPLETION RECORD — capability-optimization-ui recovered
+
+The interrupted optimization-UI slice was reviewed, re-verified,
+repaired, and committed on `feat/4197-capability-optimization-ui`.
+Recovery fixes beyond the dying agent's state: Ruff formatting and
+import-sort in three files; a mypy-1.13 `call-arg` failure in
+`capability_controls.py` (positional-after-star bounds unpacking
+replaced with typed `_numeric_spec`/`_integer_spec` factories);
+TypeScript errors in `CapabilityOptimizationPanel.test.tsx` (the mock
+runner is now `vi.fn<CapabilityRunner>`); and eager panel import
+bloating the main Vite chunk past 500 kB — `PrimaryWorkspacePanel` now
+lazy-loads the Shot Optimizer behind `Suspense`, matching the
+WindStrategyPanel precedent (main chunk 474.32 kB, no warning).
+
+Verified gates on the committed head: 808 `tests/rate_of_closure` plus
+615 swing_sim in-package tests passed with zero skips; 102 React files
+/ 619 tests passed; Ruff check/format clean; CI-equivalent mypy 1.13
+clean on all 10 changed src files; `tsc --noEmit`, zero-warning ESLint,
+and the 187-module Vite build pass; changed-only 500-LOC budget and
+`git diff --check` pass. Stack order under epic #4197: observer #4283 →
+evaluator #4289 → this branch's stacked child PR; merge in that order.
+
+## 2026-08-08 Matched Capability Optimization Workspace
+
+Active branch `feat/4197-capability-optimization-ui` is a normal child of
+evaluator commit `c280407d432c153639bb266c9c721a014a129723` (draft PR #4289).
+Do not retarget, rewrite, or merge it ahead of the evaluator and observation
+parents.
+
+PyQt6 and React now expose a discoverable Shot Optimizer module backed by the
+same strict `capability-optimization-workflow/v1` document. It captures profile
+and club IDs, capability center/spread, canonical positive-right launch and
+spin-tilt frames, sourced fixed spin, target, objective, budgets, alternatives,
+and seed. Both clients execute outside the UI thread, publish progress, cancel
+without partial-result publication, rank alternatives, retain all observation
+cohorts in `scalar-ensemble/v1`, and provide stage-qualified axis selection,
+zoom/autofit, paged raw rows, lossless CSV, and stable JSON. Generic Python
+scalar CSV serialization now lives in the UI-neutral variation layer.
+
+Rendered QA in the live Vite app and a uniquely titled standalone PyQt window
+verified execution, progress, large-result paging, plot controls, and layout.
+It also drove fixes for hidden newly registered modules, ambiguous duplicate
+axis labels, narrow split-pane geometry, and missing hover guidance. Current
+verified gates: 808 Python/PyQt plus 615 swing_sim tests and 102 React files /
+619 tests pass; Ruff, formatting, CI-equivalent mypy 1.13, TypeScript, ESLint,
+the 187-module Vite production build, structural scans, and diff checks pass. V1 remains explicitly still-air, carry-only, and excludes
+wind, bounce, roll, and total distance. Keep #4197 open for protected CI,
+review, ordered merge, and downstream parity.
+
 ## 2026-08-08 Model-Backed Capability Flight Evaluator
 
 Active branch `feat/4197-capability-flight-evaluator` is a normal child of
