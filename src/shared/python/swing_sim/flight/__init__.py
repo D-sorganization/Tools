@@ -25,6 +25,17 @@ from .capability_contract import (
     PlayerCapabilityProfile,
     TargetDefinition,
 )
+from .capability_observation import (
+    CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION,
+    CancellationCheck,
+    CapabilityOptimizationCancelled,
+    CapabilityOptimizationHooks,
+    CapabilitySampleMetric,
+    CapabilitySampleObservation,
+    CapabilitySampleParameter,
+    CapabilitySampleStatus,
+    ObservationSink,
+)
 from .capability_optimizer import CapabilityEvaluator, optimize_capability
 from .direction import (
     DEFINITIONS as LAUNCH_DIRECTION_DEFINITIONS,
@@ -129,8 +140,16 @@ __all__ = [
     "AvailabilityReason",
     "BallFlightModel",
     "CapabilityEvaluator",
+    "CapabilityOptimizationCancelled",
+    "CapabilityOptimizationHooks",
     "CapabilityObjective",
     "CapabilityParameter",
+    "CapabilitySampleMetric",
+    "CapabilitySampleObservation",
+    "CapabilitySampleParameter",
+    "CapabilitySampleStatus",
+    "CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION",
+    "CancellationCheck",
     "ClubCapability",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
@@ -173,6 +192,7 @@ __all__ = [
     "OptimizationAlternative",
     "OptimizationRequest",
     "OptimizationResult",
+    "ObservationSink",
     "ParameterValue",
     "PlayerCapabilityProfile",
     "SolutionCandidate",

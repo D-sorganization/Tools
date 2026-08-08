@@ -424,3 +424,30 @@ the Tools native window, UpstreamDrift React has no Rate route, and Tools React
 still has narrower impact/flight authority than Tools PyQt.  Close parity
 through shared versioned calculation contracts and golden fixtures, not by
 counting launchers, separate simulators, or copied model implementations.
+
+## 2026-08-07 Capability-Observation Continuation
+
+Active branch `feat/4197-capability-observer` is an unretargeted child of
+`feat/4199-wind-workflow` at exact parent head
+`6e3c1029f1f3a80ae09020ef7d0afacb3c0d5484`.
+
+The Python and TypeScript capability optimizers now stream one immutable,
+versioned observation for every attempted ensemble sample and support typed
+cooperative cancellation before an evaluator call.  Existing callers and the
+compact optimization result are unchanged.  Status normalization is fail
+closed, evaluator exception text is not leaked, all valid metrics retain their
+declared order and provenance, and malformed or incomplete landing results do
+not become fabricated successes.
+
+The Rate app adapters turn the stream into bounded `scalar-ensemble/v1`
+datasets with a complete scalar flight catalog, null unavailable outputs,
+nominal/perturbed parameters, target residuals, and source lineage.  They
+require contiguous zero-based attempts, reject overflow before retention,
+deep-copy/freeze TypeScript inputs, and serialize ASCII and Unicode fixtures
+byte-identically across runtimes.
+
+Current local gates: 120 Python tests passed with four optional Rust-wheel
+skips; 96 React files / 580 tests passed; Python 3.12 mypy, Ruff, Black,
+TypeScript, ESLint, Vite build, structural budgets, and diff checks pass.
+Publish only as the next protected stacked draft PR, then keep #4197 open for
+its remaining user-facing capability-optimization workflow.

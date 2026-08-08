@@ -690,3 +690,36 @@ or launcher tile does not satisfy parity.  Required next evidence is a
 commit-fresh capability-by-surface manifest backed by shared golden fixtures,
 one authoritative Tools physics contract, thin UI adapters, and an immutable
 UpstreamDrift Tools pin.
+
+### 2026-08-07 capability-observation continuation
+
+Active branch `feat/4197-capability-observer` is based exactly on PR #4282
+head `6e3c1029f1f3a80ae09020ef7d0afacb3c0d5484`.  It must remain a normal
+stacked child of `feat/4199-wind-workflow`; do not retarget, rewrite, or merge
+it ahead of that parent.
+
+The optimizer now accepts optional synchronous observation and cooperative
+cancellation hooks without retaining traces in `OptimizationResult`.  Every
+attempt emits one immutable `capability-sample-observation/v1` record in exact
+candidate/club/sample order.  Python and TypeScript normalize evaluator
+exceptions, malformed results, no-impact, nonconvergence, and missing landing
+metrics identically, preserve all valid evaluator metrics and provenance, and
+never expose raw exception text.  Cancellation is checked before the next
+evaluator call and reports exact attempted/total counts.
+
+The app-layer adapters convert streamed observations into the shared
+`scalar-ensemble/v1` authority.  They declare the complete scalar flight
+catalog, preserve unavailable outputs as null, include nominal and perturbed
+parameters plus target diagnostics, require a contiguous zero-based prefix,
+and reject overflow before retaining a row.  TypeScript deep-parses and
+freezes caller input before storage.  Stable JSON ordering is Unicode
+code-point based in both runtimes; ASCII and Unicode parity fixtures hash to
+`df36f765afdf508d00a3d264911ce5b6f07e25da3744b187596d67487ea3be5f`
+and `18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0`.
+
+Current local evidence on this branch is 120 Python flight/adapter tests
+passed with four expected optional `tools_core` skips, and 96 React files / 580
+tests passed.  Python 3.12 mypy, Ruff, Black, TypeScript, zero-warning ESLint,
+the Vite production build, structural budgets, and `git diff --check` pass.
+This completes the stream/adapter contract slice of #4197, not its remaining
+end-user optimization workflow or the wider release epic.
