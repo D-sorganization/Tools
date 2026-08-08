@@ -378,11 +378,19 @@ function outcome(request: WindStrategyRequest, trial: WindTrial, strategy: WindS
     information_cost_delta: actual.cost - perfectInformation.cost,
   };
 }
-
-export function analyzeWindStrategies(request: WindStrategyRequest): WindStrategyAnalysis {
+export function analyzeWindStrategies(request: WindStrategyRequest,
+  onProgress?: (completed: number, total: number) => void,
+): WindStrategyAnalysis {
   validateRequest(request);
   const windTrials = sampleWindTrials(request.uncertainty);
-  const outcomes = windTrials.flatMap((trial) => request.strategies.map((strategy) => outcome(request, trial, strategy)));
+  const total = windTrials.length * request.strategies.length;
+  let completed = 0;
+  onProgress?.(0, total);
+  const outcomes = windTrials.flatMap((trial) => request.strategies.map((strategy) => {
+    const result = outcome(request, trial, strategy);
+    onProgress?.(++completed, total);
+    return result;
+  }));
   return {
     schema_version: WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION,
     provenance: request.uncertainty.provenance,

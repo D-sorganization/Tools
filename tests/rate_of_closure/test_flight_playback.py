@@ -60,8 +60,32 @@ def test_pyqt_controls_own_one_timer_and_expose_accessible_transport(qtbot) -> N
     assert timer.isActive()
     assert controls.play_button.accessibleName() == "Play or Pause Ball Flight"
     assert controls.scrubber.accessibleName() == "Ball Flight Time"
+    assert controls.loop_check.accessibleName() == "Loop Ball Flight Playback"
+    controls.set_looping(True)
+    assert controls.loop_check.isChecked()
     controls.jump_to_apex()
     assert controls.current_time_s() == pytest.approx(1.5)
     controls.jump_to_landing()
     assert controls.current_time_s() == pytest.approx(4.0)
     assert not timer.isActive()
+
+
+def test_pyqt_controls_loop_at_landing_without_stopping(qtbot, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    pytest.importorskip("PyQt6")
+    pytest.importorskip("pytestqt")
+    from rate_of_closure.ui.pyqt6.flight_playback_controls import (
+        FlightPlaybackControls,
+    )
+
+    controls = FlightPlaybackControls()
+    qtbot.addWidget(controls)
+    controls.set_timeline(2.0, 1.0)
+    controls.set_looping(True)
+    controls._set_time(1.99)  # noqa: SLF001 - deterministic transport boundary test
+    monkeypatch.setattr(controls, "_elapsed_seconds", lambda: 0.02)
+
+    controls.timer().start()
+    controls._advance()  # noqa: SLF001 - exercise the timer callback directly
+
+    assert controls.timer().isActive()
+    assert controls.current_time_s() == pytest.approx(0.01)

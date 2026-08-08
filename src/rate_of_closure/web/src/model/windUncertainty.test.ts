@@ -46,6 +46,7 @@ describe("sampleWindTrials", () => {
 
 describe("analyzeWindStrategies", () => {
   it("returns paired scatter outcomes and nonnegative CRN regret", () => {
+    const progress: Array<[number, number]> = [];
     const launch = directLaunch({
       ballSpeedMph: 150,
       launchAngleDeg: 12,
@@ -74,9 +75,12 @@ describe("analyzeWindStrategies", () => {
         target_radius_m: 10,
         miss_distance_cvar_alpha: 0.75,
       },
-    });
+    }, (completed, total) => progress.push([completed, total]));
 
     expect(result.outcomes).toHaveLength(8);
+    expect(progress).toEqual([
+      [0, 8], [1, 8], [2, 8], [3, 8], [4, 8], [5, 8], [6, 8], [7, 8], [8, 8],
+    ]);
     expect(result.summaries).toHaveLength(2);
     expect(result.schema_version).toBe("wind-strategy-analysis/v2");
     expect(result.summaries.every((item) => item.completed_trials === 4)).toBe(true);

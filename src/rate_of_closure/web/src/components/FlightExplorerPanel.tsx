@@ -9,13 +9,14 @@
  * until the P7 WASM kernels land.
  */
 
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 
 import { DecimalInput } from "./DecimalInput";
 import { FieldInfo } from "./FieldInfo";
 import { FlightCanvases } from "./FlightCanvases";
 import { FlightPlayback3D } from "./FlightPlayback3D";
 import { SpatialTargetSection } from "./SpatialTargetSection";
+import type { Launch } from "../model/flight";
 import {
   compareWind,
   directLaunch,
@@ -33,6 +34,10 @@ import { meteorologicalWind } from "../model/wind";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 
 const SPEED_UNITS: Record<string, number> = { mph: 1.0, "m/s": 2.236936292054402 };
+
+const LazyWindStrategyPanel = lazy(() => import("./WindStrategyPanel").then((module) => ({
+  default: module.WindStrategyPanel,
+})));
 
 const DIRECTION_CONVENTIONS: Array<{
   value: string;
@@ -109,13 +114,22 @@ export function FlightExplorerPanel({
   const [error, setError] = useState<string | null>(null);
   const directionSigns = launchDirectionSignLabels(directionConvention);
 
+  const currentLaunch = () => directLaunch({
+    ballSpeedMph: speed * (SPEED_UNITS[speedUnit] / SPEED_UNITS.mph),
+    launchDirectionConvention: directionConvention,
+    ...fields,
+  });
+  let windStrategyLaunch: Launch | null = null;
+  let windStrategyLaunchError: string | null = null;
+  try {
+    windStrategyLaunch = currentLaunch();
+  } catch (reason: unknown) {
+    windStrategyLaunchError = reason instanceof Error ? reason.message : String(reason);
+  }
+
   const run = () => {
     try {
-      const launch = directLaunch({
-        ballSpeedMph: speed * (SPEED_UNITS[speedUnit] / SPEED_UNITS.mph),
-        launchDirectionConvention: directionConvention,
-        ...fields,
-      });
+      const launch = currentLaunch();
       const comparison = windEnabled
         ? compareWind(launch, meteorologicalWind(windSpeedMph / SPEED_UNITS["m/s"], windFromDeg))
         : null;
@@ -354,6 +368,13 @@ export function FlightExplorerPanel({
             />
           </div>
         </div>
+        <Suspense fallback={<section role="status" aria-label="Wind strategy workspace loading"
+          className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-5 text-sm text-slate-300">
+          Loading wind strategy workspace…
+        </section>}>
+          <LazyWindStrategyPanel launch={windStrategyLaunch}
+            launchError={windStrategyLaunchError} target={spatialTarget} />
+        </Suspense>
       </section>
     </div>
   );

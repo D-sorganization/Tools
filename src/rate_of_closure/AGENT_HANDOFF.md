@@ -328,3 +328,71 @@ python3 -m mypy src/rate_of_closure src/shared/python/swing_sim
 3. Phase 7 of #4103: WASM swap + real Pages CI deploy workflow.
 4. #4125 H4/H5: AffineDrift putting research content and the public
    release-management repo (both cross-repo, not started).
+
+## 2026-08-07 Wind-Strategy Workflow Continuation
+
+The active child branch is `feat/4199-wind-workflow`, based on exact published
+PR #4281 head `8b8690e8760d82ba814e8d95588d2540d28a6759`.  Do not fold this work into
+PR #4281: publish it as a separate draft stacked on
+`feat/4199-wind-scalar-adapter` after final review.
+
+This branch turns the shared `scalar-ensemble/v1` wind adapter into matched
+end-user workflows.  Python runs the immutable request in a `QThread`; React
+uses a real, lazy-loaded Vite module Worker.  Both expose exact `0..N`
+progress, cancellation, current launch plus canonical landing target, trial
+and wind-estimate controls, summaries, every scalar axis, explicit
+completed/nonconverged/invalid availability, cohort-colored scatter, generic
+all-row CSV, and fail-closed result invalidation.  Scatter controls include
+pan/zoom, Auto Fit, toolbar-history reset, and movable/hidden legends in
+PyQt; React includes zoom, Auto Fit, clipped marks, numeric ticks/gridlines,
+and movable/hidden legend.  Captured calculation-basis regions make model,
+seed, target, integration, risk, and aim-policy settings visible.
+
+Final native-window QA at 1280 x 768 added matched ball-flight Loop controls
+to PyQt and React and verified that Play/Pause, replay from landing, granular
+speed, and continuous wrap all use the single owned animation clock.  The
+PyQt wind workspace now separates a compact two-column Setup view from a
+plot-first Results view, automatically selects Results after completion, and
+keeps run/cancel/export plus progress/status visible in both views.  A live
+five-trial run completed 5/5 and rendered its basis, summary, scatter, native
+pan/zoom toolbar, Auto Fit, and legend-position control without overlap.
+
+Lifecycle and safety details are contractual: the PyQt worker never reads
+widgets, window shutdown cancels and joins it, queued stale signals are
+ignored, and the main window explicitly stops Flight Explorer.  React
+terminates its Worker on completion, error, cancellation, unmount, or consumed
+input change.  Both clients preserve unavailable values as null/empty cells;
+CSV strings and headers that could become spreadsheet formulas are
+neutralized without altering numeric negatives.  PyQt accepts the complete
+shared uint32 seed range.
+
+Current local evidence on this working tree:
+
+- `1350 passed, 5 skipped, 15 warnings` for the complete
+  `tests/rate_of_closure` plus `src/shared/python/swing_sim` suite.  Skips are
+  optional local Rust-wheel paths; warnings are the existing Hypothesis
+  `norecursedirs` and empty polynomial-preview legend warnings.
+- `94` React test files / `566` tests passed; focused playback and wind suites
+  also pass.
+- Ruff, Black, targeted mypy, TypeScript, zero-warning ESLint,
+  `cargo test -p swing-core` (`12 passed`), and `git diff --check` pass.
+- The 175-module production build emits separate wind-worker and lazy
+  wind-workspace chunks; the main chunk is 472.34 kB and has no size warning.
+- Every changed production source is at most 400 lines and every changed wind
+  function is at most 50 lines.
+
+This completes the #4199 current-launch workflow slice, not epic #4199 or the
+universal many-run objective.  Capability optimization still discards its
+individual evaluator rows.  The next child must add the optional streaming
+`CapabilitySampleObservationV1` sink and cancellation hook described in
+[issue #4197](https://github.com/D-sorganization/Tools/issues/4197#issuecomment-5223170071),
+then adapt those rows to `scalar-ensemble/v1` without bloating the compact
+optimization result.
+
+Ground and four-surface parity remain open epics.  The latest executable
+acceptance refinements are in
+[ground #4267](https://github.com/D-sorganization/Tools/issues/4267#issuecomment-5223106106)
+and
+[parity #4260](https://github.com/D-sorganization/Tools/issues/4260#issuecomment-5223106465).
+Do not treat a launcher tile as a fourth UI implementation, and do not equate
+launch-monitor total displacement with accumulated ground path length.

@@ -8,6 +8,7 @@ from collections.abc import Callable
 from PyQt6.QtCore import QElapsedTimer, QSignalBlocker, Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QCloseEvent
 from PyQt6.QtWidgets import (
+    QCheckBox,
     QComboBox,
     QHBoxLayout,
     QLabel,
@@ -84,6 +85,10 @@ class FlightPlaybackControls(QWidget):
         )
         self.speed_combo.currentIndexChanged.connect(self._change_speed)
         row.addWidget(self.speed_combo)
+        self.loop_check = QCheckBox("Loop")
+        self.loop_check.setAccessibleName("Loop Ball Flight Playback")
+        self.loop_check.setToolTip("Restart at launch when the flight reaches landing.")
+        row.addWidget(self.loop_check)
         self.time_label = QLabel("0.00 / 0.00 s")
         self.time_label.setMinimumWidth(94)
         self.time_label.setAccessibleName("Ball Flight Playback Time")
@@ -178,14 +183,27 @@ class FlightPlaybackControls(QWidget):
         """The sole animation timer (test and lifecycle inspection seam)."""
         return self._timer
 
+    def set_looping(self, looping: bool) -> None:
+        """Set whether playback wraps from landing back to launch."""
+        self.loop_check.setChecked(looping)
+
     def _toggle(self) -> None:
         self.pause() if self._timer.isActive() else self.play()
 
     def _advance(self) -> None:
-        elapsed_s = self._elapsed.restart() / 1000.0
-        self._set_time(self._current_time_s + elapsed_s * self._speed)
-        if self._current_time_s >= self._duration_s:
-            self.pause()
+        next_time_s = self._current_time_s + self._elapsed_seconds() * self._speed
+        if next_time_s < self._duration_s:
+            self._set_time(next_time_s)
+            return
+        if self.loop_check.isChecked() and self._duration_s > 0.0:
+            self._set_time(next_time_s % self._duration_s)
+            return
+        self._set_time(self._duration_s)
+        self.pause()
+
+    def _elapsed_seconds(self) -> float:
+        """Return elapsed wall time through a deterministic test seam."""
+        return self._elapsed.restart() / 1000.0
 
     def _scrub(self, value: int) -> None:
         self.pause()

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
 import { FlightExplorerPanel } from "./FlightExplorerPanel";
+import * as flightExplorer from "../model/flightExplorer";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "../model/targets";
 
 function FlightExplorerHarness() {
@@ -23,7 +24,7 @@ beforeAll(() => {
 });
 
 describe("FlightExplorerPanel input editing", () => {
-  it("applies one canonical spatial target to its summary and flight plots", () => {
+  it("applies one canonical spatial target to its summary and flight plots", async () => {
     render(<FlightExplorerHarness />);
 
     const downrange = screen.getByLabelText("Target downrange m");
@@ -38,6 +39,8 @@ describe("FlightExplorerPanel input editing", () => {
       .toHaveAttribute("aria-description", expect.stringContaining("180.0 m downrange"));
     expect(screen.getByRole("status", { name: "Spatial target assessment" }))
       .toHaveTextContent("Run Flight to evaluate this target");
+    expect(await screen.findByRole("region", { name: "Wind strategy uncertainty analysis" }))
+      .toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Run Flight" }));
     expect(screen.getByRole("status", { name: "Spatial target assessment" }))
@@ -97,5 +100,17 @@ describe("FlightExplorerPanel input editing", () => {
     );
     expect(screen.getByLabelText("Flight side profile (height vs carry)"))
       .toBeInTheDocument();
+  });
+
+  it("keeps the page mounted and disables wind analysis for an invalid launch snapshot", async () => {
+    const launchSpy = vi.spyOn(flightExplorer, "directLaunch").mockImplementation(() => {
+      throw new Error("transient launch value is invalid");
+    });
+
+    expect(() => render(<FlightExplorerHarness />)).not.toThrow();
+
+    expect(await screen.findByRole("alert")).toHaveTextContent(/transient launch value is invalid/i);
+    expect(screen.getByRole("button", { name: "Run wind strategy analysis" })).toBeDisabled();
+    launchSpy.mockRestore();
   });
 });

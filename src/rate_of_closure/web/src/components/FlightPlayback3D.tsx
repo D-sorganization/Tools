@@ -32,6 +32,7 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
   const timeRef = useRef(0);
   const [time, setTime] = useState(0);
   const [playing, setPlaying] = useState(false);
+  const [loop, setLoop] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [camera, setCamera] = useState(INITIAL_CAMERA);
   const timeline = useMemo(
@@ -61,15 +62,18 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
     const animate = (now: number) => {
       const elapsed = Math.max(0, now - previous) / 1000;
       previous = now;
-      const next = Math.min(duration, timeRef.current + elapsed * speed);
+      const unboundedNext = timeRef.current + elapsed * speed;
+      const next = loop && unboundedNext >= duration
+        ? unboundedNext % duration
+        : Math.min(duration, unboundedNext);
       timeRef.current = next;
       setTime(next);
-      if (next >= duration) setPlaying(false);
+      if (!loop && next >= duration) setPlaying(false);
       else animationId = window.requestAnimationFrame(animate);
     };
     animationId = window.requestAnimationFrame(animate);
     return () => window.cancelAnimationFrame(animationId);
-  }, [playing, duration, speed]);
+  }, [playing, duration, speed, loop]);
 
   const frame = useMemo(
     () => timeline?.frameAt(time) ?? null,
@@ -178,6 +182,15 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
               <option key={option} value={option}>{option}×</option>
             ))}
           </select>
+        </label>
+        <label className="flex items-center gap-1 text-slate-300">
+          <input
+            type="checkbox"
+            checked={loop}
+            onChange={(event) => setLoop(event.target.checked)}
+            aria-label="Loop Ball Flight Playback"
+          />
+          Loop
         </label>
         <output className="min-w-24 text-right tabular-nums text-slate-300">
           {time.toFixed(2)} / {duration.toFixed(2)} s

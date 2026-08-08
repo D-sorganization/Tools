@@ -394,4 +394,5 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._club_view.stop()
         self._simulation_tab.stop()
         self._variation_tab.stop()
+        self._flight_explorer_tab.stop()
         super().closeEvent(event)

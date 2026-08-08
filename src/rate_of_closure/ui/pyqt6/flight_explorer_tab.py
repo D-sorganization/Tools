@@ -27,19 +27,17 @@ from PyQt6.QtWidgets import (
     QScrollArea,
     QSplitter,
     QStackedWidget,
+    QTabWidget,
     QTextBrowser,
     QVBoxLayout,
     QWidget,
 )
 
 from rate_of_closure.derivation import LAUNCH_EXPLANATIONS
-from rate_of_closure.model import MPH_PER_MPS
 from rate_of_closure.simulation import (
     FlightExploration,
     WindComparison,
     explore_with_optional_wind,
-    launch_from_delivery,
-    launch_from_direct,
 )
 from rate_of_closure.ui.pyqt6.flight_explorer_controls import (
     DELIVERY_FIELDS,
@@ -58,14 +56,20 @@ from rate_of_closure.ui.pyqt6.result_row import ResultRow, explanation_html
 from rate_of_closure.ui.pyqt6.spatial_target_workflow import (
     build_spatial_target_workflow,
 )
+from rate_of_closure.ui.pyqt6.wind_strategy_launch import (
+    FlightExplorerLaunchValues,
+    WindStrategyLaunchContext,
+    build_flight_explorer_launch,
+)
+from rate_of_closure.ui.pyqt6.wind_strategy_panel import WindStrategyPanel
 from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
 from shared.python.swing_sim.flight import (
     LAUNCH_DIRECTION_DEFINITIONS,
+    LaunchConditions,
     LaunchDirectionConvention,
     launch_direction_sign_labels,
 )
 from shared.python.swing_sim.flight.registry import FlightModelType
-from shared.python.swing_sim.impact import DeliveryParameters
 
 logger = logging.getLogger(__name__)
 
@@ -97,6 +101,7 @@ class FlightExplorerTab(QWidget):
             build_spatial_target_workflow(self._flight_view)
         )
         left_layout.addWidget(self._spatial_target_panel)
+        self._wind_strategy_panel = WindStrategyPanel(self._wind_strategy_context)
         left_layout.addWidget(self._build_results_box())
         left_layout.addWidget(self._build_explanation_box())
         left_layout.addStretch(1)
@@ -106,9 +111,16 @@ class FlightExplorerTab(QWidget):
         left.setWidget(left_content)
         left.setMinimumWidth(300)
 
+        right_tabs = QTabWidget()
+        right_tabs.setAccessibleName("Flight Explorer Workspaces")
+        right_tabs.addTab(self._flight_panel, "Flight Playback")
+        right_tabs.addTab(self._wind_strategy_panel, "Wind Strategy")
+        right_tabs.setTabToolTip(
+            1, "Analyze current-launch dispersion under uncertain wind."
+        )
         splitter = QSplitter()
         splitter.addWidget(left)
-        splitter.addWidget(self._flight_panel)
+        splitter.addWidget(right_tabs)
         splitter.setStretchFactor(0, 0)
         splitter.setStretchFactor(1, 1)
         layout = QHBoxLayout(self)
@@ -267,40 +279,33 @@ class FlightExplorerTab(QWidget):
         """The most recent successful exploration, if any."""
         return self._exploration
 
+    def current_launch(self) -> LaunchConditions:
+        """Build launch conditions from the current visible controls."""
+        values = FlightExplorerLaunchValues(
+            self.mode() == ENTRY_MODES[0],
+            self.speed_mps(),
+            {key: spin.value() for key, spin in self._direct_spins.items()},
+            {key: spin.value() for key, spin in self._delivery_spins.items()},
+            self._direction_convention_combo.currentData(),
+        )
+        return build_flight_explorer_launch(values)
+
+    def _wind_strategy_context(self) -> WindStrategyLaunchContext:
+        """Return the current launch/target/model context for wind analysis."""
+        return WindStrategyLaunchContext(
+            self.current_launch(),
+            self._spatial_target_panel.target(),
+            self._model_combo.currentText(),
+        )
+
+    def stop(self) -> None:
+        """Cancel and join background wind analysis during shutdown."""
+        self._wind_strategy_panel.stop()
+
     def run_now(self) -> FlightExploration | None:
         """Build launch conditions, run the flight, populate the views."""
         try:
-            if self.mode() == ENTRY_MODES[0]:
-                launch = launch_from_direct(
-                    ball_speed_mph=self.speed_mps() * MPH_PER_MPS,
-                    launch_angle_deg=self._direct_spins["launch_angle_deg"].value(),
-                    launch_direction_deg=self._direct_spins[
-                        "launch_direction_deg"
-                    ].value(),
-                    spin_rpm=self._direct_spins["spin_rpm"].value(),
-                    spin_axis_tilt_deg=self._direct_spins["spin_axis_tilt_deg"].value(),
-                    direction_convention=self._direction_convention_combo.currentData(),
-                )
-            else:
-                launch = launch_from_delivery(
-                    DeliveryParameters(
-                        clubhead_speed_mps=self.speed_mps(),
-                        club_path_deg=self._delivery_spins["club_path_deg"].value(),
-                        face_angle_deg=self._delivery_spins["face_angle_deg"].value(),
-                        attack_angle_deg=self._delivery_spins[
-                            "attack_angle_deg"
-                        ].value(),
-                        dynamic_loft_deg=self._delivery_spins[
-                            "dynamic_loft_deg"
-                        ].value(),
-                        impact_offset_toe_mm=self._delivery_spins[
-                            "impact_offset_toe_mm"
-                        ].value(),
-                        impact_offset_high_mm=self._delivery_spins[
-                            "impact_offset_high_mm"
-                        ].value(),
-                    )
-                )
+            launch = self.current_launch()
             model_name = self._model_combo.currentText()
             exploration, comparison = explore_with_optional_wind(
                 launch, self.wind_controls.optional_scenario(), model_name

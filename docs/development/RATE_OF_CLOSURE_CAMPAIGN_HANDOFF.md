@@ -596,3 +596,65 @@ remains an explicit fail-closed boundary.
 6. Verify a clean installed package and the exact UpstreamDrift dependency pin.
 7. Rerun every recorded gate, inspect protected GitHub checks/reviews, and keep
    #4201 open until every acceptance criterion has current evidence.
+
+## 2026-08-07 responsive wind workflow checkpoint
+
+Branch `feat/4199-wind-workflow` is an unmerged child of exact draft PR #4281
+head `8b8690e8760d82ba814e8d95588d2540d28a6759`.  It must be published as a
+new stacked draft based on `feat/4199-wind-scalar-adapter`; do not extend,
+retarget, or rewrite #4281.
+
+The slice delivers matched PyQt6 and React current-launch wind-strategy
+workflows on the shared `wind-strategy-analysis/v2` and
+`scalar-ensemble/v1` authorities.  It adds off-GUI-thread/off-main-thread
+execution, exact progress, cancellation and teardown, canonical target reuse,
+all-variable cohort-aware scatter, null-preserving generic CSV, explicit
+availability, captured calculation basis, and stale-result invalidation.  The
+managed plot controls reset toolbar history and expose Auto Fit, zoom, and
+legend placement.  React data marks are clipped to the plot region and the
+axes have numeric ticks/gridlines.  Its workspace is genuinely code-split,
+not hidden behind a raised bundle-warning threshold.
+
+Native-window QA at 1280 x 768 found and closed two late usability gaps.  Ball
+flight now has an accessible Loop control in both clients and wraps without
+creating a second timer/animation frame.  The PyQt wind panel now uses compact
+two-column Setup and plot-first Results views, switches to Results after a
+successful run, and leaves run/cancel/export and progress/status continuously
+available.  A live five-trial run completed 5/5 with the captured basis,
+summary, scatter, native pan/zoom, Auto Fit, and legend placement visible.
+The in-app browser connection refused localhost navigation under its URL
+policy, so React visual evidence remains the full component suite and
+production build rather than a claimed live-browser pass.
+
+Current primary validation is:
+
+- Python/PyQt/shared swing: `1350 passed, 5 skipped, 15 warnings`;
+- React: `94` files / `566` tests, plus focused playback and wind passes;
+- Rust swing core: `12 passed`;
+- Ruff, Black, focused mypy, TypeScript, zero-warning ESLint, production Vite
+  build, structural line/function budgets, and `git diff --check`: passed.
+
+The five Python skips are the absent optional `swing_core` and `tools_core`
+wheel fast paths, not failures.  The two warning classes are established
+Hypothesis collection configuration and the empty polynomial preview legend.
+Hosted CI, required review, mergeability, and exact deployed/default-branch
+state remain unproven until the new child PR is published and protected checks
+finish.
+
+The independent rolling-ground audit refined epic #4267 at
+<https://github.com/D-sorganization/Tools/issues/4267#issuecomment-5223106106>.
+It defines carry, final coordinates, launch-monitor total displacement, and
+bounce/skid/roll/ground path lengths separately; requires full angular state
+and arbitrary-normal physical contact; and restricts UpstreamDrift terrain
+reuse to a one-way versioned adapter.  The four-surface audit refined #4260 at
+<https://github.com/D-sorganization/Tools/issues/4260#issuecomment-5223106465>:
+CI must prove the complete capability by `tools.pyqt6`, `tools.react`,
+`upstreamdrift.pyqt6`, and `upstreamdrift.react` Cartesian product with
+commit-fresh evidence.  A launcher/native-window handoff is not parity.
+
+The next universal-ensemble slice is the capability optimizer.  Its exact
+streaming observation/cancellation/scalar-adapter contract is recorded at
+<https://github.com/D-sorganization/Tools/issues/4197#issuecomment-5223170071>.
+Keep the ordinary optimization result compact, stream every attempted sample
+in deterministic order, preserve evaluator metrics and reasons, and never
+invent outputs for no-impact or failed rows.

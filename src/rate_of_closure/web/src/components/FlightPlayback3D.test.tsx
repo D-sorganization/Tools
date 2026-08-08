@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { FlightPlayback3D } from "./FlightPlayback3D";
@@ -78,6 +78,35 @@ describe("FlightPlayback3D", () => {
     view.unmount();
     expect(callbacks.size).toBe(0);
     expect(cancel).toHaveBeenCalled();
+  });
+
+  it("loops at landing and keeps one animation frame scheduled", () => {
+    let nextId = 0;
+    const callbacks = new Map<number, FrameRequestCallback>();
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      nextId += 1;
+      callbacks.set(nextId, callback);
+      return nextId;
+    });
+    vi.spyOn(window, "cancelAnimationFrame").mockImplementation((id) => {
+      callbacks.delete(id);
+    });
+    render(<FlightPlayback3D points={points} />);
+
+    fireEvent.click(screen.getByRole("checkbox", { name: "Loop Ball Flight Playback" }));
+    fireEvent.change(screen.getByRole("slider", { name: "Ball Flight Time" }), {
+      target: { value: "1.999" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Play Ball Flight" }));
+    const callback = [...callbacks.values()][0];
+    if (!callback) throw new Error("Expected one scheduled animation frame");
+    callbacks.clear();
+    act(() => callback(performance.now() + 10));
+
+    expect(screen.getByRole("button", { name: "Pause Ball Flight" })).toBeEnabled();
+    expect(callbacks.size).toBe(1);
+    const slider = screen.getByRole("slider", { name: "Ball Flight Time" });
+    expect(Number((slider as HTMLInputElement).value)).toBeLessThan(0.1);
   });
 
   it("keeps the active labeled target rendered while orbiting and zooming", () => {

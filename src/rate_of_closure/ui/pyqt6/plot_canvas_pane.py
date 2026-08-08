@@ -35,6 +35,7 @@ class PlotCanvasPane(QFrame):
         self.setFrameShape(QFrame.Shape.StyledPanel)
         self.setAccessibleName(f"{label} Plot Viewport")
         self._data: PlotData | None = None
+        self._custom_renderer: Callable[[Figure], None] | None = None
         self._zoom = 1.0
         self._figure = Figure(figsize=(5.2, 3.5), tight_layout=True)
         self._canvas = FigureCanvas(self._figure)
@@ -89,7 +90,35 @@ class PlotCanvasPane(QFrame):
     def render_data(self, data: PlotData) -> None:
         """Render new data and reset the viewport to a readable fit."""
         self._data = data
-        render_plot(data, self._figure)
+        self._custom_renderer = None
+        self._render_and_fit()
+
+    def render_custom(self, renderer: Callable[[Figure], None]) -> None:
+        """Render caller-owned plot data with the same managed controls."""
+        if not callable(renderer):
+            raise TypeError("renderer must be callable")
+        self._data = None
+        self._custom_renderer = renderer
+        self._render_and_fit()
+
+    def clear(self) -> None:
+        """Remove current data so Auto Fit cannot resurrect a stale result."""
+        self._data = None
+        self._custom_renderer = None
+        self._figure.clear()
+        self._toolbar.update()
+        self._zoom = 1.0
+        self._zoom_label.setText("100%")
+        self._canvas.draw_idle()
+
+    def _render_and_fit(self) -> None:
+        if self._data is not None:
+            render_plot(self._data, self._figure)
+        elif self._custom_renderer is not None:
+            self._custom_renderer(self._figure)
+        else:
+            return
+        self._toolbar.update()
         self._wrap_canvas_titles()
         self._zoom = 1.0
         self._zoom_label.setText("100%")
@@ -140,13 +169,7 @@ class PlotCanvasPane(QFrame):
 
     def auto_fit(self) -> None:
         """Restore data-derived axis limits and a 5% margin."""
-        if self._data is None:
-            return
-        render_plot(self._data, self._figure)
-        self._zoom = 1.0
-        self._zoom_label.setText("100%")
-        self._apply_legend()
-        self._canvas.draw_idle()
+        self._render_and_fit()
 
     def _scale_limits(self, factor: float) -> None:
         if not self._figure.axes:
