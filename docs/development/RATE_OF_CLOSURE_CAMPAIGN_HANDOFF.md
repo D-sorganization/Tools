@@ -843,3 +843,14 @@ toolstrip/workspace epic #4218. It tracks bounded clubhead camera following and
 Face On, Down the Line, and Overhead snap views with canonical frame definitions,
 per-viewport state, PyQt/React parity, playback/zoom interaction coverage, and
 rendered computer-control QA.
+
+Draft PR #4285 initially failed only the CI Standard changed-test assertion
+gate because its fixture-only package marker and deterministic record builder
+live beneath a `tests` directory. Both files are now explicitly allowlisted by
+exact repository path in `scripts/test_assertion_allowlist.txt`; behavioral test
+modules remain subject to the AST assertion gate. Reproduce this narrow check
+from the PR worktree by diffing Python paths against
+`feat/4197-capability-observer` and passing that list to
+`scripts/check_test_assertions.py --changed-files`. This gate repair and the
+handoff update must be committed and pushed together as a normal follow-up
+commit; do not amend or force-push the published contract commit.

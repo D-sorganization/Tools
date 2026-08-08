@@ -111,3 +111,17 @@ any PR touching `src/**`, `tests/**`, `config/**`, `pyproject.toml`,
    `rate_of_closure/web`.
 6. #4125 H5: stand up the public release-management repo (cross-repo, not
    started).
+
+## 2026-08-07 Rate-of-Closure protected continuation
+
+The current Rate-of-Closure stack extends through protected draft PR #4285
+(`feat/4268-ground-contract`), based on draft PR #4283
+(`feat/4197-capability-observer`). PR #4285 implements the strict shared
+flight-to-ground request/result v1 contract; issue #4269 is being developed in
+the separate `flight-ground-transfer` worktree and must not be folded into the
+contract PR. The first #4285 CI Standard run failed only because two
+fixture/support-only Python files under the new ground package were not yet in
+the changed-test assertion allowlist. The branch now uses exact-path exemptions
+for those two non-test modules while retaining assertion enforcement for every
+behavioral test file. Commit and push this repair normally with the campaign
+handoff update; never amend or force-push the published head.
