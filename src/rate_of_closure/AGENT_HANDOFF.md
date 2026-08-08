@@ -27,6 +27,15 @@ and the 187-module Vite build pass; changed-only 500-LOC budget and
 observer #4283 → evaluator #4289 → this #4294, all now ready-for-review
 in merge order; merge only in that order behind protected checks.
 
+The first hosted quality-gate run on #4294 rejected the dict-splat
+construction of `CapabilityWorkflowInputs` (`**dict[str, float]` cannot
+be proven against integer fields under the CI mypy context); commit
+`101020b5b` builds the snapshot with explicit typed keyword arguments.
+Known stack-wide risk for the `tests (3.10)` matrix job: many Rate
+modules use bare `from enum import StrEnum` (3.11+) instead of
+`shared.python.compatibility.StrEnum`, which already broke that job on
+PR #4280 and belongs to the branches that introduced those imports.
+
 ## 2026-08-08 Matched Capability Optimization Workspace
 
 Active branch `feat/4197-capability-optimization-ui` is a normal child of
