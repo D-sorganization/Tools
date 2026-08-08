@@ -111,3 +111,30 @@ any PR touching `src/**`, `tests/**`, `config/**`, `pyproject.toml`,
    `rate_of_closure/web`.
 6. #4125 H5: stand up the public release-management repo (cross-repo, not
    started).
+
+## 2026-08-07 Rate-of-Closure protected continuation
+
+The current Rate-of-Closure stack extends through protected draft PR #4285
+(`feat/4268-ground-contract`), based on draft PR #4283
+(`feat/4197-capability-observer`). PR #4285 implements the strict shared
+flight-to-ground request/result v1 contract; issue #4269 is being developed in
+the separate `flight-ground-transfer` worktree and must not be folded into the
+contract PR. The first #4285 CI Standard run failed only because two
+fixture/support-only Python files under the new ground package were not yet in
+the changed-test assertion allowlist. The branch now uses exact-path exemptions
+for those two non-test modules while retaining assertion enforcement for every
+behavioral test file. Commit and push this repair normally with the campaign
+handoff update; never amend or force-push the published head.
+
+The parent capability-observer repair is commit
+`49612946138b1021f80c9f8d2a4d06f1610825db`. Its four pinned cross-runtime
+digest assertions use exact inline `detect-secrets` allowlist annotations; no
+scanner path or baseline was weakened. This child branch now incorporates that
+parent head through a normal merge commit so protected checks can rerun on the
+actual stacked ancestry.
+
+Issue #4269 branch `feat/4269-flight-ground-transfer` now incorporates PR #4285
+head `3235af71150a774954e7673fc81d7179330fbe76` through a normal merge commit.
+The cross-runtime transfer implementation remains uncommitted until its repaired
+Python, TypeScript, Rust, PyO3, and WASM paths pass the second independent review
+and the complete integrated gate set.

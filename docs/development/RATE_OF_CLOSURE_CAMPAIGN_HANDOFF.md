@@ -843,3 +843,30 @@ toolstrip/workspace epic #4218. It tracks bounded clubhead camera following and
 Face On, Down the Line, and Overhead snap views with canonical frame definitions,
 per-viewport state, PyQt/React parity, playback/zoom interaction coverage, and
 rendered computer-control QA.
+
+Draft PR #4285 initially failed only the CI Standard changed-test assertion
+gate because its fixture-only package marker and deterministic record builder
+live beneath a `tests` directory. Both files are now explicitly allowlisted by
+exact repository path in `scripts/test_assertion_allowlist.txt`; behavioral test
+modules remain subject to the AST assertion gate. Reproduce this narrow check
+from the PR worktree by diffing Python paths against
+`feat/4197-capability-observer` and passing that list to
+`scripts/check_test_assertions.py --changed-files`. This gate repair and the
+handoff update must be committed and pushed together as a normal follow-up
+commit; do not amend or force-push the published contract commit.
+The next protected run exposed two `detect-secrets` false positives in each
+ runtime's cross-language SHA-256 parity assertions. They are deterministic test
+ digests, not credentials. Mark the four exact constants with the scanner's
+ `pragma: allowlist secret` annotation; do not add broad path exclusions or
+ rewrite the baseline. Re-run the scanner normalization gate, focused parity
+ tests, lint, and diff checks. Commit this CI repair with this handoff update and
+ push normally on `feat/4197-capability-observer` before propagating the parent
+ head through the protected stack. That repair is parent commit
+ `49612946138b1021f80c9f8d2a4d06f1610825db`; this child now merges it normally
+ without rewriting either published branch.
+
+Issue #4269 branch `feat/4269-flight-ground-transfer` now merges protected
+contract head `3235af71150a774954e7673fc81d7179330fbe76` without rewriting the
+stack. Keep its cross-runtime transfer implementation uncommitted until the
+post-repair independent review and complete Python/TypeScript/Rust/PyO3/WASM
+gates are green.

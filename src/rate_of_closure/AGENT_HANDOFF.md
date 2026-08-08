@@ -478,3 +478,39 @@ exact seven-file Python 3.12 mypy command, Ruff/format, diff check, and full
 135-test flight/adapter suite pass with four optional Rust-wheel skips. This
 fix and handoff update are `SELF`; resolve with `git rev-parse HEAD`, push
 normally, and monitor the fresh protected checks.
+
+## 2026-08-07 Strict ground-contract and transfer continuation
+
+Draft PR #4285 on `feat/4268-ground-contract` is the protected child of PR
+#4283 and owns only the strict shared flight-to-ground v1 contract, schemas,
+migrations, canonical cross-runtime fixture, and one-way legacy adapter. Its
+first hosted CI Standard run found no behavioral defect: the changed-test
+assertion gate classified `ground/tests/__init__.py` and the deterministic
+`ground/tests/_support.py` record builder as assertion-free tests. Exact-path
+fixture exemptions are now recorded in `scripts/test_assertion_allowlist.txt`;
+all `test_*.py` modules remain checked. Reproduce the gate against
+`feat/4197-capability-observer`, commit this repair with both durable handoffs,
+push normally, and re-verify protected checks.
+
+Issue #4269 continues independently in worktree
+`C:\Users\diete\Repositories\Tools-worktrees\flight-ground-transfer` on
+`feat/4269-flight-ground-transfer`, based on the published #4285 contract
+commit. It must deliver the terminal angular state and physical sphere/terrain
+contact bracket in Python, TypeScript, Rust, and WASM before bounce/roll is
+wired to flight. Do not infer terminal spin from launch spin or substitute a
+launch-plane crossing for physical contact.
+The subsequent protected run's `detect-secrets` job classified the two pinned
+ Python/TypeScript SHA-256 parity digests as high-entropy strings. These are
+ expected deterministic test outputs, not secrets. Use only exact inline
+ `pragma: allowlist secret` annotations on the four digest constants; preserve
+ the repository baseline and scanner scope. Commit the annotations and this
+ handoff together on the parent capability-observer branch, then re-run the
+ protected stack without force-pushing or bypassing the gate. Parent commit
+ `49612946138b1021f80c9f8d2a4d06f1610825db` is now propagated into this child
+ by a normal merge commit.
+
+The active #4269 branch now merges PR #4285 head
+`3235af71150a774954e7673fc81d7179330fbe76` normally. Do not publish its
+uncommitted transfer adapters until the repaired terrain geometry, strict wire
+contract, origin proof, bounded web integrator, and native-wheel parity have all
+passed a second independent integrated review.
