@@ -1312,21 +1312,31 @@ export const App: React.FC = () => {
 
                           {/* PID PV path (purple) */}
                           {(() => {
-                            const points = mpcSimData.time.map((_, idx) => {
-                              const x = (idx / (mpcSimData.time.length - 1)) * 340 + 5;
+                            // ⚡ Bolt Optimization: Replace chained array `.map().join(" ")` with a single-pass loop and direct string concatenation
+                            // This eliminates intermediate array allocations and closure overhead on high-frequency visualization renders.
+                            let points = "";
+                            const timeLen = mpcSimData.time.length;
+                            for (let idx = 0; idx < timeLen; idx++) {
+                              const x = (idx / (timeLen - 1)) * 340 + 5;
                               const y = 200 - (mpcSimData.pid.pv[idx] * 2);
-                              return `${x},${y}`;
-                            }).join(" ");
+                              if (idx > 0) points += " ";
+                              points += `${x},${y}`;
+                            }
                             return <polyline fill="none" stroke="var(--accent-purple)" strokeWidth="2" points={points} />;
                           })()}
 
                           {/* MPC PV path (cyan) */}
                           {(() => {
-                            const points = mpcSimData.time.map((_, idx) => {
-                              const x = (idx / (mpcSimData.time.length - 1)) * 340 + 5;
+                            // ⚡ Bolt Optimization: Replace chained array `.map().join(" ")` with a single-pass loop and direct string concatenation
+                            // This eliminates intermediate array allocations and closure overhead on high-frequency visualization renders.
+                            let points = "";
+                            const timeLen = mpcSimData.time.length;
+                            for (let idx = 0; idx < timeLen; idx++) {
+                              const x = (idx / (timeLen - 1)) * 340 + 5;
                               const y = 200 - (mpcSimData.mpc.pv[idx] * 2);
-                              return `${x},${y}`;
-                            }).join(" ");
+                              if (idx > 0) points += " ";
+                              points += `${x},${y}`;
+                            }
                             return <polyline fill="none" stroke="var(--accent-cyan)" strokeWidth="2" points={points} />;
                           })()}
                         </svg>
