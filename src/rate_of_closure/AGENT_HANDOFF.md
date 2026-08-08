@@ -499,3 +499,12 @@ commit. It must deliver the terminal angular state and physical sphere/terrain
 contact bracket in Python, TypeScript, Rust, and WASM before bounce/roll is
 wired to flight. Do not infer terminal spin from launch spin or substitute a
 launch-plane crossing for physical contact.
+The subsequent protected run's `detect-secrets` job classified the two pinned
+ Python/TypeScript SHA-256 parity digests as high-entropy strings. These are
+ expected deterministic test outputs, not secrets. Use only exact inline
+ `pragma: allowlist secret` annotations on the four digest constants; preserve
+ the repository baseline and scanner scope. Commit the annotations and this
+ handoff together on the parent capability-observer branch, then re-run the
+ protected stack without force-pushing or bypassing the gate. Parent commit
+ `49612946138b1021f80c9f8d2a4d06f1610825db` is now propagated into this child
+ by a normal merge commit.

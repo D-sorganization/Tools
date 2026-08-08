@@ -48,6 +48,9 @@ const build = (observations: readonly CapabilitySampleObservation[], maxRows = 4
 const records = (value: unknown): Record<string, unknown>[] =>
   value as Record<string, unknown>[];
 
+const ASCII_DIGEST = "df36f765afdf508d00a3d264911ce5b6f07e25da3744b187596d67487ea3be5f"; // pragma: allowlist secret
+const UNICODE_DIGEST = "18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0"; // pragma: allowlist secret
+
 const mutate = (
   apply: (draft: Record<string, unknown>) => void,
 ): CapabilitySampleObservation => {
@@ -265,7 +268,7 @@ describe("capability observation wire parity", () => {
     const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(json));
     expect(Array.from(new Uint8Array(digest), (byte) =>
       byte.toString(16).padStart(2, "0")).join(""))
-      .toBe("df36f765afdf508d00a3d264911ce5b6f07e25da3744b187596d67487ea3be5f");
+      .toBe(ASCII_DIGEST);
   });
 
   it("has stable Unicode code-point ordering across runtimes", async () => {
@@ -282,7 +285,7 @@ describe("capability observation wire parity", () => {
     const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(json));
     expect(Array.from(new Uint8Array(digest), (byte) =>
       byte.toString(16).padStart(2, "0")).join(""))
-      .toBe("18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0");
+      .toBe(UNICODE_DIGEST);
   });
 
   it("emits canonical raw number tokens at rounding and exponent edges", () => {

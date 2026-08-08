@@ -125,3 +125,10 @@ the changed-test assertion allowlist. The branch now uses exact-path exemptions
 for those two non-test modules while retaining assertion enforcement for every
 behavioral test file. Commit and push this repair normally with the campaign
 handoff update; never amend or force-push the published head.
+
+The parent capability-observer repair is commit
+`49612946138b1021f80c9f8d2a4d06f1610825db`. Its four pinned cross-runtime
+digest assertions use exact inline `detect-secrets` allowlist annotations; no
+scanner path or baseline was weakened. This child branch now incorporates that
+parent head through a normal merge commit so protected checks can rerun on the
+actual stacked ancestry.
