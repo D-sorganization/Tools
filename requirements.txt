@@ -45,4 +45,4 @@ pygments>=2.20.0,<2.21.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via
 pyyaml>=6.0.1  # YAML parser and emitter
 
 # Web Automation & Testing
-playwright>=1.61.0  # Browser automation and testing framework
+playwright>=1.62.0  # Browser automation and testing framework
