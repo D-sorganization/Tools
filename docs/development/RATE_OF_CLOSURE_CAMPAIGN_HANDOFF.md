@@ -599,10 +599,11 @@ remains an explicit fail-closed boundary.
 
 ## 2026-08-07 responsive wind workflow checkpoint
 
-Branch `feat/4199-wind-workflow` is an unmerged child of exact draft PR #4281
-head `8b8690e8760d82ba814e8d95588d2540d28a6759`.  It must be published as a
-new stacked draft based on `feat/4199-wind-scalar-adapter`; do not extend,
-retarget, or rewrite #4281.
+Branch `feat/4199-wind-workflow` is published as
+[draft PR #4282](https://github.com/D-sorganization/Tools/pull/4282) at exact
+implementation head `fdcc25008`.  It is stacked on exact draft PR #4281 head
+`8b8690e8760d82ba814e8d95588d2540d28a6759`; do not extend, retarget, rewrite,
+or merge ahead of #4281.
 
 The slice delivers matched PyQt6 and React current-launch wind-strategy
 workflows on the shared `wind-strategy-analysis/v2` and

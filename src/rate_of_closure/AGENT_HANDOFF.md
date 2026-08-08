@@ -331,10 +331,11 @@ python3 -m mypy src/rate_of_closure src/shared/python/swing_sim
 
 ## 2026-08-07 Wind-Strategy Workflow Continuation
 
-The active child branch is `feat/4199-wind-workflow`, based on exact published
-PR #4281 head `8b8690e8760d82ba814e8d95588d2540d28a6759`.  Do not fold this work into
-PR #4281: publish it as a separate draft stacked on
-`feat/4199-wind-scalar-adapter` after final review.
+The active child branch is `feat/4199-wind-workflow`, published as
+[draft PR #4282](https://github.com/D-sorganization/Tools/pull/4282) at exact
+implementation head `fdcc25008`, stacked on exact PR #4281 head
+`8b8690e8760d82ba814e8d95588d2540d28a6759`.  Do not fold this work into,
+retarget, or merge it ahead of PR #4281.
 
 This branch turns the shared `scalar-ensemble/v1` wind adapter into matched
 end-user workflows.  Python runs the immutable request in a `QThread`; React
