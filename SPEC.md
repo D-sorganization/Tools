@@ -45,6 +45,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
 ### 2026-08-06 Impact-to-Flight Solution-Family Foundation
 
 - Python and TypeScript share strict `impact-solution-request/v1` and
@@ -97,6 +98,30 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Complete catalog and result serialization is deterministic and pinned by a
   cross-language SHA-256 fixture. UI, API, and Rust/WASM adapters remain
   explicit downstream integration work.
+
+### 2026-08-07 Flight-to-ground transfer contract
+
+- The self-facaded Python `swing_sim.ground` package owns strict versioned
+  request and result contracts in canonical target-frame SI units. Requests
+  contain two full 3D states that bracket physical sphere/surface contact,
+  complete planar material data, calibration, and reproducibility provenance.
+- Results preserve ordered phases and event ledgers and keep carry, bounce-air,
+  skid, roll, accumulated surface path, final displacement, and launch-to-rest
+  horizontal distance distinct. Status, termination, trajectory, events, and
+  summaries are validated as one state machine and cannot fabricate missing
+  ground behavior.
+- Target-frame positions use the ball centre at launch/tee as their required
+  zero origin. Bounce counts include only post-first-contact `bounce` events,
+  keeping the initial contact impulse distinct.
+- Draft 2020-12 schemas, fail-closed current-version migration gateways, a
+  shared canonical-number JSON fixture, and a one-way qualified projection to
+  the legacy `GroundModelResult` provide deterministic integration boundaries.
+  Existing flight output is not accepted until it supplies full terminal
+  angular velocity and two states bracketing ball-radius/terrain contact.
+- Event ledgers retain signed pre/post linear and angular states. Unavailable
+  results identify missing required fields with typed reason and provenance;
+  duplicate JSON keys, unsafe cross-runtime integers, surrogate text, and raw
+  out-of-range values fail closed before normalization.
 
 ### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
 
@@ -1083,6 +1108,7 @@ high_mm)` exposes the face-curvature normal (gradient of the
   desktop app with PyInstaller; the web app packages via Tauri.
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
+
 ### 2026-08-05 Wedge impact-point kinematics and AoA attribution
 
 - `shared.python.golf_club` defines an immutable, frame-explicit rigid-body

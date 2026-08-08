@@ -80,3 +80,24 @@ toolstrip, persistent File operations, Glossary/Theme/hotkeys, module visibility
 Impact/Swing/Flight multi-view compositor, and distinct plot/legend controls. Per
 the epic sequencing contract, implementation starts only after the current
 ball-flight/variation/wedge campaign reaches its declared completion gate.
+
+## 2026-08-07 ground-distance authority note
+
+Branch `feat/4268-ground-contract`, stacked from PR #4283 head
+`60ac5b46c78988225862d9b89a33ddc3656a3413`, adds the strict
+`flight-to-ground-request/v1` and `flight-to-ground-result/v1` authority for
+issue #4268. Launch-monitor total distance and roll remain unavailable unless a
+complete qualified ground result is explicitly projected through
+`to_ground_model_result`; carry is never substituted. The implementation and
+both handoff updates are committed together as `SELF`. Issue #4269 must supply
+terminal 3D angular velocity and physical sphere/terrain contact bracketing
+before analytics can consume the new contract.
+
+The v1 boundary now preserves signed pre/post angular state on every ground
+event and carries typed field/reason/provenance evidence for unavailable input.
+Its strict JSON entry points reject duplicate keys, unsafe cross-runtime
+integers, surrogate text, and raw range violations before canonical rounding.
+
+Visualization child issue #4284 now extends epic #4218 with bounded clubhead
+camera tracking and canonical Face On, Down the Line, and Overhead snap views
+for matched PyQt/React 3D animations.

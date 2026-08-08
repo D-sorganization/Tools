@@ -601,27 +601,27 @@ remains an explicit fail-closed boundary.
 
 Branch `feat/4199-wind-workflow` is published as
 [draft PR #4282](https://github.com/D-sorganization/Tools/pull/4282) at exact
-implementation head `fdcc25008`.  It is stacked on exact draft PR #4281 head
+implementation head `fdcc25008`. It is stacked on exact draft PR #4281 head
 `8b8690e8760d82ba814e8d95588d2540d28a6759`; do not extend, retarget, rewrite,
 or merge ahead of #4281.
 
 The slice delivers matched PyQt6 and React current-launch wind-strategy
 workflows on the shared `wind-strategy-analysis/v2` and
-`scalar-ensemble/v1` authorities.  It adds off-GUI-thread/off-main-thread
+`scalar-ensemble/v1` authorities. It adds off-GUI-thread/off-main-thread
 execution, exact progress, cancellation and teardown, canonical target reuse,
 all-variable cohort-aware scatter, null-preserving generic CSV, explicit
-availability, captured calculation basis, and stale-result invalidation.  The
+availability, captured calculation basis, and stale-result invalidation. The
 managed plot controls reset toolbar history and expose Auto Fit, zoom, and
-legend placement.  React data marks are clipped to the plot region and the
-axes have numeric ticks/gridlines.  Its workspace is genuinely code-split,
+legend placement. React data marks are clipped to the plot region and the
+axes have numeric ticks/gridlines. Its workspace is genuinely code-split,
 not hidden behind a raised bundle-warning threshold.
 
-Native-window QA at 1280 x 768 found and closed two late usability gaps.  Ball
+Native-window QA at 1280 x 768 found and closed two late usability gaps. Ball
 flight now has an accessible Loop control in both clients and wraps without
-creating a second timer/animation frame.  The PyQt wind panel now uses compact
+creating a second timer/animation frame. The PyQt wind panel now uses compact
 two-column Setup and plot-first Results views, switches to Results after a
 successful run, and leaves run/cancel/export and progress/status continuously
-available.  A live five-trial run completed 5/5 with the captured basis,
+available. A live five-trial run completed 5/5 with the captured basis,
 summary, scatter, native pan/zoom, Auto Fit, and legend placement visible.
 The in-app browser connection refused localhost navigation under its URL
 policy, so React visual evidence remains the full component suite and
@@ -636,7 +636,7 @@ Current primary validation is:
   build, structural line/function budgets, and `git diff --check`: passed.
 
 The five Python skips are the absent optional `swing_core` and `tools_core`
-wheel fast paths, not failures.  The two warning classes are established
+wheel fast paths, not failures. The two warning classes are established
 Hypothesis collection configuration and the empty polynomial preview legend.
 Hosted CI, required review, mergeability, and exact deployed/default-branch
 state remain unproven until the new child PR is published and protected checks
@@ -647,13 +647,13 @@ The independent rolling-ground audit refined epic #4267 at
 It defines carry, final coordinates, launch-monitor total displacement, and
 bounce/skid/roll/ground path lengths separately; requires full angular state
 and arbitrary-normal physical contact; and restricts UpstreamDrift terrain
-reuse to a one-way versioned adapter.  The four-surface audit refined #4260 at
+reuse to a one-way versioned adapter. The four-surface audit refined #4260 at
 <https://github.com/D-sorganization/Tools/issues/4260#issuecomment-5223106465>:
 CI must prove the complete capability by `tools.pyqt6`, `tools.react`,
 `upstreamdrift.pyqt6`, and `upstreamdrift.react` Cartesian product with
-commit-fresh evidence.  A launcher/native-window handoff is not parity.
+commit-fresh evidence. A launcher/native-window handoff is not parity.
 
-The next universal-ensemble slice is the capability optimizer.  Its exact
+The next universal-ensemble slice is the capability optimizer. Its exact
 streaming observation/cancellation/scalar-adapter contract is recorded at
 <https://github.com/D-sorganization/Tools/issues/4197#issuecomment-5223170071>.
 Keep the ordinary optimization result compact, stream every attempted sample
@@ -664,29 +664,29 @@ invent outputs for no-impact or failed rows.
 
 PR #4282 initially failed the hosted Python 3.12 delta mypy gate because the
 wind lifecycle mixin and `QWidget` exposed incompatible `closeEvent`
-signatures.  Commit `424b4c395370aea26069386c070a65f7abe885bc` moves the Qt
+signatures. Commit `424b4c395370aea26069386c070a65f7abe885bc` moves the Qt
 override onto a concrete `WindStrategyGroupBox` and leaves the reusable mixin
-responsible only for cancellation/join behavior.  Fresh Python 3.12 mypy
+responsible only for cancellation/join behavior. Fresh Python 3.12 mypy
 passes for all 11 changed source files; Ruff, format, diff validation, and the
-19 focused wind-panel/worker/playback tests also pass.  This is a scoped CI
+19 focused wind-panel/worker/playback tests also pass. This is a scoped CI
 repair, not evidence that the still-queued protected stack is merge-ready.
 
 The current remote UpstreamDrift audit basis is `main` at
-`0782853295e005af68818617e4725eb980890f43`.  Reusable ground assets exist in
+`0782853295e005af68818617e4725eb980890f43`. Reusable ground assets exist in
 its Rust contact kernel, split terrain/material package, compressible-turf
-helpers, and putting roll engine, but none is a qualified drop-in.  Material
+helpers, and putting roll engine, but none is a qualified drop-in. Material
 round trips lose seven physical fields, the elevation-grid boundary contract
 has two failing cases, terminal flight spin is not exported as a full vector,
 and the Rust contact result uses scalar spin and a per-unit-mass energy value
-labelled as joules.  Tools must own a strict, versioned target-frame
+labelled as joules. Tools must own a strict, versioned target-frame
 flight-to-ground request/result authority; UpstreamDrift may contribute only a
 one-way explicit adapter.
 
-The parity matrix remains materially incomplete.  Tools PyQt is the broadest
+The parity matrix remains materially incomplete. Tools PyQt is the broadest
 native surface; Tools React still has reduced impact/flight model authority;
 UpstreamDrift PyQt is an external launcher; and UpstreamDrift React has no Rate
-of Closure route.  A separate generic simulator, copied TypeScript physics,
-or launcher tile does not satisfy parity.  Required next evidence is a
+of Closure route. A separate generic simulator, copied TypeScript physics,
+or launcher tile does not satisfy parity. Required next evidence is a
 commit-fresh capability-by-surface manifest backed by shared golden fixtures,
 one authoritative Tools physics contract, thin UI adapters, and an immutable
 UpstreamDrift Tools pin.
@@ -694,7 +694,7 @@ UpstreamDrift Tools pin.
 ### 2026-08-07 capability-observation continuation
 
 Active branch `feat/4197-capability-observer` is based exactly on PR #4282
-head `6e3c1029f1f3a80ae09020ef7d0afacb3c0d5484`.  It must remain a normal
+head `6e3c1029f1f3a80ae09020ef7d0afacb3c0d5484`. It must remain a normal
 stacked child of `feat/4199-wind-workflow`; do not retarget, rewrite, or merge
 it ahead of that parent.
 
@@ -705,27 +705,27 @@ validated implementation/hardening head is
 will advance that head without changing the tested runtime behavior.
 
 The optimizer now accepts optional synchronous observation and cooperative
-cancellation hooks without retaining traces in `OptimizationResult`.  Every
+cancellation hooks without retaining traces in `OptimizationResult`. Every
 attempt emits one immutable `capability-sample-observation/v1` record in exact
-candidate/club/sample order.  Python and TypeScript normalize evaluator
+candidate/club/sample order. Python and TypeScript normalize evaluator
 exceptions, malformed results, no-impact, nonconvergence, and missing landing
 metrics identically, preserve all valid evaluator metrics and provenance, and
-never expose raw exception text.  Cancellation is checked before the next
+never expose raw exception text. Cancellation is checked before the next
 evaluator call and reports exact attempted/total counts.
 
 The app-layer adapters convert streamed observations into the shared
-`scalar-ensemble/v1` authority.  They declare the complete scalar flight
+`scalar-ensemble/v1` authority. They declare the complete scalar flight
 catalog, preserve unavailable outputs as null, include nominal and perturbed
 parameters plus target diagnostics, require a contiguous zero-based prefix,
-and reject overflow before retaining a row.  TypeScript deep-parses and
-freezes caller input before storage.  Stable JSON ordering is Unicode
+and reject overflow before retaining a row. TypeScript deep-parses and
+freezes caller input before storage. Stable JSON ordering is Unicode
 code-point based in both runtimes; ASCII and Unicode parity fixtures hash to
 `df36f765afdf508d00a3d264911ce5b6f07e25da3744b187596d67487ea3be5f`
 and `18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0`.
 
 Current local evidence on this branch is 120 Python flight/adapter tests
 passed with four expected optional `tools_core` skips, and 96 React files / 580
-tests passed.  Python 3.12 mypy, Ruff, Black, TypeScript, zero-warning ESLint,
+tests passed. Python 3.12 mypy, Ruff, Black, TypeScript, zero-warning ESLint,
 the Vite production build, structural budgets, and `git diff --check` pass.
 This completes the stream/adapter contract slice of #4197, not its remaining
 end-user optimization workflow or the wider release epic.
@@ -735,16 +735,16 @@ all corrected before opening a PR: native Python/JavaScript number formatting
 was not byte-stable at IEEE rounding and exponent edges; Unicode title-casing
 could derive different labels; public observations admitted impossible
 status/metric combinations; and the TypeScript declaration signature could
-collide when identifiers contained its delimiters.  The replacement canonical
+collide when identifiers contained its delimiters. The replacement canonical
 writer emits code-point-sorted JSON with raw numeric tokens, fixed 11-decimal
 half-away rounding, decimal integer-valued magnitudes, and normalized negative
-zero.  ASCII-only initial-letter label casing, strict landing/incomplete metric
+zero. ASCII-only initial-letter label casing, strict landing/incomplete metric
 invariants, and structural declaration comparison now match in both runtimes.
 
 Adversarial regression coverage includes binary half boundaries, `1e-12`,
 `1e-11`, large integer-valued magnitudes, negative zero, Unicode identifiers,
 delimiter-bearing declarations, non-finite inputs, and every effective/source
-status combination.  Updated evidence is 135 Python flight/adapter tests passed
+status combination. Updated evidence is 135 Python flight/adapter tests passed
 with four expected Rust-wheel skips and 96 React files / 584 tests passed, plus
 Python 3.12 mypy, Ruff, Black, TypeScript, ESLint, Vite build, structural
 budgets, and diff checks. The initial implementation commit was
@@ -753,7 +753,7 @@ budgets, and diff checks. The initial implementation commit was
 Protected CI, reviews, and every parent PR remain required.
 
 The first hosted CI Standard run on PR #4283 reached delta mypy after checkout,
-dependency installation, Ruff, and formatting passed.  With unchanged imports
+dependency installation, Ruff, and formatting passed. With unchanged imports
 skipped, mypy treated the request fields used by the new private runtime as
 `Any` and rejected `_OptimizationContext.total_count` for returning an implicit
 `Any`. The request contract already guarantees positive integer operands; the
@@ -762,3 +762,84 @@ seven-file Python 3.12 CI mypy command, Ruff/format, diff check, and the full
 135-test flight/adapter suite now pass (four optional Rust-wheel skips). This
 fix and handoff update are committed together as `SELF`; resolve the exact head
 with `git rev-parse HEAD` and push normally.
+
+### 2026-08-07 strict flight-to-ground contract continuation
+
+Active worktree
+`C:\Users\diete\Repositories\Tools-worktrees\ground-transition-contract` on
+branch `feat/4268-ground-contract` starts exactly at protected draft PR #4283
+head `60ac5b46c78988225862d9b89a33ddc3656a3413`. It is the stacked implementation
+for [issue #4268](https://github.com/D-sorganization/Tools/issues/4268) under
+ground-model epic #4267. The implementation and this durable handoff update are
+committed together as `SELF`; resolve the exact commit with `git rev-parse HEAD`.
+
+The new self-facaded `shared.python.swing_sim.ground` package owns strict
+`flight-to-ground-request/v1` and `flight-to-ground-result/v1` contracts. Every
+record is frozen, SI-only, and explicit about the canonical target frame. A
+request carries two full signed 3D flight states that bracket physical
+sphere/terrain contact, ball radius, mass, rotational inertia factor, complete
+planar surface geometry/material data, provider/version identity, calibration,
+and reproducibility provenance. It rejects non-finite or Boolean numbers,
+unknown nested fields, unsupported versions/units/frames, non-unit or downward
+normals, non-incoming contact, and states that do not straddle the physical
+surface gap.
+
+Results distinguish carry, bounce-air, skid, roll, accumulated surface path,
+final downrange/offline, and launch-to-final horizontal total distance. Ordered
+phase samples, event ledgers, status/termination matrices, warnings,
+calibration, and provenance fail closed: failed/unavailable results cannot
+fabricate trajectory summaries; rest samples cannot still move or spin; event
+bounce counts and trajectory-derived distance summaries must agree. The only
+legacy projection is the explicit one-way `to_ground_model_result` adapter,
+which accepts complete qualified results and never infers total or roll from
+carry.
+
+Machine-readable Draft 2020-12 request/result schemas, deterministic compact
+serialization, explicit current-version migration gateways, a shared
+Python/TypeScript/Rust/WASM golden fixture, contract documentation, and a pinned
+public API are included. The local gate is green: 45 focused contract/API/
+schema/migration/parity tests and the full Python 3.12 flight-plus-ground suite
+(180 passed, four expected optional Rust-wheel skips), plus Ruff, formatting,
+production mypy, schema meta-validation, structural file/function budgets, and
+diff checks. The Python 3.12 environment reports the pre-existing SciPy/NumPy
+compatibility warning; no new ground test warning is introduced.
+
+Independent pre-publication review then found four release blockers before any
+commit or PR: Python-native JSON number spelling was not cross-runtime stable;
+JSON Schema integers and runtime integer parsing disagreed on values such as
+`64.0`; direct constructors could accept invalid nested records; and a plane
+could move along its normal without a reference epoch while zero-speed contact
+was classified as incoming. The fixes reuse the shared 11-decimal canonical
+numeric writer, normalize all contract floats and integral JSON numbers, pin
+adversarial numeric tokens in the golden fixture, validate every nested record
+at the public constructor boundary, restrict v1 surface motion to the tangent
+plane, and require both bracket states to have strictly incoming relative normal
+velocity. First-contact event/time/position/output-state identity and complete
+event-range checks are also enforced.
+
+Two subsequent adversarial reviews found additional fail-closed gaps. Explicit
+phase/event transitions and status/termination pairings now prevent regressions;
+terminal event time, position, linear/angular state, phase, and completion are
+bound to the final trajectory point; duplicate JSON object keys are rejected at
+every nesting depth; and the target-frame origin and post-first-contact bounce
+count are unambiguous. Event ledgers preserve signed pre/post angular state,
+unavailable results carry typed field/reason/provenance records, raw physical
+and relational bounds are checked before canonical rounding, and unsafe or
+oversized integers, noncanonical edge whitespace, and surrogate text fail
+closed with typed validation errors. All files and functions were split back
+under the repository's 400-line/50-line/four-parameter limits. Two final
+independent re-reviews found no remaining publication blocker in #4268 scope.
+
+Do not connect this contract to current flight output by substituting initial
+spin or a launch-plane crossing. Issue #4269 must first propagate full terminal
+angular velocity and two states bracketing ball-radius/terrain contact across
+Python, TypeScript, Rust, and WASM. UpstreamDrift remains a one-way adapter
+consumer; Tools must not import it, and its lossy terrain material round trip and
+elevation-grid boundary defects require separate repair evidence.
+
+New visualization issue
+[#4284](https://github.com/D-sorganization/Tools/issues/4284) is a child of
+toolstrip/workspace epic #4218. It tracks bounded clubhead camera following and
+Face On, Down the Line, and Overhead snap views with canonical frame definitions,
+per-viewport state, PyQt/React parity, playback/zoom interaction coverage, and
+rendered computer-control QA.
