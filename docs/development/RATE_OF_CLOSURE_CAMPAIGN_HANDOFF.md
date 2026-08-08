@@ -751,3 +751,14 @@ budgets, and diff checks. The initial implementation commit was
 `43ad5e35be299f2ab11260784ee707fc5721fd2e`; corrections are committed at
 `5c6073bd68ed4c8f23b343d4d11c2dc4277ea246` and published in draft PR #4283.
 Protected CI, reviews, and every parent PR remain required.
+
+The first hosted CI Standard run on PR #4283 reached delta mypy after checkout,
+dependency installation, Ruff, and formatting passed.  With unchanged imports
+skipped, mypy treated the request fields used by the new private runtime as
+`Any` and rejected `_OptimizationContext.total_count` for returning an implicit
+`Any`. The request contract already guarantees positive integer operands; the
+scoped fix makes the return boundary explicit with `int(...)`. The exact
+seven-file Python 3.12 CI mypy command, Ruff/format, diff check, and the full
+135-test flight/adapter suite now pass (four optional Rust-wheel skips). This
+fix and handoff update are committed together as `SELF`; resolve the exact head
+with `git rev-parse HEAD` and push normally.

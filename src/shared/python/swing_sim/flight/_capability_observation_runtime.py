@@ -41,7 +41,7 @@ class _OptimizationContext:
 
     @property
     def total_count(self) -> int:
-        return self.request.candidate_budget * self.request.ensemble_size
+        return int(self.request.candidate_budget * self.request.ensemble_size)
 
 
 @dataclass(frozen=True)

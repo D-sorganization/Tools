@@ -469,3 +469,12 @@ budget gates still green. The corrections are committed and published in draft
 PR #4283. Monitor its protected checks and reviews together with PRs
 #4279–#4282; do not retarget, rewrite, bypass, or merge this child ahead of
 `feat/4199-wind-workflow`.
+
+The first hosted CI Standard run found one actionable delta-mypy boundary in
+the new `_capability_observation_runtime.py`: unchanged imported request fields
+resolve as `Any` under `--follow-imports=skip`, so `total_count` now casts their
+already contract-validated product to `int`. No runtime behavior changes. The
+exact seven-file Python 3.12 mypy command, Ruff/format, diff check, and full
+135-test flight/adapter suite pass with four optional Rust-wheel skips. This
+fix and handoff update are `SELF`; resolve with `git rev-parse HEAD`, push
+normally, and monitor the fresh protected checks.
