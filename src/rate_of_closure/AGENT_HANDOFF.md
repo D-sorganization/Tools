@@ -31,10 +31,14 @@ The first hosted quality-gate run on #4294 rejected the dict-splat
 construction of `CapabilityWorkflowInputs` (`**dict[str, float]` cannot
 be proven against integer fields under the CI mypy context); commit
 `101020b5b` builds the snapshot with explicit typed keyword arguments.
-Known stack-wide risk for the `tests (3.10)` matrix job: many Rate
-modules use bare `from enum import StrEnum` (3.11+) instead of
-`shared.python.compatibility.StrEnum`, which already broke that job on
-PR #4280 and belongs to the branches that introduced those imports.
+Do not "fix" the `tests (3.10)` `StrEnum` ImportError seen on PR #4280
+by converting bare `from enum import StrEnum` to the compatibility
+shim. `pyproject.toml` has declared `requires-python = ">=3.11"` since
+2026-05-14, so those imports are correct; `shared.python.compatibility`
+serves older subsystems only. Branch protection requires exactly
+`quality-gate` and `tests (3.11)`, and `ci-standard.yml` states that
+only the 3.11 lane is required (`fail-fast: false` protects it). The
+3.10 lane is a stale-matrix artifact, not a merge blocker.
 
 ## 2026-08-08 Matched Capability Optimization Workspace
 
