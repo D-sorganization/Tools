@@ -7,6 +7,7 @@ import {
   type FlightMetricId,
   type ValueStatus,
 } from "./ballFlightMetricContract";
+import { spinAxisTiltDeg } from "./spinAxisConvention";
 
 export type AvailabilityReason = "insufficient_trajectory" | "no_ground_crossing" |
   "zero_horizontal_speed" | "zero_spin" | "target_not_configured" |
@@ -163,6 +164,7 @@ const launchValues = (inputs: FlightMetricInputs): Map<FlightMetricId, FlightMet
   const initial = inputs.trajectory[0].velocityMps;
   const horizontal = Math.hypot(initial[0], initial[2]);
   const spinMagnitude = norm(inputs.spinVectorRpm);
+  const spinAxisTilt = spinAxisTiltDeg(inputs.spinVectorRpm);
   values.set("initial_velocity", available("initial_velocity", initial, "trajectory.initial_velocity"));
   values.set("ball_speed", available("ball_speed", norm(initial), "derived.initial_velocity"));
   values.set("vertical_launch_angle", available("vertical_launch_angle",
@@ -172,8 +174,8 @@ const launchValues = (inputs: FlightMetricInputs): Map<FlightMetricId, FlightMet
   values.set("launch_direction", horizontal > MIN_SPEED
     ? available("launch_direction", degrees(Math.atan2(initial[2], initial[0])), "derived.initial_velocity")
     : unavailable("launch_direction", "zero_horizontal_speed"));
-  values.set("spin_axis_tilt", spinMagnitude > MIN_SPEED
-    ? available("spin_axis_tilt", degrees(Math.atan2(inputs.spinVectorRpm[1], inputs.spinVectorRpm[2])), "derived.spin_vector_rpm")
+  values.set("spin_axis_tilt", spinAxisTilt !== null
+    ? available("spin_axis_tilt", spinAxisTilt, "derived.spin_vector_rpm")
     : unavailable("spin_axis_tilt", "zero_spin"));
   return values;
 };

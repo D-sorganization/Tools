@@ -1,7 +1,7 @@
 {
   "schema_version": "ball-flight-metrics-parity/v1",
-  "catalog_sha256": "32699f61de6108f766e911fc6a02a0a08fe80204e83745a069ee55dca184ac14",
-  "analytic_result_sha256": "dcb78bb3138aa826f9099bc137813ef2a6b2550117624507f593410400d88772",
+  "catalog_sha256": "7c6e6d77c88d52335179ac04e2a4cc55504598cc17ea2d3bef6e50546aeb4f6c",
+  "analytic_result_sha256": "5e4c3506e2ce5b19a7eedb99dfff7ad1a94365a161d8cb7436169ed6abdea621",
   "analytic_case": {
     "trajectory": [
       {"time_s": 0.0, "position_m": [0.0, 0.0, 0.0], "velocity_m_s": [10.0, 10.0, 1.0]},
@@ -20,7 +20,7 @@
       "flight_time": 2.5,
       "landing_angle": 30.83814404628488,
       "launch_direction": 5.710593137499642,
-      "spin_axis_tilt": 91.1457628381751,
+      "spin_axis_tilt": -91.1457628381751,
       "target_downrange_residual": 1.0,
       "target_lateral_residual": -2.0,
       "target_residual": 2.23606797749979,

@@ -70,7 +70,7 @@ const IDENTITIES: Record<FlightMetricId, Identity> = {
   launch_direction: identity("Launch Direction", "Horizontal heading of initial velocity from the target line.", "deg", "derived", "positive_right", "launch", "atan2(v_z,v_x)", "nonzero horizontal speed", true),
   spin_vector: identity("Spin Vector", "Post-separation angular-velocity vector in target-frame components.", "rpm", "input", "vector_components", "launch", "vector(omega_x,omega_y,omega_z)", "post-impact spin state"),
   total_spin: identity("Total Spin", "Magnitude of the post-separation spin vector.", "rpm", "derived", "nonnegative", "launch", "norm(spin_vector)", "post-impact spin state", true),
-  spin_axis_tilt: identity("Spin Axis Tilt", "Signed tilt of the spin axis from +right toward +up.", "deg", "derived", "positive_up", "launch", "atan2(omega_y,omega_z)", "nonzero spin", true),
+  spin_axis_tilt: identity("Spin Axis Tilt", "Signed tilt from +right toward -up; positive produces fade/right curvature.", "deg", "derived", "positive_right", "launch", "atan2(-omega_y,omega_z)", "nonzero spin", true),
   landing_position: identity("Landing Position", "Linearly interpolated first descending ground crossing.", "m", "derived", "vector_components", "landing", "interpolate(position,y=0)", "ground crossing"),
   landing_velocity: identity("Landing Velocity", "Velocity interpolated at the first descending ground crossing.", "m/s", "derived", "vector_components", "landing", "interpolate(velocity,y=0)", "ground crossing"),
   carry_distance: identity("Carry Distance", "Horizontal distance from launch to first ground contact; excludes bounce and roll.", "m", "derived", "nonnegative", "landing", "hypot(delta_x,delta_z)", "ground crossing", true),

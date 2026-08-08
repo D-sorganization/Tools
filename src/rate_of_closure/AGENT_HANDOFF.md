@@ -1,7 +1,35 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-07
+> Last updated: 2026-08-08
+
+## 2026-08-08 Model-Backed Capability Flight Evaluator
+
+Active branch `feat/4197-capability-flight-evaluator` is a normal child of
+`feat/4197-capability-observer` at exact parent
+`49612946138b1021f80c9f8d2a4d06f1610825db` (draft PR #4283). Do not retarget,
+rewrite, or merge it ahead of that parent.
+
+The new shared Python and React-model adapters bind the real capability profile
+and optimization request to the actual Waterloo/Penner flight model. They use
+the established `ball_speed`, `launch_angle`, and `launch_direction` IDs,
+explicit sourced per-club spin defaults for older profiles, paired optional
+variable `total_spin` and `spin_axis_tilt`, positive-fade/right convention,
+canonical target-frame trajectory/spin conversion, target residuals, all
+available scalar metrics, typed nonconvergence, and fail-fast invariants.
+Profile units, safe bounds, and physical domains are enforced before an
+integration call. The post-impact evaluator never invents `no_impact`.
+
+Independent-review corrections removed the global 2,686-rpm fallback, aligned
+the canonical metric catalog with the existing app convention, unified
+cross-runtime sampling validation, narrowed exception handling, and added a
+shared 16-scalar parity fixture. Result, impact, and variation producers now
+share the same gyro-projected tilt function. Current complete-suite evidence is
+138 Python passes / four optional-Rust skips and 97 React files / 597 tests. Ruff,
+formatting, targeted mypy, TypeScript, zero-warning ESLint, and the 176-module
+Vite build also pass. This completes the qualified
+evaluator prerequisite, not issue #4197: matched PyQt6/React authoring, worker,
+progress/cancel, scatter/table/export, persistence, and rendered QA remain.
 
 ## 2026-08-07 Universal Variation Visualization Continuation
 

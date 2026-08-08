@@ -1,8 +1,40 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-07. This isolated integration is published as draft
+Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
+
+## 2026-08-08 Capability evaluator continuation
+
+The active child branch is `feat/4197-capability-flight-evaluator`, based
+exactly on capability-observation PR #4283 head
+`49612946138b1021f80c9f8d2a4d06f1610825db`. It adds the first qualified
+full-flight evaluator for #4197 in shared Python and the React model layer.
+The factory binds `player-capability-profile/v1` plus
+`capability-optimization-request/v1`; validates requested clubs, exact sample
+fields, units, finite values, declared safe bounds, and physical domains; runs
+the real Waterloo/Penner model; converts trajectory and spin into the canonical
+target frame; binds the request target; and emits every available scalar
+canonical metric. Existing three-variable profiles require a sourced spin
+default for every requested club, while profiles may opt into paired variable
+`total_spin` and `spin_axis_tilt`. Positive tilt is fade/right, matching the
+existing Flight Explorer, glossary, D-plane, variation, and solver convention.
+
+No-ground-crossing horizons are typed `nonconverged`; expected Python
+floating-point overflow is typed `failed` without leaking exception text;
+contract and programming errors surface; and this post-impact adapter cannot
+report `no_impact`. Python uses SciPy RK45 and React uses fixed-step RK4, so
+logical model/version and metric-set parity are exact while numeric parity is
+banded through `capability_flight_evaluator_parity_v1.json` and integrator
+provenance remains runtime-specific. Canonical result, impact-diagnostic, and
+variation producers share one gyro-projected spin-axis tilt calculation.
+
+Post-review full-suite evidence is `138 passed, 4 skipped` in Python and
+`97` files / `597` React tests. Ruff, formatting, targeted mypy, TypeScript,
+zero-warning ESLint, and the 176-module Vite build pass. The next required
+slice is the end-user PyQt6/React capability workspace with
+off-main-thread execution, progress/cancel, profile/target/environment editing,
+observation scatter/table/CSV, persistence, and rendered QA. Keep #4197 open.
 
 ## Integration checkout
 

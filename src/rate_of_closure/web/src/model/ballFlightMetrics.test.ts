@@ -13,6 +13,8 @@ import {
   type FlightMetricInputs,
   type FlightRunManifest,
 } from "./ballFlightMetrics";
+import { cross, deliveryDiagnostics, type DeliveryInput } from "./impactPhysics";
+import { spinAxisTiltDeg } from "./spinAxisConvention";
 
 const manifest: FlightRunManifest = {
   modelId: "analytic_fixture", modelVersion: "1.0.0",
@@ -104,5 +106,47 @@ describe("ball-flight result contract", () => {
         rollDistanceM: 2.7, bounceCount: 1.5, finalOfflineM: 4.5,
       },
     }, manifest)).toThrow(/bounceCount must be an integer/);
+  });
+
+  it("uses positive spin-axis tilt for fade/right curvature", () => {
+    const tilt = 10 * Math.PI / 180;
+    const result = deriveFlightMetricResult({
+      ...analyticInputs(),
+      spinVectorRpm: [0, -1000 * Math.sin(tilt), 1000 * Math.cos(tilt)],
+    }, manifest);
+
+    expect(result.scalar("spin_axis_tilt")).toBeCloseTo(10, 10);
+    expect(flightMetricCatalog().definition("spin_axis_tilt").signRule)
+      .toBe("positive_right");
+  });
+
+  it("projects gyro spin out consistently across result and impact producers", () => {
+    const spin: [number, number, number] = [500, -100, 1000];
+    const expected = spinAxisTiltDeg(spin);
+    const result = deriveFlightMetricResult({
+      ...analyticInputs(), spinVectorRpm: spin,
+    }, manifest);
+    const input: DeliveryInput = {
+      clubheadSpeedMps: 40, clubPathDeg: 12, faceAngleDeg: -4,
+      attackAngleDeg: -5, dynamicLoftDeg: 23,
+      impactOffsetToeMm: 0, impactOffsetHighMm: 0,
+    };
+    const diagnostics = deliveryDiagnostics(input);
+    const radians = (degrees: number) => degrees * Math.PI / 180;
+    const velocity = [
+      Math.cos(radians(input.attackAngleDeg)) * Math.cos(radians(input.clubPathDeg)),
+      Math.sin(radians(input.attackAngleDeg)),
+      Math.cos(radians(input.attackAngleDeg)) * Math.sin(radians(input.clubPathDeg)),
+    ] as [number, number, number];
+    const normal = [
+      Math.cos(radians(input.dynamicLoftDeg)) * Math.cos(radians(input.faceAngleDeg)),
+      Math.sin(radians(input.dynamicLoftDeg)),
+      Math.cos(radians(input.dynamicLoftDeg)) * Math.sin(radians(input.faceAngleDeg)),
+    ] as [number, number, number];
+    const impactExpected = spinAxisTiltDeg(cross(velocity, normal));
+
+    expect(expected).toBeCloseTo(Math.atan2(100, 1000) * 180 / Math.PI, 10);
+    expect(result.scalar("spin_axis_tilt")).toBeCloseTo(expected as number, 10);
+    expect(diagnostics.spinAxisTiltDeg).toBeCloseTo(impactExpected as number, 10);
   });
 });

@@ -1,113 +1,123 @@
-# AGENT_HANDOFF — Tools (monorepo root)
+# AGENT_HANDOFF — Tools
 
-> **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Update this file in every implementation commit and every push to `main`.
+> Last updated: 2026-08-08.
 
-## Where This Repo Is Headed
+## Current Rate of Closure continuation
 
-Tools is the D-sorganization fleet's shared engineering-tools monorepo (45+
-tools: PyQt6 GUIs, FastAPI/React web mirrors, Rust kernels). The current
-center of gravity is `src/rate_of_closure`, being grown from a single
-closure-rate calculator into a full swing → impact → ball-flight simulation
-platform under **Repository_Management#1390** (this handoff rollout) and a
-stack of golf-simulation epics:
+The active checkout is
+`C:\Users\diete\Repositories\Tools-worktrees\capability-flight-evaluator` on
+branch `feat/4197-capability-flight-evaluator`. It is based exactly on the
+published capability-observation branch at `49612946138b1021f80c9f8d2a4d06f1610825db`
+(draft PR #4283). Preserve that parent relationship: do not retarget, rebase,
+force-push, or merge this child ahead of its protected stack.
 
-| Epic                                                                          | Status (one line)                                                                                                                                                                                                   |
-| ----------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #4103 — Swing–Impact–Ball-Flight Simulation Platform                          | Phases 0-6 implemented on branch `feat/impact-simulation-platform`, consolidated into PR **#4119** (open, auto-merge armed, awaiting review). Phase 7 (WASM web parity swap, Pages CI) still open.                  |
-| #4120 — Investigation & Variation Suite (plotting/viewers/Monte Carlo/help)   | V1-V4 implemented, stacked on #4119, consolidated into PR **#4124** (open, draft-for-review, no auto-merge yet — targets `feat/investigation-suite`, itself stacked on #4119).                                      |
-| #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
-| #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model)     | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands.                                                                                                    |
+This continuation supplies the missing real forward evaluator for issue #4197.
+Python and TypeScript now bind an existing `player-capability-profile/v1` and
+`capability-optimization-request/v1`, validate requested clubs, parameter IDs,
+units, finite values, declared safe bounds, and physical flight domains, then
+run the actual Waterloo/Penner flight model. The adapters convert trajectory
+and spin into the canonical target frame, include the configured target in
+metric derivation, and return all available scalar `ball-flight-result/v1`
+metrics to the optimizer. Three-variable profiles require a sourced spin
+default for each requested club; there is no global driver fallback. Profiles
+may instead vary `total_spin` and `spin_axis_tilt` together. Positive tilt is
+the app-native fade/right convention, and each result records the spin source.
 
-The separate shared Club Builder epic #4146 is active. Its first dependency
-slice, #4147, lives on `feat/4147-club-builder-core` and establishes the
-UI-independent assembly mass/CG/inertia, frame, length-datum, and persistence
-contracts that the later shaft, CAD, export, fitting, and UI issues consume.
+Typed behavior is deliberate:
 
-Active infrastructure repair: #4155 hardens the Rust/PyO3 job against
-incomplete setup-python cache entries whose interpreter works but whose
-declared link library is missing. The repair is isolated on
-`fix/4155-rust-libpython-cache` and does not change simulation code.
+- a qualified ground crossing returns `complete`, including carry/offline and
+  target residuals;
+- a horizon without ground crossing returns `nonconverged` with no partial
+  metrics;
+- expected Python floating-point overflow returns `failed` with a stable
+  non-leaking reason, while programming/contract errors surface;
+- schema, unit, physical-domain, or safe-bound violations raise before physics;
+- this post-impact launch evaluator never fabricates `no_impact`.
 
-See `src/rate_of_closure/AGENT_HANDOFF.md` for the detailed stack breakdown
-and architecture pointers for this tool specifically.
+Current local evidence after the independent review corrections:
 
-## Must-Read Architecture Pointers
+- all shared flight tests: 138 passed / 4 optional-Rust skips;
+- complete React suite: 97 files / 597 tests passed;
+- shared 16-scalar parity fixture, both tilt signs, per-club default
+  provenance, physical domains, and supported coarse sampling are covered;
+- one shared gyro-projected tilt function now backs result, impact, and
+  variation producers in both runtimes;
+- Ruff, formatting, targeted mypy, TypeScript, and zero-warning ESLint pass;
+- Vite production build passes with 176 modules transformed;
+- new production modules are below 400 lines and functions below 50 lines.
 
-1. `CLAUDE.md` — repo-wide conventions, CI gate list, cross-repo dependency
-   rules (Tools is a leaf dependency; UpstreamDrift and Gasification_Model
-   consume it).
-2. `docs/architecture/CANONICAL_TOPOLOGY.md` — canonical repo topology policy.
-3. `SPEC.md` — living specification; §12 Change Log requires a dated row for
-   every PR touching `src/` (enforced by `spec-check.yml`, see gates below).
-4. `src/rate_of_closure/AGENT_HANDOFF.md`, `src/pendulum_simulator/AGENT_HANDOFF.md`,
-   `src/rotation_converter/AGENT_HANDOFF.md` — per-tool handoff docs.
-5. `docs/AGENT_HANDOFF_TEMPLATE.md` — template for adding a handoff doc to a
-   new tool.
+The next implementation slice is the user-facing capability optimization
+workflow in PyQt6 and React: profile/club/target/environment editing, worker
+progress and cancellation, observation-to-`scalar-ensemble/v1` scatter/table/
+CSV, versioned persistence, and rendered interaction review. Issue #4197 must
+remain open until that UI, protected CI, review, merge, and downstream parity
+are proven.
 
-## In-Flight Branches (what stacks on what)
+## Durable monorepo guidance
 
+Tools is the D-sorganization fleet's shared engineering-tools monorepo. It
+contains PyQt6 applications, FastAPI/React mirrors, and Rust kernels consumed
+by downstream repositories. Rate of Closure is only one package; preserve
+unrelated tool boundaries and user changes.
+
+Before changing public shared APIs, read:
+
+1. `CLAUDE.md` for repo-wide CI and downstream dependency rules;
+2. `docs/architecture/CANONICAL_TOPOLOGY.md` for repository topology;
+3. `docs/AGENT_HANDOFF_TEMPLATE.md` before adding another tool handoff;
+4. the target tool's own `AGENT_HANDOFF.md`.
+
+Any source/config/dependency change must update the canonical `SPEC.md`
+change log in the same PR unless an authorized `spec-exempt` path applies.
+Do not modify a public signature under `src/shared/python` without a
+coordinated migration for UpstreamDrift and other consumers. Do not import
+across unrelated package boundaries, regenerate API baselines to hide a
+breaking change, bypass hooks/checks, or create an ad hoc Pages workflow.
+
+## Protected stack and critical cautions
+
+- #4119 is still the outer platform PR and has unresolved integration/conflict
+  risk; none of the Rate campaign is released merely because a nested PR is
+  merged into another feature branch.
+- #4280 adds complete selected-scatter CSV/raw-table parity for #4144.
+- #4281 adds the shared wind scalar adapter; #4282 adds the PyQt/React wind
+  workflow; #4283 adds capability observation/cancellation and scalar adapters.
+- #4285 and #4288 are later ground-contract/flight-transfer descendants. Keep
+  their publication blockers separate from this evaluator slice.
+- Impact-interval PR #4133 is not present in the current #4119 head. Do not
+  repeat the stale claim that it is already integrated; reconcile its files and
+  tests explicitly before closing #4130.
+
+Use the verified GitHub App CLI route in the same PowerShell process:
+
+```powershell
+. C:\Users\diete\codex-tools\setup-github-for-codex.ps1
 ```
-main
- └─ feat/impact-simulation-platform   (PR #4119, epic #4103, auto-merge armed)
-     └─ feat/investigation-suite      (PR #4124, epic #4120, stacked on #4119)
-         └─ feat/course-showcase      (PR #4129, epic #4125, stacked on #4124)
-docs/agent-handoff-1390               (this branch, off origin/main, Repository_Management#1390)
+
+Never bypass protected checks, rewrite parent branches, use an administrator
+merge, or treat queued/skipped checks as passing evidence.
+
+## Required reading
+
+1. `AGENTS.md` for TDD, DbC, DRY, LoD, size, and GitHub rules.
+2. `CLAUDE.md` for repo-wide CI and downstream dependency rules.
+3. `docs/specs/CAPABILITY_OPTIMIZATION.md` for the evaluator contract.
+4. `src/rate_of_closure/AGENT_HANDOFF.md` for the detailed Rate stack.
+5. `docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md` for the campaign
+   history and remaining cross-surface work.
+6. `SPEC.md` section 12 for the required source-change freshness entry.
+
+## Current validation commands
+
+```powershell
+python -m pytest src/shared/python/swing_sim/flight/tests -q
+python -m ruff check src/shared/python/swing_sim/flight
+python -m ruff format --check src/shared/python/swing_sim/flight
+python -m mypy src/shared/python/swing_sim/flight/capability_flight_evaluator.py
+cd src/rate_of_closure/web
+npm test -- --run
+npm run type-check
+npm run lint -- --quiet
+npm run build
 ```
-
-Other active non-golf branches worth knowing about: `fix/file-size-budget-bounded-checkout`
-(#4096, CI checkout-scope fix), `agent/scada-phase-a-foundation` (#4091, SCADA
-epic #4085), several `scada/pr*` branches (SCADA epics #4085-#4089), and a
-handful of Bolt/Palette/Sentinel micro-PRs (#4070-#4102) unrelated to the
-golf-sim stack.
-
-## Gate Commands (repo-wide)
-
-```bash
-python3 -m ruff check .                          # lint
-python3 -m ruff format --check .                  # format check
-python3 -m pytest -n auto --timeout=60            # full test suite
-python3 -m pytest -m contract                     # API contract tests (downstream-facing)
-python3 -m pytest -m integration --timeout=60     # cross-repo integration
-```
-
-SPEC freshness (CI job `spec-freshness` in `.github/workflows/spec-check.yml`):
-any PR touching `src/**`, `tests/**`, `config/**`, `pyproject.toml`,
-`Cargo.toml`, `package.json`, or `requirements.txt` must also modify
-`SPEC.md` in the same PR, or carry the `spec-exempt` label. Runs on the
-`d-sorg-fleet` self-hosted runner.
-
-## Do-Not List
-
-- Do not modify public function signatures in `src/shared/python/**` without
-  opening coordinated migration issues in UpstreamDrift and Gasification_Model
-  (see `CLAUDE.md` Cross-Repo Dependencies).
-- Do not import across package boundaries (e.g. `signal_processing_studio`
-  importing from `sidekick.process_calculators`) — LoD is enforced.
-- Do not exceed the 500-LOC file budget on new/modified files in the golf-sim
-  packages (`rate_of_closure`, `swing_sim`, `swing-core`) — sub-package,
-  don't grow monoliths.
-- Do not use `git commit --no-verify` / `--push --no-verify` to bypass hooks;
-  see `CLAUDE.md` Hook bypass policy.
-- Do not regenerate the sidekick API baseline (`tests/sidekick_api_baseline.json`)
-  without coordinating a breaking-change migration.
-- Do not merge #4124 or #4129 ahead of their base (#4119, #4124 respectively)
-  — they are stacked and will conflict/duplicate SPEC.md sections if merged
-  out of order.
-- Do not hand-roll a GitHub Pages deploy workflow for `rate_of_closure/web`
-  yet — Phase 7 of #4103 owns this; today Pages hosting elsewhere in the repo
-  (e.g. `unit_converter`) is done via manual branch-folder publish, not CI.
-
-## Short-Term Roadmap (ordered)
-
-1. Land PR #4119 (base platform) — currently the long pole; everything else
-   stacks on it.
-2. Get #4124 out of draft-for-review and merge into `feat/investigation-suite`
-   → cascades onto #4119.
-3. Get #4129 out of draft-for-review and merge into `feat/course-showcase`
-   → cascades onto #4124.
-4. Start #4130 Phase F1 (formulation document) once #4125's stack is in.
-5. Phase 7 of #4103: WASM swap for the web mirror + real Pages CI deploy for
-   `rate_of_closure/web`.
-6. #4125 H5: stand up the public release-management repo (cross-repo, not
-   started).

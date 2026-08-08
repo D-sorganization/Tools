@@ -20,6 +20,7 @@ from .result_metrics import (
     MetricTrajectoryPoint,
     Vector3,
 )
+from .spin_axis_convention import spin_axis_tilt_deg
 
 _MIN_SPEED_M_S = 1e-12
 
@@ -106,12 +107,11 @@ def _launch_values(
         values[FlightMetricId.LAUNCH_DIRECTION] = _unavailable(
             FlightMetricId.LAUNCH_DIRECTION, AvailabilityReason.ZERO_HORIZONTAL_SPEED
         )
-    if spin_magnitude > _MIN_SPEED_M_S:
+    spin_axis_tilt = spin_axis_tilt_deg(inputs.spin_vector_rpm)
+    if spin_axis_tilt is not None:
         values[FlightMetricId.SPIN_AXIS_TILT] = _available(
             FlightMetricId.SPIN_AXIS_TILT,
-            math.degrees(
-                math.atan2(inputs.spin_vector_rpm[1], inputs.spin_vector_rpm[2])
-            ),
+            spin_axis_tilt,
             "derived.spin_vector_rpm",
         )
     else:
