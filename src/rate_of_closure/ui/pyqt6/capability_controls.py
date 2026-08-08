@@ -144,14 +144,29 @@ class CapabilityControls(QGroupBox):
 
     def inputs(self) -> CapabilityWorkflowInputs:
         """Return an immutable canonical snapshot of every visible control."""
-        values = {key: spin.value() for key, spin in self._numeric.items()}
-        integers = {key: spin.value() for key, spin in self._integers.items()}
+        numeric = {key: float(spin.value()) for key, spin in self._numeric.items()}
+        integer = {key: int(spin.value()) for key, spin in self._integers.items()}
         return CapabilityWorkflowInputs(
             profile_id=self.profile_id.text(),
             club_id=self.club_id.text(),
             objective=CapabilityObjective(self.objective.currentData()),
-            **values,
-            **integers,
+            ball_speed_mps=numeric["ball_speed_mps"],
+            ball_speed_std_mps=numeric["ball_speed_std_mps"],
+            launch_angle_deg=numeric["launch_angle_deg"],
+            launch_angle_std_deg=numeric["launch_angle_std_deg"],
+            launch_direction_deg=numeric["launch_direction_deg"],
+            launch_direction_std_deg=numeric["launch_direction_std_deg"],
+            total_spin_rpm=numeric["total_spin_rpm"],
+            spin_axis_tilt_deg=numeric["spin_axis_tilt_deg"],
+            target_distance_m=numeric["target_distance_m"],
+            target_lateral_m=numeric["target_lateral_m"],
+            target_radius_m=numeric["target_radius_m"],
+            max_time_s=numeric["max_time_s"],
+            trajectory_sample_interval_s=numeric["trajectory_sample_interval_s"],
+            candidate_budget=integer["candidate_budget"],
+            ensemble_size=integer["ensemble_size"],
+            alternatives_count=integer["alternatives_count"],
+            seed=integer["seed"],
         )
 
     def set_inputs(self, inputs: CapabilityWorkflowInputs) -> None:
