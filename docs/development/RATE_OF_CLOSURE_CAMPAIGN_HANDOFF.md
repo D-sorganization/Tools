@@ -698,6 +698,12 @@ head `6e3c1029f1f3a80ae09020ef7d0afacb3c0d5484`.  It must remain a normal
 stacked child of `feat/4199-wind-workflow`; do not retarget, rewrite, or merge
 it ahead of that parent.
 
+The branch is published as
+[draft PR #4283](https://github.com/D-sorganization/Tools/pull/4283). Its
+validated implementation/hardening head is
+`5c6073bd68ed4c8f23b343d4d11c2dc4277ea246`; this handoff-only continuation
+will advance that head without changing the tested runtime behavior.
+
 The optimizer now accepts optional synchronous observation and cooperative
 cancellation hooks without retaining traces in `OptimizationResult`.  Every
 attempt emits one immutable `capability-sample-observation/v1` record in exact
@@ -741,7 +747,7 @@ delimiter-bearing declarations, non-finite inputs, and every effective/source
 status combination.  Updated evidence is 135 Python flight/adapter tests passed
 with four expected Rust-wheel skips and 96 React files / 584 tests passed, plus
 Python 3.12 mypy, Ruff, Black, TypeScript, ESLint, Vite build, structural
-budgets, and diff checks.  The branch was pushed at implementation commit
-`43ad5e35be299f2ab11260784ee707fc5721fd2e` before this hardening; publish only
-after committing and pushing these corrections and updating this handoff with
-the resulting PR.
+budgets, and diff checks. The initial implementation commit was
+`43ad5e35be299f2ab11260784ee707fc5721fd2e`; corrections are committed at
+`5c6073bd68ed4c8f23b343d4d11c2dc4277ea246` and published in draft PR #4283.
+Protected CI, reviews, and every parent PR remain required.

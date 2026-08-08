@@ -430,6 +430,9 @@ counting launchers, separate simulators, or copied model implementations.
 Active branch `feat/4197-capability-observer` is an unretargeted child of
 `feat/4199-wind-workflow` at exact parent head
 `6e3c1029f1f3a80ae09020ef7d0afacb3c0d5484`.
+It is published as [draft PR #4283](https://github.com/D-sorganization/Tools/pull/4283);
+the validated implementation/hardening commit is
+`5c6073bd68ed4c8f23b343d4d11c2dc4277ea246`.
 
 The Python and TypeScript capability optimizers now stream one immutable,
 versioned observation for every attempted ensemble sample and support typed
@@ -462,6 +465,7 @@ Adversarial IEEE rounding/exponent/negative-zero, Unicode, control-delimiter,
 non-finite, and status-matrix tests are green.  Current totals are 135 Python
 flight/adapter tests passed with four optional Rust-wheel skips and 96 React
 files / 584 tests passed, with the previously recorded lint, type, build, and
-budget gates still green.  Commit these corrections with this handoff update,
-push normally, and only then open the stacked draft PR against
+budget gates still green. The corrections are committed and published in draft
+PR #4283. Monitor its protected checks and reviews together with PRs
+#4279–#4282; do not retarget, rewrite, bypass, or merge this child ahead of
 `feat/4199-wind-workflow`.
