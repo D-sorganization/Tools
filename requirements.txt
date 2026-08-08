@@ -37,7 +37,7 @@ pydantic>=2.0.0  # Data validation using Python type annotations
 pydantic-settings>=2.0.0  # Settings management for Pydantic v2
 
 # Security & Encryption
-cryptography>=49.0.0  # Cryptographic recipes and primitives
+cryptography>=50.0.0  # Cryptographic recipes and primitives
 defusedxml>=0.7.0  # Safe XML parsing (mitigates XML bomb / XXE attacks)
 pygments>=2.20.0,<2.21.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via rich/pip-audit)
 
