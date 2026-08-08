@@ -150,7 +150,7 @@ export function FlowRateConverter() {
             type="number"
             value={value}
             onChange={(e) => setValue(Number(e.target.value))}
-            className="w-full bg-slate-700 text-white text-lg rounded px-4 py-3 border border-slate-600 focus:border-blue-500 focus:outline-none"
+            className="w-full bg-slate-700 text-white text-lg rounded px-4 py-3 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           />
         </div>
 
@@ -161,7 +161,7 @@ export function FlowRateConverter() {
             <select
               value={fromUnit}
               onChange={(e) => setFromUnit(e.target.value)}
-              className="w-full bg-slate-700 text-white rounded px-3 py-3 border border-slate-600 focus:border-blue-500 focus:outline-none"
+              className="w-full bg-slate-700 text-white rounded px-3 py-3 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               {currentUnits.map((u) => (
                 <option key={u} value={u}>{u}</option>
@@ -183,7 +183,7 @@ export function FlowRateConverter() {
             <select
               value={toUnit}
               onChange={(e) => setToUnit(e.target.value)}
-              className="w-full bg-slate-700 text-white rounded px-3 py-3 border border-slate-600 focus:border-blue-500 focus:outline-none"
+              className="w-full bg-slate-700 text-white rounded px-3 py-3 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               {currentUnits.map((u) => (
                 <option key={u} value={u}>{u}</option>

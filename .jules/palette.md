@@ -49,3 +49,6 @@
 ## 2024-05-31 - Tab Roles vs aria-pressed
 **Learning:** When implementing custom tab components in React, use `role="tab"` paired strictly with `aria-selected` (not `aria-pressed`, which is intended for toggle buttons) and ensure `aria-controls` points to a valid `role="tabpanel"` container whose `aria-labelledby` points back to the tab.
 **Action:** When adding accessible properties to custom tabs, replace `aria-pressed` with `aria-selected`, ensure a `role="tablist"` wrapper is present, and correctly cross-reference `aria-controls` with the tab panel IDs.
+## 2024-08-08 - Keyboard Accessibility for Inputs
+**Learning:** Found an accessibility issue pattern where inputs, selects, and textareas across Flow Rate Converter and ODE Solver have `focus:outline-none` but lack focus indicators, making keyboard navigation invisible.
+**Action:** Replace `focus:outline-none` with `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500` to preserve keyboard accessibility while styling interactive form elements.

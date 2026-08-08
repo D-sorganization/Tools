@@ -321,7 +321,7 @@ export function ODESolverCalculator() {
             <select
               value={preset}
               onChange={(e) => handlePresetChange(e.target.value)}
-              className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none"
+              className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             >
               <option value="Custom">Custom</option>
               {Object.keys(ODE_PRESETS).map((name) => (
@@ -349,7 +349,7 @@ export function ODESolverCalculator() {
                   onChange={(e) => setDerivativesText(e.target.value)}
                   rows={3}
                   placeholder="y: -k*y"
-                  className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+                  className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 font-mono text-sm"
                   spellCheck="false"
                   autoCorrect="off"
                   autoCapitalize="none"
@@ -365,7 +365,7 @@ export function ODESolverCalculator() {
                   onChange={(e) => setParametersText(e.target.value)}
                   rows={3}
                   placeholder="k: 0.1"
-                  className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+                  className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 font-mono text-sm"
                   spellCheck="false"
                   autoCorrect="off"
                   autoCapitalize="none"
@@ -381,7 +381,7 @@ export function ODESolverCalculator() {
                   onChange={(e) => setInitialText(e.target.value)}
                   rows={3}
                   placeholder="y: 100"
-                  className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none font-mono text-sm"
+                  className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 font-mono text-sm"
                   spellCheck="false"
                   autoCorrect="off"
                   autoCapitalize="none"
@@ -402,7 +402,7 @@ export function ODESolverCalculator() {
                     type="number"
                     value={tStart}
                     onChange={(e) => setTStart(Number(e.target.value))}
-                    className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none"
+                    className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                   />
                 </div>
                 <div>
@@ -412,7 +412,7 @@ export function ODESolverCalculator() {
                     type="number"
                     value={tEnd}
                     onChange={(e) => setTEnd(Number(e.target.value))}
-                    className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none"
+                    className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                   />
                 </div>
               </div>
@@ -425,7 +425,7 @@ export function ODESolverCalculator() {
                   onChange={(e) => setNumPoints(Number(e.target.value))}
                   min={10}
                   max={10000}
-                  className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus:outline-none"
+                  className="w-full bg-slate-700 text-white rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                 />
               </div>
             </div>
