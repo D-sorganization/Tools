@@ -28,13 +28,17 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.5.6                                      |
 | **Spec Version**        | 1.5.6                                      |
-| **Last Spec Update**    | 2026-08-05                                 |
+| **Last Spec Update**    | 2026-08-08                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-08 Keyboard Accessibility Focus Rings
+
+- Added `focus-visible` styling (`focus-visible:ring-2 focus-visible:ring-blue-500`) to interactive elements (inputs, selects, textareas) in `src/flow_rate_converter/web` and `src/ode_solver/web` to ensure keyboard navigation visibility while removing the default browser outline (`focus:outline-none`).
 
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 
