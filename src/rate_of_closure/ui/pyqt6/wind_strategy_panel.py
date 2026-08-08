@@ -15,7 +15,6 @@ from PyQt6.QtWidgets import (
     QFileDialog,
     QFormLayout,
     QGridLayout,
-    QGroupBox,
     QHBoxLayout,
     QLabel,
     QLineEdit,
@@ -38,7 +37,7 @@ from rate_of_closure.ui.pyqt6.wind_strategy_launch import (
     scalar_ensemble_csv,
     target_hold_note,
 )
-from rate_of_closure.ui.pyqt6.wind_strategy_lifecycle import WindStrategyLifecycleMixin
+from rate_of_closure.ui.pyqt6.wind_strategy_lifecycle import WindStrategyGroupBox
 from rate_of_closure.ui.pyqt6.wind_strategy_plot import (
     draw_wind_strategy_scatter,
     scatter_availability_text,
@@ -54,7 +53,7 @@ logger = logging.getLogger(__name__)
 _CONTEXT_POLL_MS = 250
 
 
-class WindStrategyPanel(WindStrategyLifecycleMixin, QGroupBox):
+class WindStrategyPanel(WindStrategyGroupBox):
     """Run and inspect current-launch performance under uncertain wind."""
 
     def __init__(

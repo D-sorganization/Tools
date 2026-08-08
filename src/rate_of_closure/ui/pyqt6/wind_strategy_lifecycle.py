@@ -7,6 +7,7 @@ from collections.abc import Callable
 from typing import TYPE_CHECKING
 
 from PyQt6.QtGui import QCloseEvent
+from PyQt6.QtWidgets import QGroupBox
 
 from rate_of_closure.ui.pyqt6.wind_strategy_launch import WindStrategyLaunchContext
 
@@ -94,10 +95,13 @@ class WindStrategyLifecycleMixin:
         self._worker = None
         self._set_running(False)
 
-    def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
-        """Stop the worker before Qt tears down owned widgets."""
+
+class WindStrategyGroupBox(WindStrategyLifecycleMixin, QGroupBox):
+    """Qt group box that guarantees worker shutdown before teardown."""
+
+    def closeEvent(self, event: QCloseEvent | None) -> None:  # noqa: N802
         self.stop()
-        super().closeEvent(event)  # type: ignore[misc]
+        QGroupBox.closeEvent(self, event)
 
 
-__all__ = ["WindStrategyLifecycleMixin"]
+__all__ = ["WindStrategyGroupBox", "WindStrategyLifecycleMixin"]
