@@ -334,43 +334,43 @@ python3 -m mypy src/rate_of_closure src/shared/python/swing_sim
 The active child branch is `feat/4199-wind-workflow`, published as
 [draft PR #4282](https://github.com/D-sorganization/Tools/pull/4282) at exact
 implementation head `fdcc25008`, stacked on exact PR #4281 head
-`8b8690e8760d82ba814e8d95588d2540d28a6759`.  Do not fold this work into,
+`8b8690e8760d82ba814e8d95588d2540d28a6759`. Do not fold this work into,
 retarget, or merge it ahead of PR #4281.
 
 This branch turns the shared `scalar-ensemble/v1` wind adapter into matched
-end-user workflows.  Python runs the immutable request in a `QThread`; React
-uses a real, lazy-loaded Vite module Worker.  Both expose exact `0..N`
+end-user workflows. Python runs the immutable request in a `QThread`; React
+uses a real, lazy-loaded Vite module Worker. Both expose exact `0..N`
 progress, cancellation, current launch plus canonical landing target, trial
 and wind-estimate controls, summaries, every scalar axis, explicit
 completed/nonconverged/invalid availability, cohort-colored scatter, generic
-all-row CSV, and fail-closed result invalidation.  Scatter controls include
+all-row CSV, and fail-closed result invalidation. Scatter controls include
 pan/zoom, Auto Fit, toolbar-history reset, and movable/hidden legends in
 PyQt; React includes zoom, Auto Fit, clipped marks, numeric ticks/gridlines,
-and movable/hidden legend.  Captured calculation-basis regions make model,
+and movable/hidden legend. Captured calculation-basis regions make model,
 seed, target, integration, risk, and aim-policy settings visible.
 
 Final native-window QA at 1280 x 768 added matched ball-flight Loop controls
 to PyQt and React and verified that Play/Pause, replay from landing, granular
-speed, and continuous wrap all use the single owned animation clock.  The
+speed, and continuous wrap all use the single owned animation clock. The
 PyQt wind workspace now separates a compact two-column Setup view from a
 plot-first Results view, automatically selects Results after completion, and
-keeps run/cancel/export plus progress/status visible in both views.  A live
+keeps run/cancel/export plus progress/status visible in both views. A live
 five-trial run completed 5/5 and rendered its basis, summary, scatter, native
 pan/zoom toolbar, Auto Fit, and legend-position control without overlap.
 
 Lifecycle and safety details are contractual: the PyQt worker never reads
 widgets, window shutdown cancels and joins it, queued stale signals are
-ignored, and the main window explicitly stops Flight Explorer.  React
+ignored, and the main window explicitly stops Flight Explorer. React
 terminates its Worker on completion, error, cancellation, unmount, or consumed
-input change.  Both clients preserve unavailable values as null/empty cells;
+input change. Both clients preserve unavailable values as null/empty cells;
 CSV strings and headers that could become spreadsheet formulas are
-neutralized without altering numeric negatives.  PyQt accepts the complete
+neutralized without altering numeric negatives. PyQt accepts the complete
 shared uint32 seed range.
 
 Current local evidence on this working tree:
 
 - `1350 passed, 5 skipped, 15 warnings` for the complete
-  `tests/rate_of_closure` plus `src/shared/python/swing_sim` suite.  Skips are
+  `tests/rate_of_closure` plus `src/shared/python/swing_sim` suite. Skips are
   optional local Rust-wheel paths; warnings are the existing Hypothesis
   `norecursedirs` and empty polynomial-preview legend warnings.
 - `94` React test files / `566` tests passed; focused playback and wind suites
@@ -383,14 +383,14 @@ Current local evidence on this working tree:
   function is at most 50 lines.
 
 This completes the #4199 current-launch workflow slice, not epic #4199 or the
-universal many-run objective.  Capability optimization still discards its
-individual evaluator rows.  The next child must add the optional streaming
+universal many-run objective. Capability optimization still discards its
+individual evaluator rows. The next child must add the optional streaming
 `CapabilitySampleObservationV1` sink and cancellation hook described in
 [issue #4197](https://github.com/D-sorganization/Tools/issues/4197#issuecomment-5223170071),
 then adapt those rows to `scalar-ensemble/v1` without bloating the compact
 optimization result.
 
-Ground and four-surface parity remain open epics.  The latest executable
+Ground and four-surface parity remain open epics. The latest executable
 acceptance refinements are in
 [ground #4267](https://github.com/D-sorganization/Tools/issues/4267#issuecomment-5223106106)
 and
@@ -402,26 +402,26 @@ launch-monitor total displacement with accumulated ground path length.
 
 The first hosted run for PR #4282 found one actionable delta-mypy defect:
 `WindStrategyLifecycleMixin.closeEvent` conflicted with Qt's nullable close
-event signature under Python 3.12.  Commit
+event signature under Python 3.12. Commit
 `424b4c395370aea26069386c070a65f7abe885bc` introduces a concrete
 `WindStrategyGroupBox`, keeps worker teardown in the mixin, and gives the Qt
-override the correct `QCloseEvent | None` contract.  Exact Python 3.12 mypy
+override the correct `QCloseEvent | None` contract. Exact Python 3.12 mypy
 now passes for 11 changed production files, as do Ruff, formatting,
-`git diff --check`, and 19 focused wind/playback tests.  Do not merge until the
+`git diff --check`, and 19 focused wind/playback tests. Do not merge until the
 new protected checks and the entire parent stack are green and approved.
 
 Read-only audits against current UpstreamDrift remote `main`
 `0782853295e005af68818617e4725eb980890f43` found useful but unqualified
-contact, terrain, turf, and putting-roll code.  Preserve the direction
+contact, terrain, turf, and putting-roll code. Preserve the direction
 `UpstreamDrift adapter -> Tools ground-run/v1 authority`; Tools must not import
-UpstreamDrift.  Do not reuse the terrain serialization without fixing its lost
+UpstreamDrift. Do not reuse the terrain serialization without fixing its lost
 material fields, and do not start bounce/roll physics until first physical
 sphere contact, arbitrary surface normal, target-frame conversion, and full
 terminal angular velocity are available through a strict transfer contract.
 
 The four-surface parity baseline is not complete: UpstreamDrift PyQt launches
 the Tools native window, UpstreamDrift React has no Rate route, and Tools React
-still has narrower impact/flight authority than Tools PyQt.  Close parity
+still has narrower impact/flight authority than Tools PyQt. Close parity
 through shared versioned calculation contracts and golden fixtures, not by
 counting launchers, separate simulators, or copied model implementations.
 
@@ -436,15 +436,15 @@ the validated implementation/hardening commit is
 
 The Python and TypeScript capability optimizers now stream one immutable,
 versioned observation for every attempted ensemble sample and support typed
-cooperative cancellation before an evaluator call.  Existing callers and the
-compact optimization result are unchanged.  Status normalization is fail
+cooperative cancellation before an evaluator call. Existing callers and the
+compact optimization result are unchanged. Status normalization is fail
 closed, evaluator exception text is not leaked, all valid metrics retain their
 declared order and provenance, and malformed or incomplete landing results do
 not become fabricated successes.
 
 The Rate app adapters turn the stream into bounded `scalar-ensemble/v1`
 datasets with a complete scalar flight catalog, null unavailable outputs,
-nominal/perturbed parameters, target residuals, and source lineage.  They
+nominal/perturbed parameters, target residuals, and source lineage. They
 require contiguous zero-based attempts, reject overflow before retention,
 deep-copy/freeze TypeScript inputs, and serialize ASCII and Unicode fixtures
 byte-identically across runtimes.
@@ -456,13 +456,13 @@ Publish only as the next protected stacked draft PR, then keep #4197 open for
 its remaining user-facing capability-optimization workflow.
 
 An independent review blocked PR creation after the first branch push and the
-four findings are now fixed locally.  Stable JSON uses a shared raw-number
+four findings are now fixed locally. Stable JSON uses a shared raw-number
 policy rather than native runtime spelling; derived parameter labels uppercase
 only an initial ASCII letter; public observations enforce complete landing and
 empty incomplete-status metric invariants; and TypeScript compares parameter
 declarations structurally instead of with delimiter-concatenated signatures.
 Adversarial IEEE rounding/exponent/negative-zero, Unicode, control-delimiter,
-non-finite, and status-matrix tests are green.  Current totals are 135 Python
+non-finite, and status-matrix tests are green. Current totals are 135 Python
 flight/adapter tests passed with four optional Rust-wheel skips and 96 React
 files / 584 tests passed, with the previously recorded lint, type, build, and
 budget gates still green. The corrections are committed and published in draft
@@ -500,17 +500,43 @@ contact bracket in Python, TypeScript, Rust, and WASM before bounce/roll is
 wired to flight. Do not infer terminal spin from launch spin or substitute a
 launch-plane crossing for physical contact.
 The subsequent protected run's `detect-secrets` job classified the two pinned
- Python/TypeScript SHA-256 parity digests as high-entropy strings. These are
- expected deterministic test outputs, not secrets. Use only exact inline
- `pragma: allowlist secret` annotations on the four digest constants; preserve
- the repository baseline and scanner scope. Commit the annotations and this
- handoff together on the parent capability-observer branch, then re-run the
- protected stack without force-pushing or bypassing the gate. Parent commit
- `49612946138b1021f80c9f8d2a4d06f1610825db` is now propagated into this child
- by a normal merge commit.
+Python/TypeScript SHA-256 parity digests as high-entropy strings. These are
+expected deterministic test outputs, not secrets. Use only exact inline
+`pragma: allowlist secret` annotations on the four digest constants; preserve
+the repository baseline and scanner scope. Commit the annotations and this
+handoff together on the parent capability-observer branch, then re-run the
+protected stack without force-pushing or bypassing the gate. Parent commit
+`49612946138b1021f80c9f8d2a4d06f1610825db` is now propagated into this child
+by a normal merge commit.
 
 The active #4269 branch now merges PR #4285 head
 `3235af71150a774954e7673fc81d7179330fbe76` normally. Do not publish its
 uncommitted transfer adapters until the repaired terrain geometry, strict wire
 contract, origin proof, bounded web integrator, and native-wheel parity have all
 passed a second independent integrated review.
+
+## 2026-08-07 Physical flight-contact transfer
+
+Issue #4269 is active on `feat/4269-flight-ground-transfer` after alignment
+merge `13184096e`. Its local implementation adds full signed terminal angular
+state and strict physical sphere/terrain contact transfer in Python,
+TypeScript, Rust, PyO3, and WASM. Web origin proof and the 50,000-step
+synchronous RK4 budget fail closed, and a partial final step stops at the exact
+requested horizon; native Python integrates to arbitrary configured planes;
+Rust entry points preserve the complete v1 request evidence. Bounce, skid, roll,
+and UI wiring remain later child issues. Do not publish this implementation
+until the second integrated review and final gate matrix pass; `SELF` denotes
+the pending implementation/specification/handoff commit.
+
+The second integrated review's Python chronology, Rust canonical-wire, and
+Rust/web exact-horizon blockers are repaired. Final local counts are 208 Python
+tests with the rebuilt CPython 3.12 wheel and no skips, 603 React tests, and 160
+Rust tests. Exact PyO3/Python token parity, production web build, PyO3/wasm32
+checks, and `wasm-pack build` pass. The final independent closure audit found no
+P0-P2 issue and declared #4269 locally publication-ready.
+
+Full-crate Rust Clippy remains blocked only by pre-existing unrelated warnings;
+the changed flight-ground scope is clean. New code respects the source and
+function budgets. Existing oversized append-only registries and preserved
+multi-parameter public compatibility signatures are baseline constraints, not
+new structures introduced by this issue.

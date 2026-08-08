@@ -102,10 +102,34 @@ physical state. Unsupported versions therefore fail closed. Future migrations
 must be explicit, deterministic, loss-audited transforms into these canonical
 records rather than permissive parser branches.
 
-## Known integration blockers
+## Flight transfer implementation
 
-The Python, TypeScript, Rust, and WASM flight surfaces do not all expose a full
-terminal angular-velocity vector or two states bracketing physical sphere and
-terrain contact. That propagation and interpolation work belongs to the next
-ground-model issue. UpstreamDrift terrain is integrated only through an
-UpstreamDrift-to-Tools adapter; Tools must never import UpstreamDrift.
+Issue #4269 supplies the first strict flight-side adapters in Python,
+TypeScript, Rust, PyO3, and WASM. The built-in flight models preserve a signed
+three-dimensional angular-velocity vector at every emitted sample, integrate to
+the configured launch-relative physical sphere/plane gap, and transfer the last
+separated plus first penetrating states into the v1 request. A zero-gap
+interpolated contact is a valid first-penetrating state under the v1 `gap <= 0`
+rule. Rust additionally preserves its raw post-crossing sample in transfer-event
+evidence; Python and TypeScript expose the exact contact state instead. The
+trajectory contract does not promise that every runtime retains a raw
+post-crossing sample.
+
+Native flight integration requires explicit launch-relative plane geometry.
+The launch or tee ball centre remains the exact target-frame origin; terrain
+height, surface normal, ball radius, and vertical tee height therefore affect
+the terminal gap without canceling one another. Tee height is measured vertically
+from the ground plane to the ball bottom, not along a sloped surface normal.
+Adapters reject missing origin evidence, non-increasing samples, absent terminal
+angular state, grazing contact, and trajectories without a qualified physical
+contact bracket using typed unavailable outcomes.
+
+The Rust-owned PyO3 and WASM entry points parse the complete strict v1 request;
+they do not replace material, calibration, provenance, provider identity, or
+ball data with reduced plane defaults. The older ground-only Rust flight API is
+retained as a compatibility path only where it can preserve the requested
+physics; unsupported tee transfer fails closed.
+
+This transfer still does not implement bounce, skid, or roll. UpstreamDrift
+terrain remains a one-way UpstreamDrift-to-Tools adapter concern; Tools must
+never import UpstreamDrift.

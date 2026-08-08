@@ -855,18 +855,55 @@ from the PR worktree by diffing Python paths against
 handoff update must be committed and pushed together as a normal follow-up
 commit; do not amend or force-push the published contract commit.
 The next protected run exposed two `detect-secrets` false positives in each
- runtime's cross-language SHA-256 parity assertions. They are deterministic test
- digests, not credentials. Mark the four exact constants with the scanner's
- `pragma: allowlist secret` annotation; do not add broad path exclusions or
- rewrite the baseline. Re-run the scanner normalization gate, focused parity
- tests, lint, and diff checks. Commit this CI repair with this handoff update and
- push normally on `feat/4197-capability-observer` before propagating the parent
- head through the protected stack. That repair is parent commit
- `49612946138b1021f80c9f8d2a4d06f1610825db`; this child now merges it normally
- without rewriting either published branch.
+runtime's cross-language SHA-256 parity assertions. They are deterministic test
+digests, not credentials. Mark the four exact constants with the scanner's
+`pragma: allowlist secret` annotation; do not add broad path exclusions or
+rewrite the baseline. Re-run the scanner normalization gate, focused parity
+tests, lint, and diff checks. Commit this CI repair with this handoff update and
+push normally on `feat/4197-capability-observer` before propagating the parent
+head through the protected stack. That repair is parent commit
+`49612946138b1021f80c9f8d2a4d06f1610825db`; this child now merges it normally
+without rewriting either published branch.
 
 Issue #4269 branch `feat/4269-flight-ground-transfer` now merges protected
 contract head `3235af71150a774954e7673fc81d7179330fbe76` without rewriting the
 stack. Keep its cross-runtime transfer implementation uncommitted until the
 post-repair independent review and complete Python/TypeScript/Rust/PyO3/WASM
 gates are green.
+
+### 2026-08-07 flight-to-ground physical transfer continuation
+
+Issue #4269 continues from alignment merge `13184096e` in
+`C:\Users\diete\Repositories\Tools-worktrees\flight-ground-transfer`. Python
+and TypeScript now preserve full signed angular state, require explicit
+launch-origin evidence, and qualify sphere contact against the configured
+launch-relative terrain plane. Python exposes `simulate_to_surface` for built-in
+native models without breaking the legacy `simulate` contract; the web RK4 path
+rejects more than 50,000 synchronous steps before entering its loop and uses an
+exact partial final step rather than exceeding the requested horizon.
+
+Rust, PyO3, and WASM accept the complete `flight-to-ground-request/v1` record,
+including surface material/provider data, calibration, provenance, ball data,
+and the strict incoming time-ordered bracket. Rust retains its raw crossing
+bracket in transfer-event evidence; Python and TypeScript intentionally use the
+exact zero-gap interpolated contact as the v1 first-penetrating state. Tee height
+remains a vertical ground-to-ball-bottom measure and terrain elevation remains
+observable. Do not publish until a fresh native wheel, all
+cross-runtime gates, and a second independent integrated review are green. The
+implementation/specification/handoff commit is `SELF` until committed.
+
+The second independent review found three real blocker classes: approximate
+Python origins/malformed chronology, noncanonical Rust wire tokens, and
+fixed-step runtimes exceeding or truncating their requested horizon. All are
+now repaired with adversarial tests. Current evidence is 208 Python tests using
+the exact rebuilt CPython 3.12 wheel with no skips, 603 web tests, 160 Rust
+tests, exact PyO3/Python canonical output, PyO3 and wasm32 checks, production web
+build, and a completed `wasm-pack build`. The final independent closure audit
+found no P0-P2 issue and declared #4269 locally publication-ready.
+
+Full-crate Clippy warnings remain confined to pre-existing unrelated electrode,
+SCADA, signal, and math modules; no `flight_ground` warning is present. The
+existing local SciPy/NumPy compatibility warning also remains environmental.
+All new source files are below 400 lines. The oversized append-only SPEC and
+handoff registries plus the preserved Waterloo and `from_imperial` public
+signatures predate #4269 and are explicitly retained for compatibility.

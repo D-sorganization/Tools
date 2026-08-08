@@ -138,3 +138,37 @@ head `3235af71150a774954e7673fc81d7179330fbe76` through a normal merge commit.
 The cross-runtime transfer implementation remains uncommitted until its repaired
 Python, TypeScript, Rust, PyO3, and WASM paths pass the second independent review
 and the complete integrated gate set.
+
+## 2026-08-07 Flight-to-ground transfer implementation
+
+Worktree `C:\Users\diete\Repositories\Tools-worktrees\flight-ground-transfer`
+on `feat/4269-flight-ground-transfer` implements issue #4269 after alignment
+merge `13184096e`. The uncommitted implementation preserves full signed angular
+state in Python and TypeScript flight samples, integrates to explicit
+launch-relative sphere/terrain contact, and builds the strict v1 request only
+from an increasing, incoming physical bracket. Rust, PyO3, and WASM parse the
+complete request rather than a reduced plane substitute. Keep this work local
+until the second independent integrated review and final gate matrix are green;
+the implementation commit and these handoffs are `SELF` until then.
+
+Issue #4284 is the tracked child of epic #4218 for bounded clubhead camera
+following plus Face On, Down the Line, and Overhead snap views. It is planning
+scope only and is not part of the #4269 transfer diff.
+
+Two independent #4269 reviews exposed and drove closure of strict chronology,
+canonical wire-token, exact-horizon, and browser-work-budget defects. Final
+local evidence after repair is 208 expanded Python tests with the rebuilt
+CPython 3.12 wheel and no optional skips, 603 React tests, 160 Rust tests,
+byte-exact PyO3/Python canonical JSON parity, production web build, and an
+actual `wasm-pack build`. Ruff, formatting, production mypy, TypeScript,
+ESLint, Rust format, PyO3 check, wasm32 check, changed-file secret scan, and
+fleet fast guardrails are green. The final independent closure audit found no
+P0-P2 issue and declared #4269 locally publication-ready.
+
+The full-crate Rust Clippy `-D warnings` command still reaches pre-existing
+warnings in unrelated electrode, SCADA, signal, and math modules; scoped WASM
+and changed flight-ground code are clean. Local SciPy also reports the existing
+NumPy-version compatibility warning. New code files remain below 400 lines and
+new functions remain within the repository limits; the append-only SPEC/handoff
+documents and two preserved public compatibility signatures are pre-existing
+baseline exceptions, not new #4269 structures.

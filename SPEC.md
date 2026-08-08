@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.4                                     |
-| **Spec Version**        | 1.14.4                                     |
+| **Current Version**     | 1.14.5                                     |
+| **Spec Version**        | 1.14.5                                     |
 | **Last Spec Update**    | 2026-08-07                                 |
 
 ## 2. Purpose & Mission
@@ -2898,6 +2898,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-07 | 1.14.5 | feat(flight-ground, #4269): propagate full signed terminal angular state and qualified physical sphere/terrain contact brackets across Python, TypeScript, Rust, PyO3, and WASM; preserve exact launch-origin evidence, vertical tee and terrain geometry, strict v1 surface/calibration/provenance data, interpolated terminal contact, typed unavailable outcomes, and bounded synchronous web integration. |
 | 2026-08-07 | 1.14.4 | feat(rate_of_closure, #4206): add validated manual reference AoA/path, targetward forward shaft lean, and tracked-reference versus registered generated-hosel shaft datums in PyQt6 and React; rotate pose, angular-rate components, and delivered face normals consistently; persist schema-v5 `manual_delivery`; export the reference-contact/reference-impact model boundary; and pin the representative Pitching Wedge decomposition in both runtimes. |
 | 2026-08-07 | 1.14.3 | fix(variation, #4144): preserve trial identity when filtering finite landing coordinates so carry/lateral values from different incomplete trials cannot form fictitious points; use one paired-row contract for Python/TypeScript ellipse analysis, PyQt/React rendering, and exact plotted-count status. Clarify that the wedge kernel's 20 mm example is synthetic and separately pin the generated Pitching Wedge face-center/hosel cross-check and current UI-state limitations. |
 | 2026-08-06 | 1.14.2 | feat(rate_of_closure, #4192 #4234): complete the shared spatial-target workflows in PyQt6 and React with canonical cross-tab state, versioned JSON/CSV/manifest persistence, no-run 2D/3D rendering, continuous aerial passage, surface-projected landing assessment, field-linked validation, stale-solver protection, high-DPI canvases, responsive wrapped PyQt forms, collapsible engineering detail/layer controls, and movable or hideable legends; keep aerial requests fail-closed where solver/variation objectives remain ground-only. |

@@ -49,6 +49,12 @@ from .direction import (
     migrate_launch_direction_mapping,
 )
 from .frames import from_flight_frame, to_flight_frame
+from .ground_transfer import (
+    FlightGroundTransferError,
+    FlightGroundTransferSettings,
+    build_ground_simulation_request,
+    launch_relative_surface,
+)
 from .impact_solution_adapter import CenteredClubDeliveryAdapter
 from .impact_solution_contract import (
     ClubProfileId,
@@ -105,6 +111,8 @@ from .result_metrics import (
     MetricTrajectoryPoint,
     derive_flight_metric_result,
 )
+from .state import FlightStatePoint
+from .surface_simulation import SurfaceFlightSimulationSettings
 from .types import (
     DEFAULT_BACKSPIN_AXIS,
     FlightResult,
@@ -168,6 +176,9 @@ __all__ = [
     "FlightMetricResult",
     "FlightMetricValue",
     "FlightResult",
+    "FlightGroundTransferError",
+    "FlightGroundTransferSettings",
+    "FlightStatePoint",
     "FlightRunManifest",
     "FlightSimulatorProtocol",
     "ForwardEvaluator",
@@ -207,6 +218,7 @@ __all__ = [
     "DirectionalRisk",
     "PerfectInformationCounterfactual",
     "ScalarDistribution",
+    "SurfaceFlightSimulationSettings",
     "StrategyAnalysisConfig",
     "StrategyAnalysisRequest",
     "StrategyShotOutcome",
@@ -220,6 +232,8 @@ __all__ = [
     "WindTrial",
     "WindUncertaintySpec",
     "analyze_wind_strategies",
+    "build_ground_simulation_request",
+    "launch_relative_surface",
     "compare_models",
     "compute_flight_metrics",
     "derive_launch_conditions",
