@@ -73,6 +73,25 @@ The v1 request supports:
 
 Every returned alternative includes mean carry, expected miss, RMS landing dispersion, target-hold probability, miss-distance CVaR, downside carry, ensemble counts, no-impact and failure fractions, confidence, limiting constraints, extrapolation, and Pareto membership. Downside carry is the positive shortfall between the target-center distance and the mean of the lowest `(1 - cvar_alpha)` carry tail; miss CVaR is the mean of the corresponding highest miss-distance tail. Ranking is deterministic for a deterministic evaluator. Candidates below the configured minimum success fraction receive a dominating penalty but remain visible when the alternatives budget permits, preserving failure evidence.
 
+## End-User Workflow
+
+PyQt6 and React expose the optimizer through a primary `Shot Optimizer` module.
+Both clients author and strictly validate
+`capability-optimization-workflow/v1`, containing the complete profile,
+request, sourced per-club fixed-spin configuration, integrator settings, and
+deterministic search basis. The default document is explicitly representative
+and user-authored; it is not presented as measured player data.
+
+Optimization runs outside the UI thread. Progress is based on attempted model
+evaluations, cancellation publishes no partial optimization result, and input
+changes invalidate captured output. Every attempted sample is retained in
+`scalar-ensemble/v1` with complete, no-impact, or failed cohort identity. The
+clients present ranked alternatives, selectable scalar axes, paired-finite and
+unavailable counts, managed zoom/autofit, a bounded paged raw table,
+spreadsheet-safe lossless CSV, and stable JSON. Duplicate evaluator and target
+diagnostic labels are stage-qualified in selectors without changing their
+contract keys.
+
 ## Interpretation And Limitations
 
 - Results are conditional model recommendations, not measured launch-monitor results or guarantees.
@@ -81,7 +100,7 @@ Every returned alternative includes mean carry, expected miss, RMS landing dispe
 - Clipping enforces hard delivery bounds but can distort tail covariance near a bound. The result reports the limiting safety or evidence boundary so callers can identify that condition.
 - Target hold is landing containment only. Roll, turf, hazards, weather uncertainty, and strategic utility require evaluators or higher-level policies that explicitly model them.
 - V1 searches continuous delivery parameters uniformly over declared safety bounds. Adaptive optimization and player-specific priors remain deferred.
-- The qualified evaluator is model-layer infrastructure. PyQt6/React profile authoring, persistence, worker progress/cancellation, and end-user result presentation remain required before issue #4197 can close.
+- The matched PyQt6/React workflow is implemented. Issue #4197 still requires protected CI, ordered review/merge, and downstream application parity before closure.
 
 ## Cross-Runtime Parity
 
