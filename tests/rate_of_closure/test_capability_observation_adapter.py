@@ -80,6 +80,8 @@ def _observation(
 
 
 TARGET = TargetDefinition("green", 100.0, 2.0, 10.0, 15.0, 16.0)
+ASCII_DIGEST = "df36f765afdf508d00a3d264911ce5b6f07e25da3744b187596d67487ea3be5f"  # noqa: E501  # pragma: allowlist secret
+UNICODE_DIGEST = "18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0"  # noqa: E501  # pragma: allowlist secret
 
 
 def _build(observations: tuple[CapabilitySampleObservation, ...], max_rows: int = 4):
@@ -220,7 +222,7 @@ def test_stable_wire_matches_typescript_digest() -> None:
     digest = hashlib.sha256(
         capability_observation_ensemble_json(dataset).encode()
     ).hexdigest()
-    assert digest == "df36f765afdf508d00a3d264911ce5b6f07e25da3744b187596d67487ea3be5f"
+    assert digest == ASCII_DIGEST
 
 
 def test_stable_wire_matches_typescript_unicode_digest() -> None:
@@ -241,9 +243,7 @@ def test_stable_wire_matches_typescript_unicode_digest() -> None:
     )
     payload = capability_observation_ensemble_json(_build((unicode_observation,)))
     assert "観測-ß" in payload
-    assert hashlib.sha256(payload.encode()).hexdigest() == (
-        "18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0"
-    )
+    assert hashlib.sha256(payload.encode()).hexdigest() == UNICODE_DIGEST
 
 
 def test_stable_wire_uses_canonical_numeric_tokens_for_every_float() -> None:

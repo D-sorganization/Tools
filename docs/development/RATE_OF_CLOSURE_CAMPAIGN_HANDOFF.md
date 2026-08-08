@@ -762,3 +762,12 @@ seven-file Python 3.12 CI mypy command, Ruff/format, diff check, and the full
 135-test flight/adapter suite now pass (four optional Rust-wheel skips). This
 fix and handoff update are committed together as `SELF`; resolve the exact head
 with `git rev-parse HEAD` and push normally.
+
+The next protected run exposed two `detect-secrets` false positives in each
+runtime's cross-language SHA-256 parity assertions. They are deterministic test
+digests, not credentials. Mark the four exact constants with the scanner's
+`pragma: allowlist secret` annotation; do not add broad path exclusions or
+rewrite the baseline. Re-run the scanner normalization gate, focused parity
+tests, lint, and diff checks. Commit this CI repair with this handoff update and
+push normally on `feat/4197-capability-observer` before propagating the parent
+head through the protected stack.

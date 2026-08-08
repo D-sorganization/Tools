@@ -478,3 +478,11 @@ exact seven-file Python 3.12 mypy command, Ruff/format, diff check, and full
 135-test flight/adapter suite pass with four optional Rust-wheel skips. This
 fix and handoff update are `SELF`; resolve with `git rev-parse HEAD`, push
 normally, and monitor the fresh protected checks.
+
+The subsequent protected run's `detect-secrets` job classified the two pinned
+Python/TypeScript SHA-256 parity digests as high-entropy strings. These are
+expected deterministic test outputs, not secrets. Use only exact inline
+`pragma: allowlist secret` annotations on the four digest constants; preserve
+the repository baseline and scanner scope. Commit the annotations and this
+handoff together on the parent capability-observer branch, then re-run the
+protected stack without force-pushing or bypassing the gate.
