@@ -723,3 +723,25 @@ tests passed.  Python 3.12 mypy, Ruff, Black, TypeScript, zero-warning ESLint,
 the Vite production build, structural budgets, and `git diff --check` pass.
 This completes the stream/adapter contract slice of #4197, not its remaining
 end-user optimization workflow or the wider release epic.
+
+Independent pre-publication review then found four fail-closed contract gaps,
+all corrected before opening a PR: native Python/JavaScript number formatting
+was not byte-stable at IEEE rounding and exponent edges; Unicode title-casing
+could derive different labels; public observations admitted impossible
+status/metric combinations; and the TypeScript declaration signature could
+collide when identifiers contained its delimiters.  The replacement canonical
+writer emits code-point-sorted JSON with raw numeric tokens, fixed 11-decimal
+half-away rounding, decimal integer-valued magnitudes, and normalized negative
+zero.  ASCII-only initial-letter label casing, strict landing/incomplete metric
+invariants, and structural declaration comparison now match in both runtimes.
+
+Adversarial regression coverage includes binary half boundaries, `1e-12`,
+`1e-11`, large integer-valued magnitudes, negative zero, Unicode identifiers,
+delimiter-bearing declarations, non-finite inputs, and every effective/source
+status combination.  Updated evidence is 135 Python flight/adapter tests passed
+with four expected Rust-wheel skips and 96 React files / 584 tests passed, plus
+Python 3.12 mypy, Ruff, Black, TypeScript, ESLint, Vite build, structural
+budgets, and diff checks.  The branch was pushed at implementation commit
+`43ad5e35be299f2ab11260784ee707fc5721fd2e` before this hardening; publish only
+after committing and pushing these corrections and updating this handoff with
+the resulting PR.

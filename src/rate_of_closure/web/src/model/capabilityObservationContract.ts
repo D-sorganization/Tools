@@ -129,10 +129,16 @@ const requireUnique = (values: readonly string[], label: string): void => {
   if (new Set(values).size !== values.length) throw new RangeError(`${label} must be unique`);
 };
 
-const requireStatusContract = (
-  source: EvaluationStatus | null, effective: CapabilityEffectiveStatus,
-  code: string | null, reason: string | null,
-): void => {
+interface StatusContractFields {
+  readonly source: EvaluationStatus | null;
+  readonly effective: CapabilityEffectiveStatus;
+  readonly code: string | null;
+  readonly reason: string | null;
+  readonly metrics: readonly EvaluatedMetric[];
+}
+
+const requireStatusContract = (fields: StatusContractFields): void => {
+  const { source, effective, code, reason, metrics } = fields;
   let valid = false;
   if (effective === "complete") valid = source === "complete" && code === null && reason === null;
   if (effective === "no_impact") valid = source === "no_impact" && code !== null && code === reason;
@@ -146,6 +152,17 @@ const requireStatusContract = (
     valid = code !== null && code === reason;
   }
   if (!valid) throw new RangeError("observation status and reason fields are inconsistent");
+  const metricIds = new Set(metrics.map(({ metricId }) => metricId));
+  const hasLanding = metricIds.has("carry_distance") && metricIds.has("carry_offline");
+  if (effective === "complete" && !hasLanding) {
+    throw new RangeError("complete observation requires carry_distance and carry_offline metrics");
+  }
+  if (effective === "failed" && source === "complete" && hasLanding) {
+    throw new RangeError("missing_required_landing_metrics requires an incomplete landing pair");
+  }
+  if ((effective === "no_impact" || source !== "complete") && metrics.length !== 0) {
+    throw new RangeError("non-complete source statuses require zero metrics");
+  }
 };
 
 /** Parse, validate, defensively copy, and deeply freeze one v1 observation. */
@@ -177,7 +194,10 @@ export function parseCapabilitySampleObservation(payload: unknown): CapabilitySa
   if (!EFFECTIVE_STATUSES.has(effectiveStatus)) throw new RangeError("effectiveStatus is not supported");
   const reasonCode = nullableText(root.reasonCode, "reasonCode");
   const sourceReason = nullableText(root.sourceReason, "sourceReason");
-  requireStatusContract(sourceStatus, effectiveStatus, reasonCode, sourceReason);
+  requireStatusContract({
+    source: sourceStatus, effective: effectiveStatus,
+    code: reasonCode, reason: sourceReason, metrics,
+  });
   return Object.freeze({
     schemaVersion: "capability-sample-observation/v1",
     problemId: nonempty(root.problemId, "problemId"), attemptOrdinal, attemptedCount, totalCount,

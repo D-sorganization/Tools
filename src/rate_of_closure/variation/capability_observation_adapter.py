@@ -2,10 +2,8 @@
 
 from __future__ import annotations
 
-import json
 import math
-from collections.abc import Iterable, Mapping
-from typing import Any
+from collections.abc import Iterable
 
 from rate_of_closure.variation.scalar_ensemble_contract import (
     SCALAR_ENSEMBLE_SCHEMA_VERSION,
@@ -32,6 +30,8 @@ from shared.python.swing_sim.flight.result_contract import (
 )
 from shared.python.swing_sim.solver.targets import TargetRegion
 
+from .canonical_numeric_json import canonical_numeric_json
+
 MAX_CAPABILITY_OBSERVATION_ROWS = 100_000
 _ADAPTER_ID = "capability-sample-observation/scalar-ensemble/v1"
 _SOURCE_SCHEMA = "capability-sample-observation/v1"
@@ -52,29 +52,17 @@ _COHORTS = (
     ScalarCohortDefinition("no_impact", "No Impact"),
     ScalarCohortDefinition("failed", "Failed"),
 )
-_TARGET_VARIABLES = (
-    ScalarVariableDefinition(
-        "target_downrange_residual",
-        "Target Downrange Residual",
-        "m",
-        "target",
-        "target",
-    ),
-    ScalarVariableDefinition(
-        "target_lateral_residual", "Target Lateral Residual", "m", "target", "target"
-    ),
-    ScalarVariableDefinition(
-        "target_residual", "Target Center Miss Distance", "m", "target", "target"
-    ),
-    ScalarVariableDefinition(
-        "target_signed_distance", "Target Signed Distance", "m", "target", "target"
-    ),
-    ScalarVariableDefinition(
-        "target_solver_residual", "Target Solver Residual", "m", "target", "target"
-    ),
-    ScalarVariableDefinition(
-        "target_contains", "Inside Target", "1", "target", "target"
-    ),
+_TARGET_VARIABLE_DECLARATIONS = (
+    ("target_downrange_residual", "Target Downrange Residual", "m"),
+    ("target_lateral_residual", "Target Lateral Residual", "m"),
+    ("target_residual", "Target Center Miss Distance", "m"),
+    ("target_signed_distance", "Target Signed Distance", "m"),
+    ("target_solver_residual", "Target Solver Residual", "m"),
+    ("target_contains", "Inside Target", "1"),
+)
+_TARGET_VARIABLES = tuple(
+    ScalarVariableDefinition(key, label, unit, "target", "target")
+    for key, label, unit in _TARGET_VARIABLE_DECLARATIONS
 )
 
 
@@ -147,7 +135,7 @@ def _variables(
 ) -> tuple[ScalarVariableDefinition, ...]:
     variables: list[ScalarVariableDefinition] = []
     for parameter in parameters:
-        label = parameter.parameter_id.replace("_", " ").title()
+        label = _ascii_parameter_label(parameter.parameter_id)
         variables.extend(
             (
                 ScalarVariableDefinition(
@@ -178,6 +166,15 @@ def _variables(
         for metric_id in metric_ids
     )
     return tuple(variables) + _TARGET_VARIABLES
+
+
+def _ascii_parameter_label(parameter_id: str) -> str:
+    """Build a label without Unicode or locale-dependent case conversion."""
+    words = parameter_id.split("_")
+    return " ".join(
+        chr(ord(word[0]) - 32) + word[1:] if word and "a" <= word[0] <= "z" else word
+        for word in words
+    )
 
 
 def _target_region(target: TargetDefinition) -> TargetRegion:
@@ -367,25 +364,9 @@ def build_capability_observation_ensemble(
     return builder.build()
 
 
-def _canonical_wire(value: Any) -> Any:
-    if isinstance(value, float):
-        rounded = round(value, 11)
-        return int(rounded) if rounded.is_integer() else rounded
-    if isinstance(value, Mapping):
-        return {key: _canonical_wire(value[key]) for key in sorted(value)}
-    if isinstance(value, (list, tuple)):
-        return [_canonical_wire(item) for item in value]
-    return value
-
-
 def capability_observation_ensemble_json(dataset: ScalarEnsembleDataset) -> str:
     """Serialize one ensemble with deterministic cross-runtime numeric rounding."""
-    return json.dumps(
-        _canonical_wire(dataset.to_wire()),
-        ensure_ascii=False,
-        sort_keys=True,
-        separators=(",", ":"),
-    )
+    return canonical_numeric_json(dataset.to_wire())
 
 
 __all__ = [

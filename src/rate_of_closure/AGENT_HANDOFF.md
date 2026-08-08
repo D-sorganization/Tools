@@ -451,3 +451,17 @@ skips; 96 React files / 580 tests passed; Python 3.12 mypy, Ruff, Black,
 TypeScript, ESLint, Vite build, structural budgets, and diff checks pass.
 Publish only as the next protected stacked draft PR, then keep #4197 open for
 its remaining user-facing capability-optimization workflow.
+
+An independent review blocked PR creation after the first branch push and the
+four findings are now fixed locally.  Stable JSON uses a shared raw-number
+policy rather than native runtime spelling; derived parameter labels uppercase
+only an initial ASCII letter; public observations enforce complete landing and
+empty incomplete-status metric invariants; and TypeScript compares parameter
+declarations structurally instead of with delimiter-concatenated signatures.
+Adversarial IEEE rounding/exponent/negative-zero, Unicode, control-delimiter,
+non-finite, and status-matrix tests are green.  Current totals are 135 Python
+flight/adapter tests passed with four optional Rust-wheel skips and 96 React
+files / 584 tests passed, with the previously recorded lint, type, build, and
+budget gates still green.  Commit these corrections with this handoff update,
+push normally, and only then open the stacked draft PR against
+`feat/4199-wind-workflow`.

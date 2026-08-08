@@ -23,6 +23,10 @@ class CapabilitySampleStatus(StrEnum):
 
 
 _SOURCELESS_FAILURE_CODES = {"evaluator_exception", "invalid_evaluator_result"}
+_REQUIRED_LANDING_METRICS = {
+    FlightMetricId.CARRY_DISTANCE,
+    FlightMetricId.CARRY_OFFLINE,
+}
 
 
 @dataclass(frozen=True)
@@ -192,6 +196,26 @@ def _validate_status_contract(observation: CapabilitySampleObservation) -> None:
         valid = valid and code is not None and code == reason
     if not valid:
         raise ValueError("observation status and reason fields are inconsistent")
+    _validate_status_metrics(observation)
+
+
+def _validate_status_metrics(observation: CapabilitySampleObservation) -> None:
+    metric_ids = {item.metric_id for item in observation.metrics}
+    has_landing = _REQUIRED_LANDING_METRICS <= metric_ids
+    if observation.effective_status is CapabilitySampleStatus.COMPLETE:
+        if not has_landing:
+            raise ValueError(
+                "complete observation requires carry_distance and carry_offline"
+            )
+        return
+    if observation.source_status is EvaluationStatus.COMPLETE:
+        if has_landing:
+            raise ValueError(
+                "missing_required_landing_metrics must be missing at least one metric"
+            )
+        return
+    if observation.metrics:
+        raise ValueError("noncomplete source statuses require no metrics")
 
 
 ObservationSink: TypeAlias = Callable[[CapabilitySampleObservation], None]

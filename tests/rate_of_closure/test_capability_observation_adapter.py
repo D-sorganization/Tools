@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import hashlib
+import json
 import math
 from dataclasses import replace
 
 import pytest
 
+from rate_of_closure.variation.canonical_numeric_json import canonical_numeric_json
 from rate_of_closure.variation.capability_observation_adapter import (
     CapabilityObservationEnsembleBuilder,
     build_capability_observation_ensemble,
@@ -242,3 +244,73 @@ def test_stable_wire_matches_typescript_unicode_digest() -> None:
     assert hashlib.sha256(payload.encode()).hexdigest() == (
         "18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0"
     )
+
+
+def test_stable_wire_uses_canonical_numeric_tokens_for_every_float() -> None:
+    base = _observation(0, CapabilitySampleStatus.COMPLETE)
+    adversarial = replace(
+        base,
+        total_count=1,
+        parameters=(
+            CapabilitySampleParameter("positive_half", "1", 1.234567890125, 1e-12),
+            CapabilitySampleParameter("negative_half", "1", -1.234567890125, -0.0),
+            CapabilitySampleParameter("threshold", "1", 1e-11, 1e20),
+            CapabilitySampleParameter(
+                "half_away", "1", 1.000000000005, -1.000000000005
+            ),
+        ),
+    )
+
+    payload = capability_observation_ensemble_json(_build((adversarial,)))
+    wire = json.loads(payload)
+    row_values = wire["rows"][0]["values"]
+
+    assert row_values["nominal.positive_half"] == 1.23456789012
+    assert row_values["perturbed.positive_half"] == 0
+    assert row_values["nominal.negative_half"] == -1.23456789012
+    assert row_values["perturbed.negative_half"] == 0
+    assert row_values["nominal.threshold"] == 0.00000000001
+    assert row_values["perturbed.threshold"] == 100000000000000000000
+    assert row_values["nominal.half_away"] == 1.00000000001
+    assert row_values["perturbed.half_away"] == -1.00000000001
+    assert all(
+        isinstance(value, int | float) and not isinstance(value, bool)
+        for value in row_values.values()
+        if value is not None
+    )
+    assert '"nominal.threshold":0.00000000001' in payload
+    assert '"perturbed.threshold":100000000000000000000' in payload
+
+
+def test_parameter_labels_only_uppercase_initial_ascii_letters() -> None:
+    base = _observation(0, CapabilitySampleStatus.COMPLETE)
+    adversarial = replace(
+        base,
+        total_count=1,
+        parameters=(
+            CapabilitySampleParameter("ball_speed", "m/s", 1.0, 2.0),
+            CapabilitySampleParameter("ß_value", "1", 3.0, 4.0),
+            CapabilitySampleParameter("éCLAIR_rate", "1/s", 5.0, 6.0),
+            CapabilitySampleParameter("ALPHA_value", "1", 7.0, 8.0),
+        ),
+    )
+
+    dataset = _build((adversarial,))
+    labels = {
+        variable.key: variable.label
+        for variable in dataset.variables
+        if variable.key.startswith("nominal.")
+    }
+
+    assert labels == {
+        "nominal.ball_speed": "Nominal Ball Speed",
+        "nominal.ß_value": "Nominal ß Value",
+        "nominal.éCLAIR_rate": "Nominal éCLAIR Rate",
+        "nominal.ALPHA_value": "Nominal ALPHA Value",
+    }
+
+
+@pytest.mark.parametrize("value", [math.nan, math.inf, -math.inf])
+def test_canonical_numeric_json_rejects_nonfinite_values(value: float) -> None:
+    with pytest.raises(ValueError, match="finite floats"):
+        canonical_numeric_json({"value": value})

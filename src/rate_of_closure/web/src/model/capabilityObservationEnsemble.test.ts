@@ -172,6 +172,40 @@ describe("capability observation validation", () => {
     expect(builder.build().variables[0].key).toBe("nominal.ball_speed");
     expect(builder.build().rows[0].values.target_downrange_residual).toBe(5);
   });
+
+  it("enforces the exact status-to-metrics contract", () => {
+    const incompleteLanding = mutate((row) => {
+      row.sourceStatus = "complete"; row.effectiveStatus = "failed";
+      row.reasonCode = "missing_required_landing_metrics"; row.sourceReason = null;
+      row.metrics = [records(row.metrics)[0]];
+    });
+    expect(() => build([incompleteLanding])).not.toThrow();
+    const invalid = [
+      mutate((row) => { row.metrics = [records(row.metrics)[0]]; }),
+      mutate((row) => {
+        row.sourceStatus = "no_impact"; row.effectiveStatus = "no_impact";
+        row.reasonCode = "missed_ball"; row.sourceReason = "missed_ball";
+      }),
+      mutate((row) => {
+        row.sourceStatus = "failed"; row.effectiveStatus = "failed";
+        row.reasonCode = "solver_failed"; row.sourceReason = "solver_failed";
+      }),
+      mutate((row) => {
+        row.sourceStatus = "nonconverged"; row.effectiveStatus = "failed";
+        row.reasonCode = "iteration_limit"; row.sourceReason = "iteration_limit";
+      }),
+      mutate((row) => {
+        row.sourceStatus = null; row.effectiveStatus = "failed";
+        row.reasonCode = "evaluator_exception"; row.sourceReason = null;
+      }),
+      mutate((row) => {
+        row.sourceStatus = null; row.effectiveStatus = "failed";
+        row.reasonCode = "invalid_evaluator_result"; row.sourceReason = null;
+      }),
+    ];
+    records(invalid[0].metrics).splice(1);
+    invalid.forEach((row) => expect(() => build([row])).toThrow(/status|metrics|carry/));
+  });
 });
 
 describe("capability observation identity", () => {
@@ -190,6 +224,36 @@ describe("capability observation identity", () => {
       ],
     } satisfies CapabilitySampleObservation;
     expect(() => build([observation(0, "complete"), drift])).toThrow(/parameter declarations/);
+  });
+
+  it("cannot confuse structurally different declarations containing delimiters", () => {
+    const first = mutate((row) => {
+      row.clubId = "same-club";
+      row.parameters = [
+        { parameterId: "a\u0000b\u0001c", unit: "d", nominalValue: 1, perturbedValue: 2 },
+      ];
+    });
+    const second = structuredClone(first);
+    (second as { attemptOrdinal: number }).attemptOrdinal = 1;
+    (second as { attemptedCount: number }).attemptedCount = 2;
+    (second as { candidateOrdinal: number }).candidateOrdinal = 1;
+    (second as { clubCandidateOrdinal: number }).clubCandidateOrdinal = 1;
+    (second as { parameters: CapabilitySampleObservation["parameters"] }).parameters = [
+      { parameterId: "a", unit: "b", nominalValue: 1, perturbedValue: 2 },
+      { parameterId: "c", unit: "d", nominalValue: 3, perturbedValue: 4 },
+    ];
+    expect(() => build([first, second])).toThrow(/parameter declarations/);
+  });
+
+  it("derives labels using ASCII-only initial-letter casing", () => {
+    const unicode = mutate((row) => {
+      row.parameters = [
+        { parameterId: "alpha_\u00e9LAN_\u03c9mega", unit: "1", nominalValue: 1, perturbedValue: 2 },
+      ];
+    });
+    expect(build([unicode]).variables.slice(0, 2).map(({ label }) => label)).toEqual([
+      "Nominal Alpha \u00e9LAN \u03c9mega", "Perturbed Alpha \u00e9LAN \u03c9mega",
+    ]);
   });
 });
 
@@ -219,5 +283,25 @@ describe("capability observation wire parity", () => {
     expect(Array.from(new Uint8Array(digest), (byte) =>
       byte.toString(16).padStart(2, "0")).join(""))
       .toBe("18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0");
+  });
+
+  it("emits canonical raw number tokens at rounding and exponent edges", () => {
+    const edge = mutate((row) => {
+      row.totalCount = 1;
+      row.parameters = [
+        { parameterId: "half", unit: "1", nominalValue: 1.000000000005, perturbedValue: -1.000000000005 },
+        { parameterId: "tiny", unit: "1", nominalValue: -0, perturbedValue: 0.0000001 },
+        { parameterId: "large", unit: "1", nominalValue: 1e21, perturbedValue: 1e-12 },
+      ];
+    });
+    const json = stableCapabilityObservationEnsembleJson(build([edge]));
+    expect(json).toContain('"nominal.half":1.00000000001');
+    expect(json).toContain('"perturbed.half":-1.00000000001');
+    expect(json).toContain('"nominal.tiny":0');
+    expect(json).toContain('"perturbed.tiny":0.0000001');
+    expect(json).toContain('"nominal.large":1000000000000000000000');
+    expect(json).toContain('"perturbed.large":0');
+    expect(json).not.toMatch(/"(?:nominal|perturbed)\.[^"]+":"/);
+    expect(json).not.toContain("e+21");
   });
 });

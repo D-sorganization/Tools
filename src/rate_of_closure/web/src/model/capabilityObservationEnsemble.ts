@@ -64,16 +64,19 @@ const orderedObservations = (
 const declarations = (
   observations: readonly CapabilitySampleObservation[],
 ): readonly CapabilityObservedParameter[] => {
-  const byClub = new Map<string, string>();
+  const byClub = new Map<string, readonly CapabilityObservedParameter[]>();
   const declared = new Map<string, CapabilityObservedParameter>();
   observations.forEach((observation) => {
-    const signature = observation.parameters.map(({ parameterId, unit }) =>
-      `${parameterId}\u0000${unit}`).join("\u0001");
     const previous = byClub.get(observation.clubId);
-    if (previous !== undefined && previous !== signature) {
+    const same = previous?.length === observation.parameters.length
+      && previous.every((item, index) => {
+        const current = observation.parameters[index];
+        return item.parameterId === current.parameterId && item.unit === current.unit;
+      });
+    if (previous !== undefined && !same) {
       throw new RangeError("parameter declarations changed within a club");
     }
-    byClub.set(observation.clubId, signature);
+    byClub.set(observation.clubId, observation.parameters);
     observation.parameters.forEach((parameter) => {
       const prior = declared.get(parameter.parameterId);
       if (prior && prior.unit !== parameter.unit) {
@@ -94,8 +97,12 @@ const variables = (
 ): readonly ScalarVariableDefinition[] => {
   const definitions: ScalarVariableDefinition[] = [];
   parameters.forEach((parameter) => {
-    const label = parameter.parameterId.replace(/_/g, " ")
-      .replace(/\b\w/g, (letter: string) => letter.toUpperCase());
+    const label = parameter.parameterId.split("_").map((part) => {
+      const initial = part.charCodeAt(0);
+      return initial >= 97 && initial <= 122
+        ? String.fromCharCode(initial - 32) + part.slice(1)
+        : part;
+    }).join(" ");
     definitions.push(
       { key: `nominal.${parameter.parameterId}`, label: `Nominal ${label}`, unit: parameter.unit, stage_key: "nominal", category_key: "parameter" },
       { key: `perturbed.${parameter.parameterId}`, label: `Perturbed ${label}`, unit: parameter.unit, stage_key: "perturbed", category_key: "parameter" },
@@ -270,15 +277,6 @@ export function buildCapabilityObservationEnsemble(
   return builder.build();
 }
 
-const canonical = (value: unknown): unknown => {
-  if (typeof value === "number") return Number(value.toFixed(11));
-  if (Array.isArray(value)) return value.map(canonical);
-  if (value && typeof value === "object") return Object.fromEntries(Object.entries(value)
-    .sort(([left], [right]) => codePointCompare(left, right))
-    .map(([key, item]) => [key, canonical(item)]));
-  return value;
-};
-
 const codePointCompare = (left: string, right: string): number => {
   const leftPoints = [...left].map((item) => item.codePointAt(0) ?? 0);
   const rightPoints = [...right].map((item) => item.codePointAt(0) ?? 0);
@@ -289,7 +287,29 @@ const codePointCompare = (left: string, right: string): number => {
   return leftPoints.length - rightPoints.length;
 };
 
+const canonicalNumber = (value: number): string => {
+  if (!Number.isFinite(value)) throw new RangeError("stable JSON numbers must be finite");
+  if (value === 0) return "0";
+  if (Number.isInteger(value)) return BigInt(value).toString();
+  const fixed = value.toFixed(11);
+  const trimmed = fixed.includes(".") ? fixed.replace(/0+$/, "").replace(/\.$/, "") : fixed;
+  return trimmed === "-0" ? "0" : trimmed;
+};
+
+const canonicalJson = (value: unknown): string => {
+  if (value === null) return "null";
+  if (typeof value === "number") return canonicalNumber(value);
+  if (typeof value === "string" || typeof value === "boolean") return JSON.stringify(value);
+  if (Array.isArray(value)) return `[${value.map(canonicalJson).join(",")}]`;
+  if (typeof value === "object") {
+    const entries = Object.entries(value).sort(([left], [right]) => codePointCompare(left, right));
+    return `{${entries.map(([key, item]) =>
+      `${JSON.stringify(key)}:${canonicalJson(item)}`).join(",")}}`;
+  }
+  throw new TypeError("stable JSON supports only JSON-compatible values");
+};
+
 /** Serialize with stable key order and the shared 11-decimal numeric policy. */
 export const stableCapabilityObservationEnsembleJson = (
   ensemble: ScalarEnsembleResult<CapabilityCohort>,
-): string => JSON.stringify(canonical(ensemble));
+): string => canonicalJson(ensemble);
