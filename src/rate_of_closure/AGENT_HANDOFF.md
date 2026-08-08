@@ -22,8 +22,10 @@ Verified gates on the committed head: 808 `tests/rate_of_closure` plus
 / 619 tests passed; Ruff check/format clean; CI-equivalent mypy 1.13
 clean on all 10 changed src files; `tsc --noEmit`, zero-warning ESLint,
 and the 187-module Vite build pass; changed-only 500-LOC budget and
-`git diff --check` pass. Stack order under epic #4197: observer #4283 →
-evaluator #4289 → this branch's stacked child PR; merge in that order.
+`git diff --check` pass. Published as PR #4294 on
+`feat/4197-capability-flight-evaluator`. Stack order under epic #4197:
+observer #4283 → evaluator #4289 → this #4294, all now ready-for-review
+in merge order; merge only in that order behind protected checks.
 
 ## 2026-08-08 Matched Capability Optimization Workspace
 

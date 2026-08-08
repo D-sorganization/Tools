@@ -22,8 +22,10 @@ React files / 619 tests passed; Ruff check/format clean on all changed
 files; CI-equivalent mypy 1.13 (`--ignore-missing-imports
 --follow-imports=skip`) clean on all 10 changed src files; `tsc
 --noEmit`, zero-warning ESLint, and the 187-module Vite build pass;
-changed-only 500-LOC budget and `git diff --check` pass. Stack order:
-observer #4283 → evaluator #4289 → this branch's stacked child PR.
+changed-only 500-LOC budget and `git diff --check` pass. The slice is
+published as PR #4294 on `feat/4197-capability-flight-evaluator`, and
+the capability stack was flipped ready-for-review in merge order:
+observer #4283 → evaluator #4289 → this #4294.
 
 ## Current Rate of Closure continuation
 
