@@ -2702,3 +2702,5 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+- 2026-08-08 (App.tsx): Memoized the SVG `<polyline>` point attribute formatting using `useMemo` for both the PID and MPC tracks in `App.tsx`.

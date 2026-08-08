@@ -3,6 +3,7 @@ import React, {
   useEffect,
   useRef,
   useCallback,
+  useMemo,
   lazy,
   Suspense,
 } from "react";
@@ -219,6 +220,26 @@ export const App: React.FC = () => {
     process_delay: 1.0,
   });
   const [mpcSimData, setMpcSimData] = useState<MpcSimResult | null>(null);
+
+  // ⚡ Bolt Optimization: Memoize the heavy SVG polyline calculations for the simulation charts.
+  // Without this, the array mapping and string building runs on every component render (e.g. state changes).
+  const pidPoints = useMemo(() => {
+    if (!mpcSimData) return "";
+    return mpcSimData.time.map((_, idx) => {
+      const x = (idx / (mpcSimData.time.length - 1)) * 340 + 5;
+      const y = 200 - (mpcSimData.pid.pv[idx] * 2);
+      return `${x},${y}`;
+    }).join(" ");
+  }, [mpcSimData]);
+
+  const mpcPoints = useMemo(() => {
+    if (!mpcSimData) return "";
+    return mpcSimData.time.map((_, idx) => {
+      const x = (idx / (mpcSimData.time.length - 1)) * 340 + 5;
+      const y = 200 - (mpcSimData.mpc.pv[idx] * 2);
+      return `${x},${y}`;
+    }).join(" ");
+  }, [mpcSimData]);
 
   // Theme & Navigation Sidebar State
   const [theme, setTheme] = useState<"dark" | "light">(() => {
@@ -1311,34 +1332,10 @@ export const App: React.FC = () => {
                           })()}
 
                           {/* PID PV path (purple) */}
-                          {(() => {
-                            // ⚡ Bolt Optimization: Replace chained array `.map().join(" ")` with a single-pass loop and direct string concatenation
-                            // This eliminates intermediate array allocations and closure overhead on high-frequency visualization renders.
-                            let points = "";
-                            const timeLen = mpcSimData.time.length;
-                            for (let idx = 0; idx < timeLen; idx++) {
-                              const x = (idx / (timeLen - 1)) * 340 + 5;
-                              const y = 200 - (mpcSimData.pid.pv[idx] * 2);
-                              if (idx > 0) points += " ";
-                              points += `${x},${y}`;
-                            }
-                            return <polyline fill="none" stroke="var(--accent-purple)" strokeWidth="2" points={points} />;
-                          })()}
+                          <polyline fill="none" stroke="var(--accent-purple)" strokeWidth="2" points={pidPoints} />
 
                           {/* MPC PV path (cyan) */}
-                          {(() => {
-                            // ⚡ Bolt Optimization: Replace chained array `.map().join(" ")` with a single-pass loop and direct string concatenation
-                            // This eliminates intermediate array allocations and closure overhead on high-frequency visualization renders.
-                            let points = "";
-                            const timeLen = mpcSimData.time.length;
-                            for (let idx = 0; idx < timeLen; idx++) {
-                              const x = (idx / (timeLen - 1)) * 340 + 5;
-                              const y = 200 - (mpcSimData.mpc.pv[idx] * 2);
-                              if (idx > 0) points += " ";
-                              points += `${x},${y}`;
-                            }
-                            return <polyline fill="none" stroke="var(--accent-cyan)" strokeWidth="2" points={points} />;
-                          })()}
+                          <polyline fill="none" stroke="var(--accent-cyan)" strokeWidth="2" points={mpcPoints} />
                         </svg>
                         <div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.25rem", fontSize: "0.65rem", color: "var(--text-muted)" }}>
                           <span>Time: 0s</span>
