@@ -397,3 +397,30 @@ and
 [parity #4260](https://github.com/D-sorganization/Tools/issues/4260#issuecomment-5223106465).
 Do not treat a launcher tile as a fourth UI implementation, and do not equate
 launch-monitor total displacement with accumulated ground path length.
+
+### 2026-08-07 CI repair and current ground/parity findings
+
+The first hosted run for PR #4282 found one actionable delta-mypy defect:
+`WindStrategyLifecycleMixin.closeEvent` conflicted with Qt's nullable close
+event signature under Python 3.12.  Commit
+`424b4c395370aea26069386c070a65f7abe885bc` introduces a concrete
+`WindStrategyGroupBox`, keeps worker teardown in the mixin, and gives the Qt
+override the correct `QCloseEvent | None` contract.  Exact Python 3.12 mypy
+now passes for 11 changed production files, as do Ruff, formatting,
+`git diff --check`, and 19 focused wind/playback tests.  Do not merge until the
+new protected checks and the entire parent stack are green and approved.
+
+Read-only audits against current UpstreamDrift remote `main`
+`0782853295e005af68818617e4725eb980890f43` found useful but unqualified
+contact, terrain, turf, and putting-roll code.  Preserve the direction
+`UpstreamDrift adapter -> Tools ground-run/v1 authority`; Tools must not import
+UpstreamDrift.  Do not reuse the terrain serialization without fixing its lost
+material fields, and do not start bounce/roll physics until first physical
+sphere contact, arbitrary surface normal, target-frame conversion, and full
+terminal angular velocity are available through a strict transfer contract.
+
+The four-surface parity baseline is not complete: UpstreamDrift PyQt launches
+the Tools native window, UpstreamDrift React has no Rate route, and Tools React
+still has narrower impact/flight authority than Tools PyQt.  Close parity
+through shared versioned calculation contracts and golden fixtures, not by
+counting launchers, separate simulators, or copied model implementations.

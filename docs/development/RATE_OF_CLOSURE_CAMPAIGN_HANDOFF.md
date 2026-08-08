@@ -659,3 +659,34 @@ streaming observation/cancellation/scalar-adapter contract is recorded at
 Keep the ordinary optimization result compact, stream every attempted sample
 in deterministic order, preserve evaluator metrics and reasons, and never
 invent outputs for no-impact or failed rows.
+
+### 2026-08-07 protected-CI repair and ground/parity audit
+
+PR #4282 initially failed the hosted Python 3.12 delta mypy gate because the
+wind lifecycle mixin and `QWidget` exposed incompatible `closeEvent`
+signatures.  Commit `424b4c395370aea26069386c070a65f7abe885bc` moves the Qt
+override onto a concrete `WindStrategyGroupBox` and leaves the reusable mixin
+responsible only for cancellation/join behavior.  Fresh Python 3.12 mypy
+passes for all 11 changed source files; Ruff, format, diff validation, and the
+19 focused wind-panel/worker/playback tests also pass.  This is a scoped CI
+repair, not evidence that the still-queued protected stack is merge-ready.
+
+The current remote UpstreamDrift audit basis is `main` at
+`0782853295e005af68818617e4725eb980890f43`.  Reusable ground assets exist in
+its Rust contact kernel, split terrain/material package, compressible-turf
+helpers, and putting roll engine, but none is a qualified drop-in.  Material
+round trips lose seven physical fields, the elevation-grid boundary contract
+has two failing cases, terminal flight spin is not exported as a full vector,
+and the Rust contact result uses scalar spin and a per-unit-mass energy value
+labelled as joules.  Tools must own a strict, versioned target-frame
+flight-to-ground request/result authority; UpstreamDrift may contribute only a
+one-way explicit adapter.
+
+The parity matrix remains materially incomplete.  Tools PyQt is the broadest
+native surface; Tools React still has reduced impact/flight model authority;
+UpstreamDrift PyQt is an external launcher; and UpstreamDrift React has no Rate
+of Closure route.  A separate generic simulator, copied TypeScript physics,
+or launcher tile does not satisfy parity.  Required next evidence is a
+commit-fresh capability-by-surface manifest backed by shared golden fixtures,
+one authoritative Tools physics contract, thin UI adapters, and an immutable
+UpstreamDrift Tools pin.
