@@ -3,6 +3,33 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-08
 
+## 2026-08-08 Evaluator CI repair and descending-launch parity fix
+
+Two defects were found and fixed on this branch after its first protected run,
+both reported from the stacked child #4294:
+
+1. **Descending-launch exception.** `flight.ts` starts the ball at `z = 0`, so a
+   negative launch angle puts it below ground on step 1, which the `t > dt`
+   guard skips. By step 2 the interpolation ratio went negative and
+   extrapolated the ground crossing to a negative sample time, raising
+   `RangeError: timeS must be nonnegative`. The observation layer absorbed it as
+   an untyped `evaluator_exception` — 12 of 96 samples on a default driver
+   search, where Python reported zero. The ratio is now clamped to `[0, 1]`, so
+   these samples report `nonconverged`, matching Python exactly. A pinned
+   regression test covers both reproducing samples; it fails without the clamp.
+2. **Delta-mypy quality gate.** `result_derivation.py` had an unused
+   `type: ignore` and an `Any` return. `_lerp_vector` now builds the 3-tuple
+   explicitly (genuinely typed, no ignore needed in either import mode) and
+   `_curve` coerces its result to `float`.
+
+The other two red checks on #4289 were **not** code failures: `file-size-budget`
+and `detect-secrets` both had their setup steps *cancelled* by runner
+infrastructure. Re-run them rather than chasing a nonexistent violation.
+
+Verified after the fixes: 1406 Python tests and 599 React tests pass; Ruff,
+format, CI-equivalent mypy 1.13, TypeScript, zero-warning ESLint, and the
+176-module Vite build pass.
+
 ## 2026-08-08 Model-Backed Capability Flight Evaluator
 
 Active branch `feat/4197-capability-flight-evaluator` is a normal child of

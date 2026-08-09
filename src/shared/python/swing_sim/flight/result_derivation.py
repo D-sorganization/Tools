@@ -49,7 +49,11 @@ def _landing_state(points: tuple[MetricTrajectoryPoint, ...]) -> _LandingState |
 
 
 def _lerp_vector(first: Vector3, second: Vector3, fraction: float) -> Vector3:
-    return tuple(a + fraction * (b - a) for a, b in zip(first, second, strict=True))  # type: ignore[return-value]
+    return (
+        first[0] + fraction * (second[0] - first[0]),
+        first[1] + fraction * (second[1] - first[1]),
+        first[2] + fraction * (second[2] - first[2]),
+    )
 
 
 def _norm(value: Vector3) -> float:
@@ -128,7 +132,7 @@ def _curve(points: tuple[MetricTrajectoryPoint, ...], heading: float) -> float:
         + math.cos(heading) * (point.position_m[2] - origin[2])
         for point in points
     )
-    return max(lateral, key=abs)
+    return float(max(lateral, key=abs))
 
 
 def _landing_values(

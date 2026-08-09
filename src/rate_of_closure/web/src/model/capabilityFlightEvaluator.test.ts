@@ -219,4 +219,42 @@ describe("capability flight evaluator", () => {
       invalid, request(), { spinDefaults: SPIN_DEFAULTS },
     )).toThrow(message as RegExp);
   });
+  // Bounds mirror the Shot Optimizer default profile, which permits the
+  // descending launches the fixture profile's narrower envelope excludes.
+  const wideProfile = () => {
+    const parameters = [
+      parameter("ball_speed", "m/s", 67, 1, 100),
+      parameter("launch_angle", "deg", 12.5, -10, 45),
+      parameter("launch_direction", "deg", 0, -30, 30),
+    ];
+    const matrix = parameters.map((_, row) =>
+      parameters.map((__, column) => row === column ? 1 : 0));
+    return parsePlayerCapabilityProfile({
+      schema_version: "player-capability-profile/v1", profile_id: "player",
+      clubs: [{ club_id: "driver", parameters, matrix_kind: "correlation",
+        matrix, provenance: "test", confidence: 1 }],
+      provenance: "test", confidence: 1,
+    });
+  };
+
+  it.each([
+    [-4.323746585003578, 83.2427975264564],
+    [-3.169046046624327, 85.84087373780972],
+  ])("types a descending launch at %s deg as nonconverged, not an exception", (
+    launchAngle, ballSpeed,
+  ) => {
+    const evaluate = makeCapabilityFlightEvaluator(
+      wideProfile(), request(), { spinDefaults: SPIN_DEFAULTS },
+    );
+
+    const evaluation = evaluate("driver", {
+      ball_speed: ballSpeed, launch_angle: launchAngle, launch_direction: 9.2,
+    });
+
+    // The Python runtime reports these same samples as nonconverged. The
+    // ground interpolation previously extrapolated to a negative time and
+    // threw a RangeError that surfaced as an untyped evaluator_exception.
+    expect(evaluation.status).toBe("nonconverged");
+    expect(evaluation.metrics).toHaveLength(0);
+  });
 });
