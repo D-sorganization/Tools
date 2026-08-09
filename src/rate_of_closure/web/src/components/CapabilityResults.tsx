@@ -5,7 +5,7 @@ import { stableCapabilityObservationEnsembleJson } from "../model/capabilityObse
 import {
   buildScalarEnsembleScatter, type ScalarVariableDefinition,
 } from "../model/scalarEnsembleContract";
-import { scalarEnsembleToCsv } from "../model/scalarEnsembleCsv";
+import { nonCompleteReasonSummary, scalarEnsembleToCsv } from "../model/scalarEnsembleCsv";
 import { ScalarEnsembleScatter } from "./ScalarEnsembleScatter";
 import { BUTTON_CLASS, INPUT_CLASS, downloadText } from "./variationUi";
 
@@ -74,7 +74,8 @@ export function CapabilityResults({ output }: { readonly output: CapabilityRunOu
   return <div className="mt-5 space-y-5 border-t border-slate-800 pt-4">
     <p className="text-xs text-slate-300">Attempted {output.result.evaluationsAttempted}; complete {
       output.result.evaluationsCompleted}; failed {output.result.failedCount}; no impact {
-      output.result.noImpactCount}. Status: {output.result.status}.</p>
+      output.result.noImpactCount}. Status: {output.result.status}.{
+      nonCompleteReasonSummary(output.ensemble)}</p>
     <Alternatives output={output} />
     <div className="grid gap-3 sm:grid-cols-2">{[["Horizontal axis", xKey, setXKey],
       ["Vertical axis", yKey, setYKey]].map(([label, value, setter]) =>

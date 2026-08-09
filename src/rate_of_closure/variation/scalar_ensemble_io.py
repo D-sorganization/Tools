@@ -1,4 +1,4 @@
-"""Lossless, spreadsheet-safe exports for scalar-ensemble datasets."""
+"""Lossless exports and honest summaries for scalar-ensemble datasets."""
 
 from __future__ import annotations
 
@@ -45,4 +45,25 @@ def scalar_ensemble_csv(dataset: ScalarEnsembleDataset) -> str:
     return output.getvalue().removesuffix("\n")
 
 
-__all__ = ["scalar_ensemble_csv"]
+def non_complete_reason_summary(dataset: ScalarEnsembleDataset) -> str:
+    """Report why non-complete rows ended so counts are not read as defects.
+
+    A horizon nonconvergence is normalized into the ``failed`` cohort by the
+    observation contract, which has no separate member for it. Naming the
+    retained reason keeps the count truthful.
+    """
+    counts: dict[str, int] = {}
+    for row in dataset.rows:
+        if row.cohort == "complete":
+            continue
+        attributes = {} if row.attributes is None else row.attributes
+        reason = attributes.get("reason_code") or "unspecified"
+        counts[reason] = counts.get(reason, 0) + 1
+    if not counts:
+        return ""
+    ordered = sorted(counts.items(), key=lambda item: (-item[1], item[0]))
+    detail = "; ".join(f"{reason} x{count}" for reason, count in ordered)
+    return f" Non-complete reasons: {detail}."
+
+
+__all__ = ["non_complete_reason_summary", "scalar_ensemble_csv"]

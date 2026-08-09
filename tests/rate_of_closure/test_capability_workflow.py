@@ -13,6 +13,18 @@ from rate_of_closure.application.capability_workflow import (
     capability_workflow_from_json,
     capability_workflow_json,
 )
+from rate_of_closure.variation.scalar_ensemble_contract import (
+    SCALAR_ENSEMBLE_SCHEMA_VERSION,
+    ScalarCohortDefinition,
+    ScalarEnsembleDataset,
+    ScalarEnsembleProvenance,
+    ScalarEnsembleRow,
+    ScalarEnsembleStage,
+    ScalarVariableCategory,
+    ScalarVariableDefinition,
+    scalar_ensemble_row_id,
+)
+from rate_of_closure.variation.scalar_ensemble_io import non_complete_reason_summary
 
 pytestmark = pytest.mark.unit
 
@@ -86,3 +98,59 @@ def test_workflow_json_rejects_spin_default_for_a_different_club() -> None:
 
     with pytest.raises(ValueError, match="spin default club_ids"):
         capability_workflow_from_json(json.dumps(payload))
+
+
+def _reason_dataset(
+    rows: tuple[tuple[str, str | None], ...],
+) -> ScalarEnsembleDataset:
+    return ScalarEnsembleDataset(
+        SCALAR_ENSEMBLE_SCHEMA_VERSION,
+        "reason-example",
+        ScalarEnsembleProvenance("reason-test/v1", "source/v1", "fixture"),
+        (ScalarEnsembleStage("input", "Inputs"),),
+        (ScalarVariableCategory("launch", "Launch"),),
+        (ScalarVariableDefinition("speed", "Speed", "m/s", "input", "launch"),),
+        (
+            ScalarCohortDefinition("complete", "Complete"),
+            ScalarCohortDefinition("failed", "Failed"),
+        ),
+        tuple(
+            ScalarEnsembleRow(
+                scalar_ensemble_row_id(index, "run"),
+                index,
+                cohort,
+                {"speed": 1.0},
+                "run",
+                {"reason_code": reason},
+            )
+            for index, (cohort, reason) in enumerate(rows)
+        ),
+    )
+
+
+def test_reason_summary_names_a_horizon_timeout_instead_of_implying_breakage() -> None:
+    dataset = _reason_dataset(
+        (
+            ("complete", None),
+            ("failed", "no_ground_crossing_before_max_time"),
+            ("failed", "no_ground_crossing_before_max_time"),
+        )
+    )
+
+    assert non_complete_reason_summary(dataset) == (
+        " Non-complete reasons: no_ground_crossing_before_max_time x2."
+    )
+
+
+def test_reason_summary_orders_by_count_then_reason_and_labels_missing() -> None:
+    dataset = _reason_dataset(
+        (("failed", None), ("failed", "overflow"), ("failed", "overflow"))
+    )
+
+    assert non_complete_reason_summary(dataset) == (
+        " Non-complete reasons: overflow x2; unspecified x1."
+    )
+
+
+def test_reason_summary_is_empty_when_every_retained_row_completed() -> None:
+    assert non_complete_reason_summary(_reason_dataset((("complete", None),))) == ""

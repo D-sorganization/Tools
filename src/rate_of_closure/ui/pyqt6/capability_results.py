@@ -21,6 +21,7 @@ from rate_of_closure.variation.scalar_ensemble_contract import (
     ScalarEnsembleDataset,
     ScalarScatterData,
 )
+from rate_of_closure.variation.scalar_ensemble_io import non_complete_reason_summary
 from shared.python.swing_sim.flight.capability_result import OptimizationResult
 
 _PAGE_SIZE = 25
@@ -132,6 +133,7 @@ class CapabilityResults(QWidget):
             f"Attempted {result.evaluations_attempted}; complete "
             f"{result.evaluations_completed}; failed {result.failed_count}; "
             f"no impact {result.no_impact_count}. Status: {result.status}."
+            f"{non_complete_reason_summary(dataset)}"
         )
         self._populate_alternatives(result)
         self._populate_axes(dataset)
