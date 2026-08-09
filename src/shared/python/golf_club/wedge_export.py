@@ -2,18 +2,29 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 from dataclasses import asdict, dataclass
 from datetime import datetime
 from enum import Enum
 from pathlib import Path
+from typing import TypeAlias
 
 from ._validation import require_finite_float, require_identifier
+from .cad_validation import (
+    CadGeometryReference,
+    ExactCadValidation,
+    reference_from_build123d_shape,
+    validate_exact_cad,
+)
+from .stl_validation import StlMeshValidation, validate_binary_stl
 from .wedge_cad import WedgeMeasuredMetrics, build_wedge_solid
 from .wedge_parameters import WedgeHeadParameters
+from .wedge_serialization import wedge_parameters_to_json
 
-WEDGE_EXPORT_FORMAT = "golf_club.wedge_export/1"
+WEDGE_EXPORT_FORMAT = "golf_club.wedge_export/2"
+CadArtifactValidation: TypeAlias = ExactCadValidation | StlMeshValidation
 _FIXED_STEP_TIMESTAMP = datetime(1970, 1, 1)
 _MIN_LINEAR_TOLERANCE_M = 1.0e-6
 _MAX_LINEAR_TOLERANCE_M = 1.0e-3
@@ -80,6 +91,9 @@ class WedgeExportArtifact:
 
     format: WedgeExportFormat
     path: Path
+    sha256: str
+    byte_size: int
+    validation: CadArtifactValidation
 
 
 @dataclass(frozen=True)
@@ -106,8 +120,15 @@ def export_wedge_artifacts(
     if not output_directory.is_dir():
         raise ValueError("output_directory must resolve to a directory")
     result = build_wedge_solid(parameters)
+    reference = reference_from_build123d_shape(result.solid)
     artifacts = tuple(
-        _export_one(result.solid, output_directory, request, export_format)
+        _export_one(
+            result.solid,
+            reference,
+            output_directory,
+            request,
+            export_format,
+        )
         for export_format in request.formats
     )
     manifest_path = output_directory / f"{request.stem}.json"
@@ -124,6 +145,7 @@ def export_wedge_artifacts(
 
 def _export_one(
     solid: object,
+    reference: CadGeometryReference,
     output_directory: Path,
     request: WedgeExportRequest,
     export_format: WedgeExportFormat,
@@ -145,7 +167,34 @@ def _export_one(
         succeeded = export_brep(solid, path)
     if not succeeded or not path.is_file() or path.stat().st_size == 0:
         raise RuntimeError(f"failed to export {export_format.value} artifact")
-    return WedgeExportArtifact(format=export_format, path=path)
+    validation = _validate_export(path, reference, request, export_format)
+    payload = path.read_bytes()
+    return WedgeExportArtifact(
+        format=export_format,
+        path=path,
+        sha256=hashlib.sha256(payload).hexdigest(),
+        byte_size=len(payload),
+        validation=validation,
+    )
+
+
+def _validate_export(
+    path: Path,
+    reference: CadGeometryReference,
+    request: WedgeExportRequest,
+    export_format: WedgeExportFormat,
+) -> CadArtifactValidation:
+    if export_format is WedgeExportFormat.STL:
+        return validate_binary_stl(
+            path,
+            reference,
+            linear_tolerance_m=request.linear_tolerance_m,
+        )
+    return validate_exact_cad(
+        path,
+        reference,
+        format_name=export_format.value,
+    )
 
 
 def _manifest_json(
@@ -158,6 +207,9 @@ def _manifest_json(
     parameter_values["handedness"] = parameters.handedness.value
     payload = {
         "format": WEDGE_EXPORT_FORMAT,
+        "source_parameter_sha256": hashlib.sha256(
+            wedge_parameters_to_json(parameters).encode("utf-8")
+        ).hexdigest(),
         "units": {"angle": "degree", "length": "metre", "mass": "kilogram"},
         "kernel": {"name": "build123d/OpenCascade", "model_unit": "millimetre"},
         "parameters": parameter_values,
@@ -167,7 +219,13 @@ def _manifest_json(
             "angular_tolerance_rad": request.angular_tolerance_rad,
         },
         "artifacts": [
-            {"format": item.format.value, "filename": item.path.name}
+            {
+                "format": item.format.value,
+                "filename": item.path.name,
+                "sha256": item.sha256,
+                "byte_size": item.byte_size,
+                "validation": asdict(item.validation),
+            }
             for item in artifacts
         ],
     }

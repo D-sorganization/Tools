@@ -6,6 +6,12 @@ component coordinates into the assembly frame.
 """
 
 from .assembly import ClubAssembly, assemble_mass_properties
+from .cad_validation import (
+    CadGeometryReference,
+    ExactCadValidation,
+    reference_from_build123d_shape,
+    validate_exact_cad,
+)
 from .serialization import (
     CURRENT_FORMAT,
     LEGACY_FORMAT,
@@ -41,6 +47,7 @@ from .shaft_statics import (
     ShaftTipResponse,
     solve_cantilever_tip_response,
 )
+from .stl_validation import StlMeshValidation, validate_binary_stl
 from .types import (
     AssembledMassProperties,
     ClubComponent,
@@ -76,6 +83,7 @@ __all__ = [
     "CURRENT_FORMAT",
     "LEGACY_FORMAT",
     "AssembledMassProperties",
+    "CadGeometryReference",
     "ClubAssembly",
     "ClubComponent",
     "ClubLengthConvention",
@@ -83,6 +91,7 @@ __all__ = [
     "ComponentMassProperties",
     "ComponentRole",
     "ExtrapolationPolicy",
+    "ExactCadValidation",
     "Handedness",
     "RigidTransform",
     "SHAFT_PROFILE_FORMAT",
@@ -94,6 +103,7 @@ __all__ = [
     "ShaftModalSettings",
     "ShaftTipLoad",
     "ShaftTipResponse",
+    "StlMeshValidation",
     "WedgeHeadParameters",
     "WedgeGeometryProvenance",
     "WEDGE_EXPORT_FORMAT",
@@ -112,6 +122,7 @@ __all__ = [
     "assembly_to_json_dict",
     "build_wedge_solid",
     "export_wedge_artifacts",
+    "reference_from_build123d_shape",
     "scale_shaft_profile",
     "shaft_component_mass_properties",
     "shaft_profile_from_csv",
@@ -125,4 +136,6 @@ __all__ = [
     "wedge_preset",
     "wedge_parameters_from_json",
     "wedge_parameters_to_json",
+    "validate_binary_stl",
+    "validate_exact_cad",
 ]

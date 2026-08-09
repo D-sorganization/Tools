@@ -23,6 +23,7 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "CURRENT_FORMAT",
         "LEGACY_FORMAT",
         "AssembledMassProperties",
+        "CadGeometryReference",
         "ClubAssembly",
         "ClubComponent",
         "ClubLengthConvention",
@@ -30,6 +31,7 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "ComponentMassProperties",
         "ComponentRole",
         "ExtrapolationPolicy",
+        "ExactCadValidation",
         "Handedness",
         "RigidTransform",
         "SHAFT_PROFILE_FORMAT",
@@ -43,6 +45,7 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "ShaftStation",
         "ShaftTipLoad",
         "ShaftTipResponse",
+        "StlMeshValidation",
         "WedgeExportArtifact",
         "WedgeExportFormat",
         "WedgeExportRequest",
@@ -59,6 +62,7 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "assembly_to_json_dict",
         "build_wedge_solid",
         "export_wedge_artifacts",
+        "reference_from_build123d_shape",
         "scale_shaft_profile",
         "shaft_component_mass_properties",
         "shaft_profile_from_csv",
@@ -72,6 +76,8 @@ def test_public_facade_exports_the_stable_domain_api() -> None:
         "wedge_parameters_from_json",
         "wedge_parameters_to_json",
         "wedge_preset",
+        "validate_binary_stl",
+        "validate_exact_cad",
     }
 
 

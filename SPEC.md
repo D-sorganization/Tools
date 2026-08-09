@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.8                                      |
-| **Spec Version**        | 1.5.8                                      |
-| **Last Spec Update**    | 2026-08-05                                 |
+| **Current Version**     | 1.5.9                                      |
+| **Spec Version**        | 1.5.9                                      |
+| **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
 
@@ -46,8 +46,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   independently recovers loft, lie, bounce, face span, volume, mass, and target
   residual from its B-Rep.
 - Strict versioned parameter JSON and deterministic STEP, BREP, and configurable
-  STL export include units, kernel metadata, provenance, requested values, and
-  measured residuals. STEP re-import and byte-determinism are regression tested.
+  STL export include units, kernel metadata, provenance, requested values,
+  measured residuals, source/artifact SHA-256 digests, byte sizes, and explicit
+  post-export validation evidence. STEP/BREP are reopened as exact solids;
+  binary STL independently proves finite nondegenerate triangles, two-manifold
+  watertight edge incidence, consistent winding, one connected component,
+  outward orientation, and tolerance-bounded bounds/volume before a manifest is
+  emitted.
 - `docs/specs/GOLF_CLUB_WEDGE_CAD.md` defines frames, datums, supported claims,
   dependency/licensing evidence, and the remaining grind/cavity/optimization
   release boundary.
@@ -1763,6 +1768,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.5.9 | feat(golf-club, #4149): harden the modern-wedge drafting seam with generic exact-CAD reference contracts, independent fail-closed STEP/BREP re-import validation, dependency-light binary-STL topology/orientation/fidelity validation, deterministic parameter and artifact SHA-256 evidence, byte sizes, and a versioned `golf_club.wedge_export/2` manifest. |
 | 2026-08-05 | 1.5.6 | fix(ci): include and shallow-initialize UpstreamDrift's pinned `vendor/ud-tools` submodule in the narrow cross-repository checkout so editable metadata generation can validate exact package provenance without broadening checkout to the full `src` or `ui` trees. |
 | 2026-08-05 | 1.5.6 | feat(golf-club, #4147): add the canonical shared golf-club domain facade with immutable SI/frame-explicit component roles, physically realizable mass properties, rigid transforms, assembled mass/CG/full inertia, declared club-length references, and strict deterministic versioned JSON migration contracts. |
 | 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |

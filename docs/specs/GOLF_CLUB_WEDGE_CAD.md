@@ -117,11 +117,35 @@ non-finite values, and invalid nested provenance.
 - native BREP for OpenCascade-fidelity interchange; and
 - binary STL with explicit linear and angular tessellation tolerances.
 
-Each export set includes `golf_club.wedge_export/1` JSON recording SI units,
-kernel/model units, complete requested parameters and provenance, measured
-values, tessellation tolerances, and artifact filenames. STEP timestamps are
-fixed so identical geometry and requests produce byte-identical artifacts.
-Tests reopen STEP and compare exact volume.
+Each export set includes `golf_club.wedge_export/2` JSON recording SI units,
+kernel/model units, complete requested parameters and provenance, a SHA-256 of
+the canonical parameter document, measured values, tessellation tolerances,
+artifact filenames, byte sizes, artifact SHA-256 digests, and post-export
+validation evidence. STEP timestamps are fixed so identical geometry and
+requests produce byte-identical artifacts and manifests.
+
+STEP and BREP are reopened with their build123d/OpenCascade readers and must
+recover one valid solid whose volume and axis-aligned bounds agree with the
+source B-Rep. Binary STL is parsed independently without repair. Every triangle
+must be finite and nondegenerate, its stored normal must agree with its winding,
+every undirected edge must have exactly two oppositely directed uses, all faces
+must form one connected component, and signed volume must indicate outward
+orientation. Mesh volume and bounds must remain within explicit limits derived
+from the requested chord tolerance. A corrupt or out-of-tolerance artifact
+aborts the export before its manifest is written.
+
+### Export-manifest migration
+
+`golf_club.wedge_export/2` supersedes `/1`; current producers emit only `/2`.
+The repository has no manifest-import API, so this is an output-contract
+migration rather than a silent in-memory upgrade. Historical `/1` JSON remains
+readable as archival JSON, but it has no source/artifact digests or complete
+post-export validation evidence and must not be relabeled as a validated `/2`
+export. A downstream archive that needs current evidence must retain its
+original `/1` record and regenerate artifacts plus a `/2` manifest from the
+canonical `golf_club.wedge_parameters/1` project. Consumers that index both
+versions must branch on the exact `format` field and treat `/1` validation
+status as unavailable, never as passing.
 
 ## Verification and Visual QA
 
@@ -134,8 +158,10 @@ Automated coverage includes:
 - recovered loft, lie, bounce, face span, volume, mass, and residual;
 - curved rear-surface presence;
 - safe export paths and tolerances;
-- deterministic STEP/BREP/STL and manifests; and
-- STEP round-trip validity and volume.
+- deterministic STEP/BREP/STL and manifests;
+- STEP and BREP round-trip validity, solid count, bounds, and volume; and
+- independent binary-STL triangle, watertightness, manifoldness, winding,
+  connectedness, outward-orientation, bounds, and volume validation.
 
 Rendered engineering QA must accompany geometry changes because watertightness
 alone does not establish a professional or recognizable head shape.
@@ -157,3 +183,9 @@ editable:
 
 No current output predicts turf reaction, impact performance, forgiveness, or
 commercial-head equivalence.
+
+The STL validator establishes topological and geometric consistency with the
+generated B-Rep; it is not a print-process qualification, metrology report,
+material certification, minimum-wall analysis, or guarantee that a slicer or
+machine will accept the part. ASCII STL and automatic mesh repair are not
+supported by this controlled export path.

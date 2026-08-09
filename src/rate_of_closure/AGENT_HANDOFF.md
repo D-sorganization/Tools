@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-09
 
 ## Status Note
 
@@ -21,6 +21,19 @@ model: GC-path vs impact-point-path gap, °/ft). Epics #4103 → #4120 → #4125
 PyQt6 + web parity and eventual public GitHub Pages distribution. Read
 `src/rate_of_closure/README.md` (frame conventions, Cheetham dossier sourcing,
 run instructions) before touching physics code.
+
+## Shared Club-Builder Provider Boundary
+
+Club Builder epic #4146 is deliberately implemented under
+`src/shared/python/golf_club`; Rate of Closure must consume its immutable public
+facade rather than fork assembly, shaft, CAD, or export logic. On the #4149
+branch, modern-wedge exports use `golf_club.wedge_export/2` and fail closed
+unless STEP/BREP exact-solid re-import and binary-STL watertightness, manifold
+edge incidence, winding, connectedness, orientation, bounds, and volume checks
+pass. The manifest includes canonical parameter and artifact SHA-256 evidence.
+This does not yet replace Rate's representative-head renderer or establish a
+simulation adapter; those remain explicit #4146/#4149 integration work after
+the stacked provider PRs land.
 
 ## The #4119 → #4124 → #4129 PR Stack
 
