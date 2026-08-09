@@ -42,8 +42,14 @@ contract test passes; a fresh hosted parity run is still required.
 
 Combined local evidence on the composed continuation is 828 Rate Python/PyQt
 tests and 104 React files / 642 tests, plus TypeScript, zero-warning ESLint,
-and the 188-module Vite production build. Manifest/governance gates must be
-rerun after integration before publication.
+and the 188-module Vite production build. The deterministic manifest,
+generated-schema JSON, Ruff, targeted mypy, and nine manifest/parity contracts
+also pass on implementation head `2c1a77baa`.
+
+The direct web launcher dynamically loads the root bootstrap through
+`importlib` instead of mutating `sys.path` in the changed entrypoint. Its real
+child-process delegation test and the changed-Python policy guard cover that
+release path.
 
 Only `main` is the release boundary. It requires `quality-gate` and
 `tests (3.11)`. Outer PR #4119 remains the main-targeting platform carrier and

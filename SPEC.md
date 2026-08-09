@@ -68,6 +68,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   exclusive states with fail-closed cross-field requirements.
 - The current manifest truthfully records no complete campaign release SHA;
   local tests and unprotected feature-parent merges cannot satisfy that claim.
+- Composed local implementation evidence is commit-bound in the manifest;
+  maintainers must still refresh live mutable PR heads before any write,
+  merge, release, or issue-closure decision.
 
 ### 2026-08-09 Swing-core parity CI isolation
 
@@ -80,8 +83,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 ### 2026-08-09 Rate web-release stability
 
 - The documented direct Rate web launcher imports its registration through the
-  package-qualified path, so `python src/rate_of_closure/launch_web.py` works
-  outside package-module execution.
+  package-qualified path and dynamically loads the repository bootstrap without
+  direct `sys.path` mutation, so `python src/rate_of_closure/launch_web.py`
+  works outside package-module execution and satisfies changed-file policy.
 - Rate supports a static Vite web release and a PyQt6/PyInstaller desktop
   release. It does not claim Tauri support without a `src-tauri` project or an
   artifact qualification lane.

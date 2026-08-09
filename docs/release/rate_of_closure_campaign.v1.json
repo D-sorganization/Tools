@@ -258,6 +258,23 @@
       "source_paths": [
         "tests/ops/test_maturin_swing_core_workflow.py"
       ]
+    },
+    {
+      "id": "campaign-composition-local-2c1",
+      "kind": "local",
+      "commit_sha": "2c1a77baa115c4521f8995a4476d6a530b16b47d",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q tests/rate_of_closure",
+        "npm run type-check && npm run lint && npm test && npm run build",
+        "python scripts/rate_campaign_manifest.py",
+        "python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py tests/ops/test_maturin_swing_core_workflow.py"
+      ],
+      "summary": "The composed capability, diagnostics, web-release, and campaign-manifest continuation passed 828 Rate Python/PyQt tests, 104 React files and 642 tests, TypeScript, zero-warning ESLint, the 188-module production build, and nine manifest/parity contracts.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
     }
   ],
   "programs": [
@@ -772,6 +789,7 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [
+        "campaign-composition-local-2c1",
         "rate-stack-local-c182",
         "swing-parity-hosted-3186",
         "swing-parity-isolation-18fe"
@@ -820,6 +838,7 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [
+        "campaign-composition-local-2c1",
         "swing-parity-hosted-3186",
         "swing-parity-isolation-18fe"
       ],
@@ -931,6 +950,7 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [
+        "campaign-composition-local-2c1",
         "toolstrip-local-c36",
         "rate-stack-local-c182"
       ],

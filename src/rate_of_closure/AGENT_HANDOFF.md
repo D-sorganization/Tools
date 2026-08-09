@@ -14,6 +14,10 @@ static-web release entrypoints, and the strict `rate-of-closure-campaign/v1`
 release authority. It remains local until final gates pass and a normal
 fast-forward push is made.
 
+The direct web launcher dynamically loads the root bootstrap module without a
+launcher-local `sys.path` mutation; its subprocess delegation test and the
+changed-production-Python policy guard cover this release entrypoint.
+
 Use these authorities together:
 
 - `docs/release/rate_of_closure_campaign.v1.json` — machine state;
@@ -74,7 +78,9 @@ reconciled before #4130 can close.
 
 - Composed local continuation: 828 Rate Python/PyQt tests and 104 React files /
   642 tests passed; TypeScript, zero-warning ESLint, and the 188-module Vite
-  production build passed. Hosted CI has not run on this composition.
+  production build passed. The manifest, schema JSON, Ruff, targeted mypy, and
+  nine manifest/parity contracts pass on implementation head `2c1a77baa`.
+  Hosted CI has not run on this composition.
 - Consolidated capability head `c1827bbdc`: 1,426 Python Rate/shared-swing
   tests and 624 React tests passed locally.
 - Variation continuation `d71b0ea01`: 890 Python/PyQt/shared-swing tests and

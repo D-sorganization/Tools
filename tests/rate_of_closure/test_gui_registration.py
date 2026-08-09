@@ -57,9 +57,15 @@ class TestGuiRegistration:
         probe = "\n".join(
             (
                 "import runpy",
-                "from _bootstrap import bootstrap",
                 f"launcher_path = {str(launcher)!r}",
-                "bootstrap(launcher_path)",
+                "import importlib.util",
+                f"bootstrap_path = {str(repository / '_bootstrap.py')!r}",
+                "factory = importlib.util.spec_from_file_location",
+                "spec = factory('_test_bootstrap', bootstrap_path)",
+                "assert spec is not None and spec.loader is not None",
+                "module = importlib.util.module_from_spec(spec)",
+                "spec.loader.exec_module(module)",
+                "module.bootstrap(launcher_path)",
                 "import shared.python.gui_launcher as gui_launcher",
                 "def successful_launch(*_args, **_kwargs): return 0",
                 "gui_launcher.launch_web_from_gui_info = successful_launch",

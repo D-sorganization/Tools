@@ -90,6 +90,15 @@ whenever a carrier SHA, test result, limitation, supported surface, or release
 stage changes. Historical detail below remains useful provenance but must not
 override a contradictory validated manifest record.
 
+The four reviewed stabilization slices are composed on implementation head
+`2c1a77baa`: strict workflow parsing/signed editing, complete capability
+diagnostics and result exports, static-web entrypoint/package truth, and this
+manifest authority. Combined local evidence is 828 Rate Python/PyQt tests and
+104 React files / 642 tests, TypeScript, zero-warning ESLint, the 188-module
+Vite build, Ruff, targeted mypy, deterministic manifest/schema validation, and
+nine manifest/parity contracts. This remains local evidence; #4282 still needs
+a normal push, exact-head hosted CI, review, and dependency-ordered release.
+
 ## 2026-08-08 Capability workspace continuation
 
 The active stacked child is `feat/4197-capability-optimization-ui`, based
