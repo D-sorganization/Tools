@@ -626,8 +626,9 @@ resolve as `Any` under `--follow-imports=skip`, so `total_count` now casts their
 already contract-validated product to `int`. No runtime behavior changes. The
 exact seven-file Python 3.12 mypy command, Ruff/format, diff check, and full
 135-test flight/adapter suite pass with four optional Rust-wheel skips. This
-fix and handoff update are `SELF`; resolve with `git rev-parse HEAD`, push
-normally, and monitor the fresh protected checks.
+fix and handoff update are
+`60ac5b46c78988225862d9b89a33ddc3656a3413`; that commit is already present
+in the propagated capability ancestry.
 
 ## 2026-08-07 Strict ground-contract and transfer continuation
 
