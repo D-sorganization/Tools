@@ -26,13 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.8                                     |
-| **Spec Version**        | 1.14.8                                     |
+| **Current Version**     | 1.14.9                                     |
+| **Spec Version**        | 1.14.9                                     |
 | **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-09 Canonical 3D camera controls
+
+- PyQt6 and React swing, impact, and flight 3D viewports share exact Face On,
+  Down the Line, Overhead, Isometric, tracking, Auto Fit, and Recenter commands.
+- Opt-in bounded tracking preserves safe user zoom, suspends on manual orbit,
+  and resumes through one-action recenter without changing model results.
+- Stable command IDs, explicit app-frame conventions, DbC validation, and a
+  cross-runtime golden fixture prevent orientation drift between adapters.
 
 ### 2026-08-09 Capability workflow contract hardening
 
@@ -2930,6 +2939,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.14.9 | feat(rate-of-closure, #4284): add canonical cross-runtime 3D camera snaps, bounded clubhead/ball tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and focused PyQt6/React contracts. |
 | 2026-08-09 | 1.14.8 | feat(rate-of-closure, #4201): harden cross-runtime capability parsing and signed input; expose complete diagnostics, result exports, and quantitative scatter annotations; stabilize supported PyQt6/static-Vite entrypoints; and add a strict campaign manifest with generated schema, four-surface status, explicit gaps/dependencies, and fail-closed feature-stack/protected-parent/`main` release distinctions. |
 | 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |
 | 2026-08-08 | 1.14.6 | feat(rate-of-closure, #4197): add matched PyQt6/React Shot Optimizer workspaces with strict cross-runtime workflow persistence, off-main-thread qualified flight execution, truthful progress/cancellation, complete scalar-ensemble cohort retention, ranked alternatives, stage-qualified selectable scatter axes, zoom/autofit, bounded raw-row paging, lossless CSV/stable JSON, substantive hover guidance, and saved-layout migration that reveals newly registered modules. |

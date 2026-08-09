@@ -19,6 +19,11 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from rate_of_closure.application.camera_commands import (
+    CameraCommandId,
+    camera_preset,
+    matplotlib_angles,
+)
 from rate_of_closure.simulation import (
     ImpactScene,
     KineticsSeries,
@@ -35,6 +40,7 @@ from rate_of_closure.ui.impact_kinematics_presentation import (
     format_simulation_key_metrics,
     ground_clearance_snapshot_for_scene,
 )
+from rate_of_closure.ui.pyqt6.camera_controls import CameraViewportMixin
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
@@ -66,7 +72,7 @@ _IMPACT_LAYER_SETTINGS_ORG = "RateOfClosure"
 _IMPACT_LAYER_SETTINGS_APP = "ImpactScene"
 
 
-class SimulationView(SimulationViewControlsMixin, QWidget):
+class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
     """Animated 3D scene of one simulation run with video controls."""
 
     def __init__(
@@ -97,6 +103,7 @@ class SimulationView(SimulationViewControlsMixin, QWidget):
         layout.setSpacing(3)
         layout.addWidget(self._build_playback_controls())
         layout.addWidget(self._build_layers_control())
+        layout.addWidget(self._initialize_camera("Clubhead"))
         layout.addWidget(self._build_engineering_panel())
         self._canvas.setMinimumSize(360, 280)
         self._canvas.setSizePolicy(
@@ -107,6 +114,9 @@ class SimulationView(SimulationViewControlsMixin, QWidget):
         self._timer = QTimer(self)
         self._timer.setInterval(_TIMER_INTERVAL_MS)
         self._timer.timeout.connect(self._advance)
+        self._canvas.mpl_connect(
+            "button_release_event", lambda _event: self.suspend_camera_tracking()
+        )
 
     # ── public API ──────────────────────────────────────────────────
     def set_run(self, run: SimulationRun | None) -> None:
@@ -316,9 +326,52 @@ class SimulationView(SimulationViewControlsMixin, QWidget):
 
     def _apply_impact_view(self, index: int) -> None:
         """Apply a named camera without preventing subsequent free orbit."""
-        elevation, azimuth = self._impact_view.itemData(index)
-        self._axes.view_init(elev=float(elevation), azim=float(azimuth))
+        self.apply_camera_command(
+            CameraCommandId(str(self._impact_view.itemData(index)))
+        )
+
+    def _camera_subject_m(self) -> tuple[float, float, float]:
+        """Return the current clubhead in the canonical app frame."""
+        if self._run is None or not len(self._run.swing_positions):
+            return (0.0, 0.0, 0.0)
+        index = int(np.searchsorted(self._run.swing_times, self._time, side="left"))
+        index = min(index, len(self._run.swing_positions) - 1)
+        position = self._run.swing_positions[index]
+        return (float(position[0]), float(position[1]), float(position[2]))
+
+    def _camera_base_half_extent_m(self) -> float:
+        """Return the unzoomed swing envelope half extent."""
+        if self._run is None:
+            return 1.0
+        joint_extent = (
+            float(np.max(np.abs(self._run.swing_joints)))
+            if self._run.swing_joints.size
+            else 0.0
+        )
+        return max(
+            1.0,
+            float(np.max(np.abs(self._run.swing_positions))) * 1.1,
+            joint_extent * 1.1,
+        )
+
+    @staticmethod
+    def _camera_subject_radius_m() -> float:
+        """Clearance envelope for the representative head and shaft stub."""
+        return 0.35
+
+    def _camera_state_changed(self) -> None:
+        """Apply a camera state change without sharing it with another viewport."""
         self._draw()
+
+    def _camera_orientation(self) -> tuple[float, float] | None:
+        """Return an exact Matplotlib preset, or preserve a manual orbit."""
+        command = self._camera_state.preset_id
+        if command is None:
+            return None
+        elevation, azimuth = matplotlib_angles(
+            camera_preset(command, self._camera_state.face_on_side)
+        )
+        return float(elevation), float(azimuth)
 
     def _on_export_impact(self) -> None:
         """Choose and export an impact artifact from the desktop UI."""
@@ -338,4 +391,9 @@ class SimulationView(SimulationViewControlsMixin, QWidget):
         return display
 
     def _draw(self) -> None:
+        self._advance_camera_tracking()
+        orientation = self._camera_orientation()
+        if orientation is not None:
+            elevation, azimuth = orientation
+            self._axes.view_init(elev=elevation, azim=azimuth)
         SimulationSceneRenderer(self, get_chart_color).draw()

@@ -4,6 +4,20 @@ Status verified 2026-08-09. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 Camera snap/tracking continuation
+
+Local branch `feat/4284-camera-snap-tracking` starts from exact stack head
+`a742ad6cc2853b170eb945c4d74a56ea23bdda33`. It implements the canonical camera
+contract for all five Tools 3D adapters (PyQt Simulation and Flight; React
+Club, Impact, and Flight) with exact snap orientations, bounded opt-in subject
+tracking, safe zoom preservation, Auto Fit, manual suspension, and Recenter.
+This is local implementation evidence only: no GitHub write/carrier exists,
+UpstreamDrift parity is not started, and protected release remains open.
+Current local evidence is 83 affected Python/PyQt tests, 107 React files / 649
+tests, Ruff/targeted mypy, TypeScript/ESLint, a 193-module production build,
+campaign-manifest validation, structural checks, and inspected desktop plus
+700 px camera-control renders. Native-font/browser rendering remains due.
+
 ## 2026-08-09 Capability workflow hardening continuation
 
 Local branch `feat/4201-capability-contract-hardening` starts at exact carrier

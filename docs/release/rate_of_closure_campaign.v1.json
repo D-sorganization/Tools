@@ -878,6 +878,10 @@
         {
           "kind": "repository_path",
           "value": "src/rate_of_closure/view_workspace.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/camera_commands.py"
         }
       ],
       "tracked_issue_ids": [
@@ -902,10 +906,10 @@
       "evidence_ids": [
         "toolstrip-local-c36"
       ],
-      "evidence_gap": "Complete persistence adapters, synchronized multi-view state, camera snap controls, accessibility, and protected release remain open.",
+      "evidence_gap": "Complete persistence adapters, synchronized multi-view persistence, UpstreamDrift camera consumers, rendered accessibility review, and protected release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
-        "The camera tracking and canonical snap-view child has no implementation carrier."
+        "Camera tracking and canonical snap views are locally implemented on feat/4284-camera-snap-tracking but have no published implementation carrier."
       ],
       "depends_on_issues": [
         4191

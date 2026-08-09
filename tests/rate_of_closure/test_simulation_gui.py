@@ -317,7 +317,8 @@ class TestSimulationView:
         view = ran_tab.view()
         view._impact_view.setCurrentText("Face-On")
 
-        assert view._axes.azim == pytest.approx(-90.0)
+        # Canonical right-side face-on looks along -z in the app frame.
+        assert view._axes.azim == pytest.approx(0.0)
         aspect = view._axes.get_box_aspect()
         assert aspect[0] / aspect[1] == pytest.approx(1.0)
         assert aspect[0] / aspect[2] == pytest.approx(2.0 / 1.4)

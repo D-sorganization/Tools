@@ -3,6 +3,28 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-09.
 
+## Issue #4284 local implementation
+
+Branch `feat/4284-camera-snap-tracking`, based on exact stack head
+`a742ad6cc2853b170eb945c4d74a56ea23bdda33`, now has a shared Python/TypeScript
+camera contract and adapters for PyQt6 Simulation/Flight and React Club,
+Impact, and Flight 3D viewports. Canonical snap directions use x downrange,
+y up, z right; face-on side is explicit. Tracking is opt-in, bounded, isolated
+per viewport, preserves safe zoom, suspends after manual orbit, and resumes on
+Recenter. Camera state is deliberately not persisted in this slice.
+
+Do not report released: the branch remains local with no PR/carrier. Required
+follow-up is rendered desktop/constrained-browser review, hosted CI/review,
+normal stack integration, and UpstreamDrift PyQt6/React consumer parity. See
+`docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md` and issue #4284.
+
+Local gates: 83 affected Python/PyQt tests; 107 React files / 649 tests; Ruff
+format/check; targeted mypy; TypeScript; zero-warning ESLint; 193-module Vite
+build; campaign-manifest, diff, and changed-file structural checks. Headless
+desktop and 700 px camera-control renders were inspected without overlap; the
+local offscreen Qt font directory is unavailable, so native-font/browser
+rendered review remains explicitly open.
+
 ## Current continuation
 
 The active local continuation is integrated directly on the existing PR #4282

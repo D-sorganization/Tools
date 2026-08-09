@@ -19,6 +19,7 @@ Implementation branches, pull requests, and issue threads for substantial work m
 ## Index
 
 - Active: `docs/specs/active/`
+- Camera viewport controls: `docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md`
 - Planned: `docs/specs/planned/`
 - Archived: `docs/archive/specs/`
 

@@ -3,6 +3,29 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-09.
 
+## Issue #4284 camera continuation
+
+Isolated branch `feat/4284-camera-snap-tracking` starts from exact feature-stack
+head `a742ad6cc2853b170eb945c4d74a56ea23bdda33`. It locally implements the
+shared, UI-neutral camera command contract in Tools PyQt6 and React swing,
+impact, and flight 3D views: exact Face On/Down the Line/Overhead/Isometric
+snaps, opt-in bounded subject tracking, zoom-preserving Auto Fit, predictable
+manual suspension, and one-action Recenter. No GitHub write or carrier exists
+yet. UpstreamDrift consumers, rendered cross-platform review, hosted CI,
+review, and protected release remain open; do not close #4284 on local evidence.
+
+Exact local evidence is 83 affected Python/PyQt tests and the complete React
+suite at 107 files / 649 tests, plus Ruff format/check, targeted mypy,
+TypeScript, zero-warning ESLint, the 193-module production build, campaign
+manifest validation, and diff/structural checks. Headless desktop and 700 px
+camera-bar renders show no control overlap; this Qt runtime lacks usable fonts,
+so native-font and browser visual review remains an integration gate.
+
+Authorities are `docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md`,
+`src/rate_of_closure/application/camera_commands.py`, and the cross-runtime
+golden fixture under `web/src/model/__fixtures__/`. Every implementation commit
+must keep this file and `src/rate_of_closure/AGENT_HANDOFF.md` current.
+
 ## Active Rate of Closure campaign
 
 The active checkout is
