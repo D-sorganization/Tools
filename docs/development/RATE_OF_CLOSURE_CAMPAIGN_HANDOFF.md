@@ -6,8 +6,9 @@ branch was rewritten.
 
 ## 2026-08-09 Flight-transfer stack propagation
 
-The #4288 worktree now carries exact local #4285 head `2025b504f` through a
-normal merge while retaining the declared base `feat/4268-ground-contract`.
+The #4288 worktree now carries exact published #4285 head
+`8e8df7b9c633affb986326137338313faf46d2db` through a normal merge while
+retaining the declared base `feat/4268-ground-contract`.
 The only code overlap was the flight integrator: the child keeps its bounded,
 testable `flightIntegrator.ts` extraction rather than restoring the parent's
 superseded inline RK4 loop. The Python API contract now inventories both the
@@ -24,6 +25,16 @@ ground and flight facades. The transfer adapter now talks directly to the
 ground record/type modules it consumes; no public facade was widened or
 removed.
 
+This latest parent propagation is limited to the schema generator's pinned
+mypy compatibility boundary and explicit casts in adversarial contract tests.
+It has no wire or runtime transfer behavior change. Re-verify the merged child
+before publication and cite only the new exact child head's protected checks.
+Local post-merge evidence is now `70 passed` for the ground, transfer, and
+flight-facade contract suites. The pinned mypy 1.13 profile passes all `13`
+child-delta Python files, including tests, after representing frozen-dataclass
+metadata with a test-only structural protocol. Ruff check/format, the changed
+test assertion ratchet, docs governance, and diff checks are also clean.
+
 Hosted Python 3.12 logs contain no flight-to-ground transfer tolerance failure.
 The only numerical assertion is the separate shared wind fixture, whose
 `9.786440272809793` result differs from `9.7864402728063` by `3.494e-12`
@@ -32,6 +43,18 @@ workflow. The hosted Rust `-lpython3.11` linker failure remains runner/toolchain
 infrastructure.
 
 ## 2026-08-09 Ground-contract stack recovery
+
+Protected quality-gate run `31341468033` on PR #4285 exact head
+`2d9a06fae46e0601a05896b71934ca0c6b8dc59a` then reached pinned mypy 1.13
+and found that skipped-import analysis models the Python 3.10 string-enum shim
+as `str`. The scoped correction generates all schema enum values and target
+frame constants through `str(...)`; deliberate invalid-input tests use typed
+casts instead of stale suppressions. Wire values and fail-closed runtime
+behavior are unchanged. The full 19-file changed Python delta passes the exact
+mypy 1.13 flags, Ruff check/format passes, and the focused ground suite remains
+`46 passed`. Treat the failed run only as old-head diagnostic evidence. Push a
+new commit normally and propagate it into #4288 by normal merge before using
+any child CI result as release evidence.
 
 Draft PR #4285 remains based on `feat/4197-capability-observer`. A normal local
 merge now carries exact parent head `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a`

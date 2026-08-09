@@ -8,6 +8,7 @@ surface changes so removals are always deliberate.
 from __future__ import annotations
 
 import dataclasses
+from typing import Any, Protocol, cast
 
 import pytest
 
@@ -129,6 +130,13 @@ EXPECTED_PUBLIC_API = {
 }
 
 
+class _FrozenDataclassType(Protocol):
+    """Structural view required by the frozen-value contract assertion."""
+
+    __name__: str
+    __dataclass_params__: Any
+
+
 @pytest.mark.contract
 def test_public_api_surface_is_pinned() -> None:
     assert set(flight.__all__) == EXPECTED_PUBLIC_API
@@ -213,7 +221,10 @@ FROZEN_VALUE_TYPES = (
 def test_value_types_are_frozen_dataclasses() -> None:
     for cls in FROZEN_VALUE_TYPES:
         assert dataclasses.is_dataclass(cls), f"{cls.__name__} not a dataclass"
-        assert cls.__dataclass_params__.frozen, f"{cls.__name__} must be frozen"
+        value_type = cast(_FrozenDataclassType, cls)
+        assert value_type.__dataclass_params__.frozen, (
+            f"{value_type.__name__} must be frozen"
+        )
 
 
 @pytest.mark.contract

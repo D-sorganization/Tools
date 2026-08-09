@@ -6,8 +6,9 @@
 ## 2026-08-09 Flight-to-ground transfer parent propagation
 
 Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged
-base `feat/4268-ground-contract`. This checkout incorporates exact local parent
-head `2025b504f` through a normal merge; neither branch was rebased, retargeted,
+base `feat/4268-ground-contract`. This checkout incorporates exact published
+parent head `8e8df7b9c633affb986326137338313faf46d2db` through a normal merge;
+neither branch was rebased, retargeted,
 force-pushed, or merged on GitHub. The child retains its extracted
 `flightIntegrator.ts` rather than restoring the parent's superseded inline RK4
 implementation, and the Python public-contract inventory includes the parent's
@@ -27,6 +28,17 @@ and the production Vite build pass with the main bundle at 476.51 kB. Full
 Changed Python Ruff check/format and CI-pinned mypy 1.13 pass, as do docs
 governance and staged/unstaged diff checks.
 
+The propagated parent is the pinned-mypy schema repair documented below. Its
+wire-neutral `str(...)` boundary and explicit adversarial-test casts introduce
+no transfer conflict. Re-run the focused transfer/ground suites and the exact
+changed-file mypy 1.13 profile on this merged child before publishing it.
+That post-merge verification is now complete: `70` focused ground/transfer/API
+tests pass, and the stronger mypy 1.13 run is clean across all `13` changed
+Python files, including tests. The frozen-dataclass inventory uses an explicit
+structural protocol for its introspection boundary, preserving the assertion
+while avoiding a skipped-import union ambiguity. Ruff check/format, test
+assertion policy, docs governance, and diff checks also pass.
+
 Before propagation, remote PR #4288 was cleanly stacked at
 `d2d3d0f53a78aa863574afe43290a29c48318d94`, had no reviews or unresolved
 threads, and remained draft/unstable because hosted checks failed. The Python
@@ -37,6 +49,22 @@ tolerance failed, and this branch does not modify the wind workflow. The Rust
 `-lpython3.11` linker failure is runner/toolchain infrastructure.
 
 ## 2026-08-09 Strict ground-contract base propagation
+
+The first protected run on published head
+`2d9a06fae46e0601a05896b71934ca0c6b8dc59a` reached the exact pinned mypy
+1.13 gate and failed in `ground/json_schema.py`: with unchanged imports skipped,
+the Python 3.10-compatible string-enum boundary was represented as `str`, so
+the checker could not prove enum iteration or `.value` access. The scoped
+follow-up builds wire enum values through `str(item)` and uses `str(...)` for
+the fixed target frame. Deliberately invalid test inputs now use explicit
+casts instead of stale `type: ignore` comments; runtime validation semantics
+are unchanged. The exact CI profile
+`--ignore-missing-imports --follow-imports=skip` passes under mypy 1.13 for all
+19 changed Python files, Ruff check/format passes, and the focused ground suite
+is `46 passed`. Run `31341468033` is evidence for the diagnosed old head, not
+green evidence for this follow-up. Publish normally, then merge the resulting
+parent head into PR #4288 and re-verify that child; do not retry the obsolete
+failed run.
 
 Draft PR #4285 remains on `feat/4268-ground-contract` with the unchanged base
 `feat/4197-capability-observer`. This checkout incorporates the current parent

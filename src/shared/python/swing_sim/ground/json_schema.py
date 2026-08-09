@@ -60,6 +60,11 @@ def _enum(values: list[str]) -> dict[str, Any]:
     return {"enum": values, "type": "string"}
 
 
+def _enum_type(enum_type: Any) -> dict[str, Any]:
+    """Build a wire enum without coupling schema typing to the StrEnum shim."""
+    return _enum([str(item) for item in enum_type])
+
+
 def _ref(name: str) -> dict[str, str]:
     return {"$ref": f"#/$defs/{name}"}
 
@@ -83,7 +88,7 @@ def _identity_definitions() -> dict[str, Any]:
             {
                 "calibration_id": _text(),
                 "confidence": _number(0.0, 1.0),
-                "kind": _enum([item.value for item in CalibrationKind]),
+                "kind": _enum_type(CalibrationKind),
                 "source": _text(),
             }
         ),
@@ -106,7 +111,7 @@ def _surface_definition() -> dict[str, Any]:
         "compressibility_fraction": _number(0.0, 1.0),
         "compression_damping_fraction": _number(0.0, 1.0),
         "firmness_pa": {"minimum": MIN_CANONICAL_POSITIVE, "type": "number"},
-        "frame": {"const": GroundFrame.TARGET.value},
+        "frame": {"const": str(GroundFrame.TARGET)},
         "grass_height_m": _number(0.0),
         "hardness_fraction": _number(0.0, 1.0),
         "height_m": _number(),
@@ -129,7 +134,7 @@ def _contact_definition() -> dict[str, Any]:
     return _object(
         {
             "angular_velocity_rad_s": _vector(),
-            "frame": {"const": GroundFrame.TARGET.value},
+            "frame": {"const": str(GroundFrame.TARGET)},
             "position_m": _vector(),
             "time_s": _number(0.0),
             "velocity_m_s": _vector(),
@@ -145,8 +150,8 @@ def _result_definitions() -> dict[str, Any]:
                 {
                     "angular_velocity_after_rad_s": _vector(),
                     "angular_velocity_before_rad_s": _vector(),
-                    "event_type": _enum([item.value for item in GroundEventType]),
-                    "frame": {"const": GroundFrame.TARGET.value},
+                    "event_type": _enum_type(GroundEventType),
+                    "frame": {"const": str(GroundFrame.TARGET)},
                     "position_m": _vector(),
                     "sequence": {
                         "maximum": MAX_SAFE_INTEGER,
@@ -161,8 +166,8 @@ def _result_definitions() -> dict[str, Any]:
             "point": _object(
                 {
                     "angular_velocity_rad_s": _vector(),
-                    "frame": {"const": GroundFrame.TARGET.value},
-                    "phase": _enum([item.value for item in GroundPhase]),
+                    "frame": {"const": str(GroundFrame.TARGET)},
+                    "phase": _enum_type(GroundPhase),
                     "position_m": _vector(),
                     "time_s": _number(0.0),
                     "velocity_m_s": _vector(),
@@ -172,11 +177,9 @@ def _result_definitions() -> dict[str, Any]:
             "termination": _termination_definition(),
             "unavailable_field": _object(
                 {
-                    "field_id": _enum(
-                        [item.value for item in GroundUnavailableFieldId]
-                    ),
+                    "field_id": _enum_type(GroundUnavailableFieldId),
                     "provenance": _text(),
-                    "reason": _enum([item.value for item in GroundUnavailableReason]),
+                    "reason": _enum_type(GroundUnavailableReason),
                 }
             ),
             "warning": _warning_definition(),
@@ -209,7 +212,7 @@ def _termination_definition() -> dict[str, Any]:
     return _object(
         {
             "completed": {"type": "boolean"},
-            "reason": _enum([item.value for item in GroundTerminationReason]),
+            "reason": _enum_type(GroundTerminationReason),
             "time_s": _number(0.0),
         }
     )
@@ -220,7 +223,7 @@ def _warning_definition() -> dict[str, Any]:
         {
             "code": _text(),
             "message": _text(),
-            "severity": _enum([item.value for item in GroundWarningSeverity]),
+            "severity": _enum_type(GroundWarningSeverity),
         }
     )
 
@@ -266,13 +269,13 @@ def result_json_schema() -> dict[str, Any]:
     properties = {
         "calibration": _ref("calibration"),
         "events": _array(_ref("event")),
-        "frame": {"const": GroundFrame.TARGET.value},
+        "frame": {"const": str(GroundFrame.TARGET)},
         "model_id": _text(),
         "model_version": _text(),
         "provenance": _ref("provenance"),
         "request_id": _text(),
         "schema_version": {"const": RESULT_SCHEMA_VERSION},
-        "status": _enum([item.value for item in GroundResultStatus]),
+        "status": _enum_type(GroundResultStatus),
         "summary": {"anyOf": [_ref("summary"), {"type": "null"}]},
         "surface_id": _text(),
         "termination": _ref("termination"),

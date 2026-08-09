@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from copy import deepcopy
+from typing import Any, cast
 
 import pytest
 from jsonschema import Draft202012Validator
@@ -19,10 +20,12 @@ from shared.python.swing_sim.ground import (
 from ._support import _request, _result
 
 
-def _assert_strict_object(schema: dict[str, object]) -> None:
+def _assert_strict_object(schema: dict[str, Any]) -> None:
     assert schema["type"] == "object"
     assert schema["additionalProperties"] is False
-    assert set(schema["required"]) == set(schema["properties"])  # type: ignore[arg-type]
+    assert set(cast(list[str], schema["required"])) == set(
+        cast(dict[str, Any], schema["properties"])
+    )
 
 
 def test_machine_readable_schemas_are_deterministic_and_strict() -> None:
@@ -32,18 +35,22 @@ def test_machine_readable_schemas_are_deterministic_and_strict() -> None:
     for schema in (request_schema, result_schema):
         assert schema["$schema"] == JSON_SCHEMA_DIALECT
         _assert_strict_object(schema)
-        for definition in schema["$defs"].values():  # type: ignore[union-attr]
+        for definition in cast(dict[str, dict[str, Any]], schema["$defs"]).values():
             _assert_strict_object(definition)
         assert schema_json(schema) == schema_json(deepcopy(schema))
 
     assert (
-        request_schema["properties"]["schema_version"]["const"]
+        cast(dict[str, dict[str, Any]], request_schema["properties"])["schema_version"][
+            "const"
+        ]
         == _request().schema_version
-    )  # type: ignore[index]
+    )
     assert (
-        result_schema["properties"]["schema_version"]["const"]
+        cast(dict[str, dict[str, Any]], result_schema["properties"])["schema_version"][
+            "const"
+        ]
         == _result().schema_version
-    )  # type: ignore[index]
+    )
 
 
 def test_current_payload_migration_is_canonical_and_nonmutating() -> None:

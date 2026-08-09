@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from dataclasses import replace
+from typing import Any, cast
 
 import pytest
 
@@ -69,10 +71,10 @@ def test_request_and_result_have_deterministic_strict_round_trips() -> None:
     ],
 )
 def test_request_parser_rejects_unknown_units_frames_ranges_and_nonfinite(
-    mutation: object, message: str
+    mutation: Callable[[dict[str, Any]], None], message: str
 ) -> None:
     data = _request().to_dict()
-    mutation(data)  # type: ignore[operator]
+    mutation(data)
 
     with pytest.raises((TypeError, ValueError), match=message):
         GroundSimulationRequest.from_dict(data)
@@ -107,7 +109,7 @@ def test_result_rejects_bad_order_frames_event_sequences_and_status_matrix() -> 
     with pytest.raises(ValueError, match="(?i)frame"):
         replace(
             result,
-            trajectory=(replace(result.trajectory[0], frame="other"),),  # type: ignore[arg-type]
+            trajectory=(replace(result.trajectory[0], frame=cast(Any, "other")),),
         )
     with pytest.raises(ValueError, match="completed"):
         replace(
@@ -177,7 +179,7 @@ def test_result_rejects_inconsistent_terminal_state() -> None:
 
 def test_result_parser_rejects_unknown_nested_fields_and_unsupported_version() -> None:
     nested = _result().to_dict()
-    nested["summary"]["invented"] = 1  # type: ignore[index]
+    cast(dict[str, Any], nested["summary"])["invented"] = 1
     with pytest.raises(ValueError, match="fields"):
         GroundSimulationResult.from_dict(nested)
 

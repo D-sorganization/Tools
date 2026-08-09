@@ -6,12 +6,13 @@
 ## 2026-08-09 Flight-transfer parent propagation
 
 Draft PR #4288 keeps base `feat/4268-ground-contract`. The exact local parent
-head `2025b504f` is now incorporated through a normal merge; no branch was
+head `8e8df7b9c633affb986326137338313faf46d2db` is now incorporated through a
+normal merge; no branch was
 rebased, retargeted, force-pushed, or merged on GitHub. Semantic resolution
 keeps the child's focused `flightIntegrator.ts` extraction, carries the
 parent's capability-evaluator value types into the frozen public-contract
-inventory, and advances the specification to 1.14.8 without reusing the
-parent's 1.14.5 version number. Focused Python, React, Rust, and full affected
+inventory, and advances the transfer specification to 1.14.9 after the
+parent's schema-gate repair at 1.14.8. Focused Python, React, Rust, and full affected
 gates now pass: `82` focused Python tests, `38` focused React tests, `26`
 focused Rust tests, and `1483 passed, 7 skipped` for the complete affected
 Rate+swing_sim Python suite. The skips are optional local Rust-wheel paths.
@@ -25,8 +26,26 @@ ground record/type dependencies instead of reaching through `ground.__init__`.
 The hosted 3.12 numerical failure is a separate wind-fixture drift of
 `3.494e-12` against a `1e-12` absolute tolerance; no transfer assertion failed,
 so that out-of-scope wind contract is left unchanged.
+After propagating exact parent `8e8df7b9c`, the focused ground/transfer/API
+suite is `70 passed`. Pinned mypy 1.13 is clean across all `13` child-delta
+Python files, including the adversarial and facade tests; the frozen-value
+inventory now exposes its dataclass metadata through a test-only structural
+protocol instead of relying on ambiguous checker narrowing. Ruff, formatting,
+assertion policy, docs governance, and diff checks pass.
 
 ## 2026-08-09 Ground-contract ancestry and CI compatibility repair
+
+Protected quality-gate run `31341468033` on exact head
+`2d9a06fae46e0601a05896b71934ca0c6b8dc59a` exposed a second, narrower
+compatibility boundary: pinned mypy 1.13 with skipped imports sees the shared
+string-enum shim as `str`, so schema generation could not type-check iteration
+or `.value`. The follow-up derives schema strings with `str(item)` and replaces
+test-only suppressions with explicit casts around intentional invalid inputs.
+No schema value or runtime rejection rule changes. Exact mypy 1.13 now passes
+all 19 changed Python files; Ruff check/format and all 46 ground tests pass.
+This evidence applies locally to the follow-up until its new exact head runs in
+protected CI. Do not retry or cite the obsolete failed head as passing, and
+propagate the published repair into #4288 through a normal merge.
 
 Draft PR #4285 keeps its original base `feat/4197-capability-observer`. The
 current parent head `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a` was propagated
