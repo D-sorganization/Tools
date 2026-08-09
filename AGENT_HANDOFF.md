@@ -54,7 +54,7 @@ runner/toolchain infrastructure, not ground-model evidence. Re-run focused
 contract and affected Rate gates on the merged ancestry before publishing any
 follow-up, and keep issue #4269 / PR #4288 stacked behind this contract PR.
 
-The bounded follow-up `SELF` declares `jsonschema>=4.23.0` in the repository's
+The bounded follow-up `2025b504fb3e308a4141b1c20df6a88e05a59d1f` declares `jsonschema>=4.23.0` in the repository's
 test/quality dependency set, pins the verified 4.24.0 build in the lock file,
 and routes all three new ground-contract enums
 through the existing shared `StrEnum` compatibility boundary. A package-wide

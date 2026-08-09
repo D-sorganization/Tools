@@ -866,8 +866,9 @@ skipped, mypy treated the request fields used by the new private runtime as
 scoped fix makes the return boundary explicit with `int(...)`. The exact
 seven-file Python 3.12 CI mypy command, Ruff/format, diff check, and the full
 135-test flight/adapter suite now pass (four optional Rust-wheel skips). This
-fix and handoff update are committed together as `SELF`; resolve the exact head
-with `git rev-parse HEAD` and push normally.
+fix and handoff update are committed together as
+`60ac5b46c78988225862d9b89a33ddc3656a3413`, now present in the propagated
+capability ancestry.
 
 ### 2026-08-07 strict flight-to-ground contract continuation
 
@@ -877,7 +878,7 @@ branch `feat/4268-ground-contract` starts exactly at protected draft PR #4283
 head `60ac5b46c78988225862d9b89a33ddc3656a3413`. It is the stacked implementation
 for [issue #4268](https://github.com/D-sorganization/Tools/issues/4268) under
 ground-model epic #4267. The implementation and this durable handoff update are
-committed together as `SELF`; resolve the exact commit with `git rev-parse HEAD`.
+committed together as `0d6f5d0b879ce3456c990c08b17d6df4185c4a8f`.
 
 The new self-facaded `shared.python.swing_sim.ground` package owns strict
 `flight-to-ground-request/v1` and `flight-to-ground-result/v1` contracts. Every
