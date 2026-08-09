@@ -26,6 +26,27 @@ TypeScript type-check, zero-warning ESLint, structural budgets, and
 no size warning. This branch has not been pushed and no GitHub state was
 changed.
 
+## STABILIZATION RECORD (2026-08-09): interpretable capability results
+
+The isolated `feat/4201-capability-results-diagnostics` continuation is based
+on exact carrier head `18fe89201`. It makes ranked optimizer output fully
+inspectable in both PyQt6 and React: score, miss CVaR, downside carry,
+success/no-impact/failure counts, failure fraction, evidence-envelope status,
+Pareto status, limiting constraints, and parameter units are now visible.
+React scalar scatters add numeric grid/ticks, explicit axis ranges, and a
+cohort legend. Both clients add versioned result JSON and spreadsheet-safe
+ranked-alternative CSV exports; raw observation exports remain separate.
+
+RED/GREEN coverage spans the export contract, React results/scatter, and PyQt
+workflow. Local verification passed 813 Rate Python/PyQt tests and 104 React
+files / 628 tests, plus Ruff, targeted mypy for the new export and tab modules,
+TypeScript, zero-warning ESLint, and the 188-module production build. The
+pre-existing mypy 1.19.1/Python 3.13 internal serialization assertion remains
+reproducible on the unchanged `capability_results.py` base and is not a source
+diagnostic. This work is not released merely because it is committed: integrate it into
+`feat/4199-wind-workflow`, rerun exact-head hosted CI, and preserve #4282's
+existing base and release order.
+
 ## CI REMEDIATION RECORD (2026-08-09): hermetic swing-core parity lane
 
 The exact PR #4282 head `3186a265b1` built and loaded the `swing_core` wheel,

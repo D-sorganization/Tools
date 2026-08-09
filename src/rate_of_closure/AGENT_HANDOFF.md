@@ -26,6 +26,30 @@ React capability files report `69 passed`. Ruff check/format, focused mypy,
 whitespace checks pass. The Vite production build passes with 187 modules and
 no size warning. The change is local only; no push or PR mutation has occurred.
 
+## 2026-08-09 Capability result diagnostics and engineering scatter
+
+The isolated `feat/4201-capability-results-diagnostics` branch starts at
+carrier `18fe89201`. Matched PyQt6/React alternative tables now expose the
+complete retained diagnostic contract rather than only carry and dispersion:
+objective score, miss CVaR, downside carry, complete/no-impact/failed counts,
+failure fraction, confidence, extrapolation, limiting constraints, Pareto
+status, and parameter units. Result-specific CSV and versioned JSON exports
+retain those values separately from the existing lossless observation exports.
+
+The shared React scalar scatter now renders quantitative grid/tick labels,
+publishes the visible numeric ranges, and identifies complete/no-impact/failed
+cohorts with paired-finite counts. The PyQt Matplotlib view already provided
+numeric axes/grid/legend and remains the presentation reference. Keep issue
+#4197 and release gate #4201 open until carrier integration, exact-head CI,
+review, downstream parity, and protected release are proven.
+
+Local verification passed 813 Rate Python/PyQt tests and 104 React files / 628
+tests, plus Ruff, targeted mypy for the new export and tab modules, TypeScript,
+zero-warning ESLint, and the 188-module Vite build. The unchanged carrier also
+reproduces mypy 1.19.1's Python 3.13 internal serialization assertion when
+checking `capability_results.py`; do not misreport that tool failure as a new
+source-code type diagnostic.
+
 ## 2026-08-08 Capability stack consolidated onto this branch
 
 The three capability slices are **merged** and now live here on

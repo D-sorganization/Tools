@@ -22,10 +22,53 @@ from rate_of_closure.variation.scalar_ensemble_contract import (
     ScalarScatterData,
 )
 from rate_of_closure.variation.scalar_ensemble_io import non_complete_reason_summary
-from shared.python.swing_sim.flight.capability_result import OptimizationResult
+from shared.python.swing_sim.flight.capability_result import (
+    OptimizationAlternative,
+    OptimizationResult,
+)
 
 _PAGE_SIZE = 25
 _COLORS = {"complete": "#2f8bd6", "no_impact": "#eb9f3c", "failed": "#d35f5f"}
+
+
+def _parameter_units(dataset: ScalarEnsembleDataset) -> dict[str, str]:
+    return {
+        variable.key.removeprefix("nominal."): variable.unit
+        for variable in dataset.variables
+        if variable.key.startswith("nominal.")
+    }
+
+
+def _alternative_values(
+    item: OptimizationAlternative, units: dict[str, str]
+) -> tuple[str, ...]:
+    recommendation = " · ".join(
+        f"{key}={value:.5g} {units[key]}" for key, value in item.parameters
+    )
+    outcomes = (
+        f"{item.successful_count}/{item.sample_count} complete · "
+        f"{item.no_impact_count} no impact · {item.failed_count} failed"
+    )
+    evidence = (
+        f"{100 * item.confidence:.1f}% · "
+        f"{'extrapolated' if item.extrapolated else 'within envelope'} · "
+        f"{', '.join(item.limiting_constraints) or 'no limits'}"
+    )
+    return (
+        f"{item.rank}. {item.club_id}",
+        recommendation,
+        f"{item.score:.5g}",
+        f"{item.mean_carry_m:.2f} m",
+        f"{item.expected_miss_m:.2f} m",
+        f"{item.dispersion_rms_m:.2f} m",
+        f"{100 * item.target_hold_probability:.1f}%",
+        f"{item.cvar_miss_m:.2f} m",
+        f"{item.downside_carry_m:.2f} m",
+        outcomes,
+        f"{100 * item.failure_fraction:.1f}%",
+        evidence,
+        "efficient" if item.pareto_efficient else "dominated",
+    )
 
 
 def _draw_scatter(figure: Figure, scatter: ScalarScatterData) -> None:
@@ -64,16 +107,22 @@ class CapabilityResults(QWidget):
         self.summary = QLabel("No current optimization result.")
         self.summary.setWordWrap(True)
         layout.addWidget(self.summary)
-        self.alternatives = QTableWidget(0, 7)
+        self.alternatives = QTableWidget(0, 13)
         self.alternatives.setHorizontalHeaderLabels(
             [
                 "Rank / Club",
                 "Recommendation",
+                "Score",
                 "Carry",
                 "Mean miss",
                 "Dispersion",
                 "Target hold",
-                "Confidence / limits",
+                "Miss CVaR",
+                "Downside carry",
+                "Outcomes",
+                "Failure rate",
+                "Evidence",
+                "Pareto",
             ]
         )
         layout.addWidget(self.alternatives)
@@ -135,27 +184,17 @@ class CapabilityResults(QWidget):
             f"no impact {result.no_impact_count}. Status: {result.status}."
             f"{non_complete_reason_summary(dataset)}"
         )
-        self._populate_alternatives(result)
+        self._populate_alternatives(result, dataset)
         self._populate_axes(dataset)
         self._populate_page()
 
-    def _populate_alternatives(self, result: OptimizationResult) -> None:
+    def _populate_alternatives(
+        self, result: OptimizationResult, dataset: ScalarEnsembleDataset
+    ) -> None:
         self.alternatives.setRowCount(len(result.alternatives))
+        units = _parameter_units(dataset)
         for row, item in enumerate(result.alternatives):
-            recommendation = " · ".join(
-                f"{key}={value:.5g}" for key, value in item.parameters
-            )
-            values = (
-                f"{item.rank}. {item.club_id}",
-                recommendation,
-                f"{item.mean_carry_m:.2f} m",
-                f"{item.expected_miss_m:.2f} m",
-                f"{item.dispersion_rms_m:.2f} m",
-                f"{100 * item.target_hold_probability:.1f}%",
-                f"{100 * item.confidence:.1f}% · "
-                f"{', '.join(item.limiting_constraints) or 'none'}",
-            )
-            for column, value in enumerate(values):
+            for column, value in enumerate(_alternative_values(item, units)):
                 self.alternatives.setItem(row, column, QTableWidgetItem(value))
         self.alternatives.resizeColumnsToContents()
 

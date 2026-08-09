@@ -24,6 +24,23 @@ format, mypy, TypeScript, ESLint, structural, and diff checks clean. This
 continuation also builds 187 Vite modules without a size warning; it is local
 only and has not changed GitHub state.
 
+## 2026-08-09 Capability results stabilization
+
+The isolated `feat/4201-capability-results-diagnostics` continuation is based
+on exact wind-workflow carrier head `18fe89201`. It closes two audit findings
+without changing the optimizer or physics: both clients expose every ranked
+diagnostic and parameter unit, both provide result CSV plus versioned result
+JSON, and React scalar scatters now carry numeric scales and cohort legends.
+Raw observation exports remain lossless and distinct. This is feature-stack
+implementation evidence only; #4197/#4201 remain open through integration,
+hosted CI, review, downstream parity, and release to `main`.
+
+Local evidence: 813 Rate Python/PyQt tests and 104 React files / 628 tests,
+Ruff check/format, targeted mypy for the new export and tab modules, TypeScript,
+zero-warning ESLint, and the 188-module Vite production build passed. The
+pre-existing mypy 1.19.1/Python 3.13 internal serialization assertion on
+`capability_results.py` reproduces unchanged at carrier `18fe89201`.
+
 ## 2026-08-08 Capability workspace continuation
 
 The active stacked child is `feat/4197-capability-optimization-ui`, based

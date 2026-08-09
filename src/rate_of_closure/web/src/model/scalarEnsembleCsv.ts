@@ -2,7 +2,10 @@
 
 import type { ScalarEnsembleResult } from "./scalarEnsembleContract";
 
-const csvCell = (value: string | number | null | undefined): string => {
+/** Encode one spreadsheet-safe RFC 4180-style CSV cell. */
+export const spreadsheetCsvCell = (
+  value: string | number | boolean | null | undefined,
+): string => {
   if (value === null || value === undefined) return "";
   const text = String(value);
   const safe = typeof value === "string" && /^[=+\-@]/.test(text) ? `'${text}` : text;
@@ -26,7 +29,9 @@ export function scalarEnsembleToCsv<Cohort extends string>(
     ...variableKeys.map((key) => row.values[key]),
     ...attributeKeys.map((key) => row.attributes?.[key]),
   ]);
-  return [header, ...rows].map((row) => row.map(csvCell).join(",")).join("\n");
+  return [header, ...rows]
+    .map((row) => row.map(spreadsheetCsvCell).join(","))
+    .join("\n");
 }
 
 /**

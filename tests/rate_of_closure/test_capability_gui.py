@@ -46,6 +46,20 @@ def test_capability_tab_runs_and_exposes_complete_diagnostics(qtbot) -> None:  #
 
     assert tab.results.isVisibleTo(tab)
     assert tab.results.alternatives.rowCount() == 1
+    headers = [
+        tab.results.alternatives.horizontalHeaderItem(index).text()
+        for index in range(tab.results.alternatives.columnCount())
+    ]
+    expected_diagnostics = {
+        "Score",
+        "Miss CVaR",
+        "Downside carry",
+        "Outcomes",
+        "Failure rate",
+        "Evidence",
+        "Pareto",
+    }
+    assert expected_diagnostics <= set(headers)
     assert tab.results.raw_rows.rowCount() == 2
     assert tab.results.x_axis.count() > 10
     assert tab.results.minimumWidth() >= 520
@@ -57,6 +71,8 @@ def test_capability_tab_runs_and_exposes_complete_diagnostics(qtbot) -> None:  #
     assert tab.results.plot.toolbar() is not None
     assert tab.csv_button.isEnabled()
     assert tab.json_button.isEnabled()
+    assert tab.result_csv_button.isEnabled()
+    assert tab.result_json_button.isEnabled()
     tab.stop()
 
 

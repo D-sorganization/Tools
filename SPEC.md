@@ -45,6 +45,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - React Shot Optimizer numeric controls retain decimal draft text, allowing
   ordinary leading-minus keyboard entry before validated numeric commit.
 
+### 2026-08-09 Capability result diagnostics
+
+- PyQt6 and React ranked-alternative views expose the full v1 optimization
+  diagnostics, explicit parameter units, evidence-envelope state, and Pareto
+  state rather than a reduced carry/dispersion summary.
+- Ranked results export through spreadsheet-safe CSV and a deterministic
+  `capability-result-export/v1` JSON envelope. Lossless raw observation exports
+  remain separate so aggregate recommendations cannot obscure failed or
+  no-impact trials.
+- React scalar-ensemble scatter plots render numeric grid/tick scales, visible
+  axis ranges, and cohort legends with paired-finite counts.
+
 ### 2026-08-09 Swing-core parity CI isolation
 
 - The dedicated `swing_core` Rust-to-Python parity lane disables third-party
