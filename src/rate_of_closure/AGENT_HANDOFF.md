@@ -1,7 +1,43 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-05
+> Last updated: 2026-08-09
+
+## 2026-08-09 Workspace stack parent propagation
+
+Draft PR #4279 keeps base `feat/4181-launch-monitor-registry`. The exact
+published parent head `9dbceff762e4180bb8a1789ac23d29760fc2330d`
+is carried by a normal merge without rebasing, retargeting, force-pushing, or
+publishing this local continuation. No source conflict occurred: the parent's
+package-relative flight/solver facade contracts and the child's complete
+File/View/Tools command registry, strict workspace document, matched
+PyQt6/React toolstrips, module visibility/order, playback, and independent plot
+controls are all retained.
+
+The reconciled ancestry passes `126` focused Python/PyQt tests and `8 React
+files / 32 tests`. Ruff check/format passes all 28 relevant Python files, and
+CI-pinned mypy 1.13 passes the 18 changed production files and both facade
+tests. Mypy caught an untyped Qt `isChecked()` result in the child's
+`legend_visible()` boundary; the method now returns an explicit `bool` without
+changing runtime behavior. The affected simulation GUI rerun is `29 passed`;
+documentation governance and diff checks pass. Keep this handoff, the root
+handoff, the campaign handoff, and `SPEC.md` together in the merge commit.
+
+## 2026-08-09 Launch-registry parent CI repair
+
+PR #4203 exact-head run `31199764932` reached the Python test lanes but failed
+during Linux collection, before behavioral assertions. The two in-package
+flight/solver facade tests were collected as `src.shared...` modules while
+their absolute aliases crossed into the editable `shared...` namespace. They
+now import their sibling facade package relatively, preserving the pinned
+public API contract and production behavior. Reproduce with pytest
+`--import-mode=importlib`; keep the separate Rust missing-`libpython3.11`
+failure classified as runner infrastructure. Publish normally and propagate
+the repaired parent through the existing stack without changing PR bases.
+Verification is `12 passed` on Windows and `12 passed` on WSL Python 3.11
+under importlib collection; Ruff/format and exact mypy 1.13 pass for both
+changed modules. The dataclass metadata assertion remains active behind an
+explicit test-only `Any` introspection boundary.
 
 ## 2026-08-05 Advanced Wedge Impact Visualization
 

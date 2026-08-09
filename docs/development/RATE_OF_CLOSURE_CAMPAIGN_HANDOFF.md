@@ -4,6 +4,44 @@ Status verified 2026-08-07. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 PR #4279 parent propagation
+
+The #4279 continuation remains based on `feat/4181-launch-monitor-registry` and
+now contains exact parent head
+`9dbceff762e4180bb8a1789ac23d29760fc2330d` through a normal merge. The merge
+had no textual conflict: it retains the parent's Linux-safe package-relative
+flight/solver facade contracts and the child's workspace, top-toolstrip,
+module-navigation, playback, and independent plot-control histories. No branch
+was rebased, retargeted, force-pushed, or published by this continuation.
+
+Current focused evidence is `126 passed` for both facade modules and all
+Python/PyQt tests changed by #4279, plus `8 React files / 32 tests passed` for
+the matching workspace surfaces. Ruff check/format is clean across all 28
+relevant Python files. CI-pinned mypy 1.13 is clean across the 18 changed
+production files and both facade tests after making the child's
+`legend_visible()` Qt boundary return an explicit `bool`. Documentation
+governance, staged/unstaged diff checks, and the affected `29`-test simulation
+GUI rerun pass. Protected CI, review, and publication remain separate release
+requirements.
+
+## 2026-08-09 Launch-registry parent CI repair
+
+The earliest campaign parent, draft PR #4203, remains based on
+`feat/4189-dplane` at exact published head
+`912ebc9d69b05763a76c2c8f198d943737e2d3fb`. CI run `31199764932` passed its
+quality gate, then all Python versions failed before assertions because pytest
+collected the flight and solver contract modules through `src.shared...` while
+their absolute dotted facade aliases requested the editable `shared...`
+namespace. The scoped repair converts only those two test imports to relative
+package imports. Production APIs and physics are unchanged. The same run's
+Rust failure is the known runner inability to link `-lpython3.11`. Validate
+the two contract modules under importlib collection, publish a new exact head,
+and propagate it through #4279, #4280, #4281, and #4282 in normal order.
+Both modules now pass all `12` tests on Windows and WSL Python 3.11 with
+importlib collection. Ruff check/format and pinned mypy 1.13 are clean. A
+test-only `Any` cast keeps frozen-dataclass metadata introspection explicit
+without weakening the runtime contract.
+
 ## Integration checkout
 
 - Worktree: `C:\Users\diete\Repositories\Tools-worktrees\ballflight-campaign-integration`
