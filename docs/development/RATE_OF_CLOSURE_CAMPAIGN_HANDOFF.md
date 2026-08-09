@@ -6,15 +6,17 @@ branch was rewritten.
 
 ## 2026-08-09 Camera snap/tracking continuation
 
-Local branch `feat/4284-camera-snap-tracking` starts from exact stack head
-`a742ad6cc2853b170eb945c4d74a56ea23bdda33`. It implements the canonical camera
+Local branch `feat/4284-camera-snap-tracking` normally merges exact carrier
+head `de49580a3c0888b44f66dcc09bba2ab2fa33914a` with camera parent
+`91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It implements the canonical camera
 contract for all five Tools 3D adapters (PyQt Simulation and Flight; React
 Club, Impact, and Flight) with exact snap orientations, bounded opt-in subject
 tracking, safe zoom preservation, Auto Fit, manual suspension, and Recenter.
 This is local implementation evidence only: no GitHub write/carrier exists,
 UpstreamDrift parity is not started, and protected release remains open.
-Current local evidence is 83 affected Python/PyQt tests, 107 React files / 649
-tests, Ruff/targeted mypy, TypeScript/ESLint, a 193-module production build,
+Camera-parent evidence is 107 React files / 649 tests. Reconciled merge-tree
+evidence is 138 affected Python/PyQt/carrier tests, 14 focused React camera
+tests, Ruff/camera-targeted mypy, TypeScript/ESLint, a 193-module production build,
 campaign-manifest validation, structural checks, and inspected desktop plus
 700 px camera-control renders. Native-font/browser rendering remains due.
 
@@ -112,6 +114,15 @@ manifest authority. Combined local evidence is 828 Rate Python/PyQt tests and
 Vite build, Ruff, targeted mypy, deterministic manifest/schema validation, and
 nine manifest/parity contracts. This remains local evidence; #4282 still needs
 a normal push, exact-head hosted CI, review, and dependency-ordered release.
+
+The first exact-head hosted quality gate (`31340032608`) passed checkout,
+dependency installation, Ruff, and formatting, then failed mypy 1.13 because
+`--follow-imports=skip` exposed Pydantic and Qt boundary returns as `Any`. The
+loader now casts the validated model and the playback adapter converts elapsed
+milliseconds to a concrete `float`; these are static typing fixes, not schema
+or runtime behavior changes. The exact Python 3.12/mypy 1.13 command passes all
+54 delta files; Ruff, 62 focused regression tests, and eight campaign-manifest
+tests pass locally.
 
 ## 2026-08-08 Capability workspace continuation
 

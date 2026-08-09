@@ -80,6 +80,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Composed local implementation evidence is commit-bound in the manifest;
   maintainers must still refresh live mutable PR heads before any write,
   merge, release, or issue-closure decision.
+- The manifest loader explicitly narrows Pydantic's validated value for the
+  CI mypy 1.13 `--follow-imports=skip` context without weakening runtime
+  validation or the generated schema.
+- The PyQt playback adapter similarly converts Qt's elapsed-time result to a
+  concrete `float`, preserving the typed seconds contract when Qt imports are
+  deliberately skipped by the changed-file CI lane.
 
 ### 2026-08-09 Swing-core parity CI isolation
 

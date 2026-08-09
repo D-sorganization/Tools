@@ -5,8 +5,9 @@
 
 ## Issue #4284 camera continuation
 
-Isolated branch `feat/4284-camera-snap-tracking` starts from exact feature-stack
-head `a742ad6cc2853b170eb945c4d74a56ea23bdda33`. It locally implements the
+Isolated branch `feat/4284-camera-snap-tracking` normally merges exact carrier
+head `de49580a3c0888b44f66dcc09bba2ab2fa33914a` with camera implementation
+parent `91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It locally implements the
 shared, UI-neutral camera command contract in Tools PyQt6 and React swing,
 impact, and flight 3D views: exact Face On/Down the Line/Overhead/Isometric
 snaps, opt-in bounded subject tracking, zoom-preserving Auto Fit, predictable
@@ -14,8 +15,9 @@ manual suspension, and one-action Recenter. No GitHub write or carrier exists
 yet. UpstreamDrift consumers, rendered cross-platform review, hosted CI,
 review, and protected release remain open; do not close #4284 on local evidence.
 
-Exact local evidence is 83 affected Python/PyQt tests and the complete React
-suite at 107 files / 649 tests, plus Ruff format/check, targeted mypy,
+Exact camera-parent evidence is 107 React files / 649 tests. On the reconciled
+merge tree, 138 affected Python/PyQt/carrier tests and 14 focused React camera
+tests pass, plus Ruff format/check, camera-targeted mypy,
 TypeScript, zero-warning ESLint, the 193-module production build, campaign
 manifest validation, and diff/structural checks. Headless desktop and 700 px
 camera-bar renders show no control overlap; this Qt runtime lacks usable fonts,
@@ -68,6 +70,14 @@ tests and 104 React files / 642 tests, plus TypeScript, zero-warning ESLint,
 and the 188-module Vite production build. The deterministic manifest,
 generated-schema JSON, Ruff, targeted mypy, and nine manifest/parity contracts
 also pass on implementation head `2c1a77baa`.
+
+Hosted quality-gate run `31340032608` reached mypy 1.13 and exposed
+CI-context-only `no-any-return` findings in the Pydantic manifest loader and
+Qt elapsed-timer adapter because the delta lane uses `--follow-imports=skip`.
+Both boundaries now narrow their return values explicitly. The exact Python
+3.12/mypy 1.13 delta is clean across 54 files; Ruff passes and 62 focused
+regression tests plus eight campaign-manifest tests pass (only pre-existing
+optional-plugin config warnings).
 
 The direct web launcher dynamically loads the root bootstrap through
 `importlib` instead of mutating `sys.path` in the changed entrypoint. Its real

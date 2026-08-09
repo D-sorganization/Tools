@@ -5,8 +5,9 @@
 
 ## Issue #4284 local implementation
 
-Branch `feat/4284-camera-snap-tracking`, based on exact stack head
-`a742ad6cc2853b170eb945c4d74a56ea23bdda33`, now has a shared Python/TypeScript
+Branch `feat/4284-camera-snap-tracking` normally merges exact carrier head
+`de49580a3c0888b44f66dcc09bba2ab2fa33914a` with camera implementation parent
+`91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It has a shared Python/TypeScript
 camera contract and adapters for PyQt6 Simulation/Flight and React Club,
 Impact, and Flight 3D viewports. Canonical snap directions use x downrange,
 y up, z right; face-on side is explicit. Tracking is opt-in, bounded, isolated
@@ -18,8 +19,10 @@ follow-up is rendered desktop/constrained-browser review, hosted CI/review,
 normal stack integration, and UpstreamDrift PyQt6/React consumer parity. See
 `docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md` and issue #4284.
 
-Local gates: 83 affected Python/PyQt tests; 107 React files / 649 tests; Ruff
-format/check; targeted mypy; TypeScript; zero-warning ESLint; 193-module Vite
+Camera-parent gates include 107 React files / 649 tests. Reconciled merge-tree
+gates include 138 affected Python/PyQt/carrier tests, 14 focused React camera
+tests, Ruff format/check, camera-targeted mypy, TypeScript, zero-warning ESLint,
+and the 193-module Vite
 build; campaign-manifest, diff, and changed-file structural checks. Headless
 desktop and 700 px camera-control renders were inspected without overlap; the
 local offscreen Qt font directory is unavailable, so native-font/browser
@@ -103,6 +106,12 @@ reconciled before #4130 can close.
   production build passed. The manifest, schema JSON, Ruff, targeted mypy, and
   nine manifest/parity contracts pass on implementation head `2c1a77baa`.
   Hosted CI has not run on this composition.
+- Hosted quality-gate run `31340032608` subsequently found mypy 1.13
+  `no-any-return` findings at the Pydantic loader and Qt elapsed-timer adapter
+  under `--follow-imports=skip`; both boundaries now narrow their return
+  values explicitly. The exact Python 3.12/mypy 1.13 delta is clean across 54
+  files; Ruff, 62 focused regression tests, and eight campaign-manifest tests
+  also pass locally.
 - Consolidated capability head `c1827bbdc`: 1,426 Python Rate/shared-swing
   tests and 624 React tests passed locally.
 - Variation continuation `d71b0ea01`: 890 Python/PyQt/shared-swing tests and

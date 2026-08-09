@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from dataclasses import replace
 from pathlib import Path
+from typing import Any
 
 import pytest
 
@@ -235,8 +236,8 @@ def test_rejects_schema_units_bounds_and_configuration() -> None:
         evaluator("driver", {**PINNED, "unused": 1.0})
     with pytest.raises(ValueError, match="safe bounds"):
         evaluator("driver", {**PINNED, "ball_speed": 100.0})
-    bad_profile = _profile().to_dict()
-    bad_profile["clubs"][0]["parameters"][0]["unit"] = "mph"  # type: ignore[index]
+    bad_profile: dict[str, Any] = _profile().to_dict()
+    bad_profile["clubs"][0]["parameters"][0]["unit"] = "mph"
     with pytest.raises(ValueError, match="ball_speed.*m/s"):
         make_capability_flight_evaluator(
             PlayerCapabilityProfile.from_dict(bad_profile), _request(), _config()
@@ -270,18 +271,16 @@ def test_rejects_schema_units_bounds_and_configuration() -> None:
 def test_rejects_profiles_outside_physical_flight_domains(
     parameter_id: str, field: str, value: float, message: str
 ) -> None:
-    payload = _profile(
+    payload: dict[str, Any] = _profile(
         include_spin=parameter_id in {"total_spin", "spin_axis_tilt"}
     ).to_dict()
-    parameters = payload["clubs"][0]["parameters"]  # type: ignore[index]
+    parameters = payload["clubs"][0]["parameters"]
     parameter = next(
-        item
-        for item in parameters
-        if item["parameter_id"] == parameter_id  # type: ignore[union-attr]
+        item for item in parameters if item["parameter_id"] == parameter_id
     )
-    parameter[field] = value  # type: ignore[index]
+    parameter[field] = value
     if field == "upper_bound":
-        parameter["evidence_upper_bound"] = value  # type: ignore[index]
+        parameter["evidence_upper_bound"] = value
     with pytest.raises(ValueError, match=message):
         make_capability_flight_evaluator(
             PlayerCapabilityProfile.from_dict(payload), _request(), _config()
