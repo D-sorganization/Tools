@@ -34,6 +34,14 @@
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
+### 2026-08-09 Swing-core parity CI isolation
+
+- The dedicated `swing_core` Rust-to-Python parity lane disables third-party
+  pytest plugin auto-loading so cached GUI plugins on self-hosted runners cannot
+  introduce undeclared PyQt dependencies into the Rust-only qualification job.
+- The lane continues to install the built wheel and run the same non-skippable
+  parity suite; numerical behavior and production dependencies are unchanged.
+
 ### 2026-08-06 GUI module-budget repair
 
 - Movement Optimizer motion palette and chain-length helpers live in a small

@@ -1,7 +1,20 @@
 # AGENT_HANDOFF — Tools
 
 > Update this file in every implementation commit and every push to `main`.
-> Last updated: 2026-08-08.
+> Last updated: 2026-08-09.
+
+## CI REMEDIATION RECORD (2026-08-09): hermetic swing-core parity lane
+
+The exact PR #4282 head `3186a265b1` built and loaded the `swing_core` wheel,
+but its Python 3.11 parity job failed before collection because the self-hosted
+runner auto-loaded a cached `pytest-qt` plugin without PyQt6 installed. The
+Rust-only parity step now sets `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1`; a focused
+workflow regression test prevents the unrelated GUI-plugin dependency from
+returning. This is a CI-environment isolation fix, not a physics change.
+
+At this handoff, PR #4282 remains draft and unmergeable by policy: its new
+exact-head CI has not run yet, several governance jobs remain queued, and no
+review approval is recorded. Preserve its existing base and stack order.
 
 ## COMPLETION RECORD (2026-08-08): interruption recovered
 
