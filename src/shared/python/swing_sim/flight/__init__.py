@@ -25,6 +25,11 @@ from .capability_contract import (
     PlayerCapabilityProfile,
     TargetDefinition,
 )
+from .capability_flight_evaluator import (
+    CapabilityFlightEvaluatorConfig,
+    CapabilitySpinDefault,
+    make_capability_flight_evaluator,
+)
 from .capability_observation import (
     CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION,
     CancellationCheck,
@@ -140,6 +145,8 @@ __all__ = [
     "AvailabilityReason",
     "BallFlightModel",
     "CapabilityEvaluator",
+    "CapabilityFlightEvaluatorConfig",
+    "CapabilitySpinDefault",
     "CapabilityOptimizationCancelled",
     "CapabilityOptimizationHooks",
     "CapabilityObjective",
@@ -231,6 +238,7 @@ __all__ = [
     "launch_direction_sign_labels",
     "launch_direction_to_flight_azimuth",
     "migrate_launch_direction_mapping",
+    "make_capability_flight_evaluator",
     "optimize_capability",
     "simulate",
     "simulate_trajectory_rust",

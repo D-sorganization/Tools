@@ -2,15 +2,13 @@
 
 from __future__ import annotations
 
-import csv
-import io
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass
 
 from rate_of_closure.model import MPH_PER_MPS
 from rate_of_closure.simulation import launch_from_delivery, launch_from_direct
-from rate_of_closure.variation.scalar_ensemble_contract import ScalarEnsembleDataset
+from rate_of_closure.variation.scalar_ensemble_io import scalar_ensemble_csv
 from shared.python.swing_sim.flight import (
     LaunchConditions,
     ScalarDistribution,
@@ -185,44 +183,6 @@ def build_strategy_request(
             target_radius_m=_target_radius(context.target),
         ),
     )
-
-
-def scalar_ensemble_csv(dataset: ScalarEnsembleDataset) -> str:
-    """Serialize every generic scalar row, variable, and attribute to CSV."""
-    attribute_keys = sorted(
-        {
-            key
-            for row in dataset.rows
-            for key in (() if row.attributes is None else row.attributes)
-        }
-    )
-    fixed = ["row_id", "trial_index", "series_id", "cohort"]
-    variable_keys = [variable.key for variable in dataset.variables]
-    attributes = [f"attribute:{key}" for key in attribute_keys]
-    output = io.StringIO()
-    writer = csv.writer(output, lineterminator="\n")
-    writer.writerow(
-        [_spreadsheet_safe(item) for item in fixed + variable_keys + attributes]
-    )
-    for row in dataset.rows:
-        row_attributes = {} if row.attributes is None else row.attributes
-        values: list[object] = [
-            row.row_id,
-            row.trial_index,
-            row.series_id,
-            row.cohort,
-            *(row.values[key] for key in variable_keys),
-            *(row_attributes.get(key) for key in attribute_keys),
-        ]
-        writer.writerow([_spreadsheet_safe(value) for value in values])
-    return output.getvalue().removesuffix("\n")
-
-
-def _spreadsheet_safe(value: object) -> object:
-    """Neutralize formula-like strings while leaving numbers unchanged."""
-    if isinstance(value, str) and value.lstrip("'").startswith(("=", "+", "-", "@")):
-        return f"'{value}"
-    return "" if value is None else value
 
 
 __all__ = [
