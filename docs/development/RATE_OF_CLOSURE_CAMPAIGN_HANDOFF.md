@@ -995,9 +995,10 @@ and the strict incoming time-ordered bracket. Rust retains its raw crossing
 bracket in transfer-event evidence; Python and TypeScript intentionally use the
 exact zero-gap interpolated contact as the v1 first-penetrating state. Tee height
 remains a vertical ground-to-ball-bottom measure and terrain elevation remains
-observable. Do not publish until a fresh native wheel, all
-cross-runtime gates, and a second independent integrated review are green. The
-implementation/specification/handoff commit is `SELF` until committed.
+observable. At this pre-publication checkpoint, the
+implementation/specification/handoff commit became
+`d2d3d0f53a78aa863574afe43290a29c48318d94`; the following review record and
+current handoff supersede the then-pending publication instruction.
 
 The second independent review found three real blocker classes: approximate
 Python origins/malformed chronology, noncanonical Rust wire tokens, and

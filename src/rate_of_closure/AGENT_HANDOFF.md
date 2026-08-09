@@ -698,9 +698,10 @@ TypeScript, Rust, PyO3, and WASM. Web origin proof and the 50,000-step
 synchronous RK4 budget fail closed, and a partial final step stops at the exact
 requested horizon; native Python integrates to arbitrary configured planes;
 Rust entry points preserve the complete v1 request evidence. Bounce, skid, roll,
-and UI wiring remain later child issues. Do not publish this implementation
-until the second integrated review and final gate matrix pass; `SELF` denotes
-the pending implementation/specification/handoff commit.
+and UI wiring remain later child issues. At this pre-publication checkpoint,
+the pending implementation/specification/handoff commit became
+`d2d3d0f53a78aa863574afe43290a29c48318d94`; the later sections record its
+completed independent review and current parent propagation.
 
 The second integrated review's Python chronology, Rust canonical-wire, and
 Rust/web exact-horizon blockers are repaired. Final local counts are 208 Python
