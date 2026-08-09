@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from pathlib import Path
 
 import pytest
 
@@ -28,6 +29,28 @@ from rate_of_closure.variation.scalar_ensemble_io import non_complete_reason_sum
 
 pytestmark = pytest.mark.unit
 
+_PARSER_FIXTURE = json.loads(
+    (
+        Path(__file__).parents[2]
+        / "src/rate_of_closure/web/src/model/__fixtures__"
+        / "capability_workflow_parser_cases_v1.json"
+    ).read_text(encoding="utf-8")
+)
+_PARSER_CASES = _PARSER_FIXTURE["cases"]
+
+
+def _mutated_workflow(case: dict[str, object]) -> str:
+    payload = json.loads(
+        capability_workflow_json(build_capability_workflow(CapabilityWorkflowInputs()))
+    )
+    path = case["path"]
+    assert isinstance(path, list) and path
+    cursor = payload
+    for key in path[:-1]:
+        cursor = cursor[key]
+    cursor[path[-1]] = case["value"]
+    return json.dumps(payload)
+
 
 def test_default_driver_workflow_is_model_ready_and_auditable() -> None:
     document = build_capability_workflow(CapabilityWorkflowInputs())
@@ -38,6 +61,10 @@ def test_default_driver_workflow_is_model_ready_and_auditable() -> None:
     assert document.request.target.distance_m == pytest.approx(230.0)
     assert document.evaluator_config.spin_defaults[0].club_id == "driver"
     assert "user-authored" in document.evaluator_config.spin_defaults[0].provenance
+
+
+def test_shared_parser_fixture_schema_is_supported() -> None:
+    assert _PARSER_FIXTURE["schema_version"] == "capability-workflow-parser-cases/v1"
 
 
 def test_workflow_round_trip_preserves_strict_nested_contracts() -> None:
@@ -98,6 +125,19 @@ def test_workflow_json_rejects_spin_default_for_a_different_club() -> None:
 
     with pytest.raises(ValueError, match="spin default club_ids"):
         capability_workflow_from_json(json.dumps(payload))
+
+
+@pytest.mark.parametrize("case", _PARSER_CASES, ids=lambda case: case["id"])
+def test_shared_workflow_parser_cases_have_strict_types(
+    case: dict[str, object],
+) -> None:
+    source = _mutated_workflow(case)
+
+    if case["accepted"]:
+        capability_workflow_from_json(source)
+    else:
+        with pytest.raises((TypeError, ValueError)):
+            capability_workflow_from_json(source)
 
 
 def _reason_dataset(

@@ -3,6 +3,29 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
+## LOCAL CONTINUATION (2026-08-09): capability wire/input hardening
+
+Branch `feat/4201-capability-contract-hardening` is based on exact carrier
+head `18fe89201d657116bbca99922297c14968356c44`. This local-only continuation
+removes the remaining Python workflow parser coercions, requires exact JSON
+primitive types throughout the v1 capability document, and uses one shared
+golden accept/reject fixture in Python and TypeScript. Mathematically integral
+JSON numbers remain valid for integer fields; numeric strings, booleans,
+fractional integers, and numbers in text fields fail closed.
+
+The React Shot Optimizer numeric editor now keeps a decimal text draft so a
+normal keyboard sequence can enter `-3.5` without the browser number input
+discarding the leading minus sign. A `userEvent` regression test exercises the
+real clear/type/tab/run interaction and verifies the dispatched numeric value.
+
+TDD evidence before implementation: Python `8 failed, 16 passed`; React
+`2 failed, 26 passed`. Final focused capability evidence: Python `43 passed`;
+React `9 files / 69 tests passed`; Ruff check and format, focused mypy,
+TypeScript type-check, zero-warning ESLint, structural budgets, and
+`git diff --check` pass. The Vite production build passes with 187 modules and
+no size warning. This branch has not been pushed and no GitHub state was
+changed.
+
 ## CI REMEDIATION RECORD (2026-08-09): hermetic swing-core parity lane
 
 The exact PR #4282 head `3186a265b1` built and loaded the `swing_core` wheel,

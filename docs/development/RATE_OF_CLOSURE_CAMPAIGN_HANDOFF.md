@@ -4,6 +4,26 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 Capability workflow hardening continuation
+
+Local branch `feat/4201-capability-contract-hardening` starts at exact carrier
+`18fe89201d657116bbca99922297c14968356c44`. It makes the Python and TypeScript
+`capability-optimization-workflow/v1` readers fail closed on JSON primitive
+type mismatches and pins the identical accept/reject matrix in a shared golden
+fixture. The Python reader validates the complete nested wire document before
+calling model constructors, so numeric strings, booleans-as-numbers, numeric
+text identifiers/provenance, and fractional integer fields cannot be silently
+normalized. Integral JSON numbers remain portable between runtimes.
+
+The React Shot Optimizer also replaces browser-managed number inputs with
+decimal text drafts. This makes leading-minus and decimal entry reliable while
+preserving numeric commit and existing workflow validation. RED evidence was
+Python `8 failed, 16 passed` and React `2 failed, 26 passed`; final focused
+evidence is Python `43 passed`, React `9 files / 69 tests passed`, with Ruff,
+format, mypy, TypeScript, ESLint, structural, and diff checks clean. This
+continuation also builds 187 Vite modules without a size warning; it is local
+only and has not changed GitHub state.
+
 ## 2026-08-08 Capability workspace continuation
 
 The active stacked child is `feat/4197-capability-optimization-ui`, based

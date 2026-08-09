@@ -26,13 +26,24 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.7                                     |
-| **Spec Version**        | 1.14.7                                     |
-| **Last Spec Update**    | 2026-08-08                                 |
+| **Current Version**     | 1.14.8                                     |
+| **Spec Version**        | 1.14.8                                     |
+| **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-09 Capability workflow contract hardening
+
+- Python and TypeScript capability workflow readers reject JSON primitive type
+  mismatches throughout the nested v1 document instead of coercing numeric
+  strings, booleans, or numeric text fields.
+- A shared golden parser fixture pins identical acceptance and rejection,
+  including portable acceptance of mathematically integral JSON numbers for
+  integer fields.
+- React Shot Optimizer numeric controls retain decimal draft text, allowing
+  ordinary leading-minus keyboard entry before validated numeric commit.
 
 ### 2026-08-09 Swing-core parity CI isolation
 
@@ -2880,6 +2891,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.14.8 | fix(rate-of-closure, #4201): make Python and TypeScript `capability-optimization-workflow/v1` parsing reject primitive type mismatches without silent coercion, pin shared cross-runtime accept/reject cases, and use decimal draft inputs so signed values can be entered through normal keyboard interaction. |
 | 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |
 | 2026-08-08 | 1.14.6 | feat(rate-of-closure, #4197): add matched PyQt6/React Shot Optimizer workspaces with strict cross-runtime workflow persistence, off-main-thread qualified flight execution, truthful progress/cancellation, complete scalar-ensemble cohort retention, ranked alternatives, stage-qualified selectable scatter axes, zoom/autofit, bounded raw-row paging, lossless CSV/stable JSON, substantive hover guidance, and saved-layout migration that reveals newly registered modules. |
 | 2026-08-08 | 1.14.5 | feat(ball-flight, #4197): add profile/request-bound Python and TypeScript Waterloo/Penner capability evaluators with exact established parameter IDs, physical-domain and unit validation, sourced per-club spin defaults or paired variable spin inputs, shared gyro-projected positive-fade/right spin-axis convention across result/impact/variation producers, canonical target-frame conversion, target-aware complete scalar metrics, typed horizon nonconvergence, fail-fast invariants, and a shared 16-scalar tolerance fixture. Corrects the TypeScript ground-crossing interpolation so a descending launch from z=0 cannot extrapolate to a negative sample time, which previously raised an untyped `RangeError` that was absorbed as an `evaluator_exception`; such launches now report `nonconverged`, matching the Python runtime. |

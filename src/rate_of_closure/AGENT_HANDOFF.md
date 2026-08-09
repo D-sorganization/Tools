@@ -1,7 +1,30 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-08
+> Last updated: 2026-08-09
+
+## 2026-08-09 Capability workflow contract and signed-input hardening
+
+The local branch `feat/4201-capability-contract-hardening`, based on exact
+carrier `18fe89201d657116bbca99922297c14968356c44`, now validates every numeric
+and text primitive in `capability-optimization-workflow/v1` before Python model
+construction. Python and TypeScript consume the same versioned parser-case
+fixture, including accepted integral JSON numbers and rejected numeric strings,
+booleans, fractional integer fields, and non-string identifiers/provenance.
+This prevents cross-runtime acceptance drift and removes silent Python
+`float(...)` / `str(...)` normalization from the public workflow boundary.
+
+React optimizer numeric fields use a decimal text draft with explicit commit
+semantics. Negative values can be entered by ordinary keyboard interaction;
+the regression uses `userEvent` to clear, type `-3.5`, blur, run, and assert the
+worker receives `-3.5`.
+
+RED: Python `8 failed, 16 passed`; React `2 failed, 26 passed`. GREEN: the four
+focused Python capability modules report `43 passed`, and the nine focused
+React capability files report `69 passed`. Ruff check/format, focused mypy,
+`tsc --noEmit`, zero-warning ESLint, production structural budgets, and diff
+whitespace checks pass. The Vite production build passes with 187 modules and
+no size warning. The change is local only; no push or PR mutation has occurred.
 
 ## 2026-08-08 Capability stack consolidated onto this branch
 

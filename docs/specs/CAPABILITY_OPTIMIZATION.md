@@ -82,6 +82,13 @@ request, sourced per-club fixed-spin configuration, integrator settings, and
 deterministic search basis. The default document is explicitly representative
 and user-authored; it is not presented as measured player data.
 
+The persisted v1 wire contract is strict at every nested primitive. Numeric
+fields accept only finite JSON numbers (and integer fields require an integral
+number); text fields accept only nonempty JSON strings. Numeric strings,
+booleans used as numbers, fractional integer values, and numeric identifiers or
+provenance values are rejected in both runtimes. Python and TypeScript execute
+one shared versioned accept/reject fixture to prevent parser drift.
+
 Optimization runs outside the UI thread. Progress is based on attempted model
 evaluations, cancellation publishes no partial optimization result, and input
 changes invalidate captured output. Every attempted sample is retained in
