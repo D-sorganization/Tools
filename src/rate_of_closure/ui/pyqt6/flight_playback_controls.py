@@ -203,7 +203,7 @@ class FlightPlaybackControls(QWidget):
 
     def _elapsed_seconds(self) -> float:
         """Return elapsed wall time through a deterministic test seam."""
-        return self._elapsed.restart() / 1000.0
+        return float(self._elapsed.restart()) / 1000.0
 
     def _scrub(self, value: int) -> None:
         self.pause()

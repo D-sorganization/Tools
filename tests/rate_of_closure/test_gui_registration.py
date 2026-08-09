@@ -8,6 +8,7 @@ import os
 import subprocess
 import sys
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 
@@ -15,11 +16,11 @@ pytestmark = pytest.mark.unit
 
 
 @pytest.fixture
-def gui_info() -> dict:
+def gui_info() -> dict[str, Any]:
     """Load GUI registration info from the module."""
     from rate_of_closure.gui_registration import get_gui_info
 
-    return get_gui_info()
+    return cast(dict[str, Any], get_gui_info())
 
 
 class TestGuiRegistration:

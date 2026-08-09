@@ -46,6 +46,14 @@ and the 188-module Vite production build. The deterministic manifest,
 generated-schema JSON, Ruff, targeted mypy, and nine manifest/parity contracts
 also pass on implementation head `2c1a77baa`.
 
+Hosted quality-gate run `31340032608` reached mypy 1.13 and exposed
+CI-context-only `no-any-return` findings in the Pydantic manifest loader and
+Qt elapsed-timer adapter because the delta lane uses `--follow-imports=skip`.
+Both boundaries now narrow their return values explicitly. The exact Python
+3.12/mypy 1.13 delta is clean across 54 files; Ruff passes and 62 focused
+regression tests plus eight campaign-manifest tests pass (only pre-existing
+optional-plugin config warnings).
+
 The direct web launcher dynamically loads the root bootstrap through
 `importlib` instead of mutating `sys.path` in the changed entrypoint. Its real
 child-process delegation test and the changed-Python policy guard cover that

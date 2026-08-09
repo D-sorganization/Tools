@@ -99,6 +99,15 @@ Vite build, Ruff, targeted mypy, deterministic manifest/schema validation, and
 nine manifest/parity contracts. This remains local evidence; #4282 still needs
 a normal push, exact-head hosted CI, review, and dependency-ordered release.
 
+The first exact-head hosted quality gate (`31340032608`) passed checkout,
+dependency installation, Ruff, and formatting, then failed mypy 1.13 because
+`--follow-imports=skip` exposed Pydantic and Qt boundary returns as `Any`. The
+loader now casts the validated model and the playback adapter converts elapsed
+milliseconds to a concrete `float`; these are static typing fixes, not schema
+or runtime behavior changes. The exact Python 3.12/mypy 1.13 command passes all
+54 delta files; Ruff, 62 focused regression tests, and eight campaign-manifest
+tests pass locally.
+
 ## 2026-08-08 Capability workspace continuation
 
 The active stacked child is `feat/4197-capability-optimization-ui`, based

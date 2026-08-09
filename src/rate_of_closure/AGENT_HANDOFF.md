@@ -81,6 +81,12 @@ reconciled before #4130 can close.
   production build passed. The manifest, schema JSON, Ruff, targeted mypy, and
   nine manifest/parity contracts pass on implementation head `2c1a77baa`.
   Hosted CI has not run on this composition.
+- Hosted quality-gate run `31340032608` subsequently found mypy 1.13
+  `no-any-return` findings at the Pydantic loader and Qt elapsed-timer adapter
+  under `--follow-imports=skip`; both boundaries now narrow their return
+  values explicitly. The exact Python 3.12/mypy 1.13 delta is clean across 54
+  files; Ruff, 62 focused regression tests, and eight campaign-manifest tests
+  also pass locally.
 - Consolidated capability head `c1827bbdc`: 1,426 Python Rate/shared-swing
   tests and 624 React tests passed locally.
 - Variation continuation `d71b0ea01`: 890 Python/PyQt/shared-swing tests and

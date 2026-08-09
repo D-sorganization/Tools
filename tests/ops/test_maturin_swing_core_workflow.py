@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 import pytest
 import yaml
@@ -13,7 +13,7 @@ WORKFLOW = REPO_ROOT / ".github" / "workflows" / "maturin-swing-core.yml"
 
 
 def _workflow() -> dict[str, Any]:
-    return yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    return cast(dict[str, Any], yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
 
 
 @pytest.mark.unit
