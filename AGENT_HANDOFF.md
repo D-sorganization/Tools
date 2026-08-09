@@ -1,7 +1,34 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-09
+
+## 2026-08-09 PR #4203 Linux collection repair
+
+Draft PR #4203 remains on `feat/4181-launch-monitor-registry`, based on
+`feat/4189-dplane`; no branch was rebased, retargeted, force-pushed, or merged
+on GitHub. Exact-head CI run `31199764932` passed the quality gate but all
+three Python lanes failed while collecting the in-package flight and solver
+facade contract tests. Pytest loaded those tests through its `src.shared...`
+package namespace, while their absolute dotted aliases requested the editable
+`shared...` namespace; Python then reported that `flight`/`solver` could not be
+imported from `src.shared.python.swing_sim` before any assertion ran.
+
+The bounded repair uses package-relative facade imports in those two tests, so
+collection and the public API assertions stay in one namespace. It does not
+change production code or widen either facade. Verify both contract modules
+with `--import-mode=importlib`, Ruff/format, and pinned mypy before a normal
+push. The run's Rust `-lpython3.11` link error is missing runner toolchain
+state, not simulation evidence; do not modify the model to hide it. After the
+new #4203 head passes, propagate it through #4279, #4280, #4281, and #4282 in
+normal stack order.
+
+Local evidence is now `12 passed` on Windows and `12 passed` under WSL Python
+3.11 with importlib collection. Ruff check/format and pinned mypy 1.13 pass
+for both changed test modules. The frozen-dataclass assertion casts only its
+introspection target to `Any`, matching the later carrier boundary while
+retaining the runtime assertion. The minimal WSL environment reports only
+unknown-option warnings for intentionally omitted optional pytest plugins.
 
 ## Where This Repo Is Headed
 

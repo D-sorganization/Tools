@@ -11,6 +11,15 @@
 - Related integration pull request: `#4217`
 - Consumer pull request: `D-sorganization/UpstreamDrift#8369`
 
+PR #4203 current-head CI recovery is intentionally limited to Linux test
+collection: the in-package flight and solver facade-contract tests now use
+relative package imports so pytest's `src.shared...` collection namespace does
+not cross into the editable `shared...` alias. Run `31199764932` is diagnostic
+evidence for the old head; its Rust missing-`libpython3.11` failure is runner
+infrastructure. No launch-monitor analytics contract or runtime value changes.
+The repaired modules pass `12` tests on both Windows and WSL Python 3.11 under
+importlib collection; Ruff/format and pinned mypy 1.13 pass.
+
 The analytics implementation supplies UI-neutral Python and TypeScript contracts,
 statistics, parsing, and dataset fingerprinting behind stable facade modules. The
 facades are intentionally retained so the PyQt6 and React clients do not depend on

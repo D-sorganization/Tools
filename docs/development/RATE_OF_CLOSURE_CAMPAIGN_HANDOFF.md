@@ -4,6 +4,24 @@ Status verified 2026-08-07. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 Launch-registry parent CI repair
+
+The earliest campaign parent, draft PR #4203, remains based on
+`feat/4189-dplane` at exact published head
+`912ebc9d69b05763a76c2c8f198d943737e2d3fb`. CI run `31199764932` passed its
+quality gate, then all Python versions failed before assertions because pytest
+collected the flight and solver contract modules through `src.shared...` while
+their absolute dotted facade aliases requested the editable `shared...`
+namespace. The scoped repair converts only those two test imports to relative
+package imports. Production APIs and physics are unchanged. The same run's
+Rust failure is the known runner inability to link `-lpython3.11`. Validate
+the two contract modules under importlib collection, publish a new exact head,
+and propagate it through #4279, #4280, #4281, and #4282 in normal order.
+Both modules now pass all `12` tests on Windows and WSL Python 3.11 with
+importlib collection. Ruff check/format and pinned mypy 1.13 are clean. A
+test-only `Any` cast keeps frozen-dataclass metadata introspection explicit
+without weakening the runtime contract.
+
 ## Integration checkout
 
 - Worktree: `C:\Users\diete\Repositories\Tools-worktrees\ballflight-campaign-integration`

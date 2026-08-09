@@ -1,7 +1,23 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-05
+> Last updated: 2026-08-09
+
+## 2026-08-09 Launch-registry parent CI repair
+
+PR #4203 exact-head run `31199764932` reached the Python test lanes but failed
+during Linux collection, before behavioral assertions. The two in-package
+flight/solver facade tests were collected as `src.shared...` modules while
+their absolute aliases crossed into the editable `shared...` namespace. They
+now import their sibling facade package relatively, preserving the pinned
+public API contract and production behavior. Reproduce with pytest
+`--import-mode=importlib`; keep the separate Rust missing-`libpython3.11`
+failure classified as runner infrastructure. Publish normally and propagate
+the repaired parent through the existing stack without changing PR bases.
+Verification is `12 passed` on Windows and `12 passed` on WSL Python 3.11
+under importlib collection; Ruff/format and exact mypy 1.13 pass for both
+changed modules. The dataclass metadata assertion remains active behind an
+explicit test-only `Any` introspection boundary.
 
 ## 2026-08-05 Advanced Wedge Impact Visualization
 
