@@ -4,6 +4,31 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-08 Capability workspace continuation
+
+The active stacked child is `feat/4197-capability-optimization-ui`, based
+exactly on evaluator commit `c280407d432c153639bb266c9c721a014a129723`
+(draft PR #4289). It adds matched PyQt6/React Shot Optimizer modules with the
+strict cross-runtime `capability-optimization-workflow/v1` document, qualified
+Waterloo/Penner worker execution, progress/cancellation, complete retained
+observation cohorts, ranked alternatives, selectable stage-qualified scalar
+axes, managed zoom/autofit, accessible 25-row paging, spreadsheet-safe CSV,
+and stable JSON. The captured basis includes profile/club IDs, delivery
+center/spread, sourced fixed spin, positive-right target frames, objective,
+budgets, alternatives count, and deterministic seed.
+
+Live browser and standalone PyQt rendered review verified the workflows and
+found three repaired integration defects: duplicated target-axis labels, old
+saved layouts hiding newly registered modules, and a cramped PyQt results
+split. All optimizer controls now have substantive hover guidance. Verified
+local evidence is 808 Rate Python/PyQt tests plus 615 swing_sim tests and 102
+React files / 619 tests; Ruff, formatting, CI-equivalent mypy 1.13,
+TypeScript, zero-warning ESLint, the 187-module production build with a
+lazy-loaded Shot Optimizer chunk, structural limits, and diff checks pass. The model boundary is visible: still-air carry to
+first ground crossing only, with wind, bounce, roll, and total distance outside
+v1. Publish as a protected child of #4289 and keep #4197 open through CI,
+review, ordered merge, and downstream parity.
+
 ## 2026-08-08 Capability evaluator continuation
 
 The active child branch is `feat/4197-capability-flight-evaluator`, based

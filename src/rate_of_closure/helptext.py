@@ -30,6 +30,31 @@ def _entry(title: str, html: str) -> HelpEntry:
 
 #: Tab key -> help entry. Keys match the main-window tab order.
 HELP_TEXTS: dict[str, HelpEntry] = {
+    "capability_optimization": _entry(
+        "Shot Optimizer",
+        "<h3>What this tab does</h3>"
+        "<p>Builds an auditable player-and-club capability profile and searches "
+        "for robust launch conditions with the full Waterloo/Penner flight model. "
+        "Ball speed, launch angle, launch direction, their measured variability, "
+        "fixed spin, target geometry, objective, budgets, and seed are all visible.</p>"
+        "<h3>Workflow</h3><ol><li>Enter the three launch centers and standard "
+        "deviations, then review the explicit total-spin and spin-axis settings. "
+        "Positive launch direction and spin tilt mean right/fade in the target "
+        "frame.</li><li>Set the landing target, objective, candidate budget, trials "
+        "per candidate, "
+        "retained alternatives, and deterministic seed.</li><li>Run the optimization "
+        "in the background; progress and cancellation occur at sample boundaries.</li>"
+        "<li>Compare ranked alternatives, choose any parameter, flight metric, or "
+        "target diagnostic for the managed scatter axes, and page through raw rows. "
+        "Save/load the strict workflow or export every observation as "
+        "CSV/JSON.</li></ol>"
+        "<h3>Tips and limits</h3><p>The current evaluator models still-air carry "
+        "to the first "
+        "ground crossing. Wind, bounce, roll, and total distance are not silently "
+        "included. Python uses adaptive RK45 while the web uses fixed-step RK4; both "
+        "record their integrator and use tolerance-based parity rather than claiming "
+        "bit-identical rankings near a tie.</p>",
+    ),
     "clubhead": _entry(
         "3D Clubhead",
         "<h3>What this tab does</h3>"

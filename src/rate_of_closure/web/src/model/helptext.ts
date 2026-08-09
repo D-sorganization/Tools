@@ -111,6 +111,13 @@ export const HELP_TEXTS: Record<string, HelpEntry> = {
       "Results include pair-specific sample counts, multiplicity-adjusted p-values, confidence intervals, OLS coefficient uncertainty, residual diagnostics, grouped estimates, and a deterministic dataset fingerprint. TrackMan-Comparable and Foresight-Comparable labels describe documented interpretation frames only; they do not claim device emulation or certification. Export both retained records and the complete analysis evidence as JSON.",
     ],
   },
+  "Shot Optimizer": {
+    title: "How to Use This Page",
+    paragraphs: [
+      "Build an auditable player-and-club capability profile, then search for robust launch conditions using the full Waterloo/Penner ball-flight model. Set the ball-speed, launch-angle, and launch-direction centers and standard deviations; fixed total spin and spin-axis tilt are shown explicitly with user-authored provenance. Set the landing target, objective, candidate count, trials per candidate, retained alternatives, and deterministic seed before running.",
+      "Optimization runs in a background worker with exact progress and cancellation. Ranked alternatives report carry, expected miss, dispersion, target-hold probability, confidence, and limiting constraints. Select any nominal input, perturbed input, flight metric, or target diagnostic for the scatter axes; paired-finite and unavailable counts remain visible, and the paged raw table preserves failed trials without inventing values. Save or load the strict versioned workflow and export every observation as lossless CSV or stable JSON. The current evaluator is still-air carry to first ground crossing: wind, bounce, roll, and total distance are not silently included.",
+    ],
+  },
   Variation: {
     title: "How to Use This Page",
     paragraphs: [

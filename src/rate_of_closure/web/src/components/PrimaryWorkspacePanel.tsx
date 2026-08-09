@@ -1,3 +1,5 @@
+import { lazy, Suspense } from "react";
+
 import type { ImpactAppModel } from "../hooks/useImpactAppModel";
 import type { PrimaryViewId } from "../model/viewPreferences";
 import { Derivation } from "./Derivation";
@@ -9,6 +11,12 @@ import { PlotsPanel } from "./PlotsPanel";
 import { PuttingPanel } from "./PuttingPanel";
 import { SimulationPanel } from "./SimulationPanel";
 import { VariationPanel } from "./VariationPanel";
+
+const LazyCapabilityOptimizationPanel = lazy(() =>
+  import("./CapabilityOptimizationPanel").then((module) => ({
+    default: module.CapabilityOptimizationPanel,
+  })),
+);
 
 interface WorkspacePanelProps {
   readonly active: PrimaryViewId;
@@ -52,6 +60,12 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
         spatialTarget={model.spatialTarget} onSpatialTargetChange={model.setSpatialTarget} />;
     case "launch-monitor-analytics":
       return <LaunchMonitorAnalyticsPanel />;
+    case "capability-optimization":
+      return (
+        <Suspense fallback={<section role="status" aria-label="Shot optimizer loading">Loading…</section>}>
+          <LazyCapabilityOptimizationPanel />
+        </Suspense>
+      );
     case "plots":
       return <PlotsPanel scenario={model.scenario} loftDeg={10.5} />;
     case "simulation":
