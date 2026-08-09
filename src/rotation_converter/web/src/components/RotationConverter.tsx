@@ -80,8 +80,9 @@ export function RotationConverter() {
                 )}
 
                 <div>
-                    <label className="block text-sm text-slate-300 mb-1">Input Type</label>
+                    <label htmlFor="input-type-select" className="block text-sm text-slate-300 mb-1">Input Type</label>
                     <select
+                        id="input-type-select"
                         value={inputType}
                         onChange={(e) => setInputType(e.target.value)}
                         className="w-full bg-slate-700 rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -99,6 +100,7 @@ export function RotationConverter() {
                             <div key={axis}>
                                 <label className="block text-xs text-slate-400 mb-1">{axis.toUpperCase()}</label>
                                 <input
+                                    aria-label={`Quaternion ${axis.toUpperCase()}`}
                                     type="number"
                                     value={quaternion[i]}
                                     onChange={(e) => {
@@ -117,8 +119,9 @@ export function RotationConverter() {
                 {inputType === 'euler' && (
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm text-slate-300 mb-1">Convention</label>
+                            <label htmlFor="euler-convention-input" className="block text-sm text-slate-300 mb-1">Convention</label>
                             <input
+                                id="euler-convention-input"
                                 type="text"
                                 value={eulerConvention}
                                 onChange={(e) => setEulerConvention(e.target.value)}
@@ -131,6 +134,7 @@ export function RotationConverter() {
                                 <div key={label}>
                                     <label className="block text-xs text-slate-400 mb-1">Axis {i + 1} (rad)</label>
                                     <input
+                                        aria-label={`Euler Axis ${i + 1}`}
                                         type="number"
                                         value={euler[i]}
                                         onChange={(e) => {
@@ -153,6 +157,7 @@ export function RotationConverter() {
                             <div key={label}>
                                 <label className="block text-xs text-slate-400 mb-1">{label}</label>
                                 <input
+                                    aria-label={`Axis-Angle ${label}`}
                                     type="number"
                                     value={axisAngle[i]}
                                     onChange={(e) => {
@@ -174,6 +179,7 @@ export function RotationConverter() {
                             <div key={label}>
                                 <label className="block text-xs text-slate-400 mb-1">{label}</label>
                                 <input
+                                    aria-label={`Rodrigues ${label}`}
                                     type="number"
                                     value={rodrigues[i]}
                                     onChange={(e) => {
