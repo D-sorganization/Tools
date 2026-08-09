@@ -9,9 +9,13 @@ from pathlib import Path
 
 import pytest
 
+from shared.python.swing_sim.flight.impact_solution_adapter import (
+    _spin_axis_tilt_deg as impact_spin_axis_tilt_deg,
+)
 from shared.python.swing_sim.flight.result_contract import (
     AvailabilityReason,
     FlightMetricId,
+    SignRule,
     ValueStatus,
     flight_metric_catalog,
 )
@@ -22,6 +26,7 @@ from shared.python.swing_sim.flight.result_metrics import (
     MetricTrajectoryPoint,
     derive_flight_metric_result,
 )
+from shared.python.swing_sim.flight.spin_axis_convention import spin_axis_tilt_deg
 
 FIXTURE = (
     Path(__file__).parents[5]
@@ -108,6 +113,38 @@ def test_qualified_ground_output_is_never_inferred_from_carry() -> None:
     )
     with pytest.raises(ValueError, match="bounce_count must be an integer"):
         GroundModelResult("invalid", 28.0, 2.7, 1.5, 4.5)  # type: ignore[arg-type]
+
+
+def test_positive_spin_axis_tilt_uses_fade_right_convention() -> None:
+    tilt = math.radians(10.0)
+    source = _analytic_inputs()
+    inputs = FlightMetricInputs(
+        source.trajectory,
+        (0.0, -1000.0 * math.sin(tilt), 1000.0 * math.cos(tilt)),
+        source.target_position_m,
+    )
+
+    result = derive_flight_metric_result(inputs, _manifest())
+
+    assert result.scalar(FlightMetricId.SPIN_AXIS_TILT) == pytest.approx(10.0)
+    assert (
+        flight_metric_catalog().definition(FlightMetricId.SPIN_AXIS_TILT).sign_rule
+        is SignRule.POSITIVE_RIGHT
+    )
+
+
+def test_spin_axis_tilt_projects_out_gyro_spin_in_every_producer() -> None:
+    spin = (500.0, -100.0, 1000.0)
+    expected = spin_axis_tilt_deg(spin)
+    source = _analytic_inputs()
+    result = derive_flight_metric_result(
+        FlightMetricInputs(source.trajectory, spin, source.target_position_m),
+        _manifest(),
+    )
+
+    assert expected == pytest.approx(math.degrees(math.atan2(100.0, 1000.0)))
+    assert impact_spin_axis_tilt_deg(spin) == pytest.approx(expected)
+    assert result.scalar(FlightMetricId.SPIN_AXIS_TILT) == pytest.approx(expected)
 
 
 def test_degenerate_trajectories_return_reasons_and_invalid_order_fails() -> None:

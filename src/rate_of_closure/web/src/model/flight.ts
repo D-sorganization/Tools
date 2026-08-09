@@ -144,8 +144,13 @@ export function simulateFlight(
     step += 1;
 
     if (nextPos[2] < 0.0 && t > dt) {
-      // Linear interpolation to the ground crossing.
-      const frac = pos[2] / (pos[2] - nextPos[2]);
+      // Linear interpolation to the ground crossing. A launch that starts at
+      // z = 0 travelling downward is already below ground by the time the
+      // t > dt guard lets this run, which makes the raw ratio negative and
+      // would extrapolate backwards past t = 0. Clamping keeps the reported
+      // crossing inside the step that detected it.
+      const drop = pos[2] - nextPos[2];
+      const frac = drop > 0 ? Math.min(1, Math.max(0, pos[2] / drop)) : 0;
       const tGround = t - dt + frac * dt;
       const posGround = add(pos, scale(sub(nextPos, pos), frac));
       const velGround = add(vel, scale(sub(nextVel, vel), frac));

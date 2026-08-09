@@ -33,6 +33,7 @@ from rate_of_closure.ui.pyqt6.app_toolstrip import (
     ApplicationToolstrip,
     ModuleManagerDialog,
 )
+from rate_of_closure.ui.pyqt6.capability_tab import CapabilityOptimizationTab
 from rate_of_closure.ui.pyqt6.club_view import Club3DView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
@@ -72,10 +73,8 @@ from rate_of_closure.ui.pyqt6.workspace_navigation import (
 from rate_of_closure.units import convert_from_canonical
 from shared.python.swing_sim.variation import VariationDataset
 
-__all__ = ["RateOfClosureMainWindow"]
-
-# Compatibility exports retained for existing shell and help-contract tests.
-__all__ += [
+__all__ = [
+    "RateOfClosureMainWindow",
     "_DEFAULT_TAB_IDS",
     "_NAVIGATION_SETTINGS_APP",
     "_NAVIGATION_SETTINGS_ORG",
@@ -85,13 +84,9 @@ __all__ += [
     "_TAB_HELP_KEYS",
 ]
 
-# ── Theme integration (optional — graceful fallback) ───────────────
 try:
     from shared.python.theme.integration import ThemedWindowMixin
-
-    _THEME_AVAILABLE = True
 except ImportError:  # standalone / vendored use
-    _THEME_AVAILABLE = False
 
     class ThemedWindowMixin:  # type: ignore[no-redef]
         """No-op stand-in when the shared theme package is unavailable."""
@@ -130,6 +125,7 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._launch_monitor_analytics_tab = LaunchMonitorAnalyticsTab()
+        self._capability_optimization_tab = CapabilityOptimizationTab()
         self._variation_tab = VariationTab()
         self._variation_tab.studyCompleted.connect(self._on_variation_study)
         self._putting_tab = PuttingTab()
@@ -180,6 +176,11 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
                 "launch_monitor_analytics",
                 self._launch_monitor_analytics_tab,
                 "Launch Monitor Analytics",
+            ),
+            (
+                "capability_optimization",
+                self._capability_optimization_tab,
+                "Shot Optimizer",
             ),
             ("variation", self._variation_tab, "Variation"),
             ("putting", self._putting_tab, "Putting"),
@@ -395,4 +396,5 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._simulation_tab.stop()
         self._variation_tab.stop()
         self._flight_explorer_tab.stop()
+        self._capability_optimization_tab.stop()
         super().closeEvent(event)
