@@ -3,6 +3,35 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-08
 
+## 2026-08-08 Capability stack consolidated onto this branch
+
+The three capability slices are **merged** and now live here on
+`feat/4199-wind-workflow` at `c1827bbdc`. The per-slice "do not retarget,
+rewrite, or merge ahead of that parent" notes in the entries below are
+historical — they described the stack while it was still open, and they
+no longer apply:
+
+- #4283 capability observation stream and cancellation — merged
+- #4289 model-backed capability flight evaluator — merged
+- #4294 matched PyQt6/React Shot Optimizer workspaces — merged
+
+They were folded top-down (child into its own parent, then that parent
+into its parent), so no slice was released ahead of the one it depends
+on. Only `main` is protected (`quality-gate` + `tests (3.11)`); none of
+the `feat/4197-*` branches or this one carries protection, so these
+merges were not gated by required checks. `quality-gate` passed in CI on
+both #4289 and #4294 before merging.
+
+Verified on this consolidated head: **1426 Python tests** (`tests/rate_of_closure`
+plus `src/shared/python/swing_sim`, zero skips) and **624 React tests**.
+The broader matrix (`tests (3.11)`, file-size-budget, detect-secrets) did
+not complete because **25 of the 28 org runners were offline** — the jobs
+starved rather than failed. Re-run them once the fleet is restored; that
+matters before this branch approaches `main`, where protection applies.
+
+Issue #4197 stays open: protected CI, independent review, the remaining
+path to `main`, and downstream UpstreamDrift parity are all still owed.
+
 ## 2026-08-08 COMPLETION RECORD — capability-optimization-ui recovered
 
 The interrupted optimization-UI slice was reviewed, re-verified,
