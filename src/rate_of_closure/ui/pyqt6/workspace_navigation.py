@@ -18,6 +18,7 @@ _DEFAULT_TAB_IDS: tuple[str, ...] = (
     "simulation",
     "flight_explorer",
     "launch_monitor_analytics",
+    "capability_optimization",
     "variation",
     "putting",
     "glossary",
@@ -168,7 +169,7 @@ class WorkspaceNavigationMixin:
         bar = self._primary_tab_bar()
         for destination, module_id in enumerate(order):
             bar.moveTab(self._module_index(module_id), destination)
-        visible = self._sanitized_visibility(state.get("visible"))
+        visible = self._sanitized_visibility(state.get("visible"), supplied_order)
         for module_id in _DEFAULT_TAB_IDS:
             self._tabs.setTabVisible(
                 self._module_index(module_id), module_id in visible
@@ -205,11 +206,17 @@ class WorkspaceNavigationMixin:
         return order
 
     @staticmethod
-    def _sanitized_visibility(supplied: object) -> set[str]:
-        """Migrate legacy state and always retain required modules."""
+    def _sanitized_visibility(supplied: object, supplied_order: object) -> set[str]:
+        """Migrate legacy state, revealing modules absent from the saved order."""
         if not isinstance(supplied, list):
             return set(_DEFAULT_TAB_IDS)
         visible = {item for item in supplied if item in _DEFAULT_TAB_IDS}
+        known = (
+            {item for item in supplied_order if item in _DEFAULT_TAB_IDS}
+            if isinstance(supplied_order, list)
+            else set()
+        )
+        visible.update(item for item in _DEFAULT_TAB_IDS if item not in known)
         visible.update(_REQUIRED_TAB_IDS)
         return visible
 

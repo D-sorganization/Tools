@@ -44,6 +44,7 @@ describe("PrimaryViewTabs", () => {
       "plots",
       "flight",
       "launch-monitor-analytics",
+      "capability-optimization",
       "variation",
       "putting",
       "glossary",

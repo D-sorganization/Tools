@@ -1,8 +1,65 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-07. This isolated integration is published as draft
+Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
+
+## 2026-08-08 Capability workspace continuation
+
+The active stacked child is `feat/4197-capability-optimization-ui`, based
+exactly on evaluator commit `c280407d432c153639bb266c9c721a014a129723`
+(draft PR #4289). It adds matched PyQt6/React Shot Optimizer modules with the
+strict cross-runtime `capability-optimization-workflow/v1` document, qualified
+Waterloo/Penner worker execution, progress/cancellation, complete retained
+observation cohorts, ranked alternatives, selectable stage-qualified scalar
+axes, managed zoom/autofit, accessible 25-row paging, spreadsheet-safe CSV,
+and stable JSON. The captured basis includes profile/club IDs, delivery
+center/spread, sourced fixed spin, positive-right target frames, objective,
+budgets, alternatives count, and deterministic seed.
+
+Live browser and standalone PyQt rendered review verified the workflows and
+found three repaired integration defects: duplicated target-axis labels, old
+saved layouts hiding newly registered modules, and a cramped PyQt results
+split. All optimizer controls now have substantive hover guidance. Verified
+local evidence is 808 Rate Python/PyQt tests plus 615 swing_sim tests and 102
+React files / 619 tests; Ruff, formatting, CI-equivalent mypy 1.13,
+TypeScript, zero-warning ESLint, the 187-module production build with a
+lazy-loaded Shot Optimizer chunk, structural limits, and diff checks pass. The model boundary is visible: still-air carry to
+first ground crossing only, with wind, bounce, roll, and total distance outside
+v1. Publish as a protected child of #4289 and keep #4197 open through CI,
+review, ordered merge, and downstream parity.
+
+## 2026-08-08 Capability evaluator continuation
+
+The active child branch is `feat/4197-capability-flight-evaluator`, based
+exactly on capability-observation PR #4283 head
+`49612946138b1021f80c9f8d2a4d06f1610825db`. It adds the first qualified
+full-flight evaluator for #4197 in shared Python and the React model layer.
+The factory binds `player-capability-profile/v1` plus
+`capability-optimization-request/v1`; validates requested clubs, exact sample
+fields, units, finite values, declared safe bounds, and physical domains; runs
+the real Waterloo/Penner model; converts trajectory and spin into the canonical
+target frame; binds the request target; and emits every available scalar
+canonical metric. Existing three-variable profiles require a sourced spin
+default for every requested club, while profiles may opt into paired variable
+`total_spin` and `spin_axis_tilt`. Positive tilt is fade/right, matching the
+existing Flight Explorer, glossary, D-plane, variation, and solver convention.
+
+No-ground-crossing horizons are typed `nonconverged`; expected Python
+floating-point overflow is typed `failed` without leaking exception text;
+contract and programming errors surface; and this post-impact adapter cannot
+report `no_impact`. Python uses SciPy RK45 and React uses fixed-step RK4, so
+logical model/version and metric-set parity are exact while numeric parity is
+banded through `capability_flight_evaluator_parity_v1.json` and integrator
+provenance remains runtime-specific. Canonical result, impact-diagnostic, and
+variation producers share one gyro-projected spin-axis tilt calculation.
+
+Post-review full-suite evidence is `138 passed, 4 skipped` in Python and
+`97` files / `597` React tests. Ruff, formatting, targeted mypy, TypeScript,
+zero-warning ESLint, and the 176-module Vite build pass. The next required
+slice is the end-user PyQt6/React capability workspace with
+off-main-thread execution, progress/cancel, profile/target/environment editing,
+observation scatter/table/CSV, persistence, and rendered QA. Keep #4197 open.
 
 ## Integration checkout
 
@@ -690,3 +747,84 @@ or launcher tile does not satisfy parity.  Required next evidence is a
 commit-fresh capability-by-surface manifest backed by shared golden fixtures,
 one authoritative Tools physics contract, thin UI adapters, and an immutable
 UpstreamDrift Tools pin.
+
+### 2026-08-07 capability-observation continuation
+
+Active branch `feat/4197-capability-observer` is based exactly on PR #4282
+head `6e3c1029f1f3a80ae09020ef7d0afacb3c0d5484`.  It must remain a normal
+stacked child of `feat/4199-wind-workflow`; do not retarget, rewrite, or merge
+it ahead of that parent.
+
+The branch is published as
+[draft PR #4283](https://github.com/D-sorganization/Tools/pull/4283). Its
+validated implementation/hardening head is
+`5c6073bd68ed4c8f23b343d4d11c2dc4277ea246`; this handoff-only continuation
+will advance that head without changing the tested runtime behavior.
+
+The optimizer now accepts optional synchronous observation and cooperative
+cancellation hooks without retaining traces in `OptimizationResult`.  Every
+attempt emits one immutable `capability-sample-observation/v1` record in exact
+candidate/club/sample order.  Python and TypeScript normalize evaluator
+exceptions, malformed results, no-impact, nonconvergence, and missing landing
+metrics identically, preserve all valid evaluator metrics and provenance, and
+never expose raw exception text.  Cancellation is checked before the next
+evaluator call and reports exact attempted/total counts.
+
+The app-layer adapters convert streamed observations into the shared
+`scalar-ensemble/v1` authority.  They declare the complete scalar flight
+catalog, preserve unavailable outputs as null, include nominal and perturbed
+parameters plus target diagnostics, require a contiguous zero-based prefix,
+and reject overflow before retaining a row.  TypeScript deep-parses and
+freezes caller input before storage.  Stable JSON ordering is Unicode
+code-point based in both runtimes; ASCII and Unicode parity fixtures hash to
+`df36f765afdf508d00a3d264911ce5b6f07e25da3744b187596d67487ea3be5f`
+and `18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0`.
+
+Current local evidence on this branch is 120 Python flight/adapter tests
+passed with four expected optional `tools_core` skips, and 96 React files / 580
+tests passed.  Python 3.12 mypy, Ruff, Black, TypeScript, zero-warning ESLint,
+the Vite production build, structural budgets, and `git diff --check` pass.
+This completes the stream/adapter contract slice of #4197, not its remaining
+end-user optimization workflow or the wider release epic.
+
+Independent pre-publication review then found four fail-closed contract gaps,
+all corrected before opening a PR: native Python/JavaScript number formatting
+was not byte-stable at IEEE rounding and exponent edges; Unicode title-casing
+could derive different labels; public observations admitted impossible
+status/metric combinations; and the TypeScript declaration signature could
+collide when identifiers contained its delimiters.  The replacement canonical
+writer emits code-point-sorted JSON with raw numeric tokens, fixed 11-decimal
+half-away rounding, decimal integer-valued magnitudes, and normalized negative
+zero.  ASCII-only initial-letter label casing, strict landing/incomplete metric
+invariants, and structural declaration comparison now match in both runtimes.
+
+Adversarial regression coverage includes binary half boundaries, `1e-12`,
+`1e-11`, large integer-valued magnitudes, negative zero, Unicode identifiers,
+delimiter-bearing declarations, non-finite inputs, and every effective/source
+status combination.  Updated evidence is 135 Python flight/adapter tests passed
+with four expected Rust-wheel skips and 96 React files / 584 tests passed, plus
+Python 3.12 mypy, Ruff, Black, TypeScript, ESLint, Vite build, structural
+budgets, and diff checks. The initial implementation commit was
+`43ad5e35be299f2ab11260784ee707fc5721fd2e`; corrections are committed at
+`5c6073bd68ed4c8f23b343d4d11c2dc4277ea246` and published in draft PR #4283.
+Protected CI, reviews, and every parent PR remain required.
+
+The first hosted CI Standard run on PR #4283 reached delta mypy after checkout,
+dependency installation, Ruff, and formatting passed.  With unchanged imports
+skipped, mypy treated the request fields used by the new private runtime as
+`Any` and rejected `_OptimizationContext.total_count` for returning an implicit
+`Any`. The request contract already guarantees positive integer operands; the
+scoped fix makes the return boundary explicit with `int(...)`. The exact
+seven-file Python 3.12 CI mypy command, Ruff/format, diff check, and the full
+135-test flight/adapter suite now pass (four optional Rust-wheel skips). This
+fix and handoff update are committed together as `SELF`; resolve the exact head
+with `git rev-parse HEAD` and push normally.
+
+The next protected run exposed two `detect-secrets` false positives in each
+runtime's cross-language SHA-256 parity assertions. They are deterministic test
+digests, not credentials. Mark the four exact constants with the scanner's
+`pragma: allowlist secret` annotation; do not add broad path exclusions or
+rewrite the baseline. Re-run the scanner normalization gate, focused parity
+tests, lint, and diff checks. Commit this CI repair with this handoff update and
+push normally on `feat/4197-capability-observer` before propagating the parent
+head through the protected stack.
