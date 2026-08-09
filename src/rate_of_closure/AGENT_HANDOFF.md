@@ -23,9 +23,18 @@ Verified gates on the committed head: 808 `tests/rate_of_closure` plus
 clean on all 10 changed src files; `tsc --noEmit`, zero-warning ESLint,
 and the 187-module Vite build pass; changed-only 500-LOC budget and
 `git diff --check` pass. Published as PR #4294 on
-`feat/4197-capability-flight-evaluator`. Stack order under epic #4197:
-observer #4283 → evaluator #4289 → this #4294, all now ready-for-review
-in merge order; merge only in that order behind protected checks.
+`feat/4197-capability-flight-evaluator`.
+
+**Stack collapse order.** Only `main` carries branch protection
+(`quality-gate` + `tests (3.11)`); none of `feat/4197-*` or
+`feat/4199-wind-workflow` is protected, so these merges are not gated by
+required checks. Each PR's base is its own parent branch, so the stack
+collapses **top-down**: fold #4294 into `feat/4197-capability-flight-evaluator`,
+then #4289 into `feat/4197-capability-observer`, then #4283 into
+`feat/4199-wind-workflow`. Folding a child into its parent never releases
+it ahead of that parent — the parent carries it forward. Merging
+bottom-up instead strands each parent one slice behind and needs extra
+reconciliation PRs.
 
 The first hosted quality-gate run on #4294 rejected the dict-splat
 construction of `CapabilityWorkflowInputs` (`**dict[str, float]` cannot
@@ -66,6 +75,33 @@ verified gates: 808 Python/PyQt plus 615 swing_sim tests and 102 React files /
 the 187-module Vite production build, structural scans, and diff checks pass. V1 remains explicitly still-air, carry-only, and excludes
 wind, bounce, roll, and total distance. Keep #4197 open for protected CI,
 review, ordered merge, and downstream parity.
+
+## 2026-08-08 Evaluator CI repair and descending-launch parity fix
+
+Two defects were found and fixed on this branch after its first protected run,
+both reported from the stacked child #4294:
+
+1. **Descending-launch exception.** `flight.ts` starts the ball at `z = 0`, so a
+   negative launch angle puts it below ground on step 1, which the `t > dt`
+   guard skips. By step 2 the interpolation ratio went negative and
+   extrapolated the ground crossing to a negative sample time, raising
+   `RangeError: timeS must be nonnegative`. The observation layer absorbed it as
+   an untyped `evaluator_exception` — 12 of 96 samples on a default driver
+   search, where Python reported zero. The ratio is now clamped to `[0, 1]`, so
+   these samples report `nonconverged`, matching Python exactly. A pinned
+   regression test covers both reproducing samples; it fails without the clamp.
+2. **Delta-mypy quality gate.** `result_derivation.py` had an unused
+   `type: ignore` and an `Any` return. `_lerp_vector` now builds the 3-tuple
+   explicitly (genuinely typed, no ignore needed in either import mode) and
+   `_curve` coerces its result to `float`.
+
+The other two red checks on #4289 were **not** code failures: `file-size-budget`
+and `detect-secrets` both had their setup steps *cancelled* by runner
+infrastructure. Re-run them rather than chasing a nonexistent violation.
+
+Verified after the fixes: 1406 Python tests and 599 React tests pass; Ruff,
+format, CI-equivalent mypy 1.13, TypeScript, zero-warning ESLint, and the
+176-module Vite build pass.
 
 ## 2026-08-08 Model-Backed Capability Flight Evaluator
 
