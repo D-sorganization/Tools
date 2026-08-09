@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 from dataclasses import asdict, is_dataclass
-from enum import StrEnum
 from typing import Any, cast
+
+from shared.python.compatibility import StrEnum
 
 from .contract_records import GroundSimulationRequest, GroundSimulationResult
 from .contract_types import (

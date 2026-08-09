@@ -31,6 +31,7 @@ from .launch import derive_launch_conditions
 from .pipeline import simulate
 from .registry import FlightModelType
 from .result_contract import FlightMetricId
+from .spin_axis_convention import spin_axis_tilt_deg
 
 _APPROACH_EPSILON_MPS = 1e-9
 _PIPELINE_PROVENANCE = "Tools delivery->rigid-body-impact->flight pipeline"
@@ -83,13 +84,8 @@ def _metric(metric_id: FlightMetricId, value: float, stage: str) -> EvaluatedMet
 
 
 def _spin_axis_tilt_deg(spin_app: np.ndarray) -> float:
-    magnitude = float(np.linalg.norm(spin_app))
-    if magnitude <= _APPROACH_EPSILON_MPS:
-        return 0.0
-    axis = spin_app / magnitude
-    return math.degrees(
-        math.atan2(-float(axis[1]), math.hypot(float(axis[0]), float(axis[2])))
-    )
+    tilt = spin_axis_tilt_deg(spin_app)
+    return 0.0 if tilt is None else tilt
 
 
 class CenteredClubDeliveryAdapter:

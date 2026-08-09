@@ -109,6 +109,16 @@ def test_launch_monitor_tab_is_registered_once(qtbot, settings) -> None:  # type
         window.close()
 
 
+def test_capability_optimizer_tab_is_registered_once(qtbot, settings) -> None:  # type: ignore[no-untyped-def]
+    window = RateOfClosureMainWindow(navigation_settings=settings)
+    qtbot.addWidget(window)
+    try:
+        assert window.primary_tab_ids().count("capability_optimization") == 1
+        assert window._tabs.indexOf(window._capability_optimization_tab) >= 0
+    finally:
+        window.close()
+
+
 def test_visibility_and_order_round_trip_with_deterministic_active_fallback(
     qtbot, settings
 ) -> None:  # type: ignore[no-untyped-def]
@@ -167,7 +177,7 @@ def test_restore_defaults_restores_visibility_order_and_active_module(
         window.close()
 
 
-def test_saved_visibility_ignores_unknown_ids_and_preserves_required_module(
+def test_saved_visibility_ignores_unknown_ids_and_reveals_new_modules(
     qtbot, settings
 ) -> None:  # type: ignore[no-untyped-def]
     settings.setValue(
@@ -184,10 +194,7 @@ def test_saved_visibility_ignores_unknown_ids_and_preserves_required_module(
     window = RateOfClosureMainWindow(navigation_settings=settings)
     qtbot.addWidget(window)
     try:
-        assert set(window.visible_primary_tab_ids()) == {
-            "simulation",
-            *_REQUIRED_TAB_IDS,
-        }
+        assert set(window.visible_primary_tab_ids()) == set(_DEFAULT_TAB_IDS)
         assert "future_module" not in window.primary_tab_ids()
         assert window.current_primary_module_id() in window.visible_primary_tab_ids()
     finally:

@@ -3,7 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from enum import StrEnum
+
+from shared.python.compatibility import StrEnum
 
 from .contract_types import _text, _WireRecord
 

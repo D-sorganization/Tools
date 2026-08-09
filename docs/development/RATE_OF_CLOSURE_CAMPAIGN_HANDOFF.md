@@ -1,8 +1,114 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-07. This isolated integration is published as draft
+Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
+
+## 2026-08-09 Flight-transfer stack propagation
+
+The #4288 worktree now carries exact local #4285 head `2025b504f` through a
+normal merge while retaining the declared base `feat/4268-ground-contract`.
+The only code overlap was the flight integrator: the child keeps its bounded,
+testable `flightIntegrator.ts` extraction rather than restoring the parent's
+superseded inline RK4 loop. The Python API contract now inventories both the
+parent capability evaluator records and child transfer records. No GitHub
+write occurred. Focused validation passes with `82` Python tests, `38` React
+tests, and `26` Rust tests; the complete affected Rate+swing_sim Python gate is
+`1483 passed, 7 skipped`, with only optional local Rust-wheel skips.
+The complete React gate is `104 files / 643 tests passed`, followed by clean
+type-check, lint, and production build. Full `tools-core` Rust validation is
+`137 passed`. Changed Python Ruff check/format and CI-pinned mypy 1.13, docs
+governance, and staged/unstaged diff checks also pass.
+The initial focused Python run also exposed a real circular import across the
+ground and flight facades. The transfer adapter now talks directly to the
+ground record/type modules it consumes; no public facade was widened or
+removed.
+
+Hosted Python 3.12 logs contain no flight-to-ground transfer tolerance failure.
+The only numerical assertion is the separate shared wind fixture, whose
+`9.786440272809793` result differs from `9.7864402728063` by `3.494e-12`
+against a `1e-12` absolute tolerance. This branch does not change the wind
+workflow. The hosted Rust `-lpython3.11` linker failure remains runner/toolchain
+infrastructure.
+
+## 2026-08-09 Ground-contract stack recovery
+
+Draft PR #4285 remains based on `feat/4197-capability-observer`. A normal local
+merge now carries exact parent head `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a`
+into `feat/4268-ground-contract` without retargeting or rewriting either
+branch. The previous PR head had no reviews or unresolved threads and was
+reported dirty only because the parent had advanced beyond its 2026-08-07
+merge base.
+
+The current-head test logs also proved a bounded ground defect: schema tests
+imported `jsonschema` without declaring it, and the new enum modules bypassed
+the repository's Python 3.10 compatibility boundary. The follow-up declares
+`jsonschema>=4.23.0`, pins the locally verified 4.24.0 build, imports the shared
+`StrEnum`, and adds a package-wide
+regression test. RED named the three offending ground modules; GREEN is
+`46 passed`, and the affected Rate+swing_sim suite is `1463 passed, 5 skipped`
+with optional local Rust-wheel skips only. Focused Ruff check/format, targeted
+mypy, documentation governance, and diff checks pass. The separate Rust
+`-lpython3.11` linker failure is infrastructure. No GitHub write was made; PR
+#4288 must receive this parent ancestry through a normal merge before further
+flight-transfer publication.
+
+## 2026-08-08 Capability workspace continuation
+
+The active stacked child is `feat/4197-capability-optimization-ui`, based
+exactly on evaluator commit `c280407d432c153639bb266c9c721a014a129723`
+(draft PR #4289). It adds matched PyQt6/React Shot Optimizer modules with the
+strict cross-runtime `capability-optimization-workflow/v1` document, qualified
+Waterloo/Penner worker execution, progress/cancellation, complete retained
+observation cohorts, ranked alternatives, selectable stage-qualified scalar
+axes, managed zoom/autofit, accessible 25-row paging, spreadsheet-safe CSV,
+and stable JSON. The captured basis includes profile/club IDs, delivery
+center/spread, sourced fixed spin, positive-right target frames, objective,
+budgets, alternatives count, and deterministic seed.
+
+Live browser and standalone PyQt rendered review verified the workflows and
+found three repaired integration defects: duplicated target-axis labels, old
+saved layouts hiding newly registered modules, and a cramped PyQt results
+split. All optimizer controls now have substantive hover guidance. Verified
+local evidence is 808 Rate Python/PyQt tests plus 615 swing_sim tests and 102
+React files / 619 tests; Ruff, formatting, CI-equivalent mypy 1.13,
+TypeScript, zero-warning ESLint, the 187-module production build with a
+lazy-loaded Shot Optimizer chunk, structural limits, and diff checks pass. The model boundary is visible: still-air carry to
+first ground crossing only, with wind, bounce, roll, and total distance outside
+v1. Publish as a protected child of #4289 and keep #4197 open through CI,
+review, ordered merge, and downstream parity.
+
+## 2026-08-08 Capability evaluator continuation
+
+The active child branch is `feat/4197-capability-flight-evaluator`, based
+exactly on capability-observation PR #4283 head
+`49612946138b1021f80c9f8d2a4d06f1610825db`. It adds the first qualified
+full-flight evaluator for #4197 in shared Python and the React model layer.
+The factory binds `player-capability-profile/v1` plus
+`capability-optimization-request/v1`; validates requested clubs, exact sample
+fields, units, finite values, declared safe bounds, and physical domains; runs
+the real Waterloo/Penner model; converts trajectory and spin into the canonical
+target frame; binds the request target; and emits every available scalar
+canonical metric. Existing three-variable profiles require a sourced spin
+default for every requested club, while profiles may opt into paired variable
+`total_spin` and `spin_axis_tilt`. Positive tilt is fade/right, matching the
+existing Flight Explorer, glossary, D-plane, variation, and solver convention.
+
+No-ground-crossing horizons are typed `nonconverged`; expected Python
+floating-point overflow is typed `failed` without leaking exception text;
+contract and programming errors surface; and this post-impact adapter cannot
+report `no_impact`. Python uses SciPy RK45 and React uses fixed-step RK4, so
+logical model/version and metric-set parity are exact while numeric parity is
+banded through `capability_flight_evaluator_parity_v1.json` and integrator
+provenance remains runtime-specific. Canonical result, impact-diagnostic, and
+variation producers share one gyro-projected spin-axis tilt calculation.
+
+Post-review full-suite evidence is `138 passed, 4 skipped` in Python and
+`97` files / `597` React tests. Ruff, formatting, targeted mypy, TypeScript,
+zero-warning ESLint, and the 176-module Vite build pass. The next required
+slice is the end-user PyQt6/React capability workspace with
+off-main-thread execution, progress/cancel, profile/target/environment editing,
+observation scatter/table/CSV, persistence, and rendered QA. Keep #4197 open.
 
 ## Integration checkout
 

@@ -1,7 +1,180 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-07
+> Last updated: 2026-08-09
+
+## 2026-08-09 Flight-transfer parent propagation
+
+Draft PR #4288 keeps base `feat/4268-ground-contract`. The exact local parent
+head `2025b504f` is now incorporated through a normal merge; no branch was
+rebased, retargeted, force-pushed, or merged on GitHub. Semantic resolution
+keeps the child's focused `flightIntegrator.ts` extraction, carries the
+parent's capability-evaluator value types into the frozen public-contract
+inventory, and advances the specification to 1.14.8 without reusing the
+parent's 1.14.5 version number. Focused Python, React, Rust, and full affected
+gates now pass: `82` focused Python tests, `38` focused React tests, `26`
+focused Rust tests, and `1483 passed, 7 skipped` for the complete affected
+Rate+swing_sim Python suite. The skips are optional local Rust-wheel paths.
+Complete React validation is `104 files / 643 tests passed`, followed by clean
+type-check, lint, and production build; full `tools-core` validation is `137
+passed`. Changed Python Ruff check/format and the CI-pinned mypy 1.13 gate are
+clean, as are documentation governance and diff checks.
+The first focused run was correctly RED for a circular import between the
+ground and flight package facades; `ground_transfer.py` now imports its direct
+ground record/type dependencies instead of reaching through `ground.__init__`.
+The hosted 3.12 numerical failure is a separate wind-fixture drift of
+`3.494e-12` against a `1e-12` absolute tolerance; no transfer assertion failed,
+so that out-of-scope wind contract is left unchanged.
+
+## 2026-08-09 Ground-contract ancestry and CI compatibility repair
+
+Draft PR #4285 keeps its original base `feat/4197-capability-observer`. The
+current parent head `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a` was propagated
+through normal merge commit `25f181450`; no rebase, retarget, force-push, or
+GitHub merge occurred. The merge had no ground-source conflict and the only
+manual resolution retained the newer root handoff plus this ground status.
+
+Hosted checks on the preceding exact head found an undeclared `jsonschema`
+dependency during ground-schema test collection. The dependency is now
+declared and locked at the locally verified 4.24.0 build, and the three ground
+enum modules import the repository's canonical
+`shared.python.compatibility.StrEnum` rather than Python 3.11-only
+`enum.StrEnum`. A new package-wide source contract failed first on exactly
+those three modules and then passed. Current focused evidence is `46 passed`
+for `swing_sim/ground/tests`; the combined Rate+swing_sim gate is `1463 passed,
+5 skipped`, where every skip is an optional local Rust-wheel path. Ruff
+check/format, targeted mypy, documentation governance, and diff checks are clean.
+The Rust gate's missing `-lpython3.11` is runner/toolchain infrastructure.
+Do not widen this repair to older non-ground Python 3.10 imports, and keep
+#4288 stacked behind #4285 until the parent follow-up is reviewed and published.
+
+## 2026-08-08 COMPLETION RECORD — capability-optimization-ui recovered
+
+The interrupted optimization-UI slice was reviewed, re-verified,
+repaired, and committed on `feat/4197-capability-optimization-ui`.
+Recovery fixes beyond the dying agent's state: Ruff formatting and
+import-sort in three files; a mypy-1.13 `call-arg` failure in
+`capability_controls.py` (positional-after-star bounds unpacking
+replaced with typed `_numeric_spec`/`_integer_spec` factories);
+TypeScript errors in `CapabilityOptimizationPanel.test.tsx` (the mock
+runner is now `vi.fn<CapabilityRunner>`); and eager panel import
+bloating the main Vite chunk past 500 kB — `PrimaryWorkspacePanel` now
+lazy-loads the Shot Optimizer behind `Suspense`, matching the
+WindStrategyPanel precedent (main chunk 474.32 kB, no warning).
+
+Verified gates on the committed head: 808 `tests/rate_of_closure` plus
+615 swing_sim in-package tests passed with zero skips; 102 React files
+/ 619 tests passed; Ruff check/format clean; CI-equivalent mypy 1.13
+clean on all 10 changed src files; `tsc --noEmit`, zero-warning ESLint,
+and the 187-module Vite build pass; changed-only 500-LOC budget and
+`git diff --check` pass. Published as PR #4294 on
+`feat/4197-capability-flight-evaluator`.
+
+**Stack collapse order.** Only `main` carries branch protection
+(`quality-gate` + `tests (3.11)`); none of `feat/4197-*` or
+`feat/4199-wind-workflow` is protected, so these merges are not gated by
+required checks. Each PR's base is its own parent branch, so the stack
+collapses **top-down**: fold #4294 into `feat/4197-capability-flight-evaluator`,
+then #4289 into `feat/4197-capability-observer`, then #4283 into
+`feat/4199-wind-workflow`. Folding a child into its parent never releases
+it ahead of that parent — the parent carries it forward. Merging
+bottom-up instead strands each parent one slice behind and needs extra
+reconciliation PRs.
+
+The first hosted quality-gate run on #4294 rejected the dict-splat
+construction of `CapabilityWorkflowInputs` (`**dict[str, float]` cannot
+be proven against integer fields under the CI mypy context); commit
+`101020b5b` builds the snapshot with explicit typed keyword arguments.
+Do not "fix" the `tests (3.10)` `StrEnum` ImportError seen on PR #4280
+by converting bare `from enum import StrEnum` to the compatibility
+shim. `pyproject.toml` has declared `requires-python = ">=3.11"` since
+2026-05-14, so those imports are correct; `shared.python.compatibility`
+serves older subsystems only. Branch protection requires exactly
+`quality-gate` and `tests (3.11)`, and `ci-standard.yml` states that
+only the 3.11 lane is required (`fail-fast: false` protects it). The
+3.10 lane is a stale-matrix artifact, not a merge blocker.
+
+## 2026-08-08 Matched Capability Optimization Workspace
+
+Active branch `feat/4197-capability-optimization-ui` is a normal child of
+evaluator commit `c280407d432c153639bb266c9c721a014a129723` (draft PR #4289).
+Do not retarget, rewrite, or merge it ahead of the evaluator and observation
+parents.
+
+PyQt6 and React now expose a discoverable Shot Optimizer module backed by the
+same strict `capability-optimization-workflow/v1` document. It captures profile
+and club IDs, capability center/spread, canonical positive-right launch and
+spin-tilt frames, sourced fixed spin, target, objective, budgets, alternatives,
+and seed. Both clients execute outside the UI thread, publish progress, cancel
+without partial-result publication, rank alternatives, retain all observation
+cohorts in `scalar-ensemble/v1`, and provide stage-qualified axis selection,
+zoom/autofit, paged raw rows, lossless CSV, and stable JSON. Generic Python
+scalar CSV serialization now lives in the UI-neutral variation layer.
+
+Rendered QA in the live Vite app and a uniquely titled standalone PyQt window
+verified execution, progress, large-result paging, plot controls, and layout.
+It also drove fixes for hidden newly registered modules, ambiguous duplicate
+axis labels, narrow split-pane geometry, and missing hover guidance. Current
+verified gates: 808 Python/PyQt plus 615 swing_sim tests and 102 React files /
+619 tests pass; Ruff, formatting, CI-equivalent mypy 1.13, TypeScript, ESLint,
+the 187-module Vite production build, structural scans, and diff checks pass. V1 remains explicitly still-air, carry-only, and excludes
+wind, bounce, roll, and total distance. Keep #4197 open for protected CI,
+review, ordered merge, and downstream parity.
+
+## 2026-08-08 Evaluator CI repair and descending-launch parity fix
+
+Two defects were found and fixed on this branch after its first protected run,
+both reported from the stacked child #4294:
+
+1. **Descending-launch exception.** `flight.ts` starts the ball at `z = 0`, so a
+   negative launch angle puts it below ground on step 1, which the `t > dt`
+   guard skips. By step 2 the interpolation ratio went negative and
+   extrapolated the ground crossing to a negative sample time, raising
+   `RangeError: timeS must be nonnegative`. The observation layer absorbed it as
+   an untyped `evaluator_exception` — 12 of 96 samples on a default driver
+   search, where Python reported zero. The ratio is now clamped to `[0, 1]`, so
+   these samples report `nonconverged`, matching Python exactly. A pinned
+   regression test covers both reproducing samples; it fails without the clamp.
+2. **Delta-mypy quality gate.** `result_derivation.py` had an unused
+   `type: ignore` and an `Any` return. `_lerp_vector` now builds the 3-tuple
+   explicitly (genuinely typed, no ignore needed in either import mode) and
+   `_curve` coerces its result to `float`.
+
+The other two red checks on #4289 were **not** code failures: `file-size-budget`
+and `detect-secrets` both had their setup steps *cancelled* by runner
+infrastructure. Re-run them rather than chasing a nonexistent violation.
+
+Verified after the fixes: 1406 Python tests and 599 React tests pass; Ruff,
+format, CI-equivalent mypy 1.13, TypeScript, zero-warning ESLint, and the
+176-module Vite build pass.
+
+## 2026-08-08 Model-Backed Capability Flight Evaluator
+
+Active branch `feat/4197-capability-flight-evaluator` is a normal child of
+`feat/4197-capability-observer` at exact parent
+`49612946138b1021f80c9f8d2a4d06f1610825db` (draft PR #4283). Do not retarget,
+rewrite, or merge it ahead of that parent.
+
+The new shared Python and React-model adapters bind the real capability profile
+and optimization request to the actual Waterloo/Penner flight model. They use
+the established `ball_speed`, `launch_angle`, and `launch_direction` IDs,
+explicit sourced per-club spin defaults for older profiles, paired optional
+variable `total_spin` and `spin_axis_tilt`, positive-fade/right convention,
+canonical target-frame trajectory/spin conversion, target residuals, all
+available scalar metrics, typed nonconvergence, and fail-fast invariants.
+Profile units, safe bounds, and physical domains are enforced before an
+integration call. The post-impact evaluator never invents `no_impact`.
+
+Independent-review corrections removed the global 2,686-rpm fallback, aligned
+the canonical metric catalog with the existing app convention, unified
+cross-runtime sampling validation, narrowed exception handling, and added a
+shared 16-scalar parity fixture. Result, impact, and variation producers now
+share the same gyro-projected tilt function. Current complete-suite evidence is
+138 Python passes / four optional-Rust skips and 97 React files / 597 tests. Ruff,
+formatting, targeted mypy, TypeScript, zero-warning ESLint, and the 176-module
+Vite build also pass. This completes the qualified
+evaluator prerequisite, not issue #4197: matched PyQt6/React authoring, worker,
+progress/cancel, scatter/table/export, persistence, and rendered QA remain.
 
 ## 2026-08-07 Universal Variation Visualization Continuation
 

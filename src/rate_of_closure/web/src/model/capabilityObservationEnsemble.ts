@@ -19,7 +19,7 @@ import { contains, residualM, signedDistance, type TargetRegionTs } from "./targ
 export const MAX_CAPABILITY_OBSERVATION_ROWS = 100_000;
 const ADAPTER_ID = "capability-sample-observation/scalar-ensemble/v1";
 const SOURCE_SCHEMA = "capability-sample-observation/v1";
-type CapabilityCohort = "complete" | "no_impact" | "failed";
+export type CapabilityCohort = "complete" | "no_impact" | "failed";
 
 export interface CapabilityObservationEnsembleInput {
   readonly observations: Iterable<CapabilitySampleObservation>;

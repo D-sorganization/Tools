@@ -8,12 +8,14 @@ from dataclasses import dataclass, replace
 import numpy as np
 
 from shared.python.swing_sim.ball_setup import BallSetup
-from shared.python.swing_sim.ground import (
+from shared.python.swing_sim.ground.contract_records import GroundSimulationRequest
+from shared.python.swing_sim.ground.contract_types import (
     GroundCalibration,
     GroundContactState,
     GroundProvenance,
-    GroundSimulationRequest,
     GroundSurfaceProfile,
+)
+from shared.python.swing_sim.ground.unavailable_types import (
     GroundUnavailableFieldId,
     GroundUnavailableReason,
 )

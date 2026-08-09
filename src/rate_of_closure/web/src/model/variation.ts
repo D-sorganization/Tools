@@ -10,6 +10,7 @@
 import { deriveLaunch, simulateFlight, type Launch } from "./flight";
 import { MPH_PER_MPS, solveImpact, toFlightFrame, type Vec3 } from "./simulation";
 import { resolvedBase, sampleInputs } from "./variationSampling";
+import { spinAxisTiltDeg } from "./spinAxisConvention";
 import {
   isGlobalSpec,
   stableSpecId,
@@ -103,13 +104,6 @@ const launchFromImperial = (variables: Record<string, number>): Launch => {
   };
 };
 
-const spinAxisTiltDeg = (spin: Vec3): number => {
-  const magnitude = Math.hypot(...spin);
-  if (magnitude < 1e-12) return 0;
-  const axis = spin.map((value) => value / magnitude) as Vec3;
-  return Math.atan2(-axis[1], Math.hypot(axis[0], axis[2])) / RAD;
-};
-
 /** Evaluate one sampled variable set through launch or delivery physics. */
 export function evaluateRun(
   variables: Record<string, number>,
@@ -159,7 +153,7 @@ export function evaluateRun(
     launch_angle_deg: launch.launchAngleRad / RAD,
     launch_azimuth_deg: -launch.azimuthRad / RAD,
     spin_rpm: launch.spinRpm,
-    spin_axis_deg: spinAxisTiltDeg(impact.ballAngularVelocity),
+    spin_axis_deg: spinAxisTiltDeg(impact.ballAngularVelocity) ?? 0,
     carry_m: flight.carryM,
     lateral_m: -flight.lateralM,
     apex_m: flight.maxHeightM,

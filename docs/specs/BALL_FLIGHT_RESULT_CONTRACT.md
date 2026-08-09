@@ -21,6 +21,10 @@ All vectors use the right-handed target frame
 - `y` points up;
 - `z` points right when looking downrange;
 - Launch Direction and lateral/offline values are positive right;
+- Spin Axis Tilt is `atan2(-omega_y, omega_z)`; positive means fade/right
+  curvature and negative means draw/left curvature for a rightward backspin
+  axis. The forward `omega_x` gyro component is projected out rather than
+  reducing the reported tilt;
 - vertical launch angle is positive up; and
 - landing angle is reported as a positive downward angle below horizontal.
 
