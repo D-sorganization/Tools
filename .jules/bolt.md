@@ -89,3 +89,6 @@
 ## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
 **Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
 **Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
+## 2026-07-28 - Optimize CSV Generator
+**Learning:** Chaining array `.map()` and `.join()` methods within loops allocated intermediate arrays and strings when manipulating very large string data, resulting in extensive memory usage on limited-resource devices.
+**Action:** Used a single-pass `for` loop, appending string characters together, reducing intermediate allocations and GC overhead.

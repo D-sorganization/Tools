@@ -287,11 +287,22 @@ export function downloadCsv(
     throw new TypeError("downloadCsv: rows must be an array of arrays");
   }
   assertNonEmptyString(filename, "downloadCsv", "filename");
-  const lines = [headers.map(escapeCsvValue).join(",")];
-  for (const row of rows) {
-    lines.push(row.map(escapeCsvValue).join(","));
+  // ⚡ Bolt Optimization: Replace .map().join(",") and lines.join("\r\n") with a single-pass loop
+  // appending to a string to eliminate intermediate array allocations.
+  let csvText = "";
+  for (let i = 0; i < headers.length; i++) {
+    csvText += escapeCsvValue(headers[i]);
+    if (i < headers.length - 1) csvText += ",";
   }
-  const blob = new Blob([lines.join("\r\n")], {
+  for (let r = 0; r < rows.length; r++) {
+    csvText += "\r\n";
+    const row = rows[r];
+    for (let c = 0; c < row.length; c++) {
+      csvText += escapeCsvValue(row[c]);
+      if (c < row.length - 1) csvText += ",";
+    }
+  }
+  const blob = new Blob([csvText], {
     type: "text/csv;charset=utf-8",
   });
   triggerDownload(blob, filename);
