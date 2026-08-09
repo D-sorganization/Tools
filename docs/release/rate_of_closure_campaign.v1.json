@@ -1,0 +1,1050 @@
+{
+  "schema_version": "rate-of-closure-campaign/v1",
+  "repository": "D-sorganization/Tools",
+  "as_of": "2026-08-09",
+  "default_branch": "main",
+  "required_main_checks": [
+    "quality-gate",
+    "tests (3.11)"
+  ],
+  "release_stage_definitions": [
+    "specified_only",
+    "implemented_on_feature_stack",
+    "protected_merged_to_parent",
+    "released_to_main"
+  ],
+  "campaign_release": {
+    "status": "not_released",
+    "branch": "main",
+    "sha": null
+  },
+  "carriers": [
+    {
+      "id": "pr-4119",
+      "pr": 4119,
+      "branch": "feat/impact-simulation-platform",
+      "base_branch": "main",
+      "head_sha": "d4c843d6531ad31e22b3775b8a286da16d9a3d3c",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4133",
+      "pr": 4133,
+      "branch": "feat/impact-interval-dynamics",
+      "base_branch": "feat/course-showcase",
+      "head_sha": "b8209dd866e308058c443cb81c3182d2437b46a9",
+      "state": "merged",
+      "merge_commit_sha": "bc8ce9b8b98f8cefc9458b903f5bf2f98f1fd9ba",
+      "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4167",
+      "pr": 4167,
+      "branch": "feat/4144-variation-visualizations",
+      "base_branch": "feat/investigation-suite",
+      "head_sha": "edaa56358a9ccf47809533fcab28e6415b336771",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4173",
+      "pr": 4173,
+      "branch": "feat/4163-impact-inspector",
+      "base_branch": "feat/4144-variation-visualizations",
+      "head_sha": "3c43955aaeb3964ff8c3ef2748d626baae518b76",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4179",
+      "pr": 4179,
+      "branch": "feat/4162-wedge-impact-visualization",
+      "base_branch": "feat/4166-wedge-turf-physics",
+      "head_sha": "0eb804e70887c788421332369e42792411aff55a",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4202",
+      "pr": 4202,
+      "branch": "feat/4189-dplane",
+      "base_branch": "feat/4162-wedge-impact-visualization",
+      "head_sha": "b4abec03bccfbdd87ddf91427159c5c2332c21dd",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4203",
+      "pr": 4203,
+      "branch": "feat/4181-launch-monitor-registry",
+      "base_branch": "feat/4189-dplane",
+      "head_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4217",
+      "pr": 4217,
+      "branch": "codex/ballflight-campaign-integration",
+      "base_branch": "feat/4181-launch-monitor-registry",
+      "head_sha": "655fea08f62bb48c6ca3498a8893936ef9370e9e",
+      "state": "merged",
+      "merge_commit_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
+      "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4279",
+      "pr": 4279,
+      "branch": "feat/4218-toolstrip-workspace",
+      "base_branch": "feat/4181-launch-monitor-registry",
+      "head_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4280",
+      "pr": 4280,
+      "branch": "feat/4144-variation-export-continuation",
+      "base_branch": "feat/4218-toolstrip-workspace",
+      "head_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4281",
+      "pr": 4281,
+      "branch": "feat/4199-wind-scalar-adapter",
+      "base_branch": "feat/4144-variation-export-continuation",
+      "head_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4282",
+      "pr": 4282,
+      "branch": "feat/4199-wind-workflow",
+      "base_branch": "feat/4199-wind-scalar-adapter",
+      "head_sha": "18fe89201d657116bbca99922297c14968356c44",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4283",
+      "pr": 4283,
+      "branch": "feat/4197-capability-observer",
+      "base_branch": "feat/4199-wind-workflow",
+      "head_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
+      "state": "merged",
+      "merge_commit_sha": "c1827bbdc50a6e11cc475db2636b4e47a4c15416",
+      "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4285",
+      "pr": 4285,
+      "branch": "feat/4268-ground-contract",
+      "base_branch": "feat/4197-capability-observer",
+      "head_sha": "3235af71150a774954e7673fc81d7179330fbe76",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4288",
+      "pr": 4288,
+      "branch": "feat/4269-flight-ground-transfer",
+      "base_branch": "feat/4268-ground-contract",
+      "head_sha": "d2d3d0f53a78aa863574afe43290a29c48318d94",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4289",
+      "pr": 4289,
+      "branch": "feat/4197-capability-flight-evaluator",
+      "base_branch": "feat/4197-capability-observer",
+      "head_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
+      "state": "merged",
+      "merge_commit_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
+      "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4294",
+      "pr": 4294,
+      "branch": "feat/4197-capability-optimization-ui",
+      "base_branch": "feat/4197-capability-flight-evaluator",
+      "head_sha": "35db7d8210ff1365726dbf45c7a40e74194ae647",
+      "state": "merged",
+      "merge_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
+      "protection_evidence": "not_protected"
+    }
+  ],
+  "test_evidence": [
+    {
+      "id": "rate-stack-local-c182",
+      "kind": "local",
+      "commit_sha": "c1827bbdc50a6e11cc475db2636b4e47a4c15416",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure src/shared/python/swing_sim -q",
+        "npm test -- --run"
+      ],
+      "summary": "1426 Python Rate and shared-swing tests and 624 React tests passed on the consolidated capability head; this is local, not protected-release evidence.",
+      "source_paths": [
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "variation-local-d71",
+      "kind": "local",
+      "commit_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure src/shared/python/swing_sim -q",
+        "npm test -- --run"
+      ],
+      "summary": "890 Python/PyQt/shared-swing tests and 545 React tests passed for the variation export continuation, with one optional Rust skip.",
+      "source_paths": [
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "toolstrip-local-c36",
+      "kind": "local",
+      "commit_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure src/shared/python/swing_sim -q",
+        "npm test -- --run"
+      ],
+      "summary": "890 Python/PyQt/shared-swing tests and 545 React tests passed for the toolstrip and independent plot workspace carrier.",
+      "source_paths": [
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "swing-parity-hosted-3186",
+      "kind": "hosted",
+      "commit_sha": "3186a265b10a1648391bb7f6e92042aab0caa35c",
+      "outcome": "failed",
+      "commands": [
+        "Run Rust<->Python parity suite (gate, non-skipped)"
+      ],
+      "summary": "The wheel built and loaded, but cached pytest-qt plugin auto-loading failed before parity test collection because PyQt6 was absent.",
+      "source_paths": [
+        "AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "swing-parity-isolation-18fe",
+      "kind": "local",
+      "commit_sha": "18fe89201d657116bbca99922297c14968356c44",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/ops/test_maturin_swing_core_workflow.py -q"
+      ],
+      "summary": "One workflow contract test passed and proves the Rust-only parity step disables unrelated third-party pytest plugin auto-loading.",
+      "source_paths": [
+        "tests/ops/test_maturin_swing_core_workflow.py"
+      ]
+    }
+  ],
+  "programs": [
+    {
+      "issue": 4103,
+      "title": "Swing-Impact-Ball-Flight Simulation Platform",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4103"
+        },
+        {
+          "kind": "repository_path",
+          "value": "SPEC.md"
+        }
+      ],
+      "tracked_issue_ids": [],
+      "carrier_ids": [
+        "pr-4119"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "The outer main-targeting carrier is conflicting, and conflict resolution requires fresh protected checks.",
+      "limitations": [
+        "The platform is not released to main and downstream application parity is incomplete.",
+        "Impact-interval PR 4133 merged after its parent stack propagated and requires explicit reconciliation."
+      ],
+      "depends_on_issues": [],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4120,
+      "title": "Investigation and Variation Suite",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4120"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/shared/python/swing_sim/variation/spec.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/rate_of_closure/variation_visualization_performance.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4142,
+        4144
+      ],
+      "carrier_ids": [
+        "pr-4167",
+        "pr-4280"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "variation-local-d71"
+      ],
+      "evidence_gap": "Protected CI, nonlinear global sensitivity, bounded large-ensemble evidence, and downstream release remain open.",
+      "limitations": [
+        "Feature-stack plots and exports do not establish default-branch availability.",
+        "Not every many-evaluation runner has released cross-surface visualization parity."
+      ],
+      "depends_on_issues": [
+        4103
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4125,
+      "title": "Realistic Clubs, Swing Kinetics, Putting, and Showcase",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4125"
+        },
+        {
+          "kind": "repository_path",
+          "value": "SPEC.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4146,
+        4158
+      ],
+      "carrier_ids": [
+        "pr-4119",
+        "pr-4179"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "implemented_unverified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "The complete showcase scope lacks one protected release run and installed-package evidence.",
+      "limitations": [
+        "Representative geometry is not equivalent to qualified manufacturing CAD.",
+        "The current feature stack has not been released through the outer platform PR."
+      ],
+      "depends_on_issues": [
+        4120
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4130,
+      "title": "Impact-Interval Club Dynamics",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4130"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        }
+      ],
+      "tracked_issue_ids": [],
+      "carrier_ids": [
+        "pr-4133"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "implemented_unverified",
+        "tools.react": "contract_only",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [],
+      "evidence_gap": "PR 4133 is absent from the current outer platform head and has no current-carrier protected evidence.",
+      "limitations": [
+        "A merge into a historical feature parent did not propagate this implementation toward main.",
+        "Downstream and user-interface integration must be requalified after reconciliation."
+      ],
+      "depends_on_issues": [
+        4125
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4142,
+      "title": "Ensemble Variation, Quiet Zones, and Sensitivity Attribution",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4142"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/shared/python/swing_sim/variation/spec.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/rate_of_closure/variation_visualization_performance.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4144
+      ],
+      "carrier_ids": [
+        "pr-4167",
+        "pr-4280"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "variation-local-d71"
+      ],
+      "evidence_gap": "Global nonlinear sensitivity, localized execution, performance budgets, and downstream parity remain open.",
+      "limitations": [
+        "Existing local visualization evidence is not protected release evidence.",
+        "UpstreamDrift does not yet consume an immutable released variation authority."
+      ],
+      "depends_on_issues": [
+        4120
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4146,
+      "title": "Shared Golf Club Builder",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4146"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GOLF_CLUB_SHAFT_PROFILES.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GOLF_CLUB_WEDGE_CAD.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4147,
+        4148,
+        4149,
+        4150,
+        4151,
+        4152
+      ],
+      "carrier_ids": [
+        "pr-4173"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "implemented_unverified",
+        "tools.react": "not_started",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [],
+      "evidence_gap": "Only the assembly-contract child is closed; complete CAD export, image fitting, standalone workflow, and downstream qualification lack program-level evidence.",
+      "limitations": [
+        "Shaft and wedge CAD slices are carried through a later integration branch but their epic remains incomplete.",
+        "STEP and manufacturing-mesh qualification and calibrated three-view image fitting remain open."
+      ],
+      "depends_on_issues": [
+        4125
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4158,
+      "title": "Wedge Delivery Kinematics, Bounce, and Chip-Shot Explorer",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4158"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GOLF_CLUB_TURF_CONTACT.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/WEDGE_IMPACT_VISUALIZATION.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4159,
+        4160,
+        4161,
+        4162,
+        4163,
+        4164,
+        4165,
+        4166
+      ],
+      "carrier_ids": [
+        "pr-4173",
+        "pr-4179"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "The complete wedge stack lacks protected release, downstream parity, and final scientific qualification.",
+      "limitations": [
+        "The worked shaft-rotation example is a declared sensitivity case rather than a measured wedge population norm.",
+        "Current turf and forgiveness outputs remain model-conditional."
+      ],
+      "depends_on_issues": [
+        4142,
+        4146
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4181,
+      "title": "Launch Monitor Convention Registry and Comparability",
+      "kind": "program",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "implemented",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4181"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/LAUNCH_MONITOR_CONVENTIONS.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/LAUNCH_MONITOR_ANALYTICS.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4193,
+        4194
+      ],
+      "carrier_ids": [
+        "pr-4203",
+        "pr-4217"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "The implemented registry has not reached a protected main release or immutable downstream pin.",
+      "limitations": [
+        "Unavailable vendor conventions remain visibly unavailable rather than inferred.",
+        "Cross-application convention parity is not released."
+      ],
+      "depends_on_issues": [
+        4158
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4189,
+      "title": "Comprehensive 3D D-Plane Calculation and Visualization",
+      "kind": "program",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "implemented",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4189"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/D_PLANE_GEOMETRY.md"
+        }
+      ],
+      "tracked_issue_ids": [],
+      "carrier_ids": [
+        "pr-4202",
+        "pr-4203"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "D-plane parity has no protected main or downstream release evidence.",
+      "limitations": [
+        "The feature remains nested below the launch-monitor and wedge carrier chain.",
+        "Vendor comparison depends on explicitly available convention definitions."
+      ],
+      "depends_on_issues": [
+        4158,
+        4181
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4191,
+      "title": "Shot Design, Wind Strategy, Inverse Flight, and 3D Playback",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4191"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/BALL_FLIGHT_RESULT_CONTRACT.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/INVERSE_FLIGHT_SOLVER.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/IMPACT_SOLUTION_FAMILIES.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/WIND_PHYSICS.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/WIND_UNCERTAINTY_STRATEGY.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/BALL_FLIGHT_PLAYBACK.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/CAPABILITY_OPTIMIZATION.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4192,
+        4193,
+        4194,
+        4195,
+        4196,
+        4197,
+        4198,
+        4199,
+        4200,
+        4201
+      ],
+      "carrier_ids": [
+        "pr-4217",
+        "pr-4281",
+        "pr-4282",
+        "pr-4283",
+        "pr-4289",
+        "pr-4294"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "contract_only",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "rate-stack-local-c182",
+        "swing-parity-hosted-3186",
+        "swing-parity-isolation-18fe"
+      ],
+      "evidence_gap": "The current carrier requires a fresh hosted parity run, protected main integration, scientific qualification, and downstream parity.",
+      "limitations": [
+        "Capability optimization is still-air carry to first ground crossing and excludes bounce, roll, and total distance.",
+        "Feature-parent merges for capability slices were not protected main releases."
+      ],
+      "depends_on_issues": [
+        4181,
+        4189
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4201,
+      "title": "Cross-Interface Validation, Documentation, and Release Evidence",
+      "kind": "release_gate",
+      "delivery_stage": "specified_only",
+      "completion": "specified",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4201"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/release/rate_of_closure_campaign.v1.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        }
+      ],
+      "tracked_issue_ids": [],
+      "carrier_ids": [],
+      "supported_surfaces": {
+        "tools.pyqt6": "contract_only",
+        "tools.react": "contract_only",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "swing-parity-hosted-3186",
+        "swing-parity-isolation-18fe"
+      ],
+      "evidence_gap": "No exact protected main merge SHA, installed-package matrix, immutable UpstreamDrift pin, or complete release evidence exists.",
+      "limitations": [
+        "Local test totals cannot satisfy this release gate.",
+        "A successful workflow configuration regression does not replace the queued hosted parity execution."
+      ],
+      "depends_on_issues": [
+        4191,
+        4218,
+        4234,
+        4260,
+        4267
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4218,
+      "title": "Modern Toolstrip, Persistence, and Workspace Modules",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4218"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/application/workspace_document.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/view_workspace.py"
+        }
+      ],
+      "tracked_issue_ids": [
+        4219,
+        4220,
+        4221,
+        4222,
+        4223,
+        4224,
+        4225,
+        4284
+      ],
+      "carrier_ids": [
+        "pr-4279"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "locally_verified",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "toolstrip-local-c36"
+      ],
+      "evidence_gap": "Complete persistence adapters, synchronized multi-view state, camera snap controls, accessibility, and protected release remain open.",
+      "limitations": [
+        "Unavailable persistence actions remain disabled rather than simulating success.",
+        "The camera tracking and canonical snap-view child has no implementation carrier."
+      ],
+      "depends_on_issues": [
+        4191
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4234,
+      "title": "Production-Grade Visual Design, Layout, Context, and Error UX",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4234"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4235,
+        4236,
+        4237,
+        4238,
+        4239
+      ],
+      "carrier_ids": [
+        "pr-4279",
+        "pr-4282"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "locally_verified",
+        "tools.react": "implemented_unverified",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [
+        "toolstrip-local-c36",
+        "rate-stack-local-c182"
+      ],
+      "evidence_gap": "High-DPI, keyboard, reduced-motion, stable pixel baselines, and full responsive React evidence remain open.",
+      "limitations": [
+        "Rendered fixes cover selected desktop sizes rather than the complete product matrix.",
+        "Current Calculation and error-recovery acceptance criteria are not complete across four surfaces."
+      ],
+      "depends_on_issues": [
+        4218
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4260,
+      "title": "Golf Impact and Flight Authority with Four-Surface Parity",
+      "kind": "epic",
+      "delivery_stage": "specified_only",
+      "completion": "specified",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4260"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4261,
+        4262,
+        4263,
+        4264,
+        4265,
+        4266
+      ],
+      "carrier_ids": [],
+      "supported_surfaces": {
+        "tools.pyqt6": "contract_only",
+        "tools.react": "contract_only",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [],
+      "evidence_gap": "No machine-readable four-surface capability matrix, immutable Tools pin, or installed conformance run exists.",
+      "limitations": [
+        "A launcher tile does not establish an independent surface implementation.",
+        "Current UpstreamDrift source resolution and React routing do not satisfy parity."
+      ],
+      "depends_on_issues": [
+        4191
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    },
+    {
+      "issue": 4267,
+      "title": "Qualified Landing, Bounce, Roll, and Ground-Surface Modeling",
+      "kind": "epic",
+      "delivery_stage": "implemented_on_feature_stack",
+      "completion": "partial_implementation",
+      "authorities": [
+        {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4267"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        }
+      ],
+      "tracked_issue_ids": [
+        4268,
+        4269,
+        4270,
+        4271,
+        4272,
+        4273,
+        4274,
+        4275,
+        4276
+      ],
+      "carrier_ids": [
+        "pr-4285",
+        "pr-4288"
+      ],
+      "supported_surfaces": {
+        "tools.pyqt6": "contract_only",
+        "tools.react": "contract_only",
+        "upstreamdrift.pyqt6": "not_started",
+        "upstreamdrift.react": "not_started"
+      },
+      "evidence_ids": [],
+      "evidence_gap": "The contract and flight-transfer carriers are open; qualified bounce, skid, roll, total-distance, UI, and parity evidence do not exist.",
+      "limitations": [
+        "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
+        "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority."
+      ],
+      "depends_on_issues": [
+        4191
+      ],
+      "release": {
+        "status": "not_released",
+        "branch": "main",
+        "sha": null
+      }
+    }
+  ]
+}

@@ -57,6 +57,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - React scalar-ensemble scatter plots render numeric grid/tick scales, visible
   axis ranges, and cohort legends with paired-finite counts.
 
+### 2026-08-09 Rate campaign release-evidence authority
+
+- `docs/release/rate_of_closure_campaign.v1.json` is the normalized authority
+  for primary campaign issues, specifications, carriers, four-surface support,
+  commit-bound tests, limitations, dependencies, and release status.
+- `scripts/rate_campaign_manifest.py` validates the strict version-1 contract
+  and emits its deterministic JSON Schema. Feature-stack implementation,
+  protected parent integration, and exact `main` release are mutually
+  exclusive states with fail-closed cross-field requirements.
+- The current manifest truthfully records no complete campaign release SHA;
+  local tests and unprotected feature-parent merges cannot satisfy that claim.
+
 ### 2026-08-09 Swing-core parity CI isolation
 
 - The dedicated `swing_core` Rust-to-Python parity lane disables third-party
@@ -2914,7 +2926,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-09 | 1.14.8 | fix(rate-of-closure, #4201): make Python and TypeScript capability workflow parsing reject primitive type mismatches without coercion; allow reliable signed decimal editing; expose complete ranked diagnostics, units, result exports, and quantitative React scatter annotations; make the direct web launcher package-safe; declare static Vite plus PyQt6/PyInstaller as the supported release surfaces; remove unsupported Tauri claims and dependencies; and synchronize the lazy wind-panel test without timeout inflation. |
+| 2026-08-09 | 1.14.8 | feat(rate-of-closure, #4201): harden cross-runtime capability parsing and signed input; expose complete diagnostics, result exports, and quantitative scatter annotations; stabilize supported PyQt6/static-Vite entrypoints; and add a strict campaign manifest with generated schema, four-surface status, explicit gaps/dependencies, and fail-closed feature-stack/protected-parent/`main` release distinctions. |
 | 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |
 | 2026-08-08 | 1.14.6 | feat(rate-of-closure, #4197): add matched PyQt6/React Shot Optimizer workspaces with strict cross-runtime workflow persistence, off-main-thread qualified flight execution, truthful progress/cancellation, complete scalar-ensemble cohort retention, ranked alternatives, stage-qualified selectable scatter axes, zoom/autofit, bounded raw-row paging, lossless CSV/stable JSON, substantive hover guidance, and saved-layout migration that reveals newly registered modules. |
 | 2026-08-08 | 1.14.5 | feat(ball-flight, #4197): add profile/request-bound Python and TypeScript Waterloo/Penner capability evaluators with exact established parameter IDs, physical-domain and unit validation, sourced per-club spin defaults or paired variable spin inputs, shared gyro-projected positive-fade/right spin-axis convention across result/impact/variation producers, canonical target-frame conversion, target-aware complete scalar metrics, typed horizon nonconvergence, fail-fast invariants, and a shared 16-scalar tolerance fixture. Corrects the TypeScript ground-crossing interpolation so a descending launch from z=0 cannot extrapolate to a negative sample time, which previously raised an untyped `RangeError` that was absorbed as an `evaluator_exception`; such launches now report `nonconverged`, matching the Python runtime. |

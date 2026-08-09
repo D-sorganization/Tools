@@ -67,6 +67,29 @@ focused Ruff check/format, targeted mypy, package installation/audit, and diff
 checks pass. `tests/test_dry_compliance.py` retains two unrelated baseline
 failures for the Movement Optimizer and Optimizer GUI PyQt launchers.
 
+## 2026-08-09 Machine-readable campaign authority
+
+`docs/release/rate_of_closure_campaign.v1.json` is now the canonical current
+state for the primary Rate, impact, flight, variation, club-builder, wedge,
+toolstrip, design-quality, parity, and ground programs. Its normalized carrier
+and evidence tables replace status inference from the chronological entries
+below. `scripts/rate_campaign_manifest.py` supplies strict Pydantic validation
+and a generated JSON Schema; it rejects missing programs, unresolved evidence,
+placeholders, malformed SHAs, and contradictory release claims.
+
+The authority records the current campaign as **not released**. Capability PRs
+#4294, #4289, and #4283 are merged into feature parent #4282, but those were not
+protected `main` merges. Current carrier head `18fe89201` contains the hermetic
+`swing_core` parity-lane correction and its focused workflow regression; a
+fresh hosted parity run, top-down stack propagation, #4133 reconciliation,
+#4119 current-main conflict resolution, protected checks, installed-package
+evidence, and UpstreamDrift parity are still required.
+
+Maintain the JSON authority and the current-state handoffs in the same commit
+whenever a carrier SHA, test result, limitation, supported surface, or release
+stage changes. Historical detail below remains useful provenance but must not
+override a contradictory validated manifest record.
+
 ## 2026-08-08 Capability workspace continuation
 
 The active stacked child is `feat/4197-capability-optimization-ui`, based
