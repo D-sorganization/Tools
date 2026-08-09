@@ -65,6 +65,17 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - The lane continues to install the built wheel and run the same non-skippable
   parity suite; numerical behavior and production dependencies are unchanged.
 
+### 2026-08-09 Rate web-release stability
+
+- The documented direct Rate web launcher imports its registration through the
+  package-qualified path, so `python src/rate_of_closure/launch_web.py` works
+  outside package-module execution.
+- Rate supports a static Vite web release and a PyQt6/PyInstaller desktop
+  release. It does not claim Tauri support without a `src-tauri` project or an
+  artifact qualification lane.
+- The Flight Explorer parent-panel test explicitly settles its lazy wind-panel
+  import inside React `act`, removing suite-load timing from the assertion.
+
 ### 2026-08-06 GUI module-budget repair
 
 - Movement Optimizer motion palette and chain-length helpers live in a small
@@ -1098,7 +1109,7 @@ high_mm)` exposes the face-curvature normal (gradient of the
   difference between a launch monitor's reported geometric-center path and
   the impact point's actual delivery for a rotating clubhead (twist model,
   v(P) = v(ref) + omega x r). PyQt6 desktop app (animated 3D clubhead +
-  closure sweep, ThemedWindowMixin) plus a React/Vite/Tauri web clone in
+  closure sweep, ThemedWindowMixin) plus a React/Vite static web clone in
   `src/rate_of_closure/web/` whose TypeScript model is pinned test-for-test
   against the Python implementation. Conventions and rate data follow the
   AffineDrift launch-monitor research: the standard launch-monitor frame
@@ -1111,7 +1122,7 @@ high_mm)` exposes the face-curvature normal (gradient of the
   explanations, and a Derivation & Traceability tab typesetting the full
   calculation with live numeric substitution (matplotlib mathtext on
   desktop, bundled KaTeX on web). `build_executable.py` packages the
-  desktop app with PyInstaller; the web app packages via Tauri.
+  desktop app with PyInstaller; the web app releases as a static Vite bundle.
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
 ### 2026-08-05 Wedge impact-point kinematics and AoA attribution
@@ -2903,7 +2914,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-09 | 1.14.8 | fix(rate-of-closure, #4201): make Python and TypeScript `capability-optimization-workflow/v1` parsing reject primitive type mismatches without silent coercion, pin shared cross-runtime accept/reject cases, and use decimal draft inputs so signed values can be entered through normal keyboard interaction. |
+| 2026-08-09 | 1.14.8 | fix(rate-of-closure, #4201): make Python and TypeScript capability workflow parsing reject primitive type mismatches without coercion; allow reliable signed decimal editing; expose complete ranked diagnostics, units, result exports, and quantitative React scatter annotations; make the direct web launcher package-safe; declare static Vite plus PyQt6/PyInstaller as the supported release surfaces; remove unsupported Tauri claims and dependencies; and synchronize the lazy wind-panel test without timeout inflation. |
 | 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |
 | 2026-08-08 | 1.14.6 | feat(rate-of-closure, #4197): add matched PyQt6/React Shot Optimizer workspaces with strict cross-runtime workflow persistence, off-main-thread qualified flight execution, truthful progress/cancellation, complete scalar-ensemble cohort retention, ranked alternatives, stage-qualified selectable scatter axes, zoom/autofit, bounded raw-row paging, lossless CSV/stable JSON, substantive hover guidance, and saved-layout migration that reveals newly registered modules. |
 | 2026-08-08 | 1.14.5 | feat(ball-flight, #4197): add profile/request-bound Python and TypeScript Waterloo/Penner capability evaluators with exact established parameter IDs, physical-domain and unit validation, sourced per-club spin defaults or paired variable spin inputs, shared gyro-projected positive-fade/right spin-axis convention across result/impact/variation producers, canonical target-frame conversion, target-aware complete scalar metrics, typed horizon nonconvergence, fail-fast invariants, and a shared 16-scalar tolerance fixture. Corrects the TypeScript ground-crossing interpolation so a descending launch from z=0 cannot extrapolate to a negative sample time, which previously raised an untyped `RangeError` that was absorbed as an `evaluator_exception`; such launches now report `nonconverged`, matching the Python runtime. |

@@ -9,8 +9,8 @@ environment:
 The result lands in ``dist/RateOfClosureExplorer`` (one-folder mode:
 faster startup and easier antivirus review than one-file). Requires
 ``pip install pyinstaller`` in the environment that already runs the
-tool. The shareable web equivalent is ``npm run tauri build`` inside
-``src/rate_of_closure/web``.
+tool. The supported shareable web release is the static Vite bundle built
+with ``npm ci`` and ``npm run build`` inside ``src/rate_of_closure/web``.
 """
 
 from __future__ import annotations

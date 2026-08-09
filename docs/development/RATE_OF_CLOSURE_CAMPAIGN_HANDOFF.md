@@ -1,6 +1,6 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-08. This isolated integration is published as draft
+Status verified 2026-08-09. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
@@ -40,6 +40,32 @@ Ruff check/format, targeted mypy for the new export and tab modules, TypeScript,
 zero-warning ESLint, and the 188-module Vite production build passed. The
 pre-existing mypy 1.19.1/Python 3.13 internal serialization assertion on
 `capability_results.py` reproduces unchanged at carrier `18fe89201`.
+
+## 2026-08-09 Web-release stability continuation
+
+Local branch `feat/4201-web-release-stability` is based exactly on campaign
+carrier `18fe89201`. It fixes direct-path execution of
+`src/rate_of_closure/launch_web.py`, adds a subprocess delegation smoke
+contract, and reconciles the supported release boundary to the files that
+exist: static Vite web output plus PyQt6/PyInstaller desktop output. Rate has
+no `src-tauri` project, so its stale Tauri scripts, CLI dependency, lockfile
+entries, and current documentation claims were removed instead of inventing an
+unqualified wrapper.
+
+The load-sensitive `FlightExplorerPanel` assertion now explicitly settles the
+real lazy Wind Strategy import inside React `act`; it does not extend a timeout
+or replace the child component with a mock. This is test synchronization only,
+not a UI or physics change. The branch must remain local until reviewed and
+folded into the established campaign carrier; no PR, push, or merge belongs to
+this handoff slice.
+
+Exact local evidence: 813 Rate Python/PyQt tests passed with 15 existing
+warnings; 9 launcher/registration tests passed; 102 React files / 624 tests
+passed; and five sequential focused Flight Explorer runs passed 25/25 tests.
+TypeScript type-check, zero-warning ESLint, the 187-module static build,
+focused Ruff check/format, targeted mypy, package installation/audit, and diff
+checks pass. `tests/test_dry_compliance.py` retains two unrelated baseline
+failures for the Movement Optimizer and Optimizer GUI PyQt launchers.
 
 ## 2026-08-08 Capability workspace continuation
 

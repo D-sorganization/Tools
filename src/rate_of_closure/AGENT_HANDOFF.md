@@ -50,6 +50,32 @@ reproduces mypy 1.19.1's Python 3.13 internal serialization assertion when
 checking `capability_results.py`; do not misreport that tool failure as a new
 source-code type diagnostic.
 
+## 2026-08-09 Web-release stability on the campaign carrier
+
+The local branch `feat/4201-web-release-stability` starts from exact carrier
+head `18fe89201` and makes no physics or product-layout changes. It fixes the
+documented direct web script's package import, covers the exact path invocation
+in a child Python process while replacing only the shared launcher delegate,
+and removes the unsupported Tauri contract. Rate presently ships a static Vite
+bundle for web sharing and PyQt6/PyInstaller for desktop use; there is no Rate
+`src-tauri` project or qualified Tauri artifact.
+
+The intermittent Flight Explorer suite failure was a test synchronization
+defect around the real lazy Wind Strategy import. The parent-panel test now
+awaits `vi.dynamicImportSettled()` inside React `act` before a synchronous role
+assertion, instead of relying on a one-second polling window. The Wind Strategy
+component retains its own focused tests. Integrate this local commit through
+the campaign carrier after reviewing the recorded gates; do not represent it
+as a Tauri implementation or a scientific-model change.
+
+Verified locally: 813 Rate Python/PyQt tests passed with 15 existing warnings;
+the launcher-focused file passed 9/9; 102 React files / 624 tests passed; and
+the formerly load-sensitive Flight Explorer file passed five consecutive
+focused runs. TypeScript, zero-warning ESLint, the 187-module production
+build, focused Ruff check/format, targeted mypy, dependency installation/audit,
+and diff checks are green. The repository-wide DRY contract still reports only
+its baseline failures in two unrelated PyQt launcher files.
+
 ## 2026-08-08 Capability stack consolidated onto this branch
 
 The three capability slices are **merged** and now live here on
@@ -474,8 +500,8 @@ instantaneous-impulse approximation) — foundation phase only so far.
 The web mirror (`src/rate_of_closure/web/`, React/Vite/TS) is pinned
 test-for-test against the PyQt6 model today (TS mirrors hand-written, not yet
 WASM — that swap is explicitly deferred to Phase 7 of #4103). It builds to a
-static bundle (`npm run build`) and carries Tauri scripts for desktop
-packaging, same as other web tools in the repo.
+static bundle (`npm run build`). Rate does not currently contain a Tauri source
+project; PyQt6/PyInstaller is its supported desktop package.
 
 **There is no automated GitHub Pages CI deploy for this tool yet.** No
 `.github/workflows/*.yml` references `rate_of_closure` or Pages deploy

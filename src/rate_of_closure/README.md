@@ -66,13 +66,16 @@ outcome bias, r = −.14), not a bias you can simply calibrate away.
 # PyQt6 desktop (animated 3D clubhead, closure sweep)
 python src/rate_of_closure/launch_pyqt6.py
 
-# Shareable web version (same math, pinned test-for-test to the Python)
-cd src/rate_of_closure/web && npm install && npm run dev
+# Shareable web version through the repository launcher
+python src/rate_of_closure/launch_web.py
+
+# Equivalent direct Vite development workflow
+cd src/rate_of_closure/web && npm ci && npm run dev
 ```
 
 The web app builds to a static bundle (`npm run build`) that can be hosted
-anywhere as a link, and carries the same Tauri scripts as the other web
-tools for desktop packaging.
+anywhere as a link. A Tauri desktop wrapper is not currently part of this
+tool; the supported desktop release is the PyQt6/PyInstaller application.
 
 Both interfaces open with a generated driver head and its engineering CG
 target visible. The Simulation view runs immediately and supports manual,
@@ -92,11 +95,13 @@ environment:
 python src/rate_of_closure/build_executable.py            # one-folder app
 python src/rate_of_closure/build_executable.py --onefile  # single file
 
-# Web shell (Tauri) — from src/rate_of_closure/web
-npm run tauri build
+# Static web release — from src/rate_of_closure/web
+npm ci
+npm run build
 ```
 
-The PyInstaller output lands in `dist/RateOfClosureExplorer`.
+The PyInstaller output lands in `dist/RateOfClosureExplorer`; the static web
+bundle lands in `src/rate_of_closure/web/dist`.
 
 ## Structure
 

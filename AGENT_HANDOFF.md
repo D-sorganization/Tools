@@ -47,6 +47,34 @@ diagnostic. This work is not released merely because it is committed: integrate 
 `feat/4199-wind-workflow`, rerun exact-head hosted CI, and preserve #4282's
 existing base and release order.
 
+## RELEASE STABILITY RECORD (2026-08-09): Rate web entry and packaging truth
+
+The isolated branch `feat/4201-web-release-stability`, based exactly on carrier
+head `18fe89201`, repairs three bounded release blockers without changing
+physics or application UI behavior. The documented direct command
+`python src/rate_of_closure/launch_web.py` now imports `GUI_INFO` through the
+package-qualified path and is protected by a subprocess delegation smoke test.
+Rate now declares only release surfaces that exist: PyQt6/PyInstaller desktop
+and a static Vite web bundle. The nonexistent Tauri wrapper, scripts, CLI
+dependency, and corresponding claims were removed from the manifest, lockfile,
+README, executable-builder documentation, and current specification.
+
+`FlightExplorerPanel.test.tsx` now settles the code-split Wind Strategy import
+inside React `act` before making its synchronous assertion. This preserves real
+lazy integration coverage while eliminating dependence on the testing
+library's default polling timeout; no timeout was increased. Keep this branch
+local until its focused and broad gates below are reviewed and it is integrated
+through the existing campaign carrier. No PR was created or pushed here.
+
+Local evidence on this branch: 813 Rate Python/PyQt tests passed with 15
+pre-existing warnings; the focused registration/launcher file passed 9 tests;
+all 102 React files / 624 tests passed; and the Flight Explorer file passed
+five consecutive focused runs (25 tests total). TypeScript type-check,
+zero-warning ESLint, the 187-module Vite build, focused Ruff check/format,
+targeted mypy, `npm ci`, zero-vulnerability audit, and `git diff --check` pass.
+The broader `tests/test_dry_compliance.py` remains red only for the unrelated
+pre-existing Movement Optimizer and Optimizer GUI PyQt launchers.
+
 ## CI REMEDIATION RECORD (2026-08-09): hermetic swing-core parity lane
 
 The exact PR #4282 head `3186a265b1` built and loaded the `swing_core` wheel,
