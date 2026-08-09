@@ -178,7 +178,11 @@ export function parseCsv(text: string): CsvTable {
 
   // Materialize each source column's raw cells (padding short rows).
   // ⚡ Bolt Optimization: Replace dataRows.map() per column with a single-pass loop
-  const rawColumns: string[][] = Array.from({ length: colCount }, () => new Array(dataRows.length));
+  // ⚡ Bolt Optimization: Pre-allocate arrays using new Array(N) and standard for loops to avoid Array.from iterability/closure overhead
+  const rawColumns: string[][] = new Array(colCount);
+  for (let c = 0; c < colCount; c += 1) {
+    rawColumns[c] = new Array(dataRows.length);
+  }
   for (let r = 0; r < dataRows.length; r += 1) {
     const row = dataRows[r];
     for (let c = 0; c < colCount; c += 1) {

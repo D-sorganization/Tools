@@ -123,7 +123,14 @@ export const DataExplorer: React.FC<DataExplorerProps> = ({ triggerNotification 
       } else {
         if (!csv) throw new Error("No CSV loaded");
         const n = csv.columns[0]?.values.length ?? 0;
-        const index = csv.index ?? Array.from({ length: n }, (_, i) => i);
+        let index = csv.index;
+        if (!index) {
+          // ⚡ Bolt Optimization: Pre-allocate array and populate with a standard for loop to avoid Array.from overhead
+          index = new Array(n);
+          for (let i = 0; i < n; i++) {
+            index[i] = i;
+          }
+        }
         req = {
           inline: { index, columns: csv.columns },
           resample: pipeline.resample ?? undefined,
