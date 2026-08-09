@@ -5,6 +5,18 @@
 
 ## 2026-08-09 Ground-contract ancestry and CI compatibility repair
 
+Protected quality-gate run `31341468033` on exact head
+`2d9a06fae46e0601a05896b71934ca0c6b8dc59a` exposed a second, narrower
+compatibility boundary: pinned mypy 1.13 with skipped imports sees the shared
+string-enum shim as `str`, so schema generation could not type-check iteration
+or `.value`. The follow-up derives schema strings with `str(item)` and replaces
+test-only suppressions with explicit casts around intentional invalid inputs.
+No schema value or runtime rejection rule changes. Exact mypy 1.13 now passes
+all 19 changed Python files; Ruff check/format and all 46 ground tests pass.
+This evidence applies locally to the follow-up until its new exact head runs in
+protected CI. Do not retry or cite the obsolete failed head as passing, and
+propagate the published repair into #4288 through a normal merge.
+
 Draft PR #4285 keeps its original base `feat/4197-capability-observer`. The
 current parent head `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a` was propagated
 through normal merge commit `25f181450`; no rebase, retarget, force-push, or

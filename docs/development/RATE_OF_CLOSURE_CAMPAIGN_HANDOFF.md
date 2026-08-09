@@ -6,6 +6,18 @@ branch was rewritten.
 
 ## 2026-08-09 Ground-contract stack recovery
 
+Protected quality-gate run `31341468033` on PR #4285 exact head
+`2d9a06fae46e0601a05896b71934ca0c6b8dc59a` then reached pinned mypy 1.13
+and found that skipped-import analysis models the Python 3.10 string-enum shim
+as `str`. The scoped correction generates all schema enum values and target
+frame constants through `str(...)`; deliberate invalid-input tests use typed
+casts instead of stale suppressions. Wire values and fail-closed runtime
+behavior are unchanged. The full 19-file changed Python delta passes the exact
+mypy 1.13 flags, Ruff check/format passes, and the focused ground suite remains
+`46 passed`. Treat the failed run only as old-head diagnostic evidence. Push a
+new commit normally and propagate it into #4288 by normal merge before using
+any child CI result as release evidence.
+
 Draft PR #4285 remains based on `feat/4197-capability-observer`. A normal local
 merge now carries exact parent head `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a`
 into `feat/4268-ground-contract` without retargeting or rewriting either

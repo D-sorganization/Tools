@@ -5,6 +5,7 @@ from __future__ import annotations
 import ast
 from dataclasses import FrozenInstanceError, replace
 from pathlib import Path
+from typing import Any, cast
 
 import pytest
 
@@ -125,7 +126,7 @@ def test_records_are_frozen_and_vectors_are_immutable_tuples() -> None:
     request = _request()
     assert isinstance(request.last_separated_state.position_m, tuple)
     with pytest.raises(FrozenInstanceError):
-        request.max_time_s = 2.0  # type: ignore[misc]
+        cast(Any, request).max_time_s = 2.0
 
 
 def test_json_entry_points_fail_closed_for_nonobjects_and_invalid_json() -> None:
@@ -134,7 +135,7 @@ def test_json_entry_points_fail_closed_for_nonobjects_and_invalid_json() -> None
     with pytest.raises(ValueError, match="invalid"):
         ground.result_from_json("{")
     with pytest.raises(TypeError, match="text"):
-        ground.request_from_json(2)  # type: ignore[arg-type]
+        ground.request_from_json(cast(str, 2))
     duplicate_root = (
         _request()
         .to_json()
