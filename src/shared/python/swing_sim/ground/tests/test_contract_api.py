@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+import ast
 from dataclasses import FrozenInstanceError, replace
+from pathlib import Path
 
 import pytest
 
@@ -50,6 +52,20 @@ EXPECTED_API = {
 
 def test_public_api_is_explicit_and_package_is_self_facaded() -> None:
     assert set(ground.__all__) == EXPECTED_API
+
+
+def test_ground_package_does_not_import_python_311_only_strenum() -> None:
+    """Keep the shared contract importable in the repository's 3.10 CI lane."""
+    package_dir = Path(ground.__file__).parent
+    offenders: list[str] = []
+    for module_path in package_dir.glob("*.py"):
+        syntax_tree = ast.parse(module_path.read_text(encoding="utf-8"))
+        for node in ast.walk(syntax_tree):
+            if not isinstance(node, ast.ImportFrom) or node.module != "enum":
+                continue
+            if any(alias.name == "StrEnum" for alias in node.names):
+                offenders.append(module_path.name)
+    assert offenders == []
 
 
 @pytest.mark.parametrize(

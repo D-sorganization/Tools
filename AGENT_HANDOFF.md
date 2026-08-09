@@ -21,6 +21,18 @@ runner/toolchain infrastructure, not ground-model evidence. Re-run focused
 contract and affected Rate gates on the merged ancestry before publishing any
 follow-up, and keep issue #4269 / PR #4288 stacked behind this contract PR.
 
+The bounded follow-up `SELF` declares `jsonschema>=4.23.0` in the repository's
+test/quality dependency set, pins the verified 4.24.0 build in the lock file,
+and routes all three new ground-contract enums
+through the existing shared `StrEnum` compatibility boundary. A package-wide
+AST regression test was red against `contract_types.py`, `contract_wire.py`,
+and `unavailable_types.py`, then green after the imports were corrected. The
+complete ground package is `46 passed`; the affected combined Rate+swing_sim
+suite is `1463 passed, 5 skipped` (optional local Rust wheels), with Ruff
+check/format, targeted mypy, documentation governance, and diff checks clean.
+Python 3.10 failures originating in older capability/Rate modules
+remain outside this ground-only repair and must not be hidden by broad edits.
+
 ## COMPLETION RECORD (2026-08-08): interruption recovered
 
 The uncommitted capability-optimization-ui slice was reviewed against

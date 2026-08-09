@@ -4,9 +4,9 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from enum import StrEnum
 from typing import Any, TypeAlias
 
+from shared.python.compatibility import StrEnum
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_float
 
 REQUEST_SCHEMA_VERSION = "flight-to-ground-request/v1"

@@ -4,6 +4,28 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 Ground-contract stack recovery
+
+Draft PR #4285 remains based on `feat/4197-capability-observer`. A normal local
+merge now carries exact parent head `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a`
+into `feat/4268-ground-contract` without retargeting or rewriting either
+branch. The previous PR head had no reviews or unresolved threads and was
+reported dirty only because the parent had advanced beyond its 2026-08-07
+merge base.
+
+The current-head test logs also proved a bounded ground defect: schema tests
+imported `jsonschema` without declaring it, and the new enum modules bypassed
+the repository's Python 3.10 compatibility boundary. The follow-up declares
+`jsonschema>=4.23.0`, pins the locally verified 4.24.0 build, imports the shared
+`StrEnum`, and adds a package-wide
+regression test. RED named the three offending ground modules; GREEN is
+`46 passed`, and the affected Rate+swing_sim suite is `1463 passed, 5 skipped`
+with optional local Rust-wheel skips only. Focused Ruff check/format, targeted
+mypy, documentation governance, and diff checks pass. The separate Rust
+`-lpython3.11` linker failure is infrastructure. No GitHub write was made; PR
+#4288 must receive this parent ancestry through a normal merge before further
+flight-transfer publication.
+
 ## 2026-08-08 Capability workspace continuation
 
 The active stacked child is `feat/4197-capability-optimization-ui`, based

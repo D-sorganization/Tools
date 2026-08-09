@@ -1,7 +1,29 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-08
+> Last updated: 2026-08-09
+
+## 2026-08-09 Ground-contract ancestry and CI compatibility repair
+
+Draft PR #4285 keeps its original base `feat/4197-capability-observer`. The
+current parent head `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a` was propagated
+through normal merge commit `25f181450`; no rebase, retarget, force-push, or
+GitHub merge occurred. The merge had no ground-source conflict and the only
+manual resolution retained the newer root handoff plus this ground status.
+
+Hosted checks on the preceding exact head found an undeclared `jsonschema`
+dependency during ground-schema test collection. The dependency is now
+declared and locked at the locally verified 4.24.0 build, and the three ground
+enum modules import the repository's canonical
+`shared.python.compatibility.StrEnum` rather than Python 3.11-only
+`enum.StrEnum`. A new package-wide source contract failed first on exactly
+those three modules and then passed. Current focused evidence is `46 passed`
+for `swing_sim/ground/tests`; the combined Rate+swing_sim gate is `1463 passed,
+5 skipped`, where every skip is an optional local Rust-wheel path. Ruff
+check/format, targeted mypy, documentation governance, and diff checks are clean.
+The Rust gate's missing `-lpython3.11` is runner/toolchain infrastructure.
+Do not widen this repair to older non-ground Python 3.10 imports, and keep
+#4288 stacked behind #4285 until the parent follow-up is reviewed and published.
 
 ## 2026-08-08 COMPLETION RECORD — capability-optimization-ui recovered
 
