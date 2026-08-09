@@ -2702,3 +2702,14 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+## 1.1.415 - Palette Micro-UX Improvement
+
+- **2026-08-09**: feat(ux) — Added explicit `id` and `htmlFor` attributes to standalone form elements, and context-aware `aria-label` attributes to dynamic matrix and vector inputs in `src/rotation_converter/web/src/components/RotationConverter.tsx` and `src/rotation_converter/web/src/components/ReferenceFrameConverter.tsx` to improve screen reader accessibility.
+
+## 1.1.415 - Palette Micro-UX Improvement
+
+- **2026-08-09**: feat(ux) — Added explicit `id` and `htmlFor` attributes to standalone form elements, and context-aware `aria-label` attributes to dynamic matrix and vector inputs in `src/rotation_converter/web/src/components/RotationConverter.tsx` and `src/rotation_converter/web/src/components/ReferenceFrameConverter.tsx` to improve screen reader accessibility.
+## 1.1.415 - Palette Micro-UX Improvement
+
+- **2026-08-09**: feat(ux) — Added explicit `id` and `htmlFor` attributes to standalone form elements, and context-aware `aria-label` attributes to dynamic matrix and vector inputs in `src/rotation_converter/web/src/components/RotationConverter.tsx` and `src/rotation_converter/web/src/components/ReferenceFrameConverter.tsx` to improve screen reader accessibility.
