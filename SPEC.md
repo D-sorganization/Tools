@@ -44,6 +44,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   time instead of reusing the prior fixed-time input through a stale render
   closure. Regression tests cover both launcher modes, dependency discovery,
   and the fixed-to-automatic transition.
+- Parametric clubhead station refinement preserves its four-coordinate tuple
+  contract explicitly through interpolation, keeping strict type validation
+  aligned with the deterministic mesh geometry.
 
 ### 2026-08-05 Rate of Closure Python 3.10 CI compatibility
 
@@ -863,6 +866,13 @@ high_mm)` exposes the face-curvature normal (gradient of the
   desktop app with PyInstaller; the web app packages via Tauri.
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
+### 2026-08-05 Golf Club assembly type-checking compatibility
+
+- Shared golf-club assembly validation returns explicitly typed NumPy arrays
+  from the numeric-sequence and inertia-tensor adaptation seams, preserving the
+  new assembly physics contracts while satisfying the changed-file mypy gate.
+  Serialization facade methods keep typed local return values so narrow mypy
+  runs agree with full-repository type information.
 
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
@@ -1780,6 +1790,11 @@ high_mm)` exposes the face-curvature normal (gradient of the
 - Provide MATLAB scientific code integration and wrappers
 - Maintain fleet theme system for consistent UI across all tools
 - Support multiple Python versions (3.11, 3.12) with comprehensive test matrix
+- Keep the required generic quality gate on hosted compute when the local
+  fleet is operating under a WAN-constrained capacity policy
+- Keep self-hosted jobs on durable per-host dependency caches without
+  GitHub Actions cache uploads or unconditional cache purges, so post-job
+  network traffic cannot monopolize a persistent runner
 
 ### Non-Goals
 
@@ -2545,6 +2560,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.13.4 | fix(rate_of_closure, #4119): make the web entry point safe for file-path launch, declare the eagerly required SciPy dependency, and run React automatic impact-time selection atomically with regression coverage; reconcile the root release branch with current `main` while preserving fleet CI and shared golf-club contracts. |
 | 2026-08-05 | 1.13.3 | feat(rate_of_closure, swing_sim, #4135 #4142 #4143): add canonical ground/tee ball setup with club defaults and physical propagation through simulation/export/rendering, complete persistent v2 variation-plan workflows and paired common-reference propagation analysis, and make every Rate Matplotlib canvas lifecycle-safe during Qt teardown. |
 | 2026-08-05 | 1.13.2 | feat(rate_of_closure): harden both standalone interfaces with clickable reference-frame guidance, draft-based signed numeric editing, negative spin-axis tilt support, auto-populated Swing views, complete double/triple-pendulum skeletons, a parity-pinned web triple-pendulum model, default generated driver heads, engineering CG targets, and higher-resolution watertight clubhead meshes with polished lighting. |
 | 2026-08-05 | 1.13.1 | fix(ci): run the sparse UpstreamDrift downstream-contract install as an editable test install without CI release packaging hooks, so the contract job uses this PR's checked-out Tools workspace on `PYTHONPATH` instead of requiring UpstreamDrift's vendored Tools gitlink to be present in the sparse checkout. |
@@ -2563,6 +2579,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-04 | 1.5.6 | feat(rate_of_closure): club library, inertial model, and parametric head with bulge & roll (P2, #4106) — frozen SI ClubSpec with DbC bounds, 15-club library normalized from typical published specs (UpstreamDrift club_configurations.py source), head+shaft+grip composite inertia (balance point, grip-axis and shaft-axis MOI), deterministic superellipse-loft parametric head whose face honors bulge/roll sagitta and loft tilt with mass-scaled envelope, face_normal_at_offset exposed for the future impact package in Python and TypeScript with pinned parity tests, PyQt6 Club group (picker drives GC-to-face/lie with overrides preserved; sourced tooltips) and web ClubPanel generating heads client-side into the existing mesh render paths. |
 | 2026-08-03 | 1.5.5 | feat(rate_of_closure): optional photorealistic STL clubhead rendering — pure-numpy binary/ASCII STL parser with head-envelope normalization (mesh.py), PyQt6 Load Clubhead STL/Procedural Head playback-bar controls with lambert-shaded Poly3DCollection rendering, web-clone FileReader STL input with painter's-algorithm flat-shaded triangles (TS parser parity-tested against pytest), and a programmatically generated example driver-head STL free of licensing risk. |
 | 2026-08-03 | 1.5.4 | feat(rate_of_closure): add the Rate of Closure Impact Explorer (twist-based impact-point deviation model, PyQt6 3D clubhead + closure sweep, parity-tested React/Vite/Tauri web clone) aligned to the AffineDrift launch-monitor conventions and Cheetham closure-rate data; playback controls with head-fixed/head-moving display modes, clickable result explanations, a live-substituted Derivation & Traceability tab (mathtext / KaTeX), independent cross-validation tests, PyInstaller/Tauri packaging, and brand-neutral program strings; review round adds unit drop-downs (speed/rotation/length) with a canonical-unit model core, arrow-free typed inputs with sourced golf-swing range tooltips, a Common Closure Metrics panel (CCV, deg/ft, deg/in, deg/ms, R_ISA, time-to-square, toe-heel speed delta), a derivation-tab scroll fix, and removal of the duplicated Theme menu. |
+| 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
+| 2026-08-05 | 1.5.6 | feat(golf-club, #4147): add the canonical shared golf-club domain facade with immutable SI/frame-explicit component roles, physically realizable mass properties, rigid transforms, assembled mass/CG/full inertia, declared club-length references, and strict deterministic versioned JSON migration contracts. |
+| 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |
+| 2026-08-04 | 1.5.4 | docs(agent-handoff, Repository_Management#1390): add root `AGENT_HANDOFF.md` plus per-tool `AGENT_HANDOFF.md` under `src/rate_of_closure`, `src/pendulum_simulator`, and `src/rotation_converter`; add `docs/AGENT_HANDOFF_TEMPLATE.md` for future tools; add the "Agent Handoff & PR Policy" section to `CLAUDE.md`. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |
 | 2026-07-26 | 1.5.3 | fix(ci): isolate both protected Python jobs in per-job virtual environments after validating the persistent setup-python runtime; repair and import-probe the matrix NumPy/SciPy stack with compatible bounds, and reinstall OpenCV without dependency resolution so it cannot replace the verified NumPy wheel. |
 | 2026-07-26 | 1.5.3 | fix(import-aliases, #3936): make canonical shared-module aliases satisfy `runpy` code lookup so packaged compatibility commands such as `python -m sidekick` execute their parent-owned `shared.python` implementation; include `contracts` in the identity-coalescing alias set and keep Sidekick agent DbC imports on the canonical shared path. |
@@ -3226,6 +3246,19 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.5.5
+
+- 2026-08-05: fix(rotation-converter) — update application navigation tabs
+  with accessible roles and unique IDs, linking buttons to tab panels via
+  `aria-controls` and `aria-labelledby` for screen reader semantic correctness.
+
+### Version 1.5.4
+
+- 2026-08-04: ci — route the required generic PR quality gate to a hosted
+  Ubuntu runner, retain hardware and integration tests on their explicit local
+  lanes, preserve the setup-python pip cache instead of purging it, and narrow
+  the local-only policy exception to `ci-standard.yml::quality-gate`.
 
 ### Version 1.1.598
 

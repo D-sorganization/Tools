@@ -35,6 +35,7 @@ curvature off the corresponding component is zero — a flat lofted face.
 from __future__ import annotations
 
 import math
+from typing import cast
 
 import numpy as np
 
@@ -82,8 +83,12 @@ def _refined_sections(
         for step in range(_BODY_SUBDIVISIONS):
             fraction = step / _BODY_SUBDIVISIONS
             refined.append(
-                tuple(
-                    a + fraction * (b - a) for a, b in zip(first, second, strict=True)
+                cast(
+                    tuple[float, float, float, float],
+                    tuple(
+                        a + fraction * (b - a)
+                        for a, b in zip(first, second, strict=True)
+                    ),
                 )
             )
     refined.append(sections[-1])

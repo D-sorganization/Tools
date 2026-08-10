@@ -60,8 +60,9 @@ class TestGuiRegistration:
             / "launch_web.py"
         )
         with (
-            patch("shared.python.gui_launcher.launch_web_from_gui_info", return_value=0)
-            as mock_launch,
+            patch(
+                "shared.python.gui_launcher.launch_web_from_gui_info", return_value=0
+            ) as mock_launch,
             patch("sys.exit") as mock_exit,
         ):
             runpy.run_path(str(launch_module), run_name="__main__")

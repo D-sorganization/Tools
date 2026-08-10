@@ -14,6 +14,11 @@ REQUIRED_SPARSE_PATHS = {
         "tests/shared_contracts",
     },
     "D-sorganization/UpstreamDrift": {
+        "chat",
+        "contracts.py",
+        "python/src/utils",
+        "shared",
+        "sidekick",
         "src/shared/python",
         "tests/shared_contracts",
         "tests/support",
@@ -70,6 +75,27 @@ def test_upstreamdrift_install_uses_editable_mode_without_ci_release_hooks() -> 
     )
 
     assert upstream["install"].startswith("CI= pip install -e ")
+
+
+def test_upstream_scope_includes_every_release_build_package_root() -> None:
+    workflow = _workflow()
+    downstreams = workflow["jobs"]["downstream-consumer-contracts"]["strategy"][
+        "matrix"
+    ]["downstream"]
+    upstream = next(
+        downstream
+        for downstream in downstreams
+        if downstream["repo"] == "D-sorganization/UpstreamDrift"
+    )
+
+    scope = set(upstream["sparse_checkout"].splitlines())
+    assert {
+        "chat",
+        "contracts.py",
+        "python/src/utils",
+        "shared",
+        "sidekick",
+    } <= scope
 
 
 def test_downstream_checkout_keeps_sparse_checkout_authoritative() -> None:
