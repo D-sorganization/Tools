@@ -4,6 +4,100 @@ Status verified 2026-08-07. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 PR #4280 variation-export propagation
+
+Draft #4280 remains based on `feat/4218-toolstrip-workspace` and now includes
+exact corrected parent `3f67ed466fefc8991db9c4409f921f25e1c37142`
+through the normal merge containing this handoff. No branch was rebased,
+retargeted, force-pushed, or published. The child retains complete selected
+scatter-axis CSV export parity, typed unavailable rows, PyQt accessible raw
+tables, and the focused table/scatter/matrix module split. SPEC 1.14.10 records
+that child source delta independently and monotonically above parent 1.14.9.
+
+Focused evidence is `46 passed` on Python 3.11 and `19 passed` on real CPython
+3.10.20 with PyQt6 present. React passes `1 file / 8 tests`, TypeScript, and
+focused zero-warning ESLint. Ruff check/format passes the five child Python
+files; pinned mypy 1.13 passes the four production modules. Documentation,
+ancestry/SPEC assertions, and diff checks pass locally. Protected CI, review,
+publication, and normal propagation to #4281 and later children remain open.
+
+## 2026-08-09 PR #4279 Python 3.10 compatibility completion
+
+Exact corrected #4203 parent
+`08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` is incorporated into #4279 by
+normal local merge `a340fabefa443d47325c5538f342683b38c01ade`; the stack base is
+unchanged and nothing was rebased, retargeted, force-pushed, or published.
+The two child-owned string-enum modules and child workspace UTC validator now
+use the existing shared Python 3.10 compatibility contract at runtime. Native
+enum typing remains explicit under `TYPE_CHECKING`, and wire IDs, schemas,
+timestamp serialization, physics, and UI behavior are unchanged.
+
+The reconciled test covers nine `StrEnum` runtime imports, both `UTC` runtime
+imports, and direct execution of all three child workspace modules. Python
+3.11 passes `126` focused tests. Real CPython 3.10.20 passes all `14`
+compatibility cases and imports 10 dotted Rate/shared targets. Ruff
+check/format and pinned mypy 1.13 pass all affected files; documentation
+governance and diff checks are required in the same commit. Protected CI,
+review, publication, and normal propagation to #4280 and later descendants
+remain outstanding.
+
+## 2026-08-09 PR #4279 parent propagation
+
+The #4279 continuation remains based on `feat/4181-launch-monitor-registry` and
+now contains exact parent head
+`08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` through a normal merge. Source
+changes applied cleanly; the overlapping handoff/specification histories were
+reconciled monotonically. The result retains the parent's Linux-safe facade
+and Python 3.10 compatibility contracts plus the child's workspace,
+top-toolstrip, module-navigation, playback, and independent plot controls. No
+branch was rebased, retargeted, force-pushed, or published by this continuation.
+
+Current focused evidence is `126 passed` for both facade modules and all
+Python/PyQt tests changed by #4279, plus `8 React files / 32 tests passed` for
+the matching workspace surfaces. Ruff check/format is clean across all 28
+relevant Python files. CI-pinned mypy 1.13 is clean across the 18 changed
+production files and both facade tests after making the child's
+`legend_visible()` Qt boundary return an explicit `bool`. Documentation
+governance, staged/unstaged diff checks, and the affected `29`-test simulation
+GUI rerun pass. Protected CI, review, and publication remain separate release
+requirements.
+
+## 2026-08-09 Python 3.10 compatibility follow-up
+
+The descendant Python 3.10 lane revealed seven unconditional
+`enum.StrEnum` imports already present at PR #4203. The earliest owning parent
+now routes runtime imports through `shared.python.compatibility.StrEnum` while
+using the stdlib type only under `TYPE_CHECKING`. The change preserves every
+enum value and schema while removing the Python 3.11-only import boundary.
+Local evidence is 64 focused contract/physics/compatibility tests, Ruff and
+format, pinned mypy 1.13 across eight changed files, and a real CPython 3.10.20
+probe of the shared fallback and seven module import declarations. Parent is
+published at exact head `ab7de5a47977417e02926c3fbc7476002e82b690`;
+propagate it through #4279, #4280, #4281, and #4282 before retrying descendants.
+
+The same scan found one parent-owned `datetime.UTC` import in the PyQt torque
+profile controller. It now consumes the established compatibility constant,
+preserving UTC serialization while allowing Python 3.10 collection. This
+follow-up belongs on #4203 before the child stack is propagated.
+
+## 2026-08-09 Launch-registry parent CI repair
+
+The earliest campaign parent, draft PR #4203, remains based on
+`feat/4189-dplane` at exact published head
+`912ebc9d69b05763a76c2c8f198d943737e2d3fb`. CI run `31199764932` passed its
+quality gate, then all Python versions failed before assertions because pytest
+collected the flight and solver contract modules through `src.shared...` while
+their absolute dotted facade aliases requested the editable `shared...`
+namespace. The scoped repair converts only those two test imports to relative
+package imports. Production APIs and physics are unchanged. The same run's
+Rust failure is the known runner inability to link `-lpython3.11`. Validate
+the two contract modules under importlib collection, publish a new exact head,
+and propagate it through #4279, #4280, #4281, and #4282 in normal order.
+Both modules now pass all `12` tests on Windows and WSL Python 3.11 with
+importlib collection. Ruff check/format and pinned mypy 1.13 are clean. A
+test-only `Any` cast keeps frozen-dataclass metadata introspection explicit
+without weakening the runtime contract.
+
 ## Integration checkout
 
 - Worktree: `C:\Users\diete\Repositories\Tools-worktrees\ballflight-campaign-integration`

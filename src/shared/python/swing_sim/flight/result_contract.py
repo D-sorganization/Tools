@@ -8,10 +8,14 @@ from __future__ import annotations
 
 import json
 from dataclasses import asdict, dataclass
-from enum import StrEnum
 from functools import lru_cache
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.parse import urlparse
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 SCHEMA_VERSION = "ball-flight-metrics/v1"
 FRAME_ID = "target_frame:x_downrange,y_up,z_right"

@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.4                                     |
-| **Spec Version**        | 1.14.4                                     |
-| **Last Spec Update**    | 2026-08-07                                 |
+| **Current Version**     | 1.14.10                                    |
+| **Spec Version**        | 1.14.10                                    |
+| **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
 
@@ -2872,6 +2872,12 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.14.10 | feat(variation, #4144 #4280): complete PyQt6/React selected-scatter CSV export parity with stable trial identity, typed outcome and explicit unavailable values; expose bounded accessible PyQt raw-row tables through one shared population helper; and split scalar scatter and distribution-matrix rendering into focused modules while preserving linked trial selection and all-trial arc analysis. |
+| 2026-08-09 | 1.14.9 | fix(compatibility, #4279): route the child command/view `StrEnum` runtime imports and workspace-validation `UTC` import through `shared.python.compatibility` while preserving native enum typing under `TYPE_CHECKING`, all wire values, schemas, UTC serialization, and UI behavior; merge the parent and child regression into one nine-enum/two-UTC runtime-import contract exercised with real CPython 3.10.20. |
+| 2026-08-09 | 1.14.8 | feat(rate_of_closure, #4218 #4279): add a UI-neutral File/View/Tools command registry, strict atomic workspace documents, matched PyQt6/React top toolstrips, persistent module visibility and order, direct Impact/Swing/Flight navigation, deterministic replay/loop/speed controls, and independent per-plot canvases with zoom, Auto Fit, and movable or hidden legends. Propagate exact launch-registry parent `08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` normally while retaining its Linux-safe facade and Python 3.10 compatibility contracts, and type the Qt legend-visibility boundary explicitly for the pinned changed-file mypy gate. |
+| 2026-08-09 | 1.14.7 | fix(compatibility, #4203): route the PyQt torque-profile controller's UTC constant through the shared Python 3.10 compatibility module, preserving UTC timestamp serialization and workspace behavior while removing the remaining parent-owned `datetime.UTC` collection boundary. |
+| 2026-08-09 | 1.14.6 | fix(compatibility, #4203): route seven Rate/shared swing string-enum runtime imports through the existing Python 3.10 compatibility contract while retaining native enum typing under `TYPE_CHECKING`; preserve all wire values, schemas, physics, and UI behavior, and add a source-level regression exercised with real CPython 3.10.20. |
+| 2026-08-09 | 1.14.5 | fix(ci, #4203): keep the in-package swing flight and solver facade-contract tests in pytest's active package namespace by using relative imports, preventing editable Linux collection from crossing between `src.shared...` and `shared...` before assertions while leaving production APIs and physics unchanged. |
 | 2026-08-07 | 1.14.4 | feat(rate_of_closure, #4206): add validated manual reference AoA/path, targetward forward shaft lean, and tracked-reference versus registered generated-hosel shaft datums in PyQt6 and React; rotate pose, angular-rate components, and delivered face normals consistently; persist schema-v5 `manual_delivery`; export the reference-contact/reference-impact model boundary; and pin the representative Pitching Wedge decomposition in both runtimes. |
 | 2026-08-07 | 1.14.3 | fix(variation, #4144): preserve trial identity when filtering finite landing coordinates so carry/lateral values from different incomplete trials cannot form fictitious points; use one paired-row contract for Python/TypeScript ellipse analysis, PyQt/React rendering, and exact plotted-count status. Clarify that the wedge kernel's 20 mm example is synthetic and separately pin the generated Pitching Wedge face-center/hosel cross-check and current UI-state limitations. |
 | 2026-08-06 | 1.14.2 | feat(rate_of_closure, #4192 #4234): complete the shared spatial-target workflows in PyQt6 and React with canonical cross-tab state, versioned JSON/CSV/manifest persistence, no-run 2D/3D rendering, continuous aerial passage, surface-projected landing assessment, field-linked validation, stale-solver protection, high-DPI canvases, responsive wrapped PyQt forms, collapsible engineering detail/layer controls, and movable or hideable legends; keep aerial requests fail-closed where solver/variation objectives remain ground-only. |
