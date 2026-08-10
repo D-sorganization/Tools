@@ -280,12 +280,18 @@ def test_comparison_table_and_exports_are_complete_and_deterministic() -> None:
         "event_count",
         "trajectory_sample_count",
     }
-    assert next(
-        row for row in rows if row.metric_id == "start_time_s"
-    ).delta == pytest.approx(0.2)
+    by_id = {row.metric_id: row for row in rows}
+    assert by_id["start_time_s"].delta == 0.2
+    assert by_id["end_time_s"].delta == 0.2
+    assert by_id["duration_s"].delta == 0.0
     assert session.provenance_rows[0].field == "Request ID"
     assert session.provenance_rows[0].primary == "surface-run-analytic"
     assert session.provenance_rows[0].comparison == "comparison-run"
+    assert len(session.provenance_rows) == 12
+    provenance = {row.field: row for row in session.provenance_rows}
+    assert provenance["Calibration kind"].primary == "literature"
+    assert provenance["Calibration source"].primary == "documented literature basis"
+    assert provenance["Calibration confidence"].primary == "0.6"
 
     encoded = ground_comparison_json(session)
     assert encoded == ground_comparison_json(session)
@@ -299,3 +305,11 @@ def test_comparison_table_and_exports_are_complete_and_deterministic() -> None:
     assert (
         "metric_id,label,unit,primary,comparison,comparison_minus_primary" in csv_text
     )
+    csv_rows = {
+        row[0]: row
+        for row in csv.reader(io.StringIO(csv_text))
+        if row[0] != "metric_id"
+    }
+    assert csv_rows["start_time_s"][5] == "0.2"
+    assert csv_rows["end_time_s"][5] == "0.2"
+    assert csv_rows["duration_s"][5] == "0"

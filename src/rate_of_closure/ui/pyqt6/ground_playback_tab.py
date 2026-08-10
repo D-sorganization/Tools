@@ -69,7 +69,7 @@ class GroundPlaybackTab(
         """Seek to a clamped absolute ground-result time."""
         if self._timeline is None:
             return
-        if self.comparison_is_shown:
+        if self.has_comparison:
             pair = self.comparison.frame_at(time_s)
             self.current_time_s = pair.time_s
             duration = self.comparison.duration_s

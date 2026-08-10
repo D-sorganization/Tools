@@ -2,6 +2,7 @@
 
 import { canonicalGroundJson } from "./flightGroundContract";
 import type { FlightToGroundResult, GroundSummary } from "./flightGroundTypes";
+import { canonicalNumber } from "./flightGroundValidation";
 import {
   GroundPlaybackTimeline,
   type GroundPlaybackFrame,
@@ -11,9 +12,7 @@ export const GROUND_PLAYBACK_COMPARISON_SCHEMA =
   "rate-of-closure-ground-playback-comparison/v1" as const;
 
 export type GroundComparisonState =
-  | "waiting for first contact"
-  | "active"
-  | `held at ${string}`;
+  "waiting for first contact" | "active" | `held at ${string}`;
 
 export interface GroundComparisonFrame {
   readonly timeS: number;
@@ -48,7 +47,9 @@ const scalarDefinitions = [
   ["final_downrange_m", "Final downrange", "m"],
   ["final_offline_m", "Final offline", "m"],
   ["bounce_count", "Bounce count", "count"],
-] as const satisfies ReadonlyArray<readonly [keyof GroundSummary, string, string]>;
+] as const satisfies ReadonlyArray<
+  readonly [keyof GroundSummary, string, string]
+>;
 
 const metric = (
   metricId: string,
@@ -56,18 +57,34 @@ const metric = (
   unit: string,
   primary: number,
   comparison: number,
-): GroundComparisonMetric => Object.freeze({
-  metricId, label, unit, primary, comparison, delta: comparison - primary,
-});
+): GroundComparisonMetric =>
+  Object.freeze({
+    metricId,
+    label,
+    unit,
+    primary,
+    comparison,
+    delta: canonicalNumber(
+      comparison - primary,
+      `${metricId} comparison delta`,
+    ),
+  });
 
 export class GroundPlaybackComparison {
   readonly primary: GroundPlaybackTimeline;
   readonly comparison: GroundPlaybackTimeline;
 
-  constructor(primary: GroundPlaybackTimeline, comparison: GroundPlaybackTimeline) {
-    if (!(primary instanceof GroundPlaybackTimeline)
-      || !(comparison instanceof GroundPlaybackTimeline)) {
-      throw new TypeError("comparison requires two GroundPlaybackTimeline values");
+  constructor(
+    primary: GroundPlaybackTimeline,
+    comparison: GroundPlaybackTimeline,
+  ) {
+    if (
+      !(primary instanceof GroundPlaybackTimeline) ||
+      !(comparison instanceof GroundPlaybackTimeline)
+    ) {
+      throw new TypeError(
+        "comparison requires two GroundPlaybackTimeline values",
+      );
     }
     if (primary.result.unit_system !== comparison.result.unit_system) {
       throw new RangeError("comparison requires matching unit systems");
@@ -87,10 +104,13 @@ export class GroundPlaybackComparison {
     return Math.max(this.primary.endTimeS, this.comparison.endTimeS);
   }
 
-  get durationS(): number { return this.endTimeS - this.startTimeS; }
+  get durationS(): number {
+    return this.endTimeS - this.startTimeS;
+  }
 
   frameAt(timeS: number): GroundComparisonFrame {
-    if (!Number.isFinite(timeS)) throw new RangeError("playback time must be finite");
+    if (!Number.isFinite(timeS))
+      throw new RangeError("playback time must be finite");
     return Object.freeze({
       timeS: Math.min(Math.max(timeS, this.startTimeS), this.endTimeS),
       primary: this.primary.frameAt(timeS),
@@ -101,36 +121,77 @@ export class GroundPlaybackComparison {
   }
 
   stepTime(currentTimeS: number, direction: -1 | 1): number {
-    if (!Number.isFinite(currentTimeS)) throw new RangeError("playback time must be finite");
-    const times = [...new Set([
-      ...this.primary.result.trajectory.map(({ time_s }) => time_s),
-      ...this.comparison.result.trajectory.map(({ time_s }) => time_s),
-    ])].sort((left, right) => left - right);
+    if (!Number.isFinite(currentTimeS))
+      throw new RangeError("playback time must be finite");
+    const times = [
+      ...new Set([
+        ...this.primary.result.trajectory.map(({ time_s }) => time_s),
+        ...this.comparison.result.trajectory.map(({ time_s }) => time_s),
+      ]),
+    ].sort((left, right) => left - right);
     if (direction === 1) {
       return times.find((time) => time > currentTimeS + 1e-12) ?? this.endTimeS;
     }
-    return [...times].reverse().find((time) => time < currentTimeS - 1e-12)
-      ?? this.startTimeS;
+    return (
+      [...times].reverse().find((time) => time < currentTimeS - 1e-12) ??
+      this.startTimeS
+    );
   }
 
-  private state(timeline: GroundPlaybackTimeline, timeS: number): GroundComparisonState {
+  private state(
+    timeline: GroundPlaybackTimeline,
+    timeS: number,
+  ): GroundComparisonState {
     if (timeS < timeline.startTimeS) return "waiting for first contact";
-    if (timeS > timeline.endTimeS) return `held at ${timeline.endLabel.toLowerCase()}`;
+    if (timeS > timeline.endTimeS)
+      return `held at ${timeline.endLabel.toLowerCase()}`;
     return "active";
   }
 
   get metricRows(): readonly GroundComparisonMetric[] {
     const left = this.primary.result.summary;
     const right = this.comparison.result.summary;
-    if (left === null || right === null) throw new Error("playable comparison requires summaries");
+    if (left === null || right === null)
+      throw new Error("playable comparison requires summaries");
     const rows = scalarDefinitions.map(([id, label, unit]) =>
-      metric(id, label, unit, left[id], right[id]));
+      metric(id, label, unit, left[id], right[id]),
+    );
     rows.push(
-      metric("start_time_s", "First contact time", "s", this.primary.startTimeS, this.comparison.startTimeS),
-      metric("end_time_s", "Observed end time", "s", this.primary.endTimeS, this.comparison.endTimeS),
-      metric("duration_s", "Observed duration", "s", this.primary.durationS, this.comparison.durationS),
-      metric("event_count", "Event count", "count", this.primary.result.events.length, this.comparison.result.events.length),
-      metric("trajectory_sample_count", "Trajectory samples", "count", this.primary.result.trajectory.length, this.comparison.result.trajectory.length),
+      metric(
+        "start_time_s",
+        "First contact time",
+        "s",
+        this.primary.startTimeS,
+        this.comparison.startTimeS,
+      ),
+      metric(
+        "end_time_s",
+        "Observed end time",
+        "s",
+        this.primary.endTimeS,
+        this.comparison.endTimeS,
+      ),
+      metric(
+        "duration_s",
+        "Observed duration",
+        "s",
+        this.primary.durationS,
+        this.comparison.durationS,
+      ),
+      metric(
+        "event_count",
+        "Event count",
+        "count",
+        this.primary.result.events.length,
+        this.comparison.result.events.length,
+      ),
+      metric(
+        "trajectory_sample_count",
+        "Trajectory samples",
+        "count",
+        this.primary.result.trajectory.length,
+        this.comparison.result.trajectory.length,
+      ),
     );
     return Object.freeze(rows);
   }
@@ -142,22 +203,50 @@ export class GroundPlaybackComparison {
       ["Request ID", left.request_id, right.request_id],
       ["Status", left.status, right.status],
       ["Surface ID", left.surface_id, right.surface_id],
-      ["Model", `${left.model_id} ${left.model_version}`, `${right.model_id} ${right.model_version}`],
+      [
+        "Model",
+        `${left.model_id} ${left.model_version}`,
+        `${right.model_id} ${right.model_version}`,
+      ],
       ["Termination", left.termination.reason, right.termination.reason],
       ["Producer", producer(left), producer(right)],
-      ["Source revision", left.provenance.source_revision, right.provenance.source_revision],
-      ["Input SHA-256", left.provenance.input_sha256, right.provenance.input_sha256],
-      ["Calibration ID", left.calibration.calibration_id, right.calibration.calibration_id],
+      [
+        "Source revision",
+        left.provenance.source_revision,
+        right.provenance.source_revision,
+      ],
+      [
+        "Input SHA-256",
+        left.provenance.input_sha256,
+        right.provenance.input_sha256,
+      ],
+      [
+        "Calibration ID",
+        left.calibration.calibration_id,
+        right.calibration.calibration_id,
+      ],
+      ["Calibration kind", left.calibration.kind, right.calibration.kind],
+      ["Calibration source", left.calibration.source, right.calibration.source],
+      [
+        "Calibration confidence",
+        canonicalGroundJson(left.calibration.confidence),
+        canonicalGroundJson(right.calibration.confidence),
+      ],
     ];
-    return Object.freeze(rows.map(([field, primary, comparison]) =>
-      Object.freeze({ field, primary, comparison })));
+    return Object.freeze(
+      rows.map(([field, primary, comparison]) =>
+        Object.freeze({ field, primary, comparison }),
+      ),
+    );
   }
 }
 
 const producer = (result: FlightToGroundResult): string =>
   `${result.provenance.producer} ${result.provenance.producer_version}`;
 
-export const groundComparisonJson = (comparison: GroundPlaybackComparison): string =>
+export const groundComparisonJson = (
+  comparison: GroundPlaybackComparison,
+): string =>
   canonicalGroundJson({
     schema_version: GROUND_PLAYBACK_COMPARISON_SCHEMA,
     delta_definition: "comparison_minus_primary",
@@ -173,15 +262,28 @@ export const groundComparisonJson = (comparison: GroundPlaybackComparison): stri
     })),
   });
 
-const csvCell = (value: string): string => /[",\n\r]/.test(value)
-  ? `"${value.replace(/"/g, '""')}"` : value;
+const csvCell = (value: string): string =>
+  /[",\n\r]/.test(value) ? `"${value.replace(/"/g, '""')}"` : value;
 
-export const groundComparisonCsv = (comparison: GroundPlaybackComparison): string => {
+export const groundComparisonCsv = (
+  comparison: GroundPlaybackComparison,
+): string => {
   const rows = [
-    ["metric_id", "label", "unit", "primary", "comparison", "comparison_minus_primary"],
+    [
+      "metric_id",
+      "label",
+      "unit",
+      "primary",
+      "comparison",
+      "comparison_minus_primary",
+    ],
     ...comparison.metricRows.map((row) => [
-      row.metricId, row.label, row.unit, canonicalGroundJson(row.primary),
-      canonicalGroundJson(row.comparison), canonicalGroundJson(row.delta),
+      row.metricId,
+      row.label,
+      row.unit,
+      canonicalGroundJson(row.primary),
+      canonicalGroundJson(row.comparison),
+      canonicalGroundJson(row.delta),
     ]),
   ];
   return rows.map((row) => row.map(csvCell).join(",")).join("\n") + "\n";

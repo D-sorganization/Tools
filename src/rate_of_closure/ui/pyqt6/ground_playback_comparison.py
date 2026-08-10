@@ -60,7 +60,7 @@ class GroundPlaybackComparisonMixin:
     def _start_time_s(self) -> float:
         return float(
             self.comparison.start_time_s
-            if self.comparison_is_shown
+            if self.has_comparison
             else self._require_primary.start_time_s
         )
 
@@ -68,7 +68,7 @@ class GroundPlaybackComparisonMixin:
     def _end_time_s(self) -> float:
         return float(
             self.comparison.end_time_s
-            if self.comparison_is_shown
+            if self.has_comparison
             else self._require_primary.end_time_s
         )
 
@@ -83,7 +83,7 @@ class GroundPlaybackComparisonMixin:
         return self._timeline
 
     def _step_time(self, time_s: float, direction: int) -> float:
-        if self.comparison_is_shown:
+        if self.has_comparison:
             return float(self.comparison.step_time(time_s, direction))
         return float(self._require_primary.step_time(time_s, direction))
 
@@ -252,8 +252,6 @@ class GroundPlaybackComparisonMixin:
 
     def _toggle_comparison(self, shown: bool) -> None:
         self.view.set_comparison_visible(shown and self.has_comparison)
-        if self._timeline is not None:
-            self.set_time(self.current_time_s)
 
     def _choose_comparison_file(self) -> None:
         path, _filter = QFileDialog.getOpenFileName(
@@ -269,9 +267,13 @@ class GroundPlaybackComparisonMixin:
                 file_path.read_text(encoding="utf-8"), source_name=file_path.name
             )
         except (OSError, UnicodeError, RuntimeError, TypeError, ValueError) as exc:
-            self.comparison_status_label.setText(
-                f"Could not import {Path(path).name}: {exc}"
+            retained = (
+                " Last valid comparison remains loaded." if self.has_comparison else ""
             )
+            self.comparison_status_label.setText(
+                f"Could not import {Path(path).name}: {exc}.{retained}"
+            )
+            self.comparison_status_label.setProperty("state", "error")
 
     def _save_comparison(self, name: str, producer: Callable[[], str]) -> None:
         path, _filter = QFileDialog.getSaveFileName(

@@ -3,6 +3,34 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 issue #4274 comparison-session review repair
+
+Independent review of the normally propagated comparison continuation found
+four release-blocking contract defects. The repaired PyQt6/React behavior now
+keeps the union absolute-time session loaded when comparison artists are
+hidden, so visibility no longer changes scrubber limits, stepping, or the
+current observation. PyQt workspace v1 remains intentionally primary-only:
+export clamps only the serialized time to the primary timeline and does not
+mutate the live comparison time. File-dialog failures explicitly disclose when
+the last valid comparison remains loaded.
+
+Direct comparison deltas are normalized once through the shared eleven-decimal
+cross-runtime numeric policy. Python JSON, CSV, tables, and React exports
+therefore agree on canonical values such as `0.2` and `0`, without binary
+floating-point noise. Paired calibration evidence now includes ID, kind,
+source, and canonical confidence on both clients (twelve total identity,
+status, provenance, and calibration rows).
+
+Regression-first evidence is green: 22 focused Python/PyQt tests, the complete
+Rate suite (898 tests), 12 focused React tests, and the complete React suite
+(110 files / 683 tests) cover canonical deltas/CSV, comparison-only workspace export,
+visibility-only overlay toggling, complete calibration evidence, and retained
+file-error disclosure. Ruff check/format, pinned MyPy 1.13, TypeScript,
+zero-warning ESLint, and the 200-module production build pass. SPEC 1.14.41
+records the review repair. Fresh complete suites, independent exact-head
+re-review, guarded publication, protected CI, approval, parent landing, issue
+acceptance, and epic closure remain open. Keep #4274 and #4267 open.
+
 ## 2026-08-10 issue #4274 matched comparison playback
 
 The local continuation on `feat/4274-ground-playback-comparison` adds matched
@@ -26,8 +54,8 @@ and the table; deterministic CSV exports the same direct
 physics claim is made.
 
 Focused evidence passes 22 Python/PyQt contract, GUI, and tooltip tests; the
-complete Rate suite passes 896 tests. React passes 17 focused tests and the
-complete suite (110 files / 682 tests), TypeScript, zero-warning ESLint, and a
+complete Rate suite passes 898 tests. React passes 17 focused tests and the
+complete suite (110 files / 683 tests), TypeScript, zero-warning ESLint, and a
 200-module production build. Ruff check/format, MyPy, CPython 3.10 compilation,
 module/changed-file budgets, documentation, minimum-test, assertion, secrets,
 marker, and diff gates pass. A normal two-parent merge now has original

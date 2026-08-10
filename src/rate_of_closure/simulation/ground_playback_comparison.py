@@ -7,7 +7,10 @@ import csv
 import io
 from dataclasses import dataclass
 
-from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
+from shared.python.swing_sim.canonical_numeric_json import (
+    canonical_numeric_float,
+    canonical_numeric_json,
+)
 
 from .ground_playback import GroundPlaybackFrame, GroundPlaybackTimeline
 
@@ -37,7 +40,10 @@ class GroundComparisonMetric:
 
     @property
     def delta(self) -> float:
-        return self.comparison - self.primary
+        normalized_delta: float = canonical_numeric_float(
+            self.comparison - self.primary
+        )
+        return normalized_delta
 
 
 @dataclass(frozen=True)
@@ -231,6 +237,21 @@ class GroundPlaybackComparison:
                 left.calibration.calibration_id,
                 right.calibration.calibration_id,
             ),
+            (
+                "Calibration kind",
+                left.calibration.kind.value,
+                right.calibration.kind.value,
+            ),
+            (
+                "Calibration source",
+                left.calibration.source,
+                right.calibration.source,
+            ),
+            (
+                "Calibration confidence",
+                canonical_numeric_json(left.calibration.confidence),
+                canonical_numeric_json(right.calibration.confidence),
+            ),
         )
         return tuple(GroundComparisonProvenance(*value) for value in values)
 
@@ -280,7 +301,14 @@ def ground_comparison_csv(comparison: GroundPlaybackComparison) -> str:
     )
     for row in comparison.metric_rows:
         writer.writerow(
-            (row.metric_id, row.label, row.unit, row.primary, row.comparison, row.delta)
+            (
+                row.metric_id,
+                row.label,
+                row.unit,
+                canonical_numeric_json(row.primary),
+                canonical_numeric_json(row.comparison),
+                canonical_numeric_json(row.delta),
+            )
         )
     return output.getvalue()
 

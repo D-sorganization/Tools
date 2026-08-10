@@ -119,10 +119,11 @@ class GroundPlaybackPersistenceMixin:
         """Pause and serialize the exact result plus portable UI state."""
         self.pause()
         view = self.view.workspace_view()
+        persisted_time_s = self.timeline.frame_at(self.current_time_s).time_s
         workspace = GroundPlaybackWorkspace(
             result=self.timeline.result,
             playback=GroundPlaybackState(
-                self.current_time_s,
+                persisted_time_s,
                 _SPEEDS[self.speed_combo.currentIndex()],
                 self.loop_checkbox.isChecked(),
             ),

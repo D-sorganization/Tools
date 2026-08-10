@@ -13,6 +13,9 @@ pytest.importorskip("pytestqt")
 from PyQt6.QtCore import QSettings  # noqa: E402
 from PyQt6.QtTest import QTest  # noqa: E402
 
+from rate_of_closure.ui.pyqt6 import (
+    ground_playback_comparison as comparison_ui,  # noqa: E402
+)
 from rate_of_closure.ui.pyqt6.ground_playback_tab import GroundPlaybackTab  # noqa: E402
 from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow  # noqa: E402
 
@@ -111,7 +114,7 @@ def test_comparison_import_is_atomic_accessible_and_toggleable(qtbot) -> None:  
         tab.comparison_provenance_table.accessibleName()
         == "Ground comparison identity status and provenance"
     )
-    assert tab.comparison_provenance_table.rowCount() == 9
+    assert tab.comparison_provenance_table.rowCount() == 12
     assert tab.comparison_provenance_table.item(0, 1).text() == "surface-run-analytic"
     assert tab.comparison_provenance_table.item(0, 2).text() == "comparison-run"
     assert "comparison.json" in tab.comparison_status_label.text()
@@ -153,6 +156,57 @@ def test_comparison_playback_uses_union_absolute_time_and_honest_hold(qtbot) -> 
     assert "primary held at rest" in tab.time_label.text().lower()
     assert "comparison active" in tab.time_label.text().lower()
     assert tab._end_time_s == pytest.approx(tab.comparison.comparison.end_time_s)
+
+
+def test_comparison_visibility_preserves_union_time_and_workspace_clamps_primary(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+    tab.import_json_text(_result_text())
+    tab.import_comparison_json_text(_comparison_text(time_offset_s=0.2))
+    comparison_end = tab.comparison.end_time_s
+    target = tab.timeline.end_time_s + 0.1
+    tab.set_time(target)
+
+    tab.show_comparison_checkbox.setChecked(False)
+
+    assert tab.current_time_s == pytest.approx(target)
+    assert tab._end_time_s == pytest.approx(comparison_end)
+    assert not tab.view.comparison_visible
+    workspace = json.loads(tab.workspace_json())
+    assert workspace["playback"]["time_s"] == pytest.approx(tab.timeline.end_time_s)
+    assert tab.current_time_s == pytest.approx(target)
+    hidden_seek = target + 0.01
+    tab.set_time(hidden_seek)
+    assert tab.current_time_s == pytest.approx(hidden_seek)
+    assert "comparison active" in tab.time_label.text().lower()
+
+    tab.show_comparison_checkbox.setChecked(True)
+    assert tab.current_time_s == pytest.approx(hidden_seek)
+    assert tab._end_time_s == pytest.approx(comparison_end)
+    assert tab.view.comparison_visible
+
+
+def test_comparison_file_error_discloses_retained_last_good_result(
+    qtbot, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+    tab.import_json_text(_result_text())
+    tab.import_comparison_json_text(_comparison_text(), source_name="good.json")
+    invalid = tmp_path / "bad.json"
+    invalid.write_text('{"schema_version":"wrong"}', encoding="utf-8")
+    monkeypatch.setattr(
+        comparison_ui.QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(invalid), "JSON files (*.json)"),
+    )
+
+    tab._choose_comparison_file()
+
+    assert tab.has_comparison
+    assert "Last valid comparison remains loaded" in tab.comparison_status_label.text()
 
 
 def test_workspace_import_restores_playback_and_view_atomically(qtbot) -> None:  # type: ignore[no-untyped-def]

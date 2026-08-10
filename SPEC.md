@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.40                                    |
-| **Spec Version**        | 1.14.40                                    |
+| **Current Version**     | 1.14.41                                    |
+| **Spec Version**        | 1.14.41                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -48,6 +48,17 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-08-10 Matched ground-result comparison playback
 
+- Comparison overlay visibility changes only artists and the corresponding
+  legend; the loaded paired session continues to own the union time window,
+  exact stepping, and explicit waiting/held states.
+- Primary-only workspace v1 export clamps the serialized playback time to the
+  primary result without mutating comparison-only live playback state.
+- All direct deltas and CSV numeric tokens use the shared canonical
+  eleven-decimal cross-runtime policy. The paired evidence table includes
+  calibration ID, kind, source, and confidence in addition to identity,
+  status, and provenance.
+- Failed file-dialog imports explicitly report that the last valid comparison
+  remains loaded.
 - PyQt6 and React can atomically import one second strict
   `flight-to-ground-result/v1` without replacing the current primary or prior
   valid comparison when validation fails. A successful primary replacement
@@ -3104,6 +3115,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.41 | fix(ground-playback, #4274): preserve the loaded union-time comparison session when its artists are hidden, primary-clamp only the serialized workspace-v1 time, canonicalize direct deltas and Python CSV numeric tokens under the shared eleven-decimal policy, disclose calibration kind/source/confidence, and retain explicit last-good comparison messaging after file-dialog errors; add matched PyQt6/React regressions while complete suites, re-review, publication, protected CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.40 | merge(ground-playback, #4274 #4316): normally propagate exact current persistence/export parent `2c56294ecda0204886508946239c7ca5b50b8b14` into the matched comparison continuation without changing its base; preserve strict atomic comparison import, union-time phase-safe overlays, direct deltas, paired provenance, deterministic exports, and explicit remaining boundaries; reconcile pinned MyPy 1.13 skipped-import inference through runtime-neutral typed bindings and distinct row variables while protected publication, review, CI, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.39 | feat(rate-of-closure, #4274): add matched PyQt6/React atomic comparison-result import, synchronized absolute-time playback with explicitly waiting/held observation states, locked-scale solid/dashed trajectories and distinct events, accessible visibility/provenance/status/direct-delta tables, and deterministic exact-result JSON plus scalar CSV export; preserve primary-only workspace v1 and explicit remaining release boundaries. |
 | 2026-08-10 | 1.14.38 | fix(ground-playback, #4274 #4316): replace four runtime-no-op `str` casts with explicit typed local bindings after exact-head CI's pinned MyPy 1.13 delta gate correctly reported the casts as redundant; this preserves exact serializer contracts across differing import-following environments without runtime coercion, while bytes, UI behavior, and scientific scope remain unchanged. |
