@@ -1424,3 +1424,21 @@ contract, eligibility rule, or import boundary changed. Keep this repair on
 PR #4306, preserve its base at exact #4305 head
 `a35fc8aac0cbc2aeeef757fd1d1c518987f2355c`, and require ordinary protected
 checks and review before merge. Issue #4273 and epic #4267 remain open.
+
+## 2026-08-10 PR #4307 parent propagation and formatter repair
+
+PR #4307 normally merges exact parent #4306 head
+`1e1b576c36cc01e27542dd88747f54f918ff16bf` through merge commit
+`6f4009e8e3a1b3cf226b84e761d6d60a9f450d7d`; no rebase, retarget, parent
+rewrite, or force-push occurred. Hosted `quality-gate` run `31365680155`
+identified one additional Ruff 0.14.10 formatting residual in
+`ground/tests/test_study_result_adapter.py`. The helper signature is now in
+the pinned canonical form with no behavioral or contract change.
+
+Local repair evidence is 198 ground tests, 26 focused flight API/result/
+transfer tests plus clean flight-first and ground-first import smoke checks,
+and a 53-test adapter/compatibility/API superset. Ruff 0.14.10 check/format,
+Black 26.1.0, MyPy 1.13 for the two changed production modules, the campaign
+manifest and its eight contract tests, documentation governance, changed-file
+size, and `git diff --check` all pass. Require fresh ordinary protected CI and
+review at the pushed exact head; keep #4273 and #4267 open.

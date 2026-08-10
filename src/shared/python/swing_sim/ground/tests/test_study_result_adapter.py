@@ -17,9 +17,7 @@ from ._support import _result
 from .test_study_projection import _bound_surface, _qualified_request, _target
 
 
-def _qualified_study(
-    *, target: SpatialTarget | None = None
-) -> GroundStudyProjection:
+def _qualified_study(*, target: SpatialTarget | None = None) -> GroundStudyProjection:
     return project_ground_study(
         _qualified_request(),
         _result(),
