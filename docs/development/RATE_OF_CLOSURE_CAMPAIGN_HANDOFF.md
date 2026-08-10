@@ -4,6 +4,55 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 issue #4275 tilted-plane conformance and passivity
+
+Branch `feat/4275-ground-tilted-conformance` begins at exact ready PR #4321
+head `7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e`; preserve base
+`feat/4275-ground-conformance-corpus`. It extends the single shared corpus from
+five horizontal cases to six cases with one analytically tractable incline:
+`n=[0,sqrt(0.99),0.1]`, initial pure roll, zero rolling resistance, and a
+four-second gravity-driven suffix. Whitelisted checks add the center-to-plane
+constraint and pin exact event/status semantics, no-slip capture, path, and
+terminal position/velocity/spin for Python, native Rust, PyO3, and WASM.
+
+The initial RED run exposed a real fail-closed false positive. Reconstructing
+mechanical energy only from repeatedly quantized endpoints produced about
+`3.2e-9 J` of apparent creation on an otherwise analytic passive trajectory.
+The repair does not widen a global tolerance. Each Python and Rust integration
+segment now evaluates and rejects its physical gravity/contact/kinetic balance
+before the canonical 11-decimal endpoint snap, preventing prior dissipation
+from masking a later defect. Canonical snaps have accumulated fixed-component
+error bounds, rolling projection is slip-bounded, and an endpoint outside that
+budget fails. The reproducible public endpoint ledger is unchanged. Masking
+and unexplained-endpoint regressions now pass in both languages. Final local
+GREEN passes 238 Python ground tests; 191/206/203 default/Python/WASM Rust
+tests; 19 focused Python conformance/passivity tests; four native corpus tests
+over all six cases; a fresh installed CPython 3.13 PyO3 wheel; and rebuilt
+Node/WASM. Strict lint, type, format, policy, and documentation gates pass, and
+independent adversarial review is `READY`.
+
+The broader runtime matrix then exposed a separate resistance-cusp defect on a
+translating incline. A frozen resistance direction could cross through zero
+relative speed and create energy. Python and Rust now bound non-collinear
+closing roll steps; when resistance can balance slope drive, zero relative
+speed is held while the plane carries the ball. This does not emit an absolute
+rest event, and contact-force work remains explicit. A sub-tolerance residual
+is projected to exact co-motion through the existing bounded slip, velocity,
+spin, and energy checks before the hold. Dedicated Python and Rust tilted/
+moving regressions cover the repair. The independent slip tolerance gates
+pre-projection contact slip; the velocity tolerance and its radius-scaled
+angular equivalent gate the holding correction. A stationary projected stop
+returns `REST` in the same solver step, with one zero-motion interval used only
+at the handoff boundary to satisfy the strict increasing-time wire contract.
+
+Before publication, bind that local evidence to the exact implementation SHA
+and corpus digest in a follow-up evidence commit, then publish the stacked PR
+and await ordinary protected CI/review. This is still `partial_implementation`;
+#4275/#4267 remain open for mirrored and
+randomized tilted frames, broader properties, performance, calibration,
+terrain/material evolution, deformation, interfaces, visualization, and
+downstream release.
+
 ## 2026-08-10 issue #4275 scientific conformance corpus
 
 Branch `feat/4275-ground-conformance-corpus` is a normal child of exact ready

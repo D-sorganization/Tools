@@ -131,6 +131,26 @@ def _assert_rolling_constraint(
     assert math.sqrt(_dot(tangent, tangent)) <= check["absolute_tolerance"]
 
 
+def _assert_contact_plane_constraint(
+    result: dict[str, Any], request: dict[str, Any], check: dict[str, Any]
+) -> None:
+    surface = request["surface"]
+    normal = surface["normal_unit"]
+    origin = [0.0, float(surface["height_m"]), 0.0]
+    radius = float(request["ball_radius_m"])
+    tolerance = float(check["absolute_tolerance_m"])
+    for point in result["trajectory"]:
+        if point["phase"] == "bounce":
+            continue
+        offset = [
+            float(point["position_m"][index]) - origin[index] for index in range(3)
+        ]
+        error = abs(_dot(offset, normal) - radius)
+        assert error <= tolerance, (
+            f"contact point leaves the declared plane: error={error}"
+        )
+
+
 def _impact_energy(
     event: dict[str, Any], request: dict[str, Any], suffix: str
 ) -> float:
@@ -172,6 +192,8 @@ def _assert_check(
         _assert_close(after / -before, check["expected"], check)
     elif kind == "rolling_constraint":
         _assert_rolling_constraint(result, request, check)
+    elif kind == "contact_plane_constraint":
+        _assert_contact_plane_constraint(result, request, check)
     elif kind == "impact_energy_nonincrease":
         event = result["events"][check["event_index"]]
         assert _impact_energy(event, request, "after") <= (

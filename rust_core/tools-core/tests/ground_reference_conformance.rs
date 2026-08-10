@@ -231,6 +231,22 @@ fn assert_rolling_constraint(result: &Value, request: &Value, check: &Value) {
     assert!(slip <= check["absolute_tolerance"].as_f64().unwrap());
 }
 
+fn assert_contact_plane(result: &Value, request: &Value, check: &Value) {
+    let normal = vector(&request["surface"]["normal_unit"]);
+    let origin = [0.0, request["surface"]["height_m"].as_f64().unwrap(), 0.0];
+    let radius = request["ball_radius_m"].as_f64().unwrap();
+    let tolerance = check["absolute_tolerance_m"].as_f64().unwrap();
+    for point in result["trajectory"].as_array().unwrap() {
+        if point["phase"] == "bounce" {
+            continue;
+        }
+        let offset =
+            std::array::from_fn(|index| vector(&point["position_m"])[index] - origin[index]);
+        let error = (dot(offset, normal) - radius).abs();
+        assert!(error <= tolerance, "contact point leaves plane: {error}");
+    }
+}
+
 fn kinetic_energy(event: &Value, request: &Value, after: bool) -> f64 {
     let suffix = if after { "after" } else { "before" };
     let velocity = vector(&event[format!("velocity_{suffix}_m_s")]);
@@ -308,6 +324,7 @@ fn assert_check(result: &Value, request: &Value, check: &Value) {
         "event_types_equal" => assert_event_types(result, check),
         "restitution_ratio" => assert_restitution(result, request, check),
         "rolling_constraint" => assert_rolling_constraint(result, request, check),
+        "contact_plane_constraint" => assert_contact_plane(result, request, check),
         "impact_energy_nonincrease" => assert_impact_energy(result, request, check),
         kind => panic!("unsupported conformance check: {kind}"),
     }

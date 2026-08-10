@@ -3,6 +3,47 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 issue #4275 tilted-plane conformance and passivity
+
+`feat/4275-ground-tilted-conformance` is an exact child of ready PR #4321
+head `7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e` and is intended to target
+`feat/4275-ground-conformance-corpus`. The shared corpus gains a sixth case on
+the inclined plane `n=[0,sqrt(0.99),0.1]`: exact pure roll, zero rolling
+resistance, and four seconds of gravity-driven acceleration. Analytic checks
+cover event/status semantics, no-slip capture, plane contact, path, terminal
+position, velocity, and spin across Python, native Rust, installed PyO3, and
+rebuilt WASM consumers.
+
+RED exposed a production numerical defect: long passive inclined runs could
+be rejected because the old final-endpoint guard counted repeated canonical
+11-decimal state quantization as physical energy creation. Both Python and
+Rust now reject each energy-creating unquantized segment independently and
+retain canonical endpoints for the public ledger and result wire. Accumulated
+quantization allowance is derived from fixed component-error bounds; rolling
+projection is separately slip-bounded. Dedicated masking and unexplained-
+endpoint regressions retain fail-closed behavior. Final local GREEN evidence is
+238 Python ground tests; 191/206/203 default/Python/WASM Rust tests; 19 focused
+Python conformance/passivity tests; four native corpus tests consuming all six
+cases; a clean installed CPython 3.13 PyO3 wheel; a rebuilt Node/WASM harness;
+and strict lint/type/format/policy/documentation gates. Independent adversarial
+review is `READY`. Exact commit/digest, publication, and protected checks remain
+for the evidence follow-up.
+
+A complete-runtime regression additionally found that frozen rolling
+resistance could cross the zero-relative-speed cusp on a translating incline.
+Closing roll steps are now bounded, and a resistance-dominated zero-relative
+state is carried by the moving plane without inventing an absolute rest event.
+Sub-tolerance residual motion is projected to exact co-motion through the same
+bounded slip/velocity/spin/energy contract before holding. Python and Rust
+moving-incline regressions pin this passive hold behavior. Slip and correction
+tolerances remain independent, and a stationary projection reports `REST` in
+the same solver step. A zero-duration handoff advances one zero-motion interval
+before that event to preserve the strict increasing-time result contract.
+
+Keep #4275/#4267 open for opposite-orientation and randomized invariance,
+properties, calibration, performance, terrain/material evolution, interfaces,
+visualization, and downstream integration.
+
 ## 2026-08-10 issue #4275 scientific conformance corpus
 
 `feat/4275-ground-conformance-corpus` begins at exact ready PR #4320 head

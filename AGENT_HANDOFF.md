@@ -3,6 +3,52 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 issue #4275 tilted-plane conformance and passivity
+
+Branch `feat/4275-ground-tilted-conformance` starts exactly at ready PR #4321
+head `7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e` and must retain base
+`feat/4275-ground-conformance-corpus`. This bounded continuation adds a sixth
+shared conformance case: an immutable plane with
+`n=[0,sqrt(0.99),0.1]`, exact initial pure roll, zero rolling resistance, and
+a four-second downhill horizon. Independent constant-acceleration oracles pin
+the time-limit outcome, path, terminal center velocity and spin, exact no-slip
+capture, and the ball-center plane constraint in Python, native Rust, PyO3,
+and WASM.
+
+The new case first failed in both production paths because the passivity guard
+compared only canonical 11-decimal endpoints across hundreds of state snaps.
+Python and Rust now reject any unquantized constant-motion segment that creates
+energy, so an earlier legitimate loss cannot mask a later defect. Canonical
+endpoint and no-slip projection effects are admitted only inside accumulated
+11-decimal component bounds and explicit slip bounds; unexplained endpoint
+creation still fails. The public ledger and wire result retain deterministic
+canonical endpoints. Final local GREEN evidence passes 238 Python ground tests;
+191/206/203 default/Python/WASM Rust tests; 19 focused Python conformance and
+passivity tests; the four-test native corpus harness over all six fixture cases;
+a fresh installed CPython 3.13 PyO3 wheel; and a rebuilt Node/WASM harness.
+Strict lint, type, format, policy, and documentation gates pass. Independent
+adversarial review is `READY`. The exact implementation SHA/digest, PR, and
+protected CI must be recorded in a follow-up evidence commit before publication.
+
+Full-matrix testing also exposed a resistance-cusp defect on a translating
+incline: a frozen rolling-resistance direction could step through zero relative
+speed and create energy. Both runtimes now bound any non-collinear closing roll
+step and hold zero relative speed when resistance can balance slope drive. The
+hold preserves surface-carried translation, axial spin, and explicit surface
+work instead of fabricating an absolute rest event. A sub-tolerance residual is
+first projected to exact co-motion through the same slip, velocity, spin, and
+energy bounds; it cannot survive the hold branch as hidden uphill motion.
+Contact slip remains governed independently by `slip_tolerance_m_s`, while the
+holding center/spin correction uses `velocity_tolerance_m_s` and its radius-
+scaled angular equivalent. A stationary exact hold emits `REST` in the same
+solver step; at the zero-duration handoff it first advances one zero-motion
+interval so the strict increasing-time result wire remains representable.
+
+This slice does not complete #4275 or #4267. The opposite tilted orientation,
+randomized frame/property sweeps, calibration/uncertainty, performance and
+memory qualification, changing terrain/materials, deformation, torsional
+damping, roll-to-skid, UI/3D rendering, and downstream consumers remain open.
+
 ## 2026-08-10 issue #4275 scientific conformance corpus
 
 Branch `feat/4275-ground-conformance-corpus` starts exactly at ready PR #4320

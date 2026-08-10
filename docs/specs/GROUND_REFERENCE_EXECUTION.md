@@ -70,6 +70,32 @@ modules. The compiled runtime owns separate Rust phase implementations for its
 narrower domain; exact golden bytes, seeded Python parity, native tilted-plane
 invariants, and real PyO3/WASM tests constrain that implementation.
 
+Surface passivity is enforced independently on the physical mechanical balance
+of every unquantized constant-motion segment. Earlier legitimate dissipation
+therefore cannot mask a later energy-creating segment. The canonical
+11-decimal endpoint remains the deterministic state used by the next segment
+and the public result, but its exclusion from physical work is bounded by an
+accumulated fixed-component quantization budget. No-slip projection is admitted
+only while contact slip and the resulting velocity/spin corrections remain
+inside their versioned thresholds. A final endpoint outside the accumulated
+budget fails closed. Adversarial Python and Rust tests cover masking, unforced
+acceleration, and unexplained endpoint energy.
+
+Rolling resistance uses a bounded closing step when its frozen direction would
+cross zero relative speed. If the versioned resistance magnitude can balance
+the slope drive, a zero-relative-speed state is held and may continue to move
+with a translating surface. This state is not mislabeled as absolute rest;
+the balancing contact force remains in the work ledger. Any residual already
+inside the velocity tolerance is projected to exact surface co-motion through
+the same slip, velocity, spin, and energy bounds before holding.
+The contact-slip gate continues to use `slip_tolerance_m_s`; the center and
+transverse-spin correction gates use the independent `velocity_tolerance_m_s`
+and `velocity_tolerance_m_s / radius`. If that projection creates a stationary
+rest state, the solver terminates as `rest` in the same step. At the exact
+surface handoff time it advances one zero-motion interval before emitting the
+rest point because the public trajectory contract requires strictly increasing
+timestamps.
+
 ## Compiled resource and cancellation contract
 
 The synchronous compiled boundary applies independent, fail-closed budgets
@@ -145,10 +171,11 @@ specific course.
 
 `ground_reference_conformance_v1.json` is the separate scientific evidence
 boundary. It references the canonical request template, replaces only declared
-existing leaves, and defines five independently derived horizontal-plane cases:
-shallow bounce/capture, flat skid-to-roll, pure roll along +x, the proper active
--90-degree rotation about +y into +z, and pure roll relative to a translating
-plane.
+existing leaves, and defines six independently derived cases: shallow
+bounce/capture, flat skid-to-roll, pure roll along +x, the proper active
+-90-degree rotation about +y into +z, pure roll relative to a translating
+plane, and zero-resistance pure roll on the immutable incline
+`n=[0,sqrt(0.99),0.1]`.
 
 Each case declares its scientific basis, applicable runtimes, observable,
 unit, and applicable bounded tolerance. Whitelisted checks cover exact event
@@ -159,18 +186,23 @@ installed PyO3 wheel, and rebuilt Node/WASM package all consume this same
 artifact. A runtime agreeing with another runtime is insufficient: each must
 also satisfy the declared analytic oracle.
 
-The reviewed v1 artifact is bound to implementation commit
+The incline additionally requires every non-bounce center to remain one radius
+from the declared plane and compares its four-second path, position, velocity,
+and spin to the closed-form constant-acceleration solution.
+
+The prior five-case artifact is bound to implementation commit
 `9df3928a1ef32d81db2e568884ca24d8c576d49a` with raw-file SHA-256
 `f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310`.
-That digest qualifies only these five immutable horizontal-plane cases; it is
-not evidence for tilted frames, broad properties, performance, calibration,
-changing terrain, user interfaces, or downstream release.
+The six-case artifact requires a new exact implementation commit and digest in
+the follow-up evidence commit. Neither digest is evidence for broad tilted
+frames, properties, performance, calibration, changing terrain, user
+interfaces, or downstream release.
 
 This corpus does not replace the canonical full-result fixture. Scientific
 tolerances establish physical conformance; exact canonical bytes and SHA-256
 remain serialization evidence. The current cases do not qualify production
-surface parameters, tilted Python/compiled parity, regional terrain,
-performance, or statistical uncertainty.
+surface parameters, tilted-frame breadth beyond the single declared incline,
+regional terrain, performance, or statistical uncertainty.
 
 ## Design-by-contract boundary
 

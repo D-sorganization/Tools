@@ -139,6 +139,34 @@ def stable_at_zero_speed(
     )
 
 
+def holding_kinematics(
+    surface: GroundSurfaceProfile,
+    body: SphereProperties,
+    gravity_m_s2: Vector3 = STANDARD_GRAVITY_M_S2,
+) -> RigidMotion:
+    """Hold zero relative speed when rolling resistance exceeds slope drive."""
+    gravity_tangent = tangent(gravity_m_s2, surface.normal_unit)
+    return RigidMotion(
+        _ZERO,
+        _ZERO,
+        _ZERO,
+        scale(gravity_tangent, -body.mass_kg),
+    )
+
+
+def holding_state(
+    state: GroundContactState,
+    surface: GroundSurfaceProfile,
+) -> GroundContactState:
+    """Project a sub-tolerance rolling state to exact surface co-motion."""
+    axial_spin = dot(state.angular_velocity_rad_s, surface.normal_unit)
+    return replace(
+        state,
+        velocity_m_s=surface.surface_velocity_m_s,
+        angular_velocity_rad_s=scale(surface.normal_unit, axial_spin),
+    )
+
+
 def advance_constant_motion(
     state: GroundContactState,
     motion: RigidMotion,
@@ -147,6 +175,22 @@ def advance_constant_motion(
     """Advance position, velocity, and spin under constant accelerations."""
     if not math.isfinite(duration_s) or duration_s < 0.0:
         raise ValueError("duration_s must be finite and nonnegative")
+    position, velocity, spin = constant_motion_endpoint(state, motion, duration_s)
+    return replace(
+        state,
+        time_s=state.time_s + duration_s,
+        position_m=position,
+        velocity_m_s=velocity,
+        angular_velocity_rad_s=spin,
+    )
+
+
+def constant_motion_endpoint(
+    state: GroundContactState,
+    motion: RigidMotion,
+    duration_s: float,
+) -> tuple[Vector3, Vector3, Vector3]:
+    """Return the unquantized endpoint of one constant-motion segment."""
     position = add(
         state.position_m,
         add(
@@ -159,12 +203,26 @@ def advance_constant_motion(
         state.angular_velocity_rad_s,
         scale(motion.angular_acceleration_rad_s2, duration_s),
     )
-    return replace(
-        state,
-        time_s=state.time_s + duration_s,
-        position_m=position,
-        velocity_m_s=velocity,
-        angular_velocity_rad_s=spin,
+    return position, velocity, spin
+
+
+def constant_motion_energy_balance(
+    state: GroundContactState,
+    motion: RigidMotion,
+    duration_s: float,
+    body: SphereProperties,
+    gravity_m_s2: Vector3,
+    surface_velocity_m_s: Vector3,
+) -> float:
+    """Return physical dissipation before canonical endpoint quantization."""
+    position, velocity, spin = constant_motion_endpoint(state, motion, duration_s)
+    gravity_work = body.mass_kg * dot(
+        gravity_m_s2, subtract(position, state.position_m)
+    )
+    surface_work = dot(motion.contact_force_n, surface_velocity_m_s) * duration_s
+    kinetic_after = kinetic_energy_vectors(velocity, spin, body)
+    return float(
+        kinetic_energy(state, body) + gravity_work + surface_work - kinetic_after
     )
 
 
@@ -219,22 +277,34 @@ def relative_path_distance(
 
 def kinetic_energy(state: GroundContactState, body: SphereProperties) -> float:
     """Return translational plus isotropic rotational kinetic energy."""
+    return kinetic_energy_vectors(
+        state.velocity_m_s,
+        state.angular_velocity_rad_s,
+        body,
+    )
+
+
+def kinetic_energy_vectors(
+    velocity_m_s: Vector3,
+    angular_velocity_rad_s: Vector3,
+    body: SphereProperties,
+) -> float:
     return float(
-        0.5 * body.mass_kg * dot(state.velocity_m_s, state.velocity_m_s)
-        + 0.5
-        * body.inertia_kg_m2
-        * dot(
-            state.angular_velocity_rad_s,
-            state.angular_velocity_rad_s,
-        )
+        0.5 * body.mass_kg * dot(velocity_m_s, velocity_m_s)
+        + 0.5 * body.inertia_kg_m2 * dot(angular_velocity_rad_s, angular_velocity_rad_s)
     )
 
 
 __all__ = [
     "advance_constant_motion",
     "bounded_closing_duration",
+    "constant_motion_endpoint",
+    "constant_motion_energy_balance",
     "contact_slip_velocity",
+    "holding_kinematics",
+    "holding_state",
     "kinetic_energy",
+    "kinetic_energy_vectors",
     "relative_path_distance",
     "rolling_kinematics",
     "rolling_state",

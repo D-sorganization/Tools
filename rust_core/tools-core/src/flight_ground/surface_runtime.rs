@@ -12,12 +12,13 @@ use super::result_v1::{
     GroundTrajectoryPointV1,
 };
 use super::runtime_math::{
-    advance, closing_duration, norm, time_to_zero, Body, Motion, OutputSchedule, State,
+    advance, closing_duration, cross, norm, time_to_zero, Body, Motion, OutputSchedule, State,
     TimelineAppend, TimelineError, WireTimeline,
 };
 use super::surface_dynamics::{
-    can_rest, center_relative_velocity, contact_slip, rolling_feasible, rolling_motion,
-    rolling_state, skid_motion, LedgerStep, Phase, SurfaceLedger,
+    can_rest, center_relative_velocity, contact_slip, holding_motion, holding_state,
+    rolling_feasible, rolling_motion, rolling_state, skid_motion, stable_at_zero, LedgerStep,
+    Phase, SurfaceLedger,
 };
 use super::surface_events::SurfaceEventContext;
 
@@ -175,8 +176,7 @@ impl<'a> SurfaceRun<'a> {
                 "unsupported_surface",
             ));
         }
-        let after = rolling_state(self.state, &self.request.surface, self.body)
-            .map_err(|error| self.numerical(error.reason()))?;
+        let after = self.rolling_projection()?;
         if !self.append_event(GroundEventTypeV1::SkidToRoll, self.state, after)? {
             self.append_point(self.state, self.phase.wire())?;
             return Ok(Some(GroundTerminationReasonV1::EventLimit));
@@ -198,13 +198,27 @@ impl<'a> SurfaceRun<'a> {
                 "unsupported_surface",
             ));
         }
-        self.state = rolling_state(self.state, &self.request.surface, self.body)
-            .map_err(|error| self.numerical(error.reason()))?;
+        self.state = self.rolling_projection()?;
         let relative = center_relative_velocity(self.state, &self.request.surface);
         if norm(relative) <= self.settings.velocity_tolerance_m_s
             && can_rest(self.state, &self.request.surface, self.body, self.settings)
         {
             return self.record_rest();
+        }
+        if norm(relative) <= self.settings.velocity_tolerance_m_s
+            && stable_at_zero(&self.request.surface, self.body, self.settings.gravity_m_s2)
+        {
+            self.state = self.holding_projection()?;
+            let motion =
+                holding_motion(&self.request.surface, self.body, self.settings.gravity_m_s2);
+            if can_rest(self.state, &self.request.surface, self.body, self.settings) {
+                if self.state.time <= self.handoff_time + self.settings.time_tolerance_s {
+                    self.advance(motion, duration, is_cancelled)?;
+                }
+                return self.record_rest();
+            }
+            self.advance(motion, duration, is_cancelled)?;
+            return Ok(None);
         }
         let motion = rolling_motion(
             self.state,
@@ -218,14 +232,16 @@ impl<'a> SurfaceRun<'a> {
             self.settings.velocity_tolerance_m_s,
         );
         let reaches_zero = stop.is_some_and(|time| time <= duration);
-        self.advance(
-            motion,
-            stop.filter(|_| reaches_zero).unwrap_or(duration),
-            is_cancelled,
-        )?;
+        let advance_for = stop.filter(|_| reaches_zero).unwrap_or_else(|| {
+            if norm(cross(relative, motion.acceleration)) > 1.0e-12 {
+                closing_duration(relative, motion.acceleration, duration)
+            } else {
+                duration
+            }
+        });
+        self.advance(motion, advance_for, is_cancelled)?;
         if reaches_zero {
-            self.state = rolling_state(self.state, &self.request.surface, self.body)
-                .map_err(|error| self.numerical(error.reason()))?;
+            self.state = self.rolling_projection()?;
             if can_rest(self.state, &self.request.surface, self.body, self.settings) {
                 return self.record_rest();
             }
@@ -264,15 +280,47 @@ impl<'a> SurfaceRun<'a> {
             .record(LedgerStep {
                 phase: self.phase,
                 start,
-                end: self.state,
                 motion,
                 duration,
                 surface: &self.request.surface,
                 body: self.body,
                 gravity: self.settings.gravity_m_s2,
+                end: self.state,
             })
             .map_err(|error| self.numerical(error.reason()))?;
         Ok(())
+    }
+
+    fn rolling_projection(&mut self) -> Result<State, GroundReferenceRuntimeErrorV1> {
+        let after = rolling_state(self.state, &self.request.surface, self.body)
+            .map_err(|error| self.numerical(error.reason()))?;
+        self.ledger
+            .record_projection(
+                self.state,
+                after,
+                &self.request.surface,
+                self.body,
+                self.settings.slip_tolerance_m_s,
+                self.settings.slip_tolerance_m_s,
+            )
+            .map_err(|error| self.numerical(error.reason()))?;
+        Ok(after)
+    }
+
+    fn holding_projection(&mut self) -> Result<State, GroundReferenceRuntimeErrorV1> {
+        let after = holding_state(self.state, &self.request.surface)
+            .map_err(|error| self.numerical(error.reason()))?;
+        self.ledger
+            .record_projection(
+                self.state,
+                after,
+                &self.request.surface,
+                self.body,
+                self.settings.slip_tolerance_m_s,
+                self.settings.velocity_tolerance_m_s,
+            )
+            .map_err(|error| self.numerical(error.reason()))?;
+        Ok(after)
     }
 
     fn emit_grid_points(
@@ -367,7 +415,12 @@ impl<'a> SurfaceRun<'a> {
         termination: GroundTerminationReasonV1,
     ) -> Result<SurfaceSuffix, GroundReferenceRuntimeErrorV1> {
         self.ledger
-            .validate_passivity(self.initial_state, self.state, self.body)
+            .validate_passivity(
+                self.initial_state,
+                self.state,
+                self.body,
+                self.settings.gravity_m_s2,
+            )
             .map_err(|reason| self.numerical(reason))?;
         Ok(SurfaceSuffix {
             trajectory: self.trajectory,
