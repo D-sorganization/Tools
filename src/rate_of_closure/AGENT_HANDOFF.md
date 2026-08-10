@@ -1,7 +1,56 @@
 # AGENT_HANDOFF — rate_of_closure
 
-> **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-09
+> Update with every implementation commit and every push to `main`.
+> Current-state only; history lives in git. Last updated: 2026-08-10.
+
+## PR #4288 corrected-ground propagation
+
+Exact corrected #4285 parent
+`788aa547651a3685a363ea401824a5d81477bafb` is incorporated into
+`feat/4269-flight-ground-transfer` by the normal merge containing this handoff.
+PR #4288 keeps base `feat/4268-ground-contract`; neither branch was rebased,
+retargeted, rewritten, or force-pushed. The child retains its qualified
+cross-runtime terminal-state/contact transfer and inherits the corrected UTC
+parser plus canonical `swing_sim` import identity.
+
+This is ancestry propagation, not bounce, skid, roll, terrain response, total
+distance, or UI delivery. Protected CI, independent review, and normal stack
+collapse remain open.
+
+Merged-tree validation is `951` Python tests, `106` React files / `661` tests,
+and `26` focused Rust transfer/wire tests. The affected cross-version suite is
+also `110` tests on real CPython 3.10.20. The 189-module Vite production build,
+TypeScript, zero-warning ESLint, Ruff check/format across 82 files, pinned mypy
+1.13 across the six-file transfer and 13-file parent production namespaces,
+Rust workspace format plus warning-denied `tools-core` clippy, campaign-manifest
+validator plus eight contracts, documentation governance, 13-file 500-LOC
+budget, marker scan, and diff checks are clean. Hosted checks and review apply
+to the new exact merge head only.
+
+## PR #4285 workspace timestamp propagation
+
+Exact corrected #4282 parent
+`5f77af4add23547a21cc3fabce98ae9ad4260427` is incorporated into
+`feat/4268-ground-contract` by the normal merge containing this handoff. PR
+#4285 keeps base `feat/4197-capability-observer`; neither branch was rebased,
+retargeted, rewritten, or force-pushed. The child retains its strict
+flight-to-ground contract and inherits the deterministic Python 3.10-3.12 UTC
+parser plus complete variation, scalar, wind, capability, and release ancestry.
+
+The preceding exact-head Python 3.12 CI lane loaded embedded
+`src.shared.python.swing_sim` tests and canonical `shared.python.swing_sim`
+imports as distinct package trees, producing ground/impact collection errors.
+The shared alias registry now coalesces that package root. A subprocess identity
+contract failed before the fix and now passes together with both affected
+public-API suites. The file-size job was cancelled in checkout before its
+budget step and is not a code failure.
+
+Merged-tree evidence is `915` Rate/ground/impact Python tests, all `12` shared
+alias architecture tests, `28` focused tests on CPython 3.12, `28` direct
+workspace compatibility tests on real CPython 3.10.20, and `104` React files /
+`642` tests. The production build, TypeScript, zero-warning ESLint, Ruff,
+format, pinned mypy 1.13, campaign manifest and eight contracts, docs
+governance, 500-LOC budget, marker scan, and diff checks pass.
 
 ## 2026-08-09 Flight-transfer corrected-parent propagation
 
@@ -104,6 +153,10 @@ runner is now `vi.fn<CapabilityRunner>`); and eager panel import
 bloating the main Vite chunk past 500 kB — `PrimaryWorkspacePanel` now
 lazy-loads the Shot Optimizer behind `Suspense`, matching the
 WindStrategyPanel precedent (main chunk 474.32 kB, no warning).
+
+Those feature-parent merges were not protected releases. Their corrected
+#4282 carrier is now incorporated into #4285 through normal ancestry; preserve
+dependency order and use normal merges only.
 
 Verified gates on the committed head: 808 `tests/rate_of_closure` plus
 615 swing_sim in-package tests passed with zero skips; 102 React files
