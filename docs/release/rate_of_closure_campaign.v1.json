@@ -931,6 +931,10 @@
           "value": "https://github.com/D-sorganization/Tools/issues/4300"
         },
         {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4224"
+        },
+        {
           "kind": "repository_path",
           "value": "src/rate_of_closure/application/workspace_document.py"
         },
@@ -941,6 +945,14 @@
         {
           "kind": "repository_path",
           "value": "src/rate_of_closure/application/camera_commands.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/ui/pyqt6/simulation_scene_renderer.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "src/rate_of_closure/web/src/components/plotLayout.ts"
         }
       ],
       "tracked_issue_ids": [
@@ -970,11 +982,12 @@
         "camera-local-2095",
         "mobile-toolstrip-local-ebd8"
       ],
-      "evidence_gap": "Complete persistence adapters, synchronized multi-view persistence, UpstreamDrift camera consumers, native rendered accessibility review, and protected release remain open.",
+      "evidence_gap": "Complete persistence adapters, synchronized multi-view persistence, exported legend-layout proof, full installed React and native rendered accessibility review, UpstreamDrift consumers, and protected release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
         "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open.",
-        "Draft PR 4301 publishes issue 4300 constrained toolstrip-popover containment at immutable evidence commit ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5 as a child of epic 4218; protected integration remains open."
+        "Draft PR 4301 publishes issue 4300 constrained toolstrip-popover containment at immutable evidence commit ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5 as a child of epic 4218; protected integration remains open.",
+        "The bounded issue 4224 default-legend rail slice is implemented only on a local child of exact PR 4301 head 5c8efcbe5fcd6f993ef947a85e39852d268780a6; exact commit-bound evidence publication, complete persistence/export qualification, review, and protected integration remain open."
       ],
       "depends_on_issues": [
         4191

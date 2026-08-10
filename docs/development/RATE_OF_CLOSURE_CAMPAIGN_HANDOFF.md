@@ -4,6 +4,29 @@ Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 Issue #4224 non-obscuring legend rail slice
+
+An isolated branch from exact PR #4301 head
+`5c8efcbe5fcd6f993ef947a85e39852d268780a6` advances the default-legend part
+of #4224 without changing any existing worktree or remote branch. PyQt6
+Swing/Flight scenes use a figure-owned Outside Right legend and compute the
+reserved axes gutter from its rendered width. Retained figure legends are
+removed before each scene rebuild, canvas resize triggers a reflow, and inside
+or hidden choices cannot leave a stale outside artist. The minimum 360 x 280
+regression proves the legend remains inside the figure and outside the axes;
+accessible names cover both controls.
+
+React plot cards now share a pure layout contract between the data rectangle
+and legend drawing. At 520 px, the plot ends at x=330 and the legend begins at
+x=350. The focused PyQt6 suite is 58 passed; changed Python Ruff/format and
+pinned MyPy pass; the TypeScript contract executes in Node 25 and the changed
+TSX bundles with esbuild. The committed Vitest parity case still requires the
+full installed React gate. This is a bounded non-obscuring-default slice, not
+completion of #4224: workspace persistence/migration, exported-layout proof,
+complete rendered QA, protected CI/review, and dependency-ordered integration
+remain open. PR #4303 is a separate camera-default child and is not claimed as
+ancestry of this local branch.
+
 ## 2026-08-10 PR #4301 four-surface parent propagation
 
 Draft PR #4301 retains base `feat/4284-camera-snap-tracking`. Its normal

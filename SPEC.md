@@ -26,13 +26,28 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.25                                    |
-| **Spec Version**        | 1.14.25                                    |
+| **Current Version**     | 1.14.26                                    |
+| **Spec Version**        | 1.14.26                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-10 Non-obscuring external legend rail
+
+- PyQt6 Swing/Flight scenes implement Outside Right as a figure-owned legend
+  in a measured reserved gutter. The axes boundary follows the rendered legend
+  width, figure legends are cleared before redraw, and resize events reflow the
+  scene so a visible default legend cannot become an axes overlay.
+- Inside placements and Hidden remain explicit reversible choices. Both PyQt6
+  controls expose stable accessible names.
+- React managed plots derive their data rectangle and legend origin from one
+  pure `resolvePlotLayout` contract. The 520 px constrained contract reserves a
+  20 px separation between plot and outside legend.
+- This bounded #4224 slice does not claim persistence/migration, export-layout
+  proof, full rendered qualification, protected release, or completion of
+  #4224/#4218.
 
 ### 2026-08-10 Constrained toolstrip / four-surface propagation
 
@@ -3037,6 +3052,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.26 | fix(rate-of-closure, #4218 #4224): move the default PyQt6 3D scene legend from the axes into a measured figure-level rail, clear retained legends across redraw and inside/hidden transitions, reflow the rail on canvas resize, add explicit accessible control names, and centralize React plot/legend geometry in one constrained-width contract; retain open persistence, export, rendered-QA, protected-CI, review, and integration gates without claiming epic completion. |
 | 2026-08-10 | 1.14.25 | merge(rate-of-closure, #4300 #4301): normally propagate exact four-surface/camera/ground head `142631a90c008942bad99745e279748a7eda2ffa` into original constrained-toolstrip child `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64` without changing its base; retain the shared 16 px viewport-gutter clamp, desktop anchoring, bounded mobile menus, and native keyboard/accessibility semantics while inheriting the declared four-surface inventory, complete camera controls, and repaired flight-to-ground ancestry; require fresh combined-tree validation, independent review, and protected current-head CI without claiming epic completion. |
 | 2026-08-10 | 1.14.24 | merge(rate-of-closure, #4264 #4299): normally propagate exact camera/ground-stack head `57942e64744a199e4fd7d604fe2eeb9faddd062a` into original four-surface child `dca40c6c0168df3aa0cd0de0e5ae0ff109715b6a` without changing its base; retain the strict declared-scope matrix, schema, canonical inventory, exact evidence paths, deterministic 15-program/18-spec/six-capability coverage, and explicit incomplete UpstreamDrift parity boundaries while inheriting repaired flight-to-ground and camera-control contracts. |
 | 2026-08-10 | 1.14.23 | fix(flight-ground, #4284 #4298): satisfy the protected pinned-MyPy complete-delta profile with exact compatibility-enum construction and explicit three-component flight-to-ground vectors; preserve runtime values, wire bytes, coordinate transforms, physics, and camera behavior while requiring fresh exact-head CI. |

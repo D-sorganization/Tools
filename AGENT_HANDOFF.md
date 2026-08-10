@@ -3,6 +3,30 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Issue #4224 non-obscuring legend rail slice
+
+The isolated `fix/4224-default-legend-layout-local` branch starts at exact
+draft PR #4301 head `5c8efcbe5fcd6f993ef947a85e39852d268780a6`.
+PyQt6 Swing/Flight scenes now render the default Outside Right legend as a
+figure-owned artist in a measured reserved gutter rather than as an axes-owned
+artist inside the plot surface. The renderer removes retained figure legends
+before every redraw, recomputes the axes boundary from the rendered legend
+width, and reflows after canvas resize. Inside placements and Hidden remain
+independent and clear the outside artist. Legend visibility and position also
+have explicit accessible names.
+
+React managed plots now derive plot margins and legend origins from one pure
+`resolvePlotLayout` contract. At the constrained 520 px reference width the
+outside plot edge is 330 px and the legend begins at 350 px, preserving a 20 px
+gap without duplicated geometry constants in the canvas renderer. The focused
+PyQt6 camera/plot/simulation/wedge suite passes 58 tests; Ruff check/format and
+pinned MyPy 1.13 pass the changed Python production files; the TypeScript
+layout contract executes under Node 25 and the changed canvas bundles through
+esbuild. A committed Vitest assertion covers the 520 px geometry, but the full
+installed React suite, rendered native inspection, persistence/export work,
+protected CI, review, and parent integration remain open. This bounded slice
+does not close #4224, #4218, #4300, #4303, or their dependency stack.
+
 ## 2026-08-10 PR #4301 four-surface parent propagation
 
 Draft PR #4301 keeps base `feat/4284-camera-snap-tracking`. This normal

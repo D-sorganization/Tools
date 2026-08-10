@@ -119,6 +119,7 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
         self._canvas.mpl_connect(
             "button_release_event", lambda _event: self.suspend_camera_tracking()
         )
+        self._canvas.mpl_connect("resize_event", self._redraw_after_canvas_resize)
 
     # ── public API ──────────────────────────────────────────────────
     def set_run(self, run: SimulationRun | None) -> None:
@@ -399,3 +400,7 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
             elevation, azimuth = orientation
             self._axes.view_init(elev=elevation, azim=azimuth)
         SimulationSceneRenderer(self, get_chart_color).draw()
+
+    def _redraw_after_canvas_resize(self, _event: object) -> None:
+        """Reflow the outside legend after the canvas geometry changes."""
+        self._draw()

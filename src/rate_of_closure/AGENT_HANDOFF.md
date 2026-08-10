@@ -3,6 +3,25 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Issue #4224 non-obscuring legend rail slice
+
+The isolated child starts from exact PR #4301 head
+`5c8efcbe5fcd6f993ef947a85e39852d268780a6`. The PyQt6 3D simulation default
+now places its legend at figure scope inside a measured right rail, shrinks the
+axes to the legend's rendered left boundary, removes retained legends before
+redraw, and reflows on canvas resize. This keeps the visible legend outside the
+axes at the 360 x 280 minimum while preserving inside and hidden choices.
+The checkbox and position selector expose explicit accessible names.
+
+React plot cards use one pure `resolvePlotLayout` contract for both plot margins
+and legend coordinates. The 520 px regression locks a 20 px separation between
+the plot edge and outside legend. Local evidence is 58 focused Python/PyQt
+tests, clean changed-file Ruff/format and pinned MyPy, a direct Node 25 contract
+execution, and an in-memory esbuild bundle of the changed canvas. The committed
+Vitest case awaits the full installed React gate. Native rendered QA,
+workspace persistence/export, protected CI, review, and normal dependency-
+ordered integration remain open, so #4224 and epic #4218 stay open.
+
 ## 2026-08-10 PR #4301 four-surface parent propagation
 
 Draft PR #4301 preserves base `feat/4284-camera-snap-tracking` and normally
