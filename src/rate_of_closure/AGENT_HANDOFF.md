@@ -8,7 +8,10 @@
 The newest bounded continuation is draft PR #4299 branch
 `feat/4264-four-surface-capability` in isolated worktree
 `C:\Users\diete\Repositories\Tools-worktrees\four-surface-capability`, based
-exactly on published head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`.
+on published head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`. Local
+declared-scope commit `a7cc4e005bb2263abe55ba93142e2fb59d26657e` is normally
+merged with exact current #4282 carrier
+`bb101cedd555d07d493aae998b46050c68660cdd` without changing the PR base.
 It extends `four-surface-capability/v1` with deterministic enumeration of all
 15 campaign programs and 18 unique linked active release specifications while
 retaining the six curated evidence-backed records. The completeness gate fails
@@ -24,13 +27,18 @@ canonical output, Python 3.10 import/schema parity, exact mypy 1.13, Ruff,
 Ruff format, Black, assertion policy, docs governance, and diff checks pass.
 
 The inherited implementation is integrated on the existing PR #4282 carrier
-`feat/4199-wind-workflow`; this continuation starts from exact supplied head
-`de49580a3c0888b44f66dcc09bba2ab2fa33914a`. The parent adds strict cross-runtime
+`feat/4199-wind-workflow`; exact current head
+`bb101cedd555d07d493aae998b46050c68660cdd` normally incorporates exact
+corrected #4281 parent `958770049f0124dac0426a6dd62fd4edbf437e7a`.
+The base remains `feat/4199-wind-scalar-adapter`; no branch was rebased,
+retargeted, force-pushed, or published by this continuation. It adds strict
+cross-runtime
 capability parsing, reliable signed decimal entry, complete ranked diagnostics
 and result exports, quantitative React scatter annotations, package-safe
 static-web release entrypoints, and the strict `rate-of-closure-campaign/v1`
-release authority. It remains local until final gates pass and a normal
-fast-forward push is made.
+release authority. It also carries the corrected parent's Python 3.10
+compatibility, variation-export, scalar-ensemble, and wind-adapter history.
+It remains local until final gates pass and a normal fast-forward push is made.
 
 The direct web launcher dynamically loads the root bootstrap module without a
 launcher-local `sys.path` mutation; its subprocess delegation test and the
@@ -61,8 +69,10 @@ The capability stack was collapsed top-down on 2026-08-09:
 3. #4283 observer merged into `feat/4199-wind-workflow`.
 
 These were feature-parent merges, not protected releases. Current carrier
-#4282 remains upstream of #4281 → #4280 → #4279 → #4203 → #4202 → wedge and
-variation parents. Preserve that dependency order and use normal merges only.
+#4282 descends from #4281 → #4280 → #4279 → #4203 → #4202 → wedge and
+variation parents. Exact corrected #4281 parent
+`958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated locally. Preserve
+that dependency order and use normal merges only.
 
 Outer platform PR #4119 targets `main` and still needs reconciliation. PR #4133
 impact-interval dynamics merged into a historical feature parent after that
@@ -102,6 +112,13 @@ reconciled before #4130 can close.
   campaign tests, 50 cited Python/PyQt tests, and three React files / 32 tests
   pass locally. Python 3.10 import/schema parity and the focused quality gates
   pass. There is no hosted or installed-consumer evidence.
+- Corrected-parent propagation: 62 focused wind/scalar/variation and
+  compatibility tests pass on Python 3.11 and real CPython 3.10.20; 8 React
+  files / 35 tests, TypeScript, and focused zero-warning ESLint pass. The real
+  3.10 run found and now guards #4282's child-owned capability-observation
+  `StrEnum` boundary. Ruff check/format passes 15 focused files, pinned mypy
+  1.13 passes 10 production modules, and nine campaign manifest/parity
+  contracts pass.
 - Composed local continuation: 828 Rate Python/PyQt tests and 104 React files /
   642 tests passed; TypeScript, zero-warning ESLint, and the 188-module Vite
   production build passed. The manifest, schema JSON, Ruff, targeted mypy, and

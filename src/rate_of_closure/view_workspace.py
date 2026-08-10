@@ -5,8 +5,12 @@ from __future__ import annotations
 import math
 from collections.abc import Mapping
 from dataclasses import dataclass, field
-from enum import StrEnum
-from typing import TypeVar, cast
+from typing import TYPE_CHECKING, TypeVar, cast
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 FORMAT = "rate_of_closure.view_workspace/1"
 MAX_SLOTS = 6

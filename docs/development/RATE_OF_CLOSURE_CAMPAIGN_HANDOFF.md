@@ -7,8 +7,11 @@ branch was rewritten.
 ## 2026-08-09 Four-surface capability contract continuation
 
 Draft PR #4299 branch `feat/4264-four-surface-capability` was published at
-exact head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`; this local-only
-continuation does not overlap the running PyQt6 or React worktrees. It extends the strict
+exact head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`. Local declared-scope
+commit `a7cc4e005bb2263abe55ba93142e2fb59d26657e` is normally merged with
+exact current carrier `bb101cedd555d07d493aae998b46050c68660cdd`; this
+local-only continuation does not overlap the running PyQt6 or React worktrees
+and preserves the PR base. It extends the strict
 `four-surface-capability/v1` typed Python contract, checked-in generated JSON
 Schema, canonical JSON rendering, stable Tools/UpstreamDrift PyQt6/React
 surface IDs, exact Tools audit pin, evidence-path validation, and a bounded
@@ -39,6 +42,33 @@ The canonical campaign manifest references the matrix and schema but keeps
 names the missing consumer pins and four-surface conformance run and records
 the deterministic boundary for unstructured prose. This continuation has not
 been pushed and performed no GitHub write.
+
+## 2026-08-09 PR #4282 corrected-parent propagation
+
+Draft #4282 remains on `feat/4199-wind-workflow` with unchanged base
+`feat/4199-wind-scalar-adapter`. Exact corrected #4281 parent
+`958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated by the normal
+local merge containing this handoff; no branch was rebased, retargeted,
+force-pushed, or published. The result preserves the responsive PyQt6/React
+wind-strategy workflow, the consolidated capability stack, release-manifest
+authority, and launcher/type-gate repairs while inheriting the complete
+Python 3.10 compatibility, variation-export, and scalar-ensemble corrections.
+
+SPEC 1.14.12 records this propagation monotonically above the corrected
+parent's 1.14.11, 1.14.10, and 1.14.9 entries. Protected CI, review,
+publication, installed-package evidence, downstream UpstreamDrift parity, and
+the remaining scientific/accessibility/performance release gates remain
+separate. This local merge is not a protected release.
+
+Focused evidence is 62 tests on Python 3.11 and 62 tests on real CPython
+3.10.20 with PyQt6 and the complete focused scientific dependency set. The
+real 3.10 run exposed one child-owned direct `enum.StrEnum` import in
+`capability_observation.py`; it now uses the established shared runtime
+compatibility contract, retains native typing under `TYPE_CHECKING`, and is
+pinned by the expanded regression. React passes 8 files / 35 tests, TypeScript,
+and focused zero-warning ESLint. Ruff check/format passes 15 focused files;
+pinned mypy 1.13 passes 10 production modules; and the nine campaign
+manifest/parity contracts pass.
 
 ## 2026-08-09 Capability workflow hardening continuation
 

@@ -8,12 +8,14 @@
 The current bounded continuation is
 `C:\Users\diete\Repositories\Tools-worktrees\four-surface-capability` on
 draft PR #4299 branch `feat/4264-four-surface-capability`, starting from exact
-published head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`. The local-only
-continuation expands `four-surface-capability/v1` from six curated records to
-the deterministic declared scope: all 15 campaign programs, all 18 unique
-linked active release specifications, and the six curated evidence-backed
-capabilities. There is no continuation push, hosted CI, installed consumer
-pin, protected merge, or release claim.
+published head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`. Local declared-scope
+commit `a7cc4e005bb2263abe55ba93142e2fb59d26657e` is normally merged with
+exact current carrier `bb101cedd555d07d493aae998b46050c68660cdd`, preserving
+the branch base. The continuation expands `four-surface-capability/v1` from
+six curated records to the deterministic declared scope: all 15 campaign
+programs, all 18 unique linked active release specifications, and the six
+curated evidence-backed capabilities. There is no continuation push, hosted
+CI, installed consumer pin, protected merge, or release claim.
 
 Local evidence for the composed branch: 22 capability-contract tests plus eight
 campaign-manifest tests pass; 50 cited Python/PyQt workflow, workspace, and
@@ -24,15 +26,19 @@ and diff checks pass.
 
 The parent source checkout remains
 `C:\Users\diete\Repositories\Tools-worktrees\toolstrip-workspace` on the
-existing PR #4282 carrier `feat/4199-wind-workflow`; this continuation starts
-from its exact supplied carrier head
-`de49580a3c0888b44f66dcc09bba2ab2fa33914a`. The inherited carrier composes
+existing PR #4282 carrier `feat/4199-wind-workflow`. The local continuation
+normally incorporates its exact head
+`bb101cedd555d07d493aae998b46050c68660cdd`, which itself incorporates exact
+corrected #4281 parent `958770049f0124dac0426a6dd62fd4edbf437e7a`
+without changing the branch base `feat/4199-wind-scalar-adapter`. It composes
 four reviewed slices:
 strict capability parsing and signed decimal entry; complete capability
 diagnostics/result exports and quantitative React scatter scales; package-safe
 static-web release entrypoints; and the strict `rate-of-closure-campaign/v1`
-release-evidence authority. The #4264 continuation has not been pushed; hosted
-CI remains due.
+release-evidence authority. The normal merge also carries the parent's
+Python 3.10 compatibility, variation-export, and scalar-ensemble corrections.
+No branch was rebased, retargeted, force-pushed, or published by this
+continuation; hosted CI remains due.
 
 Canonical files:
 
@@ -55,7 +61,9 @@ default-branch release are never interchangeable.
 
 Capability PRs #4294, #4289, and #4283 were merged top-down into
 `feat/4199-wind-workflow`; their feature parents were not protected. PR #4282
-is the current open carrier on base `feat/4199-wind-scalar-adapter`.
+is the current open carrier on base `feat/4199-wind-scalar-adapter`. Exact
+corrected parent `958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated
+through the normal local merge containing this handoff.
 
 The previous exact #4282 head `3186a265b1` built and loaded `swing_core`, but
 its Python 3.11 parity job failed before collection because a cached
@@ -76,6 +84,15 @@ Both boundaries now narrow their return values explicitly. The exact Python
 3.12/mypy 1.13 delta is clean across 54 files; Ruff passes and 62 focused
 regression tests plus eight campaign-manifest tests pass (only pre-existing
 optional-plugin config warnings).
+
+Corrected-parent propagation evidence is 62 focused wind/scalar/variation and
+compatibility tests on both Python 3.11 and real CPython 3.10.20, plus 8 React
+files / 35 tests, TypeScript, and focused zero-warning ESLint. The Python 3.10
+run exposed one child-owned direct `enum.StrEnum` import in capability
+observations; it now uses the shared runtime compatibility contract and is
+included in the source-level regression. Ruff check/format passes 15 focused
+files, pinned mypy 1.13 passes 10 production modules, and all nine campaign
+manifest/parity contracts pass.
 
 The direct web launcher dynamically loads the root bootstrap through
 `importlib` instead of mutating `sys.path` in the changed entrypoint. Its real
