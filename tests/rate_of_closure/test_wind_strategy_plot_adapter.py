@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import replace
+from typing import Literal
 
 import pytest
 
@@ -74,7 +75,7 @@ def _scenario(speed: float, bearing: float, provenance: str) -> WindScenario:
 
 def _outcome(
     index: int,
-    status: str,
+    status: Literal["completed", "nonconverged", "invalid"],
     actual: tuple[float, float, float] | None,
     perfect: tuple[float, float, float] | None,
 ) -> StrategyShotOutcome:
@@ -84,7 +85,7 @@ def _outcome(
     return StrategyShotOutcome(
         trial_index=index,
         strategy_id="wedge",
-        status=status,  # type: ignore[arg-type]
+        status=status,
         true_wind=_scenario(5.0, 90.0, f"{provenance}/true/trial-{index}"),
         estimated_wind=_scenario(4.0, 80.0, f"{provenance}/estimated/trial-{index}"),
         landing_forward_m=None if actual is None else actual[0],

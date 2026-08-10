@@ -4,6 +4,33 @@ Status verified 2026-08-09. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 PR #4282 corrected-parent propagation
+
+Draft #4282 remains on `feat/4199-wind-workflow` with unchanged base
+`feat/4199-wind-scalar-adapter`. Exact corrected #4281 parent
+`958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated by the normal
+local merge containing this handoff; no branch was rebased, retargeted,
+force-pushed, or published. The result preserves the responsive PyQt6/React
+wind-strategy workflow, the consolidated capability stack, release-manifest
+authority, and launcher/type-gate repairs while inheriting the complete
+Python 3.10 compatibility, variation-export, and scalar-ensemble corrections.
+
+SPEC 1.14.12 records this propagation monotonically above the corrected
+parent's 1.14.11, 1.14.10, and 1.14.9 entries. Protected CI, review,
+publication, installed-package evidence, downstream UpstreamDrift parity, and
+the remaining scientific/accessibility/performance release gates remain
+separate. This local merge is not a protected release.
+
+Focused evidence is 62 tests on Python 3.11 and 62 tests on real CPython
+3.10.20 with PyQt6 and the complete focused scientific dependency set. The
+real 3.10 run exposed one child-owned direct `enum.StrEnum` import in
+`capability_observation.py`; it now uses the established shared runtime
+compatibility contract, retains native typing under `TYPE_CHECKING`, and is
+pinned by the expanded regression. React passes 8 files / 35 tests, TypeScript,
+and focused zero-warning ESLint. Ruff check/format passes 15 focused files;
+pinned mypy 1.13 passes 10 production modules; and the nine campaign
+manifest/parity contracts pass.
+
 ## 2026-08-09 Capability workflow hardening continuation
 
 Local branch `feat/4201-capability-contract-hardening` starts at exact carrier
