@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.21                                    |
-| **Spec Version**        | 1.14.21                                    |
+| **Current Version**     | 1.14.22                                    |
+| **Spec Version**        | 1.14.22                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -53,6 +53,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `flight-to-ground-result/v1` record. Imports are bounded to 5 MiB and
   100,000 trajectory samples, reject invalid input atomically, and retain the
   last valid result.
+- React validates the raw JSON text with duplicate-field detection before
+  constructing a result. Duplicate fields are rejected without replacing the
+  last valid playback, and the error message explicitly discloses that the
+  prior result remains loaded.
 - Both clients use one shared golden result and matching absolute-time,
   phase-aware playback semantics. Interpolation is permitted only within a
   declared phase; a phase transition holds the preceding exact state until
@@ -3017,6 +3021,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.22 | fix(ground-playback, #4274): route browser result imports through the duplicate-key-aware strict JSON facade, retain the last valid result on duplicate-field rejection, disclose that retention in the error state, and cover the boundary with an atomic-import regression; protected publication and review remain open. |
 | 2026-08-10 | 1.14.21 | feat(ground-playback, #4274): add discoverable standalone PyQt6 and React strict-result playback with bounded atomic import and last-good retention, shared-golden phase-aware absolute-time semantics, exact-frame/phase/loop/speed controls, honest complete versus observed endpoint labels, warning/calibration/provenance and trajectory/event tables, and locked-physical-scale orbit/zoom/reset 3D views; disclose that clients do not execute ground physics and result v1 carries no terrain geometry, while retaining explicit non-delivery boundaries for surface editors, terrain meshes, comparisons, persistence/export, ensembles, optimization, compiled runtimes, and UpstreamDrift integration. |
 | 2026-08-09 | 1.14.20 | feat(ground-profile, #4272): add strict versioned SI material-profile/library documents with uncertainty, evidence-linked validity bounds, rights, applicability, calibration, seven-gate qualification, scientific calibrated/illustrative status, canonical JSON/schema/semantic validation, fail-closed write-through atomic CAS persistence and explicit recovery, exact operating-condition binding, and a provenance-complete one-way neutral Upstream terrain snapshot adapter with split terrain/material identities; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream parity. |
 | 2026-08-09 | 1.14.19 | feat(ground-roll, #4271): continue exact #4270 capture through arbitrary-plane kinetic skid, static-feasible pure roll, rolling resistance, qualified rest, finite-axis edge localization, bounded typed limits, relative surface-path and passive energy ledgers; compose representable prefix/suffix evidence into strict v1 results without duplicate or epsilon-time samples; pin an analytic shared fixture and retain explicit exclusions for regions, changing normals, torsional spin damping, roll-to-skid, UI, compiled runtimes, and downstream parity. |

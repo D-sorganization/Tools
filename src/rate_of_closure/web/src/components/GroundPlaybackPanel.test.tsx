@@ -53,4 +53,26 @@ describe("GroundPlaybackPanel", () => {
     await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent("envelope.json"));
     expect(screen.getByRole("rowheader", { name: "Carry" })).toBeInTheDocument();
   });
+
+  it("rejects duplicate result fields without replacing the last good result", async () => {
+    render(<GroundPlaybackPanel />);
+    const input = screen.getByLabelText("Import strict ground result JSON");
+    fireEvent.change(input, { target: { files: [new File(
+      [JSON.stringify(fixture.result)], "good.json", { type: "application/json" },
+    )] } });
+    expect(await screen.findByText(/Loaded good.json/)).toBeInTheDocument();
+
+    const duplicate = JSON.stringify(fixture.result).replace(
+      '"request_id":"surface-run-analytic"',
+      '"request_id":"surface-run-analytic","request_id":"duplicate"',
+    );
+    fireEvent.change(input, { target: { files: [new File(
+      [duplicate], "duplicate.json", { type: "application/json" },
+    )] } });
+
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/duplicate JSON field/i));
+    expect(screen.getByRole("alert")).toHaveTextContent(/last valid result remains loaded/i);
+    expect(screen.getByRole("rowheader", { name: "Carry" })).toBeInTheDocument();
+    expect(screen.getByText("0.245 m")).toBeInTheDocument();
+  });
 });

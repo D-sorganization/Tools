@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 
 import type { FlightToGroundResult } from "../model/flightGroundTypes";
-import { parseFlightToGroundResultRecord } from "../model/flightGroundResultContract";
+import { flightToGroundResultFromJson } from "../model/flightGroundContract";
 import { GroundPlaybackTimeline } from "../model/groundPlayback";
 import { GroundPlayback3D } from "./GroundPlayback3D";
 
@@ -131,7 +131,7 @@ export function GroundPlaybackPanel() {
     try {
       if (file.size > MAX_IMPORT_BYTES) throw new RangeError("File exceeds the 5 MiB import limit.");
       const text = await readFileText(file);
-      const parsed = parseFlightToGroundResultRecord(JSON.parse(text) as unknown);
+      const parsed = flightToGroundResultFromJson(text);
       if (parsed.trajectory.length > MAX_IMPORT_POINTS) {
         throw new RangeError("Trajectory exceeds the 100,000 point display limit.");
       }
@@ -143,7 +143,8 @@ export function GroundPlaybackPanel() {
     } catch (reason) {
       if (generation !== importGeneration.current) return;
       const detail = reason instanceof Error ? reason.message : "Unknown import error.";
-      setError(`Could not import ${file.name}: ${detail}`);
+      const retained = result === null ? "" : " Last valid result remains loaded.";
+      setError(`Could not import ${file.name}: ${detail}${retained}`);
     }
   };
 

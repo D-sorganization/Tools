@@ -1,7 +1,21 @@
 # AGENT_HANDOFF — Tools
 
 > Update this file in every implementation commit and every push to `main`.
-> Last updated: 2026-08-09.
+> Last updated: 2026-08-10.
+
+## 2026-08-10 issue #4274 strict browser-import repair
+
+The React Ground Playback importer now routes raw text through the existing
+duplicate-key-aware `flightToGroundResultFromJson` facade before semantic
+validation. This closes a review finding in which `JSON.parse` discarded
+duplicate fields before the strict result parser could reject them. A
+regression proves duplicate `request_id` fields fail atomically, leave the
+last valid trajectory and summary intact, and tell the user that the valid
+result remains loaded. The complete React suite passes 109 files / 673 tests;
+zero-warning ESLint, TypeScript type-checking, and the production Vite build
+also pass. This is local evidence only: independent re-review, exact-head
+publication, protected CI, review approval, dependency integration, and epic
+closure remain open.
 
 ## 2026-08-09 issue #4272 evidence SHA correction
 
