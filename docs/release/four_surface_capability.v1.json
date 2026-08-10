@@ -8,7 +8,7 @@
   "schema": {
     "id": "four-surface-capability/v1",
     "path": "docs/release/four_surface_capability.v1.schema.json",
-    "sha256": "afd65b9f01417b23640bb3f5c1d12b2fa97a8936149a0c1594d5b49236c9d037"
+    "sha256": "b31f57ea573b5ac417412646a4f9e8d8f71b68f39ac7010cf0a76844537e760b"
   },
   "freshness": {
     "observed_on": "2026-08-09",
@@ -21,16 +21,25 @@
     "program_issue": 4260
   },
   "inventory": {
-    "status": "partial",
+    "status": "declared_scope_complete",
     "included_categories": [
       "model",
       "control",
       "output",
       "view",
       "persistence",
-      "export"
+      "export",
+      "campaign_program",
+      "active_specification"
     ],
-    "excluded_scope_reason": "This bounded first slice establishes the strict matrix contract and one evidenced capability per required category; it is not an exhaustive inventory of every Rate of Closure feature."
+    "enumeration_rules": [
+      "Every rate-of-closure-campaign/v1 programs array record.",
+      "Every unique linked Markdown specification authority at SPEC.md, docs/specs/*.md, or docs/rate_of_closure/*.md."
+    ],
+    "curated_capability_count": 6,
+    "campaign_program_count": 15,
+    "active_specification_count": 18,
+    "excluded_scope_reason": "The deterministic boundary covers structured campaign program records, their linked active release specifications, and six curated evidenced capabilities. Narrative headings and feature bullets that are not promoted to either structured source remain outside the declared scope."
   },
   "surfaces": [
     {
@@ -144,16 +153,25 @@
       "id": "rate.model.capability-optimization",
       "category": "model",
       "title": "Capability optimization workflow",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
+        "source_key": "curated.rate.model.capability-optimization"
+      },
       "surfaces": {
         "tools.pyqt6": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-pyqt-capability-workflow"]
+          "evidence_ids": [
+            "tools-pyqt-capability-workflow"
+          ]
         },
         "tools.react": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-react-capability-workflow"]
+          "evidence_ids": [
+            "tools-react-capability-workflow"
+          ]
         },
         "upstreamdrift.pyqt6": {
           "state": "unsupported",
@@ -171,16 +189,25 @@
       "id": "rate.control.capability-parameters",
       "category": "control",
       "title": "Capability target and player parameter controls",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
+        "source_key": "curated.rate.control.capability-parameters"
+      },
       "surfaces": {
         "tools.pyqt6": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-pyqt-capability-workflow"]
+          "evidence_ids": [
+            "tools-pyqt-capability-workflow"
+          ]
         },
         "tools.react": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-react-capability-workflow"]
+          "evidence_ids": [
+            "tools-react-capability-workflow"
+          ]
         },
         "upstreamdrift.pyqt6": {
           "state": "unsupported",
@@ -198,16 +225,25 @@
       "id": "rate.output.capability-diagnostics",
       "category": "output",
       "title": "Capability optimization diagnostics",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
+        "source_key": "curated.rate.output.capability-diagnostics"
+      },
       "surfaces": {
         "tools.pyqt6": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-pyqt-capability-workflow"]
+          "evidence_ids": [
+            "tools-pyqt-capability-workflow"
+          ]
         },
         "tools.react": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-react-capability-workflow"]
+          "evidence_ids": [
+            "tools-react-capability-workflow"
+          ]
         },
         "upstreamdrift.pyqt6": {
           "state": "unsupported",
@@ -225,16 +261,25 @@
       "id": "rate.view.capability-workbench",
       "category": "view",
       "title": "Capability optimization workbench view",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
+        "source_key": "curated.rate.view.capability-workbench"
+      },
       "surfaces": {
         "tools.pyqt6": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-pyqt-capability-workflow"]
+          "evidence_ids": [
+            "tools-pyqt-capability-workflow"
+          ]
         },
         "tools.react": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-react-capability-workflow"]
+          "evidence_ids": [
+            "tools-react-capability-workflow"
+          ]
         },
         "upstreamdrift.pyqt6": {
           "state": "unsupported",
@@ -252,16 +297,25 @@
       "id": "rate.persistence.workspace-json",
       "category": "persistence",
       "title": "Versioned workspace JSON persistence",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "src/rate_of_closure/application/workspace_document.py",
+        "source_key": "curated.rate.persistence.workspace-json"
+      },
       "surfaces": {
         "tools.pyqt6": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-pyqt-workspace"]
+          "evidence_ids": [
+            "tools-pyqt-workspace"
+          ]
         },
         "tools.react": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-react-workspace"]
+          "evidence_ids": [
+            "tools-react-workspace"
+          ]
         },
         "upstreamdrift.pyqt6": {
           "state": "unsupported",
@@ -279,16 +333,25 @@
       "id": "rate.export.capability-results",
       "category": "export",
       "title": "Capability result JSON and CSV exports",
+      "declaration": {
+        "kind": "curated_evidence",
+        "source_path": "src/rate_of_closure/application/capability_result_export.py",
+        "source_key": "curated.rate.export.capability-results"
+      },
       "surfaces": {
         "tools.pyqt6": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-pyqt-capability-export"]
+          "evidence_ids": [
+            "tools-pyqt-capability-export"
+          ]
         },
         "tools.react": {
           "state": "supported",
           "reason": null,
-          "evidence_ids": ["tools-react-capability-export"]
+          "evidence_ids": [
+            "tools-react-capability-export"
+          ]
         },
         "upstreamdrift.pyqt6": {
           "state": "unsupported",
@@ -301,12 +364,1069 @@
           "evidence_ids": []
         }
       }
+    },
+    {
+      "id": "campaign.issue-4103",
+      "category": "campaign_program",
+      "title": "Swing-Impact-Ball-Flight Simulation Platform",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[0].issue=4103"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4103 declares tools.pyqt6 as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4103 declares tools.react as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4103 declares upstreamdrift.pyqt6 as contract_only; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4103 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4120",
+      "category": "campaign_program",
+      "title": "Investigation and Variation Suite",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[1].issue=4120"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4120 declares tools.pyqt6 as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4120 declares tools.react as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4120 declares upstreamdrift.pyqt6 as contract_only; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4120 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4125",
+      "category": "campaign_program",
+      "title": "Realistic Clubs, Swing Kinetics, Putting, and Showcase",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[2].issue=4125"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4125 declares tools.pyqt6 as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4125 declares tools.react as implemented_unverified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4125 declares upstreamdrift.pyqt6 as contract_only; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4125 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4130",
+      "category": "campaign_program",
+      "title": "Impact-Interval Club Dynamics",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[3].issue=4130"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4130 declares tools.pyqt6 as implemented_unverified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4130 declares tools.react as contract_only; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4130 declares upstreamdrift.pyqt6 as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4130 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4142",
+      "category": "campaign_program",
+      "title": "Ensemble Variation, Quiet Zones, and Sensitivity Attribution",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[4].issue=4142"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4142 declares tools.pyqt6 as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4142 declares tools.react as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4142 declares upstreamdrift.pyqt6 as contract_only; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4142 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4146",
+      "category": "campaign_program",
+      "title": "Shared Golf Club Builder",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[5].issue=4146"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4146 declares tools.pyqt6 as implemented_unverified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4146 declares tools.react as not_started; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4146 declares upstreamdrift.pyqt6 as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4146 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4158",
+      "category": "campaign_program",
+      "title": "Wedge Delivery Kinematics, Bounce, and Chip-Shot Explorer",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[6].issue=4158"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4158 declares tools.pyqt6 as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4158 declares tools.react as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4158 declares upstreamdrift.pyqt6 as contract_only; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4158 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4181",
+      "category": "campaign_program",
+      "title": "Launch Monitor Convention Registry and Comparability",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[7].issue=4181"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4181 declares tools.pyqt6 as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4181 declares tools.react as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4181 declares upstreamdrift.pyqt6 as contract_only; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4181 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4189",
+      "category": "campaign_program",
+      "title": "Comprehensive 3D D-Plane Calculation and Visualization",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[8].issue=4189"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4189 declares tools.pyqt6 as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4189 declares tools.react as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4189 declares upstreamdrift.pyqt6 as contract_only; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4189 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4191",
+      "category": "campaign_program",
+      "title": "Shot Design, Wind Strategy, Inverse Flight, and 3D Playback",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[9].issue=4191"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4191 declares tools.pyqt6 as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4191 declares tools.react as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4191 declares upstreamdrift.pyqt6 as contract_only; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4191 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4201",
+      "category": "campaign_program",
+      "title": "Cross-Interface Validation, Documentation, and Release Evidence",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[10].issue=4201"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4201 declares tools.pyqt6 as contract_only; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4201 declares tools.react as contract_only; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4201 declares upstreamdrift.pyqt6 as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4201 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4218",
+      "category": "campaign_program",
+      "title": "Modern Toolstrip, Persistence, and Workspace Modules",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[11].issue=4218"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4218 declares tools.pyqt6 as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4218 declares tools.react as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4218 declares upstreamdrift.pyqt6 as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4218 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4234",
+      "category": "campaign_program",
+      "title": "Production-Grade Visual Design, Layout, Context, and Error UX",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[12].issue=4234"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4234 declares tools.pyqt6 as locally_verified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4234 declares tools.react as implemented_unverified; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4234 declares upstreamdrift.pyqt6 as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4234 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4260",
+      "category": "campaign_program",
+      "title": "Golf Impact and Flight Authority with Four-Surface Parity",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[13].issue=4260"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4260 declares tools.pyqt6 as contract_only; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4260 declares tools.react as contract_only; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4260 declares upstreamdrift.pyqt6 as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4260 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "campaign.issue-4267",
+      "category": "campaign_program",
+      "title": "Qualified Landing, Bounce, Roll, and Ground-Surface Modeling",
+      "declaration": {
+        "kind": "campaign_program",
+        "source_path": "docs/release/rate_of_closure_campaign.v1.json",
+        "source_key": "programs[14].issue=4267"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4267 declares tools.pyqt6 as contract_only; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4267 declares tools.react as contract_only; this program record has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4267 declares upstreamdrift.pyqt6 as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Campaign issue #4267 declares upstreamdrift.react as not_started; no installed consumer commit pin and repository-bound conformance evidence exist.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.ball-flight-playback",
+      "category": "active_specification",
+      "title": "Ball-Flight Playback Contract",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/BALL_FLIGHT_PLAYBACK.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/BALL_FLIGHT_PLAYBACK.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/BALL_FLIGHT_PLAYBACK.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/BALL_FLIGHT_PLAYBACK.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/BALL_FLIGHT_PLAYBACK.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.ball-flight-result-contract",
+      "category": "active_specification",
+      "title": "Ball-Flight Result Contract",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/BALL_FLIGHT_RESULT_CONTRACT.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/BALL_FLIGHT_RESULT_CONTRACT.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/BALL_FLIGHT_RESULT_CONTRACT.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/BALL_FLIGHT_RESULT_CONTRACT.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/BALL_FLIGHT_RESULT_CONTRACT.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.capability-optimization",
+      "category": "active_specification",
+      "title": "Player-Capability Optimization Contract",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/CAPABILITY_OPTIMIZATION.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/CAPABILITY_OPTIMIZATION.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/CAPABILITY_OPTIMIZATION.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/CAPABILITY_OPTIMIZATION.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/CAPABILITY_OPTIMIZATION.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.d-plane-geometry",
+      "category": "active_specification",
+      "title": "Comprehensive 3D D-Plane Geometry",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/D_PLANE_GEOMETRY.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/D_PLANE_GEOMETRY.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/D_PLANE_GEOMETRY.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/D_PLANE_GEOMETRY.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/D_PLANE_GEOMETRY.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.golf-club-shaft-profiles",
+      "category": "active_specification",
+      "title": "Golf Club Shaft Profile and Reference Solver Specification",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/GOLF_CLUB_SHAFT_PROFILES.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_SHAFT_PROFILES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_SHAFT_PROFILES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_SHAFT_PROFILES.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_SHAFT_PROFILES.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.golf-club-turf-contact",
+      "category": "active_specification",
+      "title": "Wedge Turf-Contact Model",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/GOLF_CLUB_TURF_CONTACT.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_TURF_CONTACT.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_TURF_CONTACT.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_TURF_CONTACT.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_TURF_CONTACT.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.golf-club-wedge-cad",
+      "category": "active_specification",
+      "title": "Golf Club Modern-Wedge CAD Foundation",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/GOLF_CLUB_WEDGE_CAD.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_CAD.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_CAD.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_CAD.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_CAD.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.golf-club-wedge-ground-clearance",
+      "category": "active_specification",
+      "title": "Golf Club Wedge Ground-Clearance Analysis",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_GROUND_CLEARANCE.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.golf-club-wedge-kinematics",
+      "category": "active_specification",
+      "title": "Golf Club Wedge Impact Kinematics",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/GOLF_CLUB_WEDGE_KINEMATICS.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.impact-solution-families",
+      "category": "active_specification",
+      "title": "Impact-to-Flight Solution Families",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/IMPACT_SOLUTION_FAMILIES.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/IMPACT_SOLUTION_FAMILIES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/IMPACT_SOLUTION_FAMILIES.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/IMPACT_SOLUTION_FAMILIES.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/IMPACT_SOLUTION_FAMILIES.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.inverse-flight-solver",
+      "category": "active_specification",
+      "title": "Desired Ball-Flight Inverse Solver",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/INVERSE_FLIGHT_SOLVER.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/INVERSE_FLIGHT_SOLVER.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/INVERSE_FLIGHT_SOLVER.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/INVERSE_FLIGHT_SOLVER.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/INVERSE_FLIGHT_SOLVER.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.launch-monitor-analytics",
+      "category": "active_specification",
+      "title": "Launch Monitor Analytics",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/LAUNCH_MONITOR_ANALYTICS.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/LAUNCH_MONITOR_ANALYTICS.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/LAUNCH_MONITOR_ANALYTICS.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/LAUNCH_MONITOR_ANALYTICS.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/LAUNCH_MONITOR_ANALYTICS.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.launch-monitor-conventions",
+      "category": "active_specification",
+      "title": "Launch-Monitor Convention Registry",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/LAUNCH_MONITOR_CONVENTIONS.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/LAUNCH_MONITOR_CONVENTIONS.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/LAUNCH_MONITOR_CONVENTIONS.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/LAUNCH_MONITOR_CONVENTIONS.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/LAUNCH_MONITOR_CONVENTIONS.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.wedge-impact-visualization",
+      "category": "active_specification",
+      "title": "Exact-Event Wedge Impact Visualization",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/WEDGE_IMPACT_VISUALIZATION.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WEDGE_IMPACT_VISUALIZATION.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WEDGE_IMPACT_VISUALIZATION.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WEDGE_IMPACT_VISUALIZATION.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WEDGE_IMPACT_VISUALIZATION.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.wind-physics",
+      "category": "active_specification",
+      "title": "Reproducible Ball-Flight Wind Physics",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/WIND_PHYSICS.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WIND_PHYSICS.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WIND_PHYSICS.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WIND_PHYSICS.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WIND_PHYSICS.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.wind-uncertainty-strategy",
+      "category": "active_specification",
+      "title": "Wind-Estimate Uncertainty and Strategy Analysis",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/specs/WIND_UNCERTAINTY_STRATEGY.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WIND_UNCERTAINTY_STRATEGY.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WIND_UNCERTAINTY_STRATEGY.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WIND_UNCERTAINTY_STRATEGY.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/specs/WIND_UNCERTAINTY_STRATEGY.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.repository",
+      "category": "active_specification",
+      "title": "SPEC.md — Repository Specification Document",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "SPEC.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification SPEC.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification SPEC.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification SPEC.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification SPEC.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "spec.variation-visualization-performance",
+      "category": "active_specification",
+      "title": "Variation Visualization Performance Contract",
+      "declaration": {
+        "kind": "active_release_spec",
+        "source_path": "docs/rate_of_closure/variation_visualization_performance.md",
+        "source_key": "heading.h1"
+      },
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "tools.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md is declaration authority only; it has no surface-specific source-and-test evidence at exact Tools pin de49580a3c0888b44f66dcc09bba2ab2fa33914a.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md has no installed upstreamdrift.pyqt6 consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "Active specification docs/rate_of_closure/variation_visualization_performance.md has no installed upstreamdrift.react consumer pin and repository-bound conformance evidence.",
+          "evidence_ids": []
+        }
+      }
     }
   ],
   "limitations": [
-    "This first contract slice is a partial inventory and does not close issue 4264 or epic 4260.",
-    "Supported states apply only to the exact Tools source pin and cited local evidence paths; they are not protected-CI or main-release claims.",
-    "Neither UpstreamDrift consumer has an immutable installed Tools pin in this inventory, so every declared consumer capability remains unsupported with a visible reason.",
+    "Declared-scope completeness covers all structured campaign programs and every linked active release specification, plus six curated evidence-backed capabilities; it does not parse prose into inferred feature records.",
+    "Supported states apply only to the exact Tools source pin and cited repository-bound evidence; they are not protected-CI or main-release claims.",
+    "Neither UpstreamDrift consumer has an immutable installed Tools pin in this inventory, so every declared consumer capability remains unsupported with a visible specific reason.",
+    "Narrative headings and feature bullets outside the structured campaign or linked-spec registry must be promoted into one of those authorities before the completeness generator can govern them.",
     "The matrix does not infer parity from a launcher tile, copied physics, or an unrelated simulator route."
   ]
 }

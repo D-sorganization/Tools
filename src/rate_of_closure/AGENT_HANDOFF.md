@@ -5,18 +5,19 @@
 
 ## Current continuation
 
-The newest bounded continuation is branch
+The newest bounded continuation is draft PR #4299 branch
 `feat/4264-four-surface-capability` in isolated worktree
 `C:\Users\diete\Repositories\Tools-worktrees\four-surface-capability`, based
-exactly on `feat/4199-wind-workflow@de49580a3c0888b44f66dcc09bba2ab2fa33914a`.
-It establishes `four-surface-capability/v1`: stable surface IDs, a strict typed
-Python contract, deterministic JSON Schema/canonical JSON generation, an exact
-Tools audit pin, commit-bound source/test evidence, completeness and freshness
-gates, and explicit unsupported reasons for both unpinned UpstreamDrift
-consumers. The checked-in inventory is explicitly partial and does not claim
-issue completion, installed parity, hosted CI, protected merge, or release.
+exactly on published head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`.
+It extends `four-surface-capability/v1` with deterministic enumeration of all
+15 campaign programs and 18 unique linked active release specifications while
+retaining the six curated evidence-backed records. The completeness gate fails
+when either structured source gains a record without all four surface cells.
+Unstructured prose remains explicitly outside the governed boundary until it
+is promoted to one of those sources. This does not claim issue completion,
+installed parity, hosted CI, protected merge, or release.
 
-Focused local evidence is 15 new capability-contract tests plus eight campaign
+Focused local evidence is 22 capability-contract tests plus eight campaign
 authority tests, 50 cited Python/PyQt capability/workspace/export tests, and
 three cited React files / 32 tests. The deterministic validator, schema and
 canonical output, Python 3.10 import/schema parity, exact mypy 1.13, Ruff,
@@ -37,7 +38,7 @@ changed-production-Python policy guard cover this release entrypoint.
 
 Use these authorities together:
 
-- `docs/release/four_surface_capability.v1.json` — partial parity inventory;
+- `docs/release/four_surface_capability.v1.json` — declared-scope parity inventory;
 - `scripts/four_surface_capability.py` — schema generator and validator;
 - `docs/release/FOUR_SURFACE_CAPABILITY.md` — refresh procedure;
 - `docs/release/rate_of_closure_campaign.v1.json` — machine state;
@@ -88,7 +89,7 @@ reconciled before #4130 can close.
 - Ground contracts and flight transfer are open carriers; qualified bounce,
   skid, roll, profiles, total-distance optimization, UI, and Rust/WASM parity
   remain.
-- UpstreamDrift React has no native Rate route. The partial capability matrix
+- UpstreamDrift React has no native Rate route. The declared-scope matrix
   now pins its Tools audit basis exactly, but neither UpstreamDrift consumer has
   an immutable installed Tools pin or qualified conformance result.
 - Camera tracking/snap views (#4284), complete persistence adapters, high-DPI,
@@ -97,7 +98,7 @@ reconciled before #4130 can close.
 
 ## Most recent evidence
 
-- Four-surface contract continuation: 15 strict contract tests plus eight
+- Four-surface contract continuation: 22 strict contract tests plus eight
   campaign tests, 50 cited Python/PyQt tests, and three React files / 32 tests
   pass locally. Python 3.10 import/schema parity and the focused quality gates
   pass. There is no hosted or installed-consumer evidence.
@@ -127,6 +128,7 @@ reconciled before #4130 can close.
 ```powershell
 $env:PYTHONPATH=(Resolve-Path 'src').Path
 python scripts/four_surface_capability.py
+python scripts/four_surface_capability.py --declared-scope
 python -m pytest tests/rate_of_closure/test_four_surface_capability.py -q
 python scripts/rate_campaign_manifest.py
 python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q

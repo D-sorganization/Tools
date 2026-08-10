@@ -5,17 +5,17 @@
 
 ## Active Rate of Closure campaign
 
-The current bounded local continuation is
+The current bounded continuation is
 `C:\Users\diete\Repositories\Tools-worktrees\four-surface-capability` on
-`feat/4264-four-surface-capability`, based exactly on carrier
-`feat/4199-wind-workflow@de49580a3c0888b44f66dcc09bba2ab2fa33914a`.
-It adds the strict `four-surface-capability/v1` partial inventory, deterministic
-schema/canonical JSON generation, exact Tools source pin, evidence-path and
-freshness validation, and explicit unsupported-with-reason UpstreamDrift
-consumer states. It is local only: there is no push, PR, hosted CI, installed
-consumer pin, protected merge, or release claim.
+draft PR #4299 branch `feat/4264-four-surface-capability`, starting from exact
+published head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`. The local-only
+continuation expands `four-surface-capability/v1` from six curated records to
+the deterministic declared scope: all 15 campaign programs, all 18 unique
+linked active release specifications, and the six curated evidence-backed
+capabilities. There is no continuation push, hosted CI, installed consumer
+pin, protected merge, or release claim.
 
-Local evidence for this slice: 15 capability-contract tests plus eight
+Local evidence for the composed branch: 22 capability-contract tests plus eight
 campaign-manifest tests pass; 50 cited Python/PyQt workflow, workspace, and
 export tests pass; and three cited React files / 32 tests pass. Deterministic
 CLI validation/schema/canonical output, Python 3.10 import/schema parity,
@@ -36,7 +36,7 @@ CI remains due.
 
 Canonical files:
 
-- `docs/release/four_surface_capability.v1.json` — partial four-surface matrix;
+- `docs/release/four_surface_capability.v1.json` — declared-scope matrix;
 - `docs/release/four_surface_capability.v1.schema.json` — generated schema;
 - `scripts/four_surface_capability.py` — generator and fail-closed validator;
 - `docs/release/FOUR_SURFACE_CAPABILITY.md` — maintenance procedure;
@@ -99,9 +99,10 @@ its parent stack had already propagated and is not proven in #4119.
   stack; scientific, installed-package, and cross-surface release gates remain.
 - #4218/#4234: toolstrip and selected layout fixes exist; camera issue #4284,
   complete persistence, high-DPI, keyboard, and visual baselines remain.
-- #4260/#4267: the first strict partial four-surface matrix exists, but the
-  exhaustive inventory, immutable installed UpstreamDrift consumers, truthful
-  React route, conformance runs, and protected release remain; ground
+- #4260/#4267: the strict four-surface matrix is complete for its governed
+  campaign-program/linked-spec boundary, but narrative features outside that
+  structured registry, immutable installed UpstreamDrift consumers, truthful
+  React routing, conformance runs, and protected release remain; ground
   contracts/transfer are partial and bounce, skid, roll, total distance, UI,
   and parity remain open.
 
@@ -110,6 +111,7 @@ its parent stack had already propagated and is not proven in #4119.
 ```powershell
 $env:PYTHONPATH=(Resolve-Path 'src').Path
 python scripts/four_surface_capability.py
+python scripts/four_surface_capability.py --declared-scope
 python -m pytest tests/rate_of_closure/test_four_surface_capability.py -q
 python scripts/rate_campaign_manifest.py
 python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q

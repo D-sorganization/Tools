@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import hashlib
 import json
+import shutil
 from datetime import date
 from pathlib import Path
 
@@ -20,6 +21,11 @@ from rate_of_closure.four_surface_capability import (
     render_json_schema,
     validate_freshness,
     validate_repository_evidence,
+)
+from rate_of_closure.four_surface_declarations import (
+    derive_declared_capabilities,
+    render_declared_scope,
+    validate_declared_scope_completeness,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
@@ -162,7 +168,9 @@ def test_missing_surface_and_category_are_rejected(
         FourSurfaceCapabilityManifest.model_validate_json(json.dumps(payload))
 
     payload = manifest.model_dump(mode="json", by_alias=True)
-    payload["capabilities"] = payload["capabilities"][:-1]
+    payload["capabilities"] = [
+        item for item in payload["capabilities"] if item["category"] != "export"
+    ]
     with pytest.raises(ValidationError, match="every declared category"):
         FourSurfaceCapabilityManifest.model_validate_json(json.dumps(payload))
 
@@ -230,3 +238,149 @@ def test_campaign_manifest_links_partial_inventory_without_release_claim() -> No
     assert program["completion"] == "specified"
     assert program["delivery_stage"] == "specified_only"
     assert program["release"]["status"] == "not_released"
+
+
+@pytest.mark.unit
+def test_declared_scope_is_complete_and_deterministic(
+    manifest: FourSurfaceCapabilityManifest,
+) -> None:
+    """All structured campaign programs and linked active specs are enumerated."""
+    declared = derive_declared_capabilities(CAMPAIGN_PATH, REPO_ROOT)
+    validate_declared_scope_completeness(manifest, CAMPAIGN_PATH, REPO_ROOT)
+    assert len(declared) == 33
+    assert manifest.inventory.status == "declared_scope_complete"
+    assert manifest.inventory.campaign_program_count == 15
+    assert manifest.inventory.active_specification_count == 18
+    assert manifest.inventory.curated_capability_count == 6
+    assert render_declared_scope(CAMPAIGN_PATH, REPO_ROOT) == render_declared_scope(
+        CAMPAIGN_PATH, REPO_ROOT
+    )
+
+
+@pytest.mark.unit
+def test_every_declared_record_has_four_truthful_cells(
+    manifest: FourSurfaceCapabilityManifest,
+) -> None:
+    """Generated-scope records cannot omit or overstate a product surface."""
+    declared_ids = {
+        item.id for item in derive_declared_capabilities(CAMPAIGN_PATH, REPO_ROOT)
+    }
+    records = {item.id: item for item in manifest.capabilities}
+    assert declared_ids <= records.keys()
+    for capability_id in declared_ids:
+        record = records[capability_id]
+        assert set(record.surfaces) == set(SURFACE_IDS)
+        for cell in record.surfaces.values():
+            if cell.state.value == "supported":
+                assert cell.evidence_ids
+            else:
+                assert cell.reason
+
+
+@pytest.mark.unit
+def test_declared_unsupported_reasons_identify_their_source(
+    manifest: FourSurfaceCapabilityManifest,
+) -> None:
+    """Unsupported reasons are record-specific rather than generic boilerplate."""
+    for record in manifest.capabilities:
+        if record.category.value == "campaign_program":
+            marker = f"#{record.id.removeprefix('campaign.issue-')}"
+        elif record.category.value == "active_specification":
+            marker = record.declaration.source_path
+        else:
+            continue
+        for cell in record.surfaces.values():
+            if cell.state.value == "unsupported":
+                assert cell.reason is not None
+                assert marker in cell.reason
+
+
+@pytest.mark.unit
+def test_declared_record_kind_must_match_derived_source(
+    manifest: FourSurfaceCapabilityManifest,
+) -> None:
+    """A valid but incorrect declaration kind cannot satisfy completeness."""
+    records = list(manifest.capabilities)
+    index = next(
+        index
+        for index, item in enumerate(records)
+        if item.category.value == "campaign_program"
+    )
+    campaign = records[index]
+    declaration = campaign.declaration.model_copy(
+        update={"kind": "active_release_spec"}
+    )
+    records[index] = campaign.model_copy(update={"declaration": declaration})
+    changed = manifest.model_copy(update={"capabilities": records})
+    with pytest.raises(ValueError, match="declared capability metadata differs"):
+        validate_declared_scope_completeness(changed, CAMPAIGN_PATH, REPO_ROOT)
+
+
+@pytest.mark.unit
+def test_new_campaign_program_cannot_bypass_completeness_gate(
+    manifest: FourSurfaceCapabilityManifest,
+    tmp_path: Path,
+) -> None:
+    """Adding a structured campaign record requires a matrix record."""
+    payload = json.loads(CAMPAIGN_PATH.read_text(encoding="utf-8"))
+    added = copy.deepcopy(payload["programs"][0])
+    added["issue"] = 4999
+    added["title"] = "New Structured Rate Capability"
+    payload["programs"].append(added)
+    campaign_path = tmp_path / "campaign.json"
+    campaign_path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="declared capability IDs differ"):
+        validate_declared_scope_completeness(manifest, campaign_path, REPO_ROOT)
+
+
+@pytest.mark.unit
+def test_new_linked_spec_cannot_bypass_completeness_gate(
+    manifest: FourSurfaceCapabilityManifest,
+    tmp_path: Path,
+) -> None:
+    """Adding a linked active specification requires a matrix record."""
+    payload = json.loads(CAMPAIGN_PATH.read_text(encoding="utf-8"))
+    spec_root = tmp_path / "docs" / "specs"
+    spec_root.mkdir(parents=True)
+    for source in REPO_ROOT.joinpath("docs", "specs").glob("*.md"):
+        shutil.copyfile(source, spec_root / source.name)
+    shutil.copyfile(REPO_ROOT / "SPEC.md", tmp_path / "SPEC.md")
+    rate_docs = tmp_path / "docs" / "rate_of_closure"
+    rate_docs.mkdir(parents=True)
+    shutil.copyfile(
+        REPO_ROOT
+        / "docs"
+        / "rate_of_closure"
+        / "variation_visualization_performance.md",
+        rate_docs / "variation_visualization_performance.md",
+    )
+    new_spec = spec_root / "NEW_RATE_FEATURE.md"
+    new_spec.write_text("# New Rate Feature\n", encoding="utf-8")
+    payload["programs"][0]["authorities"].append(
+        {
+            "kind": "repository_path",
+            "value": "docs/specs/NEW_RATE_FEATURE.md",
+        }
+    )
+    campaign_path = tmp_path / "campaign.json"
+    campaign_path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="declared capability IDs differ"):
+        validate_declared_scope_completeness(manifest, campaign_path, tmp_path)
+
+
+@pytest.mark.unit
+def test_linked_spec_path_cannot_escape_declared_scope(
+    tmp_path: Path,
+) -> None:
+    """A structured spec authority cannot traverse outside its governed root."""
+    payload = json.loads(CAMPAIGN_PATH.read_text(encoding="utf-8"))
+    payload["programs"][0]["authorities"].append(
+        {
+            "kind": "repository_path",
+            "value": "docs/specs/../ESCAPE.md",
+        }
+    )
+    campaign_path = tmp_path / "campaign.json"
+    campaign_path.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(ValueError, match="path must be normalized"):
+        derive_declared_capabilities(campaign_path, REPO_ROOT)

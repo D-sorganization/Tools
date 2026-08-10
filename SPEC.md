@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.9                                     |
-| **Spec Version**        | 1.14.9                                     |
+| **Current Version**     | 1.14.10                                    |
+| **Spec Version**        | 1.14.10                                    |
 | **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
@@ -42,9 +42,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   capability classifies all four surfaces as supported, unsupported, or
   deprecated. Supported cells require commit-bound evidence; unsupported and
   deprecated cells require visible reasons.
-- The initial checked-in inventory is deliberately partial and pins the exact
-  Tools audit basis. Both UpstreamDrift surfaces remain unsupported until an
-  immutable installed consumer pin and conformance evidence exist.
+- The inventory deterministically covers every structured campaign program,
+  every unique linked active release specification, and six curated
+  evidence-backed capabilities at the exact Tools audit pin. New governed
+  declarations fail completeness validation until all four cells are present.
+- Both UpstreamDrift surfaces remain unsupported until an immutable installed
+  consumer pin and repository-bound conformance evidence exist. Unstructured
+  narrative features remain excluded until promoted to a governed source.
 - Deterministic schema and canonical JSON generation, strict Pydantic
   validation, evidence-path checks, and a bounded expiry gate make incomplete
   or stale capability records fail closed in CI.
@@ -2951,6 +2955,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.14.10 | feat(rate-of-closure, #4264): expand `four-surface-capability/v1` to the deterministic declared scope of all 15 campaign programs, 18 unique linked active release specifications, and six curated evidence-backed capabilities; add stable declaration IDs/metadata, generator output, exact completeness/count gates, and specific four-surface unsupported reasons without inferring consumer parity. |
 | 2026-08-09 | 1.14.9 | feat(rate-of-closure, #4264): add the strict `four-surface-capability/v1` partial inventory with stable Tools/UpstreamDrift PyQt6/React IDs, exact Tools pin, deterministic schema and canonical JSON generation, evidence/limitation/freshness contracts, explicit unsupported consumer reasons, completeness/staleness tests, and truthful campaign-manifest integration without promoting #4260 release state. |
 | 2026-08-09 | 1.14.8 | feat(rate-of-closure, #4201): harden cross-runtime capability parsing and signed input; expose complete diagnostics, result exports, and quantitative scatter annotations; stabilize supported PyQt6/static-Vite entrypoints; and add a strict campaign manifest with generated schema, four-surface status, explicit gaps/dependencies, and fail-closed feature-stack/protected-parent/`main` release distinctions. |
 | 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |

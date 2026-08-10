@@ -26,6 +26,8 @@ CAPABILITY_CATEGORIES = (
     "view",
     "persistence",
     "export",
+    "campaign_program",
+    "active_specification",
 )
 SHA_PATTERN = re.compile(r"^[0-9a-f]{40}$")
 SHA256_PATTERN = re.compile(r"^[0-9a-f]{64}$")
@@ -66,6 +68,8 @@ class CapabilityCategory(str, Enum):  # noqa: UP042
     VIEW = "view"
     PERSISTENCE = "persistence"
     EXPORT = "export"
+    CAMPAIGN_PROGRAM = "campaign_program"
+    ACTIVE_SPECIFICATION = "active_specification"
 
 
 class CapabilityState(str, Enum):  # noqa: UP042
@@ -163,12 +167,21 @@ class SurfaceCapability(StrictModel):
         return self
 
 
+class DeclarationReference(StrictModel):
+    """Deterministic source location for one capability record."""
+
+    kind: Literal["curated_evidence", "campaign_program", "active_release_spec"]
+    source_path: str = Field(min_length=1)
+    source_key: str = Field(min_length=1)
+
+
 class CapabilityRecord(StrictModel):
     """One durable capability key classified across every product surface."""
 
     id: str = Field(pattern=ID_PATTERN.pattern)
     category: CapabilityCategory
     title: str = Field(min_length=1)
+    declaration: DeclarationReference
     surfaces: dict[str, SurfaceCapability]
 
     @model_validator(mode="after")
@@ -190,8 +203,12 @@ class CampaignReference(StrictModel):
 class InventoryScope(StrictModel):
     """Explicit boundary for the currently audited capability inventory."""
 
-    status: Literal["partial"]
+    status: Literal["declared_scope_complete"]
     included_categories: list[CapabilityCategory]
+    enumeration_rules: list[str] = Field(min_length=2)
+    curated_capability_count: int = Field(ge=1)
+    campaign_program_count: int = Field(ge=1)
+    active_specification_count: int = Field(ge=1)
     excluded_scope_reason: str = Field(min_length=1)
 
 
@@ -373,6 +390,9 @@ def validate_repository_evidence(
         if evidence.repository == manifest.tools_pin.repository
         for path in (*evidence.source_paths, *evidence.test_paths)
     }
+    paths.update(
+        capability.declaration.source_path for capability in manifest.capabilities
+    )
     missing = sorted(path for path in paths if not (repo_root / path).is_file())
     if missing:
         raise ValueError(f"capability evidence paths do not exist: {missing}")

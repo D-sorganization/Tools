@@ -1008,11 +1008,11 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [],
-      "evidence_gap": "The strict partial capability inventory pins an exact Tools source snapshot, but no installed UpstreamDrift consumer pin, exhaustive capability inventory, or four-surface conformance run exists.",
+      "evidence_gap": "The declared-scope capability inventory covers all structured campaign programs and linked active specifications at an exact Tools pin, but no installed UpstreamDrift consumer pin or four-surface conformance run exists; unstructured prose remains outside the deterministic boundary until promoted to a governed source.",
       "limitations": [
         "A launcher tile does not establish an independent surface implementation.",
         "Current UpstreamDrift source resolution and React routing do not satisfy parity.",
-        "The initial machine-readable matrix covers one evidenced capability in each required category and must not be treated as the exhaustive issue 4264 inventory."
+        "The machine-readable matrix is complete for its governed declared scope but must not be treated as exhaustive for narrative features that have not been promoted into a structured campaign record or linked active specification."
       ],
       "depends_on_issues": [
         4191

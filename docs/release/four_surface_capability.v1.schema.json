@@ -36,7 +36,9 @@
         "output",
         "view",
         "persistence",
-        "export"
+        "export",
+        "campaign_program",
+        "active_specification"
       ],
       "title": "CapabilityCategory",
       "type": "string"
@@ -47,6 +49,9 @@
       "properties": {
         "category": {
           "$ref": "#/$defs/CapabilityCategory"
+        },
+        "declaration": {
+          "$ref": "#/$defs/DeclarationReference"
         },
         "id": {
           "pattern": "^[a-z0-9]+(?:[.-][a-z0-9]+)*$",
@@ -70,6 +75,7 @@
         "id",
         "category",
         "title",
+        "declaration",
         "surfaces"
       ],
       "title": "CapabilityRecord",
@@ -84,6 +90,38 @@
       ],
       "title": "CapabilityState",
       "type": "string"
+    },
+    "DeclarationReference": {
+      "additionalProperties": false,
+      "description": "Deterministic source location for one capability record.",
+      "properties": {
+        "kind": {
+          "enum": [
+            "curated_evidence",
+            "campaign_program",
+            "active_release_spec"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "source_key": {
+          "minLength": 1,
+          "title": "Source Key",
+          "type": "string"
+        },
+        "source_path": {
+          "minLength": 1,
+          "title": "Source Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "kind",
+        "source_path",
+        "source_key"
+      ],
+      "title": "DeclarationReference",
+      "type": "object"
     },
     "EvidenceRecord": {
       "additionalProperties": false,
@@ -173,6 +211,29 @@
       "additionalProperties": false,
       "description": "Explicit boundary for the currently audited capability inventory.",
       "properties": {
+        "active_specification_count": {
+          "minimum": 1,
+          "title": "Active Specification Count",
+          "type": "integer"
+        },
+        "campaign_program_count": {
+          "minimum": 1,
+          "title": "Campaign Program Count",
+          "type": "integer"
+        },
+        "curated_capability_count": {
+          "minimum": 1,
+          "title": "Curated Capability Count",
+          "type": "integer"
+        },
+        "enumeration_rules": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 2,
+          "title": "Enumeration Rules",
+          "type": "array"
+        },
         "excluded_scope_reason": {
           "minLength": 1,
           "title": "Excluded Scope Reason",
@@ -186,7 +247,7 @@
           "type": "array"
         },
         "status": {
-          "const": "partial",
+          "const": "declared_scope_complete",
           "title": "Status",
           "type": "string"
         }
@@ -194,6 +255,10 @@
       "required": [
         "status",
         "included_categories",
+        "enumeration_rules",
+        "curated_capability_count",
+        "campaign_program_count",
+        "active_specification_count",
         "excluded_scope_reason"
       ],
       "title": "InventoryScope",

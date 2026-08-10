@@ -6,35 +6,39 @@ branch was rewritten.
 
 ## 2026-08-09 Four-surface capability contract continuation
 
-Isolated local branch `feat/4264-four-surface-capability` starts exactly from
-`feat/4199-wind-workflow@de49580a3c0888b44f66dcc09bba2ab2fa33914a` and does
-not overlap the running PyQt6 or React worktrees. It adds the strict
+Draft PR #4299 branch `feat/4264-four-surface-capability` was published at
+exact head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`; this local-only
+continuation does not overlap the running PyQt6 or React worktrees. It extends the strict
 `four-surface-capability/v1` typed Python contract, checked-in generated JSON
 Schema, canonical JSON rendering, stable Tools/UpstreamDrift PyQt6/React
 surface IDs, exact Tools audit pin, evidence-path validation, and a bounded
 freshness gate.
 
-The initial inventory covers one evidenced Tools capability in each required
-model, control, output, view, persistence, and export category. Every declared
-capability classifies all four surfaces. Both UpstreamDrift consumers remain
+The inventory now covers all 15 structured campaign program records, all 18
+unique linked active release specifications, and one evidenced Tools
+capability in each required model, control, output, view, persistence, and
+export category. Every record classifies all four surfaces. A deterministic
+generator and completeness gate reject any new program or linked spec that
+lacks its exact machine record. Both UpstreamDrift consumers remain
 explicitly unsupported with visible reasons because neither has an immutable
 installed Tools consumer pin; launcher discovery and an unrelated route do not
-qualify. The inventory is marked partial, so this slice does not close #4264
-or #4260 and does not claim hosted CI, consumer conformance, protected merge,
-or release.
+qualify. Narrative headings and feature bullets outside the two structured
+sources remain explicitly excluded until promoted. This slice does not close
+#4264 or #4260 and does not claim hosted CI, consumer conformance, protected
+merge, or release.
 
-Local validation passes 15 capability-contract tests plus the eight canonical
+Local validation passes 22 capability-contract tests plus the eight canonical
 campaign-manifest tests, 50 cited Python/PyQt capability/workspace/export
 tests, and three cited React files / 32 tests. Deterministic CLI validation,
 schema and canonical JSON generation, Python 3.10 import/schema parity, exact
 mypy 1.13, Ruff, Ruff format, Black, assertion policy, docs governance, and
 diff checks also pass.
 
-The canonical campaign manifest references the new matrix and schema but keeps
+The canonical campaign manifest references the matrix and schema but keeps
 #4260 `specified_only`, `specified`, and `not_released`. Its evidence gap now
-names the missing exhaustive inventory, consumer pins, and four-surface
-conformance run instead of incorrectly claiming that no machine-readable
-matrix exists. No GitHub write or push has occurred.
+names the missing consumer pins and four-surface conformance run and records
+the deterministic boundary for unstructured prose. This continuation has not
+been pushed and performed no GitHub write.
 
 ## 2026-08-09 Capability workflow hardening continuation
 
