@@ -1227,3 +1227,16 @@ existing local SciPy/NumPy compatibility warning also remains environmental.
 All new source files are below 400 lines. The oversized append-only SPEC and
 handoff registries plus the preserved Waterloo and `from_imperial` public
 signatures predate #4269 and are explicitly retained for compatibility.
+
+## 2026-08-09 PR #4302 deterministic-digest scanner repair
+
+The protected run at exact PR #4302 head
+`920c46dee688815691e251777142126bf1489b1a` found one actionable scanner-only
+failure: the committed impact golden fixture's public SHA-256 assertion was
+classified as a high-entropy secret. The assertion now carries only the exact
+inline `pragma: allowlist secret` annotation used elsewhere in this campaign.
+The digest, fixture, physics, scanner scope, and baseline remain unchanged.
+
+Commit and push this bounded repair normally before propagating it into #4304,
+#4305, or later ground children. The contemporaneous file-size cancellation
+occurred in checkout and remains infrastructure evidence, not a code failure.

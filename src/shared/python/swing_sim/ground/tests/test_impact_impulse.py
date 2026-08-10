@@ -280,7 +280,8 @@ def test_shared_golden_fixture_matches_canonical_analytic_impact() -> None:
 def test_shared_golden_fixture_bytes_are_version_locked() -> None:
     digest = hashlib.sha256(_GOLDEN.read_bytes()).hexdigest()
 
-    assert digest == "5831a8f8bf0fe18edf76c985503fdfe784df8e0eed89f85deb9c27085fb9f059"
+    expected = "5831a8f8bf0fe18edf76c985503fdfe784df8e0eed89f85deb9c27085fb9f059"  # pragma: allowlist secret  # noqa: E501
+    assert digest == expected
 
 
 @pytest.mark.parametrize("tangent_speed", [0.0, 0.25, 1.0, 5.0, 25.0])
