@@ -25,6 +25,16 @@ implementation commit cannot contain its own SHA; the required evidence
 follow-up must record that exact parent, the raw corpus digest, full matrix
 counts, independent review, PR, and protected checks before publication.
 
+The exact independently reviewed implementation is
+`9df3928a1ef32d81db2e568884ca24d8c576d49a`; the raw corpus SHA-256 is
+`f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310`.
+Complete local evidence is 227 Python ground tests; Rust matrices of
+184/199/196 for default/Python/WASM; eight focused Python and four native
+conformance tests; installed CPython 3.13 PyO3 and rebuilt Node/WASM harnesses;
+strict Clippy; MyPy; Ruff; formatting; manifest plus eight tests; docs
+governance; structural budgets; and an independent READY verdict. Publication,
+hosted/protected checks, review approval, integration, and release remain open.
+
 Keep #4275 and #4267 open. This slice does not qualify tilted cross-authority
 frames, broad properties, performance, ensembles, async WASM cancellation,
 calibration, material regions/changing normals, deformation, torsional damping,

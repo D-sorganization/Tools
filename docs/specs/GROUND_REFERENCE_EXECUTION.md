@@ -159,6 +159,13 @@ installed PyO3 wheel, and rebuilt Node/WASM package all consume this same
 artifact. A runtime agreeing with another runtime is insufficient: each must
 also satisfy the declared analytic oracle.
 
+The reviewed v1 artifact is bound to implementation commit
+`9df3928a1ef32d81db2e568884ca24d8c576d49a` with raw-file SHA-256
+`f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310`.
+That digest qualifies only these five immutable horizontal-plane cases; it is
+not evidence for tilted frames, broad properties, performance, calibration,
+changing terrain, user interfaces, or downstream release.
+
 This corpus does not replace the canonical full-result fixture. Scientific
 tolerances establish physical conformance; exact canonical bytes and SHA-256
 remain serialization evidence. The current cases do not qualify production

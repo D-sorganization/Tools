@@ -28,6 +28,17 @@ exact implementation parent, raw corpus SHA-256, complete test matrices,
 independent review, PR number/head/base, and protected-CI state in the strict
 manifest and all handoffs.
 
+The independently reviewed implementation is exact commit
+`9df3928a1ef32d81db2e568884ca24d8c576d49a`; corpus SHA-256 is
+`f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310`.
+Final local gates pass 227 Python ground tests, 184/199/196
+default/Python/WASM Rust tests, eight focused Python and four native corpus
+tests, a real installed CPython 3.13 PyO3 wheel, rebuilt Node/WASM, strict
+Clippy, MyPy, Ruff, formatting, manifest plus eight tests, docs governance,
+structural budgets, and independent READY review. This is immutable local
+evidence only; no carrier PR, hosted/protected result, approval, integration,
+or release is claimed.
+
 This remains `partial_implementation`. #4275/#4267 still require tilted-frame
 and property breadth, ensemble/determinism/performance qualification,
 asynchronous WASM cancellation, calibration/uncertainty, changing terrain and

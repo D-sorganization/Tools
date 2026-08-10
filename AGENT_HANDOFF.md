@@ -26,6 +26,16 @@ evidence commit must bind its exact parent SHA, full-suite counts, corpus digest
 independent review, PR, and protected-CI state in all handoffs and the strict
 campaign manifest before publication.
 
+Exact reviewed implementation commit
+`9df3928a1ef32d81db2e568884ca24d8c576d49a` now binds corpus SHA-256
+`f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310`.
+Final local evidence passes 227 Python ground tests; 184 default, 199
+Python-feature, and 196 WASM-feature Rust tests; eight focused Python and four
+native conformance tests; the installed CPython 3.13 PyO3 wheel; rebuilt
+Node/WASM; strict Clippy; MyPy; Ruff; formatting; manifest plus eight tests;
+docs governance; structural budgets; and independent READY review. No carrier
+PR, hosted check, protected review, parent integration, or release is claimed.
+
 This is scientific qualification for five immutable horizontal-plane cases,
 not completion of #4275 or epic #4267. Tilted-frame cross-authority cases,
 property sweeps, ensemble benchmarks, performance/memory budgets, asynchronous

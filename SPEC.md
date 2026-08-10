@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.38                                    |
-| **Spec Version**        | 1.14.38                                    |
+| **Current Version**     | 1.14.39                                    |
+| **Spec Version**        | 1.14.39                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -3156,6 +3156,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.39 | docs(ground-conformance, #4275): bind exact reviewed implementation `9df3928a1ef32d81db2e568884ca24d8c576d49a` and corpus SHA-256 `f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310` to the strict campaign manifest and all canonical handoffs; record 227 Python and 184/199/196 Rust matrix tests, real PyO3/WASM consumers, independent READY review, and explicit hosted/protected/epic gaps. |
 | 2026-08-10 | 1.14.38 | test(ground-conformance, #4275): add one versioned five-case scientific corpus consumed by Python, direct native Rust, installed PyO3, and rebuilt WASM; pin independently derived contact, restitution, passive-energy, skid-to-roll, no-slip stopping, proper-rotation, and moving-surface observables with explicit units and tolerances while preserving the separate exact-byte golden and all remaining performance/terrain/UI/consumer gaps. |
 | 2026-08-10 | 1.14.37 | docs(ground-runtime, #4275): bind the compiled native/PyO3/WASM runtime's independently reviewed local evidence to exact implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` through the unchanged strict manifest schema; record the 180/195/192 Rust matrices, 219 Python authority tests, unique-venv wheel and rebuilt Node/WASM checks, independent resource caps, structural budgets, package-publication notice, and explicit hosted/protected/performance/epic gaps. |
 | 2026-08-10 | 1.14.36 | feat(ground-runtime, #4275): execute the canonical contact/bounce/skid/roll/rest reference pipeline in native Rust, PyO3, and WASM with strict normalized request authority, bounded elapsed-time scheduling, independent trusted output/step/event/trajectory caps, absolute wire-resolution preflight, fully typed derived-number range failures, coherent immediate-capture event censoring, runtime monotonicity guards, cooperative cancellation including Python GIL release between polls, exact golden/parity evidence, and explicit commit-bound-evidence/static-plane/non-production boundaries. |
