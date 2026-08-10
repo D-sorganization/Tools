@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 issue #4275 uppercase result-digest parity repair
+
+Independent review found local commit
+`b802f041e1a348e365b98e77f969961b8cd11133` was not yet cross-runtime exact:
+its Rust result validator rejected uppercase hexadecimal provenance digests
+that Python and TypeScript accept before lowercase canonicalization. Raw Rust
+validation now accepts either ASCII hex case, normalization lowercases
+`provenance.input_sha256`, and post-normalization validation still guarantees
+the canonical lowercase record. Wrong-length and non-hex evidence remains
+fail-closed.
+
+Regression coverage raises the focused result-wire suite to 7 tests and adds
+direct PyO3/WASM binding tests. Full totals are 144 default, 159 Python-feature,
+and 156 WASM-feature `tools-core` tests. Fresh real CPython 3.13 and wasm-pack
+Node artifacts prove uppercase-to-lowercase emission plus malformed rejection.
+Formatting and the focused/Python/WASM Clippy gates pass; all result-wire
+production modules remain under the 400-line policy. This is a wire parity fix
+only and does not expand the compiled-physics, UI, calibration, ensemble, or
+consumer scope.
+
 ## 2026-08-10 issue #4275 Rust result-wire parity slice
 
 `feat/4275-ground-result-wire-parity` continues exact PR #4309 carrier
@@ -22,7 +42,7 @@ adversarial Rust tests; 143 default, 157 Python-feature, and 154 WASM-feature
 `tools-core` tests; 219 Python ground tests; and 19 TypeScript result-contract
 and transfer tests. Formatting, focused strict Clippy, feature all-target
 Clippy with documented inherited allowances, docs governance, source-size, and
-diff gates pass. New production modules remain at or below 256 lines.
+diff gates pass. New production modules remain at or below 258 lines.
 
 The bindings validate/canonicalize evidence; they do not execute bounce,
 skid, roll, or rest physics. UI, ensembles, compiled solver parity, production

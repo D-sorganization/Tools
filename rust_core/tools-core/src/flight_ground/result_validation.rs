@@ -66,11 +66,7 @@ fn validate_provenance(result: &FlightToGroundResultV1) -> Result<(), GroundResu
         validate_text(value, "provenance")?;
     }
     let digest = provenance.input_sha256.as_bytes();
-    if digest.len() != 64
-        || !digest
-            .iter()
-            .all(|byte| byte.is_ascii_digit() || (b'a'..=b'f').contains(byte))
-    {
+    if digest.len() != 64 || !digest.iter().all(u8::is_ascii_hexdigit) {
         return invalid("input_sha256");
     }
     Ok(())

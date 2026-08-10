@@ -146,3 +146,20 @@ fn strict_result_rejects_invalid_evidence_and_duplicate_unavailable_fields() {
     unavailable["unavailable_fields"] = serde_json::json!([field.clone(), field]);
     assert!(parse_result_v1_json(&unavailable.to_string()).is_err());
 }
+
+#[test]
+fn uppercase_provenance_digest_is_accepted_and_canonicalized_to_lowercase() {
+    let mut uppercase: Value = serde_json::from_str(&fixture_result_json()).unwrap();
+    let expected = uppercase["provenance"]["input_sha256"]
+        .as_str()
+        .unwrap()
+        .to_owned();
+    uppercase["provenance"]["input_sha256"] = Value::String(expected.to_ascii_uppercase());
+
+    let parsed = parse_result_v1_json(&uppercase.to_string())
+        .expect("Python and TypeScript accept uppercase hexadecimal input");
+    assert_eq!(parsed.provenance.input_sha256, expected);
+    let canonical = canonical_result_v1_json(&parsed).expect("canonical result");
+    let emitted: Value = serde_json::from_str(&canonical).unwrap();
+    assert_eq!(emitted["provenance"]["input_sha256"], expected);
+}

@@ -3,6 +3,26 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 issue #4275 uppercase result-digest parity repair
+
+Independent review of local implementation commit
+`b802f041e1a348e365b98e77f969961b8cd11133` found one P1 cross-runtime
+parity defect: Rust rejected a 64-character uppercase hexadecimal
+`provenance.input_sha256`, while the Python and TypeScript authorities accept
+either ASCII hex case and canonicalize to lowercase. Rust raw validation now
+accepts `[0-9A-Fa-f]`, result normalization lowercases the digest, and the
+normalized record is revalidated before canonical emission. Non-hex or
+wrong-length digests remain rejected.
+
+The focused result-wire suite is now 7 tests. Complete `tools-core` totals are
+144 default, 159 with Python, and 156 with WASM. New PyO3 and WASM unit tests
+cover the case transition, while freshly built real CPython 3.13 and wasm-pack
+Node artifacts both accept uppercase input, emit lowercase, and reject a
+64-character non-hex digest. Cargo formatting, strict focused Clippy, and both
+feature all-target Clippy gates pass. The result-wire production modules remain
+below 400 lines, with the largest at 258 lines. This repair changes no physics,
+result state-machine semantics, or previously documented non-delivery boundary.
+
 ## 2026-08-10 issue #4275 Rust result-wire parity slice
 
 Branch `feat/4275-ground-result-wire-parity` starts from exact PR #4309
@@ -25,7 +45,7 @@ Python ground tests, and 19 existing TypeScript ground-contract/transfer tests.
 Cargo formatting and focused strict Clippy pass; all-target Python/WASM Clippy
 passes with only explicitly enumerated inherited lint allowances. Docs
 governance, source-size review, and diff integrity pass. Every added production
-module is at most 256 lines.
+module is at most 258 lines.
 
 This slice validates and canonicalizes result evidence only. It does not port
 the Python bounce/skid/roll solver to Rust, execute ground physics through the

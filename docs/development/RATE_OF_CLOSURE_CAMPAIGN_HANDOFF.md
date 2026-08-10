@@ -4,6 +4,24 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 issue #4275 uppercase result-digest parity repair
+
+Independent review marked local implementation
+`b802f041e1a348e365b98e77f969961b8cd11133` not ready because Rust rejected
+uppercase `provenance.input_sha256` text that the Python and TypeScript
+contracts accept and canonicalize to lowercase. The repair admits exactly 64
+ASCII hexadecimal characters in either case during raw semantic validation,
+lowercases the digest during result normalization, and revalidates before
+canonical emission. Wrong-length and non-hex values remain rejected.
+
+The repaired focused result-wire suite has 7 tests; complete `tools-core`
+counts are 144 default, 159 Python-feature, and 156 WASM-feature tests. Direct
+binding regressions and freshly rebuilt real CPython 3.13/PyO3 and wasm-pack
+Node artifacts prove uppercase input emits lowercase and malformed evidence is
+still rejected. Cargo formatting and focused/Python/WASM Clippy gates pass.
+This review repair changes only result-wire case normalization and does not add
+compiled ground physics or alter the open #4275/#4267 delivery boundaries.
+
 ## 2026-08-10 issue #4275 Rust result-wire validation parity
 
 The local `feat/4275-ground-result-wire-parity` branch is based exactly on PR
@@ -27,7 +45,7 @@ Local evidence is 6 focused adversarial result-wire tests, 143 default
 Python ground tests, and 19 TypeScript ground-contract/transfer tests. Cargo
 formatting, focused strict Clippy, feature all-target Clippy with explicit
 inherited allowances, docs governance, source-size, and diff checks pass; each
-new production module is at most 256 lines.
+new production module is at most 258 lines.
 
 This is result-wire parity, not compiled ground-solver parity: the bindings do
 not execute bounce/skid/roll physics. PyQt6/React workflows, ensembles,

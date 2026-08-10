@@ -243,7 +243,9 @@ fn normalize_result(result: &mut FlightToGroundResultV1) -> Result<(), ()> {
         }
     }
     normalize_scalar(&mut result.termination.time_s)?;
-    normalize_scalar(&mut result.calibration.confidence)
+    normalize_scalar(&mut result.calibration.confidence)?;
+    result.provenance.input_sha256.make_ascii_lowercase();
+    Ok(())
 }
 
 fn normalize_vector(values: &mut [f64; 3]) -> Result<(), ()> {

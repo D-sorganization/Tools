@@ -34,4 +34,18 @@ mod tests {
         let expected = canonical_result_v1_json(&parse_result_v1_json(&input).unwrap()).unwrap();
         assert_eq!(output, expected);
     }
+
+    #[test]
+    fn wasm_result_boundary_canonicalizes_uppercase_digest() {
+        let mut value: serde_json::Value = serde_json::from_str(&fixture_result()).unwrap();
+        let digest = value["provenance"]["input_sha256"]
+            .as_str()
+            .unwrap()
+            .to_owned();
+        value["provenance"]["input_sha256"] =
+            serde_json::Value::String(digest.to_ascii_uppercase());
+        let output = validate_result_v1(value.to_string()).unwrap();
+        let emitted: serde_json::Value = serde_json::from_str(&output).unwrap();
+        assert_eq!(emitted["provenance"]["input_sha256"], digest);
+    }
 }
