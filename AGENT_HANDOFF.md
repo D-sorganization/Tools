@@ -506,7 +506,7 @@ npm run build
 
 Issue #4273 now has a narrow local foundation on
 `feat/4273-ground-study-projection`, based exactly on PR #4305 head
-`055c6fdaf4ac77a8e4a4647d00f35cd6d20d9240`. The new
+`a35fc8aac0cbc2aeeef757fd1d1c518987f2355c`. The new
 `ground-study-projection/v1` contract preserves the canonical result summary,
 observed endpoints, caller-request context digest, surface/model/profile identity, warnings,
 and typed unavailable evidence. The self-contained record embeds the exact
@@ -526,3 +526,16 @@ evidence. Ensemble, variation, wind, optimizer, PyQt6/React, compiled-runtime,
 and UpstreamDrift adapters remain open. Publish only as the next stacked draft
 PR targeting `feat/4272-ground-material-profiles`, after full ground tests,
 structural budgets, manifest validation, and an independent review pass.
+## 2026-08-09 PR #4302 deterministic-digest scanner repair
+
+Protected CI correctly remained blocking at head
+`920c46dee688815691e251777142126bf1489b1a`, but `detect-secrets` classified
+the SHA-256 assertion for the committed cross-runtime impact golden fixture as
+a high-entropy credential. The value is deterministic public test evidence,
+not a secret. Its exact assertion now carries the repository-standard inline
+`pragma: allowlist secret`; scanner scope and the shared baseline are unchanged.
+
+Commit this narrow repair with all three canonical handoffs and push normally
+to `feat/4270-ground-impact-bounce`. Do not retry the unchanged failed run,
+amend history, or force-push. Descendant PRs #4304 and #4305 inherit this file
+and must later receive the parent by ordinary merge commits.

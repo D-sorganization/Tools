@@ -1327,7 +1327,7 @@ signatures predate #4269 and are explicitly retained for compatibility.
 ## 2026-08-09 Issue #4273 qualified study foundation
 
 The next local child branch, `feat/4273-ground-study-projection`, starts from
-the exact PR #4305 head `055c6fdaf4ac77a8e4a4647d00f35cd6d20d9240`.
+the exact PR #4305 head `a35fc8aac0cbc2aeeef757fd1d1c518987f2355c`.
 It adds the strict `ground-study-projection/v1` boundary described in
 `docs/specs/GROUND_RESULT_STUDIES.md`: exact summary preservation; request,
 surface, model, and canonical source-result identity; complete ball/surface and
@@ -1349,3 +1349,15 @@ is claimed. Keep both #4273 and #4267 open until those later adapters and
 protected release evidence exist. The branch must remain a normal fast-forward
 child of #4305 and may be published only after its complete local gates and
 independent review are recorded.
+## 2026-08-09 PR #4302 deterministic-digest scanner repair
+
+The protected run at exact PR #4302 head
+`920c46dee688815691e251777142126bf1489b1a` found one actionable scanner-only
+failure: the committed impact golden fixture's public SHA-256 assertion was
+classified as a high-entropy secret. The assertion now carries only the exact
+inline `pragma: allowlist secret` annotation used elsewhere in this campaign.
+The digest, fixture, physics, scanner scope, and baseline remain unchanged.
+
+Commit and push this bounded repair normally before propagating it into #4304,
+#4305, or later ground children. The contemporaneous file-size cancellation
+occurred in checkout and remains infrastructure evidence, not a code failure.

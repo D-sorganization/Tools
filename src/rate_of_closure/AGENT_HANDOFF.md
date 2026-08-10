@@ -994,7 +994,7 @@ new structures introduced by this issue.
 ## 2026-08-09 Ground-study projection continuation
 
 The local `feat/4273-ground-study-projection` branch is the exact child of PR
-#4305 head `055c6fdaf4ac77a8e4a4647d00f35cd6d20d9240`. It introduces a strict
+#4305 head `a35fc8aac0cbc2aeeef757fd1d1c518987f2355c`. It introduces a strict
 `ground-study-projection/v1` record for qualified ground summaries, first and
 final observed endpoints, arbitrary-plane spatial-target miss geometry, exact
 source-result identity, complete surface/ball geometry, full material-profile
@@ -1013,3 +1013,15 @@ UI, compiled-runtime, and UpstreamDrift consumers are not implemented by this
 slice. Before publication, run the full ground suite and repository structural
 and campaign-manifest gates, then open only a stacked draft PR against
 `feat/4272-ground-material-profiles` with the guarded GitHub App identity.
+## 2026-08-09 PR #4302 deterministic-digest scanner repair
+
+At exact head `920c46dee688815691e251777142126bf1489b1a`, protected
+`detect-secrets` flagged the public SHA-256 golden-fixture assertion in
+`ground/tests/test_impact_impulse.py`. The exact constant now uses the narrow
+inline `pragma: allowlist secret` convention. No baseline, scanner scope,
+physics, fixture bytes, or expected value changed.
+
+Publish this as a normal follow-up commit on
+`feat/4270-ground-impact-bounce`, with the three handoffs in the same commit.
+Keep #4270 and #4267 open; do not bypass protected CI or propagate into child
+branches until the parent push is verified.
