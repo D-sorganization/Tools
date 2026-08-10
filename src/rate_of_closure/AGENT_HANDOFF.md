@@ -1,7 +1,91 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-05
+> Last updated: 2026-08-10
+
+## 2026-08-10 D-Plane Child Propagation
+
+Draft PR `#4202` (`feat/4189-dplane`) retains its
+`feat/4162-wedge-impact-visualization` base and normally merges original child
+head `b4abec03bccfbdd87ddf91427159c5c2332c21dd` with exact parent head
+`6704a3e541a3e74c28b4a284530d1a21269dd340`. The inherited Python 3.10 UTC
+repair and AST guard remain intact beside the frame-explicit D-plane contract.
+
+Persisted D-plane layer controls now live in a focused helper so
+`simulation_view.py` again satisfies the protected 500-line budget while
+retaining the existing UI-automation compatibility seam. Combined verification
+is green: 93 focused and 825 scoped Python tests (two optional `build123d`
+skips), 360 React tests and all web gates, real CPython 3.10.20
+compilation/UTC, scoped Ruff/Black/MyPy, and repository governance gates. The
+exact parent's 12 unchanged `swing-core` tests remain applicable because this
+child has no Rust delta. The 17-error broad MyPy Qt/NumPy baseline in 11
+untouched files remains separate. Protected CI and required review remain
+release gates.
+
+## 2026-08-10 Impact-Visualization Child Propagation
+
+Draft PR `#4179` (`feat/4162-wedge-impact-visualization`) retains its
+`feat/4166-wedge-turf-physics` base and normally merges original child head
+`0eb804e70887c788421332369e42792411aff55a` with exact parent head
+`bfa83aedc88ead380babc73a699377d98b971006`. The inherited Python 3.10 UTC
+repair and AST guard remain intact beside the exact-event scene contract.
+
+Combined verification is green: 58 focused and 739 scoped Python tests (two
+optional `build123d` skips), 347 React tests and all web gates, real CPython
+3.10.20 compilation/UTC, scoped Ruff/Black/MyPy, and repository governance
+gates. The exact parent's 12 unchanged `swing-core` tests remain applicable
+because this child has no Rust delta. The 17-error broad MyPy Qt/NumPy baseline
+in 11 untouched files remains separate. Protected CI and required review
+remain release gates.
+
+## 2026-08-10 Turf-Physics Child Propagation
+
+Draft PR `#4178` (`feat/4166-wedge-turf-physics`) retains its
+`feat/4161-wedge-ground-clearance` base and normally merges original child
+head `aaae3f73e17dbfaad5cca1dc6f49559b3aebe9d5` with exact parent head
+`9ea93e92563280ec34bca682ad44d7409edd7a02`. The inherited Python 3.10 UTC
+repair and AST guard remain intact beside the provenance-gated turf model.
+
+Combined verification is green: 56 focused and 732 scoped Python tests (two
+optional CAD-dependency skips), real CPython 3.10.20 checks, scoped
+Ruff/Black/MyPy, and repository governance gates. The unchanged TypeScript and
+Rust surfaces retain the exact parent's green 345 React and 12 Rust test
+evidence. The 17-error broad MyPy Qt/NumPy baseline in 11 untouched files
+remains separate. Protected CI and required review remain release gates.
+
+## 2026-08-10 Ground-Clearance Child Propagation
+
+Draft PR `#4174` (`feat/4161-wedge-ground-clearance`) keeps its
+`feat/4163-impact-inspector` base and normally merges original child head
+`880a6465fc872cf3d6650283db154ddc41793a31` with exact parent head
+`9ddaff3b6bca542fd7a2befc7d7b0ae53910a60a`. The inherited Python 3.10 UTC
+repair and AST guard remain intact beside the ground-clearance analysis.
+
+Combined verification is green: 56 focused and 703 scoped Python tests (two
+optional `build123d` skips), 345 React tests and all web gates, 12 Rust tests,
+real CPython 3.10.20 compile/UTC checks, scoped Ruff/Black/MyPy, and repository
+governance checks. The existing 17-error broad MyPy Qt/NumPy baseline across
+11 untouched files is documented, not expanded. Current-head protected CI and
+required review remain pending.
+
+## 2026-08-10 Python 3.10 Repair Propagation
+
+Draft child PR `#4173` (`feat/4163-impact-inspector`) retains its
+`feat/4144-variation-visualizations` base and normally merges original child
+head `3c43955aaeb3964ff8c3ef2748d626baae518b76` with exact parent head
+`22b66b560652b78de84141344c4ddd9a92a83b26`. This carries the shared
+Python 3.10-compatible UTC export and the source-wide AST guard into the wedge
+impact inspector without changing the persistence schema or user-visible
+timestamp format.
+
+Combined-stack verification is green across 63 focused Python tests, all 562
+Rate tests, all 334 React tests, TypeScript/ESLint/Vite gates, 12 `swing-core`
+tests, real CPython 3.10.20 compile/UTC checks, Ruff/Black, focused pinned MyPy
+1.13, and repository governance checks. The broad MyPy sweep retains 17
+pre-existing Qt/NumPy typing findings in 11 untouched files. The PR must remain
+draft until its exact-head protected checks complete and required review
+approves. Do not retarget, rewrite, force-push, admin-merge, or count
+infrastructure failures as passing evidence.
 
 ## 2026-08-05 Advanced Wedge Impact Visualization
 

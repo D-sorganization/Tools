@@ -1,7 +1,107 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-10
+
+## 2026-08-10 Parent Repair Propagation (#4179 → #4202)
+
+- Child PR `#4202` remains on `feat/4189-dplane`, based on
+  `feat/4162-wedge-impact-visualization`; neither branch nor PR base is
+  rewritten.
+- Original child head `b4abec03bccfbdd87ddf91427159c5c2332c21dd` is
+  normally merged with exact parent head
+  `6704a3e541a3e74c28b4a284530d1a21269dd340`, in that parent order.
+- The Python 3.10 UTC repair and source-wide AST guard remain additive to the
+  frame-explicit 3D D-plane geometry, desktop/web overlays, and export
+  contracts.
+- The persisted D-plane layer controls are extracted into a focused helper,
+  restoring `simulation_view.py` to the protected 500-line module budget
+  without changing its compatibility seam or behavior.
+- Combined-stack verification is green: 93 focused and 825 scoped Python tests
+  with two optional `build123d` skips; 360 React tests plus TypeScript, ESLint,
+  and Vite production gates; real CPython 3.10.20 compilation/UTC; Ruff/Black;
+  focused pinned MyPy 1.13; docs, minimum-test, file-size, detect-secrets, and
+  diff checks. The exact parent's 12 unchanged `swing-core` tests remain
+  applicable because this child has no Rust delta. The inherited broad MyPy
+  baseline remains 17 Qt/NumPy typing findings in 11 untouched files.
+  Protected CI and required review remain release gates.
+
+## 2026-08-10 Parent Repair Propagation (#4178 → #4179)
+
+- Child PR `#4179` remains on `feat/4162-wedge-impact-visualization`, based on
+  `feat/4166-wedge-turf-physics`; neither branch nor PR base is rewritten.
+- Original child head `0eb804e70887c788421332369e42792411aff55a` is
+  normally merged with exact parent head
+  `bfa83aedc88ead380babc73a699377d98b971006`, in that parent order.
+- The Python 3.10 UTC repair and source-wide AST guard remain additive to the
+  exact-event, locked-scale wedge impact visualization contracts.
+- Combined-stack verification is green: 58 focused and 739 scoped Python tests
+  with two optional `build123d` skips; 347 React tests plus TypeScript, ESLint,
+  and Vite production gates; real CPython 3.10.20 compilation/UTC; Ruff/Black;
+  focused pinned MyPy 1.13; docs, minimum-test, file-size, detect-secrets, and
+  diff checks. The exact parent's 12 unchanged `swing-core` tests remain
+  applicable because this child has no Rust delta. The inherited broad MyPy
+  baseline remains 17 Qt/NumPy typing findings in 11 untouched files.
+  Protected CI and required review remain release gates.
+
+## 2026-08-10 Parent Repair Propagation (#4174 → #4178)
+
+- Child PR `#4178` remains on `feat/4166-wedge-turf-physics`, based on
+  `feat/4161-wedge-ground-clearance`; neither branch nor PR base is rewritten.
+- Original child head `aaae3f73e17dbfaad5cca1dc6f49559b3aebe9d5` is
+  normally merged with exact parent head
+  `9ea93e92563280ec34bca682ad44d7409edd7a02`, in that parent order.
+- The Python 3.10 UTC repair and AST guard remain additive to the validated
+  turf-contact contracts and their explicit scientific/calibration boundary.
+- Combined-stack verification is green: 56 focused and 732 scoped Python tests
+  with two optional `build123d` skips; real CPython 3.10.20 compilation/UTC;
+  Ruff/Black; focused pinned MyPy 1.13; docs, minimum-test, file-size,
+  detect-secrets, and diff checks. With no TypeScript or Rust delta, the exact
+  parent evidence of 345 React tests/all web gates and 12 `swing-core` tests is
+  unchanged. The inherited broad MyPy baseline remains 17 Qt/NumPy typing
+  findings in 11 untouched files. Protected CI and review remain release gates.
+
+## 2026-08-10 Parent Repair Propagation (#4173 → #4174)
+
+- Child PR `#4174` remains on `feat/4161-wedge-ground-clearance`, based on
+  `feat/4163-impact-inspector`; neither branch nor PR base is rewritten.
+- Original child head `880a6465fc872cf3d6650283db154ddc41793a31` is
+  normally merged with exact parent head
+  `9ddaff3b6bca542fd7a2befc7d7b0ae53910a60a`, in that parent order.
+- The inherited Python 3.10 UTC repair and source-wide AST guard remain
+  additive to the swept wedge ground-clearance contracts.
+- Combined-stack verification is green: 56 focused Python tests; 703 scoped
+  Python tests with two optional `build123d` skips; 345 React tests plus
+  TypeScript, ESLint, and Vite production gates; 12 `swing-core` tests; real
+  CPython 3.10.20 compilation and UTC checks; Ruff/Black; focused pinned MyPy
+  1.13; docs, minimum-test, file-size, detect-secrets, and diff checks. The
+  inherited broad MyPy baseline is 17 Qt/NumPy typing findings in 11 untouched
+  files and remains outside this propagation scope. Protected CI and review
+  remain release gates.
+
+## 2026-08-10 Parent Repair Propagation (#4167 → #4173)
+
+- Child PR `#4173` remains on `feat/4163-impact-inspector`, based on
+  `feat/4144-variation-visualizations`; neither branch nor PR base is rewritten.
+- The original child head `3c43955aaeb3964ff8c3ef2748d626baae518b76`
+  is being merged normally with exact parent head
+  `22b66b560652b78de84141344c4ddd9a92a83b26`, in that parent order.
+- The inherited repair replaces Python 3.11-only `datetime.UTC` use in Rate
+  torque-profile persistence with `shared.python.compatibility.UTC` and adds a
+  Rate-source AST regression guard for direct, aliased, and module-attribute
+  access.
+- Combined local verification is green: 63 focused Python tests, all 562 Rate
+  tests, all 334 React tests, TypeScript type-check, ESLint, Vite production
+  build, 12 `swing-core` Rust tests, real CPython 3.10.20 compile/UTC checks,
+  Ruff check/format, Black, focused pinned MyPy 1.13, docs governance,
+  minimum-test, file-size, detect-secrets, and diff checks. A broader MyPy
+  sweep still reports 17 pre-existing Qt/NumPy typing errors in 11 untouched
+  files. Protected CI and required review remain release gates; queued,
+  cancelled, missing-toolcache, and dependency-download jobs are not green
+  evidence.
+- Every implementation commit must update this file, the Rate handoff, the
+  campaign handoff, and `SPEC.md`, or explicitly record why there is no
+  material handoff change.
 
 ## Where This Repo Is Headed
 
