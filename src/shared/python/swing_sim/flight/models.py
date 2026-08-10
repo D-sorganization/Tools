@@ -1,13 +1,4 @@
-"""Literature ball-flight models (scipy ``solve_ivp`` RK45 integration).
-
-Ported from UpstreamDrift ``src/shared/python/physics/flight_models.py``
-(epic #4103, flight port #4107), rewritten self-contained: the
-:class:`BallFlightModel` base with the unified ODE loop and terminal ground
-event, the Waterloo/Penner quadratic-coefficient model, the
-MacDonald-Hanzely spin-decay model, and the constant-coefficient model
-family parameterised by :class:`ConstantCoefficientSpec` (name /
-description / reference metadata preserved as the citation trail).
-"""
+"""Literature ball-flight models with adaptive physical-contact integration."""
 
 from __future__ import annotations
 
@@ -19,11 +10,14 @@ from dataclasses import dataclass
 import numpy as np
 from scipy.integrate import solve_ivp
 
-from ._constants import (
-    MAX_GOLF_BALL_LIFT_COEFFICIENT,
-    MIN_SPEED_THRESHOLD_M_S,
-    NUMERICAL_EPSILON,
-    RPM_TO_RAD_S,
+from shared.python.swing_sim.ground import GroundSurfaceProfile
+
+from ._constants import MAX_GOLF_BALL_LIFT_COEFFICIENT
+from .dynamics import ConstantCoefficientDynamics, WaterlooDynamics
+from .state import FlightStatePoint
+from .surface_simulation import (
+    SurfaceFlightSimulationSettings,
+    flight_ode_signed_gap_m,
 )
 from .types import (
     FlightResult,
@@ -33,18 +27,13 @@ from .types import (
 )
 
 
-def _capped_lift_coefficient(value: float) -> float:
-    """Return a physically bounded golf-ball lift coefficient."""
-    if value <= 0.0:
-        return 0.0
-    return float(min(MAX_GOLF_BALL_LIFT_COEFFICIENT, value))
-
-
-def _spin_ratio_lift_coefficient(spin_ratio: float, max_coefficient: float) -> float:
-    """Calibrate low-spin lift without letting high-spin shots balloon."""
-    if spin_ratio <= 0.0 or max_coefficient <= 0.0:
-        return 0.0
-    return _capped_lift_coefficient(min(max_coefficient, 1.7 * spin_ratio))
+@dataclass(frozen=True)
+class _OdeRun:
+    launch: LaunchConditions
+    derivatives: Callable[[float, np.ndarray], np.ndarray]
+    max_time: float
+    dt: float
+    launch_relative_surface: GroundSurfaceProfile | None = None
 
 
 class BallFlightModel(ABC):
@@ -68,28 +57,63 @@ class BallFlightModel(ABC):
         """Return the citation or reference for the model."""
         ...
 
-    @abstractmethod
     def simulate(
         self, launch: LaunchConditions, max_time: float = 10.0, dt: float = 0.01
     ) -> FlightResult:
         """Simulate ball flight and return the trajectory result."""
-        ...
+        if launch is None:
+            raise ValueError("launch must be provided")
+        run = _OdeRun(launch, self._build_dynamics(launch), max_time, dt)
+        return self._run_ode_simulation(run)
+
+    def simulate_to_surface(
+        self,
+        launch: LaunchConditions,
+        settings: SurfaceFlightSimulationSettings,
+    ) -> FlightResult:
+        """Simulate until sphere contact with the configured planar surface."""
+        if launch is None:
+            raise ValueError("launch must be provided")
+        if not isinstance(settings, SurfaceFlightSimulationSettings):
+            raise ValueError("settings must be SurfaceFlightSimulationSettings")
+        run = _OdeRun(
+            launch,
+            self._build_dynamics(launch),
+            settings.max_time_s,
+            settings.output_interval_s,
+            settings.launch_relative_surface,
+        )
+        return self._run_ode_simulation(run)
+
+    def _build_dynamics(
+        self, launch: LaunchConditions
+    ) -> Callable[[float, np.ndarray], np.ndarray]:
+        """Build this model's state derivative for one launch."""
+        raise NotImplementedError("surface-aware simulation is unavailable")
 
     def _compute_metrics(self, trajectory: list[TrajectoryPoint]) -> FlightResult:
         """Delegate to the shared module-level metrics computation."""
         return compute_flight_metrics(trajectory, self.name)
 
-    def _run_ode_simulation(
-        self,
-        launch: LaunchConditions,
-        deriv_func: Callable[[float, np.ndarray], np.ndarray],
-        max_time: float,
-        dt: float,
-    ) -> FlightResult:
+    def _spin_decay_rate(self) -> float:
+        """Return exponential spin-decay rate for trajectory state output."""
+        return 0.0
+
+    def _state_point(
+        self, launch: LaunchConditions, time_s: float, state: np.ndarray
+    ) -> FlightStatePoint:
+        decay = math.exp(-self._spin_decay_rate() * time_s)
+        omega = launch.get_spin_vector() * decay
+        return FlightStatePoint(time_s, state[:3], state[3:], omega)
+
+    def _run_ode_simulation(self, run: _OdeRun) -> FlightResult:
         """Unified ODE integration loop with a terminal ground event.
 
         Preconditions: ``launch`` provided, ``max_time > 0``, ``0 < dt``.
         """
+        launch = run.launch
+        max_time = run.max_time
+        dt = run.dt
         if launch is None:
             raise ValueError("launch must be provided")
         if not (math.isfinite(max_time) and max_time > 0.0):
@@ -100,15 +124,21 @@ class BallFlightModel(ABC):
         y0 = np.array([0.0, 0.0, 0.0, v0[0], v0[1], v0[2]])
 
         def ground_ev(t: float, y: np.ndarray) -> float:
-            """Return the ball height for ground-contact event detection."""
-            return float(y[2])
+            """Return the configured signed sphere gap for contact detection."""
+            if run.launch_relative_surface is not None:
+                return flight_ode_signed_gap_m(
+                    run.launch_relative_surface,
+                    launch.ball_radius,
+                    y,
+                )
+            return float(y[2] + launch.ball_setup.tee_height_m)
 
         # Type-safe attribute assignment for solve_ivp
         setattr(ground_ev, "terminal", True)  # noqa: B010
         setattr(ground_ev, "direction", -1)  # noqa: B010
 
         sol = solve_ivp(
-            deriv_func,
+            run.derivatives,
             (0, max_time),
             y0,
             method="RK45",
@@ -118,14 +148,11 @@ class BallFlightModel(ABC):
         )
 
         t_eval = np.arange(0, sol.t[-1], dt)
-        points = [
-            TrajectoryPoint(float(t), sol.sol(t)[:3], sol.sol(t)[3:]) for t in t_eval
+        points: list[TrajectoryPoint] = [
+            self._state_point(launch, float(t), sol.sol(t)) for t in t_eval
         ]
         if sol.t[-1] not in t_eval:
-            points.append(
-                TrajectoryPoint(float(sol.t[-1]), sol.y[:3, -1], sol.y[3:, -1])
-            )
-
+            points.append(self._state_point(launch, float(sol.t[-1]), sol.y[:, -1]))
         return self._compute_metrics(points)
 
 
@@ -159,60 +186,8 @@ class WaterlooPennerModel(BallFlightModel):
         """Return the Waterloo/Penner model citation."""
         return "Penner (2003); McPhee et al. (Waterloo)"
 
-    def simulate(
-        self, launch: LaunchConditions, max_time: float = 10.0, dt: float = 0.01
-    ) -> FlightResult:
-        """Simulate flight using the quadratic-Cd / power-law-Cl model."""
-        if launch is None:
-            raise ValueError("launch must be provided")
-        cd0, cd1, cd2, cl0, cl1, cl2, cl_max = self.params
-        omega_v = launch.get_spin_vector()
-        omega_m = math.hypot(omega_v[0], omega_v[1], omega_v[2])
-        area = math.pi * launch.ball_radius**2
-
-        def derivatives(t: float, y: np.ndarray) -> np.ndarray:
-            """Compute state derivatives using quadratic Cd/Cl aerodynamics."""
-            if t is None:
-                raise ValueError("t must be provided")
-            v_val = y[3:]
-            wind_v = launch.get_wind_vector(t, y[:3])
-            v_rel = v_val - wind_v
-            speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
-            if speed < MIN_SPEED_THRESHOLD_M_S:
-                derivative: np.ndarray = np.array(
-                    [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity]
-                )
-                return derivative
-            vu = v_rel / speed
-            s = (omega_m * launch.ball_radius) / speed
-            cd = cd0 + cd1 * s + cd2 * s**2
-            cl_val = cl0 + cl1 * s**cl2 if s > 0.0 else cl0
-            cl = min(cl_max, _capped_lift_coefficient(cl_val))
-
-            acc = (
-                -(0.5 * launch.air_density * speed**2 * cd * area / launch.ball_mass)
-                * vu
-            )
-            if omega_m > 0:
-                cross = np.cross(omega_v / omega_m, vu)
-                cross_norm = math.hypot(cross[0], cross[1], cross[2])
-                if cross_norm > NUMERICAL_EPSILON:
-                    acc += (
-                        0.5
-                        * launch.air_density
-                        * speed**2
-                        * cl
-                        * area
-                        / launch.ball_mass
-                    ) * (cross / cross_norm)
-
-            acc[2] -= launch.gravity
-            derivative = np.array(
-                [v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]]
-            )
-            return derivative
-
-        return self._run_ode_simulation(launch, derivatives, max_time, dt)
+    def _build_dynamics(self, launch: LaunchConditions) -> WaterlooDynamics:
+        return WaterlooDynamics(launch, self.params)
 
 
 class MacDonaldHanzelyModel(BallFlightModel):
@@ -238,59 +213,11 @@ class MacDonaldHanzelyModel(BallFlightModel):
         """Return the MacDonald-Hanzely model citation."""
         return "MacDonald & Hanzely (1991)"
 
-    def simulate(
-        self, launch: LaunchConditions, max_time: float = 10.0, dt: float = 0.01
-    ) -> FlightResult:
-        """Simulate flight using the MacDonald-Hanzely spin-decay model."""
-        if launch is None:
-            raise ValueError("launch must be provided")
-        omega_0 = launch.spin_rate * RPM_TO_RAD_S
-        spin_axis = launch.get_spin_vector()
-        spin_norm = math.hypot(spin_axis[0], spin_axis[1], spin_axis[2])
-        if spin_norm > 0:
-            spin_axis = spin_axis / spin_norm
-        area = math.pi * launch.ball_radius**2
-        k_drag = 0.5 * launch.air_density * area * self.cd / launch.ball_mass
+    def _spin_decay_rate(self) -> float:
+        return self.decay
 
-        def derivatives(t: float, y: np.ndarray) -> np.ndarray:
-            """Compute state derivatives with exponential spin decay."""
-            if t is None:
-                raise ValueError("t must be provided")
-            v_val = y[3:]
-            wind_v = launch.get_wind_vector(t, y[:3])
-            v_rel = v_val - wind_v
-            speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
-            if speed < MIN_SPEED_THRESHOLD_M_S:
-                derivative: np.ndarray = np.array(
-                    [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity]
-                )
-                return derivative
-            omega = omega_0 * math.exp(-self.decay * t)
-            vu = v_rel / speed
-            acc = -k_drag * speed**2 * vu
-
-            if omega > 0:
-                spin_ratio = omega * launch.ball_radius / speed
-                cl_eff = _spin_ratio_lift_coefficient(spin_ratio, self.cl)
-                cross = np.cross(spin_axis, vu)
-                cross_norm = math.hypot(cross[0], cross[1], cross[2])
-                if cross_norm > NUMERICAL_EPSILON:
-                    acc += (
-                        0.5
-                        * launch.air_density
-                        * area
-                        * cl_eff
-                        * speed**2
-                        / launch.ball_mass
-                    ) * (cross / cross_norm)
-
-            acc[2] -= launch.gravity
-            derivative = np.array(
-                [v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]]
-            )
-            return derivative
-
-        return self._run_ode_simulation(launch, derivatives, max_time, dt)
+    def _build_dynamics(self, launch: LaunchConditions) -> ConstantCoefficientDynamics:
+        return ConstantCoefficientDynamics(launch, self.cd, self.cl, self.decay)
 
 
 @dataclass(frozen=True)
@@ -335,60 +262,16 @@ class ConstantCoefficientModel(BallFlightModel):
         """Return the model citation from the specification."""
         return self._spec.reference
 
-    def simulate(
-        self, launch: LaunchConditions, max_time: float = 10.0, dt: float = 0.01
-    ) -> FlightResult:
-        """Simulate flight using constant drag and lift coefficients."""
-        if launch is None:
-            raise ValueError("launch must be provided")
-        omega_0 = launch.spin_rate * RPM_TO_RAD_S
-        spin_axis = launch.get_spin_vector()
-        spin_norm = math.hypot(spin_axis[0], spin_axis[1], spin_axis[2])
-        if spin_norm > 0:
-            spin_axis = spin_axis / spin_norm
-        area = math.pi * launch.ball_radius**2
-        k_drag = 0.5 * launch.air_density * area * self._spec.cd / launch.ball_mass
+    def _spin_decay_rate(self) -> float:
+        return self._spec.spin_decay
 
-        def derivatives(t: float, y: np.ndarray) -> np.ndarray:
-            """Compute state derivatives with constant coefficients and decay."""
-            if t is None:
-                raise ValueError("t must be provided")
-            v_val = y[3:]
-            wind_v = launch.get_wind_vector(t, y[:3])
-            v_rel = v_val - wind_v
-            speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
-            if speed < MIN_SPEED_THRESHOLD_M_S:
-                derivative: np.ndarray = np.array(
-                    [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity]
-                )
-                return derivative
-
-            omega = omega_0 * math.exp(-self._spec.spin_decay * t)
-            vu = v_rel / speed
-            acc = -k_drag * speed**2 * vu
-
-            if omega > 0:
-                spin_ratio = omega * launch.ball_radius / speed
-                cl_eff = _spin_ratio_lift_coefficient(spin_ratio, self._spec.cl)
-                cross = np.cross(spin_axis, vu)
-                cross_norm = math.hypot(cross[0], cross[1], cross[2])
-                if cross_norm > NUMERICAL_EPSILON:
-                    acc += (
-                        0.5
-                        * launch.air_density
-                        * area
-                        * cl_eff
-                        * speed**2
-                        / launch.ball_mass
-                    ) * (cross / cross_norm)
-
-            acc[2] -= launch.gravity
-            derivative = np.array(
-                [v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]]
-            )
-            return derivative
-
-        return self._run_ode_simulation(launch, derivatives, max_time, dt)
+    def _build_dynamics(self, launch: LaunchConditions) -> ConstantCoefficientDynamics:
+        return ConstantCoefficientDynamics(
+            launch,
+            self._spec.cd,
+            self._spec.cl,
+            self._spec.spin_decay,
+        )
 
 
 __all__ = [

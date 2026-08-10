@@ -17,7 +17,9 @@ import math
 
 import pytest
 
+from shared.python.swing_sim.ball_setup import BallSetup, BallSupportMode
 from shared.python.swing_sim.flight import (
+    FlightStatePoint,
     LaunchConditions,
     WaterlooPennerModel,
     is_rust_available,
@@ -84,6 +86,43 @@ def test_rust_result_is_flight_frame() -> None:
     pos = result.to_position_array()
     assert pos[:, 2].max() > 1.0  # height accumulates on z (flight up)
     assert abs(pos[-1, 1]) < 1e-6  # no lateral deviation without spin
+
+
+@pytest.mark.parity
+@pytest.mark.unit
+def test_rust_result_preserves_full_signed_terminal_spin() -> None:
+    launch = LaunchConditions(
+        ball_speed=70.0,
+        launch_angle=math.radians(12.0),
+        spin_rate=2400.0,
+        spin_axis=(0.2, -0.9, 0.3872983346207417),
+    )
+
+    result = simulate_trajectory_rust(launch, max_time=20.0, dt=0.005)
+
+    terminal = result.trajectory[-1]
+    assert isinstance(terminal, FlightStatePoint)
+    assert terminal.angular_velocity_rad_s.shape == (3,)
+    assert terminal.angular_velocity_rad_s @ launch.get_spin_vector() > 0.0
+
+
+@pytest.mark.parity
+@pytest.mark.physics
+def test_rust_full_state_path_honors_tee_height() -> None:
+    setup = BallSetup(BallSupportMode.TEE, 0.0381)
+    launch = LaunchConditions(
+        ball_speed=30.0,
+        launch_angle=math.radians(20.0),
+        spin_rate=2400.0,
+        ball_setup=setup,
+    )
+
+    result = simulate_trajectory_rust(launch, max_time=10.0, dt=0.005)
+
+    assert result.trajectory[-1].position[2] == pytest.approx(
+        -setup.tee_height_m,
+        abs=1e-6,
+    )
 
 
 @pytest.mark.parity

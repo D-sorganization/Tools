@@ -6,6 +6,7 @@ cross-model carry spread for a standard driver launch.
 
 from __future__ import annotations
 
+import inspect
 import math
 from collections.abc import Iterator
 
@@ -72,8 +73,9 @@ def test_carry_is_monotonic_in_ball_speed() -> None:
 def test_ground_event_terminates_trajectory() -> None:
     result = WaterlooPennerModel().simulate(DRIVER_LAUNCH, max_time=60.0)
     final = result.trajectory[-1]
-    # Terminal event: final height at the ground, not at max_time.
+    # Position is relative to the launch center; ground contact returns to z=0.
     assert final.position[2] == pytest.approx(0.0, abs=1e-6)
+    assert result.flight_time > 0.0  # the launch contact cannot retrigger at t=0
     assert result.flight_time < 60.0
     assert result.landing_angle > 0.0  # descending at landing
     # Interior of the trajectory is strictly above ground.
@@ -132,3 +134,15 @@ def test_from_imperial_converts_units() -> None:
     assert launch.ball_speed == pytest.approx(165.0 * 0.44704)
     assert launch.launch_angle == pytest.approx(math.radians(12.0))
     assert launch.spin_rate == 2600.0
+
+
+def test_waterloo_constructor_preserves_explicit_coefficient_contract() -> None:
+    signature = inspect.signature(WaterlooPennerModel)
+    expected = ["cd0", "cd1", "cd2", "cl0", "cl1", "cl2", "cl_max"]
+    assert list(signature.parameters) == expected
+    assert signature.parameters["cd0"].default == pytest.approx(0.21)
+    assert signature.parameters["cl_max"].default == pytest.approx(0.155)
+
+    model = WaterlooPennerModel(cd0=0.3, cl1=0.6, cl_max=0.25)
+
+    assert model.params == pytest.approx((0.3, 0.05, 0.02, 0.0, 0.6, 0.645, 0.25))

@@ -26,32 +26,69 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.14                                    |
-| **Spec Version**        | 1.14.14                                    |
+| **Current Version**     | 1.14.24                                    |
+| **Spec Version**        | 1.14.24                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
-### 2026-08-09 Four-surface capability contract
+### 2026-08-10 Four-surface capability propagation
 
-- `four-surface-capability/v1` defines stable IDs for standalone Tools PyQt6,
+- `four-surface-capability/v1` defines stable identifiers for Tools PyQt6,
   Tools React, UpstreamDrift PyQt6, and UpstreamDrift React consumers.
-- Every declared model, control, output, view, persistence, or export
-  capability classifies all four surfaces as supported, unsupported, or
-  deprecated. Supported cells require commit-bound evidence; unsupported and
-  deprecated cells require visible reasons.
-- The inventory deterministically covers every structured campaign program,
-  every unique linked active release specification, and six curated
-  evidence-backed capabilities at the exact Tools audit pin. New governed
-  declarations fail completeness validation until all four cells are present.
-- Both UpstreamDrift surfaces remain unsupported until an immutable installed
-  consumer pin and repository-bound conformance evidence exist. Unstructured
-  narrative features remain excluded until promoted to a governed source.
-- Deterministic schema and canonical JSON generation, strict Pydantic
-  validation, evidence-path checks, and a bounded expiry gate make incomplete
-  or stale capability records fail closed in CI.
+- Every declared model, control, output, view, persistence, or export record
+  classifies all four surfaces as supported, unsupported, or deprecated.
+  Supported cells require commit-bound evidence; all other cells require a
+  visible reason.
+- Deterministic enumeration covers all 15 structured campaign programs, all
+  18 unique linked active release specifications, and six curated
+  evidence-backed capabilities. New governed declarations fail completeness
+  validation until all four cells exist.
+- UpstreamDrift remains unsupported until an immutable installed Tools pin and
+  repository-bound conformance evidence exist. Narrative-only features remain
+  excluded until promoted to a governed structured authority.
+- The draft #4299 propagation preserves this declared-scope contract while
+  inheriting repaired flight-to-ground and camera-control ancestry. It does
+  not establish protected release or complete #4264/#4260.
+- The composed tree is required to pass the deterministic four-surface and
+  campaign authorities, the full Python/React/Rust suites, real-browser camera
+  cases, and the exact protected changed-file quality profile before normal
+  publication; protected current-head CI and installed-consumer conformance
+  remain separate release gates.
+
+### 2026-08-10 Flight-ground hosted typing repair
+
+- The complete PR-base delta must pass the protected pinned MyPy 1.13 profile
+  in one skipped-import invocation, not only per-feature subsets.
+- Flight-to-ground adapters construct exact compatibility string-enum members
+  and explicit three-component vectors so the static contract remains stable
+  when all related modules are checked together.
+- The repair is runtime-neutral: wire values, coordinate transforms, physics,
+  camera behavior, and canonical evidence remain unchanged.
+
+### 2026-08-10 Deterministic workspace timestamps
+
+- Workspace timestamps use one anchored UTC-only grammar and accept canonical
+  ISO-8601 values with zero through six fractional-second digits consistently
+  on Python 3.10 through 3.12.
+- Greater-than-microsecond precision, offsets, lower-case suffixes, and invalid
+  calendar values fail closed instead of being accepted or truncated according
+  to interpreter-specific `datetime.fromisoformat` behavior.
+
+### 2026-08-09 Canonical 3D camera controls
+
+- PyQt6 and React swing, impact, and flight 3D viewports share exact Face On,
+  Down the Line, Overhead, Isometric, tracking, Auto Fit, and Recenter commands.
+- Opt-in bounded tracking preserves safe user zoom, suspends on manual orbit,
+  and resumes through one-action recenter without changing model results.
+- Stable command IDs, explicit app-frame conventions, DbC validation, and a
+  cross-runtime golden fixture prevent orientation drift between adapters.
+- React flight playback steps backward or forward on solver-owned trajectory
+  samples without desynchronizing tracking. Playwright verifies the bounded
+  playback/camera interaction matrix at desktop size and at 520 x 900 with 2x
+  device scale; native rendered review and UpstreamDrift parity remain open.
 
 ### 2026-08-09 Capability workflow contract hardening
 
@@ -87,9 +124,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   exclusive states with fail-closed cross-field requirements.
 - The current manifest truthfully records no complete campaign release SHA;
   local tests and unprotected feature-parent merges cannot satisfy that claim.
-- Composed local implementation evidence is commit-bound in the manifest;
-  maintainers must still refresh live mutable PR heads before any write,
-  merge, release, or issue-closure decision.
+- Carrier `evidence_commit_sha` values identify immutable, already-published
+  observations rather than attempting an impossible self-reference to the
+  containing commit. Legacy `head_sha` input migrates to the new field, while
+  new schema output uses only the truthful evidence name. Maintainers must
+  still query live mutable PR heads before any write, merge, release, or
+  issue-closure decision.
 - The manifest loader explicitly narrows Pydantic's validated value for the
   CI mypy 1.13 `--follow-imports=skip` context without weakening runtime
   validation or the generated schema.
@@ -128,6 +168,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
 ### 2026-08-06 Impact-to-Flight Solution-Family Foundation
 
 - Python and TypeScript share strict `impact-solution-request/v1` and
@@ -180,6 +221,30 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Complete catalog and result serialization is deterministic and pinned by a
   cross-language SHA-256 fixture. UI, API, and Rust/WASM adapters remain
   explicit downstream integration work.
+
+### 2026-08-07 Flight-to-ground transfer contract
+
+- The self-facaded Python `swing_sim.ground` package owns strict versioned
+  request and result contracts in canonical target-frame SI units. Requests
+  contain two full 3D states that bracket physical sphere/surface contact,
+  complete planar material data, calibration, and reproducibility provenance.
+- Results preserve ordered phases and event ledgers and keep carry, bounce-air,
+  skid, roll, accumulated surface path, final displacement, and launch-to-rest
+  horizontal distance distinct. Status, termination, trajectory, events, and
+  summaries are validated as one state machine and cannot fabricate missing
+  ground behavior.
+- Target-frame positions use the ball centre at launch/tee as their required
+  zero origin. Bounce counts include only post-first-contact `bounce` events,
+  keeping the initial contact impulse distinct.
+- Draft 2020-12 schemas, fail-closed current-version migration gateways, a
+  shared canonical-number JSON fixture, and a one-way qualified projection to
+  the legacy `GroundModelResult` provide deterministic integration boundaries.
+  Existing flight output is not accepted until it supplies full terminal
+  angular velocity and two states bracketing ball-radius/terrain contact.
+- Event ledgers retain signed pre/post linear and angular states. Unavailable
+  results identify missing required fields with typed reason and provenance;
+  duplicate JSON keys, unsafe cross-runtime integers, surrogate text, and raw
+  out-of-range values fail closed before normalization.
 
 ### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
 
@@ -1150,7 +1215,7 @@ high_mm)` exposes the face-curvature normal (gradient of the
   difference between a launch monitor's reported geometric-center path and
   the impact point's actual delivery for a rotating clubhead (twist model,
   v(P) = v(ref) + omega x r). PyQt6 desktop app (animated 3D clubhead +
-  closure sweep, ThemedWindowMixin) plus a React/Vite static web clone in
+  closure sweep, ThemedWindowMixin) plus a React/Vite/Tauri web clone in
   `src/rate_of_closure/web/` whose TypeScript model is pinned test-for-test
   against the Python implementation. Conventions and rate data follow the
   AffineDrift launch-monitor research: the standard launch-monitor frame
@@ -1163,9 +1228,10 @@ high_mm)` exposes the face-curvature normal (gradient of the
   explanations, and a Derivation & Traceability tab typesetting the full
   calculation with live numeric substitution (matplotlib mathtext on
   desktop, bundled KaTeX on web). `build_executable.py` packages the
-  desktop app with PyInstaller; the web app releases as a static Vite bundle.
+  desktop app with PyInstaller; the web app packages via Tauri.
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
+
 ### 2026-08-05 Wedge impact-point kinematics and AoA attribution
 
 - `shared.python.golf_club` defines an immutable, frame-explicit rigid-body
@@ -2955,14 +3021,24 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-10 | 1.14.14 | fix(rate-of-closure, #4264 #4299): normally propagate exact corrected wind-workflow parent `5f77af4add23547a21cc3fabce98ae9ad4260427` into the draft four-surface capability branch without changing its base; retain the strict declared-scope matrix, schema, canonical inventory, exact Tools evidence pin, and deterministic coverage of all 15 campaign programs, 18 unique linked active release specifications, and six curated evidence-backed capabilities while inheriting the deterministic Python 3.10-3.12 UTC parser and complete variation, scalar-ensemble, wind-adapter, and capability-workflow history. |
+| 2026-08-10 | 1.14.24 | merge(rate-of-closure, #4264 #4299): normally propagate exact camera/ground-stack head `57942e64744a199e4fd7d604fe2eeb9faddd062a` into original four-surface child `dca40c6c0168df3aa0cd0de0e5ae0ff109715b6a` without changing its base; retain the strict declared-scope matrix, schema, canonical inventory, exact evidence paths, deterministic 15-program/18-spec/six-capability coverage, and explicit incomplete UpstreamDrift parity boundaries while inheriting repaired flight-to-ground and camera-control contracts. |
+| 2026-08-10 | 1.14.23 | fix(flight-ground, #4284 #4298): satisfy the protected pinned-MyPy complete-delta profile with exact compatibility-enum construction and explicit three-component flight-to-ground vectors; preserve runtime values, wire bytes, coordinate transforms, physics, and camera behavior while requiring fresh exact-head CI. |
+| 2026-08-10 | 1.14.22 | merge(rate-of-closure, #4284 #4288 #4298): normally propagate exact repaired flight-to-ground head `108a841b1378c992defd3c7b7ee263d41a6c8b24` into original camera-control child `9ffd8d280c77977a41e93bd0caef9678d1c231b6` while preserving base `feat/4199-wind-workflow`; retain canonical cross-runtime camera snaps, bounded tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and playback behavior while inheriting repaired strict-ground, transfer, workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, and import-identity ancestry; preserve explicit non-delivery boundaries for native rendered cross-platform qualification, camera-state persistence, UpstreamDrift parity, bounce, skid, roll, terrain response, total distance, and ground UI. |
+| 2026-08-10 | 1.14.21 | fix(flight-ground, #4199 #4269 #4282 #4285 #4288): normally propagate exact repaired strict-ground parent `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` into original flight-transfer child `247215422a6d4b677552955b4923bc609a553259` while preserving base `feat/4268-ground-contract`; retain the qualified signed terminal state, physical sphere/terrain contact brackets, strict provenance, and Python/TypeScript/Rust/PyO3/WASM transfer while inheriting the deterministic workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, import-identity, scalar-extraction, command-invariant, and security-boundary repairs; preserve explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
+| 2026-08-10 | 1.14.20 | fix(flight-ground, #4269 #4288): normally propagate exact corrected ground-contract parent `788aa547651a3685a363ea401824a5d81477bafb` into the flight-transfer descendant without changing its base; preserve the qualified Python/TypeScript/Rust/PyO3/WASM transfer while inheriting deterministic workspace timestamp parsing and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
+| 2026-08-09 | 1.14.19 | chore(flight-ground, #4269 #4288): normally propagate exact carrier-reconciled ground parent `6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` into the flight-transfer descendant without changing its base; preserve the qualified cross-runtime transfer and semantic facade assertions while completing corrected wind-to-ground ancestry; bind terminal samples before exact `FlightStatePoint` narrowing in the pinned-mypy regression; and retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
+| 2026-08-09 | 1.14.18 | feat(flight-ground, #4269): propagate full signed terminal angular state and qualified physical sphere/terrain contact brackets across Python, TypeScript, Rust, PyO3, and WASM; preserve exact launch-origin evidence, vertical tee and terrain geometry, strict v1 surface/calibration/provenance data, interpolated terminal contact, typed unavailable outcomes, and bounded synchronous web integration. Reconcile the transfer integrator with the current capability and strict-ground ancestry through normal stacked merges without retargeting or rewriting either PR, and remove the resulting ground/flight package-facade cycle through direct record/type dependencies. |
+| 2026-08-10 | 1.14.17 | fix(ground, #4268 #4285): normally propagate exact corrected workspace/wind/capability carrier `5f77af4add23547a21cc3fabce98ae9ad4260427` into the strict flight-to-ground contract while preserving base `feat/4197-capability-observer`; coalesce `shared.python.swing_sim` and its repository-local `src.shared.python.swing_sim` spelling so embedded ground/impact contract collection cannot load two package trees; retain the fail-closed ground schemas, fixture, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this ancestry through its own normal descendant merge. |
+| 2026-08-09 | 1.14.16 | chore(ground, #4268 #4285): normally reconcile the strict ground-contract parent with exact corrected wind carrier `bb101cedd555d07d493aae998b46050c68660cdd` while preserving base `feat/4197-capability-observer`; retain the fail-closed ground schemas, fixtures, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this observer-to-wind ancestry through its own normal descendant merge. |
+| 2026-08-09 | 1.14.15 | fix(ground, #4268): keep strict ground JSON Schema generation compatible with the shared Python 3.10 string-enum shim under the repository's pinned mypy 1.13 skipped-import gate by deriving wire values through `str`, and replace stale test suppressions with explicit casts around intentional invalid inputs without changing runtime validation behavior. |
+| 2026-08-09 | 1.14.14 | fix(ground, #4268): declare and lock the JSON Schema validator exercised by the strict flight-to-ground contract suite, route every new ground enum through the shared Python 3.10-compatible `StrEnum` boundary, and enforce that boundary across the package with a source-level regression contract. Propagate the current capability parent into PR #4285 through normal merge ancestry without rebasing or retargeting the stacked branch. |
 | 2026-08-10 | 1.14.13 | fix(rate-of-closure, #4282): normally propagate exact corrected scalar-ensemble parent `cf52529b1e68479321bb93b1be3d59c77f782008` into the responsive PyQt6/React wind-workflow carrier without changing its base; retain the consolidated capability workflow and release authority while inheriting the strict cross-version UTC parser, variation export, immutable scalar rows, stable composite identity, availability, and typed wind adapter; route the child-owned capability-observation `StrEnum` through the shared Python 3.10 runtime contract and extend the compatibility regression. |
 | 2026-08-10 | 1.14.12 | feat(wind variation, #4199 #4281): add matching UI-neutral Python/TypeScript `scalar-ensemble/v1` contracts with structured provenance, labeled stages/categories/cohorts, unit-bearing variables, stable RFC3986 composite row IDs, immutable nullable raw rows, and overall/per-cohort availability; adapt every actual and perfect-information wind-strategy outcome with explicit status, true/estimated wind, launch/aim, target, landing, miss, cost, and information-delta values while leaving impact variables explicitly unavailable because the analysis begins at prescribed launch. |
 | 2026-08-10 | 1.14.11 | feat(variation, #4144 #4280): complete PyQt6/React selected-scatter CSV export parity with stable trial identity, typed outcome and explicit unavailable values; expose bounded accessible PyQt raw-row tables through one shared population helper; and split scalar scatter and distribution-matrix rendering into focused modules while preserving linked trial selection and all-trial arc analysis. |
 | 2026-08-10 | 1.14.10 | fix(compatibility, #4279): make workspace UTC timestamp parsing deterministic across Python 3.10-3.12 with one anchored canonical grammar, consistent zero- through six-digit fractional-second parsing, and rejection of greater-than-microsecond precision instead of interpreter-dependent rejection or truncation. |
 | 2026-08-09 | 1.14.9 | fix(compatibility, #4279): route the child command/view `StrEnum` runtime imports and workspace-validation `UTC` import through `shared.python.compatibility` while preserving native enum typing under `TYPE_CHECKING`, all wire values, schemas, UTC serialization, and UI behavior; merge the parent and child regression into one nine-enum/two-UTC runtime-import contract exercised with real CPython 3.10.20. |
 | 2026-08-09 | 1.14.8 | feat(rate-of-closure, #4201): harden cross-runtime capability parsing and signed input; expose complete diagnostics, result exports, and quantitative scatter annotations; stabilize supported PyQt6/static-Vite entrypoints; and add a strict campaign manifest with generated schema, four-surface status, explicit gaps/dependencies, and fail-closed feature-stack/protected-parent/`main` release distinctions. |
-| 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |
+| 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding per-slice stacked-branch cautions after #4283, #4289, and #4294 merged, while retaining the incomplete protected-release boundary. |
 | 2026-08-08 | 1.14.6 | feat(rate-of-closure, #4197): add matched PyQt6/React Shot Optimizer workspaces with strict cross-runtime workflow persistence, off-main-thread qualified flight execution, truthful progress/cancellation, complete scalar-ensemble cohort retention, ranked alternatives, stage-qualified selectable scatter axes, zoom/autofit, bounded raw-row paging, lossless CSV/stable JSON, substantive hover guidance, and saved-layout migration that reveals newly registered modules. |
 | 2026-08-08 | 1.14.5 | feat(ball-flight, #4197): add profile/request-bound Python and TypeScript Waterloo/Penner capability evaluators with exact established parameter IDs, physical-domain and unit validation, sourced per-club spin defaults or paired variable spin inputs, shared gyro-projected positive-fade/right spin-axis convention across result/impact/variation producers, canonical target-frame conversion, target-aware complete scalar metrics, typed horizon nonconvergence, fail-fast invariants, and a shared 16-scalar tolerance fixture. Corrects the TypeScript ground-crossing interpolation so a descending launch from z=0 cannot extrapolate to a negative sample time, which previously raised an untyped `RangeError` that was absorbed as an `evaluator_exception`; such launches now report `nonconverged`, matching the Python runtime. |
 | 2026-08-07 | 1.14.4 | feat(rate_of_closure, #4206): add validated manual reference AoA/path, targetward forward shaft lean, and tracked-reference versus registered generated-hosel shaft datums in PyQt6 and React; rotate pose, angular-rate components, and delivered face normals consistently; persist schema-v5 `manual_delivery`; export the reference-contact/reference-impact model boundary; and pin the representative Pitching Wedge decomposition in both runtimes. |

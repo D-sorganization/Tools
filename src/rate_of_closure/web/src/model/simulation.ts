@@ -22,7 +22,6 @@
 import {
   deriveLaunch,
   simulateFlight,
-  type FlightPoint,
 } from "./flight";
 import { golfTripleParameters, simulateTriplePendulum } from "./triplePendulum";
 import {
@@ -31,21 +30,15 @@ import {
   inPlaneGravity,
   simulateConfiguredPendulum,
   summarizeDoublePendulumRun,
-  type DoublePendulumRunConfig,
-  type PendulumState,
-  type PendulumParams,
 } from "./doublePendulum";
 import {
   assessFixedContact,
   deliveryInspectionOutcome,
-  type ContactMode,
-  type ImpactOutcomeTs,
 } from "./contact";
 import {
   GOLF_BALL_RADIUS_M,
   ballCenterPosition,
   resolveBallSetup,
-  type BallSetup,
 } from "./ballSetup";
 import {
   MPH_PER_MPS,
@@ -58,7 +51,6 @@ import {
   sub,
   toFlightFrame,
   type DeliveryInput,
-  type ImpactClubProperties,
   type Vec3,
 } from "./impactPhysics";
 import {
@@ -66,17 +58,16 @@ import {
   multiplyRotations,
   rodrigues,
   rotationFromColumns,
-  type Mat3,
 } from "./rotation";
 import {
   resolveManualDelivery,
   validateDeliveredDynamicLoft,
   type ManualDelivery,
-  type ShaftAxisDatum,
 } from "./manualDelivery";
+import type { SimulationInput, SimulationRunTs, SwingSampleTs } from "./simulationTypes";
 
 export { deriveLaunch, simulateFlight } from "./flight";
-export type { FlightPoint, FlightResult, Launch } from "./flight";
+export type { AngularFlightPoint, FlightPoint, FlightResult, Launch } from "./flight";
 export {
   golfDefaultParams,
   inPlaneGravity,
@@ -88,82 +79,17 @@ const rad = (deg: number): number => (deg * Math.PI) / 180.0;
 const deg = (r: number): number => (r * 180.0) / Math.PI;
 export * from "./impactPhysics";
 export { GOLF_BALL_RADIUS_M } from "./ballSetup";
+export type {
+  SimulationInput,
+  SimulationLaunchTs,
+  SimulationRunTs,
+  SwingSampleTs,
+  WebSourceKind,
+} from "./simulationTypes";
 
 // --- Session orchestration ----------------------------------------------
 
 export const BALL_POSITION: Vec3 = [0.0, GOLF_BALL_RADIUS_M, 0.0];
-
-export type WebSourceKind = "manual" | "double_pendulum" | "triple_pendulum";
-
-export interface SimulationInput {
-  sourceKind: WebSourceKind;
-  clubheadSpeedMph: number; // manual source
-  /** Manual angular-velocity components in the zero-lean app basis [deg/s]. */
-  omegaDps: Vec3;
-  loftDeg: number;
-  impactOffsetToeMm: number;
-  impactOffsetHighMm: number;
-  planeYawDeg: number;
-  planeSideTiltDeg: number;
-  planeForwardTiltDeg: number;
-  impactTimeS: number | null; // null = auto (max clubhead speed)
-  swingDurationS: number;
-  /** Optional passive double-pendulum parameters for trace studies. */
-  pendulumParameters?: PendulumParams;
-  /** Offset from the automatic peak-speed inspection time [s]. */
-  impactTimeOffsetS?: number;
-  club?: ImpactClubProperties;
-  /** Defaults to delivery inspection for backward-compatible studies. */
-  contactMode?: ContactMode;
-  /** Defaults to passive; prescribed mode is valid only for double pendulum. */
-  doublePendulumRun?: DoublePendulumRunConfig;
-  /** θ1, θ2 [rad], then their relative angular rates [rad/s]. */
-  doublePendulumInitialState?: PendulumState;
-  /** Defaults to Ground for backward compatibility with older saved scenarios. */
-  ballSetup?: BallSetup;
-  /** Signed elevation of manual reference velocity; positive is upward. */
-  manualAttackAngleDeg?: number;
-  /** Signed horizontal heading; positive is right of target. */
-  manualClubPathDeg?: number;
-  /** Targetward-positive manual head lean, applied as Rz(-lean). */
-  manualForwardShaftLeanDeg?: number;
-  /** Defaults to the tracked-reference legacy shaft line. */
-  shaftAxisDatum?: ShaftAxisDatum;
-}
-
-export interface SwingSampleTs {
-  t: number;
-  position: Vec3; // app frame; aligned only in delivery-inspection mode
-  velocity: Vec3;
-  angularVelocity: Vec3; // app frame, rad/s, for club screw-axis analysis
-  rotation: Mat3; // canonical head frame -> app frame
-  joints: Vec3[]; // pivot -> articulated joints -> clubhead
-}
-
-export interface SimulationLaunchTs {
-  ballSpeedMph: number;
-  launchAngleDeg: number;
-  launchAzimuthDeg: number;
-  spinRpm: number;
-  carryM: number;
-  maxHeightM: number;
-  flightTimeS: number;
-  landingAngleDeg: number;
-}
-
-export interface SimulationRunTs {
-  sourceKind: WebSourceKind;
-  torqueRun: ReturnType<typeof summarizeDoublePendulumRun>;
-  swing: SwingSampleTs[];
-  impactOutcome: ImpactOutcomeTs;
-  impactTimeS: number | null;
-  totalDurationS: number;
-  launch: SimulationLaunchTs | null;
-  flight: FlightPoint[]; // app frame, ball-aligned positions
-  ballSetup: BallSetup;
-  ballPositionM: Vec3;
-  manualDelivery: ManualDelivery;
-}
 
 const clampAngle = (value: number): number => Math.max(-89, Math.min(89, value));
 
@@ -405,6 +331,7 @@ export function runSimulation(input: SimulationInput): SimulationRunTs {
     ...point,
     position: add(fromFlightFrame(point.position), ballPositionM),
     velocity: fromFlightFrame(point.velocity),
+    angularVelocityRadS: fromFlightFrame(point.angularVelocityRadS),
   }));
 
   return {

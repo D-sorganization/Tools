@@ -41,6 +41,10 @@ describe("FlightPlayback3D", () => {
     expect(screen.getByText("2.00 / 2.00 s")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Jump to Launch" }));
     expect(screen.getByText("0.00 / 2.00 s")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Step Forward One Frame" }));
+    expect(screen.getByText("1.00 / 2.00 s")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Step Back One Frame" }));
+    expect(screen.getByText("0.00 / 2.00 s")).toBeInTheDocument();
   });
 
   it("preserves its intrinsic aspect ratio at responsive widths", () => {
@@ -141,6 +145,24 @@ describe("FlightPlayback3D", () => {
 
     expect(fillText.mock.calls.length).toBeGreaterThan(initialCalls);
     expect(canvas).toHaveAttribute("aria-description", expect.stringContaining("Apex Window"));
+  });
+
+  it("snaps exact views and predictably suspends and restores ball tracking", () => {
+    render(<FlightPlayback3D points={points} />);
+    const canvas = screen.getByLabelText("Interactive 3D ball-flight playback");
+    fireEvent.click(screen.getByRole("button", { name: "Overhead" }));
+    expect(screen.getByRole("button", { name: "Overhead" }))
+      .toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(screen.getByRole("checkbox", { name: "Track Ball" }));
+    expect(screen.getByRole("status", { name: "Camera tracking state" }))
+      .toHaveTextContent("Tracking Ball");
+    fireEvent.pointerDown(canvas, { pointerId: 4, clientX: 100, clientY: 100 });
+    fireEvent.pointerMove(canvas, { pointerId: 4, clientX: 130, clientY: 120 });
+    expect(screen.getByRole("status", { name: "Camera tracking state" }))
+      .toHaveTextContent("Tracking suspended");
+    fireEvent.click(screen.getByRole("button", { name: "Re-center Ball" }));
+    expect(screen.getByRole("status", { name: "Camera tracking state" }))
+      .toHaveTextContent("Tracking Ball");
   });
 
   it.each([[[]], [[points[0]]]])(

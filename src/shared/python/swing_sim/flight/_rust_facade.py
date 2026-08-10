@@ -22,11 +22,15 @@ from __future__ import annotations
 
 import logging
 import math
+from importlib import import_module
 from typing import Any
 
 import numpy as np
 
+from shared.python.swing_sim.ball_setup import BallSupportMode
+
 from .frames import from_flight_frame, to_flight_frame
+from .state import FlightStatePoint
 from .types import (
     FlightResult,
     LaunchConditions,
@@ -39,17 +43,24 @@ logger = logging.getLogger(__name__)
 RUST_MODEL_NAME = "tools-core Rust RK4"
 
 _RUST_AVAILABLE = False
+_RUST_FULL_STATE_AVAILABLE = False
 _rust: Any = None
 
 try:
-    import tools_core
-
-    _rust = tools_core
+    _rust = import_module("tools_core")
     _RUST_AVAILABLE = bool(
         hasattr(_rust, "simulate_trajectory")
         and hasattr(_rust, "BallProperties")
         and hasattr(_rust, "EnvironmentalConditions")
         and hasattr(_rust, "LaunchConditions")
+    )
+    _RUST_FULL_STATE_AVAILABLE = all(
+        hasattr(_rust, name)
+        for name in (
+            "FlightGroundPlane",
+            "FlightGroundRequest",
+            "simulate_flight_to_ground_full_state",
+        )
     )
     if _RUST_AVAILABLE:
         logger.info("tools_core ball_flight kernel loaded (Rust fast path)")
@@ -102,6 +113,103 @@ def _build_rust_inputs(
     return ball, env, rust_launch
 
 
+def _validate_request(launch: LaunchConditions, max_time: float, dt: float) -> None:
+    """Validate the public Rust-facade preconditions."""
+    if launch is None:
+        raise ValueError("launch must be provided")
+    if launch.wind_scenario is not None and not launch.wind_scenario.is_steady:
+        raise ValueError(
+            "Rust flight currently supports steady wind only; use a Python "
+            "model for shear, gusts, or turbulence"
+        )
+    if launch.ball_speed <= 0.0:
+        raise ValueError(f"ball_speed must be > 0; got {launch.ball_speed!r}")
+    if not (math.isfinite(max_time) and max_time > 0.0):
+        raise ValueError(f"max_time must be finite and > 0; got {max_time!r}")
+    if not (math.isfinite(dt) and dt > 0.0):
+        raise ValueError(f"dt must be finite and > 0; got {dt!r}")
+
+
+def _full_state_raw_points(
+    rust_inputs: tuple[Any, Any, Any],
+    launch: LaunchConditions,
+    timing: tuple[float, float],
+) -> list[Any]:
+    """Run the tee-aware Rust API that carries the complete angular state."""
+    max_time, dt = timing
+    plane = _rust.FlightGroundPlane.horizontal(0.0)
+    tee_height = (
+        launch.ball_setup.tee_height_m
+        if launch.ball_setup.support_mode is BallSupportMode.TEE
+        else None
+    )
+    request = _rust.FlightGroundRequest(max_time, dt, plane, tee_height)
+    result = _rust.simulate_flight_to_ground_full_state(*rust_inputs, request)
+    return list(result.trajectory)
+
+
+def _legacy_raw_points(
+    rust_inputs: tuple[Any, Any, Any], timing: tuple[float, float]
+) -> list[Any]:
+    """Run the legacy scalar-spin kernel for ground-supported compatibility."""
+    max_time, dt = timing
+    return list(_rust.simulate_trajectory(*rust_inputs, max_time, dt))
+
+
+def _vector3(value: Any) -> np.ndarray:
+    """Convert a bound Rust Vector3 into a NumPy vector."""
+    components = [float(value.x), float(value.y), float(value.z)]
+    vector: np.ndarray = np.array(components, dtype=float)
+    return vector
+
+
+def _legacy_state_point(point: Any, launch: LaunchConditions) -> FlightStatePoint:
+    """Recover the exact fixed-axis vector carried by the legacy scalar state."""
+    position_app = np.array([point.x, point.y, point.z], dtype=float)
+    velocity_app = np.array([point.vx, point.vy, point.vz], dtype=float)
+    initial_spin = launch.get_spin_vector()
+    magnitude = float(np.linalg.norm(initial_spin))
+    spin_axis = initial_spin / magnitude if magnitude > 0.0 else initial_spin
+    omega = spin_axis * float(point.spin_rate)
+    return FlightStatePoint(
+        float(point.time),
+        to_flight_frame(position_app),
+        to_flight_frame(velocity_app),
+        omega,
+    )
+
+
+def _full_state_point(point: Any) -> FlightStatePoint:
+    """Convert one request-frame Rust state into the Python flight frame."""
+    return FlightStatePoint(
+        float(point.time),
+        to_flight_frame(_vector3(point.position)),
+        to_flight_frame(_vector3(point.velocity)),
+        to_flight_frame(_vector3(point.angular_velocity)),
+    )
+
+
+def _run_rust_trajectory(
+    launch: LaunchConditions, max_time: float, dt: float
+) -> list[FlightStatePoint]:
+    """Select the strongest installed Rust API without inventing tee geometry."""
+    rust_inputs = _build_rust_inputs(launch)
+    timing = (max_time, dt)
+    if _RUST_FULL_STATE_AVAILABLE:
+        return [
+            _full_state_point(point)
+            for point in _full_state_raw_points(rust_inputs, launch, timing)
+        ]
+    if launch.ball_setup.support_mode is BallSupportMode.TEE:
+        raise ImportError(
+            "installed tools_core wheel lacks tee-aware full-state flight; rebuild it"
+        )
+    return [
+        _legacy_state_point(point, launch)
+        for point in _legacy_raw_points(rust_inputs, timing)
+    ]
+
+
 def simulate_trajectory_rust(
     launch: LaunchConditions,
     max_time: float = 10.0,
@@ -131,35 +239,8 @@ def simulate_trajectory_rust(
             "shared.python.swing_sim.flight.models (scipy). Build the wheel "
             "with `pip install rust_core/tools-core`."
         )
-    if launch is None:
-        raise ValueError("launch must be provided")
-    if launch.wind_scenario is not None and not launch.wind_scenario.is_steady:
-        raise ValueError(
-            "Rust flight currently supports steady wind only; use a Python "
-            "model for shear, gusts, or turbulence"
-        )
-    if launch.ball_speed <= 0.0:
-        raise ValueError(f"ball_speed must be > 0; got {launch.ball_speed!r}")
-    if not (math.isfinite(max_time) and max_time > 0.0):
-        raise ValueError(f"max_time must be finite and > 0; got {max_time!r}")
-    if not (math.isfinite(dt) and dt > 0.0):
-        raise ValueError(f"dt must be finite and > 0; got {dt!r}")
-
-    ball, env, rust_launch = _build_rust_inputs(launch)
-    raw_points = _rust.simulate_trajectory(ball, env, rust_launch, max_time, dt)
-
-    points: list[TrajectoryPoint] = []
-    for p in raw_points:
-        pos_app = np.array([p.x, p.y, p.z])
-        vel_app = np.array([p.vx, p.vy, p.vz])
-        points.append(
-            TrajectoryPoint(
-                time=float(p.time),
-                position=to_flight_frame(pos_app),
-                velocity=to_flight_frame(vel_app),
-            )
-        )
-
+    _validate_request(launch, max_time, dt)
+    points: list[TrajectoryPoint] = list(_run_rust_trajectory(launch, max_time, dt))
     return compute_flight_metrics(points, RUST_MODEL_NAME)
 
 

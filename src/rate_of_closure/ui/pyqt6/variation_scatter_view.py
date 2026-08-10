@@ -23,6 +23,7 @@ from rate_of_closure.ui.pyqt6.variation_plot_helpers import (
 from rate_of_closure.ui.pyqt6.variation_trial_table import (
     create_trial_table,
     populate_trial_table,
+    validated_trial_index,
 )
 from rate_of_closure.variation.plot_data import (
     EnsemblePlotDataset,
@@ -144,6 +145,9 @@ class DatasetScatterView(QWidget):
 
     def _set_trials(self, count: int) -> None:
         """Populate the stable all-trials/highlight selector."""
+        self._selected_trial = None
+        self._table.clearSelection()
+        self._table.setCurrentCell(-1, -1)
         self._trial_combo.blockSignals(True)
         self._trial_combo.clear()
         self._trial_combo.addItem("All Trials", None)
@@ -153,15 +157,17 @@ class DatasetScatterView(QWidget):
 
     def set_selected_trial(self, trial_index: int | None) -> None:
         """Apply linked trial selection without emitting a signal loop."""
-        self._selected_trial = trial_index
-        index = self._trial_combo.findData(trial_index)
+        trial_count = self._variation.plan.n_runs if self._variation else 0
+        selected = validated_trial_index(trial_index, trial_count)
+        self._selected_trial = selected
+        index = self._trial_combo.findData(selected)
         self._trial_combo.blockSignals(True)
         self._trial_combo.setCurrentIndex(max(index, 0))
         self._trial_combo.blockSignals(False)
-        if trial_index is None:
+        if selected is None:
             self._table.clearSelection()
-        elif trial_index < self._table.rowCount():
-            self._table.selectRow(trial_index)
+        else:
+            self._table.selectRow(selected)
         self._redraw()
 
     def _selection_changed(self) -> None:
