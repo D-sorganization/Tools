@@ -4,6 +4,22 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 issue #4274 playback clock and evidence parity repair
+
+Independent release review found that the PyQt player advanced one nominal
+timer interval per callback and discarded loop overshoot, and that both client
+evidence tables omitted scientifically material state and provenance fields.
+PyQt now anchors playback to an injected monotonic clock, re-anchors speed and
+loop-mode changes without discontinuity, uses modulo loop wrap, and has
+deterministic delayed-tick, speed, toggle, and overshoot coverage. PyQt and React now expose full
+trajectory linear/angular velocity, event pre/post linear/angular velocity,
+result identity/status/termination, input SHA-256, calibration ID/confidence,
+and warnings from the same shared golden result. The full
+Rate suite passes 873 tests and the full React suite passes 109 files / 673
+tests; pinned MyPy 1.13, Ruff, TypeScript, zero-warning ESLint, and production
+build gates pass. Independent re-review, exact-head publication, protected CI,
+required approval, dependency integration, and epic closure remain open.
+
 ## 2026-08-10 issue #4274 strict browser-import repair
 
 The React Ground Playback importer now routes raw text through the existing

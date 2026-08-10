@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.22                                    |
-| **Spec Version**        | 1.14.22                                    |
+| **Current Version**     | 1.14.23                                    |
+| **Spec Version**        | 1.14.23                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -57,6 +57,13 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   constructing a result. Duplicate fields are rejected without replacing the
   last valid playback, and the error message explicitly discloses that the
   prior result remains loaded.
+- Desktop playback derives simulation time from elapsed monotonic time rather
+  than timer-callback count, preserves continuity when playback speed changes,
+  re-anchors loop-mode changes, and retains overshoot with modulo wrapping.
+- Both clients render the complete v1 trajectory and event state vectors,
+  result identity/status/termination, provenance input digest, calibration
+  identity/confidence, and warnings from one
+  validated immutable result.
 - Both clients use one shared golden result and matching absolute-time,
   phase-aware playback semantics. Interpolation is permitted only within a
   declared phase; a phase transition holds the preceding exact state until
@@ -3021,6 +3028,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.23 | fix(ground-playback, #4274): make PyQt playback monotonic-time based with continuous speed/loop-mode changes and modulo loop overshoot; render full trajectory and event linear/angular state, result identity/status/termination, input digest, calibration identity/confidence, and warnings with shared-fixture PyQt/React parity assertions; protected publication and review remain open. |
 | 2026-08-10 | 1.14.22 | fix(ground-playback, #4274): route browser result imports through the duplicate-key-aware strict JSON facade, retain the last valid result on duplicate-field rejection, disclose that retention in the error state, and cover the boundary with an atomic-import regression; protected publication and review remain open. |
 | 2026-08-10 | 1.14.21 | feat(ground-playback, #4274): add discoverable standalone PyQt6 and React strict-result playback with bounded atomic import and last-good retention, shared-golden phase-aware absolute-time semantics, exact-frame/phase/loop/speed controls, honest complete versus observed endpoint labels, warning/calibration/provenance and trajectory/event tables, and locked-physical-scale orbit/zoom/reset 3D views; disclose that clients do not execute ground physics and result v1 carries no terrain geometry, while retaining explicit non-delivery boundaries for surface editors, terrain meshes, comparisons, persistence/export, ensembles, optimization, compiled runtimes, and UpstreamDrift integration. |
 | 2026-08-09 | 1.14.20 | feat(ground-profile, #4272): add strict versioned SI material-profile/library documents with uncertainty, evidence-linked validity bounds, rights, applicability, calibration, seven-gate qualification, scientific calibrated/illustrative status, canonical JSON/schema/semantic validation, fail-closed write-through atomic CAS persistence and explicit recovery, exact operating-condition binding, and a provenance-complete one-way neutral Upstream terrain snapshot adapter with split terrain/material identities; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream parity. |

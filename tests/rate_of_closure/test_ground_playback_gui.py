@@ -42,8 +42,27 @@ def test_tab_imports_strict_result_and_exposes_accessible_controls(qtbot) -> Non
     assert tab.summary_table.item(0, 0).text() == "Carry"
     assert tab.summary_table.item(1, 0).text() == "Total"
     assert tab.trajectory_table.rowCount() == 8
-    assert tab.warnings_table.rowCount() == 6
-    assert tab.warnings_table.item(3, 0).text() == "provenance"
+    assert tab.trajectory_table.columnCount() == 13
+    assert tab.trajectory_table.horizontalHeaderItem(7).text() == "vx m/s"
+    assert tab.trajectory_table.horizontalHeaderItem(12).text() == "ωz rad/s"
+    assert tab.trajectory_table.item(0, 7).text() == "0.976"
+    assert tab.trajectory_table.item(0, 12).text() == "-2.8103"
+    assert tab.events_table.columnCount() == 18
+    assert tab.events_table.horizontalHeaderItem(6).text() == "vx before m/s"
+    assert tab.events_table.horizontalHeaderItem(17).text() == "ωz after rad/s"
+    assert tab.events_table.item(0, 6).text() == "1"
+    assert tab.events_table.item(0, 9).text() == "0.976"
+    evidence = {
+        (
+            tab.warnings_table.item(row, 0).text(),
+            tab.warnings_table.item(row, 1).text(),
+        ): tab.warnings_table.item(row, 2).text()
+        for row in range(tab.warnings_table.rowCount())
+    }
+    assert evidence[("identity", "status")] == "complete"
+    assert evidence[("provenance", "input SHA-256")] == "a" * 64
+    assert evidence[("calibration", "calibration ID")] == ("literature-default-2026-08")
+    assert evidence[("calibration", "confidence")] == "0.60"
     assert tab.play_button.accessibleName() == "Play ground result"
 
 
@@ -84,6 +103,39 @@ def test_play_pause_step_phase_jump_restart_and_loop(qtbot) -> None:  # type: ig
     QTest.qWait(25)
     tab.pause()
     assert not tab.playback_timer.isActive()
+
+
+def test_playback_uses_monotonic_time_speed_and_loop_overshoot(qtbot) -> None:  # type: ignore[no-untyped-def]
+    now = [100.0]
+    tab = GroundPlaybackTab(clock=lambda: now[0])
+    qtbot.addWidget(tab)
+    tab.import_json_text(_result_text())
+
+    tab.play()
+    now[0] += 0.25
+    tab._advance()
+    assert tab.current_time_s == pytest.approx(tab.timeline.start_time_s + 0.25)
+
+    tab.speed_combo.setCurrentText("2×")
+    now[0] += 0.10
+    tab._advance()
+    assert tab.current_time_s == pytest.approx(tab.timeline.start_time_s + 0.45)
+
+    tab.pause()
+    tab.loop_checkbox.setChecked(True)
+    tab.set_time(tab.timeline.end_time_s - 0.05)
+    tab.play()
+    now[0] += 0.10
+    tab._advance()
+    assert tab.current_time_s == pytest.approx(tab.timeline.start_time_s + 0.15)
+    assert tab.playback_timer.isActive()
+
+    tab.speed_combo.setCurrentText("1×")
+    tab.loop_checkbox.setChecked(False)
+    now[0] += 0.01
+    tab._advance()
+    assert tab.current_time_s == pytest.approx(tab.timeline.start_time_s + 0.16)
+    assert tab.playback_timer.isActive()
 
 
 def test_ground_module_is_discoverable_for_existing_qt_navigation(

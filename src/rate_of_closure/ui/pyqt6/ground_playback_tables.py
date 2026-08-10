@@ -8,6 +8,42 @@ from PyQt6.QtWidgets import QTableWidget, QTableWidgetItem
 
 from rate_of_closure.simulation.ground_playback import GroundPlaybackTimeline
 
+TRAJECTORY_HEADERS = (
+    "Sample",
+    "Absolute s",
+    "Elapsed s",
+    "Phase",
+    "x m",
+    "y m",
+    "z m",
+    "vx m/s",
+    "vy m/s",
+    "vz m/s",
+    "ωx rad/s",
+    "ωy rad/s",
+    "ωz rad/s",
+)
+EVENT_HEADERS = (
+    "Sequence",
+    "Event",
+    "Time s",
+    "x m",
+    "y m",
+    "z m",
+    "vx before m/s",
+    "vy before m/s",
+    "vz before m/s",
+    "vx after m/s",
+    "vy after m/s",
+    "vz after m/s",
+    "ωx before rad/s",
+    "ωy before rad/s",
+    "ωz before rad/s",
+    "ωx after rad/s",
+    "ωy after rad/s",
+    "ωz after rad/s",
+)
+
 
 def create_ground_table(headers: tuple[str, ...], accessible_name: str) -> QTableWidget:
     """Return a read-only, row-selecting evidence table."""
@@ -54,6 +90,8 @@ def populate_ground_tables(
                 point.time_s - timeline.start_time_s,
                 point.phase.value,
                 *point.position_m,
+                *point.velocity_m_s,
+                *point.angular_velocity_rad_s,
             )
             for index, point in enumerate(result.trajectory)
         ],
@@ -61,7 +99,16 @@ def populate_ground_tables(
     _set_rows(
         events_table,
         [
-            (event.sequence, event.event_type.value, event.time_s, *event.position_m)
+            (
+                event.sequence,
+                event.event_type.value,
+                event.time_s,
+                *event.position_m,
+                *event.velocity_before_m_s,
+                *event.velocity_after_m_s,
+                *event.angular_velocity_before_rad_s,
+                *event.angular_velocity_after_rad_s,
+            )
             for event in result.events
         ],
     )
@@ -70,13 +117,37 @@ def populate_ground_tables(
     ]
     warning_rows.extend(
         [
+            ("identity", "schema version", result.schema_version),
+            ("identity", "request ID", result.request_id),
+            ("identity", "status", result.status.value),
+            ("identity", "unit system", result.unit_system),
+            ("identity", "frame", result.frame.value),
+            ("identity", "surface ID", result.surface_id),
+            (
+                "identity",
+                "model",
+                f"{result.model_id} {result.model_version}",
+            ),
+            (
+                "termination",
+                result.termination.reason.value,
+                f"completed={result.termination.completed}; "
+                f"time_s={result.termination.time_s:.6f}",
+            ),
             (
                 "provenance",
                 "producer",
                 f"{result.provenance.producer} {result.provenance.producer_version}",
             ),
             ("provenance", "source revision", result.provenance.source_revision),
+            ("provenance", "input SHA-256", result.provenance.input_sha256),
+            ("calibration", "calibration ID", result.calibration.calibration_id),
             ("calibration", result.calibration.kind.value, result.calibration.source),
+            (
+                "calibration",
+                "confidence",
+                f"{result.calibration.confidence:.2f}",
+            ),
         ]
     )
     _set_rows(warnings_table, warning_rows)
@@ -91,4 +162,9 @@ def _set_rows(table: QTableWidget, rows: Sequence[Sequence[object]]) -> None:
     table.resizeColumnsToContents()
 
 
-__all__ = ["create_ground_table", "populate_ground_tables"]
+__all__ = [
+    "EVENT_HEADERS",
+    "TRAJECTORY_HEADERS",
+    "create_ground_table",
+    "populate_ground_tables",
+]

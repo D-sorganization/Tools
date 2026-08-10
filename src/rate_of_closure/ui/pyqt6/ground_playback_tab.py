@@ -2,7 +2,9 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from pathlib import Path
+from time import monotonic
 
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
@@ -27,6 +29,8 @@ from rate_of_closure.simulation.ground_playback import (
     load_ground_result_json,
 )
 from rate_of_closure.ui.pyqt6.ground_playback_tables import (
+    EVENT_HEADERS,
+    TRAJECTORY_HEADERS,
     create_ground_table,
     populate_ground_tables,
 )
@@ -40,10 +44,20 @@ _SPEEDS = (0.25, 0.5, 1.0, 2.0, 4.0)
 class GroundPlaybackTab(QWidget):
     """Inspect one strict Python-generated ground result without simulating it."""
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        *,
+        clock: Callable[[], float] = monotonic,
+    ) -> None:
         super().__init__(parent)
+        self._clock = clock
         self._timeline: GroundPlaybackTimeline | None = None
         self.current_time_s = 0.0
+        self._playback_anchor_wall_s: float | None = None
+        self._playback_anchor_time_s = 0.0
+        self._playback_speed = 1.0
+        self._playback_loop = False
         self.playback_timer = QTimer(self)
         self.playback_timer.setInterval(_TIMER_INTERVAL_MS)
         self.playback_timer.timeout.connect(self._advance)
@@ -110,12 +124,23 @@ class GroundPlaybackTab(QWidget):
             return
         if self.current_time_s >= self._timeline.end_time_s:
             self.set_time(self._timeline.start_time_s)
+        self._playback_anchor_wall_s = self._clock()
+        self._playback_anchor_time_s = self.current_time_s
+        self._playback_speed = _SPEEDS[self.speed_combo.currentIndex()]
+        self._playback_loop = self.loop_checkbox.isChecked()
         self.playback_timer.start()
         self.play_button.setText("Pause")
 
     def pause(self) -> None:
         """Pause playback without changing the current frame."""
+        if self.playback_timer.isActive():
+            self._advance()
+        self._stop_playback()
+
+    def _stop_playback(self) -> None:
+        """Stop the owned timer without performing a final time sample."""
         self.playback_timer.stop()
+        self._playback_anchor_wall_s = None
         if hasattr(self, "play_button"):
             self.play_button.setText("Play")
 
@@ -269,10 +294,12 @@ class GroundPlaybackTab(QWidget):
         self.speed_combo.setToolTip(
             "Set playback speed from quarter-speed to four-times real time."
         )
+        self.speed_combo.currentIndexChanged.connect(self._change_speed)
         self.loop_checkbox = QCheckBox("Loop")
         self.loop_checkbox.setToolTip(
             "Restart at first contact after the observed end."
         )
+        self.loop_checkbox.toggled.connect(self._change_loop)
         reset_view = QPushButton("Reset 3D view")
         reset_view.setToolTip(
             "Restore the documented camera and auto-fit locked physical axes."
@@ -286,11 +313,12 @@ class GroundPlaybackTab(QWidget):
     def _build_detail_tabs(self) -> QTabWidget:
         tabs = QTabWidget()
         self.trajectory_table = create_ground_table(
-            ("Sample", "Absolute s", "Elapsed s", "Phase", "x m", "y m", "z m"),
+            TRAJECTORY_HEADERS,
             "Ground trajectory samples",
         )
         self.events_table = create_ground_table(
-            ("Sequence", "Event", "Time s", "x m", "y m", "z m"), "Ground events"
+            EVENT_HEADERS,
+            "Ground events",
         )
         self.warnings_table = create_ground_table(
             ("Severity", "Code", "Message"), "Warnings and provenance"
@@ -352,17 +380,43 @@ class GroundPlaybackTab(QWidget):
     def _advance(self) -> None:
         timeline = self._timeline
         if timeline is None:
-            self.pause()
+            self._stop_playback()
             return
-        speed = _SPEEDS[self.speed_combo.currentIndex()]
-        candidate = self.current_time_s + _TIMER_INTERVAL_MS * speed / 1000.0
-        if candidate < timeline.end_time_s:
+        if not self.playback_timer.isActive():
+            return
+        if self._playback_anchor_wall_s is None:
+            self._playback_anchor_wall_s = self._clock()
+            self._playback_anchor_time_s = self.current_time_s
+            return
+        wall_elapsed_s = max(0.0, self._clock() - self._playback_anchor_wall_s)
+        candidate = self._playback_anchor_time_s + wall_elapsed_s * self._playback_speed
+        if self._playback_loop and timeline.duration_s > 0.0:
+            offset_s = (candidate - timeline.start_time_s) % timeline.duration_s
+            self.set_time(timeline.start_time_s + offset_s)
+        elif candidate < timeline.end_time_s:
             self.set_time(candidate)
-        elif self.loop_checkbox.isChecked():
-            self.set_time(timeline.start_time_s)
         else:
             self.set_time(timeline.end_time_s)
-            self.pause()
+            self._stop_playback()
+
+    def _change_speed(self, index: int) -> None:
+        """Re-anchor active playback when its wall-clock multiplier changes."""
+        new_speed = _SPEEDS[index]
+        if self.playback_timer.isActive():
+            self._advance()
+            if self.playback_timer.isActive():
+                self._playback_anchor_wall_s = self._clock()
+                self._playback_anchor_time_s = self.current_time_s
+        self._playback_speed = new_speed
+
+    def _change_loop(self, enabled: bool) -> None:
+        """Re-anchor active playback before changing end-of-run semantics."""
+        if self.playback_timer.isActive():
+            self._advance()
+            if self.playback_timer.isActive():
+                self._playback_anchor_wall_s = self._clock()
+                self._playback_anchor_time_s = self.current_time_s
+        self._playback_loop = enabled
 
 
 __all__ = ["GroundPlaybackTab"]

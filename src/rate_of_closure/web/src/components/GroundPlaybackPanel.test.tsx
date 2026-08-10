@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import fixture from "../model/__fixtures__/ground_reference_pipeline_golden_v1.json";
@@ -38,6 +38,24 @@ describe("GroundPlaybackPanel", () => {
     expect(screen.getByRole("rowheader", { name: "Total" })).toBeInTheDocument();
     expect(screen.getByText("STATIC_PLANE_V1")).toBeInTheDocument();
     expect(screen.getByText(/tools.rate_of_closure/)).toBeInTheDocument();
+    expect(screen.getByText("flight-to-ground-result/v1")).toBeInTheDocument();
+    expect(screen.getByText("literature-default-2026-08")).toBeInTheDocument();
+    expect(screen.getByText("a".repeat(64))).toBeInTheDocument();
+
+    const trajectory = screen.getByRole("table", { name: "Ground trajectory evidence" });
+    expect(within(trajectory).getByRole("columnheader", { name: "vx m/s" })).toBeInTheDocument();
+    expect(within(trajectory).getByRole("columnheader", { name: "ωz rad/s" })).toBeInTheDocument();
+    const trajectoryCells = within(within(trajectory).getAllByRole("row")[1]).getAllByRole("cell");
+    expect(trajectoryCells[6]).toHaveTextContent("0.976000");
+    expect(trajectoryCells[11]).toHaveTextContent("-2.810304");
+
+    const events = screen.getByRole("table", { name: "Ground event evidence" });
+    expect(within(events).getByRole("columnheader", { name: "vx before m/s" })).toBeInTheDocument();
+    expect(within(events).getByRole("columnheader", { name: "ωz after rad/s" })).toBeInTheDocument();
+    const eventCells = within(within(events).getAllByRole("row")[1]).getAllByRole("cell");
+    expect(eventCells[5]).toHaveTextContent("1.000000");
+    expect(eventCells[8]).toHaveTextContent("0.976000");
+    expect(eventCells[16]).toHaveTextContent("-2.810304");
   });
 
   it("rejects an execution envelope atomically and retains the last result", async () => {
