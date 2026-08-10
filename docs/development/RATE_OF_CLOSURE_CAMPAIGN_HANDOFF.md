@@ -6,13 +6,14 @@ branch was rewritten.
 
 ## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
 
-Local unpublished branch `feat/4275-ground-mirrored-property` starts at the
-exact current ready PR #4322 head
-`8b065dd299acc7cab39321b0e2d7f34ca64f159b`. It preserves the protected stack;
-no push, PR, retarget, merge, force operation, or existing-worktree edit has
-occurred. The implementation is exact local commit
-`08d631d7169019aee9067f3739051a50d88b9554`; this follow-up changes no
-implementation evidence.
+Branch `feat/4275-ground-mirrored-property` is published as ready PR #4323
+from exact current ready PR #4322 head
+`8b065dd299acc7cab39321b0e2d7f34ca64f159b`. It preserves base
+`feat/4275-ground-tilted-conformance` and the protected stack; no retarget,
+merge, force operation, or parent rewrite occurred. The implementation is
+exact commit `08d631d7169019aee9067f3739051a50d88b9554`; initial
+evidence/handoff head `74a23c21bb20f13bf608f463915b00d2d53d5a7f` and this
+publication follow-up change no implementation evidence.
 
 The shared corpus grows from six to seven cases with the analytically mirrored
 incline `n=[0,sqrt(0.99),-0.1]`. The reflection applies the correct distinction
@@ -39,7 +40,7 @@ This remains `partial_implementation`. Keep #4275/#4267 open for broader
 property-based coverage in every compiled surface, uncertainty and performance
 qualification, calibrated/evolving terrain, UI/3D rendering, and downstream
 release. Local parity is not hosted CI, protected approval, integration, or
-release evidence.
+release evidence; PR #4323 remains gated on all of them and on PR #4322.
 
 ## 2026-08-10 issue #4275 tilted-plane conformance and passivity
 

@@ -5,12 +5,13 @@
 
 ## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
 
-Local branch `feat/4275-ground-mirrored-property` starts exactly at ready PR
-#4322 head `8b065dd299acc7cab39321b0e2d7f34ca64f159b`. Nothing from this branch has
-been pushed, published, retargeted, merged, or applied to an existing
-worktree. The implementation is exact local commit
-`08d631d7169019aee9067f3739051a50d88b9554`; this documentation-only follow-up
-does not change that evidence.
+Branch `feat/4275-ground-mirrored-property` is published as ready
+[PR #4323](https://github.com/D-sorganization/Tools/pull/4323), targeting
+`feat/4275-ground-tilted-conformance` at exact parent head
+`8b065dd299acc7cab39321b0e2d7f34ca64f159b`. The implementation is exact
+commit `08d631d7169019aee9067f3739051a50d88b9554`; its initial evidence/handoff
+head was `74a23c21bb20f13bf608f463915b00d2d53d5a7f`. This documentation-only
+publication follow-up does not change implementation evidence.
 
 The shared scientific corpus now has seven cases. A second analytic incline
 reflects the existing `n=[0,sqrt(0.99),0.1]` case through the xy plane, with

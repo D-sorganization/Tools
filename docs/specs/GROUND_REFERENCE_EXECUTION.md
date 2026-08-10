@@ -206,14 +206,14 @@ The prior five-case artifact is bound to implementation commit
 The six-case artifact is bound to reviewed implementation commit
 `5d333a4448d6484f8c98e78c9878cb83b40aa522` with raw-file SHA-256
 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
-The local seven-case successor has raw-file SHA-256
+The ready PR #4323 seven-case successor has raw-file SHA-256
 `c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465`;
-its implementation is exact local commit
+its implementation is exact commit
 `08d631d7169019aee9067f3739051a50d88b9554`. None of
 these digests establishes exhaustive tilted/property coverage, performance,
 calibration, changing terrain, user interfaces, or downstream release. PR
 #4322 remains the exact parent carrier; hosted approval and integration remain
-separate gates for this unpublished continuation.
+separate gates for ready child PR #4323.
 
 This corpus does not replace the canonical full-result fixture. Scientific
 tolerances establish physical conformance; exact canonical bytes and SHA-256

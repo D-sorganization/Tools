@@ -5,12 +5,14 @@
 
 ## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
 
-Local branch `feat/4275-ground-mirrored-property` is an exact unpublished
-child of ready PR #4322 head
-`8b065dd299acc7cab39321b0e2d7f34ca64f159b`. No existing branch or worktree
-was changed. The implementation is bound to exact local commit
-`08d631d7169019aee9067f3739051a50d88b9554`; this documentation-only follow-up
-does not change that evidence.
+Branch `feat/4275-ground-mirrored-property` is published as ready PR #4323,
+an exact child of ready PR #4322 head
+`8b065dd299acc7cab39321b0e2d7f34ca64f159b`, with base
+`feat/4275-ground-tilted-conformance` preserved. The implementation is bound
+to exact commit `08d631d7169019aee9067f3739051a50d88b9554`; its initial
+evidence/handoff head was `74a23c21bb20f13bf608f463915b00d2d53d5a7f`.
+This documentation-only publication follow-up changes no implementation
+evidence.
 
 The shared `ground-reference-conformance/v1` authority adds a seventh analytic
 case by reflecting the qualified incline through the xy plane. The oracle

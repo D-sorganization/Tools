@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.44                                    |
-| **Spec Version**        | 1.14.44                                    |
+| **Current Version**     | 1.14.45                                    |
+| **Spec Version**        | 1.14.45                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -3180,6 +3180,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.45 | docs(ground-conformance, #4275 #4323): publish the mirrored-frame and seeded-property continuation as ready PR #4323 at initial evidence head `74a23c21bb20f13bf608f463915b00d2d53d5a7f`, preserve exact PR #4322 ancestry and base topology, and retain protected CI, review, integration, exhaustive property, performance, terrain, UI, and downstream release gates. |
 | 2026-08-10 | 1.14.44 | docs(ground-conformance, #4275): bind the mirrored-frame and seeded-property implementation to exact local commit `08d631d7169019aee9067f3739051a50d88b9554`, the seven-case corpus SHA-256, complete Python ground suite, and fresh native/PyO3/WASM consumer evidence while retaining all hosted, protected, statistical, performance, terrain, UI, and downstream release gates. |
 | 2026-08-10 | 1.14.43 | fix(ground-conformance, #4275): add a mirrored analytic incline across Python/native/PyO3/WASM and a deterministic 20-case tilted property sweep across Python/PyO3; derive the default unbounded Python plane's tangent intrinsically for arbitrary valid normals while preserving caller-declared finite axes and explicit qualification limits. |
 | 2026-08-10 | 1.14.42 | docs(ground-conformance, #4275): record ready PR #4322 targeting `feat/4275-ground-conformance-corpus` from exact implementation/evidence head `a0c8e49a40badc3ce96193e031d2a9dec557d143`; preserve the independently reviewed local evidence while keeping queued hosted checks, approval, integration, and release explicitly open. |
