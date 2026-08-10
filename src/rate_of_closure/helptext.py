@@ -185,6 +185,26 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "models by re-running with a different model at identical "
         "launch conditions.</p>",
     ),
+    "ground_playback": _entry(
+        "Ground Playback",
+        "<h3>What this tab does</h3>"
+        "<p>Imports one strict flight-to-ground-result/v1 JSON record produced "
+        "by the qualified Python reference executor and plays its observed ground "
+        "trajectory. This viewer does not run ground physics or infer missing "
+        "surface geometry.</p><h3>Workflow</h3><ol><li>Import the result object "
+        "itself, not a request or execution-envelope document.</li><li>Review "
+        "carry, total or observed-end distance, warnings, calibration, and "
+        "provenance.</li><li>Play, pause, scrub, step exact samples, jump to an "
+        "available phase, change speed, or loop.</li><li>Drag and wheel the 3D view "
+        "to orbit and zoom; Reset 3D view restores locked physical scaling.</li>"
+        "</ol><h3>Tips and limits</h3><p>Lines are colored by the declared impact, "
+        "bounce, "
+        "skid, roll, and rest phases. Across a phase boundary the display holds "
+        "the last exact state rather than inventing motion. A partial run labels "
+        "its last point Observed end. Result v1 identifies the surface but does "
+        "not embed its plane, profile, normal, or ball radius, so neutral axes are "
+        "shown instead of a claimed terrain surface.</p>",
+    ),
     "launch_monitor_analytics": _entry(
         "Launch Monitor Analytics",
         "<h3>What this tab does</h3>"

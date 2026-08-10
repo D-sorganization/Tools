@@ -1524,3 +1524,37 @@ Draft PR #4309 publishes exact independently reviewed implementation head
 `c8ebf422669992c4a33db661b0c37dfe72b580ae`. This publication-only continuation
 adds the carrier and immutable local evidence to the campaign manifest. It does
 not claim protected CI, review, merge, issue closure, or epic completion.
+
+## 2026-08-10 Issue #4274 strict ground-result playback slice
+
+The local `feat/4274-ground-playback` branch starts from exact PR #4309 head
+`51492c3ddc8b15b1358434da9b29f600261c918a`. It introduces first-class Ground
+Playback in the standalone PyQt6 and React workspaces while preserving the
+strict execution boundary: clients import an exact
+`flight-to-ground-result/v1` and never run or imitate ground physics. Import is
+bounded to 5 MiB and 100,000 trajectory samples, validates a candidate before
+state replacement, and retains the prior valid result after rejection.
+
+The two clients use the same golden result and aligned absolute-time semantics:
+interpolation is limited to one declared phase, and phase transitions hold the
+preceding exact state until the next exact sample. Controls expose replay,
+pause, exact stepping, phase jumps, scrub, loop, granular speed, and camera
+reset. Locked physical axes, orbit/zoom, carry and complete/observed terminal
+markers, and trajectory/event/warning/calibration/provenance tables preserve
+the result evidence. Since v1 carries no surface geometry, both clients show
+neutral axes and explicitly avoid claiming a terrain plane.
+
+Evidence at handoff is 872 passed full Rate Python tests, 672 passed full React
+tests, and 9 focused adapter/Qt tests. Pinned Ruff 0.14.10, Black, pinned MyPy
+1.13, React lint/type/build, changed-file policy, assertion, size,
+documentation, and diff gates pass. Standalone Playwright Chromium verified
+desktop and narrow import/playback/zoom behavior, canvas containment, and zero
+horizontal overflow at 1440x900 and 520x900. An offscreen PyQt render at the
+supported 1024x700 minimum verified the compact two-row controls and usable 3D
+viewport.
+
+This does not complete #4274 or #4267. Surface editors, exact terrain meshes,
+comparison overlays, workspace persistence/export, ensembles, inverse
+optimization, Rust/WASM execution, and UpstreamDrift consumer parity remain
+open. Require independent exact-tree review plus ordinary protected CI before
+publication; no push or PR is part of this local slice.

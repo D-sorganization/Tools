@@ -695,3 +695,38 @@ Draft PR #4309 publishes exact reviewed implementation commit
 `c8ebf422669992c4a33db661b0c37dfe72b580ae`. The campaign manifest records the
 carrier and immutable local evidence. Protected CI and repository review remain
 open, so #4273, #4275, and #4267 stay open.
+
+## 2026-08-10 Issue #4274 strict ground-result playback slice
+
+Local branch `feat/4274-ground-playback` starts exactly from draft PR #4309
+head `51492c3ddc8b15b1358434da9b29f600261c918a`. It adds first-class Ground
+Playback modules to the standalone PyQt6 and React navigation surfaces. Both
+clients import only a strict `flight-to-ground-result/v1` record, reject files
+above 5 MiB or 100,000 samples, apply candidate imports atomically, and retain
+the last valid result after an error. The React view explicitly states that it
+does not execute ground physics; the PyQt disclosure states the same boundary.
+
+One shared golden result pins matching absolute-time and phase-transition
+semantics. Both clients provide play/pause/replay, exact sample stepping, phase
+jumps, scrubbing, 0.25x through 4x speed, looping, carry versus total or
+observed-end markers, locked-physical-scale 3D orbit/zoom/reset, and complete
+trajectory, event, warning, calibration, and provenance evidence. Cross-phase
+interpolation holds the preceding exact sample so the display does not invent
+motion. Result v1 has no surface geometry, so both views use neutral axes and
+do not claim a terrain plane.
+
+Local evidence is 872 full Rate Python tests and 672 full React tests, plus the
+focused 9-test adapter/Qt suite; Ruff 0.14.10 check/format, changed-file Black,
+CI-pinned MyPy 1.13, React lint/type/build, changed-file policy, assertion,
+file-size, documentation, and diff gates pass. Standalone Playwright Chromium
+verified import, phase jumps, replay/pause, wheel zoom, disclosures, locked
+aspect containment, and zero page-width overflow at 1440x900 and 520x900;
+offscreen PyQt rendering verified a usable plot/control split at the supported
+1024x700 minimum.
+
+This is the smallest production #4274 slice, not issue or epic completion.
+Surface editors, terrain meshes, comparison overlays, workspace persistence or
+export, ensembles, inverse optimization, Rust/WASM execution, and UpstreamDrift
+consumer parity remain open. Do not publish this local commit without an
+independent exact-tree review and ordinary protected CI; keep #4274 and #4267
+open.

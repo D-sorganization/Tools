@@ -1,0 +1,180 @@
+/** Strict result-only ground playback workspace. */
+
+import { useRef, useState } from "react";
+
+import type { FlightToGroundResult } from "../model/flightGroundTypes";
+import { parseFlightToGroundResultRecord } from "../model/flightGroundResultContract";
+import { GroundPlaybackTimeline } from "../model/groundPlayback";
+import { GroundPlayback3D } from "./GroundPlayback3D";
+
+const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
+const MAX_IMPORT_POINTS = 100_000;
+
+function readFileText(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("The selected file could not be read."));
+    reader.onload = () => resolve(String(reader.result ?? ""));
+    reader.readAsText(file, "utf-8");
+  });
+}
+
+function metricRows(result: FlightToGroundResult): Array<[string, string]> {
+  const summary = result.summary;
+  if (summary === null) return [];
+  const endpoint = result.status === "complete" ? "Total" : "Observed total";
+  return [
+    ["Carry", `${summary.carry_distance_m.toFixed(3)} m`],
+    [endpoint, `${summary.total_distance_m.toFixed(3)} m`],
+    ["Bounce air", `${summary.bounce_air_distance_m.toFixed(3)} m`],
+    ["Skid", `${summary.skid_distance_m.toFixed(3)} m`],
+    ["Roll", `${summary.roll_distance_m.toFixed(3)} m`],
+    ["Surface path", `${summary.surface_path_distance_m.toFixed(3)} m`],
+  ];
+}
+
+function Summary({ result }: { readonly result: FlightToGroundResult }) {
+  return (
+    <section className="rounded-lg border border-slate-800 bg-slate-950/40 p-3" aria-label="Ground result summary">
+      <h3 className="mb-2 font-semibold text-slate-100">Result summary</h3>
+      <table className="w-full text-left text-sm">
+        <thead><tr><th scope="col">Metric</th><th scope="col">Value</th></tr></thead>
+        <tbody>{metricRows(result).map(([label, value]) => (
+          <tr key={label}><th scope="row" className="py-1 font-medium">{label}</th><td>{value}</td></tr>
+        ))}</tbody>
+      </table>
+      <dl className="mt-3 grid grid-cols-1 gap-1 text-xs text-slate-300 sm:grid-cols-2">
+        <div><dt className="font-semibold">Surface ID</dt><dd>{result.surface_id}</dd></div>
+        <div><dt className="font-semibold">Termination</dt><dd>{result.termination.reason}</dd></div>
+        <div><dt className="font-semibold">Model</dt><dd>{result.model_id} {result.model_version}</dd></div>
+        <div><dt className="font-semibold">Request</dt><dd>{result.request_id}</dd></div>
+      </dl>
+    </section>
+  );
+}
+
+function Evidence({ result }: { readonly result: FlightToGroundResult }) {
+  return (
+    <section className="rounded-lg border border-slate-800 bg-slate-950/40 p-3" aria-label="Ground warnings and provenance">
+      <h3 className="mb-2 font-semibold text-slate-100">Warnings, calibration & provenance</h3>
+      {result.warnings.length === 0 ? <p className="text-sm text-slate-400">No warnings reported.</p> : (
+        <ul className="space-y-2 text-sm">{result.warnings.map((warning) => (
+          <li key={warning.code} className="rounded border border-amber-400/20 p-2">
+            <strong>{warning.code}</strong> · {warning.severity}<br />{warning.message}
+          </li>
+        ))}</ul>
+      )}
+      <dl className="mt-3 grid gap-2 text-xs sm:grid-cols-2">
+        <div><dt className="font-semibold">Producer</dt><dd>{result.provenance.producer} {result.provenance.producer_version}</dd></div>
+        <div><dt className="font-semibold">Source revision</dt><dd>{result.provenance.source_revision}</dd></div>
+        <div><dt className="font-semibold">Calibration</dt><dd>{result.calibration.kind} · {result.calibration.source}</dd></div>
+        <div><dt className="font-semibold">Confidence</dt><dd>{result.calibration.confidence.toFixed(2)}</dd></div>
+      </dl>
+    </section>
+  );
+}
+
+function ResultTables({ result }: { readonly result: FlightToGroundResult }) {
+  const start = result.trajectory[0].time_s;
+  return (
+    <div className="grid gap-4 xl:grid-cols-2">
+      <section className="overflow-x-auto rounded-lg border border-slate-800 p-3">
+        <h3 className="mb-2 font-semibold">Trajectory samples</h3>
+        <table className="min-w-full text-left text-xs">
+          <thead><tr>{["Sample", "Absolute s", "Elapsed s", "Phase", "x m", "y m", "z m"].map(
+            (label) => <th scope="col" key={label} className="pr-3">{label}</th>,
+          )}</tr></thead>
+          <tbody>{result.trajectory.map((point, index) => (
+            <tr key={`${point.time_s}-${index}`}><th scope="row">{index}</th>
+              <td>{point.time_s.toFixed(6)}</td><td>{(point.time_s - start).toFixed(6)}</td>
+              <td>{point.phase}</td>{point.position_m.map((value, axis) => <td key={axis}>{value.toFixed(6)}</td>)}</tr>
+          ))}</tbody>
+        </table>
+      </section>
+      <section className="overflow-x-auto rounded-lg border border-slate-800 p-3">
+        <h3 className="mb-2 font-semibold">Event ledger</h3>
+        <table className="min-w-full text-left text-xs">
+          <thead><tr>{["Sequence", "Event", "Time s", "x m", "y m", "z m"].map(
+            (label) => <th scope="col" key={label} className="pr-3">{label}</th>,
+          )}</tr></thead>
+          <tbody>{result.events.map((event) => (
+            <tr key={event.sequence}><th scope="row">{event.sequence}</th><td>{event.event_type}</td>
+              <td>{event.time_s.toFixed(6)}</td>{event.position_m.map((value, axis) => <td key={axis}>{value.toFixed(6)}</td>)}</tr>
+          ))}</tbody>
+        </table>
+      </section>
+    </div>
+  );
+}
+
+function LoadedResult({ result }: { readonly result: FlightToGroundResult }) {
+  const timeline = new GroundPlaybackTimeline(result);
+  return <>
+    <div className="grid gap-4 lg:grid-cols-[minmax(15rem,22rem)_1fr]">
+      <div className="space-y-4"><Summary result={result} /><Evidence result={result} /></div>
+      <GroundPlayback3D timeline={timeline} />
+    </div>
+    <ResultTables result={result} />
+  </>;
+}
+
+export function GroundPlaybackPanel() {
+  const importGeneration = useRef(0);
+  const [result, setResult] = useState<FlightToGroundResult | null>(null);
+  const [message, setMessage] = useState("No result loaded.");
+  const [error, setError] = useState<string | null>(null);
+
+  const importFile = async (file: File | undefined) => {
+    if (!file) return;
+    const generation = importGeneration.current + 1;
+    importGeneration.current = generation;
+    try {
+      if (file.size > MAX_IMPORT_BYTES) throw new RangeError("File exceeds the 5 MiB import limit.");
+      const text = await readFileText(file);
+      const parsed = parseFlightToGroundResultRecord(JSON.parse(text) as unknown);
+      if (parsed.trajectory.length > MAX_IMPORT_POINTS) {
+        throw new RangeError("Trajectory exceeds the 100,000 point display limit.");
+      }
+      new GroundPlaybackTimeline(parsed);
+      if (generation !== importGeneration.current) return;
+      setResult(parsed);
+      setError(null);
+      setMessage(`Loaded ${file.name} — ${parsed.status}; ${parsed.trajectory.length} samples.`);
+    } catch (reason) {
+      if (generation !== importGeneration.current) return;
+      const detail = reason instanceof Error ? reason.message : "Unknown import error.";
+      setError(`Could not import ${file.name}: ${detail}`);
+    }
+  };
+
+  return (
+    <section className="space-y-4" aria-labelledby="ground-playback-heading">
+      <header className="rounded-lg border border-sky-500/30 bg-sky-950/20 p-4">
+        <h2 id="ground-playback-heading" className="text-lg font-semibold text-slate-100">Ground Playback</h2>
+        <p className="mt-1 text-sm text-slate-300">
+          Import a strict flight-to-ground-result/v1 JSON generated by the Python reference executor.
+          This browser viewer does not execute ground physics.
+        </p>
+        <p className="mt-1 text-xs text-slate-400">
+          Result v1 does not embed surface geometry, so neutral locked-scale axes are shown instead of a claimed terrain plane.
+        </p>
+      </header>
+      <label className="inline-flex cursor-pointer rounded border border-sky-500/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-200">
+        Import Ground Result JSON…
+        <input type="file" accept="application/json,.json" className="sr-only"
+          aria-label="Import strict ground result JSON"
+          onChange={(event) => {
+            void importFile(event.target.files?.[0]);
+            event.currentTarget.value = "";
+          }} />
+      </label>
+      {error ? <p role="alert" className="rounded border border-red-500/40 bg-red-950/30 p-3 text-sm text-red-200">{error}</p>
+        : <p role="status" className="text-sm text-slate-300">{message}</p>}
+      {result === null ? (
+        <div className="rounded-lg border border-dashed border-slate-700 p-8 text-center text-slate-400">
+          Choose an exact result record to enable phase-aware playback and evidence tables.
+        </div>
+      ) : <LoadedResult result={result} />}
+    </section>
+  );
+}

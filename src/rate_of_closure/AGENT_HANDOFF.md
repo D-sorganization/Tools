@@ -1165,3 +1165,31 @@ branch `feat/4273-ground-study-scalar-adapter` at
 `c8ebf422669992c4a33db661b0c37dfe72b580ae`. The manifest now records this
 carrier and local evidence; no protected check or review is yet claimed. Keep
 #4273/#4275/#4267 open.
+
+## 2026-08-10 Issue #4274 strict ground-result playback slice
+
+`feat/4274-ground-playback` begins at exact PR #4309 head
+`51492c3ddc8b15b1358434da9b29f600261c918a`. The standalone PyQt6 and React
+shells now register a discoverable Ground Playback workspace. It accepts only
+strict `flight-to-ground-result/v1` JSON, with 5 MiB and 100,000-sample bounds,
+atomic candidate validation, and last-good retention. Neither view runs ground
+physics, and both disclose that v1 contains no surface geometry.
+
+The clients share one golden result and equivalent absolute-time, same-phase
+interpolation and cross-phase hold behavior. Controls cover play/pause/replay,
+exact frames, phase jumps, scrub, loop, 0.25x-4x speed, and camera reset. Locked
+physical scales, orbit/zoom, carry and terminal markers, honest partial-result
+wording, and trajectory/event/warning/calibration/provenance tables make the
+imported evidence inspectable without relabeling observed outcomes.
+
+Verified local evidence: 872 Python Rate tests, 672 React tests, 9 focused
+adapter/Qt tests, Ruff 0.14.10, Black, MyPy 1.13, React lint/type/build, policy,
+assertion, size, documentation, and diff gates. Standalone Playwright Chromium
+passed the import and interaction workflow at 1440x900 and 520x900 with exact
+canvas containment and no horizontal page overflow. An offscreen 1024x700
+PyQt render verified that the wrapped control grid preserves a usable 3D view.
+
+Keep #4274/#4267 open: surface editing, exact terrain geometry, comparisons,
+persistence/export, ensembles, optimization, Rust/WASM, and UpstreamDrift
+integration are not delivered here. Require independent exact-tree review and
+normal protected CI before publication.

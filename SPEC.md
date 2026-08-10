@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.19                                    |
-| **Spec Version**        | 1.14.19                                    |
-| **Last Spec Update**    | 2026-08-09                                 |
+| **Current Version**     | 1.14.21                                    |
+| **Spec Version**        | 1.14.21                                    |
+| **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
@@ -45,6 +45,31 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-10 Strict ground-result playback
+
+- Standalone PyQt6 and React expose a first-class, discoverable Ground
+  Playback workspace that imports only an exact
+  `flight-to-ground-result/v1` record. Imports are bounded to 5 MiB and
+  100,000 trajectory samples, reject invalid input atomically, and retain the
+  last valid result.
+- Both clients use one shared golden result and matching absolute-time,
+  phase-aware playback semantics. Interpolation is permitted only within a
+  declared phase; a phase transition holds the preceding exact state until
+  the next exact sample. Controls provide play, pause, replay, exact-frame
+  stepping, phase jumps, looping, speed selection, scrubbing, and view reset.
+- Complete results distinguish carry from total/rest distance; partial results
+  label their endpoint as observed rather than final. Tables expose trajectory,
+  event, warning, calibration, and provenance evidence without discarding
+  censored observations.
+- The 3D views preserve physical axis proportions and support orbit, zoom, and
+  auto-fit/reset. Because result v1 contains no surface geometry, the views
+  show neutral axes and explicitly do not claim an exact terrain plane.
+- Neither client executes ground physics in this slice. Surface editors,
+  terrain meshes, comparison overlays, workspace persistence/export,
+  ensembles, inverse optimization, Rust/WASM execution, and UpstreamDrift
+  consumer integration remain downstream work under issue #4274 and epic
+  #4267.
 
 ### 2026-08-06 Impact-to-Flight Solution-Family Foundation
 
@@ -2992,6 +3017,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.21 | feat(ground-playback, #4274): add discoverable standalone PyQt6 and React strict-result playback with bounded atomic import and last-good retention, shared-golden phase-aware absolute-time semantics, exact-frame/phase/loop/speed controls, honest complete versus observed endpoint labels, warning/calibration/provenance and trajectory/event tables, and locked-physical-scale orbit/zoom/reset 3D views; disclose that clients do not execute ground physics and result v1 carries no terrain geometry, while retaining explicit non-delivery boundaries for surface editors, terrain meshes, comparisons, persistence/export, ensembles, optimization, compiled runtimes, and UpstreamDrift integration. |
 | 2026-08-09 | 1.14.20 | feat(ground-profile, #4272): add strict versioned SI material-profile/library documents with uncertainty, evidence-linked validity bounds, rights, applicability, calibration, seven-gate qualification, scientific calibrated/illustrative status, canonical JSON/schema/semantic validation, fail-closed write-through atomic CAS persistence and explicit recovery, exact operating-condition binding, and a provenance-complete one-way neutral Upstream terrain snapshot adapter with split terrain/material identities; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream parity. |
 | 2026-08-09 | 1.14.19 | feat(ground-roll, #4271): continue exact #4270 capture through arbitrary-plane kinetic skid, static-feasible pure roll, rolling resistance, qualified rest, finite-axis edge localization, bounded typed limits, relative surface-path and passive energy ledgers; compose representable prefix/suffix evidence into strict v1 results without duplicate or epsilon-time samples; pin an analytic shared fixture and retain explicit exclusions for regions, changing normals, torsional spin damping, roll-to-skid, UI, compiled runtimes, and downstream parity. |
 | 2026-08-09 | 1.14.18 | feat(ground-impact, #4270): add a typed passive restitution/Coulomb sphere-plane impulse with full spin and moving-boundary accounting, deterministic repeated ballistic hops, exact bracket contact, capture-to-skid handoff, cancellation and bounded failure states, airborne-segment evidence, a shared golden fixture, and analytic/property/convergence tests; retain #4271 ownership of skid, roll, rest, total distance, and final `GroundSimulationResult`, with UI and compiled runtimes explicitly excluded. |

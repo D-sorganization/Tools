@@ -75,7 +75,20 @@ describe("primary view preferences", () => {
     expect(loaded.order.slice(0, 2)).toEqual(["plots", "simulation"]);
     expect(new Set(loaded.order)).toEqual(new Set(PRIMARY_VIEW_IDS));
     expect(loaded.order).toContain("launch-monitor-analytics");
-    expect(loaded.visible).toEqual(["plots", "explorer"]);
+    expect(loaded.visible).toEqual(["plots", "ground-playback", "explorer"]);
+  });
+
+  it("reveals Ground Playback when migrating a saved v2 module list", () => {
+    const storage = new MemoryStorage();
+    const previousIds = PRIMARY_VIEW_IDS.filter((id) => id !== "ground-playback");
+    storage.setItem(PRIMARY_VIEW_STORAGE_KEY, JSON.stringify({
+      version: 2,
+      order: previousIds,
+      visible: ["explorer", "plots"],
+      active: "explorer",
+    }));
+
+    expect(loadPrimaryViewState(storage).visible).toContain("ground-playback");
   });
 
   it("round-trips a valid reordered state", () => {
