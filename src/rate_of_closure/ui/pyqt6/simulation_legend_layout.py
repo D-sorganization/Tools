@@ -4,7 +4,11 @@ from __future__ import annotations
 
 from typing import Any
 
-__all__ = ["clear_figure_legends", "place_simulation_legend"]
+__all__ = [
+    "clear_figure_legends",
+    "place_simulation_legend",
+    "reflow_simulation_legend",
+]
 
 _INSIDE_LOCATIONS = {
     "inside_upper_right": "upper right",
@@ -38,6 +42,13 @@ def place_simulation_legend(view: Any) -> None:
         loc=_INSIDE_LOCATIONS.get(location, "upper right"),
         fontsize=7,
     )
+
+
+def reflow_simulation_legend(view: Any) -> None:
+    """Rebuild only the legend layout after canvas geometry changes."""
+    clear_figure_legends(view)
+    place_simulation_legend(view)
+    view._canvas.draw_idle()
 
 
 def _place_outside_right(view: Any, handles: list[Any], labels: list[str]) -> None:

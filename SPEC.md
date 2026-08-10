@@ -38,8 +38,8 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 - PyQt6 Swing/Flight scenes implement Outside Right as a figure-owned legend
   in a measured reserved gutter. The axes boundary follows the rendered legend
-  width, figure legends are cleared before redraw, and resize events reflow the
-  scene so a visible default legend cannot become an axes overlay.
+  width, figure legends are cleared before redraw, and real canvas resize
+  events reflow only legend geometry so camera/playback state is untouched.
 - Inside placements and Hidden remain explicit reversible choices. Both PyQt6
   controls expose stable accessible names.
 - React managed plots derive their data rectangle and legend origin from one

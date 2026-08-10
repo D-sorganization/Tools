@@ -5,7 +5,6 @@ from __future__ import annotations
 from typing import Any
 
 import pytest
-from matplotlib.backend_bases import ResizeEvent
 
 pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
@@ -111,7 +110,9 @@ def test_engineering_details_are_scrollable_and_key_metrics_remain_visible(
     assert view._impact_details_scroll.horizontalScrollBar().maximum() == 0
 
 
-def test_legend_defaults_outside_and_can_move_or_hide(tab, qtbot) -> None:  # type: ignore[no-untyped-def]
+def test_legend_defaults_outside_and_can_move_or_hide(  # type: ignore[no-untyped-def]
+    tab, qtbot, monkeypatch: pytest.MonkeyPatch
+) -> None:
     assert tab.run_now() is not None
     view = tab.view()
     view._layers_button.click()
@@ -134,12 +135,21 @@ def test_legend_defaults_outside_and_can_move_or_hide(tab, qtbot) -> None:  # ty
     assert legend_bounds.y1 <= figure_bounds.y1
     assert view._axes.get_position().x1 <= 0.75
 
-    view._figure.set_size_inches(3.6, 2.8, forward=False)
-    ResizeEvent("resize_event", view._canvas)._process()
-    qtbot.wait(10)
+    redraw_calls: list[None] = []
+    with monkeypatch.context() as resize_patch:
+        resize_patch.setattr(view, "_draw", lambda: redraw_calls.append(None))
+        view._canvas.setFixedSize(*MINIMUM_PLOT_SIZE)
+        qtbot.wait(30)
+    assert redraw_calls == []
+    assert view._canvas.width() == MINIMUM_PLOT_SIZE[0]
+    assert view._canvas.height() == MINIMUM_PLOT_SIZE[1]
     view._canvas.draw()
-    assert view._figure.bbox.width == pytest.approx(MINIMUM_PLOT_SIZE[0])
-    assert view._figure.bbox.height == pytest.approx(MINIMUM_PLOT_SIZE[1])
+    device_ratio = view._canvas.devicePixelRatioF()
+    assert view._figure.bbox.width == pytest.approx(MINIMUM_PLOT_SIZE[0] * device_ratio)
+    assert view._figure.bbox.height == pytest.approx(
+        MINIMUM_PLOT_SIZE[1] * device_ratio
+    )
+    assert len(view._figure.legends) == 1
     compact_legend_bounds = view._figure.legends[0].get_window_extent(
         view._canvas.get_renderer()
     )

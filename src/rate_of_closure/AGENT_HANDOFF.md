@@ -9,7 +9,8 @@ The isolated child starts from exact PR #4301 head
 `5c8efcbe5fcd6f993ef947a85e39852d268780a6`. The PyQt6 3D simulation default
 now places its legend at figure scope inside a measured right rail, shrinks the
 axes to the legend's rendered left boundary, removes retained legends before
-redraw, and reflows on canvas resize. This keeps the visible legend outside the
+redraw, and performs legend-only reflow on real canvas resize without a full
+scene redraw. This keeps the visible legend outside the
 axes at the 360 x 280 minimum while preserving inside and hidden choices.
 The checkbox and position selector expose explicit accessible names.
 

@@ -11,7 +11,8 @@ PyQt6 Swing/Flight scenes now render the default Outside Right legend as a
 figure-owned artist in a measured reserved gutter rather than as an axes-owned
 artist inside the plot surface. The renderer removes retained figure legends
 before every redraw, recomputes the axes boundary from the rendered legend
-width, and reflows after canvas resize. Inside placements and Hidden remain
+width, and performs legend-only reflow after real canvas resize without
+advancing camera/playback state or rebuilding the scene. Inside placements and Hidden remain
 independent and clear the outside artist. Legend visibility and position also
 have explicit accessible names.
 

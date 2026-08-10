@@ -45,6 +45,7 @@ from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
 from rate_of_closure.ui.pyqt6.impact_layer_controls import ImpactLayerControls
+from rate_of_closure.ui.pyqt6.simulation_legend_layout import reflow_simulation_legend
 from rate_of_closure.ui.pyqt6.simulation_scene_renderer import (
     SimulationSceneRenderer,
     fallback_joint_ids,
@@ -402,5 +403,5 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
         SimulationSceneRenderer(self, get_chart_color).draw()
 
     def _redraw_after_canvas_resize(self, _event: object) -> None:
-        """Reflow the outside legend after the canvas geometry changes."""
-        self._draw()
+        """Reflow the legend without advancing camera or playback state."""
+        reflow_simulation_legend(self)

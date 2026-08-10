@@ -11,8 +11,9 @@ An isolated branch from exact PR #4301 head
 of #4224 without changing any existing worktree or remote branch. PyQt6
 Swing/Flight scenes use a figure-owned Outside Right legend and compute the
 reserved axes gutter from its rendered width. Retained figure legends are
-removed before each scene rebuild, canvas resize triggers a reflow, and inside
-or hidden choices cannot leave a stale outside artist. The minimum 360 x 280
+removed before each scene rebuild, real canvas resize triggers legend-only
+reflow without camera/playback advancement, and inside or hidden choices
+cannot leave a stale outside artist. The minimum 360 x 280
 regression proves the legend remains inside the figure and outside the axes;
 accessible names cover both controls.
 
