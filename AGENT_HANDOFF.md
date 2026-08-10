@@ -1,7 +1,95 @@
 # AGENT_HANDOFF — Tools
 
 > Update this file in every implementation commit and every push to `main`.
-> Last updated: 2026-08-09.
+> Current-state only; history lives in git. Last updated: 2026-08-10.
+
+## PR #4302 corrected-flight-transfer propagation
+
+Draft PR #4302 remains on `feat/4270-ground-impact-bounce` with unchanged base
+`feat/4269-flight-ground-transfer`. Exact corrected #4288 parent
+`247215422a6d4b677552955b4923bc609a553259` is incorporated by the normal merge
+containing this handoff. The child preserves its passive restitution/Coulomb
+sphere-plane impulse, deterministic repeated ballistic hops, exact physical
+contact, capture-to-skid handoff, cancellation/failure semantics, and airborne
+segment evidence while inheriting the corrected transfer ancestry, deterministic
+workspace timestamps, and canonical `swing_sim` import identity. No branch was
+rebased, retargeted, rewritten, or force-pushed.
+
+The slice remains partial and `not_released`: issue #4271 retains skid, roll,
+rest, total distance, and final `GroundSimulationResult`; terrain deformation,
+UI execution, TypeScript bounce physics, compiled Rust/PyO3/WASM bounce parity,
+and UpstreamDrift adapters remain excluded. Protected CI, independent review,
+and dependency-ordered collapse remain separate release gates.
+
+Merged-tree validation is `987` Python tests, `106` React files / `661` tests,
+and the complete `tools-core` Rust suite at `137` tests (`111` unit, `20`
+transfer, `6` wire). The affected cross-version suite is also `146` tests on
+real CPython 3.10.20. The 189-module Vite production build, TypeScript,
+zero-warning ESLint, Ruff check/format across 90 files, pinned mypy 1.13 across
+all 17 ground and nine transfer production modules, Rust workspace format plus
+warning-denied `tools-core` clippy, campaign-manifest validator plus eight
+contracts, documentation governance, 11-file 500-LOC budget, marker scan, and
+diff checks are clean. Hosted checks and review apply to the new exact merge
+head only.
+
+## PR #4288 corrected-ground propagation
+
+Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged
+base `feat/4268-ground-contract`. Exact corrected #4285 parent
+`788aa547651a3685a363ea401824a5d81477bafb` is incorporated by the normal merge
+containing this handoff. The child preserves its signed terminal state,
+physical sphere/terrain contact brackets, strict provenance, and qualified
+Python/TypeScript/Rust/PyO3/WASM transfer while inheriting deterministic
+workspace timestamps and canonical `swing_sim` import identity. No branch was
+rebased, retargeted, rewritten, or force-pushed.
+
+This propagation adds no bounce, skid, roll, terrain response, total distance,
+or UI execution. Protected CI, independent review, and dependency-ordered
+collapse remain separate release gates.
+
+Merged-tree validation is `951` Python tests, `106` React files / `661` tests,
+and `26` focused Rust transfer/wire tests. The affected cross-version suite is
+also `110` tests on real CPython 3.10.20. The 189-module Vite production build,
+TypeScript, zero-warning ESLint, Ruff check/format across 82 files, pinned mypy
+1.13 across the six-file transfer and 13-file parent production namespaces,
+Rust workspace format plus warning-denied `tools-core` clippy, campaign-manifest
+validator plus eight contracts, documentation governance, 13-file 500-LOC
+budget, marker scan, and diff checks are clean. Hosted checks and review apply
+to the new exact merge head only.
+
+## PR #4285 workspace timestamp propagation
+
+Draft PR #4285 remains on `feat/4268-ground-contract` with unchanged base
+`feat/4197-capability-observer`. Exact corrected #4282 carrier
+`5f77af4add23547a21cc3fabce98ae9ad4260427` is incorporated through the normal
+merge containing this handoff. No branch was rebased, retargeted, rewritten,
+or force-pushed.
+
+The child retains its strict, UI-neutral flight-to-ground schemas, canonical
+fixture, migrations, legacy-result adapter, explicit dependency, and pinned
+typing repairs while inheriting the deterministic Python 3.10-3.12 UTC parser
+and the corrected variation, scalar, wind, capability, and campaign-release
+ancestry. This merge does not claim bounce, skid, roll, terrain profiles,
+total distance, UI execution, or Rust/WASM delivery. Protected CI, review, and
+normal descendant propagation remain separate release gates.
+
+Exact-head CI on the preceding child head exposed an actionable collection
+defect after installing the package: embedded `src.shared.python.swing_sim`
+tests and canonical `shared.python.swing_sim` imports could load distinct
+package trees, making the ground and impact subpackages unavailable by import
+order. The shared alias registry now coalesces `swing_sim`; an isolated RED/GREEN
+identity contract and both affected public-API suites pin the correction. The
+separate file-size job was cancelled during checkout and did not execute its
+budget check, so it remains infrastructure evidence rather than a source
+failure.
+
+Merged-tree evidence is `915` Rate/ground/impact Python tests, the `12`-test
+shared-alias architecture suite, `28` focused ground/impact/alias tests on
+CPython 3.12, `28` direct compatibility tests on real CPython 3.10.20, and
+`104` React files / `642` tests. The 188-module Vite build, TypeScript,
+zero-warning ESLint, Ruff, format, pinned mypy 1.13, campaign-manifest
+validation plus eight contracts, documentation governance, the 44-file
+500-LOC budget, conflict-marker scan, and diff checks are clean.
 
 ## 2026-08-09 PR #4302 pinned-MyPy current-head correction
 
@@ -198,13 +286,11 @@ observer #4283 → evaluator #4289 → this #4294.
 
 ## Current Rate of Closure continuation
 
-The active checkout is
+The historical capability optimization checkout is
 `C:\Users\diete\Repositories\Tools-worktrees\capability-optimization-ui` on
-branch `feat/4197-capability-optimization-ui`. It is based exactly on evaluator
-commit `c280407d432c153639bb266c9c721a014a129723`, published as draft PR
-#4289 on `feat/4197-capability-flight-evaluator`. Preserve that parent
-relationship: do not retarget, rebase, force-push, or merge this child ahead of
-its protected stack.
+branch `feat/4197-capability-optimization-ui`. Its functionality is now part of
+the corrected #4282 ancestry incorporated above. Preserve the protected stack;
+do not retarget, rebase, force-push, or merge descendants out of order.
 
 This continuation supplies the matched end-user optimizer for issue #4197.
 PyQt6 and React now author the same versioned profile, club, target, objective,
@@ -238,6 +324,10 @@ Tools is the D-sorganization fleet's shared engineering-tools monorepo. It
 contains PyQt6 applications, FastAPI/React mirrors, and Rust kernels consumed
 by downstream repositories. Rate of Closure is only one package; preserve
 unrelated tool boundaries and user changes.
+
+The #4285 ground-contract carrier incorporates #4282 exact head
+`5f77af4add23547a21cc3fabce98ae9ad4260427` by normal ancestry. Keep downstream
+ground PRs stacked behind the resulting exact #4285 head.
 
 Before changing public shared APIs, read:
 
