@@ -179,10 +179,25 @@ def time_to_vector_zero(
     if denominator <= tolerance**2:
         return None
     time_s = -dot(value, rate) / denominator
-    if time_s < 0.0:
+    if time_s <= 0.0:
         return None
     residual = add(value, scale(rate, time_s))
     return time_s if norm(residual) <= tolerance else None
+
+
+def bounded_closing_duration(
+    value: Vector3,
+    rate: Vector3,
+    requested_duration_s: float,
+) -> float:
+    """Bound a closing vector step to avoid crossing its singular zero state."""
+    if not math.isfinite(requested_duration_s) or requested_duration_s <= 0.0:
+        raise ValueError("requested_duration_s must be finite and positive")
+    magnitude = norm(value)
+    rate_magnitude = norm(rate)
+    if magnitude == 0.0 or rate_magnitude == 0.0 or dot(value, rate) >= 0.0:
+        return requested_duration_s
+    return min(requested_duration_s, 0.25 * magnitude / rate_magnitude)
 
 
 def relative_path_distance(
@@ -214,6 +229,7 @@ def kinetic_energy(state: GroundContactState, body: SphereProperties) -> float:
 
 __all__ = [
     "advance_constant_motion",
+    "bounded_closing_duration",
     "contact_slip_velocity",
     "kinetic_energy",
     "relative_path_distance",

@@ -131,14 +131,19 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   feasibility gate, pure roll, rolling resistance, retained normal-axis spin,
   and physically qualified rest.
 - A deterministic bounded state machine localizes skid-to-roll, zero-speed,
-  and optional finite-axis edge events; retains separate skid and roll paths;
+  and optional finite-axis edge events. Exact collinear capture is retained,
+  while closing oblique slip uses a characteristic-time substep bound to avoid
+  overshoot and step-size resonance; separate skid and roll paths remain;
   anchors output sampling at first contact; and returns typed internal limit,
   cancellation, and unsupported-surface outcomes without inventing wire
   results; invalid numerical states raise before result construction.
 - One fail-closed composer joins the impact/bounce prefix and surface suffix
   without duplicate or epsilon-time points. It produces v1 summaries only for
   representable rest, left-surface, time-limit, or event-limit outcomes and
-  labels censored endpoint distances explicitly.
+  labels censored endpoint distances explicitly. The prefix is bound to the
+  complete canonical request digest, composed model identity includes both
+  phases, phase limitations remain typed, and contradictory terminal evidence
+  is rejected.
 - Energy accounting includes translation, rotation, gravity work, moving-plane
   work, and nonnegative dissipation. The shared SHA-locked analytic fixture and
   physics/state-machine/composition tests qualify this bounded Python slice.

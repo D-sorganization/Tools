@@ -146,6 +146,7 @@ class SurfaceRun:
             self.request.surface.frame,
             self.settings.model_id,
             self.settings.model_version,
+            self.prefix.request_fingerprint_sha256,
             tuple(self.trajectory),
             tuple(self.events),
             self.state,

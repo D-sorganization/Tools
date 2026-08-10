@@ -22,9 +22,19 @@ from .contract_types import (
     Vector3,
 )
 from .impact_types import ImpactImpulseResult
+from .request_identity import validate_request_fingerprint
 
 GROUND_IMPACT_MODEL_ID = "tools-ground-impact-bounce"
 GROUND_IMPACT_MODEL_VERSION = "1.0.0"
+BOUNCE_MATERIAL_LIMITATION = (
+    "Rigid restitution v1 does not use firmness_pa, hardness_fraction, "
+    "grass_height_m, compressibility_fraction, compression_damping_fraction, "
+    "turf_density_kg_m3, moisture_fraction, or rolling_resistance."
+)
+BOUNCE_HANDOFF_NOTICE = (
+    "The impact/bounce prefix ends at settled-to-skid and requires the qualified "
+    "#4271 surface continuation before final distance is available."
+)
 STANDARD_GRAVITY_M_S2: Vector3 = (0.0, -9.80665, 0.0)
 CancellationCheck = Callable[[], bool]
 
@@ -136,6 +146,7 @@ class RepeatedBounceResult:
     frame: GroundFrame
     model_id: str
     model_version: str
+    request_fingerprint_sha256: str
     trajectory: tuple[GroundTrajectoryPoint, ...]
     events: tuple[GroundEvent, ...]
     impacts: tuple[ImpactImpulseResult, ...]
@@ -145,6 +156,11 @@ class RepeatedBounceResult:
     warnings: tuple[str, ...]
 
     def __post_init__(self) -> None:
+        object.__setattr__(
+            self,
+            "request_fingerprint_sha256",
+            validate_request_fingerprint(self.request_fingerprint_sha256),
+        )
         self._validate_nested_types()
         self._normalize_collections()
         self._validate_event_ledger()
@@ -362,6 +378,8 @@ def _state_matches_point(
 
 
 __all__ = [
+    "BOUNCE_HANDOFF_NOTICE",
+    "BOUNCE_MATERIAL_LIMITATION",
     "BounceModelSettings",
     "BounceAirSegment",
     "BounceTermination",

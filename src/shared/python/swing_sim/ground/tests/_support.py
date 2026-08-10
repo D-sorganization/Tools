@@ -31,6 +31,7 @@ from shared.python.swing_sim.ground import (
     ImpactRegime,
     RepeatedBounceResult,
 )
+from shared.python.swing_sim.ground.request_identity import ground_request_fingerprint
 
 
 def _provenance() -> GroundProvenance:
@@ -338,6 +339,7 @@ def _settled_prefix(
             request.surface.frame,
             "tools-ground-impact-bounce",
             "1.0.0",
+            ground_request_fingerprint(request),
             (point,),
             (event,),
             (impact,),
@@ -413,6 +415,7 @@ def _settled_prefix(
         request.surface.frame,
         "tools-ground-impact-bounce",
         "1.0.0",
+        ground_request_fingerprint(request),
         points,
         events,
         impacts,

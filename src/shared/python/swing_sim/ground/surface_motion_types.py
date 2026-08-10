@@ -21,6 +21,7 @@ from .contract_types import (
     GroundTrajectoryPoint,
     Vector3,
 )
+from .request_identity import validate_request_fingerprint
 
 GROUND_SKID_ROLL_MODEL_ID = "tools-ground-skid-roll"
 GROUND_SKID_ROLL_MODEL_VERSION = "1.0.0"
@@ -270,6 +271,8 @@ class SkidRollTermination:
         )
         if self.time_s < 0.0 or self.elapsed_time_s < 0.0:
             raise ValueError("termination times must be nonnegative")
+        if self.elapsed_time_s > self.time_s:
+            raise ValueError("elapsed termination time cannot exceed absolute time")
 
 
 @dataclass(frozen=True)
@@ -281,6 +284,7 @@ class SkidRollResult:
     frame: GroundFrame
     model_id: str
     model_version: str
+    request_fingerprint_sha256: str
     trajectory: tuple[GroundTrajectoryPoint, ...]
     events: tuple[GroundEvent, ...]
     final_state: GroundContactState
@@ -290,6 +294,11 @@ class SkidRollResult:
     termination: SkidRollTermination
 
     def __post_init__(self) -> None:
+        object.__setattr__(
+            self,
+            "request_fingerprint_sha256",
+            validate_request_fingerprint(self.request_fingerprint_sha256),
+        )
         points = tuple(self.trajectory)
         events = tuple(self.events)
         if any(type(point) is not GroundTrajectoryPoint for point in points):
@@ -316,6 +325,12 @@ class SkidRollResult:
         self._validate_sequence()
 
     def _validate_sequence(self) -> None:
+        if not self.request_id or not self.surface_id:
+            raise ValueError("suffix identities must be nonempty")
+        if not self.model_id or not self.model_version:
+            raise ValueError("suffix model identity must be nonempty")
+        if self.final_state.frame is not self.frame:
+            raise ValueError("suffix final state frame must match result frame")
         if any(point.frame is not self.frame for point in self.trajectory):
             raise ValueError("suffix trajectory frame must match result frame")
         if any(event.frame is not self.frame for event in self.events):
@@ -327,10 +342,35 @@ class SkidRollResult:
             raise ValueError("suffix trajectory times must be strictly increasing")
         if self.termination.time_s != self.final_state.time_s:
             raise ValueError("suffix termination must match final state time")
-        if self.trajectory and self.trajectory[-1].time_s != self.final_state.time_s:
-            raise ValueError(
-                "suffix final trajectory point must match final state time"
-            )
+        if self.events:
+            first_sequence = self.events[0].sequence
+            expected = tuple(range(first_sequence, first_sequence + len(self.events)))
+            if tuple(event.sequence for event in self.events) != expected:
+                raise ValueError("suffix event sequence must be contiguous")
+            if any(
+                right.time_s < left.time_s
+                for left, right in zip(self.events, self.events[1:], strict=False)
+            ):
+                raise ValueError("suffix event times must be nondecreasing")
+            if self.events[-1].time_s > self.termination.time_s:
+                raise ValueError("suffix event cannot follow termination")
+        if self.trajectory and not _point_matches_state(
+            self.trajectory[-1], self.final_state
+        ):
+            raise ValueError("suffix final state must match terminal trajectory point")
+
+
+def _point_matches_state(
+    point: GroundTrajectoryPoint,
+    state: GroundContactState,
+) -> bool:
+    return (
+        point.time_s == state.time_s
+        and point.frame is state.frame
+        and point.position_m == state.position_m
+        and point.velocity_m_s == state.velocity_m_s
+        and point.angular_velocity_rad_s == state.angular_velocity_rad_s
+    )
 
 
 __all__ = [

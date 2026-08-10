@@ -11,6 +11,8 @@ from .bounce_kinematics import (
     trajectory_point,
 )
 from .bounce_types import (
+    BOUNCE_HANDOFF_NOTICE,
+    BOUNCE_MATERIAL_LIMITATION,
     BounceAirSegment,
     BounceModelSettings,
     BounceTermination,
@@ -28,16 +30,8 @@ from .contract_types import (
 )
 from .impact_impulse import resolve_sphere_plane_impact
 from .impact_types import ImpactImpulseResult, SphereProperties
+from .request_identity import ground_request_fingerprint
 
-_MATERIAL_LIMITATION = (
-    "Rigid restitution v1 does not use firmness_pa, hardness_fraction, "
-    "grass_height_m, compressibility_fraction, compression_damping_fraction, "
-    "turf_density_kg_m3, moisture_fraction, or rolling_resistance."
-)
-_HANDOFF_LIMITATION = (
-    "The prefix ends at settled-to-skid; #4271 owns skid/roll, total distance, "
-    "and the final GroundSimulationResult."
-)
 _EVENT_FIRST_CONTACT = GroundEventType("first_contact")
 _EVENT_BOUNCE = GroundEventType("bounce")
 _PHASE_IMPACT = GroundPhase("impact")
@@ -82,13 +76,14 @@ class _BounceRun:
             frame=self.request.surface.frame,
             model_id=self.settings.model_id,
             model_version=self.settings.model_version,
+            request_fingerprint_sha256=ground_request_fingerprint(self.request),
             trajectory=tuple(self.points),
             events=tuple(self.events),
             impacts=tuple(self.impacts),
             airborne_segments=tuple(self.airborne_segments),
             handoff_state=handoff,
             termination=BounceTermination(reason, time_s, self.elapsed(time_s)),
-            warnings=(_MATERIAL_LIMITATION, _HANDOFF_LIMITATION),
+            warnings=(BOUNCE_MATERIAL_LIMITATION, BOUNCE_HANDOFF_NOTICE),
         )
 
     def append_point(self, point: GroundTrajectoryPoint) -> None:

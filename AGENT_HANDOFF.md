@@ -3,6 +3,33 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
+## 2026-08-09 issue #4271 independent-review hardening
+
+Independent review blocked publication of local commit `730b58bba8d9c281e6cdcc1e7e2c6340caa1c3f9`
+and produced adversarial regressions before any GitHub write. The follow-up
+binds every bounce prefix to the SHA-256 of the complete canonical request;
+rejects mismatched surface, ball, limit, and provenance inputs; composes both
+phase model identities; preserves typed impact-prefix limitations; and
+requires suffix terminal state, trajectory, frame, events, and termination
+evidence to agree.
+
+The skid integrator retains exact collinear capture while adaptively bounding
+closing oblique Coulomb substeps to one quarter of the slip characteristic
+time. This prevents zero-slip overshoot and step-size resonance on inclined
+oblique motion. Strictly positive vector roots eliminate zero-duration
+downhill-start failures, and zero-speed outward acceleration at a finite edge
+is immediate `LEFT_SURFACE`. The manifest now distinguishes #4302's corrected
+current carrier head `920c46dee688815691e251777142126bf1489b1a` from immutable
+physics evidence `63a6f4bec63c58d28bceed2e8cf348a618c8e366`.
+
+The hardened exact tree passes all 115 ground tests on CPython 3.11.9 and real
+CPython 3.10.20. Pinned MyPy 1.13 is clean across 25 ground production modules;
+pinned Ruff 0.14.10 check/format is clean across 18 changed Python files. The
+manifest validator, eight manifest tests, documentation governance, file-size,
+changed-test assertion, structural, and diff gates are publication requirements.
+Issue #4271 remains open because changing normals and regional surfaces are
+still outside this bounded plane slice.
+
 ## 2026-08-09 issue #4271 static-plane skid/roll local slice
 
 The local `feat/4271-ground-skid-roll` worktree continues exact corrected

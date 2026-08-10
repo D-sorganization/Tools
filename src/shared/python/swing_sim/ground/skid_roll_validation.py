@@ -5,6 +5,7 @@ from __future__ import annotations
 from .bounce_types import BounceTerminationReason, RepeatedBounceResult
 from .contract_records import GroundSimulationRequest
 from .contract_types import GroundContactState
+from .request_identity import ground_request_fingerprint
 from .surface_motion_types import SkidRollSettings
 from .surface_resolver import SurfaceResolver
 
@@ -29,6 +30,8 @@ def validate_surface_run_inputs(
         raise ValueError("bounce prefix must expose the request handoff")
     if prefix.surface_id != request.surface.surface_id:
         raise ValueError("bounce prefix surface must match the request")
+    if prefix.request_fingerprint_sha256 != ground_request_fingerprint(request):
+        raise ValueError("bounce prefix request fingerprint must match the request")
     if prefix.frame is not request.surface.frame:
         raise ValueError("bounce prefix frame must match the request")
     if abs(request.surface.signed_gap_m(handoff, request.ball_radius_m)) > 1e-9:

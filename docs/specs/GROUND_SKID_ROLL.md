@@ -63,11 +63,14 @@ alpha = (r cross F_k) / I
 c_dot = a + alpha cross r
 ```
 
-Within one frozen-direction step, centre and angular motion use constant
-acceleration. The first positive root of `c + c_dot t = 0` localizes the
-skid-to-roll event; a numerical step may not overshoot and reverse slip. The
-transition occurs only if static friction can sustain the required rolling
-constraint. The exact inclusive feasibility condition is:
+Within one frozen-direction substep, centre and angular motion use constant
+acceleration. A collinear positive root of `c + c_dot t = 0` localizes exact
+capture. For oblique slip, an adaptive characteristic-time bound limits each
+closing substep to one quarter of `|c| / |c_dot|`; the direction is then
+re-evaluated. This prevents a numerical step from crossing the singular
+zero-slip manifold and converges to the versioned slip tolerance without
+chatter. The transition occurs only if static friction can sustain the
+required rolling constraint. The exact inclusive feasibility condition is:
 
 ```text
 m k/(1+k) |P_t(g)| <= mu_s m g_n + 1e-12 N

@@ -15,6 +15,7 @@ from .contract_types import (
 )
 from .impact_types import SphereProperties
 from .skid_roll_dynamics import (
+    bounded_closing_duration,
     contact_slip_velocity,
     rolling_kinematics,
     rolling_state,
@@ -130,7 +131,15 @@ def _skid_step(run: SurfaceRun, duration_s: float) -> SkidRollResult | None:
         tolerance=run.settings.slip_tolerance_m_s,
     )
     reaches_roll = transition is not None and transition <= duration_s
-    advance_for = transition if reaches_roll and transition is not None else duration_s
+    advance_for = (
+        transition
+        if reaches_roll and transition is not None
+        else bounded_closing_duration(
+            slip,
+            motion.contact_slip_acceleration_m_s2,
+            duration_s,
+        )
+    )
     outcome = run.advance(motion, advance_for)
     if outcome.boundary_crossed:
         return _left_surface(run)

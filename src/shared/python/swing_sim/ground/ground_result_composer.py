@@ -4,7 +4,11 @@ from __future__ import annotations
 
 import math
 
-from .bounce_types import BounceTerminationReason, RepeatedBounceResult
+from .bounce_types import (
+    BOUNCE_HANDOFF_NOTICE,
+    BounceTerminationReason,
+    RepeatedBounceResult,
+)
 from .contract_records import GroundSimulationRequest, GroundSimulationResult
 from .contract_types import (
     GroundEventType,
@@ -14,6 +18,7 @@ from .contract_types import (
     GroundTrajectoryPoint,
     GroundWarningSeverity,
 )
+from .request_identity import ground_request_fingerprint
 from .result_types import GroundSummary, GroundTermination, GroundWarning
 from .surface_motion_types import SkidRollResult, SkidRollTerminationReason
 
@@ -68,6 +73,14 @@ def _validate_inputs(
         or prefix.surface_id != suffix.surface_id
     ):
         raise GroundCompositionError("request and result surface identities must match")
+    request_fingerprint = ground_request_fingerprint(request)
+    if (
+        prefix.request_fingerprint_sha256 != request_fingerprint
+        or suffix.request_fingerprint_sha256 != request_fingerprint
+    ):
+        raise GroundCompositionError(
+            "phase request fingerprints must match the request"
+        )
     if handoff != suffix.final_state and suffix.termination.time_s == handoff.time_s:
         raise GroundCompositionError("zero-duration suffix cannot change handoff state")
     if suffix.termination.reason not in _TERMINATION_MAP:
@@ -183,6 +196,28 @@ def _warnings(suffix: SkidRollResult) -> tuple[GroundWarning, ...]:
     return tuple(warnings)
 
 
+def _composed_warnings(
+    prefix: RepeatedBounceResult,
+    suffix: SkidRollResult,
+) -> tuple[GroundWarning, ...]:
+    prefix_warnings = tuple(
+        GroundWarning(
+            f"IMPACT_PREFIX_LIMITATION_{index:03d}",
+            GroundWarningSeverity.INFO,
+            message,
+        )
+        for index, message in enumerate(
+            (
+                warning
+                for warning in prefix.warnings
+                if warning != BOUNCE_HANDOFF_NOTICE
+            ),
+            start=1,
+        )
+    )
+    return prefix_warnings + _warnings(suffix)
+
+
 def compose_ground_result(
     request: GroundSimulationRequest,
     prefix: RepeatedBounceResult,
@@ -201,8 +236,8 @@ def compose_ground_result(
         request_id=request.request_id,
         surface_id=request.surface.surface_id,
         frame=request.surface.frame,
-        model_id=suffix.model_id,
-        model_version=suffix.model_version,
+        model_id=f"{prefix.model_id}+{suffix.model_id}",
+        model_version=f"{prefix.model_version}+{suffix.model_version}",
         status=status,
         trajectory=trajectory,
         events=events,
@@ -213,7 +248,7 @@ def compose_ground_result(
             status is GroundResultStatus.COMPLETE,
         ),
         calibration=request.calibration,
-        warnings=_warnings(suffix),
+        warnings=_composed_warnings(prefix, suffix),
         unavailable_fields=(),
         provenance=request.provenance,
     )

@@ -19,6 +19,10 @@ from shared.python.swing_sim.ground import (
     simulate_skid_roll,
     to_ground_model_result,
 )
+from shared.python.swing_sim.ground.bounce_types import (
+    BOUNCE_HANDOFF_NOTICE,
+    BOUNCE_MATERIAL_LIMITATION,
+)
 
 from ._support import _settled_prefix, _surface, _surface_run_request
 
@@ -54,6 +58,12 @@ def test_composer_preserves_unique_handoff_sequences_and_distance_definitions() 
     assert result.summary.bounce_count == 1
     assert result.summary.surface_path_distance_m == pytest.approx(
         result.summary.skid_distance_m + result.summary.roll_distance_m
+    )
+    assert result.model_id == f"{prefix.model_id}+{suffix.model_id}"
+    assert result.model_version == (f"{prefix.model_version}+{suffix.model_version}")
+    assert all(
+        warning in tuple(item.message for item in result.warnings)
+        for warning in prefix.warnings
     )
     final = result.trajectory[-1].position_m
     assert result.summary.total_distance_m == pytest.approx(
@@ -160,3 +170,42 @@ def test_internal_cancel_and_step_limit_cannot_be_serialized_as_v1_results() -> 
 
     with pytest.raises(GroundCompositionError, match="not representable"):
         compose_ground_result(request, prefix, cancelled)
+
+
+def test_suffix_rejects_final_state_that_disagrees_with_terminal_point() -> None:
+    surface = replace(_surface(), rolling_resistance=0.0)
+    request = _surface_run_request(surface=surface, max_time_s=0.2)
+    prefix = _settled_prefix(request)
+    suffix = simulate_skid_roll(request, prefix)
+    impossible = replace(
+        suffix.final_state,
+        position_m=(999.0, suffix.final_state.position_m[1], 999.0),
+    )
+
+    with pytest.raises(ValueError, match="final state must match"):
+        replace(suffix, final_state=impossible)
+
+
+def test_composer_rejects_phase_results_from_a_different_request() -> None:
+    request = _surface_run_request()
+    prefix = _settled_prefix(request)
+    suffix = simulate_skid_roll(request, prefix)
+    changed = replace(request, ball_mass_kg=request.ball_mass_kg + 0.001)
+
+    with pytest.raises(GroundCompositionError, match="request fingerprints"):
+        compose_ground_result(changed, prefix, suffix)
+
+
+def test_composer_preserves_material_limit_but_drops_fulfilled_handoff_notice() -> None:
+    request = _surface_run_request()
+    prefix = replace(
+        _settled_prefix(request),
+        warnings=(BOUNCE_MATERIAL_LIMITATION, BOUNCE_HANDOFF_NOTICE),
+    )
+    suffix = simulate_skid_roll(request, prefix)
+
+    result = compose_ground_result(request, prefix, suffix)
+    messages = tuple(warning.message for warning in result.warnings)
+
+    assert BOUNCE_MATERIAL_LIMITATION in messages
+    assert BOUNCE_HANDOFF_NOTICE not in messages

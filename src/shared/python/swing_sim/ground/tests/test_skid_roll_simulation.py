@@ -200,6 +200,136 @@ def test_integration_refinement_converges_on_the_same_static_plane() -> None:
     assert coarse.roll_distance_m == pytest.approx(fine.roll_distance_m, rel=2e-7)
 
 
+def test_oblique_incline_skid_transition_converges_without_slip_overshoot() -> None:
+    angle = math.radians(8.0)
+    normal = (0.0, math.cos(angle), -math.sin(angle))
+    downhill = (0.0, -math.sin(angle), -math.cos(angle))
+    surface = replace(
+        _surface(),
+        normal_unit=normal,
+        static_friction=0.3,
+        kinetic_friction=0.2,
+        rolling_resistance=0.05,
+    )
+    request = _surface_run_request(surface=surface, max_time_s=0.8)
+    prefix = _settled_prefix(
+        request,
+        velocity_m_s=(1.0, 0.2 * downhill[1], 0.2 * downhill[2]),
+        angular_velocity_rad_s=(0.0, 0.0, 0.0),
+    )
+    results = tuple(
+        simulate_skid_roll(
+            request,
+            prefix,
+            SkidRollExecution(
+                settings=SkidRollSettings(
+                    integration_step_s=step_s,
+                    max_steps=500_000,
+                )
+            ),
+        )
+        for step_s in (0.003, 0.002, 0.00005)
+    )
+    transitions = tuple(
+        next(
+            event for event in result.events if event.event_type.value == "skid_to_roll"
+        )
+        for result in results
+    )
+
+    assert transitions[0].time_s == pytest.approx(transitions[-1].time_s, abs=2e-3)
+    assert transitions[1].time_s == pytest.approx(transitions[-1].time_s, abs=2e-3)
+    assert results[0].skid_distance_m == pytest.approx(
+        results[-1].skid_distance_m, abs=2e-3
+    )
+
+
+def test_surface_run_rejects_prefix_from_materially_different_request() -> None:
+    original = _surface_run_request()
+    prefix = _settled_prefix(original)
+    changed_requests = (
+        replace(
+            original,
+            surface=replace(original.surface, normal_restitution=0.81),
+        ),
+        replace(original, ball_mass_kg=original.ball_mass_kg + 0.001),
+        replace(original, max_time_s=original.max_time_s + 0.1),
+    )
+
+    for changed in changed_requests:
+        with pytest.raises(ValueError, match="request fingerprint"):
+            simulate_skid_roll(changed, prefix)
+
+
+def test_zero_speed_on_unheld_slope_accelerates_downhill_without_zero_step() -> None:
+    angle = math.radians(8.0)
+    normal = (0.0, math.cos(angle), -math.sin(angle))
+    downhill = (0.0, -math.sin(angle), -math.cos(angle))
+    surface = replace(
+        _surface(),
+        normal_unit=normal,
+        rolling_resistance=0.0,
+    )
+    request = _surface_run_request(surface=surface, max_time_s=0.05)
+    prefix = _settled_prefix(
+        request,
+        velocity_m_s=(0.0, 0.0, 0.0),
+        angular_velocity_rad_s=(0.0, 0.0, 0.0),
+    )
+
+    result = simulate_skid_roll(request, prefix)
+
+    assert result.termination.reason is SkidRollTerminationReason.TIME_LIMIT
+    assert (
+        sum(
+            value * direction
+            for value, direction in zip(
+                result.final_state.velocity_m_s, downhill, strict=True
+            )
+        )
+        > 0.0
+    )
+
+
+def test_edge_start_with_outward_slope_acceleration_leaves_at_handoff() -> None:
+    angle = math.radians(8.0)
+    normal = (0.0, math.cos(angle), -math.sin(angle))
+    downhill = (0.0, -math.sin(angle), -math.cos(angle))
+    surface = replace(
+        _surface(),
+        normal_unit=normal,
+        rolling_resistance=0.0,
+    )
+    request = _surface_run_request(surface=surface, max_time_s=0.05)
+    prefix = _settled_prefix(
+        request,
+        velocity_m_s=(0.0, 0.0, 0.0),
+        angular_velocity_rad_s=(0.0, 0.0, 0.0),
+    )
+    handoff = prefix.handoff_state
+    if handoff is None:
+        raise RuntimeError("test prefix must expose a handoff")
+    coordinate = sum(
+        (handoff.position_m[index]) * downhill[index] for index in range(3)
+    )
+    resolver = SurfaceResolver(
+        PlanarSurfaceDomain(
+            surface,
+            axis_unit=downhill,
+            upper_coordinate_m=coordinate,
+        )
+    )
+
+    result = simulate_skid_roll(
+        request,
+        prefix,
+        SkidRollExecution(resolver=resolver),
+    )
+
+    assert result.termination.reason is SkidRollTerminationReason.LEFT_SURFACE
+    assert result.termination.time_s == handoff.time_s
+
+
 def test_finite_region_emits_exact_left_surface_event() -> None:
     surface = replace(_surface(), rolling_resistance=0.0)
     request = _surface_run_request(surface=surface, max_time_s=1.0)

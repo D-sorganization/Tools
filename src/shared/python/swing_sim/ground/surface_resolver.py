@@ -108,7 +108,12 @@ class SurfaceResolver:
                 continue
             time_s = max(0.0, min(segment.duration_s, time_s))
             derivative = speed + 2.0 * half_acceleration * time_s
-            if outward_sign * derivative <= 0.0:
+            starts_accelerating_outward = (
+                time_s <= _ROOT_TOLERANCE_S
+                and abs(derivative) <= _ROOT_TOLERANCE_S
+                and outward_sign * 2.0 * half_acceleration > 0.0
+            )
+            if outward_sign * derivative <= 0.0 and not starts_accelerating_outward:
                 continue
             return SurfaceBoundaryCrossing(
                 time_s,
