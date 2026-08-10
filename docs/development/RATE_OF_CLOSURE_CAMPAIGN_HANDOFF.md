@@ -1,5 +1,25 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-10 #4143 Python/React golden ball-setup parity
+
+- The bounded `feat/4143-tee-parity-fixture` branch starts at exact PR #4203
+  head `31cbc007d4c85b5479b7cd0fb0969124eab2af67`, preserving its draft state,
+  base, and stack order.
+- A single `ball_setup_golden_v1.json` fixture declares schema/version, metre
+  units, the ground-plane-to-ball-bottom reference, ball radius, Driver/Tee and
+  iron/Ground defaults, explicit club-default overrides, Ground zero effective
+  height, center/serialization geometry, invalid finite-domain cases, and a
+  legacy simulation-run migration.
+- Python and React independently consume every case through their public
+  configuration/persistence boundaries. Verification is 18 passing Python
+  tests, 24 passing React tests, and green TypeScript, ESLint, Vite production
+  build, Ruff check, and Ruff format.
+- This closes only the explicit golden-parity artifact gap. #4143 remains open
+  for Playwright and PyQt rendered Ground/Tee evidence, protected CI/review,
+  and release to `main`. The strict campaign release manifest does not exist in
+  this exact #4203 history; it was added later on a divergent branch and is not
+  backported by this test-only slice.
+
 ## 2026-08-10 Propagation into launch-monitor registry
 
 - Immediate child PR `#4203` keeps base `feat/4189-dplane`.

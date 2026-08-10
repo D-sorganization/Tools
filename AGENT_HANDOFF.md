@@ -3,6 +3,27 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 #4143 Python/React Golden Ball-Setup Parity
+
+- Branch `feat/4143-tee-parity-fixture` starts from exact draft PR #4203 head
+  `31cbc007d4c85b5479b7cd0fb0969124eab2af67`; it does not rewrite or retarget
+  the release stack.
+- `ball_setup_golden_v1.json` is the single Python/React source of truth for
+  schema `rate_of_closure.ball_setup_golden` version 1, SI metre units, and
+  reference `ground_plane_to_ball_bottom`. It pins Driver/Tee and iron/Ground
+  defaults, explicit overrides, Ground's zero effective tee height, derived
+  center geometry, serialization, negative and non-finite rejection, and
+  legacy-run migration to Ground.
+- New consumer tests plus the existing tee suites pass: 18 Python tests and 24
+  React tests. Web TypeScript, ESLint, and production Vite build gates pass;
+  scoped Ruff check and format pass. This is test/fixture-only and does not
+  change production physics or UI behavior.
+- Issue #4143 remains open for recorded Playwright/PyQt rendered Ground/Tee
+  evidence, exact-head protected CI/review, and release to `main`. The strict
+  campaign release manifest is not present on #4203's exact history (it was
+  introduced later on a divergent campaign branch), so this bounded child
+  records that limitation instead of importing or reconstructing it.
+
 ## 2026-08-10 Parent Repair Propagation (#4202 → #4203)
 
 - Draft child PR `#4203` remains on `feat/4181-launch-monitor-registry`, based

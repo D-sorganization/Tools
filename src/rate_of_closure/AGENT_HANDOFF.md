@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 #4143 Python/React Golden Ball-Setup Parity
+
+The isolated `feat/4143-tee-parity-fixture` child begins at exact draft PR
+#4203 head `31cbc007d4c85b5479b7cd0fb0969124eab2af67`. One versioned JSON fixture now
+drives both Python and React ball-support tests with explicit SI units and the
+ground-plane-to-ball-bottom height reference. The shared cases cover Driver
+and non-Driver defaults, user overrides, Ground zero effective height,
+derived ball-center geometry and serialization, negative/NaN/infinite height
+rejection, and backward-compatible migration of a legacy run without
+`ball_setup`.
+
+Evidence is 18 passing Python tee/parity tests and 24 passing React
+tee/persistence/parity tests, plus green TypeScript, ESLint, Vite production
+build, Ruff check, and Ruff format. Production model and UI code are unchanged.
+Do not close #4143: rendered Playwright/PyQt Ground/Tee evidence, protected
+current-head CI/review, and release to `main` remain. This exact parent predates
+the strict campaign manifest on a divergent branch, so no downstream manifest
+was copied into this bounded test-only child.
+
 ## 2026-08-10 Launch-Registry Child Propagation
 
 Draft PR `#4203` (`feat/4181-launch-monitor-registry`) retains its
