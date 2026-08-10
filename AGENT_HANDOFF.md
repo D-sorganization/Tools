@@ -540,7 +540,8 @@ Draft PR #4306 publishes the stack child at branch
 require normal protected checks/review before any merge.
 
 The next local child `feat/4273-ground-study-result-adapter` begins at exact PR
-#4306 creation head `17473948f1ce5837bd5b55618d5393b0d8575188`. Its narrow continuation adds
+#4306 creation head `17473948f1ce5837bd5b55618d5393b0d8575188` and normally includes current
+#4306 head `d44edeb4119048fe7a3f8ccfdcae81c8771561e8`. Its narrow continuation adds
 `qualified_study_to_ground_model_result`, which populates the existing total,
 roll, bounce-count, and final-offline DTO only from a solver-eligible study.
 Target misses remain valid physics observations. The DTO is lossy and never
@@ -566,6 +567,8 @@ Exact qualification/import repair commit
 `940563f222065c4f343b587699c52062c6e1db59` passes 194 ground tests, 27
 flight-first import/result/transfer tests, and an independent 75-test adversarial
 review with no remaining blocker.
+No material handoff change beyond clarifying the deprecated adapter's rejection
+text: it no longer calls its unqualified compatibility input "qualified."
 
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 

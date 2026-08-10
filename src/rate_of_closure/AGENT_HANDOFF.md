@@ -1018,6 +1018,8 @@ sensitive workflows because it lacks a bound material profile.
 Exact repair commit `940563f222065c4f343b587699c52062c6e1db59`
 passes 194 ground tests, 27 flight-first import/result/transfer tests, and the
 independent 75-test calibration/provenance/import/API audit.
+No material handoff change beyond removing the misleading word "qualified"
+from the deprecated compatibility adapter's rejection message.
 
 Keep issue #4273 and epic #4267 open. Variation/dispersion, wind, optimizer,
 UI, compiled-runtime, and UpstreamDrift consumers are not implemented by this
@@ -1036,7 +1038,7 @@ downstream carrier work remain open.
 
 Local child `feat/4273-ground-study-result-adapter` started from #4306 creation
 head `17473948f1ce5837bd5b55618d5393b0d8575188` and now normally includes current
-#4306 head `73abbd492198645780d7d1d19b8bf8d26c7e0932`. It adds a fail-closed adapter from
+#4306 head `d44edeb4119048fe7a3f8ccfdcae81c8771561e8`. It adds a fail-closed adapter from
 solver-eligible studies into the existing four-field ground metric DTO. A
 target miss does not erase qualified physics. The DTO cannot carry the study's
 digests/profile/target evidence, so downstream audit paths must retain both.

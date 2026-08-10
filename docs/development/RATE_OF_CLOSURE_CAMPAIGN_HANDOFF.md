@@ -1354,6 +1354,8 @@ Exact repair commit `940563f222065c4f343b587699c52062c6e1db59`
 passes 194 ground tests, 27 flight-first import/result/transfer tests, and an
 independent 75-test adversarial audit of calibration, provenance, strict wire,
 lazy imports, facade exports, and deprecated compatibility behavior.
+No material handoff change beyond correcting the deprecated compatibility
+adapter's rejection wording so it does not imply profile qualification.
 
 This is a bounded foundation for issue #4273, not completion of the issue or
 ground epic. No ensemble/variation/wind/optimizer/UI/compiled/Upstream consumer
@@ -1377,7 +1379,7 @@ open.
 The next local #4273 continuation,
 `feat/4273-ground-study-result-adapter`, started from PR #4306 creation head
 `17473948f1ce5837bd5b55618d5393b0d8575188` and normally includes current head
-`73abbd492198645780d7d1d19b8bf8d26c7e0932`. It adds a one-way qualified-study
+`d44edeb4119048fe7a3f8ccfdcae81c8771561e8`. It adds a one-way qualified-study
 adapter for the existing total/roll/bounce/final-offline DTO. The adapter fails
 closed on ineligible studies, does not treat target miss as missing physics,
 and documents that the legacy DTO is provenance-lossy. It has no carrier or

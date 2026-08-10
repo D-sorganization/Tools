@@ -46,7 +46,7 @@ def to_ground_model_result(result: GroundSimulationResult) -> GroundModelResult:
         or result.summary is None
     ):
         raise ValueError(
-            "only complete, rest-terminated qualified ground results can be projected"
+            "only complete, rest-terminated ground results can be projected"
         )
     summary = result.summary
     return _metric_result(result.model_id, result.model_version, summary)
