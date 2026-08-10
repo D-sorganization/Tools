@@ -3,6 +3,42 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
+
+Local branch `feat/4275-ground-mirrored-property` starts exactly at ready PR
+#4322 head `8b065dd299acc7cab39321b0e2d7f34ca64f159b`. Nothing from this branch has
+been pushed, published, retargeted, merged, or applied to an existing
+worktree. The exact implementation SHA will be bound in a documentation-only
+follow-up after this implementation commit exists.
+
+The shared scientific corpus now has seven cases. A second analytic incline
+reflects the existing `n=[0,sqrt(0.99),0.1]` case through the xy plane, with
+polar vectors' z components and the axial spin vector's x component reflected
+under the correct pseudovector transformation. Python, native Rust, installed
+PyO3, and rebuilt Node/WASM consume and pass that shared mirror oracle.
+
+A separate fixed-seed (`4275`) 20-case Python/PyO3 exact-parity sweep varies
+both signs of z tilt, nonzero x-oriented normals, ball radius/mass/inertia,
+surface height and tangential velocity, restitution, static/kinetic friction,
+rolling resistance, launch tangent, and spin. RED exposed that Python's
+implicit unbounded domain always selected world +x as its tangent axis and
+therefore rejected valid normals with x components. The default resolver now
+derives a deterministic unit tangent by projecting the least-aligned Cartesian
+axis into the plane. Explicit caller-supplied finite axes and bounds are
+unchanged.
+
+Local evidence passes all 247 Python ground tests, the four-test native Rust
+corpus harness over all seven cases, fresh installed CPython 3.13 PyO3 corpus
+and seeded-sweep harnesses, and a freshly rebuilt Node/WASM corpus harness.
+Pinned MyPy 1.13 (`follow-imports=silent`), Ruff, Prettier, and diff checks are
+clean. The raw seven-case corpus SHA-256 is
+`c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465`.
+
+Keep #4275 and #4267 open. The seeded sweep is a bounded deterministic
+conformance sample, not statistical uncertainty, calibrated materials,
+performance/memory qualification, changing terrain, deformation, UI/3D
+rendering, WASM-wide randomized properties, or downstream release evidence.
+
 ## 2026-08-10 issue #4275 tilted-plane conformance and passivity
 
 Branch `feat/4275-ground-tilted-conformance` is published as ready

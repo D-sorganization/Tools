@@ -14,8 +14,11 @@ from shared.python.swing_sim.ground import (
     run_ground_reference,
 )
 from shared.python.swing_sim.ground.tests.conformance_support import (
+    SEEDED_PROPERTY_CASE_COUNT,
+    SEEDED_PROPERTY_SEED,
     apply_overrides,
     assert_conformance_case,
+    build_seeded_property_requests,
     load_conformance_cases,
     materialize_case,
 )
@@ -36,7 +39,10 @@ MAX_ABSOLUTE_TOLERANCE = 1e-6
 MAX_RELATIVE_TOLERANCE = 1e-6
 MAX_ENERGY_TOLERANCE_J = 1e-8
 MAX_PLANE_TOLERANCE_M = 1e-6
-TILTED_CASE_ID = "inclined-zero-resistance-pure-roll"
+TILTED_CASES = (
+    ("inclined-zero-resistance-pure-roll", 1.0),
+    ("mirrored-inclined-zero-resistance-pure-roll", -1.0),
+)
 CHECK_KEYS = {
     "contact_plane_constraint": {
         "kind",
@@ -244,19 +250,25 @@ def test_loader_pins_template_and_rejects_duplicate_template_keys(
         load_conformance_cases(corpus_path)
 
 
-def test_tilted_case_has_an_independent_constant_acceleration_oracle() -> None:
-    assert len(CASES) == 6
-    case = next(case for case in CASES if case["case_id"] == TILTED_CASE_ID)
+@pytest.mark.parametrize(("case_id", "offline_sign"), TILTED_CASES)
+def test_tilted_cases_have_independent_constant_acceleration_oracles(
+    case_id: str,
+    offline_sign: float,
+) -> None:
+    assert len(CASES) == 7
+    case = next(case for case in CASES if case["case_id"] == case_id)
     request, _ = materialize_case(TEMPLATE, case)
     normal = request["surface"]["normal_unit"]
-    downhill = [0.0, -0.1, math.sqrt(0.99)]
+    downhill = [0.0, -0.1, offline_sign * math.sqrt(0.99)]
     incoming = request["last_separated_state"]["velocity_m_s"]
     tangent_velocity = [incoming[index] + 0.04 * normal[index] for index in range(3)]
-    assert normal == pytest.approx([0.0, math.sqrt(0.99), 0.1], abs=1e-14)
+    assert normal == pytest.approx(
+        [0.0, math.sqrt(0.99), offline_sign * 0.1], abs=1e-14
+    )
     assert math.sqrt(sum(value**2 for value in normal)) == pytest.approx(1.0)
     assert tangent_velocity == pytest.approx(downhill, abs=1e-14)
     assert request["last_separated_state"]["angular_velocity_rad_s"] == pytest.approx(
-        [1.0 / request["ball_radius_m"], 0.0, 0.0], abs=1e-12
+        [offline_sign / request["ball_radius_m"], 0.0, 0.0], abs=1e-12
     )
     assert request["surface"]["rolling_resistance"] == 0.0
     assert request["surface"]["normal_restitution"] == 0.0
@@ -283,3 +295,45 @@ def test_contact_plane_constraint_rejects_off_plane_trajectory() -> None:
     }
     with pytest.raises(AssertionError, match="contact point leaves the declared plane"):
         assert_conformance_case(result, request, case)
+
+
+def test_seeded_property_sweep_is_deterministic_tilted_and_physically_valid() -> None:
+    first = build_seeded_property_requests(TEMPLATE["request"])
+    second = build_seeded_property_requests(TEMPLATE["request"])
+
+    assert first == second
+    assert len(first) == SEEDED_PROPERTY_CASE_COUNT
+    assert SEEDED_PROPERTY_SEED == 4275
+    normals = [request["surface"]["normal_unit"] for request in first]
+    assert any(abs(normal[0]) > 0.01 for normal in normals)
+    assert any(normal[2] > 0.01 for normal in normals)
+    assert any(normal[2] < -0.01 for normal in normals)
+
+    for request in first:
+        normal = request["surface"]["normal_unit"]
+        assert math.sqrt(sum(component**2 for component in normal)) == pytest.approx(
+            1.0, abs=1e-12
+        )
+        surface_velocity = request["surface"]["surface_velocity_m_s"]
+        assert sum(
+            surface_velocity[index] * normal[index] for index in range(3)
+        ) == pytest.approx(0.0, abs=1e-12)
+        separated = request["last_separated_state"]["position_m"]
+        penetrating = request["first_penetrating_state"]["position_m"]
+        bracket = [separated[index] - penetrating[index] for index in range(3)]
+        assert bracket == pytest.approx(
+            [0.002 * component for component in normal], abs=1e-12
+        )
+        result = run_ground_reference(GroundSimulationRequest.from_dict(request))
+        assert result.request_id == request["request_id"]
+
+
+@pytest.mark.parametrize(
+    "options",
+    ({"count": 0}, {"count": True}, {"seed": -1}, {"seed": 2**32}),
+)
+def test_seeded_property_sweep_rejects_invalid_controls(
+    options: dict[str, int],
+) -> None:
+    with pytest.raises(ValueError):
+        build_seeded_property_requests(TEMPLATE["request"], **options)

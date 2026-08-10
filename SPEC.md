@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.42                                    |
-| **Spec Version**        | 1.14.42                                    |
+| **Current Version**     | 1.14.43                                    |
+| **Spec Version**        | 1.14.43                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -234,10 +234,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - `ground-reference-conformance/v1` is a single machine-readable scientific
   corpus shared by the Python reference, direct native Rust, installed PyO3
   wheel, and rebuilt Node/WASM executor.
-- Six cases cover shallow bounce/capture, Coulomb
+- Seven cases cover shallow bounce/capture, Coulomb
   skid-to-roll, no-slip stopping under rolling resistance, proper 90-degree
   frame rotation, constant moving-surface relative motion, and zero-resistance
-  pure roll down the immutable incline `n=[0,sqrt(0.99),0.1]`.
+  pure roll down the mirrored immutable inclines
+  `n=[0,sqrt(0.99),+/-0.1]`.
 - Expected observables are independent closed-form values or physical
   invariants with explicit derivation, unit, and applicable bounded tolerance.
   Supported checks are whitelisted; fixture text is never executed.
@@ -263,8 +264,14 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Scientific conformance and serialization conformance are separate. The new
   artifact compares declared observables within tolerance; the existing
   full-result golden continues to pin canonical bytes and SHA-256.
-- This bounded evidence qualifies one tilted cross-authority case only. It does
-  not qualify mirrored or randomized frames, property sweeps, performance or
+- A deterministic seed-4275 Python/PyO3 sweep adds 20 exact-parity cases over
+  nonzero x-normal components, both z-tilt signs, and bounded ball, surface,
+  material, launch, and spin properties. The implicit unbounded Python domain
+  derives a stable tangent by projecting the least-aligned Cartesian axis;
+  explicit finite-domain axes and bounds remain caller-owned.
+- This bounded evidence qualifies two analytic mirrored cross-authority cases
+  and one finite Python/PyO3 sample. It does not qualify exhaustive randomized
+  frames, WASM-wide property sweeps, statistical uncertainty, performance or
   memory budgets, ensembles, asynchronous WASM
   cancellation, calibrated materials, changing terrain, UI/rendering, or
   downstream consumers.
@@ -3173,6 +3180,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.43 | fix(ground-conformance, #4275): add a mirrored analytic incline across Python/native/PyO3/WASM and a deterministic 20-case tilted property sweep across Python/PyO3; derive the default unbounded Python plane's tangent intrinsically for arbitrary valid normals while preserving caller-declared finite axes and explicit qualification limits. |
 | 2026-08-10 | 1.14.42 | docs(ground-conformance, #4275): record ready PR #4322 targeting `feat/4275-ground-conformance-corpus` from exact implementation/evidence head `a0c8e49a40badc3ce96193e031d2a9dec557d143`; preserve the independently reviewed local evidence while keeping queued hosted checks, approval, integration, and release explicitly open. |
 | 2026-08-10 | 1.14.41 | docs(ground-conformance, #4275): bind the independently reviewed tilted-plane/passivity implementation `5d333a4448d6484f8c98e78c9878cb83b40aa522` and six-case corpus SHA-256 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`; record 238 Python and 191/206/203 Rust matrices, installed PyO3/rebuilt WASM consumers, strict structural/lint/type/policy gates, READY review, and explicit protected-release gaps. |
 | 2026-08-10 | 1.14.40 | fix(ground-conformance, #4275): add a sixth analytic zero-resistance inclined pure-roll case and center-to-plane invariant across Python/native/PyO3/WASM; reject energy creation per unquantized segment, bound canonical snaps/projections, harden masking and unexplained-energy tests, prevent rolling resistance from crossing the zero-relative-speed cusp on a translating slope, and project sub-tolerance residuals to exact passive co-motion before holding. |

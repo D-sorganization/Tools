@@ -253,7 +253,7 @@ def simulate_skid_roll(
         raise ValueError("execution must be an exact SkidRollExecution record")
     selected_settings = selected_execution.settings
     selected_resolver = (
-        SurfaceResolver(PlanarSurfaceDomain(request.surface))
+        SurfaceResolver(PlanarSurfaceDomain.unbounded(request.surface))
         if selected_execution.resolver is None
         else selected_execution.resolver
     )

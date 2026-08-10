@@ -4,6 +4,41 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
+
+Local unpublished branch `feat/4275-ground-mirrored-property` starts at the
+exact current ready PR #4322 head
+`8b065dd299acc7cab39321b0e2d7f34ca64f159b`. It preserves the protected stack;
+no push, PR, retarget, merge, force operation, or existing-worktree edit has
+occurred. A documentation-only follow-up will bind the implementation SHA.
+
+The shared corpus grows from six to seven cases with the analytically mirrored
+incline `n=[0,sqrt(0.99),-0.1]`. The reflection applies the correct distinction
+between polar position/velocity vectors and the angular-velocity
+pseudovector. All four runtime consumers pass the resulting contact-plane,
+no-slip, path, terminal vector, event, and time-limit oracle.
+
+The companion fixed-seed 20-case sweep exercises Python and the installed PyO3
+authority with nonzero x components and both signs of z tilt while varying
+bounded ball, surface, material, launch, and spin properties. The RED sweep
+found that the Python default unbounded planar domain selected world +x even
+when it was not tangent. The repair derives a stable intrinsic tangent by
+projecting the least-aligned Cartesian axis; explicit finite-domain axes and
+bounds are not rewritten.
+
+Local validation passes the complete 247-test Python ground package, four
+native Rust corpus tests over seven cases, fresh CPython 3.13 PyO3 corpus and
+seeded exact-parity harnesses, freshly rebuilt Node/WASM corpus execution,
+pinned MyPy 1.13, Ruff, Prettier, and diff checks. The seven-case raw corpus
+SHA-256 is
+`c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465`.
+
+This remains `partial_implementation`. Keep #4275/#4267 open for broader
+property-based coverage in every compiled surface, uncertainty and performance
+qualification, calibrated/evolving terrain, UI/3D rendering, and downstream
+release. Local parity is not hosted CI, protected approval, integration, or
+release evidence.
+
 ## 2026-08-10 issue #4275 tilted-plane conformance and passivity
 
 Branch `feat/4275-ground-tilted-conformance` is published as ready PR #4322. It

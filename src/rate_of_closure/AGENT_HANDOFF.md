@@ -3,6 +3,37 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
+
+Local branch `feat/4275-ground-mirrored-property` is an exact unpublished
+child of ready PR #4322 head
+`8b065dd299acc7cab39321b0e2d7f34ca64f159b`. No existing branch or worktree
+was changed. Its implementation SHA will be bound by a documentation-only
+follow-up after the implementation commit exists.
+
+The shared `ground-reference-conformance/v1` authority adds a seventh analytic
+case by reflecting the qualified incline through the xy plane. The oracle
+reflects ordinary vectors and the angular-velocity pseudovector correctly and
+pins plane contact, no slip, path, terminal position/velocity/spin, events, and
+status across Python, native Rust, installed PyO3, and rebuilt WASM.
+
+A deterministic seed-4275 Python/PyO3 sweep adds 20 exact-parity requests over
+nonzero x-normal components, both z-tilt signs, and bounded ball, surface,
+material, launch, and spin properties. Its first RED run found that the Python
+default unbounded resolver hard-coded world +x as the domain axis, contrary to
+the arbitrary-plane contract. It now selects a deterministic intrinsic unit
+tangent from the least-aligned Cartesian reference. Explicit finite-domain
+axes and bounds retain their declared semantics.
+
+Local GREEN evidence is 247 Python ground tests; four native corpus tests over
+seven cases; fresh CPython 3.13 PyO3 corpus and 20-case sweep harnesses; a fresh
+Node/WASM corpus build; and clean pinned MyPy 1.13, Ruff, Prettier, and diff
+checks. Corpus SHA-256 is
+`c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465`.
+#4275/#4267 remain open for broader randomized/WASM properties, statistical
+qualification, performance, calibration, evolving terrain, interfaces,
+visualization, and downstream integration.
+
 ## 2026-08-10 issue #4275 tilted-plane conformance and passivity
 
 `feat/4275-ground-tilted-conformance` is published as ready PR #4322, an exact

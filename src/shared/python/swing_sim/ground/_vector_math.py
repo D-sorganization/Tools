@@ -49,9 +49,27 @@ def unit(vector: Vector3, *, tolerance: float) -> Vector3:
     return scale(vector, 1.0 / magnitude)
 
 
+def intrinsic_tangent_axis(normal: Vector3) -> Vector3:
+    """Return a deterministic unit tangent for an arbitrary unit normal."""
+    references = ((1.0, 0.0, 0.0), (0.0, 1.0, 0.0), (0.0, 0.0, 1.0))
+    reference = min(references, key=lambda axis: abs(dot(axis, normal)))
+    projected = subtract(reference, scale(normal, dot(reference, normal)))
+    return unit(projected, tolerance=1e-15)
+
+
 def interpolate(left: Vector3, right: Vector3, fraction: float) -> Vector3:
     """Return the componentwise affine interpolation."""
     return add(left, scale(subtract(right, left), fraction))
 
 
-__all__ = ["add", "cross", "dot", "interpolate", "norm", "scale", "subtract", "unit"]
+__all__ = [
+    "add",
+    "cross",
+    "dot",
+    "interpolate",
+    "intrinsic_tangent_axis",
+    "norm",
+    "scale",
+    "subtract",
+    "unit",
+]

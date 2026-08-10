@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import math
+import random
 from copy import deepcopy
 from pathlib import Path
 from typing import Any
@@ -18,6 +19,11 @@ FIXTURE_DIR = (
 )
 CORPUS_PATH = FIXTURE_DIR / "ground_reference_conformance_v1.json"
 TEMPLATE_FIXTURE = "ground_reference_pipeline_golden_v1.json"
+SEEDED_PROPERTY_CASE_COUNT = 20
+SEEDED_PROPERTY_SEED = 4275
+_MAX_TILT_RAD = math.radians(12.0)
+_BRACKET_OFFSET_M = 0.001
+_INCOMING_NORMAL_SPEED_M_S = 0.1
 
 
 def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -102,6 +108,101 @@ def _cross(left: list[float], right: list[float]) -> list[float]:
         left[2] * right[0] - left[0] * right[2],
         left[0] * right[1] - left[1] * right[0],
     ]
+
+
+def _add(left: list[float], right: list[float]) -> list[float]:
+    return [left[index] + right[index] for index in range(3)]
+
+
+def _scale(vector: list[float], factor: float) -> list[float]:
+    return [component * factor for component in vector]
+
+
+def _tangent(vector: list[float], normal: list[float]) -> list[float]:
+    return _add(vector, _scale(normal, -_dot(vector, normal)))
+
+
+def _seeded_normal(rng: random.Random) -> list[float]:
+    tilt = rng.uniform(0.02, _MAX_TILT_RAD)
+    azimuth = rng.uniform(-math.pi, math.pi)
+    horizontal = math.sin(tilt)
+    return [
+        horizontal * math.cos(azimuth),
+        math.cos(tilt),
+        horizontal * math.sin(azimuth),
+    ]
+
+
+def _configure_seeded_surface(
+    request: dict[str, Any], normal: list[float], rng: random.Random
+) -> None:
+    surface = request["surface"]
+    kinetic_friction = rng.uniform(0.08, 0.28)
+    surface["height_m"] = rng.uniform(-0.15, 0.15)
+    surface["normal_unit"] = normal
+    surface["surface_velocity_m_s"] = _tangent(
+        [rng.uniform(-0.08, 0.08), 0.0, rng.uniform(-0.08, 0.08)], normal
+    )
+    surface["normal_restitution"] = rng.uniform(0.05, 0.45)
+    surface["kinetic_friction"] = kinetic_friction
+    surface["static_friction"] = kinetic_friction + rng.uniform(0.05, 0.25)
+    surface["rolling_resistance"] = rng.uniform(0.03, 0.12)
+
+
+def _configure_seeded_contact_states(
+    request: dict[str, Any], normal: list[float], rng: random.Random
+) -> None:
+    surface = request["surface"]
+    origin = [0.0, float(surface["height_m"]), 0.0]
+    contact = _add(origin, _scale(normal, float(request["ball_radius_m"])))
+    relative_launch = _tangent(
+        [rng.uniform(0.5, 1.4), 0.0, rng.uniform(-0.3, 0.3)], normal
+    )
+    incoming = _add(
+        _add(surface["surface_velocity_m_s"], relative_launch),
+        _scale(normal, -_INCOMING_NORMAL_SPEED_M_S),
+    )
+    spin = [rng.uniform(-4.0, 4.0) for _ in range(3)]
+    for key, offset in (
+        ("last_separated_state", _BRACKET_OFFSET_M),
+        ("first_penetrating_state", -_BRACKET_OFFSET_M),
+    ):
+        state = request[key]
+        state["position_m"] = _add(contact, _scale(normal, offset))
+        state["velocity_m_s"] = incoming
+        state["angular_velocity_rad_s"] = spin
+
+
+def _seeded_property_request(
+    template: dict[str, Any], index: int, rng: random.Random
+) -> dict[str, Any]:
+    request = deepcopy(template)
+    request["request_id"] = f"compiled-tilted-property-{index:02d}"
+    request["ball_radius_m"] = rng.uniform(0.019, 0.024)
+    request["ball_mass_kg"] = rng.uniform(0.042, 0.047)
+    request["rotational_inertia_factor"] = rng.uniform(0.34, 0.46)
+    normal = _seeded_normal(rng)
+    _configure_seeded_surface(request, normal, rng)
+    _configure_seeded_contact_states(request, normal, rng)
+    request["max_time_s"] = 0.6
+    request["output_interval_s"] = 0.05
+    request["max_events"] = 64
+    return request
+
+
+def build_seeded_property_requests(
+    template: dict[str, Any],
+    *,
+    count: int = SEEDED_PROPERTY_CASE_COUNT,
+    seed: int = SEEDED_PROPERTY_SEED,
+) -> list[dict[str, Any]]:
+    """Build a deterministic tilted-frame and physical-property sweep."""
+    if type(count) is not int or count <= 0:
+        raise ValueError("count must be a positive integer")
+    if type(seed) is not int or not 0 <= seed <= 0xFFFFFFFF:
+        raise ValueError("seed must be a uint32 integer")
+    rng = random.Random(seed)
+    return [_seeded_property_request(template, index, rng) for index in range(count)]
 
 
 def _assert_close(actual: float, expected: float, check: dict[str, Any]) -> None:
@@ -251,8 +352,11 @@ def assert_conformance_case(
 
 
 __all__ = [
+    "SEEDED_PROPERTY_CASE_COUNT",
+    "SEEDED_PROPERTY_SEED",
     "apply_overrides",
     "assert_conformance_case",
+    "build_seeded_property_requests",
     "load_conformance_cases",
     "materialize_case",
 ]
