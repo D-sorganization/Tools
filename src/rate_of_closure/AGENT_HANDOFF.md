@@ -1055,3 +1055,14 @@ Publish this as a normal follow-up commit on
 `feat/4270-ground-impact-bounce`, with the three handoffs in the same commit.
 Keep #4270 and #4267 open; do not bypass protected CI or propagate into child
 branches until the parent push is verified.
+
+## 2026-08-10 PR #4306 pinned-Ruff formatting repair
+
+At exact PR head `d44edeb4119048fe7a3f8ccfdcae81c8771561e8`, the protected
+`quality-gate` found a format-only failure: repository-pinned Ruff 0.14.10
+would reformat `ground/__init__.py` and `ground/study_derivation.py`. Both
+files are now formatted with that exact tool version; no behavior, public
+contract, eligibility rule, or import boundary changed. Keep this repair on
+PR #4306, preserve its base at exact #4305 head
+`a35fc8aac0cbc2aeeef757fd1d1c518987f2355c`, and require ordinary protected
+checks and review before merge. Issue #4273 and epic #4267 remain open.
