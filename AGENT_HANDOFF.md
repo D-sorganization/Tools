@@ -3,6 +3,25 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 PR #4298 exact hosted-mypy repair
+
+Exact head `a51e49e4d2e7f5b1985c802f8290ea7649e7927e` passed Ruff and
+formatting, then protected quality-gate job `93503197807` failed at pinned
+MyPy 1.13 with 18 integration-only errors in the inherited flight-to-ground
+adapter. The hosted delta checks every changed production file from the
+preserved PR base in one skipped-import invocation; that exposed compatibility
+`StrEnum` members as `str` and generator-built NumPy tuples as variable-length
+tuples.
+
+The repair constructs exact typed enum members through their public
+constructors and builds explicit three-component tuples. Runtime values, wire
+bytes, coordinate transforms, physics, and camera behavior are unchanged. The
+exact hosted command now passes all 33 production files; 79 focused ground,
+transfer, and flight-physics tests plus Ruff/format pass. Fresh protected
+current-head CI is required after the normal fast-forward follow-up; do not
+retry the obsolete failed head. This repair does not complete #4284, #4269, or
+their parent epics.
+
 ## Issue #4284 camera continuation
 
 Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested

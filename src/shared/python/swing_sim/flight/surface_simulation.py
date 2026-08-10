@@ -7,12 +7,16 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from shared.python.swing_sim.ground import GroundContactState, GroundSurfaceProfile
+from shared.python.swing_sim.ground import (
+    GroundContactState,
+    GroundFrame,
+    GroundSurfaceProfile,
+)
 
 from .frames import from_flight_frame
 from .state import FlightStatePoint
 
-GROUND_STATE_FRAME = "target_frame:x_downrange,y_up,z_right"
+GROUND_STATE_FRAME = GroundFrame(str(GroundFrame.TARGET))
 
 
 @dataclass(frozen=True)
@@ -40,9 +44,9 @@ def flight_point_to_ground_state(point: FlightStatePoint) -> GroundContactState:
     return GroundContactState(
         time_s=point.time,
         frame=GROUND_STATE_FRAME,
-        position_m=tuple(float(value) for value in position),
-        velocity_m_s=tuple(float(value) for value in velocity),
-        angular_velocity_rad_s=tuple(float(value) for value in omega),
+        position_m=(float(position[0]), float(position[1]), float(position[2])),
+        velocity_m_s=(float(velocity[0]), float(velocity[1]), float(velocity[2])),
+        angular_velocity_rad_s=(float(omega[0]), float(omega[1]), float(omega[2])),
     )
 
 

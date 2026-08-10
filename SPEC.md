@@ -26,13 +26,23 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.22                                    |
-| **Spec Version**        | 1.14.22                                    |
+| **Current Version**     | 1.14.23                                    |
+| **Spec Version**        | 1.14.23                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-10 Flight-ground hosted typing repair
+
+- The complete PR-base delta must pass the protected pinned MyPy 1.13 profile
+  in one skipped-import invocation, not only per-feature subsets.
+- Flight-to-ground adapters construct exact compatibility string-enum members
+  and explicit three-component vectors so the static contract remains stable
+  when all related modules are checked together.
+- The repair is runtime-neutral: wire values, coordinate transforms, physics,
+  camera behavior, and canonical evidence remain unchanged.
 
 ### 2026-08-10 Deterministic workspace timestamps
 
@@ -2987,6 +2997,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.23 | fix(flight-ground, #4284 #4298): satisfy the protected pinned-MyPy complete-delta profile with exact compatibility-enum construction and explicit three-component flight-to-ground vectors; preserve runtime values, wire bytes, coordinate transforms, physics, and camera behavior while requiring fresh exact-head CI. |
 | 2026-08-10 | 1.14.22 | merge(rate-of-closure, #4284 #4288 #4298): normally propagate exact repaired flight-to-ground head `108a841b1378c992defd3c7b7ee263d41a6c8b24` into original camera-control child `9ffd8d280c77977a41e93bd0caef9678d1c231b6` while preserving base `feat/4199-wind-workflow`; retain canonical cross-runtime camera snaps, bounded tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and playback behavior while inheriting repaired strict-ground, transfer, workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, and import-identity ancestry; preserve explicit non-delivery boundaries for native rendered cross-platform qualification, camera-state persistence, UpstreamDrift parity, bounce, skid, roll, terrain response, total distance, and ground UI. |
 | 2026-08-10 | 1.14.21 | fix(flight-ground, #4199 #4269 #4282 #4285 #4288): normally propagate exact repaired strict-ground parent `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` into original flight-transfer child `247215422a6d4b677552955b4923bc609a553259` while preserving base `feat/4268-ground-contract`; retain the qualified signed terminal state, physical sphere/terrain contact brackets, strict provenance, and Python/TypeScript/Rust/PyO3/WASM transfer while inheriting the deterministic workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, import-identity, scalar-extraction, command-invariant, and security-boundary repairs; preserve explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
 | 2026-08-10 | 1.14.20 | fix(flight-ground, #4269 #4288): normally propagate exact corrected ground-contract parent `788aa547651a3685a363ea401824a5d81477bafb` into the flight-transfer descendant without changing its base; preserve the qualified Python/TypeScript/Rust/PyO3/WASM transfer while inheriting deterministic workspace timestamp parsing and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
