@@ -34,6 +34,13 @@ def _positive_limit(value: object, name: str) -> int:
     return value
 
 
+def _bounded_limit(value: object, name: str, hard_cap: int) -> int:
+    normalized = _positive_limit(value, name)
+    if normalized > hard_cap:
+        raise ValueError(f"{name} cannot exceed the {hard_cap} hard cap")
+    return normalized
+
+
 def _validate_point_limits(
     result: GroundSimulationResult,
     comparison: GroundSimulationResult | None,
@@ -41,8 +48,16 @@ def _validate_point_limits(
     max_points_per_result: int,
     max_combined_points: int,
 ) -> None:
-    per_result = _positive_limit(max_points_per_result, "max_points_per_result")
-    combined = _positive_limit(max_combined_points, "max_combined_points")
+    per_result = _bounded_limit(
+        max_points_per_result,
+        "max_points_per_result",
+        GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT,
+    )
+    combined = _bounded_limit(
+        max_combined_points,
+        "max_combined_points",
+        GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED,
+    )
     counts = [len(result.trajectory)]
     if comparison is not None:
         counts.append(len(comparison.trajectory))
@@ -247,9 +262,19 @@ def _decode_workspace_document(
     """Decode one bounded workspace document for strict or dispatch loaders."""
     if type(text) is not str:
         raise TypeError("ground playback workspace JSON must be text")
-    byte_limit = _positive_limit(max_bytes, "max_bytes")
-    _positive_limit(max_points_per_result, "max_points_per_result")
-    _positive_limit(max_combined_points, "max_combined_points")
+    byte_limit = _bounded_limit(
+        max_bytes, "max_bytes", GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2
+    )
+    _bounded_limit(
+        max_points_per_result,
+        "max_points_per_result",
+        GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT,
+    )
+    _bounded_limit(
+        max_combined_points,
+        "max_combined_points",
+        GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED,
+    )
     if len(text.encode("utf-8")) > byte_limit:
         raise ValueError("ground playback workspace JSON exceeds the import size limit")
     return strict_json_object(text), byte_limit
@@ -354,7 +379,9 @@ def ground_workspace_v2_to_json(
     """Serialize one exact v2 workspace and enforce its UTF-8 output bound."""
     if type(workspace) is not GroundPlaybackWorkspaceV2:
         raise TypeError("workspace must use the exact GroundPlaybackWorkspaceV2 type")
-    byte_limit = _positive_limit(max_bytes, "max_bytes")
+    byte_limit = _bounded_limit(
+        max_bytes, "max_bytes", GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2
+    )
     document = f"{canonical_numeric_json(_workspace_payload(workspace))}\n"
     if len(document.encode("utf-8")) > byte_limit:
         raise ValueError("ground playback workspace JSON exceeds the output size limit")

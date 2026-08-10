@@ -31,7 +31,10 @@ MAX_CAMERA_ZOOM = 4.0
 def _finite_number(value: object, name: str) -> float:
     if isinstance(value, bool) or not isinstance(value, (int, float)):
         raise TypeError(f"{name} must be a number")
-    normalized = float(value)
+    try:
+        normalized = float(value)
+    except OverflowError as exc:
+        raise ValueError(f"{name} must be finite") from exc
     if not math.isfinite(normalized):
         raise ValueError(f"{name} must be finite")
     return normalized

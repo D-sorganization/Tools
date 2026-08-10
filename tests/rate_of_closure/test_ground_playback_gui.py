@@ -348,6 +348,31 @@ def test_workspace_import_restores_playback_and_view_atomically(qtbot) -> None: 
     restored.pause()
 
 
+def test_workspace_oversized_integer_retains_active_last_good_state(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+    tab.import_json_text(_result_text(), source_name="good.json")
+    original = tab.timeline
+    original_time_s = tab.current_time_s
+    tab.play()
+    assert tab.playback_timer.isActive()
+    payload = json.loads(tab.workspace_json())
+    payload["playback"]["time_s"] = 10**400
+    tab.play()
+    assert tab.playback_timer.isActive()
+
+    with pytest.raises(ValueError, match="time_s must be finite"):
+        tab.import_workspace_json_text(
+            json.dumps(payload), source_name="oversized.json"
+        )
+
+    assert tab.timeline is original
+    assert original_time_s <= tab.current_time_s < original_time_s + 0.2
+    assert tab.playback_timer.isActive()
+    assert "Could not import oversized.json" in tab.status_label.text()
+    tab.pause()
+
+
 def test_workspace_restore_blocks_visibility_signals_and_seeks_union_time_last(
     qtbot,
 ) -> None:  # type: ignore[no-untyped-def]

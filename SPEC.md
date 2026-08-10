@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.45                                    |
-| **Spec Version**        | 1.14.45                                    |
+| **Current Version**     | 1.14.46                                    |
+| **Spec Version**        | 1.14.46                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,17 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-10 Ground-playback workspace hard-bound repair
+
+- Python normalizes finite-number conversion overflow to the same `ValueError`
+  boundary as non-finite floats, so malformed large integers cannot escape the
+  strict v1/v2 parsers or PyQt transactional import reporting.
+- Python and TypeScript treat 11 MiB, 100,000 trajectory points per result,
+  and 200,000 combined points as hard public contract caps. Callers may request
+  stricter limits but cannot raise those caps.
+- RED-first parser, active-playback retention, and cross-runtime hard-cap tests
+  pin the repair without changing canonical workspace bytes or physics.
 
 ### 2026-08-10 Ground-playback comparison workspace v2
 
@@ -3161,6 +3172,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.46 | fix(ground-playback, #4274): normalize oversized finite-number conversion to the strict invalid-input boundary and enforce the documented 11 MiB, 100,000-point-per-result, and 200,000-point-combined workspace caps identically in Python and TypeScript; preserve active PyQt playback on rejected imports and keep canonical bytes and physics unchanged. |
 | 2026-08-10 | 1.14.45 | feat(ground-playback, #4274): add strict cross-surface comparison workspace v2 persistence with an always-present nullable comparison envelope, visibility, union playback time, orbit view, bounded canonical LF JSON, shared Python/TypeScript golden bytes, one-way disclosed v1 migration, and transactional paused restore that preserves every last-good field on failure; retain explicit paging, terrain, camera/visual, ensemble, compiled-runtime, and UpstreamDrift non-delivery boundaries. |
 | 2026-08-10 | 1.14.44 | docs(ground-playback, #4274 #4318): record the independently reviewed raw comparison trajectory/event evidence and hardened export continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback-comparison`; protected exact-head CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.43 | feat(ground-playback, #4274): add separately labelled primary/comparison raw trajectory and event evidence in PyQt6 and React, dedicated canonical full-ledger comparison CSV exports, atomic last-good retention/clear behavior, and shared `QSaveFile` replacement without implying row alignment or adding physics, workspace-v2, camera, or Playwright scope. |

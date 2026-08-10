@@ -3,6 +3,26 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 issue #4274 workspace-v2 adversarial review repair
+
+Independent review of local workspace-v2 commit
+`b9579c0b16aaf6188f216acbca0b75828c2a5fe6` found two publication blockers.
+An integer too large for `float` escaped strict Python parsing as
+`OverflowError`, bypassing PyQt's transactional import-error boundary; Python
+and TypeScript also disagreed on whether public limit overrides could raise the
+fixed 11 MiB, 100,000-point-per-result, and 200,000-point-combined contract
+caps. The follow-up normalizes numeric conversion overflow to `ValueError` and
+rejects every override above the same hard caps in both runtimes while still
+allowing stricter caller limits.
+
+RED-first regressions cover v1 and v2 parsing, active PyQt playback retention,
+and all three cross-runtime hard caps. The complete Rate suite passes 913 tests
+and the React suite passes 111 files / 690 tests; focused Ruff/format,
+TypeScript, zero-warning ESLint, and Prettier gates pass. The canonical golden
+bytes and physics remain unchanged. This is a review repair, not completion of
+#4274 or #4267; protected publication, approval, parent landing, and the
+existing downstream boundaries remain open.
+
 ## 2026-08-10 issue #4274 comparison workspace v2
 
 Local branch `feat/4274-ground-playback-comparison-workspace-v2` starts from

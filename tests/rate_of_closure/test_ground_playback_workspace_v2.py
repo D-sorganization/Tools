@@ -14,10 +14,13 @@ from rate_of_closure.simulation.ground_playback_workspace import (
     GroundPlaybackState,
     GroundPlaybackViewState,
     GroundPlaybackWorkspace,
+    ground_workspace_from_json,
     ground_workspace_to_json,
 )
 from rate_of_closure.simulation.ground_playback_workspace_v2 import (
     GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2,
+    GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED,
+    GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT,
     GROUND_PLAYBACK_WORKSPACE_SCHEMA_V2,
     GroundPlaybackComparisonState,
     GroundPlaybackWorkspaceV2,
@@ -165,6 +168,44 @@ def test_v2_rejects_duplicates_and_enforces_all_document_bounds() -> None:
             max_combined_points=3,
         )
     assert GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2 == 11 * 1024 * 1024
+
+
+def test_v1_and_v2_normalize_oversized_numeric_tokens_to_value_errors() -> None:
+    oversized = 10**400
+    legacy = GroundPlaybackWorkspace(
+        result=load_ground_result_json(json.dumps(_result_payload())),
+        playback=GroundPlaybackState(time_s=1.205, speed=1.0, loop=False),
+        view=GroundPlaybackViewState(yaw_deg=0.0, pitch_deg=22.0, zoom=1.0),
+    )
+    legacy_payload = json.loads(ground_workspace_to_json(legacy))
+    legacy_payload["playback"]["time_s"] = oversized
+    v2_payload = json.loads(ground_workspace_v2_to_json(_workspace_v2()))
+    v2_payload["playback"]["time_s"] = oversized
+
+    with pytest.raises(ValueError, match="time_s must be finite"):
+        ground_workspace_from_json(json.dumps(legacy_payload))
+    with pytest.raises(ValueError, match="time_s must be finite"):
+        ground_workspace_v2_from_json(json.dumps(v2_payload))
+
+
+def test_v2_public_limit_overrides_cannot_raise_hard_contract_caps() -> None:
+    encoded = ground_workspace_v2_to_json(_workspace_v2())
+
+    with pytest.raises(ValueError, match="max_bytes.*hard cap"):
+        ground_workspace_v2_from_json(
+            encoded,
+            max_bytes=GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2 + 1,
+        )
+    with pytest.raises(ValueError, match="max_points_per_result.*hard cap"):
+        ground_workspace_v2_from_json(
+            encoded,
+            max_points_per_result=GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT + 1,
+        )
+    with pytest.raises(ValueError, match="max_combined_points.*hard cap"):
+        ground_workspace_v2_from_json(
+            encoded,
+            max_combined_points=GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED + 1,
+        )
 
 
 def test_v2_shared_golden_is_byte_identical_and_sha_pinned() -> None:

@@ -9,6 +9,8 @@ import {
 } from "./groundPlaybackWorkspace";
 import {
   GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2,
+  GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED,
+  GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT,
   GROUND_PLAYBACK_WORKSPACE_SCHEMA_V2,
   groundWorkspaceFromVersionedJson,
   loadGroundWorkspaceVersionedJson,
@@ -138,6 +140,26 @@ describe("ground playback workspace v2", () => {
       }),
     ).toThrow(/combined point limit/i);
     expect(GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2).toBe(11 * 1024 * 1024);
+  });
+
+  it("does not allow public limit overrides to raise hard contract caps", () => {
+    const encoded = groundWorkspaceV2ToJson(workspaceV2());
+
+    expect(() =>
+      groundWorkspaceV2FromJson(encoded, {
+        maxBytes: GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2 + 1,
+      }),
+    ).toThrow(/maxBytes.*hard cap/i);
+    expect(() =>
+      groundWorkspaceV2FromJson(encoded, {
+        maxPointsPerResult: GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT + 1,
+      }),
+    ).toThrow(/maxPointsPerResult.*hard cap/i);
+    expect(() =>
+      groundWorkspaceV2FromJson(encoded, {
+        maxCombinedPoints: GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED + 1,
+      }),
+    ).toThrow(/maxCombinedPoints.*hard cap/i);
   });
 
   it("matches the shared canonical golden bytes and SHA", async () => {

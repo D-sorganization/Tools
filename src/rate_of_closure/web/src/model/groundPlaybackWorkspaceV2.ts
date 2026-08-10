@@ -61,21 +61,36 @@ const positiveInteger = (value: number, name: string): number => {
   return value;
 };
 
+const boundedInteger = (
+  value: number,
+  name: string,
+  hardCap: number,
+): number => {
+  const normalized = positiveInteger(value, name);
+  if (normalized > hardCap) {
+    throw new RangeError(`${name} cannot exceed the ${hardCap} hard cap`);
+  }
+  return normalized;
+};
+
 const resolveLimits = (
   limits: GroundPlaybackWorkspaceLimits,
 ): ResolvedLimits => ({
-  maxBytes: positiveInteger(
+  maxBytes: boundedInteger(
     limits.maxBytes ?? GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2,
     "maxBytes",
+    GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2,
   ),
-  maxPointsPerResult: positiveInteger(
+  maxPointsPerResult: boundedInteger(
     limits.maxPointsPerResult ??
       GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT,
     "maxPointsPerResult",
+    GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_PER_RESULT,
   ),
-  maxCombinedPoints: positiveInteger(
+  maxCombinedPoints: boundedInteger(
     limits.maxCombinedPoints ?? GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED,
     "maxCombinedPoints",
+    GROUND_PLAYBACK_WORKSPACE_MAX_POINTS_COMBINED,
   ),
 });
 
