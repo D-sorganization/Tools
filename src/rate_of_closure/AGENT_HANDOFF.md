@@ -3,9 +3,9 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
-+## 2026-08-10 issue #4274 playback workspace persistence and exports
+## 2026-08-10 issue #4274 playback workspace persistence and exports
 
-A local continuation on `feat/4274-ground-playback-persistence` adds matched
+A reviewed continuation on `feat/4274-ground-playback-persistence` adds matched
 PyQt6/React persistence and deterministic evidence export from exact reviewed
 implementation head `80f0f3ebdb0835c300f9f1e60e7ef2f8703e6cc8`. The strict
 `rate-of-closure-ground-playback-workspace/v1` document embeds the validated
@@ -29,12 +29,14 @@ the complete Rate suite (891 tests), 12 focused React/model tests, the complete
 React suite (110 files / 678 tests), and the 198-module Vite production build.
 Ruff check/format, pinned-style MyPy on five production modules, TypeScript,
 zero-warning ESLint, documentation, scoped secrets, module size, minimum-test,
-conflict-marker, and final diff gates pass. Parent PR #4315 later
-advanced its documentation-only head to
-`2618ab025622bf1a4fa21e771b30f808f783648b`; publication must normally
-propagate that exact parent and reconcile the four canonical records
-monotonically. No push or PR is made from this local slice.
-
+conflict-marker, and final diff gates pass. A normal two-parent merge now has
+original feature commit `abb55c177af19a3cc08dd6bd5d258ea5ce3a61b9`
+first and exact ready-for-review parent PR #4315 head
+`2618ab025622bf1a4fa21e771b30f808f783648b` second. The base remains
+`feat/4274-ground-playback`; no branch was rewritten or retargeted. SPEC
+1.14.36 records the propagation. Independent exact-head review, guarded
+ready-for-review publication, protected CI, approval, parent landing, issue
+acceptance, and epic closure remain open.
 
 ## 2026-08-10 issue #4274 exact-parent propagation
 
@@ -50,9 +52,12 @@ ESLint, and the `197`-module production build. Ruff/format, pinned MyPy 1.13 on
 six production files, real CPython 3.10 compilation, documentation/minimum-test
 governance, a `10`-file secrets scan, marker scans, and diff checks pass. The
 exact parent supplies current green Rust/fmt/clippy evidence because this child
-adds no Rust delta. Independent exact-diff review remains required before a
-ready-for-review publication. Protected CI, approval, dependency integration, issue acceptance,
-and epic closure remain open.
+adds no Rust delta. Independent exact-diff review is READY at implementation
+merge `80f0f3ebdb0835c300f9f1e60e7ef2f8703e6cc8`. Ready-for-review PR #4315 is
+now published with unchanged base `feat/4275-ground-reference-execution`; SPEC
+1.14.34 records that live publication state. Protected CI, approval, parent
+landing, dependency integration, issue acceptance, and epic closure remain
+open.
 
 ## 2026-08-10 issue #4274 playback clock and evidence parity repair
 
