@@ -3,6 +3,33 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 issue #4275 scientific conformance corpus
+
+`feat/4275-ground-conformance-corpus` begins at exact ready PR #4320 head
+`64506a54d546021f3c16fbe0b627f35057ec6dd1` and is intended to target
+`feat/4275-ground-compiled-reference-runtime`. It adds a strict shared
+`ground-reference-conformance/v1` fixture and independent analytic assertions
+without editing production ground physics. The five cases cover shallow
+bounce/capture, flat skid-to-roll, downrange pure roll, a proper active
+-90-degree rotation about +y, and pure roll relative to a translating surface. Checks pin
+contact and transition times, restitution, event order, passive impact,
+no-slip contact velocity, component vectors, phase distances, total distance,
+and typed rest/time-limit outcomes using explicit units and tolerances.
+
+The Python reference, direct native Rust, unique-venv CPython 3.13 PyO3 wheel,
+and rebuilt Node/WASM package all consume the same committed artifact. Focused
+results are eight Python tests, four native Rust tests, one wheel script, and
+one WASM script passing. Exact-byte parity continues to use the existing golden
+fixture rather than conflating scientific tolerance with serialization. The
+implementation commit cannot contain its own SHA; the required evidence
+follow-up must record that exact parent, the raw corpus digest, full matrix
+counts, independent review, PR, and protected checks before publication.
+
+Keep #4275 and #4267 open. This slice does not qualify tilted cross-authority
+frames, broad properties, performance, ensembles, async WASM cancellation,
+calibration, material regions/changing normals, deformation, torsional damping,
+roll-to-skid, interfaces, visualization, or UpstreamDrift consumers.
+
 ## 2026-08-10 issue #4275 compiled ground-reference runtime
 
 Implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` on

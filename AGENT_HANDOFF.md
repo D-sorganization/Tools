@@ -3,6 +3,36 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 issue #4275 scientific conformance corpus
+
+Branch `feat/4275-ground-conformance-corpus` starts exactly at ready PR #4320
+head `64506a54d546021f3c16fbe0b627f35057ec6dd1` and must retain base
+`feat/4275-ground-compiled-reference-runtime`. This bounded continuation adds
+the versioned `ground-reference-conformance/v1` corpus without changing the
+production physics kernel. Five cases pin independently derived contact time,
+Newton restitution, passive impact energy, Coulomb skid-to-roll state/time and
+distance, no-slip stopping time/distance, a proper active -90-degree rotation
+about +y, and Galilean moving-surface relative motion. Every expected scalar
+or vector declares units, basis, and an applicable bounded tolerance;
+exact-byte serialization remains owned by the separate existing golden fixture.
+
+The same fixture is consumed by the Python authority, direct native Rust,
+freshly installed CPython 3.13 PyO3 wheel, and freshly rebuilt Node/WASM
+package. Focused evidence currently passes eight Python corpus tests, four
+native Rust tests, the unique-venv PyO3 harness, and the rebuilt WASM harness.
+No runtime callback is fabricated for synchronous WASM. The implementation
+commit intentionally does not attempt a self-referential SHA; a follow-up
+evidence commit must bind its exact parent SHA, full-suite counts, corpus digest,
+independent review, PR, and protected-CI state in all handoffs and the strict
+campaign manifest before publication.
+
+This is scientific qualification for five immutable horizontal-plane cases,
+not completion of #4275 or epic #4267. Tilted-frame cross-authority cases,
+property sweeps, ensemble benchmarks, performance/memory budgets, asynchronous
+WASM cancellation, calibration/uncertainty, regional or changing terrain,
+deformation, torsional damping, roll-to-skid, UI/rendering, and downstream
+consumers remain open.
+
 ## 2026-08-10 issue #4275 compiled ground-reference runtime
 
 Implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` on

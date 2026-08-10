@@ -4,6 +4,36 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 issue #4275 scientific conformance corpus
+
+Branch `feat/4275-ground-conformance-corpus` is a normal child of exact ready
+PR #4320 head `64506a54d546021f3c16fbe0b627f35057ec6dd1`; preserve PR base
+`feat/4275-ground-compiled-reference-runtime`. It adds a single versioned
+`ground-reference-conformance/v1` authority artifact plus small consumer
+harnesses for Python, direct Rust, a real installed PyO3 wheel, and rebuilt
+Node/WASM. Production physics is unchanged. The five cases independently pin
+linear contact localization, Newton restitution, passive stationary impact,
+the solid-sphere Coulomb skid-to-roll limit, constant rolling-resistance stop,
+proper active -90-degree rotation about +y, and moving-surface relative-motion invariance.
+Every numeric oracle carries a unit, derivation narrative, and an applicable
+bounded tolerance. The established full-result golden remains byte-identity
+evidence; the new corpus intentionally tests scientific observables instead of
+copying complete implementation output.
+
+Focused RED/GREEN evidence passes eight Python corpus tests, four direct native
+Rust tests, a unique CPython 3.13 wheel install/run, and a newly built
+WASM release package/run. The implementation commit cannot self-name its final
+SHA. Before publishing, create a documentation/evidence child that binds the
+exact implementation parent, raw corpus SHA-256, complete test matrices,
+independent review, PR number/head/base, and protected-CI state in the strict
+manifest and all handoffs.
+
+This remains `partial_implementation`. #4275/#4267 still require tilted-frame
+and property breadth, ensemble/determinism/performance qualification,
+asynchronous WASM cancellation, calibration/uncertainty, changing terrain and
+materials, deformation/torsional damping/roll-to-skid, matched clients and 3D
+rendering, downstream exact-pin integration, and ordinary protected release.
+
 ## 2026-08-10 issue #4275 compiled ground-reference runtime
 
 Implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` on

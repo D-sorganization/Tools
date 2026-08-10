@@ -141,6 +141,30 @@ The digest proves byte identity only. It is not a signature, calibration
 certificate, or evidence that the illustrative surface parameters match a
 specific course.
 
+## Scientific conformance corpus
+
+`ground_reference_conformance_v1.json` is the separate scientific evidence
+boundary. It references the canonical request template, replaces only declared
+existing leaves, and defines five independently derived horizontal-plane cases:
+shallow bounce/capture, flat skid-to-roll, pure roll along +x, the proper active
+-90-degree rotation about +y into +z, and pure roll relative to a translating
+plane.
+
+Each case declares its scientific basis, applicable runtimes, observable,
+unit, and applicable bounded tolerance. Whitelisted checks cover exact event
+sequences and terminal reasons, scalar/vector proximity, Newton restitution,
+the no-slip contact constraint, and passive impact energy. No expression is
+evaluated from fixture text. The Python reference, native Rust executor,
+installed PyO3 wheel, and rebuilt Node/WASM package all consume this same
+artifact. A runtime agreeing with another runtime is insufficient: each must
+also satisfy the declared analytic oracle.
+
+This corpus does not replace the canonical full-result fixture. Scientific
+tolerances establish physical conformance; exact canonical bytes and SHA-256
+remain serialization evidence. The current cases do not qualify production
+surface parameters, tilted Python/compiled parity, regional terrain,
+performance, or statistical uncertainty.
+
 ## Design-by-contract boundary
 
 - Requests and nested execution controls require exact canonical types.

@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.37                                    |
-| **Spec Version**        | 1.14.37                                    |
+| **Current Version**     | 1.14.38                                    |
+| **Spec Version**        | 1.14.38                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -228,6 +228,29 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   because the nested crate lacks its own license file while the repository
   root tracks `LICENSE`. Generated Node execution is in scope; npm publication
   and its package-metadata remediation are not qualified by this version.
+
+### 2026-08-10 Ground-reference scientific conformance
+
+- `ground-reference-conformance/v1` is a single machine-readable scientific
+  corpus shared by the Python reference, direct native Rust, installed PyO3
+  wheel, and rebuilt Node/WASM executor.
+- Five horizontal-plane cases cover shallow bounce/capture, Coulomb
+  skid-to-roll, no-slip stopping under rolling resistance, proper 90-degree
+  frame rotation, and constant moving-surface relative motion.
+- Expected observables are independent closed-form values or physical
+  invariants with explicit derivation, unit, and applicable bounded tolerance.
+  Supported checks are whitelisted; fixture text is never executed.
+- The corpus checks contact/transition timing, Newton restitution, passive
+  impact energy, event order, no-slip contact velocity, vector
+  orientation, phase distances, total distance, and typed rest/time-limit
+  outcomes. It does not change production physics.
+- Scientific conformance and serialization conformance are separate. The new
+  artifact compares declared observables within tolerance; the existing
+  full-result golden continues to pin canonical bytes and SHA-256.
+- This bounded evidence does not qualify tilted cross-authority frames,
+  property sweeps, performance or memory budgets, ensembles, asynchronous WASM
+  cancellation, calibrated materials, changing terrain, UI/rendering, or
+  downstream consumers.
 
 ### 2026-08-09 Static-plane skid, roll, and result composition
 
@@ -3133,6 +3156,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.38 | test(ground-conformance, #4275): add one versioned five-case scientific corpus consumed by Python, direct native Rust, installed PyO3, and rebuilt WASM; pin independently derived contact, restitution, passive-energy, skid-to-roll, no-slip stopping, proper-rotation, and moving-surface observables with explicit units and tolerances while preserving the separate exact-byte golden and all remaining performance/terrain/UI/consumer gaps. |
 | 2026-08-10 | 1.14.37 | docs(ground-runtime, #4275): bind the compiled native/PyO3/WASM runtime's independently reviewed local evidence to exact implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` through the unchanged strict manifest schema; record the 180/195/192 Rust matrices, 219 Python authority tests, unique-venv wheel and rebuilt Node/WASM checks, independent resource caps, structural budgets, package-publication notice, and explicit hosted/protected/performance/epic gaps. |
 | 2026-08-10 | 1.14.36 | feat(ground-runtime, #4275): execute the canonical contact/bounce/skid/roll/rest reference pipeline in native Rust, PyO3, and WASM with strict normalized request authority, bounded elapsed-time scheduling, independent trusted output/step/event/trajectory caps, absolute wire-resolution preflight, fully typed derived-number range failures, coherent immediate-capture event censoring, runtime monotonicity guards, cooperative cancellation including Python GIL release between polls, exact golden/parity evidence, and explicit commit-bound-evidence/static-plane/non-production boundaries. |
 | 2026-08-10 | 1.14.35 | feat(ground-wire, #4275 #4312): normally propagate exact corrected ground-reference parent `f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` into the strict Rust result-wire parity descendant without changing its base; preserve raw-before-normalized fail-closed validation, recursive duplicate-key rejection, complete result state-machine and geometry coherence, canonical JSON, lowercase provenance-digest emission, and real PyO3/WASM validation exports while inheriting corrected reference execution, scalar-study, material-profile, impact/roll, timestamp, and canonical `swing_sim` ancestry; retain explicit non-delivery boundaries for compiled ground physics, UI, ensembles, production calibration, and downstream consumers. |
