@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.36                                    |
-| **Spec Version**        | 1.14.36                                    |
+| **Current Version**     | 1.14.37                                    |
+| **Spec Version**        | 1.14.37                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -214,10 +214,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Final local evidence is 180 default, 195 Python-feature, and 192 WASM-feature
   `tools-core` tests; 219 Python ground-authority tests; eight campaign-manifest
   tests; strict Clippy, Rust formatting, Ruff, Prettier, and documentation
-  governance. The strict campaign manifest intentionally carries no dirty-tree
-  evidence; a follow-up evidence commit must bind the identical implementation
-  tree to its immutable SHA through the existing `commit_sha` contract. This is
-  not a performance-budget pass, hosted check, protected merge, or release.
+  governance. The strict campaign manifest binds this evidence to exact
+  implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c`
+  through the existing `commit_sha` contract; no dirty-tree evidence type was
+  added. Independent final review is READY. This is not a performance-budget
+  pass, hosted check, protected merge, or release.
 - This version supports only standard gravity, the v1 model identities, and
   one immutable planar profile. Non-null resolvers fail closed. Changing
   terrain/material regions, deformation, torsional damping, roll-to-skid,
@@ -3132,6 +3133,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.37 | docs(ground-runtime, #4275): bind the compiled native/PyO3/WASM runtime's independently reviewed local evidence to exact implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` through the unchanged strict manifest schema; record the 180/195/192 Rust matrices, 219 Python authority tests, unique-venv wheel and rebuilt Node/WASM checks, independent resource caps, structural budgets, package-publication notice, and explicit hosted/protected/performance/epic gaps. |
 | 2026-08-10 | 1.14.36 | feat(ground-runtime, #4275): execute the canonical contact/bounce/skid/roll/rest reference pipeline in native Rust, PyO3, and WASM with strict normalized request authority, bounded elapsed-time scheduling, independent trusted output/step/event/trajectory caps, absolute wire-resolution preflight, fully typed derived-number range failures, coherent immediate-capture event censoring, runtime monotonicity guards, cooperative cancellation including Python GIL release between polls, exact golden/parity evidence, and explicit commit-bound-evidence/static-plane/non-production boundaries. |
 | 2026-08-10 | 1.14.35 | feat(ground-wire, #4275 #4312): normally propagate exact corrected ground-reference parent `f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` into the strict Rust result-wire parity descendant without changing its base; preserve raw-before-normalized fail-closed validation, recursive duplicate-key rejection, complete result state-machine and geometry coherence, canonical JSON, lowercase provenance-digest emission, and real PyO3/WASM validation exports while inheriting corrected reference execution, scalar-study, material-profile, impact/roll, timestamp, and canonical `swing_sim` ancestry; retain explicit non-delivery boundaries for compiled ground physics, UI, ensembles, production calibration, and downstream consumers. |
 | 2026-08-10 | 1.14.34 | fix(ground, #4275): align Rust result provenance digest handling with Python and TypeScript by accepting 64-character ASCII hexadecimal input in either case, canonicalizing to lowercase before emission, revalidating the normalized record, and pinning malformed rejection plus real PyO3/WASM binding behavior. |

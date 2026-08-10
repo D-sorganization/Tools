@@ -5,8 +5,8 @@
 
 ## 2026-08-10 issue #4275 compiled ground-reference runtime
 
-This implementation commit on `feat/4275-ground-compiled-reference-runtime`
-starts from exact PR #4312 head
+Implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` on
+`feat/4275-ground-compiled-reference-runtime` starts from exact PR #4312 head
 `e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d` and is intended to retain
 base `feat/4275-ground-result-wire-parity`. `tools-core` now executes the
 qualified rigid-sphere pipeline through actual contact, Coulomb impact,
@@ -14,7 +14,7 @@ repeated bounce/capture, skid, pure roll, and rest phases. The native, PyO3,
 and wasm-bindgen entry points share strict request/execution parsing, canonical
 result emission, typed phase/reason/fingerprint failures, fail-closed resolver
 and serialized-callback rejection, and bounded cancellation checks. No push,
-PR, protected-CI, or external-review claim is made by this handoff.
+PR, protected-CI, or protected GitHub review claim is made by this handoff.
 
 The existing v1 execution wire intentionally gains no new resource fields.
 Independent preflight budgets admit at most 200,001 scheduled
@@ -84,10 +84,12 @@ and default strict Clippy pass; Python/WASM all-target Clippy passes with the
 same eight enumerated inherited unrelated allowances. New production modules
 are below 400 lines; the main runtime regression file is exactly 500 lines.
 Eight campaign-manifest tests and documentation governance pass. The strict
-campaign manifest intentionally contains no evidence record for a dirty tree;
-a follow-up evidence commit must bind this identical implementation tree to
-its immutable SHA using the existing `commit_sha` contract. There is no durable
-benchmark artifact or performance-budget pass.
+campaign manifest now binds local evidence to exact implementation commit
+`50682f251d5e9c0424ba633d1ce5be7fa1379a3c` through the existing `commit_sha`
+contract; no dirty-tree evidence type was added. Independent final review was
+READY with no findings after the resource, line-budget, and documentation
+repairs. There is no hosted check, durable benchmark artifact, or
+performance-budget pass.
 
 Packaging note: the successful `wasm-pack` release build emits a notice that
 the crate directory has no local license file even though the repository-root

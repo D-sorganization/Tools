@@ -1,7 +1,7 @@
 {
   "schema_version": "rate-of-closure-campaign/v1",
   "repository": "D-sorganization/Tools",
-  "as_of": "2026-08-09",
+  "as_of": "2026-08-10",
   "default_branch": "main",
   "required_main_checks": [
     "quality-gate",
@@ -503,6 +503,38 @@
       "source_paths": [
         "src/shared/python/swing_sim/ground/reference_execution.py",
         "src/shared/python/swing_sim/ground/reference_execution_types.py",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-compiled-runtime-local-5068",
+      "kind": "local",
+      "commit_sha": "50682f251d5e9c0424ba633d1ce5be7fa1379a3c",
+      "outcome": "passed",
+      "commands": [
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features python",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features wasm",
+        "cargo fmt --manifest-path rust_core/tools-core/Cargo.toml --all -- --check && cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets -- -D warnings",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features python -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features wasm -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "python -m pytest -q src/shared/python/swing_sim/ground/tests",
+        "$repoRoot = (Get-Location).Path; $artifactRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('codex-ground-wheel-' + [guid]::NewGuid().ToString('N')); $wheelhouse = Join-Path $artifactRoot 'wheelhouse'; $venv = Join-Path $artifactRoot 'venv'; New-Item -ItemType Directory -Path $wheelhouse -Force; Push-Location rust_core\\tools-core; python -m maturin build --release --out $wheelhouse; Pop-Location; python -m venv $venv; $venvPython = Join-Path $venv 'Scripts\\python.exe'; $wheel = Get-ChildItem -LiteralPath $wheelhouse -Filter '*.whl' | Select-Object -First 1; & $venvPython -m pip install --force-reinstall numpy $wheel.FullName; $env:PYTHONPATH = ((Join-Path $repoRoot 'src') + [IO.Path]::PathSeparator + $repoRoot); & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_runtime.py; & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_parity.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests\\wasm_ground_reference_runtime.cjs",
+        "python scripts/rate_campaign_manifest.py && python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py && python scripts/check_docs_governance.py",
+        "python scripts/check_file_size_budget.py --changed-only --base-ref e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d --root rust_core/tools-core && python scripts/check_changed_python_policy.py --base-ref e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d"
+      ],
+      "summary": "The independently reviewed compiled ground-reference implementation at exact commit 50682f251d5e9c0424ba633d1ce5be7fa1379a3c passes 180 default, 195 Python-feature, and 192 WASM-feature Rust tests; strict default and scoped feature Clippy; 219 Python ground-authority tests; fresh unique-venv CPython 3.13 PyO3 and rebuilt Node/WASM runtime/parity scripts; manifest, documentation, assertion, changed-Python, line-budget, and diff gates. Independent output, step, event, and total-trajectory limits fail closed without conflating their dimensions; runtime step exhaustion, derived numeric failures, event censoring, cancellation, and large-epoch representability remain typed and deterministic. This is local commit-bound evidence, not a hosted check, protected merge, release, or performance qualification.",
+      "source_paths": [
+        "rust_core/tools-core/src/flight_ground/reference_runtime.rs",
+        "rust_core/tools-core/src/flight_ground/resource_limits.rs",
+        "rust_core/tools-core/src/flight_ground/surface_runtime.rs",
+        "rust_core/tools-core/src/flight_ground/surface_events.rs",
+        "rust_core/tools-core/tests/ground_reference_limits.rs",
+        "rust_core/tools-core/tests/ground_reference_runtime.rs",
+        "rust_core/tools-core/tests/python_ground_reference_runtime.py",
+        "rust_core/tools-core/tests/wasm_ground_reference_runtime.cjs",
         "docs/specs/GROUND_REFERENCE_EXECUTION.md",
         "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
       ]
@@ -1317,9 +1349,10 @@
         "ground-study-qualification-local-9405",
         "ground-study-metric-adapter-local-6c29",
         "ground-study-scalar-adapter-local-b71b",
-        "ground-reference-execution-local-c93c"
+        "ground-reference-execution-local-c93c",
+        "ground-compiled-runtime-local-5068"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, material-profile, study-projection, qualified metric-adapter, scalar-ensemble adapter, and bounded reference-execution carriers are open. Issues #4270, #4271, #4272, and bounded #4273/#4275 slices are published on draft PRs 4302, 4304, 4305, 4306, 4307, 4308, and 4309 with exact local evidence but no completed protected evidence. Production-qualified presets and measured-source qualification, changing normals, regional surfaces, ensemble execution and rendering, optimizer integration, UI, compiled-runtime, and downstream parity evidence remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, material-profile, study-projection, qualified metric-adapter, scalar-ensemble adapter, and bounded Python reference-execution carriers are open. Exact commit 50682f251d5e9c0424ba633d1ce5be7fa1379a3c adds a locally verified native/PyO3/WASM static-plane executor, but it has no carrier PR, hosted/protected evidence, protected GitHub review approval, parent integration, or release. Issues #4270, #4271, #4272, and bounded #4273/#4275 slices are published on draft PRs 4302, 4304, 4305, 4306, 4307, 4308, and 4309 with exact local evidence but no completed protected evidence. Production-qualified presets and measured-source qualification, changing normals, regional surfaces, ensemble execution and rendering, optimizer integration, UI, asynchronous WASM cancellation, and downstream parity evidence remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
@@ -1328,7 +1361,7 @@
         "The #4272 contract slice defines no production material preset or calibration claim and its one-way Upstream snapshot adapter is a local tangent-plane projection, not regional-terrain parity.",
         "The #4273 foundation projects one result into typed target and solver evidence; it does not yet integrate ensemble variation, wind, optimizers, user interfaces, compiled runtimes, or UpstreamDrift consumers.",
         "The #4273 scalar adapter exposes bounded explicit-identity rows but does not execute ensembles, reinterpret final-rest target miss as a flight target residual, or provide rendered dispersion controls.",
-        "The bounded #4275 Python reference executor composes only settled bounce prefixes with representable skid/roll suffix outcomes; it does not fabricate cancellation or unsupported native terminal states and does not provide UI or compiled-runtime execution.",
+        "The bounded #4275 Python reference executor composes only settled bounce prefixes with representable skid/roll suffix outcomes; exact commit 50682f251d5e9c0424ba633d1ce5be7fa1379a3c adds compiled execution for one immutable planar profile but no UI, regional terrain, production calibration, hosted evidence, or downstream consumer parity.",
         "The existing GroundModelResult DTO is provenance-lossy; qualified-study consumers must retain the study record alongside it.",
         "ground-result/v1 carries no producing-request fingerprint, so #4273 records an exact caller-request context digest and exact source-result digest but does not claim they are an attested pair; exact attribution requires a result-side fingerprint.",
         "Solver admission preserves declared result calibration and provenance and rejects estimated, unvalidated, or zero-confidence calibration; provenance is auditable context rather than producer certification."

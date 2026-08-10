@@ -5,8 +5,8 @@
 
 ## 2026-08-10 issue #4275 compiled ground-reference runtime
 
-This implementation commit on `feat/4275-ground-compiled-reference-runtime`
-is based exactly on PR #4312 head
+Implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` on
+`feat/4275-ground-compiled-reference-runtime` is based exactly on PR #4312 head
 `e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d`
 and is intended to target `feat/4275-ground-result-wire-parity`. It replaces
 the compiled validation-only gap with actual Rust execution of contact,
@@ -73,10 +73,12 @@ behavior. Cargo
 formatting and strict/default scoped linting pass with inherited feature-lint
 allowances documented separately. New production modules remain under 400
 lines; the principal runtime test file is exactly 500 lines. Eight manifest
-tests and documentation governance pass. The strict campaign manifest contains
-no dirty-tree evidence entry; a follow-up commit must bind this identical
-implementation tree to its immutable SHA through the existing `commit_sha`
-contract. No durable benchmark artifact or performance-budget pass is claimed.
+tests and documentation governance pass. The strict campaign manifest binds
+the evidence to exact implementation commit
+`50682f251d5e9c0424ba633d1ce5be7fa1379a3c` using its existing `commit_sha`
+field; no dirty-tree evidence type was introduced. Independent final review is
+READY. No hosted check, durable benchmark artifact, or performance-budget pass
+is claimed.
 
 The successful `wasm-pack` release build also reports that this nested crate
 does not contain a local license file; the repository-root `LICENSE` remains

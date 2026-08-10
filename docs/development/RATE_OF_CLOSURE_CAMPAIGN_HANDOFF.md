@@ -6,8 +6,8 @@ branch was rewritten.
 
 ## 2026-08-10 issue #4275 compiled ground-reference runtime
 
-This implementation commit on `feat/4275-ground-compiled-reference-runtime`
-begins at exact PR #4312 head
+Implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` on
+`feat/4275-ground-compiled-reference-runtime` begins at exact PR #4312 head
 `e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d` and is intended to
 target `feat/4275-ground-result-wire-parity`. The bounded continuation ports
 the canonical rigid-sphere reference execution into `tools-core`: interpolated
@@ -81,10 +81,11 @@ resource-cap, event-limit, and representability checks. Formatting and strict de
 Clippy pass; feature all-target linting passes with eight explicit inherited
 unrelated allowances. New production modules are all below 400 lines, and the
 principal runtime test is exactly 500 lines. Eight manifest tests and docs
-governance pass. The strict campaign authority intentionally contains no
-dirty-tree evidence; a follow-up evidence commit must bind this identical
-implementation tree to its immutable SHA through the existing `commit_sha`
-contract. No durable benchmark artifact or performance-budget pass is claimed.
+governance pass. The strict campaign authority binds local evidence to exact
+implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c`
+through the existing `commit_sha` contract; no dirty-tree evidence type was
+added. Independent final review is READY. No hosted check, durable benchmark
+artifact, or performance-budget pass is claimed.
 
 The fresh `wasm-pack` release build succeeds but reports a packaging notice:
 the nested crate directory has no local license file although the repository
@@ -92,7 +93,7 @@ root tracks `LICENSE`. This work verifies the generated Node runtime and makes
 no npm-publication claim; the package metadata must be resolved before such a
 distribution.
 
-No push, PR, protected-CI, external review, or merge is claimed here. The
+No push, PR, protected-CI, protected GitHub review, or merge is claimed here. The
 runtime is deliberately restricted to one immutable planar profile, standard
 gravity, and the v1 model identities. Changing normals/material regions,
 terrain deformation, torsional damping, roll-to-skid, production calibration,

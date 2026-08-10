@@ -2,8 +2,9 @@
 
 ## 2026-08-10 ground-runtime integration context
 
-Local branch `feat/4275-ground-compiled-reference-runtime`, based on exact
-PR #4312 head `e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d`, adds a bounded
+Implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` on
+`feat/4275-ground-compiled-reference-runtime`, based on exact PR #4312 head
+`e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d`, adds a bounded
 `tools-core` executor for the existing canonical contact/bounce/skid/roll/rest
 contract through native, PyO3, and WASM entry points. It does not change any
 launch-monitor registry, analytics metric, identity rule, tab, or dataset
@@ -37,11 +38,11 @@ failures for every unsafe derived state/evidence value, coherent
 through native, PyO3, and WASM. Final local evidence is 180/195/192
 default/Python/WASM Rust tests, 219 Python ground tests, fresh CPython 3.13 and
 Node/WASM binding scripts, eight manifest tests, strict lint/format, and docs
-governance. The strict campaign manifest intentionally has no dirty-tree
-evidence entry; a follow-up commit must bind this identical implementation tree
-to its immutable SHA with the existing `commit_sha` contract. This is not a
-performance-budget pass, hosted check, protected merge, release, or launch-
-monitor surface change.
+governance. The strict campaign manifest binds this evidence to exact
+implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c`
+through its existing `commit_sha` field; no dirty-tree evidence type was added.
+Independent final review is READY. This is not a performance-budget pass,
+hosted check, protected merge, release, or launch-monitor surface change.
 
 ## Scope and repository state
 
