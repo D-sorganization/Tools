@@ -304,3 +304,17 @@ npm run type-check
 npm run lint
 npm run build
 ```
+
+## 2026-08-09 PR #4302 deterministic-digest scanner repair
+
+Protected CI correctly remained blocking at head
+`920c46dee688815691e251777142126bf1489b1a`, but `detect-secrets` classified
+the SHA-256 assertion for the committed cross-runtime impact golden fixture as
+a high-entropy credential. The value is deterministic public test evidence,
+not a secret. Its exact assertion now carries the repository-standard inline
+`pragma: allowlist secret`; scanner scope and the shared baseline are unchanged.
+
+Commit this narrow repair with all three canonical handoffs and push normally
+to `feat/4270-ground-impact-bounce`. Do not retry the unchanged failed run,
+amend history, or force-push. Descendant PRs #4304 and #4305 inherit this file
+and must later receive the parent by ordinary merge commits.

@@ -803,3 +803,16 @@ the changed flight-ground scope is clean. New code respects the source and
 function budgets. Existing oversized append-only registries and preserved
 multi-parameter public compatibility signatures are baseline constraints, not
 new structures introduced by this issue.
+
+## 2026-08-09 PR #4302 deterministic-digest scanner repair
+
+At exact head `920c46dee688815691e251777142126bf1489b1a`, protected
+`detect-secrets` flagged the public SHA-256 golden-fixture assertion in
+`ground/tests/test_impact_impulse.py`. The exact constant now uses the narrow
+inline `pragma: allowlist secret` convention. No baseline, scanner scope,
+physics, fixture bytes, or expected value changed.
+
+Publish this as a normal follow-up commit on
+`feat/4270-ground-impact-bounce`, with the three handoffs in the same commit.
+Keep #4270 and #4267 open; do not bypass protected CI or propagate into child
+branches until the parent push is verified.
