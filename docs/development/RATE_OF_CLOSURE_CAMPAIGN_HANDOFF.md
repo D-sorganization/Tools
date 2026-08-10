@@ -1436,3 +1436,12 @@ UI, compiled runtimes, or downstream parity and cannot close #4273 or #4267.
 Require focused/shared scalar tests, the full ground suite, static and campaign
 gates, independent review, and normal protected review before integration.
 Publish only as a draft child of `feat/4273-ground-study-result-adapter`.
+
+Independent re-review found all semantic and static blockers resolved at exact
+implementation commit `b71bf88b6ed888248ad152f69a2bd2de3892e256` after 198
+ground and 19 adapter/shared-scalar tests plus Ruff, Black, MyPy, manifest,
+documentation, assertion, file-size, structural, and diff gates. Draft PR
+#4308 publishes that implementation against unchanged parent branch
+`feat/4273-ground-study-result-adapter` at
+`de6ea15290f6b3c5c49bd436b846baa8f6cb752b`. Protected CI/review and all
+remaining #4273/#4267 scope are still open.

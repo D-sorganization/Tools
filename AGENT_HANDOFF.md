@@ -614,3 +614,11 @@ parity, or protected-release completion. Before publication, run focused and
 shared scalar contracts, full ground tests, Ruff, MyPy, structural and manifest
 gates, and independent review. Publish only as a stacked draft PR targeting
 `feat/4273-ground-study-result-adapter`; keep #4273 and #4267 open.
+
+Independent re-review declares exact implementation commit
+`b71bf88b6ed888248ad152f69a2bd2de3892e256` READY after 198 ground and 19
+adapter/shared-scalar tests, Ruff, Black, MyPy, manifest, documentation,
+assertion, file-size, structural, and diff gates. Draft PR #4308 publishes that
+commit against unchanged parent `feat/4273-ground-study-result-adapter` at
+`de6ea15290f6b3c5c49bd436b846baa8f6cb752b`. Protected checks and review remain
+open; this local evidence does not close #4273 or #4267.

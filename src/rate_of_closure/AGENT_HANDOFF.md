@@ -1088,3 +1088,11 @@ UpstreamDrift consumer and is not issue/epic completion. Validate the focused
 adapter and scalar contracts, all ground tests, lint, type, structural,
 manifest, and independent-review gates before opening a draft child PR against
 `feat/4273-ground-study-result-adapter`. Keep #4273/#4267 open.
+
+Exact independently reviewed implementation evidence is commit
+`b71bf88b6ed888248ad152f69a2bd2de3892e256`: 198 ground and 19 focused
+adapter/shared-contract tests pass with Ruff, Black, MyPy, manifest,
+documentation, assertion, file-size, structural, and diff gates. Draft PR
+#4308 targets unchanged parent `feat/4273-ground-study-result-adapter` at
+`de6ea15290f6b3c5c49bd436b846baa8f6cb752b`. It has no protected release
+evidence yet, so #4273/#4267 stay open.

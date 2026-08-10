@@ -234,7 +234,17 @@
       "pr": 4307,
       "branch": "feat/4273-ground-study-result-adapter",
       "base_branch": "feat/4273-ground-study-projection",
-      "head_sha": "dac35e3fd61ee8af80dc8c2262da31ea274dbb1d",
+      "head_sha": "de6ea15290f6b3c5c49bd436b846baa8f6cb752b",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4308",
+      "pr": 4308,
+      "branch": "feat/4273-ground-study-scalar-adapter",
+      "base_branch": "feat/4273-ground-study-result-adapter",
+      "head_sha": "b71bf88b6ed888248ad152f69a2bd2de3892e256",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -441,6 +451,27 @@
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md",
         "docs/specs/GROUND_RESULT_STUDIES.md"
+      ]
+    },
+    {
+      "id": "ground-study-scalar-adapter-local-b71b",
+      "kind": "local",
+      "commit_sha": "b71bf88b6ed888248ad152f69a2bd2de3892e256",
+      "outcome": "passed",
+      "commands": [
+        "py -3.12 -m pytest -q src/shared/python/swing_sim/ground -o addopts=",
+        "py -3.12 -m pytest -q tests/rate_of_closure/test_ground_study_scalar_adapter.py tests/rate_of_closure/test_scalar_ensemble_contract.py -o addopts=",
+        "py -3.12 -m mypy src/rate_of_closure/variation/ground_study_scalar_adapter.py tests/rate_of_closure/test_ground_study_scalar_adapter.py --ignore-missing-imports",
+        "py -3.12 -m ruff check src/rate_of_closure/variation/ground_study_scalar_adapter.py tests/rate_of_closure/test_ground_study_scalar_adapter.py && py -3.12 -m black --check src/rate_of_closure/variation/ground_study_scalar_adapter.py tests/rate_of_closure/test_ground_study_scalar_adapter.py",
+        "py -3.12 scripts/rate_campaign_manifest.py && py -3.12 -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py -o addopts=",
+        "py -3.12 scripts/check_docs_governance.py"
+      ],
+      "summary": "The independently reviewed explicit-identity ground-study scalar adapter passed 198 ground and 19 adapter/shared-scalar tests, Ruff, Black, MyPy, manifest and documentation gates, and structural policy. It binds target-derived scalars to exact target geometry and a whole-study digest, rejects duplicate/non-iterable/overflow input, preserves numeric censored observations, and retains failed/unavailable rows with truthful null scalars and typed evidence.",
+      "source_paths": [
+        "src/rate_of_closure/variation/ground_study_scalar_adapter.py",
+        "tests/rate_of_closure/test_ground_study_scalar_adapter.py",
+        "docs/specs/GROUND_RESULT_STUDIES.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
       ]
     }
   ],
@@ -1231,7 +1262,8 @@
         "pr-4304",
         "pr-4305",
         "pr-4306",
-        "pr-4307"
+        "pr-4307",
+        "pr-4308"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "contract_only",
@@ -1245,9 +1277,10 @@
         "ground-profiles-local-3645",
         "ground-study-local-0de7",
         "ground-study-qualification-local-9405",
-        "ground-study-metric-adapter-local-6c29"
+        "ground-study-metric-adapter-local-6c29",
+        "ground-study-scalar-adapter-local-b71b"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, material-profile, study-projection, and qualified metric-adapter carriers are open. Issues #4270, #4271, #4272, and bounded #4273 slices are published on draft PRs 4302, 4304, 4305, 4306, and 4307 with exact local evidence but no completed protected evidence. Production-qualified presets and measured-source qualification, changing normals, regional surfaces, ensemble/optimizer integration, UI, compiled-runtime, and downstream parity evidence remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, material-profile, study-projection, qualified metric-adapter, and scalar-ensemble adapter carriers are open. Issues #4270, #4271, #4272, and bounded #4273 slices are published on draft PRs 4302, 4304, 4305, 4306, 4307, and 4308 with exact local evidence but no completed protected evidence. Production-qualified presets and measured-source qualification, changing normals, regional surfaces, ensemble execution and rendering, optimizer integration, UI, compiled-runtime, and downstream parity evidence remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
@@ -1255,6 +1288,7 @@
         "The #4271 slice qualifies one immutable planar profile and optional finite tangent-axis edge; material regions, changing normals, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI, compiled runtimes, and downstream adapters remain unimplemented.",
         "The #4272 contract slice defines no production material preset or calibration claim and its one-way Upstream snapshot adapter is a local tangent-plane projection, not regional-terrain parity.",
         "The #4273 foundation projects one result into typed target and solver evidence; it does not yet integrate ensemble variation, wind, optimizers, user interfaces, compiled runtimes, or UpstreamDrift consumers.",
+        "The #4273 scalar adapter exposes bounded explicit-identity rows but does not execute ensembles, reinterpret final-rest target miss as a flight target residual, or provide rendered dispersion controls.",
         "The existing GroundModelResult DTO is provenance-lossy; qualified-study consumers must retain the study record alongside it.",
         "ground-result/v1 carries no producing-request fingerprint, so #4273 records an exact caller-request context digest and exact source-result digest but does not claim they are an attested pair; exact attribution requires a result-side fingerprint.",
         "Solver admission preserves declared result calibration and provenance and rejects estimated, unvalidated, or zero-confidence calibration; provenance is auditable context rather than producer certification."
