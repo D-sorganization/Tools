@@ -688,3 +688,10 @@ structural budgets, both import orders, fixture bytes, and diff checks pass.
 Repository-wide Black still reports only the two unchanged inherited files
 `ground/study_wire.py` and `ground/tests/test_profile_contract.py`; do not
 misstate that baseline as a failure of this slice.
+
+Draft PR #4309 publishes exact reviewed implementation commit
+`c93c6f36d361f4c129d702565a9330149e175557` against unchanged parent branch
+`feat/4273-ground-study-scalar-adapter` at
+`c8ebf422669992c4a33db661b0c37dfe72b580ae`. The campaign manifest records the
+carrier and immutable local evidence. Protected CI and repository review remain
+open, so #4273, #4275, and #4267 stay open.

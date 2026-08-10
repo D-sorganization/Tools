@@ -1158,3 +1158,10 @@ changed-file Black, pinned MyPy 1.13, campaign/docs/assertion/structural/diff
 gates, both import orders, and exact fixture bytes. The only repository-wide
 Black findings are unchanged inherited `ground/study_wire.py` and
 `ground/tests/test_profile_contract.py`; this slice is Black-clean.
+
+Draft PR #4309 carries exact implementation commit
+`c93c6f36d361f4c129d702565a9330149e175557` as a child of unchanged PR #4308
+branch `feat/4273-ground-study-scalar-adapter` at
+`c8ebf422669992c4a33db661b0c37dfe72b580ae`. The manifest now records this
+carrier and local evidence; no protected check or review is yet claimed. Keep
+#4273/#4275/#4267 open.

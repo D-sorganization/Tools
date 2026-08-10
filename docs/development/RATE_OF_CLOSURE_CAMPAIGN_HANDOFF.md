@@ -1517,3 +1517,10 @@ import orders, and the pinned fixture bytes. Repository-wide Black separately
 reports only unchanged inherited `ground/study_wire.py` and
 `ground/tests/test_profile_contract.py`; no unrelated formatting expansion is
 part of this carrier.
+
+Draft PR #4309 publishes exact independently reviewed implementation head
+`c93c6f36d361f4c129d702565a9330149e175557`, targeting unchanged parent
+`feat/4273-ground-study-scalar-adapter` at
+`c8ebf422669992c4a33db661b0c37dfe72b580ae`. This publication-only continuation
+adds the carrier and immutable local evidence to the campaign manifest. It does
+not claim protected CI, review, merge, issue closure, or epic completion.
