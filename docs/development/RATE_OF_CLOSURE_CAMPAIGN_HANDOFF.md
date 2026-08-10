@@ -4,6 +4,47 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 issue #4270 local ground-impact/bounce slice
+
+The isolated worktree
+`C:\Users\diete\Repositories\Tools-worktrees\ground-impact-bounce` carries
+`feat/4270-ground-impact-bounce` from exact published #4288 head
+`4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d`; its intended base is
+`feat/4269-flight-ground-transfer`. This is local implementation evidence only:
+no GitHub write, push, carrier, protected check, review, or release claim exists.
+
+The strict ground facade now includes the Python reference impulse/bounce
+prefix specified by `docs/specs/GROUND_IMPACT_BOUNCE.md`. It resolves passive
+normal restitution plus static/kinetic Coulomb impulse with arbitrary unit
+normals, moving tangential surfaces, sphere inertia, and full angular coupling.
+The repeat-hop state machine interpolates exact physical contact, uses pinned
+standard gravity and analytic recontact roots, retains absolute public times,
+interprets `max_time_s` from first contact, counts first contact against
+`max_events`, checks cancellation at event boundaries, and never duplicates an
+event/sample time.
+
+Capture uses effective restitution zero and emits one exact-contact terminal
+`SKID` point plus handoff state. Each completed or time-limited airborne segment
+records exact endpoints and x-z arc length; `bounce_air_distance_m` sums that
+evidence for #4271. A SHA-locked shared golden fixture and analytic, passivity,
+property, bracket/output-convergence, ordering, cancellation, and failure tests
+qualify the local slice.
+
+Final local validation is `82 passed` for the complete ground package on both
+CPython 3.11.9 and real CPython 3.10.20. Pinned mypy 1.13 reports no issues
+across all 17 ground production modules. Pinned Ruff 0.14.10 check and format
+pass the changed Python set. The campaign manifest validates, its eight
+contract tests pass, documentation governance and focused changed-test
+assertion gates pass, and all changed production modules/functions/signatures
+remain within 400-line/50-line/four-parameter budgets.
+
+The scope remains partial and `not_released`. Issue #4271 owns skid, roll,
+rest, total distance, and final `GroundSimulationResult`. The #4270 law does
+not consume firmness, grass, compressibility, moisture, or rolling resistance;
+terrain deformation, UI, TypeScript physics, Rust/PyO3/WASM, and UpstreamDrift
+adapters remain excluded. A normal published child carrier, protected CI,
+independent review, and downstream integration are still required.
+
 ## 2026-08-09 PR #4288 corrected-ground-parent propagation
 
 Draft #4288 remains on `feat/4269-flight-ground-transfer` with unchanged base

@@ -4,10 +4,14 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Any, TypeAlias
+from typing import TYPE_CHECKING, Any, TypeAlias
 
-from shared.python.compatibility import StrEnum
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_float
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 REQUEST_SCHEMA_VERSION = "flight-to-ground-request/v1"
 RESULT_SCHEMA_VERSION = "flight-to-ground-result/v1"

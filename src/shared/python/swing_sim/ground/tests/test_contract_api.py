@@ -20,6 +20,10 @@ EXPECTED_API = {
     "UNIT_SYSTEM_SI",
     "JSON_SCHEMA_DIALECT",
     "CalibrationKind",
+    "BounceModelSettings",
+    "BounceAirSegment",
+    "BounceTermination",
+    "BounceTerminationReason",
     "GroundCalibration",
     "GroundContactState",
     "GroundEvent",
@@ -40,6 +44,14 @@ EXPECTED_API = {
     "GroundUnavailableReason",
     "GroundWarning",
     "GroundWarningSeverity",
+    "ImpactEnergyLedger",
+    "ImpactImpulseResult",
+    "ImpactRegime",
+    "ImpactRejectionReason",
+    "ImpactStateError",
+    "SphereProperties",
+    "RepeatedBounceResult",
+    "interpolate_first_contact",
     "request_from_json",
     "request_json_schema",
     "result_from_json",
@@ -48,6 +60,8 @@ EXPECTED_API = {
     "migrate_request_to_current",
     "migrate_result_to_current",
     "to_ground_model_result",
+    "resolve_sphere_plane_impact",
+    "simulate_repeated_bounce",
 }
 
 
@@ -56,15 +70,26 @@ def test_public_api_is_explicit_and_package_is_self_facaded() -> None:
 
 
 def test_ground_package_does_not_import_python_311_only_strenum() -> None:
-    """Keep the shared contract importable in the repository's 3.10 CI lane."""
+    """Keep native StrEnum imports outside the Python 3.10 runtime path."""
     package_dir = Path(ground.__file__).parent
     offenders: list[str] = []
     for module_path in package_dir.glob("*.py"):
         syntax_tree = ast.parse(module_path.read_text(encoding="utf-8"))
+        type_checking_nodes = {
+            child
+            for node in ast.walk(syntax_tree)
+            if isinstance(node, ast.If)
+            and isinstance(node.test, ast.Name)
+            and node.test.id == "TYPE_CHECKING"
+            for branch in node.body
+            for child in ast.walk(branch)
+        }
         for node in ast.walk(syntax_tree):
             if not isinstance(node, ast.ImportFrom) or node.module != "enum":
                 continue
-            if any(alias.name == "StrEnum" for alias in node.names):
+            if node not in type_checking_nodes and any(
+                alias.name == "StrEnum" for alias in node.names
+            ):
                 offenders.append(module_path.name)
     assert offenders == []
 

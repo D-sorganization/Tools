@@ -154,7 +154,7 @@
       "pr": 4285,
       "branch": "feat/4268-ground-contract",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "3235af71150a774954e7673fc81d7179330fbe76",
+      "head_sha": "6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -164,7 +164,7 @@
       "pr": 4288,
       "branch": "feat/4269-flight-ground-transfer",
       "base_branch": "feat/4268-ground-contract",
-      "head_sha": "d2d3d0f53a78aa863574afe43290a29c48318d94",
+      "head_sha": "4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -1028,6 +1028,10 @@
         {
           "kind": "repository_path",
           "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_IMPACT_BOUNCE.md"
         }
       ],
       "tracked_issue_ids": [
@@ -1052,10 +1056,11 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [],
-      "evidence_gap": "The contract and flight-transfer carriers are open; qualified bounce, skid, roll, total-distance, UI, and parity evidence do not exist.",
+      "evidence_gap": "The contract and flight-transfer carriers are open. Issue #4270 now has a locally tested Python impact/bounce prefix, but it has no published carrier or protected evidence; skid, roll, final-result, total-distance, UI, compiled-runtime, and downstream parity work remains.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
-        "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority."
+        "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
+        "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields and does not construct the #4271-owned final ground result."
       ],
       "depends_on_issues": [
         4191

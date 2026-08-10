@@ -3,6 +3,38 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
+## 2026-08-09 Ground impact and repeated-bounce local slice
+
+Issue #4270 is implemented locally on `feat/4270-ground-impact-bounce` in
+`C:\Users\diete\Repositories\Tools-worktrees\ground-impact-bounce`, based on
+exact published #4288 head `4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d`.
+Its intended PR base remains `feat/4269-flight-ground-transfer`. This branch
+has not been pushed and no GitHub state was changed.
+
+The self-facaded ground package now exposes a typed passive restitution plus
+Coulomb sphere-plane impulse, full angular coupling, moving-boundary energy
+ledger, exact bracket contact, and deterministic repeated ballistic hops.
+Absolute event/sample times are retained while `max_time_s` starts at first
+contact; `max_events` includes first contact. Capture emits one exact-contact
+`SKID` point and `handoff_state` without a duplicate timestamp. Typed airborne
+segments make `bounce_air_distance_m` reproducible as accumulated x-z arc
+length. Cancellation and time/event/no-recontact/numerical limits return only
+a validated prefix.
+
+`docs/specs/GROUND_IMPACT_BOUNCE.md` is the scientific authority and the shared
+golden fixture is locked by SHA-256. The campaign remains `not_released`.
+Issue #4271 still owns skid/roll/rest, total distance, and the final
+`GroundSimulationResult`; terrain deformation/material response, UI,
+TypeScript physics, Rust/PyO3/WASM, and downstream adapters remain excluded.
+Final local validation is `82 passed` for the complete ground package on both
+CPython 3.11.9 and real CPython 3.10.20. Pinned mypy 1.13 reports no issues
+across all 17 ground production modules. Pinned Ruff 0.14.10 check and format
+pass the changed Python set. The campaign manifest validates, its eight
+contract tests pass, documentation governance and focused changed-test
+assertion gates pass, and all changed production modules/functions/signatures
+remain within 400-line/50-line/four-parameter budgets. Protected CI, review,
+and a normal published carrier remain required.
+
 ## 2026-08-09 Flight-transfer corrected-parent propagation
 
 Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged

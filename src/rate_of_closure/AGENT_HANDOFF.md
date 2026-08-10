@@ -3,6 +3,34 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 Ground impact and repeated-bounce local slice
+
+Issue #4270 is locally implemented on `feat/4270-ground-impact-bounce` from
+exact #4288 head `4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d`, with intended base
+`feat/4269-flight-ground-transfer`. Nothing was pushed or written to GitHub.
+The reusable Python ground facade now provides a passive restitution/Coulomb
+impact with sphere inertia and full spin, exact first contact, deterministic
+repeated hops, bounded cancellation/failure semantics, and typed airborne
+segments. `max_time_s` is elapsed from interpolated first contact while public
+times remain absolute; first contact counts toward `max_events`.
+
+Capture-to-surface output is one exact-contact `SKID` point and handoff state,
+with no duplicate event/grid sample. Horizontal bounce-air distance is the sum
+of each segment's x-z displacement, exposed as prefix evidence for #4271.
+This is not a final ground-run result: #4271 retains skid/roll/rest, total
+distance, and `GroundSimulationResult`. Firmness, grass, compression, moisture,
+rolling resistance, UI, TS/Rust/PyO3/WASM kernels, and downstream consumers are
+explicit non-deliveries. The campaign manifest remains `not_released`; see
+`docs/specs/GROUND_IMPACT_BOUNCE.md` and the campaign handoff for qualification.
+
+Final local validation is `82 passed` for the complete ground package on both
+CPython 3.11.9 and real CPython 3.10.20. Pinned mypy 1.13 reports no issues
+across all 17 ground production modules. Pinned Ruff 0.14.10 check and format
+pass the changed Python set. The campaign manifest validates, its eight
+contract tests pass, documentation governance and focused changed-test
+assertion gates pass, and all changed production modules/functions/signatures
+remain within 400-line/50-line/four-parameter budgets.
+
 ## 2026-08-09 Flight-transfer corrected-parent propagation
 
 Draft PR #4288 keeps base `feat/4268-ground-contract` and normally
