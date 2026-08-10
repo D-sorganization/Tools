@@ -3,6 +3,9 @@
 from __future__ import annotations
 
 import importlib
+import runpy
+from pathlib import Path
+from unittest.mock import patch
 
 import pytest
 
@@ -34,6 +37,7 @@ class TestGuiRegistration:
         block = gui_info["pyqt6"]
         assert block["class"] == "RateOfClosureMainWindow"
         assert "PyQt6" in block["dependencies"]
+        assert "scipy" in block["dependencies"]
         assert block["settings_app"] == "RateOfClosure"
 
     def test_declared_module_imports_and_exposes_class(self, gui_info: dict) -> None:
@@ -44,3 +48,23 @@ class TestGuiRegistration:
 
     def test_web_port_is_declared(self, gui_info: dict) -> None:
         assert gui_info["web"]["port"] == 5193
+
+    def test_web_launcher_runs_as_a_file_path(self) -> None:
+        """The Tools launcher executes entry points by path, not as packages."""
+        from rate_of_closure.gui_registration import GUI_INFO
+
+        launch_module = (
+            Path(__file__).resolve().parents[2]
+            / "src"
+            / "rate_of_closure"
+            / "launch_web.py"
+        )
+        with (
+            patch("shared.python.gui_launcher.launch_web_from_gui_info", return_value=0)
+            as mock_launch,
+            patch("sys.exit") as mock_exit,
+        ):
+            runpy.run_path(str(launch_module), run_name="__main__")
+
+        mock_launch.assert_called_once_with(GUI_INFO, str(launch_module))
+        mock_exit.assert_called_once_with(0)

@@ -19,7 +19,7 @@ GUI_INFO = {
     "pyqt6": {
         "module": "rate_of_closure.ui.pyqt6.main_window",
         "class": "RateOfClosureMainWindow",
-        "dependencies": ["PyQt6", "matplotlib", "numpy"],
+        "dependencies": ["PyQt6", "matplotlib", "numpy", "scipy"],
         "settings_app": "RateOfClosure",
         "min_size": [1024, 700],
     },

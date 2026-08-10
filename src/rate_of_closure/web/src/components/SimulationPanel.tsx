@@ -146,16 +146,17 @@ export function SimulationPanel({
     ? `Impact physics uses ${clubSpec.name}: ${clubSpec.headMassKg.toFixed(3)} kg head mass, ${clubSpec.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${clubSpec.loftDeg.toFixed(1)}° nominal loft. COR uses the ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} driver default because the club library does not yet define measured COR.`
     : `No selected club specification was provided. Impact physics uses the default driver: ${DEFAULT_IMPACT_CLUB.headMassKg.toFixed(3)} kg head mass, ${DEFAULT_IMPACT_CLUB.moiAboutShaftKgM2.toExponential(2)} kg m² MOI, and ${DEFAULT_IMPACT_CLUB.coefficientOfRestitution.toFixed(2)} COR.`;
 
-  const doRun = () => {
+  const runWithInput = (simulationInput: SimulationInput) => {
     try {
-      const result = runSimulation(input);
+      const result = runSimulation(simulationInput);
       setRun(result);
-      setLastRunSignature(inputSignature);
+      setLastRunSignature(JSON.stringify(simulationInput));
       setRunError(null);
     } catch (error) {
       setRunError(error instanceof Error ? error.message : String(error));
     }
   };
+  const doRun = () => runWithInput(input);
   const runIsStale = run !== null && lastRunSignature !== inputSignature;
   const completedStatus = run?.impactOutcome.status === "miss"
     ? "Completed — no club–ball impact"
@@ -338,8 +339,9 @@ export function SimulationPanel({
             <button
               type="button"
               onClick={() => {
+                const automaticInput = { ...input, impactTimeS: null };
                 setTauMs(null);
-                doRun();
+                runWithInput(automaticInput);
               }}
               title="Reset the impact instant to the moment of maximum clubhead speed"
               className="rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-300 hover:border-slate-500"

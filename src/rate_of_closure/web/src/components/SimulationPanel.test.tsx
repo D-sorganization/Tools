@@ -124,6 +124,20 @@ describe("SimulationPanel impact club", () => {
     expect(screen.getByText("Inputs changed — run required")).toBeInTheDocument();
   });
 
+  it("reruns atomically with automatic impact time", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    const impactTime = screen.getByRole("slider", { name: "Impact Time" });
+
+    fireEvent.change(impactTime, { target: { value: "800" } });
+    fireEvent.mouseUp(impactTime);
+    expect(screen.queryByText("Inputs changed — run required")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Auto τ" }));
+
+    expect(screen.queryByText("Inputs changed — run required")).not.toBeInTheDocument();
+    expect(screen.getByText("auto")).toBeInTheDocument();
+  });
+
   it("resets prescribed torque atomically when leaving double pendulum", () => {
     renderPanel(getClub("Driver 10.5°"));
     fireEvent.change(screen.getByLabelText("Swing Source"), {

@@ -26,15 +26,25 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.3                                     |
-| **Spec Version**        | 1.13.3                                     |
-| **Last Spec Update**    | 2026-08-05                                 |
+| **Current Version**     | 1.13.4                                     |
+| **Spec Version**        | 1.13.4                                     |
+| **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-10 Rate of Closure root-launch reliability
+
+- The React launcher remains executable both as a module and through the
+  Tools file-path launcher contract. The PyQt registration declares SciPy,
+  which the eagerly imported simulation stack requires.
+- React automatic impact-time selection now runs atomically with a null impact
+  time instead of reusing the prior fixed-time input through a stale render
+  closure. Regression tests cover both launcher modes, dependency discovery,
+  and the fixed-to-automatic transition.
+
 ### 2026-08-05 Rate of Closure Python 3.10 CI compatibility
 
 - Rate of Closure and shared swing simulation string enums use Python 3.10-safe
