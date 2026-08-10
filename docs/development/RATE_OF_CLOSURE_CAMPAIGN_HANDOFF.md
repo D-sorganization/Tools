@@ -1323,3 +1323,29 @@ existing local SciPy/NumPy compatibility warning also remains environmental.
 All new source files are below 400 lines. The oversized append-only SPEC and
 handoff registries plus the preserved Waterloo and `from_imperial` public
 signatures predate #4269 and are explicitly retained for compatibility.
+
+## 2026-08-09 Issue #4273 qualified study foundation
+
+The next local child branch, `feat/4273-ground-study-projection`, starts from
+the exact PR #4305 head `055c6fdaf4ac77a8e4a4647d00f35cd6d20d9240`.
+It adds the strict `ground-study-projection/v1` boundary described in
+`docs/specs/GROUND_RESULT_STUDIES.md`: exact summary preservation; request,
+surface, model, and canonical source-result identity; complete ball/surface and
+evidence-bearing profile bindings; typed warnings; observed endpoint geometry;
+intrinsic arbitrary-plane landing-target misses; fail-closed objective
+eligibility; and deterministic canonical persistence. The wire parser
+re-derives summary/endpoints, sphere/plane contact, target miss, and
+profile/surface coherence rather than trusting stored assertions. Valid partial
+airborne endpoints remain censored with typed target unavailability and no
+invented surface projection.
+The request digest is caller-context evidence rather than an attested source
+binding because `ground-result/v1` carries no producing-request fingerprint.
+Only the available ID, surface/frame, calibration, and provenance compatibility
+checks are claimed; exact request/result attribution remains a follow-up.
+
+This is a bounded foundation for issue #4273, not completion of the issue or
+ground epic. No ensemble/variation/wind/optimizer/UI/compiled/Upstream consumer
+is claimed. Keep both #4273 and #4267 open until those later adapters and
+protected release evidence exist. The branch must remain a normal fast-forward
+child of #4305 and may be published only after its complete local gates and
+independent review are recorded.

@@ -1127,6 +1127,10 @@
         {
           "kind": "repository_path",
           "value": "docs/specs/GROUND_MATERIAL_PROFILES.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_RESULT_STUDIES.md"
         }
       ],
       "tracked_issue_ids": [
@@ -1158,13 +1162,15 @@
         "ground-skid-roll-local-f475",
         "ground-profiles-local-3645"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, and material-profile carriers are open. Issues #4270, #4271, and #4272 are published on draft PRs 4302, 4304, and 4305 with exact local evidence but no protected evidence. Production-qualified presets and measured-source qualification, changing normals, regional surfaces, UI, compiled-runtime, and downstream parity evidence remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, and material-profile carriers are open. Issues #4270, #4271, and #4272 are published on draft PRs 4302, 4304, and 4305 with exact local evidence but no protected evidence. Issue #4273 has a local typed study-projection foundation but no carrier or protected evidence. Production-qualified presets and measured-source qualification, changing normals, regional surfaces, ensemble/optimizer integration, UI, compiled-runtime, and downstream parity evidence remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
         "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
         "The #4271 slice qualifies one immutable planar profile and optional finite tangent-axis edge; material regions, changing normals, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI, compiled runtimes, and downstream adapters remain unimplemented.",
-        "The #4272 contract slice defines no production material preset or calibration claim and its one-way Upstream snapshot adapter is a local tangent-plane projection, not regional-terrain parity."
+        "The #4272 contract slice defines no production material preset or calibration claim and its one-way Upstream snapshot adapter is a local tangent-plane projection, not regional-terrain parity.",
+        "The #4273 foundation projects one result into typed target and solver evidence; it does not yet integrate ensemble variation, wind, optimizers, user interfaces, compiled runtimes, or UpstreamDrift consumers.",
+        "ground-result/v1 carries no producing-request fingerprint, so #4273 records an exact caller-request context digest and exact source-result digest but does not claim they are an attested pair; exact attribution requires a result-side fingerprint."
       ],
       "depends_on_issues": [
         4191

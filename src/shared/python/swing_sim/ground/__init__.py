@@ -108,6 +108,19 @@ from .profile_wire import (
 from .result_adapter import to_ground_model_result
 from .result_types import GroundSummary, GroundTermination, GroundWarning
 from .skid_roll_simulation import SkidRollExecution, simulate_skid_roll
+from .study_projection import project_ground_study
+from .study_record import GroundStudyProjection
+from .study_types import (
+    GROUND_STUDY_SCHEMA_VERSION,
+    GroundEndpointKind,
+    GroundSolverEligibility,
+    GroundSolverEligibilityReason,
+    GroundStudyMetrics,
+    GroundStudyProfile,
+    GroundStudyStatus,
+    GroundTargetEvaluation,
+    GroundTargetUnavailableReason,
+)
 from .surface_motion_types import (
     GROUND_SKID_ROLL_MODEL_ID,
     GROUND_SKID_ROLL_MODEL_VERSION,
@@ -150,6 +163,7 @@ __all__ = [
     "DEFAULT_PROFILE_LIBRARY_MAX_BYTES",
     "GROUND_MATERIAL_PROFILE_SCHEMA_VERSION",
     "GROUND_PROFILE_LIBRARY_SCHEMA_VERSION",
+    "GROUND_STUDY_SCHEMA_VERSION",
     "PROFILE_UNQUALIFIED_WARNING",
     "PROFILE_ILLUSTRATIVE_WARNING",
     "UPSTREAM_TERRAIN_ADAPTER_VERSION",
@@ -168,6 +182,7 @@ __all__ = [
     "GroundContactState",
     "GroundEvent",
     "GroundEventType",
+    "GroundEndpointKind",
     "GroundFrame",
     "GroundEvidenceKind",
     "GroundMaterialParameter",
@@ -188,10 +203,18 @@ __all__ = [
     "GroundResultStatus",
     "GroundSimulationRequest",
     "GroundSimulationResult",
+    "GroundSolverEligibility",
+    "GroundSolverEligibilityReason",
+    "GroundStudyMetrics",
+    "GroundStudyProfile",
+    "GroundStudyProjection",
+    "GroundStudyStatus",
     "GroundSummary",
     "GroundSurfaceProfile",
     "GroundTermination",
     "GroundTerminationReason",
+    "GroundTargetEvaluation",
+    "GroundTargetUnavailableReason",
     "GroundTrajectoryPoint",
     "GroundUnavailableField",
     "GroundUnavailableFieldId",
@@ -246,6 +269,7 @@ __all__ = [
     "profile_from_json",
     "profile_json_schema",
     "profile_schema_json",
+    "project_ground_study",
     "request_from_json",
     "request_json_schema",
     "result_from_json",

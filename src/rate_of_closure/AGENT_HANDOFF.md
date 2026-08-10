@@ -990,3 +990,26 @@ the changed flight-ground scope is clean. New code respects the source and
 function budgets. Existing oversized append-only registries and preserved
 multi-parameter public compatibility signatures are baseline constraints, not
 new structures introduced by this issue.
+
+## 2026-08-09 Ground-study projection continuation
+
+The local `feat/4273-ground-study-projection` branch is the exact child of PR
+#4305 head `055c6fdaf4ac77a8e4a4647d00f35cd6d20d9240`. It introduces a strict
+`ground-study-projection/v1` record for qualified ground summaries, first and
+final observed endpoints, arbitrary-plane spatial-target miss geometry, exact
+source-result identity, complete surface/ball geometry, full material-profile
+binding, typed result/profile warnings, objective eligibility, and unavailable
+provenance. The parser re-derives rather than trusts geometric, summary, and
+profile assertions. It never reconstructs total as carry plus roll or infers
+rest/landing from a censored run; an airborne partial endpoint carries typed
+target unavailability.
+The request digest is exact caller context, not an attested producer binding:
+`ground-result/v1` does not yet carry a request fingerprint. The adapter checks
+shared IDs, surface/frame, calibration, and provenance and fails closed on
+those available incompatibilities.
+
+Keep issue #4273 and epic #4267 open. Variation/dispersion, wind, optimizer,
+UI, compiled-runtime, and UpstreamDrift consumers are not implemented by this
+slice. Before publication, run the full ground suite and repository structural
+and campaign-manifest gates, then open only a stacked draft PR against
+`feat/4272-ground-material-profiles` with the guarded GitHub App identity.

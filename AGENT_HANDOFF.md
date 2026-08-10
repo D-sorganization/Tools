@@ -501,3 +501,28 @@ npm run type-check
 npm run lint
 npm run build
 ```
+
+## 2026-08-09 Ground-study projection continuation
+
+Issue #4273 now has a narrow local foundation on
+`feat/4273-ground-study-projection`, based exactly on PR #4305 head
+`055c6fdaf4ac77a8e4a4647d00f35cd6d20d9240`. The new
+`ground-study-projection/v1` contract preserves the canonical result summary,
+observed endpoints, caller-request context digest, surface/model/profile identity, warnings,
+and typed unavailable evidence. The self-contained record embeds the exact
+source-result digest, complete solver surface, ball radius, full material
+profile/condition binding, typed result warnings, and separate profile warning
+codes. Construction and parsing re-derive summary/endpoints, sphere/plane
+contact, intrinsic target miss, and profile/surface coherence. Only complete
+rest results with a qualified calibrated bound profile enter objectives. A
+valid partial airborne endpoint remains censored and carries typed
+`endpoint_airborne` target unavailability without an inferred landing.
+`ground-result/v1` does not carry its producing request fingerprint, so the
+request and result digests are not an attested pair; only shared identity,
+surface/frame, calibration, and provenance compatibility are checked.
+
+This is a local implementation checkpoint, not issue completion or release
+evidence. Ensemble, variation, wind, optimizer, PyQt6/React, compiled-runtime,
+and UpstreamDrift adapters remain open. Publish only as the next stacked draft
+PR targeting `feat/4272-ground-material-profiles`, after full ground tests,
+structural budgets, manifest validation, and an independent review pass.

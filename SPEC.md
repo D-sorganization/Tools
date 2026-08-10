@@ -178,6 +178,29 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   velocity, transform, adapter version, interpretation, and individual plus
   combined identities with a complete loss/disposition report; Tools does not
   import UpstreamDrift classes.
+
+### 2026-08-09 Qualified ground-result study projection
+
+- `ground-study-projection/v1` preserves the exact ground summary, observed
+  endpoints, caller-request context digest and source-result digest, complete solver surface and
+  ball geometry, model identity, evidence-bearing profile binding, typed result
+  and profile warnings, and unavailable evidence for downstream adapters.
+- Arbitrary-plane target evaluation uses the ball/surface contact point and an
+  intrinsic surface basis. Landing targets require matching ground identity,
+  an on-plane centre, and a surface-circle or surface-corridor tolerance.
+- Only complete rest results backed by a qualified calibrated profile are
+  solver eligible. Partial, failed, unavailable, unqualified, illustrative, or
+  unbound results fail closed without fabricating final-rest metrics. A partial
+  airborne endpoint retains its observation and a typed unavailable target
+  miss rather than being projected onto the surface.
+- The strict canonical JSON boundary re-derives summary/endpoint, sphere/plane,
+  intrinsic target-miss, and profile/surface coherence, rejecting detached or
+  forged assertions before returning the immutable study. Full semantics and
+  limitations are in
+  `docs/specs/GROUND_RESULT_STUDIES.md`.
+- `ground-result/v1` does not carry the producing request fingerprint. The
+  study projection checks compatible IDs, surface/frame, calibration, and
+  provenance, but its two digests are not an attested request/result pair.
 - Production presets/calibration claims, profile UI, regional/changing-normal
   terrain, compiled runtimes, and four-surface consumer parity remain open.
   `docs/specs/GROUND_MATERIAL_PROFILES.md` is the bounded scientific authority.

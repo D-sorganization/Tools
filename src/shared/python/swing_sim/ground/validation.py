@@ -43,8 +43,15 @@ def validate_status_termination(
     termination: GroundTermination,
 ) -> None:
     """Require one valid status and termination-reason pairing."""
-    if termination.reason not in _STATUS_TERMINATIONS[status]:
-        reason = termination.reason
+    validate_status_reason(status, termination.reason)
+
+
+def validate_status_reason(
+    status: GroundResultStatus,
+    reason: GroundTerminationReason,
+) -> None:
+    """Require a canonical result-status and termination-reason pairing."""
+    if reason not in _STATUS_TERMINATIONS[status]:
         raise ValueError(
             f"result status {status} is incompatible with {reason} termination"
         )
@@ -99,6 +106,7 @@ def validate_terminal_state(
 
 __all__ = [
     "close",
+    "validate_status_reason",
     "validate_status_termination",
     "validate_terminal_state",
     "vector_close",
