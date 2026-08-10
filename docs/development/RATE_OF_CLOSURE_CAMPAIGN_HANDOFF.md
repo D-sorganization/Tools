@@ -4,6 +4,60 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 PR #4285 workspace timestamp propagation
+
+Draft PR #4285 remains on `feat/4268-ground-contract` with unchanged base
+`feat/4197-capability-observer`. Exact corrected #4282 carrier
+`5f77af4add23547a21cc3fabce98ae9ad4260427` is incorporated through the normal
+merge containing this handoff. The strict ground-contract child retains its
+schemas, canonical fixture, migrations, legacy-result adapter, declared
+dependency, and pinned typing repairs while inheriting the deterministic Python
+3.10-3.12 UTC parser and the corrected variation, scalar, wind, capability, and
+campaign-release ancestry. No branch was rebased, retargeted, rewritten, or
+force-pushed.
+
+The preceding exact-head Python 3.12 job then exposed an import-order defect,
+not a physics failure: embedded `src.shared.python.swing_sim` test packages and
+canonical `shared.python.swing_sim` imports could become distinct module trees,
+so ground and impact contract collection failed. The shared alias registry now
+coalesces `swing_sim`; a subprocess identity regression was RED before the fix
+and passes with both affected public-API suites afterward. The contemporaneous
+file-size run was cancelled during checkout before its budget step, so no size
+violation was reported.
+
+Merged-tree evidence is `915` Rate/ground/impact Python tests, the full
+`12`-test shared-alias architecture suite, `28` focused tests on CPython 3.12,
+`28` direct compatibility tests on real CPython 3.10.20, and `104` React files /
+`642` tests. The 188-module Vite build, TypeScript, zero-warning ESLint, Ruff,
+format, pinned mypy 1.13, campaign-manifest validator plus eight contracts,
+documentation governance, the 44-file 500-LOC budget, marker scan, and diff
+checks are clean. Hosted CI and review still apply only to the new exact head.
+
+This is ancestry reconciliation, not new landing physics. Qualified bounce,
+skid, roll, terrain profiles, total distance, UI execution, Rust/WASM parity,
+protected CI, review, and release remain open. PR #4288 must normally merge the
+resulting exact #4285 head before its transfer behavior is evaluated as a
+descendant of the corrected carrier.
+
+## 2026-08-10 PR #4282 workspace timestamp propagation
+
+Exact corrected #4281 parent
+`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated into
+`feat/4199-wind-workflow` by the normal merge containing this handoff. PR #4282
+keeps base `feat/4199-wind-scalar-adapter`; neither branch was rebased,
+retargeted, rewritten, or force-pushed. The consolidated wind/capability
+workflow inherits the deterministic Python 3.10-3.12 UTC parser, variation
+export, and scalar-ensemble history without changing its own behavior.
+
+The monotonic SPEC assigns 1.14.10 to compatibility, 1.14.11 to variation,
+1.14.12 to the scalar adapter, and 1.14.13 to this workflow carrier. The
+reconciled tree passes `924` combined Python tests, `28` direct compatibility
+tests on real CPython 3.10.20, and `104` React files / `642` tests. The Vite
+production build, TypeScript, zero-warning ESLint, Ruff, format, pinned mypy
+1.13, campaign-manifest validator and its eight contracts, documentation
+governance, source-size, conflict-marker, and diff gates are clean. Protected
+CI, review, and downstream propagation remain open.
+
 ## 2026-08-09 PR #4285 corrected-carrier reconciliation
 
 Draft #4285 remains on `feat/4268-ground-contract` with unchanged base
@@ -21,6 +75,39 @@ CI, review, and release remain open. PR #4288 must normally merge the resulting
 exact #4285 head and rerun its transfer and combined compatibility gates. That
 next propagation is where the descendant acquires the observer-to-wind
 reconciliation; neither PR base should change.
+
+## 2026-08-10 PR #4281 workspace timestamp propagation
+
+Exact parent `f90836e342efc8be624739802375af2876d11e5f` is incorporated into
+`feat/4199-wind-scalar-adapter` through the normal merge containing this
+handoff. PR #4281 keeps base `feat/4144-variation-export-continuation`; no
+branch was rebased, retargeted, rewritten, or force-pushed. The child retains
+its scalar ensemble and wind adapter while inheriting the deterministic UTC
+parser and complete variation parent.
+
+The monotonic SPEC now assigns 1.14.10 to compatibility, 1.14.11 to variation,
+and 1.14.12 to the wind child. The reconciled tree passes `794` Rate tests,
+`27` direct compatibility tests on real CPython 3.10.20, and `2 files / 10`
+focused React tests, plus TypeScript, focused zero-warning ESLint, Ruff,
+format, pinned mypy 1.13, documentation, size, and diff gates. Protected CI,
+review, and later propagation remain open.
+
+## 2026-08-09 PR #4281 scalar-ensemble parent propagation
+
+Draft #4281 remains based on `feat/4144-variation-export-continuation` and now
+includes exact corrected #4280 parent
+`38ed58cab96842a3007e76a855db83ee2452b8fd` through the normal merge containing
+this handoff. No branch was rebased, retargeted, force-pushed, or published.
+The child retains its matching Python/TypeScript `scalar-ensemble/v1` contract
+and wind-strategy adapter while inheriting the full variation-export and
+Python 3.10 compatibility history. SPEC 1.14.12 records this child source delta
+independently and monotonically above parent 1.14.11.
+
+SPEC 1.14.13 records the current #4282 propagation monotonically above the
+corrected parent's 1.14.12, 1.14.11, and 1.14.10 entries. Protected CI, review,
+publication, installed-package evidence, downstream UpstreamDrift parity, and
+the remaining scientific/accessibility/performance release gates remain
+separate. This local merge is not a protected release.
 
 Focused evidence is 89 ground-contract, compatibility, scalar-adapter, and
 responsive-wind tests on Python 3.11 plus the same 89 on real CPython 3.10.20.
@@ -63,6 +150,131 @@ mypy, documentation governance, and diff checks pass. The separate Rust
 `-lpython3.11` linker failure is infrastructure. No GitHub write was made; PR
 #4288 must receive this parent ancestry through a normal merge before further
 flight-transfer publication.
+
+## 2026-08-10 PR #4280 workspace timestamp propagation
+
+Exact parent `05383d333b6fd87eaf5e37305476f50b505c2c2e` is incorporated into
+`feat/4144-variation-export-continuation` through the normal merge containing
+this handoff. PR #4280 keeps base `feat/4218-toolstrip-workspace`; neither
+branch was rebased, retargeted, force-pushed, or rewritten. The reconciled tree
+retains all variation export/accessibility behavior and adds the strict
+cross-version workspace timestamp parser.
+
+SPEC 1.14.10 remains the parent compatibility entry and SPEC 1.14.11 becomes
+the child variation entry. The reconciled tree passes `778` Rate tests, `27`
+real-Python-3.10.20 compatibility tests, `1 file / 8` focused React tests,
+TypeScript, focused zero-warning ESLint, Ruff, format, and pinned mypy 1.13.
+Documentation, size, and diff gates must remain clean in the merge commit.
+Protected CI, review, and later propagation remain open.
+
+## 2026-08-09 PR #4280 variation-export propagation
+
+Draft #4280 remains based on `feat/4218-toolstrip-workspace` and includes exact
+corrected parent `3f67ed466fefc8991db9c4409f921f25e1c37142` through a normal
+merge. The child retains complete selected-scatter-axis CSV export parity,
+typed unavailable rows, PyQt accessible raw tables, and the focused
+table/scatter/matrix split.
+
+## 2026-08-10 PR #4279 fractional timestamp compatibility
+
+Descendant PR #4281's exact-head Python 3.10 lane failed the workspace instant
+ordering regression because that interpreter rejects one-, two-, four-, and
+five-digit fractional seconds before comparison. The correction belongs on
+the earliest carrier, PR #4279: enforce one anchored UTC grammar, parse zero
+through six fractional digits consistently, and reject precision beyond
+microseconds instead of allowing newer interpreters to truncate it.
+Persisted JSON remains unchanged and UTC-only validation stays authoritative.
+
+Local evidence is `778 passed` for the full Rate suite, `45 passed` for the
+workspace/compatibility suites, and `27 passed` for the direct compatibility
+suite on CPython 3.10.20. Ruff, format, pinned mypy 1.13, docs governance, and
+the 400-line budget pass. Publication is not completion: verify the exact
+remote head/base, push normally, then propagate in stack order through #4280,
+#4281, #4282, and every later descendant that carries the workspace.
+
+## 2026-08-09 Capability results stabilization
+
+The isolated `feat/4201-capability-results-diagnostics` continuation is based
+on exact wind-workflow carrier head `18fe89201`. It closes two audit findings
+without changing the optimizer or physics: both clients expose every ranked
+diagnostic and parameter unit, both provide result CSV plus versioned result
+JSON, and React scalar scatters now carry numeric scales and cohort legends.
+Raw observation exports remain lossless and distinct. This is feature-stack
+implementation evidence only; #4197/#4201 remain open through integration,
+hosted CI, review, downstream parity, and release to `main`.
+
+Local evidence: 813 Rate Python/PyQt tests and 104 React files / 628 tests,
+Ruff check/format, targeted mypy for the new export and tab modules, TypeScript,
+zero-warning ESLint, and the 188-module Vite production build passed. The
+pre-existing mypy 1.19.1/Python 3.13 internal serialization assertion on
+`capability_results.py` reproduces unchanged at carrier `18fe89201`.
+
+## 2026-08-09 Web-release stability continuation
+
+Local branch `feat/4201-web-release-stability` is based exactly on campaign
+carrier `18fe89201`. It fixes direct-path execution of
+`src/rate_of_closure/launch_web.py`, adds a subprocess delegation smoke
+contract, and reconciles the supported release boundary to the files that
+exist: static Vite web output plus PyQt6/PyInstaller desktop output. Rate has
+no `src-tauri` project, so its stale Tauri scripts, CLI dependency, lockfile
+entries, and current documentation claims were removed instead of inventing an
+unqualified wrapper.
+
+The load-sensitive `FlightExplorerPanel` assertion now explicitly settles the
+real lazy Wind Strategy import inside React `act`; it does not extend a timeout
+or replace the child component with a mock. This is test synchronization only,
+not a UI or physics change. The branch must remain local until reviewed and
+folded into the established campaign carrier; no PR, push, or merge belongs to
+this handoff slice.
+
+Exact local evidence: 813 Rate Python/PyQt tests passed with 15 existing
+warnings; 9 launcher/registration tests passed; 102 React files / 624 tests
+passed; and five sequential focused Flight Explorer runs passed 25/25 tests.
+TypeScript type-check, zero-warning ESLint, the 187-module static build,
+focused Ruff check/format, targeted mypy, package installation/audit, and diff
+checks pass. `tests/test_dry_compliance.py` retains two unrelated baseline
+failures for the Movement Optimizer and Optimizer GUI PyQt launchers.
+
+## 2026-08-09 Machine-readable campaign authority
+
+`docs/release/rate_of_closure_campaign.v1.json` is now the canonical current
+state for the primary Rate, impact, flight, variation, club-builder, wedge,
+toolstrip, design-quality, parity, and ground programs. Its normalized carrier
+and evidence tables replace status inference from the chronological entries
+below. `scripts/rate_campaign_manifest.py` supplies strict Pydantic validation
+and a generated JSON Schema; it rejects missing programs, unresolved evidence,
+placeholders, malformed SHAs, and contradictory release claims.
+
+The authority records the current campaign as **not released**. Capability PRs
+#4294, #4289, and #4283 are merged into feature parent #4282, but those were not
+protected `main` merges. Current carrier head `18fe89201` contains the hermetic
+`swing_core` parity-lane correction and its focused workflow regression; a
+fresh hosted parity run, top-down stack propagation, #4133 reconciliation,
+#4119 current-main conflict resolution, protected checks, installed-package
+evidence, and UpstreamDrift parity are still required.
+
+Maintain the JSON authority and the current-state handoffs in the same commit
+whenever a carrier SHA, test result, limitation, supported surface, or release
+stage changes. Historical detail below remains useful provenance but must not
+override a contradictory validated manifest record.
+
+The four reviewed stabilization slices are composed on implementation head
+`2c1a77baa`: strict workflow parsing/signed editing, complete capability
+diagnostics and result exports, static-web entrypoint/package truth, and this
+manifest authority. Combined local evidence is 828 Rate Python/PyQt tests and
+104 React files / 642 tests, TypeScript, zero-warning ESLint, the 188-module
+Vite build, Ruff, targeted mypy, deterministic manifest/schema validation, and
+nine manifest/parity contracts. This remains local evidence; #4282 still needs
+a normal push, exact-head hosted CI, review, and dependency-ordered release.
+
+The first exact-head hosted quality gate (`31340032608`) passed checkout,
+dependency installation, Ruff, and formatting, then failed mypy 1.13 because
+`--follow-imports=skip` exposed Pydantic and Qt boundary returns as `Any`. The
+loader now casts the validated model and the playback adapter converts elapsed
+milliseconds to a concrete `float`; these are static typing fixes, not schema
+or runtime behavior changes. The exact Python 3.12/mypy 1.13 command passes all
+54 delta files; Ruff, 62 focused regression tests, and eight campaign-manifest
+tests pass locally.
 
 ## 2026-08-08 Capability workspace continuation
 
