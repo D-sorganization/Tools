@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 PR #4202 D-plane ndarray typing repair
+
+On top of verified published head
+`b443fdbed7064c5db0320106013c8413e3e24356`, the two private D-plane ndarray
+helpers now bind NumPy results to explicit ndarray locals before returning
+them. This closes the exact MyPy 1.13 `no-any-return` findings from CI Standard
+run `31384810375`, job `93442745760`, without changing numerical operations,
+DbC validation, reference frames, persistence, rendering, or public contracts.
+
+The exact MyPy failure was reproduced before editing and is green after the
+repair. Twenty-four focused D-plane and impact integration tests pass, along
+with seven metadata/pre-push contract tests, scoped Ruff, Ruff format, Black,
+docs governance, minimum-test, module-size, changed-file-size, and diff checks.
+Three unrelated CI-workflow contract tests still expect later toolcache/env
+steps not present on this older branch; no workflow file is in scope. This
+local commit does not push, retarget, change draft state, or claim issue
+completion; protected CI, review, and parent-first release order remain
+mandatory.
+
 ## 2026-08-10 D-Plane Child Propagation
 
 Draft PR `#4202` (`feat/4189-dplane`) retains its

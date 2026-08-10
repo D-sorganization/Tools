@@ -26,13 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.10                                    |
-| **Spec Version**        | 1.13.10                                    |
+| **Current Version**     | 1.13.11                                    |
+| **Spec Version**        | 1.13.11                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-10 D-plane ndarray typing boundary repair
+
+- The private D-plane vector conversion and horizontal-projection helpers bind
+  NumPy expression results to explicit ndarray locals before returning them.
+- This preserves the existing numerical calculations and DbC validation while
+  satisfying the changed-file MyPy `no-any-return` contract on Python 3.12.
+- No public API, reference frame, serialized schema, physics assumption, or UI
+  behavior changes in this repair.
 
 ### 2026-08-06 GUI module-budget repair
 
@@ -2731,6 +2740,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.13.11 | fix(swing-sim, d-plane, #4202): add explicit ndarray result boundaries to the private vector conversion and horizontal-projection helpers, closing the exact changed-file MyPy `no-any-return` failures without changing numerical semantics, DbC validation, frames, schemas, or UI behavior. |
 | 2026-08-10 | 1.13.10 | feat/fix(rate-of-closure, swing-sim, #4179 #4182 #4183 #4189 #4202): retain typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact impact-visualization parent; extract persisted D-plane layer controls to restore the protected simulation-view module budget. |
 | 2026-08-10 | 1.13.9 | feat/fix(rate-of-closure, #4162 #4167 #4173 #4174 #4178 #4179): retain exact-event pose/twist/wrist interpolation, the versioned impact-scene contract, locked-scale PyQt6 and React views, named cameras, accessible metrics, and PNG/SVG/JSON exports while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact turf-physics parent. |
 | 2026-08-10 | 1.13.8 | feat/fix(golf-club, rate-of-closure, #4166 #4167 #4173 #4174 #4178): retain the passive provenance-gated turf proxy, nine-point wedge contact wrench, strict profile persistence, convergence diagnostics, and explicit force-coupling boundary while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact stacked parent. |

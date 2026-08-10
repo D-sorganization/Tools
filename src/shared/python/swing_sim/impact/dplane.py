@@ -57,7 +57,7 @@ class DPlaneAnalysis:
 
 
 def _as_vector(value: object, name: str) -> np.ndarray:
-    vector = np.asarray(value, dtype=float)
+    vector: np.ndarray = np.asarray(value, dtype=float)
     require(vector.shape == (3,), f"{name} must contain exactly three components")
     require(bool(np.all(np.isfinite(vector))), f"{name} must be finite")
     return vector
@@ -75,7 +75,8 @@ def _tuple(vector: np.ndarray) -> Vector3:
 
 
 def _horizontal(vector: np.ndarray, up: np.ndarray) -> np.ndarray:
-    return vector - float(np.dot(vector, up)) * up
+    horizontal: np.ndarray = vector - float(np.dot(vector, up)) * up
+    return horizontal
 
 
 def _heading_deg(

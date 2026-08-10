@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 PR #4202 D-plane ndarray typing repair
+
+- Draft PR `#4202` remains on `feat/4189-dplane`, based on
+  `feat/4162-wedge-impact-visualization`; the verified published repair base is
+  `b443fdbed7064c5db0320106013c8413e3e24356`.
+- CI Standard run `31384810375`, job `93442745760`, exposed two exact pinned
+  MyPy 1.13 `no-any-return` findings in the private D-plane ndarray helpers.
+  Explicit local ndarray result boundaries now preserve those helpers' return
+  contracts without changing validation, arithmetic, frames, schemas, or any
+  public API.
+- TDD evidence: the exact two-error MyPy failure was reproduced before the
+  repair; the same command is green afterward. Twenty-four focused D-plane,
+  impact-contract, impact-kinematics, and impact-scene tests pass, together
+  with seven metadata/pre-push contract tests, scoped Ruff, Ruff format, Black,
+  docs governance, minimum-test, module-size, changed-file-size, and diff
+  checks. An exploratory CI-workflow contract slice retains three unrelated
+  failures for later toolcache/environment steps absent from this older branch;
+  no workflow file is changed by this repair.
+- This is a bounded quality-gate repair, not completion of D-plane issue
+  `#4189`. Protected current-head CI, dependency order, and required review
+  remain release gates; no push, retarget, or draft-state change is included.
+
 ## 2026-08-10 Parent Repair Propagation (#4179 → #4202)
 
 - Child PR `#4202` remains on `feat/4189-dplane`, based on

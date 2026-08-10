@@ -1,5 +1,24 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-10 PR #4202 D-plane ndarray typing repair
+
+- The repair is based on exact published PR `#4202` head
+  `b443fdbed7064c5db0320106013c8413e3e24356` and retains base
+  `feat/4162-wedge-impact-visualization`.
+- CI Standard run `31384810375`, job `93442745760`, reported two pinned MyPy
+  1.13 `no-any-return` errors in private NumPy conversion/projection helpers.
+  Explicit ndarray local boundaries resolve those errors without changing
+  geometry, validation, frames, serialized contracts, or UI behavior.
+- RED/GREEN evidence is exact: two errors reproduced before the edit and zero
+  afterward. Twenty-four focused D-plane/impact tests, seven metadata/pre-push
+  contract tests, scoped Ruff/Ruff-format/Black, docs governance, minimum-test,
+  module-size, changed-file-size, and diff checks pass. Three exploratory
+  CI-workflow contract tests retain unrelated older-branch toolcache/env drift;
+  no workflow file is changed here.
+- This repair does not alter the stacked base, publish the branch, change its
+  draft state, or authorize a merge. Parent-first ordering, protected CI, and
+  review remain required.
+
 ## 2026-08-10 Propagation into 3D D-plane geometry
 
 - Immediate child PR `#4202` keeps base
