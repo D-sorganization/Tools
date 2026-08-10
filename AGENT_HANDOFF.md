@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 PR #4203 Python 3.10 string-enum compatibility
+
+Current-head child CI exposed a collection boundary that was already present
+in PR #4203's parent surface: seven Rate/shared swing modules imported
+`enum.StrEnum`, which does not exist on Python 3.10. Runtime imports now use
+the repository's existing `shared.python.compatibility.StrEnum`; type checking
+retains the native stdlib symbol behind `TYPE_CHECKING` so pinned mypy 1.13
+keeps enum-member types rather than weakening them to strings. No enum values,
+serialized contracts, physics, or UI behavior changed.
+
+This repair is based directly on published #4203 head `9dbceff76`. Evidence:
+64 focused convention, D-plane, manual-delivery, flight-result, inverse,
+impact-family, capability, and compatibility tests pass; Ruff and format pass;
+pinned mypy 1.13 passes all eight changed Python files; and a real CPython
+3.10.20 probe verifies the shared fallback and all seven runtime import paths.
+Propagate the new parent normally through #4279, #4280, #4281, and #4282.
+
 ## 2026-08-09 PR #4203 Linux collection repair
 
 Draft PR #4203 remains on `feat/4181-launch-monitor-registry`, based on

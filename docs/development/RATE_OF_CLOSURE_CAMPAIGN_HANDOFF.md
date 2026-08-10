@@ -4,6 +4,19 @@ Status verified 2026-08-07. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 Python 3.10 compatibility follow-up
+
+The descendant Python 3.10 lane revealed seven unconditional
+`enum.StrEnum` imports already present at PR #4203. The earliest owning parent
+now routes runtime imports through `shared.python.compatibility.StrEnum` while
+using the stdlib type only under `TYPE_CHECKING`. The change preserves every
+enum value and schema while removing the Python 3.11-only import boundary.
+Local evidence is 64 focused contract/physics/compatibility tests, Ruff and
+format, pinned mypy 1.13 across eight changed files, and a real CPython 3.10.20
+probe of the shared fallback and seven module import declarations. Parent is
+published head `9dbceff76`; after a guarded normal push, propagate the new
+exact head through #4279, #4280, #4281, and #4282 before retrying descendants.
+
 ## 2026-08-09 Launch-registry parent CI repair
 
 The earliest campaign parent, draft PR #4203, remains based on

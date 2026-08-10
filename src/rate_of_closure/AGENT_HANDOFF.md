@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 Python 3.10 enum import repair
+
+PR #4203 now owns the earliest fix for seven inherited Rate/shared swing
+modules that imported Python 3.11's `enum.StrEnum` directly. Runtime code uses
+the established shared compatibility helper while mypy sees the native enum
+only inside `TYPE_CHECKING`. This preserves wire values and enum semantics on
+supported interpreters and lets the repository's hosted Python 3.10 lane
+collect the modules. The focused evidence is 64 tests, Ruff/format, pinned
+mypy 1.13 across eight changed files, and a real CPython 3.10.20 source/runtime
+probe. This commit follows exact published #4203 head `9dbceff76`; propagate it
+through the existing stack without changing bases.
+
 ## 2026-08-09 Launch-registry parent CI repair
 
 PR #4203 exact-head run `31199764932` reached the Python test lanes but failed

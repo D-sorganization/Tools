@@ -11,6 +11,15 @@
 - Related integration pull request: `#4217`
 - Consumer pull request: `D-sorganization/UpstreamDrift#8369`
 
+PR #4203's next current-head repair also removes seven inherited Python
+3.11-only `enum.StrEnum` runtime imports from the Rate/shared swing dependency
+surface. The repository compatibility helper supplies identical string-enum
+wire behavior on Python 3.10, while `TYPE_CHECKING` preserves native enum types
+for pinned mypy 1.13. This is a compatibility-only parent correction: launch
+monitor schema, registry values, analysis logic, and UI behavior are unchanged.
+Focused evidence is 64 tests plus a real CPython 3.10.20 probe; propagate the
+new exact parent through the stack after guarded publication.
+
 PR #4203 current-head CI recovery is intentionally limited to Linux test
 collection: the in-package flight and solver facade-contract tests now use
 relative package imports so pytest's `src.shared...` collection namespace does
