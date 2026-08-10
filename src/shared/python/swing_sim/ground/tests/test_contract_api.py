@@ -24,6 +24,8 @@ EXPECTED_API = {
     "BounceAirSegment",
     "BounceTermination",
     "BounceTerminationReason",
+    "GROUND_SKID_ROLL_MODEL_ID",
+    "GROUND_SKID_ROLL_MODEL_VERSION",
     "GroundCalibration",
     "GroundContactState",
     "GroundEvent",
@@ -44,6 +46,7 @@ EXPECTED_API = {
     "GroundUnavailableReason",
     "GroundWarning",
     "GroundWarningSeverity",
+    "GroundCompositionError",
     "ImpactEnergyLedger",
     "ImpactImpulseResult",
     "ImpactRegime",
@@ -51,6 +54,18 @@ EXPECTED_API = {
     "ImpactStateError",
     "SphereProperties",
     "RepeatedBounceResult",
+    "PlanarSurfaceDomain",
+    "RigidMotion",
+    "SkidRollEnergyLedger",
+    "SkidRollExecution",
+    "SkidRollResult",
+    "SkidRollSettings",
+    "SkidRollTermination",
+    "SkidRollTerminationReason",
+    "SurfaceBoundaryCrossing",
+    "SurfaceKinematicSegment",
+    "SurfaceResolver",
+    "compose_ground_result",
     "interpolate_first_contact",
     "request_from_json",
     "request_json_schema",
@@ -62,6 +77,7 @@ EXPECTED_API = {
     "to_ground_model_result",
     "resolve_sphere_plane_impact",
     "simulate_repeated_bounce",
+    "simulate_skid_roll",
 }
 
 
@@ -91,6 +107,17 @@ def test_ground_package_does_not_import_python_311_only_strenum() -> None:
                 alias.name == "StrEnum" for alias in node.names
             ):
                 offenders.append(module_path.name)
+    assert offenders == []
+
+
+def test_ground_skid_roll_production_does_not_call_legacy_putting_integrator() -> None:
+    package_dir = Path(ground.__file__).parent
+    offenders: list[str] = []
+    for module_path in package_dir.glob("*.py"):
+        source = module_path.read_text(encoding="utf-8")
+        if "swing_sim.putting" in source or "from .putting" in source:
+            offenders.append(module_path.name)
+
     assert offenders == []
 
 

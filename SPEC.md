@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.18                                    |
-| **Spec Version**        | 1.14.18                                    |
+| **Current Version**     | 1.14.19                                    |
+| **Spec Version**        | 1.14.19                                    |
 | **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
@@ -122,6 +122,29 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   results identify missing required fields with typed reason and provenance;
   duplicate JSON keys, unsafe cross-runtime integers, surrogate text, and raw
   out-of-range values fail closed before normalization.
+
+### 2026-08-09 Static-plane skid, roll, and result composition
+
+- The Python ground reference solver consumes only an exact #4270
+  `SETTLED_TO_SKID` handoff and propagates a rigid sphere across one immutable
+  planar surface with arbitrary orientation, kinetic skid, a static-friction
+  feasibility gate, pure roll, rolling resistance, retained normal-axis spin,
+  and physically qualified rest.
+- A deterministic bounded state machine localizes skid-to-roll, zero-speed,
+  and optional finite-axis edge events; retains separate skid and roll paths;
+  anchors output sampling at first contact; and returns typed internal limit,
+  cancellation, and unsupported-surface outcomes without inventing wire
+  results; invalid numerical states raise before result construction.
+- One fail-closed composer joins the impact/bounce prefix and surface suffix
+  without duplicate or epsilon-time points. It produces v1 summaries only for
+  representable rest, left-surface, time-limit, or event-limit outcomes and
+  labels censored endpoint distances explicitly.
+- Energy accounting includes translation, rotation, gravity work, moving-plane
+  work, and nonnegative dissipation. The shared SHA-locked analytic fixture and
+  physics/state-machine/composition tests qualify this bounded Python slice.
+- Piecewise material regions, changing normals, terrain deformation,
+  torsional-spin damping, roll-to-skid transitions, UI, TypeScript physics,
+  compiled runtimes, and downstream parity remain follow-on work.
 
 ### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
 
@@ -2898,6 +2921,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.14.19 | feat(ground-roll, #4271): continue exact #4270 capture through arbitrary-plane kinetic skid, static-feasible pure roll, rolling resistance, qualified rest, finite-axis edge localization, bounded typed limits, relative surface-path and passive energy ledgers; compose representable prefix/suffix evidence into strict v1 results without duplicate or epsilon-time samples; pin an analytic shared fixture and retain explicit exclusions for regions, changing normals, torsional spin damping, roll-to-skid, UI, compiled runtimes, and downstream parity. |
 | 2026-08-09 | 1.14.18 | feat(ground-impact, #4270): add a typed passive restitution/Coulomb sphere-plane impulse with full spin and moving-boundary accounting, deterministic repeated ballistic hops, exact bracket contact, capture-to-skid handoff, cancellation and bounded failure states, airborne-segment evidence, a shared golden fixture, and analytic/property/convergence tests; retain #4271 ownership of skid, roll, rest, total distance, and final `GroundSimulationResult`, with UI and compiled runtimes explicitly excluded. |
 | 2026-08-09 | 1.14.17 | chore(flight-ground, #4269 #4288): normally propagate exact carrier-reconciled ground parent `6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` into the flight-transfer descendant without changing its base; preserve the qualified cross-runtime transfer and semantic facade assertions while completing corrected wind-to-ground ancestry; bind terminal samples before exact `FlightStatePoint` narrowing in the pinned-mypy regression; and retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
 | 2026-08-09 | 1.14.16 | feat(flight-ground, #4269): propagate full signed terminal angular state and qualified physical sphere/terrain contact brackets across Python, TypeScript, Rust, PyO3, and WASM; preserve exact launch-origin evidence, vertical tee and terrain geometry, strict v1 surface/calibration/provenance data, interpolated terminal contact, typed unavailable outcomes, and bounded synchronous web integration. Reconcile the transfer integrator with the current capability and strict-ground ancestry through normal stacked merges without retargeting or rewriting either PR, and remove the resulting ground/flight package-facade cycle through direct record/type dependencies. |

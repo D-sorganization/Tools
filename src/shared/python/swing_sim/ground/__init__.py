@@ -29,6 +29,7 @@ from .contract_types import (
     GroundWarningSeverity,
 )
 from .contract_wire import request_from_json, result_from_json
+from .ground_result_composer import GroundCompositionError, compose_ground_result
 from .impact_impulse import resolve_sphere_plane_impact
 from .impact_types import (
     ImpactEnergyLedger,
@@ -47,6 +48,21 @@ from .json_schema import (
 from .migration import migrate_request_to_current, migrate_result_to_current
 from .result_adapter import to_ground_model_result
 from .result_types import GroundSummary, GroundTermination, GroundWarning
+from .skid_roll_simulation import SkidRollExecution, simulate_skid_roll
+from .surface_motion_types import (
+    GROUND_SKID_ROLL_MODEL_ID,
+    GROUND_SKID_ROLL_MODEL_VERSION,
+    PlanarSurfaceDomain,
+    RigidMotion,
+    SkidRollEnergyLedger,
+    SkidRollResult,
+    SkidRollSettings,
+    SkidRollTermination,
+    SkidRollTerminationReason,
+    SurfaceBoundaryCrossing,
+    SurfaceKinematicSegment,
+)
+from .surface_resolver import SurfaceResolver
 from .unavailable_types import (
     GroundUnavailableField,
     GroundUnavailableFieldId,
@@ -64,6 +80,7 @@ __all__ = [
     "BounceTermination",
     "BounceTerminationReason",
     "GroundCalibration",
+    "GroundCompositionError",
     "GroundContactState",
     "GroundEvent",
     "GroundEventType",
@@ -88,8 +105,22 @@ __all__ = [
     "ImpactRegime",
     "ImpactRejectionReason",
     "ImpactStateError",
+    "GROUND_SKID_ROLL_MODEL_ID",
+    "GROUND_SKID_ROLL_MODEL_VERSION",
+    "PlanarSurfaceDomain",
+    "RigidMotion",
     "SphereProperties",
     "RepeatedBounceResult",
+    "SkidRollEnergyLedger",
+    "SkidRollExecution",
+    "SkidRollResult",
+    "SkidRollSettings",
+    "SkidRollTermination",
+    "SkidRollTerminationReason",
+    "SurfaceBoundaryCrossing",
+    "SurfaceKinematicSegment",
+    "SurfaceResolver",
+    "compose_ground_result",
     "interpolate_first_contact",
     "request_from_json",
     "request_json_schema",
@@ -101,4 +132,5 @@ __all__ = [
     "to_ground_model_result",
     "resolve_sphere_plane_impact",
     "simulate_repeated_bounce",
+    "simulate_skid_roll",
 ]

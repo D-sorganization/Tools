@@ -4,6 +4,46 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 issue #4271 local static-plane skid/roll continuation
+
+`feat/4271-ground-skid-roll` continues exact corrected #4270 parent
+`920c46dee688815691e251777142126bf1489b1a`; its intended normal base is
+`feat/4270-ground-impact-bounce`. No GitHub write, carrier, protected evidence,
+or release advancement has been made for this child.
+
+The UI-independent Python reference solver validates an exact
+`SETTLED_TO_SKID` handoff and advances one immutable arbitrary-orientation
+plane through kinetic skid, static-feasible pure roll, rolling resistance, and
+qualified rest. It retains normal-axis spin, exact finite tangent-axis edge
+exit, global first-contact sampling, global event counts, separate relative
+skid/roll paths, and a mechanical ledger with gravity and moving-surface work.
+Cancellation and bounded limit/unsupported-surface outcomes remain typed;
+invalid numerical states raise without fabricating wire results.
+
+Composition is explicitly cross-slice: immediate #4270 capture becomes one
+signed `IMPACT` point, suffix samples begin strictly later, and no duplicate or
+epsilon timestamp is introduced. Rest/left-surface map to complete v1 results;
+time/event limits map to partial censored results; unrepresentable internal
+outcomes fail closed. Carry, bounce-air, skid, roll, surface path, total
+displacement, final coordinates, and post-first-contact bounce count retain
+their strict definitions. The rest-only legacy adapter rejects complete edge
+exit.
+
+`docs/specs/GROUND_SKID_ROLL.md` and the SHA-locked analytic fixture
+(`74e23ebe86c8b476a3414b0ff11e561e126810b5358337cb87bc1e35e3a1d73d`)
+are the local authorities. The full ground package reports 108 passing tests
+on CPython 3.11.9 and isolated real CPython 3.10.20. Pinned mypy 1.13 is clean
+across 24 production modules; pinned Ruff 0.14.10 check/format passes all 15
+changed Python files. The campaign manifest validates, all eight manifest
+contracts pass, and documentation governance passes.
+
+Program #4267 remains `partial_implementation` and `not_released`. This slice
+does not qualify material regions, changing normals, deformation, grass or
+moisture response, torsional spin damping, roll-to-skid, UI, TypeScript or
+compiled physics, or downstream parity. Independent review, exact-head
+publication, protected checks, ordinary parent integration, and consumers are
+open release gates.
+
 ## 2026-08-09 PR #4302 pinned-MyPy current-head correction
 
 Hosted quality-gate run `31350134551` failed published #4302 head

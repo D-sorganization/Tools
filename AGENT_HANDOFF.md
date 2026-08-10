@@ -3,6 +3,44 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
+## 2026-08-09 issue #4271 static-plane skid/roll local slice
+
+The local `feat/4271-ground-skid-roll` worktree continues exact corrected
+#4270 parent `920c46dee688815691e251777142126bf1489b1a` without rewriting or
+publishing any branch. Its intended normal base is
+`feat/4270-ground-impact-bounce`. No GitHub write, PR, protected check, review,
+or release claim exists for this child yet.
+
+The Python ground facade now continues an exact `SETTLED_TO_SKID` handoff over
+one immutable arbitrary-orientation plane through kinetic Coulomb skid,
+static-feasible pure roll, rolling resistance, retained axial spin, and
+qualified rest. A finite tangent-axis domain localizes `LEFT_SURFACE` exactly.
+Typed cancellation, step, time, event, and unsupported-surface outcomes fail
+closed; invalid numerical states raise without a result. A passive ledger
+retains translation, rotation, gravity work, moving-plane work, and
+dissipation; skid and roll paths remain distinct.
+
+The result composer joins #4270 and #4271 evidence without duplicate or
+epsilon-time points, reconstructs immediate-capture `IMPACT` from the signed
+first event, and constructs strict v1 summaries only for representable rest,
+left-surface, time-limit, or event-limit outcomes. Partial/edge endpoint totals
+are explicitly censored, and the legacy result adapter now refuses non-rest
+complete output.
+
+`docs/specs/GROUND_SKID_ROLL.md` is the scientific authority. The shared
+analytic fixture is locked at SHA-256
+`74e23ebe86c8b476a3414b0ff11e561e126810b5358337cb87bc1e35e3a1d73d`.
+The complete ground suite is `108 passed` on CPython 3.11.9 and real CPython
+3.10.20. Pinned mypy 1.13 passes all 24 ground production modules; pinned Ruff
+0.14.10 check/format passes the 15 changed Python files. The manifest validates
+with all eight contract tests, and documentation governance passes.
+
+The campaign remains partial and `not_released`. Material regions, changing
+normals, terrain deformation, torsional spin damping, roll-to-skid transitions,
+UI, TypeScript/Rust/PyO3/WASM physics, and downstream parity remain open.
+Protected CI, independent review, exact-head publication, parent integration,
+and consumer delivery are still required.
+
 ## 2026-08-09 PR #4302 pinned-MyPy current-head correction
 
 Hosted quality-gate run `31350134551` exposed four deterministic MyPy 1.13

@@ -3,6 +3,34 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 issue #4271 static-plane skid/roll local slice
+
+Local branch `feat/4271-ground-skid-roll` is based on exact corrected #4270
+head `920c46dee688815691e251777142126bf1489b1a` and is intended to target
+`feat/4270-ground-impact-bounce`. Nothing from this child has been pushed or
+opened on GitHub, and no protected/release evidence is claimed.
+
+The shared Python ground package now consumes the exact #4270 capture handoff
+and provides bounded arbitrary-plane skid, pure roll, rolling resistance,
+finite-axis edge exit, retained axial spin, qualified rest, distinct relative
+skid/roll path, and a passive energy/work ledger. Its strict composer removes
+the immediate-capture duplicate, preserves event sequencing, and emits only
+representable v1 rest, edge, time-limit, or event-limit results. Censored
+endpoint metrics carry explicit warnings; legacy rest-only projection rejects
+complete `LEFT_SURFACE` output.
+
+The authority is `docs/specs/GROUND_SKID_ROLL.md`; golden fixture SHA-256 is
+`74e23ebe86c8b476a3414b0ff11e561e126810b5358337cb87bc1e35e3a1d73d`.
+Local qualification: all 108 ground tests pass on CPython 3.11.9 and real
+3.10.20, pinned mypy 1.13 passes 24 production modules, pinned Ruff 0.14.10
+passes 15 changed Python files, and manifest validation, eight manifest tests,
+and documentation governance pass.
+
+This remains a Python model slice, not product-surface completion. Material
+regions, changing normals, deformation/grass response, torsional spin damping,
+roll-to-skid, PyQt6/React UI, compiled runtimes, UpstreamDrift consumers,
+protected review, parent integration, and main release remain open.
+
 ## 2026-08-09 PR #4302 pinned-MyPy current-head correction
 
 Hosted quality-gate run `31350134551` exposed four deterministic MyPy 1.13

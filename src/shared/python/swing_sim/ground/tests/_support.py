@@ -5,6 +5,9 @@ from __future__ import annotations
 from dataclasses import replace
 
 from shared.python.swing_sim.ground import (
+    BounceAirSegment,
+    BounceTermination,
+    BounceTerminationReason,
     CalibrationKind,
     GroundCalibration,
     GroundContactState,
@@ -23,6 +26,10 @@ from shared.python.swing_sim.ground import (
     GroundTrajectoryPoint,
     GroundWarning,
     GroundWarningSeverity,
+    ImpactEnergyLedger,
+    ImpactImpulseResult,
+    ImpactRegime,
+    RepeatedBounceResult,
 )
 
 
@@ -214,4 +221,239 @@ def _failed_result() -> GroundSimulationResult:
     )
 
 
-__all__ = ["_contact", "_failed_result", "_request", "_result", "_surface"]
+def _surface_run_request(
+    *,
+    surface: GroundSurfaceProfile | None = None,
+    max_time_s: float = 12.0,
+    max_events: int = 64,
+) -> GroundSimulationRequest:
+    """Return a compact single-plane request for skid/roll analytic tests."""
+    selected = _surface() if surface is None else surface
+    radius = 0.02135
+    normal = selected.normal_unit
+    contact_position = (
+        radius * normal[0],
+        selected.height_m + radius * normal[1],
+        radius * normal[2],
+    )
+    separated = GroundContactState(
+        time_s=1.0,
+        frame=GroundFrame.TARGET,
+        position_m=tuple(
+            contact_position[index] + 0.001 * normal[index] for index in range(3)
+        ),
+        velocity_m_s=(
+            7.0 - 0.1 * normal[0],
+            -0.1 * normal[1],
+            -0.1 * normal[2],
+        ),
+        angular_velocity_rad_s=(0.0, 0.0, 0.0),
+    )
+    penetrating = replace(
+        separated,
+        time_s=1.01,
+        position_m=tuple(
+            contact_position[index] - 0.001 * normal[index] for index in range(3)
+        ),
+    )
+    return GroundSimulationRequest(
+        request_id="surface-run-analytic",
+        surface=selected,
+        last_separated_state=separated,
+        first_penetrating_state=penetrating,
+        ball_radius_m=radius,
+        ball_mass_kg=0.04593,
+        rotational_inertia_factor=0.4,
+        max_time_s=max_time_s,
+        output_interval_s=0.01,
+        max_events=max_events,
+        calibration=_calibration(),
+        provenance=_provenance(),
+    )
+
+
+def _impact_result(
+    before: GroundContactState,
+    after: GroundContactState,
+    restitution: float,
+) -> ImpactImpulseResult:
+    """Build a structurally valid deterministic impact record for composition tests."""
+    return ImpactImpulseResult(
+        state_before=before,
+        state_after=after,
+        regime=ImpactRegime.STICKING,
+        normal_impulse_n_s=0.01,
+        tangential_impulse_n_s=(0.0, 0.0, 0.0),
+        total_impulse_n_s=(0.0, 0.01, 0.0),
+        contact_velocity_before_m_s=before.velocity_m_s,
+        contact_velocity_after_m_s=after.velocity_m_s,
+        effective_restitution=restitution,
+        friction_utilization=0.0,
+        energy=ImpactEnergyLedger(2.0, 1.0, 0.0, 1.0),
+    )
+
+
+def _settled_prefix(
+    request: GroundSimulationRequest,
+    *,
+    velocity_m_s: tuple[float, float, float] = (7.0, 0.0, 0.0),
+    angular_velocity_rad_s: tuple[float, float, float] = (0.0, 0.0, 0.0),
+    immediate: bool = False,
+) -> RepeatedBounceResult:
+    """Return a validated #4270 SETTLED_TO_SKID prefix with exact handoff state."""
+    radius = request.ball_radius_m
+    normal = request.surface.normal_unit
+    first_time = 1.005
+    first_position = (
+        radius * normal[0],
+        request.surface.height_m + radius * normal[1],
+        radius * normal[2],
+    )
+    first_before = GroundContactState(
+        first_time,
+        request.surface.frame,
+        first_position,
+        tuple(velocity_m_s[index] - 0.1 * normal[index] for index in range(3)),
+        angular_velocity_rad_s,
+    )
+    if immediate:
+        handoff = replace(
+            first_before,
+            velocity_m_s=velocity_m_s,
+            angular_velocity_rad_s=angular_velocity_rad_s,
+        )
+        impact = _impact_result(first_before, handoff, 0.0)
+        event = _event_from_impact(0, GroundEventType.FIRST_CONTACT, impact)
+        point = GroundTrajectoryPoint(
+            handoff.time_s,
+            handoff.frame,
+            handoff.position_m,
+            handoff.velocity_m_s,
+            handoff.angular_velocity_rad_s,
+            GroundPhase.SKID,
+        )
+        return RepeatedBounceResult(
+            request.request_id,
+            request.surface.surface_id,
+            request.surface.frame,
+            "tools-ground-impact-bounce",
+            "1.0.0",
+            (point,),
+            (event,),
+            (impact,),
+            (),
+            handoff,
+            BounceTermination(BounceTerminationReason.SETTLED_TO_SKID, first_time, 0.0),
+            ("test prefix",),
+        )
+    second_time = first_time + 0.02
+    first_after = replace(
+        first_before,
+        velocity_m_s=tuple(
+            velocity_m_s[index] + 0.1 * normal[index] for index in range(3)
+        ),
+    )
+    second_position = tuple(
+        first_position[index] + velocity_m_s[index] * 0.02 for index in range(3)
+    )
+    second_before = replace(
+        first_before,
+        time_s=second_time,
+        position_m=second_position,
+        velocity_m_s=tuple(
+            velocity_m_s[index] - 0.1 * normal[index] for index in range(3)
+        ),
+    )
+    handoff = replace(
+        second_before,
+        velocity_m_s=velocity_m_s,
+        angular_velocity_rad_s=angular_velocity_rad_s,
+    )
+    impacts = (
+        _impact_result(first_before, first_after, 0.1),
+        _impact_result(second_before, handoff, 0.0),
+    )
+    events = (
+        _event_from_impact(0, GroundEventType.FIRST_CONTACT, impacts[0]),
+        _event_from_impact(1, GroundEventType.BOUNCE, impacts[1]),
+    )
+    points = (
+        GroundTrajectoryPoint(
+            first_time,
+            request.surface.frame,
+            first_position,
+            first_after.velocity_m_s,
+            first_after.angular_velocity_rad_s,
+            GroundPhase.IMPACT,
+        ),
+        GroundTrajectoryPoint(
+            second_time,
+            request.surface.frame,
+            second_position,
+            handoff.velocity_m_s,
+            handoff.angular_velocity_rad_s,
+            GroundPhase.SKID,
+        ),
+    )
+    segment = BounceAirSegment(
+        first_time,
+        second_time,
+        first_position,
+        second_position,
+        (
+            (second_position[0] - first_position[0]) ** 2
+            + (second_position[2] - first_position[2]) ** 2
+        )
+        ** 0.5,
+        True,
+    )
+    return RepeatedBounceResult(
+        request.request_id,
+        request.surface.surface_id,
+        request.surface.frame,
+        "tools-ground-impact-bounce",
+        "1.0.0",
+        points,
+        events,
+        impacts,
+        (segment,),
+        handoff,
+        BounceTermination(
+            BounceTerminationReason.SETTLED_TO_SKID,
+            second_time,
+            second_time - first_time,
+        ),
+        ("test prefix",),
+    )
+
+
+def _event_from_impact(
+    sequence: int,
+    event_type: GroundEventType,
+    impact: ImpactImpulseResult,
+) -> GroundEvent:
+    """Build the exact event ledger row corresponding to an impact record."""
+    before = impact.state_before
+    after = impact.state_after
+    return GroundEvent(
+        sequence,
+        event_type,
+        before.time_s,
+        before.frame,
+        before.position_m,
+        before.velocity_m_s,
+        after.velocity_m_s,
+        before.angular_velocity_rad_s,
+        after.angular_velocity_rad_s,
+    )
+
+
+__all__ = [
+    "_contact",
+    "_failed_result",
+    "_request",
+    "_result",
+    "_settled_prefix",
+    "_surface",
+    "_surface_run_request",
+]

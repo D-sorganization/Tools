@@ -1061,6 +1061,10 @@
         {
           "kind": "repository_path",
           "value": "docs/specs/GROUND_IMPACT_BOUNCE.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/GROUND_SKID_ROLL.md"
         }
       ],
       "tracked_issue_ids": [
@@ -1088,11 +1092,12 @@
       "evidence_ids": [
         "ground-impact-local-63a6"
       ],
-      "evidence_gap": "The contract, flight-transfer, and impact/bounce carriers are open. Issue #4270 is published on draft PR 4302 with exact local evidence but no protected evidence; skid, roll, final-result, total-distance, UI, compiled-runtime, and downstream parity work remains.",
+      "evidence_gap": "The contract, flight-transfer, and impact/bounce carriers are open. Issue #4270 is published on draft PR 4302 with exact local evidence but no protected evidence. Issue #4271 has a locally verified static-plane Python implementation but no published carrier, protected evidence, UI, compiled-runtime, or downstream parity evidence.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
-        "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields and does not construct the #4271-owned final ground result."
+        "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
+        "The #4271 slice qualifies one immutable planar profile and optional finite tangent-axis edge; material regions, changing normals, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI, compiled runtimes, and downstream adapters remain unimplemented."
       ],
       "depends_on_issues": [
         4191
