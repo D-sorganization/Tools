@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.43                                    |
-| **Spec Version**        | 1.14.43                                    |
+| **Current Version**     | 1.14.44                                    |
+| **Spec Version**        | 1.14.44                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -3138,6 +3138,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.44 | docs(ground-playback, #4274 #4318): record the independently reviewed raw comparison trajectory/event evidence and hardened export continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback-comparison`; protected exact-head CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.43 | feat(ground-playback, #4274): add separately labelled primary/comparison raw trajectory and event evidence in PyQt6 and React, dedicated canonical full-ledger comparison CSV exports, atomic last-good retention/clear behavior, and shared `QSaveFile` replacement without implying row alignment or adding physics, workspace-v2, camera, or Playwright scope. |
 | 2026-08-10 | 1.14.42 | docs(ground-playback, #4274 #4317): record the independently reviewed matched comparison continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback-persistence`; protected exact-head CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.41 | fix(ground-playback, #4274): preserve the loaded union-time comparison session when its artists are hidden, primary-clamp only the serialized workspace-v1 time, canonicalize direct deltas and Python CSV numeric tokens under the shared eleven-decimal policy, disclose calibration kind/source/confidence, and retain explicit last-good comparison messaging after file-dialog errors; add matched PyQt6/React regressions while complete suites, re-review, publication, protected CI, approval, parent landing, issue acceptance, and epic closure remain open. |

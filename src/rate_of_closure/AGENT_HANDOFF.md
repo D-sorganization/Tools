@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 PR #4318 raw comparison evidence publication
+
+The independently reviewed raw comparison-evidence continuation is published
+as ready-for-review [PR #4318](https://github.com/D-sorganization/Tools/pull/4318)
+on the preserved `feat/4274-ground-playback-comparison` base. Exact reviewed
+implementation `b89d642441e72c84481293c1f7bf6de03e933feb` descends directly
+from exact PR #4317 head `b55bfa3d710a4ff8fabd4ebc7ec31cddad37cee4`.
+Independent review found and verified the RED-first repair of a late React
+comparison-import race after strict-result or workspace primary replacement.
+The GitHub App identity and fast-forward remote state were verified before the
+normal push; no branch was rewritten or retargeted. SPEC 1.14.44 records
+publication. Protected exact-head CI, approval, parent landing, issue
+acceptance, and epic closure remain required; keep #4274/#4267 open.
+
 ## 2026-08-10 issue #4274 matched raw comparison evidence
 
 Local branch `feat/4274-ground-playback-comparison-evidence` starts from exact
@@ -31,8 +45,8 @@ pass 900 Rate tests and 110 React files / 685 tests. Ruff check/format, pinned M
 1.13, Python 3.10 compilation, TypeScript, zero-warning ESLint, Prettier, the
 203-module production build, Bandit, minimum-test, module-size, documentation,
 and conflict-marker governance gates pass. SPEC 1.14.43 records the slice.
-Final diff review, independent exact-commit review, guarded publication,
-protected CI, approval, parent landing, and issue acceptance remain required.
+Independent exact-commit review is clean and PR #4318 is published ready for
+review. Protected CI, approval, parent landing, and issue acceptance remain required.
 Workspace-v2 comparison persistence, maximum-ledger paging or lazy mounting,
 camera/Playwright/native visual verification, terrain editors, ensembles,
 compiled runtimes, UpstreamDrift parity, and epic closure remain open; keep
