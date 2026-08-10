@@ -47,6 +47,7 @@ _SHARED_ROOTS = frozenset(
         "safe_eval",
         "sidekick",
         "signal_toolkit",
+        "swing_sim",
         "theme",
         "upstream_drift_tools",
     }
