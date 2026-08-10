@@ -1,7 +1,31 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-10
+
+## 2026-08-10 Parent Repair Propagation (#4167 → #4173)
+
+- Child PR `#4173` remains on `feat/4163-impact-inspector`, based on
+  `feat/4144-variation-visualizations`; neither branch nor PR base is rewritten.
+- The original child head `3c43955aaeb3964ff8c3ef2748d626baae518b76`
+  is being merged normally with exact parent head
+  `22b66b560652b78de84141344c4ddd9a92a83b26`, in that parent order.
+- The inherited repair replaces Python 3.11-only `datetime.UTC` use in Rate
+  torque-profile persistence with `shared.python.compatibility.UTC` and adds a
+  Rate-source AST regression guard for direct, aliased, and module-attribute
+  access.
+- Combined local verification is green: 63 focused Python tests, all 562 Rate
+  tests, all 334 React tests, TypeScript type-check, ESLint, Vite production
+  build, 12 `swing-core` Rust tests, real CPython 3.10.20 compile/UTC checks,
+  Ruff check/format, Black, focused pinned MyPy 1.13, docs governance,
+  minimum-test, file-size, detect-secrets, and diff checks. A broader MyPy
+  sweep still reports 17 pre-existing Qt/NumPy typing errors in 11 untouched
+  files. Protected CI and required review remain release gates; queued,
+  cancelled, missing-toolcache, and dependency-download jobs are not green
+  evidence.
+- Every implementation commit must update this file, the Rate handoff, the
+  campaign handoff, and `SPEC.md`, or explicitly record why there is no
+  material handoff change.
 
 ## Where This Repo Is Headed
 

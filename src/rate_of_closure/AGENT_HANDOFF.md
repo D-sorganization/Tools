@@ -1,7 +1,26 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-05
+> Last updated: 2026-08-10
+
+## 2026-08-10 Python 3.10 Repair Propagation
+
+Draft child PR `#4173` (`feat/4163-impact-inspector`) retains its
+`feat/4144-variation-visualizations` base and normally merges original child
+head `3c43955aaeb3964ff8c3ef2748d626baae518b76` with exact parent head
+`22b66b560652b78de84141344c4ddd9a92a83b26`. This carries the shared
+Python 3.10-compatible UTC export and the source-wide AST guard into the wedge
+impact inspector without changing the persistence schema or user-visible
+timestamp format.
+
+Combined-stack verification is green across 63 focused Python tests, all 562
+Rate tests, all 334 React tests, TypeScript/ESLint/Vite gates, 12 `swing-core`
+tests, real CPython 3.10.20 compile/UTC checks, Ruff/Black, focused pinned MyPy
+1.13, and repository governance checks. The broad MyPy sweep retains 17
+pre-existing Qt/NumPy typing findings in 11 untouched files. The PR must remain
+draft until its exact-head protected checks complete and required review
+approves. Do not retarget, rewrite, force-push, admin-merge, or count
+infrastructure failures as passing evidence.
 
 ## 2026-08-05 Wedge Impact Inspector Integration
 
