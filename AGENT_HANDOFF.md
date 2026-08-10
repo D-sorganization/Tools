@@ -555,6 +555,11 @@ The legacy direct result-to-metric adapter is now module-only and emits a
 deprecation warning; it is deliberately absent from the package facade because
 it cannot prove material-profile qualification.
 
+Exact qualification/import repair commit
+`940563f222065c4f343b587699c52062c6e1db59` passes 194 ground tests, 27
+flight-first import/result/transfer tests, and an independent 75-test adversarial
+review with no remaining blocker.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 Protected CI correctly remained blocking at head

@@ -1350,6 +1350,11 @@ The older direct result-to-metric adapter is deprecated and removed from the
 ground facade. It remains module-level compatibility code only and cannot be
 used as the qualification-sensitive path because it has no profile binding.
 
+Exact repair commit `940563f222065c4f343b587699c52062c6e1db59`
+passes 194 ground tests, 27 flight-first import/result/transfer tests, and an
+independent 75-test adversarial audit of calibration, provenance, strict wire,
+lazy imports, facade exports, and deprecated compatibility behavior.
+
 This is a bounded foundation for issue #4273, not completion of the issue or
 ground epic. No ensemble/variation/wind/optimizer/UI/compiled/Upstream consumer
 is claimed. Keep both #4273 and #4267 open until those later adapters and
