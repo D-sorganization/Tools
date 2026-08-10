@@ -3,6 +3,51 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
+## 2026-08-09 issue #4272 ground material profile contract slice
+
+The local `feat/4272-ground-material-profiles` child continues exact PR #4304
+carrier `482cdf272b04c78b50da91a6d2ddd4d15e063c7b` with unchanged intended base
+`feat/4271-ground-skid-roll`. No GitHub publication, PR, protected check,
+review, integration, or release claim exists yet for this child.
+
+The bounded Python slice adds strict versioned SI profile/library documents,
+uncertainty, evidence-linked validity bounds, seven-gate qualification and a
+separate calibrated/illustrative scientific status, structural schemas plus
+authoritative semantic validation, canonical identities, and explicit
+applicability-aware solver binding. Fail-closed atomic CAS persistence includes
+typed recovery/indeterminate outcomes, Windows write-through replacement,
+POSIX directory sync, and reparse/root-identity checks under a documented
+cooperative single-principal boundary. A one-way neutral Upstream terrain
+snapshot adapter retains separate terrain/material identities and revisions,
+source, frame, velocity, transform, adapter version, interpretation, individual
+digests, combined input digest, and complete field dispositions without
+importing UpstreamDrift classes. Exported binding, persistence, and adapter
+results enforce their own exact-type, provenance, hash, and coherence DbC.
+
+`docs/specs/GROUND_MATERIAL_PROFILES.md` is the scientific authority. The full
+ground suite passes 167 tests on CPython 3.11.9 and isolated real CPython
+3.10.20; the latter has only five expected missing-plugin configuration
+warnings. Pinned Ruff 0.14.10 is clean across the complete 55-file ground tree,
+and CI-isolated MyPy 1.13 is clean across all 38 production modules. The
+campaign validator, eight manifest tests, documentation governance, 500-line
+file-size gate, focused 400/50-line structural budget, and diff check pass.
+Exact-head and protected publication evidence must still be captured before
+this slice is considered published.
+
+The final read-only release-gate audit found no remaining code or contract
+blockers after adversarial fixes for raw numeric identity, referenced
+calibration coverage, exact nested records, schema/semantic separation,
+operating-condition and solver-value binding, output hash coherence, Windows
+write-through replacement, typed probe failures, reparse points, safe Win32
+filenames, and collision-resistant terrain/material solver identities.
+Exact-head publication, protected CI, review, dependency integration, and
+consumer delivery remain external release gates.
+
+Issue #4272 and epic #4267 remain open. Production presets or calibration
+claims, editing UI, regional/changing-normal terrain, TypeScript/Rust/PyO3/WASM
+delivery, UpstreamDrift consumers, and four-surface parity are not delivered by
+this slice.
+
 ## 2026-08-09 PR #4304 corrected implementation evidence
 
 The campaign registry now advances PR #4304 and its immutable local evidence

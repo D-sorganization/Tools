@@ -155,6 +155,33 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   torsional-spin damping, roll-to-skid transitions, UI, TypeScript physics,
   compiled runtimes, and downstream parity remain follow-on work.
 
+### 2026-08-09 Qualified ground material profile contracts
+
+- Strict `ground-material-profile/v1` and `ground-profile-library/v1`
+  documents carry all eleven solver-facing SI material parameters, explicit
+  standard uncertainty, evidence-linked lower/upper validity bounds, immutable
+  evidence/rights/provenance, bounded applicability, calibration dependencies,
+  seven derived qualification gates, and a separately derived
+  calibrated-versus-illustrative scientific use status.
+- Draft 2020-12 schemas are structural necessary-but-not-sufficient contracts;
+  authoritative semantic validators enforce exact ordering, evidence coverage,
+  calibration coherence, applicability, safe numeric identity, exact record
+  types, and canonical JSON.
+- One explicit-directory cooperative profile store provides bounded reads,
+  writer locks, SHA-256 compare-and-swap, Windows write-through/POSIX-synced
+  atomic replacement, last-known-good backup, dual-digest explicit recovery,
+  root-identity and reparse-point checks, and typed
+  corruption/path/conflict/indeterminate-commit failures.
+- Exact applicability-aware binding retains qualification evidence and warns on
+  unqualified profiles. A neutral one-way Upstream terrain snapshot adapter
+  retains separate terrain/material identity and revisions, source, frame,
+  velocity, transform, adapter version, interpretation, and individual plus
+  combined identities with a complete loss/disposition report; Tools does not
+  import UpstreamDrift classes.
+- Production presets/calibration claims, profile UI, regional/changing-normal
+  terrain, compiled runtimes, and four-surface consumer parity remain open.
+  `docs/specs/GROUND_MATERIAL_PROFILES.md` is the bounded scientific authority.
+
 ### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
 
 - Python and TypeScript share a versioned, golden-fixture-pinned sampler for
@@ -2930,6 +2957,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.14.20 | feat(ground-profile, #4272): add strict versioned SI material-profile/library documents with uncertainty, evidence-linked validity bounds, rights, applicability, calibration, seven-gate qualification, scientific calibrated/illustrative status, canonical JSON/schema/semantic validation, fail-closed write-through atomic CAS persistence and explicit recovery, exact operating-condition binding, and a provenance-complete one-way neutral Upstream terrain snapshot adapter with split terrain/material identities; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream parity. |
 | 2026-08-09 | 1.14.19 | feat(ground-roll, #4271): continue exact #4270 capture through arbitrary-plane kinetic skid, static-feasible pure roll, rolling resistance, qualified rest, finite-axis edge localization, bounded typed limits, relative surface-path and passive energy ledgers; compose representable prefix/suffix evidence into strict v1 results without duplicate or epsilon-time samples; pin an analytic shared fixture and retain explicit exclusions for regions, changing normals, torsional spin damping, roll-to-skid, UI, compiled runtimes, and downstream parity. |
 | 2026-08-09 | 1.14.18 | feat(ground-impact, #4270): add a typed passive restitution/Coulomb sphere-plane impulse with full spin and moving-boundary accounting, deterministic repeated ballistic hops, exact bracket contact, capture-to-skid handoff, cancellation and bounded failure states, airborne-segment evidence, a shared golden fixture, and analytic/property/convergence tests; retain #4271 ownership of skid, roll, rest, total distance, and final `GroundSimulationResult`, with UI and compiled runtimes explicitly excluded. |
 | 2026-08-09 | 1.14.17 | chore(flight-ground, #4269 #4288): normally propagate exact carrier-reconciled ground parent `6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` into the flight-transfer descendant without changing its base; preserve the qualified cross-runtime transfer and semantic facade assertions while completing corrected wind-to-ground ancestry; bind terminal samples before exact `FlightStatePoint` narrowing in the pinned-mypy regression; and retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
