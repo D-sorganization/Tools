@@ -8,7 +8,7 @@ branch was rewritten.
 
 The #4279 continuation remains based on `feat/4181-launch-monitor-registry` and
 now contains exact parent head
-`ab7de5a47977417e02926c3fbc7476002e82b690` through a normal merge. Source
+`08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` through a normal merge. Source
 changes applied cleanly; the overlapping handoff/specification histories were
 reconciled monotonically. The result retains the parent's Linux-safe facade
 and Python 3.10 compatibility contracts plus the child's workspace,
@@ -37,6 +37,11 @@ format, pinned mypy 1.13 across eight changed files, and a real CPython 3.10.20
 probe of the shared fallback and seven module import declarations. Parent is
 published at exact head `ab7de5a47977417e02926c3fbc7476002e82b690`;
 propagate it through #4279, #4280, #4281, and #4282 before retrying descendants.
+
+The same scan found one parent-owned `datetime.UTC` import in the PyQt torque
+profile controller. It now consumes the established compatibility constant,
+preserving UTC serialization while allowing Python 3.10 collection. This
+follow-up belongs on #4203 before the child stack is propagated.
 
 ## 2026-08-09 Launch-registry parent CI repair
 

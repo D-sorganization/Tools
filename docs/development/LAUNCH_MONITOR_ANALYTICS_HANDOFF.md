@@ -20,6 +20,11 @@ monitor schema, registry values, analysis logic, and UI behavior are unchanged.
 Focused evidence is 64 tests plus a real CPython 3.10.20 probe; propagate the
 new exact parent through the stack after guarded publication.
 
+The parent follow-up also routes the torque-profile controller's UTC constant
+through the shared compatibility module. It does not change launch-monitor or
+torque-profile data; it removes one additional Python 3.11-only import from the
+Rate package collection surface.
+
 PR #4203 current-head CI recovery is intentionally limited to Linux test
 collection: the in-package flight and solver facade-contract tests now use
 relative package imports so pytest's `src.shared...` collection namespace does

@@ -6,7 +6,7 @@
 ## 2026-08-09 Workspace stack parent propagation
 
 Draft PR #4279 keeps base `feat/4181-launch-monitor-registry`. Exact published
-parent head `ab7de5a47977417e02926c3fbc7476002e82b690` is carried by a normal
+parent head `08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` is carried by a normal
 merge without rebasing, retargeting, force-pushing, or publishing this local
 continuation. Source changes applied cleanly; overlapping handoff/specification
 history was reconciled monotonically. The result retains the parent's facade
@@ -35,6 +35,12 @@ mypy 1.13 across eight changed files, and a real CPython 3.10.20 source/runtime
 probe. The exact published #4203 head is
 `ab7de5a47977417e02926c3fbc7476002e82b690`; propagate it through the existing
 stack without changing bases.
+
+A follow-up scan found the torque-profile controller importing
+`datetime.UTC` directly. That parent-owned Python 3.11 boundary now uses
+`shared.python.compatibility.UTC`; persisted timestamps and torque-profile
+behavior are unchanged. Re-run the focused torque-profile UI tests and the
+real Python 3.10 compatibility probe before propagation.
 
 ## 2026-08-09 Launch-registry parent CI repair
 
