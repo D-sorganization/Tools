@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.17                                    |
-| **Spec Version**        | 1.14.17                                    |
+| **Current Version**     | 1.14.18                                    |
+| **Spec Version**        | 1.14.18                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -2898,6 +2898,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.18 | feat/fix(ground, #4199 #4268 #4282 #4285): normally propagate exact repaired responsive wind-workflow carrier `686016196a2f895058b8a566dff103a0fd32cd10` into original strict ground-contract child `788aa547651a3685a363ea401824a5d81477bafb` while preserving base `feat/4197-capability-observer`; retain the fail-closed ground schemas, fixture, migrations, legacy adapter, explicit dependency, import-alias repair, and pinned typing repairs while inheriting the complete deterministic workspace, variation, scalar-wind, capability, campaign-release, and hosted-mypy manifest-repair ancestry; normalize contract-checked scalar plot extraction so the composed skipped-import mypy profile cannot leak `Any`, enforce disabled-command invariants under optimized Python, and document the optional alias finder's reviewed catch-and-continue security boundary; preserve the established no-bounce/no-skid/no-roll/no-terrain/no-total-distance/no-ground-UI/no-Rust-WASM delivery boundary and require #4288 to acquire this exact ancestry through its own normal descendant merge. |
 | 2026-08-10 | 1.14.17 | fix(ground, #4268 #4285): normally propagate exact corrected workspace/wind/capability carrier `5f77af4add23547a21cc3fabce98ae9ad4260427` into the strict flight-to-ground contract while preserving base `feat/4197-capability-observer`; coalesce `shared.python.swing_sim` and its repository-local `src.shared.python.swing_sim` spelling so embedded ground/impact contract collection cannot load two package trees; retain the fail-closed ground schemas, fixture, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this ancestry through its own normal descendant merge. |
 | 2026-08-09 | 1.14.16 | chore(ground, #4268 #4285): normally reconcile the strict ground-contract parent with exact corrected wind carrier `bb101cedd555d07d493aae998b46050c68660cdd` while preserving base `feat/4197-capability-observer`; retain the fail-closed ground schemas, fixtures, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this observer-to-wind ancestry through its own normal descendant merge. |
 | 2026-08-09 | 1.14.15 | fix(ground, #4268): keep strict ground JSON Schema generation compatible with the shared Python 3.10 string-enum shim under the repository's pinned mypy 1.13 skipped-import gate by deriving wire values through `str`, and replace stale test suppressions with explicit casts around intentional invalid inputs without changing runtime validation behavior. |

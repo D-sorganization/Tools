@@ -3,13 +3,17 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
-## PR #4285 workspace timestamp propagation
+## 2026-08-10 Exact repaired #4282 propagation into PR #4285
 
 Draft PR #4285 remains on `feat/4268-ground-contract` with unchanged base
-`feat/4197-capability-observer`. Exact corrected #4282 carrier
-`5f77af4add23547a21cc3fabce98ae9ad4260427` is incorporated through the normal
-merge containing this handoff. No branch was rebased, retargeted, rewritten,
-or force-pushed.
+`feat/4197-capability-observer`. The normal merge containing this handoff keeps
+original child `788aa547651a3685a363ea401824a5d81477bafb` first and incorporates
+exact repaired #4282 carrier `686016196a2f895058b8a566dff103a0fd32cd10`
+second. That carrier contains merged capability PR #4283 commit
+`c1827bbdc50a6e11cc475db2636b4e47a4c15416`, exact observer head
+`9bbb98e16e435a0d4c74153b909f2ebfefbbce7a`, and the hosted-mypy manifest
+repair following predecessor `aa6eeffb0395f7ed7954f2315b1c625cada552d8`.
+No branch was rebased, retargeted, rewritten, or force-pushed.
 
 The child retains its strict, UI-neutral flight-to-ground schemas, canonical
 fixture, migrations, legacy-result adapter, explicit dependency, and pinned
@@ -29,13 +33,22 @@ separate file-size job was cancelled during checkout and did not execute its
 budget check, so it remains infrastructure evidence rather than a source
 failure.
 
-Merged-tree evidence is `915` Rate/ground/impact Python tests, the `12`-test
-shared-alias architecture suite, `28` focused ground/impact/alias tests on
-CPython 3.12, `28` direct compatibility tests on real CPython 3.10.20, and
-`104` React files / `642` tests. The 188-module Vite build, TypeScript,
-zero-warning ESLint, Ruff, format, pinned mypy 1.13, campaign-manifest
-validation plus eight contracts, documentation governance, the 44-file
-500-LOC budget, conflict-marker scan, and diff checks are clean.
+The ground descendant passes 1,703 Python tests with two explicit optional
+`build123d` skips, 643 React tests across 105 files plus type-check,
+zero-warning lint and production build, 12 Rust tests, and 77 ground plus
+compatibility tests on real CPython 3.10. Ruff/format cover 78 changed Python
+files; pinned mypy and Bandit cover 52 changed production files. Campaign
+manifest, documentation, minimum-test, changed-assertion, 500-LOC, changed-file
+secrets, Python 3.10 compilation, and diff gates are clean. Protected
+current-head CI and required review remain separate release gates.
+
+The composed pinned-mypy profile additionally exposed integration-only `Any`
+returns at the Pydantic manifest and scalar plotting boundaries. The repaired
+#4282 parent owns the manifest annotation; scalar extraction normalizes the
+already-validated value with `float`. Bandit also replaced an optimized-away
+command-state assertion with an explicit invariant error. The alias finder
+retains its intentional optional-probe catch-and-continue boundary under a
+narrow explanatory `B112` annotation.
 
 ## 2026-08-09 Ground parent reconciled with corrected wind carrier
 

@@ -3,15 +3,17 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
-## PR #4285 workspace timestamp propagation
+## 2026-08-10 Exact repaired #4282 propagation into PR #4285
 
-Exact corrected #4282 parent
-`5f77af4add23547a21cc3fabce98ae9ad4260427` is incorporated into
-`feat/4268-ground-contract` by the normal merge containing this handoff. PR
-#4285 keeps base `feat/4197-capability-observer`; neither branch was rebased,
-retargeted, rewritten, or force-pushed. The child retains its strict
-flight-to-ground contract and inherits the deterministic Python 3.10-3.12 UTC
-parser plus complete variation, scalar, wind, capability, and release ancestry.
+Original child `788aa547651a3685a363ea401824a5d81477bafb`
+normally incorporates exact repaired #4282 parent
+`686016196a2f895058b8a566dff103a0fd32cd10` second on
+`feat/4268-ground-contract`. PR #4285 keeps base
+`feat/4197-capability-observer`; neither branch was rebased, retargeted,
+rewritten, or force-pushed. The parent contains merged capability PR #4283,
+its exact observer head, and the exact-hosted-mypy manifest repair. The child
+retains its strict flight-to-ground contract while acquiring the latest
+deterministic variation, workspace, wind, capability, and release ancestry.
 
 The preceding exact-head Python 3.12 CI lane loaded embedded
 `src.shared.python.swing_sim` tests and canonical `shared.python.swing_sim`
@@ -21,12 +23,19 @@ contract failed before the fix and now passes together with both affected
 public-API suites. The file-size job was cancelled in checkout before its
 budget step and is not a code failure.
 
-Merged-tree evidence is `915` Rate/ground/impact Python tests, all `12` shared
-alias architecture tests, `28` focused tests on CPython 3.12, `28` direct
-workspace compatibility tests on real CPython 3.10.20, and `104` React files /
-`642` tests. The production build, TypeScript, zero-warning ESLint, Ruff,
-format, pinned mypy 1.13, campaign manifest and eight contracts, docs
-governance, 500-LOC budget, marker scan, and diff checks pass.
+This ground descendant passes 1,703 Python tests with two optional `build123d`
+skips, 643 React tests across 105 files plus type-check/lint/build, 12 Rust
+tests, and 77 real-CPython-3.10 ground and compatibility tests. Ruff/format pass
+78 changed Python files; pinned mypy and Bandit pass 52 changed production
+files. Manifest, docs, minimum-test, assertions, 500-LOC, changed-file secrets,
+Python 3.10 compilation, and diff checks are clean.
+
+The repaired parent explicitly types the Pydantic manifest return. The composed
+tree also normalizes contract-checked scalar plot values with `float`, replaces
+the command-state `assert` with a runtime invariant error, and documents the
+alias finder's intentional optional-probe `B112` security boundary. Protected
+current-head CI, required review, and exact-parent propagation into #4288 remain
+release gates.
 
 ## 2026-08-09 Ground parent reconciled with corrected wind carrier
 

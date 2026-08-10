@@ -40,9 +40,19 @@ from rate_of_closure.plotting import (  # noqa: E402
     write_plot_csv,
     write_plot_json,
 )
+from rate_of_closure.plotting.catalog import VariableSpec  # noqa: E402
+from rate_of_closure.plotting.catalog_contract import (  # noqa: E402
+    VariableSpec as ContractVariableSpec,
+)
 from rate_of_closure.simulation import SimulationConfig, run_simulation  # noqa: E402
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+
+def test_catalog_reexports_the_focused_variable_contract() -> None:
+    """Keep the historical catalog import bound to one contract type."""
+    assert VariableSpec is ContractVariableSpec
+
 
 #: The pinned catalog contract. The web catalog mirrors this list
 #: key-for-key (plotcatalog.fixture.json + plotcatalog.test.ts).
