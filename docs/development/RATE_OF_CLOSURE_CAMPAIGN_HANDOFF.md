@@ -35,8 +35,10 @@ original feature commit `abb55c177af19a3cc08dd6bd5d258ea5ce3a61b9`
 first and exact ready-for-review parent PR #4315 head
 `2618ab025622bf1a4fa21e771b30f808f783648b` second. The base remains
 `feat/4274-ground-playback`; no branch was rewritten or retargeted. SPEC
-1.14.36 records the propagation. Independent exact-head review, guarded
-ready-for-review publication, protected CI, approval, parent landing, issue
+1.14.36 records the propagation. Independent exact-head review is READY at
+merge `0ef91e84b6d49551723ba0fbfb8eb1bf7b1ebfa2`, and ready-for-review
+PR #4316 is published against unchanged `feat/4274-ground-playback`. SPEC
+1.14.37 records publication. Protected CI, approval, parent landing, issue
 acceptance, and epic closure remain open.
 
 ## 2026-08-10 issue #4274 exact-parent propagation
