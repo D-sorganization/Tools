@@ -3,6 +3,15 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Final repaired strict-contract ancestry in flight transfer
+
+Draft PR `#4288` remains on `feat/4269-flight-ground-transfer`, based on
+`feat/4268-ground-contract`. Its original head
+`108a841b1378c992defd3c7b7ee263d41a6c8b24` normally incorporates exact
+quality-green #4285 head `a93edb4bfd6a8dc9334122cd2ae660983d5bf424`
+second. Transfer source and tests had no conflict. Fresh protected CI and review
+must pass before any release claim.
+
 ## PR #4288 exact repaired-ground propagation
 
 Original child `247215422a6d4b677552955b4923bc609a553259` normally incorporates

@@ -4,6 +4,18 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 Final repaired #4285 propagation into PR #4288
+
+- Draft PR `#4288` keeps branch `feat/4269-flight-ground-transfer`, base
+  `feat/4268-ground-contract`, and original child
+  `108a841b1378c992defd3c7b7ee263d41a6c8b24` first.
+- Exact quality-green strict-contract head
+  `a93edb4bfd6a8dc9334122cd2ae660983d5bf424` is the second parent.
+- Only the four canonical handoff/spec files conflicted; transfer production
+  and tests did not. No history or topology rewrite was used.
+- Fresh exact-head protected CI and review remain mandatory; queued checks are
+  not release evidence.
+
 ## 2026-08-10 PR #4288 exact repaired-ground propagation
 
 Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged

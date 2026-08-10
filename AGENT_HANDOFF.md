@@ -3,6 +3,16 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Final repaired ground-contract propagation into PR #4288
+
+Draft PR `#4288` retains branch `feat/4269-flight-ground-transfer` and base
+`feat/4268-ground-contract`. Original child head
+`108a841b1378c992defd3c7b7ee263d41a6c8b24` normally incorporates exact
+quality-green parent `a93edb4bfd6a8dc9334122cd2ae660983d5bf424`
+second. No transfer production or test code conflicted. No rebase, retarget,
+force-push, parent rewrite, or draft-state change was used; fresh protected CI
+and review remain required.
+
 ## PR #4288 exact repaired-ground propagation
 
 Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged
