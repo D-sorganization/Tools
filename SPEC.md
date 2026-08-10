@@ -26,13 +26,25 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.16                                    |
-| **Spec Version**        | 1.14.16                                    |
+| **Current Version**     | 1.14.17                                    |
+| **Spec Version**        | 1.14.17                                    |
 | **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-09 Constrained toolstrip-menu containment
+
+- Issue #4300 keeps File, View, and Tools popovers inside a 16 px viewport
+  gutter through one shared collision-clamp contract. Existing left-anchored
+  desktop placement is unchanged when the menu already fits.
+- Popover widths are bounded by the viewport, and the clamp is recalculated on
+  native `<details>` toggle, viewport resize, and content resize without
+  replacing summary-button keyboard or accessibility semantics.
+- A real-browser Playwright contract opens Tools from the keyboard at
+  520 x 900 and verifies that all command labels and shortcuts are visible,
+  readable, and horizontally contained.
 
 ### 2026-08-09 Canonical 3D camera controls
 
@@ -2952,6 +2964,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.14.17 | fix(rate-of-closure, #4300): keep File, View, and Tools popovers within a collision-safe viewport gutter while preserving native details/summary keyboard semantics and unchanged desktop anchoring; add focused clamp tests and a 520 x 900 Playwright containment/readability contract. |
 | 2026-08-09 | 1.14.16 | merge(rate-of-closure, #4282 #4284): normally restack the camera-control branch by merging exact published wind-workflow carrier `bb101cedd555d07d493aae998b46050c68660cdd` into exact camera parent `7f1e14d42ffe8c23856a12fc8b0d0a8a4eeaf092`, without rebasing or retargeting; retain immutable camera evidence at `2095e748ddca2d7036bbd49a731528f5634daff9`, inherit the carrier's Python 3.10 compatibility and scalar-ensemble corrections, and keep native visual, hosted review, protected release, persistence, and UpstreamDrift parity gates open. |
 | 2026-08-09 | 1.14.15 | fix(rate-of-closure, #4284): distinguish immutable carrier evidence commits from mutable PR heads, record published camera evidence at 2095e748 with 107/650 React and 4 Playwright tests, and retain migration support for legacy `head_sha` manifest input. |
 | 2026-08-09 | 1.14.14 | test(rate-of-closure, #4284): add solver-sample flight frame steps and Playwright camera/playback interaction coverage at desktop and constrained 2x-DPR viewports; retain native visual and downstream parity gates. |

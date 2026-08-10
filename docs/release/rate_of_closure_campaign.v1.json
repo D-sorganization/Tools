@@ -899,6 +899,10 @@
           "value": "https://github.com/D-sorganization/Tools/issues/4218"
         },
         {
+          "kind": "github_issue",
+          "value": "https://github.com/D-sorganization/Tools/issues/4300"
+        },
+        {
           "kind": "repository_path",
           "value": "src/rate_of_closure/application/workspace_document.py"
         },
@@ -919,7 +923,8 @@
         4223,
         4224,
         4225,
-        4284
+        4284,
+        4300
       ],
       "carrier_ids": [
         "pr-4279",
@@ -938,7 +943,8 @@
       "evidence_gap": "Complete persistence adapters, synchronized multi-view persistence, UpstreamDrift camera consumers, native rendered accessibility review, and protected release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
-        "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open."
+        "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open.",
+        "Issue 4300 tracks constrained toolstrip-popover containment as a child of epic 4218; local verification is not protected integration or release evidence."
       ],
       "depends_on_issues": [
         4191

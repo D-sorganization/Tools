@@ -4,6 +4,30 @@ Status verified 2026-08-09. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 Issue #4300 constrained Tools-menu continuation
+
+Local branch `fix/rate-mobile-tools-menu` is an unpublished child of exact
+camera carrier `42753a576f42d4c43c35fd786d0748e1d03672c5` and is intended to
+target `feat/4284-camera-snap-tracking`. It addresses the confirmed 520 x 900
+Tools-popover clipping defect without retargeting or rewriting the existing
+stack. No GitHub write has been made.
+
+The implementation uses one collision-safe horizontal clamp for File, View,
+and Tools rather than a Tools-only breakpoint. It retains the existing desktop
+left anchor when bounds already fit, enforces a 16 px viewport gutter, bounds
+popover width, and recalculates after native details toggle, viewport resize,
+or content resize. Native `<details>/<summary>` behavior, keyboard opening,
+focus semantics, command IDs, accessible names, and shortcuts are unchanged.
+
+The RED Playwright observation placed the Tools menu right edge at 622.48 px
+against the 504 px constrained limit. GREEN evidence is 108 Vitest files with
+653 tests, six Playwright cases across desktop and constrained 2x-DPR projects,
+TypeScript checking, zero-warning ESLint, a 194-module production build, the
+campaign-manifest validator, 11 manifest tests, and `git diff --check`. The
+520 x 900 browser contract verifies all labels and shortcuts are visible and
+the menu remains inside the viewport. Track the work under epic #4218 and
+child issue #4300; local evidence is not a protected merge or release.
+
 ## 2026-08-09 Camera snap/tracking continuation
 
 Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested

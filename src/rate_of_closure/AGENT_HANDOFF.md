@@ -3,6 +3,26 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-09.
 
+## Issue #4300 constrained toolstrip popovers
+
+The local continuation is branch `fix/rate-mobile-tools-menu` at
+worktree `C:\Users\diete\Repositories\Tools-worktrees\mobile-tools-menu`,
+built as a normal child of exact camera carrier
+`42753a576f42d4c43c35fd786d0748e1d03672c5`. Its intended PR base is
+`feat/4284-camera-snap-tracking`; no GitHub state has been written.
+
+One shared viewport-clamp hook now serves File, View, and Tools. It preserves
+the native details/summary control and original desktop left anchor, applies a
+16 px constrained-screen gutter, bounds popover width, and recomputes after
+toggle, viewport resize, or content resize. Issue #4300's 520 x 900 Playwright
+contract keyboard-opens Tools and checks the complete labels and shortcut text
+before asserting the rendered bounds. The observed RED right edge was
+622.48 px versus a 504 px maximum. GREEN evidence is 108 Vitest files with 653
+tests, six Playwright cases across desktop and constrained 2x-DPR projects,
+TypeScript checking, zero-warning ESLint, a 194-module production build, the
+campaign-manifest validator, 11 manifest tests, and `git diff --check`.
+Protected review and integration remain separate requirements.
+
 ## Issue #4284 local implementation
 
 Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
