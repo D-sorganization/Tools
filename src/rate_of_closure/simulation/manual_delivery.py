@@ -4,11 +4,16 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from enum import StrEnum
+from typing import TYPE_CHECKING
 
 import numpy as np
 
 from rate_of_closure._contracts import ensure, require
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 __all__ = [
     "ManualDeliveryConfig",

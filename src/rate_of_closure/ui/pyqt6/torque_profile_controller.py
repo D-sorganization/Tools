@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from datetime import UTC, datetime
+from datetime import datetime
 from enum import Enum
 from pathlib import Path
 from urllib.parse import quote
 
 from rate_of_closure.simulation.records import SimulationRun
 from rate_of_closure.simulation.torque_history import fit_run_torque_profile
+from shared.python.compatibility import UTC
 from shared.python.swing_sim.run_config import (
     DOUBLE_PENDULUM_JOINT_IDS,
     DOUBLE_PENDULUM_MODEL_ID,

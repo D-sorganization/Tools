@@ -8,13 +8,18 @@ branch was rewritten.
 
 Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
 camera evidence through immutable commit
-`2095e748ddca2d7036bbd49a731528f5634daff9`. It normally merges exact carrier
-`de49580a3c0888b44f66dcc09bba2ab2fa33914a` with camera parent
-`91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It implements the canonical camera
-contract for all five Tools 3D adapters (PyQt Simulation and Flight; React
-Club, Impact, and Flight) with exact snap orientations, bounded opt-in subject
-tracking, safe zoom preservation, Auto Fit, manual suspension, and Recenter.
-UpstreamDrift parity is not started, and protected release remains open.
+`2095e748ddca2d7036bbd49a731528f5634daff9`. The current local restack normally
+merges exact published #4282 carrier
+`bb101cedd555d07d493aae998b46050c68660cdd` into exact camera parent
+`7f1e14d42ffe8c23856a12fc8b0d0a8a4eeaf092`; PR #4298 keeps base
+`feat/4199-wind-workflow`. No branch was rebased, retargeted, force-pushed, or
+published by this restack. The two-parent merge itself contains this record, so
+its future SHA is intentionally not self-recorded. It implements the canonical
+camera contract for all five Tools 3D adapters (PyQt Simulation and Flight;
+React Club, Impact, and Flight) with exact snap orientations, bounded opt-in
+subject tracking, safe zoom preservation, Auto Fit, manual suspension, and
+Recenter. UpstreamDrift parity is not started, and protected release remains
+open.
 Evidence commit `2095e748` adds solver-owned previous/next frame controls to
 React ball-flight playback through the existing validated timeline boundary.
 It passes 39 focused Python/PyQt camera tests and the full 107-file / 650-test
@@ -26,11 +31,49 @@ ESLint, the 193-module Vite build, Ruff, targeted mypy, campaign validation,
 and diff checks also pass. Native-font/manual visual review, hosted CI/review,
 protected release, preference persistence, and UpstreamDrift parity remain due.
 
-This documentation-only successor records the already-published evidence
-commit. The campaign manifest now names carrier `evidence_commit_sha` rather
-than pretending a commit can contain its own future PR-head SHA. Legacy
-`head_sha` input remains migration-compatible, while new schema output uses the
-truthful field name.
+The prior documentation-only successor records the already-published camera
+evidence commit. The campaign manifest now names carrier
+`evidence_commit_sha` rather than pretending a commit can contain its own
+future PR-head SHA. Legacy `head_sha` input remains migration-compatible,
+while new schema output uses the truthful field name. This local restack
+records its exact two parents without attempting to self-record its merge SHA.
+
+The composed local merge candidate passes 65 focused camera, PyQt6,
+compatibility, and campaign-manifest tests on Python 3.13; all 15 compatibility
+contracts also pass on real CPython 3.10.20. The complete React suite remains
+107 files / 650 tests, all four Playwright desktop/constrained-DPR cases pass,
+and TypeScript, zero-warning ESLint, and the 193-module production build pass.
+Canonical Ruff check/format passes all 28 changed Python files; pinned Python
+3.12/mypy 1.13 passes 20 changed production modules; manifest/schema,
+documentation-governance, and staged/working-tree diff checks pass.
+
+## 2026-08-09 PR #4282 corrected-parent propagation
+
+Draft #4282 remains on `feat/4199-wind-workflow` with unchanged base
+`feat/4199-wind-scalar-adapter`. Exact corrected #4281 parent
+`958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated by the normal
+merge published as exact #4282 head
+`bb101cedd555d07d493aae998b46050c68660cdd`. The result preserves the
+responsive PyQt6/React wind-strategy workflow, the consolidated capability
+stack, release-manifest authority, and launcher/type-gate repairs while
+inheriting the complete Python 3.10 compatibility, variation-export, and
+scalar-ensemble corrections.
+
+SPEC 1.14.12 records this propagation monotonically above the corrected
+parent's 1.14.11, 1.14.10, and 1.14.9 entries. Protected CI, review,
+publication, installed-package evidence, downstream UpstreamDrift parity, and
+the remaining scientific/accessibility/performance release gates remain
+separate. This local merge is not a protected release.
+
+Focused evidence is 62 tests on Python 3.11 and 62 tests on real CPython
+3.10.20 with PyQt6 and the complete focused scientific dependency set. The
+real 3.10 run exposed one child-owned direct `enum.StrEnum` import in
+`capability_observation.py`; it now uses the established shared runtime
+compatibility contract, retains native typing under `TYPE_CHECKING`, and is
+pinned by the expanded regression. React passes 8 files / 35 tests, TypeScript,
+and focused zero-warning ESLint. Ruff check/format passes 15 focused files;
+pinned mypy 1.13 passes 10 production modules; and the nine campaign
+manifest/parity contracts pass.
 
 ## 2026-08-09 Capability workflow hardening continuation
 

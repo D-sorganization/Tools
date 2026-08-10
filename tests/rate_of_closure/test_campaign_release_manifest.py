@@ -143,6 +143,12 @@ def test_carrier_sha_is_immutable_evidence_not_a_self_referential_head(
     assert '"head_sha"' not in raw
     camera = next(carrier for carrier in manifest.carriers if carrier.pr == 4298)
     assert camera.evidence_commit_sha == ("2095e748ddca2d7036bbd49a731528f5634daff9")
+    parent_carrier = next(
+        carrier for carrier in manifest.carriers if carrier.pr == 4282
+    )
+    assert parent_carrier.evidence_commit_sha == (
+        "bb101cedd555d07d493aae998b46050c68660cdd"
+    )
 
 
 @pytest.mark.unit

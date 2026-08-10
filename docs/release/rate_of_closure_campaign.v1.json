@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "evidence_commit_sha": "18fe89201d657116bbca99922297c14968356c44",
+      "evidence_commit_sha": "bb101cedd555d07d493aae998b46050c68660cdd",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"

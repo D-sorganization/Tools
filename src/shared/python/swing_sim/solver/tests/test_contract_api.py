@@ -11,7 +11,7 @@ import dataclasses
 
 import pytest
 
-import shared.python.swing_sim.solver as solver
+from ... import solver
 
 EXPECTED_PUBLIC_API = {
     "DELIVERY_VARIABLE_DEFAULTS",

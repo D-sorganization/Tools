@@ -7,9 +7,11 @@
 
 Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
 camera evidence through immutable commit
-`2095e748ddca2d7036bbd49a731528f5634daff9`, normally merged from exact carrier
-`de49580a3c0888b44f66dcc09bba2ab2fa33914a` and camera implementation parent
-`91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It has a shared Python/TypeScript
+`2095e748ddca2d7036bbd49a731528f5634daff9`. The current local restack normally
+merges exact published #4282 carrier
+`bb101cedd555d07d493aae998b46050c68660cdd` into exact camera branch parent
+`7f1e14d42ffe8c23856a12fc8b0d0a8a4eeaf092`; the PR base remains
+`feat/4199-wind-workflow`. It has a shared Python/TypeScript
 camera contract and adapters for PyQt6 Simulation/Flight and React Club,
 Impact, and Flight 3D viewports. Canonical snap directions use x downrange,
 y up, z right; face-on side is explicit. Tracking is opt-in, bounded, isolated
@@ -34,20 +36,35 @@ without overlap; the local offscreen Qt font directory is unavailable, so
 native-font/browser rendered review remains explicitly open. Browser
 automation does not close the native visual or downstream parity gates.
 
-This documentation-only successor records the already-published evidence
-commit. `evidence_commit_sha` is immutable evidence, not an impossible
-self-reference to the successor's own future SHA.
+The prior documentation-only successor records the already-published camera
+evidence commit. `evidence_commit_sha` is immutable evidence, not an impossible
+self-reference. This local merge records its exact two parents while omitting
+its own future SHA from the commit it creates.
+
+The composed local merge candidate passes 65 focused camera, PyQt6,
+compatibility, and campaign-manifest tests on Python 3.13; all 15 compatibility
+contracts also pass on real CPython 3.10.20. The complete React suite remains
+107 files / 650 tests, all four Playwright desktop/constrained-DPR cases pass,
+and TypeScript, zero-warning ESLint, and the 193-module production build pass.
+Canonical Ruff check/format passes all 28 changed Python files; pinned Python
+3.12/mypy 1.13 passes 20 changed production modules; manifest/schema,
+documentation-governance, and staged/working-tree diff checks pass.
 
 ## Current continuation
 
-The active local continuation is integrated directly on the existing PR #4282
-carrier `feat/4199-wind-workflow`, starting from exact published head
-`18fe89201d657116bbca99922297c14968356c44`. It adds strict cross-runtime
+The active local continuation is draft #4298, normally restacked onto exact
+published #4282 carrier `bb101cedd555d07d493aae998b46050c68660cdd`.
+That carrier remains on `feat/4199-wind-workflow`, targets
+`feat/4199-wind-scalar-adapter`, and incorporates corrected #4281 parent
+`958770049f0124dac0426a6dd62fd4edbf437e7a`. No branch was rebased, retargeted,
+force-pushed, or published by this local restack. The composed history adds
+strict cross-runtime
 capability parsing, reliable signed decimal entry, complete ranked diagnostics
 and result exports, quantitative React scatter annotations, package-safe
 static-web release entrypoints, and the strict `rate-of-closure-campaign/v1`
-release authority. It remains local until final gates pass and a normal
-fast-forward push is made.
+release authority. It also carries the corrected parent's Python 3.10
+compatibility, variation-export, scalar-ensemble, and wind-adapter history.
+It remains local until final gates pass and a normal fast-forward push is made.
 
 The direct web launcher dynamically loads the root bootstrap module without a
 launcher-local `sys.path` mutation; its subprocess delegation test and the
@@ -75,8 +92,11 @@ The capability stack was collapsed top-down on 2026-08-09:
 3. #4283 observer merged into `feat/4199-wind-workflow`.
 
 These were feature-parent merges, not protected releases. Current carrier
-#4282 remains upstream of #4281 → #4280 → #4279 → #4203 → #4202 → wedge and
-variation parents. Preserve that dependency order and use normal merges only.
+#4282 descends from #4281 → #4280 → #4279 → #4203 → #4202 → wedge and
+variation parents. Exact corrected #4281 parent
+`958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated in published #4282
+head `bb101cedd555d07d493aae998b46050c68660cdd`. Preserve that dependency order
+and use normal merges only.
 
 Outer platform PR #4119 targets `main` and still needs reconciliation. PR #4133
 impact-interval dynamics merged into a historical feature parent after that
@@ -111,6 +131,13 @@ reconciled before #4130 can close.
 
 ## Most recent evidence
 
+- Corrected-parent propagation: 62 focused wind/scalar/variation and
+  compatibility tests pass on Python 3.11 and real CPython 3.10.20; 8 React
+  files / 35 tests, TypeScript, and focused zero-warning ESLint pass. The real
+  3.10 run found and now guards #4282's child-owned capability-observation
+  `StrEnum` boundary. Ruff check/format passes 15 focused files, pinned mypy
+  1.13 passes 10 production modules, and nine campaign manifest/parity
+  contracts pass.
 - Composed local continuation: 828 Rate Python/PyQt tests and 104 React files /
   642 tests passed; TypeScript, zero-warning ESLint, and the 188-module Vite
   production build passed. The manifest, schema JSON, Ruff, targeted mypy, and
