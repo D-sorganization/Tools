@@ -26,13 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.8                                     |
-| **Spec Version**        | 1.14.8                                     |
+| **Current Version**     | 1.14.9                                     |
+| **Spec Version**        | 1.14.9                                     |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-10 D-plane ndarray typing boundary repair
+
+- The private D-plane vector conversion and horizontal-projection helpers bind
+  NumPy expression results to explicit ndarray locals before returning them.
+- This preserves the existing numerical calculations and DbC validation while
+  satisfying the changed-file MyPy `no-any-return` contract on Python 3.12.
+- No public API, reference frame, serialized schema, physics assumption, or UI
+  behavior changes in this repair.
 
 ### 2026-08-06 GUI module-budget repair
 
@@ -2881,6 +2890,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.9 | fix(rate-of-closure, d-plane, #4202 #4203): normally propagate exact repaired parent head `7d8d2f06dc797021d01939691e58f8425b652b33` into the launch-monitor registry without rewriting the stack; inherit explicit ndarray return boundaries that close the parent pinned MyPy findings while preserving numerical semantics, frames, schemas, and UI behavior; verify the reconciled child tree with 25 focused D-plane/impact tests and documentation, file-size, and whitespace gates. |
 | 2026-08-10 | 1.14.8 | feat/fix/refactor(rate-of-closure, #4202 #4203): propagate the exact D-plane parent into the launch-monitor registry without rewriting the stack; preserve the responsive `SimulationViewControlsMixin` architecture while making `ImpactLayerControls` the single owner of persisted D-plane checkbox state; retain the existing automation compatibility seam as an identity alias; and repair the original child's three ungrandfathered size blockers through identity-preserving extractions for triple-pendulum dynamics, immutable plotting metadata, and versioned primary-navigation state. |
 | 2026-08-09 | 1.14.7 | fix(compatibility, #4203): route the PyQt torque-profile controller's UTC constant through the shared Python 3.10 compatibility module, preserving UTC timestamp serialization and workspace behavior while removing the remaining parent-owned `datetime.UTC` collection boundary. |
 | 2026-08-09 | 1.14.6 | fix(compatibility, #4203): route seven Rate/shared swing string-enum runtime imports through the existing Python 3.10 compatibility contract while retaining native enum typing under `TYPE_CHECKING`; preserve all wire values, schemas, physics, and UI behavior, and add a source-level regression exercised with real CPython 3.10.20. |
