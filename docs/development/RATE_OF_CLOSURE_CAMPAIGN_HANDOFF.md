@@ -4,6 +4,29 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 PR #4323 exact hosted-MyPy repair
+
+Unpublished branch `fix/4323-ground-mypy-boundaries` starts exactly at public
+PR #4323 head `b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`; base
+`feat/4275-ground-tilted-conformance` is unchanged. No push, retarget, merge,
+force operation, parent rewrite, or existing-worktree edit occurred.
+
+The failure is reproduced from hosted run `31429284874`, job `93588443824`:
+Python 3.12 plus pinned MyPy 1.13, `MYPYPATH=src:src/python/src`, and
+`--follow-imports=skip` reported eight `no-any-return` errors in the three-file
+production delta. The imports skipped by that profile caused otherwise typed
+`Vector3`, `SurfaceRun.result`, and rest-predicate expressions to appear as
+`Any`. Explicit `typing.cast` boundaries plus one DRY result helper resolve all
+eight errors without runtime conversion or numerical, event, termination, or
+wire-contract changes. The exact hosted command, all 247 ground tests, 42
+focused skid/passivity/conformance tests, Ruff/format, campaign-manifest and
+eight manifest tests, documentation-governance, changed-Python-policy, and
+diff gates are green locally.
+
+This repair does not extend scientific qualification or close #4275/#4267.
+Guarded publication remains a separate operation; hosted CI, approval, parent
+integration, and release remain unclaimed.
+
 ## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
 
 Branch `feat/4275-ground-mirrored-property` is published as ready PR #4323

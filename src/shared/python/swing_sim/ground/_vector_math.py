@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from typing import cast
 
 from .contract_types import Vector3
 
@@ -24,7 +25,7 @@ def scale(vector: Vector3, factor: float) -> Vector3:
 
 def dot(left: Vector3, right: Vector3) -> float:
     """Return the Euclidean dot product."""
-    return sum(a * b for a, b in zip(left, right, strict=True))
+    return cast(float, sum(a * b for a, b in zip(left, right, strict=True)))
 
 
 def cross(left: Vector3, right: Vector3) -> Vector3:
