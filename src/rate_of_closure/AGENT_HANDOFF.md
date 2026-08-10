@@ -3,31 +3,40 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
-## PR #4282 workspace timestamp propagation
+## 2026-08-10 Wind workflow receives exact scalar-adapter parent
 
-Exact corrected #4281 parent
-`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated into
-`feat/4199-wind-workflow` by the normal merge containing this handoff. The PR
-keeps base `feat/4199-wind-scalar-adapter`; neither branch was rebased,
-retargeted, rewritten, or force-pushed. The consolidated capability/wind
-workflow inherits the strict Python 3.10-3.12 UTC parser and complete
-variation/scalar history without changing its scientific or UI behavior.
+PR `#4282` keeps branch `feat/4199-wind-workflow`, base
+`feat/4199-wind-scalar-adapter`, and original child first parent
+`5f77af4add23547a21cc3fabce98ae9ad4260427`. Exact parent
+`4a793c4c3f19aad43a3c215800b266be487ace49` merges normally second. The
+responsive PyQt6/React wind strategy workflow, consolidated capability stack,
+and campaign release authority remain additive with the parent's complete
+variation, workspace, compatibility, and strict scalar-adapter history.
 
-SPEC versions are monotonic: 1.14.10 compatibility, 1.14.11 variation,
-1.14.12 wind scalar adapter, and 1.14.13 this workflow. The reconciled tree
-passes `924` combined Python tests, `28` direct compatibility tests on real
-CPython 3.10.20, and `104` React files / `642` tests. The Vite production
-build, TypeScript, zero-warning ESLint, Ruff, format, pinned mypy 1.13,
-campaign-manifest validator and its eight contracts, documentation governance,
-source-size, conflict-marker, and diff gates are clean. Protected CI, review,
-and dependency-ordered propagation remain open.
+The parent's extracted navigation-state tuple is the single authority and now
+includes the child-owned `capability_optimization` ID. This preserves safe
+legacy visibility migration and prevents a persisted pre-capability workspace
+from hiding the new tab. Runtime-only UI and capability invariants now raise
+explicit errors under optimized Python, the campaign manifest avoids a
+redundant pinned-MyPy cast, and the safe fixed-argument builder subprocess is
+annotated for Bandit. SPEC 1.14.14 is the unique combined child entry.
+Verification passes 73 focused Python tests, the complete 1,657-test
+Rate/shared-swing/golf-club matrix with two explicit optional build123d skips,
+all 643 React tests across 105 files plus type-check/lint/build, 12 Rust tests,
+31 real-CPython-3.10 compatibility tests, and 43 post-review invariant/GUI/
+manifest tests. Ruff/format, pinned MyPy 1.13 across 37 changed production
+files, Bandit, exact-parent size, manifest, docs, minimum-test, assertions,
+CI-policy secrets, compilation, and diff gates pass. Independent re-review
+found no actionable findings after 94 Python workflow/navigation tests, 20
+manifest/GUI tests, 61 React workflow tests, and independent static checks.
+Protected CI/review and dependency-ordered propagation remain release gates.
 
 ## Current continuation
 
 The active local continuation is integrated directly on the existing PR #4282
-carrier `feat/4199-wind-workflow`, starting from exact published head
-`de49580a3c0888b44f66dcc09bba2ab2fa33914a` and normally incorporating exact
-corrected #4281 parent `cf52529b1e68479321bb93b1be3d59c77f782008`.
+carrier `feat/4199-wind-workflow`, starting from original published head
+`5f77af4add23547a21cc3fabce98ae9ad4260427` and normally incorporating exact
+published #4281 parent `4a793c4c3f19aad43a3c215800b266be487ace49`.
 The base remains `feat/4199-wind-scalar-adapter`; no branch was rebased,
 retargeted, force-pushed, or published by this continuation. It adds strict
 cross-runtime
@@ -66,8 +75,8 @@ The capability stack was collapsed top-down on 2026-08-09:
 
 These were feature-parent merges, not protected releases. Current carrier
 #4282 descends from #4281 → #4280 → #4279 → #4203 → #4202 → wedge and
-variation parents. Exact corrected #4281 parent
-`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated locally. Preserve
+variation parents. Exact published #4281 parent
+`4a793c4c3f19aad43a3c215800b266be487ace49` is incorporated locally. Preserve
 that dependency order and use normal merges only.
 
 Outer platform PR #4119 targets `main` and still needs reconciliation. PR #4133

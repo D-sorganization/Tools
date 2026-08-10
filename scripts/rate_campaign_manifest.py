@@ -9,7 +9,7 @@ import re
 import sys
 from enum import StrEnum
 from pathlib import Path
-from typing import Any, Literal, cast
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
@@ -332,7 +332,7 @@ def _reject_placeholders(value: Any, path: str) -> None:
 def load_campaign_manifest(path: Path = DEFAULT_MANIFEST) -> CampaignManifest:
     """Read and strictly validate a UTF-8 JSON campaign manifest."""
     validated = CampaignManifest.model_validate_json(path.read_text(encoding="utf-8"))
-    return cast(CampaignManifest, validated)
+    return validated
 
 
 def validate_repository_evidence(

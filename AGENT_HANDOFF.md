@@ -3,34 +3,49 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
-## PR #4282 workspace timestamp propagation
+## 2026-08-10 Exact wind-adapter propagation into PR #4282
 
-The current carrier remains `feat/4199-wind-workflow` with base
-`feat/4199-wind-scalar-adapter`. Exact corrected parent
-`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated through the normal
-merge containing this handoff. No branch was rebased, retargeted, rewritten,
-or force-pushed. The consolidated wind/capability workflow retains its release
-authority and inherits the deterministic Python 3.10-3.12 workspace timestamp
-parser plus the complete variation and scalar-ensemble history.
+Draft PR `#4282` remains on `feat/4199-wind-workflow` with base
+`feat/4199-wind-scalar-adapter`. The normal merge starts from original child
+`5f77af4add23547a21cc3fabce98ae9ad4260427` and incorporates exact published
+parent `4a793c4c3f19aad43a3c215800b266be487ace49` second. Do not rebase,
+retarget, force-push, rewrite either parent, change draft state, or merge the PR.
 
-The monotonic SPEC assigns 1.14.10 to compatibility, 1.14.11 to variation,
-1.14.12 to the wind scalar adapter, and 1.14.13 to this workflow carrier.
-The reconciled tree passes `924` combined Python tests, `28` direct
-compatibility tests on real CPython 3.10.20, and `104` React files / `642`
-tests. The Vite production build, TypeScript, zero-warning ESLint, Ruff,
-format, pinned mypy 1.13, campaign-manifest validator and its eight contracts,
-documentation governance, source-size, conflict-marker, and diff gates are
-clean. Protected CI, review, and downstream propagation remain separate
-release gates.
+The consolidated responsive wind/capability workflow and campaign release
+authority remain additive with the parent's variation visualizations,
+result-local selection, workspace/toolstrip, Python 3.10 compatibility, and
+matching `scalar-ensemble/v1` wind adapter. The canonical navigation-state
+module now owns the child capability-tab ID, preserving the parent's safe
+legacy visibility migration without duplicating navigation constants. The
+parent's strict deterministic wind boundary also remains intact: exact
+per-trial provenance, zero shear/turbulence, seed zero, and no gusts.
+Static review replaces child-owned optimized-away runtime assertions with
+explicit invariant failures, removes a redundant campaign-manifest cast under
+the pinned type checker, and identifies the fixed-argument executable builder
+subprocess boundary with Bandit's native annotations.
+
+SPEC 1.14.14 is the unique combined child entry above parent 1.14.13.
+Verification is green across 73 focused Python navigation/wind/compatibility
+tests, the complete Rate/shared-swing/golf-club matrix (`1,657 passed`, two
+explicit optional build123d skips), and all 643 React tests across 105 files.
+TypeScript, zero-warning ESLint, Vite production build, 12 Rust tests, 31 real
+CPython 3.10 compatibility tests, and 43 post-review invariant/GUI/manifest
+tests pass. Ruff/format, pinned MyPy 1.13 across 37 changed production files,
+Bandit, the exact-parent 500-line budget, campaign-manifest contracts,
+docs/minimum-test/assertion governance, CI-policy secrets scan, compilation,
+and diff gates pass. Independent re-review found no actionable findings after
+94 Python workflow/navigation tests, 20 manifest/GUI tests, and 61 React
+workflow tests plus independent static checks. Protected current-head CI,
+unresolved threads, and required repository review remain release gates.
 
 ## Active Rate of Closure campaign
 
 The active checkout is
 `C:\Users\diete\Repositories\Tools-worktrees\toolstrip-workspace` on the
 existing PR #4282 carrier `feat/4199-wind-workflow`. The local continuation
-starts from exact published head
-`de49580a3c0888b44f66dcc09bba2ab2fa33914a` and normally incorporates exact
-corrected #4281 parent `cf52529b1e68479321bb93b1be3d59c77f782008`
+starts from original published head
+`5f77af4add23547a21cc3fabce98ae9ad4260427` and normally incorporates exact
+published #4281 parent `4a793c4c3f19aad43a3c215800b266be487ace49`
 without changing the branch base `feat/4199-wind-scalar-adapter`. It composes
 four reviewed slices:
 strict capability parsing and signed decimal entry; complete capability
@@ -59,7 +74,7 @@ default-branch release are never interchangeable.
 Capability PRs #4294, #4289, and #4283 were merged top-down into
 `feat/4199-wind-workflow`; their feature parents were not protected. PR #4282
 is the current open carrier on base `feat/4199-wind-scalar-adapter`. Exact
-corrected parent `cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated
+published parent `4a793c4c3f19aad43a3c215800b266be487ace49` is incorporated
 through the normal local merge containing this handoff.
 
 The previous exact #4282 head `3186a265b1` built and loaded `swing_core`, but
@@ -68,11 +83,11 @@ its Python 3.11 parity job failed before collection because a cached
 pytest plugin auto-loading only in that Rust parity step. Its focused workflow
 contract test passes; a fresh hosted parity run is still required.
 
-Combined local evidence on the composed continuation is 828 Rate Python/PyQt
-tests and 104 React files / 642 tests, plus TypeScript, zero-warning ESLint,
-and the 188-module Vite production build. The deterministic manifest,
-generated-schema JSON, Ruff, targeted mypy, and nine manifest/parity contracts
-also pass on implementation head `2c1a77baa`.
+Combined local evidence on the composed continuation is 1,657 Python tests
+with two explicit optional skips and 105 React files / 643 tests, plus the
+TypeScript, zero-warning ESLint, 188-module Vite build, Rust, Python 3.10,
+manifest, Ruff, pinned mypy, Bandit, governance, secrets, compilation, and
+diff evidence recorded above.
 
 Hosted quality-gate run `31340032608` reached mypy 1.13 and exposed
 CI-context-only `no-any-return` findings in the Pydantic manifest loader and

@@ -4,24 +4,37 @@ Status verified 2026-08-09. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
-## 2026-08-10 PR #4282 workspace timestamp propagation
+## 2026-08-10 Exact #4281 propagation into wind workflow PR #4282
 
-Exact corrected #4281 parent
-`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated into
-`feat/4199-wind-workflow` by the normal merge containing this handoff. PR #4282
-keeps base `feat/4199-wind-scalar-adapter`; neither branch was rebased,
-retargeted, rewritten, or force-pushed. The consolidated wind/capability
-workflow inherits the deterministic Python 3.10-3.12 UTC parser, variation
-export, and scalar-ensemble history without changing its own behavior.
-
-The monotonic SPEC assigns 1.14.10 to compatibility, 1.14.11 to variation,
-1.14.12 to the scalar adapter, and 1.14.13 to this workflow carrier. The
-reconciled tree passes `924` combined Python tests, `28` direct compatibility
-tests on real CPython 3.10.20, and `104` React files / `642` tests. The Vite
-production build, TypeScript, zero-warning ESLint, Ruff, format, pinned mypy
-1.13, campaign-manifest validator and its eight contracts, documentation
-governance, source-size, conflict-marker, and diff gates are clean. Protected
-CI, review, and downstream propagation remain open.
+- PR `#4282` remains on `feat/4199-wind-workflow`, based on
+  `feat/4199-wind-scalar-adapter`.
+- Original child `5f77af4add23547a21cc3fabce98ae9ad4260427` normally merges exact
+  parent `4a793c4c3f19aad43a3c215800b266be487ace49`; preserve that parent order
+  and do not rebase, retarget, force-push, rewrite a parent, change draft state,
+  or merge the PR.
+- The responsive PyQt6/React wind workflow, consolidated capability stack, and
+  campaign release authority remain additive with the parent's strict
+  scalar-ensemble wind adapter, variation visualization, result-local
+  selection, workspace/toolstrip, and Python 3.10 compatibility repairs.
+- The canonical navigation-state tuple now includes the child-owned capability
+  tab while retaining the parent's legacy-order visibility migration; no
+  duplicate navigation constant remains.
+- Static review replaces optimized-away UI/capability assertions with explicit
+  runtime invariant failures, removes a redundant campaign-manifest cast, and
+  records the fixed-argument executable builder subprocess boundary using
+  Bandit's native suppression syntax.
+- SPEC 1.14.14 is the unique combined child entry. Verification passes 73
+  focused Python tests, the complete 1,657-test Rate/shared-swing/golf-club
+  matrix with two explicit optional build123d skips, 643 React tests across 105
+  files plus type-check/lint/build, 12 Rust tests, 31 real-CPython-3.10
+  compatibility tests, and 43 post-review invariant/GUI/manifest tests.
+  Ruff/format, pinned MyPy 1.13 across 37 changed production files, Bandit,
+  exact-parent size, manifest, docs, minimum-test, assertions, CI-policy
+  secrets, compilation, and diff gates pass. Independent re-review found no
+  actionable findings after 94 Python workflow/navigation tests, 20
+  manifest/GUI tests, 61 React workflow tests, and independent static checks.
+  Protected current-head CI, unresolved threads, and repository review remain
+  release gates after publication.
 
 ## 2026-08-09 PR #4282 corrected-parent propagation
 

@@ -253,9 +253,11 @@ def _metrics(run: SimulationRun) -> tuple[ImpactSceneMetric, ...]:
         _metric(
             "leading_edge_relative_arc_rate",
             "Leading Edge Relative to Arc",
-            None
-            if analysis.leading_edge_relative_arc_heading_rate_rad_s is None
-            else analysis.leading_edge_relative_arc_heading_rate_rad_s * to_degrees,
+            (
+                None
+                if analysis.leading_edge_relative_arc_heading_rate_rad_s is None
+                else analysis.leading_edge_relative_arc_heading_rate_rad_s * to_degrees
+            ),
             "deg/s",
             "heading_rate(edge)-heading_rate(arc)",
             frame,
