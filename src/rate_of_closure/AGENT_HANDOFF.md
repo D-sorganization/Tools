@@ -3,6 +3,17 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Exact-head manifest typing repair
+
+PR #4282 exact head `aa6eeffb0395f7ed7954f2315b1c625cada552d8`
+failed hosted quality-gate run `31395741841` only at pinned-mypy
+`scripts/rate_campaign_manifest.py:335:5 [no-any-return]`. The CI profile skips
+import analysis, so the Pydantic validator result becomes `Any`; an explicit
+local `CampaignManifest` annotation now retains the validated return contract
+without changing parsing, validation, or error behavior. Ruff and format had
+already passed on the failed head. Publish this repair normally, then propagate
+its new exact head into #4285; do not retry the obsolete run.
+
 ## 2026-08-10 Wind workflow receives exact scalar-adapter parent
 
 PR `#4282` keeps branch `feat/4199-wind-workflow`, base
@@ -17,9 +28,9 @@ The parent's extracted navigation-state tuple is the single authority and now
 includes the child-owned `capability_optimization` ID. This preserves safe
 legacy visibility migration and prevents a persisted pre-capability workspace
 from hiding the new tab. Runtime-only UI and capability invariants now raise
-explicit errors under optimized Python, the campaign manifest avoids a
-redundant pinned-MyPy cast, and the safe fixed-argument builder subprocess is
-annotated for Bandit. SPEC 1.14.14 is the unique combined child entry.
+explicit errors under optimized Python, and the safe fixed-argument builder
+subprocess is annotated for Bandit. The skipped-import manifest return repair
+is recorded above. SPEC 1.14.15 is the current exact-head repair entry.
 Verification passes 73 focused Python tests, the complete 1,657-test
 Rate/shared-swing/golf-club matrix with two explicit optional build123d skips,
 all 643 React tests across 105 files plus type-check/lint/build, 12 Rust tests,

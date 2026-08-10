@@ -3,6 +3,18 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 PR #4282 exact-head mypy repair
+
+Protected quality-gate run `31395741841`, job `93478091420`, checked merge ref
+`ae75c4b006072b20a713e45b177defcc16a380fe` for exact head
+`aa6eeffb0395f7ed7954f2315b1c625cada552d8`. Checkout, dependency install,
+Ruff, and formatting passed; pinned mypy 1.13 then failed only
+`scripts/rate_campaign_manifest.py:335:5 [no-any-return]`. Under the exact CI
+`--follow-imports=skip` profile, Pydantic's `model_validate_json` return is
+`Any`. The validated local now carries an explicit `CampaignManifest` type,
+preserving runtime behavior without a redundant cast or suppression. Do not
+retry or cite the obsolete failed head as passing.
+
 ## 2026-08-10 Exact wind-adapter propagation into PR #4282
 
 Draft PR `#4282` remains on `feat/4199-wind-workflow` with base
@@ -20,9 +32,9 @@ legacy visibility migration without duplicating navigation constants. The
 parent's strict deterministic wind boundary also remains intact: exact
 per-trial provenance, zero shear/turbulence, seed zero, and no gusts.
 Static review replaces child-owned optimized-away runtime assertions with
-explicit invariant failures, removes a redundant campaign-manifest cast under
-the pinned type checker, and identifies the fixed-argument executable builder
-subprocess boundary with Bandit's native annotations.
+explicit invariant failures and identifies the fixed-argument executable
+builder subprocess boundary with Bandit's native annotations. The exact-head
+CI repair above handles the separate skipped-import Pydantic return boundary.
 
 SPEC 1.14.14 is the unique combined child entry above parent 1.14.13.
 Verification is green across 73 focused Python navigation/wind/compatibility

@@ -4,6 +4,20 @@ Status verified 2026-08-09. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 PR #4282 exact-head mypy repair
+
+- Hosted run `31395741841`, quality job `93478091420`, checked merge ref
+  `ae75c4b006072b20a713e45b177defcc16a380fe` for exact #4282 head
+  `aa6eeffb0395f7ed7954f2315b1c625cada552d8`.
+- Checkout, installation, Ruff, and format passed. Pinned mypy 1.13 failed only
+  `scripts/rate_campaign_manifest.py:335:5 [no-any-return]` because the exact
+  skipped-import profile treats Pydantic's validator result as `Any`.
+- The validated local now has an explicit `CampaignManifest` annotation. This
+  preserves the strict JSON contract and avoids both a suppression and the
+  redundant cast reported by the non-skipped profile.
+- The failed run belongs to the obsolete head. Publish normally, preserve the
+  PR base/draft state, and propagate the resulting exact head into #4285.
+
 ## 2026-08-10 Exact #4281 propagation into wind workflow PR #4282
 
 - PR `#4282` remains on `feat/4199-wind-workflow`, based on
@@ -20,9 +34,9 @@ branch was rewritten.
   tab while retaining the parent's legacy-order visibility migration; no
   duplicate navigation constant remains.
 - Static review replaces optimized-away UI/capability assertions with explicit
-  runtime invariant failures, removes a redundant campaign-manifest cast, and
-  records the fixed-argument executable builder subprocess boundary using
-  Bandit's native suppression syntax.
+  runtime invariant failures and records the fixed-argument executable builder
+  subprocess boundary using Bandit's native suppression syntax. The separate
+  exact-CI Pydantic return repair is recorded above.
 - SPEC 1.14.14 is the unique combined child entry. Verification passes 73
   focused Python tests, the complete 1,657-test Rate/shared-swing/golf-club
   matrix with two explicit optional build123d skips, 643 React tests across 105

@@ -331,7 +331,9 @@ def _reject_placeholders(value: Any, path: str) -> None:
 
 def load_campaign_manifest(path: Path = DEFAULT_MANIFEST) -> CampaignManifest:
     """Read and strictly validate a UTF-8 JSON campaign manifest."""
-    validated = CampaignManifest.model_validate_json(path.read_text(encoding="utf-8"))
+    validated: CampaignManifest = CampaignManifest.model_validate_json(
+        path.read_text(encoding="utf-8")
+    )
     return validated
 
 
