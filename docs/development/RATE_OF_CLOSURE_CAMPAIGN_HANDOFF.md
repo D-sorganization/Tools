@@ -1354,6 +1354,8 @@ Exact repair commit `940563f222065c4f343b587699c52062c6e1db59`
 passes 194 ground tests, 27 flight-first import/result/transfer tests, and an
 independent 75-test adversarial audit of calibration, provenance, strict wire,
 lazy imports, facade exports, and deprecated compatibility behavior.
+No material handoff change beyond correcting the deprecated compatibility
+adapter's rejection wording so it does not imply profile qualification.
 
 This is a bounded foundation for issue #4273, not completion of the issue or
 ground epic. No ensemble/variation/wind/optimizer/UI/compiled/Upstream consumer

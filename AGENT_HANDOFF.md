@@ -559,6 +559,8 @@ Exact qualification/import repair commit
 `940563f222065c4f343b587699c52062c6e1db59` passes 194 ground tests, 27
 flight-first import/result/transfer tests, and an independent 75-test adversarial
 review with no remaining blocker.
+No material handoff change beyond clarifying the deprecated adapter's rejection
+text: it no longer calls its unqualified compatibility input "qualified."
 
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 

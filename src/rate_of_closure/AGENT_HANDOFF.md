@@ -1018,6 +1018,8 @@ sensitive workflows because it lacks a bound material profile.
 Exact repair commit `940563f222065c4f343b587699c52062c6e1db59`
 passes 194 ground tests, 27 flight-first import/result/transfer tests, and the
 independent 75-test calibration/provenance/import/API audit.
+No material handoff change beyond removing the misleading word "qualified"
+from the deprecated compatibility adapter's rejection message.
 
 Keep issue #4273 and epic #4267 open. Variation/dispersion, wind, optimizer,
 UI, compiled-runtime, and UpstreamDrift consumers are not implemented by this
