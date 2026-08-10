@@ -16,7 +16,7 @@ import { pointerCoordinates } from "./pointerCoordinates";
 import {
   applyManualOverride,
   applyCameraPreset,
-  defaultCameraState,
+  movingSubjectCameraState,
   recenterCamera,
   safeTrackingZoom,
   setFaceOnSide,
@@ -43,7 +43,7 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
   const [playing, setPlaying] = useState(false);
   const [loop, setLoop] = useState(false);
   const [speed, setSpeed] = useState(1);
-  const [camera, setCamera] = useState(defaultCameraState);
+  const [camera, setCamera] = useState(movingSubjectCameraState);
   const timeline = useMemo(
     () => (points.length > 0 ? new PlaybackTimeline(points) : null),
     [points],

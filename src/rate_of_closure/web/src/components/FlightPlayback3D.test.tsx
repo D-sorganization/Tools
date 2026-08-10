@@ -153,7 +153,9 @@ describe("FlightPlayback3D", () => {
     fireEvent.click(screen.getByRole("button", { name: "Overhead" }));
     expect(screen.getByRole("button", { name: "Overhead" }))
       .toHaveAttribute("aria-pressed", "true");
-    fireEvent.click(screen.getByRole("checkbox", { name: "Track Ball" }));
+    expect(screen.getByRole("checkbox", { name: "Track Ball" })).toBeChecked();
+    expect(screen.getByRole("checkbox", { name: "Auto Fit camera" }))
+      .toBeChecked();
     expect(screen.getByRole("status", { name: "Camera tracking state" }))
       .toHaveTextContent("Tracking Ball");
     fireEvent.pointerDown(canvas, { pointerId: 4, clientX: 100, clientY: 100 });

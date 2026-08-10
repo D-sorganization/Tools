@@ -3,6 +3,25 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-09.
 
+## Issue #4300 moving-subject default-camera continuation
+
+`fix/rate-pyqt-default-camera` is based on exact draft #4301 head
+`9322df75d6ad1b6ef57be02741ac972e7c6f86cf`. A shared Python/TypeScript
+initializer gives animated clubhead and ball-flight viewports a 2x,
+tracking-enabled, Auto-Fit-enabled first frame across PyQt6 and React. Static
+viewports retain the neutral default, and every user override remains
+available. This prevents the moving subject from opening tiny or leaving the
+frame without changing physics, geometry, frames, trajectories, or schemas.
+
+RED-first tests cover the default checkboxes/state, subject containment, snap
+views, manual-orbit suspension, and re-centering. The 49 focused Python/PyQt
+tests and 108 React files / 653 tests pass with TypeScript, zero-warning ESLint,
+production build, six desktop/constrained-HiDPI Chrome Playwright cases,
+pinned MyPy 1.13, Ruff, and diff checks. Native worktree inspection confirms
+the PyQt Swing view opens at a useful scale. Manifest publication, protected
+CI/review, and integration remain open; do not close #4300 or #4218 from this
+local evidence.
+
 ## Issue #4300 constrained toolstrip popovers
 
 Draft PR #4301 publishes branch `fix/rate-mobile-tools-menu` at immutable

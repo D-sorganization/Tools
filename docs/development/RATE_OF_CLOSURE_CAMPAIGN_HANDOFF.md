@@ -4,6 +4,27 @@ Status verified 2026-08-09. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 Issue #4300 moving-subject camera defaults
+
+Worktree branch `fix/rate-pyqt-default-camera` is a normal child of exact
+draft #4301 head `9322df75d6ad1b6ef57be02741ac972e7c6f86cf`.
+One shared Python initializer and its TypeScript counterpart define the
+share-ready state for animated subjects: 2x zoom, bounded tracking on, and Auto
+Fit on. PyQt6 Swing/Flight and React Club/Flight consume the same intent while
+static viewports keep neutral defaults. Tracking and Auto Fit remain
+independently reversible; manual orbit suspends tracking and re-center resumes
+it. Physics, frames, trajectories, geometry, and result schemas are unchanged.
+
+RED-first GUI/component tests cover both defaults and subject containment.
+The 49 focused Python/PyQt tests and full 108-file / 653-test React suite pass,
+as do TypeScript, zero-warning ESLint, the production build, six
+desktop/constrained-HiDPI Chrome Playwright cases, pinned MyPy 1.13 on the four
+changed production files, Ruff, and diff checks. Native inspection confirms
+that the PyQt Swing view opens at a useful scale and follows playback instead
+of presenting a tiny, static subject. Manifest evidence, draft publication,
+protected CI/review, and ordinary integration remain open. Issue #4300 and
+epic #4218 must remain open until those gates and remaining layout work pass.
+
 ## 2026-08-09 Issue #4300 constrained Tools-menu continuation
 
 Draft PR #4301 publishes branch `fix/rate-mobile-tools-menu` at immutable

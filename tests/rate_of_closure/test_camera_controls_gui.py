@@ -55,6 +55,46 @@ def test_every_3d_view_exposes_accessible_stable_camera_commands(
     assert controls.minimumSizeHint().width() <= 700
 
 
+def test_simulation_camera_starts_fitted_and_tracks_the_clubhead(
+    qtbot, reference_run
+) -> None:  # type: ignore[no-untyped-def]
+    """The share-ready swing scene should not open tiny or lose its subject."""
+    view = SimulationView()
+    qtbot.addWidget(view)
+    view.set_run(reference_run)
+
+    state = view.camera_state()
+    assert state.tracking_enabled
+    assert state.auto_fit_enabled
+    assert state.zoom == pytest.approx(2.0)
+    assert view.camera_controls().track.isChecked()
+    assert view.camera_controls().auto_fit.isChecked()
+
+    subject = view._display(reference_run.swing_positions[0])
+    limits = (
+        view._axes.get_xlim3d(),
+        view._axes.get_ylim3d(),
+        view._axes.get_zlim3d(),
+    )
+    for coordinate, bounds in zip(subject, limits, strict=True):
+        assert bounds[0] < coordinate < bounds[1]
+    assert view.scene_extent_m() < view._camera_base_half_extent_m()
+
+
+def test_flight_camera_starts_fitted_and_tracks_the_ball(qtbot, reference_run) -> None:  # type: ignore[no-untyped-def]
+    view = FlightView()
+    qtbot.addWidget(view)
+    view.set_run(reference_run)
+
+    state = view.camera_state()
+    assert state.tracking_enabled
+    assert state.auto_fit_enabled
+    assert state.zoom == pytest.approx(2.0)
+    assert view.camera_controls().track.isChecked()
+    assert view.camera_controls().auto_fit.isChecked()
+    assert view.camera_subject_in_frame()
+
+
 def test_simulation_snap_views_are_exact_idempotent_and_face_side_explicit(
     qtbot, reference_run
 ) -> None:  # type: ignore[no-untyped-def]

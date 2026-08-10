@@ -22,6 +22,7 @@ from matplotlib.figure import Figure
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QVBoxLayout, QWidget
 
+from rate_of_closure.application.camera_commands import moving_subject_camera_state
 from rate_of_closure.simulation import SimulationRun
 from rate_of_closure.simulation.flight_playback import TimedTrajectory
 from rate_of_closure.simulation.targets import TargetRegion
@@ -90,7 +91,12 @@ class FlightView(FlightCameraAdapter, FlightViewPanelsMixin, QWidget):
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(self._build_param_bar())
-        layout.addWidget(self._initialize_camera("Ball"))
+        layout.addWidget(
+            self._initialize_camera(
+                "Ball",
+                moving_subject_camera_state(),
+            )
+        )
         layout.addWidget(self._canvas)
         self._canvas.mpl_connect("button_release_event", self._manual_camera_released)
         self._draw()
