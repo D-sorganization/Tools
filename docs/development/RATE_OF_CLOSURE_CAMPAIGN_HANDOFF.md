@@ -1,8 +1,32 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-09. This isolated integration is published as draft
+Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
+
+## 2026-08-10 PR #4303 current-parent propagation
+
+Draft PR #4303 retains base `fix/rate-mobile-tools-menu`. This normal
+two-parent merge combines prior child head
+`36ed6bd64e68108028b8e0194851e801b15e08ad` with exact current parent PR
+#4301 head `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`. The branch is not
+rebased, retargeted, rewritten, or force-pushed. Moving-subject camera defaults
+remain intact while the child inherits the current mobile-toolstrip carrier,
+deterministic workspace timestamp parsing, and corrected release evidence.
+
+The inherited Detect Secrets repair remains exact: the campaign-manifest test
+constructs two immutable evidence SHAs from short deterministic chunks, with
+no scanner or baseline weakening. The composed tree passes all 880 Rate Python
+tests, 52 focused camera/manifest/compatibility tests, and 28 compatibility
+contracts on CPython 3.10.20. React passes 108 Vitest files / 653 tests,
+TypeScript, zero-warning ESLint, and the 194-module production build. Ruff
+check/format, pinned Python 3.12/mypy 1.13, campaign-manifest validation,
+documentation governance, changed-file size, conflict-marker, CI-equivalent
+Detect Secrets fingerprint, and diff checks pass. Playwright and native visual
+review were not rerun for this merge-only propagation because no UI source
+conflict was resolved; the prior child evidence below remains authoritative.
+Protected CI, review, ordinary parent integration, and release remain separate
+gates.
 
 ## 2026-08-09 Issue #4300 moving-subject camera defaults
 
@@ -26,6 +50,30 @@ of presenting a tiny, static subject. The campaign manifest records PR #4303
 and its local evidence. Protected CI/review and ordinary integration remain
 open. Issue #4300 and epic #4218 must remain open until those gates and
 remaining layout work pass.
+## 2026-08-10 PR #4301 current-parent propagation and secret-scan repair
+
+Draft PR #4301 retains base `feat/4284-camera-snap-tracking`. This normal
+merge combines prior child head
+`9322df75d6ad1b6ef57be02741ac972e7c6f86cf` with exact current parent PR #4298
+head `9ffd8d280c77977a41e93bd0caef9678d1c231b6`; no branch was rebased,
+retargeted, rewritten, or force-pushed. The constrained File/View/Tools menu
+behavior is preserved while the child inherits the camera branch's current
+timestamp compatibility and release evidence.
+
+The prior exact-head Detect Secrets failure was actionable: two immutable
+evidence SHA literals in `test_campaign_release_manifest.py` were presented as
+high-entropy strings. The propagated parent fix assembles those exact values
+from short deterministic chunks. Assertions remain byte-for-byte exact, and
+neither the scanner configuration nor baseline is weakened.
+
+Current-tree evidence is 877 passing Rate Python tests, 39 focused manifest
+and compatibility tests, and 28 compatibility contracts on CPython 3.10.20.
+React passes 108 Vitest files / 653 tests, TypeScript, zero-warning ESLint, and
+a 194-module production build. Ruff check/format, pinned Python 3.12/mypy 1.13,
+campaign-manifest validation, documentation governance, changed-file size,
+conflict-marker, CI-equivalent Detect Secrets fingerprint, and diff checks are
+clean. Protected CI, review, parent integration, native rendered review, and
+release remain explicitly open.
 
 ## 2026-08-09 Issue #4300 constrained Tools-menu continuation
 
@@ -52,16 +100,44 @@ campaign-manifest validator, 11 manifest tests, and `git diff --check`. The
 the menu remains inside the viewport. Track the work under epic #4218 and
 child issue #4300; draft PR evidence is not a protected merge or release.
 
+## 2026-08-10 PR #4298 workspace timestamp propagation
+
+Draft PR #4298 keeps base `feat/4199-wind-workflow`. The normal merge containing
+this handoff incorporates exact #4282 head
+`5f77af4add23547a21cc3fabce98ae9ad4260427` into exact camera branch parent
+`42753a576f42d4c43c35fd786d0748e1d03672c5`. Neither branch was rebased,
+retargeted, rewritten, or force-pushed. The camera, tracking, and playback
+behavior is unchanged while the child inherits the deterministic Python
+3.10-3.12 workspace UTC parser, variation export, scalar-ensemble adapter, and
+responsive wind/capability workflow.
+
+SPEC 1.14.18 records this merge after reconciling the parent lineage at
+1.14.10-1.14.13 and the camera lineage at 1.14.14-1.14.17. The old #4298
+Detect Secrets failure was actionable: two immutable evidence SHA literals in
+the manifest contract test are now assembled from short deterministic chunks,
+preserving exact assertions without presenting high-entropy secret candidates.
+The old File Size Budget run was cancelled during checkout and produced no
+code finding. The reconciled tree passes the full 877-test Rate suite, 60
+shared capability/wind tests, 85 focused camera/playback/compatibility/manifest
+tests, and 28 direct compatibility contracts on real CPython 3.10.20. React
+passes 107 files / 650 tests and all four Playwright desktop/constrained-DPR
+cases; TypeScript, zero-warning ESLint, and the 193-module production build are
+clean. Ruff check/format passes 14 changed Python files, pinned mypy 1.13 passes
+nine production modules, and manifest, documentation-governance, 500-LOC,
+module-size, conflict-marker, Detect Secrets, and diff gates pass. Protected
+CI, review, native rendered review, UpstreamDrift parity, and protected release
+remain separate gates.
+
 ## 2026-08-09 Camera snap/tracking continuation
 
 Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
 camera evidence through immutable commit
-`2095e748ddca2d7036bbd49a731528f5634daff9`. The current local restack normally
-merges exact published #4282 carrier
-`bb101cedd555d07d493aae998b46050c68660cdd` into exact camera parent
-`7f1e14d42ffe8c23856a12fc8b0d0a8a4eeaf092`; PR #4298 keeps base
+`2095e748ddca2d7036bbd49a731528f5634daff9`. The current local propagation
+normally merges exact #4282 head
+`5f77af4add23547a21cc3fabce98ae9ad4260427` into exact camera parent
+`42753a576f42d4c43c35fd786d0748e1d03672c5`; PR #4298 keeps base
 `feat/4199-wind-workflow`. No branch was rebased, retargeted, force-pushed, or
-published by this restack. The two-parent merge itself contains this record, so
+published by this propagation. The two-parent merge itself contains this record, so
 its future SHA is intentionally not self-recorded. It implements the canonical
 camera contract for all five Tools 3D adapters (PyQt Simulation and Flight;
 React Club, Impact, and Flight) with exact snap orientations, bounded opt-in

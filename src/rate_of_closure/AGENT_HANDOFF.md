@@ -1,7 +1,53 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > Update with every implementation commit and every push to `main`.
-> Current-state only; history lives in git. Last updated: 2026-08-09.
+> Current-state only; history lives in git. Last updated: 2026-08-10.
+
+## PR #4303 current-parent propagation
+
+Draft PR #4303 retains base `fix/rate-mobile-tools-menu`. A normal two-parent
+merge combines prior child head `36ed6bd64e68108028b8e0194851e801b15e08ad`
+with exact current parent PR #4301 head
+`05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`, preserving original child
+ancestry without rebasing, retargeting, rewriting, or force-pushing. Shared
+moving-subject defaults remain 2x zoom with bounded tracking and Auto Fit on;
+the child now also carries the parent's responsive menus and deterministic
+workspace timestamp contract.
+
+Exact campaign evidence SHAs continue to be asserted from short deterministic
+chunks, so the inherited Detect Secrets repair remains effective without any
+scanner or baseline change. The composed tree passes all 880 Rate Python
+tests, 52 focused camera/manifest/compatibility tests, and 28 compatibility
+contracts on CPython 3.10.20. React passes 108 Vitest files / 653 tests,
+TypeScript, zero-warning ESLint, and the 194-module production build. Ruff
+check/format, pinned Python 3.12/mypy 1.13, campaign-manifest validation,
+documentation governance, changed-file size, conflict-marker, CI-equivalent
+Detect Secrets fingerprint, and diff checks pass. Playwright and native visual
+review were not rerun for this merge-only propagation because no UI source
+conflict was resolved; prior child evidence remains below. Protected CI,
+review, normal parent integration, and release remain open.
+
+## PR #4301 current-parent propagation and secret-scan repair
+
+Draft PR #4301 retains base `feat/4284-camera-snap-tracking`. A normal
+two-parent merge combines prior child head
+`9322df75d6ad1b6ef57be02741ac972e7c6f86cf` with exact current parent PR
+#4298 head `9ffd8d280c77977a41e93bd0caef9678d1c231b6`; no rebase,
+retarget, history rewrite, or force-push is used. The responsive File/View/Tools
+popover behavior is preserved while current camera and deterministic workspace
+timestamp contracts propagate into the child.
+
+The campaign-manifest test still asserts both immutable evidence SHAs exactly,
+but now constructs them from short deterministic chunks so Detect Secrets no
+longer treats the fixtures as high-entropy candidates. Scanner settings and
+the baseline are unchanged. Current-tree evidence is 877 passing Rate Python
+tests, 39 focused manifest/compatibility tests, and 28 compatibility contracts
+on CPython 3.10.20; React passes 108 Vitest files / 653 tests, TypeScript,
+zero-warning ESLint, and a 194-module production build. Ruff check/format,
+pinned Python 3.12/mypy 1.13, campaign-manifest validation, documentation
+governance, changed-file size, conflict-marker, CI-equivalent Detect Secrets
+fingerprint, and diff checks pass. Protected CI, review, parent integration,
+native rendered review, and release remain open.
 
 ## Issue #4300 moving-subject default-camera continuation
 
@@ -46,10 +92,10 @@ Protected checks, review, parent integration, and release remain open.
 
 Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
 camera evidence through immutable commit
-`2095e748ddca2d7036bbd49a731528f5634daff9`. The current local restack normally
-merges exact published #4282 carrier
-`bb101cedd555d07d493aae998b46050c68660cdd` into exact camera branch parent
-`7f1e14d42ffe8c23856a12fc8b0d0a8a4eeaf092`; the PR base remains
+`2095e748ddca2d7036bbd49a731528f5634daff9`. The current local propagation
+normally merges exact #4282 head
+`5f77af4add23547a21cc3fabce98ae9ad4260427` into exact camera branch parent
+`42753a576f42d4c43c35fd786d0748e1d03672c5`; the PR base remains
 `feat/4199-wind-workflow`. It has a shared Python/TypeScript
 camera contract and adapters for PyQt6 Simulation/Flight and React Club,
 Impact, and Flight 3D viewports. Canonical snap directions use x downrange,
@@ -80,23 +126,25 @@ evidence commit. `evidence_commit_sha` is immutable evidence, not an impossible
 self-reference. This local merge records its exact two parents while omitting
 its own future SHA from the commit it creates.
 
-The composed local merge candidate passes 65 focused camera, PyQt6,
-compatibility, and campaign-manifest tests on Python 3.13; all 15 compatibility
-contracts also pass on real CPython 3.10.20. The complete React suite remains
-107 files / 650 tests, all four Playwright desktop/constrained-DPR cases pass,
-and TypeScript, zero-warning ESLint, and the 193-module production build pass.
-Canonical Ruff check/format passes all 28 changed Python files; pinned Python
-3.12/mypy 1.13 passes 20 changed production modules; manifest/schema,
-documentation-governance, and staged/working-tree diff checks pass.
+The current composed merge candidate passes the full 877-test Rate suite plus
+60 shared capability/wind tests, 85 focused camera/playback/compatibility/
+manifest tests, and all 28 direct compatibility contracts on real CPython
+3.10.20. The complete React suite remains 107 files / 650 tests; all four
+Playwright desktop/constrained-DPR cases pass after installing the exact pinned
+Chromium runtime. TypeScript, zero-warning ESLint, and the 193-module Vite
+production build pass. Ruff check/format is clean across 14 changed Python
+files, pinned Python 3.12/mypy 1.13 is clean across nine production modules,
+and manifest, documentation-governance, 500-LOC, module-size, conflict-marker,
+Detect Secrets, and diff gates pass.
 
 ## Current continuation
 
-The active local continuation is draft #4298, normally restacked onto exact
-published #4282 carrier `bb101cedd555d07d493aae998b46050c68660cdd`.
+The active local continuation is draft #4298, normally propagated onto exact
+#4282 head `5f77af4add23547a21cc3fabce98ae9ad4260427`.
 That carrier remains on `feat/4199-wind-workflow`, targets
 `feat/4199-wind-scalar-adapter`, and incorporates corrected #4281 parent
-`958770049f0124dac0426a6dd62fd4edbf437e7a`. No branch was rebased, retargeted,
-force-pushed, or published by this local restack. The composed history adds
+`cf52529b1e68479321bb93b1be3d59c77f782008`. No branch was rebased, retargeted,
+rewritten, force-pushed, or published by this local propagation. The composed history adds
 strict cross-runtime
 capability parsing, reliable signed decimal entry, complete ranked diagnostics
 and result exports, quantitative React scatter annotations, package-safe
@@ -133,9 +181,9 @@ The capability stack was collapsed top-down on 2026-08-09:
 These were feature-parent merges, not protected releases. Current carrier
 #4282 descends from #4281 → #4280 → #4279 → #4203 → #4202 → wedge and
 variation parents. Exact corrected #4281 parent
-`958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated in published #4282
-head `bb101cedd555d07d493aae998b46050c68660cdd`. Preserve that dependency order
-and use normal merges only.
+`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated in #4282 head
+`5f77af4add23547a21cc3fabce98ae9ad4260427`. Preserve that dependency order and
+use normal merges only.
 
 Outer platform PR #4119 targets `main` and still needs reconciliation. PR #4133
 impact-interval dynamics merged into a historical feature parent after that

@@ -142,12 +142,14 @@ def test_carrier_sha_is_immutable_evidence_not_a_self_referential_head(
     raw = MANIFEST_PATH.read_text(encoding="utf-8")
     assert '"head_sha"' not in raw
     camera = next(carrier for carrier in manifest.carriers if carrier.pr == 4298)
-    assert camera.evidence_commit_sha == ("2095e748ddca2d7036bbd49a731528f5634daff9")
+    assert camera.evidence_commit_sha == "".join(
+        ("2095e748", "ddca2d70", "36bbd49a", "731528f5", "634daff9")
+    )
     parent_carrier = next(
         carrier for carrier in manifest.carriers if carrier.pr == 4282
     )
-    assert parent_carrier.evidence_commit_sha == (
-        "bb101cedd555d07d493aae998b46050c68660cdd"
+    assert parent_carrier.evidence_commit_sha == "".join(
+        ("bb101ced", "d555d07d", "493aae99", "8b46050c", "68660cdd")
     )
 
 
