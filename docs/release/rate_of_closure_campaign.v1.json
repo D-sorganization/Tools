@@ -198,6 +198,16 @@
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4304",
+      "pr": 4304,
+      "branch": "feat/4271-ground-skid-roll",
+      "base_branch": "feat/4270-ground-impact-bounce",
+      "head_sha": "dcc801395538bdc7b9a46835f5555abdd72677a4",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
     }
   ],
   "test_evidence": [
@@ -303,6 +313,25 @@
       "source_paths": [
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-skid-roll-local-dcc8",
+      "kind": "local",
+      "commit_sha": "dcc801395538bdc7b9a46835f5555abdd72677a4",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "uv run --no-project --python 3.10 --with pytest==9.0.3 --with numpy==2.2.6 --with scipy==1.15.3 --with jsonschema==4.25.1 -- python -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",
+        "uv run --no-project --python 3.11 --with mypy==1.13.0 -- python -m mypy --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/*.py",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground && uvx --from ruff==0.14.10 ruff format --check src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The independently reviewed static-plane skid/roll head passed all 115 ground tests on CPython 3.11.9 and real CPython 3.10.20, pinned MyPy and Ruff, manifest and documentation governance, changed-test assertions, structural budgets, diff checks, and adversarial oblique-slope, request-binding, terminal-consistency, and finite-edge regressions; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_SKID_ROLL.md"
       ]
     }
   ],
@@ -1081,7 +1110,8 @@
       "carrier_ids": [
         "pr-4285",
         "pr-4288",
-        "pr-4302"
+        "pr-4302",
+        "pr-4304"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "contract_only",
@@ -1090,9 +1120,10 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [
-        "ground-impact-local-63a6"
+        "ground-impact-local-63a6",
+        "ground-skid-roll-local-dcc8"
       ],
-      "evidence_gap": "The contract, flight-transfer, and impact/bounce carriers are open. Issue #4270 is published on draft PR 4302 with exact local evidence but no protected evidence. Issue #4271 has a locally verified static-plane Python implementation but no published carrier, protected evidence, UI, compiled-runtime, or downstream parity evidence.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, and static-plane skid/roll carriers are open. Issues #4270 and #4271 are published on draft PRs 4302 and 4304 with exact local evidence but no protected evidence. Changing normals, regional surfaces, UI, compiled-runtime, and downstream parity evidence remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
