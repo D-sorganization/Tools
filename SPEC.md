@@ -26,13 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.16                                    |
-| **Spec Version**        | 1.14.16                                    |
-| **Last Spec Update**    | 2026-08-09                                 |
+| **Current Version**     | 1.14.18                                    |
+| **Spec Version**        | 1.14.18                                    |
+| **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-10 Deterministic workspace timestamps
+
+- Workspace timestamps use one anchored UTC-only grammar and accept canonical
+  ISO-8601 values with zero through six fractional-second digits consistently
+  on Python 3.10 through 3.12.
+- Greater-than-microsecond precision, offsets, lower-case suffixes, and invalid
+  calendar values fail closed instead of being accepted or truncated according
+  to interpreter-specific `datetime.fromisoformat` behavior.
 
 ### 2026-08-09 Canonical 3D camera controls
 
@@ -2952,13 +2961,15 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-09 | 1.14.16 | merge(rate-of-closure, #4282 #4284): normally restack the camera-control branch by merging exact published wind-workflow carrier `bb101cedd555d07d493aae998b46050c68660cdd` into exact camera parent `7f1e14d42ffe8c23856a12fc8b0d0a8a4eeaf092`, without rebasing or retargeting; retain immutable camera evidence at `2095e748ddca2d7036bbd49a731528f5634daff9`, inherit the carrier's Python 3.10 compatibility and scalar-ensemble corrections, and keep native visual, hosted review, protected release, persistence, and UpstreamDrift parity gates open. |
-| 2026-08-09 | 1.14.15 | fix(rate-of-closure, #4284): distinguish immutable carrier evidence commits from mutable PR heads, record published camera evidence at 2095e748 with 107/650 React and 4 Playwright tests, and retain migration support for legacy `head_sha` manifest input. |
-| 2026-08-09 | 1.14.14 | test(rate-of-closure, #4284): add solver-sample flight frame steps and Playwright camera/playback interaction coverage at desktop and constrained 2x-DPR viewports; retain native visual and downstream parity gates. |
-| 2026-08-09 | 1.14.13 | feat(rate-of-closure, #4284): add canonical cross-runtime 3D camera snaps, bounded clubhead/ball tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and focused PyQt6/React contracts. |
-| 2026-08-09 | 1.14.12 | fix(rate-of-closure, #4282): normally propagate exact corrected scalar-ensemble parent `958770049f0124dac0426a6dd62fd4edbf437e7a` into the responsive PyQt6/React wind-workflow carrier without changing its base; retain the consolidated capability workflow and release authority while inheriting the parent's Python 3.10 compatibility, variation-export, immutable scalar-row, stable composite-identity, availability, and typed wind-adapter corrections; route the child-owned capability-observation `StrEnum` through the shared Python 3.10 runtime contract and extend the compatibility regression. |
-| 2026-08-09 | 1.14.11 | feat(wind variation, #4199 #4281): add matching UI-neutral Python/TypeScript `scalar-ensemble/v1` contracts with structured provenance, labeled stages/categories/cohorts, unit-bearing variables, stable RFC3986 composite row IDs, immutable nullable raw rows, and overall/per-cohort availability; adapt every actual and perfect-information wind-strategy outcome with explicit status, true/estimated wind, launch/aim, target, landing, miss, cost, and information-delta values while leaving impact variables explicitly unavailable because the analysis begins at prescribed launch. |
-| 2026-08-09 | 1.14.10 | feat(variation, #4144 #4280): complete PyQt6/React selected-scatter CSV export parity with stable trial identity, typed outcome and explicit unavailable values; expose bounded accessible PyQt raw-row tables through one shared population helper; and split scalar scatter and distribution-matrix rendering into focused modules while preserving linked trial selection and all-trial arc analysis. |
+| 2026-08-10 | 1.14.18 | merge(rate-of-closure, #4282 #4284): normally propagate exact wind-workflow head `5f77af4add23547a21cc3fabce98ae9ad4260427` into exact camera branch parent `42753a576f42d4c43c35fd786d0748e1d03672c5` without rebasing, retargeting, rewriting, or force-pushing; preserve the complete camera/playback behavior and inherit the deterministic Python 3.10-3.12 workspace timestamp contract. |
+| 2026-08-09 | 1.14.17 | merge(rate-of-closure, #4282 #4284): normally restack the camera-control branch by merging exact published wind-workflow carrier `bb101cedd555d07d493aae998b46050c68660cdd` into exact camera parent `7f1e14d42ffe8c23856a12fc8b0d0a8a4eeaf092`, without rebasing or retargeting; retain immutable camera evidence at `2095e748ddca2d7036bbd49a731528f5634daff9`, inherit the carrier's Python 3.10 compatibility and scalar-ensemble corrections, and keep native visual, hosted review, protected release, persistence, and UpstreamDrift parity gates open. |
+| 2026-08-09 | 1.14.16 | fix(rate-of-closure, #4284): distinguish immutable carrier evidence commits from mutable PR heads, record published camera evidence at 2095e748 with 107/650 React and 4 Playwright tests, and retain migration support for legacy `head_sha` manifest input. |
+| 2026-08-09 | 1.14.15 | test(rate-of-closure, #4284): add solver-sample flight frame steps and Playwright camera/playback interaction coverage at desktop and constrained 2x-DPR viewports; retain native visual and downstream parity gates. |
+| 2026-08-09 | 1.14.14 | feat(rate-of-closure, #4284): add canonical cross-runtime 3D camera snaps, bounded clubhead/ball tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and focused PyQt6/React contracts. |
+| 2026-08-10 | 1.14.13 | fix(rate-of-closure, #4282): normally propagate exact corrected scalar-ensemble parent `cf52529b1e68479321bb93b1be3d59c77f782008` into the responsive PyQt6/React wind-workflow carrier without changing its base; retain the consolidated capability workflow and release authority while inheriting the strict cross-version UTC parser, variation export, immutable scalar rows, stable composite identity, availability, and typed wind adapter; route the child-owned capability-observation `StrEnum` through the shared Python 3.10 runtime contract and extend the compatibility regression. |
+| 2026-08-10 | 1.14.12 | feat(wind variation, #4199 #4281): add matching UI-neutral Python/TypeScript `scalar-ensemble/v1` contracts with structured provenance, labeled stages/categories/cohorts, unit-bearing variables, stable RFC3986 composite row IDs, immutable nullable raw rows, and overall/per-cohort availability; adapt every actual and perfect-information wind-strategy outcome with explicit status, true/estimated wind, launch/aim, target, landing, miss, cost, and information-delta values while leaving impact variables explicitly unavailable because the analysis begins at prescribed launch. |
+| 2026-08-10 | 1.14.11 | feat(variation, #4144 #4280): complete PyQt6/React selected-scatter CSV export parity with stable trial identity, typed outcome and explicit unavailable values; expose bounded accessible PyQt raw-row tables through one shared population helper; and split scalar scatter and distribution-matrix rendering into focused modules while preserving linked trial selection and all-trial arc analysis. |
+| 2026-08-10 | 1.14.10 | fix(compatibility, #4279): make workspace UTC timestamp parsing deterministic across Python 3.10-3.12 with one anchored canonical grammar, consistent zero- through six-digit fractional-second parsing, and rejection of greater-than-microsecond precision instead of interpreter-dependent rejection or truncation. |
 | 2026-08-09 | 1.14.9 | fix(compatibility, #4279): route the child command/view `StrEnum` runtime imports and workspace-validation `UTC` import through `shared.python.compatibility` while preserving native enum typing under `TYPE_CHECKING`, all wire values, schemas, UTC serialization, and UI behavior; merge the parent and child regression into one nine-enum/two-UTC runtime-import contract exercised with real CPython 3.10.20. |
 | 2026-08-09 | 1.14.8 | feat(rate-of-closure, #4201): harden cross-runtime capability parsing and signed input; expose complete diagnostics, result exports, and quantitative scatter annotations; stabilize supported PyQt6/static-Vite entrypoints; and add a strict campaign manifest with generated schema, four-surface status, explicit gaps/dependencies, and fail-closed feature-stack/protected-parent/`main` release distinctions. |
 | 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |

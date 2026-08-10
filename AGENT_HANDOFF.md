@@ -1,16 +1,16 @@
 # AGENT_HANDOFF — Tools
 
 > Update this file in every implementation commit and every push to `main`.
-> Current-state only; history lives in git. Last updated: 2026-08-09.
+> Current-state only; history lives in git. Last updated: 2026-08-10.
 
 ## Issue #4284 camera continuation
 
 Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
 camera evidence through immutable commit
-`2095e748ddca2d7036bbd49a731528f5634daff9`. The current local restack normally
-merges exact published #4282 carrier
-`bb101cedd555d07d493aae998b46050c68660cdd` into exact camera branch parent
-`7f1e14d42ffe8c23856a12fc8b0d0a8a4eeaf092`; the PR base remains
+`2095e748ddca2d7036bbd49a731528f5634daff9`. The current local propagation
+normally merges exact #4282 head
+`5f77af4add23547a21cc3fabce98ae9ad4260427` into exact camera branch parent
+`42753a576f42d4c43c35fd786d0748e1d03672c5`; the PR base remains
 `feat/4199-wind-workflow`. It implements the
 shared, UI-neutral camera command contract in Tools PyQt6 and React swing,
 impact, and flight 3D views: exact Face On/Down the Line/Overhead/Isometric
@@ -35,14 +35,16 @@ evidence commit. The campaign contract uses `evidence_commit_sha`, not a
 self-referential current-head field. This local merge records its exact two
 parents; its own future SHA is intentionally absent from the commit it creates.
 
-The composed local merge candidate passes 65 focused camera, PyQt6,
-compatibility, and campaign-manifest tests on Python 3.13; all 15 compatibility
-contracts also pass on real CPython 3.10.20. The complete React suite remains
-107 files / 650 tests, all four Playwright desktop/constrained-DPR cases pass,
-and TypeScript, zero-warning ESLint, and the 193-module production build pass.
-Canonical Ruff check/format passes all 28 changed Python files; pinned Python
-3.12/mypy 1.13 passes 20 changed production modules; manifest/schema,
-documentation-governance, and staged/working-tree diff checks pass.
+The current composed merge candidate passes the full 877-test Rate suite plus
+60 shared capability/wind tests, 85 focused camera/playback/compatibility/
+manifest tests, and all 28 direct compatibility contracts on real CPython
+3.10.20. The complete React suite remains 107 files / 650 tests; all four
+Playwright desktop/constrained-DPR cases pass after installing the exact pinned
+Chromium runtime. TypeScript, zero-warning ESLint, and the 193-module Vite
+production build pass. Ruff check/format is clean across 14 changed Python
+files, pinned Python 3.12/mypy 1.13 is clean across nine production modules,
+and manifest, documentation-governance, 500-LOC, module-size, conflict-marker,
+Detect Secrets, and diff gates pass.
 
 Authorities are `docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md`,
 `src/rate_of_closure/application/camera_commands.py`, and the cross-runtime
@@ -53,18 +55,18 @@ must keep this file and `src/rate_of_closure/AGENT_HANDOFF.md` current.
 
 The active checkout is
 `C:\Users\diete\Repositories\Tools-worktrees\camera-snap-tracking` on draft
-PR #4298. Its local restack incorporates exact published #4282 carrier
-`bb101cedd555d07d493aae998b46050c68660cdd`, whose base remains
+PR #4298. Its local propagation incorporates exact #4282 head
+`5f77af4add23547a21cc3fabce98ae9ad4260427`, whose base remains
 `feat/4199-wind-scalar-adapter` and which already incorporates exact corrected
-#4281 parent `958770049f0124dac0426a6dd62fd4edbf437e7a`. It composes
+#4281 parent `cf52529b1e68479321bb93b1be3d59c77f782008`. It composes
 four reviewed slices:
 strict capability parsing and signed decimal entry; complete capability
 diagnostics/result exports and quantitative React scatter scales; package-safe
 static-web release entrypoints; and the strict `rate-of-closure-campaign/v1`
 release-evidence authority. The normal restack merge also carries the parent's
 Python 3.10 compatibility, variation-export, and scalar-ensemble corrections.
-No branch was rebased, retargeted, force-pushed, or published by this local
-restack; hosted CI remains due.
+No branch was rebased, retargeted, rewritten, force-pushed, or published by
+this local propagation; hosted CI remains due.
 
 Canonical files:
 
@@ -84,9 +86,9 @@ default-branch release are never interchangeable.
 Capability PRs #4294, #4289, and #4283 were merged top-down into
 `feat/4199-wind-workflow`; their feature parents were not protected. PR #4282
 is the current open carrier on base `feat/4199-wind-scalar-adapter`. Its exact
-published head `bb101cedd555d07d493aae998b46050c68660cdd` incorporates corrected
-parent `958770049f0124dac0426a6dd62fd4edbf437e7a`; #4298 now incorporates that
-published carrier through a normal local merge.
+head `5f77af4add23547a21cc3fabce98ae9ad4260427` incorporates corrected parent
+`cf52529b1e68479321bb93b1be3d59c77f782008`; #4298 incorporates that carrier
+through the normal local merge containing this handoff.
 
 The previous exact #4282 head `3186a265b1` built and loaded `swing_core`, but
 its Python 3.11 parity job failed before collection because a cached

@@ -1,19 +1,47 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-09. This isolated integration is published as draft
+Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
+
+## 2026-08-10 PR #4298 workspace timestamp propagation
+
+Draft PR #4298 keeps base `feat/4199-wind-workflow`. The normal merge containing
+this handoff incorporates exact #4282 head
+`5f77af4add23547a21cc3fabce98ae9ad4260427` into exact camera branch parent
+`42753a576f42d4c43c35fd786d0748e1d03672c5`. Neither branch was rebased,
+retargeted, rewritten, or force-pushed. The camera, tracking, and playback
+behavior is unchanged while the child inherits the deterministic Python
+3.10-3.12 workspace UTC parser, variation export, scalar-ensemble adapter, and
+responsive wind/capability workflow.
+
+SPEC 1.14.18 records this merge after reconciling the parent lineage at
+1.14.10-1.14.13 and the camera lineage at 1.14.14-1.14.17. The old #4298
+Detect Secrets failure was actionable: two immutable evidence SHA literals in
+the manifest contract test are now assembled from short deterministic chunks,
+preserving exact assertions without presenting high-entropy secret candidates.
+The old File Size Budget run was cancelled during checkout and produced no
+code finding. The reconciled tree passes the full 877-test Rate suite, 60
+shared capability/wind tests, 85 focused camera/playback/compatibility/manifest
+tests, and 28 direct compatibility contracts on real CPython 3.10.20. React
+passes 107 files / 650 tests and all four Playwright desktop/constrained-DPR
+cases; TypeScript, zero-warning ESLint, and the 193-module production build are
+clean. Ruff check/format passes 14 changed Python files, pinned mypy 1.13 passes
+nine production modules, and manifest, documentation-governance, 500-LOC,
+module-size, conflict-marker, Detect Secrets, and diff gates pass. Protected
+CI, review, native rendered review, UpstreamDrift parity, and protected release
+remain separate gates.
 
 ## 2026-08-09 Camera snap/tracking continuation
 
 Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
 camera evidence through immutable commit
-`2095e748ddca2d7036bbd49a731528f5634daff9`. The current local restack normally
-merges exact published #4282 carrier
-`bb101cedd555d07d493aae998b46050c68660cdd` into exact camera parent
-`7f1e14d42ffe8c23856a12fc8b0d0a8a4eeaf092`; PR #4298 keeps base
+`2095e748ddca2d7036bbd49a731528f5634daff9`. The current local propagation
+normally merges exact #4282 head
+`5f77af4add23547a21cc3fabce98ae9ad4260427` into exact camera parent
+`42753a576f42d4c43c35fd786d0748e1d03672c5`; PR #4298 keeps base
 `feat/4199-wind-workflow`. No branch was rebased, retargeted, force-pushed, or
-published by this restack. The two-parent merge itself contains this record, so
+published by this propagation. The two-parent merge itself contains this record, so
 its future SHA is intentionally not self-recorded. It implements the canonical
 camera contract for all five Tools 3D adapters (PyQt Simulation and Flight;
 React Club, Impact, and Flight) with exact snap orientations, bounded opt-in
