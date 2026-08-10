@@ -167,6 +167,7 @@ def __getattr__(name: str) -> Any:
     globals()[name] = value
     return value
 
+
 __all__ = [
     "REQUEST_SCHEMA_VERSION",
     "RESULT_SCHEMA_VERSION",

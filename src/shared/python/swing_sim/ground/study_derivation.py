@@ -52,13 +52,9 @@ def derive_solver_eligibility(
         if profile.model_use_status is GroundModelUseStatus.ILLUSTRATIVE:
             reasons.append(GroundSolverEligibilityReason.PROFILE_ILLUSTRATIVE)
     if calibration.kind not in {CalibrationKind.MEASURED, CalibrationKind.LITERATURE}:
-        reasons.append(
-            GroundSolverEligibilityReason.MODEL_CALIBRATION_NOT_VALIDATED
-        )
+        reasons.append(GroundSolverEligibilityReason.MODEL_CALIBRATION_NOT_VALIDATED)
     if calibration.confidence <= 0.0:
-        reasons.append(
-            GroundSolverEligibilityReason.MODEL_CALIBRATION_ZERO_CONFIDENCE
-        )
+        reasons.append(GroundSolverEligibilityReason.MODEL_CALIBRATION_ZERO_CONFIDENCE)
     canonical = tuple(item for item in GroundSolverEligibilityReason if item in reasons)
     if not canonical:
         canonical = (GroundSolverEligibilityReason.ELIGIBLE,)
