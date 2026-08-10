@@ -25,6 +25,11 @@
   misplaced Ruff suppressions in Sidekick GUI tests inherited from `main`.
   Their intentionally retained QApplication references now use `_app`, so the
   required lint gate can evaluate the Rate root instead of failing at baseline.
+- The remaining outdated #4119 review concern is now addressed too:
+  `ClubCanvas.tsx` is 391 lines, with mesh transformation, painter sorting,
+  lighting, projection drawing, and velocity-arrow rendering extracted into a
+  tested 234-line `clubCanvasRendering.ts` module. The legacy 400-line cap no
+  longer blocks the root release.
 - Before release, push the merge normally, verify the new exact PR head, wait
   for protected CI, resolve only the addressed review threads with linked
   evidence, obtain the required approval, and merge through ordinary branch

@@ -17,13 +17,17 @@ This branch includes current `main` plus the following review repairs:
    records that same input's signature, preventing a stale fixed-time rerun.
 4. Parametric-head station refinement carries an explicit four-coordinate
    tuple type, closing the only scoped mypy finding without changing geometry.
+5. `ClubCanvas.tsx` is below the 400-line production-file cap after pure mesh
+   transformation, shading, projection, and arrow drawing moved to
+   `clubCanvasRendering.ts`; focused helper tests pin face alignment, placement,
+   sorting, and lighting.
 
-Focused evidence: seven Python registration/launcher tests and thirteen React
-SimulationPanel tests pass. The next agent must run the full Rate/swing-sim
-and web lint/type/test/build gates after the main merge, push normally, verify
-the exact GitHub head and protected checks, and address the three review
-threads with evidence. Do not claim #4119 or any epic complete before protected
-release to `main`.
+Current local evidence: 947 Python tests pass with one expected missing-Rust-
+wheel skip; 312 React tests pass across 42 files; scoped Ruff, Black, and mypy
+are clean; and React ESLint, TypeScript, and production build pass. The next
+agent must verify the exact GitHub head and protected checks, obtain the
+required approval, and merge normally. Do not claim #4119 or any epic complete
+before protected release to `main`.
 
 After the root lands, preserve dependency order. The highest-value remaining
 UI slice is #4225's actual multi-viewport compositor; #4224 still needs

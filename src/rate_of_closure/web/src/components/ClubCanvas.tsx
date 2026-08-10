@@ -32,6 +32,15 @@ import {
   type Vec3,
 } from "./clubCanvasGeometry";
 import { drawEngineeringCgSymbol } from "./engineeringSymbols";
+import {
+  computeMeshFaceShift,
+  drawCanvasBackdrop,
+  drawProjectedLine,
+  drawShadedTriangles,
+  drawVelocityArrow,
+  prepareShadedTriangles,
+  type ProjectionView,
+} from "./clubCanvasRendering";
 
 const SPAN_MS = 8.0;
 const STEPS = 48;
@@ -53,15 +62,6 @@ const COLORS = {
   impact: getChartColor(6),
   cog: getChartColor(2),
 };
-
-// STL-mesh shading constants — identical to the PyQt6 club view.
-const LIGHT_LEN = Math.hypot(0.3, 0.8, 0.5);
-const LIGHT_DIR: Vec3 = [0.3 / LIGHT_LEN, 0.8 / LIGHT_LEN, 0.5 / LIGHT_LEN];
-const MESH_BASE_RGB = [0.56, 0.62, 0.7] as const;
-const MESH_AMBIENT = 0.22;
-const MESH_SPECULAR = 0.32;
-
-
 
 export function ClubCanvas({
   scenario,
@@ -141,19 +141,7 @@ export function ClubCanvas({
         canvas.height = bh;
       }
       const { width: w, height: h } = canvas;
-      ctx.clearRect(0, 0, w, h);
-      const backdrop = ctx.createRadialGradient(
-        w / 2,
-        h * 0.55,
-        h * 0.1,
-        w / 2,
-        h * 0.55,
-        h * 0.9,
-      );
-      backdrop.addColorStop(0, "rgba(30, 41, 59, 0.55)");
-      backdrop.addColorStop(1, "rgba(2, 6, 23, 0)");
-      ctx.fillStyle = backdrop;
-      ctx.fillRect(0, 0, w, h);
+      drawCanvasBackdrop(ctx, w, h);
       const phase = phaseRef.current - 0.5;
       const timeS = (phase * SPAN_MS) / 1000;
       const rot = rodrigues(omega, timeS);
@@ -162,20 +150,9 @@ export function ClubCanvas({
       const zoom = baseZoom * zoomRef.current;
       const yaw = yawRef.current;
       const pitch = pitchRef.current;
-
-      const line = (pts: Vec3[], color: string, lw: number) => {
-        ctx.strokeStyle = color;
-        ctx.lineWidth = lw * dpr;
-        ctx.lineCap = "round";
-        ctx.lineJoin = "round";
-        ctx.beginPath();
-        pts.forEach((p, i) => {
-          const [px, py] = project(p, w, h, zoom, yaw, pitch);
-          if (i === 0) ctx.moveTo(px, py);
-          else ctx.lineTo(px, py);
-        });
-        ctx.stroke();
-      };
+      const view: ProjectionView = { width: w, height: h, zoom, yaw, pitch, dpr };
+      const line = (points: Vec3[], color: string, lineWidth: number) =>
+        drawProjectedLine(ctx, { points, color, lineWidth, view });
 
       if (moving) {
         ctx.setLineDash([4, 6]);
@@ -193,57 +170,19 @@ export function ClubCanvas({
       // Put the mesh's forward extent (its face plane) at com_to_face
       // — exactly HEAD_DEPTH_M/2 for a normalized STL; parametric
       // heads keep their mass-scaled, loft-tilted extent.
-      let shift: Vec3 = [0, 0, 0];
+      const shift: Vec3 = mesh
+        ? computeMeshFaceShift(mesh, scenario.comToFaceMm)
+        : [0, 0, 0];
       if (mesh) {
-        let xMax = -Infinity;
-        for (const tri of mesh.triangles) {
-          for (const v of tri) if (v[0] > xMax) xMax = v[0];
-        }
-        shift = [scenario.comToFaceMm / 1000 - xMax, 0, 0];
-      }
-      if (mesh) {
-        // Painter's algorithm: camera forward axis from the orbit
-        // angles (same basis as project()); triangles sorted by
-        // centroid depth along it, farthest drawn first.
-        const fwd: Vec3 = [
-          Math.cos(pitch) * Math.cos(yaw),
-          Math.sin(pitch),
-          Math.cos(pitch) * Math.sin(yaw),
-        ];
-        const shaded = mesh.triangles.map((tri, t) => {
-          const placed = tri.map((v) => place(add(v, shift))) as [
-            Vec3,
-            Vec3,
-            Vec3,
-          ];
-          const cx = (placed[0][0] + placed[1][0] + placed[2][0]) / 3;
-          const cy = (placed[0][1] + placed[1][1] + placed[2][1]) / 3;
-          const cz = (placed[0][2] + placed[1][2] + placed[2][2]) / 3;
-          const depth = cx * fwd[0] + cy * fwd[1] + cz * fwd[2];
-          const n = apply(rot, mesh.normals[t]);
-          const lambert = Math.abs(
-            n[0] * LIGHT_DIR[0] + n[1] * LIGHT_DIR[1] + n[2] * LIGHT_DIR[2],
-          );
-          const diffuse = (1 - MESH_AMBIENT - MESH_SPECULAR) * lambert;
-          const specular = MESH_SPECULAR * lambert ** 20;
-          const intensity = MESH_AMBIENT + diffuse + specular;
-          return { placed, depth, intensity };
+        const shaded = prepareShadedTriangles({
+          mesh,
+          rotation: rot,
+          shift,
+          offset,
+          yaw,
+          pitch,
         });
-        shaded.sort((a, b) => a.depth - b.depth);
-        for (const { placed, intensity } of shaded) {
-          const rgb = MESH_BASE_RGB.map((c) =>
-            Math.round(Math.min(1, c * intensity) * 255),
-          );
-          ctx.fillStyle = `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
-          ctx.beginPath();
-          placed.forEach((p, i) => {
-            const [px, py] = project(p, w, h, zoom, yaw, pitch);
-            if (i === 0) ctx.moveTo(px, py);
-            else ctx.lineTo(px, py);
-          });
-          ctx.closePath();
-          ctx.fill();
-        }
+        drawShadedTriangles(ctx, shaded, view);
       } else {
         line(parts.face.map(place), COLORS.face, 2.5);
         line(parts.back.map(place), COLORS.body, 1.2);
@@ -281,44 +220,19 @@ export function ClubCanvas({
         ctx.fillText("CG", cx + 9 * dpr, cy - 8 * dpr);
       }
 
-      const arrow = (origin: Vec3, vec: Vec3, color: string) => {
-        const scale = 0.0035;
-        const tip: Vec3 = [
-          origin[0] + vec[0] * scale,
-          origin[1] + vec[1] * scale,
-          origin[2] + vec[2] * scale,
-        ];
-        const [ox, oy] = project(origin, w, h, zoom, yaw, pitch);
-        const [tx, ty] = project(tip, w, h, zoom, yaw, pitch);
-        const angle = Math.atan2(ty - oy, tx - ox);
-        const headLen = 11 * dpr;
-        // Stop the shaft short so the filled head forms a clean point.
-        const bx = tx - Math.cos(angle) * headLen * 0.7;
-        const by = ty - Math.sin(angle) * headLen * 0.7;
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 2.5 * dpr;
-        ctx.lineCap = "round";
-        ctx.beginPath();
-        ctx.moveTo(ox, oy);
-        ctx.lineTo(bx, by);
-        ctx.stroke();
-        ctx.fillStyle = color;
-        ctx.beginPath();
-        ctx.moveTo(tx, ty);
-        ctx.lineTo(
-          tx - headLen * Math.cos(angle - 0.45),
-          ty - headLen * Math.sin(angle - 0.45),
-        );
-        ctx.lineTo(
-          tx - headLen * Math.cos(angle + 0.45),
-          ty - headLen * Math.sin(angle + 0.45),
-        );
-        ctx.closePath();
-        ctx.fill();
-      };
       const vRefMps = scenario.clubheadSpeedMph * 0.44704;
-      arrow(offset, [vRefMps, 0, 0], COLORS.vRef);
-      arrow(place(parts.impact), result.pointVelocityMps, COLORS.vPoint);
+      drawVelocityArrow(ctx, {
+        origin: offset,
+        vector: [vRefMps, 0, 0],
+        color: COLORS.vRef,
+        view,
+      });
+      drawVelocityArrow(ctx, {
+        origin: place(parts.impact),
+        vector: result.pointVelocityMps,
+        color: COLORS.vPoint,
+        view,
+      });
 
       const [ix, iy] = project(place(parts.impact), w, h, zoom, yaw, pitch);
       ctx.fillStyle = COLORS.impact;
