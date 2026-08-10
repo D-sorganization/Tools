@@ -18,11 +18,18 @@
   React tests. Web TypeScript, ESLint, and production Vite build gates pass;
   scoped Ruff check and format pass. This is test/fixture-only and does not
   change production physics or UI behavior.
-- Issue #4143 remains open for recorded Playwright/PyQt rendered Ground/Tee
-  evidence, exact-head protected CI/review, and release to `main`. The strict
-  campaign release manifest is not present on #4203's exact history (it was
-  introduced later on a divergent campaign branch), so this bounded child
-  records that limitation instead of importing or reconstructing it.
+- Deterministic 1600 x 1200 Playwright captures cover the default Driver/Tee
+  and rerun explicit-Ground React states with checked/disabled controls,
+  present/absent tee geometry, and zero console/page errors. A hidden 1400 x
+  900 PyQt harness records the same states with canonical center and tee-artist
+  assertions; a headless regression keeps its temporary PNGs nonblank and
+  structurally distinct without pixel-perfect baselines. Artifact manifests
+  and SHA-256 digests are under
+  `C:\Users\diete\AppData\Local\Temp\rate-4143-visual-evidence-8050eeba`.
+- Issue #4143 remains open for exact-head protected CI/review and release to
+  `main`. The strict campaign release manifest is not present on #4203's exact
+  history (it was introduced later on a divergent campaign branch), so this
+  bounded child records that limitation instead of reconstructing it.
 
 ## 2026-08-10 Parent Repair Propagation (#4202 → #4203)
 

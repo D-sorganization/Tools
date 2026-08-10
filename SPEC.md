@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.9                                     |
-| **Spec Version**        | 1.14.9                                     |
+| **Current Version**     | 1.14.10                                    |
+| **Spec Version**        | 1.14.10                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -280,6 +280,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   `ground_plane_to_ball_bottom` reference; its cases pin club defaults,
   explicit overrides, Ground's zero effective tee height, derived geometry,
   serialization, invalid-height rejection, and legacy migration.
+- Visual verification uses semantic state and structural image contracts, not
+  pixel-perfect baselines: Playwright records default Tee and rerun Ground web
+  states with zero browser errors, while the hidden-window PyQt harness pins
+  canonical center/artist state and nonblank, distinct Ground/Tee captures.
 - Variation plans retain their complete v2 schema and can be saved, loaded,
   duplicated, and deleted from a versioned local library. Users can select
   simultaneous, one-at-a-time, or combined analyses, while paired common-
@@ -2886,6 +2890,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.10 | test(rate-of-closure, #4143): record deterministic Ground/Tee visual evidence through semantic Playwright checks and a hidden-window PyQt capture regression, retaining screenshots as external digested artifacts instead of brittle pixel baselines or repository binaries. |
 | 2026-08-10 | 1.14.9 | test(rate-of-closure, #4143): add one strict versioned SI golden fixture consumed by Python and React to pin Ground/Tee defaults, explicit overrides, physical height and center geometry, serialization, invalid finite-domain handling, and backward-compatible legacy migration without changing production behavior. |
 | 2026-08-10 | 1.14.8 | feat/fix/refactor(rate-of-closure, #4202 #4203): propagate the exact D-plane parent into the launch-monitor registry without rewriting the stack; preserve the responsive `SimulationViewControlsMixin` architecture while making `ImpactLayerControls` the single owner of persisted D-plane checkbox state; retain the existing automation compatibility seam as an identity alias; and repair the original child's three ungrandfathered size blockers through identity-preserving extractions for triple-pendulum dynamics, immutable plotting metadata, and versioned primary-navigation state. |
 | 2026-08-09 | 1.14.7 | fix(compatibility, #4203): route the PyQt torque-profile controller's UTC constant through the shared Python 3.10 compatibility module, preserving UTC timestamp serialization and workspace behavior while removing the remaining parent-owned `datetime.UTC` collection boundary. |

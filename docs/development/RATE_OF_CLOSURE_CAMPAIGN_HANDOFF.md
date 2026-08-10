@@ -14,11 +14,20 @@
   configuration/persistence boundaries. Verification is 18 passing Python
   tests, 24 passing React tests, and green TypeScript, ESLint, Vite production
   build, Ruff check, and Ruff format.
-- This closes only the explicit golden-parity artifact gap. #4143 remains open
-  for Playwright and PyQt rendered Ground/Tee evidence, protected CI/review,
-  and release to `main`. The strict campaign release manifest does not exist in
-  this exact #4203 history; it was added later on a divergent branch and is not
-  backported by this test-only slice.
+- Recorded visual evidence is stored under
+  `C:\Users\diete\AppData\Local\Temp\rate-4143-visual-evidence-8050eeba`.
+  Playwright captured the 1600 x 1200 default Driver/Tee and rerun
+  explicit-Ground React states after semantic control/diagram and zero-error
+  checks. A hidden 1400 x 900 PyQt harness captured the same states after
+  canonical center, editor, and tee-artist assertions. The browser manifest
+  SHA-256 is `43df78e04b47e1b3209ff7a574718f90847ccda6dde5afd863d43191a950ccf7`;
+  the PyQt manifest SHA-256 is
+  `07822495dbcfa7568615ccb2728481210c28963614434c80f6997210c325a6f9`.
+  PNGs remain external evidence rather than oversized repository binaries.
+- #4143 remains open for protected CI/review and release to `main`. The strict
+  campaign release manifest does not exist in this exact #4203 history; it was
+  added later on a divergent branch and is not backported by this bounded
+  slice.
 
 ## 2026-08-10 Propagation into launch-monitor registry
 
