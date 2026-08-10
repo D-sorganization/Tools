@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.37                                    |
-| **Spec Version**        | 1.14.37                                    |
+| **Current Version**     | 1.14.40                                    |
+| **Spec Version**        | 1.14.40                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -3104,7 +3104,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-10 | 1.14.37 | feat(rate-of-closure, #4274): add matched PyQt6/React atomic comparison-result import, synchronized absolute-time playback with explicitly waiting/held observation states, locked-scale solid/dashed trajectories and distinct events, accessible visibility/provenance/status/direct-delta tables, and deterministic exact-result JSON plus scalar CSV export; preserve primary-only workspace v1 and explicit remaining release boundaries. |
+| 2026-08-10 | 1.14.40 | merge(ground-playback, #4274 #4316): normally propagate exact current persistence/export parent `2c56294ecda0204886508946239c7ca5b50b8b14` into the matched comparison continuation without changing its base; preserve strict atomic comparison import, union-time phase-safe overlays, direct deltas, paired provenance, deterministic exports, and explicit remaining boundaries; reconcile pinned MyPy 1.13 skipped-import inference through runtime-neutral typed bindings and distinct row variables while protected publication, review, CI, parent landing, issue acceptance, and epic closure remain open. |
+| 2026-08-10 | 1.14.39 | feat(rate-of-closure, #4274): add matched PyQt6/React atomic comparison-result import, synchronized absolute-time playback with explicitly waiting/held observation states, locked-scale solid/dashed trajectories and distinct events, accessible visibility/provenance/status/direct-delta tables, and deterministic exact-result JSON plus scalar CSV export; preserve primary-only workspace v1 and explicit remaining release boundaries. |
+| 2026-08-10 | 1.14.38 | fix(ground-playback, #4274 #4316): replace four runtime-no-op `str` casts with explicit typed local bindings after exact-head CI's pinned MyPy 1.13 delta gate correctly reported the casts as redundant; this preserves exact serializer contracts across differing import-following environments without runtime coercion, while bytes, UI behavior, and scientific scope remain unchanged. |
+| 2026-08-10 | 1.14.37 | docs(ground-playback, #4274 #4316): record the independently reviewed workspace-persistence and evidence-export continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback`; protected CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.36 | merge(ground-playback, #4274 #4315): normally propagate exact ready-for-review parent `2618ab025622bf1a4fa21e771b30f808f783648b` into the persistence and evidence-export continuation without changing its base; preserve strict atomic workspace import, paused playback and orbit state, deterministic full-state exports, and explicit non-delivery boundaries while protected publication, CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.35 | feat(ground-playback, #4274): add strict cross-surface v1 workspace persistence for validated result plus paused playback/orbit state, atomic last-good import, canonical result JSON, full deterministic trajectory/event CSV, atomic PyQt file replacement, accessible controls, and contract/UI parity tests; retain explicit no-physics, no-terrain, no-comparison, no-solver, and no-consumer boundaries. |
 | 2026-08-10 | 1.14.34 | docs(ground-playback, #4274 #4315): record the independently reviewed Ground Playback implementation as a ready-for-review PR against unchanged `feat/4275-ground-reference-execution`; protected CI, approval, parent landing, dependency integration, issue acceptance, and epic closure remain open. |

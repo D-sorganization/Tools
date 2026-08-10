@@ -30,15 +30,37 @@ complete Rate suite passes 896 tests. React passes 17 focused tests and the
 complete suite (110 files / 682 tests), TypeScript, zero-warning ESLint, and a
 200-module production build. Ruff check/format, MyPy, CPython 3.10 compilation,
 module/changed-file budgets, documentation, minimum-test, assertion, secrets,
-marker, and diff gates pass. This branch is not published. It must normally
-incorporate exact live parent PR #4316 head (currently
-`2c56294ecda0204886508946239c7ca5b50b8b14` or later) with the original
-comparison commit first and parent second, then reconcile all four records
-monotonically. Comparison persistence in workspace v1, comparison trajectory/
+marker, and diff gates pass. A normal two-parent merge now has original
+comparison commit `5ceb806961e76c3699934fafcd4aba96c06bbd20` first and
+exact live parent PR #4316 head
+`2c56294ecda0204886508946239c7ca5b50b8b14` second. The base remains
+`feat/4274-ground-playback-persistence`; no branch was rewritten or
+retargeted. SPEC 1.14.39 records the feature and 1.14.40 records this
+propagation. Independent exact-merge review and guarded publication remain
+open. Comparison persistence in workspace v1, comparison trajectory/
 event evidence tables, ensembles/statistical inference, terrain meshes and
 editors, inverse solving, compiled runtimes, UpstreamDrift parity, protected
 CI, approval, parent landing, issue acceptance, and epic closure remain open.
 Keep issue #4274 and epic #4267 open.
+
+The exact pinned MyPy 1.13 propagation gate additionally reconciles skipped-
+import and fully resolved inference: explicit typed time/serializer bindings
+avoid both `Any` returns and redundant casts, while distinct metric and
+provenance row variables prevent incompatible loop-variable reuse. These are
+type-only repairs with no runtime coercion or scientific behavior change.
+
+## 2026-08-10 PR #4316 exact-head CI type repair
+
+Current-head quality-gate run `31389230948` identified four redundant `str`
+casts in the PyQt persistence export accessors under the repository's pinned
+MyPy 1.13 delta configuration. The serializers already declare exact `str`
+returns; explicit typed local bindings preserve that contract across differing
+import-following environments without runtime coercion. The casts are removed
+without changing runtime behavior. SPEC 1.14.38 records the repair. Fresh
+isolated MyPy 1.13 and 1.15 checks pass on all five production modules; 15
+focused Python/PyQt tests, Ruff, Python 3.10 compilation, formatting, and
+governance also pass. Protected current-head CI remains required; #4274 and
+#4267 remain open.
 
 ## 2026-08-10 issue #4274 playback workspace persistence and exports
 
@@ -71,8 +93,10 @@ original feature commit `abb55c177af19a3cc08dd6bd5d258ea5ce3a61b9`
 first and exact ready-for-review parent PR #4315 head
 `2618ab025622bf1a4fa21e771b30f808f783648b` second. The base remains
 `feat/4274-ground-playback`; no branch was rewritten or retargeted. SPEC
-1.14.36 records the propagation. Independent exact-head review, guarded
-ready-for-review publication, protected CI, approval, parent landing, issue
+1.14.36 records the propagation. Independent exact-head review is READY at
+merge `0ef91e84b6d49551723ba0fbfb8eb1bf7b1ebfa2`, and ready-for-review
+PR #4316 is published against unchanged `feat/4274-ground-playback`. SPEC
+1.14.37 records publication. Protected CI, approval, parent landing, issue
 acceptance, and epic closure remain open.
 
 ## 2026-08-10 issue #4274 exact-parent propagation

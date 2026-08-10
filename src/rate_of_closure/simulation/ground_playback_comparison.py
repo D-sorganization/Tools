@@ -70,11 +70,15 @@ class GroundPlaybackComparison:
 
     @property
     def start_time_s(self) -> float:
-        return min(self.primary.start_time_s, self.comparison.start_time_s)
+        primary_start_s: float = self.primary.start_time_s
+        comparison_start_s: float = self.comparison.start_time_s
+        return min(primary_start_s, comparison_start_s)
 
     @property
     def end_time_s(self) -> float:
-        return max(self.primary.end_time_s, self.comparison.end_time_s)
+        primary_end_s: float = self.primary.end_time_s
+        comparison_end_s: float = self.comparison.end_time_s
+        return max(primary_end_s, comparison_end_s)
 
     @property
     def duration_s(self) -> float:

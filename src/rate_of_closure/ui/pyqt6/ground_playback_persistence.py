@@ -128,19 +128,23 @@ class GroundPlaybackPersistenceMixin:
             ),
             view=GroundPlaybackViewState(view.yaw_deg, view.pitch_deg, view.zoom),
         )
-        return cast(str, ground_workspace_to_json(workspace))
+        document: str = ground_workspace_to_json(workspace)
+        return document
 
     def result_json(self) -> str:
         """Return the canonical loaded strict result JSON."""
-        return cast(str, ground_result_json(self.timeline.result))
+        document: str = ground_result_json(self.timeline.result)
+        return document
 
     def trajectory_csv(self) -> str:
         """Return every loaded trajectory field as deterministic CSV."""
-        return cast(str, ground_trajectory_csv(self.timeline.result))
+        document: str = ground_trajectory_csv(self.timeline.result)
+        return document
 
     def event_csv(self) -> str:
         """Return every loaded event field as deterministic CSV."""
-        return cast(str, ground_event_csv(self.timeline.result))
+        document: str = ground_event_csv(self.timeline.result)
+        return document
 
     def attach_persistence_controls(self, panel: QWidget, layout: QVBoxLayout) -> None:
         """Attach accessible workspace and evidence file controls."""

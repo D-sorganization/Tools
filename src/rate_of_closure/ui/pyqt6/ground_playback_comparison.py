@@ -207,20 +207,22 @@ class GroundPlaybackComparisonMixin:
         )
 
     def comparison_json(self) -> str:
-        return cast(str, ground_comparison_json(self.comparison))
+        document: str = ground_comparison_json(self.comparison)
+        return document
 
     def comparison_csv(self) -> str:
-        return cast(str, ground_comparison_csv(self.comparison))
+        document: str = ground_comparison_csv(self.comparison)
+        return document
 
     def _populate_comparison(self, comparison: GroundPlaybackComparison) -> None:
         rows = comparison.metric_rows
         self.comparison_table.setRowCount(len(rows))
-        for row_index, row in enumerate(rows):
+        for row_index, metric_row in enumerate(rows):
             values = (
-                f"{row.label} [{row.unit}]",
-                f"{row.primary:.6g}",
-                f"{row.comparison:.6g}",
-                f"{row.delta:+.6g}",
+                f"{metric_row.label} [{metric_row.unit}]",
+                f"{metric_row.primary:.6g}",
+                f"{metric_row.comparison:.6g}",
+                f"{metric_row.delta:+.6g}",
             )
             for column, value in enumerate(values):
                 self.comparison_table.setItem(
@@ -229,8 +231,14 @@ class GroundPlaybackComparisonMixin:
         self.comparison_table.resizeColumnsToContents()
         evidence = comparison.provenance_rows
         self.comparison_provenance_table.setRowCount(len(evidence))
-        for row_index, row in enumerate(evidence):
-            for column, value in enumerate((row.field, row.primary, row.comparison)):
+        for row_index, provenance_row in enumerate(evidence):
+            for column, value in enumerate(
+                (
+                    provenance_row.field,
+                    provenance_row.primary,
+                    provenance_row.comparison,
+                )
+            ):
                 self.comparison_provenance_table.setItem(
                     row_index, column, QTableWidgetItem(value)
                 )
