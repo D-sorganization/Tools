@@ -3,38 +3,44 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
-## PR #4288 corrected-ground propagation
+## PR #4288 exact repaired-ground propagation
 
 Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged
-base `feat/4268-ground-contract`. Exact corrected #4285 parent
-`788aa547651a3685a363ea401824a5d81477bafb` is incorporated by the normal merge
-containing this handoff. The child preserves its signed terminal state,
+base `feat/4268-ground-contract`. Original child
+`247215422a6d4b677552955b4923bc609a553259` normally incorporates exact repaired
+#4285 parent `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` second in the
+merge containing this handoff. The child preserves its signed terminal state,
 physical sphere/terrain contact brackets, strict provenance, and qualified
 Python/TypeScript/Rust/PyO3/WASM transfer while inheriting deterministic
-workspace timestamps and canonical `swing_sim` import identity. No branch was
-rebased, retargeted, rewritten, or force-pushed.
+workspace timestamps, canonical `swing_sim` import identity, the hosted-mypy
+manifest repair, and the complete variation, wind, capability, and campaign
+ancestry. No branch was rebased, retargeted, rewritten, or force-pushed.
 
 This propagation adds no bounce, skid, roll, terrain response, total distance,
 or UI execution. Protected CI, independent review, and dependency-ordered
 collapse remain separate release gates.
 
-Merged-tree validation is `951` Python tests, `106` React files / `661` tests,
-and `26` focused Rust transfer/wire tests. The affected cross-version suite is
-also `110` tests on real CPython 3.10.20. The 189-module Vite production build,
-TypeScript, zero-warning ESLint, Ruff check/format across 82 files, pinned mypy
-1.13 across the six-file transfer and 13-file parent production namespaces,
-Rust workspace format plus warning-denied `tools-core` clippy, campaign-manifest
-validator plus eight contracts, documentation governance, 13-file 500-LOC
-budget, marker scan, and diff checks are clean. Hosted checks and review apply
-to the new exact merge head only.
+Exact composed-tree verification is 1,080 Python tests passed with six explicit
+optional installed-`tools_core` wheel skips, 107 React files / 662 tests,
+26 direct Rust transfer/wire tests, TypeScript, zero-warning ESLint, and the
+189-module production build. Ruff check/format passes all 28 changed Python
+files; pinned mypy 1.13 passes all 21 changed production files. Campaign
+manifest validation, documentation governance, and diff checks are clean. The
+missing local wheel is not accelerated installed-package evidence and remains
+an explicit release boundary; the direct Rust suites executed rather than
+being relabeled as wheel parity.
 
-## PR #4285 workspace timestamp propagation
+## 2026-08-10 Exact repaired #4282 propagation into PR #4285
 
 Draft PR #4285 remains on `feat/4268-ground-contract` with unchanged base
-`feat/4197-capability-observer`. Exact corrected #4282 carrier
-`5f77af4add23547a21cc3fabce98ae9ad4260427` is incorporated through the normal
-merge containing this handoff. No branch was rebased, retargeted, rewritten,
-or force-pushed.
+`feat/4197-capability-observer`. The normal merge containing this handoff keeps
+original child `788aa547651a3685a363ea401824a5d81477bafb` first and incorporates
+exact repaired #4282 carrier `686016196a2f895058b8a566dff103a0fd32cd10`
+second. That carrier contains merged capability PR #4283 commit
+`c1827bbdc50a6e11cc475db2636b4e47a4c15416`, exact observer head
+`9bbb98e16e435a0d4c74153b909f2ebfefbbce7a`, and the hosted-mypy manifest
+repair following predecessor `aa6eeffb0395f7ed7954f2315b1c625cada552d8`.
+No branch was rebased, retargeted, rewritten, or force-pushed.
 
 The child retains its strict, UI-neutral flight-to-ground schemas, canonical
 fixture, migrations, legacy-result adapter, explicit dependency, and pinned
@@ -54,13 +60,24 @@ separate file-size job was cancelled during checkout and did not execute its
 budget check, so it remains infrastructure evidence rather than a source
 failure.
 
-Merged-tree evidence is `915` Rate/ground/impact Python tests, the `12`-test
-shared-alias architecture suite, `28` focused ground/impact/alias tests on
-CPython 3.12, `28` direct compatibility tests on real CPython 3.10.20, and
-`104` React files / `642` tests. The 188-module Vite build, TypeScript,
-zero-warning ESLint, Ruff, format, pinned mypy 1.13, campaign-manifest
-validation plus eight contracts, documentation governance, the 44-file
-500-LOC budget, conflict-marker scan, and diff checks are clean.
+The inherited ground descendant passes 1,703 Python tests with two explicit optional
+`build123d` skips, 643 React tests across 105 files plus type-check,
+zero-warning lint and production build, 12 Rust tests, and 77 ground plus
+compatibility tests on real CPython 3.10. Ruff/format cover 78 changed Python
+files; pinned mypy and Bandit cover 52 changed production files. Campaign
+manifest, documentation, minimum-test, changed-assertion, 500-LOC, changed-file
+secrets, Python 3.10 compilation, and diff gates are clean. Protected
+current-head CI and required review remain separate release gates. Its exact
+repaired head is now incorporated into #4288; normal propagation of the
+reviewed #4288 head into #4298 is the next ancestry gate.
+
+The composed pinned-mypy profile additionally exposed integration-only `Any`
+returns at the Pydantic manifest and scalar plotting boundaries. The repaired
+#4282 parent owns the manifest annotation; scalar extraction normalizes the
+already-validated value with `float`. Bandit also replaced an optimized-away
+command-state assertion with an explicit invariant error. The alias finder
+retains its intentional optional-probe catch-and-continue boundary under a
+narrow explanatory `B112` annotation.
 
 ## 2026-08-09 Flight-transfer corrected-parent propagation
 

@@ -3,39 +3,41 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
-## PR #4288 corrected-ground propagation
+## PR #4288 exact repaired-ground propagation
 
-Exact corrected #4285 parent
-`788aa547651a3685a363ea401824a5d81477bafb` is incorporated into
-`feat/4269-flight-ground-transfer` by the normal merge containing this handoff.
-PR #4288 keeps base `feat/4268-ground-contract`; neither branch was rebased,
-retargeted, rewritten, or force-pushed. The child retains its qualified
-cross-runtime terminal-state/contact transfer and inherits the corrected UTC
-parser plus canonical `swing_sim` import identity.
+Original child `247215422a6d4b677552955b4923bc609a553259` normally incorporates
+exact repaired #4285 parent `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5`
+second in the merge on `feat/4269-flight-ground-transfer`. PR #4288
+keeps base `feat/4268-ground-contract`; neither branch was rebased, retargeted,
+rewritten, or force-pushed. The child retains its qualified cross-runtime
+terminal-state/contact transfer and inherits the corrected UTC parser,
+canonical `swing_sim` import identity, hosted-mypy manifest repair, and the
+complete variation, wind, capability, and campaign ancestry.
 
 This is ancestry propagation, not bounce, skid, roll, terrain response, total
 distance, or UI delivery. Protected CI, independent review, and normal stack
 collapse remain open.
 
-Merged-tree validation is `951` Python tests, `106` React files / `661` tests,
-and `26` focused Rust transfer/wire tests. The affected cross-version suite is
-also `110` tests on real CPython 3.10.20. The 189-module Vite production build,
-TypeScript, zero-warning ESLint, Ruff check/format across 82 files, pinned mypy
-1.13 across the six-file transfer and 13-file parent production namespaces,
-Rust workspace format plus warning-denied `tools-core` clippy, campaign-manifest
-validator plus eight contracts, documentation governance, 13-file 500-LOC
-budget, marker scan, and diff checks are clean. Hosted checks and review apply
-to the new exact merge head only.
+Exact composed-tree verification is 1,080 Python tests passed with six explicit
+optional installed-`tools_core` wheel skips, 107 React files / 662 tests,
+26 direct Rust transfer/wire tests, TypeScript, zero-warning ESLint, and the
+189-module production build. Ruff check/format passes all 28 changed Python
+files; pinned mypy 1.13 passes all 21 changed production files. Campaign
+manifest, documentation governance, and diff checks pass. The missing local
+wheel remains an explicit installed-package release boundary and is not
+misreported as accelerated parity evidence.
 
-## PR #4285 workspace timestamp propagation
+## 2026-08-10 Exact repaired #4282 propagation into PR #4285
 
-Exact corrected #4282 parent
-`5f77af4add23547a21cc3fabce98ae9ad4260427` is incorporated into
-`feat/4268-ground-contract` by the normal merge containing this handoff. PR
-#4285 keeps base `feat/4197-capability-observer`; neither branch was rebased,
-retargeted, rewritten, or force-pushed. The child retains its strict
-flight-to-ground contract and inherits the deterministic Python 3.10-3.12 UTC
-parser plus complete variation, scalar, wind, capability, and release ancestry.
+Original child `788aa547651a3685a363ea401824a5d81477bafb`
+normally incorporates exact repaired #4282 parent
+`686016196a2f895058b8a566dff103a0fd32cd10` second on
+`feat/4268-ground-contract`. PR #4285 keeps base
+`feat/4197-capability-observer`; neither branch was rebased, retargeted,
+rewritten, or force-pushed. The parent contains merged capability PR #4283,
+its exact observer head, and the exact-hosted-mypy manifest repair. The child
+retains its strict flight-to-ground contract while acquiring the latest
+deterministic variation, workspace, wind, capability, and release ancestry.
 
 The preceding exact-head Python 3.12 CI lane loaded embedded
 `src.shared.python.swing_sim` tests and canonical `shared.python.swing_sim`
@@ -45,12 +47,20 @@ contract failed before the fix and now passes together with both affected
 public-API suites. The file-size job was cancelled in checkout before its
 budget step and is not a code failure.
 
-Merged-tree evidence is `915` Rate/ground/impact Python tests, all `12` shared
-alias architecture tests, `28` focused tests on CPython 3.12, `28` direct
-workspace compatibility tests on real CPython 3.10.20, and `104` React files /
-`642` tests. The production build, TypeScript, zero-warning ESLint, Ruff,
-format, pinned mypy 1.13, campaign manifest and eight contracts, docs
-governance, 500-LOC budget, marker scan, and diff checks pass.
+The inherited ground descendant passes 1,703 Python tests with two optional `build123d`
+skips, 643 React tests across 105 files plus type-check/lint/build, 12 Rust
+tests, and 77 real-CPython-3.10 ground and compatibility tests. Ruff/format pass
+78 changed Python files; pinned mypy and Bandit pass 52 changed production
+files. Manifest, docs, minimum-test, assertions, 500-LOC, changed-file secrets,
+Python 3.10 compilation, and diff checks are clean.
+
+The repaired parent explicitly types the Pydantic manifest return. The composed
+tree also normalizes contract-checked scalar plot values with `float`, replaces
+the command-state `assert` with a runtime invariant error, and documents the
+alias finder's intentional optional-probe `B112` security boundary. Protected
+current-head CI and required review remain release gates. The exact repaired
+ground head is now incorporated into #4288; normal propagation of the reviewed
+#4288 head into #4298 is the next ancestry gate.
 
 ## 2026-08-09 Flight-transfer corrected-parent propagation
 

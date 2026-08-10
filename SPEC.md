@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.20                                    |
-| **Spec Version**        | 1.14.20                                    |
+| **Current Version**     | 1.14.21                                    |
+| **Spec Version**        | 1.14.21                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -2898,6 +2898,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.21 | fix(flight-ground, #4199 #4269 #4282 #4285 #4288): normally propagate exact repaired strict-ground parent `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` into original flight-transfer child `247215422a6d4b677552955b4923bc609a553259` while preserving base `feat/4268-ground-contract`; retain the qualified signed terminal state, physical sphere/terrain contact brackets, strict provenance, and Python/TypeScript/Rust/PyO3/WASM transfer while inheriting the deterministic workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, import-identity, scalar-extraction, command-invariant, and security-boundary repairs; preserve explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
 | 2026-08-10 | 1.14.20 | fix(flight-ground, #4269 #4288): normally propagate exact corrected ground-contract parent `788aa547651a3685a363ea401824a5d81477bafb` into the flight-transfer descendant without changing its base; preserve the qualified Python/TypeScript/Rust/PyO3/WASM transfer while inheriting deterministic workspace timestamp parsing and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
 | 2026-08-09 | 1.14.19 | chore(flight-ground, #4269 #4288): normally propagate exact carrier-reconciled ground parent `6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` into the flight-transfer descendant without changing its base; preserve the qualified cross-runtime transfer and semantic facade assertions while completing corrected wind-to-ground ancestry; bind terminal samples before exact `FlightStatePoint` narrowing in the pinned-mypy regression; and retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
 | 2026-08-09 | 1.14.18 | feat(flight-ground, #4269): propagate full signed terminal angular state and qualified physical sphere/terrain contact brackets across Python, TypeScript, Rust, PyO3, and WASM; preserve exact launch-origin evidence, vertical tee and terrain geometry, strict v1 surface/calibration/provenance data, interpolated terminal contact, typed unavailable outcomes, and bounded synchronous web integration. Reconcile the transfer integrator with the current capability and strict-ground ancestry through normal stacked merges without retargeting or rewriting either PR, and remove the resulting ground/flight package-facade cycle through direct record/type dependencies. |
