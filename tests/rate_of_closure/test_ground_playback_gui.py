@@ -117,17 +117,66 @@ def test_comparison_import_is_atomic_accessible_and_toggleable(qtbot) -> None:  
     assert tab.comparison_provenance_table.rowCount() == 12
     assert tab.comparison_provenance_table.item(0, 1).text() == "surface-run-analytic"
     assert tab.comparison_provenance_table.item(0, 2).text() == "comparison-run"
+    assert (
+        tab.comparison_trajectory_table.accessibleName()
+        == "Ground comparison trajectory evidence"
+    )
+    assert (
+        tab.comparison_events_table.accessibleName()
+        == "Ground comparison event evidence"
+    )
+    assert tab.comparison_trajectory_table.rowCount() == 8
+    assert tab.comparison_events_table.rowCount() == 4
+    assert tab.comparison_trajectory_table.item(0, 7).text() == "0.976"
+    assert tab.comparison_trajectory_table.item(0, 12).text() == "-2.8103"
+    assert tab.comparison_events_table.item(0, 6).text() == "1"
+    assert tab.comparison_events_table.item(0, 9).text() == "0.976"
+    assert tab.export_comparison_trajectory_button.isEnabled()
+    assert tab.export_comparison_events_button.isEnabled()
     assert "comparison.json" in tab.comparison_status_label.text()
 
     tab.show_comparison_checkbox.setChecked(False)
     assert not tab.view.comparison_visible
+    assert tab.comparison_trajectory_table.rowCount() == 8
+    assert tab.comparison_events_table.rowCount() == 4
     with pytest.raises(ValueError):
         tab.import_comparison_json_text(
             '{"schema_version":"wrong"}', source_name="bad.json"
         )
     assert tab.timeline is primary
     assert tab.comparison is comparison
+    assert tab.comparison_trajectory_table.rowCount() == 8
+    assert tab.comparison_events_table.rowCount() == 4
     assert "Last valid comparison remains loaded" in tab.comparison_status_label.text()
+
+
+def test_comparison_raw_evidence_uses_exact_shifted_result_and_canonical_csv(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+    tab.import_json_text(_result_text(), source_name="primary.json")
+    tab.import_comparison_json_text(
+        _comparison_text(time_offset_s=0.2), source_name="comparison.json"
+    )
+
+    assert tab.trajectory_table.accessibleName() == "Ground primary trajectory evidence"
+    assert tab.events_table.accessibleName() == "Ground primary event evidence"
+    assert tab.trajectory_table.item(0, 1).text() == "1.005"
+    assert tab.comparison_trajectory_table.item(0, 1).text() == "1.205"
+    assert tab.events_table.item(0, 2).text() == "1.005"
+    assert tab.comparison_events_table.item(0, 2).text() == "1.205"
+
+    trajectory_csv = tab.comparison_trajectory_csv()
+    event_csv = tab.comparison_event_csv()
+    assert trajectory_csv.startswith("sample_index,time_s,phase,frame")
+    assert event_csv.startswith("sequence,event_type,time_s,frame")
+    assert "\r" not in trajectory_csv
+    assert "\r" not in event_csv
+    assert trajectory_csv.endswith("\n")
+    assert event_csv.endswith("\n")
+    assert trajectory_csv.splitlines()[1].split(",")[1] == "1.205"
+    assert event_csv.splitlines()[1].split(",")[2] == "1.205"
 
 
 def test_successful_primary_replacement_clears_stale_comparison(qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -140,7 +189,37 @@ def test_successful_primary_replacement_clears_stale_comparison(qtbot) -> None: 
 
     assert not tab.has_comparison
     assert not tab.show_comparison_checkbox.isEnabled()
+    assert tab.comparison_trajectory_table.rowCount() == 0
+    assert tab.comparison_events_table.rowCount() == 0
+    assert not tab.export_comparison_trajectory_button.isEnabled()
+    assert not tab.export_comparison_events_button.isEnabled()
     assert "cleared" in tab.comparison_status_label.text().lower()
+
+
+def test_comparison_export_failure_preserves_existing_destination(
+    qtbot, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+    tab.import_json_text(_result_text())
+    tab.import_comparison_json_text(_comparison_text())
+    destination = tmp_path / "ground-comparison.json"
+    destination.write_text("last-good", encoding="utf-8")
+    monkeypatch.setattr(
+        comparison_ui.QFileDialog,
+        "getSaveFileName",
+        lambda *_args, **_kwargs: (str(destination), "JSON files (*.json)"),
+    )
+
+    def fail_atomic_write(_path: Path, _text: str) -> None:
+        raise OSError("simulated commit failure")
+
+    monkeypatch.setattr(comparison_ui, "write_atomic_text", fail_atomic_write)
+
+    tab._save_comparison("ground-comparison.json", tab.comparison_json)
+
+    assert destination.read_text(encoding="utf-8") == "last-good"
+    assert "simulated commit failure" in tab.comparison_status_label.text()
 
 
 def test_comparison_playback_uses_union_absolute_time_and_honest_hold(qtbot) -> None:  # type: ignore[no-untyped-def]

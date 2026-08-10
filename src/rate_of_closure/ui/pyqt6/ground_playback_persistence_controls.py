@@ -11,6 +11,20 @@ from PyQt6.QtWidgets import QFileDialog, QGroupBox, QPushButton, QVBoxLayout, QW
 from rate_of_closure.simulation.ground_playback import DEFAULT_IMPORT_MAX_BYTES
 
 
+def write_atomic_text(path: Path, text: str) -> None:
+    """Replace one UTF-8 text file atomically or preserve its prior contents."""
+    if not isinstance(path, Path):
+        raise TypeError("export path must be a pathlib Path")
+    if type(text) is not str:
+        raise TypeError("export content must be text")
+    output = QSaveFile(str(path))
+    if not output.open(QIODevice.OpenModeFlag.WriteOnly):
+        raise OSError(output.errorString())
+    encoded = text.encode("utf-8")
+    if output.write(encoded) != len(encoded) or not output.commit():
+        raise OSError(output.errorString())
+
+
 class GroundPlaybackPersistenceControls(QGroupBox):
     """Accessible import/export controls backed by injected document functions."""
 
@@ -107,20 +121,9 @@ class GroundPlaybackPersistenceControls(QGroupBox):
         if not path:
             return
         try:
-            self._write_atomic(Path(path), render())
+            write_atomic_text(Path(path), render())
         except (OSError, TypeError, ValueError) as exc:
             self._report_error(f"Could not export {Path(path).name}: {exc}")
 
-    @staticmethod
-    def _write_atomic(path: Path, text: str) -> None:
-        if type(text) is not str:
-            raise TypeError("export content must be text")
-        output = QSaveFile(str(path))
-        if not output.open(QIODevice.OpenModeFlag.WriteOnly):
-            raise OSError(output.errorString())
-        encoded = text.encode("utf-8")
-        if output.write(encoded) != len(encoded) or not output.commit():
-            raise OSError(output.errorString())
 
-
-__all__ = ["GroundPlaybackPersistenceControls"]
+__all__ = ["GroundPlaybackPersistenceControls", "write_atomic_text"]

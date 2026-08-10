@@ -300,11 +300,11 @@ class GroundPlaybackTab(
         tabs = QTabWidget()
         self.trajectory_table = create_ground_table(
             TRAJECTORY_HEADERS,
-            "Ground trajectory samples",
+            "Ground primary trajectory evidence",
         )
         self.events_table = create_ground_table(
             EVENT_HEADERS,
-            "Ground events",
+            "Ground primary event evidence",
         )
         self.warnings_table = create_ground_table(
             ("Severity", "Code", "Message"), "Warnings and provenance"

@@ -81,37 +81,8 @@ def populate_ground_tables(
         ("Surface path", summary.surface_path_distance_m),
     )
     _set_rows(summary_table, [(name, f"{value:.3f} m") for name, value in metrics])
-    _set_rows(
-        trajectory_table,
-        [
-            (
-                index,
-                point.time_s,
-                point.time_s - timeline.start_time_s,
-                point.phase.value,
-                *point.position_m,
-                *point.velocity_m_s,
-                *point.angular_velocity_rad_s,
-            )
-            for index, point in enumerate(result.trajectory)
-        ],
-    )
-    _set_rows(
-        events_table,
-        [
-            (
-                event.sequence,
-                event.event_type.value,
-                event.time_s,
-                *event.position_m,
-                *event.velocity_before_m_s,
-                *event.velocity_after_m_s,
-                *event.angular_velocity_before_rad_s,
-                *event.angular_velocity_after_rad_s,
-            )
-            for event in result.events
-        ],
-    )
+    populate_ground_trajectory_table(timeline, trajectory_table)
+    populate_ground_event_table(timeline, events_table)
     warning_rows: list[tuple[object, ...]] = [
         (item.severity.value, item.code, item.message) for item in result.warnings
     ]
@@ -153,6 +124,49 @@ def populate_ground_tables(
     _set_rows(warnings_table, warning_rows)
 
 
+def populate_ground_trajectory_table(
+    timeline: GroundPlaybackTimeline, table: QTableWidget
+) -> None:
+    """Populate one trajectory table from exact retained result samples."""
+    _set_rows(
+        table,
+        [
+            (
+                index,
+                point.time_s,
+                point.time_s - timeline.start_time_s,
+                point.phase.value,
+                *point.position_m,
+                *point.velocity_m_s,
+                *point.angular_velocity_rad_s,
+            )
+            for index, point in enumerate(timeline.result.trajectory)
+        ],
+    )
+
+
+def populate_ground_event_table(
+    timeline: GroundPlaybackTimeline, table: QTableWidget
+) -> None:
+    """Populate one event table from the exact retained event ledger."""
+    _set_rows(
+        table,
+        [
+            (
+                event.sequence,
+                event.event_type.value,
+                event.time_s,
+                *event.position_m,
+                *event.velocity_before_m_s,
+                *event.velocity_after_m_s,
+                *event.angular_velocity_before_rad_s,
+                *event.angular_velocity_after_rad_s,
+            )
+            for event in timeline.result.events
+        ],
+    )
+
+
 def _set_rows(table: QTableWidget, rows: Sequence[Sequence[object]]) -> None:
     table.setRowCount(len(rows))
     for row_index, row in enumerate(rows):
@@ -166,5 +180,7 @@ __all__ = [
     "EVENT_HEADERS",
     "TRAJECTORY_HEADERS",
     "create_ground_table",
+    "populate_ground_event_table",
     "populate_ground_tables",
+    "populate_ground_trajectory_table",
 ]

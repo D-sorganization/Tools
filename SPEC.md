@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.42                                    |
-| **Spec Version**        | 1.14.42                                    |
+| **Current Version**     | 1.14.43                                    |
+| **Spec Version**        | 1.14.43                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,29 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-10 Matched raw ground-comparison evidence
+
+- PyQt6 and React expose separately labelled primary and comparison trajectory
+  and event ledgers. Trajectory rows retain exact absolute and result-relative
+  time plus phase; event rows retain exact event time and identity. Both retain
+  position, linear velocity, and angular velocity without inventing row-to-row
+  correspondence.
+- Comparison evidence remains available when only its graphical artists are
+  hidden. Failed comparison imports retain the entire last-good evidence set,
+  while a successful primary replacement clears every stale comparison table
+  and export control and invalidates comparison imports still completing
+  against the previously displayed primary.
+- Dedicated comparison trajectory and event CSV exports reuse the canonical
+  full-ledger serializers, including exact frame fields, eleven-decimal numeric
+  normalization, deterministic order, and LF termination. PyQt6 comparison
+  files use the same `QSaveFile` atomic replacement path as primary exports.
+- This viewer still executes no physics and makes no causal, inferential, or
+  sample/event-alignment claim. Workspace-v2 comparison persistence, bounded
+  paging/lazy mounting for maximum-size evidence, terrain editing/meshes,
+  camera-command propagation, Playwright/native visual evidence, ensembles,
+  compiled runtimes, and UpstreamDrift parity remain downstream work under
+  #4274/#4267.
 
 ### 2026-08-10 Matched ground-result comparison playback
 
@@ -3115,6 +3138,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.43 | feat(ground-playback, #4274): add separately labelled primary/comparison raw trajectory and event evidence in PyQt6 and React, dedicated canonical full-ledger comparison CSV exports, atomic last-good retention/clear behavior, and shared `QSaveFile` replacement without implying row alignment or adding physics, workspace-v2, camera, or Playwright scope. |
 | 2026-08-10 | 1.14.42 | docs(ground-playback, #4274 #4317): record the independently reviewed matched comparison continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback-persistence`; protected exact-head CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.41 | fix(ground-playback, #4274): preserve the loaded union-time comparison session when its artists are hidden, primary-clamp only the serialized workspace-v1 time, canonicalize direct deltas and Python CSV numeric tokens under the shared eleven-decimal policy, disclose calibration kind/source/confidence, and retain explicit last-good comparison messaging after file-dialog errors; add matched PyQt6/React regressions while complete suites, re-review, publication, protected CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.40 | merge(ground-playback, #4274 #4316): normally propagate exact current persistence/export parent `2c56294ecda0204886508946239c7ca5b50b8b14` into the matched comparison continuation without changing its base; preserve strict atomic comparison import, union-time phase-safe overlays, direct deltas, paired provenance, deterministic exports, and explicit remaining boundaries; reconcile pinned MyPy 1.13 skipped-import inference through runtime-neutral typed bindings and distinct row variables while protected publication, review, CI, parent landing, issue acceptance, and epic closure remain open. |

@@ -4,6 +4,42 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 issue #4274 matched raw comparison evidence
+
+Local branch `feat/4274-ground-playback-comparison-evidence` starts from exact
+published comparison parent
+`b55bfa3d710a4ff8fabd4ebc7ec31cddad37cee4`. PyQt6 and React now show
+separately labelled primary/comparison trajectory and event ledgers. Trajectory
+rows contain exact absolute and result-relative times plus phase; event rows
+contain exact event time and identity. Both retain positions, linear
+velocities, and angular velocities from each result without pairing rows or
+implying correspondence between different sample grids or event sequences, and
+they remain available when only the dashed graphical overlay is hidden.
+
+Dedicated comparison trajectory/event CSV actions reuse the existing canonical
+full-ledger serializers, so frame fields, numeric normalization, deterministic
+ordering, and LF endings stay matched across clients. PyQt comparison exports
+now reuse a shared `QSaveFile` atomic writer instead of direct replacement.
+Invalid comparison import retains the prior tables and exports; successful
+primary replacement clears them together and invalidates any in-flight
+comparison import that began against the previously displayed primary. React
+raw rendering and toolbar controls were extracted from the panel, and every
+touched production module remains below 400 lines.
+
+RED-first failures were observed on both surfaces before implementation.
+Focused evidence passes 14 PyQt tests and eight React tests; complete suites
+pass 900 Rate tests and 110 React files / 685 tests. Ruff check/format, pinned MyPy
+1.13, Python 3.10 compilation, TypeScript, zero-warning ESLint, Prettier, the
+203-module production build, Bandit, minimum-test, module-size, documentation,
+and conflict-marker governance gates pass. SPEC 1.14.43 records the slice.
+Final diff review, independent exact-commit review, guarded publication,
+protected CI, approval, parent landing, and issue acceptance remain required.
+Workspace-v2 comparison persistence, maximum-ledger paging or lazy mounting,
+camera/Playwright/native visual verification, terrain editors, ensembles,
+compiled runtimes, UpstreamDrift parity, and epic closure remain open; keep
+#4274/#4267 open.
+
+
 ## 2026-08-10 PR #4317 comparison playback publication
 
 The independently reviewed comparison continuation is published as ready-for-
