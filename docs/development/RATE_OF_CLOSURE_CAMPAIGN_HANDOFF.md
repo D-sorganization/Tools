@@ -1,4 +1,89 @@
-# Rate of Closure Ball-Flight Campaign Handoff
+# Rate of Closure Campaign Handoff
+
+## 2026-08-10 Exact #4279 propagation into variation PR #4280
+
+- PR `#4280` remains the immediate child on
+  `feat/4144-variation-export-continuation`, based on
+  `feat/4218-toolstrip-workspace`.
+- Original child `f90836e342efc8be624739802375af2876d11e5f` normally merges
+  exact parent `6717e9e09d507dbc24bedb36177f1cdf0b4fd90b`; preserve that
+  parent order and do not rebase, retarget, force-push, rewrite a parent, or
+  change draft state.
+- The variation selected-scatter export, typed unavailable rows, accessible
+  raw tables, linked trial selection, and focused PyQt/React visualization
+  modules merge cleanly with the parent's full workspace/toolstrip, playback,
+  plots, navigation, compatibility, and module-budget repairs.
+- Staged review found a release-blocking stale linked selection after rerunning
+  a smaller study. PyQt now clears selection before each result replacement
+  and validates public selection indices against the current trial count;
+  React clears on result identity change and bounds the value shared with all
+  linked views. Larger-to-smaller rerun regressions cover both clients.
+- SPEC 1.14.12 is the unique combined child release entry. Verification is
+  green across 37 focused variation tests, 1,528 complete
+  Rate/shared-swing/golf-club tests with two explicit optional build123d skips,
+  546 React tests across 90 files plus type-check/lint/build, exact-parent
+  Ruff/Ruff-format/Black/pinned MyPy/Bandit, file-size, docs, minimum-test,
+  assertion, detect-secrets, diff, real CPython 3.10.20 compilation, and 30
+  compatibility regressions. There is no Rust delta from the exact parent.
+  Independent staged re-review found no actionable findings after checking
+  both the first replacement-render React boundary and validated PyQt values.
+  Current-head protected CI, review threads, and repository review remain
+  release gates after publication.
+
+## 2026-08-10 Exact #4203 propagation into workspace PR #4279
+
+- PR `#4279` remains the immediate child on branch
+  `feat/4218-toolstrip-workspace`, based on
+  `feat/4181-launch-monitor-registry`.
+- Original child `05383d333b6fd87eaf5e37305476f50b505c2c2e` normally merges
+  exact parent `31cbc007d4c85b5479b7cd0fb0969124eab2af67`; preserve that
+  two-parent order and do not rebase, retarget, force-push, or change draft
+  state.
+- The child workspace/toolstrip, module-visibility, granular playback, path
+  trail, and independent plot behavior remain authoritative. The parent
+  `ImpactLayerControls`, navigation-state constants, plotting catalog, and
+  triple-pendulum extractions are integrated without duplicate state.
+- Verification is green across 1,339 Python tests with six explicit skips, 545
+  React tests plus type-check/lint/build, the 40-test post-format PyQt rerun,
+  exact-parent Ruff/Ruff-format/Black/pinned MyPy/Bandit, the 500-line budget,
+  docs/minimum-test/assertion/detect-secrets/diff gates, real CPython 3.10.20
+  compile/import checks, and 30 compatibility regressions. There is no Rust
+  delta from the exact parent. Independent staged review found no actionable
+  findings after 76 additional focused PyQt/navigation/workspace tests.
+  Current-head protected CI, unresolved-thread checks, and required repository
+  review remain release gates after guarded publication.
+
+## 2026-08-10 Propagation into launch-monitor registry
+
+- Immediate child PR `#4203` keeps base `feat/4189-dplane`.
+- Its original head `08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11`
+  normally merges exact parent `#4202` head
+  `b443fdbed7064c5db0320106013c8413e3e24356`; no branch rewrite, retarget,
+  or force push is permitted.
+- The semantic reconciliation keeps #4203's responsive
+  `SimulationViewControlsMixin`, while the parent's `ImpactLayerControls`
+  helper becomes the single owner of persisted D-plane checkbox state. The
+  automation compatibility mapping aliases that helper state exactly.
+- The launch-monitor registry, Python 3.10 compatibility layer, frame-explicit
+  D-plane contracts, responsive layout, and exports remain additive. Both
+  affected PyQt modules satisfy the protected 500-line limit.
+- The untouched original child had three additional ungrandfathered size
+  blockers: swing sources at 540 LOC, the plotting catalog at 533 LOC, and the
+  main window at 528 LOC. Narrow extractions move triple-pendulum dynamics,
+  plotting metadata, and versioned primary-tab state into focused modules,
+  while identity-pinned re-exports preserve every established import seam. The
+  resulting module pairs are 282/282, 459/98, and 494/85 lines.
+- Focused evidence is 36 passing PyQt simulation/layout tests, 38
+  plotting/navigation tests, and 21 simulation source/export tests. Combined
+  evidence is 1,249 passing Python tests with six explicit optional skips, 521
+  React tests and all web gates, 12 `swing-core` tests, real CPython 3.10
+  checks, scoped static analysis, docs/minimum-test/assertion governance,
+  changed-file size, detect-secrets, and diff checks. The protected size gate
+  passes all 107 changed candidates; a separate full-tree audit retains two
+  untouched non-candidate monoliths (`kinetics.py` and
+  `torque_profile_panel.py`). Independent staged review found no actionable
+  findings after 95 additional focused tests. Current-head protected CI and
+  required repository review remain pending release evidence.
 
 Status verified 2026-08-07. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
@@ -666,3 +751,123 @@ remains an explicit fail-closed boundary.
 6. Verify a clean installed package and the exact UpstreamDrift dependency pin.
 7. Rerun every recorded gate, inspect protected GitHub checks/reviews, and keep
    #4201 open until every acceptance criterion has current evidence.
+
+## 2026-08-10 Propagation into 3D D-plane geometry
+
+- Immediate child PR `#4202` keeps base
+  `feat/4162-wedge-impact-visualization`.
+- Its original head `b4abec03bccfbdd87ddf91427159c5c2332c21dd`
+  normally merges exact parent `#4179` head
+  `6704a3e541a3e74c28b4a284530d1a21269dd340`; no branch rewrite, retarget, or
+  force push is permitted.
+- The Python 3.10 UTC repair and AST guard are inherited alongside the typed,
+  frame-explicit D-plane, spin-loft, visualization, and export contracts.
+- Persisted D-plane layer controls are extracted into a focused helper so the
+  simulation view satisfies the protected 500-line module budget without a
+  behavior or compatibility-seam change.
+- Combined-stack verification is green: 93 focused and 825 scoped Python tests
+  (two optional `build123d` skips), 360 React tests and all web gates, real
+  CPython 3.10.20 compilation/UTC, scoped Ruff/Black/MyPy, and repository
+  governance gates. The exact parent's 12 unchanged `swing-core` tests remain
+  applicable because this child has no Rust delta. The inherited 17-error broad
+  MyPy Qt/NumPy baseline in 11 untouched files remains outside scope.
+  Protected CI and required review remain release gates.
+
+## 2026-08-10 Propagation into wedge impact visualization
+
+- Immediate child PR `#4179` keeps base `feat/4166-wedge-turf-physics`.
+- Its original head `0eb804e70887c788421332369e42792411aff55a`
+  normally merges exact parent `#4178` head
+  `bfa83aedc88ead380babc73a699377d98b971006`; no branch rewrite, retarget, or
+  force push is permitted.
+- The Python 3.10 UTC repair and AST guard are inherited alongside the
+  exact-event, locked-scale, exportable impact-scene contract.
+- Combined-stack verification is green: 58 focused and 739 scoped Python tests
+  (two optional `build123d` skips), 347 React tests and all web gates, real
+  CPython 3.10.20 compilation/UTC, scoped Ruff/Black/MyPy, and repository
+  governance gates. The exact parent's 12 unchanged `swing-core` tests remain
+  applicable because this child has no Rust delta. The inherited 17-error broad
+  MyPy Qt/NumPy baseline in 11 untouched files remains outside scope.
+  Protected CI and required review remain release gates.
+
+## 2026-08-10 Propagation into wedge turf physics
+
+- Immediate child PR `#4178` keeps base `feat/4161-wedge-ground-clearance`.
+- Its original head `aaae3f73e17dbfaad5cca1dc6f49559b3aebe9d5`
+  normally merges exact parent `#4174` head
+  `9ea93e92563280ec34bca682ad44d7409edd7a02`; no branch rewrite, retarget, or
+  force push is permitted.
+- The Python 3.10 UTC repair and AST guard are inherited alongside the passive,
+  provenance-gated turf-contact model and explicit force-coupling boundary.
+- Combined-stack verification is green: 56 focused and 732 scoped Python tests
+  (two optional CAD-dependency skips), real CPython 3.10.20 checks, scoped
+  static analysis, and repository governance gates. With no web or Rust delta,
+  the exact parent's green 345 React and 12 Rust tests remain applicable. The
+  inherited 17-error broad MyPy Qt/NumPy baseline in 11 untouched files remains
+  outside scope.
+
+## 2026-08-10 Propagation into wedge ground clearance
+
+- Immediate child PR `#4174` keeps base `feat/4163-impact-inspector`.
+- Its original head `880a6465fc872cf3d6650283db154ddc41793a31`
+  normally merges exact parent `#4173` head
+  `9ddaff3b6bca542fd7a2befc7d7b0ae53910a60a`; no branch rewrite, retarget, or
+  force push is permitted.
+- The Python 3.10 UTC repair and AST guard are inherited alongside the swept
+  wedge ground-clearance model, persistence, PyQt, and React surfaces.
+- Combined-stack verification is green: 56 focused and 703 scoped Python tests
+  (two optional CAD-dependency skips), 345 React tests and all web gates, 12
+  Rust tests, real CPython 3.10.20 checks, scoped static analysis, and
+  repository governance gates. The inherited 17-error broad MyPy Qt/NumPy
+  baseline in 11 untouched files remains outside scope.
+
+## 2026-08-10 Propagation into impact inspector
+
+- Immediate child PR `#4173` keeps base `feat/4144-variation-visualizations`.
+- Its original head `3c43955aaeb3964ff8c3ef2748d626baae518b76`
+  normally merges exact parent `#4167` head
+  `22b66b560652b78de84141344c4ddd9a92a83b26`; no branch rewrite, retarget, or
+  force push is permitted.
+- The Python 3.10 UTC compatibility repair and its AST guard are inherited
+  additively alongside the existing shared wedge impact-inspector contract.
+- Combined-stack verification is green: 63 focused and 562 total Rate Python
+  tests; 334 React tests plus type-check, lint, and production build; 12 Rust
+  tests; real CPython 3.10.20 compile/UTC checks; scoped static analysis and
+  repository governance gates. The broad MyPy sweep retains 17 pre-existing
+  Qt/NumPy typing findings in 11 untouched files. Current-head protected CI and
+  required review remain pending release evidence.
+
+## Dependency position
+
+PR `#4167` (`feat/4144-variation-visualizations`) is the base-most open Rate
+feature above the already merged `feat/investigation-suite` carrier. Later
+wedge, D-plane, launch-monitor, workspace, wind, capability, and ground work
+depends on this line and must receive any repair through ordinary parent
+propagation; child branches must not be rewritten.
+
+## 2026-08-10 Python 3.10 repair
+
+- Protected CI at exact pre-repair head
+  `edaa56358a9ccf47809533fcab28e6415b336771` collected 13 Rate test modules
+  unsuccessfully because `datetime.UTC` does not exist on Python 3.10.
+- The torque-profile controller now consumes the repository's existing
+  `shared.python.compatibility.UTC` export.
+- A source-tree AST guard rejects future direct imports and unaliased or
+  aliased `datetime.UTC` module-attribute access anywhere under
+  `src/rate_of_closure`.
+- Local evidence is green: 27 focused controller/history/AST tests and the
+  complete 554-test Rate suite on Python 3.13; real CPython 3.10.20 compatibility
+  import; Ruff check/format; focused pinned MyPy 1.13; detect-secrets;
+  touched-file size and diff checks.
+
+## Truthful release state
+
+This is an actionable compatibility repair, not completion of issue `#4144` or
+the variation epic. Current-head protected CI, required review, dependency
+propagation, and ordinary merges remain required. Runner download timeouts,
+missing toolcache/link libraries, cancelled jobs, and queued jobs are tracked
+as infrastructure and are never counted as green evidence.
+
+Every implementation commit must update this file, both other canonical
+handoffs, and `SPEC.md`, or explicitly record no material handoff change and
+the reason.
