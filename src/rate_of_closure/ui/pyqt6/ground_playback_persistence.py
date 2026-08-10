@@ -50,6 +50,7 @@ class GroundPlaybackPersistenceMixin:
     pause: Callable[[], None]
     set_time: Callable[[float], None]
     _set_controls_enabled: Callable[[bool], None]
+    on_primary_timeline_applied: Callable[[], None]
 
     @property
     def timeline(self) -> GroundPlaybackTimeline:
@@ -93,6 +94,7 @@ class GroundPlaybackPersistenceMixin:
         """Commit one fully validated candidate to every dependent view."""
         self.pause()
         self._timeline = candidate
+        self.on_primary_timeline_applied()
         self.current_time_s = candidate.start_time_s
         self.view.set_timeline(candidate)
         populate_ground_tables(

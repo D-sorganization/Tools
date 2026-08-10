@@ -6,6 +6,11 @@ import type { FlightToGroundResult, GroundVec3 } from "../model/flightGroundType
 import { flightToGroundResultFromJson } from "../model/flightGroundContract";
 import { GroundPlaybackTimeline } from "../model/groundPlayback";
 import {
+  GroundPlaybackComparison,
+  groundComparisonCsv,
+  groundComparisonJson,
+} from "../model/groundPlaybackComparison";
+import {
   GROUND_PLAYBACK_WORKSPACE_SCHEMA,
   groundEventCsv,
   groundResultJson,
@@ -15,6 +20,7 @@ import {
   type GroundPlaybackWorkspace,
 } from "../model/groundPlaybackWorkspace";
 import { GroundPlayback3D, type GroundPlaybackPortableState } from "./GroundPlayback3D";
+import { GroundPlaybackComparisonSummary } from "./GroundPlaybackComparisonSummary";
 import { downloadText } from "./variationUi";
 
 const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
@@ -137,8 +143,10 @@ function ResultTables({ result }: { readonly result: FlightToGroundResult }) {
   );
 }
 
-function LoadedResult({ result, initialState, onStateChange }: {
+function LoadedResult({ result, comparison, showComparison, initialState, onStateChange }: {
   readonly result: FlightToGroundResult;
+  readonly comparison: GroundPlaybackComparison | null;
+  readonly showComparison: boolean;
   readonly initialState: GroundPlaybackPortableState;
   readonly onStateChange: (state: GroundPlaybackPortableState) => void;
 }) {
@@ -146,14 +154,19 @@ function LoadedResult({ result, initialState, onStateChange }: {
   return <>
     <div className="grid gap-4 lg:grid-cols-[minmax(15rem,22rem)_1fr]">
       <div className="space-y-4"><Summary result={result} /><Evidence result={result} /></div>
-      <GroundPlayback3D timeline={timeline} initialState={initialState} onStateChange={onStateChange} />
+      <GroundPlayback3D timeline={timeline}
+        comparisonTimeline={comparison?.comparison}
+        showComparison={showComparison}
+        initialState={initialState} onStateChange={onStateChange} />
     </div>
+    {comparison && <GroundPlaybackComparisonSummary comparison={comparison} />}
     <ResultTables result={result} />
   </>;
 }
 
 export function GroundPlaybackPanel() {
   const importGeneration = useRef(0);
+  const comparisonImportGeneration = useRef(0);
   const portableState = useRef<GroundPlaybackPortableState | null>(null);
   const [loaded, setLoaded] = useState<{
     readonly result: FlightToGroundResult;
@@ -162,9 +175,14 @@ export function GroundPlaybackPanel() {
   } | null>(null);
   const [message, setMessage] = useState("No result loaded.");
   const [error, setError] = useState<string | null>(null);
+  const [comparison, setComparison] = useState<GroundPlaybackComparison | null>(null);
+  const [showComparison, setShowComparison] = useState(false);
+  const [comparisonMessage, setComparisonMessage] = useState("No comparison loaded.");
+  const [comparisonError, setComparisonError] = useState<string | null>(null);
 
   const importFile = async (file: File | undefined) => {
     if (!file) return;
+    comparisonImportGeneration.current += 1;
     const generation = importGeneration.current + 1;
     importGeneration.current = generation;
     try {
@@ -182,6 +200,12 @@ export function GroundPlaybackPanel() {
       };
       portableState.current = initialState;
       setLoaded({ result: parsed, initialState, generation });
+      setComparison(null);
+      setShowComparison(false);
+      setComparisonError(null);
+      setComparisonMessage(comparison === null
+        ? "No comparison loaded."
+        : "Comparison cleared after the primary result changed.");
       setError(null);
       setMessage(`Loaded ${file.name} — ${parsed.status}; ${parsed.trajectory.length} samples.`);
     } catch (reason) {
@@ -194,6 +218,7 @@ export function GroundPlaybackPanel() {
 
   const importWorkspace = async (file: File | undefined) => {
     if (!file) return;
+    comparisonImportGeneration.current += 1;
     const generation = importGeneration.current + 1;
     importGeneration.current = generation;
     try {
@@ -206,6 +231,12 @@ export function GroundPlaybackPanel() {
       const initialState = { playback: candidate.playback, view: candidate.view };
       portableState.current = initialState;
       setLoaded({ result: candidate.result, initialState, generation });
+      setComparison(null);
+      setShowComparison(false);
+      setComparisonError(null);
+      setComparisonMessage(comparison === null
+        ? "No comparison loaded."
+        : "Comparison cleared after the primary result changed.");
       setError(null);
       setMessage(`Loaded workspace ${file.name} — ${candidate.result.status}; paused at ${candidate.playback.timeS} s.`);
     } catch (reason) {
@@ -213,6 +244,34 @@ export function GroundPlaybackPanel() {
       const detail = reason instanceof Error ? reason.message : "Unknown import error.";
       const retained = loaded === null ? "" : " Last valid playback remains loaded.";
       setError(`Could not import ${file.name}: ${detail}${retained}`);
+    }
+  };
+
+  const importComparison = async (file: File | undefined) => {
+    if (!file || loaded === null) return;
+    const generation = comparisonImportGeneration.current + 1;
+    comparisonImportGeneration.current = generation;
+    try {
+      if (file.size > MAX_IMPORT_BYTES) throw new RangeError("File exceeds the 5 MiB import limit.");
+      const parsed = flightToGroundResultFromJson(await readFileText(file));
+      if (parsed.trajectory.length > MAX_IMPORT_POINTS) {
+        throw new RangeError("Trajectory exceeds the 100,000 point display limit.");
+      }
+      const candidate = new GroundPlaybackComparison(
+        new GroundPlaybackTimeline(loaded.result), new GroundPlaybackTimeline(parsed),
+      );
+      if (generation !== comparisonImportGeneration.current) return;
+      setComparison(candidate);
+      setShowComparison(true);
+      setComparisonError(null);
+      setComparisonMessage(
+        `Loaded comparison ${file.name} — ${parsed.status}; ${parsed.trajectory.length} samples. Deltas are comparison minus primary.`,
+      );
+    } catch (reason) {
+      if (generation !== comparisonImportGeneration.current) return;
+      const detail = reason instanceof Error ? reason.message : "Unknown import error.";
+      const retained = comparison === null ? "" : " Last valid comparison remains loaded.";
+      setComparisonError(`Could not import comparison ${file.name}: ${detail}${retained}`);
     }
   };
 
@@ -258,6 +317,15 @@ export function GroundPlaybackPanel() {
           }} />
       </label>
       {loaded !== null && <>
+        <label className="inline-flex cursor-pointer rounded border border-cyan-500/60 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-200">
+          Import Comparison JSON…
+          <input type="file" accept="application/json,.json" className="sr-only"
+            aria-label="Import ground comparison result JSON"
+            onChange={(event) => {
+              void importComparison(event.target.files?.[0]);
+              event.currentTarget.value = "";
+            }} />
+        </label>
         <button type="button" aria-label="Save ground playback workspace"
           className="rounded border border-slate-700 px-3 py-2 text-sm"
           onClick={() => downloadText("ground-playback-workspace.json", groundWorkspaceToJson(workspace()), "application/json")}>Save Workspace</button>
@@ -270,15 +338,33 @@ export function GroundPlaybackPanel() {
         <button type="button" aria-label="Export ground events CSV"
           className="rounded border border-slate-700 px-3 py-2 text-sm"
           onClick={() => downloadText("ground-events.csv", groundEventCsv(loaded.result), "text/csv;charset=utf-8")}>Events CSV</button>
+        {comparison && <>
+          <label className="inline-flex items-center gap-2 rounded border border-cyan-500/40 px-3 py-2 text-sm">
+            <input type="checkbox" aria-label="Show comparison overlay"
+              checked={showComparison}
+              onChange={(event) => setShowComparison(event.target.checked)} />
+            Show comparison
+          </label>
+          <button type="button" aria-label="Export ground comparison JSON"
+            className="rounded border border-cyan-500/40 px-3 py-2 text-sm"
+            onClick={() => downloadText("ground-comparison.json", groundComparisonJson(comparison), "application/json")}>Comparison JSON</button>
+          <button type="button" aria-label="Export ground comparison CSV"
+            className="rounded border border-cyan-500/40 px-3 py-2 text-sm"
+            onClick={() => downloadText("ground-comparison.csv", groundComparisonCsv(comparison), "text/csv;charset=utf-8")}>Comparison CSV</button>
+        </>}
       </>}
       </div>
       {error ? <p role="alert" className="rounded border border-red-500/40 bg-red-950/30 p-3 text-sm text-red-200">{error}</p>
         : <p role="status" className="text-sm text-slate-300">{message}</p>}
+      {loaded !== null && (comparisonError
+        ? <p role="alert" className="rounded border border-red-500/40 bg-red-950/30 p-3 text-sm text-red-200">{comparisonError}</p>
+        : <p role="status" aria-label="Ground comparison status" className="text-sm text-slate-300">{comparisonMessage}</p>)}
       {loaded === null ? (
         <div className="rounded-lg border border-dashed border-slate-700 p-8 text-center text-slate-400">
           Choose an exact result record to enable phase-aware playback and evidence tables.
         </div>
       ) : <LoadedResult key={loaded.generation} result={loaded.result}
+        comparison={comparison} showComparison={showComparison}
         initialState={loaded.initialState}
         onStateChange={(state) => { portableState.current = state; }} />}
     </section>

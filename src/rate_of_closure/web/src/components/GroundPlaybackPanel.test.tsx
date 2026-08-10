@@ -94,6 +94,54 @@ describe("GroundPlaybackPanel", () => {
     expect(screen.getByText("0.245 m")).toBeInTheDocument();
   });
 
+  it("imports one comparison atomically and exposes a complete accessible table", async () => {
+    render(<GroundPlaybackPanel />);
+    fireEvent.change(screen.getByLabelText("Import strict ground result JSON"), {
+      target: { files: [new File([JSON.stringify(fixture.result)], "primary.json", {
+        type: "application/json",
+      })] },
+    });
+    expect(await screen.findByText(/Loaded primary.json/)).toBeInTheDocument();
+    const comparison = structuredClone(fixture.result);
+    comparison.request_id = "comparison-run";
+    comparison.provenance.input_sha256 = "b".repeat(64);
+    const comparisonInput = screen.getByLabelText("Import ground comparison result JSON");
+    fireEvent.change(comparisonInput, { target: { files: [new File(
+      [JSON.stringify(comparison)], "comparison.json", { type: "application/json" },
+    )] } });
+
+    expect(await screen.findByText(/Loaded comparison comparison.json/)).toBeInTheDocument();
+    expect(screen.getByLabelText("Show comparison overlay")).toBeChecked();
+    const table = screen.getByRole("table", { name: "Ground result comparison table" });
+    expect(within(table).getAllByRole("row")).toHaveLength(15);
+    expect(within(table).getByRole("columnheader", { name: "Comparison − primary" }))
+      .toBeInTheDocument();
+    expect(screen.getByRole("region", { name: "Ground comparison provenance" }))
+      .toHaveTextContent("comparison-run");
+    expect(screen.getByRole("button", { name: "Export ground comparison JSON" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Export ground comparison CSV" })).toBeEnabled();
+
+    fireEvent.change(comparisonInput, { target: { files: [new File(
+      ['{"schema_version":"wrong"}'], "bad.json", { type: "application/json" },
+    )] } });
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(
+      /Last valid comparison remains loaded/,
+    ));
+    expect(screen.getByRole("table", { name: "Ground result comparison table" }))
+      .toBeInTheDocument();
+    expect(screen.getByText("comparison-run")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Import strict ground result JSON"), {
+      target: { files: [new File([JSON.stringify(fixture.result)], "replacement.json", {
+        type: "application/json",
+      })] },
+    });
+    expect(await screen.findByText(/Loaded replacement.json/)).toBeInTheDocument();
+    expect(screen.queryByRole("table", { name: "Ground result comparison table" }))
+      .not.toBeInTheDocument();
+    expect(screen.queryByLabelText("Show comparison overlay")).not.toBeInTheDocument();
+  });
+
   it("imports a workspace atomically and exposes deterministic exports", async () => {
     render(<GroundPlaybackPanel />);
     const workspace = {

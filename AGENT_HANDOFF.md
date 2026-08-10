@@ -3,6 +3,43 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 issue #4274 matched comparison playback
+
+The local continuation on `feat/4274-ground-playback-comparison` adds matched
+PyQt6/React comparison playback from exact local parent
+`0ef91e84b6d49551723ba0fbfb8eb1bf7b1ebfa2`. A second strict
+`flight-to-ground-result/v1` is parsed and fully validated before it can
+replace the last-good comparison; failure leaves both the primary and prior
+comparison intact. A successful primary replacement deliberately clears a
+stale comparison only after the new primary commits.
+
+Both clients use one absolute-time window spanning the two observed results.
+Each result is phase-safely interpolated only inside its own samples; outside
+its observed interval the marker is clamped and explicitly labelled as waiting
+for first contact or held at its qualified/observed end. One locked physical
+metre scale contains both paths. Primary and comparison use solid versus dashed
+trajectories, circular versus diamond event/ball markers, an accessible
+show/hide control, paired identity/status/provenance, and a complete fourteen-
+row direct scalar table. Deterministic JSON retains both exact result records
+and the table; deterministic CSV exports the same direct
+`comparison_minus_primary` deltas. No causal, inferential, or extrapolated
+physics claim is made.
+
+Focused evidence passes 22 Python/PyQt contract, GUI, and tooltip tests; the
+complete Rate suite passes 896 tests. React passes 17 focused tests and the
+complete suite (110 files / 682 tests), TypeScript, zero-warning ESLint, and a
+200-module production build. Ruff check/format, MyPy, CPython 3.10 compilation,
+module/changed-file budgets, documentation, minimum-test, assertion, secrets,
+marker, and diff gates pass. This branch is not published. It must normally
+incorporate exact live parent PR #4316 head (currently
+`2c56294ecda0204886508946239c7ca5b50b8b14` or later) with the original
+comparison commit first and parent second, then reconcile all four records
+monotonically. Comparison persistence in workspace v1, comparison trajectory/
+event evidence tables, ensembles/statistical inference, terrain meshes and
+editors, inverse solving, compiled runtimes, UpstreamDrift parity, protected
+CI, approval, parent landing, issue acceptance, and epic closure remain open.
+Keep issue #4274 and epic #4267 open.
+
 ## 2026-08-10 issue #4274 playback workspace persistence and exports
 
 A reviewed continuation on `feat/4274-ground-playback-persistence` adds matched

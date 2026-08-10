@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { GroundPhase } from "../model/flightGroundTypes";
 import type { GroundPlaybackTimeline } from "../model/groundPlayback";
+import { GroundPlaybackComparison } from "../model/groundPlaybackComparison";
 import type {
   GroundPlaybackState,
   GroundPlaybackViewState,
@@ -24,6 +25,8 @@ export interface GroundPlaybackPortableState {
 
 interface Props {
   readonly timeline: GroundPlaybackTimeline;
+  readonly comparisonTimeline?: GroundPlaybackTimeline;
+  readonly showComparison?: boolean;
   readonly initialState?: GroundPlaybackPortableState;
   readonly onStateChange?: (state: GroundPlaybackPortableState) => void;
 }
@@ -42,7 +45,9 @@ const viewFromCamera = (camera: PlaybackCamera): GroundPlaybackViewState => ({
   zoom: camera.zoom,
 });
 
-export function GroundPlayback3D({ timeline, initialState, onStateChange }: Props) {
+export function GroundPlayback3D({
+  timeline, comparisonTimeline, showComparison = false, initialState, onStateChange,
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const initialTime = initialState?.playback.timeS ?? timeline.startTimeS;
@@ -52,7 +57,14 @@ export function GroundPlayback3D({ timeline, initialState, onStateChange }: Prop
   const [loop, setLoop] = useState(initialState?.playback.loop ?? false);
   const [speed, setSpeed] = useState<number>(initialState?.playback.speed ?? 1);
   const [camera, setCamera] = useState(() => cameraFromView(initialState?.view));
-  const frame = useMemo(() => timeline.frameAt(timeS), [timeline, timeS]);
+  const comparison = useMemo(() => comparisonTimeline && showComparison
+    ? new GroundPlaybackComparison(timeline, comparisonTimeline) : null,
+  [timeline, comparisonTimeline, showComparison]);
+  const startTimeS = comparison?.startTimeS ?? timeline.startTimeS;
+  const endTimeS = comparison?.endTimeS ?? timeline.endTimeS;
+  const durationS = endTimeS - startTimeS;
+  const pairedFrame = useMemo(() => comparison?.frameAt(timeS) ?? null, [comparison, timeS]);
+  const frame = pairedFrame?.primary ?? timeline.frameAt(timeS);
 
   useEffect(() => {
     setPlaying(false);
@@ -64,29 +76,34 @@ export function GroundPlayback3D({ timeline, initialState, onStateChange }: Prop
     setCamera(cameraFromView(initialState?.view));
   }, [timeline, initialState]);
   useEffect(() => { timeRef.current = timeS; }, [timeS]);
-  useEffect(() => onStateChange?.({
-    playback: { timeS, speed, loop },
-    view: viewFromCamera(camera),
-  }), [timeS, speed, loop, camera, onStateChange]);
   useEffect(() => {
-    if (!playing || timeline.durationS <= 0) return;
+    const clamped = Math.min(Math.max(timeRef.current, startTimeS), endTimeS);
+    timeRef.current = clamped;
+    setTimeS(clamped);
+  }, [startTimeS, endTimeS]);
+  useEffect(() => onStateChange?.({
+    playback: { timeS: timeline.frameAt(timeS).timeS, speed, loop },
+    view: viewFromCamera(camera),
+  }), [timeS, speed, loop, camera, timeline, onStateChange]);
+  useEffect(() => {
+    if (!playing || durationS <= 0) return;
     let animationId = 0;
     let previous = performance.now();
     const animate = (now: number) => {
       const elapsed = Math.max(0, now - previous) / 1000;
       previous = now;
       const candidate = timeRef.current + elapsed * speed;
-      const next = loop && candidate >= timeline.endTimeS
-        ? timeline.startTimeS + ((candidate - timeline.startTimeS) % timeline.durationS)
-        : Math.min(timeline.endTimeS, candidate);
+      const next = loop && candidate >= endTimeS
+        ? startTimeS + ((candidate - startTimeS) % durationS)
+        : Math.min(endTimeS, candidate);
       timeRef.current = next;
       setTimeS(next);
-      if (!loop && next >= timeline.endTimeS) setPlaying(false);
+      if (!loop && next >= endTimeS) setPlaying(false);
       else animationId = window.requestAnimationFrame(animate);
     };
     animationId = window.requestAnimationFrame(animate);
     return () => window.cancelAnimationFrame(animationId);
-  }, [playing, speed, loop, timeline]);
+  }, [playing, speed, loop, durationS, startTimeS, endTimeS]);
   useEffect(() => observeCanvas(canvasRef, () => {
     if (canvasRef.current) drawGroundPlayback(
       canvasRef.current,
@@ -94,8 +111,15 @@ export function GroundPlayback3D({ timeline, initialState, onStateChange }: Prop
       frame.positionM as Vec3,
       camera,
       timeline.endLabel,
+      timeline.result.events,
+      pairedFrame && comparison ? {
+        points: comparison.comparison.result.trajectory,
+        events: comparison.comparison.result.events,
+        ballPosition: pairedFrame.comparison.positionM as Vec3,
+        endLabel: comparison.comparison.endLabel,
+      } : undefined,
     );
-  }), [timeline, frame, camera]);
+  }), [timeline, comparison, pairedFrame, frame, camera]);
 
   const jump = (target: number) => {
     setPlaying(false);
@@ -105,16 +129,18 @@ export function GroundPlayback3D({ timeline, initialState, onStateChange }: Prop
   const toggle = () => {
     if (playing) setPlaying(false);
     else {
-      if (timeS >= timeline.endTimeS) jump(timeline.startTimeS);
-      setPlaying(timeline.durationS > 0);
+      if (timeS >= endTimeS) jump(startTimeS);
+      setPlaying(durationS > 0);
     }
   };
-  const step = (direction: -1 | 1) => jump(timeline.stepTime(timeS, direction));
+  const step = (direction: -1 | 1) => jump(
+    comparison?.stepTime(timeS, direction) ?? timeline.stepTime(timeS, direction),
+  );
 
   return (
     <section className="space-y-3" aria-label="Ground trajectory playback">
       <div className="flex flex-wrap items-center gap-2 text-xs">
-        <button type="button" onClick={() => jump(timeline.startTimeS)}
+        <button type="button" onClick={() => jump(startTimeS)}
           aria-label="Jump to First Contact" className="rounded border border-slate-700 px-2 py-1">
           First Contact
         </button>
@@ -135,9 +161,9 @@ export function GroundPlayback3D({ timeline, initialState, onStateChange }: Prop
               className="rounded border border-slate-700 px-2 py-1">{phase}</button>
           );
         })}
-        <button type="button" onClick={() => jump(timeline.endTimeS)} aria-label={`Jump to ${timeline.endLabel}`}
+        <button type="button" onClick={() => jump(endTimeS)} aria-label={`Jump to ${timeline.endLabel}`}
           className="rounded border border-slate-700 px-2 py-1">{timeline.endLabel}</button>
-        <input type="range" min={timeline.startTimeS} max={timeline.endTimeS} step={0.001}
+        <input type="range" min={startTimeS} max={endTimeS} step={0.001}
           value={timeS} onChange={(event) => jump(Number(event.target.value))}
           aria-label="Ground playback absolute time" className="min-w-36 flex-1" />
         <label className="flex items-center gap-1">Speed
@@ -154,8 +180,10 @@ export function GroundPlayback3D({ timeline, initialState, onStateChange }: Prop
           className="rounded border border-slate-700 px-2 py-1">Reset 3D view</button>
       </div>
       <p role="status" aria-label="Ground playback position" className="text-sm text-slate-200">
-        <strong>{frame.phase[0].toUpperCase()}{frame.phase.slice(1)}</strong> · absolute {frame.timeS.toFixed(4)} s
-        {" · "}elapsed {frame.elapsedS.toFixed(4)} s
+        <strong>{frame.phase[0].toUpperCase()}{frame.phase.slice(1)}</strong>
+        {" · "}absolute {(pairedFrame?.timeS ?? frame.timeS).toFixed(4)} s
+        {" · "}elapsed {((pairedFrame?.timeS ?? frame.timeS) - startTimeS).toFixed(4)} s
+        {pairedFrame && <> · primary {pairedFrame.primaryState} · comparison {pairedFrame.comparisonState}</>}
       </p>
       <canvas ref={canvasRef} width={FLIGHT_PLAYBACK_LOGICAL_SIZE.width}
         height={FLIGHT_PLAYBACK_LOGICAL_SIZE.height} tabIndex={0}
@@ -191,6 +219,7 @@ export function GroundPlayback3D({ timeline, initialState, onStateChange }: Prop
           </span>
         ))}
         <span>Carry / first contact</span><span>{timeline.isComplete ? "Total / rest" : "Observed total / end"}</span>
+        {comparison && <span className="text-cyan-300">Dashed path / diamonds: comparison</span>}
       </div>
       <p className="text-xs text-slate-500">Locked orthographic physical scale: x downrange, y up, z right. Drag to orbit; wheel to zoom.</p>
     </section>

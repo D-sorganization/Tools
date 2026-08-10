@@ -13,6 +13,11 @@ from rate_of_closure.simulation.ground_playback import (
     GroundPlaybackTimeline,
     load_ground_result_json,
 )
+from rate_of_closure.simulation.ground_playback_comparison import (
+    GroundPlaybackComparison,
+    ground_comparison_csv,
+    ground_comparison_json,
+)
 from rate_of_closure.simulation.ground_playback_workspace import (
     GROUND_PLAYBACK_WORKSPACE_SCHEMA,
     GroundPlaybackState,
@@ -37,6 +42,18 @@ FIXTURE = (
 def _result_payload() -> dict[str, object]:
     payload = json.loads(FIXTURE.read_text(encoding="utf-8"))
     return payload["result"]
+
+
+def _comparison_payload(*, time_offset_s: float = 0.2) -> dict[str, object]:
+    payload = _result_payload()
+    payload["request_id"] = "comparison-run"
+    payload["provenance"]["input_sha256"] = "b" * 64  # type: ignore[index]
+    for point in payload["trajectory"]:  # type: ignore[union-attr]
+        point["time_s"] += time_offset_s
+    for event in payload["events"]:  # type: ignore[union-attr]
+        event["time_s"] += time_offset_s
+    payload["termination"]["time_s"] += time_offset_s  # type: ignore[index]
+    return payload
 
 
 def test_strict_import_accepts_only_result_and_builds_absolute_timeline() -> None:
@@ -214,3 +231,71 @@ def test_result_and_csv_exports_are_lossless_and_stable() -> None:
     assert len(event_rows) == len(result.events) + 1
     assert event_rows[1][7] == "1"
     assert event_rows[1][10] == "0.976"
+
+
+def test_comparison_uses_one_absolute_window_without_extrapolating() -> None:
+    primary = GroundPlaybackTimeline(
+        load_ground_result_json(json.dumps(_result_payload()))
+    )
+    comparison = GroundPlaybackTimeline(
+        load_ground_result_json(json.dumps(_comparison_payload()))
+    )
+    session = GroundPlaybackComparison(primary, comparison)
+
+    assert session.start_time_s == pytest.approx(primary.start_time_s)
+    assert session.end_time_s == pytest.approx(comparison.end_time_s)
+    start = session.frame_at(primary.start_time_s)
+    assert start.primary_state == "active"
+    assert start.comparison_state == "waiting for first contact"
+    assert start.comparison.time_s == pytest.approx(comparison.start_time_s)
+
+    after_primary = session.frame_at(primary.end_time_s + 0.1)
+    assert after_primary.primary_state == "held at rest"
+    assert after_primary.comparison_state == "active"
+    assert after_primary.primary.time_s == pytest.approx(primary.end_time_s)
+
+
+def test_comparison_table_and_exports_are_complete_and_deterministic() -> None:
+    session = GroundPlaybackComparison(
+        GroundPlaybackTimeline(load_ground_result_json(json.dumps(_result_payload()))),
+        GroundPlaybackTimeline(
+            load_ground_result_json(json.dumps(_comparison_payload()))
+        ),
+    )
+
+    rows = session.metric_rows
+    assert {row.metric_id for row in rows} == {
+        "carry_distance_m",
+        "bounce_air_distance_m",
+        "skid_distance_m",
+        "roll_distance_m",
+        "surface_path_distance_m",
+        "total_distance_m",
+        "final_downrange_m",
+        "final_offline_m",
+        "bounce_count",
+        "start_time_s",
+        "end_time_s",
+        "duration_s",
+        "event_count",
+        "trajectory_sample_count",
+    }
+    assert next(
+        row for row in rows if row.metric_id == "start_time_s"
+    ).delta == pytest.approx(0.2)
+    assert session.provenance_rows[0].field == "Request ID"
+    assert session.provenance_rows[0].primary == "surface-run-analytic"
+    assert session.provenance_rows[0].comparison == "comparison-run"
+
+    encoded = ground_comparison_json(session)
+    assert encoded == ground_comparison_json(session)
+    document = json.loads(encoded)
+    assert document["schema_version"] == "rate-of-closure-ground-playback-comparison/v1"
+    assert document["delta_definition"] == "comparison_minus_primary"
+    assert document["primary"]["request_id"] == "surface-run-analytic"
+    assert document["comparison"]["request_id"] == "comparison-run"
+    csv_text = ground_comparison_csv(session)
+    assert csv_text.endswith("\n")
+    assert (
+        "metric_id,label,unit,primary,comparison,comparison_minus_primary" in csv_text
+    )

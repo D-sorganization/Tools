@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.36                                    |
-| **Spec Version**        | 1.14.36                                    |
+| **Current Version**     | 1.14.37                                    |
+| **Spec Version**        | 1.14.37                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -46,6 +46,28 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-08-10 Matched ground-result comparison playback
+
+- PyQt6 and React can atomically import one second strict
+  `flight-to-ground-result/v1` without replacing the current primary or prior
+  valid comparison when validation fails. A successful primary replacement
+  clears the stale comparison only after the primary commits.
+- Both clients use one absolute-time window over both observed results. Each
+  result is phase-safely interpolated only within its samples; before first
+  contact and after observed termination its marker is clamped and explicitly
+  labelled rather than extrapolated.
+- One locked physical metre scale contains solid primary and dashed comparison
+  trajectories, distinct event and ball markers, and an accessible show/hide
+  control. A complete fourteen-row scalar table and paired identity, status,
+  calibration, and provenance table define every delta as comparison minus
+  primary without causal or inferential claims.
+- Deterministic comparison JSON retains both exact result records and their
+  direct delta table; deterministic CSV exports the same scalar evidence.
+- Workspace v1 remains a primary-only persistence contract. Comparison
+  persistence, comparison trajectory/event evidence tables, ensembles,
+  statistical inference, terrain editors/meshes, inverse solving, compiled
+  runtimes, and UpstreamDrift parity remain downstream work under #4274/#4267.
+
 ### 2026-08-10 Ground-playback workspace persistence and evidence export
 
 - PyQt6 and React share strict
@@ -60,9 +82,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   event CSV exports are deterministic, LF-terminated, accessible tables that
   retain every raw position, linear/angular velocity, frame, phase/event, time,
   sample/sequence field. PyQt file replacement uses `QSaveFile`.
-- The persistence layer does not run or alter physics. Surface editors, terrain
-  meshes, result comparisons, ensembles, inverse solvers, compiled runtimes,
-  and UpstreamDrift integration remain downstream work under #4274/#4267.
+- The persistence layer does not run or alter physics. Comparison state is not
+  embedded in workspace v1; surface editors, terrain meshes, ensembles,
+  inverse solvers, compiled runtimes, and UpstreamDrift integration remain
+  downstream work under #4274/#4267.
 
 ### 2026-08-10 Strict ground-result playback
 
@@ -3081,6 +3104,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.37 | feat(rate-of-closure, #4274): add matched PyQt6/React atomic comparison-result import, synchronized absolute-time playback with explicitly waiting/held observation states, locked-scale solid/dashed trajectories and distinct events, accessible visibility/provenance/status/direct-delta tables, and deterministic exact-result JSON plus scalar CSV export; preserve primary-only workspace v1 and explicit remaining release boundaries. |
 | 2026-08-10 | 1.14.36 | merge(ground-playback, #4274 #4315): normally propagate exact ready-for-review parent `2618ab025622bf1a4fa21e771b30f808f783648b` into the persistence and evidence-export continuation without changing its base; preserve strict atomic workspace import, paused playback and orbit state, deterministic full-state exports, and explicit non-delivery boundaries while protected publication, CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.35 | feat(ground-playback, #4274): add strict cross-surface v1 workspace persistence for validated result plus paused playback/orbit state, atomic last-good import, canonical result JSON, full deterministic trajectory/event CSV, atomic PyQt file replacement, accessible controls, and contract/UI parity tests; retain explicit no-physics, no-terrain, no-comparison, no-solver, and no-consumer boundaries. |
 | 2026-08-10 | 1.14.34 | docs(ground-playback, #4274 #4315): record the independently reviewed Ground Playback implementation as a ready-for-review PR against unchanged `feat/4275-ground-reference-execution`; protected CI, approval, parent landing, dependency integration, issue acceptance, and epic closure remain open. |

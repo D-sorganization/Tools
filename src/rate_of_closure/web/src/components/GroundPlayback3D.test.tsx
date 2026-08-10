@@ -98,4 +98,29 @@ describe("GroundPlayback3D", () => {
     expect(normalizeGroundPlaybackYawDegrees(397.5)).toBe(37.5);
     expect(normalizeGroundPlaybackYawDegrees(-397.5)).toBe(-37.5);
   });
+
+  it("uses the union absolute window and labels a held primary observation", () => {
+    const comparisonRecord = structuredClone(fixture.result) as Record<string, unknown>;
+    comparisonRecord.request_id = "comparison-run";
+    for (const point of comparisonRecord.trajectory as Array<Record<string, unknown>>) {
+      point.time_s = Number(point.time_s) + 0.2;
+    }
+    for (const event of comparisonRecord.events as Array<Record<string, unknown>>) {
+      event.time_s = Number(event.time_s) + 0.2;
+    }
+    const termination = comparisonRecord.termination as Record<string, unknown>;
+    termination.time_s = Number(termination.time_s) + 0.2;
+    const comparisonTimeline = new GroundPlaybackTimeline(
+      parseFlightToGroundResultRecord(comparisonRecord),
+    );
+    render(<GroundPlayback3D timeline={timeline} comparisonTimeline={comparisonTimeline}
+      showComparison />);
+
+    const scrubber = screen.getByLabelText("Ground playback absolute time");
+    expect(scrubber).toHaveAttribute("max", String(comparisonTimeline.endTimeS));
+    fireEvent.change(scrubber, { target: { value: timeline.endTimeS + 0.1 } });
+    expect(screen.getByRole("status", { name: "Ground playback position" }))
+      .toHaveTextContent(/primary held at rest · comparison active/i);
+    expect(screen.getByText(/Dashed path \/ diamonds: comparison/)).toBeInTheDocument();
+  });
 });

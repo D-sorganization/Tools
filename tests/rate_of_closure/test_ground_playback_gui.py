@@ -29,6 +29,18 @@ def _result_text() -> str:
     return json.dumps(json.loads(FIXTURE.read_text(encoding="utf-8"))["result"])
 
 
+def _comparison_text(*, time_offset_s: float = 0.0) -> str:
+    payload = json.loads(_result_text())
+    payload["request_id"] = "comparison-run"
+    payload["provenance"]["input_sha256"] = "b" * 64
+    for point in payload["trajectory"]:
+        point["time_s"] += time_offset_s
+    for event in payload["events"]:
+        event["time_s"] += time_offset_s
+    payload["termination"]["time_s"] += time_offset_s
+    return json.dumps(payload)
+
+
 def test_tab_imports_strict_result_and_exposes_accessible_controls(qtbot) -> None:  # type: ignore[no-untyped-def]
     tab = GroundPlaybackTab()
     qtbot.addWidget(tab)
@@ -78,6 +90,69 @@ def test_invalid_import_retains_last_good_result(qtbot) -> None:  # type: ignore
     assert tab.timeline is original
     assert tab.status_label.property("state") == "error"
     assert "bad.json" in tab.status_label.text()
+
+
+def test_comparison_import_is_atomic_accessible_and_toggleable(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+    tab.import_json_text(_result_text(), source_name="primary.json")
+    primary = tab.timeline
+
+    tab.import_comparison_json_text(_comparison_text(), source_name="comparison.json")
+    comparison = tab.comparison
+    assert tab.timeline is primary
+    assert comparison.comparison.result.request_id == "comparison-run"
+    assert tab.show_comparison_checkbox.isChecked()
+    assert tab.show_comparison_checkbox.accessibleName() == "Show comparison overlay"
+    assert tab.comparison_table.accessibleName() == "Ground result comparison table"
+    assert tab.comparison_table.rowCount() == 14
+    assert tab.comparison_table.horizontalHeaderItem(3).text() == "Comparison − primary"
+    assert (
+        tab.comparison_provenance_table.accessibleName()
+        == "Ground comparison identity status and provenance"
+    )
+    assert tab.comparison_provenance_table.rowCount() == 9
+    assert tab.comparison_provenance_table.item(0, 1).text() == "surface-run-analytic"
+    assert tab.comparison_provenance_table.item(0, 2).text() == "comparison-run"
+    assert "comparison.json" in tab.comparison_status_label.text()
+
+    tab.show_comparison_checkbox.setChecked(False)
+    assert not tab.view.comparison_visible
+    with pytest.raises(ValueError):
+        tab.import_comparison_json_text(
+            '{"schema_version":"wrong"}', source_name="bad.json"
+        )
+    assert tab.timeline is primary
+    assert tab.comparison is comparison
+    assert "Last valid comparison remains loaded" in tab.comparison_status_label.text()
+
+
+def test_successful_primary_replacement_clears_stale_comparison(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+    tab.import_json_text(_result_text())
+    tab.import_comparison_json_text(_comparison_text())
+
+    tab.import_json_text(_result_text(), source_name="replacement.json")
+
+    assert not tab.has_comparison
+    assert not tab.show_comparison_checkbox.isEnabled()
+    assert "cleared" in tab.comparison_status_label.text().lower()
+
+
+def test_comparison_playback_uses_union_absolute_time_and_honest_hold(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+    tab.import_json_text(_result_text())
+    tab.import_comparison_json_text(_comparison_text(time_offset_s=0.2))
+
+    target = tab.timeline.end_time_s + 0.1
+    tab.set_time(target)
+
+    assert tab.current_time_s == pytest.approx(target)
+    assert "primary held at rest" in tab.time_label.text().lower()
+    assert "comparison active" in tab.time_label.text().lower()
+    assert tab._end_time_s == pytest.approx(tab.comparison.comparison.end_time_s)
 
 
 def test_workspace_import_restores_playback_and_view_atomically(qtbot) -> None:  # type: ignore[no-untyped-def]

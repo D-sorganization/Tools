@@ -3,6 +3,11 @@ import { describe, expect, it } from "vitest";
 import fixture from "./__fixtures__/ground_reference_pipeline_golden_v1.json";
 import { parseFlightToGroundResultRecord } from "./flightGroundResultContract";
 import { GroundPlaybackTimeline } from "./groundPlayback";
+import {
+  GroundPlaybackComparison,
+  groundComparisonCsv,
+  groundComparisonJson,
+} from "./groundPlaybackComparison";
 
 describe("GroundPlaybackTimeline", () => {
   const timeline = () => new GroundPlaybackTimeline(
@@ -57,5 +62,54 @@ describe("GroundPlaybackTimeline", () => {
     const value = new GroundPlaybackTimeline(parseFlightToGroundResultRecord(payload));
     expect(value.isComplete).toBe(false);
     expect(value.endLabel).toBe("Observed end");
+  });
+});
+
+describe("GroundPlaybackComparison", () => {
+  const timelines = () => {
+    const primaryRecord = structuredClone(fixture.result) as Record<string, unknown>;
+    const comparisonRecord = structuredClone(fixture.result) as Record<string, unknown>;
+    comparisonRecord.request_id = "comparison-run";
+    (comparisonRecord.provenance as Record<string, unknown>).input_sha256 = "b".repeat(64);
+    for (const point of comparisonRecord.trajectory as Array<Record<string, unknown>>) {
+      point.time_s = Number(point.time_s) + 0.2;
+    }
+    for (const event of comparisonRecord.events as Array<Record<string, unknown>>) {
+      event.time_s = Number(event.time_s) + 0.2;
+    }
+    const termination = comparisonRecord.termination as Record<string, unknown>;
+    termination.time_s = Number(termination.time_s) + 0.2;
+    return {
+      primary: new GroundPlaybackTimeline(parseFlightToGroundResultRecord(primaryRecord)),
+      comparison: new GroundPlaybackTimeline(parseFlightToGroundResultRecord(comparisonRecord)),
+    };
+  };
+
+  it("synchronizes on absolute time and labels held observations", () => {
+    const { primary, comparison } = timelines();
+    const session = new GroundPlaybackComparison(primary, comparison);
+    expect(session.startTimeS).toBeCloseTo(primary.startTimeS);
+    expect(session.endTimeS).toBeCloseTo(comparison.endTimeS);
+    expect(session.frameAt(primary.startTimeS).comparisonState).toBe("waiting for first contact");
+    const later = session.frameAt(primary.endTimeS + 0.1);
+    expect(later.primaryState).toBe("held at rest");
+    expect(later.comparisonState).toBe("active");
+  });
+
+  it("exports every scalar row and provenance deterministically", () => {
+    const { primary, comparison } = timelines();
+    const session = new GroundPlaybackComparison(primary, comparison);
+    expect(session.metricRows).toHaveLength(14);
+    expect(session.metricRows.find(({ metricId }) => metricId === "start_time_s")?.delta)
+      .toBeCloseTo(0.2);
+    expect(session.provenanceRows[0]).toEqual({
+      field: "Request ID", primary: "surface-run-analytic", comparison: "comparison-run",
+    });
+    const encoded = groundComparisonJson(session);
+    expect(encoded).toBe(groundComparisonJson(session));
+    expect(JSON.parse(encoded).delta_definition).toBe("comparison_minus_primary");
+    expect(groundComparisonCsv(session)).toContain(
+      "metric_id,label,unit,primary,comparison,comparison_minus_primary",
+    );
   });
 });
