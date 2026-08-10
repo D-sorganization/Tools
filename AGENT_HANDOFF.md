@@ -3,6 +3,45 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 PR #4312 corrected-reference propagation
+
+Draft PR #4312 remains on `feat/4275-ground-result-wire-parity` with unchanged
+base `feat/4275-ground-reference-execution`. Exact corrected #4309 parent
+`f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` is incorporated by the normal
+two-parent merge containing this handoff. The child preserves strict typed Rust
+validation and canonical JSON for `flight-to-ground-result/v1`, recursive
+duplicate-key and unsafe-number rejection, raw-before-normalized semantic and
+state-machine checks, summary/geometry coherence, lowercase provenance-digest
+emission, and PyO3/WASM validation exports. It now inherits corrected bounded
+reference execution, scalar-study, material-profile, impact/roll, timestamp,
+and canonical `swing_sim` ancestry. No branch was rebased, retargeted,
+rewritten, or force-pushed.
+
+This remains a partial `not_released` slice. The compiled bindings validate and
+canonicalize result evidence; they do not execute bounce, skid, roll, or rest
+physics. PyQt6/React workflows, ensembles, production calibration, changing
+terrain/material regions, and downstream UpstreamDrift consumers remain
+excluded. Keep issue #4275 and epic #4267 open. Protected CI, independent
+review, normal stack collapse, and consumer delivery remain separate release
+gates.
+
+Merged-tree validation is `238` focused ground/scalar tests on both CPython
+3.11.9 and real CPython 3.10.20, plus `1,404` passed and seven documented
+optional-Rust-wheel skips across the broader Rate of Closure/swing/flight/
+ground/import-alias selection. `tools-core` passes `144` default, `159`
+Python-feature, and `156` WASM-feature tests, including seven focused
+result-wire adversarial tests. Cargo formatting and strict default/focused
+Clippy pass; Python/WASM all-target Clippy passes with eight explicitly
+enumerated inherited unrelated allowances. Fresh CPython 3.13 wheel and
+Node-targeted wasm-pack artifacts both normalize uppercase digest evidence and
+reject malformed evidence. The relevant TypeScript contract/transfer suite
+passes `20` tests, the 189-module Vite build passes, and ESLint is warning-free.
+Pinned MyPy 1.13 passes 51 ground/flight/scalar production modules. Campaign
+manifest validation and eight contract tests, documentation governance,
+11-module and protected changed-only 500-LOC budgets, 14-file scoped marker
+scan, and diff checks are clean. Hosted checks and review apply only to the new
+exact merge head.
+
 ## 2026-08-10 issue #4275 uppercase result-digest parity repair
 
 Independent review of local implementation commit
@@ -52,6 +91,202 @@ the Python bounce/skid/roll solver to Rust, execute ground physics through the
 bindings, add UI or ensemble workflows, supply production calibration, or add
 UpstreamDrift consumers. No publication, protected-CI, review, merge, or issue
 closure is claimed; #4275 and epic #4267 remain open.
+## 2026-08-10 PR #4309 corrected-scalar-study propagation
+
+Draft PR #4309 remains on `feat/4275-ground-reference-execution` with
+unchanged base `feat/4273-ground-study-scalar-adapter`. Exact corrected #4308
+parent `edd898089d017e36b814bfea408a7845734c7706` is incorporated by the normal
+two-parent merge containing this handoff. The child preserves its bounded
+one-shot Python reference executor: immutable request/settings are validated
+before execution, the same cooperative-cancellation callback spans existing
+repeated bounce, exact settled-to-skid handoff, skid/roll, and canonical result
+composition, and only representable suffixes compose. Typed cancellation and
+execution failures retain phase, native reason, and request fingerprint, while
+the deterministic full-pipeline fixture pins the integrated result. No branch
+was rebased, retargeted, rewritten, or force-pushed.
+
+This remains a partial `not_released` slice. Changing normals or material
+regions, terrain deformation, torsional damping, roll-to-skid transitions,
+production material profiles, ensembles, inverse solving, UI, compiled
+runtimes, and downstream consumer parity remain excluded. Keep issues #4273
+and #4275 and epic #4267 open. Protected CI, independent review, normal stack
+collapse, and consumer delivery remain separate release gates. Downstream PRs
+#4274 and #4312 still descend from the prior #4309 head and require their own
+ordinary propagation after this push.
+
+Merged-tree validation is `238` focused ground/scalar tests on both CPython
+3.11.9 and real CPython 3.10.20, plus `1,404` passed and seven documented
+optional-Rust-wheel skips across the broader Rate of Closure/swing/flight/
+ground/import-alias selection. React passes `106` files / `661` tests, the
+189-module Vite production build, and zero-warning ESLint. The complete
+`tools-core` Rust suite passes `137` tests (`111` unit, `20` transfer, `6`
+wire), workspace formatting, and warning-denied Clippy. Pinned Ruff 0.14.10
+check/format passes all six net changed Python files; pinned MyPy 1.13 passes
+51 ground/flight/scalar production modules. The campaign manifest validator
+and eight contract tests, documentation governance, ground-module budget,
+six-file protected changed-only 500-LOC budget, 13-file scoped marker scan,
+and diff checks are clean. A separate exploratory whole-repository size scan
+still reports four unchanged legacy modules outside this PR diff; it is not
+the protected changed-file gate. Hosted checks and review apply to the new
+exact merge head only.
+
+## 2026-08-10 PR #4308 corrected-result-adapter propagation
+
+Draft PR #4308 remains on `feat/4273-ground-study-scalar-adapter` with
+unchanged base `feat/4273-ground-study-result-adapter`. Exact corrected #4307
+parent `76292d7a97e891aa88b06b3ea85f9e7e5b506e9e` is incorporated by the normal
+two-parent merge containing this handoff. The child preserves its bounded,
+deterministic `ground-study/scalar-ensemble/v1` adapter: callers supply explicit
+series/trial identity, overflow and duplicate rows fail closed, complete and
+censored studies retain observed values, and failed/unavailable studies retain
+evidence with null scalars. Rows keep study/request/result/profile digests,
+calibration and producer provenance, surface/frame and target geometry,
+qualification and operating conditions, eligibility reasons, and typed target
+availability while inheriting corrected qualified-result, material-profile,
+impact/roll, timestamp, and canonical `swing_sim` ancestry. No branch was
+rebased, retargeted, rewritten, or force-pushed.
+
+This remains a partial `not_released` slice. Rendered variation/dispersion
+plots, ensemble runners, optimizers, UI, compiled runtimes,
+regional/changing-normal terrain, and four-surface consumer parity remain
+excluded. Keep issue #4273 and epic #4267 open; protected CI, independent
+review, normal dependency collapse, and consumer delivery remain separate
+release gates.
+
+Merged-tree validation is `217` focused ground/scalar tests on both CPython
+3.11.9 and real CPython 3.10.20, plus `1,383` passed and six expected skips
+across the broader 1,389-case Rate of Closure/swing/flight/ground/import-alias
+selection. React passes `106` files / `661` tests, the 189-module Vite
+production build, and zero-warning ESLint. The complete `tools-core` Rust suite
+passes `137` tests (`111` unit, `20` transfer, `6` wire), workspace formatting,
+and warning-denied Clippy. Pinned Ruff 0.14.10 check/format passes both net
+changed Python files; pinned MyPy 1.13 passes 49 ground/flight/scalar production
+modules. The campaign manifest validator and eight contract tests,
+documentation governance, module budget, changed-only 500-LOC budget, eight-file
+scoped marker scan, and diff checks are clean. Hosted checks and review apply
+to the new exact merge head only.
+
+## 2026-08-10 PR #4307 corrected-study propagation
+
+Draft PR #4307 remains on `feat/4273-ground-study-result-adapter` with
+unchanged base `feat/4273-ground-study-projection`. Exact corrected #4306
+parent `99f7fefbd61a7eb9285c4a9297618bf52344055e` is incorporated by the normal
+two-parent merge containing this handoff. The child preserves its fail-closed
+`qualified_study_to_ground_model_result` bridge, which exposes total, roll,
+bounce count, and final offline values only from a solver-eligible study and
+keeps the study as the provenance authority, while inheriting corrected
+material-profile, impact/roll, deterministic timestamp, and canonical
+`swing_sim` ancestry. No branch was rebased, retargeted, rewritten, or
+force-pushed.
+
+This remains a partial `not_released` slice. Production presets/calibration
+claims, profile UI, regional/changing-normal terrain, compiled runtimes, and
+four-surface consumer parity remain excluded. Keep issue #4273 and epic #4267
+open; protected CI, independent review, normal dependency collapse, and
+consumer delivery remain separate release gates.
+
+Merged-tree validation is `198` focused ground tests on both CPython 3.11.9
+and real CPython 3.10.20, plus `1,371` passed and six expected skips across the
+broader 1,377-case Rate of Closure/swing/flight/ground/import-alias selection.
+React passes `106` files / `661` tests, the 189-module Vite production build,
+and zero-warning ESLint. The complete `tools-core` Rust suite passes `137`
+tests (`111` unit, `20` transfer, `6` wire), workspace formatting, and
+warning-denied Clippy. Pinned Ruff 0.14.10 check/format passes all four net
+changed Python files; pinned MyPy 1.13 passes 47 ground/flight production
+modules. The campaign manifest validator and eight contract tests,
+documentation governance, module budget, four-file changed-only 500-LOC
+budget, ten-file scoped marker scan, and diff checks are clean. Hosted checks
+and review apply to the new exact merge head only.
+
+## 2026-08-10 PR #4306 corrected-material-profile propagation
+
+Draft PR #4306 remains on `feat/4273-ground-study-projection` with unchanged
+base `feat/4272-ground-material-profiles`. Exact corrected #4305 parent
+`dcfc8ef9fe522b817e64e72e964264d1770a916d` is incorporated by the normal
+two-parent merge containing this handoff. The child preserves the strict
+`ground-study-projection/v1` record, arbitrary-plane contact-target geometry,
+qualified/calibrated solver-eligibility gates, canonical revalidation, typed
+unavailable evidence, and removal of the unqualified direct metric adapter
+while inheriting corrected impact/roll ancestry, deterministic workspace
+timestamps, and canonical `swing_sim` import identity. No branch was rebased,
+retargeted, rewritten, or force-pushed.
+
+This campaign slice remains partial and `not_released`. Production presets and
+calibration claims, profile UI, regional/changing-normal terrain, compiled
+runtimes, and four-surface consumer parity remain excluded. Issue #4273 and
+epic #4267 remain open; protected CI, independent review, normal dependency
+collapse, and consumer delivery remain separate release gates.
+
+Merged-tree validation is `194` focused ground tests on both CPython 3.11.9
+and real CPython 3.10.20, plus `1,367` passed and six expected skips across the
+broader 1,373-case Rate of Closure/swing/flight/ground/import-alias selection.
+React passes `106` files / `661` tests, the 189-module Vite production build,
+and zero-warning ESLint. The complete `tools-core` Rust suite passes `137`
+tests (`111` unit, `20` transfer, `6` wire), workspace formatting, and
+warning-denied Clippy. Pinned Ruff 0.14.10 check/format passes all 18 net
+changed Python files; pinned MyPy 1.13 passes 47 ground/flight production
+modules. The campaign manifest validator and eight contract tests,
+documentation governance, module budget, 18-file changed-only 500-LOC budget,
+scoped marker scan, and diff checks are clean. Hosted checks and review apply
+to the new exact merge head only.
+
+## 2026-08-10 PR #4305 corrected-skid-roll propagation
+
+Draft PR #4305 remains on `feat/4272-ground-material-profiles` with unchanged
+base `feat/4271-ground-skid-roll`. Exact corrected #4304 parent
+`ee77b059bd83f7dafac7e0d411665231cdb7435c` is incorporated by the normal merge
+containing this handoff. The child preserves strict qualified SI material
+profiles/libraries, fail-closed write-through atomic CAS persistence, exact
+operating-condition solver binding, and provenance-complete neutral terrain
+snapshot adaptation while inheriting corrected impact/roll ancestry,
+deterministic workspace timestamps, and canonical `swing_sim` import identity.
+No branch was rebased, retargeted, rewritten, or force-pushed.
+
+The campaign remains partial and `not_released`. Production presets, profile
+UI, regional/changing terrain physics, compiled runtimes, and downstream
+consumer parity remain excluded. Protected CI, independent review, normal
+dependency collapse, and consumer delivery remain separate release gates.
+
+Merged-tree validation is `168` focused ground tests on both the current
+runtime and real CPython 3.10.20, `1073` broad Python tests, `106` React files /
+`661` tests, and the complete `tools-core` Rust suite at `137` tests (`111`
+unit, `20` transfer, `6` wire). The combined compatibility/ground/flight/alias
+suite is `232` tests on real CPython 3.10.20. The 189-module Vite production
+build, TypeScript, zero-warning ESLint, Ruff check/format across 59 files,
+pinned mypy 1.13 across all 38 ground and nine transfer production modules,
+Rust workspace format plus warning-denied `tools-core` clippy, campaign-manifest
+validator plus eight contracts, documentation governance, 20-file 500-LOC
+budget, marker scan, and diff checks are clean. Hosted checks and review apply
+to the new exact merge head only.
+
+## 2026-08-10 PR #4305 deterministic-digest secret-scan repair
+
+Exact parent repair `1a65d638cc0787c4e32f28bb37862205d5068671` is
+incorporated by the normal merge containing this handoff. Protected
+detect-secrets run `31361053024` also classified this child profile and
+library's two immutable canonical SHA-256 digests as high-entropy strings.
+Those non-secret scientific integrity values now carry explicit inline
+allowlist annotations. All three digest values and fixture bytes remain
+unchanged; physics, numerics, schemas, APIs, and persistence behavior are
+unchanged. SPEC 1.14.22 records the child repair above relabeled child feature
+1.14.21 and parent repair 1.14.20. All `168` ground tests, eight manifest
+contracts, Ruff, formatting, finding-free scans of both affected test files,
+documentation governance, `370`/`389`-line source-size checks, conflict-marker,
+and diff gates pass. Protected CI, review, and downstream propagation remain
+open after an ordinary guarded push.
+
+## 2026-08-10 PR #4304 deterministic-digest secret-scan repair
+
+Protected detect-secrets run `31360998491` correctly failed exact head
+`d09f3129a68322bfc5dd30763556ac356ef2e55c` because the immutable SHA-256
+golden-fixture digest looked like a high-entropy hexadecimal credential. The
+test now carries the scanner's explicit inline allowlist annotation. The
+digest and fixture bytes are unchanged, and this correction changes no
+physics, numerical result, schema, or API. SPEC 1.14.20 records the repair.
+All `115` ground tests, Ruff, formatting, a finding-free local scan of the
+affected file, documentation governance, the `370`-line source-size check,
+and diff gates pass before an ordinary guarded fast-forward publication.
+Fresh protected CI and review remain required.
 
 ## 2026-08-09 issue #4272 evidence SHA correction
 

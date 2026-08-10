@@ -12,6 +12,10 @@ from typing import Any, TypeAlias
 from shared.python.compatibility import UTC
 
 _STABLE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
+_UTC_TIMESTAMP = re.compile(
+    r"^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}"
+    r"(?:\.(?P<fraction>[0-9]+))?Z$"
+)
 
 JsonScalar: TypeAlias = str | int | float | bool | None
 FrozenJsonValue: TypeAlias = (
@@ -60,12 +64,17 @@ def utc_datetime(value: object, name: str) -> datetime:
     """Parse a strict ISO-8601 UTC timestamp ending in ``Z``."""
     if not isinstance(value, str) or not value.endswith("Z"):
         raise ValueError(f"{name} must be an ISO-8601 UTC timestamp ending in Z")
+    match = _UTC_TIMESTAMP.fullmatch(value)
+    if match is None:
+        raise ValueError(f"{name} must be an ISO-8601 UTC timestamp")
+    fraction = match.group("fraction")
+    if fraction is not None and len(fraction) > 6:
+        raise ValueError(f"{name} must use at most six fractional digits")
+    format_string = "%Y-%m-%dT%H:%M:%S.%fZ" if fraction else "%Y-%m-%dT%H:%M:%SZ"
     try:
-        parsed = datetime.fromisoformat(value.removesuffix("Z") + "+00:00")
+        parsed = datetime.strptime(value, format_string).replace(tzinfo=UTC)
     except ValueError as exc:
         raise ValueError(f"{name} must be an ISO-8601 UTC timestamp") from exc
-    if parsed.tzinfo != UTC:
-        raise ValueError(f"{name} must use UTC")
     return parsed
 
 
