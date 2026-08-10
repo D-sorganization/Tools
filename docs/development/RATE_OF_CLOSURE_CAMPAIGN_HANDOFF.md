@@ -19,9 +19,12 @@ build. Ruff/format, pinned MyPy 1.13 on six production files, real CPython 3.10
 compilation, documentation/minimum-test governance, a `10`-file secrets scan,
 marker scans, and diff checks also pass. The exact parent supplies current green
 Rust/fmt/clippy evidence because this child adds no Rust delta. Independent
-exact-diff review remains required before an ordinary guarded ready-for-review publication.
-Protected CI, approval, dependency integration, issue acceptance, and epic
-closure remain open.
+exact-diff review is READY at implementation merge
+`80f0f3ebdb0835c300f9f1e60e7ef2f8703e6cc8`. Ready-for-review PR #4315 is now
+published with unchanged base `feat/4275-ground-reference-execution`; SPEC
+1.14.34 records that live publication state. Protected CI, approval, parent
+landing, dependency integration, issue acceptance, and epic closure remain
+open.
 
 ## 2026-08-10 issue #4274 playback clock and evidence parity repair
 

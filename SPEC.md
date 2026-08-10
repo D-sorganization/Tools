@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.33                                    |
-| **Spec Version**        | 1.14.33                                    |
+| **Current Version**     | 1.14.34                                    |
+| **Spec Version**        | 1.14.34                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -3063,6 +3063,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.34 | docs(ground-playback, #4274 #4315): record the independently reviewed Ground Playback implementation as a ready-for-review PR against unchanged `feat/4275-ground-reference-execution`; protected CI, approval, parent landing, dependency integration, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.33 | merge(ground-playback, #4274 #4309): normally propagate exact corrected ground-reference parent `f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` into the locally reviewed PyQt6/React playback continuation without changing its base; preserve strict duplicate-key-aware import, monotonic-time playback, continuous speed and loop changes, full result/provenance evidence, locked-scale 3D controls, and explicit non-delivery boundaries while inheriting corrected ground-study, material, impact/roll, compatibility, and reference-execution ancestry; protected publication, CI, approval, dependency integration, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.23 | fix(ground-playback, #4274): make PyQt playback monotonic-time based with continuous speed/loop-mode changes and modulo loop overshoot; render full trajectory and event linear/angular state, result identity/status/termination, input digest, calibration identity/confidence, and warnings with shared-fixture PyQt/React parity assertions; protected publication and review remain open. |
 | 2026-08-10 | 1.14.22 | fix(ground-playback, #4274): route browser result imports through the duplicate-key-aware strict JSON facade, retain the last valid result on duplicate-field rejection, disclose that retention in the error state, and cover the boundary with an atomic-import regression; protected publication and review remain open. |
