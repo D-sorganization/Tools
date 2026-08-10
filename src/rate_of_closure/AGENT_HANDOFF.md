@@ -1,17 +1,38 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > Update with every implementation commit and every push to `main`.
-> Current-state only; history lives in git. Last updated: 2026-08-09.
+> Current-state only; history lives in git. Last updated: 2026-08-10.
+
+## PR #4299 workspace timestamp propagation
+
+Exact corrected #4282 parent
+`5f77af4add23547a21cc3fabce98ae9ad4260427` is incorporated into draft PR
+#4299 branch `feat/4264-four-surface-capability` by the normal merge containing
+this handoff. The PR keeps base `feat/4199-wind-workflow`; neither branch was
+rebased, retargeted, rewritten, or force-pushed. The strict declared-scope
+four-surface contract inherits the Python 3.10-3.12 UTC parser and complete
+variation/scalar/wind/capability history without changing its own behavior.
+
+SPEC versions are monotonic: 1.14.10 compatibility, 1.14.11 variation,
+1.14.12 wind scalar adapter, 1.14.13 workflow carrier, and 1.14.14 this
+four-surface child. The reconciled tree passes `946` combined Python tests,
+`28` direct compatibility tests on real CPython 3.10.20, `30` focused
+campaign/four-surface tests, and `104` React files / `642` tests. The
+188-module Vite production build, TypeScript, zero-warning ESLint, Ruff,
+format, Black, pinned mypy 1.13, deterministic validators, Rust-workflow
+contract, documentation governance, changed-file 500-LOC budget,
+conflict-marker, and diff gates are clean. Protected CI, review, installed
+consumer pins, four-surface conformance, and dependency-ordered propagation
+remain open.
 
 ## Current continuation
 
 The newest bounded continuation is draft PR #4299 branch
 `feat/4264-four-surface-capability` in isolated worktree
-`C:\Users\diete\Repositories\Tools-worktrees\four-surface-capability`, based
-on published head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`. Local
-declared-scope commit `a7cc4e005bb2263abe55ba93142e2fb59d26657e` is normally
-merged with exact current #4282 carrier
-`bb101cedd555d07d493aae998b46050c68660cdd` without changing the PR base.
+`C:\Users\diete\Repositories\Tools-worktrees\four-surface-capability`, starting
+from published head `4a44f51626c99b7f2e2f8a8935b2768ac52e209e`. Its declared-scope
+implementation is normally merged with exact current #4282 carrier
+`5f77af4add23547a21cc3fabce98ae9ad4260427` without changing the PR base.
 It extends `four-surface-capability/v1` with deterministic enumeration of all
 15 campaign programs and 18 unique linked active release specifications while
 retaining the six curated evidence-backed records. The completeness gate fails
@@ -28,17 +49,17 @@ Ruff format, Black, assertion policy, docs governance, and diff checks pass.
 
 The inherited implementation is integrated on the existing PR #4282 carrier
 `feat/4199-wind-workflow`; exact current head
-`bb101cedd555d07d493aae998b46050c68660cdd` normally incorporates exact
-corrected #4281 parent `958770049f0124dac0426a6dd62fd4edbf437e7a`.
+`5f77af4add23547a21cc3fabce98ae9ad4260427` normally incorporates exact
+corrected #4281 parent `cf52529b1e68479321bb93b1be3d59c77f782008`.
 The base remains `feat/4199-wind-scalar-adapter`; no branch was rebased,
-retargeted, force-pushed, or published by this continuation. It adds strict
-cross-runtime
+retargeted, rewritten, or force-pushed. It adds strict cross-runtime
 capability parsing, reliable signed decimal entry, complete ranked diagnostics
 and result exports, quantitative React scatter annotations, package-safe
 static-web release entrypoints, and the strict `rate-of-closure-campaign/v1`
 release authority. It also carries the corrected parent's Python 3.10
 compatibility, variation-export, scalar-ensemble, and wind-adapter history.
-It remains local until final gates pass and a normal fast-forward push is made.
+Normal publication does not establish a protected release; CI, review, and
+downstream evidence remain required.
 
 The direct web launcher dynamically loads the root bootstrap module without a
 launcher-local `sys.path` mutation; its subprocess delegation test and the
@@ -71,7 +92,7 @@ The capability stack was collapsed top-down on 2026-08-09:
 These were feature-parent merges, not protected releases. Current carrier
 #4282 descends from #4281 → #4280 → #4279 → #4203 → #4202 → wedge and
 variation parents. Exact corrected #4281 parent
-`958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated locally. Preserve
+`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated locally. Preserve
 that dependency order and use normal merges only.
 
 Outer platform PR #4119 targets `main` and still needs reconciliation. PR #4133

@@ -4,6 +4,29 @@ Status verified 2026-08-09. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 PR #4299 workspace timestamp propagation
+
+Exact corrected #4282 parent
+`5f77af4add23547a21cc3fabce98ae9ad4260427` is incorporated into draft PR
+#4299 branch `feat/4264-four-surface-capability` by the normal merge containing
+this handoff. PR #4299 keeps base `feat/4199-wind-workflow`; neither branch was
+rebased, retargeted, rewritten, nor force-pushed. The child retains the strict
+`four-surface-capability/v1` declared-scope contract while inheriting the
+deterministic Python 3.10-3.12 UTC parser and complete variation,
+scalar-ensemble, wind-adapter, and capability-workflow history.
+
+The monotonic SPEC assigns 1.14.10 to compatibility, 1.14.11 to variation,
+1.14.12 to the scalar adapter, 1.14.13 to the workflow carrier, and 1.14.14 to
+this four-surface child. The reconciled tree passes `946` combined Python
+tests, `28` direct compatibility tests on real CPython 3.10.20, `30` focused
+campaign/four-surface tests, and `104` React files / `642` tests. The
+188-module Vite production build, TypeScript, zero-warning ESLint, Ruff,
+format, Black, pinned mypy 1.13, deterministic four-surface and campaign
+validators, Rust-workflow contract, documentation governance, changed-file
+500-LOC budget, conflict-marker, and diff gates are clean. Protected CI,
+review, installed consumer pins, four-surface conformance, and downstream
+propagation remain separate gates.
+
 ## 2026-08-09 Four-surface capability contract continuation
 
 Draft PR #4299 branch `feat/4264-four-surface-capability` was published at
@@ -40,8 +63,28 @@ diff checks also pass.
 The canonical campaign manifest references the matrix and schema but keeps
 #4260 `specified_only`, `specified`, and `not_released`. Its evidence gap now
 names the missing consumer pins and four-surface conformance run and records
-the deterministic boundary for unstructured prose. This continuation has not
-been pushed and performed no GitHub write.
+the deterministic boundary for unstructured prose. This original continuation
+was later published normally as draft PR #4299; it did not establish a
+protected release.
+
+## 2026-08-10 PR #4282 workspace timestamp propagation
+
+Exact corrected #4281 parent
+`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated into
+`feat/4199-wind-workflow` by the normal merge containing this handoff. PR #4282
+keeps base `feat/4199-wind-scalar-adapter`; neither branch was rebased,
+retargeted, rewritten, or force-pushed. The consolidated wind/capability
+workflow inherits the deterministic Python 3.10-3.12 UTC parser, variation
+export, and scalar-ensemble history without changing its own behavior.
+
+The monotonic SPEC assigns 1.14.10 to compatibility, 1.14.11 to variation,
+1.14.12 to the scalar adapter, and 1.14.13 to this workflow carrier. The
+reconciled tree passes `924` combined Python tests, `28` direct compatibility
+tests on real CPython 3.10.20, and `104` React files / `642` tests. The Vite
+production build, TypeScript, zero-warning ESLint, Ruff, format, pinned mypy
+1.13, campaign-manifest validator and its eight contracts, documentation
+governance, source-size, conflict-marker, and diff gates are clean. Protected
+CI, review, and downstream propagation remain open.
 
 ## 2026-08-09 PR #4282 corrected-parent propagation
 
@@ -54,8 +97,35 @@ wind-strategy workflow, the consolidated capability stack, release-manifest
 authority, and launcher/type-gate repairs while inheriting the complete
 Python 3.10 compatibility, variation-export, and scalar-ensemble corrections.
 
-SPEC 1.14.12 records this propagation monotonically above the corrected
-parent's 1.14.11, 1.14.10, and 1.14.9 entries. Protected CI, review,
+## 2026-08-10 PR #4281 workspace timestamp propagation
+
+Exact parent `f90836e342efc8be624739802375af2876d11e5f` is incorporated into
+`feat/4199-wind-scalar-adapter` through the normal merge containing this
+handoff. PR #4281 keeps base `feat/4144-variation-export-continuation`; no
+branch was rebased, retargeted, rewritten, or force-pushed. The child retains
+its scalar ensemble and wind adapter while inheriting the deterministic UTC
+parser and complete variation parent.
+
+The monotonic SPEC now assigns 1.14.10 to compatibility, 1.14.11 to variation,
+and 1.14.12 to the wind child. The reconciled tree passes `794` Rate tests,
+`27` direct compatibility tests on real CPython 3.10.20, and `2 files / 10`
+focused React tests, plus TypeScript, focused zero-warning ESLint, Ruff,
+format, pinned mypy 1.13, documentation, size, and diff gates. Protected CI,
+review, and later propagation remain open.
+
+## 2026-08-09 PR #4281 scalar-ensemble parent propagation
+
+Draft #4281 remains based on `feat/4144-variation-export-continuation` and now
+includes exact corrected #4280 parent
+`38ed58cab96842a3007e76a855db83ee2452b8fd` through the normal merge containing
+this handoff. No branch was rebased, retargeted, force-pushed, or published.
+The child retains its matching Python/TypeScript `scalar-ensemble/v1` contract
+and wind-strategy adapter while inheriting the full variation-export and
+Python 3.10 compatibility history. SPEC 1.14.12 records this child source delta
+independently and monotonically above parent 1.14.11.
+
+SPEC 1.14.13 records the current #4282 propagation monotonically above the
+corrected parent's 1.14.12, 1.14.11, and 1.14.10 entries. Protected CI, review,
 publication, installed-package evidence, downstream UpstreamDrift parity, and
 the remaining scientific/accessibility/performance release gates remain
 separate. This local merge is not a protected release.
@@ -69,6 +139,32 @@ pinned by the expanded regression. React passes 8 files / 35 tests, TypeScript,
 and focused zero-warning ESLint. Ruff check/format passes 15 focused files;
 pinned mypy 1.13 passes 10 production modules; and the nine campaign
 manifest/parity contracts pass.
+
+## 2026-08-10 PR #4280 workspace timestamp propagation
+
+Exact parent `05383d333b6fd87eaf5e37305476f50b505c2c2e` is incorporated into
+`feat/4144-variation-export-continuation` through the normal merge containing
+this handoff. PR #4280 keeps base `feat/4218-toolstrip-workspace`; neither
+branch was rebased, retargeted, force-pushed, or rewritten. The reconciled tree
+retains all variation export/accessibility behavior and adds the strict
+cross-version workspace timestamp parser.
+
+SPEC 1.14.10 remains the parent compatibility entry and SPEC 1.14.11 becomes
+the child variation entry. The reconciled tree passes `778` Rate tests, `27`
+real-Python-3.10.20 compatibility tests, `1 file / 8` focused React tests,
+TypeScript, focused zero-warning ESLint, Ruff, format, and pinned mypy 1.13.
+Documentation, size, and diff gates must remain clean in the merge commit.
+Protected CI, review, and later propagation remain open.
+
+## 2026-08-09 PR #4280 variation-export propagation
+
+Draft #4280 remains based on `feat/4218-toolstrip-workspace` and now includes
+exact corrected parent `3f67ed466fefc8991db9c4409f921f25e1c37142`
+through the normal merge containing this handoff. No branch was rebased,
+retargeted, force-pushed, or published. The child retains complete selected
+scatter-axis CSV export parity, typed unavailable rows, PyQt accessible raw
+tables, and the focused table/scatter/matrix module split. SPEC 1.14.11 records
+that child source delta independently and monotonically above parent 1.14.10.
 
 ## 2026-08-09 Capability workflow hardening continuation
 
@@ -89,6 +185,23 @@ evidence is Python `43 passed`, React `9 files / 69 tests passed`, with Ruff,
 format, mypy, TypeScript, ESLint, structural, and diff checks clean. This
 continuation also builds 187 Vite modules without a size warning; it is local
 only and has not changed GitHub state.
+
+## 2026-08-10 PR #4279 fractional timestamp compatibility
+
+Descendant PR #4281's exact-head Python 3.10 lane failed the workspace instant
+ordering regression because that interpreter rejects one-, two-, four-, and
+five-digit fractional seconds before comparison. The correction belongs on
+the earliest carrier, PR #4279: enforce one anchored UTC grammar, parse zero
+through six fractional digits consistently, and reject precision beyond
+microseconds instead of allowing newer interpreters to truncate it.
+Persisted JSON remains unchanged and UTC-only validation stays authoritative.
+
+Local evidence is `778 passed` for the full Rate suite, `45 passed` for the
+workspace/compatibility suites, and `27 passed` for the direct compatibility
+suite on CPython 3.10.20. Ruff, format, pinned mypy 1.13, docs governance, and
+the 400-line budget pass. Publication is not completion: verify the exact
+remote head/base, push normally, then propagate in stack order through #4280,
+#4281, #4282, and every later descendant that carries the workspace.
 
 ## 2026-08-09 Capability results stabilization
 

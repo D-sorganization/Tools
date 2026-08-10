@@ -1,21 +1,45 @@
 # AGENT_HANDOFF — Tools
 
 > Update this file in every implementation commit and every push to `main`.
-> Current-state only; history lives in git. Last updated: 2026-08-09.
+> Current-state only; history lives in git. Last updated: 2026-08-10.
+
+## PR #4299 workspace timestamp propagation
+
+The current child remains draft PR #4299 branch
+`feat/4264-four-surface-capability` with base `feat/4199-wind-workflow`.
+Exact corrected parent `5f77af4add23547a21cc3fabce98ae9ad4260427` is
+incorporated through the normal merge containing this handoff. No branch was
+rebased, retargeted, rewritten, or force-pushed. The child retains its strict
+declared four-surface inventory while inheriting the deterministic Python
+3.10-3.12 workspace timestamp parser and complete variation, scalar-ensemble,
+wind-adapter, and capability-workflow history.
+
+The monotonic SPEC assigns 1.14.10 to compatibility, 1.14.11 to variation,
+1.14.12 to the wind scalar adapter, 1.14.13 to the workflow carrier, and
+1.14.14 to this four-surface child. The reconciled tree passes `946` combined
+Python tests, `28` direct compatibility tests on real CPython 3.10.20, `30`
+focused campaign/four-surface tests, and `104` React files / `642` tests. The
+188-module Vite production build, TypeScript, zero-warning ESLint, Ruff,
+format, Black, pinned mypy 1.13, deterministic four-surface and campaign
+validators, Rust-workflow contract, documentation governance, changed-file
+500-LOC budget, conflict-marker, and diff gates are clean. Protected CI,
+review, installed consumer pins, four-surface conformance, and downstream
+propagation remain separate release gates.
 
 ## Active Rate of Closure campaign
 
 The current bounded continuation is
 `C:\Users\diete\Repositories\Tools-worktrees\four-surface-capability` on
 draft PR #4299 branch `feat/4264-four-surface-capability`, starting from exact
-published head `dd58ff4113c2489d4af7be66c72ec9f58217a1d5`. Local declared-scope
-commit `a7cc4e005bb2263abe55ba93142e2fb59d26657e` is normally merged with
-exact current carrier `bb101cedd555d07d493aae998b46050c68660cdd`, preserving
-the branch base. The continuation expands `four-surface-capability/v1` from
+published head `4a44f51626c99b7f2e2f8a8935b2768ac52e209e`. Its declared-scope
+implementation is normally merged with exact current carrier
+`5f77af4add23547a21cc3fabce98ae9ad4260427`, preserving the branch base. The
+continuation expands `four-surface-capability/v1` from
 six curated records to the deterministic declared scope: all 15 campaign
 programs, all 18 unique linked active release specifications, and the six
-curated evidence-backed capabilities. There is no continuation push, hosted
-CI, installed consumer pin, protected merge, or release claim.
+curated evidence-backed capabilities. This propagation has not yet been
+pushed and does not claim an installed consumer pin, protected merge, or
+release.
 
 Local evidence for the composed branch: 22 capability-contract tests plus eight
 campaign-manifest tests pass; 50 cited Python/PyQt workflow, workspace, and
@@ -26,19 +50,18 @@ and diff checks pass.
 
 The parent source checkout remains
 `C:\Users\diete\Repositories\Tools-worktrees\toolstrip-workspace` on the
-existing PR #4282 carrier `feat/4199-wind-workflow`. The local continuation
-normally incorporates its exact head
-`bb101cedd555d07d493aae998b46050c68660cdd`, which itself incorporates exact
-corrected #4281 parent `958770049f0124dac0426a6dd62fd4edbf437e7a`
-without changing the branch base `feat/4199-wind-scalar-adapter`. It composes
+existing PR #4282 carrier `feat/4199-wind-workflow`. Exact current head
+`5f77af4add23547a21cc3fabce98ae9ad4260427` incorporates exact corrected #4281
+parent `cf52529b1e68479321bb93b1be3d59c77f782008` without changing the branch
+base `feat/4199-wind-scalar-adapter`. It composes
 four reviewed slices:
 strict capability parsing and signed decimal entry; complete capability
 diagnostics/result exports and quantitative React scatter scales; package-safe
 static-web release entrypoints; and the strict `rate-of-closure-campaign/v1`
 release-evidence authority. The normal merge also carries the parent's
 Python 3.10 compatibility, variation-export, and scalar-ensemble corrections.
-No branch was rebased, retargeted, force-pushed, or published by this
-continuation; hosted CI remains due.
+No branch was rebased, retargeted, rewritten, or force-pushed. Protected CI
+and review remain due after normal publication.
 
 Canonical files:
 
@@ -62,7 +85,7 @@ default-branch release are never interchangeable.
 Capability PRs #4294, #4289, and #4283 were merged top-down into
 `feat/4199-wind-workflow`; their feature parents were not protected. PR #4282
 is the current open carrier on base `feat/4199-wind-scalar-adapter`. Exact
-corrected parent `958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated
+corrected parent `cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated
 through the normal local merge containing this handoff.
 
 The previous exact #4282 head `3186a265b1` built and loaded `swing_core`, but
