@@ -330,6 +330,25 @@
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md"
       ]
+    },
+    {
+      "id": "legend-rail-local-83b4",
+      "kind": "local",
+      "commit_sha": "83b4baa3be7424777db4dd50883b7a9e45c8ca91",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -n 4 --dist loadscope tests/rate_of_closure/test_compact_simulation_layout.py tests/rate_of_closure/test_camera_controls_gui.py tests/rate_of_closure/test_plots_gui.py tests/rate_of_closure/test_simulation_gui.py tests/rate_of_closure/test_wedge_ground_clearance_gui.py tests/rate_of_closure/test_campaign_release_manifest.py -q",
+        "python -m pytest -q tests/rate_of_closure/test_compact_simulation_layout.py -k legend",
+        "python -m ruff check <changed Python files> && python -m ruff format --check <changed Python files>",
+        "python -m mypy --namespace-packages --explicit-package-bases --ignore-missing-imports --follow-imports=skip <changed Python production files>",
+        "node --experimental-strip-types <520 px plot-layout contract>",
+        "esbuild.build({ bundle: true, write: false }) for PlotCanvasCard.tsx"
+      ],
+      "summary": "Exact follow-up evidence passed 69 focused PyQt6, plot, camera, simulation, wedge, and campaign-manifest tests plus the isolated default-xdist legend regression; changed Python lint, format, and pinned typing; the React 520 px layout contract under Node 25; and an in-memory bundle of the changed canvas. Full installed React and rendered native qualification remain open.",
+      "source_paths": [
+        "tests/rate_of_closure/test_compact_simulation_layout.py",
+        "src/rate_of_closure/web/src/components/PlotsPanel.test.tsx"
+      ]
     }
   ],
   "programs": [
@@ -980,14 +999,15 @@
       "evidence_ids": [
         "toolstrip-local-c36",
         "camera-local-2095",
-        "mobile-toolstrip-local-ebd8"
+        "mobile-toolstrip-local-ebd8",
+        "legend-rail-local-83b4"
       ],
       "evidence_gap": "Complete persistence adapters, synchronized multi-view persistence, exported legend-layout proof, full installed React and native rendered accessibility review, UpstreamDrift consumers, and protected release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
         "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open.",
         "Draft PR 4301 publishes issue 4300 constrained toolstrip-popover containment at immutable evidence commit ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5 as a child of epic 4218; protected integration remains open.",
-        "The bounded issue 4224 default-legend rail slice is implemented only on a local child of exact PR 4301 head 5c8efcbe5fcd6f993ef947a85e39852d268780a6; exact commit-bound evidence publication, complete persistence/export qualification, review, and protected integration remain open."
+        "The bounded issue 4224 default-legend rail slice has immutable local evidence at 83b4baa3be7424777db4dd50883b7a9e45c8ca91 on a child of exact PR 4301 head 5c8efcbe5fcd6f993ef947a85e39852d268780a6; full installed React, persistence/export qualification, review, and protected integration remain open."
       ],
       "depends_on_issues": [
         4191

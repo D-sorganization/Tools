@@ -5,8 +5,11 @@
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 
-The isolated `fix/4224-default-legend-layout-local` branch starts at exact
-draft PR #4301 head `5c8efcbe5fcd6f993ef947a85e39852d268780a6`.
+Immutable implementation evidence is
+`6c65a69624007912d45615fbe59314924c5107dc` plus real-canvas follow-up
+`83b4baa3be7424777db4dd50883b7a9e45c8ca91` on isolated branch
+`fix/4224-default-legend-layout-local`, starting at exact draft PR #4301 head
+`5c8efcbe5fcd6f993ef947a85e39852d268780a6`.
 PyQt6 Swing/Flight scenes now render the default Outside Right legend as a
 figure-owned artist in a measured reserved gutter rather than as an axes-owned
 artist inside the plot surface. The renderer removes retained figure legends
@@ -20,7 +23,7 @@ React managed plots now derive plot margins and legend origins from one pure
 `resolvePlotLayout` contract. At the constrained 520 px reference width the
 outside plot edge is 330 px and the legend begins at 350 px, preserving a 20 px
 gap without duplicated geometry constants in the canvas renderer. The focused
-PyQt6 camera/plot/simulation/wedge suite passes 58 tests; Ruff check/format and
+PyQt6 camera/plot/simulation/wedge/manifest suite passes 69 tests; Ruff check/format and
 pinned MyPy 1.13 pass the changed Python production files; the TypeScript
 layout contract executes under Node 25 and the changed canvas bundles through
 esbuild. A committed Vitest assertion covers the 520 px geometry, but the full

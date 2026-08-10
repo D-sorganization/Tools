@@ -5,7 +5,9 @@
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 
-The isolated child starts from exact PR #4301 head
+Immutable implementation evidence is
+`6c65a69624007912d45615fbe59314924c5107dc` plus real-canvas follow-up
+`83b4baa3be7424777db4dd50883b7a9e45c8ca91`, based on exact PR #4301 head
 `5c8efcbe5fcd6f993ef947a85e39852d268780a6`. The PyQt6 3D simulation default
 now places its legend at figure scope inside a measured right rail, shrinks the
 axes to the legend's rendered left boundary, removes retained legends before
@@ -16,7 +18,7 @@ The checkbox and position selector expose explicit accessible names.
 
 React plot cards use one pure `resolvePlotLayout` contract for both plot margins
 and legend coordinates. The 520 px regression locks a 20 px separation between
-the plot edge and outside legend. Local evidence is 58 focused Python/PyQt
+the plot edge and outside legend. Exact evidence is 69 focused Python/PyQt/manifest
 tests, clean changed-file Ruff/format and pinned MyPy, a direct Node 25 contract
 execution, and an in-memory esbuild bundle of the changed canvas. The committed
 Vitest case awaits the full installed React gate. Native rendered QA,

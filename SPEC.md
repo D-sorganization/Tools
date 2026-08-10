@@ -36,6 +36,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ### 2026-08-10 Non-obscuring external legend rail
 
+- Immutable implementation evidence is
+  `6c65a69624007912d45615fbe59314924c5107dc` plus real-canvas follow-up
+  `83b4baa3be7424777db4dd50883b7a9e45c8ca91`, based on exact PR #4301 head
+  `5c8efcbe5fcd6f993ef947a85e39852d268780a6`.
 - PyQt6 Swing/Flight scenes implement Outside Right as a figure-owned legend
   in a measured reserved gutter. The axes boundary follows the rendered legend
   width, figure legends are cleared before redraw, and real canvas resize

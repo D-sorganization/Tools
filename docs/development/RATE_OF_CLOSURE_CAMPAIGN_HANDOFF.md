@@ -6,8 +6,10 @@ branch was rewritten.
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 
-An isolated branch from exact PR #4301 head
-`5c8efcbe5fcd6f993ef947a85e39852d268780a6` advances the default-legend part
+Immutable implementation evidence
+`6c65a69624007912d45615fbe59314924c5107dc` plus real-canvas follow-up
+`83b4baa3be7424777db4dd50883b7a9e45c8ca91` on an isolated branch from exact
+PR #4301 head `5c8efcbe5fcd6f993ef947a85e39852d268780a6` advances the default-legend part
 of #4224 without changing any existing worktree or remote branch. PyQt6
 Swing/Flight scenes use a figure-owned Outside Right legend and compute the
 reserved axes gutter from its rendered width. Retained figure legends are
@@ -19,7 +21,7 @@ accessible names cover both controls.
 
 React plot cards now share a pure layout contract between the data rectangle
 and legend drawing. At 520 px, the plot ends at x=330 and the legend begins at
-x=350. The focused PyQt6 suite is 58 passed; changed Python Ruff/format and
+x=350. The exact focused PyQt6/manifest suite is 69 passed; changed Python Ruff/format and
 pinned MyPy pass; the TypeScript contract executes in Node 25 and the changed
 TSX bundles with esbuild. The committed Vitest parity case still requires the
 full installed React gate. This is a bounded non-obscuring-default slice, not
