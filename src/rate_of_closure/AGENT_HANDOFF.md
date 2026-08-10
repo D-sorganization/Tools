@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 issue #4272 immutable implementation evidence
+
+Implementation commit `3645fc4d2a0fd8ecffed5c523ae48f7ee36e9159`
+is the independently audited ground-profile, persistence, and adapter evidence.
+Its exact tree passes 167 ground tests on CPython 3.11.9 and real CPython
+3.10.20, 75 focused adversarial/API tests, pinned Ruff 0.14.10 across 55 ground
+files, and CI-isolated MyPy 1.13 across 38 production modules. Manifest, eight
+manifest tests, documentation governance, changed-test assertions,
+structural/file-size budgets, and diff checks pass. This documentation-only
+carrier records immutable local evidence; no runtime, schema, API, or numerical
+change is introduced. GitHub publication, protected CI, review, parent
+integration, production presets, UI, compiled runtimes, and consumer parity
+remain open.
+
 ## 2026-08-09 issue #4272 ground material profile contract slice
 
 The local `feat/4272-ground-material-profiles` child continues exact PR #4304

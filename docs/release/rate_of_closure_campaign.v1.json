@@ -333,6 +333,25 @@
         "src/rate_of_closure/AGENT_HANDOFF.md",
         "docs/specs/GROUND_SKID_ROLL.md"
       ]
+    },
+    {
+      "id": "ground-profiles-local-3645",
+      "kind": "local",
+      "commit_sha": "3645fc4d2a0fd8ecffed5c523ae48f7ee36e9159",
+      "outcome": "passed",
+      "commands": [
+        "py -3.11 -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",
+        "uv run --no-project --isolated --python 3.10 --with pytest==9.0.3 --with numpy==2.2.6 --with scipy==1.15.3 --with jsonschema==4.25.1 -- python -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",
+        "uv run --no-project --isolated --python 3.11 --with mypy==1.13.0 -- python -m mypy --no-incremental --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/*.py",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground && uvx --from ruff==0.14.10 ruff format --check src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The independently audited strict ground-profile, persistence, applicability-binding, and neutral Upstream terrain-adapter implementation passed all 167 ground tests on CPython 3.11.9 and real CPython 3.10.20, 75 focused adversarial/API tests, pinned MyPy and Ruff, manifest and documentation governance, changed-test assertions, structural/file-size budgets, and diff checks; production presets, UI, consumers, and protected integration remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_MATERIAL_PROFILES.md"
+      ]
     }
   ],
   "programs": [
@@ -1125,7 +1144,8 @@
       },
       "evidence_ids": [
         "ground-impact-local-63a6",
-        "ground-skid-roll-local-f475"
+        "ground-skid-roll-local-f475",
+        "ground-profiles-local-3645"
       ],
       "evidence_gap": "The contract, flight-transfer, impact/bounce, and static-plane skid/roll carriers are open. Issues #4270 and #4271 are published on draft PRs 4302 and 4304 with exact local evidence but no protected evidence. Issue #4272 strict profile, persistence, binding, and neutral terrain-adapter contracts exist only on an unpublished child without protected or consumer evidence. Production presets, changing normals, regional surfaces, UI, compiled-runtime, and downstream parity evidence remain absent.",
       "limitations": [
