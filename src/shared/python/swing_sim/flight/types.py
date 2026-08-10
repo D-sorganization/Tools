@@ -18,6 +18,8 @@ from dataclasses import dataclass, field
 
 import numpy as np
 
+from shared.python.swing_sim.ball_setup import BallSetup
+
 from ._constants import (
     AIR_DENSITY_SEA_LEVEL_KG_M3,
     GOLF_BALL_MASS_KG,
@@ -60,6 +62,7 @@ class LaunchConditions:
     wind_speed: float = 0.0
     wind_direction: float = 0.0
     wind_scenario: WindScenario | None = None
+    ball_setup: BallSetup = field(default_factory=BallSetup)
 
     def __post_init__(self) -> None:
         """Validate finiteness, signs, and angle ranges (DbC preconditions)."""
@@ -105,6 +108,8 @@ class LaunchConditions:
             raise ValueError(
                 "provide either wind_scenario or legacy wind_speed, not both"
             )
+        if not isinstance(self.ball_setup, BallSetup):
+            raise ValueError("ball_setup must be a BallSetup")
 
     @classmethod
     def from_imperial(

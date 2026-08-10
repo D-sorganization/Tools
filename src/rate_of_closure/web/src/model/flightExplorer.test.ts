@@ -72,10 +72,17 @@ describe("exploreFlight", () => {
   });
 
   it("returns an app-frame trajectory from the tee", () => {
-    const { points } = exploreFlight(directLaunch(PINNED));
+    const launch = directLaunch(PINNED);
+    const { points } = exploreFlight(launch);
     expect(points.length).toBeGreaterThan(10);
     expect(points[0].position[0]).toBeCloseTo(BALL_POSITION[0], 6);
     expect(points[0].position[1]).toBeCloseTo(BALL_POSITION[1], 6);
+    const spinRadS = launch.spinRpm * 2 * Math.PI / 60;
+    expect(points[0].angularVelocityRadS).toEqual([
+      launch.spinAxis[0] * spinRadS,
+      launch.spinAxis[2] * spinRadS,
+      -launch.spinAxis[1] * spinRadS,
+    ]);
     const last = points[points.length - 1];
     expect(last.position[0]).toBeGreaterThan(100.0);
     expect(last.position[1]).toBeLessThan(1.0); // back at the ground

@@ -175,7 +175,8 @@ class FlightExplorerTab(QWidget):
         foresight_item = cast(
             QStandardItemModel, self._direction_convention_combo.model()
         ).item(2)
-        assert foresight_item is not None
+        if foresight_item is None:
+            raise RuntimeError("launch-direction convention item was not created")
         foresight_item.setEnabled(False)
         foresight_item.setToolTip(
             "Unavailable: the general public sign convention is not established "
