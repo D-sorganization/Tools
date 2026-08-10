@@ -1046,6 +1046,10 @@ Exact reviewed evidence is `6c296ab35471fc8d2070d229f2921d200f7defdb`:
 198 ground, 27 flight-first import/result/transfer, and 44 focused
 adapter/compatibility/API tests pass with no remaining independent-review
 blocker.
+Draft PR #4307 carries the continuation from creation head
+`dac35e3fd61ee8af80dc8c2262da31ea274dbb1d`, targeting preserved parent
+`feat/4273-ground-study-projection`. It is not release evidence until protected
+checks/review complete.
 
 PR #4306 required one import-boundary repair after flight-first collection
 revealed `flight -> ground facade -> study -> solver -> flight`. The two flight

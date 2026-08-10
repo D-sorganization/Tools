@@ -550,6 +550,10 @@ Exact reviewed adapter evidence is commit
 `6c296ab35471fc8d2070d229f2921d200f7defdb`: 198 ground tests, 27 flight-first
 import/result/transfer tests, and 44 focused adapter/compatibility/API tests
 pass. The independent re-review reports no remaining blocker.
+Draft PR #4307 publishes this continuation against preserved parent branch
+`feat/4273-ground-study-projection`; its creation head is
+`dac35e3fd61ee8af80dc8c2262da31ea274dbb1d`. Keep #4273/#4267 open and require
+normal protected checks and review.
 
 Post-publication import-order regression: importing the flight package first
 exposed a cycle through the expanded ground package facade and solver package.

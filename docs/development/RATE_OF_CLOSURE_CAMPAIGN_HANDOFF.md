@@ -1388,6 +1388,10 @@ Exact reviewed evidence is commit
 `6c296ab35471fc8d2070d229f2921d200f7defdb`: 198 ground tests, 27 flight-first
 import/result/transfer tests, and 44 focused adapter/compatibility/API tests
 pass. Independent re-review found no remaining publication blocker.
+Draft PR #4307 publishes this child against
+`feat/4273-ground-study-projection` from creation head
+`dac35e3fd61ee8af80dc8c2262da31ea274dbb1d`. Keep #4273 and #4267 open; the PR
+has no protected release evidence until required checks and review finish.
 
 A post-publication flight-first import gate found a facade cycle introduced by
 the new study exports: flight loaded the ground facade, study loaded the solver
