@@ -1042,6 +1042,10 @@ head `17473948f1ce5837bd5b55618d5393b0d8575188` and now normally includes curren
 solver-eligible studies into the existing four-field ground metric DTO. A
 target miss does not erase qualified physics. The DTO cannot carry the study's
 digests/profile/target evidence, so downstream audit paths must retain both.
+Exact reviewed evidence is `6c296ab35471fc8d2070d229f2921d200f7defdb`:
+198 ground, 27 flight-first import/result/transfer, and 44 focused
+adapter/compatibility/API tests pass with no remaining independent-review
+blocker.
 
 PR #4306 required one import-boundary repair after flight-first collection
 revealed `flight -> ground facade -> study -> solver -> flight`. The two flight

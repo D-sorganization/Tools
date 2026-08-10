@@ -546,6 +546,10 @@ The next local child `feat/4273-ground-study-result-adapter` begins at exact PR
 roll, bounce-count, and final-offline DTO only from a solver-eligible study.
 Target misses remain valid physics observations. The DTO is lossy and never
 replaces the study's provenance. This is not yet published or issue completion.
+Exact reviewed adapter evidence is commit
+`6c296ab35471fc8d2070d229f2921d200f7defdb`: 198 ground tests, 27 flight-first
+import/result/transfer tests, and 44 focused adapter/compatibility/API tests
+pass. The independent re-review reports no remaining blocker.
 
 Post-publication import-order regression: importing the flight package first
 exposed a cycle through the expanded ground package facade and solver package.

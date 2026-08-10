@@ -1384,6 +1384,10 @@ adapter for the existing total/roll/bounce/final-offline DTO. The adapter fails
 closed on ineligible studies, does not treat target miss as missing physics,
 and documents that the legacy DTO is provenance-lossy. It has no carrier or
 protected evidence yet.
+Exact reviewed evidence is commit
+`6c296ab35471fc8d2070d229f2921d200f7defdb`: 198 ground tests, 27 flight-first
+import/result/transfer tests, and 44 focused adapter/compatibility/API tests
+pass. Independent re-review found no remaining publication blocker.
 
 A post-publication flight-first import gate found a facade cycle introduced by
 the new study exports: flight loaded the ground facade, study loaded the solver
