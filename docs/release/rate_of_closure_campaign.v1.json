@@ -347,7 +347,7 @@
     {
       "id": "ground-profiles-local-3645",
       "kind": "local",
-      "commit_sha": "3645fc4d2a0fd8ecffed5c523ae48f7ee36e9159",
+      "commit_sha": "3645fc4d28e332785eb23cd2198ed0be931614d0",
       "outcome": "passed",
       "commands": [
         "py -3.11 -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",

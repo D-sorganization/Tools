@@ -3,6 +3,15 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
+## 2026-08-09 issue #4272 evidence SHA correction
+
+The authoritative implementation commit is
+`3645fc4d28e332785eb23cd2198ed0be931614d0`. Earlier documentation expanded
+the valid short SHA `3645fc4d2` to a nonexistent full object ID. This
+documentation-only correction updates every local evidence reference before
+the branch is used as a child base; it introduces no runtime or scientific
+change.
+
 ## 2026-08-09 PR #4305 protected quality-gate portability repair
 
 Protected CI run `31358547585`, job `93362698271`, failed at exact head
@@ -28,13 +37,13 @@ from `feat/4272-ground-material-profiles` at exact documentation carrier
 `feat/4271-ground-skid-roll` at
 `482cdf272b04c78b50da91a6d2ddd4d15e063c7b`. The independently audited
 implementation evidence remains
-`3645fc4d2a0fd8ecffed5c523ae48f7ee36e9159`. Protected CI, review approval,
+`3645fc4d28e332785eb23cd2198ed0be931614d0`. Protected CI, review approval,
 parent integration, production presets, UI, compiled runtimes, and consumer
 parity remain open. No parent branch was rewritten or retargeted.
 
 ## 2026-08-09 issue #4272 immutable implementation evidence
 
-Implementation commit `3645fc4d2a0fd8ecffed5c523ae48f7ee36e9159`
+Implementation commit `3645fc4d28e332785eb23cd2198ed0be931614d0`
 is the independently audited ground-profile, persistence, and adapter evidence.
 Its exact tree passes 167 ground tests on CPython 3.11.9 and real CPython
 3.10.20, 75 focused adversarial/API tests, pinned Ruff 0.14.10 across 55 ground
