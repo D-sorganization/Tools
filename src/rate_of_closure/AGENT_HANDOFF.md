@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 issue #4272 draft publication
+
+Draft [PR #4305](https://github.com/D-sorganization/Tools/pull/4305) was opened
+from `feat/4272-ground-material-profiles` at exact documentation carrier
+`e90b3b36a1b1eb2f051fae1dd549bd9da77a6a8b`, based on unchanged
+`feat/4271-ground-skid-roll` at
+`482cdf272b04c78b50da91a6d2ddd4d15e063c7b`. The independently audited
+implementation evidence remains
+`3645fc4d2a0fd8ecffed5c523ae48f7ee36e9159`. Protected CI, review approval,
+parent integration, production presets, UI, compiled runtimes, and consumer
+parity remain open. No parent branch was rewritten or retargeted.
+
 ## 2026-08-09 issue #4272 immutable implementation evidence
 
 Implementation commit `3645fc4d2a0fd8ecffed5c523ae48f7ee36e9159`
@@ -13,16 +25,15 @@ files, and CI-isolated MyPy 1.13 across 38 production modules. Manifest, eight
 manifest tests, documentation governance, changed-test assertions,
 structural/file-size budgets, and diff checks pass. This documentation-only
 carrier records immutable local evidence; no runtime, schema, API, or numerical
-change is introduced. GitHub publication, protected CI, review, parent
-integration, production presets, UI, compiled runtimes, and consumer parity
-remain open.
+change is introduced. Protected CI, review, parent integration, production
+presets, UI, compiled runtimes, and consumer parity remain open.
 
 ## 2026-08-09 issue #4272 ground material profile contract slice
 
-The local `feat/4272-ground-material-profiles` child continues exact PR #4304
-carrier `482cdf272b04c78b50da91a6d2ddd4d15e063c7b` with unchanged intended base
-`feat/4271-ground-skid-roll`. No GitHub publication, PR, protected check,
-review, integration, or release claim exists yet for this child.
+Draft PR #4305 continues exact PR #4304 carrier
+`482cdf272b04c78b50da91a6d2ddd4d15e063c7b` with unchanged base
+`feat/4271-ground-skid-roll`. No protected-check, review, integration, or
+release claim exists yet for this child.
 
 The bounded Python slice adds strict versioned SI profile/library documents,
 uncertainty, evidence-linked validity bounds, seven-gate qualification and a

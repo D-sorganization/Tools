@@ -208,6 +208,16 @@
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4305",
+      "pr": 4305,
+      "branch": "feat/4272-ground-material-profiles",
+      "base_branch": "feat/4271-ground-skid-roll",
+      "head_sha": "e90b3b36a1b1eb2f051fae1dd549bd9da77a6a8b",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
     }
   ],
   "test_evidence": [
@@ -1134,7 +1144,8 @@
         "pr-4285",
         "pr-4288",
         "pr-4302",
-        "pr-4304"
+        "pr-4304",
+        "pr-4305"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "contract_only",
@@ -1147,7 +1158,7 @@
         "ground-skid-roll-local-f475",
         "ground-profiles-local-3645"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, and static-plane skid/roll carriers are open. Issues #4270 and #4271 are published on draft PRs 4302 and 4304 with exact local evidence but no protected evidence. Issue #4272 strict profile, persistence, binding, and neutral terrain-adapter contracts exist only on an unpublished child without protected or consumer evidence. Production presets, changing normals, regional surfaces, UI, compiled-runtime, and downstream parity evidence remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, and material-profile carriers are open. Issues #4270, #4271, and #4272 are published on draft PRs 4302, 4304, and 4305 with exact local evidence but no protected evidence. Production-qualified presets and measured-source qualification, changing normals, regional surfaces, UI, compiled-runtime, and downstream parity evidence remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
