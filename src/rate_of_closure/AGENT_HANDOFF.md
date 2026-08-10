@@ -15,6 +15,12 @@ mypy 1.13 across eight changed files, and a real CPython 3.10.20 source/runtime
 probe. This commit follows exact published #4203 head `9dbceff76`; propagate it
 through the existing stack without changing bases.
 
+A follow-up scan found the torque-profile controller importing
+`datetime.UTC` directly. That parent-owned Python 3.11 boundary now uses
+`shared.python.compatibility.UTC`; persisted timestamps and torque-profile
+behavior are unchanged. Re-run the focused torque-profile UI tests and the
+real Python 3.10 compatibility probe before propagation.
+
 ## 2026-08-09 Launch-registry parent CI repair
 
 PR #4203 exact-head run `31199764932` reached the Python test lanes but failed

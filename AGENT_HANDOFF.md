@@ -20,6 +20,13 @@ pinned mypy 1.13 passes all eight changed Python files; and a real CPython
 3.10.20 probe verifies the shared fallback and all seven runtime import paths.
 Propagate the new parent normally through #4279, #4280, #4281, and #4282.
 
+The subsequent full Rate scan also found one parent-owned direct
+`datetime.UTC` import in the torque-profile controller. It now uses the same
+shared Python 3.10 compatibility module. The focused torque-profile UI suite
+and the real-3.10 source/runtime probe are required before publishing this
+follow-up; serialized timestamps remain UTC and the workspace schema is
+unchanged.
+
 ## 2026-08-09 PR #4203 Linux collection repair
 
 Draft PR #4203 remains on `feat/4181-launch-monitor-registry`, based on

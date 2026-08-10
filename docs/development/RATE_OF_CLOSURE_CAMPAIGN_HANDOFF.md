@@ -17,6 +17,11 @@ probe of the shared fallback and seven module import declarations. Parent is
 published head `9dbceff76`; after a guarded normal push, propagate the new
 exact head through #4279, #4280, #4281, and #4282 before retrying descendants.
 
+The same scan found one parent-owned `datetime.UTC` import in the PyQt torque
+profile controller. It now consumes the established compatibility constant,
+preserving UTC serialization while allowing Python 3.10 collection. This
+follow-up belongs on #4203 before the child stack is propagated.
+
 ## 2026-08-09 Launch-registry parent CI repair
 
 The earliest campaign parent, draft PR #4203, remains based on

@@ -17,6 +17,7 @@ STRING_ENUM_MODULES = (
     Path("src/shared/python/swing_sim/flight/result_contract.py"),
     Path("src/shared/python/swing_sim/impact/dplane.py"),
 )
+UTC_MODULES = (Path("src/rate_of_closure/ui/pyqt6/torque_profile_controller.py"),)
 
 
 @pytest.mark.parametrize("relative_path", STRING_ENUM_MODULES)
@@ -42,3 +43,20 @@ def test_string_enums_use_the_shared_python310_compatibility_contract(
     }
 
     assert str_enum_imports == {"shared.python.compatibility"}
+
+
+@pytest.mark.parametrize("relative_path", UTC_MODULES)
+def test_utc_uses_the_shared_python310_compatibility_contract(
+    relative_path: Path,
+) -> None:
+    """Prevent a direct Python 3.11-only ``datetime.UTC`` runtime import."""
+    source_path = REPOSITORY_ROOT / relative_path
+    tree = ast.parse(source_path.read_text(encoding="utf-8"), filename=source_path)
+    utc_imports = {
+        node.module
+        for node in ast.walk(tree)
+        if isinstance(node, ast.ImportFrom)
+        and any(alias.name == "UTC" for alias in node.names)
+    }
+
+    assert utc_imports == {"shared.python.compatibility"}
