@@ -89,3 +89,6 @@
 ## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
 **Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
 **Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
+## 2024-05-24 - Avoid map/join array chains in CSV generation
+**Learning:** When generating CSVs or performing similar data formatting in JavaScript/TypeScript, replacing clear, idiomatic chained array methods like `.map().join()` with manual `for` loops and manual comma placement is a micro-optimization that sacrifices readability for an unmeasured benefit (the bottleneck is usually Blob/download triggers, not array allocation).
+**Action:** Do not micro-optimize `map().join()` calls for simple formatting logic like CSV generation unless there is a verified, proven bottleneck in the exact routine.
