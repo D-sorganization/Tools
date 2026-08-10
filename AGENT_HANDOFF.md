@@ -3,6 +3,35 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 PR #4305 corrected-skid-roll propagation
+
+Draft PR #4305 remains on `feat/4272-ground-material-profiles` with unchanged
+base `feat/4271-ground-skid-roll`. Exact corrected #4304 parent
+`ee77b059bd83f7dafac7e0d411665231cdb7435c` is incorporated by the normal merge
+containing this handoff. The child preserves strict qualified SI material
+profiles/libraries, fail-closed write-through atomic CAS persistence, exact
+operating-condition solver binding, and provenance-complete neutral terrain
+snapshot adaptation while inheriting corrected impact/roll ancestry,
+deterministic workspace timestamps, and canonical `swing_sim` import identity.
+No branch was rebased, retargeted, rewritten, or force-pushed.
+
+The campaign remains partial and `not_released`. Production presets, profile
+UI, regional/changing terrain physics, compiled runtimes, and downstream
+consumer parity remain excluded. Protected CI, independent review, normal
+dependency collapse, and consumer delivery remain separate release gates.
+
+Merged-tree validation is `168` focused ground tests on both the current
+runtime and real CPython 3.10.20, `1073` broad Python tests, `106` React files /
+`661` tests, and the complete `tools-core` Rust suite at `137` tests (`111`
+unit, `20` transfer, `6` wire). The combined compatibility/ground/flight/alias
+suite is `232` tests on real CPython 3.10.20. The 189-module Vite production
+build, TypeScript, zero-warning ESLint, Ruff check/format across 59 files,
+pinned mypy 1.13 across all 38 ground and nine transfer production modules,
+Rust workspace format plus warning-denied `tools-core` clippy, campaign-manifest
+validator plus eight contracts, documentation governance, 20-file 500-LOC
+budget, marker scan, and diff checks are clean. Hosted checks and review apply
+to the new exact merge head only.
+
 ## 2026-08-10 PR #4305 deterministic-digest secret-scan repair
 
 Exact parent repair `1a65d638cc0787c4e32f28bb37862205d5068671` is

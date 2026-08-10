@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.22                                    |
-| **Spec Version**        | 1.14.22                                    |
+| **Current Version**     | 1.14.28                                    |
+| **Spec Version**        | 1.14.28                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -122,65 +122,6 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   results identify missing required fields with typed reason and provenance;
   duplicate JSON keys, unsafe cross-runtime integers, surrogate text, and raw
   out-of-range values fail closed before normalization.
-
-### 2026-08-09 Static-plane skid, roll, and result composition
-
-- The Python ground reference solver consumes only an exact #4270
-  `SETTLED_TO_SKID` handoff and propagates a rigid sphere across one immutable
-  planar surface with arbitrary orientation, kinetic skid, a static-friction
-  feasibility gate, pure roll, rolling resistance, retained normal-axis spin,
-  and physically qualified rest.
-- A deterministic bounded state machine localizes skid-to-roll, zero-speed,
-  and optional finite-axis edge events. Exact collinear capture is retained,
-  while closing oblique slip uses a characteristic-time substep bound to avoid
-  overshoot and step-size resonance; separate skid and roll paths remain;
-  anchors output sampling at first contact; and returns typed internal limit,
-  cancellation, and unsupported-surface outcomes without inventing wire
-  results; invalid numerical states raise before result construction.
-- One fail-closed composer joins the impact/bounce prefix and surface suffix
-  without duplicate or epsilon-time points. It produces v1 summaries only for
-  representable rest, left-surface, time-limit, or event-limit outcomes and
-  labels censored endpoint distances explicitly. The prefix is bound to the
-  complete canonical request digest, composed model identity includes both
-  phases, phase limitations remain typed, and contradictory terminal evidence
-  is rejected.
-- Energy accounting includes translation, rotation, gravity work, moving-plane
-  work, and nonnegative dissipation. The shared SHA-locked analytic fixture and
-  physics/state-machine/composition tests qualify this bounded Python slice.
-- CI-isolated MyPy execution may skip imported helper implementations, so
-  validated scalar helper boundaries explicitly normalize to `float` or
-  `bool`; this static contract hardening does not change equations, values,
-  ordering, schemas, or runtime behavior.
-- Piecewise material regions, changing normals, terrain deformation,
-  torsional-spin damping, roll-to-skid transitions, UI, TypeScript physics,
-  compiled runtimes, and downstream parity remain follow-on work.
-
-### 2026-08-09 Qualified ground material profile contracts
-
-- Strict `ground-material-profile/v1` and `ground-profile-library/v1`
-  documents carry all eleven solver-facing SI material parameters, explicit
-  standard uncertainty, evidence-linked lower/upper validity bounds, immutable
-  evidence/rights/provenance, bounded applicability, calibration dependencies,
-  seven derived qualification gates, and a separately derived
-  calibrated-versus-illustrative scientific use status.
-- Draft 2020-12 schemas are structural necessary-but-not-sufficient contracts;
-  authoritative semantic validators enforce exact ordering, evidence coverage,
-  calibration coherence, applicability, safe numeric identity, exact record
-  types, and canonical JSON.
-- One explicit-directory cooperative profile store provides bounded reads,
-  writer locks, SHA-256 compare-and-swap, Windows write-through/POSIX-synced
-  atomic replacement, last-known-good backup, dual-digest explicit recovery,
-  root-identity and reparse-point checks, and typed
-  corruption/path/conflict/indeterminate-commit failures.
-- Exact applicability-aware binding retains qualification evidence and warns on
-  unqualified profiles. A neutral one-way Upstream terrain snapshot adapter
-  retains separate terrain/material identity and revisions, source, frame,
-  velocity, transform, adapter version, interpretation, and individual plus
-  combined identities with a complete loss/disposition report; Tools does not
-  import UpstreamDrift classes.
-- Production presets/calibration claims, profile UI, regional/changing-normal
-  terrain, compiled runtimes, and four-surface consumer parity remain open.
-  `docs/specs/GROUND_MATERIAL_PROFILES.md` is the bounded scientific authority.
 
 ### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
 
@@ -2957,19 +2898,25 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-10 | 1.14.22 | fix(ground-profile, #4305): propagate the parent skid/roll digest allowlist and explicitly allowlist this child profile/library's two immutable SHA-256 golden digests as non-secret scientific integrity evidence; preserve all digest values and fixture bytes without changing physics, numerical results, schemas, APIs, or persistence behavior. |
-| 2026-08-09 | 1.14.21 | feat(ground-profile, #4272): add strict versioned SI material-profile/library documents with uncertainty, evidence-linked validity bounds, rights, applicability, calibration, seven-gate qualification, scientific calibrated/illustrative status, canonical JSON/schema/semantic validation, fail-closed write-through atomic CAS persistence and explicit recovery, exact operating-condition binding, and a provenance-complete one-way neutral Upstream terrain snapshot adapter with split terrain/material identities; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream parity. |
-| 2026-08-10 | 1.14.20 | fix(ground-roll, #4304): explicitly allowlist the immutable SHA-256 golden-fixture digest as non-secret test evidence so protected secret scanning distinguishes a scientific integrity fingerprint from a credential; no physics, numerical, schema, API, or fixture bytes change. |
-| 2026-08-09 | 1.14.19 | feat(ground-roll, #4271): continue exact #4270 capture through arbitrary-plane kinetic skid, static-feasible pure roll, rolling resistance, qualified rest, finite-axis edge localization, bounded typed limits, relative surface-path and passive energy ledgers; compose representable prefix/suffix evidence into strict v1 results without duplicate or epsilon-time samples; pin an analytic shared fixture and retain explicit exclusions for regions, changing normals, torsional spin damping, roll-to-skid, UI, compiled runtimes, and downstream parity. |
-| 2026-08-09 | 1.14.18 | feat(ground-impact, #4270): add a typed passive restitution/Coulomb sphere-plane impulse with full spin and moving-boundary accounting, deterministic repeated ballistic hops, exact bracket contact, capture-to-skid handoff, cancellation and bounded failure states, airborne-segment evidence, a shared golden fixture, and analytic/property/convergence tests; retain #4271 ownership of skid, roll, rest, total distance, and final `GroundSimulationResult`, with UI and compiled runtimes explicitly excluded. |
-| 2026-08-09 | 1.14.17 | chore(flight-ground, #4269 #4288): normally propagate exact carrier-reconciled ground parent `6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` into the flight-transfer descendant without changing its base; preserve the qualified cross-runtime transfer and semantic facade assertions while completing corrected wind-to-ground ancestry; bind terminal samples before exact `FlightStatePoint` narrowing in the pinned-mypy regression; and retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
-| 2026-08-09 | 1.14.16 | feat(flight-ground, #4269): propagate full signed terminal angular state and qualified physical sphere/terrain contact brackets across Python, TypeScript, Rust, PyO3, and WASM; preserve exact launch-origin evidence, vertical tee and terrain geometry, strict v1 surface/calibration/provenance data, interpolated terminal contact, typed unavailable outcomes, and bounded synchronous web integration. Reconcile the transfer integrator with the current capability and strict-ground ancestry through normal stacked merges without retargeting or rewriting either PR, and remove the resulting ground/flight package-facade cycle through direct record/type dependencies. |
-| 2026-08-09 | 1.14.15 | chore(ground, #4268 #4285): normally reconcile the strict ground-contract parent with exact corrected wind carrier `bb101cedd555d07d493aae998b46050c68660cdd` while preserving base `feat/4197-capability-observer`; retain the fail-closed ground schemas, fixtures, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this observer-to-wind ancestry through its own normal descendant merge. |
-| 2026-08-09 | 1.14.14 | fix(ground, #4268): keep strict ground JSON Schema generation compatible with the shared Python 3.10 string-enum shim under the repository's pinned mypy 1.13 skipped-import gate by deriving wire values through `str`, and replace stale test suppressions with explicit casts around intentional invalid inputs without changing runtime validation behavior. |
-| 2026-08-09 | 1.14.13 | fix(ground, #4268): declare and lock the JSON Schema validator exercised by the strict flight-to-ground contract suite, route every new ground enum through the shared Python 3.10-compatible `StrEnum` boundary, and enforce that boundary across the package with a source-level regression contract. Propagate the current capability parent into PR #4285 through normal merge ancestry without rebasing or retargeting the stacked branch. |
-| 2026-08-09 | 1.14.12 | fix(rate-of-closure, #4282): normally propagate exact corrected scalar-ensemble parent `958770049f0124dac0426a6dd62fd4edbf437e7a` into the responsive PyQt6/React wind-workflow carrier without changing its base; retain the consolidated capability workflow and release authority while inheriting the parent's Python 3.10 compatibility, variation-export, immutable scalar-row, stable composite-identity, availability, and typed wind-adapter corrections; route the child-owned capability-observation `StrEnum` through the shared Python 3.10 runtime contract and extend the compatibility regression. |
-| 2026-08-09 | 1.14.11 | feat(wind variation, #4199 #4281): add matching UI-neutral Python/TypeScript `scalar-ensemble/v1` contracts with structured provenance, labeled stages/categories/cohorts, unit-bearing variables, stable RFC3986 composite row IDs, immutable nullable raw rows, and overall/per-cohort availability; adapt every actual and perfect-information wind-strategy outcome with explicit status, true/estimated wind, launch/aim, target, landing, miss, cost, and information-delta values while leaving impact variables explicitly unavailable because the analysis begins at prescribed launch. |
-| 2026-08-09 | 1.14.10 | feat(variation, #4144 #4280): complete PyQt6/React selected-scatter CSV export parity with stable trial identity, typed outcome and explicit unavailable values; expose bounded accessible PyQt raw-row tables through one shared population helper; and split scalar scatter and distribution-matrix rendering into focused modules while preserving linked trial selection and all-trial arc analysis. |
+| 2026-08-10 | 1.14.28 | fix(ground-profile, #4272 #4305): normally propagate exact corrected skid/roll parent `ee77b059bd83f7dafac7e0d411665231cdb7435c` into the material-profile descendant without changing its base; preserve strict qualified SI profiles/libraries, atomic CAS persistence, solver binding, and neutral terrain snapshot adaptation while inheriting corrected impact/roll ancestry, deterministic workspace timestamp parsing, and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream consumer parity. |
+| 2026-08-10 | 1.14.27 | fix(ground-profile, #4305): explicitly allowlist the material profile/library's immutable SHA-256 golden digests as non-secret scientific integrity evidence while preserving every digest, fixture byte, physics value, schema, API, and persistence behavior. |
+| 2026-08-09 | 1.14.26 | feat(ground-profile, #4272): add strict versioned SI material-profile/library documents with uncertainty, evidence-linked validity bounds, rights, applicability, calibration, seven-gate qualification, scientific calibrated/illustrative status, canonical JSON/schema/semantic validation, fail-closed write-through atomic CAS persistence with explicit recovery, exact operating-condition binding, and a provenance-complete one-way neutral terrain snapshot adapter with split terrain/material identities; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream parity. |
+| 2026-08-10 | 1.14.25 | fix(ground-roll, #4271 #4304): normally propagate exact corrected ground-impact/bounce parent `846653c21bd61a40aab99ab838c29915d0728e70` into the skid/roll descendant without changing its base; preserve the reviewed arbitrary-plane skid, pure-roll, resistance, rest, edge, composition, and passive-ledger behavior while inheriting corrected flight-transfer ancestry, deterministic workspace timestamp parsing, and canonical `swing_sim` import identity; retain explicit exclusions for regional/changing-normal surfaces, terrain deformation, torsional spin damping, roll-to-skid transitions, UI, compiled physics, and downstream parity. |
+| 2026-08-10 | 1.14.24 | fix(ground-roll, #4304): explicitly allowlist the immutable SHA-256 golden-fixture digest as non-secret test evidence so protected secret scanning distinguishes a scientific integrity fingerprint from a credential; no physics, numerical, schema, API, or fixture bytes change. |
+| 2026-08-09 | 1.14.23 | feat(ground-roll, #4271): continue exact #4270 capture through arbitrary-plane kinetic skid, static-feasible pure roll, rolling resistance, qualified rest, finite-axis edge localization, bounded typed limits, relative surface-path and passive energy ledgers; compose representable prefix/suffix evidence into strict v1 results without duplicate or epsilon-time samples; pin an analytic shared fixture and retain explicit exclusions for regions, changing normals, torsional spin damping, roll-to-skid, UI, compiled runtimes, and downstream parity. |
+| 2026-08-10 | 1.14.22 | fix(ground-impact, #4270 #4302): normally propagate exact corrected flight-transfer parent `247215422a6d4b677552955b4923bc609a553259` into the ground-impact/bounce descendant without changing its base; preserve the passive restitution/Coulomb impulse, deterministic repeated hops, exact-contact and capture-to-skid behavior while inheriting deterministic workspace timestamp parsing and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for skid, roll, rest, total distance, final ground results, UI, TypeScript physics, and compiled bounce runtimes. |
+| 2026-08-09 | 1.14.21 | feat(ground-impact, #4270): add a typed passive restitution/Coulomb sphere-plane impulse with full spin and moving-boundary accounting, deterministic repeated ballistic hops, exact bracket contact, capture-to-skid handoff, cancellation and bounded failure states, airborne-segment evidence, a shared golden fixture, and analytic/property/convergence tests; retain #4271 ownership of skid, roll, rest, total distance, and final `GroundSimulationResult`, with UI and compiled runtimes explicitly excluded. |
+| 2026-08-10 | 1.14.20 | fix(flight-ground, #4269 #4288): normally propagate exact corrected ground-contract parent `788aa547651a3685a363ea401824a5d81477bafb` into the flight-transfer descendant without changing its base; preserve the qualified Python/TypeScript/Rust/PyO3/WASM transfer while inheriting deterministic workspace timestamp parsing and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
+| 2026-08-09 | 1.14.19 | chore(flight-ground, #4269 #4288): normally propagate exact carrier-reconciled ground parent `6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` into the flight-transfer descendant without changing its base; preserve the qualified cross-runtime transfer and semantic facade assertions while completing corrected wind-to-ground ancestry; bind terminal samples before exact `FlightStatePoint` narrowing in the pinned-mypy regression; and retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
+| 2026-08-09 | 1.14.18 | feat(flight-ground, #4269): propagate full signed terminal angular state and qualified physical sphere/terrain contact brackets across Python, TypeScript, Rust, PyO3, and WASM; preserve exact launch-origin evidence, vertical tee and terrain geometry, strict v1 surface/calibration/provenance data, interpolated terminal contact, typed unavailable outcomes, and bounded synchronous web integration. Reconcile the transfer integrator with the current capability and strict-ground ancestry through normal stacked merges without retargeting or rewriting either PR, and remove the resulting ground/flight package-facade cycle through direct record/type dependencies. |
+| 2026-08-10 | 1.14.17 | fix(ground, #4268 #4285): normally propagate exact corrected workspace/wind/capability carrier `5f77af4add23547a21cc3fabce98ae9ad4260427` into the strict flight-to-ground contract while preserving base `feat/4197-capability-observer`; coalesce `shared.python.swing_sim` and its repository-local `src.shared.python.swing_sim` spelling so embedded ground/impact contract collection cannot load two package trees; retain the fail-closed ground schemas, fixture, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this ancestry through its own normal descendant merge. |
+| 2026-08-09 | 1.14.16 | chore(ground, #4268 #4285): normally reconcile the strict ground-contract parent with exact corrected wind carrier `bb101cedd555d07d493aae998b46050c68660cdd` while preserving base `feat/4197-capability-observer`; retain the fail-closed ground schemas, fixtures, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this observer-to-wind ancestry through its own normal descendant merge. |
+| 2026-08-09 | 1.14.15 | fix(ground, #4268): keep strict ground JSON Schema generation compatible with the shared Python 3.10 string-enum shim under the repository's pinned mypy 1.13 skipped-import gate by deriving wire values through `str`, and replace stale test suppressions with explicit casts around intentional invalid inputs without changing runtime validation behavior. |
+| 2026-08-09 | 1.14.14 | fix(ground, #4268): declare and lock the JSON Schema validator exercised by the strict flight-to-ground contract suite, route every new ground enum through the shared Python 3.10-compatible `StrEnum` boundary, and enforce that boundary across the package with a source-level regression contract. Propagate the current capability parent into PR #4285 through normal merge ancestry without rebasing or retargeting the stacked branch. |
+| 2026-08-10 | 1.14.13 | fix(rate-of-closure, #4282): normally propagate exact corrected scalar-ensemble parent `cf52529b1e68479321bb93b1be3d59c77f782008` into the responsive PyQt6/React wind-workflow carrier without changing its base; retain the consolidated capability workflow and release authority while inheriting the strict cross-version UTC parser, variation export, immutable scalar rows, stable composite identity, availability, and typed wind adapter; route the child-owned capability-observation `StrEnum` through the shared Python 3.10 runtime contract and extend the compatibility regression. |
+| 2026-08-10 | 1.14.12 | feat(wind variation, #4199 #4281): add matching UI-neutral Python/TypeScript `scalar-ensemble/v1` contracts with structured provenance, labeled stages/categories/cohorts, unit-bearing variables, stable RFC3986 composite row IDs, immutable nullable raw rows, and overall/per-cohort availability; adapt every actual and perfect-information wind-strategy outcome with explicit status, true/estimated wind, launch/aim, target, landing, miss, cost, and information-delta values while leaving impact variables explicitly unavailable because the analysis begins at prescribed launch. |
+| 2026-08-10 | 1.14.11 | feat(variation, #4144 #4280): complete PyQt6/React selected-scatter CSV export parity with stable trial identity, typed outcome and explicit unavailable values; expose bounded accessible PyQt raw-row tables through one shared population helper; and split scalar scatter and distribution-matrix rendering into focused modules while preserving linked trial selection and all-trial arc analysis. |
+| 2026-08-10 | 1.14.10 | fix(compatibility, #4279): make workspace UTC timestamp parsing deterministic across Python 3.10-3.12 with one anchored canonical grammar, consistent zero- through six-digit fractional-second parsing, and rejection of greater-than-microsecond precision instead of interpreter-dependent rejection or truncation. |
 | 2026-08-09 | 1.14.9 | fix(compatibility, #4279): route the child command/view `StrEnum` runtime imports and workspace-validation `UTC` import through `shared.python.compatibility` while preserving native enum typing under `TYPE_CHECKING`, all wire values, schemas, UTC serialization, and UI behavior; merge the parent and child regression into one nine-enum/two-UTC runtime-import contract exercised with real CPython 3.10.20. |
 | 2026-08-09 | 1.14.8 | feat(rate-of-closure, #4201): harden cross-runtime capability parsing and signed input; expose complete diagnostics, result exports, and quantitative scatter annotations; stabilize supported PyQt6/static-Vite entrypoints; and add a strict campaign manifest with generated schema, four-surface status, explicit gaps/dependencies, and fail-closed feature-stack/protected-parent/`main` release distinctions. |
 | 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding per-slice stacked-branch cautions after #4283, #4289, and #4294 merged, while retaining the incomplete protected-release boundary. |

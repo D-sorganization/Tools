@@ -120,6 +120,29 @@ def test_theme_and_compatibility_aliases_share_identity() -> None:
     assert sys.modules["src.shared.python.compatibility"] is compatibility
 
 
+def test_swing_sim_aliases_share_identity_before_contract_collection() -> None:
+    """Embedded tests must not load a second swing_sim package tree."""
+    repo_root = Path(__file__).resolve().parents[2]
+    script = """
+import importlib
+
+from shared.python.import_aliases import install_shared_import_aliases
+
+install_shared_import_aliases()
+legacy = importlib.import_module("src.shared.python.swing_sim")
+canonical = importlib.import_module("shared.python.swing_sim")
+assert legacy is canonical
+
+legacy_ground = importlib.import_module("src.shared.python.swing_sim.ground")
+canonical_ground = importlib.import_module("shared.python.swing_sim.ground")
+assert legacy_ground is canonical_ground
+importlib.import_module("shared.python.swing_sim.impact")
+"""
+    env = {**os.environ, "PYTHONPATH": str(repo_root / "src")}
+
+    subprocess.run([sys.executable, "-c", script], cwd=repo_root, env=env, check=True)
+
+
 def test_installer_coalesces_preloaded_legacy_alias() -> None:
     install_shared_import_aliases()
 
