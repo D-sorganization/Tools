@@ -5,11 +5,10 @@
 
 ## Issue #4300 constrained toolstrip popovers
 
-The local continuation is branch `fix/rate-mobile-tools-menu` at
-worktree `C:\Users\diete\Repositories\Tools-worktrees\mobile-tools-menu`,
-built as a normal child of exact camera carrier
-`42753a576f42d4c43c35fd786d0748e1d03672c5`. Its intended PR base is
-`feat/4284-camera-snap-tracking`; no GitHub state has been written.
+Draft PR #4301 publishes branch `fix/rate-mobile-tools-menu` at immutable
+evidence commit `ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5`. It is a normal child of
+exact camera carrier `42753a576f42d4c43c35fd786d0748e1d03672c5` and targets
+`feat/4284-camera-snap-tracking`; no existing stack base was changed.
 
 One shared viewport-clamp hook now serves File, View, and Tools. It preserves
 the native details/summary control and original desktop left anchor, applies a
@@ -21,7 +20,7 @@ before asserting the rendered bounds. The observed RED right edge was
 tests, six Playwright cases across desktop and constrained 2x-DPR projects,
 TypeScript checking, zero-warning ESLint, a 194-module production build, the
 campaign-manifest validator, 11 manifest tests, and `git diff --check`.
-Protected review and integration remain separate requirements.
+Protected checks, review, parent integration, and release remain open.
 
 ## Issue #4284 local implementation
 

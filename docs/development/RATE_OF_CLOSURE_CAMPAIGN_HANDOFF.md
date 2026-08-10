@@ -6,11 +6,12 @@ branch was rewritten.
 
 ## 2026-08-09 Issue #4300 constrained Tools-menu continuation
 
-Local branch `fix/rate-mobile-tools-menu` is an unpublished child of exact
-camera carrier `42753a576f42d4c43c35fd786d0748e1d03672c5` and is intended to
-target `feat/4284-camera-snap-tracking`. It addresses the confirmed 520 x 900
+Draft PR #4301 publishes branch `fix/rate-mobile-tools-menu` at immutable
+evidence commit `ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5`. It targets exact camera
+carrier `42753a576f42d4c43c35fd786d0748e1d03672c5` on
+`feat/4284-camera-snap-tracking` and addresses the confirmed 520 x 900
 Tools-popover clipping defect without retargeting or rewriting the existing
-stack. No GitHub write has been made.
+stack.
 
 The implementation uses one collision-safe horizontal clamp for File, View,
 and Tools rather than a Tools-only breakpoint. It retains the existing desktop
@@ -26,7 +27,7 @@ TypeScript checking, zero-warning ESLint, a 194-module production build, the
 campaign-manifest validator, 11 manifest tests, and `git diff --check`. The
 520 x 900 browser contract verifies all labels and shortcuts are visible and
 the menu remains inside the viewport. Track the work under epic #4218 and
-child issue #4300; local evidence is not a protected merge or release.
+child issue #4300; draft PR evidence is not a protected merge or release.
 
 ## 2026-08-09 Camera snap/tracking continuation
 

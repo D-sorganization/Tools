@@ -198,6 +198,16 @@
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4301",
+      "pr": 4301,
+      "branch": "fix/rate-mobile-tools-menu",
+      "base_branch": "feat/4284-camera-snap-tracking",
+      "evidence_commit_sha": "ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
     }
   ],
   "test_evidence": [
@@ -298,6 +308,24 @@
         "npm run type-check && npm run lint && npm run build"
       ],
       "summary": "The published camera evidence commit passed 39 focused Python/PyQt tests, 107 React files and 650 tests, four Playwright browser tests, TypeScript, zero-warning ESLint, and the 193-module Vite production build; protected and native visual evidence remain open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "mobile-toolstrip-local-ebd8",
+      "kind": "local",
+      "commit_sha": "ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5",
+      "outcome": "passed",
+      "commands": [
+        "npm test",
+        "npm run type-check && npm run lint && npm run build",
+        "$env:PLAYWRIGHT_CHANNEL='chrome'; npm run test:e2e",
+        "python scripts/rate_campaign_manifest.py",
+        "python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py"
+      ],
+      "summary": "The published constrained-toolstrip evidence commit passed 108 React files and 653 tests, six Chrome Playwright cases across desktop and constrained 2x-DPR projects, TypeScript, zero-warning ESLint, the 194-module production build, manifest validation, and 11 manifest tests; protected integration remains open.",
       "source_paths": [
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md"
@@ -928,7 +956,8 @@
       ],
       "carrier_ids": [
         "pr-4279",
-        "pr-4298"
+        "pr-4298",
+        "pr-4301"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
@@ -938,13 +967,14 @@
       },
       "evidence_ids": [
         "toolstrip-local-c36",
-        "camera-local-2095"
+        "camera-local-2095",
+        "mobile-toolstrip-local-ebd8"
       ],
       "evidence_gap": "Complete persistence adapters, synchronized multi-view persistence, UpstreamDrift camera consumers, native rendered accessibility review, and protected release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
         "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open.",
-        "Issue 4300 tracks constrained toolstrip-popover containment as a child of epic 4218; local verification is not protected integration or release evidence."
+        "Draft PR 4301 publishes issue 4300 constrained toolstrip-popover containment at immutable evidence commit ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5 as a child of epic 4218; protected integration remains open."
       ],
       "depends_on_issues": [
         4191

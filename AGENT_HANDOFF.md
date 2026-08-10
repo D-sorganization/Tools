@@ -5,10 +5,11 @@
 
 ## Issue #4300 constrained Tools-menu continuation
 
-Local branch `fix/rate-mobile-tools-menu` in
-`C:\Users\diete\Repositories\Tools-worktrees\mobile-tools-menu` starts at
-exact camera carrier `42753a576f42d4c43c35fd786d0748e1d03672c5` and is intended to target
-`feat/4284-camera-snap-tracking`. It is not published and has no PR. The fix
+Draft PR #4301 publishes branch `fix/rate-mobile-tools-menu` from worktree
+`C:\Users\diete\Repositories\Tools-worktrees\mobile-tools-menu` at immutable
+evidence commit `ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5`. It targets exact camera
+carrier `42753a576f42d4c43c35fd786d0748e1d03672c5` on
+`feat/4284-camera-snap-tracking`. The fix
 keeps all File/View/Tools popovers inside a 16 px viewport gutter through one
 shared horizontal clamp, bounds menu width on smaller screens, and preserves
 unchanged desktop positioning plus native `<details>/<summary>` keyboard and
@@ -21,7 +22,7 @@ projects, TypeScript checking, zero-warning ESLint, a 194-module production
 build, the campaign-manifest validator, 11 manifest tests, and `git diff
 --check`. The browser contract keyboard-opens Tools and verifies all four
 labels, Alt+G, Alt+T, and F1 remain readable and contained. Track this bounded
-child under epic #4218 and issue #4300; local evidence is not protected
+child under epic #4218 and issue #4300; draft PR evidence is not protected
 integration.
 
 ## Issue #4284 camera continuation
