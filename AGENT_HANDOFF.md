@@ -1,7 +1,62 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-09
+> Last updated: 2026-08-10
+
+## 2026-08-10 PR #4281 workspace timestamp propagation
+
+Draft PR #4281 remains on `feat/4199-wind-scalar-adapter` with base
+`feat/4144-variation-export-continuation`. Exact corrected parent
+`f90836e342efc8be624739802375af2876d11e5f` is incorporated through the normal
+merge containing this handoff. No branch was rebased, retargeted, rewritten,
+or force-pushed. The child retains its Python/TypeScript scalar-ensemble wire
+contract and wind adapter while inheriting the cross-version UTC parser and
+the complete variation export/accessibility history.
+
+SPEC 1.14.10 records the compatibility repair, 1.14.11 the variation child,
+and 1.14.12 the wind scalar adapter. The reconciled tree passes all `794` Rate
+tests, `27` direct compatibility tests on real CPython 3.10.20, `2 files / 10`
+focused React tests, TypeScript, zero-warning focused ESLint, Ruff, format,
+pinned mypy 1.13, documentation governance, the 400-line budget, and diff
+checks. Protected CI, review, and propagation to #4282 remain separate gates.
+
+## 2026-08-10 PR #4280 workspace timestamp propagation
+
+Draft PR #4280 remains on `feat/4144-variation-export-continuation` with base
+`feat/4218-toolstrip-workspace`. Exact corrected parent
+`05383d333b6fd87eaf5e37305476f50b505c2c2e` is incorporated through the normal
+merge containing this handoff, without rebasing, retargeting, force-pushing,
+or rewriting either branch. The child retains its selected-scatter CSV export,
+typed unavailable values, accessible raw tables, and focused visualization
+modules while inheriting the deterministic Python 3.10-3.12 UTC parser.
+
+The monotonic specification assigns the parent repair version 1.14.10 and the
+variation child version 1.14.11. The reconciled tree passes all `778` Rate
+tests, the real-CPython-3.10.20 compatibility suite (`27 passed`), the focused
+React variation suite (`1 file / 8 tests`), TypeScript, zero-warning focused
+ESLint, Ruff, format, and pinned mypy 1.13. Documentation, size, and diff gates
+must remain clean in the merge commit. Protected CI, review, and propagation
+to #4281 and later descendants remain separate release gates.
+
+## 2026-08-10 PR #4279 fractional-timestamp Python 3.10 repair
+
+Exact-head CI on descendant PR #4281 exposed one remaining workspace parser
+difference: CPython 3.10 accepts only three or six fractional-second digits in
+`datetime.fromisoformat`, while newer supported interpreters accept the
+one-digit value already used by the workspace ordering contract. The earliest
+owner is PR #4279. Its shared workspace validator now enforces one anchored UTC
+grammar and parses zero through six fractional digits consistently, rejecting
+greater precision instead of silently truncating it on newer Python versions.
+UTC-only validation, serialized values, schema fields, and chronological
+comparison are unchanged.
+
+Evidence is `778 passed` for the full Rate suite and `45 passed` for the
+compatibility plus complete workspace document suites on the local supported
+interpreter, plus `27 passed` for the source-level compatibility suite on real
+CPython 3.10.20. The latter has only expected warnings for plugins absent from
+that intentionally minimal runtime. Ruff, formatting, pinned mypy 1.13,
+documentation governance, and the 400-line budget pass. Exact remote-head
+identity and normal publication/descendant propagation remain release gates.
 
 ## 2026-08-09 PR #4281 scalar-ensemble parent propagation
 
@@ -19,8 +74,8 @@ immutable nullable rows, and overall/per-cohort availability. Its wind adapter
 retains every actual and perfect-information status and exposes true/estimated
 wind, launch/aim, target, landing, miss, cost, and information delta. Impact
 variables remain explicitly unavailable because the analysis starts at
-prescribed launch. SPEC 1.14.11 records this child source delta separately
-from parent version 1.14.10.
+prescribed launch. SPEC 1.14.12 records this child source delta separately
+from parent versions 1.14.11 and earlier.
 
 Current focused evidence is `49 passed` on Python 3.11 and `49 passed` on real
 CPython 3.10.20 with PyQt6/scientific dependencies present. React passes `2
@@ -46,8 +101,8 @@ owned variation scatter/export changes.
 The child exports every selected scatter axis to CSV with stable trial index,
 typed outcome, and explicit unavailable values in both PyQt6 and React. PyQt6
 also exposes the selected raw rows in bounded accessible tables, with shared
-table population and focused scatter/matrix modules. SPEC 1.14.10 now records
-this child source delta separately from parent versions 1.14.9 and earlier.
+table population and focused scatter/matrix modules. SPEC 1.14.11 now records
+this child source delta separately from parent versions 1.14.10 and earlier.
 
 Current evidence is `46 passed` on Python 3.11 and `19 passed` on real CPython
 3.10.20 with PyQt6 present. React passes `1 file / 8 tests`, TypeScript, and
