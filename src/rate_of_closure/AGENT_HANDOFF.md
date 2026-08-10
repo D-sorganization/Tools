@@ -1,14 +1,33 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > Update with every implementation commit and every push to `main`.
-> Current-state only; history lives in git. Last updated: 2026-08-09.
+> Current-state only; history lives in git. Last updated: 2026-08-10.
+
+## PR #4282 workspace timestamp propagation
+
+Exact corrected #4281 parent
+`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated into
+`feat/4199-wind-workflow` by the normal merge containing this handoff. The PR
+keeps base `feat/4199-wind-scalar-adapter`; neither branch was rebased,
+retargeted, rewritten, or force-pushed. The consolidated capability/wind
+workflow inherits the strict Python 3.10-3.12 UTC parser and complete
+variation/scalar history without changing its scientific or UI behavior.
+
+SPEC versions are monotonic: 1.14.10 compatibility, 1.14.11 variation,
+1.14.12 wind scalar adapter, and 1.14.13 this workflow. The reconciled tree
+passes `924` combined Python tests, `28` direct compatibility tests on real
+CPython 3.10.20, and `104` React files / `642` tests. The Vite production
+build, TypeScript, zero-warning ESLint, Ruff, format, pinned mypy 1.13,
+campaign-manifest validator and its eight contracts, documentation governance,
+source-size, conflict-marker, and diff gates are clean. Protected CI, review,
+and dependency-ordered propagation remain open.
 
 ## Current continuation
 
 The active local continuation is integrated directly on the existing PR #4282
 carrier `feat/4199-wind-workflow`, starting from exact published head
 `de49580a3c0888b44f66dcc09bba2ab2fa33914a` and normally incorporating exact
-corrected #4281 parent `958770049f0124dac0426a6dd62fd4edbf437e7a`.
+corrected #4281 parent `cf52529b1e68479321bb93b1be3d59c77f782008`.
 The base remains `feat/4199-wind-scalar-adapter`; no branch was rebased,
 retargeted, force-pushed, or published by this continuation. It adds strict
 cross-runtime
@@ -17,7 +36,8 @@ and result exports, quantitative React scatter annotations, package-safe
 static-web release entrypoints, and the strict `rate-of-closure-campaign/v1`
 release authority. It also carries the corrected parent's Python 3.10
 compatibility, variation-export, scalar-ensemble, and wind-adapter history.
-It remains local until final gates pass and a normal fast-forward push is made.
+Normal publication does not establish a protected release; CI, review, and
+downstream evidence remain required.
 
 The direct web launcher dynamically loads the root bootstrap module without a
 launcher-local `sys.path` mutation; its subprocess delegation test and the
@@ -47,7 +67,7 @@ The capability stack was collapsed top-down on 2026-08-09:
 These were feature-parent merges, not protected releases. Current carrier
 #4282 descends from #4281 → #4280 → #4279 → #4203 → #4202 → wedge and
 variation parents. Exact corrected #4281 parent
-`958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated locally. Preserve
+`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated locally. Preserve
 that dependency order and use normal merges only.
 
 Outer platform PR #4119 targets `main` and still needs reconciliation. PR #4133

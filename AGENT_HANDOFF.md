@@ -1,7 +1,27 @@
 # AGENT_HANDOFF — Tools
 
 > Update this file in every implementation commit and every push to `main`.
-> Current-state only; history lives in git. Last updated: 2026-08-09.
+> Current-state only; history lives in git. Last updated: 2026-08-10.
+
+## PR #4282 workspace timestamp propagation
+
+The current carrier remains `feat/4199-wind-workflow` with base
+`feat/4199-wind-scalar-adapter`. Exact corrected parent
+`cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated through the normal
+merge containing this handoff. No branch was rebased, retargeted, rewritten,
+or force-pushed. The consolidated wind/capability workflow retains its release
+authority and inherits the deterministic Python 3.10-3.12 workspace timestamp
+parser plus the complete variation and scalar-ensemble history.
+
+The monotonic SPEC assigns 1.14.10 to compatibility, 1.14.11 to variation,
+1.14.12 to the wind scalar adapter, and 1.14.13 to this workflow carrier.
+The reconciled tree passes `924` combined Python tests, `28` direct
+compatibility tests on real CPython 3.10.20, and `104` React files / `642`
+tests. The Vite production build, TypeScript, zero-warning ESLint, Ruff,
+format, pinned mypy 1.13, campaign-manifest validator and its eight contracts,
+documentation governance, source-size, conflict-marker, and diff gates are
+clean. Protected CI, review, and downstream propagation remain separate
+release gates.
 
 ## Active Rate of Closure campaign
 
@@ -10,7 +30,7 @@ The active checkout is
 existing PR #4282 carrier `feat/4199-wind-workflow`. The local continuation
 starts from exact published head
 `de49580a3c0888b44f66dcc09bba2ab2fa33914a` and normally incorporates exact
-corrected #4281 parent `958770049f0124dac0426a6dd62fd4edbf437e7a`
+corrected #4281 parent `cf52529b1e68479321bb93b1be3d59c77f782008`
 without changing the branch base `feat/4199-wind-scalar-adapter`. It composes
 four reviewed slices:
 strict capability parsing and signed decimal entry; complete capability
@@ -18,8 +38,8 @@ diagnostics/result exports and quantitative React scatter scales; package-safe
 static-web release entrypoints; and the strict `rate-of-closure-campaign/v1`
 release-evidence authority. The normal merge also carries the parent's
 Python 3.10 compatibility, variation-export, and scalar-ensemble corrections.
-No branch was rebased, retargeted, force-pushed, or published by this
-continuation; hosted CI remains due.
+No branch was rebased, retargeted, rewritten, or force-pushed. Protected CI
+and review remain due after normal publication.
 
 Canonical files:
 
@@ -39,7 +59,7 @@ default-branch release are never interchangeable.
 Capability PRs #4294, #4289, and #4283 were merged top-down into
 `feat/4199-wind-workflow`; their feature parents were not protected. PR #4282
 is the current open carrier on base `feat/4199-wind-scalar-adapter`. Exact
-corrected parent `958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated
+corrected parent `cf52529b1e68479321bb93b1be3d59c77f782008` is incorporated
 through the normal local merge containing this handoff.
 
 The previous exact #4282 head `3186a265b1` built and loaded `swing_core`, but
