@@ -21,6 +21,10 @@
 - Post-merge scoped quality gates also make the parametric-head station
   refinement's fixed four-coordinate tuple contract explicit to mypy; this is
   a type-only clarification and does not change generated mesh values.
+- The first protected `quality-gate` run at the repaired head exposed nine
+  misplaced Ruff suppressions in Sidekick GUI tests inherited from `main`.
+  Their intentionally retained QApplication references now use `_app`, so the
+  required lint gate can evaluate the Rate root instead of failing at baseline.
 - Before release, push the merge normally, verify the new exact PR head, wait
   for protected CI, resolve only the addressed review threads with linked
   evidence, obtain the required approval, and merge through ordinary branch

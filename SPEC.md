@@ -2560,6 +2560,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.13.4 | fix(ci): name the intentionally retained QApplication references in Sidekick GUI tests with an underscore, removing nine Ruff F841 failures that blocked the required quality gate after the Rate root merged current `main`. |
 | 2026-08-10 | 1.13.4 | fix(rate_of_closure, #4119): make the web entry point safe for file-path launch, declare the eagerly required SciPy dependency, and run React automatic impact-time selection atomically with regression coverage; reconcile the root release branch with current `main` while preserving fleet CI and shared golf-club contracts. |
 | 2026-08-05 | 1.13.3 | feat(rate_of_closure, swing_sim, #4135 #4142 #4143): add canonical ground/tee ball setup with club defaults and physical propagation through simulation/export/rendering, complete persistent v2 variation-plan workflows and paired common-reference propagation analysis, and make every Rate Matplotlib canvas lifecycle-safe during Qt teardown. |
 | 2026-08-05 | 1.13.2 | feat(rate_of_closure): harden both standalone interfaces with clickable reference-frame guidance, draft-based signed numeric editing, negative spin-axis tilt support, auto-populated Swing views, complete double/triple-pendulum skeletons, a parity-pinned web triple-pendulum model, default generated driver heads, engineering CG targets, and higher-resolution watertight clubhead meshes with polished lighting. |
