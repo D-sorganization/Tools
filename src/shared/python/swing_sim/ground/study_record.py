@@ -9,7 +9,9 @@ from typing import Any
 from shared.python.swing_sim.solver.spatial_targets import SpatialTarget
 
 from .contract_types import (
+    GroundCalibration,
     GroundFrame,
+    GroundProvenance,
     GroundResultStatus,
     GroundSurfaceProfile,
     GroundTerminationReason,
@@ -52,6 +54,8 @@ class GroundStudyProjection:
     ball_radius_m: float
     model_id: str
     model_version: str
+    calibration: GroundCalibration
+    provenance: GroundProvenance
     result_status: GroundResultStatus
     status: GroundStudyStatus
     termination_reason: GroundTerminationReason
@@ -121,6 +125,10 @@ class GroundStudyProjection:
             (self.final_target, GroundTargetEvaluation, "final_target"),
             (self.profile, GroundStudyProfile, "profile"),
         )
+        if type(self.calibration) is not GroundCalibration:
+            raise TypeError("calibration must use the exact GroundCalibration type")
+        if type(self.provenance) is not GroundProvenance:
+            raise TypeError("provenance must use the exact GroundProvenance type")
         for value, expected, name in optional_exact:
             if value is not None and type(value) is not expected:
                 raise TypeError(f"{name} must use the exact {expected.__name__} type")
@@ -324,6 +332,7 @@ class GroundStudyProjection:
             self.result_status,
             self.termination_reason,
             self.profile,
+            self.calibration,
         )
         if self.solver_eligibility != expected:
             raise ValueError("solver eligibility does not match study evidence")

@@ -511,10 +511,12 @@ Issue #4273 now has a narrow local foundation on
 observed endpoints, caller-request context digest, surface/model/profile identity, warnings,
 and typed unavailable evidence. The self-contained record embeds the exact
 source-result digest, complete solver surface, ball radius, full material
-profile/condition binding, typed result warnings, and separate profile warning
+profile/condition binding, exact result calibration/provenance, typed result warnings, and separate profile warning
 codes. Construction and parsing re-derive summary/endpoints, sphere/plane
 contact, intrinsic target miss, and profile/surface coherence. Only complete
-rest results with a qualified calibrated bound profile enter objectives. A
+rest results with a qualified calibrated bound profile and measured/literature
+result calibration with positive confidence enter objectives. Estimated,
+unvalidated, or zero-confidence result calibration fails closed. A
 valid partial airborne endpoint remains censored and carries typed
 `endpoint_airborne` target unavailability without an inferred landing.
 `ground-result/v1` does not carry its producing request fingerprint, so the
@@ -545,6 +547,13 @@ loads solver-dependent study exports through `__getattr__` only when requested.
 This preserves the public API while restoring flight-first and ground-first
 import order. Keep this fix on PR #4306 and propagate it to later children only
 by normal merge.
+
+The study now persists exact result calibration/provenance and re-derives
+eligibility from model calibration as well as the material profile. Provenance
+is retained for audit but is not presented as producer certification.
+The legacy direct result-to-metric adapter is now module-only and emits a
+deprecation warning; it is deliberately absent from the package facade because
+it cannot prove material-profile qualification.
 
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 

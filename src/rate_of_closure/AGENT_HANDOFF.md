@@ -1007,6 +1007,13 @@ The request digest is exact caller context, not an attested producer binding:
 `ground-result/v1` does not yet carry a request fingerprint. The adapter checks
 shared IDs, surface/frame, calibration, and provenance and fails closed on
 those available incompatibilities.
+The record embeds the exact result calibration/provenance. Eligibility now
+also requires measured/literature result calibration with positive confidence;
+estimated, unvalidated, or zero-confidence solver evidence is rejected.
+Provenance remains auditable context, not producer certification.
+The legacy direct `GroundSimulationResult` metric adapter is no longer a public
+facade export and warns on module-level use; it cannot enter qualification-
+sensitive workflows because it lacks a bound material profile.
 
 Keep issue #4273 and epic #4267 open. Variation/dispersion, wind, optimizer,
 UI, compiled-runtime, and UpstreamDrift consumers are not implemented by this

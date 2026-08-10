@@ -1342,6 +1342,13 @@ The request digest is caller-context evidence rather than an attested source
 binding because `ground-result/v1` carries no producing-request fingerprint.
 Only the available ID, surface/frame, calibration, and provenance compatibility
 checks are claimed; exact request/result attribution remains a follow-up.
+The record embeds the exact result calibration/provenance and independently
+requires measured/literature model calibration with positive confidence for
+solver admission. Estimated, unvalidated, or zero-confidence model evidence
+fails closed; provenance is retained without claiming producer certification.
+The older direct result-to-metric adapter is deprecated and removed from the
+ground facade. It remains module-level compatibility code only and cannot be
+used as the qualification-sensitive path because it has no profile binding.
 
 This is a bounded foundation for issue #4273, not completion of the issue or
 ground epic. No ensemble/variation/wind/optimizer/UI/compiled/Upstream consumer

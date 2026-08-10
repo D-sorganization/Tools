@@ -1202,7 +1202,8 @@
         "The #4271 slice qualifies one immutable planar profile and optional finite tangent-axis edge; material regions, changing normals, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI, compiled runtimes, and downstream adapters remain unimplemented.",
         "The #4272 contract slice defines no production material preset or calibration claim and its one-way Upstream snapshot adapter is a local tangent-plane projection, not regional-terrain parity.",
         "The #4273 foundation projects one result into typed target and solver evidence; it does not yet integrate ensemble variation, wind, optimizers, user interfaces, compiled runtimes, or UpstreamDrift consumers.",
-        "ground-result/v1 carries no producing-request fingerprint, so #4273 records an exact caller-request context digest and exact source-result digest but does not claim they are an attested pair; exact attribution requires a result-side fingerprint."
+        "ground-result/v1 carries no producing-request fingerprint, so #4273 records an exact caller-request context digest and exact source-result digest but does not claim they are an attested pair; exact attribution requires a result-side fingerprint.",
+        "Solver admission preserves declared result calibration and provenance and rejects estimated, unvalidated, or zero-confidence calibration; provenance is auditable context rather than producer certification."
       ],
       "depends_on_issues": [
         4191

@@ -63,6 +63,8 @@ class GroundSolverEligibilityReason(StrEnum):
     MISSING_PROFILE_BINDING = "missing_profile_binding"
     PROFILE_UNQUALIFIED = "profile_unqualified"
     PROFILE_ILLUSTRATIVE = "profile_illustrative"
+    MODEL_CALIBRATION_NOT_VALIDATED = "model_calibration_not_validated"
+    MODEL_CALIBRATION_ZERO_CONFIDENCE = "model_calibration_zero_confidence"
 
 
 @dataclass(frozen=True)

@@ -108,7 +108,6 @@ from .profile_wire import (
     library_from_json,
     profile_from_json,
 )
-from .result_adapter import to_ground_model_result
 from .result_types import GroundSummary, GroundTermination, GroundWarning
 from .skid_roll_simulation import SkidRollExecution, simulate_skid_roll
 from .surface_motion_types import (
@@ -291,7 +290,6 @@ __all__ = [
     "schema_json",
     "migrate_request_to_current",
     "migrate_result_to_current",
-    "to_ground_model_result",
     "resolve_sphere_plane_impact",
     "simulate_repeated_bounce",
     "simulate_skid_roll",

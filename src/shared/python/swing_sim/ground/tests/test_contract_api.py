@@ -12,7 +12,7 @@ import pytest
 import shared.python.swing_sim.ground as ground
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
 
-from ._support import _contact, _request, _result, _surface
+from ._support import _request, _result, _surface
 
 EXPECTED_API = {
     "REQUEST_SCHEMA_VERSION",
@@ -138,7 +138,6 @@ EXPECTED_API = {
     "schema_json",
     "migrate_request_to_current",
     "migrate_result_to_current",
-    "to_ground_model_result",
     "resolve_sphere_plane_impact",
     "simulate_repeated_bounce",
     "simulate_skid_roll",
@@ -279,28 +278,8 @@ def test_json_entry_points_fail_closed_for_nonobjects_and_invalid_json() -> None
         ground.request_from_json(duplicate_nested)
 
 
-def test_adapter_rejects_noncomplete_results() -> None:
-    failed = replace(
-        _result(),
-        status=ground.GroundResultStatus.UNAVAILABLE,
-        trajectory=(),
-        events=(),
-        summary=None,
-        unavailable_fields=(
-            ground.GroundUnavailableField(
-                ground.GroundUnavailableFieldId.TERMINAL_ANGULAR_VELOCITY,
-                ground.GroundUnavailableReason.SOURCE_DOES_NOT_PROPAGATE,
-                "swing_sim.flight.models:waterloo_penner",
-            ),
-        ),
-        termination=ground.GroundTermination(
-            ground.GroundTerminationReason.UNAVAILABLE_INPUT,
-            _contact().time_s,
-            False,
-        ),
-    )
-    with pytest.raises(ValueError, match="complete"):
-        ground.to_ground_model_result(failed)
+def test_unqualified_compatibility_adapter_is_not_public() -> None:
+    assert not hasattr(ground, "to_ground_model_result")
 
 
 @pytest.mark.parametrize(
