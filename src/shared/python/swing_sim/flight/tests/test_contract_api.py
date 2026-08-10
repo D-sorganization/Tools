@@ -8,10 +8,11 @@ surface changes so removals are always deliberate.
 from __future__ import annotations
 
 import dataclasses
+from typing import Any, cast
 
 import pytest
 
-import shared.python.swing_sim.flight as flight
+from ... import flight
 
 EXPECTED_PUBLIC_API = {
     "DEFAULT_BACKSPIN_AXIS",
@@ -201,7 +202,10 @@ def test_value_types_are_frozen_dataclasses() -> None:
         flight.CapabilitySampleParameter,
     ):
         assert dataclasses.is_dataclass(cls), f"{cls.__name__} not a dataclass"
-        assert cls.__dataclass_params__.frozen, f"{cls.__name__} must be frozen"
+        dataclass_type = cast(Any, cls)
+        assert dataclass_type.__dataclass_params__.frozen, (
+            f"{dataclass_type.__name__} must be frozen"
+        )
 
 
 @pytest.mark.contract

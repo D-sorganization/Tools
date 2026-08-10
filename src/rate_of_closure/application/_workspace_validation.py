@@ -5,9 +5,11 @@ from __future__ import annotations
 import math
 import re
 from collections.abc import Mapping, Sequence
-from datetime import UTC, datetime
+from datetime import datetime
 from types import MappingProxyType
 from typing import Any, TypeAlias
+
+from shared.python.compatibility import UTC
 
 _STABLE_ID = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$")
 

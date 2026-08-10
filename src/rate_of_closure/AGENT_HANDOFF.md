@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 Ground parent reconciled with corrected wind carrier
+
+Draft PR #4285 keeps base `feat/4197-capability-observer` and normally
+incorporates exact corrected wind carrier
+`bb101cedd555d07d493aae998b46050c68660cdd`. No branch was rebased,
+retargeted, force-pushed, or published. The strict ground contract remains
+UI-neutral and fail closed; the merge adds no bounce, skid, roll, terrain
+profile, total distance, or presentation claim.
+
+This branch is now the carrier-reconciled ground parent. PR #4288 must merge
+the resulting exact #4285 head normally before its transfer logic is retested
+or published. That descendant merge will carry both the ground contract and
+the explicit observer-to-wind ancestry reconciliation without changing either
+PR base.
+
+Focused evidence is 89 ground/compatibility/wind tests on Python 3.11 and 89
+on real CPython 3.10.20. Ruff check/format passes 34 focused files; pinned mypy
+1.13 passes 23 production modules; the inherited campaign manifest validates
+and its nine manifest/parity tests pass. Ground production modules remain
+within the 400-line/50-line structural budgets and contain no placeholder
+markers.
+
 ## 2026-08-09 Ground-contract ancestry and CI compatibility repair
 
 Protected quality-gate run `31341468033` on exact head

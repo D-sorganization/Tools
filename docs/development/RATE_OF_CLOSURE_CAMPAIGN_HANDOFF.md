@@ -4,6 +4,32 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 PR #4285 corrected-carrier reconciliation
+
+Draft #4285 remains on `feat/4268-ground-contract` with unchanged base
+`feat/4197-capability-observer`. Exact corrected wind carrier
+`bb101cedd555d07d493aae998b46050c68660cdd` is incorporated through the
+normal local merge containing this handoff; no branch was rebased, retargeted,
+force-pushed, or published. The ground parent retains its strict schemas,
+canonical fixture, migrations, legacy-result adapter, explicit dependency, and
+pinned-mypy repairs while acquiring the corrected wind/scalar/variation,
+Python 3.10 compatibility, capability, and campaign-release ancestry.
+
+This is an ancestry reconciliation, not new landing physics. Qualified bounce,
+skid, roll, terrain profiles, total distance, UI, Rust/WASM parity, protected
+CI, review, and release remain open. PR #4288 must normally merge the resulting
+exact #4285 head and rerun its transfer and combined compatibility gates. That
+next propagation is where the descendant acquires the observer-to-wind
+reconciliation; neither PR base should change.
+
+Focused evidence is 89 ground-contract, compatibility, scalar-adapter, and
+responsive-wind tests on Python 3.11 plus the same 89 on real CPython 3.10.20.
+Ruff check/format passes 34 focused Python files, pinned mypy 1.13 passes 23
+production modules, and ground modules/functions remain within 400/50-line
+budgets without placeholders. The inherited campaign manifest validates and
+all nine manifest/parity contracts pass. Documentation governance, ancestry,
+SPEC-order, and final diff assertions are required in the same local merge.
+
 ## 2026-08-09 Ground-contract stack recovery
 
 Protected quality-gate run `31341468033` on PR #4285 exact head

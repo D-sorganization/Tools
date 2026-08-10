@@ -17,6 +17,10 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from rate_of_closure.application.capability_result_export import (
+    capability_alternatives_csv,
+    capability_result_export_json,
+)
 from rate_of_closure.application.capability_workflow import (
     CapabilityWorkflowDocument,
     build_capability_workflow,
@@ -43,6 +47,8 @@ _ACTION_TOOLTIPS = (
     "Load and strictly validate a saved capability workflow.",
     "Export every retained observation as spreadsheet-safe lossless CSV.",
     "Export every retained observation using the stable versioned JSON schema.",
+    "Export every ranked alternative and engineering diagnostic with units.",
+    "Export the strict ranked result and parameter-unit declarations.",
 )
 
 
@@ -54,6 +60,7 @@ class CapabilityOptimizationTab(QWidget):
         self._worker: CapabilityOptimizationWorker | None = None
         self._document: CapabilityWorkflowDocument | None = None
         self._dataset: ScalarEnsembleDataset | None = None
+        self._result: OptimizationResult | None = None
         self._build_ui()
 
     def _build_ui(self) -> None:
@@ -88,6 +95,8 @@ class CapabilityOptimizationTab(QWidget):
         self.cancel_button.setEnabled(False)
         self.csv_button.setEnabled(False)
         self.json_button.setEnabled(False)
+        self.result_csv_button.setEnabled(False)
+        self.result_json_button.setEnabled(False)
         self._connect_signals()
 
     def _build_actions(self) -> QHBoxLayout:
@@ -98,6 +107,8 @@ class CapabilityOptimizationTab(QWidget):
         self.load_button = QPushButton("Load Workflow")
         self.csv_button = QPushButton("Export Raw CSV")
         self.json_button = QPushButton("Export Stable JSON")
+        self.result_csv_button = QPushButton("Export Results CSV")
+        self.result_json_button = QPushButton("Export Results JSON")
         buttons = (
             self.run_button,
             self.cancel_button,
@@ -105,6 +116,8 @@ class CapabilityOptimizationTab(QWidget):
             self.load_button,
             self.csv_button,
             self.json_button,
+            self.result_csv_button,
+            self.result_json_button,
         )
         for button, tooltip in zip(buttons, _ACTION_TOOLTIPS, strict=True):
             actions.addWidget(button)
@@ -119,15 +132,20 @@ class CapabilityOptimizationTab(QWidget):
         self.load_button.clicked.connect(self._load_workflow)
         self.csv_button.clicked.connect(self._export_csv)
         self.json_button.clicked.connect(self._export_json)
+        self.result_csv_button.clicked.connect(self._export_result_csv)
+        self.result_json_button.clicked.connect(self._export_result_json)
 
     def _invalidate(self) -> None:
         if self._worker is not None and self._worker.isRunning():
             self._worker.cancel()
         self._document = None
         self._dataset = None
+        self._result = None
         self.results.setVisible(False)
         self.csv_button.setEnabled(False)
         self.json_button.setEnabled(False)
+        self.result_csv_button.setEnabled(False)
+        self.result_json_button.setEnabled(False)
         self.status.setText("Inputs changed — run again.")
 
     def run(self) -> None:
@@ -164,10 +182,13 @@ class CapabilityOptimizationTab(QWidget):
         self, result: OptimizationResult, dataset: ScalarEnsembleDataset
     ) -> None:
         self._dataset = dataset
+        self._result = result
         self.results.set_output(result, dataset)
         self.results.setVisible(True)
         self.csv_button.setEnabled(True)
         self.json_button.setEnabled(True)
+        self.result_csv_button.setEnabled(True)
+        self.result_json_button.setEnabled(True)
         self.status.setText(f"Completed {len(dataset.rows)} observations.")
         self._set_running(False)
 
@@ -237,6 +258,22 @@ class CapabilityOptimizationTab(QWidget):
                 "Export Capability Rows",
                 "capability-observations.json",
                 capability_observation_ensemble_json(self._dataset),
+            )
+
+    def _export_result_csv(self) -> None:
+        if self._result is not None and self._dataset is not None:
+            self._save_text(
+                "Export Capability Results",
+                "capability-results.csv",
+                capability_alternatives_csv(self._result, self._dataset),
+            )
+
+    def _export_result_json(self) -> None:
+        if self._result is not None and self._dataset is not None:
+            self._save_text(
+                "Export Capability Results",
+                "capability-results.json",
+                capability_result_export_json(self._result, self._dataset),
             )
 
     def _save_text(self, title: str, default_name: str, source: str) -> None:

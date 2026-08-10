@@ -3,6 +3,33 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
+## 2026-08-09 Ground parent reconciled with corrected wind carrier
+
+Draft PR #4285 remains on `feat/4268-ground-contract` with unchanged base
+`feat/4197-capability-observer`. Exact corrected wind carrier
+`bb101cedd555d07d493aae998b46050c68660cdd` is incorporated by the normal
+local merge containing this handoff; no branch was rebased, retargeted,
+force-pushed, or published. The result is the carrier-reconciled ground parent:
+it retains the strict flight-to-ground schemas, canonical fixtures, migrations,
+legacy-result adapter, dependency declaration, and pinned-mypy repairs while
+carrying the complete corrected wind/scalar/variation/Python-3.10 and
+consolidated capability ancestry.
+
+No qualified bounce, skid, roll, terrain-profile, total-distance, UI, or
+Rust/WASM ground physics is added by this propagation. PR #4288 must normally
+merge the resulting exact #4285 head before its flight-to-ground transfer can
+be evaluated as a descendant of the corrected carrier. Because #4285 still
+targets the observer branch while the corrected carrier now contains that
+observer through wind workflow #4282, this merge is the explicit
+observer-to-wind ancestry reconciliation; the GitHub base remains unchanged.
+
+Focused evidence is 89 ground-contract, compatibility, scalar-adapter, and
+responsive-wind tests on Python 3.11 and the same 89 on real CPython 3.10.20.
+Ruff check/format passes 34 focused Python files; pinned mypy 1.13 passes 23
+production modules. Ground production modules remain below 400 lines and
+functions below 50 lines, with no placeholder markers. The inherited campaign
+manifest validates and its nine manifest/parity contracts pass.
+
 ## 2026-08-09 Strict ground-contract base propagation
 
 The first protected run on published head

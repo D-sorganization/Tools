@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 from dataclasses import replace
+from typing import cast
 
 import pytest
 
@@ -14,6 +15,10 @@ from rate_of_closure.variation.capability_observation_adapter import (
     CapabilityObservationEnsembleBuilder,
     build_capability_observation_ensemble,
     capability_observation_ensemble_json,
+)
+from rate_of_closure.variation.scalar_ensemble_contract import (
+    ScalarEnsembleDataset,
+    ScalarEnsembleRow,
 )
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.flight.capability_contract import TargetDefinition
@@ -84,13 +89,15 @@ ASCII_DIGEST = "df36f765afdf508d00a3d264911ce5b6f07e25da3744b187596d67487ea3be5f
 UNICODE_DIGEST = "18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0"  # noqa: E501  # pragma: allowlist secret
 
 
-def _build(observations: tuple[CapabilitySampleObservation, ...], max_rows: int = 4):
+def _build(
+    observations: tuple[CapabilitySampleObservation, ...], max_rows: int = 4
+) -> ScalarEnsembleDataset:
     return build_capability_observation_ensemble(
         observations, TARGET, max_rows, "fixture/evaluator-v1"
     )
 
 
-def _assert_schema(dataset) -> None:
+def _assert_schema(dataset: ScalarEnsembleDataset) -> None:
     assert [row.row_id for row in dataset.rows] == [
         "series:candidate%3A0%2Fclub%3Airon-7/trial:0",
         "series:candidate%3A1%2Fclub%3Adriver/trial:0",
@@ -117,7 +124,7 @@ def _assert_schema(dataset) -> None:
     ]
 
 
-def _assert_complete_row(complete) -> None:
+def _assert_complete_row(complete: ScalarEnsembleRow) -> None:
     assert complete.values["nominal.ball_speed"] == 50.0
     assert complete.values["perturbed.ball_speed"] == 51.0
     assert complete.values["metric.carry_distance"] == 105.0
@@ -136,7 +143,7 @@ def _assert_complete_row(complete) -> None:
     assert complete.attributes["metric.carry_distance.provenance"] == "fixture.carry"
 
 
-def _assert_no_impact_row(no_impact) -> None:
+def _assert_no_impact_row(no_impact: ScalarEnsembleRow) -> None:
     assert no_impact.cohort == "no_impact"
     assert all(
         value is None
@@ -181,7 +188,7 @@ def test_rejects_overflow_instead_of_truncation_and_bounds_max_rows() -> None:
 def test_builder_rejects_non_contract_observation_without_retaining_it() -> None:
     builder = CapabilityObservationEnsembleBuilder(TARGET, 2, "fixture/evaluator-v1")
     with pytest.raises(ContractViolationError, match="CapabilitySampleObservation"):
-        builder.accept(object())  # type: ignore[arg-type]
+        builder.accept(cast(CapabilitySampleObservation, object()))
     assert builder.retained_count == 0
 
 

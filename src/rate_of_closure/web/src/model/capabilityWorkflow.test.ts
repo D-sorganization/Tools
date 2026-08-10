@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 
+import parserCasesFixture from "./__fixtures__/capability_workflow_parser_cases_v1.json";
+
 import {
   CAPABILITY_WORKFLOW_SCHEMA_VERSION,
   buildCapabilityWorkflow,
@@ -8,7 +10,35 @@ import {
   defaultCapabilityWorkflowInputs,
 } from "./capabilityWorkflow";
 
+interface ParserCase {
+  readonly id: string;
+  readonly path: readonly (string | number)[];
+  readonly value: unknown;
+  readonly accepted: boolean;
+}
+
+const parserCases = parserCasesFixture.cases as readonly ParserCase[];
+
+const mutatedWorkflow = (testCase: ParserCase): string => {
+  const payload: unknown = JSON.parse(capabilityWorkflowToJson(
+    buildCapabilityWorkflow(defaultCapabilityWorkflowInputs()),
+  ));
+  let cursor = payload;
+  testCase.path.slice(0, -1).forEach((key) => {
+    cursor = (cursor as Record<string | number, unknown>)[key];
+  });
+  const terminal = testCase.path[testCase.path.length - 1];
+  if (terminal === undefined) throw new RangeError("fixture path must be nonempty");
+  (cursor as Record<string | number, unknown>)[terminal] = testCase.value;
+  return JSON.stringify(payload);
+};
+
 describe("capability workflow", () => {
+  it("uses the supported shared parser fixture schema", () => {
+    expect(parserCasesFixture.schema_version)
+      .toBe("capability-workflow-parser-cases/v1");
+  });
+
   it("builds a model-ready and auditable default driver workflow", () => {
     const document = buildCapabilityWorkflow(defaultCapabilityWorkflowInputs());
 
@@ -70,5 +100,12 @@ describe("capability workflow", () => {
 
     expect(() => capabilityWorkflowFromJson(JSON.stringify(parsed)))
       .toThrow("spin default clubIds");
+  });
+
+  it.each(parserCases)("applies shared strict parser case $id", (testCase) => {
+    const parse = () => capabilityWorkflowFromJson(mutatedWorkflow(testCase));
+
+    if (testCase.accepted) expect(parse).not.toThrow();
+    else expect(parse).toThrow();
   });
 });
