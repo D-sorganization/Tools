@@ -6,10 +6,11 @@ branch was rewritten.
 
 ## 2026-08-10 PR #4323 exact hosted-MyPy repair
 
-Unpublished branch `fix/4323-ground-mypy-boundaries` starts exactly at public
-PR #4323 head `b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`; base
-`feat/4275-ground-tilted-conformance` is unchanged. No push, retarget, merge,
-force operation, parent rewrite, or existing-worktree edit occurred.
+The repair is published on ready PR #4323 at exact current head
+`3957f013eeadd448ffa381f12d65b6a076abe21b`, a guarded normal fast-forward
+from prior head `b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`. Base
+`feat/4275-ground-tilted-conformance` is unchanged. No retarget, merge, force
+operation, parent rewrite, or existing-worktree edit occurred.
 
 The failure is reproduced from hosted run `31429284874`, job `93588443824`:
 Python 3.12 plus pinned MyPy 1.13, `MYPYPATH=src:src/python/src`, and
@@ -24,8 +25,8 @@ eight manifest tests, documentation-governance, changed-Python-policy, and
 diff gates are green locally.
 
 This repair does not extend scientific qualification or close #4275/#4267.
-Guarded publication remains a separate operation; hosted CI, approval, parent
-integration, and release remain unclaimed.
+Fresh exact-head hosted CI, approval, parent integration, and release remain
+unclaimed.
 
 ## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
 

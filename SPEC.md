@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.46                                    |
-| **Spec Version**        | 1.14.46                                    |
+| **Current Version**     | 1.14.47                                    |
+| **Spec Version**        | 1.14.47                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -3180,6 +3180,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.47 | docs(ground-conformance, #4323): record guarded publication of the hosted-MyPy boundary repair at exact current head `3957f013eeadd448ffa381f12d65b6a076abe21b`, preserving ready state, exact parent base, scientific evidence, and all protected CI/review/integration gates. |
 | 2026-08-10 | 1.14.46 | fix(ground-conformance, #4323): satisfy the exact hosted Python 3.12/MyPy 1.13 changed-production profile by exposing existing float, bool, and `SkidRollResult` return types through runtime-identity casts and one DRY result helper; preserve all arithmetic, predicate, event, termination, scientific-corpus, and wire semantics. |
 | 2026-08-10 | 1.14.45 | docs(ground-conformance, #4275 #4323): publish the mirrored-frame and seeded-property continuation as ready PR #4323 at initial evidence head `74a23c21bb20f13bf608f463915b00d2d53d5a7f`, preserve exact PR #4322 ancestry and base topology, and retain protected CI, review, integration, exhaustive property, performance, terrain, UI, and downstream release gates. |
 | 2026-08-10 | 1.14.44 | docs(ground-conformance, #4275): bind the mirrored-frame and seeded-property implementation to exact local commit `08d631d7169019aee9067f3739051a50d88b9554`, the seven-case corpus SHA-256, complete Python ground suite, and fresh native/PyO3/WASM consumer evidence while retaining all hosted, protected, statistical, performance, terrain, UI, and downstream release gates. |

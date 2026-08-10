@@ -5,10 +5,11 @@
 
 ## 2026-08-10 PR #4323 exact hosted-MyPy repair
 
-Local branch `fix/4323-ground-mypy-boundaries` starts exactly at current public
-PR #4323 head `b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`, retaining base
-`feat/4275-ground-tilted-conformance`. Nothing from this repair has been pushed,
-published, retargeted, merged, or applied to another worktree.
+The repair is published on ready PR #4323 at exact current head
+`3957f013eeadd448ffa381f12d65b6a076abe21b`, fast-forwarded from verified
+prior head `b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`. Base
+`feat/4275-ground-tilted-conformance` and ready state are preserved; no
+retarget, merge, force operation, or parent rewrite occurred.
 
 Hosted quality-gate run `31429284874`, job `93588443824`, exposed eight
 actionable MyPy 1.13 `no-any-return` errors under its exact Python 3.12 delta
@@ -23,9 +24,9 @@ unchanged.
 The exact hosted three-file MyPy profile now passes. Local validation also
 passes all 247 ground tests, 42 focused skid/passivity/conformance tests, Ruff,
 formatting, the campaign manifest and its eight tests, documentation
-governance, changed-Python policy, and diff checks. Publication remains a
-separate guarded fast-forward operation. This repair changes neither the
-scientific evidence nor the open #4275/#4267 limitations recorded below.
+governance, changed-Python policy, and diff checks. Fresh exact-head hosted CI
+is the next gate. This repair changes neither the scientific evidence nor the
+open #4275/#4267 limitations recorded below.
 
 ## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
 

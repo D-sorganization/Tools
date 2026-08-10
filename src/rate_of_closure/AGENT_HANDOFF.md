@@ -5,8 +5,9 @@
 
 ## 2026-08-10 PR #4323 exact hosted-MyPy repair
 
-`fix/4323-ground-mypy-boundaries` is an unpublished exact child of current PR
-#4323 head `b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`; its base remains
+The repair is published on ready PR #4323 at exact current head
+`3957f013eeadd448ffa381f12d65b6a076abe21b`, a normal fast-forward from
+`b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`; its base remains
 `feat/4275-ground-tilted-conformance`. Hosted quality-gate run `31429284874`,
 job `93588443824`, reproduced eight MyPy 1.13 `no-any-return` errors with the
 exact Python 3.12 changed-production profile and `--follow-imports=skip`.
@@ -20,7 +21,8 @@ hosted three-file profile is green locally, together with all 247 ground tests,
 42 focused skid/passivity/conformance tests, Ruff/format, campaign-manifest,
 documentation-governance, changed-Python-policy, and diff gates. This is a CI
 typing repair only; the scientific corpus, property sweep, contracts, and
-#4275/#4267 delivery boundaries remain unchanged.
+#4275/#4267 delivery boundaries remain unchanged. Fresh exact-head hosted CI,
+review, and parent integration remain required.
 
 ## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
 
