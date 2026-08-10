@@ -4,6 +4,19 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 PR #4316 exact-head CI type repair
+
+Current-head quality-gate run `31389230948` identified four redundant `str`
+casts in the PyQt persistence export accessors under the repository's pinned
+MyPy 1.13 delta configuration. The serializers already declare exact `str`
+returns; explicit typed local bindings preserve that contract across differing
+import-following environments without runtime coercion. The casts are removed
+without changing runtime behavior. SPEC 1.14.38 records the repair. Fresh
+isolated MyPy 1.13 and 1.15 checks pass on all five production modules; 15
+focused Python/PyQt tests, Ruff, Python 3.10 compilation, formatting, and
+governance also pass. Protected current-head CI remains required; #4274 and
+#4267 remain open.
+
 ## 2026-08-10 issue #4274 playback workspace persistence and exports
 
 A reviewed continuation on `feat/4274-ground-playback-persistence` adds matched
