@@ -4,6 +4,17 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 PR #4302 pinned-MyPy current-head correction
+
+Hosted quality-gate run `31350134551` failed published #4302 head
+`ceaed9e548c5b6d147dbbeb17ee3ff2a509436c5` on four actionable MyPy 1.13
+findings. The lazy wire serializer is now bound to its declared mapping type,
+and the guarded optional output-grid time is copied to a local
+`float`, advanced deterministically, and stored back once. This is a static
+typing correction only: physics, schema, numerical order, outputs, scope, and
+the normal #4288 base are unchanged. Pinned MyPy, the focused ground suite,
+Ruff, and diff checks are required before publication.
+
 ## 2026-08-09 issue #4270 local ground-impact/bounce slice
 
 Draft PR #4302 publishes `feat/4270-ground-impact-bounce` at immutable

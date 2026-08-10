@@ -3,6 +3,18 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
+## 2026-08-09 PR #4302 pinned-MyPy current-head correction
+
+Hosted quality-gate run `31350134551` exposed four deterministic MyPy 1.13
+findings on published head `ceaed9e548c5b6d147dbbeb17ee3ff2a509436c5`:
+the lazy wire-serializer import was inferred as `Any`, and repeated-bounce
+sampling repeatedly accessed an optional mutable grid-time attribute after its
+runtime guard. The correction binds the already validated serializer boundary
+to its declared mapping type and narrows the initialized grid time into one local
+`float` before advancing it and writing it back. No physics, schema, numerical
+ordering, result content, issue scope, or stack base changes. Focused pinned
+MyPy and ground tests must be green before the normal fast-forward push.
+
 ## 2026-08-09 Ground impact and repeated-bounce local slice
 
 Draft PR #4302 publishes issue #4270 on `feat/4270-ground-impact-bounce` at

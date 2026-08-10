@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 PR #4302 pinned-MyPy current-head correction
+
+Hosted quality-gate run `31350134551` exposed four deterministic MyPy 1.13
+findings on published head `ceaed9e548c5b6d147dbbeb17ee3ff2a509436c5`.
+The wire serializer now binds its validated lazy-import boundary to the declared type,
+and airborne grid sampling advances one guarded local `float` before storing
+the next grid time. No material physics, schema, numerical, UI, scope, or base
+change occurred; focused pinned MyPy and ground tests remain the publication
+gate.
+
 ## 2026-08-09 Ground impact and repeated-bounce local slice
 
 Draft PR #4302 publishes issue #4270 on `feat/4270-ground-impact-bounce` at

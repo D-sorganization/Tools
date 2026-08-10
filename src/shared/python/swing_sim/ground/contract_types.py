@@ -98,7 +98,8 @@ class _WireRecord:
         """Return the strict v1 JSON-compatible mapping."""
         from .contract_wire import record_to_dict
 
-        return record_to_dict(self)
+        payload: dict[str, Any] = record_to_dict(self)
+        return payload
 
     def to_json(self) -> str:
         """Return deterministic compact JSON."""

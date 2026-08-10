@@ -148,13 +148,15 @@ class _BounceRun:
         if self.next_grid_time_s is None:
             raise RuntimeError("airborne sampling requires an initialized output grid")
         tolerance = self.settings.time_tolerance_s
-        while self.next_grid_time_s <= outgoing.time_s + tolerance:
-            self.next_grid_time_s += self.request.output_interval_s
-        while self.next_grid_time_s < terminal_time_s - tolerance:
-            elapsed = self.next_grid_time_s - outgoing.time_s
+        next_grid_time_s = self.next_grid_time_s
+        while next_grid_time_s <= outgoing.time_s + tolerance:
+            next_grid_time_s += self.request.output_interval_s
+        while next_grid_time_s < terminal_time_s - tolerance:
+            elapsed = next_grid_time_s - outgoing.time_s
             state = ballistic_state(outgoing, elapsed, self.settings)
             self.append_point(trajectory_point(state, _PHASE_BOUNCE))
-            self.next_grid_time_s += self.request.output_interval_s
+            next_grid_time_s += self.request.output_interval_s
+        self.next_grid_time_s = next_grid_time_s
         if include_terminal:
             elapsed = terminal_time_s - outgoing.time_s
             terminal = ballistic_state(outgoing, elapsed, self.settings)
