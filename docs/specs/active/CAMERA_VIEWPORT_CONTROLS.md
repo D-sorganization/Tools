@@ -30,7 +30,8 @@ and resumes tracking. Reset selects the canonical isometric orientation.
 
 All command buttons have visible labels, stable IDs, tooltips, native keyboard
 focus, and focus-visible styling. Controls remain available while playback is
-paused, playing, looping, restarted, resized, or rendered at high DPI.
+paused, playing, looping, restarted, stepped by solver-owned sample, resized,
+or rendered at high DPI.
 
 ## Architecture and contracts
 
@@ -48,7 +49,10 @@ convention from an arbitrary club pose.
 
 Unit and headless GUI/component tests cover exact orientations, parity,
 idempotence, focusable controls, tracking bounds, zoom clearance, manual
-suspension, recentering, and complete swing/flight horizons. Final issue
-closure still requires protected carrier integration, hosted CI/review,
-rendered desktop and constrained-browser review, and UpstreamDrift consumer
-parity. Camera preferences are not persisted in this slice.
+suspension, recentering, and complete swing/flight horizons. Playwright covers
+a bounded camera/playback interaction matrix in desktop Chromium and at a
+520 x 900 viewport with 2x device scale, including responsive control
+containment and the canvas backing store. Final issue closure still requires
+protected carrier integration, hosted CI/review, native rendered review, and
+UpstreamDrift consumer parity. Camera preferences are not persisted in this
+slice.

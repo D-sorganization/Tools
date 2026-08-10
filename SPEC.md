@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.9                                     |
-| **Spec Version**        | 1.14.9                                     |
+| **Current Version**     | 1.14.10                                    |
+| **Spec Version**        | 1.14.10                                    |
 | **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
@@ -42,6 +42,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   and resumes through one-action recenter without changing model results.
 - Stable command IDs, explicit app-frame conventions, DbC validation, and a
   cross-runtime golden fixture prevent orientation drift between adapters.
+- React flight playback steps backward or forward on solver-owned trajectory
+  samples without desynchronizing tracking. Playwright verifies the bounded
+  playback/camera interaction matrix at desktop size and at 520 x 900 with 2x
+  device scale; native rendered review and UpstreamDrift parity remain open.
 
 ### 2026-08-09 Capability workflow contract hardening
 
@@ -2945,6 +2949,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.14.10 | test(rate-of-closure, #4284): add solver-sample flight frame steps and Playwright camera/playback interaction coverage at desktop and constrained 2x-DPR viewports; retain native visual and downstream parity gates. |
 | 2026-08-09 | 1.14.9 | feat(rate-of-closure, #4284): add canonical cross-runtime 3D camera snaps, bounded clubhead/ball tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and focused PyQt6/React contracts. |
 | 2026-08-09 | 1.14.8 | feat(rate-of-closure, #4201): harden cross-runtime capability parsing and signed input; expose complete diagnostics, result exports, and quantitative scatter annotations; stabilize supported PyQt6/static-Vite entrypoints; and add a strict campaign manifest with generated schema, four-surface status, explicit gaps/dependencies, and fail-closed feature-stack/protected-parent/`main` release distinctions. |
 | 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |

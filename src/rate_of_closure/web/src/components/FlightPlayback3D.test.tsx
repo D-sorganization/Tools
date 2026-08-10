@@ -41,6 +41,10 @@ describe("FlightPlayback3D", () => {
     expect(screen.getByText("2.00 / 2.00 s")).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Jump to Launch" }));
     expect(screen.getByText("0.00 / 2.00 s")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Step Forward One Frame" }));
+    expect(screen.getByText("1.00 / 2.00 s")).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Step Back One Frame" }));
+    expect(screen.getByText("0.00 / 2.00 s")).toBeInTheDocument();
   });
 
   it("preserves its intrinsic aspect ratio at responsive widths", () => {

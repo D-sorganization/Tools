@@ -138,6 +138,11 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
     }
   };
 
+  const stepFrame = (direction: -1 | 1) => {
+    if (timeline === null) return;
+    jump(timeline.stepTime(timeRef.current, direction));
+  };
+
   return (
     <section className="space-y-3" aria-label="3D ball-flight playback">
       <div className="flex flex-wrap items-center gap-2 text-xs">
@@ -149,6 +154,26 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
           className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
         >
           Launch
+        </button>
+        <button
+          type="button"
+          disabled={duration <= 0}
+          onClick={() => stepFrame(-1)}
+          aria-label="Step Back One Frame"
+          title="Pause and step to the previous solver-owned trajectory sample"
+          className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
+        >
+          −1 frame
+        </button>
+        <button
+          type="button"
+          disabled={duration <= 0}
+          onClick={() => stepFrame(1)}
+          aria-label="Step Forward One Frame"
+          title="Pause and step to the next solver-owned trajectory sample"
+          className="rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40"
+        >
+          +1 frame
         </button>
         <button
           type="button"

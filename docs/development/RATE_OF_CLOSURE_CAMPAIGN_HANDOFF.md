@@ -6,19 +6,29 @@ branch was rewritten.
 
 ## 2026-08-09 Camera snap/tracking continuation
 
-Local branch `feat/4284-camera-snap-tracking` normally merges exact carrier
+Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` at exact head
+`620d9d11f67b6d6d1c8dff673396cc101c5968ad`. It normally merges exact carrier
 head `de49580a3c0888b44f66dcc09bba2ab2fa33914a` with camera parent
 `91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It implements the canonical camera
 contract for all five Tools 3D adapters (PyQt Simulation and Flight; React
 Club, Impact, and Flight) with exact snap orientations, bounded opt-in subject
 tracking, safe zoom preservation, Auto Fit, manual suspension, and Recenter.
-This is local implementation evidence only: no GitHub write/carrier exists,
 UpstreamDrift parity is not started, and protected release remains open.
 Camera-parent evidence is 107 React files / 649 tests. Reconciled merge-tree
 evidence is 138 affected Python/PyQt/carrier tests, 14 focused React camera
 tests, Ruff/camera-targeted mypy, TypeScript/ESLint, a 193-module production build,
 campaign-manifest validation, structural checks, and inspected desktop plus
-700 px camera-control renders. Native-font/browser rendering remains due.
+700 px camera-control renders.
+
+The unpushed browser-evidence continuation adds solver-owned previous/next
+frame controls to React ball-flight playback through the existing validated
+timeline boundary. Two focused Vitest files pass 11 tests, and the full React
+suite passes 107 files / 650 tests. Playwright passes a bounded
+play/pause/restart/loop/speed/frame-step/zoom/snap/tracking matrix and
+responsive backing-store assertions in desktop Chromium and a 520 x 900,
+2x-DPR Chromium project (4 browser tests total). Native-font/manual visual
+review, hosted CI/review, protected release, preference persistence, and
+UpstreamDrift parity remain due.
 
 ## 2026-08-09 Capability workflow hardening continuation
 

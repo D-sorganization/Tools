@@ -188,6 +188,16 @@
       "state": "merged",
       "merge_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
       "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4298",
+      "pr": 4298,
+      "branch": "feat/4284-camera-snap-tracking",
+      "base_branch": "feat/4199-wind-workflow",
+      "head_sha": "620d9d11f67b6d6d1c8dff673396cc101c5968ad",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
     }
   ],
   "test_evidence": [
@@ -271,6 +281,22 @@
         "python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py tests/ops/test_maturin_swing_core_workflow.py"
       ],
       "summary": "The composed capability, diagnostics, web-release, and campaign-manifest continuation passed 828 Rate Python/PyQt tests, 104 React files and 642 tests, TypeScript, zero-warning ESLint, the 188-module production build, and nine manifest/parity contracts.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "camera-local-620d",
+      "kind": "local",
+      "commit_sha": "620d9d11f67b6d6d1c8dff673396cc101c5968ad",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_camera_commands.py tests/rate_of_closure/test_camera_controls_gui.py tests/rate_of_closure/test_simulation_gui.py -q",
+        "npm test -- --run src/model/cameraCommands.test.ts src/components/CameraControlBar.test.tsx src/components/ClubCanvasCamera.test.tsx src/components/FlightPlayback3D.test.tsx",
+        "npm run type-check && npm run lint && npm run build"
+      ],
+      "summary": "The published camera head passed 138 affected Python/PyQt/carrier tests, 14 focused React camera tests, TypeScript, zero-warning ESLint, and the 193-module Vite production build; protected and native visual evidence remain open.",
       "source_paths": [
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md"
@@ -895,7 +921,8 @@
         4284
       ],
       "carrier_ids": [
-        "pr-4279"
+        "pr-4279",
+        "pr-4298"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
@@ -904,12 +931,13 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [
-        "toolstrip-local-c36"
+        "toolstrip-local-c36",
+        "camera-local-620d"
       ],
-      "evidence_gap": "Complete persistence adapters, synchronized multi-view persistence, UpstreamDrift camera consumers, rendered accessibility review, and protected release remain open.",
+      "evidence_gap": "Complete persistence adapters, synchronized multi-view persistence, UpstreamDrift camera consumers, native rendered accessibility review, and protected release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
-        "Camera tracking and canonical snap views are locally implemented on feat/4284-camera-snap-tracking but have no published implementation carrier."
+        "Camera tracking and canonical snap views are published as draft PR 4298, but its continuation evidence is local and its protected integration remains open."
       ],
       "depends_on_issues": [
         4191

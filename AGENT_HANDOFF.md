@@ -5,14 +5,17 @@
 
 ## Issue #4284 camera continuation
 
-Isolated branch `feat/4284-camera-snap-tracking` normally merges exact carrier
-head `de49580a3c0888b44f66dcc09bba2ab2fa33914a` with camera implementation
-parent `91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It locally implements the
+Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` at exact head
+`620d9d11f67b6d6d1c8dff673396cc101c5968ad`, normally merged from exact
+carrier `de49580a3c0888b44f66dcc09bba2ab2fa33914a` and camera implementation
+parent `91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It implements the
 shared, UI-neutral camera command contract in Tools PyQt6 and React swing,
 impact, and flight 3D views: exact Face On/Down the Line/Overhead/Isometric
 snaps, opt-in bounded subject tracking, zoom-preserving Auto Fit, predictable
-manual suspension, and one-action Recenter. No GitHub write or carrier exists
-yet. UpstreamDrift consumers, rendered cross-platform review, hosted CI,
+manual suspension, and one-action Recenter. The unpushed local continuation
+adds solver-sample frame stepping plus real-browser Playwright coverage for a
+bounded playback/camera interaction matrix and a 520 x 900, 2x-DPR viewport.
+UpstreamDrift consumers, native rendered cross-platform review, hosted CI,
 review, and protected release remain open; do not close #4284 on local evidence.
 
 Exact camera-parent evidence is 107 React files / 649 tests. On the reconciled
@@ -21,7 +24,12 @@ tests pass, plus Ruff format/check, camera-targeted mypy,
 TypeScript, zero-warning ESLint, the 193-module production build, campaign
 manifest validation, and diff/structural checks. Headless desktop and 700 px
 camera-bar renders show no control overlap; this Qt runtime lacks usable fonts,
-so native-font and browser visual review remains an integration gate.
+so native-font visual review remains an integration gate. The continuation's
+focused Vitest evidence is 2 files / 11 tests; the full React suite is 107
+files / 650 tests. Playwright passes two interaction scenarios in both desktop
+Chromium and constrained 2x-DPR Chromium (4 browser tests total). These are
+automated functional checks, not a substitute for the still-open native
+visual review.
 
 Authorities are `docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md`,
 `src/rate_of_closure/application/camera_commands.py`, and the cross-runtime
