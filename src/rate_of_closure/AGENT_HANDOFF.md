@@ -1,17 +1,18 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-07
+> Last updated: 2026-08-09
 
-## 2026-08-07 Universal Variation Visualization Continuation
+## 2026-08-09 Universal Variation Visualization Continuation
 
-Branch `feat/4144-variation-export-continuation` is stacked on the published
-toolstrip head `c36ca36e9` and continues issue #4144 without adding unrelated
-toolstrip changes to PR #4279. The core PyQt6/React variation workspace already
-has selectable input/contact/impact/shot scatter, a scatter matrix with
-marginals, landing dispersion, and an all-trial 3D swing-arc overlay with
-reference trace, principal spread, RMS variability, quiet zones, filtering,
-and linked trial selection.
+Branch `feat/4144-variation-export-continuation` remains based on
+`feat/4218-toolstrip-workspace` and now contains exact corrected parent
+`3f67ed466fefc8991db9c4409f921f25e1c37142` through the normal merge containing
+this handoff. The core PyQt6/React variation workspace has selectable
+input/contact/impact/shot scatter, a scatter matrix with marginals, landing
+dispersion, and an all-trial 3D swing-arc overlay with reference trace,
+principal spread, RMS variability, quiet zones, filtering, and linked trial
+selection.
 
 This continuation closes an export/accessibility parity gap: both clients now
 export the complete selected scatter axes as CSV, including every trial,
@@ -28,6 +29,17 @@ Python/PyQt/shared swing tests passed with one expected optional-Rust skip and
 formatting, Black, targeted mypy, TypeScript, zero-warning ESLint, the 166-module
 Vite build, and `git diff --check` pass. This is local evidence only; no PR,
 protected CI, review, merge, or default-branch release has yet been established.
+
+The current local continuation normally incorporates exact corrected parent
+`3f67ed466fefc8991db9c4409f921f25e1c37142` while preserving #4280's
+`feat/4218-toolstrip-workspace` base. Its current focused evidence is `46`
+Python 3.11 tests and `19` real-Python-3.10.20 tests with PyQt6 installed,
+including the merged compatibility and variation widget contracts. React
+passes `1 file / 8 tests`, TypeScript, and focused zero-warning ESLint. Ruff,
+format, pinned mypy 1.13, documentation governance, ancestry/SPEC assertions,
+and diff checks pass. SPEC 1.14.10 is the unique child entry for the
+scatter-export and accessible-row-table source change. This propagation is
+local only and has not been pushed.
 
 Literal audit of "every many-trial simulation" found two dependent gaps that
 must remain explicit:
@@ -46,7 +58,11 @@ into the impact-specific cohort enum or fabricate impact/landing values.
 
 Branch `feat/4199-wind-scalar-adapter` is published as
 [draft PR #4281](https://github.com/D-sorganization/Tools/pull/4281), stacked
-on exact draft PR #4280 head `d71b0ea01b5659d3049ff05627c41f06481207e4`.
+on exact corrected draft PR #4280 head
+`38ed58cab96842a3007e76a855db83ee2452b8fd`. That parent is incorporated by a
+normal local merge while preserving base
+`feat/4144-variation-export-continuation`; no branch was rebased, retargeted,
+force-pushed, or published by this continuation.
 Implementation commit `4a28114aa` supplies that first UI-neutral model slice.
 Python and React share the exact
 snake-case `scalar-ensemble/v1` wire structure: structured provenance,
@@ -58,14 +74,19 @@ true/estimated wind, launch/aim, target, landing, miss, cost, and information
 delta without invoking the flight solver. Impact variables remain honestly
 absent because this analysis begins at launch.
 
-Exact local gates for this branch are green: 906 Python/PyQt/shared-swing
-tests passed with one expected optional-Rust skip and 15 existing warnings;
-91 React files / 555 tests passed. Ruff, Ruff formatting, Black, focused mypy,
-TypeScript, zero-warning ESLint, the 166-module Vite production build, and
-`git diff --check` pass. Production Python modules remain below 400 lines and
-no changed Python function exceeds 50 lines. This contract/adapter does not
-complete #4199: the next slice still needs background execution, progress and
-cancellation, PyQt/React scatter/strategy UI, persistence, and export wiring.
+The original broad local gates remain green: 906 Python/PyQt/shared-swing tests
+passed with one expected optional-Rust skip and 15 existing warnings; 91 React
+files / 555 tests passed. After corrected-parent propagation, focused evidence
+is `49 passed` on Python 3.11 and `49 passed` on real CPython 3.10.20 with
+PyQt6/scientific dependencies present, plus `2 React files / 10 tests`,
+TypeScript, and zero-warning focused ESLint. Ruff check/format passes all four
+child Python files; pinned mypy 1.13 passes both production modules and the
+wind-adapter test after its status helper received an exact `Literal` type.
+Production Python modules remain below 400 lines and no changed Python function
+exceeds 50 lines. SPEC 1.14.11 uniquely records the child change above parent
+1.14.10. This contract/adapter does not complete #4199: the next slice still
+needs background execution, progress and cancellation, PyQt/React
+scatter/strategy UI, persistence, and export wiring.
 
 ## 2026-08-07 Ground Model and Four-Surface Parity Revalidation
 
@@ -99,6 +120,81 @@ has no native Rate React route, and its Tools source resolvers disagree about
 vendor-first versus sibling-first precedence. A launcher tile cannot satisfy a
 calculation-parity row; #4261, #4262, and #4264 must make the runtime source,
 exact Tools pin, and support state machine-verifiable.
+
+## 2026-08-09 Workspace Python 3.10 compatibility completion
+
+The #4279 continuation now contains exact corrected parent
+`08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` through normal local merge
+`a340fabefa443d47325c5538f342683b38c01ade`, without rebasing, retargeting,
+force-pushing, or publication. The workspace command and view enums use the
+shared `StrEnum` runtime compatibility contract with native enum typing kept
+under `TYPE_CHECKING`; `_workspace_validation` uses the shared `UTC` value.
+Stable identifiers, enum values, UTC serialization, schemas, and behavior are
+unchanged.
+
+The combined regression inspects the runtime branch for all nine inherited
+and child string-enum modules plus both UTC modules and directly executes the
+three child workspace modules. Focused Python 3.11 evidence is `126 passed`.
+Real CPython 3.10.20 evidence is `14 passed` plus successful dotted imports of
+10 Rate/shared targets. Ruff check/format is clean, and pinned mypy 1.13 passes
+all 11 affected production files under the changed-file CI contract. Keep the
+root, tool, campaign handoffs and SPEC 1.14.9 entry in the implementation
+commit; protected CI and review remain required after a normal push.
+
+## 2026-08-09 Workspace stack parent propagation
+
+Draft PR #4279 keeps base `feat/4181-launch-monitor-registry`. Exact published
+parent head `08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` is carried by a normal
+merge without rebasing, retargeting, force-pushing, or publishing this local
+continuation. Source changes applied cleanly; overlapping handoff/specification
+history was reconciled monotonically. The result retains the parent's facade
+and Python 3.10 repairs plus the child's complete File/View/Tools registry,
+strict workspace document, matched PyQt6/React toolstrips, module
+visibility/order, playback, and independent plot controls.
+
+The reconciled ancestry passes `126` focused Python/PyQt tests and `8 React
+files / 32 tests`. Ruff check/format passes all 28 relevant Python files, and
+CI-pinned mypy 1.13 passes the 18 changed production files and both facade
+tests. Mypy caught an untyped Qt `isChecked()` result in the child's
+`legend_visible()` boundary; the method now returns an explicit `bool` without
+changing runtime behavior. The affected simulation GUI rerun is `29 passed`;
+documentation governance and diff checks pass. Keep this handoff, the root
+handoff, the campaign handoff, and `SPEC.md` together in the merge commit.
+
+## 2026-08-09 Python 3.10 enum import repair
+
+PR #4203 now owns the earliest fix for seven inherited Rate/shared swing
+modules that imported Python 3.11's `enum.StrEnum` directly. Runtime code uses
+the established shared compatibility helper while mypy sees the native enum
+only inside `TYPE_CHECKING`. This preserves wire values and enum semantics on
+supported interpreters and lets the repository's hosted Python 3.10 lane
+collect the modules. The focused evidence is 64 tests, Ruff/format, pinned
+mypy 1.13 across eight changed files, and a real CPython 3.10.20 source/runtime
+probe. The exact published #4203 head is
+`ab7de5a47977417e02926c3fbc7476002e82b690`; propagate it through the existing
+stack without changing bases.
+
+A follow-up scan found the torque-profile controller importing
+`datetime.UTC` directly. That parent-owned Python 3.11 boundary now uses
+`shared.python.compatibility.UTC`; persisted timestamps and torque-profile
+behavior are unchanged. Re-run the focused torque-profile UI tests and the
+real Python 3.10 compatibility probe before propagation.
+
+## 2026-08-09 Launch-registry parent CI repair
+
+PR #4203 exact-head run `31199764932` reached the Python test lanes but failed
+during Linux collection, before behavioral assertions. The two in-package
+flight/solver facade tests were collected as `src.shared...` modules while
+their absolute aliases crossed into the editable `shared...` namespace. They
+now import their sibling facade package relatively, preserving the pinned
+public API contract and production behavior. Reproduce with pytest
+`--import-mode=importlib`; keep the separate Rust missing-`libpython3.11`
+failure classified as runner infrastructure. Publish normally and propagate
+the repaired parent through the existing stack without changing PR bases.
+Verification is `12 passed` on Windows and `12 passed` on WSL Python 3.11
+under importlib collection; Ruff/format and exact mypy 1.13 pass for both
+changed modules. The dataclass metadata assertion remains active behind an
+explicit test-only `Any` introspection boundary.
 
 ## 2026-08-05 Advanced Wedge Impact Visualization
 

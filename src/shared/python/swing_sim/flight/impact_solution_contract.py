@@ -5,8 +5,12 @@ from __future__ import annotations
 import json
 import math
 from dataclasses import dataclass
-from enum import StrEnum
-from typing import Any
+from typing import TYPE_CHECKING, Any
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 from .inverse_contract import EvaluatedMetric, InverseFlightRequest, SolverEvaluation
 from .result_contract import FlightMetricId

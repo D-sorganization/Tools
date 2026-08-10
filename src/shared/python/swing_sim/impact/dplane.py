@@ -8,12 +8,16 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from enum import StrEnum
-from typing import TypeAlias
+from typing import TYPE_CHECKING, TypeAlias
 
 import numpy as np
 
 from shared.python.contracts import require
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 Vector3: TypeAlias = tuple[float, float, float]
 _EPSILON = 1e-12
@@ -57,7 +61,7 @@ class DPlaneAnalysis:
 
 
 def _as_vector(value: object, name: str) -> np.ndarray:
-    vector = np.asarray(value, dtype=float)
+    vector: np.ndarray = np.asarray(value, dtype=float)
     require(vector.shape == (3,), f"{name} must contain exactly three components")
     require(bool(np.all(np.isfinite(vector))), f"{name} must be finite")
     return vector
@@ -75,7 +79,8 @@ def _tuple(vector: np.ndarray) -> Vector3:
 
 
 def _horizontal(vector: np.ndarray, up: np.ndarray) -> np.ndarray:
-    return vector - float(np.dot(vector, up)) * up
+    horizontal: np.ndarray = vector - float(np.dot(vector, up)) * up
+    return horizontal
 
 
 def _heading_deg(
