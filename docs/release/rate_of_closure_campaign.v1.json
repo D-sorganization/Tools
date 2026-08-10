@@ -188,6 +188,16 @@
       "state": "merged",
       "merge_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
       "protection_evidence": "not_protected"
+    },
+    {
+      "id": "pr-4302",
+      "pr": 4302,
+      "branch": "feat/4270-ground-impact-bounce",
+      "base_branch": "feat/4269-flight-ground-transfer",
+      "head_sha": "63a6f4bec63c58d28bceed2e8cf348a618c8e366",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
     }
   ],
   "test_evidence": [
@@ -271,6 +281,25 @@
         "python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py tests/ops/test_maturin_swing_core_workflow.py"
       ],
       "summary": "The composed capability, diagnostics, web-release, and campaign-manifest continuation passed 828 Rate Python/PyQt tests, 104 React files and 642 tests, TypeScript, zero-warning ESLint, the 188-module production build, and nine manifest/parity contracts.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-impact-local-63a6",
+      "kind": "local",
+      "commit_sha": "63a6f4bec63c58d28bceed2e8cf348a618c8e366",
+      "outcome": "passed",
+      "commands": [
+        "uv run --no-project --python 3.10 --with pytest==9.0.3 --with numpy==2.2.6 --with scipy==1.15.3 --with jsonschema==4.25.1 -- python -m pytest src/shared/python/swing_sim/ground/tests -q -o addopts=",
+        "py -3.11 -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "python -m pytest -q src/shared/python/swing_sim/ground/tests",
+        "python -m ruff check src/shared/python/swing_sim/ground && python -m ruff format --check src/shared/python/swing_sim/ground",
+        "python -m mypy --no-incremental src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py"
+      ],
+      "summary": "The published impact/bounce evidence commit passed the complete 82-test ground suite on CPython 3.10.20, 3.11.9, and 3.13.3, pinned Ruff and mypy gates, manifest validation and eight manifest tests, documentation governance, structural budgets, and exact shared-golden verification; protected integration remains open.",
       "source_paths": [
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md"
@@ -1047,7 +1076,8 @@
       ],
       "carrier_ids": [
         "pr-4285",
-        "pr-4288"
+        "pr-4288",
+        "pr-4302"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "contract_only",
@@ -1055,8 +1085,10 @@
         "upstreamdrift.pyqt6": "not_started",
         "upstreamdrift.react": "not_started"
       },
-      "evidence_ids": [],
-      "evidence_gap": "The contract and flight-transfer carriers are open. Issue #4270 now has a locally tested Python impact/bounce prefix, but it has no published carrier or protected evidence; skid, roll, final-result, total-distance, UI, compiled-runtime, and downstream parity work remains.",
+      "evidence_ids": [
+        "ground-impact-local-63a6"
+      ],
+      "evidence_gap": "The contract, flight-transfer, and impact/bounce carriers are open. Issue #4270 is published on draft PR 4302 with exact local evidence but no protected evidence; skid, roll, final-result, total-distance, UI, compiled-runtime, and downstream parity work remains.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",

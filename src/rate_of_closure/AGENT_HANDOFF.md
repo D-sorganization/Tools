@@ -5,9 +5,10 @@
 
 ## 2026-08-09 Ground impact and repeated-bounce local slice
 
-Issue #4270 is locally implemented on `feat/4270-ground-impact-bounce` from
-exact #4288 head `4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d`, with intended base
-`feat/4269-flight-ground-transfer`. Nothing was pushed or written to GitHub.
+Draft PR #4302 publishes issue #4270 on `feat/4270-ground-impact-bounce` at
+immutable evidence commit `63a6f4bec63c58d28bceed2e8cf348a618c8e366`.
+It targets exact #4288 head `4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d`
+on `feat/4269-flight-ground-transfer`; no existing stack base was changed.
 The reusable Python ground facade now provides a passive restitution/Coulomb
 impact with sphere inertia and full spin, exact first contact, deterministic
 repeated hops, bounded cancellation/failure semantics, and typed airborne

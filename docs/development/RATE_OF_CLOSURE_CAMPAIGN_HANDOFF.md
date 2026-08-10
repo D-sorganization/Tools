@@ -6,12 +6,11 @@ branch was rewritten.
 
 ## 2026-08-09 issue #4270 local ground-impact/bounce slice
 
-The isolated worktree
-`C:\Users\diete\Repositories\Tools-worktrees\ground-impact-bounce` carries
-`feat/4270-ground-impact-bounce` from exact published #4288 head
-`4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d`; its intended base is
-`feat/4269-flight-ground-transfer`. This is local implementation evidence only:
-no GitHub write, push, carrier, protected check, review, or release claim exists.
+Draft PR #4302 publishes `feat/4270-ground-impact-bounce` at immutable
+evidence commit `63a6f4bec63c58d28bceed2e8cf348a618c8e366`. It targets exact
+published #4288 head `4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d`
+on `feat/4269-flight-ground-transfer`; no existing stack base was changed.
+Protected checks, review, parent integration, and release remain open.
 
 The strict ground facade now includes the Python reference impulse/bounce
 prefix specified by `docs/specs/GROUND_IMPACT_BOUNCE.md`. It resolves passive
@@ -48,8 +47,8 @@ The scope remains partial and `not_released`. Issue #4271 owns skid, roll,
 rest, total distance, and final `GroundSimulationResult`. The #4270 law does
 not consume firmness, grass, compressibility, moisture, or rolling resistance;
 terrain deformation, UI, TypeScript physics, Rust/PyO3/WASM, and UpstreamDrift
-adapters remain excluded. A normal published child carrier, protected CI,
-independent review, and downstream integration are still required.
+adapters remain excluded. Protected CI, required review, ordinary parent
+integration, and downstream delivery are still required.
 
 ## 2026-08-09 PR #4288 corrected-ground-parent propagation
 

@@ -5,11 +5,11 @@
 
 ## 2026-08-09 Ground impact and repeated-bounce local slice
 
-Issue #4270 is implemented locally on `feat/4270-ground-impact-bounce` in
-`C:\Users\diete\Repositories\Tools-worktrees\ground-impact-bounce`, based on
-exact published #4288 head `4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d`.
-Its intended PR base remains `feat/4269-flight-ground-transfer`. This branch
-has not been pushed and no GitHub state was changed.
+Draft PR #4302 publishes issue #4270 on `feat/4270-ground-impact-bounce` at
+immutable evidence commit `63a6f4bec63c58d28bceed2e8cf348a618c8e366`.
+It targets exact published #4288 head
+`4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d` on
+`feat/4269-flight-ground-transfer`; no existing stack base was changed.
 
 The self-facaded ground package now exposes a typed passive restitution plus
 Coulomb sphere-plane impulse, full angular coupling, moving-boundary energy
@@ -33,7 +33,7 @@ pass the changed Python set. The campaign manifest validates, its eight
 contract tests pass, documentation governance and focused changed-test
 assertion gates pass, and all changed production modules/functions/signatures
 remain within 400-line/50-line/four-parameter budgets. Protected CI, review,
-and a normal published carrier remain required.
+and ordinary parent integration remain required.
 
 Independent pre-publication review made no material physics, schema, or scope
 change: vector primitives now return explicit `Vector3` tuples without typing
