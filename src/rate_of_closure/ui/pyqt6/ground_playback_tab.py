@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from pathlib import Path
 from time import monotonic
 
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
-    QFileDialog,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
@@ -23,16 +21,14 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.simulation.ground_playback import (
-    DEFAULT_IMPORT_MAX_BYTES,
-    GroundPlaybackTimeline,
-    load_ground_result_json,
+from rate_of_closure.simulation.ground_playback import GroundPlaybackTimeline
+from rate_of_closure.ui.pyqt6.ground_playback_persistence import (
+    GroundPlaybackPersistenceMixin,
 )
 from rate_of_closure.ui.pyqt6.ground_playback_tables import (
     EVENT_HEADERS,
     TRAJECTORY_HEADERS,
     create_ground_table,
-    populate_ground_tables,
 )
 from rate_of_closure.ui.pyqt6.ground_playback_view import GroundPlayback3DView
 
@@ -41,7 +37,7 @@ _TIMER_INTERVAL_MS = 16
 _SPEEDS = (0.25, 0.5, 1.0, 2.0, 4.0)
 
 
-class GroundPlaybackTab(QWidget):
+class GroundPlaybackTab(GroundPlaybackPersistenceMixin, QWidget):
     """Inspect one strict Python-generated ground result without simulating it."""
 
     def __init__(
@@ -63,43 +59,6 @@ class GroundPlaybackTab(QWidget):
         self.playback_timer.timeout.connect(self._advance)
         self._build_ui()
         self._set_controls_enabled(False)
-
-    @property
-    def timeline(self) -> GroundPlaybackTimeline:
-        """Return the last successfully imported playback timeline."""
-        if self._timeline is None:
-            raise RuntimeError("no ground result has been imported")
-        return self._timeline
-
-    def import_json_text(self, text: str, *, source_name: str = "result JSON") -> None:
-        """Atomically import strict text while retaining the last good result."""
-        try:
-            candidate = GroundPlaybackTimeline(load_ground_result_json(text))
-        except (TypeError, ValueError) as exc:
-            self.status_label.setText(f"Could not import {source_name}: {exc}")
-            self.status_label.setProperty("state", "error")
-            raise
-        self.pause()
-        self._timeline = candidate
-        self.current_time_s = candidate.start_time_s
-        self.view.set_timeline(candidate)
-        populate_ground_tables(
-            candidate,
-            summary_table=self.summary_table,
-            trajectory_table=self.trajectory_table,
-            events_table=self.events_table,
-            warnings_table=self.warnings_table,
-        )
-        for phase, button in self.phase_buttons.items():
-            button.setVisible(candidate.phase_time(phase) is not None)
-        self.end_button.setText(candidate.end_label)
-        self._set_controls_enabled(True)
-        self.set_time(candidate.start_time_s)
-        self.status_label.setText(
-            f"Loaded {source_name} — {candidate.result.status.value}; "
-            f"{len(candidate.result.trajectory)} samples."
-        )
-        self.status_label.setProperty("state", "ready")
 
     def set_time(self, time_s: float) -> None:
         """Seek to a clamped absolute ground-result time."""
@@ -210,6 +169,7 @@ class GroundPlaybackTab(QWidget):
         )
         self.import_button.clicked.connect(self._choose_result_file)
         layout.addWidget(self.import_button)
+        self.attach_persistence_controls(panel, layout)
         self.status_label = QLabel("No result loaded.")
         self.status_label.setWordWrap(True)
         self.status_label.setAccessibleName("Ground result import status")
@@ -342,23 +302,7 @@ class GroundPlaybackTab(QWidget):
             control.setEnabled(enabled)
         for button in self.phase_buttons.values():
             button.setEnabled(enabled)
-
-    def _choose_result_file(self) -> None:
-        path, _filter = QFileDialog.getOpenFileName(
-            self, "Import Ground Result", "", "JSON files (*.json)"
-        )
-        if not path:
-            return
-        try:
-            file_path = Path(path)
-            if file_path.stat().st_size > DEFAULT_IMPORT_MAX_BYTES:
-                raise ValueError("ground result JSON exceeds the import size limit")
-            self.import_json_text(
-                file_path.read_text(encoding="utf-8"), source_name=file_path.name
-            )
-        except (OSError, UnicodeError, TypeError, ValueError) as exc:
-            self.status_label.setText(f"Could not import {Path(path).name}: {exc}")
-            self.status_label.setProperty("state", "error")
+        self.persistence_controls.set_exports_enabled(enabled)
 
     def _toggle_playback(self) -> None:
         self.pause() if self.playback_timer.isActive() else self.play()

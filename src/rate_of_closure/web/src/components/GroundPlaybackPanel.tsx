@@ -5,7 +5,17 @@ import { useRef, useState } from "react";
 import type { FlightToGroundResult, GroundVec3 } from "../model/flightGroundTypes";
 import { flightToGroundResultFromJson } from "../model/flightGroundContract";
 import { GroundPlaybackTimeline } from "../model/groundPlayback";
-import { GroundPlayback3D } from "./GroundPlayback3D";
+import {
+  GROUND_PLAYBACK_WORKSPACE_SCHEMA,
+  groundEventCsv,
+  groundResultJson,
+  groundTrajectoryCsv,
+  groundWorkspaceFromJson,
+  groundWorkspaceToJson,
+  type GroundPlaybackWorkspace,
+} from "../model/groundPlaybackWorkspace";
+import { GroundPlayback3D, type GroundPlaybackPortableState } from "./GroundPlayback3D";
+import { downloadText } from "./variationUi";
 
 const MAX_IMPORT_BYTES = 5 * 1024 * 1024;
 const MAX_IMPORT_POINTS = 100_000;
@@ -127,12 +137,16 @@ function ResultTables({ result }: { readonly result: FlightToGroundResult }) {
   );
 }
 
-function LoadedResult({ result }: { readonly result: FlightToGroundResult }) {
+function LoadedResult({ result, initialState, onStateChange }: {
+  readonly result: FlightToGroundResult;
+  readonly initialState: GroundPlaybackPortableState;
+  readonly onStateChange: (state: GroundPlaybackPortableState) => void;
+}) {
   const timeline = new GroundPlaybackTimeline(result);
   return <>
     <div className="grid gap-4 lg:grid-cols-[minmax(15rem,22rem)_1fr]">
       <div className="space-y-4"><Summary result={result} /><Evidence result={result} /></div>
-      <GroundPlayback3D timeline={timeline} />
+      <GroundPlayback3D timeline={timeline} initialState={initialState} onStateChange={onStateChange} />
     </div>
     <ResultTables result={result} />
   </>;
@@ -140,7 +154,12 @@ function LoadedResult({ result }: { readonly result: FlightToGroundResult }) {
 
 export function GroundPlaybackPanel() {
   const importGeneration = useRef(0);
-  const [result, setResult] = useState<FlightToGroundResult | null>(null);
+  const portableState = useRef<GroundPlaybackPortableState | null>(null);
+  const [loaded, setLoaded] = useState<{
+    readonly result: FlightToGroundResult;
+    readonly initialState: GroundPlaybackPortableState;
+    readonly generation: number;
+  } | null>(null);
   const [message, setMessage] = useState("No result loaded.");
   const [error, setError] = useState<string | null>(null);
 
@@ -157,15 +176,54 @@ export function GroundPlaybackPanel() {
       }
       new GroundPlaybackTimeline(parsed);
       if (generation !== importGeneration.current) return;
-      setResult(parsed);
+      const initialState: GroundPlaybackPortableState = {
+        playback: { timeS: parsed.trajectory[0].time_s, speed: 1, loop: false },
+        view: { yawDeg: -0.65 * 180 / Math.PI, pitchDeg: 0.38 * 180 / Math.PI, zoom: 1 },
+      };
+      portableState.current = initialState;
+      setLoaded({ result: parsed, initialState, generation });
       setError(null);
       setMessage(`Loaded ${file.name} — ${parsed.status}; ${parsed.trajectory.length} samples.`);
     } catch (reason) {
       if (generation !== importGeneration.current) return;
       const detail = reason instanceof Error ? reason.message : "Unknown import error.";
-      const retained = result === null ? "" : " Last valid result remains loaded.";
+      const retained = loaded === null ? "" : " Last valid result remains loaded.";
       setError(`Could not import ${file.name}: ${detail}${retained}`);
     }
+  };
+
+  const importWorkspace = async (file: File | undefined) => {
+    if (!file) return;
+    const generation = importGeneration.current + 1;
+    importGeneration.current = generation;
+    try {
+      if (file.size > MAX_IMPORT_BYTES) throw new RangeError("File exceeds the 5 MiB import limit.");
+      const candidate = groundWorkspaceFromJson(await readFileText(file));
+      if (candidate.result.trajectory.length > MAX_IMPORT_POINTS) {
+        throw new RangeError("Trajectory exceeds the 100,000 point display limit.");
+      }
+      if (generation !== importGeneration.current) return;
+      const initialState = { playback: candidate.playback, view: candidate.view };
+      portableState.current = initialState;
+      setLoaded({ result: candidate.result, initialState, generation });
+      setError(null);
+      setMessage(`Loaded workspace ${file.name} — ${candidate.result.status}; paused at ${candidate.playback.timeS} s.`);
+    } catch (reason) {
+      if (generation !== importGeneration.current) return;
+      const detail = reason instanceof Error ? reason.message : "Unknown import error.";
+      const retained = loaded === null ? "" : " Last valid playback remains loaded.";
+      setError(`Could not import ${file.name}: ${detail}${retained}`);
+    }
+  };
+
+  const workspace = (): GroundPlaybackWorkspace => {
+    if (loaded === null || portableState.current === null) throw new Error("No result loaded.");
+    return {
+      schemaVersion: GROUND_PLAYBACK_WORKSPACE_SCHEMA,
+      result: loaded.result,
+      playback: portableState.current.playback,
+      view: portableState.current.view,
+    };
   };
 
   return (
@@ -180,6 +238,7 @@ export function GroundPlaybackPanel() {
           Result v1 does not embed surface geometry, so neutral locked-scale axes are shown instead of a claimed terrain plane.
         </p>
       </header>
+      <div className="flex flex-wrap gap-2">
       <label className="inline-flex cursor-pointer rounded border border-sky-500/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-200">
         Import Ground Result JSON…
         <input type="file" accept="application/json,.json" className="sr-only"
@@ -189,13 +248,39 @@ export function GroundPlaybackPanel() {
             event.currentTarget.value = "";
           }} />
       </label>
+      <label className="inline-flex cursor-pointer rounded border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-200">
+        Import Workspace JSON…
+        <input type="file" accept="application/json,.json" className="sr-only"
+          aria-label="Import ground playback workspace"
+          onChange={(event) => {
+            void importWorkspace(event.target.files?.[0]);
+            event.currentTarget.value = "";
+          }} />
+      </label>
+      {loaded !== null && <>
+        <button type="button" aria-label="Save ground playback workspace"
+          className="rounded border border-slate-700 px-3 py-2 text-sm"
+          onClick={() => downloadText("ground-playback-workspace.json", groundWorkspaceToJson(workspace()), "application/json")}>Save Workspace</button>
+        <button type="button" aria-label="Export ground result JSON"
+          className="rounded border border-slate-700 px-3 py-2 text-sm"
+          onClick={() => downloadText("ground-result.json", groundResultJson(loaded.result), "application/json")}>Result JSON</button>
+        <button type="button" aria-label="Export ground trajectory CSV"
+          className="rounded border border-slate-700 px-3 py-2 text-sm"
+          onClick={() => downloadText("ground-trajectory.csv", groundTrajectoryCsv(loaded.result), "text/csv;charset=utf-8")}>Trajectory CSV</button>
+        <button type="button" aria-label="Export ground events CSV"
+          className="rounded border border-slate-700 px-3 py-2 text-sm"
+          onClick={() => downloadText("ground-events.csv", groundEventCsv(loaded.result), "text/csv;charset=utf-8")}>Events CSV</button>
+      </>}
+      </div>
       {error ? <p role="alert" className="rounded border border-red-500/40 bg-red-950/30 p-3 text-sm text-red-200">{error}</p>
         : <p role="status" className="text-sm text-slate-300">{message}</p>}
-      {result === null ? (
+      {loaded === null ? (
         <div className="rounded-lg border border-dashed border-slate-700 p-8 text-center text-slate-400">
           Choose an exact result record to enable phase-aware playback and evidence tables.
         </div>
-      ) : <LoadedResult result={result} />}
+      ) : <LoadedResult key={loaded.generation} result={loaded.result}
+        initialState={loaded.initialState}
+        onStateChange={(state) => { portableState.current = state; }} />}
     </section>
   );
 }

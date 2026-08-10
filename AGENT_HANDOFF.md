@@ -3,6 +3,39 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
++## 2026-08-10 issue #4274 playback workspace persistence and exports
+
+A local continuation on `feat/4274-ground-playback-persistence` adds matched
+PyQt6/React persistence and deterministic evidence export from exact reviewed
+implementation head `80f0f3ebdb0835c300f9f1e60e7ef2f8703e6cc8`. The strict
+`rate-of-closure-ground-playback-workspace/v1` document embeds the validated
+`flight-to-ground-result/v1` plus paused absolute time, supported speed, loop
+state, and a UI-neutral orbit camera. Imports reject duplicate/unknown fields,
+unsupported versions, nonfinite or out-of-range state, oversized documents,
+and oversized trajectories before replacing the last-good workspace. Active
+timers are never persisted and importing always restores paused.
+
+Both surfaces export lossless canonical result JSON and deterministic
+LF-terminated trajectory/event CSV with every raw position, linear velocity,
+angular velocity, frame, phase/event, time, and sequence field. PyQt uses
+atomic `QSaveFile` replacement. The existing PyQt tab was reduced from 422 to
+367 lines by separating contract, persistence orchestration, and file controls.
+This slice executes no physics and does not add surface editors, terrain
+meshes, comparison overlays, ensembles, solvers, compiled runtimes, or
+UpstreamDrift integration. Keep issue #4274 and epic #4267 open.
+
+Evidence passes 17 focused Python/PyQt tests (including tooltip governance),
+the complete Rate suite (891 tests), 12 focused React/model tests, the complete
+React suite (110 files / 678 tests), and the 198-module Vite production build.
+Ruff check/format, pinned-style MyPy on five production modules, TypeScript,
+zero-warning ESLint, documentation, scoped secrets, module size, minimum-test,
+conflict-marker, and final diff gates pass. Parent PR #4315 later
+advanced its documentation-only head to
+`2618ab025622bf1a4fa21e771b30f808f783648b`; publication must normally
+propagate that exact parent and reconcile the four canonical records
+monotonically. No push or PR is made from this local slice.
+
+
 ## 2026-08-10 issue #4274 exact-parent propagation
 
 The locally reviewed Ground Playback continuation now incorporates exact

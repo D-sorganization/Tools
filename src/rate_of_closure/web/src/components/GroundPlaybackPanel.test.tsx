@@ -93,4 +93,40 @@ describe("GroundPlaybackPanel", () => {
     expect(screen.getByRole("rowheader", { name: "Carry" })).toBeInTheDocument();
     expect(screen.getByText("0.245 m")).toBeInTheDocument();
   });
+
+  it("imports a workspace atomically and exposes deterministic exports", async () => {
+    render(<GroundPlaybackPanel />);
+    const workspace = {
+      schema_version: "rate-of-closure-ground-playback-workspace/v1",
+      result: fixture.result,
+      playback: { time_s: 1.205, speed: 2, loop: true },
+      view: { yaw_deg: -37.5, pitch_deg: 18, zoom: 1.75 },
+    };
+    fireEvent.change(screen.getByLabelText("Import ground playback workspace"), {
+      target: { files: [new File([JSON.stringify(workspace)], "session.json", {
+        type: "application/json",
+      })] },
+    });
+
+    expect(await screen.findByText(/Loaded workspace session.json/)).toBeInTheDocument();
+    expect(screen.getByLabelText("Ground playback speed")).toHaveValue("2");
+    expect(screen.getByLabelText("Loop ground playback")).toBeChecked();
+    expect(screen.getByRole("status", { name: "Ground playback position" }))
+      .toHaveTextContent("1.2050 s");
+    expect(screen.getByRole("button", { name: "Export ground result JSON" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Export ground trajectory CSV" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Export ground events CSV" })).toBeEnabled();
+
+    const retained = screen.getByRole("rowheader", { name: "Carry" });
+    const invalid = { ...workspace, playback: { ...workspace.playback, speed: 3 } };
+    fireEvent.change(screen.getByLabelText("Import ground playback workspace"), {
+      target: { files: [new File([JSON.stringify(invalid)], "bad-session.json", {
+        type: "application/json",
+      })] },
+    });
+    await waitFor(() => expect(screen.getByRole("alert")).toHaveTextContent(/last valid playback remains loaded/i));
+    expect(retained).toBeInTheDocument();
+    expect(screen.getByLabelText("Ground playback speed")).toHaveValue("2");
+    expect(screen.getByLabelText("Loop ground playback")).toBeChecked();
+  });
 });

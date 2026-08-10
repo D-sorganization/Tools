@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.33                                    |
-| **Spec Version**        | 1.14.33                                    |
+| **Current Version**     | 1.14.35                                    |
+| **Spec Version**        | 1.14.35                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,25 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
++### 2026-08-10 Ground-playback workspace persistence and evidence export
+
+- PyQt6 and React share strict
+  `rate-of-closure-ground-playback-workspace/v1` semantics over one validated
+  `flight-to-ground-result/v1`, paused absolute playback time, supported speed,
+  loop state, and UI-neutral orbit yaw/pitch/zoom. Active playback is never
+  persisted, and every import restores paused.
+- Workspace imports are bounded, duplicate-key-aware, exact-field and
+  exact-version validated, and atomic: invalid files retain the complete
+  last-good result, playback, and view state.
+- Result export is the lossless canonical strict JSON record. Trajectory and
+  event CSV exports are deterministic, LF-terminated, accessible tables that
+  retain every raw position, linear/angular velocity, frame, phase/event, time,
+  sample/sequence field. PyQt file replacement uses `QSaveFile`.
+- The persistence layer does not run or alter physics. Surface editors, terrain
+  meshes, result comparisons, ensembles, inverse solvers, compiled runtimes,
+  and UpstreamDrift integration remain downstream work under #4274/#4267.
+
 
 ### 2026-08-10 Strict ground-result playback
 
@@ -77,8 +96,8 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   auto-fit/reset. Because result v1 contains no surface geometry, the views
   show neutral axes and explicitly do not claim an exact terrain plane.
 - Neither client executes ground physics in this slice. Surface editors,
-  terrain meshes, comparison overlays, workspace persistence/export,
-  ensembles, inverse optimization, Rust/WASM execution, and UpstreamDrift
+  terrain meshes, comparison overlays, ensembles, inverse optimization,
+  Rust/WASM execution, and UpstreamDrift
   consumer integration remain downstream work under issue #4274 and epic
   #4267.
 
@@ -3063,6 +3082,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.35 | feat(ground-playback, #4274): add strict cross-surface v1 workspace persistence for validated result plus paused playback/orbit state, atomic last-good import, canonical result JSON, full deterministic trajectory/event CSV, atomic PyQt file replacement, accessible controls, and contract/UI parity tests; retain explicit no-physics, no-terrain, no-comparison, no-solver, and no-consumer boundaries. |
 | 2026-08-10 | 1.14.33 | merge(ground-playback, #4274 #4309): normally propagate exact corrected ground-reference parent `f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` into the locally reviewed PyQt6/React playback continuation without changing its base; preserve strict duplicate-key-aware import, monotonic-time playback, continuous speed and loop changes, full result/provenance evidence, locked-scale 3D controls, and explicit non-delivery boundaries while inheriting corrected ground-study, material, impact/roll, compatibility, and reference-execution ancestry; protected publication, CI, approval, dependency integration, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.23 | fix(ground-playback, #4274): make PyQt playback monotonic-time based with continuous speed/loop-mode changes and modulo loop overshoot; render full trajectory and event linear/angular state, result identity/status/termination, input digest, calibration identity/confidence, and warnings with shared-fixture PyQt/React parity assertions; protected publication and review remain open. |
 | 2026-08-10 | 1.14.22 | fix(ground-playback, #4274): route browser result imports through the duplicate-key-aware strict JSON facade, retain the last valid result on duplicate-field rejection, disclose that retention in the error state, and cover the boundary with an atomic-import regression; protected publication and review remain open. |

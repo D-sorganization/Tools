@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import fixture from "../model/__fixtures__/ground_reference_pipeline_golden_v1.json";
 import { parseFlightToGroundResultRecord } from "../model/flightGroundResultContract";
 import { GroundPlaybackTimeline } from "../model/groundPlayback";
+import { normalizeGroundPlaybackYawDegrees } from "../model/groundPlaybackWorkspace";
 import { GroundPlayback3D } from "./GroundPlayback3D";
 
 describe("GroundPlayback3D", () => {
@@ -75,5 +76,26 @@ describe("GroundPlayback3D", () => {
     if (!callback) throw new Error("Expected one animation callback");
     act(() => callback?.(performance.now() + 20));
     expect(screen.getByRole("button", { name: "Pause ground result" })).toBeEnabled();
+  });
+
+  it("restores portable paused playback and camera state", () => {
+    const onStateChange = vi.fn();
+    render(<GroundPlayback3D timeline={timeline} initialState={{
+      playback: { timeS: 1.205, speed: 2, loop: true },
+      view: { yawDeg: -37.5, pitchDeg: 18, zoom: 1.75 },
+    }} onStateChange={onStateChange} />);
+
+    expect(screen.getByLabelText("Ground playback speed")).toHaveValue("2");
+    expect(screen.getByLabelText("Loop ground playback")).toBeChecked();
+    expect(screen.getByRole("status", { name: "Ground playback position" }))
+      .toHaveTextContent("1.2050 s");
+    expect(screen.getByRole("button", { name: "Play ground result" })).toBeEnabled();
+    expect(onStateChange).toHaveBeenCalledWith({
+      playback: { timeS: 1.205, speed: 2, loop: true },
+      view: { yawDeg: -37.5, pitchDeg: 18, zoom: 1.75 },
+    });
+
+    expect(normalizeGroundPlaybackYawDegrees(397.5)).toBe(37.5);
+    expect(normalizeGroundPlaybackYawDegrees(-397.5)).toBe(-37.5);
   });
 });

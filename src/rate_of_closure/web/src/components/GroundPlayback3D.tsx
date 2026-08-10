@@ -4,6 +4,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { GroundPhase } from "../model/flightGroundTypes";
 import type { GroundPlaybackTimeline } from "../model/groundPlayback";
+import type {
+  GroundPlaybackState,
+  GroundPlaybackViewState,
+} from "../model/groundPlaybackWorkspace";
+import { normalizeGroundPlaybackYawDegrees } from "../model/groundPlaybackWorkspace";
 import type { Vec3 } from "../model/simulation";
 import { observeCanvas } from "./canvasDisplay";
 import {
@@ -12,29 +17,57 @@ import {
   type PlaybackCamera,
 } from "./flightPlaybackDrawing";
 
-interface Props { readonly timeline: GroundPlaybackTimeline }
+export interface GroundPlaybackPortableState {
+  readonly playback: GroundPlaybackState;
+  readonly view: GroundPlaybackViewState;
+}
+
+interface Props {
+  readonly timeline: GroundPlaybackTimeline;
+  readonly initialState?: GroundPlaybackPortableState;
+  readonly onStateChange?: (state: GroundPlaybackPortableState) => void;
+}
 
 const INITIAL_CAMERA: PlaybackCamera = { yawRad: -0.65, pitchRad: 0.38, zoom: 1 };
 const SPEEDS = [0.25, 0.5, 1, 2, 4] as const;
 const PHASES: readonly GroundPhase[] = ["bounce", "skid", "roll"];
 
-export function GroundPlayback3D({ timeline }: Props) {
+const cameraFromView = (view: GroundPlaybackViewState | undefined): PlaybackCamera => view
+  ? { yawRad: view.yawDeg * Math.PI / 180, pitchRad: view.pitchDeg * Math.PI / 180, zoom: view.zoom }
+  : INITIAL_CAMERA;
+const stableDegrees = (value: number): number => Number(value.toFixed(11));
+const viewFromCamera = (camera: PlaybackCamera): GroundPlaybackViewState => ({
+  yawDeg: stableDegrees(normalizeGroundPlaybackYawDegrees(camera.yawRad * 180 / Math.PI)),
+  pitchDeg: stableDegrees(camera.pitchRad * 180 / Math.PI),
+  zoom: camera.zoom,
+});
+
+export function GroundPlayback3D({ timeline, initialState, onStateChange }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
-  const timeRef = useRef(timeline.startTimeS);
-  const [timeS, setTimeS] = useState(timeline.startTimeS);
+  const initialTime = initialState?.playback.timeS ?? timeline.startTimeS;
+  const timeRef = useRef(initialTime);
+  const [timeS, setTimeS] = useState(initialTime);
   const [playing, setPlaying] = useState(false);
-  const [loop, setLoop] = useState(false);
-  const [speed, setSpeed] = useState<number>(1);
-  const [camera, setCamera] = useState(INITIAL_CAMERA);
+  const [loop, setLoop] = useState(initialState?.playback.loop ?? false);
+  const [speed, setSpeed] = useState<number>(initialState?.playback.speed ?? 1);
+  const [camera, setCamera] = useState(() => cameraFromView(initialState?.view));
   const frame = useMemo(() => timeline.frameAt(timeS), [timeline, timeS]);
 
   useEffect(() => {
     setPlaying(false);
-    timeRef.current = timeline.startTimeS;
-    setTimeS(timeline.startTimeS);
-  }, [timeline]);
+    const restoredTime = initialState?.playback.timeS ?? timeline.startTimeS;
+    timeRef.current = restoredTime;
+    setTimeS(restoredTime);
+    setSpeed(initialState?.playback.speed ?? 1);
+    setLoop(initialState?.playback.loop ?? false);
+    setCamera(cameraFromView(initialState?.view));
+  }, [timeline, initialState]);
   useEffect(() => { timeRef.current = timeS; }, [timeS]);
+  useEffect(() => onStateChange?.({
+    playback: { timeS, speed, loop },
+    view: viewFromCamera(camera),
+  }), [timeS, speed, loop, camera, onStateChange]);
   useEffect(() => {
     if (!playing || timeline.durationS <= 0) return;
     let animationId = 0;

@@ -80,6 +80,62 @@ def test_invalid_import_retains_last_good_result(qtbot) -> None:  # type: ignore
     assert "bad.json" in tab.status_label.text()
 
 
+def test_workspace_import_restores_playback_and_view_atomically(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+    tab.import_json_text(_result_text(), source_name="good.json")
+    tab.set_time(1.205)
+    tab.speed_combo.setCurrentText("2×")
+    tab.loop_checkbox.setChecked(True)
+    tab.view.apply_workspace_view(yaw_deg=-37.5, pitch_deg=18.0, zoom=1.75)
+    encoded = tab.workspace_json()
+
+    restored = GroundPlaybackTab()
+    qtbot.addWidget(restored)
+    restored.import_workspace_json_text(encoded, source_name="session.json")
+    view = restored.view.workspace_view()
+
+    assert restored.current_time_s == pytest.approx(1.205)
+    assert restored.speed_combo.currentText() == "2×"
+    assert restored.loop_checkbox.isChecked()
+    assert view.yaw_deg == pytest.approx(-37.5)
+    assert view.pitch_deg == pytest.approx(18.0)
+    assert view.zoom == pytest.approx(1.75)
+    assert not restored.playback_timer.isActive()
+    assert "workspace" in restored.status_label.text().lower()
+
+    original = restored.timeline
+    with pytest.raises(ValueError):
+        restored.import_workspace_json_text(
+            encoded.replace('"speed":2', '"speed":3'), source_name="bad.json"
+        )
+    assert restored.timeline is original
+    assert restored.current_time_s == pytest.approx(1.205)
+    assert restored.speed_combo.currentText() == "2×"
+    assert restored.loop_checkbox.isChecked()
+    assert restored.view.workspace_view().zoom == pytest.approx(1.75)
+
+
+def test_persistence_and_export_controls_are_accessible(qtbot) -> None:  # type: ignore[no-untyped-def]
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+
+    assert (
+        tab.import_workspace_button.accessibleName()
+        == "Import ground playback workspace"
+    )
+    assert not tab.save_workspace_button.isEnabled()
+    tab.import_json_text(_result_text())
+
+    assert tab.save_workspace_button.isEnabled()
+    assert tab.export_result_button.isEnabled()
+    assert tab.export_trajectory_button.isEnabled()
+    assert tab.export_events_button.isEnabled()
+    assert tab.result_json() == tab.timeline.result.to_json()
+    assert tab.trajectory_csv().startswith("sample_index,time_s,phase,frame")
+    assert tab.event_csv().startswith("sequence,event_type,time_s,frame")
+
+
 def test_play_pause_step_phase_jump_restart_and_loop(qtbot) -> None:  # type: ignore[no-untyped-def]
     tab = GroundPlaybackTab()
     qtbot.addWidget(tab)
