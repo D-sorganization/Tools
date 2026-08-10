@@ -1125,3 +1125,36 @@ Black 26.1.0, MyPy 1.13 for the two changed production modules, the campaign
 manifest and its eight contract tests, documentation governance, changed-file
 size, and `git diff --check` all pass. Require fresh ordinary protected CI and
 review at the pushed exact head; keep #4273 and #4267 open.
+
+## 2026-08-10 Bounded ground-reference executor continuation
+
+`feat/4275-ground-reference-execution` starts exactly at PR #4308 head
+`c8ebf422669992c4a33db661b0c37dfe72b580ae`. Its canonical one-shot Python
+entry point reuses the impact/bounce, skid/roll, surface-resolver, and result
+composer authorities without copying their physics. Only representable
+settled-prefix and rest/left-surface/time-limit/event-limit suffix combinations
+produce `GroundSimulationResult`; cancellation has its own typed signal and
+every other native terminal state fails closed with phase, reason, and request
+fingerprint.
+The current suffix solver does not emit its reserved `numerical_failure` enum;
+native numerical exceptions remain unclassified rather than being conflated
+with resolver, configuration, or callback errors.
+
+Tests pin deterministic replay and a shared full-pipeline golden fixture, both
+representable censored endpoints, phase cancellation/failure behavior, exact
+control validation, callback continuity, and the public API. This advances
+#4273/#4275 only. It does not provide PyQt6/React controls, ensemble execution,
+nonplanar terrain, production presets, Rust/WASM, or UpstreamDrift integration.
+Keep #4267 open and publish only after full ground/import/static/campaign gates
+and an independent review, as a draft child targeting
+`feat/4273-ground-study-scalar-adapter`.
+
+Independent exact-tree re-review is READY. The self-contained fixture now
+reconstructs all explicit bounce/skid settings, and an adversarial forbidden-
+bounce test proves resolver mismatch fails before physics or cancellation
+callbacks. Evidence is 219 full ground tests, 44 focused tests on CPython 3.12
+and isolated 3.10, 26 flight compatibility tests, pinned Ruff 0.14.10,
+changed-file Black, pinned MyPy 1.13, campaign/docs/assertion/structural/diff
+gates, both import orders, and exact fixture bytes. The only repository-wide
+Black findings are unchanged inherited `ground/study_wire.py` and
+`ground/tests/test_profile_contract.py`; this slice is Black-clean.

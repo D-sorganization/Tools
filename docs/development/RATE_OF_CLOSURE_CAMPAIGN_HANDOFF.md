@@ -1474,3 +1474,46 @@ Black 26.1.0, MyPy 1.13 for the two changed production modules, the campaign
 manifest and its eight contract tests, documentation governance, changed-file
 size, and `git diff --check` all pass. Require fresh ordinary protected CI and
 review at the pushed exact head; keep #4273 and #4267 open.
+
+## 2026-08-10 Issues #4273/#4275 bounded reference execution
+
+Branch `feat/4275-ground-reference-execution` starts from exact draft PR #4308
+head `c8ebf422669992c4a33db661b0c37dfe72b580ae`. It adds the narrow canonical
+Python orchestration missing between the existing bounce, static-plane
+skid/roll, and result-composition contracts. The executor calls each phase once,
+passes the same cooperative cancellation hook to both, and returns a public
+result only when the native phase outcomes already have an honest v1 mapping.
+
+Rest, finite-domain exit, time-limit, and event-limit suffixes compose after a
+settled-to-skid prefix. Cancellation raises a distinct typed signal. Bounce
+time/event limit, no-recontact, and numerical failure, plus suffix step-limit,
+unsupported-surface, and numerical failure, raise typed fail-closed evidence
+with phase, native reason, and request fingerprint. Composition rejection is
+also typed and retains the original exception as its cause. No terminal state
+is relabeled.
+The current skid/roll implementation does not emit its reserved
+`numerical_failure` enum; native numerical exceptions propagate, and the
+coordinator intentionally avoids a broad `ValueError` catch that would also
+swallow resolver, configuration, or callback contract errors.
+
+The shared golden fixture records an exact complete bounce/skid/roll/rest
+request and result with canonical digests. Focused tests also cover repeat-run
+byte determinism, representable censored outcomes, exact controls, callback
+continuity, and public exports. This is a bounded #4273/#4275 continuation, not
+ground epic completion: UI, ensembles, production-qualified material data,
+changing normals/regions, compiled-runtime parity, and UpstreamDrift consumers
+remain open under #4274/#4276/#4267. Require complete local and independent
+review gates, then publish only as a stacked draft child of PR #4308 without
+retargeting or rewriting ancestors.
+
+Independent exact-tree re-review declares this bounded slice READY after the
+self-contained execution fixture and pre-physics resolver DbC blockers were
+fixed. Current evidence is 219 ground tests, 44 focused executor/API tests on
+CPython 3.12 and isolated 3.10, 26 flight contract/result/transfer tests,
+pinned Ruff 0.14.10, changed-file Black, pinned MyPy 1.13, campaign manifest
+plus eight contracts, documentation governance, changed-test assertions,
+400-line file, 50-line function, four-parameter signature and diff gates, both
+import orders, and the pinned fixture bytes. Repository-wide Black separately
+reports only unchanged inherited `ground/study_wire.py` and
+`ground/tests/test_profile_contract.py`; no unrelated formatting expansion is
+part of this carrier.

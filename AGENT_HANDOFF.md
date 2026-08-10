@@ -651,3 +651,40 @@ Black 26.1.0, MyPy 1.13 for the two changed production modules, the campaign
 manifest and its eight contract tests, documentation governance, changed-file
 size, and `git diff --check` all pass. Require fresh ordinary protected CI and
 review at the pushed exact head; keep #4273 and #4267 open.
+
+## 2026-08-10 Bounded ground-reference executor continuation
+
+Branch `feat/4275-ground-reference-execution` starts from exact PR #4308 head
+`c8ebf422669992c4a33db661b0c37dfe72b580ae`. The new
+`ground-reference-execution/v1` boundary runs the existing repeated-bounce and
+skid/roll solvers once and delegates successful result construction to the
+existing composer. It composes only rest, left-surface, time-limit, and
+event-limit suffixes after an exact settled-to-skid prefix. Cancellation raises
+a distinct typed operational signal; every other non-representable native
+terminal state fails closed with phase, native reason, and request fingerprint.
+The current skid/roll solver does not emit its reserved `numerical_failure`
+enum; native numerical exceptions continue to propagate without broad
+reclassification.
+
+The same optional cancellation callback reaches both phases. A committed
+cross-runtime fixture pins a full bounce/skid/roll/rest request, result, and
+canonical digests, while focused tests cover deterministic replay, censored
+time-limit, finite-domain exit, cancellation, bounce failure, suffix step
+exhaustion, exact nested controls, and public exports. This bounded #4273/#4275
+slice does not add UI, ensembles, changing terrain, compiled runtimes,
+production calibration, or UpstreamDrift parity and cannot close #4267. Require
+the full ground suite, flight-first and ground-first imports, pinned Ruff,
+Black, MyPy, manifest, documentation, assertion, structural, file-size, diff,
+and independent-review gates before publishing a draft child of PR #4308.
+
+Independent exact-tree re-review is READY after both identified blockers were
+closed: the golden case now carries and reconstructs every concrete phase
+setting, and resolver/request compatibility is proven to fail before bounce or
+callback side effects. Exact local evidence is 219 ground tests, 44 focused
+executor/API tests on CPython 3.12 and isolated CPython 3.10, and 26 flight
+contract/result/transfer tests. Pinned Ruff 0.14.10, changed-file Black, pinned
+MyPy 1.13, manifest plus eight tests, docs governance, assertion, 400/50/4
+structural budgets, both import orders, fixture bytes, and diff checks pass.
+Repository-wide Black still reports only the two unchanged inherited files
+`ground/study_wire.py` and `ground/tests/test_profile_contract.py`; do not
+misstate that baseline as a failure of this slice.
