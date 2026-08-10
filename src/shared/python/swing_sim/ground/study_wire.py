@@ -14,6 +14,8 @@ from shared.python.swing_sim.solver.target_serialization import (
 )
 
 from .contract_types import (
+    GroundCalibration,
+    GroundProvenance,
     GroundResultStatus,
     GroundSurfaceProfile,
     GroundTerminationReason,
@@ -38,6 +40,7 @@ from .study_types import (
 from .unavailable_types import GroundUnavailableField
 
 _ROOT_FIELDS = {
+    "calibration",
     "final_target",
     "final_target_unavailable_reason",
     "first_contact_target",
@@ -46,6 +49,7 @@ _ROOT_FIELDS = {
     "model_id",
     "model_version",
     "profile",
+    "provenance",
     "request_id",
     "request_sha256",
     "result_sha256",
@@ -270,10 +274,12 @@ def study_to_dict(value: GroundStudyProjection) -> dict[str, Any]:
         if value.first_contact_target is None
         else _evaluation_to_dict(value.first_contact_target),
         "ball_radius_m": value.ball_radius_m,
+        "calibration": value.calibration.to_dict(),
         "metrics": None if value.metrics is None else _metrics_to_dict(value.metrics),
         "model_id": value.model_id,
         "model_version": value.model_version,
         "profile": None if value.profile is None else _profile_to_dict(value.profile),
+        "provenance": value.provenance.to_dict(),
         "request_id": value.request_id,
         "request_sha256": value.request_sha256,
         "result_sha256": value.result_sha256,
@@ -336,6 +342,12 @@ def study_from_dict(payload: dict[str, Any]) -> GroundStudyProjection:
         _number(data["ball_radius_m"], "ball_radius_m"),
         _string(data["model_id"], "model_id"),
         _string(data["model_version"], "model_version"),
+        GroundCalibration.from_dict(
+            dict(_mapping(data["calibration"], "ground calibration"))
+        ),
+        GroundProvenance.from_dict(
+            dict(_mapping(data["provenance"], "ground provenance"))
+        ),
         GroundResultStatus(_string(data["result_status"], "result_status")),
         GroundStudyStatus(_string(data["status"], "status")),
         GroundTerminationReason(

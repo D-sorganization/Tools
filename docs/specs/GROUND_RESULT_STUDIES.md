@@ -10,7 +10,7 @@ replace a missing value.
 
 The projection records the exact caller-supplied request digest and SHA-256
 identity of the canonical source result, complete solver surface, ball radius,
-frame, model identity,
+frame, model identity, result-model calibration and provenance,
 termination, optional evidence-bearing material profile and operating
 condition, typed result warnings, profile qualification warnings, and typed
 unavailable fields. A request/result identity mismatch, incompatible bound
@@ -66,7 +66,7 @@ an otherwise eligible result.
 
 | Evidence | Study status | Objective eligible |
 | --- | --- | --- |
-| Complete result, rest termination, qualified calibrated bound profile | `complete` | Yes |
+| Complete result, rest termination, qualified calibrated bound profile, measured/literature result calibration with positive confidence | `complete` | Yes |
 | Partial surface or airborne terminal observation | `censored` | No |
 | Failed result | `failed` | No |
 | Required contact evidence unavailable | `unavailable` | No |
@@ -76,14 +76,19 @@ Eligibility is derived from evidence and encoded with canonical reasons; a
 caller cannot forge it independently. The complete strict material profile is
 revalidated against its evidence-derived qualification/calibration status and
 the embedded solver surface; a detached digest or aggregate status is not
-trusted. Failed and unavailable studies contain no numeric metrics or target
+trusted. Result-model calibration is separately preserved: `estimated` or
+`unvalidated` calibration kinds, and zero-confidence calibration, are never
+objective eligible. Result provenance is retained verbatim for audit; the v1
+contract does not attempt to certify a producer allowlist. Failed and
+unavailable studies contain no numeric metrics or target
 evaluations. Typed unavailable-field provenance is retained verbatim.
 
 ## Persistence and validation
 
 The strict v1 JSON contract rejects missing or unknown fields, duplicate keys,
 non-finite numbers, unsupported enum values, noncanonical eligibility, and
-incoherent nested records. On every construction, endpoint geometry is checked
+incoherent nested records. Calibration and provenance use the exact canonical
+ground contract records. On every construction, endpoint geometry is checked
 against carry/total/downrange/offline summary values, surface path is checked
 against skid plus roll, sphere/plane contacts are re-derived, and intrinsic
 target misses are recomputed from the embedded target and plane. All numeric
@@ -123,3 +128,8 @@ The two digests must not be presented as an attested pair: the request digest
 is exact caller context, while the result digest is exact source-result
 identity. Compatibility checks reduce accidental mismatch but cannot replace a
 result-carried request fingerprint.
+
+The earlier direct `GroundSimulationResult` compatibility adapter cannot prove
+material-profile qualification. It is deprecated and no longer exported from
+the ground package facade; qualification-sensitive consumers must enter
+through a self-validating study adapter.

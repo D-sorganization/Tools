@@ -24,8 +24,8 @@ from shared.python.swing_sim.ground import (
     GroundUnavailableReason,
     request_from_json,
     result_from_json,
-    to_ground_model_result,
 )
+from shared.python.swing_sim.ground.result_adapter import to_ground_model_result
 
 from ._support import (
     _contact,
@@ -260,8 +260,9 @@ def test_contact_bracket_requires_an_incoming_relative_velocity() -> None:
         replace(_surface(), surface_velocity_m_s=(0.0, 1.0, 0.0))
 
 
-def test_backward_adapter_maps_qualified_values_without_inference() -> None:
-    legacy = to_ground_model_result(_result())
+def test_backward_adapter_maps_compatibility_values_without_inference() -> None:
+    with pytest.deprecated_call(match="unqualified compatibility output"):
+        legacy = to_ground_model_result(_result())
 
     assert legacy.model_id == "tools-ground-reference@0.1.0"
     assert legacy.total_distance_m == pytest.approx(228.0111017034039)

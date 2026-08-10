@@ -1007,6 +1007,17 @@ The request digest is exact caller context, not an attested producer binding:
 `ground-result/v1` does not yet carry a request fingerprint. The adapter checks
 shared IDs, surface/frame, calibration, and provenance and fails closed on
 those available incompatibilities.
+The record embeds the exact result calibration/provenance. Eligibility now
+also requires measured/literature result calibration with positive confidence;
+estimated, unvalidated, or zero-confidence solver evidence is rejected.
+Provenance remains auditable context, not producer certification.
+The legacy direct `GroundSimulationResult` metric adapter is no longer a public
+facade export and warns on module-level use; it cannot enter qualification-
+sensitive workflows because it lacks a bound material profile.
+
+Exact repair commit `940563f222065c4f343b587699c52062c6e1db59`
+passes 194 ground tests, 27 flight-first import/result/transfer tests, and the
+independent 75-test calibration/provenance/import/API audit.
 
 Keep issue #4273 and epic #4267 open. Variation/dispersion, wind, optimizer,
 UI, compiled-runtime, and UpstreamDrift consumers are not implemented by this
@@ -1023,11 +1034,19 @@ Draft PR #4306 now carries this child from creation head
 branch `feat/4272-ground-material-profiles`. Protected integration and all
 downstream carrier work remain open.
 
-Local child `feat/4273-ground-study-result-adapter` starts from exact #4306 head
-`17473948f1ce5837bd5b55618d5393b0d8575188` and adds a fail-closed adapter from
+Local child `feat/4273-ground-study-result-adapter` started from #4306 creation
+head `17473948f1ce5837bd5b55618d5393b0d8575188` and now normally includes current
+#4306 head `73abbd492198645780d7d1d19b8bf8d26c7e0932`. It adds a fail-closed adapter from
 solver-eligible studies into the existing four-field ground metric DTO. A
 target miss does not erase qualified physics. The DTO cannot carry the study's
 digests/profile/target evidence, so downstream audit paths must retain both.
+
+PR #4306 required one import-boundary repair after flight-first collection
+revealed `flight -> ground facade -> study -> solver -> flight`. The two flight
+modules now depend directly on neutral `ground.contract_types`; the ground
+facade lazily resolves only its solver-dependent study exports. This matches
+the existing contract-boundary pattern without removing public exports. Re-run
+both flight result-contract tests and the full ground suite before pushing.
 
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 

@@ -511,10 +511,12 @@ Issue #4273 now has a narrow local foundation on
 observed endpoints, caller-request context digest, surface/model/profile identity, warnings,
 and typed unavailable evidence. The self-contained record embeds the exact
 source-result digest, complete solver surface, ball radius, full material
-profile/condition binding, typed result warnings, and separate profile warning
+profile/condition binding, exact result calibration/provenance, typed result warnings, and separate profile warning
 codes. Construction and parsing re-derive summary/endpoints, sphere/plane
 contact, intrinsic target miss, and profile/surface coherence. Only complete
-rest results with a qualified calibrated bound profile enter objectives. A
+rest results with a qualified calibrated bound profile and measured/literature
+result calibration with positive confidence enter objectives. Estimated,
+unvalidated, or zero-confidence result calibration fails closed. A
 valid partial airborne endpoint remains censored and carries typed
 `endpoint_airborne` target unavailability without an inferred landing.
 `ground-result/v1` does not carry its producing request fingerprint, so the
@@ -538,11 +540,32 @@ Draft PR #4306 publishes the stack child at branch
 require normal protected checks/review before any merge.
 
 The next local child `feat/4273-ground-study-result-adapter` begins at exact PR
-#4306 head `17473948f1ce5837bd5b55618d5393b0d8575188`. Its narrow continuation adds
+#4306 creation head `17473948f1ce5837bd5b55618d5393b0d8575188`. Its narrow continuation adds
 `qualified_study_to_ground_model_result`, which populates the existing total,
 roll, bounce-count, and final-offline DTO only from a solver-eligible study.
 Target misses remain valid physics observations. The DTO is lossy and never
 replaces the study's provenance. This is not yet published or issue completion.
+
+Post-publication import-order regression: importing the flight package first
+exposed a cycle through the expanded ground package facade and solver package.
+`flight.models` and `flight.surface_simulation` now import their neutral ground
+record types directly from `ground.contract_types`, while the ground facade
+loads solver-dependent study exports through `__getattr__` only when requested.
+This preserves the public API while restoring flight-first and ground-first
+import order. Keep this fix on PR #4306 and propagate it to later children only
+by normal merge.
+
+The study now persists exact result calibration/provenance and re-derives
+eligibility from model calibration as well as the material profile. Provenance
+is retained for audit but is not presented as producer certification.
+The legacy direct result-to-metric adapter is now module-only and emits a
+deprecation warning; it is deliberately absent from the package facade because
+it cannot prove material-profile qualification.
+
+Exact qualification/import repair commit
+`940563f222065c4f343b587699c52062c6e1db59` passes 194 ground tests, 27
+flight-first import/result/transfer tests, and an independent 75-test adversarial
+review with no remaining blocker.
 
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 

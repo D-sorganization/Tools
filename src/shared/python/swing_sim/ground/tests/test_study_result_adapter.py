@@ -4,7 +4,11 @@ from dataclasses import replace
 
 import pytest
 
-from shared.python.swing_sim.ground import qualified_study_to_ground_model_result
+from shared.python.swing_sim.ground import (
+    CalibrationKind,
+    GroundCalibration,
+    qualified_study_to_ground_model_result,
+)
 from shared.python.swing_sim.ground.study_projection import project_ground_study
 from shared.python.swing_sim.ground.study_record import GroundStudyProjection
 from shared.python.swing_sim.solver.spatial_targets import SpatialTarget, TargetPoint
@@ -51,3 +55,22 @@ def test_ineligible_or_wrong_type_study_fails_closed() -> None:
         qualified_study_to_ground_model_result(unbound)
     with pytest.raises(TypeError, match="exact GroundStudyProjection"):
         qualified_study_to_ground_model_result(object())  # type: ignore[arg-type]
+
+
+def test_unvalidated_result_model_cannot_enter_ground_metric_dto() -> None:
+    calibration = GroundCalibration(
+        "unvalidated-demo",
+        CalibrationKind.UNVALIDATED,
+        "no validation evidence",
+        0.0,
+    )
+    request = replace(_qualified_request(), calibration=calibration)
+    result = replace(_result(), calibration=calibration)
+    study = project_ground_study(
+        request,
+        result,
+        bound_surface=_bound_surface(),
+    )
+
+    with pytest.raises(ValueError, match="solver-eligible"):
+        qualified_study_to_ground_model_result(study)

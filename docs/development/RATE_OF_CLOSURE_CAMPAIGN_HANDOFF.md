@@ -1342,6 +1342,18 @@ The request digest is caller-context evidence rather than an attested source
 binding because `ground-result/v1` carries no producing-request fingerprint.
 Only the available ID, surface/frame, calibration, and provenance compatibility
 checks are claimed; exact request/result attribution remains a follow-up.
+The record embeds the exact result calibration/provenance and independently
+requires measured/literature model calibration with positive confidence for
+solver admission. Estimated, unvalidated, or zero-confidence model evidence
+fails closed; provenance is retained without claiming producer certification.
+The older direct result-to-metric adapter is deprecated and removed from the
+ground facade. It remains module-level compatibility code only and cannot be
+used as the qualification-sensitive path because it has no profile binding.
+
+Exact repair commit `940563f222065c4f343b587699c52062c6e1db59`
+passes 194 ground tests, 27 flight-first import/result/transfer tests, and an
+independent 75-test adversarial audit of calibration, provenance, strict wire,
+lazy imports, facade exports, and deprecated compatibility behavior.
 
 This is a bounded foundation for issue #4273, not completion of the issue or
 ground epic. No ensemble/variation/wind/optimizer/UI/compiled/Upstream consumer
@@ -1363,12 +1375,21 @@ evidence only after required checks and review complete, so #4273/#4267 remain
 open.
 
 The next local #4273 continuation,
-`feat/4273-ground-study-result-adapter`, starts from exact PR #4306 head
-`17473948f1ce5837bd5b55618d5393b0d8575188`. It adds a one-way qualified-study
+`feat/4273-ground-study-result-adapter`, started from PR #4306 creation head
+`17473948f1ce5837bd5b55618d5393b0d8575188` and normally includes current head
+`73abbd492198645780d7d1d19b8bf8d26c7e0932`. It adds a one-way qualified-study
 adapter for the existing total/roll/bounce/final-offline DTO. The adapter fails
 closed on ineligible studies, does not treat target miss as missing physics,
 and documents that the legacy DTO is provenance-lossy. It has no carrier or
 protected evidence yet.
+
+A post-publication flight-first import gate found a facade cycle introduced by
+the new study exports: flight loaded the ground facade, study loaded the solver
+package, and solver returned to the partially initialized flight facade. PR
+#4306 repairs this at the dependency boundary by importing `GroundSurfaceProfile`
+and `GroundContactState` directly from `ground.contract_types` in the two flight
+consumers and lazily resolving solver-dependent study facade exports. Later
+children must receive this only through normal ancestry.
 
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 

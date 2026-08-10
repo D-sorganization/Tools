@@ -8,6 +8,8 @@ from dataclasses import replace
 import pytest
 
 from shared.python.swing_sim.ground import (
+    CalibrationKind,
+    GroundCalibration,
     GroundWarning,
     GroundWarningSeverity,
 )
@@ -173,6 +175,46 @@ def test_profile_qualification_and_calibration_independently_gate_solver_use() -
     assert illustrative_result.solver_eligibility.reasons == (
         GroundSolverEligibilityReason.PROFILE_ILLUSTRATIVE,
     )
+
+
+def test_unvalidated_result_calibration_blocks_solver_eligibility() -> None:
+    calibration = GroundCalibration(
+        "unvalidated-demo",
+        CalibrationKind.UNVALIDATED,
+        "no validation evidence",
+        0.0,
+    )
+    request = replace(_qualified_request(), calibration=calibration)
+    result = replace(_result(), calibration=calibration)
+
+    projection = project_ground_study(
+        request,
+        result,
+        bound_surface=_bound_surface(),
+    )
+
+    assert projection.calibration == calibration
+    assert projection.provenance == result.provenance
+    assert not projection.solver_eligibility.eligible
+    assert projection.solver_eligibility.reasons == (
+        GroundSolverEligibilityReason.MODEL_CALIBRATION_NOT_VALIDATED,
+        GroundSolverEligibilityReason.MODEL_CALIBRATION_ZERO_CONFIDENCE,
+    )
+    assert GroundStudyProjection.from_json(projection.to_json()) == projection
+
+
+def test_wire_cannot_forge_eligibility_after_downgrading_calibration() -> None:
+    payload = project_ground_study(
+        _qualified_request(),
+        _result(),
+        bound_surface=_bound_surface(),
+    ).to_dict()
+    calibration = payload["calibration"]
+    assert isinstance(calibration, dict)
+    calibration.update({"kind": "unvalidated", "confidence": 0.0})
+
+    with pytest.raises(ValueError, match="solver eligibility"):
+        GroundStudyProjection.from_dict(payload)
 
 
 def test_target_evaluation_fails_closed_for_wrong_ground_source() -> None:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import warnings
 from typing import TYPE_CHECKING
 
 from shared.python.swing_sim.flight.result_metrics import GroundModelResult
@@ -29,7 +30,13 @@ def _metric_result(
 
 
 def to_ground_model_result(result: GroundSimulationResult) -> GroundModelResult:
-    """Project qualified summary values without inferring missing distances."""
+    """Compatibility-only projection without material-profile qualification."""
+    warnings.warn(
+        "to_ground_model_result is unqualified compatibility output; "
+        "use the study adapter for qualification-sensitive consumers",
+        DeprecationWarning,
+        stacklevel=2,
+    )
     if result is None:
         raise ValueError("result must be provided")
     rest_terminated = result.termination.reason is GroundTerminationReason.REST

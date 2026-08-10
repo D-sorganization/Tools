@@ -189,8 +189,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   intrinsic surface basis. Landing targets require matching ground identity,
   an on-plane centre, and a surface-circle or surface-corridor tolerance.
 - Only complete rest results backed by a qualified calibrated profile are
-  solver eligible. Partial, failed, unavailable, unqualified, illustrative, or
-  unbound results fail closed without fabricating final-rest metrics. A partial
+  solver eligible, and the result-model calibration must be measured or
+  literature-backed with positive confidence. Partial, failed, unavailable,
+  unqualified, illustrative, unvalidated/estimated-calibration, zero-confidence,
+  or unbound results fail closed without fabricating final-rest metrics. A partial
   airborne endpoint retains its observation and a typed unavailable target
   miss rather than being projected onto the surface.
 - The strict canonical JSON boundary re-derives summary/endpoint, sphere/plane,
@@ -198,6 +200,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   forged assertions before returning the immutable study. Full semantics and
   limitations are in
   `docs/specs/GROUND_RESULT_STUDIES.md`.
+- Each study embeds the exact result `GroundCalibration` and `GroundProvenance`
+  records. Provenance is audit evidence, not a producer certification or an
+  attested request/result binding.
+- The direct result-to-metric compatibility adapter is deprecated and removed
+  from the public ground facade because it cannot prove material-profile
+  qualification. Qualification-sensitive consumers must use a study boundary.
 - `ground-result/v1` does not carry the producing request fingerprint. The
   study projection checks compatible IDs, surface/frame, calibration, and
   provenance, but its two digests are not an attested request/result pair.
