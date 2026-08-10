@@ -123,14 +123,17 @@ def test_native_models_propagate_full_terminal_angular_velocity() -> None:
     waterloo = WaterlooPennerModel().simulate(launch)
     macdonald = MacDonaldHanzelyModel(decay=0.07).simulate(launch)
 
-    assert isinstance(waterloo.trajectory[-1], FlightStatePoint)
+    waterloo_terminal = waterloo.trajectory[-1]
+    macdonald_terminal = macdonald.trajectory[-1]
+    assert isinstance(waterloo_terminal, FlightStatePoint)
+    assert isinstance(macdonald_terminal, FlightStatePoint)
     np.testing.assert_allclose(
-        waterloo.trajectory[-1].angular_velocity_rad_s,
+        waterloo_terminal.angular_velocity_rad_s,
         launch.get_spin_vector(),
     )
     expected_decay = math.exp(-0.07 * macdonald.flight_time)
     np.testing.assert_allclose(
-        macdonald.trajectory[-1].angular_velocity_rad_s,
+        macdonald_terminal.angular_velocity_rad_s,
         launch.get_spin_vector() * expected_decay,
     )
 

@@ -12,7 +12,7 @@ from typing import Any, Protocol, cast
 
 import pytest
 
-import shared.python.swing_sim.flight as flight
+from ... import flight
 
 EXPECTED_PUBLIC_API = {
     "DEFAULT_BACKSPIN_AXIS",

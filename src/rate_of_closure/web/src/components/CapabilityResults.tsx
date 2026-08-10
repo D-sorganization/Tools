@@ -3,6 +3,9 @@ import { useEffect, useMemo, useState } from "react";
 import type { CapabilityRunOutput } from "../model/capabilityRun";
 import { stableCapabilityObservationEnsembleJson } from "../model/capabilityObservationEnsemble";
 import {
+  capabilityAlternativesCsv, stableCapabilityResultExportJson,
+} from "../model/capabilityResultExport";
+import {
   buildScalarEnsembleScatter, type ScalarVariableDefinition,
 } from "../model/scalarEnsembleContract";
 import { nonCompleteReasonSummary, scalarEnsembleToCsv } from "../model/scalarEnsembleCsv";
@@ -21,22 +24,42 @@ const axisLabel = (
 };
 
 function Alternatives({ output }: { readonly output: CapabilityRunOutput }) {
+  const units = Object.fromEntries(output.ensemble.variables
+    .filter(({ key }) => key.startsWith("nominal."))
+    .map(({ key, unit }) => [key.slice("nominal.".length), unit]));
+  const recommendation = (item: CapabilityRunOutput["result"]["alternatives"][number]): string =>
+    item.parameters.map((value) => {
+      const unit = units[value.parameterId];
+      if (unit === undefined) throw new RangeError(`missing unit for ${value.parameterId}`);
+      return `${value.parameterId}=${value.value.toPrecision(5)} ${unit}`;
+    }).join(" · ");
   return <div className="overflow-x-auto"><table aria-label="Ranked capability alternatives"
-    className="w-full text-left text-xs text-slate-300"><thead><tr>
+    className="w-full whitespace-nowrap text-left text-xs text-slate-300"><thead><tr>
       <th className="px-2 py-1">Rank / Club</th><th className="px-2 py-1">Recommendation</th>
+      <th className="px-2 py-1">Score</th>
       <th className="px-2 py-1">Carry</th><th className="px-2 py-1">Mean miss</th>
       <th className="px-2 py-1">Dispersion</th><th className="px-2 py-1">Target hold</th>
-      <th className="px-2 py-1">Confidence / limits</th>
+      <th className="px-2 py-1">Miss CVaR</th><th className="px-2 py-1">Downside carry</th>
+      <th className="px-2 py-1">Outcomes</th><th className="px-2 py-1">Failure rate</th>
+      <th className="px-2 py-1">Evidence</th><th className="px-2 py-1">Pareto</th>
     </tr></thead><tbody>{output.result.alternatives.map((item) => <tr key={item.rank}
       className="border-t border-slate-800"><td className="px-2 py-1">{item.rank}. {item.clubId}</td>
-      <td className="px-2 py-1">{item.parameters.map((value) =>
-        `${value.parameterId}=${value.value.toPrecision(5)}`).join(" · ")}</td>
+      <td className="px-2 py-1">{recommendation(item)}</td>
+      <td className="px-2 py-1">{item.score.toPrecision(5)}</td>
       <td className="px-2 py-1">{item.meanCarryM.toFixed(2)} m</td>
       <td className="px-2 py-1">{item.expectedMissM.toFixed(2)} m</td>
       <td className="px-2 py-1">{item.dispersionRmsM.toFixed(2)} m</td>
       <td className="px-2 py-1">{(100 * item.targetHoldProbability).toFixed(1)}%</td>
+      <td className="px-2 py-1">{item.cvarMissM.toFixed(2)} m</td>
+      <td className="px-2 py-1">{item.downsideCarryM.toFixed(2)} m</td>
+      <td className="px-2 py-1">{item.successfulCount}/{item.sampleCount} complete · {
+        item.noImpactCount} no impact · {item.failedCount} failed</td>
+      <td className="px-2 py-1">{(100 * item.failureFraction).toFixed(1)}%</td>
       <td className="px-2 py-1">{(100 * item.confidence).toFixed(1)}% · {
-        item.limitingConstraints.join(", ") || "none"}</td></tr>)}</tbody></table></div>;
+        item.extrapolated ? "extrapolated" : "within envelope"} · {
+        item.limitingConstraints.join(", ") || "no limits"}</td>
+      <td className="px-2 py-1">{item.paretoEfficient ? "efficient" : "dominated"}</td>
+    </tr>)}</tbody></table></div>;
 }
 
 function RawRows({ output }: { readonly output: CapabilityRunOutput }) {
@@ -94,6 +117,14 @@ export function CapabilityResults({ output }: { readonly output: CapabilityRunOu
         scalarEnsembleToCsv(output.ensemble), "text/csv;charset=utf-8")}>Export raw CSV</button>
       <button type="button" className={BUTTON_CLASS}
         onClick={() => downloadText("capability-observations.json",
-          stableCapabilityObservationEnsembleJson(output.ensemble), "application/json")}>Export stable JSON</button></div>
+          stableCapabilityObservationEnsembleJson(output.ensemble), "application/json")}>Export stable JSON</button>
+      <button type="button" className={BUTTON_CLASS}
+        onClick={() => downloadText("capability-results.csv",
+          capabilityAlternativesCsv(output.result, output.ensemble),
+          "text/csv;charset=utf-8")}>Export results CSV</button>
+      <button type="button" className={BUTTON_CLASS}
+        onClick={() => downloadText("capability-results.json",
+          stableCapabilityResultExportJson(output.result, output.ensemble),
+          "application/json")}>Export results JSON</button></div>
   </div>;
 }

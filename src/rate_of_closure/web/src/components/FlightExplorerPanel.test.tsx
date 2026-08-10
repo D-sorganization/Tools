@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { beforeAll, describe, expect, it, vi } from "vitest";
 
@@ -39,7 +39,10 @@ describe("FlightExplorerPanel input editing", () => {
       .toHaveAttribute("aria-description", expect.stringContaining("180.0 m downrange"));
     expect(screen.getByRole("status", { name: "Spatial target assessment" }))
       .toHaveTextContent("Run Flight to evaluate this target");
-    expect(await screen.findByRole("region", { name: "Wind strategy uncertainty analysis" }))
+    await act(async () => {
+      await vi.dynamicImportSettled();
+    });
+    expect(screen.getByRole("region", { name: "Wind strategy uncertainty analysis" }))
       .toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Run Flight" }));

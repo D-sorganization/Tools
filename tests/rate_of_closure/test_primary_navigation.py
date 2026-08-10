@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+from typing import Any
 
 import pytest
 
@@ -120,8 +121,8 @@ def test_capability_optimizer_tab_is_registered_once(qtbot, settings) -> None:  
 
 
 def test_visibility_and_order_round_trip_with_deterministic_active_fallback(
-    qtbot, settings
-) -> None:  # type: ignore[no-untyped-def]
+    qtbot: Any, settings: QSettings
+) -> None:
     first = RateOfClosureMainWindow(navigation_settings=settings)
     qtbot.addWidget(first)
     first.set_primary_module_active("simulation")
@@ -159,8 +160,8 @@ def test_required_module_cannot_be_hidden(qtbot, settings) -> None:  # type: ign
 
 
 def test_restore_defaults_restores_visibility_order_and_active_module(
-    qtbot, settings
-) -> None:  # type: ignore[no-untyped-def]
+    qtbot: Any, settings: QSettings
+) -> None:
     window = RateOfClosureMainWindow(navigation_settings=settings)
     qtbot.addWidget(window)
     try:
@@ -178,8 +179,8 @@ def test_restore_defaults_restores_visibility_order_and_active_module(
 
 
 def test_saved_visibility_ignores_unknown_ids_and_reveals_new_modules(
-    qtbot, settings
-) -> None:  # type: ignore[no-untyped-def]
+    qtbot: Any, settings: QSettings
+) -> None:
     settings.setValue(
         _NAVIGATION_STATE_KEY,
         json.dumps(

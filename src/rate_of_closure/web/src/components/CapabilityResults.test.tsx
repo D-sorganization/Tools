@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 
 import { runCapabilityOptimization } from "../model/capabilityRun";
@@ -18,6 +18,22 @@ const output = (ensembleSize: number) => runCapabilityOptimization(
 );
 
 describe("CapabilityResults", () => {
+  it("exposes the complete ranked-alternative diagnostic contract", () => {
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
+    render(<CapabilityResults output={output(2)} />);
+
+    const table = screen.getByRole("table", { name: "Ranked capability alternatives" });
+    [
+      "Score", "Miss CVaR", "Downside carry", "Outcomes", "Failure rate",
+      "Evidence", "Pareto",
+    ].forEach((heading) => {
+      expect(within(table).getByRole("columnheader", { name: heading })).toBeInTheDocument();
+    });
+    expect(within(table).getByText(/ball_speed=.*m\/s/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Export results CSV" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Export results JSON" })).toBeInTheDocument();
+  });
+
   it("resets raw-row paging when a smaller result replaces the output", async () => {
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
     const view = render(<CapabilityResults output={output(26)} />);

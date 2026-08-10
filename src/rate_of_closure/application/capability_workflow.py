@@ -7,6 +7,9 @@ import math
 from dataclasses import dataclass
 from typing import Any
 
+from rate_of_closure.application.capability_workflow_wire import (
+    validate_capability_workflow_wire,
+)
 from shared.python.swing_sim.flight.capability_contract import (
     CapabilityObjective,
     CapabilityParameter,
@@ -119,7 +122,9 @@ def _finite(value: object, name: str) -> float:
     return parsed
 
 
-def _text(value: str, name: str) -> str:
+def _text(value: object, name: str) -> str:
+    if not isinstance(value, str):
+        raise ValueError(f"{name} must be nonempty text")
     parsed = value.strip()
     if not parsed:
         raise ValueError(f"{name} must be nonempty")
@@ -280,15 +285,18 @@ def _config_from_wire(payload: dict[str, Any]) -> CapabilityFlightEvaluatorConfi
             raise ValueError("spin default fields do not match v1 schema")
         defaults.append(
             CapabilitySpinDefault(
-                str(source["club_id"]),
-                float(source["total_spin_rpm"]),
-                float(source["spin_axis_tilt_deg"]),
-                str(source["provenance"]),
+                _text(source["club_id"], "spin default club_id"),
+                _finite(source["total_spin_rpm"], "total_spin_rpm"),
+                _finite(source["spin_axis_tilt_deg"], "spin_axis_tilt_deg"),
+                _text(source["provenance"], "spin default provenance"),
             )
         )
     return CapabilityFlightEvaluatorConfig(
-        float(payload["max_time_s"]),
-        float(payload["trajectory_sample_interval_s"]),
+        _finite(payload["max_time_s"], "max_time_s"),
+        _finite(
+            payload["trajectory_sample_interval_s"],
+            "trajectory_sample_interval_s",
+        ),
         tuple(defaults),
     )
 
@@ -302,15 +310,12 @@ def capability_workflow_json(document: CapabilityWorkflowDocument) -> str:
 
 def capability_workflow_from_json(source: str) -> CapabilityWorkflowDocument:
     """Parse one exact workflow document and reject unknown fields."""
-    payload = json.loads(source)
-    expected = {"evaluator_config", "profile", "request", "schema_version"}
-    if not isinstance(payload, dict) or set(payload) != expected:
-        raise ValueError("capability workflow fields do not match v1 schema")
+    payload = validate_capability_workflow_wire(json.loads(source))
     return CapabilityWorkflowDocument(
         PlayerCapabilityProfile.from_dict(payload["profile"]),
         OptimizationRequest.from_dict(payload["request"]),
         _config_from_wire(payload["evaluator_config"]),
-        str(payload["schema_version"]),
+        _text(payload["schema_version"], "schema_version"),
     )
 
 

@@ -3,6 +3,34 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
+## 2026-08-09 Flight-transfer corrected-parent propagation
+
+Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged
+base `feat/4268-ground-contract`. Exact carrier-reconciled #4285 parent
+`6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` is incorporated through the
+normal local merge containing this handoff; no branch was rebased, retargeted,
+force-pushed, or published. The result retains the qualified signed terminal
+state and physical contact transfer across Python, TypeScript, Rust, PyO3, and
+WASM while inheriting the corrected wind/scalar/variation, capability,
+Python-3.10, campaign-authority, and strict-ground ancestry.
+
+The public flight-facade conflict was resolved semantically: the child keeps
+its structural frozen-dataclass protocol and transfer API inventory, while the
+parent's package-relative import preserves Linux/editable collection. No
+bounce, skid, roll, terrain response, total distance, or UI delivery is added.
+Protected CI, independent review, and exact child-first merge remain required.
+
+Focused evidence is 113 strict-ground, flight-transfer/facade, compatibility,
+scalar-adapter, and responsive-wind tests on Python 3.11 and the same 113 on
+real CPython 3.10.20. Ruff check/format passes 36 focused Python files. Pinned
+mypy 1.13 passes the 13-file transfer delta and 12-file ground production set
+in their established separate namespace invocations. The type gate required
+binding each terminal trajectory sample before `FlightStatePoint` narrowing;
+runtime assertions and physics are unchanged. The inherited campaign manifest
+validates and its nine manifest/parity contracts pass. Transfer modules remain
+within 400/50-line structural budgets; the sole placeholder scan hit is the
+intentional fail-closed base-model `NotImplementedError` extension boundary.
+
 ## 2026-08-09 Flight-to-ground transfer parent propagation
 
 Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged

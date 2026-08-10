@@ -3,21 +3,34 @@
 
 from __future__ import annotations
 
+import importlib.util
 import sys
 from pathlib import Path
+from typing import Protocol, cast
 
-# Add repository root to sys.path to allow importing _bootstrap
-_repo_root = Path(__file__).resolve().parents[2]
-if str(_repo_root) not in sys.path:
-    sys.path.insert(0, str(_repo_root))
 
-from _bootstrap import bootstrap  # noqa: E402
+class _BootstrapModule(Protocol):
+    """Minimum repository-bootstrap contract needed by this launcher."""
 
-_REPO_ROOT = bootstrap(__file__)
+    def bootstrap(self, caller_file: str) -> Path:
+        """Install repository-local import paths and return the root."""
 
+
+def _load_bootstrap() -> _BootstrapModule:
+    """Load the root bootstrap without mutating import paths in this script."""
+    bootstrap_path = Path(__file__).resolve().parents[2] / "_bootstrap.py"
+    spec = importlib.util.spec_from_file_location("_tools_bootstrap", bootstrap_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Cannot load bootstrap module from {bootstrap_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return cast(_BootstrapModule, module)
+
+
+_REPO_ROOT = _load_bootstrap().bootstrap(__file__)
+
+from rate_of_closure.gui_registration import GUI_INFO  # noqa: E402
 from shared.python.gui_launcher import launch_web_from_gui_info  # noqa: E402
-
-from .gui_registration import GUI_INFO  # noqa: E402
 
 if __name__ == "__main__":
     sys.exit(launch_web_from_gui_info(GUI_INFO, __file__))

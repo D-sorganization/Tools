@@ -3,6 +3,30 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 Flight-transfer corrected-parent propagation
+
+Draft PR #4288 keeps base `feat/4268-ground-contract` and normally
+incorporates exact carrier-reconciled #4285 parent
+`6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059`. No branch was rebased,
+retargeted, force-pushed, or published. The transfer's signed terminal state,
+physical sphere/terrain contact brackets, strict provenance, and cross-runtime
+contracts remain intact while the corrected wind-to-ground ancestry becomes
+complete.
+
+The flight facade retains both the child's transfer inventory/structural
+frozen-dataclass typing and the parent's package-relative collection fix.
+This propagation adds no bounce, skid, roll, terrain response, total-distance,
+or UI claim. Protected CI and child-first merge of #4288 into #4285 remain
+separate release gates.
+
+Focused evidence is 113 ground/transfer/facade/carrier tests on Python 3.11 and
+113 on real CPython 3.10.20. Ruff check/format passes 36 focused files; pinned
+mypy 1.13 passes the 13 transfer-delta files and 12 ground production modules
+through their established separate namespace invocations. The terminal-spin
+test now binds each trajectory sample before exact `FlightStatePoint`
+narrowing, preserving runtime assertions while satisfying the pinned checker.
+The campaign manifest and all nine manifest/parity tests pass.
+
 ## 2026-08-09 Flight-transfer parent propagation
 
 Draft PR #4288 keeps base `feat/4268-ground-contract`. The exact local parent

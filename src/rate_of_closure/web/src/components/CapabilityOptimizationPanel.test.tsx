@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 
 import { runCapabilityOptimization, type CapabilityRunOutput } from "../model/capabilityRun";
@@ -42,11 +43,12 @@ describe("CapabilityOptimizationPanel", () => {
   it("exposes integration settings that are persisted and run", () => {
     render(<CapabilityOptimizationPanel />);
 
-    expect(screen.getByLabelText("Maximum flight time")).toHaveValue(10);
-    expect(screen.getByLabelText("Trajectory sample interval")).toHaveValue(0.01);
+    expect(screen.getByLabelText("Maximum flight time")).toHaveValue("10");
+    expect(screen.getByLabelText("Trajectory sample interval")).toHaveValue("0.01");
   });
 
-  it("allows clearing a numeric field before entering a negative value", () => {
+  it("allows normal keyboard entry of a negative decimal", async () => {
+    const user = userEvent.setup();
     const runner = vi.fn<CapabilityRunner>(() => ({
       promise: new Promise<CapabilityRunOutput>(() => undefined),
       cancel: vi.fn(),
@@ -54,15 +56,14 @@ describe("CapabilityOptimizationPanel", () => {
     render(<CapabilityOptimizationPanel runner={runner} />);
     const tilt = screen.getByLabelText("Fixed spin-axis tilt (+ fade/right)");
 
-    fireEvent.change(tilt, { target: { value: "" } });
-    expect(tilt).toHaveValue(null);
-    fireEvent.change(tilt, { target: { value: "-" } });
-    expect(tilt).toHaveValue(null);
-    fireEvent.change(tilt, { target: { value: "-3.5" } });
-    fireEvent.blur(tilt);
-    fireEvent.click(screen.getByRole("button", { name: "Run optimization" }));
+    expect(tilt).toHaveAttribute("type", "text");
+    expect(tilt).toHaveAttribute("inputmode", "decimal");
+    await user.clear(tilt);
+    await user.type(tilt, "-3.5");
+    await user.tab();
+    await user.click(screen.getByRole("button", { name: "Run optimization" }));
 
-    expect(tilt).toHaveValue(-3.5);
+    expect(tilt).toHaveValue("-3.5");
     expect(runner.mock.calls[0][0].evaluatorConfig.spinDefaults[0].spinAxisTiltDeg)
       .toBe(-3.5);
   });

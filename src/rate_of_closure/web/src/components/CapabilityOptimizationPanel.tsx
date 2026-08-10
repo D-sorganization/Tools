@@ -44,8 +44,8 @@ function NumericInput({ field, value, update }: {
     if (source.trim() && Number.isFinite(parsed)) update(parsed);
     else setDraft(String(value));
   };
-  return <input type="number" aria-label={field.label} className={INPUT_CLASS}
-    value={draft} min={field.min} max={field.max} step={field.step}
+  return <input type="text" inputMode="decimal" aria-label={field.label}
+    className={INPUT_CLASS} value={draft}
     onFocus={(event) => event.currentTarget.select()}
     onBlur={(event) => commit(event.currentTarget.value)}
     onChange={(event) => {

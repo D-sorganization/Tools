@@ -70,8 +70,10 @@ const finite = (value: unknown, name: string): number => {
   return value;
 };
 
-const text = (value: string, name: string): string => {
-  if (!value.trim()) throw new RangeError(`${name} must be nonempty`);
+const text = (value: unknown, name: string): string => {
+  if (typeof value !== "string" || !value.trim()) {
+    throw new RangeError(`${name} must be nonempty text`);
+  }
   return value.trim();
 };
 
@@ -267,10 +269,10 @@ const parseConfig = (value: unknown): CapabilityFlightEvaluatorConfig => {
   const spinDefaults = source.spin_defaults.map((item): CapabilitySpinDefault => {
     const spin = record(item, "spin default");
     exact(spin, ["club_id", "provenance", "spin_axis_tilt_deg", "total_spin_rpm"], "spin default");
-    return Object.freeze({ clubId: text(String(spin.club_id), "clubId"),
+    return Object.freeze({ clubId: text(spin.club_id, "clubId"),
       totalSpinRpm: finite(spin.total_spin_rpm, "totalSpinRpm"),
       spinAxisTiltDeg: finite(spin.spin_axis_tilt_deg, "spinAxisTiltDeg"),
-      provenance: text(String(spin.provenance), "provenance") });
+      provenance: text(spin.provenance, "provenance") });
   });
   return Object.freeze({ maxTimeS: finite(source.max_time_s, "maxTimeS"),
     trajectorySampleIntervalS: finite(

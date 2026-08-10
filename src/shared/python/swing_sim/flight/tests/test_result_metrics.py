@@ -6,6 +6,7 @@ import hashlib
 import json
 import math
 from pathlib import Path
+from typing import cast
 
 import pytest
 
@@ -112,7 +113,7 @@ def test_qualified_ground_output_is_never_inferred_from_carry() -> None:
         result.value(FlightMetricId.TOTAL_DISTANCE).provenance == "qualified-ground/v1"
     )
     with pytest.raises(ValueError, match="bounce_count must be an integer"):
-        GroundModelResult("invalid", 28.0, 2.7, 1.5, 4.5)  # type: ignore[arg-type]
+        GroundModelResult(cast(int, "invalid"), 28.0, 2.7, 1.5, 4.5)
 
 
 def test_positive_spin_axis_tilt_uses_fade_right_convention() -> None:

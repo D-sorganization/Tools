@@ -4,6 +4,35 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 PR #4288 corrected-ground-parent propagation
+
+Draft #4288 remains on `feat/4269-flight-ground-transfer` with unchanged base
+`feat/4268-ground-contract`. Exact carrier-reconciled #4285 parent
+`6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` is incorporated through the
+normal local merge containing this handoff; no branch was rebased, retargeted,
+force-pushed, or published. The descendant retains its qualified cross-runtime
+terminal-state/contact transfer and now carries the complete corrected
+wind/scalar/variation, capability, Python-3.10, campaign-manifest, and strict
+ground-contract ancestry.
+
+The only source conflict was the public flight facade test. Resolution keeps
+the child's structural protocol and transfer value inventory plus the parent's
+package-relative import required for Linux/editable collection. This is
+ancestry propagation, not bounce/roll implementation. Protected CI,
+independent review, exact-head publication, and child-first merge of #4288
+into #4285 remain required before the ground parent can collapse toward the
+wind carrier.
+
+Focused evidence is 113 strict-ground, transfer/facade, compatibility,
+scalar-adapter, and responsive-wind tests on Python 3.11 plus the same 113 on
+real CPython 3.10.20. Ruff check/format passes 36 focused files. Pinned mypy
+1.13 passes the 13-file transfer delta and 12-file ground production set in
+separate established namespace invocations; the transfer test binds terminal
+samples before exact `FlightStatePoint` narrowing without weakening runtime
+assertions. The campaign manifest validates and all nine manifest/parity
+contracts pass. Documentation governance, ancestry, SPEC order, and final diff
+assertions remain required in the same merge.
+
 ## 2026-08-09 Flight-transfer stack propagation
 
 The #4288 worktree now carries exact published #4285 head
