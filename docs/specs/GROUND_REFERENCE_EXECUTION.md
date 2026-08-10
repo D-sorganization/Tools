@@ -193,8 +193,10 @@ and spin to the closed-form constant-acceleration solution.
 The prior five-case artifact is bound to implementation commit
 `9df3928a1ef32d81db2e568884ca24d8c576d49a` with raw-file SHA-256
 `f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310`.
-The six-case artifact requires a new exact implementation commit and digest in
-the follow-up evidence commit. Neither digest is evidence for broad tilted
+The six-case artifact is bound to reviewed implementation commit
+`5d333a4448d6484f8c98e78c9878cb83b40aa522` with raw-file SHA-256
+`502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
+Neither digest is evidence for broad tilted
 frames, properties, performance, calibration, changing terrain, user
 interfaces, or downstream release.
 

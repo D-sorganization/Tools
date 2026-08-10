@@ -27,8 +27,11 @@ canonical endpoints. Final local GREEN evidence passes 238 Python ground tests;
 passivity tests; the four-test native corpus harness over all six fixture cases;
 a fresh installed CPython 3.13 PyO3 wheel; and a rebuilt Node/WASM harness.
 Strict lint, type, format, policy, and documentation gates pass. Independent
-adversarial review is `READY`. The exact implementation SHA/digest, PR, and
-protected CI must be recorded in a follow-up evidence commit before publication.
+adversarial review is `READY`. The exact implementation is
+`5d333a4448d6484f8c98e78c9878cb83b40aa522`; the six-case corpus SHA-256 is
+`502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
+Publication, PR identity, protected CI, approval, integration, and release
+remain unclaimed.
 
 Full-matrix testing also exposed a resistance-cusp defect on a translating
 incline: a frozen rolling-resistance direction could step through zero relative

@@ -26,8 +26,10 @@ endpoint regressions retain fail-closed behavior. Final local GREEN evidence is
 Python conformance/passivity tests; four native corpus tests consuming all six
 cases; a clean installed CPython 3.13 PyO3 wheel; a rebuilt Node/WASM harness;
 and strict lint/type/format/policy/documentation gates. Independent adversarial
-review is `READY`. Exact commit/digest, publication, and protected checks remain
-for the evidence follow-up.
+review is `READY`. The reviewed implementation is exact commit
+`5d333a4448d6484f8c98e78c9878cb83b40aa522`; the raw six-case corpus SHA-256 is
+`502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
+No carrier PR, hosted check, approval, integration, or release is claimed yet.
 
 A complete-runtime regression additionally found that frozen rolling
 resistance could cross the zero-relative-speed cusp on a translating incline.

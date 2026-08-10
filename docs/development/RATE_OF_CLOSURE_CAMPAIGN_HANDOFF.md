@@ -31,6 +31,12 @@ over all six cases; a fresh installed CPython 3.13 PyO3 wheel; and rebuilt
 Node/WASM. Strict lint, type, format, policy, and documentation gates pass, and
 independent adversarial review is `READY`.
 
+The reviewed implementation is exact commit
+`5d333a4448d6484f8c98e78c9878cb83b40aa522`; the raw six-case corpus SHA-256 is
+`502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
+This is immutable local evidence only. Publication, hosted/protected checks,
+review approval, integration, and release are not yet claimed.
+
 The broader runtime matrix then exposed a separate resistance-cusp defect on a
 translating incline. A frozen resistance direction could cross through zero
 relative speed and create energy. Python and Rust now bound non-collinear
@@ -45,9 +51,8 @@ angular equivalent gate the holding correction. A stationary projected stop
 returns `REST` in the same solver step, with one zero-motion interval used only
 at the handoff boundary to satisfy the strict increasing-time wire contract.
 
-Before publication, bind that local evidence to the exact implementation SHA
-and corpus digest in a follow-up evidence commit, then publish the stacked PR
-and await ordinary protected CI/review. This is still `partial_implementation`;
+Before publication, publish the stacked PR from the evidence child and await
+ordinary protected CI/review. This is still `partial_implementation`;
 #4275/#4267 remain open for mirrored and
 randomized tilted frames, broader properties, performance, calibration,
 terrain/material evolution, deformation, interfaces, visualization, and
