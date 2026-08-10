@@ -4,6 +4,18 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 Final repaired #4282 propagation into PR #4285
+
+- Draft PR `#4285` keeps branch `feat/4268-ground-contract`, base
+  `feat/4197-capability-observer`, and original child
+  `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` first.
+- Exact quality-green workflow head
+  `1e82f15026786ea0b08f78f4c001590ddce9ff39` is the second parent.
+- Only the four canonical handoff/spec files conflicted; ground-contract
+  production and tests did not. No history or topology rewrite was used.
+- Fresh exact-head protected CI and review are mandatory before #4288 receives
+  this ancestry through its own normal descendant merge.
+
 ## 2026-08-10 Exact repaired #4282 propagation into PR #4285
 
 Draft PR #4285 remains on `feat/4268-ground-contract` with unchanged base

@@ -3,6 +3,16 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Final repaired #4282 propagation into PR #4285
+
+Draft PR `#4285` retains branch `feat/4268-ground-contract` and base
+`feat/4197-capability-observer`. Original child head
+`e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` now normally incorporates exact
+quality-green workflow head `1e82f15026786ea0b08f78f4c001590ddce9ff39`
+second. No ground-contract production or test code conflicted, and no rebase,
+retarget, force-push, parent rewrite, or draft-state change was used. Fresh
+protected CI/review is required before downstream #4288 propagation.
+
 ## 2026-08-10 Exact repaired #4282 propagation into PR #4285
 
 Draft PR #4285 remains on `feat/4268-ground-contract` with unchanged base

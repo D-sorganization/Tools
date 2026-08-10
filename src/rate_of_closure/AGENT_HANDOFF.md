@@ -3,6 +3,15 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Final repaired workflow ancestry in strict ground contract
+
+Draft PR `#4285` remains on `feat/4268-ground-contract`, based on
+`feat/4197-capability-observer`. Its original head
+`e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` normally incorporates exact
+quality-green #4282 head `1e82f15026786ea0b08f78f4c001590ddce9ff39`
+second. Ground-contract source and tests had no conflict. Protected CI and
+review must pass before the new exact head propagates normally into #4288.
+
 ## 2026-08-10 Exact repaired #4282 propagation into PR #4285
 
 Original child `788aa547651a3685a363ea401824a5d81477bafb`
