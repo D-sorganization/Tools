@@ -1,5 +1,8 @@
 """Strict reusable flight-to-ground transfer and result contracts."""
 
+from importlib import import_module
+from typing import Any
+
 from .bounce_kinematics import interpolate_first_contact
 from .bounce_simulation import simulate_repeated_bounce
 from .bounce_types import (
@@ -108,19 +111,6 @@ from .profile_wire import (
 from .result_adapter import to_ground_model_result
 from .result_types import GroundSummary, GroundTermination, GroundWarning
 from .skid_roll_simulation import SkidRollExecution, simulate_skid_roll
-from .study_projection import project_ground_study
-from .study_record import GroundStudyProjection
-from .study_types import (
-    GROUND_STUDY_SCHEMA_VERSION,
-    GroundEndpointKind,
-    GroundSolverEligibility,
-    GroundSolverEligibilityReason,
-    GroundStudyMetrics,
-    GroundStudyProfile,
-    GroundStudyStatus,
-    GroundTargetEvaluation,
-    GroundTargetUnavailableReason,
-)
 from .surface_motion_types import (
     GROUND_SKID_ROLL_MODEL_ID,
     GROUND_SKID_ROLL_MODEL_VERSION,
@@ -152,6 +142,30 @@ from .upstream_terrain_adapter import (
     adapt_upstream_terrain_snapshot,
     upstream_snapshot_from_json,
 )
+
+_LAZY_STUDY_EXPORTS = {
+    "GROUND_STUDY_SCHEMA_VERSION": "study_types",
+    "GroundEndpointKind": "study_types",
+    "GroundSolverEligibility": "study_types",
+    "GroundSolverEligibilityReason": "study_types",
+    "GroundStudyMetrics": "study_types",
+    "GroundStudyProfile": "study_types",
+    "GroundStudyProjection": "study_record",
+    "GroundStudyStatus": "study_types",
+    "GroundTargetEvaluation": "study_types",
+    "GroundTargetUnavailableReason": "study_types",
+    "project_ground_study": "study_projection",
+}
+
+
+def __getattr__(name: str) -> Any:
+    """Load solver-dependent study exports without creating import cycles."""
+    module_name = _LAZY_STUDY_EXPORTS.get(name)
+    if module_name is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    value = getattr(import_module(f"{__name__}.{module_name}"), name)
+    globals()[name] = value
+    return value
 
 __all__ = [
     "REQUEST_SCHEMA_VERSION",

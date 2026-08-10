@@ -1023,6 +1023,13 @@ Draft PR #4306 now carries this child from creation head
 branch `feat/4272-ground-material-profiles`. Protected integration and all
 downstream carrier work remain open.
 
+PR #4306 required one import-boundary repair after flight-first collection
+revealed `flight -> ground facade -> study -> solver -> flight`. The two flight
+modules now depend directly on neutral `ground.contract_types`; the ground
+facade lazily resolves only its solver-dependent study exports. This matches
+the existing contract-boundary pattern without removing public exports. Re-run
+both flight result-contract tests and the full ground suite before pushing.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 At exact head `920c46dee688815691e251777142126bf1489b1a`, protected

@@ -1362,6 +1362,14 @@ Draft PR #4306 publishes the normal stack child on
 evidence only after required checks and review complete, so #4273/#4267 remain
 open.
 
+A post-publication flight-first import gate found a facade cycle introduced by
+the new study exports: flight loaded the ground facade, study loaded the solver
+package, and solver returned to the partially initialized flight facade. PR
+#4306 repairs this at the dependency boundary by importing `GroundSurfaceProfile`
+and `GroundContactState` directly from `ground.contract_types` in the two flight
+consumers and lazily resolving solver-dependent study facade exports. Later
+children must receive this only through normal ancestry.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 The protected run at exact PR #4302 head

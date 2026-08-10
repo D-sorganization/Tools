@@ -537,6 +537,15 @@ Draft PR #4306 publishes the stack child at branch
 `6a1b2f76160de0535fca2126958934c53ad5ed25`. Keep #4273 and #4267 open and
 require normal protected checks/review before any merge.
 
+Post-publication import-order regression: importing the flight package first
+exposed a cycle through the expanded ground package facade and solver package.
+`flight.models` and `flight.surface_simulation` now import their neutral ground
+record types directly from `ground.contract_types`, while the ground facade
+loads solver-dependent study exports through `__getattr__` only when requested.
+This preserves the public API while restoring flight-first and ground-first
+import order. Keep this fix on PR #4306 and propagate it to later children only
+by normal merge.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 Protected CI correctly remained blocking at head
