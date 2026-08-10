@@ -9,17 +9,17 @@ from .contract_types import Vector3
 
 def add(left: Vector3, right: Vector3) -> Vector3:
     """Return the componentwise vector sum."""
-    return tuple(a + b for a, b in zip(left, right, strict=True))  # type: ignore[return-value]
+    return (left[0] + right[0], left[1] + right[1], left[2] + right[2])
 
 
 def subtract(left: Vector3, right: Vector3) -> Vector3:
     """Return the componentwise vector difference."""
-    return tuple(a - b for a, b in zip(left, right, strict=True))  # type: ignore[return-value]
+    return (left[0] - right[0], left[1] - right[1], left[2] - right[2])
 
 
 def scale(vector: Vector3, factor: float) -> Vector3:
     """Return a vector multiplied by a scalar."""
-    return tuple(factor * value for value in vector)  # type: ignore[return-value]
+    return (factor * vector[0], factor * vector[1], factor * vector[2])
 
 
 def dot(left: Vector3, right: Vector3) -> float:

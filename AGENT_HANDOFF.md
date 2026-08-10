@@ -35,6 +35,12 @@ assertion gates pass, and all changed production modules/functions/signatures
 remain within 400-line/50-line/four-parameter budgets. Protected CI, review,
 and a normal published carrier remain required.
 
+Independent pre-publication review made no material physics, schema, or scope
+change: vector primitives now return explicit `Vector3` tuples without typing
+suppressions, and internal sampling/contact initialization invariants raise
+deterministic runtime errors instead of relying on optimizable assertions. The
+complete 82-test ground suite, pinned mypy, Ruff, and diff gates remain green.
+
 ## 2026-08-09 Flight-transfer corrected-parent propagation
 
 Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged

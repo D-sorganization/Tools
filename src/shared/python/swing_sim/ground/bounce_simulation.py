@@ -145,7 +145,8 @@ class _BounceRun:
         include_terminal: bool,
     ) -> None:
         """Add global-grid hop samples, optionally including the terminal state."""
-        assert self.next_grid_time_s is not None
+        if self.next_grid_time_s is None:
+            raise RuntimeError("airborne sampling requires an initialized output grid")
         tolerance = self.settings.time_tolerance_s
         while self.next_grid_time_s <= outgoing.time_s + tolerance:
             self.next_grid_time_s += self.request.output_interval_s
@@ -194,7 +195,8 @@ class _BounceRun:
             incoming = contact_state_after_hop(outgoing, self.request, self.settings)
             if incoming is None:
                 return self.result(_NO_RECONTACT, outgoing.time_s)
-            assert self.first_contact_time_s is not None
+            if self.first_contact_time_s is None:
+                raise RuntimeError("bounce propagation requires first-contact time")
             time_limit = self.first_contact_time_s + self.request.max_time_s
             if incoming.time_s > time_limit + self.settings.time_tolerance_s:
                 self.add_airborne_samples(outgoing, time_limit, include_terminal=True)

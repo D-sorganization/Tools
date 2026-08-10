@@ -38,6 +38,12 @@ contract tests pass, documentation governance and focused changed-test
 assertion gates pass, and all changed production modules/functions/signatures
 remain within 400-line/50-line/four-parameter budgets.
 
+Independent pre-publication review made no material physics, schema, or scope
+change: vector helpers now return explicit fixed-length tuples without typing
+suppressions, and internal initialization invariants raise deterministic
+runtime errors rather than relying on optimizable assertions. The complete
+82-test ground suite, pinned mypy, Ruff, and diff gates remain green.
+
 The scope remains partial and `not_released`. Issue #4271 owns skid, roll,
 rest, total distance, and final `GroundSimulationResult`. The #4270 law does
 not consume firmness, grass, compressibility, moisture, or rolling resistance;
