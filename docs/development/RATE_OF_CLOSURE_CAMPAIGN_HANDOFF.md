@@ -4,6 +4,21 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 PR #4305 deterministic-digest secret-scan repair
+
+Exact parent repair `1a65d638cc0787c4e32f28bb37862205d5068671` is
+incorporated by the normal merge containing this handoff. Protected
+detect-secrets run `31361053024` identified the parent skid/roll digest plus
+this child profile/library's two immutable canonical SHA-256 digests as
+high-entropy strings. Explicit inline allowlist annotations now identify all
+three as non-secret scientific integrity evidence. Digest values, fixtures,
+physics, numerics, schemas, APIs, and persistence behavior are unchanged.
+SPEC 1.14.22 records the child correction. All `168` ground tests, eight
+manifest contracts, Ruff, formatting, finding-free scans of both affected
+test files, documentation governance, `370`/`389`-line source-size checks,
+conflict-marker, and diff gates pass. Protected CI, review, and downstream
+propagation remain open after a normal guarded push.
+
 ## 2026-08-09 issue #4272 evidence SHA correction
 
 The authoritative implementation commit is
@@ -99,6 +114,19 @@ Issue #4272 and epic #4267 remain open. Production presets or calibration
 claims, editing UI, regional/changing-normal terrain, TypeScript/Rust/PyO3/WASM
 delivery, UpstreamDrift consumers, and four-surface parity are not delivered by
 this slice.
+
+## 2026-08-10 PR #4304 deterministic-digest secret-scan repair
+
+Protected detect-secrets run `31360998491` failed exact #4304 head
+`d09f3129a68322bfc5dd30763556ac356ef2e55c` after identifying the skid/roll
+golden fixture's pinned SHA-256 digest as a high-entropy hexadecimal string.
+The test now uses the scanner's explicit inline allowlist annotation for this
+non-secret scientific integrity value. The digest, fixture, physics,
+numerical results, schema, and API are unchanged. SPEC 1.14.20 records the
+repair. All `115` ground tests, Ruff, formatting, a finding-free local scan of
+the affected file, documentation governance, the `370`-line source-size
+check, and diff gates pass before an ordinary guarded fast-forward
+publication; protected CI and review remain open.
 
 ## 2026-08-09 PR #4304 corrected implementation evidence
 

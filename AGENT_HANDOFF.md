@@ -1,7 +1,36 @@
 # AGENT_HANDOFF — Tools
 
 > Update this file in every implementation commit and every push to `main`.
-> Last updated: 2026-08-09.
+> Last updated: 2026-08-10.
+
+## 2026-08-10 PR #4305 deterministic-digest secret-scan repair
+
+Exact parent repair `1a65d638cc0787c4e32f28bb37862205d5068671` is
+incorporated by the normal merge containing this handoff. Protected
+detect-secrets run `31361053024` also classified this child profile and
+library's two immutable canonical SHA-256 digests as high-entropy strings.
+Those non-secret scientific integrity values now carry explicit inline
+allowlist annotations. All three digest values and fixture bytes remain
+unchanged; physics, numerics, schemas, APIs, and persistence behavior are
+unchanged. SPEC 1.14.22 records the child repair above relabeled child feature
+1.14.21 and parent repair 1.14.20. All `168` ground tests, eight manifest
+contracts, Ruff, formatting, finding-free scans of both affected test files,
+documentation governance, `370`/`389`-line source-size checks, conflict-marker,
+and diff gates pass. Protected CI, review, and downstream propagation remain
+open after an ordinary guarded push.
+
+## 2026-08-10 PR #4304 deterministic-digest secret-scan repair
+
+Protected detect-secrets run `31360998491` correctly failed exact head
+`d09f3129a68322bfc5dd30763556ac356ef2e55c` because the immutable SHA-256
+golden-fixture digest looked like a high-entropy hexadecimal credential. The
+test now carries the scanner's explicit inline allowlist annotation. The
+digest and fixture bytes are unchanged, and this correction changes no
+physics, numerical result, schema, or API. SPEC 1.14.20 records the repair.
+All `115` ground tests, Ruff, formatting, a finding-free local scan of the
+affected file, documentation governance, the `370`-line source-size check,
+and diff gates pass before an ordinary guarded fast-forward publication.
+Fresh protected CI and review remain required.
 
 ## 2026-08-09 issue #4272 evidence SHA correction
 
