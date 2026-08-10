@@ -4,6 +4,26 @@ Status verified 2026-08-07. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 PR #4279 Python 3.10 compatibility completion
+
+Exact corrected #4203 parent
+`08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` is incorporated into #4279 by
+normal local merge `a340fabefa443d47325c5538f342683b38c01ade`; the stack base is
+unchanged and nothing was rebased, retargeted, force-pushed, or published.
+The two child-owned string-enum modules and child workspace UTC validator now
+use the existing shared Python 3.10 compatibility contract at runtime. Native
+enum typing remains explicit under `TYPE_CHECKING`, and wire IDs, schemas,
+timestamp serialization, physics, and UI behavior are unchanged.
+
+The reconciled test covers nine `StrEnum` runtime imports, both `UTC` runtime
+imports, and direct execution of all three child workspace modules. Python
+3.11 passes `126` focused tests. Real CPython 3.10.20 passes all `14`
+compatibility cases and imports 10 dotted Rate/shared targets. Ruff
+check/format and pinned mypy 1.13 pass all affected files; documentation
+governance and diff checks are required in the same commit. Protected CI,
+review, publication, and normal propagation to #4280 and later descendants
+remain outstanding.
+
 ## 2026-08-09 PR #4279 parent propagation
 
 The #4279 continuation remains based on `feat/4181-launch-monitor-registry` and

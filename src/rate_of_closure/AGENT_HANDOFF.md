@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 Workspace Python 3.10 compatibility completion
+
+The #4279 continuation now contains exact corrected parent
+`08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` through normal local merge
+`a340fabefa443d47325c5538f342683b38c01ade`, without rebasing, retargeting,
+force-pushing, or publication. The workspace command and view enums use the
+shared `StrEnum` runtime compatibility contract with native enum typing kept
+under `TYPE_CHECKING`; `_workspace_validation` uses the shared `UTC` value.
+Stable identifiers, enum values, UTC serialization, schemas, and behavior are
+unchanged.
+
+The combined regression inspects the runtime branch for all nine inherited
+and child string-enum modules plus both UTC modules and directly executes the
+three child workspace modules. Focused Python 3.11 evidence is `126 passed`.
+Real CPython 3.10.20 evidence is `14 passed` plus successful dotted imports of
+10 Rate/shared targets. Ruff check/format is clean, and pinned mypy 1.13 passes
+all 11 affected production files under the changed-file CI contract. Keep the
+root, tool, campaign handoffs and SPEC 1.14.9 entry in the implementation
+commit; protected CI and review remain required after a normal push.
+
 ## 2026-08-09 Workspace stack parent propagation
 
 Draft PR #4279 keeps base `feat/4181-launch-monitor-registry`. Exact published

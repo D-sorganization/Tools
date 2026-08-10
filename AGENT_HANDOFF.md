@@ -3,6 +3,30 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-09
 
+## 2026-08-09 PR #4279 Python 3.10 compatibility completion
+
+Draft PR #4279 remains on `feat/4218-toolstrip-workspace` with unchanged base
+`feat/4181-launch-monitor-registry`. Exact corrected parent
+`08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` was incorporated by the normal
+local merge `a340fabefa443d47325c5538f342683b38c01ade`; no branch was rebased,
+retargeted, force-pushed, or published by this continuation.
+
+The child-owned command registry and view-workspace enums now obtain
+`StrEnum` from `shared.python.compatibility` at runtime while retaining the
+native type behind `TYPE_CHECKING`. Workspace timestamp validation likewise
+uses the shared `UTC` value. This removes all three Python 3.11-only imports
+introduced by #4279 without changing command IDs, enum values, timestamp
+serialization, workspace schemas, or UI behavior. The merged regression
+guards nine string-enum modules and both UTC modules by inspecting the actual
+runtime import branch, then executes the three child workspace modules.
+
+Evidence is `126 passed` on Python 3.11, plus `14 passed` and a successful
+10-module dotted-import probe on real CPython 3.10.20. Ruff check/format passes
+the 11 production modules and compatibility test; pinned mypy 1.13 passes all
+11 production modules with the changed-file CI settings. Documentation
+governance and final diff checks must pass in this same local commit. Protected
+CI, review, publication, and descendant propagation remain separate gates.
+
 ## 2026-08-09 PR #4279 launch-registry propagation
 
 Draft PR #4279 remains on `feat/4218-toolstrip-workspace` with unchanged base
