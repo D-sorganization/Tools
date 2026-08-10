@@ -10,7 +10,9 @@ Local unpublished branch `feat/4275-ground-mirrored-property` starts at the
 exact current ready PR #4322 head
 `8b065dd299acc7cab39321b0e2d7f34ca64f159b`. It preserves the protected stack;
 no push, PR, retarget, merge, force operation, or existing-worktree edit has
-occurred. A documentation-only follow-up will bind the implementation SHA.
+occurred. The implementation is exact local commit
+`08d631d7169019aee9067f3739051a50d88b9554`; this follow-up changes no
+implementation evidence.
 
 The shared corpus grows from six to seven cases with the analytically mirrored
 incline `n=[0,sqrt(0.99),-0.1]`. The reflection applies the correct distinction

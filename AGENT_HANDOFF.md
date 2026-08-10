@@ -8,8 +8,9 @@
 Local branch `feat/4275-ground-mirrored-property` starts exactly at ready PR
 #4322 head `8b065dd299acc7cab39321b0e2d7f34ca64f159b`. Nothing from this branch has
 been pushed, published, retargeted, merged, or applied to an existing
-worktree. The exact implementation SHA will be bound in a documentation-only
-follow-up after this implementation commit exists.
+worktree. The implementation is exact local commit
+`08d631d7169019aee9067f3739051a50d88b9554`; this documentation-only follow-up
+does not change that evidence.
 
 The shared scientific corpus now has seven cases. A second analytic incline
 reflects the existing `n=[0,sqrt(0.99),0.1]` case through the xy plane, with

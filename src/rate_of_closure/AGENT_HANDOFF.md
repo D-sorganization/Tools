@@ -8,8 +8,9 @@
 Local branch `feat/4275-ground-mirrored-property` is an exact unpublished
 child of ready PR #4322 head
 `8b065dd299acc7cab39321b0e2d7f34ca64f159b`. No existing branch or worktree
-was changed. Its implementation SHA will be bound by a documentation-only
-follow-up after the implementation commit exists.
+was changed. The implementation is bound to exact local commit
+`08d631d7169019aee9067f3739051a50d88b9554`; this documentation-only follow-up
+does not change that evidence.
 
 The shared `ground-reference-conformance/v1` authority adds a seventh analytic
 case by reflecting the qualified incline through the xy plane. The oracle

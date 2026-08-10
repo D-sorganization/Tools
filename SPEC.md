@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.43                                    |
-| **Spec Version**        | 1.14.43                                    |
+| **Current Version**     | 1.14.44                                    |
+| **Spec Version**        | 1.14.44                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -3180,6 +3180,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.44 | docs(ground-conformance, #4275): bind the mirrored-frame and seeded-property implementation to exact local commit `08d631d7169019aee9067f3739051a50d88b9554`, the seven-case corpus SHA-256, complete Python ground suite, and fresh native/PyO3/WASM consumer evidence while retaining all hosted, protected, statistical, performance, terrain, UI, and downstream release gates. |
 | 2026-08-10 | 1.14.43 | fix(ground-conformance, #4275): add a mirrored analytic incline across Python/native/PyO3/WASM and a deterministic 20-case tilted property sweep across Python/PyO3; derive the default unbounded Python plane's tangent intrinsically for arbitrary valid normals while preserving caller-declared finite axes and explicit qualification limits. |
 | 2026-08-10 | 1.14.42 | docs(ground-conformance, #4275): record ready PR #4322 targeting `feat/4275-ground-conformance-corpus` from exact implementation/evidence head `a0c8e49a40badc3ce96193e031d2a9dec557d143`; preserve the independently reviewed local evidence while keeping queued hosted checks, approval, integration, and release explicitly open. |
 | 2026-08-10 | 1.14.41 | docs(ground-conformance, #4275): bind the independently reviewed tilted-plane/passivity implementation `5d333a4448d6484f8c98e78c9878cb83b40aa522` and six-case corpus SHA-256 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`; record 238 Python and 191/206/203 Rust matrices, installed PyO3/rebuilt WASM consumers, strict structural/lint/type/policy gates, READY review, and explicit protected-release gaps. |
