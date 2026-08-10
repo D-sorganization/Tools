@@ -35,7 +35,7 @@ def _normal_gravity(surface: GroundSurfaceProfile, gravity: Vector3) -> float:
     normal_acceleration = -dot(gravity, surface.normal_unit)
     if normal_acceleration <= 0.0:
         raise ValueError("surface must oppose the versioned gravity vector")
-    return normal_acceleration
+    return float(normal_acceleration)
 
 
 def skid_kinematics(
@@ -69,7 +69,7 @@ def static_rolling_feasible(
     factor = body.rotational_inertia_factor
     required = body.mass_kg * factor / (1.0 + factor) * norm(gravity_tangent)
     available = surface.static_friction * body.mass_kg * normal_acceleration
-    return required <= available + 1e-12
+    return bool(required <= available + 1e-12)
 
 
 def rolling_state(
@@ -197,7 +197,7 @@ def bounded_closing_duration(
     rate_magnitude = norm(rate)
     if magnitude == 0.0 or rate_magnitude == 0.0 or dot(value, rate) >= 0.0:
         return requested_duration_s
-    return min(requested_duration_s, 0.25 * magnitude / rate_magnitude)
+    return float(min(requested_duration_s, 0.25 * magnitude / rate_magnitude))
 
 
 def relative_path_distance(
@@ -209,8 +209,8 @@ def relative_path_distance(
     final_velocity = add(initial_velocity, scale(acceleration, duration_s))
     midpoint = add(initial_velocity, scale(acceleration, 0.5 * duration_s))
     if norm(cross(initial_velocity, final_velocity)) <= 1e-12:
-        return 0.5 * (norm(initial_velocity) + norm(final_velocity)) * duration_s
-    return (
+        return float(0.5 * (norm(initial_velocity) + norm(final_velocity)) * duration_s)
+    return float(
         duration_s
         * (norm(initial_velocity) + 4.0 * norm(midpoint) + norm(final_velocity))
         / 6.0
@@ -219,11 +219,14 @@ def relative_path_distance(
 
 def kinetic_energy(state: GroundContactState, body: SphereProperties) -> float:
     """Return translational plus isotropic rotational kinetic energy."""
-    return 0.5 * body.mass_kg * dot(
-        state.velocity_m_s, state.velocity_m_s
-    ) + 0.5 * body.inertia_kg_m2 * dot(
-        state.angular_velocity_rad_s,
-        state.angular_velocity_rad_s,
+    return float(
+        0.5 * body.mass_kg * dot(state.velocity_m_s, state.velocity_m_s)
+        + 0.5
+        * body.inertia_kg_m2
+        * dot(
+            state.angular_velocity_rad_s,
+            state.angular_velocity_rad_s,
+        )
     )
 
 

@@ -64,14 +64,14 @@ class SurfaceRun:
 
     @property
     def first_contact_time_s(self) -> float:
-        return self.prefix.events[0].time_s
+        return float(self.prefix.events[0].time_s)
 
     @property
     def time_limit_s(self) -> float:
-        return self.first_contact_time_s + self.request.max_time_s
+        return float(self.first_contact_time_s + self.request.max_time_s)
 
     def elapsed(self) -> float:
-        return max(0.0, self.state.time_s - self.first_contact_time_s)
+        return float(max(0.0, self.state.time_s - self.first_contact_time_s))
 
     def append_point(self, state: GroundContactState, phase: GroundPhase) -> None:
         """Append/replace a suffix point, never duplicating the prefix handoff."""

@@ -3,7 +3,23 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
-+## 2026-08-09 draft PR #4304 publication
+## 2026-08-09 PR #4304 isolated-MyPy correction
+
+Hosted quality-gate run `31354071845` (job `93350276996`) failed exact
+published carrier `aaff1bc536653e90b1e629b91365f55b171bf689` with ten
+`no-any-return` findings. Its changed-file MyPy 1.13 invocation deliberately
+uses `--follow-imports=skip`, so imported NumPy-backed scalar helpers were
+represented as `Any` at nine public and internal return boundaries.
+
+The correction explicitly normalizes those already validated boundaries to
+`float` or `bool`. It changes no physics equation, scalar value, integration
+order, schema, serialized output, API, issue scope, or stack base. The exact
+hosted invocation now passes locally, all 115 ground tests pass on CPython
+3.11.9, and pinned Ruff check/format is clean for the changed production
+files. A normal guarded fast-forward publication must trigger fresh protected
+CI; the failed run is not retried or treated as evidence.
+
+## 2026-08-09 draft PR #4304 publication
 
 Draft PR #4304 now publishes `feat/4271-ground-skid-roll` at exact reviewed head `dcc801395538bdc7b9a46835f5555abdd72677a4` with unchanged base `feat/4270-ground-impact-bounce` at parent `920c46dee688815691e251777142126bf1489b1a`. The branch was pushed normally after verifying the GitHub App identity, clean worktree, absent remote child, exact parent head, and fast-forward ancestry. No retarget, rebase, force-push, parent rewrite, merge, or check bypass occurred.
 

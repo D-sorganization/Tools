@@ -147,6 +147,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Energy accounting includes translation, rotation, gravity work, moving-plane
   work, and nonnegative dissipation. The shared SHA-locked analytic fixture and
   physics/state-machine/composition tests qualify this bounded Python slice.
+- CI-isolated MyPy execution may skip imported helper implementations, so
+  validated scalar helper boundaries explicitly normalize to `float` or
+  `bool`; this static contract hardening does not change equations, values,
+  ordering, schemas, or runtime behavior.
 - Piecewise material regions, changing normals, terrain deformation,
   torsional-spin damping, roll-to-skid transitions, UI, TypeScript physics,
   compiled runtimes, and downstream parity remain follow-on work.

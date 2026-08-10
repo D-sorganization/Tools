@@ -96,7 +96,7 @@ class PlanarSurfaceDomain:
 
     def coordinate(self, position_m: Vector3) -> float:
         """Return signed position along the finite-domain axis."""
-        return dot(subtract(position_m, self.axis_origin_m), self.axis_unit)
+        return float(dot(subtract(position_m, self.axis_origin_m), self.axis_unit))
 
     def contains(self, position_m: Vector3) -> bool:
         """Return whether a center projection is inside both finite bounds."""
