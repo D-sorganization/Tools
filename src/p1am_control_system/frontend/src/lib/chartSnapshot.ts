@@ -287,9 +287,22 @@ export function downloadCsv(
     throw new TypeError("downloadCsv: rows must be an array of arrays");
   }
   assertNonEmptyString(filename, "downloadCsv", "filename");
-  const lines = [headers.map(escapeCsvValue).join(",")];
-  for (const row of rows) {
-    lines.push(row.map(escapeCsvValue).join(","));
+  // ⚡ Bolt Optimization: Replacing array allocations with single-pass string concatenation for CSV generation
+  let headerLine = "";
+  for (let i = 0; i < headers.length; i++) {
+    headerLine += escapeCsvValue(headers[i]);
+    if (i < headers.length - 1) headerLine += ",";
+  }
+  const lines = [headerLine];
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i];
+    let rowLine = "";
+    for (let j = 0; j < row.length; j++) {
+      rowLine += escapeCsvValue(row[j]);
+      if (j < row.length - 1) rowLine += ",";
+    }
+    lines.push(rowLine);
   }
   const blob = new Blob([lines.join("\r\n")], {
     type: "text/csv;charset=utf-8",
