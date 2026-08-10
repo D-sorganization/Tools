@@ -1,7 +1,34 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-09
+> Last updated: 2026-08-10
+
+## 2026-08-10 issue #4275 Rust result-wire parity slice
+
+`feat/4275-ground-result-wire-parity` continues exact PR #4309 carrier
+`51492c3ddc8b15b1358434da9b29f600261c918a` with a bounded `tools-core`
+boundary for `flight-to-ground-result/v1`. Rust now parses the exact typed
+result, rejects duplicate JSON keys and unsafe numbers before deserialization,
+applies the Python contract's raw semantic and trajectory/event state-machine
+invariants before canonical normalization, revalidates the normalized record,
+and emits the established canonical JSON representation. This closes the
+result-wire validation gap without duplicating or claiming the Python ground
+physics implementation.
+
+The real PyO3 wheel export `validate_flight_to_ground_result_v1` and real
+wasm-pack Node export `validateFlightToGroundResultV1` reproduce the complete
+shared reference-pipeline result and canonical SHA. Evidence is 6 focused
+adversarial Rust tests; 143 default, 157 Python-feature, and 154 WASM-feature
+`tools-core` tests; 219 Python ground tests; and 19 TypeScript result-contract
+and transfer tests. Formatting, focused strict Clippy, feature all-target
+Clippy with documented inherited allowances, docs governance, source-size, and
+diff gates pass. New production modules remain at or below 256 lines.
+
+The bindings validate/canonicalize evidence; they do not execute bounce,
+skid, roll, or rest physics. UI, ensembles, compiled solver parity, production
+profiles, and UpstreamDrift integration remain open. This local-only carrier
+does not claim protected CI, review, publication, merge, issue closure, or epic
+completion; retain #4275/#4267 as open.
 
 ## 2026-08-09 issue #4272 evidence SHA correction
 

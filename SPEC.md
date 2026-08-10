@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.19                                    |
-| **Spec Version**        | 1.14.19                                    |
-| **Last Spec Update**    | 2026-08-09                                 |
+| **Current Version**     | 1.14.21                                    |
+| **Spec Version**        | 1.14.21                                    |
+| **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
@@ -122,6 +122,22 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   results identify missing required fields with typed reason and provenance;
   duplicate JSON keys, unsafe cross-runtime integers, surrogate text, and raw
   out-of-range values fail closed before normalization.
+
+### 2026-08-10 Rust ground-result wire parity
+
+- `tools-core` parses the complete typed `flight-to-ground-result/v1` record,
+  enforces the Python authority's status, termination, trajectory, event,
+  summary, calibration, provenance, warning, and unavailable-data semantics,
+  and emits the shared canonical-number JSON representation.
+- Duplicate object keys at any nesting depth, unknown fields, unsafe integers,
+  invalid raw values, and malformed state-machine evidence fail closed. Raw
+  validation precedes numeric normalization, followed by normalized-record
+  validation, so rounding cannot convert invalid evidence into valid evidence.
+- PyO3 and wasm-bindgen expose validation/canonicalization entry points pinned
+  to the full reference-pipeline result and canonical SHA-256 fixture.
+- This boundary does not execute the Python bounce/skid/roll reference solver
+  in Rust and makes no compiled-physics parity, UI, calibration, ensemble, or
+  downstream-consumer claim.
 
 ### 2026-08-09 Static-plane skid, roll, and result composition
 
@@ -2992,6 +3008,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.21 | feat(ground, #4275): add strict typed Rust validation and canonical JSON parity for `flight-to-ground-result/v1`, including recursive duplicate-key rejection, pre-normalization semantic checks, complete trajectory/event/summary/status coherence, and real PyO3/WASM validation exports pinned to the shared reference-pipeline SHA; retain explicit non-delivery boundaries for compiled ground physics, UI, ensembles, production calibration, and UpstreamDrift consumers. |
 | 2026-08-09 | 1.14.20 | feat(ground-profile, #4272): add strict versioned SI material-profile/library documents with uncertainty, evidence-linked validity bounds, rights, applicability, calibration, seven-gate qualification, scientific calibrated/illustrative status, canonical JSON/schema/semantic validation, fail-closed write-through atomic CAS persistence and explicit recovery, exact operating-condition binding, and a provenance-complete one-way neutral Upstream terrain snapshot adapter with split terrain/material identities; retain explicit non-delivery boundaries for production presets, profile UI, regional terrain, compiled runtimes, and downstream parity. |
 | 2026-08-09 | 1.14.19 | feat(ground-roll, #4271): continue exact #4270 capture through arbitrary-plane kinetic skid, static-feasible pure roll, rolling resistance, qualified rest, finite-axis edge localization, bounded typed limits, relative surface-path and passive energy ledgers; compose representable prefix/suffix evidence into strict v1 results without duplicate or epsilon-time samples; pin an analytic shared fixture and retain explicit exclusions for regions, changing normals, torsional spin damping, roll-to-skid, UI, compiled runtimes, and downstream parity. |
 | 2026-08-09 | 1.14.18 | feat(ground-impact, #4270): add a typed passive restitution/Coulomb sphere-plane impulse with full spin and moving-boundary accounting, deterministic repeated ballistic hops, exact bracket contact, capture-to-skid handoff, cancellation and bounded failure states, airborne-segment evidence, a shared golden fixture, and analytic/property/convergence tests; retain #4271 ownership of skid, roll, rest, total distance, and final `GroundSimulationResult`, with UI and compiled runtimes explicitly excluded. |

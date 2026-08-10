@@ -1,7 +1,37 @@
 # AGENT_HANDOFF — Tools
 
 > Update this file in every implementation commit and every push to `main`.
-> Last updated: 2026-08-09.
+> Last updated: 2026-08-10.
+
+## 2026-08-10 issue #4275 Rust result-wire parity slice
+
+Branch `feat/4275-ground-result-wire-parity` starts from exact PR #4309
+carrier `51492c3ddc8b15b1358434da9b29f600261c918a`. The bounded `tools-core`
+slice adds an exact typed `flight-to-ground-result/v1` parser, full semantic
+state-machine validation, and canonical JSON re-emission with the existing
+cross-runtime number rules. Validation rejects duplicate keys at every object
+depth, unsafe integers, unknown fields, invalid text/hash evidence, nonfinite
+or out-of-domain raw values, unordered trajectory phases, incoherent event
+ledgers, summary/geometry mismatches, and contradictory status, termination,
+or unavailable payloads. Raw values are validated before canonical numeric
+normalization so a tiny invalid negative cannot normalize into acceptance.
+
+Python exposes `validate_flight_to_ground_result_v1`; WASM exposes
+`validateFlightToGroundResultV1`. Both real generated artifacts preserve the
+complete shared reference-pipeline fixture and its canonical SHA-256 identity.
+Local evidence is 6 focused adversarial result-wire tests, the complete
+default/Python/WASM `tools-core` suites (143/157/154 tests respectively), 219
+Python ground tests, and 19 existing TypeScript ground-contract/transfer tests.
+Cargo formatting and focused strict Clippy pass; all-target Python/WASM Clippy
+passes with only explicitly enumerated inherited lint allowances. Docs
+governance, source-size review, and diff integrity pass. Every added production
+module is at most 256 lines.
+
+This slice validates and canonicalizes result evidence only. It does not port
+the Python bounce/skid/roll solver to Rust, execute ground physics through the
+bindings, add UI or ensemble workflows, supply production calibration, or add
+UpstreamDrift consumers. No publication, protected-CI, review, merge, or issue
+closure is claimed; #4275 and epic #4267 remain open.
 
 ## 2026-08-09 issue #4272 evidence SHA correction
 

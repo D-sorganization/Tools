@@ -17,12 +17,21 @@ pub use request_v1::{
     adapt_samples_to_request_v1, canonical_request_v1_json, parse_request_v1_json,
     FlightToGroundRequestV1, GroundRequestV1Error,
 };
+mod result_geometry;
+mod result_v1;
+mod result_validation;
+mod strict_json;
+pub use result_v1::{
+    canonical_result_v1_json, parse_result_v1_json, FlightToGroundResultV1, GroundResultV1Error,
+};
 #[cfg(feature = "python")]
 pub mod python;
 #[cfg(feature = "wasm")]
 mod wasm;
 #[cfg(feature = "wasm")]
 mod wasm_request;
+#[cfg(feature = "wasm")]
+mod wasm_result;
 
 const UNIT_TOLERANCE: f64 = 1.0e-9;
 const GRAZING_GAP_TOLERANCE: f64 = 1.0e-9;

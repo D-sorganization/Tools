@@ -4,9 +4,9 @@ use pyo3::prelude::*;
 use crate::ball_flight::{BallProperties, EnvironmentalConditions, LaunchConditions};
 
 use super::{
-    adapt_samples_to_request_v1, canonical_request_v1_json, parse_request_v1_json,
-    simulate_flight_to_ground, FlightGroundConfig, FlightGroundRun, FlightState,
-    GroundTransferOutcome, LaunchGeometry, PlanarGround,
+    adapt_samples_to_request_v1, canonical_request_v1_json, canonical_result_v1_json,
+    parse_request_v1_json, parse_result_v1_json, simulate_flight_to_ground, FlightGroundConfig,
+    FlightGroundRun, FlightState, GroundTransferOutcome, LaunchGeometry, PlanarGround,
 };
 use math_primitives::types::Vector3;
 
@@ -179,6 +179,14 @@ pub fn py_validate_request_v1(payload: String) -> PyResult<String> {
     canonical_request_v1_json(&request).map_err(|_| PyValueError::new_err("request_serialization"))
 }
 
+/// Validate and canonically re-emit an exact `flight-to-ground-result/v1` record.
+#[pyfunction(name = "validate_flight_to_ground_result_v1")]
+pub fn py_validate_result_v1(payload: String) -> PyResult<String> {
+    let result =
+        parse_result_v1_json(&payload).map_err(|error| PyValueError::new_err(error.code()))?;
+    canonical_result_v1_json(&result).map_err(|_| PyValueError::new_err("result_serialization"))
+}
+
 /// Replace only the contact bracket while preserving every v1 context field.
 #[pyfunction(name = "adapt_flight_samples_to_ground_request_v1")]
 pub fn py_adapt_request_v1(samples: Vec<FlightState>, payload: String) -> PyResult<String> {
@@ -200,6 +208,14 @@ mod tests {
         .replace("\\ud800", "rejected-surrogate");
         let value: serde_json::Value = serde_json::from_str(&fixture).unwrap();
         serde_json::to_string(&value["request"]).unwrap()
+    }
+
+    fn fixture_result() -> String {
+        let fixture = include_str!(
+            "../../../../src/rate_of_closure/web/src/model/__fixtures__/ground_reference_pipeline_golden_v1.json"
+        );
+        let value: serde_json::Value = serde_json::from_str(fixture).unwrap();
+        serde_json::to_string(&value["result"]).unwrap()
     }
 
     #[test]
@@ -240,6 +256,14 @@ mod tests {
         let input = fixture_request();
         let output = py_validate_request_v1(input.clone()).unwrap();
         let expected = canonical_request_v1_json(&parse_request_v1_json(&input).unwrap()).unwrap();
+        assert_eq!(output, expected);
+    }
+
+    #[test]
+    fn python_result_boundary_preserves_complete_shared_fixture() {
+        let input = fixture_result();
+        let output = py_validate_result_v1(input.clone()).unwrap();
+        let expected = canonical_result_v1_json(&parse_result_v1_json(&input).unwrap()).unwrap();
         assert_eq!(output, expected);
     }
 }

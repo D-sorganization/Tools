@@ -4,6 +4,36 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 issue #4275 Rust result-wire validation parity
+
+The local `feat/4275-ground-result-wire-parity` branch is based exactly on PR
+#4309 carrier `51492c3ddc8b15b1358434da9b29f600261c918a`. Its bounded
+`tools-core` continuation implements the exact typed
+`flight-to-ground-result/v1` wire record, semantic state-machine validation,
+and deterministic canonical JSON. The boundary rejects unknown or duplicate
+keys, unsafe integers, invalid raw numeric/text/hash evidence, trajectory and
+event ordering errors, summary/geometry drift, and contradictory
+status/termination/payload combinations. Validation runs before and after
+canonical number normalization, preventing an invalid raw value from being
+rounded into the accepted domain.
+
+The same validation/canonicalization contract is exported through PyO3 as
+`validate_flight_to_ground_result_v1` and through wasm-bindgen as
+`validateFlightToGroundResultV1`. A real CPython 3.13 wheel and a real
+wasm-pack Node artifact both preserve the full shared
+`ground_reference_pipeline_golden_v1.json` result and its canonical SHA-256.
+Local evidence is 6 focused adversarial result-wire tests, 143 default
+`tools-core` tests, 157 Python-feature tests, 154 WASM-feature tests, 219
+Python ground tests, and 19 TypeScript ground-contract/transfer tests. Cargo
+formatting, focused strict Clippy, feature all-target Clippy with explicit
+inherited allowances, docs governance, source-size, and diff checks pass; each
+new production module is at most 256 lines.
+
+This is result-wire parity, not compiled ground-solver parity: the bindings do
+not execute bounce/skid/roll physics. PyQt6/React workflows, ensembles,
+production calibration, UpstreamDrift consumers, protected CI, review,
+publication, integration, and closure of #4275/#4267 remain outstanding.
+
 ## 2026-08-09 issue #4272 evidence SHA correction
 
 The authoritative implementation commit is
