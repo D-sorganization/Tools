@@ -13,6 +13,10 @@ from rate_of_closure.simulation.ground_playback import (
     DEFAULT_IMPORT_MAX_POINTS,
     GroundPlaybackTimeline,
 )
+from rate_of_closure.simulation.ground_playback_workspace_common import (
+    exact_workspace_fields,
+    workspace_object,
+)
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
 from shared.python.swing_sim.ground import GroundSimulationResult
 from shared.python.swing_sim.ground.contract_wire import record_from_dict
@@ -97,17 +101,6 @@ class GroundPlaybackWorkspace:
             raise ValueError("playback time_s must lie within the result timeline")
 
 
-def _exact_fields(payload: dict[str, Any], expected: set[str], name: str) -> None:
-    if set(payload) != expected:
-        raise ValueError(f"{name} fields do not match v1 schema")
-
-
-def _object(value: object, name: str) -> dict[str, Any]:
-    if not isinstance(value, dict) or not all(isinstance(key, str) for key in value):
-        raise ValueError(f"{name} must be an object")
-    return cast(dict[str, Any], value)
-
-
 def _workspace_dict(workspace: GroundPlaybackWorkspace) -> dict[str, Any]:
     return {
         "playback": {
@@ -148,14 +141,17 @@ def ground_workspace_from_json(
     if len(text.encode("utf-8")) > max_bytes:
         raise ValueError("ground playback workspace JSON exceeds the import size limit")
     payload = strict_json_object(text)
-    _exact_fields(
-        payload, {"schema_version", "result", "playback", "view"}, "workspace"
+    exact_workspace_fields(
+        payload,
+        {"schema_version", "result", "playback", "view"},
+        "workspace",
+        "v1",
     )
-    playback = _object(payload["playback"], "playback")
-    view = _object(payload["view"], "view")
-    result_payload = _object(payload["result"], "result")
-    _exact_fields(playback, {"time_s", "speed", "loop"}, "playback")
-    _exact_fields(view, {"yaw_deg", "pitch_deg", "zoom"}, "view")
+    playback = workspace_object(payload["playback"], "playback")
+    view = workspace_object(payload["view"], "view")
+    result_payload = workspace_object(payload["result"], "result")
+    exact_workspace_fields(playback, {"time_s", "speed", "loop"}, "playback", "v1")
+    exact_workspace_fields(view, {"yaw_deg", "pitch_deg", "zoom"}, "view", "v1")
     result = cast(
         GroundSimulationResult,
         record_from_dict(GroundSimulationResult, result_payload),

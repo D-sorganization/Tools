@@ -111,14 +111,14 @@ export function GroundPlayback3D({
     timeRef.current = clamped;
     setTimeS(clamped);
   }, [startTimeS, endTimeS]);
-  useEffect(
-    () =>
-      onStateChange?.({
-        playback: { timeS: timeline.frameAt(timeS).timeS, speed, loop },
-        view: viewFromCamera(camera),
-      }),
-    [timeS, speed, loop, camera, timeline, onStateChange],
-  );
+  useEffect(() => {
+    const portableTimeS =
+      comparison?.frameAt(timeS).timeS ?? timeline.frameAt(timeS).timeS;
+    onStateChange?.({
+      playback: { timeS: portableTimeS, speed, loop },
+      view: viewFromCamera(camera),
+    });
+  }, [timeS, speed, loop, camera, timeline, comparison, onStateChange]);
   useEffect(() => {
     if (!playing || durationS <= 0) return;
     let animationId = 0;

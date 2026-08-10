@@ -58,10 +58,12 @@ class GroundPlayback3DView(QWidget):
         """Return whether the comparison overlay is currently visible."""
         return self._comparison_visible
 
-    def set_comparison_timeline(self, timeline: GroundPlaybackTimeline) -> None:
+    def set_comparison_timeline(
+        self, timeline: GroundPlaybackTimeline, *, visible: bool = True
+    ) -> None:
         """Replace the comparison overlay and fit both paths on one metre scale."""
         self._comparison_timeline = timeline
-        self._comparison_visible = True
+        self._comparison_visible = visible
         self._redraw()
 
     def clear_comparison(self) -> None:

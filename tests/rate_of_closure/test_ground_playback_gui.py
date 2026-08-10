@@ -237,7 +237,7 @@ def test_comparison_playback_uses_union_absolute_time_and_honest_hold(qtbot) -> 
     assert tab._end_time_s == pytest.approx(tab.comparison.comparison.end_time_s)
 
 
-def test_comparison_visibility_preserves_union_time_and_workspace_clamps_primary(
+def test_comparison_visibility_preserves_union_time_in_workspace_v2(
     qtbot,
 ) -> None:  # type: ignore[no-untyped-def]
     tab = GroundPlaybackTab()
@@ -254,7 +254,12 @@ def test_comparison_visibility_preserves_union_time_and_workspace_clamps_primary
     assert tab._end_time_s == pytest.approx(comparison_end)
     assert not tab.view.comparison_visible
     workspace = json.loads(tab.workspace_json())
-    assert workspace["playback"]["time_s"] == pytest.approx(tab.timeline.end_time_s)
+    assert workspace["schema_version"] == (
+        "rate-of-closure-ground-playback-workspace/v2"
+    )
+    assert workspace["playback"]["time_s"] == pytest.approx(target)
+    assert workspace["comparison"]["visible"] is False
+    assert workspace["comparison"]["result"]["request_id"] == "comparison-run"
     assert tab.current_time_s == pytest.approx(target)
     hidden_seek = target + 0.01
     tab.set_time(hidden_seek)
@@ -292,7 +297,12 @@ def test_workspace_import_restores_playback_and_view_atomically(qtbot) -> None: 
     tab = GroundPlaybackTab()
     qtbot.addWidget(tab)
     tab.import_json_text(_result_text(), source_name="good.json")
-    tab.set_time(1.205)
+    tab.import_comparison_json_text(
+        _comparison_text(time_offset_s=0.2), source_name="comparison.json"
+    )
+    target = tab.timeline.end_time_s + 0.1
+    tab.set_time(target)
+    tab.show_comparison_checkbox.setChecked(False)
     tab.speed_combo.setCurrentText("2×")
     tab.loop_checkbox.setChecked(True)
     tab.view.apply_workspace_view(yaw_deg=-37.5, pitch_deg=18.0, zoom=1.75)
@@ -303,7 +313,11 @@ def test_workspace_import_restores_playback_and_view_atomically(qtbot) -> None: 
     restored.import_workspace_json_text(encoded, source_name="session.json")
     view = restored.view.workspace_view()
 
-    assert restored.current_time_s == pytest.approx(1.205)
+    assert restored.current_time_s == pytest.approx(target)
+    assert restored.has_comparison
+    assert restored.comparison.comparison.result.request_id == "comparison-run"
+    assert not restored.show_comparison_checkbox.isChecked()
+    assert not restored.view.comparison_visible
     assert restored.speed_combo.currentText() == "2×"
     assert restored.loop_checkbox.isChecked()
     assert view.yaw_deg == pytest.approx(-37.5)
@@ -313,15 +327,75 @@ def test_workspace_import_restores_playback_and_view_atomically(qtbot) -> None: 
     assert "workspace" in restored.status_label.text().lower()
 
     original = restored.timeline
+    original_comparison = restored.comparison
+    restored.play()
+    assert restored.playback_timer.isActive()
     with pytest.raises(ValueError):
         restored.import_workspace_json_text(
             encoded.replace('"speed":2', '"speed":3'), source_name="bad.json"
         )
     assert restored.timeline is original
-    assert restored.current_time_s == pytest.approx(1.205)
+    assert restored.comparison is original_comparison
+    assert restored.current_time_s == pytest.approx(target)
     assert restored.speed_combo.currentText() == "2×"
     assert restored.loop_checkbox.isChecked()
-    assert restored.view.workspace_view().zoom == pytest.approx(1.75)
+    assert not restored.show_comparison_checkbox.isChecked()
+    retained_view = restored.view.workspace_view()
+    assert retained_view.yaw_deg == pytest.approx(-37.5)
+    assert retained_view.pitch_deg == pytest.approx(18.0)
+    assert retained_view.zoom == pytest.approx(1.75)
+    assert restored.playback_timer.isActive()
+    restored.pause()
+
+
+def test_workspace_restore_blocks_visibility_signals_and_seeks_union_time_last(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    source = GroundPlaybackTab()
+    qtbot.addWidget(source)
+    source.import_json_text(_result_text())
+    source.import_comparison_json_text(_comparison_text(time_offset_s=0.2))
+    target = source.timeline.end_time_s + 0.1
+    source.set_time(target)
+    encoded = source.workspace_json()
+
+    restored = GroundPlaybackTab()
+    qtbot.addWidget(restored)
+    visibility_emissions: list[bool] = []
+    restored.show_comparison_checkbox.toggled.connect(visibility_emissions.append)
+    seek_calls: list[float] = []
+    original_set_time = restored.set_time
+
+    def record_seek(time_s: float) -> None:
+        seek_calls.append(time_s)
+        original_set_time(time_s)
+
+    restored.set_time = record_seek  # type: ignore[method-assign]
+    restored.import_workspace_json_text(encoded, source_name="session.json")
+
+    assert visibility_emissions == []
+    assert seek_calls == [pytest.approx(target)]
+    assert restored.show_comparison_checkbox.isChecked()
+    assert restored.view.comparison_visible
+    assert restored.current_time_s == pytest.approx(target)
+
+
+def test_workspace_v1_import_discloses_one_way_migration(qtbot) -> None:  # type: ignore[no-untyped-def]
+    legacy = {
+        "schema_version": "rate-of-closure-ground-playback-workspace/v1",
+        "result": json.loads(_result_text()),
+        "playback": {"time_s": 1.205, "speed": 1, "loop": False},
+        "view": {"yaw_deg": 0, "pitch_deg": 22, "zoom": 1},
+    }
+    tab = GroundPlaybackTab()
+    qtbot.addWidget(tab)
+
+    tab.import_workspace_json_text(json.dumps(legacy), source_name="legacy.json")
+
+    assert "migrated" in tab.status_label.text().lower()
+    assert "v1" in tab.status_label.text().lower()
+    assert "saved as v2" in tab.status_label.text().lower()
+    assert json.loads(tab.workspace_json())["schema_version"].endswith("/v2")
 
 
 def test_persistence_and_export_controls_are_accessible(qtbot) -> None:  # type: ignore[no-untyped-def]

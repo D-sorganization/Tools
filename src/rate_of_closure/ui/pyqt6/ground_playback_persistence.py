@@ -6,6 +6,7 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any, cast
 
+from PyQt6.QtCore import QSignalBlocker
 from PyQt6.QtWidgets import QFileDialog, QVBoxLayout, QWidget
 
 from rate_of_closure.simulation.ground_playback import (
@@ -13,15 +14,21 @@ from rate_of_closure.simulation.ground_playback import (
     GroundPlaybackTimeline,
     load_ground_result_json,
 )
+from rate_of_closure.simulation.ground_playback_comparison import (
+    GroundPlaybackComparison,
+)
 from rate_of_closure.simulation.ground_playback_workspace import (
     GroundPlaybackState,
     GroundPlaybackViewState,
-    GroundPlaybackWorkspace,
     ground_event_csv,
     ground_result_json,
     ground_trajectory_csv,
-    ground_workspace_from_json,
-    ground_workspace_to_json,
+)
+from rate_of_closure.simulation.ground_playback_workspace_v2 import (
+    GroundPlaybackComparisonState,
+    GroundPlaybackWorkspaceV2,
+    ground_workspace_v2_to_json,
+    load_ground_workspace_versioned_json,
 )
 from rate_of_closure.ui.pyqt6.ground_playback_persistence_controls import (
     GroundPlaybackPersistenceControls,
@@ -51,6 +58,11 @@ class GroundPlaybackPersistenceMixin:
     set_time: Callable[[float], None]
     _set_controls_enabled: Callable[[bool], None]
     on_primary_timeline_applied: Callable[[], None]
+    has_comparison: bool
+    comparison: GroundPlaybackComparison
+    comparison_is_shown: bool
+    show_comparison_checkbox: Any
+    apply_workspace_comparison: Callable[..., None]
 
     @property
     def timeline(self) -> GroundPlaybackTimeline:
@@ -73,29 +85,62 @@ class GroundPlaybackPersistenceMixin:
     ) -> None:
         """Atomically restore one strict workspace while retaining last-good state."""
         try:
-            workspace = ground_workspace_from_json(text)
+            load = load_ground_workspace_versioned_json(text)
+            workspace = load.workspace
             candidate = GroundPlaybackTimeline(workspace.result)
+            comparison = (
+                GroundPlaybackComparison(
+                    candidate,
+                    GroundPlaybackTimeline(workspace.comparison.result),
+                )
+                if workspace.comparison is not None
+                else None
+            )
         except (TypeError, ValueError) as exc:
             self._report_file_error(f"Could not import {source_name}: {exc}")
             raise
-        self._apply_timeline(candidate, f"workspace {source_name}")
-        self.speed_combo.setCurrentText(f"{workspace.playback.speed:g}×")
-        self.loop_checkbox.setChecked(workspace.playback.loop)
+        visibility = workspace.comparison.visible if workspace.comparison else False
+        visibility_blocker = QSignalBlocker(self.show_comparison_checkbox)
+        try:
+            self._apply_timeline(
+                candidate,
+                f"workspace {source_name}",
+                seek_to_start=False,
+            )
+            self.apply_workspace_comparison(
+                comparison,
+                visible=visibility,
+                source_name=source_name,
+            )
+            self.speed_combo.setCurrentText(f"{workspace.playback.speed:g}×")
+            self.loop_checkbox.setChecked(workspace.playback.loop)
+            self.view.apply_workspace_view(
+                yaw_deg=workspace.view.yaw_deg,
+                pitch_deg=workspace.view.pitch_deg,
+                zoom=workspace.view.zoom,
+            )
+        finally:
+            visibility_blocker.unblock()
         self.set_time(workspace.playback.time_s)
-        self.view.apply_workspace_view(
-            yaw_deg=workspace.view.yaw_deg,
-            pitch_deg=workspace.view.pitch_deg,
-            zoom=workspace.view.zoom,
-        )
+        if load.migrated_from_v1:
+            self.status_label.setText(
+                f"Migrated workspace {source_name} from v1 to v2; "
+                "future workspace saves are saved as v2."
+            )
 
     def _apply_timeline(
-        self, candidate: GroundPlaybackTimeline, source_name: str
+        self,
+        candidate: GroundPlaybackTimeline,
+        source_name: str,
+        *,
+        seek_to_start: bool = True,
     ) -> None:
         """Commit one fully validated candidate to every dependent view."""
         self.pause()
         self._timeline = candidate
         self.on_primary_timeline_applied()
-        self.current_time_s = candidate.start_time_s
+        if seek_to_start:
+            self.current_time_s = candidate.start_time_s
         self.view.set_timeline(candidate)
         populate_ground_tables(
             candidate,
@@ -108,7 +153,8 @@ class GroundPlaybackPersistenceMixin:
             button.setVisible(candidate.phase_time(phase) is not None)
         self.end_button.setText(candidate.end_label)
         self._set_controls_enabled(True)
-        self.set_time(candidate.start_time_s)
+        if seek_to_start:
+            self.set_time(candidate.start_time_s)
         self.status_label.setText(
             f"Loaded {source_name} — {candidate.result.status.value}; "
             f"{len(candidate.result.trajectory)} samples."
@@ -119,9 +165,21 @@ class GroundPlaybackPersistenceMixin:
         """Pause and serialize the exact result plus portable UI state."""
         self.pause()
         view = self.view.workspace_view()
-        persisted_time_s = self.timeline.frame_at(self.current_time_s).time_s
-        workspace = GroundPlaybackWorkspace(
+        persisted_time_s = (
+            self.comparison.frame_at(self.current_time_s).time_s
+            if self.has_comparison
+            else self.timeline.frame_at(self.current_time_s).time_s
+        )
+        workspace = GroundPlaybackWorkspaceV2(
             result=self.timeline.result,
+            comparison=(
+                GroundPlaybackComparisonState(
+                    self.comparison.comparison.result,
+                    self.comparison_is_shown,
+                )
+                if self.has_comparison
+                else None
+            ),
             playback=GroundPlaybackState(
                 persisted_time_s,
                 _SPEEDS[self.speed_combo.currentIndex()],
@@ -129,7 +187,7 @@ class GroundPlaybackPersistenceMixin:
             ),
             view=GroundPlaybackViewState(view.yaw_deg, view.pitch_deg, view.zoom),
         )
-        document: str = ground_workspace_to_json(workspace)
+        document: str = ground_workspace_v2_to_json(workspace)
         return document
 
     def result_json(self) -> str:

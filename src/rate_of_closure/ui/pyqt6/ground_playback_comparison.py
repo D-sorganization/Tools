@@ -227,18 +227,57 @@ class GroundPlaybackComparisonMixin:
             self.comparison_status_label.setProperty("state", "error")
             raise
         self.pause()
+        self._commit_comparison(
+            candidate,
+            visible=True,
+            status=(
+                f"Loaded comparison {source_name} — "
+                f"{candidate.comparison.result.status.value}; "
+                f"{len(candidate.comparison.result.trajectory)} samples. "
+                "Deltas are comparison minus primary."
+            ),
+        )
+        self.set_time(self.current_time_s)
+
+    def apply_workspace_comparison(
+        self,
+        candidate: GroundPlaybackComparison | None,
+        *,
+        visible: bool,
+        source_name: str,
+    ) -> None:
+        """Commit one prevalidated optional comparison from a valid workspace."""
+        if candidate is None:
+            self.comparison_status_label.setText(
+                f"Workspace {source_name} contains no comparison."
+            )
+            self.comparison_status_label.setProperty("state", "ready")
+            return
+        self._commit_comparison(
+            candidate,
+            visible=visible,
+            status=(
+                f"Loaded workspace comparison {source_name} — "
+                f"{candidate.comparison.result.status.value}; "
+                f"{len(candidate.comparison.result.trajectory)} samples. "
+                "Deltas are comparison minus primary."
+            ),
+        )
+
+    def _commit_comparison(
+        self,
+        candidate: GroundPlaybackComparison,
+        *,
+        visible: bool,
+        status: str,
+    ) -> None:
+        """Apply one fully validated comparison without parsing or I/O."""
         self._comparison = candidate
-        self.view.set_comparison_timeline(candidate.comparison)
+        self.view.set_comparison_timeline(candidate.comparison, visible=visible)
         self._populate_comparison(candidate)
         self._set_comparison_enabled(True)
-        self.show_comparison_checkbox.setChecked(True)
-        self.set_time(self.current_time_s)
-        self.comparison_status_label.setText(
-            f"Loaded comparison {source_name} — "
-            f"{candidate.comparison.result.status.value}; "
-            f"{len(candidate.comparison.result.trajectory)} samples. "
-            "Deltas are comparison minus primary."
-        )
+        self.show_comparison_checkbox.setChecked(visible)
+        self.comparison_status_label.setText(status)
         self.comparison_status_label.setProperty("state", "ready")
 
     def on_primary_timeline_applied(self) -> None:
