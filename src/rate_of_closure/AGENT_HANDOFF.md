@@ -5,9 +5,13 @@
 
 ## 2026-08-10 issue #4275 tilted-plane conformance and passivity
 
-`feat/4275-ground-tilted-conformance` is an exact child of ready PR #4321
-head `7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e` and is intended to target
-`feat/4275-ground-conformance-corpus`. The shared corpus gains a sixth case on
+`feat/4275-ground-tilted-conformance` is published as ready PR #4322, an exact
+child of ready PR #4321 head
+`7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e`, targeting
+`feat/4275-ground-conformance-corpus`. Its implementation/evidence head was
+`a0c8e49a40badc3ce96193e031d2a9dec557d143`; this documentation-only
+publication follow-up changes no implementation evidence. The shared corpus
+gains a sixth case on
 the inclined plane `n=[0,sqrt(0.99),0.1]`: exact pure roll, zero rolling
 resistance, and four seconds of gravity-driven acceleration. Analytic checks
 cover event/status semantics, no-slip capture, plane contact, path, terminal
@@ -29,7 +33,9 @@ and strict lint/type/format/policy/documentation gates. Independent adversarial
 review is `READY`. The reviewed implementation is exact commit
 `5d333a4448d6484f8c98e78c9878cb83b40aa522`; the raw six-case corpus SHA-256 is
 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
-No carrier PR, hosted check, approval, integration, or release is claimed yet.
+PR #4322 was initially open, ready, and mergeable with protected jobs queued or
+in progress and no review decision. Green hosted CI, approval, integration, and
+release are not claimed.
 
 A complete-runtime regression additionally found that frozen rolling
 resistance could cross the zero-relative-speed cusp on a translating incline.

@@ -6,9 +6,12 @@ branch was rewritten.
 
 ## 2026-08-10 issue #4275 tilted-plane conformance and passivity
 
-Branch `feat/4275-ground-tilted-conformance` begins at exact ready PR #4321
-head `7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e`; preserve base
-`feat/4275-ground-conformance-corpus`. It extends the single shared corpus from
+Branch `feat/4275-ground-tilted-conformance` is published as ready PR #4322. It
+begins at exact ready PR #4321 head
+`7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e` and preserves base
+`feat/4275-ground-conformance-corpus`. Its implementation/evidence publication
+head was `a0c8e49a40badc3ce96193e031d2a9dec557d143`; this documentation-only
+follow-up changes no implementation evidence. It extends the single shared corpus from
 five horizontal cases to six cases with one analytically tractable incline:
 `n=[0,sqrt(0.99),0.1]`, initial pure roll, zero rolling resistance, and a
 four-second gravity-driven suffix. Whitelisted checks add the center-to-plane
@@ -34,8 +37,9 @@ independent adversarial review is `READY`.
 The reviewed implementation is exact commit
 `5d333a4448d6484f8c98e78c9878cb83b40aa522`; the raw six-case corpus SHA-256 is
 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
-This is immutable local evidence only. Publication, hosted/protected checks,
-review approval, integration, and release are not yet claimed.
+This is immutable local evidence. PR #4322 was initially open, ready, and
+mergeable, with protected jobs queued/in progress and no review decision.
+Green hosted checks, approval, integration, and release are not claimed.
 
 The broader runtime matrix then exposed a separate resistance-cusp defect on a
 translating incline. A frozen resistance direction could cross through zero
@@ -51,8 +55,8 @@ angular equivalent gate the holding correction. A stationary projected stop
 returns `REST` in the same solver step, with one zero-motion interval used only
 at the handoff boundary to satisfy the strict increasing-time wire contract.
 
-Before publication, publish the stacked PR from the evidence child and await
-ordinary protected CI/review. This is still `partial_implementation`;
+Await ordinary protected CI/review and parent-stack integration. This is still
+`partial_implementation`;
 #4275/#4267 remain open for mirrored and
 randomized tilted frames, broader properties, performance, calibration,
 terrain/material evolution, deformation, interfaces, visualization, and

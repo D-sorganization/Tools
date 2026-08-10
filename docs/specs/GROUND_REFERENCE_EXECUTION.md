@@ -198,7 +198,9 @@ The six-case artifact is bound to reviewed implementation commit
 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
 Neither digest is evidence for broad tilted
 frames, properties, performance, calibration, changing terrain, user
-interfaces, or downstream release.
+interfaces, or downstream release. The bounded carrier is ready PR #4322,
+targeting `feat/4275-ground-conformance-corpus`; hosted approval and integration
+remain separate gates.
 
 This corpus does not replace the canonical full-result fixture. Scientific
 tolerances establish physical conformance; exact canonical bytes and SHA-256

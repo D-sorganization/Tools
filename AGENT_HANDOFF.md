@@ -5,9 +5,14 @@
 
 ## 2026-08-10 issue #4275 tilted-plane conformance and passivity
 
-Branch `feat/4275-ground-tilted-conformance` starts exactly at ready PR #4321
-head `7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e` and must retain base
-`feat/4275-ground-conformance-corpus`. This bounded continuation adds a sixth
+Branch `feat/4275-ground-tilted-conformance` is published as ready
+[PR #4322](https://github.com/D-sorganization/Tools/pull/4322). It starts
+exactly at ready PR #4321 head
+`7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e` and retains base
+`feat/4275-ground-conformance-corpus`. The implementation/evidence head was
+`a0c8e49a40badc3ce96193e031d2a9dec557d143`; this documentation-only
+publication follow-up changes no implementation evidence. This bounded
+continuation adds a sixth
 shared conformance case: an immutable plane with
 `n=[0,sqrt(0.99),0.1]`, exact initial pure roll, zero rolling resistance, and
 a four-second downhill horizon. Independent constant-acceleration oracles pin
@@ -30,8 +35,9 @@ Strict lint, type, format, policy, and documentation gates pass. Independent
 adversarial review is `READY`. The exact implementation is
 `5d333a4448d6484f8c98e78c9878cb83b40aa522`; the six-case corpus SHA-256 is
 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
-Publication, PR identity, protected CI, approval, integration, and release
-remain unclaimed.
+At initial publication PR #4322 was open, ready, and mergeable; protected jobs
+were queued/in progress and no review decision existed. Green hosted CI,
+approval, parent integration, and release remain unclaimed.
 
 Full-matrix testing also exposed a resistance-cusp defect on a translating
 incline: a frozen rolling-resistance direction could step through zero relative
