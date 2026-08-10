@@ -26,13 +26,28 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.8                                     |
-| **Spec Version**        | 1.14.8                                     |
+| **Current Version**     | 1.14.9                                     |
+| **Spec Version**        | 1.14.9                                     |
 | **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-09 Four-surface capability contract
+
+- `four-surface-capability/v1` defines stable IDs for standalone Tools PyQt6,
+  Tools React, UpstreamDrift PyQt6, and UpstreamDrift React consumers.
+- Every declared model, control, output, view, persistence, or export
+  capability classifies all four surfaces as supported, unsupported, or
+  deprecated. Supported cells require commit-bound evidence; unsupported and
+  deprecated cells require visible reasons.
+- The initial checked-in inventory is deliberately partial and pins the exact
+  Tools audit basis. Both UpstreamDrift surfaces remain unsupported until an
+  immutable installed consumer pin and conformance evidence exist.
+- Deterministic schema and canonical JSON generation, strict Pydantic
+  validation, evidence-path checks, and a bounded expiry gate make incomplete
+  or stale capability records fail closed in CI.
 
 ### 2026-08-09 Capability workflow contract hardening
 
@@ -2936,6 +2951,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.14.9 | feat(rate-of-closure, #4264): add the strict `four-surface-capability/v1` partial inventory with stable Tools/UpstreamDrift PyQt6/React IDs, exact Tools pin, deterministic schema and canonical JSON generation, evidence/limitation/freshness contracts, explicit unsupported consumer reasons, completeness/staleness tests, and truthful campaign-manifest integration without promoting #4260 release state. |
 | 2026-08-09 | 1.14.8 | feat(rate-of-closure, #4201): harden cross-runtime capability parsing and signed input; expose complete diagnostics, result exports, and quantitative scatter annotations; stabilize supported PyQt6/static-Vite entrypoints; and add a strict campaign manifest with generated schema, four-surface status, explicit gaps/dependencies, and fail-closed feature-stack/protected-parent/`main` release distinctions. |
 | 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |
 | 2026-08-08 | 1.14.6 | feat(rate-of-closure, #4197): add matched PyQt6/React Shot Optimizer workspaces with strict cross-runtime workflow persistence, off-main-thread qualified flight execution, truthful progress/cancellation, complete scalar-ensemble cohort retention, ranked alternatives, stage-qualified selectable scatter axes, zoom/autofit, bounded raw-row paging, lossless CSV/stable JSON, substantive hover guidance, and saved-layout migration that reveals newly registered modules. |

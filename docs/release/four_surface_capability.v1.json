@@ -1,0 +1,312 @@
+{
+  "schema_version": "four-surface-capability/v1",
+  "tools_pin": {
+    "repository": "D-sorganization/Tools",
+    "branch": "feat/4199-wind-workflow",
+    "commit_sha": "de49580a3c0888b44f66dcc09bba2ab2fa33914a"
+  },
+  "schema": {
+    "id": "four-surface-capability/v1",
+    "path": "docs/release/four_surface_capability.v1.schema.json",
+    "sha256": "afd65b9f01417b23640bb3f5c1d12b2fa97a8936149a0c1594d5b49236c9d037"
+  },
+  "freshness": {
+    "observed_on": "2026-08-09",
+    "max_age_days": 30,
+    "expires_on": "2026-09-08"
+  },
+  "campaign": {
+    "path": "docs/release/rate_of_closure_campaign.v1.json",
+    "schema_version": "rate-of-closure-campaign/v1",
+    "program_issue": 4260
+  },
+  "inventory": {
+    "status": "partial",
+    "included_categories": [
+      "model",
+      "control",
+      "output",
+      "view",
+      "persistence",
+      "export"
+    ],
+    "excluded_scope_reason": "This bounded first slice establishes the strict matrix contract and one evidenced capability per required category; it is not an exhaustive inventory of every Rate of Closure feature."
+  },
+  "surfaces": [
+    {
+      "id": "tools.pyqt6",
+      "repository": "D-sorganization/Tools",
+      "runtime": "pyqt6",
+      "role": "authority",
+      "consumer_commit_sha": null
+    },
+    {
+      "id": "tools.react",
+      "repository": "D-sorganization/Tools",
+      "runtime": "react",
+      "role": "authority",
+      "consumer_commit_sha": null
+    },
+    {
+      "id": "upstreamdrift.pyqt6",
+      "repository": "D-sorganization/UpstreamDrift",
+      "runtime": "pyqt6",
+      "role": "consumer",
+      "consumer_commit_sha": null
+    },
+    {
+      "id": "upstreamdrift.react",
+      "repository": "D-sorganization/UpstreamDrift",
+      "runtime": "react",
+      "role": "consumer",
+      "consumer_commit_sha": null
+    }
+  ],
+  "evidence": [
+    {
+      "id": "tools-pyqt-capability-workflow",
+      "repository": "D-sorganization/Tools",
+      "commit_sha": "de49580a3c0888b44f66dcc09bba2ab2fa33914a",
+      "source_paths": [
+        "src/rate_of_closure/application/capability_workflow.py",
+        "src/rate_of_closure/ui/pyqt6/capability_tab.py"
+      ],
+      "test_paths": [
+        "tests/rate_of_closure/test_capability_workflow.py",
+        "tests/rate_of_closure/test_capability_gui.py"
+      ],
+      "assertion": "The standalone Tools PyQt surface exposes the typed capability workflow and its native workbench controls and diagnostics."
+    },
+    {
+      "id": "tools-react-capability-workflow",
+      "repository": "D-sorganization/Tools",
+      "commit_sha": "de49580a3c0888b44f66dcc09bba2ab2fa33914a",
+      "source_paths": [
+        "src/rate_of_closure/web/src/model/capabilityWorkflow.ts",
+        "src/rate_of_closure/web/src/App.tsx"
+      ],
+      "test_paths": [
+        "src/rate_of_closure/web/src/model/capabilityWorkflow.test.ts"
+      ],
+      "assertion": "The standalone Tools React surface exposes its strict capability workflow and registered application view."
+    },
+    {
+      "id": "tools-pyqt-workspace",
+      "repository": "D-sorganization/Tools",
+      "commit_sha": "de49580a3c0888b44f66dcc09bba2ab2fa33914a",
+      "source_paths": [
+        "src/rate_of_closure/application/workspace_document.py"
+      ],
+      "test_paths": [
+        "tests/rate_of_closure/test_workspace_document.py"
+      ],
+      "assertion": "The standalone Tools PyQt application has a strict versioned workspace document contract and persistence tests."
+    },
+    {
+      "id": "tools-react-workspace",
+      "repository": "D-sorganization/Tools",
+      "commit_sha": "de49580a3c0888b44f66dcc09bba2ab2fa33914a",
+      "source_paths": [
+        "src/rate_of_closure/web/src/hooks/useAppWorkspace.ts"
+      ],
+      "test_paths": [
+        "src/rate_of_closure/web/src/model/workspaceCommands.test.ts"
+      ],
+      "assertion": "The standalone Tools React application exposes workspace commands through its application workspace hook."
+    },
+    {
+      "id": "tools-pyqt-capability-export",
+      "repository": "D-sorganization/Tools",
+      "commit_sha": "de49580a3c0888b44f66dcc09bba2ab2fa33914a",
+      "source_paths": [
+        "src/rate_of_closure/application/capability_result_export.py"
+      ],
+      "test_paths": [
+        "tests/rate_of_closure/test_capability_result_export.py"
+      ],
+      "assertion": "The standalone Tools PyQt path has deterministic capability-result JSON and spreadsheet-safe CSV export contracts."
+    },
+    {
+      "id": "tools-react-capability-export",
+      "repository": "D-sorganization/Tools",
+      "commit_sha": "de49580a3c0888b44f66dcc09bba2ab2fa33914a",
+      "source_paths": [
+        "src/rate_of_closure/web/src/model/capabilityResultExport.ts"
+      ],
+      "test_paths": [
+        "src/rate_of_closure/web/src/model/capabilityResultExport.test.ts"
+      ],
+      "assertion": "The standalone Tools React path has deterministic capability-result JSON and spreadsheet-safe CSV export contracts."
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "rate.model.capability-optimization",
+      "category": "model",
+      "title": "Capability optimization workflow",
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-pyqt-capability-workflow"]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-react-capability-workflow"]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "No installed UpstreamDrift PyQt consumer adapter is pinned to the audited Tools commit; a launcher tile is not an implementation.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure route or consumer adapter is pinned to the audited Tools commit.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "rate.control.capability-parameters",
+      "category": "control",
+      "title": "Capability target and player parameter controls",
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-pyqt-capability-workflow"]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-react-capability-workflow"]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "No installed UpstreamDrift PyQt consumer adapter is pinned to the audited Tools commit; launcher discovery alone does not expose these controls.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure route is installed for these controls.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "rate.output.capability-diagnostics",
+      "category": "output",
+      "title": "Capability optimization diagnostics",
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-pyqt-capability-workflow"]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-react-capability-workflow"]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "No installed UpstreamDrift PyQt capability-results adapter is pinned to the audited Tools commit.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure results route is installed.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "rate.view.capability-workbench",
+      "category": "view",
+      "title": "Capability optimization workbench view",
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-pyqt-capability-workflow"]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-react-capability-workflow"]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "The UpstreamDrift PyQt launcher does not establish an independently verified capability workbench surface.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure route is installed for this view.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "rate.persistence.workspace-json",
+      "category": "persistence",
+      "title": "Versioned workspace JSON persistence",
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-pyqt-workspace"]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-react-workspace"]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "No installed UpstreamDrift PyQt workspace adapter is pinned to the audited Tools commit.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure workspace route or adapter is installed.",
+          "evidence_ids": []
+        }
+      }
+    },
+    {
+      "id": "rate.export.capability-results",
+      "category": "export",
+      "title": "Capability result JSON and CSV exports",
+      "surfaces": {
+        "tools.pyqt6": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-pyqt-capability-export"]
+        },
+        "tools.react": {
+          "state": "supported",
+          "reason": null,
+          "evidence_ids": ["tools-react-capability-export"]
+        },
+        "upstreamdrift.pyqt6": {
+          "state": "unsupported",
+          "reason": "No installed UpstreamDrift PyQt export adapter is pinned to the audited Tools commit.",
+          "evidence_ids": []
+        },
+        "upstreamdrift.react": {
+          "state": "unsupported",
+          "reason": "No UpstreamDrift React Rate of Closure export route or adapter is installed.",
+          "evidence_ids": []
+        }
+      }
+    }
+  ],
+  "limitations": [
+    "This first contract slice is a partial inventory and does not close issue 4264 or epic 4260.",
+    "Supported states apply only to the exact Tools source pin and cited local evidence paths; they are not protected-CI or main-release claims.",
+    "Neither UpstreamDrift consumer has an immutable installed Tools pin in this inventory, so every declared consumer capability remains unsupported with a visible reason.",
+    "The matrix does not infer parity from a launcher tile, copied physics, or an unrelated simulator route."
+  ]
+}

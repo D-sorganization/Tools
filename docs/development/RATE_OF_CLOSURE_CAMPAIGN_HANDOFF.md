@@ -4,6 +4,38 @@ Status verified 2026-08-09. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 Four-surface capability contract continuation
+
+Isolated local branch `feat/4264-four-surface-capability` starts exactly from
+`feat/4199-wind-workflow@de49580a3c0888b44f66dcc09bba2ab2fa33914a` and does
+not overlap the running PyQt6 or React worktrees. It adds the strict
+`four-surface-capability/v1` typed Python contract, checked-in generated JSON
+Schema, canonical JSON rendering, stable Tools/UpstreamDrift PyQt6/React
+surface IDs, exact Tools audit pin, evidence-path validation, and a bounded
+freshness gate.
+
+The initial inventory covers one evidenced Tools capability in each required
+model, control, output, view, persistence, and export category. Every declared
+capability classifies all four surfaces. Both UpstreamDrift consumers remain
+explicitly unsupported with visible reasons because neither has an immutable
+installed Tools consumer pin; launcher discovery and an unrelated route do not
+qualify. The inventory is marked partial, so this slice does not close #4264
+or #4260 and does not claim hosted CI, consumer conformance, protected merge,
+or release.
+
+Local validation passes 15 capability-contract tests plus the eight canonical
+campaign-manifest tests, 50 cited Python/PyQt capability/workspace/export
+tests, and three cited React files / 32 tests. Deterministic CLI validation,
+schema and canonical JSON generation, Python 3.10 import/schema parity, exact
+mypy 1.13, Ruff, Ruff format, Black, assertion policy, docs governance, and
+diff checks also pass.
+
+The canonical campaign manifest references the new matrix and schema but keeps
+#4260 `specified_only`, `specified`, and `not_released`. Its evidence gap now
+names the missing exhaustive inventory, consumer pins, and four-surface
+conformance run instead of incorrectly claiming that no machine-readable
+matrix exists. No GitHub write or push has occurred.
+
 ## 2026-08-09 Capability workflow hardening continuation
 
 Local branch `feat/4201-capability-contract-hardening` starts at exact carrier

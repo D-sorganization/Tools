@@ -982,6 +982,14 @@
         {
           "kind": "repository_path",
           "value": "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/release/four_surface_capability.v1.json"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/release/four_surface_capability.v1.schema.json"
         }
       ],
       "tracked_issue_ids": [
@@ -1000,10 +1008,11 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [],
-      "evidence_gap": "No machine-readable four-surface capability matrix, immutable Tools pin, or installed conformance run exists.",
+      "evidence_gap": "The strict partial capability inventory pins an exact Tools source snapshot, but no installed UpstreamDrift consumer pin, exhaustive capability inventory, or four-surface conformance run exists.",
       "limitations": [
         "A launcher tile does not establish an independent surface implementation.",
-        "Current UpstreamDrift source resolution and React routing do not satisfy parity."
+        "Current UpstreamDrift source resolution and React routing do not satisfy parity.",
+        "The initial machine-readable matrix covers one evidenced capability in each required category and must not be treated as the exhaustive issue 4264 inventory."
       ],
       "depends_on_issues": [
         4191

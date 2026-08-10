@@ -5,9 +5,26 @@
 
 ## Current continuation
 
-The active local continuation is integrated directly on the existing PR #4282
-carrier `feat/4199-wind-workflow`, starting from exact published head
-`18fe89201d657116bbca99922297c14968356c44`. It adds strict cross-runtime
+The newest bounded continuation is branch
+`feat/4264-four-surface-capability` in isolated worktree
+`C:\Users\diete\Repositories\Tools-worktrees\four-surface-capability`, based
+exactly on `feat/4199-wind-workflow@de49580a3c0888b44f66dcc09bba2ab2fa33914a`.
+It establishes `four-surface-capability/v1`: stable surface IDs, a strict typed
+Python contract, deterministic JSON Schema/canonical JSON generation, an exact
+Tools audit pin, commit-bound source/test evidence, completeness and freshness
+gates, and explicit unsupported reasons for both unpinned UpstreamDrift
+consumers. The checked-in inventory is explicitly partial and does not claim
+issue completion, installed parity, hosted CI, protected merge, or release.
+
+Focused local evidence is 15 new capability-contract tests plus eight campaign
+authority tests, 50 cited Python/PyQt capability/workspace/export tests, and
+three cited React files / 32 tests. The deterministic validator, schema and
+canonical output, Python 3.10 import/schema parity, exact mypy 1.13, Ruff,
+Ruff format, Black, assertion policy, docs governance, and diff checks pass.
+
+The inherited implementation is integrated on the existing PR #4282 carrier
+`feat/4199-wind-workflow`; this continuation starts from exact supplied head
+`de49580a3c0888b44f66dcc09bba2ab2fa33914a`. The parent adds strict cross-runtime
 capability parsing, reliable signed decimal entry, complete ranked diagnostics
 and result exports, quantitative React scatter annotations, package-safe
 static-web release entrypoints, and the strict `rate-of-closure-campaign/v1`
@@ -20,6 +37,9 @@ changed-production-Python policy guard cover this release entrypoint.
 
 Use these authorities together:
 
+- `docs/release/four_surface_capability.v1.json` — partial parity inventory;
+- `scripts/four_surface_capability.py` — schema generator and validator;
+- `docs/release/FOUR_SURFACE_CAPABILITY.md` — refresh procedure;
 - `docs/release/rate_of_closure_campaign.v1.json` — machine state;
 - `scripts/rate_campaign_manifest.py` — validation and generated JSON Schema;
 - `docs/release/RATE_OF_CLOSURE_CAMPAIGN_MANIFEST.md` — update procedure;
@@ -68,14 +88,19 @@ reconciled before #4130 can close.
 - Ground contracts and flight transfer are open carriers; qualified bounce,
   skid, roll, profiles, total-distance optimization, UI, and Rust/WASM parity
   remain.
-- UpstreamDrift React has no native Rate route, and the Tools source pin and
-  resolver behavior are not a qualified immutable parity boundary.
+- UpstreamDrift React has no native Rate route. The partial capability matrix
+  now pins its Tools audit basis exactly, but neither UpstreamDrift consumer has
+  an immutable installed Tools pin or qualified conformance result.
 - Camera tracking/snap views (#4284), complete persistence adapters, high-DPI,
   keyboard, reduced-motion, and visual-regression matrices remain open.
 - Local/rendered evidence is not protected CI or installed-package evidence.
 
 ## Most recent evidence
 
+- Four-surface contract continuation: 15 strict contract tests plus eight
+  campaign tests, 50 cited Python/PyQt tests, and three React files / 32 tests
+  pass locally. Python 3.10 import/schema parity and the focused quality gates
+  pass. There is no hosted or installed-consumer evidence.
 - Composed local continuation: 828 Rate Python/PyQt tests and 104 React files /
   642 tests passed; TypeScript, zero-warning ESLint, and the 188-module Vite
   production build passed. The manifest, schema JSON, Ruff, targeted mypy, and
@@ -100,10 +125,12 @@ reconciled before #4130 can close.
 ## Validation
 
 ```powershell
+$env:PYTHONPATH=(Resolve-Path 'src').Path
+python scripts/four_surface_capability.py
+python -m pytest tests/rate_of_closure/test_four_surface_capability.py -q
 python scripts/rate_campaign_manifest.py
 python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q
 $env:QT_QPA_PLATFORM='offscreen'
-$env:PYTHONPATH=(Resolve-Path 'src').Path
 python -m pytest tests/rate_of_closure src/shared/python/swing_sim -q
 cd src/rate_of_closure/web
 npm test -- --run
