@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.4                                     |
-| **Spec Version**        | 1.13.4                                     |
-| **Last Spec Update**    | 2026-08-06                                 |
+| **Current Version**     | 1.13.5                                     |
+| **Spec Version**        | 1.13.5                                     |
+| **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
@@ -55,6 +55,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - All visualization calculations remain outside widget/rendering code, preserve
   stable point and variable identifiers, disclose unavailable downstream
   values, and keep reproducible sampling seeds and exact cohort counts.
+
+### 2026-08-10 Rate of Closure Python 3.10 datetime boundary
+
+- Rate of Closure modules must import `UTC` from
+  `shared.python.compatibility`, never directly from `datetime`, because
+  `datetime.UTC` is unavailable on the supported Python 3.10 runtime.
+- An AST-based regression guard scans the complete Rate source tree so future
+  user-interface or persistence work cannot silently restore the incompatible
+  import.
 
 ### 2026-08-05 Rate of Closure Python 3.10 CI compatibility
 
@@ -2556,6 +2565,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.13.5 | fix(rate-of-closure, #4167): replace the Python 3.11-only `datetime.UTC` import in torque-profile persistence with the shared Python 3.10-compatible UTC export, and add a source-wide AST guard covering direct, aliased, and module-attribute access forms; release evidence remains pending. |
 | 2026-08-06 | 1.13.4 | refactor(gui, ci): deduplicate Rotation Converter plot helpers and extract Movement Optimizer motion helpers, restoring the protected module-size budget inherited by the stacked Rate PRs. |
 | 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |
 | 2026-08-05 | 1.13.3 | feat(rate_of_closure, swing_sim, #4135 #4142 #4143): add canonical ground/tee ball setup with club defaults and physical propagation through simulation/export/rendering, complete persistent v2 variation-plan workflows and paired common-reference propagation analysis, and make every Rate Matplotlib canvas lifecycle-safe during Qt teardown. |
