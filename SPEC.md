@@ -26,13 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.13                                    |
-| **Spec Version**        | 1.14.13                                    |
+| **Current Version**     | 1.14.14                                    |
+| **Spec Version**        | 1.14.14                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-10 D-plane ndarray typing boundary repair
+
+- The private D-plane vector conversion and horizontal-projection helpers bind
+  NumPy expression results to explicit ndarray locals before returning them.
+- This preserves the existing numerical calculations and DbC validation while
+  satisfying the changed-file MyPy `no-any-return` contract on Python 3.12.
+- No public API, reference frame, serialized schema, physics assumption, or UI
+  behavior changes in this repair.
 
 ### 2026-08-06 GUI module-budget repair
 
@@ -2881,8 +2890,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-10 | 1.14.13 | feat/fix(wind variation, #4144 #4199 #4280 #4281): normally propagate exact variation parent `8bcc49fc4e16e5e43be0b7f0f03c3017d5b79d0c` into the wind scalar-adapter child while preserving matching UI-neutral Python/TypeScript `scalar-ensemble/v1` contracts with structured provenance, unit-bearing variables, stable RFC3986 row IDs, immutable nullable raw rows, and overall/per-cohort availability; adapt actual and perfect-information wind outcomes with explicit status, true/estimated wind, launch/aim, target, landing, miss, cost, and information-delta values; enforce the deterministic scenario boundary identically in both clients with exact per-trial provenance, zero shear/turbulence, seed zero, and empty gusts; and retain the parent's result-local linked selection and complete visualization/workspace repairs. |
-| 2026-08-10 | 1.14.12 | feat/fix(variation, #4144 #4218 #4279 #4280): normally propagate exact workspace parent `6717e9e09d507dbc24bedb36177f1cdf0b4fd90b` into the variation-export child while preserving selected-scatter CSV parity with stable trial identity, typed unavailable outcomes, bounded accessible PyQt raw tables, focused PyQt/React visualization modules, linked selection, and all-trial arc analysis alongside the complete workspace/toolstrip, playback, plot, navigation, compatibility, and module-budget repairs; make linked trial selection result-local in both clients, clear it atomically when a rerun replaces the result, and reject or neutralize indices outside the current trial count so smaller reruns cannot crash or dim every new point. |
+| 2026-08-10 | 1.14.14 | feat/fix(wind variation, #4144 #4199 #4280 #4281): normally propagate repaired variation parent `b90e5021a59e2081415b51ef29fbed06377bc201` into the wind scalar-adapter child without production/test conflict or history rewrite; preserve matching Python/TypeScript `scalar-ensemble/v1` provenance, availability, deterministic-scenario, and wind-strategy plot-adapter contracts; verify the reconciliation with 25 focused D-plane/impact tests and governance, size, and whitespace gates. |
+| 2026-08-10 | 1.14.13 | feat/fix(variation, #4144 #4218 #4279 #4280): normally propagate repaired workspace parent `61b7f48b5aeb7d57246b4963da3df086e79cbe15` into the variation-export child without feature-code conflict or history rewrite; preserve selected-scatter CSV parity, typed unavailable outcomes, bounded accessible tables, linked selection, all-trial arc analysis, and the complete workspace/toolstrip behavior; verify the reconciliation with 25 focused D-plane/impact tests and governance, size, and whitespace gates. |
+| 2026-08-10 | 1.14.12 | fix(rate-of-closure, d-plane, #4202 #4203 #4279): normally propagate exact repaired launch-registry parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` into the workspace/toolstrip child without rewriting the stack; inherit explicit ndarray result boundaries while preserving numerical semantics, frames, schemas, and UI behavior; verify the reconciled tree with 25 focused D-plane/impact tests and governance, size, and whitespace gates. |
 | 2026-08-10 | 1.14.11 | feat/fix(rate-of-closure, #4203 #4218 #4279): normally propagate exact launch-registry parent `31cbc007d4c85b5479b7cd0fb0969124eab2af67` into the workspace/toolstrip child while preserving granular playback, path trails, module visibility, and independent plot controls; reuse the parent's single persisted impact-layer mapping and canonical navigation constants without duplicating state; and retain its focused triple-pendulum, plotting-catalog, and primary-navigation repairs. |
 | 2026-08-10 | 1.14.10 | fix(compatibility, #4279): make workspace UTC timestamp parsing deterministic across Python 3.10-3.12 with one anchored canonical grammar, consistent zero- through six-digit fractional-second parsing, and rejection of greater-than-microsecond precision instead of interpreter-dependent rejection or truncation. |
 | 2026-08-09 | 1.14.9 | fix(compatibility, #4279): route the child command/view `StrEnum` runtime imports and workspace-validation `UTC` import through `shared.python.compatibility` while preserving native enum typing under `TYPE_CHECKING`, all wire values, schemas, UTC serialization, and UI behavior; merge the parent and child regression into one nine-enum/two-UTC runtime-import contract exercised with real CPython 3.10.20. |

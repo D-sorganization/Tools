@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 Wind scalar child receives second repaired parent
+
+PR `#4281` retains branch `feat/4199-wind-scalar-adapter` and base
+`feat/4144-variation-export-continuation`. It normally merges exact repaired
+parent `b90e5021a59e2081415b51ef29fbed06377bc201` without scalar-adapter code
+conflict or history rewrite. Fresh child CI, review, and dependency order
+remain required.
+Post-reconciliation evidence is 25 focused D-plane/impact tests plus docs,
+changed-file-size, and whitespace gates.
+
+## 2026-08-10 Variation child receives second repaired workspace parent
+
+PR `#4280` retains branch `feat/4144-variation-export-continuation` and base
+`feat/4218-toolstrip-workspace`. It normally merges exact repaired parent head
+`61b7f48b5aeb7d57246b4963da3df086e79cbe15` without feature-code conflict or
+history rewrite. Variation/export behavior remains unchanged; fresh child CI,
+review, and dependency order remain required.
+Post-reconciliation evidence is 25 focused D-plane/impact tests plus docs,
+changed-file-size, and whitespace gates.
+
 ## 2026-08-10 Wind scalar child receives exact variation parent
 
 PR `#4281` keeps branch `feat/4199-wind-scalar-adapter`, base
@@ -39,6 +59,18 @@ for the Rate suite, `27 passed` on real CPython 3.10.20, and `1 file / 8 tests`
 for focused React variation, with TypeScript, focused ESLint, Ruff, format, and
 pinned mypy 1.13 clean. Normal publication and dependency-ordered propagation
 remain separate gates.
+
+## 2026-08-10 Workspace child receives second repaired parent
+
+PR `#4279` retains branch `feat/4218-toolstrip-workspace` and base
+`feat/4181-launch-monitor-registry`. It normally merges exact repaired parent
+head `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76`; there is no feature-code
+conflict, rebase, retarget, or history rewrite. The inherited explicit ndarray
+boundaries do not alter numerical behavior. Fresh child CI, review, and
+dependency order remain required.
+Verification after reconciliation is 25 focused D-plane/impact tests plus
+docs-governance, changed-file-size, and whitespace gates.
+
 ## 2026-08-10 Workspace child receives exact repaired parent
 
 PR `#4279` keeps branch `feat/4218-toolstrip-workspace` and base
@@ -240,6 +272,21 @@ tests. Mypy caught an untyped Qt `isChecked()` result in the child's
 changing runtime behavior. The affected simulation GUI rerun is `29 passed`;
 documentation governance and diff checks pass. Keep this handoff, the root
 handoff, the campaign handoff, and `SPEC.md` together in the merge commit.
+
+## 2026-08-10 Second D-Plane Parent Repair Propagation
+
+Draft PR `#4203` keeps base `feat/4189-dplane` and normally merges exact
+repaired parent head `7d8d2f06dc797021d01939691e58f8425b652b33` without
+rewriting either branch. The inherited change makes the two private D-plane
+NumPy return boundaries explicit for pinned MyPy while preserving numerical
+semantics, frames, schemas, and UI behavior. The parent quality gate is green;
+child protected CI, review, dependency order, and #4189 closure remain open.
+Post-reconciliation evidence is 25 focused D-plane/impact tests plus docs,
+changed-file-size, and whitespace gates. Local pinned-type evidence remains the
+parent's green hosted quality gate: Windows MyPy 1.15 encounters incompatible
+installed NumPy stub syntax and WSL is unavailable with `E_FAIL`, so neither
+local attempt is represented as green.
+
 ## 2026-08-10 Launch-Registry Child Propagation
 
 Draft PR `#4203` (`feat/4181-launch-monitor-registry`) retains its
@@ -303,6 +350,25 @@ Verification is `12 passed` on Windows and `12 passed` on WSL Python 3.11
 under importlib collection; Ruff/format and exact mypy 1.13 pass for both
 changed modules. The dataclass metadata assertion remains active behind an
 explicit test-only `Any` introspection boundary.
+
+## 2026-08-10 PR #4202 D-plane ndarray typing repair
+
+On top of verified published head
+`b443fdbed7064c5db0320106013c8413e3e24356`, the two private D-plane ndarray
+helpers now bind NumPy results to explicit ndarray locals before returning
+them. This closes the exact MyPy 1.13 `no-any-return` findings from CI Standard
+run `31384810375`, job `93442745760`, without changing numerical operations,
+DbC validation, reference frames, persistence, rendering, or public contracts.
+
+The exact MyPy failure was reproduced before editing and is green after the
+repair. Twenty-four focused D-plane and impact integration tests pass, along
+with seven metadata/pre-push contract tests, scoped Ruff, Ruff format, Black,
+docs governance, minimum-test, module-size, changed-file-size, and diff checks.
+Three unrelated CI-workflow contract tests still expect later toolcache/env
+steps not present on this older branch; no workflow file is in scope. This
+local commit does not push, retarget, change draft state, or claim issue
+completion; protected CI, review, and parent-first release order remain
+mandatory.
 
 ## 2026-08-10 D-Plane Child Propagation
 

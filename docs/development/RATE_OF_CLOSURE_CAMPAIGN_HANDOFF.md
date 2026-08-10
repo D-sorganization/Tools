@@ -1,5 +1,16 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-10 Second #4280 propagation into wind scalar PR #4281
+
+- PR `#4281` stays on `feat/4199-wind-scalar-adapter`, based on
+  `feat/4144-variation-export-continuation`.
+- Exact repaired parent `b90e5021a59e2081415b51ef29fbed06377bc201`
+  is incorporated through a normal merge commit. There is no production/test
+  scalar-adapter conflict and no branch/PR topology or history rewrite.
+- Fresh protected CI, review, and dependency ordering remain open.
+- Post-reconciliation evidence is 25 focused D-plane/impact tests plus docs
+  governance, changed-file-size, and whitespace gates.
+
 ## 2026-08-10 Exact #4280 propagation into wind scalar PR #4281
 
 - PR `#4281` remains on `feat/4199-wind-scalar-adapter`, based on
@@ -24,6 +35,18 @@
   exact provenance derivation and all five deterministic-scenario regressions.
   Protected current-head CI, unresolved threads, and repository review remain
   release gates after publication.
+
+## 2026-08-10 Second #4279 propagation into variation PR #4280
+
+- PR `#4280` stays on `feat/4144-variation-export-continuation`, based on
+  `feat/4218-toolstrip-workspace`.
+- Exact repaired parent `61b7f48b5aeb7d57246b4963da3df086e79cbe15`
+  is incorporated through a normal merge commit. No feature code conflicts and
+  no branch/PR topology or parent history is rewritten.
+- Preserve the variation/export implementation and both append-only handoff
+  histories. Fresh protected CI, review, and dependency order remain open.
+- Post-reconciliation evidence is 25 focused D-plane/impact tests plus docs
+  governance, changed-file-size, and whitespace gates.
 
 ## 2026-08-10 Exact #4279 propagation into variation PR #4280
 
@@ -55,6 +78,20 @@
   Current-head protected CI, review threads, and repository review remain
   release gates after publication.
 
+## 2026-08-10 Second #4203 propagation into workspace PR #4279
+
+- PR `#4279` remains the immediate child on
+  `feat/4218-toolstrip-workspace`, based on
+  `feat/4181-launch-monitor-registry`.
+- Exact repaired parent head
+  `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` is incorporated through a
+  normal merge commit; no feature code conflicts and no branch or PR topology
+  is rewritten.
+- Preserve both append-only handoff histories. Fresh child protected CI,
+  review, and earlier dependency gates remain required.
+- Post-reconciliation evidence is 25 focused D-plane/impact tests plus docs
+  governance, changed-file-size, and whitespace gates.
+
 ## 2026-08-10 Exact #4203 propagation into workspace PR #4279
 
 - PR `#4279` remains the immediate child on branch
@@ -77,6 +114,23 @@
   findings after 76 additional focused PyQt/navigation/workspace tests.
   Current-head protected CI, unresolved-thread checks, and required repository
   review remain release gates after guarded publication.
+
+## 2026-08-10 Second propagation into launch-monitor registry
+
+- Draft child PR `#4203` retains base `feat/4189-dplane` and receives exact
+  repaired parent head `7d8d2f06dc797021d01939691e58f8425b652b33`
+  through a normal merge commit. No branch history, PR base, or draft state is
+  rewritten.
+- The inherited repair closes the parent head's two pinned MyPy
+  `no-any-return` findings with explicit ndarray boundaries and makes no
+  numerical, frame, schema, or UI change.
+- Parent quality-gate success is not child release evidence. Current-head child
+  CI, review, all earlier ancestors, and #4189 acceptance remain required.
+- Reconciled child-tree evidence is 25 focused D-plane/impact tests, docs
+  governance, changed-file size, and whitespace checks. The local Windows
+  MyPy 1.15/installed-NumPy stub combination is incompatible with the branch's
+  Python 3.11 target, while WSL currently fails to start with `E_FAIL`; the
+  successful pinned typing evidence remains the exact parent hosted gate.
 
 ## 2026-08-10 Propagation into launch-monitor registry
 
@@ -872,6 +926,25 @@ remains an explicit fail-closed boundary.
 6. Verify a clean installed package and the exact UpstreamDrift dependency pin.
 7. Rerun every recorded gate, inspect protected GitHub checks/reviews, and keep
    #4201 open until every acceptance criterion has current evidence.
+
+## 2026-08-10 PR #4202 D-plane ndarray typing repair
+
+- The repair is based on exact published PR `#4202` head
+  `b443fdbed7064c5db0320106013c8413e3e24356` and retains base
+  `feat/4162-wedge-impact-visualization`.
+- CI Standard run `31384810375`, job `93442745760`, reported two pinned MyPy
+  1.13 `no-any-return` errors in private NumPy conversion/projection helpers.
+  Explicit ndarray local boundaries resolve those errors without changing
+  geometry, validation, frames, serialized contracts, or UI behavior.
+- RED/GREEN evidence is exact: two errors reproduced before the edit and zero
+  afterward. Twenty-four focused D-plane/impact tests, seven metadata/pre-push
+  contract tests, scoped Ruff/Ruff-format/Black, docs governance, minimum-test,
+  module-size, changed-file-size, and diff checks pass. Three exploratory
+  CI-workflow contract tests retain unrelated older-branch toolcache/env drift;
+  no workflow file is changed here.
+- This repair does not alter the stacked base, publish the branch, change its
+  draft state, or authorize a merge. Parent-first ordering, protected CI, and
+  review remain required.
 
 ## 2026-08-10 Propagation into 3D D-plane geometry
 
