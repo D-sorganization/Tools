@@ -591,3 +591,26 @@ Commit this narrow repair with all three canonical handoffs and push normally
 to `feat/4270-ground-impact-bounce`. Do not retry the unchanged failed run,
 amend history, or force-push. Descendant PRs #4304 and #4305 inherit this file
 and must later receive the parent by ordinary merge commits.
+
+## 2026-08-09 Ground-study scalar ensemble continuation
+
+Local branch `feat/4273-ground-study-scalar-adapter` starts exactly from PR
+#4307 head `de6ea15290f6b3c5c49bd436b846baa8f6cb752b`. It adds a bounded,
+deterministic adapter from explicit `(series_id, trial_index,
+GroundStudyProjection)` samples into `scalar-ensemble/v1`. No identity is
+inferred. Complete and censored rows keep observed metrics; failed/unavailable
+rows keep their cohort and evidence with all scalars null. Partial airborne
+rows keep first-contact evidence and report null final-target values with typed
+unavailability. Target misses and ineligible-but-numeric studies remain visible
+rather than being discarded.
+
+Rows retain a whole-study digest, request/result digests, exact target geometry,
+calibration and producer provenance, surface/frame, profile qualification and
+operating condition, eligibility
+reasons, and target availability. Input collection rejects before retaining a
+row beyond the configured bound and never truncates. This is a bounded #4273
+continuation, not ensemble-runner, optimizer, UI, compiled-runtime, downstream
+parity, or protected-release completion. Before publication, run focused and
+shared scalar contracts, full ground tests, Ruff, MyPy, structural and manifest
+gates, and independent review. Publish only as a stacked draft PR targeting
+`feat/4273-ground-study-result-adapter`; keep #4273 and #4267 open.

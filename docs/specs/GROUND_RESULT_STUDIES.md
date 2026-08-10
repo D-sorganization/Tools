@@ -114,10 +114,41 @@ the study, request-context, result, profile, or target evidence digests, so it
 must not replace the study record in an audit trail. Consumers needing typed
 unavailability or provenance retain the study alongside the DTO.
 
+## Scalar ensemble adapter
+
+`build_ground_study_scalar_dataset` projects explicitly identified
+`GroundStudySample` records into the shared `scalar-ensemble/v1` contract. The
+caller must provide both `series_id` and `trial_index`; the adapter never infers
+identity from request IDs, input order, file paths, club labels, or other
+incidental structure. Rows are sorted by that explicit composite identity and
+duplicates fail closed. Input is consumed through a bounded collector that
+rejects the first row beyond `max_rows`; it never returns a silently truncated
+study.
+
+Complete and censored studies retain every observed numeric ground metric.
+Failed and unavailable studies retain their cohort and evidence attributes but
+all declared scalar values are null. A partial airborne endpoint preserves its
+first-contact target result and physical trajectory metrics while its final
+target values remain null with `endpoint_airborne` in the row attributes. A
+target miss does not erase physical metrics, and a targetless study has null
+target scalars rather than fabricated zeroes.
+
+Each row retains a whole-study digest, request-context and source-result
+digests, exact target geometry, result calibration
+and producer provenance, surface/frame identity, material-profile digest and
+qualification, operating condition, solver eligibility and its reasons, and
+typed final-target unavailability. Dataset provenance is separately supplied
+by the caller and identifies the ensemble source; it is not derived from row
+order or treated as a cryptographic attestation. The adapter exposes raw
+observations for dispersion and scatter analysis. It does not reinterpret
+final-rest target miss as the flight capability solver's first-landing target
+residual.
+
 ## Explicit limitations
 
 This foundation does not yet connect the projection to ensemble runners,
-variation/dispersion plots, wind studies, inverse or capability optimizers,
+rendered variation/dispersion plots, wind studies, inverse or capability
+optimizers,
 PyQt6/React controls, compiled runtimes, or UpstreamDrift consumers. It does
 not implement piecewise terrain or changing normals. Cancellation and
 pre-contact/no-contact workflows require a higher-level adapter that produces

@@ -1070,3 +1070,21 @@ Publish this as a normal follow-up commit on
 `feat/4270-ground-impact-bounce`, with the three handoffs in the same commit.
 Keep #4270 and #4267 open; do not bypass protected CI or propagate into child
 branches until the parent push is verified.
+
+## 2026-08-09 Ground-study scalar ensemble continuation
+
+`feat/4273-ground-study-scalar-adapter` is an exact child of PR #4307 head
+`de6ea15290f6b3c5c49bd436b846baa8f6cb752b`. The new Rate-owned adapter maps
+caller-identified ground studies to the shared `scalar-ensemble/v1` authority.
+It sorts and deduplicates only explicit series/trial identities, rejects before
+retaining a row beyond its bound, preserves numeric censored observations, and
+uses null scalars for failed or unavailable studies. Typed airborne final-target
+unavailability, target misses, solver ineligibility, whole-study and source
+digests, exact target geometry, calibration, producer, surface, profile, and
+operating-condition evidence remain visible.
+
+This does not connect an ensemble runner, optimizer, GUI, compiled runtime, or
+UpstreamDrift consumer and is not issue/epic completion. Validate the focused
+adapter and scalar contracts, all ground tests, lint, type, structural,
+manifest, and independent-review gates before opening a draft child PR against
+`feat/4273-ground-study-result-adapter`. Keep #4273/#4267 open.

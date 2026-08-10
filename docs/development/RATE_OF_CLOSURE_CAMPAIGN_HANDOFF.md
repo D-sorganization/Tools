@@ -1413,3 +1413,26 @@ The digest, fixture, physics, scanner scope, and baseline remain unchanged.
 Commit and push this bounded repair normally before propagating it into #4304,
 #4305, or later ground children. The contemporaneous file-size cancellation
 occurred in checkout and remains infrastructure evidence, not a code failure.
+
+## 2026-08-09 Issue #4273 scalar ensemble continuation
+
+Local branch `feat/4273-ground-study-scalar-adapter` starts from exact PR #4307
+head `de6ea15290f6b3c5c49bd436b846baa8f6cb752b`. It adds an explicit-identity,
+bounded adapter from `ground-study-projection/v1` records into the shared
+`scalar-ensemble/v1` plot/export contract. The adapter sorts by caller-supplied
+series/trial identity, rejects duplicates and overflow without truncation,
+retains complete and censored numeric observations, and exposes failed or
+unavailable rows with null scalars rather than inventing outcomes. Partial
+airborne studies retain first-contact target evidence while final-target values
+stay null with the typed reason.
+
+Row attributes preserve a whole-study digest, request-context and result
+digests, exact target geometry, result calibration and provenance, surface/frame
+and material-profile identity, qualification
+and operating condition, solver eligibility reasons, and target availability.
+Missed targets and numeric but unqualified results remain analyzable. This
+slice does not implement ensemble execution, optimization composition, plots,
+UI, compiled runtimes, or downstream parity and cannot close #4273 or #4267.
+Require focused/shared scalar tests, the full ground suite, static and campaign
+gates, independent review, and normal protected review before integration.
+Publish only as a draft child of `feat/4273-ground-study-result-adapter`.
