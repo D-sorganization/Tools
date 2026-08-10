@@ -1,7 +1,43 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-09
+> Last updated: 2026-08-10
+
+## 2026-08-10 Variation child timestamp propagation
+
+The #4280 continuation now carries exact parent
+`05383d333b6fd87eaf5e37305476f50b505c2c2e` through a normal merge while
+preserving its original base and complete variation export/accessibility
+implementation. The inherited workspace parser now has one strict UTC grammar
+and consistent zero- through six-digit fractional-second behavior across
+Python 3.10-3.12. The child variation behavior is unchanged.
+
+SPEC 1.14.10 records the parent compatibility repair and 1.14.11 records the
+child variation delta. Keep this handoff, the root and campaign handoffs, and
+the reconciled SPEC in the merge commit. The combined evidence is `778 passed`
+for the Rate suite, `27 passed` on real CPython 3.10.20, and `1 file / 8 tests`
+for focused React variation, with TypeScript, focused ESLint, Ruff, format, and
+pinned mypy 1.13 clean. Normal publication and dependency-ordered propagation
+remain separate gates.
+
+## 2026-08-10 Workspace fractional-timestamp compatibility repair
+
+The Python 3.10 lane on descendant PR #4281 revealed that the strict workspace
+ordering test reached `datetime.fromisoformat` with a one-digit fractional
+second. Python 3.10 rejects that spelling before comparing timestamps, although
+newer supported interpreters accept it. PR #4279 is the earliest owning branch.
+The workspace validator now enforces one anchored UTC grammar and parses every
+losslessly representable zero- to six-digit fraction consistently, rejecting
+greater precision rather than allowing interpreter-dependent truncation. It
+does not modify the persisted spelling, UTC requirement, schema, or ordering
+rule.
+
+Evidence is `778 passed` for the full Rate suite, `45 passed` across the
+compatibility and workspace document tests on the local interpreter, and
+`27 passed` under real CPython 3.10.20. Ruff, format, pinned mypy 1.13, docs
+governance, and the 400-line budget pass. Keep this handoff, the root handoff,
+campaign handoff, and SPEC entry in the same implementation commit; verify the
+exact remote head before a normal push and propagate through later descendants.
 
 ## 2026-08-09 Universal Variation Visualization Continuation
 
@@ -37,7 +73,7 @@ Python 3.11 tests and `19` real-Python-3.10.20 tests with PyQt6 installed,
 including the merged compatibility and variation widget contracts. React
 passes `1 file / 8 tests`, TypeScript, and focused zero-warning ESLint. Ruff,
 format, pinned mypy 1.13, documentation governance, ancestry/SPEC assertions,
-and diff checks pass. SPEC 1.14.10 is the unique child entry for the
+and diff checks pass. SPEC 1.14.11 is the unique child entry for the
 scatter-export and accessible-row-table source change. This propagation is
 local only and has not been pushed.
 
