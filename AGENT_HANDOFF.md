@@ -3,6 +3,23 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-09.
 
+## 2026-08-09 PR #4305 protected quality-gate portability repair
+
+Protected CI run `31358547585`, job `93362698271`, failed at exact head
+`c242fdacd5c9e9a59e5ffb8934542eaa67114452` because Linux-hosted MyPy 1.13
+correctly does not expose Windows-only `ctypes.WinDLL` and
+`ctypes.get_last_error` attributes. The repair isolates those members behind
+the already guarded Windows-only helper, uses the module namespace for
+platform-conditional lookup, and adds an adversarial unit test that proves the
+wide-character `MoveFileExW` call retains `REPLACE_EXISTING | WRITE_THROUGH`
+flags and ctypes signatures. The focused store suite (12 tests), full ground
+suite (168 tests on CPython 3.11.9 and real CPython 3.10.20), pinned Ruff
+0.14.10 across 55 files, CI-equivalent MyPy 1.13 across 14 changed production
+files, manifest plus 8 tests, documentation governance, and diff checks pass
+locally. This is a portability/type-check repair only; persistence semantics
+and numerical contracts are unchanged. Protected rerun evidence remains
+pending.
+
 ## 2026-08-09 issue #4272 draft publication
 
 Draft [PR #4305](https://github.com/D-sorganization/Tools/pull/4305) was opened

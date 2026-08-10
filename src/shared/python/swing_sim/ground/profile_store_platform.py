@@ -56,14 +56,22 @@ def atomic_replace(source: Path, destination: Path) -> None:
     if os.name != "nt":
         os.replace(source, destination)
         return
-    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    _windows_atomic_replace(source, destination)
+
+
+def _windows_atomic_replace(source: Path, destination: Path) -> None:
+    """Use the Windows wide-character, write-through replacement primitive."""
+    # These ctypes members exist only on Windows. Attribute lookup keeps Linux
+    # type checking honest while the os.name dispatch above keeps runtime use
+    # platform-correct.
+    kernel32 = vars(ctypes)["WinDLL"]("kernel32", use_last_error=True)
     move_file = kernel32.MoveFileExW
     move_file.argtypes = (ctypes.c_wchar_p, ctypes.c_wchar_p, ctypes.c_uint32)
     move_file.restype = ctypes.c_int
     replace_existing = 0x1
     write_through = 0x8
     if not move_file(str(source), str(destination), replace_existing | write_through):
-        error = ctypes.get_last_error()
+        error = int(vars(ctypes)["get_last_error"]())
         raise OSError(error, "MoveFileExW atomic write-through replacement failed")
 
 

@@ -10,6 +10,7 @@ from types import SimpleNamespace
 import pytest
 
 import shared.python.swing_sim.ground.profile_store as profile_store_module
+import shared.python.swing_sim.ground.profile_store_platform as platform_module
 from shared.python.swing_sim.ground.profile_store import (
     GroundProfileLibraryStore,
     ProfileStoreConflictError,
@@ -240,6 +241,42 @@ def test_windows_reparse_attribute_is_treated_as_link_like(
     )
 
     assert GroundProfileLibraryStore._is_link_like(tmp_path)
+
+
+def test_windows_atomic_replace_uses_wide_write_through_api(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    calls: list[tuple[str, str, int]] = []
+
+    class MoveFile:
+        argtypes: object = None
+        restype: object = None
+
+        def __call__(self, source: str, destination: str, flags: int) -> int:
+            calls.append((source, destination, flags))
+            return 1
+
+    move_file = MoveFile()
+    kernel32 = SimpleNamespace(MoveFileExW=move_file)
+    monkeypatch.setattr(
+        platform_module.ctypes,
+        "WinDLL",
+        lambda *_args, **_kwargs: kernel32,
+        raising=False,
+    )
+
+    source = tmp_path / "source"
+    destination = tmp_path / "destination"
+    platform_module._windows_atomic_replace(source, destination)
+
+    assert calls == [(str(source), str(destination), 0x1 | 0x8)]
+    assert move_file.argtypes == (
+        platform_module.ctypes.c_wchar_p,
+        platform_module.ctypes.c_wchar_p,
+        platform_module.ctypes.c_uint32,
+    )
+    assert move_file.restype is platform_module.ctypes.c_int
 
 
 def test_root_reparse_probe_failures_are_typed(
