@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.6                                     |
-| **Spec Version**        | 1.14.6                                     |
+| **Current Version**     | 1.14.7                                     |
+| **Spec Version**        | 1.14.7                                     |
 | **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
@@ -2872,7 +2872,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-09 | 1.14.6 | feat(rate_of_closure, #4218 #4279): add a UI-neutral File/View/Tools command registry, strict atomic workspace documents, matched PyQt6/React top toolstrips, persistent module visibility and order, direct Impact/Swing/Flight navigation, deterministic replay/loop/speed controls, and independent per-plot canvases with zoom, Auto Fit, and movable or hidden legends. Propagate exact launch-registry parent `9dbceff762e4180bb8a1789ac23d29760fc2330d` normally while retaining its Linux-safe flight/solver facade tests, and type the Qt legend-visibility boundary explicitly for the pinned changed-file mypy gate. |
+| 2026-08-09 | 1.14.7 | feat(rate_of_closure, #4218 #4279): add a UI-neutral File/View/Tools command registry, strict atomic workspace documents, matched PyQt6/React top toolstrips, persistent module visibility and order, direct Impact/Swing/Flight navigation, deterministic replay/loop/speed controls, and independent per-plot canvases with zoom, Auto Fit, and movable or hidden legends. Propagate exact launch-registry parent `ab7de5a47977417e02926c3fbc7476002e82b690` normally while retaining its Linux-safe facade and Python 3.10 compatibility contracts, and type the Qt legend-visibility boundary explicitly for the pinned changed-file mypy gate. |
+| 2026-08-09 | 1.14.6 | fix(compatibility, #4203): route seven Rate/shared swing string-enum runtime imports through the existing Python 3.10 compatibility contract while retaining native enum typing under `TYPE_CHECKING`; preserve all wire values, schemas, physics, and UI behavior, and add a source-level regression exercised with real CPython 3.10.20. |
 | 2026-08-09 | 1.14.5 | fix(ci, #4203): keep the in-package swing flight and solver facade-contract tests in pytest's active package namespace by using relative imports, preventing editable Linux collection from crossing between `src.shared...` and `shared...` before assertions while leaving production APIs and physics unchanged. |
 | 2026-08-07 | 1.14.4 | feat(rate_of_closure, #4206): add validated manual reference AoA/path, targetward forward shaft lean, and tracked-reference versus registered generated-hosel shaft datums in PyQt6 and React; rotate pose, angular-rate components, and delivered face normals consistently; persist schema-v5 `manual_delivery`; export the reference-contact/reference-impact model boundary; and pin the representative Pitching Wedge decomposition in both runtimes. |
 | 2026-08-07 | 1.14.3 | fix(variation, #4144): preserve trial identity when filtering finite landing coordinates so carry/lateral values from different incomplete trials cannot form fictitious points; use one paired-row contract for Python/TypeScript ellipse analysis, PyQt/React rendering, and exact plotted-count status. Clarify that the wedge kernel's 20 mm example is synthetic and separately pin the generated Pitching Wedge face-center/hosel cross-check and current UI-state limitations. |

@@ -5,9 +5,13 @@ from __future__ import annotations
 import json
 from dataclasses import asdict, dataclass
 from datetime import date
-from enum import StrEnum
-from typing import Any
+from typing import TYPE_CHECKING, Any
 from urllib.parse import urlparse
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 SCHEMA_VERSION = "launch-monitor-conventions/v1"
 

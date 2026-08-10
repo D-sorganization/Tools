@@ -8,11 +8,12 @@ branch was rewritten.
 
 The #4279 continuation remains based on `feat/4181-launch-monitor-registry` and
 now contains exact parent head
-`9dbceff762e4180bb8a1789ac23d29760fc2330d` through a normal merge. The merge
-had no textual conflict: it retains the parent's Linux-safe package-relative
-flight/solver facade contracts and the child's workspace, top-toolstrip,
-module-navigation, playback, and independent plot-control histories. No branch
-was rebased, retargeted, force-pushed, or published by this continuation.
+`ab7de5a47977417e02926c3fbc7476002e82b690` through a normal merge. Source
+changes applied cleanly; the overlapping handoff/specification histories were
+reconciled monotonically. The result retains the parent's Linux-safe facade
+and Python 3.10 compatibility contracts plus the child's workspace,
+top-toolstrip, module-navigation, playback, and independent plot controls. No
+branch was rebased, retargeted, force-pushed, or published by this continuation.
 
 Current focused evidence is `126 passed` for both facade modules and all
 Python/PyQt tests changed by #4279, plus `8 React files / 32 tests passed` for
@@ -23,6 +24,19 @@ production files and both facade tests after making the child's
 governance, staged/unstaged diff checks, and the affected `29`-test simulation
 GUI rerun pass. Protected CI, review, and publication remain separate release
 requirements.
+
+## 2026-08-09 Python 3.10 compatibility follow-up
+
+The descendant Python 3.10 lane revealed seven unconditional
+`enum.StrEnum` imports already present at PR #4203. The earliest owning parent
+now routes runtime imports through `shared.python.compatibility.StrEnum` while
+using the stdlib type only under `TYPE_CHECKING`. The change preserves every
+enum value and schema while removing the Python 3.11-only import boundary.
+Local evidence is 64 focused contract/physics/compatibility tests, Ruff and
+format, pinned mypy 1.13 across eight changed files, and a real CPython 3.10.20
+probe of the shared fallback and seven module import declarations. Parent is
+published at exact head `ab7de5a47977417e02926c3fbc7476002e82b690`;
+propagate it through #4279, #4280, #4281, and #4282 before retrying descendants.
 
 ## 2026-08-09 Launch-registry parent CI repair
 

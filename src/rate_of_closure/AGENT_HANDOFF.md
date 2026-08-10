@@ -5,14 +5,14 @@
 
 ## 2026-08-09 Workspace stack parent propagation
 
-Draft PR #4279 keeps base `feat/4181-launch-monitor-registry`. The exact
-published parent head `9dbceff762e4180bb8a1789ac23d29760fc2330d`
-is carried by a normal merge without rebasing, retargeting, force-pushing, or
-publishing this local continuation. No source conflict occurred: the parent's
-package-relative flight/solver facade contracts and the child's complete
-File/View/Tools command registry, strict workspace document, matched
-PyQt6/React toolstrips, module visibility/order, playback, and independent plot
-controls are all retained.
+Draft PR #4279 keeps base `feat/4181-launch-monitor-registry`. Exact published
+parent head `ab7de5a47977417e02926c3fbc7476002e82b690` is carried by a normal
+merge without rebasing, retargeting, force-pushing, or publishing this local
+continuation. Source changes applied cleanly; overlapping handoff/specification
+history was reconciled monotonically. The result retains the parent's facade
+and Python 3.10 repairs plus the child's complete File/View/Tools registry,
+strict workspace document, matched PyQt6/React toolstrips, module
+visibility/order, playback, and independent plot controls.
 
 The reconciled ancestry passes `126` focused Python/PyQt tests and `8 React
 files / 32 tests`. Ruff check/format passes all 28 relevant Python files, and
@@ -22,6 +22,19 @@ tests. Mypy caught an untyped Qt `isChecked()` result in the child's
 changing runtime behavior. The affected simulation GUI rerun is `29 passed`;
 documentation governance and diff checks pass. Keep this handoff, the root
 handoff, the campaign handoff, and `SPEC.md` together in the merge commit.
+
+## 2026-08-09 Python 3.10 enum import repair
+
+PR #4203 now owns the earliest fix for seven inherited Rate/shared swing
+modules that imported Python 3.11's `enum.StrEnum` directly. Runtime code uses
+the established shared compatibility helper while mypy sees the native enum
+only inside `TYPE_CHECKING`. This preserves wire values and enum semantics on
+supported interpreters and lets the repository's hosted Python 3.10 lane
+collect the modules. The focused evidence is 64 tests, Ruff/format, pinned
+mypy 1.13 across eight changed files, and a real CPython 3.10.20 source/runtime
+probe. The exact published #4203 head is
+`ab7de5a47977417e02926c3fbc7476002e82b690`; propagate it through the existing
+stack without changing bases.
 
 ## 2026-08-09 Launch-registry parent CI repair
 

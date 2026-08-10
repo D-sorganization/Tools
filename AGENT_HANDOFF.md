@@ -7,12 +7,13 @@
 
 Draft PR #4279 remains on `feat/4218-toolstrip-workspace` with unchanged base
 `feat/4181-launch-monitor-registry`. Exact parent head
-`9dbceff762e4180bb8a1789ac23d29760fc2330d` is incorporated through the normal
+`ab7de5a47977417e02926c3fbc7476002e82b690` is incorporated through the normal
 merge commit containing this handoff; neither branch was rebased, retargeted,
-force-pushed, or pushed by this continuation. The merge had no textual
-conflicts and preserves both the parent's package-relative flight/solver facade
-contract repair and the child's workspace, toolstrip, playback, plot, and
-module-navigation implementation.
+force-pushed, or pushed by this continuation. Source changes applied cleanly;
+the overlapping handoff and specification histories were reconciled
+monotonically. The result preserves the parent's package-relative facade and
+Python 3.10 enum repairs plus the child's workspace, toolstrip, playback, plot,
+and module-navigation implementation.
 
 Focused validation is `126 passed` across both facade contract modules and all
 Python/PyQt test files changed by #4279. React workspace validation is `8 files
@@ -22,6 +23,24 @@ facade contract tests. The type gate exposed one real child-boundary defect:
 `legend_visible()` returned an untyped Qt value; it now converts that value at
 the widget boundary with `bool(...)`. The affected simulation GUI rerun is `29
 passed`; documentation governance and staged/unstaged diff checks also pass.
+
+## 2026-08-09 PR #4203 Python 3.10 string-enum compatibility
+
+Current-head child CI exposed a collection boundary that was already present
+in PR #4203's parent surface: seven Rate/shared swing modules imported
+`enum.StrEnum`, which does not exist on Python 3.10. Runtime imports now use
+the repository's existing `shared.python.compatibility.StrEnum`; type checking
+retains the native stdlib symbol behind `TYPE_CHECKING` so pinned mypy 1.13
+keeps enum-member types rather than weakening them to strings. No enum values,
+serialized contracts, physics, or UI behavior changed.
+
+This repair is published at exact #4203 head
+`ab7de5a47977417e02926c3fbc7476002e82b690`. Evidence:
+64 focused convention, D-plane, manual-delivery, flight-result, inverse,
+impact-family, capability, and compatibility tests pass; Ruff and format pass;
+pinned mypy 1.13 passes all eight changed Python files; and a real CPython
+3.10.20 probe verifies the shared fallback and all seven runtime import paths.
+Propagate the new parent normally through #4279, #4280, #4281, and #4282.
 
 ## 2026-08-09 PR #4203 Linux collection repair
 
