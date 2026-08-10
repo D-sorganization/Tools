@@ -19,9 +19,10 @@ The checkbox and position selector expose explicit accessible names.
 React plot cards use one pure `resolvePlotLayout` contract for both plot margins
 and legend coordinates. The 520 px regression locks a 20 px separation between
 the plot edge and outside legend. Exact evidence is 69 focused Python/PyQt/manifest
-tests, clean changed-file Ruff/format and pinned MyPy, a direct Node 25 contract
-execution, and an in-memory esbuild bundle of the changed canvas. The committed
-Vitest case awaits the full installed React gate. Native rendered QA,
+tests, clean changed-file Ruff/format and pinned MyPy, plus the installed React
+focused regression (one file / four tests), full 111-file / 674-test Vitest
+suite, TypeScript, scoped zero-warning ESLint, and 196-module production build.
+`npm ci` audited 337 packages with zero vulnerabilities. Native rendered QA,
 workspace persistence/export, protected CI, review, and normal dependency-
 ordered integration remain open, so #4224 and epic #4218 stay open.
 

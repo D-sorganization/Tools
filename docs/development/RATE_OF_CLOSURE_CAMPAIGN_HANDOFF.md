@@ -22,10 +22,12 @@ accessible names cover both controls.
 React plot cards now share a pure layout contract between the data rectangle
 and legend drawing. At 520 px, the plot ends at x=330 and the legend begins at
 x=350. The exact focused PyQt6/manifest suite is 69 passed; changed Python Ruff/format and
-pinned MyPy pass; the TypeScript contract executes in Node 25 and the changed
-TSX bundles with esbuild. The committed Vitest parity case still requires the
-full installed React gate. This is a bounded non-obscuring-default slice, not
-completion of #4224: workspace persistence/migration, exported-layout proof,
+pinned MyPy pass. The installed React evidence passes the focused one-file /
+four-test regression, the complete 111-file / 674-test Vitest suite,
+TypeScript, scoped zero-warning ESLint, and the 196-module production build;
+`npm ci` audited 337 packages with zero vulnerabilities. This is a bounded
+non-obscuring-default slice, not completion of #4224: workspace
+persistence/migration, exported-layout proof,
 complete rendered QA, protected CI/review, and dependency-ordered integration
 remain open. PR #4303 is a separate camera-default child and is not claimed as
 ancestry of this local branch.

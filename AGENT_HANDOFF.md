@@ -24,10 +24,11 @@ React managed plots now derive plot margins and legend origins from one pure
 outside plot edge is 330 px and the legend begins at 350 px, preserving a 20 px
 gap without duplicated geometry constants in the canvas renderer. The focused
 PyQt6 camera/plot/simulation/wedge/manifest suite passes 69 tests; Ruff check/format and
-pinned MyPy 1.13 pass the changed Python production files; the TypeScript
-layout contract executes under Node 25 and the changed canvas bundles through
-esbuild. A committed Vitest assertion covers the 520 px geometry, but the full
-installed React suite, rendered native inspection, persistence/export work,
+pinned MyPy 1.13 pass the changed Python production files. The installed React
+toolchain passes the focused 520 px regression (one file / four tests), the
+complete 111-file / 674-test Vitest suite, TypeScript, scoped zero-warning
+ESLint, and the 196-module production build; `npm ci` audited 337 packages with
+zero vulnerabilities. Rendered native inspection, persistence/export work,
 protected CI, review, and parent integration remain open. This bounded slice
 does not close #4224, #4218, #4300, #4303, or their dependency stack.
 

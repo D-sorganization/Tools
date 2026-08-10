@@ -49,6 +49,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - React managed plots derive their data rectangle and legend origin from one
   pure `resolvePlotLayout` contract. The 520 px constrained contract reserves a
   20 px separation between plot and outside legend.
+- Installed-toolchain evidence passes the focused one-file / four-test layout
+  regression, the complete 111-file / 674-test Vitest suite, TypeScript,
+  scoped zero-warning ESLint, and the 196-module Vite production build; the
+  clean install audited 337 packages with zero vulnerabilities.
 - This bounded #4224 slice does not claim persistence/migration, export-layout
   proof, full rendered qualification, protected release, or completion of
   #4224/#4218.
