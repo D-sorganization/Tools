@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 Ground/Tee parity child receives repaired parent
+
+Ready PR `#4325` keeps branch `feat/4143-tee-parity-fixture` and base
+`feat/4181-launch-monitor-registry`. It normally merges exact repaired parent
+head `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` without any production/test
+code conflict or history rewrite. Shared parity and rendered-evidence
+contracts remain intact; fresh protected CI, review, dependency order, and
+#4143 release remain open.
+
 ## 2026-08-10 #4143 Python/React Golden Ball-Setup Parity
 
 The isolated `feat/4143-tee-parity-fixture` child begins at exact draft PR
@@ -27,6 +36,20 @@ versioned manifests are in
 Do not close #4143: protected current-head CI/review and release to `main`
 remain. This exact parent predates the strict campaign manifest on a divergent
 branch, so no downstream manifest was copied into this bounded child.
+
+## 2026-08-10 Second D-Plane Parent Repair Propagation
+
+Draft PR `#4203` keeps base `feat/4189-dplane` and normally merges exact
+repaired parent head `7d8d2f06dc797021d01939691e58f8425b652b33` without
+rewriting either branch. The inherited change makes the two private D-plane
+NumPy return boundaries explicit for pinned MyPy while preserving numerical
+semantics, frames, schemas, and UI behavior. The parent quality gate is green;
+child protected CI, review, dependency order, and #4189 closure remain open.
+Post-reconciliation evidence is 25 focused D-plane/impact tests plus docs,
+changed-file-size, and whitespace gates. Local pinned-type evidence remains the
+parent's green hosted quality gate: Windows MyPy 1.15 encounters incompatible
+installed NumPy stub syntax and WSL is unavailable with `E_FAIL`, so neither
+local attempt is represented as green.
 
 ## 2026-08-10 Launch-Registry Child Propagation
 
@@ -90,6 +113,25 @@ Verification is `12 passed` on Windows and `12 passed` on WSL Python 3.11
 under importlib collection; Ruff/format and exact mypy 1.13 pass for both
 changed modules. The dataclass metadata assertion remains active behind an
 explicit test-only `Any` introspection boundary.
+
+## 2026-08-10 PR #4202 D-plane ndarray typing repair
+
+On top of verified published head
+`b443fdbed7064c5db0320106013c8413e3e24356`, the two private D-plane ndarray
+helpers now bind NumPy results to explicit ndarray locals before returning
+them. This closes the exact MyPy 1.13 `no-any-return` findings from CI Standard
+run `31384810375`, job `93442745760`, without changing numerical operations,
+DbC validation, reference frames, persistence, rendering, or public contracts.
+
+The exact MyPy failure was reproduced before editing and is green after the
+repair. Twenty-four focused D-plane and impact integration tests pass, along
+with seven metadata/pre-push contract tests, scoped Ruff, Ruff format, Black,
+docs governance, minimum-test, module-size, changed-file-size, and diff checks.
+Three unrelated CI-workflow contract tests still expect later toolcache/env
+steps not present on this older branch; no workflow file is in scope. This
+local commit does not push, retarget, change draft state, or claim issue
+completion; protected CI, review, and parent-first release order remain
+mandatory.
 
 ## 2026-08-10 D-Plane Child Propagation
 

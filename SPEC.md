@@ -26,13 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.10                                    |
-| **Spec Version**        | 1.14.10                                    |
+| **Current Version**     | 1.14.11                                    |
+| **Spec Version**        | 1.14.11                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-10 D-plane ndarray typing boundary repair
+
+- The private D-plane vector conversion and horizontal-projection helpers bind
+  NumPy expression results to explicit ndarray locals before returning them.
+- This preserves the existing numerical calculations and DbC validation while
+  satisfying the changed-file MyPy `no-any-return` contract on Python 3.12.
+- No public API, reference frame, serialized schema, physics assumption, or UI
+  behavior changes in this repair.
 
 ### 2026-08-06 GUI module-budget repair
 
@@ -2890,6 +2899,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.11 | test/fix(rate-of-closure, #4143 #4202 #4203 #4325): normally propagate repaired launch-registry parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` into the shared Ground/Tee parity and rendered-evidence child without production/test-code conflict or history rewrite. |
 | 2026-08-10 | 1.14.10 | test(rate-of-closure, #4143): record deterministic Ground/Tee visual evidence through semantic Playwright checks and a hidden-window PyQt capture regression, retaining screenshots as external digested artifacts instead of brittle pixel baselines or repository binaries. |
 | 2026-08-10 | 1.14.9 | test(rate-of-closure, #4143): add one strict versioned SI golden fixture consumed by Python and React to pin Ground/Tee defaults, explicit overrides, physical height and center geometry, serialization, invalid finite-domain handling, and backward-compatible legacy migration without changing production behavior. |
 | 2026-08-10 | 1.14.8 | feat/fix/refactor(rate-of-closure, #4202 #4203): propagate the exact D-plane parent into the launch-monitor registry without rewriting the stack; preserve the responsive `SimulationViewControlsMixin` architecture while making `ImpactLayerControls` the single owner of persisted D-plane checkbox state; retain the existing automation compatibility seam as an identity alias; and repair the original child's three ungrandfathered size blockers through identity-preserving extractions for triple-pendulum dynamics, immutable plotting metadata, and versioned primary-navigation state. |

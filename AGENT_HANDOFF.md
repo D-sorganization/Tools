@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 #4143 child receives repaired #4203 parent
+
+- Ready PR `#4325` retains branch `feat/4143-tee-parity-fixture` and base
+  `feat/4181-launch-monitor-registry`; repaired parent head
+  `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` is incorporated through a
+  normal merge commit without rebasing, retargeting, or rewriting history.
+- The merge tree has no production/test-code conflict. Both branches'
+  append-only handoff/SPEC evidence is retained, including the shared parity
+  fixture and deterministic web/PyQt visual evidence.
+- Fresh exact-head protected CI and review remain required. #4143 stays open
+  until the dependency line lands on `main`.
+
 ## 2026-08-10 #4143 Python/React Golden Ball-Setup Parity
 
 - Branch `feat/4143-tee-parity-fixture` starts from exact draft PR #4203 head
@@ -30,6 +42,25 @@
   `main`. The strict campaign release manifest is not present on #4203's exact
   history (it was introduced later on a divergent campaign branch), so this
   bounded child records that limitation instead of reconstructing it.
+
+## 2026-08-10 Second Parent Repair Propagation (#4202 -> #4203)
+
+- Draft child PR `#4203` retains base `feat/4189-dplane` and receives exact
+  repaired parent head `7d8d2f06dc797021d01939691e58f8425b652b33`
+  through a normal merge commit; no base, parent history, or draft state is
+  rewritten.
+- The propagated parent repair adds explicit NumPy ndarray result boundaries
+  to the two D-plane helpers that failed the hosted pinned MyPy gate. Numerical
+  behavior, frames, schemas, and UI behavior remain unchanged.
+- The exact parent quality gate is green. Protected child checks, review, and
+  all earlier dependency gates remain open; this propagation does not
+  authorize a merge or close #4189.
+- Child-tree verification after conflict reconciliation is 25 focused D-plane,
+  impact-contract, impact-kinematics, and impact-scene tests; docs governance,
+  changed-file size budget, and whitespace checks also pass. The Windows
+  unpinned MyPy 1.15 environment cannot parse the installed Python-3.12-only
+  NumPy stub syntax under this branch's Python 3.11 target, and WSL currently
+  fails to start with `E_FAIL`; neither attempt is reported as a passing gate.
 
 ## 2026-08-10 Parent Repair Propagation (#4202 → #4203)
 
@@ -117,6 +148,28 @@ for both changed test modules. The frozen-dataclass assertion casts only its
 introspection target to `Any`, matching the later carrier boundary while
 retaining the runtime assertion. The minimal WSL environment reports only
 unknown-option warnings for intentionally omitted optional pytest plugins.
+
+## 2026-08-10 PR #4202 D-plane ndarray typing repair
+
+- Draft PR `#4202` remains on `feat/4189-dplane`, based on
+  `feat/4162-wedge-impact-visualization`; the verified published repair base is
+  `b443fdbed7064c5db0320106013c8413e3e24356`.
+- CI Standard run `31384810375`, job `93442745760`, exposed two exact pinned
+  MyPy 1.13 `no-any-return` findings in the private D-plane ndarray helpers.
+  Explicit local ndarray result boundaries now preserve those helpers' return
+  contracts without changing validation, arithmetic, frames, schemas, or any
+  public API.
+- TDD evidence: the exact two-error MyPy failure was reproduced before the
+  repair; the same command is green afterward. Twenty-four focused D-plane,
+  impact-contract, impact-kinematics, and impact-scene tests pass, together
+  with seven metadata/pre-push contract tests, scoped Ruff, Ruff format, Black,
+  docs governance, minimum-test, module-size, changed-file-size, and diff
+  checks. An exploratory CI-workflow contract slice retains three unrelated
+  failures for later toolcache/environment steps absent from this older branch;
+  no workflow file is changed by this repair.
+- This is a bounded quality-gate repair, not completion of D-plane issue
+  `#4189`. Protected current-head CI, dependency order, and required review
+  remain release gates; no push, retarget, or draft-state change is included.
 
 ## 2026-08-10 Parent Repair Propagation (#4179 → #4202)
 

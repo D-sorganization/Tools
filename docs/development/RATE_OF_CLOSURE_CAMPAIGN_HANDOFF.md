@@ -1,5 +1,16 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-10 #4143 child receives repaired launch-registry parent
+
+- Ready PR `#4325` stays on `feat/4143-tee-parity-fixture`, based on
+  `feat/4181-launch-monitor-registry`.
+- Exact parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` is incorporated by a
+  normal merge commit. There is no production/test-code conflict and no
+  rebase, retarget, force-push, or parent rewrite.
+- Preserve the shared parity fixture and deterministic web/PyQt evidence.
+  Fresh exact-head CI, review, dependency order, and release to `main` remain
+  required before #4143 can close.
+
 ## 2026-08-10 #4143 Python/React golden ball-setup parity
 
 - The bounded `feat/4143-tee-parity-fixture` branch starts at exact PR #4203
@@ -28,6 +39,23 @@
   campaign release manifest does not exist in this exact #4203 history; it was
   added later on a divergent branch and is not backported by this bounded
   slice.
+
+## 2026-08-10 Second propagation into launch-monitor registry
+
+- Draft child PR `#4203` retains base `feat/4189-dplane` and receives exact
+  repaired parent head `7d8d2f06dc797021d01939691e58f8425b652b33`
+  through a normal merge commit. No branch history, PR base, or draft state is
+  rewritten.
+- The inherited repair closes the parent head's two pinned MyPy
+  `no-any-return` findings with explicit ndarray boundaries and makes no
+  numerical, frame, schema, or UI change.
+- Parent quality-gate success is not child release evidence. Current-head child
+  CI, review, all earlier ancestors, and #4189 acceptance remain required.
+- Reconciled child-tree evidence is 25 focused D-plane/impact tests, docs
+  governance, changed-file size, and whitespace checks. The local Windows
+  MyPy 1.15/installed-NumPy stub combination is incompatible with the branch's
+  Python 3.11 target, while WSL currently fails to start with `E_FAIL`; the
+  successful pinned typing evidence remains the exact parent hosted gate.
 
 ## 2026-08-10 Propagation into launch-monitor registry
 
@@ -533,6 +561,25 @@ remains an explicit fail-closed boundary.
 6. Verify a clean installed package and the exact UpstreamDrift dependency pin.
 7. Rerun every recorded gate, inspect protected GitHub checks/reviews, and keep
    #4201 open until every acceptance criterion has current evidence.
+
+## 2026-08-10 PR #4202 D-plane ndarray typing repair
+
+- The repair is based on exact published PR `#4202` head
+  `b443fdbed7064c5db0320106013c8413e3e24356` and retains base
+  `feat/4162-wedge-impact-visualization`.
+- CI Standard run `31384810375`, job `93442745760`, reported two pinned MyPy
+  1.13 `no-any-return` errors in private NumPy conversion/projection helpers.
+  Explicit ndarray local boundaries resolve those errors without changing
+  geometry, validation, frames, serialized contracts, or UI behavior.
+- RED/GREEN evidence is exact: two errors reproduced before the edit and zero
+  afterward. Twenty-four focused D-plane/impact tests, seven metadata/pre-push
+  contract tests, scoped Ruff/Ruff-format/Black, docs governance, minimum-test,
+  module-size, changed-file-size, and diff checks pass. Three exploratory
+  CI-workflow contract tests retain unrelated older-branch toolcache/env drift;
+  no workflow file is changed here.
+- This repair does not alter the stacked base, publish the branch, change its
+  draft state, or authorize a merge. Parent-first ordering, protected CI, and
+  review remain required.
 
 ## 2026-08-10 Propagation into 3D D-plane geometry
 
