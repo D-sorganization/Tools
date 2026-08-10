@@ -1349,6 +1349,12 @@ is claimed. Keep both #4273 and #4267 open until those later adapters and
 protected release evidence exist. The branch must remain a normal fast-forward
 child of #4305 and may be published only after its complete local gates and
 independent review are recorded.
+
+Implementation commit `0de714842cf4cd1207944044c883c2d8dc83a7ba`
+passed independent adversarial review. After normally merging current #4305
+head `a35fc8aac0cbc2aeeef757fd1d1c518987f2355c`, the tree passes all 192 ground
+tests and 47 focused projection/state/wire/API tests.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 The protected run at exact PR #4302 head

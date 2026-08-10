@@ -526,6 +526,11 @@ evidence. Ensemble, variation, wind, optimizer, PyQt6/React, compiled-runtime,
 and UpstreamDrift adapters remain open. Publish only as the next stacked draft
 PR targeting `feat/4272-ground-material-profiles`, after full ground tests,
 structural budgets, manifest validation, and an independent review pass.
+
+The independently reviewed implementation commit is
+`0de714842cf4cd1207944044c883c2d8dc83a7ba`; after normal parent propagation,
+192 ground tests and 47 focused projection/state/wire/API tests pass.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 Protected CI correctly remained blocking at head

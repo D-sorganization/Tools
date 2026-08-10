@@ -1013,6 +1013,11 @@ UI, compiled-runtime, and UpstreamDrift consumers are not implemented by this
 slice. Before publication, run the full ground suite and repository structural
 and campaign-manifest gates, then open only a stacked draft PR against
 `feat/4272-ground-material-profiles` with the guarded GitHub App identity.
+
+The independently reviewed implementation is exact commit
+`0de714842cf4cd1207944044c883c2d8dc83a7ba`; the post-parent-merge tree passes
+192 ground tests and 47 focused projection/state/wire/API tests.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 At exact head `920c46dee688815691e251777142126bf1489b1a`, protected
