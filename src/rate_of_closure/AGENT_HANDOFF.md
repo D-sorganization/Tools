@@ -3,6 +3,34 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 PR #4304 corrected-impact propagation
+
+Exact corrected #4302 parent
+`846653c21bd61a40aab99ab838c29915d0728e70` is incorporated into
+`feat/4271-ground-skid-roll` by the normal merge containing this handoff. PR
+#4304 keeps base `feat/4270-ground-impact-bounce`; neither branch was rebased,
+retargeted, rewritten, or force-pushed. The child retains arbitrary-plane skid,
+pure roll, resistance, qualified rest, finite-edge handling, strict result
+composition, and passive ledgers while inheriting corrected flight transfer,
+deterministic workspace timestamps, and canonical `swing_sim` identity.
+
+This remains a partial `not_released` slice. Regional/changing-normal surfaces,
+terrain deformation, torsional spin damping, roll-to-skid transitions, UI,
+TypeScript/Rust/PyO3/WASM physics, and downstream parity remain excluded.
+Protected CI, independent review, and normal stack collapse remain open.
+
+Merged-tree validation is `115` focused ground tests on both the current
+runtime and real CPython 3.10.20, `1020` broad Python tests, `106` React files /
+`661` tests, and the complete `tools-core` Rust suite at `137` tests (`111`
+unit, `20` transfer, `6` wire). The combined compatibility/ground/flight/alias
+suite is `179` tests on real CPython 3.10.20. The 189-module Vite production
+build, TypeScript, zero-warning ESLint, Ruff check/format across 41 files,
+pinned mypy 1.13 across all 25 ground and nine transfer production modules,
+Rust workspace format plus warning-denied `tools-core` clippy, campaign-manifest
+validator plus eight contracts, documentation governance, 18-file 500-LOC
+budget, marker scan, and diff checks are clean. Hosted checks and review apply
+to the new exact merge head only.
+
 ## 2026-08-10 PR #4304 deterministic-digest secret-scan repair
 
 Protected detect-secrets run `31360998491` classified the version-locked

@@ -4,6 +4,36 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 PR #4304 corrected-impact propagation
+
+Draft PR #4304 remains on `feat/4271-ground-skid-roll` with unchanged base
+`feat/4270-ground-impact-bounce`. Exact corrected #4302 parent
+`846653c21bd61a40aab99ab838c29915d0728e70` is incorporated by the normal merge
+containing this handoff. The child preserves arbitrary-plane kinetic skid,
+static-feasible pure roll, rolling resistance, qualified rest, finite-axis
+edge localization, strict prefix/suffix result composition, and passive energy
+ledgers while inheriting corrected flight-transfer ancestry, deterministic
+workspace timestamps, and canonical `swing_sim` import identity. No branch was
+rebased, retargeted, rewritten, or force-pushed.
+
+The campaign remains partial and `not_released`. Material regions, changing
+normals, terrain deformation, torsional spin damping, roll-to-skid transitions,
+UI, TypeScript/Rust/PyO3/WASM physics, and downstream parity remain excluded.
+Protected CI, independent review, normal dependency collapse, and consumer
+delivery remain separate release gates.
+
+Merged-tree validation is `115` focused ground tests on both the current
+runtime and real CPython 3.10.20, `1020` broad Python tests, `106` React files /
+`661` tests, and the complete `tools-core` Rust suite at `137` tests (`111`
+unit, `20` transfer, `6` wire). The combined compatibility/ground/flight/alias
+suite is `179` tests on real CPython 3.10.20. The 189-module Vite production
+build, TypeScript, zero-warning ESLint, Ruff check/format across 41 files,
+pinned mypy 1.13 across all 25 ground and nine transfer production modules,
+Rust workspace format plus warning-denied `tools-core` clippy, campaign-manifest
+validator plus eight contracts, documentation governance, 18-file 500-LOC
+budget, marker scan, and diff checks are clean. Hosted checks and review apply
+to the new exact merge head only.
+
 ## 2026-08-10 PR #4304 deterministic-digest secret-scan repair
 
 Protected detect-secrets run `31360998491` failed exact #4304 head
