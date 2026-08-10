@@ -1,7 +1,20 @@
 # AGENT_HANDOFF — Tools
 
 > Update this file in every implementation commit and every push to `main`.
-> Last updated: 2026-08-09.
+> Last updated: 2026-08-10.
+
+## 2026-08-10 PR #4304 deterministic-digest secret-scan repair
+
+Protected detect-secrets run `31360998491` correctly failed exact head
+`d09f3129a68322bfc5dd30763556ac356ef2e55c` because the immutable SHA-256
+golden-fixture digest looked like a high-entropy hexadecimal credential. The
+test now carries the scanner's explicit inline allowlist annotation. The
+digest and fixture bytes are unchanged, and this correction changes no
+physics, numerical result, schema, or API. SPEC 1.14.20 records the repair.
+All `115` ground tests, Ruff, formatting, a finding-free local scan of the
+affected file, documentation governance, the `370`-line source-size check,
+and diff gates pass before an ordinary guarded fast-forward publication.
+Fresh protected CI and review remain required.
 
 ## 2026-08-09 PR #4304 corrected implementation evidence
 

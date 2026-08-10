@@ -1,7 +1,19 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-09
+> Last updated: 2026-08-10
+
+## 2026-08-10 PR #4304 deterministic-digest secret-scan repair
+
+Protected detect-secrets run `31360998491` classified the version-locked
+ground skid/roll golden-fixture SHA-256 digest as a high-entropy string on
+exact head `d09f3129a68322bfc5dd30763556ac356ef2e55c`. The test now explicitly
+allowlists that immutable non-secret digest without changing its value or the
+fixture bytes. There is no physics, numerical, schema, or API change. SPEC
+1.14.20 records the CI correction. All `115` ground tests, Ruff, formatting,
+a finding-free local scan of the affected file, documentation governance, the
+`370`-line source-size check, and diff gates pass; fresh protected CI/review
+remain required after a normal guarded push.
 
 ## 2026-08-09 PR #4304 corrected implementation evidence
 

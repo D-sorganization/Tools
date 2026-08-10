@@ -4,6 +4,19 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 PR #4304 deterministic-digest secret-scan repair
+
+Protected detect-secrets run `31360998491` failed exact #4304 head
+`d09f3129a68322bfc5dd30763556ac356ef2e55c` after identifying the skid/roll
+golden fixture's pinned SHA-256 digest as a high-entropy hexadecimal string.
+The test now uses the scanner's explicit inline allowlist annotation for this
+non-secret scientific integrity value. The digest, fixture, physics,
+numerical results, schema, and API are unchanged. SPEC 1.14.20 records the
+repair. All `115` ground tests, Ruff, formatting, a finding-free local scan of
+the affected file, documentation governance, the `370`-line source-size
+check, and diff gates pass before an ordinary guarded fast-forward
+publication; protected CI and review remain open.
+
 ## 2026-08-09 PR #4304 corrected implementation evidence
 
 The campaign registry now advances PR #4304 and its immutable local evidence

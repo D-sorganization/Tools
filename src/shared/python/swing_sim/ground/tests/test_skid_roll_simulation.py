@@ -66,8 +66,11 @@ def test_shared_golden_fixture_pins_flat_skid_and_roll_solution() -> None:
     result = simulate_skid_roll(request, prefix)
 
     assert fixture["schema_version"] == "ground-skid-roll-golden/v1"
-    assert hashlib.sha256(_GOLDEN.read_bytes()).hexdigest() == (
-        "74e23ebe86c8b476a3414b0ff11e561e126810b5358337cb87bc1e35e3a1d73d"
+    assert (
+        hashlib.sha256(_GOLDEN.read_bytes()).hexdigest()
+        == (
+            "74e23ebe86c8b476a3414b0ff11e561e126810b5358337cb87bc1e35e3a1d73d"  # pragma: allowlist secret  # noqa: E501
+        )
     )
     assert result.termination.reason.value == expected["termination"]
     assert result.events[0].time_s - prefix.termination.time_s == pytest.approx(
