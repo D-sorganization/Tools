@@ -3,6 +3,93 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 issue #4275 compiled ground-reference runtime
+
+This implementation commit on `feat/4275-ground-compiled-reference-runtime`
+is based exactly on PR #4312 head
+`e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d`
+and is intended to target `feat/4275-ground-result-wire-parity`. It replaces
+the compiled validation-only gap with actual Rust execution of contact,
+Coulomb impact, repeated bounce/capture, skid, pure roll, and rest. Native,
+PyO3, and WASM callers share strict execution settings, typed bounded failures
+and cancellation, fail-closed unsupported resolver/callback serialization,
+and the existing canonical result contract. It does not claim publication,
+hosted CI, external review, or merge.
+
+No new v1 wire field was added for resource limits. Independent budgets admit
+at most 200,001 scheduled endpoint-inclusive points, 1,000,000 declared
+surface-loop steps, 10,000 events, and 210,003 total trajectory points
+including unscheduled phase/event evidence. Output density is not coupled to
+the integration-step allowance. Oversized declarations fail before callbacks,
+allocation, or physics with a resource-specific reason, while an admitted
+small `max_steps` preserves runtime `step_limit`. Dynamic append guards enforce
+total point/event capacity, and grid emitters check cancellation per sample.
+
+Independent review found absolute-time catch-up, native normalization, and
+PyO3 concurrency defects before publication. Grid schedules now use a bounded
+integer index in elapsed time and convert to absolute timestamps only at the
+wire edge. Native typed requests are normalized once and the identical record
+controls fingerprinting, preflight, and execution; the JSON path does not
+renormalize its parsed authority. PyO3 releases the GIL across physics and
+reacquires it only during callback polls, retaining exception and non-boolean
+rejection. Large valid timestamps in bounce and immediate-capture surface
+paths, sub-canonical input mutation, and a real two-thread wheel cancellation
+test cover these corrections.
+
+A second review pass established a distinct wire-resolution boundary. Even a
+bounded elapsed schedule cannot be emitted monotonically when the requested
+interval is below the canonical `f64` spacing at its absolute epoch. Before
+callbacks or physics, the runtime now verifies the endpoint-inclusive grid's
+first and terminal-adjacent projections; failure is typed Bounce
+`time_resolution`. Bounce and surface append guards also reject any unexpected
+positive elapsed advance that collapses to the preceding wire timestamp,
+while preserving intentional same-elapsed phase replacement. Tests pin both
+fail-closed paths at `9e15 s` and successful monotonic bounce and
+immediate-capture output at a representable large epoch.
+An additional callback-zero case proves that canonical safe-number overflow
+from an individually valid epoch plus duration is the same typed failure, not
+a panic.
+
+The final review pass made all derived-state and evidence canonicalization
+fallible. Unsafe derived states, wire times, events, ledgers, summaries, or
+final JSON numbers produce typed owning-phase `NumericalFailure` with
+`numeric_range` across native, PyO3, and WASM instead of a panic/trap. An
+immediate capture that consumes `max_events=1` returns coherent
+`Partial`/`EventLimit` evidence at the unchanged terminal point, while a
+rebound requiring another event remains a Bounce `event_limit` failure.
+Cross-binding regressions also pin monotonic success at `1e12 s`.
+
+The integrated golden output is still byte-exact at SHA-256
+`23f567f125ec9631e2a7638dfa217b78891883fc4e5092bea3b1f21fb063e8af`.
+Twenty seeded moving-surface/material cases plus an immediate-capture edge
+case match the Python authority in its common resolver-free horizontal scope,
+while a native invariant test covers a tilted plane. The full `tools-core`
+matrices pass 180/195/192 tests for
+default/Python/WASM, all 219 Python ground tests pass, and freshly built real
+CPython 3.13 and Node/WASM artifacts verify golden execution, defaults,
+100-run determinism, cancellation, callback exception propagation, and typed
+wire-resolution, numeric-range, resource-cap, event-limit, and representability
+behavior. Cargo
+formatting and strict/default scoped linting pass with inherited feature-lint
+allowances documented separately. New production modules remain under 400
+lines; the principal runtime test file is exactly 500 lines. Eight manifest
+tests and documentation governance pass. The strict campaign manifest contains
+no dirty-tree evidence entry; a follow-up commit must bind this identical
+implementation tree to its immutable SHA through the existing `commit_sha`
+contract. No durable benchmark artifact or performance-budget pass is claimed.
+
+The successful `wasm-pack` release build also reports that this nested crate
+does not contain a local license file; the repository-root `LICENSE` remains
+tracked. Node execution is qualified here, but package publication is not, so
+that metadata notice remains a distribution follow-up.
+
+The scope remains one immutable planar profile, standard gravity, and the v1
+model identities. Regional/changing terrain, deformation, torsional damping,
+roll-to-skid, calibrated profiles, ensembles, UI integration, UpstreamDrift
+parity, and asynchronous WASM cancellation remain open. Keep issue #4275 and
+epic #4267 open through protected review, dependency-order integration, and
+consumer release.
+
 ## 2026-08-10 PR #4312 corrected-reference propagation
 
 Exact corrected #4309 parent

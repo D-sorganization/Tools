@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.35                                    |
-| **Spec Version**        | 1.14.35                                    |
+| **Current Version**     | 1.14.36                                    |
+| **Spec Version**        | 1.14.36                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -148,6 +148,85 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   runs again afterward. Wrong-length or non-hex digests remain invalid.
 - The required behavior is verified in the core parser/canonicalizer and both
   real compiled binding surfaces; it does not change any ground-physics value.
+
+### 2026-08-10 Compiled ground-reference execution
+
+- `tools-core` executes the qualified static-plane reference pipeline through
+  sphere-plane contact, passive restitution/Coulomb impact, repeated bounce and
+  capture, skid, skid-to-roll transition, pure roll, rolling resistance, and
+  qualified rest.
+- Native Rust, PyO3, and wasm-bindgen entry points share strict request and
+  `ground-reference-execution/v1` parsing, canonical
+  `flight-to-ground-result/v1` output, and typed
+  `ground-reference-execution-error/v1` runtime failures with phase, native
+  reason, and request fingerprint.
+- Execution is bounded by request time/event limits and solver step limits.
+  Cancellation is checked before contact, within bounce and surface loops,
+  inside every grid-emission loop, and before composition. Callback exceptions
+  propagate through PyO3 and WASM; cancellation is not serialized into the
+  execution record.
+- The v1 wire adds no redundant resource fields. Independent trusted budgets
+  permit at most 200,001 scheduled endpoint-inclusive output points, 1,000,000
+  declared surface-loop steps, 10,000 events, and 210,003 total trajectory
+  points including unscheduled contact, transition, event, and terminal
+  evidence. Output density is not compared with integration steps. Excess
+  declarations fail before callbacks, allocation, or physics with
+  resource-specific reasons; an admitted small `max_steps` retains runtime
+  `step_limit`. Dynamic append guards preserve the event/trajectory caps.
+- A single bounded integer output index is shared across bounce and surface
+  phases in elapsed time. Absolute request time is applied only when emitting
+  trajectory, event, and termination evidence, preventing non-advancing
+  floating-point catch-up at large valid epochs while preserving canonical
+  wire timestamps.
+- Before callbacks or physics, the first and terminal-adjacent points of the
+  endpoint-inclusive requested grid must remain strictly increasing after
+  projection onto canonical absolute `f64` wire time. A grid below the epoch's
+  representable spacing fails as typed Bounce `time_resolution`. Runtime
+  append guards enforce the same rule for unplanned event/state times, while
+  intentional same-elapsed phase transitions may replace one another; contact
+  must never be silently dropped. Epoch-plus-duration projections outside the
+  canonical safe-number range produce the same typed failure rather than a
+  panic.
+- Every derived state, wire timestamp, event, summary accumulator, and final
+  recursively inspected JSON number must remain within the canonical safe
+  numeric range. A violation returns `NumericalFailure` with reason
+  `numeric_range` from the phase that derived it; valid parsed inputs must not
+  panic or trap in native, PyO3, or WASM execution.
+- If immediate capture consumes the sole allowed event, the unchanged surface
+  handoff is a coherent `Partial`/`EventLimit` result whose final trajectory
+  point equals termination. A rebound that requires another bounce event
+  remains a typed Bounce `event_limit` failure; an empty surface suffix is not
+  accepted for an uncensored terminal reason.
+- A direct native call normalizes its typed request exactly once and uses that
+  same immutable record for the request fingerprint, output preflight, and all
+  physics. The JSON boundary reuses its normalized parse result rather than
+  applying a second normalization pass.
+- PyO3 releases the GIL for compiled physics and reacquires it only for a
+  cancellation callback poll. Python callback exceptions and non-boolean
+  results remain strict, and cancellation from another Python thread must be
+  prompt.
+- The compiled result must remain byte-identical to the established canonical
+  golden SHA. Seeded parity covers the common Python/Rust resolver-free scope,
+  and native coverage separately validates an arbitrary static plane. Native,
+  fresh CPython 3.13 PyO3, and fresh Node/WASM regressions cover derived-range
+  failures, the trusted output cap, event-limit coherence, and monotonic
+  bounce/immediate-capture success at the representable `1e12 s` epoch.
+- Final local evidence is 180 default, 195 Python-feature, and 192 WASM-feature
+  `tools-core` tests; 219 Python ground-authority tests; eight campaign-manifest
+  tests; strict Clippy, Rust formatting, Ruff, Prettier, and documentation
+  governance. The strict campaign manifest intentionally carries no dirty-tree
+  evidence; a follow-up evidence commit must bind the identical implementation
+  tree to its immutable SHA through the existing `commit_sha` contract. This is
+  not a performance-budget pass, hosted check, protected merge, or release.
+- This version supports only standard gravity, the v1 model identities, and
+  one immutable planar profile. Non-null resolvers fail closed. Changing
+  terrain/material regions, deformation, torsional damping, roll-to-skid,
+  production calibration, ensemble/UI/consumer integration, and asynchronous
+  WASM cancellation are non-goals of this slice.
+- The verified `wasm-pack` release build currently emits a packaging notice
+  because the nested crate lacks its own license file while the repository
+  root tracks `LICENSE`. Generated Node execution is in scope; npm publication
+  and its package-metadata remediation are not qualified by this version.
 
 ### 2026-08-09 Static-plane skid, roll, and result composition
 
@@ -3053,6 +3132,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.36 | feat(ground-runtime, #4275): execute the canonical contact/bounce/skid/roll/rest reference pipeline in native Rust, PyO3, and WASM with strict normalized request authority, bounded elapsed-time scheduling, independent trusted output/step/event/trajectory caps, absolute wire-resolution preflight, fully typed derived-number range failures, coherent immediate-capture event censoring, runtime monotonicity guards, cooperative cancellation including Python GIL release between polls, exact golden/parity evidence, and explicit commit-bound-evidence/static-plane/non-production boundaries. |
 | 2026-08-10 | 1.14.35 | feat(ground-wire, #4275 #4312): normally propagate exact corrected ground-reference parent `f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` into the strict Rust result-wire parity descendant without changing its base; preserve raw-before-normalized fail-closed validation, recursive duplicate-key rejection, complete result state-machine and geometry coherence, canonical JSON, lowercase provenance-digest emission, and real PyO3/WASM validation exports while inheriting corrected reference execution, scalar-study, material-profile, impact/roll, timestamp, and canonical `swing_sim` ancestry; retain explicit non-delivery boundaries for compiled ground physics, UI, ensembles, production calibration, and downstream consumers. |
 | 2026-08-10 | 1.14.34 | fix(ground, #4275): align Rust result provenance digest handling with Python and TypeScript by accepting 64-character ASCII hexadecimal input in either case, canonicalizing to lowercase before emission, revalidating the normalized record, and pinning malformed rejection plus real PyO3/WASM binding behavior. |
 | 2026-08-10 | 1.14.33 | feat(ground, #4275): add strict typed Rust validation and canonical JSON parity for `flight-to-ground-result/v1`, including recursive duplicate-key rejection, pre-normalization semantic checks, complete trajectory/event/summary/status coherence, and real PyO3/WASM validation exports pinned to the shared reference-pipeline SHA; retain explicit non-delivery boundaries for compiled ground physics, UI, ensembles, production calibration, and UpstreamDrift consumers. |

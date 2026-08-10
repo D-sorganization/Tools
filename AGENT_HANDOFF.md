@@ -3,6 +3,106 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 issue #4275 compiled ground-reference runtime
+
+This implementation commit on `feat/4275-ground-compiled-reference-runtime`
+starts from exact PR #4312 head
+`e3f1d7dd7eecaecfed1253b7fe72577c9ed6989d` and is intended to retain
+base `feat/4275-ground-result-wire-parity`. `tools-core` now executes the
+qualified rigid-sphere pipeline through actual contact, Coulomb impact,
+repeated bounce/capture, skid, pure roll, and rest phases. The native, PyO3,
+and wasm-bindgen entry points share strict request/execution parsing, canonical
+result emission, typed phase/reason/fingerprint failures, fail-closed resolver
+and serialized-callback rejection, and bounded cancellation checks. No push,
+PR, protected-CI, or external-review claim is made by this handoff.
+
+The existing v1 execution wire intentionally gains no new resource fields.
+Independent preflight budgets admit at most 200,001 scheduled
+endpoint-inclusive points, 1,000,000 caller-authorized surface-loop steps,
+10,000 declared events, and 210,003 total trajectory points including
+unscheduled contact, transition, event, and terminal evidence. Output points
+are not compared to integration steps: sparse output cannot authorize
+unbounded integration, and a small runtime step cap does not reject a denser
+valid output schedule. Values above the trusted caps fail before callbacks,
+allocation, or physics as `output_point_limit`, `integration_step_limit`,
+`event_count_limit`, or `trajectory_point_limit`; an admitted small
+`max_steps` still terminates honestly as runtime `step_limit`. Dynamic append
+guards enforce the total point/event caps, and every grid loop checks
+cancellation per emitted sample.
+
+Independent pre-publication review then found three current-head defects. The
+shared output schedule now advances by a bounded integer index over elapsed
+time and projects to absolute wire time only when emitting evidence, so a
+large valid epoch cannot make `time + interval == time` and trap a catch-up
+loop. Direct native calls normalize the typed request exactly once; that same
+record drives its fingerprint, output preflight, and every physics phase, while
+the JSON boundary reuses its already-normalized parse result. Finally, PyO3
+releases the GIL for the complete physics run and reacquires it only for each
+cancellation poll, preserving callback exceptions and strict boolean results.
+Large-epoch bounce/immediate-capture surface, sub-canonical mutation, and real
+two-thread wheel cancellation regressions pin these repairs.
+
+A follow-up review found that elapsed-time scheduling alone could still
+collapse distinct samples when a requested interval was smaller than the
+absolute epoch's representable `f64` spacing. Preflight now proves that the
+first and terminal-adjacent points of the endpoint-inclusive requested grid
+advance after projection to canonical wire time. An unrepresentable grid
+fails before callbacks or physics as typed Bounce `time_resolution`; runtime
+append guards independently fail closed if any later positive elapsed-time
+advance collides on the wire. Same-elapsed phase transitions retain their
+intentional replacement behavior, but contact is never silently discarded.
+RED/GREEN coverage includes bounce and immediate-capture failures at `9e15 s`
+and monotonic successful results for both paths at a representable large
+epoch. A separate callback-zero regression proves that a valid absolute epoch
+plus valid duration which exceeds the canonical safe-number range also returns
+typed `time_resolution` instead of panicking.
+
+The final review pass removed all infallible canonicalization of derived
+physics values. Derived states, timestamps, events, distance/energy ledgers,
+summaries, and the recursively inspected final JSON now return typed
+`NumericalFailure`/`numeric_range` from the owning Bounce, SkidRoll, or
+Composition phase rather than panicking or trapping across native, PyO3, and
+WASM. Immediate capture with `max_events=1` is a coherent
+`Partial`/`EventLimit` result at the unchanged terminal state; a rebound that
+needs another event remains a Bounce `event_limit` failure. Regressions cover
+exact derived-overflow payloads and monotonic bounce/capture success at
+`1e12 s` on all three surfaces.
+
+The canonical full-pipeline result remains byte-identical at SHA-256
+`23f567f125ec9631e2a7638dfa217b78891883fc4e5092bea3b1f21fb063e8af`.
+A seeded 20-case corpus plus an immediate-capture edge case is exact against
+the Python authority for the common resolver-free horizontal-plane scope;
+native coverage separately exercises a
+tilted plane because the Python default planar domain fixes a world-x tangent
+axis and world-origin point. Complete `tools-core` totals are 180 default, 195
+Python-feature, and 192 WASM-feature tests. All 219 Python ground tests pass.
+Fresh CPython 3.13 and Node/WASM artifacts pass golden, default-setting,
+100-run determinism, cancellation, callback-exception, wire-resolution,
+derived-numeric, independent resource-cap, event-limit, and trillion-second
+representability checks. Formatting
+and default strict Clippy pass; Python/WASM all-target Clippy passes with the
+same eight enumerated inherited unrelated allowances. New production modules
+are below 400 lines; the main runtime regression file is exactly 500 lines.
+Eight campaign-manifest tests and documentation governance pass. The strict
+campaign manifest intentionally contains no evidence record for a dirty tree;
+a follow-up evidence commit must bind this identical implementation tree to
+its immutable SHA using the existing `commit_sha` contract. There is no durable
+benchmark artifact or performance-budget pass.
+
+Packaging note: the successful `wasm-pack` release build emits a notice that
+the crate directory has no local license file even though the repository-root
+`LICENSE` is tracked. This slice validates the generated Node artifact but does
+not publish it; resolve that package-metadata notice before npm distribution.
+
+This remains a bounded static-plane reference runtime, not ground-epic
+completion. It intentionally supports only standard gravity and the existing
+v1 model identities; non-null material/terrain resolvers and serialized
+cancellation are rejected. Changing normals or material regions during a run,
+terrain deformation, torsional damping, roll-to-skid, production calibration,
+ensembles, UI wiring, UpstreamDrift consumers, and asynchronous WASM
+cancellation remain open. Keep #4275 and epic #4267 open until protected CI,
+independent review, normal stack integration, and downstream delivery finish.
+
 ## 2026-08-10 PR #4312 corrected-reference propagation
 
 Draft PR #4312 remains on `feat/4275-ground-result-wire-parity` with unchanged

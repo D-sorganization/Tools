@@ -2,18 +2,28 @@
 
 ## Scope
 
-`ground-reference-execution/v1` is the canonical one-shot Python boundary for
-the qualified planar ground model. It runs the existing repeated-impact solver,
-passes its exact settled contact state into the existing skid/roll solver, and
-uses the existing result composer. It does not copy phase physics, relabel an
-internal solver outcome, or fabricate a terminal state that
-`ground-result/v1` cannot represent.
+`ground-reference-execution/v1` defines the immutable controls for one-shot
+execution of the qualified planar ground model. The Python implementation
+remains the scientific reference authority: it runs the existing
+repeated-impact solver, passes its exact settled contact state into the existing
+skid/roll solver, and uses the existing result composer. The compiled
+`tools-core` implementation independently executes the same qualified
+contact/bounce/skid/roll/rest sequence for its explicitly narrower static-plane,
+resolver-free scope and emits the existing canonical
+`flight-to-ground-result/v1` wire contract.
 
 The public call is:
 
 ```python
 run_ground_reference(request, execution=None) -> GroundSimulationResult
 ```
+
+Compiled callers use native `run_ground_reference_v1`, strict JSON
+`run_ground_reference_v1_json`, PyO3
+`run_flight_to_ground_reference_v1`, or wasm-bindgen
+`runFlightToGroundReferenceV1`. All compiled surfaces share one parser,
+normalized request authority, runtime, typed error record, and canonical result
+encoder; binding layers do not reimplement physics.
 
 `GroundReferenceExecution` is immutable and contains the exact
 `BounceModelSettings`, exact `SkidRollSettings`, an optional exact
@@ -22,7 +32,11 @@ instance is supplied to both phases. The callback is cooperative: it is checked
 at the bounded points already defined by each phase solver, not from another
 thread inside an integration step.
 
-## Execution sequence
+The compiled execution record carries the versioned bounce and skid/roll
+settings but no serialized callback. A non-null material or terrain resolver
+fails closed because compiled v1 qualifies one immutable plane only.
+
+## Python reference sequence
 
 1. Validate an exact `GroundSimulationRequest` and exact execution controls.
 2. Calculate the canonical request SHA-256 fingerprint.
@@ -34,9 +48,58 @@ thread inside an integration step.
 7. Delegate final trajectory, event, summary, warning, status, and termination
    construction to `compose_ground_result`.
 
-The executor owns orchestration only. Impact impulses, airborne propagation,
-friction, skid-to-roll transition, surface resolution, distance accounting,
-warnings, and JSON encoding remain owned by their existing modules.
+## Compiled parity sequence
+
+1. Strictly parse and validate the request and execution wires, rejecting
+   duplicate keys, unsupported identities, resolvers, and serialized callbacks.
+2. Normalize the typed request once and use that exact record for fingerprint,
+   preflight, and physics.
+3. Prove wire-time representability and independent output, integration-step,
+   event, and total-trajectory budgets before callbacks or physics.
+4. Interpolate contact, resolve the first impact, and execute bounded repeated
+   bounce or immediate capture.
+5. Continue the exact handoff through skid, pure roll, rest, or an honest
+   censored termination.
+6. Compose, recursively validate, and canonically serialize the complete v1
+   result; derived unsafe values return typed owning-phase errors.
+
+The Python executor owns orchestration only. Impact impulses, airborne
+propagation, friction, skid-to-roll transition, surface resolution, distance
+accounting, warnings, and JSON encoding remain owned by their existing Python
+modules. The compiled runtime owns separate Rust phase implementations for its
+narrower domain; exact golden bytes, seeded Python parity, native tilted-plane
+invariants, and real PyO3/WASM tests constrain that implementation.
+
+## Compiled resource and cancellation contract
+
+The synchronous compiled boundary applies independent, fail-closed budgets
+before callbacks or physics and repeats capacity checks at every dynamic append:
+
+- at most 200,001 scheduled endpoint-inclusive output points;
+- at most 1,000,000 caller-authorized surface-loop steps;
+- at most 10,000 declared events; and
+- at most 210,003 total trajectory points, including unscheduled contact,
+  phase-transition, event, and terminal evidence.
+
+Output samples and integration steps are different dimensions. A sparse output
+interval cannot authorize excessive integration work, and a small integration
+step allowance does not reject a valid denser output schedule. `max_steps`
+remains a runtime exhaustion cap, not a promise that the full requested horizon
+will be reached; ordinary exhaustion remains typed `step_limit`. Values above
+the trusted compiled ceiling fail as `integration_step_limit`, and oversized
+event or trajectory work fails as `event_count_limit` or
+`trajectory_point_limit`.
+
+The absolute output grid is generated by a bounded integer index in elapsed
+time. Projection to the canonical wire epoch must remain strictly increasing;
+unrepresentable grids fail as `time_resolution`. Derived unsafe numeric values
+fail from their owning phase as `numeric_range`; they must never panic or trap.
+
+Native cancellation is a cooperative closure checked before execution and
+inside bounce, surface, and output loops. PyO3 releases the GIL between polls
+and reacquires it only to invoke the callback, preserving callback exceptions
+and strict boolean results. The current WASM call is synchronous and
+cooperative; asynchronous WASM cancellation is not part of v1.
 
 ## Terminal-state policy
 
@@ -95,13 +158,18 @@ specific course.
 
 ## Explicit limitations
 
-This v1 executor is Python-only and supports the existing qualified immutable
-planar surface plus its optional finite tangent-axis boundary. It does not add
-changing normals, material regions, terrain deformation, torsional-spin
-damping, roll-to-skid transitions, production material presets, ensemble
-execution, inverse solving, UI controls, Rust/WASM parity, or UpstreamDrift
-consumers. It does not turn cancellation, lack of recontact, numerical failure,
-unsupported terrain, or numerical step exhaustion into a result.
+The Python reference supports the existing qualified immutable planar surface
+and its optional finite tangent-axis boundary. Compiled parity is intentionally
+narrower: one immutable plane, standard gravity, the exact v1 model identities,
+and no material/terrain resolver. Cross-runtime byte parity is qualified over
+the common resolver-free horizontal-plane scope; native invariants separately
+cover tilted planes.
+
+Neither implementation adds changing normals, regional materials, terrain
+deformation, torsional-spin damping, roll-to-skid transitions, production
+material presets, ensemble execution, inverse solving, UI controls, or
+UpstreamDrift consumers. Cancellation, lack of recontact, unsafe numerics,
+unsupported terrain, and step exhaustion remain typed non-success outcomes.
 
 The executor advances ground-model issues #4273 and #4275 but does not complete
 the ground-model epic #4267. User-facing execution and rendering remain issue
