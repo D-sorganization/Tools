@@ -301,7 +301,7 @@ def test_profile_wire_is_exact_canonical_and_digest_stable() -> None:
     assert len(profile.canonical_sha256()) == 64
     assert (
         profile.canonical_sha256()
-        == "e5377325a77b2b7a195a51d4715fb4f333bf4a49ac1992e743371102ada01537"
+        == "e5377325a77b2b7a195a51d4715fb4f333bf4a49ac1992e743371102ada01537"  # pragma: allowlist secret  # noqa: E501
     )
 
     with pytest.raises(ValueError, match="canonical"):
@@ -333,7 +333,7 @@ def test_library_requires_sorted_unique_profiles_and_round_trips() -> None:
     assert library_from_json(library.to_json()) == library
     assert (
         library.canonical_sha256()
-        == "9e0bb8dff1e4de3e7cde72ebe879105c016344049c540ea0920590ecd4963550"
+        == "9e0bb8dff1e4de3e7cde72ebe879105c016344049c540ea0920590ecd4963550"  # pragma: allowlist secret  # noqa: E501
     )
     assert library.profile("fixture-fairway") == _profile()
 
