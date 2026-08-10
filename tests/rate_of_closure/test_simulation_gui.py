@@ -246,6 +246,7 @@ class TestSimulationView:
         first_settings = QSettings(str(settings_path), QSettings.Format.IniFormat)
         first = SimulationView(impact_settings=first_settings)
         qtbot.addWidget(first)
+        assert first._impact_layer_checks is first._impact_layer_controls.checks
         first._impact_layer_checks["spin_loft_sector"].setChecked(False)
         first._impact_layer_checks["face_center_travel"].setChecked(False)
         first_settings.sync()
@@ -254,6 +255,7 @@ class TestSimulationView:
         second = SimulationView(impact_settings=second_settings)
         qtbot.addWidget(second)
 
+        assert second._impact_layer_checks is second._impact_layer_controls.checks
         assert not second._impact_layer_checks["spin_loft_sector"].isChecked()
         assert not second._impact_layer_checks["face_center_travel"].isChecked()
         assert second._impact_layer_checks["face_normal"].isChecked()

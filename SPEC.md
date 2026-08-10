@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.4                                     |
-| **Spec Version**        | 1.14.4                                     |
-| **Last Spec Update**    | 2026-08-07                                 |
+| **Current Version**     | 1.14.8                                     |
+| **Spec Version**        | 1.14.8                                     |
+| **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
@@ -249,6 +249,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - All visualization calculations remain outside widget/rendering code, preserve
   stable point and variable identifiers, disclose unavailable downstream
   values, and keep reproducible sampling seeds and exact cohort counts.
+
+### 2026-08-10 Rate of Closure Python 3.10 datetime boundary
+
+- Rate of Closure modules must import `UTC` from
+  `shared.python.compatibility`, never directly from `datetime`, because
+  `datetime.UTC` is unavailable on the supported Python 3.10 runtime.
+- An AST-based regression guard scans the complete Rate source tree so future
+  user-interface or persistence work cannot silently restore the incompatible
+  import.
 
 ### 2026-08-05 Rate of Closure Python 3.10 CI compatibility
 
@@ -2872,6 +2881,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.8 | feat/fix/refactor(rate-of-closure, #4202 #4203): propagate the exact D-plane parent into the launch-monitor registry without rewriting the stack; preserve the responsive `SimulationViewControlsMixin` architecture while making `ImpactLayerControls` the single owner of persisted D-plane checkbox state; retain the existing automation compatibility seam as an identity alias; and repair the original child's three ungrandfathered size blockers through identity-preserving extractions for triple-pendulum dynamics, immutable plotting metadata, and versioned primary-navigation state. |
 | 2026-08-09 | 1.14.7 | fix(compatibility, #4203): route the PyQt torque-profile controller's UTC constant through the shared Python 3.10 compatibility module, preserving UTC timestamp serialization and workspace behavior while removing the remaining parent-owned `datetime.UTC` collection boundary. |
 | 2026-08-09 | 1.14.6 | fix(compatibility, #4203): route seven Rate/shared swing string-enum runtime imports through the existing Python 3.10 compatibility contract while retaining native enum typing under `TYPE_CHECKING`; preserve all wire values, schemas, physics, and UI behavior, and add a source-level regression exercised with real CPython 3.10.20. |
 | 2026-08-09 | 1.14.5 | fix(ci, #4203): keep the in-package swing flight and solver facade-contract tests in pytest's active package namespace by using relative imports, preventing editable Linux collection from crossing between `src.shared...` and `shared...` before assertions while leaving production APIs and physics unchanged. |
@@ -2880,13 +2890,15 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-06 | 1.14.2 | feat(rate_of_closure, #4192 #4234): complete the shared spatial-target workflows in PyQt6 and React with canonical cross-tab state, versioned JSON/CSV/manifest persistence, no-run 2D/3D rendering, continuous aerial passage, surface-projected landing assessment, field-linked validation, stale-solver protection, high-DPI canvases, responsive wrapped PyQt forms, collapsible engineering detail/layer controls, and movable or hideable legends; keep aerial requests fail-closed where solver/variation objectives remain ground-only. |
 | 2026-08-06 | 1.14.1 | feat(ball-flight integration, #4192-#4200 #4205): integrate the canonical metric catalog, Launch Direction conventions, inverse and impact-family solvers, capability-aware objectives, spatial targets, reproducible wind and uncertainty analysis, responsive locked-aspect plots, and timestamp-accurate Launch/Apex/Landing 3D playback across the shared Python contracts and the PyQt6/React Rate of Closure clients. |
 | 2026-08-06 | 1.14.0 | feat(swing_sim, rate_of_closure, #4192): add the UI-neutral `swing_sim.spatial_target` version-1 contract with canonical app-frame downrange/elevation/right coordinates, source-frame provenance and flight-frame conversion, surface-circle/corridor and 3D sphere/box acceptance geometry, signed closest-point miss vectors, deterministic Python/TypeScript serialization, and explicit legacy green/fairway migration. |
-| 2026-08-06 | 1.13.13 | feat(swing_sim, rate_of_closure, #4196): map desired flight to frame-explicit centered driver/iron delivery solution families with strict cross-runtime schemas, observed intervals/correlations, local sensitivities, complete residuals, model manifests, and rejected no-impact/miss diagnostics. |
-| 2026-08-06 | 1.13.12 | feat(swing_sim, rate_of_closure, #4195): add strict desired-flight inverse-solver contracts, deterministic bounded multi-objective search, ranked residual-rich candidates, typed infeasible/no-impact/nonconverged outcomes, and Python/TypeScript parity fixtures. |
-| 2026-08-06 | 1.13.11 | feat(swing_sim, rate_of_closure, #4194): add the canonical source-backed flight-result metric catalog, analytic landing/trajectory derivation, typed unavailable and qualified-ground boundaries, complete run manifests, deterministic Python/TypeScript exports, and cross-client parity fixtures. |
-| 2026-08-06 | 1.13.12 | feat(ball-flight, #4198 #4199): add Python/TypeScript deterministic true-versus-estimated wind ensembles, correlated under/overestimation, common-random-number club/aim strategy trials, landing scatter cohorts, and expected-cost/regret summaries. |
+| 2026-08-06 | 1.13.16 | feat(swing_sim, rate_of_closure, #4196): map desired flight to frame-explicit centered driver/iron delivery solution families with strict cross-runtime schemas, observed intervals/correlations, local sensitivities, complete residuals, model manifests, and rejected no-impact/miss diagnostics. |
+| 2026-08-06 | 1.13.15 | feat(swing_sim, rate_of_closure, #4195): add strict desired-flight inverse-solver contracts, deterministic bounded multi-objective search, ranked residual-rich candidates, typed infeasible/no-impact/nonconverged outcomes, and Python/TypeScript parity fixtures. |
+| 2026-08-06 | 1.13.14 | feat(swing_sim, rate_of_closure, #4194): add the canonical source-backed flight-result metric catalog, analytic landing/trajectory derivation, typed unavailable and qualified-ground boundaries, complete run manifests, deterministic Python/TypeScript exports, and cross-client parity fixtures. |
 | 2026-08-06 | 1.13.13 | fix(ball-flight, #4199): migrate strategy output to v2; separate policy-fixed true-wind counterfactuals from preset-oracle regret and add failure-inclusive target-hold, miss-distance CVaR, and directional risk metrics with Python/TypeScript parity. |
-| 2026-08-06 | 1.13.12 | feat(rate_of_closure, #4200): add deterministic timestamp interpolation and accessible play/pause/scrub/speed/restart/Launch/Apex/Landing controls to PyQt6 and React; preserve Matplotlib camera state with mutable markers; add a dependency-free rotatable/zoomable orthographic web canvas with a locked physical metre scale and one cancellable animation loop. |
+| 2026-08-06 | 1.13.12 | feat(ball-flight, #4198 #4199): add Python/TypeScript deterministic true-versus-estimated wind ensembles, correlated under/overestimation, common-random-number club/aim strategy trials, landing scatter cohorts, and expected-cost/regret summaries. |
+| 2026-08-06 | 1.13.11 | feat(rate_of_closure, #4200): add deterministic timestamp interpolation and accessible play/pause/scrub/speed/restart/Launch/Apex/Landing controls to PyQt6 and React; preserve Matplotlib camera state with mutable markers; add a dependency-free rotatable/zoomable orthographic web canvas with a locked physical metre scale and one cancellable animation loop. |
+| 2026-08-10 | 1.13.10 | feat/fix(rate-of-closure, swing-sim, #4179 #4182 #4183 #4189 #4202): retain typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact impact-visualization parent; extract persisted D-plane layer controls to restore the protected simulation-view module budget. |
 | 2026-08-06 | 1.13.9 | feat(rate_of_closure, swing_sim, #4182 #4183 #4189): add typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports. |
+| 2026-08-10 | 1.13.8 | feat/fix(golf-club, rate-of-closure, #4166 #4167 #4173 #4174 #4178): retain the passive provenance-gated turf proxy, nine-point wedge contact wrench, strict profile persistence, convergence diagnostics, and explicit force-coupling boundary while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact stacked parent. |
 | 2026-08-05 | 1.13.7 | feat(rate_of_closure, #4162): add exact-event pose/twist/wrist interpolation; a versioned impact-scene contract; locked-scale orbitable wedge, shaft, ball, contact, orientation, screw-axis, and velocity-decomposition views in PyQt6 and React; named cameras, accessible metric definitions, and PNG/SVG/JSON exports. |
 | 2026-08-06 | 1.13.6 | feat(golf-club, rate_of_closure, #4166): add a passive, provenance-gated compliant turf proxy; nine-point wedge contact wrench; strict profile persistence; cancellation and refinement diagnostics; and a retained-Rate adapter with explicit force-coupling limitations. |
 | 2026-08-06 | 1.13.5 | refactor(gui, ci): deduplicate Rotation Converter plot helpers and extract Movement Optimizer motion helpers, restoring the protected module-size budget inherited by the stacked Rate PRs. |

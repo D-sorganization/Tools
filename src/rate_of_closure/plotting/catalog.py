@@ -16,104 +16,30 @@ parity fixture.
 from __future__ import annotations
 
 from collections.abc import Callable
-from dataclasses import dataclass
 
 import numpy as np
 
 from rate_of_closure._contracts import ensure, require
 from rate_of_closure.model import solve
 from rate_of_closure.plotting import optional_values
+from rate_of_closure.plotting.catalog_contract import (
+    CATEGORIES,
+    DISTANCE_KEYS,
+    Extractor,
+    VariableSpec,
+)
 from rate_of_closure.simulation.kinetics import KineticsSeries, kinetics_for_run
 from rate_of_closure.simulation.session import SimulationRun
 
 __all__ = [
     "CATALOG",
     "CATEGORIES",
+    "DISTANCE_KEYS",
     "VariableSpec",
     "catalog_keys",
     "extract",
     "variables_by_category",
 ]
-
-#: Catalog categories in display order. Array-valued (per-sample)
-#: categories first, scalar (per-run) categories after.
-CATEGORIES: tuple[str, ...] = (
-    "Input",
-    "Swing Sample",
-    "Kinetics",
-    "Impact",
-    "Launch",
-    "Flight",
-    "Metric",
-)
-
-#: Categories whose extractors return per-sample arrays.
-SERIES_CATEGORIES: frozenset[str] = frozenset({"Swing Sample", "Kinetics", "Flight"})
-
-#: Axis-scale hints accepted by :class:`VariableSpec`.
-SCALE_HINTS: tuple[str, ...] = ("linear", "log")
-
-Extractor = Callable[[SimulationRun], "np.ndarray | float"]
-
-
-@dataclass(frozen=True)
-class VariableSpec:
-    """One plottable variable.
-
-    Args:
-        key: Stable namespaced identifier, ``category.name``.
-        label: Title Case display label.
-        unit: Display unit string ("" for dimensionless).
-        category: One of :data:`CATEGORIES`.
-        extractor: ``run -> np.ndarray | float`` in the app frame / SI
-            or stated display unit.
-        scale: Axis-scale hint, ``"linear"`` or ``"log"``.
-    """
-
-    key: str
-    label: str
-    unit: str
-    category: str
-    extractor: Extractor
-    scale: str = "linear"
-
-    def __post_init__(self) -> None:
-        require(
-            bool(self.key) and "." in self.key,
-            "key must be namespaced as 'category.name'",
-            self.key,
-        )
-        require(bool(self.label), "label must be non-empty", self.label)
-        require(self.category in CATEGORIES, "unknown category", self.category)
-        require(self.scale in SCALE_HINTS, "unknown scale hint", self.scale)
-        require(callable(self.extractor), "extractor must be callable")
-
-    @property
-    def is_series(self) -> bool:
-        """True when the extractor yields a per-sample array."""
-        return self.category in SERIES_CATEGORIES
-
-    @property
-    def axis_label(self) -> str:
-        """Axis label: ``Label [unit]`` (unit omitted when empty)."""
-        return f"{self.label} [{self.unit}]" if self.unit else self.label
-
-
-#: Ball-flight distance variables that follow the user's Distance
-#: display unit (#4125 H6 — yards default). Heights (flight.y_m,
-#: metric.max_height_m) and swing-scale positions stay in metres.
-DISTANCE_KEYS: frozenset[str] = frozenset(
-    {
-        "flight.x_m",
-        "flight.z_m",
-        "metric.carry_m",
-        "putting.path_x",
-        "putting.path_y",
-        "putting.rollout",
-        "putting.skid_distance",
-        "putting.break",
-    }
-)
 
 
 def _speed_series(vectors: np.ndarray) -> np.ndarray:

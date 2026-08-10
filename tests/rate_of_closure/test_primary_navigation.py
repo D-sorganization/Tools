@@ -18,8 +18,22 @@ from rate_of_closure.ui.pyqt6.main_window import (  # noqa: E402
     _NAVIGATION_STATE_KEY,
     RateOfClosureMainWindow,
 )
+from rate_of_closure.ui.pyqt6.navigation_state import (  # noqa: E402
+    DEFAULT_TAB_IDS,
+    NAVIGATION_SETTINGS_APP,
+    NAVIGATION_SETTINGS_ORG,
+    NAVIGATION_STATE_KEY,
+)
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+
+def test_main_window_reexports_the_focused_navigation_contract() -> None:
+    """Keep compatibility imports bound to the extracted state contract."""
+    assert _DEFAULT_TAB_IDS is DEFAULT_TAB_IDS
+    assert _NAVIGATION_SETTINGS_ORG is NAVIGATION_SETTINGS_ORG
+    assert _NAVIGATION_SETTINGS_APP is NAVIGATION_SETTINGS_APP
+    assert _NAVIGATION_STATE_KEY is NAVIGATION_STATE_KEY
 
 
 @pytest.fixture

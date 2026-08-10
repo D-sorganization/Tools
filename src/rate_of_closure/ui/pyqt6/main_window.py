@@ -15,10 +15,7 @@ it never reaches into widgets or model internals (LoD).
 
 from __future__ import annotations
 
-import json
-import logging
 import math
-from typing import Protocol
 
 from PyQt6.QtCore import QSettings, Qt
 from PyQt6.QtWidgets import (
@@ -59,6 +56,24 @@ from rate_of_closure.ui.pyqt6.glossary_tab import GlossaryTab
 from rate_of_closure.ui.pyqt6.launch_monitor_analytics_tab import (
     LaunchMonitorAnalyticsTab,
 )
+from rate_of_closure.ui.pyqt6.navigation_state import (
+    DEFAULT_TAB_IDS as _DEFAULT_TAB_IDS,
+)
+from rate_of_closure.ui.pyqt6.navigation_state import (
+    NAVIGATION_SETTINGS_APP as _NAVIGATION_SETTINGS_APP,
+)
+from rate_of_closure.ui.pyqt6.navigation_state import (
+    NAVIGATION_SETTINGS_ORG as _NAVIGATION_SETTINGS_ORG,
+)
+from rate_of_closure.ui.pyqt6.navigation_state import (
+    NAVIGATION_STATE_KEY as _NAVIGATION_STATE_KEY,
+)
+from rate_of_closure.ui.pyqt6.navigation_state import TAB_HELP_KEYS as _TAB_HELP_KEYS
+from rate_of_closure.ui.pyqt6.navigation_state import (
+    NavigationSettings,
+    decode_navigation_state,
+    encode_navigation_state,
+)
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
@@ -68,9 +83,7 @@ from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
 from rate_of_closure.units import convert_from_canonical
 from shared.python.swing_sim.variation import VariationDataset
 
-logger = logging.getLogger(__name__)
-
-__all__ = ["RateOfClosureMainWindow"]
+__all__ = ["RateOfClosureMainWindow", "_TAB_HELP_KEYS"]
 
 # ── Theme integration (optional — graceful fallback) ───────────────
 try:
@@ -128,36 +141,6 @@ _UNITS: dict[str, str] = {
     "time_to_square_from_1deg_open_ms": " ms",
 }
 
-#: Stable IDs for primary tabs in their first-run order.
-_DEFAULT_TAB_IDS: tuple[str, ...] = (
-    "clubhead",
-    "plots",
-    "calculation_description",
-    "simulation",
-    "flight_explorer",
-    "launch_monitor_analytics",
-    "variation",
-    "putting",
-    "glossary",
-)
-#: Compatibility export used by the help-content contract tests.
-_TAB_HELP_KEYS = _DEFAULT_TAB_IDS
-_NAVIGATION_SETTINGS_ORG = "D-sorganization"
-_NAVIGATION_SETTINGS_APP = "RateOfClosureImpactExplorer"
-_NAVIGATION_STATE_KEY = "ui/primary-tabs/v1"
-_NAVIGATION_STATE_VERSION = 1
-
-
-class _Settings(Protocol):
-    """Minimal QSettings seam used by primary-tab persistence."""
-
-    def value(self, key: str, default_value: object = None) -> object:
-        """Return a persisted value."""
-
-    def setValue(self, key: str, value: object) -> None:  # noqa: N802
-        """Persist a value."""
-
-
 #: result/metric field -> the units drop-down quantity it follows.
 _QUANTITY_ROWS: dict[str, str] = {
     "tangential_speed_mph": "speed",
@@ -175,7 +158,7 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
         self,
         parent: QWidget | None = None,
         *,
-        navigation_settings: _Settings | None = None,
+        navigation_settings: NavigationSettings | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Rate of Closure Impact Explorer")
@@ -413,42 +396,25 @@ class RateOfClosureMainWindow(ThemedWindowMixin, QMainWindow):
 
     def _restore_primary_navigation(self) -> None:
         """Restore a valid tab order and selection; ignore corrupt state."""
-        raw = self._navigation_settings.value(_NAVIGATION_STATE_KEY)
-        if not isinstance(raw, str):
-            return
-        try:
-            state = json.loads(raw)
-        except (json.JSONDecodeError, TypeError):
-            logger.warning("Ignoring corrupt primary-tab navigation state")
-            return
-        if (
-            not isinstance(state, dict)
-            or state.get("version") != _NAVIGATION_STATE_VERSION
-        ):
-            return
-        supplied = state.get("order")
-        if not isinstance(supplied, list):
-            supplied = []
-        order = list(
-            dict.fromkeys(tab_id for tab_id in supplied if tab_id in _DEFAULT_TAB_IDS)
+        restored = decode_navigation_state(
+            self._navigation_settings.value(_NAVIGATION_STATE_KEY)
         )
-        order.extend(tab_id for tab_id in _DEFAULT_TAB_IDS if tab_id not in order)
+        if restored is None:
+            return
+        order, active = restored
         bar = self._primary_tab_bar()
         for destination, tab_id in enumerate(order):
             source = self.primary_tab_ids().index(tab_id)
             bar.moveTab(source, destination)
-        active = state.get("active")
-        if active in _DEFAULT_TAB_IDS:
+        if active is not None:
             self._tabs.setCurrentIndex(self.primary_tab_ids().index(active))
 
     def _persist_primary_navigation(self, _index: int = -1) -> None:
         """Persist stable IDs so label changes cannot invalidate layout."""
-        state = {
-            "version": _NAVIGATION_STATE_VERSION,
-            "order": self.primary_tab_ids(),
-            "active": self._current_primary_tab_id(),
-        }
-        self._navigation_settings.setValue(_NAVIGATION_STATE_KEY, json.dumps(state))
+        state = encode_navigation_state(
+            self.primary_tab_ids(), self._current_primary_tab_id()
+        )
+        self._navigation_settings.setValue(_NAVIGATION_STATE_KEY, state)
 
     def _format_row(self, field: str, value: float) -> str:
         """Format one row's value in the user's selected display unit."""
