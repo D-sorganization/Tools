@@ -4,6 +4,18 @@ Status verified 2026-08-09. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 Repaired wind-scalar parent propagation into PR #4282
+
+- Draft PR `#4282` keeps branch `feat/4199-wind-workflow` and base
+  `feat/4199-wind-scalar-adapter`.
+- Exact repaired parent head `d6fb04e07c2a625412e9208b07103acdc42c621b`
+  is incorporated through a normal merge after its quality gate passed.
+- No wind-workflow production or test code conflicted. No rebase, retarget,
+  force-push, parent rewrite, draft-state change, or merge was used.
+- Twenty-five focused tests plus documentation governance, changed-file size,
+  and whitespace checks pass locally. Fresh protected CI and review must pass
+  before this exact head can propagate normally into PR `#4285`.
+
 ## 2026-08-10 PR #4282 exact-head mypy repair
 
 - Hosted run `31395741841`, quality job `93478091420`, checked merge ref

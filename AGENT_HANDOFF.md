@@ -3,6 +3,17 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Repaired wind-scalar parent propagation
+
+Draft PR `#4282` retains branch `feat/4199-wind-workflow` and base
+`feat/4199-wind-scalar-adapter`. Exact repaired parent head
+`d6fb04e07c2a625412e9208b07103acdc42c621b` is incorporated through a normal
+merge commit after its quality gate passed. No wind-workflow production or test
+code conflicted, and no rebase, retarget, force-push, or history rewrite was
+used. The current-state handoff remains authoritative. Verification covers 25
+focused tests plus documentation governance, changed-file size, and whitespace
+checks; fresh protected CI, review, and downstream propagation remain required.
+
 ## 2026-08-10 PR #4282 exact-head mypy repair
 
 Protected quality-gate run `31395741841`, job `93478091420`, checked merge ref

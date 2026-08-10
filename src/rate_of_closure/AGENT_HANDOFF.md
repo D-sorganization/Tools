@@ -3,6 +3,16 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Repaired scalar-adapter propagation into wind workflow
+
+Draft PR `#4282` remains on `feat/4199-wind-workflow`, based on
+`feat/4199-wind-scalar-adapter`. It now normally incorporates repaired parent
+head `d6fb04e07c2a625412e9208b07103acdc42c621b` after that head's quality gate
+passed. The merge had no wind-workflow production/test conflict and used no
+rebase, retarget, force-push, or history rewrite. Twenty-five focused tests and
+the documentation, size, and whitespace gates pass locally; protected CI,
+review, and later-stack propagation remain outstanding.
+
 ## 2026-08-10 Exact-head manifest typing repair
 
 PR #4282 exact head `aa6eeffb0395f7ed7954f2315b1c625cada552d8`

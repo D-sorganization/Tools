@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.15                                    |
-| **Spec Version**        | 1.14.15                                    |
+| **Current Version**     | 1.14.16                                    |
+| **Spec Version**        | 1.14.16                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -2936,6 +2936,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.16 | fix(rate-of-closure, #4281 #4282): normally propagate repaired wind scalar-adapter parent `d6fb04e07c2a625412e9208b07103acdc42c621b` into the responsive wind workflow without production/test conflict or history rewrite; retain current-state handoff policy and verify with 25 focused tests plus governance, size, and whitespace checks. |
 | 2026-08-10 | 1.14.15 | fix(rate-of-closure, #4282): preserve the strict campaign-manifest return contract under the repository's exact pinned-mypy skipped-import profile by explicitly typing the Pydantic-validated local as `CampaignManifest`; this repairs hosted quality-gate run `31395741841` without changing JSON parsing, validation, failure behavior, PR base, or dependency topology, and requires the resulting exact head to propagate normally into #4285. |
 | 2026-08-10 | 1.14.14 | feat/fix(rate-of-closure, #4199 #4281 #4282): normally propagate exact scalar-adapter parent `4a793c4c3f19aad43a3c215800b266be487ace49` into the responsive PyQt6/React wind-workflow carrier without changing its base; preserve the consolidated capability workflow and release authority while inheriting the complete variation, workspace, Python 3.10 compatibility, immutable scalar-row, stable identity, availability, and deterministic wind-scenario repairs; register the child capability tab in the parent's canonical navigation-state tuple so legacy saved orders reveal it without duplicating state; retain runtime invariant enforcement under optimized Python; and satisfy pinned typing/security analysis without weakening the fixed-argument builder boundary. |
 | 2026-08-10 | 1.14.13 | feat/fix(wind variation, #4144 #4199 #4280 #4281): normally propagate exact variation parent `8bcc49fc4e16e5e43be0b7f0f03c3017d5b79d0c` into the wind scalar-adapter child while preserving matching UI-neutral Python/TypeScript `scalar-ensemble/v1` contracts with structured provenance, unit-bearing variables, stable RFC3986 row IDs, immutable nullable raw rows, and overall/per-cohort availability; adapt actual and perfect-information wind outcomes with explicit status, true/estimated wind, launch/aim, target, landing, miss, cost, and information-delta values; enforce the deterministic scenario boundary identically in both clients with exact per-trial provenance, zero shear/turbulence, seed zero, and empty gusts; and retain the parent's result-local linked selection and complete visualization/workspace repairs. |
