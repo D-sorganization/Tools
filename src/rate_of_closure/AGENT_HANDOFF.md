@@ -1018,6 +1018,11 @@ The independently reviewed implementation is exact commit
 `0de714842cf4cd1207944044c883c2d8dc83a7ba`; the post-parent-merge tree passes
 192 ground tests and 47 focused projection/state/wire/API tests.
 
+Draft PR #4306 now carries this child from creation head
+`6a1b2f76160de0535fca2126958934c53ad5ed25` and targets the preserved parent
+branch `feat/4272-ground-material-profiles`. Protected integration and all
+downstream carrier work remain open.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 At exact head `920c46dee688815691e251777142126bf1489b1a`, protected

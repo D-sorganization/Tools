@@ -1355,6 +1355,13 @@ passed independent adversarial review. After normally merging current #4305
 head `a35fc8aac0cbc2aeeef757fd1d1c518987f2355c`, the tree passes all 192 ground
 tests and 47 focused projection/state/wire/API tests.
 
+Draft PR #4306 publishes the normal stack child on
+`feat/4273-ground-study-projection`, targeting
+`feat/4272-ground-material-profiles`; its creation head was
+`6a1b2f76160de0535fca2126958934c53ad5ed25`. This is protected-integration
+evidence only after required checks and review complete, so #4273/#4267 remain
+open.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 The protected run at exact PR #4302 head

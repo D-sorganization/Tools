@@ -531,6 +531,12 @@ The independently reviewed implementation commit is
 `0de714842cf4cd1207944044c883c2d8dc83a7ba`; after normal parent propagation,
 192 ground tests and 47 focused projection/state/wire/API tests pass.
 
+Draft PR #4306 publishes the stack child at branch
+`feat/4273-ground-study-projection` against
+`feat/4272-ground-material-profiles`. Its creation head was
+`6a1b2f76160de0535fca2126958934c53ad5ed25`. Keep #4273 and #4267 open and
+require normal protected checks/review before any merge.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 Protected CI correctly remained blocking at head
