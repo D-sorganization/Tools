@@ -3,6 +3,21 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 PR #4317 comparison playback publication
+
+The independently reviewed comparison continuation is published as ready-for-
+review [PR #4317](https://github.com/D-sorganization/Tools/pull/4317) on the
+preserved `feat/4274-ground-playback-persistence` base. Exact reviewed
+implementation head `ab0d07c0b60b2034259444a8fb68253fa24ddac7` has clean
+ancestry through merge `395c48f4142520b0f0a1b41479d02ac29c27abcf`, whose
+parents remain original comparison commit `5ceb806961e76c3699934fafcd4aba96c06bbd20`
+first and exact PR #4316 head
+`2c56294ecda0204886508946239c7ca5b50b8b14` second. The GitHub App identity
+was verified before the normal push; no branch was rewritten or retargeted.
+SPEC 1.14.42 records publication. Protected exact-head CI, approval, parent
+landing, issue acceptance, and epic closure remain required; keep #4274 and
+#4267 open.
+
 ## 2026-08-10 issue #4274 comparison-session review repair
 
 Independent review of the normally propagated comparison continuation found

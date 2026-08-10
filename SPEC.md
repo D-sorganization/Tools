@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.41                                    |
-| **Spec Version**        | 1.14.41                                    |
+| **Current Version**     | 1.14.42                                    |
+| **Spec Version**        | 1.14.42                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -3115,6 +3115,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.42 | docs(ground-playback, #4274 #4317): record the independently reviewed matched comparison continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback-persistence`; protected exact-head CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.41 | fix(ground-playback, #4274): preserve the loaded union-time comparison session when its artists are hidden, primary-clamp only the serialized workspace-v1 time, canonicalize direct deltas and Python CSV numeric tokens under the shared eleven-decimal policy, disclose calibration kind/source/confidence, and retain explicit last-good comparison messaging after file-dialog errors; add matched PyQt6/React regressions while complete suites, re-review, publication, protected CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.40 | merge(ground-playback, #4274 #4316): normally propagate exact current persistence/export parent `2c56294ecda0204886508946239c7ca5b50b8b14` into the matched comparison continuation without changing its base; preserve strict atomic comparison import, union-time phase-safe overlays, direct deltas, paired provenance, deterministic exports, and explicit remaining boundaries; reconcile pinned MyPy 1.13 skipped-import inference through runtime-neutral typed bindings and distinct row variables while protected publication, review, CI, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.39 | feat(rate-of-closure, #4274): add matched PyQt6/React atomic comparison-result import, synchronized absolute-time playback with explicitly waiting/held observation states, locked-scale solid/dashed trajectories and distinct events, accessible visibility/provenance/status/direct-delta tables, and deterministic exact-result JSON plus scalar CSV export; preserve primary-only workspace v1 and explicit remaining release boundaries. |
