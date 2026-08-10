@@ -1,7 +1,27 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-09
+> Last updated: 2026-08-10
+
+## 2026-08-10 PR #4279 fractional-timestamp Python 3.10 repair
+
+Exact-head CI on descendant PR #4281 exposed one remaining workspace parser
+difference: CPython 3.10 accepts only three or six fractional-second digits in
+`datetime.fromisoformat`, while newer supported interpreters accept the
+one-digit value already used by the workspace ordering contract. The earliest
+owner is PR #4279. Its shared workspace validator now enforces one anchored UTC
+grammar and parses zero through six fractional digits consistently, rejecting
+greater precision instead of silently truncating it on newer Python versions.
+UTC-only validation, serialized values, schema fields, and chronological
+comparison are unchanged.
+
+Evidence is `778 passed` for the full Rate suite and `45 passed` for the
+compatibility plus complete workspace document suites on the local supported
+interpreter, plus `27 passed` for the source-level compatibility suite on real
+CPython 3.10.20. The latter has only expected warnings for plugins absent from
+that intentionally minimal runtime. Ruff, formatting, pinned mypy 1.13,
+documentation governance, and the 400-line budget pass. Exact remote-head
+identity and normal publication/descendant propagation remain release gates.
 
 ## 2026-08-09 PR #4279 Python 3.10 compatibility completion
 

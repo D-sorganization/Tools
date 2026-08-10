@@ -1,7 +1,26 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-09
+> Last updated: 2026-08-10
+
+## 2026-08-10 Workspace fractional-timestamp compatibility repair
+
+The Python 3.10 lane on descendant PR #4281 revealed that the strict workspace
+ordering test reached `datetime.fromisoformat` with a one-digit fractional
+second. Python 3.10 rejects that spelling before comparing timestamps, although
+newer supported interpreters accept it. PR #4279 is the earliest owning branch.
+The workspace validator now enforces one anchored UTC grammar and parses every
+losslessly representable zero- to six-digit fraction consistently, rejecting
+greater precision rather than allowing interpreter-dependent truncation. It
+does not modify the persisted spelling, UTC requirement, schema, or ordering
+rule.
+
+Evidence is `778 passed` for the full Rate suite, `45 passed` across the
+compatibility and workspace document tests on the local interpreter, and
+`27 passed` under real CPython 3.10.20. Ruff, format, pinned mypy 1.13, docs
+governance, and the 400-line budget pass. Keep this handoff, the root handoff,
+campaign handoff, and SPEC entry in the same implementation commit; verify the
+exact remote head before a normal push and propagate through later descendants.
 
 ## 2026-08-09 Workspace Python 3.10 compatibility completion
 

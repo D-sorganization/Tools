@@ -7,6 +7,7 @@ import importlib.util
 import sys
 from pathlib import Path
 from types import ModuleType
+from typing import Any, cast
 
 import pytest
 
@@ -87,7 +88,61 @@ def test_workspace_string_enum_modules_execute_through_compatibility_contract(
         enum_type = getattr(module, enum_name)
         member = next(iter(enum_type))
         assert isinstance(member, str)
-        assert str(member) == member.value
+        assert str(member) == cast(Any, member).value
+
+
+@pytest.mark.parametrize(
+    ("timestamp", "expected_microsecond"),
+    [
+        ("2026-08-07T12:00:00Z", 0),
+        ("2026-08-07T12:00:00.1Z", 100_000),
+        ("2026-08-07T12:00:00.12Z", 120_000),
+        ("2026-08-07T12:00:00.123Z", 123_000),
+        ("2026-08-07T12:00:00.1234Z", 123_400),
+        ("2026-08-07T12:00:00.12345Z", 123_450),
+        ("2026-08-07T12:00:00.123456Z", 123_456),
+    ],
+)
+def test_workspace_timestamp_precision_is_stable_on_supported_python_versions(
+    timestamp: str,
+    expected_microsecond: int,
+) -> None:
+    """Accept every timestamp precision representable without data loss."""
+    module = _load_source_module(REPOSITORY_ROOT / UTC_MODULES[0])
+
+    parsed = module.utc_datetime(timestamp, "timestamp")
+
+    assert parsed.microsecond == expected_microsecond
+    assert parsed.tzinfo is module.UTC
+
+
+def test_workspace_timestamp_rejects_precision_beyond_microseconds() -> None:
+    """Never silently truncate a persisted timestamp on newer interpreters."""
+    module = _load_source_module(REPOSITORY_ROOT / UTC_MODULES[0])
+
+    with pytest.raises(ValueError, match="at most six fractional digits"):
+        module.utc_datetime("2026-08-07T12:00:00.1234567Z", "timestamp")
+
+
+@pytest.mark.parametrize(
+    ("timestamp", "message"),
+    [
+        ("2026-08-07T12:00:00.Z", "ISO-8601 UTC timestamp"),
+        ("2026-08-07T12:00:00", "ending in Z"),
+        ("2026-08-07T12:00:00+00:00", "ending in Z"),
+        ("2026-8-07T12:00:00Z", "ISO-8601 UTC timestamp"),
+        ("2026-08-07 12:00:00Z", "ISO-8601 UTC timestamp"),
+    ],
+)
+def test_workspace_timestamp_rejects_noncanonical_utc_spellings(
+    timestamp: str,
+    message: str,
+) -> None:
+    """Keep the persisted UTC grammar strict and interpreter-independent."""
+    module = _load_source_module(REPOSITORY_ROOT / UTC_MODULES[0])
+
+    with pytest.raises(ValueError, match=message):
+        module.utc_datetime(timestamp, "timestamp")
 
 
 def _load_source_module(source_path: Path) -> ModuleType:

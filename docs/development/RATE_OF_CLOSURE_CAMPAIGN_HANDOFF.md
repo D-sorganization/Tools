@@ -4,6 +4,23 @@ Status verified 2026-08-07. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 PR #4279 fractional timestamp compatibility
+
+Descendant PR #4281's exact-head Python 3.10 lane failed the workspace instant
+ordering regression because that interpreter rejects one-, two-, four-, and
+five-digit fractional seconds before comparison. The correction belongs on
+the earliest carrier, PR #4279: enforce one anchored UTC grammar, parse zero
+through six fractional digits consistently, and reject precision beyond
+microseconds instead of allowing newer interpreters to truncate it.
+Persisted JSON remains unchanged and UTC-only validation stays authoritative.
+
+Local evidence is `778 passed` for the full Rate suite, `45 passed` for the
+workspace/compatibility suites, and `27 passed` for the direct compatibility
+suite on CPython 3.10.20. Ruff, format, pinned mypy 1.13, docs governance, and
+the 400-line budget pass. Publication is not completion: verify the exact
+remote head/base, push normally, then propagate in stack order through #4280,
+#4281, #4282, and every later descendant that carries the workspace.
+
 ## 2026-08-09 PR #4279 Python 3.10 compatibility completion
 
 Exact corrected #4203 parent
