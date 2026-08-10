@@ -4,6 +4,17 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-09 PR #4304 corrected implementation evidence
+
+The campaign registry now advances PR #4304 and its immutable local evidence
+to qualified implementation commit `f475ae85feea1b2c628f756699b2aba6ea9334fb`.
+That commit is the narrow scalar-boundary correction for hosted run
+`31354071845`; its 115-test CPython 3.11.9 and 3.10.20 suites, pinned MyPy
+1.13, pinned Ruff 0.14.10, manifest contracts, and documentation governance
+all pass locally. This registry/handoff commit is documentation-only and makes
+no material runtime, physics, numerical, schema, or API change. Fresh
+protected CI and review remain required after an ordinary guarded push.
+
 ## 2026-08-09 PR #4304 isolated-MyPy correction
 
 Hosted quality-gate run `31354071845` (job `93350276996`) failed exact

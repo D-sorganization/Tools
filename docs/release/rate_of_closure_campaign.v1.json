@@ -204,7 +204,7 @@
       "pr": 4304,
       "branch": "feat/4271-ground-skid-roll",
       "base_branch": "feat/4270-ground-impact-bounce",
-      "head_sha": "dcc801395538bdc7b9a46835f5555abdd72677a4",
+      "head_sha": "f475ae85feea1b2c628f756699b2aba6ea9334fb",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -316,9 +316,9 @@
       ]
     },
     {
-      "id": "ground-skid-roll-local-dcc8",
+      "id": "ground-skid-roll-local-f475",
       "kind": "local",
-      "commit_sha": "dcc801395538bdc7b9a46835f5555abdd72677a4",
+      "commit_sha": "f475ae85feea1b2c628f756699b2aba6ea9334fb",
       "outcome": "passed",
       "commands": [
         "py -3.11 -m pytest src/shared/python/swing_sim/ground/tests -q",
@@ -1121,7 +1121,7 @@
       },
       "evidence_ids": [
         "ground-impact-local-63a6",
-        "ground-skid-roll-local-dcc8"
+        "ground-skid-roll-local-f475"
       ],
       "evidence_gap": "The contract, flight-transfer, impact/bounce, and static-plane skid/roll carriers are open. Issues #4270 and #4271 are published on draft PRs 4302 and 4304 with exact local evidence but no protected evidence. Changing normals, regional surfaces, UI, compiled-runtime, and downstream parity evidence remain absent.",
       "limitations": [
