@@ -5,17 +5,18 @@
 
 ## Issue #4284 local implementation
 
-Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` at exact head
-`620d9d11f67b6d6d1c8dff673396cc101c5968ad`, normally merged from exact
-carrier `de49580a3c0888b44f66dcc09bba2ab2fa33914a` and camera implementation
-parent `91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It has a shared Python/TypeScript
+Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
+camera evidence through immutable commit
+`2095e748ddca2d7036bbd49a731528f5634daff9`, normally merged from exact carrier
+`de49580a3c0888b44f66dcc09bba2ab2fa33914a` and camera implementation parent
+`91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It has a shared Python/TypeScript
 camera contract and adapters for PyQt6 Simulation/Flight and React Club,
 Impact, and Flight 3D viewports. Canonical snap directions use x downrange,
 y up, z right; face-on side is explicit. Tracking is opt-in, bounded, isolated
 per viewport, preserves safe zoom, suspends after manual orbit, and resumes on
 Recenter. Camera state is deliberately not persisted in this slice.
 
-The unpushed local continuation adds adjacent solver-sample frame stepping to
+The published evidence adds adjacent solver-sample frame stepping to
 React flight playback and Playwright coverage spanning play/pause/restart,
 loop, speed, frame steps, wheel zoom, snap views, tracking suspension, and
 Recenter. It also verifies control containment and canvas backing resolution
@@ -24,17 +25,18 @@ rendered review, hosted CI/review, normal stack integration, and UpstreamDrift
 PyQt6/React consumer parity. See
 `docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md` and issue #4284.
 
-Camera-parent gates include 107 React files / 649 tests. Reconciled merge-tree
-gates include 138 affected Python/PyQt/carrier tests, 14 focused React camera
-tests, Ruff format/check, camera-targeted mypy, TypeScript, zero-warning ESLint,
-and the 193-module Vite
-build; campaign-manifest, diff, and changed-file structural checks. Headless
-desktop and 700 px camera-control renders were inspected without overlap; the
-local offscreen Qt font directory is unavailable, so native-font/browser
-rendered review remains explicitly open. The local evidence continuation adds
-2 focused Vitest files / 11 tests, the full 107-file / 650-test React suite,
-and 4 Playwright browser tests across desktop and constrained 2x-DPR Chromium.
-Browser automation does not close the native visual or downstream parity gates.
+Evidence commit `2095e748` passes 39 focused Python/PyQt camera tests, the full
+107-file / 650-test React suite, four Playwright browser tests across desktop
+and constrained 2x-DPR Chromium, Ruff format/check, targeted mypy, TypeScript,
+zero-warning ESLint, the 193-module Vite build, campaign validation, and diff
+checks. Headless desktop and 700 px camera-control renders were inspected
+without overlap; the local offscreen Qt font directory is unavailable, so
+native-font/browser rendered review remains explicitly open. Browser
+automation does not close the native visual or downstream parity gates.
+
+This documentation-only successor records the already-published evidence
+commit. `evidence_commit_sha` is immutable evidence, not an impossible
+self-reference to the successor's own future SHA.
 
 ## Current continuation
 

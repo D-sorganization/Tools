@@ -24,7 +24,7 @@
       "pr": 4119,
       "branch": "feat/impact-simulation-platform",
       "base_branch": "main",
-      "head_sha": "d4c843d6531ad31e22b3775b8a286da16d9a3d3c",
+      "evidence_commit_sha": "d4c843d6531ad31e22b3775b8a286da16d9a3d3c",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -34,7 +34,7 @@
       "pr": 4133,
       "branch": "feat/impact-interval-dynamics",
       "base_branch": "feat/course-showcase",
-      "head_sha": "b8209dd866e308058c443cb81c3182d2437b46a9",
+      "evidence_commit_sha": "b8209dd866e308058c443cb81c3182d2437b46a9",
       "state": "merged",
       "merge_commit_sha": "bc8ce9b8b98f8cefc9458b903f5bf2f98f1fd9ba",
       "protection_evidence": "not_protected"
@@ -44,7 +44,7 @@
       "pr": 4167,
       "branch": "feat/4144-variation-visualizations",
       "base_branch": "feat/investigation-suite",
-      "head_sha": "edaa56358a9ccf47809533fcab28e6415b336771",
+      "evidence_commit_sha": "edaa56358a9ccf47809533fcab28e6415b336771",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -54,7 +54,7 @@
       "pr": 4173,
       "branch": "feat/4163-impact-inspector",
       "base_branch": "feat/4144-variation-visualizations",
-      "head_sha": "3c43955aaeb3964ff8c3ef2748d626baae518b76",
+      "evidence_commit_sha": "3c43955aaeb3964ff8c3ef2748d626baae518b76",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -64,7 +64,7 @@
       "pr": 4179,
       "branch": "feat/4162-wedge-impact-visualization",
       "base_branch": "feat/4166-wedge-turf-physics",
-      "head_sha": "0eb804e70887c788421332369e42792411aff55a",
+      "evidence_commit_sha": "0eb804e70887c788421332369e42792411aff55a",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -74,7 +74,7 @@
       "pr": 4202,
       "branch": "feat/4189-dplane",
       "base_branch": "feat/4162-wedge-impact-visualization",
-      "head_sha": "b4abec03bccfbdd87ddf91427159c5c2332c21dd",
+      "evidence_commit_sha": "b4abec03bccfbdd87ddf91427159c5c2332c21dd",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -84,7 +84,7 @@
       "pr": 4203,
       "branch": "feat/4181-launch-monitor-registry",
       "base_branch": "feat/4189-dplane",
-      "head_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
+      "evidence_commit_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -94,7 +94,7 @@
       "pr": 4217,
       "branch": "codex/ballflight-campaign-integration",
       "base_branch": "feat/4181-launch-monitor-registry",
-      "head_sha": "655fea08f62bb48c6ca3498a8893936ef9370e9e",
+      "evidence_commit_sha": "655fea08f62bb48c6ca3498a8893936ef9370e9e",
       "state": "merged",
       "merge_commit_sha": "912ebc9d69b05763a76c2c8f198d943737e2d3fb",
       "protection_evidence": "not_protected"
@@ -104,7 +104,7 @@
       "pr": 4279,
       "branch": "feat/4218-toolstrip-workspace",
       "base_branch": "feat/4181-launch-monitor-registry",
-      "head_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392",
+      "evidence_commit_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -114,7 +114,7 @@
       "pr": 4280,
       "branch": "feat/4144-variation-export-continuation",
       "base_branch": "feat/4218-toolstrip-workspace",
-      "head_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4",
+      "evidence_commit_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -124,7 +124,7 @@
       "pr": 4281,
       "branch": "feat/4199-wind-scalar-adapter",
       "base_branch": "feat/4144-variation-export-continuation",
-      "head_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759",
+      "evidence_commit_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "18fe89201d657116bbca99922297c14968356c44",
+      "evidence_commit_sha": "18fe89201d657116bbca99922297c14968356c44",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -144,7 +144,7 @@
       "pr": 4283,
       "branch": "feat/4197-capability-observer",
       "base_branch": "feat/4199-wind-workflow",
-      "head_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
+      "evidence_commit_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
       "state": "merged",
       "merge_commit_sha": "c1827bbdc50a6e11cc475db2636b4e47a4c15416",
       "protection_evidence": "not_protected"
@@ -154,7 +154,7 @@
       "pr": 4285,
       "branch": "feat/4268-ground-contract",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "3235af71150a774954e7673fc81d7179330fbe76",
+      "evidence_commit_sha": "3235af71150a774954e7673fc81d7179330fbe76",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -164,7 +164,7 @@
       "pr": 4288,
       "branch": "feat/4269-flight-ground-transfer",
       "base_branch": "feat/4268-ground-contract",
-      "head_sha": "d2d3d0f53a78aa863574afe43290a29c48318d94",
+      "evidence_commit_sha": "d2d3d0f53a78aa863574afe43290a29c48318d94",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -174,7 +174,7 @@
       "pr": 4289,
       "branch": "feat/4197-capability-flight-evaluator",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
+      "evidence_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
       "state": "merged",
       "merge_commit_sha": "9bbb98e16e435a0d4c74153b909f2ebfefbbce7a",
       "protection_evidence": "not_protected"
@@ -184,7 +184,7 @@
       "pr": 4294,
       "branch": "feat/4197-capability-optimization-ui",
       "base_branch": "feat/4197-capability-flight-evaluator",
-      "head_sha": "35db7d8210ff1365726dbf45c7a40e74194ae647",
+      "evidence_commit_sha": "35db7d8210ff1365726dbf45c7a40e74194ae647",
       "state": "merged",
       "merge_commit_sha": "43e13bb30a9a1e80bac910990661a69b05d6adcf",
       "protection_evidence": "not_protected"
@@ -194,7 +194,7 @@
       "pr": 4298,
       "branch": "feat/4284-camera-snap-tracking",
       "base_branch": "feat/4199-wind-workflow",
-      "head_sha": "620d9d11f67b6d6d1c8dff673396cc101c5968ad",
+      "evidence_commit_sha": "2095e748ddca2d7036bbd49a731528f5634daff9",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -287,16 +287,17 @@
       ]
     },
     {
-      "id": "camera-local-620d",
+      "id": "camera-local-2095",
       "kind": "local",
-      "commit_sha": "620d9d11f67b6d6d1c8dff673396cc101c5968ad",
+      "commit_sha": "2095e748ddca2d7036bbd49a731528f5634daff9",
       "outcome": "passed",
       "commands": [
         "python -m pytest tests/rate_of_closure/test_camera_commands.py tests/rate_of_closure/test_camera_controls_gui.py tests/rate_of_closure/test_simulation_gui.py -q",
-        "npm test -- --run src/model/cameraCommands.test.ts src/components/CameraControlBar.test.tsx src/components/ClubCanvasCamera.test.tsx src/components/FlightPlayback3D.test.tsx",
+        "npm test -- --run",
+        "$env:PLAYWRIGHT_CHANNEL='chrome'; npm run test:e2e",
         "npm run type-check && npm run lint && npm run build"
       ],
-      "summary": "The published camera head passed 138 affected Python/PyQt/carrier tests, 14 focused React camera tests, TypeScript, zero-warning ESLint, and the 193-module Vite production build; protected and native visual evidence remain open.",
+      "summary": "The published camera evidence commit passed 39 focused Python/PyQt tests, 107 React files and 650 tests, four Playwright browser tests, TypeScript, zero-warning ESLint, and the 193-module Vite production build; protected and native visual evidence remain open.",
       "source_paths": [
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md"
@@ -932,12 +933,12 @@
       },
       "evidence_ids": [
         "toolstrip-local-c36",
-        "camera-local-620d"
+        "camera-local-2095"
       ],
       "evidence_gap": "Complete persistence adapters, synchronized multi-view persistence, UpstreamDrift camera consumers, native rendered accessibility review, and protected release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
-        "Camera tracking and canonical snap views are published as draft PR 4298, but its continuation evidence is local and its protected integration remains open."
+        "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open."
       ],
       "depends_on_issues": [
         4191

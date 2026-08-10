@@ -6,29 +6,31 @@ branch was rewritten.
 
 ## 2026-08-09 Camera snap/tracking continuation
 
-Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` at exact head
-`620d9d11f67b6d6d1c8dff673396cc101c5968ad`. It normally merges exact carrier
-head `de49580a3c0888b44f66dcc09bba2ab2fa33914a` with camera parent
+Draft PR #4298 publishes branch `feat/4284-camera-snap-tracking` with tested
+camera evidence through immutable commit
+`2095e748ddca2d7036bbd49a731528f5634daff9`. It normally merges exact carrier
+`de49580a3c0888b44f66dcc09bba2ab2fa33914a` with camera parent
 `91bdd77df4dfc3abe79d9d22108b31d07a7cfbe3`. It implements the canonical camera
 contract for all five Tools 3D adapters (PyQt Simulation and Flight; React
 Club, Impact, and Flight) with exact snap orientations, bounded opt-in subject
 tracking, safe zoom preservation, Auto Fit, manual suspension, and Recenter.
 UpstreamDrift parity is not started, and protected release remains open.
-Camera-parent evidence is 107 React files / 649 tests. Reconciled merge-tree
-evidence is 138 affected Python/PyQt/carrier tests, 14 focused React camera
-tests, Ruff/camera-targeted mypy, TypeScript/ESLint, a 193-module production build,
-campaign-manifest validation, structural checks, and inspected desktop plus
-700 px camera-control renders.
-
-The unpushed browser-evidence continuation adds solver-owned previous/next
-frame controls to React ball-flight playback through the existing validated
-timeline boundary. Two focused Vitest files pass 11 tests, and the full React
-suite passes 107 files / 650 tests. Playwright passes a bounded
+Evidence commit `2095e748` adds solver-owned previous/next frame controls to
+React ball-flight playback through the existing validated timeline boundary.
+It passes 39 focused Python/PyQt camera tests and the full 107-file / 650-test
+React suite. Playwright passes a bounded
 play/pause/restart/loop/speed/frame-step/zoom/snap/tracking matrix and
 responsive backing-store assertions in desktop Chromium and a 520 x 900,
-2x-DPR Chromium project (4 browser tests total). Native-font/manual visual
-review, hosted CI/review, protected release, preference persistence, and
-UpstreamDrift parity remain due.
+2x-DPR Chromium project (4 browser tests total). TypeScript, zero-warning
+ESLint, the 193-module Vite build, Ruff, targeted mypy, campaign validation,
+and diff checks also pass. Native-font/manual visual review, hosted CI/review,
+protected release, preference persistence, and UpstreamDrift parity remain due.
+
+This documentation-only successor records the already-published evidence
+commit. The campaign manifest now names carrier `evidence_commit_sha` rather
+than pretending a commit can contain its own future PR-head SHA. Legacy
+`head_sha` input remains migration-compatible, while new schema output uses the
+truthful field name.
 
 ## 2026-08-09 Capability workflow hardening continuation
 

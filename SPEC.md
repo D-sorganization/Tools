@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.10                                    |
-| **Spec Version**        | 1.14.10                                    |
+| **Current Version**     | 1.14.11                                    |
+| **Spec Version**        | 1.14.11                                    |
 | **Last Spec Update**    | 2026-08-09                                 |
 
 ## 2. Purpose & Mission
@@ -81,9 +81,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   exclusive states with fail-closed cross-field requirements.
 - The current manifest truthfully records no complete campaign release SHA;
   local tests and unprotected feature-parent merges cannot satisfy that claim.
-- Composed local implementation evidence is commit-bound in the manifest;
-  maintainers must still refresh live mutable PR heads before any write,
-  merge, release, or issue-closure decision.
+- Carrier `evidence_commit_sha` values identify immutable, already-published
+  observations rather than attempting an impossible self-reference to the
+  containing commit. Legacy `head_sha` input migrates to the new field, while
+  new schema output uses only the truthful evidence name. Maintainers must
+  still query live mutable PR heads before any write, merge, release, or
+  issue-closure decision.
 - The manifest loader explicitly narrows Pydantic's validated value for the
   CI mypy 1.13 `--follow-imports=skip` context without weakening runtime
   validation or the generated schema.
@@ -2949,6 +2952,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-09 | 1.14.11 | fix(rate-of-closure, #4284): distinguish immutable carrier evidence commits from mutable PR heads, record published camera evidence at 2095e748 with 107/650 React and 4 Playwright tests, and retain migration support for legacy `head_sha` manifest input. |
 | 2026-08-09 | 1.14.10 | test(rate-of-closure, #4284): add solver-sample flight frame steps and Playwright camera/playback interaction coverage at desktop and constrained 2x-DPR viewports; retain native visual and downstream parity gates. |
 | 2026-08-09 | 1.14.9 | feat(rate-of-closure, #4284): add canonical cross-runtime 3D camera snaps, bounded clubhead/ball tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and focused PyQt6/React contracts. |
 | 2026-08-09 | 1.14.8 | feat(rate-of-closure, #4201): harden cross-runtime capability parsing and signed input; expose complete diagnostics, result exports, and quantitative scatter annotations; stabilize supported PyQt6/static-Vite entrypoints; and add a strict campaign manifest with generated schema, four-surface status, explicit gaps/dependencies, and fail-closed feature-stack/protected-parent/`main` release distinctions. |
