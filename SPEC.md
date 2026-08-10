@@ -201,6 +201,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - `ground-result/v1` does not carry the producing request fingerprint. The
   study projection checks compatible IDs, surface/frame, calibration, and
   provenance, but its two digests are not an attested request/result pair.
+- `qualified_study_to_ground_model_result` populates the existing total,
+  roll, bounce-count, and final-offline DTO only from a solver-eligible study.
+  Target misses do not suppress qualified physics values. Because that legacy
+  DTO is intentionally lossy, the study remains the provenance authority.
 - Production presets/calibration claims, profile UI, regional/changing-normal
   terrain, compiled runtimes, and four-surface consumer parity remain open.
   `docs/specs/GROUND_MATERIAL_PROFILES.md` is the bounded scientific authority.

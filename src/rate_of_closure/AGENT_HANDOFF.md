@@ -1023,6 +1023,12 @@ Draft PR #4306 now carries this child from creation head
 branch `feat/4272-ground-material-profiles`. Protected integration and all
 downstream carrier work remain open.
 
+Local child `feat/4273-ground-study-result-adapter` starts from exact #4306 head
+`17473948f1ce5837bd5b55618d5393b0d8575188` and adds a fail-closed adapter from
+solver-eligible studies into the existing four-field ground metric DTO. A
+target miss does not erase qualified physics. The DTO cannot carry the study's
+digests/profile/target evidence, so downstream audit paths must retain both.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 At exact head `920c46dee688815691e251777142126bf1489b1a`, protected

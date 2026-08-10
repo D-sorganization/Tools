@@ -105,7 +105,10 @@ from .profile_wire import (
     library_from_json,
     profile_from_json,
 )
-from .result_adapter import to_ground_model_result
+from .result_adapter import (
+    qualified_study_to_ground_model_result,
+    to_ground_model_result,
+)
 from .result_types import GroundSummary, GroundTermination, GroundWarning
 from .skid_roll_simulation import SkidRollExecution, simulate_skid_roll
 from .study_projection import project_ground_study
@@ -270,6 +273,7 @@ __all__ = [
     "profile_json_schema",
     "profile_schema_json",
     "project_ground_study",
+    "qualified_study_to_ground_model_result",
     "request_from_json",
     "request_json_schema",
     "result_from_json",

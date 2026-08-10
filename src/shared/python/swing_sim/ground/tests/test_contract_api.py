@@ -131,6 +131,7 @@ EXPECTED_API = {
     "profile_json_schema",
     "profile_schema_json",
     "project_ground_study",
+    "qualified_study_to_ground_model_result",
     "request_from_json",
     "request_json_schema",
     "result_from_json",

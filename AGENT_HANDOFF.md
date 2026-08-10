@@ -537,6 +537,13 @@ Draft PR #4306 publishes the stack child at branch
 `6a1b2f76160de0535fca2126958934c53ad5ed25`. Keep #4273 and #4267 open and
 require normal protected checks/review before any merge.
 
+The next local child `feat/4273-ground-study-result-adapter` begins at exact PR
+#4306 head `17473948f1ce5837bd5b55618d5393b0d8575188`. Its narrow continuation adds
+`qualified_study_to_ground_model_result`, which populates the existing total,
+roll, bounce-count, and final-offline DTO only from a solver-eligible study.
+Target misses remain valid physics observations. The DTO is lossy and never
+replaces the study's provenance. This is not yet published or issue completion.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 Protected CI correctly remained blocking at head

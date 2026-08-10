@@ -1362,6 +1362,14 @@ Draft PR #4306 publishes the normal stack child on
 evidence only after required checks and review complete, so #4273/#4267 remain
 open.
 
+The next local #4273 continuation,
+`feat/4273-ground-study-result-adapter`, starts from exact PR #4306 head
+`17473948f1ce5837bd5b55618d5393b0d8575188`. It adds a one-way qualified-study
+adapter for the existing total/roll/bounce/final-offline DTO. The adapter fails
+closed on ineligible studies, does not treat target miss as missing physics,
+and documents that the legacy DTO is provenance-lossy. It has no carrier or
+protected evidence yet.
+
 ## 2026-08-09 PR #4302 deterministic-digest scanner repair
 
 The protected run at exact PR #4302 head

@@ -96,6 +96,19 @@ Result warnings preserve their typed code, severity, and message. Profile
 qualification warnings remain a separate part of the embedded profile binding,
 so neither evidence channel is collapsed into code-only strings.
 
+## Existing metric-contract adapter
+
+`qualified_study_to_ground_model_result` is the narrow one-way bridge into the
+existing flight metric DTO. It accepts only an exact, solver-eligible study and
+copies total distance, roll distance, bounce count, and final offline distance
+from the preserved canonical summary. Target acceptance is not a physics
+qualification gate: a valid target miss still exposes these metrics.
+
+The legacy DTO carries only model identity and scalar values. It does not carry
+the study, request-context, result, profile, or target evidence digests, so it
+must not replace the study record in an audit trail. Consumers needing typed
+unavailability or provenance retain the study alongside the DTO.
+
 ## Explicit limitations
 
 This foundation does not yet connect the projection to ensemble runners,
