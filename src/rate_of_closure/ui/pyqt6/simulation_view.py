@@ -44,6 +44,7 @@ from rate_of_closure.ui.pyqt6.camera_controls import CameraViewportMixin
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
+from rate_of_closure.ui.pyqt6.impact_layer_controls import ImpactLayerControls
 from rate_of_closure.ui.pyqt6.simulation_scene_renderer import (
     SimulationSceneRenderer,
     fallback_joint_ids,
@@ -68,8 +69,6 @@ __all__ = ["RATE_PRESETS", "SimulationView"]
 
 _TIMER_INTERVAL_MS = 40
 _SLIDER_STEPS = 1000
-_IMPACT_LAYER_SETTINGS_ORG = "RateOfClosure"
-_IMPACT_LAYER_SETTINGS_APP = "ImpactScene"
 
 
 class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
@@ -81,9 +80,12 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
         impact_settings: QSettings | None = None,
     ) -> None:
         super().__init__(parent)
-        self._impact_settings = impact_settings or QSettings(
-            _IMPACT_LAYER_SETTINGS_ORG, _IMPACT_LAYER_SETTINGS_APP
+        self._impact_layer_controls: ImpactLayerControls = ImpactLayerControls(
+            impact_settings,
+            self._draw,
         )
+        # Kept as a compatibility seam for existing UI automation.
+        self._impact_layer_checks = self._impact_layer_controls.checks
         self._figure = Figure(figsize=(5, 5))
         self._canvas = FigureCanvas(self._figure)
         self._axes = self._figure.add_subplot(111, projection="3d")

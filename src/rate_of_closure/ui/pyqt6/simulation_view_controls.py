@@ -2,10 +2,9 @@
 
 from __future__ import annotations
 
-import json
 from typing import TYPE_CHECKING
 
-from PyQt6.QtCore import QSettings, Qt
+from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -21,15 +20,12 @@ from PyQt6.QtWidgets import (
 )
 
 from rate_of_closure.application.camera_commands import CameraCommandId
+from rate_of_closure.ui.pyqt6.impact_layer_controls import ImpactLayerControls
 from rate_of_closure.ui.pyqt6.simulation_engineering_panel import (
     create_engineering_panel,
 )
 from rate_of_closure.units import FIELD_GUIDANCE
 
-_IMPACT_LAYER_SETTINGS_KEY = "visible_layers_v1"
-_DEFAULT_IMPACT_LAYERS = frozenset(
-    {"face_normal", "face_center_travel", "dplane_normal", "spin_loft_sector"}
-)
 _SCENE_CHECK_SPECS = (
     ("_ball_check", "Ball", True, FIELD_GUIDANCE["ball_visible"]),
     ("_ground_check", "Ground", True, FIELD_GUIDANCE["ground_visible"]),
@@ -56,18 +52,12 @@ _SCENE_CHECK_SPECS = (
         + FIELD_GUIDANCE["swing_flight_toggle"],
     ),
 )
-_IMPACT_LAYER_SPECS = (
-    ("face_normal", "Face Normal", "delivered face-center normal"),
-    ("face_center_travel", "Face Travel", "rigid-body face-center travel"),
-    ("dplane_normal", "D-Plane", "D-plane normal"),
-    ("spin_loft_sector", "Spin Loft", "shaded exact 3D spin-loft angle"),
-)
 
 
 class SimulationViewControlsMixin:
     """Build responsive controls without owning scene or playback behavior."""
 
-    _impact_settings: QSettings
+    _impact_layer_controls: ImpactLayerControls
     _ball_check: QCheckBox
     _ground_check: QCheckBox
     _course_check: QCheckBox
@@ -267,23 +257,6 @@ class SimulationViewControlsMixin:
             check.setToolTip(tooltip)
             check.toggled.connect(lambda _checked: self._draw())
             setattr(self, name, check)
-        self._impact_layer_checks = self._create_impact_layer_checks()
-
-    def _create_impact_layer_checks(self) -> dict[str, QCheckBox]:
-        """Create persisted, independently toggleable impact-vector layers."""
-        checks: dict[str, QCheckBox] = {}
-        saved = self._load_impact_layers()
-        for key, label, description in _IMPACT_LAYER_SPECS:
-            check = QCheckBox(label)
-            check.setChecked(key in saved)
-            check.setToolTip(
-                "Suggested range: on for engineering review; turn off to isolate "
-                f"other layers. Show {description} in app frame x target, y up, "
-                "z right. Source: standard 3D D-plane geometry."
-            )
-            check.toggled.connect(self._on_impact_layer_toggled)
-            checks[key] = check
-        return checks
 
     def _layer_checkboxes(self) -> tuple[QCheckBox, ...]:
         """Return scene checkboxes laid out without clipped text."""
@@ -321,33 +294,10 @@ class SimulationViewControlsMixin:
             Qt.ArrowType.DownArrow if expanded else Qt.ArrowType.RightArrow
         )
 
-    def _load_impact_layers(self) -> frozenset[str]:
-        raw = self._impact_settings.value(_IMPACT_LAYER_SETTINGS_KEY)
-        if not isinstance(raw, str):
-            return _DEFAULT_IMPACT_LAYERS
-        try:
-            values = json.loads(raw)
-        except (TypeError, ValueError):
-            return _DEFAULT_IMPACT_LAYERS
-        if not isinstance(values, list) or not all(
-            isinstance(value, str) and value in _DEFAULT_IMPACT_LAYERS
-            for value in values
-        ):
-            return _DEFAULT_IMPACT_LAYERS
-        return frozenset(values)
-
-    def _on_impact_layer_toggled(self, _checked: bool) -> None:
-        self._impact_settings.setValue(
-            _IMPACT_LAYER_SETTINGS_KEY,
-            json.dumps(sorted(self.impact_visible_layers())),
-        )
-        self._draw()
-
     def impact_visible_layers(self) -> frozenset[str]:
         """Return independently toggleable persisted impact layers."""
-        return frozenset(
-            key for key, check in self._impact_layer_checks.items() if check.isChecked()
-        )
+        layers: frozenset[str] = self._impact_layer_controls.visible_layers()
+        return layers
 
     def legend_visible(self) -> bool:
         """Return whether the plot legend is enabled."""
