@@ -1,10 +1,11 @@
 # AGENT_HANDOFF — Tools
 
-## 2026-08-11 local flight-through-regional-ground pipeline candidate
+## 2026-08-11 PR #4360 flight-through-regional-ground pipeline
 
-Local branch `feat/4271-flight-regional-ground-pipeline` starts from exact
-published PR #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`
-without modifying its published worktree. Audit found that the existing
+Ready-for-review PR [#4360](https://github.com/D-sorganization/Tools/pull/4360)
+on `feat/4271-flight-regional-ground-pipeline` starts from exact published PR
+#4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`. Its reviewed implementation
+commit is `090e835477d1f19614f37f978a1b8a0e2f50ae21`. Audit found that the existing
 regional envelope is exact only after `SETTLED_TO_SKID`; bounce time/event
 limits and no-recontact cannot be mapped to its failure enum honestly.
 
@@ -31,10 +32,11 @@ and canonical bytes are unchanged. Standalone Black reports one inherited
 formatting preference in `test_contract_api.py`; repository-authoritative Ruff
 is green and that file's delta is limited to the required public API entries.
 
-This is an unpushed, `not_released` candidate. It adds no new wire schema or
-migration and no PyQt6/React, TypeScript/Rust/WASM, persistence, playback,
-calibration, target/solver/variation, or downstream integration. Keep #4271,
-#4273, and #4267 open.
+The ready PR is not yet protected or reviewed and remains `not_released`. It
+adds no new wire schema or migration and no PyQt6/React,
+TypeScript/Rust/WASM, persistence, playback, calibration,
+target/solver/variation, or downstream integration. Keep #4271, #4273, and
+#4267 open.
 
 ## 2026-08-11 PR #4359 flight-to-bounce composition
 

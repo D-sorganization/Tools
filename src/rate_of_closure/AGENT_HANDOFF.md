@@ -1,10 +1,11 @@
 # AGENT_HANDOFF — rate_of_closure
 
-## 2026-08-11 local flight-through-regional-ground pipeline candidate
+## 2026-08-11 PR #4360 flight-through-regional-ground pipeline
 
-Local `feat/4271-flight-regional-ground-pipeline` starts from exact published
-Tools #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`.
-The published parent worktree remains untouched. Audit established that the
+Ready-for-review PR [#4360](https://github.com/D-sorganization/Tools/pull/4360)
+on `feat/4271-flight-regional-ground-pipeline` starts from exact published
+Tools #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`; its reviewed implementation
+commit is `090e835477d1f19614f37f978a1b8a0e2f50ae21`. Audit established that the
 regional envelope is semantically exact only after `SETTLED_TO_SKID`, not for
 bounce time/event limits or no-recontact.
 
@@ -27,7 +28,8 @@ runtime or canonical-byte change. Standalone Black keeps one inherited
 preference in `test_contract_api.py`; authoritative Ruff is green and its
 delta is only the required public API additions.
 
-No wire schema/migration, PyQt6/React, TypeScript/Rust/WASM, persistence,
+The ready PR remains `not_released` pending protected checks and review. No
+wire schema/migration, PyQt6/React, TypeScript/Rust/WASM, persistence,
 playback, calibration, target/solver/variation integration, or downstream
 release is included. Keep #4271, #4273, and #4267 open.
 

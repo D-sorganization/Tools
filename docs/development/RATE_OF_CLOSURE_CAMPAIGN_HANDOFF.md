@@ -1,10 +1,12 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-## 2026-08-11 local flight-through-regional-ground pipeline candidate
+## 2026-08-11 PR #4360 flight-through-regional-ground pipeline
 
-- Local `feat/4271-flight-regional-ground-pipeline` starts from exact published
-  PR #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`; the
-  published worktree was not modified.
+- Ready-for-review PR
+  [#4360](https://github.com/D-sorganization/Tools/pull/4360) on
+  `feat/4271-flight-regional-ground-pipeline` starts from exact published PR
+  #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`; its reviewed implementation
+  commit is `090e835477d1f19614f37f978a1b8a0e2f50ae21`.
 - Audit showed the regional envelope cannot honestly represent bounce
   time/event limits or no-recontact. The new UI-neutral composition validates
   exact inputs, capture, and launch-relative plan/base equality before physics,
@@ -25,7 +27,8 @@
   runtime or canonical-byte changes. Standalone Black retains one inherited
   preference in `test_contract_api.py`; authoritative Ruff is green and its
   delta contains only required public API entries.
-- No wire/migration, clients, TypeScript/Rust/WASM, persistence, playback,
+- The ready PR remains `not_released` pending protected checks and review. No
+  wire/migration, clients, TypeScript/Rust/WASM, persistence, playback,
   calibration, study integration, protected evidence, or release is claimed.
   Keep #4271, #4273, and #4267 open.
 
