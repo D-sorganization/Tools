@@ -1,5 +1,16 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 pinned-Ruff propagation into impact inspector
+
+- Exact repaired parent `#4167` head
+  `91dc2174578a4fc472907d7141ca44c9ef36d3ab` is merged normally into child
+  `#4173`; branch/base identities remain unchanged.
+- The merge carries only the documented five-file Ruff `0.14.10` mechanical
+  formatting delta plus its canonical handoff/spec evidence. Impact-inspector
+  and variation behavior are unchanged.
+- Protected current-head checks and the later investigation-suite carrier into
+  the root branch remain mandatory release gates.
+
 ## 2026-08-10 Propagation into impact inspector
 
 - Immediate child PR `#4173` keeps base `feat/4144-variation-visualizations`.
@@ -23,6 +34,17 @@ feature above the already merged `feat/investigation-suite` carrier. Later
 wedge, D-plane, launch-monitor, workspace, wind, capability, and ground work
 depends on this line and must receive any repair through ordinary parent
 propagation; child branches must not be rewritten.
+
+## 2026-08-11 pinned-Ruff repair
+
+- Exact PR `#4167` head `3c19aaa9d3e812e4659053735a2955d62a080d34`
+  carries the same five changed Python blobs that fail Ruff `0.14.10` format
+  checking on immediate child `#4173`.
+- The five files are mechanically formatted with the workflow-pinned version;
+  there is no scientific, persistence, API, schema, test, or UI behavior
+  change and no claim that variation epic `#4144` is complete.
+- The repair must still pass current-head protected checks and travel through
+  the ordinary investigation-suite carrier before the root PR can reach main.
 
 ## 2026-08-10 Python 3.10 repair
 

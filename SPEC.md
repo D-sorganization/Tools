@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.6                                     |
-| **Spec Version**        | 1.13.6                                     |
-| **Last Spec Update**    | 2026-08-10                                 |
+| **Current Version**     | 1.13.7                                     |
+| **Spec Version**        | 1.13.7                                     |
+| **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
@@ -2644,6 +2644,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.13.7 | fix(ci, #4167 #4173): propagate the workflow-pinned Ruff 0.14.10 five-file format repair normally into the impact-inspector child; no scientific, persistence, API, schema, test, or UI behavior changes, and the ordinary carrier/protected gates remain open. |
 | 2026-08-10 | 1.13.6 | fix(rate-of-closure, #4167 #4173): propagate the Python 3.10 UTC compatibility repair into the impact-inspector child without rewriting its history; torque-profile persistence now uses the shared compatibility export and a source-wide AST guard prevents direct, aliased, or module-attribute `datetime.UTC` regressions. |
 | 2026-08-06 | 1.13.5 | refactor(gui, ci): deduplicate Rotation Converter plot helpers and extract Movement Optimizer motion helpers, restoring the protected module-size budget inherited by the stacked Rate PRs. |
 | 2026-08-05 | 1.13.4 | feat(rate_of_closure, golf-club, #4158 #4160 #4163): integrate frame-explicit wedge contact/shaft kinematics into retained Rate runs; add honest impact-or-closest-approach jump controls and engineering readouts to PyQt6 and React; restore manual web angular velocity; and select the documented 30 ms square pose for flat automatic speed plateaus. |

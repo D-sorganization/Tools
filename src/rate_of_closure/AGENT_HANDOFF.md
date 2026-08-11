@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
 
 ## 2026-08-10 Python 3.10 Repair Propagation
 
@@ -12,6 +12,14 @@ head `3c43955aaeb3964ff8c3ef2748d626baae518b76` with exact parent head
 Python 3.10-compatible UTC export and the source-wide AST guard into the wedge
 impact inspector without changing the persistence schema or user-visible
 timestamp format.
+
+## 2026-08-11 pinned-Ruff repair
+
+Exact published head `3c19aaa9d3e812e4659053735a2955d62a080d34`
+inherits the five-file Ruff `0.14.10` format mismatch reported on its immediate
+child. The files are now mechanically formatted with that pinned version. No
+material handoff or runtime behavior changes: variation, physics, frames, DbC
+validation, public contracts, schemas, tests, and UI behavior remain intact.
 
 Combined-stack verification is green across 63 focused Python tests, all 562
 Rate tests, all 334 React tests, TypeScript/ESLint/Vite gates, 12 `swing-core`

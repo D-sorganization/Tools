@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
 
 ## 2026-08-10 Parent Repair Propagation (#4167 → #4173)
 
@@ -26,6 +26,19 @@
 - Every implementation commit must update this file, the Rate handoff, the
   campaign handoff, and `SPEC.md`, or explicitly record why there is no
   material handoff change.
+
+## 2026-08-11 pinned-Ruff parent propagation
+
+- Exact published head `3c19aaa9d3e812e4659053735a2955d62a080d34`
+  has the same five-file Ruff `0.14.10` format mismatch proven by child CI.
+- Those files are mechanically formatted with the workflow-pinned version.
+  No variation, impact, plotting, persistence, API, schema, test, or UI
+  behavior changes; this is not completion of issue `#4144`.
+- No material handoff behavior changed. Protected CI and the ordinary carrier
+  into `feat/impact-simulation-platform` remain release gates.
+
+The formatted parent is merged normally into the impact-inspector child; no
+impact-inspection or variation behavior changes.
 
 ## Where This Repo Is Headed
 
