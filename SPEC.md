@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.9                                     |
-| **Spec Version**        | 1.13.9                                     |
-| **Last Spec Update**    | 2026-08-10                                 |
+| **Current Version**     | 1.13.13                                    |
+| **Spec Version**        | 1.13.13                                    |
+| **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
@@ -2713,6 +2713,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.13.13 | fix(ci, #4162 #4167 #4173 #4174 #4178 #4179): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into wedge impact visualization while preserving its configured base and additive scientific, presentation, handoff, campaign, and specification histories. |
+| 2026-08-11 | 1.13.12 | fix(ci, #4167 #4173 #4174 #4178): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into wedge turf physics while preserving its configured base and additive scientific, handoff, campaign, and specification histories. |
+| 2026-08-11 | 1.13.11 | fix(ci, #4167 #4173 #4174): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into swept wedge ground clearance while preserving the configured base, scientific behavior, and additive handoff/specification history. |
+| 2026-08-11 | 1.13.10 | fix(ci, #4167 #4173): propagate the workflow-pinned Ruff 0.14.10 five-file format repair normally into the impact-inspector child; no scientific, persistence, API, schema, test, or UI behavior changes, and the ordinary carrier/protected gates remain open. |
 | 2026-08-10 | 1.13.9 | feat/fix(rate-of-closure, #4162 #4167 #4173 #4174 #4178 #4179): retain exact-event pose/twist/wrist interpolation, the versioned impact-scene contract, locked-scale PyQt6 and React views, named cameras, accessible metrics, and PNG/SVG/JSON exports while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact turf-physics parent. |
 | 2026-08-10 | 1.13.8 | feat/fix(golf-club, rate-of-closure, #4166 #4167 #4173 #4174 #4178): retain the passive provenance-gated turf proxy, nine-point wedge contact wrench, strict profile persistence, convergence diagnostics, and explicit force-coupling boundary while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact stacked parent. |
 | 2026-08-10 | 1.13.7 | fix(rate-of-closure, #4167 #4173 #4174): propagate the Python 3.10 UTC compatibility repair and source-wide AST guard through the impact-inspector parent into swept wedge ground clearance without rewriting the stacked child or changing its ground-contact contracts. |
