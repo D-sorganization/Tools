@@ -20,6 +20,7 @@ from shared.python.swing_sim.flight import (
     StrategyShotOutcome,
     TargetPoint,
     WindEstimateError,
+    WindGust,
     WindScenario,
     WindStrategy,
     WindStrategyAnalysis,
@@ -254,4 +255,36 @@ def test_adapter_rejects_inconsistent_trial_wind_and_outcome_availability() -> N
                 analysis,
                 outcomes=(analysis.outcomes[0], wrong_values, analysis.outcomes[2]),
             ),
+        )
+
+
+@pytest.mark.parametrize(
+    "scenario",
+    [
+        replace(_scenario(5.0, 90.0, "range-study/true/trial-0"), provenance="other"),
+        replace(
+            _scenario(5.0, 90.0, "range-study/true/trial-0"),
+            shear_fraction_per_10m=0.1,
+        ),
+        replace(
+            _scenario(5.0, 90.0, "range-study/true/trial-0"),
+            turbulence_intensity_mps=0.2,
+        ),
+        replace(_scenario(5.0, 90.0, "range-study/true/trial-0"), seed=1),
+        replace(
+            _scenario(5.0, 90.0, "range-study/true/trial-0"),
+            gusts=(WindGust(0.0, 1.0, (0.0, 1.0, 0.0)),),
+        ),
+    ],
+)
+def test_adapter_rejects_noncanonical_deterministic_wind_scenarios(
+    scenario: WindScenario,
+) -> None:
+    analysis = _analysis()
+    wrong = replace(analysis.outcomes[0], true_wind=scenario)
+
+    with pytest.raises(ContractViolationError, match="deterministic scenario"):
+        build_wind_strategy_plot_dataset(
+            _request(),
+            replace(analysis, outcomes=(wrong,) + analysis.outcomes[1:]),
         )

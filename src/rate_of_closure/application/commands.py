@@ -99,8 +99,10 @@ class CommandAvailability:
             raise TypeError("command_id must be an AppCommandId")
         if self.enabled:
             return
-        assert self.disabled_reason is not None
-        raise CommandUnavailableError(command_id, self.disabled_reason)
+        reason = self.disabled_reason
+        if reason is None:
+            raise RuntimeError("disabled command state is missing disabled_reason")
+        raise CommandUnavailableError(command_id, reason)
 
 
 __all__ = [

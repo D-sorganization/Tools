@@ -35,6 +35,7 @@ from rate_of_closure.ui.pyqt6.variation_plot_helpers import (
     point_label,
 )
 from rate_of_closure.ui.pyqt6.variation_scatter_view import DatasetScatterView
+from rate_of_closure.ui.pyqt6.variation_trial_table import validated_trial_index
 from rate_of_closure.variation.plot_data import EnsemblePlotDataset
 from rate_of_closure.variation.plot_definition import PlotDefinition
 from rate_of_closure.variation.simulation_types import TrialEvaluationStatus
@@ -159,6 +160,7 @@ class ArcOverlayView(QWidget):
 
     def set_plot_dataset(self, dataset: EnsemblePlotDataset) -> None:
         """Populate modeled points and render every valid trial arc."""
+        self._selected_trial = None
         self._dataset = dataset
         self._filters.set_dataset(dataset)
         self._exports.setEnabled(True)
@@ -179,8 +181,10 @@ class ArcOverlayView(QWidget):
         self._redraw()
 
     def set_selected_trial(self, trial_index: int | None) -> None:
-        self._selected_trial = trial_index
-        index = self._trial_combo.findData(trial_index)
+        trial_count = self._dataset.result.variation.plan.n_runs if self._dataset else 0
+        selected = validated_trial_index(trial_index, trial_count)
+        self._selected_trial = selected
+        index = self._trial_combo.findData(selected)
         self._trial_combo.blockSignals(True)
         self._trial_combo.setCurrentIndex(max(index, 0))
         self._trial_combo.blockSignals(False)

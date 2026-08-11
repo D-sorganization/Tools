@@ -234,7 +234,7 @@
       "pr": 4339,
       "branch": "feat/4274-regional-surface-ui",
       "base_branch": "feat/4271-regional-wire-contract",
-      "head_sha": "d21741e312b849a63f73cabf351a15d9de80fb94",
+      "head_sha": "db335937afc4b587d235eb705e315f577519c5e6",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -244,7 +244,7 @@
       "pr": 4342,
       "branch": "feat/4274-regional-plan-io",
       "base_branch": "feat/4274-regional-surface-ui",
-      "head_sha": "c1f47f2ef68b3db102da5416aaac17a40f675207",
+      "head_sha": "de66a851aa5dded680279cf9a2b25a5094966593",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -254,7 +254,17 @@
       "pr": 4350,
       "branch": "feat/4271-regional-execution-binding",
       "base_branch": "feat/4274-regional-plan-io",
-      "head_sha": "dfb4b97481f187ff3594eceb08c427f650aca4e3",
+      "head_sha": "98f86990e9225903fbe84cd1f267ed38ef0a15d8",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4351",
+      "pr": 4351,
+      "branch": "feat/4271-regional-execution-ui",
+      "base_branch": "feat/4271-regional-execution-binding",
+      "head_sha": "351a3051e9093c6b80cabf0f1db04aeeb15abfac",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
