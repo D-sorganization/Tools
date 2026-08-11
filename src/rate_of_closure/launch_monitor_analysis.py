@@ -68,9 +68,7 @@ def _fingerprint(frame: pd.DataFrame, selected: tuple[str, ...]) -> str:
             column: (
                 None
                 if pd.isna(value)
-                else value.item()
-                if hasattr(value, "item")
-                else value
+                else value.item() if hasattr(value, "item") else value
             )
             for column, value in row.items()
         }
