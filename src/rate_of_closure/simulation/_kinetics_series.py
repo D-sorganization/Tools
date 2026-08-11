@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
+from typing import cast
 
 import numpy as np
 
@@ -118,7 +119,9 @@ class KineticsSeries:
             which,
         )
         vectors = getattr(self, f"{which}_force_n")
-        return np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
+        return cast(
+            np.ndarray, np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
+        )
 
     def ztcf_force_magnitude_n(self, which: str) -> np.ndarray:
         """Return the state-matched ZTCF magnitude of one force series."""
@@ -128,4 +131,6 @@ class KineticsSeries:
             which,
         )
         vectors = getattr(self, f"ztcf_{which}_force_n")
-        return np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
+        return cast(
+            np.ndarray, np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
+        )

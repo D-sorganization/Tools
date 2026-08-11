@@ -16,6 +16,7 @@ a constraint is never presented as actuator input. Pure dynamics live in
 from __future__ import annotations
 
 import math
+from typing import cast
 
 import numpy as np
 
@@ -58,7 +59,7 @@ _reaction_forces = reaction_forces
 def _to_app(plane_r: np.ndarray, vectors: np.ndarray) -> np.ndarray:
     """Map in-plane vectors (local x, local up) into the app frame."""
     world = vectors[:, :1] * plane_r[:, 0] + vectors[:, 1:2] * plane_r[:, 2]
-    return np.asarray(world @ APP_FROM_SWING.T)
+    return cast(np.ndarray, np.asarray(world @ APP_FROM_SWING.T))
 
 
 def compute_kinetics(

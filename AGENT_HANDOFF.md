@@ -3,6 +3,19 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 hosted MyPy repair propagation into workspace PR #4279
+
+- Exact workspace child `7806a16f58e1c6999d32f0127a187fbb21f839a1`
+  normally merges exact published parent
+  `3796b49e40b677fbac4e05739f8be49f905df2cb`; PR base, stack order, and
+  both histories remain unchanged.
+- The inherited production delta is limited to four static
+  `numpy.ndarray` casts in the kinetics façade, series, and dynamics modules.
+  Workspace/toolstrip behavior and runtime arrays, physics, units, frames,
+  public identity, and UI behavior are unchanged.
+- This merge is local only. Fresh exact-head protected CI, required review,
+  unresolved-thread checks, and dependency gates remain release blockers.
+
 ## 2026-08-11 latest #4203 propagation into workspace PR #4279
 
 - Exact parent `0216a547aa79727091a2939b96e779e8ddbd7304` is normally merged into
@@ -14,6 +27,28 @@
   size-budget repair.
 - This merge is local only. Fresh exact-head protected CI, review, unresolved
   threads, and dependency gates remain required before publication or merge.
+
+## 2026-08-11 #4203 hosted MyPy kinetics repair
+
+- Exact head `0216a547aa79727091a2939b96e779e8ddbd7304` failed CI Standard run
+  `31477542889`, job `93734652129`, at runtime merge ref `aede309`: NumPy's
+  typed API exposed four `no-any-return` findings in the newly extracted
+  kinetics modules.
+- The repair narrows only the results of `numpy.linalg.norm`,
+  `numpy.concatenate`, and the app-frame matrix projection to the already
+  declared `numpy.ndarray` return contract. Explicit casts do not allocate,
+  convert, or change any array, physics, units, frames, public identity, or UI.
+- RED evidence is the exact four hosted diagnostics at
+  `_kinetics_series.py:121/131`, `_kinetics_dynamics.py:194`, and
+  `kinetics.py:61`. GREEN evidence requires the complete PR-base changed-source
+  MyPy profile, not a three-file-only run, plus focused/full Rate regression and
+  normal protected CI after publication.
+- Local GREEN evidence is 102/102 complete-delta MyPy source files, 141/141
+  Ruff/format files, 101 Bandit source files with no medium/high finding, 28/28
+  focused tests, and 701/701 full Rate tests. Size, documentation, minimum-test,
+  and diff gates also pass.
+- This commit is local only. PR base, stack order, protected review, and the
+  paused #4279 parent propagation remain unchanged.
 
 ## 2026-08-11 #4203 kinetics size-budget repair
 

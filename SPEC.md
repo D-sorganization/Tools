@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.14                                    |
-| **Spec Version**        | 1.14.14                                    |
+| **Current Version**     | 1.14.15                                    |
+| **Spec Version**        | 1.14.15                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -2914,7 +2914,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.15 | merge(rate-of-closure, #4203 #4279): normally propagate exact published launch-registry parent `3796b49e40b677fbac4e05739f8be49f905df2cb` into exact workspace/toolstrip child `7806a16f58e1c6999d32f0127a187fbb21f839a1` without rewriting stack topology; inherit only four static NumPy-array casts while preserving runtime arrays, physics, frames, units, public contracts, workspace behavior, and UI behavior; require fresh current-head protected CI and review. |
 | 2026-08-11 | 1.14.14 | merge(rate-of-closure, #4203 #4279): normally propagate exact launch-registry parent `0216a547aa79727091a2939b96e779e8ddbd7304` into the workspace/toolstrip child without rewriting stack topology; preserve the child's workspace, toolstrip, module-visibility, navigation, playback, and independent-plot behavior while inheriting the parent's identity-preserving kinetics split and pinned formatting repair; require fresh current-head protected CI and review. |
+| 2026-08-11 | 1.14.14 | fix(rate-of-closure, #4203): close four hosted MyPy `no-any-return` findings from the kinetics size split with explicit NumPy-array return narrowing at force-norm, RK4 concatenation, and app-frame projection boundaries; preserve exact runtime arrays, physics, frames, units, public contracts, and stack order. |
 | 2026-08-11 | 1.14.13 | refactor(rate-of-closure, #4203): split the 646-LOC swing-kinetics monolith into an identity-preserving 222-LOC public façade, 205-LOC pure-dynamics module, and 131-LOC immutable-series contract; preserve physics, frames, fixtures, UI behavior, and established imports while satisfying the changed-file 500-LOC gate. |
 | 2026-08-11 | 1.14.12 | style(rate-of-closure, #4203): apply repository-pinned Ruff 0.14.10 formatting to the eight files reported by current-head CI without changing physics, behavior, public contracts, schemas, UI layout, or stack order. |
 | 2026-08-10 | 1.14.12 | fix(rate-of-closure, d-plane, #4202 #4203 #4279): normally propagate exact repaired launch-registry parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` into the workspace/toolstrip child without rewriting the stack; inherit explicit ndarray result boundaries while preserving numerical semantics, frames, schemas, and UI behavior; verify the reconciled tree with 25 focused D-plane/impact tests and governance, size, and whitespace gates. |

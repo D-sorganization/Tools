@@ -1,5 +1,20 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 hosted MyPy repair propagation into workspace PR #4279
+
+- PR `#4279` remains on `feat/4218-toolstrip-workspace`, based on
+  `feat/4181-launch-monitor-registry`. Exact child
+  `7806a16f58e1c6999d32f0127a187fbb21f839a1` normally merges exact published
+  parent `3796b49e40b677fbac4e05739f8be49f905df2cb` without rebase, retarget,
+  force-push, or history rewrite.
+- There are no feature-code conflicts. The only inherited production changes
+  are four static NumPy-array casts that close hosted MyPy return boundaries;
+  workspace/toolstrip behavior and numerical, frame, unit, schema, rendering,
+  and public-API semantics remain unchanged.
+- Preserve both append-only histories below. This local merge requires fresh
+  merged-tree protected CI, required review, unresolved-thread checks, and
+  dependency order before publication or merge.
+
 ## 2026-08-11 latest #4203 propagation into workspace PR #4279
 
 - PR `#4279` remains on `feat/4218-toolstrip-workspace`, based on
@@ -50,6 +65,27 @@
   findings after 76 additional focused PyQt/navigation/workspace tests.
   Current-head protected CI, unresolved-thread checks, and required repository
   review remain release gates after guarded publication.
+
+## 2026-08-11 #4203 hosted MyPy NumPy boundary repair
+
+- Exact PR head `0216a547aa79727091a2939b96e779e8ddbd7304` reached runtime merge
+  ref `aede309` but failed CI Standard run `31477542889`, job `93734652129`,
+  with four `no-any-return` findings introduced when kinetics was split for the
+  size budget.
+- Explicit `numpy.ndarray` casts now close only the static return boundaries
+  around force norms, the RK4 derivative concatenation, and the app-frame
+  projection. There is no numerical operation, copy, schema, frame, unit,
+  rendering, or public API change.
+- The acceptance profile is the entire 102-file PR-base changed-source MyPy
+  set, followed by focused kinetics/presentation/PyQt tests, the full Rate
+  suite, and the repository's Ruff/format, size, Bandit, documentation, and
+  diff gates. A three-file MyPy pass alone is insufficient release evidence.
+- That local profile is now green: MyPy 102 files; Ruff/format 141 files;
+  Bandit 101 production files with no medium/high finding; 28 focused and 701
+  full Rate tests; plus module/file size, documentation, minimum-test, and diff
+  gates.
+- The fix remains local pending independent review and ordinary protected CI.
+  Do not resume #4279 propagation from an unreviewed or unpublished commit.
 
 ## 2026-08-11 #4203 kinetics size-budget repair
 

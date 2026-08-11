@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 Workspace child receives hosted MyPy repair
+
+PR `#4279` retains branch `feat/4218-toolstrip-workspace` and base
+`feat/4181-launch-monitor-registry`. Exact child
+`7806a16f58e1c6999d32f0127a187fbb21f839a1` normally merges exact published
+parent `3796b49e40b677fbac4e05739f8be49f905df2cb`. No feature-code conflict
+exists: the inherited production delta is four static `numpy.ndarray` casts,
+while workspace/toolstrip behavior and runtime arrays, physics, frames, units,
+imports, and UI behavior remain unchanged. This local merge does not satisfy
+fresh protected CI, required review, unresolved-thread, dependency, or release
+gates.
+
 ## 2026-08-11 workspace child receives latest repaired parent
 
 PR `#4279` retains branch `feat/4218-toolstrip-workspace` and base
@@ -14,6 +26,21 @@ behavior remain unchanged while the parent kinetics façade/dynamics/series
 split and pinned formatting are inherited. This local merge does not satisfy
 fresh protected CI, required review, unresolved-thread, dependency, or release
 gates.
+
+## 2026-08-11 Hosted MyPy NumPy-return repair
+
+CI Standard run `31477542889`, job `93734652129`, found four
+`no-any-return` errors after the kinetics façade extraction at exact PR #4203
+head `0216a547aa79727091a2939b96e779e8ddbd7304`. The NumPy stubs widen
+`linalg.norm`, `concatenate`, and matrix projection results to `Any` even
+though the runtime operations return arrays. The private series/dynamics
+modules and public façade now use explicit `cast(np.ndarray, ...)` boundaries.
+These casts are static only: array identity, values, dtype, shape, physics,
+frames, units, imports, and UI behavior are unchanged. Verification must cover
+the complete PR changed-source MyPy set and both focused and full Rate tests.
+Current local evidence is 102 changed-source MyPy files, 28 focused tests, and
+all 701 Rate tests passing; complete-delta Ruff/format and Bandit are also
+green.
 
 ## 2026-08-11 Kinetics façade extraction
 
