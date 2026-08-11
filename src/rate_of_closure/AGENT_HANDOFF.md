@@ -1,5 +1,66 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4342 current-parent propagation candidate
+
+This local no-publish merge keeps `feat/4274-regional-plan-io` over
+`feat/4274-regional-surface-ui`. Exact current child
+`c1f47f2ef68b3db102da5416aaac17a40f675207` is the first parent and exact
+reviewed local #4339 candidate `db335937afc4b587d235eb705e315f577519c5e6`
+is the second parent. Child-owned canonical request import/export, bounded UTF-8,
+native atomic save, browser-qualified download, tests, and limitations remain
+intact while inheriting current editor, wire, regional physics, and complete
+ground ancestry.
+
+The default shared canonical encoder continues to reject floats and integers
+outside JavaScript's safe range. Only the capability-observation facade selects
+a separately named extended finite-float policy. It shares the same recursive
+encoder, retains safe-range integer checks, emits exact exponent-free `1e20`
+and `1e21` tokens matching TypeScript, and rejects non-finite values.
+
+Local qualification passes all `909` Rate-of-Closure Python tests, all `110`
+React files / `686` tests, the complete Cargo workspace, `47` focused Python
+compatibility/regional-I/O tests, and `12` focused React capability tests.
+Pinned Ruff 0.14.10 check/format passes `17` changed Python files; pinned MyPy
+1.13 and Bandit pass `12` changed production files. TypeScript, zero-warning
+ESLint, the 199-module Vite build, Rust format/warning-denied clippy, 400- and
+500-LOC gates, manifest/docs/blocking-gate/assertion/minimum-test governance,
+marker scans, and diff checks pass. One untouched manual-delivery UI test timed
+out in the first concurrent full run, then passed alone and in the single
+complete rerun.
+
+The candidate is not published or released. Execution/playback, result
+interchange, measured calibration, persistence, changing geometry or velocity,
+TypeScript/compiled regional physics, downstream parity, protected exact-head
+evidence, review, approval, dependency integration, and release remain open.
+
+## 2026-08-11 PR #4339 current-parent propagation candidate
+
+This local no-publish merge keeps `feat/4274-regional-surface-ui` over
+`feat/4271-regional-wire-contract`. Exact current child
+`d21741e312b849a63f73cabf351a15d9de80fb94` is the first parent and exact
+published #4335 head `8f933ed8dcb29e55ece4ec6bb1e60813f6794d57`
+is the second parent. Child-owned matched PyQt6/React editors, validation
+invalidation, engineering hints, strict readback, and limitations remain intact
+alongside the parent's regional wire/resolver/physics and complete ground
+ancestry. The parent-extracted navigation-state contract remains canonical and
+includes the child-owned `regional_surfaces` module in default/migration order.
+
+Local qualification passes all `891` Rate-of-Closure Python tests, all `110`
+React files / `678` tests, `177` focused regional/ground/navigation Python
+tests, `14` focused React editor/navigation/wire tests, and all `137`
+`tools-core` Rust tests. TypeScript, zero-warning ESLint, the 198-module Vite
+build, Rust format and warning-denied clippy, pinned Ruff 0.14.10 across seven
+PR-delta Python files, pinned MyPy 1.13 across six production files, Bandit
+medium/high, both changed-file size gates, manifest/docs/assertion/minimum-test
+governance, child-feature byte checks, marker scans, and diff checks pass.
+Existing Hypothesis ignored-cache and Node local-storage option warnings remain
+non-failing.
+
+The candidate is not published or released. Execution/playback, result
+interchange, measured calibration, persistence, changing geometry or velocity,
+TypeScript/compiled regional physics, downstream parity, protected exact-head
+evidence, review, approval, dependency integration, and release remain open.
+
 
 ## 2026-08-11 PR #4342 append-only preservation repair
 

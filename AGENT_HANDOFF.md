@@ -1,5 +1,75 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 PR #4342 current-parent propagation candidate
+
+This no-publish candidate keeps PR `#4342` on
+`feat/4274-regional-plan-io` with base `feat/4274-regional-surface-ui`.
+Exact current child `c1f47f2ef68b3db102da5416aaac17a40f675207` is the first
+parent and exact reviewed local #4339 candidate
+`db335937afc4b587d235eb705e315f577519c5e6` is the second parent of a
+normal no-ff merge. Child-owned canonical request import/export, bounded UTF-8,
+native atomic save, browser-qualified download, tests, and limitations remain
+intact while inheriting current editor, wire, regional-physics, and complete
+ground-model ancestry.
+
+The merge also resolves one cross-runtime compatibility edge without weakening
+the ground contract. The default shared canonical encoder still rejects floats
+or integers outside JavaScript's safe range. A separately named extended
+finite-float policy reuses the same recursive encoder only through the
+capability-observation facade; integers remain safe-range bounded and integral
+finite doubles such as `1e20` and `1e21` emit exact exponent-free tokens that
+match the TypeScript capability serializer. Non-finite values still fail
+closed.
+
+Local qualification is green: all `909` Rate-of-Closure Python tests, all
+`110` React files / `686` tests, and the complete Cargo workspace pass. The
+focused compatibility/regional-I/O slices pass `47` Python and `12` React
+tests. Pinned Ruff 0.14.10 check/format passes `17` changed Python files; pinned
+MyPy 1.13 and Bandit pass `12` changed production files. TypeScript,
+zero-warning ESLint, the 199-module Vite build, Rust format and warning-denied
+clippy, both 400- and 500-LOC changed-file gates, manifest/docs/blocking-gate/
+assertion/minimum-test governance, marker scans, and diff checks pass. An
+untouched manual-delivery UI test timed out once during the first concurrent
+full run, then passed alone and in the single complete rerun.
+
+No branch has been rebased, retargeted, rewritten, force-pushed, or published.
+Execution and playback, result interchange, measured calibration, model-input
+persistence, changing geometry or velocity, TypeScript/compiled regional
+physics, downstream parity, protected exact-head evidence, approval,
+dependency integration, and release remain open.
+
+## 2026-08-11 PR #4339 current-parent propagation candidate
+
+This no-publish candidate keeps PR `#4339` on
+`feat/4274-regional-surface-ui` with base
+`feat/4271-regional-wire-contract`. Exact current child
+`d21741e312b849a63f73cabf351a15d9de80fb94` is the first parent and exact
+published PR #4335 head `8f933ed8dcb29e55ece4ec6bb1e60813f6794d57`
+is the second parent of a normal no-ff merge. The matched PyQt6/React regional
+surface editors retain their validation, invalidation, engineering hints, and
+strict request readback while inheriting the current regional wire, resolver,
+regional physics, and complete ground-model ancestry. The extracted navigation
+state remains canonical and now includes the child-owned `regional_surfaces`
+module in the first-run and migration order.
+
+Local qualification is green: the complete Rate-of-Closure Python suite passes
+all `891` tests and the complete React suite passes `110` files / `678` tests.
+Focused regional/ground/navigation coverage passes `177` Python tests and `14`
+React tests; all `137` `tools-core` Rust tests pass. TypeScript, zero-warning
+ESLint, the 198-module Vite build, Rust workspace format and warning-denied
+clippy, pinned Ruff 0.14.10 across seven PR-delta Python files, pinned MyPy 1.13
+across six production files, Bandit medium/high screening, both 400- and
+500-LOC changed-file gates, manifest validation, documentation governance,
+changed-test assertions, minimum-test contracts, child-feature byte checks,
+conflict-marker scans, and diff checks pass. The test runners emit only the
+existing Hypothesis ignored-cache and Node local-storage option warnings.
+
+No branch has been rebased, retargeted, rewritten, force-pushed, or published.
+Physics execution and playback, result interchange, measured calibration,
+model-input persistence, changing geometry or surface velocity,
+TypeScript/compiled regional physics, downstream parity, protected exact-head
+evidence, approval, dependency integration, and release remain open.
+
 
 ## 2026-08-11 PR #4342 append-only preservation repair
 
