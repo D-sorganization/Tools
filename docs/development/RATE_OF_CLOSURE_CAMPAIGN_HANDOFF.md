@@ -11,6 +11,9 @@
   speed's float boundary explicit. It does not change valid wire values or
   runtime behavior. Independent review, normal fast-forward publication, and
   fresh exact-head CI remain open.
+- The first independent audit found only the SPEC header still declared
+  1.14.35 despite the 1.14.36 changelog. Both version fields are now aligned;
+  no source, test, schema, or runtime artifact changes in that correction.
 
 ## 2026-08-11 Camera-preference workspace child
 

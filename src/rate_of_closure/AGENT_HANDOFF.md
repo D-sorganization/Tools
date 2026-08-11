@@ -15,6 +15,10 @@ and explicitly narrows the Qt putting-speed value to float. Valid camera
 preferences, putting results, and simulation behavior are unchanged.
 Independent review, normal publication, and fresh CI remain open.
 
+The initial independent review found only that the SPEC header lagged its new
+1.14.36 changelog entry. The header is now aligned to 1.14.36. This follow-up
+is documentation-only and changes no camera or simulation behavior.
+
 ## 2026-08-11 View-workspace v2 camera preferences
 
 Draft PR [#4349](https://github.com/D-sorganization/Tools/pull/4349) publishes

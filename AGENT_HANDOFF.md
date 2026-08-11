@@ -17,6 +17,10 @@ behavior and wire-format values remain unchanged.
 Independent review, normal fast-forward publication, and fresh exact-head CI
 remain required.
 
+The first independent pass found only a stale SPEC header: its changelog was
+1.14.36 while the declared version remained 1.14.35. Both declarations are now
+aligned to 1.14.36; this documentation correction changes no runtime artifact.
+
 ## 2026-08-11 Camera-preference persistence continuation
 
 Draft PR [#4349](https://github.com/D-sorganization/Tools/pull/4349) publishes

@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.35                                    |
-| **Spec Version**        | 1.14.35                                    |
+| **Current Version**     | 1.14.36                                    |
+| **Spec Version**        | 1.14.36                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
