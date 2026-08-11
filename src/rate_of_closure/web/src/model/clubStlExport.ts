@@ -1,6 +1,11 @@
 /** Selected-club STL serialization and browser download boundary. */
 
 import { buildParametricHead, type ClubSpec } from "./club";
+import {
+  browserArtifactDownloadRuntime,
+  downloadClubArtifact,
+  type ClubArtifactDownloadRuntime,
+} from "./clubArtifactDownload";
 import { writeBinaryStl, type Triangle, type Vec3 } from "./mesh";
 
 export const CLUBHEAD_STL_HEADER =
@@ -27,30 +32,7 @@ const WINDOWS_RESERVED_STEMS = new Set([
   ...Array.from({ length: 9 }, (_, index) => `lpt${index + 1}`),
 ]);
 
-/** Browser operations injected at the download boundary for deterministic tests. */
-export interface ClubheadDownloadRuntime {
-  createObjectUrl: (blob: Blob) => string;
-  clickDownload: (url: string, filename: string) => void;
-  revokeObjectUrl: (url: string) => void;
-}
-
-function browserDownloadRuntime(): ClubheadDownloadRuntime {
-  return {
-    createObjectUrl: (blob) => URL.createObjectURL(blob),
-    clickDownload: (url, filename) => {
-      const anchor = document.createElement("a");
-      anchor.href = url;
-      anchor.download = filename;
-      document.body.append(anchor);
-      try {
-        anchor.click();
-      } finally {
-        anchor.remove();
-      }
-    },
-    revokeObjectUrl: (url) => URL.revokeObjectURL(url),
-  };
-}
+export type ClubheadDownloadRuntime = ClubArtifactDownloadRuntime;
 
 function assertMeshSpec(spec: ClubSpec): void {
   if (!CLUB_TYPES.has(spec.clubType)) {
@@ -108,16 +90,9 @@ export function serializeClubheadStl(spec: ClubSpec): ArrayBuffer {
 /** Download the selected representative head and return its portable filename. */
 export function downloadClubheadStl(
   spec: ClubSpec,
-  runtime: ClubheadDownloadRuntime = browserDownloadRuntime(),
+  runtime: ClubheadDownloadRuntime = browserArtifactDownloadRuntime(),
 ): string {
   const filename = defaultClubheadStlFilename(spec);
-  const blob = new Blob([serializeClubheadStl(spec)], { type: "model/stl" });
-  const url = runtime.createObjectUrl(blob);
-  if (!url) throw new Error("browser did not create an STL download URL");
-  try {
-    runtime.clickDownload(url, filename);
-  } finally {
-    runtime.revokeObjectUrl(url);
-  }
+  downloadClubArtifact(serializeClubheadStl(spec), "model/stl", filename, runtime);
   return filename;
 }

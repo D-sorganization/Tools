@@ -21,6 +21,19 @@ equation only as an isotropic-equivalent compatibility approximation with an
 explicit axis/reference mismatch. See
 `docs/development/rate_of_closure_clubhead_tensor_contract.md` for the measured
 or density-integrated tensor and complete-frame contract required to enable it.
+Both panels also export a deterministic
+`rate_of_closure.clubhead_engineering/1` JSON sidecar. It SHA-256-identifies the
+unchanged companion STL, declares the head/STL frames and identity-plus-scale
+transform, and carries the selected head mass with explicit representative-
+input provenance. Partial CG offsets and the shaft-axis scalar are
+`evidence_only`; the complete CG, full tensor, world attitude, and assembly
+properties remain `unavailable` with no substitute value. The shared
+`golf_club.ClubAssembly` contract is authoritative when supplied, but no
+validated assembly is bound to this UI selection yet.
+Local implementation-head evidence is green: 511 Python/PyQt tests, 328 React
+tests, React type-check/ESLint/build, and changed-file Ruff/format/MyPy. The
+React sidecar test imports the canonical Python golden document and compares
+the complete parsed record, including the portable companion filename.
 
 The tool now exists on the #4119 branch and its large descendant stack, but it
 is still not released to Tools `main`. PR #4119 remains the dependency root.

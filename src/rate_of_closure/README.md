@@ -85,6 +85,15 @@ handle Unicode-only and Windows-reserved club names. This visual parametric
 mesh is not a density-integrated CAD model and does not imply a measured 3×3
 inertia tensor.
 
+The adjacent **Engineering Sidecar JSON** action exports the strict versioned
+`rate_of_closure.clubhead_engineering/1` record on both surfaces. It identifies
+the exact portable-named companion STL by SHA-256 and byte length, declares its
+frame/units/transform and head mass provenance, and fails closed for the
+unavailable complete CG, symmetric CG inertia tensor, world attitude, and
+assembly properties. Partial CG offsets and the shaft-axis scalar remain
+labeled `evidence_only`; they are never emitted as substitute tensor or CG
+values.
+
 ## Build a Standalone Executable
 
 Users can package the explorer and experiment without a Python

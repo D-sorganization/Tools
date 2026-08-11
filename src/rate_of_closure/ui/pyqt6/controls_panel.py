@@ -23,11 +23,9 @@ from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QDoubleSpinBox,
-    QFileDialog,
     QFormLayout,
     QGroupBox,
     QLabel,
-    QMessageBox,
     QPushButton,
     QVBoxLayout,
     QWidget,
@@ -36,9 +34,7 @@ from PyQt6.QtWidgets import (
 from rate_of_closure.club import (
     ClubSpec,
     club_names,
-    default_clubhead_stl_filename,
     get_club,
-    write_clubhead_stl_atomic,
 )
 from rate_of_closure.model import _BOUNDS, ImpactScenario
 from rate_of_closure.presets import PRESETS, preset_names
@@ -48,6 +44,11 @@ from rate_of_closure.units import (
     convert_from_canonical,
     convert_to_canonical,
     set_display_distance_unit,
+)
+
+from .club_artifact_ui import (
+    export_clubhead_engineering_sidecar,
+    export_clubhead_stl,
 )
 
 logger = logging.getLogger(__name__)
@@ -188,6 +189,13 @@ class ControlsPanel(QWidget):
         )
         self._export_head_button.clicked.connect(self._on_export_head)
         form.addRow(self._export_head_button)
+        self._export_engineering_button = QPushButton("Export Engineering JSON…")
+        self._export_engineering_button.setToolTip(
+            "Save a versioned sidecar with the exact STL digest, frames, "
+            "mass provenance, and explicit unavailable CG/tensor capabilities."
+        )
+        self._export_engineering_button.clicked.connect(self._on_export_engineering)
+        form.addRow(self._export_engineering_button)
         self._export_status = QLabel("")
         self._export_status.setWordWrap(True)
         form.addRow(self._export_status)
@@ -337,23 +345,11 @@ class ControlsPanel(QWidget):
 
     def _on_export_head(self) -> None:
         """Export the complete current club specification as binary STL."""
-        spec = self.club_spec()
-        path, _selected = QFileDialog.getSaveFileName(
-            self,
-            "Export Selected Clubhead STL",
-            default_clubhead_stl_filename(spec),
-            "STL meshes (*.stl);;All files (*)",
-        )
-        if not path:
-            return
-        try:
-            write_clubhead_stl_atomic(spec, path)
-        except (OSError, ValueError) as exc:
-            logger.warning("clubhead STL export failed: %s", exc)
-            self._export_status.setText("STL export failed.")
-            QMessageBox.warning(self, "STL Export Failed", str(exc))
-            return
-        self._export_status.setText(f"STL exported: {spec.name} — {path}")
+        export_clubhead_stl(self, self.club_spec(), self._export_status)
+
+    def _on_export_engineering(self) -> None:
+        """Export the selected head's strict engineering JSON sidecar."""
+        export_clubhead_engineering_sidecar(self, self.club_spec(), self._export_status)
 
     # ── behaviour ───────────────────────────────────────────────────
     def apply_preset(self, name: str) -> None:

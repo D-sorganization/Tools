@@ -17,6 +17,19 @@
   an isotropic-equivalent compatibility approximation with an explicit
   axis/reference mismatch. The exact unblock contract is recorded in
   `docs/development/rate_of_closure_clubhead_tensor_contract.md`.
+- Issue #4111 now also has matched, discoverable PyQt/React engineering-sidecar
+  export (`rate_of_closure.clubhead_engineering/1`). The JSON records the exact
+  unchanged companion-STL SHA-256/size, declared head/STL frames and transform,
+  selected head mass provenance, and a machine-readable capability ledger.
+  Partial CG offsets and the shaft-axis scalar are evidence only; complete CG,
+  full symmetric CG tensor, world attitude, and assembly properties fail closed
+  as unavailable. No default-mass assembly or uniform-density mesh tensor is
+  inferred. A validated shared `golf_club.ClubAssembly` still must be explicitly
+  bound to the selected spec before authoritative assembly data can be emitted.
+  Local release evidence on the implementation head: 511 Rate Python/PyQt tests
+  and 328 React tests pass; React type-check, ESLint, production build, changed-
+  file Ruff/format, and changed-source MyPy also pass. The React contract test
+  imports the Python golden JSON, so whole-document parity is executable.
 - The protected Rate of Closure release still starts at Tools PR **#4119**
   (`feat/impact-simulation-platform`). Every later Rate/Wedge/D-plane,
   workspace, variation, wind, camera, and ground-model PR depends on this

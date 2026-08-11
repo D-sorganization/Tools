@@ -19,6 +19,7 @@ import {
   generatedHeadFor,
   type GeneratedHead,
 } from "../model/clubHeadGeneration";
+import { downloadClubheadEngineeringSidecar } from "../model/clubEngineeringSidecar";
 import { downloadClubheadStl } from "../model/clubStlExport";
 import { FIELD_GUIDANCE } from "../model/units";
 
@@ -82,6 +83,18 @@ export function ClubPanel({
       const detail =
         error instanceof Error ? error.message : "unknown browser error";
       setExportStatus(`STL download failed: ${detail}`);
+    }
+  };
+
+  const onDownloadEngineering = async () => {
+    const spec = effectiveSpec();
+    try {
+      const filename = await downloadClubheadEngineeringSidecar(spec);
+      setExportStatus(`Engineering JSON downloaded: ${spec.name} — ${filename}`);
+    } catch (error) {
+      const detail =
+        error instanceof Error ? error.message : "unknown browser error";
+      setExportStatus(`Engineering JSON download failed: ${detail}`);
     }
   };
 
@@ -176,6 +189,14 @@ export function ClubPanel({
         className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1.5 text-sm font-medium transition-colors hover:border-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
       >
         Download Selected Clubhead STL
+      </button>
+      <button
+        type="button"
+        onClick={onDownloadEngineering}
+        title="Download a versioned engineering sidecar containing the exact companion-STL SHA-256, frame and transform declarations, head-mass provenance, and explicit unavailable boundaries for complete CG, inertia tensor, world attitude, and assembly properties."
+        className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1.5 text-sm font-medium transition-colors hover:border-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+      >
+        Download Engineering Sidecar JSON
       </button>
       {exportStatus ? (
         <p role="status" className="mt-2 text-xs text-slate-400">

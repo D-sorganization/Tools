@@ -82,3 +82,27 @@ successful and failed click attempts. Filename defaults on both surfaces fall
 back safely for Unicode-only names, avoid Windows reserved device stems, and
 bound the generated stem length. Neither surface presents this representative
 mesh as tensor-derived or production CAD geometry.
+
+## Versioned Engineering Sidecar Delivered for #4111
+
+Both selected-club panels now export
+`rate_of_closure.clubhead_engineering/1` JSON. The sidecar hashes the exact
+companion binary STL with SHA-256, records its portable companion filename,
+byte length, and mesh-defining inputs, and declares the right-handed head frame
+plus the identity/1000× head-to-STL coordinate transform. The STL byte contract
+itself is unchanged.
+
+The selected `ClubSpec` supplies an application-authoritative representative
+head mass. Its two datum-relative CG offsets and one shaft-axis scalar moment
+are retained only as `evidence_only`; neither unavailable record contains a
+substitutable `value`. Capability entries explicitly mark the complete head CG,
+full symmetric CG tensor, world-from-head attitude, and assembly mass
+properties unavailable. The browser rejects an invalid SHA-256 result, and
+both surfaces validate the selected inputs before serialization.
+
+The shared `golf_club.ClubAssembly` domain can carry validated assembly mass,
+CG, full tensor, frames, and component transforms, but no such assembly is
+currently bound to a Rate of Closure `ClubSpec`. The sidecar therefore does not
+construct one from default shaft/grip masses or the legacy scalar composition.
+The remaining integration must establish an explicit selected-spec ↔ assembly
+identity and provenance record before assembly values can become available.
