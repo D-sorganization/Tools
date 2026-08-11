@@ -3,14 +3,19 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-11.
 
-## 2026-08-11 Exact-head format-gate repair
+## 2026-08-11 Exact-head quality-gate repair
 
-Fresh protected CI on published head `3f4bb18526fc23390b4e03deb78b04804a6fc805`
-identified twelve inherited Python files that did not satisfy the repository's
-current Ruff formatter. The pending repair is formatting-only for those files;
-it changes no camera contract, simulation behavior, wire format, or feature
-scope. The repaired head still requires independent review, normal
-fast-forward publication, and fresh protected exact-head checks.
+The Ruff-only repair was published normally as
+`317d2b0c16c9516ef2cac028e77b25c6f13aced4`. Fresh protected CI then passed
+lint and format and exposed two MyPy defects that the formatter failure had
+masked. The current repair strictly narrows persisted enum fields to strings
+before construction and removes one redundant workspace-document cast. New
+adversarial tests reject non-string enum values without coercion. The repair
+also replaces an untyped signal lambda with a typed partial and explicitly
+narrows the Qt putting-speed value to float. Camera, putting, and simulation
+behavior and wire-format values remain unchanged.
+Independent review, normal fast-forward publication, and fresh exact-head CI
+remain required.
 
 ## 2026-08-11 Camera-preference persistence continuation
 

@@ -1,13 +1,16 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-## 2026-08-11 Camera child format-gate repair
+## 2026-08-11 Camera child quality-gate repair
 
-- Protected CI on exact published #4349 head
-  `3f4bb18526fc23390b4e03deb78b04804a6fc805` found twelve inherited Python
-  files outside the camera feature that require the repository's current Ruff
-  formatting. The pending repair is deliberately mechanical and changes no
-  runtime behavior or public contract. Independent review, normal
-  fast-forward publication, and fresh exact-head CI remain required.
+- The Ruff-only repair was published normally as exact #4349 head
+  `317d2b0c16c9516ef2cac028e77b25c6f13aced4`. Fresh protected CI passed lint
+  and format, then exposed strict MyPy errors in camera-preference enum parsing
+  and a redundant compositor cast. The current repair adds explicit string
+  narrowing plus adversarial non-string tests, removes the redundant cast,
+  binds the camera callback through a typed partial, and makes the Qt putting
+  speed's float boundary explicit. It does not change valid wire values or
+  runtime behavior. Independent review, normal fast-forward publication, and
+  fresh exact-head CI remain open.
 
 ## 2026-08-11 Camera-preference workspace child
 

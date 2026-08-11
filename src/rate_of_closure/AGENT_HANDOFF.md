@@ -3,13 +3,17 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-11.
 
-## 2026-08-11 Exact-head format-gate repair
+## 2026-08-11 Exact-head quality-gate repair
 
-Protected CI on published #4349 head
-`3f4bb18526fc23390b4e03deb78b04804a6fc805` failed only the Ruff format step.
-The pending repair applies the configured formatter to twelve inherited Python
-files and intentionally changes no camera-preference behavior, simulation
-behavior, or contract. Independent review and fresh protected CI remain open.
+The Ruff-only repair was published normally as
+`317d2b0c16c9516ef2cac028e77b25c6f13aced4`. Its fresh protected run passed
+lint and format, then exposed strict MyPy failures in two persisted enum
+constructors and one redundant cast. The current repair rejects non-string
+enum tokens before construction and returns the already precise compositor
+document type directly. It also uses a typed partial for the camera listener
+and explicitly narrows the Qt putting-speed value to float. Valid camera
+preferences, putting results, and simulation behavior are unchanged.
+Independent review, normal publication, and fresh CI remain open.
 
 ## 2026-08-11 View-workspace v2 camera preferences
 

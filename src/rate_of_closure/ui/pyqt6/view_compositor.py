@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping
 from dataclasses import replace
-from typing import cast
+from functools import partial
 
 from PyQt6.QtCore import QSettings, QSignalBlocker, QTimer
 from PyQt6.QtWidgets import (
@@ -92,7 +92,7 @@ class ViewCompositor(QWidget):
 
     def export_workspace_document(self) -> dict[str, object]:
         """Return a detached, strict version-1 compositor document."""
-        return cast(dict[str, object], workspace_to_document(self._workspace))
+        return workspace_to_document(self._workspace)
 
     def import_workspace_document(self, document: Mapping[str, object]) -> None:
         """Atomically apply one strict version-1 compositor document."""
@@ -215,9 +215,7 @@ class ViewCompositor(QWidget):
         for kind, view in self._views.items():
             if isinstance(view, CameraViewportMixin):
                 view.set_camera_preference_listener(
-                    lambda state, viewport_kind=kind: self._camera_preference_changed(
-                        viewport_kind, state
-                    )
+                    partial(self._camera_preference_changed, kind)
                 )
 
     def _camera_preference_changed(self, kind: ViewKind, state: CameraState) -> None:

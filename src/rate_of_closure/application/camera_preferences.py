@@ -77,9 +77,13 @@ class CameraPreference:
             },
             "camera preference",
         )
+        preset_value = data["preset_id"]
+        side_value = data["face_on_side"]
+        if not isinstance(preset_value, str) or not isinstance(side_value, str):
+            raise TypeError("camera preference enum values must be strings")
         try:
-            preset = CameraCommandId(data["preset_id"])
-            side = FaceOnSide(data["face_on_side"])
+            preset = CameraCommandId(preset_value)
+            side = FaceOnSide(side_value)
         except (TypeError, ValueError) as exc:
             raise ValueError("camera preference contains an unsupported enum") from exc
         zoom = data["zoom"]

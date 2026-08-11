@@ -73,6 +73,21 @@ def test_contract_rejects_future_or_malformed_documents(mutation) -> None:
         CameraPreferences.from_document(mutation(document))
 
 
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("preset_id", 1),
+        ("face_on_side", None),
+    ],
+)
+def test_contract_rejects_non_string_enum_values(field: str, value: object) -> None:
+    document = json.loads(FIXTURE.read_text(encoding="utf-8"))
+    document["viewports"]["impact"][field] = value
+
+    with pytest.raises(TypeError, match="enum values must be strings"):
+        CameraPreferences.from_document(document)
+
+
 def test_capture_and_restore_exclude_target_and_manual_suspension() -> None:
     fallback = CameraPreference(preset_id=CameraCommandId.VIEW_OVERHEAD)
     runtime = CameraState(
