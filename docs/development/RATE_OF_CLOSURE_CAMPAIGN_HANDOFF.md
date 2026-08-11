@@ -1,5 +1,31 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 current workspace propagation into variation PR #4280
+
+- PR `#4280` remains on `feat/4144-variation-export-continuation`, based on
+  `feat/4218-toolstrip-workspace`. Exact published child
+  `3337945699966b63cb5cd8e52d7c3b194315e911` is the first parent and exact
+  newly published workspace head `efbca84095b617b4018732f7802c2da3f0525387`
+  is the second parent of this normal local merge.
+- Production and test paths merge automatically. Variation selected-scatter
+  CSV parity, typed unavailable outcomes, bounded accessible tables, linked
+  selection, and all-trial arc analysis remain authoritative while inheriting
+  the parent's current workspace/toolstrip, launch-monitor/D-plane ancestry,
+  split kinetics, and Qt typing repairs. Only the three canonical handoffs and
+  SPEC conflict textually; both append-only histories are retained.
+- Focused pre-commit regression is green: 56 Python variation tests and all 10
+  tests in the three focused React variation suites pass. Exact post-commit
+  PR-delta gates are also green: pinned Ruff 0.14.10 checks/formats five changed
+  Python files, pinned MyPy 1.13.0 accepts four production files, and pinned
+  Bandit 1.7.7 finds no issues in those four files. Docs governance, 500-LOC
+  budget, changed-Python policy, minimum-test contract, changed-test assertions,
+  diff hygiene, React type-check/lint, and the production web build pass. The
+  manifest artifact/checker/test exist on neither side of this pre-manifest
+  stack, so that later release gate is structurally not applicable.
+- No issue or epic is completed by this propagation. Independent review,
+  normal publication, protected exact-head CI, unresolved-thread checks,
+  dependency integration, and release remain open.
+
 ## 2026-08-11 reviewed workspace parent propagation into variation PR #4280
 
 - PR `#4280` remains on `feat/4144-variation-export-continuation`, based on
@@ -63,6 +89,31 @@
   both the first replacement-render React boundary and validated PyQt values.
   Current-head protected CI, review threads, and repository review remain
   release gates after publication.
+## 2026-08-11 current #4203 propagation into workspace PR #4279
+
+- PR `#4279` remains on `feat/4218-toolstrip-workspace`, based on
+  `feat/4181-launch-monitor-registry`. Exact published child
+  `ccd0e026c580c93038fdf5c59d5d452a85ba27a0` is the first parent and exact
+  newly published #4203 head `7abce9ad767fe8311da66a1e5998b892ea3ca9de`
+  is the second parent of this normal local merge.
+- Production and test paths merge automatically. Workspace/toolstrip,
+  module-visibility, navigation, granular playback, and independent plots are
+  preserved while the descendant inherits the parent's current launch-monitor,
+  D-plane, split-kinetics, and Qt typing repairs. Only the three canonical
+  handoffs and SPEC conflict textually; both append-only histories are retained.
+- Focused pre-commit regression is green: 142 exact PR-delta Python tests pass,
+  and all 32 tests in the eight changed React suites pass. Exact post-commit
+  PR-delta gates are also green: pinned Ruff 0.14.10 checks/formats 27 changed
+  Python files, pinned MyPy 1.13.0 accepts 18 production files, and pinned
+  Bandit 1.7.7 finds no medium/high issues in those 18 files. Docs governance,
+  500-LOC budget, changed-Python policy, minimum-test contract, changed-test
+  assertions, diff hygiene, React type-check/lint, and the production web build
+  pass. The manifest artifact/checker/test exist on neither side of this
+  pre-manifest stack, so that later release gate is structurally not applicable.
+- No issue or epic is completed by this propagation. Independent review,
+  normal publication, protected exact-head CI, unresolved-thread checks,
+  dependency integration, and release remain open.
+
 ## 2026-08-11 remote automation reconciliation for workspace PR #4279
 
 - PR `#4279` remains on `feat/4218-toolstrip-workspace`, based on
@@ -149,6 +200,45 @@
   findings after 76 additional focused PyQt/navigation/workspace tests.
   Current-head protected CI, unresolved-thread checks, and required repository
   review remain release gates after guarded publication.
+
+## 2026-08-11 #4203 append-only SPEC preservation repair
+
+- Independent review of local candidate `e20b4f630...` found four exact
+  current-parent history rows missing from SPEC: 2026-08-10 versions 1.13.11,
+  1.13.9, 1.13.7, and 1.13.6. The current documentation-only follow-up restores
+  those rows verbatim and advances the declared/changelog version together.
+- Runtime files, tests, ordered merge parents, PR base, and validation evidence
+  are byte-unchanged. Re-review, normal publication, exact-head protected CI,
+  and downstream propagation remain required.
+
+## 2026-08-11 #4203 current-parent reconciliation
+
+- The current D-plane base is exact head
+  `f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`; #4203's exact published child
+  is `217e36dc93d30f79826847f958fbcd10805e58ed`. They are being composed in
+  that order by a normal merge while retaining base `feat/4189-dplane`.
+- The parent's nine changed files merge without semantic conflict except for
+  formatting around the inherited kinetics origin offset. The split child
+  facade remains authoritative because the obsolete parent expression reaches
+  through `source.inner`; the equivalent explanatory comment is preserved.
+- The exact CI-pinned MyPy 1.13 delta found four additional Qt-stub `Any`
+  boundaries after the merge. Explicit `bool`/`str` narrowing now closes the
+  responsive-event, legend, ball-setup event-filter, and status-text contracts
+  without changing their runtime values or interaction behavior.
+- No issue or epic is complete from this reconciliation. Independent review,
+  ordinary publication, protected CI, downstream propagation, and release
+  gates remain open.
+
+## 2026-08-11 #4203 exact-head format completion
+
+- Exact published head `7d69a545ae555679f0318940e67c1786626d6794`
+  failed only the Ruff format step. The exact pinned 0.14.10 reproduction found
+  eleven noncompliant changed files: four inherited files plus seven altered by
+  the automated pre-commit repair.
+- The pending correction is mechanical Ruff formatting of those eleven files.
+  It changes no runtime behavior or public contract and still requires AST
+  equivalence, focused tests, independent review, ordinary fast-forward
+  publication, and fresh protected exact-head CI.
 
 ## 2026-08-11 #4203 hosted MyPy NumPy boundary repair
 
