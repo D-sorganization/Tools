@@ -37,6 +37,32 @@ _G_FLAT = (0.0, -9.80665)
 _DT = 1e-3
 
 
+def test_public_kinetics_facade_preserves_extracted_implementation_identities() -> None:
+    """The size-budget split must not fork established import contracts."""
+    from rate_of_closure.simulation import kinetics as facade
+    from rate_of_closure.simulation._kinetics_dynamics import (
+        inverse_dynamics as extracted_inverse_dynamics,
+    )
+    from rate_of_closure.simulation._kinetics_dynamics import (
+        reaction_forces as extracted_reaction_forces,
+    )
+    from rate_of_closure.simulation._kinetics_dynamics import (
+        simulate_forced as extracted_simulate_forced,
+    )
+    from rate_of_closure.simulation._kinetics_dynamics import (
+        zero_torque_counterfactual as extracted_zero_torque_counterfactual,
+    )
+    from rate_of_closure.simulation._kinetics_series import (
+        KineticsSeries as ExtractedKineticsSeries,
+    )
+
+    assert facade.KineticsSeries is ExtractedKineticsSeries
+    assert facade.inverse_dynamics is extracted_inverse_dynamics
+    assert facade.simulate_forced is extracted_simulate_forced
+    assert facade.zero_torque_counterfactual is extracted_zero_torque_counterfactual
+    assert facade._reaction_forces is extracted_reaction_forces
+
+
 def _params(d1: float = 0.4, d2: float = 0.25) -> PendulumParameters:
     base = PendulumParameters.golf_default()
     return PendulumParameters(

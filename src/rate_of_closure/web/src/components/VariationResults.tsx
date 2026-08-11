@@ -23,6 +23,12 @@ interface VariationResultsProps {
   ensemble?: SwingVariationResultTs | null;
 }
 
+interface TrialSelection {
+  dataset: VariationDatasetTs | null;
+  ensemble: SwingVariationResultTs | null;
+  trialIndex: number;
+}
+
 export function VariationResults({
   dataset,
   sensitivity,
@@ -30,7 +36,28 @@ export function VariationResults({
   distanceUnit,
   ensemble = null,
 }: VariationResultsProps): JSX.Element {
-  const [selectedTrialIndex, setSelectedTrialIndex] = useState<number | null>(null);
+  const [selection, setSelection] = useState<TrialSelection | null>(null);
+  const trialCount = dataset?.plan.nRuns ?? ensemble?.dataset.plan.nRuns ?? 0;
+  const validSelectedTrialIndex = selection !== null
+    && selection.dataset === dataset
+    && selection.ensemble === ensemble
+    && Number.isInteger(selection.trialIndex)
+    && selection.trialIndex >= 0
+    && selection.trialIndex < trialCount
+    ? selection.trialIndex
+    : null;
+  const selectTrial = (trialIndex: number | null): void => {
+    if (
+      trialIndex === null
+      || !Number.isInteger(trialIndex)
+      || trialIndex < 0
+      || trialIndex >= trialCount
+    ) {
+      setSelection(null);
+      return;
+    }
+    setSelection({ dataset, ensemble, trialIndex });
+  };
   const stats = useMemo(() => dataset ? summaryStats(dataset) : [], [dataset]);
   const spearman = useMemo(() => dataset ? spearmanMatrix(dataset) : null, [dataset]);
 
@@ -42,8 +69,8 @@ export function VariationResults({
           <VariationDistributionMatrix
             dataset={dataset}
             ensemble={ensemble}
-            selectedTrialIndex={selectedTrialIndex}
-            onSelectedTrialChange={setSelectedTrialIndex}
+            selectedTrialIndex={validSelectedTrialIndex}
+            onSelectedTrialChange={selectTrial}
           />
         </div>
       )}
@@ -56,8 +83,8 @@ export function VariationResults({
           <VariationScatter
             dataset={dataset}
             ensemble={ensemble}
-            selectedTrialIndex={selectedTrialIndex}
-            onSelectedTrialChange={setSelectedTrialIndex}
+            selectedTrialIndex={validSelectedTrialIndex}
+            onSelectedTrialChange={selectTrial}
           />
         </div>
       )}
@@ -69,8 +96,8 @@ export function VariationResults({
           </h2>
           <VariationArcOverlay
             ensemble={ensemble}
-            selectedTrialIndex={selectedTrialIndex}
-            onSelectedTrialChange={setSelectedTrialIndex}
+            selectedTrialIndex={validSelectedTrialIndex}
+            onSelectedTrialChange={selectTrial}
           />
         </div>
       )}

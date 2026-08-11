@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "18fe89201d657116bbca99922297c14968356c44",
+      "head_sha": "b2baf6ef615b0d756a86ac4ca7eef2fc583210ee",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -154,7 +154,7 @@
       "pr": 4285,
       "branch": "feat/4268-ground-contract",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059",
+      "head_sha": "584e4e53a7990053a346938c4e45538786887ec7",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -164,7 +164,7 @@
       "pr": 4288,
       "branch": "feat/4269-flight-ground-transfer",
       "base_branch": "feat/4268-ground-contract",
-      "head_sha": "4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d",
+      "head_sha": "c39297d37a17d5d8d3520ed62c5563cdcc609cab",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -194,7 +194,7 @@
       "pr": 4302,
       "branch": "feat/4270-ground-impact-bounce",
       "base_branch": "feat/4269-flight-ground-transfer",
-      "head_sha": "cf6e72bad98e5f36f782254942e6895b8b71e670",
+      "head_sha": "62beb3e1aa951645fd556a53f9cbae4bb46c47e5",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -204,7 +204,7 @@
       "pr": 4304,
       "branch": "feat/4271-ground-skid-roll",
       "base_branch": "feat/4270-ground-impact-bounce",
-      "head_sha": "0ea6740965068542e9d8c7449e06ec07d88969e0",
+      "head_sha": "3f861c1faaa7455faee92eaa7f813174667208e0",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -214,7 +214,7 @@
       "pr": 4332,
       "branch": "feat/4271-regional-surface-transitions",
       "base_branch": "feat/4271-ground-skid-roll",
-      "head_sha": "1a48d749af508843fac2a5102f4dd56294429bda",
+      "head_sha": "04ccf08dd990de1cd056a3420e67772773a4be2e",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
