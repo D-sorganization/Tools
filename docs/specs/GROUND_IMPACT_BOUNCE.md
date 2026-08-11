@@ -208,6 +208,22 @@ numbers, identity drift, digest drift, and UTF-8 documents over 1 MiB.
 The pairing record checks a validated `RepeatedBounceResult` against request,
 surface, frame, model, version, and the result's existing ground-request
 fingerprint. Because result v1 predates the joint execution digest, the result
-alone cannot prove the capture threshold that produced it. A later executor
-must preserve the request envelope or its `execution_input_sha256`; this slice
-does not execute physics, persist inputs, or widen the frozen result schema.
+alone cannot prove the capture threshold that produced it.
+
+## UI-neutral repeated-bounce execution binding
+
+`execute_repeated_bounce_request` is the single UI-neutral Python binding from
+the strict request envelope to the existing repeated-bounce solver. It accepts
+only an exact `RepeatedBounceRequest` and a callable-or-`None` cancellation
+check, derives `BounceModelSettings` from the request so the bound capture
+threshold is consumed, and returns a `RepeatedBounceRequestResultPair`. Pair
+construction revalidates request, surface, frame, model, version, and embedded
+ground-request fingerprint after execution. A preflight cancellation remains a
+valid pair with empty trajectory, event, impact, and airborne ledgers, no
+handoff, and zero elapsed ground time.
+
+The executor preserves the complete request object and therefore its
+`execution_input_sha256` alongside the result. It does not alter either frozen
+wire schema and does not add UI request construction, TypeScript or compiled
+physics, file persistence, playback, regional-material chaining, calibrated
+terrain response, or final total-distance claims.

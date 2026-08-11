@@ -1,5 +1,31 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 repeated-bounce request execution binding candidate
+
+- Local branch `feat/4270-repeated-bounce-execution` starts exactly from
+  published #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d` and
+  has not been pushed.
+- The candidate adds the UI-neutral Python
+  `execute_repeated_bounce_request` boundary. It accepts only the exact strict
+  request plus callable-or-`None` cancellation, consumes the request-bound
+  capture threshold through fixed-version settings, invokes the existing
+  Python physics authority, and returns the existing identity-validated
+  request/result pair. Schemas, physics, TypeScript, and UIs are unchanged.
+- TDD recorded the expected missing-public-executor failure. Qualification is
+  green for 28 focused contract tests, the complete 189-test ground suite, 11
+  campaign-manifest/layout tests, Ruff check/format, Black, protected
+  changed-file MyPy, Bandit, clean placeholder/diff checks, documentation and
+  blocking-quality governance, minimum-test/test-assertion contracts,
+  changed-Python policy, module-size policy, and campaign-manifest validation.
+  A non-authoritative import-following MyPy probe reports three inherited
+  redundant casts in unchanged ground modules; the protected
+  `--follow-imports=skip` profile is green for the new production module.
+- This remains a no-publish, `not_released` candidate. UI request construction
+  and invocation, persistence, playback, TypeScript/compiled physics,
+  regional-material chaining, measured terrain calibration, downstream parity,
+  protected exact-head evidence, review, approval, release, and issue/epic
+  completion remain open.
+
 ## 2026-08-11 PR #4356 published current-parent propagation
 
 - Ready-for-review PR `#4356` retains branch

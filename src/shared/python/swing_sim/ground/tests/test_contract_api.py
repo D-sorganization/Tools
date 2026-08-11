@@ -96,6 +96,7 @@ EXPECTED_API = {
     "SurfaceRegionTransitionCrossing",
     "SurfaceResolver",
     "compose_ground_result",
+    "execute_repeated_bounce_request",
     "execute_regional_ground",
     "execution_input_sha256",
     "build_regional_material_plan_result",
