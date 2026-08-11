@@ -1,7 +1,17 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 PR #4179 pinned-Ruff format repair
+
+Exact published head `ec73b63a748347b42686758d4738c0fd2fd09332`
+failed its current CI Standard quality gate because five changed Python files
+did not match Ruff `0.14.10`. They are now mechanically formatted with the
+workflow-pinned version. There is no material handoff or behavior change:
+impact visualization, wedge/turf physics, frames, DbC validation, public
+contracts, schemas, tests, and UI behavior remain unchanged. Protected checks
+and parent-first release order still apply.
 
 ## 2026-08-10 Impact-Visualization Child Propagation
 
