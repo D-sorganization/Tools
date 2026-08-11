@@ -61,6 +61,7 @@ class FlightCameraAdapter(CameraViewportMixin):
             )
         )
         axes.view_init(elev=orientation[0], azim=orientation[1])
+        self._apply_camera_axis_visibility(axes)
         if not self._camera_state.tracking_enabled:
             return
         carry, height, lateral = self.extents_m()
