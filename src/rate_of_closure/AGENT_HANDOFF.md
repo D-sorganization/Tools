@@ -1,5 +1,17 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 variation-study workspace protected publication
+
+Branch `feat/4144-workspace-variation-study` is published normally as a draft
+child of exact PR #4340 head
+`26105f668de260d75a99f450726348570db7ff89`, targeting parent branch
+`feat/4136-workspace-torque-profiles`. Its independently reviewed
+implementation head is `73041194a7cfd8cae14cd1739b806617af933648`; this
+documentation-only publication commit changes no runtime behavior. The
+assigned PR URL is recorded in a follow-up. Protected CI/review, #4142/#4144,
+parent ordering, UpstreamDrift qualification, integration, and release remain
+open.
+
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-11.
 
