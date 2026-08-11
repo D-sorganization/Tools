@@ -1,7 +1,7 @@
 {
   "schema_version": "rate-of-closure-campaign/v1",
   "repository": "D-sorganization/Tools",
-  "as_of": "2026-08-09",
+  "as_of": "2026-08-11",
   "default_branch": "main",
   "required_main_checks": [
     "quality-gate",
@@ -194,7 +194,7 @@
       "pr": 4302,
       "branch": "feat/4270-ground-impact-bounce",
       "base_branch": "feat/4269-flight-ground-transfer",
-      "head_sha": "920c46dee688815691e251777142126bf1489b1a",
+      "head_sha": "cf6e72bad98e5f36f782254942e6895b8b71e670",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -204,7 +204,27 @@
       "pr": 4304,
       "branch": "feat/4271-ground-skid-roll",
       "base_branch": "feat/4270-ground-impact-bounce",
-      "head_sha": "f475ae85feea1b2c628f756699b2aba6ea9334fb",
+      "head_sha": "0ea6740965068542e9d8c7449e06ec07d88969e0",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4332",
+      "pr": 4332,
+      "branch": "feat/4271-regional-surface-transitions",
+      "base_branch": "feat/4271-ground-skid-roll",
+      "head_sha": "04ccf08dd990de1cd056a3420e67772773a4be2e",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4335",
+      "pr": 4335,
+      "branch": "feat/4271-regional-wire-contract",
+      "base_branch": "feat/4271-regional-surface-transitions",
+      "head_sha": "74a053d2d544da9f44a88007660ad28c0127f285",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -331,6 +351,47 @@
       "source_paths": [
         "AGENT_HANDOFF.md",
         "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
+    {
+      "id": "ground-regional-local-1a48",
+      "kind": "local",
+      "commit_sha": "1a48d749af508843fac2a5102f4dd56294429bda",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q src/shared/python/swing_sim/ground/tests",
+        "npm test -- --run",
+        "uvx --from mypy==1.13.0 mypy --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/*.py",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground && uvx --from ruff==0.14.10 ruff format --check src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The published PR #4332 regional-material child passed all 121 ground tests, 106 React files and 662 tests, TypeScript, zero-warning ESLint, the 189-module production build, pinned MyPy and Ruff, manifest and documentation governance, changed-test assertions, structural budgets, diff checks, and randomized piecewise-analytic transition qualification; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
+        "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
+    {
+      "id": "ground-regional-wire-local-74a0",
+      "kind": "local",
+      "commit_sha": "74a053d2d544da9f44a88007660ad28c0127f285",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest -q src/shared/python/swing_sim/ground/tests",
+        "npm test -- --run",
+        "npm run type-check && npm run lint && npm run build",
+        "uvx --from mypy==1.13.0 mypy --ignore-missing-imports --follow-imports=skip src/shared/python/swing_sim/ground/*.py",
+        "uvx --from ruff==0.14.10 ruff check src/shared/python/swing_sim/ground && uvx --from ruff==0.14.10 ruff format --check src/shared/python/swing_sim/ground",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q"
+      ],
+      "summary": "The published PR #4335 regional-plan wire child passed all 132 ground tests, 107 React files and 666 tests, TypeScript, zero-warning ESLint, the 190-module production build, pinned MyPy and Ruff, manifest and documentation governance, structural budgets, diff checks, and exact cross-runtime canonical JSON/SHA-256 qualification; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
         "docs/specs/GROUND_SKID_ROLL.md"
       ]
     }
@@ -1111,7 +1172,9 @@
         "pr-4285",
         "pr-4288",
         "pr-4302",
-        "pr-4304"
+        "pr-4304",
+        "pr-4332",
+        "pr-4335"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "contract_only",
@@ -1121,14 +1184,16 @@
       },
       "evidence_ids": [
         "ground-impact-local-63a6",
-        "ground-skid-roll-local-f475"
+        "ground-skid-roll-local-f475",
+        "ground-regional-local-1a48",
+        "ground-regional-wire-local-74a0"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, and static-plane skid/roll carriers are open. Issues #4270 and #4271 are published on draft PRs 4302 and 4304 with exact local evidence but no protected evidence. Local unprotected children add coplanar regional-material reference physics and a strict Python/TypeScript plan wire boundary; changing normals, regional UI/compiled-runtime physics, internal transition-ledger export, and downstream parity evidence remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, and regional-plan wire carriers are open. Issues #4270 and #4271 are published on draft PRs 4302, 4304, 4332, and 4335 with exact local evidence but no protected evidence. Changing normals, regional UI/compiled-runtime physics, internal transition-ledger export, and downstream parity evidence remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
         "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
-        "Published PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge. Local unprotected children qualify bounded coplanar material overlays and a separate strict Python/TypeScript plan request/result wire boundary with Python resolver binding; changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, internal transition-ledger export, UI, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
+        "Published PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge. Open PR #4332 qualifies bounded coplanar material overlays, and open PR #4335 adds a separate strict Python/TypeScript plan request/result wire boundary with Python resolver binding. Changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, internal transition-ledger export, UI, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
       ],
       "depends_on_issues": [
         4191
