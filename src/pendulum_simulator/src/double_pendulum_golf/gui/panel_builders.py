@@ -377,7 +377,9 @@ def _wire_panel_sim_signals(
         )
         # Reset toolstrip play button when playback ends
         panel.playback_ended.connect(
-            lambda _p=panel: ts.btn_play.setChecked(False) if _p is active_panel_fn() else None
+            lambda _p=panel: (
+                ts.btn_play.setChecked(False) if _p is active_panel_fn() else None
+            )
         )
 
 
@@ -977,12 +979,18 @@ def _wire_overlay_signals(ts: Any, active_panel_fn: Callable) -> None:
         if hasattr(pw, attr):
             getattr(pw, attr)(value)
 
-    ts.torque_vectors_toggled.connect(lambda v: _fwd_overlay("set_show_torque_vectors", v))
-    ts.moment_of_force_toggled.connect(lambda v: _fwd_overlay("set_show_moment_of_force", v))
+    ts.torque_vectors_toggled.connect(
+        lambda v: _fwd_overlay("set_show_torque_vectors", v)
+    )
+    ts.moment_of_force_toggled.connect(
+        lambda v: _fwd_overlay("set_show_moment_of_force", v)
+    )
     ts.sum_moments_toggled.connect(lambda v: _fwd_overlay("set_show_sum_moments", v))
     ts.force_scale_changed.connect(lambda v: _fwd_overlay("set_force_scale", v))
     ts.mob_scale_changed.connect(lambda v: _fwd_overlay("set_mob_ellipsoid_scale", v))
-    ts.force_ell_scale_changed.connect(lambda v: _fwd_overlay("set_force_ellipsoid_scale", v))
+    ts.force_ell_scale_changed.connect(
+        lambda v: _fwd_overlay("set_force_ellipsoid_scale", v)
+    )
     ts.azimuth_changed.connect(lambda v: _fwd_overlay("set_view_azimuth", v))
     ts.tilt_changed.connect(lambda v: _fwd_overlay("set_tilt_angle", v))
     ts.reset_view_requested.connect(
@@ -1024,7 +1032,9 @@ def wire_toolstrip(main_window: Any) -> None:
     )
 
     # ── Simulation action signals → active panel only ──────────────
-    ts.run_requested.connect(lambda: main_window._active_panel().controls.run_requested.emit())
+    ts.run_requested.connect(
+        lambda: main_window._active_panel().controls.run_requested.emit()
+    )
     ts.reset_requested.connect(
         lambda: main_window._active_panel().controls.reset_requested.emit()
     )
@@ -1034,7 +1044,9 @@ def wire_toolstrip(main_window: Any) -> None:
     ts.speed_changed.connect(
         lambda val: main_window._active_panel().controls.speed_changed.emit(val)
     )
-    ts.frame_scrubbed.connect(lambda idx: main_window._active_panel().scrub_to_frame(idx))
+    ts.frame_scrubbed.connect(
+        lambda idx: main_window._active_panel().scrub_to_frame(idx)
+    )
 
     # ── Export actions (#1141) → active panel's controls ──────────
     ts.export_data_requested.connect(
@@ -1121,9 +1133,15 @@ def _connect_common_signals(main_window: Any) -> None:
             getattr(pw, attr)(value)
 
     ts.forces_toggled.connect(lambda v: _fwd_overlay("set_show_forces", v))
-    ts.zero_torque_toggled.connect(lambda v: _fwd_overlay("set_show_zero_torque_forces", v))
-    ts.mob_ellipsoid_toggled.connect(lambda v: _fwd_overlay("set_show_mob_ellipsoids", v))
-    ts.force_ellipsoid_toggled.connect(lambda v: _fwd_overlay("set_show_force_ellipsoids", v))
+    ts.zero_torque_toggled.connect(
+        lambda v: _fwd_overlay("set_show_zero_torque_forces", v)
+    )
+    ts.mob_ellipsoid_toggled.connect(
+        lambda v: _fwd_overlay("set_show_mob_ellipsoids", v)
+    )
+    ts.force_ellipsoid_toggled.connect(
+        lambda v: _fwd_overlay("set_show_force_ellipsoids", v)
+    )
     ts.com_toggled.connect(lambda v: _fwd_overlay("set_show_com", v))
 
     # ── 3D segment rendering (#1155) ──────────────────────────────

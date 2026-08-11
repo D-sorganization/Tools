@@ -80,9 +80,9 @@ def test_induced_acceleration_analysis(simulator: LowerBodySimulator) -> None:
 
     # The total induced acceleration shouldn't be identically perfectly zero
     total_accel = sum(abs(v) for v in iaa_result.values())
-    assert total_accel > 1e-4, (
-        "Applied torque should induce some acceleration on the root body."
-    )
+    assert (
+        total_accel > 1e-4
+    ), "Applied torque should induce some acceleration on the root body."
 
 
 def test_history_recording_and_restoring(simulator: LowerBodySimulator) -> None:
