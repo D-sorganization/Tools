@@ -1,7 +1,20 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 PR #4119 pinned-Ruff format repair
+
+- Exact published head `7898fead5700ddf0d7d6e48e17794268d0625058`
+  failed CI Standard run `31487222816`, job `93765274929`, at the format
+  check after checkout, setup, changed-file collection, and Ruff lint passed.
+- The workflow-pinned Ruff `0.14.10` formatter is applied only to the 331
+  changed Python files admitted by the workflow exclusion contract; exactly 95
+  files require mechanical changes. No simulation, UI, data, safety, API,
+  schema, test, or user-visible behavior changes.
+- No material handoff behavior changed. The workflow-mirrored Ruff checks,
+  focused tests, and `git diff --check` are the local gates. Protected checks,
+  the investigation-suite carrier, and dependency order remain release gates.
 
 ## 2026-08-10 Authoritative Transfer Snapshot
 

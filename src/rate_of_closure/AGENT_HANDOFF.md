@@ -1,7 +1,18 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 Root PR #4119 pinned-Ruff format repair
+
+CI Standard run `31487222816`, job `93765274929`, failed exact head
+`7898fead5700ddf0d7d6e48e17794268d0625058` only at its workflow-pinned Ruff
+`0.14.10` format check. The admitted changed-file set is now mechanically
+formatted; 95 files change, including the inherited Rate of Closure files.
+There is no material handoff or runtime behavior change: physics, frames, DbC
+validation, public contracts, schemas, tests, and UI behavior remain unchanged.
+The open investigation-suite carrier and ordinary protected dependency order
+remain required before the campaign can reach `main`.
 
 ## 2026-08-10 Authoritative Transfer Snapshot
 
