@@ -6,6 +6,7 @@ import {
   GROUND_REGIONAL_PLAN_REQUEST_VERSION,
   parseGroundRegionalMaterialPlanRequest,
   type GroundRegionalMaterialPlanRequest,
+  type GroundRegionalMaterialRegion,
 } from "./groundRegionalPlan";
 import { GROUND_TARGET_FRAME, type GroundSurfaceProfile } from "./flightGroundTypes";
 import { canonicalGroundJson } from "./flightGroundContract";
@@ -106,6 +107,70 @@ const surfacePayload = (surface: SurfaceMaterialDraft): GroundSurfaceProfile => 
   surface_velocity_m_s: [0, 0, 0],
 });
 
+const surfaceDraft = (surface: GroundSurfaceProfile): SurfaceMaterialDraft => ({
+  surface_id: surface.surface_id,
+  normal_restitution: surface.normal_restitution,
+  static_friction: surface.static_friction,
+  kinetic_friction: surface.kinetic_friction,
+  rolling_resistance: surface.rolling_resistance,
+  firmness_pa: surface.firmness_pa,
+  hardness_fraction: surface.hardness_fraction,
+  grass_height_m: surface.grass_height_m,
+  compressibility_fraction: surface.compressibility_fraction,
+  compression_damping_fraction: surface.compression_damping_fraction,
+  turf_density_kg_m3: surface.turf_density_kg_m3,
+  moisture_fraction: surface.moisture_fraction,
+});
+
+const assertEditorSurface = (surface: GroundSurfaceProfile): void => {
+  if (surface.provider_id !== REGIONAL_SURFACE_EDITOR_PROVIDER ||
+      surface.provider_version !== REGIONAL_SURFACE_EDITOR_VERSION) {
+    throw new RangeError("surface is not qualified by the editor provider v1");
+  }
+};
+
+const overlayDraft = (region: GroundRegionalMaterialRegion): RegionalOverlayDraft => ({
+  region_id: region.region_id,
+  precedence: region.precedence,
+  lower_coordinate_m: region.lower_coordinate_m,
+  upper_coordinate_m: region.upper_coordinate_m,
+  surface: surfaceDraft(region.surface),
+});
+
+/** Project a fully validated editor-v1 request without relabelling evidence. */
+export const editorDraftFromGroundRegionalSurfacePlanRequest = (
+  request: GroundRegionalMaterialPlanRequest,
+): RegionalSurfacePlanDraft => {
+  if (request.provenance.producer !== REGIONAL_SURFACE_EDITOR_PROVIDER ||
+      request.provenance.producer_version !== REGIONAL_SURFACE_EDITOR_VERSION) {
+    throw new RangeError("request is not qualified by the editor producer v1");
+  }
+  if (canonicalGroundJson(request.axis_origin_m) !== "[0,0,0]" ||
+      canonicalGroundJson(request.axis_unit) !== "[1,0,0]") {
+    throw new RangeError("request uses an unsupported editor axis qualification");
+  }
+  if (request.regions.length > MAX_REGIONAL_SURFACE_EDITOR_ROWS) {
+    throw new RangeError(
+      `editor supports one to at most ${MAX_REGIONAL_SURFACE_EDITOR_ROWS} regions`,
+    );
+  }
+  assertEditorSurface(request.base_surface);
+  request.regions.forEach((region) => assertEditorSurface(region.surface));
+  const draft: RegionalSurfacePlanDraft = {
+    request_id: request.request_id,
+    lower_coordinate_m: request.lower_coordinate_m,
+    upper_coordinate_m: request.upper_coordinate_m,
+    source_revision: request.provenance.source_revision,
+    calibration_kind: "unvalidated",
+    base_surface: surfaceDraft(request.base_surface),
+    regions: request.regions.map(overlayDraft),
+  };
+  if (request.provenance.input_sha256 !== sha256Text(canonicalGroundJson(draft))) {
+    throw new RangeError("editor provenance digest does not match the editable request");
+  }
+  return draft;
+};
+
 export const buildGroundRegionalSurfacePlanRequest = (
   draft: RegionalSurfacePlanDraft,
 ): GroundRegionalMaterialPlanRequest => {
@@ -144,4 +209,18 @@ export const buildGroundRegionalSurfacePlanRequest = (
     unit_system: "SI",
     schema_version: GROUND_REGIONAL_PLAN_REQUEST_VERSION,
   });
+};
+
+/** Keep untouched imported evidence exact; bind fresh provenance after edits. */
+export const regionalSurfacePlanRequestForDraft = (
+  draft: RegionalSurfacePlanDraft,
+  importedRequest: GroundRegionalMaterialPlanRequest | null = null,
+): GroundRegionalMaterialPlanRequest => {
+  if (importedRequest !== null) {
+    const importedDraft = editorDraftFromGroundRegionalSurfacePlanRequest(importedRequest);
+    if (canonicalGroundJson(draft) === canonicalGroundJson(importedDraft)) {
+      return importedRequest;
+    }
+  }
+  return buildGroundRegionalSurfacePlanRequest(draft);
 };

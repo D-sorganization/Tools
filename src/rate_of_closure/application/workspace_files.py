@@ -2,27 +2,14 @@
 
 from __future__ import annotations
 
-import os
-import tempfile
 from pathlib import Path
 
+from .atomic_text_files import write_utf8_text_atomic
 from .workspace_document import (
     WorkspaceDocument,
     workspace_from_json,
     workspace_to_json,
 )
-
-
-def _destination_path(destination: str | Path) -> Path:
-    path = Path(destination)
-    if not path.name:
-        raise ValueError("workspace destination must name a file")
-    parent = path.parent
-    if not parent.is_dir():
-        raise FileNotFoundError(f"workspace parent directory does not exist: {parent}")
-    if path.exists() and not path.is_file():
-        raise IsADirectoryError(f"workspace destination is not a file: {path}")
-    return path
 
 
 def read_workspace(source: str | Path) -> WorkspaceDocument:
@@ -59,21 +46,7 @@ def write_workspace_atomic(
     if destination is None:
         return False
     serialized = workspace_to_json(document)
-    path = _destination_path(destination)
-    descriptor, temporary_name = tempfile.mkstemp(
-        prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
-    )
-    temporary = Path(temporary_name)
-    try:
-        with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as handle:
-            handle.write(serialized)
-            handle.flush()
-            os.fsync(handle.fileno())
-        os.replace(temporary, path)
-    except Exception:
-        temporary.unlink(missing_ok=True)
-        raise
-    return True
+    return write_utf8_text_atomic(serialized, destination, document_name="workspace")
 
 
 __all__ = ["read_workspace", "write_workspace_atomic"]

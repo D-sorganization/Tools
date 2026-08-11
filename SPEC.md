@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.28                                    |
-| **Spec Version**        | 1.14.28                                    |
+| **Current Version**     | 1.14.29                                    |
+| **Spec Version**        | 1.14.29                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -46,7 +46,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
-### 2026-08-10 Regional Surface-Plan Editor First Slice
+### 2026-08-10 Regional Surface-Plan Canonical Request I/O
 
 - The standalone PyQt6 and React shells expose matched `Ground Surfaces`
   modules for editing one SI base domain and one to eight coplanar static
@@ -60,9 +60,18 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   errors preserve the draft and provide accessible error state; successful
   validation exposes schema, SI-unit, provenance, and canonical request
   readback.
-- This first slice is session-only. Ground execution/playback, result import,
-  export, measured calibration workflows, model-input persistence, compiled
-  regional physics, and UpstreamDrift consumers remain explicit non-goals.
+- Native PyQt6 Open/Save As commands use strict complete-read validation and
+  atomic UTF-8 replacement. Browser import/download uses the same bounded
+  canonical request and discloses that browser downloads cannot guarantee a
+  path, atomic replacement, or recent-file access. Workspace persistence is a
+  separate contract.
+- Imports accept only editor-v1 provenance, providers, geometry/axis
+  qualification, and row capacity. Unchanged imports preserve the exact
+  request and provenance; edits create a fresh draft digest. External or
+  differently qualified requests are rejected without coercion.
+- Ground execution/playback, result interchange, measured calibration
+  workflows, model-input workspace persistence, compiled regional physics,
+  and UpstreamDrift consumers remain explicit non-goals.
 
 ### 2026-08-06 Impact-to-Flight Solution-Family Foundation
 
@@ -2916,6 +2925,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.29 | feat(rate-of-closure, #4274): add strict matched PyQt6 native atomic Open/Save As and React bounded import/canonical download for editor-qualified regional requests; preserve exact unchanged provenance, rebind edited drafts, reject unsupported qualifications without coercion, keep workspace persistence separate, and retain execution, calibration, protected evidence, and release as open work. |
 | 2026-08-10 | 1.14.28 | feat(rate-of-closure, #4274): add matched PyQt6 and React regional surface-plan editors with explicit SI material inputs, one-to-eight bounded overlays, illustrative/unvalidated and persistence/execution qualifications, accessible strict validation/readback, provenance bound to the actual draft, and delegation to the separate regional-plan v1 wire contract; retain playback, execution, result interchange, measured calibration, workspace model-input persistence, other runtimes, protected evidence, and release as open work. |
 | 2026-08-10 | 1.14.27 | feat(ground-roll, #4271): add separate strict Python/TypeScript `ground-regional-material-plan-request/v1` and result/v1 wire contracts with exact keys, SI units, explicit coplanar/static limitations, finite bounded base/overlay intervals, bounded region/document counts, unique region/precedence/surface identities, canonical cross-runtime JSON/SHA-256 evidence, fail-closed no-fabrication result binding, and a Python-only adapter into the existing regional resolver; preserve the frozen flight-to-ground v1 request/result and retain TypeScript/compiled regional physics, UI, changing geometry, internal transition-ledger export, downstream parity, protected CI, review, and release as open work. |
 | 2026-08-10 | 1.14.26 | feat(ground-roll, #4271): add bounded Python-reference support for finite coplanar material overlays with unique explicit precedence, exact quadratic boundary splitting, base-edge precedence, state/energy continuity, strict Python/TypeScript `surface_transition` events, internal from/to identity evidence, typed transition limits, and randomized piecewise-analytic qualification; reject changing normals, height/velocity discontinuities, and overlays owning the impact handoff rather than fabricating impulses or geometry transitions, while retaining UI, compiled regional physics, and downstream parity as open work. |

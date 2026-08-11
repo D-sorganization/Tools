@@ -70,13 +70,15 @@ def test_serialization_failure_does_not_touch_existing_file(
 def test_replace_failure_preserves_existing_and_removes_temporary_file(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    from rate_of_closure.application import atomic_text_files
+
     target = tmp_path / "showcase.json"
     target.write_text("last-known-good", encoding="utf-8")
 
     def fail_replace(_source: str | Path, _target: str | Path) -> None:
         raise OSError("replace failed")
 
-    monkeypatch.setattr(workspace_files.os, "replace", fail_replace)
+    monkeypatch.setattr(atomic_text_files.os, "replace", fail_replace)
 
     with pytest.raises(OSError, match="replace failed"):
         workspace_files.write_workspace_atomic(_document("New"), target)

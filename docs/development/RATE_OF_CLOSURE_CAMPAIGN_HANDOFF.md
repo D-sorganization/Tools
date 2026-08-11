@@ -16,6 +16,43 @@ and diff checks are clean. The known polynomial-generator empty-legend warning
 is unrelated. This changes no wire schema, provenance digest, physics, or
 persistence boundary; fresh protected CI is still required before merge.
 
+## 2026-08-10 issue #4274 canonical regional request I/O local child
+
+Local branch `feat/4274-regional-plan-io` started directly from published PR
+#4339 head `a9ace5052bcd54b78f79b62d5d9ac26debedb4b1`, then fast-forwarded
+normally to corrected exact parent `cbb9c0a6bdc6a50f59f7a661139b9d53e1892980`.
+The parent's stale-validation invalidation and tooltip follow-up are preserved.
+This child has not been pushed, opened as a PR, reviewed, merged, or released.
+
+The matched Ground Surfaces editors now import and export the canonical
+`ground-regional-material-plan-request/v1` document. PyQt6 uses native Open
+and Save As dialogs plus a shared flush/fsync/atomic-replace UTF-8 writer;
+cancel is a no-op, failed reads and writes preserve the last-known-good editor
+or file, and the recent path advances only after success. React validates a
+bounded browser File before committing state and downloads exact canonical
+bytes while revoking its object URL. Browser filesystem limitations are
+explicit, and workspace persistence remains separate.
+
+Import accepts only editor producer/provider v1 evidence, the fixed target
+frame origin/downrange axis, and one to eight rows. It never relabels external
+evidence. An unchanged import round-trips the exact request and provenance;
+after any edit, validation binds a fresh draft digest. No measured calibration
+is synthesized and neither path executes physics.
+
+RED-first coverage now includes exact-byte round-trip, native cancel and
+atomic rollback, corruption, duplicate keys, oversize input, unsupported
+producer/axis qualification, stale-provenance rebinding, transactional PyQt6
+population, browser rollback, URL cleanup, and pre-allocation size rejection.
+Focused evidence is 25 Python/PyQt tests and 12 React tests passing. With
+adjacent wire and manifest coverage, 44 Python and 16 React tests pass.
+Focused MyPy, Ruff, TypeScript, zero-warning ESLint, the 199-module production
+build, release-manifest validation, and module budgets are clean.
+
+Issue #4274 remains open. Measured calibration, workspace model-input
+persistence, execution/playback, result interchange, visualization, changing
+geometry, compiled regional physics, downstream parity, protected CI/review,
+integration of this child into the protected stack, and release remain explicit
+gaps.
 ## 2026-08-10 issue #4274 matched regional surface editor local child
 
 Local branch `feat/4274-regional-surface-ui` started from published PR #4335

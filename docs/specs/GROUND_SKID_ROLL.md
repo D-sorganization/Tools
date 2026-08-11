@@ -203,11 +203,16 @@ schema, unit, provenance, and request readback.
 
 The regional v1 wire schema has no calibration record, so the editor does not
 invent one or widen that schema. `unvalidated` is explicit presentation/source
-qualification and is included in the source digest. This first slice is
-session-only: current web workspace file commands do not persist model inputs,
-and neither client claims request export/import, execution, result playback,
-or measured-course calibration. Those capabilities require separate contracts
-and acceptance evidence.
+qualification and is included in the source digest. PyQt6 native Open/Save As
+and React browser import/download persist only the canonical regional request;
+workspace model-input persistence remains a separate contract. Import is
+transactional and accepts only the editor producer/provider v1, fixed qualified
+axis/geometry, and editor row capacity. An unchanged import retains the exact
+request and provenance; editing rebinds the draft digest. Browser downloads
+cannot promise a native path, atomic replacement, or recent-file access.
+Neither client claims execution, result playback, or measured-course
+calibration. Those capabilities require separate contracts and acceptance
+evidence.
 
 Skid and roll distances are accumulated separately from centre speed relative
 to the moving surface. Collinear constant-acceleration segments use the exact

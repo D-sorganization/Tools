@@ -1,0 +1,152 @@
+"""Reusable PyQt6 inputs for the regional surface-plan editor."""
+
+from __future__ import annotations
+
+from collections.abc import Callable
+
+from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import (
+    QDoubleSpinBox,
+    QFormLayout,
+    QGroupBox,
+    QLineEdit,
+    QPushButton,
+    QSpinBox,
+    QVBoxLayout,
+)
+
+from rate_of_closure.application.regional_surface_plan import (
+    RegionalOverlayDraft,
+    SurfaceMaterialDraft,
+)
+
+_MATERIAL_FIELDS = (
+    ("normal_restitution", "Normal restitution", "", 0.01, 0.0, 1.0),
+    ("static_friction", "Static friction", "", 0.01, 0.0, 5.0),
+    ("kinetic_friction", "Kinetic friction", "", 0.01, 0.0, 5.0),
+    ("rolling_resistance", "Rolling resistance", "", 0.01, 0.0, 1.0),
+    ("firmness_pa", "Firmness", " Pa", 1_000.0, 1e-11, 1e100),
+    ("hardness_fraction", "Hardness", " fraction", 0.01, 0.0, 1.0),
+    ("grass_height_m", "Grass height", " m", 0.001, 0.0, 1e100),
+    ("compressibility_fraction", "Compressibility", " fraction", 0.01, 0.0, 1.0),
+    (
+        "compression_damping_fraction",
+        "Compression damping",
+        " fraction",
+        0.01,
+        0.0,
+        1.0,
+    ),
+    ("turf_density_kg_m3", "Turf density", " kg/m³", 1.0, 0.0, 1e100),
+    ("moisture_fraction", "Moisture", " fraction", 0.01, 0.0, 1.0),
+)
+
+
+def number_input(
+    name: str,
+    value: float,
+    suffix: str = "",
+    step: float = 0.1,
+    minimum: float = -1e100,
+    maximum: float = 1e100,
+) -> QDoubleSpinBox:
+    """Create one canonical-precision accessible SI number input."""
+    field = QDoubleSpinBox()
+    field.setAccessibleName(name)
+    field.setDecimals(11)
+    field.setRange(minimum, maximum)
+    field.setSingleStep(step)
+    field.setSuffix(suffix)
+    field.setValue(value)
+    field.setToolTip(
+        f"{name}. Edit this SI draft value, then validate the surface plan."
+    )
+    return field
+
+
+class MaterialEditor(QGroupBox):
+    """Editable surface identity and full v1 material parameter collection."""
+
+    def __init__(self, title: str, value: SurfaceMaterialDraft) -> None:
+        super().__init__(title)
+        self.surface_id = QLineEdit(value.surface_id)
+        self.surface_id.setAccessibleName(f"{title} surface ID")
+        self.surface_id.setToolTip(
+            f"Stable identifier for {title.lower()}; included in validated readback."
+        )
+        self.fields: dict[str, QDoubleSpinBox] = {}
+        layout = QFormLayout(self)
+        layout.addRow("Surface ID", self.surface_id)
+        for name, label, suffix, step, minimum, maximum in _MATERIAL_FIELDS:
+            field = number_input(
+                f"{title} {label}", getattr(value, name), suffix, step, minimum, maximum
+            )
+            self.fields[name] = field
+            layout.addRow(label, field)
+
+    def draft(self) -> SurfaceMaterialDraft:
+        """Read the current widgets without applying separate UI validation."""
+        values = {name: field.value() for name, field in self.fields.items()}
+        return SurfaceMaterialDraft(self.surface_id.text(), **values)
+
+    def set_draft(self, value: SurfaceMaterialDraft) -> None:
+        """Replace all visible material values from one validated draft."""
+        self.surface_id.setText(value.surface_id)
+        for name, field in self.fields.items():
+            field.setValue(getattr(value, name))
+
+
+class RegionalOverlayRow(QGroupBox):
+    """One removable bounded regional overlay row."""
+
+    def __init__(
+        self,
+        ordinal: int,
+        value: RegionalOverlayDraft,
+        remove: Callable[[RegionalOverlayRow], None],
+    ) -> None:
+        super().__init__(f"Regional overlay {ordinal}")
+        self.region_id = QLineEdit(value.region_id)
+        self.region_id.setToolTip(
+            "Stable overlay identifier; it must be unique within the regional plan."
+        )
+        self.precedence = QSpinBox()
+        self.precedence.setRange(0, 1_000_000)
+        self.precedence.setValue(value.precedence)
+        self.precedence.setToolTip(
+            "Overlay selection precedence. Higher values win when intervals overlap."
+        )
+        self.lower_coordinate = number_input(
+            f"Overlay {ordinal} lower coordinate", value.lower_coordinate_m, " m"
+        )
+        self.upper_coordinate = number_input(
+            f"Overlay {ordinal} upper coordinate", value.upper_coordinate_m, " m"
+        )
+        self.material = MaterialEditor(f"Overlay {ordinal} material", value.surface)
+        self.remove_button = QPushButton(f"Remove overlay {ordinal}")
+        self.remove_button.setToolTip(
+            "Remove this overlay from the unvalidated draft; one overlay is required."
+        )
+        self.remove_button.clicked.connect(lambda: remove(self))
+        form = QFormLayout()
+        form.addRow("Region ID", self.region_id)
+        form.addRow("Precedence", self.precedence)
+        form.addRow("Lower coordinate", self.lower_coordinate)
+        form.addRow("Upper coordinate", self.upper_coordinate)
+        layout = QVBoxLayout(self)
+        layout.addLayout(form)
+        layout.addWidget(self.material)
+        layout.addWidget(self.remove_button, alignment=Qt.AlignmentFlag.AlignRight)
+
+    def draft(self) -> RegionalOverlayDraft:
+        """Read one overlay for authoritative contract validation."""
+        return RegionalOverlayDraft(
+            self.region_id.text(),
+            self.precedence.value(),
+            self.lower_coordinate.value(),
+            self.upper_coordinate.value(),
+            self.material.draft(),
+        )
+
+
+__all__ = ["MaterialEditor", "RegionalOverlayRow", "number_input"]

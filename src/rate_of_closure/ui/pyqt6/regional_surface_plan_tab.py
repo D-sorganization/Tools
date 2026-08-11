@@ -2,13 +2,10 @@
 
 from __future__ import annotations
 
-from collections.abc import Callable
 from dataclasses import replace
 
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QComboBox,
-    QDoubleSpinBox,
     QFormLayout,
     QGroupBox,
     QHBoxLayout,
@@ -17,7 +14,6 @@ from PyQt6.QtWidgets import (
     QPlainTextEdit,
     QPushButton,
     QScrollArea,
-    QSpinBox,
     QVBoxLayout,
     QWidget,
 )
@@ -26,132 +22,21 @@ from rate_of_closure.application.regional_surface_plan import (
     MAX_EDITOR_REGIONS,
     RegionalOverlayDraft,
     RegionalSurfacePlanDraft,
-    SurfaceMaterialDraft,
+    editor_draft_from_regional_surface_plan_request,
     illustrative_regional_surface_plan_draft,
-    validate_regional_surface_plan_draft,
+    regional_surface_plan_request_for_draft,
 )
-
-_MATERIAL_FIELDS = (
-    ("normal_restitution", "Normal restitution", "", 0.01, 0.0, 1.0),
-    ("static_friction", "Static friction", "", 0.01, 0.0, 5.0),
-    ("kinetic_friction", "Kinetic friction", "", 0.01, 0.0, 5.0),
-    ("rolling_resistance", "Rolling resistance", "", 0.01, 0.0, 1.0),
-    ("firmness_pa", "Firmness", " Pa", 1_000.0, 0.001, 1e9),
-    ("hardness_fraction", "Hardness", " fraction", 0.01, 0.0, 1.0),
-    ("grass_height_m", "Grass height", " m", 0.001, 0.0, 1.0),
-    ("compressibility_fraction", "Compressibility", " fraction", 0.01, 0.0, 1.0),
-    (
-        "compression_damping_fraction",
-        "Compression damping",
-        " fraction",
-        0.01,
-        0.0,
-        1.0,
-    ),
-    ("turf_density_kg_m3", "Turf density", " kg/m³", 1.0, 0.0, 10_000.0),
-    ("moisture_fraction", "Moisture", " fraction", 0.01, 0.0, 1.0),
+from rate_of_closure.ui.pyqt6.regional_surface_plan_io import (
+    RegionalSurfacePlanFileActions,
 )
-
-
-def _number_input(
-    name: str,
-    value: float,
-    suffix: str = "",
-    step: float = 0.1,
-    minimum: float = -1e9,
-    maximum: float = 1e9,
-) -> QDoubleSpinBox:
-    """Create one consistently configured accessible SI number input."""
-    field = QDoubleSpinBox()
-    field.setAccessibleName(name)
-    field.setDecimals(6)
-    field.setRange(minimum, maximum)
-    field.setSingleStep(step)
-    field.setSuffix(suffix)
-    field.setValue(value)
-    field.setToolTip(
-        f"{name}. Edit this SI draft value, then validate the surface plan."
-    )
-    return field
-
-
-class MaterialEditor(QGroupBox):
-    """Editable surface identity and full v1 material parameter collection."""
-
-    def __init__(self, title: str, value: SurfaceMaterialDraft) -> None:
-        super().__init__(title)
-        self.surface_id = QLineEdit(value.surface_id)
-        self.surface_id.setAccessibleName(f"{title} surface ID")
-        self.surface_id.setToolTip(
-            f"Stable identifier for {title.lower()}; included in validated readback."
-        )
-        self.fields: dict[str, QDoubleSpinBox] = {}
-        layout = QFormLayout(self)
-        layout.addRow("Surface ID", self.surface_id)
-        for name, label, suffix, step, minimum, maximum in _MATERIAL_FIELDS:
-            field = _number_input(
-                f"{title} {label}", getattr(value, name), suffix, step, minimum, maximum
-            )
-            self.fields[name] = field
-            layout.addRow(label, field)
-
-    def draft(self) -> SurfaceMaterialDraft:
-        """Read the current widgets without applying separate UI validation."""
-        values = {name: field.value() for name, field in self.fields.items()}
-        return SurfaceMaterialDraft(self.surface_id.text(), **values)
-
-
-class RegionalOverlayRow(QGroupBox):
-    """One removable bounded regional overlay row."""
-
-    def __init__(
-        self,
-        ordinal: int,
-        value: RegionalOverlayDraft,
-        remove: Callable[[RegionalOverlayRow], None],
-    ) -> None:
-        super().__init__(f"Regional overlay {ordinal}")
-        self.region_id = QLineEdit(value.region_id)
-        self.region_id.setToolTip(
-            "Stable overlay identifier; it must be unique within the regional plan."
-        )
-        self.precedence = QSpinBox()
-        self.precedence.setRange(0, 1_000_000)
-        self.precedence.setValue(value.precedence)
-        self.precedence.setToolTip(
-            "Overlay selection precedence. Higher values win when intervals overlap."
-        )
-        self.lower_coordinate = _number_input(
-            f"Overlay {ordinal} lower coordinate", value.lower_coordinate_m, " m"
-        )
-        self.upper_coordinate = _number_input(
-            f"Overlay {ordinal} upper coordinate", value.upper_coordinate_m, " m"
-        )
-        self.material = MaterialEditor(f"Overlay {ordinal} material", value.surface)
-        self.remove_button = QPushButton(f"Remove overlay {ordinal}")
-        self.remove_button.setToolTip(
-            "Remove this overlay from the unvalidated draft; one overlay is required."
-        )
-        self.remove_button.clicked.connect(lambda: remove(self))
-        form = QFormLayout()
-        form.addRow("Region ID", self.region_id)
-        form.addRow("Precedence", self.precedence)
-        form.addRow("Lower coordinate", self.lower_coordinate)
-        form.addRow("Upper coordinate", self.upper_coordinate)
-        layout = QVBoxLayout(self)
-        layout.addLayout(form)
-        layout.addWidget(self.material)
-        layout.addWidget(self.remove_button, alignment=Qt.AlignmentFlag.AlignRight)
-
-    def draft(self) -> RegionalOverlayDraft:
-        """Read one overlay for authoritative contract validation."""
-        return RegionalOverlayDraft(
-            self.region_id.text(),
-            self.precedence.value(),
-            self.lower_coordinate.value(),
-            self.upper_coordinate.value(),
-            self.material.draft(),
-        )
+from rate_of_closure.ui.pyqt6.regional_surface_plan_widgets import (
+    MaterialEditor,
+    RegionalOverlayRow,
+    number_input,
+)
+from shared.python.swing_sim.ground.regional_plan_records import (
+    GroundRegionalMaterialPlanRequest,
+)
 
 
 class RegionalSurfacePlanTab(QWidget):
@@ -161,6 +46,8 @@ class RegionalSurfacePlanTab(QWidget):
         super().__init__(parent)
         self._rows: list[RegionalOverlayRow] = []
         self._initial = illustrative_regional_surface_plan_draft()
+        self._imported_request: GroundRegionalMaterialPlanRequest | None = None
+        self.file_actions = RegionalSurfacePlanFileActions(self, self)
         self._build_ui()
         self._connect_static_changes()
         self._append_row(self._initial.regions[0])
@@ -252,8 +139,8 @@ class RegionalSurfacePlanTab(QWidget):
         )
         geometry.setWordWrap(True)
         session = QLabel(
-            "Session-only draft: current workspace file commands do not persist "
-            "model inputs."
+            "Open/Save As persists this canonical request only. Workspace "
+            "persistence remains a separate contract."
         )
         session.setWordWrap(True)
         layout = QFormLayout(box)
@@ -267,10 +154,10 @@ class RegionalSurfacePlanTab(QWidget):
     def _base_box(self) -> QGroupBox:
         """Create the base interval and complete base material editor."""
         box = QGroupBox("Base surface and domain")
-        self.domain_lower = _number_input(
+        self.domain_lower = number_input(
             "Base domain lower coordinate", self._initial.lower_coordinate_m, " m"
         )
-        self.domain_upper = _number_input(
+        self.domain_upper = number_input(
             "Base domain upper coordinate", self._initial.upper_coordinate_m, " m"
         )
         self.base_material = MaterialEditor("Base material", self._initial.base_surface)
@@ -297,7 +184,21 @@ class RegionalSurfacePlanTab(QWidget):
             "Validate the complete draft and display its canonical SI request."
         )
         self.validate_button.clicked.connect(self.validate_plan)
+        self.open_button = QPushButton("Open JSON")
+        self.open_button.setAccessibleName("Open regional surface plan JSON")
+        self.open_button.setToolTip(
+            "Open and fully validate an editor-qualified canonical request."
+        )
+        self.open_button.clicked.connect(self.file_actions.open)
+        self.save_button = QPushButton("Save As JSON")
+        self.save_button.setAccessibleName("Save regional surface plan JSON as")
+        self.save_button.setToolTip(
+            "Atomically save the validated canonical request to a chosen file."
+        )
+        self.save_button.clicked.connect(self.file_actions.save_as)
         layout.addWidget(self.add_button)
+        layout.addWidget(self.open_button)
+        layout.addWidget(self.save_button)
         layout.addStretch(1)
         layout.addWidget(self.validate_button)
         return layout
@@ -368,10 +269,35 @@ class RegionalSurfacePlanTab(QWidget):
             tuple(row.draft() for row in self._rows),
         )
 
+    def current_request(self) -> GroundRegionalMaterialPlanRequest:
+        """Return exact imported evidence unless the visible draft has changed."""
+        return regional_surface_plan_request_for_draft(
+            self.draft(), self._imported_request
+        )
+
+    def apply_imported_request(
+        self, request: GroundRegionalMaterialPlanRequest
+    ) -> None:
+        """Populate widgets only after complete strict editor qualification."""
+        draft = editor_draft_from_regional_surface_plan_request(request)
+        self.request_id.setText(draft.request_id)
+        self.source_revision.setText(draft.source_revision)
+        self.domain_lower.setValue(draft.lower_coordinate_m)
+        self.domain_upper.setValue(draft.upper_coordinate_m)
+        self.base_material.set_draft(draft.base_surface)
+        for row in self._rows:
+            self.rows_layout.removeWidget(row)
+            row.deleteLater()
+        self._rows.clear()
+        for region in draft.regions:
+            self._append_row(region)
+        self._update_row_actions()
+        self._imported_request = request
+
     def validate_plan(self) -> None:
         """Validate through the strict contract and render canonical readback."""
         try:
-            request = validate_regional_surface_plan_draft(self.draft())
+            request = self.current_request()
         except (TypeError, ValueError) as exc:
             self.status_label.setText(str(exc))
             self.status_label.setAccessibleName(

@@ -1,13 +1,19 @@
-import { useState } from "react";
+import { type ChangeEvent, useRef, useState } from "react";
 
 import {
   MAX_REGIONAL_SURFACE_EDITOR_ROWS,
-  buildGroundRegionalSurfacePlanRequest,
+  editorDraftFromGroundRegionalSurfacePlanRequest,
   illustrativeRegionalSurfacePlanDraft,
+  regionalSurfacePlanRequestForDraft,
   type RegionalOverlayDraft,
   type RegionalSurfacePlanDraft,
   type SurfaceMaterialDraft,
 } from "../model/regionalSurfacePlan";
+import {
+  downloadRegionalSurfacePlanRequest,
+  readRegionalSurfacePlanFile,
+} from "../model/regionalSurfacePlanFiles";
+import type { GroundRegionalMaterialPlanRequest } from "../model/groundRegionalPlan";
 
 type NumericMaterialKey = Exclude<keyof SurfaceMaterialDraft, "surface_id">;
 
@@ -133,15 +139,20 @@ function nextOverlay(draft: RegionalSurfacePlanDraft): RegionalOverlayDraft {
 
 export function RegionalSurfacePlanPanel() {
   const [draft, setDraft] = useState(illustrativeRegionalSurfacePlanDraft);
+  const [importedRequest, setImportedRequest] =
+    useState<GroundRegionalMaterialPlanRequest | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [readback, setReadback] = useState<string | null>(null);
+  const [fileStatus, setFileStatus] = useState<string | null>(null);
   const [validationAttempted, setValidationAttempted] = useState(false);
+  const fileInput = useRef<HTMLInputElement>(null);
   const updateDraft = (
     transform: (current: RegionalSurfacePlanDraft) => RegionalSurfacePlanDraft,
   ) => {
     setDraft(transform);
     setError(null);
     setReadback(null);
+    setFileStatus(null);
     setValidationAttempted(false);
   };
   const updateRegion = (index: number, value: RegionalOverlayDraft) =>
@@ -152,7 +163,7 @@ export function RegionalSurfacePlanPanel() {
   const validate = () => {
     setValidationAttempted(true);
     try {
-      const request = buildGroundRegionalSurfacePlanRequest(draft);
+      const request = regionalSurfacePlanRequestForDraft(draft, importedRequest);
       setError(null);
       setReadback(
         `${request.schema_version} · ${request.unit_system} · ` +
@@ -163,6 +174,35 @@ export function RegionalSurfacePlanPanel() {
     } catch (caught) {
       setReadback(null);
       setError(caught instanceof Error ? caught.message : "Surface plan is invalid");
+    }
+  };
+  const importFile = async (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.currentTarget.files?.[0];
+    event.currentTarget.value = "";
+    if (file === undefined) return;
+    try {
+      const request = await readRegionalSurfacePlanFile(file);
+      const importedDraft = editorDraftFromGroundRegionalSurfacePlanRequest(request);
+      setDraft(importedDraft);
+      setImportedRequest(request);
+      setValidationAttempted(false);
+      setError(null);
+      setReadback(`${request.schema_version} · exact imported provenance ${request.provenance.input_sha256}`);
+      setFileStatus(`Imported ${file.name}. No physics executed.`);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Regional plan import failed");
+      setFileStatus("Import failed; the editor and prior validated readback were preserved.");
+    }
+  };
+  const download = () => {
+    try {
+      const request = regionalSurfacePlanRequestForDraft(draft, importedRequest);
+      downloadRegionalSurfacePlanRequest(request);
+      setError(null);
+      setFileStatus("Download prepared. Your browser controls the destination and overwrite behavior.");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Regional plan download failed");
+      setFileStatus("Download failed; no browser filesystem state was changed.");
     }
   };
   return (
@@ -181,7 +221,8 @@ export function RegionalSurfacePlanPanel() {
         This slice validates a material plan only; it does not run physics or playback.
       </div>
       <p className="text-xs text-slate-500">
-        Session-only draft: the current web workspace adapter does not persist model inputs.
+        Import/download persists this canonical request only; workspace persistence remains separate.
+        Browser downloads cannot promise a native path, atomic replacement, or recent-file access.
       </p>
       <fieldset className="rounded-xl border border-slate-700/80 bg-slate-900/60 p-4">
         <legend className="font-semibold text-slate-200">Plan identity and provenance</legend>
@@ -242,6 +283,9 @@ export function RegionalSurfacePlanPanel() {
           }))} />
       ))}
       <div className="flex flex-wrap gap-3">
+        <input ref={fileInput} type="file" accept=".json,application/json"
+          aria-label="Import regional surface plan JSON file" className="sr-only"
+          onChange={(event) => { void importFile(event); }} />
         <button type="button" aria-label="Add regional overlay"
           disabled={draft.regions.length >= MAX_REGIONAL_SURFACE_EDITOR_ROWS}
           onClick={() => updateDraft((current) => ({
@@ -249,6 +293,16 @@ export function RegionalSurfacePlanPanel() {
           }))}
           className="rounded-md border border-sky-500/60 px-3 py-2 text-sm text-sky-200 disabled:opacity-40">
           Add overlay
+        </button>
+        <button type="button" aria-label="Import regional surface plan JSON"
+          onClick={() => fileInput.current?.click()}
+          className="rounded-md border border-sky-500/60 px-3 py-2 text-sm text-sky-200">
+          Import JSON
+        </button>
+        <button type="button" aria-label="Download regional surface plan JSON"
+          onClick={download}
+          className="rounded-md border border-sky-500/60 px-3 py-2 text-sm text-sky-200">
+          Download JSON
         </button>
         <button type="button" aria-label="Validate surface plan" onClick={validate}
           className="rounded-md bg-sky-500 px-3 py-2 text-sm font-semibold text-slate-950">
@@ -263,6 +317,8 @@ export function RegionalSurfacePlanPanel() {
         className="rounded-md border border-emerald-500/50 bg-emerald-500/10 p-3 text-sm text-emerald-100">
         Validated readback: {readback}
       </p>}
+      {fileStatus !== null && <p role="status" aria-label="Regional surface plan file status"
+        className="text-xs text-slate-400">{fileStatus}</p>}
     </section>
   );
 }

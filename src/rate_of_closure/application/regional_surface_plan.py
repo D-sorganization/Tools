@@ -6,11 +6,13 @@ import hashlib
 from dataclasses import asdict, dataclass
 
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
+from shared.python.swing_sim.ground.contract_types import GroundSurfaceProfile
 from shared.python.swing_sim.ground.regional_plan_records import (
     REGIONAL_PLAN_GEOMETRY_MODEL,
     REGIONAL_PLAN_LIMITATIONS,
     REGIONAL_PLAN_REQUEST_SCHEMA_VERSION,
     GroundRegionalMaterialPlanRequest,
+    GroundRegionalMaterialRegion,
 )
 from shared.python.swing_sim.ground.regional_plan_wire import (
     regional_material_plan_request_from_dict,
@@ -158,6 +160,99 @@ def _region_payload(region: RegionalOverlayDraft) -> dict[str, object]:
     }
 
 
+def _surface_draft(surface: GroundSurfaceProfile) -> SurfaceMaterialDraft:
+    """Project one already-validated wire surface into editable SI values."""
+    return SurfaceMaterialDraft(
+        surface.surface_id,
+        surface.normal_restitution,
+        surface.static_friction,
+        surface.kinetic_friction,
+        surface.rolling_resistance,
+        surface.firmness_pa,
+        surface.hardness_fraction,
+        surface.grass_height_m,
+        surface.compressibility_fraction,
+        surface.compression_damping_fraction,
+        surface.turf_density_kg_m3,
+        surface.moisture_fraction,
+    )
+
+
+def _assert_editor_surface(surface: GroundSurfaceProfile) -> None:
+    """Reject material evidence not authored under the editor v1 contract."""
+    if (
+        surface.provider_id != EDITOR_PROVIDER_ID
+        or surface.provider_version != EDITOR_PROVIDER_VERSION
+    ):
+        raise ValueError("surface is not qualified by the editor provider v1")
+
+
+def _overlay_draft(region: GroundRegionalMaterialRegion) -> RegionalOverlayDraft:
+    return RegionalOverlayDraft(
+        region.region_id,
+        region.precedence,
+        region.lower_coordinate_m,
+        region.upper_coordinate_m,
+        _surface_draft(region.surface),
+    )
+
+
+def editor_draft_from_regional_surface_plan_request(
+    request: GroundRegionalMaterialPlanRequest,
+) -> RegionalSurfacePlanDraft:
+    """Project one fully validated, editor-qualified v1 request into the editor.
+
+    The editor provider v1 contract is explicitly unvalidated. Requests from a
+    different producer, material provider, axis qualification, or row capacity
+    are therefore rejected rather than relabelled or coerced.
+    """
+    if type(request) is not GroundRegionalMaterialPlanRequest:
+        raise TypeError("request must be an exact GroundRegionalMaterialPlanRequest")
+    provenance = request.provenance
+    if (
+        provenance.producer != EDITOR_PROVIDER_ID
+        or provenance.producer_version != EDITOR_PROVIDER_VERSION
+    ):
+        raise ValueError("request is not qualified by the editor producer v1")
+    if request.axis_origin_m != (0.0, 0.0, 0.0) or request.axis_unit != (
+        1.0,
+        0.0,
+        0.0,
+    ):
+        raise ValueError("request uses an unsupported editor axis qualification")
+    if len(request.regions) > MAX_EDITOR_REGIONS:
+        raise ValueError(f"editor supports one to at most {MAX_EDITOR_REGIONS} regions")
+    _assert_editor_surface(request.base_surface)
+    for region in request.regions:
+        _assert_editor_surface(region.surface)
+    draft = RegionalSurfacePlanDraft(
+        request.request_id,
+        request.lower_coordinate_m,
+        request.upper_coordinate_m,
+        provenance.source_revision,
+        "unvalidated",
+        _surface_draft(request.base_surface),
+        tuple(_overlay_draft(region) for region in request.regions),
+    )
+    if provenance.input_sha256 != _source_digest(draft):
+        raise ValueError("editor provenance digest does not match the editable request")
+    return draft
+
+
+def regional_surface_plan_request_for_draft(
+    draft: RegionalSurfacePlanDraft,
+    imported_request: GroundRegionalMaterialPlanRequest | None = None,
+) -> GroundRegionalMaterialPlanRequest:
+    """Preserve an unchanged import exactly; otherwise bind fresh provenance."""
+    if imported_request is not None:
+        imported_draft = editor_draft_from_regional_surface_plan_request(
+            imported_request
+        )
+        if draft == imported_draft:
+            return imported_request
+    return validate_regional_surface_plan_draft(draft)
+
+
 def validate_regional_surface_plan_draft(
     draft: RegionalSurfacePlanDraft,
 ) -> GroundRegionalMaterialPlanRequest:
@@ -191,10 +286,14 @@ def validate_regional_surface_plan_draft(
 
 
 __all__ = [
+    "EDITOR_PROVIDER_ID",
+    "EDITOR_PROVIDER_VERSION",
     "MAX_EDITOR_REGIONS",
     "RegionalOverlayDraft",
     "RegionalSurfacePlanDraft",
     "SurfaceMaterialDraft",
+    "editor_draft_from_regional_surface_plan_request",
     "illustrative_regional_surface_plan_draft",
+    "regional_surface_plan_request_for_draft",
     "validate_regional_surface_plan_draft",
 ]
