@@ -56,6 +56,7 @@ from rate_of_closure.ui.pyqt6.main_window_layout import (
 )
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
+from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import RegionalSurfacePlanTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
 from rate_of_closure.ui.pyqt6.result_row import explanation_html
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
@@ -124,6 +125,7 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._simulation_tab = SimulationTab()
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
+        self._regional_surface_plan_tab = RegionalSurfacePlanTab()
         self._launch_monitor_analytics_tab = LaunchMonitorAnalyticsTab()
         self._capability_optimization_tab = CapabilityOptimizationTab()
         self._variation_tab = VariationTab()
@@ -172,6 +174,7 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
             ),
             ("simulation", self._simulation_tab, "Simulation"),
             ("flight_explorer", self._flight_explorer_tab, "Flight Explorer"),
+            ("regional_surfaces", self._regional_surface_plan_tab, "Ground Surfaces"),
             (
                 "launch_monitor_analytics",
                 self._launch_monitor_analytics_tab,
@@ -217,12 +220,9 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         """Populate all views with a representative, internally consistent run."""
         self._derivation_view.set_config(self._simulation_tab.derivation_config())
         self._on_scenario(self._controls.scenario())
-        # A share-ready scene should never open as a placeholder wireframe.
-        # Load the selected representative driver immediately; users can still
-        # regenerate another library head or load a measured STL.
+        # Open with the selected representative driver, not a placeholder.
         self._on_club_head(self._controls.club_spec())
-        # Match the web experience: the Swing view opens with a meaningful
-        # result instead of empty axes that look like a rendering failure.
+        # Match the web experience with a meaningful initial Swing result.
         self._simulation_tab.run_now()
         self._show_explanation(_RESULT_ROWS[0][0])
 

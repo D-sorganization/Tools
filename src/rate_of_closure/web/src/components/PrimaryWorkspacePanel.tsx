@@ -9,6 +9,7 @@ import { ImpactExplorerPanel } from "./ImpactExplorerPanel";
 import { LaunchMonitorAnalyticsPanel } from "./LaunchMonitorAnalyticsPanel";
 import { PlotsPanel } from "./PlotsPanel";
 import { PuttingPanel } from "./PuttingPanel";
+import { RegionalSurfacePlanPanel } from "./RegionalSurfacePlanPanel";
 import { SimulationPanel } from "./SimulationPanel";
 import { VariationPanel } from "./VariationPanel";
 
@@ -58,6 +59,8 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
     case "flight":
       return <FlightExplorerPanel distanceUnit={model.units.distance}
         spatialTarget={model.spatialTarget} onSpatialTargetChange={model.setSpatialTarget} />;
+    case "regional-surfaces":
+      return <RegionalSurfacePlanPanel />;
     case "launch-monitor-analytics":
       return <LaunchMonitorAnalyticsPanel />;
     case "capability-optimization":

@@ -181,6 +181,34 @@ from/to transition ledger remains execution-scoped. A future explicitly
 versioned result contract is required before that ledger crosses a process
 boundary.
 
+### Matched editor/readback boundary
+
+The standalone PyQt6 and React applications register a `Ground Surfaces`
+primary module that presents one base interval and one to eight regional
+overlay rows. The editor exposes every `GroundSurfaceProfile` material field,
+stable request/region/surface IDs, unique precedence, metre interval bounds,
+and source revision. Geometry remains visibly fixed to the target frame,
+zero-height upward-normal plane, downrange tangent axis, and zero surface
+velocity. The interface labels metre, pascal, density, coefficient, and
+dimensionless-fraction quantities explicitly.
+
+Both clients load the same visibly **illustrative, unvalidated** discovery
+values. They hash the actual editor draft, including its calibration
+qualification, into provenance before delegating to the authoritative
+`ground-regional-material-plan-request/v1` validator. The presentation layer
+does not reimplement material or regional physics and does not soften unique
+identity, interval, finite-number, material-range, or geometry contracts.
+Errors remain associated with the editable draft; success exposes canonical
+schema, unit, provenance, and request readback.
+
+The regional v1 wire schema has no calibration record, so the editor does not
+invent one or widen that schema. `unvalidated` is explicit presentation/source
+qualification and is included in the source digest. This first slice is
+session-only: current web workspace file commands do not persist model inputs,
+and neither client claims request export/import, execution, result playback,
+or measured-course calibration. Those capabilities require separate contracts
+and acceptance evidence.
+
 Skid and roll distances are accumulated separately from centre speed relative
 to the moving surface. Collinear constant-acceleration segments use the exact
 trapezoidal speed integral; non-collinear segments use deterministic Simpson

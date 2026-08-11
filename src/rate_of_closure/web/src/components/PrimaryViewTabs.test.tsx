@@ -43,6 +43,7 @@ describe("PrimaryViewTabs", () => {
       "calculation",
       "plots",
       "flight",
+      "regional-surfaces",
       "launch-monitor-analytics",
       "capability-optimization",
       "variation",

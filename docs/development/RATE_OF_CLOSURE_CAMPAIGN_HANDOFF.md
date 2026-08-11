@@ -1,5 +1,51 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-10 issue #4274 matched regional surface editor local child
+
+Local branch `feat/4274-regional-surface-ui` started from published PR #4335
+head `d382ca9928628a16fec7ddd4fa1b1cc144b4c490`. When that parent
+advanced, normal merge `6051d89a685ef009cfeef7c77bb3591cd124574a` preserved both
+histories and exact corrected parent
+`74a053d2d544da9f44a88007660ad28c0127f285`. No GitHub write,
+protected evidence, review, merge-to-parent, or release claim has been made for
+this child.
+
+The PyQt6 and React shells now register matched `Ground Surfaces` primary
+modules. Each exposes one complete SI base material/domain and one to eight
+finite overlay rows with editable material evidence, region/surface/request
+identities, precedence, bounds, and source revision. Both load explicitly
+illustrative/unvalidated discovery data, hash the actual draft into provenance,
+and delegate to the strict regional-plan v1 parser. Errors preserve input and
+publish accessible state; successful validation exposes canonical schema, SI,
+source, digest, and request readback. Navigation migration reveals the new
+module without discarding a user's saved order or visibility.
+
+RED-first evidence captured the missing Python and React adapter/component
+boundaries. Before the parent advance, all five Python/PyQt editor tests and
+seven focused React/wire tests passed. After the normal parent merge, the three
+non-GUI Python adapter tests and six PyQt shell/help integration tests pass;
+five final React editor tests and four regional wire tests pass,
+including the shared illustrative-draft provenance digest
+`2b3bf1b705bf86f5bf3cbe17970ddff63887410ad9f255200e5cfa31e5717db3`.
+TypeScript, zero-warning ESLint, the 198-module production build, Ruff, and
+MyPy pass. The campaign manifest and its eight tests, documentation governance,
+changed-test assertions, and diff checks pass. The isolated regional PyQt
+rerun and an ad hoc full-shell exit check hit bounded workstation
+startup/lifecycle timeouts without an assertion failure; the pre-merge editor
+GUI tests and post-merge shell/help GUI tests remain green, while the post-merge
+adapter tests exercise the exact incoming validation/type-guard changes.
+
+This is a session-only request editor/readback slice, not completion of #4274.
+The regional v1 schema has no calibration record, so `unvalidated` remains
+visible source qualification included in the draft digest rather than a
+fabricated wire field. Request import/export, measured calibration workflows,
+workspace model-input persistence, physics execution, result playback,
+terrain/interval visualization, TypeScript or compiled regional physics,
+UpstreamDrift parity, protected CI/review, parent integration, and main release
+remain open.
+
+
+
 ## 2026-08-10 PR #4335 isolated-MyPy return typing
 
 Protected CI at exact head `d382ca9928628a16fec7ddd4fa1b1cc144b4c490`

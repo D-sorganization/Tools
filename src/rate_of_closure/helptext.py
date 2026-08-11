@@ -185,6 +185,25 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "models by re-running with a different model at identical "
         "launch conditions.</p>",
     ),
+    "regional_surfaces": _entry(
+        "Ground Surfaces",
+        "<h3>What this tab does</h3>"
+        "<p>Builds a strict versioned request for one flat, stationary SI base "
+        "surface and bounded coplanar material overlays. Every material value, "
+        "interval, identity, precedence, source revision, and qualification is "
+        "visible before validation.</p>"
+        "<h3>Workflow</h3><ol><li>Replace the clearly marked illustrative base "
+        "material with traceable values and identify the source revision.</li>"
+        "<li>Add up to eight overlays, keeping each metre interval inside the "
+        "base domain and every region, precedence, and surface ID unique.</li>"
+        "<li>Validate and inspect the canonical request readback. Errors preserve "
+        "the draft so the reported field can be corrected.</li></ol>"
+        "<h3>Tips and qualification</h3><p>This first slice is an unvalidated, "
+        "session-only "
+        "request editor. It does not execute ground physics or playback, and it "
+        "does not persist model inputs. Geometry is fixed to the target frame as "
+        "flat, static, and coplanar because those are the regional v1 limits.</p>",
+    ),
     "launch_monitor_analytics": _entry(
         "Launch Monitor Analytics",
         "<h3>What this tab does</h3>"
