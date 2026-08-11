@@ -54,7 +54,7 @@ class _WholeFieldSpinBox(QDoubleSpinBox):
             and event.type() is QEvent.Type.MouseButtonPress
         ):
             QTimer.singleShot(0, self._select_number)
-        return super().eventFilter(watched, event)
+        return bool(super().eventFilter(watched, event))
 
     def _select_number(self) -> None:
         line_edit = self.lineEdit()
@@ -176,7 +176,7 @@ class BallSetupControl(HeightForWidthGroupBox):
 
     def status_text(self) -> str:
         """Return the visible setup explanation."""
-        return self._status.text()
+        return str(self._status.text())
 
     def _apply_setup(self, setup: BallSetup) -> None:
         self._updating = True
