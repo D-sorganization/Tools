@@ -3,6 +3,40 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 Ground/Tee parity child receives repaired parent
+
+Ready PR `#4325` keeps branch `feat/4143-tee-parity-fixture` and base
+`feat/4181-launch-monitor-registry`. It normally merges exact repaired parent
+head `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` without any production/test
+code conflict or history rewrite. Shared parity and rendered-evidence
+contracts remain intact; fresh protected CI, review, dependency order, and
+#4143 release remain open.
+
+## 2026-08-10 #4143 Python/React Golden Ball-Setup Parity
+
+The isolated `feat/4143-tee-parity-fixture` child begins at exact draft PR
+#4203 head `31cbc007d4c85b5479b7cd0fb0969124eab2af67`. One versioned JSON fixture now
+drives both Python and React ball-support tests with explicit SI units and the
+ground-plane-to-ball-bottom height reference. The shared cases cover Driver
+and non-Driver defaults, user overrides, Ground zero effective height,
+derived ball-center geometry and serialization, negative/NaN/infinite height
+rejection, and backward-compatible migration of a legacy run without
+`ball_setup`.
+
+Evidence is 18 passing Python tee/parity tests and 24 passing React
+tee/persistence/parity tests, plus green TypeScript, ESLint, Vite production
+build, Ruff check, and Ruff format. Production model and UI code are unchanged.
+Recorded visual evidence now adds 1600 x 1200 Playwright Driver/Tee and
+rerun-Ground captures plus 1400 x 900 hidden-window PyQt captures. The browser
+run asserts control state, diagram geometry, and zero console/page errors; the
+desktop run asserts canonical center/artist state, nonblank output, and
+different Ground/Tee digests without pixel absolutes. The exact artifacts and
+versioned manifests are in
+`C:\Users\diete\AppData\Local\Temp\rate-4143-visual-evidence-8050eeba`.
+Do not close #4143: protected current-head CI/review and release to `main`
+remain. This exact parent predates the strict campaign manifest on a divergent
+branch, so no downstream manifest was copied into this bounded child.
+
 ## 2026-08-10 Second D-Plane Parent Repair Propagation
 
 Draft PR `#4203` keeps base `feat/4189-dplane` and normally merges exact
