@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 remote automation reconciliation for workspace PR #4279
+
+- Exact local workspace head `0b22c401a26c31441a599d8d9b39de123706e7ea`
+  ordinarily merges exact remote head
+  `61fe2d556a5413e525d958612ccfd57e65b8d5a2`, preserving both histories and
+  the existing PR base `feat/4181-launch-monitor-registry` without rebase,
+  reset, retarget, force-push, or parent rewrite.
+- The remote commit is a broad formatting-only automation sweep. Fifteen of
+  its 23 paths, including six pre-existing `.codex-worktrees` gitlinks, were
+  already byte-identical in the current parent. Its seven unique formatting
+  edits did not match protected Ruff 0.14.10 output and are normalized back to
+  the pinned form. Its sole content conflict was obsolete pre-split kinetics
+  code; the current `pendulum.sample(...)` façade implementation remains
+  authoritative, preserving the parent split and runtime behavior.
+- Workspace/toolstrip, module visibility, navigation, playback, independent
+  plots, physics, frames, units, schemas, and public contracts remain intact.
+  This history-preserving local reconciliation still requires independent
+  review, exact-head protected CI, unresolved-thread checks, and dependency
+  gates before publication or merge.
+
 ## 2026-08-11 hosted MyPy repair propagation into workspace PR #4279
 
 - Exact workspace child `7806a16f58e1c6999d32f0127a187fbb21f839a1`

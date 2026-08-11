@@ -1,5 +1,26 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 remote automation reconciliation for workspace PR #4279
+
+- PR `#4279` remains on `feat/4218-toolstrip-workspace`, based on
+  `feat/4181-launch-monitor-registry`. Exact local head
+  `0b22c401a26c31441a599d8d9b39de123706e7ea` ordinarily merges exact remote
+  head `61fe2d556a5413e525d958612ccfd57e65b8d5a2`; both histories and every
+  commit remain reachable without reset, rebase, force-push, retarget, or
+  parent rewrite.
+- The remote automation commit spans 23 paths but is formatting-only. Fifteen
+  paths were already byte-identical through the current parent, including its
+  six existing `.codex-worktrees` gitlinks. Its seven unique formatting edits
+  do not match protected Ruff 0.14.10 output and are normalized back to the
+  pinned form. The sole content conflict was between obsolete pre-split
+  kinetics source and the current façade; resolution retains the current
+  `pendulum.sample(...)` implementation and parent module split.
+- No workspace/toolstrip feature code is lost. Module visibility, navigation,
+  granular playback, independent plots, physics, frames, units, schemas, and
+  public contracts remain unchanged. Fresh exact-head protected CI,
+  independent review, unresolved-thread checks, dependency order, and normal
+  publication are still required; this local merge is not a release claim.
+
 ## 2026-08-11 hosted MyPy repair propagation into workspace PR #4279
 
 - PR `#4279` remains on `feat/4218-toolstrip-workspace`, based on

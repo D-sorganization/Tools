@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 Remote workspace history reconciled locally
+
+PR `#4279` retains branch `feat/4218-toolstrip-workspace` and base
+`feat/4181-launch-monitor-registry`. Exact local head
+`0b22c401a26c31441a599d8d9b39de123706e7ea` ordinarily merges divergent
+remote head `61fe2d556a5413e525d958612ccfd57e65b8d5a2`, preserving every commit in
+both histories. The remote automation commit is formatting-only: 15 of 23
+paths were already identical through the parent, while its seven unique edits
+are normalized back to protected Ruff 0.14.10 output. Its one content conflict
+referenced the obsolete pre-split kinetics implementation. The reconciled tree
+keeps the current `pendulum.sample(...)` façade path and therefore preserves
+the kinetics split, physics, frames, units, imports, schemas, and UI behavior. Workspace/toolstrip,
+visibility, navigation, playback, and independent plot behavior are unchanged.
+Publication remains blocked on independent review, fresh exact-head protected
+CI, unresolved-thread checks, and dependency order.
+
 ## 2026-08-11 Workspace child receives hosted MyPy repair
 
 PR `#4279` retains branch `feat/4218-toolstrip-workspace` and base

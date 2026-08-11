@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.15                                    |
-| **Spec Version**        | 1.14.15                                    |
+| **Current Version**     | 1.14.16                                    |
+| **Spec Version**        | 1.14.16                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -2914,6 +2914,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.16 | merge(rate-of-closure, #4279): ordinarily reconcile exact local workspace/toolstrip head `0b22c401a26c31441a599d8d9b39de123706e7ea` with divergent remote automation head `61fe2d556a5413e525d958612ccfd57e65b8d5a2`, preserving every commit and the existing stack topology; recognize 15 already-identical parent paths, normalize seven incompatible formatting edits back to protected Ruff 0.14.10 output, and resolve the sole obsolete pre-split kinetics conflict in favor of the current `pendulum.sample(...)` façade implementation; preserve workspace, toolstrip, visibility, navigation, playback, independent plots, physics, frames, units, schemas, and public contracts; require independent review and fresh exact-head protected CI before publication. |
 | 2026-08-11 | 1.14.15 | merge(rate-of-closure, #4203 #4279): normally propagate exact published launch-registry parent `3796b49e40b677fbac4e05739f8be49f905df2cb` into exact workspace/toolstrip child `7806a16f58e1c6999d32f0127a187fbb21f839a1` without rewriting stack topology; inherit only four static NumPy-array casts while preserving runtime arrays, physics, frames, units, public contracts, workspace behavior, and UI behavior; require fresh current-head protected CI and review. |
 | 2026-08-11 | 1.14.14 | merge(rate-of-closure, #4203 #4279): normally propagate exact launch-registry parent `0216a547aa79727091a2939b96e779e8ddbd7304` into the workspace/toolstrip child without rewriting stack topology; preserve the child's workspace, toolstrip, module-visibility, navigation, playback, and independent-plot behavior while inheriting the parent's identity-preserving kinetics split and pinned formatting repair; require fresh current-head protected CI and review. |
 | 2026-08-11 | 1.14.14 | fix(rate-of-closure, #4203): close four hosted MyPy `no-any-return` findings from the kinetics size split with explicit NumPy-array return narrowing at force-norm, RK4 concatenation, and app-frame projection boundaries; preserve exact runtime arrays, physics, frames, units, public contracts, and stack order. |
