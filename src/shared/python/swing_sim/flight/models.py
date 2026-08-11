@@ -15,9 +15,10 @@ import math
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import cast
+from typing import TypeAlias
 
 import numpy as np
+from numpy.typing import NDArray
 from scipy.integrate import solve_ivp
 
 from ._constants import (
@@ -33,12 +34,14 @@ from .types import (
     compute_flight_metrics,
 )
 
+FloatArray: TypeAlias = NDArray[np.float64]
+
 
 def _capped_lift_coefficient(value: float) -> float:
     """Return a physically bounded golf-ball lift coefficient."""
     if value <= 0.0:
         return 0.0
-    return min(MAX_GOLF_BALL_LIFT_COEFFICIENT, value)
+    return float(min(float(MAX_GOLF_BALL_LIFT_COEFFICIENT), value))
 
 
 def _spin_ratio_lift_coefficient(spin_ratio: float, max_coefficient: float) -> float:
@@ -83,7 +86,7 @@ class BallFlightModel(ABC):
     def _run_ode_simulation(
         self,
         launch: LaunchConditions,
-        deriv_func: Callable[[float, np.ndarray], np.ndarray],
+        deriv_func: Callable[[float, FloatArray], FloatArray],
         max_time: float,
         dt: float,
     ) -> FlightResult:
@@ -98,9 +101,11 @@ class BallFlightModel(ABC):
         if not (math.isfinite(dt) and dt > 0.0):
             raise ValueError(f"dt must be finite and > 0; got {dt!r}")
         v0 = launch.get_initial_velocity()
-        y0 = np.array([0.0, 0.0, 0.0, v0[0], v0[1], v0[2]])
+        y0: FloatArray = np.array(
+            [0.0, 0.0, 0.0, v0[0], v0[1], v0[2]], dtype=np.float64
+        )
 
-        def ground_ev(t: float, y: np.ndarray) -> float:
+        def ground_ev(t: float, y: FloatArray) -> float:
             """Return the ball height for ground-contact event detection."""
             return float(y[2])
 
@@ -172,16 +177,17 @@ class WaterlooPennerModel(BallFlightModel):
         wind_v = launch.get_wind_vector()
         area = math.pi * launch.ball_radius**2
 
-        def derivatives(t: float, y: np.ndarray) -> np.ndarray:
+        def derivatives(t: float, y: FloatArray) -> FloatArray:
             """Compute state derivatives using quadratic Cd/Cl aerodynamics."""
             if t is None:
                 raise ValueError("t must be provided")
-            v_val = cast(np.ndarray, y[3:])
+            v_val = y[3:]
             v_rel = v_val - wind_v
             speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
             if speed < MIN_SPEED_THRESHOLD_M_S:
                 return np.array(
-                    [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity]
+                    [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity],
+                    dtype=np.float64,
                 )
 
             vu = v_rel / speed
@@ -208,7 +214,10 @@ class WaterlooPennerModel(BallFlightModel):
                     ) * (cross / cross_norm)
 
             acc[2] -= launch.gravity
-            return np.array([v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]])
+            return np.array(
+                [v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]],
+                dtype=np.float64,
+            )
 
         return self._run_ode_simulation(launch, derivatives, max_time, dt)
 
@@ -251,16 +260,17 @@ class MacDonaldHanzelyModel(BallFlightModel):
         area = math.pi * launch.ball_radius**2
         k_drag = 0.5 * launch.air_density * area * self.cd / launch.ball_mass
 
-        def derivatives(t: float, y: np.ndarray) -> np.ndarray:
+        def derivatives(t: float, y: FloatArray) -> FloatArray:
             """Compute state derivatives with exponential spin decay."""
             if t is None:
                 raise ValueError("t must be provided")
-            v_val = cast(np.ndarray, y[3:])
+            v_val = y[3:]
             v_rel = v_val - wind_v
             speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
             if speed < MIN_SPEED_THRESHOLD_M_S:
                 return np.array(
-                    [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity]
+                    [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity],
+                    dtype=np.float64,
                 )
 
             omega = omega_0 * math.exp(-self.decay * t)
@@ -283,7 +293,10 @@ class MacDonaldHanzelyModel(BallFlightModel):
                     ) * (cross / cross_norm)
 
             acc[2] -= launch.gravity
-            return np.array([v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]])
+            return np.array(
+                [v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]],
+                dtype=np.float64,
+            )
 
         return self._run_ode_simulation(launch, derivatives, max_time, dt)
 
@@ -345,16 +358,17 @@ class ConstantCoefficientModel(BallFlightModel):
         area = math.pi * launch.ball_radius**2
         k_drag = 0.5 * launch.air_density * area * self._spec.cd / launch.ball_mass
 
-        def derivatives(t: float, y: np.ndarray) -> np.ndarray:
+        def derivatives(t: float, y: FloatArray) -> FloatArray:
             """Compute state derivatives with constant coefficients and decay."""
             if t is None:
                 raise ValueError("t must be provided")
-            v_val = cast(np.ndarray, y[3:])
+            v_val = y[3:]
             v_rel = v_val - wind_v
             speed = math.hypot(v_rel[0], v_rel[1], v_rel[2])
             if speed < MIN_SPEED_THRESHOLD_M_S:
                 return np.array(
-                    [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity]
+                    [v_val[0], v_val[1], v_val[2], 0.0, 0.0, -launch.gravity],
+                    dtype=np.float64,
                 )
 
             omega = omega_0 * math.exp(-self._spec.spin_decay * t)
@@ -377,7 +391,10 @@ class ConstantCoefficientModel(BallFlightModel):
                     ) * (cross / cross_norm)
 
             acc[2] -= launch.gravity
-            return np.array([v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]])
+            return np.array(
+                [v_val[0], v_val[1], v_val[2], acc[0], acc[1], acc[2]],
+                dtype=np.float64,
+            )
 
         return self._run_ode_simulation(launch, derivatives, max_time, dt)
 

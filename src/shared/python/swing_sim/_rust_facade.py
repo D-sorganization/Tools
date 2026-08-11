@@ -16,13 +16,16 @@ PyO3 submodule (an attribute, not a filesystem module), so we must use
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import Any, TypeAlias
 
 import numpy as np
+from numpy.typing import NDArray
 
 from .types import PendulumParameters, PendulumState
 
 logger = logging.getLogger(__name__)
+
+FloatArray: TypeAlias = NDArray[np.float64]
 
 _MISSING_WHEEL_MESSAGE = (
     "swing_core Rust extension is not installed; the swing integration hot "
@@ -71,13 +74,14 @@ def _to_rust_state(s: PendulumState) -> Any:
     return rust.PendulumState(s.theta1, s.theta2, s.omega1, s.omega2)
 
 
-def plane_rotation_rust(yaw: float, side_tilt: float, fwd_tilt: float) -> np.ndarray:
+def plane_rotation_rust(yaw: float, side_tilt: float, fwd_tilt: float) -> FloatArray:
     """World-from-plane rotation matrix (3x3) — Rust path."""
     rust = _require_rust()
-    return np.asarray(
+    rotation: FloatArray = np.asarray(
         rust.plane_rotation(float(yaw), float(side_tilt), float(fwd_tilt)),
         dtype=np.float64,
     )
+    return rotation
 
 
 def in_plane_gravity_rust(
@@ -122,7 +126,7 @@ def simulate_rust(
     g_inplane: tuple[float, float],
     dt: float,
     n_steps: int,
-) -> np.ndarray:
+) -> FloatArray:
     """Simulate ``n_steps`` RK4 steps — Rust path (hot loop).
 
     Returns an ``(n_steps + 1, 4)`` array of rows
@@ -141,7 +145,10 @@ def simulate_rust(
         float(dt),
         int(n_steps),
     )
-    return np.asarray(flat, dtype=np.float64).reshape(int(n_steps) + 1, 4)
+    trajectory: FloatArray = np.asarray(flat, dtype=np.float64).reshape(
+        int(n_steps) + 1, 4
+    )
+    return trajectory
 
 
 def total_energy_rust(

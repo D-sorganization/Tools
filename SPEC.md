@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.4                                     |
-| **Spec Version**        | 1.13.4                                     |
+| **Current Version**     | 1.13.5                                     |
+| **Spec Version**        | 1.13.5                                     |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,19 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-10 Shared swing-core typed numerical boundaries
+
+- Shared flight, impact, swing-source, reference-integrator, torque-fitting,
+  and solver-objective APIs declare float64 NumPy array contracts rather than
+  propagating unparameterized ndarray `Any` values.
+- Dynamic Rust-extension, configuration, and imported model values are
+  normalized only where they cross into typed Python code. The refinement is
+  static-contract-only: equations, frame conventions, units, integration
+  order, and runtime outputs are unchanged.
+- The scoped contract must remain clean under CI-pinned Mypy 2.3.0 without
+  blanket ignores, while the directly related flight/impact/swing/solver
+  behavior suites remain green.
+
 ### 2026-08-10 Rate of Closure root-launch reliability
 
 - The React launcher remains executable both as a module and through the
@@ -2561,6 +2574,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | Date | Version | Changes |
 | ---- | ------- | ------- |
 | 2026-08-10 | 1.13.4 | fix(types, #4119): make Rate UI/kinetics and shared variation NumPy/scalar boundaries explicit and add a validated `ImpactGoal.from_mapping` path for dynamic UI target dictionaries, resolving changed-file Mypy findings without changing model values. |
+| 2026-08-10 | 1.13.5 | fix(swing_sim, #4119): replace unparameterized shared-core ndarray contracts with explicit float64 arrays and normalize scalars at dynamic Rust/config/model boundaries; clear the CI-pinned findings across the flight/impact/swing/reference/solver slice plus a newer-Mypy solver return finding, without ignores or runtime-physics changes. |
 | 2026-08-10 | 1.13.4 | style(repo, #4119): mechanically normalize 101 Python files with the repository's authoritative Ruff formatter after the current-main reconciliation exposed legacy drift; repository-wide Ruff lint and format checks are clean, with no behavior or domain-contract change. |
 | 2026-08-10 | 1.13.4 | refactor(rate_of_closure, #4119): split `ClubCanvas` mesh transformation, painter sorting, lighting, projected primitives, and velocity-arrow rendering into a focused tested module, bringing every production file below the 400-line cap without changing playback or rendered geometry. |
 | 2026-08-10 | 1.13.4 | fix(ci): name the intentionally retained QApplication references in Sidekick GUI tests with an underscore, removing nine Ruff F841 failures that blocked the required quality gate after the Rate root merged current `main`. |

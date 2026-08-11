@@ -111,7 +111,7 @@ def fit_torque_polynomial(
         condition_number=condition_number,
         original_sample_sha256=_sample_sha256(times, torques),
     )
-    coefficients_array = np.zeros(degree + 1, dtype=np.float64)
+    coefficients_array: NDArray[np.float64] = np.zeros(degree + 1, dtype=np.float64)
     coefficients_array[: len(physical.coef)] = physical.coef
     coefficients = tuple(float(value) for value in coefficients_array)
     return TorquePolynomial(coefficients, metadata)

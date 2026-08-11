@@ -15,8 +15,10 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
+from typing import TypeAlias
 
 import numpy as np
+from numpy.typing import NDArray
 
 from shared.python.contracts import require
 
@@ -25,8 +27,10 @@ from .types import PendulumParameters, PendulumState
 MASS_MATRIX_SINGULAR_TOLERANCE = 1e-12
 """Numerical tolerance for detecting singular mass matrices."""
 
+FloatArray: TypeAlias = NDArray[np.float64]
 
-def plane_rotation(yaw: float, side_tilt: float, fwd_tilt: float) -> np.ndarray:
+
+def plane_rotation(yaw: float, side_tilt: float, fwd_tilt: float) -> FloatArray:
     """World-from-plane rotation matrix ``Rz(yaw) @ Rx(side) @ Ry(fwd)``.
 
     Columns are the plane's local axes in world coordinates: column 0 =
@@ -38,13 +42,20 @@ def plane_rotation(yaw: float, side_tilt: float, fwd_tilt: float) -> np.ndarray:
     cy, sy = math.cos(yaw), math.sin(yaw)
     cs, ss = math.cos(side_tilt), math.sin(side_tilt)
     cf, sf = math.cos(fwd_tilt), math.sin(fwd_tilt)
-    rz = np.array([[cy, -sy, 0.0], [sy, cy, 0.0], [0.0, 0.0, 1.0]])
-    rx = np.array([[1.0, 0.0, 0.0], [0.0, cs, -ss], [0.0, ss, cs]])
-    ry = np.array([[cf, 0.0, sf], [0.0, 1.0, 0.0], [-sf, 0.0, cf]])
-    return np.asarray(rz @ rx @ ry)
+    rz: FloatArray = np.array(
+        [[cy, -sy, 0.0], [sy, cy, 0.0], [0.0, 0.0, 1.0]], dtype=np.float64
+    )
+    rx: FloatArray = np.array(
+        [[1.0, 0.0, 0.0], [0.0, cs, -ss], [0.0, ss, cs]], dtype=np.float64
+    )
+    ry: FloatArray = np.array(
+        [[cf, 0.0, sf], [0.0, 1.0, 0.0], [-sf, 0.0, cf]], dtype=np.float64
+    )
+    rotation: FloatArray = np.asarray(rz @ rx @ ry, dtype=np.float64)
+    return rotation
 
 
-def in_plane_gravity(plane_r: np.ndarray, g: float) -> tuple[float, float]:
+def in_plane_gravity(plane_r: FloatArray, g: float) -> tuple[float, float]:
     """Project world gravity ``(0, 0, -g)`` into the swing plane.
 
     Returns ``(g_x_inplane, g_y_inplane)`` along the plane's local
@@ -66,13 +77,13 @@ def in_plane_gravity_from_tilts(
     return in_plane_gravity(plane_rotation(yaw, side_tilt, fwd_tilt), g)
 
 
-def mass_matrix(p: PendulumParameters, theta2: float) -> np.ndarray:
+def mass_matrix(p: PendulumParameters, theta2: float) -> FloatArray:
     """Symmetric 2x2 mass matrix for the given relative angle."""
     cos_theta2 = math.cos(theta2)
     m11 = p.i1 + p.i2 + p.m2 * p.l1 * p.l1 + 2.0 * p.m2 * p.l1 * p.lc2 * cos_theta2
     m12 = p.i2 + p.m2 * p.l1 * p.lc2 * cos_theta2
     m22 = p.i2
-    return np.array([[m11, m12], [m12, m22]])
+    return np.array([[m11, m12], [m12, m22]], dtype=np.float64)
 
 
 def coriolis_vector(
@@ -114,7 +125,7 @@ def damping_vector(
     return p.d1 * omega1, p.d2 * omega2
 
 
-def _invert_mass_matrix(p: PendulumParameters, theta2: float) -> np.ndarray:
+def _invert_mass_matrix(p: PendulumParameters, theta2: float) -> FloatArray:
     m = mass_matrix(p, theta2)
     det = m[0, 0] * m[1, 1] - m[0, 1] * m[1, 0]
     require(
@@ -122,7 +133,10 @@ def _invert_mass_matrix(p: PendulumParameters, theta2: float) -> np.ndarray:
         "mass matrix determinant too close to zero; check pendulum parameters",
         det,
     )
-    return np.array([[m[1, 1] / det, -m[0, 1] / det], [-m[1, 0] / det, m[0, 0] / det]])
+    return np.array(
+        [[m[1, 1] / det, -m[0, 1] / det], [-m[1, 0] / det, m[0, 0] / det]],
+        dtype=np.float64,
+    )
 
 
 def derivatives(
@@ -368,14 +382,14 @@ def simulate(
     g_inplane: tuple[float, float],
     dt: float,
     n_steps: int,
-) -> np.ndarray:
+) -> FloatArray:
     """Simulate ``n_steps`` RK4 steps.
 
     Returns an ``(n_steps + 1, 4)`` array of rows
     ``[theta1, theta2, omega1, omega2]`` including the initial state.
     """
     require(n_steps >= 0, "n_steps must be >= 0", n_steps)
-    out = np.empty((n_steps + 1, 4), dtype=np.float64)
+    out: FloatArray = np.empty((n_steps + 1, 4), dtype=np.float64)
     out[0] = (initial.theta1, initial.theta2, initial.omega1, initial.omega2)
     current = initial
     for i in range(n_steps):
@@ -391,11 +405,11 @@ def simulate_forced(
     dt: float,
     n_steps: int,
     torque_at: Callable[[float], tuple[float, float]],
-) -> np.ndarray:
+) -> FloatArray:
     """Simulate prescribed generalized torques on the existing RK4 grid."""
     require(n_steps >= 0, "n_steps must be >= 0", n_steps)
     require(callable(torque_at), "torque_at must be callable", torque_at)
-    out = np.empty((n_steps + 1, 4), dtype=np.float64)
+    out: FloatArray = np.empty((n_steps + 1, 4), dtype=np.float64)
     out[0] = (initial.theta1, initial.theta2, initial.omega1, initial.omega2)
     current = initial
     for i in range(n_steps):
@@ -412,12 +426,12 @@ def simulate_locked(
     n_steps: int,
     torque_at: Callable[[float], tuple[float, float]],
     locked: tuple[bool, bool],
-) -> np.ndarray:
+) -> FloatArray:
     """Simulate ideal locked coordinates with optional prescribed torques."""
     require(n_steps >= 0, "n_steps must be >= 0", n_steps)
     require(callable(torque_at), "torque_at must be callable", torque_at)
     derivatives_locked(p, initial, g_inplane, torque_at(0.0), locked)
-    out = np.empty((n_steps + 1, 4), dtype=np.float64)
+    out: FloatArray = np.empty((n_steps + 1, 4), dtype=np.float64)
     out[0] = (initial.theta1, initial.theta2, initial.omega1, initial.omega2)
     current = initial
     for i in range(n_steps):

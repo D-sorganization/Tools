@@ -39,7 +39,11 @@ formatted files became part of the changed-file set. Rate UI/kinetics and the
 shared variation group now have explicit NumPy/scalar boundary types, and
 dynamic solver goal dictionaries flow through the validated
 `ImpactGoal.from_mapping` constructor. Focused solver/GUI/kinetics tests (90)
-and variation tests (103) pass; these repairs do not change model values.
+and variation tests (103) pass. The integrated shared-core slice clears its 42
+findings with explicit float64 array contracts; 315 related tests pass with
+five expected missing-Rust-wheel skips. These repairs add no ignores and do
+not change model values or physics equations. The final Rate model/mesh slice
+must still be integrated before protected CI is evaluated again.
 
 After the root lands, preserve dependency order. The highest-value remaining
 UI slice is #4225's actual multi-viewport compositor; #4224 still needs

@@ -15,8 +15,10 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
+from typing import TypeAlias
 
 import numpy as np
+from numpy.typing import NDArray
 
 from ._constants import (
     AIR_DENSITY_SEA_LEVEL_KG_M3,
@@ -30,6 +32,8 @@ from ._constants import (
 
 DEFAULT_BACKSPIN_AXIS = (0.0, -1.0, 0.0)
 """Pure-backspin unit axis in the flight frame (x fwd / y left / z up)."""
+
+FloatArray: TypeAlias = NDArray[np.float64]
 
 
 @dataclass(frozen=True)
@@ -124,15 +128,20 @@ class LaunchConditions:
             wind_direction=math.radians(wind_direction_deg),
         )
 
-    def get_initial_velocity(self) -> np.ndarray:
+    def get_initial_velocity(self) -> FloatArray:
         """Compute the 3D initial velocity vector from launch angles and speed."""
         ca, sa = math.cos(self.azimuth_angle), math.sin(self.azimuth_angle)
         cv, sv = math.cos(self.launch_angle), math.sin(self.launch_angle)
         return np.array(
-            [self.ball_speed * cv * ca, self.ball_speed * cv * sa, self.ball_speed * sv]
+            [
+                self.ball_speed * cv * ca,
+                self.ball_speed * cv * sa,
+                self.ball_speed * sv,
+            ],
+            dtype=np.float64,
         )
 
-    def get_spin_vector(self) -> np.ndarray:
+    def get_spin_vector(self) -> FloatArray:
         """Compute the 3D spin vector [rad/s] in the flight frame.
 
         When ``spin_axis`` is set, returns ``omega * spin_axis``; otherwise
@@ -141,7 +150,7 @@ class LaunchConditions:
         """
         omega = self.spin_rate * RPM_TO_RAD_S
         if self.spin_axis is not None:
-            return omega * np.asarray(self.spin_axis, dtype=float)
+            return omega * np.asarray(self.spin_axis, dtype=np.float64)
         backspin = omega * math.cos(self.spin_axis_angle)
         sidespin = omega * math.sin(self.spin_axis_angle)
         return np.array(
@@ -149,17 +158,19 @@ class LaunchConditions:
                 sidespin * math.sin(self.azimuth_angle),
                 -backspin,
                 sidespin * math.cos(self.azimuth_angle),
-            ]
+            ],
+            dtype=np.float64,
         )
 
-    def get_wind_vector(self) -> np.ndarray:
+    def get_wind_vector(self) -> FloatArray:
         """Compute the 3D wind velocity vector from speed and direction."""
         return np.array(
             [
                 -self.wind_speed * math.cos(self.wind_direction),
                 -self.wind_speed * math.sin(self.wind_direction),
                 0.0,
-            ]
+            ],
+            dtype=np.float64,
         )
 
 
@@ -168,8 +179,8 @@ class TrajectoryPoint:
     """Single point in a flight trajectory (flight frame, SI units)."""
 
     time: float
-    position: np.ndarray = field(repr=False)
-    velocity: np.ndarray = field(repr=False)
+    position: FloatArray = field(repr=False)
+    velocity: FloatArray = field(repr=False)
 
     def __post_init__(self) -> None:
         """Coerce vectors to float arrays and validate shapes/finiteness."""
@@ -207,11 +218,11 @@ class FlightResult:
         """Normalise the trajectory container to a tuple."""
         object.__setattr__(self, "trajectory", tuple(self.trajectory))
 
-    def to_position_array(self) -> np.ndarray:
+    def to_position_array(self) -> FloatArray:
         """Convert trajectory to an Nx3 position array."""
         if not self.trajectory:
-            return np.zeros((0, 3))
-        return np.array([p.position for p in self.trajectory])
+            return np.zeros((0, 3), dtype=np.float64)
+        return np.asarray([p.position for p in self.trajectory], dtype=np.float64)
 
 
 def compute_flight_metrics(
@@ -230,7 +241,7 @@ def compute_flight_metrics(
     if not points:
         return FlightResult((), model_name)
 
-    pos = np.array([p.position for p in points])
+    pos: FloatArray = np.asarray([p.position for p in points], dtype=np.float64)
     carry = math.hypot(float(pos[-1, 0]), float(pos[-1, 1]))
     max_h = float(np.max(pos[:, 2]))
     time = points[-1].time

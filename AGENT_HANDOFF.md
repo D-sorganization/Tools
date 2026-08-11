@@ -39,9 +39,13 @@
   inspect legacy Rate/shared numerical boundaries. The Rate UI, kinetics,
   solver-goal, and variation groups now use explicit NumPy result types and
   scalar conversions; dynamic UI goals use `ImpactGoal.from_mapping` instead
-  of an unsafe `**dict`. These are type-contract repairs with focused tests and
-  no numerical behavior change; the remaining shared/core groups are being
-  repaired on isolated branches before the next protected push.
+  of an unsafe `**dict`. The integrated shared flight/impact/swing/reference/
+  solver group adds explicit float64 array contracts and narrow normalization
+  at dynamic Rust/config/model boundaries. Together these repairs clear 112 of
+  the 132 protected findings; 315 shared-core tests pass with five expected
+  Rust-wheel skips, plus 90 UI/kinetics and 103 variation tests. No blanket
+  ignores or numerical behavior changes were introduced; the final Rate
+  model/mesh group remains isolated until review and integration.
 - Before release, push the merge normally, verify the new exact PR head, wait
   for protected CI, resolve only the addressed review threads with linked
   evidence, obtain the required approval, and merge through ordinary branch

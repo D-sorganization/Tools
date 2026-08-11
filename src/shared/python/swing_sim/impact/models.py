@@ -32,8 +32,10 @@ from __future__ import annotations
 
 import math
 from abc import ABC, abstractmethod
+from typing import TypeAlias
 
 import numpy as np
+from numpy.typing import NDArray
 
 from shared.python.contracts import precondition, require, require_finite
 
@@ -61,20 +63,22 @@ from .types import ImpactModelType, ImpactParameters, PostImpactState, PreImpact
 # Am. J. Phys. 70, 1093 (2002).
 SPHERE_ROLLING_CAP_FACTOR = 2.0 / 7.0
 
+FloatArray: TypeAlias = NDArray[np.float64]
+
 _DEFAULT_REFERENCE_UP = np.array([0.0, 1.0, 0.0])
 _FALLBACK_REFERENCE_UP = np.array([0.0, 0.0, 1.0])
 
 
-def _norm(vector: np.ndarray) -> float:
+def _norm(vector: FloatArray) -> float:
     """Euclidean norm of a small vector."""
-    flat = np.asarray(vector, dtype=float).reshape(-1)
+    flat: FloatArray = np.asarray(vector, dtype=np.float64).reshape(-1)
     return 0.0 if flat.size == 0 else float(math.sqrt(float(np.dot(flat, flat))))
 
 
 def face_basis(
-    face_normal: np.ndarray,
-    reference_up: np.ndarray | None = None,
-) -> tuple[np.ndarray, np.ndarray]:
+    face_normal: FloatArray,
+    reference_up: FloatArray | None = None,
+) -> tuple[FloatArray, FloatArray]:
     """Return the (toe_axis, up_axis) face-plane basis for a face normal.
 
     ``up_axis`` is the projection of ``reference_up`` (default world up,
@@ -110,10 +114,10 @@ def face_basis(
 
 
 def offset_to_face_vector(
-    impact_offset: np.ndarray,
-    face_normal: np.ndarray,
-    reference_up: np.ndarray | None = None,
-) -> np.ndarray:
+    impact_offset: FloatArray,
+    face_normal: FloatArray,
+    reference_up: FloatArray | None = None,
+) -> FloatArray:
     """Lift a 2-D face offset [horizontal, vertical] to a 3-D vector.
 
     The result lies in the face plane:
@@ -130,7 +134,7 @@ def offset_to_face_vector(
     offset = np.asarray(impact_offset, dtype=float).reshape(-1)
     require(offset.size == 2, "impact_offset must have exactly 2 components")
     toe_axis, up_axis = face_basis(face_normal, reference_up)
-    lifted: np.ndarray = offset[0] * toe_axis + offset[1] * up_axis
+    lifted: FloatArray = offset[0] * toe_axis + offset[1] * up_axis
     return lifted
 
 
@@ -164,7 +168,7 @@ class RigidBodyImpactModel(ImpactModel):
         """
         if pre_state is None:
             raise ValueError("pre_state must be provided")
-        m_club = pre_state.clubhead_mass
+        m_club = float(pre_state.clubhead_mass)
         if pre_state.impact_offset is None:
             return m_club
 
@@ -182,14 +186,15 @@ class RigidBodyImpactModel(ImpactModel):
             angular_term = float(r_cross_n @ np.linalg.solve(tensor, r_cross_n))
             return 1.0 / (1.0 / m_club + angular_term)
 
-        if pre_state.clubhead_moi > 0:
-            return 1.0 / (1.0 / m_club + r_offset**2 / pre_state.clubhead_moi)
+        clubhead_moi = float(pre_state.clubhead_moi)
+        if clubhead_moi > 0:
+            return 1.0 / (1.0 / m_club + r_offset**2 / clubhead_moi)
         return m_club
 
     def _compute_impulse(
         self,
-        v_rel: np.ndarray,
-        n: np.ndarray,
+        v_rel: FloatArray,
+        n: FloatArray,
         m_club_effective: float,
         cor: float,
     ) -> tuple[float, float]:
@@ -206,19 +211,22 @@ class RigidBodyImpactModel(ImpactModel):
     def _compute_friction_spin(
         self,
         pre_state: PreImpactState,
-        v_rel: np.ndarray,
+        v_rel: FloatArray,
         v_approach: float,
-        n: np.ndarray,
+        n: FloatArray,
         j: float,
         friction_coefficient: float,
-    ) -> np.ndarray:
+    ) -> FloatArray:
         """Ball spin after the Coulomb friction impulse (2/7 rolling cap)."""
         if pre_state is None:
             raise ValueError("pre_state must be provided")
+        base_spin: FloatArray = np.asarray(
+            pre_state.ball_angular_velocity, dtype=np.float64
+        )
         v_tangent = v_rel - v_approach * n
         tangent_mag = _norm(v_tangent)
         if tangent_mag <= 1e-6:
-            return pre_state.ball_angular_velocity.copy()
+            return base_spin.copy()
 
         tangent_dir = v_tangent / tangent_mag
         # Spin axis: friction drags the ball's contact surface along the
@@ -232,7 +240,7 @@ class RigidBodyImpactModel(ImpactModel):
         spin_axis = np.cross(tangent_dir, n)
         # Rolling cap relative to contact-point speed (pre-existing spin
         # reduces sliding).
-        omega_contact = float(np.dot(pre_state.ball_angular_velocity, spin_axis))
+        omega_contact = float(np.dot(base_spin, spin_axis))
         v_t_eff = max(0.0, tangent_mag - omega_contact * GOLF_BALL_RADIUS_M)
         # Coulomb friction impulse, capped at the rolling-without-slip
         # impulse for a uniform solid sphere (J_f = m*v_t*2/7, see
@@ -244,25 +252,20 @@ class RigidBodyImpactModel(ImpactModel):
         spin_magnitude = j_friction / (
             GOLF_BALL_MOMENT_OF_INERTIA_KG_M2 / GOLF_BALL_RADIUS_M
         )
-        return pre_state.ball_angular_velocity + spin_magnitude * spin_axis
+        return base_spin + spin_magnitude * spin_axis
 
     def _compute_energy_transfer(
         self,
-        pre_ball_velocity: np.ndarray,
-        post_ball_velocity: np.ndarray,
+        pre_ball_velocity: FloatArray,
+        post_ball_velocity: FloatArray,
     ) -> float:
         """Ball kinetic-energy change across the impact [J]."""
         if pre_ball_velocity is None:
             raise ValueError("pre_ball_velocity must be provided")
-        ke_pre = (
-            0.5
-            * GOLF_BALL_MASS_KG
-            * float(np.dot(pre_ball_velocity, pre_ball_velocity))
-        )
+        ball_mass = float(GOLF_BALL_MASS_KG)
+        ke_pre = 0.5 * ball_mass * float(np.dot(pre_ball_velocity, pre_ball_velocity))
         ke_post = (
-            0.5
-            * GOLF_BALL_MASS_KG
-            * float(np.dot(post_ball_velocity, post_ball_velocity))
+            0.5 * ball_mass * float(np.dot(post_ball_velocity, post_ball_velocity))
         )
         return ke_post - ke_pre
 

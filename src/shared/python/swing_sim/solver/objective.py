@@ -36,8 +36,10 @@ from __future__ import annotations
 import dataclasses
 import math
 from collections.abc import Mapping
+from typing import TypeAlias
 
 import numpy as np
+from numpy.typing import NDArray
 
 from shared.python.contracts import require
 
@@ -82,6 +84,8 @@ _RESIDUAL_SCALES: Mapping[str, float] = {
 
 _MAX_DELIVERY_ANGLE_DEG = 89.0
 _EPS = 1e-12
+
+FloatArray: TypeAlias = NDArray[np.float64]
 
 
 @dataclasses.dataclass(frozen=True)
@@ -176,7 +180,7 @@ def _derive_from_swing(
     return speed, _clamp_angle(path_deg), _clamp_angle(aoa_deg)
 
 
-def _spin_axis_tilt_deg(spin_vector: np.ndarray) -> float:
+def _spin_axis_tilt_deg(spin_vector: FloatArray) -> float:
     """Signed D-plane spin-axis tilt [deg] from an app-frame spin vector.
 
     Same convention as ``delivery.derive_delivery``: pure backspin is the
@@ -285,7 +289,7 @@ def evaluate_candidate(
     partition: VariablePartition,
     goal: ImpactGoal,
     config: EvaluationConfig | None = None,
-) -> np.ndarray:
+) -> FloatArray:
     """Weighted residual vector for a full candidate variable mapping.
 
     This is the Rust-portable seam (see module docstring): pure function,
@@ -309,15 +313,15 @@ def evaluate_candidate(
             )
             / SCALE_CARRY_M
         )
-    return np.array(values)
+    return np.asarray(values, dtype=np.float64)
 
 
 def residuals(
-    x: np.ndarray,
+    x: FloatArray,
     partition: VariablePartition,
     goal: ImpactGoal,
     config: EvaluationConfig | None = None,
-) -> np.ndarray:
+) -> FloatArray:
     """Residual vector for a free-variable vector (driver entry point)."""
     return evaluate_candidate(partition.assemble(x), partition, goal, config)
 

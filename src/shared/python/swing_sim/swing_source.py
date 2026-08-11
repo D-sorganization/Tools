@@ -11,9 +11,10 @@ wheel is absent) and sampled by linear interpolation afterwards.
 from __future__ import annotations
 
 import math
-from typing import Literal, Protocol, runtime_checkable
+from typing import Literal, Protocol, TypeAlias, runtime_checkable
 
 import numpy as np
+from numpy.typing import NDArray
 
 from shared.python.contracts import require
 
@@ -38,6 +39,7 @@ from .types import (
 )
 
 Backend = Literal["auto", "rust", "python"]
+FloatArray: TypeAlias = NDArray[np.float64]
 
 
 def _zero_joint_torques(_time_s: float) -> tuple[float, float]:
@@ -96,10 +98,10 @@ class SwingSource(Protocol):
         ...
 
 
-def _local_axis_rotation(angle: float) -> np.ndarray:
+def _local_axis_rotation(angle: float) -> FloatArray:
     """Rotation about the plane-local normal axis (local y) by ``angle``."""
     c, s = math.cos(angle), math.sin(angle)
-    return np.array([[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]])
+    return np.array([[c, 0.0, s], [0.0, 1.0, 0.0], [-s, 0.0, c]], dtype=np.float64)
 
 
 class DoublePendulumSwing:
@@ -167,11 +169,12 @@ class DoublePendulumSwing:
             config, torque_library, self._duration
         )
 
-        self._plane_r = reference.plane_rotation(
+        self._plane_r: FloatArray = reference.plane_rotation(
             self._plane.yaw_rad, self._plane.side_tilt_rad, self._plane.forward_tilt_rad
         )
         self._g_inplane = reference.in_plane_gravity(self._plane_r, gravity_m_s2)
         self._backend: Backend
+        self._states: FloatArray
 
         if config.joint_locks.has_locks:
             require(
@@ -239,12 +242,17 @@ class DoublePendulumSwing:
     @property
     def joint_ids(self) -> tuple[str, str]:
         """Stable kernel ordering for generalized joint torques."""
-        return DOUBLE_PENDULUM_JOINT_IDS
+        return (
+            str(DOUBLE_PENDULUM_JOINT_IDS[0]),
+            str(DOUBLE_PENDULUM_JOINT_IDS[1]),
+        )
 
     @property
     def locked_joint_ids(self) -> tuple[str, ...]:
         """Stable IDs of ideal coordinate locks active for this trajectory."""
-        return self._run_config.joint_locks.locked_joint_ids
+        return tuple(
+            str(joint_id) for joint_id in self._run_config.joint_locks.locked_joint_ids
+        )
 
     @property
     def parameters(self) -> PendulumParameters:
@@ -274,7 +282,7 @@ class DoublePendulumSwing:
         )
         sample_time = min(max(time_s, 0.0), self._duration)
         values = profile.evaluate(sample_time)
-        return values[SHOULDER_JOINT_ID], values[WRIST_JOINT_ID]
+        return float(values[SHOULDER_JOINT_ID]), float(values[WRIST_JOINT_ID])
 
     def _validate_locked_initial_velocity(self, locks: JointLockConfig) -> None:
         """Reject lock activation that would require an unmodelled impulse."""
@@ -301,7 +309,8 @@ class DoublePendulumSwing:
         sample_time = min(max(t, 0.0), self._duration)
         if self._torque_profile is None:
             return {SHOULDER_JOINT_ID: 0.0, WRIST_JOINT_ID: 0.0}
-        return self._torque_profile.evaluate(sample_time)
+        values = self._torque_profile.evaluate(sample_time)
+        return {str(joint_id): float(torque) for joint_id, torque in values.items()}
 
     def _state_at(self, t: float) -> tuple[float, float, float, float]:
         """Linearly interpolate the joint state at time ``t``."""
@@ -331,7 +340,7 @@ class DoublePendulumSwing:
         theta1, theta2, omega1, omega2 = self._state_at(t)
         return PendulumState(theta1=theta1, theta2=theta2, omega1=omega1, omega2=omega2)
 
-    def joint_positions(self, t: float) -> np.ndarray:
+    def joint_positions(self, t: float) -> FloatArray:
         """Pivot, wrist, and clubhead positions in the swing world frame."""
         state = self.state_at(t)
         p = self._parameters
@@ -342,7 +351,8 @@ class DoublePendulumSwing:
             math.sin(state.theta1) * x_axis - math.cos(state.theta1) * up_axis
         )
         tip = wrist + p.l2 * (math.sin(t12) * x_axis - math.cos(t12) * up_axis)
-        return np.vstack([np.zeros(3), wrist, tip])
+        positions: FloatArray = np.vstack([np.zeros(3, dtype=np.float64), wrist, tip])
+        return positions
 
     def sample(self, t: float) -> SwingSample:
         """Return the clubhead :class:`SwingSample` at time ``t``.
