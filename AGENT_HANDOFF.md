@@ -1,13 +1,14 @@
 # AGENT_HANDOFF — Tools
 
-## 2026-08-11 PR #4356 current-parent propagation candidate
+## 2026-08-11 PR #4356 published current-parent propagation
 
-This no-publish candidate keeps PR `#4356` on
+Published ready-for-review PR `#4356` remains on
 `feat/4270-repeated-bounce-request-wire` with base
 `feat/4271-repeated-bounce-wire`. Exact current child
 `23897eac03e8a3edf4a37855f0ba05e8c2527986` is the first parent and exact
 published PR #4355 head `a04d14e9308990e676e8c90ddb1d80e368dd1387`
-is the second parent of a normal no-ff merge. The child's complete strict
+is the second parent of normal no-ff merge
+`345c329e6b6e3fc7a8fc981abf65795f356b94cf`. The child's complete strict
 cross-runtime repeated-bounce request envelope, canonical ground-request and
 joint-execution-input digests, exact request/result identity pairing, shared
 golden corpus, adversarial capture-speed digest follow-up, and live-PR handoff
@@ -26,10 +27,13 @@ eight manifest tests, and every repository governance gate are green. All
 eight child feature/spec/test files remain byte-exact; the parent-only
 result-wire files and both inherited typed-Boolean repairs also remain exact.
 Known warnings remain the Hypothesis cache ignore, empty polynomial legend,
-Node local-storage flag, and 528.82 kB Vite chunk. No branch has been rebased,
-retargeted, rewritten, force-pushed, or published by this propagation. UI
-request construction, executor invocation, persistence, playback, measured
-calibration, compiled and downstream parity, protected exact-head evidence,
+Node local-storage flag, and 528.82 kB Vite chunk. The propagation was normally
+published, and exact heads #4351 through #4356 were marked ready for review
+without rebasing, retargeting, rewriting, force-pushing, merging, or changing
+their bases. On the first protected checkpoint, #4356 had one successful
+quality check, four skipped checks, twelve queued checks, no failure, and no
+review. UI request construction, executor invocation, persistence, playback,
+measured calibration, compiled and downstream parity, protected completion,
 review, approval, dependency integration, release, and issue completion remain
 open.
 

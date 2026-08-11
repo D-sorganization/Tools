@@ -1,12 +1,13 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-## 2026-08-11 PR #4356 current-parent propagation candidate
+## 2026-08-11 PR #4356 published current-parent propagation
 
-- PR `#4356` retains branch `feat/4270-repeated-bounce-request-wire` and base
+- Ready-for-review PR `#4356` retains branch
+  `feat/4270-repeated-bounce-request-wire` and base
   `feat/4271-repeated-bounce-wire`. Exact current child
   `23897eac03e8a3edf4a37855f0ba05e8c2527986` is first and exact published PR
-  #4355 head `a04d14e9308990e676e8c90ddb1d80e368dd1387` is second in a normal
-  no-ff merge.
+  #4355 head `a04d14e9308990e676e8c90ddb1d80e368dd1387` is second in normal
+  no-ff merge `345c329e6b6e3fc7a8fc981abf65795f356b94cf`.
 - The child retains its strict cross-runtime repeated-bounce request envelope,
   canonical ground-request and joint-execution-input digests, exact
   request/result identity pairing, shared golden corpus, adversarial
@@ -24,12 +25,15 @@
   eight child feature/spec/test files remain byte-exact; the parent-only
   result-wire files and both inherited typed-Boolean repairs also remain exact.
   Known warnings remain the Hypothesis cache ignore, empty polynomial legend,
-  Node local-storage flag, and 528.82 kB Vite chunk. The candidate has not been
-  rebased, retargeted, rewritten, force-pushed, or published by this
-  propagation and remains `not_released`.
+  Node local-storage flag, and 528.82 kB Vite chunk. The propagation was
+  normally published, and exact heads #4351 through #4356 were marked ready
+  for review without rebasing, retargeting, rewriting, force-pushing, merging,
+  or changing their bases. The slice remains `not_released`.
+- The first protected #4356 checkpoint had one successful quality check, four
+  skipped checks, twelve queued checks, no failure, and no review.
 - UI request construction, executor invocation, persistence, playback,
   measured calibration, compiled and downstream parity, protected exact-head
-  evidence, review, approval, dependency integration, release, and issue
+  completion, review, approval, dependency integration, release, and issue
   completion remain open.
 
 ## 2026-08-11 PR #4355 current-parent propagation candidate
