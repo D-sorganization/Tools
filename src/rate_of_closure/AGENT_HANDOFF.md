@@ -3,6 +3,89 @@
 > Update this append-only handoff with every implementation commit and every
 > push to `main`. Last updated: 2026-08-11.
 
+## 2026-08-11 Ground contract receives current capability carrier
+
+Open draft PR `#4285` retains branch `feat/4268-ground-contract` and base
+`feat/4197-capability-observer`. Exact remote ground-contract child
+`e09ab96280cab363b36bd0e7db4a3cd064dc2527` is merged first and exact current
+capability-observer parent `d0b827667e61f0583e1dad0b3cbbca6819624d3c`
+second by an ordinary no-ff merge. All strict flight-to-ground production,
+tests, schemas, fixtures, dependencies, and fail-closed limitations are
+preserved. Only append-only handoff/SPEC files conflict; their dated records
+from both parents remain. Publication, protected exact-head CI, review,
+approval, release, and downstream #4288 propagation remain open. Focused
+verification passes 214 Python/PyQt tests, pinned Ruff 0.14.10 across 27
+PR-delta Python files, pinned MyPy 1.13 across 20 production files, and Bandit's
+medium/high threshold. Docs, strict manifest, diff, exact ground-tree, and
+both-parent append-only preservation gates pass.
+
+## 2026-08-11 Merged capability-observer carrier receives current wind workflow
+
+PR `#4283` is merged, while its former head branch
+`feat/4197-capability-observer` remains the base of open draft PR `#4285`.
+Exact remote/local carrier child
+`b2baf6ef615b0d756a86ac4ca7eef2fc583210ee` is merged first and exact published
+#4282 parent `3faf9e9493c9ba37168d9f65ab10cafeedc2a72f` second by a normal
+no-ff merge. Since the carrier is already the first parent of #4282, the source
+merge is conflict-free: the complete capability-observer implementation and
+history remain present while the exact current wind workflow and manifest tree
+are inherited. Only handoff/SPEC carrier records differ from #4282. All 86
+focused Python/PyQt capability, wind, and manifest tests and all 86 tests in 12
+focused React capability/wind suites pass. React type-check, zero-warning lint,
+and the production build pass. Docs, manifest, and exact-parent diff gates pass;
+changed-Python static gates are not applicable to the documentation-only exact
+delta. This local audit does not authorize publication; review,
+protected CI, and
+later dependency propagation into #4285 remain open.
+
+## 2026-08-11 Wind workflow receives newly published scalar-adapter parent
+
+PR `#4282` keeps branch `feat/4199-wind-workflow` and base
+`feat/4199-wind-scalar-adapter`. Exact published child
+`b2baf6ef615b0d756a86ac4ca7eef2fc583210ee` is merged first and exact current
+parent `9321c1d2e091b8c7e5a4a83aa9ad726290e7fb5a` second. Implementation and test
+paths merge automatically: responsive PyQt6/React wind execution,
+progress/cancellation, controls, scatter, persistence/export, consolidated
+capability workflow, and strict campaign release authority remain intact while
+the parent contributes current scalar-adapter, variation, workspace,
+launch-monitor/D-plane, split-kinetics, and Qt repairs. Only append-only
+handoffs and SPEC conflict textually; both histories are preserved. All 94
+focused Python/PyQt wind, responsive-layout, navigation, playback, and manifest
+tests pass, as do all 44 tests in eight focused React wind/responsive suites.
+Docs governance and strict campaign-manifest generation/validation pass.
+Pinned Ruff checks/formats all 57 changed Python files; pinned MyPy accepts 38
+production files; pinned Bandit finds no medium/high issues in 37 scanned source
+files; the 500-LOC, changed-Python policy, test-contract/assertion, diff, React
+type-check/lint, and production-build gates pass. Review, ordinary publication,
+protected exact-head CI, unresolved threads, dependency order, and release
+remain open.
+
+## 2026-08-11 Wind workflow receives current scalar-adapter parent
+
+PR `#4282` remains on `feat/4199-wind-workflow`, based on
+`feat/4199-wind-scalar-adapter`. Exact remote child
+`29e15d6ff631f7f30afcc745be783f2e716d7dcf` normally merges exact published
+parent `a7dce5f89b483303938f518b74b4028a1c68ba81` second, preserving child-first
+history and the existing base. The responsive PyQt6/React workflow and
+consolidated capability stack inherit the parent's split kinetics facade,
+Ground/Tee parity, and 252-line public/213-line private wind-adapter repair.
+
+The only source conflict is an obsolete formatting-only edit to the pre-split
+kinetics monolith and resolves wholly to the validated parent facade. Both
+append-only documentation histories remain present. Seven surviving
+child-owned paths receive only repository-pinned Ruff formatting. The exact
+skipped-import MyPy profile also replaces one now-unused cache-return ignore
+with an explicit `KineticsSeries | None` cast; the cached object and runtime
+behavior are unchanged. Protected exact-head CI, independent review,
+unresolved-thread checks, publication, and dependency order remain release
+gates.
+
+Local evidence is 74 focused Python/PyQt wind, kinetics, and Ground/Tee tests;
+29 focused React tests; and 8 campaign-manifest tests. TypeScript, focused
+zero-warning ESLint, Ruff check/format, pinned MyPy 1.13, Bandit's medium/high
+threshold, strict wind module/signature/function budgets, manifest,
+documentation, policy, SPEC, and diff gates pass.
+
 ## 2026-08-11 Ground contract receives current workflow/base ancestry
 
 Draft PR `#4285` keeps branch `feat/4268-ground-contract` and base
@@ -979,6 +1062,28 @@ The subsequent protected run's `detect-secrets` job classified the two pinned
  by a normal merge commit.
 ## Inherited #4281 handoff history
 
+## 2026-08-11 Wind scalar adapter receives current variation parent
+
+PR `#4281` keeps branch `feat/4199-wind-scalar-adapter` and base
+`feat/4144-variation-export-continuation`. Exact published child
+`a7dce5f89b483303938f518b74b4028a1c68ba81` is merged first and exact current
+parent `e6c7460a01082631565fb9ed48aa32538bd7772c` second. Implementation and test
+paths merge automatically: Python/TypeScript scalar-ensemble provenance,
+availability, deterministic-scenario, wind-strategy adapter, and strict
+module-budget behavior remain intact while the parent contributes current
+variation visualization/export, workspace, launch-monitor/D-plane ancestry,
+split kinetics, and behavior-preserving Qt return narrowing. Only append-only
+handoffs and SPEC conflict textually; both histories are preserved. All 77
+focused wind/variation Python tests and all 20 tests in the five focused React
+wind/variation suites pass before the merge commit. Pinned Ruff checks/formats
+all five changed Python files; pinned MyPy and Bandit accept all three production
+files; both 500- and strict 400-LOC, docs, changed-Python policy,
+test-contract/assertion, diff, React type-check/lint, and production-build gates
+pass. The later campaign-manifest artifact/checker/test exist on neither side of
+this pre-manifest stack and are not applicable. Review, ordinary publication,
+protected exact-head CI, unresolved threads, dependency order, and release
+remain open.
+
 ## 2026-08-11 Wind scalar-adapter module-budget repair
 
 The 403-line `variation/wind_strategy_plot_adapter.py` exceeded the mandatory
@@ -1013,7 +1118,26 @@ feature-code conflict referenced obsolete monolithic kinetics and is resolved
 to the validated parent `pendulum.sample(...)` facade. This local merge still
 requires independent review, fresh exact-head protected CI, unresolved-thread
 checks, dependency order, and ordinary publication.
+## 2026-08-11 Variation export receives current workspace parent
 
+PR `#4280` keeps branch `feat/4144-variation-export-continuation` and base
+`feat/4218-toolstrip-workspace`. Exact published child
+`3337945699966b63cb5cd8e52d7c3b194315e911` is merged first and exact current
+parent `efbca84095b617b4018732f7802c2da3f0525387` second. Implementation and test
+paths merge automatically: selected-scatter CSV parity, typed unavailable
+outcomes, bounded accessible tables, linked selection, and all-trial arc
+analysis remain intact while the parent contributes current workspace,
+launch-monitor/D-plane ancestry, split kinetics, and behavior-preserving Qt
+return narrowing. Only append-only handoffs and SPEC conflict textually; both
+histories are preserved. All 56 focused Python variation tests and all 10 tests
+in the three focused React variation suites pass before the merge commit.
+Pinned Ruff checks/formats all five changed Python files; pinned MyPy and Bandit
+accept all four production files; docs, 500-LOC, changed-Python policy,
+test-contract/assertion, diff, React type-check/lint, and production-build gates
+pass. The later campaign-manifest artifact/checker/test exist on neither side of
+this pre-manifest stack and are not applicable. Review, ordinary publication,
+protected exact-head CI, unresolved threads, dependency order, and release
+remain open.
 ## 2026-08-11 Variation export receives reviewed workspace parent
 
 PR `#4280` stays on `feat/4144-variation-export-continuation`, based on
@@ -1031,7 +1155,26 @@ match protected Ruff 0.14.10 output and are normalized to the exact reviewed
 parent blobs while their commit remains in history. This local reconciliation
 still requires independent review, exact-head protected CI, unresolved-thread
 checks, dependency order, and ordinary publication.
+## 2026-08-11 Workspace child receives current #4203 parent
 
+PR `#4279` keeps branch `feat/4218-toolstrip-workspace` and base
+`feat/4181-launch-monitor-registry`. Exact published child
+`ccd0e026c580c93038fdf5c59d5d452a85ba27a0` is merged first and exact current
+parent `7abce9ad767fe8311da66a1e5998b892ea3ca9de` second. Implementation and
+test paths merge automatically: the child workspace/toolstrip, visibility,
+navigation, playback, and independent-plot behavior remain intact while the
+parent contributes current launch-monitor/D-plane ancestry, split kinetics,
+and behavior-preserving Qt return narrowing. Only append-only handoffs and
+SPEC conflict textually; both histories are preserved. All 142 exact
+PR-delta Python tests and all 32 tests in the eight changed React suites pass
+before the merge commit. Pinned Ruff checks/formats all 27 changed Python
+files; pinned MyPy and Bandit accept all 18 production files; docs, 500-LOC,
+changed-Python policy, test-contract/assertion, diff, React type-check/lint, and
+production-build gates pass. The later campaign-manifest artifact/checker/test
+exist on neither side of this pre-manifest stack and are not applicable.
+Review, ordinary publication, protected exact-head CI, unresolved threads,
+dependency order,
+and release remain open.
 ## 2026-08-11 Remote workspace history reconciled locally
 
 PR `#4279` retains branch `feat/4218-toolstrip-workspace` and base
@@ -1071,6 +1214,37 @@ behavior remain unchanged while the parent kinetics façade/dynamics/series
 split and pinned formatting are inherited. This local merge does not satisfy
 fresh protected CI, required review, unresolved-thread, dependency, or release
 gates.
+
+## 2026-08-11 Append-only SPEC preservation repair
+
+Independent review found that the local #4203 reconciliation omitted four
+exact D-plane parent SPEC rows dated 2026-08-10 (versions 1.13.11, 1.13.9,
+1.13.7, and 1.13.6). They are restored verbatim in a documentation-only
+follow-up. Production behavior, tests, ordered parents, base, and local quality
+evidence are unchanged; re-review, normal publication, and protected CI remain
+open.
+
+## 2026-08-11 Current D-plane parent reconciliation
+
+PR #4203's published child `217e36dc93d30f79826847f958fbcd10805e58ed`
+is being normally merged with exact current D-plane base
+`f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`. The base and source branch stay
+unchanged. The only conflict is the parent's formatting of an older monolithic
+kinetics expression: the split facade keeps its typed pendulum accessor and
+inherits the parent's geometry explanation. No launch-monitor, D-plane, or
+kinetics behavior is intentionally changed. Four Qt-stub `Any` returns exposed
+by the exact MyPy 1.13 delta are also narrowed to their declared `bool`/`str`
+contracts without changing values. Focused/full validation, independent
+review, normal publication, and protected CI remain open.
+
+## 2026-08-11 Exact-head format completion
+
+Protected CI on #4203 head `7d69a545ae555679f0318940e67c1786626d6794`
+failed only Ruff formatting. The pinned 0.14.10 reproduction found eleven
+noncompliant changed Python files: four inherited files plus seven altered by
+the automated pre-commit repair. The pending repair intentionally changes no
+launch-monitor, kinetics, simulation, or UI behavior and requires independent
+review plus fresh protected CI before integration.
 
 ## 2026-08-11 Hosted MyPy NumPy-return repair
 
@@ -1153,6 +1327,31 @@ conflict or history rewrite. Fresh child CI, review, and dependency order
 remain required.
 Post-reconciliation evidence is 25 focused D-plane/impact tests plus docs,
 changed-file-size, and whitespace gates.
+
+## 2026-08-10 Variation export child receives exact workspace parent
+
+PR `#4280` retains branch `feat/4144-variation-export-continuation`, base
+`feat/4218-toolstrip-workspace`, and original child first parent
+`f90836e342efc8be624739802375af2876d11e5f`. Exact parent
+`6717e9e09d507dbc24bedb36177f1cdf0b4fd90b` merges normally as the second
+parent. All variation visualization/export source merged without conflict:
+selected scatter CSV, typed unavailable rows, accessible bounded raw tables,
+linked trials, focused PyQt widgets, and React parity remain additive with the
+parent workspace/toolstrip/playback/plot/navigation repairs. SPEC 1.14.12 is
+the unique combined child entry. Staged review exposed a stale linked-trial
+selection when a smaller rerun replaced the active result. Corrected PyQt
+views clear result-local selection before repopulating and validate all public
+setter indices; React clears on result identity change and shares only bounded
+selections with linked views. Thirty-seven focused variation tests and the
+complete Rate/shared-swing/golf-club matrix pass 1,528 tests with two explicit
+optional build123d skips; all 546 React tests across 90 files pass;
+TypeScript, ESLint, and production build are green. Exact-parent
+Ruff/Ruff-format/Black, pinned MyPy 1.13 across four Python production modules,
+Bandit, file-size, docs, minimum-test, assertion, detect-secrets, diff, real
+CPython 3.10.20 compilation, and 30 compatibility regressions pass. There is
+no Rust delta from the exact parent. Independent staged re-review found no
+actionable findings, including the first replacement-render React boundary.
+Protected CI/review remain release gates after an ordinary guarded push.
 
 ## 2026-08-10 Variation child receives second repaired workspace parent
 
@@ -1806,3 +2005,235 @@ Run Ruff format/check and pinned delta mypy on every changed Python file. Do not
 rewrite parents, force-push, bypass checks, infer unavailable values, or close
 #4201 until exact protected merge, installed package, downstream pin, science,
 performance, accessibility, documentation, and rollback evidence all exist.
+
+## 2026-08-11 parent sections preserved during #4282 reconciliation
+
+## 2026-08-11 Workspace child receives hosted MyPy repair
+
+PR `#4279` retains branch `feat/4218-toolstrip-workspace` and base
+`feat/4181-launch-monitor-registry`. Exact child
+`7806a16f58e1c6999d32f0127a187fbb21f839a1` normally merges exact published
+parent `3796b49e40b677fbac4e05739f8be49f905df2cb`. No feature-code conflict
+exists: the inherited production delta is four static `numpy.ndarray` casts,
+while workspace/toolstrip behavior and runtime arrays, physics, frames, units,
+imports, and UI behavior remain unchanged. This local merge does not satisfy
+fresh protected CI, required review, unresolved-thread, dependency, or release
+gates.
+
+## 2026-08-11 workspace child receives latest repaired parent
+
+PR `#4279` retains branch `feat/4218-toolstrip-workspace` and base
+`feat/4181-launch-monitor-registry`. A normal merge incorporates exact parent
+`0216a547aa79727091a2939b96e779e8ddbd7304` into exact child
+`61b7f48b5aeb7d57246b4963da3df086e79cbe15`. There are no feature-code
+conflicts: workspace/toolstrip, visibility, navigation, playback, and plot
+behavior remain unchanged while the parent kinetics façade/dynamics/series
+split and pinned formatting are inherited. This local merge does not satisfy
+fresh protected CI, required review, unresolved-thread, dependency, or release
+gates.
+
+## 2026-08-11 Append-only SPEC preservation repair
+
+Independent review found that the local #4203 reconciliation omitted four
+exact D-plane parent SPEC rows dated 2026-08-10 (versions 1.13.11, 1.13.9,
+1.13.7, and 1.13.6). They are restored verbatim in a documentation-only
+follow-up. Production behavior, tests, ordered parents, base, and local quality
+evidence are unchanged; re-review, normal publication, and protected CI remain
+open.
+
+## 2026-08-11 Current D-plane parent reconciliation
+
+PR #4203's published child `217e36dc93d30f79826847f958fbcd10805e58ed`
+is being normally merged with exact current D-plane base
+`f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`. The base and source branch stay
+unchanged. The only conflict is the parent's formatting of an older monolithic
+kinetics expression: the split facade keeps its typed pendulum accessor and
+inherits the parent's geometry explanation. No launch-monitor, D-plane, or
+kinetics behavior is intentionally changed. Four Qt-stub `Any` returns exposed
+by the exact MyPy 1.13 delta are also narrowed to their declared `bool`/`str`
+contracts without changing values. Focused/full validation, independent
+review, normal publication, and protected CI remain open.
+
+## 2026-08-11 Exact-head format completion
+
+Protected CI on #4203 head `7d69a545ae555679f0318940e67c1786626d6794`
+failed only Ruff formatting. The pinned 0.14.10 reproduction found eleven
+noncompliant changed Python files: four inherited files plus seven altered by
+the automated pre-commit repair. The pending repair intentionally changes no
+launch-monitor, kinetics, simulation, or UI behavior and requires independent
+review plus fresh protected CI before integration.
+
+## 2026-08-11 Hosted MyPy NumPy-return repair
+
+CI Standard run `31477542889`, job `93734652129`, found four
+`no-any-return` errors after the kinetics façade extraction at exact PR #4203
+head `0216a547aa79727091a2939b96e779e8ddbd7304`. The NumPy stubs widen
+`linalg.norm`, `concatenate`, and matrix projection results to `Any` even
+though the runtime operations return arrays. The private series/dynamics
+modules and public façade now use explicit `cast(np.ndarray, ...)` boundaries.
+These casts are static only: array identity, values, dtype, shape, physics,
+frames, units, imports, and UI behavior are unchanged. Verification must cover
+the complete PR changed-source MyPy set and both focused and full Rate tests.
+Current local evidence is 102 changed-source MyPy files, 28 focused tests, and
+all 701 Rate tests passing; complete-delta Ruff/format and Bandit are also
+green.
+
+## 2026-08-11 Kinetics façade extraction
+
+The strict current-head delta reproduces a protected size failure that the
+PR-base comparison hides: `kinetics.py` is changed versus `HEAD~1` and is 646
+LOC, above the ungrandfathered 500-LOC maximum. The public module is now a
+222-LOC run adapter/facade; its pure double-pendulum dynamics are in the
+205-LOC `_kinetics_dynamics.py`, and the immutable `KineticsSeries`/DbC
+contract is in the 131-LOC `_kinetics_series.py`. Existing public imports and
+the `_reaction_forces` seam are the same implementation objects. A RED-first
+identity test plus the existing physics, energy, force, parity-fixture,
+presentation, and PyQt tests protect behavior. No physics, frame, SI-unit,
+schema, UI, or stack-order change is intended; the commit remains local only.
+Focused kinetics/presentation/PyQt verification is 28 passing tests; the
+complete Rate-of-Closure Python regression suite is 701 passing tests.
+
+## 2026-08-11 #4203 pinned-Ruff formatting repair
+
+No material handoff change: current-head CI Standard run `31468208320`, job
+`93705508050`, identified eight files that differ from repository-pinned Ruff
+0.14.10 output. This commit changes formatting only; Rate physics, behavior,
+frames, persistence schemas, PyQt/React contracts, stack bases, and dependency
+order remain unchanged. Fresh protected CI and review are still required.
+
+## 2026-08-10 Ground/Tee parity child receives repaired parent
+
+Ready PR `#4325` keeps branch `feat/4143-tee-parity-fixture` and base
+`feat/4181-launch-monitor-registry`. It normally merges exact repaired parent
+head `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` without any production/test
+code conflict or history rewrite. Shared parity and rendered-evidence
+contracts remain intact; fresh protected CI, review, dependency order, and
+#4143 release remain open.
+
+## 2026-08-10 #4143 Python/React Golden Ball-Setup Parity
+
+The isolated `feat/4143-tee-parity-fixture` child begins at exact draft PR
+#4203 head `31cbc007d4c85b5479b7cd0fb0969124eab2af67`. One versioned JSON fixture now
+drives both Python and React ball-support tests with explicit SI units and the
+ground-plane-to-ball-bottom height reference. The shared cases cover Driver
+and non-Driver defaults, user overrides, Ground zero effective height,
+derived ball-center geometry and serialization, negative/NaN/infinite height
+rejection, and backward-compatible migration of a legacy run without
+`ball_setup`.
+
+Evidence is 18 passing Python tee/parity tests and 24 passing React
+tee/persistence/parity tests, plus green TypeScript, ESLint, Vite production
+build, Ruff check, and Ruff format. Production model and UI code are unchanged.
+Recorded visual evidence now adds 1600 x 1200 Playwright Driver/Tee and
+rerun-Ground captures plus 1400 x 900 hidden-window PyQt captures. The browser
+run asserts control state, diagram geometry, and zero console/page errors; the
+desktop run asserts canonical center/artist state, nonblank output, and
+different Ground/Tee digests without pixel absolutes. The exact artifacts and
+versioned manifests are in
+`C:\Users\diete\AppData\Local\Temp\rate-4143-visual-evidence-8050eeba`.
+Do not close #4143: protected current-head CI/review and release to `main`
+remain. This exact parent predates the strict campaign manifest on a divergent
+branch, so no downstream manifest was copied into this bounded child.
+
+## 2026-08-10 Wind scalar child receives second repaired parent
+
+PR `#4281` retains branch `feat/4199-wind-scalar-adapter` and base
+`feat/4144-variation-export-continuation`. It normally merges exact repaired
+parent `b90e5021a59e2081415b51ef29fbed06377bc201` without scalar-adapter code
+conflict or history rewrite. Fresh child CI, review, and dependency order
+remain required.
+Post-reconciliation evidence is 25 focused D-plane/impact tests plus docs,
+changed-file-size, and whitespace gates.
+
+## 2026-08-10 Variation export child receives exact workspace parent
+
+PR `#4280` retains branch `feat/4144-variation-export-continuation`, base
+`feat/4218-toolstrip-workspace`, and original child first parent
+`f90836e342efc8be624739802375af2876d11e5f`. Exact parent
+`6717e9e09d507dbc24bedb36177f1cdf0b4fd90b` merges normally as the second
+parent. All variation visualization/export source merged without conflict:
+selected scatter CSV, typed unavailable rows, accessible bounded raw tables,
+linked trials, focused PyQt widgets, and React parity remain additive with the
+parent workspace/toolstrip/playback/plot/navigation repairs. SPEC 1.14.12 is
+the unique combined child entry. Staged review exposed a stale linked-trial
+selection when a smaller rerun replaced the active result. Corrected PyQt
+views clear result-local selection before repopulating and validate all public
+setter indices; React clears on result identity change and shares only bounded
+selections with linked views. Thirty-seven focused variation tests and the
+complete Rate/shared-swing/golf-club matrix pass 1,528 tests with two explicit
+optional build123d skips; all 546 React tests across 90 files pass;
+TypeScript, ESLint, and production build are green. Exact-parent
+Ruff/Ruff-format/Black, pinned MyPy 1.13 across four Python production modules,
+Bandit, file-size, docs, minimum-test, assertion, detect-secrets, diff, real
+CPython 3.10.20 compilation, and 30 compatibility regressions pass. There is
+no Rust delta from the exact parent. Independent staged re-review found no
+actionable findings, including the first replacement-render React boundary.
+Protected CI/review remain release gates after an ordinary guarded push.
+
+## 2026-08-10 Variation child receives second repaired workspace parent
+
+PR `#4280` retains branch `feat/4144-variation-export-continuation` and base
+`feat/4218-toolstrip-workspace`. It normally merges exact repaired parent head
+`61b7f48b5aeb7d57246b4963da3df086e79cbe15` without feature-code conflict or
+history rewrite. Variation/export behavior remains unchanged; fresh child CI,
+review, and dependency order remain required.
+Post-reconciliation evidence is 25 focused D-plane/impact tests plus docs,
+changed-file-size, and whitespace gates.
+
+## 2026-08-10 Wind scalar child receives exact variation parent
+
+PR `#4281` keeps branch `feat/4199-wind-scalar-adapter`, base
+`feat/4144-variation-export-continuation`, and original child first parent
+`cf52529b1e68479321bb93b1be3d59c77f782008`. Exact parent
+`8bcc49fc4e16e5e43be0b7f0f03c3017d5b79d0c` merges normally second. The
+child's scalar-ensemble wire contract, provenance-preserving wind rows,
+availability accounting, and plot adapter remain additive with the parent's
+variation visualization/export and result-local selection repairs. Python and
+TypeScript reject wind scenarios unless their per-trial provenance is exact,
+shear/turbulence are zero, seed is zero, and gusts are empty. SPEC 1.14.13 is
+the unique combined child entry. Twenty-seven focused Python tests, the
+1,549-test complete Rate/shared-swing/golf-club matrix with two explicit
+optional build123d skips, and all 556 React tests across 92 files pass.
+TypeScript, ESLint, production build, Ruff/format, pinned MyPy, Bandit, size,
+docs, minimum-test, assertions, detect-secrets, diff, and CPython 3.10 compile
+gates pass. Independent re-review found no actionable findings after checking
+the exact provenance derivation and all five deterministic-scenario
+regressions; protected CI/review remain release gates.
+
+## 2026-08-10 Variation child timestamp propagation
+
+The #4280 continuation now carries exact parent
+`05383d333b6fd87eaf5e37305476f50b505c2c2e` through a normal merge while
+preserving its original base and complete variation export/accessibility
+implementation. The inherit…4250 tokens truncated…7417e02926c3fbc7476002e82b690`; propagate it through the existing
+stack without changing bases.
+
+A follow-up scan found the torque-profile controller importing
+`datetime.UTC` directly. That parent-owned Python 3.11 boundary now uses
+`shared.python.compatibility.UTC`; persisted timestamps and torque-profile
+behavior are unchanged. Re-run the focused torque-profile UI tests and the
+real Python 3.10 compatibility probe before propagation.
+
+## Do-Not List
+
+- Do not duplicate the Kelvin-Voigt contact-force law — #4130 requires
+  `SpringDamperImpactModel` and the new `impact_interval/` package to share
+  one implementation (DRY, explicit in the epic's binding standards).
+- Do not exceed 500 LOC per file in `rate_of_closure`, `swing_sim`, or
+  `swing-core` — sub-package instead.
+- Do not hand-mirror physics into the TS web layer once WASM lands (Phase 7)
+  — that's the whole point of the wasm-pack build; today's hand-written TS
+  mirrors are a stopgap, not the target architecture.
+- Do not merge the stacked PRs out of order (see stack section above).
+- Do not invent citations in derivation docstrings or the AffineDrift
+  putting research content (H4) — sourced/verifiable only, dossier
+  discipline per epic #4125.
+
+## Roadmap (ordered)
+
+1. Merge #4119, then #4124, then #4129 in order.
+2. Start epic #4130 Phase F1 (formulation document) — six-DOF rigid-club
+   contact-interval derivation, validation program design.
+3. Phase 7 of #4103: WASM swap + real Pages CI deploy workflow.
+4. #4125 H4/H5: AffineDrift putting research content and the public
+   release-management repo (both cross-repo, not started).
