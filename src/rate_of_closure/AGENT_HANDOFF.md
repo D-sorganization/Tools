@@ -45,6 +45,16 @@ agent must verify the exact GitHub head and protected checks, obtain the
 required approval, and merge normally. Do not claim #4119 or any epic complete
 before protected release to `main`.
 
+The first protected run at the fully typed head passed Mypy and Ruff but found
+six empty `swing_sim/*/tests/__init__.py` package markers in the changed-test
+assertion gate. The repository allowlist now exempts source-local test-package
+markers only; it does not exempt executable test modules.
+
+The following protected run reached the module-size gate and found the
+repository formatter's Movement Optimizer `motion_tabs.py` change at 1,216
+lines. A behavior-neutral documentation/call-layout compaction brings it to
+1,152 lines; the exact size budget and 80 focused Movement Optimizer tests pass.
+
 The repository's authoritative formatter is Ruff. The current-main merge
 required a mechanical `ruff format` normalization of 101 Python files,
 including four Rate/swing-sim files; there is no Rate behavior change, and

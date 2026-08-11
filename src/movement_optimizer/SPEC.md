@@ -11,8 +11,8 @@
 | License          | MIT                                                     |
 | Package Name     | `movement-optimizer`                                    |
 | Current Version  | `1.0.0`                                                 |
-| Spec Version     | `1.0.36`                                                |
-| Last Spec Update | 2026-06-19                                              |
+| Spec Version     | `1.0.37`                                                |
+| Last Spec Update | 2026-08-10                                              |
 
 ## 2. Purpose
 
@@ -245,6 +245,7 @@ mypy --ignore-missing-imports src/movement_optimizer/
 
 | Date       | Version | Changes                                                                                                                                                                                                                                                                                                                                                                                                       |
 | ---------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-08-10 | 1.0.37  | Compacted `gui/motion_tabs.py` comments, docstrings, and Ruff call layout from 1,216 to 1,152 lines without changing runtime behavior, restoring compliance with the monorepo's 1,200-line protected module budget; 80 focused motion-tab, theming, and vector-overlay tests pass.                                                                                                                           |
 | 2026-06-19 | 1.0.36  | Split rendered MotionAnalysisPanel legend layout regressions into `tests/test_motion_analysis_panel_legends.py`, preserving the Swingset/Chain no-overlap assertions while keeping changed test files below the size budget.                                                                                                                                                                                  |
 | 2026-06-19 | 1.0.35  | Replaced per-plot Swingset and Chain Dynamics analysis legend strips with one reserved figure-level legend footer, reducing vertical clutter while preserving rendered regression coverage that the legend cannot overlap plot data, tick labels, or axis labels.                                                                                                                                             |
 | 2026-06-19 | 1.0.33  | Moved Swingset and Chain Dynamics analysis legends into right-docked per-plot strips with wider scrollable plot columns, so legends remain visible beside each plot instead of sitting between rows or covering plotted curves and neighboring axis labels.                                                                                                                                                   |
