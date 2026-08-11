@@ -3,6 +3,19 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 Current D-plane parent reconciliation
+
+PR #4203's published child `217e36dc93d30f79826847f958fbcd10805e58ed`
+is being normally merged with exact current D-plane base
+`f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`. The base and source branch stay
+unchanged. The only conflict is the parent's formatting of an older monolithic
+kinetics expression: the split facade keeps its typed pendulum accessor and
+inherits the parent's geometry explanation. No launch-monitor, D-plane, or
+kinetics behavior is intentionally changed. Four Qt-stub `Any` returns exposed
+by the exact MyPy 1.13 delta are also narrowed to their declared `bool`/`str`
+contracts without changing values. Focused/full validation, independent
+review, normal publication, and protected CI remain open.
+
 ## 2026-08-11 Exact-head format completion
 
 Protected CI on #4203 head `7d69a545ae555679f0318940e67c1786626d6794`

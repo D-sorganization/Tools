@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 #4203 current-parent reconciliation
+
+- The current D-plane base is exact head
+  `f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`; #4203's exact published child
+  is `217e36dc93d30f79826847f958fbcd10805e58ed`. They are being composed in
+  that order by a normal merge while retaining base `feat/4189-dplane`.
+- The parent's nine changed files merge without semantic conflict except for
+  formatting around the inherited kinetics origin offset. The split child
+  facade remains authoritative because the obsolete parent expression reaches
+  through `source.inner`; the equivalent explanatory comment is preserved.
+- The exact CI-pinned MyPy 1.13 delta found four additional Qt-stub `Any`
+  boundaries after the merge. Explicit `bool`/`str` narrowing now closes the
+  responsive-event, legend, ball-setup event-filter, and status-text contracts
+  without changing their runtime values or interaction behavior.
+- No issue or epic is complete from this reconciliation. Independent review,
+  ordinary publication, protected CI, downstream propagation, and release
+  gates remain open.
+
 ## 2026-08-11 #4203 exact-head format completion
 
 - Exact published head `7d69a545ae555679f0318940e67c1786626d6794`

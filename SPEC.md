@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.13                                    |
-| **Spec Version**        | 1.14.13                                    |
+| **Current Version**     | 1.14.16                                    |
+| **Spec Version**        | 1.14.16                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -2914,6 +2914,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.16 | fix(rate-of-closure, #4203): close four exact-delta MyPy 1.13 Qt-stub boundaries by narrowing responsive-event handling, legend visibility, ball-setup event filtering, and visible status text to their already declared primitive return contracts; preserve values and UI behavior while retaining normal parent reconciliation and protected release gates. |
+| 2026-08-11 | 1.14.15 | merge(rate-of-closure, #4202 #4203): normally compose exact published launch-monitor-registry child `217e36dc93d30f79826847f958fbcd10805e58ed` with exact current D-plane parent `f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`; retain the split typed kinetics facade at the sole formatting conflict, preserve parent behavior and history, and keep independent review, protected exact-head CI, downstream propagation, and release open. |
 | 2026-08-11 | 1.14.14 | fix(rate-of-closure, #4203): close four hosted MyPy `no-any-return` findings from the kinetics size split with explicit NumPy-array return narrowing at force-norm, RK4 concatenation, and app-frame projection boundaries; preserve exact runtime arrays, physics, frames, units, public contracts, and stack order. |
 | 2026-08-11 | 1.14.13 | refactor(rate-of-closure, #4203): split the 646-LOC swing-kinetics monolith into an identity-preserving 222-LOC public façade, 205-LOC pure-dynamics module, and 131-LOC immutable-series contract; preserve physics, frames, fixtures, UI behavior, and established imports while satisfying the changed-file 500-LOC gate. |
 | 2026-08-11 | 1.14.12 | style(rate-of-closure, #4203): apply repository-pinned Ruff 0.14.10 formatting to the eight files reported by current-head CI without changing physics, behavior, public contracts, schemas, UI layout, or stack order. |

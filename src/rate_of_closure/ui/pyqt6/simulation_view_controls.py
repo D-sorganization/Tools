@@ -311,7 +311,7 @@ class SimulationViewControlsMixin:
 
     def legend_visible(self) -> bool:
         """Return whether the plot legend is enabled."""
-        return self._legend_check.isChecked()
+        return bool(self._legend_check.isChecked())
 
     def legend_location(self) -> str:
         """Return the stable legend-placement key."""

@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 #4203 current D-plane parent reconciliation
+
+- Draft PR #4203 now requires a normal merge of exact current base
+  `f3363aa88868f6a5c7e9ccfc682a9eca014e86c1` after exact published child
+  `217e36dc93d30f79826847f958fbcd10805e58ed`; its base remains
+  `feat/4189-dplane` and no history is rewritten.
+- The parent changes nine files. Its sole textual conflict is an inherited
+  kinetics formatting edit. The already reviewed split kinetics facade stays
+  authoritative and uses the typed `DoublePendulumSwing` object directly;
+  the parent's explanatory geometry comment is retained.
+- Exact CI-pinned MyPy 1.13 validation then exposed four remaining Qt stub
+  boundaries in the child delta. Responsive-event handling, legend visibility,
+  ball-setup event filtering, and status text now narrow their unchanged Qt
+  return values to the declared primitive contracts.
+- Focused regression, full PR-delta quality gates, independent review, normal
+  fast-forward publication, and fresh protected exact-head CI remain required.
+
 ## 2026-08-11 #4203 exact-head format completion
 
 - Protected CI on exact published head
