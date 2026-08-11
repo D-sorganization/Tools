@@ -1,5 +1,16 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4288 append-only history preservation repair
+
+This documentation-only follow-up to exact local candidate
+`1eb4188ff1a87a3d8e9a55aeca68194ca04e0bb4` restores every omitted #4285
+parent handoff section and specification history row verbatim. It repairs one
+interleaved rate-of-closure paragraph without changing implementation, tests,
+schemas, manifest data, merge topology, or #4288's
+`feat/4268-ground-contract` base. The repaired candidate remains local pending
+independent review, ordinary publication, fresh protected CI, approval,
+dependency integration, and release.
+
 ## 2026-08-11 PR #4288 current-ground-parent ancestry candidate
 
 Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged
@@ -295,6 +306,32 @@ production build, TypeScript, zero-warning ESLint, Ruff, format, pinned mypy
 1.13, campaign-manifest validator and its eight contracts, documentation
 governance, source-size, conflict-marker, and diff gates are clean. Protected
 CI, review, and downstream propagation remain open.
+
+## 2026-08-09 PR #4285 corrected-carrier reconciliation
+
+Draft #4285 remains on `feat/4268-ground-contract` with unchanged base
+`feat/4197-capability-observer`. Exact corrected wind carrier
+`bb101cedd555d07d493aae998b46050c68660cdd` is incorporated through the
+normal local merge containing this handoff; no branch was rebased, retargeted,
+force-pushed, or published. The ground parent retains its strict schemas,
+canonical fixture, migrations, legacy-result adapter, explicit dependency, and
+pinned-mypy repairs while acquiring the corrected wind/scalar/variation,
+Python 3.10 compatibility, capability, and campaign-release ancestry.
+
+This is an ancestry reconciliation, not new landing physics. Qualified bounce,
+skid, roll, terrain profiles, total distance, UI, Rust/WASM parity, protected
+CI, review, and release remain open. PR #4288 must normally merge the resulting
+exact #4285 head and rerun its transfer and combined compatibility gates. That
+next propagation is where the descendant acquires the observer-to-wind
+reconciliation; neither PR base should change.
+Draft #4282 remains on `feat/4199-wind-workflow` with unchanged base
+`feat/4199-wind-scalar-adapter`. Exact corrected #4281 parent
+`958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated by the normal
+local merge containing this handoff; no branch was rebased, retargeted,
+force-pushed, or published. The result preserves the responsive PyQt6/React
+wind-strategy workflow, the consolidated capability stack, release-manifest
+authority, and launcher/type-gate repairs while inheriting the complete
+Python 3.10 compatibility, variation-export, and scalar-ensemble corrections.
 
 ## 2026-08-09 PR #4288 corrected-ground-parent propagation
 

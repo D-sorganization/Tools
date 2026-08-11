@@ -1,5 +1,15 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 PR #4288 append-only history preservation repair
+
+This documentation-only follow-up to exact local candidate
+`1eb4188ff1a87a3d8e9a55aeca68194ca04e0bb4` restores the parent handoff
+sections and specification rows omitted during conflict resolution. It also
+repairs the interleaved rate-of-closure handoff paragraph without changing
+production code, tests, schemas, the campaign manifest, merge topology, or PR
+#4288's `feat/4268-ground-contract` base. Publication, protected exact-head CI,
+approval, dependency integration, and release remain open.
+
 ## 2026-08-11 PR #4288 current-ground-parent ancestry candidate
 
 The clean `feat/4269-flight-ground-transfer` reconciliation starts from exact
@@ -433,6 +443,16 @@ swing and React suites recorded in the per-tool handoff.
 Fleet handoff policy is tracked by Repository_Management #1393/#1397. Any
 `src/**` handoff change also requires the same-commit `SPEC.md` update.
 
+## 2026-08-10 Final repaired #4282 propagation into PR #4285
+
+Draft PR `#4285` retains branch `feat/4268-ground-contract` and base
+`feat/4197-capability-observer`. Original child head
+`e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` now normally incorporates exact
+quality-green workflow head `1e82f15026786ea0b08f78f4c001590ddce9ff39`
+second. No ground-contract production or test code conflicted, and no rebase,
+retarget, force-push, parent rewrite, or draft-state change was used. Fresh
+protected CI/review is required before downstream #4288 propagation.
+
 ## 2026-08-10 Final repaired ground-contract propagation into PR #4288
 
 Draft PR `#4288` retains branch `feat/4269-flight-ground-transfer` and base
@@ -518,6 +538,33 @@ already-validated value with `float`. Bandit also replaced an optimized-away
 command-state assertion with an explicit invariant error. The alias finder
 retains its intentional optional-probe catch-and-continue boundary under a
 narrow explanatory `B112` annotation.
+
+## 2026-08-09 Ground parent reconciled with corrected wind carrier
+
+Draft PR #4285 remains on `feat/4268-ground-contract` with unchanged base
+`feat/4197-capability-observer`. Exact corrected wind carrier
+`bb101cedd555d07d493aae998b46050c68660cdd` is incorporated by the normal
+local merge containing this handoff; no branch was rebased, retargeted,
+force-pushed, or published. The result is the carrier-reconciled ground parent:
+it retains the strict flight-to-ground schemas, canonical fixtures, migrations,
+legacy-result adapter, dependency declaration, and pinned-mypy repairs while
+carrying the complete corrected wind/scalar/variation/Python-3.10 and
+consolidated capability ancestry.
+
+No qualified bounce, skid, roll, terrain-profile, total-distance, UI, or
+Rust/WASM ground physics is added by this propagation. PR #4288 must normally
+merge the resulting exact #4285 head before its flight-to-ground transfer can
+be evaluated as a descendant of the corrected carrier. Because #4285 still
+targets the observer branch while the corrected carrier now contains that
+observer through wind workflow #4282, this merge is the explicit
+observer-to-wind ancestry reconciliation; the GitHub base remains unchanged.
+
+Focused evidence is 89 ground-contract, compatibility, scalar-adapter, and
+responsive-wind tests on Python 3.11 and the same 89 on real CPython 3.10.20.
+Ruff check/format passes 34 focused Python files; pinned mypy 1.13 passes 23
+production modules. Ground production modules remain below 400 lines and
+functions below 50 lines, with no placeholder markers. The inherited campaign
+manifest validates and its nine manifest/parity contracts pass.
 
 ## 2026-08-09 Flight-transfer corrected-parent propagation
 

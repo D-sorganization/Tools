@@ -1,5 +1,15 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4288 append-only history preservation repair
+
+This documentation-only follow-up to exact local candidate
+`1eb4188ff1a87a3d8e9a55aeca68194ca04e0bb4` restores every omitted parent
+handoff section and specification row and repairs the interleaved paragraph
+below. Production code, tests, schemas, the campaign manifest, child-first
+merge topology, and #4288's `feat/4268-ground-contract` base are unchanged.
+Publication, protected exact-head CI, approval, dependency integration, and
+release remain open.
+
 ## 2026-08-11 PR #4288 current-ground-parent ancestry candidate
 
 The clean `feat/4269-flight-ground-transfer` reconciliation starts from exact
@@ -8,10 +18,10 @@ exact newly published #4285 parent
 `e09ab96280cab363b36bd0e7db4a3cd064dc2527` second without changing #4288's
 base. The child's bounded `flightIntegrator.ts` facade is preserved instead of
 restoring the parent's superseded inline loop, while kinetics resolves to the
-parent's split validated implementation. Bounce, skid, roll, terrain response,
-Seven child-owned Python files receive pinned Ruff 0.14.10 normalization with
-no AST change; the preserved TypeScript facade uses standard line endings.
-total distance, UI integration, protected evidence, and release remain open.
+parent's split validated implementation. Seven child-owned Python files receive
+pinned Ruff 0.14.10 normalization with no AST change; the preserved TypeScript
+facade uses standard line endings. Bounce, skid, roll, terrain response, total
+distance, UI integration, protected evidence, and release remain open.
 
 > Update this append-only handoff with every implementation commit and every
 > push to `main`. Last updated: 2026-08-11.
@@ -253,6 +263,15 @@ zero-warning ESLint, Ruff check/format, pinned MyPy 1.13, Bandit's medium/high
 threshold, strict wind module/signature/function budgets, manifest,
 documentation, policy, SPEC, and diff gates pass.
 
+## 2026-08-10 Final repaired workflow ancestry in strict ground contract
+
+Draft PR `#4285` remains on `feat/4268-ground-contract`, based on
+`feat/4197-capability-observer`. Its original head
+`e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` normally incorporates exact
+quality-green #4282 head `1e82f15026786ea0b08f78f4c001590ddce9ff39`
+second. Ground-contract source and tests had no conflict. Protected CI and
+review must pass before the new exact head propagates normally into #4288.
+
 ## 2026-08-10 Final repaired strict-contract ancestry in flight transfer
 
 Draft PR `#4288` remains on `feat/4269-flight-ground-transfer`, based on
@@ -320,6 +339,28 @@ alias finder's intentional optional-probe `B112` security boundary. Protected
 current-head CI and required review remain release gates. The exact repaired
 ground head is now incorporated into #4288; normal propagation of the reviewed
 #4288 head into #4298 is the next ancestry gate.
+
+## 2026-08-09 Ground parent reconciled with corrected wind carrier
+
+Draft PR #4285 keeps base `feat/4197-capability-observer` and normally
+incorporates exact corrected wind carrier
+`bb101cedd555d07d493aae998b46050c68660cdd`. No branch was rebased,
+retargeted, force-pushed, or published. The strict ground contract remains
+UI-neutral and fail closed; the merge adds no bounce, skid, roll, terrain
+profile, total distance, or presentation claim.
+
+This branch is now the carrier-reconciled ground parent. PR #4288 must merge
+the resulting exact #4285 head normally before its transfer logic is retested
+or published. That descendant merge will carry both the ground contract and
+the explicit observer-to-wind ancestry reconciliation without changing either
+PR base.
+
+Focused evidence is 89 ground/compatibility/wind tests on Python 3.11 and 89
+on real CPython 3.10.20. Ruff check/format passes 34 focused files; pinned mypy
+1.13 passes 23 production modules; the inherited campaign manifest validates
+and its nine manifest/parity tests pass. Ground production modules remain
+within the 400-line/50-line structural budgets and contain no placeholder
+markers.
 
 ## 2026-08-09 Flight-transfer corrected-parent propagation
 

@@ -26,13 +26,22 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.23                                    |
-| **Spec Version**        | 1.14.23                                    |
+| **Current Version**     | 1.14.24                                    |
+| **Spec Version**        | 1.14.24                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-11 PR #4288 append-only history preservation repair
+
+The documentation-only follow-up to exact local candidate
+`1eb4188ff1a87a3d8e9a55aeca68194ca04e0bb4` restores parent handoff sections
+and change-log rows omitted during reconciliation and repairs one interleaved
+handoff paragraph. Production code, tests, schemas, the campaign manifest,
+child-first merge topology, and PR #4288's `feat/4268-ground-contract` base are
+unchanged. Publication and protected exact-head release evidence remain open.
 
 ### 2026-08-11 Ground contract receives current workflow/base ancestry
 
@@ -3046,7 +3055,11 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.24 | docs(flight-ground, #4285 #4288): restore every parent handoff section and specification history row omitted during the local #4288 reconciliation, repair the interleaved rate-of-closure handoff paragraph, and preserve the exact candidate's implementation, tests, schemas, campaign manifest, child-first topology, and `feat/4268-ground-contract` base; keep publication, protected exact-head CI, approval, dependency integration, and release open. |
 | 2026-08-11 | 1.14.23 | chore(flight-ground, #4285 #4288): normally reconcile exact published flight-transfer child `afb1bdcfc6701caaf1f7bc3497a6a37dd9698c14` with exact newly published strict-ground parent `e09ab96280cab363b36bd0e7db4a3cd064dc2527` without changing #4288's base or rewriting either branch; preserve the child's bounded TypeScript flight integrator, signed terminal angular state, physical sphere/terrain contact, and Python/TypeScript/Rust/PyO3/WASM transfer while inheriting the parent's current wind/capability, strict-ground, split-kinetics, plotting-catalog, and formatting ancestry; apply AST-equivalent pinned Ruff normalization to seven child-owned Python files and standard line endings to the preserved TypeScript facade; retain bounce, skid, roll, terrain response, total distance, UI, protected evidence, and release as open work. |
+| 2026-08-11 | 1.14.22 | merge(rate-of-closure, #4282 #4283 #4285): normally merge exact remote ground-contract child `7a38b9838d743e051a6900620c4d6e754582aa89` first with exact current workflow/base head `b2baf6ef615b0d756a86ac4ca7eef2fc583210ee` second, preserving PR #4285's base and strict flight-to-ground contract while inheriting the complete current wind/capability, Ground/Tee parity, split-kinetics, and pinned-format ancestry; resolve the obsolete formatting-only kinetics hunk wholly to the validated parent facade, retain both append-only histories, and keep protected CI, approval, publication, release, qualified ground physics, and downstream #4288 propagation open. |
+| 2026-08-10 | 1.14.19 | fix(rate-of-closure, #4282 #4285): normally propagate exact quality-green responsive wind-workflow head `1e82f15026786ea0b08f78f4c001590ddce9ff39` into strict flight-to-ground contract child `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` without production/test conflict, topology change, or history rewrite; retain the fail-closed contract boundary and require fresh CI/review before normal #4288 propagation. |
+| 2026-08-10 | 1.14.18 | feat/fix(ground, #4199 #4268 #4282 #4285): normally propagate exact repaired responsive wind-workflow carrier `686016196a2f895058b8a566dff103a0fd32cd10` into original strict ground-contract child `788aa547651a3685a363ea401824a5d81477bafb` while preserving base `feat/4197-capability-observer`; retain the fail-closed ground schemas, fixture, migrations, legacy adapter, explicit dependency, import-alias repair, and pinned typing repairs while inheriting the complete deterministic workspace, variation, scalar-wind, capability, campaign-release, and hosted-mypy manifest-repair ancestry; normalize contract-checked scalar plot extraction so the composed skipped-import mypy profile cannot leak `Any`, enforce disabled-command invariants under optimized Python, and document the optional alias finder's reviewed catch-and-continue security boundary; preserve the established no-bounce/no-skid/no-roll/no-terrain/no-total-distance/no-ground-UI/no-Rust-WASM delivery boundary and require #4288 to acquire this exact ancestry through its own normal descendant merge. |
 | 2026-08-10 | 1.14.22 | fix(flight-ground, #4285 #4288): normally propagate exact quality-green strict-ground-contract head `a93edb4bfd6a8dc9334122cd2ae660983d5bf424` into flight-transfer child `108a841b1378c992defd3c7b7ee263d41a6c8b24` without production/test conflict, topology change, or history rewrite; retain the qualified cross-runtime transfer and explicit non-delivery boundaries, with fresh CI/review required before release. |
 | 2026-08-10 | 1.14.21 | fix(flight-ground, #4199 #4269 #4282 #4285 #4288): normally propagate exact repaired strict-ground parent `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` into original flight-transfer child `247215422a6d4b677552955b4923bc609a553259` while preserving base `feat/4268-ground-contract`; retain the qualified signed terminal state, physical sphere/terrain contact brackets, strict provenance, and Python/TypeScript/Rust/PyO3/WASM transfer while inheriting the deterministic workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, import-identity, scalar-extraction, command-invariant, and security-boundary repairs; preserve explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
 | 2026-08-10 | 1.14.20 | fix(flight-ground, #4269 #4288): normally propagate exact corrected ground-contract parent `788aa547651a3685a363ea401824a5d81477bafb` into the flight-transfer descendant without changing its base; preserve the qualified Python/TypeScript/Rust/PyO3/WASM transfer while inheriting deterministic workspace timestamp parsing and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
