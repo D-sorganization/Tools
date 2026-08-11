@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.30                                    |
-| **Spec Version**        | 1.14.30                                    |
+| **Current Version**     | 1.14.31                                    |
+| **Spec Version**        | 1.14.31                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -51,10 +51,35 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   status/error text. Browser Save and Recent remain explicitly unavailable
   because an ordinary browser cannot overwrite a prior download or retain a
   trustworthy filesystem path; Save As remains the supported browser write.
-- This bounded live-adapter slice does not serialize simulation-tab-local ball,
-  target, torque-editor, optimizer, variation-run, or flight-run state. Those
-  domain mappers and installed UpstreamDrift consumer parity remain explicit
-  follow-up work; their absence is not represented as epic completion.
+- The explorer-session v2 continuation now serializes the simulation's ball
+  support selection and complete spatial target. Torque-editor, optimizer,
+  variation-run, and flight-run state still require strict domain mappers;
+  installed UpstreamDrift consumer parity also remains explicit follow-up work.
+
+### 2026-08-10 Ball support and spatial target workspace contract
+
+- `rate_of_closure.explorer_session/2` embeds a versioned
+  `rate_of_closure.simulation_setup/1` payload. It stores Ground/Tee mode,
+  tee height in metres, height-reference and derived ball-centre invariants,
+  plus whether the value is a club default or an explicit override. Default
+  provenance names the persisted club and fails closed unless its geometry is
+  exactly that club's declared default.
+- The same payload stores the complete `swing_sim.spatial_target/1` identity:
+  label, target kind, canonical app-frame position, authoring-frame provenance,
+  units, elevation/ground source, and the full sphere, box, surface-circle, or
+  surface-corridor tolerance geometry. Python and TypeScript delegate to their
+  existing canonical target serializers rather than maintaining another shape.
+- PyQt6 and React now lift this state into the whole-app File adapter. A file is
+  completely parsed before any widget/setter is touched; native application
+  still has rollback, and nested target or provenance corruption leaves the
+  prior live session intact.
+- Explorer-session v1 is never assigned invented tee or target values. Loading
+  it requires an explicit current-live simulation fallback. The fallback's
+  physical values are preserved; a default originating from a different club
+  is deliberately reclassified as an explicit override.
+- This slice is not issue #4225 or epic #4218 completion: torque profiles,
+  optimizer state, variation/flight run artifacts, protected review/release,
+  and UpstreamDrift consumers remain open.
 
 ### 2026-08-10 Non-obscuring external legend rail
 
@@ -3082,6 +3107,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.31 | feat(rate-of-closure, #4143 #4225): extend whole-workspace persistence with the strict explorer-session v2 simulation subpayload shared by PyQt6 and React; round-trip Ground/Tee support, SI tee height, derived geometry, club-default versus explicit-override provenance, and the complete versioned spatial-target identity/frame/tolerance contract; validate before UI mutation, reject corrupt provenance/targets atomically, and require explicit preserve-current migration for v1 instead of inventing values; retain torque/optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |
 | 2026-08-10 | 1.14.30 | feat(rate-of-closure, #4218 #4225): wire the strict whole-workspace and compositor contracts into production PyQt6 and React File operations; provide New/Open/Save As/view Import/view Export/Close on both clients, native atomic Save and persisted Recent, complete-before-mutate validation, rollback-safe application, dirty-session protection, cancellation, and user-visible status/errors; preserve honest browser Save/Recent limitations and fail closed on unsupported torque/variation payloads; retain simulation-tab-local domain mappers, installed-consumer parity, protected CI/review, and epic completion as explicit open work. |
 | 2026-08-10 | 1.14.29 | merge(rate-of-closure, #4327 #4225): normally place the keyboard-complete, versioned multi-view workspace continuation on exact repaired compositor parent `0e3054e6a7fa0e3e38e1312b4132bbd1e4336fb2`; retain React roving-tab navigation, deterministic PyQt focus order, atomic cross-client compositor import/export, QSettings and whole-workspace round trips, and the nested-array freeze repair while inheriting the repaired legend, toolstrip, camera, wind, variation, and capability ancestry; make the already-validated current-workspace mapping explicit at the pinned type boundary without runtime change; implementation/test code does not conflict, only additive handoff/spec files require reconciliation, and protected CI/review, live File adapters, and installed-consumer parity remain open. |
 | 2026-08-10 | 1.14.28 | feat(rate-of-closure, #4218 #4225): complete local multi-view keyboard and persistence acceptance contracts with React roving-tab Arrow/Home/End navigation, deterministic PyQt Layout/Impact/Swing/Flight tab order, keyboard-only Single/Split/Grid membership tests, strict atomic version-1 compositor import/export on both client boundaries, future-format rejection, native QSettings reconstruction, canonical view data inside the whole-app workspace envelope, and a repair for its nested-array double-freeze parser defect; retain disabled File commands, protected CI/review, dependency integration, and UpstreamDrift parity as explicit remaining gates. |

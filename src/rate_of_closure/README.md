@@ -99,9 +99,16 @@ Open and Import validate the complete file before changing live state. Invalid
 files show an error and leave the session untouched. New, Open, and Close
 protect unsaved changes, and cancelled operations do not mutate the session.
 The current whole-workspace adapter covers impact scenario, club, units,
-primary-module layout, and compositor state. Simulation-tab-local ball, target,
-torque-editor, optimizer, variation-run, and flight-run state are not yet part
-of this document; unsupported torque-profile or variation-plan payloads are
+primary-module layout, compositor state, the Ground/Tee selection and SI tee
+height with club-default/override provenance, and the complete canonical
+spatial target (identity, app/source frames, position, surface/absolute source,
+and tolerance geometry). Current explorer-session v2 files restore those
+values on both clients. A v1 explorer session can only load through an explicit
+preserve-current simulation fallback; no tee or target values are invented,
+and a preserved default from another club becomes an explicit override.
+
+Torque-editor, optimizer, variation-run, and flight-run state are not yet part
+of this document. Unsupported torque-profile or variation-plan payloads are
 rejected instead of being silently discarded.
 
 ## Build a Standalone Executable

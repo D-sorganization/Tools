@@ -3,6 +3,34 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Ball-support and spatial-target workspace continuation
+
+Branch `feat/4225-ball-target-session-mappers` starts from exact published
+File-adapter parent `bd7da1e6d42557d5e8782b8f4f64fc4ed183e5ce` (draft PR
+#4333). It adds `rate_of_closure.explorer_session/2` with the strict nested
+`rate_of_closure.simulation_setup/1` payload on both clients. Whole-workspace
+Save/Open now includes ball support mode, SI tee height, derived geometry,
+club-default versus explicit-override provenance, and the complete canonical
+spatial target including identity, app/source frames, elevation/ground source,
+and all supported tolerance geometries.
+
+Current files validate the full nested payload before any UI mutation.
+Club-default provenance must name and geometrically match the persisted club;
+invalid target frames or tolerances fail without partial application. A v1
+explorer session requires a caller-supplied current simulation fallback. The
+values are preserved exactly, and a default from another club becomes an
+explicit override instead of being relabelled or recomputed.
+
+This remains a bounded #4143/#4225 continuation. Torque-editor, optimizer,
+variation-run, flight-run, installed UpstreamDrift parity, protected CI/review,
+and dependency-ordered release remain open. Post-refactor qualification passes
+8 focused native tests and 27 focused React tests, pinned MyPy 1.13, Ruff
+check/format, TypeScript, zero-warning ESLint, the 203-module production build,
+the 11-test campaign-manifest suite, module-size, docs, manifest-layout,
+changed-Python, and diff gates. The broader suites were stopped without failure
+output after several minutes on the overloaded workstation; they are not
+claimed as validation and protected CI remains required.
+
 ## 2026-08-10 Live PyQt6/React workspace File adapters
 
 Isolated branch `feat/4225-workspace-file-adapters` starts at exact draft PR

@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 import pytest
 
 pytest.importorskip("PyQt6")
@@ -15,8 +17,24 @@ from rate_of_closure.application.commands import (  # noqa: E402
     APP_COMMAND_IDS,
     AppCommandId,
 )
+from rate_of_closure.application.workspace_session import (  # noqa: E402
+    document_from_state,
+)
+from rate_of_closure.application.workspace_simulation_session import (  # noqa: E402
+    SimulationWorkspaceState,
+)
 from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow  # noqa: E402
 from rate_of_closure.view_workspace import ViewKind  # noqa: E402
+from shared.python.swing_sim.ball_setup import (  # noqa: E402
+    BallSetup,
+    BallSupportMode,
+)
+from shared.python.swing_sim.solver import (  # noqa: E402
+    BoxTolerance,
+    SpatialTarget,
+    SurfaceCircleTolerance,
+    TargetPoint,
+)
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -80,8 +98,22 @@ def test_save_as_and_open_restore_supported_state_atomically(
         "getSaveFileName",
         lambda *_args, **_kwargs: (str(target), ""),
     )
+    saved_target = SpatialTarget(
+        label="Saved apex gate",
+        kind="aerial_waypoint",
+        point=TargetPoint.from_frame((142.0, 3.0, 25.0), "flight"),
+        tolerance=BoxTolerance((5.0, 2.0, 4.0)),
+        elevation_source="absolute",
+    )
+    window._simulation_tab.apply_simulation_workspace_state(
+        SimulationWorkspaceState(
+            ball_setup=BallSetup(BallSupportMode.TEE, 0.052),
+            ball_setup_user_overridden=True,
+            spatial_target=saved_target,
+        )
+    )
     _action(window, AppCommandId.FILE_SAVE_WORKSPACE_AS).trigger()
-    saved = window._controls.scenario()
+    saved = window._capture_workspace_state()
     assert target.is_file()
     assert not window.workspace_is_dirty()
     recent = _action(window, AppCommandId.FILE_OPEN_RECENT_WORKSPACE)
@@ -89,6 +121,20 @@ def test_save_as_and_open_restore_supported_state_atomically(
     assert str(target) in recent.toolTip()
 
     window._controls.apply_preset("Zero rotation (control)")
+    window._simulation_tab.apply_simulation_workspace_state(
+        SimulationWorkspaceState(
+            ball_setup=BallSetup(BallSupportMode.GROUND, 0.0),
+            ball_setup_user_overridden=True,
+            spatial_target=SpatialTarget(
+                label="Temporary landing",
+                kind="landing_area",
+                point=TargetPoint(80.0, 0.0, 5.0),
+                tolerance=SurfaceCircleTolerance(8.0),
+                elevation_source="course_surface",
+                ground_source="course.surface/test",
+            ),
+        )
+    )
     assert window.workspace_is_dirty()
     monkeypatch.setattr(
         QFileDialog,
@@ -102,13 +148,13 @@ def test_save_as_and_open_restore_supported_state_atomically(
     )
     _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
 
-    assert window._controls.scenario() == saved
+    assert window._capture_workspace_state() == saved
     assert not window.workspace_is_dirty()
 
     window._controls.apply_preset("Zero rotation (control)")
     recent.trigger()
 
-    assert window._controls.scenario() == saved
+    assert window._capture_workspace_state() == saved
     assert not window.workspace_is_dirty()
 
 
@@ -155,6 +201,38 @@ def test_invalid_open_reports_error_without_partial_mutation(
 
     assert window._capture_workspace_state() == before
     assert warnings and warnings[0][0] == "Open Failed"
+
+
+def test_invalid_nested_target_is_rejected_before_native_ui_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    raw["model_session"]["data"]["simulation_setup"]["data"]["spatial_target"][
+        "source_frame"
+    ] = "camera"
+    target = tmp_path / "invalid-target.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "source_frame" in warnings[0][1]
 
 
 def test_glossary_is_first_class_and_recovers_a_hidden_module(window) -> None:  # type: ignore[no-untyped-def]

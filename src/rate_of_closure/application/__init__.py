@@ -23,6 +23,10 @@ from .workspace_session import (
     document_from_state,
     state_from_document,
 )
+from .workspace_simulation_session import (
+    LegacySimulationMigrationRequired,
+    SimulationWorkspaceState,
+)
 
 __all__ = [
     "APP_COMMAND_IDS",
@@ -32,6 +36,8 @@ __all__ = [
     "CommandAvailability",
     "CommandUnavailableError",
     "ExplorerWorkspaceState",
+    "LegacySimulationMigrationRequired",
+    "SimulationWorkspaceState",
     "VersionedPayload",
     "WorkspaceDocument",
     "WorkspaceLayout",

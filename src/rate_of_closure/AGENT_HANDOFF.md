@@ -3,6 +3,32 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Explorer-session v2 ball/target mapper
+
+The child `feat/4225-ball-target-session-mappers` is based on exact draft PR
+#4333 head `bd7da1e6d42557d5e8782b8f4f64fc4ed183e5ce`. The Python and
+TypeScript File adapters now embed one strict versioned simulation subpayload.
+It round-trips Ground/Tee support, SI tee height, the derived ball-centre
+invariant, club-default/explicit-override provenance, and the canonical spatial
+target's label, kind, app/source frame, position, elevation/ground source, and
+complete tolerance geometry.
+
+PyQt6 captures/applies the actual Simulation tab controls; React lifts ball
+setup/provenance into app-owned state beside its already shared spatial target.
+Both parse the whole document before touching live state. Club-default claims
+must match the saved club and geometry. Explorer-session v1 requires an
+explicit current-state fallback, preserves those values, and reclassifies a
+cross-club default as an explicit override rather than inventing a value.
+
+This does not close #4143/#4225/#4218. Torque/optimizer/run payloads,
+UpstreamDrift consumers, protected CI/review, and release remain open.
+Post-refactor evidence is 8 focused native tests and 27 focused React tests,
+pinned MyPy 1.13, Ruff check/format, TypeScript, zero-warning ESLint, the
+203-module production build, the 11-test campaign-manifest suite, module-size,
+docs, manifest-layout, changed-Python, and diff gates. The broader suites were
+stopped without failure output after several minutes on the overloaded
+workstation and are not claimed as validation.
+
 ## 2026-08-10 Production File-command adapters
 
 Branch `feat/4225-workspace-file-adapters` is isolated from exact draft PR

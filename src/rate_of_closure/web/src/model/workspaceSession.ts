@@ -14,12 +14,19 @@ import {
   viewWorkspaceFromDocument,
   type ViewWorkspace,
 } from "./viewWorkspace";
+import {
+  simulationWorkspaceDocument,
+  simulationWorkspaceFromDocument,
+  migratedLegacySimulationFallback,
+  type SimulationWorkspaceSnapshot,
+} from "./workspaceSimulationSession";
 
 const WORKSPACE_SCHEMA = "rate_of_closure.workspace";
 const WORKSPACE_VERSION = 2;
 const SESSION_SCHEMA = "rate_of_closure.explorer_session";
 const CLUB_SCHEMA = "rate_of_closure.club_configuration";
-const PAYLOAD_VERSION = 1;
+const SESSION_PAYLOAD_VERSION = 2;
+const CLUB_PAYLOAD_VERSION = 1;
 const STABLE_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const UTC_TIMESTAMP =
   /^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\.[0-9]{1,6})?Z$/;
@@ -40,6 +47,7 @@ export interface WorkspaceSessionSnapshot {
   readonly scenario: ImpactScenario;
   readonly club: ClubSpec;
   readonly units: UnitSelections;
+  readonly simulation: SimulationWorkspaceSnapshot;
   readonly modules: PrimaryViewState;
   readonly viewWorkspace: ViewWorkspace;
 }
@@ -61,6 +69,11 @@ function exactRecord(value: unknown, keys: readonly string[], context: string): 
   if (actual.length !== keys.length || keys.some((key) => !(key in value))) {
     throw new TypeError(`${context} has invalid fields`);
   }
+  return value;
+}
+
+function objectRecord(value: unknown, context: string): Record<string, unknown> {
+  if (!isRecord(value)) throw new TypeError(`${context} must be an object`);
   return value;
 }
 
@@ -194,18 +207,24 @@ function validatedModules(layout: Record<string, unknown>): PrimaryViewState {
   };
 }
 
-function payload(value: unknown, schema: string, context: string): Record<string, unknown> {
+function payload(
+  value: unknown,
+  schema: string,
+  versions: readonly number[],
+  context: string,
+): { readonly version: number; readonly data: Record<string, unknown> } {
   const envelope = exactRecord(value, ["schema", "schema_version", "data"], context);
-  if (envelope.schema !== schema || envelope.schema_version !== PAYLOAD_VERSION) {
+  if (
+    envelope.schema !== schema ||
+    typeof envelope.schema_version !== "number" ||
+    !versions.includes(envelope.schema_version)
+  ) {
     throw new TypeError(`${context} has an unsupported schema`);
   }
-  return exactRecord(envelope.data, context === "model_session"
-    ? ["scenario", "units"]
-    : Object.keys(clubDocument({
-      name: "x", clubType: "Driver", lengthM: 1, headMassKg: 0.2, loftDeg: 10,
-      lieDeg: 56, moiAboutShaftKgM2: 0.0005, cgDepthM: 0.02, cgHeightM: 0.02,
-      faceBulgeRadiusM: null, faceRollRadiusM: null,
-    })), `${context}.data`);
+  return {
+    version: envelope.schema_version,
+    data: objectRecord(envelope.data, `${context}.data`),
+  };
 }
 
 function validateMetadata(value: unknown): void {
@@ -253,13 +272,17 @@ export function createWorkspaceDocument(
     },
     model_session: {
       schema: SESSION_SCHEMA,
-      schema_version: PAYLOAD_VERSION,
-      data: { scenario: scenarioDocument(snapshot.scenario), units: snapshot.units },
+      schema_version: SESSION_PAYLOAD_VERSION,
+      data: {
+        scenario: scenarioDocument(snapshot.scenario),
+        units: snapshot.units,
+        simulation_setup: simulationWorkspaceDocument(snapshot.simulation, snapshot.club),
+      },
     },
     prescribed_torque_profiles: [],
     club_configuration: {
       schema: CLUB_SCHEMA,
-      schema_version: PAYLOAD_VERSION,
+      schema_version: CLUB_PAYLOAD_VERSION,
       data: clubDocument(snapshot.club),
     },
     variation_plan: null,
@@ -279,7 +302,15 @@ export function createWorkspaceDocument(
 }
 
 /** Parse and validate the entire document before exposing any applicable state. */
-export function parseWorkspaceDocument(text: string): WorkspaceSessionSnapshot {
+export interface WorkspaceParseOptions {
+  readonly legacySimulationFallback?: SimulationWorkspaceSnapshot;
+}
+
+/** Parse a current file or deliberately migrate v1 with an explicit fallback. */
+export function parseWorkspaceDocument(
+  text: string,
+  options: WorkspaceParseOptions = {},
+): WorkspaceSessionSnapshot {
   if (typeof text !== "string" || text.trim().length === 0) {
     throw new TypeError("workspace file must contain JSON text");
   }
@@ -297,8 +328,34 @@ export function parseWorkspaceDocument(text: string): WorkspaceSessionSnapshot {
   if (root.variation_plan !== null) {
     throw new TypeError("variation plans are not supported by this adapter");
   }
-  const session = payload(root.model_session, SESSION_SCHEMA, "model_session");
-  const club = payload(root.club_configuration, CLUB_SCHEMA, "club_configuration");
+  const sessionEnvelope = payload(
+    root.model_session,
+    SESSION_SCHEMA,
+    [1, SESSION_PAYLOAD_VERSION],
+    "model_session",
+  );
+  const session = exactRecord(
+    sessionEnvelope.data,
+    sessionEnvelope.version === 1
+      ? ["scenario", "units"]
+      : ["scenario", "units", "simulation_setup"],
+    "model_session.data",
+  );
+  const clubEnvelope = payload(
+    root.club_configuration,
+    CLUB_SCHEMA,
+    [CLUB_PAYLOAD_VERSION],
+    "club_configuration",
+  );
+  const club = exactRecord(
+    clubEnvelope.data,
+    Object.keys(clubDocument({
+      name: "x", clubType: "Driver", lengthM: 1, headMassKg: 0.2, loftDeg: 10,
+      lieDeg: 56, moiAboutShaftKgM2: 0.0005, cgDepthM: 0.02, cgHeightM: 0.02,
+      faceBulgeRadiusM: null, faceRollRadiusM: null,
+    })),
+    "club_configuration.data",
+  );
   const layout = exactRecord(root.layout, [
     "module_order", "visible_module_ids", "active_module_id", "view_workspace",
   ], "layout");
@@ -308,10 +365,26 @@ export function parseWorkspaceDocument(text: string): WorkspaceSessionSnapshot {
   if (viewEnvelope.schema !== "rate_of_closure.view_workspace" || viewEnvelope.schema_version !== 1) {
     throw new TypeError("unsupported view workspace payload");
   }
+  const parsedClub = clubFromDocument(club);
+  let simulation: SimulationWorkspaceSnapshot;
+  if (sessionEnvelope.version === 1) {
+    if (options.legacySimulationFallback === undefined) {
+      throw new RangeError(
+        "model_session v1 requires an explicit simulation migration fallback",
+      );
+    }
+    simulation = migratedLegacySimulationFallback(
+      options.legacySimulationFallback,
+      parsedClub,
+    );
+  } else {
+    simulation = simulationWorkspaceFromDocument(session.simulation_setup, parsedClub);
+  }
   return {
     scenario: scenarioFromDocument(session.scenario),
-    club: clubFromDocument(club),
+    club: parsedClub,
     units: validatedUnits(session.units),
+    simulation,
     modules: validatedModules(layout),
     viewWorkspace: viewWorkspaceFromDocument(viewEnvelope.data),
   };

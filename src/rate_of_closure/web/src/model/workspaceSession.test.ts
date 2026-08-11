@@ -1,9 +1,15 @@
 import { describe, expect, it } from "vitest";
 
 import { getClub } from "./club";
+import { DRIVER_TEE_HEIGHT_M } from "./ballSetup";
 import { DEFAULT_SCENARIO } from "./impact";
 import { DEFAULT_PRIMARY_VIEW_STATE } from "./viewPreferences";
 import { defaultViewWorkspace } from "./viewWorkspace";
+import {
+  boxTolerance,
+  createSpatialTarget,
+  targetPointFromFrame,
+} from "./spatialTarget";
 import {
   createWorkspaceDocument,
   parseWorkspaceDocument,
@@ -14,6 +20,17 @@ const snapshot = (): WorkspaceSessionSnapshot => ({
   scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -900 },
   club: getClub("Driver 10.5°"),
   units: { speed: "mph", rotation: "deg/s", length: "mm", distance: "yd" },
+  simulation: {
+    ballSetup: { supportMode: "tee", teeHeightM: DRIVER_TEE_HEIGHT_M },
+    ballSetupUserOverridden: false,
+    spatialTarget: createSpatialTarget({
+      label: "Apex gate",
+      kind: "aerial_waypoint",
+      point: targetPointFromFrame([137.5, 3.25, 24.25], "flight"),
+      tolerance: boxTolerance([4.5, 2.5, 3.5]),
+      elevationSource: "absolute",
+    }),
+  },
   modules: DEFAULT_PRIMARY_VIEW_STATE,
   viewWorkspace: defaultViewWorkspace,
 });
@@ -31,6 +48,63 @@ describe("whole workspace session contract", () => {
     const encoded = createWorkspaceDocument(snapshot(), metadata);
     expect(parseWorkspaceDocument(encoded)).toEqual(snapshot());
     expect(JSON.parse(encoded).schema_version).toBe(2);
+    const session = JSON.parse(encoded).model_session;
+    expect(session.schema_version).toBe(2);
+    expect(session.data.simulation_setup.data.ball_setup.provenance).toEqual({
+      kind: "club_default",
+      club_name: "Driver 10.5°",
+    });
+    expect(session.data.simulation_setup.data.spatial_target).toMatchObject({
+      source_frame: "flight",
+      tolerance: {
+        kind: "box",
+        half_extents_m: { x: 4.5, elevation: 2.5, right: 3.5 },
+      },
+    });
+  });
+
+  it("rejects club-default provenance that disagrees with saved geometry", () => {
+    const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    const setup = value.model_session.data.simulation_setup.data.ball_setup.setup;
+    setup.tee_height_m = 0.05;
+    setup.ball_center_m[1] = 0.05 + 0.04267 / 2;
+    expect(() => parseWorkspaceDocument(JSON.stringify(value))).toThrow(/club-default ball setup/i);
+  });
+
+  it("requires an explicit fallback to migrate a v1 explorer session", () => {
+    const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    value.model_session.schema_version = 1;
+    value.model_session.data = {
+      scenario: value.model_session.data.scenario,
+      units: value.model_session.data.units,
+    };
+    const text = JSON.stringify(value);
+    expect(() => parseWorkspaceDocument(text)).toThrow(/explicit.*migration/i);
+    expect(parseWorkspaceDocument(text, {
+      legacySimulationFallback: snapshot().simulation,
+    }).simulation).toEqual(snapshot().simulation);
+  });
+
+  it("preserves a cross-club v1 fallback as an explicit override", () => {
+    const iron: WorkspaceSessionSnapshot = {
+      ...snapshot(),
+      club: getClub("7-Iron"),
+      simulation: {
+        ...snapshot().simulation,
+        ballSetup: { supportMode: "ground", teeHeightM: 0 },
+      },
+    };
+    const value = JSON.parse(createWorkspaceDocument(iron, metadata));
+    value.model_session.schema_version = 1;
+    value.model_session.data = {
+      scenario: value.model_session.data.scenario,
+      units: value.model_session.data.units,
+    };
+    const migrated = parseWorkspaceDocument(JSON.stringify(value), {
+      legacySimulationFallback: snapshot().simulation,
+    });
+    expect(migrated.simulation.ballSetup).toEqual(snapshot().simulation.ballSetup);
+    expect(migrated.simulation.ballSetupUserOverridden).toBe(true);
   });
 
   it("rejects unsupported domain state before returning applicable values", () => {

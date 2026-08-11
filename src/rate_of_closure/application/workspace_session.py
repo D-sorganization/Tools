@@ -22,10 +22,19 @@ from .workspace_document import (
     WorkspaceLayout,
     WorkspaceMetadata,
 )
+from .workspace_simulation_session import (
+    LegacySimulationMigrationRequired,
+    SimulationWorkspaceState,
+    migrate_legacy_simulation_fallback,
+    simulation_workspace_from_payload,
+    simulation_workspace_to_payload,
+    validate_simulation_workspace,
+)
 
 EXPLORER_SESSION_SCHEMA = "rate_of_closure.explorer_session"
 CLUB_CONFIGURATION_SCHEMA = "rate_of_closure.club_configuration"
-SESSION_SCHEMA_VERSION = 1
+SESSION_SCHEMA_VERSION = 2
+CLUB_CONFIGURATION_SCHEMA_VERSION = 1
 CANONICAL_MODULE_IDS = (
     "explorer",
     "calculation",
@@ -55,7 +64,8 @@ _CLUB_FIELDS = frozenset(
         "head_style",
     }
 )
-_SESSION_FIELDS = frozenset({"scenario", "units"})
+_SESSION_V1_FIELDS = frozenset({"scenario", "units"})
+_SESSION_FIELDS = _SESSION_V1_FIELDS | {"simulation_setup"}
 
 
 @dataclass(frozen=True)
@@ -76,6 +86,7 @@ class ExplorerWorkspaceState:
     scenario: ImpactScenario
     club: ClubSpec
     units: Mapping[str, str]
+    simulation: SimulationWorkspaceState
     module_order: tuple[str, ...]
     visible_module_ids: tuple[str, ...]
     active_module_id: str
@@ -87,6 +98,7 @@ class ExplorerWorkspaceState:
             raise TypeError("scenario must be an ImpactScenario")
         if not isinstance(self.club, ClubSpec):
             raise TypeError("club must be a ClubSpec")
+        validate_simulation_workspace(self.simulation, self.club)
         units = dict(self.units)
         if set(units) != set(QUANTITY_UNITS) or any(
             value not in QUANTITY_UNITS[key] for key, value in units.items()
@@ -160,12 +172,18 @@ def document_from_state(
         model_session=VersionedPayload(
             EXPLORER_SESSION_SCHEMA,
             SESSION_SCHEMA_VERSION,
-            {"scenario": _scenario_data(state.scenario), "units": dict(state.units)},
+            {
+                "scenario": _scenario_data(state.scenario),
+                "units": dict(state.units),
+                "simulation_setup": simulation_workspace_to_payload(
+                    state.simulation, state.club
+                ),
+            },
         ),
         prescribed_torque_profiles=(),
         club_configuration=VersionedPayload(
             CLUB_CONFIGURATION_SCHEMA,
-            SESSION_SCHEMA_VERSION,
+            CLUB_CONFIGURATION_SCHEMA_VERSION,
             _club_data(state.club),
         ),
         variation_plan=None,
@@ -182,7 +200,11 @@ def document_from_state(
     )
 
 
-def state_from_document(document: WorkspaceDocument) -> ExplorerWorkspaceState:
+def state_from_document(
+    document: WorkspaceDocument,
+    *,
+    legacy_simulation_fallback: SimulationWorkspaceState | None = None,
+) -> ExplorerWorkspaceState:
     """Validate a supported whole document before returning applicable state."""
     if not isinstance(document, WorkspaceDocument):
         raise TypeError("document must be a WorkspaceDocument")
@@ -192,17 +214,21 @@ def state_from_document(document: WorkspaceDocument) -> ExplorerWorkspaceState:
         raise TypeError("variation plans are not supported by this adapter")
     session = document.model_session
     club = document.club_configuration
-    if (session.schema, session.schema_version) != (
-        EXPLORER_SESSION_SCHEMA,
+    if session.schema != EXPLORER_SESSION_SCHEMA or session.schema_version not in (
+        1,
         SESSION_SCHEMA_VERSION,
     ):
         raise ValueError("unsupported explorer session payload")
     if (club.schema, club.schema_version) != (
         CLUB_CONFIGURATION_SCHEMA,
-        SESSION_SCHEMA_VERSION,
+        CLUB_CONFIGURATION_SCHEMA_VERSION,
     ):
         raise ValueError("unsupported club configuration payload")
-    session_data = _exact_mapping(session.data, _SESSION_FIELDS, "model_session.data")
+    parsed_club = _club_from_data(club.data)
+    session_fields = (
+        _SESSION_V1_FIELDS if session.schema_version == 1 else _SESSION_FIELDS
+    )
+    session_data = _exact_mapping(session.data, session_fields, "model_session.data")
     scenario_data = _exact_mapping(
         session_data["scenario"], _SCENARIO_FIELDS, "model_session.scenario"
     )
@@ -215,10 +241,24 @@ def state_from_document(document: WorkspaceDocument) -> ExplorerWorkspaceState:
         1,
     ):
         raise ValueError("workspace requires a supported compositor payload")
+    if session.schema_version == 1:
+        if legacy_simulation_fallback is None:
+            raise LegacySimulationMigrationRequired(
+                "model_session v1 omitted ball setup and spatial target; "
+                "an explicit simulation migration fallback is required"
+            )
+        simulation = migrate_legacy_simulation_fallback(
+            legacy_simulation_fallback, parsed_club
+        )
+    else:
+        simulation = simulation_workspace_from_payload(
+            session_data["simulation_setup"], parsed_club
+        )
     return ExplorerWorkspaceState(
         scenario=ImpactScenario(**scenario_data),
-        club=_club_from_data(club.data),
+        club=parsed_club,
         units=units,
+        simulation=simulation,
         module_order=document.layout.module_order,
         visible_module_ids=document.layout.visible_module_ids,
         active_module_id=document.layout.active_module_id,
@@ -229,8 +269,11 @@ def state_from_document(document: WorkspaceDocument) -> ExplorerWorkspaceState:
 __all__ = [
     "CANONICAL_MODULE_IDS",
     "CLUB_CONFIGURATION_SCHEMA",
+    "CLUB_CONFIGURATION_SCHEMA_VERSION",
     "EXPLORER_SESSION_SCHEMA",
     "ExplorerWorkspaceState",
+    "LegacySimulationMigrationRequired",
+    "SimulationWorkspaceState",
     "WorkspaceSessionMetadata",
     "document_from_state",
     "state_from_document",

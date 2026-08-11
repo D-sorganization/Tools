@@ -2,17 +2,34 @@ import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { APP_COMMAND_ID } from "../model/appCommands";
+import { DRIVER_TEE_HEIGHT_M } from "../model/ballSetup";
 import { getClub } from "../model/club";
 import { DEFAULT_SCENARIO } from "../model/impact";
 import { DEFAULT_PRIMARY_VIEW_STATE } from "../model/viewPreferences";
 import { defaultViewWorkspace } from "../model/viewWorkspace";
 import { createWorkspaceDocument } from "../model/workspaceSession";
+import {
+  boxTolerance,
+  createSpatialTarget,
+  targetPointFromFrame,
+} from "../model/spatialTarget";
 import { useWorkspaceFiles } from "./useWorkspaceFiles";
 
 const snapshot = () => ({
   scenario: DEFAULT_SCENARIO,
   club: getClub("Driver 10.5°"),
   units: { speed: "mph", rotation: "deg/s", length: "mm", distance: "yd" } as const,
+  simulation: {
+    ballSetup: { supportMode: "tee" as const, teeHeightM: DRIVER_TEE_HEIGHT_M },
+    ballSetupUserOverridden: false,
+    spatialTarget: createSpatialTarget({
+      label: "Workspace target",
+      kind: "aerial_waypoint",
+      point: targetPointFromFrame([125, -4, 21], "flight"),
+      tolerance: boxTolerance([4, 2, 3]),
+      elevationSource: "absolute",
+    }),
+  },
   modules: DEFAULT_PRIMARY_VIEW_STATE,
   viewWorkspace: defaultViewWorkspace,
 });
@@ -52,6 +69,30 @@ describe("browser workspace file controller", () => {
     });
 
     await waitFor(() => expect(result.current.error).toMatch(/json/i));
+    expect(applySnapshot).not.toHaveBeenCalled();
+  });
+
+  it("rejects an invalid nested target before applying any workspace state", async () => {
+    const applySnapshot = vi.fn();
+    const encoded = JSON.parse(createWorkspaceDocument(snapshot(), {
+      documentId: "workspace.invalid.target", title: "Invalid", appVersion: "1.14.30",
+      createdAtUtc: "2026-08-10T12:00:00Z", modifiedAtUtc: "2026-08-10T12:00:00Z",
+    }));
+    encoded.model_session.data.simulation_setup.data.spatial_target.source_frame = "camera";
+    const { result } = renderHook(() => useWorkspaceFiles({
+      snapshot: snapshot(), initialSnapshot: snapshot(), applySnapshot,
+      applyViewWorkspace: vi.fn(),
+    }));
+    const input = document.createElement("input");
+    Object.defineProperty(input, "files", {
+      value: [new File([JSON.stringify(encoded)], "invalid-target.json")],
+    });
+    act(() => {
+      result.current.handleCommand(APP_COMMAND_ID.fileOpenWorkspace);
+      result.current.onFileChange({ currentTarget: input } as never);
+    });
+
+    await waitFor(() => expect(result.current.error).toMatch(/source_frame|frame/i));
     expect(applySnapshot).not.toHaveBeenCalled();
   });
 

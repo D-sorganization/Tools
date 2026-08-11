@@ -4,6 +4,28 @@ Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 Ball setup and spatial target workspace child
+
+- Worktree `Tools-worktrees/workspace-ball-target` and branch
+  `feat/4225-ball-target-session-mappers` start at exact draft PR #4333 head
+  `bd7da1e6d42557d5e8782b8f4f64fc4ed183e5ce`.
+- Explorer-session v2 embeds the same strict simulation-setup v1 contract in
+  Python and TypeScript. It includes Ground/Tee mode, SI tee height, derived
+  ball centre, club-default/override provenance, and the complete canonical
+  spatial-target label/kind/frames/position/source/tolerance document.
+- PyQt6 maps the real Simulation tab state; React lifts ball state to the app
+  model beside the shared target. Nested corruption is rejected before any
+  live mutation. Legacy explorer-session v1 requires an explicit preserve-
+  current fallback and never fabricates missing physical values.
+- Remaining #4225 work is torque-editor, optimizer, variation-run, flight-run,
+  installed UpstreamDrift parity, protected CI/review, and ordered release.
+  Post-refactor qualification passes 8 focused native tests, 27 focused React
+  tests, pinned MyPy 1.13, Ruff check/format, TypeScript, zero-warning ESLint,
+  the 203-module production build, the 11-test campaign-manifest suite,
+  module-size, docs, manifest-layout, changed-Python, and diff gates. The
+  broader suites were stopped without failure output after several minutes on
+  the overloaded workstation; they are not claimed as validation.
+
 ## 2026-08-10 Live workspace File-adapter continuation
 
 - Worktree `Tools-worktrees/workspace-file-adapters` and branch

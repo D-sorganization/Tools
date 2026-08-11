@@ -41,6 +41,12 @@ function SimulationWorkspace(props: {
       onScenarioChange={(updates) => model.setScenario((state) => ({ ...state, ...updates }))}
       spatialTarget={model.spatialTarget}
       onSpatialTargetChange={model.setSpatialTarget}
+      ballSetup={model.ballSetup}
+      ballSetupUserOverridden={model.ballSetupUserOverridden}
+      ballSetupMessage={model.ballSetupMessage}
+      onBallSetupChange={model.setBallSetup}
+      onBallSetupUserOverriddenChange={model.setBallSetupUserOverridden}
+      onBallSetupMessageChange={model.setBallSetupMessage}
       distanceUnit={model.units.distance}
       viewWorkspace={props.viewWorkspace}
       viewCommandRevision={props.viewCommandRevision}

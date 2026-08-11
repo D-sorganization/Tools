@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
     from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 
-_APP_VERSION = "1.14.30"
+_APP_VERSION = "1.14.31"
 _WORKSPACE_FILTER = "Rate Workspace (*.roc-workspace.json);;JSON files (*.json)"
 _VIEW_FILTER = "Rate View Layout (*.roc-view.json);;JSON files (*.json)"
 _RECENT_PATHS_KEY = "workspace/recent_paths_v1"
@@ -189,7 +189,15 @@ class MainWindowFileCommandsMixin:
     def _open_workspace_path(self, path: Path) -> None:
         try:
             document = read_workspace(path)
-            state = state_from_document(document)
+            legacy_session = document.model_session.schema_version == 1
+            state = state_from_document(
+                document,
+                legacy_simulation_fallback=(
+                    self._capture_workspace_state().simulation
+                    if legacy_session
+                    else None
+                ),
+            )
         except (OSError, TypeError, ValueError) as exc:
             self._show_error("Open Failed", str(exc))
             return
@@ -210,7 +218,12 @@ class MainWindowFileCommandsMixin:
             metadata.app_version,
         )
         self._remember_workspace(path)
-        self._mark_saved(f"Opened {path.name}")
+        suffix = (
+            "; legacy v1 preserved the current ball setup and spatial target"
+            if legacy_session
+            else ""
+        )
+        self._mark_saved(f"Opened {path.name}{suffix}")
 
     def _save_to_path(self, path: Path) -> bool:
         now = self._utc_now()
@@ -244,6 +257,7 @@ class MainWindowFileCommandsMixin:
             scenario=self._controls.scenario(),
             club=self._controls.club_spec(),
             units=self._controls.unit_selections(),
+            simulation=self._simulation_tab.simulation_workspace_state(),
             module_order=module_order,
             visible_module_ids=visible,
             active_module_id=_PYQT_TO_CANONICAL[self.current_primary_module_id()],
@@ -266,6 +280,7 @@ class MainWindowFileCommandsMixin:
             state.scenario, state.club, dict(state.units)
         )
         self.apply_primary_navigation(order, visible, active)
+        self._simulation_tab.apply_simulation_workspace_state(state.simulation)
         self._simulation_tab.compositor().import_workspace_document(
             workspace_to_document(state.view_workspace)
         )

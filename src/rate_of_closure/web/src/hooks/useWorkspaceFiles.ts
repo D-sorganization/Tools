@@ -5,7 +5,7 @@ import { exportViewWorkspace, importViewWorkspace, type ViewWorkspace } from "..
 import type { WorkspaceSessionSnapshot } from "../model/workspaceSession";
 
 type PickerMode = "workspace" | "view";
-const APP_VERSION = "1.14.30";
+const APP_VERSION = "1.14.31";
 
 interface WorkspaceFileOptions {
   readonly snapshot: WorkspaceSessionSnapshot;
@@ -149,7 +149,9 @@ export function useWorkspaceFiles(options: WorkspaceFileOptions): WorkspaceFileC
           return;
         }
         void import("../model/workspaceSession").then(({ parseWorkspaceDocument }) => {
-          const parsed = parseWorkspaceDocument(text);
+          const parsed = parseWorkspaceDocument(text, {
+            legacySimulationFallback: options.snapshot.simulation,
+          });
           if (!confirmDiscard("open the selected workspace")) return;
           options.applySnapshot(parsed);
           setBaseline(fingerprint(parsed));

@@ -69,6 +69,11 @@ export default function App() {
     scenario: model.scenario,
     club: model.clubSpec,
     units: model.units,
+    simulation: {
+      ballSetup: model.ballSetup,
+      ballSetupUserOverridden: model.ballSetupUserOverridden,
+      spatialTarget: model.spatialTarget,
+    },
     modules: workspace.viewState,
     viewWorkspace: workspace.viewWorkspace,
   };
@@ -81,6 +86,11 @@ export default function App() {
       model.setClubSpec(next.club);
       model.setGeneratedHead(generatedHeadFor(next.club));
       model.setUnits(next.units);
+      model.setBallSetup(next.simulation.ballSetup);
+      model.setBallSetupUserOverridden(
+        next.simulation.ballSetupUserOverridden,
+      );
+      model.setSpatialTarget(next.simulation.spatialTarget);
       workspace.setViewState(next.modules);
       workspace.setViewWorkspace(next.viewWorkspace);
     },
