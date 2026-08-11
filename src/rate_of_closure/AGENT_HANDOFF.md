@@ -1,10 +1,12 @@
 # AGENT_HANDOFF — rate_of_closure
 
-## 2026-08-11 qualified regional-ground study adapter (#4273)
+## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
-The local unpushed `codex/4273-flight-ground-study-adapter` candidate starts
-from exact published PR #4360 head
-`74f1ceafd87f952a76917dc868baa6414f856144`. A read-only audit of current
+Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)
+starts from exact published PR #4360 head
+`74f1ceafd87f952a76917dc868baa6414f856144`. Its independently reviewed
+implementation commit is `d71c43fdd729b35e1abe5573f41ed60201698608`.
+A read-only audit of current
 flight metric, target, scalar-ensemble, capability, regional readback, and
 ground-result contracts plus the historical `ground-study-scalar-adapter`,
 `ground-study-result-adapter`, and `ground-study-projection` worktrees retained

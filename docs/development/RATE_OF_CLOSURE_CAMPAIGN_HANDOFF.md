@@ -1,10 +1,11 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-## 2026-08-11 qualified regional-ground study adapter (#4273)
+## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
-- The local unpushed `codex/4273-flight-ground-study-adapter` candidate starts
-  from exact published PR #4360 head
-  `74f1ceafd87f952a76917dc868baa6414f856144`.
+- Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)
+  starts from exact published PR #4360 head
+  `74f1ceafd87f952a76917dc868baa6414f856144`; its independently reviewed
+  implementation commit is `d71c43fdd729b35e1abe5573f41ed60201698608`.
 - Contract and historical-worktree audits retained only the existing
   complete-rest qualification invariant and scalar taxonomy. The adapter
   reuses `to_ground_model_result`, `FlightMetricInputs`, and
@@ -25,7 +26,7 @@
   assertion-bearing test.
 - Solver/capability invocation, variation UI, wind strategy, persistence,
   TypeScript/compiled and four-surface parity, protected CI/review,
-  publication, release, and #4273/#4267 completion remain open.
+  protected release, and #4273/#4267 completion remain open.
 
 ## 2026-08-11 PR #4360 flight-through-regional-ground pipeline
 

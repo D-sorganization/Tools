@@ -1,10 +1,12 @@
 # AGENT_HANDOFF — Tools
 
-## 2026-08-11 qualified regional-ground study adapter (#4273)
+## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
-The local unpushed `codex/4273-flight-ground-study-adapter` candidate starts
-from exact published PR #4360 head
-`74f1ceafd87f952a76917dc868baa6414f856144`. A read-only audit of current
+Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)
+starts from exact published PR #4360 head
+`74f1ceafd87f952a76917dc868baa6414f856144`. Its independently reviewed
+implementation commit is `d71c43fdd729b35e1abe5573f41ed60201698608`.
+A read-only audit of current
 flight metric, target, scalar-ensemble, capability, regional readback, and
 ground-result contracts plus the historical `ground-study-scalar-adapter`,
 `ground-study-result-adapter`, and `ground-study-projection` worktrees found
@@ -33,7 +35,7 @@ default module-size budget, and diff checks are green. The assertion and
 400-line scans report only inherited stack files when compared with main; the
 new test has behavioral assertions and the new production module is 328 lines.
 
-This candidate adds no UI, solver/capability invocation, wind strategy,
+This PR adds no UI, solver/capability invocation, wind strategy,
 persistence, TypeScript or compiled runtime, four-surface parity, protected
 CI/review, publication, or release. Keep #4273 and #4267 open.
 
