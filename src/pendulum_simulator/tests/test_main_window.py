@@ -156,7 +156,9 @@ def test_popout_chart_with_result_dialog_accepted(qapp, monkeypatch) -> Any:
 
         # mock extract_series
         mock_extract = MagicMock(side_effect=[([1], "X", "m"), ([2], "Y", "m")])
-        monkeypatch.setattr("double_pendulum_golf.data_extractor.extract_series", mock_extract)
+        monkeypatch.setattr(
+            "double_pendulum_golf.data_extractor.extract_series", mock_extract
+        )
 
         # mock PopOutChart
         mock_chart_class = MagicMock()
@@ -199,7 +201,9 @@ def test_popout_chart_with_result_data_error(qapp, monkeypatch) -> Any:
         def mock_extract(*args) -> Any:
             raise KeyError("bad")
 
-        monkeypatch.setattr("double_pendulum_golf.data_extractor.extract_series", mock_extract)
+        monkeypatch.setattr(
+            "double_pendulum_golf.data_extractor.extract_series", mock_extract
+        )
 
         mock_msg = MagicMock()
         monkeypatch.setattr("PyQt6.QtWidgets.QMessageBox.warning", mock_msg)

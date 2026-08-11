@@ -147,7 +147,11 @@ class _FakeSidebar:
         pass
 
     def get_optimization_params(self) -> tuple[float, float, float]:
-        return (self.bar_slider.value(), self.dur_slider.value(), self.smooth_slider.value())
+        return (
+            self.bar_slider.value(),
+            self.dur_slider.value(),
+            self.smooth_slider.value(),
+        )
 
     def get_segment_multipliers(self) -> dict[str, float]:
         return {
@@ -201,7 +205,9 @@ class _FakeTab:
     ) -> None:
         self.draw_all_plots_calls.append((result, body, bar, exercise_type))
 
-    def draw_anim_frame(self, fi: int, result: Any, dyn: Any, body: Any, etype: str) -> None:
+    def draw_anim_frame(
+        self, fi: int, result: Any, dyn: Any, body: Any, etype: str
+    ) -> None:
         self.draw_anim_frame_calls.append((fi, result, dyn, body, etype))
 
 
@@ -219,7 +225,9 @@ class _FakeWindow:
         from movement_optimizer.gui.exercise_state import ExerciseRuntimeState
         from movement_optimizer.trajectory import SolutionCache
 
-        self.exercise_states = [ExerciseRuntimeState() for _name, _etype in self.EXERCISE_CONFIGS]
+        self.exercise_states = [
+            ExerciseRuntimeState() for _name, _etype in self.EXERCISE_CONFIGS
+        ]
         self.sidebar = _FakeSidebar()
         self.status_label = _FakeLabel()
         self.exercise_tabs = [_FakeTab() for _ in self.EXERCISE_CONFIGS]
@@ -493,7 +501,14 @@ class TestResolveExerciseParams:
         from movement_optimizer.gui.optimization_mixin import OptimizationMixin
 
         window = _FakeWindow()
-        _body, _dyn, etype, _bar, _dur, _smoothness = OptimizationMixin._resolve_exercise_params(
+        (
+            _body,
+            _dyn,
+            etype,
+            _bar,
+            _dur,
+            _smoothness,
+        ) = OptimizationMixin._resolve_exercise_params(
             window,
             0,  # type: ignore
         )  # type: ignore[arg-type]
@@ -503,7 +518,14 @@ class TestResolveExerciseParams:
         from movement_optimizer.gui.optimization_mixin import OptimizationMixin
 
         window = _FakeWindow()
-        _body, _dyn, etype, _bar, _dur, _smoothness = OptimizationMixin._resolve_exercise_params(
+        (
+            _body,
+            _dyn,
+            etype,
+            _bar,
+            _dur,
+            _smoothness,
+        ) = OptimizationMixin._resolve_exercise_params(
             window,
             2,  # type: ignore
         )  # type: ignore[arg-type]
@@ -528,7 +550,14 @@ class TestResolveExerciseParams:
 
         window = _FakeWindow()
         window.sidebar.bar_slider.current = 100.0
-        _body, _dyn, _etype, bar, _dur, _smoothness = OptimizationMixin._resolve_exercise_params(
+        (
+            _body,
+            _dyn,
+            _etype,
+            bar,
+            _dur,
+            _smoothness,
+        ) = OptimizationMixin._resolve_exercise_params(
             window,
             0,  # type: ignore
         )  # type: ignore[arg-type]
@@ -540,7 +569,14 @@ class TestResolveExerciseParams:
 
         window = _FakeWindow()
         window.sidebar.dur_slider.current = 1.0
-        _body, _dyn, _etype, _bar, dur, _smoothness = OptimizationMixin._resolve_exercise_params(
+        (
+            _body,
+            _dyn,
+            _etype,
+            _bar,
+            dur,
+            _smoothness,
+        ) = OptimizationMixin._resolve_exercise_params(
             window,
             1,  # type: ignore
         )  # type: ignore[arg-type]
