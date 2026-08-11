@@ -1,5 +1,41 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local flight-through-regional-ground pipeline candidate
+
+Local branch `feat/4271-flight-regional-ground-pipeline` starts from exact
+published PR #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`
+without modifying its published worktree. Audit found that the existing
+regional envelope is exact only after `SETTLED_TO_SKID`; bounce time/event
+limits and no-recontact cannot be mapped to its failure enum honestly.
+
+The child adds `execute_regional_ground_from_flight`, which validates exact
+flight, launch, transfer, plan, and regional-option records, capture speed, and
+launch-relative plan/base-surface equality before bounce physics. It composes
+only the existing flight-to-bounce and regional-ground executors. The new
+strict bounded `flight-regional-ground-pipeline/v1` in-memory result preserves
+the exact bounce pair, ground and bounce-input digests, plan/digest/provenance,
+and existing regional envelope. Regional evidence is required exactly for a
+settled bounce; every non-settled bounce reason remains native and forbids
+downstream evidence. Canonical regional-plan hashing is now one shared helper.
+
+RED recorded the missing module/result/exports, GREEN passed 17 pipeline/public
+contract tests, and REFACTOR passed 39 pipeline/public/regional contract tests.
+The complete flight-plus-ground suite is green for 377 tests. Ruff
+check/format, scoped Black, protected changed-file and import-following MyPy,
+Bandit, placeholder and diff checks, documentation governance,
+blocking-quality policy, minimum-test and test-assertion contracts,
+changed-Python policy, both LOC policies, campaign-manifest validation, and 11
+manifest/layout tests are green. Protected skipped-import MyPy required only
+explicit result casts at the already dynamic wire-parser boundaries; runtime
+and canonical bytes are unchanged. Standalone Black reports one inherited
+formatting preference in `test_contract_api.py`; repository-authoritative Ruff
+is green and that file's delta is limited to the required public API entries.
+
+This is an unpushed, `not_released` candidate. It adds no new wire schema or
+migration and no PyQt6/React, TypeScript/Rust/WASM, persistence, playback,
+calibration, target/solver/variation, or downstream integration. Keep #4271,
+#4273, and #4267 open.
+
 ## 2026-08-11 PR #4359 flight-to-bounce composition
 
 Ready-for-review PR [#4359](https://github.com/D-sorganization/Tools/pull/4359)

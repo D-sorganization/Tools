@@ -62,6 +62,15 @@ def _digest(value: object, name: str) -> str:
     return digest
 
 
+def regional_plan_request_sha256(
+    request: GroundRegionalMaterialPlanRequest,
+) -> str:
+    """Return the canonical digest for one exact regional plan request."""
+    if type(request) is not GroundRegionalMaterialPlanRequest:
+        raise ValueError("request must be an exact regional material plan request")
+    return _sha256(request.to_json())
+
+
 @dataclass(frozen=True)
 class GroundRegionalMaterialRegion(_WireRecord):
     """One finite regional surface record bound to a stable identity."""
@@ -89,7 +98,10 @@ class GroundRegionalMaterialRegion(_WireRecord):
         """Parse one exact regional material record."""
         from .regional_plan_wire import regional_material_region_from_dict
 
-        return regional_material_region_from_dict(payload)
+        return cast(
+            GroundRegionalMaterialRegion,
+            regional_material_region_from_dict(payload),
+        )
 
     def to_runtime(
         self, request: GroundRegionalMaterialPlanRequest
@@ -236,7 +248,10 @@ class GroundRegionalMaterialPlanRequest(_WireRecord):
         """Parse one exact regional plan request mapping."""
         from .regional_plan_wire import regional_material_plan_request_from_dict
 
-        return regional_material_plan_request_from_dict(payload)
+        return cast(
+            GroundRegionalMaterialPlanRequest,
+            regional_material_plan_request_from_dict(payload),
+        )
 
     def to_surface_resolver(self) -> SurfaceResolver:
         """Construct the exact runtime resolver represented by this plan."""
@@ -269,7 +284,7 @@ class GroundRegionalMaterialPlanResult(_WireRecord):
         if type(self.provenance) is not GroundProvenance:
             raise ValueError("provenance must be an exact GroundProvenance")
         digest = _digest(self.request_sha256, "request_sha256")
-        if digest != _sha256(self.request.to_json()):
+        if digest != regional_plan_request_sha256(self.request):
             raise ValueError("request_sha256 does not match the embedded request")
         if self.provenance.input_sha256 != digest:
             raise ValueError("result provenance input_sha256 must match request_sha256")
@@ -311,7 +326,10 @@ class GroundRegionalMaterialPlanResult(_WireRecord):
         """Parse one exact regional plan result mapping."""
         from .regional_plan_wire import regional_material_plan_result_from_dict
 
-        return regional_material_plan_result_from_dict(payload)
+        return cast(
+            GroundRegionalMaterialPlanResult,
+            regional_material_plan_result_from_dict(payload),
+        )
 
 
 def _canonical_regions(
@@ -337,7 +355,7 @@ def build_regional_material_plan_result(
         raise ValueError("request must be an exact regional material plan request")
     return GroundRegionalMaterialPlanResult(
         request,
-        _sha256(request.to_json()),
+        regional_plan_request_sha256(request),
         _canonical_regions(request),
         provenance,
     )
@@ -364,4 +382,5 @@ __all__ = [
     "GroundRegionalMaterialRegion",
     "build_regional_material_plan_result",
     "regional_plan_to_surface_resolver",
+    "regional_plan_request_sha256",
 ]

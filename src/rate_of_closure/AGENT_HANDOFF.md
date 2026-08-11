@@ -1,5 +1,36 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local flight-through-regional-ground pipeline candidate
+
+Local `feat/4271-flight-regional-ground-pipeline` starts from exact published
+Tools #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`.
+The published parent worktree remains untouched. Audit established that the
+regional envelope is semantically exact only after `SETTLED_TO_SKID`, not for
+bounce time/event limits or no-recontact.
+
+The shared flight facade now composes exact flight output through the existing
+flight-to-bounce and regional-ground authorities. Preflight rejects type,
+capture, and launch-relative plan/base mismatches before bounce physics. The
+strict bounded versioned in-memory result preserves exact request, bounce, and
+plan identities/digests/provenance; it requires regional evidence only for a
+settled bounce and retains every other bounce termination unchanged. The child
+also centralizes canonical regional-plan hashing without changing physics.
+
+RED captured the missing module/result/exports, GREEN passed 17 focused tests,
+and REFACTOR passed 39 pipeline/public/regional tests. The complete 377-test
+flight-plus-ground suite is green, as are Ruff check/format, scoped Black,
+protected changed-file and import-following MyPy, Bandit, placeholder/diff,
+documentation, blocking-quality, minimum-test, test-assertion, changed-Python,
+both LOC, campaign-manifest, and 11 manifest/layout gates. Explicit casts at
+dynamic wire-parser boundaries close protected skipped-import MyPy without a
+runtime or canonical-byte change. Standalone Black keeps one inherited
+preference in `test_contract_api.py`; authoritative Ruff is green and its
+delta is only the required public API additions.
+
+No wire schema/migration, PyQt6/React, TypeScript/Rust/WASM, persistence,
+playback, calibration, target/solver/variation integration, or downstream
+release is included. Keep #4271, #4273, and #4267 open.
+
 ## 2026-08-11 PR #4359 shared Python flight-to-bounce composition
 
 Ready-for-review PR [#4359](https://github.com/D-sorganization/Tools/pull/4359)

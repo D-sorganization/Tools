@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import hashlib
 from dataclasses import dataclass, field
 
 from .bounce_types import RepeatedBounceResult
@@ -17,7 +16,10 @@ from .regional_execution_records import (
     RegionalGroundExecutionStatus,
     execution_input_sha256,
 )
-from .regional_plan_records import GroundRegionalMaterialPlanRequest
+from .regional_plan_records import (
+    GroundRegionalMaterialPlanRequest,
+    regional_plan_request_sha256,
+)
 from .request_identity import ground_request_fingerprint
 from .skid_roll_result_types import SkidRollResult
 from .skid_roll_simulation import SkidRollExecution, simulate_skid_roll
@@ -103,10 +105,6 @@ def _validate_inputs(
         raise ValueError("bounce prefix fingerprint must match the ground request")
 
 
-def _sha256(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
 def _executor_provenance(
     options: RegionalGroundExecutionOptions,
     ground_digest: str,
@@ -167,7 +165,7 @@ def execute_regional_ground(
     selected = RegionalGroundExecutionOptions() if options is None else options
     _validate_inputs(request, prefix, plan, selected)
     ground_digest = ground_request_fingerprint(request)
-    plan_digest = _sha256(plan.to_json())
+    plan_digest = regional_plan_request_sha256(plan)
     resolver = plan.to_surface_resolver()
     suffix = simulate_skid_roll(
         request,

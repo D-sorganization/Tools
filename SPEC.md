@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.48                                    |
-| **Spec Version**        | 1.14.48                                    |
+| **Current Version**     | 1.14.49                                    |
+| **Spec Version**        | 1.14.49                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,30 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Flight Through Regional Ground Pipeline
+
+- `execute_regional_ground_from_flight` is the UI-neutral Python composition
+  from exact flight output through the existing flight-to-ground transfer,
+  repeated-bounce executor, regional skid/roll executor, and ground-result
+  composer. It introduces no alternate physics.
+- Exact input records, the versioned capture threshold, and the plan's equality
+  to the launch-relative transfer surface are checked before bounce physics.
+  The optional regional execution callback is shared with bounce so preflight
+  cancellation cannot invoke skid/roll.
+- `FlightRegionalGroundPipelineResult` is a strict, bounded, versioned
+  in-memory composition record. It preserves the exact bounce request/result
+  pair, physical-request and joint bounce-input digests, exact regional plan
+  and canonical digest/provenance, and the existing regional envelope only
+  when bounce terminates `SETTLED_TO_SKID`.
+- Every other bounce termination remains its native typed reason and forbids a
+  fabricated regional result. The existing regional envelope remains
+  authoritative for regional cancellation/failure and complete/partial ground
+  results. No new wire schema or migration is warranted until a UI,
+  persistence, or cross-runtime consumer is designed.
+- #4271, #4273, and #4267 remain open. This child does not add clients,
+  TypeScript/Rust/WASM execution, profile calibration, persistence, playback,
+  target/solver/variation integration, downstream parity, or release evidence.
 
 ### 2026-08-11 Shared Python Flight-to-Bounce Composition
 
@@ -3043,6 +3067,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.49 | feat(ground-roll, #4271 #4273 #4267): add the UI-neutral `execute_regional_ground_from_flight` composition from exact flight output through the existing transfer, repeated-bounce, regional skid/roll, and ground-result authorities; validate exact inputs, capture, and launch-relative plan/base-surface identity before physics; add a strict bounded versioned in-memory result that preserves request/bounce/plan digests and provenance, requires regional execution exactly for `SETTLED_TO_SKID`, and retains every other bounce termination in its native typed contract without fabricated downstream evidence; centralize canonical regional-plan hashing while leaving wire schemas/migrations, UI/runtime parity, persistence, playback, calibration, target/solver/variation integration, protected evidence, release, and issue/epic completion open. |
 | 2026-08-11 | 1.14.48 | chore(release, #4359 #4270 #4267): publish the qualified flight-to-repeated-bounce composition as ready PR #4359 on exact #4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`; bind its reviewed implementation commit `869b626e2d3ebd4097ae76b8fc9720cda6696947` into the campaign handoff and release manifest while retaining protected review/check completion, skid/roll, clients, compiled-runtime parity, downstream integration, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.47 | feat(ground-impact, #4270 #4267): add the public UI-neutral Python `execute_repeated_bounce_from_flight` composition facade with exact flight/launch/transfer types, callback and capture validation before transfer, unchanged typed transfer failures, and identity-safe delegation through the existing ground-request builder, repeated-bounce request, and executor; cover validation order, capture consumption, cancellation, identity/digests, and transfer failure without duplicating physics, while retaining UI/TypeScript/Rust/WASM work, persistence, playback, regional chaining, total distance, protected evidence, release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.46 | docs(rate-of-closure, #4203 #4279-#4282 #4285 #4288 #4302 #4304 #4332 #4335 #4339 #4342 #4350-#4357): reconcile the intact exact dependency heads and bases, record #4357 in the campaign carrier authority, and normalize every exact open dependency to ready-for-review without history changes; retain `not_released` truth because protected contexts remain queued and no approval is submitted. |
