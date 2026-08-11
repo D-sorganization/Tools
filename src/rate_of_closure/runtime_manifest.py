@@ -27,8 +27,11 @@ from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_jso
 SCHEMA_VERSION = "calculation-runtime-manifest/v1"
 MAX_SAFE_INTEGER = 9_007_199_254_740_991
 _STABLE_ID = re.compile(r"^[a-z0-9][a-z0-9._/-]*$")
+_SEMVER_IDENTIFIER = r"(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)"
 _SEMVER = re.compile(
-    r"^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$"
+    r"^(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)\.(?:0|[1-9][0-9]*)"
+    rf"(?:-{_SEMVER_IDENTIFIER}(?:\.{_SEMVER_IDENTIFIER})*)?"
+    r"(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$"
 )
 _SHA = re.compile(r"^[0-9a-f]{40}$")
 _PLACEHOLDER = re.compile(r"\b(?:fixme|placeholder|tbd|todo|unknown)\b", re.I)
@@ -44,6 +47,12 @@ _AUTHORITY_FIELDS = (
     "frame_id",
     "unit_system_id",
 )
+_REASON_SENTINELS = frozenset(
+    {"x", "na", "none", "nodata", "notavailable", "notapplicable", "unavailable"}
+)
+_REASON_WORD = re.compile(r"[A-Za-z]{2,}")
+_REASON_MIN_LENGTH = 16
+_REASON_MAX_LENGTH = 500
 
 
 def _validated_text(value: str, name: str, *, stable_id: bool = False) -> str:
@@ -56,6 +65,21 @@ def _validated_text(value: str, name: str, *, stable_id: bool = False) -> str:
     if stable_id and not _STABLE_ID.fullmatch(value):
         raise ValueError(f"{name} must be a stable lowercase identifier")
     return value
+
+
+def _validated_reason(value: str) -> str:
+    reason = _validated_text(value, "reason")
+    if reason != reason.strip():
+        raise ValueError("reason must not contain surrounding whitespace")
+    normalized = re.sub(r"[\s./_-]+", "", reason.casefold()).rstrip("!?")
+    if normalized in _REASON_SENTINELS:
+        raise ValueError("reason must not be a sentinel value")
+    scalar_length = len(reason)
+    if not _REASON_MIN_LENGTH <= scalar_length <= _REASON_MAX_LENGTH:
+        raise ValueError("reason must contain 16 to 500 Unicode scalar values")
+    if len(_REASON_WORD.findall(reason)) < 3:
+        raise ValueError("reason must contain at least three explanatory words")
+    return reason
 
 
 class StrictModel(BaseModel):
@@ -120,12 +144,16 @@ class RuntimeOption(StrictModel):
         if isinstance(value, int):
             if abs(value) > MAX_SAFE_INTEGER:
                 raise ValueError(
-                    "option value exceeds the cross-runtime safe integer range"
+                    "option value exceeds the cross-runtime safe numeric magnitude"
                 )
             return value
         if isinstance(value, float):
             if not math.isfinite(value):
                 raise ValueError("option value must be finite")
+            if abs(value) > MAX_SAFE_INTEGER:
+                raise ValueError(
+                    "option value exceeds the cross-runtime safe numeric magnitude"
+                )
             return value
         if isinstance(value, str):
             return _validated_text(value, "option value")
@@ -218,7 +246,7 @@ class CalculationAuthority(StrictModel):
     @field_validator("reason")
     @classmethod
     def _reason(cls, value: str | None) -> str | None:
-        return value if value is None else _validated_text(value, "reason")
+        return value if value is None else _validated_reason(value)
 
     @model_validator(mode="after")
     def _availability_invariant(self) -> Self:

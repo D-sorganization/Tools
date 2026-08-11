@@ -1085,7 +1085,7 @@
         "upstreamdrift.react": "not_started"
       },
       "evidence_ids": [],
-      "evidence_gap": "The strict calculation-runtime-manifest/v1 contract exists on this unpublished feature child but is not attached to live runs or declared by a protected carrier; no installed UpstreamDrift consumer pin or four-surface conformance run exists, and unstructured prose remains outside the deterministic boundary until promoted to a governed source.",
+      "evidence_gap": "The strict calculation-runtime-manifest/v1 contract and its independent-review numeric, SemVer, and unavailable-reason validation repairs exist on this unpublished feature child but are not attached to live runs or declared by a protected carrier; no installed UpstreamDrift consumer pin or four-surface conformance run exists, and unstructured prose remains outside the deterministic boundary until promoted to a governed source.",
       "limitations": [
         "A launcher tile does not establish an independent surface implementation.",
         "Current UpstreamDrift source resolution and React routing do not satisfy parity.",

@@ -999,3 +999,14 @@ Keep this contract-only. Live run attachment, workspace/export persistence,
 provider discovery, UpstreamDrift pinning, and scientific model qualification
 remain future reviewed slices. The pure factories must not inspect ambient Git,
 sibling worktrees, or installed-package state.
+
+### 2026-08-11 review-gap hardening
+
+The follow-up to local contract commit `15b951e40` aligns validation and
+serialization domains: all integer and floating-point option magnitudes must
+be at most `9,007,199,254,740,991`, including inside the shared Python
+canonicalizer. Python and TypeScript also reject leading-zero SemVer core or
+numeric prerelease identifiers. Unavailable reasons must be exact-trimmed,
+16–500 Unicode scalars, contain at least three explanatory ASCII word tokens,
+and survive a normalized sentinel blacklist. Keep these rules mirrored and do
+not weaken them when future delivery adapters attach the manifest to a run.

@@ -25,6 +25,16 @@ An unavailable entry is not an error and must not be replaced with a fallback
 identity. It is the truthful representation of a calculation that the run did
 not execute through a qualified authority.
 
+An unavailable reason has one cross-runtime grammar. It must already be
+trimmed, contain 16 through 500 Unicode scalar values, and contain at least
+three ASCII-letter word tokens of two or more letters. After lowercasing,
+removing whitespace plus `.`, `/`, `_`, and `-`, and removing terminal `!` or
+`?`, it must not equal `x`, `na`, `none`, `nodata`, `notavailable`,
+`notapplicable`, or `unavailable`. Consequently `x`, `n/a`, bare
+`unavailable`, punctuation/case variants, and surrounding-whitespace variants
+cannot masquerade as evidence. A sentence such as “No qualified ground
+producer was selected for this run.” is valid.
+
 ## Authoritative fields
 
 The following fields determine how a result must be interpreted and compared:
@@ -40,7 +50,9 @@ Consumers must fail closed on unknown fields or versions, incomplete available
 identities, identities attached to an unavailable domain, duplicate domains or
 options, non-finite values, unsafe integers, and contradictory unit semantics.
 Numeric options require an explicit unit; categorical and Boolean options use a
-null unit. Dimensionless numeric values use unit `1`.
+null unit. Dimensionless numeric values use unit `1`. Package versions follow
+SemVer 2.0.0, including the prohibition on leading zeros in numeric core and
+prerelease identifiers.
 
 ## Descriptive evidence
 
@@ -53,9 +65,12 @@ evidence is rejected, and evidence IDs must be nonempty and unique.
 
 Objects are sorted by Unicode key, arrays preserve their contract order, and
 numbers use the shared finite 11-decimal fixed-token policy. Integers must fit
-the JavaScript safe range. Duplicate JSON fields and unpaired surrogate code
-points are rejected. `runtime_manifest_parity_v1.json` pins the exact wire
-shape and bytes used by both runtimes.
+the JavaScript safe range, and every floating-point magnitude must also be no
+greater than `9,007,199,254,740,991`. The shared Python canonicalizer enforces
+the same bound, so accepted manifest numbers and serializable numbers are the
+same domain. Duplicate JSON fields and unpaired surrogate code points are
+rejected. `runtime_manifest_parity_v1.json` pins the exact wire shape and bytes
+used by both runtimes.
 
 ## Explicit creation
 

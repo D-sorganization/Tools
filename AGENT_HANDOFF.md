@@ -525,3 +525,15 @@ regional ground execution, or UpstreamDrift source resolution. It does not
 complete #4261 or #4260. The next integration must be reviewed separately
 after active assembly/workspace work settles and must never invent ambient Git
 or package provenance inside the pure contract layer.
+
+### 2026-08-11 independent-review contract repairs
+
+Follow-up work after local commit `15b951e40acea6a58d6c2b76fbe402602f08af2d`
+keeps the same contract-only boundary while closing three review blockers.
+Python now rejects every float whose magnitude exceeds the JavaScript safe
+integer bound, and the shared canonical numeric encoder enforces the same
+domain. Both runtimes use SemVer 2 numeric-identifier rules and the same
+trimmed, length-bounded, explanatory unavailable-reason grammar with a
+normalized sentinel blacklist. Boundary, large-magnitude, leading-zero, and
+sentinel cases are pinned by RED-first tests. The four-surface documentation
+now correctly describes nested active specs as `docs/specs/**/*.md`.

@@ -12,9 +12,17 @@ const SOURCE_KINDS = [
   "installed_package", "source_checkout", "embedded_web_build", "test_fixture",
 ] as const;
 const STABLE_ID = /^[a-z0-9][a-z0-9._/-]*$/;
-const SEMVER = /^[0-9]+\.[0-9]+\.[0-9]+(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$/;
+const SEMVER_IDENTIFIER = "(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)";
+const SEMVER = new RegExp(
+  "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)" +
+  `(?:-${SEMVER_IDENTIFIER}(?:\\.${SEMVER_IDENTIFIER})*)?` +
+  "(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$",
+);
 const SHA = /^[0-9a-f]{40}$/;
 const PLACEHOLDER = /\b(?:fixme|placeholder|tbd|todo|unknown)\b/i;
+const REASON_SENTINELS = new Set([
+  "x", "na", "none", "nodata", "notavailable", "notapplicable", "unavailable",
+]);
 
 export type RuntimeSurfaceId = typeof SURFACES[number];
 export type CalculationDomain = typeof DOMAINS[number];
@@ -91,6 +99,21 @@ const text = (value: unknown, name: string, stable = false): string => {
 const nullableStableId = (value: unknown, name: string): string | null =>
   value === null ? null : text(value, name, true);
 
+const unavailableReason = (value: unknown): string => {
+  const reason = text(value, "reason");
+  if (reason !== reason.trim()) throw new RangeError("reason must not contain surrounding whitespace");
+  const normalized = reason.toLowerCase().replace(/[\s./_-]+/g, "").replace(/[!?]+$/, "");
+  if (REASON_SENTINELS.has(normalized)) throw new RangeError("reason must not be a sentinel value");
+  const scalarLength = [...reason].length;
+  if (scalarLength < 16 || scalarLength > 500) {
+    throw new RangeError("reason must contain 16 to 500 Unicode scalar values");
+  }
+  if ((reason.match(/[A-Za-z]{2,}/g) ?? []).length < 3) {
+    throw new RangeError("reason must contain at least three explanatory words");
+  }
+  return reason;
+};
+
 const member = <T extends string>(value: unknown, values: readonly T[], name: string): T => {
   if (typeof value !== "string" || !values.includes(value as T)) {
     throw new RangeError(`${name} is unsupported`);
@@ -102,8 +125,8 @@ const optionValue = (value: unknown): RuntimeOptionValue => {
   if (typeof value === "boolean") return value;
   if (typeof value === "number") {
     if (!Number.isFinite(value)) throw new RangeError("option value must be finite");
-    if (Number.isInteger(value) && !Number.isSafeInteger(value)) {
-      throw new RangeError("option value exceeds the cross-runtime safe integer range");
+    if (Math.abs(value) > Number.MAX_SAFE_INTEGER) {
+      throw new RangeError("option value exceeds the cross-runtime safe numeric magnitude");
     }
     return value;
   }
@@ -147,7 +170,7 @@ const parseAuthority = (value: unknown): CalculationAuthority => {
   const item = record(value, fields, "calculation authority");
   const domain = member(item.domain, DOMAINS, "calculation domain");
   const status = member(item.status, ["available", "unavailable"] as const, "availability");
-  const reason = item.reason === null ? null : text(item.reason, "reason");
+  const reason = item.reason === null ? null : unavailableReason(item.reason);
   const identities = authorityIdentities(item);
   if (!Array.isArray(item.numerical_options)) throw new TypeError("numerical_options must be an array");
   const options = Object.freeze(item.numerical_options.map(parseOption));

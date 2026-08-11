@@ -5,7 +5,7 @@ issue #4264. It classifies the standalone Tools PyQt6 and React applications
 and the UpstreamDrift PyQt6 and React consumers with stable surface IDs.
 
 The governed scope contains every structured campaign program, every unique
-active Markdown specification authority at `SPEC.md`, `docs/specs/*.md`, or
+active Markdown specification authority at `SPEC.md`, `docs/specs/**/*.md`, or
 `docs/rate_of_closure/*.md` linked by those programs, and six curated
 evidence-backed capabilities. A capability is supported only
 when it cites source and test evidence at the exact Tools commit pin. An

@@ -1478,3 +1478,17 @@ This is deliberately not wired into live simulation results, workspaces,
 exports, regional ground execution, or UpstreamDrift. It does not close #4261
 or #4260. Future attachment and provider-resolution work must be independent,
 dependency-ordered slices after active assembly and workspace edits settle.
+
+### 2026-08-11 independent-review hardening
+
+The contract follow-up after `15b951e40` repairs all three independent-review
+blockers without expanding delivery scope. Python float validation and the
+shared canonicalizer now share TypeScript’s safe-magnitude domain. Both
+runtimes enforce SemVer 2 numeric-identifier rules and one deterministic
+substantive unavailable-reason grammar, including exact trimming, scalar-count
+and explanatory-word thresholds, and normalized sentinel rejection. RED-first
+tests cover `1e16`, `1e20`, both safe boundaries, leading-zero versions, `x`,
+`n/a`, bare/whitespace `unavailable`, and valid explanatory sentences. The
+declared-scope prose now accurately includes recursive `docs/specs/**/*.md`.
+This remains an unpublished contract child with all four spec cells unsupported
+at the older protected inventory pin.

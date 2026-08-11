@@ -34,7 +34,7 @@
     ],
     "enumeration_rules": [
       "Every rate-of-closure-campaign/v1 programs array record.",
-      "Every unique linked Markdown specification authority at SPEC.md, docs/specs/*.md, or docs/rate_of_closure/*.md."
+      "Every unique linked Markdown specification authority at SPEC.md, docs/specs/**/*.md, or docs/rate_of_closure/*.md."
     ],
     "curated_capability_count": 6,
     "campaign_program_count": 15,

@@ -16,6 +16,7 @@ from rate_of_closure.runtime_manifest import (
     runtime_manifest_from_json,
     stable_runtime_manifest_json,
 )
+from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
 
 FIXTURE_PATH = (
     Path(__file__).resolve().parents[2]
@@ -86,6 +87,22 @@ def test_factory_requires_only_explicit_inputs_and_freezes_nested_records() -> N
             lambda value: value["build"].update(build_id="todo"),
         ),
         (
+            "leading-zero major version",
+            lambda value: value["build"].update(package_version="01.0.0"),
+        ),
+        (
+            "leading-zero minor version",
+            lambda value: value["build"].update(package_version="1.00.0"),
+        ),
+        (
+            "leading-zero patch version",
+            lambda value: value["build"].update(package_version="1.0.00"),
+        ),
+        (
+            "leading-zero prerelease version",
+            lambda value: value["build"].update(package_version="1.0.0-01"),
+        ),
+        (
             "duplicate calculation domain",
             lambda value: value["calculations"][2].update(domain="flight"),
         ),
@@ -114,6 +131,24 @@ def test_factory_requires_only_explicit_inputs_and_freezes_nested_records() -> N
         (
             "placeholder unavailable reason",
             lambda value: value["calculations"][2].update(reason="Unknown"),
+        ),
+        (
+            "one-letter unavailable reason",
+            lambda value: value["calculations"][2].update(reason="x"),
+        ),
+        (
+            "abbreviated unavailable reason",
+            lambda value: value["calculations"][2].update(reason="n/a"),
+        ),
+        (
+            "whitespace sentinel unavailable reason",
+            lambda value: value["calculations"][2].update(reason=" \tUNAVAILABLE\n"),
+        ),
+        (
+            "surrounding whitespace on explanatory reason",
+            lambda value: value["calculations"][2].update(
+                reason=" No qualified ground producer was selected for this run. "
+            ),
         ),
         (
             "duplicate numerical option",
@@ -163,13 +198,57 @@ def test_runtime_manifest_rejects_nonfinite_options(value: float) -> None:
         CalculationRuntimeManifest.model_validate(payload)
 
 
+@pytest.mark.parametrize("value", [9_007_199_254_740_992.0, 1e16, -1e20])
+def test_runtime_manifest_rejects_unsafe_float_magnitudes(value: float) -> None:
+    payload = _manifest_payload()
+    payload["calculations"][1]["numerical_options"][0]["value"] = value
+
+    with pytest.raises(ValidationError, match="safe numeric magnitude"):
+        CalculationRuntimeManifest.model_validate(payload)
+
+
+@pytest.mark.parametrize("value", [-9_007_199_254_740_991.0, 9_007_199_254_740_991.0])
+def test_runtime_manifest_accepts_safe_numeric_boundaries(value: float) -> None:
+    payload = _manifest_payload()
+    payload["calculations"][1]["numerical_options"][0]["value"] = value
+
+    manifest = CalculationRuntimeManifest.model_validate(payload)
+
+    assert str(int(value)) in stable_runtime_manifest_json(manifest)
+
+
+def test_runtime_manifest_accepts_substantive_unavailable_reason_and_semver() -> None:
+    payload = _manifest_payload()
+    payload["build"]["package_version"] = "1.2.3-alpha.1+build.5"
+    ground_calculation = payload["calculations"][2]
+    ground_calculation["reason"] = (
+        "No qualified ground producer was selected for this run."
+    )
+
+    assert CalculationRuntimeManifest.model_validate(payload).to_wire() == payload
+
+
+def test_runtime_manifest_numeric_policy_matches_shared_parity_fixture() -> None:
+    cases = _fixture()["numeric_policy_cases"]
+
+    assert (
+        canonical_numeric_json(cases["safe_boundaries"])
+        == cases["expected_canonical_json"]
+    )
+    for value in cases["unsafe_magnitudes"]:
+        payload = _manifest_payload()
+        payload["calculations"][1]["numerical_options"][0]["value"] = value
+        with pytest.raises(ValidationError, match="safe numeric magnitude"):
+            CalculationRuntimeManifest.model_validate(payload)
+
+
 def test_runtime_manifest_rejects_unsafe_integer_and_duplicate_json_fields() -> None:
     payload = _manifest_payload()
     payload["calculations"][1]["numerical_options"][0].update(
         value=9_007_199_254_740_992,
         unit="1",
     )
-    with pytest.raises(ValidationError, match="safe integer"):
+    with pytest.raises(ValidationError, match="safe numeric magnitude"):
         CalculationRuntimeManifest.model_validate(payload)
 
     duplicate = '{"schema_version":"first","schema_version":"second"}'

@@ -21,6 +21,8 @@ def _string_token(value: str) -> str:
 def _canonical_float_token(value: float) -> str:
     if not math.isfinite(value):
         raise ValueError("canonical JSON requires finite floats")
+    if abs(value) > _MAX_SAFE_INTEGER:
+        raise ValueError("canonical JSON number exceeds cross-runtime safe range")
     if value == 0 or value.is_integer():
         return "0" if value == 0 else str(int(value))
     rounded = Decimal.from_float(value).quantize(_FLOAT_QUANTUM, rounding=ROUND_HALF_UP)

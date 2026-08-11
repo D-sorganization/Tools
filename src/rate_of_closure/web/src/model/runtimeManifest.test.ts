@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import fixture from "./__fixtures__/runtime_manifest_parity_v1.json";
+import { canonicalNumericJson } from "./flightGroundContract";
 import {
   createRuntimeManifest,
   parseRuntimeManifest,
@@ -49,6 +50,18 @@ describe("calculation runtime manifest v1", () => {
     ["non-SHA revision", (value: Record<string, unknown>) => {
       (value.build as Record<string, unknown>).tools_commit = "working-tree";
     }],
+    ["leading-zero major version", (value: Record<string, unknown>) => {
+      (value.build as Record<string, unknown>).package_version = "01.0.0";
+    }],
+    ["leading-zero minor version", (value: Record<string, unknown>) => {
+      (value.build as Record<string, unknown>).package_version = "1.00.0";
+    }],
+    ["leading-zero patch version", (value: Record<string, unknown>) => {
+      (value.build as Record<string, unknown>).package_version = "1.0.00";
+    }],
+    ["leading-zero prerelease version", (value: Record<string, unknown>) => {
+      (value.build as Record<string, unknown>).package_version = "1.0.0-01";
+    }],
     ["duplicate domain", (value: Record<string, unknown>) => {
       calculations(value)[2].domain = "flight";
     }],
@@ -69,6 +82,19 @@ describe("calculation runtime manifest v1", () => {
     }],
     ["placeholder unavailable reason", (value: Record<string, unknown>) => {
       calculations(value)[2].reason = "Unknown";
+    }],
+    ["one-letter unavailable reason", (value: Record<string, unknown>) => {
+      calculations(value)[2].reason = "x";
+    }],
+    ["abbreviated unavailable reason", (value: Record<string, unknown>) => {
+      calculations(value)[2].reason = "n/a";
+    }],
+    ["whitespace sentinel unavailable reason", (value: Record<string, unknown>) => {
+      calculations(value)[2].reason = " \tUNAVAILABLE\n";
+    }],
+    ["surrounding whitespace on explanatory reason", (value: Record<string, unknown>) => {
+      calculations(value)[2].reason =
+        " No qualified ground producer was selected for this run. ";
     }],
     ["duplicate option", (value: Record<string, unknown>) => {
       const options = calculations(value)[0].numerical_options as unknown[];
@@ -105,13 +131,50 @@ describe("calculation runtime manifest v1", () => {
     },
   );
 
-  it("rejects unsafe integers and duplicate JSON fields", () => {
+  it("rejects unsafe numbers and duplicate JSON fields", () => {
     const value = source();
     const options = calculations(value)[1].numerical_options as Array<Record<string, unknown>>;
     options[0].value = Number.MAX_SAFE_INTEGER + 1;
-    expect(() => parseRuntimeManifest(value)).toThrow(/safe integer/);
+    expect(() => parseRuntimeManifest(value)).toThrow(/safe numeric magnitude/);
     expect(() => runtimeManifestFromJson(
       '{"schema_version":"first","schema_version":"second"}',
     )).toThrow(/duplicate JSON field/);
+  });
+
+  it.each([Number.MAX_SAFE_INTEGER + 1, 1e16, -1e20])(
+    "rejects unsafe numeric magnitude %s", (optionValue) => {
+      const value = source();
+      const options = calculations(value)[1].numerical_options as Array<Record<string, unknown>>;
+      options[0].value = optionValue;
+      expect(() => parseRuntimeManifest(value)).toThrow(/safe numeric magnitude/);
+    },
+  );
+
+  it.each([-Number.MAX_SAFE_INTEGER, Number.MAX_SAFE_INTEGER])(
+    "accepts and canonically serializes safe numeric boundary %s", (optionValue) => {
+      const value = source();
+      const options = calculations(value)[1].numerical_options as Array<Record<string, unknown>>;
+      options[0].value = optionValue;
+      const parsed = parseRuntimeManifest(value);
+      expect(stableRuntimeManifestJson(parsed)).toContain(String(optionValue));
+    },
+  );
+
+  it("accepts an explanatory unavailable reason and strict SemVer", () => {
+    const value = source();
+    (value.build as Record<string, unknown>).package_version = "1.2.3-alpha.1+build.5";
+    calculations(value)[2].reason = "No qualified ground producer was selected for this run.";
+    expect(parseRuntimeManifest(value)).toEqual(value);
+  });
+
+  it("matches the shared cross-runtime numeric-policy fixture", () => {
+    const cases = fixture.numeric_policy_cases;
+    expect(canonicalNumericJson(cases.safe_boundaries)).toBe(cases.expected_canonical_json);
+    for (const optionValue of cases.unsafe_magnitudes) {
+      const value = source();
+      const options = calculations(value)[1].numerical_options as Array<Record<string, unknown>>;
+      options[0].value = optionValue;
+      expect(() => parseRuntimeManifest(value)).toThrow(/safe numeric magnitude/);
+    }
   });
 });
