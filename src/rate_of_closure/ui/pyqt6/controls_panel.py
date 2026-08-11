@@ -16,7 +16,6 @@ from __future__ import annotations
 
 import logging
 from dataclasses import fields, replace
-from pathlib import Path
 
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
@@ -39,7 +38,7 @@ from rate_of_closure.club import (
     club_names,
     default_clubhead_stl_filename,
     get_club,
-    serialize_clubhead_stl,
+    write_clubhead_stl_atomic,
 )
 from rate_of_closure.model import _BOUNDS, ImpactScenario
 from rate_of_closure.presets import PRESETS, preset_names
@@ -182,8 +181,10 @@ class ControlsPanel(QWidget):
 
         self._export_head_button = QPushButton("Export Selected Head STL…")
         self._export_head_button.setToolTip(
-            "Save the selected club specification's deterministic parametric "
-            "head as a binary STL in the canonical head frame (metres)."
+            "Save the selected club's deterministic parametric head as a "
+            "binary STL. The model computes in SI metres; exported unitless "
+            "STL coordinates are millimetres in the canonical head frame "
+            "(x target, y up, z toe)."
         )
         self._export_head_button.clicked.connect(self._on_export_head)
         form.addRow(self._export_head_button)
@@ -346,7 +347,7 @@ class ControlsPanel(QWidget):
         if not path:
             return
         try:
-            Path(path).write_bytes(serialize_clubhead_stl(spec))
+            write_clubhead_stl_atomic(spec, path)
         except (OSError, ValueError) as exc:
             logger.warning("clubhead STL export failed: %s", exc)
             self._export_status.setText("STL export failed.")

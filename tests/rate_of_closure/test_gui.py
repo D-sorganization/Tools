@@ -238,11 +238,77 @@ class TestClubGroup:
         assert output.is_file()
         np.testing.assert_allclose(
             parse_stl(output.read_bytes()),
-            build_parametric_head(panel.club_spec()),
+            build_parametric_head(panel.club_spec()) * 1000.0,
             rtol=1e-6,
-            atol=1e-9,
+            atol=1e-6,
         )
         assert "STL exported: 7-Iron" in panel._export_status.text()
+
+    def test_export_cancel_does_not_serialize(self, qtbot, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.controls_panel.QFileDialog.getSaveFileName",
+            lambda *_args, **_kwargs: ("", ""),
+        )
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.controls_panel.write_clubhead_stl_atomic",
+            lambda *_args, **_kwargs: pytest.fail("cancel must not serialize"),
+        )
+
+        panel._export_head_button.click()
+
+        assert panel._export_status.text() == ""
+
+    def test_export_reports_serialization_failure(
+        self, qtbot, tmp_path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        output = tmp_path / "head.stl"
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.controls_panel.QFileDialog.getSaveFileName",
+            lambda *_args, **_kwargs: (str(output), "STL meshes (*.stl)"),
+        )
+        monkeypatch.setattr(
+            "rate_of_closure.club.stl_export.serialize_clubhead_stl",
+            lambda *_args, **_kwargs: (_ for _ in ()).throw(ValueError("bad mesh")),
+        )
+        warnings: list[str] = []
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.controls_panel.QMessageBox.warning",
+            lambda _parent, _title, message: warnings.append(message),
+        )
+
+        panel._export_head_button.click()
+
+        assert not output.exists()
+        assert panel._export_status.text() == "STL export failed."
+        assert warnings == ["bad mesh"]
+
+    def test_export_reports_write_failure(self, qtbot, tmp_path, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+        output = tmp_path / "head.stl"
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.controls_panel.QFileDialog.getSaveFileName",
+            lambda *_args, **_kwargs: (str(output), "STL meshes (*.stl)"),
+        )
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.controls_panel.write_clubhead_stl_atomic",
+            lambda *_args, **_kwargs: (_ for _ in ()).throw(OSError("disk full")),
+        )
+        warnings: list[str] = []
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.controls_panel.QMessageBox.warning",
+            lambda _parent, _title, message: warnings.append(message),
+        )
+
+        panel._export_head_button.click()
+
+        assert not output.exists()
+        assert panel._export_status.text() == "STL export failed."
+        assert warnings == ["disk full"]
 
     def test_generate_loads_a_parametric_head_into_the_view(
         self, window, qtbot

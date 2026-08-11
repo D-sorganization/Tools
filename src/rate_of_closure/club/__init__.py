@@ -28,7 +28,11 @@ from .parametric_head import (
     face_sagitta,
     parametric_head_mesh,
 )
-from .stl_export import default_clubhead_stl_filename, serialize_clubhead_stl
+from .stl_export import (
+    default_clubhead_stl_filename,
+    serialize_clubhead_stl,
+    write_clubhead_stl_atomic,
+)
 from .types import ClubSpec, ClubType, HeadStyle
 from .volumetrics import CogReport, head_cog, is_watertight, mesh_volume_centroid
 
@@ -54,4 +58,5 @@ __all__ = [
     "mesh_volume_centroid",
     "parametric_head_mesh",
     "serialize_clubhead_stl",
+    "write_clubhead_stl_atomic",
 ]

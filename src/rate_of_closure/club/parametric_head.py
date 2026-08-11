@@ -18,9 +18,12 @@ one. Given a :class:`~rate_of_closure.club.types.ClubSpec`:
   through the face center, so the face normal at center is
   ``(cos loft, sin loft, 0)``.
 
-Everything is a pure function of the spec — no RNG — so meshes are
-bit-for-bit deterministic and the vitest twin (``web/src/model/
-club.ts``) can pin identical numbers.
+The mesh-defining ``ClubSpec`` subset is ``club_type``, ``head_style``,
+``head_mass_kg``, ``loft_deg``, and the optional bulge/roll radii. Club name,
+length, lie, published CG, and shaft-axis MOI do not alter this representative
+envelope; in particular, the geometry is not an inertia-driven CAD solve.
+Everything is deterministic (no RNG), so the vitest twin
+(``web/src/model/club.ts``) can pin identical numbers.
 
 :func:`face_normal_at_offset` exposes the face-curvature normal for the
 future impact package: for the pre-loft surface

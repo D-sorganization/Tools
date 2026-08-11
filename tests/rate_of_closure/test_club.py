@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import replace
+from pathlib import Path
 
 import numpy as np
 import pytest
@@ -28,6 +29,7 @@ from rate_of_closure.club import (
     get_club,
     parametric_head_mesh,
     serialize_clubhead_stl,
+    write_clubhead_stl_atomic,
 )
 from rate_of_closure.club.geometry import RING_POINTS, superellipse_ring
 from rate_of_closure.club.inertia import (
@@ -200,8 +202,21 @@ class TestFaceCurvature:
 
 
 class TestParametricHead:
-    def test_stl_default_filename_is_portable(self) -> None:
+    def test_stl_default_filename_is_portable_and_bounded(self) -> None:
         assert default_clubhead_stl_filename(get_club(_DRIVER)) == "driver-10-5.stl"
+        assert (
+            default_clubhead_stl_filename(replace(get_club(_DRIVER), name="高尔夫"))
+            == "clubhead.stl"
+        )
+        assert (
+            default_clubhead_stl_filename(replace(get_club(_DRIVER), name="CON"))
+            == "clubhead-con.stl"
+        )
+        bounded = default_clubhead_stl_filename(
+            replace(get_club(_DRIVER), name="a" * 200)
+        )
+        assert len(bounded) <= 84
+        assert bounded.endswith(".stl")
 
     def test_mesh_is_closed_and_deterministic(self) -> None:
         driver = get_club(_DRIVER)
@@ -210,6 +225,23 @@ class TestParametricHead:
         # Ten refined body sections, five face rings, and two cap fans.
         assert first.shape == (28 * RING_POINTS, 3, 3)
         assert np.array_equal(first, second)
+
+    def test_non_mesh_spec_fields_do_not_claim_inertia_driven_geometry(self) -> None:
+        base = get_club(_DRIVER)
+        non_mesh_edit = replace(
+            base,
+            name="Same representative envelope",
+            length_m=0.9,
+            lie_deg=70.0,
+            moi_about_shaft_kg_m2=1.0e-3,
+            cg_depth_m=0.04,
+            cg_height_m=0.04,
+        )
+
+        assert np.array_equal(
+            build_parametric_head(base),
+            build_parametric_head(non_mesh_edit),
+        )
 
     def test_envelope_scales_with_head_mass(self) -> None:
         """Constant-density scaling: cbrt(m / 0.200 kg) on every axis."""
@@ -261,7 +293,7 @@ class TestParametricHead:
         np.testing.assert_allclose(norms, 1.0, atol=1e-9)
 
     def test_selected_spec_serializes_as_deterministic_binary_stl(self) -> None:
-        """The portable STL is exactly the selected spec's generated mesh."""
+        """STL stores the generated SI mesh as explicit millimetre coordinates."""
         spec = replace(
             get_club(_DRIVER),
             loft_deg=9.0,
@@ -272,12 +304,34 @@ class TestParametricHead:
         second = serialize_clubhead_stl(spec)
 
         assert first == second
+        header = first[:80].rstrip(b"\0").decode("ascii")
+        assert "units=mm" in header
+        assert "x=target,y=up,z=toe" in header
+        exported = parse_stl(first)
         np.testing.assert_allclose(
-            parse_stl(first),
-            build_parametric_head(spec),
+            exported,
+            build_parametric_head(spec) * 1000.0,
             rtol=1e-6,
-            atol=1e-9,
+            atol=1e-6,
         )
+        extents_mm = np.ptp(exported.reshape(-1, 3), axis=0)
+        assert extents_mm.max() > 100.0
+
+    def test_atomic_stl_write_preserves_existing_target_on_replace_failure(
+        self, tmp_path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        output = tmp_path / "head.stl"
+        output.write_bytes(b"existing valid artifact")
+
+        def fail_replace(_source: Path, _target: Path) -> Path:
+            raise OSError("replace denied")
+
+        monkeypatch.setattr(Path, "replace", fail_replace)
+        with pytest.raises(OSError, match="replace denied"):
+            write_clubhead_stl_atomic(get_club(_DRIVER), output)
+
+        assert output.read_bytes() == b"existing valid artifact"
+        assert list(tmp_path.glob(".head.stl.*.tmp")) == []
 
     def test_ring_helper_validates_inputs(self) -> None:
         with pytest.raises(PreconditionError):

@@ -2,10 +2,13 @@
 
 ## Decision
 
-The selected `ClubSpec` must continue to use the shared impact model's scalar
-MOI path. The current data is not sufficient to derive an authoritative full
-3×3 clubhead inertia tensor without inventing a mass distribution or an
-orientation degree of freedom.
+The selected `ClubSpec` currently uses the shared impact model's scalar path.
+That path is mathematically equivalent to assuming an isotropic tensor about
+the head CG. The value supplied by `ClubSpec`, however, is sourced as a moment
+about the shaft axis. The current calculation is therefore an explicitly
+retained compatibility approximation with an axis/reference mismatch—not a
+resolved CG inertia model. The current data cannot produce an authoritative
+full 3×3 tensor without inventing mass distribution or attitude information.
 
 This decision does not limit the already-supported expert path:
 `PreImpactState.clubhead_moi_tensor` may still receive an independently sourced
@@ -52,15 +55,27 @@ A future selected-club tensor path must provide all of the following:
    frame-rotation covariance, symmetry/positive-definiteness rejection, and
    serialization round trips.
 
-Until that contract exists, `simulation.pipeline._solve_hit` intentionally
-passes `ClubSpec.moi_about_shaft_kg_m2` through the legacy scalar argument and
-does not populate `clubhead_moi_tensor`.
+Until that contract exists, `simulation.pipeline._solve_hit` passes
+`ClubSpec.moi_about_shaft_kg_m2` through the legacy scalar argument as an
+isotropic-equivalent approximation and does not populate
+`clubhead_moi_tensor`. The shaft-axis source and CG-centered scalar equation do
+not share an exact reference; consumers must not present this path as measured
+tensor physics.
 
 ## STL Boundary Delivered for #4111
 
-The STL path is independent of the unresolved physical tensor. The selected
-and user-edited `ClubSpec` deterministically generates the existing parametric
-mesh, then serializes it as binary STL in the canonical head frame. Coordinates
-are metres; STL carries no unit metadata, so the export action states the unit
-contract in its tooltip and embeds it in the binary header. The UI writes only
-to the path explicitly selected by the user.
+The STL path is independent of the unresolved physical tensor. Only the
+mesh-defining `ClubSpec` subset—club type/style, head mass, loft, and optional
+bulge/roll radii—drives the representative geometry. Name, length, lie, CG, and
+MOI do not drive the mesh. The generator computes internally in SI metres, then
+the serializer writes millimetre coordinates because STL is unitless and mm is
+the conventional CAD interchange assumption. The binary header and UI tooltip
+state `units=mm` and the canonical axes (x target, y up, z toe).
+
+The export writes a same-directory temporary file, flushes it, and atomically
+replaces the user-selected destination. Serialization, write, or replace
+failures preserve an existing destination where supported and remove the
+temporary artifact where the operating system permits. Filename defaults fall
+back safely for Unicode-only names, avoid Windows reserved device stems, and
+bound the generated stem length. React download parity remains separately
+tracked; this slice adds the native PyQt action and reusable Python serializer.

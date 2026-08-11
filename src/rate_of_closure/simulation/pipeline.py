@@ -235,6 +235,10 @@ def _solve_hit(
         clubhead_orientation=delivery.face_normal,
         impact_offset=delivery.impact_offset,
         clubhead_mass=config.club.head_mass_kg,
+        # Compatibility approximation: the impact scalar path is equivalent
+        # to an isotropic CG tensor, but ClubSpec's sourced value is about the
+        # shaft axis. Keep the axis/reference mismatch explicit until a
+        # provenance-backed CG tensor and complete head attitude are available.
         clubhead_moi=config.club.moi_about_shaft_kg_m2,
         face_normal_at_offset=_face_normal_callable(config),
         record=False,

@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.7                                     |
-| **Spec Version**        | 1.13.7                                     |
+| **Current Version**     | 1.13.8                                     |
+| **Spec Version**        | 1.13.8                                     |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -37,15 +37,21 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 ## 3. Goals & Non-Goals
 ### 2026-08-10 Selected-club STL export and safe impact-inertia boundary
 
-- The PyQt Club panel can export the complete current `ClubSpec`, including
-  user-edited loft and face curvature, as a deterministic binary STL generated
-  by the existing parametric mesh pipeline. Coordinates stay in the canonical
-  head frame in metres, and the writer never chooses an output path implicitly.
+- The PyQt Club panel exports the representative mesh defined by the current
+  club type/style, head mass, loft, and optional face curvature. Name, length,
+  lie, CG, and MOI are not mesh inputs; the export is not inertia-driven CAD.
+  Geometry computes internally in SI metres, then binary STL writes conventional
+  millimetre coordinates with unit/frame metadata in its fixed header and
+  tooltip. A same-directory temporary file is flushed and atomically replaces
+  only the user-selected destination. Portable default filenames handle
+  Unicode-only names, Windows reserved stems, and excessive length.
 - A `ClubSpec` does not populate the shared impact model's optional full 3×3
   clubhead tensor. Its mass, two-coordinate CG, one shaft-axis moment, and
   representative visual envelope do not determine a six-component CG tensor
-  or a complete world-frame attitude. The scalar compatibility path remains
-  authoritative until the measured/CAD density and frame contract in
+  or a complete world-frame attitude. The current scalar path treats the
+  shaft-axis source value as an isotropic-equivalent moment about the CG, an
+  explicit axis/reference approximation rather than authoritative tensor
+  physics. It remains only for compatibility until the measured/CAD density and frame contract in
   `docs/development/rate_of_closure_clubhead_tensor_contract.md` is satisfied.
 
 ### 2026-08-10 Shared swing-core typed numerical boundaries
@@ -2586,6 +2592,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.13.8 | fix(rate_of_closure, #4111): export unitless STL coordinates in explicitly labeled millimetres, pin canonical frame/extents, harden portable filenames and atomic destination replacement, cover cancel/serialization/write failures, identify the actual mesh-defining ClubSpec subset, and label the current shaft-axis scalar in the CG-centered impact equation as an isotropic-equivalent axis/reference approximation. |
 | 2026-08-10 | 1.13.7 | feat(rate_of_closure, #4111): add deterministic selected-`ClubSpec` binary STL serialization and a tested PyQt export action; document why the current scalar shaft-axis MOI, partial CG, representative envelope, and face-normal-only attitude cannot safely generate the shared impact model's full world-frame inertia tensor. |
 | 2026-08-10 | 1.13.6 | fix(rate_of_closure, #4119): finish explicit numerical contracts across the Rate model, STL/club geometry, simulation, PyQt canvas, and course-rendering boundaries; clear the complete changed-file Mypy 1.13 surface without ignores or numerical-model changes. |
 | 2026-08-10 | 1.13.5 | fix(swing_sim, #4119): replace unparameterized shared-core ndarray contracts with explicit float64 arrays and normalize scalars at dynamic Rust/config/model boundaries; clear the CI-pinned findings across the flight/impact/swing/reference/solver slice plus a newer-Mypy solver return finding, without ignores or runtime-physics changes. |
