@@ -114,6 +114,15 @@ def test_orthographic_snap_hides_only_depth_axis_and_restores_all_axes(
         "yaxis": hidden_axis != "yaxis",
         "zaxis": hidden_axis != "zaxis",
     }
+    depth_axis = getattr(axes, hidden_axis)
+    assert not depth_axis.label.get_visible()
+    assert not depth_axis.line.get_visible()
+    assert not depth_axis.pane.get_visible()
+    assert all(
+        not artist.get_visible()
+        for tick in depth_axis.get_major_ticks()
+        for artist in (tick.tick1line, tick.tick2line, tick.label1, tick.label2)
+    )
 
     view.apply_camera_command(CameraCommandId.VIEW_ISOMETRIC)
     axes = view._axes if isinstance(view, SimulationView) else view._axes_3d
@@ -121,6 +130,12 @@ def test_orthographic_snap_hides_only_depth_axis_and_restores_all_axes(
     assert all(
         getattr(axes, axis_name).get_visible()
         for axis_name in ("xaxis", "yaxis", "zaxis")
+    )
+    assert all(
+        artist.get_visible()
+        for axis_name in ("xaxis", "yaxis", "zaxis")
+        for axis in (getattr(axes, axis_name),)
+        for artist in (axis.label, axis.line, axis.pane)
     )
 
     view.apply_camera_command(command)

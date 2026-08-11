@@ -311,6 +311,8 @@ class CameraViewportMixin:
         Matplotlib display axes are ``x=right``, ``y=downrange``, and
         ``z=up``. Isometric and manually orbited views restore every physical
         axis so a snap never leaves persistent presentation state behind.
+        Axes3D can continue painting cached label/tick artists after the axis
+        container is hidden, so the complete presentation surface is toggled.
         """
         preset_id = self._camera_state.preset_id
         hidden_axis = (
@@ -321,7 +323,16 @@ class CameraViewportMixin:
             ("y", axes.yaxis),
             ("z", axes.zaxis),
         ):
-            axis.set_visible(axis_name != hidden_axis)
+            visible = axis_name != hidden_axis
+            axis.set_visible(visible)
+            axis.label.set_visible(visible)
+            axis.line.set_visible(visible)
+            axis.pane.set_visible(visible)
+            for tick in axis.get_major_ticks():
+                tick.tick1line.set_visible(visible)
+                tick.tick2line.set_visible(visible)
+                tick.label1.set_visible(visible)
+                tick.label2.set_visible(visible)
 
     def _notify_camera_state_changed(self) -> None:
         self._camera_controls_widget.sync(self._camera_state)

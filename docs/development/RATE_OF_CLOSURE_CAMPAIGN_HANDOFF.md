@@ -186,8 +186,10 @@ the exact orthographic presets.
 The shared PyQt camera adapter now applies one explicit display-axis contract
 after each Simulation and Flight render. Face On hides only display x/right,
 Down the Line hides only display y/target, and Overhead hides only display
-z/up. The two in-plane physical axes remain labelled. Isometric/reset and
-manual orbit restore all axes, preventing stale visibility across modes. A
+z/up. Because Axes3D can retain cached artists, the adapter suppresses the
+depth axis container, label, line, pane, and tick artists together. The two
+in-plane physical axes remain labelled. Isometric/reset and manual orbit
+restore all axis artists, preventing stale visibility across modes. A
 parameterized headless GUI regression proves all three mappings and both
 restoration paths in both viewports. Physics, camera angles, limits, tracking,
 zoom, geometry, and React behavior are unchanged. Fresh focused tests, Ruff,

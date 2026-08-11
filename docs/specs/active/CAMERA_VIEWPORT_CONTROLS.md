@@ -19,11 +19,14 @@ along +x; overhead looks along -y. Face-on is explicit: right-side looks along
 -z and left-side along +z. A snap is idempotent and sets orientation only; it
 does not silently change target or zoom.
 
-Exact orthographic presets suppress only the display axis perpendicular to the
-screen: display x/right for Face On, display y/downrange for Down the Line, and
-display z/up for Overhead. The two visible axes retain their physical labels,
-ticks, and engineering units. Reset/isometric and any manual orbit restore all
-three axes, so hidden presentation state cannot leak between camera modes.
+Exact orthographic presets suppress the complete Matplotlib presentation
+(axis container, label, line, pane, and tick artists) only for the display axis
+perpendicular to the screen: display x/right for Face On, display y/downrange
+for Down the Line, and display z/up for Overhead. This explicit artist-level
+contract prevents cached Axes3D depth labels from surviving a snap. The two
+visible axes retain their physical labels, ticks, and engineering units.
+Reset/isometric and any manual orbit restore all three axes, so hidden
+presentation state cannot leak between camera modes.
 
 ## Tracking and interaction
 
