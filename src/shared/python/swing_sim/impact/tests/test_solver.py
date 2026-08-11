@@ -151,8 +151,9 @@ class TestValidationAndReporting:
         api = self._api_with_impacts()
         exported = api.recorder.export_to_dict()
         assert exported["num_impacts"] == 3
-        assert exported["summary"]["max_ball_speed"] >= (
-            exported["summary"]["mean_ball_speed"]
+        assert (
+            exported["summary"]["max_ball_speed"]
+            >= (exported["summary"]["mean_ball_speed"])
         )
         assert len(api.recorder.get_all_events()) == 3
 
