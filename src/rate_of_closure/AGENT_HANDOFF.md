@@ -3,7 +3,7 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
-## 2026-08-10 #4111 assembly-to-simulation adapter (local, not released)
+## 2026-08-10 #4111 assembly-to-simulation adapter (draft PR #4341)
 
 Independent publication review found and repaired one desktop ownership gap:
 changing the Simulation tab's club now invalidates the binding in the Club
@@ -17,8 +17,8 @@ file gate still reports three pre-existing oversized modules touched by this
 stack; the repository's baseline-aware 1200-line module budget passes.
 
 Local branch `feat/4111-assembly-simulation-adapter` starts at exact published
-PR #4338 head `6b55a6b01e8029712217185f0e0ebf2a421be20e` and remains
-**not released** with no GitHub write. It adds a fail-closed adapter from the
+PR #4338 head `6b55a6b01e8029712217185f0e0ebf2a421be20e` and is published
+as draft PR #4341 while remaining **not released**. It adds a fail-closed adapter from the
 validated selected-spec to `ClubAssembly` binding to the existing impact
 boundary. Desktop consumes the bound head mass and may rotate the authoritative
 head-CG tensor as `R I_head R^T` only when a complete selected-head-to-app
