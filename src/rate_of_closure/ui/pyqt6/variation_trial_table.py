@@ -10,6 +10,19 @@ from rate_of_closure.variation.plot_data import ScalarPlotVariable
 from shared.python.swing_sim.variation import VariationDataset
 
 
+def validated_trial_index(trial_index: int | None, trial_count: int) -> int | None:
+    """Return a selection only when it belongs to the current result."""
+    if trial_index is None:
+        return None
+    if (
+        isinstance(trial_index, bool)
+        or not isinstance(trial_index, int)
+        or not 0 <= trial_index < trial_count
+    ):
+        raise ValueError(f"trial_index must be in [0, {trial_count}) or None")
+    return trial_index
+
+
 def create_trial_table(accessible_name: str, tooltip: str) -> QTableWidget:
     """Create a bounded, read-only table for raw variation rows."""
     table = QTableWidget()
@@ -58,4 +71,4 @@ def _populate_values(
         table.setItem(trial_index, column_index, QTableWidgetItem(text))
 
 
-__all__ = ["create_trial_table", "populate_trial_table"]
+__all__ = ["create_trial_table", "populate_trial_table", "validated_trial_index"]

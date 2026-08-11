@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import importlib.util
 import shutil
-import subprocess  # noqa: S404 - fixed argument list, no user input
+import subprocess  # nosec B404  # Fixed argument list; no user input.
 import sys
 from pathlib import Path
 
@@ -56,7 +56,7 @@ def build(one_file: bool = False) -> Path:
         str(dist),
         str(_HERE / "launch_pyqt6.py"),
     ]
-    completed = subprocess.run(command, check=False)  # noqa: S603
+    completed = subprocess.run(command, check=False)  # nosec B603  # Fixed argv.
     if completed.returncode != 0:
         raise RuntimeError(f"PyInstaller failed with code {completed.returncode}")
 
