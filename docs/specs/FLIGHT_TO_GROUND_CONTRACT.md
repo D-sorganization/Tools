@@ -168,6 +168,27 @@ regional enum or fabricated ground result.
 
 The composition adds no wire schema because no new serialized information is
 needed: its nested bounce, plan, regional, and ground contracts remain the
-serialization authorities. UI/runtime parity, persistence, playback,
-calibration, target/solver/variation studies, downstream consumers, and
+serialization authorities.
+
+## Qualified study metric boundary
+
+The UI-neutral Rate adapter consumes either the exact pipeline result or its
+typed `FlightGroundTransferError`. It may attach the existing
+`GroundModelResult` to `FlightMetricInputs` only when the regional envelope is
+`COMPLETE` and the embedded result is `COMPLETE`, terminates at `REST`, and has
+a summary. That path delegates to `to_ground_model_result`; it does not read a
+partial endpoint into an optimizer-eligible metric. Any other outcome clears
+the ground DTO so the existing canonical metrics remain typed unavailable.
+
+For downstream variation the adapter emits the existing
+`scalar-ensemble/v1` contract. Existing flight metric IDs remain under
+`metric.*`; bounce-air, skid, surface-path, and final-downrange detail use
+explicit `ground.*` keys. Partial/censored, cancelled, failed, non-settled,
+missing-summary, and transfer-failure rows contain null numeric values plus
+their available typed status, reason, model, and SHA-256 identity attributes.
+Carry remains first-contact distance and is never substituted for final total
+distance.
+
+UI/runtime parity, persistence, playback, calibration, target/solver and
+capability invocation, variation UI, wind strategy, downstream consumers, and
 #4271/#4273/#4267 completion remain open.

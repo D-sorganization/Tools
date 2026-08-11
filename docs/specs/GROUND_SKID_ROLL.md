@@ -236,9 +236,29 @@ that phase begins.
 
 This composition is not a new wire format. Existing strict bounded bounce,
 plan, regional-execution, and ground-result serializers remain authoritative,
-so there is no migration in this UI-neutral slice. #4271 physics qualification,
-#4273 study integration, #4267 completion, clients, persistence, playback,
-compiled parity, and downstream release remain open.
+so there is no migration in this UI-neutral slice.
+
+### Qualified study projection
+
+The Rate-owned Python `regional_ground_study_adapter` is the only current
+projection from this pipeline into study data. It reuses `ScalarEnsembleDataset`
+and the canonical `GroundModelResult`; no parallel ground-study result exists.
+Canonical total distance, roll, final offline, and bounce count enter flight
+metrics only through `to_ground_model_result`, whose complete/rest/summary gate
+is unchanged. The scalar ensemble also exposes distinct bounce-air, skid,
+surface-path, and final-downrange details and keeps carry separate from total.
+
+Every non-final outcome is fail-closed. Partial and left-surface summaries are
+diagnostic censored evidence only; their observed endpoint numbers are null in
+the study row. Non-settled bounce, regional cancellation/failure, absent
+summary, and typed transfer failure are likewise nullable rows with exact
+status/reason and available identity digests in attributes. Reapplying an
+unqualified outcome clears any prior ground metric input, preventing stale or
+censored total distance from becoming an optimizer objective.
+
+#4271 physics qualification, remaining #4273 solver/capability and variation-UI
+integration, #4267 completion, clients, persistence, playback, wind strategy,
+compiled/four-surface parity, and downstream release remain open.
 
 ### Matched editor/readback boundary
 

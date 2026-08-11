@@ -1,5 +1,35 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 qualified regional-ground study adapter (#4273)
+
+The local unpushed `codex/4273-flight-ground-study-adapter` candidate starts
+from exact published PR #4360 head
+`74f1ceafd87f952a76917dc868baa6414f856144`. A read-only audit of current
+flight metric, target, scalar-ensemble, capability, regional readback, and
+ground-result contracts plus the historical `ground-study-scalar-adapter`,
+`ground-study-result-adapter`, and `ground-study-projection` worktrees retained
+only the complete-rest qualification invariant and scalar taxonomy. The stale
+parallel study model and its numeric censored totals were not copied.
+
+The UI-neutral Rate adapter reuses `to_ground_model_result`,
+`FlightMetricInputs`, and `ScalarEnsembleDataset`. Complete-rest evidence may
+populate canonical total, roll, final-offline, and bounce-count values plus
+distinct bounce-air/skid/surface-path/final-downrange detail. Carry remains
+separate. Partial/left-surface, every non-settled bounce reason, regional
+cancelled/failed, missing-summary, and typed transfer-error outcomes retain
+null numerics with exact typed status/reason/model/digest attributes. Applying
+unqualified evidence clears stale ground metric inputs.
+
+Seven focused tests and 1,299 Rate/flight/ground tests pass. Ruff, strict
+MyPy, pinned Bandit, manifest validation plus 8 manifest tests, documentation
+governance, blocking-quality, minimum-test, default module-size, and diff gates
+pass. Inherited main-relative assertion and 400-line findings do not include
+this 328-line module or its assertion-bearing test.
+
+Solver/capability invocation, variation UI, wind strategy, persistence,
+TypeScript/compiled and four-surface parity, protected CI/review, publication,
+release, and #4273/#4267 completion remain open.
+
 ## 2026-08-11 PR #4360 flight-through-regional-ground pipeline
 
 Ready-for-review PR [#4360](https://github.com/D-sorganization/Tools/pull/4360)

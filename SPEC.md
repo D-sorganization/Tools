@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.50                                    |
-| **Spec Version**        | 1.14.50                                    |
+| **Current Version**     | 1.14.51                                    |
+| **Spec Version**        | 1.14.51                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,30 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Qualified Regional-Ground Study Adapter
+
+- The Rate-owned `regional_ground_study_adapter` projects the existing
+  `FlightRegionalGroundPipelineResult` into the existing scalar-ensemble and
+  flight-metric contracts; it introduces neither a parallel study model nor
+  alternate ground physics.
+- Existing `metric.total_distance`, `metric.roll_distance`,
+  `metric.final_offline`, and `metric.bounce_count` IDs are populated only
+  after the existing strict `to_ground_model_result` boundary accepts a
+  regional `COMPLETE` plus ground `COMPLETE/REST` result with a summary.
+  Bounce-air, skid, surface-path, and final-downrange diagnostics use distinct
+  `ground.*` study keys. Carry remains a separate first-contact quantity and
+  is never relabeled as total distance.
+- Partial/time-limited and left-surface endpoints, missing summaries,
+  non-settled bounce outcomes, regional cancellation/failure, and typed flight
+  transfer failures retain null scalar values with exact cohort, status,
+  reason, model, and digest attributes. Applying any such outcome to flight
+  metric inputs clears stale ground output, so a solver cannot maximize a
+  censored observed endpoint as final-rest total distance.
+- This bounded child is Python and UI neutral. It adds no solver/capability
+  invocation, variation UI, wind strategy, persistence, TypeScript or compiled
+  implementation, four-surface parity, protected release evidence, or issue
+  completion. Keep #4273 and #4267 open.
 
 ### 2026-08-11 Flight Through Regional Ground Pipeline
 
@@ -3067,6 +3091,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.51 | feat(ground-study, #4273 #4267): add a UI-neutral strict adapter from the exact flight-through-regional-ground pipeline into the existing flight metric and scalar-ensemble contracts; admit canonical final ground metrics and bounce/skid detail only for regional complete plus ground complete/rest evidence, retain typed nullable cohorts and exact reasons/digests for partial, censored, cancelled, failed, non-settled, missing-summary, and transfer-failure outcomes, clear stale ground metric inputs on unavailable evidence, preserve carry versus total distance, and leave solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, protected release, and issue completion open. |
 | 2026-08-11 | 1.14.50 | chore(release, #4360 #4271 #4273 #4267): publish the qualified flight-through-regional-ground composition as ready PR #4360 on exact #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`; bind implementation commit `090e835477d1f19614f37f978a1b8a0e2f50ae21` into the campaign handoff and manifest while retaining protected review/check completion, client integration, persistence, compiled-runtime parity, studies, downstream integration, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.49 | feat(ground-roll, #4271 #4273 #4267): add the UI-neutral `execute_regional_ground_from_flight` composition from exact flight output through the existing transfer, repeated-bounce, regional skid/roll, and ground-result authorities; validate exact inputs, capture, and launch-relative plan/base-surface identity before physics; add a strict bounded versioned in-memory result that preserves request/bounce/plan digests and provenance, requires regional execution exactly for `SETTLED_TO_SKID`, and retains every other bounce termination in its native typed contract without fabricated downstream evidence; centralize canonical regional-plan hashing while leaving wire schemas/migrations, UI/runtime parity, persistence, playback, calibration, target/solver/variation integration, protected evidence, release, and issue/epic completion open. |
 | 2026-08-11 | 1.14.48 | chore(release, #4359 #4270 #4267): publish the qualified flight-to-repeated-bounce composition as ready PR #4359 on exact #4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`; bind its reviewed implementation commit `869b626e2d3ebd4097ae76b8fc9720cda6696947` into the campaign handoff and release manifest while retaining protected review/check completion, skid/roll, clients, compiled-runtime parity, downstream integration, and issue/epic completion as open. |
