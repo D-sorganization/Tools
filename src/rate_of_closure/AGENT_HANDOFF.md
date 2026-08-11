@@ -29,6 +29,11 @@ agent must verify the exact GitHub head and protected checks, obtain the
 required approval, and merge normally. Do not claim #4119 or any epic complete
 before protected release to `main`.
 
+The repository's authoritative formatter is Ruff. The current-main merge
+required a mechanical `ruff format` normalization of 101 Python files,
+including four Rate/swing-sim files; there is no Rate behavior change, and
+both repository-wide Ruff lint and format checks are clean afterward.
+
 After the root lands, preserve dependency order. The highest-value remaining
 UI slice is #4225's actual multi-viewport compositor; #4224 still needs
 responsive/DPR-aware plot redraw, measured non-overlapping legends, and

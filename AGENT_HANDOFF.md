@@ -30,6 +30,11 @@
   lighting, projection drawing, and velocity-arrow rendering extracted into a
   tested 234-line `clubCanvasRendering.ts` module. The legacy 400-line cap no
   longer blocks the root release.
+- The authoritative repository format gate is `ruff format --check .` (not
+  Black). After the current-main merge exposed 101 legacy mismatches, this
+  branch mechanically normalized those Python files with `ruff format`; Ruff
+  lint and format checks are now clean. This is formatting-only across the
+  affected tools, with no material domain behavior or handoff change.
 - Before release, push the merge normally, verify the new exact PR head, wait
   for protected CI, resolve only the addressed review threads with linked
   evidence, obtain the required approval, and merge through ordinary branch

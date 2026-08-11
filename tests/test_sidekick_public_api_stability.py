@@ -254,17 +254,17 @@ def test_sidekick_public_api_stability(pytestconfig: pytest.Config) -> None:
         log.info("Regenerated public API baseline in %s", BASELINE_PATH)
         return
 
-    assert (
-        BASELINE_PATH.is_file()
-    ), "Baseline file not found. Run with --regenerate-api-baseline to create it."
+    assert BASELINE_PATH.is_file(), (
+        "Baseline file not found. Run with --regenerate-api-baseline to create it."
+    )
 
     with open(BASELINE_PATH, encoding="utf-8") as f:
         baseline_api = json.load(f)
 
     # Compare keys
-    assert set(current_api.keys()) == set(
-        baseline_api.keys()
-    ), "Set of public sidekick module files changed."
+    assert set(current_api.keys()) == set(baseline_api.keys()), (
+        "Set of public sidekick module files changed."
+    )
 
     # Perform detailed comparison to raise clean assertions
     mismatches = []

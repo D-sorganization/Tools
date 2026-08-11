@@ -2560,6 +2560,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.13.4 | style(repo, #4119): mechanically normalize 101 Python files with the repository's authoritative Ruff formatter after the current-main reconciliation exposed legacy drift; repository-wide Ruff lint and format checks are clean, with no behavior or domain-contract change. |
 | 2026-08-10 | 1.13.4 | refactor(rate_of_closure, #4119): split `ClubCanvas` mesh transformation, painter sorting, lighting, projected primitives, and velocity-arrow rendering into a focused tested module, bringing every production file below the 400-line cap without changing playback or rendered geometry. |
 | 2026-08-10 | 1.13.4 | fix(ci): name the intentionally retained QApplication references in Sidekick GUI tests with an underscore, removing nine Ruff F841 failures that blocked the required quality gate after the Rate root merged current `main`. |
 | 2026-08-10 | 1.13.4 | fix(rate_of_closure, #4119): make the web entry point safe for file-path launch, declare the eagerly required SciPy dependency, and run React automatic impact-time selection atomically with regression coverage; reconcile the root release branch with current `main` while preserving fleet CI and shared golf-club contracts. |
