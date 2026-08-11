@@ -1,7 +1,18 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 PR #4174 pinned-Ruff format repair
+
+Exact published head `525696e0c1080616eb5055e2cb1c93565f98672e`
+failed CI Standard run `31485402975`, job `93759519460`, because five changed
+Python files did not match Ruff `0.14.10`. They are now mechanically formatted
+with the workflow-pinned version. There is no material handoff or behavior
+change: physics, frames, DbC validation, public contracts, schemas, tests, and
+UI behavior remain unchanged. Workflow-mirrored Ruff, `git diff --check`, and
+71 focused impact, kinetics, PyQt, and layout tests are green. Protected checks
+and parent-first release order still apply.
 
 ## 2026-08-10 Ground-Clearance Child Propagation
 
