@@ -57,9 +57,7 @@ class TestMakePolynomialTorque:
 
     def test_empty_coefficients_raises(self):
         """Each joint needs at least one coefficient."""
-        with pytest.raises(
-            (ValueError, TypeError), match="Need at least one coefficient"
-        ):
+        with pytest.raises((ValueError, TypeError), match="Need at least one coefficient"):
             make_polynomial_torque([])
 
     def test_returns_tuple(self):

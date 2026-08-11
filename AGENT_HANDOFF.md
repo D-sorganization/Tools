@@ -3,6 +3,15 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-11.
 
+## 2026-08-11 Exact-head format-gate repair
+
+Fresh protected CI on published head `3f4bb18526fc23390b4e03deb78b04804a6fc805`
+identified twelve inherited Python files that did not satisfy the repository's
+current Ruff formatter. The pending repair is formatting-only for those files;
+it changes no camera contract, simulation behavior, wire format, or feature
+scope. The repaired head still requires independent review, normal
+fast-forward publication, and fresh protected exact-head checks.
+
 ## 2026-08-11 Camera-preference persistence continuation
 
 Draft PR [#4349](https://github.com/D-sorganization/Tools/pull/4349) publishes

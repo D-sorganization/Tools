@@ -1,5 +1,14 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 Camera child format-gate repair
+
+- Protected CI on exact published #4349 head
+  `3f4bb18526fc23390b4e03deb78b04804a6fc805` found twelve inherited Python
+  files outside the camera feature that require the repository's current Ruff
+  formatting. The pending repair is deliberately mechanical and changes no
+  runtime behavior or public contract. Independent review, normal
+  fast-forward publication, and fresh exact-head CI remain required.
+
 ## 2026-08-11 Camera-preference workspace child
 
 - Draft PR [#4349](https://github.com/D-sorganization/Tools/pull/4349)

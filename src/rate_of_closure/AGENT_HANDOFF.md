@@ -3,6 +3,14 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-11.
 
+## 2026-08-11 Exact-head format-gate repair
+
+Protected CI on published #4349 head
+`3f4bb18526fc23390b4e03deb78b04804a6fc805` failed only the Ruff format step.
+The pending repair applies the configured formatter to twelve inherited Python
+files and intentionally changes no camera-preference behavior, simulation
+behavior, or contract. Independent review and fresh protected CI remain open.
+
 ## 2026-08-11 View-workspace v2 camera preferences
 
 Draft PR [#4349](https://github.com/D-sorganization/Tools/pull/4349) publishes
