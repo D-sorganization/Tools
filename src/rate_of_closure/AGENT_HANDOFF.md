@@ -3,6 +3,36 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 #4111 assembly-to-simulation adapter (local, not released)
+
+Local branch `feat/4111-assembly-simulation-adapter` starts at exact published
+PR #4338 head `6b55a6b01e8029712217185f0e0ebf2a421be20e` and remains
+**not released** with no GitHub write. It adds a fail-closed adapter from the
+validated selected-spec to `ClubAssembly` binding to the existing impact
+boundary. Desktop consumes the bound head mass and may rotate the authoritative
+head-CG tensor as `R I_head R^T` only when a complete selected-head-to-app
+attitude is explicitly declared. The manual source declares that pose; current
+double/triple pendulum sources do not, so their tensor capability stays
+unavailable. The scalar-only browser solver consumes the validated head mass
+only and reports tensor/CG unavailability. Neither surface ever substitutes
+assembled-club mass, CG, or inertia for head properties, and a miss records
+every property as `not_used` without impact/flight. PyQt/React expose binding
+status and clear mismatched selection state; exports include a non-duplicating
+capability ledger. The binding fixture remains synthetic qualified-analysis
+evidence. Canonical campaign handoff/release-manifest files are still absent on
+this lineage, so no release state was invented.
+
+Final local evidence on this continuation: 42 focused Python simulation,
+contact, ball-setup, export, and adapter tests pass; three focused PyQt binding,
+invalidation, and source-status tests pass; and 27 React adapter, persistence,
+Club-panel, and Simulation-panel tests pass. Focused Ruff lint/format, Black,
+CI-pinned Mypy 1.13 (eight changed sources), repository module-size and docs
+governance gates, React ESLint/type-check, and the production Vite build are
+clean. A first broad 14-worker GUI run saturated shared Qt setup and timed out;
+the same new GUI coverage passes serially. A broader serial regression then
+caught and drove the fix that prevents unbound manual runs from constructing a
+binding-only attitude.
+
 ## 2026-08-10 assembly-binding lint follow-up
 
 The post-split TypeScript compiler passes on exact local head

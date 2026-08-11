@@ -1,9 +1,12 @@
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
+import bindingFixture from "../../../../../tests/rate_of_closure/fixtures/club_assembly_binding_driver_10_5.json";
+
 import { getClub, type ClubSpec } from "../model/club";
 import { DEFAULT_SCENARIO } from "../model/impact";
 import { DEFAULT_TARGET } from "../model/targets";
+import { parseClubAssemblyBinding } from "../model/clubAssemblyBinding";
 import { SimulationPanel } from "./SimulationPanel";
 
 beforeAll(() => {
@@ -52,6 +55,38 @@ function displayedLaunchAngle(): number {
 }
 
 describe("SimulationPanel impact club", () => {
+  it("discloses the scalar-only browser boundary for a validated binding", async () => {
+    const binding = await parseClubAssemblyBinding(
+      getClub("Driver 10.5°"),
+      JSON.stringify(bindingFixture),
+      {
+        sha256Hex: async (payload: ArrayBuffer) => {
+          const text = new TextDecoder().decode(payload);
+          return text.includes("driver-qualified-2026-08")
+            ? bindingFixture.assembly_identity.sha256
+            : bindingFixture.selected_spec_identity.sha256;
+        },
+      },
+    );
+    render(
+      <SimulationPanel
+        scenario={{ ...DEFAULT_SCENARIO, impactOffsetToeMm: 20 }}
+        loftDeg={10.5}
+        clubSpec={getClub("Driver 10.5°")}
+        assemblyBinding={binding}
+        onScenarioChange={() => undefined}
+        target={DEFAULT_TARGET}
+        onTargetChange={() => undefined}
+      />,
+    );
+
+    const status = screen.getByRole("note", {
+      name: /club assembly simulation binding/i,
+    });
+    expect(status).toHaveTextContent(/head inertia: unavailable.*scalar-MOI-only/i);
+    expect(status).toHaveTextContent(/must not substitute assembled-club mass/i);
+  });
+
   it("applies club defaults, preserves explicit overrides, and can restore the default", () => {
     const driver = getClub("Driver 10.5°");
     const view = renderPanel(driver);

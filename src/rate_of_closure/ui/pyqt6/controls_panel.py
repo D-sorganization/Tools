@@ -94,6 +94,8 @@ class ControlsPanel(QWidget):
     scenarioChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
     #: Emitted with a ClubSpec when the user asks for a parametric head.
     clubHeadRequested = pyqtSignal(object)  # noqa: N815 - Qt signal convention
+    #: Publishes only an exact selected-spec binding, or None on invalidation.
+    assemblyBindingChanged = pyqtSignal(object)  # noqa: N815 - Qt convention
     #: Emitted with the new unit when the Distance display unit changes
     #: (#4125 H6) so distance surfaces across the app re-render.
     distanceUnitChanged = pyqtSignal(str)  # noqa: N815 - Qt signal convention
@@ -371,6 +373,7 @@ class ControlsPanel(QWidget):
         if self._assembly_binding is None:
             return
         self._assembly_binding = None
+        self.assemblyBindingChanged.emit(None)
         self._binding_status.setText(
             "Assembly binding cleared — selected club specification changed."
         )
@@ -382,6 +385,10 @@ class ControlsPanel(QWidget):
         )
         if binding is not None:
             self._assembly_binding = binding
+            self.assemblyBindingChanged.emit(binding)
+        else:
+            self._assembly_binding = None
+            self.assemblyBindingChanged.emit(None)
 
     def _on_export_head(self) -> None:
         """Export the complete current club specification as binary STL."""

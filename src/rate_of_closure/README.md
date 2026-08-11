@@ -102,7 +102,14 @@ component transform, complete physical tensors, and a qualified measured,
 manufacturer, CAD-integrated, or engineering-analysis source declaration.
 Only a valid binding makes complete head and assembled-club mass properties
 available in the exported sidecar; any identity-defining Club-panel edit clears
-it. World-from-head attitude remains unavailable and is never inferred. The
+it. The simulation adapter is deliberately narrower. Desktop impact consumes
+the validated head mass and rotates the head-CG tensor into the app frame only
+when the swing source explicitly declares the complete selected-head attitude;
+the manual source does, while the current pendulum sources do not. Browser
+impact remains scalar-MOI-only and consumes just the validated head mass. Full
+CG is unsupported by the current impact datum, and neither surface substitutes
+assembled-club properties for head properties. A no-contact run records the
+binding properties as not used and does not fabricate impact or flight. The
 repository's binding fixture is synthetic test evidence, not manufacturer data.
 
 ## Build a Standalone Executable

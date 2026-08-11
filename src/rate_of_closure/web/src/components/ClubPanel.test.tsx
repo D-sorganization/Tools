@@ -13,6 +13,7 @@ afterEach(() => {
 
 describe("ClubPanel STL export", () => {
   it("imports an exact assembly binding and fails closed after selection changes", async () => {
+    const onBindingChange = vi.fn();
     const digestBytes = (hex: string) =>
       Uint8Array.from(hex.match(/.{2}/gu) ?? [], (value) =>
         Number.parseInt(value, 16),
@@ -33,6 +34,7 @@ describe("ClubPanel STL export", () => {
       <ClubPanel
         onDriveScenario={() => undefined}
         onGenerate={() => undefined}
+        onBindingChange={onBindingChange}
       />,
     );
     const input = screen.getByLabelText(/import assembly binding json/i);
@@ -46,6 +48,13 @@ describe("ClubPanel STL export", () => {
       /assembly binding loaded: driver-qualified-2026-08.*qualified_analysis/i,
     );
     expect(screen.getByText(/bound: driver-qualified-2026-08/i)).toBeVisible();
+    expect(onBindingChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        assemblyIdentity: expect.objectContaining({
+          assemblyId: "driver-qualified-2026-08",
+        }),
+      }),
+    );
 
     fireEvent.change(screen.getByRole("combobox", { name: "Club" }), {
       target: { value: "7-Iron" },
@@ -53,6 +62,7 @@ describe("ClubPanel STL export", () => {
     expect(screen.getByRole("status")).toHaveTextContent(
       /assembly binding cleared.*specification changed/i,
     );
+    expect(onBindingChange).toHaveBeenLastCalledWith(undefined);
     fireEvent.change(input, { target: { files: [fixtureFile()] } });
     await waitFor(() =>
       expect(screen.getByRole("status")).toHaveTextContent(

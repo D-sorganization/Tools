@@ -399,6 +399,8 @@ class TestClubGroup:
         output = tmp_path / "bound.engineering.json"
         panel = ControlsPanel()
         qtbot.addWidget(panel)
+        published_bindings: list[object] = []
+        panel.assemblyBindingChanged.connect(published_bindings.append)
         monkeypatch.setattr(
             "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getOpenFileName",
             lambda *_args, **_kwargs: (str(fixture), "Club assembly binding"),
@@ -407,6 +409,7 @@ class TestClubGroup:
         panel._import_assembly_button.click()
 
         assert panel._assembly_binding is not None
+        assert published_bindings[-1] is panel._assembly_binding
         assert "driver-qualified-2026-08" in panel._binding_status.text()
         monkeypatch.setattr(
             "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getSaveFileName",
@@ -431,6 +434,8 @@ class TestClubGroup:
         )
         panel = ControlsPanel()
         qtbot.addWidget(panel)
+        published_bindings: list[object] = []
+        panel.assemblyBindingChanged.connect(published_bindings.append)
         monkeypatch.setattr(
             "rate_of_closure.ui.pyqt6.club_artifact_ui.QFileDialog.getOpenFileName",
             lambda *_args, **_kwargs: (str(fixture), "Club assembly binding"),
@@ -452,6 +457,7 @@ class TestClubGroup:
         assert panel._assembly_binding is not None
         panel._loft_spin.setValue(11.0)
         assert panel._assembly_binding is None
+        assert published_bindings[-1] is None
         assert "specification changed" in panel._binding_status.text()
 
     def test_generate_loads_a_parametric_head_into_the_view(

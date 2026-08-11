@@ -51,6 +51,13 @@ from .parametric_head import (
     face_sagitta,
     parametric_head_mesh,
 )
+from .simulation_adapter import (
+    APP_FRAME_ID,
+    ClubAssemblyImpactInputs,
+    SimulationCapabilityUse,
+    WorldFromHeadAttitude,
+    adapt_club_assembly_for_impact,
+)
 from .stl_export import (
     default_clubhead_stl_filename,
     serialize_clubhead_stl,
@@ -60,6 +67,7 @@ from .types import ClubSpec, ClubType, HeadStyle
 from .volumetrics import CogReport, head_cog, is_watertight, mesh_volume_centroid
 
 __all__ = [
+    "APP_FRAME_ID",
     "CLUB_ASSEMBLY_BINDING_FORMAT",
     "CLUB_SPEC_IDENTITY_FORMAT",
     "CLUBHEAD_ENGINEERING_FORMAT",
@@ -67,6 +75,7 @@ __all__ = [
     "CLUB_LIBRARY",
     "REFERENCE_HEAD_MASS_KG",
     "ClubAssemblyBinding",
+    "ClubAssemblyImpactInputs",
     "ClubAssemblySourceAuthority",
     "ClubInertia",
     "ClubSpec",
@@ -74,6 +83,9 @@ __all__ = [
     "CogReport",
     "HeadStyle",
     "MassPropertyAuthorityKind",
+    "SimulationCapabilityUse",
+    "WorldFromHeadAttitude",
+    "adapt_club_assembly_for_impact",
     "build_club_assembly_binding",
     "build_clubhead_engineering_sidecar",
     "build_parametric_head",
