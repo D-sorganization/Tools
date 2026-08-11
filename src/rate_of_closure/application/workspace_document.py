@@ -105,7 +105,7 @@ class VersionedPayload:
             schema_version=positive_version(
                 data["schema_version"], "payload.schema_version"
             ),
-            data=freeze_object(data["data"], "payload.data"),
+            data=data["data"],
         )
 
 

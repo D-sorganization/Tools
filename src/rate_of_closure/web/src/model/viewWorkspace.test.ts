@@ -2,6 +2,8 @@ import { describe, expect, it } from "vitest";
 
 import {
   VIEW_WORKSPACE_STORAGE_KEY,
+  exportViewWorkspace,
+  importViewWorkspace,
   loadViewWorkspace,
   migrateViewWorkspace,
   saveViewWorkspace,
@@ -88,5 +90,26 @@ describe("view workspace persistence", () => {
       layout: "split_horizontal",
       active_slot_id: "impact",
     });
+  });
+
+  it("round-trips a strict versioned export without partial future-version recovery", () => {
+    const workspace = migrateViewWorkspace({
+      format: "rate_of_closure.view_workspace/1",
+      layout: "grid",
+      slots: [
+        { id: "impact", kind: "impact", legend: "hidden" },
+        { id: "swing", kind: "swing", legend: "outside_right" },
+        { id: "flight", kind: "flight", legend: "outside_right" },
+      ],
+      active_slot_id: "flight",
+      playback: { time_s: 0.42, playing: false, loop: true, rate: 0.5 },
+    });
+
+    const text = exportViewWorkspace(workspace);
+
+    expect(text.endsWith("\n")).toBe(true);
+    expect(importViewWorkspace(text)).toEqual(workspace);
+    const future = JSON.stringify({ ...JSON.parse(text), format: "future/9" });
+    expect(() => importViewWorkspace(future)).toThrow(/unsupported workspace format/);
   });
 });

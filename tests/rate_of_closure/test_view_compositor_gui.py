@@ -9,8 +9,8 @@ import pytest
 pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
-from PyQt6.QtCore import QSettings  # noqa: E402
-from PyQt6.QtWidgets import QLabel, QScrollArea  # noqa: E402
+from PyQt6.QtCore import QSettings, Qt  # noqa: E402
+from PyQt6.QtWidgets import QCheckBox, QComboBox, QLabel, QScrollArea  # noqa: E402
 
 from rate_of_closure.ui.pyqt6.view_compositor import ViewCompositor  # noqa: E402
 from rate_of_closure.view_workspace import (  # noqa: E402
@@ -131,3 +131,82 @@ def test_grid_remains_navigable_when_real_views_exceed_available_height(qtbot) -
     assert viewport is not None
     assert viewport.widgetResizable()
     assert viewport.verticalScrollBar().maximum() > 0
+
+
+def test_keyboard_focus_order_can_build_and_reduce_a_multi_view_layout(
+    qtbot,
+) -> None:  # type: ignore[no-untyped-def]
+    views = {
+        kind: QLabel(kind.value)
+        for kind in (ViewKind.IMPACT, ViewKind.SWING, ViewKind.FLIGHT)
+    }
+    compositor = ViewCompositor(views)
+    qtbot.addWidget(compositor)
+    compositor.show()
+    qtbot.waitExposed(compositor)
+    compositor.activateWindow()
+
+    layout = compositor.findChild(QComboBox, "viewportLayoutCombo")
+    impact = compositor.findChild(QCheckBox, "impactViewportToggle")
+    flight = compositor.findChild(QCheckBox, "flightViewportToggle")
+    assert layout is not None and impact is not None and flight is not None
+
+    layout.setFocus(Qt.FocusReason.TabFocusReason)
+    qtbot.waitUntil(layout.hasFocus)
+    qtbot.keyClick(layout, Qt.Key.Key_Down)
+    assert compositor.workspace().layout is ViewLayout.SPLIT_HORIZONTAL
+    assert layout.hasFocus()
+    qtbot.keyClick(layout, Qt.Key.Key_Tab)
+    assert impact.hasFocus()
+
+    flight.setFocus()
+    qtbot.keyClick(flight, Qt.Key.Key_Space)
+    assert compositor.workspace().layout is ViewLayout.GRID
+    assert flight.hasFocus()
+    qtbot.keyClick(flight, Qt.Key.Key_Space)
+    assert compositor.workspace().layout is ViewLayout.SPLIT_HORIZONTAL
+
+
+def test_versioned_workspace_export_import_round_trip_is_atomic(
+    qtbot, tmp_path
+) -> None:  # type: ignore[no-untyped-def]
+    settings = QSettings(str(tmp_path / "roundtrip.ini"), QSettings.Format.IniFormat)
+    views = {
+        kind: QLabel(kind.value)
+        for kind in (ViewKind.IMPACT, ViewKind.SWING, ViewKind.FLIGHT)
+    }
+    source = ViewCompositor(views)
+    qtbot.addWidget(source)
+    source._checks[ViewKind.FLIGHT].setChecked(True)
+    source._checks[ViewKind.IMPACT].setChecked(True)
+    source.update_playback(
+        PlaybackState(time_s=0.42, playing=False, loop=True, rate=0.5)
+    )
+
+    document = source.export_workspace_document()
+    target = ViewCompositor(
+        {
+            kind: QLabel(f"target-{kind.value}")
+            for kind in (ViewKind.IMPACT, ViewKind.SWING, ViewKind.FLIGHT)
+        },
+        settings,
+    )
+    qtbot.addWidget(target)
+    target.import_workspace_document(document)
+
+    assert document["format"] == "rate_of_closure.view_workspace/1"
+    assert target.workspace() == source.workspace()
+    settings.sync()
+    reloaded = ViewCompositor(
+        {
+            kind: QLabel(f"reloaded-{kind.value}")
+            for kind in (ViewKind.IMPACT, ViewKind.SWING, ViewKind.FLIGHT)
+        },
+        settings,
+    )
+    qtbot.addWidget(reloaded)
+    assert reloaded.workspace() == source.workspace()
+    before = target.workspace()
+    with pytest.raises(ValueError, match="unsupported workspace format"):
+        target.import_workspace_document({**document, "format": "future/9"})
+    assert target.workspace() == before

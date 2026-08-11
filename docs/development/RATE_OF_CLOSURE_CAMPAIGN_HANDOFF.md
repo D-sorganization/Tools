@@ -4,11 +4,11 @@ Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
-## 2026-08-10 Issue #4225 multi-view compositor rendered-QA slice
+## 2026-08-10 Issue #4225 multi-view keyboard/export acceptance slice
 
-Worktree `Tools-worktrees/issue-4225-multiview-compositor` and branch
-`feat/4225-multiview-compositor` begin at exact PR #4324 head
-`b8bf8aae43d460ec69d6766f57ed55bb8efb7790`. This bounded slice replaces the
+Worktree `Tools-worktrees/issue-4225-multiview-persistence` and branch
+`feat/4225-multiview-persistence` begin at exact draft PR #4327 head
+`e975f66bdcfc5a32f9688b8c2c6e34fe1b53ce6e`. The parent slice replaces the
 disabled/direct-route placeholders with three real distinct viewport hosts in
 PyQt6 and React. Impact, Swing, and Flight can be selected directly or composed
 as single, horizontal, vertical, and grid layouts. The active run and playback
@@ -27,15 +27,21 @@ play/loop/rate and settled time; PyQt6 debounces active-frame writes. Native
 controls now include hover guidance and constrained multi-view grids expose
 scroll navigation instead of clipping real plots.
 
-Current gates are the complete 919-test Python/PyQt Rate of Closure suite,
-clean Ruff/format and focused type checks, and 114 React files / 684 tests with
-TypeScript, zero-warning ESLint, and a production build. Browser QA at
-1280 x 720 and 760 x 800 verifies distinct balanced hosts, responsive stacking,
-legacy-display reachability, and direct commands. Isolated PyQt6 QA at
-1282 x 752 verifies persisted Single, two-host Split Horizontal, three-host
-Grid, distinct plots, and navigable overflow. No push or PR exists for this
-local slice. Keep #4225 and #4218 open for complete keyboard-focus behavior,
-workspace export round trips, protected CI/review, dependency-ordered
+This continuation closes the two remaining local acceptance-proof gaps. React
+quick-view tabs implement roving focus and Arrow Left/Right, Home, and End;
+native controls use an explicit Layout -> Impact -> Swing -> Flight tab order.
+Both clients are tested manipulating view membership entirely by keyboard.
+Strict version-1 import/export boundaries validate before mutation, reject
+future formats, preserve playback and legend state, and the native import
+survives QSettings reconstruction. The canonical view document is now proven
+inside the whole-app workspace v2 envelope too. This exposed and repaired its
+pre-existing nested-array double-freeze parser defect. Local evidence is 921
+Python/PyQt Rate tests, 114 React files / 686 tests, focused MyPy,
+Ruff/format, TypeScript, zero-warning ESLint, production build, module-size,
+changed-policy, assertion, whitespace, and diff gates; 337 npm packages audit
+with zero vulnerabilities. File-menu commands remain
+disabled because no file picker or full live-session mapper is claimed here.
+Keep #4225 and #4218 open for protected CI/review, dependency-ordered
 integration, and UpstreamDrift consumer parity.
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice

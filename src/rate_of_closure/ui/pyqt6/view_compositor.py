@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 from collections.abc import Mapping
 from dataclasses import replace
+from typing import cast
 
 from PyQt6.QtCore import QSettings, QSignalBlocker, QTimer
 from PyQt6.QtWidgets import (
@@ -25,6 +26,7 @@ from rate_of_closure.view_workspace import (
     ViewLayout,
     ViewSlot,
     ViewWorkspace,
+    workspace_from_document,
     workspace_to_document,
 )
 from rate_of_closure.view_workspace_recovery import (
@@ -80,6 +82,19 @@ class ViewCompositor(QWidget):
         """Return the persistent view instance registered for ``kind``."""
         return self._views[kind]
 
+    def export_workspace_document(self) -> dict[str, object]:
+        """Return a detached, strict version-1 compositor document."""
+        return cast(dict[str, object], workspace_to_document(self._workspace))
+
+    def import_workspace_document(self, document: Mapping[str, object]) -> None:
+        """Atomically apply one strict version-1 compositor document."""
+        if not isinstance(document, Mapping):
+            raise TypeError("workspace document must be a mapping")
+        workspace = workspace_from_document(document)
+        if any(slot.kind not in SUPPORTED_VIEW_KINDS for slot in workspace.slots):
+            raise ValueError("workspace document contains an unsupported view kind")
+        self._apply_workspace(workspace)
+
     def show_single_view(self, kind: ViewKind) -> None:
         """Select one real host while preserving all other host-owned state."""
         if kind not in SUPPORTED_VIEW_KINDS:
@@ -106,6 +121,7 @@ class ViewCompositor(QWidget):
         controls = QHBoxLayout()
         controls.addWidget(QLabel("Viewport Layout"))
         self._layout_combo.setAccessibleName("Viewport Layout")
+        self._layout_combo.setObjectName("viewportLayoutCombo")
         self._layout_combo.setToolTip(
             "Arrange the selected synchronized views as a single panel, split, or grid."
         )
@@ -115,6 +131,7 @@ class ViewCompositor(QWidget):
         controls.addWidget(self._layout_combo)
         for kind in SUPPORTED_VIEW_KINDS:
             check = QCheckBox(_LABELS[kind])
+            check.setObjectName(f"{kind.value}ViewportToggle")
             check.setAccessibleName(f"Show {_LABELS[kind]} viewport")
             check.setToolTip(
                 f"Show or hide the synchronized {_LABELS[kind].lower()} viewport."
@@ -128,6 +145,9 @@ class ViewCompositor(QWidget):
         root = QVBoxLayout(self)
         root.setContentsMargins(0, 0, 0, 0)
         root.addLayout(controls)
+        focus_order = [self._layout_combo, *self._checks.values()]
+        for current, following in zip(focus_order, focus_order[1:], strict=False):
+            self.setTabOrder(current, following)
         viewport_surface = QWidget(self)
         viewport_surface.setLayout(self._grid)
         viewport = QScrollArea(self)

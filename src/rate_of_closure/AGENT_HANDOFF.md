@@ -3,10 +3,10 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
-## 2026-08-10 Issue #4225 multi-view compositor rendered-QA slice
+## 2026-08-10 Issue #4225 multi-view keyboard/export acceptance slice
 
-The isolated `feat/4225-multiview-compositor` branch is based on exact PR #4324
-head `b8bf8aae43d460ec69d6766f57ed55bb8efb7790`. PyQt6 now owns persistent,
+The continuation `feat/4225-multiview-persistence` branch is based on exact
+draft PR #4327 head `e975f66bdcfc5a32f9688b8c2c6e34fe1b53ce6e`. PyQt6 owns persistent,
 distinct `StrikeView`, synchronized `SimulationView`, and `FlightView`
 instances in a real compositor tab; enabled View commands select those hosts.
 React provides matching Impact/Swing/Flight hosts, quick-view tabs, visibility
@@ -27,16 +27,27 @@ debounced in PyQt6 so animation frames do not become settings writes. New
 native controls have hover guidance, and a resizable scroll viewport keeps
 minimum-size plots reachable in constrained grids.
 
-Evidence is the complete 919-test Python/PyQt Rate of Closure suite, focused
-type checks and clean Ruff/format; and 114 React files / 684 tests with
-TypeScript, zero-warning ESLint, and a production build. Browser control at
-1280 x 720 and 760 x 800 verifies balanced distinct hosts, responsive stacking,
-legacy displays, and direct commands. Isolated PyQt6 control at 1282 x 752
-verifies Single to Split Horizontal to Grid normalization, distinct real plots,
-and navigable overflow. This is not full #4225 completion: complete focus and
-keyboard layout manipulation, export round-trip evidence, protected CI/review,
-normal stack integration, and UpstreamDrift parity remain required. Solver UI
-was not changed.
+Keyboard behavior is now explicit and regression-pinned: React quick-view tabs
+implement the standard roving-tab pattern with Arrow Left/Right, Home, and End;
+Qt exposes a deterministic Layout -> Impact -> Swing -> Flight focus chain.
+Tests create and reduce layouts using focus and keyboard activation alone.
+Strict version-1 export/import functions exist on both client boundaries,
+validate fully before applying state, reject future formats without partial
+mutation, preserve playback and legend state, and persist a native import
+through QSettings recreation. The whole-workspace Python envelope now
+round-trips the canonical view document rather than placeholder data.
+
+That realistic nested slot list exposed and fixed a pre-existing
+`VersionedPayload.from_json_dict` double-freeze defect. Exact local gates are
+921 Python/PyQt Rate tests, 114 React files / 686 tests, focused MyPy,
+Ruff/format, TypeScript, zero-warning ESLint, production Vite build,
+module-size, changed-policy, assertion, whitespace, and diff checks. The web
+dependency audit reports 337 packages and zero vulnerabilities.
+
+This still is not full #4225 completion: the File commands remain disabled
+until the whole application-session adapter and chooser workflow lands, and
+protected CI/review, normal stack integration, and UpstreamDrift parity remain
+required. Solver UI was not changed.
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 

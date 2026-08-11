@@ -3,10 +3,11 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
-## 2026-08-10 Issue #4225 multi-view compositor rendered-QA slice
+## 2026-08-10 Issue #4225 multi-view keyboard/export acceptance slice
 
-Isolated branch `feat/4225-multiview-compositor` starts at exact PR #4324 head
-`b8bf8aae43d460ec69d6766f57ed55bb8efb7790`; no existing branch was rewritten.
+Continuation branch `feat/4225-multiview-persistence` starts at exact draft PR
+#4327 head `e975f66bdcfc5a32f9688b8c2c6e34fe1b53ce6e`; no existing branch was
+rewritten.
 PyQt6 and React now expose real, distinct Impact, Swing, and Flight viewport
 hosts through enabled UI-neutral commands and single, horizontal, vertical, or
 grid layouts. One simulation run and playback clock drive the visible hosts,
@@ -26,17 +27,30 @@ and PyQt6 debounces active playback writes. PyQt6 adds hover guidance for every
 new control and a resizable scrolling viewport so minimum-size real plots stay
 navigable instead of being clipped in a desktop grid.
 
-Current local evidence is the complete 919-test Python/PyQt Rate of Closure
-suite, Ruff/format and focused type checks; plus the complete 114-file /
-684-test React suite, TypeScript, zero-warning ESLint, and the production Vite
-build. Browser QA at 1280 x 720 and 760 x 800 proves responsive non-overflowing
-hosts, distinct balanced grid content, legacy-display reachability, and direct
-command routing. Isolated native QA at 1282 x 752 proves persisted Single,
-two-host Split Horizontal, three-host Grid, distinct real plots, and explicit
-overflow navigation. This slice still does not close #4225 or epic #4218:
-complete keyboard focus/layout manipulation, workspace export proof, protected
-CI and review, stack integration, and UpstreamDrift parity remain open. Do not
-push or open a PR until the root release owner reviews this slice.
+The remaining local acceptance gaps are now executable contracts. React uses a
+roving tab stop with Arrow Left/Right, Home, and End selection; native Qt uses
+an explicit Layout -> Impact -> Swing -> Flight tab chain with stable object
+names. Both tests manipulate Single/Split/Grid membership using only focus and
+keyboard activation. Both clients also expose strict version-1 compositor
+export/import boundaries. Imports validate completely before mutation, reject
+future versions, preserve shared playback and per-host legend state, and a
+native imported document survives a fresh QSettings reconstruction. The real
+version-1 view document is also embedded in and recovered from the whole-app
+workspace envelope instead of using placeholder layout data.
+
+The realistic nested slot list exposed and repaired a pre-existing
+`VersionedPayload.from_json_dict` double-freeze defect; imports now validate and
+freeze JSON exactly once. Local evidence is the complete 921-test Python/PyQt
+Rate suite and 114-file / 686-test React suite, focused MyPy, Ruff/format,
+TypeScript, zero-warning ESLint, the production Vite build, module-size,
+changed-policy, assertion, whitespace, and diff gates. `npm ci` audited 337
+packages with zero vulnerabilities.
+
+The File menu remains truthfully disabled because this slice adds reusable
+adapters and round-trip proof, not a file-picker/application-session workflow.
+#4225 and epic #4218 remain open for protected CI/review, dependency-ordered
+integration, and UpstreamDrift consumer parity. Do not push or open a PR until
+the root release owner reviews this slice.
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 

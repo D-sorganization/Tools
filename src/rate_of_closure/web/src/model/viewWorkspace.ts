@@ -64,8 +64,7 @@ function normalizedLayout(value: unknown, count: number): ViewLayout {
     : "split_horizontal";
 }
 
-function recoveredPlayback(value: unknown): ViewPlayback {
-  if (!isRecord(value)) return DEFAULT_PLAYBACK;
+function playbackCandidate(value: Record<string, unknown>): ViewPlayback | null {
   const candidate = {
     timeS: value.time_s,
     playing: value.playing,
@@ -76,8 +75,12 @@ function recoveredPlayback(value: unknown): ViewPlayback {
     typeof candidate.timeS !== "number" || !Number.isFinite(candidate.timeS) || candidate.timeS < 0 ||
     typeof candidate.rate !== "number" || !Number.isFinite(candidate.rate) || candidate.rate <= 0 ||
     typeof candidate.playing !== "boolean" || typeof candidate.loop !== "boolean"
-  ) return DEFAULT_PLAYBACK;
+  ) return null;
   return candidate as ViewPlayback;
+}
+
+function recoveredPlayback(value: unknown): ViewPlayback {
+  return isRecord(value) ? playbackCandidate(value) ?? DEFAULT_PLAYBACK : DEFAULT_PLAYBACK;
 }
 
 function recoveredSlots(value: unknown): ViewSlot[] {
@@ -170,6 +173,75 @@ function documentFor(workspace: ViewWorkspace): Record<string, unknown> {
       rate: workspace.playback.rate,
     },
   };
+}
+
+function exactKeys(
+  value: Record<string, unknown>,
+  expected: readonly string[],
+  context: string,
+): void {
+  const actual = Object.keys(value);
+  if (actual.length !== expected.length || expected.some((key) => !(key in value))) {
+    throw new TypeError(`${context} has invalid fields`);
+  }
+}
+
+function strictWorkspaceDocument(value: unknown): ViewWorkspace {
+  if (!isRecord(value)) throw new TypeError("workspace document must be an object");
+  exactKeys(value, ["format", "layout", "slots", "active_slot_id", "playback"], "workspace");
+  if (value.format !== FORMAT) {
+    throw new TypeError(`unsupported workspace format: ${String(value.format)}`);
+  }
+  if (!VIEW_LAYOUTS.includes(value.layout as ViewLayout) || !Array.isArray(value.slots)) {
+    throw new TypeError("workspace layout and slots must be valid");
+  }
+  const slots = value.slots.map((item): ViewSlot => {
+    if (!isRecord(item)) throw new TypeError("workspace slot must be an object");
+    exactKeys(item, ["id", "kind", "plot_id", "legend"], "workspace slot");
+    if (item.id !== item.kind || !isViewKind(item.id) || item.plot_id !== null) {
+      throw new TypeError("workspace slot identity is invalid");
+    }
+    if (item.legend !== "hidden" && item.legend !== "outside_right") {
+      throw new TypeError("workspace slot legend is invalid");
+    }
+    return { id: item.id, kind: item.id, legend: item.legend };
+  });
+  if (slots.length === 0 || slots.length > VIEW_KINDS.length ||
+      new Set(slots.map(({ id }) => id)).size !== slots.length) {
+    throw new TypeError("workspace slots must be non-empty and unique");
+  }
+  if (!isViewKind(value.active_slot_id) ||
+      !slots.some(({ id }) => id === value.active_slot_id)) {
+    throw new TypeError("workspace active slot is invalid");
+  }
+  if (normalizedLayout(value.layout, slots.length) !== value.layout) {
+    throw new TypeError("workspace layout cardinality is invalid");
+  }
+  if (!isRecord(value.playback)) throw new TypeError("workspace playback is invalid");
+  exactKeys(value.playback, ["time_s", "playing", "loop", "rate"], "workspace playback");
+  const playback = playbackCandidate(value.playback);
+  if (playback === null) throw new TypeError("workspace playback is invalid");
+  return {
+    layout: value.layout as ViewLayout,
+    slots,
+    activeSlotId: value.active_slot_id,
+    playback,
+  };
+}
+
+/** Serialize a strict, versioned compositor document for file/workspace adapters. */
+export function exportViewWorkspace(workspace: ViewWorkspace): string {
+  const document = documentFor(workspace);
+  strictWorkspaceDocument(document);
+  return `${JSON.stringify(document, null, 2)}\n`;
+}
+
+/** Parse a strict compositor export without partial mutation or version recovery. */
+export function importViewWorkspace(text: string): ViewWorkspace {
+  if (typeof text !== "string" || text.trim().length === 0) {
+    throw new TypeError("workspace import must be non-empty JSON text");
+  }
+  return strictWorkspaceDocument(JSON.parse(text));
 }
 
 export function loadViewWorkspace(storage?: StorageReader | null): ViewWorkspace {

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useRef, type KeyboardEvent, type ReactNode } from "react";
 
 import {
   VIEW_KINDS,
@@ -47,6 +47,24 @@ function hostClass(kind: ViewKind, layout: ViewLayout): string {
 /** Arrange independent viewport hosts around one synchronized run timeline. */
 export function ViewCompositor(props: Props) {
   const visible = props.workspace.slots.map(({ kind }) => kind);
+  const tabRefs = useRef<Partial<Record<ViewKind, HTMLButtonElement>>>({});
+  const navigateTabs = (event: KeyboardEvent<HTMLButtonElement>, kind: ViewKind) => {
+    const current = VIEW_KINDS.indexOf(kind);
+    const destination = event.key === "Home"
+      ? 0
+      : event.key === "End"
+        ? VIEW_KINDS.length - 1
+        : event.key === "ArrowRight"
+          ? (current + 1) % VIEW_KINDS.length
+          : event.key === "ArrowLeft"
+            ? (current - 1 + VIEW_KINDS.length) % VIEW_KINDS.length
+            : null;
+    if (destination === null) return;
+    event.preventDefault();
+    const next = VIEW_KINDS[destination];
+    props.onWorkspaceChange(workspaceForSingleView(next, props.workspace));
+    tabRefs.current[next]?.focus();
+  };
   return (
     <section aria-label="Synchronized simulation view compositor" className="space-y-3">
       <div className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-700 p-3">
@@ -56,6 +74,9 @@ export function ViewCompositor(props: Props) {
             const selected = props.workspace.layout === "single" && visible[0] === kind;
             return (
               <button key={kind} type="button" role="tab" aria-selected={selected}
+                ref={(element) => { tabRefs.current[kind] = element ?? undefined; }}
+                tabIndex={selected ? 0 : -1}
+                onKeyDown={(event) => navigateTabs(event, kind)}
                 onClick={() => props.onWorkspaceChange(
                   workspaceForSingleView(kind, props.workspace),
                 )}
