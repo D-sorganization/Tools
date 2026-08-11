@@ -54,8 +54,10 @@ describe("ClubPanel STL export", () => {
       /assembly binding cleared.*specification changed/i,
     );
     fireEvent.change(input, { target: { files: [fixtureFile()] } });
-    expect(await screen.findByRole("status")).toHaveTextContent(
-      /assembly binding import failed.*selected clubspec identity/i,
+    await waitFor(() =>
+      expect(screen.getByRole("status")).toHaveTextContent(
+        /assembly binding import failed.*selected clubspec identity/i,
+      ),
     );
     expect(screen.getByText(/no binding.*complete cg/i)).toBeVisible();
   });

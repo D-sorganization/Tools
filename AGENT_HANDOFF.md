@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 assembly-binding lint follow-up
+
+The post-split TypeScript compiler passes on exact local head
+`e9e75614f29a0d6fb4925bc2b096155a9f9edf25`. ESLint then found one
+test-only explicit `any`; the assertion view now uses a narrow structural
+inspection type instead. Runtime behavior, wire bytes, identities, sidecar
+content, and scientific availability remain unchanged and `not_released`.
+The focused UI test also now waits for the asynchronous re-import result
+instead of matching the already-present selection-cleared status.
+
 ## 2026-08-10 Authoritative Transfer Snapshot
 
 - Publication-hardening follow-up on the same **not released** branch preserves

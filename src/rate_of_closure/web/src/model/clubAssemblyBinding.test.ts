@@ -23,6 +23,15 @@ const DRIVER = "Driver 10.5\u00b0";
 const DRIVER_STL_SHA256 =
   "3ea68a083099ce3780418e9eff0900e7178b835608261bf7d89825bddef243c8";
 
+interface BoundSidecarInspection {
+  readonly capabilities: { readonly head_full_inertia_tensor: unknown };
+  readonly mass_properties: {
+    readonly head: { readonly center_of_mass_m: { readonly value: unknown } };
+    readonly assembly: unknown;
+  };
+  readonly frames: { readonly world_from_head: { readonly status: unknown } };
+}
+
 function digestRuntime(): ClubAssemblyBindingDigestRuntime {
   return {
     sha256Hex: vi.fn(async (payload: ArrayBuffer) => {
@@ -89,7 +98,7 @@ describe("selected-spec to ClubAssembly binding", () => {
         },
       },
       binding,
-    )) as Record<string, any>;
+    )) as unknown as BoundSidecarInspection;
 
     expect(sidecar.capabilities.head_full_inertia_tensor).toEqual({
       status: "available",
