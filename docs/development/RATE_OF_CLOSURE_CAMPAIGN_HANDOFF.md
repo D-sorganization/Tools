@@ -4,6 +4,29 @@ Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 Repaired compositor-parent propagation into persistence child
+
+- Continuation branch `feat/4225-multiview-persistence` now normally
+  incorporates exact repaired compositor parent
+  `0e3054e6a7fa0e3e38e1312b4132bbd1e4336fb2`.
+- Keyboard/persistence production and test code did not conflict; only the four
+  additive handoff/spec files required reconciliation.
+- No rebase, retarget, force-push, parent rewrite, or history rewrite was used.
+  Fresh local verification, protected exact-head CI, and review remain.
+- The pinned-MyPy delta requires an explicit typed current-workspace validation
+  local; parsing, validation, migration, and serialization behavior is unchanged.
+
+## 2026-08-10 Repaired legend-parent propagation into PR #4327
+
+- Draft PR `#4327` keeps branch `feat/4225-multiview-compositor` and base
+  `fix/4224-default-legend-layout-local`.
+- Exact repaired legend parent `531a851dc125e83ad86abe1601651e163f5f866d`
+  is incorporated through a normal merge.
+- Multi-view production/test code did not conflict; only the four additive
+  handoff/spec files required reconciliation.
+- No rebase, retarget, force-push, parent rewrite, or history rewrite was used.
+  Fresh local verification, protected exact-head CI, and review remain.
+
 ## 2026-08-10 Issue #4225 multi-view keyboard/export acceptance slice
 
 Worktree `Tools-worktrees/issue-4225-multiview-persistence` and branch
@@ -43,6 +66,16 @@ with zero vulnerabilities. File-menu commands remain
 disabled because no file picker or full live-session mapper is claimed here.
 Keep #4225 and #4218 open for protected CI/review, dependency-ordered
 integration, and UpstreamDrift consumer parity.
+## 2026-08-10 Repaired mobile-parent propagation into PR #4324
+
+- Draft PR `#4324` keeps branch `fix/4224-default-legend-layout-local` and
+  base `fix/rate-mobile-tools-menu`.
+- Exact repaired mobile parent `16a1167c31126238163297983862004afc5001d9`
+  is incorporated through a normal merge.
+- Legend/layout production/test code did not conflict; only the four additive
+  handoff/spec files required reconciliation.
+- No rebase, retarget, force-push, parent rewrite, or history rewrite was used.
+  Fresh local verification, protected exact-head CI, and review remain.
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 
@@ -71,6 +104,16 @@ persistence/migration, exported-layout proof,
 complete rendered QA, protected CI/review, and dependency-ordered integration
 remain open. PR #4303 is a separate camera-default child and is not claimed as
 ancestry of this local branch.
+## 2026-08-10 Repaired camera-parent propagation into PR #4301
+
+- Draft PR `#4301` keeps branch `fix/rate-mobile-tools-menu` and base
+  `feat/4284-camera-snap-tracking`.
+- Exact repaired camera parent `104503aac9779b195d46d38e8ed32611ffc8dfd7`
+  is incorporated through a normal merge.
+- Mobile-toolstrip production/test code did not conflict; only the four
+  additive handoff/spec files required reconciliation.
+- No rebase, retarget, force-push, parent rewrite, or history rewrite was used.
+  Fresh local verification, protected exact-head CI, and review remain.
 
 ## 2026-08-10 PR #4301 four-surface parent propagation
 
@@ -131,6 +174,28 @@ Independent exact-tree review found no findings. This propagation is not issue
 or epic completion: protected current-head CI, installed-consumer evidence,
 four-surface conformance, native rendered QA, and dependency-ordered release
 remain open.
+## 2026-08-10 Current-parent propagation into camera PR #4298
+
+- Draft PR `#4298` keeps branch `feat/4284-camera-snap-tracking` and base
+  `feat/4199-wind-workflow`.
+- Exact current parent head `1e82f15026786ea0b08f78f4c001590ddce9ff39`
+  is incorporated through a normal merge.
+- Camera production/test code did not conflict. Only the four additive
+  current-state handoff/spec files required reconciliation.
+- No rebase, retarget, force-push, parent rewrite, or history rewrite was used.
+  Fresh local verification, protected exact-head CI, and review remain required.
+
+## 2026-08-10 Repaired wind-scalar parent propagation into PR #4282
+
+- Draft PR `#4282` keeps branch `feat/4199-wind-workflow` and base
+  `feat/4199-wind-scalar-adapter`.
+- Exact repaired parent head `d6fb04e07c2a625412e9208b07103acdc42c621b`
+  is incorporated through a normal merge after its quality gate passed.
+- No wind-workflow production or test code conflicted. No rebase, retarget,
+  force-push, parent rewrite, draft-state change, or merge was used.
+- Twenty-five focused tests plus documentation governance, changed-file size,
+  and whitespace checks pass locally. Fresh protected CI and review must pass
+  before this exact head can propagate normally into PR `#4285`.
 
 ## 2026-08-10 PR #4298 exact hosted-mypy repair
 
