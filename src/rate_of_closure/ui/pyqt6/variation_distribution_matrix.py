@@ -26,6 +26,7 @@ from rate_of_closure.ui.pyqt6.variation_plot_helpers import axis_label, dataset_
 from rate_of_closure.ui.pyqt6.variation_trial_table import (
     create_trial_table,
     populate_trial_table,
+    validated_trial_index,
 )
 from rate_of_closure.variation.plot_data import (
     EnsemblePlotDataset,
@@ -108,6 +109,9 @@ class DistributionMatrixView(QWidget):
         dataset: VariationDataset,
         variables: tuple[ScalarPlotVariable, ...],
     ) -> None:
+        self._selected_trial = None
+        self._table.clearSelection()
+        self._table.setCurrentCell(-1, -1)
         self._variation = dataset
         self._variables = variables
         self._exports.setEnabled(True)
@@ -224,11 +228,13 @@ class DistributionMatrixView(QWidget):
 
     def set_selected_trial(self, trial_index: int | None) -> None:
         """Apply linked trial selection without emitting a signal loop."""
-        self._selected_trial = trial_index
-        if trial_index is None:
+        trial_count = self._variation.plan.n_runs if self._variation else 0
+        selected = validated_trial_index(trial_index, trial_count)
+        self._selected_trial = selected
+        if selected is None:
             self._table.clearSelection()
         else:
-            self._table.selectRow(trial_index)
+            self._table.selectRow(selected)
         self._redraw()
 
     def _table_selected(self, row: int, _column: int) -> None:

@@ -41,11 +41,11 @@ pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 _YAW = f"{CATEGORY_SWING}.yaw_deg"
 
 
-def _plot_dataset():  # type: ignore[no-untyped-def]
+def _plot_dataset(n_runs: int = 3):  # type: ignore[no-untyped-def]
     plan = VariationPlan(
         mode="swing",
         noise=(NoiseSpec(_YAW, distribution="uniform", scale=0.2),),
-        n_runs=3,
+        n_runs=n_runs,
         seed=8,
     )
     base = SimulationConfig(
@@ -200,6 +200,30 @@ def test_trial_selection_links_scatter_matrix_and_arc_views(qtbot) -> None:  # t
     matrix._table.cellClicked.emit(0, 0)
     assert scatter._trial_combo.currentData() == 0
     assert arcs._trial_combo.currentData() == 0
+
+
+def test_replacing_result_clears_and_bounds_linked_trial_selection(qtbot) -> None:  # type: ignore[no-untyped-def]
+    """A smaller rerun must not retain an impossible trial identity."""
+    larger = _plot_dataset(3)
+    smaller = _plot_dataset(1)
+    scatter = DatasetScatterView()
+    arcs = ArcOverlayView()
+    matrix = DistributionMatrixView()
+    for view in (scatter, arcs, matrix):
+        qtbot.addWidget(view)
+        view.set_plot_dataset(larger)
+        view.set_selected_trial(2)
+
+    for view in (scatter, arcs, matrix):
+        view.set_plot_dataset(smaller)
+        assert view._selected_trial is None
+
+    assert scatter._trial_combo.currentData() is None
+    assert arcs._trial_combo.currentData() is None
+    assert matrix._table.currentRow() == -1
+    for view in (scatter, arcs, matrix):
+        with pytest.raises(ValueError, match="trial_index"):
+            view.set_selected_trial(1)
 
 
 def test_distribution_matrix_draws_and_exports_selected_raw_rows(
