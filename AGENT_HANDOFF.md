@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 #4203 hosted MyPy kinetics repair
+
+- Exact head `0216a547aa79727091a2939b96e779e8ddbd7304` failed CI Standard run
+  `31477542889`, job `93734652129`, at runtime merge ref `aede309`: NumPy's
+  typed API exposed four `no-any-return` findings in the newly extracted
+  kinetics modules.
+- The repair narrows only the results of `numpy.linalg.norm`,
+  `numpy.concatenate`, and the app-frame matrix projection to the already
+  declared `numpy.ndarray` return contract. Explicit casts do not allocate,
+  convert, or change any array, physics, units, frames, public identity, or UI.
+- RED evidence is the exact four hosted diagnostics at
+  `_kinetics_series.py:121/131`, `_kinetics_dynamics.py:194`, and
+  `kinetics.py:61`. GREEN evidence requires the complete PR-base changed-source
+  MyPy profile, not a three-file-only run, plus focused/full Rate regression and
+  normal protected CI after publication.
+- Local GREEN evidence is 102/102 complete-delta MyPy source files, 141/141
+  Ruff/format files, 101 Bandit source files with no medium/high finding, 28/28
+  focused tests, and 701/701 full Rate tests. Size, documentation, minimum-test,
+  and diff gates also pass.
+- This commit is local only. PR base, stack order, protected review, and the
+  paused #4279 parent propagation remain unchanged.
+
 ## 2026-08-11 #4203 kinetics size-budget repair
 
 - Exact head `572bf525dd1ded26cbc3fbb4f228d1f6ca16e118` passes the PR-base

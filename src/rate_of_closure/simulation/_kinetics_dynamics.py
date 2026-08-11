@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from collections.abc import Callable
+from typing import cast
 
 import numpy as np
 
@@ -191,7 +192,7 @@ def simulate_forced(
         m = reference.mass_matrix(p, y[1])
         rhs = tau - np.asarray(c) - np.asarray(g) - np.asarray(d)
         acc = np.linalg.solve(m, rhs)
-        return np.concatenate([y[2:], acc])
+        return cast(np.ndarray, np.concatenate([y[2:], acc]))
 
     out = np.empty((n_steps + 1, 4))
     out[0] = (initial.theta1, initial.theta2, initial.omega1, initial.omega2)

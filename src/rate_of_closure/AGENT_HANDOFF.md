@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 Hosted MyPy NumPy-return repair
+
+CI Standard run `31477542889`, job `93734652129`, found four
+`no-any-return` errors after the kinetics façade extraction at exact PR #4203
+head `0216a547aa79727091a2939b96e779e8ddbd7304`. The NumPy stubs widen
+`linalg.norm`, `concatenate`, and matrix projection results to `Any` even
+though the runtime operations return arrays. The private series/dynamics
+modules and public façade now use explicit `cast(np.ndarray, ...)` boundaries.
+These casts are static only: array identity, values, dtype, shape, physics,
+frames, units, imports, and UI behavior are unchanged. Verification must cover
+the complete PR changed-source MyPy set and both focused and full Rate tests.
+Current local evidence is 102 changed-source MyPy files, 28 focused tests, and
+all 701 Rate tests passing; complete-delta Ruff/format and Bandit are also
+green.
+
 ## 2026-08-11 Kinetics façade extraction
 
 The strict current-head delta reproduces a protected size failure that the
