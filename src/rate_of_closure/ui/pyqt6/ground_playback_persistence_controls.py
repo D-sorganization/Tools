@@ -8,7 +8,23 @@ from pathlib import Path
 from PyQt6.QtCore import QIODevice, QSaveFile
 from PyQt6.QtWidgets import QFileDialog, QGroupBox, QPushButton, QVBoxLayout, QWidget
 
-from rate_of_closure.simulation.ground_playback import DEFAULT_IMPORT_MAX_BYTES
+from rate_of_closure.simulation.ground_playback_workspace_v2 import (
+    GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2,
+)
+
+
+def write_atomic_text(path: Path, text: str) -> None:
+    """Replace one UTF-8 text file atomically or preserve its prior contents."""
+    if not isinstance(path, Path):
+        raise TypeError("export path must be a pathlib Path")
+    if type(text) is not str:
+        raise TypeError("export content must be text")
+    output = QSaveFile(str(path))
+    if not output.open(QIODevice.OpenModeFlag.WriteOnly):
+        raise OSError(output.errorString())
+    encoded = text.encode("utf-8")
+    if output.write(encoded) != len(encoded) or not output.commit():
+        raise OSError(output.errorString())
 
 
 class GroundPlaybackPersistenceControls(QGroupBox):
@@ -32,7 +48,8 @@ class GroundPlaybackPersistenceControls(QGroupBox):
             "Import ground playback workspace"
         )
         self.import_workspace_button.setToolTip(
-            "Restore one strict v1 workspace and retain the last valid state on error."
+            "Restore strict workspace v1 or v2 and retain every last-good "
+            "state on error."
         )
         self.import_workspace_button.clicked.connect(self._choose_workspace)
         layout.addWidget(self.import_workspace_button)
@@ -51,7 +68,8 @@ class GroundPlaybackPersistenceControls(QGroupBox):
         }
         tooltips = {
             "workspace": (
-                "Save the exact result and paused UI state as strict v1 JSON."
+                "Save primary, optional comparison, playback, and view as "
+                "strict v2 JSON."
             ),
             "result": (
                 "Export the loaded flight-to-ground-result/v1 record as canonical JSON."
@@ -85,7 +103,7 @@ class GroundPlaybackPersistenceControls(QGroupBox):
             return
         try:
             file_path = Path(path)
-            if file_path.stat().st_size > DEFAULT_IMPORT_MAX_BYTES:
+            if file_path.stat().st_size > GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2:
                 raise ValueError(
                     "ground playback workspace exceeds the import size limit"
                 )
@@ -107,20 +125,9 @@ class GroundPlaybackPersistenceControls(QGroupBox):
         if not path:
             return
         try:
-            self._write_atomic(Path(path), render())
+            write_atomic_text(Path(path), render())
         except (OSError, TypeError, ValueError) as exc:
             self._report_error(f"Could not export {Path(path).name}: {exc}")
 
-    @staticmethod
-    def _write_atomic(path: Path, text: str) -> None:
-        if type(text) is not str:
-            raise TypeError("export content must be text")
-        output = QSaveFile(str(path))
-        if not output.open(QIODevice.OpenModeFlag.WriteOnly):
-            raise OSError(output.errorString())
-        encoded = text.encode("utf-8")
-        if output.write(encoded) != len(encoded) or not output.commit():
-            raise OSError(output.errorString())
 
-
-__all__ = ["GroundPlaybackPersistenceControls"]
+__all__ = ["GroundPlaybackPersistenceControls", "write_atomic_text"]

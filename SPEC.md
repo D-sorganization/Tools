@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.42                                    |
-| **Spec Version**        | 1.14.42                                    |
+| **Current Version**     | 1.14.46                                    |
+| **Spec Version**        | 1.14.46                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,63 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-10 Ground-playback workspace hard-bound repair
+
+- Python normalizes finite-number conversion overflow to the same `ValueError`
+  boundary as non-finite floats, so malformed large integers cannot escape the
+  strict v1/v2 parsers or PyQt transactional import reporting.
+- Python and TypeScript treat 11 MiB, 100,000 trajectory points per result,
+  and 200,000 combined points as hard public contract caps. Callers may request
+  stricter limits but cannot raise those caps.
+- RED-first parser, active-playback retention, and cross-runtime hard-cap tests
+  pin the repair without changing canonical workspace bytes or physics.
+
+### 2026-08-10 Ground-playback comparison workspace v2
+
+- PyQt6 and React persist one strict
+  `rate-of-closure-ground-playback-workspace/v2` document with primary result,
+  an always-present nullable comparison envelope and visibility, union-window
+  playback, and orbit view. `GroundPlaybackComparisonState` is the stable
+  public comparison type.
+- Strict v2-only parsers remain separate from version dispatch. V1 imports
+  migrate one way to normalized v2, visibly disclose migration, and save as v2.
+  Recursive exact-field and duplicate-key validation enforce finite values,
+  100,000 points per result, 200,000 combined points, and 11 MiB before parse
+  and after serialization. Python and TypeScript pin identical LF-terminated
+  canonical bytes and SHA-256.
+- Both clients import transactionally: invalid input retains every last-good
+  result, comparison, visibility, playback, camera, and running field; valid
+  input commits paused. PyQt blocks visibility signals and commits union time
+  last without intermediate seeks. React memoizes timelines so comparison
+  activity cannot reset playback time or camera.
+- This persistence slice executes no physics and does not add maximum-ledger
+  paging/lazy mounting, terrain editing/meshes, camera-command propagation,
+  Playwright/native visual evidence, ensembles, compiled runtimes, or
+  UpstreamDrift parity. Those remain downstream under #4274/#4267.
+
+### 2026-08-10 Matched raw ground-comparison evidence
+
+- PyQt6 and React expose separately labelled primary and comparison trajectory
+  and event ledgers. Trajectory rows retain exact absolute and result-relative
+  time plus phase; event rows retain exact event time and identity. Both retain
+  position, linear velocity, and angular velocity without inventing row-to-row
+  correspondence.
+- Comparison evidence remains available when only its graphical artists are
+  hidden. Failed comparison imports retain the entire last-good evidence set,
+  while a successful primary replacement clears every stale comparison table
+  and export control and invalidates comparison imports still completing
+  against the previously displayed primary.
+- Dedicated comparison trajectory and event CSV exports reuse the canonical
+  full-ledger serializers, including exact frame fields, eleven-decimal numeric
+  normalization, deterministic order, and LF termination. PyQt6 comparison
+  files use the same `QSaveFile` atomic replacement path as primary exports.
+- This viewer still executes no physics and makes no causal, inferential, or
+  sample/event-alignment claim. Workspace-v2 comparison persistence, bounded
+  paging/lazy mounting for maximum-size evidence, terrain editing/meshes,
+  camera-command propagation, Playwright/native visual evidence, ensembles,
+  compiled runtimes, and UpstreamDrift parity remain downstream work under
+  #4274/#4267.
 
 ### 2026-08-10 Matched ground-result comparison playback
 
@@ -3115,6 +3172,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.46 | fix(ground-playback, #4274): normalize oversized finite-number conversion to the strict invalid-input boundary and enforce the documented 11 MiB, 100,000-point-per-result, and 200,000-point-combined workspace caps identically in Python and TypeScript; preserve active PyQt playback on rejected imports and keep canonical bytes and physics unchanged. |
+| 2026-08-10 | 1.14.45 | feat(ground-playback, #4274): add strict cross-surface comparison workspace v2 persistence with an always-present nullable comparison envelope, visibility, union playback time, orbit view, bounded canonical LF JSON, shared Python/TypeScript golden bytes, one-way disclosed v1 migration, and transactional paused restore that preserves every last-good field on failure; retain explicit paging, terrain, camera/visual, ensemble, compiled-runtime, and UpstreamDrift non-delivery boundaries. |
+| 2026-08-10 | 1.14.44 | docs(ground-playback, #4274 #4318): record the independently reviewed raw comparison trajectory/event evidence and hardened export continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback-comparison`; protected exact-head CI, approval, parent landing, issue acceptance, and epic closure remain open. |
+| 2026-08-10 | 1.14.43 | feat(ground-playback, #4274): add separately labelled primary/comparison raw trajectory and event evidence in PyQt6 and React, dedicated canonical full-ledger comparison CSV exports, atomic last-good retention/clear behavior, and shared `QSaveFile` replacement without implying row alignment or adding physics, workspace-v2, camera, or Playwright scope. |
 | 2026-08-10 | 1.14.42 | docs(ground-playback, #4274 #4317): record the independently reviewed matched comparison continuation as a ready-for-review PR against unchanged `feat/4274-ground-playback-persistence`; protected exact-head CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.41 | fix(ground-playback, #4274): preserve the loaded union-time comparison session when its artists are hidden, primary-clamp only the serialized workspace-v1 time, canonicalize direct deltas and Python CSV numeric tokens under the shared eleven-decimal policy, disclose calibration kind/source/confidence, and retain explicit last-good comparison messaging after file-dialog errors; add matched PyQt6/React regressions while complete suites, re-review, publication, protected CI, approval, parent landing, issue acceptance, and epic closure remain open. |
 | 2026-08-10 | 1.14.40 | merge(ground-playback, #4274 #4316): normally propagate exact current persistence/export parent `2c56294ecda0204886508946239c7ca5b50b8b14` into the matched comparison continuation without changing its base; preserve strict atomic comparison import, union-time phase-safe overlays, direct deltas, paired provenance, deterministic exports, and explicit remaining boundaries; reconcile pinned MyPy 1.13 skipped-import inference through runtime-neutral typed bindings and distinct row variables while protected publication, review, CI, parent landing, issue acceptance, and epic closure remain open. |
