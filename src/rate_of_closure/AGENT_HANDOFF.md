@@ -1,9 +1,11 @@
 # AGENT_HANDOFF — rate_of_closure
 
-## 2026-08-11 #4284 local camera-preset parity candidate
+## 2026-08-11 PR #4358 published camera-preset parity
 
-Branch `feat/4284-camera-preset-parity` is an unpublished child of exact #4356
-head `2387430fc78baa92ba122c7ad008a498118bf62d`. The Python authority
+Ready-for-review PR `#4358` publishes branch
+`feat/4284-camera-preset-parity` as a child of exact #4356 head
+`2387430fc78baa92ba122c7ad008a498118bf62d`; its reviewed implementation head is
+`c0584faae7e0fe113e01f8c3ed3582853dfaf803`. The Python authority
 `application/camera_presets.py` and TypeScript twin `cameraPresets.ts` are
 pinned by one golden fixture in the canonical x-downrange/y-up/z-right frame.
 The matched `Club3DView` and `ClubCanvas` expose accessible stable controls for
@@ -25,8 +27,9 @@ files with 750 tests plus TypeScript, zero-warning ESLint, the 206-module
 production build, Ruff, Black, and focused MyPy. The exact rendered-review
 follow-up passes 55 camera/general-GUI/minimum-layout tests, focused MyPy,
 Ruff, Black, manifest validation, and module budget; all four canonical PNGs
-were inspected locally. This is a partial local candidate, not a published
-carrier.
+were inspected locally. This is a partial published carrier, not a release.
+Its first protected snapshot is mergeable/unstable with the quality gate in
+progress, the remaining substantive jobs queued, no failure, and no approval.
 The changed club viewport is within the 500-line source budget after its
 geometry adapters were extracted; the existing 612-line torque-profile panel
 remains the only repository-wide file-budget violation.

@@ -1,7 +1,8 @@
 # Camera Viewport Controls Parity Registry
 
-Status: active; the first matched clubhead-preset slice is implemented locally
-for Tools issue #4284. Tracking and protected integration remain open.
+Status: active; ready-for-review Tools PR #4358 carries the first matched
+clubhead-preset slice for issue #4284. Tracking, protected approval, and
+release remain open.
 
 ## Problem
 
@@ -76,8 +77,9 @@ This slice does not implement subject tracking, tracking suspension, recenter,
 per-viewport workspace persistence, the principal React 3D swing conversion,
 other simulation/impact/flight adapters, Playwright/high-DPI rendered review,
 or the complete camera/playback matrix. Those remain explicit acceptance gates
-for #4284 and epic #4218. This local branch is not a protected or released
-carrier and must not be represented as issue completion.
+for #4284 and epic #4218. This published branch is not approved,
+protected-complete, or released and must not be represented as issue
+completion.
 
 ## Validation
 

@@ -1,9 +1,11 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-## 2026-08-11 #4284 local camera-preset parity candidate
+## 2026-08-11 PR #4358 published camera-preset parity
 
-- Unpublished branch `feat/4284-camera-preset-parity` starts at exact published
-  #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; no GitHub write occurred.
+- Ready-for-review PR `#4358` publishes branch
+  `feat/4284-camera-preset-parity` over exact #4356 head
+  `2387430fc78baa92ba122c7ad008a498118bf62d`; its reviewed implementation head
+  is `c0584faae7e0fe113e01f8c3ed3582853dfaf803`.
 - One shared fixture pins strict Python/TypeScript camera contracts in the
   x-downrange/y-up/z-right application frame. The matched PyQt6 club view and
   React club canvas now provide stable, accessible Isometric, explicit-side
@@ -34,7 +36,10 @@
   `docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md`. Tracking, tracking suspension,
   recenter, workspace persistence, principal React 3D swing, remaining 3D
   surfaces, Playwright/high-DPI rendered QA, full playback combinations,
-  protected carrier/review, release, and #4284/#4218 completion remain open.
+  protected review, release, and #4284/#4218 completion remain open.
+- The first protected snapshot is mergeable/unstable: two anti-phantom jobs
+  are skipped, the quality gate is in progress, the remaining substantive jobs
+  are queued, and no failure or approval is recorded.
 
 ## 2026-08-11 PR #4356 published current-parent propagation
 

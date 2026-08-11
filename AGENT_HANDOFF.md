@@ -1,9 +1,11 @@
 # AGENT_HANDOFF — Tools
 
-## 2026-08-11 #4284 local camera-preset parity candidate
+## 2026-08-11 PR #4358 published camera-preset parity
 
-Local no-publish branch `feat/4284-camera-preset-parity` starts from exact
-published #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`.
+Ready-for-review PR `#4358` publishes branch
+`feat/4284-camera-preset-parity` over exact #4356 head
+`2387430fc78baa92ba122c7ad008a498118bf62d`. Its reviewed implementation head
+is `c0584faae7e0fe113e01f8c3ed3582853dfaf803`.
 It implements only the first camera child slice: one shared-golden strict
 Python/TypeScript preset contract and matched accessible controls on PyQt6
 `Club3DView` and React `ClubCanvas`. Isometric, explicit left/right Face On,
@@ -27,7 +29,9 @@ follow-up passes 55 camera/general-GUI/minimum-layout tests, focused MyPy,
 Ruff, Black, manifest validation, and module budget; new Face On, DTL,
 Overhead, and Isometric PNGs were inspected locally. The shared near-unit
 `1 + 5e-10` adversarial vector is rejected at the same absolute `1e-12`
-tolerance in both runtimes. No GitHub write or publication has occurred.
+tolerance in both runtimes. The first protected snapshot is mergeable but
+unstable: two anti-phantom jobs are skipped, the quality gate is in progress,
+the remaining jobs are queued, and no approval or failure is recorded.
 The changed PyQt viewport is back within the 500-line source budget after
 extracting dependency-light geometry adapters; the repository-wide budget
 still reports only the parent-branch `torque_profile_panel.py` at 612 lines.
