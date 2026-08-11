@@ -36,12 +36,19 @@ import {
   validateWorkspaceMetadata,
   versionedPayload,
 } from "./workspaceMetadataValidation";
+import {
+  buildCapabilityWorkflow,
+  capabilityWorkflowDocument,
+  capabilityWorkflowFromDocument,
+  capabilityWorkflowInputs,
+  type CapabilityWorkflowInputs,
+} from "./capabilityWorkflow";
 
 const WORKSPACE_SCHEMA = "rate_of_closure.workspace";
 const WORKSPACE_VERSION = 2;
 const SESSION_SCHEMA = "rate_of_closure.explorer_session";
 const CLUB_SCHEMA = "rate_of_closure.club_configuration";
-const SESSION_PAYLOAD_VERSION = 4;
+const SESSION_PAYLOAD_VERSION = 5;
 const CLUB_PAYLOAD_VERSION = 1;
 const CLUB_TYPES: readonly ClubType[] = [
   "Driver",
@@ -75,6 +82,7 @@ export interface WorkspaceSessionSnapshot {
   readonly simulation: SimulationWorkspaceSnapshot;
   readonly torque: TorqueWorkspaceSnapshot;
   readonly variation: VariationWorkspaceSnapshot;
+  readonly capability: CapabilityWorkflowInputs;
   readonly modules: PrimaryViewState;
   readonly viewWorkspace: ViewWorkspace;
 }
@@ -319,6 +327,9 @@ export function createWorkspaceDocument(
           snapshot.variation,
           snapshot.simulation.ballSetup,
         ),
+        capability_request: capabilityWorkflowDocument(
+          buildCapabilityWorkflow(snapshot.capability),
+        ),
       },
     },
     prescribed_torque_profiles: snapshot.torque.profiles.map((profile) =>
@@ -353,6 +364,7 @@ export interface WorkspaceParseOptions {
   readonly legacySimulationFallback?: SimulationWorkspaceSnapshot;
   readonly legacyTorqueFallback?: TorqueWorkspaceSnapshot;
   readonly legacyVariationFallback?: VariationWorkspaceSnapshot;
+  readonly legacyCapabilityFallback?: CapabilityWorkflowInputs;
 }
 
 /** Parse a current file or deliberately migrate v1 with an explicit fallback. */
@@ -387,7 +399,7 @@ export function parseWorkspaceDocument(
   const sessionEnvelope = versionedPayload(
     root.model_session,
     SESSION_SCHEMA,
-    [1, 2, 3, SESSION_PAYLOAD_VERSION],
+    [1, 2, 3, 4, SESSION_PAYLOAD_VERSION],
     "model_session",
   );
   const session = exactRecord(
@@ -398,12 +410,21 @@ export function parseWorkspaceDocument(
         ? ["scenario", "units", "simulation_setup"]
         : sessionEnvelope.version === 3
           ? ["scenario", "units", "simulation_setup", "torque_selection"]
+        : sessionEnvelope.version === 4
+          ? [
+              "scenario",
+              "units",
+              "simulation_setup",
+              "torque_selection",
+              "variation_study",
+            ]
           : [
               "scenario",
               "units",
               "simulation_setup",
               "torque_selection",
               "variation_study",
+              "capability_request",
             ],
     "model_session.data",
   );
@@ -475,7 +496,7 @@ export function parseWorkspaceDocument(
           simulation.ballSetup,
         );
   let variation: VariationWorkspaceSnapshot;
-  if (sessionEnvelope.version < SESSION_PAYLOAD_VERSION) {
+  if (sessionEnvelope.version < 4) {
     if (options.legacyVariationFallback === undefined) {
       throw new RangeError(
         "legacy model_session requires an explicit variation migration fallback",
@@ -498,6 +519,21 @@ export function parseWorkspaceDocument(
       simulation.ballSetup,
     );
   }
+  let capability: CapabilityWorkflowInputs;
+  if (sessionEnvelope.version < SESSION_PAYLOAD_VERSION) {
+    if (options.legacyCapabilityFallback === undefined) {
+      throw new RangeError(
+        "legacy model_session requires an explicit capability migration fallback",
+      );
+    }
+    capability = capabilityWorkflowInputs(
+      buildCapabilityWorkflow(options.legacyCapabilityFallback),
+    );
+  } else {
+    capability = capabilityWorkflowInputs(
+      capabilityWorkflowFromDocument(session.capability_request),
+    );
+  }
   return {
     scenario: scenarioFromDocument(session.scenario),
     club: parsedClub,
@@ -505,6 +541,7 @@ export function parseWorkspaceDocument(
     simulation,
     torque,
     variation,
+    capability,
     modules: validatedModules(layout),
     viewWorkspace: viewWorkspaceFromDocument(viewEnvelope.data),
   };

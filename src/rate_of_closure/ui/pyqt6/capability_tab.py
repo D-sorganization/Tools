@@ -169,6 +169,19 @@ class CapabilityOptimizationTab(QWidget):
         self._set_running(True)
         self._worker.start()
 
+    def capability_workspace_document(self) -> CapabilityWorkflowDocument:
+        """Capture only the strict, reproducible optimizer input specification."""
+        return build_capability_workflow(self.controls.inputs())
+
+    def apply_capability_workspace_document(
+        self, document: CapabilityWorkflowDocument
+    ) -> None:
+        """Replace inputs atomically and invalidate all prior computed output."""
+        inputs = capability_workflow_inputs(document)
+        self.controls.set_inputs(inputs)
+        self._invalidate()
+        self.status.setText("Workspace optimizer inputs loaded — run when ready.")
+
     def _set_running(self, running: bool) -> None:
         self.run_button.setEnabled(not running)
         self.cancel_button.setEnabled(running)

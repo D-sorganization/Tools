@@ -5,6 +5,7 @@ import { describe, expect, it, vi } from "vitest";
 import { runCapabilityOptimization, type CapabilityRunOutput } from "../model/capabilityRun";
 import type { CapabilityRunner } from "../model/capabilityWorkerClient";
 import { CapabilityOptimizationPanel } from "./CapabilityOptimizationPanel";
+import { defaultCapabilityWorkflowInputs } from "../model/capabilityWorkflow";
 
 describe("CapabilityOptimizationPanel", () => {
   it("runs a bounded workflow and exposes alternatives plus raw diagnostics", async () => {
@@ -66,5 +67,40 @@ describe("CapabilityOptimizationPanel", () => {
     expect(tilt).toHaveValue("-3.5");
     expect(runner.mock.calls[0][0].evaluatorConfig.spinDefaults[0].spinAxisTiltDeg)
       .toBe(-3.5);
+  });
+
+  it("uses the workspace input authority and invalidates stale output on replacement", async () => {
+    vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
+    const runner: CapabilityRunner = (document, onProgress) => ({
+      promise: Promise.resolve(runCapabilityOptimization(document, onProgress)),
+      cancel: vi.fn(),
+    });
+    const initial = {
+      ...defaultCapabilityWorkflowInputs(),
+      candidateBudget: 1,
+      ensembleSize: 1,
+      alternativesCount: 1,
+    };
+    const changed = { ...initial, targetDistanceM: 199 };
+    const onInputsChange = vi.fn();
+    const { rerender } = render(
+      <CapabilityOptimizationPanel runner={runner} inputs={initial}
+        onInputsChange={onInputsChange} />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Run optimization" }));
+    expect(await screen.findByRole("table", {
+      name: "Ranked capability alternatives",
+    })).toBeInTheDocument();
+
+    rerender(<CapabilityOptimizationPanel runner={runner} inputs={changed}
+      onInputsChange={onInputsChange} />);
+
+    expect(screen.queryByRole("table", {
+      name: "Ranked capability alternatives",
+    })).not.toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("Target distance"), {
+      target: { value: "201" },
+    });
+    expect(onInputsChange).toHaveBeenCalled();
   });
 });

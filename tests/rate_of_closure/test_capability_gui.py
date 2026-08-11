@@ -9,6 +9,7 @@ pytest.importorskip("pytestqt")
 
 from rate_of_closure.application.capability_workflow import (  # noqa: E402
     CapabilityWorkflowInputs,
+    build_capability_workflow,
 )
 from rate_of_closure.ui.pyqt6.capability_controls import (
     CapabilityControls,  # noqa: E402
@@ -86,3 +87,25 @@ def test_capability_tab_rejects_oversized_interactive_workload(qtbot) -> None:  
 
     assert "100000" in tab.status.text()
     assert tab._worker is None
+
+
+def test_capability_workspace_apply_replaces_inputs_and_invalidates_results(
+    qtbot,  # type: ignore[no-untyped-def]
+) -> None:
+    tab = CapabilityOptimizationTab()
+    qtbot.addWidget(tab)
+    tab._document = build_capability_workflow(CapabilityWorkflowInputs())
+    tab.results.setVisible(True)
+    requested = build_capability_workflow(
+        CapabilityWorkflowInputs(
+            profile_id="loaded-profile",
+            target_distance_m=198.0,
+            spin_axis_tilt_deg=-8.0,
+        )
+    )
+
+    tab.apply_capability_workspace_document(requested)
+
+    assert tab.capability_workspace_document() == requested
+    assert tab._document is None
+    assert not tab.results.isVisibleTo(tab)

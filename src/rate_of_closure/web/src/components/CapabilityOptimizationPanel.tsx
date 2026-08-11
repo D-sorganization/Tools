@@ -1,4 +1,9 @@
-import { useEffect, useState } from "react";
+import {
+  useEffect,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 
 import { useCapabilityOptimization } from "../hooks/useCapabilityOptimization";
 import {
@@ -95,10 +100,17 @@ function WorkflowActions({ state }: {
     className="mt-3 text-xs text-rose-400">{state.error ?? saveError}</p>}</>;
 }
 
-export function CapabilityOptimizationPanel({ runner }: {
+export function CapabilityOptimizationPanel({ runner, inputs, onInputsChange }: {
   readonly runner?: CapabilityRunner;
+  readonly inputs?: CapabilityWorkflowInputs;
+  readonly onInputsChange?: Dispatch<SetStateAction<CapabilityWorkflowInputs>>;
 }): JSX.Element {
-  const state = useCapabilityOptimization(runner);
+  if ((inputs === undefined) !== (onInputsChange === undefined)) {
+    throw new TypeError("controlled capability inputs require an input change handler");
+  }
+  const authority = inputs === undefined || onInputsChange === undefined
+    ? undefined : { inputs, onInputsChange };
+  const state = useCapabilityOptimization(runner, authority);
   return <section className={PANEL_CLASS} aria-label="Shot capability optimizer">
     <h2 className="text-lg font-semibold text-sky-300">Shot Capability Optimizer</h2>
     <p className="mt-1 text-xs text-slate-400">Still-air carry-to-first-ground-crossing model. Fixed spin is explicit and sourced; wind, bounce, roll, and total distance are not included.</p>

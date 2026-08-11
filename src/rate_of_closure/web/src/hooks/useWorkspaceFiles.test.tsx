@@ -10,6 +10,7 @@ import { starterTorqueProfile } from "../model/torqueProfileEditor";
 import { DEFAULT_PRIMARY_VIEW_STATE } from "../model/viewPreferences";
 import { defaultViewWorkspace } from "../model/viewWorkspace";
 import { createWorkspaceDocument } from "../model/workspaceSession";
+import { defaultCapabilityWorkflowInputs } from "../model/capabilityWorkflow";
 import {
   boxTolerance,
   createSpatialTarget,
@@ -49,6 +50,7 @@ const snapshot = () => {
       runConfig: passiveDoublePendulumRun(),
     },
     variation: initialVariationWorkspace(),
+    capability: defaultCapabilityWorkflowInputs(),
     modules: DEFAULT_PRIMARY_VIEW_STATE,
     viewWorkspace: defaultViewWorkspace,
   };
@@ -240,6 +242,39 @@ describe("browser workspace file controller", () => {
     expect(applySnapshot).not.toHaveBeenCalled();
   });
 
+  it("rejects computed capability output before applying state", async () => {
+    const applySnapshot = vi.fn();
+    const encoded = JSON.parse(
+      createWorkspaceDocument(snapshot(), {
+        documentId: "workspace.invalid.capability",
+        title: "Invalid",
+        appVersion: "1.14.34",
+        createdAtUtc: "2026-08-11T07:00:00Z",
+        modifiedAtUtc: "2026-08-11T07:00:00Z",
+      }),
+    );
+    encoded.model_session.data.capability_request.computed_result = {};
+    const { result } = renderHook(() =>
+      useWorkspaceFiles({
+        snapshot: snapshot(),
+        initialSnapshot: snapshot(),
+        applySnapshot,
+        applyViewWorkspace: vi.fn(),
+      }),
+    );
+    const input = document.createElement("input");
+    Object.defineProperty(input, "files", {
+      value: [new File([JSON.stringify(encoded)], "invalid-capability.json")],
+    });
+    act(() => {
+      result.current.handleCommand(APP_COMMAND_ID.fileOpenWorkspace);
+      result.current.onFileChange({ currentTarget: input } as never);
+    });
+
+    await waitFor(() => expect(result.current.error).toMatch(/capability workflow/i));
+    expect(applySnapshot).not.toHaveBeenCalled();
+  });
+
   it("applies a valid opened workspace and marks the result clean", async () => {
     const opened = {
       ...snapshot(),
@@ -340,6 +375,7 @@ describe("browser workspace file controller", () => {
     );
     legacy.model_session.schema_version = 3;
     delete legacy.model_session.data.variation_study;
+    delete legacy.model_session.data.capability_request;
     legacy.variation_plan = null;
     const encoded = JSON.stringify(legacy);
     const reads = stubDeferredFileReaders();

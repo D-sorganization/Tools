@@ -99,6 +99,25 @@ spreadsheet-safe lossless CSV, and stable JSON. Duplicate evaluator and target
 diagnostic labels are stage-qualified in selectors without changing their
 contract keys.
 
+### Whole-Workspace Input Persistence
+
+Explorer-session v5 embeds the exact `capability-optimization-workflow/v1`
+document as `model_session.data.capability_request`. The nested document is the
+sole cross-runtime schema for this input specification; the workspace does not
+duplicate individual optimizer fields. It contains only the profile, request,
+target, evaluator configuration, search budgets, and deterministic seed needed
+to reproduce a request.
+
+Whole-workspace parsing completes before either UI mutates. PyQt6 applies the
+validated request inside the window's rollback boundary, while React applies
+the projected editable inputs from the validated document. Both invalidate any
+previous computed output. Explorer-session v1-v4 migration requires an
+explicit current capability fallback and never invents an optimizer request.
+Ranked alternatives, observation ensembles, progress, cancellation/runtime
+objects, and inferred player identity are excluded. The current interactive
+workflow declares still air and has no editable wind input; workspace restore
+must not fabricate wind-aware optimization or execution parity.
+
 ## Interpretation And Limitations
 
 - Results are conditional model recommendations, not measured launch-monitor results or guarantees.

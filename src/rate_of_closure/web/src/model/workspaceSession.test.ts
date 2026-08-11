@@ -9,6 +9,7 @@ import { DEFAULT_PRIMARY_VIEW_STATE } from "./viewPreferences";
 import { defaultViewWorkspace } from "./viewWorkspace";
 import variationFixture from "./__fixtures__/workspace_variation_parity.json";
 import { planFromJson } from "./variation";
+import { defaultCapabilityWorkflowInputs } from "./capabilityWorkflow";
 import {
   boxTolerance,
   createSpatialTarget,
@@ -47,6 +48,14 @@ const snapshot = (): WorkspaceSessionSnapshot => {
       analysisExecution: "both" as const,
       selectedOutputMetrics: ["carry_m", "lateral_m", "apex_m"],
     },
+    capability: {
+      ...defaultCapabilityWorkflowInputs(),
+      profileId: "workspace-profile",
+      objective: "minimize_expected_miss",
+      targetDistanceM: 241,
+      targetLateralM: -4,
+      spinAxisTiltDeg: -3.5,
+    },
     modules: DEFAULT_PRIMARY_VIEW_STATE,
     viewWorkspace: defaultViewWorkspace,
   };
@@ -66,7 +75,7 @@ describe("whole workspace session contract", () => {
     expect(parseWorkspaceDocument(encoded)).toEqual(snapshot());
     expect(JSON.parse(encoded).schema_version).toBe(2);
     const session = JSON.parse(encoded).model_session;
-    expect(session.schema_version).toBe(4);
+    expect(session.schema_version).toBe(5);
     expect(session.data.simulation_setup.data.ball_setup.provenance).toEqual({
       kind: "club_default",
       club_name: "Driver 10.5°",
@@ -88,6 +97,35 @@ describe("whole workspace session contract", () => {
     expect(session.data.variation_study).toEqual(variationFixture.selection);
     expect(JSON.parse(encoded).variation_plan).toEqual(variationFixture.plan);
     expect(JSON.parse(encoded).variation_plan).not.toHaveProperty("ball_setup");
+    expect(session.data.capability_request).toMatchObject({
+      schema_version: "capability-optimization-workflow/v1",
+      request: {
+        objective: "minimize_expected_miss",
+        target: { distance_m: 241, lateral_m: -4 },
+      },
+    });
+    expect(session.data.capability_request).not.toHaveProperty("result");
+  });
+
+  it("requires an explicit capability fallback to migrate a v4 session", () => {
+    const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    value.model_session.schema_version = 4;
+    delete value.model_session.data.capability_request;
+    const text = JSON.stringify(value);
+
+    expect(() => parseWorkspaceDocument(text)).toThrow(/explicit capability/i);
+    expect(parseWorkspaceDocument(text, {
+      legacyCapabilityFallback: snapshot().capability,
+    }).capability).toEqual(snapshot().capability);
+  });
+
+  it("rejects computed capability output before returning workspace state", () => {
+    const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    value.model_session.data.capability_request.computed_result = {};
+
+    expect(() => parseWorkspaceDocument(JSON.stringify(value))).toThrow(
+      /capability workflow/i,
+    );
   });
 
   it("rejects a variation plan that duplicates the simulation ball setup", () => {
@@ -126,6 +164,7 @@ describe("whole workspace session contract", () => {
         legacySimulationFallback: snapshot().simulation,
         legacyTorqueFallback: snapshot().torque,
         legacyVariationFallback: snapshot().variation,
+        legacyCapabilityFallback: snapshot().capability,
       }).simulation,
     ).toEqual(snapshot().simulation);
   });
@@ -149,6 +188,7 @@ describe("whole workspace session contract", () => {
       legacySimulationFallback: snapshot().simulation,
       legacyTorqueFallback: snapshot().torque,
       legacyVariationFallback: snapshot().variation,
+      legacyCapabilityFallback: snapshot().capability,
     });
     expect(migrated.simulation.ballSetup).toEqual(
       snapshot().simulation.ballSetup,
@@ -161,12 +201,14 @@ describe("whole workspace session contract", () => {
     value.model_session.schema_version = 2;
     delete value.model_session.data.torque_selection;
     delete value.model_session.data.variation_study;
+    delete value.model_session.data.capability_request;
     const text = JSON.stringify(value);
     expect(() => parseWorkspaceDocument(text)).toThrow(/explicit torque/i);
     expect(
       parseWorkspaceDocument(text, {
         legacyTorqueFallback: snapshot().torque,
         legacyVariationFallback: snapshot().variation,
+        legacyCapabilityFallback: snapshot().capability,
       }).torque,
     ).toEqual(snapshot().torque);
   });
@@ -196,12 +238,14 @@ describe("whole workspace session contract", () => {
     const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
     value.model_session.schema_version = 3;
     delete value.model_session.data.variation_study;
+    delete value.model_session.data.capability_request;
     const text = JSON.stringify(value);
 
     expect(() => parseWorkspaceDocument(text)).toThrow(/explicit variation/i);
     expect(
       parseWorkspaceDocument(text, {
         legacyVariationFallback: snapshot().variation,
+        legacyCapabilityFallback: snapshot().capability,
       }).variation,
     ).toEqual(snapshot().variation);
 
@@ -212,6 +256,7 @@ describe("whole workspace session contract", () => {
     expect(() =>
       parseWorkspaceDocument(text, {
         legacyVariationFallback: conflict,
+        legacyCapabilityFallback: snapshot().capability,
       }),
     ).toThrow(/conflicts/i);
   });

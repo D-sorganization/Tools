@@ -1,4 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type Dispatch,
+  type SetStateAction,
+} from "react";
 
 import type { CapabilityRunOutput } from "../model/capabilityRun";
 import {
@@ -23,24 +29,37 @@ export interface CapabilityOptimizationState {
   run: () => void; cancel: () => void; load: (file: File) => Promise<void>;
 }
 
+export interface CapabilityInputAuthority {
+  readonly inputs: CapabilityWorkflowInputs;
+  readonly onInputsChange: Dispatch<SetStateAction<CapabilityWorkflowInputs>>;
+}
+
 const message = (reason: unknown): string =>
   reason instanceof Error ? reason.message : String(reason);
 
 export function useCapabilityOptimization(
   runner: CapabilityRunner = runCapabilityInWorker,
+  authority?: CapabilityInputAuthority,
 ): CapabilityOptimizationState {
-  const [inputs, setInputs] = useState(defaultCapabilityWorkflowInputs);
+  const [localInputs, setLocalInputs] = useState(defaultCapabilityWorkflowInputs);
+  const inputs = authority?.inputs ?? localInputs;
+  const setInputs = authority?.onInputsChange ?? setLocalInputs;
   const [output, setOutput] = useState<CapabilityRunOutput | null>(null);
   const [status, setStatus] = useState("Ready"); const [error, setError] = useState<string | null>(null);
   const [progress, setProgress] = useState({ completed: 0, total: 0 });
   const [running, setRunning] = useState(false);
   const active = useRef<CapabilityRunController | null>(null); const runId = useRef(0);
+  const priorInputs = useRef(inputs);
   const invalidate = (next: string): void => {
     runId.current += 1; active.current?.cancel(); active.current = null;
     setRunning(false);
     setOutput(null); setError(null); setStatus(next); setProgress({ completed: 0, total: 0 });
   };
   useEffect(() => () => { runId.current += 1; active.current?.cancel(); }, []);
+  useEffect(() => {
+    if (priorInputs.current !== inputs) invalidate("Inputs changed — run again");
+    priorInputs.current = inputs;
+  }, [inputs]);
   const update = (key: keyof CapabilityWorkflowInputs, value: string | number): void => {
     invalidate("Inputs changed — run again"); setInputs((current) => ({ ...current, [key]: value }));
   };

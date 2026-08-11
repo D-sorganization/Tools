@@ -282,12 +282,21 @@ const parseConfig = (value: unknown): CapabilityFlightEvaluatorConfig => {
 
 export const capabilityWorkflowToJson = (
   document: CapabilityWorkflowDocument,
-): string => JSON.stringify({ evaluator_config: configWire(document.evaluatorConfig),
+): string => JSON.stringify(capabilityWorkflowDocument(document));
+
+export const capabilityWorkflowDocument = (
+  document: CapabilityWorkflowDocument,
+): Record<string, unknown> => ({ evaluator_config: configWire(document.evaluatorConfig),
   profile: profileWire(document.profile), request: requestWire(document.request),
   schema_version: document.schemaVersion });
 
 export function capabilityWorkflowFromJson(source: string): CapabilityWorkflowDocument {
-  const value: unknown = JSON.parse(source);
+  return capabilityWorkflowFromDocument(JSON.parse(source));
+}
+
+export function capabilityWorkflowFromDocument(
+  value: unknown,
+): CapabilityWorkflowDocument {
   const payload = record(value, "capability workflow");
   exact(payload, ["evaluator_config", "profile", "request", "schema_version"], "capability workflow");
   if (payload.schema_version !== CAPABILITY_WORKFLOW_SCHEMA_VERSION) {

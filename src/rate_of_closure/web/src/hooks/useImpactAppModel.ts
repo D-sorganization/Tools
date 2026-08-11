@@ -15,6 +15,10 @@ import type { TorqueWorkspaceSnapshot } from "../model/workspaceTorqueSession";
 import { loadInitialTorqueWorkspace } from "./useSimulationTorqueWorkspace";
 import type { VariationWorkspaceSnapshot } from "../model/workspaceVariationSession";
 import { initialVariationWorkspace } from "./useVariationWorkspace";
+import {
+  defaultCapabilityWorkflowInputs,
+  type CapabilityWorkflowInputs,
+} from "../model/capabilityWorkflow";
 
 export interface ImpactAppModel {
   readonly scenario: ImpactScenario;
@@ -34,6 +38,10 @@ export interface ImpactAppModel {
   readonly variationWorkspace: VariationWorkspaceSnapshot;
   readonly setVariationWorkspace: Dispatch<
     SetStateAction<VariationWorkspaceSnapshot>
+  >;
+  readonly capabilityInputs: CapabilityWorkflowInputs;
+  readonly setCapabilityInputs: Dispatch<
+    SetStateAction<CapabilityWorkflowInputs>
   >;
   readonly units: UnitSelections;
   readonly setUnits: Dispatch<SetStateAction<UnitSelections>>;
@@ -80,6 +88,9 @@ export function useImpactAppModel(): ImpactAppModel {
   const [variationWorkspace, setVariationWorkspace] = useState(() =>
     initialVariationWorkspace(),
   );
+  const [capabilityInputs, setCapabilityInputs] = useState(
+    defaultCapabilityWorkflowInputs,
+  );
   const [units, setUnits] = useState(DEFAULT_UNITS);
   const [generatedHead, setGeneratedHead] = useState(() =>
     generatedHeadFor(defaultDriver),
@@ -102,6 +113,8 @@ export function useImpactAppModel(): ImpactAppModel {
     setTorqueWorkspace,
     variationWorkspace,
     setVariationWorkspace,
+    capabilityInputs,
+    setCapabilityInputs,
     units,
     setUnits,
     generatedHead,

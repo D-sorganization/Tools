@@ -1,5 +1,30 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 Capability-request workspace continuation
+
+Local-only branch `feat/4197-workspace-capability-request` starts from exact
+published PR #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49`.
+Explorer-session v5 embeds the existing strict
+`capability-optimization-workflow/v1` input document in PyQt6 and React. It
+persists the user-authored profile/club, capability bounds and distributions,
+objective, target, fixed-spin evaluator assumptions, integration settings,
+budgets, and deterministic seed. It stores no computed result, observation
+ensemble, worker/runtime object, or identity beyond user-authored stable IDs.
+
+Both clients validate the complete file before live mutation. PyQt6 applies
+inside the existing rollback boundary; React lifts the form inputs to the app
+workspace authority and invalidates stale results when a workspace replaces
+them. Legacy v1-v4 sessions require an explicit current capability fallback,
+so migration cannot invent an optimizer request. This is bounded #4197/#4225
+input-specification parity only: it does not claim optimizer execution parity,
+wind-aware optimization, saved results, UpstreamDrift qualification, protected
+CI/review, integration, or issue completion. The branch must remain local until
+the parent stack explicitly authorizes publication. Local qualification passes
+56 focused Python workflow/workspace/File/PyQt tests and 60 focused React
+contract/File/UI tests; pinned MyPy, Ruff check/format, TypeScript,
+zero-warning ESLint, the 210-module production build, 11 campaign-manifest
+tests, docs governance, and manifest-layout validation also pass.
+
 ## 2026-08-11 variation-study workspace protected publication
 
 Branch `feat/4144-workspace-variation-study` is published normally as draft PR
