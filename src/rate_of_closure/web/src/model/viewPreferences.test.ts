@@ -75,7 +75,7 @@ describe("primary view preferences", () => {
     expect(loaded.order.slice(0, 2)).toEqual(["plots", "simulation"]);
     expect(new Set(loaded.order)).toEqual(new Set(PRIMARY_VIEW_IDS));
     expect(loaded.order).toContain("launch-monitor-analytics");
-    expect(loaded.visible).toEqual(["plots", "explorer"]);
+    expect(loaded.visible).toEqual(["plots", "ground-playback", "explorer"]);
   });
 
   it("round-trips a valid reordered state", () => {

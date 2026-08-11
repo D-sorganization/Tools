@@ -1,5 +1,37 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local issue #4274 ground-playback candidate
+
+Local branch `codex/4274-ground-playback-propagation` starts from exact
+published PR #4361 head `81de044075a4f72c6da8fedb972437df79a06ab8`.
+The bounded hand integration adds matched additive `Ground Playback` views to
+PyQt6 and React while preserving `Ground Surfaces`, its navigation state, and
+current help. No later historical 72-file chain was merged or cherry-picked.
+
+Both clients accept a strict standalone ground result or an explicitly
+validated regional-execution envelope, reuse its nested result, and reject
+null, cancelled, failed, empty-trajectory, or missing-summary evidence. The
+adapters delegate to existing parsers and do not invoke or duplicate physics.
+The shared absolute-time policy steps and jumps exactly and holds the lower
+sample across phase boundaries. Play, pause, restart, looping, granular speed,
+locked-scale 3D orbit/zoom/reset, honest carry/first-contact and observed-end
+language, and accessible summary/evidence inspection are matched.
+
+Playback hardening uses binary per-frame lookup, a deterministic 2,048-point
+landmark-aware visual path, and a disclosed 256-row evidence window while
+retaining the validated full result. RED first captured the absent timeline and
+UI. Local qualification passes all 1,125 Rate/shared-ground Python tests and
+all 119 React files / 754 tests. Ruff check/format, scoped Black, strict MyPy
+on all five new Python production modules, Bandit, ESLint, TypeScript
+type-check, production build, campaign-manifest validation, documentation
+governance, the 400-line new-module budget, and diff checks are green. No
+GitHub write has occurred from this worktree.
+
+Keep #4274 and #4267 open. Terrain mesh/changing-normal rendering, direct
+editor-to-playback handoff, comparison, persistence, rendered visual QA,
+camera presets/tracking, downstream UpstreamDrift/four-surface parity, and
+protected CI/review/release remain explicit follow-on work.
+
 ## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
 Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)

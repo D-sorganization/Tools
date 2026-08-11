@@ -1,5 +1,35 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local issue #4274 ground-playback candidate
+
+Local branch `codex/4274-ground-playback-propagation` is based exactly on
+published PR #4361 head `81de044075a4f72c6da8fedb972437df79a06ab8`.
+It hand-integrates only the reviewed matched playback slice: strict Python and
+TypeScript absolute-time timelines, matched additive PyQt6/React workspaces,
+and explicit import adapters for standalone results and validated regional
+execution envelopes. The regional adapters return the already-validated nested
+ground result and never calculate physics. Existing `Ground Surfaces`, saved
+navigation behavior, and help remain available.
+
+Controls provide exact step, phase jump, play, pause, restart, loop, granular
+speed, locked-scale 3D orbit/zoom/reset, summary status, warnings, calibration,
+provenance, and accessible event/transition/trajectory evidence. Cross-phase
+interpolation holds the lower exact record rather than fabricating a state.
+For 100,000-point inputs, per-frame selection is binary, visual materialization
+is capped at 2,048 landmark-aware points, and evidence tables disclose their
+256-row window while retaining the full validated result.
+
+RED first failed on the absent timeline/UI. Local qualification passes all
+1,125 Rate/shared-ground Python tests and all 119 React files / 754 tests.
+Ruff check/format, scoped Black, strict MyPy on the five new Python production
+modules, Bandit, ESLint, TypeScript type-check, production build, campaign
+manifest, documentation governance, the 400-line new-module budget, and diff
+checks are green. No push or other GitHub write has occurred.
+
+Keep #4274/#4267 open for terrain meshes and changing normals, direct editor
+handoff, comparison, persistence, rendered visual QA, camera presets/tracking,
+downstream UpstreamDrift/four-surface parity, and protected release.
+
 ## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
 Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)

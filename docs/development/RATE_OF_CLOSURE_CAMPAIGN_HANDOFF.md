@@ -1,5 +1,28 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local issue #4274 matched ground playback
+
+- Local `codex/4274-ground-playback-propagation` starts from exact published
+  PR #4361 head `81de044075a4f72c6da8fedb972437df79a06ab8`
+  and hand-integrates only the reviewed initial playback slice.
+- Additive matched PyQt6/React workspaces import strict standalone results or
+  explicit validated regional envelopes. They reuse the nested result, reject
+  null/cancelled/failed/empty/missing-summary evidence, and never run physics.
+- The phase-safe absolute-time policy holds the lower sample at discontinuous
+  boundaries and gives exact step/jump/play/pause/restart/loop/speed behavior.
+  Locked physical scale, orbit/zoom/reset, honest endpoint labels, and
+  accessible summary, warning, calibration, provenance, and evidence tables
+  are shared product behavior.
+- Large results use binary frame lookup, at most 2,048 landmark-aware visual
+  points, and disclosed 256-row tables while retaining the full validated
+  result. Local qualification passes all 1,125 Rate/shared-ground Python tests
+  and all 119 React files / 754 tests. Ruff/Black, strict scoped MyPy, Bandit,
+  ESLint, TypeScript type-check, production build, manifest, documentation,
+  400-line new-module budget, and diff gates are green.
+- Keep #4274/#4267 open for terrain meshes/changing normals, direct editor
+  handoff, comparison, persistence, rendered visual QA, camera presets and
+  tracking, downstream parity, and protected CI/review/release.
+
 ## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
 - Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)

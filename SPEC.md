@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.52                                    |
-| **Spec Version**        | 1.14.52                                    |
+| **Current Version**     | 1.14.53                                    |
+| **Spec Version**        | 1.14.53                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,28 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Matched Ground-Playback Inspection
+
+- PyQt6 and React expose additive `Ground Playback` workspaces without
+  replacing the existing `Ground Surfaces` editor. Both import either a strict
+  standalone ground result or an explicit validated regional-execution
+  envelope, reusing the envelope's nested ground result without running or
+  reimplementing physics.
+- A shared phase-safe absolute-time policy holds the lower recorded sample
+  across discontinuities and supports exact step, phase jump, play, pause,
+  restart, loop, and speed behavior. Interactive 3D views preserve physical
+  axis scale while allowing orbit, zoom, and reset. Summary, warning,
+  calibration, provenance, event, transition, and trajectory evidence remains
+  inspectable with accessible names and honest observed-end terminology.
+- Large evidence remains bounded at the presentation layer: binary frame
+  lookup avoids full scans during playback, visual paths retain a deterministic
+  maximum of 2,048 landmark-aware samples, and tables disclose their 256-row
+  window while the validated full result remains available to the timeline.
+- This slice does not add terrain meshes or changing normals, direct editor to
+  playback handoff, multi-run comparison, persistence, rendered visual QA,
+  camera presets/tracking, physics, or downstream UpstreamDrift parity. Keep
+  #4274 and #4267 open until those acceptance and protected-release gates land.
 
 ### 2026-08-11 Qualified Regional-Ground Study Adapter
 
