@@ -1,9 +1,11 @@
 # AGENT_HANDOFF — rate_of_closure
 
-## 2026-08-11 local shared Python flight-to-bounce composition candidate
+## 2026-08-11 PR #4359 shared Python flight-to-bounce composition
 
-Local branch `feat/4270-flight-bounce-execution` is based on exact clean
-published Tools #4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`.
+Ready-for-review PR [#4359](https://github.com/D-sorganization/Tools/pull/4359)
+on `feat/4270-flight-bounce-execution` is based on exact clean published Tools
+#4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`; its reviewed implementation
+commit is `869b626e2d3ebd4097ae76b8fc9720cda6696947`.
 The shared flight facade now exposes `execute_repeated_bounce_from_flight`,
 which accepts exact flight, launch, and transfer contracts, validates callback
 and capture inputs before transfer, and delegates without copied physics to the
@@ -24,8 +26,8 @@ is green and the file's only delta is the public API entry. The committed
 changed-file size gate is green with zero violations across four changed
 Python files.
 
-This local candidate is not pushed, reviewed, protected, integrated, or
-released. It adds no PyQt6/React controls, TypeScript/Rust/WASM physics,
+The ready PR is not yet reviewed, protected, integrated, or released. It adds
+no PyQt6/React controls, TypeScript/Rust/WASM physics,
 persistence, playback, camera behavior, regional-material chaining, skid/roll
 completion, or total-distance result. Keep #4270 and #4267 open.
 

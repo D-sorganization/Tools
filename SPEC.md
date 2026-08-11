@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.47                                    |
-| **Spec Version**        | 1.14.47                                    |
+| **Current Version**     | 1.14.48                                    |
+| **Spec Version**        | 1.14.48                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3043,6 +3043,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.48 | chore(release, #4359 #4270 #4267): publish the qualified flight-to-repeated-bounce composition as ready PR #4359 on exact #4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`; bind its reviewed implementation commit `869b626e2d3ebd4097ae76b8fc9720cda6696947` into the campaign handoff and release manifest while retaining protected review/check completion, skid/roll, clients, compiled-runtime parity, downstream integration, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.47 | feat(ground-impact, #4270 #4267): add the public UI-neutral Python `execute_repeated_bounce_from_flight` composition facade with exact flight/launch/transfer types, callback and capture validation before transfer, unchanged typed transfer failures, and identity-safe delegation through the existing ground-request builder, repeated-bounce request, and executor; cover validation order, capture consumption, cancellation, identity/digests, and transfer failure without duplicating physics, while retaining UI/TypeScript/Rust/WASM work, persistence, playback, regional chaining, total distance, protected evidence, release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.46 | docs(rate-of-closure, #4203 #4279-#4282 #4285 #4288 #4302 #4304 #4332 #4335 #4339 #4342 #4350-#4357): reconcile the intact exact dependency heads and bases, record #4357 in the campaign carrier authority, and normalize every exact open dependency to ready-for-review without history changes; retain `not_released` truth because protected contexts remain queued and no approval is submitted. |
 | 2026-08-11 | 1.14.45 | docs(ground-impact, #4357): record ready-for-review publication of the UI-neutral repeated-bounce request executor at exact implementation head `cf54d3528a71fd429ad19f53f04e4a1a84495097`, stacked on unchanged #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; retain `not_released` truth and leave protected checks, review, UI invocation, persistence, playback, compiled parity, regional chaining, downstream integration, and #4270/#4267 completion open. |

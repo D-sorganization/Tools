@@ -1,9 +1,11 @@
 # AGENT_HANDOFF — Tools
 
-## 2026-08-11 local flight-to-bounce composition candidate
+## 2026-08-11 PR #4359 flight-to-bounce composition
 
-Local branch `feat/4270-flight-bounce-execution` starts from exact clean
-published Tools #4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`.
+Ready-for-review PR [#4359](https://github.com/D-sorganization/Tools/pull/4359)
+on `feat/4270-flight-bounce-execution` starts from exact clean published Tools
+#4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`. Its reviewed implementation
+commit is `869b626e2d3ebd4097ae76b8fc9720cda6696947`.
 It adds the shared Python `execute_repeated_bounce_from_flight` facade. The
 facade requires exact flight, launch, and transfer records; validates the
 callback and capture threshold before transfer; and composes only the existing
@@ -27,11 +29,11 @@ of `test_contract_api.py`; repository-authoritative Ruff is green and the
 file's only delta is the required public-API entry. The committed changed-file
 size gate is also green with zero violations across four changed Python files.
 
-This is a local no-push/no-PR candidate and remains `not_released`. It changes
-no PyQt6/React UI, TypeScript/Rust/WASM runtime, persistence, playback, camera
-behavior, regional-material chaining, skid/roll completion, or total-distance
-contract. Issues #4270 and #4267 remain open; no issue-completion claim is
-made.
+The ready PR is mergeable, but protected checks and review are not yet complete,
+so it remains `not_released`. It changes no PyQt6/React UI,
+TypeScript/Rust/WASM runtime, persistence, playback, camera behavior,
+regional-material chaining, skid/roll completion, or total-distance contract.
+Issues #4270 and #4267 remain open; no issue-completion claim is made.
 
 ## 2026-08-11 PR #4357 repeated-bounce request execution binding
 
