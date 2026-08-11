@@ -3,14 +3,12 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from pathlib import Path
 from time import monotonic
 
 from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
-    QFileDialog,
     QGridLayout,
     QGroupBox,
     QHBoxLayout,
@@ -23,16 +21,17 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from rate_of_closure.simulation.ground_playback import (
-    DEFAULT_IMPORT_MAX_BYTES,
-    GroundPlaybackTimeline,
-    load_ground_result_json,
+from rate_of_closure.simulation.ground_playback import GroundPlaybackTimeline
+from rate_of_closure.ui.pyqt6.ground_playback_comparison import (
+    GroundPlaybackComparisonMixin,
+)
+from rate_of_closure.ui.pyqt6.ground_playback_persistence import (
+    GroundPlaybackPersistenceMixin,
 )
 from rate_of_closure.ui.pyqt6.ground_playback_tables import (
     EVENT_HEADERS,
     TRAJECTORY_HEADERS,
     create_ground_table,
-    populate_ground_tables,
 )
 from rate_of_closure.ui.pyqt6.ground_playback_view import GroundPlayback3DView
 
@@ -41,7 +40,9 @@ _TIMER_INTERVAL_MS = 16
 _SPEEDS = (0.25, 0.5, 1.0, 2.0, 4.0)
 
 
-class GroundPlaybackTab(QWidget):
+class GroundPlaybackTab(
+    GroundPlaybackComparisonMixin, GroundPlaybackPersistenceMixin, QWidget
+):
     """Inspect one strict Python-generated ground result without simulating it."""
 
     def __init__(
@@ -64,46 +65,29 @@ class GroundPlaybackTab(QWidget):
         self._build_ui()
         self._set_controls_enabled(False)
 
-    @property
-    def timeline(self) -> GroundPlaybackTimeline:
-        """Return the last successfully imported playback timeline."""
-        if self._timeline is None:
-            raise RuntimeError("no ground result has been imported")
-        return self._timeline
-
-    def import_json_text(self, text: str, *, source_name: str = "result JSON") -> None:
-        """Atomically import strict text while retaining the last good result."""
-        try:
-            candidate = GroundPlaybackTimeline(load_ground_result_json(text))
-        except (TypeError, ValueError) as exc:
-            self.status_label.setText(f"Could not import {source_name}: {exc}")
-            self.status_label.setProperty("state", "error")
-            raise
-        self.pause()
-        self._timeline = candidate
-        self.current_time_s = candidate.start_time_s
-        self.view.set_timeline(candidate)
-        populate_ground_tables(
-            candidate,
-            summary_table=self.summary_table,
-            trajectory_table=self.trajectory_table,
-            events_table=self.events_table,
-            warnings_table=self.warnings_table,
-        )
-        for phase, button in self.phase_buttons.items():
-            button.setVisible(candidate.phase_time(phase) is not None)
-        self.end_button.setText(candidate.end_label)
-        self._set_controls_enabled(True)
-        self.set_time(candidate.start_time_s)
-        self.status_label.setText(
-            f"Loaded {source_name} — {candidate.result.status.value}; "
-            f"{len(candidate.result.trajectory)} samples."
-        )
-        self.status_label.setProperty("state", "ready")
-
     def set_time(self, time_s: float) -> None:
         """Seek to a clamped absolute ground-result time."""
         if self._timeline is None:
+            return
+        if self.has_comparison:
+            pair = self.comparison.frame_at(time_s)
+            self.current_time_s = pair.time_s
+            duration = self.comparison.duration_s
+            elapsed_s = pair.time_s - self.comparison.start_time_s
+            ratio = 0.0 if duration == 0.0 else elapsed_s / duration
+            self.scrubber.blockSignals(True)
+            self.scrubber.setValue(round(ratio * _SLIDER_STEPS))
+            self.scrubber.blockSignals(False)
+            self.phase_label.setText(
+                f"Primary {pair.primary.phase.title()} · "
+                f"Comparison {pair.comparison.phase.title()}"
+            )
+            self.time_label.setText(
+                f"Absolute {pair.time_s:.4f} s · primary {pair.primary_state} · "
+                f"comparison {pair.comparison_state}"
+            )
+            self.view.set_position(pair.primary.position_m)
+            self.view.set_comparison_position(pair.comparison.position_m)
             return
         frame = self._timeline.frame_at(time_s)
         self.current_time_s = frame.time_s
@@ -122,8 +106,8 @@ class GroundPlaybackTab(QWidget):
         """Start or restart playback using exactly one owned timer."""
         if self._timeline is None:
             return
-        if self.current_time_s >= self._timeline.end_time_s:
-            self.set_time(self._timeline.start_time_s)
+        if self.current_time_s >= self._end_time_s:
+            self.set_time(self._start_time_s)
         self._playback_anchor_wall_s = self._clock()
         self._playback_anchor_time_s = self.current_time_s
         self._playback_speed = _SPEEDS[self.speed_combo.currentIndex()]
@@ -148,19 +132,19 @@ class GroundPlaybackTab(QWidget):
         """Return to exact first contact and pause."""
         self.pause()
         if self._timeline is not None:
-            self.set_time(self._timeline.start_time_s)
+            self.set_time(self._start_time_s)
 
     def previous_frame(self) -> None:
         """Seek to the previous exact trajectory sample."""
         if self._timeline is not None:
             self.pause()
-            self.set_time(self._timeline.step_time(self.current_time_s, -1))
+            self.set_time(self._step_time(self.current_time_s, -1))
 
     def next_frame(self) -> None:
         """Seek to the next exact trajectory sample."""
         if self._timeline is not None:
             self.pause()
-            self.set_time(self._timeline.step_time(self.current_time_s, 1))
+            self.set_time(self._step_time(self.current_time_s, 1))
 
     def jump_to_phase(self, phase: str) -> None:
         """Seek to the first exact sample for an available phase."""
@@ -210,10 +194,12 @@ class GroundPlaybackTab(QWidget):
         )
         self.import_button.clicked.connect(self._choose_result_file)
         layout.addWidget(self.import_button)
+        self.attach_persistence_controls(panel, layout)
         self.status_label = QLabel("No result loaded.")
         self.status_label.setWordWrap(True)
         self.status_label.setAccessibleName("Ground result import status")
         layout.addWidget(self.status_label)
+        self.attach_comparison_controls(panel, layout)
         layout.addWidget(self._build_playback_group())
         self.summary_table = create_ground_table(
             ("Metric", "Value"), "Ground result summary"
@@ -314,11 +300,11 @@ class GroundPlaybackTab(QWidget):
         tabs = QTabWidget()
         self.trajectory_table = create_ground_table(
             TRAJECTORY_HEADERS,
-            "Ground trajectory samples",
+            "Ground primary trajectory evidence",
         )
         self.events_table = create_ground_table(
             EVENT_HEADERS,
-            "Ground events",
+            "Ground primary event evidence",
         )
         self.warnings_table = create_ground_table(
             ("Severity", "Code", "Message"), "Warnings and provenance"
@@ -326,6 +312,7 @@ class GroundPlaybackTab(QWidget):
         tabs.addTab(self.trajectory_table, "Trajectory")
         tabs.addTab(self.events_table, "Events")
         tabs.addTab(self.warnings_table, "Warnings / provenance")
+        self.attach_comparison_detail_tabs(tabs)
         return tabs
 
     def _set_controls_enabled(self, enabled: bool) -> None:
@@ -342,23 +329,8 @@ class GroundPlaybackTab(QWidget):
             control.setEnabled(enabled)
         for button in self.phase_buttons.values():
             button.setEnabled(enabled)
-
-    def _choose_result_file(self) -> None:
-        path, _filter = QFileDialog.getOpenFileName(
-            self, "Import Ground Result", "", "JSON files (*.json)"
-        )
-        if not path:
-            return
-        try:
-            file_path = Path(path)
-            if file_path.stat().st_size > DEFAULT_IMPORT_MAX_BYTES:
-                raise ValueError("ground result JSON exceeds the import size limit")
-            self.import_json_text(
-                file_path.read_text(encoding="utf-8"), source_name=file_path.name
-            )
-        except (OSError, UnicodeError, TypeError, ValueError) as exc:
-            self.status_label.setText(f"Could not import {Path(path).name}: {exc}")
-            self.status_label.setProperty("state", "error")
+        self.import_comparison_button.setEnabled(enabled)
+        self.persistence_controls.set_exports_enabled(enabled)
 
     def _toggle_playback(self) -> None:
         self.pause() if self.playback_timer.isActive() else self.play()
@@ -367,15 +339,12 @@ class GroundPlaybackTab(QWidget):
         if self._timeline is None:
             return
         self.pause()
-        self.set_time(
-            self._timeline.start_time_s
-            + self._timeline.duration_s * value / _SLIDER_STEPS
-        )
+        self.set_time(self._start_time_s + self._duration_s * value / _SLIDER_STEPS)
 
     def _jump_to_end(self) -> None:
         if self._timeline is not None:
             self.pause()
-            self.set_time(self._timeline.end_time_s)
+            self.set_time(self._end_time_s)
 
     def _advance(self) -> None:
         timeline = self._timeline
@@ -390,13 +359,13 @@ class GroundPlaybackTab(QWidget):
             return
         wall_elapsed_s = max(0.0, self._clock() - self._playback_anchor_wall_s)
         candidate = self._playback_anchor_time_s + wall_elapsed_s * self._playback_speed
-        if self._playback_loop and timeline.duration_s > 0.0:
-            offset_s = (candidate - timeline.start_time_s) % timeline.duration_s
-            self.set_time(timeline.start_time_s + offset_s)
-        elif candidate < timeline.end_time_s:
+        if self._playback_loop and self._duration_s > 0.0:
+            offset_s = (candidate - self._start_time_s) % self._duration_s
+            self.set_time(self._start_time_s + offset_s)
+        elif candidate < self._end_time_s:
             self.set_time(candidate)
         else:
-            self.set_time(timeline.end_time_s)
+            self.set_time(self._end_time_s)
             self._stop_playback()
 
     def _change_speed(self, index: int) -> None:

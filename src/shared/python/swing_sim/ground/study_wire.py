@@ -264,15 +264,21 @@ def study_to_dict(value: GroundStudyProjection) -> dict[str, Any]:
     if type(value) is not GroundStudyProjection:
         raise TypeError("value must use the exact GroundStudyProjection type")
     return {
-        "final_target": None
-        if value.final_target is None
-        else _evaluation_to_dict(value.final_target),
-        "final_target_unavailable_reason": None
-        if value.final_target_unavailable_reason is None
-        else value.final_target_unavailable_reason.value,
-        "first_contact_target": None
-        if value.first_contact_target is None
-        else _evaluation_to_dict(value.first_contact_target),
+        "final_target": (
+            None
+            if value.final_target is None
+            else _evaluation_to_dict(value.final_target)
+        ),
+        "final_target_unavailable_reason": (
+            None
+            if value.final_target_unavailable_reason is None
+            else value.final_target_unavailable_reason.value
+        ),
+        "first_contact_target": (
+            None
+            if value.first_contact_target is None
+            else _evaluation_to_dict(value.first_contact_target)
+        ),
         "ball_radius_m": value.ball_radius_m,
         "calibration": value.calibration.to_dict(),
         "metrics": None if value.metrics is None else _metrics_to_dict(value.metrics),
@@ -288,9 +294,9 @@ def study_to_dict(value: GroundStudyProjection) -> dict[str, Any]:
         "solver_eligibility": _eligibility_to_dict(value.solver_eligibility),
         "status": value.status.value,
         "surface": value.surface.to_dict(),
-        "target": None
-        if value.target is None
-        else spatial_target_to_json_dict(value.target),
+        "target": (
+            None if value.target is None else spatial_target_to_json_dict(value.target)
+        ),
         "termination_reason": value.termination_reason.value,
         "unavailable_fields": [item.to_dict() for item in value.unavailable_fields],
         "warnings": [item.to_dict() for item in value.warnings],
