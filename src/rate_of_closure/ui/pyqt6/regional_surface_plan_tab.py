@@ -26,6 +26,9 @@ from rate_of_closure.application.regional_surface_plan import (
     illustrative_regional_surface_plan_draft,
     regional_surface_plan_request_for_draft,
 )
+from rate_of_closure.ui.pyqt6.regional_execution_evidence import (
+    RegionalExecutionEvidenceBox,
+)
 from rate_of_closure.ui.pyqt6.regional_surface_plan_io import (
     RegionalSurfacePlanFileActions,
 )
@@ -80,6 +83,7 @@ class RegionalSurfacePlanTab(QWidget):
         self.status_label.setText("Changes not validated")
         self.status_label.setAccessibleName("Regional surface plan validation pending")
         self.readback.clear()
+        self.execution_evidence.clear()
 
     def _build_ui(self) -> None:
         """Build the scrollable form and always-visible validation output."""
@@ -101,6 +105,8 @@ class RegionalSurfacePlanTab(QWidget):
         self.rows_layout = QVBoxLayout()
         self.content_layout.addLayout(self.rows_layout)
         self.content_layout.addLayout(self._action_row())
+        self.execution_evidence = RegionalExecutionEvidenceBox(self, content)
+        self.content_layout.addWidget(self.execution_evidence)
         self.status_label = QLabel("Not validated")
         self.status_label.setWordWrap(True)
         self.status_label.setAccessibleName("Regional surface plan validation status")

@@ -1742,3 +1742,23 @@ The digest, fixture, physics, scanner scope, and baseline remain unchanged.
 Commit and push this bounded repair normally before propagating it into #4304,
 #4305, or later ground children. The contemporaneous file-size cancellation
 occurred in checkout and remains infrastructure evidence, not a code failure.
+
+## 2026-08-11 Regional execution evidence readback continuation
+
+The next bounded #4267/#4271 slice is local on
+`feat/4271-regional-execution-ui`, based exactly on published PR #4350 head
+`dfb4b97481f187ff3594eceb08c427f650aca4e3`. Matched PyQt6 and React plan
+surfaces import and present strict Python executor evidence only when the
+embedded regional plan exactly matches the current valid editor plan. The
+readback exposes partial/complete/failure truth, termination, model, distinct
+skid/roll/total metrics, transition count, and executor provenance. Invalid
+imports preserve the last accepted evidence; plan changes invalidate it.
+
+This is deliberately not browser physics and not UI executor invocation. No
+ground request or settled bounce prefix is synthesized from illustrative
+editor state. Local gates are green: 207 expanded Python tests and 111 React
+files / 690 tests, strict MyPy, Ruff/format, TypeScript, zero-warning ESLint,
+production build, manifest and eight manifest tests, docs governance,
+structural budgets, and diff checks. The inherited 500 kB build advisory
+remains. Complete an independent audit before publication; then create a normal
+stacked draft child without retargeting or rewriting PR #4350.

@@ -1427,3 +1427,23 @@ Publish this as a normal follow-up commit on
 `feat/4270-ground-impact-bounce`, with the three handoffs in the same commit.
 Keep #4270 and #4267 open; do not bypass protected CI or propagate into child
 branches until the parent push is verified.
+
+## 2026-08-11 Regional execution evidence readback
+
+Local unpublished branch `feat/4271-regional-execution-ui` starts at exact PR
+#4350 head `dfb4b97481f187ff3594eceb08c427f650aca4e3`. Both standalone PyQt6 and
+React regional-plan surfaces now import bounded strict Python-produced
+`ground-regional-execution-result/v1`, require exact equality with the current
+validated plan, preserve accepted evidence after import errors, and clear
+stale evidence after plan edits. Status, termination/failure, model, skid,
+roll, total, transitions, and executor provenance are visible. React remains
+readback-only and runs no physics.
+
+Local gates pass: 207 expanded Python ground/plan/PyQt/layout tests, 111 React
+files / 690 tests, strict MyPy, Ruff/format, TypeScript, zero-warning ESLint,
+production build, manifest and eight manifest tests, docs governance,
+structural budgets, and diff checks. The inherited 500 kB build advisory
+remains. Independent review is still required before any GitHub write. Do not
+claim #4267/#4271 complete; UI executor inputs/invocation, playback, measured
+calibration, compiled regional physics, downstream parity, protected evidence,
+and release remain open.

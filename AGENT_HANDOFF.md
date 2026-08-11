@@ -948,3 +948,23 @@ Commit this narrow repair with all three canonical handoffs and push normally
 to `feat/4270-ground-impact-bounce`. Do not retry the unchanged failed run,
 amend history, or force-push. Descendant PRs #4304 and #4305 inherit this file
 and must later receive the parent by ordinary merge commits.
+
+## 2026-08-11 regional execution evidence UI continuation
+
+Branch `feat/4271-regional-execution-ui` is a local, unpublished child of
+exact published PR #4350 head
+`dfb4b97481f187ff3594eceb08c427f650aca4e3`. It adds matched PyQt6 and React
+import-only readback for strict Python-produced
+`ground-regional-execution-result/v1` evidence. Acceptance is transactional,
+bounded, strict, and requires the embedded plan to equal the currently valid
+visible plan. Plan edits clear stale evidence. React does not run physics.
+
+Local evidence is green: 207 expanded Python ground/plan/PyQt/layout tests and
+111 React files / 690 tests passed, with strict MyPy, Ruff/format, TypeScript,
+zero-warning ESLint, production build, manifest + eight manifest tests,
+documentation governance, structural budgets, and diff checks. The build
+retains the inherited 500 kB chunk advisory. Do not publish until an
+independent review is complete. UI construction of a qualified ground request
+and settled bounce prefix, executor invocation, playback, measured
+calibration, compiled regional physics, downstream parity, protected evidence,
+release, and issue completion remain open.

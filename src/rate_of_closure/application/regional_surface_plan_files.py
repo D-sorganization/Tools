@@ -13,18 +13,7 @@ from shared.python.swing_sim.ground.regional_plan_wire import (
 )
 
 from .atomic_text_files import write_utf8_text_atomic
-
-
-def _read_bounded_utf8(path: Path) -> str:
-    """Read one immutable handle snapshot without allocating beyond the cap."""
-    with path.open("rb") as handle:
-        raw = handle.read(MAX_REGIONAL_PLAN_WIRE_BYTES + 1)
-    if len(raw) > MAX_REGIONAL_PLAN_WIRE_BYTES:
-        raise ValueError("regional material plan exceeds maximum wire size")
-    try:
-        return raw.decode("utf-8")
-    except UnicodeDecodeError as exc:
-        raise ValueError("regional material plan must be valid UTF-8") from exc
+from .bounded_text_files import read_bounded_utf8
 
 
 def read_regional_surface_plan_request(
@@ -34,7 +23,13 @@ def read_regional_surface_plan_request(
     path = Path(source)
     if not path.is_file():
         raise FileNotFoundError(f"regional surface plan does not exist: {path}")
-    return regional_material_plan_request_from_json(_read_bounded_utf8(path))
+    return regional_material_plan_request_from_json(
+        read_bounded_utf8(
+            path,
+            MAX_REGIONAL_PLAN_WIRE_BYTES,
+            "regional material plan",
+        )
+    )
 
 
 def write_regional_surface_plan_request_atomic(

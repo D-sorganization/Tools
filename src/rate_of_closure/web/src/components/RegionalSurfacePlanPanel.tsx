@@ -14,6 +14,7 @@ import {
   readRegionalSurfacePlanFile,
 } from "../model/regionalSurfacePlanFiles";
 import type { GroundRegionalMaterialPlanRequest } from "../model/groundRegionalPlan";
+import { RegionalExecutionEvidencePanel } from "./RegionalExecutionEvidencePanel";
 
 type NumericMaterialKey = Exclude<keyof SurfaceMaterialDraft, "surface_id">;
 
@@ -145,6 +146,7 @@ export function RegionalSurfacePlanPanel() {
   const [readback, setReadback] = useState<string | null>(null);
   const [fileStatus, setFileStatus] = useState<string | null>(null);
   const [validationAttempted, setValidationAttempted] = useState(false);
+  const [executionRevision, setExecutionRevision] = useState(0);
   const fileInput = useRef<HTMLInputElement>(null);
   const updateDraft = (
     transform: (current: RegionalSurfacePlanDraft) => RegionalSurfacePlanDraft,
@@ -154,6 +156,7 @@ export function RegionalSurfacePlanPanel() {
     setReadback(null);
     setFileStatus(null);
     setValidationAttempted(false);
+    setExecutionRevision((value) => value + 1);
   };
   const updateRegion = (index: number, value: RegionalOverlayDraft) =>
     updateDraft((current) => ({
@@ -189,6 +192,7 @@ export function RegionalSurfacePlanPanel() {
       setError(null);
       setReadback(`${request.schema_version} · exact imported provenance ${request.provenance.input_sha256}`);
       setFileStatus(`Imported ${file.name}. No physics executed.`);
+      setExecutionRevision((value) => value + 1);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Regional plan import failed");
       setFileStatus("Import failed; the editor and prior validated readback were preserved.");
@@ -319,6 +323,8 @@ export function RegionalSurfacePlanPanel() {
       </p>}
       {fileStatus !== null && <p role="status" aria-label="Regional surface plan file status"
         className="text-xs text-slate-400">{fileStatus}</p>}
+      <RegionalExecutionEvidencePanel key={executionRevision}
+        currentPlan={() => regionalSurfacePlanRequestForDraft(draft, importedRequest)} />
     </section>
   );
 }
