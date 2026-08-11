@@ -1,9 +1,11 @@
 # AGENT_HANDOFF — rate_of_closure
 
-## 2026-08-11 local issue #4274 ground-playback candidate
+## 2026-08-11 PR #4363 matched ground playback
 
-Local branch `codex/4274-ground-playback-propagation` is based exactly on
-published PR #4361 head `81de044075a4f72c6da8fedb972437df79a06ab8`.
+Ready-for-review PR [#4363](https://github.com/D-sorganization/Tools/pull/4363)
+is based exactly on published PR #4361 head
+`81de044075a4f72c6da8fedb972437df79a06ab8`; its independently reviewed
+implementation commit is `7f7d4b01d83d914ae5684715dc20c69388cf799f`.
 It hand-integrates only the reviewed matched playback slice: strict Python and
 TypeScript absolute-time timelines, matched additive PyQt6/React workspaces,
 and explicit import adapters for standalone results and validated regional
@@ -24,7 +26,8 @@ RED first failed on the absent timeline/UI. Local qualification passes all
 Ruff check/format, scoped Black, strict MyPy on the five new Python production
 modules, Bandit, ESLint, TypeScript type-check, production build, campaign
 manifest, documentation governance, the 400-line new-module budget, and diff
-checks are green. No push or other GitHub write has occurred.
+checks are green. Fresh protected current-head checks, dependency order, and
+ordinary merge gates remain required.
 
 Keep #4274/#4267 open for terrain meshes and changing normals, direct editor
 handoff, comparison, persistence, rendered visual QA, camera presets/tracking,

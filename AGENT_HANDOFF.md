@@ -1,9 +1,11 @@
 # AGENT_HANDOFF — Tools
 
-## 2026-08-11 local issue #4274 ground-playback candidate
+## 2026-08-11 PR #4363 matched ground playback
 
-Local branch `codex/4274-ground-playback-propagation` starts from exact
-published PR #4361 head `81de044075a4f72c6da8fedb972437df79a06ab8`.
+Ready-for-review PR [#4363](https://github.com/D-sorganization/Tools/pull/4363)
+starts from exact published PR #4361 head
+`81de044075a4f72c6da8fedb972437df79a06ab8`; its independently reviewed
+implementation commit is `7f7d4b01d83d914ae5684715dc20c69388cf799f`.
 The bounded hand integration adds matched additive `Ground Playback` views to
 PyQt6 and React while preserving `Ground Surfaces`, its navigation state, and
 current help. No later historical 72-file chain was merged or cherry-picked.
@@ -24,8 +26,9 @@ UI. Local qualification passes all 1,125 Rate/shared-ground Python tests and
 all 119 React files / 754 tests. Ruff check/format, scoped Black, strict MyPy
 on all five new Python production modules, Bandit, ESLint, TypeScript
 type-check, production build, campaign-manifest validation, documentation
-governance, the 400-line new-module budget, and diff checks are green. No
-GitHub write has occurred from this worktree.
+governance, the 400-line new-module budget, and diff checks are green. Fresh
+protected current-head checks, dependency order, and ordinary merge gates
+remain required.
 
 Keep #4274 and #4267 open. Terrain mesh/changing-normal rendering, direct
 editor-to-playback handoff, comparison, persistence, rendered visual QA,

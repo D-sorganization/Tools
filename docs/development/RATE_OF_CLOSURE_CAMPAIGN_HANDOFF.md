@@ -1,10 +1,12 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-## 2026-08-11 local issue #4274 matched ground playback
+## 2026-08-11 PR #4363 matched ground playback
 
-- Local `codex/4274-ground-playback-propagation` starts from exact published
-  PR #4361 head `81de044075a4f72c6da8fedb972437df79a06ab8`
-  and hand-integrates only the reviewed initial playback slice.
+- Ready-for-review PR [#4363](https://github.com/D-sorganization/Tools/pull/4363)
+  starts from exact published PR #4361 head
+  `81de044075a4f72c6da8fedb972437df79a06ab8`; independently reviewed
+  implementation commit `7f7d4b01d83d914ae5684715dc20c69388cf799f`
+  hand-integrates only the initial playback slice.
 - Additive matched PyQt6/React workspaces import strict standalone results or
   explicit validated regional envelopes. They reuse the nested result, reject
   null/cancelled/failed/empty/missing-summary evidence, and never run physics.
@@ -18,7 +20,8 @@
   result. Local qualification passes all 1,125 Rate/shared-ground Python tests
   and all 119 React files / 754 tests. Ruff/Black, strict scoped MyPy, Bandit,
   ESLint, TypeScript type-check, production build, manifest, documentation,
-  400-line new-module budget, and diff gates are green.
+  400-line new-module budget, and diff gates are green. Fresh protected
+  current-head checks, dependency order, and ordinary merge gates remain.
 - Keep #4274/#4267 open for terrain meshes/changing normals, direct editor
   handoff, comparison, persistence, rendered visual QA, camera presets and
   tracking, downstream parity, and protected CI/review/release.
