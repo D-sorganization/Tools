@@ -3,6 +3,147 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 PR #4323 exact hosted-MyPy repair
+
+The repair is published on ready PR #4323 at exact current head
+`3957f013eeadd448ffa381f12d65b6a076abe21b`, a normal fast-forward from
+`b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`; its base remains
+`feat/4275-ground-tilted-conformance`. Hosted quality-gate run `31429284874`,
+job `93588443824`, reproduced eight MyPy 1.13 `no-any-return` errors with the
+exact Python 3.12 changed-production profile and `--follow-imports=skip`.
+
+`typing.cast` now makes the already-enforced `float`, `bool`, and
+`SkidRollResult` boundaries visible to that isolated analysis. A single typed
+result helper removes seven duplicated casts. Because casts are erased at
+runtime, vector summation order and strictness, rest classification, surface
+events, termination reasons, and result records are unchanged. The exact
+hosted three-file profile is green locally, together with all 247 ground tests,
+42 focused skid/passivity/conformance tests, Ruff/format, campaign-manifest,
+documentation-governance, changed-Python-policy, and diff gates. This is a CI
+typing repair only; the scientific corpus, property sweep, contracts, and
+#4275/#4267 delivery boundaries remain unchanged. Fresh exact-head hosted CI,
+review, and parent integration remain required.
+
+## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
+
+Branch `feat/4275-ground-mirrored-property` is published as ready PR #4323,
+an exact child of ready PR #4322 head
+`8b065dd299acc7cab39321b0e2d7f34ca64f159b`, with base
+`feat/4275-ground-tilted-conformance` preserved. The implementation is bound
+to exact commit `08d631d7169019aee9067f3739051a50d88b9554`; its initial
+evidence/handoff head was `74a23c21bb20f13bf608f463915b00d2d53d5a7f`.
+This documentation-only publication follow-up changes no implementation
+evidence.
+
+The shared `ground-reference-conformance/v1` authority adds a seventh analytic
+case by reflecting the qualified incline through the xy plane. The oracle
+reflects ordinary vectors and the angular-velocity pseudovector correctly and
+pins plane contact, no slip, path, terminal position/velocity/spin, events, and
+status across Python, native Rust, installed PyO3, and rebuilt WASM.
+
+A deterministic seed-4275 Python/PyO3 sweep adds 20 exact-parity requests over
+nonzero x-normal components, both z-tilt signs, and bounded ball, surface,
+material, launch, and spin properties. Its first RED run found that the Python
+default unbounded resolver hard-coded world +x as the domain axis, contrary to
+the arbitrary-plane contract. It now selects a deterministic intrinsic unit
+tangent from the least-aligned Cartesian reference. Explicit finite-domain
+axes and bounds retain their declared semantics.
+
+Local GREEN evidence is 247 Python ground tests; four native corpus tests over
+seven cases; fresh CPython 3.13 PyO3 corpus and 20-case sweep harnesses; a fresh
+Node/WASM corpus build; and clean pinned MyPy 1.13, Ruff, Prettier, and diff
+checks. Corpus SHA-256 is
+`c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465`.
+#4275/#4267 remain open for broader randomized/WASM properties, statistical
+qualification, performance, calibration, evolving terrain, interfaces,
+visualization, and downstream integration.
+
+## 2026-08-10 issue #4275 tilted-plane conformance and passivity
+
+`feat/4275-ground-tilted-conformance` is published as ready PR #4322, an exact
+child of ready PR #4321 head
+`7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e`, targeting
+`feat/4275-ground-conformance-corpus`. Its implementation/evidence head was
+`a0c8e49a40badc3ce96193e031d2a9dec557d143`; this documentation-only
+publication follow-up changes no implementation evidence. The shared corpus
+gains a sixth case on
+the inclined plane `n=[0,sqrt(0.99),0.1]`: exact pure roll, zero rolling
+resistance, and four seconds of gravity-driven acceleration. Analytic checks
+cover event/status semantics, no-slip capture, plane contact, path, terminal
+position, velocity, and spin across Python, native Rust, installed PyO3, and
+rebuilt WASM consumers.
+
+RED exposed a production numerical defect: long passive inclined runs could
+be rejected because the old final-endpoint guard counted repeated canonical
+11-decimal state quantization as physical energy creation. Both Python and
+Rust now reject each energy-creating unquantized segment independently and
+retain canonical endpoints for the public ledger and result wire. Accumulated
+quantization allowance is derived from fixed component-error bounds; rolling
+projection is separately slip-bounded. Dedicated masking and unexplained-
+endpoint regressions retain fail-closed behavior. Final local GREEN evidence is
+238 Python ground tests; 191/206/203 default/Python/WASM Rust tests; 19 focused
+Python conformance/passivity tests; four native corpus tests consuming all six
+cases; a clean installed CPython 3.13 PyO3 wheel; a rebuilt Node/WASM harness;
+and strict lint/type/format/policy/documentation gates. Independent adversarial
+review is `READY`. The reviewed implementation is exact commit
+`5d333a4448d6484f8c98e78c9878cb83b40aa522`; the raw six-case corpus SHA-256 is
+`502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
+PR #4322 was initially open, ready, and mergeable with protected jobs queued or
+in progress and no review decision. Green hosted CI, approval, integration, and
+release are not claimed.
+
+A complete-runtime regression additionally found that frozen rolling
+resistance could cross the zero-relative-speed cusp on a translating incline.
+Closing roll steps are now bounded, and a resistance-dominated zero-relative
+state is carried by the moving plane without inventing an absolute rest event.
+Sub-tolerance residual motion is projected to exact co-motion through the same
+bounded slip/velocity/spin/energy contract before holding. Python and Rust
+moving-incline regressions pin this passive hold behavior. Slip and correction
+tolerances remain independent, and a stationary projection reports `REST` in
+the same solver step. A zero-duration handoff advances one zero-motion interval
+before that event to preserve the strict increasing-time result contract.
+
+Keep #4275/#4267 open for opposite-orientation and randomized invariance,
+properties, calibration, performance, terrain/material evolution, interfaces,
+visualization, and downstream integration.
+
+## 2026-08-10 issue #4275 scientific conformance corpus
+
+`feat/4275-ground-conformance-corpus` begins at exact ready PR #4320 head
+`64506a54d546021f3c16fbe0b627f35057ec6dd1` and is intended to target
+`feat/4275-ground-compiled-reference-runtime`. It adds a strict shared
+`ground-reference-conformance/v1` fixture and independent analytic assertions
+without editing production ground physics. The five cases cover shallow
+bounce/capture, flat skid-to-roll, downrange pure roll, a proper active
+-90-degree rotation about +y, and pure roll relative to a translating surface. Checks pin
+contact and transition times, restitution, event order, passive impact,
+no-slip contact velocity, component vectors, phase distances, total distance,
+and typed rest/time-limit outcomes using explicit units and tolerances.
+
+The Python reference, direct native Rust, unique-venv CPython 3.13 PyO3 wheel,
+and rebuilt Node/WASM package all consume the same committed artifact. Focused
+results are eight Python tests, four native Rust tests, one wheel script, and
+one WASM script passing. Exact-byte parity continues to use the existing golden
+fixture rather than conflating scientific tolerance with serialization. The
+implementation commit cannot contain its own SHA; the required evidence
+follow-up must record that exact parent, the raw corpus digest, full matrix
+counts, independent review, PR, and protected checks before publication.
+
+The exact independently reviewed implementation is
+`9df3928a1ef32d81db2e568884ca24d8c576d49a`; the raw corpus SHA-256 is
+`f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310`.
+Complete local evidence is 227 Python ground tests; Rust matrices of
+184/199/196 for default/Python/WASM; eight focused Python and four native
+conformance tests; installed CPython 3.13 PyO3 and rebuilt Node/WASM harnesses;
+strict Clippy; MyPy; Ruff; formatting; manifest plus eight tests; docs
+governance; structural budgets; and an independent READY verdict. Publication,
+hosted/protected checks, review approval, integration, and release remain open.
+
+Keep #4275 and #4267 open. This slice does not qualify tilted cross-authority
+frames, broad properties, performance, ensembles, async WASM cancellation,
+calibration, material regions/changing normals, deformation, torsional damping,
+roll-to-skid, interfaces, visualization, or UpstreamDrift consumers.
+
 ## 2026-08-10 issue #4275 compiled ground-reference runtime
 
 Implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` on

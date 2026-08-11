@@ -70,6 +70,32 @@ modules. The compiled runtime owns separate Rust phase implementations for its
 narrower domain; exact golden bytes, seeded Python parity, native tilted-plane
 invariants, and real PyO3/WASM tests constrain that implementation.
 
+Surface passivity is enforced independently on the physical mechanical balance
+of every unquantized constant-motion segment. Earlier legitimate dissipation
+therefore cannot mask a later energy-creating segment. The canonical
+11-decimal endpoint remains the deterministic state used by the next segment
+and the public result, but its exclusion from physical work is bounded by an
+accumulated fixed-component quantization budget. No-slip projection is admitted
+only while contact slip and the resulting velocity/spin corrections remain
+inside their versioned thresholds. A final endpoint outside the accumulated
+budget fails closed. Adversarial Python and Rust tests cover masking, unforced
+acceleration, and unexplained endpoint energy.
+
+Rolling resistance uses a bounded closing step when its frozen direction would
+cross zero relative speed. If the versioned resistance magnitude can balance
+the slope drive, a zero-relative-speed state is held and may continue to move
+with a translating surface. This state is not mislabeled as absolute rest;
+the balancing contact force remains in the work ledger. Any residual already
+inside the velocity tolerance is projected to exact surface co-motion through
+the same slip, velocity, spin, and energy bounds before holding.
+The contact-slip gate continues to use `slip_tolerance_m_s`; the center and
+transverse-spin correction gates use the independent `velocity_tolerance_m_s`
+and `velocity_tolerance_m_s / radius`. If that projection creates a stationary
+rest state, the solver terminates as `rest` in the same step. At the exact
+surface handoff time it advances one zero-motion interval before emitting the
+rest point because the public trajectory contract requires strictly increasing
+timestamps.
+
 ## Compiled resource and cancellation contract
 
 The synchronous compiled boundary applies independent, fail-closed budgets
@@ -141,6 +167,60 @@ The digest proves byte identity only. It is not a signature, calibration
 certificate, or evidence that the illustrative surface parameters match a
 specific course.
 
+## Scientific conformance corpus
+
+`ground_reference_conformance_v1.json` is the separate scientific evidence
+boundary. It references the canonical request template, replaces only declared
+existing leaves, and defines six independently derived cases: shallow
+bounce/capture, flat skid-to-roll, pure roll along +x, the proper active
+-90-degree rotation about +y into +z, pure roll relative to a translating
+plane, and zero-resistance pure roll on the immutable incline
+`n=[0,sqrt(0.99),0.1]`. The seventh case reflects that incline through the xy
+plane to form a seventh case at `n=[0,sqrt(0.99),-0.1]`; position and velocity follow the polar-vector
+reflection while angular velocity follows the axial-vector transformation.
+
+Each case declares its scientific basis, applicable runtimes, observable,
+unit, and applicable bounded tolerance. Whitelisted checks cover exact event
+sequences and terminal reasons, scalar/vector proximity, Newton restitution,
+the no-slip contact constraint, and passive impact energy. No expression is
+evaluated from fixture text. The Python reference, native Rust executor,
+installed PyO3 wheel, and rebuilt Node/WASM package all consume this same
+artifact. A runtime agreeing with another runtime is insufficient: each must
+also satisfy the declared analytic oracle.
+
+Both inclines additionally require every non-bounce center to remain one radius
+from the declared plane and compare their four-second path, position, velocity,
+and spin to the reflected closed-form constant-acceleration solutions.
+
+A separate deterministic property harness uses local PRNG seed `4275` to build
+20 requests from the same canonical template. It covers nonzero x-normal
+components and both z-tilt signs while varying bounded radius, mass, inertia,
+surface height and tangential velocity, restitution, friction, rolling
+resistance, launch tangent, and spin. Python and a freshly installed PyO3
+extension must emit identical canonical JSON for every request. This seeded
+sample complements rather than replaces the independently analytic corpus.
+
+The prior five-case artifact is bound to implementation commit
+`9df3928a1ef32d81db2e568884ca24d8c576d49a` with raw-file SHA-256
+`f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310`.
+The six-case artifact is bound to reviewed implementation commit
+`5d333a4448d6484f8c98e78c9878cb83b40aa522` with raw-file SHA-256
+`502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
+The ready PR #4323 seven-case successor has raw-file SHA-256
+`c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465`;
+its implementation is exact commit
+`08d631d7169019aee9067f3739051a50d88b9554`. None of
+these digests establishes exhaustive tilted/property coverage, performance,
+calibration, changing terrain, user interfaces, or downstream release. PR
+#4322 remains the exact parent carrier; hosted approval and integration remain
+separate gates for ready child PR #4323.
+
+This corpus does not replace the canonical full-result fixture. Scientific
+tolerances establish physical conformance; exact canonical bytes and SHA-256
+remain serialization evidence. The current analytic cases and finite seeded
+sample do not qualify production surface parameters, exhaustive frames,
+regional terrain, performance, or statistical uncertainty.
+
 ## Design-by-contract boundary
 
 - Requests and nested execution controls require exact canonical types.
@@ -159,11 +239,14 @@ specific course.
 ## Explicit limitations
 
 The Python reference supports the existing qualified immutable planar surface
-and its optional finite tangent-axis boundary. Compiled parity is intentionally
-narrower: one immutable plane, standard gravity, the exact v1 model identities,
-and no material/terrain resolver. Cross-runtime byte parity is qualified over
-the common resolver-free horizontal-plane scope; native invariants separately
-cover tilted planes.
+and its optional finite tangent-axis boundary. Its default unbounded resolver
+derives a deterministic tangent by projecting the least-aligned Cartesian axis
+into the plane, so every valid normal has a tangent frame. Explicit finite axes
+and bounds remain caller-owned. Compiled parity is intentionally narrower: one
+immutable plane, standard gravity, the exact v1 model identities, and no
+material/terrain resolver. Cross-runtime conformance includes the two mirrored
+analytic inclines; the broader seeded property sample currently qualifies
+Python and installed PyO3 only.
 
 Neither implementation adds changing normals, regional materials, terrain
 deformation, torsional-spin damping, roll-to-skid transitions, production
