@@ -119,7 +119,9 @@ def _import_help_handlers() -> Any:
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module
-    except Exception as e:  # noqa: BLE001 — test isolation: any import failure skips suite
+    except (
+        Exception
+    ) as e:  # noqa: BLE001 — test isolation: any import failure skips suite
         pytest.skip(f"help_system not importable: {e}")
 
 
