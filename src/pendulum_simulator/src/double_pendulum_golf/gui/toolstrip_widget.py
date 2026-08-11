@@ -38,7 +38,9 @@ from .button_sizing import fit_button_to_text
 # Stylesheet constants
 # ---------------------------------------------------------------------------
 
-_STYLE_STRIP = "QWidget#toolstrip {background: #16162e;border-bottom: 1px solid #2a2a50;}"
+_STYLE_STRIP = (
+    "QWidget#toolstrip {background: #16162e;border-bottom: 1px solid #2a2a50;}"
+)
 _BTN_RUN = (
     "QPushButton{"
     "background:#1e5c30;color:#a8f0b8;border:none;border-radius:5px;"
@@ -203,9 +205,9 @@ def _make_scale_slider(
     if style is None:
         raise ValueError("style must be provided")
     assert divisor > 0, f"divisor must be > 0, got {divisor}"
-    assert max_val > 0 and default > 0 and default <= max_val, (
-        f"invalid slider bounds: default={default}, max_val={max_val}"
-    )
+    assert (
+        max_val > 0 and default > 0 and default <= max_val
+    ), f"invalid slider bounds: default={default}, max_val={max_val}"
     s = QSlider(Qt.Orientation.Horizontal)
     s.setRange(1, max_val)
     s.setValue(default)
@@ -638,7 +640,9 @@ class ToolStrip(QWidget):
 
         # Mobility ellipsoids: divisor=100 → raw 1..1000 maps to 0.01×..10×
         # so the user can shrink them to 1/100th of unity when joints crowd.
-        self._sld_mob = _make_scale_slider(_SLIDER_MOB, default=100, max_val=1000, divisor=100)
+        self._sld_mob = _make_scale_slider(
+            _SLIDER_MOB, default=100, max_val=1000, divisor=100
+        )
         self._sld_mob.setToolTip("Mobility ellipsoid display scale (0.01× – 10×)")
         self._sld_mob.valueChanged.connect(self._on_mob_scale)
 
@@ -667,7 +671,9 @@ class ToolStrip(QWidget):
         self._lbl_force_ell_scale = QLabel("1.0×")
         self._lbl_force_ell_scale.setStyleSheet(_VAL_LBL)
 
-        return _overlay_row(self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale)
+        return _overlay_row(
+            self.chk_force_ell, self._sld_force_ell, self._lbl_force_ell_scale
+        )
 
     def _build_segment_visibility_row(self) -> QHBoxLayout:
         """Row D: Per-segment visibility sub-checkboxes (#1100, #1101, #1102)."""
@@ -919,7 +925,9 @@ class ToolStrip(QWidget):
         If all segments are checked, emit None (show all).
         Otherwise emit the set of checked segment names.
         """
-        checked = {name for name, chk in self._segment_checks.items() if chk.isChecked()}
+        checked = {
+            name for name, chk in self._segment_checks.items() if chk.isChecked()
+        }
         if len(checked) == len(self._segment_checks):
             self.segment_visibility_changed.emit(None)  # all visible
         else:
