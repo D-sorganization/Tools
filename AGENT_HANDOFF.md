@@ -1,7 +1,23 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 PR #4202 pinned-Ruff format repair
+
+- Exact published head `f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`
+  failed CI Standard run `31483390692`, job `93753191911`, only because five
+  changed Python files no longer matched the workflow-pinned Ruff `0.14.10`
+  formatter.
+- Those five files are mechanically reformatted with Ruff `0.14.10`; numerical
+  behavior, reference frames, validation, APIs, schemas, and tests are
+  unchanged. This is an actionable current-head CI repair, not an expansion or
+  completion of D-plane issue `#4189`.
+- Verification is green for the workflow-mirrored scoped Ruff check and format
+  check, `git diff --check`, and 71 focused impact, kinetics, PyQt, and layout
+  tests.
+- No material handoff behavior changed. The release remains parent-first and
+  protected; queued checks and the ordinary repository merge gates still apply.
 
 ## 2026-08-10 PR #4202 D-plane ndarray typing repair
 

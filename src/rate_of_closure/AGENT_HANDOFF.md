@@ -1,7 +1,19 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 PR #4202 pinned-Ruff format repair
+
+CI Standard run `31483390692`, job `93753191911`, checked exact published head
+`f3363aa88868f6a5c7e9ccfc682a9eca014e86c1` with the workflow-pinned Ruff
+`0.14.10` formatter and identified five changed files requiring mechanical
+formatting. They are now formatted with that exact version. There is no
+material handoff or runtime behavior change: physics, frames, DbC validation,
+public contracts, schemas, tests, and user-visible behavior are unchanged.
+The workflow-mirrored scoped Ruff check and format check, `git diff --check`,
+and 71 focused impact, kinetics, PyQt, and layout tests are green. Protected
+checks and parent-first release order remain mandatory.
 
 ## 2026-08-10 PR #4202 D-plane ndarray typing repair
 
