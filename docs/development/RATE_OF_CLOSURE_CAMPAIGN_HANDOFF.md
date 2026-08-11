@@ -1762,3 +1762,26 @@ production build, manifest and eight manifest tests, docs governance,
 structural budgets, and diff checks. The inherited 500 kB build advisory
 remains. Complete an independent audit before publication; then create a normal
 stacked draft child without retargeting or rewriting PR #4350.
+
+## 2026-08-11 Complete regional result readback continuation
+
+Local branch `feat/4271-regional-result-readback` starts exactly at draft PR
+#4351 head `fe463b5503a8c7b599a329da18bb690d008871cd`. The next bounded result-
+usability slice makes matched PyQt6/React evidence inspection complete for the
+existing frozen result: carry, bounce-air, skid, roll, surface path, total,
+final downrange/offline, bounce count, ground time, completion, model and
+surface-provider identities/versions, calibration evidence, ordered observed
+phases, typed warnings, executor provenance, and qualification limits.
+
+Cancellation/failure cannot fabricate ground-only values, and partial results
+remain visibly censored. React still executes no ground physics. Trajectory and
+event tables, export/playback, executor input construction/invocation, measured
+calibration, compiled parity, Upstream consumers, protected evidence, release,
+and issue completion remain open.
+
+Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
+111 React files / 691 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 202-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
+remains. Independent review is required before publication.

@@ -24,7 +24,11 @@ describe("RegionalExecutionEvidencePanel", () => {
       "Regional execution evidence readback",
     )).toBeVisible());
     expect(screen.getByText("partial")).toBeVisible();
-    expect(screen.getByText("0.254 m")).toBeVisible();
+    expect(screen.getAllByText("0.254 m")).toHaveLength(2);
+    expect(screen.getByText("0.040 m")).toBeVisible();
+    expect(screen.getByText("1.155 s")).toBeVisible();
+    expect(screen.getByText("impact → skid → roll")).toBeVisible();
+    expect(screen.getByText(/CENSORED_ENDPOINT/)).toBeVisible();
     expect(screen.getByText(/no browser physics executed/i)).toBeVisible();
 
     fireEvent.change(input!, { target: { files: [{
@@ -33,7 +37,7 @@ describe("RegionalExecutionEvidencePanel", () => {
       text: async () => "{}",
     }] } });
     await waitFor(() => expect(screen.getByRole("alert")).toBeVisible());
-    expect(screen.getByText("0.254 m")).toBeVisible();
+    expect(screen.getAllByText("0.254 m")).toHaveLength(2);
     expect(screen.getByText(/prior accepted execution evidence was preserved/i)).toBeVisible();
   });
 });

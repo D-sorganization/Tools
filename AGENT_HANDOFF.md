@@ -968,3 +968,26 @@ independent review is complete. UI construction of a qualified ground request
 and settled bounce prefix, executor invocation, playback, measured
 calibration, compiled regional physics, downstream parity, protected evidence,
 release, and issue completion remain open.
+
+## 2026-08-11 complete regional result readback continuation
+
+Branch `feat/4271-regional-result-readback` is a local unpublished child of
+exact draft PR #4351 head
+`fe463b5503a8c7b599a329da18bb690d008871cd`. It extends the matched import-only
+PyQt6/React readback to every qualified summary/result field required for
+honest user inspection: distinct carry/bounce/skid/roll/surface-path/total,
+final downrange/offline, bounce count, ground time, terminal completion, model
+and surface provider IDs/versions, calibration evidence, observed phases,
+typed warnings, executor provenance, and qualification limits.
+
+Null-result cancellation/failure keeps ground-only values unavailable. Partial
+evidence retains the censored-endpoint warning and is not relabeled as rest.
+No physics, executor invocation, trajectory/event tables, playback, compiled
+parity, calibration workflow, or downstream integration is added.
+
+Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
+111 React files / 691 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 202-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The build retains the inherited
+500 kB chunk advisory. Independently review before any GitHub write.

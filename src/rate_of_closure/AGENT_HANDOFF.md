@@ -1447,3 +1447,25 @@ remains. Independent review is still required before any GitHub write. Do not
 claim #4267/#4271 complete; UI executor inputs/invocation, playback, measured
 calibration, compiled regional physics, downstream parity, protected evidence,
 and release remain open.
+
+## 2026-08-11 Complete regional result readback
+
+Local unpublished `feat/4271-regional-result-readback` is an exact child of PR
+#4351 head `fe463b5503a8c7b599a329da18bb690d008871cd`. Its matched PyQt6 and React
+evidence presenters now expose every qualified result summary field, final
+position, ground time, completion, bounce count, model/surface authority,
+calibration evidence, ordered phases, warnings, executor provenance, and
+limitations. Null-result states remain unavailable rather than fabricated;
+partial endpoints retain their warning.
+
+This remains import/readback only. Complete local gates and independent review
+before any GitHub write. Executor invocation, trajectory/event tables, export,
+playback, calibration workflows, compiled parity, downstream parity, protected
+evidence, release, and #4267/#4271 completion remain open.
+
+Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
+111 React files / 691 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 202-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
+remains.

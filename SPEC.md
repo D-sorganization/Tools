@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.35                                    |
-| **Spec Version**        | 1.14.35                                    |
+| **Current Version**     | 1.14.36                                    |
+| **Spec Version**        | 1.14.36                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,22 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Complete Regional Execution Result Readback
+
+- The matched PyQt6 and React evidence readers project every already-qualified
+  ground summary field without recomputation: carry, bounce-air, skid, roll,
+  surface-path, total, final downrange/offline, bounce count, ground time,
+  terminal completion, model and base-surface provider identities, calibration
+  evidence, ordered observed phases, typed warnings, executor provenance, and
+  qualification limitations.
+- Null-result cancellation/failure evidence keeps all ground-only values
+  unavailable and emits no fabricated phases, warnings, calibration, times, or
+  distances. Partial results retain their censored-endpoint warning and are not
+  presented as final-rest outcomes.
+- PyQt6 uses a readable scrollable readback while React uses an accessible
+  definition list and warning list. Both remain import-only consumers of the
+  frozen Python executor envelope; this slice does not add playback or physics.
 
 ### 2026-08-11 Regional Execution Evidence Readback
 
@@ -2978,6 +2994,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.36 | feat(ground-roll, #4267 #4271): complete the matched PyQt6/React import-only result projection with carry, bounce-air, skid, roll, surface-path, total, final position/offline, bounce count, ground time, terminal completion, model and surface-provider identity/version, calibration evidence, ordered observed phases, typed warnings, executor provenance, and qualification limits; preserve unavailable ground-only values for null-result cancellation/failure and keep partial censored endpoints explicit; retain UI executor invocation, trajectory/event tables, playback, calibration workflows, compiled parity, downstream parity, protected evidence, release, and issue completion as open work. |
 | 2026-08-11 | 1.14.35 | feat(ground-roll, #4267 #4271): add matched PyQt6 and React bounded strict import/readback for Python-produced regional execution evidence; require its embedded plan to exactly match the currently valid visible plan, preserve prior accepted evidence after failed imports, invalidate stale evidence after plan edits, expose status/termination/model/skid/roll/total/transitions/provenance, and state explicitly that React executes no regional physics; retain UI executor invocation, playback, measured calibration, compiled physics, downstream parity, protected evidence, release, and issue completion as open work. |
 | 2026-08-11 | 1.14.34 | chore(ground-roll, #4271): normally reconcile exact reviewed regional-execution child `012cdfc33ad1590f31a1cbb109f0b8bee8eee700` with exact newly published PR #4342 parent `c1f47f2ef68b3db102da5416aaac17a40f675207` without changing the intended `feat/4274-regional-plan-io` base or rewriting either branch; retain the remediated embedded-plan execution/provenance contract and executor-produced cross-runtime evidence together with canonical request I/O, the bounded engineering-input helper, and verbatim parent/child handoff and SPEC history; keep UI execution/playback, compiled regional physics, downstream parity, protected evidence, PR publication, release, and issue completion open. |
 | 2026-08-11 | 1.14.33 | fix(ground-roll, #4271): remediate independent review of the regional execution envelope by embedding and hashing the exact plan, enforcing fixed executor producer/version with variable source revision, binding ordered transition identities and coordinates to both ground events and real plan crossings, aligning Python wire safe-number/integral-number/nonblank-text/vector validation with TypeScript, rejecting same-surface and fabricated mappings or unsubstantiated null-result ledgers, replacing synthetic evidence with executor-produced representable/cancelled/failed fixtures, and adding a shared adversarial parity corpus; preserve frozen base-result v1 and retain UI, compiled physics, downstream parity, protected evidence, release, and issue completion as open work. |
