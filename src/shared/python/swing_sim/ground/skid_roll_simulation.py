@@ -202,13 +202,15 @@ def _roll_step(run: SurfaceRun, duration_s: float) -> SkidRollResult | None:
     advance_for = (
         stop
         if reaches_zero and stop is not None
-        else bounded_closing_duration(
-            relative,
-            motion.acceleration_m_s2,
-            duration_s,
+        else (
+            bounded_closing_duration(
+                relative,
+                motion.acceleration_m_s2,
+                duration_s,
+            )
+            if norm(cross(relative, motion.acceleration_m_s2)) > 1e-12
+            else duration_s
         )
-        if norm(cross(relative, motion.acceleration_m_s2)) > 1e-12
-        else duration_s
     )
     outcome = run.advance(motion, advance_for)
     if outcome.boundary_crossed:
