@@ -4072,3 +4072,21 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+## 2026-08-11 Repeated-bounce evidence wire boundary
+
+- Added strict versioned `ground-repeated-bounce-result/v1` Python
+  serializer/parser coverage for the complete validated `RepeatedBounceResult`
+  prefix, with exact nested keys, duplicate-key rejection, a 1 MiB UTF-8 bound,
+  frozen SI target frame, and canonical record reuse.
+- Added import-only TypeScript parser/serializer parity. Browser code validates
+  and re-exports evidence but never computes bounce or regional physics.
+- Bound each event and impact post-state to one phase-correct trajectory point,
+  settled handoff and termination chronology to terminal evidence, and energy
+  dissipation to the additive passive-energy balance under identical explicit
+  cross-runtime tolerances.
+- Locked canonical cross-runtime JSON to SHA-256
+  `d8e7400632215220d3c5b1ccd7c57040f6023ebd72470b380b48b8f8fa99b9f9`.
+- This is an input/evidence boundary only. Request construction, executor
+  invocation, persistence, playback, measured calibration, compiled and
+  downstream parity, protected release, and #4267/#4271 completion remain open.

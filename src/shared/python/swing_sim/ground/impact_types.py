@@ -13,6 +13,16 @@ else:
 
 from .contract_types import GroundContactState, Vector3
 
+_ENERGY_ABSOLUTE_TOLERANCE_J = 1e-10
+_ENERGY_RELATIVE_TOLERANCE = 1e-10
+
+
+def _energy_balance_tolerance_j(*values: float) -> float:
+    return _ENERGY_ABSOLUTE_TOLERANCE_J + _ENERGY_RELATIVE_TOLERANCE * max(
+        (abs(value) for value in values),
+        default=0.0,
+    )
+
 
 class ImpactRegime(StrEnum):
     """Tangential contact regime selected by the Coulomb law."""
@@ -89,6 +99,17 @@ class ImpactEnergyLedger:
             raise ValueError("impact kinetic energy must be nonnegative")
         if self.dissipation_j < 0.0:
             raise ValueError("impact dissipation must be nonnegative")
+        expected_dissipation = (
+            self.kinetic_before_j + self.boundary_work_j - self.kinetic_after_j
+        )
+        tolerance = _energy_balance_tolerance_j(
+            self.kinetic_before_j,
+            self.kinetic_after_j,
+            self.boundary_work_j,
+            self.dissipation_j,
+        )
+        if abs(self.dissipation_j - expected_dissipation) > tolerance:
+            raise ValueError("impact dissipation must match the energy balance")
 
 
 @dataclass(frozen=True)

@@ -145,3 +145,41 @@ friction properties; bracket and output refinement; repeated-hop analytic
 times; capture; ordering; time/event limits; cancellation; no-recontact; and
 numerical failure. Release still requires a normal protected carrier, hosted
 checks, independent review, and downstream consumer integration.
+
+## Repeated-bounce evidence wire boundary
+
+`RepeatedBounceResult` is transferable as
+`ground-repeated-bounce-result/v1`. The envelope adds only `schema_version`
+and `unit_system` to the complete prefix record; it does not add a summary or
+claim a final ground result. The exact v1 fields are `request_id`,
+`surface_id`, `frame`, `model_id`, `model_version`,
+`request_fingerprint_sha256`, `trajectory`, `events`, `impacts`,
+`airborne_segments`, `handoff_state`, `termination`, `warnings`,
+`unit_system`, and `schema_version`.
+
+Python is the serialization authority. Its parser reuses the canonical
+contact-state, trajectory-point, and event constructors, plus the immutable
+impact, energy, air-segment, termination, and prefix-result constructors. The
+React parser mirrors those same invariants for imported evidence only and
+does not execute or approximate bounce physics. Both runtimes reject missing
+or additional keys at every object level, duplicate JSON keys, non-finite or
+cross-runtime-unsafe numbers, unsupported frames/units/versions, malformed
+fingerprints, and inconsistent event/impact, segment, or handoff evidence.
+Settled prefixes require a non-null handoff matching the terminal skid point;
+termination time matches the final trajectory point and elapsed time is measured
+from first contact. Energy evidence must satisfy
+`D = K_before + W_boundary - K_after` within the model's documented
+`1e-10 J + 1e-10` relative tolerance. Cross-record scalar and vector evidence
+uses explicit `1e-10` absolute and relative tolerances in both runtimes.
+Every event also requires one uniquely time-aligned trajectory point matching
+its impact post-state: first contact uses `impact`, later contacts use `bounce`,
+and a terminal zero-restitution contact uses `skid`. Eventful records cannot
+omit trajectory evidence.
+
+Input is bounded by UTF-8 byte length to 1 MiB. Output uses the shared
+11-decimal-place canonical numeric JSON policy with lexicographically sorted
+object keys. The shared golden fixture
+`ground_repeated_bounce_wire_golden_v1.json` has SHA-256
+`d8e7400632215220d3c5b1ccd7c57040f6023ebd72470b380b48b8f8fa99b9f9`.
+This boundary deliberately performs no file persistence, ground-request
+construction, regional execution, interpolation, or playback.

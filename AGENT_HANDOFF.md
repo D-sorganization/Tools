@@ -1044,3 +1044,34 @@ zero-warning ESLint, the 204-module production build, campaign-manifest
 validation plus eight manifest tests, documentation governance, module-size
 budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
 remains. Independent review is required before publication.
+
+## 2026-08-11 repeated-bounce evidence wire boundary
+
+Branch `feat/4271-repeated-bounce-wire` is a local, unpublished child of exact
+regional trajectory/export candidate
+`99b0739bdc3ece814ed6039e6ba31f7ac38c0227`. It adds the strict
+`ground-repeated-bounce-result/v1` executor-input evidence boundary that was
+missing between the qualified #4270 bounce solver and later #4271 regional
+execution. Python serializes and parses the complete `RepeatedBounceResult`;
+React provides an import-only parser and canonical serializer and executes no
+browser physics.
+
+The contract has exact keys at every level, rejects duplicate JSON object keys,
+enforces a 1 MiB UTF-8 bound, accepts only the frozen SI target frame, and
+validates request/model identities, the 64-character request fingerprint,
+event/impact/post-state trajectory correspondence, additive energy-ledger
+arithmetic, airborne segments, settled handoff, termination chronology, and
+warnings through the canonical record validators. A shared fixture pins
+byte-deterministic canonical numeric JSON and
+SHA-256 `d8e7400632215220d3c5b1ccd7c57040f6023ebd72470b380b48b8f8fa99b9f9`.
+
+This slice does not construct a ground request, execute bounce or regional
+physics, invoke an executor from either UI, persist files, interpolate or play
+back trajectories, or claim measured calibration, compiled parity, downstream
+parity, protected evidence, release, or #4267/#4271 completion. Local gates are
+green: 162 Python ground tests, 113 React files / 712 tests, focused pinned MyPy,
+Ruff/format, TypeScript type-check, zero-warning ESLint, and the 204-module
+production build. The inherited 500 kB build advisory remains. Independent
+review found four evidence-integrity blockers; all four were remediated with
+matched adversarial tests. A final independent review of the complete
+post-remediation diff remains required before any publication.
