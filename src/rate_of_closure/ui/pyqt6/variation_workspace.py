@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from functools import partial
 from typing import TYPE_CHECKING
 
 from PyQt6.QtWidgets import (
@@ -93,8 +94,22 @@ class VariationWorkspaceMixin:
                 f"Remember {metric} in the workspace's saved output focus. "
                 "The complete result remains available after every run."
             )
+            checkbox.toggled.connect(
+                partial(self._keep_output_focus_nonempty, checkbox)
+            )
             self._metric_layout.addWidget(checkbox, index // 2, index % 2)
             self._metric_checks[metric] = checkbox
+
+    def _keep_output_focus_nonempty(self, checkbox: QCheckBox, checked: bool) -> None:
+        """Reject removal of the final mode-valid saved-output selection."""
+        if checked or any(
+            candidate.isChecked() for candidate in self._metric_checks.values()
+        ):
+            return
+        checkbox.blockSignals(True)
+        checkbox.setChecked(True)
+        checkbox.blockSignals(False)
+        self._status.setText("At least one saved output metric must remain selected.")
 
     def analysis_execution(self) -> VariationAnalysisExecution:
         """Return the selected simultaneous/individual execution policy."""

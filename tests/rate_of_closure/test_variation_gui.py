@@ -160,6 +160,23 @@ class TestPlanRoundTrip:
         assert tab._metric_checks["carry_m"].isChecked()
         assert not tab._metric_checks["apex_m"].isChecked()
 
+    def test_saved_output_focus_keeps_one_metric_selected(
+        self, tab: VariationTab
+    ) -> None:
+        for checkbox in tab._metric_checks.values():
+            checkbox.setChecked(False)
+
+        selected = [
+            metric
+            for metric, checkbox in tab._metric_checks.items()
+            if checkbox.isChecked()
+        ]
+        assert len(selected) == 1
+        assert tab.variation_workspace_state().selected_output_metrics == tuple(
+            selected
+        )
+        assert "at least one" in tab._status.text().lower()
+
 
 class TestRunAndResults:
     def test_full_study_populates_every_results_view(

@@ -20,10 +20,14 @@ branch was rewritten.
   state and legacy fallbacks before applying, and derives the complete
   17-field swing output focus from the executor rather than a stale duplicate
   registry. The focus is persisted policy; complete results remain available.
+- Native focus controls preserve one selected output, matching React and
+  keeping every File operation inside the validated contract. Browser file
+  reads capture their selected type and a monotonic operation ID; stale
+  out-of-order reads cannot overwrite newer choices or change parser mode.
 - This slice stores no results, identity, optimizer outputs, or flight-run
   outputs; it does not qualify UpstreamDrift or close #4142/#4144/#4218.
   Protected review/CI and dependency-ordered release remain open. Post-review
-  gates pass 20 focused Python and 43 focused React tests, pinned MyPy 1.13,
+  gates pass 21 focused Python and 45 focused React tests, pinned MyPy 1.13,
   Ruff, TypeScript, zero-warning ESLint, the 210-module production build, 11
   campaign manifest tests, changed-file/module-size, docs, manifest-layout,
   changed-Python, JSON, and diff validation. A broader PyQt pair was stopped

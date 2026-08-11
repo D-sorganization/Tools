@@ -25,10 +25,17 @@ fallbacks. React's selectable swing outputs derive directly from the complete
 face-to-path, and spin-axis tilt. Both clients explicitly call the selector a
 saved output focus; it never filters or truncates canonical run/export data.
 
+A second independent review closed two interaction failures before
+publication. PyQt6 prevents removing the final saved-output selection, which
+keeps native File capture valid and matches the browser guard. Browser reads
+capture the selected file type and a monotonic operation ID, so stale
+out-of-order completions are ignored and later pickers cannot reinterpret an
+in-flight file.
+
 This does not persist results, identity, optimizer outputs, or flight-run
 results and does not close #4142/#4144/#4218. UpstreamDrift consumers,
 protected CI/review, and ordered release remain open. Post-review qualification
-passes 20 focused Python workspace/PyQt tests, 43 focused React
+passes 21 focused Python workspace/PyQt tests, 45 focused React
 workspace/variation tests, pinned MyPy 1.13, Ruff check/format, TypeScript,
 zero-warning ESLint, the 210-module production build, the 11-test
 campaign-manifest suite, changed-file and module-size budgets, docs,

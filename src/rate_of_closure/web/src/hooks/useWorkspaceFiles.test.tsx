@@ -54,6 +54,33 @@ const snapshot = () => {
   };
 };
 
+interface DeferredFileRead {
+  resolve: (text: string) => void;
+}
+
+const stubDeferredFileReaders = (): DeferredFileRead[] => {
+  const reads: DeferredFileRead[] = [];
+  vi.stubGlobal(
+    "FileReader",
+    class {
+      result: string | null = null;
+      error: Error | null = null;
+      onload: ((event: ProgressEvent<FileReader>) => void) | null = null;
+      onerror: ((event: ProgressEvent<FileReader>) => void) | null = null;
+
+      readAsText(): void {
+        reads.push({
+          resolve: (text: string) => {
+            this.result = text;
+            this.onload?.(new ProgressEvent("load") as ProgressEvent<FileReader>);
+          },
+        });
+      }
+    },
+  );
+  return reads;
+};
+
 afterEach(() => {
   vi.restoreAllMocks();
   vi.unstubAllGlobals();
@@ -259,23 +286,7 @@ describe("browser workspace file controller", () => {
       createdAtUtc: "2026-08-11T07:00:00Z",
       modifiedAtUtc: "2026-08-11T07:00:00Z",
     });
-    let releaseRead: (() => void) | undefined;
-    vi.stubGlobal(
-      "FileReader",
-      class {
-        result: string | null = null;
-        error: Error | null = null;
-        onload: ((event: ProgressEvent<FileReader>) => void) | null = null;
-        onerror: ((event: ProgressEvent<FileReader>) => void) | null = null;
-
-        readAsText(): void {
-          releaseRead = () => {
-            this.result = encoded;
-            this.onload?.(new ProgressEvent("load") as ProgressEvent<FileReader>);
-          };
-        }
-      },
-    );
+    const reads = stubDeferredFileReaders();
     const applySnapshot = vi.fn();
     const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
     const initial = snapshot();
@@ -303,7 +314,7 @@ describe("browser workspace file controller", () => {
     });
     rerender({ current: changed });
 
-    act(() => releaseRead?.());
+    act(() => reads[0].resolve(encoded));
 
     await waitFor(() => expect(confirm).toHaveBeenCalledTimes(1));
     expect(applySnapshot).not.toHaveBeenCalled();
@@ -331,23 +342,7 @@ describe("browser workspace file controller", () => {
     delete legacy.model_session.data.variation_study;
     legacy.variation_plan = null;
     const encoded = JSON.stringify(legacy);
-    let releaseRead: (() => void) | undefined;
-    vi.stubGlobal(
-      "FileReader",
-      class {
-        result: string | null = null;
-        error: Error | null = null;
-        onload: ((event: ProgressEvent<FileReader>) => void) | null = null;
-        onerror: ((event: ProgressEvent<FileReader>) => void) | null = null;
-
-        readAsText(): void {
-          releaseRead = () => {
-            this.result = encoded;
-            this.onload?.(new ProgressEvent("load") as ProgressEvent<FileReader>);
-          };
-        }
-      },
-    );
+    const reads = stubDeferredFileReaders();
     const applySnapshot = vi.fn();
     vi.spyOn(window, "confirm").mockReturnValue(true);
     const { result, rerender } = renderHook(
@@ -370,9 +365,96 @@ describe("browser workspace file controller", () => {
     });
     rerender({ current: latest });
 
-    act(() => releaseRead?.());
+    act(() => reads[0].resolve(encoded));
 
     await waitFor(() => expect(applySnapshot).toHaveBeenCalledTimes(1));
     expect(applySnapshot.mock.calls[0][0].variation).toEqual(latest.variation);
+  });
+
+  it("ignores an older file read that completes after a newer open", async () => {
+    const first = {
+      ...snapshot(),
+      scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -700 },
+    };
+    const second = {
+      ...snapshot(),
+      scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -900 },
+    };
+    const encode = (value: ReturnType<typeof snapshot>, id: string) =>
+      createWorkspaceDocument(value, {
+        documentId: id,
+        title: id,
+        appVersion: "1.14.34",
+        createdAtUtc: "2026-08-11T07:00:00Z",
+        modifiedAtUtc: "2026-08-11T07:00:00Z",
+      });
+    const firstText = encode(first, "workspace.first");
+    const secondText = encode(second, "workspace.second");
+    const reads = stubDeferredFileReaders();
+    const applySnapshot = vi.fn();
+    const { result } = renderHook(() =>
+      useWorkspaceFiles({
+        snapshot: snapshot(),
+        initialSnapshot: snapshot(),
+        applySnapshot,
+        applyViewWorkspace: vi.fn(),
+      }),
+    );
+    const select = (text: string, name: string) => {
+      const element = document.createElement("input");
+      Object.defineProperty(element, "files", {
+        value: [new File([text], name)],
+      });
+      result.current.handleCommand(APP_COMMAND_ID.fileOpenWorkspace);
+      result.current.onFileChange({ currentTarget: element } as never);
+    };
+    act(() => {
+      select(firstText, "first.roc-workspace.json");
+      select(secondText, "second.roc-workspace.json");
+    });
+
+    act(() => reads[1].resolve(secondText));
+    await waitFor(() => expect(applySnapshot).toHaveBeenCalledWith(second));
+    act(() => reads[0].resolve(firstText));
+
+    await waitFor(() => expect(applySnapshot).toHaveBeenCalledTimes(1));
+  });
+
+  it("keeps the selected file mode when another picker opens during the read", async () => {
+    const opened = {
+      ...snapshot(),
+      scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -650 },
+    };
+    const encoded = createWorkspaceDocument(opened, {
+      documentId: "workspace.mode.capture",
+      title: "Captured Mode",
+      appVersion: "1.14.34",
+      createdAtUtc: "2026-08-11T07:00:00Z",
+      modifiedAtUtc: "2026-08-11T07:00:00Z",
+    });
+    const reads = stubDeferredFileReaders();
+    const applySnapshot = vi.fn();
+    const applyViewWorkspace = vi.fn();
+    const { result } = renderHook(() =>
+      useWorkspaceFiles({
+        snapshot: snapshot(),
+        initialSnapshot: snapshot(),
+        applySnapshot,
+        applyViewWorkspace,
+      }),
+    );
+    const element = document.createElement("input");
+    Object.defineProperty(element, "files", {
+      value: [new File([encoded], "captured.roc-workspace.json")],
+    });
+    act(() => {
+      result.current.handleCommand(APP_COMMAND_ID.fileOpenWorkspace);
+      result.current.onFileChange({ currentTarget: element } as never);
+      result.current.handleCommand(APP_COMMAND_ID.fileImportWorkspace);
+      reads[0].resolve(encoded);
+    });
+
+    await waitFor(() => expect(applySnapshot).toHaveBeenCalledWith(opened));
+    expect(applyViewWorkspace).not.toHaveBeenCalled();
   });
 });

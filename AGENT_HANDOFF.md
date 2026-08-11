@@ -25,10 +25,17 @@ and the React swing-output registry now derives from the executor's complete
 clients label metric selection as a saved output focus; every run and export
 retains the complete canonical result.
 
+A second independent review closed two interaction failures before
+publication. PyQt6 now prevents removal of the final saved-output selection,
+matching React and keeping File commands inside the valid workspace contract.
+Browser file reads capture their selected file type and use a monotonic
+operation ID, so a slower earlier read cannot overwrite a newer Open and a
+later picker cannot reinterpret an in-flight file under the wrong mode.
+
 This is bounded #4142/#4144/#4218 specification persistence. It does not store
 results or identity, add optimizer outputs, qualify UpstreamDrift consumers, or
 close any issue/epic. Protected CI/review and ordered release remain open.
-Post-review qualification passes 20 focused Python workspace/PyQt tests, 43
+Post-review qualification passes 21 focused Python workspace/PyQt tests, 45
 focused React workspace/variation tests, pinned MyPy 1.13, Ruff check/format,
 TypeScript, zero-warning ESLint, the 210-module production build, the 11-test
 campaign-manifest suite, changed-file and module-size budgets, docs,

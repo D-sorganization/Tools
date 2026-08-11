@@ -86,6 +86,7 @@ export function useWorkspaceFiles(
 ): WorkspaceFileController {
   const input = useRef<HTMLInputElement>(null);
   const mode = useRef<PickerMode>("workspace");
+  const readSequence = useRef(0);
   const optionsRef = useRef(options);
   optionsRef.current = options;
   const [baseline, setBaseline] = useState(() =>
@@ -192,10 +193,14 @@ export function useWorkspaceFiles(
       const file = event.currentTarget.files?.[0];
       event.currentTarget.value = "";
       if (file === undefined) return;
+      const selectedMode = mode.current;
+      readSequence.current += 1;
+      const operationId = readSequence.current;
       void readFileText(file)
         .then((text) => {
+          if (operationId !== readSequence.current) return;
           try {
-            if (mode.current === "view") {
+            if (selectedMode === "view") {
               const parsed = importViewWorkspace(text);
               if (!confirmDiscard("import the selected view layout")) return;
               optionsRef.current.applyViewWorkspace(parsed);
@@ -205,6 +210,7 @@ export function useWorkspaceFiles(
             }
             void import("../model/workspaceSession")
               .then(({ parseWorkspaceDocument }) => {
+                if (operationId !== readSequence.current) return;
                 const current = optionsRef.current;
                 const parsed = parseWorkspaceDocument(text, {
                   legacySimulationFallback: current.snapshot.simulation,
@@ -218,6 +224,7 @@ export function useWorkspaceFiles(
                 setError(null);
               })
               .catch((caught: unknown) => {
+                if (operationId !== readSequence.current) return;
                 setError(
                   caught instanceof Error
                     ? caught.message
@@ -233,6 +240,7 @@ export function useWorkspaceFiles(
           }
         })
         .catch((caught: unknown) => {
+          if (operationId !== readSequence.current) return;
           setError(
             caught instanceof Error
               ? caught.message

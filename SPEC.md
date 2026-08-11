@@ -49,6 +49,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   parses legacy sessions against the latest live fallback. Selectable swing
   outputs derive from the executor's complete 17-field registry rather than a
   second manually maintained list.
+- Native controls preserve at least one selected output. Browser file reads
+  bind their selected parser mode and a monotonic operation ID at selection
+  time; later commands cannot reinterpret an in-flight file and stale reads
+  cannot overwrite a newer completed Open.
 - Simulation setup is the only authority for Ground/Tee context. Workspace
   variation plans reject a duplicate ball setup, and a Tee Height input is
   invalid unless the separately persisted setup selects Tee support.
