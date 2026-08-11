@@ -60,20 +60,36 @@ def write_workspace_atomic(
         return False
     serialized = workspace_to_json(document)
     path = _destination_path(destination)
+    _atomic_replace_text(serialized, path)
+    return True
+
+
+def _atomic_replace_text(text: str, path: Path) -> None:
+    """Stage, flush, and replace one validated destination path."""
     descriptor, temporary_name = tempfile.mkstemp(
         prefix=f".{path.name}.", suffix=".tmp", dir=path.parent
     )
     temporary = Path(temporary_name)
     try:
         with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as handle:
-            handle.write(serialized)
+            handle.write(text)
             handle.flush()
             os.fsync(handle.fileno())
         os.replace(temporary, path)
     except Exception:
         temporary.unlink(missing_ok=True)
         raise
+
+
+def write_text_atomic(text: str, destination: str | Path | None) -> bool:
+    """Atomically replace a UTF-8 text file, or return false on cancellation."""
+    if destination is None:
+        return False
+    if not isinstance(text, str):
+        raise TypeError("workspace export must be text")
+    path = _destination_path(destination)
+    _atomic_replace_text(text, path)
     return True
 
 
-__all__ = ["read_workspace", "write_workspace_atomic"]
+__all__ = ["read_workspace", "write_text_atomic", "write_workspace_atomic"]

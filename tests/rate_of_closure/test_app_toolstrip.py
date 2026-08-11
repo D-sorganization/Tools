@@ -49,26 +49,112 @@ def test_real_top_toolstrip_exposes_stable_file_view_and_tools_surfaces(window) 
         assert button.menu() is not None
 
 
-@pytest.mark.parametrize(
-    "command_id",
-    (
+def test_implemented_file_commands_are_enabled_and_recent_remains_honest(
+    window,
+) -> None:  # type: ignore[no-untyped-def]
+    supported = (
         AppCommandId.FILE_NEW_WORKSPACE,
         AppCommandId.FILE_OPEN_WORKSPACE,
-        AppCommandId.FILE_OPEN_RECENT_WORKSPACE,
         AppCommandId.FILE_SAVE_WORKSPACE,
         AppCommandId.FILE_SAVE_WORKSPACE_AS,
         AppCommandId.FILE_IMPORT_WORKSPACE,
         AppCommandId.FILE_EXPORT_WORKSPACE,
         AppCommandId.FILE_CLOSE_WORKSPACE,
-    ),
-)
-def test_file_commands_are_truthfully_disabled_until_project_contract_exists(
-    window, command_id: AppCommandId
+    )
+    assert all(_action(window, command_id).isEnabled() for command_id in supported)
+    assert all(_action(window, command_id).toolTip() for command_id in supported)
+    recent = _action(window, AppCommandId.FILE_OPEN_RECENT_WORKSPACE)
+    assert not recent.isEnabled()
+    assert "no recent workspace" in recent.toolTip().lower()
+    assert recent.statusTip() == recent.toolTip()
+
+
+def test_save_as_and_open_restore_supported_state_atomically(
+    window, tmp_path, monkeypatch
 ) -> None:  # type: ignore[no-untyped-def]
-    action = _action(window, command_id)
-    assert not action.isEnabled()
-    assert "project document contract" in action.toolTip().lower()
-    assert action.statusTip() == action.toolTip()
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    target = tmp_path / "session.roc-workspace.json"
+    monkeypatch.setattr(
+        QFileDialog,
+        "getSaveFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    _action(window, AppCommandId.FILE_SAVE_WORKSPACE_AS).trigger()
+    saved = window._controls.scenario()
+    assert target.is_file()
+    assert not window.workspace_is_dirty()
+    recent = _action(window, AppCommandId.FILE_OPEN_RECENT_WORKSPACE)
+    assert recent.isEnabled()
+    assert str(target) in recent.toolTip()
+
+    window._controls.apply_preset("Zero rotation (control)")
+    assert window.workspace_is_dirty()
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda *_args, **_kwargs: QMessageBox.StandardButton.Discard,
+    )
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._controls.scenario() == saved
+    assert not window.workspace_is_dirty()
+
+    window._controls.apply_preset("Zero rotation (control)")
+    recent.trigger()
+
+    assert window._controls.scenario() == saved
+    assert not window.workspace_is_dirty()
+
+
+def test_cancelled_dirty_new_preserves_live_state(window, monkeypatch) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QMessageBox
+
+    window._controls.apply_preset("Zero rotation (control)")
+    dirty = window._controls.scenario()
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda *_args, **_kwargs: QMessageBox.StandardButton.Cancel,
+    )
+
+    _action(window, AppCommandId.FILE_NEW_WORKSPACE).trigger()
+
+    assert window._controls.scenario() == dirty
+    assert window.workspace_is_dirty()
+
+
+def test_invalid_open_reports_error_without_partial_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    target = tmp_path / "invalid.roc-workspace.json"
+    target.write_text('{"schema":"wrong"}', encoding="utf-8")
+    before = window._capture_workspace_state()
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and warnings[0][0] == "Open Failed"
 
 
 def test_glossary_is_first_class_and_recovers_a_hidden_module(window) -> None:  # type: ignore[no-untyped-def]

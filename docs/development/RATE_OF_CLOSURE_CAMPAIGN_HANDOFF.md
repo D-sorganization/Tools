@@ -4,6 +4,32 @@ Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 Live workspace File-adapter continuation
+
+- Worktree `Tools-worktrees/workspace-file-adapters` and branch
+  `feat/4225-workspace-file-adapters` start at exact draft PR #4330 head
+  `d8176bb5863a35725199bb8357a5f000f9bdd3ba`.
+- PyQt6 and React now connect New, Open, Save As, strict compositor-layout
+  Import/Export, and Close to real validated state. Native adds atomic Save and
+  persisted Open Recent. Browser Save/Recent remain honestly disabled because
+  the browser surface cannot safely overwrite or retain a filesystem path.
+- The whole-workspace live slice is impact scenario, club, units, primary
+  navigation, and compositor. Parsing finishes before mutation; invalid or
+  cancelled reads preserve state, dirty destructive commands confirm first,
+  native writes are atomic, and unsupported torque/variation payloads fail
+  closed.
+- Remaining work is explicit: add strict mappers for simulation-local ball,
+  target, torque-editor, optimizer, variation-run, and flight-run state; qualify
+  installed UpstreamDrift consumers; pass protected CI/review and merge in
+  dependency order. This slice does not close #4218 or #4225.
+- Local evidence: 921/921 Rate-of-Closure Python tests; focused MyPy, Ruff, and
+  Black; React TypeScript, zero-warning ESLint, 116 files / 693 tests, and the
+  201-module production build; plus baseline-aware module-size, docs,
+  linked-debt, changed-Python policy, changed-test assertion, and diff gates.
+  The legacy full-tree 500-LOC scanner has no loaded grandfather baseline in
+  this checkout and reports 232 pre-existing files; all newly added modules
+  remain below 500 lines.
+
 ## 2026-08-10 Repaired compositor-parent propagation into persistence child
 
 - Continuation branch `feat/4225-multiview-persistence` now normally

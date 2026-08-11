@@ -3,6 +3,37 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Live PyQt6/React workspace File adapters
+
+Isolated branch `feat/4225-workspace-file-adapters` starts at exact draft PR
+#4330 head `d8176bb5863a35725199bb8357a5f000f9bdd3ba`; no parent or remote branch was
+rewritten. PyQt6 and React now route visible File commands through the existing
+strict whole-workspace and compositor contracts. Both support New, Open, Save
+As, strict view-layout Import/Export, and Close. PyQt6 additionally provides
+atomic Save-over-current-path and QSettings-backed Recent paths; browser Save
+and Recent stay disabled with explicit platform reasons.
+
+Whole-workspace reads restore the impact scenario, club, units, primary module
+order/visibility/active selection, and compositor only after complete
+validation. Native writes use atomic replacement. Invalid reads, cancelled
+dialogs, and rejected dirty-session prompts preserve live state; application
+failure rolls back the supported slice. Unsupported torque profiles and
+variation plans fail closed.
+
+This is a coherent live adapter, not completion of #4218/#4225. Simulation-tab
+ball/target/torque-editor state, optimizer inputs, variation runs, flight runs,
+and other domain payloads still require explicit strict mappers. Browser
+filesystem-handle persistence, installed UpstreamDrift parity, protected CI,
+review, and merge remain open. The complete Rate-of-Closure Python suite passes
+921 tests; focused MyPy, Ruff, and Black gates pass; React TypeScript and
+zero-warning ESLint pass; all 116 Vitest files / 693 tests pass; and the
+201-module Vite production build passes. Repository module-size, documentation,
+linked-debt, explicit changed-Python policy, changed-test assertion, and diff
+checks pass. The older full-tree 500-LOC check is not a usable delta gate in
+this checkout because it loads no grandfather baseline and reports 232
+pre-existing repository files; every new module in this slice is below 500
+lines and the active 1,200-line baseline-aware module gate passes.
+
 ## 2026-08-10 Repaired compositor-parent propagation into persistence child
 
 Continuation branch `feat/4225-multiview-persistence` now normally incorporates

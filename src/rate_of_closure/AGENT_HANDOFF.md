@@ -3,6 +3,36 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Production File-command adapters
+
+Branch `feat/4225-workspace-file-adapters` is isolated from exact draft PR
+#4330 head `d8176bb5863a35725199bb8357a5f000f9bdd3ba`. The existing strict
+`rate_of_closure.workspace/2` envelope and `rate_of_closure.view_workspace/1`
+document now drive production PyQt6 and React File operations. New/Open/Save
+As/view Import/view Export/Close are available on both; native also owns atomic
+Save and persisted Recent. Browser Save/Recent expose platform-specific disabled
+reasons.
+
+The live whole-session mapper covers the impact scenario, club, units, primary
+module presentation, and compositor. Complete validation precedes mutation;
+dirty New/Open/Close are protected, failed native application restores the
+prior supported state, and unsupported torque-profile/variation-plan payloads
+are rejected. Native writes replace atomically and Recent changes only after a
+successful save/open.
+
+Do not infer full workspace coverage: ball setup, target, torque editor,
+optimizer, variation runs, flight runs, and other simulation-tab-local state
+still require strict domain adapters. Installed-consumer parity, protected CI,
+review, dependency integration, and #4218/#4225 completion remain open.
+
+Local qualification passes 921 Rate-of-Closure Python tests, focused MyPy,
+Ruff, and Black, React TypeScript and zero-warning ESLint, all 116 Vitest files
+/ 693 tests, the 201-module Vite build, and baseline-aware module-size, docs,
+linked-debt, changed-Python policy, changed-test assertion, and diff checks.
+The legacy full-tree 500-LOC script loads no grandfather baseline in this
+checkout and therefore reports 232 pre-existing files; all new modules in this
+slice are below 500 lines.
+
 ## 2026-08-10 Repaired compositor-parent propagation into persistence child
 
 Continuation branch `feat/4225-multiview-persistence` now normally incorporates

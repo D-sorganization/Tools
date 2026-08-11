@@ -137,6 +137,33 @@ class WorkspaceNavigationMixin:
         self._tabs.setCurrentIndex(self._module_index(_DEFAULT_TAB_IDS[0]))
         self._persist_primary_navigation()
 
+    def apply_primary_navigation(
+        self,
+        order: tuple[str, ...],
+        visible: tuple[str, ...],
+        active: str,
+    ) -> None:
+        """Atomically apply one fully specified native module layout."""
+        if len(order) != len(_DEFAULT_TAB_IDS) or set(order) != set(_DEFAULT_TAB_IDS):
+            raise ValueError("workspace module order is incomplete")
+        if (
+            not visible
+            or len(set(visible)) != len(visible)
+            or not set(visible).issubset(order)
+            or not set(_REQUIRED_TAB_IDS).issubset(visible)
+            or active not in visible
+        ):
+            raise ValueError("workspace module visibility is invalid")
+        bar = self._primary_tab_bar()
+        for destination, module_id in enumerate(order):
+            bar.moveTab(self._module_index(module_id), destination)
+        for module_id in _DEFAULT_TAB_IDS:
+            self._tabs.setTabVisible(
+                self._module_index(module_id), module_id in visible
+            )
+        self._tabs.setCurrentIndex(self._module_index(active))
+        self._persist_primary_navigation()
+
     def _current_primary_tab_id(self) -> str:
         """Return the selected stable ID, with a deterministic safe fallback."""
         index = self._tabs.currentIndex()

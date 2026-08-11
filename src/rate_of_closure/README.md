@@ -85,6 +85,25 @@ clickable reference-frame notes. Web numeric fields select the complete value
 on focus and accept intermediate signed decimal drafts (for example, `-12.5`
 degrees of spin-axis tilt) before committing on Enter or focus loss.
 
+## Workspace Files
+
+The top File menu stores and restores the supported explorer calculation
+state, module presentation, and multi-view compositor in a strict versioned
+workspace document. PyQt6 supports New, Open, persisted Open Recent, atomic
+Save/Save As, strict view-layout Import/Export, and Close. The browser supports
+the same workflow through Open, Save As downloads, and strict view-layout
+Import/Export; ordinary browser security means Save-over-current-path and
+Recent remain visibly unavailable rather than pretending to work.
+
+Open and Import validate the complete file before changing live state. Invalid
+files show an error and leave the session untouched. New, Open, and Close
+protect unsaved changes, and cancelled operations do not mutate the session.
+The current whole-workspace adapter covers impact scenario, club, units,
+primary-module layout, and compositor state. Simulation-tab-local ball, target,
+torque-editor, optimizer, variation-run, and flight-run state are not yet part
+of this document; unsupported torque-profile or variation-plan payloads are
+rejected instead of being silently discarded.
+
 ## Build a Standalone Executable
 
 Users can package the explorer and experiment without a Python

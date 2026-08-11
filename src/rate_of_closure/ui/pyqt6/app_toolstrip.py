@@ -25,9 +25,24 @@ from PyQt6.QtWidgets import (
 from rate_of_closure.application.commands import AppCommandId, CommandAvailability
 from rate_of_closure.ui.pyqt6.workspace_navigation import PrimaryModuleEntry
 
-_PROJECT_DISABLED_REASON = (
-    "Unavailable until the canonical project document contract is implemented."
-)
+_RECENT_DISABLED_REASON = "No recent workspace is available in this session."
+_FILE_COMMAND_HINTS = {
+    AppCommandId.FILE_NEW_WORKSPACE: "Create a clean explorer workspace",
+    AppCommandId.FILE_OPEN_WORKSPACE: "Open a validated explorer workspace file",
+    AppCommandId.FILE_SAVE_WORKSPACE: "Save the current explorer workspace atomically",
+    AppCommandId.FILE_SAVE_WORKSPACE_AS: (
+        "Choose a path and save the current explorer workspace atomically"
+    ),
+    AppCommandId.FILE_IMPORT_WORKSPACE: (
+        "Import a validated cross-client compositor view layout"
+    ),
+    AppCommandId.FILE_EXPORT_WORKSPACE: (
+        "Export the current compositor view layout atomically"
+    ),
+    AppCommandId.FILE_CLOSE_WORKSPACE: (
+        "Close the named workspace after resolving unsaved changes"
+    ),
+}
 _MODULE_ID_ROLE = Qt.ItemDataRole.UserRole
 
 
@@ -48,6 +63,30 @@ class ToolstripHost(Protocol):
 
     def show_compositor_view(self, view_id: str) -> None:
         """Show one stable simulation view in the synchronized compositor."""
+
+    def new_workspace(self) -> None:
+        """Create a clean workspace."""
+
+    def open_workspace(self) -> None:
+        """Choose and open a whole workspace."""
+
+    def open_recent_workspace(self) -> None:
+        """Open the most recent workspace when available."""
+
+    def save_workspace(self) -> bool:
+        """Save the current whole workspace."""
+
+    def save_workspace_as(self) -> bool:
+        """Choose a destination and save the whole workspace."""
+
+    def import_workspace(self) -> None:
+        """Import a cross-client compositor document."""
+
+    def export_workspace(self) -> None:
+        """Export a cross-client compositor document."""
+
+    def close_workspace(self) -> None:
+        """Close the current named workspace."""
 
 
 class ModuleManagerHost(Protocol):
@@ -95,6 +134,19 @@ class ApplicationToolstrip(QToolBar):
         """Return the currently displayed shortcut dialog, if any."""
         return self._shortcut_dialog
 
+    def set_open_recent_available(self, available: bool, path: str = "") -> None:
+        """Reflect whether the native controller owns a usable recent path."""
+        action = self.command(AppCommandId.FILE_OPEN_RECENT_WORKSPACE)
+        if available:
+            self._apply_availability(action, CommandAvailability.available())
+            hint = f"Open the most recent workspace: {path}"
+            action.setToolTip(hint)
+            action.setStatusTip(hint)
+        else:
+            self._apply_availability(
+                action, CommandAvailability.disabled(_RECENT_DISABLED_REASON)
+            )
+
     def bind_theme_menu(self, menu: QMenu) -> None:
         """Attach the launcher-owned theme menu without duplicating its state."""
         if menu is None:
@@ -138,7 +190,7 @@ class ApplicationToolstrip(QToolBar):
     def _build(self) -> None:
         """Assemble the top-level command groups and direct actions."""
         file_menu = QMenu("File", self)
-        self._add_disabled_file_commands(file_menu)
+        self._add_file_commands(file_menu)
         self._add_menu_button("File", "fileMenuButton", file_menu)
         self._build_view_menu()
         glossary, shortcuts = self._build_tools_menu()
@@ -226,39 +278,79 @@ class ApplicationToolstrip(QToolBar):
         self._add_menu_button("Tools", "toolsMenuButton", self._tools_menu)
         return glossary, shortcuts
 
-    def _add_disabled_file_commands(self, menu: QMenu) -> None:
+    def _add_file_commands(self, menu: QMenu) -> None:
+        """Register implemented native File operations and one honest gap."""
         commands = (
-            (AppCommandId.FILE_NEW_WORKSPACE, "New", QKeySequence.StandardKey.New),
-            (AppCommandId.FILE_OPEN_WORKSPACE, "Open…", QKeySequence.StandardKey.Open),
-            (AppCommandId.FILE_OPEN_RECENT_WORKSPACE, "Open Recent", None),
-            (AppCommandId.FILE_SAVE_WORKSPACE, "Save", QKeySequence.StandardKey.Save),
+            (
+                AppCommandId.FILE_NEW_WORKSPACE,
+                "New",
+                QKeySequence.StandardKey.New,
+                self._host.new_workspace,
+            ),
+            (
+                AppCommandId.FILE_OPEN_WORKSPACE,
+                "Open…",
+                QKeySequence.StandardKey.Open,
+                self._host.open_workspace,
+            ),
+            (
+                AppCommandId.FILE_OPEN_RECENT_WORKSPACE,
+                "Open Recent",
+                None,
+                self._host.open_recent_workspace,
+            ),
+            (
+                AppCommandId.FILE_SAVE_WORKSPACE,
+                "Save",
+                QKeySequence.StandardKey.Save,
+                self._host.save_workspace,
+            ),
             (
                 AppCommandId.FILE_SAVE_WORKSPACE_AS,
                 "Save As…",
                 QKeySequence.StandardKey.SaveAs,
+                self._host.save_workspace_as,
             ),
-            (AppCommandId.FILE_IMPORT_WORKSPACE, "Import…", None),
-            (AppCommandId.FILE_EXPORT_WORKSPACE, "Export…", None),
+            (
+                AppCommandId.FILE_IMPORT_WORKSPACE,
+                "Import View Layout…",
+                None,
+                self._host.import_workspace,
+            ),
+            (
+                AppCommandId.FILE_EXPORT_WORKSPACE,
+                "Export View Layout…",
+                None,
+                self._host.export_workspace,
+            ),
             (
                 AppCommandId.FILE_CLOSE_WORKSPACE,
                 "Close",
                 QKeySequence.StandardKey.Close,
+                self._host.close_workspace,
             ),
         )
-        for command_id, label, shortcut in commands:
-            action = self._make_action(command_id, label)
+        for command_id, label, shortcut, callback in commands:
+            action = self._make_action(command_id, label, callback)
             if shortcut is not None:
                 action.setShortcut(QKeySequence(shortcut))
-            self._apply_availability(
-                action, CommandAvailability.disabled(_PROJECT_DISABLED_REASON)
+            availability = (
+                CommandAvailability.disabled(_RECENT_DISABLED_REASON)
+                if command_id is AppCommandId.FILE_OPEN_RECENT_WORKSPACE
+                else CommandAvailability.available()
             )
+            self._apply_availability(action, availability)
+            hint = _FILE_COMMAND_HINTS.get(command_id)
+            if hint:
+                action.setToolTip(hint)
+                action.setStatusTip(hint)
             menu.addAction(action)
 
     def _make_action(
         self,
         command_id: AppCommandId,
         label: str,
-        callback: Callable[[], None] | None = None,
+        callback: Callable[[], object] | None = None,
         shortcut: str | None = None,
     ) -> QAction:
         action = QAction(label, self)

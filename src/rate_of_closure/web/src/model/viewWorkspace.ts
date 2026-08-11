@@ -158,7 +158,7 @@ export function toggleWorkspaceView(current: ViewWorkspace, kind: ViewKind): Vie
   };
 }
 
-function documentFor(workspace: ViewWorkspace): Record<string, unknown> {
+export function viewWorkspaceDocument(workspace: ViewWorkspace): Record<string, unknown> {
   return {
     format: FORMAT,
     layout: workspace.layout,
@@ -231,7 +231,7 @@ function strictWorkspaceDocument(value: unknown): ViewWorkspace {
 
 /** Serialize a strict, versioned compositor document for file/workspace adapters. */
 export function exportViewWorkspace(workspace: ViewWorkspace): string {
-  const document = documentFor(workspace);
+  const document = viewWorkspaceDocument(workspace);
   strictWorkspaceDocument(document);
   return `${JSON.stringify(document, null, 2)}\n`;
 }
@@ -242,6 +242,11 @@ export function importViewWorkspace(text: string): ViewWorkspace {
     throw new TypeError("workspace import must be non-empty JSON text");
   }
   return strictWorkspaceDocument(JSON.parse(text));
+}
+
+/** Validate one already-parsed compositor document without recovery. */
+export function viewWorkspaceFromDocument(document: unknown): ViewWorkspace {
+  return strictWorkspaceDocument(document);
 }
 
 export function loadViewWorkspace(storage?: StorageReader | null): ViewWorkspace {
@@ -267,7 +272,7 @@ export function saveViewWorkspace(
       ? (typeof window === "undefined" ? null : window.localStorage)
       : storage;
     if (target === null) return false;
-    target.setItem(VIEW_WORKSPACE_STORAGE_KEY, JSON.stringify(documentFor(workspace)));
+    target.setItem(VIEW_WORKSPACE_STORAGE_KEY, JSON.stringify(viewWorkspaceDocument(workspace)));
     return true;
   } catch {
     return false;

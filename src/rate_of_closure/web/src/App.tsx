@@ -1,10 +1,14 @@
 /** Rate of Closure Impact Explorer — shareable web application shell. */
 
+import { useRef } from "react";
+
 import { AppToolstrip } from "./components/AppToolstrip";
 import { PrimaryViewTabs } from "./components/PrimaryViewTabs";
 import { PrimaryWorkspacePanel } from "./components/PrimaryWorkspacePanel";
 import { useAppWorkspace } from "./hooks/useAppWorkspace";
 import { useImpactAppModel } from "./hooks/useImpactAppModel";
+import { useWorkspaceFiles } from "./hooks/useWorkspaceFiles";
+import { generatedHeadFor } from "./model/clubHeadGeneration";
 import { HELP_TEXTS } from "./model/helptext";
 import { primaryViewLabel, type PrimaryViewId } from "./model/viewPreferences";
 
@@ -61,6 +65,30 @@ function AppFooter() {
 export default function App() {
   const workspace = useAppWorkspace();
   const model = useImpactAppModel();
+  const snapshot = {
+    scenario: model.scenario,
+    club: model.clubSpec,
+    units: model.units,
+    modules: workspace.viewState,
+    viewWorkspace: workspace.viewWorkspace,
+  };
+  const initialSnapshot = useRef(snapshot);
+  const files = useWorkspaceFiles({
+    snapshot,
+    initialSnapshot: initialSnapshot.current,
+    applySnapshot: (next) => {
+      model.setScenario(next.scenario);
+      model.setClubSpec(next.club);
+      model.setGeneratedHead(generatedHeadFor(next.club));
+      model.setUnits(next.units);
+      workspace.setViewState(next.modules);
+      workspace.setViewWorkspace(next.viewWorkspace);
+    },
+    applyViewWorkspace: workspace.setViewWorkspace,
+  });
+  const runCommand = (command: Parameters<typeof workspace.handleCommand>[0]) => {
+    if (!files.handleCommand(command)) workspace.handleCommand(command);
+  };
   const active = workspace.viewState.active;
   const openGlossary = (term: string | undefined) => {
     model.setGlossaryTerm(term);
@@ -72,8 +100,12 @@ export default function App() {
       <AppToolstrip moduleState={workspace.viewState} theme={workspace.theme}
         shortcutHelpOpen={workspace.shortcutHelpOpen}
         onModuleStateChange={workspace.setViewState}
-        onCommand={workspace.handleCommand}
-        onShortcutHelpOpenChange={workspace.setShortcutHelpOpen} />
+        onCommand={runCommand}
+        onShortcutHelpOpenChange={workspace.setShortcutHelpOpen}
+        fileStatus={files.dirty ? "Unsaved workspace changes" : files.status}
+        fileError={files.error} />
+      <input ref={files.fileInputRef} type="file" accept={files.fileAccept}
+        aria-label="Workspace file chooser" hidden onChange={files.onFileChange} />
       <AppHeader />
       <PrimaryViewTabs state={workspace.viewState}
         onActiveChange={workspace.activatePrimaryView}
