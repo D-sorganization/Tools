@@ -1,5 +1,36 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4192/#4273 post-ground spatial-target projection
+
+- The clean local candidate starts from exact published PR #4361 head
+  `81de044075a4f72c6da8fedb972437df79a06ab8` and leaves the parallel
+  ground-playback slice untouched. Its UI-neutral adapter accepts only exact
+  pipeline-or-transfer evidence and an exact existing `SpatialTarget`, while
+  reusing #4361's promoted complete-rest qualifier and evidence attributes.
+- Numerics exist only for regional `COMPLETE` plus ground `COMPLETE/REST` with
+  a summary. The output records the sole ground-v1 `GroundFrame.TARGET`
+  (x-downrange/y-up/z-right), retains final x/z, replaces terminal ball-center
+  y exactly once with the target's declared course-surface elevation, and then
+  delegates geometry and signed long/high/right residuals to
+  `SpatialTarget.miss`. App- and flight-authored targets are equivalent.
+- Aerial targets are typed `AERIAL_REQUIRES_FLIGHT_TRAJECTORY`; transfer,
+  non-settled bounce, regional cancelled/failed/partial, non-rest,
+  `LEFT_SURFACE`, missing-summary, and censored outcomes retain null numerics
+  with exact availability/phase/reason/frame/model/digest evidence. A bounded
+  ordered scalar ensemble exposes hold, miss, downrange, elevation, and
+  lateral results with deterministic row identity and provenance.
+- RED captured the absent module. Sixteen new focused tests and seven parent
+  adapter tests pass; all 1,315 selected Rate/flight/ground tests pass with 14
+  environment-only Hypothesis collection warnings and one inherited
+  polynomial-generator legend warning. Strict MyPy, focused Ruff,
+  Bandit, campaign-manifest validation and eight tests, documentation,
+  blocking-quality, minimum-test, changed-Python, 400-line module-size,
+  changed-test assertion, placeholder, and diff gates pass. No PR/protected
+  release, editor/UI, persistence, solver/capability,
+  aerial trajectory evaluation, compiled runtime, geometry, or physics is
+  claimed. Keep #4192, #4273, and #4267 open.
+
+
 ## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
 - Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)

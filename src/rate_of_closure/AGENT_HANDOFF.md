@@ -1,5 +1,46 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4192/#4273 post-ground spatial-target projection
+
+This clean local candidate starts from exact published PR #4361 head
+`81de044075a4f72c6da8fedb972437df79a06ab8`. It adds the UI-neutral
+`regional_ground_target_projection` boundary without modifying the parallel
+ground-playback slice. The adapter accepts only an exact
+`FlightRegionalGroundPipelineResult | FlightGroundTransferError` and exact
+`SpatialTarget`. It reuses #4361's promoted complete-rest qualifier and exact
+evidence attributes instead of duplicating endpoint eligibility.
+
+Only regional `COMPLETE` plus ground `COMPLETE/REST` with a summary produces
+an endpoint, hold, or miss. Ground v1's sole `GroundFrame.TARGET` is recorded
+explicitly as x-downrange/y-up/z-right. Final x/z pass through unchanged; the
+terminal ball-center y is replaced exactly once by the target's declared
+course-surface elevation before delegating geometry and signed long/high/right
+residuals to `SpatialTarget.miss`. App- and flight-authored target points
+therefore give the same canonical result. Aerial targets return
+`AERIAL_REQUIRES_FLIGHT_TRAJECTORY` and are never flattened.
+
+Transfer failures, every non-settled bounce reason, regional cancellation,
+failure or partial execution, `LEFT_SURFACE`/non-rest termination, missing
+summaries, and all censored outcomes retain null target numerics with exact
+availability, phase, reason, frame, model, and digest attributes. The bounded
+ordered `ScalarEnsembleDataset` projection exposes hold, miss distance, and
+signed downrange/elevation/lateral values with deterministic row identity and
+source provenance.
+
+RED captured the missing module. Sixteen new focused tests plus all seven
+parent study-adapter tests pass; the complete Rate/flight/ground selection is
+green for 1,315 tests with 14 environment-only Hypothesis collection warnings
+and one inherited polynomial-generator legend warning.
+Strict MyPy, focused Ruff check/format, Bandit, campaign-manifest validation
+and its eight tests, documentation governance, blocking-quality,
+minimum-test, changed-Python, 400-line module-size, changed-test assertion,
+placeholder, and diff checks are green.
+This candidate has no PR or protected evidence and adds no editor/UI,
+persistence, solver/capability invocation, aerial trajectory evaluation,
+compiled runtime, new physics, or geometry. Keep #4192, #4273, and #4267 open.
+
+
+
 ## 2026-08-11 PR #4361 qualified regional-ground study adapter
 
 Ready-for-review PR [#4361](https://github.com/D-sorganization/Tools/pull/4361)

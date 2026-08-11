@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.52                                    |
-| **Spec Version**        | 1.14.52                                    |
+| **Current Version**     | 1.14.53                                    |
+| **Spec Version**        | 1.14.53                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3091,6 +3091,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.53 | feat(ground-target, #4192 #4273 #4267): add a UI-neutral complete-rest-only projection from exact flight-through-regional-ground evidence to the existing `SpatialTarget`; record the sole `GroundFrame.TARGET`, retain final x/z, replace ball-center y exactly once with declared landing-surface elevation, reuse `SpatialTarget.miss` signs and geometry, type aerial targets as `AERIAL_REQUIRES_FLIGHT_TRAJECTORY`, preserve every unqualified/censored outcome as null with exact phase/reason/digest evidence, and expose a bounded ordered target scalar ensemble while leaving UI, persistence, solver/capability, aerial-trajectory, compiled-runtime, protected-release, and issue completion open. |
 | 2026-08-11 | 1.14.52 | chore(release, #4361 #4273 #4267): publish the independently reviewed qualified regional-ground study adapter as ready PR #4361 on exact #4360 head `74f1ceafd87f952a76917dc868baa6414f856144`; bind implementation commit `d71c43fdd729b35e1abe5573f41ed60201698608` while retaining protected review/check completion, solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, downstream release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.51 | feat(ground-study, #4273 #4267): add a UI-neutral strict adapter from the exact flight-through-regional-ground pipeline into the existing flight metric and scalar-ensemble contracts; admit canonical final ground metrics and bounce/skid detail only for regional complete plus ground complete/rest evidence, retain typed nullable cohorts and exact reasons/digests for partial, censored, cancelled, failed, non-settled, missing-summary, and transfer-failure outcomes, clear stale ground metric inputs on unavailable evidence, preserve carry versus total distance, and leave solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, protected release, and issue completion open. |
 | 2026-08-11 | 1.14.50 | chore(release, #4360 #4271 #4273 #4267): publish the qualified flight-through-regional-ground composition as ready PR #4360 on exact #4359 head `e53c6fb1bd273292c02085ee5d0a2b5497820871`; bind implementation commit `090e835477d1f19614f37f978a1b8a0e2f50ae21` into the campaign handoff and manifest while retaining protected review/check completion, client integration, persistence, compiled-runtime parity, studies, downstream integration, and issue/epic completion as open. |
