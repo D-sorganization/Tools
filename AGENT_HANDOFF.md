@@ -3,6 +3,26 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 Durable #4143 web visual evidence
+
+- The isolated `test/4143-ground-tee-visual-evidence` child starts at exact PR
+  #4325 head `f0f0dee074d29e3f12bf5f566c38d0080e43c756`; no parent branch, base,
+  production UI, or physics code is changed.
+- The Rate web package now owns a single Chromium Playwright scenario that
+  clears persisted state, proves the Driver default is Tee at 38.1 mm, records
+  the visible representative tee, switches to explicit Ground, reruns, proves
+  the disabled zero-height state and absent tee, and fails on browser errors.
+  Captures must be nonblank and distinct; their exact sizes and SHA-256 digests
+  are written to a versioned manifest.
+- `.github/workflows/rate-of-closure-visual-evidence.yml` builds the web app,
+  runs the scenario on the local fleet in Chromium, and uploads the runtime screenshots,
+  manifest, traces, and HTML report for 14 days. Binary visual baselines remain
+  untracked. #4143 still requires protected child CI/review, parent-first
+  landing, and release to `main` before closure.
+- Local verification: reproducible `npm ci`; 526/526 Vitest unit tests; 1/1
+  Playwright scenario; TypeScript, ESLint, Vite production build, workflow
+  routing/pinning, YAML parsing, and whitespace checks all pass.
+
 ## 2026-08-10 #4143 child receives repaired #4203 parent
 
 - Ready PR `#4325` retains branch `feat/4143-tee-parity-fixture` and base

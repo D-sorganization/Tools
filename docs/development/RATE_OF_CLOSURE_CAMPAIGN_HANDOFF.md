@@ -1,5 +1,25 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-10 #4143 durable Playwright artifact contract
+
+- A child of exact PR #4325 head
+  `f0f0dee074d29e3f12bf5f566c38d0080e43c756` adds the missing committed,
+  reproducible web visual scenario without modifying the parent or production
+  code.
+- One Chromium test clears local persistence, opens Simulation/Strike, records
+  the Driver default Tee at 38.1 mm, changes to explicit Ground, reruns, and
+  records zero effective height with no representative tee. Semantic UI state,
+  completed execution, zero console/page errors, nonblank images, and distinct
+  image digests all gate the test.
+- The local-fleet, path-filtered `Rate of Closure Visual Evidence` workflow builds first,
+  captures at 1600 x 1200, and uploads PNGs, a v1 size/digest manifest, traces,
+  and the HTML report for 14 days. There are no committed pixel baselines.
+  Issue #4143 still waits on protected child CI/review, its normal dependency
+  chain, and release to `main`.
+- Local gates: deterministic `npm ci`; 526 passing Vitest tests; one passing
+  Playwright scenario; TypeScript, ESLint, Vite build, workflow routing and
+  pinning, YAML parsing, and whitespace checks all pass.
+
 ## 2026-08-10 #4143 child receives repaired launch-registry parent
 
 - Ready PR `#4325` stays on `feat/4143-tee-parity-fixture`, based on

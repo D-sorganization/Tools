@@ -10,6 +10,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: "./src/test/setup.ts",
     globals: true,
+    include: ["src/**/*.test.{ts,tsx}"],
     // Physics optimization and Monte Carlo cases contend under Vitest's
     // parallel pool; retain a bounded but CI-realistic per-test ceiling.
     testTimeout: 15_000,

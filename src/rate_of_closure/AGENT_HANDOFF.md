@@ -3,6 +3,24 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 Reproducible Ground/Tee browser captures
+
+The exact PR #4325 head
+`f0f0dee074d29e3f12bf5f566c38d0080e43c756` now has an isolated child that
+turns its temporary browser captures into a committed Playwright contract. The
+test covers the default Driver/Tee 38.1 mm state and the rerun explicit-Ground
+zero-height state at 1600 x 1200, including the support controls, diagram tee
+presence/absence, completed run, screenshot structure, distinct digests, and
+zero browser errors. A narrowly path-filtered local-fleet Chromium workflow uploads
+the PNGs, versioned digest manifest, failure trace, and HTML report for 14 days;
+Git continues to exclude generated visual output. No production model, UI, or
+physics behavior changes. #4143 remains open for protected CI/review,
+dependency-ordered landing, and release to `main`.
+
+Local evidence is a clean `npm ci`, 526 passing unit tests, one passing
+Playwright scenario, and green TypeScript, ESLint, Vite production build,
+workflow-policy, YAML, and whitespace gates.
+
 ## 2026-08-10 Ground/Tee parity child receives repaired parent
 
 Ready PR `#4325` keeps branch `feat/4143-tee-parity-fixture` and base

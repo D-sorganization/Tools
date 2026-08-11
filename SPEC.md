@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.11                                    |
-| **Spec Version**        | 1.14.11                                    |
+| **Current Version**     | 1.14.12                                    |
+| **Spec Version**        | 1.14.12                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -293,6 +293,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   pixel-perfect baselines: Playwright records default Tee and rerun Ground web
   states with zero browser errors, while the hidden-window PyQt harness pins
   canonical center/artist state and nonblank, distinct Ground/Tee captures.
+  The web scenario is committed in the Rate package and runs in a path-filtered
+  Chromium workflow. CI retains both PNGs, a versioned size/SHA-256 manifest,
+  traces, and the HTML report for 14 days without committing binary baselines.
 - Variation plans retain their complete v2 schema and can be saved, loaded,
   duplicated, and deleted from a versioned local library. Users can select
   simultaneous, one-at-a-time, or combined analyses, while paired common-
@@ -2899,6 +2902,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.12 | test(ci, rate-of-closure, #4143): make Driver Ground/Tee Playwright evidence reproducible from the Rate web package and retain 1600 x 1200 captures, a versioned digest manifest, traces, and an HTML report as bounded workflow artifacts rather than Git-tracked image baselines. |
 | 2026-08-10 | 1.14.11 | test/fix(rate-of-closure, #4143 #4202 #4203 #4325): normally propagate repaired launch-registry parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` into the shared Ground/Tee parity and rendered-evidence child without production/test-code conflict or history rewrite. |
 | 2026-08-10 | 1.14.10 | test(rate-of-closure, #4143): record deterministic Ground/Tee visual evidence through semantic Playwright checks and a hidden-window PyQt capture regression, retaining screenshots as external digested artifacts instead of brittle pixel baselines or repository binaries. |
 | 2026-08-10 | 1.14.9 | test(rate-of-closure, #4143): add one strict versioned SI golden fixture consumed by Python and React to pin Ground/Tee defaults, explicit overrides, physical height and center geometry, serialization, invalid finite-domain handling, and backward-compatible legacy migration without changing production behavior. |
