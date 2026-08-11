@@ -247,10 +247,10 @@ def test_declared_scope_is_complete_and_deterministic(
     """All structured campaign programs and linked active specs are enumerated."""
     declared = derive_declared_capabilities(CAMPAIGN_PATH, REPO_ROOT)
     validate_declared_scope_completeness(manifest, CAMPAIGN_PATH, REPO_ROOT)
-    assert len(declared) == 33
+    assert len(declared) == 34
     assert manifest.inventory.status == "declared_scope_complete"
     assert manifest.inventory.campaign_program_count == 15
-    assert manifest.inventory.active_specification_count == 18
+    assert manifest.inventory.active_specification_count == 19
     assert manifest.inventory.curated_capability_count == 6
     assert render_declared_scope(CAMPAIGN_PATH, REPO_ROOT) == render_declared_scope(
         CAMPAIGN_PATH, REPO_ROOT
@@ -342,8 +342,11 @@ def test_new_linked_spec_cannot_bypass_completeness_gate(
     payload = json.loads(CAMPAIGN_PATH.read_text(encoding="utf-8"))
     spec_root = tmp_path / "docs" / "specs"
     spec_root.mkdir(parents=True)
-    for source in REPO_ROOT.joinpath("docs", "specs").glob("*.md"):
-        shutil.copyfile(source, spec_root / source.name)
+    repository_spec_root = REPO_ROOT / "docs" / "specs"
+    for source in repository_spec_root.rglob("*.md"):
+        destination = spec_root / source.relative_to(repository_spec_root)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(source, destination)
     shutil.copyfile(REPO_ROOT / "SPEC.md", tmp_path / "SPEC.md")
     rate_docs = tmp_path / "docs" / "rate_of_closure"
     rate_docs.mkdir(parents=True)

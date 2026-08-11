@@ -39,7 +39,10 @@ const canonicalToken = (value: unknown): string => {
 };
 
 /** Serialize JSON-compatible data using the shared 11-decimal numeric policy. */
-export const canonicalGroundJson = (value: unknown): string => canonicalToken(value);
+export const canonicalNumericJson = (value: unknown): string => canonicalToken(value);
+
+/** Preserve the public flight-ground facade name for existing consumers. */
+export const canonicalGroundJson = canonicalNumericJson;
 
 /** Parse and validate one request mapping. */
 export const parseFlightToGroundRequest = (payload: unknown): FlightToGroundRequest =>

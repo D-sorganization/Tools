@@ -977,3 +977,25 @@ the changed flight-ground scope is clean. New code respects the source and
 function budgets. Existing oversized append-only registries and preserved
 multi-parameter public compatibility signatures are baseline constraints, not
 new structures introduced by this issue.
+
+## 2026-08-11 strict calculation-runtime manifest foundation
+
+The isolated `feat/4261-runtime-manifest-contract` branch starts from exact
+`fix/rate-mobile-tools-menu` head
+`16a1167c31126238163297983862004afc5001d9`. It adds the UI-neutral Python/
+TypeScript `calculation-runtime-manifest/v1` boundary and shared fixture for
+#4261 without changing simulation, UI, workspace, ground, or consumer code.
+
+The contract is strict and immutable. It requires all three calculation
+domains in canonical order, makes unavailable domains carry a reason rather
+than fake identities, records exact model/backend/integrator/schema/frame/unit
+evidence for available domains, and accepts only explicit caller-sourced build
+and provenance records. Canonical JSON parity and adversarial validation cover
+unknown fields, invalid revisions/surfaces, status contradictions, duplicate
+domains/options/evidence, placeholders, non-finite values, unsafe integers,
+unit mismatches, surrogate text, and duplicate JSON fields.
+
+Keep this contract-only. Live run attachment, workspace/export persistence,
+provider discovery, UpstreamDrift pinning, and scientific model qualification
+remain future reviewed slices. The pure factories must not inspect ambient Git,
+sibling worktrees, or installed-package state.

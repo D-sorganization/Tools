@@ -496,3 +496,32 @@ npm run type-check
 npm run lint
 npm run build
 ```
+
+## 2026-08-11 calculation-runtime manifest contract continuation
+
+Issue #4261 continues locally in
+`C:\Users\diete\Repositories\Tools-worktrees\runtime-manifest-contract` on
+`feat/4261-runtime-manifest-contract`, based on exact remote parent
+`fix/rate-mobile-tools-menu` at
+`16a1167c31126238163297983862004afc5001d9`. Do not rebase, retarget, rewrite,
+or publish it before independent review.
+
+The bounded child adds immutable, extra-forbidding Python and TypeScript
+`calculation-runtime-manifest/v1` contracts. Every record contains an exact
+four-surface identity, package/build/Tools SHA, and canonical impact/flight/
+ground ledger. Available entries require complete model, authority, backend,
+integrator, request/result schema, frame, unit-system, and numerical-option
+identity. Unavailable entries require a substantive reason and prohibit every
+calculation identity and option. Shared canonical bytes, duplicate-field
+rejection, non-finite/safe-integer guards, placeholder rejection, deep freeze,
+and adversarial validation are pinned by one fixture.
+
+The governed four-surface inventory now includes this active specification as
+unsupported on all four surfaces at its older protected Tools pin. That record
+is intentional: unpublished contract evidence cannot establish live support.
+
+This branch does not bind the manifest to live runs, workspaces, exports,
+regional ground execution, or UpstreamDrift source resolution. It does not
+complete #4261 or #4260. The next integration must be reviewed separately
+after active assembly/workspace work settles and must never invent ambient Git
+or package provenance inside the pure contract layer.

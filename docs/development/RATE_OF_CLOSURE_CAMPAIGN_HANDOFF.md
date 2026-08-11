@@ -1448,3 +1448,33 @@ existing local SciPy/NumPy compatibility warning also remains environmental.
 All new source files are below 400 lines. The oversized append-only SPEC and
 handoff registries plus the preserved Waterloo and `from_imperial` public
 signatures predate #4269 and are explicitly retained for compatibility.
+
+## 2026-08-11 #4261 calculation-runtime manifest contract slice
+
+The next four-surface authority slice is isolated on
+`feat/4261-runtime-manifest-contract` from exact remote
+`fix/rate-mobile-tools-menu` head
+`16a1167c31126238163297983862004afc5001d9`. It defines the strict immutable
+`calculation-runtime-manifest/v1` contract in Python and TypeScript and shares a
+canonical parity fixture. The record names the exact product surface, package,
+build, Tools SHA, and complete impact/flight/ground status ledger. Available
+domains require model/version, implementation authority, backend, integrator,
+request/result schemas, frame, units, and unit-explicit finite options;
+unavailable domains require a reason and reject all identities/options.
+
+The contract rejects unknown fields and schema/surface values, non-SHA builds,
+placeholder evidence, domain/status contradictions, duplicate option/evidence
+IDs, non-finite values, unsafe integers, invalid unit semantics, surrogate
+text, and duplicate JSON fields. Python and TypeScript emit the same stable
+11-decimal canonical bytes and expose pure factories that accept explicit
+evidence rather than reading ambient Git or installed-package state.
+
+Adding the nested active specification expanded the deterministic declared
+scope from 18 to 19 specifications. Its four-surface cells remain explicitly
+unsupported because the protected inventory pin predates this unpublished
+child and no live surface attachment or consumer conformance evidence exists.
+
+This is deliberately not wired into live simulation results, workspaces,
+exports, regional ground execution, or UpstreamDrift. It does not close #4261
+or #4260. Future attachment and provider-resolution work must be independent,
+dependency-ordered slices after active assembly and workspace edits settle.
