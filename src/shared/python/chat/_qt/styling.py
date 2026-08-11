@@ -23,6 +23,8 @@ def get_theme_colors(
     try:
         colors: dict[str, str] = provider.get_current_colors()
         return colors
-    except Exception:  # noqa: BLE001 - defensive: a misbehaving provider must not crash the widget
+    except (
+        Exception
+    ):  # noqa: BLE001 - defensive: a misbehaving provider must not crash the widget
         colors = _DefaultDarkTheme().get_current_colors()
         return colors

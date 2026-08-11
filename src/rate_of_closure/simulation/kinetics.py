@@ -600,9 +600,8 @@ def compute_kinetics(
 
     # Ball-aligned app-frame geometry: the run's stored positions carry
     # the scrubber offset; the pivot sits at the swing origin + offset.
-    offset = (
-        run.swing_positions[0]
-        - APP_FROM_SWING @ (source.inner.sample(float(times[0])).pose[:3, 3])
+    offset = run.swing_positions[0] - APP_FROM_SWING @ (
+        source.inner.sample(float(times[0])).pose[:3, 3]
     )
     wrist_local = np.stack(
         [p.l1 * np.sin(theta[:, 0]), -p.l1 * np.cos(theta[:, 0])], axis=1
