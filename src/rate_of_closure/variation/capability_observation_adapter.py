@@ -366,7 +366,7 @@ def build_capability_observation_ensemble(
 
 def capability_observation_ensemble_json(dataset: ScalarEnsembleDataset) -> str:
     """Serialize one ensemble with deterministic cross-runtime numeric rounding."""
-    return canonical_numeric_json(dataset.to_wire())
+    return str(canonical_numeric_json(dataset.to_wire()))
 
 
 __all__ = [
