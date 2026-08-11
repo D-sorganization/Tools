@@ -2,6 +2,12 @@
 
 ## 2026-08-11 Explorer-session v5 capability-request mapper
 
+Draft PR [#4348](https://github.com/D-sorganization/Tools/pull/4348) publishes
+this bounded child from independently approved implementation head
+`5730e74752ffb84ab3560bed6318b7d97b6e627d`, preserving base
+`feat/4144-workspace-variation-study`. Protected current-head CI, review,
+parent landing, integration, and release remain required.
+
 The remaining independent no-publish blocker on local head `68692bbcb` is
 repaired locally. PyQt6 and React interactive projection accepts only the exact
 ordered `ball_speed` (`m/s`), `launch_angle` (`deg`), and `launch_direction`

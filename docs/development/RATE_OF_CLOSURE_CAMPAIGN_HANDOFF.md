@@ -2,6 +2,12 @@
 
 ## 2026-08-11 Capability input specification in whole workspaces
 
+- Draft PR [#4348](https://github.com/D-sorganization/Tools/pull/4348)
+  publishes this bounded child from independently approved implementation head
+  `5730e74752ffb84ab3560bed6318b7d97b6e627d`, preserving base
+  `feat/4144-workspace-variation-study`. Protected current-head CI, review,
+  parent landing, integration, and release remain required.
+
 - The remaining no-publish finding against local head `68692bbcb` is repaired
   locally. Interactive projection requires the exact ordered `ball_speed`
   (`m/s`), `launch_angle` (`deg`), and `launch_direction` (`deg`) basis with a
@@ -13,7 +19,7 @@
   Native identity/generation gates reject stale success, and both parsers cap
   numeric wire magnitude at `1e300` through the native File/Open error path.
 
-- Local branch `feat/4197-workspace-capability-request` starts from exact draft
+- Branch `feat/4197-workspace-capability-request` starts from exact draft
   PR #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49`; it does not modify
   or publish the parent branch.
 - Explorer-session v5 embeds the established cross-runtime

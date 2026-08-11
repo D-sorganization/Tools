@@ -2,8 +2,14 @@
 
 ## 2026-08-11 Capability-request workspace continuation
 
+Draft PR [#4348](https://github.com/D-sorganization/Tools/pull/4348) publishes
+this bounded child from independently approved implementation head
+`5730e74752ffb84ab3560bed6318b7d97b6e627d`, with base
+`feat/4144-workspace-variation-study` unchanged. Protected current-head CI,
+review, parent landing, integration, and release remain required.
+
 The remaining independent no-publish blocker on local head `68692bbcb` is
-repaired in this unpublished child. Interactive projection now accepts only
+repaired in this child. Interactive projection now accepts only
 the exact ordered `ball_speed` (`m/s`), `launch_angle` (`deg`), and
 `launch_direction` (`deg`) basis with one 3-by-3 correlation matrix, one club,
 and one spin default. `mph`, covariance, reordered parameters, and unsupported
@@ -17,8 +23,8 @@ identity plus generation gates reject late success from cancelled replaced
 runs. The shared hostile fixture caps numeric wire magnitude at `1e300`, and
 Python overflow follows the normal validation and File/Open rollback path.
 
-Local-only branch `feat/4197-workspace-capability-request` starts from exact
-published PR #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49`.
+Branch `feat/4197-workspace-capability-request` starts from exact published PR
+#4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49`.
 Explorer-session v5 embeds the existing strict
 `capability-optimization-workflow/v1` input document in PyQt6 and React. It
 persists the user-authored profile/club, capability bounds and distributions,
