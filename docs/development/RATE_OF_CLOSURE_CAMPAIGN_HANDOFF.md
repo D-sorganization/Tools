@@ -247,6 +247,33 @@ persistence/migration, exported-layout proof,
 complete rendered QA, protected CI/review, and dependency-ordered integration
 remain open. PR #4303 is a separate camera-default child and is not claimed as
 ancestry of this local branch.
+## 2026-08-11 PR #4303 current-parent propagation repair
+
+- Preserve exact live child `2e07bec58b8a759c9db36ea7afb26a1c835434f5`
+  first and normally merge exact current PR #4301 parent
+  `c653f9ff9193d6cdb8e11a13ad0001707e468a42` second without changing PR #4303's
+  branch or base.
+- The former merge base `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`
+  was stale, causing GitHub conflicts and exposing parent formatting as
+  child-local. The merge keeps the current parent for one unrelated shared
+  flight-contract test and reconciles four additive current-state documents;
+  camera production code merges cleanly.
+- Preserve the shared Python/TypeScript moving-subject default: animated PyQt6
+  and React clubhead/flight viewports start at 2x zoom with bounded tracking
+  and Auto Fit enabled, static viewports remain neutral, and controls remain
+  independently user-overridable. Physics and geometry are unchanged.
+- No rebase, retarget, force-push, parent rewrite, publication, GitHub write,
+  or CI retry is used. Independent review and protected exact-head CI remain
+  release gates; #4300 and epic #4218 stay open.
+- Fresh merged-tree evidence is 49 focused Python/PyQt camera, layout, and
+  simulation tests plus 14 campaign/launcher-manifest tests; exact-delta
+  Ruff/format on six Python files; pinned MyPy 1.13 and Bandit on four
+  production files; documentation, changed-code, module-size, minimum-test,
+  assertion, manifest-layout, whitespace, and diff gates. React passes 111
+  files / 673 tests, TypeScript, zero-warning ESLint, the 195-module production
+  build, and six serial Playwright camera/toolstrip cases across desktop and
+  constrained 2x-DPR projects.
+
 ## 2026-08-10 Repaired camera-parent propagation into PR #4301
 
 - Draft PR `#4301` keeps branch `fix/rate-mobile-tools-menu` and base

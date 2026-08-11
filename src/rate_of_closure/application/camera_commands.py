@@ -93,6 +93,15 @@ class CameraState:
             raise ValueError("tracking cannot be suspended while disabled")
 
 
+def moving_subject_camera_state() -> CameraState:
+    """Return the share-ready initial state for moving clubs and balls."""
+    return CameraState(
+        zoom=2.0,
+        tracking_enabled=True,
+        auto_fit_enabled=True,
+    )
+
+
 def camera_preset(command_id: CameraCommandId, side: FaceOnSide) -> CameraPreset:
     """Return one exact canonical view, failing closed for non-view commands."""
     if command_id is CameraCommandId.VIEW_ISOMETRIC:
@@ -220,6 +229,7 @@ __all__ = [
     "camera_preset",
     "canvas_angles",
     "matplotlib_angles",
+    "moving_subject_camera_state",
     "recenter_camera",
     "safe_tracking_zoom",
     "set_tracking_enabled",

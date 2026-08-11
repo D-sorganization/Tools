@@ -1,5 +1,32 @@
 # AGENT_HANDOFF — rate_of_closure
 
+> Update with every implementation commit and every push to `main`.
+> Current-state only; history lives in git. Last updated: 2026-08-11.
+
+## 2026-08-11 PR #4303 current-parent propagation repair
+
+The PyQt default-camera child now normally merges exact live head
+`2e07bec58b8a759c9db36ea7afb26a1c835434f5` first with exact current mobile-
+toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42` second. This repairs the stale
+`05713bcdd8f9889dcdcbaa5bdbaeab139d599b64` merge-base comparison that exposed
+parent formatting as child-local and made GitHub report conflicts. Current
+parent content is retained for the unrelated shared flight contract test;
+camera production code merged cleanly.
+
+Animated clubhead and ball-flight viewports still share a cross-runtime 2x,
+tracking-enabled, Auto-Fit-enabled initial state. Static viewports retain the
+neutral default, controls remain independent, and physics and geometry are
+unchanged. No publication or CI retry is authorized from this worktree;
+independent review and protected exact-head CI remain open.
+
+Fresh verification is 49 focused native camera/layout/simulation tests and 14
+campaign/launcher-manifest tests; exact-delta Ruff/format on six Python files;
+pinned MyPy 1.13 and Bandit on four production files; and the relevant
+documentation, policy, size, assertion, manifest, whitespace, and diff gates.
+React passes 111 files / 673 tests, TypeScript, zero-warning ESLint, the
+195-module production build, and six serial desktop/constrained-2x-DPR
+Playwright camera/toolstrip cases.
+
 ## 2026-08-11 variation-study workspace protected publication
 
 Branch `feat/4144-workspace-variation-study` is published normally as draft PR

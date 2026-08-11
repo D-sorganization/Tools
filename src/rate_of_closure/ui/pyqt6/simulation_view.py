@@ -23,6 +23,7 @@ from rate_of_closure.application.camera_commands import (
     CameraCommandId,
     camera_preset,
     matplotlib_angles,
+    moving_subject_camera_state,
 )
 from rate_of_closure.simulation import (
     ImpactScene,
@@ -106,7 +107,12 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
         layout.setSpacing(3)
         layout.addWidget(self._build_playback_controls())
         layout.addWidget(self._build_layers_control())
-        layout.addWidget(self._initialize_camera("Clubhead"))
+        layout.addWidget(
+            self._initialize_camera(
+                "Clubhead",
+                moving_subject_camera_state(),
+            )
+        )
         layout.addWidget(self._build_engineering_panel())
         self._canvas.setMinimumSize(360, 280)
         self._canvas.setSizePolicy(

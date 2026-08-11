@@ -1,5 +1,37 @@
 # AGENT_HANDOFF — Tools
 
+> Update this file in every implementation commit and every push to `main`.
+> Current-state only; history lives in git. Last updated: 2026-08-11.
+
+## 2026-08-11 PR #4303 current-parent propagation repair
+
+Draft PR #4303 retains branch `fix/rate-pyqt-default-camera` and base
+`fix/rate-mobile-tools-menu`. A normal child-first merge preserves exact live
+child `2e07bec58b8a759c9db36ea7afb26a1c835434f5` and incorporates exact current
+parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42`. The parent had advanced from
+the child's merge base `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`, so
+GitHub reported conflicts and treated the parent's broad style mutation as
+child-local. The current parent is authoritative for the unrelated shared
+flight contract test; four additive current-state documents were reconciled
+here. Camera production code merged without conflict.
+
+The child retains one shared Python/TypeScript moving-subject initializer:
+animated PyQt6 and React clubhead and ball-flight viewports start at 2x zoom
+with bounded tracking and Auto Fit enabled, while static viewports retain the
+neutral default and every user override remains independent. No camera
+physics, geometry, view convention, or persistence claim changes. No rebase,
+retarget, force-push, parent rewrite, publication, GitHub write, or CI retry
+was used. Independent review and protected exact-head CI remain required.
+
+Fresh merged-tree evidence is 49 focused Python/PyQt camera, layout, and
+simulation tests plus 14 campaign/launcher-manifest tests; exact-delta Ruff
+lint/format on six Python files; pinned MyPy 1.13 and Bandit on four production
+files; documentation, changed-code, module-size, minimum-test, assertion,
+manifest-layout, whitespace, and diff gates. React passes all 111 files / 673
+tests, TypeScript, zero-warning ESLint, the 195-module production build, and
+six serial Playwright camera/toolstrip cases across desktop and constrained
+2x-DPR projects.
+
 ## 2026-08-11 variation-study workspace protected publication
 
 Branch `feat/4144-workspace-variation-study` is published normally as draft PR

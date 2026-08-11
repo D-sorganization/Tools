@@ -208,6 +208,16 @@
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4303",
+      "pr": 4303,
+      "branch": "fix/rate-pyqt-default-camera",
+      "base_branch": "fix/rate-mobile-tools-menu",
+      "evidence_commit_sha": "01ae99f0f42876c7a6948c30f50e13618da14eca",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
     }
   ],
   "test_evidence": [
@@ -354,6 +364,25 @@
       "source_paths": [
         "tests/rate_of_closure/test_compact_simulation_layout.py",
         "src/rate_of_closure/web/src/components/PlotsPanel.test.tsx"
+      ]
+    },
+    {
+      "id": "moving-camera-local-01ae",
+      "kind": "local",
+      "commit_sha": "01ae99f0f42876c7a6948c30f50e13618da14eca",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_camera_commands.py tests/rate_of_closure/test_camera_controls_gui.py tests/rate_of_closure/test_compact_simulation_layout.py tests/rate_of_closure/test_simulation_gui.py -q",
+        "npm test && npm run type-check && npm run lint && npm run build",
+        "$env:PLAYWRIGHT_CHANNEL='chrome'; npm run test:e2e",
+        "python scripts/rate_campaign_manifest.py",
+        "python -m pytest -q tests/rate_of_closure/test_campaign_release_manifest.py"
+      ],
+      "summary": "The moving-subject camera continuation passed 49 focused Python/PyQt tests, 108 React files and 653 tests, six desktop/constrained-HiDPI Chrome Playwright cases, TypeScript, zero-warning ESLint, production build, pinned MyPy, Ruff, manifest validation, and 11 manifest contracts; protected integration remains open.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md"
       ]
     }
   ],
@@ -1026,7 +1055,8 @@
       "carrier_ids": [
         "pr-4279",
         "pr-4298",
-        "pr-4301"
+        "pr-4301",
+        "pr-4303"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "locally_verified",
@@ -1038,7 +1068,8 @@
         "toolstrip-local-c36",
         "camera-local-2095",
         "mobile-toolstrip-local-ebd8",
-        "legend-rail-local-83b4"
+        "legend-rail-local-83b4",
+        "moving-camera-local-01ae"
       ],
       "evidence_gap": "Optimizer, variation-result, and flight-run persistence adapters, exported legend-layout proof, native rendered accessibility review, UpstreamDrift consumers, and protected release remain open.",
       "limitations": [
@@ -1048,7 +1079,8 @@
         "The explorer-session v4 child locally persists authored variation inputs, execution policy, deterministic run specification, and selected output focus on Tools PyQt6 and React; browser Open rechecks latest dirty/fallback state, binds parser mode, rejects stale out-of-order reads, and is superseded by confirmed New/Close operations, while native focus controls retain one valid selection and the focus derives from the complete executor output registry without filtering canonical results; results persistence, optimizer outputs, UpstreamDrift consumers, and protected integration remain open.",
         "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open.",
         "Draft PR 4301 publishes issue 4300 constrained toolstrip-popover containment at immutable evidence commit ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5 as a child of epic 4218; protected integration remains open.",
-        "The bounded issue 4224 default-legend rail slice has immutable local evidence at 83b4baa3be7424777db4dd50883b7a9e45c8ca91 on a child of exact PR 4301 head 5c8efcbe5fcd6f993ef947a85e39852d268780a6; installed React qualification passes while persistence/export qualification, native review, and protected integration remain open."
+        "The bounded issue 4224 default-legend rail slice has immutable local evidence at 83b4baa3be7424777db4dd50883b7a9e45c8ca91 on a child of exact PR 4301 head 5c8efcbe5fcd6f993ef947a85e39852d268780a6; installed React qualification passes while persistence/export qualification, native review, and protected integration remain open.",
+        "Draft PR 4303 publishes share-ready moving-subject camera defaults across PyQt6 and React at immutable evidence commit 01ae99f0f42876c7a6948c30f50e13618da14eca; protected integration and remaining issue 4300 layout work remain open."
       ],
       "depends_on_issues": [
         4191

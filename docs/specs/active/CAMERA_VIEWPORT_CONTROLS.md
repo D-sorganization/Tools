@@ -25,6 +25,21 @@ the complete 114-file / 686-test React suite; TypeScript; zero-warning ESLint;
 the 199-module production build; and four serial desktop/constrained-2x-DPR
 Playwright camera cases. The dependency audit reports zero vulnerabilities in
 337 packages.
+## PR #4303 current-parent repair
+
+The local publication candidate normally merges exact live child
+`2e07bec58b8a759c9db36ea7afb26a1c835434f5` first with exact current
+mobile-toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42`
+second. This repairs stale ancestry without changing the default-camera
+contract below. Independent review and protected exact-head CI remain release
+gates.
+
+Fresh merged-tree verification covers 49 focused native camera, layout, and
+simulation tests; 14 campaign/launcher-manifest tests; exact-delta Ruff/format,
+pinned MyPy 1.13, Bandit, governance, size, assertion, whitespace, and diff
+gates; the complete 111-file / 673-test React suite; TypeScript; zero-warning
+ESLint; the 195-module production build; and six serial desktop/constrained-
+2x-DPR Playwright camera/toolstrip cases.
 
 ## Problem and scope
 
@@ -55,12 +70,16 @@ both tick-label sides on and therefore cannot create duplicate labels.
 
 ## Tracking and interaction
 
-Tracking is opt-in and each viewport owns its own state. The target advances
-toward the current clubhead or ball by at most the adapter's positive,
+Tracking is user-controllable and each viewport owns its own state. Moving
+clubhead and ball-flight viewports start in a share-ready 2x, tracking, Auto Fit
+state so their animated subject cannot silently leave an overly broad initial
+frame; static viewports retain the neutral contract default. The target
+advances toward the current clubhead or ball by at most the adapter's positive,
 finite per-frame step. Zoom is preserved when the subject clearance radius
-fits; optional Auto Fit only caps an unsafe zoom with 16% clearance. Manual
-orbit suspends tracking predictably. Recenter targets the subject in one action
-and resumes tracking. Reset selects the canonical isometric orientation.
+fits; Auto Fit only caps an unsafe zoom with 16% clearance. Users may disable
+either option independently. Manual orbit suspends tracking predictably.
+Recenter targets the subject in one action and resumes tracking. Reset selects
+the canonical isometric orientation.
 
 All command buttons have visible labels, stable IDs, tooltips, native keyboard
 focus, and focus-visible styling. Controls remain available while playback is
@@ -76,8 +95,9 @@ or rendered at high DPI.
   `src/rate_of_closure/web/src/model/__fixtures__/camera_commands_v1.json`
 
 Contracts reject non-finite vectors, non-unit or non-perpendicular camera
-bases, invalid zoom, and non-positive tracking steps. No adapter infers a view
-convention from an arbitrary club pose.
+bases, invalid zoom, and non-positive tracking steps. The shared
+`moving_subject_camera_state` initializer prevents PyQt6/React default drift;
+no adapter infers a view convention from an arbitrary club pose.
 
 ## Validation and remaining gates
 

@@ -208,8 +208,11 @@ class CameraViewportMixin:
     def _camera_state_changed(self) -> None:
         raise NotImplementedError
 
-    def _initialize_camera(self, subject_label: str) -> CameraControls:
-        self._camera_state = CameraState()
+    def _initialize_camera(
+        self, subject_label: str, initial_state: CameraState | None = None
+    ) -> CameraControls:
+        """Create isolated controls from an optional viewport-specific state."""
+        self._camera_state = initial_state or CameraState()
         self._camera_controls_widget = CameraControls(
             subject_label,
             self.apply_camera_command,
@@ -217,6 +220,7 @@ class CameraViewportMixin:
             self.set_camera_tracking,
             self.set_camera_auto_fit,
         )
+        self._camera_controls_widget.sync(self._camera_state)
         return self._camera_controls_widget
 
     def camera_controls(self) -> CameraControls:

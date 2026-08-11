@@ -34,7 +34,7 @@ import { drawEngineeringCgSymbol } from "./engineeringSymbols";
 import { ClubCanvasPlaybackControls } from "./ClubCanvasPlaybackControls";
 import { ClubCanvasViewport } from "./ClubCanvasViewport";
 import {
-  defaultCameraState,
+  movingSubjectCameraState,
   safeTrackingZoom,
   updateTrackingTarget,
   withCameraZoom,
@@ -91,7 +91,7 @@ export function ClubCanvas({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const phaseRef = useRef(0);
-  const [camera, setCamera] = useState(defaultCameraState);
+  const [camera, setCamera] = useState(movingSubjectCameraState);
   const cameraRef = useRef(camera);
   const subjectRef = useRef<Vec3>([0, 0, 0]);
   const dragRef = useRef<{ x: number; y: number } | null>(null);

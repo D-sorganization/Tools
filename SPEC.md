@@ -177,6 +177,27 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - This bounded #4224 slice does not claim persistence/migration, export-layout
   proof, full rendered qualification, protected release, or completion of
   #4224/#4218.
+### 2026-08-11 PyQt moving-camera current-parent repair
+
+- Draft PR #4303 normally merges exact live child
+  `2e07bec58b8a759c9db36ea7afb26a1c835434f5` first with exact current
+  mobile-toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42`
+  second, preserving the branch, base, and history.
+- The merge replaces stale merge-base comparison
+  `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`, removes parent formatter changes
+  from the effective child delta, and retains current-parent content for the
+  unrelated shared flight-contract test. Camera production code merges
+  without conflict.
+- Animated PyQt6 and React clubhead/ball-flight viewports retain their shared
+  2x, bounded-tracking, Auto-Fit initial state. Static viewports remain neutral,
+  user controls remain independent, and physics and geometry are unchanged.
+- Independent review and protected exact-head CI remain required; the local
+  repair does not complete #4300 or #4218.
+- Fresh evidence is 49 focused native camera/layout/simulation tests, 14
+  campaign/launcher-manifest tests, exact-delta Ruff/format, pinned MyPy 1.13,
+  Bandit, governance/diff gates, 111 React files / 673 tests, TypeScript,
+  zero-warning ESLint, the 195-module build, and six serial desktop/constrained
+  2x-DPR Playwright camera/toolstrip cases.
 
 ### 2026-08-10 Constrained toolstrip / four-surface propagation
 
@@ -3190,6 +3211,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-10 | 1.14.28 | feat(rate-of-closure, #4218 #4225): complete local multi-view keyboard and persistence acceptance contracts with React roving-tab Arrow/Home/End navigation, deterministic PyQt Layout/Impact/Swing/Flight tab order, keyboard-only Single/Split/Grid membership tests, strict atomic version-1 compositor import/export on both client boundaries, future-format rejection, native QSettings reconstruction, canonical view data inside the whole-app workspace envelope, and a repair for its nested-array double-freeze parser defect; retain disabled File commands, protected CI/review, dependency integration, and UpstreamDrift parity as explicit remaining gates. |
 | 2026-08-10 | 1.14.27 | feat(rate-of-closure, #4218 #4225): add real distinct Impact/Swing/Flight viewport hosts with PyQt6/React direct-command parity, synchronized live playback persistence, host-local camera and overlay ownership, strict one/two/three-host Single/Split/Grid cardinality, preserved valid per-slot legends, debounced native settings writes, navigable native constrained grids, and deterministic legacy/corrupt/unknown-view recovery; preserve all established React displays and the spatial-target Flight workflow beside Multi View, verify desktop/constrained browser and native rendering, and retain complete keyboard focus behavior, export proof, protected CI/review, stack integration, and UpstreamDrift parity as explicit open gates. |
 | 2026-08-10 | 1.14.26 | fix(rate-of-closure, #4218 #4224): move the default PyQt6 3D scene legend from the axes into a measured figure-level rail, clear retained legends across redraw and inside/hidden transitions, reflow the rail on canvas resize, add explicit accessible control names, and centralize React plot/legend geometry in one constrained-width contract; retain open persistence, export, rendered-QA, protected-CI, review, and integration gates without claiming epic completion. |
+| 2026-08-11 | 1.14.27 | merge(rate-of-closure, #4300 #4303): normally propagate exact current mobile-toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42` into exact live PyQt moving-camera child `2e07bec58b8a759c9db36ea7afb26a1c835434f5` without changing its branch or base; repair stale merge ancestry, retain current-parent shared-flight test content, preserve cross-runtime 2x tracking and Auto Fit defaults, and require independent review plus protected exact-head CI. |
+| 2026-08-10 | 1.14.26 | merge(rate-of-closure, #4298 #4301): normally propagate exact repaired camera parent `104503aac9779b195d46d38e8ed32611ffc8dfd7` into the constrained mobile-toolstrip descendant without changing its base; retain the shared File/View/Tools clamp and accessibility behavior while inheriting current camera, wind, workspace, variation, and capability repairs; mobile-toolstrip production/test code does not conflict, only additive handoff/spec files require reconciliation, and protected exact-head CI plus review remain required. |
 | 2026-08-10 | 1.14.25 | merge(rate-of-closure, #4300 #4301): normally propagate exact four-surface/camera/ground head `142631a90c008942bad99745e279748a7eda2ffa` into original constrained-toolstrip child `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64` without changing its base; retain the shared 16 px viewport-gutter clamp, desktop anchoring, bounded mobile menus, and native keyboard/accessibility semantics while inheriting the declared four-surface inventory, complete camera controls, and repaired flight-to-ground ancestry; require fresh combined-tree validation, independent review, and protected current-head CI without claiming epic completion. |
 | 2026-08-10 | 1.14.24 | merge(rate-of-closure, #4264 #4299): normally propagate exact camera/ground-stack head `57942e64744a199e4fd7d604fe2eeb9faddd062a` into original four-surface child `dca40c6c0168df3aa0cd0de0e5ae0ff109715b6a` without changing its base; retain the strict declared-scope matrix, schema, canonical inventory, exact evidence paths, deterministic 15-program/18-spec/six-capability coverage, and explicit incomplete UpstreamDrift parity boundaries while inheriting repaired flight-to-ground and camera-control contracts. |
 | 2026-08-10 | 1.14.23 | fix(flight-ground, #4284 #4298): satisfy the protected pinned-MyPy complete-delta profile with exact compatibility-enum construction and explicit three-component flight-to-ground vectors; preserve runtime values, wire bytes, coordinate transforms, physics, and camera behavior while requiring fresh exact-head CI. |
