@@ -5,6 +5,14 @@
 
 ## 2026-08-10 Authoritative Transfer Snapshot
 
+- Issue #4111 now has a tested selected-`ClubSpec` → deterministic binary STL
+  path and a discoverable PyQt export action. The file uses the canonical head
+  frame in metres and preserves all current user overrides. The 3×3 impact
+  tensor is intentionally not inferred: the current spec lacks a full CG,
+  density/material provenance, five independent inertial components, and a
+  complete world-from-head attitude. The exact unblock contract is recorded in
+  `docs/development/rate_of_closure_clubhead_tensor_contract.md`; keep the
+  scalar impact path until those inputs exist.
 - The protected Rate of Closure release still starts at Tools PR **#4119**
   (`feat/impact-simulation-platform`). Every later Rate/Wedge/D-plane,
   workspace, variation, wind, camera, and ground-model PR depends on this

@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import fields, replace
+from pathlib import Path
 
 from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
@@ -23,14 +24,23 @@ from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
     QDoubleSpinBox,
+    QFileDialog,
     QFormLayout,
     QGroupBox,
+    QLabel,
+    QMessageBox,
     QPushButton,
     QVBoxLayout,
     QWidget,
 )
 
-from rate_of_closure.club import ClubSpec, club_names, get_club
+from rate_of_closure.club import (
+    ClubSpec,
+    club_names,
+    default_clubhead_stl_filename,
+    get_club,
+    serialize_clubhead_stl,
+)
 from rate_of_closure.model import _BOUNDS, ImpactScenario
 from rate_of_closure.presets import PRESETS, preset_names
 from rate_of_closure.units import (
@@ -169,6 +179,17 @@ class ControlsPanel(QWidget):
         )
         self._generate_button.clicked.connect(self._on_generate_head)
         form.addRow(self._generate_button)
+
+        self._export_head_button = QPushButton("Export Selected Head STL…")
+        self._export_head_button.setToolTip(
+            "Save the selected club specification's deterministic parametric "
+            "head as a binary STL in the canonical head frame (metres)."
+        )
+        self._export_head_button.clicked.connect(self._on_export_head)
+        form.addRow(self._export_head_button)
+        self._export_status = QLabel("")
+        self._export_status.setWordWrap(True)
+        form.addRow(self._export_status)
 
         self._on_club_changed(self._club_combo.currentText())
         return box
@@ -312,6 +333,26 @@ class ControlsPanel(QWidget):
 
     def _on_generate_head(self) -> None:
         self.clubHeadRequested.emit(self.club_spec())
+
+    def _on_export_head(self) -> None:
+        """Export the complete current club specification as binary STL."""
+        spec = self.club_spec()
+        path, _selected = QFileDialog.getSaveFileName(
+            self,
+            "Export Selected Clubhead STL",
+            default_clubhead_stl_filename(spec),
+            "STL meshes (*.stl);;All files (*)",
+        )
+        if not path:
+            return
+        try:
+            Path(path).write_bytes(serialize_clubhead_stl(spec))
+        except (OSError, ValueError) as exc:
+            logger.warning("clubhead STL export failed: %s", exc)
+            self._export_status.setText("STL export failed.")
+            QMessageBox.warning(self, "STL Export Failed", str(exc))
+            return
+        self._export_status.setText(f"STL exported: {spec.name} — {path}")
 
     # ── behaviour ───────────────────────────────────────────────────
     def apply_preset(self, name: str) -> None:

@@ -22,10 +22,12 @@ from rate_of_closure.club import (
     build_parametric_head,
     club_inertia,
     club_names,
+    default_clubhead_stl_filename,
     face_normal_at_offset,
     face_sagitta,
     get_club,
     parametric_head_mesh,
+    serialize_clubhead_stl,
 )
 from rate_of_closure.club.geometry import RING_POINTS, superellipse_ring
 from rate_of_closure.club.inertia import (
@@ -33,6 +35,7 @@ from rate_of_closure.club.inertia import (
     GRIP_TUBE_RADIUS_M,
     SHAFT_TUBE_RADIUS_M,
 )
+from rate_of_closure.mesh import parse_stl
 
 pytestmark = pytest.mark.unit
 
@@ -197,6 +200,9 @@ class TestFaceCurvature:
 
 
 class TestParametricHead:
+    def test_stl_default_filename_is_portable(self) -> None:
+        assert default_clubhead_stl_filename(get_club(_DRIVER)) == "driver-10-5.stl"
+
     def test_mesh_is_closed_and_deterministic(self) -> None:
         driver = get_club(_DRIVER)
         first = build_parametric_head(driver)
@@ -253,6 +259,25 @@ class TestParametricHead:
         mesh = parametric_head_mesh(get_club("3-Wood"))
         norms = np.linalg.norm(mesh.normals, axis=1)
         np.testing.assert_allclose(norms, 1.0, atol=1e-9)
+
+    def test_selected_spec_serializes_as_deterministic_binary_stl(self) -> None:
+        """The portable STL is exactly the selected spec's generated mesh."""
+        spec = replace(
+            get_club(_DRIVER),
+            loft_deg=9.0,
+            face_bulge_radius_m=0.280,
+        )
+
+        first = serialize_clubhead_stl(spec)
+        second = serialize_clubhead_stl(spec)
+
+        assert first == second
+        np.testing.assert_allclose(
+            parse_stl(first),
+            build_parametric_head(spec),
+            rtol=1e-6,
+            atol=1e-9,
+        )
 
     def test_ring_helper_validates_inputs(self) -> None:
         with pytest.raises(PreconditionError):

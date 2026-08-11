@@ -8,6 +8,7 @@ touching any internal widget of another component.
 
 from __future__ import annotations
 
+import numpy as np
 import pytest
 
 pytest.importorskip("PyQt6")
@@ -215,6 +216,33 @@ class TestClubGroup:
         with qtbot.waitSignal(panel.clubHeadRequested, timeout=2000) as blocker:
             panel._generate_button.click()
         assert isinstance(blocker.args[0], ClubSpec)
+
+    def test_export_action_writes_selected_parametric_head_stl(
+        self, qtbot, tmp_path, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        from rate_of_closure.club import build_parametric_head
+        from rate_of_closure.mesh import parse_stl
+
+        output = tmp_path / "selected-head.stl"
+        panel = ControlsPanel()
+        qtbot.addWidget(panel)
+        panel._club_combo.setCurrentText("7-Iron")
+        panel._loft_spin.setValue(32.0)
+        monkeypatch.setattr(
+            "rate_of_closure.ui.pyqt6.controls_panel.QFileDialog.getSaveFileName",
+            lambda *_args, **_kwargs: (str(output), "STL meshes (*.stl)"),
+        )
+
+        panel._export_head_button.click()
+
+        assert output.is_file()
+        np.testing.assert_allclose(
+            parse_stl(output.read_bytes()),
+            build_parametric_head(panel.club_spec()),
+            rtol=1e-6,
+            atol=1e-9,
+        )
+        assert "STL exported: 7-Iron" in panel._export_status.text()
 
     def test_generate_loads_a_parametric_head_into_the_view(
         self, window, qtbot

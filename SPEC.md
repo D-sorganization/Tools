@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.6                                     |
-| **Spec Version**        | 1.13.6                                     |
+| **Current Version**     | 1.13.7                                     |
+| **Spec Version**        | 1.13.7                                     |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -35,6 +35,19 @@
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+### 2026-08-10 Selected-club STL export and safe impact-inertia boundary
+
+- The PyQt Club panel can export the complete current `ClubSpec`, including
+  user-edited loft and face curvature, as a deterministic binary STL generated
+  by the existing parametric mesh pipeline. Coordinates stay in the canonical
+  head frame in metres, and the writer never chooses an output path implicitly.
+- A `ClubSpec` does not populate the shared impact model's optional full 3×3
+  clubhead tensor. Its mass, two-coordinate CG, one shaft-axis moment, and
+  representative visual envelope do not determine a six-component CG tensor
+  or a complete world-frame attitude. The scalar compatibility path remains
+  authoritative until the measured/CAD density and frame contract in
+  `docs/development/rate_of_closure_clubhead_tensor_contract.md` is satisfied.
+
 ### 2026-08-10 Shared swing-core typed numerical boundaries
 
 - Shared flight, impact, swing-source, reference-integrator, torque-fitting,
@@ -2573,6 +2586,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.13.7 | feat(rate_of_closure, #4111): add deterministic selected-`ClubSpec` binary STL serialization and a tested PyQt export action; document why the current scalar shaft-axis MOI, partial CG, representative envelope, and face-normal-only attitude cannot safely generate the shared impact model's full world-frame inertia tensor. |
 | 2026-08-10 | 1.13.6 | fix(rate_of_closure, #4119): finish explicit numerical contracts across the Rate model, STL/club geometry, simulation, PyQt canvas, and course-rendering boundaries; clear the complete changed-file Mypy 1.13 surface without ignores or numerical-model changes. |
 | 2026-08-10 | 1.13.5 | fix(swing_sim, #4119): replace unparameterized shared-core ndarray contracts with explicit float64 arrays and normalize scalars at dynamic Rust/config/model boundaries; clear the CI-pinned findings across the flight/impact/swing/reference/solver slice plus a newer-Mypy solver return finding, without ignores or runtime-physics changes. |
 | 2026-08-10 | 1.13.4 | fix(types, #4119): make Rate UI/kinetics and shared variation NumPy/scalar boundaries explicit and add a validated `ImpactGoal.from_mapping` path for dynamic UI target dictionaries, resolving changed-file Mypy findings without changing model values. |

@@ -5,6 +5,16 @@
 
 ## 2026-08-10 Authoritative Transfer Snapshot
 
+Issue #4111's selected-club export gap is now implemented: the current edited
+`ClubSpec` serializes through the existing deterministic parametric generator
+and binary STL writer, and the PyQt Club panel exposes the action with an
+explicit metre/frame tooltip. Focused tests pin deterministic geometry and the
+selected-spec UI handoff. No full tensor is derived from `ClubSpec`: its scalar
+shaft-axis moment, partial CG, visual envelope, and face-normal-only impact
+attitude are underdetermined. See
+`docs/development/rate_of_closure_clubhead_tensor_contract.md` for the measured
+or density-integrated tensor and complete-frame contract required to enable it.
+
 The tool now exists on the #4119 branch and its large descendant stack, but it
 is still not released to Tools `main`. PR #4119 remains the dependency root.
 This branch includes current `main` plus the following review repairs:

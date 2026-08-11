@@ -8,6 +8,7 @@ The package owns everything "club" for the rate-of-closure explorer:
 * :mod:`.geometry` — shared superellipse-loft mesh helpers.
 * :mod:`.head_profiles` — type-specific cross-sections, hosel, face center.
 * :mod:`.parametric_head` — representative head meshes with bulge & roll.
+* :mod:`.stl_export` — deterministic selected-spec binary STL serialization.
 * :mod:`.volumetrics` — divergence-theorem volume and geometric COG.
 
 The TypeScript twin lives in ``web/src/model/club.ts`` and is pinned
@@ -27,6 +28,7 @@ from .parametric_head import (
     face_sagitta,
     parametric_head_mesh,
 )
+from .stl_export import default_clubhead_stl_filename, serialize_clubhead_stl
 from .types import ClubSpec, ClubType, HeadStyle
 from .volumetrics import CogReport, head_cog, is_watertight, mesh_volume_centroid
 
@@ -41,6 +43,7 @@ __all__ = [
     "build_parametric_head",
     "club_inertia",
     "club_names",
+    "default_clubhead_stl_filename",
     "face_center_point",
     "face_normal_at_offset",
     "face_sagitta",
@@ -50,4 +53,5 @@ __all__ = [
     "is_watertight",
     "mesh_volume_centroid",
     "parametric_head_mesh",
+    "serialize_clubhead_stl",
 ]
