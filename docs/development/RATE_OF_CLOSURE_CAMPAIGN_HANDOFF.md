@@ -1,5 +1,19 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 latest #4203 propagation into workspace PR #4279
+
+- PR `#4279` remains on `feat/4218-toolstrip-workspace`, based on
+  `feat/4181-launch-monitor-registry`; exact parent
+  `0216a547aa79727091a2939b96e779e8ddbd7304` is incorporated by a normal
+  two-parent merge without rebase, retarget, force-push, or history rewrite.
+- There are no feature-code conflicts. The child retains its workspace,
+  toolstrip, module-visibility, navigation, granular playback, and independent
+  plot behavior while inheriting the parent's pinned formatting and
+  identity-preserving 222/205/131-line kinetics split.
+- Preserve both append-only histories below. Fresh merged-tree protected CI,
+  required review, unresolved-thread checks, and dependency order remain
+  release gates; this local merge is not a completion or publication claim.
+
 ## 2026-08-10 Second #4203 propagation into workspace PR #4279
 
 - PR `#4279` remains the immediate child on
@@ -36,6 +50,73 @@
   findings after 76 additional focused PyQt/navigation/workspace tests.
   Current-head protected CI, unresolved-thread checks, and required repository
   review remain release gates after guarded publication.
+
+## 2026-08-11 #4203 kinetics size-budget repair
+
+- The exact `572bf525d` PR tree passes its base-relative candidate scan, but
+  `python scripts/check_file_size_budget.py --max-loc 500 --changed-only
+  --base-ref HEAD~1 --baseline-file scripts/monolith_baseline.txt` reproduces
+  the proactive release failure: Ruff-formatted `simulation/kinetics.py` is
+  selected at 646 LOC and is not grandfathered.
+- A behavior-preserving extraction leaves a 222-LOC stable public façade and
+  delegates immutable result validation (131 LOC) and pure pendulum dynamics
+  (205 LOC) to focused private modules. Public export identity and the existing
+  `_reaction_forces` compatibility seam are test-pinned.
+- Existing numerical parity, inverse/forward dynamics, energy, reaction-force,
+  presentation, and PyQt behavior remain the acceptance basis. This local-only
+  implementation does not change PR base, stack order, protected review/CI
+  requirements, or any downstream issue completion state.
+- Local regression evidence is 28 focused kinetics/presentation/PyQt tests
+  and all 701 Rate-of-Closure Python tests passing.
+
+## 2026-08-11 #4203 pinned-Ruff formatting repair
+
+- No material handoff change: the eight Python files reported by CI Standard
+  run `31468208320`, job `93705508050`, receive only the repository-pinned
+  Ruff 0.14.10 formatting output.
+- No physics, behavior, frame, schema, UI, release-stack, or dependency
+  contract changes. Current-head protected CI and review remain release
+  requirements; queued checks remain unresolved rather than passing.
+
+## 2026-08-10 #4143 child receives repaired launch-registry parent
+
+- Ready PR `#4325` stays on `feat/4143-tee-parity-fixture`, based on
+  `feat/4181-launch-monitor-registry`.
+- Exact parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` is incorporated by a
+  normal merge commit. There is no production/test-code conflict and no
+  rebase, retarget, force-push, or parent rewrite.
+- Preserve the shared parity fixture and deterministic web/PyQt evidence.
+  Fresh exact-head CI, review, dependency order, and release to `main` remain
+  required before #4143 can close.
+
+## 2026-08-10 #4143 Python/React golden ball-setup parity
+
+- The bounded `feat/4143-tee-parity-fixture` branch starts at exact PR #4203
+  head `31cbc007d4c85b5479b7cd0fb0969124eab2af67`, preserving its draft state,
+  base, and stack order.
+- A single `ball_setup_golden_v1.json` fixture declares schema/version, metre
+  units, the ground-plane-to-ball-bottom reference, ball radius, Driver/Tee and
+  iron/Ground defaults, explicit club-default overrides, Ground zero effective
+  height, center/serialization geometry, invalid finite-domain cases, and a
+  legacy simulation-run migration.
+- Python and React independently consume every case through their public
+  configuration/persistence boundaries. Verification is 18 passing Python
+  tests, 24 passing React tests, and green TypeScript, ESLint, Vite production
+  build, Ruff check, and Ruff format.
+- Recorded visual evidence is stored under
+  `C:\Users\diete\AppData\Local\Temp\rate-4143-visual-evidence-8050eeba`.
+  Playwright captured the 1600 x 1200 default Driver/Tee and rerun
+  explicit-Ground React states after semantic control/diagram and zero-error
+  checks. A hidden 1400 x 900 PyQt harness captured the same states after
+  canonical center, editor, and tee-artist assertions. The browser manifest
+  SHA-256 is `43df78e04b47e1b3209ff7a574718f90847ccda6dde5afd863d43191a950ccf7`;
+  the PyQt manifest SHA-256 is
+  `07822495dbcfa7568615ccb2728481210c28963614434c80f6997210c325a6f9`.
+  PNGs remain external evidence rather than oversized repository binaries.
+- #4143 remains open for protected CI/review and release to `main`. The strict
+  campaign release manifest does not exist in this exact #4203 history; it was
+  added later on a divergent branch and is not backported by this bounded
+  slice.
 
 ## 2026-08-10 Second propagation into launch-monitor registry
 

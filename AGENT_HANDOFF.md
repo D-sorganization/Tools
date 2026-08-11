@@ -1,7 +1,87 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 latest #4203 propagation into workspace PR #4279
+
+- Exact parent `0216a547aa79727091a2939b96e779e8ddbd7304` is normally merged into
+  child `61b7f48b5aeb7d57246b4963da3df086e79cbe15` without changing PR base,
+  stack order, or either history.
+- No feature-code conflict exists. The workspace/toolstrip, visibility,
+  navigation, playback, and plot controls remain intact while the child
+  inherits the parent's pinned formatting and identity-preserving kinetics
+  size-budget repair.
+- This merge is local only. Fresh exact-head protected CI, review, unresolved
+  threads, and dependency gates remain required before publication or merge.
+
+## 2026-08-11 #4203 kinetics size-budget repair
+
+- Exact head `572bf525dd1ded26cbc3fbb4f228d1f6ca16e118` passes the PR-base
+  changed-file scan because `kinetics.py` is byte-identical to the inherited
+  parent, but the stricter `HEAD~1` scan selects the Ruff-formatted file and
+  fails it at 646 LOC against the ungrandfathered 500-LOC limit.
+- The behavior-preserving LoD/DRY split leaves
+  `simulation/kinetics.py` as the stable 222-LOC public façade, moves pure
+  dynamics to `_kinetics_dynamics.py` (205 LOC), and moves the immutable
+  series/DbC contract to `_kinetics_series.py` (131 LOC). Public constants,
+  class/function objects, and the private `_reaction_forces` compatibility
+  seam are identity-pinned by a RED-first contract test.
+- Physics, units, frames, numerical parity fixture, PyQt presentation, and
+  release-stack order are unchanged. This implementation is committed locally
+  only; no push, PR mutation, or release claim is authorized by this handoff.
+- Verification includes 28 focused kinetics/presentation/PyQt tests and the
+  complete 701-test Rate-of-Closure Python suite, all passing locally.
+
+## 2026-08-11 #4203 pinned-Ruff formatting repair
+
+- No material handoff change: this commit only applies the repository-pinned
+  Ruff 0.14.10 formatter to the eight Python files named by current-head CI
+  Standard run `31468208320`, job `93705508050`.
+- Physics, application behavior, public contracts, schemas, UI layout, stack
+  bases, and dependency order are unchanged. Fresh protected CI and review at
+  the resulting head remain required; queued runner jobs are not green
+  evidence.
+
+## 2026-08-10 #4143 child receives repaired #4203 parent
+
+- Ready PR `#4325` retains branch `feat/4143-tee-parity-fixture` and base
+  `feat/4181-launch-monitor-registry`; repaired parent head
+  `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` is incorporated through a
+  normal merge commit without rebasing, retargeting, or rewriting history.
+- The merge tree has no production/test-code conflict. Both branches'
+  append-only handoff/SPEC evidence is retained, including the shared parity
+  fixture and deterministic web/PyQt visual evidence.
+- Fresh exact-head protected CI and review remain required. #4143 stays open
+  until the dependency line lands on `main`.
+
+## 2026-08-10 #4143 Python/React Golden Ball-Setup Parity
+
+- Branch `feat/4143-tee-parity-fixture` starts from exact draft PR #4203 head
+  `31cbc007d4c85b5479b7cd0fb0969124eab2af67`; it does not rewrite or retarget
+  the release stack.
+- `ball_setup_golden_v1.json` is the single Python/React source of truth for
+  schema `rate_of_closure.ball_setup_golden` version 1, SI metre units, and
+  reference `ground_plane_to_ball_bottom`. It pins Driver/Tee and iron/Ground
+  defaults, explicit overrides, Ground's zero effective tee height, derived
+  center geometry, serialization, negative and non-finite rejection, and
+  legacy-run migration to Ground.
+- New consumer tests plus the existing tee suites pass: 18 Python tests and 24
+  React tests. Web TypeScript, ESLint, and production Vite build gates pass;
+  scoped Ruff check and format pass. This is test/fixture-only and does not
+  change production physics or UI behavior.
+- Deterministic 1600 x 1200 Playwright captures cover the default Driver/Tee
+  and rerun explicit-Ground React states with checked/disabled controls,
+  present/absent tee geometry, and zero console/page errors. A hidden 1400 x
+  900 PyQt harness records the same states with canonical center and tee-artist
+  assertions; a headless regression keeps its temporary PNGs nonblank and
+  structurally distinct without pixel-perfect baselines. Artifact manifests
+  and SHA-256 digests are under
+  `C:\Users\diete\AppData\Local\Temp\rate-4143-visual-evidence-8050eeba`.
+- Issue #4143 remains open for exact-head protected CI/review and release to
+  `main`. The strict campaign release manifest is not present on #4203's exact
+  history (it was introduced later on a divergent campaign branch), so this
+  bounded child records that limitation instead of reconstructing it.
 
 ## 2026-08-10 Second parent propagation into PR #4279
 
