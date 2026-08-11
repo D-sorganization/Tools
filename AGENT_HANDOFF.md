@@ -32,6 +32,11 @@ or GitHub write occurred. Keep #4273/#4267 open for pipeline invocation,
 overlay variation, solver/capability and wind integration, compiled/downstream
 parity, protected review, publication, and release.
 
+Publication audit note: the workflow-pinned Ruff 0.14.10 formatter normalized
+only `test_regional_ground_variation_request_io.py` after the implementation
+commit. This is a test-layout-only follow-up with no material handoff, runtime,
+wire, UI, or physics change; the focused gates were rerun before publication.
+
 ## 2026-08-11 local #4273 React request-workspace ownership
 
 The unpublished `codex/4273-ground-variation-file-ui` branch starts from exact

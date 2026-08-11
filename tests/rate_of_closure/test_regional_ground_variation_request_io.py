@@ -127,9 +127,7 @@ def test_save_validates_before_dialog_and_writes_atomic_canonical_bytes(
     ]
 
 
-def test_cancelled_dialogs_are_no_ops(
-    qtbot, monkeypatch: pytest.MonkeyPatch
-) -> None:  # type: ignore[no-untyped-def]
+def test_cancelled_dialogs_are_no_ops(qtbot, monkeypatch: pytest.MonkeyPatch) -> None:  # type: ignore[no-untyped-def]
     monkeypatch.setattr(
         request_io.QFileDialog, "getOpenFileName", lambda *_args: ("", "")
     )
