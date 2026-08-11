@@ -1082,8 +1082,9 @@ post-remediation diff remains required before any publication.
 
 ## 2026-08-11 repeated-bounce request wire and pairing boundary
 
-Local unpublished branch `feat/4270-repeated-bounce-request-wire` starts from
-exact published draft PR #4355 head
+Draft PR #4356 publishes branch `feat/4270-repeated-bounce-request-wire` at
+exact head `5f71bc2d8e3527bc76fe4c7f331f9f10203a6491`, stacked on exact
+published draft parent PR #4355 head
 `b67af52226fa6334dd3570cf650aebeaf81912fc`. It reuses the strict embedded
 `flight-to-ground-request/v1` rather than duplicating physical inputs and adds
 bounded `ground-repeated-bounce-request/v1` Python/TypeScript import contracts.
@@ -1096,13 +1097,17 @@ the joint execution digest, so it cannot independently prove the capture
 threshold; later executor evidence must preserve the paired request or digest.
 The browser still runs no bounce physics. UI construction/invocation,
 persistence, compiled physics, downstream parity, protected evidence, release,
-and #4267/#4270 completion remain open. No GitHub write has been made.
+and #4267/#4270 completion remain open. Protected CI for #4356 is pending.
 
-Exact local gates are green: 183 Python ground tests; 114 React files / 731
-tests; exact changed-source MyPy with hosted `--follow-imports=skip`; Ruff and
-format; TypeScript; zero-warning ESLint; the 204-module production build;
+Exact prepublication implementation gates at `9da44ec98709dfb0d92a23591698ea3bf2be6e5c`
+are green: 183 Python ground tests; 114 React files / 731 tests; exact
+changed-source MyPy with hosted `--follow-imports=skip`; Ruff and format;
+TypeScript; zero-warning ESLint; the 204-module production build;
 campaign-manifest validation and eight manifest tests; docs governance;
-module-size budget; placeholder/quality scan; and diff checks. The inherited
+module-size budget; placeholder/quality scan; and diff checks. Published head
+`5f71bc2d8e3527bc76fe4c7f331f9f10203a6491` adds explicit finite
+capture-threshold digest-drift coverage; its focused request suites pass 21
+Python and 19 TypeScript tests. The inherited
 528.54 kB build advisory remains. A temporary whole-tree secret-baseline scan
 found no finding in this slice's changed paths, but still reported two
 parent-existing findings in unchanged regional-surface-plan tests while PR
