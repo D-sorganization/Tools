@@ -769,7 +769,9 @@ class UnifiedToolsSidebar(
         self._vis_persistence.save(self._tab_collection.visible_ids())
 
     def _apply_tab_state(self, state: SidebarState) -> None:
-        self._state = sanitize_tab_state(state, self._tab_collection._tab_definitions)  # noqa: SLF001
+        self._state = sanitize_tab_state(
+            state, self._tab_collection._tab_definitions
+        )  # noqa: SLF001
         state = self._state
         for tab_id in list(self._tab_collection.visible_ids()):
             if tab_id in state.hidden_tabs:
