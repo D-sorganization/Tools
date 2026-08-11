@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.23                                    |
-| **Spec Version**        | 1.14.23                                    |
+| **Current Version**     | 1.14.24                                    |
+| **Spec Version**        | 1.14.24                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -2997,6 +2997,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.24 | merge(rate-of-closure, #4282 #4284 #4298): normally propagate exact current wind-workflow parent `1e82f15026786ea0b08f78f4c001590ddce9ff39` into the camera-control descendant without changing its base; retain the shared cross-runtime camera commands, snap views, bounded tracking, playback behavior, and parent wind/workspace/variation/capability repairs; camera production/test code does not conflict, only additive current-state handoff/spec files require reconciliation, and protected exact-head CI plus review remain required. |
 | 2026-08-10 | 1.14.23 | fix(flight-ground, #4284 #4298): satisfy the protected pinned-MyPy complete-delta profile with exact compatibility-enum construction and explicit three-component flight-to-ground vectors; preserve runtime values, wire bytes, coordinate transforms, physics, and camera behavior while requiring fresh exact-head CI. |
 | 2026-08-10 | 1.14.22 | merge(rate-of-closure, #4284 #4288 #4298): normally propagate exact repaired flight-to-ground head `108a841b1378c992defd3c7b7ee263d41a6c8b24` into original camera-control child `9ffd8d280c77977a41e93bd0caef9678d1c231b6` while preserving base `feat/4199-wind-workflow`; retain canonical cross-runtime camera snaps, bounded tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and playback behavior while inheriting repaired strict-ground, transfer, workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, and import-identity ancestry; preserve explicit non-delivery boundaries for native rendered cross-platform qualification, camera-state persistence, UpstreamDrift parity, bounce, skid, roll, terrain response, total distance, and ground UI. |
 | 2026-08-10 | 1.14.21 | fix(flight-ground, #4199 #4269 #4282 #4285 #4288): normally propagate exact repaired strict-ground parent `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` into original flight-transfer child `247215422a6d4b677552955b4923bc609a553259` while preserving base `feat/4268-ground-contract`; retain the qualified signed terminal state, physical sphere/terrain contact brackets, strict provenance, and Python/TypeScript/Rust/PyO3/WASM transfer while inheriting the deterministic workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, import-identity, scalar-extraction, command-invariant, and security-boundary repairs; preserve explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
