@@ -121,9 +121,9 @@ class TestResolveColors:
                 7,
                 9,
             ), f"Key {key!r} resolved to non-standard color: {value!r}"
-            assert value.startswith(
-                "#"
-            ), f"Key {key!r} resolved to non-hex color: {value!r}"
+            assert value.startswith("#"), (
+                f"Key {key!r} resolved to non-hex color: {value!r}"
+            )
 
     def test_partial_theme_uses_fallback_for_missing_keys(self) -> None:
         """A partial palette should not break resolution for missing tokens."""

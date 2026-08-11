@@ -785,9 +785,7 @@ class StarWarsRRTApp:
         try:
             models["falcon"] = trimesh.load(model_path)
             logging.info("Loaded ship model from %s", model_path)
-        except (
-            Exception
-        ) as exc:  # noqa: BLE001  # pragma: no cover - visualization-only fallback
+        except Exception as exc:  # noqa: BLE001  # pragma: no cover - visualization-only fallback
             logging.warning("Could not load STL model %s: %s", model_path, exc)
         return models
 
