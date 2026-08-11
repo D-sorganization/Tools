@@ -196,12 +196,37 @@ class ImpactGoal:
         **targets: GoalTerm | float | tuple[float, float],
     ) -> ImpactGoal:
         """Build a goal from floats, ``(target, weight)`` tuples, or terms."""
-        unknown = set(targets) - set(GOAL_QUANTITIES)
-        require(not unknown, "unknown goal quantities", sorted(unknown))
-        return cls(
+        return cls.from_mapping(
+            targets,
             target_region=target_region,
             target_region_weight=target_region_weight,
-            **{name: _as_term(value) for name, value in targets.items()},
+        )
+
+    @classmethod
+    def from_mapping(
+        cls,
+        targets: Mapping[str, GoalTerm | float | tuple[float, float]],
+        *,
+        target_region: TargetRegion | None = None,
+        target_region_weight: float = 1.0,
+    ) -> ImpactGoal:
+        """Build a goal from a dynamic mapping without unsafe ``**dict`` typing."""
+        unknown = set(targets) - set(GOAL_QUANTITIES)
+        require(not unknown, "unknown goal quantities", sorted(unknown))
+        normalized = {name: _as_term(value) for name, value in targets.items()}
+        return cls(
+            club_path_deg=normalized.get("club_path_deg"),
+            face_angle_deg=normalized.get("face_angle_deg"),
+            attack_angle_deg=normalized.get("attack_angle_deg"),
+            dynamic_loft_deg=normalized.get("dynamic_loft_deg"),
+            ball_speed_mph=normalized.get("ball_speed_mph"),
+            launch_angle_deg=normalized.get("launch_angle_deg"),
+            launch_azimuth_deg=normalized.get("launch_azimuth_deg"),
+            spin_rpm=normalized.get("spin_rpm"),
+            spin_axis_deg=normalized.get("spin_axis_deg"),
+            carry_m=normalized.get("carry_m"),
+            target_region=target_region,
+            target_region_weight=target_region_weight,
         )
 
     def items(self) -> tuple[tuple[str, GoalTerm], ...]:

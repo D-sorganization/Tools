@@ -50,7 +50,7 @@ def require_point_ids(point_ids: tuple[str, ...]) -> None:
 
 def validated_sample_times(sample_times_s: np.ndarray) -> np.ndarray:
     """Validate and return a finite, strictly increasing 1-D sample grid."""
-    times = np.asarray(sample_times_s, dtype=float)
+    times: np.ndarray = np.asarray(sample_times_s, dtype=float)
     require(
         times.ndim == 1 and times.size > 0,
         "sample times must be 1-D and non-empty",
@@ -195,12 +195,13 @@ class EnsemblePositionTraces:
     @property
     def n_trials(self) -> int:
         """Return the number of trial rows, including no-impact trials."""
-        return self.variation.plan.n_runs
+        return int(self.variation.plan.n_runs)
 
     @property
     def impact_occurred(self) -> np.ndarray:
         """Boolean impact status for every trial without dropping misses."""
-        return self.impact_sample_indices >= 0
+        occurred: np.ndarray = self.impact_sample_indices >= 0
+        return occurred
 
     @property
     def n_no_impact(self) -> int:

@@ -48,6 +48,19 @@ class TestImpactGoal:
         assert items["spin_rpm"] == GoalTerm(2600.0, 0.5)
         assert items["carry_m"] == GoalTerm(230.0, 2.0)
 
+    def test_from_mapping_accepts_dynamic_ui_targets(self) -> None:
+        targets: dict[str, float | tuple[float, float]] = {
+            "ball_speed_mph": 150.0,
+            "spin_rpm": (2600.0, 0.5),
+        }
+
+        goal = ImpactGoal.from_mapping(targets)
+
+        assert dict(goal.items()) == {
+            "ball_speed_mph": GoalTerm(150.0),
+            "spin_rpm": GoalTerm(2600.0, 0.5),
+        }
+
     def test_of_rejects_unknown_quantity(self) -> None:
         with pytest.raises(ContractViolationError):
             ImpactGoal.of(smash_factor=1.5)

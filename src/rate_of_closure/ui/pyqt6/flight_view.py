@@ -245,7 +245,10 @@ class FlightView(QWidget):
             )
         if self._checks["landing"].isChecked():
             self._annotate_landing(
-                axes, pos[-1, 0], pos[-1, 1], f"carry {format_distance_m(pos[-1, 0])}"
+                axes,
+                float(pos[-1, 0]),
+                float(pos[-1, 1]),
+                f"carry {format_distance_m(float(pos[-1, 0]))}",
             )
         axes.set_xlim(0.0, carry_ext)
         axes.set_ylim(0.0, height_ext)
@@ -269,10 +272,10 @@ class FlightView(QWidget):
         if self._checks["landing"].isChecked():
             self._annotate_landing(
                 axes,
-                pos[-1, 0],
-                pos[-1, 2],
+                float(pos[-1, 0]),
+                float(pos[-1, 2]),
                 f"lateral {'+' if pos[-1, 2] >= 0 else '-'}"
-                f"{format_distance_m(abs(pos[-1, 2]))}",
+                f"{format_distance_m(abs(float(pos[-1, 2])))}",
             )
         title = "Top-down"
         # Target region + Variation landing scatter (#4125 H7b).

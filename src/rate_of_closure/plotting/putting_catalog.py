@@ -63,7 +63,8 @@ class PuttingVariableSpec:
 
 
 def _series(values: tuple[float, ...]) -> np.ndarray:
-    return np.asarray(values, dtype=float)
+    series: np.ndarray = np.asarray(values, dtype=float)
+    return series
 
 
 def _entries() -> list[PuttingVariableSpec]:

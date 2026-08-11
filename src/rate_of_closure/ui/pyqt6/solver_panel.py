@@ -241,12 +241,12 @@ class SolverPanel(QWidget):
             if row.enabled.isChecked()
         }
         if include_target:
-            return ImpactGoal.of(
+            return ImpactGoal.from_mapping(
+                targets,
                 target_region=self._target_panel.region(),
                 target_region_weight=self._target_panel.weight(),
-                **targets,
             )
-        return ImpactGoal.of(**targets)
+        return ImpactGoal.from_mapping(targets)
 
     def build_partition(self) -> VariablePartition:
         """The VariablePartition described by the variable rows."""

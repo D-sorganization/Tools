@@ -35,6 +35,13 @@
   branch mechanically normalized those Python files with `ruff format`; Ruff
   lint and format checks are now clean. This is formatting-only across the
   affected tools, with no material domain behavior or handoff change.
+- That broad formatter reconciliation caused the changed-file Mypy gate to
+  inspect legacy Rate/shared numerical boundaries. The Rate UI, kinetics,
+  solver-goal, and variation groups now use explicit NumPy result types and
+  scalar conversions; dynamic UI goals use `ImpactGoal.from_mapping` instead
+  of an unsafe `**dict`. These are type-contract repairs with focused tests and
+  no numerical behavior change; the remaining shared/core groups are being
+  repaired on isolated branches before the next protected push.
 - Before release, push the merge normally, verify the new exact PR head, wait
   for protected CI, resolve only the addressed review threads with linked
   evidence, obtain the required approval, and merge through ordinary branch

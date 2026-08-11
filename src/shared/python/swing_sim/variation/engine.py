@@ -118,7 +118,8 @@ class VariationDataset:
         values = np.asarray(
             self.outputs[self.success, self.output_names.index(name)], dtype=float
         )
-        return values[np.isfinite(values)]
+        finite_values: np.ndarray = values[np.isfinite(values)]
+        return finite_values
 
 
 def _stream_for(seed: int, spec: NoiseSpec) -> np.random.Generator:
@@ -214,7 +215,8 @@ def sample_inputs(plan: VariationPlan) -> np.ndarray:
     for spec in plan.noise:
         assert spec.spec_id is not None
         ordered.append(sampled[spec.spec_id])
-    return np.column_stack(ordered)
+    samples: np.ndarray = np.column_stack(ordered)
+    return samples
 
 
 class _Progress:
@@ -344,8 +346,8 @@ def run_variation(
     )
     names = outputs_for_mode(plan.mode)
     inputs = sample_inputs(plan)
-    outputs = np.full((plan.n_runs, len(names)), np.nan)
-    success = np.zeros(plan.n_runs, dtype=bool)
+    outputs: np.ndarray = np.full((plan.n_runs, len(names)), np.nan)
+    success: np.ndarray = np.zeros(plan.n_runs, dtype=bool)
     progress = _Progress(progress_cb, plan.n_runs)
 
     workers = min(n_workers, plan.n_runs)

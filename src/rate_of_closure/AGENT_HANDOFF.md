@@ -34,6 +34,13 @@ required a mechanical `ruff format` normalization of 101 Python files,
 including four Rate/swing-sim files; there is no Rate behavior change, and
 both repository-wide Ruff lint and format checks are clean afterward.
 
+The next protected gate exposed legacy Mypy debt because those mechanically
+formatted files became part of the changed-file set. Rate UI/kinetics and the
+shared variation group now have explicit NumPy/scalar boundary types, and
+dynamic solver goal dictionaries flow through the validated
+`ImpactGoal.from_mapping` constructor. Focused solver/GUI/kinetics tests (90)
+and variation tests (103) pass; these repairs do not change model values.
+
 After the root lands, preserve dependency order. The highest-value remaining
 UI slice is #4225's actual multi-viewport compositor; #4224 still needs
 responsive/DPR-aware plot redraw, measured non-overlapping legends, and

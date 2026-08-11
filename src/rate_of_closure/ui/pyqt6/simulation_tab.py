@@ -5,6 +5,7 @@ from __future__ import annotations
 import dataclasses
 import logging
 import math
+from typing import cast
 
 import numpy as np
 from PyQt6.QtCore import Qt, pyqtSignal
@@ -60,6 +61,7 @@ from rate_of_closure.ui.pyqt6.torque_profile_panel import TorqueProfilePanel
 from rate_of_closure.units import FIELD_GUIDANCE, format_distance_m
 from shared.python.swing_sim.flight.registry import FlightModelType
 from shared.python.swing_sim.run_config import DoublePendulumRunConfig
+from shared.python.swing_sim.swing_source import SwingSource
 from shared.python.swing_sim.types import PlaneOrientation
 
 logger = logging.getLogger(__name__)
@@ -84,7 +86,7 @@ class SimulationTab(QWidget):
         self._scenario = ImpactScenario(clubhead_speed_mph=113.0)
         self._run: SimulationRun | None = None
         self._tau: float | None = None  # None = auto (max clubhead speed)
-        self._source = None  # cached app-frame source for live scrubbing
+        self._source: SwingSource | None = None
         self._rows: dict[str, ResultRow] = {}
 
         self._view = SimulationView()
@@ -339,7 +341,7 @@ class SimulationTab(QWidget):
 
     def contact_mode(self) -> ContactMode:
         """The selected contact policy."""
-        return self._contact_combo.currentData()
+        return cast(ContactMode, self._contact_combo.currentData())
 
     def config(self) -> SimulationConfig:
         """The simulation request described by the controls."""
@@ -542,7 +544,7 @@ class SimulationTab(QWidget):
         self._view.stop()
         self._solver_panel.stop()
 
-    def _ensure_source(self):  # type: ignore[no-untyped-def]
+    def _ensure_source(self) -> SwingSource:
         if self._source is None:
             config = self.config()
             self._source = make_source(

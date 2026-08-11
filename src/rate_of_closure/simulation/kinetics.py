@@ -214,8 +214,11 @@ class KineticsSeries:
             "unknown force series",
             which,
         )
-        vectors = getattr(self, f"{which}_force_n")
-        return np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
+        vectors: np.ndarray = getattr(self, f"{which}_force_n")
+        magnitudes: np.ndarray = np.asarray(
+            np.linalg.norm(vectors, axis=1), dtype=float
+        )
+        return magnitudes
 
     def ztcf_force_magnitude_n(self, which: str) -> np.ndarray:
         """(N,) state-matched ZTCF magnitude for one force series."""
@@ -224,8 +227,11 @@ class KineticsSeries:
             "unknown ZTCF force series",
             which,
         )
-        vectors = getattr(self, f"ztcf_{which}_force_n")
-        return np.asarray(np.linalg.norm(vectors, axis=1), dtype=float)
+        vectors: np.ndarray = getattr(self, f"ztcf_{which}_force_n")
+        magnitudes: np.ndarray = np.asarray(
+            np.linalg.norm(vectors, axis=1), dtype=float
+        )
+        return magnitudes
 
 
 def _eom_terms(
@@ -241,10 +247,12 @@ def _eom_terms(
     damping = np.empty((n, 2))
     for i in range(n):
         coriolis[i] = reference.coriolis_vector(
-            p, theta[i, 1], omega[i, 0], omega[i, 1]
+            p, float(theta[i, 1]), float(omega[i, 0]), float(omega[i, 1])
         )
-        gravity[i] = reference.gravity_vector(p, theta[i, 0], theta[i, 1], g_inplane)
-        damping[i] = reference.damping_vector(p, omega[i, 0], omega[i, 1])
+        gravity[i] = reference.gravity_vector(
+            p, float(theta[i, 0]), float(theta[i, 1]), g_inplane
+        )
+        damping[i] = reference.damping_vector(p, float(omega[i, 0]), float(omega[i, 1]))
     return coriolis, gravity, damping
 
 
@@ -296,7 +304,7 @@ def inverse_dynamics(
     n = states.shape[0]
     inertial = np.empty((n, 2))
     for i in range(n):
-        m = reference.mass_matrix(p, theta[i, 1])
+        m = reference.mass_matrix(p, float(theta[i, 1]))
         inertial[i] = m @ alpha[i] + coriolis[i]
     applied = inertial + gravity + damping
     ensure(bool(np.all(np.isfinite(applied))), "inverse dynamics must be finite")
@@ -453,13 +461,14 @@ def simulate_forced(
 
     def f(t: float, y: np.ndarray) -> np.ndarray:
         tau = np.asarray(torque_fn(t), dtype=float)
-        c = reference.coriolis_vector(p, y[1], y[2], y[3])
-        g = reference.gravity_vector(p, y[0], y[1], g_inplane)
-        d = reference.damping_vector(p, y[2], y[3])
-        m = reference.mass_matrix(p, y[1])
+        c = reference.coriolis_vector(p, float(y[1]), float(y[2]), float(y[3]))
+        g = reference.gravity_vector(p, float(y[0]), float(y[1]), g_inplane)
+        d = reference.damping_vector(p, float(y[2]), float(y[3]))
+        m = reference.mass_matrix(p, float(y[1]))
         rhs = tau - np.asarray(c) - np.asarray(g) - np.asarray(d)
         acc = np.linalg.solve(m, rhs)
-        return np.concatenate([y[2:], acc])
+        derivative: np.ndarray = np.concatenate([y[2:], acc])
+        return derivative
 
     out = np.empty((n_steps + 1, 4))
     out[0] = (initial.theta1, initial.theta2, initial.omega1, initial.omega2)
@@ -476,7 +485,8 @@ def simulate_forced(
 def _to_app(plane_r: np.ndarray, vectors: np.ndarray) -> np.ndarray:
     """Map in-plane 2-vectors (local x, local up) into the app frame."""
     world = vectors[:, :1] * plane_r[:, 0] + vectors[:, 1:2] * plane_r[:, 2]
-    return np.asarray(world @ APP_FROM_SWING.T)
+    app_vectors: np.ndarray = np.asarray(world @ APP_FROM_SWING.T)
+    return app_vectors
 
 
 def compute_kinetics(

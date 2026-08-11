@@ -245,8 +245,8 @@ def _variation_dataset(
     elapsed_s: float,
 ) -> VariationDataset:
     """Build the scalar matrix while preserving sampled inputs."""
-    outputs = np.full((request.plan.n_runs, len(ALL_OUTPUT_NAMES)), np.nan)
-    success = np.zeros(request.plan.n_runs, dtype=bool)
+    outputs: np.ndarray = np.full((request.plan.n_runs, len(ALL_OUTPUT_NAMES)), np.nan)
+    success: np.ndarray = np.zeros(request.plan.n_runs, dtype=bool)
     for outcome in outcomes:
         outputs[outcome.trial_index] = [
             math.nan if outcome.value(name) is None else outcome.value(name)
@@ -272,9 +272,11 @@ def _ensemble_traces(
 ) -> EnsemblePositionTraces:
     """Build common-grid positions, marking numerical failures invalid."""
     times, point_ids = _trace_layout(request.configs[0], reference)
-    positions = np.full((len(captures), len(times), len(point_ids), 3), np.nan)
-    valid = np.zeros((len(captures), len(times)), dtype=bool)
-    impacts = np.full(len(captures), -1, dtype=int)
+    positions: np.ndarray = np.full(
+        (len(captures), len(times), len(point_ids), 3), np.nan
+    )
+    valid: np.ndarray = np.zeros((len(captures), len(times)), dtype=bool)
+    impacts: np.ndarray = np.full(len(captures), -1, dtype=int)
     for index, capture in enumerate(captures):
         run = capture.run
         if run is None:

@@ -17,7 +17,7 @@ _MATRIX_TOLERANCE = 1e-12
 def _as_matrix(value: object) -> np.ndarray:
     """Convert matrix-like input or raise a domain-level contract error."""
     try:
-        result = np.asarray(value, dtype=float)
+        result: np.ndarray = np.asarray(value, dtype=float)
     except (TypeError, ValueError) as exc:
         require(False, "matrix must be a numeric square matrix", value)
         raise ValueError("matrix must be a numeric square matrix") from exc
@@ -114,7 +114,8 @@ class PerturbationGroup:
         )
         matrix = np.asarray(self.matrix, dtype=float)
         if self.matrix_kind == "covariance":
-            return matrix.copy()
+            covariance_copy: np.ndarray = matrix.copy()
+            return covariance_copy
         covariance: np.ndarray = (
             scale_array[:, np.newaxis] * matrix * scale_array[np.newaxis, :]
         )
