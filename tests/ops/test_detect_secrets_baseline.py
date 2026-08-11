@@ -141,9 +141,9 @@ class TestBaselineExists:
 
     def test_baseline_file_exists(self) -> None:
         """Precondition: .secrets.baseline must exist in repo root."""
-        assert BASELINE_PATH.exists(), (
-            ".secrets.baseline is missing. Run: detect-secrets scan > .secrets.baseline"
-        )
+        assert (
+            BASELINE_PATH.exists()
+        ), ".secrets.baseline is missing. Run: detect-secrets scan > .secrets.baseline"
 
     def test_baseline_is_valid_json(self) -> None:
         """Baseline must be parseable JSON."""
@@ -352,9 +352,9 @@ class TestBaselineEntryIntegrity:
             for i, entry in enumerate(entries):
                 if required_field not in entry:
                     missing.append(f"{file_key}[{i}]")
-        assert not missing, (
-            f"Baseline entries missing field {required_field!r}: {missing[:10]}"
-        )
+        assert (
+            not missing
+        ), f"Baseline entries missing field {required_field!r}: {missing[:10]}"
 
     def test_hashed_secrets_are_40_char_hex(self) -> None:
         """All hashed_secret values must be 40-char hex strings (SHA1)."""
