@@ -112,9 +112,9 @@ class TestUserFeedbackFixes:
         panel = ControlsPanel()
         qtbot.addWidget(panel)
         for name, spin in panel._spins.items():
-            assert spin.buttonSymbols() == QAbstractSpinBox.ButtonSymbols.NoButtons, (
-                name
-            )
+            assert (
+                spin.buttonSymbols() == QAbstractSpinBox.ButtonSymbols.NoButtons
+            ), name
 
     def test_entry_boxes_carry_range_guidance_with_source(self, qtbot) -> None:  # type: ignore[no-untyped-def]
         panel = ControlsPanel()
