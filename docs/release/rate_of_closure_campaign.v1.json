@@ -1123,12 +1123,12 @@
         "ground-impact-local-63a6",
         "ground-skid-roll-local-f475"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, and static-plane skid/roll carriers are open. Issues #4270 and #4271 are published on draft PRs 4302 and 4304 with exact local evidence but no protected evidence. A local unprotected child adds coplanar regional-material reference support; changing normals, regional UI/compiled-runtime delivery, and downstream parity evidence remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, and static-plane skid/roll carriers are open. Issues #4270 and #4271 are published on draft PRs 4302 and 4304 with exact local evidence but no protected evidence. Local unprotected children add coplanar regional-material reference physics and a strict Python/TypeScript plan wire boundary; changing normals, regional UI/compiled-runtime physics, internal transition-ledger export, and downstream parity evidence remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",
         "The #4270 rigid impact law does not consume firmness, grass, compressibility, moisture, or rolling-resistance fields.",
-        "Published PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge. A local unprotected child qualifies bounded coplanar material overlays as execution-scoped non-wire inputs only; a versioned regional wire schema, changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, UI, compiled regional physics, and downstream adapters remain unimplemented."
+        "Published PR #4304 qualifies one immutable planar profile and optional finite tangent-axis edge. Local unprotected children qualify bounded coplanar material overlays and a separate strict Python/TypeScript plan request/result wire boundary with Python resolver binding; changing normals, height or velocity discontinuities, terrain deformation, torsional-spin damping, roll-to-skid transitions, internal transition-ledger export, UI, compiled or TypeScript regional physics, and downstream adapters remain unimplemented."
       ],
       "depends_on_issues": [
         4191

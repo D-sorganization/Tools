@@ -3,6 +3,46 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 issue #4271 regional-plan wire-contract local child
+
+Local branch `feat/4271-regional-wire-contract` starts from exact regional
+physics parent `1a48d749af508843fac2a5102f4dd56294429bda`. No GitHub write,
+protected evidence, review, merge, or release claim has been made for this
+child.
+
+Python and TypeScript now share separate strict
+`ground-regional-material-plan-request/v1` and result/v1 records without
+silently widening either frozen flight-to-ground v1 contract. The request
+requires a finite base interval and one or more finite in-domain overlays,
+exact SI/schema/geometry/limitation values, explicit provenance, stationary
+coplanar geometry, and unique region, precedence, and surface IDs. Counts are
+bounded at 4,096 regions and documents at 1 MiB. Duplicate JSON keys, unknown
+fields, nonfinite values, changed geometry/velocity, invalid intervals, and
+unsupported qualifications fail closed.
+
+The result embeds the exact request, its canonical SHA-256, the same regions
+in deterministic precedence/ID order, and producer provenance bound to the
+request digest. Both runtimes reject reordered or changed surface evidence.
+The Python adapter constructs the existing qualified `SurfaceResolver`;
+TypeScript validates and serializes only and does not claim regional physics.
+The shared golden request/result digests are
+`a890b6fd544d73114ec5d0cd042f87aa2358d01ca85543a8c4d71ef2cb18cab1`
+and
+`8d9bc2f53897da241580f7b5fdaff7c6614077bed8a486cc6d7619d02b0e3e55`.
+
+Local qualification is green: all 132 Python ground tests and all 107 React
+files / 666 tests pass; TypeScript, zero-warning ESLint, and the 190-module
+production build pass. Pinned Ruff 0.14.10 is clean over 45 ground files and
+pinned MyPy 1.13 is clean over 31 production modules. The campaign manifest
+and its eight contracts plus documentation governance pass. The changed
+production modules remain below 400 lines.
+
+This child remains `not_released`. Protected CI, independent review, normal
+stack integration, UI, TypeScript/Rust/PyO3/WASM regional physics, changing
+normals/heights/velocities, internal transition-ledger wire export,
+UpstreamDrift parity, and main release remain open.
+
+
 ## 2026-08-10 issue #4271 coplanar regional-material local child
 
 Local branch `feat/4271-regional-surface-transitions` starts from exact current
