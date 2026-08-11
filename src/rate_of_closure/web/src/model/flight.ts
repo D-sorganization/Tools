@@ -96,4 +96,3 @@ export function simulateFlightWithOptions(
 ): FlightResult {
   return integrateFlight(launch, options);
 }
-

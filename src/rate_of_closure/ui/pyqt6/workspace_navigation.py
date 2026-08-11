@@ -5,40 +5,39 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass
-from typing import Protocol
 
 from PyQt6.QtWidgets import QTabBar, QTabWidget
 
+from rate_of_closure.ui.pyqt6.navigation_state import (
+    DEFAULT_TAB_IDS as _DEFAULT_TAB_IDS,
+)
+from rate_of_closure.ui.pyqt6.navigation_state import (
+    NAVIGATION_SETTINGS_APP as _NAVIGATION_SETTINGS_APP,
+)
+from rate_of_closure.ui.pyqt6.navigation_state import (
+    NAVIGATION_SETTINGS_ORG as _NAVIGATION_SETTINGS_ORG,
+)
+from rate_of_closure.ui.pyqt6.navigation_state import (
+    NAVIGATION_STATE_KEY as _NAVIGATION_STATE_KEY,
+)
+from rate_of_closure.ui.pyqt6.navigation_state import NavigationSettings
+
 logger = logging.getLogger(__name__)
 
-_DEFAULT_TAB_IDS: tuple[str, ...] = (
-    "clubhead",
-    "plots",
-    "calculation_description",
-    "simulation",
-    "flight_explorer",
-    "regional_surfaces",
-    "launch_monitor_analytics",
-    "capability_optimization",
-    "variation",
-    "putting",
-    "glossary",
-)
+__all__ = [
+    "_DEFAULT_TAB_IDS",
+    "_NAVIGATION_SETTINGS_APP",
+    "_NAVIGATION_SETTINGS_ORG",
+    "_NAVIGATION_STATE_KEY",
+    "_NAVIGATION_STATE_VERSION",
+    "_REQUIRED_TAB_IDS",
+    "NavigationSettings",
+    "PrimaryModuleEntry",
+    "WorkspaceNavigationMixin",
+]
+
 _REQUIRED_TAB_IDS: tuple[str, ...] = ("clubhead",)
-_NAVIGATION_SETTINGS_ORG = "D-sorganization"
-_NAVIGATION_SETTINGS_APP = "RateOfClosureImpactExplorer"
-_NAVIGATION_STATE_KEY = "ui/primary-tabs/v1"
 _NAVIGATION_STATE_VERSION = 1
-
-
-class NavigationSettings(Protocol):
-    """Minimal settings boundary used by primary-module persistence."""
-
-    def value(self, key: str, default_value: object = None) -> object:
-        """Return a persisted value."""
-
-    def setValue(self, key: str, value: object) -> None:  # noqa: N802
-        """Persist a value."""
 
 
 @dataclass(frozen=True)
