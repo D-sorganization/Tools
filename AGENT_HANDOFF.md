@@ -1,5 +1,27 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 regional request I/O safe-number follow-up
+
+Independent review of local commit `e39edf4b50b1fb9811b0032bec4758c7a08c9b74`
+found two cross-runtime representation gaps. The PyQt6 precedence spin box
+silently narrowed otherwise valid v1 integers above 1,000,000, and Python
+accepted integer-valued wire numbers above JavaScript's exact safe range.
+
+The native editor now uses an exact decimal integer entry for precedence and
+preserves every v1 value from zero through 9,007,199,254,740,991 without a
+floating-point conversion. Shared Python canonical-number and ground-record
+validation now reject magnitudes outside that same range, matching React while
+retaining all finite fractional values inside it. PyQt6 floating-point editors
+publish the same bounds. Regression coverage pins exact maximum-precedence
+open/save round-trip and matched native/browser refusal of unsafe material
+numbers. This changes no schema version, provenance algorithm, physics, or
+browser filesystem limitation. Final local evidence is 132 shared ground tests,
+21 regional editor/I/O tests, five atomic-workspace tests, 23 focused React
+tests, the whole-shell tooltip sweep, and eight manifest tests passing. Ruff,
+Ruff format, Black, focused MyPy, TypeScript, zero-warning ESLint, the 199-module
+production build, module and changed-file size budgets, documentation
+governance, and diff checks pass. The child remains local and unprotected.
+
 ## 2026-08-10 PR #4339 stale-validation invalidation follow-up
 
 Rendered exact-head browser QA found that a validated one-overlay readback
@@ -17,7 +39,7 @@ is unrelated. This changes no wire schema, provenance digest, physics, or
 persistence boundary; fresh protected CI is still required before merge.
 
 > Update this file in every implementation commit and every push to `main`.
-> Last updated: 2026-08-10.
+> Last updated: 2026-08-11.
 
 ## 2026-08-10 issue #4274 canonical regional request I/O local child
 

@@ -138,3 +138,14 @@ def test_edited_import_rebinds_provenance_instead_of_reusing_stale_digest() -> N
     assert rebound.request_id == "edited-plan"
     assert rebound.provenance.producer == EDITOR_PROVIDER_ID
     assert rebound.provenance.input_sha256 != request.provenance.input_sha256
+
+
+def test_editor_rejects_unsafe_integer_valued_number() -> None:
+    draft = illustrative_regional_surface_plan_draft()
+    unsafe = replace(
+        draft,
+        base_surface=replace(draft.base_surface, firmness_pa=10_000_000_000_000_000.0),
+    )
+
+    with pytest.raises(ValueError, match="cross-runtime safe range"):
+        validate_regional_surface_plan_draft(unsafe)

@@ -58,6 +58,32 @@ describe("RegionalSurfacePlanPanel", () => {
       .not.toBeInTheDocument();
   });
 
+  it("accepts the exact cross-runtime maximum precedence", () => {
+    render(<RegionalSurfacePlanPanel />);
+    fireEvent.change(screen.getByLabelText("Overlay 1 precedence"), {
+      target: { value: String(Number.MAX_SAFE_INTEGER) },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Validate surface plan" }));
+
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Regional surface plan readback" }))
+      .toHaveTextContent("1 overlay(s)");
+  });
+
+  it("rejects integer-valued material numbers beyond the cross-runtime safe range", () => {
+    render(<RegionalSurfacePlanPanel />);
+    fireEvent.change(screen.getByLabelText("Base Firmness (Pa)"), {
+      target: { value: "10000000000000000" },
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Validate surface plan" }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/cross-runtime safe range/i);
+    expect(screen.queryByRole("status", { name: "Regional surface plan readback" }))
+      .not.toBeInTheDocument();
+  });
+
   it("links invalid interval fields to an accessible error without clearing input", () => {
     render(<RegionalSurfacePlanPanel />);
     const lower = screen.getByLabelText("Overlay 1 lower coordinate (m)");

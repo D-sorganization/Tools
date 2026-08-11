@@ -70,7 +70,7 @@ class RegionalSurfacePlanTab(QWidget):
     def _connect_row_changes(self, row: RegionalOverlayRow) -> None:
         """Connect one dynamic overlay to the shared invalidation boundary."""
         row.region_id.textChanged.connect(self._mark_dirty)
-        row.precedence.valueChanged.connect(self._mark_dirty)
+        row.precedence.textChanged.connect(self._mark_dirty)
         row.lower_coordinate.valueChanged.connect(self._mark_dirty)
         row.upper_coordinate.valueChanged.connect(self._mark_dirty)
         self._connect_material_changes(row.material)

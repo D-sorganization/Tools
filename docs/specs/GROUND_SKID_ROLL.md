@@ -210,6 +210,10 @@ transactional and accepts only the editor producer/provider v1, fixed qualified
 axis/geometry, and editor row capacity. An unchanged import retains the exact
 request and provenance; editing rebinds the draft digest. Browser downloads
 cannot promise a native path, atomic replacement, or recent-file access.
+Wire numbers are bounded to the shared cross-runtime safe range. Native
+precedence entry preserves every nonnegative integer through
+9,007,199,254,740,991 exactly, so a qualified import cannot be silently narrowed
+before validation or Save As.
 Neither client claims execution, result playback, or measured-course
 calibration. Those capabilities require separate contracts and acceptance
 evidence.

@@ -5,13 +5,13 @@ from __future__ import annotations
 from collections.abc import Callable
 
 from PyQt6.QtCore import Qt
+from PyQt6.QtGui import QValidator
 from PyQt6.QtWidgets import (
     QDoubleSpinBox,
     QFormLayout,
     QGroupBox,
     QLineEdit,
     QPushButton,
-    QSpinBox,
     QVBoxLayout,
 )
 
@@ -19,15 +19,21 @@ from rate_of_closure.application.regional_surface_plan import (
     RegionalOverlayDraft,
     SurfaceMaterialDraft,
 )
+from shared.python.swing_sim.canonical_numeric_json import (
+    MAX_CANONICAL_SAFE_INTEGER,
+)
+
+_MAX_SAFE_FLOAT = float(MAX_CANONICAL_SAFE_INTEGER)
+_MAX_SAFE_INTEGER_TEXT = str(MAX_CANONICAL_SAFE_INTEGER)
 
 _MATERIAL_FIELDS = (
     ("normal_restitution", "Normal restitution", "", 0.01, 0.0, 1.0),
     ("static_friction", "Static friction", "", 0.01, 0.0, 5.0),
     ("kinetic_friction", "Kinetic friction", "", 0.01, 0.0, 5.0),
     ("rolling_resistance", "Rolling resistance", "", 0.01, 0.0, 1.0),
-    ("firmness_pa", "Firmness", " Pa", 1_000.0, 1e-11, 1e100),
+    ("firmness_pa", "Firmness", " Pa", 1_000.0, 1e-11, _MAX_SAFE_FLOAT),
     ("hardness_fraction", "Hardness", " fraction", 0.01, 0.0, 1.0),
-    ("grass_height_m", "Grass height", " m", 0.001, 0.0, 1e100),
+    ("grass_height_m", "Grass height", " m", 0.001, 0.0, _MAX_SAFE_FLOAT),
     ("compressibility_fraction", "Compressibility", " fraction", 0.01, 0.0, 1.0),
     (
         "compression_damping_fraction",
@@ -37,7 +43,14 @@ _MATERIAL_FIELDS = (
         0.0,
         1.0,
     ),
-    ("turf_density_kg_m3", "Turf density", " kg/m³", 1.0, 0.0, 1e100),
+    (
+        "turf_density_kg_m3",
+        "Turf density",
+        " kg/m³",
+        1.0,
+        0.0,
+        _MAX_SAFE_FLOAT,
+    ),
     ("moisture_fraction", "Moisture", " fraction", 0.01, 0.0, 1.0),
 )
 
@@ -47,8 +60,8 @@ def number_input(
     value: float,
     suffix: str = "",
     step: float = 0.1,
-    minimum: float = -1e100,
-    maximum: float = 1e100,
+    minimum: float = -_MAX_SAFE_FLOAT,
+    maximum: float = _MAX_SAFE_FLOAT,
 ) -> QDoubleSpinBox:
     """Create one canonical-precision accessible SI number input."""
     field = QDoubleSpinBox()
@@ -62,6 +75,52 @@ def number_input(
         f"{name}. Edit this SI draft value, then validate the surface plan."
     )
     return field
+
+
+class _SafeIntegerValidator(QValidator):
+    """Accept one decimal integer in the shared JSON-safe nonnegative range."""
+
+    def validate(
+        self, input_text: str | None, position: int
+    ) -> tuple[QValidator.State, str, int]:
+        input_text = input_text or ""
+        if input_text == "":
+            state = QValidator.State.Intermediate
+        elif not input_text.isascii() or not input_text.isdecimal():
+            state = QValidator.State.Invalid
+        elif len(input_text) < len(_MAX_SAFE_INTEGER_TEXT):
+            state = QValidator.State.Acceptable
+        elif input_text <= _MAX_SAFE_INTEGER_TEXT:
+            state = QValidator.State.Acceptable
+        else:
+            state = QValidator.State.Invalid
+        return state, input_text, position
+
+
+class SafeIntegerEdit(QLineEdit):
+    """Exact integer editor that does not narrow the v1 safe-integer contract."""
+
+    def __init__(self, name: str, value: int) -> None:
+        super().__init__()
+        self._name = name
+        self.setAccessibleName(name)
+        self.setMaxLength(len(_MAX_SAFE_INTEGER_TEXT))
+        self.setValidator(_SafeIntegerValidator(self))
+        self.set_value(value)
+
+    def set_value(self, value: int) -> None:
+        """Set one already validated exact safe integer without float conversion."""
+        if isinstance(value, bool) or not isinstance(value, int):
+            raise TypeError(f"{self._name} must be an integer")
+        if not 0 <= value <= MAX_CANONICAL_SAFE_INTEGER:
+            raise ValueError(f"{self._name} must lie within cross-runtime safe range")
+        self.setText(str(value))
+
+    def value(self) -> int:
+        """Return the exact integer or reject an incomplete editor value."""
+        if not self.hasAcceptableInput():
+            raise ValueError(f"{self._name} must lie within cross-runtime safe range")
+        return int(self.text())
 
 
 class MaterialEditor(QGroupBox):
@@ -110,9 +169,9 @@ class RegionalOverlayRow(QGroupBox):
         self.region_id.setToolTip(
             "Stable overlay identifier; it must be unique within the regional plan."
         )
-        self.precedence = QSpinBox()
-        self.precedence.setRange(0, 1_000_000)
-        self.precedence.setValue(value.precedence)
+        self.precedence = SafeIntegerEdit(
+            f"Overlay {ordinal} precedence", value.precedence
+        )
         self.precedence.setToolTip(
             "Overlay selection precedence. Higher values win when intervals overlap."
         )
@@ -149,4 +208,9 @@ class RegionalOverlayRow(QGroupBox):
         )
 
 
-__all__ = ["MaterialEditor", "RegionalOverlayRow", "number_input"]
+__all__ = [
+    "MaterialEditor",
+    "RegionalOverlayRow",
+    "SafeIntegerEdit",
+    "number_input",
+]

@@ -12,6 +12,9 @@ from rate_of_closure.application.regional_surface_plan import (
     illustrative_regional_surface_plan_draft,
     validate_regional_surface_plan_draft,
 )
+from shared.python.swing_sim.canonical_numeric_json import (
+    MAX_CANONICAL_SAFE_INTEGER,
+)
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -191,8 +194,13 @@ def test_pyqt_save_as_preserves_imported_request_bytes(
         RegionalSurfacePlanTab,
     )
 
+    draft = illustrative_regional_surface_plan_draft()
     request = validate_regional_surface_plan_draft(
-        replace(illustrative_regional_surface_plan_draft(), request_id="saved-plan")
+        replace(
+            draft,
+            request_id="saved-plan",
+            regions=(replace(draft.regions[0], precedence=MAX_CANONICAL_SAFE_INTEGER),),
+        )
     )
     source = tmp_path / "source.json"
     destination = tmp_path / "copy.json"
@@ -216,6 +224,7 @@ def test_pyqt_save_as_preserves_imported_request_bytes(
 
     assert destination.read_bytes() == source.read_bytes()
     assert tab.file_actions.recent_path == destination
+    assert tab.current_request() == request
 
 
 def test_pyqt_import_preserves_canonical_precision_and_large_si_values(

@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.29                                    |
-| **Spec Version**        | 1.14.29                                    |
-| **Last Spec Update**    | 2026-08-10                                 |
+| **Current Version**     | 1.14.30                                    |
+| **Spec Version**        | 1.14.30                                    |
+| **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
@@ -69,6 +69,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   qualification, and row capacity. Unchanged imports preserve the exact
   request and provenance; edits create a fresh draft digest. External or
   differently qualified requests are rejected without coercion.
+- Both runtimes accept wire numbers only inside JavaScript's exact safe range.
+  Native precedence entry remains integer-exact through the inclusive v1
+  maximum of 9,007,199,254,740,991 and cannot silently narrow imported data.
 - Ground execution/playback, result interchange, measured calibration
   workflows, model-input workspace persistence, compiled regional physics,
   and UpstreamDrift consumers remain explicit non-goals.

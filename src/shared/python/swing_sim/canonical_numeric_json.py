@@ -9,7 +9,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from typing import Any
 
 _FLOAT_QUANTUM = Decimal("0.00000000001")
-_MAX_SAFE_INTEGER = 9_007_199_254_740_991
+MAX_CANONICAL_SAFE_INTEGER = 9_007_199_254_740_991
 
 
 def _string_token(value: str) -> str:
@@ -21,6 +21,8 @@ def _string_token(value: str) -> str:
 def _canonical_float_token(value: float) -> str:
     if not math.isfinite(value):
         raise ValueError("canonical JSON requires finite floats")
+    if abs(value) > MAX_CANONICAL_SAFE_INTEGER:
+        raise ValueError("canonical JSON number exceeds cross-runtime safe range")
     if value == 0 or value.is_integer():
         return "0" if value == 0 else str(int(value))
     rounded = Decimal.from_float(value).quantize(_FLOAT_QUANTUM, rounding=ROUND_HALF_UP)
@@ -43,7 +45,7 @@ def canonical_numeric_json(value: Any) -> str:
     if isinstance(value, float):
         return _canonical_float_token(value)
     if isinstance(value, int):
-        if abs(value) > _MAX_SAFE_INTEGER:
+        if abs(value) > MAX_CANONICAL_SAFE_INTEGER:
             raise ValueError("canonical JSON integer exceeds cross-runtime safe range")
         return str(value)
     if isinstance(value, str):
@@ -61,4 +63,8 @@ def canonical_numeric_json(value: Any) -> str:
     raise TypeError(f"unsupported canonical JSON value: {type(value).__name__}")
 
 
-__all__ = ["canonical_numeric_float", "canonical_numeric_json"]
+__all__ = [
+    "MAX_CANONICAL_SAFE_INTEGER",
+    "canonical_numeric_float",
+    "canonical_numeric_json",
+]

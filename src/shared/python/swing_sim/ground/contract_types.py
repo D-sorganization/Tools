@@ -6,7 +6,10 @@ import math
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, TypeAlias
 
-from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_float
+from shared.python.swing_sim.canonical_numeric_json import (
+    MAX_CANONICAL_SAFE_INTEGER,
+    canonical_numeric_float,
+)
 
 if TYPE_CHECKING:
     from enum import StrEnum
@@ -18,7 +21,6 @@ RESULT_SCHEMA_VERSION = "flight-to-ground-result/v1"
 UNIT_SYSTEM_SI = "SI"
 Vector3: TypeAlias = tuple[float, float, float]
 _UNIT_TOLERANCE = 1e-9
-_MAX_SAFE_INTEGER = 9_007_199_254_740_991
 _MIN_CANONICAL_POSITIVE = 0.00000000001
 _TEXT_EDGE_WHITESPACE = " \t\r\n\f\v"
 
@@ -29,6 +31,8 @@ def _raw_finite(value: float, name: str) -> float:
     number = float(value)
     if not math.isfinite(number):
         raise ValueError(f"{name} must be finite")
+    if abs(number) > MAX_CANONICAL_SAFE_INTEGER:
+        raise ValueError(f"{name} must lie within the cross-runtime safe range")
     return number
 
 
@@ -67,10 +71,10 @@ def _integer(value: int | float, name: str, minimum: int = 0) -> int:
         normalized = int(value)
     else:
         raise ValueError(f"{name} must be an integer")
-    if not minimum <= normalized <= _MAX_SAFE_INTEGER:
+    if not minimum <= normalized <= MAX_CANONICAL_SAFE_INTEGER:
         raise ValueError(
             f"{name} must lie within cross-runtime safe range "
-            f"[{minimum}, {_MAX_SAFE_INTEGER}]"
+            f"[{minimum}, {MAX_CANONICAL_SAFE_INTEGER}]"
         )
     return normalized
 
