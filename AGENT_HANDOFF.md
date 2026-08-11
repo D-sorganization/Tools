@@ -8,8 +8,11 @@
 - The 403-line `wind_strategy_plot_adapter.py` blocker is repaired by moving
   request/analysis validation into the private
   `_wind_strategy_plot_validation.py` collaborator. The public adapter is now
-  252 lines and the validator is 186 lines; both are below the mandatory
+  252 lines and the validator is 213 lines; both are below the mandatory
   400-line ceiling.
+- The scenario validator accepts the scenario plus one frozen, slotted
+  expectation object. No production function exceeds four parameters or 50
+  lines.
 - `build_wind_strategy_plot_dataset`, `WIND_STRATEGY_*` exports, validation
   messages, variable/stage/category/cohort order, row identity, scalar values,
   availability, attributes, and the no-flight-rerun boundary are unchanged.

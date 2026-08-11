@@ -3,9 +3,12 @@
 ## 2026-08-11 PR #4281 wind adapter module-budget repair
 
 - The public `wind_strategy_plot_adapter.py` is reduced from 403 to 252 lines
-  by extracting its request/analysis validation into the 186-line private
+  by extracting its request/analysis validation into the 213-line private
   `_wind_strategy_plot_validation.py` collaborator. Both now satisfy the
   mandatory below-400 production-module ceiling.
+- A frozen, slotted scenario-expectation object reduces the private scenario
+  validator from five loose parameters to two cohesive parameters. Every
+  production function is at or below four parameters and 50 lines.
 - Public imports, the `scalar-ensemble/v1` dataset, variable and cohort order,
   composite row identity, values, availability, attributes, validation
   messages, and the rule that adaptation never invokes flight physics are

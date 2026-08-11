@@ -8,7 +8,10 @@
 The 403-line `variation/wind_strategy_plot_adapter.py` exceeded the mandatory
 400-line ceiling. Request/analysis validation now lives in the private
 `variation/_wind_strategy_plot_validation.py` collaborator, leaving a 252-line
-public adapter and a 186-line validator. The public imports, dataset schema,
+public adapter and a 213-line validator. A frozen, slotted scenario-expectation
+object keeps the private scenario validator at two cohesive parameters; every
+production function is at or below four parameters and 50 lines. The public
+imports, dataset schema,
 variable/stage/category/cohort order, composite row identities, row values,
 typed availability, attributes, validation messages, and no-flight-rerun
 boundary are unchanged.
