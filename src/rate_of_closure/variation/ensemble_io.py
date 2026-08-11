@@ -94,9 +94,11 @@ def write_trace_csv(result: SimulationEnsembleResult, path: str | Path) -> None:
                             repr(float(time_s)),
                             point_id,
                             *(
-                                repr(float(value))
-                                if valid and math.isfinite(value)
-                                else ""
+                                (
+                                    repr(float(value))
+                                    if valid and math.isfinite(value)
+                                    else ""
+                                )
                                 for value in xyz
                             ),
                             int(valid),
