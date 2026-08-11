@@ -1,7 +1,27 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > Update with every implementation commit and every push to `main`.
-> Current-state only; history lives in git. Last updated: 2026-08-10.
+> Current-state only; history lives in git. Last updated: 2026-08-11.
+
+## 2026-08-11 PR #4331 current-parent propagation repair
+
+The orthographic-axis child now normally incorporates exact current
+multi-view persistence parent
+`304a069b1777dcf8cf107de26caa3b9fbe96dbb3` after exact live child
+`c7bccbccc6cda0c9b938b2862ed660cebdcb7597`. The earlier hosted quality gate
+used stale merge base `d8176bb5863a35725199bb8357a5f000f9bdd3ba` and therefore
+treated the parent's formatting and worktree-pointer changes as child-local.
+The content-clean merge restores the effective PR delta to the intended eight
+camera documentation, adapter, and test files without changing runtime camera
+semantics. Protected current-head CI and independent review remain required;
+no publication or CI retry is authorized from this worktree.
+
+Fresh verification is 71 focused/native Python and PyQt tests, exact-delta
+Ruff/format, pinned MyPy 1.13, Bandit, campaign and launcher manifests, and all
+relevant governance/diff gates. The complete React suite passes 114 files / 686
+tests together with TypeScript, zero-warning ESLint, the 199-module production
+build, and four serial desktop/constrained-2x-DPR Playwright camera cases. The
+web dependency audit reports 337 packages and zero vulnerabilities.
 
 ## 2026-08-10 Repaired compositor-parent propagation into persistence child
 

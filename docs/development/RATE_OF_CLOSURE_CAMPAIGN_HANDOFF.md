@@ -1,8 +1,31 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-10. This isolated integration is published as draft
+Status verified 2026-08-11. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
+
+## 2026-08-11 PR #4331 current-parent propagation repair
+
+- Exact live child `c7bccbccc6cda0c9b938b2862ed660cebdcb7597` is retained
+  first and exact current PR #4330 parent
+  `304a069b1777dcf8cf107de26caa3b9fbe96dbb3` is incorporated second through a
+  normal merge on `feat/4284-orthographic-axis-polish`.
+- The failed hosted format gate was an ancestry defect: stale merge base
+  `d8176bb5863a35725199bb8357a5f000f9bdd3ba` exposed the parent's formatting
+  commit and six worktree pointers as child-local changes. With current parent
+  ancestry, the effective child delta contains only eight intended camera-polish
+  documentation, adapter, and regression files.
+- The merge is content-clean and camera behavior is unchanged. No rebase,
+  retarget, force-push, parent rewrite, CI retry, or GitHub write was used.
+  Independent review, release-owner publication, and protected exact-head CI
+  remain open.
+- Fresh merged-tree evidence is 71 Python/PyQt camera, compositor, layout,
+  main-window, and manifest tests; exact-delta Ruff/format, pinned MyPy 1.13,
+  Bandit, documentation, changed-code, module-size, minimum-test, assertion,
+  manifest-layout, whitespace, and diff gates. React passes 114 files / 686
+  tests, TypeScript, zero-warning ESLint, the 199-module production build, and
+  four serial Playwright camera cases across desktop and constrained 2x-DPR
+  projects. `npm ci` audited 337 packages with zero vulnerabilities.
 
 ## 2026-08-10 Repaired compositor-parent propagation into persistence child
 

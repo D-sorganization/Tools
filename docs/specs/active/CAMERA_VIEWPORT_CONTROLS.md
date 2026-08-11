@@ -3,6 +3,24 @@
 Status: implemented locally for Tools issue #4284; protected integration and
 UpstreamDrift consumer parity remain open.
 
+## PR #4331 stack repair
+
+The local publication candidate normally merges exact current PR #4330 parent
+`304a069b1777dcf8cf107de26caa3b9fbe96dbb3` after exact live PR #4331 child
+`c7bccbccc6cda0c9b938b2862ed660cebdcb7597`. This corrects ancestry only: it
+removes the parent's formatting and worktree-pointer files from the effective
+child comparison while preserving the camera implementation and every command
+contract below. Protected exact-head CI and independent review remain release
+gates.
+
+Fresh merged-tree verification covers 71 Python/PyQt camera, compositor,
+layout, main-window, and manifest tests; exact-delta Ruff/format, pinned MyPy
+1.13, Bandit, governance, module-size, assertion, whitespace, and diff gates;
+the complete 114-file / 686-test React suite; TypeScript; zero-warning ESLint;
+the 199-module production build; and four serial desktop/constrained-2x-DPR
+Playwright camera cases. The dependency audit reports zero vulnerabilities in
+337 packages.
+
 ## Problem and scope
 
 Moving clubheads and balls can leave a manually framed 3D view. Every Tools
