@@ -5,6 +5,7 @@ import { DEFAULT_COURSE_LAYOUT, type CourseLayout } from "../model/course";
 import type { ImpactScenario } from "../model/impact";
 import type { SimulationInput, SimulationRunTs } from "../model/simulation";
 import type { SpatialTargetTs } from "../model/spatialTarget";
+import type { ViewWorkspace } from "../model/viewWorkspace";
 import { spatialTargetForGroundWorkflow } from "../model/spatialTargetWorkflow";
 import { wedgeGroundClearance } from "../model/wedgeGroundClearance";
 import { FIELD_GUIDANCE } from "../model/units";
@@ -17,6 +18,7 @@ import { StrikeCanvas } from "./StrikeCanvas";
 import { SwingPlaybackControls } from "./SwingPlaybackControls";
 import { SpatialTargetSection } from "./SpatialTargetSection";
 import { WedgeGroundClearancePanel } from "./WedgeGroundClearancePanel";
+import { SynchronizedSimulationViews } from "./SynchronizedSimulationViews";
 import { drawSwingScene } from "./swingSceneDraw";
 import {
   screwEntityOptions,
@@ -44,6 +46,8 @@ interface Props {
   spatialTarget: SpatialTargetTs;
   onSpatialTargetChange: (target: SpatialTargetTs) => void;
   distanceUnit: string;
+  viewWorkspace?: ViewWorkspace;
+  onViewWorkspaceChange?: (workspace: ViewWorkspace) => void;
 }
 
 export function SimulationDisplay({
@@ -55,6 +59,8 @@ export function SimulationDisplay({
   spatialTarget,
   onSpatialTargetChange,
   distanceUnit,
+  viewWorkspace,
+  onViewWorkspaceChange,
 }: Props) {
   const [playing, setPlaying] = useState(false);
   const [loop, setLoop] = useState(false);
@@ -137,8 +143,38 @@ export function SimulationDisplay({
     }
   }, [
     run, time, showBall, showGround, showCourse, showFlight, showSwingTrail,
-    showScrew, screwEntityId, view, wedgeClearance,
+    showScrew, screwEntityId, view, wedgeClearance, viewWorkspace,
   ]);
+
+  const playbackControls = (
+    <SwingPlaybackControls run={run} playing={playing} setPlaying={setPlaying}
+      time={time} setTime={setTime} loop={loop} setLoop={setLoop}
+      rate={rate} setRate={setRate} toggles={[
+        ["Ball", showBall, setShowBall, TOGGLE_GUIDANCE.ball, "text-slate-300"],
+        ["Ground", showGround, setShowGround, TOGGLE_GUIDANCE.ground, "text-slate-300"],
+        ["Course Elements", showCourse, setShowCourse, TOGGLE_GUIDANCE.course, "text-slate-300"],
+        ["Screw Axis", showScrew, setShowScrew, TOGGLE_GUIDANCE.screw, "text-fuchsia-300"],
+        ["Path Trail", showSwingTrail, setShowSwingTrail,
+          "Show the clubhead path travelled up to the current frame.", "text-sky-300"],
+        ["Show Ball Flight", showFlight, setShowFlight, TOGGLE_GUIDANCE.flight, "text-amber-300/90"],
+      ]} />
+  );
+
+  if (viewWorkspace && onViewWorkspaceChange) {
+    return (
+      <section className="min-w-0 space-y-3">
+        <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
+          {playbackControls}
+          <SynchronizedSimulationViews workspace={viewWorkspace}
+            onWorkspaceChange={onViewWorkspaceChange} run={run} input={input}
+            scenario={scenario} effectiveLoftDeg={effectiveLoftDeg}
+            clubSpec={clubSpec} spatialTarget={spatialTarget}
+            onSpatialTargetChange={onSpatialTargetChange} timeS={time}
+            swingCanvasRef={canvasRef} deliveryAngles={deliveryAngles} />
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="min-w-0 space-y-3">
@@ -174,17 +210,7 @@ export function SimulationDisplay({
             spatialTarget={spatialTarget} distanceUnit={distanceUnit} />
         </>}
         {view === "Swing" && <>
-          <SwingPlaybackControls run={run} playing={playing} setPlaying={setPlaying}
-            time={time} setTime={setTime} loop={loop} setLoop={setLoop}
-            rate={rate} setRate={setRate} toggles={[
-              ["Ball", showBall, setShowBall, TOGGLE_GUIDANCE.ball, "text-slate-300"],
-              ["Ground", showGround, setShowGround, TOGGLE_GUIDANCE.ground, "text-slate-300"],
-              ["Course Elements", showCourse, setShowCourse, TOGGLE_GUIDANCE.course, "text-slate-300"],
-              ["Screw Axis", showScrew, setShowScrew, TOGGLE_GUIDANCE.screw, "text-fuchsia-300"],
-              ["Path Trail", showSwingTrail, setShowSwingTrail,
-                "Show the clubhead path travelled up to the current frame.", "text-sky-300"],
-              ["Show Ball Flight", showFlight, setShowFlight, TOGGLE_GUIDANCE.flight, "text-amber-300/90"],
-            ]} />
+          {playbackControls}
           {run && clubSpec && (
             <>
               <ImpactKinematicsPanel run={run} scenario={scenario} club={clubSpec} />

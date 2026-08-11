@@ -6,7 +6,7 @@ import dataclasses
 import logging
 import math
 
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import QSettings, Qt, pyqtSignal
 from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -20,12 +20,11 @@ from PyQt6.QtWidgets import (
 
 from rate_of_closure.club import ClubSpec, get_club
 from rate_of_closure.derivation_models import DerivationConfig
-from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
+from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation import (
     SOURCE_KINDS,
     BallSetup,
     ContactMode,
-    ManualDeliveryConfig,
     SimulationConfig,
     SimulationRun,
     run_simulation,
@@ -40,6 +39,9 @@ from rate_of_closure.ui.pyqt6.simulation_specs import (
     LAUNCH_ROWS,
     SOURCE_LABELS,
 )
+from rate_of_closure.ui.pyqt6.simulation_tab_compositor import (
+    SimulationTabCompositorMixin,
+)
 from rate_of_closure.ui.pyqt6.simulation_tab_controls import (
     SimulationTabControlsMixin,
 )
@@ -50,9 +52,14 @@ from rate_of_closure.ui.pyqt6.simulation_target_workflow import (
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
+from rate_of_closure.ui.pyqt6.synchronized_simulation_view import (
+    SynchronizedSimulationView,
+)
 from rate_of_closure.ui.pyqt6.torque_profile_controller import RunMode
 from rate_of_closure.ui.pyqt6.torque_profile_panel import TorqueProfilePanel
+from rate_of_closure.ui.pyqt6.view_compositor import ViewCompositor
 from rate_of_closure.units import format_distance_m
+from rate_of_closure.view_workspace import ViewKind
 from shared.python.swing_sim.run_config import DoublePendulumRunConfig
 from shared.python.swing_sim.types import PlaneOrientation
 
@@ -63,6 +70,7 @@ __all__ = ["LAUNCH_ROWS", "SOURCE_LABELS", "SimulationTab"]
 
 class SimulationTab(
     SimulationTabControlsMixin,
+    SimulationTabCompositorMixin,
     SimulationTabRuntimeMixin,
     SimulationTargetWorkflowMixin,
     QWidget,
@@ -78,7 +86,11 @@ class SimulationTab(
     #: Requests that the owning workbench adopt a library-club selection.
     clubSelectionChanged = pyqtSignal(str)  # noqa: N815 - Qt signal convention
 
-    def __init__(self, parent: QWidget | None = None) -> None:
+    def __init__(
+        self,
+        parent: QWidget | None = None,
+        view_settings: QSettings | None = None,
+    ) -> None:
         super().__init__(parent)
         self._scenario = ImpactScenario(clubhead_speed_mph=113.0)
         self._run: SimulationRun | None = None
@@ -90,6 +102,20 @@ class SimulationTab(
         self._strike_view = StrikeView()
         self._flight_view = FlightView()
         self._flight_panel = FlightPlaybackPanel(self._flight_view)
+        self._compositor_strike_view = StrikeView()
+        self._compositor_swing_view = SynchronizedSimulationView()
+        self._compositor_flight_view = FlightView()
+        self._compositor = ViewCompositor(
+            {
+                ViewKind.IMPACT: self._compositor_strike_view,
+                ViewKind.SWING: self._compositor_swing_view,
+                ViewKind.FLIGHT: self._compositor_flight_view,
+            },
+            view_settings,
+        )
+        self._compositor_swing_view.playbackTimeChanged.connect(
+            self._sync_compositor_playback
+        )
         self._kinetics_panel = KineticsPanel()
         self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)
         self._inspector = InspectorView()
@@ -140,6 +166,7 @@ class SimulationTab(
         right.addTab(self._view, "Swing")
         right.addTab(self._kinetics_panel, "Kinetics")
         right.addTab(self._flight_panel, "Flight")
+        right.addTab(self._compositor, "Multi View")
         right.addTab(self._inspector, "Inspector")
         right.addTab(self._solver_panel, "Solver")
         right.addTab(self._torque_profile_panel, "Torque Profiles")
@@ -282,6 +309,10 @@ class SimulationTab(
         self._strike_view.set_run(run)
         self._kinetics_panel.set_run(run)
         self._flight_view.set_run(run)
+        self._compositor_swing_view.set_run(run)
+        self._compositor_strike_view.set_run(run)
+        self._compositor_flight_view.set_run(run)
+        self._sync_compositor_playback(self._compositor_swing_view.playback_time())
         self._inspector.set_run(run)
         self._refresh_launch_rows()
         self._update_spatial_target_after_run(run)
@@ -342,40 +373,6 @@ class SimulationTab(
         self._ball_setup_control.set_setup(setup)
         self._emit_config()
 
-    def set_manual_delivery(self, delivery: ManualDeliveryConfig) -> None:
-        """Load one validated manual declaration without partial signal churn."""
-        if not isinstance(delivery, ManualDeliveryConfig):
-            raise TypeError("delivery must be a ManualDeliveryConfig")
-        values = {
-            "attack_angle_deg": delivery.attack_angle_deg,
-            "club_path_deg": delivery.club_path_deg,
-            "forward_shaft_lean_deg": delivery.forward_shaft_lean_deg,
-        }
-        for name, value in values.items():
-            spin = self._manual_delivery_spins[name]
-            spin.blockSignals(True)
-            spin.setValue(value)
-            spin.blockSignals(False)
-        datum_index = self._shaft_datum_combo.findData(delivery.shaft_axis_datum)
-        if datum_index < 0:
-            raise ValueError("manual shaft-axis datum is unavailable in this UI")
-        self._shaft_datum_combo.blockSignals(True)
-        self._shaft_datum_combo.setCurrentIndex(datum_index)
-        self._shaft_datum_combo.blockSignals(False)
-        self._invalidate_source()
-
-    def view(self) -> SimulationView:
-        """The swing-scale 3D scene (playback controls live on it)."""
-        return self._view
-
-    def strike_view(self) -> StrikeView:
-        """The face-scale impact-zone viewer."""
-        return self._strike_view
-
-    def flight_view(self) -> FlightView:
-        """The flight-scale trajectory viewer."""
-        return self._flight_view
-
     def kinetics_panel(self) -> KineticsPanel:
         """The kinetics plots + peak-table sub-tab (#4125 H2)."""
         return self._kinetics_panel
@@ -388,68 +385,8 @@ class SimulationTab(
         """The goal-driven Solver panel (worker lifecycle lives on it)."""
         return self._solver_panel
 
-    def apply_solver_solution(
-        self, result: object, use_swing_source: bool
-    ) -> SimulationRun | None:
-        """Load a SolverResult's variables into the session and rerun.
-
-        Mapping (documented deviation — manual head yaw is not yet exposed,
-        so a solved face angle informs the goal table but is not replayed):
-
-        * both modes: the solved impact offsets land in the scenario;
-        * delivery mode: the manual constant-twist source is selected and
-          the solved clubhead speed becomes the scenario reference speed;
-        * swing-source mode: the double-pendulum source is selected, the
-          solved plane tilts drive the tilt inputs, and the solved
-          impact-time offset shifts tau off the peak-speed instant.
-        """
-        variables: dict[str, float] = result.variables  # type: ignore[attr-defined]
-        updates = {
-            "impact_offset_toe_mm": variables["impact_offset_toe_mm"],
-            "impact_offset_high_mm": variables["impact_offset_high_mm"],
-        }
-        if use_swing_source:
-            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
-            for attr, var in (
-                ("yaw_deg", "swing_yaw_deg"),
-                ("side_tilt_deg", "swing_side_tilt_deg"),
-                ("forward_tilt_deg", "swing_forward_tilt_deg"),
-            ):
-                spin = self._tilt_spins[attr]
-                spin.blockSignals(True)
-                spin.setValue(variables[var])
-                spin.blockSignals(False)
-        else:
-            self._source_combo.setCurrentIndex(SOURCE_KINDS.index("manual"))
-            speed_mph = variables["clubhead_speed_mps"] * MPH_PER_MPS
-            updates["clubhead_speed_mph"] = speed_mph
-            manual_delivery = ManualDeliveryConfig(
-                attack_angle_deg=variables["attack_angle_deg"],
-                club_path_deg=variables["club_path_deg"],
-                forward_shaft_lean_deg=(
-                    get_club(self._club_combo.currentText()).loft_deg
-                    - variables["dynamic_loft_deg"]
-                ),
-                shaft_axis_datum=self._shaft_datum_combo.currentData(),
-            )
-            self.set_manual_delivery(manual_delivery)
-        self._scenario = dataclasses.replace(self._scenario, **updates)
-        self._invalidate_source()
-        self._tau = None  # auto: impact at maximum clubhead speed
-        run = self.run_now()
-        offset = variables.get("swing_impact_time_offset_s", 0.0)
-        if (
-            run is not None
-            and run.impact_time_s is not None
-            and use_swing_source
-            and abs(offset) > 1e-9
-        ):
-            source = self._ensure_source()
-            self._tau = min(max(run.impact_time_s + offset, 0.0), source.duration)
-            run = self.run_now()
-        return run
-
     def stop(self) -> None:
         """Stop the playback timer and solver worker (close and tests)."""
         self._view.stop()
+        self._compositor_swing_view.stop()
         self._solver_panel.stop()

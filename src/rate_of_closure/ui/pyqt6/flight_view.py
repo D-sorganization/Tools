@@ -192,6 +192,10 @@ class FlightView(FlightCameraAdapter, FlightViewPanelsMixin, QWidget):
             0.0 if self._timed_trajectory is None else self._timed_trajectory.duration_s
         )
 
+    def playback_time_s(self) -> float:
+        """Current solver-relative flight playback time [s]."""
+        return self._playback_time_s
+
     def playback_apex_time_s(self) -> float:
         """Current solver trajectory apex timestamp [s], or zero if unavailable."""
         return (

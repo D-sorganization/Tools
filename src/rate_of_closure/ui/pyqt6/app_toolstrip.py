@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from functools import partial
 from typing import Protocol
 
 from PyQt6.QtCore import Qt
@@ -27,9 +28,6 @@ from rate_of_closure.ui.pyqt6.workspace_navigation import PrimaryModuleEntry
 _PROJECT_DISABLED_REASON = (
     "Unavailable until the canonical project document contract is implemented."
 )
-_COMPOSITOR_DISABLED_REASON = (
-    "Unavailable until the synchronized multi-view compositor contract is implemented."
-)
 _MODULE_ID_ROLE = Qt.ItemDataRole.UserRole
 
 
@@ -47,6 +45,9 @@ class ToolstripHost(Protocol):
 
     def restore_default_workspace(self) -> None:
         """Restore the declared workspace defaults."""
+
+    def show_compositor_view(self, view_id: str) -> None:
+        """Show one stable simulation view in the synchronized compositor."""
 
 
 class ModuleManagerHost(Protocol):
@@ -167,19 +168,24 @@ class ApplicationToolstrip(QToolBar):
         restore.setToolTip("Restore the default module order and visibility")
         view_menu.addAction(restore)
         view_menu.addSeparator()
-        self._add_disabled_view_commands(view_menu)
+        self._add_view_commands(view_menu)
         self._add_menu_button("View", "viewMenuButton", view_menu)
 
-    def _add_disabled_view_commands(self, menu: QMenu) -> None:
-        """Register compositor commands with truthful availability reasons."""
+    def _add_view_commands(self, menu: QMenu) -> None:
+        """Register enabled commands for real compositor viewport hosts."""
         for command_id, label in (
             (AppCommandId.VIEW_SHOW_IMPACT, "Show Impact View"),
             (AppCommandId.VIEW_SHOW_SWING, "Show Swing View"),
             (AppCommandId.VIEW_SHOW_FLIGHT, "Show Flight View"),
         ):
-            action = self._make_action(command_id, label)
-            self._apply_availability(
-                action, CommandAvailability.disabled(_COMPOSITOR_DISABLED_REASON)
+            view_id = command_id.value.removeprefix("view.show_")
+            action = self._make_action(
+                command_id,
+                label,
+                partial(self._host.show_compositor_view, view_id),
+            )
+            action.setToolTip(
+                f"Show the {label.removeprefix('Show ')} in the synchronized workspace"
             )
             menu.addAction(action)
 

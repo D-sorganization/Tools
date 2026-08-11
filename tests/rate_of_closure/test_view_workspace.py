@@ -14,6 +14,7 @@ from rate_of_closure.view_workspace import (
     workspace_from_document,
     workspace_to_document,
 )
+from rate_of_closure.view_workspace_recovery import recover_workspace_document
 
 
 def test_default_workspace_is_a_single_swing_view() -> None:
@@ -133,3 +134,40 @@ def test_document_rejects_unknown_or_incomplete_fields() -> None:
     invalid_slot = {**valid, "slots": [{"id": "swing", "kind": "swing"}]}
     with pytest.raises(ValueError, match="missing"):
         workspace_from_document(invalid_slot)
+
+
+def test_recovery_drops_unknown_view_ids_and_preserves_valid_playback() -> None:
+    document = workspace_to_document(
+        ViewWorkspace(
+            layout=ViewLayout.GRID,
+            slots=(
+                ViewSlot(id="future", kind=ViewKind.PLOT, plot_id="future"),
+                ViewSlot(id="swing", kind=ViewKind.SWING),
+                ViewSlot(id="flight", kind=ViewKind.FLIGHT),
+            ),
+            active_slot_id="future",
+            playback=PlaybackState(time_s=0.42, loop=True, rate=0.5),
+        )
+    )
+
+    recovered = recover_workspace_document(document)
+
+    assert [slot.id for slot in recovered.slots] == ["swing", "flight"]
+    assert recovered.active_slot_id == "swing"
+    assert recovered.layout is ViewLayout.GRID
+    assert recovered.playback == PlaybackState(time_s=0.42, loop=True, rate=0.5)
+
+
+def test_recovery_migrates_legacy_visible_views_with_safe_fallback() -> None:
+    recovered = recover_workspace_document(
+        {
+            "version": 1,
+            "layout": "split_horizontal",
+            "views": ["impact", "future", "flight"],
+            "active": "future",
+        }
+    )
+
+    assert [slot.id for slot in recovered.slots] == ["impact", "flight"]
+    assert recovered.active_slot_id == "impact"
+    assert recovered.layout is ViewLayout.SPLIT_HORIZONTAL

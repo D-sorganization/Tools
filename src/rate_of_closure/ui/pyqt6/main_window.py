@@ -54,6 +54,9 @@ from rate_of_closure.ui.pyqt6.main_window_layout import (
     ResultsSidebar,
     create_primary_tabs,
 )
+from rate_of_closure.ui.pyqt6.main_window_view_commands import (
+    MainWindowViewCommandsMixin,
+)
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
@@ -95,7 +98,12 @@ except ImportError:  # standalone / vendored use
             """Match the themed mixin's interface; do nothing."""
 
 
-class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMainWindow):
+class RateOfClosureMainWindow(
+    MainWindowViewCommandsMixin,
+    WorkspaceNavigationMixin,
+    ThemedWindowMixin,
+    QMainWindow,
+):
     """Interactive explorer for rotation-induced impact-point deviations."""
 
     def __init__(
@@ -108,8 +116,14 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self.setWindowTitle("Rate of Closure Impact Explorer")
         self.setMinimumSize(1024, 700)
 
+        self._navigation_settings = (
+            navigation_settings
+            if navigation_settings is not None
+            else QSettings(_NAVIGATION_SETTINGS_ORG, _NAVIGATION_SETTINGS_APP)
+        )
+
         self._create_views()
-        self._build_application_shell(navigation_settings)
+        self._build_application_shell()
         self._connect_view_signals()
         self._initialize_view_content()
 
@@ -121,7 +135,7 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._club_view = Club3DView()
         self._plots_tab = PlotsTab()
         self._derivation_view = DerivationView()
-        self._simulation_tab = SimulationTab()
+        self._simulation_tab = SimulationTab(view_settings=self._navigation_settings)
         self._simulation_tab.runCompleted.connect(self._plots_tab.set_run)
         self._flight_explorer_tab = FlightExplorerTab()
         self._launch_monitor_analytics_tab = LaunchMonitorAnalyticsTab()
@@ -132,7 +146,7 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._glossary_tab = GlossaryTab()
 
     def _build_application_shell(
-        self, navigation_settings: NavigationSettings | None
+        self,
     ) -> None:
         """Assemble navigation, toolstrip, result sidebar, and central splitter."""
         sidebar = ResultsSidebar(
@@ -140,11 +154,6 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         )
         self._rows = sidebar.rows
         self._explanation = sidebar.explanation
-        self._navigation_settings = (
-            navigation_settings
-            if navigation_settings is not None
-            else QSettings(_NAVIGATION_SETTINGS_ORG, _NAVIGATION_SETTINGS_APP)
-        )
         self._tabs = create_primary_tabs(self._primary_tab_specs())
         self._restore_primary_navigation()
         tab_bar = self._primary_tab_bar()
@@ -286,18 +295,9 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._module_manager_dialog = dialog
         dialog.show()
 
-    def module_manager_dialog(self) -> ModuleManagerDialog | None:
-        """Return the current workspace module manager, if one was opened."""
-        return self._module_manager_dialog
-
     def bind_theme_menu(self, menu) -> None:  # type: ignore[no-untyped-def]
         """Expose the launcher-owned theme choices in the top toolstrip."""
         self._app_toolstrip.bind_theme_menu(menu)
-
-    def shortcut_help_dialog(self) -> QDialog | None:
-        """Return the current keyboard-shortcut help dialog."""
-        dialog = self._app_toolstrip.shortcut_dialog()
-        return dialog if isinstance(dialog, QDialog) else None
 
     def _bind_launcher_theme_menu(self) -> None:
         """Move the launcher-provided Theme surface into the top toolstrip."""

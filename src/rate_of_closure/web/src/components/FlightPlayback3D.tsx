@@ -30,12 +30,20 @@ interface Props {
   points: readonly FlightPoint[];
   comparisonPoints?: readonly FlightPoint[];
   spatialTarget?: SpatialTargetTs;
+  synchronizedTimeS?: number;
+  hideTransport?: boolean;
 }
 
 const SPEEDS = [0.25, 0.5, 1, 2, 4];
 const BALL_CLEARANCE_RADIUS_M = 0.05;
 
-export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget }: Props) {
+export function FlightPlayback3D({
+  points,
+  comparisonPoints = [],
+  spatialTarget,
+  synchronizedTimeS,
+  hideTransport = false,
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const dragRef = useRef<{ pointerId: number; x: number; y: number } | null>(null);
   const timeRef = useRef(0);
@@ -50,6 +58,9 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
   );
   const duration = timeline?.duration ?? 0;
   const apexTime = timeline?.apexTime ?? 0;
+  const displayedTime = synchronizedTimeS === undefined
+    ? time
+    : Math.min(Math.max(synchronizedTimeS, 0), duration);
   useMemo(() => {
     if (comparisonPoints.length > 0) validatePlaybackPoints(comparisonPoints);
   }, [comparisonPoints]);
@@ -65,7 +76,7 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
   }, [time]);
 
   useEffect(() => {
-    if (!playing || duration <= 0) return;
+    if (synchronizedTimeS !== undefined || !playing || duration <= 0) return;
     let animationId = 0;
     let previous = performance.now();
     const animate = (now: number) => {
@@ -82,11 +93,11 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
     };
     animationId = window.requestAnimationFrame(animate);
     return () => window.cancelAnimationFrame(animationId);
-  }, [playing, duration, speed, loop]);
+  }, [playing, duration, speed, loop, synchronizedTimeS]);
 
   const frame = useMemo(
-    () => timeline?.frameAt(time) ?? null,
-    [timeline, time],
+    () => timeline?.frameAt(displayedTime) ?? null,
+    [timeline, displayedTime],
   );
 
   const baseHalfExtentM = useMemo(() => {
@@ -145,7 +156,7 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
 
   return (
     <section className="space-y-3" aria-label="3D ball-flight playback">
-      <div className="flex flex-wrap items-center gap-2 text-xs">
+      {!hideTransport && <div className="flex flex-wrap items-center gap-2 text-xs">
         <button
           type="button"
           disabled={duration <= 0}
@@ -251,7 +262,7 @@ export function FlightPlayback3D({ points, comparisonPoints = [], spatialTarget 
         <output className="min-w-24 text-right tabular-nums text-slate-300">
           {time.toFixed(2)} / {duration.toFixed(2)} s
         </output>
-      </div>
+      </div>}
       <CameraControlBar state={camera} subjectLabel="Ball"
         onPreset={(preset) => setCamera((current) => applyCameraPreset(current, preset))}
         onFaceOnSide={(side) => setCamera((current) => setFaceOnSide(current, side))}

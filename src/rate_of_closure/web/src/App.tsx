@@ -83,7 +83,9 @@ export default function App() {
       <main id={`primary-panel-${active}`} role="tabpanel"
         aria-labelledby={`primary-tab-${active}`}>
         <PrimaryWorkspacePanel active={active} model={model}
-          onOpenGlossary={openGlossary} />
+          onOpenGlossary={openGlossary}
+          viewWorkspace={workspace.viewWorkspace}
+          onViewWorkspaceChange={workspace.setViewWorkspace} />
       </main>
       <AppFooter />
     </div>

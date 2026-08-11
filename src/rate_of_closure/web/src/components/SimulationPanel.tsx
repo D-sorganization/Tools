@@ -12,6 +12,7 @@ import { FIELD_GUIDANCE } from "../model/units";
 import { type ClubSpec } from "../model/club";
 import { solve, type ImpactScenario } from "../model/impact";
 import { type SpatialTargetTs } from "../model/spatialTarget";
+import { type ViewWorkspace } from "../model/viewWorkspace";
 import { type ContactMode } from "../model/contact";
 import { SpatialTargetSolverPanel } from "./SpatialTargetSolverPanel";
 import { SimulationLaunchNumbers } from "./SimulationLaunchNumbers";
@@ -55,6 +56,8 @@ interface Props {
   onSpatialTargetChange: (target: SpatialTargetTs) => void;
   /** Ball-flight distance display unit (#4125 H6): yards default. */
   distanceUnit?: string;
+  viewWorkspace?: ViewWorkspace;
+  onViewWorkspaceChange?: (workspace: ViewWorkspace) => void;
 }
 
 export function SimulationPanel({
@@ -65,6 +68,8 @@ export function SimulationPanel({
   spatialTarget,
   onSpatialTargetChange,
   distanceUnit = "yd",
+  viewWorkspace,
+  onViewWorkspaceChange,
 }: Props) {
   const clubDefaultSetup = defaultBallSetupForClub(clubSpec);
   const [initialBallPreference] = useState(() => {
@@ -376,6 +381,8 @@ export function SimulationPanel({
         spatialTarget={spatialTarget}
         onSpatialTargetChange={onSpatialTargetChange}
         distanceUnit={distanceUnit}
+        viewWorkspace={viewWorkspace}
+        onViewWorkspaceChange={onViewWorkspaceChange}
       />
     </div>
   );

@@ -4,6 +4,28 @@ Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 Issue #4225 multi-view compositor first slice
+
+Worktree `Tools-worktrees/issue-4225-multiview-compositor` and branch
+`feat/4225-multiview-compositor` begin at exact PR #4324 head
+`b8bf8aae43d460ec69d6766f57ed55bb8efb7790`. This bounded slice replaces the
+disabled/direct-route placeholders with three real distinct viewport hosts in
+PyQt6 and React. Impact, Swing, and Flight can be selected directly or composed
+as single, horizontal, vertical, and grid layouts. The active run and playback
+time are synchronized, flight time is mapped relative to impact, and each host
+keeps independent camera/overlay ownership. React Flight also retains the
+canonical spatial-target editor.
+
+Both clients persist the same version-1 workspace shape and defensively migrate
+legacy layouts, corrupt values, unsupported future IDs, and missing active
+views to deterministic known-view layouts. Current gates are 94 focused
+Python/PyQt tests, pinned MyPy 1.13, Ruff/format/compileall, and 114 React files
+/ 680 tests with TypeScript, zero-warning ESLint, and the 199-module production
+build. No push or PR exists for this local slice. Keep #4225 and #4218 open for
+rendered native/browser QA, constrained responsive and keyboard-focus proof,
+workspace export round trips, protected CI/review, dependency-ordered
+integration, and UpstreamDrift consumer parity.
+
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 
 Immutable implementation evidence

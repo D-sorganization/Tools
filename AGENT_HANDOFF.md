@@ -3,6 +3,29 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Issue #4225 multi-view compositor first slice
+
+Isolated branch `feat/4225-multiview-compositor` starts at exact PR #4324 head
+`b8bf8aae43d460ec69d6766f57ed55bb8efb7790`; no existing branch was rewritten.
+PyQt6 and React now expose real, distinct Impact, Swing, and Flight viewport
+hosts through enabled UI-neutral commands and single, horizontal, vertical, or
+grid layouts. One simulation run and playback clock drive the visible hosts,
+while each real view retains its own camera and overlay state. React preserves
+the established Simulation-to-Flight target-editing workflow inside the new
+Flight host. Both clients persist the version-1 layout and visible-view set and
+recover legacy documents, corrupt data, unknown future IDs, and invalid active
+IDs through a deterministic known-view fallback.
+
+Current local evidence is 94 focused Python/PyQt model, command, compositor,
+simulation-layout, and viewer tests; pinned MyPy 1.13, Ruff, formatting,
+compileall, and diff checks; plus the complete 114-file / 680-test React suite,
+TypeScript, zero-warning ESLint, and the 199-module Vite production build. All
+changed/new production modules remain below 400 lines. This bounded slice does
+not close #4225 or epic #4218: native/browser rendered QA across constrained
+sizes, complete keyboard focus/layout manipulation, workspace export proof,
+protected CI and review, stack integration, and UpstreamDrift parity remain
+open. Do not push or open a PR until the root release owner reviews this slice.
+
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 
 Immutable implementation evidence is

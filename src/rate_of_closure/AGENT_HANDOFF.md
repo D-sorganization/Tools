@@ -3,6 +3,29 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Issue #4225 multi-view compositor first slice
+
+The isolated `feat/4225-multiview-compositor` branch is based on exact PR #4324
+head `b8bf8aae43d460ec69d6766f57ed55bb8efb7790`. PyQt6 now owns persistent,
+distinct `StrikeView`, synchronized `SimulationView`, and `FlightView`
+instances in a real compositor tab; enabled View commands select those hosts.
+React provides matching Impact/Swing/Flight hosts, quick-view tabs, visibility
+toggles, responsive layouts, the canonical target editor in Flight, and direct
+toolstrip routing. Visible hosts share run identity and time (flight receives
+impact-relative time), while camera and overlay ownership remains local to
+each host.
+
+The shared `rate_of_closure.view_workspace/1` wire shape is honored on both
+clients. Persistence safely migrates legacy `views` documents and drops unknown
+future IDs with deterministic active-view and layout fallback instead of
+failing application launch. Evidence is 94 focused Python/PyQt tests, pinned
+MyPy 1.13, Ruff/format/compileall, and 114 React files / 680 tests with
+TypeScript, zero-warning ESLint, and a 199-module production build. This is not
+full #4225 completion: rendered computer-control QA, complete focus/layout
+keyboard behavior, export round-trip evidence, protected CI/review, normal
+stack integration, and UpstreamDrift parity are still required. Solver UI was
+not changed.
+
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 
 Immutable implementation evidence is

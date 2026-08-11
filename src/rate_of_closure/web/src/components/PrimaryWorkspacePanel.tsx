@@ -2,6 +2,7 @@ import { lazy, Suspense } from "react";
 
 import type { ImpactAppModel } from "../hooks/useImpactAppModel";
 import type { PrimaryViewId } from "../model/viewPreferences";
+import type { ViewWorkspace } from "../model/viewWorkspace";
 import { Derivation } from "./Derivation";
 import { FlightExplorerPanel } from "./FlightExplorerPanel";
 import { GlossaryPanel } from "./GlossaryPanel";
@@ -22,20 +23,31 @@ interface WorkspacePanelProps {
   readonly active: PrimaryViewId;
   readonly model: ImpactAppModel;
   readonly onOpenGlossary: (term: string | undefined) => void;
+  readonly viewWorkspace: ViewWorkspace;
+  readonly onViewWorkspaceChange: (workspace: ViewWorkspace) => void;
 }
 
-function SimulationWorkspace({ model }: { readonly model: ImpactAppModel }) {
+function SimulationWorkspace(props: {
+  readonly model: ImpactAppModel;
+  readonly viewWorkspace: ViewWorkspace;
+  readonly onViewWorkspaceChange: (workspace: ViewWorkspace) => void;
+}) {
+  const { model } = props;
   return (
     <SimulationPanel scenario={model.scenario} loftDeg={10.5}
       clubSpec={model.clubSpec}
       onScenarioChange={(updates) => model.setScenario((state) => ({ ...state, ...updates }))}
       spatialTarget={model.spatialTarget}
       onSpatialTargetChange={model.setSpatialTarget}
-      distanceUnit={model.units.distance} />
+      distanceUnit={model.units.distance}
+      viewWorkspace={props.viewWorkspace}
+      onViewWorkspaceChange={props.onViewWorkspaceChange} />
   );
 }
 
-function ExplorerWorkspace(props: Omit<WorkspacePanelProps, "active">) {
+function ExplorerWorkspace(
+  props: Pick<WorkspacePanelProps, "model" | "onOpenGlossary">,
+) {
   const { model } = props;
   return (
     <ImpactExplorerPanel scenario={model.scenario} setScenario={model.setScenario}
@@ -69,7 +81,8 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
     case "plots":
       return <PlotsPanel scenario={model.scenario} loftDeg={10.5} />;
     case "simulation":
-      return <SimulationWorkspace model={model} />;
+      return <SimulationWorkspace model={model} viewWorkspace={props.viewWorkspace}
+        onViewWorkspaceChange={props.onViewWorkspaceChange} />;
     case "calculation":
       return <Derivation scenario={model.scenario} />;
     default:

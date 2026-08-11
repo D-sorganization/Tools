@@ -16,6 +16,7 @@ from rate_of_closure.application.commands import (  # noqa: E402
     AppCommandId,
 )
 from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow  # noqa: E402
+from rate_of_closure.view_workspace import ViewKind  # noqa: E402
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -140,20 +141,44 @@ def test_module_manager_applies_visibility_and_order_changes(window) -> None:  #
 
 
 @pytest.mark.parametrize(
-    "command_id",
+    ("command_id", "view_id"),
     (
-        AppCommandId.VIEW_SHOW_IMPACT,
-        AppCommandId.VIEW_SHOW_SWING,
-        AppCommandId.VIEW_SHOW_FLIGHT,
+        (AppCommandId.VIEW_SHOW_IMPACT, "impact"),
+        (AppCommandId.VIEW_SHOW_SWING, "swing"),
+        (AppCommandId.VIEW_SHOW_FLIGHT, "flight"),
     ),
 )
-def test_multi_view_commands_explain_their_deliberate_unavailable_state(
-    window, command_id: AppCommandId
+def test_multi_view_commands_open_real_single_view_hosts(
+    window, command_id: AppCommandId, view_id: str
 ) -> None:  # type: ignore[no-untyped-def]
     action = _action(window, command_id.value)
-    assert not action.isEnabled()
-    assert "multi-view compositor contract" in action.toolTip().lower()
-    assert action.statusTip() == action.toolTip()
+    assert action.isEnabled()
+
+    action.trigger()
+
+    assert window.current_primary_module_id() == "simulation"
+    compositor = window._simulation_tab.compositor()
+    assert compositor.workspace().active_slot_id == view_id
+    assert compositor.visible_view_ids() == (view_id,)
+
+
+def test_multi_view_hosts_share_run_and_time_but_keep_distinct_view_instances(
+    window,
+) -> None:  # type: ignore[no-untyped-def]
+    _action(window, AppCommandId.VIEW_SHOW_SWING.value).trigger()
+    compositor = window._simulation_tab.compositor()
+    run = window._simulation_tab.last_run()
+    assert run is not None and run.impact_time_s is not None
+
+    swing = compositor.view(ViewKind.SWING)
+    impact = compositor.view(ViewKind.IMPACT)
+    flight = compositor.view(ViewKind.FLIGHT)
+    assert len({id(swing), id(impact), id(flight)}) == 3
+    assert swing.run() is run
+    assert impact.run() is run
+
+    swing.set_playback_time(run.impact_time_s + 0.2)
+    assert flight.playback_time_s() == pytest.approx(0.2)
 
 
 def test_every_ui_neutral_command_id_is_registered_exactly_once(window) -> None:  # type: ignore[no-untyped-def]
