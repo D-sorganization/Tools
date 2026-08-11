@@ -195,7 +195,9 @@ def test_large_consolidation_branch_skips_changed_test_expansion() -> None:
     run_tests_block = workflow.split(
         "- name: Run Tests with Coverage",
         maxsplit=1,
-    )[1].split("- name: Provider-Contract Suite", maxsplit=1)[0]
+    )[
+        1
+    ].split("- name: Provider-Contract Suite", maxsplit=1)[0]
 
     assert "large_consolidation_branch=false" in run_tests_block
     assert 'BRANCH_NAME" = "consolidate/open-prs-20260620' in run_tests_block

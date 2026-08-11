@@ -220,7 +220,9 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
                 row.addWidget(w)
                 layout.addLayout(row)
         else:
-            self.inp_m_hub = LabeledInput("Standoff", "0.001", "Standoff mass (massless)")
+            self.inp_m_hub = LabeledInput(
+                "Standoff", "0.001", "Standoff mass (massless)"
+            )
             self.inp_m_r_upper = LabeledInput("R Upper", "3.5", "Right upper arm")
             self.inp_m_r_fore = LabeledInput("R Fore", "2.0", "Right forearm")
             self.inp_m_l_upper = LabeledInput("L Upper", "3.5", "Left upper arm")
@@ -280,7 +282,9 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
                 row.addWidget(w)
                 layout.addLayout(row)
         else:
-            self.inp_L_hub = LabeledInput("Standoff", "0.15", "Standoff length (COM offset)")
+            self.inp_L_hub = LabeledInput(
+                "Standoff", "0.15", "Standoff length (COM offset)"
+            )
             self.inp_L_r_upper = LabeledInput("R Upper", "0.35", "Right upper arm")
             self.inp_L_r_fore = LabeledInput("R Fore", "0.30", "Right forearm")
             self.inp_L_l_upper = LabeledInput("L Upper", "0.35", "Left upper arm")
@@ -303,8 +307,12 @@ class ControlsWidgetGolfer(ControlsWidgetBase):
         layout = QVBoxLayout(box)
         layout.setContentsMargins(4, 12, 4, 4)
         layout.setSpacing(3)
-        self.inp_d_rs = LabeledInput("d_RS (m)", "0.20", "Hub bar to right shoulder offset")
-        self.inp_d_ls = LabeledInput("d_LS (m)", "0.20", "Hub bar to left shoulder offset")
+        self.inp_d_rs = LabeledInput(
+            "d_RS (m)", "0.20", "Hub bar to right shoulder offset"
+        )
+        self.inp_d_ls = LabeledInput(
+            "d_LS (m)", "0.20", "Hub bar to left shoulder offset"
+        )
         self.inp_grip_right = LabeledInput(
             "Grip R (m)", "0.05", "Right hand grip from club base"
         )
