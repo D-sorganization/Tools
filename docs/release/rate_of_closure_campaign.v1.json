@@ -124,7 +124,7 @@
       "pr": 4281,
       "branch": "feat/4199-wind-scalar-adapter",
       "base_branch": "feat/4144-variation-export-continuation",
-      "head_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759",
+      "head_sha": "e934ba563a79bf95ee892fea8593972c81299eeb",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "b2baf6ef615b0d756a86ac4ca7eef2fc583210ee",
+      "head_sha": "8c6105d865abe130a68cfa35ffe6afb7eef850c8",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -154,7 +154,7 @@
       "pr": 4285,
       "branch": "feat/4268-ground-contract",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "e09ab96280cab363b36bd0e7db4a3cd064dc2527",
+      "head_sha": "d36551cead67e2544cf185584bff4d070ee663b3",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -164,7 +164,7 @@
       "pr": 4288,
       "branch": "feat/4269-flight-ground-transfer",
       "base_branch": "feat/4268-ground-contract",
-      "head_sha": "afb1bdcfc6701caaf1f7bc3497a6a37dd9698c14",
+      "head_sha": "c39297d37a17d5d8d3520ed62c5563cdcc609cab",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
