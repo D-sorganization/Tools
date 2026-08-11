@@ -32,7 +32,7 @@ from rate_of_closure.ui.pyqt6.regional_surface_plan_io import (
 from rate_of_closure.ui.pyqt6.regional_surface_plan_widgets import (
     MaterialEditor,
     RegionalOverlayRow,
-    number_input,
+    coordinate_input,
 )
 from shared.python.swing_sim.ground.regional_plan_records import (
     GroundRegionalMaterialPlanRequest,
@@ -154,11 +154,13 @@ class RegionalSurfacePlanTab(QWidget):
     def _base_box(self) -> QGroupBox:
         """Create the base interval and complete base material editor."""
         box = QGroupBox("Base surface and domain")
-        self.domain_lower = number_input(
-            "Base domain lower coordinate", self._initial.lower_coordinate_m, " m"
+        self.domain_lower = coordinate_input(
+            "Base domain lower coordinate",
+            self._initial.lower_coordinate_m,
         )
-        self.domain_upper = number_input(
-            "Base domain upper coordinate", self._initial.upper_coordinate_m, " m"
+        self.domain_upper = coordinate_input(
+            "Base domain upper coordinate",
+            self._initial.upper_coordinate_m,
         )
         self.base_material = MaterialEditor("Base material", self._initial.base_surface)
         layout = QVBoxLayout(box)

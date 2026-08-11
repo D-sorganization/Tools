@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.31                                    |
-| **Spec Version**        | 1.14.31                                    |
+| **Current Version**     | 1.14.32                                    |
+| **Spec Version**        | 1.14.32                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -75,6 +75,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Native request import reads a single binary-handle snapshot bounded to the
   1 MiB wire limit plus one sentinel byte, then performs strict UTF-8 decoding.
   Concurrent file growth cannot trigger an unbounded allocation.
+- PyQt6 canonical-precision inputs share one frozen `NumberInputSpec` and
+  three-parameter construction helper. The regional I/O editor retains its
+  eleven-decimal presentation and inclusive cross-runtime safe bounds without
+  restoring the superseded six-parameter helper.
 - Ground execution/playback, result interchange, measured calibration
   workflows, model-input workspace persistence, compiled regional physics,
   and UpstreamDrift consumers remain explicit non-goals.
@@ -2931,6 +2935,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.32 | chore(rate-of-closure, #4274 #4342): normally reconcile exact published regional request-I/O child `8e1c7ccd99a7c4886c5fb9ccc7e4d94a6d7e3833` with exact newly published regional-editor parent `d21741e312b849a63f73cabf351a15d9de80fb94` without changing PR #4342's base; preserve native atomic and browser-qualified canonical request I/O, safe-number and bounded UTF-8 behavior, and the parent's frozen validated engineering-number specification by delegating child controls to its three-parameter helper while retaining eleven-decimal presentation; keep protected CI, approval, integration, execution, calibration, downstream parity, and release open. |
+| 2026-08-11 | 1.14.31 | fix(rate-of-closure, #4274 #4342): remove one redundant Boolean cast rejected by protected delta-MyPy without changing wire bytes, validation, file semantics, UI behavior, or physics. |
+| 2026-08-11 | 1.14.30 | fix(rate-of-closure, #4274 #4339): replace the six-parameter PyQt engineering-number helper with a three-parameter helper and frozen validated specification while preserving names, values, units, ranges, increments, tooltips, and field order; add RED-first helper/configuration and structural-bound tests, retain byte-stable wire/digest/physics behavior, and keep protected CI, approval, integration, and release open. |
 | 2026-08-10 | 1.14.29 | feat(rate-of-closure, #4274): add strict matched PyQt6 native atomic Open/Save As and React bounded import/canonical download for editor-qualified regional requests; preserve exact unchanged provenance, rebind edited drafts, reject unsupported qualifications without coercion, keep workspace persistence separate, and retain execution, calibration, protected evidence, and release as open work. |
 | 2026-08-10 | 1.14.28 | feat(rate-of-closure, #4274): add matched PyQt6 and React regional surface-plan editors with explicit SI material inputs, one-to-eight bounded overlays, illustrative/unvalidated and persistence/execution qualifications, accessible strict validation/readback, provenance bound to the actual draft, and delegation to the separate regional-plan v1 wire contract; retain playback, execution, result interchange, measured calibration, workspace model-input persistence, other runtimes, protected evidence, and release as open work. |
 | 2026-08-10 | 1.14.27 | feat(ground-roll, #4271): add separate strict Python/TypeScript `ground-regional-material-plan-request/v1` and result/v1 wire contracts with exact keys, SI units, explicit coplanar/static limitations, finite bounded base/overlay intervals, bounded region/document counts, unique region/precedence/surface identities, canonical cross-runtime JSON/SHA-256 evidence, fail-closed no-fabrication result binding, and a Python-only adapter into the existing regional resolver; preserve the frozen flight-to-ground v1 request/result and retain TypeScript/compiled regional physics, UI, changing geometry, internal transition-ledger export, downstream parity, protected CI, review, and release as open work. |

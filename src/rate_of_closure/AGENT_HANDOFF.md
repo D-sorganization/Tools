@@ -1,5 +1,61 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4342 current-parent reconciliation candidate
+
+The clean `feat/4274-regional-plan-io` worktree normally merges exact
+published PR #4342 child `8e1c7ccd99a7c4886c5fb9ccc7e4d94a6d7e3833`
+with exact newly published PR #4339 parent
+`d21741e312b849a63f73cabf351a15d9de80fb94` as its second parent. PR #4342
+continues to target `feat/4274-regional-surface-ui`; neither branch is rebased,
+retargeted, rewritten, force-pushed, or published by this reconciliation.
+The merge preserves strict regional request import/export together with the
+parent's frozen engineering-number specification and bounded helper.
+
+The child widget module now delegates its canonical-precision controls to that
+shared three-parameter helper while retaining the inclusive cross-runtime safe
+number bounds and eleven-decimal presentation required by its I/O contract.
+Merged-tree qualification is 53 focused Python/PyQt/shared-ground tests and 14
+focused React tests passing. Pinned Ruff 0.14.10 check/format, MyPy 1.13 over
+all ten affected production modules, Bandit medium/high screening, TypeScript,
+zero-warning ESLint, and the 199-module production build pass. Campaign
+manifest validation and all eight manifest tests, documentation and tool
+manifest governance, changed-Python, minimum-test, exact-diff assertion,
+500-LOC, parent/child diff, and whitespace gates pass. Mandatory structural
+maxima are 396 module lines, 40 function lines, and three parameters.
+The local merge is not protected or release evidence. Independent review,
+ordinary fast-forward publication, fresh protected CI/approval, dependency
+integration, and release remain required.
+
+## 2026-08-11 PR #4339 structural helper repair candidate
+
+This parent follow-up descends exact independently reviewed reconciliation
+candidate `eedad6d23b517eb4c99d4ba9000ff6555101099f`. Independent review found
+one publication blocker: the regional PyQt number-input helper accepted six
+parameters, above the campaign's mandatory four-parameter limit. RED-first
+tests bind the helper's signature and all observable widget settings. A frozen
+`NumberInputSpec` validates finite positive step and finite ordered bounds
+before widget construction; the three-parameter helper preserves field names,
+values, units, ranges, increments, tooltips, and presentation order.
+
+Eight focused Python/PyQt tests and 25 focused React tests pass; the complete
+React suite passes all 108 files / 672 tests. Pinned Ruff check/format, MyPy,
+Bandit medium/high screening, TypeScript, zero-warning ESLint,
+documentation/manifest governance, changed-production, test-assertion,
+minimum-test, 500-LOC, and diff gates pass. Mandatory maxima are 400 module
+lines, 42 function lines, and three parameters. No schema, digest, regional
+physics, UI behavior, PR base, protected evidence, or release boundary changes.
+
+## 2026-08-11 PR #4339 current-parent ancestry candidate
+
+The clean `feat/4274-regional-surface-ui` worktree normally merged exact
+published child `cbb9c0a6bdc6a50f59f7a661139b9d53e1892980` with exact published
+#4335 parent `9e01ccc3e891cc45907293751a192624195a77a5`, while preserving
+#4339's `feat/4271-regional-wire-contract` base. Production UI, contract,
+resolver, regional physics, and ground ancestry merged without conflict; only
+SPEC, manifest, and handoffs were reconciled. Independent review, ordinary
+publication, protected exact-head CI/approval, dependency integration, and
+release remained open.
+
 ## 2026-08-11 PR #4342 delta-MyPy follow-up
 
 Protected CI on exact PR #4342 head

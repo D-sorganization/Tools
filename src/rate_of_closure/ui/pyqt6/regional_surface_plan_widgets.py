@@ -19,6 +19,10 @@ from rate_of_closure.application.regional_surface_plan import (
     RegionalOverlayDraft,
     SurfaceMaterialDraft,
 )
+from rate_of_closure.ui.pyqt6.engineering_number_input import (
+    NumberInputSpec,
+    engineering_number_input,
+)
 from shared.python.swing_sim.canonical_numeric_json import (
     MAX_CANONICAL_SAFE_INTEGER,
 )
@@ -58,23 +62,29 @@ _MATERIAL_FIELDS = (
 def number_input(
     name: str,
     value: float,
-    suffix: str = "",
-    step: float = 0.1,
-    minimum: float = -_MAX_SAFE_FLOAT,
-    maximum: float = _MAX_SAFE_FLOAT,
+    spec: NumberInputSpec | None = None,
 ) -> QDoubleSpinBox:
     """Create one canonical-precision accessible SI number input."""
-    field = QDoubleSpinBox()
-    field.setAccessibleName(name)
-    field.setDecimals(11)
-    field.setRange(minimum, maximum)
-    field.setSingleStep(step)
-    field.setSuffix(suffix)
-    field.setValue(value)
-    field.setToolTip(
-        f"{name}. Edit this SI draft value, then validate the surface plan."
+    resolved_spec = spec or NumberInputSpec(
+        minimum=-_MAX_SAFE_FLOAT,
+        maximum=_MAX_SAFE_FLOAT,
+        decimals=11,
     )
-    return field
+    return engineering_number_input(name, value, resolved_spec)
+
+
+def coordinate_input(name: str, value: float) -> QDoubleSpinBox:
+    """Create one canonical-precision coordinate editor."""
+    return number_input(
+        name,
+        value,
+        NumberInputSpec(
+            suffix=" m",
+            minimum=-_MAX_SAFE_FLOAT,
+            maximum=_MAX_SAFE_FLOAT,
+            decimals=11,
+        ),
+    )
 
 
 class _SafeIntegerValidator(QValidator):
@@ -138,7 +148,9 @@ class MaterialEditor(QGroupBox):
         layout.addRow("Surface ID", self.surface_id)
         for name, label, suffix, step, minimum, maximum in _MATERIAL_FIELDS:
             field = number_input(
-                f"{title} {label}", getattr(value, name), suffix, step, minimum, maximum
+                f"{title} {label}",
+                getattr(value, name),
+                NumberInputSpec(suffix, step, minimum, maximum, decimals=11),
             )
             self.fields[name] = field
             layout.addRow(label, field)
@@ -175,11 +187,13 @@ class RegionalOverlayRow(QGroupBox):
         self.precedence.setToolTip(
             "Overlay selection precedence. Higher values win when intervals overlap."
         )
-        self.lower_coordinate = number_input(
-            f"Overlay {ordinal} lower coordinate", value.lower_coordinate_m, " m"
+        self.lower_coordinate = coordinate_input(
+            f"Overlay {ordinal} lower coordinate",
+            value.lower_coordinate_m,
         )
-        self.upper_coordinate = number_input(
-            f"Overlay {ordinal} upper coordinate", value.upper_coordinate_m, " m"
+        self.upper_coordinate = coordinate_input(
+            f"Overlay {ordinal} upper coordinate",
+            value.upper_coordinate_m,
         )
         self.material = MaterialEditor(f"Overlay {ordinal} material", value.surface)
         self.remove_button = QPushButton(f"Remove overlay {ordinal}")
@@ -212,5 +226,6 @@ __all__ = [
     "MaterialEditor",
     "RegionalOverlayRow",
     "SafeIntegerEdit",
+    "coordinate_input",
     "number_input",
 ]

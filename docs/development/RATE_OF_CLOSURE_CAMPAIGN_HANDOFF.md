@@ -1,5 +1,48 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4342 current-parent reconciliation candidate
+
+- The clean `feat/4274-regional-plan-io` worktree normally merges exact
+  published PR #4342 child `8e1c7ccd99a7c4886c5fb9ccc7e4d94a6d7e3833`
+  with exact newly published PR #4339 parent
+  `d21741e312b849a63f73cabf351a15d9de80fb94` as its second parent.
+- PR #4342 retains base `feat/4274-regional-surface-ui`; no rebase, retarget,
+  rewrite, force-push, publication, protected-evidence, or release claim is
+  made by this reconciliation.
+- Strict regional request import/export is preserved. The child widget module
+  delegates canonical-precision controls to the parent's frozen
+  `NumberInputSpec` and three-parameter helper while retaining inclusive safe
+  number bounds and eleven-decimal presentation.
+- Merged-tree qualification is 53 focused Python/PyQt/shared-ground tests and
+  14 focused React tests passing. Ruff, MyPy, Bandit, TypeScript, zero-warning
+  ESLint, the 199-module production build, campaign manifest and eight manifest
+  tests, documentation/tool-manifest governance, changed-Python, minimum-test,
+  exact-diff assertion, 500-LOC, parent/child diff, and whitespace gates pass.
+  Structural maxima are 396 module lines, 40 function lines, and three
+  parameters.
+- Independent review, ordinary fast-forward publication, fresh protected
+  CI/approval, dependency integration, and release remain required.
+
+## 2026-08-11 PR #4339 structural helper repair candidate
+
+- Parent head `d21741e312b849a63f73cabf351a15d9de80fb94` replaces the regional
+  PyQt six-parameter input helper with a frozen validated `NumberInputSpec`
+  and three-parameter helper without changing field behavior or ordering.
+- Eight focused Python/PyQt tests, 25 focused React tests, and the complete 672
+  React tests pass with Ruff, MyPy, Bandit, TypeScript, ESLint, build,
+  documentation, manifest, size, structural, and diff gates clean.
+- No schema, digest, regional physics, PR base, protected evidence, or release
+  boundary changes.
+
+## 2026-08-11 PR #4339 current-parent ancestry candidate
+
+- The parent worktree normally merged exact editor child
+  `cbb9c0a6bdc6a50f59f7a661139b9d53e1892980` with exact published #4335
+  parent `9e01ccc3e891cc45907293751a192624195a77a5` while retaining the
+  `feat/4271-regional-wire-contract` base.
+- UI, wire, resolver, regional physics, and ground ancestry were preserved;
+  protected exact-head review, integration, and release remained open.
+
 ## 2026-08-11 PR #4342 delta-MyPy follow-up
 
 - Protected CI on exact head
