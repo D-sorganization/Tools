@@ -1,7 +1,19 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 PR #4178 pinned-Ruff format repair
+
+- Exact published head `b8822401f4522e867d6b160125953981a39a770d`
+  failed its current CI Standard quality gate only because five changed Python
+  files did not match the workflow-pinned Ruff `0.14.10` formatter.
+- The files are mechanically reformatted with that exact version. No turf or
+  impact physics, frames, calibration boundaries, validation, APIs, schemas,
+  tests, or user-visible behavior changes; this is not completion of `#4166`.
+- No material handoff behavior changed. Workflow-mirrored Ruff, focused tests,
+  `git diff --check`, and 71 focused impact, kinetics, PyQt, and layout tests
+  are green. Protected checks and parent-first release order remain the gates.
 
 ## 2026-08-10 Parent Repair Propagation (#4174 → #4178)
 
