@@ -346,9 +346,11 @@ class PuttingTab(QWidget):
             "putt_margin": (
                 f"HOLED (+{result.margin_mps:.2f} m/s under bound)"
                 if result.holed and result.margin_mps is not None
-                else f"miss by {self._format_m(result.miss_distance_m)}"
-                if result.miss_distance_m is not None
-                else "—"
+                else (
+                    f"miss by {self._format_m(result.miss_distance_m)}"
+                    if result.miss_distance_m is not None
+                    else "—"
+                )
             ),
         }
         for field, text in values.items():
