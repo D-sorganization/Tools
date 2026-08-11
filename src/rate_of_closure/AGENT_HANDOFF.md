@@ -2,12 +2,13 @@
 
 ## 2026-08-11 regional request I/O protected publication
 
-Branch `feat/4274-regional-plan-io` is published normally as a draft child of
-exact PR #4339 head `cbb9c0a6bdc6a50f59f7a661139b9d53e1892980`. Its reviewed
-implementation head is `d748e7a5ef3da5e6ce7737ff6829e0f14665fe97`; this
-documentation-only publication commit changes no runtime behavior. A follow-up
-records the assigned PR URL. Protected CI, independent review, issue #4274,
-parent ordering, integration, and release remain open.
+Branch `feat/4274-regional-plan-io` is published normally as draft PR
+[#4342](https://github.com/D-sorganization/Tools/pull/4342), targeting exact
+PR #4339 branch `feat/4274-regional-surface-ui` at parent head
+`cbb9c0a6bdc6a50f59f7a661139b9d53e1892980`. Its reviewed implementation
+head is `d748e7a5ef3da5e6ce7737ff6829e0f14665fe97`; publication commits change
+no runtime behavior. Protected CI, independent review, issue #4274, parent
+ordering, integration, and release remain open.
 
 ## 2026-08-11 bounded regional request read follow-up
 
