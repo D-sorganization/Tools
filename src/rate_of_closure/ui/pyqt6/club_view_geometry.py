@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import cast
 
 import numpy as np
+from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from mpl_toolkits.mplot3d.axes3d import Axes3D
 
 from rate_of_closure.application.camera_presets import CameraViewId
@@ -15,6 +16,10 @@ SHAFT_STUB_M = 0.35
 _FACE_HALF_WIDTH_M = 0.058
 _FACE_HALF_HEIGHT_M = 0.028
 _BODY_DEPTH_M = 0.11
+_LIGHT_DIRECTION = np.array([0.3, 0.8, 0.5]) / np.linalg.norm([0.3, 0.8, 0.5])
+_MESH_BASE_RGB = np.array([0.56, 0.62, 0.70])
+_MESH_AMBIENT = 0.22
+_MESH_SPECULAR = 0.32
 
 
 def rodrigues(axis_omega: np.ndarray, dt: float) -> np.ndarray:
@@ -77,6 +82,22 @@ def display_points(points: np.ndarray) -> np.ndarray:
     return displayed
 
 
+def axes_target_m(axes: Axes3D) -> tuple[float, float, float]:
+    """Return the application-frame center represented by 3D axis limits."""
+    display_center = np.array(
+        [
+            sum(axes.get_xlim3d()) / 2.0,
+            sum(axes.get_ylim3d()) / 2.0,
+            sum(axes.get_zlim3d()) / 2.0,
+        ]
+    )
+    return (
+        float(display_center[1]),
+        float(display_center[2]),
+        float(display_center[0]),
+    )
+
+
 def head_shift(mesh: HeadMesh, scenario: ImpactScenario) -> np.ndarray:
     """Return the +x translation placing the mesh face at GC-to-face."""
     face_depth = scenario.com_to_face_mm / 1000.0
@@ -92,6 +113,30 @@ def shifted_point(
     """Return one model-frame point translated with the clubhead mesh."""
     shifted: np.ndarray = np.asarray(point + head_shift(mesh, scenario))
     return shifted
+
+
+def draw_mesh(
+    axes: Axes3D,
+    mesh: HeadMesh,
+    scenario: ImpactScenario,
+    rotation: np.ndarray,
+    offset: np.ndarray,
+) -> None:
+    """Draw one shaded mesh under the shared clubhead placement transform."""
+    triangles = (mesh.triangles + head_shift(mesh, scenario)) @ rotation.T + offset
+    normals = mesh.normals @ rotation.T
+    lambert = np.abs(normals @ _LIGHT_DIRECTION)
+    diffuse = (1.0 - _MESH_AMBIENT - _MESH_SPECULAR) * lambert
+    specular = _MESH_SPECULAR * lambert**20
+    intensity = _MESH_AMBIENT + diffuse + specular
+    colors = np.clip(intensity[:, None] * _MESH_BASE_RGB[None, :], 0.0, 1.0)
+    collection = Poly3DCollection(
+        display_points(triangles),
+        facecolors=colors,
+        edgecolors="none",
+        linewidths=0.0,
+    )
+    axes.add_collection3d(collection)
 
 
 def canonical_axis_visibility(
@@ -125,8 +170,10 @@ def set_axis_visibility(axes: Axes3D, view_id: CameraViewId | None) -> None:
 
 __all__ = [
     "SHAFT_STUB_M",
+    "axes_target_m",
     "canonical_axis_visibility",
     "display_points",
+    "draw_mesh",
     "head_shift",
     "head_wireframe",
     "rodrigues",

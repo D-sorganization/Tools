@@ -123,4 +123,8 @@ integers, surrogate text, and raw range violations before canonical rounding.
 
 Visualization child issue #4284 now extends epic #4218 with bounded clubhead
 camera tracking and canonical Face On, Down the Line, and Overhead snap views
-for matched PyQt/React 3D animations.
+for matched PyQt/React 3D animations. The preset commands are published in PR
+#4358; the matched Track Clubhead, manual orbit/pan suspension, Re-center, and
+opt-in reduction-only Auto Fit fallback remain an unpushed local child based on
+exact published head `d662b016eceed8cbfbce26c12a42ca2c326a684f`. Persistence,
+other 3D surfaces, protected review, and issue completion remain open.

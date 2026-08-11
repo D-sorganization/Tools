@@ -37,6 +37,26 @@ export function project(
   return [width / 2 + screenX * scale, height * 0.62 - screenY * scale];
 }
 
+/** Project an application-frame point around an explicit camera target. */
+export function projectAroundTarget(
+  vector: Vec3,
+  target: Vec3,
+  width: number,
+  height: number,
+  zoom: number,
+  azimuth: number,
+  elevation: number,
+): [number, number] {
+  return project(
+    [vector[0] - target[0], vector[1] - target[1], vector[2] - target[2]],
+    width,
+    height,
+    zoom,
+    azimuth,
+    elevation,
+  );
+}
+
 export function headParts(scenario: ImpactScenario) {
   const depth = scenario.comToFaceMm / 1000;
   const lie = (scenario.lieAngleDeg * Math.PI) / 180;

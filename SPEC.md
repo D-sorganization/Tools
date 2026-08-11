@@ -46,6 +46,29 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-08-11 Matched Opt-In Clubhead Camera Tracking
+
+- The PyQt6 `Club3DView` and React `ClubCanvas` share stable Track Clubhead,
+  Re-center Clubhead, and Auto Fit fallback identifiers and expose a visible,
+  accessible tracking state (`off`, `active`, or `suspended`) per viewport.
+- Enabling tracking centers the current clubhead subject without changing
+  zoom. Playback advances the camera target by no more than 0.05 m per frame;
+  a loop wrap deliberately recenters instead of traversing the discontinuity.
+  A scenario/replay phase reset uses the same exact recenter only while
+  tracking is active; suspended tracking retains its manual target.
+- Manual orbit deterministically suspends tracking in both clients. Native
+  PyQt pan also preserves the user's visible target while suspending. Re-center
+  resumes active tracking at the current clubhead while preserving orientation
+  and zoom. React pan remains outside this child.
+- Continuous fitting is separately opt-in. It may only reduce an unsafe zoom
+  enough to retain the documented 16% clearance and never silently zoom in.
+  The correction is resolved before rasterizing the affected frame, including
+  after discontinuous mode, geometry, or target changes. The existing one-shot
+  Auto Fit command remains independent.
+- Tracking state is transient and local to one viewport. Workspace
+  persistence, remaining 3D surfaces, rendered browser/HiDPI matrices, and
+  protected issue/epic completion remain outside this child slice.
+
 ### 2026-08-11 Regional Trajectory Inspection and Canonical Evidence Export
 
 - Matched PyQt6 and React evidence surfaces expose the already-validated raw

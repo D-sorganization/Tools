@@ -324,7 +324,7 @@
       "pr": 4358,
       "branch": "feat/4284-camera-preset-parity",
       "base_branch": "feat/4270-repeated-bounce-request-wire",
-      "head_sha": "c0584faae7e0fe113e01f8c3ed3582853dfaf803",
+      "head_sha": "d662b016eceed8cbfbce26c12a42ca2c326a684f",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -1198,11 +1198,11 @@
         "toolstrip-local-c36",
         "camera-preset-local-c058"
       ],
-      "evidence_gap": "Ready-for-review PR #4358, based exactly on 2387430fc78baa92ba122c7ad008a498118bf62d, carries implementation c0584faae7e0fe113e01f8c3ed3582853dfaf803 for the first matched PyQt6/React clubhead preset, explicit Face-On side, Reset, and geometry-bounded Auto Fit slice. Tracking, recenter, workspace camera persistence, remaining 3D surfaces, the full rendered browser/desktop matrix, protected approval, and release remain open.",
+      "evidence_gap": "Ready-for-review PR #4358 is currently published at d662b016eceed8cbfbce26c12a42ca2c326a684f and carries the first matched PyQt6/React clubhead preset, explicit Face-On side, Reset, and geometry-bounded Auto Fit slice. An unpushed child based exactly on that head locally implements matched bounded clubhead tracking, visible manual-override suspension, recenter, target-relative React projection, and an opt-in reduction-only Auto Fit fallback. Workspace camera persistence, remaining 3D surfaces, the full rendered browser/desktop matrix, protected approval, and release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
         "PR #4358 is published but its protected checks and review are incomplete; it is not released.",
-        "Tracking, manual-override suspension, recenter, per-viewport persistence, principal React 3D swing, other 3D adapters, Playwright/high-DPI review, and the full playback matrix are not implemented by the preset slice."
+        "The bounded tracking child is local and unpushed, with no protected evidence; per-viewport persistence, principal React 3D swing, other 3D adapters, Playwright/high-DPI review, and the full playback matrix remain unimplemented."
       ],
       "depends_on_issues": [
         4191

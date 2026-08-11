@@ -4,6 +4,7 @@ import {
   type CameraState,
   type CameraViewId,
   type FaceOnSide,
+  trackingStateId,
 } from "../model/cameraPresets";
 
 interface Props {
@@ -13,6 +14,9 @@ interface Props {
   onFaceOnSide: (side: FaceOnSide) => void;
   onReset: () => void;
   onAutoFit: () => void;
+  onTrackingChange: (enabled: boolean) => void;
+  onAutoFitFallbackChange: (enabled: boolean) => void;
+  onRecenter: () => void;
 }
 
 const VIEW_BUTTONS: ReadonlyArray<{
@@ -51,7 +55,15 @@ export function ClubCameraControls({
   onFaceOnSide,
   onReset,
   onAutoFit,
+  onTrackingChange,
+  onAutoFitFallbackChange,
+  onRecenter,
 }: Props) {
+  const trackingId = trackingStateId(state);
+  const trackingText = trackingId === "camera.tracking.active"
+    ? "Tracking Clubhead"
+    : trackingId === "camera.tracking.suspended"
+      ? "Tracking suspended by manual camera" : "Tracking off";
   return (
     <div role="group" aria-label="Clubhead camera controls"
       className="flex flex-wrap items-center gap-2 rounded-xl border border-slate-800/80 bg-slate-900/60 px-3 py-2 text-xs shadow-lg shadow-black/20 backdrop-blur">
@@ -83,6 +95,29 @@ export function ClubCameraControls({
         onClick={onAutoFit} className={BUTTON_CLASS}>
         Auto Fit
       </button>
+      <label title="Follow the moving clubhead with bounded target updates; zoom is preserved."
+        className="flex items-center gap-1 text-slate-300">
+        <input type="checkbox" checked={state.trackingEnabled}
+          aria-label="Track Clubhead" data-camera-command="camera.track_clubhead"
+          onChange={(event) => onTrackingChange(event.target.checked)} />
+        Track Clubhead
+      </label>
+      <label title="Opt in to reducing unsafe zoom only when 16% clubhead clearance would otherwise be violated."
+        className="flex items-center gap-1 text-slate-300">
+        <input type="checkbox" checked={state.autoFitFallbackEnabled}
+          aria-label="Auto Fit fallback" data-camera-control="camera.auto_fit_fallback"
+          onChange={(event) => onAutoFitFallbackChange(event.target.checked)} />
+        Auto Fit fallback
+      </label>
+      <button type="button" data-camera-command="camera.recenter"
+        title="Center on the current clubhead and resume tracking without changing zoom."
+        onClick={onRecenter} className={BUTTON_CLASS}>
+        Re-center Clubhead
+      </button>
+      <span role="status" aria-label="Camera tracking state"
+        data-camera-tracking-state={trackingId} className="text-slate-400">
+        {trackingText}
+      </span>
     </div>
   );
 }
