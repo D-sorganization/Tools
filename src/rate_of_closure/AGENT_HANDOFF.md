@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 Exact #4202 format repair reconciliation
+
+PR #4203 remains on `feat/4181-launch-monitor-registry` with base
+`feat/4189-dplane`. Exact published child
+`7abce9ad767fe8311da66a1e5998b892ea3ca9de` is normally merged with exact
+parent `ba4aa35cc384d51ed3aa52eb532a67e960669c27`. The append-only handoffs
+retain both histories. At the already documented split kinetics seam, the
+typed `pendulum.sample(...)` facade call remains authoritative while the
+parent's formatted app-frame geometry comment is preserved; the obsolete
+`source.inner.sample(...)` monolith is not reintroduced. Physics, numerical
+values, frames, and contracts are unchanged. Pinned Ruff 0.14.10 check/format
+passes the five inherited Python files. All 81 focused
+kinetics/impact/PyQt/layout tests and 44 launch-registry/D-plane/delivery/API
+tests pass; diff checks are clean. This merge remains local-only pending normal
+publication, protected CI, and review.
+
 ## 2026-08-11 Append-only SPEC preservation repair
 
 Independent review found that the local #4203 reconciliation omitted four
@@ -182,6 +198,17 @@ Verification is `12 passed` on Windows and `12 passed` on WSL Python 3.11
 under importlib collection; Ruff/format and exact mypy 1.13 pass for both
 changed modules. The dataclass metadata assertion remains active behind an
 explicit test-only `Any` introspection boundary.
+## 2026-08-11 PR #4202 pinned-Ruff format repair
+
+CI Standard run `31483390692`, job `93753191911`, checked exact published head
+`f3363aa88868f6a5c7e9ccfc682a9eca014e86c1` with the workflow-pinned Ruff
+`0.14.10` formatter and identified five changed files requiring mechanical
+formatting. They are now formatted with that exact version. There is no
+material handoff or runtime behavior change: physics, frames, DbC validation,
+public contracts, schemas, tests, and user-visible behavior are unchanged.
+The workflow-mirrored scoped Ruff check and format check, `git diff --check`,
+and 71 focused impact, kinetics, PyQt, and layout tests are green. Protected
+checks and parent-first release order remain mandatory.
 
 ## 2026-08-10 PR #4202 D-plane ndarray typing repair
 
@@ -221,6 +248,16 @@ child has no Rust delta. The 17-error broad MyPy Qt/NumPy baseline in 11
 untouched files remains separate. Protected CI and required review remain
 release gates.
 
+## 2026-08-11 PR #4179 pinned-Ruff format repair
+
+Exact published head `ec73b63a748347b42686758d4738c0fd2fd09332`
+failed its current CI Standard quality gate because five changed Python files
+did not match Ruff `0.14.10`. They are now mechanically formatted with the
+workflow-pinned version. There is no material handoff or behavior change:
+impact visualization, wedge/turf physics, frames, DbC validation, public
+contracts, schemas, tests, and UI behavior remain unchanged. Protected checks
+and parent-first release order still apply.
+
 ## 2026-08-10 Impact-Visualization Child Propagation
 
 Draft PR `#4179` (`feat/4162-wedge-impact-visualization`) retains its
@@ -237,6 +274,18 @@ because this child has no Rust delta. The 17-error broad MyPy Qt/NumPy baseline
 in 11 untouched files remains separate. Protected CI and required review
 remain release gates.
 
+## 2026-08-11 PR #4178 pinned-Ruff format repair
+
+Exact published head `b8822401f4522e867d6b160125953981a39a770d`
+failed its current CI Standard quality gate because five changed Python files
+did not match Ruff `0.14.10`. They are now mechanically formatted with the
+workflow-pinned version. There is no material handoff or behavior change:
+turf/impact physics, frames, calibration boundaries, DbC validation, public
+contracts, schemas, tests, and UI behavior remain unchanged. Protected checks
+and parent-first release order still apply. Workflow-mirrored Ruff,
+`git diff --check`, and 71 focused impact, kinetics, PyQt, and layout tests are
+green.
+
 ## 2026-08-10 Turf-Physics Child Propagation
 
 Draft PR `#4178` (`feat/4166-wedge-turf-physics`) retains its
@@ -251,6 +300,17 @@ Ruff/Black/MyPy, and repository governance gates. The unchanged TypeScript and
 Rust surfaces retain the exact parent's green 345 React and 12 Rust test
 evidence. The 17-error broad MyPy Qt/NumPy baseline in 11 untouched files
 remains separate. Protected CI and required review remain release gates.
+
+## 2026-08-11 PR #4174 pinned-Ruff format repair
+
+Exact published head `525696e0c1080616eb5055e2cb1c93565f98672e`
+failed CI Standard run `31485402975`, job `93759519460`, because five changed
+Python files did not match Ruff `0.14.10`. They are now mechanically formatted
+with the workflow-pinned version. There is no material handoff or behavior
+change: physics, frames, DbC validation, public contracts, schemas, tests, and
+UI behavior remain unchanged. Workflow-mirrored Ruff, `git diff --check`, and
+71 focused impact, kinetics, PyQt, and layout tests are green. Protected checks
+and parent-first release order still apply.
 
 ## 2026-08-10 Ground-Clearance Child Propagation
 
