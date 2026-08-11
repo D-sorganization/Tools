@@ -85,9 +85,9 @@ class TestTabCollection:
             [SidebarTabDefinition(tab_id="chat", title="Chat", factory=lambda *_: None)]
         )
 
-        assert alias is col._tab_definitions, (  # noqa: SLF001
-            "set_definitions() must not rebind the backing dict"
-        )
+        assert (
+            alias is col._tab_definitions
+        ), "set_definitions() must not rebind the backing dict"  # noqa: SLF001
         assert "chat" in alias, "alias must observe the new definition in place"
         assert col.definition_for("chat") is not None
 
@@ -105,9 +105,9 @@ class TestTabCollection:
 
         col.sync_order_from_widget()
 
-        assert alias is col._tab_ids, (  # noqa: SLF001
-            "sync_order_from_widget() must not rebind the backing list"
-        )
+        assert (
+            alias is col._tab_ids
+        ), "sync_order_from_widget() must not rebind the backing list"  # noqa: SLF001
         assert alias == ["a", "b"], "alias must observe current visual order"
 
     def test_add_duplicate_raises(self, qtbot: Any) -> None:
@@ -153,9 +153,9 @@ class TestTabCollection:
         result = col.replace(old_w, new_w)
 
         assert result is True, "replace() must return True"
-        assert col.widget_for("chat") is new_w, (
-            "widget_for() must return the new widget after replace()"
-        )
+        assert (
+            col.widget_for("chat") is new_w
+        ), "widget_for() must return the new widget after replace()"
         assert "chat" in col.visible_ids(), "id must still be in visible_ids()"
 
     def test_clear_resets_state(self, qtbot: Any) -> None:
@@ -170,9 +170,9 @@ class TestTabCollection:
         col.clear()
 
         assert col.visible_ids() == [], "visible_ids() must be empty after clear()"
-        assert col.widget_for("t") is None, (
-            "widget_for() must return None after clear()"
-        )
+        assert (
+            col.widget_for("t") is None
+        ), "widget_for() must return None after clear()"
 
     def test_contains_and_index_of(self, qtbot: Any) -> None:
         """contains() and index_of() must reflect actual id list."""
@@ -250,7 +250,9 @@ class TestDockChromeController:
         assert not ctrl.is_collapsed, "starts expanded"
         ctrl.toggle_collapsed()
         assert ctrl.is_collapsed, "must be collapsed after toggle"
-        assert ctrl._tabs.isVisible() is False, "tabs must be hidden when collapsed"  # noqa: SLF001
+        assert (
+            ctrl._tabs.isVisible() is False
+        ), "tabs must be hidden when collapsed"  # noqa: SLF001
 
     def test_toggle_collapsed_shows_tabs_on_expand(self, qtbot: Any) -> None:
         """A second toggle_collapsed() must restore the tabs to visible."""
@@ -259,7 +261,9 @@ class TestDockChromeController:
         ctrl.toggle_collapsed()  # expand
 
         assert not ctrl.is_collapsed, "must be expanded after double toggle"
-        assert ctrl._tabs.isVisible() is True, "tabs must be visible after expanding"  # noqa: SLF001
+        assert (
+            ctrl._tabs.isVisible() is True
+        ), "tabs must be visible after expanding"  # noqa: SLF001
 
     def test_dock_widget_is_none_before_install(self, qtbot: Any) -> None:
         """dock_widget must be None before install_as_dock() is called."""
@@ -382,6 +386,8 @@ class TestVisibilityPersistence:
         vp_b = VisibilityPersistence(project_root=root_b)
 
         # Access the private key to assert isolation (white-box)
-        assert vp_a._key != vp_b._key, (  # noqa: SLF001
+        assert (
+            vp_a._key != vp_b._key
+        ), (  # noqa: SLF001
             "Different roots must produce different QSettings keys (F5 isolation)"
         )
