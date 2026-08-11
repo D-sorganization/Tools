@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.7                                     |
-| **Spec Version**        | 1.13.7                                     |
+| **Current Version**     | 1.13.8                                     |
+| **Spec Version**        | 1.13.8                                     |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -2573,6 +2573,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.13.8 | refactor(movement_optimizer, #4119): compact formatter-touched `motion_tabs.py` documentation and call layout from 1,216 to 1,152 lines without behavior changes, satisfying the protected 1,200-line module budget with 80 focused tests. |
 | 2026-08-10 | 1.13.7 | fix(ci, #4119): classify empty source-local test-package `__init__.py` markers as assertion-gate support files while retaining behavioral-assertion enforcement for executable test modules. |
 | 2026-08-10 | 1.13.6 | fix(rate_of_closure, #4119): finish explicit numerical contracts across the Rate model, STL/club geometry, simulation, PyQt canvas, and course-rendering boundaries; clear the complete changed-file Mypy 1.13 surface without ignores or numerical-model changes. |
 | 2026-08-10 | 1.13.5 | fix(swing_sim, #4119): replace unparameterized shared-core ndarray contracts with explicit float64 arrays and normalize scalars at dynamic Rust/config/model boundaries; clear the CI-pinned findings across the flight/impact/swing/reference/solver slice plus a newer-Mypy solver return finding, without ignores or runtime-physics changes. |
