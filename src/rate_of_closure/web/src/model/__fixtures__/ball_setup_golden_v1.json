@@ -1,0 +1,150 @@
+{
+  "schema": "rate_of_closure.ball_setup_golden",
+  "schema_version": 1,
+  "units": {
+    "length": "m"
+  },
+  "height_reference": "ground_plane_to_ball_bottom",
+  "ball_radius_m": 0.021335,
+  "default_cases": [
+    {
+      "id": "driver_defaults_to_representative_tee",
+      "club_name": "Driver 10.5°",
+      "expected": {
+        "support_mode": "tee",
+        "tee_height_m": 0.0381,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.059435, 0.0]
+      }
+    },
+    {
+      "id": "iron_defaults_to_ground",
+      "club_name": "7-Iron",
+      "expected": {
+        "support_mode": "ground",
+        "tee_height_m": 0.0,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.021335, 0.0]
+      }
+    }
+  ],
+  "override_cases": [
+    {
+      "id": "driver_explicit_ground_override",
+      "club_name": "Driver 10.5°",
+      "input": {
+        "support_mode": "ground",
+        "tee_height_m": 0.0,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.021335, 0.0]
+      },
+      "expected": {
+        "support_mode": "ground",
+        "tee_height_m": 0.0,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.021335, 0.0]
+      }
+    },
+    {
+      "id": "iron_explicit_tee_override",
+      "club_name": "7-Iron",
+      "input": {
+        "support_mode": "tee",
+        "tee_height_m": 0.0127,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.034035, 0.0]
+      },
+      "expected": {
+        "support_mode": "tee",
+        "tee_height_m": 0.0127,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.034035, 0.0]
+      }
+    }
+  ],
+  "geometry_cases": [
+    {
+      "id": "ground_has_zero_effective_tee_height",
+      "input": {
+        "support_mode": "ground",
+        "tee_height_m": 0.0,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.021335, 0.0]
+      },
+      "effective_tee_height_m": 0.0,
+      "ball_center_m": [0.0, 0.021335, 0.0],
+      "serialized": {
+        "support_mode": "ground",
+        "tee_height_m": 0.0,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.021335, 0.0]
+      }
+    },
+    {
+      "id": "tee_height_is_ground_to_ball_bottom",
+      "input": {
+        "support_mode": "tee",
+        "tee_height_m": 0.0254,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.046735, 0.0]
+      },
+      "effective_tee_height_m": 0.0254,
+      "ball_center_m": [0.0, 0.046735, 0.0],
+      "serialized": {
+        "support_mode": "tee",
+        "tee_height_m": 0.0254,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.046735, 0.0]
+      }
+    }
+  ],
+  "invalid_cases": [
+    {
+      "id": "negative_tee_height",
+      "support_mode": "tee",
+      "tee_height": -0.001,
+      "error_pattern": "height"
+    },
+    {
+      "id": "nan_tee_height",
+      "support_mode": "tee",
+      "tee_height": "nan",
+      "error_pattern": "height"
+    },
+    {
+      "id": "positive_infinite_tee_height",
+      "support_mode": "tee",
+      "tee_height": "positive_infinity",
+      "error_pattern": "height"
+    },
+    {
+      "id": "negative_infinite_tee_height",
+      "support_mode": "tee",
+      "tee_height": "negative_infinity",
+      "error_pattern": "height"
+    },
+    {
+      "id": "ground_nonzero_tee_height",
+      "support_mode": "ground",
+      "tee_height": 0.001,
+      "error_pattern": "Ground support"
+    }
+  ],
+  "legacy_cases": [
+    {
+      "id": "version_one_run_without_ball_setup",
+      "document": {
+        "format": "rate_of_closure.simulation_run/1",
+        "parameters": {
+          "club": "Driver 10.5°"
+        }
+      },
+      "expected": {
+        "support_mode": "ground",
+        "tee_height_m": 0.0,
+        "height_reference": "ground_plane_to_ball_bottom",
+        "ball_center_m": [0.0, 0.021335, 0.0]
+      }
+    }
+  ]
+}
