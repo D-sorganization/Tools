@@ -1013,3 +1013,14 @@ Unicode White_Space set at either boundary, and survive a normalized sentinel
 blacklist. Valid non-BMP scalars are accepted and only unpaired surrogates are
 rejected. The shared fixture is authoritative for these edge cases; keep the
 rules mirrored when delivery adapters attach the manifest to a run.
+
+### 2026-08-11 stable-ID placeholder boundary repair
+
+Python and TypeScript now detect placeholder vocabulary as complete
+ASCII-alphanumeric-delimited tokens instead of regex word-boundary tokens.
+This closes the underscore bypass (`todo_build`, `unknown_source`) while
+preserving legitimate longer identifiers such as `todolist`. The shared parity
+fixture covers every placeholder adjacent to `.`, `_`, `/`, and `-` on both
+sides in both runtimes. The redundant MyPy reason cast was also removed. Keep
+these token semantics mirrored in future adapters; no live integration is
+claimed by this contract-only repair.

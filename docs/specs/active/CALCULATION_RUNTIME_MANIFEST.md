@@ -69,6 +69,10 @@ prerelease identifiers.
 the caller obtained its authoritative values. They support an audit but do not
 upgrade an unavailable calculation or prove scientific validation. Placeholder
 evidence is rejected, and evidence IDs must be nonempty and unique.
+Placeholder vocabulary is matched as a complete ASCII-alphanumeric-delimited
+token. Therefore `.`, `_`, `/`, and `-` stable-ID separators cannot hide a
+placeholder, while a legitimate longer substring such as `todolist` remains
+valid.
 
 ## Canonical serialization
 

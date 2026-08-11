@@ -1496,3 +1496,14 @@ surrogates, `x`, `n/a`, and bare/whitespace `unavailable`; capability tests
 restore the existing `1e21` wire behavior. The declared-scope prose accurately
 includes recursive `docs/specs/**/*.md`. This remains an unpublished contract
 child with all four spec cells unsupported at the older protected inventory pin.
+
+### 2026-08-11 stable-ID placeholder boundary repair
+
+Independent publish review found that regex word boundaries treated `_` as a
+word character, allowing placeholder tokens such as `todo_build` to pass even
+though `_` is a valid stable-ID separator. Python and TypeScript now recognize
+placeholders as complete ASCII-alphanumeric-delimited tokens. The shared parity
+fixture exercises every token next to `.`, `_`, `/`, and `-` in both directions
+and preserves legitimate longer substrings such as `todolist`. The same bounded
+repair removes the pinned-MyPy redundant reason cast. This remains an
+unpublished contract-only child and does not expand the #4261 completion claim.

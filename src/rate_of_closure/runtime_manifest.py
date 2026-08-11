@@ -35,7 +35,10 @@ _SEMVER = re.compile(
     r"(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$"
 )
 _SHA = re.compile(r"^[0-9a-f]{40}$")
-_PLACEHOLDER = re.compile(r"\b(?:fixme|placeholder|tbd|todo|unknown)\b", re.I)
+_PLACEHOLDER = re.compile(
+    r"(?:^|[^A-Za-z0-9])(?:fixme|placeholder|tbd|todo|unknown)(?=$|[^A-Za-z0-9])",
+    re.I,
+)
 _DOMAIN_ORDER = ("impact", "flight", "ground")
 _AUTHORITY_FIELDS = (
     "model_id",
@@ -63,7 +66,7 @@ def _validated_text(value: str, name: str, *, stable_id: bool = False) -> str:
 
 
 def _validated_reason(value: str) -> str:
-    return cast(str, validate_reason_grammar(_validated_text(value, "reason")))
+    return validate_reason_grammar(_validated_text(value, "reason"))
 
 
 class StrictModel(BaseModel):

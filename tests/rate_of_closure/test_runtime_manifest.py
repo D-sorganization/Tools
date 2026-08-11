@@ -269,6 +269,26 @@ def test_runtime_manifest_reason_policy_matches_shared_parity_fixture() -> None:
         CalculationRuntimeManifest.model_validate(payload)
 
 
+def test_runtime_manifest_placeholder_policy_matches_shared_parity_fixture() -> None:
+    cases = _fixture()["placeholder_policy_cases"]
+
+    for token in cases["tokens"]:
+        for separator in cases["stable_id_separators"]:
+            for build_id in (
+                f"release{separator}{token}",
+                f"{token}{separator}release",
+            ):
+                payload = _manifest_payload()
+                payload["build"]["build_id"] = build_id
+                with pytest.raises(ValidationError, match="placeholder"):
+                    CalculationRuntimeManifest.model_validate(payload)
+
+    for build_id in cases["valid_substrings"]:
+        payload = _manifest_payload()
+        payload["build"]["build_id"] = build_id
+        CalculationRuntimeManifest.model_validate(payload)
+
+
 def test_runtime_manifest_rejects_unsafe_integer_and_duplicate_json_fields() -> None:
     payload = _manifest_payload()
     payload["calculations"][1]["numerical_options"][0].update(

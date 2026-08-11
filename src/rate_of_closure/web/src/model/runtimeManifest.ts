@@ -20,7 +20,8 @@ const SEMVER = new RegExp(
   "(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$",
 );
 const SHA = /^[0-9a-f]{40}$/;
-const PLACEHOLDER = /\b(?:fixme|placeholder|tbd|todo|unknown)\b/i;
+const PLACEHOLDER =
+  /(?:^|[^A-Za-z0-9])(?:fixme|placeholder|tbd|todo|unknown)(?=$|[^A-Za-z0-9])/i;
 const REASON_SENTINELS = new Set([
   "x", "na", "none", "nodata", "notavailable", "notapplicable", "unavailable",
 ]);

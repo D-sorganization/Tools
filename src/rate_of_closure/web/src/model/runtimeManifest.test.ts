@@ -202,4 +202,26 @@ describe("calculation runtime manifest v1", () => {
       `No qualified ${cases.unpaired_surrogate} ground producer selected.`;
     expect(() => parseRuntimeManifest(invalid)).toThrow(/surrogate/);
   });
+
+  it("matches the shared placeholder-token boundary fixture", () => {
+    const cases = fixture.placeholder_policy_cases;
+    for (const token of cases.tokens) {
+      for (const separator of cases.stable_id_separators) {
+        for (const buildId of [
+          `release${separator}${token}`,
+          `${token}${separator}release`,
+        ]) {
+          const value = source();
+          (value.build as Record<string, unknown>).build_id = buildId;
+          expect(() => parseRuntimeManifest(value)).toThrow(/placeholder/);
+        }
+      }
+    }
+
+    for (const buildId of cases.valid_substrings) {
+      const value = source();
+      (value.build as Record<string, unknown>).build_id = buildId;
+      expect(parseRuntimeManifest(value).build.build_id).toBe(buildId);
+    }
+  });
 });
