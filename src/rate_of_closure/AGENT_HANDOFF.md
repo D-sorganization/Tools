@@ -29,6 +29,12 @@ regional-material chaining, measured terrain calibration, downstream parity,
 protected exact-head evidence, review, approval, release, and issue/epic
 completion remain open.
 
+All exact open dependencies from #4203 through #4357 are now ready for review
+without base or history changes. No current-head check was failing at the
+release reconciliation snapshot, but protected queues and all approvals remain
+open. The manifest records the reconciled parent heads and #4357 without
+claiming protected completion or release.
+
 ## 2026-08-11 PR #4356 published current-parent propagation
 
 Published ready-for-review PR #4356 keeps `feat/4270-repeated-bounce-request-wire`

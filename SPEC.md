@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.45                                    |
-| **Spec Version**        | 1.14.45                                    |
+| **Current Version**     | 1.14.46                                    |
+| **Spec Version**        | 1.14.46                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3026,6 +3026,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.46 | docs(rate-of-closure, #4203 #4279-#4282 #4285 #4288 #4302 #4304 #4332 #4335 #4339 #4342 #4350-#4357): reconcile the intact exact dependency heads and bases, record #4357 in the campaign carrier authority, and normalize every exact open dependency to ready-for-review without history changes; retain `not_released` truth because protected contexts remain queued and no approval is submitted. |
 | 2026-08-11 | 1.14.45 | docs(ground-impact, #4357): record ready-for-review publication of the UI-neutral repeated-bounce request executor at exact implementation head `cf54d3528a71fd429ad19f53f04e4a1a84495097`, stacked on unchanged #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; retain `not_released` truth and leave protected checks, review, UI invocation, persistence, playback, compiled parity, regional chaining, downstream integration, and #4270/#4267 completion open. |
 | 2026-08-11 | 1.14.44 | feat(ground-impact, #4270): add the UI-neutral Python `execute_repeated_bounce_request` binding that accepts only an exact validated repeated-bounce request plus a callable-or-`None` cancellation check, consumes the request's capture threshold through its fixed-version settings, invokes the existing Python physics authority, and returns the existing identity-validated request/result pair; cover golden identity, capture behavior, preflight cancellation, canonical result round-trip pairing, and explicit public API while leaving schemas, UI construction and invocation, TypeScript/compiled physics, persistence, playback, regional chaining, downstream parity, protected evidence, release, and issue/epic completion open. |
 | 2026-08-11 | 1.14.43 | docs(rate-of-closure, #4351-#4356): record exact published #4356 propagation head `345c329e6b6e3fc7a8fc981abf65795f356b94cf`, normal ready-for-review state for the exact #4351 through #4356 stack without base or history changes, and the first #4356 protected snapshot of one successful quality check, four skipped checks, twelve queued checks, no failure, and no review; preserve `not_released` truth and all implementation limitations. |

@@ -30,6 +30,13 @@ regional-material chaining, measured terrain calibration, downstream parity,
 protected exact-head evidence, review, approval, release, and issue/epic
 completion remain open.
 
+The exact open dependency chain from #4203 through #4357 is now ready for
+review without base or history changes. The 2026-08-11 release reconciliation
+found no current-head failing check, but every open PR still had queued
+protected contexts and no submitted approval. The release manifest now records
+the reconciled parent heads and #4357; it remains evidence-only and does not
+claim protected completion or release.
+
 ## 2026-08-11 PR #4356 published current-parent propagation
 
 Published ready-for-review PR `#4356` remains on
