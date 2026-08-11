@@ -1,7 +1,176 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 reviewed variation parent propagation into wind PR #4281
+
+- Exact remote wind child `247046d55afcad3e6cd4f8029f854856c427f59c`
+  normally merges exact reviewed variation parent
+  `3337945699966b63cb5cd8e52d7c3b194315e911` in child-first order. PR base,
+  stack topology, and both histories remain intact; no rebase, reset, retarget,
+  force-push, or parent rewrite is used.
+- Python/TypeScript scalar-ensemble and wind-strategy plot-adapter behavior is
+  unchanged while inheriting the parent's variation/export UI, kinetics split,
+  Ground/Tee parity, workspace/toolstrip, and Ruff-normalized repairs. The sole
+  feature-code conflict was obsolete monolithic kinetics and is resolved to the
+  validated parent `pendulum.sample(...)` facade.
+- This reconciliation is local only. Independent review, fresh exact-head CI,
+  unresolved-thread checks, dependency order, and ordinary publication remain
+  required before merge or release.
+
+## 2026-08-11 reviewed workspace parent propagation into variation PR #4280
+
+- Exact remote variation child
+  `668ba96746f79f7a12e8092161bd610054197f58` normally merges exact reviewed
+  workspace/toolstrip parent `ccd0e026c580c93038fdf5c59d5d452a85ba27a0`
+  in child-first order. PR base, stack order, and both histories remain intact;
+  no rebase, reset, retarget, force-push, or parent rewrite is used.
+- The variation/export feature remains unchanged while inheriting the current
+  kinetics split, Ground/Tee parity contracts, protected Ruff normalization,
+  and complete workspace/toolstrip behavior. The sole feature-code conflict
+  was obsolete monolithic kinetics source and is resolved to the validated
+  parent façade. Seven duplicate child automation edits fail protected Ruff
+  0.14.10 formatting and are normalized to the exact reviewed parent blobs;
+  the automation commit remains reachable in the child-first history.
+- This reconciliation is local only. Independent review, fresh exact-head
+  protected CI, unresolved-thread checks, dependency order, and ordinary
+  publication remain required before merge or release.
+
+## 2026-08-11 remote automation reconciliation for workspace PR #4279
+
+- Exact local workspace head `0b22c401a26c31441a599d8d9b39de123706e7ea`
+  ordinarily merges exact remote head
+  `61fe2d556a5413e525d958612ccfd57e65b8d5a2`, preserving both histories and
+  the existing PR base `feat/4181-launch-monitor-registry` without rebase,
+  reset, retarget, force-push, or parent rewrite.
+- The remote commit is a broad formatting-only automation sweep. Fifteen of
+  its 23 paths, including six pre-existing `.codex-worktrees` gitlinks, were
+  already byte-identical in the current parent. Its seven unique formatting
+  edits did not match protected Ruff 0.14.10 output and are normalized back to
+  the pinned form. Its sole content conflict was obsolete pre-split kinetics
+  code; the current `pendulum.sample(...)` façade implementation remains
+  authoritative, preserving the parent split and runtime behavior.
+- Workspace/toolstrip, module visibility, navigation, playback, independent
+  plots, physics, frames, units, schemas, and public contracts remain intact.
+  This history-preserving local reconciliation still requires independent
+  review, exact-head protected CI, unresolved-thread checks, and dependency
+  gates before publication or merge.
+
+## 2026-08-11 hosted MyPy repair propagation into workspace PR #4279
+
+- Exact workspace child `7806a16f58e1c6999d32f0127a187fbb21f839a1`
+  normally merges exact published parent
+  `3796b49e40b677fbac4e05739f8be49f905df2cb`; PR base, stack order, and
+  both histories remain unchanged.
+- The inherited production delta is limited to four static
+  `numpy.ndarray` casts in the kinetics façade, series, and dynamics modules.
+  Workspace/toolstrip behavior and runtime arrays, physics, units, frames,
+  public identity, and UI behavior are unchanged.
+- This merge is local only. Fresh exact-head protected CI, required review,
+  unresolved-thread checks, and dependency gates remain release blockers.
+
+## 2026-08-11 latest #4203 propagation into workspace PR #4279
+
+- Exact parent `0216a547aa79727091a2939b96e779e8ddbd7304` is normally merged into
+  child `61b7f48b5aeb7d57246b4963da3df086e79cbe15` without changing PR base,
+  stack order, or either history.
+- No feature-code conflict exists. The workspace/toolstrip, visibility,
+  navigation, playback, and plot controls remain intact while the child
+  inherits the parent's pinned formatting and identity-preserving kinetics
+  size-budget repair.
+- This merge is local only. Fresh exact-head protected CI, review, unresolved
+  threads, and dependency gates remain required before publication or merge.
+
+## 2026-08-11 #4203 hosted MyPy kinetics repair
+
+- Exact head `0216a547aa79727091a2939b96e779e8ddbd7304` failed CI Standard run
+  `31477542889`, job `93734652129`, at runtime merge ref `aede309`: NumPy's
+  typed API exposed four `no-any-return` findings in the newly extracted
+  kinetics modules.
+- The repair narrows only the results of `numpy.linalg.norm`,
+  `numpy.concatenate`, and the app-frame matrix projection to the already
+  declared `numpy.ndarray` return contract. Explicit casts do not allocate,
+  convert, or change any array, physics, units, frames, public identity, or UI.
+- RED evidence is the exact four hosted diagnostics at
+  `_kinetics_series.py:121/131`, `_kinetics_dynamics.py:194`, and
+  `kinetics.py:61`. GREEN evidence requires the complete PR-base changed-source
+  MyPy profile, not a three-file-only run, plus focused/full Rate regression and
+  normal protected CI after publication.
+- Local GREEN evidence is 102/102 complete-delta MyPy source files, 141/141
+  Ruff/format files, 101 Bandit source files with no medium/high finding, 28/28
+  focused tests, and 701/701 full Rate tests. Size, documentation, minimum-test,
+  and diff gates also pass.
+- This commit is local only. PR base, stack order, protected review, and the
+  paused #4279 parent propagation remain unchanged.
+
+## 2026-08-11 #4203 kinetics size-budget repair
+
+- Exact head `572bf525dd1ded26cbc3fbb4f228d1f6ca16e118` passes the PR-base
+  changed-file scan because `kinetics.py` is byte-identical to the inherited
+  parent, but the stricter `HEAD~1` scan selects the Ruff-formatted file and
+  fails it at 646 LOC against the ungrandfathered 500-LOC limit.
+- The behavior-preserving LoD/DRY split leaves
+  `simulation/kinetics.py` as the stable 222-LOC public façade, moves pure
+  dynamics to `_kinetics_dynamics.py` (205 LOC), and moves the immutable
+  series/DbC contract to `_kinetics_series.py` (131 LOC). Public constants,
+  class/function objects, and the private `_reaction_forces` compatibility
+  seam are identity-pinned by a RED-first contract test.
+- Physics, units, frames, numerical parity fixture, PyQt presentation, and
+  release-stack order are unchanged. This implementation is committed locally
+  only; no push, PR mutation, or release claim is authorized by this handoff.
+- Verification includes 28 focused kinetics/presentation/PyQt tests and the
+  complete 701-test Rate-of-Closure Python suite, all passing locally.
+
+## 2026-08-11 #4203 pinned-Ruff formatting repair
+
+- No material handoff change: this commit only applies the repository-pinned
+  Ruff 0.14.10 formatter to the eight Python files named by current-head CI
+  Standard run `31468208320`, job `93705508050`.
+- Physics, application behavior, public contracts, schemas, UI layout, stack
+  bases, and dependency order are unchanged. Fresh protected CI and review at
+  the resulting head remain required; queued runner jobs are not green
+  evidence.
+
+## 2026-08-10 #4143 child receives repaired #4203 parent
+
+- Ready PR `#4325` retains branch `feat/4143-tee-parity-fixture` and base
+  `feat/4181-launch-monitor-registry`; repaired parent head
+  `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` is incorporated through a
+  normal merge commit without rebasing, retargeting, or rewriting history.
+- The merge tree has no production/test-code conflict. Both branches'
+  append-only handoff/SPEC evidence is retained, including the shared parity
+  fixture and deterministic web/PyQt visual evidence.
+- Fresh exact-head protected CI and review remain required. #4143 stays open
+  until the dependency line lands on `main`.
+
+## 2026-08-10 #4143 Python/React Golden Ball-Setup Parity
+
+- Branch `feat/4143-tee-parity-fixture` starts from exact draft PR #4203 head
+  `31cbc007d4c85b5479b7cd0fb0969124eab2af67`; it does not rewrite or retarget
+  the release stack.
+- `ball_setup_golden_v1.json` is the single Python/React source of truth for
+  schema `rate_of_closure.ball_setup_golden` version 1, SI metre units, and
+  reference `ground_plane_to_ball_bottom`. It pins Driver/Tee and iron/Ground
+  defaults, explicit overrides, Ground's zero effective tee height, derived
+  center geometry, serialization, negative and non-finite rejection, and
+  legacy-run migration to Ground.
+- New consumer tests plus the existing tee suites pass: 18 Python tests and 24
+  React tests. Web TypeScript, ESLint, and production Vite build gates pass;
+  scoped Ruff check and format pass. This is test/fixture-only and does not
+  change production physics or UI behavior.
+- Deterministic 1600 x 1200 Playwright captures cover the default Driver/Tee
+  and rerun explicit-Ground React states with checked/disabled controls,
+  present/absent tee geometry, and zero console/page errors. A hidden 1400 x
+  900 PyQt harness records the same states with canonical center and tee-artist
+  assertions; a headless regression keeps its temporary PNGs nonblank and
+  structurally distinct without pixel-perfect baselines. Artifact manifests
+  and SHA-256 digests are under
+  `C:\Users\diete\AppData\Local\Temp\rate-4143-visual-evidence-8050eeba`.
+- Issue #4143 remains open for exact-head protected CI/review and release to
+  `main`. The strict campaign release manifest is not present on #4203's exact
+  history (it was introduced later on a divergent campaign branch), so this
+  bounded child records that limitation instead of reconstructing it.
 
 ## 2026-08-10 Second variation-parent propagation into PR #4281
 
