@@ -100,7 +100,9 @@ class TestMakePolynomialTorque:
         assert result == (1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0)
 
     def test_linear_torque(self) -> None:
-        tf = make_polynomial_torque([0.0, 1.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0])
+        tf = make_polynomial_torque(
+            [0.0, 1.0], [0.0], [0.0], [0.0], [0.0], [0.0], [0.0]
+        )
         result = tf(2.0)
         assert abs(result[0] - 2.0) < 1e-10
 
@@ -121,7 +123,9 @@ class TestRunSimulation:
         assert sim_result.states.shape[1] == 2 * N_DOF
 
     def test_time_monotonic(self, sim_result: GolferSimulationResult) -> None:
-        assert np.all(np.diff(sim_result.t) > 0), "Time must be monotonically increasing"
+        assert np.all(
+            np.diff(sim_result.t) > 0
+        ), "Time must be monotonically increasing"
 
     def test_constraint_bounded(self, sim_result: GolferSimulationResult) -> None:
         for i in range(sim_result.n_steps):
@@ -154,16 +158,20 @@ class TestRunSimulation:
 class TestConstraintViolationPostcondition:
     """Constraint monitoring postcondition: drift must stay within abort threshold."""
 
-    def test_violation_below_abort_threshold(self, sim_result: GolferSimulationResult) -> None:
+    def test_violation_below_abort_threshold(
+        self, sim_result: GolferSimulationResult
+    ) -> None:
         """All trajectory steps must have constraint violation below abort threshold."""
         abort_tol = 1e-2
         for i in range(sim_result.n_steps):
             v = constraint_violation(sim_result.states[i], _GOLFER_PARAMS)
-            assert v < abort_tol, (
-                f"Constraint violation {v:.3e} at step {i} exceeds abort threshold {abort_tol:.3e}"
-            )
+            assert (
+                v < abort_tol
+            ), f"Constraint violation {v:.3e} at step {i} exceeds abort threshold {abort_tol:.3e}"
 
-    def test_violation_finite_at_all_steps(self, sim_result: GolferSimulationResult) -> None:
+    def test_violation_finite_at_all_steps(
+        self, sim_result: GolferSimulationResult
+    ) -> None:
         """Constraint violation must be finite at every trajectory step."""
         for i in range(sim_result.n_steps):
             v = constraint_violation(sim_result.states[i], _GOLFER_PARAMS)
@@ -220,7 +228,9 @@ class TestGolferSimulationResult:
         M = sim_result.mass_matrix_at(0)
         assert M.shape == (N_DOF, N_DOF)
 
-    def test_all_positions_and_energies(self, sim_result: GolferSimulationResult) -> None:
+    def test_all_positions_and_energies(
+        self, sim_result: GolferSimulationResult
+    ) -> None:
         positions = sim_result.all_positions()
         energies = sim_result.all_energies()
         assert len(positions) == sim_result.n_steps
