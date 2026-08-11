@@ -26,7 +26,8 @@ def build_motion_colors() -> dict[str, QColor]:
 def chain_path_length(chain_nodes: list[tuple[float, float]]) -> float:
     """Return the polyline length with the renderer's minimum view scale."""
     distances = [
-        np.hypot(end[0] - start[0], end[1] - start[1]) for start, end in pairwise(chain_nodes)
+        np.hypot(end[0] - start[0], end[1] - start[1])
+        for start, end in pairwise(chain_nodes)
     ]
     return max(float(sum(distances)), 0.5)
 
