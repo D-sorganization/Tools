@@ -2,17 +2,19 @@ import { useMemo, useState, type Dispatch, type SetStateAction } from "react";
 
 import type { UnitSelections } from "../components/ImpactExplorerPanel";
 import { getClub, type ClubSpec } from "../model/club";
-import { generatedHeadFor, type GeneratedHead } from "../model/clubHeadGeneration";
-import { DEFAULT_SCENARIO, type ImpactScenario } from "../model/impact";
 import {
-  defaultBallSetupForClub,
-  type BallSetup,
-} from "../model/ballSetup";
+  generatedHeadFor,
+  type GeneratedHead,
+} from "../model/clubHeadGeneration";
+import { DEFAULT_SCENARIO, type ImpactScenario } from "../model/impact";
+import { defaultBallSetupForClub, type BallSetup } from "../model/ballSetup";
 import { loadBallSetupPreference } from "../model/ballSetupPersistence";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "../model/targets";
 import type { TorqueWorkspaceSnapshot } from "../model/workspaceTorqueSession";
 import { loadInitialTorqueWorkspace } from "./useSimulationTorqueWorkspace";
+import type { VariationWorkspaceSnapshot } from "../model/workspaceVariationSession";
+import { initialVariationWorkspace } from "./useVariationWorkspace";
 
 export interface ImpactAppModel {
   readonly scenario: ImpactScenario;
@@ -26,7 +28,13 @@ export interface ImpactAppModel {
   readonly ballSetupMessage: string | null;
   readonly setBallSetupMessage: Dispatch<SetStateAction<string | null>>;
   readonly torqueWorkspace: TorqueWorkspaceSnapshot;
-  readonly setTorqueWorkspace: Dispatch<SetStateAction<TorqueWorkspaceSnapshot>>;
+  readonly setTorqueWorkspace: Dispatch<
+    SetStateAction<TorqueWorkspaceSnapshot>
+  >;
+  readonly variationWorkspace: VariationWorkspaceSnapshot;
+  readonly setVariationWorkspace: Dispatch<
+    SetStateAction<VariationWorkspaceSnapshot>
+  >;
   readonly units: UnitSelections;
   readonly setUnits: Dispatch<SetStateAction<UnitSelections>>;
   readonly generatedHead: GeneratedHead;
@@ -57,7 +65,8 @@ export function useImpactAppModel(): ImpactAppModel {
   });
   const [scenario, setScenario] = useState(DEFAULT_SCENARIO);
   const [spatialTarget, setSpatialTarget] = useState(() =>
-    spatialTargetFromRegion(DEFAULT_TARGET));
+    spatialTargetFromRegion(DEFAULT_TARGET),
+  );
   const [ballSetup, setBallSetup] = useState(initialBallPreference.setup);
   const [ballSetupUserOverridden, setBallSetupUserOverridden] = useState(
     initialBallPreference.userOverridden,
@@ -68,19 +77,40 @@ export function useImpactAppModel(): ImpactAppModel {
   const [torqueWorkspace, setTorqueWorkspace] = useState(
     loadInitialTorqueWorkspace,
   );
+  const [variationWorkspace, setVariationWorkspace] = useState(() =>
+    initialVariationWorkspace(),
+  );
   const [units, setUnits] = useState(DEFAULT_UNITS);
   const [generatedHead, setGeneratedHead] = useState(() =>
-    generatedHeadFor(defaultDriver));
+    generatedHeadFor(defaultDriver),
+  );
   const [clubSpec, setClubSpec] = useState(defaultDriver);
   const [explained, setExplained] = useState("pathDeviationDeg");
   const [glossaryTerm, setGlossaryTerm] = useState<string>();
   return {
-    scenario, setScenario, spatialTarget, setSpatialTarget,
-    ballSetup, setBallSetup, ballSetupUserOverridden,
-    setBallSetupUserOverridden, ballSetupMessage, setBallSetupMessage,
-    torqueWorkspace, setTorqueWorkspace,
-    units, setUnits,
-    generatedHead, setGeneratedHead, clubSpec, setClubSpec, explained,
-    setExplained, glossaryTerm, setGlossaryTerm,
+    scenario,
+    setScenario,
+    spatialTarget,
+    setSpatialTarget,
+    ballSetup,
+    setBallSetup,
+    ballSetupUserOverridden,
+    setBallSetupUserOverridden,
+    ballSetupMessage,
+    setBallSetupMessage,
+    torqueWorkspace,
+    setTorqueWorkspace,
+    variationWorkspace,
+    setVariationWorkspace,
+    units,
+    setUnits,
+    generatedHead,
+    setGeneratedHead,
+    clubSpec,
+    setClubSpec,
+    explained,
+    setExplained,
+    glossaryTerm,
+    setGlossaryTerm,
   };
 }

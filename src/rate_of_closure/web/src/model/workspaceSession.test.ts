@@ -7,6 +7,8 @@ import { passiveDoublePendulumRun } from "./doublePendulum";
 import { starterTorqueProfile } from "./torqueProfileEditor";
 import { DEFAULT_PRIMARY_VIEW_STATE } from "./viewPreferences";
 import { defaultViewWorkspace } from "./viewWorkspace";
+import variationFixture from "./__fixtures__/workspace_variation_parity.json";
+import { planFromJson } from "./variation";
 import {
   boxTolerance,
   createSpatialTarget,
@@ -20,29 +22,34 @@ import {
 
 const snapshot = (): WorkspaceSessionSnapshot => {
   const profile = starterTorqueProfile();
-  return ({
-  scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -900 },
-  club: getClub("Driver 10.5°"),
-  units: { speed: "mph", rotation: "deg/s", length: "mm", distance: "yd" },
-  simulation: {
-    ballSetup: { supportMode: "tee", teeHeightM: DRIVER_TEE_HEIGHT_M },
-    ballSetupUserOverridden: false,
-    spatialTarget: createSpatialTarget({
-      label: "Apex gate",
-      kind: "aerial_waypoint",
-      point: targetPointFromFrame([137.5, 3.25, 24.25], "flight"),
-      tolerance: boxTolerance([4.5, 2.5, 3.5]),
-      elevationSource: "absolute",
-    }),
-  },
-  torque: {
-    profiles: Object.freeze([profile]),
-    activeProfileId: profile.profileId,
-    runConfig: passiveDoublePendulumRun(),
-  },
-  modules: DEFAULT_PRIMARY_VIEW_STATE,
-  viewWorkspace: defaultViewWorkspace,
-  });
+  return {
+    scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -900 },
+    club: getClub("Driver 10.5°"),
+    units: { speed: "mph", rotation: "deg/s", length: "mm", distance: "yd" },
+    simulation: {
+      ballSetup: { supportMode: "tee", teeHeightM: DRIVER_TEE_HEIGHT_M },
+      ballSetupUserOverridden: false,
+      spatialTarget: createSpatialTarget({
+        label: "Apex gate",
+        kind: "aerial_waypoint",
+        point: targetPointFromFrame([137.5, 3.25, 24.25], "flight"),
+        tolerance: boxTolerance([4.5, 2.5, 3.5]),
+        elevationSource: "absolute",
+      }),
+    },
+    torque: {
+      profiles: Object.freeze([profile]),
+      activeProfileId: profile.profileId,
+      runConfig: passiveDoublePendulumRun(),
+    },
+    variation: {
+      plan: planFromJson(JSON.stringify(variationFixture.plan)),
+      analysisExecution: "both" as const,
+      selectedOutputMetrics: ["carry_m", "lateral_m", "apex_m"],
+    },
+    modules: DEFAULT_PRIMARY_VIEW_STATE,
+    viewWorkspace: defaultViewWorkspace,
+  };
 };
 
 const metadata = {
@@ -59,7 +66,7 @@ describe("whole workspace session contract", () => {
     expect(parseWorkspaceDocument(encoded)).toEqual(snapshot());
     expect(JSON.parse(encoded).schema_version).toBe(2);
     const session = JSON.parse(encoded).model_session;
-    expect(session.schema_version).toBe(3);
+    expect(session.schema_version).toBe(4);
     expect(session.data.simulation_setup.data.ball_setup.provenance).toEqual({
       kind: "club_default",
       club_name: "Driver 10.5°",
@@ -78,14 +85,31 @@ describe("whole workspace session contract", () => {
         profile_source: "direct",
       },
     });
+    expect(session.data.variation_study).toEqual(variationFixture.selection);
+    expect(JSON.parse(encoded).variation_plan).toEqual(variationFixture.plan);
+    expect(JSON.parse(encoded).variation_plan).not.toHaveProperty("ball_setup");
+  });
+
+  it("rejects a variation plan that duplicates the simulation ball setup", () => {
+    const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    value.variation_plan.ball_setup = {
+      support_mode: "tee",
+      tee_height_m: DRIVER_TEE_HEIGHT_M,
+    };
+    expect(() => parseWorkspaceDocument(JSON.stringify(value))).toThrow(
+      /must not duplicate simulation ball_setup/i,
+    );
   });
 
   it("rejects club-default provenance that disagrees with saved geometry", () => {
     const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
-    const setup = value.model_session.data.simulation_setup.data.ball_setup.setup;
+    const setup =
+      value.model_session.data.simulation_setup.data.ball_setup.setup;
     setup.tee_height_m = 0.05;
     setup.ball_center_m[1] = 0.05 + 0.04267 / 2;
-    expect(() => parseWorkspaceDocument(JSON.stringify(value))).toThrow(/club-default ball setup/i);
+    expect(() => parseWorkspaceDocument(JSON.stringify(value))).toThrow(
+      /club-default ball setup/i,
+    );
   });
 
   it("requires an explicit fallback to migrate a v1 explorer session", () => {
@@ -97,10 +121,13 @@ describe("whole workspace session contract", () => {
     };
     const text = JSON.stringify(value);
     expect(() => parseWorkspaceDocument(text)).toThrow(/explicit.*migration/i);
-    expect(parseWorkspaceDocument(text, {
-      legacySimulationFallback: snapshot().simulation,
-      legacyTorqueFallback: snapshot().torque,
-    }).simulation).toEqual(snapshot().simulation);
+    expect(
+      parseWorkspaceDocument(text, {
+        legacySimulationFallback: snapshot().simulation,
+        legacyTorqueFallback: snapshot().torque,
+        legacyVariationFallback: snapshot().variation,
+      }).simulation,
+    ).toEqual(snapshot().simulation);
   });
 
   it("preserves a cross-club v1 fallback as an explicit override", () => {
@@ -121,8 +148,11 @@ describe("whole workspace session contract", () => {
     const migrated = parseWorkspaceDocument(JSON.stringify(value), {
       legacySimulationFallback: snapshot().simulation,
       legacyTorqueFallback: snapshot().torque,
+      legacyVariationFallback: snapshot().variation,
     });
-    expect(migrated.simulation.ballSetup).toEqual(snapshot().simulation.ballSetup);
+    expect(migrated.simulation.ballSetup).toEqual(
+      snapshot().simulation.ballSetup,
+    );
     expect(migrated.simulation.ballSetupUserOverridden).toBe(true);
   });
 
@@ -130,11 +160,15 @@ describe("whole workspace session contract", () => {
     const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
     value.model_session.schema_version = 2;
     delete value.model_session.data.torque_selection;
+    delete value.model_session.data.variation_study;
     const text = JSON.stringify(value);
     expect(() => parseWorkspaceDocument(text)).toThrow(/explicit torque/i);
-    expect(parseWorkspaceDocument(text, {
-      legacyTorqueFallback: snapshot().torque,
-    }).torque).toEqual(snapshot().torque);
+    expect(
+      parseWorkspaceDocument(text, {
+        legacyTorqueFallback: snapshot().torque,
+        legacyVariationFallback: snapshot().variation,
+      }).torque,
+    ).toEqual(snapshot().torque);
   });
 
   it.each([
@@ -148,29 +182,72 @@ describe("whole workspace session contract", () => {
     );
   });
 
-  it("rejects unsupported domain state before returning applicable values", () => {
+  it("rejects invalid variation selection before returning applicable values", () => {
     const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
-    value.variation_plan = { schema_version: 2 };
-    expect(() => parseWorkspaceDocument(JSON.stringify(value))).toThrow(/variation/i);
+    value.model_session.data.variation_study.data.selected_output_metrics = [
+      "unknown_metric",
+    ];
+    expect(() => parseWorkspaceDocument(JSON.stringify(value))).toThrow(
+      /metric/i,
+    );
+  });
+
+  it("requires a nonconflicting variation fallback for legacy v3", () => {
+    const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    value.model_session.schema_version = 3;
+    delete value.model_session.data.variation_study;
+    const text = JSON.stringify(value);
+
+    expect(() => parseWorkspaceDocument(text)).toThrow(/explicit variation/i);
+    expect(
+      parseWorkspaceDocument(text, {
+        legacyVariationFallback: snapshot().variation,
+      }).variation,
+    ).toEqual(snapshot().variation);
+
+    const conflict = {
+      ...snapshot().variation,
+      plan: { ...snapshot().variation.plan, seed: 99 },
+    };
+    expect(() =>
+      parseWorkspaceDocument(text, {
+        legacyVariationFallback: conflict,
+      }),
+    ).toThrow(/conflicts/i);
   });
 
   it("rejects corrupt module and compositor documents", () => {
-    const missingModule = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    const missingModule = JSON.parse(
+      createWorkspaceDocument(snapshot(), metadata),
+    );
     missingModule.layout.module_order = ["explorer"];
-    expect(() => parseWorkspaceDocument(JSON.stringify(missingModule))).toThrow(/module/i);
+    expect(() => parseWorkspaceDocument(JSON.stringify(missingModule))).toThrow(
+      /module/i,
+    );
 
-    const futureView = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
-    futureView.layout.view_workspace.data.format = "rate_of_closure.view_workspace/9";
-    expect(() => parseWorkspaceDocument(JSON.stringify(futureView))).toThrow(/format/i);
+    const futureView = JSON.parse(
+      createWorkspaceDocument(snapshot(), metadata),
+    );
+    futureView.layout.view_workspace.data.format =
+      "rate_of_closure.view_workspace/9";
+    expect(() => parseWorkspaceDocument(JSON.stringify(futureView))).toThrow(
+      /format/i,
+    );
   });
 
   it("matches the native stable identity and strict UTC metadata boundary", () => {
     const localTime = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
     localTime.metadata.created_at_utc = "2026-08-10T12:00:00-07:00";
-    expect(() => parseWorkspaceDocument(JSON.stringify(localTime))).toThrow(/UTC/i);
+    expect(() => parseWorkspaceDocument(JSON.stringify(localTime))).toThrow(
+      /UTC/i,
+    );
 
-    const unstableId = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    const unstableId = JSON.parse(
+      createWorkspaceDocument(snapshot(), metadata),
+    );
     unstableId.metadata.document_id = "workspace id with spaces";
-    expect(() => parseWorkspaceDocument(JSON.stringify(unstableId))).toThrow(/identifier/i);
+    expect(() => parseWorkspaceDocument(JSON.stringify(unstableId))).toThrow(
+      /identifier/i,
+    );
   });
 });

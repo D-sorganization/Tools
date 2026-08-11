@@ -1,7 +1,30 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > Update with every implementation commit and every push to `main`.
-> Current-state only; history lives in git. Last updated: 2026-08-10.
+> Current-state only; history lives in git. Last updated: 2026-08-11.
+
+## 2026-08-11 Explorer-session v4 variation-study mapper
+
+The child `feat/4144-workspace-variation-study` is based on exact published PR
+#4340 head `26105f668de260d75a99f450726348570db7ff89`. Its Python and
+TypeScript contracts persist one canonical authored variation plan plus a
+strict selection payload for all-together/individual/both execution and a
+non-empty, mode-valid output focus. The canonical plan already owns inputs,
+distributions, ranges, groups, trial count, seed, and flight model.
+
+Both clients map actual live controls. The simulation setup remains the sole
+ball-support authority; workspace plans cannot duplicate it, and Tee Height is
+rejected under Ground support. Legacy v1-v3 sessions require an explicit,
+nonconflicting variation fallback. Full parsing precedes mutation and native
+application rolls the supported workspace back on failure.
+
+This does not persist results, identity, optimizer outputs, or flight-run
+results and does not close #4142/#4144/#4218. UpstreamDrift consumers,
+protected CI/review, and ordered release remain open. Local qualification
+passes 32 focused Python tests, 33 focused React tests, pinned MyPy 1.13, Ruff
+check/format, TypeScript, zero-warning ESLint, the 210-module production build,
+the 11-test campaign-manifest suite, module-size, docs, manifest-layout,
+changed-Python, changed-test assertion, linked-debt, JSON, and diff gates.
 
 ## 2026-08-10 Explorer-session v3 torque-profile mapper
 

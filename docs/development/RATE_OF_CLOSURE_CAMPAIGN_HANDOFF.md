@@ -1,8 +1,28 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-10. This isolated integration is published as draft
+Status verified 2026-08-11. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
+
+## 2026-08-11 Variation-study workspace child
+
+- Worktree `Tools-worktrees/workspace-variation-study` and branch
+  `feat/4144-workspace-variation-study` start at exact published PR #4340 head
+  `26105f668de260d75a99f450726348570db7ff89`.
+- Explorer-session v4 persists canonical user-authored variation inputs,
+  distributions/ranges/groups, trial count, deterministic seed,
+  simultaneous/individual/both analysis policy, and a strict selected-output
+  focus on both Tools clients.
+- Simulation is the sole persisted Ground/Tee authority. Duplicate ball setup,
+  Tee Height under Ground support, unknown/duplicate/empty output selections,
+  ambiguous legacy plans, and partial native application all fail closed.
+- This slice stores no results, identity, optimizer outputs, or flight-run
+  outputs; it does not qualify UpstreamDrift or close #4142/#4144/#4218.
+  Protected review/CI and dependency-ordered release remain open. Local gates
+  pass 32 focused Python and 33 focused React tests, pinned MyPy 1.13, Ruff,
+  TypeScript, zero-warning ESLint, the 210-module production build, 11 campaign
+  manifest tests, module-size, docs, manifest-layout, changed-Python,
+  changed-test assertion, linked-debt, JSON, and diff validation.
 
 ## 2026-08-10 Torque-profile workspace child
 

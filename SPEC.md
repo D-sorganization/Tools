@@ -26,13 +26,33 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.32                                    |
-| **Spec Version**        | 1.14.32                                    |
-| **Last Spec Update**    | 2026-08-10                                 |
+| **Current Version**     | 1.14.34                                    |
+| **Spec Version**        | 1.14.34                                    |
+| **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-11 Variation-study workspace specification
+
+- `rate_of_closure.explorer_session/4` stores the existing canonical variation
+  plan plus `rate_of_closure.variation_workspace_selection/1`. The selection
+  records all-together, individual, or both execution; and a non-empty,
+  mode-valid, deterministically ordered set of selected output metrics.
+- The canonical plan remains the authority for varied parameters, distribution
+  and bounds, groups, trial count, deterministic seed, and flight model. The
+  selection payload does not duplicate physical plan values or persist results.
+- Simulation setup is the only authority for Ground/Tee context. Workspace
+  variation plans reject a duplicate ball setup, and a Tee Height input is
+  invalid unless the separately persisted setup selects Tee support.
+- Current files validate completely before live mutation. Legacy v1-v3 files
+  require an explicit current variation fallback, and any non-null legacy root
+  plan must match it exactly; native application failure restores the prior
+  complete supported state.
+- This bounded #4142/#4144/#4218 slice does not persist trial results, player
+  identity, optimizer outputs, or flight-run results, does not implement
+  UpstreamDrift consumers, and does not close either variation issue or epic.
 
 ### 2026-08-10 Torque-profile workspace persistence
 
@@ -3130,6 +3150,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.34 | feat(rate-of-closure, #4142 #4144 #4218): persist the complete user-authored variation-study specification in explorer-session v4 across PyQt6 and React, including canonical varied inputs/distributions/ranges/groups, simultaneous/individual/both execution, trial count, deterministic seed, and selected mode-valid output metrics; keep simulation ball support authoritative, reject duplicated or inapplicable Tee Height context, require explicit conflict-safe v1-v3 migration, and apply atomically without persisting results, identity, optimizer outputs, or claiming issue/epic completion. |
 | 2026-08-10 | 1.14.32 | feat(rate-of-closure, #4136 #4220 #4218): persist the canonical prescribed polynomial torque-profile library and source-derived active selection in explorer-session v3 across PyQt6 and React; preserve passive/prescribed run configuration and canonical joint locks, validate schema/SI units/c0-first order/identity/provenance before atomic apply, require explicit conflict-safe v1/v2 migration, and retain optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |
 | 2026-08-10 | 1.14.31 | feat(rate-of-closure, #4143 #4225): extend whole-workspace persistence with the strict explorer-session v2 simulation subpayload shared by PyQt6 and React; round-trip Ground/Tee support, SI tee height, derived geometry, club-default versus explicit-override provenance, and the complete versioned spatial-target identity/frame/tolerance contract; validate before UI mutation, reject corrupt provenance/targets atomically, and require explicit preserve-current migration for v1 instead of inventing values; retain torque/optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |
 | 2026-08-10 | 1.14.30 | feat(rate-of-closure, #4218 #4225): wire the strict whole-workspace and compositor contracts into production PyQt6 and React File operations; provide New/Open/Save As/view Import/view Export/Close on both clients, native atomic Save and persisted Recent, complete-before-mutate validation, rollback-safe application, dirty-session protection, cancellation, and user-visible status/errors; preserve honest browser Save/Recent limitations and fail closed on unsupported torque/variation payloads; retain simulation-tab-local domain mappers, installed-consumer parity, protected CI/review, and epic completion as explicit open work. |

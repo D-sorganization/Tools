@@ -268,6 +268,37 @@ def test_invalid_torque_selection_is_rejected_before_native_ui_mutation(
     assert warnings and "provenance" in warnings[0][1]
 
 
+def test_invalid_variation_selection_is_rejected_before_native_ui_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    selection = raw["model_session"]["data"]["variation_study"]["data"]
+    selection["selected_output_metrics"] = ["unknown_metric"]
+    target = tmp_path / "invalid-variation-selection.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "metric" in warnings[0][1]
+
+
 def test_glossary_is_first_class_and_recovers_a_hidden_module(window) -> None:  # type: ignore[no-untyped-def]
     assert window.set_primary_module_visible("glossary", False)
     glossary = _action(window, AppCommandId.GLOBAL_OPEN_GLOSSARY.value)

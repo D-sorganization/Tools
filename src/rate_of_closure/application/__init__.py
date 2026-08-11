@@ -31,6 +31,11 @@ from .workspace_torque_session import (
     LegacyTorqueMigrationRequired,
     TorqueWorkspaceState,
 )
+from .workspace_variation_session import (
+    LegacyVariationMigrationRequired,
+    VariationAnalysisExecution,
+    VariationWorkspaceState,
+)
 
 __all__ = [
     "APP_COMMAND_IDS",
@@ -42,8 +47,11 @@ __all__ = [
     "ExplorerWorkspaceState",
     "LegacySimulationMigrationRequired",
     "LegacyTorqueMigrationRequired",
+    "LegacyVariationMigrationRequired",
     "SimulationWorkspaceState",
     "TorqueWorkspaceState",
+    "VariationAnalysisExecution",
+    "VariationWorkspaceState",
     "VersionedPayload",
     "WorkspaceDocument",
     "WorkspaceLayout",

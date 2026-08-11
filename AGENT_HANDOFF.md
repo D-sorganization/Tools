@@ -1,7 +1,31 @@
 # AGENT_HANDOFF — Tools
 
 > Update this file in every implementation commit and every push to `main`.
-> Current-state only; history lives in git. Last updated: 2026-08-10.
+> Current-state only; history lives in git. Last updated: 2026-08-11.
+
+## 2026-08-11 Variation-study workspace continuation
+
+Branch `feat/4144-workspace-variation-study` starts from exact published PR
+#4340 head `26105f668de260d75a99f450726348570db7ff89`. Explorer-session v4
+persists the user-authored variation specification with one strict shared
+selection contract: canonical varied inputs/distributions/ranges/groups, trial
+count, deterministic seed, simultaneous/individual/both analysis, and selected
+mode-valid output metrics.
+
+PyQt6 and React own the same live state and validate the complete document
+before mutation. Legacy v1-v3 migration requires an explicit current variation
+fallback and rejects conflicting root plans. Simulation remains the sole
+Ground/Tee authority; duplicated ball setup and Tee Height under Ground support
+fail closed. Native widget application is rollback-safe.
+
+This is bounded #4142/#4144/#4218 specification persistence. It does not store
+results or identity, add optimizer outputs, qualify UpstreamDrift consumers, or
+close any issue/epic. Protected CI/review and ordered release remain open.
+Local qualification passes 32 focused Python tests, 33 focused React tests,
+pinned MyPy 1.13, Ruff check/format, TypeScript, zero-warning ESLint, the
+210-module production build, the 11-test campaign-manifest suite, module-size,
+docs, manifest-layout, changed-Python, changed-test assertion, linked-debt,
+JSON, and diff gates.
 
 ## 2026-08-10 Torque-profile workspace continuation
 

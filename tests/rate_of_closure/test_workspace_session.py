@@ -21,6 +21,11 @@ from rate_of_closure.application.workspace_torque_session import (
     LegacyTorqueMigrationRequired,
     TorqueWorkspaceState,
 )
+from rate_of_closure.application.workspace_variation_session import (
+    LegacyVariationMigrationRequired,
+    VariationAnalysisExecution,
+    VariationWorkspaceState,
+)
 from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.view_workspace import ViewWorkspace
@@ -73,6 +78,21 @@ def _state() -> ExplorerWorkspaceState:
             active_profile_id=profile.profile_id,
             run_config=DoublePendulumRunConfig.prescribed(profile.profile_id),
         ),
+        variation=VariationWorkspaceState(
+            plan=VariationPlan(
+                mode="launch",
+                noise=(
+                    NoiseSpec(
+                        "swing_sim.flight.launch.ball_speed_mph",
+                        scale=1.0,
+                    ),
+                ),
+                n_runs=24,
+                seed=7,
+            ),
+            analysis_execution=VariationAnalysisExecution.BOTH,
+            selected_output_metrics=("carry_m", "lateral_m"),
+        ),
         module_order=(
             "explorer",
             "calculation",
@@ -109,7 +129,7 @@ def test_live_state_round_trips_through_strict_whole_workspace_document() -> Non
     assert restored == state
 
     payload = document_from_state(state, _metadata()).model_session
-    assert payload.schema_version == 3
+    assert payload.schema_version == 4
     setup = payload.to_json_dict()["data"]["simulation_setup"]
     assert setup["schema"] == "rate_of_closure.simulation_setup"
     assert setup["data"]["ball_setup"]["provenance"] == {
@@ -127,6 +147,12 @@ def test_live_state_round_trips_through_strict_whole_workspace_document() -> Non
     assert document_from_state(state, _metadata()).prescribed_torque_profiles == (
         state.torque.profiles
     )
+    variation = payload.to_json_dict()["data"]["variation_study"]
+    assert variation["schema"] == "rate_of_closure.variation_workspace_selection"
+    assert variation["data"]["analysis_execution"] == "both"
+    assert (
+        document_from_state(state, _metadata()).variation_plan == state.variation.plan
+    )
 
 
 def test_club_default_provenance_must_match_persisted_club_and_geometry() -> None:
@@ -139,6 +165,32 @@ def test_club_default_provenance_must_match_persisted_club_and_geometry() -> Non
 
     with pytest.raises(ValueError, match="club-default ball setup"):
         state_from_document(WorkspaceDocument.from_json_dict(raw))
+
+
+def test_tee_height_variation_requires_tee_support_context() -> None:
+    state = _state()
+    plan = VariationPlan(
+        mode="swing",
+        noise=(NoiseSpec("swing_sim.ball_setup.tee_height_m", scale=0.002),),
+        n_runs=24,
+        seed=7,
+    )
+    variation = VariationWorkspaceState(
+        plan=plan,
+        analysis_execution=VariationAnalysisExecution.BOTH,
+        selected_output_metrics=("carry_m",),
+    )
+
+    with pytest.raises(ValueError, match="tee-height variation requires Tee"):
+        replace(
+            state,
+            simulation=replace(
+                state.simulation,
+                ball_setup=BallSetup(BallSupportMode.GROUND, 0.0),
+                ball_setup_user_overridden=True,
+            ),
+            variation=variation,
+        )
 
 
 def test_legacy_v1_session_requires_and_uses_an_explicit_simulation_fallback() -> None:
@@ -162,6 +214,7 @@ def test_legacy_v1_session_requires_and_uses_an_explicit_simulation_fallback() -
         legacy,
         legacy_simulation_fallback=_state().simulation,
         legacy_torque_fallback=_state().torque,
+        legacy_variation_fallback=_state().variation,
     )
     assert migrated.simulation == _state().simulation
 
@@ -192,6 +245,7 @@ def test_legacy_cross_club_fallback_preserves_geometry_as_an_override() -> None:
         legacy,
         legacy_simulation_fallback=_state().simulation,
         legacy_torque_fallback=_state().torque,
+        legacy_variation_fallback=_state().variation,
     )
     assert migrated.simulation.ball_setup == _state().simulation.ball_setup
     assert migrated.simulation.ball_setup_user_overridden
@@ -221,7 +275,11 @@ def test_legacy_v2_requires_explicit_torque_fallback_without_inventing_profiles(
     with pytest.raises(LegacyTorqueMigrationRequired, match="explicit"):
         state_from_document(legacy)
 
-    restored = state_from_document(legacy, legacy_torque_fallback=_state().torque)
+    restored = state_from_document(
+        legacy,
+        legacy_torque_fallback=_state().torque,
+        legacy_variation_fallback=_state().variation,
+    )
     assert restored.torque == _state().torque
 
 
@@ -241,18 +299,41 @@ def test_workspace_rejects_noncanonical_torque_units_and_coefficient_order(
         WorkspaceDocument.from_json_dict(raw)
 
 
-def test_unsupported_domain_state_is_rejected_before_any_ui_mutation() -> None:
-    document = document_from_state(_state(), _metadata())
-    document = replace(
-        document,
-        variation_plan=VariationPlan(
-            mode="delivery",
-            noise=(NoiseSpec("swing_sim.impact.delivery.face_angle_deg", scale=1.0),),
+def test_legacy_v3_variation_migration_requires_a_nonconflicting_fallback() -> None:
+    from rate_of_closure.application.workspace_document import VersionedPayload
+
+    current = document_from_state(_state(), _metadata())
+    data = current.model_session.to_json_dict()["data"]
+    legacy = replace(
+        current,
+        model_session=VersionedPayload(
+            current.model_session.schema,
+            3,
+            {
+                "scenario": data["scenario"],
+                "units": data["units"],
+                "simulation_setup": data["simulation_setup"],
+                "torque_selection": data["torque_selection"],
+            },
         ),
     )
 
-    with pytest.raises(TypeError, match="variation"):
-        state_from_document(document)
+    with pytest.raises(LegacyVariationMigrationRequired, match="explicit"):
+        state_from_document(legacy)
+
+    assert (
+        state_from_document(
+            legacy,
+            legacy_variation_fallback=_state().variation,
+        ).variation
+        == _state().variation
+    )
+
+    conflicting = replace(
+        _state().variation, plan=replace(_state().variation.plan, seed=8)
+    )
+    with pytest.raises(LegacyVariationMigrationRequired, match="conflicts"):
+        state_from_document(legacy, legacy_variation_fallback=conflicting)
 
 
 def test_state_contract_rejects_invalid_units_and_incomplete_module_registry() -> None:
