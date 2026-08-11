@@ -178,7 +178,9 @@ def test_force_scale_pushed(qapp) -> None:
 
     apply_toolstrip_overlay_state(ts, pw)
 
-    assert pw.calls.get("set_force_scale") == pytest.approx(_expected_scale(ts._sld_force))
+    assert pw.calls.get("set_force_scale") == pytest.approx(
+        _expected_scale(ts._sld_force)
+    )
 
 
 def test_mob_ellipsoid_scale_pushed(qapp) -> None:

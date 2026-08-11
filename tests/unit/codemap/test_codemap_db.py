@@ -118,8 +118,7 @@ def test_init_schema_migrates_legacy_fts_alias_schema() -> None:
     conn = sqlite3.connect(":memory:")
 
     try:
-        conn.executescript(
-            """
+        conn.executescript("""
             CREATE TABLE meta (
                 key   TEXT PRIMARY KEY,
                 value TEXT NOT NULL
@@ -158,8 +157,7 @@ def test_init_schema_migrates_legacy_fts_alias_schema() -> None:
             CREATE TRIGGER symbols_ai AFTER INSERT ON symbols BEGIN
                 SELECT 1;
             END;
-            """
-        )
+            """)
 
         codemap_db.init_schema(conn)
 
