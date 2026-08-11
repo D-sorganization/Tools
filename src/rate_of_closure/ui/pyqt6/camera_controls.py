@@ -29,6 +29,10 @@ from rate_of_closure.application.camera_commands import (
     set_tracking_enabled,
     update_tracking_target,
 )
+from rate_of_closure.application.camera_preferences import (
+    CameraPreference,
+    apply_camera_preference,
+)
 
 Vector3 = tuple[float, float, float]
 
@@ -195,6 +199,7 @@ class CameraViewportMixin:
 
     _camera_state: CameraState
     _camera_controls_widget: CameraControls
+    _camera_preference_listener: Callable[[CameraState], None] | None
 
     def _camera_subject_m(self) -> Vector3:
         raise NotImplementedError
@@ -213,6 +218,7 @@ class CameraViewportMixin:
     ) -> CameraControls:
         """Create isolated controls from an optional viewport-specific state."""
         self._camera_state = initial_state or CameraState()
+        self._camera_preference_listener = None
         self._camera_controls_widget = CameraControls(
             subject_label,
             self.apply_camera_command,
@@ -230,6 +236,20 @@ class CameraViewportMixin:
     def camera_state(self) -> CameraState:
         """Return the immutable camera state snapshot."""
         return self._camera_state
+
+    def set_camera_preference_listener(
+        self, listener: Callable[[CameraState], None] | None
+    ) -> None:
+        """Observe deliberate state changes; playback tracking is never emitted."""
+        if listener is not None and not callable(listener):
+            raise TypeError("camera preference listener must be callable")
+        self._camera_preference_listener = listener
+
+    def restore_camera_preference(self, preference: CameraPreference) -> None:
+        """Restore durable fields without replacing the current subject target."""
+        self._camera_state = apply_camera_preference(self._camera_state, preference)
+        self._camera_controls_widget.sync(self._camera_state)
+        self._camera_state_changed()
 
     def camera_zoom(self) -> float:
         """Return the current dimensionless zoom factor."""
@@ -351,6 +371,9 @@ class CameraViewportMixin:
         if not isinstance(viewport, CameraViewport):
             raise TypeError("CameraViewportMixin requires the CameraViewport contract")
         viewport._camera_state_changed()
+        listener = self._camera_preference_listener
+        if listener is not None:
+            listener(self._camera_state)
 
 
 __all__ = ["CameraControls", "CameraViewportMixin"]

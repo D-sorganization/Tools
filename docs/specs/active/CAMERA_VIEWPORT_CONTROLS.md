@@ -3,6 +3,23 @@
 Status: implemented locally for Tools issue #4284; protected integration and
 UpstreamDrift consumer parity remain open.
 
+## Camera-preference persistence contract
+
+`camera-preferences/v1` is keyed by stable `impact`, `swing`, and `flight`
+viewport IDs. Each value contains one canonical preset, explicit face-on side,
+zoom bounded to 0.25 through 8, tracking enabled, and Auto Fit enabled. It does
+not serialize the moving target, canvas yaw/pitch from a manual orbit, or the
+runtime manual-suspension flag.
+
+`rate_of_closure.view_workspace/2` embeds the complete preference document.
+Strict v1 import deterministically supplies #4303 defaults: neutral 1x Impact
+and 2x tracking/Auto-Fit Swing and Flight. Unknown keys, missing viewports,
+unsupported enums, out-of-range/non-finite zoom, and future formats reject.
+PyQt6 QSettings and File operations and React localStorage and File operations
+use the same document. The two native and three browser camera adapters restore
+controls without moving the current subject target; only deliberate camera
+controls notify storage, so playback tracking cannot produce per-frame writes.
+
 ## PR #4331 stack repair
 
 The local publication candidate normally merges exact current PR #4330 parent

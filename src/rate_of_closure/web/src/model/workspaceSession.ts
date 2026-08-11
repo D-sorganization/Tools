@@ -339,7 +339,7 @@ export function createWorkspaceDocument(
       active_module_id: snapshot.modules.active,
       view_workspace: {
         schema: "rate_of_closure.view_workspace",
-        schema_version: 1,
+        schema_version: 2,
         data: viewWorkspaceDocument(snapshot.viewWorkspace),
       },
     },
@@ -449,9 +449,31 @@ export function parseWorkspaceDocument(
   );
   if (
     viewEnvelope.schema !== "rate_of_closure.view_workspace" ||
-    viewEnvelope.schema_version !== 1
+    (viewEnvelope.schema_version !== 1 && viewEnvelope.schema_version !== 2)
   ) {
     throw new TypeError("unsupported view workspace payload");
+  }
+  const viewData = exactRecord(
+    viewEnvelope.data,
+    viewEnvelope.schema_version === 1
+      ? ["format", "layout", "slots", "active_slot_id", "playback"]
+      : [
+          "format",
+          "layout",
+          "slots",
+          "active_slot_id",
+          "playback",
+          "camera_preferences",
+        ],
+    "layout.view_workspace.data",
+  );
+  if (
+    (viewEnvelope.schema_version === 1 &&
+      viewData.format !== "rate_of_closure.view_workspace/1") ||
+    (viewEnvelope.schema_version === 2 &&
+      viewData.format !== "rate_of_closure.view_workspace/2")
+  ) {
+    throw new TypeError("view workspace envelope version does not match its format");
   }
   const parsedClub = clubFromDocument(club);
   const simulation: SimulationWorkspaceSnapshot =
@@ -506,6 +528,6 @@ export function parseWorkspaceDocument(
     torque,
     variation,
     modules: validatedModules(layout),
-    viewWorkspace: viewWorkspaceFromDocument(viewEnvelope.data),
+    viewWorkspace: viewWorkspaceFromDocument(viewData),
   };
 }

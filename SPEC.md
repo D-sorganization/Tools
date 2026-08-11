@@ -26,13 +26,34 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.34                                    |
-| **Spec Version**        | 1.14.34                                    |
+| **Current Version**     | 1.14.35                                    |
+| **Spec Version**        | 1.14.35                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-11 Camera-preference workspace persistence
+
+- `camera-preferences/v1` is a strict cross-runtime document keyed by stable
+  Impact, Swing, and Flight viewport IDs. Each viewport stores only canonical
+  preset, explicit face-on side, zoom bounded to [0.25, 8], tracking enabled,
+  and Auto Fit enabled.
+- Subject targets, manual yaw/pitch, and tracking suspension are runtime-only.
+  Applying a preference preserves the current target and clears stale manual
+  suspension. Capturing a manually orbited view retains its last durable preset.
+- `rate_of_closure.view_workspace/2` embeds the complete camera document.
+  Strict v1 migration supplies the #4303 defaults: neutral 1x Impact and 2x,
+  tracking-enabled, Auto-Fit-enabled Swing and Flight. Malformed, incomplete,
+  non-finite, out-of-range, or future documents reject before mutation.
+- QSettings/localStorage and whole-workspace File Save/Open share the schema.
+  PyQt6 Simulation/Flight and React Impact/Clubhead/Flight adapters restore
+  independently across layout, hide/show, and reload. Only deliberate controls
+  notify persistence; moving-subject animation updates cannot write per frame.
+- This bounded #4218/#4284 continuation does not close either issue, qualify
+  installed UpstreamDrift consumers, or replace protected and rendered release
+  gates.
 
 ### 2026-08-11 Variation-study workspace specification
 
@@ -3202,6 +3223,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.35 | feat(rate-of-closure, #4218 #4284): add strict cross-runtime `camera-preferences/v1` keyed by Impact/Swing/Flight; persist only preset, face-on side, bounded zoom, tracking, and Auto Fit through view-workspace v2, QSettings, localStorage, and whole-workspace File operations; migrate v1 to exact #4303 defaults; reject malformed/future data atomically; wire two PyQt6 and three React adapters while excluding moving targets/manual suspension and preventing per-frame writes; retain protected CI/review, rendered qualification, UpstreamDrift parity, and epic completion as open gates. |
 | 2026-08-11 | 1.14.34 | feat(rate-of-closure, #4142 #4144 #4218): persist the complete user-authored variation-study specification in explorer-session v4 across PyQt6 and React, including canonical varied inputs/distributions/ranges/groups, simultaneous/individual/both execution, trial count, deterministic seed, and selected mode-valid output metrics; keep simulation ball support authoritative, reject duplicated or inapplicable Tee Height context, require explicit conflict-safe v1-v3 migration, and apply atomically without persisting results, identity, optimizer outputs, or claiming issue/epic completion. |
 | 2026-08-10 | 1.14.32 | feat(rate-of-closure, #4136 #4220 #4218): persist the canonical prescribed polynomial torque-profile library and source-derived active selection in explorer-session v3 across PyQt6 and React; preserve passive/prescribed run configuration and canonical joint locks, validate schema/SI units/c0-first order/identity/provenance before atomic apply, require explicit conflict-safe v1/v2 migration, and retain optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |
 | 2026-08-10 | 1.14.31 | feat(rate-of-closure, #4143 #4225): extend whole-workspace persistence with the strict explorer-session v2 simulation subpayload shared by PyQt6 and React; round-trip Ground/Tee support, SI tee height, derived geometry, club-default versus explicit-override provenance, and the complete versioned spatial-target identity/frame/tolerance contract; validate before UI mutation, reject corrupt provenance/targets atomically, and require explicit preserve-current migration for v1 instead of inventing values; retain torque/optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |

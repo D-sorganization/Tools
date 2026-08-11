@@ -1,5 +1,21 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 Camera-preference workspace child
+
+- `feat/4218-camera-preference-persistence` begins at exact published #4343
+  head `4ff103d9a6ef886099c180da560e8458d5e20b49`, then normally
+  composes exact #4331 `e07e2a66a894c93b50c1ded308fc8902f2ff6c24`
+  and #4303 `98cf35994488dd6f3d66916415bbc9f8e7c8bf3f` in order.
+- `camera-preferences/v1` owns three stable viewport keys and exactly five
+  deliberate fields: preset, face-on side, bounded zoom, tracking, and Auto
+  Fit. It excludes the moving target and manual suspension.
+- View-workspace v2, QSettings, localStorage, and whole-workspace File adapters
+  share the contract. V1 migration uses #4303 defaults; malformed/future
+  documents reject before mutation. Five native/browser camera adapters are
+  connected and animation-frame tracking cannot trigger persistence.
+- Protected CI/review, rendered cross-platform qualification, UpstreamDrift
+  consumers, ordered integration, and #4218 completion remain open.
+
 ## 2026-08-11 variation-study workspace protected publication
 
 - Branch `feat/4144-workspace-variation-study` is published normally as draft

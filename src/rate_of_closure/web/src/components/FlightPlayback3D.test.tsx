@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { FlightPlayback3D } from "./FlightPlayback3D";
 import type { FlightPoint } from "../model/flight";
 import { createSpatialTarget, sphereTolerance, targetPointFromFrame } from "../model/spatialTarget";
+import { defaultCameraPreferences } from "../model/cameraPreferences";
 
 const points: FlightPoint[] = [
   { time: 0, position: [0, 0, 0], velocity: [1, 0, 1] },
@@ -25,6 +26,42 @@ describe("FlightPlayback3D", () => {
   });
 
   afterEach(() => vi.restoreAllMocks());
+
+  it("restores durable controls without emitting per-frame tracking writes", () => {
+    let nextId = 0;
+    const callbacks = new Map<number, FrameRequestCallback>();
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation((callback) => {
+      nextId += 1;
+      callbacks.set(nextId, callback);
+      return nextId;
+    });
+    vi.spyOn(window, "cancelAnimationFrame").mockImplementation((id) => {
+      callbacks.delete(id);
+    });
+    const onChange = vi.fn();
+    const preference = {
+      ...defaultCameraPreferences().viewports.flight,
+      presetId: "camera.view.overhead" as const,
+      zoom: 2.75,
+    };
+    render(<FlightPlayback3D points={points} cameraPreference={preference}
+      onCameraPreferenceChange={onChange} />);
+
+    expect(screen.getByRole("button", { name: "Overhead" }))
+      .toHaveAttribute("aria-pressed", "true");
+    fireEvent.click(screen.getByRole("button", { name: "Play Ball Flight" }));
+    const callback = [...callbacks.values()][0];
+    if (!callback) throw new Error("Expected one scheduled animation frame");
+    callbacks.clear();
+    act(() => callback(performance.now() + 10));
+    expect(onChange).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Down the Line" }));
+    expect(onChange).toHaveBeenLastCalledWith(expect.objectContaining({
+      presetId: "camera.view.down_the_line",
+      zoom: 2.75,
+    }));
+  });
 
   it("provides accessible playback, scrubbing, speed, and jump controls", () => {
     render(<FlightPlayback3D points={points} />);

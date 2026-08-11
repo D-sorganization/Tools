@@ -1080,7 +1080,8 @@
         "Camera tracking, canonical snap views, frame stepping, and Playwright coverage are published through evidence commit 2095e748ddca2d7036bbd49a731528f5634daff9 on draft PR 4298; protected integration remains open.",
         "Draft PR 4301 publishes issue 4300 constrained toolstrip-popover containment at immutable evidence commit ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5 as a child of epic 4218; protected integration remains open.",
         "The bounded issue 4224 default-legend rail slice has immutable local evidence at 83b4baa3be7424777db4dd50883b7a9e45c8ca91 on a child of exact PR 4301 head 5c8efcbe5fcd6f993ef947a85e39852d268780a6; installed React qualification passes while persistence/export qualification, native review, and protected integration remain open.",
-        "Draft PR 4303 publishes share-ready moving-subject camera defaults across PyQt6 and React at immutable evidence commit 01ae99f0f42876c7a6948c30f50e13618da14eca; protected integration and remaining issue 4300 layout work remain open."
+        "Draft PR 4303 publishes share-ready moving-subject camera defaults across PyQt6 and React at immutable evidence commit 01ae99f0f42876c7a6948c30f50e13618da14eca; protected integration and remaining issue 4300 layout work remain open.",
+        "The local #4218/#4284 camera-preference continuation composes exact published #4343, #4331, and #4303 heads and adds strict cross-runtime view-workspace v2 persistence across QSettings, localStorage, File operations, and five camera adapters without persisting targets or per-frame tracking; immutable commit evidence, protected review/CI, rendered qualification, and UpstreamDrift consumers remain open."
       ],
       "depends_on_issues": [
         4191

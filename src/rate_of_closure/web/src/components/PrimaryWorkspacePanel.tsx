@@ -3,6 +3,11 @@ import { lazy, Suspense } from "react";
 import type { ImpactAppModel } from "../hooks/useImpactAppModel";
 import type { PrimaryViewId } from "../model/viewPreferences";
 import type { ViewWorkspace } from "../model/viewWorkspace";
+import {
+  withCameraPreference,
+  type CameraPreference,
+  type CameraViewportId,
+} from "../model/cameraPreferences";
 import { Derivation } from "./Derivation";
 import { FlightExplorerPanel } from "./FlightExplorerPanel";
 import { GlossaryPanel } from "./GlossaryPanel";
@@ -62,7 +67,10 @@ function SimulationWorkspace(props: {
 }
 
 function ExplorerWorkspace(
-  props: Pick<WorkspacePanelProps, "model" | "onOpenGlossary">,
+  props: Pick<
+    WorkspacePanelProps,
+    "model" | "onOpenGlossary" | "viewWorkspace" | "onViewWorkspaceChange"
+  >,
 ) {
   const { model } = props;
   return (
@@ -78,12 +86,36 @@ function ExplorerWorkspace(
       explained={model.explained}
       onExplainedChange={model.setExplained}
       onOpenGlossary={props.onOpenGlossary}
+      cameraPreference={props.viewWorkspace.cameraPreferences.viewports.swing}
+      onCameraPreferenceChange={(preference) => {
+        const cameraPreferences = withCameraPreference(
+          props.viewWorkspace.cameraPreferences,
+          "swing",
+          preference,
+        );
+        if (cameraPreferences !== props.viewWorkspace.cameraPreferences) {
+          props.onViewWorkspaceChange({ ...props.viewWorkspace, cameraPreferences });
+        }
+      }}
     />
   );
 }
 
 export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
   const { active, model, onOpenGlossary } = props;
+  const updateCameraPreference = (
+    viewportId: CameraViewportId,
+    preference: CameraPreference,
+  ) => {
+    const cameraPreferences = withCameraPreference(
+      props.viewWorkspace.cameraPreferences,
+      viewportId,
+      preference,
+    );
+    if (cameraPreferences !== props.viewWorkspace.cameraPreferences) {
+      props.onViewWorkspaceChange({ ...props.viewWorkspace, cameraPreferences });
+    }
+  };
   switch (active) {
     case "glossary":
       return (
@@ -115,6 +147,9 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
           distanceUnit={model.units.distance}
           spatialTarget={model.spatialTarget}
           onSpatialTargetChange={model.setSpatialTarget}
+          cameraPreference={props.viewWorkspace.cameraPreferences.viewports.flight}
+          onCameraPreferenceChange={(preference) =>
+            updateCameraPreference("flight", preference)}
         />
       );
     case "launch-monitor-analytics":
@@ -146,7 +181,9 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
       return <Derivation scenario={model.scenario} />;
     default:
       return (
-        <ExplorerWorkspace model={model} onOpenGlossary={onOpenGlossary} />
+        <ExplorerWorkspace model={model} onOpenGlossary={onOpenGlossary}
+          viewWorkspace={props.viewWorkspace}
+          onViewWorkspaceChange={props.onViewWorkspaceChange} />
       );
   }
 }

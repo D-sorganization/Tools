@@ -3,6 +3,29 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-11.
 
+## 2026-08-11 Camera-preference persistence continuation
+
+Branch `feat/4218-camera-preference-persistence` starts from exact published
+PR #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49` and normally
+composes exact PR #4331 head `e07e2a66a894c93b50c1ded308fc8902f2ff6c24`
+then exact PR #4303 head `98cf35994488dd6f3d66916415bbc9f8e7c8bf3f`.
+No source branch, base, or published history is rewritten.
+
+The shared strict `camera-preferences/v1` contract is keyed by stable Impact,
+Swing, and Flight viewport IDs. It stores only preset, explicit face-on side,
+bounded zoom, tracking enabled, and Auto Fit enabled. Moving subject targets
+and manual-tracking suspension remain runtime-only. View-workspace v2 embeds
+that contract; exact v1 files migrate to the published #4303 neutral-impact
+and 2x tracked Swing/Flight defaults, while malformed/future data fails closed.
+
+PyQt6 Simulation/Flight adapters and React Impact/Clubhead/Flight adapters now
+consume app-owned values through QSettings, localStorage, and File Save/Open.
+Only deliberate controls notify persistence; animation-frame tracking never
+writes. Layout, hide/show, reload, strict import, and existing atomic/stale-read
+File boundaries retain the isolated values. Protected CI/review, rendered
+cross-platform qualification, UpstreamDrift consumption, and #4218 completion
+remain open.
+
 ## 2026-08-11 PR #4303 current-parent propagation repair
 
 Draft PR #4303 retains branch `fix/rate-pyqt-default-camera` and base

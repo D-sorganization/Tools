@@ -3,6 +3,25 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-11.
 
+## 2026-08-11 View-workspace v2 camera preferences
+
+The isolated `feat/4218-camera-preference-persistence` branch starts at exact
+published #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49` and
+normally merges exact #4331 `e07e2a66a894c93b50c1ded308fc8902f2ff6c24`
+then #4303 `98cf35994488dd6f3d66916415bbc9f8e7c8bf3f`.
+
+Python and TypeScript share an exact `camera-preferences/v1` document for the
+Impact, Swing, and Flight viewport identities. Its deliberate fields are
+preset, face-on side, zoom in [0.25, 8], tracking, and Auto Fit. Subject target
+and manual suspension are excluded. Strict view-workspace v2 serialization and
+v1 migration are cross-runtime; QSettings, localStorage, and whole-workspace
+File adapters restore the same values atomically. Five runtime adapters are
+wired, while bounded tracking updates remain silent to durable storage.
+
+This is bounded #4218/#4284 work, not issue or epic completion. Protected
+review/CI, installed UpstreamDrift consumers, and rendered platform evidence
+remain required.
+
 ## 2026-08-11 PR #4303 current-parent propagation repair
 
 The PyQt default-camera child now normally merges exact live head
