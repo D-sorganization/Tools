@@ -5,6 +5,8 @@ import { APP_COMMAND_ID } from "../model/appCommands";
 import { DRIVER_TEE_HEIGHT_M } from "../model/ballSetup";
 import { getClub } from "../model/club";
 import { DEFAULT_SCENARIO } from "../model/impact";
+import { passiveDoublePendulumRun } from "../model/doublePendulum";
+import { starterTorqueProfile } from "../model/torqueProfileEditor";
 import { DEFAULT_PRIMARY_VIEW_STATE } from "../model/viewPreferences";
 import { defaultViewWorkspace } from "../model/viewWorkspace";
 import { createWorkspaceDocument } from "../model/workspaceSession";
@@ -15,7 +17,9 @@ import {
 } from "../model/spatialTarget";
 import { useWorkspaceFiles } from "./useWorkspaceFiles";
 
-const snapshot = () => ({
+const snapshot = () => {
+  const profile = starterTorqueProfile();
+  return ({
   scenario: DEFAULT_SCENARIO,
   club: getClub("Driver 10.5°"),
   units: { speed: "mph", rotation: "deg/s", length: "mm", distance: "yd" } as const,
@@ -30,9 +34,15 @@ const snapshot = () => ({
       elevationSource: "absolute",
     }),
   },
+  torque: {
+    profiles: Object.freeze([profile]),
+    activeProfileId: profile.profileId,
+    runConfig: passiveDoublePendulumRun(),
+  },
   modules: DEFAULT_PRIMARY_VIEW_STATE,
   viewWorkspace: defaultViewWorkspace,
-});
+  });
+};
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -93,6 +103,31 @@ describe("browser workspace file controller", () => {
     });
 
     await waitFor(() => expect(result.current.error).toMatch(/source_frame|frame/i));
+    expect(applySnapshot).not.toHaveBeenCalled();
+  });
+
+  it("rejects invalid torque selection provenance before applying state", async () => {
+    const applySnapshot = vi.fn();
+    const encoded = JSON.parse(createWorkspaceDocument(snapshot(), {
+      documentId: "workspace.invalid.torque", title: "Invalid", appVersion: "1.14.32",
+      createdAtUtc: "2026-08-10T12:00:00Z", modifiedAtUtc: "2026-08-10T12:00:00Z",
+    }));
+    encoded.model_session.data.torque_selection.data.selection_provenance
+      .profile_source = "drawn";
+    const { result } = renderHook(() => useWorkspaceFiles({
+      snapshot: snapshot(), initialSnapshot: snapshot(), applySnapshot,
+      applyViewWorkspace: vi.fn(),
+    }));
+    const input = document.createElement("input");
+    Object.defineProperty(input, "files", {
+      value: [new File([JSON.stringify(encoded)], "invalid-torque.json")],
+    });
+    act(() => {
+      result.current.handleCommand(APP_COMMAND_ID.fileOpenWorkspace);
+      result.current.onFileChange({ currentTarget: input } as never);
+    });
+
+    await waitFor(() => expect(result.current.error).toMatch(/provenance/i));
     expect(applySnapshot).not.toHaveBeenCalled();
   });
 

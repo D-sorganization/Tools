@@ -26,13 +26,36 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.31                                    |
-| **Spec Version**        | 1.14.31                                    |
+| **Current Version**     | 1.14.32                                    |
+| **Spec Version**        | 1.14.32                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-10 Torque-profile workspace persistence
+
+- `rate_of_closure.explorer_session/3` stores a strict
+  `rate_of_closure.torque_workspace_selection/1` payload while continuing to
+  use the workspace root's canonical `PrescribedTorqueProfile` library. The
+  selection records the active stable profile ID, passive/prescribed run mode,
+  prescribed profile ID, and canonical joint locks without duplicating profile
+  coefficients or fit evidence.
+- Python and TypeScript validate the existing profile schema version, `N*m`
+  units, ascending `c0`-first coefficient order, stable model/joint IDs, time
+  domain, source metadata, timestamps, optional fit evidence, unique profile
+  identity, selection membership, run-contract consistency, and provenance
+  derived from the selected profile source.
+- PyQt6 and React File operations capture and restore the live profile library,
+  active selection, execution mode, and joint locks. Complete parsing precedes
+  UI mutation; invalid nested profile or selection data leaves current state
+  intact and presents the existing accessible File/profile error surfaces.
+- Explorer-session v1/v2 migration requires an explicit current torque-state
+  fallback. A legacy root library must exactly match that fallback or loading
+  fails as ambiguous; coefficients, joint IDs, fit evidence, and outcomes are
+  never inferred. Optimizer, variation-run, flight-run, UpstreamDrift consumer,
+  protected-CI, and release work remain open.
 
 ### 2026-08-10 Live workspace File adapters
 
@@ -3107,6 +3130,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.32 | feat(rate-of-closure, #4136 #4220 #4218): persist the canonical prescribed polynomial torque-profile library and source-derived active selection in explorer-session v3 across PyQt6 and React; preserve passive/prescribed run configuration and canonical joint locks, validate schema/SI units/c0-first order/identity/provenance before atomic apply, require explicit conflict-safe v1/v2 migration, and retain optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |
 | 2026-08-10 | 1.14.31 | feat(rate-of-closure, #4143 #4225): extend whole-workspace persistence with the strict explorer-session v2 simulation subpayload shared by PyQt6 and React; round-trip Ground/Tee support, SI tee height, derived geometry, club-default versus explicit-override provenance, and the complete versioned spatial-target identity/frame/tolerance contract; validate before UI mutation, reject corrupt provenance/targets atomically, and require explicit preserve-current migration for v1 instead of inventing values; retain torque/optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |
 | 2026-08-10 | 1.14.30 | feat(rate-of-closure, #4218 #4225): wire the strict whole-workspace and compositor contracts into production PyQt6 and React File operations; provide New/Open/Save As/view Import/view Export/Close on both clients, native atomic Save and persisted Recent, complete-before-mutate validation, rollback-safe application, dirty-session protection, cancellation, and user-visible status/errors; preserve honest browser Save/Recent limitations and fail closed on unsupported torque/variation payloads; retain simulation-tab-local domain mappers, installed-consumer parity, protected CI/review, and epic completion as explicit open work. |
 | 2026-08-10 | 1.14.29 | merge(rate-of-closure, #4327 #4225): normally place the keyboard-complete, versioned multi-view workspace continuation on exact repaired compositor parent `0e3054e6a7fa0e3e38e1312b4132bbd1e4336fb2`; retain React roving-tab navigation, deterministic PyQt focus order, atomic cross-client compositor import/export, QSettings and whole-workspace round trips, and the nested-array freeze repair while inheriting the repaired legend, toolstrip, camera, wind, variation, and capability ancestry; make the already-validated current-workspace mapping explicit at the pinned type boundary without runtime change; implementation/test code does not conflict, only additive handoff/spec files require reconciliation, and protected CI/review, live File adapters, and installed-consumer parity remain open. |

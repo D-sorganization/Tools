@@ -11,6 +11,8 @@ import {
 import { loadBallSetupPreference } from "../model/ballSetupPersistence";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "../model/targets";
+import type { TorqueWorkspaceSnapshot } from "../model/workspaceTorqueSession";
+import { loadInitialTorqueWorkspace } from "./useSimulationTorqueWorkspace";
 
 export interface ImpactAppModel {
   readonly scenario: ImpactScenario;
@@ -23,6 +25,8 @@ export interface ImpactAppModel {
   readonly setBallSetupUserOverridden: Dispatch<SetStateAction<boolean>>;
   readonly ballSetupMessage: string | null;
   readonly setBallSetupMessage: Dispatch<SetStateAction<string | null>>;
+  readonly torqueWorkspace: TorqueWorkspaceSnapshot;
+  readonly setTorqueWorkspace: Dispatch<SetStateAction<TorqueWorkspaceSnapshot>>;
   readonly units: UnitSelections;
   readonly setUnits: Dispatch<SetStateAction<UnitSelections>>;
   readonly generatedHead: GeneratedHead;
@@ -61,6 +65,9 @@ export function useImpactAppModel(): ImpactAppModel {
   const [ballSetupMessage, setBallSetupMessage] = useState(
     initialBallPreference.warning,
   );
+  const [torqueWorkspace, setTorqueWorkspace] = useState(
+    loadInitialTorqueWorkspace,
+  );
   const [units, setUnits] = useState(DEFAULT_UNITS);
   const [generatedHead, setGeneratedHead] = useState(() =>
     generatedHeadFor(defaultDriver));
@@ -71,6 +78,7 @@ export function useImpactAppModel(): ImpactAppModel {
     scenario, setScenario, spatialTarget, setSpatialTarget,
     ballSetup, setBallSetup, ballSetupUserOverridden,
     setBallSetupUserOverridden, ballSetupMessage, setBallSetupMessage,
+    torqueWorkspace, setTorqueWorkspace,
     units, setUnits,
     generatedHead, setGeneratedHead, clubSpec, setClubSpec, explained,
     setExplained, glossaryTerm, setGlossaryTerm,

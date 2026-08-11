@@ -4,6 +4,28 @@ Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 Torque-profile workspace child
+
+- Worktree `Tools-worktrees/workspace-torque-profiles` and branch
+  `feat/4136-workspace-torque-profiles` start at exact published PR #4336 head
+  `6e9dd85a3c5f43d37cf8a704db0555bdad734e7e`.
+- Explorer-session v3 references the root canonical torque-profile library
+  through a strict selection payload shared by Python and TypeScript. It stores
+  active stable identity, passive/prescribed run configuration, canonical joint
+  locks, and profile-source provenance without duplicating or inventing profile
+  data.
+- PyQt6 and React map the real editor library and selection. Complete validation
+  precedes atomic application; canonical schema/SI-unit/c0-first order/joint/
+  fit/source rules remain authoritative. Legacy v1/v2 migration requires an
+  explicit current fallback and rejects conflicting root profiles.
+- Remaining work includes optimizer, variation-run and flight-run persistence,
+  installed UpstreamDrift parity, protected CI/review, and ordered release.
+  Local qualification passes 34 focused Python tests, 43 focused React tests,
+  pinned MyPy 1.13, Ruff check/format, TypeScript, zero-warning ESLint, the
+  206-module production build, the 11-test campaign-manifest suite,
+  module-size, docs, manifest-layout, changed-Python, changed-test assertion,
+  JSON, and diff gates. Protected release evidence remains open.
+
 ## 2026-08-10 Ball setup and spatial target workspace child
 
 - Worktree `Tools-worktrees/workspace-ball-target` and branch

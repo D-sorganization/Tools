@@ -30,10 +30,17 @@ from .workspace_simulation_session import (
     simulation_workspace_to_payload,
     validate_simulation_workspace,
 )
+from .workspace_torque_session import (
+    LegacyTorqueMigrationRequired,
+    TorqueWorkspaceState,
+    migrate_legacy_torque_fallback,
+    torque_workspace_from_payload,
+    torque_workspace_to_payload,
+)
 
 EXPLORER_SESSION_SCHEMA = "rate_of_closure.explorer_session"
 CLUB_CONFIGURATION_SCHEMA = "rate_of_closure.club_configuration"
-SESSION_SCHEMA_VERSION = 2
+SESSION_SCHEMA_VERSION = 3
 CLUB_CONFIGURATION_SCHEMA_VERSION = 1
 CANONICAL_MODULE_IDS = (
     "explorer",
@@ -65,7 +72,8 @@ _CLUB_FIELDS = frozenset(
     }
 )
 _SESSION_V1_FIELDS = frozenset({"scenario", "units"})
-_SESSION_FIELDS = _SESSION_V1_FIELDS | {"simulation_setup"}
+_SESSION_V2_FIELDS = _SESSION_V1_FIELDS | {"simulation_setup"}
+_SESSION_FIELDS = _SESSION_V2_FIELDS | {"torque_selection"}
 
 
 @dataclass(frozen=True)
@@ -87,6 +95,7 @@ class ExplorerWorkspaceState:
     club: ClubSpec
     units: Mapping[str, str]
     simulation: SimulationWorkspaceState
+    torque: TorqueWorkspaceState
     module_order: tuple[str, ...]
     visible_module_ids: tuple[str, ...]
     active_module_id: str
@@ -99,6 +108,8 @@ class ExplorerWorkspaceState:
         if not isinstance(self.club, ClubSpec):
             raise TypeError("club must be a ClubSpec")
         validate_simulation_workspace(self.simulation, self.club)
+        if not isinstance(self.torque, TorqueWorkspaceState):
+            raise TypeError("torque must be a TorqueWorkspaceState")
         units = dict(self.units)
         if set(units) != set(QUANTITY_UNITS) or any(
             value not in QUANTITY_UNITS[key] for key, value in units.items()
@@ -178,9 +189,10 @@ def document_from_state(
                 "simulation_setup": simulation_workspace_to_payload(
                     state.simulation, state.club
                 ),
+                "torque_selection": torque_workspace_to_payload(state.torque),
             },
         ),
-        prescribed_torque_profiles=(),
+        prescribed_torque_profiles=state.torque.profiles,
         club_configuration=VersionedPayload(
             CLUB_CONFIGURATION_SCHEMA,
             CLUB_CONFIGURATION_SCHEMA_VERSION,
@@ -204,18 +216,18 @@ def state_from_document(
     document: WorkspaceDocument,
     *,
     legacy_simulation_fallback: SimulationWorkspaceState | None = None,
+    legacy_torque_fallback: TorqueWorkspaceState | None = None,
 ) -> ExplorerWorkspaceState:
     """Validate a supported whole document before returning applicable state."""
     if not isinstance(document, WorkspaceDocument):
         raise TypeError("document must be a WorkspaceDocument")
-    if document.prescribed_torque_profiles:
-        raise ValueError("prescribed torque profiles are not supported by this adapter")
     if document.variation_plan is not None:
         raise TypeError("variation plans are not supported by this adapter")
     session = document.model_session
     club = document.club_configuration
     if session.schema != EXPLORER_SESSION_SCHEMA or session.schema_version not in (
         1,
+        2,
         SESSION_SCHEMA_VERSION,
     ):
         raise ValueError("unsupported explorer session payload")
@@ -225,9 +237,11 @@ def state_from_document(
     ):
         raise ValueError("unsupported club configuration payload")
     parsed_club = _club_from_data(club.data)
-    session_fields = (
-        _SESSION_V1_FIELDS if session.schema_version == 1 else _SESSION_FIELDS
-    )
+    session_fields = {
+        1: _SESSION_V1_FIELDS,
+        2: _SESSION_V2_FIELDS,
+        SESSION_SCHEMA_VERSION: _SESSION_FIELDS,
+    }[session.schema_version]
     session_data = _exact_mapping(session.data, session_fields, "model_session.data")
     scenario_data = _exact_mapping(
         session_data["scenario"], _SCENARIO_FIELDS, "model_session.scenario"
@@ -254,11 +268,27 @@ def state_from_document(
         simulation = simulation_workspace_from_payload(
             session_data["simulation_setup"], parsed_club
         )
+    if session.schema_version < SESSION_SCHEMA_VERSION:
+        if legacy_torque_fallback is None:
+            raise LegacyTorqueMigrationRequired(
+                "legacy model_session omitted torque selection; "
+                "an explicit torque migration fallback is required"
+            )
+        torque = migrate_legacy_torque_fallback(
+            legacy_torque_fallback,
+            document.prescribed_torque_profiles,
+        )
+    else:
+        torque = torque_workspace_from_payload(
+            session_data["torque_selection"],
+            document.prescribed_torque_profiles,
+        )
     return ExplorerWorkspaceState(
         scenario=ImpactScenario(**scenario_data),
         club=parsed_club,
         units=units,
         simulation=simulation,
+        torque=torque,
         module_order=document.layout.module_order,
         visible_module_ids=document.layout.visible_module_ids,
         active_module_id=document.layout.active_module_id,
@@ -273,7 +303,9 @@ __all__ = [
     "EXPLORER_SESSION_SCHEMA",
     "ExplorerWorkspaceState",
     "LegacySimulationMigrationRequired",
+    "LegacyTorqueMigrationRequired",
     "SimulationWorkspaceState",
+    "TorqueWorkspaceState",
     "WorkspaceSessionMetadata",
     "document_from_state",
     "state_from_document",

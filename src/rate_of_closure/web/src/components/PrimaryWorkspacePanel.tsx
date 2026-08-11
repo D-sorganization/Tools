@@ -47,6 +47,8 @@ function SimulationWorkspace(props: {
       onBallSetupChange={model.setBallSetup}
       onBallSetupUserOverriddenChange={model.setBallSetupUserOverridden}
       onBallSetupMessageChange={model.setBallSetupMessage}
+      torqueWorkspace={model.torqueWorkspace}
+      onTorqueWorkspaceChange={model.setTorqueWorkspace}
       distanceUnit={model.units.distance}
       viewWorkspace={props.viewWorkspace}
       viewCommandRevision={props.viewCommandRevision}

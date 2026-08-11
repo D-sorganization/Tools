@@ -14,6 +14,7 @@ import {
 } from "../model/torqueProfileEditor";
 import { TorqueProfilePanel } from "./TorqueProfilePanel";
 import { type SimulationRunTs } from "../model/simulation";
+import { PrescribedTorqueProfile } from "../model/torqueProfiles";
 
 class MemoryStorage implements Storage {
   private values = new Map<string, string>();
@@ -48,6 +49,33 @@ afterEach(() => {
 });
 
 describe("TorqueProfilePanel", () => {
+  it("exposes a controlled workspace library and stable selection", async () => {
+    const user = userEvent.setup();
+    const first = starterTorqueProfile();
+    const second = PrescribedTorqueProfile.fromJsonObject({
+      ...first.toJsonObject(),
+      profile_id: "profile.controlled.v1",
+      name: "Controlled Profile",
+    });
+    const onLibraryChange = vi.fn();
+    render(
+      <TorqueProfilePanel sourceKind="double_pendulum"
+        runConfig={PASSIVE_DOUBLE_PENDULUM_RUN} onRunConfigChange={vi.fn()}
+        profiles={[first, second]} activeProfileId={second.profileId}
+        onLibraryChange={onLibraryChange} storage={storage} />,
+    );
+
+    expect(screen.getByRole("combobox", { name: "Torque profile library" }))
+      .toHaveValue(second.profileId);
+    expect(screen.getByRole("textbox", { name: "Profile name" }))
+      .toHaveValue("Controlled Profile");
+    await user.selectOptions(
+      screen.getByRole("combobox", { name: "Torque profile library" }),
+      first.profileId,
+    );
+    expect(onLibraryChange).toHaveBeenCalledWith([first, second], first.profileId);
+  });
+
   it("makes passive versus prescribed execution explicit", async () => {
     const user = userEvent.setup();
     render(<Harness />);

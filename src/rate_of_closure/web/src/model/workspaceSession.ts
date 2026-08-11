@@ -16,16 +16,20 @@ import {
 } from "./viewWorkspace";
 import {
   simulationWorkspaceDocument,
-  simulationWorkspaceFromDocument,
-  migratedLegacySimulationFallback,
+  simulationWorkspaceFromSession,
   type SimulationWorkspaceSnapshot,
 } from "./workspaceSimulationSession";
+import {
+  torqueWorkspaceDocument,
+  torqueWorkspaceFromSession,
+  type TorqueWorkspaceSnapshot,
+} from "./workspaceTorqueSession";
 
 const WORKSPACE_SCHEMA = "rate_of_closure.workspace";
 const WORKSPACE_VERSION = 2;
 const SESSION_SCHEMA = "rate_of_closure.explorer_session";
 const CLUB_SCHEMA = "rate_of_closure.club_configuration";
-const SESSION_PAYLOAD_VERSION = 2;
+const SESSION_PAYLOAD_VERSION = 3;
 const CLUB_PAYLOAD_VERSION = 1;
 const STABLE_ID = /^[A-Za-z0-9][A-Za-z0-9._:-]{0,127}$/;
 const UTC_TIMESTAMP =
@@ -48,6 +52,7 @@ export interface WorkspaceSessionSnapshot {
   readonly club: ClubSpec;
   readonly units: UnitSelections;
   readonly simulation: SimulationWorkspaceSnapshot;
+  readonly torque: TorqueWorkspaceSnapshot;
   readonly modules: PrimaryViewState;
   readonly viewWorkspace: ViewWorkspace;
 }
@@ -277,9 +282,11 @@ export function createWorkspaceDocument(
         scenario: scenarioDocument(snapshot.scenario),
         units: snapshot.units,
         simulation_setup: simulationWorkspaceDocument(snapshot.simulation, snapshot.club),
+        torque_selection: torqueWorkspaceDocument(snapshot.torque),
       },
     },
-    prescribed_torque_profiles: [],
+    prescribed_torque_profiles: snapshot.torque.profiles.map((profile) =>
+      profile.toJsonObject()),
     club_configuration: {
       schema: CLUB_SCHEMA,
       schema_version: CLUB_PAYLOAD_VERSION,
@@ -304,6 +311,7 @@ export function createWorkspaceDocument(
 /** Parse and validate the entire document before exposing any applicable state. */
 export interface WorkspaceParseOptions {
   readonly legacySimulationFallback?: SimulationWorkspaceSnapshot;
+  readonly legacyTorqueFallback?: TorqueWorkspaceSnapshot;
 }
 
 /** Parse a current file or deliberately migrate v1 with an explicit fallback. */
@@ -322,23 +330,22 @@ export function parseWorkspaceDocument(
     throw new TypeError("unsupported workspace schema");
   }
   validateMetadata(root.metadata);
-  if (!Array.isArray(root.prescribed_torque_profiles) || root.prescribed_torque_profiles.length > 0) {
-    throw new TypeError("prescribed torque profiles are not supported by this adapter");
-  }
   if (root.variation_plan !== null) {
     throw new TypeError("variation plans are not supported by this adapter");
   }
   const sessionEnvelope = payload(
     root.model_session,
     SESSION_SCHEMA,
-    [1, SESSION_PAYLOAD_VERSION],
+    [1, 2, SESSION_PAYLOAD_VERSION],
     "model_session",
   );
   const session = exactRecord(
     sessionEnvelope.data,
     sessionEnvelope.version === 1
       ? ["scenario", "units"]
-      : ["scenario", "units", "simulation_setup"],
+      : sessionEnvelope.version === 2
+        ? ["scenario", "units", "simulation_setup"]
+        : ["scenario", "units", "simulation_setup", "torque_selection"],
     "model_session.data",
   );
   const clubEnvelope = payload(
@@ -366,25 +373,24 @@ export function parseWorkspaceDocument(
     throw new TypeError("unsupported view workspace payload");
   }
   const parsedClub = clubFromDocument(club);
-  let simulation: SimulationWorkspaceSnapshot;
-  if (sessionEnvelope.version === 1) {
-    if (options.legacySimulationFallback === undefined) {
-      throw new RangeError(
-        "model_session v1 requires an explicit simulation migration fallback",
-      );
-    }
-    simulation = migratedLegacySimulationFallback(
-      options.legacySimulationFallback,
-      parsedClub,
-    );
-  } else {
-    simulation = simulationWorkspaceFromDocument(session.simulation_setup, parsedClub);
-  }
+  const simulation: SimulationWorkspaceSnapshot = simulationWorkspaceFromSession({
+    isLegacy: sessionEnvelope.version === 1,
+    setupDocument: session.simulation_setup,
+    club: parsedClub,
+    legacyFallback: options.legacySimulationFallback,
+  });
+  const torque: TorqueWorkspaceSnapshot = torqueWorkspaceFromSession({
+    isLegacy: sessionEnvelope.version < SESSION_PAYLOAD_VERSION,
+    selectionDocument: session.torque_selection,
+    profileDocuments: root.prescribed_torque_profiles,
+    legacyFallback: options.legacyTorqueFallback,
+  });
   return {
     scenario: scenarioFromDocument(session.scenario),
     club: parsedClub,
     units: validatedUnits(session.units),
     simulation,
+    torque,
     modules: validatedModules(layout),
     viewWorkspace: viewWorkspaceFromDocument(viewEnvelope.data),
   };

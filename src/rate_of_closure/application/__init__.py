@@ -27,6 +27,10 @@ from .workspace_simulation_session import (
     LegacySimulationMigrationRequired,
     SimulationWorkspaceState,
 )
+from .workspace_torque_session import (
+    LegacyTorqueMigrationRequired,
+    TorqueWorkspaceState,
+)
 
 __all__ = [
     "APP_COMMAND_IDS",
@@ -37,7 +41,9 @@ __all__ = [
     "CommandUnavailableError",
     "ExplorerWorkspaceState",
     "LegacySimulationMigrationRequired",
+    "LegacyTorqueMigrationRequired",
     "SimulationWorkspaceState",
+    "TorqueWorkspaceState",
     "VersionedPayload",
     "WorkspaceDocument",
     "WorkspaceLayout",

@@ -33,7 +33,7 @@ if TYPE_CHECKING:
     from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
     from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 
-_APP_VERSION = "1.14.31"
+_APP_VERSION = "1.14.32"
 _WORKSPACE_FILTER = "Rate Workspace (*.roc-workspace.json);;JSON files (*.json)"
 _VIEW_FILTER = "Rate View Layout (*.roc-view.json);;JSON files (*.json)"
 _RECENT_PATHS_KEY = "workspace/recent_paths_v1"
@@ -189,13 +189,17 @@ class MainWindowFileCommandsMixin:
     def _open_workspace_path(self, path: Path) -> None:
         try:
             document = read_workspace(path)
-            legacy_session = document.model_session.schema_version == 1
+            session_version = document.model_session.schema_version
+            legacy_simulation = session_version == 1
+            legacy_torque = session_version < 3
+            current = self._capture_workspace_state() if legacy_torque else None
             state = state_from_document(
                 document,
                 legacy_simulation_fallback=(
-                    self._capture_workspace_state().simulation
-                    if legacy_session
-                    else None
+                    current.simulation if legacy_simulation and current else None
+                ),
+                legacy_torque_fallback=(
+                    current.torque if legacy_torque and current else None
                 ),
             )
         except (OSError, TypeError, ValueError) as exc:
@@ -218,9 +222,14 @@ class MainWindowFileCommandsMixin:
             metadata.app_version,
         )
         self._remember_workspace(path)
+        preserved: list[str] = []
+        if legacy_simulation:
+            preserved.append("ball setup and spatial target")
+        if legacy_torque:
+            preserved.append("torque-profile library and selection")
         suffix = (
-            "; legacy v1 preserved the current ball setup and spatial target"
-            if legacy_session
+            "; legacy session preserved " + " plus ".join(preserved)
+            if preserved
             else ""
         )
         self._mark_saved(f"Opened {path.name}{suffix}")
@@ -258,6 +267,7 @@ class MainWindowFileCommandsMixin:
             club=self._controls.club_spec(),
             units=self._controls.unit_selections(),
             simulation=self._simulation_tab.simulation_workspace_state(),
+            torque=self._simulation_tab.torque_workspace_state(),
             module_order=module_order,
             visible_module_ids=visible,
             active_module_id=_PYQT_TO_CANONICAL[self.current_primary_module_id()],
@@ -281,6 +291,7 @@ class MainWindowFileCommandsMixin:
         )
         self.apply_primary_navigation(order, visible, active)
         self._simulation_tab.apply_simulation_workspace_state(state.simulation)
+        self._simulation_tab.apply_torque_workspace_state(state.torque)
         self._simulation_tab.compositor().import_workspace_document(
             workspace_to_document(state.view_workspace)
         )

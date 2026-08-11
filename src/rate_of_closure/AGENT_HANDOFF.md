@@ -3,6 +3,28 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Explorer-session v3 torque-profile mapper
+
+The child `feat/4136-workspace-torque-profiles` is based on exact published PR
+#4336 head `6e9dd85a3c5f43d37cf8a704db0555bdad734e7e`. PyQt6 and React now
+persist their live canonical torque-profile library, active stable profile ID,
+passive/prescribed run selection, canonical joint locks, and profile-source
+provenance through explorer-session v3 and the existing workspace root library.
+
+The adapter delegates coefficient, SI-unit, coefficient-order, identity,
+source, timestamp, time-domain, and fit-evidence validation to the existing
+shared profile contracts. Selection membership and provenance are checked
+before UI mutation. Legacy v1/v2 sessions require an explicit current torque
+fallback and reject a conflicting embedded library instead of guessing.
+
+This does not close #4136/#4220/#4218. Optimizer and other run payloads,
+UpstreamDrift consumers, protected CI/review, and ordered release remain open.
+Local qualification passes 34 focused Python tests and 43 focused React tests,
+pinned MyPy 1.13, Ruff check/format, TypeScript, zero-warning ESLint, the
+206-module production build, the 11-test campaign-manifest suite, module-size,
+docs, manifest-layout, changed-Python, changed-test assertion, JSON, and diff
+gates. The exact local child commit is recorded after commit creation.
+
 ## 2026-08-10 Explorer-session v2 ball/target mapper
 
 The child `feat/4225-ball-target-session-mappers` is based on exact draft PR

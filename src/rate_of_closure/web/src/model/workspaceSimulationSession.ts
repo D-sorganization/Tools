@@ -32,6 +32,13 @@ export interface SimulationWorkspaceSnapshot {
   readonly spatialTarget: SpatialTargetTs;
 }
 
+export interface SimulationSessionMigrationInput {
+  readonly isLegacy: boolean;
+  readonly setupDocument: unknown;
+  readonly club: ClubSpec;
+  readonly legacyFallback?: SimulationWorkspaceSnapshot;
+}
+
 function record(value: unknown, context: string): Record<string, unknown> {
   if (typeof value !== "object" || value === null || Array.isArray(value)) {
     throw new TypeError(`${context} must be an object`);
@@ -200,4 +207,19 @@ export function simulationWorkspaceFromDocument(
     ...ball,
     spatialTarget: spatialTargetFromJson(JSON.stringify(data.spatial_target)),
   }, club);
+}
+
+/** Resolve current or explicit-legacy simulation state for a workspace. */
+export function simulationWorkspaceFromSession(
+  input: SimulationSessionMigrationInput,
+): SimulationWorkspaceSnapshot {
+  if (!input.isLegacy) {
+    return simulationWorkspaceFromDocument(input.setupDocument, input.club);
+  }
+  if (input.legacyFallback === undefined) {
+    throw new RangeError(
+      "model_session v1 requires an explicit simulation migration fallback",
+    );
+  }
+  return migratedLegacySimulationFallback(input.legacyFallback, input.club);
 }

@@ -3,6 +3,31 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Torque-profile workspace continuation
+
+Branch `feat/4136-workspace-torque-profiles` starts from exact published PR
+#4336 head `6e9dd85a3c5f43d37cf8a704db0555bdad734e7e`. Explorer-session v3
+persists the existing canonical prescribed polynomial profile library plus one
+strict versioned selection payload across PyQt6 and React. The selection owns
+the active stable ID, passive/prescribed run contract, canonical joint locks,
+and provenance derived from the selected profile's declared source.
+
+No coefficients, joint IDs, fit evidence, or impact outcomes are synthesized.
+Canonical profile parsing continues to enforce schema v1, `N*m`, ascending
+`c0`-first coefficients, stable identities, physical time domain, timestamps,
+source metadata, and fit metadata. Both File adapters validate the whole file
+before applying live library/mode/selection state. Legacy v1/v2 sessions require
+an explicit live torque fallback and reject a conflicting root library.
+
+This is bounded #4136/#4220/#4218 persistence work, not optimizer, variation-
+run, flight-run, UpstreamDrift consumer, protected-release, or epic completion.
+Local qualification passes 34 focused Python tests and 43 focused React tests,
+pinned MyPy 1.13, Ruff check/format, TypeScript, zero-warning ESLint, the
+206-module production build, the 11-test campaign-manifest suite, module-size,
+docs, manifest-layout, changed-Python, changed-test assertion, JSON, and diff
+gates. Protected CI/review and dependency-ordered release remain required; the
+exact local child commit is recorded after commit creation.
+
 ## 2026-08-10 Ball-support and spatial-target workspace continuation
 
 Branch `feat/4225-ball-target-session-mappers` starts from exact published

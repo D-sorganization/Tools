@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from pathlib import Path
 
 import pytest
 
@@ -16,6 +17,10 @@ from rate_of_closure.application.workspace_simulation_session import (
     LegacySimulationMigrationRequired,
     SimulationWorkspaceState,
 )
+from rate_of_closure.application.workspace_torque_session import (
+    LegacyTorqueMigrationRequired,
+    TorqueWorkspaceState,
+)
 from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.view_workspace import ViewWorkspace
@@ -24,15 +29,22 @@ from shared.python.swing_sim.ball_setup import (
     BallSetup,
     BallSupportMode,
 )
+from shared.python.swing_sim.run_config import DoublePendulumRunConfig
 from shared.python.swing_sim.solver import (
     BoxTolerance,
     SpatialTarget,
     TargetPoint,
 )
+from shared.python.swing_sim.torque_profiles import PrescribedTorqueProfile
 from shared.python.swing_sim.variation import NoiseSpec, VariationPlan
 
 
 def _state() -> ExplorerWorkspaceState:
+    fixture_path = (
+        Path(__file__).parents[2]
+        / "src/rate_of_closure/web/src/model/__fixtures__/torque_profile_parity.json"
+    )
+    profile = PrescribedTorqueProfile.loads(fixture_path.read_text(encoding="utf-8"))
     return ExplorerWorkspaceState(
         scenario=ImpactScenario(clubhead_speed_mph=111.0, omega_shaft_dps=-900.0),
         club=get_club("Driver 10.5°"),
@@ -55,6 +67,11 @@ def _state() -> ExplorerWorkspaceState:
                 tolerance=BoxTolerance((4.5, 2.5, 3.5)),
                 elevation_source="absolute",
             ),
+        ),
+        torque=TorqueWorkspaceState(
+            profiles=(profile,),
+            active_profile_id=profile.profile_id,
+            run_config=DoublePendulumRunConfig.prescribed(profile.profile_id),
         ),
         module_order=(
             "explorer",
@@ -92,7 +109,7 @@ def test_live_state_round_trips_through_strict_whole_workspace_document() -> Non
     assert restored == state
 
     payload = document_from_state(state, _metadata()).model_session
-    assert payload.schema_version == 2
+    assert payload.schema_version == 3
     setup = payload.to_json_dict()["data"]["simulation_setup"]
     assert setup["schema"] == "rate_of_closure.simulation_setup"
     assert setup["data"]["ball_setup"]["provenance"] == {
@@ -104,6 +121,12 @@ def test_live_state_round_trips_through_strict_whole_workspace_document() -> Non
         "kind": "box",
         "half_extents_m": {"x": 4.5, "elevation": 2.5, "right": 3.5},
     }
+    torque = payload.to_json_dict()["data"]["torque_selection"]
+    assert torque["schema"] == "rate_of_closure.torque_workspace_selection"
+    assert torque["data"]["active_profile_id"] == "profile.web_parity.v1"
+    assert document_from_state(state, _metadata()).prescribed_torque_profiles == (
+        state.torque.profiles
+    )
 
 
 def test_club_default_provenance_must_match_persisted_club_and_geometry() -> None:
@@ -138,6 +161,7 @@ def test_legacy_v1_session_requires_and_uses_an_explicit_simulation_fallback() -
     migrated = state_from_document(
         legacy,
         legacy_simulation_fallback=_state().simulation,
+        legacy_torque_fallback=_state().torque,
     )
     assert migrated.simulation == _state().simulation
 
@@ -167,9 +191,54 @@ def test_legacy_cross_club_fallback_preserves_geometry_as_an_override() -> None:
     migrated = state_from_document(
         legacy,
         legacy_simulation_fallback=_state().simulation,
+        legacy_torque_fallback=_state().torque,
     )
     assert migrated.simulation.ball_setup == _state().simulation.ball_setup
     assert migrated.simulation.ball_setup_user_overridden
+
+
+def test_legacy_v2_requires_explicit_torque_fallback_without_inventing_profiles() -> (
+    None
+):
+    from rate_of_closure.application.workspace_document import VersionedPayload
+
+    current = document_from_state(_state(), _metadata())
+    data = current.model_session.to_json_dict()["data"]
+    legacy = replace(
+        current,
+        model_session=VersionedPayload(
+            current.model_session.schema,
+            2,
+            {
+                "scenario": data["scenario"],
+                "units": data["units"],
+                "simulation_setup": data["simulation_setup"],
+            },
+        ),
+        prescribed_torque_profiles=(),
+    )
+
+    with pytest.raises(LegacyTorqueMigrationRequired, match="explicit"):
+        state_from_document(legacy)
+
+    restored = state_from_document(legacy, legacy_torque_fallback=_state().torque)
+    assert restored.torque == _state().torque
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [("torque_unit", "lbf*ft"), ("coefficient_order", "descending")],
+)
+def test_workspace_rejects_noncanonical_torque_units_and_coefficient_order(
+    field: str, value: str
+) -> None:
+    from rate_of_closure.application.workspace_document import WorkspaceDocument
+
+    raw = document_from_state(_state(), _metadata()).to_json_dict()
+    raw["prescribed_torque_profiles"][0][field] = value
+
+    with pytest.raises(ValueError, match=field):
+        WorkspaceDocument.from_json_dict(raw)
 
 
 def test_unsupported_domain_state_is_rejected_before_any_ui_mutation() -> None:

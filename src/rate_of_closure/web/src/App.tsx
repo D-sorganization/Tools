@@ -74,6 +74,7 @@ export default function App() {
       ballSetupUserOverridden: model.ballSetupUserOverridden,
       spatialTarget: model.spatialTarget,
     },
+    torque: model.torqueWorkspace,
     modules: workspace.viewState,
     viewWorkspace: workspace.viewWorkspace,
   };
@@ -91,6 +92,7 @@ export default function App() {
         next.simulation.ballSetupUserOverridden,
       );
       model.setSpatialTarget(next.simulation.spatialTarget);
+      model.setTorqueWorkspace(next.torque);
       workspace.setViewState(next.modules);
       workspace.setViewWorkspace(next.viewWorkspace);
     },

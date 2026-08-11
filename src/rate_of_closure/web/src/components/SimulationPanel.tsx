@@ -31,9 +31,12 @@ import {
   PASSIVE_DOUBLE_PENDULUM_RUN,
   SHOULDER_JOINT_ID,
   WRIST_JOINT_ID,
-  type DoublePendulumRunConfig,
   type PendulumState,
 } from "../model/doublePendulum";
+import {
+  type ControlledTorqueWorkspaceProps,
+  useSimulationTorqueWorkspace,
+} from "../hooks/useSimulationTorqueWorkspace";
 import { SimulationRunFileControls } from "./SimulationRunFileControls";
 import { ManualDeliveryControls } from "./ManualDeliveryControls";
 import {
@@ -41,7 +44,7 @@ import {
   type ManualDelivery,
 } from "../model/manualDelivery";
 
-interface Props extends ControlledBallSetupProps {
+interface Props extends ControlledBallSetupProps, ControlledTorqueWorkspaceProps {
   scenario: ImpactScenario;
   loftDeg: number;
   /** Effective club spec from the Club group (H1: CG marker source). */
@@ -70,6 +73,8 @@ export function SimulationPanel({
   onBallSetupChange: controlledOnBallSetupChange,
   onBallSetupUserOverriddenChange: controlledOnBallSetupUserOverriddenChange,
   onBallSetupMessageChange: controlledOnBallSetupMessageChange,
+  torqueWorkspace: controlledTorqueWorkspace,
+  onTorqueWorkspaceChange: controlledOnTorqueWorkspaceChange,
   distanceUnit = "yd",
   viewWorkspace,
   viewCommandRevision,
@@ -84,6 +89,10 @@ export function SimulationPanel({
     onBallSetupMessageChange: controlledOnBallSetupMessageChange,
   });
   const { ballSetup, ballSetupUserOverridden, ballSetupMessage } = ball;
+  const torque = useSimulationTorqueWorkspace({
+    torqueWorkspace: controlledTorqueWorkspace,
+    onTorqueWorkspaceChange: controlledOnTorqueWorkspaceChange,
+  });
   const [importError, setImportError] = useState<string | null>(null);
   const [sourceKind, setSourceKind] = useState<WebSourceKind>("manual");
   const [manualDelivery, setManualDelivery] = useState<ManualDelivery>(
@@ -91,8 +100,8 @@ export function SimulationPanel({
   );
   const [contactMode, setContactMode] =
     useState<ContactMode>("delivery_inspection");
-  const [doublePendulumRun, setDoublePendulumRun] =
-    useState<DoublePendulumRunConfig>(PASSIVE_DOUBLE_PENDULUM_RUN);
+  const doublePendulumRun = torque.state.runConfig;
+  const setDoublePendulumRun = torque.setRunConfig;
   const [doublePendulumInitialState, setDoublePendulumInitialState] =
     useState<PendulumState>([-Math.PI / 2, 0, 0, 0]);
   const [tilts, setTilts] = useState({ yaw: 0, side: -45, forward: 0 });
@@ -339,6 +348,9 @@ export function SimulationPanel({
           sourceKind={sourceKind}
           runConfig={doublePendulumRun}
           onRunConfigChange={setDoublePendulumRun}
+          profiles={torque.state.profiles}
+          activeProfileId={torque.state.activeProfileId}
+          onLibraryChange={torque.setLibrary}
           run={run}
         />
 

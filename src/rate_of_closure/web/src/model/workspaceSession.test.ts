@@ -3,6 +3,8 @@ import { describe, expect, it } from "vitest";
 import { getClub } from "./club";
 import { DRIVER_TEE_HEIGHT_M } from "./ballSetup";
 import { DEFAULT_SCENARIO } from "./impact";
+import { passiveDoublePendulumRun } from "./doublePendulum";
+import { starterTorqueProfile } from "./torqueProfileEditor";
 import { DEFAULT_PRIMARY_VIEW_STATE } from "./viewPreferences";
 import { defaultViewWorkspace } from "./viewWorkspace";
 import {
@@ -16,7 +18,9 @@ import {
   type WorkspaceSessionSnapshot,
 } from "./workspaceSession";
 
-const snapshot = (): WorkspaceSessionSnapshot => ({
+const snapshot = (): WorkspaceSessionSnapshot => {
+  const profile = starterTorqueProfile();
+  return ({
   scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -900 },
   club: getClub("Driver 10.5°"),
   units: { speed: "mph", rotation: "deg/s", length: "mm", distance: "yd" },
@@ -31,9 +35,15 @@ const snapshot = (): WorkspaceSessionSnapshot => ({
       elevationSource: "absolute",
     }),
   },
+  torque: {
+    profiles: Object.freeze([profile]),
+    activeProfileId: profile.profileId,
+    runConfig: passiveDoublePendulumRun(),
+  },
   modules: DEFAULT_PRIMARY_VIEW_STATE,
   viewWorkspace: defaultViewWorkspace,
-});
+  });
+};
 
 const metadata = {
   documentId: "workspace.web.test",
@@ -49,7 +59,7 @@ describe("whole workspace session contract", () => {
     expect(parseWorkspaceDocument(encoded)).toEqual(snapshot());
     expect(JSON.parse(encoded).schema_version).toBe(2);
     const session = JSON.parse(encoded).model_session;
-    expect(session.schema_version).toBe(2);
+    expect(session.schema_version).toBe(3);
     expect(session.data.simulation_setup.data.ball_setup.provenance).toEqual({
       kind: "club_default",
       club_name: "Driver 10.5°",
@@ -59,6 +69,13 @@ describe("whole workspace session contract", () => {
       tolerance: {
         kind: "box",
         half_extents_m: { x: 4.5, elevation: 2.5, right: 3.5 },
+      },
+    });
+    expect(session.data.torque_selection.data).toMatchObject({
+      active_profile_id: "profile.web.starter_drive.v1",
+      selection_provenance: {
+        kind: "library_profile",
+        profile_source: "direct",
       },
     });
   });
@@ -82,6 +99,7 @@ describe("whole workspace session contract", () => {
     expect(() => parseWorkspaceDocument(text)).toThrow(/explicit.*migration/i);
     expect(parseWorkspaceDocument(text, {
       legacySimulationFallback: snapshot().simulation,
+      legacyTorqueFallback: snapshot().torque,
     }).simulation).toEqual(snapshot().simulation);
   });
 
@@ -102,9 +120,32 @@ describe("whole workspace session contract", () => {
     };
     const migrated = parseWorkspaceDocument(JSON.stringify(value), {
       legacySimulationFallback: snapshot().simulation,
+      legacyTorqueFallback: snapshot().torque,
     });
     expect(migrated.simulation.ballSetup).toEqual(snapshot().simulation.ballSetup);
     expect(migrated.simulation.ballSetupUserOverridden).toBe(true);
+  });
+
+  it("requires an explicit torque fallback to migrate a v2 session", () => {
+    const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    value.model_session.schema_version = 2;
+    delete value.model_session.data.torque_selection;
+    const text = JSON.stringify(value);
+    expect(() => parseWorkspaceDocument(text)).toThrow(/explicit torque/i);
+    expect(parseWorkspaceDocument(text, {
+      legacyTorqueFallback: snapshot().torque,
+    }).torque).toEqual(snapshot().torque);
+  });
+
+  it.each([
+    ["torque_unit", "lbf*ft"],
+    ["coefficient_order", "descending"],
+  ])("rejects noncanonical torque profile %s", (field, invalid) => {
+    const value = JSON.parse(createWorkspaceDocument(snapshot(), metadata));
+    value.prescribed_torque_profiles[0][field] = invalid;
+    expect(() => parseWorkspaceDocument(JSON.stringify(value))).toThrow(
+      new RegExp(field),
+    );
   });
 
   it("rejects unsupported domain state before returning applicable values", () => {

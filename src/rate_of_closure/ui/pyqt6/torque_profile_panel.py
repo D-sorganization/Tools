@@ -33,6 +33,9 @@ from rate_of_closure.ui.pyqt6.torque_profile_controller import (
     TorqueProfileLibraryAdapter,
     execution_selection,
 )
+from rate_of_closure.ui.pyqt6.torque_profile_workspace import (
+    TorqueProfileWorkspaceMixin,
+)
 from shared.python.signal_toolkit.polynomial_generator import (
     PolynomialGeneratorWidget,
 )
@@ -106,7 +109,7 @@ class TorquePolynomialDialog(QDialog):
         QMessageBox.warning(self, title, message)
 
 
-class TorqueProfilePanel(QWidget):
+class TorqueProfilePanel(TorqueProfileWorkspaceMixin, QWidget):
     """Author canonical profiles while preserving the existing run path."""
 
     runModeChanged = pyqtSignal(object)  # noqa: N815
@@ -494,11 +497,11 @@ class TorqueProfilePanel(QWidget):
 
     def fit_degree(self) -> int:
         """Return the selected retained-history polynomial degree."""
-        return self._fit_degree_spin.value()
+        return int(self._fit_degree_spin.value())
 
     def assignment_status(self, joint_id: str) -> str:
         """Return the visible polynomial summary for a stable joint ID."""
-        return self._assignment_labels[joint_id].text()
+        return str(self._assignment_labels[joint_id].text())
 
     def library_action_buttons(self) -> dict[str, QPushButton]:
         """Return the four explicit persistence controls."""

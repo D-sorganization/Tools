@@ -151,6 +151,7 @@ export function useWorkspaceFiles(options: WorkspaceFileOptions): WorkspaceFileC
         void import("../model/workspaceSession").then(({ parseWorkspaceDocument }) => {
           const parsed = parseWorkspaceDocument(text, {
             legacySimulationFallback: options.snapshot.simulation,
+            legacyTorqueFallback: options.snapshot.torque,
           });
           if (!confirmDiscard("open the selected workspace")) return;
           options.applySnapshot(parsed);
