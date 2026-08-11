@@ -1,11 +1,13 @@
 # AGENT_HANDOFF — Tools
 
-## 2026-08-11 local #4192/#4273 post-ground spatial-target projection
+## 2026-08-11 PR #4364 post-ground spatial-target projection
 
-This clean local candidate starts from exact published PR #4361 head
-`81de044075a4f72c6da8fedb972437df79a06ab8`. It adds the UI-neutral
-`regional_ground_target_projection` boundary without modifying the parallel
-ground-playback slice. The adapter accepts only an exact
+Ready-for-review PR [#4364](https://github.com/D-sorganization/Tools/pull/4364)
+is stacked on exact PR #4363 head
+`ec50fdf059f91ca9e4664da891398af218e1ba65`. Independently reviewed target
+implementation commit `b480f17f11b86a57326622168e4c748efc77aaf3`
+adds the UI-neutral `regional_ground_target_projection` boundary without
+modifying the inherited playback production code. The adapter accepts only an exact
 `FlightRegionalGroundPipelineResult | FlightGroundTransferError` and exact
 `SpatialTarget`. It reuses #4361's promoted complete-rest qualifier and exact
 evidence attributes instead of duplicating endpoint eligibility.
@@ -34,8 +36,8 @@ and one inherited polynomial-generator legend warning.
 Strict MyPy, focused Ruff check/format, Bandit, campaign-manifest validation
 and its eight tests, documentation governance, blocking-quality,
 minimum-test, changed-Python, 400-line module-size, changed-test assertion,
-placeholder, and diff checks are green.
-This candidate has no PR or protected evidence and adds no editor/UI,
+placeholder, and diff checks are green. Fresh protected current-head checks,
+dependency order, and ordinary merge gates remain. The PR adds no editor/UI,
 persistence, solver/capability invocation, aerial trajectory evaluation,
 compiled runtime, new physics, or geometry. Keep #4192, #4273, and #4267 open.
 
