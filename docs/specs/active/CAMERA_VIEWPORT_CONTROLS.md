@@ -124,6 +124,7 @@ controls, tracking bounds, zoom clearance, manual suspension, recentering, and
 complete swing/flight horizons. Playwright covers a bounded camera/playback
 interaction matrix in desktop Chromium and at a 520 x 900 viewport with 2x
 device scale, including responsive control containment and the canvas backing
-store. Final issue closure still requires protected carrier integration,
-hosted CI/review, post-polish native rendered review, and UpstreamDrift consumer
-parity. Camera preferences are not persisted in this slice.
+store. Camera preferences are persisted through the strict view-workspace v2
+contract in this slice. Final issue closure still requires protected carrier
+integration, hosted CI/review, fresh rendered Playwright and native QA, and
+UpstreamDrift consumer parity.
