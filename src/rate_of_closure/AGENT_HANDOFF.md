@@ -1,7 +1,15 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 #4203 pinned-Ruff formatting repair
+
+No material handoff change: current-head CI Standard run `31468208320`, job
+`93705508050`, identified eight files that differ from repository-pinned Ruff
+0.14.10 output. This commit changes formatting only; Rate physics, behavior,
+frames, persistence schemas, PyQt/React contracts, stack bases, and dependency
+order remain unchanged. Fresh protected CI and review are still required.
 
 ## 2026-08-10 Ground/Tee parity child receives repaired parent
 

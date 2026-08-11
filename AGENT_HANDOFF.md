@@ -1,7 +1,17 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 #4203 pinned-Ruff formatting repair
+
+- No material handoff change: this commit only applies the repository-pinned
+  Ruff 0.14.10 formatter to the eight Python files named by current-head CI
+  Standard run `31468208320`, job `93705508050`.
+- Physics, application behavior, public contracts, schemas, UI layout, stack
+  bases, and dependency order are unchanged. Fresh protected CI and review at
+  the resulting head remain required; queued runner jobs are not green
+  evidence.
 
 ## 2026-08-10 #4143 child receives repaired #4203 parent
 

@@ -2899,6 +2899,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.12 | style(rate-of-closure, #4203): apply repository-pinned Ruff 0.14.10 formatting to the eight files reported by current-head CI without changing physics, behavior, public contracts, schemas, UI layout, or stack order. |
 | 2026-08-10 | 1.14.11 | test/fix(rate-of-closure, #4143 #4202 #4203 #4325): normally propagate repaired launch-registry parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` into the shared Ground/Tee parity and rendered-evidence child without production/test-code conflict or history rewrite. |
 | 2026-08-10 | 1.14.10 | test(rate-of-closure, #4143): record deterministic Ground/Tee visual evidence through semantic Playwright checks and a hidden-window PyQt capture regression, retaining screenshots as external digested artifacts instead of brittle pixel baselines or repository binaries. |
 | 2026-08-10 | 1.14.9 | test(rate-of-closure, #4143): add one strict versioned SI golden fixture consumed by Python and React to pin Ground/Tee defaults, explicit overrides, physical height and center geometry, serialization, invalid finite-domain handling, and backward-compatible legacy migration without changing production behavior. |

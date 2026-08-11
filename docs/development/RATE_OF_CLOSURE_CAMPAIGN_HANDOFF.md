@@ -1,5 +1,14 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 #4203 pinned-Ruff formatting repair
+
+- No material handoff change: the eight Python files reported by CI Standard
+  run `31468208320`, job `93705508050`, receive only the repository-pinned
+  Ruff 0.14.10 formatting output.
+- No physics, behavior, frame, schema, UI, release-stack, or dependency
+  contract changes. Current-head protected CI and review remain release
+  requirements; queued checks remain unresolved rather than passing.
+
 ## 2026-08-10 #4143 child receives repaired launch-registry parent
 
 - Ready PR `#4325` stays on `feat/4143-tee-parity-fixture`, based on
