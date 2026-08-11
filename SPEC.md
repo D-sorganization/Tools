@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.8                                     |
-| **Spec Version**        | 1.13.8                                     |
-| **Last Spec Update**    | 2026-08-10                                 |
+| **Current Version**     | 1.13.11                                    |
+| **Spec Version**        | 1.13.11                                    |
+| **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
@@ -2691,6 +2691,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.13.11 | fix(ci, #4167 #4173 #4174 #4178): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into wedge turf physics while preserving its configured base and additive scientific, handoff, campaign, and specification histories. |
+| 2026-08-11 | 1.13.10 | fix(ci, #4167 #4173 #4174): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into swept wedge ground clearance while preserving the configured base, scientific behavior, and additive handoff/specification history. |
+| 2026-08-11 | 1.13.9 | fix(ci, #4167 #4173): propagate the workflow-pinned Ruff 0.14.10 five-file format repair normally into the impact-inspector child; no scientific, persistence, API, schema, test, or UI behavior changes, and the ordinary carrier/protected gates remain open. |
 | 2026-08-10 | 1.13.8 | feat/fix(golf-club, rate-of-closure, #4166 #4167 #4173 #4174 #4178): retain the passive provenance-gated turf proxy, nine-point wedge contact wrench, strict profile persistence, convergence diagnostics, and explicit force-coupling boundary while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact stacked parent. |
 | 2026-08-10 | 1.13.7 | fix(rate-of-closure, #4167 #4173 #4174): propagate the Python 3.10 UTC compatibility repair and source-wide AST guard through the impact-inspector parent into swept wedge ground clearance without rewriting the stacked child or changing its ground-contact contracts. |
 | 2026-08-10 | 1.13.6 | fix(rate-of-closure, #4167 #4173): propagate the Python 3.10 UTC compatibility repair into the impact-inspector child without rewriting its history; torque-profile persistence now uses the shared compatibility export and a source-wide AST guard prevents direct, aliased, or module-attribute `datetime.UTC` regressions. |
