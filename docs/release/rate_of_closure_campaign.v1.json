@@ -124,7 +124,7 @@
       "pr": 4281,
       "branch": "feat/4199-wind-scalar-adapter",
       "base_branch": "feat/4144-variation-export-continuation",
-      "head_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759",
+      "head_sha": "e934ba563a79bf95ee892fea8593972c81299eeb",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "b2baf6ef615b0d756a86ac4ca7eef2fc583210ee",
+      "head_sha": "8c6105d865abe130a68cfa35ffe6afb7eef850c8",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -154,7 +154,7 @@
       "pr": 4285,
       "branch": "feat/4268-ground-contract",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "7a38b9838d743e051a6900620c4d6e754582aa89",
+      "head_sha": "584e4e53a7990053a346938c4e45538786887ec7",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
