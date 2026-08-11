@@ -1,5 +1,20 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 PR #4281 wind adapter module-budget repair
+
+- The public `wind_strategy_plot_adapter.py` is reduced from 403 to 252 lines
+  by extracting its request/analysis validation into the 186-line private
+  `_wind_strategy_plot_validation.py` collaborator. Both now satisfy the
+  mandatory below-400 production-module ceiling.
+- Public imports, the `scalar-ensemble/v1` dataset, variable and cohort order,
+  composite row identity, values, availability, attributes, validation
+  messages, and the rule that adaptation never invokes flight physics are
+  unchanged.
+- Local focused evidence is 14 Python adapter tests and 16 React wind tests,
+  plus Ruff/format, pinned MyPy 1.13, Bandit, and the explicit line budget.
+  Independent review, exact-head protected CI, ordinary publication, and
+  dependency order remain required.
+
 ## 2026-08-11 reviewed variation parent propagation into wind scalar PR #4281
 
 - PR `#4281` remains on `feat/4199-wind-scalar-adapter`, based on
@@ -1022,8 +1037,10 @@ an explicit mocked-integrator regression test for that boundary.
 Current exact local evidence is 906 Python/PyQt/shared-swing tests passed with
 one expected optional-Rust skip and 15 existing warnings, plus 91 React test
 files / 555 tests passed. Ruff, formatting, Black, focused mypy, TypeScript,
-zero-warning ESLint, the 166-module production build, `git diff --check`, and
-the production module/function budgets pass. The adapter is plot-ready model
+zero-warning ESLint, the 166-module production build, and `git diff --check`
+passed. The function budget passed, but the 403-line wind adapter did not meet
+the mandatory below-400 module ceiling at that historical head; the
+2026-08-11 repair above corrects that blocker. The adapter is plot-ready model
 infrastructure, not an end-user workflow; #4199 remains open for worker,
 progress/cancellation, client controls, strategy/scatter displays,
 persistence, and exports.

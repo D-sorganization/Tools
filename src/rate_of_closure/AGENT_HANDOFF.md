@@ -3,6 +3,22 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 Wind scalar-adapter module-budget repair
+
+The 403-line `variation/wind_strategy_plot_adapter.py` exceeded the mandatory
+400-line ceiling. Request/analysis validation now lives in the private
+`variation/_wind_strategy_plot_validation.py` collaborator, leaving a 252-line
+public adapter and a 186-line validator. The public imports, dataset schema,
+variable/stage/category/cohort order, composite row identities, row values,
+typed availability, attributes, validation messages, and no-flight-rerun
+boundary are unchanged.
+
+The existing 14-test Python adapter suite and 16 focused React wind tests cover
+the behavior-preserving extraction; Ruff/format, pinned MyPy 1.13, Bandit, and
+the explicit strict line budget pass locally. Protected exact-head CI,
+independent review, unresolved-thread checks, ordinary publication, and stack
+order remain release gates.
+
 ## 2026-08-11 Wind scalar adapter receives reviewed variation parent
 
 PR `#4281` stays on `feat/4199-wind-scalar-adapter`, based on
@@ -340,11 +356,13 @@ PyQt6/scientific dependencies present, plus `2 React files / 10 tests`,
 TypeScript, and zero-warning focused ESLint. Ruff check/format passes all four
 child Python files; pinned mypy 1.13 passes both production modules and the
 wind-adapter test after its status helper received an exact `Literal` type.
-Production Python modules remain below 400 lines and no changed Python function
-exceeds 50 lines. SPEC 1.14.11 uniquely records the child change above parent
-1.14.10. This contract/adapter does not complete #4199: the next slice still
-needs background execution, progress and cancellation, PyQt/React
-scatter/strategy UI, persistence, and export wiring.
+The function budget passed at that historical head, but the 403-line wind
+adapter did not satisfy the mandatory below-400 module ceiling; the 2026-08-11
+repair above is the first point at which that module claim is true. SPEC
+1.14.11 uniquely records the child change above parent 1.14.10. This
+contract/adapter does not complete #4199: the next slice still needs background
+execution, progress and cancellation, PyQt/React scatter/strategy UI,
+persistence, and export wiring.
 
 ## 2026-08-07 Ground Model and Four-Surface Parity Revalidation
 

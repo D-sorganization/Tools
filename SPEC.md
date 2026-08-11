@@ -26,13 +26,23 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.18                                    |
-| **Spec Version**        | 1.14.18                                    |
+| **Current Version**     | 1.14.19                                    |
+| **Spec Version**        | 1.14.19                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-11 Wind strategy plot-adapter module-budget repair
+
+- `rate_of_closure.variation.wind_strategy_plot_adapter` remains the public
+  plot-data facade. Its request/analysis validation is delegated to the private
+  `_wind_strategy_plot_validation` collaborator so both production modules are
+  below the mandatory 400-line ceiling.
+- The public API, `scalar-ensemble/v1` wire shape and ordering, row identity,
+  values, typed availability, attributes, validation messages, and contract
+  prohibiting a flight-physics rerun are unchanged.
 
 ### 2026-08-11 Kinetics module-budget repair
 
@@ -2914,6 +2924,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.19 | refactor(rate-of-closure, #4281): split request/analysis validation from the 403-line wind-strategy plot adapter into a private collaborator, leaving 252-line and 186-line production modules below the mandatory 400-line ceiling while preserving the public API, scalar-ensemble wire order, row identity and values, availability, attributes, validation messages, and no-flight-rerun boundary. |
 | 2026-08-11 | 1.14.18 | merge(rate-of-closure, #4280 #4281): normally merge exact reviewed variation-export parent `3337945699966b63cb5cd8e52d7c3b194315e911` into exact remote wind scalar-adapter child `247046d55afcad3e6cd4f8029f854856c427f59c` with child-first parent order and no history rewrite; preserve matching Python/TypeScript `scalar-ensemble/v1` provenance, availability, deterministic-scenario, and wind-strategy plot-adapter behavior while inheriting the parent variation/export UI, kinetics split, Ground/Tee parity contracts, workspace/toolstrip repairs, and protected Ruff normalization; resolve the obsolete monolithic kinetics overlap to the validated parent `pendulum.sample(...)` facade, retain both append-only documentation histories, and require independent review plus fresh exact-head protected CI before publication. |
 | 2026-08-11 | 1.14.17 | merge(rate-of-closure, #4279 #4280): normally merge exact reviewed workspace/toolstrip parent `ccd0e026c580c93038fdf5c59d5d452a85ba27a0` into exact remote variation-export child `668ba96746f79f7a12e8092161bd610054197f58` with child-first parent order and no history rewrite; preserve selected-scatter CSV parity, typed unavailable outcomes, bounded accessible tables, linked selection, and all-trial arc analysis while inheriting the parent kinetics split, Ground/Tee parity contracts, and complete workspace/toolstrip behavior; resolve the obsolete monolithic kinetics overlap to the validated parent façade and normalize seven duplicate automation edits to exact protected Ruff 0.14.10 parent blobs while keeping their commit reachable; require independent review and fresh exact-head protected CI before publication. |
 | 2026-08-11 | 1.14.16 | merge(rate-of-closure, #4279): ordinarily reconcile exact local workspace/toolstrip head `0b22c401a26c31441a599d8d9b39de123706e7ea` with divergent remote automation head `61fe2d556a5413e525d958612ccfd57e65b8d5a2`, preserving every commit and the existing stack topology; recognize 15 already-identical parent paths, normalize seven incompatible formatting edits back to protected Ruff 0.14.10 output, and resolve the sole obsolete pre-split kinetics conflict in favor of the current `pendulum.sample(...)` façade implementation; preserve workspace, toolstrip, visibility, navigation, playback, independent plots, physics, frames, units, schemas, and public contracts; require independent review and fresh exact-head protected CI before publication. |

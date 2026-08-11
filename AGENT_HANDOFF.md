@@ -3,6 +3,20 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 PR #4281 wind adapter module-budget repair
+
+- The 403-line `wind_strategy_plot_adapter.py` blocker is repaired by moving
+  request/analysis validation into the private
+  `_wind_strategy_plot_validation.py` collaborator. The public adapter is now
+  252 lines and the validator is 186 lines; both are below the mandatory
+  400-line ceiling.
+- `build_wind_strategy_plot_dataset`, `WIND_STRATEGY_*` exports, validation
+  messages, variable/stage/category/cohort order, row identity, scalar values,
+  availability, attributes, and the no-flight-rerun boundary are unchanged.
+- This is a local candidate only. Independent review, fresh exact-head
+  protected CI, unresolved-thread checks, dependency order, and ordinary
+  publication remain required before merge or release.
+
 ## 2026-08-11 reviewed variation parent propagation into wind PR #4281
 
 - Exact remote wind child `247046d55afcad3e6cd4f8029f854856c427f59c`
