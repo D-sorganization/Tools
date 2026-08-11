@@ -62,13 +62,14 @@ class VariationWorkspaceMixin:
         )
         layout.addWidget(QLabel("Analysis Execution"))
         layout.addWidget(self._analysis_execution_combo)
-        metric_box = QGroupBox("Selected Output Metrics")
+        metric_box = QGroupBox("Saved Output Focus")
         self._metric_layout = QGridLayout(metric_box)
         self._metric_checks = {}
         self._reset_output_metric_choices()
         metric_box.setToolTip(
-            "Saved output focus for this study. Runs retain their complete canonical "
-            "result contract; these selections do not fabricate or discard results."
+            "Choose which mode-valid outputs the workspace remembers as this study's "
+            "focus. Runs and exports retain their complete canonical result contract; "
+            "these selections do not filter, fabricate, or discard calculated results."
         )
         layout.addWidget(metric_box)
         return box
@@ -88,7 +89,10 @@ class VariationWorkspaceMixin:
         for index, metric in enumerate(available_output_metrics(self.mode())):
             checkbox = QCheckBox(metric)
             checkbox.setChecked(True)
-            checkbox.setToolTip(f"Include {metric} in the saved output focus.")
+            checkbox.setToolTip(
+                f"Remember {metric} in the workspace's saved output focus. "
+                "The complete result remains available after every run."
+            )
             self._metric_layout.addWidget(checkbox, index // 2, index % 2)
             self._metric_checks[metric] = checkbox
 

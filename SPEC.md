@@ -43,6 +43,12 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - The canonical plan remains the authority for varied parameters, distribution
   and bounds, groups, trial count, deterministic seed, and flight model. The
   selection payload does not duplicate physical plan values or persist results.
+  Selected metrics are a saved study focus, not a result filter; calculated
+  runs and exports always retain the complete canonical output contract.
+- Browser Open rechecks current unsaved state after asynchronous file reads and
+  parses legacy sessions against the latest live fallback. Selectable swing
+  outputs derive from the executor's complete 17-field registry rather than a
+  second manually maintained list.
 - Simulation setup is the only authority for Ground/Tee context. Workspace
   variation plans reject a duplicate ball setup, and a Tee Height input is
   invalid unless the separately persisted setup selects Tee support.

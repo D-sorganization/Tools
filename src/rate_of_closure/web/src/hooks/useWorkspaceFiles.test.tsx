@@ -54,7 +54,10 @@ const snapshot = () => {
   };
 };
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => {
+  vi.restoreAllMocks();
+  vi.unstubAllGlobals();
+});
 
 describe("browser workspace file controller", () => {
   it("protects dirty state when New is cancelled", () => {
@@ -242,5 +245,134 @@ describe("browser workspace file controller", () => {
 
     await waitFor(() => expect(applySnapshot).toHaveBeenCalledWith(opened));
     expect(result.current.error).toBeNull();
+  });
+
+  it("rechecks the latest dirty state before an asynchronous open applies", async () => {
+    const opened = {
+      ...snapshot(),
+      scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -800 },
+    };
+    const encoded = createWorkspaceDocument(opened, {
+      documentId: "workspace.async.open",
+      title: "Async Open",
+      appVersion: "1.14.34",
+      createdAtUtc: "2026-08-11T07:00:00Z",
+      modifiedAtUtc: "2026-08-11T07:00:00Z",
+    });
+    let releaseRead: (() => void) | undefined;
+    vi.stubGlobal(
+      "FileReader",
+      class {
+        result: string | null = null;
+        error: Error | null = null;
+        onload: ((event: ProgressEvent<FileReader>) => void) | null = null;
+        onerror: ((event: ProgressEvent<FileReader>) => void) | null = null;
+
+        readAsText(): void {
+          releaseRead = () => {
+            this.result = encoded;
+            this.onload?.(new ProgressEvent("load") as ProgressEvent<FileReader>);
+          };
+        }
+      },
+    );
+    const applySnapshot = vi.fn();
+    const confirm = vi.spyOn(window, "confirm").mockReturnValue(false);
+    const initial = snapshot();
+    const changed = {
+      ...initial,
+      scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: 0 },
+    };
+    const { result, rerender } = renderHook(
+      ({ current }) =>
+        useWorkspaceFiles({
+          snapshot: current,
+          initialSnapshot: initial,
+          applySnapshot,
+          applyViewWorkspace: vi.fn(),
+        }),
+      { initialProps: { current: initial } },
+    );
+    const input = document.createElement("input");
+    Object.defineProperty(input, "files", {
+      value: [new File([encoded], "async.roc-workspace.json")],
+    });
+    act(() => {
+      result.current.handleCommand(APP_COMMAND_ID.fileOpenWorkspace);
+      result.current.onFileChange({ currentTarget: input } as never);
+    });
+    rerender({ current: changed });
+
+    act(() => releaseRead?.());
+
+    await waitFor(() => expect(confirm).toHaveBeenCalledTimes(1));
+    expect(applySnapshot).not.toHaveBeenCalled();
+  });
+
+  it("uses the latest legacy fallback after an asynchronous read", async () => {
+    const initial = snapshot();
+    const latest = {
+      ...initial,
+      variation: {
+        ...initial.variation,
+        plan: { ...initial.variation.plan, seed: 99 },
+      },
+    };
+    const legacy = JSON.parse(
+      createWorkspaceDocument(initial, {
+        documentId: "workspace.async.legacy",
+        title: "Async Legacy Open",
+        appVersion: "1.14.34",
+        createdAtUtc: "2026-08-11T07:00:00Z",
+        modifiedAtUtc: "2026-08-11T07:00:00Z",
+      }),
+    );
+    legacy.model_session.schema_version = 3;
+    delete legacy.model_session.data.variation_study;
+    legacy.variation_plan = null;
+    const encoded = JSON.stringify(legacy);
+    let releaseRead: (() => void) | undefined;
+    vi.stubGlobal(
+      "FileReader",
+      class {
+        result: string | null = null;
+        error: Error | null = null;
+        onload: ((event: ProgressEvent<FileReader>) => void) | null = null;
+        onerror: ((event: ProgressEvent<FileReader>) => void) | null = null;
+
+        readAsText(): void {
+          releaseRead = () => {
+            this.result = encoded;
+            this.onload?.(new ProgressEvent("load") as ProgressEvent<FileReader>);
+          };
+        }
+      },
+    );
+    const applySnapshot = vi.fn();
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    const { result, rerender } = renderHook(
+      ({ current }) =>
+        useWorkspaceFiles({
+          snapshot: current,
+          initialSnapshot: initial,
+          applySnapshot,
+          applyViewWorkspace: vi.fn(),
+        }),
+      { initialProps: { current: initial } },
+    );
+    const input = document.createElement("input");
+    Object.defineProperty(input, "files", {
+      value: [new File([encoded], "legacy.roc-workspace.json")],
+    });
+    act(() => {
+      result.current.handleCommand(APP_COMMAND_ID.fileOpenWorkspace);
+      result.current.onFileChange({ currentTarget: input } as never);
+    });
+    rerender({ current: latest });
+
+    act(() => releaseRead?.());
+
+    await waitFor(() => expect(applySnapshot).toHaveBeenCalledTimes(1));
+    expect(applySnapshot.mock.calls[0][0].variation).toEqual(latest.variation);
   });
 });

@@ -16,13 +16,19 @@ branch was rewritten.
 - Simulation is the sole persisted Ground/Tee authority. Duplicate ball setup,
   Tee Height under Ground support, unknown/duplicate/empty output selections,
   ambiguous legacy plans, and partial native application all fail closed.
+- Independent review makes asynchronous browser Open recheck the latest dirty
+  state and legacy fallbacks before applying, and derives the complete
+  17-field swing output focus from the executor rather than a stale duplicate
+  registry. The focus is persisted policy; complete results remain available.
 - This slice stores no results, identity, optimizer outputs, or flight-run
   outputs; it does not qualify UpstreamDrift or close #4142/#4144/#4218.
-  Protected review/CI and dependency-ordered release remain open. Local gates
-  pass 32 focused Python and 33 focused React tests, pinned MyPy 1.13, Ruff,
-  TypeScript, zero-warning ESLint, the 210-module production build, 11 campaign
-  manifest tests, module-size, docs, manifest-layout, changed-Python,
-  changed-test assertion, linked-debt, JSON, and diff validation.
+  Protected review/CI and dependency-ordered release remain open. Post-review
+  gates pass 20 focused Python and 43 focused React tests, pinned MyPy 1.13,
+  Ruff, TypeScript, zero-warning ESLint, the 210-module production build, 11
+  campaign manifest tests, changed-file/module-size, docs, manifest-layout,
+  changed-Python, JSON, and diff validation. A broader PyQt pair was stopped
+  without failure output after two contention timeouts; the three directly
+  affected native workflows passed serially.
 
 ## 2026-08-10 Torque-profile workspace child
 

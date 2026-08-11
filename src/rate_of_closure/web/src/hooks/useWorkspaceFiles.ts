@@ -86,6 +86,8 @@ export function useWorkspaceFiles(
 ): WorkspaceFileController {
   const input = useRef<HTMLInputElement>(null);
   const mode = useRef<PickerMode>("workspace");
+  const optionsRef = useRef(options);
+  optionsRef.current = options;
   const [baseline, setBaseline] = useState(() =>
     fingerprint(options.initialSnapshot),
   );
@@ -96,12 +98,14 @@ export function useWorkspaceFiles(
     [options.snapshot],
   );
   const dirty = currentFingerprint !== baseline;
+  const dirtyRef = useRef(dirty);
+  dirtyRef.current = dirty;
 
   const confirmDiscard = useCallback(
     (action: string): boolean =>
-      !dirty ||
+      !dirtyRef.current ||
       window.confirm(`Discard unsaved workspace changes and ${action}?`),
-    [dirty],
+    [],
   );
 
   const reset = useCallback(
@@ -194,20 +198,21 @@ export function useWorkspaceFiles(
             if (mode.current === "view") {
               const parsed = importViewWorkspace(text);
               if (!confirmDiscard("import the selected view layout")) return;
-              options.applyViewWorkspace(parsed);
+              optionsRef.current.applyViewWorkspace(parsed);
               setStatus(`Imported ${file.name}`);
               setError(null);
               return;
             }
             void import("../model/workspaceSession")
               .then(({ parseWorkspaceDocument }) => {
+                const current = optionsRef.current;
                 const parsed = parseWorkspaceDocument(text, {
-                  legacySimulationFallback: options.snapshot.simulation,
-                  legacyTorqueFallback: options.snapshot.torque,
-                  legacyVariationFallback: options.snapshot.variation,
+                  legacySimulationFallback: current.snapshot.simulation,
+                  legacyTorqueFallback: current.snapshot.torque,
+                  legacyVariationFallback: current.snapshot.variation,
                 });
                 if (!confirmDiscard("open the selected workspace")) return;
-                options.applySnapshot(parsed);
+                current.applySnapshot(parsed);
                 setBaseline(fingerprint(parsed));
                 setStatus(`Opened ${file.name}`);
                 setError(null);
@@ -235,7 +240,7 @@ export function useWorkspaceFiles(
           );
         });
     },
-    [confirmDiscard, options],
+    [confirmDiscard],
   );
 
   return {

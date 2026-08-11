@@ -1,7 +1,7 @@
 import fixture from "./__fixtures__/workspace_variation_parity.json";
 import { describe, expect, it } from "vitest";
 
-import { planFromJson } from "./variation";
+import { outputsForMode, planFromJson } from "./variation";
 import {
   migratedLegacyVariationFallback,
   variationWorkspaceDocument,
@@ -11,6 +11,28 @@ import {
 const plan = () => planFromJson(JSON.stringify(fixture.plan));
 
 describe("variation workspace selection parity", () => {
+  it("exposes the complete canonical swing-output contract", () => {
+    expect(outputsForMode("swing")).toEqual([
+      "candidate_time_s",
+      "closest_approach_m",
+      "contact_margin_m",
+      "impact_time_s",
+      "clubhead_speed_mps",
+      "spin_loft_deg",
+      "face_to_path_deg",
+      "spin_axis_tilt_deg",
+      "ball_speed_mph",
+      "launch_angle_deg",
+      "launch_azimuth_deg",
+      "spin_rpm",
+      "carry_m",
+      "lateral_m",
+      "max_height_m",
+      "flight_time_s",
+      "landing_angle_deg",
+    ]);
+  });
+
   it("round trips the authored specification without storing results", () => {
     const state = variationWorkspaceFromDocument(fixture.selection, plan());
 

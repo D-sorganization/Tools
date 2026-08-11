@@ -18,14 +18,23 @@ fallback and rejects conflicting root plans. Simulation remains the sole
 Ground/Tee authority; duplicated ball setup and Tee Height under Ground support
 fail closed. Native widget application is rollback-safe.
 
+Independent review also closed two browser contract gaps: Open rechecks the
+latest dirty state and latest legacy fallbacks after asynchronous file reads,
+and the React swing-output registry now derives from the executor's complete
+17-field contract (including spin loft, face-to-path, and spin-axis tilt). The
+clients label metric selection as a saved output focus; every run and export
+retains the complete canonical result.
+
 This is bounded #4142/#4144/#4218 specification persistence. It does not store
 results or identity, add optimizer outputs, qualify UpstreamDrift consumers, or
 close any issue/epic. Protected CI/review and ordered release remain open.
-Local qualification passes 32 focused Python tests, 33 focused React tests,
-pinned MyPy 1.13, Ruff check/format, TypeScript, zero-warning ESLint, the
-210-module production build, the 11-test campaign-manifest suite, module-size,
-docs, manifest-layout, changed-Python, changed-test assertion, linked-debt,
-JSON, and diff gates.
+Post-review qualification passes 20 focused Python workspace/PyQt tests, 43
+focused React workspace/variation tests, pinned MyPy 1.13, Ruff check/format,
+TypeScript, zero-warning ESLint, the 210-module production build, the 11-test
+campaign-manifest suite, changed-file and module-size budgets, docs,
+manifest-layout, changed-Python, JSON, and diff gates. A broader PyQt pair was
+stopped without failure output after two 120-second workstation-contention
+timeouts; the three directly affected native workflows then passed serially.
 
 ## 2026-08-10 Torque-profile workspace continuation
 

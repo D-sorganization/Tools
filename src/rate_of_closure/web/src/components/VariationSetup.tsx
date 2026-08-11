@@ -182,7 +182,7 @@ export function VariationSetup({
         </p>
         <fieldset className="mt-3" aria-label="Selected output metrics">
           <legend className="mb-2 text-sm text-slate-300">
-            Output Metrics
+            Saved Output Focus
           </legend>
           <div className="grid max-h-36 grid-cols-2 gap-1 overflow-y-auto rounded border border-slate-800 p-2">
             {outputsForMode(plan.mode).map((metric) => {
