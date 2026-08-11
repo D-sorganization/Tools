@@ -164,8 +164,8 @@ def compute_kinetics(
     net = torques["inertial"]
     power = net * omega
 
-    # Ball-aligned app-frame geometry: the run's stored positions carry the
-    # scrubber offset; the pivot sits at the swing origin plus that offset.
+    # Ball-aligned app-frame geometry: the run's stored positions carry
+    # the scrubber offset; the pivot sits at the swing origin + offset.
     offset = (
         run.swing_positions[0]
         - APP_FROM_SWING @ pendulum.sample(float(times[0])).pose[:3, 3]
