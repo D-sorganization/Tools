@@ -260,9 +260,11 @@ def test_profile_rejects_parameter_order_units_bounds_and_numeric_bools() -> Non
         replace(
             _profile(),
             parameters=tuple(
-                replace(item, value_si=0.9, validity_upper_si=1.0)
-                if item.parameter_id == "kinetic_friction"
-                else item
+                (
+                    replace(item, value_si=0.9, validity_upper_si=1.0)
+                    if item.parameter_id == "kinetic_friction"
+                    else item
+                )
                 for item in _parameters()
             ),
         )

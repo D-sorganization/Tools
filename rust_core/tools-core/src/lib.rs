@@ -65,6 +65,10 @@ fn tools_core(m: &Bound<'_, PyModule>) -> PyResult<()> {
         flight_ground::python::py_adapt_request_v1,
         m
     )?)?;
+    m.add_function(wrap_pyfunction!(
+        flight_ground::python_reference::py_run_ground_reference_v1,
+        m
+    )?)?;
     m.add_function(wrap_pyfunction!(math::py_lerp, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_clamp, m)?)?;
     m.add_function(wrap_pyfunction!(math::py_deg_to_rad, m)?)?;
