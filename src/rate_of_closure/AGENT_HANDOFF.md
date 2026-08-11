@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 Exact-head format completion
+
+Protected CI on #4203 head `7d69a545ae555679f0318940e67c1786626d6794`
+failed only Ruff formatting. The pinned 0.14.10 reproduction found eleven
+noncompliant changed Python files: four inherited files plus seven altered by
+the automated pre-commit repair. The pending repair intentionally changes no
+launch-monitor, kinetics, simulation, or UI behavior and requires independent
+review plus fresh protected CI before integration.
+
 ## 2026-08-11 Hosted MyPy NumPy-return repair
 
 CI Standard run `31477542889`, job `93734652129`, found four

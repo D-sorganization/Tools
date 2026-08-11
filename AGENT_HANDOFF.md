@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 #4203 exact-head format completion
+
+- Protected CI on exact published head
+  `7d69a545ae555679f0318940e67c1786626d6794` failed only Ruff formatting.
+  Reproducing the exact pinned 0.14.10 check found eleven noncompliant changed
+  Python files: four inherited files plus seven altered by the automated
+  pre-commit repair.
+- The pending repair applies pinned Ruff formatting to exactly those eleven
+  files. AST equivalence and focused tests must pass before independent review
+  and ordinary fast-forward publication; no simulation, contract, or UI
+  behavior is intentionally changed.
+
 ## 2026-08-11 #4203 hosted MyPy kinetics repair
 
 - Exact head `0216a547aa79727091a2939b96e779e8ddbd7304` failed CI Standard run

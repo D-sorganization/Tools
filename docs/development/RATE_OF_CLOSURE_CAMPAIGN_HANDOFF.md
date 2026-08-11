@@ -1,5 +1,16 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 #4203 exact-head format completion
+
+- Exact published head `7d69a545ae555679f0318940e67c1786626d6794`
+  failed only the Ruff format step. The exact pinned 0.14.10 reproduction found
+  eleven noncompliant changed files: four inherited files plus seven altered by
+  the automated pre-commit repair.
+- The pending correction is mechanical Ruff formatting of those eleven files.
+  It changes no runtime behavior or public contract and still requires AST
+  equivalence, focused tests, independent review, ordinary fast-forward
+  publication, and fresh protected exact-head CI.
+
 ## 2026-08-11 #4203 hosted MyPy NumPy boundary repair
 
 - Exact PR head `0216a547aa79727091a2939b96e779e8ddbd7304` reached runtime merge
