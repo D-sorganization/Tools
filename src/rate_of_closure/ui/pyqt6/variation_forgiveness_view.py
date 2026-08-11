@@ -194,9 +194,11 @@ class ChipForgivenessView(QWidget):
             values = (
                 str(point.sample_count),
                 f"{point.mean_loss:.5g}",
-                "Unavailable"
-                if point.standard_error is None
-                else f"{point.standard_error:.5g}",
+                (
+                    "Unavailable"
+                    if point.standard_error is None
+                    else f"{point.standard_error:.5g}"
+                ),
             )
             for column, value in enumerate(values):
                 self._convergence.setItem(row, column, _item(value))
