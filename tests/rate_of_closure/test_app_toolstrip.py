@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 pytest.importorskip("PyQt6")
@@ -14,6 +16,9 @@ from PyQt6.QtWidgets import QMenu, QToolBar, QToolButton  # noqa: E402
 from rate_of_closure.application.commands import (  # noqa: E402
     APP_COMMAND_IDS,
     AppCommandId,
+)
+from rate_of_closure.application.regional_ground_variation_request import (  # noqa: E402
+    regional_ground_variation_request_from_json,
 )
 from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow  # noqa: E402
 
@@ -163,3 +168,58 @@ def test_every_ui_neutral_command_id_is_registered_exactly_once(window) -> None:
         if action.objectName() in {command.value for command in APP_COMMAND_IDS}
     ]
     assert sorted(registered) == sorted(command.value for command in APP_COMMAND_IDS)
+
+
+def test_combined_request_commands_follow_relevant_module_context(window) -> None:  # type: ignore[no-untyped-def]
+    command_ids = (
+        AppCommandId.FILE_OPEN_REGIONAL_GROUND_VARIATION_REQUEST,
+        AppCommandId.FILE_SAVE_REGIONAL_GROUND_VARIATION_REQUEST_AS,
+    )
+    for command_id in command_ids:
+        action = _action(window, command_id.value)
+        assert not action.isEnabled()
+        assert "ground surfaces and variation" in action.toolTip().lower()
+
+    window.set_primary_module_active("variation")
+    assert all(_action(window, item.value).isEnabled() for item in command_ids)
+
+    window.set_primary_module_active("regional_surfaces")
+    assert all(_action(window, item.value).isEnabled() for item in command_ids)
+
+    window.set_primary_module_active("plots")
+    assert all(not _action(window, item.value).isEnabled() for item in command_ids)
+
+
+def test_combined_request_save_rejects_unvalidated_illustrative_surface(window) -> None:  # type: ignore[no-untyped-def]
+    window.set_primary_module_active("variation")
+
+    _action(
+        window, AppCommandId.FILE_SAVE_REGIONAL_GROUND_VARIATION_REQUEST_AS.value
+    ).trigger()
+
+    assert "explicitly validated" in window.statusBar().currentMessage().lower()
+    assert "error" in window.statusBar().currentMessage().lower()
+
+
+def test_combined_request_apply_is_exact_until_an_owner_changes(window) -> None:  # type: ignore[no-untyped-def]
+    fixture = (
+        Path(__file__).parents[2]
+        / "src"
+        / "rate_of_closure"
+        / "web"
+        / "src"
+        / "model"
+        / "__fixtures__"
+        / "regional_ground_variation_request_golden_v1.json"
+    )
+    request = regional_ground_variation_request_from_json(
+        fixture.read_text(encoding="utf-8")
+    )
+
+    window.apply_regional_ground_variation_request(request)
+
+    assert window.current_regional_ground_variation_request() is request
+    window._variation_tab._seed_spin.setValue(request.plan.seed + 1)
+    changed = window.current_regional_ground_variation_request()
+    assert changed is not request
+    assert changed.plan.seed == request.plan.seed + 1

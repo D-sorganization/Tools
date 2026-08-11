@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.58                                    |
-| **Spec Version**        | 1.14.58                                    |
+| **Current Version**     | 1.14.59                                    |
+| **Spec Version**        | 1.14.59                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,27 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Contextual Regional-Ground Variation File Controls
+
+- React and PyQt6 expose the same stable Open and Save As command IDs only
+  while Variation or Ground Surfaces is active. Both clients use the existing
+  App-owned combined request and Python application persistence contracts;
+  neither introduces a parallel workspace or physics model.
+- React strictly parses and canonically serializes the exact v1 envelope under
+  its 1 MiB UTF-8 bound. A Python-produced fixture is asserted by both
+  runtimes. Browser import applies only after complete validation and reports
+  failures accessibly. Download text explains that the browser controls the
+  destination, replacement, recent-file, and atomicity behavior.
+- PyQt6 native Open validates before either editor changes. Save validates the
+  current combined snapshot before showing a chooser and delegates to the
+  existing atomic writer. Cancellation changes nothing. An exact imported
+  request remains authoritative until either owning editor changes.
+- The disclosed illustrative regional draft cannot be saved until explicitly
+  validated. A valid wire plan outside the PyQt editor's run-count capacity is
+  rejected before mutation. This slice does not run physics or complete
+  pipeline, overlay, solver/capability, wind, compiled-runtime, downstream,
+  protected-release, #4273, or #4267 work.
 
 ### 2026-08-11 React Regional-Ground Variation Workspace Ownership
 
@@ -3176,6 +3197,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.59 | feat(ground-study, #4273): bind contextual React and PyQt6 Open/Save As commands to the App-owned seeded regional-ground request; add strict TypeScript v1 parsing and Python-parity canonical serialization, a shared golden payload, bounded transactional browser import, truthful browser download semantics, visible failures, native validate-before-dialog atomic persistence, exact-import retention until editor change, explicit illustrative-draft rejection, and cancel-safe dialogs; retain physics invocation, overlay variation, solver/capability and wind integration, compiled/downstream parity, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.58 | feat(ground-study, #4273): lift the React variation plan, execution policy, regional draft, and exact imported evidence into one App-owned transactional workspace; make both panels controlled across navigation; expose a typed compose/apply request port; register the two inspectable ground inputs while failing closed before unsupported scalar-browser execution; retain File controls, PyQt wiring, browser persistence, pipeline integration, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.57 | feat(ground-study, #4273): add strict canonical bounded seeded regional-ground request persistence without UI or physics. |
 | 2026-08-11 | 1.14.56 | docs(ground-study, #4365): record ready publication of the seeded base-material variation runner at implementation `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf`, stacked on exact #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`; retain protected checks, UI/overlay/persistence, solver/wind, compiled/downstream parity, release, and #4273/#4267 completion as open. |

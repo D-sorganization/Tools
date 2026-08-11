@@ -1,5 +1,37 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4273 contextual regional-ground request File controls
+
+The unpublished `codex/4273-ground-variation-file-controls` child starts from
+exact ready PR #4367 head `0968a4ced5644aa8e2673ca278d261eeb92c31f8`.
+It turns that prerequisite's typed App-owned request port into matched,
+contextual File commands without introducing another request or physics model.
+
+React parses and serializes the exact Python-owned v1 combined envelope with
+strict JSON, nested validation, and the same 1 MiB UTF-8 bound. A
+Python-produced golden payload is asserted in both runtimes. In Variation and
+Ground Surfaces only, accessible Open and Save As commands import into or
+snapshot the App owner. Invalid imports preserve all prior state and expose an
+alert. Downloads disclose that the browser owns destination, overwrite, and
+atomicity semantics.
+
+PyQt6 exposes the same stable commands only in the two relevant modules.
+Native Open fully validates before applying both editors; Save validates before
+showing the chooser and uses the existing atomic writer. Cancellation changes
+nothing. Imported exact evidence remains authoritative until either editor
+changes. The untouched illustrative regional draft cannot be saved until it is
+explicitly validated, and oversized wire-valid run counts fail before editor
+mutation.
+
+This slice executes no physics and adds no illustrative fallback. All 782 React
+tests in 123 files, the 87-test focused Python/PyQt selection, and a 25-test
+post-fixture follow-up pass; type-check, ESLint, Vite build, Ruff, MyPy, and
+repository policy gates are green. The code, SPEC, manifest, and all canonical
+handoffs commit together as `SELF`; no push
+or GitHub write occurred. Keep #4273/#4267 open for pipeline invocation,
+overlay variation, solver/capability and wind integration, compiled/downstream
+parity, protected review, publication, and release.
+
 ## 2026-08-11 local #4273 React request-workspace ownership
 
 The unpublished `codex/4273-ground-variation-file-ui` child starts from exact

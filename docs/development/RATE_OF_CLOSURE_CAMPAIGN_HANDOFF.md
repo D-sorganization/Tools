@@ -1,5 +1,31 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4273 contextual regional-ground request File controls
+
+- The unpublished `codex/4273-ground-variation-file-controls` child starts
+  from exact ready PR #4367 head
+  `0968a4ced5644aa8e2673ca278d261eeb92c31f8` and binds contextual File
+  controls to its App-owned combined request port.
+- React strictly parses and canonically serializes the Python-owned v1
+  envelope under the same 1 MiB UTF-8 bound. Both runtimes assert a
+  Python-produced golden payload. Accessible import/download commands appear
+  only in Variation and Ground Surfaces, apply transactionally, report errors
+  visibly, and disclose browser-owned destination/overwrite/atomicity behavior.
+- PyQt6 uses the same stable command IDs and the existing application parser,
+  bounded reader, and atomic writer. Open validates before applying either
+  editor; Save validates before opening its chooser; cancellation is a no-op.
+  Exact imported evidence is retained until an owning editor changes. The
+  illustrative draft is not silently persisted and an unsupported run count
+  cannot partially mutate the editors.
+- No physics or illustrative fallback is added. All 782 React tests in 123
+  files, the 87-test focused Python/PyQt selection, and a 25-test post-fixture
+  follow-up pass; TypeScript, ESLint, Vite, Ruff, MyPy, and policy gates are
+  green. The implementation, SPEC, manifest, and all handoffs commit together
+  as `SELF`; no push or GitHub write
+  occurred. Keep #4273/#4267 open for pipeline invocation, overlays,
+  solver/capability and wind integration, compiled/downstream parity,
+  protected evidence, publication, and release.
+
 ## 2026-08-11 local #4273 React request-workspace ownership
 
 - The unpublished `codex/4273-ground-variation-file-ui` child starts from exact

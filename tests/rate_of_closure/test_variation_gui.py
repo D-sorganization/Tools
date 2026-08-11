@@ -91,6 +91,14 @@ class TestConstruction:
         tab._remove_row(tab._rows[0])
         assert len(tab._rows) == 1  # refused, status message instead
 
+    def test_row_structure_changes_emit_plan_change(
+        self, qtbot, tab: VariationTab
+    ) -> None:  # type: ignore[no-untyped-def]
+        with qtbot.waitSignal(tab.planChanged):
+            added = tab._add_row()
+        with qtbot.waitSignal(tab.planChanged):
+            tab._remove_row(added)
+
 
 class TestPlanRoundTrip:
     def test_build_plan_reflects_the_editors(self, tab: VariationTab) -> None:

@@ -22,6 +22,8 @@ def test_command_ids_are_stable_unique_wire_values() -> None:
         "file.import_workspace",
         "file.export_workspace",
         "file.close_workspace",
+        "file.open_regional_ground_variation_request",
+        "file.save_regional_ground_variation_request_as",
         "view.manage_modules",
         "view.restore_default_workspace",
         "view.show_impact",

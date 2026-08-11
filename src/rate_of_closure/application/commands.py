@@ -26,6 +26,12 @@ class AppCommandId(StrEnum):
     FILE_IMPORT_WORKSPACE = "file.import_workspace"
     FILE_EXPORT_WORKSPACE = "file.export_workspace"
     FILE_CLOSE_WORKSPACE = "file.close_workspace"
+    FILE_OPEN_REGIONAL_GROUND_VARIATION_REQUEST = (
+        "file.open_regional_ground_variation_request"
+    )
+    FILE_SAVE_REGIONAL_GROUND_VARIATION_REQUEST_AS = (
+        "file.save_regional_ground_variation_request_as"
+    )
     VIEW_MANAGE_MODULES = "view.manage_modules"
     VIEW_RESTORE_DEFAULT_WORKSPACE = "view.restore_default_workspace"
     VIEW_SHOW_IMPACT = "view.show_impact"

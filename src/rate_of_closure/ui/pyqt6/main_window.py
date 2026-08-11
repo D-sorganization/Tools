@@ -57,6 +57,9 @@ from rate_of_closure.ui.pyqt6.main_window_layout import (
 )
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
+from rate_of_closure.ui.pyqt6.regional_ground_variation_window import (
+    RegionalGroundVariationWindowMixin,
+)
 from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import RegionalSurfacePlanTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
 from rate_of_closure.ui.pyqt6.result_row import explanation_html
@@ -97,7 +100,12 @@ except ImportError:  # standalone / vendored use
             """Match the themed mixin's interface; do nothing."""
 
 
-class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMainWindow):
+class RateOfClosureMainWindow(
+    RegionalGroundVariationWindowMixin,
+    WorkspaceNavigationMixin,
+    ThemedWindowMixin,
+    QMainWindow,
+):
     """Interactive explorer for rotation-induced impact-point deviations."""
 
     def __init__(
@@ -118,6 +126,7 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
     def _create_views(self) -> None:
         """Create the application views without coupling their signal graph."""
 
+        self._prepare_regional_ground_variation_editors()
         self._controls = ControlsPanel()
         self._rows: dict[str, _ResultRow] = {}
         self._club_view = Club3DView()
@@ -134,6 +143,7 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._variation_tab.studyCompleted.connect(self._on_variation_study)
         self._putting_tab = PuttingTab()
         self._glossary_tab = GlossaryTab()
+        self._initialize_regional_ground_variation_files()
 
     def _build_application_shell(
         self, navigation_settings: NavigationSettings | None
@@ -155,6 +165,8 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         tab_bar.tabMoved.connect(self._persist_primary_navigation)
         self._tabs.currentChanged.connect(self._persist_primary_navigation)
         self._configure_toolstrip_and_help()
+        self._tabs.currentChanged.connect(self._update_toolstrip_context)
+        self._update_toolstrip_context()
         splitter = QSplitter()
         splitter.addWidget(sidebar)
         splitter.addWidget(self._tabs)
@@ -218,6 +230,12 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._simulation_tab.clubSelectionChanged.connect(self._controls.set_club_name)
         self._flight_explorer_tab.glossaryRequested.connect(self.open_glossary)
         self._putting_tab.glossaryRequested.connect(self.open_glossary)
+        self._variation_tab.planChanged.connect(
+            self._clear_loaded_regional_ground_variation_request
+        )
+        self._regional_surface_plan_tab.requestChanged.connect(
+            self._clear_loaded_regional_ground_variation_request
+        )
 
     def _initialize_view_content(self) -> None:
         """Populate all views with a representative, internally consistent run."""

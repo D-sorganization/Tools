@@ -8,6 +8,7 @@ the 500-line budget.
 
 from __future__ import annotations
 
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QAbstractSpinBox,
     QCheckBox,
@@ -42,6 +43,8 @@ def make_spin(lo: float, hi: float, value: float, decimals: int) -> QDoubleSpinB
 
 class NoiseRow(QWidget):
     """One noise spec: variable, distribution, scale, optional clipping."""
+
+    changed = pyqtSignal()
 
     def __init__(self, mode: str, on_remove) -> None:  # type: ignore[no-untyped-def]
         super().__init__()
@@ -86,6 +89,12 @@ class NoiseRow(QWidget):
         layout.addWidget(remove)
 
         self.variable.currentIndexChanged.connect(self._on_variable_changed)
+        self.variable.currentIndexChanged.connect(self.changed)
+        self.distribution.currentIndexChanged.connect(self.changed)
+        self.scale.valueChanged.connect(self.changed)
+        self.clip.toggled.connect(self.changed)
+        self.clip_low.valueChanged.connect(self.changed)
+        self.clip_high.valueChanged.connect(self.changed)
         self.set_mode(mode)
 
     def set_mode(self, mode: str) -> None:
