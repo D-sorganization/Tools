@@ -158,9 +158,9 @@ class NoiseSpec:
             "lower": self.lower,
             "upper": self.upper,
             "spec_id": self.spec_id,
-            "time_window_s": None
-            if self.time_window_s is None
-            else list(self.time_window_s),
+            "time_window_s": (
+                None if self.time_window_s is None else list(self.time_window_s)
+            ),
             "point_ids": list(self.point_ids),
         }
 
@@ -176,9 +176,11 @@ class NoiseSpec:
             spec_id=None if data.get("spec_id") is None else str(data["spec_id"]),
             time_window_s=cast(
                 tuple[float, float] | None,
-                None
-                if data.get("time_window_s") is None
-                else tuple(float(value) for value in data["time_window_s"]),
+                (
+                    None
+                    if data.get("time_window_s") is None
+                    else tuple(float(value) for value in data["time_window_s"])
+                ),
             ),
             point_ids=tuple(str(value) for value in data.get("point_ids", [])),
         )
