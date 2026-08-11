@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.27                                    |
-| **Spec Version**        | 1.14.27                                    |
+| **Current Version**     | 1.14.28                                    |
+| **Spec Version**        | 1.14.28                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -3060,6 +3060,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.28 | merge(rate-of-closure, #4324 #4327): normally propagate exact repaired legend/layout parent `531a851dc125e83ad86abe1601651e163f5f866d` into the multi-view compositor descendant without changing its base; retain distinct synchronized Impact/Swing/Flight hosts, strict layout cardinality, per-host camera/overlay state, responsive native/web composition, and accessible direct routing while inheriting the repaired legend, mobile-toolstrip, camera, wind, workspace, variation, and capability ancestry; multi-view production/test code does not conflict, only additive handoff/spec files require reconciliation, and protected exact-head CI plus review remain required. |
 | 2026-08-10 | 1.14.27 | feat(rate-of-closure, #4218 #4225): add real distinct Impact/Swing/Flight viewport hosts with PyQt6/React direct-command parity, synchronized live playback persistence, host-local camera and overlay ownership, strict one/two/three-host Single/Split/Grid cardinality, preserved valid per-slot legends, debounced native settings writes, navigable native constrained grids, and deterministic legacy/corrupt/unknown-view recovery; preserve all established React displays and the spatial-target Flight workflow beside Multi View, verify desktop/constrained browser and native rendering, and retain complete keyboard focus behavior, export proof, protected CI/review, stack integration, and UpstreamDrift parity as explicit open gates. |
 | 2026-08-10 | 1.14.26 | fix(rate-of-closure, #4218 #4224): move the default PyQt6 3D scene legend from the axes into a measured figure-level rail, clear retained legends across redraw and inside/hidden transitions, reflow the rail on canvas resize, add explicit accessible control names, and centralize React plot/legend geometry in one constrained-width contract; retain open persistence, export, rendered-QA, protected-CI, review, and integration gates without claiming epic completion. |
 | 2026-08-10 | 1.14.25 | merge(rate-of-closure, #4300 #4301): normally propagate exact four-surface/camera/ground head `142631a90c008942bad99745e279748a7eda2ffa` into original constrained-toolstrip child `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64` without changing its base; retain the shared 16 px viewport-gutter clamp, desktop anchoring, bounded mobile menus, and native keyboard/accessibility semantics while inheriting the declared four-surface inventory, complete camera controls, and repaired flight-to-ground ancestry; require fresh combined-tree validation, independent review, and protected current-head CI without claiming epic completion. |

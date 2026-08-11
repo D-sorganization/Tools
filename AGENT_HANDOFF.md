@@ -3,6 +3,16 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Repaired legend-parent propagation into PR #4327
+
+Draft PR `#4327` retains branch `feat/4225-multiview-compositor` and base
+`fix/4224-default-legend-layout-local`. It now normally incorporates exact
+repaired legend parent `531a851dc125e83ad86abe1601651e163f5f866d`.
+Multi-view production/test code did not conflict; only the four additive
+handoff/spec files required reconciliation. No rebase, retarget, force-push,
+parent rewrite, or history rewrite was used. Fresh focused/local gates and
+protected exact-head CI remain required.
+
 ## 2026-08-10 Issue #4225 multi-view compositor rendered-QA slice
 
 Isolated branch `feat/4225-multiview-compositor` starts at exact PR #4324 head
@@ -37,6 +47,15 @@ overflow navigation. This slice still does not close #4225 or epic #4218:
 complete keyboard focus/layout manipulation, workspace export proof, protected
 CI and review, stack integration, and UpstreamDrift parity remain open. Do not
 push or open a PR until the root release owner reviews this slice.
+## 2026-08-10 Repaired mobile-parent propagation into PR #4324
+
+Draft PR `#4324` retains branch `fix/4224-default-legend-layout-local` and base
+`fix/rate-mobile-tools-menu`. It now normally incorporates exact repaired
+mobile parent `16a1167c31126238163297983862004afc5001d9`. Legend/layout
+production/test code did not conflict; only the four additive handoff/spec
+files required reconciliation. No rebase, retarget, force-push, parent rewrite,
+or history rewrite was used. Fresh focused/local gates and protected exact-head
+CI remain required before descendant propagation.
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 
@@ -66,6 +85,15 @@ ESLint, and the 196-module production build; `npm ci` audited 337 packages with
 zero vulnerabilities. Rendered native inspection, persistence/export work,
 protected CI, review, and parent integration remain open. This bounded slice
 does not close #4224, #4218, #4300, #4303, or their dependency stack.
+## 2026-08-10 Repaired camera-parent propagation into PR #4301
+
+Draft PR `#4301` retains branch `fix/rate-mobile-tools-menu` and base
+`feat/4284-camera-snap-tracking`. It now normally incorporates exact repaired
+camera parent `104503aac9779b195d46d38e8ed32611ffc8dfd7`. Mobile-toolstrip
+production/test code did not conflict; only the four additive handoff/spec
+files required reconciliation. No rebase, retarget, force-push, parent rewrite,
+or history rewrite was used. Fresh focused/local gates and protected exact-head
+CI remain required before further descendant propagation.
 
 ## 2026-08-10 PR #4301 four-surface parent propagation
 
@@ -127,6 +155,26 @@ Independent exact-tree review found no findings. This propagation is not issue
 or epic completion: protected current-head CI, installed-consumer evidence,
 four-surface conformance, native rendered QA, and dependency-ordered release
 remain open.
+## 2026-08-10 Current-parent propagation into PR #4298
+
+Draft PR `#4298` remains on `feat/4284-camera-snap-tracking`, based on
+`feat/4199-wind-workflow`. It now normally incorporates exact current parent
+head `1e82f15026786ea0b08f78f4c001590ddce9ff39`; camera production and test
+code did not conflict. Only the four current-state handoff/spec files required
+additive reconciliation. No rebase, retarget, force-push, parent rewrite, or
+history rewrite was used. Fresh focused/local gates and protected exact-head
+CI are required before this descendant can advance.
+
+## 2026-08-10 Repaired wind-scalar parent propagation
+
+Draft PR `#4282` retains branch `feat/4199-wind-workflow` and base
+`feat/4199-wind-scalar-adapter`. Exact repaired parent head
+`d6fb04e07c2a625412e9208b07103acdc42c621b` is incorporated through a normal
+merge commit after its quality gate passed. No wind-workflow production or test
+code conflicted, and no rebase, retarget, force-push, or history rewrite was
+used. The current-state handoff remains authoritative. Verification covers 25
+focused tests plus documentation governance, changed-file size, and whitespace
+checks; fresh protected CI, review, and downstream propagation remain required.
 
 ## 2026-08-10 PR #4298 exact hosted-mypy repair
 

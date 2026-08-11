@@ -3,6 +3,16 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Repaired legend-parent propagation into PR #4327
+
+Draft PR `#4327` remains on `feat/4225-multiview-compositor`, based on
+`fix/4224-default-legend-layout-local`, and now normally incorporates exact
+repaired legend parent `531a851dc125e83ad86abe1601651e163f5f866d`.
+Multi-view production/test code did not conflict; only the four additive
+handoff/spec files required reconciliation. No rebase, retarget, force-push,
+parent rewrite, or history rewrite was used. Fresh verification and protected
+CI remain.
+
 ## 2026-08-10 Issue #4225 multi-view compositor rendered-QA slice
 
 The isolated `feat/4225-multiview-compositor` branch is based on exact PR #4324
@@ -37,6 +47,14 @@ and navigable overflow. This is not full #4225 completion: complete focus and
 keyboard layout manipulation, export round-trip evidence, protected CI/review,
 normal stack integration, and UpstreamDrift parity remain required. Solver UI
 was not changed.
+## 2026-08-10 Repaired mobile-parent propagation into PR #4324
+
+Draft PR `#4324` remains on `fix/4224-default-legend-layout-local`, based on
+`fix/rate-mobile-tools-menu`, and now normally incorporates exact repaired
+mobile parent `16a1167c31126238163297983862004afc5001d9`. Legend/layout
+production/test code did not conflict; only the four additive handoff/spec
+files required reconciliation. No rebase, retarget, force-push, parent rewrite,
+or history rewrite was used. Fresh local verification and protected CI remain.
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 
@@ -60,6 +78,14 @@ suite, TypeScript, scoped zero-warning ESLint, and 196-module production build.
 `npm ci` audited 337 packages with zero vulnerabilities. Native rendered QA,
 workspace persistence/export, protected CI, review, and normal dependency-
 ordered integration remain open, so #4224 and epic #4218 stay open.
+## 2026-08-10 Repaired camera-parent propagation into PR #4301
+
+Draft PR `#4301` remains on `fix/rate-mobile-tools-menu`, based on
+`feat/4284-camera-snap-tracking`, and now normally incorporates exact repaired
+camera parent `104503aac9779b195d46d38e8ed32611ffc8dfd7`. Mobile-toolstrip
+production/test code did not conflict; only the four additive handoff/spec
+files required reconciliation. No rebase, retarget, force-push, parent rewrite,
+or history rewrite was used. Fresh local verification and protected CI remain.
 
 ## 2026-08-10 PR #4301 four-surface parent propagation
 
@@ -115,6 +141,24 @@ manifest-layout, conflict-marker, and diff gates.
 Independent exact-tree review found no findings. Protected current-head CI,
 installed-consumer evidence, native rendered QA, and dependency-ordered
 release remain open. Neither #4264 nor #4260 is complete.
+## 2026-08-10 Current-parent propagation into camera PR #4298
+
+Draft PR `#4298` retains branch `feat/4284-camera-snap-tracking` and base
+`feat/4199-wind-workflow`. It now normally incorporates exact current parent
+head `1e82f15026786ea0b08f78f4c001590ddce9ff39`; camera production/test code
+did not conflict, and only the four additive handoff/spec files required
+reconciliation. No rebase, retarget, force-push, parent rewrite, or history
+rewrite was used. Fresh local verification, protected CI, and review remain.
+
+## 2026-08-10 Repaired scalar-adapter propagation into wind workflow
+
+Draft PR `#4282` remains on `feat/4199-wind-workflow`, based on
+`feat/4199-wind-scalar-adapter`. It now normally incorporates repaired parent
+head `d6fb04e07c2a625412e9208b07103acdc42c621b` after that head's quality gate
+passed. The merge had no wind-workflow production/test conflict and used no
+rebase, retarget, force-push, or history rewrite. Twenty-five focused tests and
+the documentation, size, and whitespace gates pass locally; protected CI,
+review, and later-stack propagation remain outstanding.
 
 ## 2026-08-10 PR #4298 exact hosted-mypy repair
 
