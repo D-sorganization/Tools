@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.38                                    |
-| **Spec Version**        | 1.14.38                                    |
+| **Current Version**     | 1.14.39                                    |
+| **Spec Version**        | 1.14.39                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3026,6 +3026,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.39 | feat(ground-impact, #4270): reuse the frozen `flight-to-ground-request/v1` authority inside a strict bounded Python/TypeScript `ground-repeated-bounce-request/v1` envelope; bind SI/frame/request/surface/model identities, canonical ground-request SHA-256, capture threshold, fixed model version, and joint execution-input SHA-256; add exact request/result identity pairing and shared golden parity while retaining Python as the only physics authority and leaving UI construction/invocation, persistence, compiled physics, downstream parity, protected evidence, release, and issue/epic completion open. |
 | 2026-08-11 | 1.14.38 | feat(ground-roll, #4267 #4271): add matched bounded PyQt6/React inspection of validated raw ground-trajectory samples with explicit SI units and frames, retain the complete accepted envelope while rendering at most 256 samples with exact truncation disclosure, and add canonical semantic-lossless evidence export using native atomic UTF-8 writes and browser downloads of the frozen serializer; preserve transactional import and partial-result censorship, execute no browser physics, and retain input construction, executor invocation, interpolation/playback, measured calibration, compiled parity, downstream parity, protected evidence, release, and issue completion as open work. |
 | 2026-08-11 | 1.14.37 | feat(ground-roll, #4267 #4271): add matched bounded PyQt6/React inspection of the already-validated ground-event and regional-transition ledgers with explicit SI units, frames, before/after linear and angular states, and from/to region/surface identities; retain the full accepted envelope while rendering at most 256 rows per ledger with exact truncation disclosure; keep null-result ledgers empty and partial endpoints censored; retain trajectory-sample inspection, lossless export, executor invocation, playback, calibration workflows, compiled parity, downstream parity, protected evidence, release, and issue completion as open work. |
 | 2026-08-11 | 1.14.36 | feat(ground-roll, #4267 #4271): complete the matched PyQt6/React import-only result projection with carry, bounce-air, skid, roll, surface-path, total, final position/offline, bounce count, ground time, terminal completion, model and surface-provider identity/version, calibration evidence, ordered observed phases, typed warnings, executor provenance, and qualification limits; preserve unavailable ground-only values for null-result cancellation/failure and keep partial censored endpoints explicit; retain UI executor invocation, trajectory/event tables, playback, calibration workflows, compiled parity, downstream parity, protected evidence, release, and issue completion as open work. |
@@ -4092,3 +4093,35 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - This is an input/evidence boundary only. Request construction, executor
   invocation, persistence, playback, measured calibration, compiled and
   downstream parity, protected release, and #4267/#4271 completion remain open.
+
+## 2026-08-11 Repeated-bounce request and pairing wire boundary
+
+- Reused the existing strict `flight-to-ground-request/v1` record as the
+  physical request authority instead of defining a second surface, contact,
+  ball, calibration, or provenance schema.
+- Added bounded `ground-repeated-bounce-request/v1` Python and import-only
+  TypeScript envelopes with exact keys, SI target-frame identity, fixed
+  `tools-ground-impact-bounce@1.0.0` authority, and one configurable
+  `capture_speed_m_s`. Standard gravity and the numerical tolerances remain
+  fixed implementation details of that model version; the wire does not
+  expose alternate values.
+- Bound the embedded request to `ground_request_sha256`, then bound that digest,
+  the canonical capture threshold, schema, and model identity to
+  `execution_input_sha256`. Both runtimes reject unknown fields, duplicate
+  keys, over-1-MiB UTF-8 documents, non-finite/cross-runtime-unsafe values,
+  unsupported identities, nested request tampering, and digest mismatches.
+- Added an exact request/result pairing record that checks request, surface,
+  frame, model, version, and the result's existing ground-request fingerprint.
+  Result v1 does not carry `execution_input_sha256`, so an imported result alone
+  cannot prove which capture threshold produced it. A later executor envelope
+  must preserve the paired request or its joint digest; this slice does not
+  invoke the solver or claim that missing production evidence.
+- The shared request fixture pins ground-request SHA-256
+  `b185be04825814aaf5fa7c87ebc9d0613899fb0c9c3f977094963228a95cc255`,
+  joint execution-input SHA-256
+  `98553d20bfdbd4a218a798886a329a1e6c058ab86bf18a81626bd78c898bd99c`,
+  and canonical request-document SHA-256
+  `ec5f8e83fae479a3ffa070603baa6b9916a1c9808a5690beba9417f35a812424`.
+- Browser physics, UI request construction, executor invocation, file/workspace
+  persistence, compiled-runtime execution, downstream parity, protected CI,
+  release, and #4267/#4270 completion remain open.

@@ -1556,3 +1556,32 @@ remains. Independent
 review found four evidence-integrity blockers; all four were remediated with
 matched adversarial tests. A final independent review of the complete
 post-remediation diff remains required before any publication.
+
+## 2026-08-11 repeated-bounce request wire and pairing boundary
+
+Local unpublished branch `feat/4270-repeated-bounce-request-wire` starts from
+exact published draft PR #4355 head
+`b67af52226fa6334dd3570cf650aebeaf81912fc`. It reuses the strict embedded
+`flight-to-ground-request/v1` rather than duplicating physical inputs and adds
+bounded `ground-repeated-bounce-request/v1` Python/TypeScript import contracts.
+Exact SI/frame/request/surface/model identities, canonical ground-request
+SHA-256, capture threshold, and joint execution-input SHA-256 are fail-closed.
+
+An exact pairing record checks the existing bounce result's request, surface,
+frame, model/version, and ground-request fingerprint. Result v1 does not carry
+the joint execution digest, so it cannot independently prove the capture
+threshold; later executor evidence must preserve the paired request or digest.
+The browser still runs no bounce physics. UI construction/invocation,
+persistence, compiled physics, downstream parity, protected evidence, release,
+and #4267/#4270 completion remain open. No GitHub write has been made.
+
+Exact local gates are green: 183 Python ground tests; 114 React files / 731
+tests; exact changed-source MyPy with hosted `--follow-imports=skip`; Ruff and
+format; TypeScript; zero-warning ESLint; the 204-module production build;
+campaign-manifest validation and eight manifest tests; docs governance;
+module-size budget; placeholder/quality scan; and diff checks. The inherited
+528.54 kB build advisory remains. A temporary whole-tree secret-baseline scan
+found no finding in this slice's changed paths, but still reported two
+parent-existing findings in unchanged regional-surface-plan tests while PR
+#4355's protected detect-secrets job remained pending. No protected or release
+claim is made.

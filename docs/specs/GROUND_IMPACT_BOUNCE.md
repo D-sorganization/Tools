@@ -186,3 +186,28 @@ object keys. The shared golden fixture
 `d8e7400632215220d3c5b1ccd7c57040f6023ebd72470b380b48b8f8fa99b9f9`.
 This boundary deliberately performs no file persistence, ground-request
 construction, regional execution, interpolation, or playback.
+
+## Repeated-bounce request wire and result pairing
+
+`ground-repeated-bounce-request/v1` embeds the existing strict
+`flight-to-ground-request/v1`; it does not duplicate physical surface, contact,
+ball, calibration, or provenance fields. The envelope repeats and validates
+the request, surface, target-frame, SI, and fixed
+`tools-ground-impact-bounce@1.0.0` identities. It exposes only the canonical
+`capture_speed_m_s` setting. Standard gravity, velocity tolerance, and time
+tolerance remain fixed by model version and cannot be overridden through v1.
+
+The embedded ground request's canonical JSON is bound to
+`ground_request_sha256`. A second `execution_input_sha256` hashes that digest,
+the capture threshold, schema identity, and fixed model identity. Python and
+import-only TypeScript use the same canonical numeric JSON and synchronous
+SHA-256 policy,
+reject exact/nested extra fields, duplicate JSON keys, non-finite and unsafe
+numbers, identity drift, digest drift, and UTF-8 documents over 1 MiB.
+
+The pairing record checks a validated `RepeatedBounceResult` against request,
+surface, frame, model, version, and the result's existing ground-request
+fingerprint. Because result v1 predates the joint execution digest, the result
+alone cannot prove the capture threshold that produced it. A later executor
+must preserve the request envelope or its `execution_input_sha256`; this slice
+does not execute physics, persist inputs, or widen the frozen result schema.
