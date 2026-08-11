@@ -214,6 +214,9 @@ Wire numbers are bounded to the shared cross-runtime safe range. Native
 precedence entry preserves every nonnegative integer through
 9,007,199,254,740,991 exactly, so a qualified import cannot be silently narrowed
 before validation or Save As.
+Native import reads one binary handle with a one-byte overflow sentinel before
+strict UTF-8 decoding, so mutable files cannot bypass the 1 MiB allocation cap
+between a metadata check and content parsing.
 Neither client claims execution, result playback, or measured-course
 calibration. Those capabilities require separate contracts and acceptance
 evidence.

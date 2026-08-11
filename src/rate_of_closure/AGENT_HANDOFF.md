@@ -1,5 +1,23 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 bounded regional request read follow-up
+
+Independent review of local safe-number commit
+`10c394f6b1fd2927e7f3b1f96cc097cae6bfd380` found that native request import
+checked file size with `stat()` and then performed a separate unbounded text
+read. A concurrently grown or replaced file could therefore allocate beyond
+the 1 MiB wire cap before the strict parser rejected it.
+
+Native import now opens one binary handle, reads at most the wire cap plus one
+sentinel byte, rejects overflow, strictly decodes UTF-8, and only then delegates
+to the unchanged canonical v1 parser. Tests simulate content growth after the
+metadata check and reject invalid UTF-8 explicitly. The complete regional and
+atomic persistence set is 28 tests passing. This changes no schema, digest,
+physics, browser behavior, or write semantics. Static and governance evidence
+is recorded in this commit: Ruff, Ruff format, Black, focused MyPy, manifest,
+module-size, documentation-governance, and diff checks pass. The child remains
+local and unprotected.
+
 ## 2026-08-11 regional request I/O safe-number follow-up
 
 Independent review of local commit `e39edf4b50b1fb9811b0032bec4758c7a08c9b74`

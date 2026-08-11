@@ -96,6 +96,45 @@ def test_request_read_rejects_corruption_duplicates_and_oversize(
         read_regional_surface_plan_request(target)
 
 
+def test_request_read_bounds_a_file_that_grows_after_metadata_check(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    target = tmp_path / "growing.json"
+    target.write_bytes(b"{}")
+    requested_sizes: list[int] = []
+
+    class GrowingBinaryFile:
+        def __enter__(self) -> GrowingBinaryFile:
+            return self
+
+        def __exit__(self, *_args: object) -> None:
+            return None
+
+        def read(self, size: int) -> bytes:
+            requested_sizes.append(size)
+            return b" " * size
+
+    monkeypatch.setattr(
+        Path,
+        "read_text",
+        lambda *_args, **_kwargs: pytest.fail("unbounded read_text used"),
+    )
+    monkeypatch.setattr(Path, "open", lambda *_args, **_kwargs: GrowingBinaryFile())
+
+    with pytest.raises(ValueError, match="maximum wire size"):
+        read_regional_surface_plan_request(target)
+
+    assert requested_sizes == [MAX_REGIONAL_PLAN_WIRE_BYTES + 1]
+
+
+def test_request_read_rejects_invalid_utf8(tmp_path: Path) -> None:
+    target = tmp_path / "invalid-utf8.json"
+    target.write_bytes(b"\xff")
+
+    with pytest.raises(ValueError, match="UTF-8"):
+        read_regional_surface_plan_request(target)
+
+
 def test_import_rejects_non_editor_provenance_without_coercion() -> None:
     request = validate_regional_surface_plan_draft(
         illustrative_regional_surface_plan_draft()
