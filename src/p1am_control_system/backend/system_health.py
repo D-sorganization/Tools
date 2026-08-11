@@ -152,16 +152,18 @@ class SystemHealthService:
         storage_status = (
             HealthStatus.GOOD
             if free_bytes >= 1_000_000_000
-            else HealthStatus.DEGRADED
-            if free_bytes >= 100_000_000
-            else HealthStatus.BAD
+            else (
+                HealthStatus.DEGRADED if free_bytes >= 100_000_000 else HealthStatus.BAD
+            )
         )
         clock_status = (
             HealthStatus.GOOD
             if clock_synchronized is True
-            else HealthStatus.BAD
-            if clock_synchronized is False
-            else HealthStatus.DEGRADED
+            else (
+                HealthStatus.BAD
+                if clock_synchronized is False
+                else HealthStatus.DEGRADED
+            )
         )
         checks = (
             self._database_check(),
@@ -183,9 +185,11 @@ class SystemHealthService:
                 detail=(
                     "Synchronized"
                     if clock_synchronized is True
-                    else "Not synchronized"
-                    if clock_synchronized is False
-                    else "Synchronization source not verified"
+                    else (
+                        "Not synchronized"
+                        if clock_synchronized is False
+                        else "Synchronization source not verified"
+                    )
                 ),
             ),
             HealthCheck(

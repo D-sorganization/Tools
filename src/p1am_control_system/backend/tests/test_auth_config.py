@@ -193,7 +193,9 @@ def test_named_engineer_can_operate_but_cannot_admin(
     principal = require_api_key(api_key="engineer-key-12345", bearer=None)
     assert principal.subject == "eng.1"
     with pytest.raises(HTTPException) as excinfo:
-        require_admin_key(api_key="engineer-key-12345", bearer=None)  # noqa: E501  # pragma: allowlist secret
+        require_admin_key(
+            api_key="engineer-key-12345", bearer=None
+        )  # noqa: E501  # pragma: allowlist secret
     assert excinfo.value.status_code == status.HTTP_403_FORBIDDEN
 
 
@@ -207,7 +209,9 @@ def test_engineer_gate_rejects_named_operator(
     )
 
     with pytest.raises(HTTPException) as excinfo:
-        require_engineer_key(api_key="operator-key-12345", bearer=None)  # noqa: E501  # pragma: allowlist secret
+        require_engineer_key(
+            api_key="operator-key-12345", bearer=None
+        )  # noqa: E501  # pragma: allowlist secret
 
     assert excinfo.value.status_code == status.HTTP_403_FORBIDDEN
 

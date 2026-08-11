@@ -123,6 +123,8 @@ def test_provider_preserves_sessions_until_identity_environment_changes() -> Non
 
 
 def test_legacy_keys_preserve_existing_nonempty_length_contract() -> None:
-    service = load_identity_service({"P1AM_API_KEY": "short-key"})  # noqa: E501  # pragma: allowlist secret
+    service = load_identity_service(
+        {"P1AM_API_KEY": "short-key"}
+    )  # noqa: E501  # pragma: allowlist secret
     assert service is not None
     assert service.login("short-key") is not None

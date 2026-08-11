@@ -88,9 +88,11 @@ class ConnectorDiagnostic(BaseModel):
 
 def _redact(details: Mapping[str, object]) -> dict[str, object]:
     return {
-        key: "[REDACTED]"
-        if any(fragment in key.casefold() for fragment in _SECRET_FRAGMENTS)
-        else value
+        key: (
+            "[REDACTED]"
+            if any(fragment in key.casefold() for fragment in _SECRET_FRAGMENTS)
+            else value
+        )
         for key, value in details.items()
     }
 
