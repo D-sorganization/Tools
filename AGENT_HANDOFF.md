@@ -1,5 +1,16 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 PR #4339 current-parent ancestry candidate
+
+The clean `feat/4274-regional-surface-ui` worktree normally merges exact
+published child `cbb9c0a6bdc6a50f59f7a661139b9d53e1892980` with exact newly
+published #4335 parent `9e01ccc3e891cc45907293751a192624195a77a5`,
+while preserving #4339's `feat/4271-regional-wire-contract` base. Production
+UI, contract, resolver, regional physics, and ground ancestry merge without
+conflict. Only SPEC, manifest, and handoffs are reconciled. Independent review,
+ordinary fast-forward publication, fresh protected CI/approval, dependency
+integration, and release remain required.
+
 ## 2026-08-10 PR #4339 stale-validation invalidation follow-up
 
 Rendered exact-head browser QA found that a validated one-overlay readback
@@ -17,7 +28,101 @@ is unrelated. This changes no wire schema, provenance digest, physics, or
 persistence boundary; fresh protected CI is still required before merge.
 
 > Update this file in every implementation commit and every push to `main`.
-> Last updated: 2026-08-10.
+> Last updated: 2026-08-11.
+
+## 2026-08-11 PR #4335 current-parent ancestry candidate
+
+The clean dedicated `feat/4271-regional-wire-contract` worktree starts from
+exact live PR #4335 child `74a053d2d544da9f44a88007660ad28c0127f285`
+and normally merges exact newly published PR #4332 parent
+`04ccf08dd990de1cd056a3420e67772773a4be2e` as its second parent. PR #4335
+keeps base `feat/4271-regional-surface-transitions`; neither branch is rebased,
+retargeted, rewritten, force-pushed, or published by this reconciliation.
+Production physics, wire contracts, golden fixtures, numerical ordering, and
+public APIs merge byte-exactly; only SPEC, manifest, and handoff records require
+truthful reconciliation.
+
+The child retains the strict cross-runtime regional-plan request/result wire
+contract, canonical JSON/SHA-256 evidence, fail-closed parsing, and Python
+resolver adapter. The parent retains bounded coplanar regional transitions and
+the complete reconciled impact/bounce/skid/roll ancestry. Changing normals,
+height or surface-velocity discontinuities, terrain deformation, torsional-spin
+damping, roll-to-skid transitions, internal transition-ledger export, regional
+UI, compiled or TypeScript regional physics, downstream parity, protected CI,
+review, normal stack integration, and main release remain open. This local
+merge is not release evidence and requires independent review before an
+ordinary fast-forward publication.
+
+Merged-tree qualification is `132` focused Python ground tests and `9`
+focused React regional/ground-contract tests passing. Pinned Ruff 0.14.10 check
+and format pass all `45` ground Python files. Pinned MyPy 1.13 passes the exact
+two-file isolated CI boundary and all `31` production modules under the coherent
+whole-package profile that disables only redundant-cast warnings; those casts
+remain required by the isolated protected profile. Bandit reports no
+medium/high finding. Documentation governance, manifest validation/layout and
+all `8` manifest contracts, changed-production and minimum-test policies, the
+official 500-LOC PR-delta gate (`6` files, zero violations), diff checks, and
+mandatory maxima of `392` module lines, `46` function lines, and `4` parameters
+all pass.
+
+## 2026-08-11 PR #4332 current-parent ancestry candidate
+
+The clean dedicated `feat/4271-regional-surface-transitions` worktree starts
+from exact live PR #4332 child `1a48d749af508843fac2a5102f4dd56294429bda`
+and normally merges exact newly published `feat/4271-ground-skid-roll` parent
+`0ea6740965068542e9d8c7449e06ec07d88969e0` as its second parent. PR #4332
+keeps base `feat/4271-ground-skid-roll`; neither branch is rebased, retargeted,
+rewritten, force-pushed, or published by this reconciliation. The only textual
+merge conflict is the independent SPEC-version collision. SPEC 1.14.27 retains
+the regional child record after the parent's 1.14.26 entry; production physics,
+contracts, schemas, numerical ordering, and public APIs merge without conflict.
+
+The child retains bounded coplanar material overlays, explicit precedence,
+exact quadratic boundary splitting, base-edge precedence, state and energy
+continuity, strict `surface_transition` evidence, request-bound transition
+limits, and randomized piecewise-analytic coverage. The current parent retains
+its reviewed impact, bounce, skid, roll, resistance, qualified-rest, edge,
+composition, and passive-ledger behavior. Changing normals, height or
+surface-velocity discontinuities, terrain deformation, torsional-spin damping,
+roll-to-skid transitions, regional UI, compiled regional physics, downstream
+parity, protected CI, review, normal stack integration, and main release remain
+open. This local merge is not release evidence and requires independent review
+before an ordinary fast-forward publication.
+
+Merged-tree qualification is `121` focused Python ground/regional tests and
+`5` focused React ground-contract tests passing. Pinned Ruff 0.14.10 check and
+format pass all `41` ground Python files; pinned MyPy 1.13 passes all `28`
+ground production modules; and Bandit reports no medium/high finding. The
+campaign manifest validator and all `8` manifest contracts, documentation
+governance, changed-production policy, minimum test contract, both parent and
+child diff checks, and the official 500-LOC changed-file gate (`14` files,
+zero violations) pass. Production maxima are `392` lines per module, `46`
+lines per function, and `4` parameters excluding `self`/`cls`. The manifest
+now records open PR #4332 at its still-published child head and open PR #4304
+at its exact newly published parent head; neither record claims protected or
+main-release evidence.
+
+## 2026-08-11 PR #4304 current-parent ancestry candidate
+
+The clean dedicated `feat/4271-ground-skid-roll` worktree first fast-forwarded
+to exact live PR #4304 child `52d9a6a978d8e6b8b19ef92f02f265c9058b00ad`,
+then normally merged exact live `feat/4270-ground-impact-bounce` parent
+`cf6e72bad98e5f36f782254942e6895b8b71e670`. The PR base remains unchanged;
+neither branch was rebased, retargeted, rewritten, force-pushed, or published.
+The automatic merge was conflict-free. Its only child-tree change before this
+documentation reconciliation is deterministic formatting in the existing
+skid/roll regression test; production physics, contracts, schemas, numerical
+ordering, and public APIs remain unchanged.
+
+Local qualification on the merge candidate is `115` focused ground
+tests passing on CPython 3.13, pinned Ruff 0.14.10 clean across the ground
+package and tests, and pinned MyPy 1.13 clean across all `25` ground production
+modules. The manifest validator and all `8` manifest tests, documentation
+governance, exact-parent and exact-child diff checks, changed-production policy,
+the official changed-file 500-LOC budget, and mandatory production limits of
+400 lines per module, 50 lines per function, and four parameters all pass. The
+local merge is a PUBLISH candidate for independent review only; protected
+exact-head CI, approval, normal child propagation, and publication remain open.
 
 ## 2026-08-10 issue #4274 matched regional surface editor local child
 
