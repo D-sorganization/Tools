@@ -8,6 +8,7 @@ import numpy as np
 from mpl_toolkits.mplot3d.axes3d import Axes3D
 
 from rate_of_closure.application.camera_presets import CameraViewId
+from rate_of_closure.mesh import HeadMesh
 from rate_of_closure.model import ImpactScenario
 
 SHAFT_STUB_M = 0.35
@@ -72,7 +73,25 @@ def head_wireframe(scenario: ImpactScenario) -> dict[str, np.ndarray]:
 
 def display_points(points: np.ndarray) -> np.ndarray:
     """Map app-frame points to Matplotlib display axes ``(z, x, y)``."""
-    return np.asarray(points)[..., [2, 0, 1]]
+    displayed: np.ndarray = np.asarray(points)[..., [2, 0, 1]]
+    return displayed
+
+
+def head_shift(mesh: HeadMesh, scenario: ImpactScenario) -> np.ndarray:
+    """Return the +x translation placing the mesh face at GC-to-face."""
+    face_depth = scenario.com_to_face_mm / 1000.0
+    shift: np.ndarray = np.array(
+        [face_depth - float(mesh.triangles[..., 0].max()), 0.0, 0.0]
+    )
+    return shift
+
+
+def shifted_point(
+    point: np.ndarray, mesh: HeadMesh, scenario: ImpactScenario
+) -> np.ndarray:
+    """Return one model-frame point translated with the clubhead mesh."""
+    shifted: np.ndarray = np.asarray(point + head_shift(mesh, scenario))
+    return shifted
 
 
 def canonical_axis_visibility(
@@ -108,7 +127,9 @@ __all__ = [
     "SHAFT_STUB_M",
     "canonical_axis_visibility",
     "display_points",
+    "head_shift",
     "head_wireframe",
     "rodrigues",
     "set_axis_visibility",
+    "shifted_point",
 ]

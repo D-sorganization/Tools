@@ -45,14 +45,15 @@ from rate_of_closure.units import FIELD_GUIDANCE
 
 _SHAFT_STUB = club_view_geometry.SHAFT_STUB_M
 _display = club_view_geometry.display_points
+_head_shift = club_view_geometry.head_shift
 _head_wireframe = club_view_geometry.head_wireframe
 _rodrigues = club_view_geometry.rodrigues
+_shifted_point = club_view_geometry.shifted_point
 
 logger = logging.getLogger(__name__)
 
 __all__ = ["VIEW_MODES", "Club3DView"]
 
-# Fallback palette (theme-neutral, matches shared CHART_COLORS hues).
 _COL_FACE = "#0A84FF"
 _COL_BODY = "#8b949e"
 _COL_SHAFT = "#AC8E68"
@@ -62,8 +63,6 @@ _COL_IMPACT = "#FFD60A"
 _COL_GROUND = "#8b949e"
 _COL_COG = "#FF9F0A"
 
-# STL-mesh shading: fixed world-frame light and a steel-gray base tint.
-# Kept identical to the web clone (src/components/ClubCanvas.tsx).
 _LIGHT_DIR = np.array([0.3, 0.8, 0.5]) / np.linalg.norm([0.3, 0.8, 0.5])
 _MESH_BASE_RGB = np.array([0.56, 0.62, 0.70])
 _MESH_AMBIENT = 0.22
@@ -113,7 +112,6 @@ class Club3DView(QWidget):
         self._canvas.mpl_connect("scroll_event", self._on_scroll)
         self._canvas.mpl_connect("button_release_event", self._on_orbit_release)
 
-    # ── construction ────────────────────────────────────────────────
     def _build_playback_bar(self) -> QHBoxLayout:
         bar = QHBoxLayout()
         bar.setContentsMargins(4, 4, 4, 0)
@@ -172,7 +170,6 @@ class Club3DView(QWidget):
         bar.addWidget(self._show_cg_check)
         return bar
 
-    # ── public API ──────────────────────────────────────────────────
     def set_scenario(self, scenario: ImpactScenario) -> None:
         """Adopt a new scenario without starting background animation."""
         self._scenario = scenario
@@ -190,7 +187,8 @@ class Club3DView(QWidget):
 
     def is_playing(self) -> bool:
         """Whether the clubhead animation timer is running."""
-        return self._timer.isActive()
+        active: bool = self._timer.isActive()
+        return active
 
     def set_view_mode(self, mode: str) -> None:
         """Select a display mode by name (see :data:`VIEW_MODES`)."""
@@ -201,7 +199,8 @@ class Club3DView(QWidget):
 
     def view_mode(self) -> str:
         """The active display mode name."""
-        return self._mode_combo.currentText()
+        mode: str = self._mode_combo.currentText()
+        return mode
 
     def set_zoom(self, factor: float) -> None:
         """Set the camera zoom factor (0.3-4.0; larger = closer)."""
@@ -285,7 +284,8 @@ class Club3DView(QWidget):
         shifted with the mesh; ``None`` for the wireframe hosel."""
         if self._scenario is None or self._mesh is None or self._hosel is None:
             return None
-        return np.asarray(self._hosel + self._head_shift(self._mesh, self._scenario))
+        attachment: np.ndarray = _shifted_point(self._hosel, self._mesh, self._scenario)
+        return attachment
 
     def cg_marker_point(self) -> np.ndarray | None:
         """Model-frame CG marker location, or ``None`` when hidden."""
@@ -293,13 +293,14 @@ class Club3DView(QWidget):
             return None
         if self._mesh is None or self._cog is None:
             return np.zeros(3)  # spec CG fallback: the reference point
-        return np.asarray(self._cog + self._head_shift(self._mesh, self._scenario))
+        marker: np.ndarray = _shifted_point(self._cog, self._mesh, self._scenario)
+        return marker
 
     @staticmethod
     def _head_shift(mesh: HeadMesh, scenario: ImpactScenario) -> np.ndarray:
         """+x shift placing the mesh's face plane at GC-to-face."""
-        d = scenario.com_to_face_mm / 1000.0
-        return np.array([d - float(mesh.triangles[..., 0].max()), 0.0, 0.0])
+        shift: np.ndarray = _head_shift(mesh, scenario)
+        return shift
 
     def has_mesh(self) -> bool:
         """Whether an STL mesh is currently rendered."""
@@ -310,7 +311,6 @@ class Club3DView(QWidget):
         self._timer.stop()
         self._play_button.setChecked(False)
 
-    # ── internals ──────────────────────────────────────────────────
     def _on_load_mesh_clicked(self) -> None:
         path, _filter = QFileDialog.getOpenFileName(
             self, "Load Clubhead STL", "", "STL meshes (*.stl);;All files (*)"

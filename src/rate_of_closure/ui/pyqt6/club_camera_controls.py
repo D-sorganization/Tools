@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from typing import cast
 
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -153,12 +152,10 @@ class ClubCameraControls(QWidget):
 
     def angles(self) -> tuple[float, float]:
         """Return the exact current Matplotlib elevation and azimuth."""
-        return cast(
-            tuple[float, float],
-            matplotlib_angles(
-                camera_preset(self._state.preset_id, self._state.face_on_side)
-            ),
+        angles: tuple[float, float] = matplotlib_angles(
+            camera_preset(self._state.preset_id, self._state.face_on_side)
         )
+        return angles
 
     def set_zoom(self, zoom: float) -> None:
         """Set bounded zoom without changing orientation or target."""
