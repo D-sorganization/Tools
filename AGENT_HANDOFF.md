@@ -25,6 +25,10 @@
   PyQt canvas, and Matplotlib patch boundaries are repaired with explicit
   types and casts only. The exact scoped CI mode passes 11 files, 134 focused
   tests pass, and scoped Ruff lint/format pass; runtime behavior is unchanged.
+- The next protected run passed changed-file Mypy and both Ruff gates, then
+  exposed six empty source-local test-package `__init__.py` markers in the
+  assertion-quality gate. The repository allowlist now classifies only those
+  package markers as support files; executable test modules remain enforced.
 - The first protected `quality-gate` run at the repaired head exposed nine
   misplaced Ruff suppressions in Sidekick GUI tests inherited from `main`.
   Their intentionally retained QApplication references now use `_app`, so the

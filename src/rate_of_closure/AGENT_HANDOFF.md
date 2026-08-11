@@ -31,6 +31,11 @@ agent must verify the exact GitHub head and protected checks, obtain the
 required approval, and merge normally. Do not claim #4119 or any epic complete
 before protected release to `main`.
 
+The first protected run at the fully typed head passed Mypy and Ruff but found
+six empty `swing_sim/*/tests/__init__.py` package markers in the changed-test
+assertion gate. The repository allowlist now exempts source-local test-package
+markers only; it does not exempt executable test modules.
+
 The repository's authoritative formatter is Ruff. The current-main merge
 required a mechanical `ruff format` normalization of 101 Python files,
 including four Rate/swing-sim files; there is no Rate behavior change, and
