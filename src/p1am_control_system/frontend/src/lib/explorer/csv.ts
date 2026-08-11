@@ -172,9 +172,14 @@ export function parseCsv(text: string): CsvTable {
     throw new Error("parseCsv: no data rows (header only)");
   }
 
-  const header = rows[0].map((h) => h.trim());
+  const headerRow = rows[0];
+  const colCount = headerRow.length;
+  // ⚡ Bolt Optimization: Replace rows[0].map with single-pass loop
+  const header = new Array(colCount);
+  for (let c = 0; c < colCount; c++) {
+    header[c] = headerRow[c].trim();
+  }
   const dataRows = rows.slice(1);
-  const colCount = header.length;
 
   // Materialize each source column's raw cells (padding short rows).
   // ⚡ Bolt Optimization: Replace dataRows.map() per column with a single-pass loop
