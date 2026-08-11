@@ -1469,3 +1469,26 @@ zero-warning ESLint, the 202-module production build, campaign-manifest
 validation plus eight manifest tests, documentation governance, module-size
 budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
 remains.
+
+## 2026-08-11 Regional execution ledger inspection
+
+Local unpublished `feat/4271-regional-event-inspection` is an exact child of PR
+#4352 head `10fdac4860035fd5c845a621752e93688e2e674e`. Matched PyQt6 and React
+surfaces now inspect validated ground-event and regional-transition rows with
+explicit SI units, frames, before/after velocity and spin vectors, and bound
+from/to region and surface identities. Both retain the full accepted envelope,
+cap rendered ledgers at 256 rows, and disclose truncation. Null-result ledgers
+stay empty and partial endpoint warnings stay visible.
+
+This remains import/readback only. Trajectory-sample inspection, lossless
+export, executor invocation, playback, calibration workflows, compiled parity,
+downstream parity, protected evidence, release, and #4267/#4271 completion
+remain open. Complete local gates and independent review before any GitHub
+write.
+
+Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
+111 React files / 692 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 203-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
+remains.

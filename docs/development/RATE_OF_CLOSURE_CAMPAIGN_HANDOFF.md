@@ -1785,3 +1785,27 @@ zero-warning ESLint, the 202-module production build, campaign-manifest
 validation plus eight manifest tests, documentation governance, module-size
 budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
 remains. Independent review is required before publication.
+
+## 2026-08-11 Regional execution ledger inspection continuation
+
+Local branch `feat/4271-regional-event-inspection` starts exactly at draft PR
+#4352 head `10fdac4860035fd5c845a621752e93688e2e674e`. The bounded matched-
+client slice presents the already-validated ground-event and plan-bound
+regional-transition ledgers without running or approximating physics. Events
+retain sequence/type, frame, SI time/position, and before/after linear and
+angular velocities. Transitions retain the matching event, SI time/position,
+and from/to region and surface identities.
+
+The complete accepted envelope remains resident, while each table renders a
+maximum of 256 rows and discloses the exact total if truncated. Null results
+show empty ledgers and partial endpoints remain censored. Trajectory-sample
+inspection, lossless export, executor construction/invocation, playback,
+measured calibration, compiled parity, Upstream consumers, protected evidence,
+release, and #4267/#4271 completion remain open.
+
+Exact local gates are green: 208 expanded Python ground/plan/PyQt/layout tests,
+111 React files / 692 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 203-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
+remains. Independent review is required before publication.

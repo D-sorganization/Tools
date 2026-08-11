@@ -25,6 +25,34 @@ class RegionalExecutionWarningReadback:
 
 
 @dataclass(frozen=True)
+class RegionalExecutionEventReadback:
+    """One validated discontinuity with explicit SI quantities and frame."""
+
+    sequence: int
+    event_type: str
+    time_s: float
+    frame: str
+    position_m: tuple[float, float, float]
+    velocity_before_m_s: tuple[float, float, float]
+    velocity_after_m_s: tuple[float, float, float]
+    angular_velocity_before_rad_s: tuple[float, float, float]
+    angular_velocity_after_rad_s: tuple[float, float, float]
+
+
+@dataclass(frozen=True)
+class RegionalExecutionTransitionReadback:
+    """One plan-bound material transition from the validated ledger."""
+
+    event_sequence: int
+    time_s: float
+    position_m: tuple[float, float, float]
+    from_region_id: str | None
+    to_region_id: str | None
+    from_surface_id: str
+    to_surface_id: str
+
+
+@dataclass(frozen=True)
 class RegionalExecutionReadback:
     """Small UI-neutral projection of one frozen execution envelope."""
 
@@ -54,7 +82,10 @@ class RegionalExecutionReadback:
     calibration_source: str | None
     calibration_confidence: float | None
     observed_phases: tuple[str, ...]
+    events: tuple[RegionalExecutionEventReadback, ...]
+    transitions: tuple[RegionalExecutionTransitionReadback, ...]
     warnings: tuple[RegionalExecutionWarningReadback, ...]
+    unit_system: str
     executor_source_revision: str
     executor_input_sha256: str
     limitations: tuple[str, ...]
@@ -100,6 +131,36 @@ def regional_execution_readback(
             for item in ground.warnings
         )
     )
+    events = (
+        ()
+        if ground is None
+        else tuple(
+            RegionalExecutionEventReadback(
+                sequence=item.sequence,
+                event_type=item.event_type.value,
+                time_s=item.time_s,
+                frame=item.frame.value,
+                position_m=item.position_m,
+                velocity_before_m_s=item.velocity_before_m_s,
+                velocity_after_m_s=item.velocity_after_m_s,
+                angular_velocity_before_rad_s=item.angular_velocity_before_rad_s,
+                angular_velocity_after_rad_s=item.angular_velocity_after_rad_s,
+            )
+            for item in ground.events
+        )
+    )
+    transitions = tuple(
+        RegionalExecutionTransitionReadback(
+            event_sequence=item.event_sequence,
+            time_s=item.time_s,
+            position_m=item.position_m,
+            from_region_id=item.from_region_id,
+            to_region_id=item.to_region_id,
+            from_surface_id=item.from_surface_id,
+            to_surface_id=item.to_surface_id,
+        )
+        for item in result.transitions
+    )
     return RegionalExecutionReadback(
         status=result.status.value,
         failure_reason=None
@@ -135,7 +196,10 @@ def regional_execution_readback(
             None if ground is None else ground.calibration.confidence
         ),
         observed_phases=phases,
+        events=events,
+        transitions=transitions,
         warnings=warnings,
+        unit_system=result.unit_system,
         executor_source_revision=result.executor_provenance.source_revision,
         executor_input_sha256=result.executor_provenance.input_sha256,
         limitations=result.limitations,
@@ -164,7 +228,9 @@ def read_regional_execution_evidence(
 
 __all__ = [
     "RegionalExecutionEvidence",
+    "RegionalExecutionEventReadback",
     "RegionalExecutionReadback",
+    "RegionalExecutionTransitionReadback",
     "RegionalExecutionWarningReadback",
     "read_regional_execution_evidence",
     "regional_execution_readback",

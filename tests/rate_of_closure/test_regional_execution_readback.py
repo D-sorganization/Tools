@@ -59,6 +59,22 @@ def test_readback_reports_frozen_executor_evidence_without_running_physics() -> 
     assert readback.calibration_source == "documented literature basis"
     assert readback.calibration_confidence == pytest.approx(0.6)
     assert readback.observed_phases == ("impact", "skid", "roll")
+    assert readback.unit_system == "SI"
+    assert len(readback.events) == 4
+    assert readback.events[0].sequence == 0
+    assert readback.events[0].event_type == "first_contact"
+    assert readback.events[0].time_s == pytest.approx(1.005)
+    assert readback.events[0].position_m == pytest.approx((0.0, 0.02135, 0.0))
+    assert readback.events[0].velocity_before_m_s == pytest.approx((2.0, -0.1, 0.0))
+    assert readback.events[0].angular_velocity_after_rad_s == pytest.approx(
+        (0.0, 0.0, -93.67681498829)
+    )
+    assert len(readback.transitions) == 1
+    assert readback.transitions[0].event_sequence == 3
+    assert readback.transitions[0].from_region_id is None
+    assert readback.transitions[0].to_region_id == "rough-band"
+    assert readback.transitions[0].from_surface_id == "firm-fairway"
+    assert readback.transitions[0].to_surface_id == "regional-rough"
     assert len(readback.warnings) == 4
     assert readback.warnings[-1].code == "CENSORED_ENDPOINT"
     assert readback.warnings[-1].severity == "warning"
@@ -81,6 +97,8 @@ def test_null_result_readback_does_not_fabricate_ground_metrics() -> None:
     assert readback.calibration_source is None
     assert readback.calibration_confidence is None
     assert readback.observed_phases == ()
+    assert readback.events == ()
+    assert readback.transitions == ()
     assert readback.warnings == ()
 
 
@@ -145,6 +163,23 @@ def test_pyqt_import_is_transactional_and_invalidated_by_plan_edit(
     assert "bounce 0.040 m" in box.readback_label.toPlainText()
     assert "final offline 0.000 m" in box.readback_label.toPlainText()
     assert "CENSORED_ENDPOINT" in box.readback_label.toPlainText()
+    assert "units: SI" in box.readback_label.toPlainText()
+    assert box.event_table.rowCount() == 4
+    assert box.event_table.item(0, 1).text() == "first_contact"
+    assert box.event_table.item(0, 2).text() == "1.005000"
+    assert box.event_table.item(0, 3).text() == "(0.000000, 0.021350, 0.000000)"
+    assert box.transition_table.rowCount() == 1
+    assert box.transition_table.item(0, 3).text() == "base / firm-fairway"
+    assert box.transition_table.item(0, 4).text() == "rough-band / regional-rough"
+    readback = regional_execution_readback(result, result.regional_plan)
+    many_events = tuple(
+        replace(readback.events[0], sequence=index) for index in range(257)
+    )
+    regional_execution_evidence._populate_event_table(box.event_table, many_events)
+    assert box.event_table.rowCount() == 256
+    assert regional_execution_evidence._ledger_summary("Events", 257) == (
+        "Events: showing first 256 of 257 validated rows."
+    )
     assert "No physics executed" in box.status_label.text()
     accepted = box.readback_label.toPlainText()
     target.write_text('{"request_id":"one","request_id":"two"}', encoding="utf-8")
@@ -153,3 +188,5 @@ def test_pyqt_import_is_transactional_and_invalidated_by_plan_edit(
     assert "Prior accepted evidence was preserved" in box.status_label.text()
     box.clear()
     assert box.readback_label.toPlainText() == "No accepted evidence"
+    assert box.event_table.rowCount() == 0
+    assert box.transition_table.rowCount() == 0

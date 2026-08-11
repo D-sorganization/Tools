@@ -35,6 +35,23 @@ describe("regional execution evidence readback", () => {
     expect(readback.calibrationSource).toBe("documented literature basis");
     expect(readback.calibrationConfidence).toBeCloseTo(0.6);
     expect(readback.observedPhases).toEqual(["impact", "skid", "roll"]);
+    expect(readback.unitSystem).toBe("SI");
+    expect(readback.events).toHaveLength(4);
+    expect(readback.events[0]).toMatchObject({
+      sequence: 0,
+      eventType: "first_contact",
+      timeS: 1.005,
+      positionM: [0, 0.02135, 0],
+      velocityBeforeMps: [2, -0.1, 0],
+      angularVelocityAfterRadS: [0, 0, -93.67681498829],
+    });
+    expect(readback.transitions).toEqual([expect.objectContaining({
+      eventSequence: 3,
+      fromRegionId: null,
+      toRegionId: "rough-band",
+      fromSurfaceId: "firm-fairway",
+      toSurfaceId: "regional-rough",
+    })]);
     expect(readback.warnings[readback.warnings.length - 1]).toEqual({
       code: "CENSORED_ENDPOINT",
       severity: "warning",
@@ -56,6 +73,8 @@ describe("regional execution evidence readback", () => {
     expect(readback.calibrationSource).toBeNull();
     expect(readback.calibrationConfidence).toBeNull();
     expect(readback.observedPhases).toEqual([]);
+    expect(readback.events).toEqual([]);
+    expect(readback.transitions).toEqual([]);
     expect(readback.warnings).toEqual([]);
   });
 
