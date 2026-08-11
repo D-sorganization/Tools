@@ -3,6 +3,15 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
+## 2026-08-10 Repaired camera-parent propagation into PR #4301
+
+Draft PR `#4301` remains on `fix/rate-mobile-tools-menu`, based on
+`feat/4284-camera-snap-tracking`, and now normally incorporates exact repaired
+camera parent `104503aac9779b195d46d38e8ed32611ffc8dfd7`. Mobile-toolstrip
+production/test code did not conflict; only the four additive handoff/spec
+files required reconciliation. No rebase, retarget, force-push, parent rewrite,
+or history rewrite was used. Fresh local verification and protected CI remain.
+
 ## 2026-08-10 PR #4301 four-surface parent propagation
 
 Draft PR #4301 preserves base `feat/4284-camera-snap-tracking` and normally
@@ -57,6 +66,24 @@ manifest-layout, conflict-marker, and diff gates.
 Independent exact-tree review found no findings. Protected current-head CI,
 installed-consumer evidence, native rendered QA, and dependency-ordered
 release remain open. Neither #4264 nor #4260 is complete.
+## 2026-08-10 Current-parent propagation into camera PR #4298
+
+Draft PR `#4298` retains branch `feat/4284-camera-snap-tracking` and base
+`feat/4199-wind-workflow`. It now normally incorporates exact current parent
+head `1e82f15026786ea0b08f78f4c001590ddce9ff39`; camera production/test code
+did not conflict, and only the four additive handoff/spec files required
+reconciliation. No rebase, retarget, force-push, parent rewrite, or history
+rewrite was used. Fresh local verification, protected CI, and review remain.
+
+## 2026-08-10 Repaired scalar-adapter propagation into wind workflow
+
+Draft PR `#4282` remains on `feat/4199-wind-workflow`, based on
+`feat/4199-wind-scalar-adapter`. It now normally incorporates repaired parent
+head `d6fb04e07c2a625412e9208b07103acdc42c621b` after that head's quality gate
+passed. The merge had no wind-workflow production/test conflict and used no
+rebase, retarget, force-push, or history rewrite. Twenty-five focused tests and
+the documentation, size, and whitespace gates pass locally; protected CI,
+review, and later-stack propagation remain outstanding.
 
 ## 2026-08-10 PR #4298 exact hosted-mypy repair
 
