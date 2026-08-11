@@ -60,6 +60,7 @@ interface AppWorkspaceState {
   readonly setViewState: React.Dispatch<React.SetStateAction<PrimaryViewState>>;
   readonly viewWorkspace: ViewWorkspace;
   readonly setViewWorkspace: React.Dispatch<React.SetStateAction<ViewWorkspace>>;
+  readonly viewCommandRevision: number;
   readonly theme: AppTheme;
   readonly shortcutHelpOpen: boolean;
   readonly setShortcutHelpOpen: (open: boolean) => void;
@@ -72,6 +73,7 @@ interface AppWorkspaceState {
 export function useAppWorkspace(): AppWorkspaceState {
   const [viewState, setViewState] = useState(loadPrimaryViewState);
   const [viewWorkspace, setViewWorkspace] = useState(loadViewWorkspace);
+  const [viewCommandRevision, setViewCommandRevision] = useState(0);
   const [theme, setTheme] = usePersistedTheme();
   const [shortcutHelpOpen, setShortcutHelpOpen] = useState(false);
   const [moduleHelpOpen, setModuleHelpOpen] = useState(false);
@@ -89,6 +91,7 @@ export function useAppWorkspace(): AppWorkspaceState {
     const selectedKind = viewKindForCommand(command);
     if (selectedKind !== null) {
       setViewWorkspace((current) => workspaceForSingleView(selectedKind, current));
+      setViewCommandRevision((current) => current + 1);
       activatePrimaryView("simulation");
       return;
     }
@@ -105,7 +108,7 @@ export function useAppWorkspace(): AppWorkspaceState {
 
   useGlobalCommandShortcuts(handleCommand);
   return {
-    viewState, setViewState, viewWorkspace, setViewWorkspace,
+    viewState, setViewState, viewWorkspace, setViewWorkspace, viewCommandRevision,
     theme, shortcutHelpOpen, setShortcutHelpOpen,
     moduleHelpOpen, setModuleHelpOpen, activatePrimaryView, handleCommand,
   };

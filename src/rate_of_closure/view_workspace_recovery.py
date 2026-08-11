@@ -28,7 +28,7 @@ def recover_workspace_document(document: object) -> ViewWorkspace:
     active_raw = document.get("active_slot_id", document.get("active"))
     active = active_raw if active_raw in identifiers else identifiers[0]
     return ViewWorkspace(
-        layout=_recover_layout(document.get("layout"), len(slots)),
+        layout=normalized_workspace_layout(document.get("layout"), len(slots)),
         slots=slots,
         active_slot_id=str(active),
         playback=_recover_playback(document.get("playback")),
@@ -76,16 +76,18 @@ def _slot(value: object) -> ViewSlot | None:
     return ViewSlot(id=identifier, kind=kind, legend=legend)
 
 
-def _recover_layout(value: object, slot_count: int) -> ViewLayout:
+def normalized_workspace_layout(value: object, slot_count: int) -> ViewLayout:
+    """Return the only valid layout family for the visible-slot cardinality."""
     if slot_count == 1:
         return ViewLayout.SINGLE
-    try:
-        layout = ViewLayout(value)
-    except (TypeError, ValueError):
-        layout = ViewLayout.SPLIT_HORIZONTAL if slot_count == 2 else ViewLayout.GRID
-    if layout is ViewLayout.SINGLE:
-        return ViewLayout.SPLIT_HORIZONTAL if slot_count == 2 else ViewLayout.GRID
-    return layout
+    if slot_count >= len(SUPPORTED_VIEW_KINDS):
+        return ViewLayout.GRID
+    return (
+        ViewLayout.SPLIT_VERTICAL
+        if value is ViewLayout.SPLIT_VERTICAL
+        or value == ViewLayout.SPLIT_VERTICAL.value
+        else ViewLayout.SPLIT_HORIZONTAL
+    )
 
 
 def _recover_playback(value: object) -> PlaybackState:
@@ -106,4 +108,8 @@ def _recover_playback(value: object) -> PlaybackState:
     return playback
 
 
-__all__ = ["SUPPORTED_VIEW_KINDS", "recover_workspace_document"]
+__all__ = [
+    "SUPPORTED_VIEW_KINDS",
+    "normalized_workspace_layout",
+    "recover_workspace_document",
+]

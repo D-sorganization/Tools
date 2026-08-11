@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import json
 from collections.abc import Mapping
+from dataclasses import replace
 
-from PyQt6.QtCore import QSettings, QSignalBlocker
+from PyQt6.QtCore import QSettings, QSignalBlocker, QTimer
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -13,11 +14,13 @@ from PyQt6.QtWidgets import (
     QGroupBox,
     QHBoxLayout,
     QLabel,
+    QScrollArea,
     QVBoxLayout,
     QWidget,
 )
 
 from rate_of_closure.view_workspace import (
+    PlaybackState,
     ViewKind,
     ViewLayout,
     ViewSlot,
@@ -26,10 +29,12 @@ from rate_of_closure.view_workspace import (
 )
 from rate_of_closure.view_workspace_recovery import (
     SUPPORTED_VIEW_KINDS,
+    normalized_workspace_layout,
     recover_workspace_document,
 )
 
 _SETTINGS_KEY = "view_compositor/layout_v1"
+_PLAYBACK_PERSIST_DEBOUNCE_MS = 200
 _LABELS = {
     ViewKind.IMPACT: "Impact",
     ViewKind.SWING: "Swing",
@@ -51,6 +56,10 @@ class ViewCompositor(QWidget):
             raise ValueError("compositor requires Impact, Swing, and Flight views")
         self._views: dict[ViewKind, QWidget] = dict(views)
         self._settings = settings
+        self._persist_timer = QTimer(self)
+        self._persist_timer.setSingleShot(True)
+        self._persist_timer.setInterval(_PLAYBACK_PERSIST_DEBOUNCE_MS)
+        self._persist_timer.timeout.connect(lambda: self._persist())
         self._hosts = {kind: self._host(kind, view) for kind, view in views.items()}
         self._layout_combo = QComboBox(self)
         self._checks: dict[ViewKind, QCheckBox] = {}
@@ -78,16 +87,28 @@ class ViewCompositor(QWidget):
         self._apply_workspace(
             ViewWorkspace(
                 layout=ViewLayout.SINGLE,
-                slots=(ViewSlot(id=kind.value, kind=kind),),
+                slots=(self._slot_for_kind(kind),),
                 active_slot_id=kind.value,
                 playback=self._workspace.playback,
             )
         )
 
+    def update_playback(self, playback: PlaybackState) -> None:
+        """Update the owned transport snapshot and debounce durable writes."""
+        playback.validate()
+        if playback == self._workspace.playback:
+            return
+        self._workspace = replace(self._workspace, playback=playback)
+        if self._settings is not None:
+            self._persist_timer.start()
+
     def _build(self) -> None:
         controls = QHBoxLayout()
         controls.addWidget(QLabel("Viewport Layout"))
         self._layout_combo.setAccessibleName("Viewport Layout")
+        self._layout_combo.setToolTip(
+            "Arrange the selected synchronized views as a single panel, split, or grid."
+        )
         for layout in ViewLayout:
             self._layout_combo.addItem(layout.value.replace("_", " ").title(), layout)
         self._layout_combo.currentIndexChanged.connect(self._on_layout_changed)
@@ -95,6 +116,9 @@ class ViewCompositor(QWidget):
         for kind in SUPPORTED_VIEW_KINDS:
             check = QCheckBox(_LABELS[kind])
             check.setAccessibleName(f"Show {_LABELS[kind]} viewport")
+            check.setToolTip(
+                f"Show or hide the synchronized {_LABELS[kind].lower()} viewport."
+            )
             check.toggled.connect(
                 lambda checked, item=kind: self._toggle(item, checked)
             )
@@ -104,7 +128,14 @@ class ViewCompositor(QWidget):
         root = QVBoxLayout(self)
         root.setContentsMargins(0, 0, 0, 0)
         root.addLayout(controls)
-        root.addLayout(self._grid, stretch=1)
+        viewport_surface = QWidget(self)
+        viewport_surface.setLayout(self._grid)
+        viewport = QScrollArea(self)
+        viewport.setObjectName("viewCompositorScrollArea")
+        viewport.setAccessibleName("Synchronized viewport workspace")
+        viewport.setWidgetResizable(True)
+        viewport.setWidget(viewport_surface)
+        root.addWidget(viewport, stretch=1)
 
     def _host(self, kind: ViewKind, view: QWidget) -> QGroupBox:
         host = QGroupBox(f"{_LABELS[kind]} View", self)
@@ -140,6 +171,7 @@ class ViewCompositor(QWidget):
             self._grid.addWidget(host, row, column)
             host.show()
         if persist:
+            self._persist_timer.stop()
             self._persist()
 
     @staticmethod
@@ -175,11 +207,7 @@ class ViewCompositor(QWidget):
             with QSignalBlocker(self._checks[kind]):
                 self._checks[kind].setChecked(True)
             return
-        layout = self._workspace.layout
-        if len(kinds) == 1:
-            layout = ViewLayout.SINGLE
-        elif layout is ViewLayout.SINGLE:
-            layout = ViewLayout.SPLIT_HORIZONTAL
+        layout = normalized_workspace_layout(self._workspace.layout, len(kinds))
         self._set_kinds(layout, kinds)
 
     def _set_kinds(self, layout: ViewLayout, kinds: list[ViewKind]) -> None:
@@ -187,11 +215,17 @@ class ViewCompositor(QWidget):
         identifiers = [kind.value for kind in kinds]
         self._apply_workspace(
             ViewWorkspace(
-                layout=layout,
-                slots=tuple(ViewSlot(id=kind.value, kind=kind) for kind in kinds),
+                layout=normalized_workspace_layout(layout, len(kinds)),
+                slots=tuple(self._slot_for_kind(kind) for kind in kinds),
                 active_slot_id=active if active in identifiers else identifiers[0],
                 playback=self._workspace.playback,
             )
+        )
+
+    def _slot_for_kind(self, kind: ViewKind) -> ViewSlot:
+        return next(
+            (slot for slot in self._workspace.slots if slot.kind is kind),
+            ViewSlot(id=kind.value, kind=kind),
         )
 
     def _load_workspace(self) -> ViewWorkspace:

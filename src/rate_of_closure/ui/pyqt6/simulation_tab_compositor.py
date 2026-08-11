@@ -9,7 +9,7 @@ from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
 from rate_of_closure.ui.pyqt6.view_compositor import ViewCompositor
-from rate_of_closure.view_workspace import ViewKind
+from rate_of_closure.view_workspace import PlaybackState, ViewKind
 
 
 class SimulationTabCompositorMixin:
@@ -17,6 +17,7 @@ class SimulationTabCompositorMixin:
 
     _compositor: ViewCompositor
     _compositor_flight_view: FlightView
+    _compositor_swing_view: SimulationView
     _display_tabs: QTabWidget
     _flight_view: FlightView
     _run: SimulationRun | None
@@ -46,6 +47,14 @@ class SimulationTabCompositorMixin:
 
     def _sync_compositor_playback(self, time_s: float) -> None:
         """Map the shared run clock onto solver-relative flight time."""
+        self._compositor.update_playback(
+            PlaybackState(
+                time_s=time_s,
+                playing=self._compositor_swing_view.is_playing(),
+                loop=self._compositor_swing_view.is_looping(),
+                rate=self._compositor_swing_view.playback_rate(),
+            )
+        )
         run = self._run
         if run is None or run.impact_time_s is None:
             return

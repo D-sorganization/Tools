@@ -33,9 +33,15 @@ interface Props {
 
 function gridClass(layout: ViewLayout): string {
   if (layout === "split_vertical") return "grid grid-cols-1 gap-4";
-  if (layout === "split_horizontal") return "grid gap-4 xl:grid-cols-2";
+  if (layout === "split_horizontal") return "grid gap-4 lg:grid-cols-2";
   if (layout === "grid") return "grid gap-4 lg:grid-cols-2";
   return "grid grid-cols-1 gap-4";
+}
+
+function hostClass(kind: ViewKind, layout: ViewLayout): string {
+  const flightSpan = layout === "grid" && kind === "flight" ? " lg:col-span-2" : "";
+  return "min-h-72 min-w-0 overflow-hidden rounded-xl border " +
+    `border-slate-700 bg-slate-950/40 p-3${flightSpan}`;
 }
 
 /** Arrange independent viewport hosts around one synchronized run timeline. */
@@ -98,7 +104,7 @@ export function ViewCompositor(props: Props) {
             data-viewport-id={id}
             data-run-identity={props.runIdentity}
             data-playback-time={props.timeS.toFixed(3)}
-            className="min-h-72 min-w-0 overflow-hidden rounded-xl border border-slate-700 bg-slate-950/40 p-3"
+            className={hostClass(kind, props.workspace.layout)}
           >
             <h3 className="mb-2 text-sm font-semibold text-sky-200">{LABELS[kind]} View</h3>
             {props.renderViewport(kind)}

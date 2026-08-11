@@ -26,7 +26,7 @@ import {
   screwPresentation,
 } from "./screwPresentation";
 
-const VIEWS = ["Strike", "Swing", "Kinetics", "Flight"] as const;
+const VIEWS = ["Strike", "Swing", "Kinetics", "Flight", "Multi View"] as const;
 type ViewName = (typeof VIEWS)[number];
 
 const TOGGLE_GUIDANCE = {
@@ -48,6 +48,7 @@ interface Props {
   distanceUnit: string;
   viewWorkspace?: ViewWorkspace;
   onViewWorkspaceChange?: (workspace: ViewWorkspace) => void;
+  viewCommandRevision?: number;
 }
 
 export function SimulationDisplay({
@@ -61,11 +62,13 @@ export function SimulationDisplay({
   distanceUnit,
   viewWorkspace,
   onViewWorkspaceChange,
+  viewCommandRevision = 0,
 }: Props) {
-  const [playing, setPlaying] = useState(false);
-  const [loop, setLoop] = useState(false);
-  const [rate, setRate] = useState(1);
-  const [time, setTime] = useState(0);
+  const initialPlayback = viewWorkspace?.playback;
+  const [playing, setPlaying] = useState(initialPlayback?.playing ?? false);
+  const [loop, setLoop] = useState(initialPlayback?.loop ?? false);
+  const [rate, setRate] = useState(initialPlayback?.rate ?? 1);
+  const [time, setTime] = useState(initialPlayback?.timeS ?? 0);
   const [showBall, setShowBall] = useState(true);
   const [showGround, setShowGround] = useState(true);
   const [showCourse, setShowCourse] = useState(true);
@@ -73,8 +76,9 @@ export function SimulationDisplay({
   const [screwEntityId, setScrewEntityId] = useState("club");
   const [showFlight, setShowFlight] = useState(false);
   const [showSwingTrail, setShowSwingTrail] = useState(false);
-  const [view, setView] = useState<ViewName>("Swing");
+  const [view, setView] = useState<ViewName>(viewWorkspace ? "Multi View" : "Swing");
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const workspaceRef = useRef(viewWorkspace);
   const screwEntities = useMemo(() => screwEntityOptions(run), [run]);
   const screwData = useMemo(() =>
     run && showScrew ? screwPresentation(run, time, screwEntityId) : null,
@@ -115,6 +119,31 @@ export function SimulationDisplay({
     setPlaying(false);
     setScrewEntityId("club");
   }, [run]);
+  useEffect(() => {
+    workspaceRef.current = viewWorkspace;
+  }, [viewWorkspace]);
+  useEffect(() => {
+    if (viewCommandRevision > 0) setView("Multi View");
+  }, [viewCommandRevision]);
+  useEffect(() => {
+    const current = workspaceRef.current;
+    if (!current || !onViewWorkspaceChange) return;
+    const playback = {
+      timeS: playing ? current.playback.timeS : time,
+      playing,
+      loop,
+      rate,
+    };
+    if (
+      playback.timeS === current.playback.timeS &&
+      playback.playing === current.playback.playing &&
+      playback.loop === current.playback.loop &&
+      playback.rate === current.playback.rate
+    ) return;
+    const next = { ...current, playback };
+    workspaceRef.current = next;
+    onViewWorkspaceChange(next);
+  }, [playing, loop, rate, time, onViewWorkspaceChange]);
   useEffect(() => {
     if (!playing || !run) return undefined;
     let last = performance.now();
@@ -160,22 +189,6 @@ export function SimulationDisplay({
       ]} />
   );
 
-  if (viewWorkspace && onViewWorkspaceChange) {
-    return (
-      <section className="min-w-0 space-y-3">
-        <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
-          {playbackControls}
-          <SynchronizedSimulationViews workspace={viewWorkspace}
-            onWorkspaceChange={onViewWorkspaceChange} run={run} input={input}
-            scenario={scenario} effectiveLoftDeg={effectiveLoftDeg}
-            clubSpec={clubSpec} spatialTarget={spatialTarget}
-            onSpatialTargetChange={onSpatialTargetChange} timeS={time}
-            swingCanvasRef={canvasRef} deliveryAngles={deliveryAngles} />
-        </div>
-      </section>
-    );
-  }
-
   return (
     <section className="min-w-0 space-y-3">
       <div className="rounded-xl border border-slate-800/80 bg-slate-900/60 p-4 shadow-lg shadow-black/20 backdrop-blur">
@@ -208,6 +221,15 @@ export function SimulationDisplay({
             emptyText="Run a simulation to populate the flight view."
             layout={targetLayout}
             spatialTarget={spatialTarget} distanceUnit={distanceUnit} />
+        </>}
+        {view === "Multi View" && viewWorkspace && onViewWorkspaceChange && <>
+          {playbackControls}
+          <SynchronizedSimulationViews workspace={viewWorkspace}
+            onWorkspaceChange={onViewWorkspaceChange} run={run} input={input}
+            scenario={scenario} effectiveLoftDeg={effectiveLoftDeg}
+            clubSpec={clubSpec} spatialTarget={spatialTarget}
+            onSpatialTargetChange={onSpatialTargetChange} timeS={time}
+            swingCanvasRef={canvasRef} deliveryAngles={deliveryAngles} />
         </>}
         {view === "Swing" && <>
           {playbackControls}

@@ -3,7 +3,7 @@
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
-## 2026-08-10 Issue #4225 multi-view compositor first slice
+## 2026-08-10 Issue #4225 multi-view compositor rendered-QA slice
 
 The isolated `feat/4225-multiview-compositor` branch is based on exact PR #4324
 head `b8bf8aae43d460ec69d6766f57ed55bb8efb7790`. PyQt6 now owns persistent,
@@ -13,18 +13,30 @@ React provides matching Impact/Swing/Flight hosts, quick-view tabs, visibility
 toggles, responsive layouts, the canonical target editor in Flight, and direct
 toolstrip routing. Visible hosts share run identity and time (flight receives
 impact-relative time), while camera and overlay ownership remains local to
-each host.
+each host. The established Strike, Swing, Kinetics, and Flight displays remain
+reachable beside Multi View; direct toolstrip commands return to Multi View
+and select the requested real host.
 
 The shared `rate_of_closure.view_workspace/1` wire shape is honored on both
 clients. Persistence safely migrates legacy `views` documents and drops unknown
-future IDs with deterministic active-view and layout fallback instead of
-failing application launch. Evidence is 94 focused Python/PyQt tests, pinned
-MyPy 1.13, Ruff/format/compileall, and 114 React files / 680 tests with
-TypeScript, zero-warning ESLint, and a 199-module production build. This is not
-full #4225 completion: rendered computer-control QA, complete focus/layout
-keyboard behavior, export round-trip evidence, protected CI/review, normal
-stack integration, and UpstreamDrift parity are still required. Solver UI was
-not changed.
+future IDs with deterministic active-view and strict cardinality fallback:
+one host is Single, two hosts use a valid split, and three hosts are Grid.
+Valid legend placement survives recovery and transitions. Playback persistence
+comes from the real transport, stores settled time plus play/loop/rate, and is
+debounced in PyQt6 so animation frames do not become settings writes. New
+native controls have hover guidance, and a resizable scroll viewport keeps
+minimum-size plots reachable in constrained grids.
+
+Evidence is the complete 919-test Python/PyQt Rate of Closure suite, focused
+type checks and clean Ruff/format; and 114 React files / 684 tests with
+TypeScript, zero-warning ESLint, and a production build. Browser control at
+1280 x 720 and 760 x 800 verifies balanced distinct hosts, responsive stacking,
+legacy displays, and direct commands. Isolated PyQt6 control at 1282 x 752
+verifies Single to Split Horizontal to Grid normalization, distinct real plots,
+and navigable overflow. This is not full #4225 completion: complete focus and
+keyboard layout manipulation, export round-trip evidence, protected CI/review,
+normal stack integration, and UpstreamDrift parity remain required. Solver UI
+was not changed.
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 

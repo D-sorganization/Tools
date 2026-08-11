@@ -154,7 +154,7 @@ def test_recovery_drops_unknown_view_ids_and_preserves_valid_playback() -> None:
 
     assert [slot.id for slot in recovered.slots] == ["swing", "flight"]
     assert recovered.active_slot_id == "swing"
-    assert recovered.layout is ViewLayout.GRID
+    assert recovered.layout is ViewLayout.SPLIT_HORIZONTAL
     assert recovered.playback == PlaybackState(time_s=0.42, loop=True, rate=0.5)
 
 
@@ -171,3 +171,25 @@ def test_recovery_migrates_legacy_visible_views_with_safe_fallback() -> None:
     assert [slot.id for slot in recovered.slots] == ["impact", "flight"]
     assert recovered.active_slot_id == "impact"
     assert recovered.layout is ViewLayout.SPLIT_HORIZONTAL
+
+
+def test_recovery_normalizes_three_views_to_grid_without_blocking_launch() -> None:
+    recovered = recover_workspace_document(
+        {
+            "format": "rate_of_closure.view_workspace/1",
+            "layout": "split_vertical",
+            "slots": [
+                {"id": "impact", "kind": "impact", "legend": "hidden"},
+                {"id": "swing", "kind": "swing", "legend": "outside_right"},
+                {"id": "flight", "kind": "flight", "legend": "hidden"},
+            ],
+            "active_slot_id": "impact",
+        }
+    )
+
+    assert recovered.layout is ViewLayout.GRID
+    assert [slot.legend for slot in recovered.slots] == [
+        LegendPlacement.HIDDEN,
+        LegendPlacement.OUTSIDE_RIGHT,
+        LegendPlacement.HIDDEN,
+    ]

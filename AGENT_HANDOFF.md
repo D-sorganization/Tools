@@ -3,7 +3,7 @@
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
-## 2026-08-10 Issue #4225 multi-view compositor first slice
+## 2026-08-10 Issue #4225 multi-view compositor rendered-QA slice
 
 Isolated branch `feat/4225-multiview-compositor` starts at exact PR #4324 head
 `b8bf8aae43d460ec69d6766f57ed55bb8efb7790`; no existing branch was rewritten.
@@ -11,20 +11,32 @@ PyQt6 and React now expose real, distinct Impact, Swing, and Flight viewport
 hosts through enabled UI-neutral commands and single, horizontal, vertical, or
 grid layouts. One simulation run and playback clock drive the visible hosts,
 while each real view retains its own camera and overlay state. React preserves
-the established Simulation-to-Flight target-editing workflow inside the new
-Flight host. Both clients persist the version-1 layout and visible-view set and
-recover legacy documents, corrupt data, unknown future IDs, and invalid active
-IDs through a deterministic known-view fallback.
+the established Strike, Swing, Kinetics, and Flight displays beside the new
+Multi View display, including the canonical spatial-target workflow. Direct
+toolstrip commands select a real compositor host without making the legacy
+displays unreachable.
 
-Current local evidence is 94 focused Python/PyQt model, command, compositor,
-simulation-layout, and viewer tests; pinned MyPy 1.13, Ruff, formatting,
-compileall, and diff checks; plus the complete 114-file / 680-test React suite,
-TypeScript, zero-warning ESLint, and the 199-module Vite production build. All
-changed/new production modules remain below 400 lines. This bounded slice does
-not close #4225 or epic #4218: native/browser rendered QA across constrained
-sizes, complete keyboard focus/layout manipulation, workspace export proof,
-protected CI and review, stack integration, and UpstreamDrift parity remain
-open. Do not push or open a PR until the root release owner reviews this slice.
+Independent review tightened the shared contract: one visible host always
+normalizes to Single, two to a valid split, and three to Grid; corrupt saved
+split-plus-three documents recover to Grid instead of blocking launch. Valid
+per-slot legend placement survives recovery and view transitions. Real
+playback state now owns the serialized workspace without writing settings on
+every animation frame: React persists settled time plus play/loop/rate changes,
+and PyQt6 debounces active playback writes. PyQt6 adds hover guidance for every
+new control and a resizable scrolling viewport so minimum-size real plots stay
+navigable instead of being clipped in a desktop grid.
+
+Current local evidence is the complete 919-test Python/PyQt Rate of Closure
+suite, Ruff/format and focused type checks; plus the complete 114-file /
+684-test React suite, TypeScript, zero-warning ESLint, and the production Vite
+build. Browser QA at 1280 x 720 and 760 x 800 proves responsive non-overflowing
+hosts, distinct balanced grid content, legacy-display reachability, and direct
+command routing. Isolated native QA at 1282 x 752 proves persisted Single,
+two-host Split Horizontal, three-host Grid, distinct real plots, and explicit
+overflow navigation. This slice still does not close #4225 or epic #4218:
+complete keyboard focus/layout manipulation, workspace export proof, protected
+CI and review, stack integration, and UpstreamDrift parity remain open. Do not
+push or open a PR until the root release owner reviews this slice.
 
 ## 2026-08-10 Issue #4224 non-obscuring legend rail slice
 

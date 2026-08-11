@@ -13,8 +13,10 @@ export type ViewLayout = (typeof VIEW_LAYOUTS)[number];
 export interface ViewSlot {
   readonly id: ViewKind;
   readonly kind: ViewKind;
-  readonly legend: "hidden" | "outside_right";
+  readonly legend: LegendPlacement;
 }
+
+export type LegendPlacement = "hidden" | "outside_right";
 
 export interface ViewPlayback {
   readonly timeS: number;
@@ -54,13 +56,12 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === "object" && value !== null && !Array.isArray(value);
 const isViewKind = (value: unknown): value is ViewKind =>
   typeof value === "string" && VIEW_KINDS.includes(value as ViewKind);
-const isLayout = (value: unknown): value is ViewLayout =>
-  typeof value === "string" && VIEW_LAYOUTS.includes(value as ViewLayout);
-
 function normalizedLayout(value: unknown, count: number): ViewLayout {
   if (count === 1) return "single";
-  if (isLayout(value) && value !== "single") return value;
-  return count === 2 ? "split_horizontal" : "grid";
+  if (count >= VIEW_KINDS.length) return "grid";
+  return value === "split_vertical" || value === "split_horizontal"
+    ? value
+    : "split_horizontal";
 }
 
 function recoveredPlayback(value: unknown): ViewPlayback {
@@ -79,35 +80,50 @@ function recoveredPlayback(value: unknown): ViewPlayback {
   return candidate as ViewPlayback;
 }
 
-function recoveredKinds(value: unknown): ViewKind[] {
+function recoveredSlots(value: unknown): ViewSlot[] {
   if (!Array.isArray(value)) return [];
-  const kinds = value.flatMap((item): ViewKind[] => {
-    if (isViewKind(item)) return [item];
+  const slots = value.flatMap((item): ViewSlot[] => {
+    if (isViewKind(item)) return [slot(item)];
     if (!isRecord(item) || item.id !== item.kind || !isViewKind(item.id)) return [];
-    return [item.id];
+    const legend: LegendPlacement = item.legend === "hidden"
+      ? "hidden"
+      : "outside_right";
+    return [{ id: item.id, kind: item.id, legend }];
   });
-  return kinds.filter((kind, index) => kinds.indexOf(kind) === index);
+  return slots.filter((candidate, index) =>
+    slots.findIndex(({ id }) => id === candidate.id) === index);
+}
+
+function slotsForKinds(current: ViewWorkspace, kinds: readonly ViewKind[]): ViewSlot[] {
+  return kinds.map((kind) =>
+    current.slots.find(({ id }) => id === kind) ?? slot(kind));
 }
 
 /** Recover canonical or legacy layout data with deterministic known-view fallback. */
 export function migrateViewWorkspace(value: unknown): ViewWorkspace {
   if (!isRecord(value)) return defaultViewWorkspace;
-  const kinds = recoveredKinds(Array.isArray(value.slots) ? value.slots : value.views);
-  if (kinds.length === 0) return defaultViewWorkspace;
+  const slots = recoveredSlots(Array.isArray(value.slots) ? value.slots : value.views);
+  if (slots.length === 0) return defaultViewWorkspace;
+  const kinds = slots.map(({ kind }) => kind);
   const activeRaw = value.active_slot_id ?? value.active;
   const activeSlotId = isViewKind(activeRaw) && kinds.includes(activeRaw)
     ? activeRaw
     : kinds[0];
   return {
     layout: normalizedLayout(value.layout, kinds.length),
-    slots: kinds.map(slot),
+    slots,
     activeSlotId,
     playback: recoveredPlayback(value.playback),
   };
 }
 
 export function workspaceForSingleView(kind: ViewKind, current: ViewWorkspace): ViewWorkspace {
-  return { ...current, layout: "single", slots: [slot(kind)], activeSlotId: kind };
+  return {
+    ...current,
+    layout: "single",
+    slots: slotsForKinds(current, [kind]),
+    activeSlotId: kind,
+  };
 }
 
 export function workspaceWithLayout(layout: ViewLayout, current: ViewWorkspace): ViewWorkspace {
@@ -116,7 +132,12 @@ export function workspaceWithLayout(layout: ViewLayout, current: ViewWorkspace):
   const present = current.slots.map(({ kind }) => kind);
   const kinds = [...present, ...VIEW_KINDS.filter((kind) => !present.includes(kind))]
     .slice(0, minimum);
-  return { ...current, layout, slots: kinds.map(slot), activeSlotId: kinds[0] };
+  return {
+    ...current,
+    layout: normalizedLayout(layout, kinds.length),
+    slots: slotsForKinds(current, kinds),
+    activeSlotId: kinds[0],
+  };
 }
 
 export function toggleWorkspaceView(current: ViewWorkspace, kind: ViewKind): ViewWorkspace {
@@ -129,7 +150,7 @@ export function toggleWorkspaceView(current: ViewWorkspace, kind: ViewKind): Vie
   return {
     ...current,
     layout: normalizedLayout(current.layout, kinds.length),
-    slots: kinds.map(slot),
+    slots: slotsForKinds(current, kinds),
     activeSlotId,
   };
 }

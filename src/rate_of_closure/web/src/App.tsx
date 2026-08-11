@@ -85,6 +85,7 @@ export default function App() {
         <PrimaryWorkspacePanel active={active} model={model}
           onOpenGlossary={openGlossary}
           viewWorkspace={workspace.viewWorkspace}
+          viewCommandRevision={workspace.viewCommandRevision}
           onViewWorkspaceChange={workspace.setViewWorkspace} />
       </main>
       <AppFooter />

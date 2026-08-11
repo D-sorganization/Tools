@@ -4,7 +4,7 @@ Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
-## 2026-08-10 Issue #4225 multi-view compositor first slice
+## 2026-08-10 Issue #4225 multi-view compositor rendered-QA slice
 
 Worktree `Tools-worktrees/issue-4225-multiview-compositor` and branch
 `feat/4225-multiview-compositor` begin at exact PR #4324 head
@@ -14,15 +14,27 @@ PyQt6 and React. Impact, Swing, and Flight can be selected directly or composed
 as single, horizontal, vertical, and grid layouts. The active run and playback
 time are synchronized, flight time is mapped relative to impact, and each host
 keeps independent camera/overlay ownership. React Flight also retains the
-canonical spatial-target editor.
+canonical spatial-target editor. React's established Strike, Swing, Kinetics,
+and Flight displays remain reachable beside Multi View, while direct toolstrip
+commands return to Multi View and select a real host.
 
 Both clients persist the same version-1 workspace shape and defensively migrate
 legacy layouts, corrupt values, unsupported future IDs, and missing active
-views to deterministic known-view layouts. Current gates are 94 focused
-Python/PyQt tests, pinned MyPy 1.13, Ruff/format/compileall, and 114 React files
-/ 680 tests with TypeScript, zero-warning ESLint, and the 199-module production
-build. No push or PR exists for this local slice. Keep #4225 and #4218 open for
-rendered native/browser QA, constrained responsive and keyboard-focus proof,
+views to deterministic known-view layouts. Cardinality is strict across both
+clients: one host is Single, two use a valid split, and three are Grid. Valid
+per-slot legends survive recovery/transitions. The live transport owns saved
+play/loop/rate and settled time; PyQt6 debounces active-frame writes. Native
+controls now include hover guidance and constrained multi-view grids expose
+scroll navigation instead of clipping real plots.
+
+Current gates are the complete 919-test Python/PyQt Rate of Closure suite,
+clean Ruff/format and focused type checks, and 114 React files / 684 tests with
+TypeScript, zero-warning ESLint, and a production build. Browser QA at
+1280 x 720 and 760 x 800 verifies distinct balanced hosts, responsive stacking,
+legacy-display reachability, and direct commands. Isolated PyQt6 QA at
+1282 x 752 verifies persisted Single, two-host Split Horizontal, three-host
+Grid, distinct plots, and navigable overflow. No push or PR exists for this
+local slice. Keep #4225 and #4218 open for complete keyboard-focus behavior,
 workspace export round trips, protected CI/review, dependency-ordered
 integration, and UpstreamDrift consumer parity.
 

@@ -199,6 +199,10 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
         """Set the loop toggle."""
         self._loop_check.setChecked(looping)
 
+    def is_looping(self) -> bool:
+        """Whether playback restarts automatically at the timeline end."""
+        return bool(self._loop_check.isChecked())
+
     def flight_shown(self) -> bool:
         """Whether the flight-scale 'Show Ball Flight' toggle is on."""
         return bool(self._flight_check.isChecked())

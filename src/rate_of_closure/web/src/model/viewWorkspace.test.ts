@@ -5,6 +5,9 @@ import {
   loadViewWorkspace,
   migrateViewWorkspace,
   saveViewWorkspace,
+  toggleWorkspaceView,
+  workspaceForSingleView,
+  workspaceWithLayout,
 } from "./viewWorkspace";
 
 describe("view workspace persistence", () => {
@@ -22,9 +25,45 @@ describe("view workspace persistence", () => {
     });
 
     expect(workspace.slots.map(({ id }) => id)).toEqual(["swing", "flight"]);
+    expect(workspace.slots.map(({ legend }) => legend)).toEqual([
+      "hidden",
+      "outside_right",
+    ]);
     expect(workspace.activeSlotId).toBe("swing");
-    expect(workspace.layout).toBe("grid");
+    expect(workspace.layout).toBe("split_horizontal");
     expect(workspace.playback).toEqual({ timeS: 0.42, playing: false, loop: true, rate: 0.5 });
+  });
+
+  it("normalizes layout cardinality and preserves per-view legend state", () => {
+    const recovered = migrateViewWorkspace({
+      layout: "split_vertical",
+      slots: [
+        { id: "impact", kind: "impact", legend: "hidden" },
+        { id: "swing", kind: "swing", legend: "outside_right" },
+        { id: "flight", kind: "flight", legend: "hidden" },
+      ],
+      active_slot_id: "impact",
+    });
+
+    expect(recovered.layout).toBe("grid");
+    const single = workspaceForSingleView("impact", recovered);
+    expect(single.layout).toBe("single");
+    expect(single.slots[0].legend).toBe("hidden");
+
+    const split = toggleWorkspaceView(recovered, "flight");
+    expect(split.layout).toBe("split_horizontal");
+    expect(split.slots.map(({ legend }) => legend)).toEqual([
+      "hidden",
+      "outside_right",
+    ]);
+
+    const grid = workspaceWithLayout("grid", split);
+    expect(grid.layout).toBe("grid");
+    expect(grid.slots.map(({ legend }) => legend)).toEqual([
+      "hidden",
+      "outside_right",
+      "outside_right",
+    ]);
   });
 
   it("migrates the legacy visible-view list and persists the canonical document", () => {

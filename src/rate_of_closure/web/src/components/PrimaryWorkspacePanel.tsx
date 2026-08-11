@@ -24,12 +24,14 @@ interface WorkspacePanelProps {
   readonly model: ImpactAppModel;
   readonly onOpenGlossary: (term: string | undefined) => void;
   readonly viewWorkspace: ViewWorkspace;
+  readonly viewCommandRevision: number;
   readonly onViewWorkspaceChange: (workspace: ViewWorkspace) => void;
 }
 
 function SimulationWorkspace(props: {
   readonly model: ImpactAppModel;
   readonly viewWorkspace: ViewWorkspace;
+  readonly viewCommandRevision: number;
   readonly onViewWorkspaceChange: (workspace: ViewWorkspace) => void;
 }) {
   const { model } = props;
@@ -41,6 +43,7 @@ function SimulationWorkspace(props: {
       onSpatialTargetChange={model.setSpatialTarget}
       distanceUnit={model.units.distance}
       viewWorkspace={props.viewWorkspace}
+      viewCommandRevision={props.viewCommandRevision}
       onViewWorkspaceChange={props.onViewWorkspaceChange} />
   );
 }
@@ -82,6 +85,7 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
       return <PlotsPanel scenario={model.scenario} loftDeg={10.5} />;
     case "simulation":
       return <SimulationWorkspace model={model} viewWorkspace={props.viewWorkspace}
+        viewCommandRevision={props.viewCommandRevision}
         onViewWorkspaceChange={props.onViewWorkspaceChange} />;
     case "calculation":
       return <Derivation scenario={model.scenario} />;

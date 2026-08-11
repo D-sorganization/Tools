@@ -13,6 +13,19 @@ class SynchronizedSimulationView(SimulationView):
 
     playbackTimeChanged = pyqtSignal(float)  # noqa: N815
 
+    def __init__(self) -> None:
+        super().__init__()
+        self._loop_check.toggled.connect(self._publish_playback)
+        self._rate_spin.valueChanged.connect(self._publish_playback)
+
+    def _publish_playback(self, *_args: object) -> None:
+        """Publish a complete transport change through the shared-clock seam."""
+        self.playbackTimeChanged.emit(self.playback_time())
+
+    def _on_play_toggled(self, playing: bool) -> None:
+        super()._on_play_toggled(playing)
+        self._publish_playback()
+
     def set_run(self, run: SimulationRun | None) -> None:
         """Adopt a shared run and publish the reset timeline position."""
         super().set_run(run)

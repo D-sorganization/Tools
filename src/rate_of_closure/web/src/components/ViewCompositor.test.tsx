@@ -35,6 +35,24 @@ describe("ViewCompositor", () => {
     }
   });
 
+  it("keeps horizontal and grid layouts useful at desktop workbench widths", () => {
+    render(<Harness />);
+    const layout = screen.getByRole("combobox", { name: "Viewport layout" });
+
+    fireEvent.change(layout, { target: { value: "split_horizontal" } });
+    const impact = screen.getByRole("region", {
+      name: "Impact synchronized viewport",
+    });
+    expect(impact.parentElement).toHaveClass("lg:grid-cols-2");
+
+    fireEvent.change(layout, { target: { value: "grid" } });
+    const flight = screen.getByRole("region", {
+      name: "Flight synchronized viewport",
+    });
+    expect(flight).toHaveClass("lg:col-span-2");
+    expect(impact).not.toHaveClass("lg:col-span-2");
+  });
+
   it("keeps at least one known view when a user hides a viewport", () => {
     render(<Harness />);
     fireEvent.change(screen.getByRole("combobox", { name: "Viewport layout" }), {

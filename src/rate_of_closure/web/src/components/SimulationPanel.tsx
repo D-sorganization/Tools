@@ -57,6 +57,7 @@ interface Props {
   /** Ball-flight distance display unit (#4125 H6): yards default. */
   distanceUnit?: string;
   viewWorkspace?: ViewWorkspace;
+  viewCommandRevision?: number;
   onViewWorkspaceChange?: (workspace: ViewWorkspace) => void;
 }
 
@@ -69,6 +70,7 @@ export function SimulationPanel({
   onSpatialTargetChange,
   distanceUnit = "yd",
   viewWorkspace,
+  viewCommandRevision,
   onViewWorkspaceChange,
 }: Props) {
   const clubDefaultSetup = defaultBallSetupForClub(clubSpec);
@@ -382,6 +384,7 @@ export function SimulationPanel({
         onSpatialTargetChange={onSpatialTargetChange}
         distanceUnit={distanceUnit}
         viewWorkspace={viewWorkspace}
+        viewCommandRevision={viewCommandRevision}
         onViewWorkspaceChange={onViewWorkspaceChange}
       />
     </div>

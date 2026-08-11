@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import App from "../App";
@@ -34,7 +34,10 @@ describe("canonical spatial target navigation", () => {
     fireEvent.click(screen.getByRole("button", { name: "Apply spatial target" }));
 
     fireEvent.click(screen.getByRole("tab", { name: "Simulation" }));
-    fireEvent.click(screen.getByRole("tab", { name: "Flight" }));
+    const displayTabs = screen.getByRole("tablist", {
+      name: "Display views (scale-separated)",
+    });
+    fireEvent.click(within(displayTabs).getByRole("tab", { name: "Flight" }));
     expect(screen.getByLabelText("Target downrange m")).toHaveValue("180");
 
     fireEvent.click(screen.getByRole("tab", { name: "Flight Explorer" }));

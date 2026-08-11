@@ -116,6 +116,9 @@ class SimulationTab(
         self._compositor_swing_view.playbackTimeChanged.connect(
             self._sync_compositor_playback
         )
+        restored_playback = self._compositor.workspace().playback
+        self._compositor_swing_view.set_looping(restored_playback.loop)
+        self._compositor_swing_view.set_playback_rate(restored_playback.rate)
         self._kinetics_panel = KineticsPanel()
         self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)
         self._inspector = InspectorView()
