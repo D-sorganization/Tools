@@ -37,7 +37,7 @@ class HeightForWidthGroupBox(QGroupBox):
             QEvent.Type.StyleChange,
         ):
             self._reserve_wrapped_height()
-        return handled
+        return bool(handled)
 
     def _reserve_wrapped_height(self) -> None:
         layout: QLayout | None = self.layout()
