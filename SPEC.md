@@ -26,13 +26,54 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.16                                    |
-| **Spec Version**        | 1.14.16                                    |
-| **Last Spec Update**    | 2026-08-10                                 |
+| **Current Version**     | 1.14.21                                    |
+| **Spec Version**        | 1.14.21                                    |
+| **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-11 Wind workflow receives current scalar-adapter parent
+
+- The responsive PyQt6/React wind-strategy workflow and consolidated
+  capability stack inherit exact scalar-adapter parent
+  `a7dce5f89b483303938f518b74b4028a1c68ba81` through a normal child-first
+  merge, preserving branch topology and both histories.
+- The validated split kinetics facade replaces one obsolete child formatting
+  hunk. Seven remaining child-owned paths receive pinned Ruff formatting only;
+  physics, public APIs, schemas, frames, units, and UI behavior are unchanged.
+- The exact skipped-import MyPy profile replaces one unused cache-return ignore
+  with an explicit `KineticsSeries | None` cast. The cached object and runtime
+  behavior are unchanged.
+
+### 2026-08-11 Wind strategy plot-adapter module-budget repair
+
+- `rate_of_closure.variation.wind_strategy_plot_adapter` remains the public
+  plot-data facade. Its request/analysis validation is delegated to the private
+  `_wind_strategy_plot_validation` collaborator so both production modules are
+  below the mandatory 400-line ceiling.
+- The public API, `scalar-ensemble/v1` wire shape and ordering, row identity,
+  values, typed availability, attributes, validation messages, and contract
+  prohibiting a flight-physics rerun are unchanged.
+- Private wind-scenario validation receives a scenario and one frozen, slotted
+  expectation object, keeping every production function at or below four
+  parameters and 50 lines without weakening any precondition.
+
+### 2026-08-11 Kinetics module-budget repair
+
+- The established `rate_of_closure.simulation.kinetics` module remains the
+  public façade for swing kinetics. Immutable result validation now lives in
+  `_kinetics_series.py`, and pure double-pendulum inverse/forward dynamics and
+  reaction-force helpers live in `_kinetics_dynamics.py`.
+- Public constants, classes, and functions retain identity-preserving imports;
+  the historical private `_reaction_forces` test/consumer seam remains an
+  alias to the extracted implementation. Physics, SI units, frames, numerical
+  fixtures, UI behavior, and serialization contracts are unchanged.
+- This extraction repairs the proactively reproduced changed-file failure:
+  exact head `572bf525d` versus `HEAD~1` selected the Ruff-formatted
+  `kinetics.py` at 646 LOC, above the ungrandfathered 500-LOC ceiling. The
+  façade and its focused implementation modules are now 222, 205, and 131 LOC.
 
 ### 2026-08-09 Capability workflow contract hardening
 
@@ -97,6 +138,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   artifact qualification lane.
 - The Flight Explorer parent-panel test explicitly settles its lazy wind-panel
   import inside React `act`, removing suite-load timing from the assertion.
+
+### 2026-08-10 D-plane ndarray typing boundary repair
+
+- The private D-plane vector conversion and horizontal-projection helpers bind
+  NumPy expression results to explicit ndarray locals before returning them.
+- This preserves the existing numerical calculations and DbC validation while
+  satisfying the changed-file MyPy `no-any-return` contract on Python 3.12.
+- No public API, reference frame, serialized schema, physics assumption, or UI
+  behavior changes in this repair.
 
 ### 2026-08-06 GUI module-budget repair
 
@@ -330,6 +380,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   overrides survive club changes, legacy runs migrate to Ground, and the
   derived ball center drives contact, alignment, impact records, flight origin,
   and both standalone renderers.
+- Python and React consume the same version-1 golden ball-setup fixture. Its
+  strict metadata fixes SI metre units and the
+  `ground_plane_to_ball_bottom` reference; its cases pin club defaults,
+  explicit overrides, Ground's zero effective tee height, derived geometry,
+  serialization, invalid-height rejection, and legacy migration.
+- Visual verification uses semantic state and structural image contracts, not
+  pixel-perfect baselines: Playwright records default Tee and rerun Ground web
+  states with zero browser errors, while the hidden-window PyQt harness pins
+  canonical center/artist state and nonblank, distinct Ground/Tee captures.
 - Variation plans retain their complete v2 schema and can be saved, loaded,
   duplicated, and deleted from a versioned local library. Users can select
   simultaneous, one-at-a-time, or combined analyses, while paired common-
@@ -2936,6 +2995,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.21 | merge/fix(rate-of-closure, #4281 #4282): normally merge exact published scalar-adapter parent `a7dce5f89b483303938f518b74b4028a1c68ba81` into exact remote responsive-workflow child `29e15d6ff631f7f30afcc745be783f2e716d7dcf` in child-first order; preserve the complete PyQt6/React wind workflow and capability stack while inheriting the parent's split kinetics and scalar-adapter size/parameter repairs; resolve obsolete monolithic kinetics wholly to the parent facade, retain both append-only documentation histories, apply pinned Ruff formatting only to seven surviving child-owned paths, and replace one skipped-import cache-return ignore with an explicit typed cast without changing behavior, APIs, schemas, frames, or units. |
 | 2026-08-10 | 1.14.16 | fix(rate-of-closure, #4281 #4282): normally propagate repaired wind scalar-adapter parent `d6fb04e07c2a625412e9208b07103acdc42c621b` into the responsive wind workflow without production/test conflict or history rewrite; retain current-state handoff policy and verify with 25 focused tests plus governance, size, and whitespace checks. |
 | 2026-08-10 | 1.14.15 | fix(rate-of-closure, #4282): preserve the strict campaign-manifest return contract under the repository's exact pinned-mypy skipped-import profile by explicitly typing the Pydantic-validated local as `CampaignManifest`; this repairs hosted quality-gate run `31395741841` without changing JSON parsing, validation, failure behavior, PR base, or dependency topology, and requires the resulting exact head to propagate normally into #4285. |
 | 2026-08-10 | 1.14.14 | feat/fix(rate-of-closure, #4199 #4281 #4282): normally propagate exact scalar-adapter parent `4a793c4c3f19aad43a3c215800b266be487ace49` into the responsive PyQt6/React wind-workflow carrier without changing its base; preserve the consolidated capability workflow and release authority while inheriting the complete variation, workspace, Python 3.10 compatibility, immutable scalar-row, stable identity, availability, and deterministic wind-scenario repairs; register the child capability tab in the parent's canonical navigation-state tuple so legacy saved orders reveal it without duplicating state; retain runtime invariant enforcement under optimized Python; and satisfy pinned typing/security analysis without weakening the fixed-argument builder boundary. |
@@ -2948,6 +3008,30 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |
 | 2026-08-08 | 1.14.6 | feat(rate-of-closure, #4197): add matched PyQt6/React Shot Optimizer workspaces with strict cross-runtime workflow persistence, off-main-thread qualified flight execution, truthful progress/cancellation, complete scalar-ensemble cohort retention, ranked alternatives, stage-qualified selectable scatter axes, zoom/autofit, bounded raw-row paging, lossless CSV/stable JSON, substantive hover guidance, and saved-layout migration that reveals newly registered modules. |
 | 2026-08-08 | 1.14.5 | feat(ball-flight, #4197): add profile/request-bound Python and TypeScript Waterloo/Penner capability evaluators with exact established parameter IDs, physical-domain and unit validation, sourced per-club spin defaults or paired variable spin inputs, shared gyro-projected positive-fade/right spin-axis convention across result/impact/variation producers, canonical target-frame conversion, target-aware complete scalar metrics, typed horizon nonconvergence, fail-fast invariants, and a shared 16-scalar tolerance fixture. Corrects the TypeScript ground-crossing interpolation so a descending launch from z=0 cannot extrapolate to a negative sample time, which previously raised an untyped `RangeError` that was absorbed as an `evaluator_exception`; such launches now report `nonconverged`, matching the Python runtime. |
+| 2026-08-11 | 1.14.20 | refactor(rate-of-closure, #4281): replace the private wind-scenario validator's five loose parameters with a scenario and one frozen, slotted expectation object; preserve validation order, messages, behavior, public API, and wire output while satisfying the four-parameter and 50-line production-function contracts. |
+| 2026-08-11 | 1.14.19 | refactor(rate-of-closure, #4281): split request/analysis validation from the 403-line wind-strategy plot adapter into a private collaborator, leaving 252-line and 186-line production modules below the mandatory 400-line ceiling while preserving the public API, scalar-ensemble wire order, row identity and values, availability, attributes, validation messages, and no-flight-rerun boundary. |
+| 2026-08-11 | 1.14.18 | merge(rate-of-closure, #4280 #4281): normally merge exact reviewed variation-export parent `3337945699966b63cb5cd8e52d7c3b194315e911` into exact remote wind scalar-adapter child `247046d55afcad3e6cd4f8029f854856c427f59c` with child-first parent order and no history rewrite; preserve matching Python/TypeScript `scalar-ensemble/v1` provenance, availability, deterministic-scenario, and wind-strategy plot-adapter behavior while inheriting the parent variation/export UI, kinetics split, Ground/Tee parity contracts, workspace/toolstrip repairs, and protected Ruff normalization; resolve the obsolete monolithic kinetics overlap to the validated parent `pendulum.sample(...)` facade, retain both append-only documentation histories, and require independent review plus fresh exact-head protected CI before publication. |
+| 2026-08-11 | 1.14.17 | merge(rate-of-closure, #4279 #4280): normally merge exact reviewed workspace/toolstrip parent `ccd0e026c580c93038fdf5c59d5d452a85ba27a0` into exact remote variation-export child `668ba96746f79f7a12e8092161bd610054197f58` with child-first parent order and no history rewrite; preserve selected-scatter CSV parity, typed unavailable outcomes, bounded accessible tables, linked selection, and all-trial arc analysis while inheriting the parent kinetics split, Ground/Tee parity contracts, and complete workspace/toolstrip behavior; resolve the obsolete monolithic kinetics overlap to the validated parent façade and normalize seven duplicate automation edits to exact protected Ruff 0.14.10 parent blobs while keeping their commit reachable; require independent review and fresh exact-head protected CI before publication. |
+| 2026-08-11 | 1.14.16 | merge(rate-of-closure, #4279): ordinarily reconcile exact local workspace/toolstrip head `0b22c401a26c31441a599d8d9b39de123706e7ea` with divergent remote automation head `61fe2d556a5413e525d958612ccfd57e65b8d5a2`, preserving every commit and the existing stack topology; recognize 15 already-identical parent paths, normalize seven incompatible formatting edits back to protected Ruff 0.14.10 output, and resolve the sole obsolete pre-split kinetics conflict in favor of the current `pendulum.sample(...)` façade implementation; preserve workspace, toolstrip, visibility, navigation, playback, independent plots, physics, frames, units, schemas, and public contracts; require independent review and fresh exact-head protected CI before publication. |
+| 2026-08-11 | 1.14.15 | merge(rate-of-closure, #4203 #4279): normally propagate exact published launch-registry parent `3796b49e40b677fbac4e05739f8be49f905df2cb` into exact workspace/toolstrip child `7806a16f58e1c6999d32f0127a187fbb21f839a1` without rewriting stack topology; inherit only four static NumPy-array casts while preserving runtime arrays, physics, frames, units, public contracts, workspace behavior, and UI behavior; require fresh current-head protected CI and review. |
+| 2026-08-11 | 1.14.14 | merge(rate-of-closure, #4203 #4279): normally propagate exact launch-registry parent `0216a547aa79727091a2939b96e779e8ddbd7304` into the workspace/toolstrip child without rewriting stack topology; preserve the child's workspace, toolstrip, module-visibility, navigation, playback, and independent-plot behavior while inheriting the parent's identity-preserving kinetics split and pinned formatting repair; require fresh current-head protected CI and review. |
+| 2026-08-11 | 1.14.14 | fix(rate-of-closure, #4203): close four hosted MyPy `no-any-return` findings from the kinetics size split with explicit NumPy-array return narrowing at force-norm, RK4 concatenation, and app-frame projection boundaries; preserve exact runtime arrays, physics, frames, units, public contracts, and stack order. |
+| 2026-08-11 | 1.14.13 | refactor(rate-of-closure, #4203): split the 646-LOC swing-kinetics monolith into an identity-preserving 222-LOC public façade, 205-LOC pure-dynamics module, and 131-LOC immutable-series contract; preserve physics, frames, fixtures, UI behavior, and established imports while satisfying the changed-file 500-LOC gate. |
+| 2026-08-11 | 1.14.12 | style(rate-of-closure, #4203): apply repository-pinned Ruff 0.14.10 formatting to the eight files reported by current-head CI without changing physics, behavior, public contracts, schemas, UI layout, or stack order. |
+| 2026-08-10 | 1.14.14 | feat/fix(wind variation, #4144 #4199 #4280 #4281): normally propagate repaired variation parent `b90e5021a59e2081415b51ef29fbed06377bc201` into the wind scalar-adapter child without production/test conflict or history rewrite; preserve matching Python/TypeScript `scalar-ensemble/v1` provenance, availability, deterministic-scenario, and wind-strategy plot-adapter contracts; verify the reconciliation with 25 focused D-plane/impact tests and governance, size, and whitespace gates. |
+| 2026-08-10 | 1.14.13 | feat/fix(variation, #4144 #4218 #4279 #4280): normally propagate repaired workspace parent `61b7f48b5aeb7d57246b4963da3df086e79cbe15` into the variation-export child without feature-code conflict or history rewrite; preserve selected-scatter CSV parity, typed unavailable outcomes, bounded accessible tables, linked selection, all-trial arc analysis, and the complete workspace/toolstrip behavior; verify the reconciliation with 25 focused D-plane/impact tests and governance, size, and whitespace gates. |
+| 2026-08-10 | 1.14.12 | fix(rate-of-closure, d-plane, #4202 #4203 #4279): normally propagate exact repaired launch-registry parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` into the workspace/toolstrip child without rewriting the stack; inherit explicit ndarray result boundaries while preserving numerical semantics, frames, schemas, and UI behavior; verify the reconciled tree with 25 focused D-plane/impact tests and governance, size, and whitespace gates. |
+| 2026-08-10 | 1.14.11 | feat/fix(rate-of-closure, #4203 #4218 #4279): normally propagate exact launch-registry parent `31cbc007d4c85b5479b7cd0fb0969124eab2af67` into the workspace/toolstrip child while preserving granular playback, path trails, module visibility, and independent plot controls; reuse the parent's single persisted impact-layer mapping and canonical navigation constants without duplicating state; and retain its focused triple-pendulum, plotting-catalog, and primary-navigation repairs. |
+| 2026-08-10 | 1.14.10 | fix(compatibility, #4279): make workspace UTC timestamp parsing deterministic across Python 3.10-3.12 with one anchored canonical grammar, consistent zero- through six-digit fractional-second parsing, and rejection of greater-than-microsecond precision instead of interpreter-dependent rejection or truncation. |
+| 2026-08-09 | 1.14.9 | fix(compatibility, #4279): route the child command/view `StrEnum` runtime imports and workspace-validation `UTC` import through `shared.python.compatibility` while preserving native enum typing under `TYPE_CHECKING`, all wire values, schemas, UTC serialization, and UI behavior; merge the parent and child regression into one nine-enum/two-UTC runtime-import contract exercised with real CPython 3.10.20. |
+| 2026-08-09 | 1.14.8 | feat(rate_of_closure, #4218 #4279): add a UI-neutral File/View/Tools command registry, strict atomic workspace documents, matched PyQt6/React top toolstrips, persistent module visibility and order, direct Impact/Swing/Flight navigation, deterministic replay/loop/speed controls, and independent per-plot canvases with zoom, Auto Fit, and movable or hidden legends. Propagate exact launch-registry parent `08a2fdd8ce6bbc8fbb8f121927a677d4addb6b11` normally while retaining its Linux-safe facade and Python 3.10 compatibility contracts, and type the Qt legend-visibility boundary explicitly for the pinned changed-file mypy gate. |
+| 2026-08-10 | 1.14.11 | test/fix(rate-of-closure, #4143 #4202 #4203 #4325): normally propagate repaired launch-registry parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` into the shared Ground/Tee parity and rendered-evidence child without production/test-code conflict or history rewrite. |
+| 2026-08-10 | 1.14.10 | test(rate-of-closure, #4143): record deterministic Ground/Tee visual evidence through semantic Playwright checks and a hidden-window PyQt capture regression, retaining screenshots as external digested artifacts instead of brittle pixel baselines or repository binaries. |
+| 2026-08-10 | 1.14.9 | test(rate-of-closure, #4143): add one strict versioned SI golden fixture consumed by Python and React to pin Ground/Tee defaults, explicit overrides, physical height and center geometry, serialization, invalid finite-domain handling, and backward-compatible legacy migration without changing production behavior. |
+| 2026-08-10 | 1.14.8 | feat/fix/refactor(rate-of-closure, #4202 #4203): propagate the exact D-plane parent into the launch-monitor registry without rewriting the stack; preserve the responsive `SimulationViewControlsMixin` architecture while making `ImpactLayerControls` the single owner of persisted D-plane checkbox state; retain the existing automation compatibility seam as an identity alias; and repair the original child's three ungrandfathered size blockers through identity-preserving extractions for triple-pendulum dynamics, immutable plotting metadata, and versioned primary-navigation state. |
+| 2026-08-09 | 1.14.7 | fix(compatibility, #4203): route the PyQt torque-profile controller's UTC constant through the shared Python 3.10 compatibility module, preserving UTC timestamp serialization and workspace behavior while removing the remaining parent-owned `datetime.UTC` collection boundary. |
+| 2026-08-09 | 1.14.6 | fix(compatibility, #4203): route seven Rate/shared swing string-enum runtime imports through the existing Python 3.10 compatibility contract while retaining native enum typing under `TYPE_CHECKING`; preserve all wire values, schemas, physics, and UI behavior, and add a source-level regression exercised with real CPython 3.10.20. |
+| 2026-08-09 | 1.14.5 | fix(ci, #4203): keep the in-package swing flight and solver facade-contract tests in pytest's active package namespace by using relative imports, preventing editable Linux collection from crossing between `src.shared...` and `shared...` before assertions while leaving production APIs and physics unchanged. |
 | 2026-08-07 | 1.14.4 | feat(rate_of_closure, #4206): add validated manual reference AoA/path, targetward forward shaft lean, and tracked-reference versus registered generated-hosel shaft datums in PyQt6 and React; rotate pose, angular-rate components, and delivered face normals consistently; persist schema-v5 `manual_delivery`; export the reference-contact/reference-impact model boundary; and pin the representative Pitching Wedge decomposition in both runtimes. |
 | 2026-08-07 | 1.14.3 | fix(variation, #4144): preserve trial identity when filtering finite landing coordinates so carry/lateral values from different incomplete trials cannot form fictitious points; use one paired-row contract for Python/TypeScript ellipse analysis, PyQt/React rendering, and exact plotted-count status. Clarify that the wedge kernel's 20 mm example is synthetic and separately pin the generated Pitching Wedge face-center/hosel cross-check and current UI-state limitations. |
 | 2026-08-06 | 1.14.2 | feat(rate_of_closure, #4192 #4234): complete the shared spatial-target workflows in PyQt6 and React with canonical cross-tab state, versioned JSON/CSV/manifest persistence, no-run 2D/3D rendering, continuous aerial passage, surface-projected landing assessment, field-linked validation, stale-solver protection, high-DPI canvases, responsive wrapped PyQt forms, collapsible engineering detail/layer controls, and movable or hideable legends; keep aerial requests fail-closed where solver/variation objectives remain ground-only. |
