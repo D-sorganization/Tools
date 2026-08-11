@@ -222,9 +222,9 @@ def test_value_types_are_frozen_dataclasses() -> None:
     for cls in FROZEN_VALUE_TYPES:
         assert dataclasses.is_dataclass(cls), f"{cls.__name__} not a dataclass"
         value_type = cast(_FrozenDataclassType, cls)
-        assert value_type.__dataclass_params__.frozen, (
-            f"{value_type.__name__} must be frozen"
-        )
+        assert (
+            value_type.__dataclass_params__.frozen
+        ), f"{value_type.__name__} must be frozen"
 
 
 @pytest.mark.contract
