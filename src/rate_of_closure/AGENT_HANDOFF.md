@@ -980,7 +980,8 @@ new structures introduced by this issue.
 
 ## 2026-08-11 strict calculation-runtime manifest foundation
 
-The isolated `feat/4261-runtime-manifest-contract` branch starts from exact
+Draft PR #4344 publishes `feat/4261-runtime-manifest-contract` at exact head
+`c06cefb5c541fe7d87b54cd36269917d92d837a6`, stacked on exact
 `fix/rate-mobile-tools-menu` head
 `c653f9ff9193d6cdb8e11a13ad0001707e468a42`, incorporated by an ordinary
 conflict-free parent merge after the branch advanced from `16a1167c...`. It
@@ -997,7 +998,7 @@ unknown fields, invalid revisions/surfaces, status contradictions, duplicate
 domains/options/evidence, placeholders, non-finite values, unsafe integers,
 unit mismatches, unpaired-surrogate text, and duplicate JSON fields.
 
-Keep this contract-only. Live run attachment, workspace/export persistence,
+Keep PR #4344 contract-only. Live run attachment, workspace/export persistence,
 provider discovery, UpstreamDrift pinning, and scientific model qualification
 remain future reviewed slices. The pure factories must not inspect ambient Git,
 sibling worktrees, or installed-package state.

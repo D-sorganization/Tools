@@ -499,7 +499,8 @@ npm run build
 
 ## 2026-08-11 calculation-runtime manifest contract continuation
 
-Issue #4261 continues locally in
+Issue #4261 is published as draft PR #4344 from exact head
+`c06cefb5c541fe7d87b54cd36269917d92d837a6` in
 `C:\Users\diete\Repositories\Tools-worktrees\runtime-manifest-contract` on
 `feat/4261-runtime-manifest-contract`, based on exact remote parent
 `fix/rate-mobile-tools-menu` at
@@ -519,7 +520,7 @@ and adversarial validation are pinned by one fixture.
 
 The governed four-surface inventory now includes this active specification as
 unsupported on all four surfaces at its older protected Tools pin. That record
-is intentional: unpublished contract evidence cannot establish live support.
+is intentional: a draft contract cannot establish live support.
 
 This branch does not bind the manifest to live runs, workspaces, exports,
 regional ground execution, or UpstreamDrift source resolution. It does not

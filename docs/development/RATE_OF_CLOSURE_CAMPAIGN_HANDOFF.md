@@ -1451,8 +1451,9 @@ signatures predate #4269 and are explicitly retained for compatibility.
 
 ## 2026-08-11 #4261 calculation-runtime manifest contract slice
 
-The next four-surface authority slice is isolated on
-`feat/4261-runtime-manifest-contract` from exact remote
+Draft PR #4344 publishes the next four-surface authority slice on
+`feat/4261-runtime-manifest-contract` at exact head
+`c06cefb5c541fe7d87b54cd36269917d92d837a6`, from exact remote
 `fix/rate-mobile-tools-menu` head
 `c653f9ff9193d6cdb8e11a13ad0001707e468a42`. The child incorporated the
 parent's advance from `16a1167c...` by an ordinary conflict-free merge and
@@ -1496,8 +1497,8 @@ RED-first shared-fixture tests cover `1e16`, `1e20`, both safe boundaries,
 leading-zero versions, astral text, all declared boundary whitespace, unpaired
 surrogates, `x`, `n/a`, and bare/whitespace `unavailable`; capability tests
 restore the existing `1e21` wire behavior. The declared-scope prose accurately
-includes recursive `docs/specs/**/*.md`. This remains an unpublished contract
-child with all four spec cells unsupported at the older protected inventory pin.
+includes recursive `docs/specs/**/*.md`. This remains a draft contract child
+with all four spec cells unsupported at the older protected inventory pin.
 
 ### 2026-08-11 stable-ID placeholder boundary repair
 
@@ -1507,5 +1508,5 @@ though `_` is a valid stable-ID separator. Python and TypeScript now recognize
 placeholders as complete ASCII-alphanumeric-delimited tokens. The shared parity
 fixture exercises every token next to `.`, `_`, `/`, and `-` in both directions
 and preserves legitimate longer substrings such as `todolist`. The same bounded
-repair removes the pinned-MyPy redundant reason cast. This remains an
-unpublished contract-only child and does not expand the #4261 completion claim.
+repair removes the pinned-MyPy redundant reason cast. Draft PR #4344 remains a
+contract-only child and does not expand the #4261 completion claim.
