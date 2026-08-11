@@ -137,7 +137,11 @@ def test_orthographic_snap_hides_only_depth_axis_and_restores_all_axes(
         for axis in (getattr(axes, axis_name),)
         for artist in (axis.label, axis.line, axis.pane)
     )
-
+    assert all(
+        tick.label1.get_visible() and not tick.label2.get_visible()
+        for axis_name in ("xaxis", "yaxis", "zaxis")
+        for tick in getattr(axes, axis_name).get_major_ticks()
+    )
     view.apply_camera_command(command)
     view.suspend_camera_tracking()
     axes = view._axes if isinstance(view, SimulationView) else view._axes_3d

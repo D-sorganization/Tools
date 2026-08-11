@@ -189,7 +189,8 @@ Down the Line hides only display y/target, and Overhead hides only display
 z/up. Because Axes3D can retain cached artists, the adapter suppresses the
 depth axis container, label, line, pane, and tick artists together. The two
 in-plane physical axes remain labelled. Isometric/reset and manual orbit
-restore all axis artists, preventing stale visibility across modes. A
+restore all axis artists from each fresh render, preventing stale visibility
+across modes without forcing both tick-label sides visible. A
 parameterized headless GUI regression proves all three mappings and both
 restoration paths in both viewports. Physics, camera angles, limits, tracking,
 zoom, geometry, and React behavior are unchanged. Fresh focused tests, Ruff,

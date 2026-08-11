@@ -26,7 +26,9 @@ for Down the Line, and display z/up for Overhead. This explicit artist-level
 contract prevents cached Axes3D depth labels from surviving a snap. The two
 visible axes retain their physical labels, ticks, and engineering units.
 Reset/isometric and any manual orbit restore all three axes, so hidden
-presentation state cannot leak between camera modes.
+presentation state cannot leak between camera modes. Visible axes retain
+Matplotlib's native one-sided tick-artist selection; the adapter never forces
+both tick-label sides on and therefore cannot create duplicate labels.
 
 ## Tracking and interaction
 

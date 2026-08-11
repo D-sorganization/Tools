@@ -328,11 +328,18 @@ class CameraViewportMixin:
             axis.label.set_visible(visible)
             axis.line.set_visible(visible)
             axis.pane.set_visible(visible)
-            for tick in axis.get_major_ticks():
-                tick.tick1line.set_visible(visible)
-                tick.tick2line.set_visible(visible)
-                tick.label1.set_visible(visible)
-                tick.label2.set_visible(visible)
+            if not visible:
+                for tick in axis.get_major_ticks():
+                    tick.tick1line.set_visible(False)
+                    tick.tick2line.set_visible(False)
+                    tick.label1.set_visible(False)
+                    tick.label2.set_visible(False)
+            else:
+                for tick in axis.get_major_ticks():
+                    tick.tick1line.set_visible(True)
+                    tick.tick2line.set_visible(False)
+                    tick.label1.set_visible(True)
+                    tick.label2.set_visible(False)
 
     def _notify_camera_state_changed(self) -> None:
         self._camera_controls_widget.sync(self._camera_state)
