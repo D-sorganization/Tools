@@ -16,7 +16,7 @@ pytest==9.1.1
 pytest-cov==7.1.0
 pytest-timeout==2.4.0
 pytest-benchmark==5.2.3
-ruff==0.15.22
+ruff==0.16.1
 mypy==2.3.0
 bandit==1.9.4
 types-PyYAML==6.0.12.20260518
