@@ -1,6 +1,7 @@
 import { type ChangeEvent, type ReactNode, useRef, useState } from "react";
 
 import type { GroundRegionalMaterialPlanRequest } from "../model/groundRegionalPlan";
+import { downloadRegionalExecutionEvidence } from "../model/regionalExecutionFiles";
 import {
   readRegionalExecutionEvidenceFile,
   type RegionalExecutionEvidence,
@@ -38,6 +39,17 @@ export function RegionalExecutionEvidencePanel(props: {
       setStatus("Import failed; prior accepted execution evidence was preserved.");
     }
   };
+  const downloadEvidence = () => {
+    if (evidence === null) return;
+    try {
+      downloadRegionalExecutionEvidence(evidence.result);
+      setError(null);
+      setStatus("Downloaded canonical evidence; no browser physics executed.");
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "Evidence download failed");
+      setStatus("Download failed; prior accepted execution evidence was preserved.");
+    }
+  };
   return (
     <section aria-labelledby="regional-execution-evidence-title"
       className="rounded-xl border border-slate-700/80 bg-slate-900/60 p-4">
@@ -54,6 +66,11 @@ export function RegionalExecutionEvidencePanel(props: {
       <button type="button" onClick={() => input.current?.click()}
         className="mt-3 rounded-md border border-sky-500/60 px-3 py-2 text-sm text-sky-200">
         Import execution evidence
+      </button>
+      <button type="button" disabled={evidence === null} onClick={downloadEvidence}
+        aria-label="Download canonical execution evidence JSON"
+        className="ml-2 mt-3 rounded-md border border-sky-500/60 px-3 py-2 text-sm text-sky-200 disabled:opacity-50">
+        Download canonical evidence
       </button>
       {error !== null && <p role="alert" className="mt-3 text-sm text-rose-200">{error}</p>}
       <p role="status" aria-label="Regional execution evidence status"
@@ -117,7 +134,9 @@ export function RegionalExecutionEvidencePanel(props: {
         </div>}
       </dl>}
       {readback !== null && <RegionalExecutionLedgerTables
-        events={readback.events} transitions={readback.transitions} />}
+        events={readback.events}
+        trajectory={evidence?.result.ground_result?.trajectory ?? []}
+        transitions={readback.transitions} />}
     </section>
   );
 }

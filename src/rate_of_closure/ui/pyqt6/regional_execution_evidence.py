@@ -1,4 +1,4 @@
-"""Native import-only readback for frozen regional execution evidence."""
+"""Native import, inspection, and canonical export of execution evidence."""
 
 from __future__ import annotations
 
@@ -27,8 +27,12 @@ from rate_of_closure.application.regional_execution_readback import (
     RegionalExecutionReadback,
     RegionalExecutionTransitionReadback,
     read_regional_execution_evidence,
+    write_regional_execution_evidence_atomic,
 )
-from shared.python.swing_sim.ground import GroundRegionalMaterialPlanRequest
+from shared.python.swing_sim.ground import (
+    GroundRegionalMaterialPlanRequest,
+    GroundTrajectoryPoint,
+)
 
 MAX_VISIBLE_LEDGER_ROWS = 256
 
@@ -59,6 +63,14 @@ class RegionalExecutionEvidenceBox(QGroupBox):
             "visible plan."
         )
         self.open_button.clicked.connect(self.open)
+        self.save_button = QPushButton("Save canonical evidence as...")
+        self.save_button.setAccessibleName("Save canonical execution evidence JSON")
+        self.save_button.setToolTip(
+            "Atomically save the complete accepted canonical envelope without "
+            "running physics."
+        )
+        self.save_button.setEnabled(False)
+        self.save_button.clicked.connect(self.save_as)
         self.status_label = QLabel("No execution evidence loaded.")
         self.status_label.setWordWrap(True)
         self.status_label.setAccessibleName("Regional execution evidence status")
@@ -67,6 +79,18 @@ class RegionalExecutionEvidenceBox(QGroupBox):
         self.readback_label.setMinimumHeight(180)
         self.readback_label.setAccessibleName("Regional execution evidence readback")
         self.event_summary = QLabel("Events: no accepted evidence")
+        self.trajectory_summary = QLabel("Trajectory: no accepted evidence")
+        self.trajectory_table = _ledger_table(
+            (
+                "t (s)",
+                "Phase",
+                "Position (m)",
+                "v (m/s)",
+                "omega (rad/s)",
+                "Frame",
+            ),
+            "Ground trajectory samples",
+        )
         self.event_table = _ledger_table(
             (
                 "Seq",
@@ -95,6 +119,9 @@ class RegionalExecutionEvidenceBox(QGroupBox):
         self.ledger_tabs = QTabWidget()
         self.ledger_tabs.setAccessibleName("Regional execution ledger inspection")
         self.ledger_tabs.addTab(
+            _ledger_tab(self.trajectory_summary, self.trajectory_table), "Trajectory"
+        )
+        self.ledger_tabs.addTab(
             _ledger_tab(self.event_summary, self.event_table), "Events"
         )
         self.ledger_tabs.addTab(
@@ -103,17 +130,21 @@ class RegionalExecutionEvidenceBox(QGroupBox):
         layout = QFormLayout(self)
         layout.addRow(self.description)
         layout.addRow(self.open_button)
-        layout.addRow("Import status", self.status_label)
+        layout.addRow(self.save_button)
+        layout.addRow("Evidence status", self.status_label)
         layout.addRow("Validated result", self.readback_label)
         layout.addRow("Validated ledgers", self.ledger_tabs)
 
     def clear(self) -> None:
         """Remove evidence made stale by a visible plan edit."""
         self._accepted_evidence = None
+        self.save_button.setEnabled(False)
         self.readback_label.setPlainText("No accepted evidence")
+        _populate_trajectory_table(self.trajectory_table, ())
         _populate_event_table(self.event_table, ())
         _populate_transition_table(self.transition_table, ())
         self.event_summary.setText("Events: no accepted evidence")
+        self.trajectory_summary.setText("Trajectory: no accepted evidence")
         self.transition_summary.setText("Transitions: no accepted evidence")
         self.status_label.setText("Plan changed; execution evidence must be reloaded.")
 
@@ -140,16 +171,59 @@ class RegionalExecutionEvidenceBox(QGroupBox):
             return
         self.recent_path = path
         self._accepted_evidence = evidence
+        self.save_button.setEnabled(True)
         self.readback_label.setPlainText(_format_readback(evidence.readback))
+        trajectory = (
+            ()
+            if evidence.result.ground_result is None
+            else evidence.result.ground_result.trajectory
+        )
+        _populate_trajectory_table(self.trajectory_table, trajectory)
         _populate_event_table(self.event_table, evidence.readback.events)
         _populate_transition_table(self.transition_table, evidence.readback.transitions)
         self.event_summary.setText(
             _ledger_summary("Events", len(evidence.readback.events))
         )
+        self.trajectory_summary.setText(_ledger_summary("Trajectory", len(trajectory)))
         self.transition_summary.setText(
             _ledger_summary("Transitions", len(evidence.readback.transitions))
         )
         self.status_label.setText(f"Loaded {path.name}. No physics executed.")
+        self.status_label.setAccessibleName("Regional execution evidence success")
+
+    def save_as(self) -> None:
+        """Atomically save the complete accepted canonical envelope."""
+        if self._accepted_evidence is None:
+            self.status_label.setText("Save unavailable: no accepted evidence.")
+            self.status_label.setAccessibleName("Regional execution evidence error")
+            return
+        initial = "regional-execution-evidence.json"
+        if self.recent_path is not None:
+            initial = str(self.recent_path.parent / initial)
+        selected, _filter = QFileDialog.getSaveFileName(
+            self,
+            "Save Regional Execution Evidence As",
+            initial,
+            "JSON files (*.json)",
+        )
+        if not selected:
+            return
+        path = Path(selected)
+        try:
+            write_regional_execution_evidence_atomic(
+                self._accepted_evidence.result, path
+            )
+        except (OSError, TypeError, ValueError) as exc:
+            self.status_label.setText(
+                f"Save failed: {exc}. Accepted evidence was preserved."
+            )
+            self.status_label.setAccessibleName("Regional execution evidence error")
+            return
+        self.recent_path = path
+        self.status_label.setText(
+            f"Saved {path.name} atomically. Canonical envelope unchanged; "
+            "no physics executed."
+        )
         self.status_label.setAccessibleName("Regional execution evidence success")
 
 
@@ -198,6 +272,24 @@ def _populate_event_table(
             _vector(value.angular_velocity_before_rad_s),
             _vector(value.angular_velocity_after_rad_s),
             value.frame,
+        )
+        for column, text in enumerate(cells):
+            table.setItem(row, column, QTableWidgetItem(text))
+
+
+def _populate_trajectory_table(
+    table: QTableWidget, values: tuple[GroundTrajectoryPoint, ...]
+) -> None:
+    visible = values[:MAX_VISIBLE_LEDGER_ROWS]
+    table.setRowCount(len(visible))
+    for row, value in enumerate(visible):
+        cells = (
+            f"{value.time_s:.6f}",
+            value.phase.value,
+            _vector(value.position_m),
+            _vector(value.velocity_m_s),
+            _vector(value.angular_velocity_rad_s),
+            value.frame.value,
         )
         for column, text in enumerate(cells):
             table.setItem(row, column, QTableWidgetItem(text))

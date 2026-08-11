@@ -1015,3 +1015,32 @@ zero-warning ESLint, the 203-module production build, campaign-manifest
 validation plus eight manifest tests, documentation governance, module-size
 budget, placeholder scan, and diff checks. The build retains the inherited
 500 kB chunk advisory.
+
+## 2026-08-11 regional trajectory inspection and canonical export continuation
+
+Branch `feat/4271-regional-trajectory-export` is a local, unpublished child of
+exact published draft PR #4353 head
+`7fc00f43561c31923b74563bc2bf6caf89bbc9eb`. It adds matched PyQt6 and React
+inspection of the frozen envelope's already-validated raw ground trajectory:
+SI time, phase, position, linear velocity, angular velocity, and frame. Both
+clients retain the complete accepted envelope while presenting at most 256
+samples with exact count/truncation disclosure.
+
+Accepted evidence can be saved with the frozen canonical serializer. PyQt6
+uses a bounded UTF-8 native atomic write; React downloads the same canonical
+JSON and makes no atomic-filesystem claim. Export does not project, recompute,
+or alter evidence. Native cancellation is a no-op; import and export failures
+preserve the prior accepted evidence. No browser physics is introduced.
+
+This child has not been pushed and has no PR. Before any GitHub write, finish
+the recorded local gates and independent review. Ground-request and settled-
+bounce-prefix construction, UI executor invocation, interpolation/playback,
+measured calibration, compiled-runtime parity, downstream parity, protected
+CI/review, release, and #4267/#4271 completion remain open.
+
+Exact local gates are green: 209 expanded Python ground/plan/PyQt/layout tests,
+112 React files / 694 tests, strict MyPy, Ruff/format, TypeScript type-check,
+zero-warning ESLint, the 204-module production build, campaign-manifest
+validation plus eight manifest tests, documentation governance, module-size
+budget, placeholder scan, and diff checks. The inherited 500 kB build advisory
+remains. Independent review is required before publication.

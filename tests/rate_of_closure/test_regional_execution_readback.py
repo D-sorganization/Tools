@@ -11,6 +11,7 @@ import pytest
 from rate_of_closure.application.regional_execution_readback import (
     read_regional_execution_evidence,
     regional_execution_readback,
+    write_regional_execution_evidence_atomic,
 )
 from shared.python.swing_sim.ground import (
     MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES,
@@ -129,6 +130,23 @@ def test_file_read_is_bounded_strict_and_plan_bound(tmp_path: Path) -> None:
         read_regional_execution_evidence(target, result.regional_plan)
 
 
+def test_export_writes_the_exact_canonical_validated_envelope_atomically(
+    tmp_path: Path,
+) -> None:
+    result = _result()
+    target = tmp_path / "execution-export.json"
+
+    assert write_regional_execution_evidence_atomic(result, target) is True
+    assert target.read_text(encoding="utf-8") == result.to_json()
+    assert (
+        RegionalGroundExecutionResult.from_dict(
+            json.loads(target.read_text(encoding="utf-8"))
+        )
+        == result
+    )
+    assert write_regional_execution_evidence_atomic(result, None) is False
+
+
 def test_pyqt_import_is_transactional_and_invalidated_by_plan_edit(
     qtbot, tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:  # type: ignore[no-untyped-def]
@@ -157,6 +175,8 @@ def test_pyqt_import_is_transactional_and_invalidated_by_plan_edit(
     qtbot.addWidget(parent)
     box = RegionalExecutionEvidenceBox(Host(), parent)
 
+    assert box.save_button.isEnabled() is False
+
     box.open_button.click()
 
     assert "partial" in box.readback_label.toPlainText()
@@ -171,6 +191,11 @@ def test_pyqt_import_is_transactional_and_invalidated_by_plan_edit(
     assert box.transition_table.rowCount() == 1
     assert box.transition_table.item(0, 3).text() == "base / firm-fairway"
     assert box.transition_table.item(0, 4).text() == "rough-band / regional-rough"
+    assert box.trajectory_table.rowCount() == 13
+    assert box.trajectory_table.item(0, 0).text() == "1.005000"
+    assert box.trajectory_table.item(0, 1).text() == "impact"
+    assert box.trajectory_table.item(0, 2).text() == ("(0.000000, 0.021350, 0.000000)")
+    assert box.save_button.isEnabled() is True
     readback = regional_execution_readback(result, result.regional_plan)
     many_events = tuple(
         replace(readback.events[0], sequence=index) for index in range(257)
@@ -181,7 +206,31 @@ def test_pyqt_import_is_transactional_and_invalidated_by_plan_edit(
         "Events: showing first 256 of 257 validated rows."
     )
     assert "No physics executed" in box.status_label.text()
+    exported = tmp_path / "exported.json"
+    monkeypatch.setattr(
+        regional_execution_evidence.QFileDialog,
+        "getSaveFileName",
+        lambda *_args: (str(exported), "JSON files (*.json)"),
+    )
+    box.save_button.click()
+    assert exported.read_text(encoding="utf-8") == result.to_json()
+    assert "atomically" in box.status_label.text()
     accepted = box.readback_label.toPlainText()
+
+    def fail_save(*_args: object) -> bool:
+        raise OSError("simulated destination failure")
+
+    monkeypatch.setattr(
+        regional_execution_evidence,
+        "write_regional_execution_evidence_atomic",
+        fail_save,
+    )
+    box.save_button.click()
+    assert "Save failed: simulated destination failure" in box.status_label.text()
+    assert "Accepted evidence was preserved" in box.status_label.text()
+    assert box.readback_label.toPlainText() == accepted
+    assert box.save_button.isEnabled() is True
+
     target.write_text('{"request_id":"one","request_id":"two"}', encoding="utf-8")
     box.open_button.click()
     assert box.readback_label.toPlainText() == accepted
@@ -190,3 +239,5 @@ def test_pyqt_import_is_transactional_and_invalidated_by_plan_edit(
     assert box.readback_label.toPlainText() == "No accepted evidence"
     assert box.event_table.rowCount() == 0
     assert box.transition_table.rowCount() == 0
+    assert box.trajectory_table.rowCount() == 0
+    assert box.save_button.isEnabled() is False

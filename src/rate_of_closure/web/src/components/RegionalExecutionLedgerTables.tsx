@@ -2,6 +2,7 @@ import type {
   RegionalExecutionEventReadback,
   RegionalExecutionTransitionReadback,
 } from "../model/regionalExecutionReadback";
+import type { GroundTrajectoryPoint } from "../model/flightGroundTypes";
 
 const MAX_VISIBLE_LEDGER_ROWS = 256;
 
@@ -20,9 +21,33 @@ function LedgerSummary(props: { readonly total: number }) {
 
 export function RegionalExecutionLedgerTables(props: {
   readonly events: readonly RegionalExecutionEventReadback[];
+  readonly trajectory: readonly GroundTrajectoryPoint[];
   readonly transitions: readonly RegionalExecutionTransitionReadback[];
 }) {
   return <div className="mt-4 grid gap-3">
+    <details>
+      <summary aria-label="Toggle ground trajectory samples"
+        className="cursor-pointer font-medium">
+        Trajectory · <LedgerSummary total={props.trajectory.length} />
+      </summary>
+      <div className="mt-2 overflow-x-auto">
+        <table aria-label="Ground trajectory samples" className="min-w-max text-left text-xs">
+          <thead><tr>
+            {["t (s)", "Phase", "Position (m)", "v (m/s)", "omega (rad/s)", "Frame"]
+              .map((heading) => <th className="px-2 py-1" key={heading}>{heading}</th>)}
+          </tr></thead>
+          <tbody>{props.trajectory.slice(0, MAX_VISIBLE_LEDGER_ROWS).map((point, index) =>
+            <tr className="border-t border-slate-700" key={`${point.time_s}-${index}`}>
+              <td className="px-2 py-1">{point.time_s.toFixed(6)}</td>
+              <td className="px-2 py-1">{point.phase}</td>
+              <td className="px-2 py-1">{vector(point.position_m)}</td>
+              <td className="px-2 py-1">{vector(point.velocity_m_s)}</td>
+              <td className="px-2 py-1">{vector(point.angular_velocity_rad_s)}</td>
+              <td className="px-2 py-1">{point.frame}</td>
+            </tr>)}</tbody>
+        </table>
+      </div>
+    </details>
     <details>
       <summary aria-label="Toggle ground execution events"
         className="cursor-pointer font-medium">
