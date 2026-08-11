@@ -503,8 +503,9 @@ Issue #4261 continues locally in
 `C:\Users\diete\Repositories\Tools-worktrees\runtime-manifest-contract` on
 `feat/4261-runtime-manifest-contract`, based on exact remote parent
 `fix/rate-mobile-tools-menu` at
-`16a1167c31126238163297983862004afc5001d9`. Do not rebase, retarget, rewrite,
-or publish it before independent review.
+`c653f9ff9193d6cdb8e11a13ad0001707e468a42`. The branch incorporated that
+parent by an ordinary merge after the parent advanced from `16a1167c...`;
+there were no conflicts. Do not rebase, retarget, or rewrite the stack.
 
 The bounded child adds immutable, extra-forbidding Python and TypeScript
 `calculation-runtime-manifest/v1` contracts. Every record contains an exact

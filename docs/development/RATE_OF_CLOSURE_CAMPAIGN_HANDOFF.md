@@ -1454,7 +1454,9 @@ signatures predate #4269 and are explicitly retained for compatibility.
 The next four-surface authority slice is isolated on
 `feat/4261-runtime-manifest-contract` from exact remote
 `fix/rate-mobile-tools-menu` head
-`16a1167c31126238163297983862004afc5001d9`. It defines the strict immutable
+`c653f9ff9193d6cdb8e11a13ad0001707e468a42`. The child incorporated the
+parent's advance from `16a1167c...` by an ordinary conflict-free merge and
+retains the same base branch. It defines the strict immutable
 `calculation-runtime-manifest/v1` contract in Python and TypeScript and shares a
 canonical parity fixture. The record names the exact product surface, package,
 build, Tools SHA, and complete impact/flight/ground status ledger. Available

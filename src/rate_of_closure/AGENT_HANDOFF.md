@@ -982,7 +982,9 @@ new structures introduced by this issue.
 
 The isolated `feat/4261-runtime-manifest-contract` branch starts from exact
 `fix/rate-mobile-tools-menu` head
-`16a1167c31126238163297983862004afc5001d9`. It adds the UI-neutral Python/
+`c653f9ff9193d6cdb8e11a13ad0001707e468a42`, incorporated by an ordinary
+conflict-free parent merge after the branch advanced from `16a1167c...`. It
+adds the UI-neutral Python/
 TypeScript `calculation-runtime-manifest/v1` boundary and shared fixture for
 #4261 without changing simulation, UI, workspace, ground, or consumer code.
 
