@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
+from typing import TypeAlias, cast
 
 import numpy as np
+import numpy.typing as npt
 
 from rate_of_closure._contracts import ensure, require
 from rate_of_closure.club import face_normal_at_offset
@@ -35,10 +38,12 @@ from shared.python.swing_sim.impact import (
 )
 from shared.python.swing_sim.swing_source import SwingSource
 
+FloatArray: TypeAlias = npt.NDArray[np.float64]
+
 SWING_SAMPLE_DT_S = 1e-3
 
 
-def swing_sample_times(duration_s: float) -> np.ndarray:
+def swing_sample_times(duration_s: float) -> FloatArray:
     """Return the canonical uniformly sampled swing grid for a duration."""
     require(
         math.isfinite(duration_s) and duration_s > 0.0,
@@ -46,17 +51,18 @@ def swing_sample_times(duration_s: float) -> np.ndarray:
         duration_s,
     )
     sample_count = int(round(duration_s / SWING_SAMPLE_DT_S))
-    return np.linspace(0.0, duration_s, max(sample_count, 2) + 1)
+    times: FloatArray = np.linspace(0.0, duration_s, max(sample_count, 2) + 1)
+    return times
 
 
 def configured_swing_sample_times(config: SimulationConfig) -> np.ndarray:
     """Return the exact grid produced by a validated simulation config."""
     if config.source_kind == "manual":
-        return swing_sample_times(MANUAL_SWING_DURATION_S)
+        return cast(np.ndarray, swing_sample_times(MANUAL_SWING_DURATION_S))
     source_duration_s = (
         round(config.swing_duration_s / SWING_SAMPLE_DT_S) * SWING_SAMPLE_DT_S
     )
-    return swing_sample_times(source_duration_s)
+    return cast(np.ndarray, swing_sample_times(source_duration_s))
 
 
 @dataclass(frozen=True)
@@ -171,7 +177,8 @@ def _sample_applied_torques(
             values,
         )
         rows.append([float(values[joint_id]) for joint_id in joint_ids])
-    return np.asarray(rows, dtype=np.float64)
+    samples: FloatArray = np.asarray(rows, dtype=np.float64)
+    return cast(np.ndarray, samples)
 
 
 def _select_contact(
@@ -244,11 +251,16 @@ def _solve_hit(
     )
 
 
-def _face_normal_callable(config: SimulationConfig):  # type: ignore[no-untyped-def]
+def _face_normal_callable(
+    config: SimulationConfig,
+) -> Callable[[float, float], FloatArray]:
     """Return the club's bulge/roll normal callback for the impact solver."""
 
     def _normal(toe_m: float, high_m: float) -> np.ndarray:
-        return np.array(face_normal_at_offset(config.club, toe_m * 1e3, high_m * 1e3))
+        normal: FloatArray = np.array(
+            face_normal_at_offset(config.club, toe_m * 1e3, high_m * 1e3)
+        )
+        return cast(np.ndarray, normal)
 
     return _normal
 

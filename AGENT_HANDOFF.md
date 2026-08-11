@@ -21,6 +21,10 @@
 - Post-merge scoped quality gates also make the parametric-head station
   refinement's fixed four-coordinate tuple contract explicit to mypy; this is
   a type-only clarification and does not change generated mesh values.
+- The CI Mypy 1.13 failures in Rate's NumPy/STL, club geometry, simulation,
+  PyQt canvas, and Matplotlib patch boundaries are repaired with explicit
+  types and casts only. The exact scoped CI mode passes 11 files, 134 focused
+  tests pass, and scoped Ruff lint/format pass; runtime behavior is unchanged.
 - The first protected `quality-gate` run at the repaired head exposed nine
   misplaced Ruff suppressions in Sidekick GUI tests inherited from `main`.
   Their intentionally retained QApplication references now use `_app`, so the
@@ -37,15 +41,13 @@
   affected tools, with no material domain behavior or handoff change.
 - That broad formatter reconciliation caused the changed-file Mypy gate to
   inspect legacy Rate/shared numerical boundaries. The Rate UI, kinetics,
-  solver-goal, and variation groups now use explicit NumPy result types and
-  scalar conversions; dynamic UI goals use `ImpactGoal.from_mapping` instead
-  of an unsafe `**dict`. The integrated shared flight/impact/swing/reference/
-  solver group adds explicit float64 array contracts and narrow normalization
-  at dynamic Rust/config/model boundaries. Together these repairs clear 112 of
-  the 132 protected findings; 315 shared-core tests pass with five expected
-  Rust-wheel skips, plus 90 UI/kinetics and 103 variation tests. No blanket
-  ignores or numerical behavior changes were introduced; the final Rate
-  model/mesh group remains isolated until review and integration.
+  solver-goal, variation, flight/impact/swing/reference/solver, model, mesh,
+  club-geometry, simulation, and plotting groups now use explicit NumPy
+  result types and narrow scalar normalization at dynamic boundaries.
+  `ImpactGoal.from_mapping` replaces the unsafe dynamic `**dict` path. All
+  132 protected findings are cleared without blanket ignores or changes to
+  numerical equations; the final model/mesh slice is independently clean in
+  Mypy 1.13 and a newer verifier, with 134 focused tests passing.
 - Before release, push the merge normally, verify the new exact PR head, wait
   for protected CI, resolve only the addressed review threads with linked
   evidence, obtain the required approval, and merge through ordinary branch
@@ -55,9 +57,6 @@
   viewport compositor (#4225); then finish measured plot geometry/export
   parity (#4224). Open epic checklists remain acceptance ledgers and must not
   be closed merely because partial PR evidence exists.
-
-The older sections below are retained as architecture/history; this snapshot
-is authoritative when their dated PR state differs.
 
 ## Where This Repo Is Headed
 
@@ -79,11 +78,6 @@ The separate shared Club Builder epic #4146 is active. Its first dependency
 slice, #4147, lives on `feat/4147-club-builder-core` and establishes the
 UI-independent assembly mass/CG/inertia, frame, length-datum, and persistence
 contracts that the later shaft, CAD, export, fitting, and UI issues consume.
-
-Active infrastructure repair: #4155 hardens the Rust/PyO3 job against
-incomplete setup-python cache entries whose interpreter works but whose
-declared link library is missing. The repair is isolated on
-`fix/4155-rust-libpython-cache` and does not change simulation code.
 
 See `src/rate_of_closure/AGENT_HANDOFF.md` for the detailed stack breakdown
 and architecture pointers for this tool specifically.
@@ -110,12 +104,6 @@ main
          └─ feat/course-showcase      (PR #4129, epic #4125, stacked on #4124)
 docs/agent-handoff-1390               (this branch, off origin/main, Repository_Management#1390)
 ```
-
-Other active non-golf branches worth knowing about: `fix/file-size-budget-bounded-checkout`
-(#4096, CI checkout-scope fix), `agent/scada-phase-a-foundation` (#4091, SCADA
-epic #4085), several `scada/pr*` branches (SCADA epics #4085-#4089), and a
-handful of Bolt/Palette/Sentinel micro-PRs (#4070-#4102) unrelated to the
-golf-sim stack.
 
 ## Gate Commands (repo-wide)
 

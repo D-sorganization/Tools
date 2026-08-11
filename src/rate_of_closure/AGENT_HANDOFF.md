@@ -22,9 +22,11 @@ This branch includes current `main` plus the following review repairs:
    `clubCanvasRendering.ts`; focused helper tests pin face alignment, placement,
    sorting, and lighting.
 
-Current local evidence: 947 Python tests pass with one expected missing-Rust-
-wheel skip; 312 React tests pass across 42 files; scoped Ruff, Black, and mypy
-are clean; and React ESLint, TypeScript, and production build pass. The next
+Current integrated evidence: 948 Python tests pass with one expected missing-
+Rust-wheel skip; 312 React tests pass across 42 files; repository Ruff
+lint/format, changed-file Mypy across 191 source files, React ESLint,
+TypeScript, and production build are clean. The final Rate model/mesh slice
+also passes Mypy 1.13 and a newer verifier plus 134 focused tests. The next
 agent must verify the exact GitHub head and protected checks, obtain the
 required approval, and merge normally. Do not claim #4119 or any epic complete
 before protected release to `main`.
@@ -35,15 +37,12 @@ including four Rate/swing-sim files; there is no Rate behavior change, and
 both repository-wide Ruff lint and format checks are clean afterward.
 
 The next protected gate exposed legacy Mypy debt because those mechanically
-formatted files became part of the changed-file set. Rate UI/kinetics and the
-shared variation group now have explicit NumPy/scalar boundary types, and
-dynamic solver goal dictionaries flow through the validated
-`ImpactGoal.from_mapping` constructor. Focused solver/GUI/kinetics tests (90)
-and variation tests (103) pass. The integrated shared-core slice clears its 42
-findings with explicit float64 array contracts; 315 related tests pass with
-five expected missing-Rust-wheel skips. These repairs add no ignores and do
-not change model values or physics equations. The final Rate model/mesh slice
-must still be integrated before protected CI is evaluated again.
+formatted files became part of the changed-file set. Rate UI/kinetics,
+variation, shared core, model, mesh, club geometry, simulation, canvas, and
+course-rendering boundaries now carry explicit NumPy/scalar types; dynamic
+solver goal dictionaries flow through validated `ImpactGoal.from_mapping`.
+The complete changed-file Mypy surface is locally clean. These repairs add no
+ignores and do not change model values or physics equations.
 
 After the root lands, preserve dependency order. The highest-value remaining
 UI slice is #4225's actual multi-viewport compositor; #4224 still needs

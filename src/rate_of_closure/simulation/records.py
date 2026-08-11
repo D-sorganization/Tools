@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
+from typing import TypeAlias
 
 import numpy as np
+import numpy.typing as npt
 
 from rate_of_closure._contracts import require
 from rate_of_closure.club import ClubSpec, ClubType
@@ -29,6 +31,8 @@ from shared.python.swing_sim.run_config import (
 )
 from shared.python.swing_sim.torque_library import TorqueProfileLibrary
 from shared.python.swing_sim.types import PlaneOrientation
+
+FloatArray: TypeAlias = npt.NDArray[np.float64]
 
 __all__ = ["BALL_POSITION_M", "SimulationConfig", "SimulationRun"]
 
@@ -117,9 +121,10 @@ class SimulationConfig:
         )
 
     @property
-    def ball_position_m(self) -> np.ndarray:
+    def ball_position_m(self) -> FloatArray:
         """Return a new ball-center vector for geometry calculations."""
-        return np.asarray(self.ball_setup.ball_center_m, dtype=float)
+        position: FloatArray = np.asarray(self.ball_setup.ball_center_m, dtype=float)
+        return position
 
 
 def _default_ball_setup(club: ClubSpec) -> BallSetup:

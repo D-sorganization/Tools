@@ -25,9 +25,10 @@ from __future__ import annotations
 import math
 from collections.abc import Callable
 from dataclasses import dataclass
-from typing import cast
+from typing import TypeAlias, cast
 
 import numpy as np
+import numpy.typing as npt
 
 from rate_of_closure._contracts import require
 from rate_of_closure.model import ImpactScenario, solve
@@ -40,6 +41,8 @@ from shared.python.swing_sim.types import (
     PlaneOrientation,
     SwingSample,
 )
+
+FloatArray: TypeAlias = npt.NDArray[np.float64]
 
 __all__ = [
     "SOURCE_KINDS",
@@ -70,11 +73,12 @@ APP_FROM_SWING = np.array(
 )
 
 
-def _rodrigues(axis_omega: np.ndarray, dt: float) -> np.ndarray:
+def _rodrigues(axis_omega: np.ndarray, dt: float) -> FloatArray:
     """Rotation matrix for spinning at ``axis_omega`` [rad/s] for ``dt`` s."""
     theta = float(np.linalg.norm(axis_omega)) * dt
     if abs(theta) < 1e-15:
-        return np.eye(3)
+        identity: FloatArray = np.eye(3)
+        return identity
     axis = axis_omega / np.linalg.norm(axis_omega)
     k = np.array(
         [
@@ -83,9 +87,10 @@ def _rodrigues(axis_omega: np.ndarray, dt: float) -> np.ndarray:
             [-axis[1], axis[0], 0.0],
         ]
     )
-    return np.asarray(
+    rotation: FloatArray = np.asarray(
         np.eye(3) + math.sin(theta) * k + (1.0 - math.cos(theta)) * (k @ k)
     )
+    return rotation
 
 
 class AppFrameSwing:
@@ -311,7 +316,8 @@ def triple_derivatives(
     damping = j.T @ (np.array(p.damping) * (j @ dphi))
 
     ddphi = np.linalg.solve(mass, -(coriolis + gravity + damping))
-    return np.concatenate([dphi, ddphi])
+    derivatives: FloatArray = np.concatenate([dphi, ddphi])
+    return cast(np.ndarray, derivatives)
 
 
 def triple_total_energy(
@@ -392,7 +398,8 @@ class TriplePendulumSwing:
         k2 = f(y + dt / 2.0 * k1)
         k3 = f(y + dt / 2.0 * k2)
         k4 = f(y + dt * k3)
-        return np.asarray(y + dt / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4))
+        state: FloatArray = np.asarray(y + dt / 6.0 * (k1 + 2.0 * k2 + 2.0 * k3 + k4))
+        return cast(np.ndarray, state)
 
     def state_at(self, t: float) -> np.ndarray:
         """Interpolated absolute-angle joint state at ``t``."""
@@ -403,7 +410,10 @@ class TriplePendulumSwing:
         i0 = min(int(idx), self._n_steps)
         i1 = min(i0 + 1, self._n_steps)
         frac = idx - i0
-        return np.asarray((1.0 - frac) * self._states[i0] + frac * self._states[i1])
+        state: FloatArray = np.asarray(
+            (1.0 - frac) * self._states[i0] + frac * self._states[i1]
+        )
+        return cast(np.ndarray, state)
 
     def joint_positions(self, t: float) -> np.ndarray:
         """Pivot and each link endpoint in the oriented swing frame."""
@@ -416,7 +426,8 @@ class TriplePendulumSwing:
                 math.sin(float(angle)) * x_axis - math.cos(float(angle)) * up_axis
             )
             points.append(current.copy())
-        return np.vstack(points)
+        positions: FloatArray = np.vstack(points)
+        return cast(np.ndarray, positions)
 
     @property
     def parameters(self) -> TriplePendulumParameters:
@@ -447,7 +458,7 @@ class TriplePendulumSwing:
 
         lengths = np.array(self._p.l)
         x = float(np.sum(lengths * np.sin(phi)))
-        y = float(-np.sum(lengths * np.cos(phi)))
+        y = -float(np.sum(lengths * np.cos(phi)))
         vx = float(np.sum(lengths * np.cos(phi) * dphi))
         vy = float(np.sum(lengths * np.sin(phi) * dphi))
 

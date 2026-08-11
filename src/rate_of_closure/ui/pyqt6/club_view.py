@@ -8,9 +8,10 @@ alignment, and an engineering-style center-of-gravity marker.
 from __future__ import annotations
 
 import logging
-from typing import cast
+from typing import TypeAlias, cast
 
 import numpy as np
+import numpy.typing as npt
 from matplotlib.figure import Figure
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 from PyQt6.QtCore import Qt, QTimer
@@ -35,6 +36,8 @@ from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
 from rate_of_closure.units import FIELD_GUIDANCE
+
+FloatArray: TypeAlias = npt.NDArray[np.float64]
 
 logger = logging.getLogger(__name__)
 
@@ -128,13 +131,14 @@ def _head_wireframe(scenario: ImpactScenario) -> dict[str, np.ndarray]:
     return {"face": face, "back": back, "shaft": shaft, "impact": impact}
 
 
-def _display(points: np.ndarray) -> np.ndarray:
+def _display(points: np.ndarray) -> FloatArray:
     """Model frame (x target, y up, z right) -> matplotlib display axes.
 
     Matplotlib draws its z axis vertically, so plot (z, x, y): right of
     target across, target line into the page, up truly up.
     """
-    return np.asarray(points)[..., [2, 0, 1]]
+    display_points: FloatArray = np.asarray(points)[..., [2, 0, 1]]
+    return display_points
 
 
 class Club3DView(QWidget):
@@ -313,7 +317,10 @@ class Club3DView(QWidget):
         shifted with the mesh; ``None`` for the wireframe hosel."""
         if self._scenario is None or self._mesh is None or self._hosel is None:
             return None
-        return np.asarray(self._hosel + self._head_shift(self._mesh, self._scenario))
+        attachment: FloatArray = np.asarray(
+            self._hosel + self._head_shift(self._mesh, self._scenario)
+        )
+        return cast(np.ndarray, attachment)
 
     def cg_marker_point(self) -> np.ndarray | None:
         """Model-frame CG marker location, or ``None`` when hidden."""
@@ -321,13 +328,19 @@ class Club3DView(QWidget):
             return None
         if self._mesh is None or self._cog is None:
             return np.zeros(3)  # spec CG fallback: the reference point
-        return np.asarray(self._cog + self._head_shift(self._mesh, self._scenario))
+        marker: FloatArray = np.asarray(
+            self._cog + self._head_shift(self._mesh, self._scenario)
+        )
+        return cast(np.ndarray, marker)
 
     @staticmethod
     def _head_shift(mesh: HeadMesh, scenario: ImpactScenario) -> np.ndarray:
         """+x shift placing the mesh's face plane at GC-to-face."""
         d = scenario.com_to_face_mm / 1000.0
-        return np.array([d - float(mesh.triangles[..., 0].max()), 0.0, 0.0])
+        shift: FloatArray = np.array(
+            [d - float(mesh.triangles[..., 0].max()), 0.0, 0.0]
+        )
+        return cast(np.ndarray, shift)
 
     def has_mesh(self) -> bool:
         """Whether an STL mesh is currently rendered."""

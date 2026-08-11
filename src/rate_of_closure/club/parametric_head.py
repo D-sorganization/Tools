@@ -35,9 +35,10 @@ curvature off the corresponding component is zero — a flat lofted face.
 from __future__ import annotations
 
 import math
-from typing import cast
+from typing import TypeAlias, cast
 
 import numpy as np
+import numpy.typing as npt
 
 from rate_of_closure._contracts import ensure, require, require_finite
 from rate_of_closure.mesh import HeadMesh, triangle_normals
@@ -45,6 +46,8 @@ from rate_of_closure.mesh import HeadMesh, triangle_normals
 from .geometry import RING_POINTS, cap_fan, loft_band, superellipse_ring
 from .head_profiles import mass_scale, profile_for
 from .types import ClubSpec
+
+FloatArray: TypeAlias = npt.NDArray[np.float64]
 
 __all__ = [
     "BASE_SECTIONS",
@@ -123,16 +126,17 @@ def face_sagitta(spec: ClubSpec, toe_m: float, high_m: float) -> float:
     return sag
 
 
-def _loft_rotation(loft_deg: float) -> np.ndarray:
+def _loft_rotation(loft_deg: float) -> FloatArray:
     """Rotation about +z tilting the face normal up by the loft angle."""
     lam = math.radians(loft_deg)
-    return np.array(
+    rotation: FloatArray = np.array(
         [
             [math.cos(lam), -math.sin(lam), 0.0],
             [math.sin(lam), math.cos(lam), 0.0],
             [0.0, 0.0, 1.0],
         ]
     )
+    return rotation
 
 
 def face_normal_at_offset(
@@ -198,7 +202,7 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
         x, hh, hw, yc = section
         ring = superellipse_ring(x, hh, hw)
         ring[:, 1] += yc
-        return ring
+        return cast(np.ndarray, ring)
 
     rings = [body_ring(section) for section in sections]
     face_x, _hh0, _hw0, face_yc = sections[0]
@@ -212,7 +216,8 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
         scaled[:, 2] *= fraction
         for row in scaled:
             row[0] = face_x - face_sagitta(spec, float(row[2]), float(row[1] - face_yc))
-        return np.asarray((scaled - center) @ rotation.T + center)
+        ring: FloatArray = np.asarray((scaled - center) @ rotation.T + center)
+        return cast(np.ndarray, ring)
 
     face_rings = [face_ring(fraction) for fraction in _FACE_FRACTIONS]
     face_center = center.copy()  # sagitta at (0, 0) is zero; loft fixes c
@@ -235,11 +240,11 @@ def build_parametric_head(spec: ClubSpec) -> np.ndarray:
     tail_center = np.array([tail_x + profile.rear_recess_m * scale, tail_yc, 0.0])
     triangles.extend(cap_fan(tail_center, rings[-1], outward_x=False))
 
-    mesh = np.array(triangles)
+    mesh: FloatArray = np.array(triangles)
     expected = (2 * (len(sections) - 1) + 2 * (len(face_rings) - 1) + 2) * RING_POINTS
     ensure(mesh.shape[0] == expected, "parametric head is closed")
     ensure(bool(np.isfinite(mesh).all()), "parametric head vertices finite")
-    return mesh
+    return cast(np.ndarray, mesh)
 
 
 def parametric_head_mesh(spec: ClubSpec) -> HeadMesh:

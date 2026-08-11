@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.5                                     |
-| **Spec Version**        | 1.13.5                                     |
+| **Current Version**     | 1.13.6                                     |
+| **Spec Version**        | 1.13.6                                     |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -2573,8 +2573,9 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-10 | 1.13.4 | fix(types, #4119): make Rate UI/kinetics and shared variation NumPy/scalar boundaries explicit and add a validated `ImpactGoal.from_mapping` path for dynamic UI target dictionaries, resolving changed-file Mypy findings without changing model values. |
+| 2026-08-10 | 1.13.6 | fix(rate_of_closure, #4119): finish explicit numerical contracts across the Rate model, STL/club geometry, simulation, PyQt canvas, and course-rendering boundaries; clear the complete changed-file Mypy 1.13 surface without ignores or numerical-model changes. |
 | 2026-08-10 | 1.13.5 | fix(swing_sim, #4119): replace unparameterized shared-core ndarray contracts with explicit float64 arrays and normalize scalars at dynamic Rust/config/model boundaries; clear the CI-pinned findings across the flight/impact/swing/reference/solver slice plus a newer-Mypy solver return finding, without ignores or runtime-physics changes. |
+| 2026-08-10 | 1.13.4 | fix(types, #4119): make Rate UI/kinetics and shared variation NumPy/scalar boundaries explicit and add a validated `ImpactGoal.from_mapping` path for dynamic UI target dictionaries, resolving changed-file Mypy findings without changing model values. |
 | 2026-08-10 | 1.13.4 | style(repo, #4119): mechanically normalize 101 Python files with the repository's authoritative Ruff formatter after the current-main reconciliation exposed legacy drift; repository-wide Ruff lint and format checks are clean, with no behavior or domain-contract change. |
 | 2026-08-10 | 1.13.4 | refactor(rate_of_closure, #4119): split `ClubCanvas` mesh transformation, painter sorting, lighting, projected primitives, and velocity-arrow rendering into a focused tested module, bringing every production file below the 400-line cap without changing playback or rendered geometry. |
 | 2026-08-10 | 1.13.4 | fix(ci): name the intentionally retained QApplication references in Sidekick GUI tests with an underscore, removing nine Ruff F841 failures that blocked the required quality gate after the Rate root merged current `main`. |

@@ -53,10 +53,14 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, fields
+from typing import TypeAlias, cast
 
 import numpy as np
+import numpy.typing as npt
 
 from ._contracts import ensure, require, require_finite
+
+FloatArray: TypeAlias = npt.NDArray[np.float64]
 
 __all__ = [
     "MPH_PER_MPS",
@@ -182,7 +186,7 @@ class ImpactResult:
     plane_normal: tuple[float, float, float]
 
 
-def _frame(lie_angle_deg: float) -> tuple[np.ndarray, np.ndarray]:
+def _frame(lie_angle_deg: float) -> tuple[FloatArray, FloatArray]:
     """Shaft axis and swing-plane normal for a given impact lie angle.
 
     The shaft points from the head up toward the hands: up (+y) and
@@ -198,18 +202,19 @@ def _frame(lie_angle_deg: float) -> tuple[np.ndarray, np.ndarray]:
     return shaft, normal
 
 
-def _omega_rad(scenario: ImpactScenario) -> np.ndarray:
+def _omega_rad(scenario: ImpactScenario) -> FloatArray:
     """Angular velocity vector in rad/s from the two reported components."""
     shaft, normal = _frame(scenario.lie_angle_deg)
-    return np.asarray(
+    omega: FloatArray = np.asarray(
         math.radians(scenario.omega_plane_dps) * normal
         + math.radians(scenario.omega_shaft_dps) * shaft
     )
+    return omega
 
 
-def _impact_lever_m(scenario: ImpactScenario) -> np.ndarray:
+def _impact_lever_m(scenario: ImpactScenario) -> FloatArray:
     """Vector from the reference point to the impact point, metres."""
-    return (
+    lever: FloatArray = (
         np.array(
             [
                 scenario.com_to_face_mm,
@@ -219,6 +224,7 @@ def _impact_lever_m(scenario: ImpactScenario) -> np.ndarray:
         )
         / 1000.0
     )
+    return lever
 
 
 def solve(scenario: ImpactScenario) -> ImpactResult:
@@ -397,4 +403,5 @@ def sweep(scenario: ImpactScenario, field_name: str, values: np.ndarray) -> np.n
         ).path_deviation_deg
         for value in array.ravel()
     ]
-    return np.asarray(flat).reshape(array.shape)
+    result: FloatArray = np.asarray(flat).reshape(array.shape)
+    return cast(np.ndarray, result)
