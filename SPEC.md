@@ -134,6 +134,26 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - This slice is not issue #4225 or epic #4218 completion: torque profiles,
   optimizer state, variation/flight run artifacts, protected review/release,
   and UpstreamDrift consumers remain open.
+### 2026-08-11 Orthographic 3D axis presentation
+
+- PyQt6 Face On, Down the Line, and Overhead camera presets suppress the
+  complete Matplotlib presentation of only the screen-depth display axis:
+  x/right for Face On, y/downrange for Down the Line, and z/up for Overhead.
+- Suppression covers the depth-axis container, label, line, pane, and tick
+  artists so cached Axes3D labels cannot survive an orthographic snap. The two
+  visible axes retain their physical labels, engineering units, ticks, and
+  Matplotlib's native one-sided tick-label selection.
+- Reset/isometric and manual orbit restore all three axes. Snap commands remain
+  idempotent and do not change the camera target, zoom, tracking state,
+  simulation physics, trajectory, or geometry.
+- The behavior is implemented by the shared native camera adapter and consumed
+  by both Swing and Flight viewports. Focused GUI contracts verify all three
+  orthographic presets on both viewport types, depth-artist suppression,
+  restoration, and absence of duplicate visible-axis labels.
+- Draft PR #4331 normally incorporates exact current parent
+  `304a069b1777dcf8cf107de26caa3b9fbe96dbb3` after exact live child
+  `c7bccbccc6cda0c9b938b2862ed660cebdcb7597`; independent review and protected
+  exact-head CI remain release gates.
 
 ### 2026-08-10 Non-obscuring external legend rail
 
@@ -3165,6 +3185,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-10 | 1.14.32 | feat(rate-of-closure, #4136 #4220 #4218): persist the canonical prescribed polynomial torque-profile library and source-derived active selection in explorer-session v3 across PyQt6 and React; preserve passive/prescribed run configuration and canonical joint locks, validate schema/SI units/c0-first order/identity/provenance before atomic apply, require explicit conflict-safe v1/v2 migration, and retain optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |
 | 2026-08-10 | 1.14.31 | feat(rate-of-closure, #4143 #4225): extend whole-workspace persistence with the strict explorer-session v2 simulation subpayload shared by PyQt6 and React; round-trip Ground/Tee support, SI tee height, derived geometry, club-default versus explicit-override provenance, and the complete versioned spatial-target identity/frame/tolerance contract; validate before UI mutation, reject corrupt provenance/targets atomically, and require explicit preserve-current migration for v1 instead of inventing values; retain torque/optimizer/run payloads, protected release, and UpstreamDrift parity as open work. |
 | 2026-08-10 | 1.14.30 | feat(rate-of-closure, #4218 #4225): wire the strict whole-workspace and compositor contracts into production PyQt6 and React File operations; provide New/Open/Save As/view Import/view Export/Close on both clients, native atomic Save and persisted Recent, complete-before-mutate validation, rollback-safe application, dirty-session protection, cancellation, and user-visible status/errors; preserve honest browser Save/Recent limitations and fail closed on unsupported torque/variation payloads; retain simulation-tab-local domain mappers, installed-consumer parity, protected CI/review, and epic completion as explicit open work. |
+| 2026-08-11 | 1.14.30 | fix(rate-of-closure, #4284 #4331): suppress only the screen-depth Matplotlib axis presentation for Face On, Down the Line, and Overhead native 3D presets; preserve both visible engineering axes and native one-sided ticks, restore all axes on isometric/manual orbit, retain camera target/zoom/tracking and simulation behavior, and record the normal current-parent ancestry repair while keeping protected exact-head CI and review open. |
 | 2026-08-10 | 1.14.29 | merge(rate-of-closure, #4327 #4225): normally place the keyboard-complete, versioned multi-view workspace continuation on exact repaired compositor parent `0e3054e6a7fa0e3e38e1312b4132bbd1e4336fb2`; retain React roving-tab navigation, deterministic PyQt focus order, atomic cross-client compositor import/export, QSettings and whole-workspace round trips, and the nested-array freeze repair while inheriting the repaired legend, toolstrip, camera, wind, variation, and capability ancestry; make the already-validated current-workspace mapping explicit at the pinned type boundary without runtime change; implementation/test code does not conflict, only additive handoff/spec files require reconciliation, and protected CI/review, live File adapters, and installed-consumer parity remain open. |
 | 2026-08-10 | 1.14.28 | feat(rate-of-closure, #4218 #4225): complete local multi-view keyboard and persistence acceptance contracts with React roving-tab Arrow/Home/End navigation, deterministic PyQt Layout/Impact/Swing/Flight tab order, keyboard-only Single/Split/Grid membership tests, strict atomic version-1 compositor import/export on both client boundaries, future-format rejection, native QSettings reconstruction, canonical view data inside the whole-app workspace envelope, and a repair for its nested-array double-freeze parser defect; retain disabled File commands, protected CI/review, dependency integration, and UpstreamDrift parity as explicit remaining gates. |
 | 2026-08-10 | 1.14.27 | feat(rate-of-closure, #4218 #4225): add real distinct Impact/Swing/Flight viewport hosts with PyQt6/React direct-command parity, synchronized live playback persistence, host-local camera and overlay ownership, strict one/two/three-host Single/Split/Grid cardinality, preserved valid per-slot legends, debounced native settings writes, navigable native constrained grids, and deterministic legacy/corrupt/unknown-view recovery; preserve all established React displays and the spatial-target Flight workflow beside Multi View, verify desktop/constrained browser and native rendering, and retain complete keyboard focus behavior, export proof, protected CI/review, stack integration, and UpstreamDrift parity as explicit open gates. |

@@ -119,6 +119,33 @@ branch was rewritten.
   The legacy full-tree 500-LOC scanner has no loaded grandfather baseline in
   this checkout and reports 232 pre-existing files; all newly added modules
   remain below 500 lines.
+## 2026-08-11 PR #4331 current-parent propagation repair
+
+- Exact live child `c7bccbccc6cda0c9b938b2862ed660cebdcb7597` is retained
+  first and exact current PR #4330 parent
+  `304a069b1777dcf8cf107de26caa3b9fbe96dbb3` is incorporated second through a
+  normal merge on `feat/4284-orthographic-axis-polish`.
+- The failed hosted format gate was an ancestry defect: stale merge base
+  `d8176bb5863a35725199bb8357a5f000f9bdd3ba` exposed the parent's formatting
+  commit and six worktree pointers as child-local changes. With current parent
+  ancestry, the effective child delta contains only nine intended camera-polish
+  documentation, adapter, and regression files.
+- The merge is content-clean and camera behavior is unchanged. No rebase,
+  retarget, force-push, parent rewrite, CI retry, or GitHub write was used.
+  Independent review, release-owner publication, and protected exact-head CI
+  remain open.
+- Root `SPEC.md` is synchronized at version `1.14.30` with the exact per-preset
+  depth-axis mapping, full Matplotlib artist-suppression boundary, preservation
+  of visible engineering axes/native one-sided ticks, and restoration on
+  isometric/manual orbit. This governance repair changes no runtime file.
+- Fresh merged-tree evidence is 71 Python/PyQt camera, compositor, layout,
+  main-window, and manifest tests; exact-delta Ruff/format, pinned MyPy 1.13,
+  Bandit, documentation, changed-code, module-size, minimum-test, assertion,
+  manifest-layout, Spec Check, version, whitespace, and diff gates. React
+  passes 114 files / 686
+  tests, TypeScript, zero-warning ESLint, the 199-module production build, and
+  four serial Playwright camera cases across desktop and constrained 2x-DPR
+  projects. `npm ci` audited 337 packages with zero vulnerabilities.
 
 ## 2026-08-10 Repaired compositor-parent propagation into persistence child
 
@@ -290,6 +317,36 @@ Independent exact-tree review found no findings. This propagation is not issue
 or epic completion: protected current-head CI, installed-consumer evidence,
 four-surface conformance, native rendered QA, and dependency-ordered release
 remain open.
+
+## 2026-08-10 Native orthographic-axis presentation polish
+
+Native Windows review of the current camera carrier confirmed Face On, Down
+the Line, Overhead, Reset, Track, Auto Fit, Re-center, replay, pause, and loop,
+then identified one presentation defect: the depth-axis labels and ticks
+collapsed into the screen plane and overlapped plot titles or visible axes in
+the exact orthographic presets.
+
+The shared PyQt camera adapter now applies one explicit display-axis contract
+after each Simulation and Flight render. Face On hides only display x/right,
+Down the Line hides only display y/target, and Overhead hides only display
+z/up. Because Axes3D can retain cached artists, the adapter suppresses the
+depth axis container, label, line, pane, and tick artists together. The two
+in-plane physical axes remain labelled. Isometric/reset and manual orbit
+restore all axis artists from each fresh render, preventing stale visibility
+across modes without forcing both tick-label sides visible. A
+parameterized headless GUI regression proves all three mappings and both
+restoration paths in both viewports. Physics, camera angles, limits, tracking,
+zoom, geometry, and React behavior are unchanged.
+
+Exact implementation head `c6f7122d8fb63eacaf94fc0f295c2e470f80fce8`
+passes 11 focused camera tests, the 33-test camera/layout/workspace integration
+set, Ruff, pinned MyPy on the three changed production modules, and diff
+validation. Native Windows inspection at 1282 x 752 confirms Face On, Down the
+Line, and Overhead retain only the two in-plane labelled axes with no duplicate
+ticks; reset/isometric restores the complete 3D frame. Protected exact-head CI,
+review, parent-first integration, and installed UpstreamDrift parity remain
+required before this follow-up is released.
+
 ## 2026-08-10 Current-parent propagation into camera PR #4298
 
 - Draft PR `#4298` keeps branch `feat/4284-camera-snap-tracking` and base

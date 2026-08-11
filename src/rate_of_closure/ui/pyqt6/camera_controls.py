@@ -6,6 +6,7 @@ from collections.abc import Callable
 from dataclasses import replace
 from typing import Protocol, runtime_checkable
 
+from mpl_toolkits.mplot3d.axes3d import Axes3D
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QCheckBox,
@@ -53,6 +54,12 @@ _BUTTON_SPECS = (
         "Restore the canonical isometric orientation without changing target or zoom.",
     ),
 )
+
+_ORTHOGRAPHIC_DEPTH_AXIS = {
+    CameraCommandId.VIEW_FACE_ON: "x",
+    CameraCommandId.VIEW_DOWN_THE_LINE: "y",
+    CameraCommandId.VIEW_OVERHEAD: "z",
+}
 
 
 @runtime_checkable
@@ -297,6 +304,42 @@ class CameraViewportMixin:
             self._camera_state, self._camera_subject_m(), maximum_step
         )
         self._camera_controls_widget.sync(self._camera_state)
+
+    def _apply_camera_axis_visibility(self, axes: Axes3D) -> None:
+        """Hide only the depth axis for an exact orthographic preset.
+
+        Matplotlib display axes are ``x=right``, ``y=downrange``, and
+        ``z=up``. Isometric and manually orbited views restore every physical
+        axis so a snap never leaves persistent presentation state behind.
+        Axes3D can continue painting cached label/tick artists after the axis
+        container is hidden, so the complete presentation surface is toggled.
+        """
+        preset_id = self._camera_state.preset_id
+        hidden_axis = (
+            None if preset_id is None else _ORTHOGRAPHIC_DEPTH_AXIS.get(preset_id)
+        )
+        for axis_name, axis in (
+            ("x", axes.xaxis),
+            ("y", axes.yaxis),
+            ("z", axes.zaxis),
+        ):
+            visible = axis_name != hidden_axis
+            axis.set_visible(visible)
+            axis.label.set_visible(visible)
+            axis.line.set_visible(visible)
+            axis.pane.set_visible(visible)
+            if not visible:
+                for tick in axis.get_major_ticks():
+                    tick.tick1line.set_visible(False)
+                    tick.tick2line.set_visible(False)
+                    tick.label1.set_visible(False)
+                    tick.label2.set_visible(False)
+            else:
+                for tick in axis.get_major_ticks():
+                    tick.tick1line.set_visible(True)
+                    tick.tick2line.set_visible(False)
+                    tick.label1.set_visible(True)
+                    tick.label2.set_visible(False)
 
     def _notify_camera_state_changed(self) -> None:
         self._camera_controls_widget.sync(self._camera_state)
