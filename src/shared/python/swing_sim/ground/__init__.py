@@ -46,8 +46,14 @@ from .json_schema import (
     schema_json,
 )
 from .migration import migrate_request_to_current, migrate_result_to_current
+from .regional_surface_types import (
+    PlanarSurfaceRegion,
+    SurfaceRegionTransition,
+    SurfaceRegionTransitionCrossing,
+)
 from .result_adapter import to_ground_model_result
 from .result_types import GroundSummary, GroundTermination, GroundWarning
+from .skid_roll_result_types import SkidRollResult
 from .skid_roll_simulation import SkidRollExecution, simulate_skid_roll
 from .surface_motion_types import (
     GROUND_SKID_ROLL_MODEL_ID,
@@ -55,7 +61,6 @@ from .surface_motion_types import (
     PlanarSurfaceDomain,
     RigidMotion,
     SkidRollEnergyLedger,
-    SkidRollResult,
     SkidRollSettings,
     SkidRollTermination,
     SkidRollTerminationReason,
@@ -108,6 +113,7 @@ __all__ = [
     "GROUND_SKID_ROLL_MODEL_ID",
     "GROUND_SKID_ROLL_MODEL_VERSION",
     "PlanarSurfaceDomain",
+    "PlanarSurfaceRegion",
     "RigidMotion",
     "SphereProperties",
     "RepeatedBounceResult",
@@ -119,6 +125,8 @@ __all__ = [
     "SkidRollTerminationReason",
     "SurfaceBoundaryCrossing",
     "SurfaceKinematicSegment",
+    "SurfaceRegionTransition",
+    "SurfaceRegionTransitionCrossing",
     "SurfaceResolver",
     "compose_ground_result",
     "interpolate_first_contact",

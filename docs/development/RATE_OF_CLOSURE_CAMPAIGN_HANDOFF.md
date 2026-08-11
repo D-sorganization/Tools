@@ -1,5 +1,41 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-10 issue #4271 coplanar regional-material local child
+
+Local branch `feat/4271-regional-surface-transitions` starts from exact current
+draft PR #4304 head `ee77b059bd83f7dafac7e0d411665231cdb7435c`.
+No GitHub write, PR, protected evidence, review, merge, or release claim has
+been made for this child.
+
+The Python reference now supports finite coplanar material overlays on the
+request-bound skid/roll plane. Region IDs and nonnegative precedence values are
+unique; higher precedence wins overlaps; quadratic boundary roots split motion
+exactly; and a coincident base-domain exit wins over a material change. Every
+overlay must retain the base frame, height, normal, axis, and surface velocity.
+A transition preserves time, position, velocity, spin, phase, and energy,
+emits the strict Python/TypeScript `surface_transition` event, and records exact
+from/to region and surface IDs in the internal suffix ledger. Request event
+limits, a positive `max_surface_transitions` bound, and the existing step
+limit prevent unbounded transition sequences. Model version `1.1.0` and the
+`REGIONAL_PLANAR_V1` warning make the new qualification visible.
+
+RED-first analytic/property evidence is green: all `121` ground tests pass,
+including 24 randomized piecewise-analytic examples; the React contract suite
+and full web suite pass at `106` files / `662` tests; TypeScript, zero-warning
+ESLint, and the 189-module production build pass. Pinned MyPy 1.13 passes all
+`28` ground production modules and the isolated `12` changed-module CI
+profile. Ruff check/format, the campaign manifest and its eight contracts,
+documentation governance, changed-test assertions, the 400-LOC changed-file
+budget, and diff checks are clean.
+
+This remains local, partial, and `not_released`. Arbitrary changing normals,
+height or surface-velocity discontinuities, deformation/grass response,
+torsional-spin damping, roll-to-skid transitions, regional PyQt6/React UI,
+a versioned regional wire request/result schema, TypeScript/Rust/PyO3/WASM
+regional physics, UpstreamDrift parity, protected CI, review, normal stack
+integration, and main release remain open. Region plans and from/to identity
+records are execution-scoped non-wire data in this child.
+
 Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.

@@ -1,4 +1,4 @@
-# Static-Plane Ground Skid and Roll Specification
+# Planar Ground Skid, Roll, and Regional Material Specification
 
 Status: locally implemented feature-stack slice for Tools issue #4271; not a
 protected or main-branch release.
@@ -11,12 +11,15 @@ pure roll, and (when physically representable) rest. It also defines the only
 qualified composition of the #4270 prefix and #4271 suffix into the strict v1
 `GroundSimulationResult`.
 
-The qualified domain is one immutable planar `GroundSurfaceProfile`. A caller
-may bound that plane along one tangent axis; crossing the first finite edge
-terminates with exact `LEFT_SURFACE` evidence. This slice does not claim
-piecewise material regions, changing surface normals, terrain deformation,
-grass-blade interaction, torsional spin damping, roll-to-skid transitions,
-TypeScript or compiled physics, UI delivery, or downstream application parity.
+The qualified domain is one immutable plane with a request-bound base
+`GroundSurfaceProfile`. A caller may add finite coplanar material overlays
+along the plane's declared tangent axis. Higher unique integer precedence wins
+where overlays overlap. A caller may also bound the base plane; crossing its
+first finite edge terminates with exact `LEFT_SURFACE` evidence. This slice
+does not claim changing surface normals, height or velocity discontinuities,
+terrain deformation, grass-blade interaction, torsional spin damping,
+roll-to-skid transitions, TypeScript or compiled regional physics, UI delivery,
+or downstream application parity.
 
 ## Units, frames, and handoff preconditions
 
@@ -29,12 +32,16 @@ seconds. Version 1 uses standard gravity exactly:
 g = (0, -9.80665, 0) m/s^2
 ```
 
-The request, bounce prefix, resolver, surface, frame, provider identity, and
-material profile must match exactly. The prefix must terminate
+The request, bounce prefix, resolver base surface, frame, provider identity,
+and base material profile must match exactly. The prefix must terminate
 `SETTLED_TO_SKID`, expose a handoff at zero signed sphere-plane gap, and have
 zero relative normal speed. The handoff centre must lie within the declared
-surface domain. Invalid inputs raise before any trajectory or summary is
-constructed.
+base domain and outside every material overlay, so the impact-bound request
+profile owns the initial contact. Every overlay must have two finite bounds,
+a unique ID and precedence, the same tangent axis/origin, and exactly the same
+frame, height, normal, and surface velocity as the base. Only validated
+material coefficients and identities may differ. Invalid inputs raise before
+any trajectory or summary is constructed.
 
 For ball radius `R`, mass `m`, rotational-inertia factor `k`, inertia
 `I = k m R^2`, upward plane normal `n`, centre velocity `v`, angular velocity
@@ -107,7 +114,7 @@ A moving surface therefore cannot produce world-frame `REST`. Residual
 normal-axis spin also prevents `REST`; without a calibrated torsional law the
 bounded run continues until a declared limit.
 
-## Deterministic integration, sampling, and finite edges
+## Deterministic integration, sampling, regions, and finite edges
 
 The solver is bounded by request time/event limits plus versioned numerical
 step and maximum-step limits. Cancellation is checked before each step. Invalid
@@ -123,6 +130,29 @@ selects the earliest positive outward root and advances exactly to that edge.
 The resulting `LEFT_SURFACE` event is a complete end of this surface model,
 not evidence of rest. A consumer requiring rest-only legacy output must reject
 it.
+
+Every regional lower/upper coordinate is also an exact quadratic boundary
+candidate. At a boundary the resolver samples the outgoing coordinate with the
+next representable floating-point value in the direction of travel, then
+selects the highest-precedence containing overlay. It splits the step only
+when that selected identity differs from the active region. If a regional
+boundary and the base-domain edge coincide, base-domain exit takes precedence.
+
+A regional transition preserves time, position, centre velocity, angular
+velocity, phase, and accumulated energy: no impulse or epsilon-time point is
+fabricated. The active material changes only after a legal
+`SURFACE_TRANSITION` event is appended. A parallel internal transition ledger
+binds that event sequence/time/position to the source and destination region
+and surface IDs. The request event limit includes these events, and a separate
+positive `max_surface_transitions` setting terminates with typed internal
+`SURFACE_TRANSITION_LIMIT` evidence before an unbounded regional sequence can
+run. The existing positive maximum-step bound remains independent.
+
+Region definitions and their source/destination identities remain execution-
+scoped non-wire inputs in this slice. The strict v1 result preserves the legal
+transition event and qualified-domain warning, but it does not serialize the
+regional plan or the internal identity ledger. A versioned wire request/result
+extension is required before regional plans can cross process boundaries.
 
 Skid and roll distances are accumulated separately from centre speed relative
 to the moving surface. Collinear constant-acceleration segments use the exact
@@ -144,7 +174,9 @@ D = K_before + W_g + W_surface - K_after
 `D` must be nonnegative within a small absolute/relative round-off allowance.
 A larger violation fails closed. A stationary surface cannot add mechanical
 energy; a moving surface may exchange energy only through the explicit work
-term.
+term. Work, force, skid/roll path, and resistance are evaluated with the
+material active over each exactly split segment; state continuity contributes
+no boundary work.
 
 ## Prefix/suffix composition
 
@@ -171,8 +203,11 @@ bounce_count = number of post-first-contact BOUNCE events
 ```
 
 For a partial or edge-censored result, totals describe the observed endpoint;
-they are not projected final-rest values. Results carry explicit static-plane,
-undamped-axial-spin, and censored-endpoint warnings as applicable.
+they are not projected final-rest values. Results without transitions carry
+the static-plane warning. Results with regional events carry
+`REGIONAL_PLANAR_V1`, which states that only coplanar, equal-velocity material
+changes are qualified. All results retain the undamped-axial-spin and
+censored-endpoint warnings as applicable.
 
 ## Qualification evidence
 
@@ -187,9 +222,11 @@ Tests cover arbitrary plane orientation, exact static-friction feasibility,
 slip direction and transition roots, rolling kinematics, rolling-resistance
 stop, axial-spin conservation, moving-surface relative motion and work,
 passivity, finite-edge localization, output/event ordering, time/event/step
-limits, cancellation, integration refinement, immediate-capture composition,
-partial-result censorship, bounce counts, total-distance definitions, and
-legacy-adapter refusal of non-rest complete results.
+limits, cancellation, integration refinement, exact regional precedence and
+boundary splitting, state continuity, transition-ledger identity, randomized
+piecewise analytic rolling speed, immediate-capture composition, partial-result
+censorship, bounce counts, total-distance definitions, and legacy-adapter
+refusal of non-rest complete results.
 
 Protected CI, independent review, normal parent integration, and explicit
 consumer/UI work remain release gates.

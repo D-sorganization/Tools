@@ -1,4 +1,4 @@
-"""Deterministic bounded skid-to-roll solver for one static planar surface."""
+"""Deterministic bounded skid-to-roll solver for coplanar material regions."""
 
 from __future__ import annotations
 
@@ -14,6 +14,10 @@ from .contract_types import (
     Vector3,
 )
 from .impact_types import SphereProperties
+from .regional_surface_types import (
+    SurfaceRegionTransition,
+    SurfaceRegionTransitionCrossing,
+)
 from .skid_roll_dynamics import (
     bounded_closing_duration,
     contact_slip_velocity,
@@ -25,12 +29,12 @@ from .skid_roll_dynamics import (
     tangent,
     time_to_vector_zero,
 )
+from .skid_roll_result_types import SkidRollResult
 from .skid_roll_runtime import SurfaceRun
 from .skid_roll_validation import validate_surface_run_inputs
 from .surface_motion_types import (
     CancellationCheck,
     PlanarSurfaceDomain,
-    SkidRollResult,
     SkidRollSettings,
     SkidRollTerminationReason,
 )
@@ -84,7 +88,7 @@ def _event_result(
 
 
 def _can_rest(run: SurfaceRun) -> bool:
-    surface = run.request.surface
+    surface = run.active_surface
     return (
         surface.surface_velocity_m_s == _ZERO
         and stable_at_zero_speed(surface, run.body, run.settings.gravity_m_s2)
@@ -108,20 +112,54 @@ def _rest_or_hold(run: SurfaceRun) -> SkidRollResult | None:
 
 def _transition_to_roll(run: SurfaceRun) -> SkidRollResult | None:
     if not static_rolling_feasible(
-        run.request.surface, run.body, run.settings.gravity_m_s2
+        run.active_surface, run.body, run.settings.gravity_m_s2
     ):
         return run.result(SkidRollTerminationReason.UNSUPPORTED_SURFACE)
-    rolled = rolling_state(run.state, run.request.surface, run.body)
+    rolled = rolling_state(run.state, run.active_surface, run.body)
     return _event_result(run, GroundEventType.SKID_TO_ROLL, rolled)
 
 
+def _surface_transition(
+    run: SurfaceRun,
+    transition: SurfaceRegionTransitionCrossing,
+) -> SkidRollResult | None:
+    """Record one continuous material change or return a typed bound."""
+    if type(transition) is not SurfaceRegionTransitionCrossing:
+        raise RuntimeError("surface transition outcome must be exact")
+    if run.surface_transition_count >= run.settings.max_surface_transitions:
+        run.append_point(run.state, run.phase)
+        return run.result(SkidRollTerminationReason.SURFACE_TRANSITION_LIMIT)
+    before = run.state
+    sequence = len(run.prefix.events) + len(run.events)
+    from_surface_id = run.active_surface.surface_id
+    if not run.append_event(GroundEventType.SURFACE_TRANSITION, before, before):
+        run.append_point(before, run.phase)
+        return run.result(SkidRollTerminationReason.EVENT_LIMIT)
+    run.surface_transitions.append(
+        SurfaceRegionTransition(
+            sequence,
+            before.time_s,
+            before.position_m,
+            transition.from_region_id,
+            transition.to_region_id,
+            from_surface_id,
+            transition.to_surface.surface_id,
+        )
+    )
+    run.active_surface = transition.to_surface
+    run.active_region_id = transition.to_region_id
+    run.surface_transition_count += 1
+    run.append_point(before, run.phase)
+    return None
+
+
 def _skid_step(run: SurfaceRun, duration_s: float) -> SkidRollResult | None:
-    slip = contact_slip_velocity(run.state, run.request.surface, run.body)
+    slip = contact_slip_velocity(run.state, run.active_surface, run.body)
     if norm(slip) <= run.settings.slip_tolerance_m_s:
         return _transition_to_roll(run)
     motion = skid_kinematics(
         run.state,
-        run.request.surface,
+        run.active_surface,
         run.body,
         run.settings.gravity_m_s2,
     )
@@ -143,13 +181,15 @@ def _skid_step(run: SurfaceRun, duration_s: float) -> SkidRollResult | None:
     outcome = run.advance(motion, advance_for)
     if outcome.boundary_crossed:
         return _left_surface(run)
+    if outcome.transition is not None:
+        return _surface_transition(run, outcome.transition)
     if reaches_roll:
         return _transition_to_roll(run)
     return None
 
 
 def _roll_step(run: SurfaceRun, duration_s: float) -> SkidRollResult | None:
-    surface = run.request.surface
+    surface = run.active_surface
     if not static_rolling_feasible(surface, run.body, run.settings.gravity_m_s2):
         return run.result(SkidRollTerminationReason.UNSUPPORTED_SURFACE)
     run.state = rolling_state(run.state, surface, run.body)
@@ -172,6 +212,8 @@ def _roll_step(run: SurfaceRun, duration_s: float) -> SkidRollResult | None:
     outcome = run.advance(motion, advance_for)
     if outcome.boundary_crossed:
         return _left_surface(run)
+    if outcome.transition is not None:
+        return _surface_transition(run, outcome.transition)
     if reaches_zero:
         run.state = rolling_state(run.state, surface, run.body)
         return _rest_or_hold(run)
@@ -251,6 +293,7 @@ def simulate_skid_roll(
         cancellation,
         body,
         handoff,
+        request.surface,
         next_grid_time_s=next_grid,
     )
     return _run_loop(run)

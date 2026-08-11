@@ -25,7 +25,7 @@ def validate_surface_run_inputs(
         raise ValueError("resolver and settings must be exact skid/roll records")
     if prefix.termination.reason is not BounceTerminationReason.SETTLED_TO_SKID:
         raise ValueError("skid/roll simulation requires SETTLED_TO_SKID")
-    handoff = prefix.handoff_state
+    handoff = _typed_handoff(prefix.handoff_state)
     if handoff is None or prefix.request_id != request.request_id:
         raise ValueError("bounce prefix must expose the request handoff")
     if prefix.surface_id != request.surface.surface_id:
@@ -41,7 +41,13 @@ def validate_surface_run_inputs(
     resolver.validate_request(request)
     if not resolver.domain.contains(handoff.position_m):
         raise ValueError("skid/roll handoff must lie inside the surface domain")
+    resolver.validate_handoff(handoff.position_m)
     return handoff
+
+
+def _typed_handoff(value: GroundContactState | None) -> GroundContactState | None:
+    """Keep the imported bounce boundary explicit under isolated MyPy."""
+    return value
 
 
 __all__ = ["validate_surface_run_inputs"]

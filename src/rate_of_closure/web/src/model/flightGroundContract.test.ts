@@ -61,4 +61,28 @@ describe("flight-to-ground v1 contract", () => {
       surface: { ...fixture.request.surface, frame: "flight" },
     })).toThrow(/frame/);
   });
+
+  it("accepts a continuous coplanar surface-transition event", () => {
+    const events = fixture.result.events.map((event) => ({ ...event }));
+    const rest = { ...events[3], sequence: 4 };
+    const transition = {
+      ...events[2],
+      sequence: 3,
+      event_type: "surface_transition",
+      time_s: 7,
+      position_m: [226, 0.02135, -2.4],
+      velocity_before_m_s: [10, 0, 0.4],
+      velocity_after_m_s: [10, 0, 0.4],
+      angular_velocity_before_rad_s: [0, 200, -2],
+      angular_velocity_after_rad_s: [0, 200, -2],
+    };
+    const result = {
+      ...fixture.result,
+      events: [...events.slice(0, 3), transition, rest],
+    };
+
+    expect(parseFlightToGroundResult(result).events[3].event_type).toBe(
+      "surface_transition",
+    );
+  });
 });

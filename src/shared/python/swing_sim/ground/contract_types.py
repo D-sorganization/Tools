@@ -139,6 +139,7 @@ class GroundEventType(StrEnum):
     FIRST_CONTACT = "first_contact"
     BOUNCE = "bounce"
     SKID_TO_ROLL = "skid_to_roll"
+    SURFACE_TRANSITION = "surface_transition"
     REST = "rest"
     LEFT_SURFACE = "left_surface"
 

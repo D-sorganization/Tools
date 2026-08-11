@@ -26,6 +26,7 @@ from .contract_types import (
     _WireRecord,
 )
 from .result_types import GroundSummary, GroundTermination, GroundWarning
+from .trajectory_transition_rules import EVENT_TRANSITIONS, PHASE_TRANSITIONS
 from .unavailable_types import GroundUnavailableField
 from .validation import (
     close as _close,
@@ -41,38 +42,6 @@ from .validation import (
 )
 
 _CONTACT_SPEED_TOLERANCE_M_S = 1e-12
-_PHASE_TRANSITIONS = {
-    GroundPhase.IMPACT: frozenset(GroundPhase),
-    GroundPhase.BOUNCE: frozenset(
-        {GroundPhase.BOUNCE, GroundPhase.SKID, GroundPhase.ROLL, GroundPhase.REST}
-    ),
-    GroundPhase.SKID: frozenset({GroundPhase.SKID, GroundPhase.ROLL, GroundPhase.REST}),
-    GroundPhase.ROLL: frozenset({GroundPhase.ROLL, GroundPhase.REST}),
-    GroundPhase.REST: frozenset({GroundPhase.REST}),
-}
-_EVENT_TRANSITIONS = {
-    GroundEventType.FIRST_CONTACT: frozenset(
-        {
-            GroundEventType.BOUNCE,
-            GroundEventType.SKID_TO_ROLL,
-            GroundEventType.REST,
-            GroundEventType.LEFT_SURFACE,
-        }
-    ),
-    GroundEventType.BOUNCE: frozenset(
-        {
-            GroundEventType.BOUNCE,
-            GroundEventType.SKID_TO_ROLL,
-            GroundEventType.REST,
-            GroundEventType.LEFT_SURFACE,
-        }
-    ),
-    GroundEventType.SKID_TO_ROLL: frozenset(
-        {GroundEventType.REST, GroundEventType.LEFT_SURFACE}
-    ),
-    GroundEventType.REST: frozenset(),
-    GroundEventType.LEFT_SURFACE: frozenset(),
-}
 
 
 def _schema(value: str, expected: str) -> str:
@@ -201,7 +170,7 @@ def _validate_trajectory(
     ):
         raise ValueError("trajectory times must be strictly increasing")
     for left, right in zip(points, points[1:], strict=False):
-        if right.phase not in _PHASE_TRANSITIONS[left.phase]:
+        if right.phase not in PHASE_TRANSITIONS[left.phase]:
             raise ValueError(
                 f"invalid ground phase transition: {left.phase}->{right.phase}"
             )
@@ -218,7 +187,7 @@ def _validate_events(events: tuple[GroundEvent, ...], frame: GroundFrame) -> Non
     ):
         raise ValueError("event times must be nondecreasing")
     for left, right in zip(events, events[1:], strict=False):
-        if right.event_type not in _EVENT_TRANSITIONS[left.event_type]:
+        if right.event_type not in EVENT_TRANSITIONS[left.event_type]:
             transition = f"{left.event_type}->{right.event_type}"
             raise ValueError(f"invalid ground event transition: {transition}")
 

@@ -20,7 +20,8 @@ from .contract_types import (
 )
 from .request_identity import ground_request_fingerprint
 from .result_types import GroundSummary, GroundTermination, GroundWarning
-from .surface_motion_types import SkidRollResult, SkidRollTerminationReason
+from .skid_roll_result_types import SkidRollResult
+from .surface_motion_types import SkidRollTerminationReason
 
 
 class GroundCompositionError(ValueError):
@@ -106,7 +107,7 @@ def _impact_point_from_first_event(
 def _prefix_trajectory(
     prefix: RepeatedBounceResult,
 ) -> tuple[GroundTrajectoryPoint, ...]:
-    points = prefix.trajectory
+    points = _typed_trajectory(prefix.trajectory)
     if not points:
         raise GroundCompositionError("bounce prefix trajectory must be nonempty")
     if points[0].phase is GroundPhase.IMPACT:
@@ -126,6 +127,13 @@ def _prefix_trajectory(
             "immediate capture does not match first-contact state"
         )
     return (reconstructed,)
+
+
+def _typed_trajectory(
+    points: tuple[GroundTrajectoryPoint, ...],
+) -> tuple[GroundTrajectoryPoint, ...]:
+    """Keep the imported prefix boundary explicit under isolated MyPy."""
+    return points
 
 
 def _trajectory(
@@ -170,13 +178,27 @@ def _summary(
 
 
 def _warnings(suffix: SkidRollResult) -> tuple[GroundWarning, ...]:
-    warnings = [
+    has_regions = any(
+        event.event_type is GroundEventType.SURFACE_TRANSITION
+        for event in suffix.events
+    )
+    domain_warning = (
         GroundWarning(
+            "REGIONAL_PLANAR_V1",
+            GroundWarningSeverity.INFO,
+            "Qualified for deterministic coplanar material regions; changing "
+            "normals and surface velocity at boundaries remain unsupported.",
+        )
+        if has_regions
+        else GroundWarning(
             "STATIC_PLANE_V1",
             GroundWarningSeverity.INFO,
             "Qualified for one immutable planar profile; material regions "
             "and changing normals are unsupported.",
-        ),
+        )
+    )
+    warnings = [
+        domain_warning,
         GroundWarning(
             "AXIAL_SPIN_UNDAMPED",
             GroundWarningSeverity.INFO,

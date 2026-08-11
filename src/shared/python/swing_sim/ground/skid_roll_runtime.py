@@ -12,20 +12,25 @@ from .contract_types import (
     GroundEvent,
     GroundEventType,
     GroundPhase,
+    GroundSurfaceProfile,
     GroundTrajectoryPoint,
 )
 from .impact_types import SphereProperties
+from .regional_surface_types import (
+    SurfaceRegionTransition,
+    SurfaceRegionTransitionCrossing,
+)
 from .skid_roll_dynamics import (
     advance_constant_motion,
     kinetic_energy,
     relative_path_distance,
     tangent,
 )
+from .skid_roll_result_types import SkidRollResult
 from .surface_motion_types import (
     CancellationCheck,
     RigidMotion,
     SkidRollEnergyLedger,
-    SkidRollResult,
     SkidRollSettings,
     SkidRollTermination,
     SkidRollTerminationReason,
@@ -36,9 +41,10 @@ from .surface_resolver import SurfaceResolver
 
 @dataclass(frozen=True)
 class AdvanceResult:
-    """Report whether an exact finite-domain edge truncated one step."""
+    """Report the exact domain or regional boundary truncating one step."""
 
     boundary_crossed: bool
+    transition: SurfaceRegionTransitionCrossing | None = None
 
 
 @dataclass
@@ -52,14 +58,18 @@ class SurfaceRun:
     is_cancelled: CancellationCheck
     body: SphereProperties
     state: GroundContactState
+    active_surface: GroundSurfaceProfile
+    active_region_id: str | None = None
     phase: GroundPhase = GroundPhase.SKID
     trajectory: list[GroundTrajectoryPoint] = field(default_factory=list)
     events: list[GroundEvent] = field(default_factory=list)
+    surface_transitions: list[SurfaceRegionTransition] = field(default_factory=list)
     skid_distance_m: float = 0.0
     roll_distance_m: float = 0.0
     gravity_work_j: float = 0.0
     surface_work_j: float = 0.0
     step_count: int = 0
+    surface_transition_count: int = 0
     next_grid_time_s: float = 0.0
 
     @property
@@ -149,6 +159,7 @@ class SurfaceRun:
             self.prefix.request_fingerprint_sha256,
             tuple(self.trajectory),
             tuple(self.events),
+            tuple(self.surface_transitions),
             self.state,
             self.skid_distance_m,
             self.roll_distance_m,
@@ -185,12 +196,26 @@ class SurfaceRun:
             duration_s,
         )
         crossing = self.resolver.first_crossing(segment)
-        actual_duration = crossing.time_offset_s if crossing is not None else duration_s
+        transition = self.resolver.first_transition(segment, self.active_region_id)
+        outer_is_first = crossing is not None and (
+            transition is None
+            or crossing.time_offset_s
+            <= transition.time_offset_s + self.settings.time_tolerance_s
+        )
+        if outer_is_first and crossing is not None:
+            actual_duration = crossing.time_offset_s
+            selected_transition = None
+        elif transition is not None:
+            actual_duration = transition.time_offset_s
+            selected_transition = transition
+        else:
+            actual_duration = duration_s
+            selected_transition = None
         start = self.state
         self.emit_grid_points(start, motion, actual_duration)
         self.state = advance_constant_motion(start, motion, actual_duration)
         self._account_step(start, motion, actual_duration)
-        return AdvanceResult(crossing is not None)
+        return AdvanceResult(outer_is_first, selected_transition)
 
     def _account_step(
         self,
@@ -198,7 +223,7 @@ class SurfaceRun:
         motion: RigidMotion,
         duration_s: float,
     ) -> None:
-        surface = self.request.surface
+        surface = self.active_surface
         relative = tangent(
             subtract(start.velocity_m_s, surface.surface_velocity_m_s),
             surface.normal_unit,

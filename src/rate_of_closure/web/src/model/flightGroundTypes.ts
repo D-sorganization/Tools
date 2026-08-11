@@ -8,7 +8,13 @@ export type GroundVec3 = readonly [number, number, number];
 export type GroundFrame = typeof GROUND_TARGET_FRAME;
 export type CalibrationKind = "measured" | "literature" | "estimated" | "unvalidated";
 export type GroundPhase = "impact" | "bounce" | "skid" | "roll" | "rest";
-export type GroundEventType = "first_contact" | "bounce" | "skid_to_roll" | "rest" | "left_surface";
+export type GroundEventType =
+  | "first_contact"
+  | "bounce"
+  | "skid_to_roll"
+  | "surface_transition"
+  | "rest"
+  | "left_surface";
 export type GroundResultStatus = "complete" | "partial" | "failed" | "unavailable";
 export type GroundTerminationReason =
   | "rest" | "time_limit" | "event_limit" | "left_surface"

@@ -67,7 +67,14 @@ const parseEvent = (value: unknown): GroundEvent => {
     sequence: integer(item.sequence, "event sequence"),
     event_type: oneOf(
       item.event_type,
-      ["first_contact", "bounce", "skid_to_roll", "rest", "left_surface"] as const,
+      [
+        "first_contact",
+        "bounce",
+        "skid_to_roll",
+        "surface_transition",
+        "rest",
+        "left_surface",
+      ] as const,
       "event_type",
     ),
     time_s: nonnegative(item.time_s, "event time_s"),
@@ -160,9 +167,10 @@ const PHASE_TRANSITIONS: Readonly<Record<GroundPhase, readonly GroundPhase[]>> =
   rest: ["rest"],
 };
 const EVENT_TRANSITIONS: Readonly<Record<GroundEventType, readonly GroundEventType[]>> = {
-  first_contact: ["bounce", "skid_to_roll", "rest", "left_surface"],
-  bounce: ["bounce", "skid_to_roll", "rest", "left_surface"],
-  skid_to_roll: ["rest", "left_surface"],
+  first_contact: ["bounce", "skid_to_roll", "surface_transition", "rest", "left_surface"],
+  bounce: ["bounce", "skid_to_roll", "surface_transition", "rest", "left_surface"],
+  skid_to_roll: ["surface_transition", "rest", "left_surface"],
+  surface_transition: ["surface_transition", "skid_to_roll", "rest", "left_surface"],
   rest: [],
   left_surface: [],
 };
