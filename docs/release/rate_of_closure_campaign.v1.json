@@ -1,7 +1,7 @@
 {
   "schema_version": "rate-of-closure-campaign/v1",
   "repository": "D-sorganization/Tools",
-  "as_of": "2026-08-09",
+  "as_of": "2026-08-11",
   "default_branch": "main",
   "required_main_checks": [
     "quality-gate",
@@ -124,7 +124,7 @@
       "pr": 4281,
       "branch": "feat/4199-wind-scalar-adapter",
       "base_branch": "feat/4144-variation-export-continuation",
-      "head_sha": "8b8690e8760d82ba814e8d95588d2540d28a6759",
+      "head_sha": "e934ba563a79bf95ee892fea8593972c81299eeb",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "18fe89201d657116bbca99922297c14968356c44",
+      "head_sha": "3faf9e9493c9ba37168d9f65ab10cafeedc2a72f",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
