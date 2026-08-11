@@ -67,9 +67,9 @@ class TestEllipsoidScaleFloor:
         ts.force_ell_scale_changed.connect(captured.append)
         ts._sld_force_ell.setValue(ts._sld_force_ell.minimum())
         assert captured, "force_ell_scale_changed never fired"
-        assert captured[-1] <= 0.01 + 1e-9, (
-            f"Force ellipsoid slider floor is {captured[-1]}; should be ≤ 0.01"
-        )
+        assert (
+            captured[-1] <= 0.01 + 1e-9
+        ), f"Force ellipsoid slider floor is {captured[-1]}; should be ≤ 0.01"
 
     def test_default_value_still_emits_one_x(self, qapp) -> None:
         """The default slider position must still emit 1.0×, so existing
@@ -84,9 +84,9 @@ class TestEllipsoidScaleFloor:
         ts._sld_mob.setValue(default + 1)
         ts._sld_mob.setValue(default)
         assert captured, "mob_scale_changed did not fire on default"
-        assert captured[-1] == pytest.approx(1.0, abs=0.05), (
-            f"Default mob scale should be ~1.0×, got {captured[-1]}"
-        )
+        assert captured[-1] == pytest.approx(
+            1.0, abs=0.05
+        ), f"Default mob scale should be ~1.0×, got {captured[-1]}"
 
 
 # ──────────────────────────────────────────────────────────────────────
