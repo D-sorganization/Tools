@@ -261,7 +261,7 @@ def test_stable_wire_uses_canonical_numeric_tokens_for_every_float() -> None:
         parameters=(
             CapabilitySampleParameter("positive_half", "1", 1.234567890125, 1e-12),
             CapabilitySampleParameter("negative_half", "1", -1.234567890125, -0.0),
-            CapabilitySampleParameter("threshold", "1", 1e-11, 9_007_199_254_740_991.0),
+            CapabilitySampleParameter("threshold", "1", 1e-11, 1e21),
             CapabilitySampleParameter(
                 "half_away", "1", 1.000000000005, -1.000000000005
             ),
@@ -277,7 +277,7 @@ def test_stable_wire_uses_canonical_numeric_tokens_for_every_float() -> None:
     assert row_values["nominal.negative_half"] == -1.23456789012
     assert row_values["perturbed.negative_half"] == 0
     assert row_values["nominal.threshold"] == 0.00000000001
-    assert row_values["perturbed.threshold"] == 9_007_199_254_740_991
+    assert row_values["perturbed.threshold"] == 1_000_000_000_000_000_000_000
     assert row_values["nominal.half_away"] == 1.00000000001
     assert row_values["perturbed.half_away"] == -1.00000000001
     assert all(
@@ -286,7 +286,7 @@ def test_stable_wire_uses_canonical_numeric_tokens_for_every_float() -> None:
         if value is not None
     )
     assert '"nominal.threshold":0.00000000001' in payload
-    assert '"perturbed.threshold":9007199254740991' in payload
+    assert '"perturbed.threshold":1000000000000000000000' in payload
 
 
 def test_parameter_labels_only_uppercase_initial_ascii_letters() -> None:

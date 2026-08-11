@@ -993,7 +993,7 @@ evidence for available domains, and accepts only explicit caller-sourced build
 and provenance records. Canonical JSON parity and adversarial validation cover
 unknown fields, invalid revisions/surfaces, status contradictions, duplicate
 domains/options/evidence, placeholders, non-finite values, unsafe integers,
-unit mismatches, surrogate text, and duplicate JSON fields.
+unit mismatches, unpaired-surrogate text, and duplicate JSON fields.
 
 Keep this contract-only. Live run attachment, workspace/export persistence,
 provider discovery, UpstreamDrift pinning, and scientific model qualification
@@ -1002,11 +1002,14 @@ sibling worktrees, or installed-package state.
 
 ### 2026-08-11 review-gap hardening
 
-The follow-up to local contract commit `15b951e40` aligns validation and
-serialization domains: all integer and floating-point option magnitudes must
-be at most `9,007,199,254,740,991`, including inside the shared Python
-canonicalizer. Python and TypeScript also reject leading-zero SemVer core or
-numeric prerelease identifiers. Unavailable reasons must be exact-trimmed,
-16–500 Unicode scalars, contain at least three explanatory ASCII word tokens,
-and survive a normalized sentinel blacklist. Keep these rules mirrored and do
-not weaken them when future delivery adapters attach the manifest to a run.
+The follow-up to local contract commit `15b951e40` aligns manifest validation
+and serialization domains: all integer and floating-point option magnitudes
+must be at most `9,007,199,254,740,991`. Keep that bound manifest-local; the
+shared Python encoder preserves the established capability-observation `1e21`
+wire domain. Python and TypeScript reject leading-zero SemVer core or numeric
+prerelease identifiers. Unavailable reasons must be 16–500 Unicode scalars,
+contain at least three explanatory ASCII word tokens, reject the exact shared
+Unicode White_Space set at either boundary, and survive a normalized sentinel
+blacklist. Valid non-BMP scalars are accepted and only unpaired surrogates are
+rejected. The shared fixture is authoritative for these edge cases; keep the
+rules mirrored when delivery adapters attach the manifest to a run.

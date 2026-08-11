@@ -2,6 +2,7 @@
 
 import { canonicalNumericJson } from "./flightGroundContract";
 import { parseUniqueJson } from "./strictJson";
+import { hasUnpairedSurrogate } from "./unicodeScalar";
 
 export const RUNTIME_MANIFEST_SCHEMA = "calculation-runtime-manifest/v1" as const;
 const SURFACES = [
@@ -22,6 +23,14 @@ const SHA = /^[0-9a-f]{40}$/;
 const PLACEHOLDER = /\b(?:fixme|placeholder|tbd|todo|unknown)\b/i;
 const REASON_SENTINELS = new Set([
   "x", "na", "none", "nodata", "notavailable", "notapplicable", "unavailable",
+]);
+const REASON_WHITESPACE = new Set([
+  ..."\u0009\u000A\u000B\u000C\u000D\u0020\u0085\u00A0\u1680",
+  ..."\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200A",
+  ..."\u2028\u2029\u202F\u205F\u3000",
+]);
+const REASON_NORMALIZATION_SEPARATORS = new Set([
+  ...REASON_WHITESPACE, ".", "/", "_", "-",
 ]);
 
 export type RuntimeSurfaceId = typeof SURFACES[number];
@@ -90,7 +99,7 @@ const record = (value: unknown, fields: readonly string[], name: string): Unknow
 
 const text = (value: unknown, name: string, stable = false): string => {
   if (typeof value !== "string" || !value.trim()) throw new TypeError(`${name} must be nonempty text`);
-  if (/[\uD800-\uDFFF]/.test(value)) throw new RangeError(`${name} must not contain surrogates`);
+  if (hasUnpairedSurrogate(value)) throw new RangeError(`${name} must not contain unpaired surrogates`);
   if (PLACEHOLDER.test(value)) throw new RangeError(`${name} must not contain a placeholder`);
   if (stable && !STABLE_ID.test(value)) throw new RangeError(`${name} must be a stable identifier`);
   return value;
@@ -101,8 +110,14 @@ const nullableStableId = (value: unknown, name: string): string | null =>
 
 const unavailableReason = (value: unknown): string => {
   const reason = text(value, "reason");
-  if (reason !== reason.trim()) throw new RangeError("reason must not contain surrounding whitespace");
-  const normalized = reason.toLowerCase().replace(/[\s./_-]+/g, "").replace(/[!?]+$/, "");
+  if (REASON_WHITESPACE.has(reason[0]) || REASON_WHITESPACE.has(reason[reason.length - 1])) {
+    throw new RangeError("reason must not contain surrounding whitespace");
+  }
+  const normalized = [...reason]
+    .map((character) => /[A-Z]/.test(character) ? character.toLowerCase() : character)
+    .filter((character) => !REASON_NORMALIZATION_SEPARATORS.has(character))
+    .join("")
+    .replace(/[!?]+$/, "");
   if (REASON_SENTINELS.has(normalized)) throw new RangeError("reason must not be a sentinel value");
   const scalarLength = [...reason].length;
   if (scalarLength < 16 || scalarLength > 500) {

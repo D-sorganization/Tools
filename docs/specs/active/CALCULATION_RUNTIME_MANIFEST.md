@@ -27,13 +27,22 @@ not execute through a qualified authority.
 
 An unavailable reason has one cross-runtime grammar. It must already be
 trimmed, contain 16 through 500 Unicode scalar values, and contain at least
-three ASCII-letter word tokens of two or more letters. After lowercasing,
-removing whitespace plus `.`, `/`, `_`, and `-`, and removing terminal `!` or
-`?`, it must not equal `x`, `na`, `none`, `nodata`, `notavailable`,
-`notapplicable`, or `unavailable`. Consequently `x`, `n/a`, bare
-`unavailable`, punctuation/case variants, and surrounding-whitespace variants
+three ASCII-letter word tokens of two or more letters. Boundary trimming and
+sentinel normalization use exactly the Unicode White_Space code points
+U+0009–U+000D, U+0020, U+0085, U+00A0, U+1680, U+2000–U+200A, U+2028,
+U+2029, U+202F, U+205F, and U+3000. Sentinel matching folds ASCII `A`–`Z`,
+removes that whitespace plus `.`, `/`, `_`, and `-`, and removes terminal `!`
+or `?`. The result must not equal `x`, `na`, `none`, `nodata`,
+`notavailable`, `notapplicable`, or `unavailable`. Consequently `x`, `n/a`,
+bare `unavailable`, punctuation/case variants, and boundary-whitespace variants
 cannot masquerade as evidence. A sentence such as “No qualified ground
 producer was selected for this run.” is valid.
+
+Valid non-BMP scalar values are permitted in descriptive text. JavaScript
+validates UTF-16 pairing rather than rejecting every surrogate code unit;
+Python and TypeScript both reject only unpaired surrogates. The shared reason
+fixture pins an astral scalar, every boundary-whitespace code point above, and
+an unpaired-surrogate rejection case.
 
 ## Authoritative fields
 
@@ -65,12 +74,14 @@ evidence is rejected, and evidence IDs must be nonempty and unique.
 
 Objects are sorted by Unicode key, arrays preserve their contract order, and
 numbers use the shared finite 11-decimal fixed-token policy. Integers must fit
-the JavaScript safe range, and every floating-point magnitude must also be no
-greater than `9,007,199,254,740,991`. The shared Python canonicalizer enforces
-the same bound, so accepted manifest numbers and serializable numbers are the
-same domain. Duplicate JSON fields and unpaired surrogate code points are
-rejected. `runtime_manifest_parity_v1.json` pins the exact wire shape and bytes
-used by both runtimes.
+the JavaScript safe range, and every floating-point manifest-option magnitude
+must also be no greater than `9,007,199,254,740,991`. Both manifest validators
+enforce that bound before serialization, so accepted manifest numbers and
+serializable manifest numbers are the same domain. The shared Python numeric
+encoder retains its broader established domain for existing non-manifest
+consumers. Duplicate JSON fields and unpaired surrogate code points are
+rejected. `runtime_manifest_parity_v1.json` pins the exact wire shape, numeric
+boundaries, reason grammar, and bytes used by both runtimes.
 
 ## Explicit creation
 

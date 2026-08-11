@@ -1,12 +1,15 @@
 /** Public strict JSON facade for the flight-to-ground v1 boundary. */
 
 import { parseUniqueJson } from "./strictJson";
+import { hasUnpairedSurrogate } from "./unicodeScalar";
 import { parseFlightToGroundRequestRecord } from "./flightGroundRequestContract";
 import { parseFlightToGroundResultRecord } from "./flightGroundResultContract";
 import type { FlightToGroundRequest, FlightToGroundResult } from "./flightGroundTypes";
 
 const rejectSurrogates = (value: string, name: string): void => {
-  if (/[\uD800-\uDFFF]/.test(value)) throw new RangeError(name + " must not contain surrogate code points");
+  if (hasUnpairedSurrogate(value)) {
+    throw new RangeError(name + " must not contain unpaired surrogate code points");
+  }
 };
 
 const numberToken = (value: number): string => {

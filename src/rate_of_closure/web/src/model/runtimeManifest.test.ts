@@ -177,4 +177,29 @@ describe("calculation runtime manifest v1", () => {
       expect(() => parseRuntimeManifest(value)).toThrow(/safe numeric magnitude/);
     }
   });
+
+  it("matches the shared cross-runtime reason-policy fixture", () => {
+    const cases = fixture.reason_policy_cases;
+    const valid = source();
+    calculations(valid)[2].reason = cases.valid_astral_reason;
+    const parsed = parseRuntimeManifest(valid);
+
+    expect(runtimeManifestFromJson(stableRuntimeManifestJson(parsed))).toEqual(parsed);
+    expect(stableRuntimeManifestJson(parsed)).toContain(cases.valid_astral_reason);
+    for (const boundary of cases.boundary_whitespace) {
+      for (const reason of [
+        boundary + cases.valid_astral_reason,
+        cases.valid_astral_reason + boundary,
+      ]) {
+        const value = source();
+        calculations(value)[2].reason = reason;
+        expect(() => parseRuntimeManifest(value)).toThrow(/surrounding whitespace/);
+      }
+    }
+
+    const invalid = source();
+    calculations(invalid)[2].reason =
+      `No qualified ${cases.unpaired_surrogate} ground producer selected.`;
+    expect(() => parseRuntimeManifest(invalid)).toThrow(/surrogate/);
+  });
 });

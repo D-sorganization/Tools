@@ -530,10 +530,15 @@ or package provenance inside the pure contract layer.
 
 Follow-up work after local commit `15b951e40acea6a58d6c2b76fbe402602f08af2d`
 keeps the same contract-only boundary while closing three review blockers.
-Python now rejects every float whose magnitude exceeds the JavaScript safe
-integer bound, and the shared canonical numeric encoder enforces the same
-domain. Both runtimes use SemVer 2 numeric-identifier rules and the same
-trimmed, length-bounded, explanatory unavailable-reason grammar with a
-normalized sentinel blacklist. Boundary, large-magnitude, leading-zero, and
-sentinel cases are pinned by RED-first tests. The four-surface documentation
-now correctly describes nested active specs as `docs/specs/**/*.md`.
+Both manifest validators reject every numerical-option magnitude above the
+JavaScript safe-integer bound before serialization. The shared Python numeric
+encoder retains its established broader domain so capability-observation
+exports remain compatible. Both runtimes use SemVer 2 numeric-identifier rules
+and the same length-bounded explanatory-reason grammar with an explicit Unicode
+White_Space boundary set and normalized sentinel blacklist. TypeScript accepts
+valid UTF-16 surrogate pairs and rejects only unpaired surrogates, matching
+Python Unicode-scalar semantics. Numeric boundaries, valid astral text, every
+declared boundary-whitespace code point, leading-zero versions, unpaired
+surrogates, and sentinels are pinned by RED-first shared-fixture tests. The
+four-surface documentation correctly describes nested specs as
+`docs/specs/**/*.md`.

@@ -21,6 +21,7 @@ from pydantic import (
     model_validator,
 )
 
+from rate_of_closure._runtime_manifest_reason import validate_reason_grammar
 from rate_of_closure.application._workspace_validation import unique_json_object
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
 
@@ -47,12 +48,6 @@ _AUTHORITY_FIELDS = (
     "frame_id",
     "unit_system_id",
 )
-_REASON_SENTINELS = frozenset(
-    {"x", "na", "none", "nodata", "notavailable", "notapplicable", "unavailable"}
-)
-_REASON_WORD = re.compile(r"[A-Za-z]{2,}")
-_REASON_MIN_LENGTH = 16
-_REASON_MAX_LENGTH = 500
 
 
 def _validated_text(value: str, name: str, *, stable_id: bool = False) -> str:
@@ -68,18 +63,7 @@ def _validated_text(value: str, name: str, *, stable_id: bool = False) -> str:
 
 
 def _validated_reason(value: str) -> str:
-    reason = _validated_text(value, "reason")
-    if reason != reason.strip():
-        raise ValueError("reason must not contain surrounding whitespace")
-    normalized = re.sub(r"[\s./_-]+", "", reason.casefold()).rstrip("!?")
-    if normalized in _REASON_SENTINELS:
-        raise ValueError("reason must not be a sentinel value")
-    scalar_length = len(reason)
-    if not _REASON_MIN_LENGTH <= scalar_length <= _REASON_MAX_LENGTH:
-        raise ValueError("reason must contain 16 to 500 Unicode scalar values")
-    if len(_REASON_WORD.findall(reason)) < 3:
-        raise ValueError("reason must contain at least three explanatory words")
-    return reason
+    return cast(str, validate_reason_grammar(_validated_text(value, "reason")))
 
 
 class StrictModel(BaseModel):

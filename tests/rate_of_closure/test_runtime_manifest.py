@@ -242,6 +242,33 @@ def test_runtime_manifest_numeric_policy_matches_shared_parity_fixture() -> None
             CalculationRuntimeManifest.model_validate(payload)
 
 
+def test_runtime_manifest_reason_policy_matches_shared_parity_fixture() -> None:
+    cases = _fixture()["reason_policy_cases"]
+    valid_payload = _manifest_payload()
+    valid_payload["calculations"][2]["reason"] = cases["valid_astral_reason"]
+
+    manifest = CalculationRuntimeManifest.model_validate(valid_payload)
+
+    assert runtime_manifest_from_json(manifest.to_json()) == manifest
+    assert cases["valid_astral_reason"] in manifest.to_json()
+    for boundary in cases["boundary_whitespace"]:
+        for reason in (
+            boundary + cases["valid_astral_reason"],
+            cases["valid_astral_reason"] + boundary,
+        ):
+            payload = _manifest_payload()
+            payload["calculations"][2]["reason"] = reason
+            with pytest.raises(ValidationError, match="surrounding whitespace"):
+                CalculationRuntimeManifest.model_validate(payload)
+
+    payload = _manifest_payload()
+    payload["calculations"][2]["reason"] = (
+        "No qualified " + cases["unpaired_surrogate"] + " ground producer selected."
+    )
+    with pytest.raises(ValidationError, match="surrogate"):
+        CalculationRuntimeManifest.model_validate(payload)
+
+
 def test_runtime_manifest_rejects_unsafe_integer_and_duplicate_json_fields() -> None:
     payload = _manifest_payload()
     payload["calculations"][1]["numerical_options"][0].update(

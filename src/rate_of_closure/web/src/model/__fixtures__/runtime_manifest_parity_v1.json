@@ -11,6 +11,37 @@
       -1e20
     ]
   },
+  "reason_policy_cases": {
+    "valid_astral_reason": "No qualified 😀 ground producer was selected.",
+    "boundary_whitespace": [
+      "\t",
+      "\n",
+      "\u000b",
+      "\f",
+      "\r",
+      "\u0020",
+      "\u0085",
+      "\u00a0",
+      "\u1680",
+      "\u2000",
+      "\u2001",
+      "\u2002",
+      "\u2003",
+      "\u2004",
+      "\u2005",
+      "\u2006",
+      "\u2007",
+      "\u2008",
+      "\u2009",
+      "\u200a",
+      "\u2028",
+      "\u2029",
+      "\u202f",
+      "\u205f",
+      "\u3000"
+    ],
+    "unpaired_surrogate": "\ud800"
+  },
   "expected_canonical_json": "{\"build\":{\"build_id\":\"tools-rate-pyqt6/1.5.0\",\"package_name\":\"ud-tools\",\"package_version\":\"1.5.0\",\"tools_commit\":\"16a1167c31126238163297983862004afc5001d9\"},\"calculations\":[{\"backend\":\"python\",\"domain\":\"impact\",\"frame_id\":\"rate.app-target/v1\",\"implementation_authority\":\"shared.python.swing_sim.impact\",\"integrator\":\"not-applicable\",\"model_id\":\"rigid-body-impulse\",\"model_version\":\"impact-solver/v1\",\"numerical_options\":[{\"option_id\":\"restitution-model\",\"unit\":null,\"value\":\"constant\"}],\"reason\":null,\"request_schema\":\"impact-solver-request/v1\",\"result_schema\":\"impact-solver-result/v1\",\"status\":\"available\",\"unit_system_id\":\"si/v1\"},{\"backend\":\"python\",\"domain\":\"flight\",\"frame_id\":\"rate.flight/v1\",\"implementation_authority\":\"shared.python.swing_sim.flight\",\"integrator\":\"scipy-rk45\",\"model_id\":\"waterloo-penner\",\"model_version\":\"waterloo-penner/v1\",\"numerical_options\":[{\"option_id\":\"relative-tolerance\",\"unit\":\"1\",\"value\":0.00000001}],\"reason\":null,\"request_schema\":\"ball-flight-request/v1\",\"result_schema\":\"ball-flight-result/v1\",\"status\":\"available\",\"unit_system_id\":\"si/v1\"},{\"backend\":null,\"domain\":\"ground\",\"frame_id\":null,\"implementation_authority\":null,\"integrator\":null,\"model_id\":null,\"model_version\":null,\"numerical_options\":[],\"reason\":\"No qualified ground producer was selected for this run.\",\"request_schema\":null,\"result_schema\":null,\"status\":\"unavailable\",\"unit_system_id\":null}],\"provenance\":{\"evidence_ids\":[\"issue-4261\",\"fixture-runtime-manifest-v1\"],\"source_kind\":\"test_fixture\",\"source_reference\":\"runtime-manifest-parity/v1\"},\"schema_version\":\"calculation-runtime-manifest/v1\",\"surface_id\":\"tools.pyqt6\"}",
   "manifest": {
     "schema_version": "calculation-runtime-manifest/v1",

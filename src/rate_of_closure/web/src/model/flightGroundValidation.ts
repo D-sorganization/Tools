@@ -8,6 +8,7 @@ import {
   type GroundSurfaceProfile,
   type GroundVec3,
 } from "./flightGroundTypes";
+import { hasUnpairedSurrogate } from "./unicodeScalar";
 
 export type JsonRecord = Record<string, unknown>;
 export const MIN_CANONICAL_POSITIVE = 1e-11;
@@ -33,7 +34,9 @@ export const text = (value: unknown, name: string): string => {
   if (value !== value.replace(/^[\s\v\f]+|[\s\v\f]+$/g, "")) {
     throw new RangeError(name + " must not have leading or trailing whitespace");
   }
-  if (/[\uD800-\uDFFF]/.test(value)) throw new RangeError(name + " must not contain surrogate code points");
+  if (hasUnpairedSurrogate(value)) {
+    throw new RangeError(name + " must not contain unpaired surrogate code points");
+  }
   return value;
 };
 

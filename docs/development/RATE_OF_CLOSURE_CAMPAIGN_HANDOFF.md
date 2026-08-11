@@ -1464,8 +1464,8 @@ unavailable domains require a reason and reject all identities/options.
 
 The contract rejects unknown fields and schema/surface values, non-SHA builds,
 placeholder evidence, domain/status contradictions, duplicate option/evidence
-IDs, non-finite values, unsafe integers, invalid unit semantics, surrogate
-text, and duplicate JSON fields. Python and TypeScript emit the same stable
+IDs, non-finite values, unsafe integers, invalid unit semantics, unpaired
+surrogate text, and duplicate JSON fields. Python and TypeScript emit the same stable
 11-decimal canonical bytes and expose pure factories that accept explicit
 evidence rather than reading ambient Git or installed-package state.
 
@@ -1481,14 +1481,18 @@ dependency-ordered slices after active assembly and workspace edits settle.
 
 ### 2026-08-11 independent-review hardening
 
-The contract follow-up after `15b951e40` repairs all three independent-review
-blockers without expanding delivery scope. Python float validation and the
-shared canonicalizer now share TypeScript’s safe-magnitude domain. Both
-runtimes enforce SemVer 2 numeric-identifier rules and one deterministic
-substantive unavailable-reason grammar, including exact trimming, scalar-count
-and explanatory-word thresholds, and normalized sentinel rejection. RED-first
-tests cover `1e16`, `1e20`, both safe boundaries, leading-zero versions, `x`,
-`n/a`, bare/whitespace `unavailable`, and valid explanatory sentences. The
-declared-scope prose now accurately includes recursive `docs/specs/**/*.md`.
-This remains an unpublished contract child with all four spec cells unsupported
-at the older protected inventory pin.
+The contract follow-up after `15b951e40` repairs the independent-review
+blockers without expanding delivery scope. Python and TypeScript manifest
+options share the safe-magnitude domain, while the general Python canonical
+encoder retains its established large-float behavior for capability-observation
+exports. Both runtimes enforce SemVer 2 numeric identifiers and one
+deterministic substantive-reason grammar: the same explicit Unicode White_Space
+boundary set, Unicode-scalar length, ASCII explanatory-word threshold, and
+normalized sentinel rejection. TypeScript now distinguishes valid UTF-16 pairs
+from unpaired surrogates, matching Python and preserving valid non-BMP text.
+RED-first shared-fixture tests cover `1e16`, `1e20`, both safe boundaries,
+leading-zero versions, astral text, all declared boundary whitespace, unpaired
+surrogates, `x`, `n/a`, and bare/whitespace `unavailable`; capability tests
+restore the existing `1e21` wire behavior. The declared-scope prose accurately
+includes recursive `docs/specs/**/*.md`. This remains an unpublished contract
+child with all four spec cells unsupported at the older protected inventory pin.
