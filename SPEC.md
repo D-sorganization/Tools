@@ -4082,9 +4082,11 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - Added import-only TypeScript parser/serializer parity. Browser code validates
   and re-exports evidence but never computes bounce or regional physics.
 - Bound each event and impact post-state to one phase-correct trajectory point,
-  settled handoff and termination chronology to terminal evidence, and energy
-  dissipation to the additive passive-energy balance under identical explicit
-  cross-runtime tolerances.
+  settled handoff and termination chronology to terminal evidence when those
+  records exist, and energy dissipation to the additive passive-energy balance
+  under identical explicit cross-runtime tolerances. A valid pre-contact
+  cancellation has no trajectory, events, impacts, or airborne segments and
+  reports zero elapsed ground time.
 - Locked canonical cross-runtime JSON to SHA-256
   `d8e7400632215220d3c5b1ccd7c57040f6023ebd72470b380b48b8f8fa99b9f9`.
 - This is an input/evidence boundary only. Request construction, executor

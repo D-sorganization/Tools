@@ -166,8 +166,11 @@ or additional keys at every object level, duplicate JSON keys, non-finite or
 cross-runtime-unsafe numbers, unsupported frames/units/versions, malformed
 fingerprints, and inconsistent event/impact, segment, or handoff evidence.
 Settled prefixes require a non-null handoff matching the terminal skid point;
-termination time matches the final trajectory point and elapsed time is measured
-from first contact. Energy evidence must satisfy
+when a trajectory exists, termination time matches its final point, and when a
+first-contact event exists, elapsed time is measured from that event. A valid
+pre-contact cancellation instead has empty trajectory, event, impact, and
+airborne-segment ledgers, no handoff, and zero elapsed ground time. Energy
+evidence must satisfy
 `D = K_before + W_boundary - K_after` within the model's documented
 `1e-10 J + 1e-10` relative tolerance. Cross-record scalar and vector evidence
 uses explicit `1e-10` absolute and relative tolerances in both runtimes.

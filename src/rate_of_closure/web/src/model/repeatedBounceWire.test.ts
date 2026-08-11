@@ -28,6 +28,29 @@ describe("repeated-bounce evidence wire v1", () => {
     expect(result.unit_system).toBe("SI");
   });
 
+  it("round-trips a valid pre-contact cancellation with empty prefix evidence", () => {
+    const value = clone();
+    value.trajectory = [];
+    value.events = [];
+    value.impacts = [];
+    value.airborne_segments = [];
+    value.handoff_state = null;
+    value.termination = { reason: "cancelled", time_s: 1, elapsed_time_s: 0 };
+
+    const text = stableRepeatedBounceResultJson(value);
+    const parsed = repeatedBounceResultFromJson(text);
+
+    expect(parsed.trajectory).toEqual([]);
+    expect(parsed.events).toEqual([]);
+    expect(parsed.impacts).toEqual([]);
+    expect(parsed.airborne_segments).toEqual([]);
+    expect(parsed.handoff_state).toBeNull();
+    expect(parsed.termination).toEqual({
+      reason: "cancelled", time_s: 1, elapsed_time_s: 0,
+    });
+    expect(stableRepeatedBounceResultJson(parsed)).toBe(text);
+  });
+
   it.each<readonly [string, Mutator]>([
     ["extra top-level key", (value) => { value.extra = true; }],
     ["missing events", (value) => { delete value.events; }],

@@ -15,6 +15,7 @@ from shared.python.swing_sim.ground import (
     RepeatedBounceResult,
     repeated_bounce_result_from_json,
     repeated_bounce_result_to_json,
+    simulate_repeated_bounce,
 )
 
 from ._support import _settled_prefix, _surface_run_request
@@ -47,6 +48,25 @@ def test_repeated_bounce_wire_matches_canonical_golden_and_sha256() -> None:
     assert parsed.to_dict() == json.loads(text)
     assert json.loads(text)["schema_version"] == REPEATED_BOUNCE_SCHEMA_VERSION
     assert json.loads(text)["unit_system"] == "SI"
+
+
+def test_precontact_cancellation_round_trips_empty_prefix_evidence() -> None:
+    request = _surface_run_request()
+    cancelled = simulate_repeated_bounce(request, is_cancelled=lambda: True)
+
+    text = repeated_bounce_result_to_json(cancelled)
+    payload = json.loads(text)
+    parsed = repeated_bounce_result_from_json(text)
+
+    assert payload["trajectory"] == []
+    assert payload["events"] == []
+    assert payload["impacts"] == []
+    assert payload["airborne_segments"] == []
+    assert payload["handoff_state"] is None
+    assert parsed.termination.reason.value == "cancelled"
+    assert parsed.termination.time_s == request.last_separated_state.time_s
+    assert parsed.termination.elapsed_time_s == 0.0
+    assert repeated_bounce_result_to_json(parsed) == text
 
 
 @pytest.mark.parametrize(

@@ -1546,9 +1546,13 @@ This slice does not construct a ground request, execute bounce or regional
 physics, invoke an executor from either UI, persist files, interpolate or play
 back trajectories, or claim measured calibration, compiled parity, downstream
 parity, protected evidence, release, or #4267/#4271 completion. Local gates are
-green: 162 Python ground tests, 113 React files / 712 tests, focused pinned MyPy,
-Ruff/format, TypeScript type-check, zero-warning ESLint, and the 204-module
-production build. The inherited 500 kB build advisory remains. Independent
+green on the predecessor candidate: 162 Python ground tests, 113 React files /
+712 tests, focused pinned MyPy, Ruff/format, TypeScript type-check, zero-warning
+ESLint, and the 204-module production build. A narrow follow-up explicitly pins
+valid pre-contact cancellation with empty evidence ledgers and zero elapsed
+ground time; its focused Python/TypeScript and documentation/manifest gates pass
+without changing production behavior. The inherited 500 kB build advisory
+remains. Independent
 review found four evidence-integrity blockers; all four were remediated with
 matched adversarial tests. A final independent review of the complete
 post-remediation diff remains required before any publication.
