@@ -156,7 +156,9 @@ def _get_plot_colors() -> dict[str, Any]:
                 "surface": colors.get("group_bg", _DARK_SURFACE),
                 "axes": CHART_COLORS[:3] if CHART_COLORS else _AXIS_COLORS,
             }
-        except Exception:  # noqa: BLE001 — theme import is optional; fall back to defaults
+        except (
+            Exception
+        ):  # noqa: BLE001 — theme import is optional; fall back to defaults
             pass
     return {
         "bg": _DARK_BG,
@@ -338,7 +340,9 @@ class RotationConverterTab(QWidget):
                 rot = Rotation.from_rotation_matrix(R)
             else:
                 return
-        except Exception as e:  # noqa: BLE001 — user input can raise any error; display it
+        except (
+            Exception
+        ) as e:  # noqa: BLE001 — user input can raise any error; display it
             self._output_text.setPlainText(f"Error: {e}")
             return
 
@@ -368,7 +372,9 @@ class RotationConverterTab(QWidget):
             else:
                 res = ""
             self._main_result.setText(res)
-        except Exception as e:  # noqa: BLE001 — rotation conversion may raise any arithmetic error
+        except (
+            Exception
+        ) as e:  # noqa: BLE001 — rotation conversion may raise any arithmetic error
             self._main_result.setText(f"Error: {e}")
 
     def _display_all(self, rot: Rotation, conv: str) -> None:
@@ -390,7 +396,9 @@ class RotationConverterTab(QWidget):
                 e = rot.as_euler(c)
                 marker = " ◀" if c == conv else ""
                 lines.append(f"  {c}: {e[0]: .6f}  {e[1]: .6f}  {e[2]: .6f}{marker}")
-            except Exception:  # noqa: BLE001 — Euler conversion may fail for degenerate rotations
+            except (
+                Exception
+            ):  # noqa: BLE001 — Euler conversion may fail for degenerate rotations
                 lines.append(f"  {c}: (error)")
         lines += [
             "",
@@ -573,7 +581,9 @@ class RigidTransformTab(QWidget):
                 T = RigidTransform.from_matrix(v.reshape(4, 4), source=src, target=tgt)
             else:
                 return
-        except Exception as e:  # noqa: BLE001 — user input can raise any error; display it
+        except (
+            Exception
+        ) as e:  # noqa: BLE001 — user input can raise any error; display it
             self._tf_output.setPlainText(f"Error: {e}")
             return
 
@@ -631,7 +641,9 @@ class RigidTransformTab(QWidget):
                 f"  pitch: {screw['pitch']:.6f}",
                 f"  theta: {screw['theta']:.6f} rad",
             ]
-        except Exception:  # noqa: BLE001 — screw decomposition is optional display; skip on error
+        except (
+            Exception
+        ):  # noqa: BLE001 — screw decomposition is optional display; skip on error
             pass
 
         self._tf_output.setPlainText("\n".join(lines))
