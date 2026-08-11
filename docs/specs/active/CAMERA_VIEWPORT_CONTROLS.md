@@ -13,9 +13,14 @@ child comparison while preserving the camera implementation and every command
 contract below. Protected exact-head CI and independent review remain release
 gates.
 
+Root `SPEC.md` version `1.14.30` now carries the same orthographic-axis
+presentation contract as this active specification. The synchronization is
+documentation-only; the previously validated runtime tree is unchanged.
+
 Fresh merged-tree verification covers 71 Python/PyQt camera, compositor,
 layout, main-window, and manifest tests; exact-delta Ruff/format, pinned MyPy
-1.13, Bandit, governance, module-size, assertion, whitespace, and diff gates;
+1.13, Bandit, Spec Check, version/governance, module-size, assertion,
+whitespace, and diff gates;
 the complete 114-file / 686-test React suite; TypeScript; zero-warning ESLint;
 the 199-module production build; and four serial desktop/constrained-2x-DPR
 Playwright camera cases. The dependency audit reports zero vulnerabilities in

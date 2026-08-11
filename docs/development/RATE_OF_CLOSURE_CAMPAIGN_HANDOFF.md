@@ -13,16 +13,21 @@ branch was rewritten.
 - The failed hosted format gate was an ancestry defect: stale merge base
   `d8176bb5863a35725199bb8357a5f000f9bdd3ba` exposed the parent's formatting
   commit and six worktree pointers as child-local changes. With current parent
-  ancestry, the effective child delta contains only eight intended camera-polish
+  ancestry, the effective child delta contains only nine intended camera-polish
   documentation, adapter, and regression files.
 - The merge is content-clean and camera behavior is unchanged. No rebase,
   retarget, force-push, parent rewrite, CI retry, or GitHub write was used.
   Independent review, release-owner publication, and protected exact-head CI
   remain open.
+- Root `SPEC.md` is synchronized at version `1.14.30` with the exact per-preset
+  depth-axis mapping, full Matplotlib artist-suppression boundary, preservation
+  of visible engineering axes/native one-sided ticks, and restoration on
+  isometric/manual orbit. This governance repair changes no runtime file.
 - Fresh merged-tree evidence is 71 Python/PyQt camera, compositor, layout,
   main-window, and manifest tests; exact-delta Ruff/format, pinned MyPy 1.13,
   Bandit, documentation, changed-code, module-size, minimum-test, assertion,
-  manifest-layout, whitespace, and diff gates. React passes 114 files / 686
+  manifest-layout, Spec Check, version, whitespace, and diff gates. React
+  passes 114 files / 686
   tests, TypeScript, zero-warning ESLint, the 199-module production build, and
   four serial Playwright camera cases across desktop and constrained 2x-DPR
   projects. `npm ci` audited 337 packages with zero vulnerabilities.

@@ -12,16 +12,22 @@ The failed hosted quality gate compared the child with stale merge base
 `d8176bb5863a35725199bb8357a5f000f9bdd3ba`, so the parent's broad formatting
 commit and six worktree pointers incorrectly appeared in the child delta. The
 normal two-parent merge has no content conflict and reduces the effective PR
-delta to the eight intended camera-polish documentation, adapter, and regression
+delta to the nine intended camera-polish documentation, adapter, and regression
 files. Camera behavior is unchanged. No rebase, retarget, force-push, parent
 rewrite, or CI retry was used. This local candidate still requires independent
 review, publication by the release owner, and protected exact-head CI.
+
+The repository specification is now synchronized at version `1.14.30`. It
+defines the per-preset depth-axis mapping, complete artist suppression,
+visible engineering-axis preservation, native one-sided ticks, and full-axis
+restoration without claiming any camera-state or simulation-behavior change.
 
 Fresh local evidence on the merged tree is 71 Python/PyQt camera, compositor,
 main-window, layout, campaign-manifest, and launcher-manifest tests; Ruff lint
 and format on the exact Python delta; pinned MyPy 1.13 on three production
 adapters; Bandit; documentation, changed-code, module-size, minimum-test,
-assertion, manifest-layout, whitespace, and diff gates. React passes all 114
+assertion, manifest-layout, Spec Check, version, whitespace, and diff gates.
+React passes all 114
 files / 686 tests, TypeScript, zero-warning ESLint, the 199-module production
 build, and four serial Playwright camera cases across desktop and constrained
 2x-DPR projects. `npm ci` audited 337 packages with zero vulnerabilities.
