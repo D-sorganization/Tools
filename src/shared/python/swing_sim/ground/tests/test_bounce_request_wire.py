@@ -111,6 +111,15 @@ def test_request_wire_rejects_nested_tampering_duplicates_and_size() -> None:
         repeated_bounce_request_from_json(oversized)
 
 
+def test_request_wire_rejects_finite_capture_speed_digest_drift() -> None:
+    """A finite capture-threshold change must invalidate the joint digest."""
+    payload = _request().to_dict()
+    payload["capture_speed_m_s"] = 0.06
+
+    with pytest.raises(ValueError, match="execution_input_sha256"):
+        RepeatedBounceRequest.from_dict(payload)
+
+
 @pytest.mark.parametrize(
     ("change", "message"),
     [

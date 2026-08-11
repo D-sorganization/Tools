@@ -72,6 +72,15 @@ describe("repeated-bounce request wire v1", () => {
     )).toThrow(/maximum wire size/i);
   });
 
+  it("rejects finite capture-speed changes without a matching input digest", () => {
+    const value = clone(requestFixture.request);
+    value.capture_speed_m_s = 0.06;
+
+    expect(() => parseRepeatedBounceRequest(value)).toThrow(
+      /execution_input_sha256/,
+    );
+  });
+
   it.each([
     ["request identity", (value: MutableRecord) => { value.request_id = "wrong"; }],
     ["surface identity", (value: MutableRecord) => { value.surface_id = "wrong"; }],
