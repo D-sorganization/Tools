@@ -221,9 +221,8 @@ def test_csv_repeats_exact_canonical_target_metadata(
     assert float(first["target_x_downrange_m"]) == pytest.approx(140.0)
     assert float(first["target_y_up_m"]) == pytest.approx(24.0)
     assert float(first["target_z_right_m"]) == pytest.approx(-3.0)
-    assert (
-        json.loads(first["target_tolerance_json"])
-        == (spatial_target_to_json_dict(aerial_target)["tolerance"])
+    assert json.loads(first["target_tolerance_json"]) == (
+        spatial_target_to_json_dict(aerial_target)["tolerance"]
     )
 
 
