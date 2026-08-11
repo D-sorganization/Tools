@@ -2,18 +2,17 @@
 
 ## 2026-08-11 variation-study workspace protected publication
 
-- Branch `feat/4144-workspace-variation-study` is published normally as a
-  draft child of exact PR #4340 head
-  `26105f668de260d75a99f450726348570db7ff89`, targeting parent branch
-  `feat/4136-workspace-torque-profiles`.
+- Branch `feat/4144-workspace-variation-study` is published normally as draft
+  PR [#4343](https://github.com/D-sorganization/Tools/pull/4343), targeting
+  exact PR #4340 branch `feat/4136-workspace-torque-profiles` at parent head
+  `26105f668de260d75a99f450726348570db7ff89`.
 - Independently reviewed implementation head
   `73041194a7cfd8cae14cd1739b806617af933648` contains explorer-session v4,
   deterministic file-operation ordering, complete swing-output registry
-  parity, and valid saved-focus controls. This documentation-only publication
-  commit changes no runtime code.
-- The assigned PR URL is recorded in a normal follow-up. Protected CI/review,
-  #4142/#4144, dependency ordering, UpstreamDrift qualification, integration,
-  and release remain open.
+  parity, and valid saved-focus controls. Publication documentation commits
+  change no runtime code.
+- Protected CI/review, #4142/#4144, dependency ordering, UpstreamDrift
+  qualification, integration, and release remain open.
 
 Status verified 2026-08-11. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
