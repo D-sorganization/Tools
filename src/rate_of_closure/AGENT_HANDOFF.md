@@ -1,5 +1,23 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 regional ground execution binding
+
+`feat/4271-regional-execution-binding` is an isolated child of exact PR #4342
+head `8e1c7ccd99a7c4886c5fb9ccc7e4d94a6d7e3833`. It adds one
+UI-neutral Python executor that accepts exact ground request/prefix/plan values
+plus bounded settings/cancellation, creates its resolver only from the plan,
+and delegates unchanged physics to `simulate_skid_roll` and
+`compose_ground_result`.
+
+The separate strict `ground-regional-execution-result/v1` envelope preserves
+frozen ground-result v1 bytes for complete/partial output and uses typed
+null-result cancellation/failure states where v1 cannot represent an honest
+result. Canonical request/plan digests, plan/executor provenance, model IDs,
+and ordered from/to regional transition evidence are cross-runtime through a
+shared fixture and a TypeScript parser/serializer. UI execution/playback,
+compiled regional physics, downstream parity, protected evidence, and issue
+completion remain open.
+
 ## 2026-08-11 PR #4342 delta-MyPy follow-up
 
 Protected CI on exact PR #4342 head

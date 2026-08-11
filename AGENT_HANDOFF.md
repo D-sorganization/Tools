@@ -1,5 +1,24 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 regional ground execution binding
+
+Local branch `feat/4271-regional-execution-binding` starts from exact current
+PR #4342 head `8e1c7ccd99a7c4886c5fb9ccc7e4d94a6d7e3833` without rewriting
+the plan-I/O parent. The UI-neutral `execute_regional_ground` boundary accepts
+an exact ground request, settled bounce prefix, regional plan request, and
+bounded execution options. The resolver is constructed only from the plan;
+base-surface, request, prefix, digest, model, and transition identities fail
+closed before evidence is accepted.
+
+Strict `ground-regional-execution-result/v1` embeds representable frozen
+ground-result v1 output and otherwise reports typed cancellation/failure with
+no fabricated result. It carries canonical request/plan SHA-256 values, plan
+and executor provenance, model identity, exact ordered from/to region+surface
+transitions, and the coplanar/static limitations. Python executes the existing
+solver/composer; TypeScript only parses/serializes. No UI controls, compiled
+regional physics, UpstreamDrift consumers, protected CI/review, or #4271
+completion are claimed.
+
 ## 2026-08-11 PR #4342 delta-MyPy follow-up
 
 Protected CI on exact PR #4342 head

@@ -1,5 +1,21 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 regional execution/provenance child
+
+- `feat/4271-regional-execution-binding` begins at exact current PR #4342
+  head `8e1c7ccd99a7c4886c5fb9ccc7e4d94a6d7e3833`; the parent is not
+  rewritten or retargeted.
+- `execute_regional_ground` validates exact request/prefix/plan identities,
+  requires `plan.base_surface == request.surface`, creates the only resolver
+  from that plan, and delegates to the established Python solver/composer.
+- Strict `ground-regional-execution-result/v1` carries canonical input digests,
+  plan/executor/model provenance, exact ordered from/to transition evidence,
+  and fixed coplanar/static limits. Frozen ground-result v1 is embedded only
+  for representable complete/partial outcomes; typed cancellation/failure has
+  a null result rather than fabricated physics. TypeScript is wire-only.
+- No new controls, playback, compiled regional solver, downstream consumer,
+  protected evidence, release, or #4271 completion is claimed.
+
 ## 2026-08-11 PR #4342 delta-MyPy follow-up
 
 - Protected CI on exact head
