@@ -33,6 +33,18 @@
   baseline remains 17 Qt/NumPy typing findings in 11 untouched files.
   Protected CI and required review remain release gates.
 
+## 2026-08-11 PR #4178 pinned-Ruff format repair
+
+- Exact published head `b8822401f4522e867d6b160125953981a39a770d`
+  failed its current CI Standard quality gate only because five changed Python
+  files did not match the workflow-pinned Ruff `0.14.10` formatter.
+- The files are mechanically reformatted with that exact version. No turf or
+  impact physics, frames, calibration boundaries, validation, APIs, schemas,
+  tests, or user-visible behavior changes; this is not completion of `#4166`.
+- No material handoff behavior changed. Workflow-mirrored Ruff, focused tests,
+  `git diff --check`, and 71 focused impact, kinetics, PyQt, and layout tests
+  are green. Protected checks and parent-first release order remain the gates.
+
 ## 2026-08-10 Parent Repair Propagation (#4174 → #4178)
 
 - Child PR `#4178` remains on `feat/4166-wedge-turf-physics`, based on
@@ -49,6 +61,19 @@
   parent evidence of 345 React tests/all web gates and 12 `swing-core` tests is
   unchanged. The inherited broad MyPy baseline remains 17 Qt/NumPy typing
   findings in 11 untouched files. Protected CI and review remain release gates.
+
+## 2026-08-11 PR #4174 pinned-Ruff format repair
+
+- Exact published head `525696e0c1080616eb5055e2cb1c93565f98672e`
+  failed CI Standard run `31485402975`, job `93759519460`, only because five
+  changed Python files did not match the workflow-pinned Ruff `0.14.10`
+  formatter.
+- The files are mechanically reformatted with that exact version. No physics,
+  frames, validation, public APIs, schemas, tests, or user-visible behavior
+  changes; this is not completion of wedge issue `#4161`.
+- No material handoff behavior changed. Workflow-mirrored Ruff, focused tests,
+  `git diff --check`, and 71 focused impact, kinetics, PyQt, and layout tests
+  are green. Protected checks and parent-first release order remain the gates.
 
 ## 2026-08-10 Parent Repair Propagation (#4173 → #4174)
 
