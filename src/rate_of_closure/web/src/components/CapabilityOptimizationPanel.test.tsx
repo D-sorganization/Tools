@@ -36,6 +36,15 @@ const customWorkflow = (): CapabilityWorkflowDocument => {
   return capabilityWorkflowFromJson(JSON.stringify(payload));
 };
 
+const noncanonicalWorkflow = (kind: "mph" | "covariance") => {
+  const payload = JSON.parse(capabilityWorkflowToJson(
+    buildCapabilityWorkflow(defaultCapabilityWorkflowInputs()),
+  ));
+  if (kind === "mph") payload.profile.clubs[0].parameters[0].unit = "mph";
+  else payload.profile.clubs[0].matrix_kind = "covariance";
+  return capabilityWorkflowFromJson(JSON.stringify(payload));
+};
+
 describe("CapabilityOptimizationPanel", () => {
   it("runs a bounded workflow and exposes alternatives plus raw diagnostics", async () => {
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(null);
@@ -172,5 +181,14 @@ describe("CapabilityOptimizationPanel", () => {
     expect(persisted.profile.clubs[0].parameters[0].bias).toBe(0.4);
     expect(persisted.evaluator_config.spin_defaults[0].provenance)
       .toBe("measured/spin-42");
+  });
+
+  it.each([
+    ["mph", /unit/i], ["covariance", /correlation/i],
+  ] as const)("rejects a noncanonical %s workflow before panel apply", (kind, message) => {
+    expect(() => render(
+      <CapabilityOptimizationPanel workflow={noncanonicalWorkflow(kind)}
+        onWorkflowChange={vi.fn()} />,
+    )).toThrow(message);
   });
 });

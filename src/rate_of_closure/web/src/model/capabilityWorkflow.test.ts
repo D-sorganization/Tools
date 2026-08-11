@@ -6,6 +6,7 @@ import {
   CAPABILITY_WORKFLOW_SCHEMA_VERSION,
   buildCapabilityWorkflow,
   capabilityWorkflowFromJson,
+  capabilityWorkflowInputs,
   capabilityWorkflowToJson,
   defaultCapabilityWorkflowInputs,
 } from "./capabilityWorkflow";
@@ -32,6 +33,18 @@ const mutatedWorkflow = (testCase: ParserCase): string => {
   if (terminal === undefined) throw new RangeError("fixture path must be nonempty");
   (cursor as Record<string | number, unknown>)[terminal] = testCase.value;
   return JSON.stringify(payload);
+};
+
+const noncanonicalInteractiveWorkflow = (
+  kind: "mph" | "covariance" | "reordered",
+) => {
+  const payload = JSON.parse(capabilityWorkflowToJson(
+    buildCapabilityWorkflow(defaultCapabilityWorkflowInputs()),
+  ));
+  if (kind === "mph") payload.profile.clubs[0].parameters[0].unit = "mph";
+  else if (kind === "covariance") payload.profile.clubs[0].matrix_kind = "covariance";
+  else payload.profile.clubs[0].parameters.reverse();
+  return capabilityWorkflowFromJson(JSON.stringify(payload));
 };
 
 describe("capability workflow", () => {
@@ -78,6 +91,19 @@ describe("capability workflow", () => {
     const encoded = capabilityWorkflowToJson(source);
     expect(capabilityWorkflowFromJson(encoded)).toEqual(source);
     expect(JSON.parse(encoded).schema_version).toBe(CAPABILITY_WORKFLOW_SCHEMA_VERSION);
+  });
+
+  it("projects the exact canonical interactive parameter basis", () => {
+    expect(capabilityWorkflowInputs(
+      buildCapabilityWorkflow(defaultCapabilityWorkflowInputs()),
+    )).toEqual(defaultCapabilityWorkflowInputs());
+  });
+
+  it.each([
+    ["mph", /unit/i], ["covariance", /correlation/i], ["reordered", /order/i],
+  ] as const)("rejects a noncanonical %s interactive basis", (kind, message) => {
+    expect(() => capabilityWorkflowInputs(noncanonicalInteractiveWorkflow(kind)))
+      .toThrow(message);
   });
 
   it.each([

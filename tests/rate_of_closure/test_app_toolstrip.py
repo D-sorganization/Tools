@@ -329,6 +329,39 @@ def test_invalid_capability_request_is_rejected_before_native_ui_mutation(
     assert warnings and "capability workflow" in warnings[0][1]
 
 
+@pytest.mark.parametrize(
+    ("kind", "message"), [("mph", "unit"), ("covariance", "correlation")]
+)
+def test_noncanonical_capability_basis_reports_open_error_without_mutation(
+    window, tmp_path, monkeypatch, kind: str, message: str
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = document_from_state(before, window._workspace_metadata).to_json_dict()
+    club = raw["model_session"]["data"]["capability_request"]["profile"]["clubs"][0]
+    if kind == "mph":
+        club["parameters"][0]["unit"] = "mph"
+    else:
+        club["matrix_kind"] = "covariance"
+    target = tmp_path / f"invalid-capability-{kind}.roc-workspace.json"
+    target.write_text(json.dumps(raw), encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog, "getOpenFileName", lambda *_args: (str(target), "")
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, text, *_args: warnings.append((title, text)),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and message in warnings[0][1]
+
+
 def test_oversized_capability_number_reports_open_error_without_mutation(
     window, tmp_path, monkeypatch
 ) -> None:  # type: ignore[no-untyped-def]

@@ -13,6 +13,7 @@ import type {
   CapabilityFlightEvaluatorConfig,
   CapabilitySpinDefault,
 } from "./capabilityFlightEvaluator";
+import { validateInteractiveCapabilityBasis } from "./capabilityInteractiveBasis";
 
 export const CAPABILITY_WORKFLOW_SCHEMA_VERSION =
   "capability-optimization-workflow/v1" as const;
@@ -321,6 +322,7 @@ export function capabilityWorkflowInputs(
     throw new RangeError("interactive workflow supports exactly one club and spin default");
   }
   const club = document.profile.clubs[0];
+  validateInteractiveCapabilityBasis(club);
   const parameters = new Map(club.parameters.map((item) => [item.parameterId, item]));
   const ballSpeed = parameters.get("ball_speed");
   const launchAngle = parameters.get("launch_angle");

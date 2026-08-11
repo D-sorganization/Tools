@@ -9,9 +9,11 @@ import pytest
 
 from rate_of_closure.application.capability_workflow import (
     CAPABILITY_WORKFLOW_SCHEMA_VERSION,
+    CapabilityWorkflowDocument,
     CapabilityWorkflowInputs,
     build_capability_workflow,
     capability_workflow_from_json,
+    capability_workflow_inputs,
     capability_workflow_json,
 )
 from rate_of_closure.variation.scalar_ensemble_contract import (
@@ -100,6 +102,41 @@ def test_workflow_round_trip_preserves_strict_nested_contracts() -> None:
 
     assert restored == source
     assert json.loads(encoded)["schema_version"] == CAPABILITY_WORKFLOW_SCHEMA_VERSION
+
+
+def _noncanonical_interactive_workflow(
+    kind: str,
+) -> CapabilityWorkflowDocument:
+    payload = json.loads(
+        capability_workflow_json(build_capability_workflow(CapabilityWorkflowInputs()))
+    )
+    club = payload["profile"]["clubs"][0]
+    if kind == "mph":
+        club["parameters"][0]["unit"] = "mph"
+    elif kind == "covariance":
+        club["matrix_kind"] = "covariance"
+    else:
+        club["parameters"].reverse()
+    return capability_workflow_from_json(json.dumps(payload))
+
+
+def test_interactive_projection_accepts_exact_canonical_parameter_basis() -> None:
+    projected = capability_workflow_inputs(
+        build_capability_workflow(CapabilityWorkflowInputs())
+    )
+
+    assert projected == CapabilityWorkflowInputs()
+
+
+@pytest.mark.parametrize(
+    ("kind", "message"),
+    [("mph", "unit"), ("covariance", "correlation"), ("reordered", "order")],
+)
+def test_interactive_projection_rejects_noncanonical_basis(
+    kind: str, message: str
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        capability_workflow_inputs(_noncanonical_interactive_workflow(kind))
 
 
 @pytest.mark.parametrize(

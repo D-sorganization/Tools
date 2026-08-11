@@ -245,6 +245,39 @@ describe("browser workspace file controller", () => {
     expect(applySnapshot).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ["mph", /unit/i], ["covariance", /correlation/i],
+  ] as const)("rejects a noncanonical %s capability file before apply", async (
+    kind, message,
+  ) => {
+    const applySnapshot = vi.fn();
+    const encoded = JSON.parse(createWorkspaceDocument(snapshot(), {
+      documentId: `workspace.invalid.capability.${kind}`,
+      title: "Invalid",
+      appVersion: "1.14.34",
+      createdAtUtc: "2026-08-11T07:00:00Z",
+      modifiedAtUtc: "2026-08-11T07:00:00Z",
+    }));
+    const club = encoded.model_session.data.capability_request.profile.clubs[0];
+    if (kind === "mph") club.parameters[0].unit = "mph";
+    else club.matrix_kind = "covariance";
+    const { result } = renderHook(() => useWorkspaceFiles({
+      snapshot: snapshot(), initialSnapshot: snapshot(), applySnapshot,
+      applyViewWorkspace: vi.fn(),
+    }));
+    const input = document.createElement("input");
+    Object.defineProperty(input, "files", { value: [
+      new File([JSON.stringify(encoded)], `invalid-capability-${kind}.json`),
+    ] });
+    act(() => {
+      result.current.handleCommand(APP_COMMAND_ID.fileOpenWorkspace);
+      result.current.onFileChange({ currentTarget: input } as never);
+    });
+
+    await waitFor(() => expect(result.current.error).toMatch(message));
+    expect(applySnapshot).not.toHaveBeenCalled();
+  });
+
   it("rejects computed capability output before applying state", async () => {
     const applySnapshot = vi.fn();
     const encoded = JSON.parse(

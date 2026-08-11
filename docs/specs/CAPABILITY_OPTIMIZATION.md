@@ -83,8 +83,9 @@ deterministic search basis. The default document is explicitly representative
 and user-authored; it is not presented as measured player data.
 
 The persisted v1 wire contract is strict at every nested primitive. Numeric
-fields accept only finite JSON numbers with magnitude at most `1e300` (and integer fields require an integral
-number); text fields accept only nonempty JSON strings. Numeric strings,
+fields accept only finite JSON numbers with magnitude at most `1e300` (and
+integer fields require an integral number); text fields accept only nonempty
+JSON strings. Numeric strings,
 booleans used as numbers, fractional integer values, and numeric identifiers or
 provenance values are rejected in both runtimes. Python and TypeScript execute
 one shared versioned accept/reject fixture to prevent parser drift.
@@ -117,8 +118,14 @@ represented by editable controls; accepted provenance, confidence,
 correlation, bias, bounds, custom problem policy, target geometry, and spin
 provenance survive apply, edit, recapture, save, and reopen exactly. Documents
 outside the supported single-club/three-parameter interactive projection fail
-closed. Both invalidate previous computed output. Explorer-session v1-v4 migration requires an
-explicit current capability fallback and never invents an optimizer request.
+closed. Specifically, the interactive basis is exactly `ball_speed` in `m/s`,
+`launch_angle` in `deg`, and `launch_direction` in `deg`, in that order, with
+one matching 3-by-3 correlation matrix, one club, and one spin default.
+Covariance matrices, alternate units such as `mph`, reordered parameters, and
+other shapes are rejected before UI mutation; this slice performs no implicit
+unit conversion or covariance rescaling. Both clients invalidate previous
+computed output. Explorer-session v1-v4 migration requires an explicit current
+capability fallback and never invents an optimizer request.
 Ranked alternatives, observation ensembles, progress, cancellation/runtime
 objects, and inferred player identity are excluded. The current interactive
 workflow declares still air and has no editable wind input; workspace restore

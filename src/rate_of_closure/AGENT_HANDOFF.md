@@ -2,8 +2,15 @@
 
 ## 2026-08-11 Explorer-session v5 capability-request mapper
 
-Independent no-publish review blockers on local head `91811c42` are repaired
-locally. PyQt6 and React retain the full validated workflow as live authority
+The remaining independent no-publish blocker on local head `68692bbcb` is
+repaired locally. PyQt6 and React interactive projection accepts only the exact
+ordered `ball_speed` (`m/s`), `launch_angle` (`deg`), and `launch_direction`
+(`deg`) basis with one 3-by-3 correlation matrix, one club, and one spin
+default. `mph`, covariance, reordered parameters, and unsupported shapes fail
+closed before projection, UI apply, or File/Open mutation. No unit conversion
+or covariance rescaling is attempted.
+
+The prior repair retains the full validated workflow as live authority
 and overlay only editable fields, preserving accepted evidence and advanced
 request policy. Unsupported interactive shapes fail closed. Native result
 publication now requires matching worker identity and generation. A shared
@@ -27,9 +34,9 @@ Legacy v1-v4 files require an explicit current capability fallback instead of a
 fabricated default. This bounded slice does not claim optimizer execution
 parity, wind-aware optimization, result persistence, UpstreamDrift parity,
 protected release, or completion of #4197/#4225.
-Local qualification passes 63 focused Python workflow/workspace/File/PyQt/
-manifest tests and 62 focused React contract/File/UI tests, plus pinned MyPy, Ruff
-check/format, TypeScript, zero-warning ESLint, the 210-module production build,
+Local qualification passes 71 focused Python workflow/workspace/File/PyQt/
+manifest tests and 70 focused React contract/File/UI tests, plus pinned MyPy, Ruff
+check/format, TypeScript, zero-warning ESLint, the 211-module production build,
 11 campaign-manifest tests, docs governance, and manifest-layout validation.
 
 ## 2026-08-11 variation-study workspace protected publication

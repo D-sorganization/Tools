@@ -8,6 +8,9 @@ from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Any
 
+from rate_of_closure.application.capability_interactive_basis import (
+    validate_capability_interactive_basis,
+)
 from rate_of_closure.application.capability_workflow_wire import (
     validate_capability_workflow_wire,
 )
@@ -350,6 +353,7 @@ def capability_workflow_inputs(
             "interactive workflow supports exactly one club and spin default"
         )
     club = document.profile.clubs[0]
+    validate_capability_interactive_basis(club)
     parameters = {item.parameter_id: item for item in club.parameters}
     if set(parameters) != {"ball_speed", "launch_angle", "launch_direction"}:
         raise ValueError("interactive workflow requires the three launch parameters")

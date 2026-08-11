@@ -10,6 +10,7 @@ pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
 from rate_of_closure.application.capability_workflow import (  # noqa: E402
+    CapabilityWorkflowDocument,
     CapabilityWorkflowInputs,
     build_capability_workflow,
     capability_workflow_from_json,
@@ -49,6 +50,18 @@ def _custom_workflow():  # type: ignore[no-untyped-def]
     )
     request["target"].update(kind="fairway", band_half_length_m=21.0, half_width_m=8.0)
     payload["evaluator_config"]["spin_defaults"][0]["provenance"] = "measured/spin-42"
+    return capability_workflow_from_json(json.dumps(payload))
+
+
+def _noncanonical_workflow(kind: str) -> CapabilityWorkflowDocument:
+    payload = json.loads(
+        capability_workflow_json(build_capability_workflow(CapabilityWorkflowInputs()))
+    )
+    club = payload["profile"]["clubs"][0]
+    if kind == "mph":
+        club["parameters"][0]["unit"] = "mph"
+    else:
+        club["matrix_kind"] = "covariance"
     return capability_workflow_from_json(json.dumps(payload))
 
 
@@ -134,6 +147,22 @@ def test_capability_workspace_apply_replaces_inputs_and_invalidates_results(
     assert tab.capability_workspace_document() == requested
     assert tab._document is None
     assert not tab.results.isVisibleTo(tab)
+
+
+@pytest.mark.parametrize(
+    ("kind", "message"), [("mph", "unit"), ("covariance", "correlation")]
+)
+def test_capability_workspace_apply_rejects_noncanonical_basis_before_mutation(
+    qtbot, kind: str, message: str
+) -> None:  # type: ignore[no-untyped-def]
+    tab = CapabilityOptimizationTab()
+    qtbot.addWidget(tab)
+    before = tab.capability_workspace_document()
+
+    with pytest.raises(ValueError, match=message):
+        tab.apply_capability_workspace_document(_noncanonical_workflow(kind))
+
+    assert tab.capability_workspace_document() == before
 
 
 def test_capability_workspace_rejects_stale_worker_success_after_replacement(

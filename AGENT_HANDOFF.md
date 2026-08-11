@@ -2,8 +2,15 @@
 
 ## 2026-08-11 Capability-request workspace continuation
 
-Independent no-publish review blockers on local head `91811c42` are repaired
-in this unpublished child. Both clients retain the complete validated workflow
+The remaining independent no-publish blocker on local head `68692bbcb` is
+repaired in this unpublished child. Interactive projection now accepts only
+the exact ordered `ball_speed` (`m/s`), `launch_angle` (`deg`), and
+`launch_direction` (`deg`) basis with one 3-by-3 correlation matrix, one club,
+and one spin default. `mph`, covariance, reordered parameters, and unsupported
+shapes fail closed before projection, panel/tab apply, or whole-File mutation;
+there is no implicit conversion or covariance rescaling.
+
+The prior repair makes both clients retain the complete validated workflow
 and overlay only editable controls, preserving accepted evidence and advanced
 request policy. Unsupported interactive shapes fail closed. PyQt worker
 identity plus generation gates reject late success from cancelled replaced
@@ -29,9 +36,9 @@ input-specification parity only: it does not claim optimizer execution parity,
 wind-aware optimization, saved results, UpstreamDrift qualification, protected
 CI/review, integration, or issue completion. The branch must remain local until
 the parent stack explicitly authorizes publication. Local qualification passes
-63 focused Python workflow/workspace/File/PyQt/manifest tests and 62 focused React
+71 focused Python workflow/workspace/File/PyQt/manifest tests and 70 focused React
 contract/File/UI tests; pinned MyPy, Ruff check/format, TypeScript,
-zero-warning ESLint, the 210-module production build, 11 campaign-manifest
+zero-warning ESLint, the 211-module production build, 11 campaign-manifest
 tests, docs governance, and manifest-layout validation also pass.
 
 ## 2026-08-11 variation-study workspace protected publication
