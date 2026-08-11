@@ -193,10 +193,16 @@ restore all axis artists from each fresh render, preventing stale visibility
 across modes without forcing both tick-label sides visible. A
 parameterized headless GUI regression proves all three mappings and both
 restoration paths in both viewports. Physics, camera angles, limits, tracking,
-zoom, geometry, and React behavior are unchanged. Fresh focused tests, Ruff,
-pinned MyPy, post-polish native rendered review, protected CI, and review are
-required before this follow-up is released; this entry intentionally does not
-self-record the implementation commit.
+zoom, geometry, and React behavior are unchanged.
+
+Exact implementation head `c6f7122d8fb63eacaf94fc0f295c2e470f80fce8`
+passes 11 focused camera tests, the 33-test camera/layout/workspace integration
+set, Ruff, pinned MyPy on the three changed production modules, and diff
+validation. Native Windows inspection at 1282 x 752 confirms Face On, Down the
+Line, and Overhead retain only the two in-plane labelled axes with no duplicate
+ticks; reset/isometric restores the complete 3D frame. Protected exact-head CI,
+review, parent-first integration, and installed UpstreamDrift parity remain
+required before this follow-up is released.
 
 ## 2026-08-10 Current-parent propagation into camera PR #4298
 
