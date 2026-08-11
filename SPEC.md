@@ -26,22 +26,30 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.5.3                                      |
-| **Spec Version**        | 1.5.3                                      |
-| **Last Spec Update**    | 2026-07-26                                 |
+| **Current Version**     | 1.5.6                                      |
+| **Spec Version**        | 1.5.6                                      |
+| **Last Spec Update**    | 2026-08-05                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-05 Golf Club assembly type-checking compatibility
+
+- Shared golf-club assembly validation returns explicitly typed NumPy arrays
+  from the numeric-sequence and inertia-tensor adaptation seams, preserving the
+  new assembly physics contracts while satisfying the changed-file mypy gate.
+  Serialization facade methods keep typed local return values so narrow mypy
+  runs agree with full-repository type information.
+
 ### 2026-07-26 P1AM Control System Trend Crosshair Optimization
 
 - `src/p1am_control_system/frontend/src/components/TrendPlotOverlays.tsx` and `PlotCrosshair.tsx` reduce
   garbage collection pressure during high-frequency pointer move events by
   replacing chained `.map()` and `.reduce()` operations with single-pass `for` loops.
   This eliminates intermediate array allocations and closure overhead for SVG crosshair rendering.
-
 
 ### 2026-07-23 P1AM Control System Trend Plot Optimization
 
@@ -952,6 +960,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Provide MATLAB scientific code integration and wrappers
 - Maintain fleet theme system for consistent UI across all tools
 - Support multiple Python versions (3.11, 3.12) with comprehensive test matrix
+- Keep the required generic quality gate on hosted compute when the local
+  fleet is operating under a WAN-constrained capacity policy
+- Keep self-hosted jobs on durable per-host dependency caches without
+  GitHub Actions cache uploads or unconditional cache purges, so post-job
+  network traffic cannot monopolize a persistent runner
 
 ### Non-Goals
 
@@ -1717,6 +1730,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-05 | 1.5.6 | fix(ci): include UpstreamDrift's release-build package roots in the narrow cross-repository sparse checkout so editable metadata generation can validate the pinned Tools package contract without broadening checkout to the full `src` or `ui` trees. |
+| 2026-08-05 | 1.5.6 | feat(golf-club, #4147): add the canonical shared golf-club domain facade with immutable SI/frame-explicit component roles, physically realizable mass properties, rigid transforms, assembled mass/CG/full inertia, declared club-length references, and strict deterministic versioned JSON migration contracts. |
+| 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |
+| 2026-08-04 | 1.5.4 | docs(agent-handoff, Repository_Management#1390): add root `AGENT_HANDOFF.md` plus per-tool `AGENT_HANDOFF.md` under `src/rate_of_closure`, `src/pendulum_simulator`, and `src/rotation_converter`; add `docs/AGENT_HANDOFF_TEMPLATE.md` for future tools; add the "Agent Handoff & PR Policy" section to `CLAUDE.md`. |
 | 2026-07-26 | 1.5.3 | fix(test): create the standalone-wheel smoke environment from the real base interpreter rather than nesting it under the active CI virtualenv, keeping installed-artifact validation portable across relocated self-hosted Python 3.10 runtimes. |
 | 2026-07-26 | 1.5.3 | fix(ci): isolate both protected Python jobs in per-job virtual environments after validating the persistent setup-python runtime; repair and import-probe the matrix NumPy/SciPy stack with compatible bounds, and reinstall OpenCV without dependency resolution so it cannot replace the verified NumPy wheel. |
 | 2026-07-26 | 1.5.3 | fix(import-aliases, #3936): make canonical shared-module aliases satisfy `runpy` code lookup so packaged compatibility commands such as `python -m sidekick` execute their parent-owned `shared.python` implementation; include `contracts` in the identity-coalescing alias set and keep Sidekick agent DbC imports on the canonical shared path. |
@@ -2380,6 +2397,19 @@ Active development with stable core, continuous tool expansion, and web API in p
 - **Reliability**: Restored source-tree `src.shared.python.logging_pkg` and `src.shared.python.config` compatibility modules so shared AI adapter factories and chat service connection code import cleanly from a Tools source checkout or vendored shared-module install.
 
 ## 9. Changelog
+
+### Version 1.5.5
+
+- 2026-08-05: fix(rotation-converter) — update application navigation tabs
+  with accessible roles and unique IDs, linking buttons to tab panels via
+  `aria-controls` and `aria-labelledby` for screen reader semantic correctness.
+
+### Version 1.5.4
+
+- 2026-08-04: ci — route the required generic PR quality gate to a hosted
+  Ubuntu runner, retain hardware and integration tests on their explicit local
+  lanes, preserve the setup-python pip cache instead of purging it, and narrow
+  the local-only policy exception to `ci-standard.yml::quality-gate`.
 
 ### Version 1.1.598
 

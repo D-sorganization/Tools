@@ -86,3 +86,6 @@
 ## 2024-08-01 - Avoid allocating string arrays for SVG paths
 **Learning:** In high-frequency chart updates, building SVG `d` paths using `.map(p => '...').join(' ')` allocates a new array of strings on every frame, causing unnecessary garbage collection pressure and main thread stalls.
 **Action:** Build SVG `d` paths using a single-pass `for` loop and string concatenation to eliminate intermediate array allocations.
+## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
+**Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
+**Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
