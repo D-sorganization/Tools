@@ -19,6 +19,7 @@ Implementation branches, pull requests, and issue threads for substantial work m
 ## Index
 
 - Active: `docs/specs/active/`
+  - `docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md` — #4284 camera parity registry
 - Planned: `docs/specs/planned/`
 - Archived: `docs/archive/specs/`
 

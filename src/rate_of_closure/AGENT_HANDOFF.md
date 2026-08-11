@@ -1,5 +1,40 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4284 local camera-preset parity candidate
+
+Branch `feat/4284-camera-preset-parity` is an unpublished child of exact #4356
+head `2387430fc78baa92ba122c7ad008a498118bf62d`. The Python authority
+`application/camera_presets.py` and TypeScript twin `cameraPresets.ts` are
+pinned by one golden fixture in the canonical x-downrange/y-up/z-right frame.
+The matched `Club3DView` and `ClubCanvas` expose accessible stable controls for
+Isometric, explicit-side Face On, exact Down the Line, Overhead, Reset, and
+Auto Fit. Preset/reset actions preserve target and zoom; Auto Fit alone scales
+the geometry, with 16% clearance verified for a representative driver at
+fixed/moving start, impact, and end. Zoom retains a manual orbit.
+Free orbit clears preset selected/pressed semantics in both toolkits while
+retaining the last preset internally; a new preset or Reset restores an exact
+canonical view. A side change after a custom Face-On orbit restores exact Face
+On for the newly selected physical side.
+Rendered review's stacked depth-axis labels are fixed by hiding only display x
+for exact Face On, display y for exact Down the Line, and display z for exact
+Overhead. Isometric and custom orbit show all axes; leaving a preset by native
+orbit restores them without changing the new orientation.
+
+The base candidate's broad evidence is 929 Python/PyQt tests and 118 React
+files with 750 tests plus TypeScript, zero-warning ESLint, the 206-module
+production build, Ruff, Black, and focused MyPy. The exact rendered-review
+follow-up passes 55 camera/general-GUI/minimum-layout tests, focused MyPy,
+Ruff, Black, manifest validation, and module budget; all four canonical PNGs
+were inspected locally. This is a partial local candidate, not a published
+carrier.
+The changed club viewport is within the 500-line source budget after its
+geometry adapters were extracted; the existing 612-line torque-profile panel
+remains the only repository-wide file-budget violation.
+Tracking, manual tracking suspension, recenter,
+per-viewport persistence, the principal React 3D swing, other 3D surfaces,
+Playwright/high-DPI rendered review, full playback coverage, protected
+integration, release, and #4284/#4218 completion remain open.
+
 ## 2026-08-11 PR #4356 published current-parent propagation
 
 Published ready-for-review PR #4356 keeps `feat/4270-repeated-bounce-request-wire`

@@ -1,5 +1,41 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4284 local camera-preset parity candidate
+
+- Unpublished branch `feat/4284-camera-preset-parity` starts at exact published
+  #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; no GitHub write occurred.
+- One shared fixture pins strict Python/TypeScript camera contracts in the
+  x-downrange/y-up/z-right application frame. The matched PyQt6 club view and
+  React club canvas now provide stable, accessible Isometric, explicit-side
+  Face On, exact +x Down the Line, -y Overhead, Reset, and Auto Fit commands.
+- Presets and Reset are idempotent and preserve target/zoom. Auto Fit alone
+  changes scale and retains 16% clearance around the complete representative
+  driver at fixed/moving start, impact, and end. Zoom preserves native manual
+  orbit. Strict unknown-ID, finite, unit-vector, perpendicular-vector, and
+  absolute-tolerance parity are regression tested.
+- Free orbit clears preset selected/pressed semantics on both surfaces; zoom
+  and Auto Fit preserve that custom orientation until a preset or Reset is
+  deliberately selected; a side change while Face On is the last preset also
+  restores exact Face On for that physical side.
+- Rendered review found stacked depth ticks in exact canonical projections.
+  PyQt now hides only display x for Face On, display y for Down the Line, and
+  display z for Overhead; Isometric and custom orbit restore every labeled axis
+  immediately without resetting the manual orientation.
+- The base candidate's broad gates passed: 929 Python/PyQt tests and 118 React
+  files with 750 tests, TypeScript, zero-warning ESLint, the 206-module
+  production build, Ruff, Black, and focused MyPy. The exact rendered-review
+  follow-up passes 55 camera/general-GUI/minimum-layout tests, focused MyPy,
+  Ruff, Black, manifest validation, and module budget; locally generated Face
+  On, DTL, Overhead, and Isometric PNGs were inspected.
+- The changed PyQt viewport is within the 500-line source budget after geometry
+  adapter extraction. The parent branch's 612-line `torque_profile_panel.py`
+  remains the only repository-wide file-budget violation.
+- The parity registry is
+  `docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md`. Tracking, tracking suspension,
+  recenter, workspace persistence, principal React 3D swing, remaining 3D
+  surfaces, Playwright/high-DPI rendered QA, full playback combinations,
+  protected carrier/review, release, and #4284/#4218 completion remain open.
+
 ## 2026-08-11 PR #4356 published current-parent propagation
 
 - Ready-for-review PR `#4356` retains branch

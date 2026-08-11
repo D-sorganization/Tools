@@ -19,6 +19,17 @@
 import { useEffect, useRef, useState } from "react";
 
 import { solve, type ImpactScenario } from "../model/impact";
+import {
+  AUTO_FIT_CLEARANCE_FRACTION,
+  applyCameraView,
+  autoFitCamera,
+  defaultCameraState,
+  setFaceOnSide,
+  withCameraZoom,
+  type CameraState,
+  type CameraViewId,
+  type FaceOnSide,
+} from "../model/cameraPresets";
 import { loadHeadMesh, type HeadMesh } from "../model/mesh";
 import { getChartColor } from "../model/theme";
 import { FIELD_GUIDANCE } from "../model/units";
@@ -32,6 +43,7 @@ import {
   type Vec3,
 } from "./clubCanvasGeometry";
 import { drawEngineeringCgSymbol } from "./engineeringSymbols";
+import { ClubCameraControls } from "./ClubCameraControls";
 
 const SPAN_MS = 8.0;
 const STEPS = 48;
@@ -68,6 +80,7 @@ export function ClubCanvas({
   externalMesh = null,
   hoselPoint = null,
   cogPoint = null,
+  initialPhase = 0,
 }: {
   scenario: ImpactScenario;
   /** A generated head (e.g. parametric club head) to render; the STL
@@ -77,14 +90,20 @@ export function ClubCanvas({
   hoselPoint?: Vec3 | null;
   /** Generated head's divergence-theorem volumetric COG (H1). */
   cogPoint?: Vec3 | null;
+  /** Deterministic phase seam used by camera-fit regression tests. */
+  initialPhase?: number;
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const phaseRef = useRef(0);
+  const phaseRef = useRef(initialPhase);
   // Orbit camera state lives in refs so dragging never re-runs effects.
-  // Defaults match the PyQt view (azimuth 150 deg, elevation 30 deg).
-  const yawRef = useRef((150 * Math.PI) / 180);
-  const pitchRef = useRef((30 * Math.PI) / 180);
-  const zoomRef = useRef(1.0);
+  const initialCamera = useRef(defaultCameraState());
+  const [camera, setCamera] = useState<CameraState>(initialCamera.current);
+  const [canonicalOrientation, setCanonicalOrientation] = useState(true);
+  const cameraRef = useRef(initialCamera.current);
+  const yawRef = useRef(initialCamera.current.yawRad);
+  const pitchRef = useRef(initialCamera.current.pitchRad);
+  const zoomRef = useRef(initialCamera.current.zoom);
+  const subjectRadiusRef = useRef(0.4);
   const dragRef = useRef<{ x: number; y: number } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [playing, setPlaying] = useState(true);
@@ -93,6 +112,17 @@ export function ClubCanvas({
   const [mesh, setMesh] = useState<HeadMesh | null>(null);
   const [meshError, setMeshError] = useState<string | null>(null);
   const [showCg, setShowCg] = useState(true);
+
+  const updateCamera = (update: (current: CameraState) => CameraState) => {
+    setCamera((current) => {
+      const next = update(current);
+      cameraRef.current = next;
+      yawRef.current = next.yawRad;
+      pitchRef.current = next.pitchRad;
+      zoomRef.current = next.zoom;
+      return next;
+    });
+  };
 
   useEffect(() => {
     if (externalMesh) {
@@ -265,6 +295,23 @@ export function ClubCanvas({
           hosel[2] - Math.cos(lie) * SHAFT_LEN,
         ];
       }
+      const fitPoints = mesh
+        ? mesh.triangles.flatMap((triangle) =>
+          triangle.map((point) => add(point, shift)))
+        : [...parts.face, ...parts.back];
+      fitPoints.push(hosel, shaftEnd, parts.impact);
+      subjectRadiusRef.current = Math.max(
+        1e-9,
+        ...fitPoints.map((point) => {
+          const placed = place(point);
+          const target = cameraRef.current.targetM;
+          return Math.hypot(
+            placed[0] - target[0],
+            placed[1] - target[1],
+            placed[2] - target[2],
+          );
+        }),
+      );
       line([place(hosel), place(shaftEnd)], COLORS.shaft, 2.5);
 
       if (showCg) {
@@ -374,6 +421,7 @@ export function ClubCanvas({
           <span className="text-slate-400">Display</span>
           <select
             value={mode}
+            aria-label="Clubhead display mode"
             title="Display mode: head fixed in place or moving through space"
             onChange={(e) => setMode(e.target.value as ViewMode)}
             className="rounded border border-slate-700 bg-slate-800 px-2 py-1 text-slate-100 focus:border-blue-500 focus:outline-none"
@@ -435,6 +483,29 @@ export function ClubCanvas({
           </span>
         )}
       </div>
+      <ClubCameraControls
+        state={camera}
+        activeViewId={canonicalOrientation ? camera.presetId : null}
+        onView={(view: CameraViewId) => {
+          setCanonicalOrientation(true);
+          updateCamera((current) => applyCameraView(current, view));
+        }}
+        onFaceOnSide={(side: FaceOnSide) => {
+          if (cameraRef.current.presetId === "camera.view.face_on") {
+            setCanonicalOrientation(true);
+          }
+          updateCamera((current) => setFaceOnSide(current, side));
+        }}
+        onReset={() => {
+          setCanonicalOrientation(true);
+          updateCamera((current) => applyCameraView(current, "camera.view.isometric"));
+        }}
+        onAutoFit={() => updateCamera((current) => autoFitCamera(
+          current,
+          subjectRadiusRef.current,
+          mode === VIEW_MODES[1] ? 0.42 : 0.24,
+        ))}
+      />
       <canvas
         ref={canvasRef}
         width={840}
@@ -442,6 +513,16 @@ export function ClubCanvas({
         className="w-full cursor-grab touch-none rounded-xl border border-slate-800/80 bg-slate-950/80 shadow-lg shadow-black/30 active:cursor-grabbing"
         role="img"
         aria-label="Animated 3D clubhead rotating under the scenario's angular velocity. Drag to orbit; scroll to zoom."
+        tabIndex={0}
+        data-camera-view={canonicalOrientation ? camera.presetId : "custom"}
+        data-camera-yaw={camera.yawRad.toFixed(12)}
+        data-camera-pitch={camera.pitchRad.toFixed(12)}
+        data-camera-zoom={camera.zoom.toFixed(6)}
+        data-camera-subject-fits={String(
+          subjectRadiusRef.current * camera.zoom
+            <= (mode === VIEW_MODES[1] ? 0.42 : 0.24)
+              * (1 - AUTO_FIT_CLEARANCE_FRACTION) + 1e-12
+        )}
         onPointerDown={(e) => {
           dragRef.current = { x: e.clientX, y: e.clientY };
           e.currentTarget.setPointerCapture(e.pointerId);
@@ -454,6 +535,16 @@ export function ClubCanvas({
             Math.min(1.4, pitchRef.current + (e.clientY - dragRef.current.y) * 0.008),
           );
           dragRef.current = { x: e.clientX, y: e.clientY };
+          setCanonicalOrientation(false);
+          setCamera((current) => {
+            const next = {
+              ...current,
+              yawRad: yawRef.current,
+              pitchRad: pitchRef.current,
+            };
+            cameraRef.current = next;
+            return next;
+          });
         }}
         onPointerUp={(e) => {
           dragRef.current = null;
@@ -463,10 +554,10 @@ export function ClubCanvas({
           dragRef.current = null;
         }}
         onWheel={(e) => {
-          zoomRef.current = Math.max(
-            0.3,
-            Math.min(4.0, zoomRef.current * (e.deltaY < 0 ? 1.1 : 1 / 1.1)),
-          );
+          updateCamera((current) => withCameraZoom(
+            current,
+            current.zoom * (e.deltaY < 0 ? 1.1 : 1 / 1.1),
+          ));
         }}
       />
       <p className="text-xs text-slate-500">

@@ -1142,6 +1142,10 @@
         {
           "kind": "repository_path",
           "value": "src/rate_of_closure/view_workspace.py"
+        },
+        {
+          "kind": "repository_path",
+          "value": "docs/specs/active/CAMERA_VIEWPORT_CONTROLS.md"
         }
       ],
       "tracked_issue_ids": [
@@ -1166,10 +1170,11 @@
       "evidence_ids": [
         "toolstrip-local-c36"
       ],
-      "evidence_gap": "Complete persistence adapters, synchronized multi-view state, camera snap controls, accessibility, and protected release remain open.",
+      "evidence_gap": "Local no-publish branch feat/4284-camera-preset-parity, based exactly on 2387430fc78baa92ba122c7ad008a498118bf62d, implements the first matched PyQt6/React clubhead preset, explicit Face-On side, Reset, and geometry-bounded Auto Fit slice. It has no PR carrier. Tracking, recenter, workspace camera persistence, remaining 3D surfaces, rendered browser/desktop QA, protected review, and release remain open.",
       "limitations": [
         "Unavailable persistence actions remain disabled rather than simulating success.",
-        "The camera tracking and canonical snap-view child has no implementation carrier."
+        "The local #4284 preset candidate has no published implementation carrier and is not protected or released.",
+        "Tracking, manual-override suspension, recenter, per-viewport persistence, principal React 3D swing, other 3D adapters, Playwright/high-DPI review, and the full playback matrix are not implemented by the preset slice."
       ],
       "depends_on_issues": [
         4191

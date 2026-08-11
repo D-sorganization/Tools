@@ -1,5 +1,41 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4284 local camera-preset parity candidate
+
+Local no-publish branch `feat/4284-camera-preset-parity` starts from exact
+published #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`.
+It implements only the first camera child slice: one shared-golden strict
+Python/TypeScript preset contract and matched accessible controls on PyQt6
+`Club3DView` and React `ClubCanvas`. Isometric, explicit left/right Face On,
+exact +x Down the Line, -y Overhead, zoom-preserving Reset, and
+geometry-bounded Auto Fit now have stable command IDs. Presets are idempotent;
+target and zoom are preserved except that Auto Fit alone changes zoom. Manual
+orbit survives scale changes. The complete representative driver is bounded
+with 16% clearance in fixed/moving start, impact, and end cases.
+Free orbit clears every preset's selected/pressed presentation on both
+surfaces; a preset or Reset deliberately restores exact canonical state.
+Changing side while Face On is the last preset also restores exact Face On.
+Rendered review found stacked depth-axis ticks in exact Face On, Down the Line,
+and Overhead views. The local candidate now suppresses only display x, y, and z
+respectively for those canonical views; Isometric and custom free orbit restore
+all three labeled axes immediately without resetting the orbit.
+
+The base candidate's broad qualification was green: 929 Python/PyQt tests and
+118 React files with 750 tests, TypeScript, zero-warning ESLint, the 206-module
+production build, Ruff, Black, and focused MyPy. The exact rendered-review
+follow-up passes 55 camera/general-GUI/minimum-layout tests, focused MyPy,
+Ruff, Black, manifest validation, and module budget; new Face On, DTL,
+Overhead, and Isometric PNGs were inspected locally. The shared near-unit
+`1 + 5e-10` adversarial vector is rejected at the same absolute `1e-12`
+tolerance in both runtimes. No GitHub write or publication has occurred.
+The changed PyQt viewport is back within the 500-line source budget after
+extracting dependency-light geometry adapters; the repository-wide budget
+still reports only the parent-branch `torque_profile_panel.py` at 612 lines.
+Tracking, tracking-suspension semantics, recenter, camera workspace
+persistence, principal React 3D swing, remaining 3D adapters,
+Playwright/high-DPI rendered QA, full playback coverage, protected review,
+release, and issue/epic completion remain open.
+
 ## 2026-08-11 PR #4356 published current-parent propagation
 
 Published ready-for-review PR `#4356` remains on
