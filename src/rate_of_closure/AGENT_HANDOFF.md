@@ -1,5 +1,24 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 regional execution evidence hardening
+
+The review follow-up to `696a3ff8f124bebf6dc22ae0d584cf35f6d92843`
+removes synthetic execution evidence and closes cross-runtime validation gaps.
+`ground-regional-execution-result/v1` now embeds and hashes the exact plan,
+binds plan/source/base identities, enforces the executor authority while
+leaving source revision variable, and proves each transition is a real
+ordered crossing between the declared plan regions and surfaces. Python and
+TypeScript share adversarial safe-number/text/vector acceptance cases and
+executor-produced representable/cancelled/failed fixtures.
+Null-result cancellation/failure envelopes reject nonempty transition ledgers
+because no embedded result exists to substantiate those events.
+
+The pre-existing capability-observation test using `1e20` remains outside this
+slice: exact parent `8e1c7ccd99a7c4886c5fb9ccc7e4d94a6d7e3833`
+and this child both raise `ValueError: canonical JSON number exceeds
+cross-runtime safe range` in
+`test_stable_wire_uses_canonical_numeric_tokens_for_every_float`.
+
 ## 2026-08-11 regional ground execution binding
 
 `feat/4271-regional-execution-binding` is an isolated child of exact PR #4342

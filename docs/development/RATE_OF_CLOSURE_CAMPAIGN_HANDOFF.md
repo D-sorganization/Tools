@@ -1,5 +1,24 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 regional execution review remediation
+
+- Independent review rejected local commit `696a3ff8f...` because its Python
+  transition wire was more permissive than TypeScript, its fixture was not
+  executor output, executor identity was not fixed, and from/to identities
+  were not bound to the referenced plan.
+- The repaired v1 envelope embeds the exact plan, recomputes its digest, binds
+  plan/source/base identities, fixes executor producer/version, and validates
+  every ledger row against both its ground event and a real plan boundary
+  crossing. Shared adversarial and executor-produced outcome fixtures cover
+  cross-runtime canonical validation and representable/cancelled/failed states.
+- Null-result cancellation/failure evidence requires an empty transition
+  ledger because no embedded result exists to substantiate transition rows.
+- Frozen base-result v1 remains unchanged. UI, compiled regional physics,
+  downstream consumers, protected evidence, and issue completion remain open.
+- Separate baseline: the capability-observation test with a `1e20` value fails
+  on exact parent `8e1c7ccd...` and this child with `ValueError: canonical JSON
+  number exceeds cross-runtime safe range`; it is not attributed to this work.
+
 ## 2026-08-11 regional execution/provenance child
 
 - `feat/4271-regional-execution-binding` begins at exact current PR #4342

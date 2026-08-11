@@ -97,6 +97,20 @@ def _execution(
     return request, prefix, plan
 
 
+def _fixture_execution() -> tuple[
+    GroundSimulationRequest,
+    RepeatedBounceResult,
+    GroundRegionalMaterialPlanRequest,
+]:
+    request = _surface_run_request(max_time_s=0.15)
+    prefix = _settled_prefix(
+        request,
+        velocity_m_s=(2.0, 0.0, 0.0),
+        angular_velocity_rad_s=(0.0, 0.0, -2.0 / request.ball_radius_m),
+    )
+    return request, prefix, _plan(request, lower_coordinate_m=0.1)
+
+
 def test_executor_recomputes_digests_and_preserves_plan_executor_provenance() -> None:
     request, prefix, plan = _execution()
 
@@ -107,6 +121,7 @@ def test_executor_recomputes_digests_and_preserves_plan_executor_provenance() ->
     assert result.request_id == request.request_id
     assert result.surface_id == request.surface.surface_id
     assert result.plan_id == plan.request_id
+    assert result.regional_plan == plan
     assert result.plan_provenance == plan.provenance
     assert result.executor_provenance.input_sha256 == result.execution_input_sha256
     assert result.ground_result is not None
@@ -155,6 +170,25 @@ def test_transition_ledger_matches_embedded_ground_events_one_to_one() -> None:
     changed["transitions"][0]["event_sequence"] += 1
     with pytest.raises(ValueError, match="transition ledger"):
         RegionalGroundExecutionResult.from_dict(changed)
+
+    fabricated = result.to_dict()
+    fabricated["transitions"][0]["from_region_id"] = "rough-band"
+    fabricated["transitions"][0]["to_region_id"] = None
+    with pytest.raises(ValueError, match="regional plan"):
+        RegionalGroundExecutionResult.from_dict(fabricated)
+
+    reversed_order = result.to_dict()
+    item = reversed_order["transitions"][0]
+    item["from_region_id"], item["to_region_id"] = (
+        item["to_region_id"],
+        item["from_region_id"],
+    )
+    item["from_surface_id"], item["to_surface_id"] = (
+        item["to_surface_id"],
+        item["from_surface_id"],
+    )
+    with pytest.raises(ValueError, match="regional plan"):
+        RegionalGroundExecutionResult.from_dict(reversed_order)
 
 
 def test_empty_transition_run_retains_complete_plan_provenance() -> None:
@@ -226,21 +260,93 @@ def test_wire_parser_rejects_extra_duplicate_and_malformed_evidence() -> None:
             '"schema_version":"ground-regional-execution-result/v1"}'
         )
 
+    wrong_producer = result.to_dict()
+    wrong_producer["executor_provenance"]["producer"] = "lookalike"
+    with pytest.raises(ValueError, match="executor producer"):
+        RegionalGroundExecutionResult.from_dict(wrong_producer)
+    wrong_version = result.to_dict()
+    wrong_version["executor_provenance"]["producer_version"] = "9.9.9"
+    with pytest.raises(ValueError, match="executor version"):
+        RegionalGroundExecutionResult.from_dict(wrong_version)
+    revised_source = result.to_dict()
+    revised_source["executor_provenance"]["source_revision"] = "verified-build-2"
+    assert (
+        RegionalGroundExecutionResult.from_dict(
+            revised_source
+        ).executor_provenance.source_revision
+        == "verified-build-2"
+    )
 
-def test_shared_golden_round_trip_and_frozen_base_result_bytes() -> None:
+
+def test_shared_adversarial_transition_wire_parity() -> None:
+    fixture = json.loads(
+        (FIXTURES / "ground_regional_execution_adversarial_v1.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    baseline = execute_regional_ground(*_fixture_execution()).to_dict()
+
+    for case in fixture["cases"]:
+        changed = json.loads(json.dumps(baseline))
+        changed["transitions"][0].update(case["overrides"])
+        if case["accepted"]:
+            parsed = RegionalGroundExecutionResult.from_dict(changed)
+            assert parsed.transitions[0].event_sequence == 3
+        else:
+            with pytest.raises(ValueError, match=case["error"]):
+                RegionalGroundExecutionResult.from_dict(changed)
+
+
+def test_shared_golden_results_are_executor_produced_and_round_trip() -> None:
     fixture = json.loads(
         (FIXTURES / "ground_regional_execution_golden_v1.json").read_text(
             encoding="utf-8"
         )
     )
-    result = RegionalGroundExecutionResult.from_dict(fixture["result"])
+    request, prefix, plan = _fixture_execution()
+    produced = {
+        "representable": execute_regional_ground(request, prefix, plan),
+        "cancelled": execute_regional_ground(
+            request,
+            prefix,
+            plan,
+            RegionalGroundExecutionOptions(is_cancelled=lambda: True),
+        ),
+        "failed": execute_regional_ground(
+            request,
+            prefix,
+            plan,
+            RegionalGroundExecutionOptions(settings=SkidRollSettings(max_steps=1)),
+        ),
+    }
+    for name, expected in produced.items():
+        result = RegionalGroundExecutionResult.from_dict(fixture[name]["result"])
+        assert result.to_dict() == expected.to_dict() == fixture[name]["result"]
+        assert _digest(result.to_json()) == fixture[name]["result_sha256"]
+
+    invalid_cancelled = json.loads(json.dumps(fixture["cancelled"]["result"]))
+    invalid_cancelled["failure_reason"] = "step_limit"
+    with pytest.raises(ValueError, match="cancelled failure_reason"):
+        RegionalGroundExecutionResult.from_dict(invalid_cancelled)
+    invalid_failed = json.loads(json.dumps(fixture["failed"]["result"]))
+    invalid_failed["failure_reason"] = "cancelled"
+    with pytest.raises(ValueError, match="cancelled status"):
+        RegionalGroundExecutionResult.from_dict(invalid_failed)
+
+    fabricated_cancelled = json.loads(json.dumps(fixture["cancelled"]["result"]))
+    fabricated_cancelled["transitions"] = fixture["representable"]["result"][
+        "transitions"
+    ]
+    with pytest.raises(
+        ValueError, match="null ground_result cannot declare transitions"
+    ):
+        RegionalGroundExecutionResult.from_dict(fabricated_cancelled)
+
+
+def test_frozen_base_result_fixture_bytes_remain_unchanged() -> None:
     base_fixture = json.loads(
         (FIXTURES / "flight_to_ground_golden_v1.json").read_text(encoding="utf-8")
     )
     base = GroundSimulationResult.from_dict(base_fixture["result"])
 
-    assert result.to_dict() == fixture["result"]
-    assert _digest(result.to_json()) == fixture["result_sha256"]
-    assert result.ground_result is not None
-    assert result.ground_result.to_json() == base.to_json()
     assert base.to_json() == canonical_numeric_json(base_fixture["result"])

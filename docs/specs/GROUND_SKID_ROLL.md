@@ -189,11 +189,16 @@ existing `simulate_skid_roll` and `compose_ground_result` authorities.
 
 The additive `ground-regional-execution-result/v1` envelope carries canonical
 SHA-256 identities for both inputs, the ground request/surface and plan IDs,
-the unchanged plan source provenance, executor provenance bound to the joint
-input digest, exact model ID/version, and the ordered internal transition
-ledger with from/to region and surface IDs. Each ledger row must match one
-`SURFACE_TRANSITION` event by sequence, time, and position. Empty ledgers still
-retain complete plan and executor provenance.
+the exact embedded regional plan and unchanged plan source provenance,
+executor provenance bound to the joint input digest, exact model ID/version,
+and the ordered internal transition ledger with from/to region and surface
+IDs. The plan digest is recomputed from the embedded plan; plan ID, base
+surface, and provenance must agree. Executor producer/version are the fixed v1
+authority while source revision remains variable evidence. Each ledger row
+must match one `SURFACE_TRANSITION` event by sequence, time, and position, and
+its coordinate/from/to identities must describe a real boundary crossing in
+the embedded plan. Empty ledgers still retain complete plan and executor
+provenance.
 
 Complete and partial outcomes embed an unchanged
 `flight-to-ground-result/v1`. Cancellation, step/transition bounds,
@@ -202,8 +207,14 @@ encoded honestly by the frozen base result; the envelope therefore uses typed
 cancelled/failed status, reason, and `ground_result: null`. Python is the only
 physics executor. TypeScript strictly parses/serializes the envelope and shared
 golden fixture without implementing dynamics. Documents are capped at 8 MiB,
-reject duplicate/extra/malformed data, and declare the same coplanar/static
-limitations as the plan.
+reject duplicate/extra/malformed data, use the same canonical safe-number,
+integral JSON-number, nonblank-text, and vector policy in both runtimes, reject
+same-surface transitions, and declare the same coplanar/static limitations as
+the plan. The golden representable/cancelled/failed envelopes are produced by
+`execute_regional_ground`; an adversarial fixture pins cross-runtime rejection,
+and frozen base-result v1 compatibility remains a separate test. Null-result
+cancelled/failed envelopes require an empty transition ledger because no
+embedded result exists to substantiate transition evidence.
 
 ### Matched editor/readback boundary
 

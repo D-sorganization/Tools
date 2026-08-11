@@ -5,11 +5,18 @@ from __future__ import annotations
 from typing import Any, cast
 
 from .contract_records import GroundSimulationResult
-from .contract_types import GroundProvenance
+from .contract_types import (
+    GroundProvenance,
+    _integer,
+    _nonnegative,
+    _text,
+    _vector,
+)
 from .regional_execution_records import (
     MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES,
     RegionalGroundExecutionResult,
 )
+from .regional_plan_wire import regional_material_plan_request_from_dict
 from .regional_surface_types import SurfaceRegionTransition
 from .strict_json import strict_json_object
 
@@ -24,6 +31,7 @@ _RESULT_FIELDS = {
     "plan_id",
     "plan_provenance",
     "regional_plan_sha256",
+    "regional_plan",
     "request_id",
     "schema_version",
     "status",
@@ -68,16 +76,26 @@ def _provenance(value: object) -> GroundProvenance:
 def _transition(value: object) -> SurfaceRegionTransition:
     data = _mapping(value, "regional transition")
     _exact(data, _TRANSITION_FIELDS, "regional transition")
-    position = _sequence(data["position_m"], "position_m")
+    position = tuple(_sequence(data["position_m"], "position_m"))
+    from_region = _optional_text(data["from_region_id"], "from_region_id")
+    to_region = _optional_text(data["to_region_id"], "to_region_id")
+    from_surface = _text(data["from_surface_id"], "from_surface_id")
+    to_surface = _text(data["to_surface_id"], "to_surface_id")
+    if from_surface == to_surface:
+        raise ValueError("transition surface identities must differ")
     return SurfaceRegionTransition(
-        data["event_sequence"],
-        data["time_s"],
-        cast(tuple[float, float, float], tuple(position)),
-        data["from_region_id"],
-        data["to_region_id"],
-        data["from_surface_id"],
-        data["to_surface_id"],
+        _integer(data["event_sequence"], "event_sequence"),
+        _nonnegative(data["time_s"], "time_s"),
+        _vector(cast(tuple[float, float, float], position), "position_m"),
+        from_region,
+        to_region,
+        from_surface,
+        to_surface,
     )
+
+
+def _optional_text(value: object, name: str) -> str | None:
+    return None if value is None else _text(cast(str, value), name)
 
 
 def regional_execution_result_from_dict(
@@ -98,6 +116,7 @@ def regional_execution_result_from_dict(
         data["plan_id"],
         data["ground_request_sha256"],
         data["regional_plan_sha256"],
+        regional_material_plan_request_from_dict(data["regional_plan"]),
         data["status"],
         data["failure_reason"],
         ground_result,

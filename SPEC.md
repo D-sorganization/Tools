@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.32                                    |
-| **Spec Version**        | 1.14.32                                    |
+| **Current Version**     | 1.14.33                                    |
+| **Spec Version**        | 1.14.33                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -54,16 +54,24 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   the plan base surface must equal the ground request surface, phase identities
   and fingerprints must agree, and callers cannot substitute a resolver.
 - `ground-regional-execution-result/v1` is a separate immutable envelope. It
-  carries request and plan SHA-256 identities, plan source and executor input
-  provenance, exact model identity, an ordered from/to region+surface ledger,
-  SI units, and the fixed coplanar/static limitations.
+  embeds the exact regional plan, carries the executor-computed ground-request
+  SHA-256, recomputes the plan SHA-256, binds plan/base/source and fixed
+  executor authority provenance,
+  and validates its ordered from/to region+surface ledger against both ground
+  events and real plan boundary crossings. Executor source revision remains
+  variable evidence; producer and version do not.
 - Complete/partial runs embed unchanged `flight-to-ground-result/v1` output.
   Cancellation and internal bounds use typed null-result statuses because the
-  frozen base result cannot represent them honestly. The TypeScript boundary
-  parses and serializes evidence only; it does not duplicate regional physics.
+  frozen base result cannot represent them honestly; these null-result states
+  require an empty transition ledger. The TypeScript boundary parses and
+  serializes evidence only; it does not duplicate regional physics.
 - This slice does not add UI controls/playback, changing geometry, calibrated
   terrain deformation, compiled regional physics, downstream adapters,
   protected evidence, release, or issue completion.
+- Python and TypeScript share canonical safe-number, integral JSON-number,
+  nonblank-text, vector, and same-surface rejection evidence. Golden
+  representable/cancelled/failed envelopes are actual Python executor output;
+  frozen `flight-to-ground-result/v1` bytes remain pinned separately.
 
 ### 2026-08-10 Regional Surface-Plan Canonical Request I/O
 
@@ -2950,6 +2958,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.33 | fix(ground-roll, #4271): remediate independent review of the regional execution envelope by embedding and hashing the exact plan, enforcing fixed executor producer/version with variable source revision, binding ordered transition identities and coordinates to both ground events and real plan crossings, aligning Python wire safe-number/integral-number/nonblank-text/vector validation with TypeScript, rejecting same-surface and fabricated mappings or unsubstantiated null-result ledgers, replacing synthetic evidence with executor-produced representable/cancelled/failed fixtures, and adding a shared adversarial parity corpus; preserve frozen base-result v1 and retain UI, compiled physics, downstream parity, protected evidence, release, and issue completion as open work. |
 | 2026-08-11 | 1.14.32 | feat(ground-roll, #4271): bind exact ground request, settled bounce prefix, and regional-plan request through a bounded UI-neutral Python executor that constructs its resolver only from the plan and delegates to the authoritative skid/roll solver and composer; add strict immutable cross-runtime `ground-regional-execution-result/v1` with canonical request/plan digests, plan/executor/model provenance, exact ordered from/to transition evidence, fixed coplanar/static limitations, frozen base-result embedding for representable outcomes, and typed null-result cancellation/failure without fabricated physics; retain UI/playback, compiled regional physics, downstream parity, protected evidence, release, and issue completion as open work. |
 | 2026-08-10 | 1.14.29 | feat(rate-of-closure, #4274): add strict matched PyQt6 native atomic Open/Save As and React bounded import/canonical download for editor-qualified regional requests; preserve exact unchanged provenance, rebind edited drafts, reject unsupported qualifications without coercion, keep workspace persistence separate, and retain execution, calibration, protected evidence, and release as open work. |
 | 2026-08-10 | 1.14.28 | feat(rate-of-closure, #4274): add matched PyQt6 and React regional surface-plan editors with explicit SI material inputs, one-to-eight bounded overlays, illustrative/unvalidated and persistence/execution qualifications, accessible strict validation/readback, provenance bound to the actual draft, and delegation to the separate regional-plan v1 wire contract; retain playback, execution, result interchange, measured calibration, workspace model-input persistence, other runtimes, protected evidence, and release as open work. |

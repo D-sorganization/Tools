@@ -10,6 +10,8 @@ from .contract_records import GroundSimulationRequest, GroundSimulationResult
 from .contract_types import GroundProvenance, _text
 from .ground_result_composer import GroundCompositionError, compose_ground_result
 from .regional_execution_records import (
+    REGIONAL_GROUND_EXECUTOR_ID,
+    REGIONAL_GROUND_EXECUTOR_VERSION,
     RegionalGroundExecutionFailureReason,
     RegionalGroundExecutionResult,
     RegionalGroundExecutionStatus,
@@ -25,8 +27,6 @@ from .surface_motion_types import (
     SkidRollTerminationReason,
 )
 
-REGIONAL_GROUND_EXECUTOR_ID = "tools-ground-regional-executor"
-REGIONAL_GROUND_EXECUTOR_VERSION = "1.0.0"
 REGIONAL_GROUND_EXECUTOR_SOURCE = "ground-regional-execution-v1"
 MAX_REGIONAL_EXECUTION_STEPS = 1_000_000
 MAX_REGIONAL_EXECUTION_TRANSITIONS = 4_096
@@ -183,6 +183,7 @@ def execute_regional_ground(
         plan.request_id,
         ground_digest,
         plan_digest,
+        plan,
         status,
         failure_reason,
         ground_result,

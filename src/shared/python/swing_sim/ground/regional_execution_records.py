@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
 
+from ._vector_math import dot
 from .contract_records import GroundSimulationResult
 from .contract_types import (
     UNIT_SYSTEM_SI,
@@ -17,8 +18,12 @@ from .contract_types import (
     _text,
     _WireRecord,
 )
-from .regional_plan_records import REGIONAL_PLAN_LIMITATIONS
+from .regional_plan_records import (
+    REGIONAL_PLAN_LIMITATIONS,
+    GroundRegionalMaterialPlanRequest,
+)
 from .regional_surface_types import SurfaceRegionTransition
+from .regional_transition_binding import validate_transition_against_plan
 
 if TYPE_CHECKING:
     from enum import StrEnum
@@ -28,6 +33,8 @@ else:
 REGIONAL_GROUND_EXECUTION_SCHEMA_VERSION = "ground-regional-execution-result/v1"
 REGIONAL_GROUND_EXECUTION_LIMITATIONS = REGIONAL_PLAN_LIMITATIONS
 MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES = 8_388_608
+REGIONAL_GROUND_EXECUTOR_ID = "tools-ground-regional-executor"
+REGIONAL_GROUND_EXECUTOR_VERSION = "1.0.0"
 
 
 class RegionalGroundExecutionStatus(StrEnum):
@@ -89,6 +96,7 @@ class RegionalGroundExecutionResult(_WireRecord):
     plan_id: str
     ground_request_sha256: str
     regional_plan_sha256: str
+    regional_plan: GroundRegionalMaterialPlanRequest
     status: RegionalGroundExecutionStatus
     failure_reason: RegionalGroundExecutionFailureReason | None
     ground_result: GroundSimulationResult | None
@@ -145,6 +153,8 @@ class RegionalGroundExecutionResult(_WireRecord):
             raise ValueError("plan_provenance must be an exact GroundProvenance")
         if type(self.executor_provenance) is not GroundProvenance:
             raise ValueError("executor_provenance must be an exact GroundProvenance")
+        if type(self.regional_plan) is not GroundRegionalMaterialPlanRequest:
+            raise ValueError("regional_plan must be an exact plan request")
         if (
             self.ground_result is not None
             and type(self.ground_result) is not GroundSimulationResult
@@ -158,6 +168,26 @@ class RegionalGroundExecutionResult(_WireRecord):
             raise ValueError(
                 "executor provenance must match canonical execution inputs"
             )
+        if self.executor_provenance.producer != REGIONAL_GROUND_EXECUTOR_ID:
+            raise ValueError("executor producer must match the v1 authority")
+        if (
+            self.executor_provenance.producer_version
+            != REGIONAL_GROUND_EXECUTOR_VERSION
+        ):
+            raise ValueError("executor version must match the v1 authority")
+        self._validate_plan_identity()
+
+    def _validate_plan_identity(self) -> None:
+        plan = self.regional_plan
+        plan_digest = hashlib.sha256(plan.to_json().encode("utf-8")).hexdigest()
+        if plan_digest != self.regional_plan_sha256:
+            raise ValueError("regional_plan_sha256 must match the embedded plan")
+        if self.plan_id != plan.request_id:
+            raise ValueError("plan_id must match the embedded regional plan")
+        if self.surface_id != plan.base_surface.surface_id:
+            raise ValueError("surface_id must match the regional plan base surface")
+        if self.plan_provenance != plan.provenance:
+            raise ValueError("plan provenance must match the embedded regional plan")
 
     def _validate_status(self) -> None:
         ground = self.ground_result
@@ -199,12 +229,16 @@ class RegionalGroundExecutionResult(_WireRecord):
 
     def _validate_transition_ledger(self) -> None:
         transitions = self.transitions
+        if any(item.from_surface_id == item.to_surface_id for item in transitions):
+            raise ValueError("transition surface identities must differ")
         if any(
             right.event_sequence <= left.event_sequence or right.time_s < left.time_s
             for left, right in zip(transitions, transitions[1:], strict=False)
         ):
             raise ValueError("transition ledger must be strictly ordered")
         if self.ground_result is None:
+            if transitions:
+                raise ValueError("null ground_result cannot declare transitions")
             return
         events = tuple(
             event
@@ -220,6 +254,11 @@ class RegionalGroundExecutionResult(_WireRecord):
                 or event.position_m != transition.position_m
             ):
                 raise ValueError("transition ledger must match ground result events")
+            validate_transition_against_plan(
+                self.regional_plan,
+                transition,
+                dot(event.velocity_before_m_s, self.regional_plan.axis_unit),
+            )
 
     @classmethod
     def from_dict(cls, payload: object) -> RegionalGroundExecutionResult:
@@ -233,6 +272,8 @@ __all__ = [
     "MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES",
     "REGIONAL_GROUND_EXECUTION_LIMITATIONS",
     "REGIONAL_GROUND_EXECUTION_SCHEMA_VERSION",
+    "REGIONAL_GROUND_EXECUTOR_ID",
+    "REGIONAL_GROUND_EXECUTOR_VERSION",
     "RegionalGroundExecutionFailureReason",
     "RegionalGroundExecutionResult",
     "RegionalGroundExecutionStatus",
