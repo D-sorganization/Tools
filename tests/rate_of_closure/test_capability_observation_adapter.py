@@ -262,6 +262,7 @@ def test_stable_wire_uses_canonical_numeric_tokens_for_every_float() -> None:
             CapabilitySampleParameter("positive_half", "1", 1.234567890125, 1e-12),
             CapabilitySampleParameter("negative_half", "1", -1.234567890125, -0.0),
             CapabilitySampleParameter("threshold", "1", 1e-11, 1e20),
+            CapabilitySampleParameter("large", "1", 1e21, 1e-12),
             CapabilitySampleParameter(
                 "half_away", "1", 1.000000000005, -1.000000000005
             ),
@@ -278,6 +279,8 @@ def test_stable_wire_uses_canonical_numeric_tokens_for_every_float() -> None:
     assert row_values["perturbed.negative_half"] == 0
     assert row_values["nominal.threshold"] == 0.00000000001
     assert row_values["perturbed.threshold"] == 100000000000000000000
+    assert row_values["nominal.large"] == 1000000000000000000000
+    assert row_values["perturbed.large"] == 0
     assert row_values["nominal.half_away"] == 1.00000000001
     assert row_values["perturbed.half_away"] == -1.00000000001
     assert all(
@@ -287,6 +290,8 @@ def test_stable_wire_uses_canonical_numeric_tokens_for_every_float() -> None:
     )
     assert '"nominal.threshold":0.00000000001' in payload
     assert '"perturbed.threshold":100000000000000000000' in payload
+    assert '"nominal.large":1000000000000000000000' in payload
+    assert "e+21" not in payload
 
 
 def test_parameter_labels_only_uppercase_initial_ascii_letters() -> None:
@@ -321,3 +326,8 @@ def test_parameter_labels_only_uppercase_initial_ascii_letters() -> None:
 def test_canonical_numeric_json_rejects_nonfinite_values(value: float) -> None:
     with pytest.raises(ValueError, match="finite floats"):
         canonical_numeric_json({"value": value})
+
+
+def test_capability_extended_float_policy_keeps_integer_safe_range() -> None:
+    with pytest.raises(ValueError, match="integer.*safe range"):
+        canonical_numeric_json({"value": 9_007_199_254_740_992})

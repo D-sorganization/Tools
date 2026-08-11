@@ -1,5 +1,279 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4355 current-parent propagation candidate
+
+- PR `#4355` retains branch `feat/4271-repeated-bounce-wire` and base
+  `feat/4271-regional-trajectory-export`. Exact current child
+  `b67af52226fa6334dd3570cf650aebeaf81912fc` is first and exact published PR
+  #4354 head `97925e4803f4fbd72d576eb1c11c47f8e61b0b66` is second in a normal
+  no-ff merge.
+- The child retains its complete strict cross-runtime repeated-bounce
+  result-wire contract, canonical golden corpus, phase/chronology/energy
+  invariants, and pre-contact cancellation follow-up while inheriting regional
+  trajectory inspection/export, both typed-Boolean protected-MyPy repairs, and
+  the complete regional/ground ancestry.
+- Local qualification is complete: 1,078 Python tests, 115 React files with
+  719 tests, complete Cargo workspace tests, focused 43-Python/34-React
+  coverage, Ruff check/format on all seven child-delta Python files, protected
+  MyPy on five child production modules plus the coherent 36-module ground
+  profile, Bandit on the five production modules, a clean placeholder scan,
+  TypeScript, zero-warning ESLint, the 204-module Vite build, Rust
+  formatting/clippy, both LOC budgets, the manifest validator and manifest
+  tests, and every repository governance gate are green. All 12 child
+  feature/test files and both inherited typed-Boolean repairs remain
+  byte-exact. Standalone Black is non-authoritative by repository policy and
+  reports one advisory formatting difference in the audited child
+  `bounce_types.py`; authoritative Ruff is green, so that child file remains
+  exact. Known warnings remain the Hypothesis cache ignore, Node local-storage
+  flag, and 528.82 kB Vite chunk. The candidate has not been rebased,
+  retargeted, rewritten, force-pushed, or published and remains
+  `not_released`.
+- Request construction, executor invocation, persistence, playback, measured
+  calibration, compiled and downstream parity, protected exact-head evidence,
+  review, approval, dependency integration, release, and issue completion
+  remain open.
+
+## 2026-08-11 PR #4354 current-parent propagation candidate
+
+- PR `#4354` retains branch `feat/4271-regional-trajectory-export` and base
+  `feat/4271-regional-event-inspection`. Exact current child
+  `99b0739bdc3ece814ed6039e6ba31f7ac38c0227` is first and exact published PR
+  #4353 head `e0433adbc3c82272745d098867f261462a790d08` is second in a normal
+  no-ff merge.
+- The child retains matched bounded PyQt6/React raw-trajectory inspection and
+  canonical semantic-lossless evidence export while inheriting ground-event
+  and regional-transition ledger inspection, the complete qualified result
+  projection, the explicit Boolean local required by protected delta-MyPy,
+  embedded-plan execution/provenance and request-I/O boundaries, and complete
+  regional physics ancestry.
+- Local qualification is complete: 1,058 Python tests, 114 React files with
+  700 tests, complete Cargo workspace tests, focused 6-Python/8-React coverage,
+  Ruff check/format on the three child-delta Python files, protected MyPy on
+  two child production modules plus the coherent 35-module ground profile,
+  Bandit on the two child production modules, TypeScript, zero-warning ESLint,
+  the 204-module Vite build, Rust formatting/clippy, both LOC budgets, the
+  manifest validator and manifest tests, and every repository governance gate
+  are green. Protected delta-MyPy found the same skipped-import `no-any-return`
+  boundary as #4351 in the new evidence exporter; its helper result is now
+  assigned to an explicit Boolean local with no runtime or canonical-byte
+  change. The other seven child feature/test files and inherited Boolean-local
+  repair remain byte-exact. Standalone Black is non-authoritative by repository
+  policy and its Python 3.13 runner cannot safety-parse the inferred 3.14
+  target; authoritative Ruff is green. Known warnings remain the Hypothesis
+  cache ignore, empty polynomial legend, Node local-storage flag, and 528.82 kB
+  Vite chunk. The candidate has not been rebased, retargeted, rewritten,
+  force-pushed, or published and remains `not_released`.
+- Input construction, UI executor invocation, interpolation/playback,
+  calibration workflows, compiled regional physics, downstream parity,
+  protected exact-head evidence, review, approval, dependency integration,
+  release, and issue completion remain open.
+
+## 2026-08-11 PR #4353 current-parent propagation candidate
+
+- PR `#4353` retains branch `feat/4271-regional-event-inspection` and base
+  `feat/4271-regional-result-readback`. Exact current child
+  `7fc00f43561c31923b74563bc2bf6caf89bbc9eb` is first and exact published PR
+  #4352 head `12fc80798d2a15b44c0215688ffb031dd99cbdd1` is second in a normal
+  no-ff merge.
+- The child retains matched bounded PyQt6/React inspection of validated ground-
+  event and regional-transition ledgers while inheriting the complete qualified
+  result projection, the explicit Boolean local required by protected delta-
+  MyPy, embedded-plan execution/provenance and request-I/O boundaries, complete
+  regional physics ancestry, capability-only extended finite-float serializer,
+  and default ground safe-number boundary.
+- Local qualification is complete: 1,057 Python tests, 113 React files with
+  698 tests, complete Cargo workspace tests, focused 76-Python/38-React
+  coverage, Ruff check/format on the three child-delta Python files, protected
+  MyPy on two child production modules plus the coherent 35-module ground
+  profile, Bandit on the two child production modules, TypeScript,
+  zero-warning ESLint, the 203-module Vite build, Rust formatting/clippy, both
+  LOC budgets, the manifest validator and eight manifest tests, and every
+  repository governance gate are green. Child feature bytes and the inherited
+  Boolean-local repair are exact; conflict-marker and diff checks are clean.
+  Non-failing warnings are limited to the known Hypothesis cache ignore, empty
+  polynomial legend, Node local-storage flag, and 526.79 kB Vite chunk. The
+  candidate has not been rebased, retargeted, rewritten, force-pushed, or
+  published and remains `not_released`.
+- Trajectory-sample inspection, lossless export, UI executor invocation,
+  playback, calibration workflows, compiled regional physics, downstream
+  parity, protected exact-head evidence, review, approval, dependency
+  integration, release, and issue completion remain open.
+
+## 2026-08-11 PR #4352 current-parent propagation candidate
+
+- PR `#4352` retains branch `feat/4271-regional-result-readback` and base
+  `feat/4271-regional-execution-ui`. Exact current child
+  `10fdac4860035fd5c845a621752e93688e2e674e` is first and exact published PR
+  #4351 head `4024c8a1ad2d3871c6b06ef6369250a873789c39` is second in a normal
+  no-ff merge.
+- The child retains its complete matched PyQt6/React qualified result
+  projection while inheriting bounded evidence import/readback, the explicit
+  Boolean local required by protected delta-MyPy, embedded-plan execution and
+  provenance, request I/O, complete regional physics ancestry, the capability-
+  only extended finite-float serializer, and default ground safe-number
+  boundary.
+- Local qualification passes all `1,057` combined Rate/shared-ground Python
+  tests, all `113` React files / `697` tests, the complete Cargo workspace,
+  `76` focused Python result/readback/execution/I/O/capability tests, and `37`
+  focused React tests. Pinned Ruff 0.14.10 check/format passes three child-delta
+  Python files; isolated-import strict MyPy passes both child production
+  modules and the coherent 35-module ground profile passes with inherited
+  imports skipped and only the parent's documented `redundant-cast` code
+  disabled; Bandit passes both production files. TypeScript, zero-warning
+  ESLint, the 202-module Vite build, Rust format and warning-denied clippy, both
+  LOC gates, the campaign validator and eight manifest tests,
+  docs/tool-manifest/blocking-gate/assertion/minimum-test governance, child-
+  feature and inherited Boolean-local byte checks, marker scans, and diff
+  checks pass. Existing Hypothesis ignored-cache, polynomial-generator empty-
+  legend, Node local-storage option, and 523.34 kB Vite chunk warnings remain
+  non-failing.
+- The candidate has not been rebased, retargeted, rewritten, force-pushed, or
+  published and remains `not_released`.
+- UI executor invocation, trajectory/event tables, playback, calibration
+  workflows, compiled regional physics, downstream parity, protected exact-
+  head evidence, review, approval, dependency integration, release, and issue
+  completion remain open.
+
+## 2026-08-11 PR #4351 current-parent propagation candidate
+
+- PR `#4351` retains branch `feat/4271-regional-execution-ui` and base
+  `feat/4271-regional-execution-binding`. Exact current child
+  `351a3051e9093c6b80cabf0f1db04aeeb15abfac` is first and exact published PR
+  #4350 head `98f86990e9225903fbe84cd1f267ed38ef0a15d8` is second in a normal
+  no-ff merge.
+- The child retains matched bounded PyQt6/React execution-evidence import and
+  readback, including the explicit Boolean local required by protected
+  delta-MyPy, while inheriting the embedded-plan execution/provenance contract,
+  request I/O, complete regional physics ancestry, capability-only extended
+  finite-float serializer, and default ground safe-number boundary.
+- Local qualification passes all `1,056` combined Rate/shared-ground Python
+  tests, all `113` React files / `696` tests, the complete Cargo workspace,
+  `75` focused Python evidence/readback/execution/I/O/capability tests, and `36`
+  focused React tests. Pinned Ruff 0.14.10 check/format passes six child-delta
+  Python files; isolated-import strict MyPy passes all five child production
+  modules and preserves the Boolean-local repair; the coherent 35-module ground
+  profile passes with inherited imports skipped and only the parent's
+  documented `redundant-cast` code disabled; and Bandit passes those five files.
+  TypeScript, zero-warning ESLint, the 202-module Vite build, Rust format
+  and warning-denied clippy, both LOC gates, the campaign validator and eight
+  manifest tests, docs/tool-manifest/blocking-gate/assertion/minimum-test
+  governance, child-feature byte checks, marker scans, and diff checks pass.
+  Existing Hypothesis ignored-cache, polynomial-generator empty-legend, Node
+  local-storage option, and 521.54 kB Vite chunk warnings remain non-failing.
+- The candidate has not been rebased, retargeted, rewritten, force-pushed, or
+  published and remains `not_released`.
+- UI executor invocation, playback, compiled regional physics, downstream
+  parity, protected exact-head evidence, review, approval, dependency
+  integration, release, and issue completion remain open.
+
+## 2026-08-11 PR #4350 current-parent propagation candidate
+
+- PR `#4350` retains branch `feat/4271-regional-execution-binding` and base
+  `feat/4274-regional-plan-io`. Exact current child
+  `dfb4b97481f187ff3594eceb08c427f650aca4e3` is first and exact published PR
+  #4342 head `de66a851aa5dded680279cf9a2b25a5094966593` is second in a normal
+  no-ff merge.
+- The child retains its embedded-plan execution/provenance envelope, executor
+  authority, transition binding, cross-runtime fixtures, and frozen
+  base-result boundary while inheriting current request I/O, matched editors,
+  complete regional physics ancestry, the capability-only extended
+  finite-float serializer, and the default ground safe-number boundary.
+- Local qualification passes all `1,052` combined Rate/shared-ground Python
+  tests, all `111` React files / `692` tests, the complete Cargo workspace,
+  `71` focused Python execution/I/O/capability tests, and `36` focused React
+  tests. Pinned Ruff 0.14.10 check/format passes seven child-delta Python
+  files; isolated-import strict MyPy passes the four execution modules and the
+  coherent 35-module ground profile passes with only the parent's documented
+  `redundant-cast` code disabled. Bandit passes five child production files.
+  TypeScript, zero-warning ESLint, the 199-module Vite build, Rust format and
+  warning-denied clippy, both LOC gates, the campaign validator and eight
+  manifest tests, docs/tool-manifest/blocking-gate/assertion/minimum-test
+  governance, child-feature byte checks, marker scans, and diff checks pass.
+- The first CPU-contended Python run produced `1,051` passes and one Hypothesis
+  input-generation `too_slow` health check. The property passed alone and all
+  `1,052` tests passed in the single uncontended rerun.
+- The candidate has not been rebased, retargeted, rewritten, force-pushed, or
+  published and remains `not_released`.
+- Execution UI/playback, compiled regional physics, downstream parity,
+  protected exact-head evidence, review, approval, dependency integration,
+  release, and issue completion remain open.
+
+## 2026-08-11 PR #4342 current-parent propagation candidate
+
+- PR `#4342` retains branch `feat/4274-regional-plan-io` and base
+  `feat/4274-regional-surface-ui`. Exact current child
+  `c1f47f2ef68b3db102da5416aaac17a40f675207` is first and exact reviewed
+  local #4339 candidate `db335937afc4b587d235eb705e315f577519c5e6` is
+  second in a normal no-ff merge.
+- Child-owned canonical request import/export, bounded UTF-8, native atomic
+  save, browser-qualified download, tests, and limitations remain intact while
+  inheriting current editor, wire, regional-physics, and complete ground
+  ancestry.
+- The default shared canonical encoder still rejects floats and integers beyond
+  JavaScript's safe range. The capability-observation facade alone selects a
+  separately named extended finite-float policy that reuses the shared
+  recursion, keeps integers bounded, emits exact exponent-free `1e20` and
+  `1e21` tokens matching TypeScript, and rejects non-finite values.
+- Local qualification passes all `909` Rate-of-Closure Python tests, all `110`
+  React files / `686` tests, the complete Cargo workspace, `47` focused Python
+  compatibility/regional-I/O tests, and `12` focused React capability tests.
+  Pinned Ruff 0.14.10 check/format passes `17` changed Python files; pinned
+  MyPy 1.13 and Bandit pass `12` changed production files. TypeScript,
+  zero-warning ESLint, the 199-module Vite build, Rust format and
+  warning-denied clippy, both changed-file LOC gates, manifest/docs/blocking-
+  gate/assertion/minimum-test governance, marker scans, and diff checks pass.
+  One untouched manual-delivery UI test timed out in the first concurrent full
+  run, then passed alone and in the single complete rerun.
+- The candidate has not been rebased, retargeted, rewritten, force-pushed, or
+  published and remains `not_released`.
+- Execution/playback, result interchange, measured calibration, model-input
+  persistence, changing geometry or velocity, TypeScript/compiled regional
+  physics, downstream parity, protected exact-head evidence, review, approval,
+  dependency integration, and release remain open.
+
+## 2026-08-11 PR #4339 current-parent propagation candidate
+
+- PR `#4339` retains branch `feat/4274-regional-surface-ui` and base
+  `feat/4271-regional-wire-contract`. Exact current child
+  `d21741e312b849a63f73cabf351a15d9de80fb94` is first and exact published
+  PR #4335 head `8f933ed8dcb29e55ece4ec6bb1e60813f6794d57` is second in a normal
+  no-ff merge.
+- The matched PyQt6/React regional surface editors retain validation,
+  invalidation, engineering hints, and strict request readback while inheriting
+  current wire/resolver/regional-physics/ground ancestry. The extracted PyQt
+  navigation-state contract includes `regional_surfaces` in default and legacy
+  migration order.
+- Local qualification passes all `891` Rate-of-Closure Python tests, all `110`
+  React files / `678` tests, `177` focused regional/ground/navigation Python
+  tests, `14` focused React editor/navigation/wire tests, and all `137`
+  `tools-core` Rust tests. TypeScript, zero-warning ESLint, the 198-module Vite
+  build, Rust format and warning-denied clippy, pinned Ruff 0.14.10 across seven
+  PR-delta Python files, pinned MyPy 1.13 across six production files, Bandit
+  medium/high, 400- and 500-LOC changed-file gates, manifest/docs/assertion/
+  minimum-test governance, child-feature byte checks, conflict-marker scans,
+  and diff checks pass. Existing Hypothesis ignored-cache and Node local-storage
+  option warnings remain non-failing.
+- The candidate has not been rebased, retargeted, rewritten, force-pushed, or
+  published and remains `not_released`.
+- Execution/playback, result interchange, measured calibration, model-input
+  persistence, changing geometry or velocity, TypeScript/compiled regional
+  physics, downstream parity, protected exact-head evidence, review, approval,
+  dependency integration, and release remain open.
+
+
+## 2026-08-11 PR #4351 delta-MyPy boundary repair candidate
+
+- Exact PR #4351 head `fe463b5503a8c7b599a329da18bb690d008871cd`
+  fails the protected changed-file MyPy profile because
+  `--follow-imports=skip` makes the imported atomic writer `Any` at this root.
+- The regional plan writer now assigns that call to an explicitly typed local
+  before returning it. This remains valid when the helper is also a MyPy root,
+  avoiding both `no-any-return` and a conditionally redundant cast.
+- No request bytes, validation, cancellation behavior, atomic persistence,
+  UI behavior, or physics changes. This is a local no-publish candidate;
+  descendants #4352/#4353/#4354 still require ordered propagation and their
+  own protected exact-head evidence.
+
 
 ## 2026-08-11 regional execution current-parent reconciliation candidate
 

@@ -294,6 +294,7 @@ describe("capability observation wire parity", () => {
       row.parameters = [
         { parameterId: "half", unit: "1", nominalValue: 1.000000000005, perturbedValue: -1.000000000005 },
         { parameterId: "tiny", unit: "1", nominalValue: -0, perturbedValue: 0.0000001 },
+        { parameterId: "threshold", unit: "1", nominalValue: 1e20, perturbedValue: 1e-11 },
         { parameterId: "large", unit: "1", nominalValue: 1e21, perturbedValue: 1e-12 },
       ];
     });
@@ -302,6 +303,8 @@ describe("capability observation wire parity", () => {
     expect(json).toContain('"perturbed.half":-1.00000000001');
     expect(json).toContain('"nominal.tiny":0');
     expect(json).toContain('"perturbed.tiny":0.0000001');
+    expect(json).toContain('"nominal.threshold":100000000000000000000');
+    expect(json).toContain('"perturbed.threshold":0.00000000001');
     expect(json).toContain('"nominal.large":1000000000000000000000');
     expect(json).toContain('"perturbed.large":0');
     expect(json).not.toMatch(/"(?:nominal|perturbed)\.[^"]+":"/);
