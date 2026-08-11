@@ -1,7 +1,7 @@
 /** Dependency-free, scale-locked orthographic 3D ball-flight drawing. */
 
 import type { FlightPoint } from "../model/flight";
-import type { GroundTrajectoryPoint } from "../model/flightGroundTypes";
+import type { GroundEvent, GroundTrajectoryPoint } from "../model/flightGroundTypes";
 import type { Vec3 } from "../model/simulation";
 import {
   spatialTargetHalfExtents,
@@ -260,6 +260,13 @@ export function drawGroundPlayback(
   ballPosition: Vec3,
   camera: PlaybackCamera,
   endLabel: string,
+  events: readonly GroundEvent[] = [],
+  comparison?: {
+    readonly points: readonly GroundTrajectoryPoint[];
+    readonly events: readonly GroundEvent[];
+    readonly ballPosition: Vec3;
+    readonly endLabel: string;
+  },
 ): void {
   const drawable = points.map((point) => ({
     time: point.time_s,
@@ -272,21 +279,38 @@ export function drawGroundPlayback(
   context.clearRect(0, 0, width, height);
   context.fillStyle = "#020617";
   context.fillRect(0, 0, width, height);
+  const comparisonDrawable = comparison?.points.map((point) => ({
+    time: point.time_s,
+    position: point.position_m as Vec3,
+    velocity: point.velocity_m_s as Vec3,
+  })) ?? [];
   const projection = createProjection(
-    drawable, [], camera, width, height, undefined, GROUND_MINIMUM_EXTENT_M,
+    drawable, comparisonDrawable, camera, width, height, undefined, GROUND_MINIMUM_EXTENT_M,
   );
-  const bounds = extents(drawable, []);
+  const bounds = extents(drawable, comparisonDrawable);
   const axisExtents = bounds.max.map((value, axis) =>
     Math.max(GROUND_MINIMUM_EXTENT_M, Math.abs(value), Math.abs(bounds.min[axis])),
   ) as Vec3;
   drawGroundAxes(context, projection, axisExtents[0], axisExtents[1], axisExtents[2]);
+  comparison?.points.slice(0, -1).forEach((point, index) => {
+    drawPath(
+      context, comparisonDrawable.slice(index, index + 2), projection,
+      GROUND_PHASE_COLORS[point.phase], [7, 5],
+    );
+  });
   points.slice(0, -1).forEach((point, index) => {
     drawPath(context, drawable.slice(index, index + 2), projection, GROUND_PHASE_COLORS[point.phase]);
   });
-  const marker = (position: Vec3, color: string, label: string | null, offset: number) => {
+  const marker = (
+    position: Vec3, color: string, label: string | null, offset: number, diamond = false,
+  ) => {
     const screen = projection.point(position);
     context.beginPath();
-    context.arc(screen.x, screen.y, 6, 0, 2 * Math.PI);
+    if (diamond) {
+      context.moveTo(screen.x, screen.y - 6); context.lineTo(screen.x + 6, screen.y);
+      context.lineTo(screen.x, screen.y + 6); context.lineTo(screen.x - 6, screen.y);
+      context.closePath();
+    } else context.arc(screen.x, screen.y, 6, 0, 2 * Math.PI);
     context.fillStyle = color;
     context.fill();
     if (label) {
@@ -296,6 +320,33 @@ export function drawGroundPlayback(
   };
   marker(points[0].position_m as Vec3, "#38bdf8", "Carry / first contact", -8);
   marker(points[points.length - 1].position_m as Vec3, "#f8fafc", endLabel, 14);
+  const eventMarker = (position: Vec3, color: string, diamond: boolean) => {
+    const screen = projection.point(position);
+    context.beginPath();
+    if (diamond) {
+      context.moveTo(screen.x, screen.y - 5); context.lineTo(screen.x + 5, screen.y);
+      context.lineTo(screen.x, screen.y + 5); context.lineTo(screen.x - 5, screen.y);
+      context.closePath();
+    } else context.arc(screen.x, screen.y, 4, 0, 2 * Math.PI);
+    context.strokeStyle = color;
+    context.lineWidth = 1.4;
+    context.stroke();
+  };
+  events.forEach((event) =>
+    eventMarker(event.position_m as Vec3, "#f8fafc", false));
+  comparison?.events.forEach((event) =>
+    eventMarker(event.position_m as Vec3, "#22d3ee", true));
+  if (comparison) {
+    marker(
+      comparison.points[0].position_m as Vec3,
+      "#22d3ee", "Comparison first contact", -8, true,
+    );
+    marker(
+      comparison.points[comparison.points.length - 1].position_m as Vec3,
+      "#67e8f9", `Comparison ${comparison.endLabel}`, 14, true,
+    );
+    marker(comparison.ballPosition, "#22d3ee", null, -8, true);
+  }
   marker(ballPosition, "#fb923c", null, -8);
   context.fillStyle = "#cbd5e1";
   context.fillText(`Locked physical scale: ${projection.pixelsPerMeter.toFixed(2)} px/m`, 10, height - 12);

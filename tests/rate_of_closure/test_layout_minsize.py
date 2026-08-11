@@ -78,9 +78,9 @@ class TestSmallWindowLayout:
                     f"{type(entry).__name__} is {entry.width()}px wide on "
                     f"{page} — unreadable below {MIN_ENTRY_WIDTH_PX}px"
                 )
-                assert entry.height() > 0, (
-                    f"{type(entry).__name__} collapsed to zero height on {page}"
-                )
+                assert (
+                    entry.height() > 0
+                ), f"{type(entry).__name__} collapsed to zero height on {page}"
                 checked += 1
         assert checked > 20, "the walk must actually visit entry widgets"
 
