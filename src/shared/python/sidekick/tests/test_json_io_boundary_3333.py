@@ -32,9 +32,9 @@ def test_state_manager_has_no_cross_tree_imports() -> None:
             root = node.module.split(".")[0]
             if root in {"utils", "compatibility"}:
                 offending.append(node.module)
-    assert offending == [], (
-        f"state_manager still imports across the tool-tree boundary: {offending}"
-    )
+    assert (
+        offending == []
+    ), f"state_manager still imports across the tool-tree boundary: {offending}"
 
 
 @pytest.mark.unit
