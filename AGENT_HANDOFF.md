@@ -1,5 +1,44 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4273 seeded regional-ground material variation
+
+The unpublished branch `codex/4273-seeded-ground-variation` starts from exact
+Tools PR #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`.
+It adds one UI-neutral runner that samples only base-surface normal restitution
+and rolling resistance through the existing `VariationPlan`/`sample_inputs`
+authority, rebinds an immutable regional request for every trial, and delegates
+all flight, impact, bounce, and regional skid/roll physics to an injected exact
+pipeline executor. The adapter adds no alternate physics or UI path.
+
+The two adapter variables use the shared registry's explicit extension seam;
+importing the module does not mutate the process-global registry. Deterministic
+trial IDs and SHA-256 input provenance bind seed, plan, trial order, sampled
+values, and exact base-plan identity. Sampled values are aligned with qualified
+scalar metrics, while transfer failures and censored outcomes retain those
+inputs and typed null output metrics. Requests fail before execution for
+unsupported or missing keys, mismatched bases, implicit/nonfinite/Boolean/out-
+of-range bounds, nonfinite scales or samples, invalid exact types, and row-cap
+overflow.
+
+RED captured the missing module. Twelve focused tests pass, including byte-for-
+byte seed replay, subset-stable streams, changed-seed divergence, immutable
+identity/provenance/order, failure nulls, fail-before-execution boundaries, and
+a real-pipeline check that increased rolling resistance reduces qualified total
+distance. The focused adapter plus pinned-registry suite passes 43 tests; the
+complete relevant Rate adapters and shared flight/ground/variation selection
+passes 506 tests with six expected missing-Rust-wheel skips and one environment
+warning. Ruff, import-skipping MyPy, Bandit, campaign-manifest validation and
+its eight tests, documentation governance, blocking-quality, minimum-test,
+default module-size, changed-test assertion, 397-line new-module, placeholder,
+and diff gates are green. The stricter full variation-directory 400-line scan
+reports only the inherited 433-line `plot_data.py`, not this candidate.
+
+This is deliberately not a #4273 or #4267 completion claim. Regional overlay
+variation, UI/editor integration, persistence, wind coupling, solver/capability
+consumption, compiled/runtime parity, downstream UpstreamDrift parity,
+protected CI/review, publication, and release remain open. No branch was pushed
+and no GitHub state was changed.
+
 ## 2026-08-11 PR #4364 post-ground spatial-target projection
 
 Ready-for-review PR [#4364](https://github.com/D-sorganization/Tools/pull/4364)

@@ -1,5 +1,38 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4273 seeded regional-ground material variation
+
+- The unpublished `codex/4273-seeded-ground-variation` child starts from exact
+  Tools PR #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`.
+  It adds a UI-neutral, bounded seeded runner for only the base regional-plan
+  normal-restitution and rolling-resistance values. Sampling stays in the
+  existing `VariationPlan`/`sample_inputs` authority; physics stays in an
+  injected exact flight-through-regional-ground executor.
+- Each immutable trial carries stable seed/trial identity, sampled values, a
+  canonical input digest, and a rebound regional request/provenance record.
+  Qualified complete-rest outputs and all censored/transfer-failure typed-null
+  outcomes remain row-aligned with their sampled inputs in the existing scalar
+  ensemble contract. Explicit registry registration avoids import-time global
+  mutation.
+- DbC rejects unsupported/missing keys, mismatched base values, missing,
+  nonfinite, Boolean, or out-of-range bounds, forged nonfinite scales or
+  samples, invalid exact outcomes or plan identities, and row-cap overflow
+  before executor use where applicable.
+- RED captured the absent module. Twelve focused tests, 43 focused-plus-
+  registry tests, and 506 relevant Rate-adapter/shared-flight/ground/variation
+  tests pass. The broad set has six expected missing-Rust-wheel skips and one
+  environment warning. A real-pipeline test observes shorter qualified total
+  distance at higher rolling resistance. Ruff, import-skipping MyPy, Bandit,
+  campaign-manifest validation plus eight tests, documentation,
+  blocking-quality, minimum-test, default module-size, changed-test assertion,
+  the candidate's 397-line budget, placeholder, and diff gates pass. A strict
+  whole-directory 400-line scan reports only inherited 433-line
+  `plot_data.py`.
+- This local candidate is not pushed and does not close #4273/#4267. Region
+  overlay variation, UI/persistence, solver/capability use, wind coupling,
+  compiled and downstream parity, protected CI/review, publication, and release
+  remain open.
+
 ## 2026-08-11 PR #4364 post-ground spatial-target projection
 
 - Ready-for-review PR [#4364](https://github.com/D-sorganization/Tools/pull/4364)

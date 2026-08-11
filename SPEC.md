@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.54                                    |
-| **Spec Version**        | 1.14.54                                    |
+| **Current Version**     | 1.14.55                                    |
+| **Spec Version**        | 1.14.55                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,26 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Seeded Regional-Ground Material Variation
+
+- A UI-neutral adapter samples base-surface normal restitution and rolling
+  resistance with the shared versioned `VariationPlan` and subset-stable
+  sampling engine. Callers explicitly register these two extension variables,
+  so merely importing the adapter does not alter shared process state.
+- Every trial owns an immutable rebound regional plan, deterministic request
+  identity, canonical input SHA-256, and source revision. An injected exact
+  flight-through-regional-ground executor remains the sole physics authority.
+- The existing bounded scalar-ensemble contract aligns sampled material inputs
+  with only qualified complete-rest outputs. Censored and failed trials keep
+  their sampled inputs and typed-null ground metrics instead of fabricating
+  terminal values.
+- Inputs fail closed before execution for unsupported/missing keys, base-plan
+  mismatch, implicit/nonfinite/Boolean/out-of-range bounds, nonfinite scale or
+  samples, non-exact outcomes, plan/digest mismatch, and row-cap overflow.
+- This slice excludes region-overlay perturbation, an editor or UI, persistence,
+  wind, target/playback changes, solver/capability invocation, compiled-runtime
+  physics, downstream parity, and release. Issues #4273 and #4267 remain open.
 
 ### 2026-08-11 Matched Ground-Playback Inspection
 

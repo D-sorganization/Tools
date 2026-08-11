@@ -1,5 +1,38 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4273 seeded regional-ground material variation
+
+The unpublished `codex/4273-seeded-ground-variation` child starts from exact
+PR #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`.
+`regional_ground_variation` samples only base normal restitution and rolling
+resistance with the existing `VariationPlan`/`sample_inputs` engine, creates an
+immutable plan/provenance-bound trial, and calls an injected exact
+`FlightRegionalGroundPipelineResult | FlightGroundTransferError` executor. It
+then augments the existing bounded scalar-ensemble projection so each qualified
+or typed-null outcome remains aligned with its sampled inputs.
+
+Registration is explicit and idempotent through the shared registry extension
+seam, avoiding import-time global state. Validation fails before executor entry
+for invalid keys, base mismatch, missing/nonfinite/Boolean/out-of-range bounds,
+nonfinite scale/sample, invalid exact records, and row overflow. Exact pipeline
+results must retain the sampled regional plan and canonical digest.
+
+Twelve focused tests pass. The 43-test focused-plus-registry selection and the
+506-test Rate-adapter/shared-flight/ground/variation selection are green; the
+latter has six expected Rust-wheel skips and one environment warning. A live
+pipeline test confirms greater sampled rolling resistance shortens qualified
+total distance. Ruff and import-skipping MyPy pass. Remaining policy evidence
+also passes: Bandit, campaign manifest and its eight tests, documentation,
+blocking-quality, minimum-test, default module-size, changed-test assertion,
+the new module's 397-line budget, placeholder, and diff checks. A stricter
+whole-directory 400-line scan reports only inherited `plot_data.py` at 433
+lines.
+
+No UI, persistence, region-overlay variation, solver/capability invocation,
+wind physics, target/playback changes, compiled runtime, downstream parity,
+protected review, publication, or release is included. Keep #4273 and #4267
+open. This branch has not been pushed and has made no GitHub write.
+
 ## 2026-08-11 PR #4364 post-ground spatial-target projection
 
 Ready-for-review PR [#4364](https://github.com/D-sorganization/Tools/pull/4364)
