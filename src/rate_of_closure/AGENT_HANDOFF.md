@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 PR #4335 isolated-MyPy return typing
+
+Protected CI at exact head `d382ca9928628a16fec7ddd4fa1b1cc144b4c490`
+found two `no-any-return` errors under its changed-file
+`--follow-imports=skip` profile. The strict text and JSON validators still
+perform the same runtime checks; their already validated return values now
+carry explicit local casts so the isolated CI type boundary remains precise.
+This correction changes no schema, digest, physics, numerical result, or API.
+Fresh exact-head CI and review remain required after the ordinary push.
+
 ## 2026-08-10 issue #4271 regional-plan wire-contract local child
 
 Local branch `feat/4271-regional-wire-contract` starts from exact regional

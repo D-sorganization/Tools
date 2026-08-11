@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 from dataclasses import dataclass
+from typing import cast
 
 from .contract_types import (
     UNIT_SYSTEM_SI,
@@ -53,7 +54,7 @@ def _sha256(text: str) -> str:
 def _digest(value: object, name: str) -> str:
     if not isinstance(value, str):
         raise ValueError(f"{name} must be 64 lowercase hexadecimal characters")
-    digest = _text(value, name).lower()
+    digest = cast(str, _text(value, name)).lower()
     if len(digest) != 64 or any(
         character not in "0123456789abcdef" for character in digest
     ):
