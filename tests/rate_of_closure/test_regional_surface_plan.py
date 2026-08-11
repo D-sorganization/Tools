@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from inspect import signature
 
 import pytest
 
@@ -61,6 +62,39 @@ def test_editor_region_limit_fails_before_wire_construction() -> None:
 
     with pytest.raises(ValueError, match=f"at most {MAX_EDITOR_REGIONS}"):
         validate_regional_surface_plan_draft(replace(draft, regions=repeated))
+
+
+def test_pyqt_number_input_spec_preserves_behavior_and_structural_bound(qtbot) -> None:  # type: ignore[no-untyped-def]
+    pytest.importorskip("PyQt6")
+    pytest.importorskip("pytestqt")
+    from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import (
+        NumberInputSpec,
+        _number_input,
+    )
+
+    spec = NumberInputSpec(suffix=" m", step=0.25, minimum=-2.0, maximum=3.0)
+    field = _number_input("Test coordinate", 1.5, spec)
+    qtbot.addWidget(field)
+
+    assert NumberInputSpec.__dataclass_params__.frozen is True
+    assert len(signature(_number_input).parameters) <= 4
+    assert field.accessibleName() == "Test coordinate"
+    assert field.value() == pytest.approx(1.5)
+    assert field.suffix() == " m"
+    assert field.singleStep() == pytest.approx(0.25)
+    assert field.minimum() == pytest.approx(-2.0)
+    assert field.maximum() == pytest.approx(3.0)
+    assert "Test coordinate" in field.toolTip()
+
+
+def test_pyqt_number_input_spec_rejects_invalid_configuration() -> None:
+    pytest.importorskip("PyQt6")
+    from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import NumberInputSpec
+
+    with pytest.raises(ValueError, match="step must be finite and positive"):
+        NumberInputSpec(suffix="", step=0.0, minimum=0.0, maximum=1.0)
+    with pytest.raises(ValueError, match="minimum must not exceed maximum"):
+        NumberInputSpec(suffix="", step=0.1, minimum=2.0, maximum=1.0)
 
 
 def test_pyqt_editor_exposes_warnings_units_and_validated_readback(qtbot) -> None:  # type: ignore[no-untyped-def]

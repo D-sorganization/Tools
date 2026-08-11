@@ -30,6 +30,12 @@ from rate_of_closure.application.regional_surface_plan import (
     illustrative_regional_surface_plan_draft,
     validate_regional_surface_plan_draft,
 )
+from rate_of_closure.ui.pyqt6.engineering_number_input import (
+    NumberInputSpec,
+)
+from rate_of_closure.ui.pyqt6.engineering_number_input import (
+    engineering_number_input as _number_input,
+)
 
 _MATERIAL_FIELDS = (
     ("normal_restitution", "Normal restitution", "", 0.01, 0.0, 1.0),
@@ -53,28 +59,6 @@ _MATERIAL_FIELDS = (
 )
 
 
-def _number_input(
-    name: str,
-    value: float,
-    suffix: str = "",
-    step: float = 0.1,
-    minimum: float = -1e9,
-    maximum: float = 1e9,
-) -> QDoubleSpinBox:
-    """Create one consistently configured accessible SI number input."""
-    field = QDoubleSpinBox()
-    field.setAccessibleName(name)
-    field.setDecimals(6)
-    field.setRange(minimum, maximum)
-    field.setSingleStep(step)
-    field.setSuffix(suffix)
-    field.setValue(value)
-    field.setToolTip(
-        f"{name}. Edit this SI draft value, then validate the surface plan."
-    )
-    return field
-
-
 class MaterialEditor(QGroupBox):
     """Editable surface identity and full v1 material parameter collection."""
 
@@ -90,7 +74,9 @@ class MaterialEditor(QGroupBox):
         layout.addRow("Surface ID", self.surface_id)
         for name, label, suffix, step, minimum, maximum in _MATERIAL_FIELDS:
             field = _number_input(
-                f"{title} {label}", getattr(value, name), suffix, step, minimum, maximum
+                f"{title} {label}",
+                getattr(value, name),
+                NumberInputSpec(suffix, step, minimum, maximum),
             )
             self.fields[name] = field
             layout.addRow(label, field)
@@ -122,10 +108,14 @@ class RegionalOverlayRow(QGroupBox):
             "Overlay selection precedence. Higher values win when intervals overlap."
         )
         self.lower_coordinate = _number_input(
-            f"Overlay {ordinal} lower coordinate", value.lower_coordinate_m, " m"
+            f"Overlay {ordinal} lower coordinate",
+            value.lower_coordinate_m,
+            NumberInputSpec(suffix=" m"),
         )
         self.upper_coordinate = _number_input(
-            f"Overlay {ordinal} upper coordinate", value.upper_coordinate_m, " m"
+            f"Overlay {ordinal} upper coordinate",
+            value.upper_coordinate_m,
+            NumberInputSpec(suffix=" m"),
         )
         self.material = MaterialEditor(f"Overlay {ordinal} material", value.surface)
         self.remove_button = QPushButton(f"Remove overlay {ordinal}")
@@ -268,10 +258,14 @@ class RegionalSurfacePlanTab(QWidget):
         """Create the base interval and complete base material editor."""
         box = QGroupBox("Base surface and domain")
         self.domain_lower = _number_input(
-            "Base domain lower coordinate", self._initial.lower_coordinate_m, " m"
+            "Base domain lower coordinate",
+            self._initial.lower_coordinate_m,
+            NumberInputSpec(suffix=" m"),
         )
         self.domain_upper = _number_input(
-            "Base domain upper coordinate", self._initial.upper_coordinate_m, " m"
+            "Base domain upper coordinate",
+            self._initial.upper_coordinate_m,
+            NumberInputSpec(suffix=" m"),
         )
         self.base_material = MaterialEditor("Base material", self._initial.base_surface)
         layout = QVBoxLayout(box)

@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.29                                    |
-| **Spec Version**        | 1.14.29                                    |
+| **Current Version**     | 1.14.30                                    |
+| **Spec Version**        | 1.14.30                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -2916,6 +2916,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.30 | fix(rate-of-closure, #4274 #4339): replace the six-parameter PyQt engineering-number helper with a three-parameter helper and frozen validated specification while preserving names, values, units, ranges, increments, tooltips, and field order; add RED-first helper/configuration and structural-bound tests, retain byte-stable wire/digest/physics behavior, and keep protected CI, approval, integration, and release open. |
 | 2026-08-11 | 1.14.29 | chore(rate-of-closure, #4274 #4339): normally reconcile exact published regional-surface editor child `cbb9c0a6bdc6a50f59f7a661139b9d53e1892980` with exact newly published regional-plan wire parent `9e01ccc3e891cc45907293751a192624195a77a5` without changing the PR base or rewriting either branch; retain matched PyQt6/React request editors, invalidation and engineering hints together with the strict Python/TypeScript plan contract, resolver binding, bounded coplanar regional physics, and complete ground ancestry, while preserving execution/playback, result interchange, measured calibration, workspace persistence, changing geometry, compiled-runtime physics, downstream parity, protected evidence, and release as open work. |
 | 2026-08-11 | 1.14.28 | chore(ground-regions, #4271 #4335): normally reconcile exact live regional-wire child `74a053d2d544da9f44a88007660ad28c0127f285` with exact newly published regional-surface parent `04ccf08dd990de1cd056a3420e67772773a4be2e` without changing the PR base or rewriting either branch; preserve the strict Python/TypeScript plan wire boundary and Python resolver binding together with the parent's reconciled coplanar regional physics and complete skid/roll ancestry, while retaining protected CI/review, UI, compiled or TypeScript regional physics, changing geometry/velocity, internal transition-ledger export, downstream parity, and release as open work. |
 | 2026-08-10 | 1.14.27 | feat(ground-roll, #4271): add separate strict Python/TypeScript `ground-regional-material-plan-request/v1` and result/v1 wire contracts with exact keys, SI units, explicit coplanar/static limitations, finite bounded base/overlay intervals, bounded region/document counts, unique region/precedence/surface identities, canonical cross-runtime JSON/SHA-256 evidence, fail-closed no-fabrication result binding, and a Python-only adapter into the existing regional resolver; preserve the frozen flight-to-ground v1 request/result and retain TypeScript/compiled regional physics, UI, changing geometry, internal transition-ledger export, downstream parity, protected CI, review, and release as open work. |

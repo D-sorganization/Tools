@@ -1,5 +1,28 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4339 structural helper repair candidate
+
+This local follow-up descends exact independently reviewed reconciliation
+candidate `eedad6d23b517eb4c99d4ba9000ff6555101099f`. Independent review found
+one publication blocker: the regional PyQt number-input helper accepted six
+parameters, above the campaign's mandatory four-parameter limit. RED-first
+tests now bind the helper's signature and all observable widget settings. A
+frozen `NumberInputSpec` validates finite positive step and finite ordered
+bounds before widget construction; the three-parameter helper preserves field
+names, values, units, ranges, increments, tooltips, and presentation order.
+
+Eight focused Python/PyQt tests and 25 focused React tests pass; the complete
+React suite passes all 108 files / 672 tests. Pinned Ruff check/format, MyPy on
+all six affected production modules, Bandit medium/high screening, TypeScript,
+zero-warning ESLint, documentation/manifest governance, changed-production,
+test-assertion, minimum-test, 500-LOC, and diff gates pass. Mandatory maxima
+are 400 module lines, 42 function lines, and three parameters. A broader
+Rate-of-Closure Python run reached the ten-minute workstation lifecycle bound
+without yielding an assertion failure; it is not counted as passing evidence.
+The monorepo-wide lane separately exposed unrelated baseline failures and
+xdist worker termination. No schema, digest, regional physics, UI behavior,
+PR base, protected evidence, or release boundary changes.
+
 ## 2026-08-11 PR #4339 current-parent ancestry candidate
 
 The clean `feat/4274-regional-surface-ui` worktree normally merges exact
