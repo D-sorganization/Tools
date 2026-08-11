@@ -1,9 +1,10 @@
 # Camera Viewport Controls Parity Registry
 
 Status: active. Ready-for-review Tools PR #4358 carries the first matched
-clubhead-preset slice for issue #4284. An unpushed child based exactly on
-published head `d662b016eceed8cbfbce26c12a42ca2c326a684f` adds the bounded
-tracking slice described below. Protected approval and release remain open.
+clubhead-preset slice for issue #4284. Ready-for-review child PR #4362 is based
+exactly on published head `d662b016eceed8cbfbce26c12a42ca2c326a684f` and
+adds the bounded tracking slice described below. Protected checks, dependency
+landing, and release remain open.
 
 ## Problem
 
@@ -90,8 +91,8 @@ alone.
 
 | Surface | Presets / side / reset | Auto Fit | Tracking | Status |
 | --- | --- | --- | --- | --- | --- |
-| Tools PyQt6 `Club3DView` | Matched | Matched | Matched locally | Local child |
-| Tools React `ClubCanvas` | Matched | Matched | Matched locally | Local child |
+| Tools PyQt6 `Club3DView` | Matched | Matched | Matched in #4362 | Ready PR |
+| Tools React `ClubCanvas` | Matched | Matched | Matched in #4362 | Ready PR |
 | Tools PyQt6 `SimulationView` | Legacy partial selector | No | No | Open |
 | Tools React primary Swing view | No interactive 3D camera | No | No | Open |
 | Tools React impact scene | Legacy partial buttons | No | No | Open |
@@ -103,10 +104,9 @@ alone.
 This child does not implement per-viewport workspace persistence, the
 principal React 3D swing conversion, other simulation/impact/flight adapters,
 Playwright/high-DPI rendered review, or the complete camera/playback matrix.
-Those remain explicit acceptance gates for #4284 and epic #4218. The child is
-local and unpushed; neither it nor the published parent is approved,
-protected-complete, or released and neither issue may be represented as
-complete.
+Those remain explicit acceptance gates for #4284 and epic #4218. Neither ready
+PR is protected-complete, dependency-landed, or released, and neither issue may
+be represented as complete.
 
 ## Validation
 

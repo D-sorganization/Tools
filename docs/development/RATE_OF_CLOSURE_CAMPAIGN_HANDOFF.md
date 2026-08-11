@@ -1,10 +1,12 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-## 2026-08-11 local #4284 bounded Track Clubhead child
+## 2026-08-11 PR #4362 bounded Track Clubhead child
 
-Local branch `feat/4284-track-clubhead` starts exactly at current published PR
-#4358 head `d662b016eceed8cbfbce26c12a42ca2c326a684f`; it is intentionally
-unpushed and makes no GitHub mutation. The shared Python/TypeScript camera
+Ready-for-review PR [#4362](https://github.com/D-sorganization/Tools/pull/4362)
+starts exactly at current published PR #4358 head
+`d662b016eceed8cbfbce26c12a42ca2c326a684f`. Its independently reviewed
+implementation commit is `cb2bec4eb1b62a84dd617700052273787abba9ef`.
+The shared Python/TypeScript camera
 contract now adds stable `camera.track_clubhead`, `camera.recenter`,
 `camera.auto_fit_fallback`, and off/active/suspended state IDs under a new
 `camera_tracking_v1.json` golden. The original preset/v1 golden remains
