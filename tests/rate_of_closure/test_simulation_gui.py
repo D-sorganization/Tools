@@ -90,6 +90,31 @@ class TestSimulationTab:
         assert tab._assembly_binding is None
         assert "selection changed" in tab._assembly_binding_status.text()
 
+    def test_simulation_club_change_invalidates_binding_in_owning_club_panel(
+        self, qtbot
+    ) -> None:  # type: ignore[no-untyped-def]
+        window = RateOfClosureMainWindow()
+        qtbot.addWidget(window)
+        fixture = (
+            Path(__file__).parent
+            / "fixtures"
+            / "club_assembly_binding_driver_10_5.json"
+        )
+        binding = parse_club_assembly_binding(
+            get_club("Driver 10.5°"), fixture.read_bytes()
+        )
+        window._controls._assembly_binding = binding
+        window._controls._binding_status.setText("Bound")
+        window._controls.assemblyBindingChanged.emit(binding)
+
+        window._simulation_tab._club_combo.setCurrentText("7-Iron")
+
+        assert window._simulation_tab._assembly_binding is None
+        assert window._controls._assembly_binding is None
+        assert "simulation club selection changed" in (
+            window._controls._binding_status.text()
+        )
+
     def test_run_populates_launch_rows(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         assert isinstance(ran_tab.last_run(), SimulationRun)
         for field, _label, _unit in LAUNCH_ROWS:

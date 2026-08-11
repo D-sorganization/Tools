@@ -5,6 +5,17 @@
 
 ## 2026-08-10 #4111 assembly-to-simulation adapter (local, not released)
 
+Independent publication review found and repaired one desktop ownership gap:
+changing the Simulation tab's club now invalidates the binding in the Club
+panel that owns it, so export status and solver state cannot disagree. The
+new signal-bound regression and the combined 67-test adapter/PyQt/GUI suite
+pass serially. Focused Ruff/format, CI-pinned Mypy 1.13, the 27-test React
+suite, TypeScript, zero-warning ESLint, and the 125-module production build are
+clean. The first test invocation exposed only a missing test fixture and was
+corrected before implementation evidence. The repository's generic 500-LOC
+file gate still reports three pre-existing oversized modules touched by this
+stack; the repository's baseline-aware 1200-line module budget passes.
+
 Local branch `feat/4111-assembly-simulation-adapter` starts at exact published
 PR #4338 head `6b55a6b01e8029712217185f0e0ebf2a421be20e` and remains
 **not released** with no GitHub write. It adds a fail-closed adapter from the

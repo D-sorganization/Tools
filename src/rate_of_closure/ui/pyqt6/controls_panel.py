@@ -370,13 +370,17 @@ class ControlsPanel(QWidget):
 
     def _clear_assembly_binding(self, _value: object = None) -> None:
         """Discard a binding when any identity-defining selected input changes."""
+        self.clear_assembly_binding(
+            "Assembly binding cleared — selected club specification changed."
+        )
+
+    def clear_assembly_binding(self, reason: str) -> None:
+        """Discard the owned binding and publish one authoritative invalidation."""
         if self._assembly_binding is None:
             return
         self._assembly_binding = None
         self.assemblyBindingChanged.emit(None)
-        self._binding_status.setText(
-            "Assembly binding cleared — selected club specification changed."
-        )
+        self._binding_status.setText(reason)
 
     def _on_import_assembly(self) -> None:
         """Import a qualified binding for the exact current club selection."""

@@ -80,6 +80,8 @@ class SimulationTab(QWidget):
     glossaryRequested = pyqtSignal(str)  # noqa: N815 - Qt signal convention
     #: Drives conditional Calculation Description sections from model changes.
     configChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
+    #: Requests invalidation from the Club panel, which owns the binding.
+    assemblyBindingInvalidated = pyqtSignal(str)  # noqa: N815 - Qt convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
         super().__init__(parent)
@@ -350,6 +352,9 @@ class SimulationTab(QWidget):
         if self._assembly_binding is not None:
             self._assembly_binding = None
             self._assembly_binding_status.setText(
+                "Assembly binding cleared — simulation club selection changed."
+            )
+            self.assemblyBindingInvalidated.emit(
                 "Assembly binding cleared — simulation club selection changed."
             )
         club = get_club(name)
