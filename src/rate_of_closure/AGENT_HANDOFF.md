@@ -5,6 +5,19 @@
 
 ## 2026-08-10 Authoritative Transfer Snapshot
 
+The publication-hardening follow-up keeps
+`fdce377f123f925bf5768b666619927886f17ae9` intact as its parent and moves the
+matrix, rotation, eigenvalue, and inertia-validation operations into the
+cohesive 88-line `clubAssemblyMassMath.ts`. The remaining wire/schema and
+assembly-orchestration module is 316 lines; every production TypeScript file
+new to this binding slice is at most 328 lines. No schema, canonical identity,
+digest, validation, or exported-sidecar behavior is changed. The formatter
+command timed out under workstation load, and no further gate was started after
+the coordinating agent's explicit boundary. Prior focused evidence remains
+valid, while the final TypeScript/ESLint/build state remains unverified. This
+follow-up is **not released**, and the absent campaign handoff/manifest paths
+described below remain absent on this lineage.
+
 Local branch `feat/4111-club-assembly-binding` starts from exact published
 parent `66da8f024450ad5e7940a8005227f3d6612a85d8` and remains **not released**.
 The parent contains no campaign handoff at

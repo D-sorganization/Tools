@@ -5,6 +5,21 @@
 
 ## 2026-08-10 Authoritative Transfer Snapshot
 
+- Publication-hardening follow-up on the same **not released** branch preserves
+  `fdce377f123f925bf5768b666619927886f17ae9` as its parent and extracts the
+  three-dimensional matrix, rotation, eigenvalue, and inertia-validation
+  operations into `clubAssemblyMassMath.ts`. The new math module is 88 lines;
+  `clubAssemblyMassProperties.ts` is 316 lines, and every production TypeScript
+  file introduced by the binding slice is at most 328 lines. Schema, canonical
+  identity bytes/digests, validation order, and sidecar behavior are unchanged.
+  Under the continuing workstation overload, the combined formatter/count
+  command timed out and the direct worktree-local Prettier executable was not
+  present because dependencies are supplied through the sibling junction. At
+  the coordinating agent's gate boundary, no further test/type/lint/build
+  command was started; the prior evidence and explicit unverified
+  TypeScript/ESLint/build boundary below remain authoritative. The absent
+  campaign-handoff/manifest explanation below remains unchanged.
+
 - Local continuation `feat/4111-club-assembly-binding` is based exactly on the
   published sidecar parent `66da8f024450ad5e7940a8005227f3d6612a85d8` and is
   **not released**. It adds the validated selected-spec ↔ shared-assembly
