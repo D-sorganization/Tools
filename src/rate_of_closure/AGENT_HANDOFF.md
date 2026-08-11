@@ -3,6 +3,27 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 Workspace child receives current #4203 parent
+
+PR `#4279` keeps branch `feat/4218-toolstrip-workspace` and base
+`feat/4181-launch-monitor-registry`. Exact published child
+`ccd0e026c580c93038fdf5c59d5d452a85ba27a0` is merged first and exact current
+parent `7abce9ad767fe8311da66a1e5998b892ea3ca9de` second. Implementation and
+test paths merge automatically: the child workspace/toolstrip, visibility,
+navigation, playback, and independent-plot behavior remain intact while the
+parent contributes current launch-monitor/D-plane ancestry, split kinetics,
+and behavior-preserving Qt return narrowing. Only append-only handoffs and
+SPEC conflict textually; both histories are preserved. All 142 exact
+PR-delta Python tests and all 32 tests in the eight changed React suites pass
+before the merge commit. Pinned Ruff checks/formats all 27 changed Python
+files; pinned MyPy and Bandit accept all 18 production files; docs, 500-LOC,
+changed-Python policy, test-contract/assertion, diff, React type-check/lint, and
+production-build gates pass. The later campaign-manifest artifact/checker/test
+exist on neither side of this pre-manifest stack and are not applicable.
+Review, ordinary publication, protected exact-head CI, unresolved threads,
+dependency order,
+and release remain open.
+
 ## 2026-08-11 Remote workspace history reconciled locally
 
 PR `#4279` retains branch `feat/4218-toolstrip-workspace` and base
@@ -42,6 +63,37 @@ behavior remain unchanged while the parent kinetics façade/dynamics/series
 split and pinned formatting are inherited. This local merge does not satisfy
 fresh protected CI, required review, unresolved-thread, dependency, or release
 gates.
+
+## 2026-08-11 Append-only SPEC preservation repair
+
+Independent review found that the local #4203 reconciliation omitted four
+exact D-plane parent SPEC rows dated 2026-08-10 (versions 1.13.11, 1.13.9,
+1.13.7, and 1.13.6). They are restored verbatim in a documentation-only
+follow-up. Production behavior, tests, ordered parents, base, and local quality
+evidence are unchanged; re-review, normal publication, and protected CI remain
+open.
+
+## 2026-08-11 Current D-plane parent reconciliation
+
+PR #4203's published child `217e36dc93d30f79826847f958fbcd10805e58ed`
+is being normally merged with exact current D-plane base
+`f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`. The base and source branch stay
+unchanged. The only conflict is the parent's formatting of an older monolithic
+kinetics expression: the split facade keeps its typed pendulum accessor and
+inherits the parent's geometry explanation. No launch-monitor, D-plane, or
+kinetics behavior is intentionally changed. Four Qt-stub `Any` returns exposed
+by the exact MyPy 1.13 delta are also narrowed to their declared `bool`/`str`
+contracts without changing values. Focused/full validation, independent
+review, normal publication, and protected CI remain open.
+
+## 2026-08-11 Exact-head format completion
+
+Protected CI on #4203 head `7d69a545ae555679f0318940e67c1786626d6794`
+failed only Ruff formatting. The pinned 0.14.10 reproduction found eleven
+noncompliant changed Python files: four inherited files plus seven altered by
+the automated pre-commit repair. The pending repair intentionally changes no
+launch-monitor, kinetics, simulation, or UI behavior and requires independent
+review plus fresh protected CI before integration.
 
 ## 2026-08-11 Hosted MyPy NumPy-return repair
 
