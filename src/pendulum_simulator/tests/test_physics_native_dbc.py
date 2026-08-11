@@ -202,9 +202,13 @@ class TestGolferNativeRequired:
         # The double-pendulum path legitimately falls back; the golfer path must
         # not claim a fallback that does not exist. Assert the specific stale
         # golfer log string is gone.
-        assert "golfer mass_matrix call failed (%s), falling back to NumPy" not in source
+        assert (
+            "golfer mass_matrix call failed (%s), falling back to NumPy" not in source
+        )
 
-    @pytest.mark.skipif(not physics_native.HAS_NATIVE, reason="native pendulum_core not built")
+    @pytest.mark.skipif(
+        not physics_native.HAS_NATIVE, reason="native pendulum_core not built"
+    )
     def test_construction_succeeds_with_native(self) -> None:
         golfer = physics_native.Golfer(**_GOLFER_KWARGS)
         assert golfer.use_native is True
