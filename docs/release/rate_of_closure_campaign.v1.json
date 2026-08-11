@@ -1,7 +1,7 @@
 {
   "schema_version": "rate-of-closure-campaign/v1",
   "repository": "D-sorganization/Tools",
-  "as_of": "2026-08-09",
+  "as_of": "2026-08-11",
   "default_branch": "main",
   "required_main_checks": [
     "quality-gate",
@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "18fe89201d657116bbca99922297c14968356c44",
+      "head_sha": "b2baf6ef615b0d756a86ac4ca7eef2fc583210ee",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -154,7 +154,7 @@
       "pr": 4285,
       "branch": "feat/4268-ground-contract",
       "base_branch": "feat/4197-capability-observer",
-      "head_sha": "6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059",
+      "head_sha": "584e4e53a7990053a346938c4e45538786887ec7",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -164,7 +164,7 @@
       "pr": 4288,
       "branch": "feat/4269-flight-ground-transfer",
       "base_branch": "feat/4268-ground-contract",
-      "head_sha": "4972e55e0bb6e5b6bf7da0f899eed5d4f54e7d9d",
+      "head_sha": "c39297d37a17d5d8d3520ed62c5563cdcc609cab",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -194,7 +194,7 @@
       "pr": 4302,
       "branch": "feat/4270-ground-impact-bounce",
       "base_branch": "feat/4269-flight-ground-transfer",
-      "head_sha": "63a6f4bec63c58d28bceed2e8cf348a618c8e366",
+      "head_sha": "cf6e72bad98e5f36f782254942e6895b8b71e670",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
