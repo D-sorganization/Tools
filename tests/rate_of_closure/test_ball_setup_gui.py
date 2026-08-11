@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import hashlib
+from pathlib import Path
+
 import numpy as np
 import pytest
 from PyQt6.QtCore import Qt
@@ -129,6 +132,44 @@ def test_swing_scene_uses_run_ball_center_and_draws_tee_only_for_tee(tab) -> Non
     assert ground_run is not None
     assert tab.view().rendered_ball_center_m()[1] == pytest.approx(GOLF_BALL_RADIUS_M)
     assert not tab.view().tee_visible()
+
+
+def test_ground_and_tee_widget_captures_are_nonblank_and_distinct(
+    tab,
+    qtbot,
+    tmp_path: Path,  # type: ignore[no-untyped-def]
+) -> None:
+    """Render reviewable captures without brittle pixel-perfect assertions."""
+    tab.resize(1400, 900)
+    tab.show()
+    qtbot.wait(1)
+
+    tee_run = tab.run_now()
+    assert tee_run is not None
+    assert tab.view().tee_visible()
+    tee_digest = _capture_digest(tab, tmp_path / "driver-tee.png")
+
+    control = tab.ball_setup_control()
+    control.mode_combo().setCurrentIndex(
+        control.mode_combo().findData(BallSupportMode.GROUND)
+    )
+    ground_run = tab.run_now()
+    assert ground_run is not None
+    assert not tab.view().tee_visible()
+    ground_digest = _capture_digest(tab, tmp_path / "driver-ground.png")
+
+    assert tee_digest != ground_digest
+
+
+def _capture_digest(tab: SimulationTab, path: Path) -> str:
+    pixmap = tab.grab()
+    assert not pixmap.isNull()
+    assert pixmap.width() >= 1000
+    assert pixmap.height() >= 700
+    assert pixmap.save(str(path), "PNG")
+    payload = path.read_bytes()
+    assert len(payload) > 20_000
+    return hashlib.sha256(payload).hexdigest()
 
 
 def test_no_impact_scene_preserves_configured_tee_geometry(tab) -> None:  # type: ignore[no-untyped-def]

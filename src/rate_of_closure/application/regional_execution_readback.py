@@ -239,11 +239,15 @@ def write_regional_execution_evidence_atomic(
     text = result.to_json()
     if len(text.encode("utf-8")) > MAX_REGIONAL_GROUND_EXECUTION_WIRE_BYTES:
         raise ValueError("regional execution evidence exceeds maximum wire size")
-    return write_utf8_text_atomic(
+    # The protected delta gate skips imported modules, so annotate this local
+    # boundary explicitly without a cast that becomes redundant when the
+    # helper is included in the same MyPy root set.
+    write_succeeded: bool = write_utf8_text_atomic(
         text,
         destination,
         document_name="regional execution evidence",
     )
+    return write_succeeded
 
 
 __all__ = [

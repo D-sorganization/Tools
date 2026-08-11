@@ -180,9 +180,11 @@ def _evaluate_candidate(
         counts = counts.add(status)
         if outcome.effective_status is not CapabilitySampleStatus.COMPLETE:
             continue
-        assert evaluation is not None
+        if evaluation is None:
+            raise RuntimeError("normalized complete sample has no evaluation")
         landing = _landing(evaluation)
-        assert landing is not None
+        if landing is None:
+            raise RuntimeError("normalized complete sample has no finite landing")
         landings.append(landing)
     samples = _CandidateSamples(club, nominal, tuple(landings), counts)
     return _summarize(samples, context), counts
