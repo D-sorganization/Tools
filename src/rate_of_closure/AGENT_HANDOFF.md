@@ -2,6 +2,17 @@
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
+## 2026-08-11 pinned-Ruff parent propagation (#4173 → #4174)
+
+Exact child head `01ecf9a7b1922d1609fb99093226799a0b564704` is
+merged normally with exact parent `#4173` head
+`bd48852d303db6281ed5891d4a271d99e76a94e6`, while keeping the configured
+`feat/4163-impact-inspector` base. Parent Ruff `0.14.10` formatting and all
+prior handoff/spec history remain additive. No Rate or wedge runtime contract
+changes. Workflow-pinned Ruff check/format, 98 focused impact/kinetics/wedge/
+PyQt/layout tests, and repository documentation, minimum-test, SPEC-version,
+and diff gates are green. Protected checks and parent-first release order
+remain mandatory.
 
 ## 2026-08-11 PR #4174 pinned-Ruff format repair
 
@@ -28,7 +39,6 @@ real CPython 3.10.20 compile/UTC checks, scoped Ruff/Black/MyPy, and repository
 governance checks. The existing 17-error broad MyPy Qt/NumPy baseline across
 11 untouched files is documented, not expanded. Current-head protected CI and
 required review remain pending.
-
 ## 2026-08-10 Python 3.10 Repair Propagation
 
 Draft child PR `#4173` (`feat/4163-impact-inspector`) retains its
@@ -38,6 +48,14 @@ head `3c43955aaeb3964ff8c3ef2748d626baae518b76` with exact parent head
 Python 3.10-compatible UTC export and the source-wide AST guard into the wedge
 impact inspector without changing the persistence schema or user-visible
 timestamp format.
+
+## 2026-08-11 pinned-Ruff repair
+
+Exact published head `3c19aaa9d3e812e4659053735a2955d62a080d34`
+inherits the five-file Ruff `0.14.10` format mismatch reported on its immediate
+child. The files are now mechanically formatted with that pinned version. No
+material handoff or runtime behavior changes: variation, physics, frames, DbC
+validation, public contracts, schemas, tests, and UI behavior remain intact.
 
 Combined-stack verification is green across 63 focused Python tests, all 562
 Rate tests, all 334 React tests, TypeScript/ESLint/Vite gates, 12 `swing-core`

@@ -2,6 +2,20 @@
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
+## 2026-08-11 pinned-Ruff parent propagation (#4173 → #4174)
+
+- Child PR `#4174` remains on `feat/4161-wedge-ground-clearance`, based on
+  `feat/4163-impact-inspector`; neither branch nor PR base is rewritten.
+- Exact clean child head `01ecf9a7b1922d1609fb99093226799a0b564704`
+  is merged normally with exact parent head
+  `bd48852d303db6281ed5891d4a271d99e76a94e6`.
+- The inherited Ruff `0.14.10` formatting and parent handoff/spec history stay
+  additive to the existing swept wedge ground-clearance contracts. No physics,
+  frame, validation, API, schema, test, persistence, or UI behavior changes.
+- Workflow-pinned Ruff check/format and 98 focused impact, kinetics, wedge,
+  PyQt, and layout tests are green. Documentation, minimum-test, SPEC-version,
+  and diff gates are also green. Protected checks, review, and parent-first
+  release order remain gates.
 
 ## 2026-08-11 PR #4174 pinned-Ruff format repair
 
@@ -33,7 +47,6 @@
   inherited broad MyPy baseline is 17 Qt/NumPy typing findings in 11 untouched
   files and remains outside this propagation scope. Protected CI and review
   remain release gates.
-
 ## 2026-08-10 Parent Repair Propagation (#4167 → #4173)
 
 - Child PR `#4173` remains on `feat/4163-impact-inspector`, based on
@@ -57,6 +70,19 @@
 - Every implementation commit must update this file, the Rate handoff, the
   campaign handoff, and `SPEC.md`, or explicitly record why there is no
   material handoff change.
+
+## 2026-08-11 pinned-Ruff parent propagation
+
+- Exact published head `3c19aaa9d3e812e4659053735a2955d62a080d34`
+  has the same five-file Ruff `0.14.10` format mismatch proven by child CI.
+- Those files are mechanically formatted with the workflow-pinned version.
+  No variation, impact, plotting, persistence, API, schema, test, or UI
+  behavior changes; this is not completion of issue `#4144`.
+- No material handoff behavior changed. Protected CI and the ordinary carrier
+  into `feat/impact-simulation-platform` remain release gates.
+
+The formatted parent is merged normally into the impact-inspector child; no
+impact-inspection or variation behavior changes.
 
 ## Where This Repo Is Headed
 
