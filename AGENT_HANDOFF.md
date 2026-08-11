@@ -1,6 +1,22 @@
 # AGENT_HANDOFF — Tools
 
 
+## 2026-08-11 PR #4351 delta-MyPy boundary repair candidate
+
+Protected CI on exact PR #4351 head
+`fe463b5503a8c7b599a329da18bb690d008871cd` exposed a delta-root-dependent
+typing boundary in `write_regional_surface_plan_request_atomic`. The CI profile
+uses `MYPYPATH=src:src/python/src` and `--follow-imports=skip`, so the imported
+atomic writer resolves as `Any` when it is not itself a MyPy root. A typed local
+now preserves the declared Boolean return without reintroducing the cast that
+becomes redundant when both modules are roots. Runtime validation, atomic file
+semantics, canonical bytes, UI behavior, and physics are unchanged.
+
+This is a local no-publish repair candidate. It must propagate normally through
+descendants #4352, #4353, and #4354 after exact-head review; protected CI,
+review, dependency ordering, and release remain open.
+
+
 ## 2026-08-11 regional execution current-parent reconciliation candidate
 
 The clean `feat/4271-regional-execution-binding` worktree normally merges

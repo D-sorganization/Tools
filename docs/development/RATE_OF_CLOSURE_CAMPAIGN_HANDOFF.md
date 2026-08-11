@@ -1,6 +1,20 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
 
+## 2026-08-11 PR #4351 delta-MyPy boundary repair candidate
+
+- Exact PR #4351 head `fe463b5503a8c7b599a329da18bb690d008871cd`
+  fails the protected changed-file MyPy profile because
+  `--follow-imports=skip` makes the imported atomic writer `Any` at this root.
+- The regional plan writer now assigns that call to an explicitly typed local
+  before returning it. This remains valid when the helper is also a MyPy root,
+  avoiding both `no-any-return` and a conditionally redundant cast.
+- No request bytes, validation, cancellation behavior, atomic persistence,
+  UI behavior, or physics changes. This is a local no-publish candidate;
+  descendants #4352/#4353/#4354 still require ordered propagation and their
+  own protected exact-head evidence.
+
+
 ## 2026-08-11 regional execution current-parent reconciliation candidate
 
 - The clean `feat/4271-regional-execution-binding` worktree normally merges

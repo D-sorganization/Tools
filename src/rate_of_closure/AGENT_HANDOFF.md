@@ -1,6 +1,21 @@
 # AGENT_HANDOFF — rate_of_closure
 
 
+## 2026-08-11 PR #4351 delta-MyPy boundary repair candidate
+
+Exact PR #4351 head `fe463b5503a8c7b599a329da18bb690d008871cd`
+is runtime-correct but fails the protected changed-file MyPy profile: with
+`--follow-imports=skip`, the imported atomic writer is `Any`, so returning its
+call directly violates the adapter's declared `bool` contract. An explicitly
+typed local records that contract without a cast, remaining clean whether or
+not the helper is included as another MyPy root. No persistence, validation,
+wire, UI, or physics behavior changes.
+
+This local candidate is not protected or published. It must be reviewed and
+propagated in order through #4352, #4353, and #4354 before those descendants
+can rely on the repair.
+
+
 ## 2026-08-11 regional execution current-parent reconciliation candidate
 
 The clean `feat/4271-regional-execution-binding` worktree normally merges

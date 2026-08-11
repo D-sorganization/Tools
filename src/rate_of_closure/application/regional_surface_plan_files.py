@@ -41,9 +41,13 @@ def write_regional_surface_plan_request_atomic(
         return False
     if type(request) is not GroundRegionalMaterialPlanRequest:
         raise TypeError("request must be an exact GroundRegionalMaterialPlanRequest")
-    return write_utf8_text_atomic(
+    # The protected delta gate skips imported modules, so annotate this local
+    # boundary explicitly without a cast that becomes redundant when the
+    # helper is included in the same MyPy root set.
+    write_succeeded: bool = write_utf8_text_atomic(
         request.to_json(), destination, document_name="regional surface plan"
     )
+    return write_succeeded
 
 
 __all__ = [
