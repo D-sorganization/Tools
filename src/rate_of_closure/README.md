@@ -94,6 +94,17 @@ assembly properties. Partial CG offsets and the shaft-axis scalar remain
 labeled `evidence_only`; they are never emitted as substitute tensor or CG
 values.
 
+Both Club panels also expose **Import Assembly Binding JSON**. The versioned
+`rate_of_closure.club_assembly_binding/1` document must match the exact selected
+spec and embedded shared `golf_club.ClubAssembly` by deterministic SHA-256
+identity. Import additionally validates the unique head, head mass, SI units,
+component transform, complete physical tensors, and a qualified measured,
+manufacturer, CAD-integrated, or engineering-analysis source declaration.
+Only a valid binding makes complete head and assembled-club mass properties
+available in the exported sidecar; any identity-defining Club-panel edit clears
+it. World-from-head attitude remains unavailable and is never inferred. The
+repository's binding fixture is synthetic test evidence, not manufacturer data.
+
 ## Build a Standalone Executable
 
 Users can package the explorer and experiment without a Python

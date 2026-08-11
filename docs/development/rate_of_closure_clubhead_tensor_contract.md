@@ -100,9 +100,28 @@ full symmetric CG tensor, world-from-head attitude, and assembly mass
 properties unavailable. The browser rejects an invalid SHA-256 result, and
 both surfaces validate the selected inputs before serialization.
 
-The shared `golf_club.ClubAssembly` domain can carry validated assembly mass,
-CG, full tensor, frames, and component transforms, but no such assembly is
-currently bound to a Rate of Closure `ClubSpec`. The sidecar therefore does not
-construct one from default shaft/grip masses or the legacy scalar composition.
-The remaining integration must establish an explicit selected-spec ↔ assembly
-identity and provenance record before assembly values can become available.
+The shared `golf_club.ClubAssembly` domain carries validated component and
+assembly mass, CG, full tensors, frames, and component transforms. The strict
+`rate_of_closure.club_assembly_binding/1` import contract now binds one such
+assembly to one exact selected `ClubSpec` identity. Both identities are SHA-256
+digests of deterministic, cross-language canonical bytes; a golden vector pins
+the Python and browser encoders. The binding also identifies the unique head
+component, supplies the explicit selected-head-to-component transform, declares
+SI units, and preserves a measured, manufacturer, CAD-integrated, or qualified-
+analysis source-authority record. Duplicate JSON fields, unknown or absent
+fields, payloads over 4 MiB, unsupported authority classes, nonphysical tensors,
+head-mass mismatch, frame mismatch, and either identity mismatch fail closed.
+
+After that complete validation, PyQt and React engineering-sidecar export can
+mark the head CG, head full CG tensor, and assembled-club mass properties
+available in their explicitly named frames. Any identity-defining Club-panel
+edit clears the retained binding. The source declaration is preserved rather
+than independently certified, and the included driver fixture is synthetic
+qualified-analysis test data—not a manufacturer measurement or production
+club definition. No default shaft/grip assembly, uniform-density mesh tensor,
+CAD density, or missing transform is inferred.
+
+This binding does not satisfy the dynamic world-attitude requirement. The
+sidecar continues to mark `world_from_head` unavailable, and the simulation
+does not populate `clubhead_moi_tensor`, until a separately validated complete
+world-from-head orientation is supplied at impact.

@@ -2,10 +2,21 @@
 
 import { type ClubSpec } from "./club";
 import {
+  assertBindingMatchesSpec,
+  type ClubAssemblyBinding,
+} from "./clubAssemblyBinding";
+import {
   browserArtifactDownloadRuntime,
   downloadClubArtifact,
   type ClubArtifactDownloadRuntime,
 } from "./clubArtifactDownload";
+import {
+  BINDING_AUTHORITY_LIMITATION,
+  bindingProvenance,
+  boundCapabilityContract,
+  boundFrameContract,
+  boundMassProperties,
+} from "./clubEngineeringBinding";
 import {
   defaultClubheadStlFilename,
   serializeClubheadStl,
@@ -70,12 +81,7 @@ function assertMassPropertyEvidence(spec: ClubSpec): void {
   assertFiniteRange(spec.headMassKg, "headMassKg", 0.1, 0.5);
   assertFiniteRange(spec.cgDepthM, "cgDepthM", 0, 0.08);
   assertFiniteRange(spec.cgHeightM, "cgHeightM", 0, 0.06);
-  assertFiniteRange(
-    spec.moiAboutShaftKgM2,
-    "moiAboutShaftKgM2",
-    5e-5,
-    2e-3,
-  );
+  assertFiniteRange(spec.moiAboutShaftKgM2, "moiAboutShaftKgM2", 5e-5, 2e-3);
 }
 
 function sortedJson(value: JsonValue): JsonValue {
@@ -196,25 +202,40 @@ function capabilityContract(): JsonValue {
 export async function buildClubheadEngineeringSidecar(
   spec: ClubSpec,
   runtime: ClubheadDigestRuntime = { sha256Hex: browserSha256Hex },
+  binding?: ClubAssemblyBinding,
 ): Promise<JsonValue> {
   assertMassPropertyEvidence(spec);
+  if (binding) assertBindingMatchesSpec(binding, spec);
   const stlPayload = serializeClubheadStl(spec);
   const sha256 = await runtime.sha256Hex(stlPayload);
   if (!SHA256_HEX.test(sha256)) {
     throw new Error("mesh digest must be lowercase SHA-256");
   }
   return {
-    capabilities: capabilityContract(),
+    capabilities: binding
+      ? (boundCapabilityContract() as JsonValue)
+      : capabilityContract(),
     format: CLUBHEAD_ENGINEERING_FORMAT,
-    frames: frameContract(),
+    frames: binding
+      ? (boundFrameContract(
+          binding,
+          frameContract() as Record<string, unknown>,
+        ) as JsonValue)
+      : frameContract(),
     limitations: [
       "The representative render mesh is not a measured or density-integrated inertia CAD model.",
       "Two datum-relative CG offsets do not define a three-coordinate CG in the declared head frame.",
       "One shaft-axis scalar moment cannot determine a symmetric tensor about the head CG.",
       "A face normal or static loft does not define the complete world-from-head attitude.",
-      "No validated shared golf-club assembly record is connected to this selected club specification.",
+      ...(binding
+        ? [BINDING_AUTHORITY_LIMITATION]
+        : [
+            "No validated shared golf-club assembly record is connected to this selected club specification.",
+          ]),
     ],
-    mass_properties: massProperties(spec),
+    mass_properties: binding
+      ? (boundMassProperties(binding) as JsonValue)
+      : massProperties(spec),
     mesh: {
       byte_length: stlPayload.byteLength,
       companion_filename: defaultClubheadStlFilename(spec),
@@ -232,12 +253,16 @@ export async function buildClubheadEngineeringSidecar(
     },
     provenance: {
       application: "Rate of Closure Impact Explorer",
-      mass_property_authority:
-        "selected ClubSpec fields only; no measured or CAD-integrated tensor source",
+      mass_property_authority: binding
+        ? "validated ClubAssembly binding"
+        : "selected ClubSpec fields only; no measured or CAD-integrated tensor source",
       selected_spec: {
         kind: "rate_of_closure.club.ClubSpec",
         name: spec.name,
       },
+      ...(binding
+        ? { assembly_binding: bindingProvenance(binding) as JsonValue }
+        : {}),
     },
     subject: {
       kind: "selected_representative_clubhead",
@@ -250,8 +275,13 @@ export async function buildClubheadEngineeringSidecar(
 export async function serializeClubheadEngineeringSidecar(
   spec: ClubSpec,
   runtime: ClubheadDigestRuntime = { sha256Hex: browserSha256Hex },
+  binding?: ClubAssemblyBinding,
 ): Promise<string> {
-  const document = await buildClubheadEngineeringSidecar(spec, runtime);
+  const document = await buildClubheadEngineeringSidecar(
+    spec,
+    runtime,
+    binding,
+  );
   return `${JSON.stringify(sortedJson(document), null, 2)}\n`;
 }
 
@@ -267,9 +297,14 @@ export function defaultClubheadEngineeringFilename(spec: ClubSpec): string {
 export async function downloadClubheadEngineeringSidecar(
   spec: ClubSpec,
   runtime: ClubheadEngineeringRuntime = browserEngineeringRuntime(),
+  binding?: ClubAssemblyBinding,
 ): Promise<string> {
   const filename = defaultClubheadEngineeringFilename(spec);
-  const payload = await serializeClubheadEngineeringSidecar(spec, runtime);
+  const payload = await serializeClubheadEngineeringSidecar(
+    spec,
+    runtime,
+    binding,
+  );
   downloadClubArtifact(
     payload,
     CLUBHEAD_ENGINEERING_MEDIA_TYPE,

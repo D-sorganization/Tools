@@ -5,6 +5,22 @@
 
 ## 2026-08-10 Authoritative Transfer Snapshot
 
+Local branch `feat/4111-club-assembly-binding` starts from exact published
+parent `66da8f024450ad5e7940a8005227f3d6612a85d8` and remains **not released**.
+The parent contains no campaign handoff at
+`docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md` and no release manifest
+at `docs/release/rate_of_closure_campaign.v1.json`; this continuation therefore
+does not create release state or claim delivery. It updates this canonical Rate
+handoff, the root handoff, README/specification, and tensor contract. Fresh
+bounded evidence is 14 passing Python binding/legacy-sidecar tests, 5 passing
+browser binding tests, two previously passing focused PyQt import/export/error
+tests, clean focused Ruff, and clean CI-pinned Mypy 1.13 across five changed
+sources. A three-file React run, the final TypeScript check after its
+ArrayBuffer typing repair, and an earlier full GUI run timed out without failure
+output on the overloaded workstation. TypeScript/ESLint/build are therefore
+unverified on this local head and the overloaded broad commands should not be
+repeated.
+
 Issue #4111's selected-club export gap is now implemented: the mesh-defining
 subset of the current `ClubSpec`—type/style, head mass, loft, and optional
 curvature—serializes through the deterministic parametric generator; name,
@@ -28,12 +44,22 @@ transform, and carries the selected head mass with explicit representative-
 input provenance. Partial CG offsets and the shaft-axis scalar are
 `evidence_only`; the complete CG, full tensor, world attitude, and assembly
 properties remain `unavailable` with no substitute value. The shared
-`golf_club.ClubAssembly` contract is authoritative when supplied, but no
-validated assembly is bound to this UI selection yet.
-Local implementation-head evidence is green: 511 Python/PyQt tests, 328 React
-tests, React type-check/ESLint/build, and changed-file Ruff/format/MyPy. The
-React sidecar test imports the canonical Python golden document and compares
-the complete parsed record, including the portable companion filename.
+`golf_club.ClubAssembly` contract is authoritative when supplied. The new
+`rate_of_closure.club_assembly_binding/1` boundary binds it to the exact selected
+spec only after cross-language canonical SHA-256 identities, qualified source
+authority, SI units, one head, exact head mass, explicit frame transform, and
+complete physical tensors validate. Both panels provide a discoverable import,
+clear it on an identity-defining edit, and expose complete head/assembly mass
+properties only in a subsequent bound sidecar. Duplicate fields, oversized
+documents, absent/unknown fields, and all identity/frame/property mismatches
+fail closed. The driver golden is synthetic qualified-analysis test data, not
+manufacturer data. Source authority is preserved but not independently
+certified; dynamic world attitude and simulation tensor injection remain
+unavailable rather than inferred.
+
+Local evidence for this continuation must be read from the latest entry below;
+the earlier 511 Python/PyQt and 328 React counts describe the parent sidecar
+head, not this unpushed binding continuation.
 
 The tool now exists on the #4119 branch and its large descendant stack, but it
 is still not released to Tools `main`. PR #4119 remains the dependency root.

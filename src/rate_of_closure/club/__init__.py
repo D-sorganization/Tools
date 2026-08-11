@@ -19,6 +19,20 @@ test_club.py``.
 
 from __future__ import annotations
 
+from .assembly_binding import (
+    CLUB_ASSEMBLY_BINDING_FORMAT,
+    CLUB_SPEC_IDENTITY_FORMAT,
+    ClubAssemblyBinding,
+    ClubAssemblySourceAuthority,
+    MassPropertyAuthorityKind,
+    build_club_assembly_binding,
+    club_assembly_identity,
+    club_assembly_identity_payload,
+    club_spec_identity,
+    club_spec_identity_payload,
+    parse_club_assembly_binding,
+    serialize_club_assembly_binding,
+)
 from .engineering_sidecar import (
     CLUBHEAD_ENGINEERING_FORMAT,
     CLUBHEAD_ENGINEERING_MEDIA_TYPE,
@@ -46,21 +60,31 @@ from .types import ClubSpec, ClubType, HeadStyle
 from .volumetrics import CogReport, head_cog, is_watertight, mesh_volume_centroid
 
 __all__ = [
-    "CLUB_LIBRARY",
+    "CLUB_ASSEMBLY_BINDING_FORMAT",
+    "CLUB_SPEC_IDENTITY_FORMAT",
     "CLUBHEAD_ENGINEERING_FORMAT",
     "CLUBHEAD_ENGINEERING_MEDIA_TYPE",
+    "CLUB_LIBRARY",
     "REFERENCE_HEAD_MASS_KG",
+    "ClubAssemblyBinding",
+    "ClubAssemblySourceAuthority",
     "ClubInertia",
     "ClubSpec",
     "ClubType",
     "CogReport",
     "HeadStyle",
-    "build_parametric_head",
+    "MassPropertyAuthorityKind",
+    "build_club_assembly_binding",
     "build_clubhead_engineering_sidecar",
+    "build_parametric_head",
+    "club_assembly_identity",
+    "club_assembly_identity_payload",
     "club_inertia",
     "club_names",
-    "default_clubhead_stl_filename",
+    "club_spec_identity",
+    "club_spec_identity_payload",
     "default_clubhead_engineering_filename",
+    "default_clubhead_stl_filename",
     "face_center_point",
     "face_normal_at_offset",
     "face_sagitta",
@@ -70,8 +94,10 @@ __all__ = [
     "is_watertight",
     "mesh_volume_centroid",
     "parametric_head_mesh",
-    "serialize_clubhead_stl",
+    "parse_club_assembly_binding",
+    "serialize_club_assembly_binding",
     "serialize_clubhead_engineering_sidecar",
+    "serialize_clubhead_stl",
     "write_clubhead_engineering_sidecar_atomic",
     "write_clubhead_stl_atomic",
 ]

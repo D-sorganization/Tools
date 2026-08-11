@@ -5,6 +5,25 @@
 
 ## 2026-08-10 Authoritative Transfer Snapshot
 
+- Local continuation `feat/4111-club-assembly-binding` is based exactly on the
+  published sidecar parent `66da8f024450ad5e7940a8005227f3d6612a85d8` and is
+  **not released**. It adds the validated selected-spec ↔ shared-assembly
+  boundary described below without changing the parent or writing to GitHub.
+  On that exact parent, neither
+  `docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md` nor
+  `docs/release/rate_of_closure_campaign.v1.json` exists, so this commit does
+  not invent a release manifest or claim campaign delivery. The canonical root
+  and Rate handoffs, Rate README/specification, and tensor-contract document are
+  updated instead. Fresh bounded evidence: 14 Python binding/legacy-sidecar
+  contract tests and 5 browser binding tests pass; the two focused PyQt import,
+  export, mismatch, and invalidation tests passed before the final documentation
+  and typing-only adjustments. CI-pinned Mypy 1.13 is clean across the five
+  changed Python sources, and focused Ruff lint/format are clean. A three-file
+  React test command, the final TypeScript check after its ArrayBuffer typing
+  repair, and an earlier full GUI command timed out without failure output under
+  workstation load. Final TypeScript/ESLint/build status is therefore
+  unverified on this local head; do not repeat those overloaded broad commands.
+
 - Issue #4111 now has a tested mesh-defining-`ClubSpec`-subset → deterministic
   binary STL path and discoverable PyQt and React export actions. The generator
   uses type/style, head mass, loft, and face curvature—not name, length, lie,
@@ -24,12 +43,17 @@
   Partial CG offsets and the shaft-axis scalar are evidence only; complete CG,
   full symmetric CG tensor, world attitude, and assembly properties fail closed
   as unavailable. No default-mass assembly or uniform-density mesh tensor is
-  inferred. A validated shared `golf_club.ClubAssembly` still must be explicitly
-  bound to the selected spec before authoritative assembly data can be emitted.
-  Local release evidence on the implementation head: 511 Rate Python/PyQt tests
-  and 328 React tests pass; React type-check, ESLint, production build, changed-
-  file Ruff/format, and changed-source MyPy also pass. The React contract test
-  imports the Python golden JSON, so whole-document parity is executable.
+  inferred. The strict `rate_of_closure.club_assembly_binding/1` continuation
+  now provides that explicit boundary: deterministic cross-language spec and
+  assembly identities, qualified authority, SI units, unique-head/exact-mass,
+  frame-transform, and physical-tensor validation precede availability. PyQt
+  and React provide discoverable import and clear a retained binding on an
+  identity-defining selection edit. Duplicate/oversized/unknown/mismatched data
+  fails closed. The golden assembly is synthetic qualified-analysis test data,
+  not manufacturer data; authority is preserved but not certified. World
+  attitude and simulation tensor injection remain unavailable. The parent
+  sidecar head's 511 Python/PyQt and 328 React counts do not cover this local,
+  unpushed continuation; use its newest focused evidence entry below.
 - The protected Rate of Closure release still starts at Tools PR **#4119**
   (`feat/impact-simulation-platform`). Every later Rate/Wedge/D-plane,
   workspace, variation, wind, camera, and ground-model PR depends on this

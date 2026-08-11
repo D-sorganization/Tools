@@ -10,6 +10,7 @@ from typing import Any
 from rate_of_closure._contracts import ensure, require
 
 from ._atomic_file import write_bytes_atomic
+from .assembly_binding import ClubAssemblyBinding
 from .stl_export import default_clubhead_stl_filename, serialize_clubhead_stl
 from .types import ClubSpec
 
@@ -68,6 +69,18 @@ def _capabilities() -> dict[str, Any]:
     }
 
 
+def _bound_capabilities() -> dict[str, Any]:
+    """Return capabilities unlocked by a validated assembly binding."""
+    capabilities = _capabilities()
+    for name in (
+        "assembly_mass_properties",
+        "head_center_of_mass",
+        "head_full_inertia_tensor",
+    ):
+        capabilities[name] = {"status": "available"}
+    return capabilities
+
+
 def _frames() -> dict[str, Any]:
     """Declare the mesh/head identity transform and missing world attitude."""
     return {
@@ -99,6 +112,25 @@ def _frames() -> dict[str, Any]:
             "status": "unavailable",
         },
     }
+
+
+def _bound_frames(binding: ClubAssemblyBinding) -> dict[str, Any]:
+    """Add explicit head-component and assembly frames to the base ledger."""
+    frames = _frames()
+    transform = binding.head_component_from_selected_head
+    frames["head_component_from_head"] = {
+        "from_frame_id": transform.from_frame_id,
+        "rotation": [list(row) for row in transform.rotation],
+        "status": "available",
+        "to_frame_id": transform.to_frame_id,
+        "translation_m": list(transform.translation_m),
+    }
+    frames["assembly"] = {
+        "frame_id": binding.assembly.frame_id,
+        "length_unit": "m",
+        "status": "available",
+    }
+    return frames
 
 
 def _head_mass_properties(spec: ClubSpec) -> dict[str, Any]:
@@ -149,6 +181,59 @@ def _head_mass_properties(spec: ClubSpec) -> dict[str, Any]:
     }
 
 
+def _bound_mass_properties(binding: ClubAssemblyBinding) -> dict[str, Any]:
+    """Expose complete properties only from the validated shared assembly."""
+    head = binding.head_properties_in_selected_frame()
+    assembly = binding.assembly.mass_properties
+    provenance = "validated_club_assembly_binding"
+    return {
+        "assembly": {
+            "center_of_mass_m": list(assembly.center_of_mass_m),
+            "component_ids": list(assembly.component_ids),
+            "frame_id": assembly.frame_id,
+            "inertia_tensor_at_com_kg_m2": [
+                list(row) for row in assembly.inertia_at_com_kg_m2
+            ],
+            "provenance": provenance,
+            "status": "available",
+            "total_mass_kg": assembly.total_mass_kg,
+        },
+        "head": {
+            "center_of_mass_m": {
+                "frame_id": head.frame_id,
+                "provenance": provenance,
+                "status": "available",
+                "value": list(head.center_of_mass_m),
+            },
+            "inertia_tensor_at_com_kg_m2": {
+                "about": "head_center_of_mass",
+                "frame_id": head.frame_id,
+                "provenance": provenance,
+                "status": "available",
+                "value": [list(row) for row in head.inertia_at_com_kg_m2],
+            },
+            "mass_kg": {
+                "provenance": provenance,
+                "status": "available",
+                "value": head.mass_kg,
+            },
+        },
+    }
+
+
+def _binding_provenance(binding: ClubAssemblyBinding) -> dict[str, Any]:
+    """Return identities and source authority without copying the assembly."""
+    authority = binding.authority
+    return {
+        "assembly_id": binding.assembly.assembly_id,
+        "assembly_sha256": binding.assembly_sha256,
+        "binding_format": "rate_of_closure.club_assembly_binding/1",
+        "head_component_id": binding.head_component_id,
+        "selected_spec_sha256": binding.selected_spec_sha256,
+        "source_authority": authority.to_json_dict(),
+    }
+
+
 def _mesh_record(spec: ClubSpec, stl_payload: bytes) -> dict[str, Any]:
     """Identify the exact companion STL and its shape-defining inputs."""
     return {
@@ -168,7 +253,9 @@ def _mesh_record(spec: ClubSpec, stl_payload: bytes) -> dict[str, Any]:
     }
 
 
-def build_clubhead_engineering_sidecar(spec: ClubSpec) -> dict[str, Any]:
+def build_clubhead_engineering_sidecar(
+    spec: ClubSpec, binding: ClubAssemblyBinding | None = None
+) -> dict[str, Any]:
     """Build a strict sidecar without inferring unavailable mass properties.
 
     The selected :class:`ClubSpec` authoritatively supplies only its declared
@@ -177,11 +264,17 @@ def build_clubhead_engineering_sidecar(spec: ClubSpec) -> dict[str, Any]:
     Their capability records deliberately omit a substitutable ``value``.
     """
     require(isinstance(spec, ClubSpec), "spec must be a ClubSpec")
+    if binding is not None:
+        require(
+            isinstance(binding, ClubAssemblyBinding),
+            "binding must be a ClubAssemblyBinding or None",
+        )
+        binding.assert_matches(spec)
     stl_payload = serialize_clubhead_stl(spec)
     document: dict[str, Any] = {
-        "capabilities": _capabilities(),
+        "capabilities": _bound_capabilities() if binding else _capabilities(),
         "format": CLUBHEAD_ENGINEERING_FORMAT,
-        "frames": _frames(),
+        "frames": _bound_frames(binding) if binding else _frames(),
         "limitations": [
             (
                 "The representative render mesh is not a measured or "
@@ -199,24 +292,48 @@ def build_clubhead_engineering_sidecar(spec: ClubSpec) -> dict[str, Any]:
                 "A face normal or static loft does not define the complete "
                 "world-from-head attitude."
             ),
-            (
-                "No validated shared golf-club assembly record is connected to "
-                "this selected club specification."
+            *(
+                []
+                if binding
+                else [
+                    (
+                        "No validated shared golf-club assembly record is connected "
+                        "to this selected club specification."
+                    )
+                ]
+            ),
+            *(
+                [
+                    (
+                        "The imported source-authority declaration is preserved but "
+                        "is not independently certified by this application."
+                    )
+                ]
+                if binding
+                else []
             ),
         ],
-        "mass_properties": {
-            "assembly": {
-                "reason": _ASSEMBLY_UNAVAILABLE,
-                "status": "unavailable",
-            },
-            "head": _head_mass_properties(spec),
-        },
+        "mass_properties": (
+            _bound_mass_properties(binding)
+            if binding
+            else {
+                "assembly": {
+                    "reason": _ASSEMBLY_UNAVAILABLE,
+                    "status": "unavailable",
+                },
+                "head": _head_mass_properties(spec),
+            }
+        ),
         "mesh": _mesh_record(spec, stl_payload),
         "provenance": {
             "application": "Rate of Closure Impact Explorer",
             "mass_property_authority": (
-                "selected ClubSpec fields only; no measured or CAD-integrated "
-                "tensor source"
+                "validated ClubAssembly binding"
+                if binding
+                else (
+                    "selected ClubSpec fields only; no measured or CAD-integrated "
+                    "tensor source"
+                )
             ),
             "selected_spec": {
                 "kind": "rate_of_closure.club.ClubSpec",
@@ -228,18 +345,23 @@ def build_clubhead_engineering_sidecar(spec: ClubSpec) -> dict[str, Any]:
             "name": spec.name,
         },
     }
+    if binding:
+        document["provenance"]["assembly_binding"] = _binding_provenance(binding)
     head = document["mass_properties"]["head"]
-    ensure("value" not in head["center_of_mass_m"], "unavailable CG has no value")
-    ensure(
-        "value" not in head["inertia_tensor_at_com_kg_m2"],
-        "unavailable tensor has no value",
-    )
+    if binding is None:
+        ensure("value" not in head["center_of_mass_m"], "unavailable CG has no value")
+        ensure(
+            "value" not in head["inertia_tensor_at_com_kg_m2"],
+            "unavailable tensor has no value",
+        )
     return document
 
 
-def serialize_clubhead_engineering_sidecar(spec: ClubSpec) -> bytes:
+def serialize_clubhead_engineering_sidecar(
+    spec: ClubSpec, binding: ClubAssemblyBinding | None = None
+) -> bytes:
     """Serialize the deterministic versioned sidecar as UTF-8 JSON."""
-    document = build_clubhead_engineering_sidecar(spec)
+    document = build_clubhead_engineering_sidecar(spec, binding)
     payload = (
         json.dumps(
             document,
@@ -254,7 +376,13 @@ def serialize_clubhead_engineering_sidecar(spec: ClubSpec) -> bytes:
     return payload
 
 
-def write_clubhead_engineering_sidecar_atomic(spec: ClubSpec, path: str | Path) -> Path:
+def write_clubhead_engineering_sidecar_atomic(
+    spec: ClubSpec,
+    path: str | Path,
+    binding: ClubAssemblyBinding | None = None,
+) -> Path:
     """Atomically replace ``path`` with the selected head's JSON sidecar."""
     require(isinstance(spec, ClubSpec), "spec must be a ClubSpec")
-    return write_bytes_atomic(serialize_clubhead_engineering_sidecar(spec), path)
+    return Path(
+        write_bytes_atomic(serialize_clubhead_engineering_sidecar(spec, binding), path)
+    )

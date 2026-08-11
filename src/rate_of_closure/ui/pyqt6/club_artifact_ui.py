@@ -5,14 +5,17 @@ from __future__ import annotations
 import logging
 from collections.abc import Callable
 from dataclasses import dataclass, replace
+from functools import partial
 from pathlib import Path
 
 from PyQt6.QtWidgets import QFileDialog, QLabel, QMessageBox, QWidget
 
 from rate_of_closure.club import (
+    ClubAssemblyBinding,
     ClubSpec,
     default_clubhead_engineering_filename,
     default_clubhead_stl_filename,
+    parse_club_assembly_binding,
     write_clubhead_engineering_sidecar_atomic,
     write_clubhead_stl_atomic,
 )
@@ -45,6 +48,33 @@ _ENGINEERING = _ArtifactExport(
     file_filter="Engineering JSON (*.engineering.json *.json);;All files (*)",
     writer=write_clubhead_engineering_sidecar_atomic,
 )
+
+
+def import_club_assembly_binding(
+    parent: QWidget, spec: ClubSpec, status: QLabel
+) -> ClubAssemblyBinding | None:
+    """Prompt for and validate one binding against the exact selected spec."""
+    path, _selected = QFileDialog.getOpenFileName(
+        parent,
+        "Import Club Assembly Binding",
+        "",
+        "Club assembly binding (*.club-assembly.json *.json);;All files (*)",
+    )
+    if not path:
+        return None
+    try:
+        binding = parse_club_assembly_binding(spec, Path(path).read_bytes())
+    except (OSError, TypeError, ValueError) as exc:
+        logger.warning("club assembly binding import failed: %s", exc)
+        status.setText("Assembly binding import failed.")
+        QMessageBox.warning(parent, "Assembly Binding Import Failed", str(exc))
+        return None
+    authority = binding.authority
+    status.setText(
+        f"Assembly binding loaded: {binding.assembly.assembly_id} — "
+        f"{authority.kind.value}; {authority.document_id} rev {authority.revision}"
+    )
+    return binding
 
 
 def _export_artifact(
@@ -81,15 +111,25 @@ def export_clubhead_stl(parent: QWidget, spec: ClubSpec, status: QLabel) -> bool
 
 
 def export_clubhead_engineering_sidecar(
-    parent: QWidget, spec: ClubSpec, status: QLabel
+    parent: QWidget,
+    spec: ClubSpec,
+    status: QLabel,
+    binding: ClubAssemblyBinding | None = None,
 ) -> bool:
     """Prompt for and atomically write the selected engineering JSON."""
+    writer: ArtifactWriter = partial(
+        write_clubhead_engineering_sidecar_atomic, binding=binding
+    )
     return _export_artifact(
         parent,
         spec,
         status,
-        replace(_ENGINEERING, writer=write_clubhead_engineering_sidecar_atomic),
+        replace(_ENGINEERING, writer=writer),
     )
 
 
-__all__ = ["export_clubhead_engineering_sidecar", "export_clubhead_stl"]
+__all__ = [
+    "export_clubhead_engineering_sidecar",
+    "export_clubhead_stl",
+    "import_club_assembly_binding",
+]
