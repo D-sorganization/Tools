@@ -47,12 +47,12 @@ def _exists(rel_path: str) -> bool:
 @pytest.mark.unit
 def test_2662_tab_context_menus() -> None:
     """#2662: Tab workflow controls moved to right-click menus."""
-    assert (SIDEBAR / "tab_context_menu.py").is_file(), (
-        "tab_context_menu.py missing — #2662 may be phantom-closed"
-    )
-    assert (SIDEBAR / "tab_context_menu.py").stat().st_size > 500, (
-        "tab_context_menu.py appears to be a stub (< 500 bytes)"
-    )
+    assert (
+        SIDEBAR / "tab_context_menu.py"
+    ).is_file(), "tab_context_menu.py missing — #2662 may be phantom-closed"
+    assert (
+        SIDEBAR / "tab_context_menu.py"
+    ).stat().st_size > 500, "tab_context_menu.py appears to be a stub (< 500 bytes)"
 
 
 @pytest.mark.unit
@@ -141,13 +141,13 @@ def test_2673_jupyter_tab_phased_implementation() -> None:
     """
     # The phased implementation should have a jupyter_tab subpackage
     jupyter_dir = SIDEBAR / "jupyter_tab"
-    assert jupyter_dir.is_dir(), (
-        "jupyter_tab/ directory missing — phased Jupyter implementation not landed"
-    )
+    assert (
+        jupyter_dir.is_dir()
+    ), "jupyter_tab/ directory missing — phased Jupyter implementation not landed"
     assert (jupyter_dir / "widget.py").is_file(), "jupyter_tab/widget.py missing"
-    assert (jupyter_dir / "availability.py").is_file(), (
-        "jupyter_tab/availability.py missing (soft-dependency guard)"
-    )
+    assert (
+        jupyter_dir / "availability.py"
+    ).is_file(), "jupyter_tab/availability.py missing (soft-dependency guard)"
 
 
 @pytest.mark.unit
@@ -182,17 +182,17 @@ def test_2675_shared_calculator_workspace_contract() -> None:
     workspace_contract = (
         REPO_ROOT / "src" / "shared" / "python" / "sidekick" / "workspace_contract.py"
     )
-    assert workspace_contract.is_file(), (
-        "workspace_contract.py missing — #2675 shared contract not implemented"
-    )
+    assert (
+        workspace_contract.is_file()
+    ), "workspace_contract.py missing — #2675 shared contract not implemented"
 
 
 @pytest.mark.unit
 def test_2676_host_integration() -> None:
     """#2676: Proven shared host integration across downstream consumers."""
-    assert (INTEGRATION / "test_sidekick_host_integration.py").is_file(), (
-        "Integration test file missing for #2676"
-    )
+    assert (
+        INTEGRATION / "test_sidekick_host_integration.py"
+    ).is_file(), "Integration test file missing for #2676"
     content = (INTEGRATION / "test_sidekick_host_integration.py").read_text(
         encoding="utf-8"
     )
@@ -251,9 +251,9 @@ def test_2682_symbolic_solver() -> None:
 
     Being implemented on branch fix/issue-2934-symbolic-solver.
     """
-    assert (SIDEKICK / "symbolic_engine.py").is_file(), (
-        "symbolic_engine.py missing — #2682 not yet fully landed"
-    )
+    assert (
+        SIDEKICK / "symbolic_engine.py"
+    ).is_file(), "symbolic_engine.py missing — #2682 not yet fully landed"
 
 
 @pytest.mark.unit
@@ -276,9 +276,9 @@ def test_2684_rotation_converter_tab() -> None:
     """
     assert (SIDEBAR / "default_tabs.py").is_file()
     content = (SIDEBAR / "default_tabs.py").read_text(encoding="utf-8")
-    assert "rotation" in content.lower() or "ROTATION_CONVERTER" in content, (
-        "default_tabs.py does not appear to include Rotation Converter tab"
-    )
+    assert (
+        "rotation" in content.lower() or "ROTATION_CONVERTER" in content
+    ), "default_tabs.py does not appear to include Rotation Converter tab"
 
 
 @pytest.mark.unit
@@ -396,6 +396,6 @@ def test_epic_2661_implementation_summary() -> None:
         UserWarning,
         stacklevel=2,
     )
-    assert len(present) + len(missing_core) == len(files_to_check), (
-        "Epic #2661 summary inventory lost or duplicated file entries"
-    )
+    assert len(present) + len(missing_core) == len(
+        files_to_check
+    ), "Epic #2661 summary inventory lost or duplicated file entries"
