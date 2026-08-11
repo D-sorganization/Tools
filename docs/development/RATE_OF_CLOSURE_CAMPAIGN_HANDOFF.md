@@ -1,5 +1,16 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 regional request I/O protected publication
+
+- Branch `feat/4274-regional-plan-io` is published normally as a draft child of
+  exact PR #4339 head `cbb9c0a6bdc6a50f59f7a661139b9d53e1892980`.
+- Reviewed implementation head
+  `d748e7a5ef3da5e6ce7737ff6829e0f14665fe97` includes canonical PyQt6/React
+  request import/export, safe-number parity, and bounded strict UTF-8 native
+  reads. This documentation-only publication commit changes no runtime code.
+- The assigned PR URL is recorded in the normal follow-up. Protected CI,
+  review, #4274, dependency ordering, integration, and release remain open.
+
 ## 2026-08-11 bounded regional request read follow-up
 
 Independent review of local safe-number commit
