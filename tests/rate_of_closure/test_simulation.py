@@ -70,6 +70,27 @@ class TestManualSwingSource:
 
 
 class TestPendulumSources:
+    def test_triple_pendulum_module_preserves_source_exports(self) -> None:
+        """The focused triple-pendulum module keeps legacy imports stable."""
+        from rate_of_closure.simulation import sources
+        from rate_of_closure.simulation.triple_pendulum import (
+            TriplePendulumParameters as ExtractedParameters,
+        )
+        from rate_of_closure.simulation.triple_pendulum import (
+            TriplePendulumSwing as ExtractedSwing,
+        )
+        from rate_of_closure.simulation.triple_pendulum import (
+            triple_derivatives as extracted_derivatives,
+        )
+        from rate_of_closure.simulation.triple_pendulum import (
+            triple_total_energy as extracted_total_energy,
+        )
+
+        assert sources.TriplePendulumParameters is ExtractedParameters
+        assert sources.TriplePendulumSwing is ExtractedSwing
+        assert sources.triple_derivatives is extracted_derivatives
+        assert sources.triple_total_energy is extracted_total_energy
+
     def test_make_source_covers_every_kind(self) -> None:
         for kind in SOURCE_KINDS:
             source = make_source(kind, _SCENARIO, duration=0.5)
