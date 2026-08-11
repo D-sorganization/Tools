@@ -288,6 +288,7 @@ def _validate_scenario(
     scenario: WindScenario,
     speed_mps: float,
     bearing_deg: float,
+    expected_provenance: str,
     name: str,
 ) -> None:
     expected = WindScenario.from_meteorological(speed_mps, bearing_deg)
@@ -300,16 +301,26 @@ def _validate_scenario(
         ),
         f"{name} does not agree with its wind trial",
     )
+    require(
+        scenario.provenance == expected_provenance
+        and scenario.shear_fraction_per_10m == 0.0
+        and scenario.turbulence_intensity_mps == 0.0
+        and scenario.seed == 0
+        and not scenario.gusts,
+        f"{name} does not agree with its deterministic scenario contract",
+    )
 
 
 # fmt: off
-def _validate_outcome(outcome: StrategyShotOutcome, trial: WindTrial) -> None:
+def _validate_outcome(
+    outcome: StrategyShotOutcome, trial: WindTrial, provenance: str
+) -> None:
     statuses = {item.key for item in WIND_STRATEGY_COHORTS}
     require(outcome.status in statuses, "unknown actual status")
     perfect = outcome.perfect_information
     require(perfect.status in statuses, "unknown perfect-information status")
-    _validate_scenario(outcome.true_wind, trial.true_speed_mps, trial.true_from_bearing_deg, "true wind")  # noqa: E501
-    _validate_scenario(outcome.estimated_wind, trial.estimated_speed_mps, trial.estimated_from_bearing_deg, "estimated wind")  # noqa: E501
+    _validate_scenario(outcome.true_wind, trial.true_speed_mps, trial.true_from_bearing_deg, f"{provenance}/true/trial-{trial.trial_index}", "true wind")  # noqa: E501
+    _validate_scenario(outcome.estimated_wind, trial.estimated_speed_mps, trial.estimated_from_bearing_deg, f"{provenance}/estimated/trial-{trial.trial_index}", "estimated wind")  # noqa: E501
     actual_values = (outcome.landing_forward_m, outcome.landing_right_m, outcome.miss_distance_m)  # noqa: E501
     perfect_values = (perfect.landing_forward_m, perfect.landing_right_m, perfect.miss_distance_m)  # noqa: E501
     _validate_simulation_result(outcome.status, actual_values, outcome.failure_reason, "actual outcome")  # noqa: E501
@@ -350,7 +361,7 @@ def _validate_outcomes(
         "analysis outcomes must cover every strategy and trial",
     )
     for outcome in analysis.outcomes:
-        _validate_outcome(outcome, trials[outcome.trial_index])
+        _validate_outcome(outcome, trials[outcome.trial_index], analysis.provenance)
     return dict(zip(keys, analysis.outcomes, strict=True))
 
 

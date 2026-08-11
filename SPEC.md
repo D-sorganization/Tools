@@ -26,51 +26,85 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.21                                    |
-| **Spec Version**        | 1.14.21                                    |
-| **Last Spec Update**    | 2026-08-10                                 |
+| **Current Version**     | 1.14.27                                    |
+| **Spec Version**        | 1.14.27                                    |
+| **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
-### 2026-08-10 PyQt moving-camera parent propagation
+### 2026-08-11 PyQt moving-camera current-parent repair
 
-- Draft PR #4303 retains base `fix/rate-mobile-tools-menu` and normally merges
-  exact current parent head `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`
-  into prior child head `36ed6bd64e68108028b8e0194851e801b15e08ad`
-  without rebasing, retargeting, rewriting, or force-pushing.
-- The shared moving-subject 2x zoom, tracking-enabled, Auto-Fit-enabled default
-  remains unchanged while responsive toolstrip menus and deterministic
-  workspace timestamp parsing propagate into the child.
-- Exact campaign evidence assertions continue to use short deterministic SHA
-  chunks, preserving the inherited Detect Secrets repair without changing its
-  scanner configuration or baseline.
+- Draft PR #4303 normally merges exact live child
+  `2e07bec58b8a759c9db36ea7afb26a1c835434f5` first with exact current
+  mobile-toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42`
+  second, preserving the branch, base, and history.
+- The merge replaces stale merge-base comparison
+  `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`, removes parent formatter changes
+  from the effective child delta, and retains current-parent content for the
+  unrelated shared flight-contract test. Camera production code merges
+  without conflict.
+- Animated PyQt6 and React clubhead/ball-flight viewports retain their shared
+  2x, bounded-tracking, Auto-Fit initial state. Static viewports remain neutral,
+  user controls remain independent, and physics and geometry are unchanged.
+- Independent review and protected exact-head CI remain required; the local
+  repair does not complete #4300 or #4218.
+- Fresh evidence is 49 focused native camera/layout/simulation tests, 14
+  campaign/launcher-manifest tests, exact-delta Ruff/format, pinned MyPy 1.13,
+  Bandit, governance/diff gates, 111 React files / 673 tests, TypeScript,
+  zero-warning ESLint, the 195-module build, and six serial desktop/constrained
+  2x-DPR Playwright camera/toolstrip cases.
 
-### 2026-08-10 Mobile toolstrip parent propagation
+### 2026-08-10 Constrained toolstrip / four-surface propagation
 
-- Draft PR #4301 retains base `feat/4284-camera-snap-tracking` and normally
-  merges exact current parent head
-  `9ffd8d280c77977a41e93bd0caef9678d1c231b6` into prior child head
-  `9322df75d6ad1b6ef57be02741ac972e7c6f86cf` without rebasing, retargeting,
-  rewriting, or force-pushing.
-- The child preserves constrained File/View/Tools popovers while inheriting the
-  parent's deterministic Python 3.10-3.12 UTC parser and camera stack.
-- Two immutable evidence SHAs in the campaign-manifest test are assembled from
-  short deterministic chunks, preserving exact assertions without weakening
-  Detect Secrets or presenting high-entropy secret candidates.
+- Draft PR #4301 keeps base `feat/4284-camera-snap-tracking` and normally
+  merges exact #4299 head `142631a90c008942bad99745e279748a7eda2ffa`
+  into original constrained-toolstrip child
+  `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`, with the child as first parent.
+  No rebase, retarget, history rewrite, or force-push is permitted.
+- File, View, and Tools popovers share one collision clamp that preserves an
+  unchanged desktop anchor and native `<details>/<summary>` keyboard and
+  accessibility behavior while enforcing a 16 px constrained-screen gutter
+  and a viewport-bounded menu width.
+- The composed tree inherits the declared four-surface inventory, complete
+  camera/playback controls, and repaired flight-to-ground ancestry without
+  claiming native rendered qualification, installed-consumer conformance,
+  protected release, or completion of #4300/#4284/#4264/#4260.
 
-### 2026-08-09 Constrained toolstrip-menu containment
+### 2026-08-10 Four-surface capability propagation
 
-- Issue #4300 keeps File, View, and Tools popovers inside a 16 px viewport
-  gutter through one shared collision-clamp contract. Existing left-anchored
-  desktop placement is unchanged when the menu already fits.
-- Popover widths are bounded by the viewport, and the clamp is recalculated on
-  native `<details>` toggle, viewport resize, and content resize without
-  replacing summary-button keyboard or accessibility semantics.
-- A real-browser Playwright contract opens Tools from the keyboard at
-  520 x 900 and verifies that all command labels and shortcuts are visible,
-  readable, and horizontally contained.
+- `four-surface-capability/v1` defines stable identifiers for Tools PyQt6,
+  Tools React, UpstreamDrift PyQt6, and UpstreamDrift React consumers.
+- Every declared model, control, output, view, persistence, or export record
+  classifies all four surfaces as supported, unsupported, or deprecated.
+  Supported cells require commit-bound evidence; all other cells require a
+  visible reason.
+- Deterministic enumeration covers all 15 structured campaign programs, all
+  18 unique linked active release specifications, and six curated
+  evidence-backed capabilities. New governed declarations fail completeness
+  validation until all four cells exist.
+- UpstreamDrift remains unsupported until an immutable installed Tools pin and
+  repository-bound conformance evidence exist. Narrative-only features remain
+  excluded until promoted to a governed structured authority.
+- The draft #4299 propagation preserves this declared-scope contract while
+  inheriting repaired flight-to-ground and camera-control ancestry. It does
+  not establish protected release or complete #4264/#4260.
+- The composed tree is required to pass the deterministic four-surface and
+  campaign authorities, the full Python/React/Rust suites, real-browser camera
+  cases, and the exact protected changed-file quality profile before normal
+  publication; protected current-head CI and installed-consumer conformance
+  remain separate release gates.
+
+### 2026-08-10 Flight-ground hosted typing repair
+
+- The complete PR-base delta must pass the protected pinned MyPy 1.13 profile
+  in one skipped-import invocation, not only per-feature subsets.
+- Flight-to-ground adapters construct exact compatibility string-enum members
+  and explicit three-component vectors so the static contract remains stable
+  when all related modules are checked together.
+- The repair is runtime-neutral: wire values, coordinate transforms, physics,
+  camera behavior, and canonical evidence remain unchanged.
 
 ### 2026-08-10 Deterministic workspace timestamps
 
@@ -172,6 +206,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
 ### 2026-08-06 Impact-to-Flight Solution-Family Foundation
 
 - Python and TypeScript share strict `impact-solution-request/v1` and
@@ -224,6 +259,30 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Complete catalog and result serialization is deterministic and pinned by a
   cross-language SHA-256 fixture. UI, API, and Rust/WASM adapters remain
   explicit downstream integration work.
+
+### 2026-08-07 Flight-to-ground transfer contract
+
+- The self-facaded Python `swing_sim.ground` package owns strict versioned
+  request and result contracts in canonical target-frame SI units. Requests
+  contain two full 3D states that bracket physical sphere/surface contact,
+  complete planar material data, calibration, and reproducibility provenance.
+- Results preserve ordered phases and event ledgers and keep carry, bounce-air,
+  skid, roll, accumulated surface path, final displacement, and launch-to-rest
+  horizontal distance distinct. Status, termination, trajectory, events, and
+  summaries are validated as one state machine and cannot fabricate missing
+  ground behavior.
+- Target-frame positions use the ball centre at launch/tee as their required
+  zero origin. Bounce counts include only post-first-contact `bounce` events,
+  keeping the initial contact impulse distinct.
+- Draft 2020-12 schemas, fail-closed current-version migration gateways, a
+  shared canonical-number JSON fixture, and a one-way qualified projection to
+  the legacy `GroundModelResult` provide deterministic integration boundaries.
+  Existing flight output is not accepted until it supplies full terminal
+  angular velocity and two states bracketing ball-radius/terrain contact.
+- Event ledgers retain signed pre/post linear and angular states. Unavailable
+  results identify missing required fields with typed reason and provenance;
+  duplicate JSON keys, unsafe cross-runtime integers, surrogate text, and raw
+  out-of-range values fail closed before normalization.
 
 ### 2026-08-06 Wind-Estimate Uncertainty and Strategy Analysis
 
@@ -1194,7 +1253,7 @@ high_mm)` exposes the face-curvature normal (gradient of the
   difference between a launch monitor's reported geometric-center path and
   the impact point's actual delivery for a rotating clubhead (twist model,
   v(P) = v(ref) + omega x r). PyQt6 desktop app (animated 3D clubhead +
-  closure sweep, ThemedWindowMixin) plus a React/Vite static web clone in
+  closure sweep, ThemedWindowMixin) plus a React/Vite/Tauri web clone in
   `src/rate_of_closure/web/` whose TypeScript model is pinned test-for-test
   against the Python implementation. Conventions and rate data follow the
   AffineDrift launch-monitor research: the standard launch-monitor frame
@@ -1207,9 +1266,10 @@ high_mm)` exposes the face-curvature normal (gradient of the
   explanations, and a Derivation & Traceability tab typesetting the full
   calculation with live numeric substitution (matplotlib mathtext on
   desktop, bundled KaTeX on web). `build_executable.py` packages the
-  desktop app with PyInstaller; the web app releases as a static Vite bundle.
+  desktop app with PyInstaller; the web app packages via Tauri.
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
+
 ### 2026-08-05 Wedge impact-point kinematics and AoA attribution
 
 - `shared.python.golf_club` defines an immutable, frame-explicit rigid-body
@@ -2999,21 +3059,27 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
-| 2026-08-10 | 1.14.21 | merge(rate-of-closure, #4300): normally propagate exact mobile-toolstrip parent `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64` into prior moving-camera child `36ed6bd64e68108028b8e0194851e801b15e08ad` without changing PR #4303's base; preserve 2x moving-subject zoom, tracking, and Auto Fit defaults while inheriting responsive menus, deterministic timestamps, and the secret-safe exact evidence contract. |
-| 2026-08-10 | 1.14.20 | merge(rate-of-closure, #4284 #4300): normally propagate exact camera parent `9ffd8d280c77977a41e93bd0caef9678d1c231b6` into prior mobile-menu child `9322df75d6ad1b6ef57be02741ac972e7c6f86cf` without changing PR #4301's base; preserve constrained File/View/Tools popovers, inherit deterministic workspace timestamps, and retain exact campaign evidence assertions through short deterministic SHA chunks that pass Detect Secrets without weakening scanning. |
-| 2026-08-10 | 1.14.19 | fix(rate-of-closure, #4300): keep File, View, and Tools popovers within a collision-safe viewport gutter while preserving native details/summary keyboard semantics and unchanged desktop anchoring; add focused clamp tests and a 520 x 900 Playwright containment/readability contract. |
-| 2026-08-10 | 1.14.18 | merge(rate-of-closure, #4282 #4284): normally propagate exact wind-workflow head `5f77af4add23547a21cc3fabce98ae9ad4260427` into exact camera branch parent `42753a576f42d4c43c35fd786d0748e1d03672c5` without rebasing, retargeting, rewriting, or force-pushing; preserve the complete camera/playback behavior and inherit the deterministic Python 3.10-3.12 workspace timestamp contract. |
-| 2026-08-09 | 1.14.17 | merge(rate-of-closure, #4282 #4284): normally restack the camera-control branch by merging exact published wind-workflow carrier `bb101cedd555d07d493aae998b46050c68660cdd` into exact camera parent `7f1e14d42ffe8c23856a12fc8b0d0a8a4eeaf092`, without rebasing or retargeting; retain immutable camera evidence at `2095e748ddca2d7036bbd49a731528f5634daff9`, inherit the carrier's Python 3.10 compatibility and scalar-ensemble corrections, and keep native visual, hosted review, protected release, persistence, and UpstreamDrift parity gates open. |
-| 2026-08-09 | 1.14.16 | fix(rate-of-closure, #4284): distinguish immutable carrier evidence commits from mutable PR heads, record published camera evidence at 2095e748 with 107/650 React and 4 Playwright tests, and retain migration support for legacy `head_sha` manifest input. |
-| 2026-08-09 | 1.14.15 | test(rate-of-closure, #4284): add solver-sample flight frame steps and Playwright camera/playback interaction coverage at desktop and constrained 2x-DPR viewports; retain native visual and downstream parity gates. |
-| 2026-08-09 | 1.14.14 | feat(rate-of-closure, #4284): add canonical cross-runtime 3D camera snaps, bounded clubhead/ball tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and focused PyQt6/React contracts. |
+| 2026-08-11 | 1.14.27 | merge(rate-of-closure, #4300 #4303): normally propagate exact current mobile-toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42` into exact live PyQt moving-camera child `2e07bec58b8a759c9db36ea7afb26a1c835434f5` without changing its branch or base; repair stale merge ancestry, retain current-parent shared-flight test content, preserve cross-runtime 2x tracking and Auto Fit defaults, and require independent review plus protected exact-head CI. |
+| 2026-08-10 | 1.14.26 | merge(rate-of-closure, #4298 #4301): normally propagate exact repaired camera parent `104503aac9779b195d46d38e8ed32611ffc8dfd7` into the constrained mobile-toolstrip descendant without changing its base; retain the shared File/View/Tools clamp and accessibility behavior while inheriting current camera, wind, workspace, variation, and capability repairs; mobile-toolstrip production/test code does not conflict, only additive handoff/spec files require reconciliation, and protected exact-head CI plus review remain required. |
+| 2026-08-10 | 1.14.25 | merge(rate-of-closure, #4300 #4301): normally propagate exact four-surface/camera/ground head `142631a90c008942bad99745e279748a7eda2ffa` into original constrained-toolstrip child `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64` without changing its base; retain the shared 16 px viewport-gutter clamp, desktop anchoring, bounded mobile menus, and native keyboard/accessibility semantics while inheriting the declared four-surface inventory, complete camera controls, and repaired flight-to-ground ancestry; require fresh combined-tree validation, independent review, and protected current-head CI without claiming epic completion. |
+| 2026-08-10 | 1.14.24 | merge(rate-of-closure, #4264 #4299): normally propagate exact camera/ground-stack head `57942e64744a199e4fd7d604fe2eeb9faddd062a` into original four-surface child `dca40c6c0168df3aa0cd0de0e5ae0ff109715b6a` without changing its base; retain the strict declared-scope matrix, schema, canonical inventory, exact evidence paths, deterministic 15-program/18-spec/six-capability coverage, and explicit incomplete UpstreamDrift parity boundaries while inheriting repaired flight-to-ground and camera-control contracts. |
+| 2026-08-10 | 1.14.23 | fix(flight-ground, #4284 #4298): satisfy the protected pinned-MyPy complete-delta profile with exact compatibility-enum construction and explicit three-component flight-to-ground vectors; preserve runtime values, wire bytes, coordinate transforms, physics, and camera behavior while requiring fresh exact-head CI. |
+| 2026-08-10 | 1.14.22 | merge(rate-of-closure, #4284 #4288 #4298): normally propagate exact repaired flight-to-ground head `108a841b1378c992defd3c7b7ee263d41a6c8b24` into original camera-control child `9ffd8d280c77977a41e93bd0caef9678d1c231b6` while preserving base `feat/4199-wind-workflow`; retain canonical cross-runtime camera snaps, bounded tracking, zoom-safe Auto Fit, manual suspension, Recenter, accessible controls, and playback behavior while inheriting repaired strict-ground, transfer, workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, and import-identity ancestry; preserve explicit non-delivery boundaries for native rendered cross-platform qualification, camera-state persistence, UpstreamDrift parity, bounce, skid, roll, terrain response, total distance, and ground UI. |
+| 2026-08-10 | 1.14.21 | fix(flight-ground, #4199 #4269 #4282 #4285 #4288): normally propagate exact repaired strict-ground parent `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` into original flight-transfer child `247215422a6d4b677552955b4923bc609a553259` while preserving base `feat/4268-ground-contract`; retain the qualified signed terminal state, physical sphere/terrain contact brackets, strict provenance, and Python/TypeScript/Rust/PyO3/WASM transfer while inheriting the deterministic workspace, variation, scalar-wind, capability, campaign-release, hosted-mypy, import-identity, scalar-extraction, command-invariant, and security-boundary repairs; preserve explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
+| 2026-08-10 | 1.14.20 | fix(flight-ground, #4269 #4288): normally propagate exact corrected ground-contract parent `788aa547651a3685a363ea401824a5d81477bafb` into the flight-transfer descendant without changing its base; preserve the qualified Python/TypeScript/Rust/PyO3/WASM transfer while inheriting deterministic workspace timestamp parsing and canonical `swing_sim` import identity; retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
+| 2026-08-09 | 1.14.19 | chore(flight-ground, #4269 #4288): normally propagate exact carrier-reconciled ground parent `6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` into the flight-transfer descendant without changing its base; preserve the qualified cross-runtime transfer and semantic facade assertions while completing corrected wind-to-ground ancestry; bind terminal samples before exact `FlightStatePoint` narrowing in the pinned-mypy regression; and retain explicit non-delivery boundaries for bounce, skid, roll, terrain response, total distance, and UI. |
+| 2026-08-09 | 1.14.18 | feat(flight-ground, #4269): propagate full signed terminal angular state and qualified physical sphere/terrain contact brackets across Python, TypeScript, Rust, PyO3, and WASM; preserve exact launch-origin evidence, vertical tee and terrain geometry, strict v1 surface/calibration/provenance data, interpolated terminal contact, typed unavailable outcomes, and bounded synchronous web integration. Reconcile the transfer integrator with the current capability and strict-ground ancestry through normal stacked merges without retargeting or rewriting either PR, and remove the resulting ground/flight package-facade cycle through direct record/type dependencies. |
+| 2026-08-10 | 1.14.17 | fix(ground, #4268 #4285): normally propagate exact corrected workspace/wind/capability carrier `5f77af4add23547a21cc3fabce98ae9ad4260427` into the strict flight-to-ground contract while preserving base `feat/4197-capability-observer`; coalesce `shared.python.swing_sim` and its repository-local `src.shared.python.swing_sim` spelling so embedded ground/impact contract collection cannot load two package trees; retain the fail-closed ground schemas, fixture, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this ancestry through its own normal descendant merge. |
+| 2026-08-09 | 1.14.16 | chore(ground, #4268 #4285): normally reconcile the strict ground-contract parent with exact corrected wind carrier `bb101cedd555d07d493aae998b46050c68660cdd` while preserving base `feat/4197-capability-observer`; retain the fail-closed ground schemas, fixtures, migrations, dependency, and type repairs without claiming bounce, skid, roll, terrain, total-distance, UI, or Rust/WASM delivery, and require #4288 to acquire this observer-to-wind ancestry through its own normal descendant merge. |
+| 2026-08-09 | 1.14.15 | fix(ground, #4268): keep strict ground JSON Schema generation compatible with the shared Python 3.10 string-enum shim under the repository's pinned mypy 1.13 skipped-import gate by deriving wire values through `str`, and replace stale test suppressions with explicit casts around intentional invalid inputs without changing runtime validation behavior. |
+| 2026-08-09 | 1.14.14 | fix(ground, #4268): declare and lock the JSON Schema validator exercised by the strict flight-to-ground contract suite, route every new ground enum through the shared Python 3.10-compatible `StrEnum` boundary, and enforce that boundary across the package with a source-level regression contract. Propagate the current capability parent into PR #4285 through normal merge ancestry without rebasing or retargeting the stacked branch. |
 | 2026-08-10 | 1.14.13 | fix(rate-of-closure, #4282): normally propagate exact corrected scalar-ensemble parent `cf52529b1e68479321bb93b1be3d59c77f782008` into the responsive PyQt6/React wind-workflow carrier without changing its base; retain the consolidated capability workflow and release authority while inheriting the strict cross-version UTC parser, variation export, immutable scalar rows, stable composite identity, availability, and typed wind adapter; route the child-owned capability-observation `StrEnum` through the shared Python 3.10 runtime contract and extend the compatibility regression. |
 | 2026-08-10 | 1.14.12 | feat(wind variation, #4199 #4281): add matching UI-neutral Python/TypeScript `scalar-ensemble/v1` contracts with structured provenance, labeled stages/categories/cohorts, unit-bearing variables, stable RFC3986 composite row IDs, immutable nullable raw rows, and overall/per-cohort availability; adapt every actual and perfect-information wind-strategy outcome with explicit status, true/estimated wind, launch/aim, target, landing, miss, cost, and information-delta values while leaving impact variables explicitly unavailable because the analysis begins at prescribed launch. |
 | 2026-08-10 | 1.14.11 | feat(variation, #4144 #4280): complete PyQt6/React selected-scatter CSV export parity with stable trial identity, typed outcome and explicit unavailable values; expose bounded accessible PyQt raw-row tables through one shared population helper; and split scalar scatter and distribution-matrix rendering into focused modules while preserving linked trial selection and all-trial arc analysis. |
 | 2026-08-10 | 1.14.10 | fix(compatibility, #4279): make workspace UTC timestamp parsing deterministic across Python 3.10-3.12 with one anchored canonical grammar, consistent zero- through six-digit fractional-second parsing, and rejection of greater-than-microsecond precision instead of interpreter-dependent rejection or truncation. |
 | 2026-08-09 | 1.14.9 | fix(compatibility, #4279): route the child command/view `StrEnum` runtime imports and workspace-validation `UTC` import through `shared.python.compatibility` while preserving native enum typing under `TYPE_CHECKING`, all wire values, schemas, UTC serialization, and UI behavior; merge the parent and child regression into one nine-enum/two-UTC runtime-import contract exercised with real CPython 3.10.20. |
 | 2026-08-09 | 1.14.8 | feat(rate-of-closure, #4201): harden cross-runtime capability parsing and signed input; expose complete diagnostics, result exports, and quantitative scatter annotations; stabilize supported PyQt6/static-Vite entrypoints; and add a strict campaign manifest with generated schema, four-surface status, explicit gaps/dependencies, and fail-closed feature-stack/protected-parent/`main` release distinctions. |
-| 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding the per-slice stacked-branch cautions now that #4283, #4289, and #4294 are merged, and note that the unfinished CI matrix reflects an offline runner fleet rather than failures. |
+| 2026-08-08 | 1.14.7 | docs(rate-of-closure, #4197): record the capability stack consolidation onto `feat/4199-wind-workflow`, superseding per-slice stacked-branch cautions after #4283, #4289, and #4294 merged, while retaining the incomplete protected-release boundary. |
 | 2026-08-08 | 1.14.6 | feat(rate-of-closure, #4197): add matched PyQt6/React Shot Optimizer workspaces with strict cross-runtime workflow persistence, off-main-thread qualified flight execution, truthful progress/cancellation, complete scalar-ensemble cohort retention, ranked alternatives, stage-qualified selectable scatter axes, zoom/autofit, bounded raw-row paging, lossless CSV/stable JSON, substantive hover guidance, and saved-layout migration that reveals newly registered modules. |
 | 2026-08-08 | 1.14.5 | feat(ball-flight, #4197): add profile/request-bound Python and TypeScript Waterloo/Penner capability evaluators with exact established parameter IDs, physical-domain and unit validation, sourced per-club spin defaults or paired variable spin inputs, shared gyro-projected positive-fade/right spin-axis convention across result/impact/variation producers, canonical target-frame conversion, target-aware complete scalar metrics, typed horizon nonconvergence, fail-fast invariants, and a shared 16-scalar tolerance fixture. Corrects the TypeScript ground-crossing interpolation so a descending launch from z=0 cannot extrapolate to a negative sample time, which previously raised an untyped `RangeError` that was absorbed as an `evaluator_exception`; such launches now report `nonconverged`, matching the Python runtime. |
 | 2026-08-07 | 1.14.4 | feat(rate_of_closure, #4206): add validated manual reference AoA/path, targetward forward shaft lean, and tracked-reference versus registered generated-hosel shaft datums in PyQt6 and React; rotate pose, angular-rate components, and delivered face normals consistently; persist schema-v5 `manual_delivery`; export the reference-contact/reference-impact model boundary; and pin the representative Pitching Wedge decomposition in both runtimes. |

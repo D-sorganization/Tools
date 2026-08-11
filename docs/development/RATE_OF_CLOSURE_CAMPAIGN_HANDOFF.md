@@ -1,132 +1,251 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-Status verified 2026-08-10. This isolated integration is published as draft
+Status verified 2026-08-11. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
-## 2026-08-10 PR #4303 current-parent propagation
+## 2026-08-11 PR #4303 current-parent propagation repair
 
-Draft PR #4303 retains base `fix/rate-mobile-tools-menu`. This normal
-two-parent merge combines prior child head
-`36ed6bd64e68108028b8e0194851e801b15e08ad` with exact current parent PR
-#4301 head `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`. The branch is not
-rebased, retargeted, rewritten, or force-pushed. Moving-subject camera defaults
-remain intact while the child inherits the current mobile-toolstrip carrier,
-deterministic workspace timestamp parsing, and corrected release evidence.
+- Preserve exact live child `2e07bec58b8a759c9db36ea7afb26a1c835434f5`
+  first and normally merge exact current PR #4301 parent
+  `c653f9ff9193d6cdb8e11a13ad0001707e468a42` second without changing PR #4303's
+  branch or base.
+- The former merge base `05713bcdd8f9889dcdcbaa5bdbaeab139d599b64`
+  was stale, causing GitHub conflicts and exposing parent formatting as
+  child-local. The merge keeps the current parent for one unrelated shared
+  flight-contract test and reconciles four additive current-state documents;
+  camera production code merges cleanly.
+- Preserve the shared Python/TypeScript moving-subject default: animated PyQt6
+  and React clubhead/flight viewports start at 2x zoom with bounded tracking
+  and Auto Fit enabled, static viewports remain neutral, and controls remain
+  independently user-overridable. Physics and geometry are unchanged.
+- No rebase, retarget, force-push, parent rewrite, publication, GitHub write,
+  or CI retry is used. Independent review and protected exact-head CI remain
+  release gates; #4300 and epic #4218 stay open.
+- Fresh merged-tree evidence is 49 focused Python/PyQt camera, layout, and
+  simulation tests plus 14 campaign/launcher-manifest tests; exact-delta
+  Ruff/format on six Python files; pinned MyPy 1.13 and Bandit on four
+  production files; documentation, changed-code, module-size, minimum-test,
+  assertion, manifest-layout, whitespace, and diff gates. React passes 111
+  files / 673 tests, TypeScript, zero-warning ESLint, the 195-module production
+  build, and six serial Playwright camera/toolstrip cases across desktop and
+  constrained 2x-DPR projects.
 
-The inherited Detect Secrets repair remains exact: the campaign-manifest test
-constructs two immutable evidence SHAs from short deterministic chunks, with
-no scanner or baseline weakening. The composed tree passes all 880 Rate Python
-tests, 52 focused camera/manifest/compatibility tests, and 28 compatibility
-contracts on CPython 3.10.20. React passes 108 Vitest files / 653 tests,
-TypeScript, zero-warning ESLint, and the 194-module production build. Ruff
-check/format, pinned Python 3.12/mypy 1.13, campaign-manifest validation,
-documentation governance, changed-file size, conflict-marker, CI-equivalent
-Detect Secrets fingerprint, and diff checks pass. Playwright and native visual
-review were not rerun for this merge-only propagation because no UI source
-conflict was resolved; the prior child evidence below remains authoritative.
-Protected CI, review, ordinary parent integration, and release remain separate
+## 2026-08-10 Repaired camera-parent propagation into PR #4301
+
+- Draft PR `#4301` keeps branch `fix/rate-mobile-tools-menu` and base
+  `feat/4284-camera-snap-tracking`.
+- Exact repaired camera parent `104503aac9779b195d46d38e8ed32611ffc8dfd7`
+  is incorporated through a normal merge.
+- Mobile-toolstrip production/test code did not conflict; only the four
+  additive handoff/spec files required reconciliation.
+- No rebase, retarget, force-push, parent rewrite, or history rewrite was used.
+  Fresh local verification, protected exact-head CI, and review remain.
+
+## 2026-08-10 PR #4301 four-surface parent propagation
+
+Draft PR #4301 retains base `feat/4284-camera-snap-tracking`. Its normal
+two-parent merge keeps original constrained-toolstrip child
+`05713bcdd8f9889dcdcbaa5bdbaeab139d599b64` first and exact, independently
+reviewed #4299 head `142631a90c008942bad99745e279748a7eda2ffa`
+second. No branch is rebased, retargeted, rewritten, or force-pushed. The
+File/View/Tools popovers keep their shared 16 px viewport-gutter clamp,
+unchanged desktop anchor, bounded mobile width, and native keyboard and
+accessibility semantics while inheriting the four-surface inventory, repaired
+flight-to-ground stack, and complete camera/playback controls.
+
+Fresh combined-tree evidence is 1,589 Python/PyQt/shared-swing tests with one
+explicit unavailable-wheel skip; 111 React files / 673 tests; TypeScript,
+zero-warning ESLint, the 195-module build, and six desktop/constrained 2x-DPR
+browser cases; all 137 `tools-core` tests plus format and warning-denied
+Clippy; and exact-delta Ruff/format, pinned MyPy, Bandit, deterministic-
+authority, assertion, minimum-test, documentation, manifest-layout, size,
+conflict-marker, and diff gates. Independent staged-tree review found no
+findings; protected current-head CI is still open. This propagation does not
+complete #4300,
+#4284, #4264, #4260,
+or their parent epics; native rendered QA and installed-consumer conformance
+remain release gates.
+
+## 2026-08-10 PR #4299 camera/ground-stack propagation
+
+Draft PR #4299 keeps base `feat/4199-wind-workflow` and normally merges the
+original four-surface child head
+`dca40c6c0168df3aa0cd0de0e5ae0ff109715b6a` first with independently
+reviewed #4298 head `57942e64744a199e4fd7d604fe2eeb9faddd062a`
+second. No branch is rebased, retargeted, rewritten, or force-pushed. The
+result retains `four-surface-capability/v1`, its declared-scope generator,
+schema, canonical inventory, and exact evidence paths while inheriting the
+complete camera-control and repaired flight-to-ground stack.
+
+The declared inventory still covers 15 structured campaign programs, 18
+unique linked active release specifications, and six curated capability
+records across model, control, output, view, persistence, and export
+categories. Every record classifies Tools PyQt6, Tools React, UpstreamDrift
+PyQt6, and UpstreamDrift React explicitly. Both UpstreamDrift cells remain
+unsupported unless an immutable installed consumer pin and repository-bound
+conformance evidence exist; unstructured narrative features remain outside
+the governed boundary until promoted to a structured authority.
+
+Local integration evidence is 1,589 Python/PyQt/shared-swing tests with one
+explicit unavailable-wheel skip; 110 React files / 670 tests; TypeScript,
+zero-warning ESLint, and the 194-module production build; four Playwright
+camera cases across desktop and constrained 2x-DPR viewports; and all 137
+`tools-core` tests plus formatting and warning-denied Clippy. The exact hosted
+delta also passes Ruff/format on 52 Python files, pinned MyPy 1.13 on 36
+production files, Bandit on 34 source files, both deterministic authorities,
+and documentation, changed-code, source-size, assertion, manifest-layout,
+conflict-marker, and diff gates.
+
+Independent exact-tree review found no findings. This propagation is not issue
+or epic completion: protected current-head CI, installed-consumer evidence,
+four-surface conformance, native rendered QA, and dependency-ordered release
+remain open.
+## 2026-08-10 Current-parent propagation into camera PR #4298
+
+- Draft PR `#4298` keeps branch `feat/4284-camera-snap-tracking` and base
+  `feat/4199-wind-workflow`.
+- Exact current parent head `1e82f15026786ea0b08f78f4c001590ddce9ff39`
+  is incorporated through a normal merge.
+- Camera production/test code did not conflict. Only the four additive
+  current-state handoff/spec files required reconciliation.
+- No rebase, retarget, force-push, parent rewrite, or history rewrite was used.
+  Fresh local verification, protected exact-head CI, and review remain required.
+
+## 2026-08-10 Repaired wind-scalar parent propagation into PR #4282
+
+- Draft PR `#4282` keeps branch `feat/4199-wind-workflow` and base
+  `feat/4199-wind-scalar-adapter`.
+- Exact repaired parent head `d6fb04e07c2a625412e9208b07103acdc42c621b`
+  is incorporated through a normal merge after its quality gate passed.
+- No wind-workflow production or test code conflicted. No rebase, retarget,
+  force-push, parent rewrite, draft-state change, or merge was used.
+- Twenty-five focused tests plus documentation governance, changed-file size,
+  and whitespace checks pass locally. Fresh protected CI and review must pass
+  before this exact head can propagate normally into PR `#4285`.
+
+## 2026-08-10 PR #4298 exact hosted-mypy repair
+
+Exact head `a51e49e4d2e7f5b1985c802f8290ea7649e7927e` passed Ruff and
+formatting, then protected quality-gate job `93503197807` failed at pinned
+MyPy 1.13 with 18 integration-only errors in the inherited flight-to-ground
+adapter. The hosted delta checks every changed production file from the
+preserved PR base in one skipped-import invocation; that exposed compatibility
+`StrEnum` members as `str` and generator-built NumPy tuples as variable-length
+tuples.
+
+The repair constructs exact typed enum members through their public
+constructors and builds explicit three-component tuples. Runtime values, wire
+bytes, coordinate transforms, physics, and camera behavior are unchanged. The
+exact hosted command now passes all 33 production files; 79 focused ground,
+transfer, and flight-physics tests plus Ruff/format pass. Fresh protected
+current-head CI is required after the normal fast-forward follow-up; do not
+retry the obsolete failed head. This repair does not complete #4284, #4269, or
+their parent epics.
+
+## 2026-08-10 PR #4288 exact repaired-ground propagation
+
+Draft PR #4288 remains on `feat/4269-flight-ground-transfer` with unchanged
+base `feat/4268-ground-contract`. Original child
+`247215422a6d4b677552955b4923bc609a553259` normally incorporates exact repaired
+#4285 parent `e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` second in the
+merge containing this handoff. The child retains its qualified signed terminal state,
+physical sphere/terrain contact brackets, strict provenance, and cross-runtime
+Python/TypeScript/Rust/PyO3/WASM contracts while inheriting deterministic
+workspace timestamps, canonical `swing_sim` import identity, the hosted-mypy
+manifest repair, and the complete variation, wind, capability, and campaign
+ancestry. No branch was rebased, retargeted, rewritten, or force-pushed.
+
+This propagation does not add bounce, skid, roll, terrain response, total
+distance, or UI execution. Protected CI, independent review, and normal
+dependency-ordered collapse remain separate release gates.
+
+Exact composed-tree verification is 1,080 Python tests passed with six explicit
+optional installed-`tools_core` wheel skips, 107 React files / 662 tests,
+26 direct Rust transfer/wire tests, TypeScript, zero-warning ESLint, and the
+189-module production build. Ruff check/format passes all 28 changed Python
+files; pinned mypy 1.13 passes all 21 changed production files. Campaign
+manifest validation, documentation governance, and diff checks are clean. The
+missing local wheel is not accelerated installed-package evidence and remains
+an explicit release boundary; the direct Rust suites executed rather than
+being relabeled as wheel parity.
+
+## 2026-08-10 Exact repaired #4282 propagation into PR #4285
+
+Draft PR #4285 remains on `feat/4268-ground-contract` with unchanged base
+`feat/4197-capability-observer`. Original child
+`788aa547651a3685a363ea401824a5d81477bafb` normally incorporates exact
+repaired #4282 carrier `686016196a2f895058b8a566dff103a0fd32cd10`
+second. That parent contains merged capability PR #4283 commit
+`c1827bbdc50a6e11cc475db2636b4e47a4c15416`, exact observer head
+`9bbb98e16e435a0d4c74153b909f2ebfefbbce7a`, and the hosted pinned-mypy
+manifest repair. The strict ground-contract child retains its
+schemas, canonical fixture, migrations, legacy-result adapter, declared
+dependency, and pinned typing repairs while inheriting the deterministic Python
+3.10-3.12 UTC parser and the corrected variation, scalar, wind, capability, and
+campaign-release ancestry. No branch was rebased, retargeted, rewritten, or
+force-pushed.
+
+The preceding exact-head Python 3.12 job then exposed an import-order defect,
+not a physics failure: embedded `src.shared.python.swing_sim` test packages and
+canonical `shared.python.swing_sim` imports could become distinct module trees,
+so ground and impact contract collection failed. The shared alias registry now
+coalesces `swing_sim`; a subprocess identity regression was RED before the fix
+and passes with both affected public-API suites afterward. The contemporaneous
+file-size run was cancelled during checkout before its budget step, so no size
+violation was reported.
+
+The inherited ground descendant passes 1,703 Python tests with two optional `build123d`
+skips, 643 React tests across 105 files plus type-check/lint/build, 12 Rust tests,
+and 77 real-CPython-3.10 ground and compatibility tests. Ruff/format pass 78
+changed Python files; pinned mypy and Bandit pass 52 changed production files.
+Manifest, docs, minimum-test, assertions, 500-LOC, changed-file secrets, Python
+3.10 compilation, and diff checks are clean. Hosted CI and review still apply
+only to the new exact head. That repaired ground head is incorporated into
+#4288, and exact #4288 is incorporated into #4298 by the normal merge
+containing this handoff. Current #4298 CI and review are now the next ancestry
 gates.
 
-## 2026-08-09 Issue #4300 moving-subject camera defaults
+The repaired parent owns the explicit Pydantic manifest annotation. The
+composed tree additionally normalizes contract-checked scalar plot values,
+enforces disabled-command invariants under optimized Python, and documents the
+optional alias finder's reviewed catch-and-continue security boundary.
 
-Draft PR #4303 publishes `fix/rate-pyqt-default-camera` as a normal child of
-exact draft #4301 head `9322df75d6ad1b6ef57be02741ac972e7c6f86cf`
-at immutable evidence `01ae99f0f42876c7a6948c30f50e13618da14eca`.
-One shared Python initializer and its TypeScript counterpart define the
-share-ready state for animated subjects: 2x zoom, bounded tracking on, and Auto
-Fit on. PyQt6 Swing/Flight and React Club/Flight consume the same intent while
-static viewports keep neutral defaults. Tracking and Auto Fit remain
-independently reversible; manual orbit suspends tracking and re-center resumes
-it. Physics, frames, trajectories, geometry, and result schemas are unchanged.
+This is ancestry reconciliation, not new landing physics. Qualified bounce,
+skid, roll, terrain profiles, total distance, UI execution, Rust/WASM parity,
+protected CI, review, and release remain open. The exact repaired #4285 head is
+incorporated into #4288, and that corrected descendant is incorporated into
+#4298 by the normal merge containing this handoff.
 
-RED-first GUI/component tests cover both defaults and subject containment.
-The 49 focused Python/PyQt tests and full 108-file / 653-test React suite pass,
-as do TypeScript, zero-warning ESLint, the production build, six
-desktop/constrained-HiDPI Chrome Playwright cases, pinned MyPy 1.13 on the four
-changed production files, Ruff, and diff checks. Native inspection confirms
-that the PyQt Swing view opens at a useful scale and follows playback instead
-of presenting a tiny, static subject. The campaign manifest records PR #4303
-and its local evidence. Protected CI/review and ordinary integration remain
-open. Issue #4300 and epic #4218 must remain open until those gates and
-remaining layout work pass.
-## 2026-08-10 PR #4301 current-parent propagation and secret-scan repair
-
-Draft PR #4301 retains base `feat/4284-camera-snap-tracking`. This normal
-merge combines prior child head
-`9322df75d6ad1b6ef57be02741ac972e7c6f86cf` with exact current parent PR #4298
-head `9ffd8d280c77977a41e93bd0caef9678d1c231b6`; no branch was rebased,
-retargeted, rewritten, or force-pushed. The constrained File/View/Tools menu
-behavior is preserved while the child inherits the camera branch's current
-timestamp compatibility and release evidence.
-
-The prior exact-head Detect Secrets failure was actionable: two immutable
-evidence SHA literals in `test_campaign_release_manifest.py` were presented as
-high-entropy strings. The propagated parent fix assembles those exact values
-from short deterministic chunks. Assertions remain byte-for-byte exact, and
-neither the scanner configuration nor baseline is weakened.
-
-Current-tree evidence is 877 passing Rate Python tests, 39 focused manifest
-and compatibility tests, and 28 compatibility contracts on CPython 3.10.20.
-React passes 108 Vitest files / 653 tests, TypeScript, zero-warning ESLint, and
-a 194-module production build. Ruff check/format, pinned Python 3.12/mypy 1.13,
-campaign-manifest validation, documentation governance, changed-file size,
-conflict-marker, CI-equivalent Detect Secrets fingerprint, and diff checks are
-clean. Protected CI, review, parent integration, native rendered review, and
-release remain explicitly open.
-
-## 2026-08-09 Issue #4300 constrained Tools-menu continuation
-
-Draft PR #4301 publishes branch `fix/rate-mobile-tools-menu` at immutable
-evidence commit `ebd804ff24e7ce5ca58c7d1495c438ab1dcd83b5`. It targets exact camera
-carrier `42753a576f42d4c43c35fd786d0748e1d03672c5` on
-`feat/4284-camera-snap-tracking` and addresses the confirmed 520 x 900
-Tools-popover clipping defect without retargeting or rewriting the existing
-stack.
-
-The implementation uses one collision-safe horizontal clamp for File, View,
-and Tools rather than a Tools-only breakpoint. It retains the existing desktop
-left anchor when bounds already fit, enforces a 16 px viewport gutter, bounds
-popover width, and recalculates after native details toggle, viewport resize,
-or content resize. Native `<details>/<summary>` behavior, keyboard opening,
-focus semantics, command IDs, accessible names, and shortcuts are unchanged.
-
-The RED Playwright observation placed the Tools menu right edge at 622.48 px
-against the 504 px constrained limit. GREEN evidence is 108 Vitest files with
-653 tests, six Playwright cases across desktop and constrained 2x-DPR projects,
-TypeScript checking, zero-warning ESLint, a 194-module production build, the
-campaign-manifest validator, 11 manifest tests, and `git diff --check`. The
-520 x 900 browser contract verifies all labels and shortcuts are visible and
-the menu remains inside the viewport. Track the work under epic #4218 and
-child issue #4300; draft PR evidence is not a protected merge or release.
-
-## 2026-08-10 PR #4298 workspace timestamp propagation
+## 2026-08-10 PR #4298 exact repaired flight-ground propagation
 
 Draft PR #4298 keeps base `feat/4199-wind-workflow`. The normal merge containing
-this handoff incorporates exact #4282 head
-`5f77af4add23547a21cc3fabce98ae9ad4260427` into exact camera branch parent
-`42753a576f42d4c43c35fd786d0748e1d03672c5`. Neither branch was rebased,
+this handoff keeps original camera child
+`9ffd8d280c77977a41e93bd0caef9678d1c231b6` first and incorporates exact
+repaired #4288 head `108a841b1378c992defd3c7b7ee263d41a6c8b24`
+second. Exact #4288 contains repaired #4285
+`e5bcbd1096d3be1f621a805c9d9f3fd321e375a5` and repaired #4282
+`686016196a2f895058b8a566dff103a0fd32cd10`. Neither branch was rebased,
 retargeted, rewritten, or force-pushed. The camera, tracking, and playback
-behavior is unchanged while the child inherits the deterministic Python
-3.10-3.12 workspace UTC parser, variation export, scalar-ensemble adapter, and
-responsive wind/capability workflow.
+behavior is preserved while the child inherits the qualified flight-to-ground
+transfer plus deterministic workspace, variation, scalar-wind, capability,
+campaign-release, hosted-mypy, and import-identity corrections. The only code
+conflict was the controls import seam; semantic resolution retains both the
+child `CameraCommandId` and parent `ImpactLayerControls` dependencies.
 
-SPEC 1.14.18 records this merge after reconciling the parent lineage at
-1.14.10-1.14.13 and the camera lineage at 1.14.14-1.14.17. The old #4298
-Detect Secrets failure was actionable: two immutable evidence SHA literals in
-the manifest contract test are now assembled from short deterministic chunks,
-preserving exact assertions without presenting high-entropy secret candidates.
-The old File Size Budget run was cancelled during checkout and produced no
-code finding. The reconciled tree passes the full 877-test Rate suite, 60
-shared capability/wind tests, 85 focused camera/playback/compatibility/manifest
-tests, and 28 direct compatibility contracts on real CPython 3.10.20. React
-passes 107 files / 650 tests and all four Playwright desktop/constrained-DPR
-cases; TypeScript, zero-warning ESLint, and the 193-module production build are
-clean. Ruff check/format passes 14 changed Python files, pinned mypy 1.13 passes
-nine production modules, and manifest, documentation-governance, 500-LOC,
-module-size, conflict-marker, Detect Secrets, and diff gates pass. Protected
-CI, review, native rendered review, UpstreamDrift parity, and protected release
-remain separate gates.
+SPEC 1.14.22 records this merge monotonically above repaired parent 1.14.21.
+The exact composed tree passes 1,738 Python tests with two explicit optional
+`build123d` skips, including the installed `tools_core` flight parity path;
+110 React files / 670 tests; all 137 `tools-core` Rust tests; and four
+Playwright camera/playback cases across desktop and constrained 2x-DPR
+Chromium. TypeScript, zero-warning ESLint, the 194-module production build,
+Ruff check/format across 61 changed Python files, pinned mypy 1.13 and Bandit
+across 43 changed production files, warning-denied `tools-core` clippy, Rust
+format, campaign-manifest validation, documentation governance, module and
+500-LOC budgets, conflict-marker checks, and staged/working diff checks are
+clean. The focused control seam passes 12 PyQt camera and impact-layer tests.
+Protected current-head CI, review, native rendered review, camera-state
+persistence, UpstreamDrift parity, and protected release remain separate gates.
 
 ## 2026-08-09 Camera snap/tracking continuation
 
@@ -171,17 +290,72 @@ Canonical Ruff check/format passes all 28 changed Python files; pinned Python
 3.12/mypy 1.13 passes 20 changed production modules; manifest/schema,
 documentation-governance, and staged/working-tree diff checks pass.
 
-## 2026-08-09 PR #4282 corrected-parent propagation
+## 2026-08-09 PR #4288 corrected-ground-parent propagation
 
-Draft #4282 remains on `feat/4199-wind-workflow` with unchanged base
-`feat/4199-wind-scalar-adapter`. Exact corrected #4281 parent
-`958770049f0124dac0426a6dd62fd4edbf437e7a` is incorporated by the normal
-merge published as exact #4282 head
-`bb101cedd555d07d493aae998b46050c68660cdd`. The result preserves the
-responsive PyQt6/React wind-strategy workflow, the consolidated capability
-stack, release-manifest authority, and launcher/type-gate repairs while
-inheriting the complete Python 3.10 compatibility, variation-export, and
-scalar-ensemble corrections.
+Draft #4288 remains on `feat/4269-flight-ground-transfer` with unchanged base
+`feat/4268-ground-contract`. Exact carrier-reconciled #4285 parent
+`6a2bc9d06f6f9a28a0d615b19d2ed4fc13871059` is incorporated through the
+normal local merge containing this handoff; no branch was rebased, retargeted,
+force-pushed, or published. The descendant retains its qualified cross-runtime
+terminal-state/contact transfer and now carries the complete corrected
+wind/scalar/variation, capability, Python-3.10, campaign-manifest, and strict
+ground-contract ancestry.
+
+The only source conflict was the public flight facade test. Resolution keeps
+the child's structural protocol and transfer value inventory plus the parent's
+package-relative import required for Linux/editable collection. This is
+ancestry propagation, not bounce/roll implementation. Protected CI,
+independent review, exact-head publication, and child-first merge of #4288
+into #4285 remain required before the ground parent can collapse toward the
+wind carrier.
+
+Focused evidence is 113 strict-ground, transfer/facade, compatibility,
+scalar-adapter, and responsive-wind tests on Python 3.11 plus the same 113 on
+real CPython 3.10.20. Ruff check/format passes 36 focused files. Pinned mypy
+1.13 passes the 13-file transfer delta and 12-file ground production set in
+separate established namespace invocations; the transfer test binds terminal
+samples before exact `FlightStatePoint` narrowing without weakening runtime
+assertions. The campaign manifest validates and all nine manifest/parity
+contracts pass. Documentation governance, ancestry, SPEC order, and final diff
+assertions remain required in the same merge.
+
+## 2026-08-09 Flight-transfer stack propagation
+
+The #4288 worktree now carries exact published #4285 head
+`8e8df7b9c633affb986326137338313faf46d2db` through a normal merge while
+retaining the declared base `feat/4268-ground-contract`.
+The only code overlap was the flight integrator: the child keeps its bounded,
+testable `flightIntegrator.ts` extraction rather than restoring the parent's
+superseded inline RK4 loop. The Python API contract now inventories both the
+parent capability evaluator records and child transfer records. No GitHub
+write occurred. Focused validation passes with `82` Python tests, `38` React
+tests, and `26` Rust tests; the complete affected Rate+swing_sim Python gate is
+`1483 passed, 7 skipped`, with only optional local Rust-wheel skips.
+The complete React gate is `104 files / 643 tests passed`, followed by clean
+type-check, lint, and production build. Full `tools-core` Rust validation is
+`137 passed`. Changed Python Ruff check/format and CI-pinned mypy 1.13, docs
+governance, and staged/unstaged diff checks also pass.
+The initial focused Python run also exposed a real circular import across the
+ground and flight facades. The transfer adapter now talks directly to the
+ground record/type modules it consumes; no public facade was widened or
+removed.
+
+This latest parent propagation is limited to the schema generator's pinned
+mypy compatibility boundary and explicit casts in adversarial contract tests.
+It has no wire or runtime transfer behavior change. Re-verify the merged child
+before publication and cite only the new exact child head's protected checks.
+Local post-merge evidence is now `70 passed` for the ground, transfer, and
+flight-facade contract suites. The pinned mypy 1.13 profile passes all `13`
+child-delta Python files, including tests, after representing frozen-dataclass
+metadata with a test-only structural protocol. Ruff check/format, the changed
+test assertion ratchet, docs governance, and diff checks are also clean.
+
+Hosted Python 3.12 logs contain no flight-to-ground transfer tolerance failure.
+The only numerical assertion is the separate shared wind fixture, whose
+`9.786440272809793` result differs from `9.7864402728063` by `3.494e-12`
+against a `1e-12` absolute tolerance. This branch does not change the wind
+workflow. The hosted Rust `-lpython3.11` linker failure remains runner/toolchain
+infrastructure.
 
 SPEC 1.14.12 records this propagation monotonically above the corrected
 parent's 1.14.11, 1.14.10, and 1.14.9 entries. Protected CI, review,
@@ -189,35 +363,71 @@ publication, installed-package evidence, downstream UpstreamDrift parity, and
 the remaining scientific/accessibility/performance release gates remain
 separate. This local merge is not a protected release.
 
-Focused evidence is 62 tests on Python 3.11 and 62 tests on real CPython
-3.10.20 with PyQt6 and the complete focused scientific dependency set. The
-real 3.10 run exposed one child-owned direct `enum.StrEnum` import in
-`capability_observation.py`; it now uses the established shared runtime
-compatibility contract, retains native typing under `TYPE_CHECKING`, and is
-pinned by the expanded regression. React passes 8 files / 35 tests, TypeScript,
-and focused zero-warning ESLint. Ruff check/format passes 15 focused files;
-pinned mypy 1.13 passes 10 production modules; and the nine campaign
-manifest/parity contracts pass.
+Focused evidence is 89 ground-contract, compatibility, scalar-adapter, and
+responsive-wind tests on Python 3.11 plus the same 89 on real CPython 3.10.20.
+Ruff check/format passes 34 focused Python files, pinned mypy 1.13 passes 23
+production modules, and ground modules/functions remain within 400/50-line
+budgets without placeholders. The inherited campaign manifest validates and
+all nine manifest/parity contracts pass. Documentation governance, ancestry,
+SPEC-order, and final diff assertions are required in the same local merge.
 
-## 2026-08-09 Capability workflow hardening continuation
+## 2026-08-09 Ground-contract stack recovery
 
-Local branch `feat/4201-capability-contract-hardening` starts at exact carrier
-`18fe89201d657116bbca99922297c14968356c44`. It makes the Python and TypeScript
-`capability-optimization-workflow/v1` readers fail closed on JSON primitive
-type mismatches and pins the identical accept/reject matrix in a shared golden
-fixture. The Python reader validates the complete nested wire document before
-calling model constructors, so numeric strings, booleans-as-numbers, numeric
-text identifiers/provenance, and fractional integer fields cannot be silently
-normalized. Integral JSON numbers remain portable between runtimes.
+Protected quality-gate run `31341468033` on PR #4285 exact head
+`2d9a06fae46e0601a05896b71934ca0c6b8dc59a` then reached pinned mypy 1.13
+and found that skipped-import analysis models the Python 3.10 string-enum shim
+as `str`. The scoped correction generates all schema enum values and target
+frame constants through `str(...)`; deliberate invalid-input tests use typed
+casts instead of stale suppressions. Wire values and fail-closed runtime
+behavior are unchanged. The full 19-file changed Python delta passes the exact
+mypy 1.13 flags, Ruff check/format passes, and the focused ground suite remains
+`46 passed`. Treat the failed run only as old-head diagnostic evidence. Push a
+new commit normally and propagate it into #4288 by normal merge before using
+any child CI result as release evidence.
 
-The React Shot Optimizer also replaces browser-managed number inputs with
-decimal text drafts. This makes leading-minus and decimal entry reliable while
-preserving numeric commit and existing workflow validation. RED evidence was
-Python `8 failed, 16 passed` and React `2 failed, 26 passed`; final focused
-evidence is Python `43 passed`, React `9 files / 69 tests passed`, with Ruff,
-format, mypy, TypeScript, ESLint, structural, and diff checks clean. This
-continuation also builds 187 Vite modules without a size warning; it is local
-only and has not changed GitHub state.
+Draft PR #4285 remains based on `feat/4197-capability-observer`. A normal local
+merge now carries exact parent head `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a`
+into `feat/4268-ground-contract` without retargeting or rewriting either
+branch. The previous PR head had no reviews or unresolved threads and was
+reported dirty only because the parent had advanced beyond its 2026-08-07
+merge base.
+
+The current-head test logs also proved a bounded ground defect: schema tests
+imported `jsonschema` without declaring it, and the new enum modules bypassed
+the repository's Python 3.10 compatibility boundary. The follow-up declares
+`jsonschema>=4.23.0`, pins the locally verified 4.24.0 build, imports the shared
+`StrEnum`, and adds a package-wide
+regression test. RED named the three offending ground modules; GREEN is
+`46 passed`, and the affected Rate+swing_sim suite is `1463 passed, 5 skipped`
+with optional local Rust-wheel skips only. Focused Ruff check/format, targeted
+mypy, documentation governance, and diff checks pass. The separate Rust
+`-lpython3.11` linker failure is infrastructure. No GitHub write was made; PR
+#4288 must receive this parent ancestry through a normal merge before further
+flight-transfer publication.
+
+## 2026-08-10 PR #4280 workspace timestamp propagation
+
+Exact parent `05383d333b6fd87eaf5e37305476f50b505c2c2e` is incorporated into
+`feat/4144-variation-export-continuation` through the normal merge containing
+this handoff. PR #4280 keeps base `feat/4218-toolstrip-workspace`; neither
+branch was rebased, retargeted, force-pushed, or rewritten. The reconciled tree
+retains all variation export/accessibility behavior and adds the strict
+cross-version workspace timestamp parser.
+
+SPEC 1.14.10 remains the parent compatibility entry and SPEC 1.14.11 becomes
+the child variation entry. The reconciled tree passes `778` Rate tests, `27`
+real-Python-3.10.20 compatibility tests, `1 file / 8` focused React tests,
+TypeScript, focused zero-warning ESLint, Ruff, format, and pinned mypy 1.13.
+Documentation, size, and diff gates must remain clean in the merge commit.
+Protected CI, review, and later propagation remain open.
+
+## 2026-08-09 PR #4280 variation-export propagation
+
+Draft #4280 remains based on `feat/4218-toolstrip-workspace` and includes exact
+corrected parent `3f67ed466fefc8991db9c4409f921f25e1c37142` through a normal
+merge. The child retains complete selected-scatter-axis CSV export parity,
+typed unavailable rows, PyQt accessible raw tables, and the focused
+table/scatter/matrix split.
 
 ## 2026-08-09 Capability results stabilization
 
@@ -957,27 +1167,27 @@ remains an explicit fail-closed boundary.
 
 Branch `feat/4199-wind-workflow` is published as
 [draft PR #4282](https://github.com/D-sorganization/Tools/pull/4282) at exact
-implementation head `fdcc25008`.  It is stacked on exact draft PR #4281 head
+implementation head `fdcc25008`. It is stacked on exact draft PR #4281 head
 `8b8690e8760d82ba814e8d95588d2540d28a6759`; do not extend, retarget, rewrite,
 or merge ahead of #4281.
 
 The slice delivers matched PyQt6 and React current-launch wind-strategy
 workflows on the shared `wind-strategy-analysis/v2` and
-`scalar-ensemble/v1` authorities.  It adds off-GUI-thread/off-main-thread
+`scalar-ensemble/v1` authorities. It adds off-GUI-thread/off-main-thread
 execution, exact progress, cancellation and teardown, canonical target reuse,
 all-variable cohort-aware scatter, null-preserving generic CSV, explicit
-availability, captured calculation basis, and stale-result invalidation.  The
+availability, captured calculation basis, and stale-result invalidation. The
 managed plot controls reset toolbar history and expose Auto Fit, zoom, and
-legend placement.  React data marks are clipped to the plot region and the
-axes have numeric ticks/gridlines.  Its workspace is genuinely code-split,
+legend placement. React data marks are clipped to the plot region and the
+axes have numeric ticks/gridlines. Its workspace is genuinely code-split,
 not hidden behind a raised bundle-warning threshold.
 
-Native-window QA at 1280 x 768 found and closed two late usability gaps.  Ball
+Native-window QA at 1280 x 768 found and closed two late usability gaps. Ball
 flight now has an accessible Loop control in both clients and wraps without
-creating a second timer/animation frame.  The PyQt wind panel now uses compact
+creating a second timer/animation frame. The PyQt wind panel now uses compact
 two-column Setup and plot-first Results views, switches to Results after a
 successful run, and leaves run/cancel/export and progress/status continuously
-available.  A live five-trial run completed 5/5 with the captured basis,
+available. A live five-trial run completed 5/5 with the captured basis,
 summary, scatter, native pan/zoom, Auto Fit, and legend placement visible.
 The in-app browser connection refused localhost navigation under its URL
 policy, so React visual evidence remains the full component suite and
@@ -992,7 +1202,7 @@ Current primary validation is:
   build, structural line/function budgets, and `git diff --check`: passed.
 
 The five Python skips are the absent optional `swing_core` and `tools_core`
-wheel fast paths, not failures.  The two warning classes are established
+wheel fast paths, not failures. The two warning classes are established
 Hypothesis collection configuration and the empty polynomial preview legend.
 Hosted CI, required review, mergeability, and exact deployed/default-branch
 state remain unproven until the new child PR is published and protected checks
@@ -1003,13 +1213,13 @@ The independent rolling-ground audit refined epic #4267 at
 It defines carry, final coordinates, launch-monitor total displacement, and
 bounce/skid/roll/ground path lengths separately; requires full angular state
 and arbitrary-normal physical contact; and restricts UpstreamDrift terrain
-reuse to a one-way versioned adapter.  The four-surface audit refined #4260 at
+reuse to a one-way versioned adapter. The four-surface audit refined #4260 at
 <https://github.com/D-sorganization/Tools/issues/4260#issuecomment-5223106465>:
 CI must prove the complete capability by `tools.pyqt6`, `tools.react`,
 `upstreamdrift.pyqt6`, and `upstreamdrift.react` Cartesian product with
-commit-fresh evidence.  A launcher/native-window handoff is not parity.
+commit-fresh evidence. A launcher/native-window handoff is not parity.
 
-The next universal-ensemble slice is the capability optimizer.  Its exact
+The next universal-ensemble slice is the capability optimizer. Its exact
 streaming observation/cancellation/scalar-adapter contract is recorded at
 <https://github.com/D-sorganization/Tools/issues/4197#issuecomment-5223170071>.
 Keep the ordinary optimization result compact, stream every attempted sample
@@ -1020,29 +1230,29 @@ invent outputs for no-impact or failed rows.
 
 PR #4282 initially failed the hosted Python 3.12 delta mypy gate because the
 wind lifecycle mixin and `QWidget` exposed incompatible `closeEvent`
-signatures.  Commit `424b4c395370aea26069386c070a65f7abe885bc` moves the Qt
+signatures. Commit `424b4c395370aea26069386c070a65f7abe885bc` moves the Qt
 override onto a concrete `WindStrategyGroupBox` and leaves the reusable mixin
-responsible only for cancellation/join behavior.  Fresh Python 3.12 mypy
+responsible only for cancellation/join behavior. Fresh Python 3.12 mypy
 passes for all 11 changed source files; Ruff, format, diff validation, and the
-19 focused wind-panel/worker/playback tests also pass.  This is a scoped CI
+19 focused wind-panel/worker/playback tests also pass. This is a scoped CI
 repair, not evidence that the still-queued protected stack is merge-ready.
 
 The current remote UpstreamDrift audit basis is `main` at
-`0782853295e005af68818617e4725eb980890f43`.  Reusable ground assets exist in
+`0782853295e005af68818617e4725eb980890f43`. Reusable ground assets exist in
 its Rust contact kernel, split terrain/material package, compressible-turf
-helpers, and putting roll engine, but none is a qualified drop-in.  Material
+helpers, and putting roll engine, but none is a qualified drop-in. Material
 round trips lose seven physical fields, the elevation-grid boundary contract
 has two failing cases, terminal flight spin is not exported as a full vector,
 and the Rust contact result uses scalar spin and a per-unit-mass energy value
-labelled as joules.  Tools must own a strict, versioned target-frame
+labelled as joules. Tools must own a strict, versioned target-frame
 flight-to-ground request/result authority; UpstreamDrift may contribute only a
 one-way explicit adapter.
 
-The parity matrix remains materially incomplete.  Tools PyQt is the broadest
+The parity matrix remains materially incomplete. Tools PyQt is the broadest
 native surface; Tools React still has reduced impact/flight model authority;
 UpstreamDrift PyQt is an external launcher; and UpstreamDrift React has no Rate
-of Closure route.  A separate generic simulator, copied TypeScript physics,
-or launcher tile does not satisfy parity.  Required next evidence is a
+of Closure route. A separate generic simulator, copied TypeScript physics,
+or launcher tile does not satisfy parity. Required next evidence is a
 commit-fresh capability-by-surface manifest backed by shared golden fixtures,
 one authoritative Tools physics contract, thin UI adapters, and an immutable
 UpstreamDrift Tools pin.
@@ -1050,7 +1260,7 @@ UpstreamDrift Tools pin.
 ### 2026-08-07 capability-observation continuation
 
 Active branch `feat/4197-capability-observer` is based exactly on PR #4282
-head `6e3c1029f1f3a80ae09020ef7d0afacb3c0d5484`.  It must remain a normal
+head `6e3c1029f1f3a80ae09020ef7d0afacb3c0d5484`. It must remain a normal
 stacked child of `feat/4199-wind-workflow`; do not retarget, rewrite, or merge
 it ahead of that parent.
 
@@ -1061,27 +1271,27 @@ validated implementation/hardening head is
 will advance that head without changing the tested runtime behavior.
 
 The optimizer now accepts optional synchronous observation and cooperative
-cancellation hooks without retaining traces in `OptimizationResult`.  Every
+cancellation hooks without retaining traces in `OptimizationResult`. Every
 attempt emits one immutable `capability-sample-observation/v1` record in exact
-candidate/club/sample order.  Python and TypeScript normalize evaluator
+candidate/club/sample order. Python and TypeScript normalize evaluator
 exceptions, malformed results, no-impact, nonconvergence, and missing landing
 metrics identically, preserve all valid evaluator metrics and provenance, and
-never expose raw exception text.  Cancellation is checked before the next
+never expose raw exception text. Cancellation is checked before the next
 evaluator call and reports exact attempted/total counts.
 
 The app-layer adapters convert streamed observations into the shared
-`scalar-ensemble/v1` authority.  They declare the complete scalar flight
+`scalar-ensemble/v1` authority. They declare the complete scalar flight
 catalog, preserve unavailable outputs as null, include nominal and perturbed
 parameters plus target diagnostics, require a contiguous zero-based prefix,
-and reject overflow before retaining a row.  TypeScript deep-parses and
-freezes caller input before storage.  Stable JSON ordering is Unicode
+and reject overflow before retaining a row. TypeScript deep-parses and
+freezes caller input before storage. Stable JSON ordering is Unicode
 code-point based in both runtimes; ASCII and Unicode parity fixtures hash to
 `df36f765afdf508d00a3d264911ce5b6f07e25da3744b187596d67487ea3be5f`
 and `18086b5e97d576598bbfa63407b6eda786a3a7ce20509654de282400bd32efd0`.
 
 Current local evidence on this branch is 120 Python flight/adapter tests
 passed with four expected optional `tools_core` skips, and 96 React files / 580
-tests passed.  Python 3.12 mypy, Ruff, Black, TypeScript, zero-warning ESLint,
+tests passed. Python 3.12 mypy, Ruff, Black, TypeScript, zero-warning ESLint,
 the Vite production build, structural budgets, and `git diff --check` pass.
 This completes the stream/adapter contract slice of #4197, not its remaining
 end-user optimization workflow or the wider release epic.
@@ -1091,16 +1301,16 @@ all corrected before opening a PR: native Python/JavaScript number formatting
 was not byte-stable at IEEE rounding and exponent edges; Unicode title-casing
 could derive different labels; public observations admitted impossible
 status/metric combinations; and the TypeScript declaration signature could
-collide when identifiers contained its delimiters.  The replacement canonical
+collide when identifiers contained its delimiters. The replacement canonical
 writer emits code-point-sorted JSON with raw numeric tokens, fixed 11-decimal
 half-away rounding, decimal integer-valued magnitudes, and normalized negative
-zero.  ASCII-only initial-letter label casing, strict landing/incomplete metric
+zero. ASCII-only initial-letter label casing, strict landing/incomplete metric
 invariants, and structural declaration comparison now match in both runtimes.
 
 Adversarial regression coverage includes binary half boundaries, `1e-12`,
 `1e-11`, large integer-valued magnitudes, negative zero, Unicode identifiers,
 delimiter-bearing declarations, non-finite inputs, and every effective/source
-status combination.  Updated evidence is 135 Python flight/adapter tests passed
+status combination. Updated evidence is 135 Python flight/adapter tests passed
 with four expected Rust-wheel skips and 96 React files / 584 tests passed, plus
 Python 3.12 mypy, Ruff, Black, TypeScript, ESLint, Vite build, structural
 budgets, and diff checks. The initial implementation commit was
@@ -1109,16 +1319,108 @@ budgets, and diff checks. The initial implementation commit was
 Protected CI, reviews, and every parent PR remain required.
 
 The first hosted CI Standard run on PR #4283 reached delta mypy after checkout,
-dependency installation, Ruff, and formatting passed.  With unchanged imports
+dependency installation, Ruff, and formatting passed. With unchanged imports
 skipped, mypy treated the request fields used by the new private runtime as
 `Any` and rejected `_OptimizationContext.total_count` for returning an implicit
 `Any`. The request contract already guarantees positive integer operands; the
 scoped fix makes the return boundary explicit with `int(...)`. The exact
 seven-file Python 3.12 CI mypy command, Ruff/format, diff check, and the full
 135-test flight/adapter suite now pass (four optional Rust-wheel skips). This
-fix and handoff update are committed together as `SELF`; resolve the exact head
-with `git rev-parse HEAD` and push normally.
+fix and handoff update are committed together as
+`60ac5b46c78988225862d9b89a33ddc3656a3413`, now present in the propagated
+capability ancestry.
 
+### 2026-08-07 strict flight-to-ground contract continuation
+
+Active worktree
+`C:\Users\diete\Repositories\Tools-worktrees\ground-transition-contract` on
+branch `feat/4268-ground-contract` starts exactly at protected draft PR #4283
+head `60ac5b46c78988225862d9b89a33ddc3656a3413`. It is the stacked implementation
+for [issue #4268](https://github.com/D-sorganization/Tools/issues/4268) under
+ground-model epic #4267. The implementation and this durable handoff update are
+committed together as `0d6f5d0b879ce3456c990c08b17d6df4185c4a8f`.
+
+The new self-facaded `shared.python.swing_sim.ground` package owns strict
+`flight-to-ground-request/v1` and `flight-to-ground-result/v1` contracts. Every
+record is frozen, SI-only, and explicit about the canonical target frame. A
+request carries two full signed 3D flight states that bracket physical
+sphere/terrain contact, ball radius, mass, rotational inertia factor, complete
+planar surface geometry/material data, provider/version identity, calibration,
+and reproducibility provenance. It rejects non-finite or Boolean numbers,
+unknown nested fields, unsupported versions/units/frames, non-unit or downward
+normals, non-incoming contact, and states that do not straddle the physical
+surface gap.
+
+Results distinguish carry, bounce-air, skid, roll, accumulated surface path,
+final downrange/offline, and launch-to-final horizontal total distance. Ordered
+phase samples, event ledgers, status/termination matrices, warnings,
+calibration, and provenance fail closed: failed/unavailable results cannot
+fabricate trajectory summaries; rest samples cannot still move or spin; event
+bounce counts and trajectory-derived distance summaries must agree. The only
+legacy projection is the explicit one-way `to_ground_model_result` adapter,
+which accepts complete qualified results and never infers total or roll from
+carry.
+
+Machine-readable Draft 2020-12 request/result schemas, deterministic compact
+serialization, explicit current-version migration gateways, a shared
+Python/TypeScript/Rust/WASM golden fixture, contract documentation, and a pinned
+public API are included. The local gate is green: 45 focused contract/API/
+schema/migration/parity tests and the full Python 3.12 flight-plus-ground suite
+(180 passed, four expected optional Rust-wheel skips), plus Ruff, formatting,
+production mypy, schema meta-validation, structural file/function budgets, and
+diff checks. The Python 3.12 environment reports the pre-existing SciPy/NumPy
+compatibility warning; no new ground test warning is introduced.
+
+Independent pre-publication review then found four release blockers before any
+commit or PR: Python-native JSON number spelling was not cross-runtime stable;
+JSON Schema integers and runtime integer parsing disagreed on values such as
+`64.0`; direct constructors could accept invalid nested records; and a plane
+could move along its normal without a reference epoch while zero-speed contact
+was classified as incoming. The fixes reuse the shared 11-decimal canonical
+numeric writer, normalize all contract floats and integral JSON numbers, pin
+adversarial numeric tokens in the golden fixture, validate every nested record
+at the public constructor boundary, restrict v1 surface motion to the tangent
+plane, and require both bracket states to have strictly incoming relative normal
+velocity. First-contact event/time/position/output-state identity and complete
+event-range checks are also enforced.
+
+Two subsequent adversarial reviews found additional fail-closed gaps. Explicit
+phase/event transitions and status/termination pairings now prevent regressions;
+terminal event time, position, linear/angular state, phase, and completion are
+bound to the final trajectory point; duplicate JSON object keys are rejected at
+every nesting depth; and the target-frame origin and post-first-contact bounce
+count are unambiguous. Event ledgers preserve signed pre/post angular state,
+unavailable results carry typed field/reason/provenance records, raw physical
+and relational bounds are checked before canonical rounding, and unsafe or
+oversized integers, noncanonical edge whitespace, and surrogate text fail
+closed with typed validation errors. All files and functions were split back
+under the repository's 400-line/50-line/four-parameter limits. Two final
+independent re-reviews found no remaining publication blocker in #4268 scope.
+
+Do not connect this contract to current flight output by substituting initial
+spin or a launch-plane crossing. Issue #4269 must first propagate full terminal
+angular velocity and two states bracketing ball-radius/terrain contact across
+Python, TypeScript, Rust, and WASM. UpstreamDrift remains a one-way adapter
+consumer; Tools must not import it, and its lossy terrain material round trip and
+elevation-grid boundary defects require separate repair evidence.
+
+New visualization issue
+[#4284](https://github.com/D-sorganization/Tools/issues/4284) is a child of
+toolstrip/workspace epic #4218. It tracks bounded clubhead camera following and
+Face On, Down the Line, and Overhead snap views with canonical frame definitions,
+per-viewport state, PyQt/React parity, playback/zoom interaction coverage, and
+rendered computer-control QA.
+
+Draft PR #4285 initially failed only the CI Standard changed-test assertion
+gate because its fixture-only package marker and deterministic record builder
+live beneath a `tests` directory. Both files are now explicitly allowlisted by
+exact repository path in `scripts/test_assertion_allowlist.txt`; behavioral test
+modules remain subject to the AST assertion gate. Reproduce this narrow check
+from the PR worktree by diffing Python paths against
+`feat/4197-capability-observer` and passing that list to
+`scripts/check_test_assertions.py --changed-files`. This gate repair and the
+handoff update must be committed and pushed together as a normal follow-up
+commit; do not amend or force-push the published contract commit.
 The next protected run exposed two `detect-secrets` false positives in each
 runtime's cross-language SHA-256 parity assertions. They are deterministic test
 digests, not credentials. Mark the four exact constants with the scanner's
@@ -1126,4 +1428,50 @@ digests, not credentials. Mark the four exact constants with the scanner's
 rewrite the baseline. Re-run the scanner normalization gate, focused parity
 tests, lint, and diff checks. Commit this CI repair with this handoff update and
 push normally on `feat/4197-capability-observer` before propagating the parent
-head through the protected stack.
+head through the protected stack. That repair is parent commit
+`49612946138b1021f80c9f8d2a4d06f1610825db`; this child now merges it normally
+without rewriting either published branch.
+
+Issue #4269 branch `feat/4269-flight-ground-transfer` now merges protected
+contract head `3235af71150a774954e7673fc81d7179330fbe76` without rewriting the
+stack. Keep its cross-runtime transfer implementation uncommitted until the
+post-repair independent review and complete Python/TypeScript/Rust/PyO3/WASM
+gates are green.
+
+### 2026-08-07 flight-to-ground physical transfer continuation
+
+Issue #4269 continues from alignment merge `13184096e` in
+`C:\Users\diete\Repositories\Tools-worktrees\flight-ground-transfer`. Python
+and TypeScript now preserve full signed angular state, require explicit
+launch-origin evidence, and qualify sphere contact against the configured
+launch-relative terrain plane. Python exposes `simulate_to_surface` for built-in
+native models without breaking the legacy `simulate` contract; the web RK4 path
+rejects more than 50,000 synchronous steps before entering its loop and uses an
+exact partial final step rather than exceeding the requested horizon.
+
+Rust, PyO3, and WASM accept the complete `flight-to-ground-request/v1` record,
+including surface material/provider data, calibration, provenance, ball data,
+and the strict incoming time-ordered bracket. Rust retains its raw crossing
+bracket in transfer-event evidence; Python and TypeScript intentionally use the
+exact zero-gap interpolated contact as the v1 first-penetrating state. Tee height
+remains a vertical ground-to-ball-bottom measure and terrain elevation remains
+observable. At this pre-publication checkpoint, the
+implementation/specification/handoff commit became
+`d2d3d0f53a78aa863574afe43290a29c48318d94`; the following review record and
+current handoff supersede the then-pending publication instruction.
+
+The second independent review found three real blocker classes: approximate
+Python origins/malformed chronology, noncanonical Rust wire tokens, and
+fixed-step runtimes exceeding or truncating their requested horizon. All are
+now repaired with adversarial tests. Current evidence is 208 Python tests using
+the exact rebuilt CPython 3.12 wheel with no skips, 603 web tests, 160 Rust
+tests, exact PyO3/Python canonical output, PyO3 and wasm32 checks, production web
+build, and a completed `wasm-pack build`. The final independent closure audit
+found no P0-P2 issue and declared #4269 locally publication-ready.
+
+Full-crate Clippy warnings remain confined to pre-existing unrelated electrode,
+SCADA, signal, and math modules; no `flight_ground` warning is present. The
+existing local SciPy/NumPy compatibility warning also remains environmental.
+All new source files are below 400 lines. The oversized append-only SPEC and
+handoff registries plus the preserved Waterloo and `from_imperial` public
+signatures predate #4269 and are explicitly retained for compatibility.

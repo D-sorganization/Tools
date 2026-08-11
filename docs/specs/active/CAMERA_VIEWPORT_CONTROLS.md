@@ -3,6 +3,22 @@
 Status: implemented locally for Tools issue #4284; protected integration and
 UpstreamDrift consumer parity remain open.
 
+## PR #4303 current-parent repair
+
+The local publication candidate normally merges exact live child
+`2e07bec58b8a759c9db36ea7afb26a1c835434f5` first with exact current
+mobile-toolstrip parent `c653f9ff9193d6cdb8e11a13ad0001707e468a42`
+second. This repairs stale ancestry without changing the default-camera
+contract below. Independent review and protected exact-head CI remain release
+gates.
+
+Fresh merged-tree verification covers 49 focused native camera, layout, and
+simulation tests; 14 campaign/launcher-manifest tests; exact-delta Ruff/format,
+pinned MyPy 1.13, Bandit, governance, size, assertion, whitespace, and diff
+gates; the complete 111-file / 673-test React suite; TypeScript; zero-warning
+ESLint; the 195-module production build; and six serial desktop/constrained-
+2x-DPR Playwright camera/toolstrip cases.
+
 ## Problem and scope
 
 Moving clubheads and balls can leave a manually framed 3D view. Every Tools

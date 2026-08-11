@@ -10,7 +10,7 @@
  * kernels land.
  */
 
-import { simulateFlight, type FlightPoint, type Launch } from "./flight";
+import { simulateFlight, type AngularFlightPoint, type Launch } from "./flight";
 import {
   launchDirectionFromRecord,
   launchDirectionToFlightAzimuth,
@@ -72,7 +72,7 @@ export function directLaunch(input: DirectLaunchInput): Launch {
 
 export interface FlightExplorationTs {
   /** App-frame trajectory from the tee (x target, y up, z right). */
-  points: FlightPoint[];
+  points: AngularFlightPoint[];
   metrics: {
     ballSpeedMph: number;
     launchAngleDeg: number;
@@ -105,6 +105,7 @@ export function exploreFlight(launch: Launch): FlightExplorationTs {
     ...point,
     position: add(fromFlightFrame(point.position), BALL_POSITION),
     velocity: fromFlightFrame(point.velocity),
+    angularVelocityRadS: fromFlightFrame(point.angularVelocityRadS),
   }));
   return {
     points,
