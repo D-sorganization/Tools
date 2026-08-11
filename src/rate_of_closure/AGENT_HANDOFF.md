@@ -3,6 +3,301 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 
+## 2026-08-10 issue #4274 workspace-v2 adversarial review repair
+
+Independent review of local workspace-v2 commit
+`b9579c0b16aaf6188f216acbca0b75828c2a5fe6` found two publication blockers.
+An integer too large for `float` escaped strict Python parsing as
+`OverflowError`, bypassing PyQt's transactional import-error boundary; Python
+and TypeScript also disagreed on whether public limit overrides could raise the
+fixed 11 MiB, 100,000-point-per-result, and 200,000-point-combined contract
+caps. The follow-up normalizes numeric conversion overflow to `ValueError` and
+rejects every override above the same hard caps in both runtimes while still
+allowing stricter caller limits.
+
+RED-first regressions cover v1 and v2 parsing, active PyQt playback retention,
+and all three cross-runtime hard caps. The complete Rate suite passes 913 tests
+and the React suite passes 111 files / 690 tests; focused Ruff/format,
+TypeScript, zero-warning ESLint, and Prettier gates pass. The canonical golden
+bytes and physics remain unchanged. This is a review repair, not completion of
+#4274 or #4267; protected publication, approval, parent landing, and the
+existing downstream boundaries remain open.
+
+## 2026-08-10 issue #4274 comparison workspace v2
+
+Local branch `feat/4274-ground-playback-comparison-workspace-v2` starts from
+exact raw-evidence parent `9be08f9a67336aae4ac1f6add68c190d42e67f10`.
+PyQt6 and React now save one strict
+`rate-of-closure-ground-playback-workspace/v2` document containing the primary
+`flight-to-ground-result/v1`, an always-present nullable comparison envelope
+with independent visibility, union-window playback state, and orbit view.
+The stable shared comparison type is `GroundPlaybackComparisonState`.
+
+Strict v2-only parsing is separate from discoverable version dispatch. V1
+documents migrate one way to normalized v2, visibly disclose migration, and
+subsequent saves remain v2. Exact-field recursive validation, duplicate-key
+rejection, finite bounds, 100,000 points per result, 200,000 combined points,
+and an 11 MiB UTF-8 bound apply before parse and after serialization. Python
+and TypeScript pin the same LF-terminated 9,055-byte golden document at SHA-256
+`28b94af16a05315a9d1067bda894a3817dce5849a9562e1ffef7d0d8caecd654`.
+
+Import is transactional on both clients. Invalid input preserves every
+last-good primary, comparison, visibility, playback, camera, and running state;
+valid input commits paused. PyQt restores comparison visibility with signals
+blocked, avoids intermediate seeks/callbacks, and commits union time last.
+React memoizes result timelines so comparison errors or rerenders do not reset
+time/camera, and portable time uses the union window.
+
+RED-first contract and UI failures were observed before implementation.
+Focused evidence passes 34 Python/PyQt tests and eight React panel tests;
+complete suites pass 910 Rate tests and 111 React files / 689 tests. TypeScript,
+zero-warning ESLint, the 204-module production build, Ruff, Black, pinned MyPy
+1.13, Prettier, Python 3.10 compilation, Bandit with the inherited unchanged
+low-severity B101 assertion excluded, minimum-test, module-size,
+documentation, and conflict-marker gates pass. Maximum-ledger paging/lazy
+mounting, camera/Playwright/native visual evidence, terrain editing/meshes,
+ensembles, compiled runtimes, UpstreamDrift parity, protected publication,
+issue acceptance, and epic closure remain open; keep #4274/#4267 open.
+
+## 2026-08-10 PR #4318 raw comparison evidence publication
+
+The independently reviewed raw comparison-evidence continuation is published
+as ready-for-review [PR #4318](https://github.com/D-sorganization/Tools/pull/4318)
+on the preserved `feat/4274-ground-playback-comparison` base. Exact reviewed
+implementation `b89d642441e72c84481293c1f7bf6de03e933feb` descends directly
+from exact PR #4317 head `b55bfa3d710a4ff8fabd4ebc7ec31cddad37cee4`.
+Independent review found and verified the RED-first repair of a late React
+comparison-import race after strict-result or workspace primary replacement.
+The GitHub App identity and fast-forward remote state were verified before the
+normal push; no branch was rewritten or retargeted. SPEC 1.14.44 records
+publication. Protected exact-head CI, approval, parent landing, issue
+acceptance, and epic closure remain required; keep #4274/#4267 open.
+
+## 2026-08-10 issue #4274 matched raw comparison evidence
+
+Local branch `feat/4274-ground-playback-comparison-evidence` starts from exact
+published comparison parent
+`b55bfa3d710a4ff8fabd4ebc7ec31cddad37cee4`. PyQt6 and React now show
+separately labelled primary/comparison trajectory and event ledgers. Trajectory
+rows contain exact absolute and result-relative times plus phase; event rows
+contain exact event time and identity. Both retain positions, linear
+velocities, and angular velocities from each result without pairing rows or
+implying correspondence between different sample grids or event sequences, and
+they remain available when only the dashed graphical overlay is hidden.
+
+Dedicated comparison trajectory/event CSV actions reuse the existing canonical
+full-ledger serializers, so frame fields, numeric normalization, deterministic
+ordering, and LF endings stay matched across clients. PyQt comparison exports
+now reuse a shared `QSaveFile` atomic writer instead of direct replacement.
+Invalid comparison import retains the prior tables and exports; successful
+primary replacement clears them together and invalidates any in-flight
+comparison import that began against the previously displayed primary. React
+raw rendering and toolbar controls were extracted from the panel, and every
+touched production module remains below 400 lines.
+
+RED-first failures were observed on both surfaces before implementation.
+Focused evidence passes 14 PyQt tests and eight React tests; complete suites
+pass 900 Rate tests and 110 React files / 685 tests. Ruff check/format, pinned MyPy
+1.13, Python 3.10 compilation, TypeScript, zero-warning ESLint, Prettier, the
+203-module production build, Bandit, minimum-test, module-size, documentation,
+and conflict-marker governance gates pass. SPEC 1.14.43 records the slice.
+Independent exact-commit review is clean and PR #4318 is published ready for
+review. Protected CI, approval, parent landing, and issue acceptance remain required.
+Workspace-v2 comparison persistence, maximum-ledger paging or lazy mounting,
+camera/Playwright/native visual verification, terrain editors, ensembles,
+compiled runtimes, UpstreamDrift parity, and epic closure remain open; keep
+#4274/#4267 open.
+
+## 2026-08-10 PR #4317 comparison playback publication
+
+The independently reviewed comparison continuation is published as ready-for-
+review [PR #4317](https://github.com/D-sorganization/Tools/pull/4317) on the
+preserved `feat/4274-ground-playback-persistence` base. Exact reviewed
+implementation head `ab0d07c0b60b2034259444a8fb68253fa24ddac7` has clean
+ancestry through merge `395c48f4142520b0f0a1b41479d02ac29c27abcf`, whose
+parents remain original comparison commit `5ceb806961e76c3699934fafcd4aba96c06bbd20`
+first and exact PR #4316 head
+`2c56294ecda0204886508946239c7ca5b50b8b14` second. The GitHub App identity
+was verified before the normal push; no branch was rewritten or retargeted.
+SPEC 1.14.42 records publication. Protected exact-head CI, approval, parent
+landing, issue acceptance, and epic closure remain required; keep #4274 and
+#4267 open.
+
+## 2026-08-10 issue #4274 comparison-session review repair
+
+Independent review of the normally propagated comparison continuation found
+four release-blocking contract defects. The repaired PyQt6/React behavior now
+keeps the union absolute-time session loaded when comparison artists are
+hidden, so visibility no longer changes scrubber limits, stepping, or the
+current observation. PyQt workspace v1 remains intentionally primary-only:
+export clamps only the serialized time to the primary timeline and does not
+mutate the live comparison time. File-dialog failures explicitly disclose when
+the last valid comparison remains loaded.
+
+Direct comparison deltas are normalized once through the shared eleven-decimal
+cross-runtime numeric policy. Python JSON, CSV, tables, and React exports
+therefore agree on canonical values such as `0.2` and `0`, without binary
+floating-point noise. Paired calibration evidence now includes ID, kind,
+source, and canonical confidence on both clients (twelve total identity,
+status, provenance, and calibration rows).
+
+Regression-first evidence is green: 22 focused Python/PyQt tests, the complete
+Rate suite (898 tests), 12 focused React tests, and the complete React suite
+(110 files / 683 tests) cover canonical deltas/CSV, comparison-only workspace export,
+visibility-only overlay toggling, complete calibration evidence, and retained
+file-error disclosure. Ruff check/format, pinned MyPy 1.13, TypeScript,
+zero-warning ESLint, and the 200-module production build pass. SPEC 1.14.41
+records the review repair. Fresh complete suites, independent exact-head
+re-review, guarded publication, protected CI, approval, parent landing, issue
+acceptance, and epic closure remain open. Keep #4274 and #4267 open.
+
+## 2026-08-10 issue #4274 matched comparison playback
+
+The local continuation on `feat/4274-ground-playback-comparison` adds matched
+PyQt6/React comparison playback from exact local parent
+`0ef91e84b6d49551723ba0fbfb8eb1bf7b1ebfa2`. A second strict
+`flight-to-ground-result/v1` is parsed and fully validated before it can
+replace the last-good comparison; failure leaves both the primary and prior
+comparison intact. A successful primary replacement deliberately clears a
+stale comparison only after the new primary commits.
+
+Both clients use one absolute-time window spanning the two observed results.
+Each result is phase-safely interpolated only inside its own samples; outside
+its observed interval the marker is clamped and explicitly labelled as waiting
+for first contact or held at its qualified/observed end. One locked physical
+metre scale contains both paths. Primary and comparison use solid versus dashed
+trajectories, circular versus diamond event/ball markers, an accessible
+show/hide control, paired identity/status/provenance, and a complete fourteen-
+row direct scalar table. Deterministic JSON retains both exact result records
+and the table; deterministic CSV exports the same direct
+`comparison_minus_primary` deltas. No causal, inferential, or extrapolated
+physics claim is made.
+
+Focused evidence passes 22 Python/PyQt contract, GUI, and tooltip tests; the
+complete Rate suite passes 898 tests. React passes 17 focused tests and the
+complete suite (110 files / 683 tests), TypeScript, zero-warning ESLint, and a
+200-module production build. Ruff check/format, MyPy, CPython 3.10 compilation,
+module/changed-file budgets, documentation, minimum-test, assertion, secrets,
+marker, and diff gates pass. A normal two-parent merge now has original
+comparison commit `5ceb806961e76c3699934fafcd4aba96c06bbd20` first and
+exact live parent PR #4316 head
+`2c56294ecda0204886508946239c7ca5b50b8b14` second. The base remains
+`feat/4274-ground-playback-persistence`; no branch was rewritten or
+retargeted. SPEC 1.14.39 records the feature and 1.14.40 records this
+propagation. Independent exact-merge review and guarded publication remain
+open. Comparison persistence in workspace v1, comparison trajectory/
+event evidence tables, ensembles/statistical inference, terrain meshes and
+editors, inverse solving, compiled runtimes, UpstreamDrift parity, protected
+CI, approval, parent landing, issue acceptance, and epic closure remain open.
+Keep issue #4274 and epic #4267 open.
+
+The exact pinned MyPy 1.13 propagation gate additionally reconciles skipped-
+import and fully resolved inference: explicit typed time/serializer bindings
+avoid both `Any` returns and redundant casts, while distinct metric and
+provenance row variables prevent incompatible loop-variable reuse. These are
+type-only repairs with no runtime coercion or scientific behavior change.
+
+## 2026-08-10 PR #4316 exact-head CI type repair
+
+Current-head quality-gate run `31389230948` identified four redundant `str`
+casts in the PyQt persistence export accessors under the repository's pinned
+MyPy 1.13 delta configuration. The serializers already declare exact `str`
+returns; explicit typed local bindings preserve that contract across differing
+import-following environments without runtime coercion. The casts are removed
+without changing runtime behavior. SPEC 1.14.38 records the repair. Fresh
+isolated MyPy 1.13 and 1.15 checks pass on all five production modules; 15
+focused Python/PyQt tests, Ruff, Python 3.10 compilation, formatting, and
+governance also pass. Protected current-head CI remains required; #4274 and
+#4267 remain open.
+
+## 2026-08-10 issue #4274 playback workspace persistence and exports
+
+A reviewed continuation on `feat/4274-ground-playback-persistence` adds matched
+PyQt6/React persistence and deterministic evidence export from exact reviewed
+implementation head `80f0f3ebdb0835c300f9f1e60e7ef2f8703e6cc8`. The strict
+`rate-of-closure-ground-playback-workspace/v1` document embeds the validated
+`flight-to-ground-result/v1` plus paused absolute time, supported speed, loop
+state, and a UI-neutral orbit camera. Imports reject duplicate/unknown fields,
+unsupported versions, nonfinite or out-of-range state, oversized documents,
+and oversized trajectories before replacing the last-good workspace. Active
+timers are never persisted and importing always restores paused.
+
+Both surfaces export lossless canonical result JSON and deterministic
+LF-terminated trajectory/event CSV with every raw position, linear velocity,
+angular velocity, frame, phase/event, time, and sequence field. PyQt uses
+atomic `QSaveFile` replacement. The existing PyQt tab was reduced from 422 to
+367 lines by separating contract, persistence orchestration, and file controls.
+This slice executes no physics and does not add surface editors, terrain
+meshes, comparison overlays, ensembles, solvers, compiled runtimes, or
+UpstreamDrift integration. Keep issue #4274 and epic #4267 open.
+
+Evidence passes 17 focused Python/PyQt tests (including tooltip governance),
+the complete Rate suite (891 tests), 12 focused React/model tests, the complete
+React suite (110 files / 678 tests), and the 198-module Vite production build.
+Ruff check/format, pinned-style MyPy on five production modules, TypeScript,
+zero-warning ESLint, documentation, scoped secrets, module size, minimum-test,
+conflict-marker, and final diff gates pass. A normal two-parent merge now has
+original feature commit `abb55c177af19a3cc08dd6bd5d258ea5ce3a61b9`
+first and exact ready-for-review parent PR #4315 head
+`2618ab025622bf1a4fa21e771b30f808f783648b` second. The base remains
+`feat/4274-ground-playback`; no branch was rewritten or retargeted. SPEC
+1.14.36 records the propagation. Independent exact-head review is READY at
+merge `0ef91e84b6d49551723ba0fbfb8eb1bf7b1ebfa2`, and ready-for-review
+PR #4316 is published against unchanged `feat/4274-ground-playback`. SPEC
+1.14.37 records publication. Protected CI, approval, parent landing, issue
+acceptance, and epic closure remain open.
+
+## 2026-08-10 issue #4274 exact-parent propagation
+
+The Ground Playback continuation now incorporates exact current parent
+`f4ca3f801f60c1c3042d4ed1a6100fdd7cfebd4b` from draft PR #4309 through a
+normal two-parent merge. Original playback head
+`9045f8f3684fcf87bbe0ef3f5c1e1afba0ed5708` is the first parent and the
+corrected ground reference executor is the second; the base remains
+`feat/4275-ground-reference-execution`. SPEC 1.14.33 records the propagation.
+Fresh current-diff evidence passes `77` focused and `1,105` broad Python tests,
+the full React suite (`109` files / `673` tests), TypeScript, zero-warning
+ESLint, and the `197`-module production build. Ruff/format, pinned MyPy 1.13 on
+six production files, real CPython 3.10 compilation, documentation/minimum-test
+governance, a `10`-file secrets scan, marker scans, and diff checks pass. The
+exact parent supplies current green Rust/fmt/clippy evidence because this child
+adds no Rust delta. Independent exact-diff review is READY at implementation
+merge `80f0f3ebdb0835c300f9f1e60e7ef2f8703e6cc8`. Ready-for-review PR #4315 is
+now published with unchanged base `feat/4275-ground-reference-execution`; SPEC
+1.14.34 records that live publication state. Protected CI, approval, parent
+landing, dependency integration, issue acceptance, and epic closure remain
+open.
+
+## 2026-08-10 issue #4274 playback clock and evidence parity repair
+
+Independent release review found that the PyQt player advanced one nominal
+timer interval per callback and discarded loop overshoot, and that both client
+evidence tables omitted scientifically material state and provenance fields.
+PyQt now anchors playback to an injected monotonic clock, re-anchors speed and
+loop-mode changes without discontinuity, uses modulo loop wrap, and has
+deterministic delayed-tick, speed, toggle, and overshoot coverage. PyQt and React now expose full
+trajectory linear/angular velocity, event pre/post linear/angular velocity,
+result identity/status/termination, input SHA-256, calibration ID/confidence,
+and warnings from the same shared golden result. The full
+Rate suite passes 873 tests and the full React suite passes 109 files / 673
+tests; pinned MyPy 1.13, Ruff, TypeScript, zero-warning ESLint, and production
+build gates pass. Independent re-review, exact-head publication, protected CI,
+required approval, dependency integration, and epic closure remain open.
+
+## 2026-08-10 issue #4274 strict browser-import repair
+
+The React Ground Playback importer now routes raw text through the existing
+duplicate-key-aware `flightToGroundResultFromJson` facade before semantic
+validation. This closes a review finding in which `JSON.parse` discarded
+duplicate fields before the strict result parser could reject them. A
+regression proves duplicate `request_id` fields fail atomically, leave the
+last valid trajectory and summary intact, and tell the user that the valid
+result remains loaded. The complete React suite passes 109 files / 673 tests;
+zero-warning ESLint, TypeScript type-checking, and the production Vite build
+also pass. This is local evidence only: independent re-review, exact-head
+ready-for-review publication, protected CI, review approval, dependency integration, and epic
+closure remain open.
+
 ## 2026-08-10 PR #4309 corrected-scalar-study propagation
 
 Exact corrected #4308 parent
@@ -309,7 +604,6 @@ The immutable implementation evidence remains the two-commit child ending at `dc
 
 This publication-only registry update makes no material physics, numerical, schema, or API change beyond the already committed exact head; it records the carrier and evidence in the campaign manifest and canonical handoffs.
 
-
 ## 2026-08-09 issue #4271 independent-review hardening
 
 Independent review blocked publication of local commit `730b58bba8d9c281e6cdcc1e7e2c6340caa1c3f9`
@@ -591,7 +885,7 @@ both reported from the stacked child #4294:
    `_curve` coerces its result to `float`.
 
 The other two red checks on #4289 were **not** code failures: `file-size-budget`
-and `detect-secrets` both had their setup steps *cancelled* by runner
+and `detect-secrets` both had their setup steps _cancelled_ by runner
 infrastructure. Re-run them rather than chasing a nonexistent violation.
 
 Verified after the fixes: 1406 Python tests and 599 React tests pass; Ruff,
@@ -1340,3 +1634,31 @@ branch `feat/4273-ground-study-scalar-adapter` at
 `c8ebf422669992c4a33db661b0c37dfe72b580ae`. The manifest now records this
 carrier and local evidence; no protected check or review is yet claimed. Keep
 #4273/#4275/#4267 open.
+
+## 2026-08-10 Issue #4274 strict ground-result playback slice
+
+`feat/4274-ground-playback` begins at exact PR #4309 head
+`51492c3ddc8b15b1358434da9b29f600261c918a`. The standalone PyQt6 and React
+shells now register a discoverable Ground Playback workspace. It accepts only
+strict `flight-to-ground-result/v1` JSON, with 5 MiB and 100,000-sample bounds,
+atomic candidate validation, and last-good retention. Neither view runs ground
+physics, and both disclose that v1 contains no surface geometry.
+
+The clients share one golden result and equivalent absolute-time, same-phase
+interpolation and cross-phase hold behavior. Controls cover play/pause/replay,
+exact frames, phase jumps, scrub, loop, 0.25x-4x speed, and camera reset. Locked
+physical scales, orbit/zoom, carry and terminal markers, honest partial-result
+wording, and trajectory/event/warning/calibration/provenance tables make the
+imported evidence inspectable without relabeling observed outcomes.
+
+Verified local evidence: 872 Python Rate tests, 672 React tests, 9 focused
+adapter/Qt tests, Ruff 0.14.10, Black, MyPy 1.13, React lint/type/build, policy,
+assertion, size, documentation, and diff gates. Standalone Playwright Chromium
+passed the import and interaction workflow at 1440x900 and 520x900 with exact
+canvas containment and no horizontal page overflow. An offscreen 1024x700
+PyQt render verified that the wrapped control grid preserves a usable 3D view.
+
+Keep #4274/#4267 open: surface editing, exact terrain geometry, comparisons,
+persistence/export, ensembles, optimization, Rust/WASM, and UpstreamDrift
+integration are not delivered here. Require independent exact-tree review and
+normal protected CI before publication.
