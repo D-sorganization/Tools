@@ -104,7 +104,7 @@
       "pr": 4279,
       "branch": "feat/4218-toolstrip-workspace",
       "base_branch": "feat/4181-launch-monitor-registry",
-      "head_sha": "c36ca36e91f34fa849d2508708bf9dd6c0cdc392",
+      "head_sha": "983805d799b76e5e1ad1dbdc7a5ab28957d805c8",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -114,7 +114,7 @@
       "pr": 4280,
       "branch": "feat/4144-variation-export-continuation",
       "base_branch": "feat/4218-toolstrip-workspace",
-      "head_sha": "d71b0ea01b5659d3049ff05627c41f06481207e4",
+      "head_sha": "7fb5d7f489db49742b7bc82ef009570ad2502456",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -124,7 +124,7 @@
       "pr": 4281,
       "branch": "feat/4199-wind-scalar-adapter",
       "base_branch": "feat/4144-variation-export-continuation",
-      "head_sha": "e934ba563a79bf95ee892fea8593972c81299eeb",
+      "head_sha": "73b7f6b45063ec71fa300a39d2185d3f935187b7",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -134,7 +134,7 @@
       "pr": 4282,
       "branch": "feat/4199-wind-workflow",
       "base_branch": "feat/4199-wind-scalar-adapter",
-      "head_sha": "3faf9e9493c9ba37168d9f65ab10cafeedc2a72f",
+      "head_sha": "8c6105d865abe130a68cfa35ffe6afb7eef850c8",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
