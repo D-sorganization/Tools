@@ -3,6 +3,69 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 PR #4323 exact hosted-MyPy repair
+
+The repair is published on ready PR #4323 at exact current head
+`3957f013eeadd448ffa381f12d65b6a076abe21b`, fast-forwarded from verified
+prior head `b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`. Base
+`feat/4275-ground-tilted-conformance` and ready state are preserved; no
+retarget, merge, force operation, or parent rewrite occurred.
+
+Hosted quality-gate run `31429284874`, job `93588443824`, exposed eight
+actionable MyPy 1.13 `no-any-return` errors under its exact Python 3.12 delta
+profile with `MYPYPATH=src:src/python/src` and `--follow-imports=skip`. Skipped
+imports hid the return types of the shared `Vector3` dot-product expression,
+`SurfaceRun.result`, and the rest predicate. The repair uses `typing.cast` at
+those three static-analysis boundaries and one DRY result helper. `cast` is a
+runtime identity operation: arithmetic order, strict vector-length checking,
+predicate truth, event construction, terminal reasons, and public records are
+unchanged.
+
+The exact hosted three-file MyPy profile now passes. Local validation also
+passes all 247 ground tests, 42 focused skid/passivity/conformance tests, Ruff,
+formatting, the campaign manifest and its eight tests, documentation
+governance, changed-Python policy, and diff checks. Fresh exact-head hosted CI
+is the next gate. This repair changes neither the scientific evidence nor the
+open #4275/#4267 limitations recorded below.
+
+## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
+
+Branch `feat/4275-ground-mirrored-property` is published as ready
+[PR #4323](https://github.com/D-sorganization/Tools/pull/4323), targeting
+`feat/4275-ground-tilted-conformance` at exact parent head
+`8b065dd299acc7cab39321b0e2d7f34ca64f159b`. The implementation is exact
+commit `08d631d7169019aee9067f3739051a50d88b9554`; its initial evidence/handoff
+head was `74a23c21bb20f13bf608f463915b00d2d53d5a7f`. This documentation-only
+publication follow-up does not change implementation evidence.
+
+The shared scientific corpus now has seven cases. A second analytic incline
+reflects the existing `n=[0,sqrt(0.99),0.1]` case through the xy plane, with
+polar vectors' z components and the axial spin vector's x component reflected
+under the correct pseudovector transformation. Python, native Rust, installed
+PyO3, and rebuilt Node/WASM consume and pass that shared mirror oracle.
+
+A separate fixed-seed (`4275`) 20-case Python/PyO3 exact-parity sweep varies
+both signs of z tilt, nonzero x-oriented normals, ball radius/mass/inertia,
+surface height and tangential velocity, restitution, static/kinetic friction,
+rolling resistance, launch tangent, and spin. RED exposed that Python's
+implicit unbounded domain always selected world +x as its tangent axis and
+therefore rejected valid normals with x components. The default resolver now
+derives a deterministic unit tangent by projecting the least-aligned Cartesian
+axis into the plane. Explicit caller-supplied finite axes and bounds are
+unchanged.
+
+Local evidence passes all 247 Python ground tests, the four-test native Rust
+corpus harness over all seven cases, fresh installed CPython 3.13 PyO3 corpus
+and seeded-sweep harnesses, and a freshly rebuilt Node/WASM corpus harness.
+Pinned MyPy 1.13 (`follow-imports=silent`), Ruff, Prettier, and diff checks are
+clean. The raw seven-case corpus SHA-256 is
+`c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465`.
+
+Keep #4275 and #4267 open. The seeded sweep is a bounded deterministic
+conformance sample, not statistical uncertainty, calibrated materials,
+performance/memory qualification, changing terrain, deformation, UI/3D
+rendering, WASM-wide randomized properties, or downstream release evidence.
+
 ## 2026-08-10 issue #4275 tilted-plane conformance and passivity
 
 Branch `feat/4275-ground-tilted-conformance` is published as ready

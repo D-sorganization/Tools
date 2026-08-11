@@ -175,7 +175,9 @@ existing leaves, and defines six independently derived cases: shallow
 bounce/capture, flat skid-to-roll, pure roll along +x, the proper active
 -90-degree rotation about +y into +z, pure roll relative to a translating
 plane, and zero-resistance pure roll on the immutable incline
-`n=[0,sqrt(0.99),0.1]`.
+`n=[0,sqrt(0.99),0.1]`. The seventh case reflects that incline through the xy
+plane to form a seventh case at `n=[0,sqrt(0.99),-0.1]`; position and velocity follow the polar-vector
+reflection while angular velocity follows the axial-vector transformation.
 
 Each case declares its scientific basis, applicable runtimes, observable,
 unit, and applicable bounded tolerance. Whitelisted checks cover exact event
@@ -186,9 +188,17 @@ installed PyO3 wheel, and rebuilt Node/WASM package all consume this same
 artifact. A runtime agreeing with another runtime is insufficient: each must
 also satisfy the declared analytic oracle.
 
-The incline additionally requires every non-bounce center to remain one radius
-from the declared plane and compares its four-second path, position, velocity,
-and spin to the closed-form constant-acceleration solution.
+Both inclines additionally require every non-bounce center to remain one radius
+from the declared plane and compare their four-second path, position, velocity,
+and spin to the reflected closed-form constant-acceleration solutions.
+
+A separate deterministic property harness uses local PRNG seed `4275` to build
+20 requests from the same canonical template. It covers nonzero x-normal
+components and both z-tilt signs while varying bounded radius, mass, inertia,
+surface height and tangential velocity, restitution, friction, rolling
+resistance, launch tangent, and spin. Python and a freshly installed PyO3
+extension must emit identical canonical JSON for every request. This seeded
+sample complements rather than replaces the independently analytic corpus.
 
 The prior five-case artifact is bound to implementation commit
 `9df3928a1ef32d81db2e568884ca24d8c576d49a` with raw-file SHA-256
@@ -196,16 +206,19 @@ The prior five-case artifact is bound to implementation commit
 The six-case artifact is bound to reviewed implementation commit
 `5d333a4448d6484f8c98e78c9878cb83b40aa522` with raw-file SHA-256
 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`.
-Neither digest is evidence for broad tilted
-frames, properties, performance, calibration, changing terrain, user
-interfaces, or downstream release. The bounded carrier is ready PR #4322,
-targeting `feat/4275-ground-conformance-corpus`; hosted approval and integration
-remain separate gates.
+The ready PR #4323 seven-case successor has raw-file SHA-256
+`c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465`;
+its implementation is exact commit
+`08d631d7169019aee9067f3739051a50d88b9554`. None of
+these digests establishes exhaustive tilted/property coverage, performance,
+calibration, changing terrain, user interfaces, or downstream release. PR
+#4322 remains the exact parent carrier; hosted approval and integration remain
+separate gates for ready child PR #4323.
 
 This corpus does not replace the canonical full-result fixture. Scientific
 tolerances establish physical conformance; exact canonical bytes and SHA-256
-remain serialization evidence. The current cases do not qualify production
-surface parameters, tilted-frame breadth beyond the single declared incline,
+remain serialization evidence. The current analytic cases and finite seeded
+sample do not qualify production surface parameters, exhaustive frames,
 regional terrain, performance, or statistical uncertainty.
 
 ## Design-by-contract boundary
@@ -226,11 +239,14 @@ regional terrain, performance, or statistical uncertainty.
 ## Explicit limitations
 
 The Python reference supports the existing qualified immutable planar surface
-and its optional finite tangent-axis boundary. Compiled parity is intentionally
-narrower: one immutable plane, standard gravity, the exact v1 model identities,
-and no material/terrain resolver. Cross-runtime byte parity is qualified over
-the common resolver-free horizontal-plane scope; native invariants separately
-cover tilted planes.
+and its optional finite tangent-axis boundary. Its default unbounded resolver
+derives a deterministic tangent by projecting the least-aligned Cartesian axis
+into the plane, so every valid normal has a tangent frame. Explicit finite axes
+and bounds remain caller-owned. Compiled parity is intentionally narrower: one
+immutable plane, standard gravity, the exact v1 model identities, and no
+material/terrain resolver. Cross-runtime conformance includes the two mirrored
+analytic inclines; the broader seeded property sample currently qualifies
+Python and installed PyO3 only.
 
 Neither implementation adds changing normals, regional materials, terrain
 deformation, torsional-spin damping, roll-to-skid transitions, production

@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 else:
     from shared.python.compatibility import StrEnum
 
-from ._vector_math import dot, norm, subtract
+from ._vector_math import dot, intrinsic_tangent_axis, norm, subtract
 from .contract_types import (
     GroundContactState,
     GroundEvent,
@@ -79,6 +79,13 @@ class PlanarSurfaceDomain:
         self._validate_geometry()
         if lower is not None and upper is not None and lower >= upper:
             raise ValueError("domain lower coordinate must be below upper coordinate")
+
+    @classmethod
+    def unbounded(cls, surface: GroundSurfaceProfile) -> PlanarSurfaceDomain:
+        if type(surface) is not GroundSurfaceProfile:
+            raise ValueError("domain surface must be an exact surface profile")
+        axis = intrinsic_tangent_axis(surface.normal_unit)
+        return cls(surface, (0.0, surface.height_m, 0.0), axis)
 
     @staticmethod
     def _optional_bound(value: float | None, name: str) -> float | None:

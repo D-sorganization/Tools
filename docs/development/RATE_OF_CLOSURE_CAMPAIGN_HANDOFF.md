@@ -4,6 +4,68 @@ Status verified 2026-08-08. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-10 PR #4323 exact hosted-MyPy repair
+
+The repair is published on ready PR #4323 at exact current head
+`3957f013eeadd448ffa381f12d65b6a076abe21b`, a guarded normal fast-forward
+from prior head `b8101e070ea59fd9b336b960c2c7a0648bf5fb3f`. Base
+`feat/4275-ground-tilted-conformance` is unchanged. No retarget, merge, force
+operation, parent rewrite, or existing-worktree edit occurred.
+
+The failure is reproduced from hosted run `31429284874`, job `93588443824`:
+Python 3.12 plus pinned MyPy 1.13, `MYPYPATH=src:src/python/src`, and
+`--follow-imports=skip` reported eight `no-any-return` errors in the three-file
+production delta. The imports skipped by that profile caused otherwise typed
+`Vector3`, `SurfaceRun.result`, and rest-predicate expressions to appear as
+`Any`. Explicit `typing.cast` boundaries plus one DRY result helper resolve all
+eight errors without runtime conversion or numerical, event, termination, or
+wire-contract changes. The exact hosted command, all 247 ground tests, 42
+focused skid/passivity/conformance tests, Ruff/format, campaign-manifest and
+eight manifest tests, documentation-governance, changed-Python-policy, and
+diff gates are green locally.
+
+This repair does not extend scientific qualification or close #4275/#4267.
+Fresh exact-head hosted CI, approval, parent integration, and release remain
+unclaimed.
+
+## 2026-08-10 issue #4275 mirrored-frame and seeded-property conformance
+
+Branch `feat/4275-ground-mirrored-property` is published as ready PR #4323
+from exact current ready PR #4322 head
+`8b065dd299acc7cab39321b0e2d7f34ca64f159b`. It preserves base
+`feat/4275-ground-tilted-conformance` and the protected stack; no retarget,
+merge, force operation, or parent rewrite occurred. The implementation is
+exact commit `08d631d7169019aee9067f3739051a50d88b9554`; initial
+evidence/handoff head `74a23c21bb20f13bf608f463915b00d2d53d5a7f` and this
+publication follow-up change no implementation evidence.
+
+The shared corpus grows from six to seven cases with the analytically mirrored
+incline `n=[0,sqrt(0.99),-0.1]`. The reflection applies the correct distinction
+between polar position/velocity vectors and the angular-velocity
+pseudovector. All four runtime consumers pass the resulting contact-plane,
+no-slip, path, terminal vector, event, and time-limit oracle.
+
+The companion fixed-seed 20-case sweep exercises Python and the installed PyO3
+authority with nonzero x components and both signs of z tilt while varying
+bounded ball, surface, material, launch, and spin properties. The RED sweep
+found that the Python default unbounded planar domain selected world +x even
+when it was not tangent. The repair derives a stable intrinsic tangent by
+projecting the least-aligned Cartesian axis; explicit finite-domain axes and
+bounds are not rewritten.
+
+Local validation passes the complete 247-test Python ground package, four
+native Rust corpus tests over seven cases, fresh CPython 3.13 PyO3 corpus and
+seeded exact-parity harnesses, freshly rebuilt Node/WASM corpus execution,
+pinned MyPy 1.13, Ruff, Prettier, and diff checks. The seven-case raw corpus
+SHA-256 is
+`c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465`.
+
+This remains `partial_implementation`. Keep #4275/#4267 open for broader
+property-based coverage in every compiled surface, uncertainty and performance
+qualification, calibrated/evolving terrain, UI/3D rendering, and downstream
+release. Local parity is not hosted CI, protected approval, integration, or
+release evidence; PR #4323 remains gated on all of them and on PR #4322.
+
 ## 2026-08-10 issue #4275 tilted-plane conformance and passivity
 
 Branch `feat/4275-ground-tilted-conformance` is published as ready PR #4322. It
