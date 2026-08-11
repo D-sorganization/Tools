@@ -1,7 +1,29 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-10
+> Last updated: 2026-08-11
+
+## 2026-08-11 PR #4304 current-parent ancestry candidate
+
+The clean dedicated `feat/4271-ground-skid-roll` worktree first fast-forwarded
+to exact live PR #4304 child `52d9a6a978d8e6b8b19ef92f02f265c9058b00ad`,
+then normally merged exact live `feat/4270-ground-impact-bounce` parent
+`cf6e72bad98e5f36f782254942e6895b8b71e670`. The PR base remains unchanged;
+neither branch was rebased, retargeted, rewritten, force-pushed, or published.
+The automatic merge was conflict-free. Its only child-tree change before this
+documentation reconciliation is deterministic formatting in the existing
+skid/roll regression test; production physics, contracts, schemas, numerical
+ordering, and public APIs remain unchanged.
+
+Local qualification on the merge candidate is `115` focused ground
+tests passing on CPython 3.13, pinned Ruff 0.14.10 clean across the ground
+package and tests, and pinned MyPy 1.13 clean across all `25` ground production
+modules. The manifest validator and all `8` manifest tests, documentation
+governance, exact-parent and exact-child diff checks, changed-production policy,
+the official changed-file 500-LOC budget, and mandatory production limits of
+400 lines per module, 50 lines per function, and four parameters all pass. The
+local merge is a PUBLISH candidate for independent review only; protected
+exact-head CI, approval, normal child propagation, and publication remain open.
 
 ## 2026-08-10 PR #4304 corrected-impact propagation
 

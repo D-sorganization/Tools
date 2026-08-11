@@ -194,7 +194,7 @@
       "pr": 4302,
       "branch": "feat/4270-ground-impact-bounce",
       "base_branch": "feat/4269-flight-ground-transfer",
-      "head_sha": "920c46dee688815691e251777142126bf1489b1a",
+      "head_sha": "cf6e72bad98e5f36f782254942e6895b8b71e670",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
@@ -204,7 +204,7 @@
       "pr": 4304,
       "branch": "feat/4271-ground-skid-roll",
       "base_branch": "feat/4270-ground-impact-bounce",
-      "head_sha": "f475ae85feea1b2c628f756699b2aba6ea9334fb",
+      "head_sha": "52d9a6a978d8e6b8b19ef92f02f265c9058b00ad",
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
