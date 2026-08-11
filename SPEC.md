@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.17                                    |
-| **Spec Version**        | 1.14.17                                    |
+| **Current Version**     | 1.14.25                                    |
+| **Spec Version**        | 1.14.25                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -2914,6 +2914,14 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.25 | merge(rate-of-closure, #4202 #4203): normally compose exact launch-monitor-registry child `9ce2c70f11a15420f0ba2d3b4fef6726b6eacefa` with exact D-plane parent `9f83cd379ce8ae2805aa4a5608b5645a529f9c3c`; preserve the configured base, registry/analytics contracts, cross-runtime fixture, D-plane ndarray repair, split typed kinetics façade, and append-only histories without reconstructing the absent strict campaign release manifest. |
+| 2026-08-11 | 1.14.24 | fix(ci, #4179 #4202): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into the D-plane visualization stack while preserving its configured base, ndarray typing repair, frame-explicit scientific behavior, and additive handoff, campaign, and specification histories. |
+| 2026-08-10 | 1.14.23 | fix(swing-sim, d-plane, #4202): add explicit ndarray result boundaries to the private vector conversion and horizontal-projection helpers, closing the exact changed-file MyPy `no-any-return` failures without changing numerical semantics, DbC validation, frames, schemas, or UI behavior. |
+| 2026-08-10 | 1.14.22 | feat/fix(rate-of-closure, swing-sim, #4179 #4182 #4183 #4189 #4202): retain typed reference-frame-explicit 3D D-plane geometry, face-center/contact/reference analyses, exact-versus-planar spin-loft residuals, persistent PyQt6/React engineering layers, and shaded sector exports while propagating the Python 3.10 UTC repair and source-wide AST guard through the exact impact-visualization parent; extract persisted D-plane layer controls to restore the protected simulation-view module budget. |
+| 2026-08-11 | 1.14.21 | fix(ci, #4162 #4167 #4173 #4174 #4178 #4179): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into wedge impact visualization while preserving its configured base and additive scientific, presentation, handoff, campaign, and specification histories. |
+| 2026-08-11 | 1.14.20 | fix(ci, #4167 #4173 #4174 #4178): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into wedge turf physics while preserving its configured base and additive scientific, handoff, campaign, and specification histories. |
+| 2026-08-11 | 1.14.19 | fix(ci, #4167 #4173 #4174): propagate the workflow-pinned Ruff 0.14.10 parent repair normally into swept wedge ground clearance while preserving the configured base, scientific behavior, and additive handoff/specification history. |
+| 2026-08-11 | 1.14.18 | fix(ci, #4167 #4173): propagate the workflow-pinned Ruff 0.14.10 five-file format repair normally into the impact-inspector child; no scientific, persistence, API, schema, test, or UI behavior changes, and the ordinary carrier/protected gates remain open. |
 | 2026-08-11 | 1.14.17 | docs(rate-of-closure, #4202 #4203): restore four exact append-only D-plane parent history rows omitted during the local current-parent reconciliation; preserve the candidate implementation, tests, topology, base, and quality evidence while keeping independent re-review, normal publication, protected exact-head CI, downstream propagation, and release open. |
 | 2026-08-11 | 1.14.16 | fix(rate-of-closure, #4203): close four exact-delta MyPy 1.13 Qt-stub boundaries by narrowing responsive-event handling, legend visibility, ball-setup event filtering, and visible status text to their already declared primitive return contracts; preserve values and UI behavior while retaining normal parent reconciliation and protected release gates. |
 | 2026-08-11 | 1.14.15 | merge(rate-of-closure, #4202 #4203): normally compose exact published launch-monitor-registry child `217e36dc93d30f79826847f958fbcd10805e58ed` with exact current D-plane parent `f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`; retain the split typed kinetics facade at the sole formatting conflict, preserve parent behavior and history, and keep independent review, protected exact-head CI, downstream propagation, and release open. |

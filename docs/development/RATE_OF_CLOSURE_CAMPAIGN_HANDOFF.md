@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 current D-plane parent propagation into launch-monitor registry
+
+- Immediate child PR `#4203` keeps base `feat/4189-dplane`.
+- Exact clean child head `9ce2c70f11a15420f0ba2d3b4fef6726b6eacefa`
+  normally merges exact parent `#4202` head
+  `9f83cd379ce8ae2805aa4a5608b5645a529f9c3c` without rewriting history.
+- Launch-monitor convention/analytics registries, cross-runtime golden fixture,
+  D-plane ndarray repair, split typed kinetics façade, and pinned Ruff
+  `0.14.10` files remain unchanged. The strict campaign release manifest is
+  still absent from this exact history and is not reconstructed here.
+- Both campaign histories and the parent's seven post-base SPEC records remain
+  additive under new monotonic `1.14.x` revisions. Pinned Ruff `0.14.10`
+  check/format is green across 18 registry, analytics, D-plane, delivery, and
+  kinetics files; 79 focused Python and 31 focused React tests pass.
+  Documentation, minimum-test, changed-file-size, module-size, SPEC-version,
+  and diff gates are also green. Protected current-head checks and parent-first
+  release order remain open.
+
 ## 2026-08-11 #4203 append-only SPEC preservation repair
 
 - Independent review of local candidate `e20b4f630...` found four exact
@@ -648,6 +666,20 @@ remains an explicit fail-closed boundary.
 6. Verify a clean installed package and the exact UpstreamDrift dependency pin.
 7. Rerun every recorded gate, inspect protected GitHub checks/reviews, and keep
    #4201 open until every acceptance criterion has current evidence.
+## 2026-08-11 pinned-Ruff propagation into D-plane visualization
+
+- Immediate child PR `#4202` keeps base
+  `feat/4162-wedge-impact-visualization`.
+- Exact clean child head `ba4aa35cc384d51ed3aa52eb532a67e960669c27`
+  normally merges exact parent `#4179` head
+  `7e5dfecf569b39dbbf8cc2101c7426cbc53a2771` without rewriting history.
+- The D-plane ndarray typing repair, frame-explicit geometry, pinned Ruff
+  `0.14.10` files, and all visualization, turf, wedge, impact, variation,
+  handoff, and specification histories remain additive. No scientific or UI
+  behavior changes. Pinned Ruff `0.14.10` check/format verification and 129
+  focused D-plane, impact, solver, kinetics, PyQt, and layout tests are green.
+  Documentation, minimum-test, SPEC-version, and diff gates are also green.
+  Protected current-head checks and parent-first release order remain open.
 
 ## 2026-08-10 PR #4202 D-plane ndarray typing repair
 
@@ -688,6 +720,19 @@ remains an explicit fail-closed boundary.
   applicable because this child has no Rust delta. The inherited 17-error broad
   MyPy Qt/NumPy baseline in 11 untouched files remains outside scope.
   Protected CI and required review remain release gates.
+## 2026-08-11 pinned-Ruff propagation into wedge impact visualization
+
+- Immediate child PR `#4179` keeps base `feat/4166-wedge-turf-physics`.
+- Exact clean child head `ea7acebf033379d6beefd70eb51027ebd3d01be7`
+  normally merges exact parent `#4178` head
+  `188f491ccc88a335ad36afdd66b52289e2e24808` without rewriting history.
+- Parent Ruff `0.14.10` formatting and all existing visualization, turf, wedge,
+  impact, variation, handoff, and specification history remain additive. No
+  scientific or UI behavior changes. Pinned Ruff `0.14.10` check/format
+  verification and 130 focused impact-scene, solver, kinetics, PyQt/layout,
+  wedge-clearance, and turf-model tests are green. Documentation, minimum-test,
+  SPEC-version, and diff gates are also green. Protected current-head checks
+  and parent-first release order remain open.
 
 ## 2026-08-10 Propagation into wedge impact visualization
 
@@ -705,7 +750,17 @@ remains an explicit fail-closed boundary.
   applicable because this child has no Rust delta. The inherited 17-error broad
   MyPy Qt/NumPy baseline in 11 untouched files remains outside scope.
   Protected CI and required review remain release gates.
+## 2026-08-11 pinned-Ruff propagation into wedge turf physics
 
+- Immediate child PR `#4178` keeps base `feat/4161-wedge-ground-clearance`.
+- Exact clean child head `ca567fe7d3fa48b1900ad3098045f4200cfe86a7`
+  normally merges exact parent `#4174` head
+  `3e1b44cf42f4c0838149e0bc8e88ce4cb79b72b0` without rewriting history.
+- Parent Ruff `0.14.10` formatting and all existing turf, wedge, impact,
+  variation, handoff, and specification history remain additive. No scientific
+  or UI behavior changes. Workflow-pinned Ruff check/format, 127 focused tests,
+  and documentation, minimum-test, SPEC-version, and diff gates are green.
+  Protected current-head checks and parent-first release order remain open.
 ## 2026-08-10 Propagation into wedge turf physics
 
 - Immediate child PR `#4178` keeps base `feat/4161-wedge-ground-clearance`.
@@ -721,7 +776,17 @@ remains an explicit fail-closed boundary.
   the exact parent's green 345 React and 12 Rust tests remain applicable. The
   inherited 17-error broad MyPy Qt/NumPy baseline in 11 untouched files remains
   outside scope.
+## 2026-08-11 pinned-Ruff propagation into wedge ground clearance
 
+- Immediate child PR `#4174` keeps base `feat/4163-impact-inspector`.
+- Exact clean child head `01ecf9a7b1922d1609fb99093226799a0b564704`
+  normally merges exact parent `#4173` head
+  `bd48852d303db6281ed5891d4a271d99e76a94e6` without rewriting history.
+- Parent Ruff `0.14.10` formatting and all existing wedge, impact, variation,
+  handoff, and specification history remain additive. No scientific or UI
+  behavior changes. Workflow-pinned Ruff check/format, 98 focused tests, and
+  documentation, minimum-test, SPEC-version, and diff gates are green.
+  Protected current-head checks and parent-first release order remain open.
 ## 2026-08-10 Propagation into wedge ground clearance
 
 - Immediate child PR `#4174` keeps base `feat/4163-impact-inspector`.
@@ -736,7 +801,16 @@ remains an explicit fail-closed boundary.
   Rust tests, real CPython 3.10.20 checks, scoped static analysis, and
   repository governance gates. The inherited 17-error broad MyPy Qt/NumPy
   baseline in 11 untouched files remains outside scope.
+## 2026-08-11 pinned-Ruff propagation into impact inspector
 
+- Exact repaired parent `#4167` head
+  `91dc2174578a4fc472907d7141ca44c9ef36d3ab` is merged normally into child
+  `#4173`; branch/base identities remain unchanged.
+- The merge carries only the documented five-file Ruff `0.14.10` mechanical
+  formatting delta plus its canonical handoff/spec evidence. Impact-inspector
+  and variation behavior are unchanged.
+- Protected current-head checks and the later investigation-suite carrier into
+  the root branch remain mandatory release gates.
 ## 2026-08-10 Propagation into impact inspector
 
 - Immediate child PR `#4173` keeps base `feat/4144-variation-visualizations`.
@@ -760,6 +834,17 @@ feature above the already merged `feat/investigation-suite` carrier. Later
 wedge, D-plane, launch-monitor, workspace, wind, capability, and ground work
 depends on this line and must receive any repair through ordinary parent
 propagation; child branches must not be rewritten.
+
+## 2026-08-11 pinned-Ruff repair
+
+- Exact PR `#4167` head `3c19aaa9d3e812e4659053735a2955d62a080d34`
+  carries the same five changed Python blobs that fail Ruff `0.14.10` format
+  checking on immediate child `#4173`.
+- The five files are mechanically formatted with the workflow-pinned version;
+  there is no scientific, persistence, API, schema, test, or UI behavior
+  change and no claim that variation epic `#4144` is complete.
+- The repair must still pass current-head protected checks and travel through
+  the ordinary investigation-suite carrier before the root PR can reach main.
 
 ## 2026-08-10 Python 3.10 repair
 
