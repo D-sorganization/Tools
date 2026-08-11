@@ -8,14 +8,17 @@
 Issue #4111's selected-club export gap is now implemented: the mesh-defining
 subset of the current `ClubSpec`—type/style, head mass, loft, and optional
 curvature—serializes through the deterministic parametric generator; name,
-length, lie, CG, and MOI do not drive the representative mesh. The PyQt action
-exports conventional millimetre STL coordinates with canonical axes in the
-header/tooltip, safe bounded filenames, and atomic destination replacement.
-Tests cover geometry/extents, cancel, serialization/write failure, and
-preservation of an existing target on replace failure. No full tensor is
-derived: the current shaft-axis scalar enters the CG-centered impact equation
-only as an isotropic-equivalent compatibility approximation with an explicit
-axis/reference mismatch. See
+length, lie, CG, and MOI do not drive the representative mesh. Both Club panels
+export conventional millimetre STL coordinates with canonical axes in the
+header/tooltip and safe bounded filenames. PyQt uses atomic destination
+replacement; React uses the same deterministic geometry/header contract and a
+browser-local `model/stl` object URL that is released after success or click
+failure. Tests cover geometry/extents, filename edge cases, runtime validation,
+browser success/failure status, cancel, serialization/write failure, and
+preservation of an existing native target on replace failure. No full tensor
+is derived: the current shaft-axis scalar enters the CG-centered impact
+equation only as an isotropic-equivalent compatibility approximation with an
+explicit axis/reference mismatch. See
 `docs/development/rate_of_closure_clubhead_tensor_contract.md` for the measured
 or density-integrated tensor and complete-frame contract required to enable it.
 

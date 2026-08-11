@@ -19,6 +19,7 @@ import {
   generatedHeadFor,
   type GeneratedHead,
 } from "../model/clubHeadGeneration";
+import { downloadClubheadStl } from "../model/clubStlExport";
 import { FIELD_GUIDANCE } from "../model/units";
 
 const INPUT_CLASS =
@@ -43,6 +44,7 @@ export function ClubPanel({
   const [curvedFace, setCurvedFace] = useState<boolean>(true);
   const [bulgeMm, setBulgeMm] = useState<number>(300);
   const [rollMm, setRollMm] = useState<number>(280);
+  const [exportStatus, setExportStatus] = useState<string>("");
 
   const effectiveSpec = (): ClubSpec => ({
     ...getClub(clubName),
@@ -69,6 +71,18 @@ export function ClubPanel({
   const onGenerateHead = () => {
     const spec = effectiveSpec();
     onGenerate(generatedHeadFor(spec));
+  };
+
+  const onDownloadHead = () => {
+    const spec = effectiveSpec();
+    try {
+      const filename = downloadClubheadStl(spec);
+      setExportStatus(`STL downloaded: ${spec.name} — ${filename}`);
+    } catch (error) {
+      const detail =
+        error instanceof Error ? error.message : "unknown browser error";
+      setExportStatus(`STL download failed: ${detail}`);
+    }
   };
 
   return (
@@ -155,6 +169,19 @@ export function ClubPanel({
       >
         Generate Representative Head
       </button>
+      <button
+        type="button"
+        onClick={onDownloadHead}
+        title="Download the selected representative parametric head as binary STL. STL is unitless; this export writes units=mm in the head frame with x target, y up, z toe. The mesh is not an inertia-derived CAD model."
+        className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-800/80 px-2 py-1.5 text-sm font-medium transition-colors hover:border-sky-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-400"
+      >
+        Download Selected Clubhead STL
+      </button>
+      {exportStatus ? (
+        <p role="status" className="mt-2 text-xs text-slate-400">
+          {exportStatus}
+        </p>
+      ) : null}
     </div>
   );
 }

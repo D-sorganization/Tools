@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.10                                    |
-| **Spec Version**        | 1.13.10                                    |
+| **Current Version**     | 1.13.11                                    |
+| **Spec Version**        | 1.13.11                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -37,13 +37,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 ## 3. Goals & Non-Goals
 ### 2026-08-10 Selected-club STL export and safe impact-inertia boundary
 
-- The PyQt Club panel exports the representative mesh defined by the current
-  club type/style, head mass, loft, and optional face curvature. Name, length,
-  lie, CG, and MOI are not mesh inputs; the export is not inertia-driven CAD.
+- The PyQt and React Club panels export the representative mesh defined by the
+  current club type/style, head mass, loft, and optional face curvature. Name,
+  length, lie, CG, and MOI are not mesh inputs; the export is not inertia-driven CAD.
   Geometry computes internally in SI metres, then binary STL writes conventional
   millimetre coordinates with unit/frame metadata in its fixed header and
-  tooltip. A same-directory temporary file is flushed and atomically replaces
-  only the user-selected destination. Portable default filenames handle
+  tooltip. PyQt flushes a same-directory temporary file and atomically replaces
+  only the user-selected destination. React creates one browser-local
+  `model/stl` object URL, initiates the download, and releases the URL even when
+  the synthetic click fails. Portable default filenames on both surfaces handle
   Unicode-only names, Windows reserved stems, and excessive length.
 - A `ClubSpec` does not populate the shared impact model's optional full 3×3
   clubhead tensor. Its mass, two-coordinate CG, one shaft-axis moment, and
@@ -2592,6 +2594,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.13.11 | feat(rate_of_closure, #4111): complete React selected-club STL download parity with a reusable deterministic binary writer, the exact millimetre/head-frame/axis header contract, portable bounded filenames, runtime mesh-field validation, object-URL cleanup, visible success/failure status, and explicit representative-mesh limitations. |
 | 2026-08-10 | 1.13.10 | fix(rate_of_closure, #4111): export unitless STL coordinates in explicitly labeled millimetres, pin canonical frame/extents, harden portable filenames and atomic destination replacement, cover cancel/serialization/write failures, identify the actual mesh-defining ClubSpec subset, and label the current shaft-axis scalar in the CG-centered impact equation as an isotropic-equivalent axis/reference approximation. |
 | 2026-08-10 | 1.13.9 | feat(rate_of_closure, #4111): add deterministic selected-`ClubSpec` binary STL serialization and a tested PyQt export action; document why the current scalar shaft-axis MOI, partial CG, representative envelope, and face-normal-only attitude cannot safely generate the shared impact model's full world-frame inertia tensor. |
 | 2026-08-10 | 1.13.8 | refactor(movement_optimizer, #4119): compact formatter-touched `motion_tabs.py` documentation and call layout from 1,216 to 1,152 lines without behavior changes, satisfying the protected 1,200-line module budget with 80 focused tests. |

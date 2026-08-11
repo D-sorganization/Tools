@@ -77,6 +77,14 @@ clickable reference-frame notes. Web numeric fields select the complete value
 on focus and accept intermediate signed decimal drafts (for example, `-12.5`
 degrees of spin-axis tilt) before committing on Enter or focus loss.
 
+Both Club panels can export the selected representative head as deterministic
+binary STL. The generator works in metres, while the unitless STL coordinates
+are written in conventional millimetres; the fixed header records
+`units=mm`, the head frame, and axes `x=target,y=up,z=toe`. Portable filenames
+handle Unicode-only and Windows-reserved club names. This visual parametric
+mesh is not a density-integrated CAD model and does not imply a measured 3×3
+inertia tensor.
+
 ## Build a Standalone Executable
 
 Users can package the explorer and experiment without a Python

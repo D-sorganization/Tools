@@ -6,12 +6,14 @@
 ## 2026-08-10 Authoritative Transfer Snapshot
 
 - Issue #4111 now has a tested mesh-defining-`ClubSpec`-subset → deterministic
-  binary STL path and a discoverable PyQt export action. The generator uses
-  type/style, head mass, loft, and face curvature—not name, length, lie, CG, or
-  MOI. It computes in SI metres and exports conventional millimetre coordinates
-  with canonical axes in the header/tooltip, hardened filenames, and atomic
-  destination replacement. The 3×3 tensor is intentionally not inferred. The
-  current shaft-axis scalar is used by the CG-centered impact equation only as
+  binary STL path and discoverable PyQt and React export actions. The generator
+  uses type/style, head mass, loft, and face curvature—not name, length, lie,
+  CG, or MOI. It computes in SI metres and exports conventional millimetre
+  coordinates with canonical axes in the header/tooltip and hardened filenames.
+  PyQt uses atomic destination replacement; React uses a browser-local
+  `model/stl` object URL that is released after success or click failure. The
+  3×3 tensor is intentionally not inferred. The current shaft-axis scalar is
+  used by the CG-centered impact equation only as
   an isotropic-equivalent compatibility approximation with an explicit
   axis/reference mismatch. The exact unblock contract is recorded in
   `docs/development/rate_of_closure_clubhead_tensor_contract.md`.

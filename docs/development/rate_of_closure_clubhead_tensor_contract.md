@@ -72,10 +72,13 @@ the serializer writes millimetre coordinates because STL is unitless and mm is
 the conventional CAD interchange assumption. The binary header and UI tooltip
 state `units=mm` and the canonical axes (x target, y up, z toe).
 
-The export writes a same-directory temporary file, flushes it, and atomically
-replaces the user-selected destination. Serialization, write, or replace
-failures preserve an existing destination where supported and remove the
-temporary artifact where the operating system permits. Filename defaults fall
+The PyQt export writes a same-directory temporary file, flushes it, and
+atomically replaces the user-selected destination. Serialization, write, or
+replace failures preserve an existing destination where supported and remove
+the temporary artifact where the operating system permits. The React action
+serializes the same selected mesh in the browser, creates one local
+`model/stl` object URL, initiates the download, and releases the URL after both
+successful and failed click attempts. Filename defaults on both surfaces fall
 back safely for Unicode-only names, avoid Windows reserved device stems, and
-bound the generated stem length. React download parity remains separately
-tracked; this slice adds the native PyQt action and reusable Python serializer.
+bound the generated stem length. Neither surface presents this representative
+mesh as tensor-derived or production CAD geometry.
