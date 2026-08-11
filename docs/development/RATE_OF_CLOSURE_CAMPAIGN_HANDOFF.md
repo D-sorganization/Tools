@@ -1,5 +1,15 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 #4203 append-only SPEC preservation repair
+
+- Independent review of local candidate `e20b4f630...` found four exact
+  current-parent history rows missing from SPEC: 2026-08-10 versions 1.13.11,
+  1.13.9, 1.13.7, and 1.13.6. The current documentation-only follow-up restores
+  those rows verbatim and advances the declared/changelog version together.
+- Runtime files, tests, ordered merge parents, PR base, and validation evidence
+  are byte-unchanged. Re-review, normal publication, exact-head protected CI,
+  and downstream propagation remain required.
+
 ## 2026-08-11 #4203 current-parent reconciliation
 
 - The current D-plane base is exact head

@@ -3,6 +3,15 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 Append-only SPEC preservation repair
+
+Independent review found that the local #4203 reconciliation omitted four
+exact D-plane parent SPEC rows dated 2026-08-10 (versions 1.13.11, 1.13.9,
+1.13.7, and 1.13.6). They are restored verbatim in a documentation-only
+follow-up. Production behavior, tests, ordered parents, base, and local quality
+evidence are unchanged; re-review, normal publication, and protected CI remain
+open.
+
 ## 2026-08-11 Current D-plane parent reconciliation
 
 PR #4203's published child `217e36dc93d30f79826847f958fbcd10805e58ed`
