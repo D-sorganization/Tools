@@ -227,3 +227,30 @@ The executor preserves the complete request object and therefore its
 wire schema and does not add UI request construction, TypeScript or compiled
 physics, file persistence, playback, regional-material chaining, calibrated
 terrain response, or final total-distance claims.
+
+## Flight-to-bounce composition facade
+
+`execute_repeated_bounce_from_flight` is the single shared-Python composition
+path from an already-computed flight record to the repeated-bounce prefix. It
+accepts exact `FlightResult`, `LaunchConditions`, and
+`FlightGroundTransferSettings` records plus the capture threshold and an
+optional cancellation callback. Exact nominal types, callback shape, and the
+existing versioned `BounceModelSettings` capture constraint are checked before
+the physical transfer begins.
+
+After validation, the facade composes only existing authorities in order:
+
+1. `build_ground_simulation_request` qualifies physical contact and constructs
+   the frozen `flight-to-ground-request/v1` authority;
+2. `RepeatedBounceRequest` binds that request and the validated capture
+   threshold to the joint execution digest; and
+3. `execute_repeated_bounce_request` runs the existing Python solver and
+   returns its identity-validated request/result pair.
+
+No exception is translated: `FlightGroundTransferError` retains its typed
+field and reason, invalid input remains a contract error, and cancellation
+remains solver evidence. The facade introduces no copied impact, flight, or
+bounce calculations and no new serialization. It is UI-neutral and does not
+provide PyQt6/React invocation, TypeScript/Rust/WASM physics, persistence,
+playback, camera work, regional chaining, skid/roll completion, or total
+distance. Those boundaries remain open under #4267/#4270/#4271.

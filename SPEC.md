@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.46                                    |
-| **Spec Version**        | 1.14.46                                    |
+| **Current Version**     | 1.14.47                                    |
+| **Spec Version**        | 1.14.47                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,23 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Shared Python Flight-to-Bounce Composition
+
+- `execute_repeated_bounce_from_flight` is the public UI-neutral Python seam
+  from exact flight output, launch conditions, transfer settings, capture
+  threshold, and optional cancellation into the existing repeated-bounce
+  request executor.
+- Exact nominal input types, callback shape, and the versioned capture-speed
+  constraint are checked before flight-to-ground transfer. The seam then
+  composes only `build_ground_simulation_request`, `RepeatedBounceRequest`, and
+  `execute_repeated_bounce_request`; it contains no copied physics.
+- Typed transfer errors propagate unchanged. Successful and cancelled runs
+  return the existing identity-validated request/result pair with its physical
+  request fingerprint and joint execution-input digest intact.
+- This child adds no UI/TypeScript/Rust/WASM work, persistence, playback,
+  camera behavior, regional-material chaining, skid/roll completion, or final
+  total-distance claim. Issues #4270 and #4267 remain open.
 
 ### 2026-08-11 Regional Trajectory Inspection and Canonical Evidence Export
 
@@ -3026,6 +3043,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.47 | feat(ground-impact, #4270 #4267): add the public UI-neutral Python `execute_repeated_bounce_from_flight` composition facade with exact flight/launch/transfer types, callback and capture validation before transfer, unchanged typed transfer failures, and identity-safe delegation through the existing ground-request builder, repeated-bounce request, and executor; cover validation order, capture consumption, cancellation, identity/digests, and transfer failure without duplicating physics, while retaining UI/TypeScript/Rust/WASM work, persistence, playback, regional chaining, total distance, protected evidence, release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.46 | docs(rate-of-closure, #4203 #4279-#4282 #4285 #4288 #4302 #4304 #4332 #4335 #4339 #4342 #4350-#4357): reconcile the intact exact dependency heads and bases, record #4357 in the campaign carrier authority, and normalize every exact open dependency to ready-for-review without history changes; retain `not_released` truth because protected contexts remain queued and no approval is submitted. |
 | 2026-08-11 | 1.14.45 | docs(ground-impact, #4357): record ready-for-review publication of the UI-neutral repeated-bounce request executor at exact implementation head `cf54d3528a71fd429ad19f53f04e4a1a84495097`, stacked on unchanged #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d`; retain `not_released` truth and leave protected checks, review, UI invocation, persistence, playback, compiled parity, regional chaining, downstream integration, and #4270/#4267 completion open. |
 | 2026-08-11 | 1.14.44 | feat(ground-impact, #4270): add the UI-neutral Python `execute_repeated_bounce_request` binding that accepts only an exact validated repeated-bounce request plus a callable-or-`None` cancellation check, consumes the request's capture threshold through its fixed-version settings, invokes the existing Python physics authority, and returns the existing identity-validated request/result pair; cover golden identity, capture behavior, preflight cancellation, canonical result round-trip pairing, and explicit public API while leaving schemas, UI construction and invocation, TypeScript/compiled physics, persistence, playback, regional chaining, downstream parity, protected evidence, release, and issue/epic completion open. |

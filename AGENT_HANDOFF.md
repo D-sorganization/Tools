@@ -1,5 +1,38 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local flight-to-bounce composition candidate
+
+Local branch `feat/4270-flight-bounce-execution` starts from exact clean
+published Tools #4357 head `c492b52f9f7615c5bc38e780965167cc8f64327c`.
+It adds the shared Python `execute_repeated_bounce_from_flight` facade. The
+facade requires exact flight, launch, and transfer records; validates the
+callback and capture threshold before transfer; and composes only the existing
+`build_ground_simulation_request`, `RepeatedBounceRequest`, and
+`execute_repeated_bounce_request` authorities. Typed transfer errors propagate
+unchanged, while successful and cancelled results retain the existing request,
+surface, frame, model, fingerprint, and joint execution-input identities.
+
+RED-GREEN evidence recorded the missing module and public export before the
+implementation. Independent follow-up coverage now proves exact message,
+field, and reason propagation plus zero executor calls for no physical contact,
+grazing contact, and missing terminal angular state. The focused contract suite
+is green for 17 tests and the complete flight-plus-ground suite is green for
+365 tests. Ruff check/format, scoped
+Black, protected and import-following MyPy, Bandit, placeholder and diff
+checks, documentation governance, blocking-quality policy, minimum-test and
+test-assertion contracts, changed-Python policy, module-size policy, campaign
+manifest validation, and 11 manifest/layout tests are green. Standalone Black
+reports one inherited formatting preference in unchanged surrounding syntax
+of `test_contract_api.py`; repository-authoritative Ruff is green and the
+file's only delta is the required public-API entry. The committed changed-file
+size gate is also green with zero violations across four changed Python files.
+
+This is a local no-push/no-PR candidate and remains `not_released`. It changes
+no PyQt6/React UI, TypeScript/Rust/WASM runtime, persistence, playback, camera
+behavior, regional-material chaining, skid/roll completion, or total-distance
+contract. Issues #4270 and #4267 remain open; no issue-completion claim is
+made.
+
 ## 2026-08-11 PR #4357 repeated-bounce request execution binding
 
 Ready-for-review PR [#4357](https://github.com/D-sorganization/Tools/pull/4357)
