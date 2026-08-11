@@ -204,6 +204,25 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "does not persist model inputs. Geometry is fixed to the target frame as "
         "flat, static, and coplanar because those are the regional v1 limits.</p>",
     ),
+    "ground_playback": _entry(
+        "Ground Playback",
+        "<h3>What this tab does</h3><p>Imports either one strict "
+        "flight-to-ground-result/v1 result or one strict validated "
+        "ground-regional-execution-result/v1 envelope and plays the nested "
+        "observed trajectory. The viewer never executes ground physics.</p>"
+        "<h3>Workflow</h3><ol><li>Choose the standalone-result or regional-"
+        "execution import explicitly.</li><li>Review the carry / first-contact "
+        "and honest Rest, End / left surface, or Observed end markers plus "
+        "warnings, calibration, provenance, samples, and events.</li><li>Play, "
+        "pause, scrub, step exact frames, jump to a phase, restart, loop, or "
+        "change speed.</li><li>Drag and wheel the locked-scale 3D view to orbit "
+        "and zoom; Reset 3D view restores the documented camera.</li></ol>"
+        "<h3>Tips and qualification</h3><p>Phase boundaries hold the preceding exact "
+        "sample rather than inventing motion. Result v1 does not embed terrain "
+        "geometry, so neutral axes are shown instead of a claimed surface. "
+        "Failed, cancelled, empty, or summary-free evidence is rejected while "
+        "the last valid result stays loaded.</p>",
+    ),
     "launch_monitor_analytics": _entry(
         "Launch Monitor Analytics",
         "<h3>What this tab does</h3>"

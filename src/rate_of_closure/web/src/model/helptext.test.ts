@@ -16,6 +16,7 @@ const TABS = [
   "Plots",
   "Flight Explorer",
   "Ground Surfaces",
+  "Ground Playback",
   "Launch Monitor Analytics",
   "Shot Optimizer",
   "Variation",
