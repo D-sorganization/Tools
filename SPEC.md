@@ -26,13 +26,28 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.11                                    |
-| **Spec Version**        | 1.14.11                                    |
-| **Last Spec Update**    | 2026-08-10                                 |
+| **Current Version**     | 1.14.13                                    |
+| **Spec Version**        | 1.14.13                                    |
+| **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-11 Kinetics module-budget repair
+
+- The established `rate_of_closure.simulation.kinetics` module remains the
+  public façade for swing kinetics. Immutable result validation now lives in
+  `_kinetics_series.py`, and pure double-pendulum inverse/forward dynamics and
+  reaction-force helpers live in `_kinetics_dynamics.py`.
+- Public constants, classes, and functions retain identity-preserving imports;
+  the historical private `_reaction_forces` test/consumer seam remains an
+  alias to the extracted implementation. Physics, SI units, frames, numerical
+  fixtures, UI behavior, and serialization contracts are unchanged.
+- This extraction repairs the proactively reproduced changed-file failure:
+  exact head `572bf525d` versus `HEAD~1` selected the Ruff-formatted
+  `kinetics.py` at 646 LOC, above the ungrandfathered 500-LOC ceiling. The
+  façade and its focused implementation modules are now 222, 205, and 131 LOC.
 
 ### 2026-08-10 D-plane ndarray typing boundary repair
 
@@ -2899,6 +2914,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.13 | refactor(rate-of-closure, #4203): split the 646-LOC swing-kinetics monolith into an identity-preserving 222-LOC public façade, 205-LOC pure-dynamics module, and 131-LOC immutable-series contract; preserve physics, frames, fixtures, UI behavior, and established imports while satisfying the changed-file 500-LOC gate. |
 | 2026-08-11 | 1.14.12 | style(rate-of-closure, #4203): apply repository-pinned Ruff 0.14.10 formatting to the eight files reported by current-head CI without changing physics, behavior, public contracts, schemas, UI layout, or stack order. |
 | 2026-08-10 | 1.14.11 | test/fix(rate-of-closure, #4143 #4202 #4203 #4325): normally propagate repaired launch-registry parent `12dd76a8dbcc106c4683f2f2e53076f8dc6f1b76` into the shared Ground/Tee parity and rendered-evidence child without production/test-code conflict or history rewrite. |
 | 2026-08-10 | 1.14.10 | test(rate-of-closure, #4143): record deterministic Ground/Tee visual evidence through semantic Playwright checks and a hidden-window PyQt capture regression, retaining screenshots as external digested artifacts instead of brittle pixel baselines or repository binaries. |

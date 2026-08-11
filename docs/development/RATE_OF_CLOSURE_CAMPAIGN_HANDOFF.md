@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-11 #4203 kinetics size-budget repair
+
+- The exact `572bf525d` PR tree passes its base-relative candidate scan, but
+  `python scripts/check_file_size_budget.py --max-loc 500 --changed-only
+  --base-ref HEAD~1 --baseline-file scripts/monolith_baseline.txt` reproduces
+  the proactive release failure: Ruff-formatted `simulation/kinetics.py` is
+  selected at 646 LOC and is not grandfathered.
+- A behavior-preserving extraction leaves a 222-LOC stable public façade and
+  delegates immutable result validation (131 LOC) and pure pendulum dynamics
+  (205 LOC) to focused private modules. Public export identity and the existing
+  `_reaction_forces` compatibility seam are test-pinned.
+- Existing numerical parity, inverse/forward dynamics, energy, reaction-force,
+  presentation, and PyQt behavior remain the acceptance basis. This local-only
+  implementation does not change PR base, stack order, protected review/CI
+  requirements, or any downstream issue completion state.
+- Local regression evidence is 28 focused kinetics/presentation/PyQt tests
+  and all 701 Rate-of-Closure Python tests passing.
+
 ## 2026-08-11 #4203 pinned-Ruff formatting repair
 
 - No material handoff change: the eight Python files reported by CI Standard

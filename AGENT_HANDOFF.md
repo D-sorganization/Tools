@@ -3,6 +3,24 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 #4203 kinetics size-budget repair
+
+- Exact head `572bf525dd1ded26cbc3fbb4f228d1f6ca16e118` passes the PR-base
+  changed-file scan because `kinetics.py` is byte-identical to the inherited
+  parent, but the stricter `HEAD~1` scan selects the Ruff-formatted file and
+  fails it at 646 LOC against the ungrandfathered 500-LOC limit.
+- The behavior-preserving LoD/DRY split leaves
+  `simulation/kinetics.py` as the stable 222-LOC public façade, moves pure
+  dynamics to `_kinetics_dynamics.py` (205 LOC), and moves the immutable
+  series/DbC contract to `_kinetics_series.py` (131 LOC). Public constants,
+  class/function objects, and the private `_reaction_forces` compatibility
+  seam are identity-pinned by a RED-first contract test.
+- Physics, units, frames, numerical parity fixture, PyQt presentation, and
+  release-stack order are unchanged. This implementation is committed locally
+  only; no push, PR mutation, or release claim is authorized by this handoff.
+- Verification includes 28 focused kinetics/presentation/PyQt tests and the
+  complete 701-test Rate-of-Closure Python suite, all passing locally.
+
 ## 2026-08-11 #4203 pinned-Ruff formatting repair
 
 - No material handoff change: this commit only applies the repository-pinned

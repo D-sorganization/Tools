@@ -3,6 +3,21 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-11
 
+## 2026-08-11 Kinetics façade extraction
+
+The strict current-head delta reproduces a protected size failure that the
+PR-base comparison hides: `kinetics.py` is changed versus `HEAD~1` and is 646
+LOC, above the ungrandfathered 500-LOC maximum. The public module is now a
+222-LOC run adapter/facade; its pure double-pendulum dynamics are in the
+205-LOC `_kinetics_dynamics.py`, and the immutable `KineticsSeries`/DbC
+contract is in the 131-LOC `_kinetics_series.py`. Existing public imports and
+the `_reaction_forces` seam are the same implementation objects. A RED-first
+identity test plus the existing physics, energy, force, parity-fixture,
+presentation, and PyQt tests protect behavior. No physics, frame, SI-unit,
+schema, UI, or stack-order change is intended; the commit remains local only.
+Focused kinetics/presentation/PyQt verification is 28 passing tests; the
+complete Rate-of-Closure Python regression suite is 701 passing tests.
+
 ## 2026-08-11 #4203 pinned-Ruff formatting repair
 
 No material handoff change: current-head CI Standard run `31468208320`, job
