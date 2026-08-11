@@ -1,5 +1,36 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4273 seeded-request persistence
+
+The unpublished `codex/4273-ground-variation-persistence` child starts from
+exact PR #4365 docs head `27d2a68d3738d61307af9235f3f97f7bd400e0f3`.
+The new application-layer contract composes existing authorities into one
+strict v1 seeded-study request envelope: exact `VariationPlan`, exact regional
+plan, result/source/series identifiers, and the bounded row cap. Canonical
+numeric JSON is compact, deterministic, cross-runtime safe, and suitable for a
+browser download; native persistence reuses the existing bounded UTF-8 reader
+and atomic writer.
+
+Import rejects duplicate or unknown fields, unsupported outer or nested
+versions, nonfinite/unsafe/Boolean numbers, surrogate text, malformed
+identifiers and caps, invalid nested contracts, and payloads above 1 MiB. It
+explicitly registers the Rate ground variables only when parsing a request.
+Successful import returns the existing immutable request and executes no
+physics. Native cancellation is a no-op; failed replacement retains the prior
+file and removes its temporary file.
+
+RED captured the absent module. Twenty-two focused tests, 82 composition tests,
+and 545 relevant Rate/shared flight-ground-variation tests pass; the broad set
+has six expected missing-Rust-wheel skips and one environment warning. Ruff,
+import-skipping MyPy, Bandit, campaign manifest and its eight tests,
+documentation, blocking-quality, minimum-test, module-size, changed-test
+assertion, placeholder, structural, and diff gates pass.
+
+No UI/editor, browser filesystem behavior, workspace embedding, overlay
+variation, solver/capability invocation, wind, compiled runtime, downstream
+parity, protected review, publication, or release is included. Keep #4273 and
+#4267 open. This branch has not been pushed.
+
 ## 2026-08-11 PR #4365 seeded regional-ground material variation
 
 Ready PR [#4365](https://github.com/D-sorganization/Tools/pull/4365) is stacked

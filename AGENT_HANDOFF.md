@@ -1,5 +1,44 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4273 seeded-request persistence
+
+The unpublished `codex/4273-ground-variation-persistence` branch starts from
+exact published PR #4365 documentation head
+`27d2a68d3738d61307af9235f3f97f7bd400e0f3`. A read-only persistence audit
+found a clean composition seam: the existing immutable seeded request,
+`VariationPlan` and regional-plan object serializers, shared canonical numeric
+JSON, duplicate-key-rejecting ground parser, bounded UTF-8 snapshot reader, and
+native atomic text writer. No alternate storage or physics contract was needed.
+
+The new UI-neutral v1 envelope persists the exact variation plan, exact
+regional material plan, result/source/series identifiers, and row cap. It has a
+1 MiB UTF-8 bound and deterministic compact canonical text suitable for the
+existing browser-download model. Import requires exact fields and current
+schema versions before delegating nested objects to their existing parsers.
+Duplicate fields, nonfinite or cross-runtime-unsafe numbers, Boolean numeric
+substitutes, surrogate text, malformed identifiers/caps, oversized documents,
+and invalid nested plans fail closed. Import registers the two Rate extension
+variables explicitly; merely importing the module still does not mutate the
+shared registry.
+
+Native reads take one sentinel-bounded strict UTF-8 snapshot. Writes serialize
+and validate before reusing the existing flush/fsync/atomic-replace seam;
+cancellation is a no-op and a failed replacement preserves the last-known-good
+file. No UI, browser filesystem claim, or physics execution is added.
+
+RED captured the missing persistence module. Twenty-two focused tests and 82
+composition tests pass. The relevant Rate adapter/file plus complete shared
+flight/ground/variation selection passes 545 tests with six expected
+missing-Rust-wheel skips and one environment-only Hypothesis warning. Ruff,
+import-skipping MyPy, Bandit, campaign-manifest validation and its eight tests,
+documentation governance, blocking-quality, minimum-test, module-size,
+changed-test assertion, placeholder, structural, and diff gates are green.
+
+This is not a #4273/#4267 completion claim. UI/editor integration, workspace
+embedding, regional-overlay variation, solver/capability consumption, wind,
+compiled/downstream parity, protected review, publication, and release remain
+open. No branch was pushed and no GitHub state was changed.
+
 ## 2026-08-11 PR #4365 seeded regional-ground material variation
 
 Ready PR [#4365](https://github.com/D-sorganization/Tools/pull/4365) is stacked
