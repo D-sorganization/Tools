@@ -28,7 +28,10 @@ describe("GroundPlaybackPanel", () => {
       context as CanvasRenderingContext2D,
     );
   });
-  afterEach(() => vi.clearAllMocks());
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.clearAllMocks();
+  });
 
   it("starts empty with an honest execution and geometry disclosure", () => {
     render(<GroundPlaybackPanel />);
@@ -284,6 +287,15 @@ describe("GroundPlaybackPanel", () => {
     expect(eventCall?.[1].endsWith("\n")).toBe(true);
 
     fireEvent.click(screen.getByLabelText("Show comparison overlay"));
+    const preservedTime = fixture.result.termination.time_s + 0.1;
+    fireEvent.change(screen.getByLabelText("Ground playback absolute time"), {
+      target: { value: preservedTime },
+    });
+    fireEvent.click(screen.getByLabelText("Show comparison overlay"));
+    fireEvent.click(screen.getByLabelText("Show comparison overlay"));
+    expect(screen.getByLabelText("Ground playback absolute time")).toHaveValue(
+      String(preservedTime),
+    );
     expect(
       screen.getByRole("table", {
         name: "Ground comparison trajectory evidence",
@@ -365,7 +377,8 @@ describe("GroundPlaybackPanel", () => {
         playback: { time_s: 1.205, speed: 1, loop: false },
         view: { yaw_deg: -37.5, pitch_deg: 18, zoom: 1.25 },
       }),
-      loadedPattern: /Loaded workspace replacement.json/,
+      loadedPattern:
+        /Migrated workspace replacement.json from v1.*saved as v2/i,
     },
   ])(
     "discards a comparison that finishes after a newer primary commits via $replacementLabel",
@@ -455,11 +468,26 @@ describe("GroundPlaybackPanel", () => {
   );
 
   it("imports a workspace atomically and exposes deterministic exports", async () => {
+    vi.spyOn(window, "requestAnimationFrame").mockImplementation(() => 1);
+    vi.spyOn(window, "cancelAnimationFrame").mockImplementation(
+      () => undefined,
+    );
     render(<GroundPlaybackPanel />);
+    const comparison = structuredClone(fixture.result);
+    comparison.request_id = "workspace-comparison";
+    comparison.provenance.input_sha256 = "b".repeat(64);
+    comparison.trajectory.forEach((point) => {
+      point.time_s += 0.2;
+    });
+    comparison.events.forEach((event) => {
+      event.time_s += 0.2;
+    });
+    comparison.termination.time_s += 0.2;
     const workspace = {
-      schema_version: "rate-of-closure-ground-playback-workspace/v1",
+      schema_version: "rate-of-closure-ground-playback-workspace/v2",
       result: fixture.result,
-      playback: { time_s: 1.205, speed: 2, loop: true },
+      comparison: { result: comparison, visible: false },
+      playback: { time_s: 1.60466094435, speed: 2, loop: true },
       view: { yaw_deg: -37.5, pitch_deg: 18, zoom: 1.75 },
     };
     fireEvent.change(
@@ -482,7 +510,9 @@ describe("GroundPlaybackPanel", () => {
     expect(screen.getByLabelText("Loop ground playback")).toBeChecked();
     expect(
       screen.getByRole("status", { name: "Ground playback position" }),
-    ).toHaveTextContent("1.2050 s");
+    ).toHaveTextContent("1.6047 s");
+    expect(screen.getByText("workspace-comparison")).toBeInTheDocument();
+    expect(screen.getByLabelText("Show comparison overlay")).not.toBeChecked();
     expect(
       screen.getByRole("button", { name: "Export ground result JSON" }),
     ).toBeEnabled();
@@ -494,6 +524,13 @@ describe("GroundPlaybackPanel", () => {
     ).toBeEnabled();
 
     const retained = screen.getByRole("rowheader", { name: "Carry" });
+    fireEvent.click(screen.getByRole("button", { name: "Play ground result" }));
+    expect(
+      screen.getByRole("button", { name: "Pause ground result" }),
+    ).toBeEnabled();
+    fireEvent.wheel(screen.getByLabelText("Interactive 3D ground playback"), {
+      deltaY: -100,
+    });
     const invalid = {
       ...workspace,
       playback: { ...workspace.playback, speed: 3 },
@@ -518,5 +555,49 @@ describe("GroundPlaybackPanel", () => {
     expect(retained).toBeInTheDocument();
     expect(screen.getByLabelText("Ground playback speed")).toHaveValue("2");
     expect(screen.getByLabelText("Loop ground playback")).toBeChecked();
+    expect(screen.getByLabelText("Show comparison overlay")).not.toBeChecked();
+    expect(screen.getByText("workspace-comparison")).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Pause ground result" }),
+    ).toBeEnabled();
+    expect(screen.getByLabelText("Ground playback absolute time")).toHaveValue(
+      "1.60466094435",
+    );
+
+    fireEvent.click(
+      screen.getByRole("button", { name: "Save ground playback workspace" }),
+    );
+    const calls = vi.mocked(downloadText).mock.calls;
+    const saved = JSON.parse(calls[calls.length - 1]?.[1] ?? "");
+    expect(saved.schema_version).toBe(
+      "rate-of-closure-ground-playback-workspace/v2",
+    );
+    expect(saved.comparison.visible).toBe(false);
+    expect(saved.comparison.result.request_id).toBe("workspace-comparison");
+    expect(saved.playback.time_s).toBe(1.60466094435);
+    expect(saved.view).toEqual({
+      pitch_deg: 18,
+      yaw_deg: -37.5,
+      zoom: 1.925,
+    });
+
+    fireEvent.change(
+      screen.getByLabelText("Import ground playback workspace"),
+      {
+        target: {
+          files: [
+            new File([JSON.stringify(workspace)], "valid-reload.json", {
+              type: "application/json",
+            }),
+          ],
+        },
+      },
+    );
+    expect(
+      await screen.findByText(/Loaded workspace valid-reload.json/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Play ground result" }),
+    ).toBeEnabled();
   });
 });

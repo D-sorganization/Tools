@@ -1,5 +1,7 @@
 /** Loaded ground result presentation, including raw primary/comparison evidence. */
 
+import { useMemo } from "react";
+
 import type { FlightToGroundResult } from "../model/flightGroundTypes";
 import { GroundPlaybackTimeline } from "../model/groundPlayback";
 import type { GroundPlaybackComparison } from "../model/groundPlaybackComparison";
@@ -165,7 +167,7 @@ export function GroundPlaybackLoadedResult({
   readonly initialState: GroundPlaybackPortableState;
   readonly onStateChange: (state: GroundPlaybackPortableState) => void;
 }) {
-  const timeline = new GroundPlaybackTimeline(result);
+  const timeline = useMemo(() => new GroundPlaybackTimeline(result), [result]);
   return (
     <>
       <div className="grid gap-4 lg:grid-cols-[minmax(15rem,22rem)_1fr]">

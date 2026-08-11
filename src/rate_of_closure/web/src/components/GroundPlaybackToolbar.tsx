@@ -10,9 +10,11 @@ import {
   groundEventCsv,
   groundResultJson,
   groundTrajectoryCsv,
-  groundWorkspaceToJson,
-  type GroundPlaybackWorkspace,
 } from "../model/groundPlaybackWorkspace";
+import {
+  groundWorkspaceV2ToJson,
+  type GroundPlaybackWorkspaceV2,
+} from "../model/groundPlaybackWorkspaceV2";
 import { downloadText } from "./variationUi";
 
 type GroundPlaybackToolbarProps = {
@@ -23,7 +25,7 @@ type GroundPlaybackToolbarProps = {
   readonly onImportResult: (file: File | undefined) => void;
   readonly onImportWorkspace: (file: File | undefined) => void;
   readonly onImportComparison: (file: File | undefined) => void;
-  readonly workspace: () => GroundPlaybackWorkspace;
+  readonly workspace: () => GroundPlaybackWorkspaceV2;
 };
 
 export function GroundPlaybackToolbar({
@@ -86,7 +88,7 @@ export function GroundPlaybackToolbar({
             onClick={() =>
               downloadText(
                 "ground-playback-workspace.json",
-                groundWorkspaceToJson(workspace()),
+                groundWorkspaceV2ToJson(workspace()),
                 "application/json",
               )
             }

@@ -3,6 +3,62 @@
 > Update this file in every implementation commit and every push to `main`.
 > Last updated: 2026-08-10.
 
+## 2026-08-10 issue #4274 workspace-v2 adversarial review repair
+
+Independent review of local workspace-v2 commit
+`b9579c0b16aaf6188f216acbca0b75828c2a5fe6` found two publication blockers.
+An integer too large for `float` escaped strict Python parsing as
+`OverflowError`, bypassing PyQt's transactional import-error boundary; Python
+and TypeScript also disagreed on whether public limit overrides could raise the
+fixed 11 MiB, 100,000-point-per-result, and 200,000-point-combined contract
+caps. The follow-up normalizes numeric conversion overflow to `ValueError` and
+rejects every override above the same hard caps in both runtimes while still
+allowing stricter caller limits.
+
+RED-first regressions cover v1 and v2 parsing, active PyQt playback retention,
+and all three cross-runtime hard caps. The complete Rate suite passes 913 tests
+and the React suite passes 111 files / 690 tests; focused Ruff/format,
+TypeScript, zero-warning ESLint, and Prettier gates pass. The canonical golden
+bytes and physics remain unchanged. This is a review repair, not completion of
+#4274 or #4267; protected publication, approval, parent landing, and the
+existing downstream boundaries remain open.
+
+## 2026-08-10 issue #4274 comparison workspace v2
+
+Local branch `feat/4274-ground-playback-comparison-workspace-v2` starts from
+exact raw-evidence parent `9be08f9a67336aae4ac1f6add68c190d42e67f10`.
+PyQt6 and React now save one strict
+`rate-of-closure-ground-playback-workspace/v2` document containing the primary
+`flight-to-ground-result/v1`, an always-present nullable comparison envelope
+with independent visibility, union-window playback state, and orbit view.
+The stable shared comparison type is `GroundPlaybackComparisonState`.
+
+Strict v2-only parsing is separate from discoverable version dispatch. V1
+documents migrate one way to normalized v2, visibly disclose migration, and
+subsequent saves remain v2. Exact-field recursive validation, duplicate-key
+rejection, finite bounds, 100,000 points per result, 200,000 combined points,
+and an 11 MiB UTF-8 bound apply before parse and after serialization. Python
+and TypeScript pin the same LF-terminated 9,055-byte golden document at SHA-256
+`28b94af16a05315a9d1067bda894a3817dce5849a9562e1ffef7d0d8caecd654`.
+
+Import is transactional on both clients. Invalid input preserves every
+last-good primary, comparison, visibility, playback, camera, and running state;
+valid input commits paused. PyQt restores comparison visibility with signals
+blocked, avoids intermediate seeks/callbacks, and commits union time last.
+React memoizes result timelines so comparison errors or rerenders do not reset
+time/camera, and portable time uses the union window.
+
+RED-first contract and UI failures were observed before implementation.
+Focused evidence passes 34 Python/PyQt tests and eight React panel tests;
+complete suites pass 910 Rate tests and 111 React files / 689 tests. TypeScript,
+zero-warning ESLint, the 204-module production build, Ruff, Black, pinned MyPy
+1.13, Prettier, Python 3.10 compilation, Bandit with the inherited unchanged
+low-severity B101 assertion excluded, minimum-test, module-size,
+documentation, and conflict-marker gates pass. Maximum-ledger paging/lazy
+mounting, camera/Playwright/native visual evidence, terrain editing/meshes,
+ensembles, compiled runtimes, UpstreamDrift parity, protected publication,
+issue acceptance, and epic closure remain open; keep #4274/#4267 open.
+
 ## 2026-08-10 PR #4318 raw comparison evidence publication
 
 The independently reviewed raw comparison-evidence continuation is published
@@ -51,7 +107,6 @@ Workspace-v2 comparison persistence, maximum-ledger paging or lazy mounting,
 camera/Playwright/native visual verification, terrain editors, ensembles,
 compiled runtimes, UpstreamDrift parity, and epic closure remain open; keep
 #4274/#4267 open.
-
 
 ## 2026-08-10 PR #4317 comparison playback publication
 

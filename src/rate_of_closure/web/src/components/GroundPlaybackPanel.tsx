@@ -7,10 +7,11 @@ import { flightToGroundResultFromJson } from "../model/flightGroundContract";
 import { GroundPlaybackTimeline } from "../model/groundPlayback";
 import { GroundPlaybackComparison } from "../model/groundPlaybackComparison";
 import {
-  GROUND_PLAYBACK_WORKSPACE_SCHEMA,
-  groundWorkspaceFromJson,
-  type GroundPlaybackWorkspace,
-} from "../model/groundPlaybackWorkspace";
+  GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2,
+  GROUND_PLAYBACK_WORKSPACE_SCHEMA_V2,
+  loadGroundWorkspaceVersionedJson,
+  type GroundPlaybackWorkspaceV2,
+} from "../model/groundPlaybackWorkspaceV2";
 import type { GroundPlaybackPortableState } from "./GroundPlayback3D";
 import { GroundPlaybackLoadedResult } from "./GroundPlaybackLoadedResult";
 import { GroundPlaybackToolbar } from "./GroundPlaybackToolbar";
@@ -104,14 +105,19 @@ export function GroundPlaybackPanel() {
     const generation = importGeneration.current + 1;
     importGeneration.current = generation;
     try {
-      if (file.size > MAX_IMPORT_BYTES)
-        throw new RangeError("File exceeds the 5 MiB import limit.");
-      const candidate = groundWorkspaceFromJson(await readFileText(file));
-      if (candidate.result.trajectory.length > MAX_IMPORT_POINTS) {
-        throw new RangeError(
-          "Trajectory exceeds the 100,000 point display limit.",
-        );
-      }
+      if (file.size > GROUND_PLAYBACK_WORKSPACE_MAX_BYTES_V2)
+        throw new RangeError("File exceeds the 11 MiB workspace import limit.");
+      const workspaceLoad = loadGroundWorkspaceVersionedJson(
+        await readFileText(file),
+      );
+      const candidate = workspaceLoad.workspace;
+      const candidateComparison =
+        candidate.comparison === null
+          ? null
+          : new GroundPlaybackComparison(
+              new GroundPlaybackTimeline(candidate.result),
+              new GroundPlaybackTimeline(candidate.comparison.result),
+            );
       if (generation !== importGeneration.current) return;
       comparisonImportGeneration.current += 1;
       const initialState = {
@@ -120,17 +126,19 @@ export function GroundPlaybackPanel() {
       };
       portableState.current = initialState;
       setLoaded({ result: candidate.result, initialState, generation });
-      setComparison(null);
-      setShowComparison(false);
+      setComparison(candidateComparison);
+      setShowComparison(candidate.comparison?.visible ?? false);
       setComparisonError(null);
       setComparisonMessage(
-        comparison === null
-          ? "No comparison loaded."
-          : "Comparison cleared after the primary result changed.",
+        candidateComparison === null
+          ? "Workspace contains no comparison."
+          : `Loaded workspace comparison ${file.name}. Deltas are comparison minus primary.`,
       );
       setError(null);
       setMessage(
-        `Loaded workspace ${file.name} — ${candidate.result.status}; paused at ${candidate.playback.timeS} s.`,
+        workspaceLoad.migratedFromV1
+          ? `Migrated workspace ${file.name} from v1 to v2; future workspace files are saved as v2.`
+          : `Loaded workspace ${file.name} — ${candidate.result.status}; paused at ${candidate.playback.timeS} s.`,
       );
     } catch (reason) {
       if (generation !== importGeneration.current) return;
@@ -178,12 +186,19 @@ export function GroundPlaybackPanel() {
     }
   };
 
-  const workspace = (): GroundPlaybackWorkspace => {
+  const workspace = (): GroundPlaybackWorkspaceV2 => {
     if (loaded === null || portableState.current === null)
       throw new Error("No result loaded.");
     return {
-      schemaVersion: GROUND_PLAYBACK_WORKSPACE_SCHEMA,
+      schemaVersion: GROUND_PLAYBACK_WORKSPACE_SCHEMA_V2,
       result: loaded.result,
+      comparison:
+        comparison === null
+          ? null
+          : {
+              result: comparison.comparison.result,
+              visible: showComparison,
+            },
       playback: portableState.current.playback,
       view: portableState.current.view,
     };

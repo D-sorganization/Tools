@@ -148,11 +148,13 @@ describe("GroundPlayback3D", () => {
     const comparisonTimeline = new GroundPlaybackTimeline(
       parseFlightToGroundResultRecord(comparisonRecord),
     );
+    const onStateChange = vi.fn();
     render(
       <GroundPlayback3D
         timeline={timeline}
         comparisonTimeline={comparisonTimeline}
         showComparison
+        onStateChange={onStateChange}
       />,
     );
 
@@ -165,6 +167,11 @@ describe("GroundPlayback3D", () => {
     expect(
       screen.getByRole("status", { name: "Ground playback position" }),
     ).toHaveTextContent(/primary held at rest · comparison active/i);
+    expect(onStateChange).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        playback: expect.objectContaining({ timeS: timeline.endTimeS + 0.1 }),
+      }),
+    );
     expect(
       screen.getByText(/Dashed path \/ diamonds: comparison/),
     ).toBeInTheDocument();
