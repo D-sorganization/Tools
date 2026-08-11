@@ -1,5 +1,34 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4273 React request-workspace ownership
+
+The unpublished `codex/4273-ground-variation-file-ui` child starts from exact
+PR #4366 head `8dfb1189c13f0fce99901e1ffbba152d813f9006`. React previously owned the
+variation and regional-surface inputs inside separate panels that unmount on
+navigation. The new App-owned reducer/hook retains the complete request-editor
+state and exact imported regional evidence; both panels are controlled.
+
+`RegionalGroundVariationRequestTs` and its typed port provide a future
+File-command seam. Snapshot uses only the current plan and current regional
+draft/import evidence. Complete apply validates all fields and derives the
+editor draft before dispatch, so invalid input cannot partially replace state.
+The disclosed illustrative regional draft is not composable until the user
+explicitly edits it or imports qualified evidence.
+The web registry exposes the two existing ground-material keys, while the
+scalar browser runner rejects them with a visible unsupported-path message.
+No physics or persistence behavior is added.
+
+RED captured the missing owner and tab-reset behavior. The full React suite is
+green at 763 tests in 121 files. TypeScript, ESLint, Vite production build,
+campaign manifest validation and its eight tests, documentation governance,
+blocking-quality policy, scoped module-size, and diff gates pass; the Vite
+main-chunk warning is inherited.
+
+File controls, strict combined-schema TypeScript serialization, browser
+upload/download, PyQt native actions, pipeline execution, protected review,
+publication, and downstream parity remain open. Keep #4273/#4267 open. No push
+or GitHub write occurred.
+
 ## 2026-08-11 local #4273 seeded-request persistence
 
 The unpublished `codex/4273-ground-variation-persistence` child starts from

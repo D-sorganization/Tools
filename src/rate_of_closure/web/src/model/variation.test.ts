@@ -260,7 +260,7 @@ describe("analysis + export", () => {
   });
 
   it("registry keys per mode mirror the Python categories", () => {
-    expect(keysForMode("launch")).toHaveLength(5);
+    expect(keysForMode("launch")).toHaveLength(7);
     expect(keysForMode("delivery")).toHaveLength(7); // club category is desktop-only
   });
 });

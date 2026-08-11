@@ -9,6 +9,7 @@ import { cleanup, render } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 
 import App from "../App";
+import { useRegionalGroundVariationWorkspace } from "../hooks/useRegionalGroundVariationWorkspace";
 import { DEFAULT_SCENARIO } from "../model/impact";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "../model/targets";
 import { Derivation } from "./Derivation";
@@ -19,6 +20,14 @@ import { PlotsPanel } from "./PlotsPanel";
 import { PuttingPanel } from "./PuttingPanel";
 import { SimulationPanel } from "./SimulationPanel";
 import { VariationPanel } from "./VariationPanel";
+
+function TestVariationPanel() {
+  const workspace = useRegionalGroundVariationWorkspace();
+  return <VariationPanel plan={workspace.state.variationPlan}
+    analysisExecution={workspace.state.analysisExecution}
+    onPlanChange={workspace.replaceVariationPlan}
+    onAnalysisExecutionChange={workspace.replaceAnalysisExecution} />;
+}
 
 beforeAll(() => {
   // jsdom has no canvas implementation — stub the 2D context so the
@@ -83,7 +92,7 @@ describe("hover-hint completeness", () => {
   });
 
   it("VariationPanel", () => {
-    const { container } = render(<VariationPanel />);
+    const { container } = render(<TestVariationPanel />);
     assertHints(container, "VariationPanel");
   });
 

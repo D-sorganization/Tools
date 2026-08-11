@@ -1,5 +1,30 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4273 React request-workspace ownership
+
+- The unpublished `codex/4273-ground-variation-file-ui` child starts from exact
+  PR #4366 head `8dfb1189c13f0fce99901e1ffbba152d813f9006`. Audit showed a clean PyQt
+  main-window composition seam but no React owner above the mutually exclusive
+  Variation and Ground Surfaces panels; navigation discarded one editor.
+- A UI-neutral reducer and App-owned hook now retain the physical variation
+  plan, analysis policy, regional draft, and exact imported request across
+  navigation. Both panels are controlled. A reserved typed toolstrip port
+  snapshots only current state and validates a complete replacement before one
+  atomic reducer transition, so invalid requests cannot partially apply. The
+  disclosed illustrative draft remains ineligible until edited or imported.
+- The two existing Rate ground input keys are inspectable in the web registry.
+  Browser scalar execution fails closed with a visible unsupported-path status;
+  no regional physics was reimplemented or approximated.
+- RED captured the missing owner and navigation reset. All 763 React tests in
+  121 files pass, as do TypeScript, ESLint, the production Vite build, campaign
+  manifest validation plus eight tests, docs governance, blocking-quality
+  policy, the scoped 400-line module budget, and diff checks. Vite reports only
+  its inherited main-chunk size warning.
+- This local slice adds no File controls, request upload/download adapter,
+  native dialog, PyQt wiring, persistent browser workspace, or protected
+  evidence. Keep #4273/#4267 open and stack those remaining clients only on
+  this state owner. No branch was pushed and no GitHub state changed.
+
 ## 2026-08-11 local #4273 seeded-request persistence
 
 - The unpublished `codex/4273-ground-variation-persistence` branch starts from

@@ -1,6 +1,7 @@
 import { lazy, Suspense } from "react";
 
 import type { ImpactAppModel } from "../hooks/useImpactAppModel";
+import type { RegionalGroundVariationWorkspaceController } from "../hooks/useRegionalGroundVariationWorkspace";
 import type { PrimaryViewId } from "../model/viewPreferences";
 import { Derivation } from "./Derivation";
 import { FlightExplorerPanel } from "./FlightExplorerPanel";
@@ -27,6 +28,7 @@ const LazyGroundPlaybackPanel = lazy(() =>
 interface WorkspacePanelProps {
   readonly active: PrimaryViewId;
   readonly model: ImpactAppModel;
+  readonly regionalGroundVariation: RegionalGroundVariationWorkspaceController;
   readonly onOpenGlossary: (term: string | undefined) => void;
 }
 
@@ -41,7 +43,9 @@ function SimulationWorkspace({ model }: { readonly model: ImpactAppModel }) {
   );
 }
 
-function ExplorerWorkspace(props: Omit<WorkspacePanelProps, "active">) {
+function ExplorerWorkspace(
+  props: Pick<WorkspacePanelProps, "model" | "onOpenGlossary">,
+) {
   const { model } = props;
   return (
     <ImpactExplorerPanel scenario={model.scenario} setScenario={model.setScenario}
@@ -53,19 +57,27 @@ function ExplorerWorkspace(props: Omit<WorkspacePanelProps, "active">) {
 }
 
 export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
-  const { active, model, onOpenGlossary } = props;
+  const { active, model, onOpenGlossary, regionalGroundVariation } = props;
   switch (active) {
     case "glossary":
       return <GlossaryPanel key={model.glossaryTerm ?? "none"} initialTerm={model.glossaryTerm} />;
     case "putting":
       return <PuttingPanel distanceUnit={model.units.distance} onGlossary={onOpenGlossary} />;
     case "variation":
-      return <VariationPanel spatialTarget={model.spatialTarget} distanceUnit={model.units.distance} />;
+      return <VariationPanel spatialTarget={model.spatialTarget} distanceUnit={model.units.distance}
+        plan={regionalGroundVariation.state.variationPlan}
+        analysisExecution={regionalGroundVariation.state.analysisExecution}
+        onPlanChange={regionalGroundVariation.replaceVariationPlan}
+        onAnalysisExecutionChange={regionalGroundVariation.replaceAnalysisExecution} />;
     case "flight":
       return <FlightExplorerPanel distanceUnit={model.units.distance}
         spatialTarget={model.spatialTarget} onSpatialTargetChange={model.setSpatialTarget} />;
     case "regional-surfaces":
-      return <RegionalSurfacePlanPanel />;
+      return <RegionalSurfacePlanPanel
+        draft={regionalGroundVariation.state.regionalDraft}
+        importedRequest={regionalGroundVariation.state.importedRegionalRequest}
+        onDraftChange={regionalGroundVariation.replaceRegionalDraft}
+        onImport={regionalGroundVariation.applyRegionalImport} />;
     case "ground-playback":
       return (
         <Suspense fallback={<section role="status" aria-label="Ground playback loading">Loading…</section>}>

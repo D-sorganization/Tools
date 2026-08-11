@@ -13,6 +13,10 @@ export const CATEGORY_LAUNCH = "swing_sim.flight.launch";
 export const CATEGORY_SWING = "swing_sim.swing";
 export const CATEGORY_CLUB = "swing_sim.club";
 export const TEE_HEIGHT_VARIATION_KEY = "swing_sim.ball_setup.tee_height_m";
+export const GROUND_NORMAL_RESTITUTION_KEY =
+  `${CATEGORY_LAUNCH}.ground_normal_restitution`;
+export const GROUND_ROLLING_RESISTANCE_KEY =
+  `${CATEGORY_LAUNCH}.ground_rolling_resistance`;
 
 export type VariationMode = "delivery" | "swing" | "launch";
 
@@ -205,6 +209,22 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     default: 0.0,
     typicalScale: 1.5,
     guidance: "Positive = fade/slice side.",
+  },
+  {
+    key: GROUND_NORMAL_RESTITUTION_KEY,
+    label: "Ground Normal Restitution",
+    unit: "1",
+    default: 0.4,
+    typicalScale: 0.05,
+    guidance: "Base-surface normal restitution for a regional-ground study.",
+  },
+  {
+    key: GROUND_ROLLING_RESISTANCE_KEY,
+    label: "Ground Rolling Resistance",
+    unit: "1",
+    default: 0.04,
+    typicalScale: 0.01,
+    guidance: "Base-surface rolling resistance for a regional-ground study.",
   },
 ];
 
