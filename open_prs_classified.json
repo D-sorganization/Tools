@@ -1,0 +1,702 @@
+[
+  {
+    "headRefName": "feat/4111-head-tensor-sidecar",
+    "isDraft": true,
+    "number": 4334,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): export strict clubhead sidecar"
+  },
+  {
+    "headRefName": "feat/4225-workspace-file-adapters",
+    "isDraft": true,
+    "number": 4333,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): wire workspace file commands"
+  },
+  {
+    "headRefName": "feat/4271-regional-surface-transitions",
+    "isDraft": true,
+    "number": 4332,
+    "state": "OPEN",
+    "title": "feat(ground): add coplanar regional transitions"
+  },
+  {
+    "headRefName": "feat/4284-orthographic-axis-polish",
+    "isDraft": true,
+    "number": 4331,
+    "state": "OPEN",
+    "title": "fix(rate-of-closure): declutter orthographic camera axes"
+  },
+  {
+    "headRefName": "feat/4225-multiview-persistence",
+    "isDraft": true,
+    "number": 4330,
+    "state": "OPEN",
+    "title": "feat(rate): complete multi-view keyboard and workspace contracts"
+  },
+  {
+    "headRefName": "feat/4111-react-stl-export",
+    "isDraft": true,
+    "number": 4329,
+    "state": "OPEN",
+    "title": "feat(rate_of_closure): add React clubhead STL export"
+  },
+  {
+    "headRefName": "test/4143-ground-tee-visual-evidence",
+    "isDraft": true,
+    "number": 4328,
+    "state": "OPEN",
+    "title": "test(rate): persist Ground Tee visual evidence"
+  },
+  {
+    "headRefName": "feat/4225-multiview-compositor",
+    "isDraft": true,
+    "number": 4327,
+    "state": "OPEN",
+    "title": "feat(rate_of_closure): add synchronized multi-view workspace"
+  },
+  {
+    "headRefName": "feat/4111-impact-tensor-stl",
+    "isDraft": true,
+    "number": 4326,
+    "state": "OPEN",
+    "title": "feat(rate_of_closure): export selected clubhead STL"
+  },
+  {
+    "headRefName": "feat/4143-tee-parity-fixture",
+    "isDraft": false,
+    "number": 4325,
+    "state": "OPEN",
+    "title": "test(rate): add shared Ground and Tee parity fixture"
+  },
+  {
+    "headRefName": "fix/4224-default-legend-layout-local",
+    "isDraft": true,
+    "number": 4324,
+    "state": "OPEN",
+    "title": "fix(rate-ui): reserve non-obscuring legend rails"
+  },
+  {
+    "headRefName": "feat/4275-ground-mirrored-property",
+    "isDraft": false,
+    "number": 4323,
+    "state": "OPEN",
+    "title": "test(ground): qualify mirrored tilted properties"
+  },
+  {
+    "headRefName": "feat/4275-ground-tilted-conformance",
+    "isDraft": false,
+    "number": 4322,
+    "state": "OPEN",
+    "title": "fix(ground): qualify inclined passivity and holding"
+  },
+  {
+    "headRefName": "feat/4275-ground-conformance-corpus",
+    "isDraft": false,
+    "number": 4321,
+    "state": "OPEN",
+    "title": "test(ground): add cross-runtime scientific conformance corpus"
+  },
+  {
+    "headRefName": "feat/4275-ground-compiled-reference-runtime",
+    "isDraft": false,
+    "number": 4320,
+    "state": "OPEN",
+    "title": "feat(ground): add compiled reference runtime"
+  },
+  {
+    "headRefName": "feat/4274-ground-playback-comparison-workspace-v2",
+    "isDraft": false,
+    "number": 4319,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): persist ground comparison workspaces"
+  },
+  {
+    "headRefName": "feat/4274-ground-playback-comparison-evidence",
+    "isDraft": false,
+    "number": 4318,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): expose ground comparison evidence"
+  },
+  {
+    "headRefName": "feat/4274-ground-playback-comparison",
+    "isDraft": false,
+    "number": 4317,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): compare ground playback results"
+  },
+  {
+    "headRefName": "feat/4274-ground-playback-persistence",
+    "isDraft": false,
+    "number": 4316,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): persist ground playback workspaces"
+  },
+  {
+    "headRefName": "feat/4274-ground-playback",
+    "isDraft": false,
+    "number": 4315,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): add strict ground result playback"
+  },
+  {
+    "headRefName": "palette-rotation-a11y-12035677392027795396",
+    "isDraft": false,
+    "number": 4314,
+    "state": "OPEN",
+    "title": "\ud83c\udfa8 Palette: Rotation Converter Forms"
+  },
+  {
+    "headRefName": "bolt-csv-parse-optimization-1235263912546436300",
+    "isDraft": false,
+    "number": 4313,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: Eliminate Array.from overhead in CSV parsing"
+  },
+  {
+    "headRefName": "feat/4275-ground-result-wire-parity",
+    "isDraft": true,
+    "number": 4312,
+    "state": "OPEN",
+    "title": "feat(ground): add Rust result wire parity"
+  },
+  {
+    "headRefName": "bolt-optimize-csv-generation-11723817660880391859",
+    "isDraft": false,
+    "number": 4311,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: Optimize CSV generation in chart snapshot"
+  },
+  {
+    "headRefName": "bolt-csv-generation-optimization-8871594894715453573",
+    "isDraft": false,
+    "number": 4310,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: [CSV Generation Memory Optimization]"
+  },
+  {
+    "headRefName": "feat/4275-ground-reference-execution",
+    "isDraft": true,
+    "number": 4309,
+    "state": "OPEN",
+    "title": "feat(ground): add bounded reference execution"
+  },
+  {
+    "headRefName": "feat/4273-ground-study-scalar-adapter",
+    "isDraft": true,
+    "number": 4308,
+    "state": "OPEN",
+    "title": "feat(rate): adapt ground studies to scalar ensembles"
+  },
+  {
+    "headRefName": "feat/4273-ground-study-result-adapter",
+    "isDraft": true,
+    "number": 4307,
+    "state": "OPEN",
+    "title": "feat(ground): bridge qualified studies to flight metrics (#4273)"
+  },
+  {
+    "headRefName": "feat/4273-ground-study-projection",
+    "isDraft": true,
+    "number": 4306,
+    "state": "OPEN",
+    "title": "feat(ground): add qualified study projection (#4273)"
+  },
+  {
+    "headRefName": "feat/4272-ground-material-profiles",
+    "isDraft": true,
+    "number": 4305,
+    "state": "OPEN",
+    "title": "feat(ground): add qualified material profiles (#4272)"
+  },
+  {
+    "headRefName": "feat/4271-ground-skid-roll",
+    "isDraft": true,
+    "number": 4304,
+    "state": "OPEN",
+    "title": "feat(ground): add reviewed static-plane skid/roll reference (#4271)"
+  },
+  {
+    "headRefName": "fix/rate-pyqt-default-camera",
+    "isDraft": true,
+    "number": 4303,
+    "state": "OPEN",
+    "title": "fix(rate-ui): keep moving subjects framed by default"
+  },
+  {
+    "headRefName": "feat/4270-ground-impact-bounce",
+    "isDraft": true,
+    "number": 4302,
+    "state": "OPEN",
+    "title": "feat(ground): add passive impact and repeated bounce"
+  },
+  {
+    "headRefName": "fix/rate-mobile-tools-menu",
+    "isDraft": true,
+    "number": 4301,
+    "state": "OPEN",
+    "title": "fix(rate UI): keep toolstrip menus inside constrained viewports"
+  },
+  {
+    "headRefName": "feat/4264-four-surface-capability",
+    "isDraft": true,
+    "number": 4299,
+    "state": "OPEN",
+    "title": "feat(rate): add strict four-surface capability contract"
+  },
+  {
+    "headRefName": "feat/4284-camera-snap-tracking",
+    "isDraft": true,
+    "number": 4298,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): add camera tracking and snap views"
+  },
+  {
+    "headRefName": "palette/a11y-labels-rotation-converter-5253491654548337478",
+    "isDraft": false,
+    "number": 4297,
+    "state": "OPEN",
+    "title": "\ud83c\udfa8 Palette: Add accessible aria-labels to dynamic input grids"
+  },
+  {
+    "headRefName": "bolt-optimize-csv-generator-9256605179631154523",
+    "isDraft": false,
+    "number": 4296,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: Optimize CSV generation in Data Explorer"
+  },
+  {
+    "headRefName": "bolt-optimize-array-from-685097287823411952",
+    "isDraft": false,
+    "number": 4295,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: [performance improvement]"
+  },
+  {
+    "headRefName": "dependabot/pip/playwright-gte-1.62.0",
+    "isDraft": false,
+    "number": 4293,
+    "state": "OPEN",
+    "title": "build(deps): update playwright requirement from >=1.61.0 to >=1.62.0"
+  },
+  {
+    "headRefName": "dependabot/pip/ruff-0.16.1",
+    "isDraft": false,
+    "number": 4292,
+    "state": "OPEN",
+    "title": "build(deps): bump ruff from 0.15.22 to 0.16.1"
+  },
+  {
+    "headRefName": "dependabot/pip/trimesh-5.0.0",
+    "isDraft": false,
+    "number": 4291,
+    "state": "OPEN",
+    "title": "build(deps): bump trimesh from 4.12.2 to 5.0.0"
+  },
+  {
+    "headRefName": "dependabot/pip/cryptography-50.0.0",
+    "isDraft": false,
+    "number": 4290,
+    "state": "OPEN",
+    "title": "build(deps): bump cryptography from 49.0.0 to 50.0.0"
+  },
+  {
+    "headRefName": "feat/4269-flight-ground-transfer",
+    "isDraft": true,
+    "number": 4288,
+    "state": "OPEN",
+    "title": "feat(flight-ground): qualify physical transfer state"
+  },
+  {
+    "headRefName": "palette-focus-visible-fix-8102073924590629122",
+    "isDraft": false,
+    "number": 4287,
+    "state": "OPEN",
+    "title": "\ud83c\udfa8 Palette: [UX improvement] Add focus visible styles to interactive elements"
+  },
+  {
+    "headRefName": "bolt-opt-svg-polyline-16124603645979492510",
+    "isDraft": false,
+    "number": 4286,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: [performance improvement]"
+  },
+  {
+    "headRefName": "feat/4268-ground-contract",
+    "isDraft": true,
+    "number": 4285,
+    "state": "OPEN",
+    "title": "feat(ground): define strict flight transfer contracts"
+  },
+  {
+    "headRefName": "feat/4199-wind-workflow",
+    "isDraft": true,
+    "number": 4282,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): add responsive wind strategy workflow"
+  },
+  {
+    "headRefName": "feat/4199-wind-scalar-adapter",
+    "isDraft": true,
+    "number": 4281,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): adapt wind trials to scalar ensembles"
+  },
+  {
+    "headRefName": "feat/4144-variation-export-continuation",
+    "isDraft": true,
+    "number": 4280,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): complete scatter export parity"
+  },
+  {
+    "headRefName": "feat/4218-toolstrip-workspace",
+    "isDraft": true,
+    "number": 4279,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): add application toolstrip and independent plot workspaces"
+  },
+  {
+    "headRefName": "palette-a11y-inputs-4660551570368348091",
+    "isDraft": false,
+    "number": 4247,
+    "state": "OPEN",
+    "title": "\ud83c\udfa8 Palette: Improve accessible input labels for Screen Readers"
+  },
+  {
+    "headRefName": "feat/4197-capability-optimizer",
+    "isDraft": true,
+    "number": 4216,
+    "state": "OPEN",
+    "title": "feat(flight): add capability-aware shot optimizer"
+  },
+  {
+    "headRefName": "feat/4196-impact-solution-families",
+    "isDraft": true,
+    "number": 4215,
+    "state": "OPEN",
+    "title": "feat(flight): add impact solution families"
+  },
+  {
+    "headRefName": "feat/4200-flight-playback",
+    "isDraft": true,
+    "number": 4214,
+    "state": "OPEN",
+    "title": "feat(ball-flight): add interactive 3D playback"
+  },
+  {
+    "headRefName": "feat/4199-wind-uncertainty",
+    "isDraft": true,
+    "number": 4213,
+    "state": "OPEN",
+    "title": "feat(ball-flight): analyze wind estimate uncertainty"
+  },
+  {
+    "headRefName": "feat/4195-inverse-flight-solver",
+    "isDraft": true,
+    "number": 4211,
+    "state": "OPEN",
+    "title": "feat(flight): add desired-flight inverse solver"
+  },
+  {
+    "headRefName": "feat/4194-flight-metric-catalog",
+    "isDraft": true,
+    "number": 4210,
+    "state": "OPEN",
+    "title": "feat(flight): add canonical result metric catalog"
+  },
+  {
+    "headRefName": "feat/4192-3d-target-contract",
+    "isDraft": true,
+    "number": 4208,
+    "state": "OPEN",
+    "title": "feat(swing-sim): add spatial target contract"
+  },
+  {
+    "headRefName": "feat/4198-wind-physics",
+    "isDraft": true,
+    "number": 4207,
+    "state": "OPEN",
+    "title": "feat(ball-flight): add reproducible wind comparison"
+  },
+  {
+    "headRefName": "fix/4164-forgiveness-contracts",
+    "isDraft": true,
+    "number": 4204,
+    "state": "OPEN",
+    "title": "fix(rate-of-closure): harden forgiveness evidence contracts"
+  },
+  {
+    "headRefName": "feat/4181-launch-monitor-registry",
+    "isDraft": true,
+    "number": 4203,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): add launch monitor convention registry"
+  },
+  {
+    "headRefName": "feat/4189-dplane",
+    "isDraft": true,
+    "number": 4202,
+    "state": "OPEN",
+    "title": "feat(rate_of_closure): add exact 3D D-plane overlays"
+  },
+  {
+    "headRefName": "feat/4164-wedge-forgiveness",
+    "isDraft": true,
+    "number": 4190,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): add chip forgiveness decision analysis"
+  },
+  {
+    "headRefName": "feat/4162-wedge-impact-visualization",
+    "isDraft": true,
+    "number": 4179,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): add advanced wedge impact visualization"
+  },
+  {
+    "headRefName": "feat/4166-wedge-turf-physics",
+    "isDraft": true,
+    "number": 4178,
+    "state": "OPEN",
+    "title": "feat(golf-club): add validated wedge turf contact"
+  },
+  {
+    "headRefName": "palette-keyboard-a11y-rotation-8417977717012914862",
+    "isDraft": false,
+    "number": 4177,
+    "state": "OPEN",
+    "title": "\ud83c\udfa8 Palette: Enable native Enter key submission in forms"
+  },
+  {
+    "headRefName": "bolt/ode-solver-parse-key-value-2300221890219707580",
+    "isDraft": false,
+    "number": 4175,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: Optimize key-value parsing overhead"
+  },
+  {
+    "headRefName": "feat/4161-wedge-ground-clearance",
+    "isDraft": true,
+    "number": 4174,
+    "state": "OPEN",
+    "title": "feat: add swept wedge ground-clearance analysis"
+  },
+  {
+    "headRefName": "feat/4163-impact-inspector",
+    "isDraft": true,
+    "number": 4173,
+    "state": "OPEN",
+    "title": "feat(rate-of-closure): add shared impact inspector"
+  },
+  {
+    "headRefName": "feat/4160-wedge-kinematics",
+    "isDraft": true,
+    "number": 4172,
+    "state": "OPEN",
+    "title": "feat(club-builder): add wedge impact kinematics"
+  },
+  {
+    "headRefName": "feat/4149-cad-families",
+    "isDraft": true,
+    "number": 4171,
+    "state": "OPEN",
+    "title": "feat(club-builder): add exact wedge CAD foundation"
+  },
+  {
+    "headRefName": "feat/4148-shaft-profiles",
+    "isDraft": true,
+    "number": 4170,
+    "state": "OPEN",
+    "title": "feat(club-builder): add measured shaft profiles"
+  },
+  {
+    "headRefName": "feat/4144-variation-visualizations",
+    "isDraft": true,
+    "number": 4167,
+    "state": "OPEN",
+    "title": "Variation: add complete ensemble scatter and swing-arc foundation"
+  },
+  {
+    "headRefName": "feat/impact-simulation-platform",
+    "isDraft": false,
+    "number": 4119,
+    "state": "OPEN",
+    "title": "feat: Swing\u2013Impact\u2013Ball-Flight Simulation Platform (consolidated \u2014 epic #4103)"
+  },
+  {
+    "headRefName": "bolt/optimize-use-trend-backfill-9226189002519216972",
+    "isDraft": false,
+    "number": 4102,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: [performance improvement]"
+  },
+  {
+    "headRefName": "bolt-optimize-svg-path-building-1146440072528933127",
+    "isDraft": false,
+    "number": 4100,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: Optimize SVG path building for Data Explorer plots"
+  },
+  {
+    "headRefName": "palette-form-submission-13631188098923034009",
+    "isDraft": false,
+    "number": 4099,
+    "state": "OPEN",
+    "title": "\ud83c\udfa8 Palette: Enable native Enter key submission for calculators"
+  },
+  {
+    "headRefName": "fix/file-size-budget-bounded-checkout",
+    "isDraft": false,
+    "number": 4096,
+    "state": "OPEN",
+    "title": "fix(ci): bound File Size Budget checkout to merge parents"
+  },
+  {
+    "headRefName": "agent/scada-phase-a-foundation",
+    "isDraft": false,
+    "number": 4091,
+    "state": "OPEN",
+    "title": "feat(scada): deliver professional representative SCADA product"
+  },
+  {
+    "headRefName": "palette/add-focus-visible-calculators-16191840208807867331",
+    "isDraft": false,
+    "number": 4084,
+    "state": "OPEN",
+    "title": "\ud83c\udfa8 Palette: Add keyboard focus-visible states to calculators"
+  },
+  {
+    "headRefName": "bolt-svg-path-optimization-169915529390790315",
+    "isDraft": false,
+    "number": 4083,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: Eliminate intermediate string array allocations for SVG paths"
+  },
+  {
+    "headRefName": "bolt-optimize-math-min-max-spread-2496600321445404036",
+    "isDraft": false,
+    "number": 4082,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: Replace Math.min/max spread with loops for dynamic scales"
+  },
+  {
+    "headRefName": "bolt-optimize-trend-axis-scale-12282537680084057479",
+    "isDraft": false,
+    "number": 4081,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: Replace spread operator in Math.min/max with single-pass loop"
+  },
+  {
+    "headRefName": "jules-12248824925126103807-8eacfe8f",
+    "isDraft": false,
+    "number": 4080,
+    "state": "OPEN",
+    "title": "docs(completist): audit completist data and generate report"
+  },
+  {
+    "headRefName": "consolidate/trend-axis-sourcepanel-20260802",
+    "isDraft": false,
+    "number": 4079,
+    "state": "OPEN",
+    "title": "perf: consolidate trend-axis and SourcePanel range scans"
+  },
+  {
+    "headRefName": "palette-form-submission-rotation-converter-16474855241218320867",
+    "isDraft": false,
+    "number": 4077,
+    "state": "OPEN",
+    "title": "\ud83c\udfa8 Palette: Enable native form submission for converters"
+  },
+  {
+    "headRefName": "palette-pressure-drop-tabs-a11y-13829499245294638391",
+    "isDraft": false,
+    "number": 4073,
+    "state": "OPEN",
+    "title": "\ud83c\udfa8 Palette: [UX improvement] Improve Accessibility for Pressure Drop Calculator Tabs"
+  },
+  {
+    "headRefName": "sentinel/fix-pdf-renamer-cache-resource-leak-11472274256158351043",
+    "isDraft": false,
+    "number": 4072,
+    "state": "OPEN",
+    "title": "\ud83d\udee1\ufe0f Sentinel: [HIGH] Fix Unclosed SQLite Connections in pdf_renamer cache"
+  },
+  {
+    "headRefName": "bolt-optimize-resolve-range-11123800049247150513",
+    "isDraft": false,
+    "number": 4070,
+    "state": "OPEN",
+    "title": "\u26a1 Bolt: Optimize Y-axis scale calculation for large trend datasets"
+  },
+  {
+    "headRefName": "fix/p1am-db-path-anchoring",
+    "isDraft": false,
+    "number": 4068,
+    "state": "OPEN",
+    "title": "fix(p1am): anchor historian DB to package dir; ignore stray dcs_scada.db"
+  },
+  {
+    "headRefName": "fix/frontend-localstorage-test-polyfill",
+    "isDraft": false,
+    "number": 4067,
+    "state": "OPEN",
+    "title": "fix(p1am-frontend): install conforming localStorage in test setup"
+  },
+  {
+    "headRefName": "scada/pr8-security-deploy",
+    "isDraft": false,
+    "number": 4066,
+    "state": "OPEN",
+    "title": "Harden P1AM SCADA deployment: the authz was fine, the deployment wasn't"
+  },
+  {
+    "headRefName": "feat/timescale-historian",
+    "isDraft": false,
+    "number": 4065,
+    "state": "OPEN",
+    "title": "feat(p1am): plant historian and analytics platform (TimescaleDB + Grafana)"
+  },
+  {
+    "headRefName": "scada/pr6-poll-loop",
+    "isDraft": false,
+    "number": 4064,
+    "state": "OPEN",
+    "title": "SCADA: fix poll-loop data integrity, cadence and backpressure (#4004 #4008 #4009 #4023 #4024)"
+  },
+  {
+    "headRefName": "scada/pr11-calibration-alarms",
+    "isDraft": false,
+    "number": 4062,
+    "state": "OPEN",
+    "title": "P1AM SCADA: safe calibration shutdown, real alarm ack, settings-driven MFCs"
+  },
+  {
+    "headRefName": "scada/pr3-estop-safestate",
+    "isDraft": false,
+    "number": 4060,
+    "state": "OPEN",
+    "title": "fix(p1am): de-energize on E-stop and on shutdown; kill dead write seams"
+  },
+  {
+    "headRefName": "scada/pr4-units-sensors",
+    "isDraft": false,
+    "number": 4059,
+    "state": "OPEN",
+    "title": "P1AM: scale the power-supply thermocouple, fault on missing feedback, one units contract"
+  },
+  {
+    "headRefName": "scada/pr7-historian",
+    "isDraft": false,
+    "number": 4058,
+    "state": "OPEN",
+    "title": "fix(p1am/historian): unblock E-stop during retention, fix UTC drift, bound explorer loads"
+  },
+  {
+    "headRefName": "scada/pr10-desktop-hmi",
+    "isDraft": false,
+    "number": 4057,
+    "state": "OPEN",
+    "title": "fix(p1am-hmi): correct alarm annunciation, thresholds, E-stop gate and event-log churn"
+  }
+]
