@@ -1,10 +1,12 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-## 2026-08-11 repeated-bounce request execution binding candidate
+## 2026-08-11 PR #4357 repeated-bounce request execution binding
 
-- Local branch `feat/4270-repeated-bounce-execution` starts exactly from
-  published #4356 head `2387430fc78baa92ba122c7ad008a498118bf62d` and
-  has not been pushed.
+- Ready-for-review PR
+  [#4357](https://github.com/D-sorganization/Tools/pull/4357) on
+  `feat/4270-repeated-bounce-execution` starts exactly from published #4356
+  head `2387430fc78baa92ba122c7ad008a498118bf62d` and is published at
+  implementation head `cf54d3528a71fd429ad19f53f04e4a1a84495097`.
 - The candidate adds the UI-neutral Python
   `execute_repeated_bounce_request` boundary. It accepts only the exact strict
   request plus callable-or-`None` cancellation, consumes the request-bound
@@ -20,7 +22,7 @@
   A non-authoritative import-following MyPy probe reports three inherited
   redundant casts in unchanged ground modules; the protected
   `--follow-imports=skip` profile is green for the new production module.
-- This remains a no-publish, `not_released` candidate. UI request construction
+- This remains `not_released`; protected checks and review are pending. UI request construction
   and invocation, persistence, playback, TypeScript/compiled physics,
   regional-material chaining, measured terrain calibration, downstream parity,
   protected exact-head evidence, review, approval, release, and issue/epic
