@@ -56,7 +56,9 @@ def make_polynomial_torque(
     polynomials: list[TorquePolynomial] = []
     for i, coeffs in enumerate(coeffs_per_joint):
         if not (len(coeffs) >= 1):
-            raise ValueError(f"Need at least one coefficient for joint {i}, got {len(coeffs)}")
+            raise ValueError(
+                f"Need at least one coefficient for joint {i}, got {len(coeffs)}"
+            )
         polynomials.append(TorquePolynomial(tuple(coeffs)))
 
     def torque_func(t: float) -> tuple[float, ...]:
