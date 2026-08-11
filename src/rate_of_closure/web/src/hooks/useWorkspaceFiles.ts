@@ -112,6 +112,7 @@ export function useWorkspaceFiles(
   const reset = useCallback(
     (label: string) => {
       if (!confirmDiscard(label.toLowerCase())) return;
+      readSequence.current += 1;
       options.applySnapshot(options.initialSnapshot);
       setBaseline(fingerprint(options.initialSnapshot));
       setError(null);

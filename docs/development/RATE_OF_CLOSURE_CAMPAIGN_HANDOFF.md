@@ -24,10 +24,12 @@ branch was rewritten.
   keeping every File operation inside the validated contract. Browser file
   reads capture their selected type and a monotonic operation ID; stale
   out-of-order reads cannot overwrite newer choices or change parser mode.
+  Confirmed New/Close operations invalidate pending reads; cancelled resets do
+  not discard the user's pending Open.
 - This slice stores no results, identity, optimizer outputs, or flight-run
   outputs; it does not qualify UpstreamDrift or close #4142/#4144/#4218.
   Protected review/CI and dependency-ordered release remain open. Post-review
-  gates pass 21 focused Python and 45 focused React tests, pinned MyPy 1.13,
+  gates pass 21 focused Python and 48 focused React tests, pinned MyPy 1.13,
   Ruff, TypeScript, zero-warning ESLint, the 210-module production build, 11
   campaign manifest tests, changed-file/module-size, docs, manifest-layout,
   changed-Python, JSON, and diff validation. A broader PyQt pair was stopped

@@ -52,7 +52,8 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Native controls preserve at least one selected output. Browser file reads
   bind their selected parser mode and a monotonic operation ID at selection
   time; later commands cannot reinterpret an in-flight file and stale reads
-  cannot overwrite a newer completed Open.
+  cannot overwrite a newer completed Open. Confirmed New/Close operations
+  invalidate pending reads; cancelled resets preserve them.
 - Simulation setup is the only authority for Ground/Tee context. Workspace
   variation plans reject a duplicate ball setup, and a Tee Height input is
   invalid unless the separately persisted setup selects Tee support.

@@ -457,4 +457,90 @@ describe("browser workspace file controller", () => {
     await waitFor(() => expect(applySnapshot).toHaveBeenCalledWith(opened));
     expect(applyViewWorkspace).not.toHaveBeenCalled();
   });
+
+  it.each([
+    APP_COMMAND_ID.fileNewWorkspace,
+    APP_COMMAND_ID.fileCloseWorkspace,
+  ])("supersedes a pending open after confirmed %s", async (command) => {
+    const initial = snapshot();
+    const opened = {
+      ...initial,
+      scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -620 },
+    };
+    const encoded = createWorkspaceDocument(opened, {
+      documentId: "workspace.reset.supersedes",
+      title: "Superseded Open",
+      appVersion: "1.14.34",
+      createdAtUtc: "2026-08-11T07:00:00Z",
+      modifiedAtUtc: "2026-08-11T07:00:00Z",
+    });
+    const reads = stubDeferredFileReaders();
+    const applySnapshot = vi.fn();
+    const { result } = renderHook(() =>
+      useWorkspaceFiles({
+        snapshot: initial,
+        initialSnapshot: initial,
+        applySnapshot,
+        applyViewWorkspace: vi.fn(),
+      }),
+    );
+    const element = document.createElement("input");
+    Object.defineProperty(element, "files", {
+      value: [new File([encoded], "pending.roc-workspace.json")],
+    });
+    act(() => {
+      result.current.handleCommand(APP_COMMAND_ID.fileOpenWorkspace);
+      result.current.onFileChange({ currentTarget: element } as never);
+      result.current.handleCommand(command);
+      reads[0].resolve(encoded);
+    });
+
+    await waitFor(() => expect(applySnapshot).toHaveBeenCalledTimes(1));
+    expect(applySnapshot).toHaveBeenCalledWith(initial);
+  });
+
+  it("keeps a pending open active when a dirty reset is cancelled", async () => {
+    const initial = snapshot();
+    const dirty = {
+      ...initial,
+      scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -500 },
+    };
+    const opened = {
+      ...initial,
+      scenario: { ...DEFAULT_SCENARIO, omegaShaftDps: -610 },
+    };
+    const encoded = createWorkspaceDocument(opened, {
+      documentId: "workspace.cancelled.reset",
+      title: "Open After Cancelled Reset",
+      appVersion: "1.14.34",
+      createdAtUtc: "2026-08-11T07:00:00Z",
+      modifiedAtUtc: "2026-08-11T07:00:00Z",
+    });
+    const reads = stubDeferredFileReaders();
+    const applySnapshot = vi.fn();
+    vi.spyOn(window, "confirm")
+      .mockReturnValueOnce(false)
+      .mockReturnValueOnce(true);
+    const { result } = renderHook(() =>
+      useWorkspaceFiles({
+        snapshot: dirty,
+        initialSnapshot: initial,
+        applySnapshot,
+        applyViewWorkspace: vi.fn(),
+      }),
+    );
+    const element = document.createElement("input");
+    Object.defineProperty(element, "files", {
+      value: [new File([encoded], "pending.roc-workspace.json")],
+    });
+    act(() => {
+      result.current.handleCommand(APP_COMMAND_ID.fileOpenWorkspace);
+      result.current.onFileChange({ currentTarget: element } as never);
+      result.current.handleCommand(APP_COMMAND_ID.fileNewWorkspace);
+      reads[0].resolve(encoded);
+    });
+
+    await waitFor(() => expect(applySnapshot).toHaveBeenCalledWith(opened));
+    expect(applySnapshot).toHaveBeenCalledTimes(1);
+  });
 });

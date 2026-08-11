@@ -31,11 +31,13 @@ matching React and keeping File commands inside the valid workspace contract.
 Browser file reads capture their selected file type and use a monotonic
 operation ID, so a slower earlier read cannot overwrite a newer Open and a
 later picker cannot reinterpret an in-flight file under the wrong mode.
+Confirmed New and Close operations also invalidate pending reads; a cancelled
+reset intentionally leaves the user's pending Open active.
 
 This is bounded #4142/#4144/#4218 specification persistence. It does not store
 results or identity, add optimizer outputs, qualify UpstreamDrift consumers, or
 close any issue/epic. Protected CI/review and ordered release remain open.
-Post-review qualification passes 21 focused Python workspace/PyQt tests, 45
+Post-review qualification passes 21 focused Python workspace/PyQt tests, 48
 focused React workspace/variation tests, pinned MyPy 1.13, Ruff check/format,
 TypeScript, zero-warning ESLint, the 210-module production build, the 11-test
 campaign-manifest suite, changed-file and module-size budgets, docs,
