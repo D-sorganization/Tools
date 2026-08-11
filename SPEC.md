@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.55                                    |
-| **Spec Version**        | 1.14.55                                    |
+| **Current Version**     | 1.14.56                                    |
+| **Spec Version**        | 1.14.56                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3133,6 +3133,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.56 | docs(ground-study, #4365): record ready publication of the seeded base-material variation runner at implementation `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf`, stacked on exact #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`; retain protected checks, UI/overlay/persistence, solver/wind, compiled/downstream parity, release, and #4273/#4267 completion as open. |
+| 2026-08-11 | 1.14.55 | feat(ground-study, #4273 #4267): add deterministic VariationPlan-driven base normal-restitution and rolling-resistance studies with immutable per-trial provenance, exact injected flight-through-regional-ground execution, bounded sampled-input scalar ensembles, typed-null unavailable rows, and fail-before-execution validation; retain region overlays, UI/persistence, solver/wind integration, compiled/downstream parity, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.54 | feat(ground-target, #4192 #4273 #4267): add a UI-neutral complete-rest-only projection from exact flight-through-regional-ground evidence to the existing `SpatialTarget`; record the sole `GroundFrame.TARGET`, retain final x/z, replace ball-center y exactly once with declared landing-surface elevation, reuse `SpatialTarget.miss` signs and geometry, type aerial targets as `AERIAL_REQUIRES_FLIGHT_TRAJECTORY`, preserve every unqualified/censored outcome as null with exact phase/reason/digest evidence, and expose a bounded ordered target scalar ensemble while leaving UI, persistence, solver/capability, aerial-trajectory, compiled-runtime, protected-release, and issue completion open. |
 | 2026-08-11 | 1.14.53 | feat(ground-playback, #4274 #4267): add matched strict import-only PyQt6 and React ground-result playback with phase-safe absolute time, exact logarithmic step/frame lookup, play/pause/restart/loop/speed controls, locked-scale orbit/zoom/reset, bounded 2,048-point landmark-aware visuals, disclosed 256-row evidence windows with full-result retention, atomic standalone/regional imports, and honest partial-result terminology while leaving live flight synchronization, comparison, persistence, camera integration, rendered visual evidence, compiled physics, downstream parity, protected release, and issue completion open. |
 | 2026-08-11 | 1.14.52 | chore(release, #4361 #4273 #4267): publish the independently reviewed qualified regional-ground study adapter as ready PR #4361 on exact #4360 head `74f1ceafd87f952a76917dc868baa6414f856144`; bind implementation commit `d71c43fdd729b35e1abe5573f41ed60201698608` while retaining protected review/check completion, solver/capability invocation, variation UI, wind strategy, persistence, compiled/four-surface parity, downstream release, and issue/epic completion as open. |

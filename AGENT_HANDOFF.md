@@ -1,9 +1,11 @@
 # AGENT_HANDOFF — Tools
 
-## 2026-08-11 local #4273 seeded regional-ground material variation
+## 2026-08-11 PR #4365 seeded regional-ground material variation
 
-The unpublished branch `codex/4273-seeded-ground-variation` starts from exact
-Tools PR #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`.
+Ready PR [#4365](https://github.com/D-sorganization/Tools/pull/4365) is stacked
+on exact Tools PR #4364 head
+`f13f0908dd2a553cf4d114afd31bb474d1b967c7`; independently reviewed
+implementation commit `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf` follows.
 It adds one UI-neutral runner that samples only base-surface normal restitution
 and rolling resistance through the existing `VariationPlan`/`sample_inputs`
 authority, rebinds an immutable regional request for every trial, and delegates
@@ -36,8 +38,8 @@ reports only the inherited 433-line `plot_data.py`, not this candidate.
 This is deliberately not a #4273 or #4267 completion claim. Regional overlay
 variation, UI/editor integration, persistence, wind coupling, solver/capability
 consumption, compiled/runtime parity, downstream UpstreamDrift parity,
-protected CI/review, publication, and release remain open. No branch was pushed
-and no GitHub state was changed.
+protected CI and release remain open. Publication does not promote this bounded
+slice to issue or epic completion.
 
 ## 2026-08-11 PR #4364 post-ground spatial-target projection
 

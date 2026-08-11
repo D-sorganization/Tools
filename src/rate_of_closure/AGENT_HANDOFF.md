@@ -1,9 +1,11 @@
 # AGENT_HANDOFF — rate_of_closure
 
-## 2026-08-11 local #4273 seeded regional-ground material variation
+## 2026-08-11 PR #4365 seeded regional-ground material variation
 
-The unpublished `codex/4273-seeded-ground-variation` child starts from exact
-PR #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`.
+Ready PR [#4365](https://github.com/D-sorganization/Tools/pull/4365) is stacked
+on exact PR #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`;
+its independently reviewed implementation is
+`8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf`.
 `regional_ground_variation` samples only base normal restitution and rolling
 resistance with the existing `VariationPlan`/`sample_inputs` engine, creates an
 immutable plan/provenance-bound trial, and calls an injected exact
@@ -30,8 +32,8 @@ lines.
 
 No UI, persistence, region-overlay variation, solver/capability invocation,
 wind physics, target/playback changes, compiled runtime, downstream parity,
-protected review, publication, or release is included. Keep #4273 and #4267
-open. This branch has not been pushed and has made no GitHub write.
+protected release evidence is included. Keep #4273 and #4267 open; publication
+of this bounded contract does not close either issue.
 
 ## 2026-08-11 PR #4364 post-ground spatial-target projection
 

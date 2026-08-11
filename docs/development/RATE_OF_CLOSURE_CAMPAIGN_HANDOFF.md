@@ -1,9 +1,11 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
-## 2026-08-11 local #4273 seeded regional-ground material variation
+## 2026-08-11 PR #4365 seeded regional-ground material variation
 
-- The unpublished `codex/4273-seeded-ground-variation` child starts from exact
-  Tools PR #4364 head `f13f0908dd2a553cf4d114afd31bb474d1b967c7`.
+- Ready PR [#4365](https://github.com/D-sorganization/Tools/pull/4365) starts
+  from exact Tools PR #4364 head
+  `f13f0908dd2a553cf4d114afd31bb474d1b967c7`; independently reviewed
+  implementation `8c9c9512c61bac6f958ae7c7c0fe58e8f70525bf` follows.
   It adds a UI-neutral, bounded seeded runner for only the base regional-plan
   normal-restitution and rolling-resistance values. Sampling stays in the
   existing `VariationPlan`/`sample_inputs` authority; physics stays in an
@@ -28,10 +30,10 @@
   the candidate's 397-line budget, placeholder, and diff gates pass. A strict
   whole-directory 400-line scan reports only inherited 433-line
   `plot_data.py`.
-- This local candidate is not pushed and does not close #4273/#4267. Region
+- This published bounded candidate does not close #4273/#4267. Region
   overlay variation, UI/persistence, solver/capability use, wind coupling,
   compiled and downstream parity, protected CI/review, publication, and release
-  remain open.
+  remain open, as do protected current-head checks and dependency integration.
 
 ## 2026-08-11 PR #4364 post-ground spatial-target projection
 
