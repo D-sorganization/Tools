@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.13.5                                     |
-| **Spec Version**        | 1.13.5                                     |
-| **Last Spec Update**    | 2026-08-10                                 |
+| **Current Version**     | 1.13.6                                     |
+| **Spec Version**        | 1.13.6                                     |
+| **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
 
@@ -2565,6 +2565,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.13.6 | fix(ci, #4167): mechanically align the five admitted Rate/impact Python files with workflow-pinned Ruff 0.14.10; no scientific, persistence, API, schema, test, or UI behavior changes, and protected release/carrier gates remain open. |
 | 2026-08-10 | 1.13.5 | fix(rate-of-closure, #4167): replace the Python 3.11-only `datetime.UTC` import in torque-profile persistence with the shared Python 3.10-compatible UTC export, and add a source-wide AST guard covering direct, aliased, and module-attribute access forms; release evidence remains pending. |
 | 2026-08-06 | 1.13.4 | refactor(gui, ci): deduplicate Rotation Converter plot helpers and extract Movement Optimizer motion helpers, restoring the protected module-size budget inherited by the stacked Rate PRs. |
 | 2026-08-05 | 1.5.5 | fix(ci, #4155): make the Python tool-cache guard inspect `/opt/hostedtoolcache` and optionally require the interpreter's declared link library; run that stronger semantic preflight immediately before the Rust/PyO3 job provisions Python, with Linux fixture and workflow-order contracts. |

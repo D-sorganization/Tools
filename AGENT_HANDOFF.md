@@ -7,6 +7,16 @@
 - Base: `feat/investigation-suite`
 - Pre-repair head: `edaa56358a9ccf47809533fcab28e6415b336771`
 
+## 2026-08-11 pinned-Ruff repair
+
+- Exact published head `3c19aaa9d3e812e4659053735a2955d62a080d34`
+  has the same five-file Ruff `0.14.10` format mismatch proven by child CI.
+- Those files are mechanically formatted with the workflow-pinned version.
+  No variation, impact, plotting, persistence, API, schema, test, or UI
+  behavior changes; this is not completion of issue `#4144`.
+- No material handoff behavior changed. Protected CI and the ordinary carrier
+  into `feat/impact-simulation-platform` remain release gates.
+
 ## Current work
 
 - The variation-visualization implementation remains the base-most open Rate

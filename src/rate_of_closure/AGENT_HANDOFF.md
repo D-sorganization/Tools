@@ -7,6 +7,14 @@
 - Base: `feat/investigation-suite`
 - Pre-repair head: `edaa56358a9ccf47809533fcab28e6415b336771`
 
+## 2026-08-11 pinned-Ruff repair
+
+Exact published head `3c19aaa9d3e812e4659053735a2955d62a080d34`
+inherits the five-file Ruff `0.14.10` format mismatch reported on its immediate
+child. The files are now mechanically formatted with that pinned version. No
+material handoff or runtime behavior changes: variation, physics, frames, DbC
+validation, public contracts, schemas, tests, and UI behavior remain intact.
+
 The branch contains the typed multi-trial visualization foundation described
 in `SPEC.md`. Its current in-scope CI repair replaces the Python 3.11-only
 `datetime.UTC` import in the torque-profile controller with

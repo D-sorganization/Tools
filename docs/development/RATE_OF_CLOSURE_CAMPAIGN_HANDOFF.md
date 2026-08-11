@@ -8,6 +8,17 @@ wedge, D-plane, launch-monitor, workspace, wind, capability, and ground work
 depends on this line and must receive any repair through ordinary parent
 propagation; child branches must not be rewritten.
 
+## 2026-08-11 pinned-Ruff repair
+
+- Exact PR `#4167` head `3c19aaa9d3e812e4659053735a2955d62a080d34`
+  carries the same five changed Python blobs that fail Ruff `0.14.10` format
+  checking on immediate child `#4173`.
+- The five files are mechanically formatted with the workflow-pinned version;
+  there is no scientific, persistence, API, schema, test, or UI behavior
+  change and no claim that variation epic `#4144` is complete.
+- The repair must still pass current-head protected checks and travel through
+  the ordinary investigation-suite carrier before the root PR can reach main.
+
 ## 2026-08-10 Python 3.10 repair
 
 - Protected CI at exact pre-repair head
