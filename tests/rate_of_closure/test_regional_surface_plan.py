@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
+from inspect import signature
 from pathlib import Path
 
 import pytest
@@ -17,6 +18,48 @@ from shared.python.swing_sim.canonical_numeric_json import (
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+
+def test_pyqt_number_input_spec_preserves_behavior_and_structural_bound(qtbot) -> None:  # type: ignore[no-untyped-def]
+    pytest.importorskip("PyQt6")
+    pytest.importorskip("pytestqt")
+    from rate_of_closure.ui.pyqt6.engineering_number_input import (
+        NumberInputSpec,
+        engineering_number_input,
+    )
+
+    spec = NumberInputSpec(
+        suffix=" m",
+        step=0.25,
+        minimum=-2.0,
+        maximum=3.0,
+        decimals=11,
+    )
+    field = engineering_number_input("Test coordinate", 1.5, spec)
+    qtbot.addWidget(field)
+
+    assert NumberInputSpec.__dataclass_params__.frozen is True
+    assert len(signature(engineering_number_input).parameters) <= 4
+    assert field.accessibleName() == "Test coordinate"
+    assert field.value() == pytest.approx(1.5)
+    assert field.suffix() == " m"
+    assert field.singleStep() == pytest.approx(0.25)
+    assert field.minimum() == pytest.approx(-2.0)
+    assert field.maximum() == pytest.approx(3.0)
+    assert field.decimals() == 11
+    assert "Test coordinate" in field.toolTip()
+
+
+def test_pyqt_number_input_spec_rejects_invalid_configuration() -> None:
+    pytest.importorskip("PyQt6")
+    from rate_of_closure.ui.pyqt6.engineering_number_input import NumberInputSpec
+
+    with pytest.raises(ValueError, match="step must be finite and positive"):
+        NumberInputSpec(suffix="", step=0.0, minimum=0.0, maximum=1.0)
+    with pytest.raises(ValueError, match="minimum must not exceed maximum"):
+        NumberInputSpec(suffix="", step=0.1, minimum=2.0, maximum=1.0)
+    with pytest.raises(ValueError, match="decimals must be an integer"):
+        NumberInputSpec(decimals=True)
 
 
 def test_illustrative_draft_delegates_to_regional_wire_contract() -> None:
