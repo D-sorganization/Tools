@@ -2,6 +2,14 @@
 
 ## 2026-08-11 Capability-request workspace continuation
 
+Independent no-publish review blockers on local head `91811c42` are repaired
+in this unpublished child. Both clients retain the complete validated workflow
+and overlay only editable controls, preserving accepted evidence and advanced
+request policy. Unsupported interactive shapes fail closed. PyQt worker
+identity plus generation gates reject late success from cancelled replaced
+runs. The shared hostile fixture caps numeric wire magnitude at `1e300`, and
+Python overflow follows the normal validation and File/Open rollback path.
+
 Local-only branch `feat/4197-workspace-capability-request` starts from exact
 published PR #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49`.
 Explorer-session v5 embeds the existing strict
@@ -12,15 +20,16 @@ budgets, and deterministic seed. It stores no computed result, observation
 ensemble, worker/runtime object, or identity beyond user-authored stable IDs.
 
 Both clients validate the complete file before live mutation. PyQt6 applies
-inside the existing rollback boundary; React lifts the form inputs to the app
-workspace authority and invalidates stale results when a workspace replaces
-them. Legacy v1-v4 sessions require an explicit current capability fallback,
+inside the existing rollback boundary; React lifts the full workflow document
+to app workspace authority and invalidates stale results when a workspace
+replaces it. Legacy v1-v4 sessions require an explicit current capability
+fallback,
 so migration cannot invent an optimizer request. This is bounded #4197/#4225
 input-specification parity only: it does not claim optimizer execution parity,
 wind-aware optimization, saved results, UpstreamDrift qualification, protected
 CI/review, integration, or issue completion. The branch must remain local until
 the parent stack explicitly authorizes publication. Local qualification passes
-56 focused Python workflow/workspace/File/PyQt tests and 60 focused React
+63 focused Python workflow/workspace/File/PyQt/manifest tests and 62 focused React
 contract/File/UI tests; pinned MyPy, Ruff check/format, TypeScript,
 zero-warning ESLint, the 210-module production build, 11 campaign-manifest
 tests, docs governance, and manifest-layout validation also pass.

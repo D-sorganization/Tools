@@ -37,6 +37,7 @@ _PARSER_FIXTURE = json.loads(
     ).read_text(encoding="utf-8")
 )
 _PARSER_CASES = _PARSER_FIXTURE["cases"]
+_HOSTILE_NUMBERS = _PARSER_FIXTURE["hostile_numbers"]
 
 
 def _mutated_workflow(case: dict[str, object]) -> str:
@@ -65,6 +66,20 @@ def test_default_driver_workflow_is_model_ready_and_auditable() -> None:
 
 def test_shared_parser_fixture_schema_is_supported() -> None:
     assert _PARSER_FIXTURE["schema_version"] == "capability-workflow-parser-cases/v1"
+
+
+@pytest.mark.parametrize("case", _HOSTILE_NUMBERS, ids=lambda case: case["id"])
+def test_shared_parser_rejects_oversized_raw_json_numbers(
+    case: dict[str, object],
+) -> None:
+    source = capability_workflow_json(
+        build_capability_workflow(CapabilityWorkflowInputs())
+    )
+    raw_number = str(case["digit"]) * int(case["digits"])
+    source = source.replace('"candidate_budget":8', f'"candidate_budget":{raw_number}')
+
+    with pytest.raises(ValueError, match="magnitude|finite"):
+        capability_workflow_from_json(source)
 
 
 def test_workflow_round_trip_preserves_strict_nested_contracts() -> None:

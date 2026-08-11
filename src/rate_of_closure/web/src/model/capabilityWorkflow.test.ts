@@ -18,6 +18,7 @@ interface ParserCase {
 }
 
 const parserCases = parserCasesFixture.cases as readonly ParserCase[];
+const hostileNumbers = parserCasesFixture.hostile_numbers;
 
 const mutatedWorkflow = (testCase: ParserCase): string => {
   const payload: unknown = JSON.parse(capabilityWorkflowToJson(
@@ -37,6 +38,19 @@ describe("capability workflow", () => {
   it("uses the supported shared parser fixture schema", () => {
     expect(parserCasesFixture.schema_version)
       .toBe("capability-workflow-parser-cases/v1");
+  });
+
+  it.each(hostileNumbers)("rejects shared hostile number $id", (testCase) => {
+    const source = capabilityWorkflowToJson(
+      buildCapabilityWorkflow(defaultCapabilityWorkflowInputs()),
+    );
+    const rawNumber = testCase.digit.repeat(testCase.digits);
+    const hostile = source.replace(
+      '"candidate_budget":8',
+      `"candidate_budget":${rawNumber}`,
+    );
+
+    expect(() => capabilityWorkflowFromJson(hostile)).toThrow(/magnitude|finite/i);
   });
 
   it("builds a model-ready and auditable default driver workflow", () => {

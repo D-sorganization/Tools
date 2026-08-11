@@ -329,6 +329,38 @@ def test_invalid_capability_request_is_rejected_before_native_ui_mutation(
     assert warnings and "capability workflow" in warnings[0][1]
 
 
+def test_oversized_capability_number_reports_open_error_without_mutation(
+    window, tmp_path, monkeypatch
+) -> None:  # type: ignore[no-untyped-def]
+    from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
+    before = window._capture_workspace_state()
+    raw = json.dumps(
+        document_from_state(before, window._workspace_metadata).to_json_dict()
+    )
+    raw = raw.replace('"candidate_budget": 8', '"candidate_budget": ' + "9" * 4000)
+    target = tmp_path / "oversized-capability-number.roc-workspace.json"
+    target.write_text(raw, encoding="utf-8")
+    warnings: list[tuple[str, str]] = []
+    monkeypatch.setattr(
+        QFileDialog,
+        "getOpenFileName",
+        lambda *_args, **_kwargs: (str(target), ""),
+    )
+    monkeypatch.setattr(
+        QMessageBox,
+        "warning",
+        lambda _parent, title, message, *_args, **_kwargs: warnings.append(
+            (title, message)
+        ),
+    )
+
+    _action(window, AppCommandId.FILE_OPEN_WORKSPACE).trigger()
+
+    assert window._capture_workspace_state() == before
+    assert warnings and "finite" in warnings[0][1]
+
+
 def test_glossary_is_first_class_and_recovers_a_hidden_module(window) -> None:  # type: ignore[no-untyped-def]
     assert window.set_primary_module_visible("glossary", False)
     glossary = _action(window, AppCommandId.GLOBAL_OPEN_GLOSSARY.value)

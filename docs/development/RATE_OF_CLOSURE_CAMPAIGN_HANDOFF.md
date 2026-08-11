@@ -2,6 +2,12 @@
 
 ## 2026-08-11 Capability input specification in whole workspaces
 
+- Independent no-publish findings against local head `91811c42` are repaired
+  locally: full-document authority plus editable overlays preserve accepted
+  evidence and advanced policy; unsupported interactive documents fail closed.
+  Native identity/generation gates reject stale success, and both parsers cap
+  numeric wire magnitude at `1e300` through the native File/Open error path.
+
 - Local branch `feat/4197-workspace-capability-request` starts from exact draft
   PR #4343 head `4ff103d9a6ef886099c180da560e8458d5e20b49`; it does not modify
   or publish the parent branch.
@@ -9,16 +15,17 @@
   `capability-optimization-workflow/v1` request. PyQt6 and React round-trip the
   editable profile/club, capability ranges/distributions, objective, target,
   fixed-spin evaluator assumptions, integration policy, budgets, and seed.
-- Full parsing precedes application. Legacy v1-v4 files require an explicit
-  current capability fallback. Native apply is rollback-safe, and both clients
+- Full parsing precedes application. Both clients retain the full validated
+  document while controls overlay only represented fields. Legacy v1-v4 files
+  require an explicit current capability fallback. Native apply is rollback-safe, and both clients
   invalidate computed results when restored inputs replace the live request.
 - Results, observation ensembles, runtime objects, inferred identity, and
   optimizer-execution claims remain excluded. Wind-aware optimizer inputs are
   not yet user-editable in this workflow and therefore are not fabricated.
   #4197/#4225, UpstreamDrift parity, protected CI/review, integration, and
   release remain open.
-- Local qualification passes 56 focused Python workflow/workspace/File/PyQt
-  tests and 60 focused React contract/File/UI tests; pinned MyPy, Ruff,
+- Local qualification passes 63 focused Python workflow/workspace/File/PyQt/
+  manifest tests and 62 focused React contract/File/UI tests; pinned MyPy, Ruff,
   TypeScript, zero-warning ESLint, the 210-module production build, 11
   campaign-manifest tests, docs governance, and manifest-layout validation
   also pass.

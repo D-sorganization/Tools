@@ -86,7 +86,7 @@ export default function App() {
     },
     torque: model.torqueWorkspace,
     variation: model.variationWorkspace,
-    capability: model.capabilityInputs,
+    capability: model.capabilityWorkflow,
     modules: workspace.viewState,
     viewWorkspace: workspace.viewWorkspace,
   };
@@ -104,7 +104,7 @@ export default function App() {
       model.setSpatialTarget(next.simulation.spatialTarget);
       model.setTorqueWorkspace(next.torque);
       model.setVariationWorkspace(next.variation);
-      model.setCapabilityInputs(next.capability);
+      model.setCapabilityWorkflow(next.capability);
       workspace.setViewState(next.modules);
       workspace.setViewWorkspace(next.viewWorkspace);
     },

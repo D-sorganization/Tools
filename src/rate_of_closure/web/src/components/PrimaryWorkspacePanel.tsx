@@ -129,8 +129,8 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
           }
         >
           <LazyCapabilityOptimizationPanel
-            inputs={model.capabilityInputs}
-            onInputsChange={model.setCapabilityInputs}
+            workflow={model.capabilityWorkflow}
+            onWorkflowChange={model.setCapabilityWorkflow}
           />
         </Suspense>
       );

@@ -9,7 +9,12 @@ import { DEFAULT_PRIMARY_VIEW_STATE } from "./viewPreferences";
 import { defaultViewWorkspace } from "./viewWorkspace";
 import variationFixture from "./__fixtures__/workspace_variation_parity.json";
 import { planFromJson } from "./variation";
-import { defaultCapabilityWorkflowInputs } from "./capabilityWorkflow";
+import {
+  buildCapabilityWorkflow,
+  capabilityWorkflowFromJson,
+  capabilityWorkflowToJson,
+  defaultCapabilityWorkflowInputs,
+} from "./capabilityWorkflow";
 import {
   boxTolerance,
   createSpatialTarget,
@@ -48,17 +53,34 @@ const snapshot = (): WorkspaceSessionSnapshot => {
       analysisExecution: "both" as const,
       selectedOutputMetrics: ["carry_m", "lateral_m", "apex_m"],
     },
-    capability: {
-      ...defaultCapabilityWorkflowInputs(),
-      profileId: "workspace-profile",
-      objective: "minimize_expected_miss",
-      targetDistanceM: 241,
-      targetLateralM: -4,
-      spinAxisTiltDeg: -3.5,
-    },
+    capability: customCapabilityWorkflow(),
     modules: DEFAULT_PRIMARY_VIEW_STATE,
     viewWorkspace: defaultViewWorkspace,
   };
+};
+
+const customCapabilityWorkflow = () => {
+  const payload = JSON.parse(capabilityWorkflowToJson(buildCapabilityWorkflow({
+    ...defaultCapabilityWorkflowInputs(), profileId: "workspace-profile",
+    objective: "minimize_expected_miss", targetDistanceM: 241,
+    targetLateralM: -4, spinAxisTiltDeg: -3.5,
+  })));
+  payload.profile.provenance = "measured/session-42";
+  payload.profile.confidence = 0.71;
+  payload.profile.clubs[0].provenance = "fit/driver-42";
+  payload.profile.clubs[0].confidence = 0.63;
+  payload.profile.clubs[0].matrix = [
+    [1, 0.2, 0], [0.2, 1, 0.1], [0, 0.1, 1],
+  ];
+  payload.profile.clubs[0].parameters[0].bias = 0.4;
+  payload.request.problem_id = "custom-problem-42";
+  payload.request.cvar_alpha = 0.83;
+  payload.request.minimum_success_fraction = 0.64;
+  payload.request.target.kind = "fairway";
+  payload.request.target.band_half_length_m = 21;
+  payload.request.target.half_width_m = 8;
+  payload.evaluator_config.spin_defaults[0].provenance = "measured/spin-42";
+  return capabilityWorkflowFromJson(JSON.stringify(payload));
 };
 
 const metadata = {
@@ -105,6 +127,9 @@ describe("whole workspace session contract", () => {
       },
     });
     expect(session.data.capability_request).not.toHaveProperty("result");
+    expect(capabilityWorkflowToJson(
+      parseWorkspaceDocument(encoded).capability,
+    )).toBe(capabilityWorkflowToJson(snapshot().capability));
   });
 
   it("requires an explicit capability fallback to migrate a v4 session", () => {

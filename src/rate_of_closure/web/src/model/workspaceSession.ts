@@ -37,11 +37,10 @@ import {
   versionedPayload,
 } from "./workspaceMetadataValidation";
 import {
-  buildCapabilityWorkflow,
   capabilityWorkflowDocument,
   capabilityWorkflowFromDocument,
   capabilityWorkflowInputs,
-  type CapabilityWorkflowInputs,
+  type CapabilityWorkflowDocument,
 } from "./capabilityWorkflow";
 
 const WORKSPACE_SCHEMA = "rate_of_closure.workspace";
@@ -82,7 +81,7 @@ export interface WorkspaceSessionSnapshot {
   readonly simulation: SimulationWorkspaceSnapshot;
   readonly torque: TorqueWorkspaceSnapshot;
   readonly variation: VariationWorkspaceSnapshot;
-  readonly capability: CapabilityWorkflowInputs;
+  readonly capability: CapabilityWorkflowDocument;
   readonly modules: PrimaryViewState;
   readonly viewWorkspace: ViewWorkspace;
 }
@@ -327,9 +326,7 @@ export function createWorkspaceDocument(
           snapshot.variation,
           snapshot.simulation.ballSetup,
         ),
-        capability_request: capabilityWorkflowDocument(
-          buildCapabilityWorkflow(snapshot.capability),
-        ),
+        capability_request: capabilityWorkflowDocument(snapshot.capability),
       },
     },
     prescribed_torque_profiles: snapshot.torque.profiles.map((profile) =>
@@ -364,7 +361,7 @@ export interface WorkspaceParseOptions {
   readonly legacySimulationFallback?: SimulationWorkspaceSnapshot;
   readonly legacyTorqueFallback?: TorqueWorkspaceSnapshot;
   readonly legacyVariationFallback?: VariationWorkspaceSnapshot;
-  readonly legacyCapabilityFallback?: CapabilityWorkflowInputs;
+  readonly legacyCapabilityFallback?: CapabilityWorkflowDocument;
 }
 
 /** Parse a current file or deliberately migrate v1 with an explicit fallback. */
@@ -519,20 +516,18 @@ export function parseWorkspaceDocument(
       simulation.ballSetup,
     );
   }
-  let capability: CapabilityWorkflowInputs;
+  let capability: CapabilityWorkflowDocument;
   if (sessionEnvelope.version < SESSION_PAYLOAD_VERSION) {
     if (options.legacyCapabilityFallback === undefined) {
       throw new RangeError(
         "legacy model_session requires an explicit capability migration fallback",
       );
     }
-    capability = capabilityWorkflowInputs(
-      buildCapabilityWorkflow(options.legacyCapabilityFallback),
-    );
+    capabilityWorkflowInputs(options.legacyCapabilityFallback);
+    capability = options.legacyCapabilityFallback;
   } else {
-    capability = capabilityWorkflowInputs(
-      capabilityWorkflowFromDocument(session.capability_request),
-    );
+    capability = capabilityWorkflowFromDocument(session.capability_request);
+    capabilityWorkflowInputs(capability);
   }
   return {
     scenario: scenarioFromDocument(session.scenario),

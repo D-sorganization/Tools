@@ -7,8 +7,8 @@ import {
 
 import { useCapabilityOptimization } from "../hooks/useCapabilityOptimization";
 import {
-  buildCapabilityWorkflow,
   capabilityWorkflowToJson,
+  type CapabilityWorkflowDocument,
   type CapabilityWorkflowInputs,
 } from "../model/capabilityWorkflow";
 import type { CapabilityRunner } from "../model/capabilityWorkerClient";
@@ -82,7 +82,7 @@ function WorkflowActions({ state }: {
   const [saveError, setSaveError] = useState<string | null>(null);
   const save = (): void => {
     try { downloadText("capability-workflow.json", capabilityWorkflowToJson(
-      buildCapabilityWorkflow(state.inputs)), "application/json"); setSaveError(null); }
+      state.document()), "application/json"); setSaveError(null); }
     catch (reason: unknown) { setSaveError(reason instanceof Error ? reason.message : String(reason)); }
   };
   return <><div className="mt-4 flex flex-wrap items-center gap-2">
@@ -100,16 +100,16 @@ function WorkflowActions({ state }: {
     className="mt-3 text-xs text-rose-400">{state.error ?? saveError}</p>}</>;
 }
 
-export function CapabilityOptimizationPanel({ runner, inputs, onInputsChange }: {
+export function CapabilityOptimizationPanel({ runner, workflow, onWorkflowChange }: {
   readonly runner?: CapabilityRunner;
-  readonly inputs?: CapabilityWorkflowInputs;
-  readonly onInputsChange?: Dispatch<SetStateAction<CapabilityWorkflowInputs>>;
+  readonly workflow?: CapabilityWorkflowDocument;
+  readonly onWorkflowChange?: Dispatch<SetStateAction<CapabilityWorkflowDocument>>;
 }): JSX.Element {
-  if ((inputs === undefined) !== (onInputsChange === undefined)) {
-    throw new TypeError("controlled capability inputs require an input change handler");
+  if ((workflow === undefined) !== (onWorkflowChange === undefined)) {
+    throw new TypeError("controlled capability workflow requires a change handler");
   }
-  const authority = inputs === undefined || onInputsChange === undefined
-    ? undefined : { inputs, onInputsChange };
+  const authority = workflow === undefined || onWorkflowChange === undefined
+    ? undefined : { workflow, onWorkflowChange };
   const state = useCapabilityOptimization(runner, authority);
   return <section className={PANEL_CLASS} aria-label="Shot capability optimizer">
     <h2 className="text-lg font-semibold text-sky-300">Shot Capability Optimizer</h2>

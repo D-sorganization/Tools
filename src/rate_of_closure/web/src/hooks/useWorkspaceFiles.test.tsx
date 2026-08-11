@@ -10,7 +10,10 @@ import { starterTorqueProfile } from "../model/torqueProfileEditor";
 import { DEFAULT_PRIMARY_VIEW_STATE } from "../model/viewPreferences";
 import { defaultViewWorkspace } from "../model/viewWorkspace";
 import { createWorkspaceDocument } from "../model/workspaceSession";
-import { defaultCapabilityWorkflowInputs } from "../model/capabilityWorkflow";
+import {
+  buildCapabilityWorkflow,
+  defaultCapabilityWorkflowInputs,
+} from "../model/capabilityWorkflow";
 import {
   boxTolerance,
   createSpatialTarget,
@@ -50,7 +53,7 @@ const snapshot = () => {
       runConfig: passiveDoublePendulumRun(),
     },
     variation: initialVariationWorkspace(),
-    capability: defaultCapabilityWorkflowInputs(),
+    capability: buildCapabilityWorkflow(defaultCapabilityWorkflowInputs()),
     modules: DEFAULT_PRIMARY_VIEW_STATE,
     viewWorkspace: defaultViewWorkspace,
   };

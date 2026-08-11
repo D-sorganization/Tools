@@ -83,7 +83,7 @@ deterministic search basis. The default document is explicitly representative
 and user-authored; it is not presented as measured player data.
 
 The persisted v1 wire contract is strict at every nested primitive. Numeric
-fields accept only finite JSON numbers (and integer fields require an integral
+fields accept only finite JSON numbers with magnitude at most `1e300` (and integer fields require an integral
 number); text fields accept only nonempty JSON strings. Numeric strings,
 booleans used as numbers, fractional integer values, and numeric identifiers or
 provenance values are rejected in both runtimes. Python and TypeScript execute
@@ -91,7 +91,9 @@ one shared versioned accept/reject fixture to prevent parser drift.
 
 Optimization runs outside the UI thread. Progress is based on attempted model
 evaluations, cancellation publishes no partial optimization result, and input
-changes invalidate captured output. Every attempted sample is retained in
+changes invalidate captured output. Native publication also requires matching
+worker identity and generation, so a cancelled pre-replacement worker cannot
+publish a late success. Every attempted sample is retained in
 `scalar-ensemble/v1` with complete, no-impact, or failed cohort identity. The
 clients present ranked alternatives, selectable scalar axes, paired-finite and
 unavailable counts, managed zoom/autofit, a bounded paged raw table,
@@ -109,9 +111,13 @@ target, evaluator configuration, search budgets, and deterministic seed needed
 to reproduce a request.
 
 Whole-workspace parsing completes before either UI mutates. PyQt6 applies the
-validated request inside the window's rollback boundary, while React applies
-the projected editable inputs from the validated document. Both invalidate any
-previous computed output. Explorer-session v1-v4 migration requires an
+validated request inside the window's rollback boundary, while React retains
+the same full document as app-owned state. Both clients overlay only fields
+represented by editable controls; accepted provenance, confidence,
+correlation, bias, bounds, custom problem policy, target geometry, and spin
+provenance survive apply, edit, recapture, save, and reopen exactly. Documents
+outside the supported single-club/three-parameter interactive projection fail
+closed. Both invalidate previous computed output. Explorer-session v1-v4 migration requires an
 explicit current capability fallback and never invents an optimizer request.
 Ranked alternatives, observation ensembles, progress, cancellation/runtime
 objects, and inferred player identity are excluded. The current interactive

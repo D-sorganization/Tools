@@ -3,6 +3,7 @@
 import {
   parseOptimizationRequest,
   parsePlayerCapabilityProfile,
+  MAX_CAPABILITY_WIRE_MAGNITUDE,
   type CapabilityObjective,
   type CapabilityParameter,
   type OptimizationRequest,
@@ -66,6 +67,9 @@ export const defaultCapabilityWorkflowInputs = (): CapabilityWorkflowInputs => (
 const finite = (value: unknown, name: string): number => {
   if (typeof value !== "number" || !Number.isFinite(value)) {
     throw new RangeError(`${name} must be finite`);
+  }
+  if (Math.abs(value) > MAX_CAPABILITY_WIRE_MAGNITUDE) {
+    throw new RangeError(`${name} magnitude must not exceed ${MAX_CAPABILITY_WIRE_MAGNITUDE}`);
   }
   return value;
 };
@@ -339,4 +343,42 @@ export function capabilityWorkflowInputs(
     alternativesCount: document.request.alternativesCount, seed: document.request.seed,
     maxTimeS: document.evaluatorConfig.maxTimeS,
     trajectorySampleIntervalS: document.evaluatorConfig.trajectorySampleIntervalS });
+}
+
+/** Overlay editable controls on a validated document without erasing evidence. */
+export function overlayCapabilityWorkflowInputs(
+  document: CapabilityWorkflowDocument,
+  input: CapabilityWorkflowInputs,
+): CapabilityWorkflowDocument {
+  capabilityWorkflowInputs(document);
+  validateAuthoringInputs(input);
+  const values: Readonly<Record<string, readonly [number, number]>> = {
+    ball_speed: [input.ballSpeedMps, input.ballSpeedStdMps],
+    launch_angle: [input.launchAngleDeg, input.launchAngleStdDeg],
+    launch_direction: [input.launchDirectionDeg, input.launchDirectionStdDeg],
+  };
+  const sourceClub = document.profile.clubs[0];
+  const club = { ...sourceClub, clubId: text(input.clubId, "clubId"),
+    parameters: sourceClub.parameters.map((item) => ({ ...item,
+      baseline: values[item.parameterId][0],
+      standardDeviation: values[item.parameterId][1] })) };
+  const profile = { ...document.profile, profileId: text(input.profileId, "profileId"),
+    clubs: [club] };
+  const target = { ...document.request.target, distanceM: input.targetDistanceM,
+    lateralM: input.targetLateralM, radiusM: input.targetRadiusM };
+  const request = { ...document.request, objective: input.objective,
+    clubIds: [club.clubId], target, candidateBudget: input.candidateBudget,
+    ensembleSize: input.ensembleSize, alternativesCount: input.alternativesCount,
+    seed: input.seed };
+  const sourceSpin = document.evaluatorConfig.spinDefaults[0];
+  const evaluatorConfig = { ...document.evaluatorConfig,
+    maxTimeS: input.maxTimeS,
+    trajectorySampleIntervalS: input.trajectorySampleIntervalS,
+    spinDefaults: [{ ...sourceSpin, clubId: club.clubId,
+      totalSpinRpm: input.totalSpinRpm,
+      spinAxisTiltDeg: input.spinAxisTiltDeg }] };
+  return capabilityWorkflowFromDocument(capabilityWorkflowDocument({
+    schemaVersion: CAPABILITY_WORKFLOW_SCHEMA_VERSION,
+    profile, request, evaluatorConfig,
+  }));
 }
