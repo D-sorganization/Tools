@@ -2,6 +2,12 @@
 
 ## 2026-08-11 Camera-preference workspace child
 
+- Draft PR [#4349](https://github.com/D-sorganization/Tools/pull/4349)
+  publishes this bounded child from independently approved exact head
+  `f2d3be771a9ba1d17f5e8942484b3fb49c236527`, preserving its #4343 base and
+  composed #4331/#4303 histories. Fresh protected CI/review, rendered platform
+  qualification, dependency landing, and release remain required.
+
 - `feat/4218-camera-preference-persistence` begins at exact published #4343
   head `4ff103d9a6ef886099c180da560e8458d5e20b49`, then normally
   composes exact #4331 `e07e2a66a894c93b50c1ded308fc8902f2ff6c24`
