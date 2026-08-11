@@ -1,5 +1,15 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 PR #4342 delta-MyPy follow-up
+
+Protected CI on exact PR #4342 head
+`cffe349ac0a8054f1d168cb36684fd00bc5f8a49` identified one redundant `bool`
+cast in the regional atomic-write adapter under the Linux delta-MyPy gate. The
+cast is removed; the typed helper's direct Boolean return is preserved. This
+changes no wire bytes, validation, file semantics, UI behavior, or physics.
+Focused persistence tests and the CI-equivalent pinned MyPy command pass
+locally; fresh protected CI/review and dependency ordering remain required.
+
 ## 2026-08-11 regional request I/O protected publication
 
 Branch `feat/4274-regional-plan-io` is published normally as draft PR

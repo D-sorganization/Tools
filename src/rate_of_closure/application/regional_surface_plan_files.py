@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from typing import cast
 
 from shared.python.swing_sim.ground.regional_plan_records import (
     MAX_REGIONAL_PLAN_WIRE_BYTES,
@@ -47,11 +46,8 @@ def write_regional_surface_plan_request_atomic(
         return False
     if type(request) is not GroundRegionalMaterialPlanRequest:
         raise TypeError("request must be an exact GroundRegionalMaterialPlanRequest")
-    return cast(
-        bool,
-        write_utf8_text_atomic(
-            request.to_json(), destination, document_name="regional surface plan"
-        ),
+    return write_utf8_text_atomic(
+        request.to_json(), destination, document_name="regional surface plan"
     )
 
 

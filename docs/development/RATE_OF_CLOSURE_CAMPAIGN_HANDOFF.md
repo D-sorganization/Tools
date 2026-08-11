@@ -1,5 +1,15 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 PR #4342 delta-MyPy follow-up
+
+- Protected CI on exact head
+  `cffe349ac0a8054f1d168cb36684fd00bc5f8a49` rejected one redundant Boolean
+  cast in the regional atomic-write adapter.
+- The cast is removed and the typed helper's direct return is unchanged.
+  Focused persistence tests and the CI-equivalent pinned MyPy command pass.
+- No wire, validation, file, UI, or physics behavior changes. Fresh protected
+  CI/review and dependency ordering remain open.
+
 ## 2026-08-11 regional request I/O protected publication
 
 - Branch `feat/4274-regional-plan-io` is published normally as draft PR
