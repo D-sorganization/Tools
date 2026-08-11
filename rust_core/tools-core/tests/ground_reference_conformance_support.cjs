@@ -223,6 +223,22 @@ function assertRollingConstraint(result, request, check) {
   assert.ok(Math.sqrt(dot(tangent, tangent)) <= check.absolute_tolerance);
 }
 
+function assertContactPlane(result, request, check) {
+  const normal = request.surface.normal_unit;
+  const origin = [0, request.surface.height_m, 0];
+  for (const point of result.trajectory) {
+    if (point.phase === "bounce") continue;
+    const offset = point.position_m.map(
+      (value, index) => value - origin[index],
+    );
+    const error = Math.abs(dot(offset, normal) - request.ball_radius_m);
+    assert.ok(
+      error <= check.absolute_tolerance_m,
+      `contact point leaves the declared plane: error=${error}`,
+    );
+  }
+}
+
 function impactEnergy(event, request, suffix) {
   const velocity = event[`velocity_${suffix}_m_s`];
   const spin = event[`angular_velocity_${suffix}_rad_s`];
@@ -262,6 +278,8 @@ function assertCheck(result, request, check) {
     assertClose(after / -before, check.expected, check);
   } else if (check.kind === "rolling_constraint") {
     assertRollingConstraint(result, request, check);
+  } else if (check.kind === "contact_plane_constraint") {
+    assertContactPlane(result, request, check);
   } else if (check.kind === "impact_energy_nonincrease") {
     const event = result.events[check.event_index];
     assert.ok(

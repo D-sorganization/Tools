@@ -571,6 +571,75 @@
         "docs/specs/GROUND_REFERENCE_EXECUTION.md",
         "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
       ]
+    },
+    {
+      "id": "ground-inclined-passivity-local-5d33",
+      "kind": "local",
+      "commit_sha": "5d333a4448d6484f8c98e78c9878cb83b40aa522",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "python -m pytest src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py -q",
+        "python -m mypy --no-incremental --ignore-missing-imports src/shared/python/swing_sim/ground/skid_roll_dynamics.py src/shared/python/swing_sim/ground/skid_roll_runtime.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "python -m ruff check src/shared/python/swing_sim/ground/skid_roll_dynamics.py src/shared/python/swing_sim/ground/skid_roll_runtime.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py rust_core/tools-core/tests/python_ground_reference_conformance.py && python -m ruff format --check src/shared/python/swing_sim/ground/skid_roll_dynamics.py src/shared/python/swing_sim/ground/skid_roll_runtime.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "cargo fmt --manifest-path rust_core/tools-core/Cargo.toml -- --check && npx prettier --check rust_core/tools-core/tests/ground_reference_conformance_support.cjs rust_core/tools-core/tests/wasm_ground_reference_conformance.cjs src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features python",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --features wasm",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets -- -D warnings",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features python -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "cargo clippy --manifest-path rust_core/tools-core/Cargo.toml --all-targets --features wasm -- -D warnings -A clippy::too-many-arguments -A clippy::needless-borrows-for-generic-args -A clippy::new-without-default -A clippy::manual-is-multiple-of -A clippy::needless-range-loop -A clippy::redundant-closure -A clippy::type-complexity -A clippy::bool-assert-comparison",
+        "$repoRoot = (Get-Location).Path; $artifactRoot = Join-Path ([System.IO.Path]::GetTempPath()) ('codex-ground-conformance-' + [guid]::NewGuid().ToString('N')); $wheelhouse = Join-Path $artifactRoot 'wheel'; $venv = Join-Path $artifactRoot 'venv'; New-Item -ItemType Directory -Path $wheelhouse -Force; Push-Location rust_core\\tools-core; python -m maturin build --release --out $wheelhouse; Pop-Location; python -m venv $venv; $venvPython = Join-Path $venv 'Scripts\\python.exe'; $wheel = Get-ChildItem -LiteralPath $wheelhouse -Filter '*.whl' | Select-Object -First 1; & $venvPython -m pip install --force-reinstall numpy $wheel.FullName; $env:PYTHONPATH = ((Join-Path $repoRoot 'src') + [IO.Path]::PathSeparator + $repoRoot); & $venvPython rust_core\\tools-core\\tests\\python_ground_reference_conformance.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests/wasm_ground_reference_conformance.cjs",
+        "python scripts/check_file_size_budget.py --changed-only --base-ref 7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e --root rust_core/tools-core && python scripts/check_changed_python_policy.py --base-ref 7efbf4796c2d0f4e41ce776a60ab4db5cb5dd74e",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q && python scripts/check_docs_governance.py"
+      ],
+      "summary": "Exact implementation commit 5d333a4448d6484f8c98e78c9878cb83b40aa522 passes 238 Python ground tests; 191 default, 206 Python-feature, and 203 WASM-feature Rust tests; 19 focused conformance/passivity tests; four native six-case corpus tests; strict Clippy, MyPy, Ruff, formatting, policy, documentation, and 500-line structural gates; a fresh installed CPython 3.13 PyO3 wheel; and a rebuilt Node/WASM harness. Independent adversarial review is READY. The sixth analytic case pins zero-resistance pure roll on n=[0,sqrt(0.99),0.1], while per-segment passivity, bounded canonical projection, rolling-resistance cusp handling, independent slip/velocity tolerances, and same-step stationary REST remain fail closed. Corpus SHA-256 is 502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76. This is local commit-bound evidence, not hosted or protected-release qualification.",
+      "source_paths": [
+        "src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "src/shared/python/swing_sim/ground/skid_roll_dynamics.py",
+        "src/shared/python/swing_sim/ground/skid_roll_runtime.py",
+        "src/shared/python/swing_sim/ground/skid_roll_simulation.py",
+        "src/shared/python/swing_sim/ground/tests/test_reference_conformance.py",
+        "src/shared/python/swing_sim/ground/tests/test_skid_roll_passivity.py",
+        "rust_core/tools-core/src/flight_ground/runtime_math.rs",
+        "rust_core/tools-core/src/flight_ground/surface_dynamics.rs",
+        "rust_core/tools-core/src/flight_ground/surface_runtime.rs",
+        "rust_core/tools-core/tests/ground_reference_conformance.rs",
+        "rust_core/tools-core/tests/ground_reference_holding.rs",
+        "rust_core/tools-core/tests/python_ground_reference_conformance.py",
+        "rust_core/tools-core/tests/wasm_ground_reference_conformance.cjs",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
+    },
+    {
+      "id": "ground-mirrored-property-local-08d6",
+      "kind": "local",
+      "commit_sha": "08d631d7169019aee9067f3739051a50d88b9554",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest src/shared/python/swing_sim/ground/tests -q",
+        "cargo test --manifest-path rust_core/tools-core/Cargo.toml --test ground_reference_conformance",
+        "python -m maturin build --release --manifest-path rust_core/tools-core/Cargo.toml --out <temporary-wheelhouse> && <fresh-cpython-3.13> rust_core/tools-core/tests/python_ground_reference_conformance.py && <fresh-cpython-3.13> rust_core/tools-core/tests/python_ground_reference_parity.py",
+        "cd rust_core/tools-core && wasm-pack build . --release --target nodejs --out-dir pkg -- --features wasm && node tests/wasm_ground_reference_conformance.cjs",
+        "python -m mypy --no-incremental --ignore-missing-imports --follow-imports=silent src/shared/python/swing_sim/ground/_vector_math.py src/shared/python/swing_sim/ground/skid_roll_simulation.py src/shared/python/swing_sim/ground/surface_motion_types.py src/shared/python/swing_sim/ground/tests/conformance_support.py src/shared/python/swing_sim/ground/tests/test_reference_conformance.py src/shared/python/swing_sim/ground/tests/test_surface_resolver.py rust_core/tools-core/tests/python_ground_reference_parity.py",
+        "python -m ruff check <seven changed Python sources> && python -m ruff format --check <seven changed Python sources> && npx prettier --check src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "python scripts/rate_campaign_manifest.py && python -m pytest tests/rate_of_closure/test_campaign_release_manifest.py -q && python scripts/check_docs_governance.py && python scripts/check_changed_python_policy.py --base-ref 8b065dd299acc7cab39321b0e2d7f34ca64f159b"
+      ],
+      "summary": "Exact implementation commit 08d631d7169019aee9067f3739051a50d88b9554 passes 247 Python ground tests; four native Rust seven-case corpus tests; a fresh CPython 3.13 PyO3 seven-case corpus and deterministic seed-4275 20-case tilted property sweep; a fresh release WASM build and Node seven-case harness; and pinned MyPy, Ruff, formatting, manifest, governance, changed-Python, file-size, and diff gates. The reflected incline applies the polar/axial vector distinction, and the Python default unbounded plane derives a deterministic intrinsic tangent for arbitrary valid normals while preserving explicit finite axes. Corpus SHA-256 is c1c363a8ee79b12ab2b7d9c69677e71ab8ab30ba5288c275fff8ddcd4e683465. Ready PR #4323 current head 3957f013eeadd448ffa381f12d65b6a076abe21b additionally repairs the exact hosted eight-path MyPy boundary failure without runtime semantic change; protected checks, review, parent integration, and release remain open.",
+      "source_paths": [
+        "src/rate_of_closure/web/src/model/__fixtures__/ground_reference_conformance_v1.json",
+        "src/shared/python/swing_sim/ground/_vector_math.py",
+        "src/shared/python/swing_sim/ground/skid_roll_simulation.py",
+        "src/shared/python/swing_sim/ground/surface_motion_types.py",
+        "src/shared/python/swing_sim/ground/tests/conformance_support.py",
+        "src/shared/python/swing_sim/ground/tests/test_reference_conformance.py",
+        "src/shared/python/swing_sim/ground/tests/test_surface_resolver.py",
+        "rust_core/tools-core/tests/python_ground_reference_parity.py",
+        "docs/specs/GROUND_REFERENCE_EXECUTION.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md"
+      ]
     }
   ],
   "programs": [
@@ -1384,9 +1453,11 @@
         "ground-study-scalar-adapter-local-b71b",
         "ground-reference-execution-local-c93c",
         "ground-compiled-runtime-local-5068",
-        "ground-scientific-conformance-local-9df3"
+        "ground-scientific-conformance-local-9df3",
+        "ground-inclined-passivity-local-5d33",
+        "ground-mirrored-property-local-08d6"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, material-profile, study-projection, qualified metric-adapter, scalar-ensemble adapter, and bounded Python reference-execution carriers are open. Exact commit 50682f251d5e9c0424ba633d1ce5be7fa1379a3c adds a locally verified native/PyO3/WASM static-plane executor, and exact child commit 9df3928a1ef32d81db2e568884ca24d8c576d49a adds an independently reviewed five-case scientific conformance corpus, but neither has completed hosted/protected evidence, protected GitHub review approval, parent integration, or release. Issues #4270, #4271, #4272, and bounded #4273/#4275 slices are published on draft PRs 4302, 4304, 4305, 4306, 4307, 4308, and 4309 with exact local evidence but no completed protected evidence. Production-qualified presets and measured-source qualification, tilted/property conformance breadth, changing normals, regional surfaces, ensemble execution and rendering, optimizer integration, UI, asynchronous WASM cancellation, and downstream parity evidence remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, material-profile, study-projection, qualified metric-adapter, scalar-ensemble adapter, and bounded Python reference-execution carriers are open. Exact commit 50682f251d5e9c0424ba633d1ce5be7fa1379a3c adds a locally verified native/PyO3/WASM static-plane executor, exact child 9df3928a1ef32d81db2e568884ca24d8c576d49a adds an independently reviewed five-case scientific conformance corpus, exact child 5d333a4448d6484f8c98e78c9878cb83b40aa522 adds one analytic incline plus fail-closed passivity and holding qualification on ready PR #4322, and exact child 08d631d7169019aee9067f3739051a50d88b9554 adds the mirrored incline plus a deterministic 20-case Python/PyO3 tilted-property sweep on ready PR #4323. None has completed hosted/protected evidence, protected GitHub review approval, parent integration, or release. Issues #4270, #4271, #4272, and bounded #4273/#4275 slices are published on draft PRs 4302, 4304, 4305, 4306, 4307, 4308, and 4309 or ready PRs #4322/#4323 with exact local evidence but no completed protected evidence. Production-qualified presets and measured-source qualification, exhaustive tilted/property conformance, changing normals, regional surfaces, ensemble execution and rendering, optimizer integration, UI, asynchronous WASM cancellation, and downstream parity evidence remain absent.",
       "limitations": [
         "Airborne flight must first terminate against physical terrain and preserve terminal angular velocity.",
         "Current UpstreamDrift terrain and putting implementations are reference inputs rather than the qualified authority.",

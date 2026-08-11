@@ -2,9 +2,11 @@
 
 from __future__ import annotations
 
+import math
+import sys
 from dataclasses import dataclass, field
 
-from ._vector_math import dot, subtract
+from ._vector_math import dot, norm, subtract
 from .bounce_types import RepeatedBounceResult
 from .contract_records import GroundSimulationRequest
 from .contract_types import (
@@ -17,8 +19,14 @@ from .contract_types import (
 from .impact_types import SphereProperties
 from .skid_roll_dynamics import (
     advance_constant_motion,
+    constant_motion_endpoint,
+    constant_motion_energy_balance,
+    contact_slip_velocity,
+    holding_state,
     kinetic_energy,
+    kinetic_energy_vectors,
     relative_path_distance,
+    rolling_state,
     tangent,
 )
 from .surface_motion_types import (
@@ -32,6 +40,9 @@ from .surface_motion_types import (
     SurfaceKinematicSegment,
 )
 from .surface_resolver import SurfaceResolver
+
+_CANONICAL_QUANTUM = 1e-11
+_FLOATING_ERROR_MULTIPLIER = 64.0
 
 
 @dataclass(frozen=True)
@@ -57,8 +68,9 @@ class SurfaceRun:
     events: list[GroundEvent] = field(default_factory=list)
     skid_distance_m: float = 0.0
     roll_distance_m: float = 0.0
-    gravity_work_j: float = 0.0
     surface_work_j: float = 0.0
+    physical_dissipation_j: float = 0.0
+    canonical_energy_budget_j: float = 0.0
     step_count: int = 0
     next_grid_time_s: float = 0.0
 
@@ -129,14 +141,21 @@ class SurfaceRun:
             raise RuntimeError("surface run requires a handoff")
         before = kinetic_energy(initial, self.body)
         after = kinetic_energy(self.state, self.body)
-        dissipation = before + self.gravity_work_j + self.surface_work_j - after
-        tolerance = 1e-9 + 1e-9 * max(before, after, abs(self.surface_work_j))
-        if dissipation < -tolerance:
+        displacement = subtract(self.state.position_m, initial.position_m)
+        gravity_work = self.body.mass_kg * dot(self.settings.gravity_m_s2, displacement)
+        dissipation = before + gravity_work + self.surface_work_j - after
+        energy_scale = max(
+            1.0, before, after, abs(gravity_work), abs(self.surface_work_j)
+        )
+        canonical_tolerance = self.canonical_energy_budget_j + _floating_tolerance(
+            energy_scale, self.step_count + 1
+        )
+        if dissipation < -canonical_tolerance:
             raise ValueError("surface run violates passive energy accounting")
         energy = SkidRollEnergyLedger(
             before,
             after,
-            self.gravity_work_j,
+            gravity_work,
             self.surface_work_j,
             max(0.0, dissipation),
         )
@@ -210,18 +229,132 @@ class SurfaceRun:
             self.skid_distance_m += distance
         else:
             self.roll_distance_m += distance
-        displacement = subtract(self.state.position_m, start.position_m)
-        self.gravity_work_j += self.body.mass_kg * dot(
+        surface_work = (
+            dot(motion.contact_force_n, surface.surface_velocity_m_s) * duration_s
+        )
+        self.surface_work_j += surface_work
+        segment_dissipation = constant_motion_energy_balance(
+            start,
+            motion,
+            duration_s,
+            self.body,
             self.settings.gravity_m_s2,
-            displacement,
+            surface.surface_velocity_m_s,
         )
-        self.surface_work_j += (
-            dot(
-                motion.contact_force_n,
-                surface.surface_velocity_m_s,
+        position, velocity, spin = constant_motion_endpoint(start, motion, duration_s)
+        raw_energy = kinetic_energy_vectors(velocity, spin, self.body)
+        gravity_work = self.body.mass_kg * dot(
+            self.settings.gravity_m_s2, subtract(position, start.position_m)
+        )
+        segment_scale = max(
+            1.0,
+            kinetic_energy(start, self.body),
+            raw_energy,
+            abs(gravity_work),
+            abs(surface_work),
+        )
+        if segment_dissipation < -_floating_tolerance(segment_scale):
+            raise ValueError("surface run violates passive energy accounting")
+        self.physical_dissipation_j += max(0.0, segment_dissipation)
+        self.canonical_energy_budget_j += _canonical_snap_energy_budget(
+            (position, velocity, spin),
+            self.state,
+            self.body,
+            self.settings.gravity_m_s2,
+        )
+
+    def rolling_projection(self) -> GroundContactState:
+        """Return a bounded no-slip projection and account numerical energy."""
+        before = self.state
+        return self._bounded_projection(
+            before,
+            rolling_state(before, self.request.surface, self.body),
+            correction_tolerance_m_s=self.settings.slip_tolerance_m_s,
+        )
+
+    def holding_projection(self) -> GroundContactState:
+        """Return an exactly co-moving state inside the same projection bounds."""
+        before = self.state
+        return self._bounded_projection(
+            before,
+            holding_state(before, self.request.surface),
+            correction_tolerance_m_s=self.settings.velocity_tolerance_m_s,
+        )
+
+    def _bounded_projection(
+        self,
+        before: GroundContactState,
+        after: GroundContactState,
+        *,
+        correction_tolerance_m_s: float,
+    ) -> GroundContactState:
+        slip = norm(contact_slip_velocity(before, self.request.surface, self.body))
+        tolerance = self.settings.slip_tolerance_m_s
+        if slip > tolerance + _floating_tolerance(max(1.0, slip)):
+            raise ValueError("surface run violates passive energy accounting")
+        velocity_change = norm(subtract(after.velocity_m_s, before.velocity_m_s))
+        spin_change = norm(
+            subtract(
+                after.angular_velocity_rad_s,
+                before.angular_velocity_rad_s,
             )
-            * duration_s
         )
+        component_rounding = math.sqrt(3.0) * _CANONICAL_QUANTUM
+        if velocity_change > correction_tolerance_m_s + component_rounding:
+            raise ValueError("surface run violates passive energy accounting")
+        if (
+            spin_change
+            > correction_tolerance_m_s / self.body.radius_m + component_rounding
+        ):
+            raise ValueError("surface run violates passive energy accounting")
+        energy_creation = kinetic_energy(after, self.body) - kinetic_energy(
+            before, self.body
+        )
+        self.canonical_energy_budget_j += max(0.0, energy_creation)
+        return after
+
+
+def _floating_tolerance(scale: float, operations: int = 1) -> float:
+    return float(
+        _FLOATING_ERROR_MULTIPLIER
+        * sys.float_info.epsilon
+        * max(1.0, scale)
+        * operations
+    )
+
+
+def _component_error_bound(value: float) -> float:
+    return float(
+        0.5 * _CANONICAL_QUANTUM + 4.0 * sys.float_info.epsilon * max(1.0, abs(value))
+    )
+
+
+def _canonical_snap_energy_budget(
+    raw: tuple[tuple[float, float, float], ...],
+    canonical: GroundContactState,
+    body: SphereProperties,
+    gravity_m_s2: tuple[float, float, float],
+) -> float:
+    canonical_vectors = (
+        canonical.position_m,
+        canonical.velocity_m_s,
+        canonical.angular_velocity_rad_s,
+    )
+    error_norms: list[float] = []
+    for raw_vector, canonical_vector in zip(raw, canonical_vectors, strict=True):
+        bounds = tuple(_component_error_bound(value) for value in raw_vector)
+        for actual, expected, bound in zip(
+            canonical_vector, raw_vector, bounds, strict=True
+        ):
+            if abs(actual - expected) > bound:
+                raise ValueError("surface run exceeds canonical quantization bound")
+        error_norms.append(math.sqrt(sum(bound * bound for bound in bounds)))
+    position_error, velocity_error, spin_error = error_norms
+    return float(
+        body.mass_kg * norm(gravity_m_s2) * position_error
+        + body.mass_kg * (norm(raw[1]) * velocity_error + 0.5 * velocity_error**2)
+        + body.inertia_kg_m2 * (norm(raw[2]) * spin_error + 0.5 * spin_error**2)
+    )
 
 
 __all__ = ["AdvanceResult", "SurfaceRun"]

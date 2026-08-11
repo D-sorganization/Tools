@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.39                                    |
-| **Spec Version**        | 1.14.39                                    |
+| **Current Version**     | 1.14.47                                    |
+| **Spec Version**        | 1.14.47                                    |
 | **Last Spec Update**    | 2026-08-10                                 |
 
 ## 2. Purpose & Mission
@@ -234,21 +234,45 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - `ground-reference-conformance/v1` is a single machine-readable scientific
   corpus shared by the Python reference, direct native Rust, installed PyO3
   wheel, and rebuilt Node/WASM executor.
-- Five horizontal-plane cases cover shallow bounce/capture, Coulomb
+- Seven cases cover shallow bounce/capture, Coulomb
   skid-to-roll, no-slip stopping under rolling resistance, proper 90-degree
-  frame rotation, and constant moving-surface relative motion.
+  frame rotation, constant moving-surface relative motion, and zero-resistance
+  pure roll down the mirrored immutable inclines
+  `n=[0,sqrt(0.99),+/-0.1]`.
 - Expected observables are independent closed-form values or physical
   invariants with explicit derivation, unit, and applicable bounded tolerance.
   Supported checks are whitelisted; fixture text is never executed.
 - The corpus checks contact/transition timing, Newton restitution, passive
-  impact energy, event order, no-slip contact velocity, vector
-  orientation, phase distances, total distance, and typed rest/time-limit
-  outcomes. It does not change production physics.
+  impact energy, event order, no-slip contact velocity, center-to-plane
+  distance, vector orientation, phase distances, total distance, and typed
+  rest/time-limit outcomes.
+- Surface passivity is enforced independently on every unquantized constant-
+  motion segment so earlier dissipation cannot mask later energy creation.
+  Canonical 11-decimal endpoint effects are admitted only inside accumulated
+  fixed-component bounds, and no-slip projection is separately slip-bounded.
+  The reproducible public ledger/wire authority is unchanged. Adversarial
+  masking and unexplained-endpoint tests remain fail-closed.
+- Rolling resistance cannot step through its zero-relative-speed direction
+  cusp. Non-collinear closing steps are bounded, and a moving plane carries a
+  resistance-held ball at zero relative speed without fabricating absolute
+  rest; the balancing contact force remains explicit for work accounting.
+  Sub-tolerance residual motion is projected to exact co-motion only through
+  the bounded slip, velocity, spin, and energy contract before holding. Slip
+  and correction tolerances remain independent. A stationary projected state
+  terminates as rest in the same solver step; at the exact handoff boundary one
+  zero-motion interval preserves strictly increasing wire timestamps.
 - Scientific conformance and serialization conformance are separate. The new
   artifact compares declared observables within tolerance; the existing
   full-result golden continues to pin canonical bytes and SHA-256.
-- This bounded evidence does not qualify tilted cross-authority frames,
-  property sweeps, performance or memory budgets, ensembles, asynchronous WASM
+- A deterministic seed-4275 Python/PyO3 sweep adds 20 exact-parity cases over
+  nonzero x-normal components, both z-tilt signs, and bounded ball, surface,
+  material, launch, and spin properties. The implicit unbounded Python domain
+  derives a stable tangent by projecting the least-aligned Cartesian axis;
+  explicit finite-domain axes and bounds remain caller-owned.
+- This bounded evidence qualifies two analytic mirrored cross-authority cases
+  and one finite Python/PyO3 sample. It does not qualify exhaustive randomized
+  frames, WASM-wide property sweeps, statistical uncertainty, performance or
+  memory budgets, ensembles, asynchronous WASM
   cancellation, calibrated materials, changing terrain, UI/rendering, or
   downstream consumers.
 
@@ -3156,6 +3180,14 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-10 | 1.14.47 | docs(ground-conformance, #4323): record guarded publication of the hosted-MyPy boundary repair at exact current head `3957f013eeadd448ffa381f12d65b6a076abe21b`, preserving ready state, exact parent base, scientific evidence, and all protected CI/review/integration gates. |
+| 2026-08-10 | 1.14.46 | fix(ground-conformance, #4323): satisfy the exact hosted Python 3.12/MyPy 1.13 changed-production profile by exposing existing float, bool, and `SkidRollResult` return types through runtime-identity casts and one DRY result helper; preserve all arithmetic, predicate, event, termination, scientific-corpus, and wire semantics. |
+| 2026-08-10 | 1.14.45 | docs(ground-conformance, #4275 #4323): publish the mirrored-frame and seeded-property continuation as ready PR #4323 at initial evidence head `74a23c21bb20f13bf608f463915b00d2d53d5a7f`, preserve exact PR #4322 ancestry and base topology, and retain protected CI, review, integration, exhaustive property, performance, terrain, UI, and downstream release gates. |
+| 2026-08-10 | 1.14.44 | docs(ground-conformance, #4275): bind the mirrored-frame and seeded-property implementation to exact local commit `08d631d7169019aee9067f3739051a50d88b9554`, the seven-case corpus SHA-256, complete Python ground suite, and fresh native/PyO3/WASM consumer evidence while retaining all hosted, protected, statistical, performance, terrain, UI, and downstream release gates. |
+| 2026-08-10 | 1.14.43 | fix(ground-conformance, #4275): add a mirrored analytic incline across Python/native/PyO3/WASM and a deterministic 20-case tilted property sweep across Python/PyO3; derive the default unbounded Python plane's tangent intrinsically for arbitrary valid normals while preserving caller-declared finite axes and explicit qualification limits. |
+| 2026-08-10 | 1.14.42 | docs(ground-conformance, #4275): record ready PR #4322 targeting `feat/4275-ground-conformance-corpus` from exact implementation/evidence head `a0c8e49a40badc3ce96193e031d2a9dec557d143`; preserve the independently reviewed local evidence while keeping queued hosted checks, approval, integration, and release explicitly open. |
+| 2026-08-10 | 1.14.41 | docs(ground-conformance, #4275): bind the independently reviewed tilted-plane/passivity implementation `5d333a4448d6484f8c98e78c9878cb83b40aa522` and six-case corpus SHA-256 `502dae7cacb346e55a0624b5758efce1baf123065a45571cd3aaf2ee0045bb76`; record 238 Python and 191/206/203 Rust matrices, installed PyO3/rebuilt WASM consumers, strict structural/lint/type/policy gates, READY review, and explicit protected-release gaps. |
+| 2026-08-10 | 1.14.40 | fix(ground-conformance, #4275): add a sixth analytic zero-resistance inclined pure-roll case and center-to-plane invariant across Python/native/PyO3/WASM; reject energy creation per unquantized segment, bound canonical snaps/projections, harden masking and unexplained-energy tests, prevent rolling resistance from crossing the zero-relative-speed cusp on a translating slope, and project sub-tolerance residuals to exact passive co-motion before holding. |
 | 2026-08-10 | 1.14.39 | docs(ground-conformance, #4275): bind exact reviewed implementation `9df3928a1ef32d81db2e568884ca24d8c576d49a` and corpus SHA-256 `f7fda73e45c5c64951a9934ba126cd9edbde7f7f85843a69612f86b8ec518310` to the strict campaign manifest and all canonical handoffs; record 227 Python and 184/199/196 Rust matrix tests, real PyO3/WASM consumers, independent READY review, and explicit hosted/protected/epic gaps. |
 | 2026-08-10 | 1.14.38 | test(ground-conformance, #4275): add one versioned five-case scientific corpus consumed by Python, direct native Rust, installed PyO3, and rebuilt WASM; pin independently derived contact, restitution, passive-energy, skid-to-roll, no-slip stopping, proper-rotation, and moving-surface observables with explicit units and tolerances while preserving the separate exact-byte golden and all remaining performance/terrain/UI/consumer gaps. |
 | 2026-08-10 | 1.14.37 | docs(ground-runtime, #4275): bind the compiled native/PyO3/WASM runtime's independently reviewed local evidence to exact implementation commit `50682f251d5e9c0424ba633d1ce5be7fa1379a3c` through the unchanged strict manifest schema; record the 180/195/192 Rust matrices, 219 Python authority tests, unique-venv wheel and rebuilt Node/WASM checks, independent resource caps, structural budgets, package-publication notice, and explicit hosted/protected/performance/epic gaps. |

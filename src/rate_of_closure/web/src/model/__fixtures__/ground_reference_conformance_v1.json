@@ -336,6 +336,232 @@
           "description": "After relative stop, center velocity must equal the translating surface velocity."
         }
       ]
+    },
+    {
+      "case_id": "inclined-zero-resistance-pure-roll",
+      "scientific_basis": "On the immutable plane n=[0,sqrt(0.99),0.1], a no-slip sphere with zero rolling resistance accelerates down slope at g*0.1/(1+k); constant-acceleration kinematics determine the four-second time-limit endpoint.",
+      "platforms": ["python", "native", "pyo3", "wasm"],
+      "request_overrides": {
+        "/request_id": "conformance-inclined-zero-resistance-roll",
+        "/surface/normal_restitution": 0.0,
+        "/surface/normal_unit": [0.0, 0.99498743710662, 0.1],
+        "/surface/rolling_resistance": 0.0,
+        "/last_separated_state/position_m": [
+          0.0, 0.022237969219332958, 0.0022350000000000004
+        ],
+        "/first_penetrating_state/position_m": [
+          0.0, 0.020247994345119716, 0.002035
+        ],
+        "/last_separated_state/velocity_m_s": [
+          0.0, -0.1397994974842648, 0.99098743710662
+        ],
+        "/first_penetrating_state/velocity_m_s": [
+          0.0, -0.1397994974842648, 0.99098743710662
+        ],
+        "/last_separated_state/angular_velocity_rad_s": [
+          46.838407494145194, 0.0, 0.0
+        ],
+        "/first_penetrating_state/angular_velocity_rad_s": [
+          46.838407494145194, 0.0, 0.0
+        ]
+      },
+      "checks": [
+        {
+          "kind": "event_types_equal",
+          "expected": ["first_contact", "skid_to_roll"],
+          "description": "Exact no-slip capture enters roll immediately and the downhill case reaches the time horizon without fabricating rest."
+        },
+        {
+          "kind": "value_equal",
+          "path": "/status",
+          "expected": "partial",
+          "description": "A still-accelerating ball at the declared horizon is a censored partial result."
+        },
+        {
+          "kind": "value_equal",
+          "path": "/termination/reason",
+          "expected": "time_limit",
+          "description": "Zero resistance on a downhill plane cannot terminate at rest."
+        },
+        {
+          "kind": "rolling_constraint",
+          "event_index": 0,
+          "absolute_tolerance": 2e-9,
+          "unit": "m/s",
+          "description": "The first captured state must lie on the tilted no-slip manifold."
+        },
+        {
+          "kind": "contact_plane_constraint",
+          "absolute_tolerance_m": 2e-8,
+          "unit": "m",
+          "description": "Every non-bounce center remains one ball radius above the inclined plane."
+        },
+        {
+          "kind": "impact_energy_nonincrease",
+          "event_index": 0,
+          "absolute_tolerance_j": 1e-10,
+          "unit": "J",
+          "description": "The stationary zero-restitution capture remains passive before gravity drives the roll."
+        },
+        {
+          "kind": "scalar_close",
+          "path": "/termination/time_s",
+          "expected": 5.005,
+          "absolute_tolerance": 2e-8,
+          "relative_tolerance": 2e-9,
+          "unit": "s",
+          "description": "The four-second horizon is measured from the analytically localized 1.005 second contact."
+        },
+        {
+          "kind": "scalar_close",
+          "path": "/summary/roll_distance_m",
+          "expected": 9.6038,
+          "absolute_tolerance": 5e-8,
+          "relative_tolerance": 2e-9,
+          "unit": "m",
+          "description": "Distance equals v0*T plus one-half g*sin(theta)*T squared divided by 1+k."
+        },
+        {
+          "kind": "terminal_vector_close",
+          "field": "position_m",
+          "expected": [0.0, -0.9391370182177736, 9.557795348484557],
+          "absolute_tolerance": 5e-8,
+          "relative_tolerance": 2e-9,
+          "unit": "m",
+          "description": "The terminal center is the contact center plus the analytic downslope displacement."
+        },
+        {
+          "kind": "terminal_vector_close",
+          "field": "velocity_m_s",
+          "expected": [0.0, -0.38019000000000003, 3.7828427371356588],
+          "absolute_tolerance": 3e-8,
+          "relative_tolerance": 2e-9,
+          "unit": "m/s",
+          "description": "The terminal velocity is the downhill unit vector scaled by v0 plus a*T."
+        },
+        {
+          "kind": "terminal_vector_close",
+          "field": "angular_velocity_rad_s",
+          "expected": [178.07494145199064, 0.0, 0.0],
+          "absolute_tolerance": 1e-6,
+          "relative_tolerance": 2e-9,
+          "unit": "rad/s",
+          "description": "The terminal spin follows the no-slip relation n cross v divided by radius."
+        }
+      ]
+    },
+    {
+      "case_id": "mirrored-inclined-zero-resistance-pure-roll",
+      "scientific_basis": "Reflecting the qualified incline across the x-y plane maps n=[0,sqrt(0.99),0.1] to n=[0,sqrt(0.99),-0.1], reverses offline position, velocity, and axial rolling spin, and preserves time, path length, passivity, and the closed-form gravity-driven acceleration.",
+      "platforms": ["python", "native", "pyo3", "wasm"],
+      "request_overrides": {
+        "/request_id": "conformance-mirrored-inclined-zero-resistance-roll",
+        "/surface/normal_restitution": 0.0,
+        "/surface/normal_unit": [0.0, 0.99498743710662, -0.1],
+        "/surface/rolling_resistance": 0.0,
+        "/last_separated_state/position_m": [
+          0.0, 0.022237969219332958, -0.0022350000000000004
+        ],
+        "/first_penetrating_state/position_m": [
+          0.0, 0.020247994345119716, -0.002035
+        ],
+        "/last_separated_state/velocity_m_s": [
+          0.0, -0.1397994974842648, -0.99098743710662
+        ],
+        "/first_penetrating_state/velocity_m_s": [
+          0.0, -0.1397994974842648, -0.99098743710662
+        ],
+        "/last_separated_state/angular_velocity_rad_s": [
+          -46.838407494145194, 0.0, 0.0
+        ],
+        "/first_penetrating_state/angular_velocity_rad_s": [
+          -46.838407494145194, 0.0, 0.0
+        ]
+      },
+      "checks": [
+        {
+          "kind": "event_types_equal",
+          "expected": ["first_contact", "skid_to_roll"],
+          "description": "The reflected exact no-slip capture retains the qualified event order."
+        },
+        {
+          "kind": "value_equal",
+          "path": "/status",
+          "expected": "partial",
+          "description": "The reflected accelerating case remains censored at the declared horizon."
+        },
+        {
+          "kind": "value_equal",
+          "path": "/termination/reason",
+          "expected": "time_limit",
+          "description": "Reflection cannot create a stationary terminal state on the zero-resistance slope."
+        },
+        {
+          "kind": "rolling_constraint",
+          "event_index": 0,
+          "absolute_tolerance": 2e-9,
+          "unit": "m/s",
+          "description": "The reflected capture remains on the tilted no-slip manifold."
+        },
+        {
+          "kind": "contact_plane_constraint",
+          "absolute_tolerance_m": 2e-8,
+          "unit": "m",
+          "description": "Every reflected non-bounce center remains one radius above its plane."
+        },
+        {
+          "kind": "impact_energy_nonincrease",
+          "event_index": 0,
+          "absolute_tolerance_j": 1e-10,
+          "unit": "J",
+          "description": "Reflection preserves the passive zero-restitution capture."
+        },
+        {
+          "kind": "scalar_close",
+          "path": "/termination/time_s",
+          "expected": 5.005,
+          "absolute_tolerance": 2e-8,
+          "relative_tolerance": 2e-9,
+          "unit": "s",
+          "description": "Reflection preserves contact localization and the four-second horizon."
+        },
+        {
+          "kind": "scalar_close",
+          "path": "/summary/roll_distance_m",
+          "expected": 9.6038,
+          "absolute_tolerance": 5e-8,
+          "relative_tolerance": 2e-9,
+          "unit": "m",
+          "description": "Reflection preserves the closed-form inclined-plane path length."
+        },
+        {
+          "kind": "terminal_vector_close",
+          "field": "position_m",
+          "expected": [0.0, -0.9391370182177736, -9.557795348484557],
+          "absolute_tolerance": 5e-8,
+          "relative_tolerance": 2e-9,
+          "unit": "m",
+          "description": "The reflected terminal center reverses only its offline component."
+        },
+        {
+          "kind": "terminal_vector_close",
+          "field": "velocity_m_s",
+          "expected": [0.0, -0.38019000000000003, -3.7828427371356588],
+          "absolute_tolerance": 3e-8,
+          "relative_tolerance": 2e-9,
+          "unit": "m/s",
+          "description": "The reflected terminal velocity reverses only its offline component."
+        },
+        {
+          "kind": "terminal_vector_close",
+          "field": "angular_velocity_rad_s",
+          "expected": [-178.07494145199064, 0.0, 0.0],
+          "absolute_tolerance": 1e-6,
+          "relative_tolerance": 2e-9,
+          "unit": "rad/s",
+          "description": "The axial rolling spin transforms as a pseudovector under reflection."
+        }
+      ]
     }
   ]
 }

@@ -9,12 +9,14 @@ pub(super) type Vec3 = [f64; 3];
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub(super) enum RuntimeMathError {
     CanonicalRange,
+    Passivity,
 }
 
 impl RuntimeMathError {
     pub fn reason(self) -> &'static str {
         match self {
             Self::CanonicalRange => "numeric_range",
+            Self::Passivity => "surface_passivity",
         }
     }
 }
@@ -279,6 +281,10 @@ fn interpolate(left: State, right: State, fraction: f64) -> MathResult<State> {
 }
 
 pub(super) fn advance(state: State, motion: Motion, duration: f64) -> MathResult<State> {
+    advance_raw(state, motion, duration).normalized()
+}
+
+pub(super) fn advance_raw(state: State, motion: Motion, duration: f64) -> State {
     State {
         time: state.time + duration,
         position: add(
@@ -291,7 +297,6 @@ pub(super) fn advance(state: State, motion: Motion, duration: f64) -> MathResult
         velocity: add(state.velocity, scale(motion.acceleration, duration)),
         spin: add(state.spin, scale(motion.angular_acceleration, duration)),
     }
-    .normalized()
 }
 
 pub(super) fn ballistic(state: State, gravity: Vec3, duration: f64) -> MathResult<State> {
