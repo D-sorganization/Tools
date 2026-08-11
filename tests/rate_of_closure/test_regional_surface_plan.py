@@ -103,3 +103,21 @@ def test_pyqt_editor_reports_invalid_interval_without_losing_draft(qtbot) -> Non
     assert "lower_coordinate_m" in tab.status_label.text()
     assert tab.status_label.accessibleName() == "Regional surface plan validation error"
     assert tab.region_count() == 1
+
+
+def test_pyqt_editor_invalidates_validated_readback_after_draft_change(qtbot) -> None:  # type: ignore[no-untyped-def]
+    pytest.importorskip("PyQt6")
+    pytest.importorskip("pytestqt")
+    from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import (
+        RegionalSurfacePlanTab,
+    )
+
+    tab = RegionalSurfacePlanTab()
+    qtbot.addWidget(tab)
+    tab.validate_button.click()
+    assert tab.readback.toPlainText()
+
+    tab.add_button.click()
+
+    assert tab.readback.toPlainText() == ""
+    assert tab.status_label.text() == "Changes not validated"

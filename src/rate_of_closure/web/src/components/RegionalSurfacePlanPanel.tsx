@@ -136,10 +136,19 @@ export function RegionalSurfacePlanPanel() {
   const [error, setError] = useState<string | null>(null);
   const [readback, setReadback] = useState<string | null>(null);
   const [validationAttempted, setValidationAttempted] = useState(false);
-  const updateRegion = (index: number, value: RegionalOverlayDraft) => setDraft((current) => ({
-    ...current,
-    regions: current.regions.map((region, row) => row === index ? value : region),
-  }));
+  const updateDraft = (
+    transform: (current: RegionalSurfacePlanDraft) => RegionalSurfacePlanDraft,
+  ) => {
+    setDraft(transform);
+    setError(null);
+    setReadback(null);
+    setValidationAttempted(false);
+  };
+  const updateRegion = (index: number, value: RegionalOverlayDraft) =>
+    updateDraft((current) => ({
+      ...current,
+      regions: current.regions.map((region, row) => row === index ? value : region),
+    }));
   const validate = () => {
     setValidationAttempted(true);
     try {
@@ -180,13 +189,17 @@ export function RegionalSurfacePlanPanel() {
           <label className="flex flex-col gap-1 text-xs text-slate-400">
             <span>Request ID</span>
             <input value={draft.request_id} aria-label="Regional plan request ID"
-              onChange={(event) => setDraft({ ...draft, request_id: event.target.value })}
+              onChange={(event) => updateDraft((current) => ({
+                ...current, request_id: event.target.value,
+              }))}
               className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1.5 text-slate-100" />
           </label>
           <label className="flex flex-col gap-1 text-xs text-slate-400">
             <span>Source revision</span>
             <input value={draft.source_revision} aria-label="Regional plan source revision"
-              onChange={(event) => setDraft({ ...draft, source_revision: event.target.value })}
+              onChange={(event) => updateDraft((current) => ({
+                ...current, source_revision: event.target.value,
+              }))}
               className="rounded-md border border-slate-700 bg-slate-950 px-2 py-1.5 text-slate-100" />
           </label>
           <label className="flex flex-col gap-1 text-xs text-slate-400">
@@ -205,26 +218,35 @@ export function RegionalSurfacePlanPanel() {
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <NumericInput label="Base domain lower coordinate (m)"
             value={draft.lower_coordinate_m}
-            onChange={(value) => setDraft({ ...draft, lower_coordinate_m: value })} />
+            onChange={(value) => updateDraft((current) => ({
+              ...current, lower_coordinate_m: value,
+            }))} />
           <NumericInput label="Base domain upper coordinate (m)"
             value={draft.upper_coordinate_m}
-            onChange={(value) => setDraft({ ...draft, upper_coordinate_m: value })} />
+            onChange={(value) => updateDraft((current) => ({
+              ...current, upper_coordinate_m: value,
+            }))} />
         </div>
         <MaterialEditor prefix="Base" value={draft.base_surface}
-          onChange={(base_surface) => setDraft({ ...draft, base_surface })} />
+          onChange={(base_surface) => updateDraft((current) => ({
+            ...current, base_surface,
+          }))} />
       </fieldset>
       {draft.regions.map((region, index) => (
         <OverlayEditor key={`regional-overlay-${index}`} index={index} value={region}
           validationAttempted={validationAttempted} removable={draft.regions.length > 1}
           onChange={(value) => updateRegion(index, value)}
-          onRemove={() => setDraft({
-            ...draft, regions: draft.regions.filter((_item, row) => row !== index),
-          })} />
+          onRemove={() => updateDraft((current) => ({
+            ...current,
+            regions: current.regions.filter((_item, row) => row !== index),
+          }))} />
       ))}
       <div className="flex flex-wrap gap-3">
         <button type="button" aria-label="Add regional overlay"
           disabled={draft.regions.length >= MAX_REGIONAL_SURFACE_EDITOR_ROWS}
-          onClick={() => setDraft({ ...draft, regions: [...draft.regions, nextOverlay(draft)] })}
+          onClick={() => updateDraft((current) => ({
+            ...current, regions: [...current.regions, nextOverlay(current)],
+          }))}
           className="rounded-md border border-sky-500/60 px-3 py-2 text-sm text-sky-200 disabled:opacity-40">
           Add overlay
         </button>

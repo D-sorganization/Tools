@@ -1,5 +1,21 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-10 PR #4339 stale-validation invalidation follow-up
+
+Rendered exact-head browser QA found that a validated one-overlay readback
+remained visible after adding a second overlay. The broad PyQt6 suite also
+found missing hover hints on the new controls. PyQt6 and React now clear both
+canonical readback and prior validation state whenever any identity, interval,
+material, or overlay-row draft value changes; PyQt6 exposes the explicit
+"Changes not validated" pending state, and every PyQt6 interactive has a
+specific engineering-context tooltip. RED-first regression tests cover the
+dynamic-row path on both surfaces. Final local evidence is 870 Python/PyQt
+tests and 672 React tests passing; Ruff, format, MyPy, TypeScript, zero-warning
+ESLint, the 198-module production build, manifest/docs/file-size governance,
+and diff checks are clean. The known polynomial-generator empty-legend warning
+is unrelated. This changes no wire schema, provenance digest, physics, or
+persistence boundary; fresh protected CI is still required before merge.
+
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-10
 

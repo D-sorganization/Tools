@@ -36,6 +36,19 @@ describe("RegionalSurfacePlanPanel", () => {
       .toHaveTextContent("SI");
   });
 
+  it("invalidates a validated readback as soon as the draft changes", () => {
+    render(<RegionalSurfacePlanPanel />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Validate surface plan" }));
+    expect(screen.getByRole("status", { name: "Regional surface plan readback" }))
+      .toHaveTextContent("1 overlay(s)");
+
+    fireEvent.click(screen.getByRole("button", { name: "Add regional overlay" }));
+
+    expect(screen.queryByRole("status", { name: "Regional surface plan readback" }))
+      .not.toBeInTheDocument();
+  });
+
   it("links invalid interval fields to an accessible error without clearing input", () => {
     render(<RegionalSurfacePlanPanel />);
     const lower = screen.getByLabelText("Overlay 1 lower coordinate (m)");

@@ -69,6 +69,9 @@ def _number_input(
     field.setSingleStep(step)
     field.setSuffix(suffix)
     field.setValue(value)
+    field.setToolTip(
+        f"{name}. Edit this SI draft value, then validate the surface plan."
+    )
     return field
 
 
@@ -79,6 +82,9 @@ class MaterialEditor(QGroupBox):
         super().__init__(title)
         self.surface_id = QLineEdit(value.surface_id)
         self.surface_id.setAccessibleName(f"{title} surface ID")
+        self.surface_id.setToolTip(
+            f"Stable identifier for {title.lower()}; included in validated readback."
+        )
         self.fields: dict[str, QDoubleSpinBox] = {}
         layout = QFormLayout(self)
         layout.addRow("Surface ID", self.surface_id)
@@ -106,9 +112,15 @@ class RegionalOverlayRow(QGroupBox):
     ) -> None:
         super().__init__(f"Regional overlay {ordinal}")
         self.region_id = QLineEdit(value.region_id)
+        self.region_id.setToolTip(
+            "Stable overlay identifier; it must be unique within the regional plan."
+        )
         self.precedence = QSpinBox()
         self.precedence.setRange(0, 1_000_000)
         self.precedence.setValue(value.precedence)
+        self.precedence.setToolTip(
+            "Overlay selection precedence. Higher values win when intervals overlap."
+        )
         self.lower_coordinate = _number_input(
             f"Overlay {ordinal} lower coordinate", value.lower_coordinate_m, " m"
         )
@@ -117,6 +129,9 @@ class RegionalOverlayRow(QGroupBox):
         )
         self.material = MaterialEditor(f"Overlay {ordinal} material", value.surface)
         self.remove_button = QPushButton(f"Remove overlay {ordinal}")
+        self.remove_button.setToolTip(
+            "Remove this overlay from the unvalidated draft; one overlay is required."
+        )
         self.remove_button.clicked.connect(lambda: remove(self))
         form = QFormLayout()
         form.addRow("Region ID", self.region_id)
@@ -147,8 +162,37 @@ class RegionalSurfacePlanTab(QWidget):
         self._rows: list[RegionalOverlayRow] = []
         self._initial = illustrative_regional_surface_plan_draft()
         self._build_ui()
+        self._connect_static_changes()
         self._append_row(self._initial.regions[0])
         self._update_row_actions()
+
+    def _connect_material_changes(self, editor: MaterialEditor) -> None:
+        """Invalidate canonical output when any material draft value changes."""
+        editor.surface_id.textChanged.connect(self._mark_dirty)
+        for field in editor.fields.values():
+            field.valueChanged.connect(self._mark_dirty)
+
+    def _connect_static_changes(self) -> None:
+        """Connect the fixed identity, domain, and base-material inputs."""
+        self.request_id.textChanged.connect(self._mark_dirty)
+        self.source_revision.textChanged.connect(self._mark_dirty)
+        self.domain_lower.valueChanged.connect(self._mark_dirty)
+        self.domain_upper.valueChanged.connect(self._mark_dirty)
+        self._connect_material_changes(self.base_material)
+
+    def _connect_row_changes(self, row: RegionalOverlayRow) -> None:
+        """Connect one dynamic overlay to the shared invalidation boundary."""
+        row.region_id.textChanged.connect(self._mark_dirty)
+        row.precedence.valueChanged.connect(self._mark_dirty)
+        row.lower_coordinate.valueChanged.connect(self._mark_dirty)
+        row.upper_coordinate.valueChanged.connect(self._mark_dirty)
+        self._connect_material_changes(row.material)
+
+    def _mark_dirty(self) -> None:
+        """Remove stale validation evidence after any draft mutation."""
+        self.status_label.setText("Changes not validated")
+        self.status_label.setAccessibleName("Regional surface plan validation pending")
+        self.readback.clear()
 
     def _build_ui(self) -> None:
         """Build the scrollable form and always-visible validation output."""
@@ -190,10 +234,19 @@ class RegionalSurfacePlanTab(QWidget):
         """Create request identity, evidence, and fixed calibration controls."""
         box = QGroupBox("Plan identity and provenance")
         self.request_id = QLineEdit(self._initial.request_id)
+        self.request_id.setToolTip(
+            "Stable request identifier included in canonical validation output."
+        )
         self.source_revision = QLineEdit(self._initial.source_revision)
+        self.source_revision.setToolTip(
+            "Revision of the source evidence used to define this draft."
+        )
         self.calibration_combo = QComboBox()
         self.calibration_combo.addItem("Unvalidated", "unvalidated")
         self.calibration_combo.setEnabled(False)
+        self.calibration_combo.setToolTip(
+            "Calibration remains unvalidated until measured course evidence exists."
+        )
         geometry = QLabel(
             "Frame: target x-downrange, y-up, z-right. Flat static coplanar geometry."
         )
@@ -234,9 +287,15 @@ class RegionalSurfacePlanTab(QWidget):
         layout = QHBoxLayout()
         self.add_button = QPushButton("Add overlay")
         self.add_button.setAccessibleName("Add regional overlay")
+        self.add_button.setToolTip(
+            f"Add an illustrative overlay row, up to {MAX_EDITOR_REGIONS} total."
+        )
         self.add_button.clicked.connect(self._add_default_row)
         self.validate_button = QPushButton("Validate and preview")
         self.validate_button.setAccessibleName("Validate surface plan")
+        self.validate_button.setToolTip(
+            "Validate the complete draft and display its canonical SI request."
+        )
         self.validate_button.clicked.connect(self.validate_plan)
         layout.addWidget(self.add_button)
         layout.addStretch(1)
@@ -263,10 +322,12 @@ class RegionalSurfacePlanTab(QWidget):
             )
         )
         self._update_row_actions()
+        self._mark_dirty()
 
     def _append_row(self, draft: RegionalOverlayDraft) -> None:
         """Create and register a presentation row."""
         row = RegionalOverlayRow(len(self._rows) + 1, draft, self._remove_row)
+        self._connect_row_changes(row)
         self._rows.append(row)
         self.rows_layout.addWidget(row)
 
@@ -278,6 +339,7 @@ class RegionalSurfacePlanTab(QWidget):
         self.rows_layout.removeWidget(row)
         row.deleteLater()
         self._update_row_actions()
+        self._mark_dirty()
 
     def _update_row_actions(self) -> None:
         """Expose row bounds through disabled states and removal availability."""
