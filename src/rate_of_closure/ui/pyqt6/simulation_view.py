@@ -399,3 +399,4 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
             elevation, azimuth = orientation
             self._axes.view_init(elev=elevation, azim=azimuth)
         SimulationSceneRenderer(self, get_chart_color).draw()
+        self._apply_camera_axis_visibility(self._axes)

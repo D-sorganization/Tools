@@ -86,6 +86,53 @@ def test_simulation_snap_views_are_exact_idempotent_and_face_side_explicit(
     assert float(view._axes.azim) == pytest.approx(-90.0)
 
 
+@pytest.mark.parametrize("view_type", [SimulationView, FlightView])
+@pytest.mark.parametrize(
+    ("command", "hidden_axis"),
+    [
+        (CameraCommandId.VIEW_FACE_ON, "xaxis"),
+        (CameraCommandId.VIEW_DOWN_THE_LINE, "yaxis"),
+        (CameraCommandId.VIEW_OVERHEAD, "zaxis"),
+    ],
+)
+def test_orthographic_snap_hides_only_depth_axis_and_restores_all_axes(
+    qtbot, reference_run, view_type, command, hidden_axis
+) -> None:  # type: ignore[no-untyped-def]
+    view = view_type()
+    qtbot.addWidget(view)
+    view.set_run(reference_run)
+
+    view.apply_camera_command(command)
+    axes = view._axes if isinstance(view, SimulationView) else view._axes_3d
+    assert axes is not None
+    visibility = {
+        axis_name: getattr(axes, axis_name).get_visible()
+        for axis_name in ("xaxis", "yaxis", "zaxis")
+    }
+    assert visibility == {
+        "xaxis": hidden_axis != "xaxis",
+        "yaxis": hidden_axis != "yaxis",
+        "zaxis": hidden_axis != "zaxis",
+    }
+
+    view.apply_camera_command(CameraCommandId.VIEW_ISOMETRIC)
+    axes = view._axes if isinstance(view, SimulationView) else view._axes_3d
+    assert axes is not None
+    assert all(
+        getattr(axes, axis_name).get_visible()
+        for axis_name in ("xaxis", "yaxis", "zaxis")
+    )
+
+    view.apply_camera_command(command)
+    view.suspend_camera_tracking()
+    axes = view._axes if isinstance(view, SimulationView) else view._axes_3d
+    assert axes is not None
+    assert all(
+        getattr(axes, axis_name).get_visible()
+        for axis_name in ("xaxis", "yaxis", "zaxis")
+    )
+
+
 def test_tracking_keeps_complete_swing_subject_inside_preserved_zoom(
     qtbot, reference_run
 ) -> None:  # type: ignore[no-untyped-def]

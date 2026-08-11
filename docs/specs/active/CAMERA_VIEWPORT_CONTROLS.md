@@ -19,6 +19,12 @@ along +x; overhead looks along -y. Face-on is explicit: right-side looks along
 -z and left-side along +z. A snap is idempotent and sets orientation only; it
 does not silently change target or zoom.
 
+Exact orthographic presets suppress only the display axis perpendicular to the
+screen: display x/right for Face On, display y/downrange for Down the Line, and
+display z/up for Overhead. The two visible axes retain their physical labels,
+ticks, and engineering units. Reset/isometric and any manual orbit restore all
+three axes, so hidden presentation state cannot leak between camera modes.
+
 ## Tracking and interaction
 
 Tracking is opt-in and each viewport owns its own state. The target advances
@@ -48,11 +54,11 @@ convention from an arbitrary club pose.
 ## Validation and remaining gates
 
 Unit and headless GUI/component tests cover exact orientations, parity,
-idempotence, focusable controls, tracking bounds, zoom clearance, manual
-suspension, recentering, and complete swing/flight horizons. Playwright covers
-a bounded camera/playback interaction matrix in desktop Chromium and at a
-520 x 900 viewport with 2x device scale, including responsive control
-containment and the canvas backing store. Final issue closure still requires
-protected carrier integration, hosted CI/review, native rendered review, and
-UpstreamDrift consumer parity. Camera preferences are not persisted in this
-slice.
+idempotence, orthographic depth-axis suppression and restoration, focusable
+controls, tracking bounds, zoom clearance, manual suspension, recentering, and
+complete swing/flight horizons. Playwright covers a bounded camera/playback
+interaction matrix in desktop Chromium and at a 520 x 900 viewport with 2x
+device scale, including responsive control containment and the canvas backing
+store. Final issue closure still requires protected carrier integration,
+hosted CI/review, post-polish native rendered review, and UpstreamDrift consumer
+parity. Camera preferences are not persisted in this slice.
