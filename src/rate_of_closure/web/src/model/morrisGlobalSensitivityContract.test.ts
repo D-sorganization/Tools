@@ -244,12 +244,35 @@ describe("Morris global-sensitivity report parity", () => {
     expect(parseMorrisReport(payload).estimates[0].availability).toBe("constant-output");
   });
 
-  it("uses a bounded floating tolerance for the metric identity", () => {
+  it("rejects positive metrics inside the producer clamp interval", () => {
     const payload = cloneFixture();
     effectsOf(payload).sigma = 1e-14;
-    expect(parseMorrisReport(payload).estimates[0].effects.sigma).toBe(1e-14);
+    expect(() => parseMorrisReport(payload)).toThrow("serialized sigma");
+    effectsOf(payload).sigma = 0;
+    effectsOf(payload).mu_star_standard_error = 1e-14;
+    expect(() => parseMorrisReport(payload)).toThrow("serialized standard error");
+  });
+
+  it("allows a nonzero sigma when only its corresponding SE was clamped", () => {
+    const payload = cloneFixture();
+    effectsOf(payload).sigma = 4e-14;
+    expect(parseMorrisReport(payload).estimates[0].effects.sigma).toBe(4e-14);
+  });
+
+  it("rejects a variance far above the clamp in a degenerate tuple", () => {
+    const payload = cloneFixture();
     effectsOf(payload).sigma = 1e-8;
     expect(() => parseMorrisReport(payload)).toThrow("metric");
+  });
+
+  it("rejects huge finite metrics instead of admitting NaN identity arithmetic", () => {
+    const payload = cloneFixture();
+    const effects = effectsOf(payload);
+    effects.mu = 1e308;
+    effects.mu_star = 1e308;
+    effects.mu_star_standard_error = 1e308;
+    effects.sigma = 1e308;
+    expect(() => parseMorrisReport(payload)).toThrow("safely squared");
   });
 
   it.each([

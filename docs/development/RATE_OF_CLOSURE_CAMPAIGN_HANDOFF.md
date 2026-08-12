@@ -1,5 +1,17 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 exact Morris serialized-clamp contract (#4142 R13.4)
+
+- Serialized `sigma` and `mu*` standard error are now accepted only as exact
+  zero or strictly above the producer's 64-epsilon clamp; positive values at or
+  below it fail closed.
+- Clamp uncertainty is propagated only for exact zero metrics. Nonzero metrics
+  use ordinary scaled rounding, the identity is normalized before squaring,
+  and huge finite values that cannot be squared safely are rejected.
+- Numerical validation moved into a bounded helper module; regression tests pin
+  normal counts/scales, clamp boundaries, and near-`1e308` input. Python
+  calculations and later UI/export/execution/UpstreamDrift scope are unchanged.
+
 ## 2026-08-12 Morris clamp-scale tolerance correction (#4142 R13.4)
 
 - The strict consumer now derives tolerance from the producer's exact

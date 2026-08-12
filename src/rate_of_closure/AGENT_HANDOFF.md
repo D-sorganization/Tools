@@ -3,6 +3,18 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Exact Morris serialized-clamp contract (#4142 R13.4)
+
+The consumer now matches the Python wire behavior exactly: `sigma` and `mu*`
+standard error must be zero or strictly above the producer's 64-epsilon clamp.
+Only exact serialized zeros receive propagated clamp uncertainty; nonzero
+metrics use ordinary scale-aware floating tolerance. The moment identity is
+evaluated after magnitude normalization, and un-squareable huge finite metrics
+fail closed. Numerical logic now lives in the focused
+`morrisMetricValidation.ts` module so the parser remains below 400 lines.
+Tests cover clamp boundaries, a valid zero-SE/nonzero-sigma case, normal sample
+counts/scales, and near-`1e308` adversarial input. Other scopes are unchanged.
+
 ## 2026-08-12 Morris clamp-scale tolerance correction (#4142 R13.4)
 
 The squared moment check no longer uses a unit-floor tolerance. It derives the

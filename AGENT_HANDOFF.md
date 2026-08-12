@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Exact Morris serialized-clamp contract (#4142 R13.4)
+
+- The producer maps `sigma` and `mu*` standard error at or below
+  `64*epsilon*max(1,mu_star)` to exact zero. The consumer now rejects positive
+  values inside that interval; the prior `1e-14` perturbation allowance is
+  removed. Clamp uncertainty contributes to the squared identity only when the
+  corresponding serialized metric is exactly zero.
+- Identity arithmetic is normalized before squaring. Nonzero metrics receive
+  only ordinary scale-aware rounding allowance; huge finite values that cannot
+  be squared safely fail closed rather than producing `Infinity`/`NaN` that can
+  evade comparisons.
+- Cohesive numerical checks moved to `morrisMetricValidation.ts`, keeping the
+  primary strict parser below 400 lines. Tests retain normal `n=4`/`n=12` and
+  `10^6`-scale cases and add clamp-boundary and near-`1e308` adversarial cases.
+- Producer calculations, UI/export/execution, and UpstreamDrift remain open and
+  unchanged.
+
 ## 2026-08-12 Morris clamp-scale tolerance correction (#4142 R13.4)
 
 - The earlier squared-space unit floor was too permissive near

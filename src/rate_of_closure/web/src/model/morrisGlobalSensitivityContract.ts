@@ -1,5 +1,7 @@
 /** Strict, UI-neutral consumer for the versioned Morris screening report. */
 
+import { validateMorrisMetrics } from "./morrisMetricValidation";
+
 export const MORRIS_REPORT_SCHEMA_ID = "swing-sim/morris-global-sensitivity-report" as const;
 export const MORRIS_REPORT_SCHEMA_VERSION = 1 as const;
 export const MORRIS_METHOD = "morris-elementary-effects" as const;
@@ -73,9 +75,6 @@ const DENOMINATOR_FIELDS = ["total_pairs", "valid_pairs", "typed_no_impact_pairs
 const C0_CONTROL_MAX = 0x1f;
 const C1_CONTROL_MIN = 0x7f;
 const C1_CONTROL_MAX = 0x9f;
-// Mirrors the Python producer's metric-level numerical clamp exactly. The
-// squared-identity bound below propagates this delta through every square.
-const PRODUCER_METRIC_CLAMP_EPSILON_MULTIPLIER = 64;
 
 const asRecord = (value: unknown, name: string): Record<string, unknown> => {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
@@ -242,56 +241,6 @@ const parseDenominator = (value: unknown): MorrisDenominator => {
   });
 };
 
-const metricClampDelta = (muStar: number): number => (
-  PRODUCER_METRIC_CLAMP_EPSILON_MULTIPLIER * Number.EPSILON * Math.max(1, muStar)
-);
-
-const squaredMetricError = (metric: number, delta: number): number => (
-  2 * Math.abs(metric) * delta + delta ** 2
-);
-
-const metricIdentityTolerance = (effects: MorrisEffects, sampleCount: number, delta: number): number => {
-  const { mu, muStar, muStarStandardError, sigma } = effects;
-  if (mu === null || muStar === null || muStarStandardError === null || sigma === null) return 0;
-  const sampleCorrection = sampleCount / (sampleCount - 1);
-  return squaredMetricError(sigma, delta)
-    + sampleCount * squaredMetricError(muStarStandardError, delta)
-    + sampleCorrection * (squaredMetricError(muStar, delta) + squaredMetricError(mu, delta));
-};
-
-const validateFiniteMetrics = (estimate: MorrisEstimate): void => {
-  const { mu, muStar, muStarStandardError, sigma } = estimate.effects;
-  if (mu === null || muStar === null || muStarStandardError === null || sigma === null) return;
-  if (muStar === 0) {
-    if (mu !== 0 || sigma !== 0 || muStarStandardError !== 0
-        || estimate.availability !== "constant-output") {
-      throw new RangeError("zero mu_star requires zero metrics and constant-output availability");
-    }
-    return;
-  }
-  if (estimate.availability === "constant-output") {
-    throw new RangeError("constant-output Morris effects must be zero");
-  }
-  const delta = metricClampDelta(muStar);
-  const meanMagnitudeDifference = Math.abs(muStar - Math.abs(mu));
-  if (meanMagnitudeDifference <= delta && muStarStandardError <= delta && sigma > delta) {
-    throw new RangeError("Morris metric clamp-scale degeneracy is inconsistent");
-  }
-  if (sigma === 0 && (muStarStandardError !== 0
-      || meanMagnitudeDifference > delta)) {
-    throw new RangeError("zero-sigma Morris metric relationship failed");
-  }
-  const sampleCount = estimate.denominator.validPairs;
-  const sigmaSquared = sigma ** 2;
-  const scaledStandardErrorSquared = sampleCount * muStarStandardError ** 2;
-  const meanDifference = sampleCount / (sampleCount - 1) * (muStar ** 2 - mu ** 2);
-  const residual = sigmaSquared - scaledStandardErrorSquared - meanDifference;
-  const tolerance = metricIdentityTolerance(estimate.effects, sampleCount, delta);
-  if (Math.abs(residual) > tolerance) {
-    throw new RangeError("Morris metric identity is inconsistent with valid_pairs");
-  }
-};
-
 const validateEstimate = (estimate: MorrisEstimate, trajectories: number): void => {
   const denominator = estimate.denominator;
   const exclusiveTotal = denominator.validPairs + denominator.noImpactUnavailablePairs
@@ -314,7 +263,7 @@ const validateEstimate = (estimate: MorrisEstimate, trajectories: number): void 
   if (estimate.sampleAdequacy === "limited" && (denominator.validPairs < 2 || denominator.validPairs >= 10)) {
     throw new RangeError("limited Morris estimate requires two through nine valid pairs");
   }
-  validateFiniteMetrics(estimate);
+  validateMorrisMetrics(estimate.effects, estimate.availability, denominator.validPairs);
 };
 
 const parseEstimate = (value: unknown, trajectories: number): MorrisEstimate => {

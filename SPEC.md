@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.24                                    |
-| **Spec Version**        | 1.16.24                                    |
+| **Current Version**     | 1.16.25                                    |
+| **Spec Version**        | 1.16.25                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -2922,6 +2922,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.25 | fix(rate-of-closure, #4142 R13.4): mirror the Morris producer's serialized clamp exactly by requiring `sigma` and `mu*` standard error to be either zero or strictly above `64*epsilon*max(1,mu*)`; apply clamp uncertainty only to zero-valued squared terms, use scale-normalized identity arithmetic with ordinary floating tolerance for nonzero metrics, reject finite magnitudes that cannot be squared safely, and move cohesive metric validation to a dedicated bounded module. |
 | 2026-08-12 | 1.16.24 | fix(rate-of-closure, #4142 R13.4): replace the Morris squared-identity unit-floor tolerance with the Python producer's exact metric clamp `64*epsilon*max(1, mu*)`, propagate that delta through every squared statistic and `n/(n-1)` term, and add a clamp-scale degeneracy check so an impossible `sigma=1e-8` is rejected when `mu*=abs(mu)` and standard error is zero while serializer-scale perturbations near `1e-14` remain accepted; pin valid identities at `n=4`, `n=12`, and metric scale `10^6`. |
 | 2026-08-12 | 1.16.23 | fix(rate-of-closure, #4142 R13.4): harden the strict Morris report consumer to accept only plain/null-prototype records, reject C0/C1 controls and composite-identity ambiguity, require complete unique source-target matrices with stable provenance, and verify `mu`, `mu*`, `mu*` standard error, and `sigma` are jointly possible for the declared valid-pair count using the sample-moment identity and a bounded scale-aware tolerance of 256 IEEE-754 epsilons; require zero `mu*` to mean an exact all-zero `constant-output` estimate and enforce zero-sigma implications without weakening explicit null unavailable states. |
 | 2026-08-12 | 1.16.22 | feat(rate-of-closure, #4142 R13.4): add the strict UI-neutral TypeScript consumer for the Morris global-sensitivity report, give the cross-runtime wire contract the stable `swing-sim/morris-global-sensitivity-report` identity independent of its method vocabulary, and fail closed on unknown/malformed/non-finite payloads, grid/sample provenance errors, invalid units/frames/loci/bounds, unavailable-estimate encoding, typed availability/adequacy states, and denominator inconsistencies; retain UI/export/execution and UpstreamDrift integration as follow-up scope. |
