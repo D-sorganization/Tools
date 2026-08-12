@@ -1,5 +1,23 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4369 typed validator failure boundary
+
+This exact-parent continuation starts from published PR #4370 head
+`0a485958bd6ed46dce18e65fd3e3cd1fa797502a`. The complete-only regional
+variation runner now converts exceptions raised by its injected outcome
+validator into `GroundRegionalVariationFailed` with the stable `validation`
+stage. The error records only the count accepted before validation failed,
+retains the original exception through explicit chaining, and carries neither
+rows nor a dataset. Executor, callback, cancellation, and publication behavior
+are unchanged; the successful scalar-ensemble bytes remain pinned by the
+existing SHA-256 regression.
+
+The TDD regression fails on the parent because the validator's
+`PreconditionError` escapes directly, then passes with the typed boundary after
+one prior accepted trial. No execution authority, physics, backend, worker,
+browser, or UI behavior is added. Keep #4369/#4273/#4267 open for those larger
+qualification and release requirements.
+
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
 The composed local head `915c80f38` is a contract/control/parser prerequisite,

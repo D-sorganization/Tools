@@ -1,5 +1,15 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4369 typed outcome-validation failure
+
+From exact published #4370 head `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`,
+the UI-neutral complete-batch runner now wraps every exception from
+`job.validator` as `GroundRegionalVariationFailed` at the stable `validation`
+stage. The terminal reports only already accepted trials, preserves the
+original exception as `__cause__`, and publishes no rows or dataset. Successful
+execution and its pinned canonical output bytes are unchanged. This slice adds
+no physics or execution-job binding and no authority, backend, worker, or UI.
+
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
 `915c80f38` composes the job, batch-control, and result-import prerequisites,

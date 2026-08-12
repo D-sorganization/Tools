@@ -1,5 +1,17 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4369 validator-failure hardening
+
+- Exact parent: published PR #4370 head
+  `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`.
+- Outcome-validator exceptions now terminate through the same typed,
+  complete-only failure boundary as executor and callback defects, using the
+  stable `validation` stage and explicit exception chaining.
+- Counts include only accepted trials; no partial rows or dataset escape. The
+  existing successful-output SHA-256 regression remains authoritative.
+- Scope excludes execution authority, physics, job binding, backends, workers,
+  browsers, and matched UI. Keep #4369/#4273/#4267 open.
+
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
 - Exact local composition head `915c80f38` contains the execution-job contract,
