@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.79                                    |
-| **Spec Version**        | 1.14.79                                    |
+| **Current Version**     | 1.14.80                                    |
+| **Spec Version**        | 1.14.80                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -84,6 +84,26 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   its synthetic declared flight digests do not match the registered profile.
   Runner preflight therefore remains failed with zero accepted trials; ground
   physics, capability, client controls, persistence, and release stay disabled.
+### 2026-08-11 React Regional-Ground Execution Controller
+
+- A UI-neutral React hook now coordinates the existing strict authority client:
+  it validates the exact capability and execution job before submit, permits
+  only one active job, polls serially, preserves exact completed/total progress,
+  and exposes the server-owned typed terminal failure without synthesizing
+  status or physical output.
+- Every in-flight submit, status, cancellation, and result request receives an
+  `AbortSignal`. Reset, unmount, cancellation, and superseding operations abort
+  pending work; generation and operation identities prevent late responses from
+  publishing stale status or results. React StrictMode effect probing is
+  explicitly covered.
+- Cancellation delegates to the existing POST-cancel client. A result is fetched
+  only after an exact succeeded status and is published only after the client has
+  validated the complete envelope against the originating job.
+- The only production capability remains the exact false-only contract, so the
+  controller's submit/status/cancel/result controls remain disabled by default.
+  A clearly named injection seam exists only to exercise lifecycle behavior in
+  unit tests. This slice adds no visible controls, capability promotion,
+  TypeScript physics, qualified runner, persistence, or release claim.
 
 ### 2026-08-11 Canonical Regional-Ground Authority Status Wire
 
@@ -3337,6 +3357,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | 2026-08-11 | 1.14.78 | test(ground-study, #4369): qualify the PyQt submitter against an actual authenticated loopback Uvicorn/FastAPI process, covering bearer secrecy, canonical submit/status/cancel/result behavior, typed fail-closed production preflight, bounded shutdown, and false-capability non-construction without running or claiming physics. |
 | 2026-08-11 | 1.14.77 | feat(ground-study, #4369): add a UI-neutral authenticated PyQt loopback submitter adapter with canonical job/status/result binding, bounded polling/backoff, cooperative cancellation, best-effort cleanup after accepted-job client failures, typed non-secret errors, stale/late suppression, and fail-closed construction while capability remains unavailable. |
 | 2026-08-11 | 1.14.79 | feat(ground-study, #4369): register one strict versioned Waterloo/Penner flight execution profile with bounded exact settings, launch-relative planar-contact recomputation, terminal-preserving deterministic sampling, and typed digest qualification; retain fail-closed runner behavior because the canonical fixture's synthetic flight digests do not recompute, and leave ground execution and capability disabled. |
+| 2026-08-11 | 1.14.80 | feat(ground-study, #4369): add a UI-neutral React execution controller over the strict authority client with exact capability/job admission, one-active-job serial polling, abort and stale-generation protection, exact progress and typed terminal failure, POST cancellation, and complete job-bound result publication; keep production capability and visible controls disabled with no TypeScript physics. |
 | 2026-08-11 | 1.14.76 | feat(ground-study, #4369): add a typed production-runner preflight that rejects unknown and unregistered versioned flight profiles before any physics; propagate the preflight terminal stage through the canonical Python/React status contract while leaving capability, execution controls, and model invocation disabled until solver and digest semantics are qualified. |
 | 2026-08-11 | 1.14.75 | feat(ground-study, #4369): centralize the six-state authority job-status wire in a transport-neutral strict Python parser/serializer, make the server consume it, and prove Python-produced canonical byte/semantic parity in React across every failure code and stage; keep physics, UI, capability promotion, persistence, and execution claims open. |
 | 2026-08-11 | 1.14.74 | feat(ground-study, #4369): add strict future-facing React submit/status/POST-cancel/result REST client contracts plus one-at-a-time capability polling with AbortController cleanup, obsolete-response suppression, bounded job-bound status/result validation, and every execution-control flag disabled while the Python authority remains unavailable; matching routes exist while a qualified runner, physics invocation, and visible Run integration remain open. |

@@ -227,7 +227,7 @@ class LoopbackRegionalGroundSubmitter:
                 expected_status=202,
             )
         except Exception:
-            pass
+            return
 
     def _resolve_terminal(
         self,

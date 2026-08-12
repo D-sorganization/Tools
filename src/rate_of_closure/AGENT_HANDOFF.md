@@ -34,6 +34,29 @@ TDD evidence is green for 20 focused registry/preflight tests and 147 composed
 authority, execution-contract, manifest, and shared flight-pipeline tests.
 Ruff, Black, focused MyPy, Bandit, manifest validation, and structural checks
 are clean. No GitHub write occurred.
+## 2026-08-11 local #4369 React execution controller
+
+From exact local composed head
+`7e4069e891d8b4bde3f1d712b5b47897359a414e`, the React hooks layer adds a
+UI-neutral controller around `RegionalGroundAuthorityClient`. It parses the
+exact capability and job before submit, enforces one active job, polls serially,
+retains exact progress and server-owned typed failures, calls the existing
+POST-cancel client, and retrieves only a succeeded job's strictly bound complete
+result.
+
+Every lifecycle request carries an abort signal. Run-generation and operation
+guards prevent stale publication after reset, cancellation, unmount, or request
+replacement, including React StrictMode's development effect cycle. The
+production capability remains false-only, so application controls stay
+disabled. The admission override is explicitly test-only. There is no visible
+UI, physical invocation, capability promotion, TypeScript physics, persistence,
+or release claim; keep #4369/#4273/#4267 open.
+
+TDD RED captured the absent hook and the StrictMode remount defect. Evidence
+passes 31 focused controller/client/capability tests, strict TypeScript,
+zero-warning ESLint, the 214-module build, all eight manifest tests, and
+module/minimum-test governance. This child is local-only and performs no
+GitHub write.
 
 ## 2026-08-11 local #4369 canonical authority status wire
 

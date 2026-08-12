@@ -120,8 +120,7 @@ class FlightExecutionProfileQualificationError(RuntimeError):
             raise TypeError("qualification must be exact")
         self.qualification = qualification
         super().__init__(
-            "flight execution evidence is not qualified: "
-            f"{qualification.reason.value}"
+            f"flight execution evidence is not qualified: {qualification.reason.value}"
         )
 
 

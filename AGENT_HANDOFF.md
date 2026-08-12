@@ -42,6 +42,30 @@ registry/preflight tests and 147 composed authority, job/result, manifest, and
 flight/transfer/pipeline tests. Ruff, Black, focused MyPy, Bandit, JSON and
 manifest validation, diff hygiene, and structural limits are clean. No GitHub
 operation occurred.
+## 2026-08-11 local #4369 React execution-controller prerequisite
+
+This isolated `codex/4369-authority-react-controller-v1` child starts from the
+exact local composed head `7e4069e891d8b4bde3f1d712b5b47897359a414e`.
+It adds a UI-neutral React hook over the existing strict authority client. The
+hook validates exact capability/job input before submission, owns at most one
+active job, polls status serially, preserves exact progress and typed terminal
+failure, delegates cancellation through the client's POST route, and retrieves
+only a succeeded job's complete job-bound result.
+
+All requests are abortable. Reset, cancellation, unmount, operation IDs, and
+run generations prevent obsolete status or result publication; a dedicated
+regression covers React StrictMode's development effect probe. Production
+admission remains false under the only valid capability. The named injected
+admission override is unit-test-only and must never be wired by application
+code. No visible control, capability promotion, TypeScript physics, qualified
+runner, persistence, downstream parity, or issue completion is claimed.
+
+TDD RED first captured the missing hook, then a separate RED exposed the
+StrictMode cleanup/remount defect. Evidence passes 31 focused controller and
+adjacent authority-contract tests, strict TypeScript, zero-warning ESLint, the
+214-module production build, manifest validation and all eight manifest tests,
+and module/minimum-test governance. Code, tests, SPEC, manifest, and all three
+handoffs commit together; no push or GitHub write belongs to this child.
 
 ## 2026-08-11 local #4369 canonical authority status wire
 
