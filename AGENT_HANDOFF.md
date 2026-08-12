@@ -3,6 +3,44 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 React Morris workflow (#4142 R13.7)
+
+Branch `codex/4142-morris-react-workflow` starts at exact UI-contract parent
+`71c771fb73143f1839449d1cf5a1f5472a55f098`. The Rate React application now
+owns and injects one same-origin `MorrisAuthorityClient`; the Variation page
+exposes Monte Carlo and Morris as explicit sibling workflows. Morris has no
+browser physics path: it capability-gates submission and reports static or
+unreachable deployments as unavailable.
+
+The new workflow edits all applicable factors in canonical order, initializes
+their bounds from the actual authority base and shared registry scales, and
+controls trajectories, even grid levels, seed, minimum effects, and workers.
+It fails closed unless the current club is the exact canonical library spec and
+every unrepresented scenario field equals the pinned passive fixed-ball base
+(113 mph, 1870/1307 deg/s, 58 deg lie, 40 mm COM-to-face, 450 us contact).
+Impact offsets remain represented; ground support omits tee height. A stable
+validated base identity remounts the workflow on a real context change, aborts
+old work, clears old results, and rebuilds suggestions without overwriting
+edits when the base is unchanged.
+
+One abortable operation is active at a time and Run disables before the create
+request can be duplicated. Capability, create, status, and cancel calls each
+have a 30-second deadline. Polls are strictly sequential; a nonterminal cancel
+response continues polling until terminal state, late responses cannot restore
+stale results, and unmount aborts discovery or work.
+The submitted request ID and first accepted job ID are pinned for the entire
+lifecycle: create must echo the request ID, and every status/cancel envelope
+must echo both IDs; polling always addresses the pinned job and fails closed on
+identity drift. Any actual factor or design edit invalidates the prior job,
+status, and report before showing the new controls; no-op commits preserve them.
+Completed reports provide a target selector, target-local `mu*` ranking,
+`mu`, standard error, `sigma`, availability/adequacy, typed no-impact and
+failure denominators, design provenance, assumptions, and the interaction
+caveat. There is intentionally no Morris input persistence or report export
+in this slice: the existing variation-plan schema is not compatible and must
+not be overloaded. UpstreamDrift consumption and PyQt integration remain
+separate stacked work.
+
 ## 2026-08-12 UI-neutral Morris application contract (#4142 R13.6)
 
 Branch `codex/4142-morris-ui-contract` starts at exact private-authority parent

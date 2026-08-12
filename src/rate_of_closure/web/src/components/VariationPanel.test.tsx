@@ -88,6 +88,14 @@ afterEach(() => {
 });
 
 describe("VariationPanel v2 plan persistence", () => {
+  it("explains why Morris is disabled when the current context cannot round-trip", () => {
+    render(<VariationPanel morrisUnavailableReason="custom club loft is unsupported" />);
+    expect(screen.getByRole("button", { name: "Morris Screening" })).toBeDisabled();
+    expect(screen.getByRole("status", { name: "Morris availability" })).toHaveTextContent(
+      /Morris unavailable: custom club loft is unsupported/i,
+    );
+  });
+
   it("reports an aerial target without projecting it onto the ground", () => {
     const target = createSpatialTarget({
       label: "Apex gate",

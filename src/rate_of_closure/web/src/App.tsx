@@ -7,6 +7,8 @@ import { useAppWorkspace } from "./hooks/useAppWorkspace";
 import { useImpactAppModel } from "./hooks/useImpactAppModel";
 import { HELP_TEXTS } from "./model/helptext";
 import { primaryViewLabel, type PrimaryViewId } from "./model/viewPreferences";
+import { createMorrisAuthorityClient } from "./model/morrisAuthorityClient";
+import { useMemo } from "react";
 
 function AppHeader() {
   return (
@@ -61,6 +63,7 @@ function AppFooter() {
 export default function App() {
   const workspace = useAppWorkspace();
   const model = useImpactAppModel();
+  const morrisClient = useMemo(() => createMorrisAuthorityClient(), []);
   const active = workspace.viewState.active;
   const openGlossary = (term: string | undefined) => {
     model.setGlossaryTerm(term);
@@ -83,7 +86,7 @@ export default function App() {
       <main id={`primary-panel-${active}`} role="tabpanel"
         aria-labelledby={`primary-tab-${active}`}>
         <PrimaryWorkspacePanel active={active} model={model}
-          onOpenGlossary={openGlossary} />
+          onOpenGlossary={openGlossary} morrisClient={morrisClient} />
       </main>
       <AppFooter />
     </div>

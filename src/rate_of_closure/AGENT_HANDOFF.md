@@ -3,6 +3,39 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 authority-backed React Morris workflow (#4142 R13.7)
+
+`App.tsx` owns the same-origin authority client and injects it through
+`PrimaryWorkspacePanel` into the Variation page. `VariationPanel` keeps its
+existing Monte Carlo experience as the default and adds Morris as a sibling;
+direct/static uses without a client remain visibly unavailable and cannot run
+browser physics. The bridge accepts only an exact canonical library club and
+the pinned passive fixed-ball scenario (113 mph, 1870/1307 deg/s, 58 deg lie,
+40 mm COM-to-face, and 450 us contact); unsupported or customized context is
+disabled with an actionable reason instead of being discarded. Impact offsets
+round-trip, drivers use the pinned tee setup, and ground clubs omit tee height.
+Factor suggestions use each actual base value plus/minus two registry typical
+scales, clamped to physical endpoints, matching the Python R13.6 builder.
+
+`useMorrisAuthority` owns capability discovery, one abort controller, a
+monotonic generation, immediate submission exclusion, exact request
+serialization, sequential polling, cancel, and cleanup. Capability, create,
+status, and cancel each have a 30-second deadline; nonterminal cancel responses
+continue sequential polling. Late/aborted responses cannot update state. A
+stable validated base key aborts/remounts on a real context change, clearing
+old reports and rebuilding suggestions while preserving edits for an unchanged
+base. Create must echo the submitted request ID; its accepted job ID and request
+ID are then pinned, compared against every status/cancel response, and used for
+every poll so an authority response cannot pivot the lifecycle. Any actual
+factor/design mutation explicitly invalidates the prior job/error/report while
+no-op commits preserve current evidence. Focused components separately own
+canonical factor editing, design controls, progress, and selected-target
+result presentation. All controls are labeled, keyboard-native, hover-described,
+responsive, and expose errors/status through live regions. The report table
+retains every scientific diagnostic rather than ranking across targets or
+turning missing effects into zero. Morris persistence/export is still open
+because the existing Monte Carlo plan format is a different schema.
+
 ## 2026-08-12 Morris request/presentation seam (#4142 R13.6)
 
 `application/morris/request_document.py` is now the only UI-neutral builder

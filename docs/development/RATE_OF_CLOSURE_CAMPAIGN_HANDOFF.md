@@ -1,5 +1,45 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R13.7 React Morris workflow
+
+- App-owned dependency injection connects the Variation surface to the
+  same-origin private authority; no component constructs or mirrors a physics
+  evaluator and a missing/unreachable authority is presented honestly.
+- Monte Carlo and Morris are explicit sibling workflows. The Morris surface
+  includes the applicable canonical ordered factor rows, contextual guidance
+  and units, editable finite bounds centered on actual base values using the
+  Python R13.6 registry scales, tee applicability, trajectories, even levels,
+  seed, minimum valid effects, and worker controls.
+- Submission uses the strict R13.6 serializer. Current impact offsets are
+  represented, but custom club specifications and any unrepresented scenario
+  difference from the pinned passive fixed-ball authority are rejected with an
+  actionable UI reason. The gate compares every club field to its canonical
+  library entry, normalizing optional `headStyle`; it does not equate a reused
+  club name with canonical geometry.
+- Capability discovery, create, status, and cancel share abortable lifecycle
+  ownership and independent 30-second deadlines. Submission is excluded before
+  POST; polling is sequential; a nonterminal cancel response is polled to a
+  terminal state; operation generations suppress stale jobs/reports; unmount
+  always aborts. A stable full-base identity remounts on context change, aborts
+  in-flight work, clears completed results, and rebuilds suggestions while an
+  equivalent base preserves user edits.
+- Create must echo the exact submitted request ID. That request ID and the first
+  accepted job ID remain pinned through every status/cancel envelope and every
+  poll path; identity drift fails closed and can never redirect polling. Any
+  actual factor or design mutation clears the prior job/error/report immediately
+  so completed evidence is never displayed beside changed controls; no-op input
+  commits do not discard evidence.
+- Completed reports select one output at a time and rank only that target's
+  finite `mu*`. Tables also show `mu`, `SE(mu*)`, `sigma`, bounds, availability,
+  adequacy, valid/total pairs, typed/no-impact unavailable pairs, failures,
+  nonfinite pairs, design provenance, assumptions, and the mandatory Morris
+  interaction/nonlinearity caveat.
+- The new UI is responsive and accessible, including status live regions,
+  native progress and controls, explicit labels, descriptions, disabled states,
+  and honest errors. Input persistence and report export remain open by design;
+  the Monte Carlo plan library is not a compatible schema. PyQt and downstream
+  UpstreamDrift work remain separate stack entries.
+
 ## 2026-08-12 #4142 R13.6 UI-neutral Morris application seam
 
 - Added one canonical tee-aware ten-factor order, registry-derived bounded

@@ -26,13 +26,48 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.29                                    |
-| **Spec Version**        | 1.16.29                                    |
+| **Current Version**     | 1.16.31                                    |
+| **Spec Version**        | 1.16.31                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-12 React Morris elementary-effects workflow
+
+- The Rate React app owns and injects its same-origin Morris client; the
+  Variation surface exposes Monte Carlo and global Morris screening as sibling
+  workflows. A missing, unreachable, or unavailable Python authority disables
+  execution and is never replaced by browser-side physics.
+- The Morris form preserves the canonical ten-factor order and shared contract
+  validation while allowing applicable factor enablement/bounds and
+  trajectories, even levels, seed, minimum effects, and bounded worker count to
+  be edited. Initial bounds are centered on actual base values at plus/minus two
+  shared registry scales and physical endpoint clamps; tee height is omitted on
+  ground.
+- The browser bridge fails closed unless the current club matches every field
+  of its canonical library specification and unrepresented scenario fields
+  match the pinned passive fixed-ball authority. Current impact offsets remain
+  represented. Unsupported context is explained in the UI rather than silently
+  collapsed to a club name or hard-coded base.
+- The async lifecycle permits one current operation, disables Run before POST,
+  gives capability/create/status/cancel independent 30-second deadlines, polls
+  sequentially including after a nonterminal cancel response, aborts on
+  unmount, and suppresses every late response by generation. A stable validated
+  base identity aborts and remounts the workflow on a real context change, while
+  an equivalent base preserves edits.
+- Create responses must echo the submitted request ID. The accepted request/job
+  identity is immutable thereafter: every status/cancel envelope is checked
+  against both IDs and all polling continues on the originally accepted job.
+  Any real factor or design mutation clears the old job, error, status, and
+  report before the changed controls are presented; no-op commits preserve it.
+- Completed reports are selected and ranked per output target. They retain the
+  full design provenance, effect estimates and uncertainty, availability and
+  sample adequacy, typed no-impact overlap and exclusive unavailable/failure/
+  nonfinite counts, assumptions, and the interaction/nonlinearity caveat.
+- Existing Monte Carlo plan persistence is intentionally not reused for Morris
+  because its schema cannot represent the authority request without loss.
 
 ### 2026-08-11 Kinetics module-budget repair
 
@@ -2922,6 +2957,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.31 | feat(rate-of-closure, #4142 R13.7): add the authority-backed React Morris workflow as a sibling to Monte Carlo with app-owned same-origin injection, registry/base-centered factor suggestions, strict canonical-club and pinned-scenario fail-closed gating, stable full-base remount identity, immediate duplicate-submission exclusion, bounded capability/create/status/cancel deadlines, sequential terminal cancellation polling, immutable request/job identity checks that prevent polling pivots, edit-driven stale-report invalidation, stale-response and unmount abort safety, responsive accessible factor/design controls, and target-local report presentation retaining all scientific provenance, denominators, adequacy, and interpretation caveats; retain Morris persistence/export, PyQt, UpstreamDrift consumption, protected publication, and epic completion as open gates. |
 | 2026-08-12 | 1.16.30 | feat(rate-of-closure, #4142 R13.6): add the UI-neutral Morris application seam shared conceptually across Python and TypeScript: canonical tee-aware factor order and registry-derived bounded drafts, full represented-`SimulationConfig` round-trip with fail-closed pinned semantics, exact request serialization including authority base-physics/vocabulary and named sample/observation resource parity, strict frozen capability/job/report consumers, same-origin/direct-loopback authenticated clients with 16 MiB success and 8 KiB error bounds, exact scientific metric and denominator validation, target-scoped stable `mu*` presentation, and one cross-runtime fixture pinned and verified against Python. Retain widgets, hooks/polling, launchers/host routes, exports, persistence, local physics fallback, UpstreamDrift consumption, and epic completion as open gates. |
 | 2026-08-12 | 1.16.29 | feat(rate-of-closure, #4142 R13.5): add a bounded private Morris authority host for the standalone React development launcher: exclusive ephemeral IPv4 loopback child socket, exact authenticated capability readiness, redacted bearer, no-store/nosniff no-CORS FastAPI host including sanitized authenticated errors, explicit pre-lifespan-to-ASGI exact-once registry ownership transfer, BaseException-safe startup cleanup and pipe closure that preserve the primary error through secondary cleanup failures, graceful authenticated shutdown with bounded reap fallback, and a strict server-only Vite proxy at the canonical `/api/rate-of-closure/v1` prefix. Declare the optional FastAPI/Uvicorn/SciPy host dependencies and retain UI polling/presentation, export, persistence, static or deployed authority hosting, UpstreamDrift consumption, and epic completion as open gates. |
 | 2026-08-12 | 1.16.28 | feat(rate-of-closure, #4142 R13.5): add exact primitive-only Morris request/job v1 contracts, deterministic execution into unchanged report v1, a dependency-injected mountable FastAPI router with strict bounded raw JSON and lock-linearized ephemeral jobs, and a strict TypeScript parser plus injected transport. Retain presentation, export, persistence, host registration, UpstreamDrift consumption, and a genuine fixed-ball double-pendulum hit as open gates. |

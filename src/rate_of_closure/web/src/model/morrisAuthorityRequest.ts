@@ -126,6 +126,42 @@ const ENDPOINT_BOUNDS = new Map<string, readonly [number, number]>([
   ["swing_sim.ball_setup.tee_height_m", [0, Number.POSITIVE_INFINITY]],
 ]);
 
+const baseFactorValues = (base: MorrisAuthorityBase): Readonly<Record<string, number>> => {
+  const club = CLUB_LIBRARY.find((candidate) => candidate.name === base.clubName);
+  if (club === undefined) throw new RangeError("clubName is not in the authority club library");
+  return Object.freeze({
+    "swing_sim.swing.yaw_deg": base.planeYawDeg,
+    "swing_sim.swing.side_tilt_deg": base.planeSideTiltDeg,
+    "swing_sim.swing.forward_tilt_deg": base.planeForwardTiltDeg,
+    "swing_sim.swing.damping_shoulder": base.dampingShoulder,
+    "swing_sim.swing.damping_wrist": base.dampingWrist,
+    "swing_sim.impact.delivery.impact_offset_toe_mm": base.impactOffsetToeMm,
+    "swing_sim.impact.delivery.impact_offset_high_mm": base.impactOffsetHighMm,
+    "swing_sim.club.head_mass_kg": club.headMassKg,
+    "swing_sim.club.head_moi_kg_m2": club.moiAboutShaftKgM2,
+    "swing_sim.ball_setup.tee_height_m": base.teeHeightM,
+  });
+};
+
+/** Mirror Python R13.6 registry-centered suggestions without implementing physics. */
+export function suggestedMorrisFactorDrafts(base: MorrisAuthorityBase): readonly MorrisFactorDraft[] {
+  validateFiniteBaseNumbers(base);
+  validateBaseSemantics(base);
+  const values = baseFactorValues(base);
+  const keys = base.supportMode === "ground" ? RATE_MORRIS_VARIABLE_KEYS.slice(0, -1) : RATE_MORRIS_VARIABLE_KEYS;
+  const drafts = keys.map((variableKey) => {
+    const definition = variableDef(variableKey);
+    if (definition === undefined) throw new RangeError(`Morris factor ${variableKey} is absent from the registry`);
+    const center = values[variableKey];
+    const endpointBounds = ENDPOINT_BOUNDS.get(variableKey);
+    const lower = Math.max(center - 2 * definition.typicalScale, endpointBounds?.[0] ?? Number.NEGATIVE_INFINITY);
+    const upper = Math.min(center + 2 * definition.typicalScale, endpointBounds?.[1] ?? Number.POSITIVE_INFINITY);
+    if (!(lower < upper)) throw new RangeError(`suggested Morris bounds collapsed for ${variableKey}`);
+    return Object.freeze({ variableKey, enabled: true, lower, upper });
+  });
+  return Object.freeze(drafts);
+}
+
 const stableText = (value: unknown, name: string): string => {
   if (typeof value !== "string" || value === "" || value !== value.trim()) {
     throw new RangeError(`${name} must be a nonempty trimmed string`);
@@ -273,6 +309,11 @@ const serializeBase = (base: MorrisAuthorityBase): Readonly<Record<string, strin
   };
   return Object.freeze(document);
 };
+
+/** Stable validated identity for remounting stateful workflows when their authority base changes. */
+export function morrisAuthorityBaseIdentity(base: MorrisAuthorityBase): string {
+  return JSON.stringify(serializeBase(base));
+}
 
 export function serializeMorrisAuthorityRequest(
   request: MorrisAuthorityRequest,

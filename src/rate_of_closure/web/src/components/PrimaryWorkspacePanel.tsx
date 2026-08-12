@@ -9,11 +9,14 @@ import { PlotsPanel } from "./PlotsPanel";
 import { PuttingPanel } from "./PuttingPanel";
 import { SimulationPanel } from "./SimulationPanel";
 import { VariationPanel } from "./VariationPanel";
+import type { MorrisAuthorityClient } from "../model/morrisAuthorityClient";
+import { defaultMorrisAuthorityBase } from "../model/morrisWorkflowDefaults";
 
 interface WorkspacePanelProps {
   readonly active: PrimaryViewId;
   readonly model: ImpactAppModel;
   readonly onOpenGlossary: (term: string | undefined) => void;
+  readonly morrisClient: MorrisAuthorityClient | null;
 }
 
 function SimulationWorkspace({ model }: { readonly model: ImpactAppModel }) {
@@ -27,7 +30,7 @@ function SimulationWorkspace({ model }: { readonly model: ImpactAppModel }) {
   );
 }
 
-function ExplorerWorkspace(props: Omit<WorkspacePanelProps, "active">) {
+function ExplorerWorkspace(props: Omit<WorkspacePanelProps, "active" | "morrisClient">) {
   const { model } = props;
   return (
     <ImpactExplorerPanel scenario={model.scenario} setScenario={model.setScenario}
@@ -46,7 +49,15 @@ export function PrimaryWorkspacePanel(props: WorkspacePanelProps) {
     case "putting":
       return <PuttingPanel distanceUnit={model.units.distance} onGlossary={onOpenGlossary} />;
     case "variation":
-      return <VariationPanel spatialTarget={model.spatialTarget} distanceUnit={model.units.distance} />;
+      try {
+        return <VariationPanel spatialTarget={model.spatialTarget} distanceUnit={model.units.distance}
+          morrisClient={props.morrisClient}
+          morrisBase={defaultMorrisAuthorityBase(model.clubSpec, model.scenario)} />;
+      } catch (error: unknown) {
+        return <VariationPanel spatialTarget={model.spatialTarget} distanceUnit={model.units.distance}
+          morrisClient={null}
+          morrisUnavailableReason={error instanceof Error ? error.message : "Current model context is unsupported"} />;
+      }
     case "flight":
       return <FlightExplorerPanel distanceUnit={model.units.distance}
         spatialTarget={model.spatialTarget} onSpatialTargetChange={model.setSpatialTarget} />;
