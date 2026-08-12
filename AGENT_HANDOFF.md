@@ -1,5 +1,34 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4369 widget-free PyQt submission controller
+
+This exact-parent continuation starts from published PR #4372 head
+`990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`. It adds a widget-free PyQt6
+`RegionalGroundExecutionWorker` and owning controller around an injected
+`RegionalGroundExecutionSubmitter` protocol. The controller accepts only one
+strict qualified `RegionalGroundExecutionJob`, runs the injected authority on a
+QThread, forwards immutable typed progress/cancellation/failure records through
+queued Qt signals, and supports cooperative cancel plus bounded shutdown.
+
+Success is emitted only after an exact `RegionalGroundExecutionResult` passes
+full expected-job binding. Wrong result types or identities become typed
+validation failures; ordinary adapter exceptions become typed executor
+failures with their cause chained; inconsistent terminal totals and stale
+queued signals fail closed. No partial dataset is exposed.
+
+The injected submitter remains intentionally absent in production. This slice
+does not invoke flight or ground physics, advertise authority availability, add
+visible Run/Cancel controls, add a browser endpoint, or claim execution. Keep
+#4369/#4273/#4267 open for the qualified authority, matched clients, protected
+integration, downstream parity, and release.
+
+TDD RED first proved the worker/controller module absent. Seven focused
+QThread/controller tests, 79 job/result/qualification/variation regressions,
+and all 1,068 Rate Python/PyQt tests pass; the full suite retains one unrelated
+polynomial-generator empty-legend warning. Ruff, Black, focused MyPy, manifest
+validation and eight manifest tests, docs governance, and structural gates are
+green. No GitHub write occurred.
+
 ## 2026-08-11 local #4369 job-bound execution result envelope
 
 From exact published PR #4370 head

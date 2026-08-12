@@ -1,5 +1,25 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4369 PyQt worker/controller prerequisite
+
+- Exact source parent: published PR #4372 head
+  `990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`.
+- A widget-free QThread worker/controller accepts the exact qualified job and a
+  dependency-injected submitter. It forwards typed progress, cancellation, and
+  failure signals and prevents overlapping work or stale publication.
+- Success requires one complete execution-result envelope that passes the
+  existing expected-job identity, trial-count/order, and series binding.
+  Invalid or unbound results become typed validation failures; no partial rows
+  or dataset are exposed.
+- No physical submitter is registered, no visible control is wired, and the
+  authority capability remains unavailable. Browser submission, matched client
+  controls, protected integration, and release remain open.
+- TDD RED captured the absent port. Evidence passes 7 focused QThread tests, 79
+  job/result/qualification/variation regressions, all 1,068 Rate Python/PyQt
+  tests, Ruff, Black, focused MyPy, manifest validation/tests, docs governance,
+  and structural gates. The full suite's one empty-legend warning predates and
+  is unrelated to this slice.
+
 ## 2026-08-11 local #4369 job-bound result envelope
 
 - Exact source parent: published PR #4370 head

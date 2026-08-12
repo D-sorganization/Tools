@@ -1,5 +1,22 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4369 PyQt job-submission port
+
+From exact published #4372 head `990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`,
+the PyQt6 layer now provides a QWidget-independent QThread worker/controller
+port. A dependency-injected submitter receives the strict qualified job plus
+the existing typed progress/cancellation hooks. Qt signals expose only exact
+progress, typed cancellation/failure, or a complete result that has passed the
+existing expected-job identity, trial, order, and series checks.
+
+The controller rejects concurrency and stale signals and offers cooperative
+cancel and bounded shutdown. There is deliberately no production submitter,
+physics invocation, visible control, capability promotion, or browser route;
+future adapters must not enable execution until a qualified authority is bound.
+Headless evidence passes 7 focused controller tests, 79 composed contract tests,
+and the complete 1,068-test Rate suite, plus focused lint/type and governance
+gates. One existing empty-legend warning remains outside this slice.
+
 ## 2026-08-11 local #4369 job-bound execution result envelope
 
 The bounded Python/React
