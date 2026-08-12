@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "method": "morris-elementary-effects",
+  "design": {
+    "trajectories": 12,
+    "levels": 4,
+    "seed": 73,
+    "total_samples": 36,
+    "normalized_step": 0.6666666666666666
+  },
+  "assumptions": [
+    "Factors are independently screened over declared finite bounds.",
+    "The evaluator is deterministic or its stochastic stream is controlled.",
+    "Elementary effects are scaled to a full normalized factor range.",
+    "Only paired finite outputs from non-failed endpoints are estimable."
+  ],
+  "interaction_caveat": "Morris sigma is a screening indicator that conflates nonlinearity and interaction; it does not isolate either effect or establish causality.",
+  "estimates": [
+    {
+      "source": {
+        "spec_id": "face-window",
+        "variable_key": "swing_sim.impact.delivery.face_angle_deg",
+        "unit": "deg",
+        "bounds": [0.0, 1.0],
+        "time_window_s": [0.01, 0.02],
+        "point_ids": ["clubhead"]
+      },
+      "target": {
+        "name": "clubhead_x_m",
+        "unit": "m",
+        "kind": "state-point",
+        "time_s": 0.03,
+        "point_id": "clubhead",
+        "coordinate_frame": "app_frame:x_target,y_up,z_right"
+      },
+      "effects": {
+        "mu": 2.0,
+        "mu_star": 2.0,
+        "mu_star_standard_error": 0.0,
+        "sigma": 0.0
+      },
+      "availability": "available",
+      "sample_adequacy": "adequate",
+      "denominator": {
+        "total_pairs": 12,
+        "valid_pairs": 12,
+        "typed_no_impact_pairs": 0,
+        "no_impact_unavailable_pairs": 0,
+        "failed_pairs": 0,
+        "nonfinite_pairs": 0
+      }
+    },
+    {
+      "source": {
+        "spec_id": "speed-global",
+        "variable_key": "swing_sim.impact.delivery.clubhead_speed_mps",
+        "unit": "m/s",
+        "bounds": [0.0, 1.0],
+        "time_window_s": null,
+        "point_ids": []
+      },
+      "target": {
+        "name": "clubhead_x_m",
+        "unit": "m",
+        "kind": "state-point",
+        "time_s": 0.03,
+        "point_id": "clubhead",
+        "coordinate_frame": "app_frame:x_target,y_up,z_right"
+      },
+      "effects": {
+        "mu": 3.0,
+        "mu_star": 3.0,
+        "mu_star_standard_error": 0.0,
+        "sigma": 0.0
+      },
+      "availability": "available",
+      "sample_adequacy": "adequate",
+      "denominator": {
+        "total_pairs": 12,
+        "valid_pairs": 12,
+        "typed_no_impact_pairs": 0,
+        "no_impact_unavailable_pairs": 0,
+        "failed_pairs": 0,
+        "nonfinite_pairs": 0
+      }
+    }
+  ]
+}

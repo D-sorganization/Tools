@@ -1,5 +1,28 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 bounded global-sensitivity analysis slice (#4142)
+
+- `codex/4142-global-sensitivity` normally merges exact intended parent
+  `feat/4144-variation-export-continuation@7fb5d7f489db49742b7bc82ef009570ad2502456`;
+  its future PR must retain that configured base and normal history.
+- Shared, UI-neutral Morris contracts now provide deterministic randomized
+  trajectories plus elementary-effect `mu`, `mu*`, standard error, and `sigma`
+  estimates with registered variable units, finite bounds, source locus,
+  target unit/frame/point/time, seed/grid provenance, method assumptions, and
+  explicit adequacy/availability states.
+- Every effect denominator retains evaluated misses, numerical failures, and
+  per-output non-finite/unavailable pairs. Finite pre-impact/state outputs from
+  a miss remain analyzable; impact/shot quantities from a miss remain absent.
+- Deterministic report serialization uses JSON `null` for unavailable numeric
+  estimates and a versioned golden fixture under the React model fixtures pins
+  the cross-runtime payload without implementing presentation or export logic.
+- This advances only bounded R13.2-R13.4 core analysis. It does not complete
+  epic #4142 and deliberately avoids #4280 UI/export overlap. Simulation
+  execution, visualization/export, UpstreamDrift consumption, and protected
+  release evidence remain open.
+- Morris `sigma` cannot distinguish nonlinearity from interaction, and this
+  screening result is neither causal attribution nor Sobol variance shares.
+
 ## 2026-08-11 current workspace parent propagation into variation export
 
 - Immediate child PR `#4280` keeps base `feat/4218-toolstrip-workspace`.

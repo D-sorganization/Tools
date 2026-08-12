@@ -41,7 +41,15 @@ from .ensemble_geometry import (
     compute_position_dispersion_view,
     find_low_variability_intervals,
 )
+from .global_sensitivity import MorrisEstimate, MorrisReport, analyze_morris
 from .group_spec import PerturbationGroup
+from .morris_design import (
+    MorrisDesign,
+    MorrisFactor,
+    MorrisObservations,
+    MorrisOutput,
+    generate_morris_design,
+)
 from .propagation import (
     CommonReferenceTrace,
     PairedIntervention,
@@ -88,6 +96,12 @@ __all__ = [
     "EnsemblePositionTraces",
     "LowVariabilityCriteria",
     "LowVariabilityInterval",
+    "MorrisDesign",
+    "MorrisEstimate",
+    "MorrisFactor",
+    "MorrisObservations",
+    "MorrisOutput",
+    "MorrisReport",
     "NoiseSpec",
     "OutputStats",
     "PairedIntervention",
@@ -100,12 +114,14 @@ __all__ = [
     "VariationDataset",
     "VariationPlan",
     "dispersion_ellipse",
+    "analyze_morris",
     "analyze_paired_intervention",
     "compute_position_dispersion",
     "compute_position_dispersion_view",
     "evaluate_run",
     "keys_for_mode",
     "find_low_variability_intervals",
+    "generate_morris_design",
     "one_at_a_time_sensitivity",
     "outputs_for_mode",
     "register_variable",

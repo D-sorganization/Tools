@@ -1,7 +1,27 @@
 # AGENT_HANDOFF — rate_of_closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-11
+> Last updated: 2026-08-12
+
+## 2026-08-12 Shared Morris screening foundation (#4142 R13.2-R13.4)
+
+The reusable owner `src/shared/python/swing_sim/variation/` now includes a
+deterministic, bounded Morris elementary-effects design and analysis contract.
+It carries source variable/spec/locus/unit and downstream target
+unit/frame/point/time metadata; reports `mu`, `mu*`, `mu*` standard error,
+`sigma`, method assumptions, design provenance, adequacy, and complete typed
+denominators. Canonical evaluated-hit, evaluated-no-impact, and
+numerical-failure wire values are accepted: finite no-impact state metrics can
+contribute, but absent impact/shot outputs never become fabricated values.
+
+This branch normally includes exact parent
+`feat/4144-variation-export-continuation@7fb5d7f489db49742b7bc82ef009570ad2502456`.
+No Rate UI or existing #4280 export logic changes in this slice. A deterministic
+JSON-safe report serializer and committed React-consumable golden fixture pin
+the cross-runtime contract. The model execution adapter, PyQt6/React views, and
+UpstreamDrift integration remain explicit follow-up work. Interpret Morris
+`sigma` only as a screening indicator for nonlinearity and/or interaction, not
+as separated interaction variance or causality.
 
 ## 2026-08-11 Current workspace parent propagation (#4279 → #4280)
 

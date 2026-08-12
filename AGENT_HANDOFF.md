@@ -1,7 +1,30 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-11
+> Last updated: 2026-08-12
+
+## 2026-08-12 Bounded Morris global-sensitivity core (#4142 R13.2-R13.4)
+
+- Branch `codex/4142-global-sensitivity` normally merged exact intended parent
+  `feat/4144-variation-export-continuation@7fb5d7f489db49742b7bc82ef009570ad2502456`
+  without rebasing, resetting, retargeting, or rewriting either history.
+- New UI-neutral `swing_sim.variation` contracts generate deterministic Morris
+  trajectories and report `mu`, `mu*`, `mu*` standard error, and `sigma` for
+  simultaneous nonlinear/interacting bounded inputs. Source spec/locus/unit,
+  target unit/frame/point/time, seed, design grid, bounds, denominators, and
+  adequacy remain explicit.
+- Canonical Rate trial-status wire values are accepted without a reverse shared
+  package dependency. Evaluated misses retain available pre-impact/state
+  outputs, while absent impact/shot effects, numerical failures, and non-finite
+  values remain separate denominator cohorts with `NaN` estimates when sample
+  adequacy is insufficient. No impact or shot value is fabricated.
+- The deterministic report serializer maps unavailable numeric estimates to
+  JSON `null`; a committed golden fixture is ready for later React consumption.
+  This remains only the reusable analysis slice and does not modify PR #4280
+  export/UI logic. Design execution orchestration, PyQt6/React presentation,
+  and UpstreamDrift consumption remain open R13-R15 work; Morris `sigma`
+  conflates nonlinearity and interaction and is not causal attribution or a
+  variance decomposition.
 
 ## 2026-08-11 current workspace parent propagation (#4279 → #4280)
 
