@@ -21,13 +21,12 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-from PyQt6.QtWidgets import (
-    QFileDialog as QFileDialog,
-)
+from PyQt6.QtWidgets import QFileDialog as QFileDialog
 
 from rate_of_closure.club import get_club
 from rate_of_closure.model import MPH_PER_MPS, ImpactScenario
 from rate_of_closure.simulation import SimulationConfig
+from rate_of_closure.ui.pyqt6 import variation_constants
 from rate_of_closure.ui.pyqt6.variation_rows import NoiseRow
 from rate_of_closure.ui.pyqt6.variation_tab_io import VariationTabIoMixin
 from rate_of_closure.ui.pyqt6.variation_tab_results import (
@@ -52,20 +51,11 @@ logger = logging.getLogger(__name__)
 
 __all__ = ["QFileDialog", "VariationTab"]
 
-_MODE_LABELS: dict[str, str] = {
-    "delivery": "Delivery → Impact → Flight",
-    "swing": "Pendulum Swing → Impact → Flight",
-    "launch": "Launch Conditions → Flight",
-}
-_BASE_SOURCES = ("Registry Defaults", "Explorer Scenario")
-_MAX_RUNS = 5000
-
 
 class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
     """Monte-Carlo variation tab (controls left, results right)."""
 
-    #: Emitted with the VariationDataset after a successful study
-    #: (#4125 H7b: the course view overlays the landing scatter).
+    #: Emitted after a successful study for landing-scatter overlays (#4125 H7b).
     studyCompleted = pyqtSignal(object)  # noqa: N815 — Qt convention
 
     def __init__(self, parent: QWidget | None = None) -> None:
@@ -114,7 +104,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         form = QFormLayout(box)
         self._mode_combo = QComboBox()
         for mode in MODES:
-            self._mode_combo.addItem(_MODE_LABELS[mode], mode)
+            self._mode_combo.addItem(variation_constants.MODE_LABELS[mode], mode)
         self._mode_combo.setToolTip(
             "Which pipeline slice each run exercises: full delivery → "
             "impact → flight, the double-pendulum swing source feeding it, "
@@ -124,7 +114,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         form.addRow("Pipeline", self._mode_combo)
 
         self._base_combo = QComboBox()
-        self._base_combo.addItems(list(_BASE_SOURCES))
+        self._base_combo.addItems(list(variation_constants.BASE_SOURCES))
         self._base_combo.setToolTip(
             "Base values the noise varies about: the shared registry "
             "defaults, or the current explorer scenario (clubhead speed "
@@ -142,7 +132,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         form.addRow("Flight Model", self._flight_combo)
 
         self._runs_spin = QSpinBox()
-        self._runs_spin.setRange(2, _MAX_RUNS)
+        self._runs_spin.setRange(2, variation_constants.MAX_RUNS)
         self._runs_spin.setValue(200)
         self._runs_spin.setToolTip(
             "Monte-Carlo runs per study. 100-500 resolves dispersion "

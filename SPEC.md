@@ -44,6 +44,9 @@ review; only the format-repair and handoff ancestry are added.
 PR #4400's exact-head quality gate identified a formatting-only defect in its
 new workflow test. Version 1.16.32 records the mechanical Ruff format repair;
 runtime behavior, public contracts, and scientific semantics are unchanged.
+The same follow-up restores the 500-line changed-file budget by extracting
+immutable UI labels and bounds to internal `variation_constants.py`; public
+behavior, contracts, and scientific semantics remain unchanged.
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
