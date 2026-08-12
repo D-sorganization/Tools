@@ -1,5 +1,22 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4369 execution qualification child
+
+Local branch `codex/4369-execution-qualification` starts exactly from
+published PR #4370 head `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`.
+It binds exact callback-free regional options, all skid/roll settings, executor
+revision, source plan, and a separately hashed launch-origin plan. The base,
+every overlay, and axis origin receive one identical tee/ball-center
+translation; provenance and digests are recomputed in Python and TypeScript.
+
+V1 now truthfully contains only `max_trials`, rejecting unsupported
+parallelism, timeout, and configurable fail-fast fields. The teed-driver golden
+remains serialization evidence; there is no physics invocation or Run path.
+Local evidence passed 243 Python regressions, 35 focused Python tests, all 804
+React tests, MyPy, Ruff, TypeScript, ESLint, production build, manifest, and
+module gates. Result binding, in-flight cancellation, controllers, protected
+integration, and release remain open.
+
 ## 2026-08-11 local #4369 typed validator failure boundary
 
 Stacked from exact published PR #4370 head

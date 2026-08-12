@@ -8,19 +8,27 @@ from typing import Any, cast
 
 from rate_of_closure.application._regional_ground_execution_job_values import (
     MAX_CAPTURE_SPEED_M_S,
-    MAX_EXECUTION_TIMEOUT_S,
     FlightExecutionInput,
     FlightLaunchInput,
     GroundExecutionOptions,
     canonical_flight_result_sha256,
     canonical_flight_trajectory_sha256,
-    canonical_text,
     digest,
-    integer,
     positive,
     sha256,
 )
+from rate_of_closure.application._regional_ground_execution_physics import (
+    regional_execution_options_from_dict,
+    regional_execution_options_to_dict,
+)
+from rate_of_closure.application._regional_ground_execution_transfer import (
+    transfer_from_dict,
+    transfer_payload,
+)
 from rate_of_closure.application._workspace_validation import exact_mapping, stable_id
+from rate_of_closure.application.regional_ground_execution_qualification import (
+    qualify_regional_plan_for_launch,
+)
 from rate_of_closure.application.regional_ground_variation_request import (
     GroundRegionalVariationRequest,
     regional_ground_variation_request_from_json,
@@ -30,16 +38,18 @@ from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_jso
 from shared.python.swing_sim.flight import (
     FlightGroundTransferSettings,
     LaunchConditions,
-    launch_relative_surface,
 )
 from shared.python.swing_sim.ground import (
-    GroundCalibration,
     GroundProvenance,
-    GroundSurfaceProfile,
+    GroundRegionalMaterialPlanRequest,
+    RegionalGroundExecutionOptions,
 )
 from shared.python.swing_sim.ground.contract_wire import (
     record_from_dict,
     record_to_dict,
+)
+from shared.python.swing_sim.ground.regional_plan_records import (
+    regional_plan_request_sha256,
 )
 from shared.python.swing_sim.ground.strict_json import strict_json_object
 
@@ -59,92 +69,15 @@ _ROOT_FIELDS = frozenset(
         "transfer",
         "capture_speed_m_s",
         "execution_options",
+        "regional_execution_options",
+        "qualified_regional_plan",
+        "qualified_plan_sha256",
         "variation_request",
         "input_sha256",
         "provenance",
         "job_sha256",
     }
 )
-_TRANSFER_FIELDS = frozenset(
-    {
-        "request_id",
-        "surface",
-        "calibration",
-        "provenance",
-        "max_time_s",
-        "output_interval_s",
-        "max_events",
-        "rotational_inertia_factor",
-        "surface_sha256",
-        "settings_sha256",
-    }
-)
-
-
-def _transfer_payload(settings: FlightGroundTransferSettings) -> dict[str, Any]:
-    base = {
-        "request_id": settings.request_id,
-        "surface": record_to_dict(settings.surface),
-        "calibration": record_to_dict(settings.calibration),
-        "provenance": record_to_dict(settings.provenance),
-        "max_time_s": settings.max_time_s,
-        "output_interval_s": settings.output_interval_s,
-        "max_events": settings.max_events,
-        "rotational_inertia_factor": settings.rotational_inertia_factor,
-    }
-    return {
-        **base,
-        "surface_sha256": sha256(base["surface"]),
-        "settings_sha256": sha256(base),
-    }
-
-
-def _parse_transfer_records(
-    data: Any,
-) -> tuple[GroundSurfaceProfile, GroundCalibration, GroundProvenance]:
-    return (
-        cast(
-            GroundSurfaceProfile,
-            record_from_dict(GroundSurfaceProfile, data["surface"]),
-        ),
-        cast(
-            GroundCalibration,
-            record_from_dict(GroundCalibration, data["calibration"]),
-        ),
-        cast(
-            GroundProvenance,
-            record_from_dict(GroundProvenance, data["provenance"]),
-        ),
-    )
-
-
-def _transfer_from_dict(value: object) -> FlightGroundTransferSettings:
-    data = exact_mapping(value, _TRANSFER_FIELDS, "transfer")
-    surface, calibration, provenance = _parse_transfer_records(data)
-    max_time_s = positive(
-        data["max_time_s"], "transfer max_time_s", MAX_EXECUTION_TIMEOUT_S
-    )
-    output_interval_s = positive(
-        data["output_interval_s"],
-        "transfer output_interval_s",
-        max_time_s,
-    )
-    settings = FlightGroundTransferSettings(
-        canonical_text(data["request_id"], "transfer request_id"),
-        surface,
-        calibration,
-        provenance,
-        max_time_s,
-        output_interval_s,
-        integer(data["max_events"], "transfer max_events", 1, 10_000),
-        positive(data["rotational_inertia_factor"], "rotational_inertia_factor", 1.0),
-    )
-    expected = _transfer_payload(settings)
-    if data["surface_sha256"] != expected["surface_sha256"]:
-        raise ValueError("surface_sha256 must match the embedded surface authority")
-    if data["settings_sha256"] != expected["settings_sha256"]:
-        raise ValueError("settings_sha256 must match the transfer settings authority")
-    return settings
 
 
 def _variation_payload(request: GroundRegionalVariationRequest) -> dict[str, Any]:
@@ -165,6 +98,9 @@ class RegionalGroundExecutionJob:
     transfer: FlightGroundTransferSettings
     capture_speed_m_s: float
     execution_options: GroundExecutionOptions
+    regional_execution_options: RegionalGroundExecutionOptions
+    qualified_regional_plan: GroundRegionalMaterialPlanRequest
+    qualified_plan_sha256: str
     variation_request: GroundRegionalVariationRequest
     input_sha256: str
     provenance: GroundProvenance
@@ -190,6 +126,12 @@ class RegionalGroundExecutionJob:
             raise TypeError("transfer must be an exact FlightGroundTransferSettings")
         if type(self.execution_options) is not GroundExecutionOptions:
             raise TypeError("execution_options must be exact")
+        if type(self.regional_execution_options) is not RegionalGroundExecutionOptions:
+            raise TypeError("regional_execution_options must be exact")
+        regional_execution_options_to_dict(self.regional_execution_options)
+        if type(self.qualified_regional_plan) is not GroundRegionalMaterialPlanRequest:
+            raise TypeError("qualified_regional_plan must be exact")
+        digest(self.qualified_plan_sha256, "qualified_plan_sha256")
         if type(self.variation_request) is not GroundRegionalVariationRequest:
             raise TypeError("variation_request must be exact")
         positive(self.capture_speed_m_s, "capture_speed_m_s", MAX_CAPTURE_SPEED_M_S)
@@ -201,29 +143,37 @@ class RegionalGroundExecutionJob:
         request = self.variation_request
         if options.max_trials != request.plan.n_runs:
             raise ValueError("max_trials must equal variation request n_runs")
-        if options.max_parallelism > options.max_trials:
-            raise ValueError("max_parallelism must not exceed max_trials")
         if self.flight.model_id != request.plan.flight_model:
             raise ValueError(
                 "flight model_id must match variation request flight_model"
             )
-        expected_surface = launch_relative_surface(
+        if request.regional_plan.base_surface != self.transfer.surface:
+            raise ValueError("source regional base surface must match transfer surface")
+        expected_plan = qualify_regional_plan_for_launch(
+            request.regional_plan,
+            self.launch.launch,
             self.transfer.surface,
-            self.launch.launch.ball_radius,
-            self.launch.ball_setup,
+            source_revision=self.regional_execution_options.source_revision,
         )
-        if request.regional_plan.base_surface != expected_surface:
+        if self.qualified_regional_plan != expected_plan:
             raise ValueError(
-                "regional base surface must match launch-relative transfer surface"
+                "qualified regional plan must match launch-origin translation"
             )
+        if self.qualified_plan_sha256 != regional_plan_request_sha256(expected_plan):
+            raise ValueError("qualified_plan_sha256 must match the qualified plan")
 
     def _inputs(self) -> dict[str, Any]:
         return {
             "launch": self.launch.to_dict(),
             "flight": self.flight.to_dict(),
-            "transfer": _transfer_payload(self.transfer),
+            "transfer": transfer_payload(self.transfer),
             "capture_speed_m_s": self.capture_speed_m_s,
             "execution_options": self.execution_options.to_dict(),
+            "regional_execution_options": regional_execution_options_to_dict(
+                self.regional_execution_options
+            ),
+            "qualified_regional_plan": self.qualified_regional_plan.to_dict(),
+            "qualified_plan_sha256": self.qualified_plan_sha256,
             "variation_request": _variation_payload(self.variation_request),
         }
 
@@ -268,6 +218,9 @@ def _unchecked_job(
     transfer: FlightGroundTransferSettings,
     capture_speed_m_s: float,
     execution_options: GroundExecutionOptions,
+    regional_execution_options: RegionalGroundExecutionOptions,
+    qualified_regional_plan: GroundRegionalMaterialPlanRequest,
+    qualified_plan_sha256: str,
     variation_request: GroundRegionalVariationRequest,
     provenance: GroundProvenance,
 ) -> RegionalGroundExecutionJob:
@@ -287,6 +240,7 @@ def build_regional_ground_execution_job(
     transfer: FlightGroundTransferSettings,
     capture_speed_m_s: float,
     execution_options: GroundExecutionOptions,
+    regional_execution_options: RegionalGroundExecutionOptions,
     variation_request: GroundRegionalVariationRequest,
     producer: str,
     producer_version: str,
@@ -294,6 +248,12 @@ def build_regional_ground_execution_job(
 ) -> RegionalGroundExecutionJob:
     """Build a job and derive both canonical identities without physics."""
     placeholder = "0" * 64
+    qualified_plan = qualify_regional_plan_for_launch(
+        variation_request.regional_plan,
+        launch,
+        transfer.surface,
+        source_revision=regional_execution_options.source_revision,
+    )
     job = _unchecked_job(
         job_id=job_id,
         launch=FlightLaunchInput(launch),
@@ -301,6 +261,9 @@ def build_regional_ground_execution_job(
         transfer=transfer,
         capture_speed_m_s=capture_speed_m_s,
         execution_options=execution_options,
+        regional_execution_options=regional_execution_options,
+        qualified_regional_plan=qualified_plan,
+        qualified_plan_sha256=regional_plan_request_sha256(qualified_plan),
         variation_request=variation_request,
         provenance=GroundProvenance(
             producer, producer_version, source_revision, placeholder
@@ -351,9 +314,12 @@ def regional_ground_execution_job_from_json(text: str) -> RegionalGroundExecutio
         stable_id(data["job_id"], "job_id"),
         FlightLaunchInput.from_dict(data["launch"]),
         FlightExecutionInput.from_dict(data["flight"]),
-        _transfer_from_dict(data["transfer"]),
+        transfer_from_dict(data["transfer"]),
         positive(data["capture_speed_m_s"], "capture_speed_m_s", MAX_CAPTURE_SPEED_M_S),
         GroundExecutionOptions.from_dict(data["execution_options"]),
+        regional_execution_options_from_dict(data["regional_execution_options"]),
+        GroundRegionalMaterialPlanRequest.from_dict(data["qualified_regional_plan"]),
+        digest(data["qualified_plan_sha256"], "qualified_plan_sha256"),
         regional_ground_variation_request_from_json(variation_text),
         digest(data["input_sha256"], "input_sha256"),
         cast(GroundProvenance, record_from_dict(GroundProvenance, data["provenance"])),

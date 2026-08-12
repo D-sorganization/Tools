@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.66                                    |
-| **Spec Version**        | 1.14.66                                    |
+| **Current Version**     | 1.14.67                                    |
+| **Spec Version**        | 1.14.67                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3218,6 +3218,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.67 | feat(ground-study, #4369): qualify execution jobs with exact physical regional/skid-roll settings, executor revision, and recomputable source-to-launch-origin plan translation; expose only implemented serial fail-fast max-trials orchestration. |
 | 2026-08-11 | 1.14.66 | fix(ground-study, #4369): retain the authenticated loopback authority readiness contract while replacing generic URL opening with an explicit fixed-host HTTP connection for hosted Bandit B310 compliance. |
 | 2026-08-11 | 1.14.65 | fix(ground-study, #4369): make seeded regional-ground outcome validation a typed terminal failure stage; retain original exception chaining and accepted-trial counts, expose no partial rows or dataset, and preserve successful scalar-ensemble bytes. |
 | 2026-08-11 | 1.14.64 | feat(ground-study, #4369): add an isolated authenticated loopback authority process, server-side Vite token proxy, and strict fail-closed Python/React capability contract while advertising regional-ground execution as unavailable until the qualified job authority and matched controllers exist. |

@@ -1,5 +1,22 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 physical and launch-origin job qualification
+
+From exact PR #4370 head `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`,
+the execution job now embeds exact callback-free regional options, every
+`SkidRollSettings` field, executor revision, source plan, and a separately
+digested launch-origin execution plan. A pure qualifier translates the base,
+every overlay, and axis origin together and rebinds provenance to the source
+plan, launch, transfer surface, ball radius, and ball setup. Matched Python and
+React validators recompute this evidence.
+
+V1 retains only implemented serial fail-fast `max_trials` and rejects false
+parallelism, timeout, and configurable fail-fast claims. Local gates passed
+243 Python regressions, 35 focused Python tests, all 804 React tests, static
+analysis, production build, manifest, and module budgets. Physics invocation,
+result binding, in-flight cancel, controllers, protected integration, and
+release remain open.
+
 ## 2026-08-11 local #4369 typed validator failure boundary
 
 Stacked from exact published PR #4370 head
