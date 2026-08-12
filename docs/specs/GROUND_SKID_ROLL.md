@@ -281,6 +281,27 @@ stores canonical job, status, and complete-result bytes in a versioned
 SQLite/WAL database under a process-lifetime lock, with independent content
 digests, integrity/schema/size checks, and oldest-first bounded retention.
 
+On Windows, the durable state root is supported only on a fixed local NTFS
+volume that advertises persistent ACLs and named streams. The root and each
+SQLite, WAL, SHM, journal, and lock artifact have a protected DACL containing
+exactly full-control allow entries for the current token user, SYSTEM, and
+Builtin Administrators. Process-lifetime handles retain every traversed
+ancestor without delete sharing, while root admission rejects reparse points,
+hard links, alternate streams, unexpected entries, and identity substitution.
+Existing broad ACLs migrate in place, with reverse-order rollback on failure.
+Errors expose only a stable state-security category and never the state path.
+New roots are owned by the current token user; an existing owner mismatch is
+rejected and is never migrated through an elevated owner-changing operation.
+
+Authority state is retained across normal shutdown, restart, upgrade, and
+package uninstall; job rows remain bounded by the existing oldest-first
+terminal-retention contract. This version does not automatically purge user
+state. Explicit deletion is an out-of-band user action allowed only after all
+authority processes stop. The ACL boundary does not protect against the same
+user, Administrator, SYSTEM, offline disk access, or process injection, and it
+makes no installer-owned cleanup claim.
+
+
 Accepted transitions are durable before publication. A succeeded result
 survives process loss. Startup maps interrupted queued/running work to
 `execution_failed/authority_restart` and cancel-requested work to cancelled;

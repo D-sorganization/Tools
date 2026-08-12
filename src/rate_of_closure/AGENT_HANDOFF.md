@@ -1,5 +1,77 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-12 #4385 Windows authority-state security
+
+Branch `codex/4385-windows-state-security` is being implemented from
+`de673971bfae83a9d673bba4859def5322635af9`, an ancestor of the current Tools
+PR #4391 head `0de3de8a41c018aec03dead8371a1f3ec6e1912f`. It must follow #4391 by
+normal parent propagation before publication; do not rebase, force-push,
+retarget, or rewrite the shared browser branch. Human review is approved, but
+fresh protected CI, dependency order, and ordinary non-admin merge behavior
+remain mandatory.
+
+The Windows authority store now requires a named path on fixed local NTFS with
+persistent ACL and named-stream support. A process-lifetime native lease opens
+every ancestor without delete sharing, rejects reparse points, and pins volume
+and file identities. The dedicated root and every database, WAL, SHM, journal,
+and lock artifact use a protected DACL with exactly full-control allow ACEs for
+the current token user, SYSTEM, and Builtin Administrators. Existing broad
+DACLs migrate in place without replacing the directory or file; batch failure
+rolls changes back in reverse order and reports a distinct rollback-incomplete
+code if restoration cannot be proven. New roots are created with the current
+token user as owner; an existing owner mismatch is rejected rather than
+requiring elevated owner-changing authority.
+
+The boundary rejects UNC/non-fixed/non-NTFS storage, overlong or reserved
+components, alternate-data-stream syntax and planted named streams, junctions
+and symlinks, hard-linked files, unexpected root entries, type changes, and
+out-of-root paths. Stable typed diagnostics never include the sensitive path.
+SQLite temporary storage is memory-backed, and no-delete handles remain live
+for the root and durable artifacts; transient sidecar handles are released in a
+bounded order before SQLite shutdown.
+
+State retention is deliberate: normal shutdown, restart, upgrade, and package
+uninstall do not delete the per-user authority root. Terminal records remain
+subject to the existing oldest-first job bound. This slice adds no automatic or
+in-app destructive purge; explicit user removal is out of band and is safe only
+after every Rate of Closure authority process has stopped. The protection does
+not claim resistance to the same user, an elevated Administrator or SYSTEM,
+offline disk access, or a malicious process able to inject into this process.
+Installer-owned removal remains part of the still-open frozen-distribution
+work.
+
+A dedicated protected workflow targets only
+`[self-hosted, Windows, X64, d-sorg-windows-security]` for Python 3.11 and
+3.12. It performs credential-free exact-head checkout, requires the symlink
+adversarial case rather than accepting a skip, runs the native contracts,
+builds exact React assets and a wheel, then qualifies the clean installed wheel
+from an unrelated Unicode working directory. No credential, native state,
+database, browser profile, or raw diagnostic is uploaded. Do not route this
+gate to the shared ControlTower/MATLAB runner; absence of the dedicated
+restricted runner is an explicit release blocker, not permission to weaken the
+label contract.
+
+Local evidence on Windows is green: the final focused native,
+store/API/loopback/companion, and workflow suite passed 86 tests with four
+expected local symlink-privilege skips and the expected POSIX-mode skip. Ruff,
+format, YAML lint, and focused MyPy pass after excluding only the repository's
+pre-existing transitive unreachable-code diagnostic. The fully provisioned
+Rate of Closure suite reached 1,344 passes and seven expected skips; its one
+companion timeout passed serially and its sole deterministic tooltip failure
+reproduces unchanged on parent PR #4391. Fresh wheel installs on Python 3.11
+and 3.12 both proved installed-module isolation, exact private ACLs, schema v1,
+completed-result restart recovery, interrupted-job no-replay, and zero
+unrelated-CWD pollution. Wheel metadata and both installs prove
+`pywin32>=311` is a Windows base dependency; the existing
+`rate-of-closure-web` extra supplies the separate SciPy web runtime boundary.
+
+No campaign-manifest carrier is recorded in this implementation commit because
+#4385 has not yet been published as a PR and therefore has no exact remote head
+or protected evidence to record. Add that carrier and commit-bound evidence in
+the publication handoff commit. The system volume was nearly full during local
+qualification, so all disposable build/test environments were isolated on
+`D:`; this is local infrastructure context, not product evidence.
+
 ## 2026-08-12 #4380 production-browser qualification
 
 Branch `codex/4380-playwright-production-browser` was created at
