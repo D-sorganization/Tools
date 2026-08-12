@@ -21,6 +21,7 @@ const PYTHON_REASONS = [
 
 export type RegionalGroundAuthorityReason =
   | typeof PYTHON_REASONS[number]
+  | "static_inspection"
   | "authority_unreachable"
   | "authority_invalid_response";
 
@@ -59,6 +60,12 @@ export const qualifiedRegionalGroundAuthorityCapability = (
   reason_code: "qualified_execution_profile",
   detail: "Qualified Python regional-ground execution is available.",
 });
+
+export const staticInspectionRegionalGroundCapability = (
+): RegionalGroundAuthorityCapability => unavailableRegionalGroundAuthorityCapability(
+  "static_inspection",
+  "Static inspection mode — local Python execution is unavailable.",
+);
 
 /** Parse the exact discriminated v1 service-level capability. */
 export const parseRegionalGroundAuthorityCapability = (

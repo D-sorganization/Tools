@@ -1,5 +1,59 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-12 #4378 deterministic static-inspection distribution
+
+Branch `codex/4378-static-inspection-runtime` starts exactly from Tools PR
+#4376 head `d14ce6f8ef2696ccaa8971443fa4df7e8d52f21f` and must target
+`codex/4369-authority-restart-recovery`. Human review is approved; protected
+dependency order and ordinary non-admin merging remain mandatory.
+
+The built React application now enters explicit `static_inspection` mode. That
+mode publishes a stable false capability, performs zero authority queries, and
+keeps prepare/run/cancel/status/result/recovery controls disabled. Existing
+canonical import, validation, visualization, and evidence download remain local
+inspection features. A malicious or unrelated origin-root `/api` response
+cannot enable execution because the built App never delegates capability
+discovery to `fetch`.
+
+Browser bootstrap parses exactly one embedded JSON runtime descriptor before
+mounting the App and renders a local fail-closed error for malformed metadata.
+The separately packaged descriptor is the same manifest-hashed byte contract;
+Python readiness requires `static_inspection` and binds its release revision to
+the asset manifest.
+
+The Vite build emits no public source maps. A post-build Node contract writes a
+strict versioned runtime descriptor and a deterministic path-sorted asset
+manifest with exact byte sizes, SHA-256 digests, media types, non-executable
+flags, bounded totals, and explicit development-or-commit identity. It rejects
+unsupported files, ambiguous revisions, symlinks, case collisions, and
+post-manifest substitution. Python mirrors the exact manifest boundary,
+rejects duplicate JSON fields and unsafe inventories, verifies link/reparse,
+open-file identity, size, and digest constraints, and returns immutable bytes
+instead of filesystem paths that a future gateway could reopen.
+
+The root wheel includes only the declared built web resources under explicit
+package-data rules. Local evidence builds a 72-file wheel inventory (71 declared
+assets plus the manifest), excludes source maps, installs the exact wheel
+without dependencies into a clean temporary environment, and resolves the same
+71 immutable assets from package resources under an unrelated working
+directory. This is distribution evidence for static inspection only.
+
+The setuptools build hook refuses to include an existing web bundle unless an
+exact `ROC_RELEASE_REVISION` matches a clean checkout and the resolved bundle.
+The pinned-action distribution workflow rebuilds the exact PR head, runs the
+complete frontend gate, builds one wheel, verifies every wheel member, installs
+without dependencies, and resolves from an unrelated Unicode working
+directory. It also proves the intentional generic no-bundle wheel branch. A
+source distribution or generic wheel is not a qualified web distribution;
+exact-revision web wheels require the trusted clean Git build job.
+
+The production same-origin gateway, browser Playwright qualification, Windows
+authority-state ACL/reparse hardening, frozen web/PyQt artifacts, installers,
+signing, SBOM/attestation, calibrated or compiled physics, downstream parity,
+protected release, and issue/epic closure remain open under #4377 and
+#4379-#4385.
+
+
 ## 2026-08-12 #4369 durable loopback authority recovery
 
 Branch `codex/4369-authority-restart-recovery` starts exactly from approved

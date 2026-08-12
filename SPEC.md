@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.93                                    |
-| **Spec Version**        | 1.14.93                                    |
+| **Current Version**     | 1.14.94                                    |
+| **Spec Version**        | 1.14.94                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,33 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-12 Deterministic Static-Inspection Distribution
+
+- The production Vite build is an explicit network-silent static-inspection
+  surface. It never queries the local authority and cannot prepare, execute,
+  cancel, reconcile, or recover regional-ground jobs. Canonical local evidence
+  import, validation, visualization, and download remain available. Vite
+  development retains its existing authenticated local-authority proxy.
+- A strict runtime descriptor and deterministic asset manifest bind one
+  development-or-commit revision to a complete sorted inventory of bounded
+  regular assets, exact byte sizes, SHA-256 digests, closed media types, and
+  non-executable flags. Public source maps are not emitted.
+- Browser bootstrap consumes exactly one embedded copy of that descriptor
+  before mounting and fails closed locally if it is missing or malformed.
+  Python readiness requires the separately packaged manifest-hashed descriptor
+  and rejects mode or revision disagreement.
+- Python validates the same exact manifest, rejects duplicate fields, unsafe
+  paths, missing/unlisted/substituted/link/reparse assets, and returns immutable
+  verified bytes. A future server must not reopen the source paths.
+- Wheel package data contains the built static-inspection bundle only after its
+  explicit frontend build. Setuptools rejects a present bundle unless its
+  exact revision matches a clean checkout. The dedicated distribution workflow
+  builds the exact head, verifies every wheel member, and proves clean-install
+  resolution from an unrelated working directory.
+- A production same-origin companion, Playwright browser qualification,
+  Windows ACL/reparse privacy, frozen executables, installers, signing,
+  attestation/SBOM, and execution from a public static host remain non-goals.
 
 ### 2026-08-12 Durable Source-Loopback Authority Recovery
 
@@ -1731,7 +1758,7 @@ high_mm)` exposes the face-curvature normal (gradient of the
   difference between a launch monitor's reported geometric-center path and
   the impact point's actual delivery for a rotating clubhead (twist model,
   v(P) = v(ref) + omega x r). PyQt6 desktop app (animated 3D clubhead +
-  closure sweep, ThemedWindowMixin) plus a React/Vite/Tauri web clone in
+  closure sweep, ThemedWindowMixin) plus a React/Vite web clone in
   `src/rate_of_closure/web/` whose TypeScript model is pinned test-for-test
   against the Python implementation. Conventions and rate data follow the
   AffineDrift launch-monitor research: the standard launch-monitor frame
@@ -1744,7 +1771,9 @@ high_mm)` exposes the face-curvature normal (gradient of the
   explanations, and a Derivation & Traceability tab typesetting the full
   calculation with live numeric substitution (matplotlib mathtext on
   desktop, bundled KaTeX on web). `build_executable.py` packages the
-  desktop app with PyInstaller; the web app packages via Tauri.
+  historical desktop candidate with PyInstaller. The web app now builds a
+  manifest-bound static-inspection artifact; neither PyInstaller nor a local
+  production web companion is qualified by that historical release entry.
   Registered in `tool_manifest.yaml` (web port 5193); tests in
   `tests/rate_of_closure/`.
 

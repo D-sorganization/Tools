@@ -73,9 +73,13 @@ python src/rate_of_closure/launch_web.py
 cd src/rate_of_closure/web && npm ci && npm run dev
 ```
 
-The web app builds to a static bundle (`npm run build`) that can be hosted
-anywhere as a link. A Tauri desktop wrapper is not currently part of this
-tool; the supported desktop release is the PyQt6/PyInstaller application.
+The web app builds to a manifest-bound static-inspection bundle (`npm run
+build`) that can be hosted as a link. Static inspection performs no authority
+requests: Python-backed prepare/run/cancel/recover actions remain visibly
+unavailable while evidence import, visualization, and download remain local.
+A Tauri wrapper does not exist. The current PyInstaller script is a developer
+candidate, not a qualified standalone release; production companion and frozen
+qualification are tracked separately under Tools epic #4377.
 
 Both interfaces open with a generated driver head and its engineering CG
 target visible. The Simulation view runs immediately and supports manual,
@@ -87,11 +91,10 @@ degrees of spin-axis tilt) before committing on Enter or focus loss.
 
 ## Build a Standalone Executable
 
-Users can package the explorer and experiment without a Python
-environment:
+Developers can build candidate artifacts for qualification:
 
 ```bash
-# Desktop (PyQt6) — requires: pip install pyinstaller
+# Unqualified desktop candidate (PyQt6) — requires: pip install pyinstaller
 python src/rate_of_closure/build_executable.py            # one-folder app
 python src/rate_of_closure/build_executable.py --onefile  # single file
 
@@ -100,8 +103,13 @@ npm ci
 npm run build
 ```
 
-The PyInstaller output lands in `dist/RateOfClosureExplorer`; the static web
-bundle lands in `src/rate_of_closure/web/dist`.
+The unqualified PyInstaller output lands in `dist/RateOfClosureExplorer`. The
+static-inspection web bundle lands in `src/rate_of_closure/web/dist` with an
+exact runtime descriptor and SHA-256 asset manifest. Build the frontend before
+building a wheel. Set `ROC_RELEASE_REVISION` to the exact clean checkout commit;
+setuptools refuses present web assets with missing, development, dirty, or
+mismatched identity. The dedicated web-distribution workflow performs this
+sequence and a clean isolated-install verification automatically.
 
 ## Structure
 

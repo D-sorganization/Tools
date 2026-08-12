@@ -11,6 +11,10 @@ import { useRegionalGroundVariationWorkspace } from "./hooks/useRegionalGroundVa
 import { useRegionalGroundExecutionWorkspace } from "./hooks/useRegionalGroundExecutionWorkspace";
 import { HELP_TEXTS } from "./model/helptext";
 import { primaryViewLabel, type PrimaryViewId } from "./model/viewPreferences";
+import {
+  LOCAL_COMPANION_WEB_RUNTIME,
+  type WebRuntime,
+} from "./model/webRuntime";
 
 function AppHeader() {
   return (
@@ -62,7 +66,11 @@ function AppFooter() {
   );
 }
 
-export default function App() {
+export interface AppProps {
+  readonly runtime?: WebRuntime;
+}
+
+export default function App({ runtime = LOCAL_COMPANION_WEB_RUNTIME }: AppProps) {
   const workspace = useAppWorkspace();
   const model = useImpactAppModel();
   const regionalGroundVariation = useRegionalGroundVariationWorkspace();
@@ -73,6 +81,7 @@ export default function App() {
         variationRequestPort: regionalGroundVariation.requestPort,
       }), [model.flightPreparationLaunch, regionalGroundVariation.requestPort]);
   const regionalGroundExecution = useRegionalGroundExecutionWorkspace({
+    authority: { runtime },
     preparationSource,
   });
   const active = workspace.viewState.active;
