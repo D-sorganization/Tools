@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.86                                    |
-| **Spec Version**        | 1.14.86                                    |
+| **Current Version**     | 1.14.87                                    |
+| **Spec Version**        | 1.14.87                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3438,6 +3438,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.87 | fix(ground-study, #4369): complete the PyQt6 toolstrip host protocol with the four strict execution-job/result file callbacks required by its contextual command group, restoring the pinned MyPy 1.13 changed-source gate without changing runtime behavior. |
 | 2026-08-11 | 1.14.86 | fix(web-authority, #4369): preserve strict loopback URL and ephemeral-token validation while returning the mutable proxy adapter required by Vite 7, restoring the integrated authority-backed web launcher without exposing the token to browser code. |
 | 2026-08-11 | 1.14.85 | feat(ground-study, #4369): add matched strict imported-job execution workflows with App-owned React Run/Cancel/reconciliation and canonical downloads, a dedicated source-qualified PyQt6 Ground Study workspace with QThread lifecycle and atomic JSON/CSV persistence, shared contextual File commands, and explicit static/frozen/editor-construction/restart/downstream/release limitations. |
 | 2026-08-11 | 1.14.83 | feat(ground-study, #4369): deterministically regenerate profile-qualified job/status/result fixtures; execute qualified jobs through one reused flight solve and seeded regional ground with typed cancellation/failure and complete-only publication; add matched disabled PyQt6/React identity, progress, failure, and result presentation while retaining false default capability and open protected/downstream gates. |

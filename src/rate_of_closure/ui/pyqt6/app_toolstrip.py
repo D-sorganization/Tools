@@ -57,6 +57,18 @@ class ToolstripHost(Protocol):
     def save_regional_ground_variation_request_as(self) -> None:
         """Save the combined current request to a chosen native path."""
 
+    def open_regional_ground_execution_job(self) -> None:
+        """Open one strict regional-ground execution job."""
+
+    def save_regional_ground_execution_job_as(self) -> None:
+        """Save the accepted execution job to a chosen native path."""
+
+    def save_regional_ground_execution_result_as(self) -> None:
+        """Save the retained complete execution result."""
+
+    def export_regional_ground_execution_rows_csv(self) -> None:
+        """Export retained execution rows as lossless CSV."""
+
 
 class ModuleManagerHost(Protocol):
     """Workspace operations used by the module manager dialog."""

@@ -1,5 +1,14 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 PyQt6 toolstrip protocol correction
+
+Hosted PR #4373 quality-gate job 94021363392 found that the concrete main
+window implemented all regional-ground execution File callbacks while the
+`ToolstripHost` structural protocol declared only the variation callbacks.
+The protocol now includes Open Job, Save Job, Save Result, and Export Rows CSV;
+this is a typing-only correction with no runtime behavior change. Reproduce with
+the pinned MyPy 1.13 changed-source profile and `MYPYPATH=src:src/python/src`.
+
 ## 2026-08-11 #4369 integrated web-launch repair
 
 Physical launch verification found that Vite 7 mutates each proxy adapter with
