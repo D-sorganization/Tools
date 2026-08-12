@@ -1,7 +1,10 @@
 import { act, renderHook, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
-import type { RegionalGroundAuthorityCapability } from "../model/regionalGroundAuthority";
+import {
+  qualifiedRegionalGroundAuthorityCapability,
+  type RegionalGroundAuthorityCapability,
+} from "../model/regionalGroundAuthority";
 import { useRegionalGroundAuthority } from "./useRegionalGroundAuthority";
 
 const capability = (detail: string): RegionalGroundAuthorityCapability => ({
@@ -41,21 +44,24 @@ describe("regional-ground authority polling lifecycle", () => {
     });
   });
 
-  it("does not trust an injected executable capability claim", async () => {
-    const query = vi.fn().mockResolvedValue({
-      ...capability("Forged."),
-      available: true,
-      regional_ground_execution: true,
-    } as unknown as RegionalGroundAuthorityCapability);
+  it("enables submission only for exact qualified execution evidence", async () => {
+    const query = vi.fn().mockResolvedValue(
+      qualifiedRegionalGroundAuthorityCapability(),
+    );
     const { result } = renderHook(() => useRegionalGroundAuthority({
       query,
       pollIntervalMs: 1_000,
     }));
 
     await waitFor(() => expect(result.current.checking).toBe(false));
-    expect(result.current.capability.available).toBe(false);
-    expect(result.current.capability.reason_code).toBe("authority_unreachable");
-    expect(Object.values(result.current.controls).every((value) => !value)).toBe(true);
+    expect(result.current.capability.available).toBe(true);
+    expect(result.current.capability.reason_code).toBe("qualified_execution_profile");
+    expect(result.current.controls).toEqual({
+      submitEnabled: true,
+      statusEnabled: false,
+      cancelEnabled: false,
+      resultEnabled: false,
+    });
   });
 
   it("polls one request at a time and aborts the active request on cleanup", async () => {

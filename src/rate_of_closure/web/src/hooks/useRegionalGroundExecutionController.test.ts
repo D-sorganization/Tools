@@ -4,7 +4,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 
 import jobFixture from "../model/__fixtures__/regional_ground_execution_job_golden_v1.json";
 import resultFixture from "../model/__fixtures__/regional_ground_execution_result_golden_v1.json";
-import type { RegionalGroundAuthorityCapability } from "../model/regionalGroundAuthority";
+import {
+  qualifiedRegionalGroundAuthorityCapability,
+  type RegionalGroundAuthorityCapability,
+} from "../model/regionalGroundAuthority";
 import type {
   RegionalGroundAuthorityClient,
   RegionalGroundAuthorityJobStatus,
@@ -39,7 +42,7 @@ const status = (
   result_available: state === "succeeded",
   failure: state === "failed" ? { code: "execution_failed", stage: "executor" } : null,
 });
-const admittedForLifecycleTests = (): boolean => true;
+const qualified = qualifiedRegionalGroundAuthorityCapability();
 const deferred = <T,>() => {
   let resolve!: (value: T) => void;
   const promise = new Promise<T>((accept) => { resolve = accept; });
@@ -77,8 +80,7 @@ describe("regional-ground React execution controller", () => {
       createElement(StrictMode, null, children);
     const { result } = renderHook(() => useRegionalGroundExecutionController({
       client: authority,
-      capability: unavailable,
-      testOnlyAdmission: admittedForLifecycleTests,
+      capability: qualified,
     }), { wrapper });
 
     await act(async () => { await result.current.submit(job); });
@@ -97,9 +99,8 @@ describe("regional-ground React execution controller", () => {
     });
     const { result } = renderHook(() => useRegionalGroundExecutionController({
       client: authority,
-      capability: unavailable,
+      capability: qualified,
       pollIntervalMs: 250,
-      testOnlyAdmission: admittedForLifecycleTests,
     }));
 
     await act(async () => { await result.current.submit(job); });
@@ -132,9 +133,8 @@ describe("regional-ground React execution controller", () => {
     });
     const { result } = renderHook(() => useRegionalGroundExecutionController({
       client: authority,
-      capability: unavailable,
+      capability: qualified,
       pollIntervalMs: 250,
-      testOnlyAdmission: admittedForLifecycleTests,
     }));
 
     await act(async () => { await result.current.submit(job); });
@@ -155,8 +155,7 @@ describe("regional-ground React execution controller", () => {
     const authority = client({ submit: vi.fn().mockResolvedValue(status("failed", 1)) });
     const { result } = renderHook(() => useRegionalGroundExecutionController({
       client: authority,
-      capability: unavailable,
-      testOnlyAdmission: admittedForLifecycleTests,
+      capability: qualified,
     }));
 
     await act(async () => { await result.current.submit(job); });
@@ -179,9 +178,8 @@ describe("regional-ground React execution controller", () => {
     });
     const { result } = renderHook(() => useRegionalGroundExecutionController({
       client: authority,
-      capability: unavailable,
+      capability: qualified,
       pollIntervalMs: 250,
-      testOnlyAdmission: admittedForLifecycleTests,
     }));
 
     await act(async () => { await result.current.submit(job); });

@@ -1,5 +1,37 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 qualified headless authority admission
+
+The default environment factory now constructs one inseparable pair: the
+qualified production runner and the exact true/true service capability. Exact
+Python/TypeScript discriminants, capability/manager construction checks,
+authenticated bounded readiness parsing, and cooperative manager shutdown
+prevent false-ready and ready-without-runner states. The React controller uses
+the qualified production capability directly; the test-only admission seam is
+removed.
+
+Combined xdist execution may register the two documented ground-variable
+extensions before the shared registry contract test. That contract now pins
+the five built-in launch entries as an ordered prefix, eliminating test-order
+coupling without changing the registry or production variable definitions.
+
+Independent review reproduced and closed submit-versus-close and exceptional
+lifespan-exit races. Python and React now also share exact runtime reason,
+detail-length, media-type, and bounded-body capability validation.
+
+Complete local evidence passes 2,014 Python/PyQt/shared-simulation tests with
+one optional Rust-wheel parity skip and 860 React tests across 132 files. The
+pinned MyPy 1.13/Ruff 0.14.10 profiles, Ruff format, high-severity Bandit,
+TypeScript, zero-warning ESLint, 214-module production build, fixture,
+campaign-manifest, governance, and diff-hygiene gates pass as well.
+
+Do not mistake service readiness for an editor workflow. There is still no
+production execution-job constructor in either live client, the evidence
+presentations remain unmounted/disabled, static React has no backend, PyQt
+packaging has not qualified a Uvicorn helper, and job/result retention is not
+durable. Implement strict imported-job execution next and preserve every open
+security, persistence, compiled-parity, downstream, and protected-release gate.
+
 ## 2026-08-11 #4369 qualified fixture, runner, and matched presentation
 
 The canonical authority fixture family is now generated from registered-profile
@@ -10,9 +42,10 @@ unbound result. The real authenticated loopback success path is exercised.
 
 Python and TypeScript presentation models preserve exact identity, provenance,
 progress, cancellation, typed failure, and complete result evidence. PyQt6 is
-observer-only and React has no handlers; both controls are disabled from the
-false capability. Do not register the runner or promote capability without a
-separate protected, security-reviewed integration and downstream parity gate.
+observer-only and React has no handlers; at that earlier fixture slice both
+controls were disabled from the false capability. The newer headless admission
+supersedes only the service state; visible integration, protected evidence, and
+downstream parity remain mandatory.
 Consolidated evidence passes 2,004 Python/PyQt/shared-simulation and 858 React
 tests plus real-loopback, static, security, build, fixture, documentation,
 manifest, and diff gates. The optional Rust parity test is skipped because the
@@ -92,11 +125,11 @@ result.
 
 Every lifecycle request carries an abort signal. Run-generation and operation
 guards prevent stale publication after reset, cancellation, unmount, or request
-replacement, including React StrictMode's development effect cycle. The
-production capability remains false-only, so application controls stay
-disabled. The admission override is explicitly test-only. There is no visible
-UI, physical invocation, capability promotion, TypeScript physics, persistence,
-or release claim; keep #4369/#4273/#4267 open.
+replacement, including React StrictMode's development effect cycle. At that
+earlier controller slice production capability was false-only and the admission
+override was test-only. The newer headless admission removes that override but
+adds no visible UI, TypeScript physics, persistence, or release claim; keep
+#4369/#4273/#4267 open.
 
 TDD RED captured the absent hook and the StrictMode remount defect. Evidence
 passes 31 focused controller/client/capability tests, strict TypeScript,

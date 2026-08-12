@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import threading
+import time
 
 import pytest
 
+import rate_of_closure.web_authority.jobs as authority_jobs
 from rate_of_closure.application.regional_ground_execution_job import (
     RegionalGroundExecutionJob,
     build_regional_ground_execution_job,
@@ -71,6 +73,64 @@ def test_manager_rejects_submission_without_a_qualified_runner() -> None:
     with pytest.raises(AuthorityExecutionUnavailable):
         manager.submit(_job())
 
+    assert manager.retained_job_count == 0
+
+
+def test_manager_close_cancels_joins_and_rejects_new_work() -> None:
+    entered = threading.Event()
+
+    def runner(
+        job: RegionalGroundExecutionJob,
+        hooks: GroundRegionalVariationHooks,
+    ) -> RegionalGroundExecutionResult:
+        entered.set()
+        assert hooks.cancellation_requested is not None
+        while not hooks.cancellation_requested():
+            time.sleep(0.005)
+        raise GroundRegionalVariationCancelled(0, job.execution_options.max_trials)
+
+    manager = AuthorityJobManager(runner=runner)
+    submitted = manager.submit(_job())
+    assert entered.wait(timeout=2.0)
+
+    manager.close(timeout_s=2.0)
+
+    assert manager.execution_available is False
+    assert manager.status(submitted.job_id).status is AuthorityJobStatus.CANCELLED
+    with pytest.raises(AuthorityExecutionUnavailable):
+        manager.submit(_job("closed-manager-job"))
+
+
+def test_submission_cannot_start_a_worker_after_concurrent_close(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    runner_entered = threading.Event()
+
+    def runner(
+        job: RegionalGroundExecutionJob,
+        hooks: GroundRegionalVariationHooks,
+    ) -> RegionalGroundExecutionResult:
+        del hooks
+        runner_entered.set()
+        return _result(job)
+
+    manager = AuthorityJobManager(runner=runner)
+    real_thread = threading.Thread
+
+    def close_during_worker_construction(
+        *args: object, **kwargs: object
+    ) -> threading.Thread:
+        manager.close()
+        return real_thread(*args, **kwargs)
+
+    monkeypatch.setattr(
+        authority_jobs.threading, "Thread", close_during_worker_construction
+    )
+
+    with pytest.raises(AuthorityExecutionUnavailable, match="closed"):
+        manager.submit(_job())
+
+    assert runner_entered.is_set() is False
     assert manager.retained_job_count == 0
 
 

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import secrets
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from typing import Annotated
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
@@ -104,11 +106,23 @@ def create_authority_app(
     manager = AuthorityJobManager() if job_manager is None else job_manager
     if type(manager) is not AuthorityJobManager:
         raise TypeError("job_manager must be an exact AuthorityJobManager")
+    advertised = capability.to_wire()["regional_ground_execution"]
+    if advertised is not manager.execution_available:
+        raise ValueError("capability and job-manager runner availability must agree")
+
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        try:
+            yield
+        finally:
+            manager.close()
+
     app = FastAPI(
         title="Rate of Closure local model authority",
         docs_url=None,
         redoc_url=None,
         openapi_url=None,
+        lifespan=lifespan,
     )
 
     def authorize(

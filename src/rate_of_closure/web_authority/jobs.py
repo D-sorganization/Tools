@@ -93,6 +93,8 @@ class AuthorityJobManager:
         self._records: dict[str, _JobRecord] = {}
         self._terminal_order: deque[str] = deque()
         self._active_job_id: str | None = None
+        self._worker: threading.Thread | None = None
+        self._closed = False
         self._condition = threading.Condition(threading.RLock())
 
     @property
@@ -100,6 +102,27 @@ class AuthorityJobManager:
         """Return the bounded number of active plus retained terminal jobs."""
         with self._condition:
             return len(self._records)
+
+    @property
+    def execution_available(self) -> bool:
+        """Return whether this manager owns a callable execution runner."""
+        with self._condition:
+            return self._runner is not None and not self._closed
+
+    def close(self, timeout_s: float = 5.0) -> None:
+        """Cancel and join the owned worker before authority shutdown."""
+        if type(timeout_s) not in {int, float} or timeout_s < 0:
+            raise ValueError("timeout_s must be a nonnegative number")
+        with self._condition:
+            self._closed = True
+            active_id = self._active_job_id
+            if active_id is not None:
+                self._records[active_id].cancellation.set()
+            worker = self._worker
+        if worker is not None and worker is not threading.current_thread():
+            worker.join(float(timeout_s))
+            if worker.is_alive():
+                raise TimeoutError("authority job worker did not stop before timeout")
 
     def submit(self, job: RegionalGroundExecutionJob) -> AuthorityJobSnapshot:
         """Accept one exact job and start its injected runner on a daemon thread."""
@@ -109,7 +132,15 @@ class AuthorityJobManager:
         if self._runner is None:
             raise AuthorityExecutionUnavailable("qualified execution is unavailable")
         record = _JobRecord(job=job, cancellation=threading.Event())
+        worker = threading.Thread(
+            target=self._run,
+            args=(record,),
+            name="regional-ground-authority-job",
+            daemon=True,
+        )
         with self._condition:
+            if self._closed:
+                raise AuthorityExecutionUnavailable("authority manager is closed")
             if self._active_job_id is not None:
                 raise AuthorityJobConflict("one regional-ground job is already active")
             if job.job_id in self._records:
@@ -117,19 +148,14 @@ class AuthorityJobManager:
             self._records[job.job_id] = record
             self._active_job_id = job.job_id
             queued = self._snapshot(record)
-        worker = threading.Thread(
-            target=self._run,
-            args=(record,),
-            name="regional-ground-authority-job",
-            daemon=True,
-        )
-        try:
-            worker.start()
-        except Exception:
-            with self._condition:
+            self._worker = worker
+            try:
+                worker.start()
+            except Exception:
+                self._worker = None
                 self._records.pop(job.job_id, None)
                 self._active_job_id = None
-            raise
+                raise
         return queued
 
     def status(self, job_id: str) -> AuthorityJobSnapshot:

@@ -43,8 +43,10 @@ const initialCapability = (): RegionalGroundAuthorityCapability =>
     "Local Python execution authority has not been checked.",
   );
 
-const disabledControls = (): RegionalGroundExecutionControlState => Object.freeze({
-  submitEnabled: false,
+const controlsFor = (
+  capability: RegionalGroundAuthorityCapability,
+): RegionalGroundExecutionControlState => Object.freeze({
+  submitEnabled: capability.available && capability.regional_ground_execution,
   statusEnabled: false,
   cancelEnabled: false,
   resultEnabled: false,
@@ -90,6 +92,6 @@ export function useRegionalGroundAuthority(
     };
   }, [interval, query]);
 
-  const controls = useMemo(disabledControls, [capability]);
+  const controls = useMemo(() => controlsFor(capability), [capability]);
   return { capability, checking, controls };
 }

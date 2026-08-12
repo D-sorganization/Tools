@@ -16,6 +16,7 @@ from types import MappingProxyType
 from typing import Final
 
 from .api import CAPABILITY_PATH
+from .capability import AuthorityCapability
 
 LOOPBACK_HOST: Final = "127.0.0.1"
 AUTHORITY_URL_ENV: Final = "ROC_AUTHORITY_URL"
@@ -138,8 +139,14 @@ def _is_ready(runtime: AuthorityRuntime) -> bool:
             CAPABILITY_PATH,
             headers={"Authorization": f"Bearer {runtime.token}"},
         )
-        return connection.getresponse().status == 200
-    except (OSError, TimeoutError):
+        response = connection.getresponse()
+        if response.status != 200:
+            return False
+        if response.headers.get_content_type() != "application/json":
+            return False
+        capability = AuthorityCapability.from_json(response.read(4_097).decode("utf-8"))
+        return capability.available and capability.regional_ground_execution
+    except (OSError, TimeoutError, UnicodeDecodeError, TypeError, ValueError):
         return False
     finally:
         connection.close()

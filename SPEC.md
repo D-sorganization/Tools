@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.83                                    |
-| **Spec Version**        | 1.14.83                                    |
+| **Current Version**     | 1.14.84                                    |
+| **Spec Version**        | 1.14.84                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -46,6 +46,36 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-08-11 Qualified Local-Authority Admission
+
+- The isolated default Python authority now atomically registers the qualified
+  regional-ground production runner and advertises one strict service-level
+  ready capability. Available and executable flags must agree with the reason
+  discriminant and with the attached job manager; split-brain capability and
+  runner configurations fail during application construction.
+- Readiness requires an authenticated, bounded, duplicate-safe, exact v1
+  capability response rather than any HTTP 200. The in-memory manager owns its
+  worker, cooperatively cancels and joins it during application shutdown, and
+  rejects work after close.
+- React accepts the exact qualified capability and removes the test-only
+  production-admission bypass. The headless controller can therefore execute a
+  separately supplied strict job through Python; no browser physics is added.
+- The shared variation registry contract pins its five built-in launch entries
+  as an ordered prefix so a previously exercised documented extension seam
+  cannot make the combined parallel test suite depend on worker order.
+- Independent review reproduced and closed submit-versus-close and exceptional
+  lifespan-exit races. Python and React share exact runtime reason,
+  detail-length, media-type, and bounded-body capability validation.
+- Complete local qualification passes 2,014 Python/PyQt/shared-simulation
+  tests with one optional Rust-wheel parity skip and 860 React tests across
+  132 files, plus pinned type/lint/format/security checks, the 214-module
+  production build, deterministic fixtures, manifest, governance, and diff
+  gates.
+- Visible Run/Cancel controls remain unmounted or disabled because neither live
+  client yet constructs a complete execution job from current editor state.
+  Static hosting, restart persistence, direct editor handoff, packaged-helper
+  qualification, compiled/downstream parity, and protected release remain open.
+
 ### 2026-08-11 Qualified Regional-Ground Execution and Matched Presentation
 
 - One deterministic generator recomputes the canonical job's flight evidence
@@ -60,10 +90,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   model, producer, source revision, input digest, progress, cancellation,
   stable failure stage, and result digest. Both continue to display disabled
   Run and Cancel controls sourced from the false production capability.
-- The default server still injects no runner and advertises execution as
-  unavailable. This slice proves a qualified executor and real-loopback success
-  path without promoting production capability, exposing a runnable UI, or
-  claiming protected release/downstream parity.
+- That earlier slice proved the qualified executor and real-loopback success
+  path while leaving the default server unavailable. The newer admission slice
+  above promotes only the headless local service; it still exposes no runnable
+  editor surface or protected release/downstream-parity claim.
 - Consolidated evidence passes 2,004 Python/PyQt/shared-simulation tests and
   858 React tests. The optional Rust parity test remains skipped because the
   local interpreter has no `swing_core` wheel; no compiled-runtime claim is
@@ -82,10 +112,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   or a cancellation-only non-physical runner. The default production factory,
   command shape, loopback host, environment-only token, and lifecycle ownership
   remain unchanged.
-- Capability remains false-only and the submitter factory still returns no
-  production adapter. These tests execute no flight or ground physics, fabricate
-  no successful result, add no UI control, and establish no physical-model,
-  protected-carrier, downstream-parity, or release claim.
+- At that earlier loopback-only slice capability was false and the submitter
+  factory returned no production adapter. The newer headless admission does not
+  add a visible UI control or establish a protected-carrier,
+  downstream-parity, or release claim.
 ### 2026-08-11 Versioned Flight Execution-Profile Registry
 
 - The application registry maps the exact `waterloo_penner` model ID and
@@ -122,11 +152,11 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - Cancellation delegates to the existing POST-cancel client. A result is fetched
   only after an exact succeeded status and is published only after the client has
   validated the complete envelope against the originating job.
-- The only production capability remains the exact false-only contract, so the
-  controller's submit/status/cancel/result controls remain disabled by default.
-  A clearly named injection seam exists only to exercise lifecycle behavior in
-  unit tests. This slice adds no visible controls, capability promotion,
-  TypeScript physics, qualified runner, persistence, or release claim.
+- In this earlier controller-only slice, production capability was an exact
+  false-only contract and a named injection seam exercised lifecycle behavior
+  in unit tests. The newer admission slice removes that seam and qualifies only
+  the headless local service; visible controls, TypeScript physics, persistence,
+  and release remain absent.
 
 ### 2026-08-11 Canonical Regional-Ground Authority Status Wire
 
@@ -144,8 +174,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   case byte-for-byte and shares the same bounded JSON entry point, preventing
   server construction and client parsing from drifting independently.
 - This contract performs no physics, transport, persistence, UI wiring,
-  capability promotion, or execution. Production capability remains false and
-  every React execution control remains disabled.
+  capability promotion, or execution. At that contract-only slice production
+  capability was false; the newer headless admission does not mount visible
+  React execution controls.
 
 ### 2026-08-11 Regional-Ground Production-Runner Preflight
 
@@ -176,10 +207,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - The transport is fixed to the runtime-owned loopback host, port, and bearer
   token, rejects ambiguous paths and encoded/oversized responses, bounds each
   request, and closes independently of the owned authority process.
-- The adapter remains unconstructed and unregistered while the exact authority
-  capability is false. This slice adds no widgets, visible controls, physical
-  runner, physics or qualification claim, persistence, protected carrier, or
-  release evidence.
+- The adapter remains unconstructed and unregistered in the visible PyQt
+  workflow. Although the isolated service capability is now qualified for
+  headless use, this adapter slice adds no widgets, visible controls,
+  persistence, protected carrier, or release evidence.
 
 ### 2026-08-11 React Regional-Ground Authority Client Contracts
 

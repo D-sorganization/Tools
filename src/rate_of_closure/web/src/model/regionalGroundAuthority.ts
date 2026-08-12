@@ -10,12 +10,13 @@ export const REGIONAL_GROUND_AUTHORITY_CAPABILITY_PATH =
 const AUTHORITY_ID = "rate-of-closure-python-authority";
 const AUTHORITY_VERSION = "1";
 const MAX_CAPABILITY_BYTES = 4_096;
+const MAX_CAPABILITY_DETAIL_LENGTH = 240;
 const FIELDS = [
   "schema_version", "authority_id", "authority_version", "available",
   "regional_ground_execution", "reason_code", "detail",
 ] as const;
 const PYTHON_REASONS = [
-  "execution_profile_unqualified", "runner_not_started",
+  "qualified_execution_profile", "execution_profile_unqualified", "runner_not_started",
 ] as const;
 
 export type RegionalGroundAuthorityReason =
@@ -27,8 +28,8 @@ export interface RegionalGroundAuthorityCapability {
   readonly schema_version: typeof REGIONAL_GROUND_AUTHORITY_CAPABILITY_SCHEMA;
   readonly authority_id: typeof AUTHORITY_ID;
   readonly authority_version: typeof AUTHORITY_VERSION;
-  readonly available: false;
-  readonly regional_ground_execution: false;
+  readonly available: boolean;
+  readonly regional_ground_execution: boolean;
   readonly reason_code: RegionalGroundAuthorityReason;
   readonly detail: string;
 }
@@ -48,7 +49,18 @@ export const unavailableRegionalGroundAuthorityCapability = (
   detail,
 });
 
-/** Parse the exact v1 capability. Execution remains disabled in this slice. */
+export const qualifiedRegionalGroundAuthorityCapability = (
+): RegionalGroundAuthorityCapability => Object.freeze({
+  schema_version: REGIONAL_GROUND_AUTHORITY_CAPABILITY_SCHEMA,
+  authority_id: AUTHORITY_ID,
+  authority_version: AUTHORITY_VERSION,
+  available: true,
+  regional_ground_execution: true,
+  reason_code: "qualified_execution_profile",
+  detail: "Qualified Python regional-ground execution is available.",
+});
+
+/** Parse the exact discriminated v1 service-level capability. */
 export const parseRegionalGroundAuthorityCapability = (
   value: unknown,
 ): RegionalGroundAuthorityCapability => {
@@ -60,18 +72,32 @@ export const parseRegionalGroundAuthorityCapability = (
   if (item.authority_id !== AUTHORITY_ID || item.authority_version !== AUTHORITY_VERSION) {
     throw new RangeError("unsupported regional-ground authority identity");
   }
-  if (item.available !== false) throw new RangeError("authority availability is not qualified");
-  if (item.regional_ground_execution !== false) {
-    throw new RangeError("regional-ground execution is not qualified");
+  if (typeof item.available !== "boolean" || typeof item.regional_ground_execution !== "boolean") {
+    throw new TypeError("authority capability flags must be booleans");
   }
-  return unavailableRegionalGroundAuthorityCapability(
-    oneOf(item.reason_code, PYTHON_REASONS, "authority reason"),
-    text(item.detail, "authority detail"),
-  );
+  if (item.available !== item.regional_ground_execution) {
+    throw new RangeError("authority capability flags must be consistent");
+  }
+  const reason = oneOf(item.reason_code, PYTHON_REASONS, "authority reason");
+  const detail = text(item.detail, "authority detail");
+  if (detail.length > MAX_CAPABILITY_DETAIL_LENGTH) {
+    throw new RangeError("authority detail exceeds the v1 length bound");
+  }
+  const qualified = reason === "qualified_execution_profile";
+  if (item.available !== qualified) {
+    throw new RangeError("qualified authority reason and flags must agree");
+  }
+  return qualified
+    ? Object.freeze({ ...qualifiedRegionalGroundAuthorityCapability(), detail })
+    : unavailableRegionalGroundAuthorityCapability(reason, detail);
 };
 
 const readCapabilityResponse = async (response: Response): Promise<unknown> => {
   if (!response.ok) throw new Error("authority response was not successful");
+  const mediaType = response.headers.get("content-type")?.split(";", 1)[0].trim().toLowerCase();
+  if (mediaType !== "application/json") {
+    throw new TypeError("authority response must use application/json");
+  }
   const declaredLength = Number(response.headers.get("content-length") ?? "0");
   if (declaredLength > MAX_CAPABILITY_BYTES) throw new RangeError("capability response exceeds byte limit");
   const source = await response.text();

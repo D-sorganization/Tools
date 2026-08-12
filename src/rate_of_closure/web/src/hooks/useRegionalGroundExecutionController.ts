@@ -49,14 +49,10 @@ export interface RegionalGroundExecutionControllerState {
   readonly error: Error | null;
 }
 
-type TestOnlyAdmission = (capability: RegionalGroundAuthorityCapability) => boolean;
-
 export interface RegionalGroundExecutionControllerOptions {
   readonly client: RegionalGroundAuthorityClient;
   readonly capability: unknown;
   readonly pollIntervalMs?: number;
-  /** Unit-test seam only; production must omit this false-only admission override. */
-  readonly testOnlyAdmission?: TestOnlyAdmission;
 }
 
 export interface RegionalGroundExecutionController
@@ -77,7 +73,9 @@ const initialState = (): RegionalGroundExecutionControllerState => ({
   error: null,
 });
 
-const denyProductionAdmission: TestOnlyAdmission = () => false;
+const qualifiedForExecution = (
+  capability: RegionalGroundAuthorityCapability,
+): boolean => capability.available && capability.regional_ground_execution;
 
 const validateInterval = (value: number): number => {
   if (!Number.isSafeInteger(value) || value < MIN_POLL_INTERVAL_MS) {
@@ -106,7 +104,6 @@ export function useRegionalGroundExecutionController(
   const controller = useRef<AbortController>();
   const client = useRef(options.client);
   const capability = useRef(options.capability);
-  const admission = useRef(options.testOnlyAdmission ?? denyProductionAdmission);
   const pollInterval = useRef(interval);
   const job = useRef<RegionalGroundExecutionJob | null>(null);
   const processStatus = useRef<(
@@ -117,7 +114,6 @@ export function useRegionalGroundExecutionController(
 
   client.current = options.client;
   capability.current = options.capability;
-  admission.current = options.testOnlyAdmission ?? denyProductionAdmission;
   pollInterval.current = interval;
 
   const current = useCallback((run: number, request?: number): boolean =>
@@ -205,7 +201,7 @@ export function useRegionalGroundExecutionController(
   const submit = useCallback(async (source: RegionalGroundExecutionJob): Promise<void> => {
     if (active.current) throw new Error("a regional-ground authority job is already active");
     const exactCapability = parseRegionalGroundAuthorityCapability(capability.current);
-    if (!admission.current(exactCapability)) {
+    if (!qualifiedForExecution(exactCapability)) {
       throw new Error("regional-ground execution capability is unavailable");
     }
     const exactJob = parseRegionalGroundExecutionJob(source);
@@ -267,12 +263,13 @@ export function useRegionalGroundExecutionController(
 
   const admitted = useMemo(() => {
     try {
-      const currentAdmission = options.testOnlyAdmission ?? denyProductionAdmission;
-      return currentAdmission(parseRegionalGroundAuthorityCapability(options.capability));
+      return qualifiedForExecution(
+        parseRegionalGroundAuthorityCapability(options.capability),
+      );
     } catch {
       return false;
     }
-  }, [options.capability, options.testOnlyAdmission]);
+  }, [options.capability]);
   const controls = Object.freeze({
     submitEnabled: admitted && !active.current,
     statusEnabled: active.current,

@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   fetchRegionalGroundAuthorityCapability,
   parseRegionalGroundAuthorityCapability,
+  qualifiedRegionalGroundAuthorityCapability,
 } from "./regionalGroundAuthority";
 
 const unavailable = {
@@ -31,11 +32,27 @@ describe("regional-ground authority capability", () => {
     expect(() => parseRegionalGroundAuthorityCapability({
       ...unavailable,
       available: true,
-    })).toThrow(/availability/i);
+    })).toThrow(/consistent/i);
     expect(() => parseRegionalGroundAuthorityCapability({
       ...unavailable,
       regional_ground_execution: true,
-    })).toThrow(/not qualified/i);
+    })).toThrow(/consistent/i);
+  });
+
+  it("accepts only the exact internally-consistent qualified state", () => {
+    const qualified = qualifiedRegionalGroundAuthorityCapability();
+
+    expect(parseRegionalGroundAuthorityCapability(qualified)).toEqual(qualified);
+    expect(qualified.available).toBe(true);
+    expect(qualified.regional_ground_execution).toBe(true);
+    expect(() => parseRegionalGroundAuthorityCapability({
+      ...qualified,
+      reason_code: "runner_not_started",
+    })).toThrow(/qualified/i);
+    expect(() => parseRegionalGroundAuthorityCapability({
+      ...qualified,
+      detail: "x".repeat(241),
+    })).toThrow(/length/i);
   });
 
   it("returns a typed unavailable state when the local authority cannot be reached", async () => {
@@ -55,5 +72,21 @@ describe("regional-ground authority capability", () => {
     const result = await fetchRegionalGroundAuthorityCapability(fetcher);
 
     expect(result.reason_code).toBe("authority_invalid_response");
+  });
+
+  it("requires the Python capability media type", async () => {
+    const qualified = qualifiedRegionalGroundAuthorityCapability();
+    const wrongMedia = vi.fn().mockResolvedValue(new Response(
+      JSON.stringify(qualified),
+      { status: 200, headers: { "Content-Type": "text/plain" } },
+    ));
+    const missingMediaResponse = new Response(JSON.stringify(qualified), { status: 200 });
+    missingMediaResponse.headers.delete("content-type");
+    const missingMedia = vi.fn().mockResolvedValue(missingMediaResponse);
+
+    expect((await fetchRegionalGroundAuthorityCapability(wrongMedia)).reason_code)
+      .toBe("authority_invalid_response");
+    expect((await fetchRegionalGroundAuthorityCapability(missingMedia)).reason_code)
+      .toBe("authority_invalid_response");
   });
 });

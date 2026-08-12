@@ -1,5 +1,41 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4369 qualified headless authority admission
+
+The default loopback server now atomically binds the qualified production
+runner to an exact true/true service capability. Python and TypeScript reject
+split capability flags or mismatched reasons; FastAPI rejects capability/runner
+split-brain at construction; readiness parses the authenticated bounded exact
+document; and application shutdown cooperatively cancels and joins the owned
+worker. React production admission now trusts only that strict qualified
+capability and no longer uses the lifecycle-test bypass.
+
+The full combined suite exposed an order-dependent registry assertion after
+Rate tests registered the documented ground-variable extensions in the same
+xdist worker. The shared contract now pins the five built-in launch variables
+as an ordered prefix, preserving extension behavior and deterministic testing.
+
+Independent review reproduced and closed two shutdown races: submission can no
+longer start a worker after concurrent close, and exceptional FastAPI lifespan
+exit always closes the manager. Direct Python construction and React response
+handling now share exact reason, detail-length, media-type, and body bounds.
+
+Complete local qualification passes 2,014 Python/PyQt/shared-simulation tests
+with one optional Rust-wheel parity skip and 860 React tests across 132 files.
+Pinned MyPy 1.13 and Ruff 0.14.10, Ruff format, high-severity Bandit,
+TypeScript, zero-warning ESLint, the 214-module production build,
+deterministic fixture generation, campaign-manifest validation, repository
+governance, and diff-hygiene checks also pass.
+
+This is headless admission, not visible Run integration. Neither live client
+constructs a complete regional-ground execution job from current editor state,
+the matched presentation components remain unmounted/disabled, static hosting
+has no authority, and results are in-memory only. Next use strict imported-job
+Run/Cancel/save surfaces, then a Python-authoritative current-editor job
+preparation boundary. Keep direct editor execution, packaged-helper claims,
+persistence/recovery, compiled/downstream parity, release, #4369, #4273, and
+#4267 open.
+
 ## 2026-08-11 #4369 qualified fixture, runner, and matched presentation
 
 Starting from corrected published PR #4372 head
@@ -13,9 +49,11 @@ proves the successful submit/status/result path.
 
 Matched Python/TypeScript presentation models plus observer-only PyQt6 and
 handler-free React views expose exact job/model/provenance/digest and immutable
-progress/failure/result evidence with visibly disabled controls. The default
-server still registers no runner, capability remains false, and no runnable UI,
-protected release, persistence, compiled-runtime, or downstream claim is made.
+progress/failure/result evidence with visibly disabled controls. At that
+earlier fixture slice the default server registered no runner; the newer
+headless-admission section above supersedes that service state without adding a
+runnable UI, protected release, persistence, compiled-runtime, or downstream
+claim.
 The consolidated gate passes 2,004 Python/PyQt/shared-simulation tests and 858
 React tests plus the focused real-loopback, static, security, build,
 fixture-generation, documentation, manifest, and diff checks. One Rust parity
@@ -84,8 +122,8 @@ qualified boundary releases the physical flight result only when both job
 digests match. The current canonical fixture recomputes deterministically but
 its synthetic declared digests differ, so runner preflight reports
 `flight_evidence_mismatch`, completes zero trials, invokes no ground physics,
-and publishes no result. Production still injects no runner; capability and
-all client execution controls remain disabled. A new canonical fixture must be
+and publishes no result. At that earlier profile slice production injected no
+runner and all client execution controls were disabled. A canonical fixture was
 produced by the exact registered profile under a pinned numerical runtime
 before the physical runner can progress. Keep #4369/#4273/#4267 open.
 
@@ -106,10 +144,10 @@ only a succeeded job's complete job-bound result.
 
 All requests are abortable. Reset, cancellation, unmount, operation IDs, and
 run generations prevent obsolete status or result publication; a dedicated
-regression covers React StrictMode's development effect probe. Production
-admission remains false under the only valid capability. The named injected
-admission override is unit-test-only and must never be wired by application
-code. No visible control, capability promotion, TypeScript physics, qualified
+regression covers React StrictMode's development effect probe. At that earlier
+controller slice production admission was false and the named admission
+override was unit-test-only. The newer headless admission removes the override
+without adding a visible control, TypeScript physics, qualified
 runner, persistence, downstream parity, or issue completion is claimed.
 
 TDD RED first captured the missing hook, then a separate RED exposed the

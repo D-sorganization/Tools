@@ -43,7 +43,9 @@ from rate_of_closure.web_authority.api import (
     JOB_COLLECTION_PATH,
     create_authority_app,
 )
-from rate_of_closure.web_authority.capability import DEFAULT_UNAVAILABLE_CAPABILITY
+from rate_of_closure.web_authority.capability import (
+    QUALIFIED_EXECUTION_CAPABILITY,
+)
 from rate_of_closure.web_authority.jobs import AuthorityJobManager
 from rate_of_closure.web_authority.production_runner import (
     run_regional_ground_production_job,
@@ -69,6 +71,7 @@ def create_preflight_authority_app() -> FastAPI:
     """Build the real API with the production fail-closed preflight runner."""
     return create_authority_app(
         token=os.environ[_TOKEN_ENV],
+        capability=QUALIFIED_EXECUTION_CAPABILITY,
         job_manager=AuthorityJobManager(runner=run_regional_ground_production_job),
     )
 
@@ -89,6 +92,7 @@ def create_cancellable_authority_app() -> FastAPI:
     """Build the real API with a non-physical cancellation-only test runner."""
     return create_authority_app(
         token=os.environ[_TOKEN_ENV],
+        capability=QUALIFIED_EXECUTION_CAPABILITY,
         job_manager=AuthorityJobManager(runner=_wait_for_cancel),
     )
 
@@ -107,18 +111,39 @@ def _factory(name: str) -> str:
     return f"tests.rate_of_closure.test_regional_ground_real_loopback:{name}"
 
 
+def test_default_environment_factory_is_qualified_and_executes() -> None:
+    runtime = start_authority(source_root=_SOURCE_ROOT)
+    try:
+        transport = LoopbackAuthorityHttpTransport(runtime, timeout_s=1.0)
+        capability_response = transport.request("GET", CAPABILITY_PATH, None, 4_096)
+        assert json.loads(capability_response.body) == (
+            QUALIFIED_EXECUTION_CAPABILITY.to_wire()
+        )
+        submitter = regional_ground_submitter_if_available(
+            runtime=runtime,
+            capability=QUALIFIED_EXECUTION_CAPABILITY,
+            policy=_POLICY,
+        )
+        assert submitter is not None
+        result = submitter(_job(), GroundRegionalVariationHooks())
+        result.assert_matches_job(_job())
+        submitter.close()
+        transport.close()
+    finally:
+        runtime.close()
+
+
 def test_real_qualified_authority_auth_status_cancel_and_result_contracts(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     job = _job()
     with _authority(_factory("create_preflight_authority_app")) as runtime:
         assert runtime.token not in " ".join(runtime.process.args)
-        assert (
-            regional_ground_submitter_if_available(
-                runtime=runtime, capability=DEFAULT_UNAVAILABLE_CAPABILITY
-            )
-            is None
+        submitter_from_capability = regional_ground_submitter_if_available(
+            runtime=runtime, capability=QUALIFIED_EXECUTION_CAPABILITY
         )
+        assert submitter_from_capability is not None
+        submitter_from_capability.close()
 
         wrong_runtime = AuthorityRuntime(
             process=runtime.process,
@@ -132,6 +157,15 @@ def test_real_qualified_authority_auth_status_cancel_and_result_contracts(
         assert runtime.token not in caplog.text
         assert runtime.token.encode() not in unauthorized.body
         wrong.close()
+
+        capability_transport = LoopbackAuthorityHttpTransport(runtime, timeout_s=1.0)
+        capability_response = capability_transport.request(
+            "GET", CAPABILITY_PATH, None, 4_096
+        )
+        assert json.loads(capability_response.body) == (
+            QUALIFIED_EXECUTION_CAPABILITY.to_wire()
+        )
+        capability_transport.close()
 
         submitter = LoopbackRegionalGroundSubmitter(
             LoopbackAuthorityHttpTransport(runtime, timeout_s=1.0), policy=_POLICY

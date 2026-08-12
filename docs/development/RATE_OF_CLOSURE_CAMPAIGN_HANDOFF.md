@@ -1,5 +1,31 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 qualified headless authority admission
+
+- Default local authority construction now atomically couples the qualified
+  regional-ground runner with a strict ready capability; impossible flag,
+  reason, or manager/runner combinations fail closed.
+- Readiness validates the authenticated exact capability body, not status alone.
+  The manager cooperatively cancels and joins its one owned worker on shutdown.
+- React production admission accepts only the qualified v1 evidence and removes
+  its test-only bypass. No TypeScript physics or automatic execution is added.
+- The shared launch-registry test now pins built-ins as an ordered prefix, so
+  documented Rate extensions do not create xdist worker-order dependence.
+- Independent review reproduced and closed submit-versus-close and exceptional
+  lifespan-exit races. Python and React now share exact reason, detail-length,
+  media-type, and bounded-body capability validation.
+- Complete local qualification passes 2,014 Python/PyQt/shared-simulation
+  tests with one optional Rust-wheel parity skip and 860 React tests across
+  132 files. Pinned MyPy 1.13/Ruff 0.14.10, Ruff format, high-severity Bandit,
+  TypeScript, zero-warning ESLint, the 214-module production build,
+  deterministic fixtures, campaign-manifest, governance, and diff checks pass.
+- Visible controls remain unmounted/disabled until a strict imported job can be
+  selected, confirmed, run/cancelled, and explicitly saved. Direct editor
+  execution requires a later Python-authoritative job preparation boundary.
+- Static hosting, persistent recovery, packaged PyQt helper behavior, compiled
+  runtime parity, downstream parity, protected integration, and release remain
+  open. Do not close #4369, #4273, or #4267 from this headless service slice.
+
 ## 2026-08-11 #4369 qualified fixture, runner, and matched presentation
 
 - Exact published source head before composition:
@@ -10,9 +36,9 @@
   preserve cooperative cancellation, typed-null transfer rejection, typed
   terminal defects, and complete-only job-bound publication.
 - Matched PyQt6/React presentation shows exact identity/provenance/progress/
-  failure/result evidence but offers no executing handler. The default runner
-  remains unregistered, capability remains false, and visible Run/Cancel stays
-  disabled pending protected integration and an explicit promotion decision.
+  failure/result evidence but offers no executing handler. At that earlier
+  fixture slice the default runner was unregistered and capability was false;
+  visible Run/Cancel remains disabled after the newer headless admission.
 - Consolidated evidence: 2,004 Python/PyQt/shared-simulation tests and 858 React
   tests, real authenticated loopback success, deterministic fixture `--check`,
   Ruff/format, MyPy, Bandit, TypeScript, zero-warning ESLint, 214-module build,
@@ -38,9 +64,9 @@
   preflight, the authenticated PyQt client and real-process tests, a strict
   digest-qualified Waterloo/Penner execution profile, and an abortable
   one-active-job React controller.
-- The fixture's synthetic flight hashes fail deterministic recomputation, so
-  production still injects no runner, capability remains false, and no visible
-  execution control or ground-physics claim is promoted.
+- The fixture's synthetic flight hashes failed deterministic recomputation at
+  that earlier continuation head, so production injected no runner and
+  capability was false. No visible execution control is promoted now.
 - Consolidated evidence: 1,148 Python/PyQt and 854 React tests, real loopback,
   Ruff/format, focused MyPy, changed-file high-severity Bandit, TypeScript,
   zero-warning ESLint, 214-module build, docs/manifest/structural governance,
@@ -97,11 +123,11 @@
   Abort signals, operation IDs, and run generations suppress late publication
   after cancellation, reset, unmount, or a superseding request. React
   StrictMode remount behavior has a dedicated regression.
-- Production admission remains false and all controls stay disabled under the
-  only valid capability. A named admission override is confined to lifecycle
-  unit tests. No visible controls, capability promotion, qualified physical
-  runner, TypeScript physics, persistence, protected carrier, downstream
-  parity, or issue completion is included.
+- At that earlier controller slice production admission was false and a named
+  admission override was confined to lifecycle tests. The newer headless
+  admission removes the override without adding visible controls, a qualified
+  UI physical runner, TypeScript physics, persistence, protected carrier,
+  downstream parity, or issue completion.
 - TDD RED captured both the missing controller and the StrictMode lifecycle
   bug. Evidence passes 31 focused React authority tests, strict TypeScript,
   zero-warning ESLint, the 214-module production build, manifest validation and
@@ -135,9 +161,10 @@
 - Tests prove that preflight invokes neither flight nor regional-ground
   physics; the manager publishes only a generic `preflight` failure with zero
   completed trials and no result.
-- No profile is registered, the production factory still injects no runner,
-  capability remains unavailable, and no client control or release is
-  promoted. The next physical slice must qualify the exact versioned input,
+- At that earlier preflight slice no profile was registered, the production
+  factory injected no runner, and capability was unavailable. The later
+  headless service qualification does not promote a client control or release.
+  The next physical UI slice must preserve the exact versioned input,
   solver/surface, and digest-recomputation contract. Keep #4369/#4273/#4267
   open.
 - TDD RED captured the missing module. Evidence passes 7 focused runner tests,
@@ -158,8 +185,9 @@
 - Client failures after acceptance attempt one bounded best-effort cancel;
   callback/transport/status/result failures remain typed and non-secret, and
   cancellation, shutdown, stale status, or late success cannot publish data.
-- The current false capability returns no adapter, so production registers no
-  submitter. No controls, physical runner/model invocation, persistence,
+- At that earlier submitter slice the false capability returned no adapter.
+  The visible PyQt workflow still registers no submitter; no controls,
+  persistence,
   scientific claim, protected carrier, downstream parity, or release is added.
 - Code, tests, SPEC, manifest, and all handoffs commit atomically as `SELF`;
   exact local gate evidence follows.
@@ -235,10 +263,10 @@
 - Capability polling is one request at a time. Cleanup clears scheduled polls,
   aborts active fetches, and prevents an earlier effect from publishing stale
   capability state after its query changes or the component unmounts.
-- All submit/status/cancel/result flags remain disabled while the Python-owned
-  capability is false. The separately composed API exposes these routes, but
-  its production runner remains unavailable, so this is not Run integration
-  and adds no physics, qualified job execution, visible controls, persistence,
+- At that earlier client slice all submit/status/cancel/result flags were
+  disabled while the Python-owned capability was false. The newer qualified
+  headless API still is not visible Run integration and adds no browser
+  physics, visible controls, persistence,
   downstream parity, protected evidence, or issue completion.
 - Complete local evidence passes 1,061 Python/PyQt and 841 React tests across
   130 files, the 214-module production build, strict TypeScript, zero-warning

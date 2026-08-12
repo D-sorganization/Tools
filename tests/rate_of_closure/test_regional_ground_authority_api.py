@@ -23,6 +23,7 @@ from rate_of_closure.variation.regional_ground_variation_control import (
 from rate_of_closure.web_authority.api import create_authority_app
 from rate_of_closure.web_authority.capability import (
     AUTHORITY_CAPABILITY_SCHEMA_VERSION,
+    QUALIFIED_EXECUTION_CAPABILITY,
     AuthorityCapability,
 )
 from rate_of_closure.web_authority.jobs import AuthorityJobManager
@@ -45,6 +46,64 @@ def test_capability_defaults_to_non_executable() -> None:
         "reason_code": "execution_profile_unqualified",
         "detail": "Exact flight and ground execution profile is not qualified.",
     }
+
+
+def test_qualified_capability_is_internally_consistent() -> None:
+    assert QUALIFIED_EXECUTION_CAPABILITY.to_wire() == {
+        "schema_version": AUTHORITY_CAPABILITY_SCHEMA_VERSION,
+        "authority_id": "rate-of-closure-python-authority",
+        "authority_version": "1",
+        "available": True,
+        "regional_ground_execution": True,
+        "reason_code": "qualified_execution_profile",
+        "detail": "Qualified Python regional-ground execution is available.",
+    }
+
+    with pytest.raises(ValueError, match="qualified"):
+        AuthorityCapability(
+            available=True,
+            regional_ground_execution=True,
+            reason_code="runner_not_started",
+            detail="Runner is unavailable.",
+        )
+
+
+@pytest.mark.parametrize("reason", ["unknown_reason", 17, None])
+def test_direct_capability_construction_rejects_unknown_reason(reason: object) -> None:
+    with pytest.raises(ValueError, match="reason"):
+        AuthorityCapability(
+            available=False,
+            regional_ground_execution=False,
+            reason_code=reason,  # type: ignore[arg-type]
+            detail="Authority is unavailable.",
+        )
+
+
+def test_direct_capability_construction_rejects_non_text_detail() -> None:
+    with pytest.raises(TypeError, match="detail"):
+        AuthorityCapability(
+            available=False,
+            regional_ground_execution=False,
+            reason_code="runner_not_started",
+            detail=17,  # type: ignore[arg-type]
+        )
+
+
+def test_capability_json_parser_rejects_duplicate_and_split_brain_states() -> None:
+    exact = json.dumps(QUALIFIED_EXECUTION_CAPABILITY.to_wire())
+    assert AuthorityCapability.from_json(exact) == QUALIFIED_EXECUTION_CAPABILITY
+
+    with pytest.raises(ValueError, match="duplicate"):
+        AuthorityCapability.from_json(
+            exact.replace('"available": true', '"available": true, "available": true')
+        )
+    with pytest.raises(ValueError, match="consistent"):
+        AuthorityCapability.from_json(
+            exact.replace(
+                '"regional_ground_execution": true',
+                '"regional_ground_execution": false',
+            )
+        )
 
 
 def test_app_requires_nonempty_ephemeral_token() -> None:
@@ -140,9 +199,29 @@ def _executable_client() -> tuple[TestClient, AuthorityJobManager]:
 
     manager = AuthorityJobManager(runner=runner)
     client = TestClient(
-        create_authority_app(token="test-ephemeral-token", job_manager=manager)
+        create_authority_app(
+            token="test-ephemeral-token",
+            capability=QUALIFIED_EXECUTION_CAPABILITY,
+            job_manager=manager,
+        )
     )
     return client, manager
+
+
+@pytest.mark.asyncio
+async def test_exceptional_lifespan_exit_still_closes_the_manager() -> None:
+    manager = AuthorityJobManager(runner=lambda job, _hooks: _result(job))
+    app = create_authority_app(
+        token="test-ephemeral-token",
+        capability=QUALIFIED_EXECUTION_CAPABILITY,
+        job_manager=manager,
+    )
+
+    with pytest.raises(RuntimeError, match="lifespan failure"):
+        async with app.router.lifespan_context(app):
+            raise RuntimeError("lifespan failure")
+
+    assert manager.execution_available is False
 
 
 def test_all_job_routes_require_authentication_without_logging_token(
@@ -205,7 +284,7 @@ def test_submit_status_and_complete_result_round_trip() -> None:
     ) == _result(job)
 
 
-def test_injected_test_runner_does_not_promote_execution_capability() -> None:
+def test_attached_runner_and_capability_are_advertised_together() -> None:
     client, _manager = _executable_client()
     response = client.get(
         "/api/rate-of-closure/v1/capabilities",
@@ -213,8 +292,16 @@ def test_injected_test_runner_does_not_promote_execution_capability() -> None:
     )
 
     assert response.status_code == 200
-    assert response.json()["available"] is False
-    assert response.json()["regional_ground_execution"] is False
+    assert response.json()["available"] is True
+    assert response.json()["regional_ground_execution"] is True
+
+
+def test_executable_capability_requires_an_attached_runner() -> None:
+    with pytest.raises(ValueError, match="runner"):
+        create_authority_app(
+            token="test-ephemeral-token",
+            capability=QUALIFIED_EXECUTION_CAPABILITY,
+        )
 
 
 @pytest.mark.parametrize(
@@ -259,7 +346,11 @@ def test_result_is_unavailable_until_complete_and_cancel_is_idempotent() -> None
 
     manager = AuthorityJobManager(runner=runner)
     client = TestClient(
-        create_authority_app(token="test-ephemeral-token", job_manager=manager)
+        create_authority_app(
+            token="test-ephemeral-token",
+            capability=QUALIFIED_EXECUTION_CAPABILITY,
+            job_manager=manager,
+        )
     )
     job = _job()
     response = client.post(
