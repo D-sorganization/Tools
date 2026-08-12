@@ -10,11 +10,10 @@ import sys
 import time
 from collections.abc import Mapping
 from dataclasses import dataclass
+from http.client import HTTPConnection
 from pathlib import Path
 from types import MappingProxyType
 from typing import Final
-from urllib.error import URLError
-from urllib.request import Request, urlopen
 
 from .api import CAPABILITY_PATH
 
@@ -110,15 +109,22 @@ def _reserve_loopback_port() -> int:
 
 
 def _is_ready(runtime: AuthorityRuntime) -> bool:
-    request = Request(
-        f"http://{LOOPBACK_HOST}:{runtime.port}{CAPABILITY_PATH}",
-        headers={"Authorization": f"Bearer {runtime.token}"},
+    connection = HTTPConnection(
+        LOOPBACK_HOST,
+        runtime.port,
+        timeout=_READINESS_INTERVAL_S,
     )
     try:
-        with urlopen(request, timeout=_READINESS_INTERVAL_S) as response:
-            return int(response.status) == 200
-    except (TimeoutError, URLError):
+        connection.request(
+            "GET",
+            CAPABILITY_PATH,
+            headers={"Authorization": f"Bearer {runtime.token}"},
+        )
+        return connection.getresponse().status == 200
+    except (OSError, TimeoutError):
         return False
+    finally:
+        connection.close()
 
 
 def _wait_until_ready(runtime: AuthorityRuntime) -> None:

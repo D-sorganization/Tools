@@ -39,6 +39,9 @@ capability/proxy tests, strict TypeScript, zero-warning ESLint, Ruff/format,
 focused MyPy, and a live isolated-process readiness/authentication/shutdown
 probe. The shared `node_modules` directory used for local React verification
 is an untracked junction and is not publication content.
+Hosted Bandit B310 remediation replaced generic URL opening in the readiness
+probe with an explicit fixed-host `HTTPConnection`; capability behavior and
+the loopback-only boundary are unchanged.
 
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
