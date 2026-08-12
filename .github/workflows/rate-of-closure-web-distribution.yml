@@ -65,7 +65,10 @@ jobs:
           npm run build
       - name: Run package-side distribution contracts
         run: |
-          python -m pip install --disable-pip-version-check pytest==9.0.2
+          python -m pip install --disable-pip-version-check \
+            pytest==9.0.2 \
+            pytest-benchmark==5.2.3 \
+            pytest-xdist==3.8.0
           PYTHONPATH=src python -m pytest -q \
             tests/rate_of_closure/test_web_asset_distribution.py
       - name: Build and verify exact wheel

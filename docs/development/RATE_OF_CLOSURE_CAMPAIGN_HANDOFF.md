@@ -54,6 +54,14 @@ ephemeral hosted runner. This avoids the checkout action's cleanup failure on
 the repository's intentionally unregistered historical gitlink and leaves no
 repository credential for PR-controlled code.
 
+Hosted exact-head run `31587364259` completed checkout and the full React gate,
+then failed before Python test collection because the isolated package-side
+step installed only Pytest while the repository's declared Pytest arguments
+require the benchmark and xdist plugins. The workflow now installs pinned
+`pytest-benchmark==5.2.3` and `pytest-xdist==3.8.0` with `pytest==9.0.2` before
+running the distribution contract. This is CI-environment repair only; it does
+not change product behavior, distribution contents, or the release contract.
+
 The production same-origin gateway, browser Playwright qualification, Windows
 authority-state ACL/reparse hardening, frozen web/PyQt artifacts, installers,
 signing, SBOM/attestation, calibrated or compiled physics, downstream parity,
