@@ -44,6 +44,28 @@ tests are clean. A serial full Rate suite exceeded the 10-minute local command
 ceiling without reporting a failure; root owns the nonredundant full composed
 gate. No GitHub operation occurred.
 
+## 2026-08-11 local #4369 PyQt authenticated loopback submitter
+
+From exact published PR #4372 head
+`3571952c2344ca23ffa65121c606faab1b735a23`, the UI-neutral application layer
+adds a dependency-injected submitter for the existing PyQt QThread controller.
+It POSTs canonical execution-job bytes through the runtime-owned fixed-loopback
+bearer transport, validates canonical status snapshots against the exact job,
+polls with bounded timeout/backoff, POSTs cooperative cancellation once, and
+retrieves only a complete result that passes expected-job validation.
+
+Callback, transport, status, timeout, result, and shutdown failures publish
+only existing typed terminals. After acceptance, client-side failures make one
+bounded best-effort cancellation request without masking the original terminal;
+cancelled, obsolete, and late-success responses cannot publish a result. Raw
+transport exception and token text is excluded from the client error surface.
+
+The construction factory returns `None` under the current false capability, so
+production registers no submitter. This adds no widgets, visible controls,
+physical runner or model invocation, persistence, protected carrier,
+scientific/physics claim, downstream parity, or release. Code, tests, SPEC,
+manifest, and all handoffs commit together as `SELF`; exact gates follow.
+
 ## 2026-08-11 #4369 authority terminal-count binding
 
 Authority cancellation and failure terminals must match the exact submitted

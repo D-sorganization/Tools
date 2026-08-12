@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.76                                    |
-| **Spec Version**        | 1.14.76                                    |
+| **Current Version**     | 1.14.77                                    |
+| **Spec Version**        | 1.14.77                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -78,6 +78,26 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   the canonical Python/React status contract and invokes neither flight nor
   regional-ground physics. No production runner is injected, so capability
   and all execution controls remain disabled pending profile qualification.
+
+### 2026-08-11 PyQt Regional-Ground Loopback Submitter Adapter
+
+- A widget-free, dependency-injected Python adapter submits the existing
+  canonical execution-job bytes to the authenticated loopback authority,
+  validates every status against the exact job and canonical shared status
+  contract, polls with bounded timeout/backoff, posts cooperative cancellation,
+  and retrieves only a complete result that passes expected-job validation.
+- Client failures, malformed/stale status, invalid results, timeout, callback
+  errors, and shutdown publish only existing typed terminals. Once a job has
+  been accepted, client-side failures make one bounded best-effort cancellation
+  request and never publish late results. Transport exception and bearer-token
+  text is not exposed by the client error surface.
+- The transport is fixed to the runtime-owned loopback host, port, and bearer
+  token, rejects ambiguous paths and encoded/oversized responses, bounds each
+  request, and closes independently of the owned authority process.
+- The adapter remains unconstructed and unregistered while the exact authority
+  capability is false. This slice adds no widgets, visible controls, physical
+  runner, physics or qualification claim, persistence, protected carrier, or
+  release evidence.
 
 ### 2026-08-11 React Regional-Ground Authority Client Contracts
 
@@ -3275,6 +3295,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.77 | feat(ground-study, #4369): add a UI-neutral authenticated PyQt loopback submitter adapter with canonical job/status/result binding, bounded polling/backoff, cooperative cancellation, best-effort cleanup after accepted-job client failures, typed non-secret errors, stale/late suppression, and fail-closed construction while capability remains unavailable. |
 | 2026-08-11 | 1.14.76 | feat(ground-study, #4369): add a typed production-runner preflight that rejects unknown and unregistered versioned flight profiles before any physics; propagate the preflight terminal stage through the canonical Python/React status contract while leaving capability, execution controls, and model invocation disabled until solver and digest semantics are qualified. |
 | 2026-08-11 | 1.14.75 | feat(ground-study, #4369): centralize the six-state authority job-status wire in a transport-neutral strict Python parser/serializer, make the server consume it, and prove Python-produced canonical byte/semantic parity in React across every failure code and stage; keep physics, UI, capability promotion, persistence, and execution claims open. |
 | 2026-08-11 | 1.14.74 | feat(ground-study, #4369): add strict future-facing React submit/status/POST-cancel/result REST client contracts plus one-at-a-time capability polling with AbortController cleanup, obsolete-response suppression, bounded job-bound status/result validation, and every execution-control flag disabled while the Python authority remains unavailable; matching routes exist while a qualified runner, physics invocation, and visible Run integration remain open. |

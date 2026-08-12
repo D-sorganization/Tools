@@ -39,6 +39,21 @@ clean. The serial complete Rate suite reached the 10-minute local command cap
 without a reported failure; root will run the nonredundant full composed gate.
 No GitHub write occurred.
 
+## 2026-08-11 local #4369 PyQt authenticated loopback submitter
+
+From exact published PR #4372 head
+`3571952c2344ca23ffa65121c606faab1b735a23`, the widget-free application port
+adds an injectable client for canonical submit/status/POST-cancel/result routes.
+It uses the owned loopback runtime authority, strict shared status and result
+contracts, bounded timeout/backoff, one active-job guard, cooperative cleanup,
+typed non-secret failures, late-result suppression, and bounded close.
+
+The production factory remains fail-closed because authority capability is
+false; no submitter is registered with the existing PyQt controller. There is
+no new widget, physical execution, persistence, qualification, protected
+evidence, or release claim. The atomic implementation commit is `SELF` and
+exact local gate evidence follows.
+
 ## 2026-08-11 #4369 authority terminal-count binding
 
 The authority manager rejects cancellation/failure terminals whose total does

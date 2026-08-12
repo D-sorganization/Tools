@@ -39,6 +39,23 @@
   without reporting a failure; root owns the nonredundant complete gate. No
   GitHub write occurred.
 
+## 2026-08-11 local #4369 PyQt authenticated loopback submitter
+
+- Exact source parent: published PR #4372 head
+  `3571952c2344ca23ffa65121c606faab1b735a23`.
+- The widget-free application adapter sends canonical jobs through the existing
+  authenticated loopback runtime, validates the shared job-bound status wire,
+  polls with bounded timeout/backoff, forwards cooperative POST cancellation,
+  and retrieves only complete expected-job-bound results.
+- Client failures after acceptance attempt one bounded best-effort cancel;
+  callback/transport/status/result failures remain typed and non-secret, and
+  cancellation, shutdown, stale status, or late success cannot publish data.
+- The current false capability returns no adapter, so production registers no
+  submitter. No controls, physical runner/model invocation, persistence,
+  scientific claim, protected carrier, downstream parity, or release is added.
+- Code, tests, SPEC, manifest, and all handoffs commit atomically as `SELF`;
+  exact local gate evidence follows.
+
 ## 2026-08-11 #4369 authority terminal-count binding
 
 - Injected cancellation/failure terminals must match the submitted job total
