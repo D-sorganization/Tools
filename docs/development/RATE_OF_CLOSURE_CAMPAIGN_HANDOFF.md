@@ -1,5 +1,34 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4369 batch progress/cancellation prerequisite
+
+- This continuation starts from exact local execution-job contract commit
+  `a5a1b99bfa6cb6400bc18b13139d7893471824f4` on
+  `codex/4369-regional-ground-execution-job` and changes only the Python seeded
+  regional-ground variation execution boundary.
+- Frozen hooks provide exact accepted completed/total progress and a cooperative
+  cancellation check. The batch polls immediately before and after each
+  unchanged injected executor call and after progress delivery. Pre-cancel runs
+  no trial; in-flight cancellation rejects the current outcome.
+- Typed cancellation and failure terminals carry counts but no partial rows or
+  dataset. Failures preserve a stable cancellation-callback, executor,
+  progress-callback, or publication stage and cause metadata. The complete
+  publisher is invoked once only after all outcomes are accepted, so callback,
+  executor, or aggregation defects cannot leak a partial scalar ensemble.
+- Successful output stays byte-identical at SHA-256
+  `671e5fd6c59aa1c068f2a3bd608ff7ef58c585b7ee4897ca49ef4ae73743f6a0`;
+  deterministic sampling, trial order/identity, and provenance are unchanged.
+  The production modules remain below 400 lines.
+- TDD RED captured the missing controls. The execution-job, base variation, and
+  control suites pass 47 tests; focused type/lint plus relevant cross-suite and
+  governance gates are required before local commit `SELF`. No push or GitHub
+  write occurs.
+- This is not an execution-feature completion: job-to-executor binding,
+  worker/thread and matched Run/Cancel UI, browser-capable qualified physics,
+  result import/workspace integration, variable wind, compiled/downstream
+  parity, protected evidence, publication, and release remain open. Keep
+  #4369/#4273/#4267 open.
+
 ## 2026-08-11 local #4369 regional-ground execution-job contract
 
 The unpublished `codex/4369-regional-ground-execution-job` branch starts from

@@ -1,5 +1,43 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4369 regional-ground batch progress and cancellation
+
+The unpublished `codex/4369-regional-ground-execution-job` continuation starts
+from exact local execution-job contract commit
+`a5a1b99bfa6cb6400bc18b13139d7893471824f4`. It extends only the existing
+Python `run_regional_ground_variation()` application seam; it does not bind the
+new job envelope to launch/flight/ground execution and changes no physics.
+
+`GroundRegionalVariationHooks` exposes an immutable exact `(completed, total)`
+progress record and a zero-argument cooperative cancellation check. The runner
+polls immediately before and after each injected executor call and after each
+progress notification. A cancellation detected during an executor call drops
+that in-flight outcome. Typed terminal exceptions record accepted completed and
+total counts; failures also record the exact cancellation-callback, executor,
+progress-callback, or publication stage plus cause type/message. They never
+carry a partial dataset or row collection.
+
+The complete-batch helper retains outcomes privately and calls its publisher
+only after all trials are accepted. Callback defects and publisher failures
+therefore terminate without externally visible partial rows. The physics
+executor signature and outcome validator are unchanged, and the original
+successful scalar-ensemble JSON remains byte-identical at SHA-256
+`671e5fd6c59aa1c068f2a3bd608ff7ef58c585b7ee4897ca49ef4ae73743f6a0`.
+Sampling, trial ordering, request IDs, and input digests remain owned by the
+existing deterministic path.
+
+TDD RED captured the absent terminal types and hooks. Focused execution-job,
+variation, and control coverage passes 47 tests. The implementation is split
+into contract, complete-batch execution, and dataset-projection modules below
+400 lines. Ruff/format, focused MyPy, relevant ground/flight/variation
+regressions, campaign manifest, documentation, structural, assertion, and diff
+gates are required before local commit `SELF`; no push or GitHub write occurs.
+
+Keep #4369/#4273/#4267 open. This slice supplies no worker/thread, UI Run/Cancel
+controls, progress throttling, execution-job-to-physics binding, browser
+executor, partial scalar schema, result workspace/import, variable-wind wire,
+compiled/downstream parity, protected evidence, publication, or release.
+
 ## 2026-08-11 local #4369 regional-ground execution-job contract
 
 The unpublished `codex/4369-regional-ground-execution-job` branch starts from

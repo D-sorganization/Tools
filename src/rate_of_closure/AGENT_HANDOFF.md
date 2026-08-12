@@ -1,5 +1,40 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4369 complete-only variation execution controls
+
+This continuation is stacked on exact local execution-job contract commit
+`a5a1b99bfa6cb6400bc18b13139d7893471824f4` in
+`codex/4369-regional-ground-execution-job`. It extends only the UI-neutral
+Python seeded regional-ground batch seam.
+
+Application callers may supply frozen `GroundRegionalVariationHooks` with a
+typed immutable completed/total progress callback and cooperative cancellation
+predicate. Cancellation is checked before and immediately after each unchanged
+physical executor call and after progress delivery. Pre-cancel executes no
+trial; cancellation raised during a call rejects that in-flight outcome.
+
+`GroundRegionalVariationCancelled` and `GroundRegionalVariationFailed` are
+terminal signals with exact accepted/total counts. Failure identifies one of
+four stable stages: cancellation callback, executor, progress callback, or
+publication. No terminal object carries trial outcomes, rows, or a dataset.
+The generic complete-batch helper retains all intermediate outcomes privately
+and invokes the scalar-ensemble publisher exactly once only after every trial
+is accepted. A broken callback cannot mutate results or cause a partial
+publication.
+
+Successful execution preserves the prior canonical output bytes at SHA-256
+`671e5fd6c59aa1c068f2a3bd608ff7ef58c585b7ee4897ca49ef4ae73743f6a0`, as well
+as seed streams, trial indexes, request IDs, sampled plans, and provenance
+digests. Existing exact outcome-contract failures remain fail-fast DbC errors;
+ordinary executor exceptions become typed terminal failures.
+
+Focused execution-job plus variation coverage passes 47 tests. Ruff/format,
+focused MyPy, relevant cross-suite physics/variation tests, manifest and docs
+governance, structural budgets, assertion/minimum-test checks, and diff checks
+are required before commit `SELF`. No UI, browser physics, worker/thread,
+execution-job binding, or physical executor change is included. Keep
+#4369/#4273/#4267 open for those integrations and protected release.
+
 ## 2026-08-11 local #4369 regional-ground execution-job contract
 
 The unpublished `codex/4369-regional-ground-execution-job` branch starts from
