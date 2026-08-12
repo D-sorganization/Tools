@@ -6,8 +6,10 @@
 ## 2026-08-12 React Morris workflow integration (#4142 R13.7)
 
 Branch `codex/4142-morris-react-integration` stacks the independently reviewed
-React Morris workflow above exact PyQt parent
-`89eb7a0a3432158aa4ff6a3e188f874120337c28`. The React application owns and
+React Morris workflow above current PyQt parent
+`398415ef6bd4109978c68ee2fd4fc1c5fe034e50`; reviewed PyQt production remains
+the blob-exact `89eb7a0a3432158aa4ff6a3e188f874120337c28` tree plus its
+format-only test repair and handoff record. The React application owns and
 injects one same-origin `MorrisAuthorityClient`; Variation exposes Monte Carlo
 and Morris as explicit sibling workflows with no browser-physics fallback.
 
@@ -31,6 +33,9 @@ and Morris as explicit sibling workflows with no browser-physics fallback.
   tests plus type-check, zero-warning ESLint, and production build. This
   integration commit reconciles all four handoffs without changing either
   reviewed implementation.
+
+The post-review parent-alignment merge preserves the validated application and
+test tree; it adds only the parent branch's protected-CI format-repair record.
 
 Morris persistence/export, UpstreamDrift replacement, protected CI, and
 parent-first merge remain open; this does not complete epic #4142.

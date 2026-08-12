@@ -3,8 +3,10 @@
 ## 2026-08-12 #4142 R13.7 React workflow integration
 
 - Branch `codex/4142-morris-react-integration` stacks exact reviewed React
-  commit `eedfc24a163af736caa47c4f0c74912a7f165036` above exact reviewed PyQt
-  parent `89eb7a0a3432158aa4ff6a3e188f874120337c28`.
+  commit `eedfc24a163af736caa47c4f0c74912a7f165036` above current PyQt PR #4400
+  parent `398415ef6bd4109978c68ee2fd4fc1c5fe034e50`. Reviewed PyQt production is
+  still the blob-exact `89eb7a0a3432158aa4ff6a3e188f874120337c28` tree; the
+  parent follow-up changes only test formatting and handoff evidence.
 - App-owned dependency injection connects React Variation to the same-origin
   private authority. Static/unreachable deployments are honest unavailable
   states and never execute browser physics.
@@ -23,6 +25,8 @@
   gates; independent final GO. PyQt evidence remains recorded below.
 - Persistence/export, UpstreamDrift replacement, protected CI, and dependency-
   ordered merge remain open; do not mark #4142 complete from these UI slices.
+- The normal parent-alignment merge retains both reviewed implementations and
+  makes no additional runtime or scientific change.
 
 ## 2026-08-12 #4142 R13.7 standalone PyQt workflow
 

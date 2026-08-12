@@ -26,11 +26,18 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.32                                    |
-| **Spec Version**        | 1.16.32                                    |
+| **Current Version**     | 1.16.33                                    |
+| **Spec Version**        | 1.16.33                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Morris UI stack alignment
+
+Version 1.16.33 records the ordinary merge of current PyQt PR #4400 head
+`398415ef6bd4109978c68ee2fd4fc1c5fe034e50` into the React integration branch.
+The combined runtime and scientific tree is unchanged from its independent
+review; only the format-repair and handoff ancestry are added.
 
 ### 2026-08-12 PyQt Morris protected-CI format repair
 
@@ -2986,6 +2993,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.33 | merge(rate-of-closure, #4142 R13.7): align the combined React Morris integration on current PyQt PR #4400 head `398415ef6bd4109978c68ee2fd4fc1c5fe034e50` through an ordinary merge. Preserve both independently reviewed implementations; the parent delta is limited to canonical Ruff formatting for one test and its handoff evidence. Persistence/export, UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
 | 2026-08-12 | 1.16.32 | merge(rate-of-closure, #4142 R13.7): integrate the independently reviewed React Morris workflow above the reviewed standalone PyQt child; preserve both exact implementations and reconcile all four handoff documents. React now owns same-origin authority injection, base-centered canonical factor suggestions, fail-closed canonical club/pinned scenario context, bounded single-operation create/status/cancel with immutable request/job identity, terminal cancellation polling, base/unmount abort, and factor/design stale-evidence invalidation. Retain Morris persistence/export, UpstreamDrift replacement, protected parent-first CI/merge, and epic completion as open gates. |
 | 2026-08-12 | 1.16.31 | feat(rate-of-closure, #4142 R13.7): add the standalone PyQt Morris Screening workflow as an explicit sibling of unchanged Monte Carlo dispersion; own the authenticated private authority for exactly the Qt event loop; inject the repr-hidden strict loopback client through launcher/window/workspace seams; provide capability gating, canonical editable factors, bounded design controls, sequential off-thread polling and cancellation, stale-generation suppression, target-local ranked mu-star with uncertainty and complete typed miss/failure denominators, accessible honest unavailable/error states, and fail-closed exact base-config compatibility without a local physics fallback. Retain React presentation, workspace persistence/export, UpstreamDrift consumption, protected CI, dependency-order release, and epic completion as open gates. |
 | 2026-08-12 | 1.16.30 | feat(rate-of-closure, #4142 R13.6): add the UI-neutral Morris application seam shared conceptually across Python and TypeScript: canonical tee-aware factor order and registry-derived bounded drafts, full represented-`SimulationConfig` round-trip with fail-closed pinned semantics, exact request serialization including authority base-physics/vocabulary and named sample/observation resource parity, strict frozen capability/job/report consumers, same-origin/direct-loopback authenticated clients with 16 MiB success and 8 KiB error bounds, exact scientific metric and denominator validation, target-scoped stable `mu*` presentation, and one cross-runtime fixture pinned and verified against Python. Retain widgets, hooks/polling, launchers/host routes, exports, persistence, local physics fallback, UpstreamDrift consumption, and epic completion as open gates. |
