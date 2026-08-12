@@ -3,6 +3,30 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Rate Morris authority bridge (#4142 R13.5)
+
+Exact request/job v1 contracts and `RateMorrisService` now bridge the current
+ten-factor Rate adapter to the unchanged Morris report v1. Reconstruction pins
+passive, unlocked, profile-free double-pendulum fixed-ball execution with no
+prescribed impact time and zero time offset. The internal 113 mph scenario
+speed is compatibility-only, not a new measured input or physics claim.
+Wire validation is unconditional: factor ordering, pendulum/club/ball physical
+domains, contextual tee factors, and both factor endpoints are checked before
+shared DbC-backed constructors. WARN/OFF contract modes remain fail-closed.
+
+The optional router strictly decodes bounded raw JSON, and its injected-clock
+registry owns active/global worker budgets, TTL/retention, cancellation, and a
+lock-linearized lifecycle. Cancellation registered before terminal completion
+discards the report; running work stays running until acknowledgment. Expected
+sample numerical failures remain completed report denominator data, while
+programming failures yield only a sanitized stable job error. The TypeScript
+model uses the existing report parser and an injected create/status/cancel
+client with no browser physics fallback.
+
+Open: UI/polling presentation, export, persistence, host mount, UpstreamDrift,
+and a genuine fixed-ball double-pendulum hit. Cancellation latency depends on
+executor observation; no partial report or per-sample diagnostic is exposed.
+
 ## 2026-08-12 Rate fixed-ball Morris evaluator (#4142 R13.3)
 
 - Branch `codex/4142-morris-rate-adapter` starts at exact shared-executor parent

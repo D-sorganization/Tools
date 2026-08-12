@@ -1,5 +1,22 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R13.5 bounded authority bridge
+
+- Added exact request/job v1 contracts, deterministic Rate execution, bounded
+  lock-linearized ephemeral jobs, and a mountable optional FastAPI router.
+- Strict raw JSON and domain parsing reject media/size/UTF-8/duplicate-key/
+  non-finite/schema/resource/unit/factor/tee violations.
+- Physical/config/factor invariants are mirrored before shared DbC-backed
+  constructors; WARN and OFF contract modes remain fail-closed.
+- Added a strict TypeScript envelope parser and injected client using the
+  existing report parser, with no local physics fallback.
+- The authority remains passive unlocked fixed-ball double pendulum. The
+  contact model remains a fixed point/sphere, not swept collision, compression,
+  or mesh contact. Cancellation waits for executor observation and no partial
+  report or per-sample diagnostic crosses the job envelope.
+- Open: presentation, export, persistence, host mount, UpstreamDrift, and a
+  genuine fixed-ball double-pendulum hit.
+
 ## 2026-08-12 Rate fixed-ball Morris evaluator (#4142 R13.3)
 
 - Exact shared-executor parent `b2fa365087f184d9ada16a6d35b08cbce64879c6`

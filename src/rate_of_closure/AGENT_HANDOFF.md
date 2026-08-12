@@ -3,6 +3,24 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Morris authority bridge (#4142 R13.5)
+
+`application/morris/` now provides strict primitive request/job v1 contracts,
+deterministic `RateMorrisService`, and an optional mountable FastAPI router;
+the core package does not eagerly import FastAPI. Only completed jobs carry
+the unchanged shared report v1. Raw JSON rejects media, size, UTF-8, duplicate
+key, non-finite, schema, resource, unit, duplicate-factor, and tee violations.
+Primitive/base/factor physical rules and both endpoints are checked before
+require-backed constructors, so WARN/OFF shared DbC modes cannot admit invalid
+authority requests.
+
+Authority reconstruction is passive/unlocked/profile-free double pendulum,
+fixed-ball, no impact time, zero offset; 113 mph is an internal compatibility
+seed. The TypeScript parser/client has injected transport and no local fallback.
+Still open: presentation, export, persistence, host registration, UpstreamDrift,
+and a genuine fixed-ball double-pendulum hit. Cancellation is cooperative and
+per-sample failure detail remains reduced to established report denominators.
+
 ## 2026-08-12 Rate fixed-ball Morris execution (#4142 R13.3)
 
 The shared Morris executor now has a Rate-owned injected adapter over exact

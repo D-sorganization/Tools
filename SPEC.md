@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.27                                    |
-| **Spec Version**        | 1.16.27                                    |
+| **Current Version**     | 1.16.28                                    |
+| **Spec Version**        | 1.16.28                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -2922,6 +2922,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.28 | feat(rate-of-closure, #4142 R13.5): add exact primitive-only Morris request/job v1 contracts, deterministic execution into unchanged report v1, a dependency-injected mountable FastAPI router with strict bounded raw JSON and lock-linearized ephemeral jobs, and a strict TypeScript parser plus injected transport. Retain presentation, export, persistence, host registration, UpstreamDrift consumption, and a genuine fixed-ball double-pendulum hit as open gates. |
 | 2026-08-12 | 1.16.27 | feat(rate-of-closure, #4142 R13.3): add the bounded Rate fixed-ball Morris evaluator for ten exact global simulation variables and the current 17-scalar output contract; extract shared trial capture/projection so ensemble and Morris execution retain identical hit/miss/numerical-failure availability, apply samples through one public immutable config seam, reject fixed-contact timing no-ops/localized or invalid factors, and validate a genuine double-pendulum miss while retaining double-pendulum fixed-hit validation, UI/export, per-sample failure diagnostics, and UpstreamDrift consumption as open gates. |
 | 2026-08-12 | 1.16.26 | feat(rate-of-closure, #4142 R13.3): add a bounded UI-neutral Morris execution adapter with immutable physical sample identity, injected typed evaluators that explicitly normalize their own domain failures, exact per-output availability, deterministic serial/parallel tensors and completed-prefix progress every eight samples plus final, cooperative no-partial-result cancellation, and named worker/sample/observation-cell resource limits; retain Rate, UI, export, and `evaluate_run` integration as later scope. |
 | 2026-08-12 | 1.16.25 | fix(rate-of-closure, #4142 R13.4): mirror the Morris producer's serialized clamp exactly by requiring `sigma` and `mu*` standard error to be either zero or strictly above `64*epsilon*max(1,mu*)`; apply clamp uncertainty only to zero-valued squared terms, use scale-normalized identity arithmetic with ordinary floating tolerance for nonzero metrics, reject finite magnitudes that cannot be squared safely, and move cohesive metric validation to a dedicated bounded module. |
