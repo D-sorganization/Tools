@@ -6,6 +6,9 @@ Branch `codex/4379-same-origin-companion` starts exactly from Tools PR #4388
 head `1616e2de41521789a53f41e00e9ce35f1805f080` and must target
 `codex/4378-static-inspection-runtime`. Human review is approved; protected
 dependency order and ordinary non-admin merging remain mandatory.
+Published child PR: #4390. Its exact pre-publication artifact-qualified head is
+`822e90c914baeb73338d037df89c5281811b9f7f`; protected CI must qualify the
+final handoff-recording head independently.
 
 Production `launch_web.py` and the `rate-of-closure-web` entry point now run a
 Python-only foreground companion over an exact manifest-qualified packaged
