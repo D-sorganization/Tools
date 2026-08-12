@@ -1,5 +1,35 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4369 job-bound execution result envelope
+
+The unpublished `codex/4369-result-envelope-v1` child starts from exact
+published PR #4370 head `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`.
+It adds the strict bounded Python/TypeScript
+`rate-of-closure/regional-ground-execution-result/v1` prerequisite. The
+immutable envelope carries exact job/input identities, embeds the complete
+`scalar-ensemble/v1` object, and recomputes its canonical dataset SHA-256 on
+every build/import. Callers with the originating job must use the explicit
+expected-job assertion. That assertion also binds the dataset result ID,
+declared trial count, exact zero-based trial order, and every row's series ID;
+without it the envelope proves internal dataset integrity, not job authenticity.
+
+A reusable Python scalar wire parser now mirrors the React limits and exact
+shape checks. The Python-owned shared golden preserves ordered definitions and
+rows plus a censored typed null. Both runtimes reject root/nested extras,
+duplicate fields, digest or dataset substitution, malformed values, missing or
+mistyped nullable scalars, Boolean trial indexes, and oversize UTF-8. The full
+Rate of Closure gate passes 1,048 Python/PyQt tests and 818 React tests; the
+214-module production build, Ruff, focused MyPy, TypeScript, zero-warning
+ESLint, campaign-manifest validation, eight manifest tests, and 400-line module
+budget also pass. Pytest retains 14 Hypothesis ignored-cache collection notices
+and one unrelated polynomial-generator empty-legend warning; Vite retains its
+existing main-chunk advisory.
+
+This child adds no executor, partial-result publication, worker, Run/Cancel UI,
+loopback host, result persistence, Rust/WASM physics, or downstream parity. It
+does not make synthetic job flight digests scientific evidence and does not
+close #4369/#4273/#4267.
+
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
 The composed local head `915c80f38` is a contract/control/parser prerequisite,

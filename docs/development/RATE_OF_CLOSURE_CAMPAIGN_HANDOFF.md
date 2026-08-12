@@ -1,5 +1,33 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4369 job-bound result envelope
+
+- Exact parent: published PR #4370 head
+  `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`; local branch:
+  `codex/4369-result-envelope-v1`.
+- The new bounded Python/React
+  `rate-of-closure/regional-ground-execution-result/v1` embeds the complete
+  scalar ensemble and carries exact job/input identities plus the recomputed
+  canonical dataset SHA-256.
+- The shared Python-produced golden includes complete and censored rows and
+  proves canonical result/dataset digest parity and typed-null preservation.
+  Adversarial coverage rejects job or dataset substitution, bad digests,
+  duplicate/nested-extra fields, malformed/missing typed values, Boolean trial
+  identities, and oversize UTF-8.
+- Expected-job matching is intentionally explicit and binds the job/input
+  identities, dataset result ID, exact declared trial count and zero-based
+  ordering, and every row's series ID. An envelope parsed without the source
+  job has internal digest integrity but is neither authenticated nor proof that
+  the declared model executed.
+- Full local evidence: 1,048 Python/PyQt and 818 React tests pass, along with
+  the 214-module production build, Ruff, focused MyPy, TypeScript, zero-warning
+  ESLint, manifest validation/eight manifest tests, and the 400-line production
+  module budget. Fourteen Hypothesis ignored-cache collection notices, one
+  unrelated empty-legend pytest warning, and the existing Vite chunk advisory
+  remain. This slice adds no executor, partial publication,
+  UI/backend/storage, compiled physics, or downstream parity. Keep
+  #4369/#4273/#4267 open.
+
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
 - Exact local composition head `915c80f38` contains the execution-job contract,

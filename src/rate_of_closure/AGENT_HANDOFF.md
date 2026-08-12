@@ -1,5 +1,28 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4369 job-bound execution result envelope
+
+The exact-parent `codex/4369-result-envelope-v1` continuation adds a bounded
+cross-runtime result identity boundary, not an executor. Python
+`RegionalGroundExecutionResult` and React `RegionalGroundExecutionResult` bind
+`job_id`, `job_sha256`, and `input_sha256` to the SHA-256 of the complete
+canonical embedded `scalar-ensemble/v1`. Importers recompute the dataset digest;
+callers holding the source job must also invoke the explicit expected-job
+binding check. It rejects substituted job identities as well as a
+self-consistent dataset with the wrong result ID, trial count/order, or series
+identity.
+
+`variation.scalar_ensemble_wire` supplies the missing strict Python parser with
+the same 100,000-row and definition bounds as React. The shared Python-owned
+golden proves canonical byte/digest parity and typed-null preservation. The
+slice remains import/build-only: no physics, partial results, UI controls,
+storage, backend, WASM/Rust executor, or UpstreamDrift consumer is added. Keep
+#4369/#4273/#4267 open. Local verification passes all 1,048 Python/PyQt and 818
+React tests, the 214-module production build, both language static checks,
+manifest governance, and the 400-line production-module budget. Fourteen
+Hypothesis ignored-cache collection notices, one unrelated empty-legend pytest
+warning, and the existing Vite chunk advisory remain.
+
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
 `915c80f38` composes the job, batch-control, and result-import prerequisites,

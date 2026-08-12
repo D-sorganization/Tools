@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.63                                    |
-| **Spec Version**        | 1.14.63                                    |
+| **Current Version**     | 1.14.64                                    |
+| **Spec Version**        | 1.14.64                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -220,6 +220,29 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - #4271, #4273, and #4267 remain open. This child does not add clients,
   TypeScript/Rust/WASM execution, profile calibration, persistence, playback,
   target/solver/variation integration, downstream parity, or release evidence.
+
+### 2026-08-11 Job-Bound Regional Ground Result Envelope
+
+- `rate-of-closure/regional-ground-execution-result/v1` is the bounded,
+  UI-neutral Python/TypeScript identity envelope for one complete
+  `scalar-ensemble/v1` dataset. It carries the exact `job_id`, `job_sha256`,
+  `input_sha256`, and SHA-256 of the complete canonical embedded dataset.
+- Python owns the shared canonical golden. Both runtimes recompute the dataset
+  digest, preserve every definition, ordered row, evidence attribute, and typed
+  null, reject duplicate/extra/unsupported/nonfinite/Boolean/surrogate/oversize
+  inputs, and deeply freeze the accepted object model.
+- Job substitution is checked explicitly against a validated
+  `RegionalGroundExecutionJob`. That check also requires the job's result ID,
+  declared trial count, exact zero-based trial ordering, and series identity;
+  self-consistent dataset/digest substitution therefore fails. An imported
+  envelope without that expected job proves internal dataset integrity only.
+  These SHA-256 identities are provenance links, not signatures or proof that
+  the declared physics ran.
+- The generic Python scalar wire parser mirrors the existing React boundary at
+  100,000 rows and bounded definition counts. This slice invokes no physics,
+  publishes no partial batch, enables no Run control, and adds no persistence,
+  worker, loopback host, compiled runtime, or downstream consumer. Keep #4369,
+  #4273, and #4267 open for those qualified integrations.
 
 ### 2026-08-11 Shared Python Flight-to-Bounce Composition
 
@@ -3218,6 +3241,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.64 | feat(ground-study, #4369 #4273 #4267): add a strict bounded Python/TypeScript `regional-ground-execution-result/v1` envelope that binds exact job/input identities to the SHA-256 of a complete embedded `scalar-ensemble/v1`; add a reusable bounded Python scalar wire parser, Python-owned shared golden, explicit expected-job identity/result/trial/series substitution checks, deep immutability, and duplicate/extra/digest/nonfinite/Boolean/typed-null/surrogate/oversize adversarial parity tests while retaining execution, UI, persistence, compiled/downstream parity, protected release, and issue completion as open. |
 | 2026-08-11 | 1.14.63 | docs(ground-study, #4369): record that composed execution-job, complete-only batch-control, and browser result-import prerequisites remain non-executable until exact flight-profile/digest qualification, skid/roll settings and executor revision binding, launch-origin regional-surface translation, orchestration semantics, job-bound result evidence, cancellable Python authority, loopback host, and matched client controllers are implemented and tested. |
 | 2026-08-11 | 1.14.62 | feat(ground-study, #4369): add a strict bounded React import-only adapter for the two Python-owned regional `scalar-ensemble/v1` result variants; preserve exact schema, provenance/model/input digests, definitions, units, categories, stages, ordered identities, cohorts, and censored typed nulls; add a Python-produced four-cohort golden fixture asserted by both runtimes; reject duplicate/extra/version/nonfinite/unsafe/Boolean/surrogate/oversize/fatal-UTF-8 and forged identity/evidence inputs; retain browser physics, Run claims, result UI/persistence, overlays, solver/capability and wind integration, compiled/downstream parity, protected evidence, and release as open. |
 | 2026-08-11 | 1.14.61 | feat(ground-study, #4369 #4273 #4267): add a UI-neutral Python execution-control boundary for seeded regional-ground variation with immutable exact completed/total progress, cooperative cancellation immediately before and after every injected executor call, typed cancellation/executor/callback/publication terminal failures, and complete-only scalar-ensemble publication; preserve the existing executor signature, deterministic seed/trial identities, and byte-identical successful output while retaining job-to-executor binding, matched UI controllers, browser-capable qualified physics, result import/workspace integration, protected release, and issue/epic completion as open. |
