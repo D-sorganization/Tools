@@ -3,6 +3,45 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Lossless Morris workspace persistence/export (#4142 R13.8)
+
+Branch `codex/4142-morris-workspace-python` starts at exact combined UI parent
+`37fe8d33bdb4ce26465f478757dfd7f081c04372`. It adds the shared Python
+contract and standalone PyQt half of the dedicated Morris workspace v1.
+
+- The exact four-field root stores the complete authority-compatible base, all
+  ten canonical factor drafts in order (including disabled and invalid raw bound
+  text plus explicit validation state), bounded design controls, and either no
+  evidence or one strictly bound completed request/job/report pair.
+- The parser rejects unknown/duplicate keys, non-finite values, noncanonical
+  factors, invalid enabled bounds, crossed base/design/source/request identities,
+  non-completed evidence, excess payload depth/bytes, and ambient transport,
+  credential, process, URL, environment, identity, timestamp, or path fields.
+  Imported job/request IDs are inert archive provenance and never resume work.
+- Cross-review hardening recursively freezes setup and evidence base mappings,
+  limits documents to 2,000,000 UTF-8 bytes/25,000 decoded nodes/32 levels,
+  accepts only portable decimal/exponent bound lexemes within +/-1e9, rejects
+  C0/C1 controls, and constrains seeds to the signed Qt range. PyQt retains raw
+  imported bound text/error state exactly and preflights all representability
+  before it can invalidate an active run. Enabling a retained invalid draft
+  fails closed until an explicit valid numeric edit clears the error.
+- PyQt exposes Save Workspace, Load Workspace, and Aggregate CSV actions through
+  a separate mixin. Import parses completely and checks the live host base before
+  invalidating active work, then restores controls, every draft, and immutable
+  archived evidence together. Imported results are visibly labeled archived and
+  unverified-live.
+- Deterministic CSV retains source/target provenance, all four Morris metrics,
+  availability, adequacy, every denominator, and design/request metadata.
+  Authority raw samples are not retained and are never claimed as exportable.
+  The fixed export scope is `authority-base-and-morris-controls-only`; custom
+  scenario/torque semantics outside the authority base are explicitly omitted.
+  Text cells are spreadsheet-formula-neutralized while numeric negatives remain
+  numeric.
+
+This child does not alter React files or complete #4142; React parity, review,
+protected CI, publication, and UpstreamDrift replacement remain gates.
+
+
 ## 2026-08-12 React Morris workflow integration (#4142 R13.7)
 
 Branch `codex/4142-morris-react-integration` stacks the independently reviewed

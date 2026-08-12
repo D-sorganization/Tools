@@ -30,6 +30,7 @@ from rate_of_closure.application.morris.request_document import (
     build_morris_request,
     suggested_factor_drafts,
 )
+from rate_of_closure.application.morris.workspace import MorrisWorkspaceFactorDraft
 from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation import SimulationConfig
@@ -45,9 +46,10 @@ from rate_of_closure.ui.pyqt6.morris_worker import (
     MorrisCapabilityWorker,
     MorrisRunWorker,
 )
+from rate_of_closure.ui.pyqt6.morris_workspace_mixin import MorrisWorkspaceMixin
 
 
-class MorrisScreeningTab(QWidget):
+class MorrisScreeningTab(MorrisWorkspaceMixin, QWidget):
     """Configure and present authority-owned Morris elementary effects."""
 
     shutdownReady = pyqtSignal()  # noqa: N815 - Qt convention
@@ -79,6 +81,7 @@ class MorrisScreeningTab(QWidget):
             contact_mode=ContactMode.FIXED_BALL_CONTACT,
         )
         self._factor_rows: list[MorrisFactorEditor] = []
+        self._workspace_detached_drafts: dict[str, MorrisWorkspaceFactorDraft] = {}
         self._build_ui()
         self._rebuild_factors()
         self._check_capability()
@@ -94,6 +97,7 @@ class MorrisScreeningTab(QWidget):
         self._workers = self._design.workers
         self._design.changed.connect(self._mark_completed_result_stale)
         controls_layout.addWidget(self._design)
+        controls_layout.addLayout(self._build_workspace_buttons())
         controls_layout.addWidget(self._build_factor_box(), stretch=1)
         controls_layout.addWidget(self._build_run_box())
         controls_scroll = QScrollArea()
@@ -226,6 +230,7 @@ class MorrisScreeningTab(QWidget):
         if not isinstance(config, SimulationConfig):
             raise TypeError("config must be a SimulationConfig")
         self._invalidate_active_run()
+        self._workspace_detached_drafts.clear()
         self._config = config
         self._rebuild_factors()
         self._clear_results()

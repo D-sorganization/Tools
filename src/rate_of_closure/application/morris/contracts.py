@@ -3,10 +3,15 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import TYPE_CHECKING, Any, Literal
 
-from rate_of_closure.application._workspace_validation import exact_mapping, stable_id
+from rate_of_closure.application._workspace_validation import (
+    exact_mapping,
+    freeze_object,
+    stable_id,
+)
 from rate_of_closure.club.types import SPEC_BOUNDS
 
 if TYPE_CHECKING:
@@ -102,7 +107,7 @@ def _integer(value: object, name: str, minimum: int, maximum: int) -> int:
 class MorrisBaseRequest:
     """Primitive-only base simulation fields accepted on the wire."""
 
-    values: dict[str, Any]
+    values: Mapping[str, Any]
 
     def simulation_config(self) -> SimulationConfig:
         """Reconstruct the one pinned passive fixed-ball authority config."""
@@ -269,7 +274,7 @@ def _parse_base(value: object) -> MorrisBaseRequest:
     _validate_base_physics(item)
     if item["support_mode"] == "ground" and item["tee_height_m"] != 0.0:
         raise ValueError("ground support requires tee_height_m == 0")
-    result = MorrisBaseRequest(item)
+    result = MorrisBaseRequest(freeze_object(item, "Morris base"))
     result.simulation_config()
     return result
 

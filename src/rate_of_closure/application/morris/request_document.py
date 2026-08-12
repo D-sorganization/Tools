@@ -100,7 +100,8 @@ def _suggested_draft(config: SimulationConfig, key: str) -> MorrisFactorDraft:
     return MorrisFactorDraft(key, True, lower, upper)
 
 
-def _base_document(config: SimulationConfig) -> dict[str, object]:
+def base_document(config: SimulationConfig) -> dict[str, object]:
+    """Return the complete primitive authority base represented by ``config``."""
     parameters = config.pendulum_parameters
     return {
         "club_name": config.club.name,
@@ -210,7 +211,7 @@ def build_morris_request(
         "schema_id": MORRIS_REQUEST_SCHEMA_ID,
         "schema_version": MORRIS_AUTHORITY_SCHEMA_VERSION,
         "request_id": request_id,
-        "base": _base_document(config),
+        "base": base_document(config),
         "factors": _factor_documents(config, drafts),
         "trajectories": trajectories,
         "levels": levels,
@@ -228,6 +229,7 @@ __all__ = [
     "CANONICAL_MORRIS_FACTOR_KEYS",
     "MorrisFactorDraft",
     "build_morris_request",
+    "base_document",
     "spec_id_for_key",
     "suggested_factor_drafts",
 ]

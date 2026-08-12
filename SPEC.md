@@ -26,11 +26,42 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.34                                    |
-| **Spec Version**        | 1.16.34                                    |
+| **Current Version**     | 1.16.35                                    |
+| **Spec Version**        | 1.16.35                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 Lossless Morris workspace v1 (#4142 R13.8)
+
+Version 1.16.35 defines a strict, immutable Morris workspace document shared by
+Python and React. Its allowlisted setup preserves the exact authority base,
+bounded design controls, fixed export scope, and all ten canonical factor rows,
+including disabled invalid raw text and its validation state. Optional evidence
+is a completed-only request/job/report archive bound by typed equality across
+base, enabled factors, design, sample totals, request identity, and report
+sources. IDs remain inert provenance and imported evidence is unverified-live.
+
+The standalone PyQt workflow provides atomic save/load and deterministic
+aggregate CSV export. It fully parses and validates a bounded document before
+checking the current host base or cancelling work, then restores controls,
+factor drafts, and archived results as one state transition. CSV contains the
+four effect metrics, complete denominators, adequacy/availability, source and
+target provenance, and design metadata. Raw Morris samples are unavailable
+because the authority retains aggregates only; custom scenario and torque data
+outside the authority base are excluded by the labeled export scope.
+The cross-runtime limits are exactly 2,000,000 UTF-8 bytes, 25,000 decoded
+nodes, 32 nesting levels, 128 characters per raw bound, trajectories 2..5000,
+and seed 0..2^31-1. Bound lexemes use a shared ASCII decimal/exponent grammar,
+must be finite and within +/-1e9, and reject C0/C1 controls. Valid disabled
+ground-tee rows have no validation error; applicability is represented solely
+by `enabled=false`. All nested base state is recursively immutable, and PyQt
+preflights every control/bound before active-work invalidation.
+An imported invalid draft cannot be enabled and submitted through a stale
+spin-box numeric value; execution remains blocked until a valid numeric edit
+explicitly replaces that draft state.
+CSV export prefixes formula-significant text (`=`, `+`, `-`, `@`, tab, or
+carriage return) with an apostrophe while retaining numeric fields as numbers.
 
 ### 2026-08-12 Morris UI stack alignment
 
