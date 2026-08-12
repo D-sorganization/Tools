@@ -3,6 +3,37 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 lossless React Morris workspace (#4142 R13.8)
+
+Branch `codex/4142-morris-workspace-react` adds the React half of the shared
+`rate-of-closure/morris-workspace` v1 contract. Export retains the exact
+authority base, all ten canonical factor drafts (including disabled and
+invalid raw draft text plus its validation error), design controls, and only
+completed aggregate request/job evidence. It deliberately excludes raw Morris
+samples, custom scenario/torque state, transport credentials, filesystem data,
+and live job capability.
+
+Imports are bounded, strict, duplicate-key rejecting, exact-field validated,
+and cross-check request, setup, job, report, factor, design, and sample
+identities before one atomic install. A base mismatch leaves current controls
+untouched. Imported results are visibly archived and unverified-live; their IDs
+are inert provenance and cannot resume, poll, or cancel authority work. React
+also exports a deterministic aggregate CSV with full source/target/design and
+typed denominator provenance. The exact fixture under
+`tests/rate_of_closure/fixtures/morris_workspace_v1.json` is shared with the
+Python implementation and must remain byte-identical across their branches.
+The canonical edge contract is now explicit: 2,000,000 UTF-8 bytes, 25,000
+JSON nodes, 128-character raw bounds, decimal/exponent syntax only, finite
+values within +/-1e9, trajectories 2..5000, and seed 0..2^31-1. Disabled
+invalid rows require the one synthesized error while valid disabled ground-tee
+rows require null. Imported graphs are recursively frozen. The file picker
+rejects oversize files before FileReader allocation and uses a real
+keyboard-focusable button with visible focus treatment.
+Unicode string caps count code points in both runtimes; duplicate scanning
+shares the depth-32 ceiling, reports stop at 64 assumptions and 1,000
+estimates, and CSV string cells neutralize spreadsheet formula leaders without
+changing numeric negative values.
+
 ## 2026-08-12 React Morris workflow integration (#4142 R13.7)
 
 Branch `codex/4142-morris-react-integration` stacks the independently reviewed

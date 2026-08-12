@@ -76,6 +76,8 @@ const DENOMINATOR_FIELDS = ["total_pairs", "valid_pairs", "typed_no_impact_pairs
 const C0_CONTROL_MAX = 0x1f;
 const C1_CONTROL_MIN = 0x7f;
 const C1_CONTROL_MAX = 0x9f;
+export const MAX_MORRIS_REPORT_ASSUMPTIONS = 64;
+export const MAX_MORRIS_REPORT_ESTIMATES = 1_000;
 
 const asRecord = (value: unknown, name: string): Record<string, unknown> => {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
@@ -319,6 +321,12 @@ export function parseMorrisReport(value: unknown): MorrisReport {
   if (item.method !== MORRIS_METHOD) throw new RangeError("unsupported Morris method");
   if (!Array.isArray(item.assumptions) || !Array.isArray(item.estimates)) {
     throw new RangeError("Morris assumptions and estimates must be arrays");
+  }
+  if (item.assumptions.length > MAX_MORRIS_REPORT_ASSUMPTIONS) {
+    throw new RangeError("Morris report exceeds the assumption count limit");
+  }
+  if (item.estimates.length > MAX_MORRIS_REPORT_ESTIMATES) {
+    throw new RangeError("Morris report exceeds the estimate count limit");
   }
   const design = parseDesign(item.design);
   const report = Object.freeze({

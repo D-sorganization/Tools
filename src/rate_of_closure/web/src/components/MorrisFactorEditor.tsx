@@ -3,6 +3,7 @@ import {
   type MorrisFactorDraft,
 } from "../model/morrisAuthorityRequest";
 import type { SupportMode } from "../model/ballSetup";
+import { MAX_MORRIS_EDITOR_BOUND } from "../model/morrisWorkspaceDocument";
 import { INPUT_CLASS } from "./variationUi";
 import { DecimalInput } from "./DecimalInput";
 
@@ -38,12 +39,14 @@ export function MorrisFactorEditor(props: MorrisFactorEditorProps) {
               <td className="p-2"><span className="font-medium text-slate-200">{row.label}</span>
                 <span className="mt-1 block max-w-xs text-slate-500">{row.guidance}</span></td>
               <td className="p-2"><DecimalInput className={INPUT_CLASS} value={row.lower ?? 0}
+                min={-MAX_MORRIS_EDITOR_BOUND} max={MAX_MORRIS_EDITOR_BOUND}
                 aria-label={`${row.label} lower bound`} disabled={props.disabled || !row.enabled}
                 aria-invalid={row.validationError !== null}
                 aria-describedby={`morris-factor-error-${row.specId}`}
                 title={`Minimum ${row.label} value sampled by the authority`}
                 onCommit={(lower) => update(index, { lower })} /></td>
               <td className="p-2"><DecimalInput className={INPUT_CLASS} value={row.upper ?? 0}
+                min={-MAX_MORRIS_EDITOR_BOUND} max={MAX_MORRIS_EDITOR_BOUND}
                 aria-label={`${row.label} upper bound`} disabled={props.disabled || !row.enabled}
                 aria-invalid={row.validationError !== null}
                 aria-describedby={`morris-factor-error-${row.specId}`}

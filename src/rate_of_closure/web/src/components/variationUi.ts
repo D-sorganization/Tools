@@ -53,6 +53,14 @@ export const downloadText = (name: string, text: string, type: string): void => 
   downloadBlob(name, new Blob([text], { type }));
 };
 
+export const readFileText = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("load", () => resolve(String(reader.result ?? "")));
+    reader.addEventListener("error", () => reject(reader.error ?? new Error("File read failed")));
+    reader.readAsText(file);
+  });
+
 export const downloadBlob = (name: string, blob: Blob): void => {
   const url = URL.createObjectURL(blob);
   const anchor = document.createElement("a");

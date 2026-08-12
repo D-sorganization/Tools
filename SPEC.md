@@ -26,11 +26,44 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.34                                    |
-| **Spec Version**        | 1.16.34                                    |
+| **Current Version**     | 1.16.36                                    |
+| **Spec Version**        | 1.16.36                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 lossless Morris workspace and aggregate export (#4142 R13.8)
+
+- Both presentation runtimes share the dedicated
+  `rate-of-closure/morris-workspace` schema version 1. Its fixed export scope is
+  `authority-base-and-morris-controls-only`: exact authority base, complete
+  ten-row canonical factor draft registry, Morris design controls, and optional
+  completed aggregate request/job evidence. Custom scenarios, torque profiles,
+  raw samples, paths, credentials, and transport state are excluded.
+- Disabled factor drafts preserve bounded raw lower/upper strings and a
+  validation error. Enabled rows require finite ordered bounds and no error.
+  Ground workspaces retain tee height as disabled rather than dropping the
+  canonical row.
+- Parsing is bounded and fail closed: duplicate keys, unknown/missing fields,
+  nonfinite/domain errors, and crossed setup/request/job/report identities are
+  rejected before atomic UI installation. Imported completed results are
+  immutable archived evidence, explicitly not live-revalidated, and their IDs
+  grant no resume/poll/cancel behavior.
+- Deterministic JSON supports lossless handoff between PyQt6 and React using one
+  cross-runtime fixture. CSV export contains aggregate estimates, uncertainty,
+  availability/adequacy, factor/target/design provenance, and every typed
+  denominator; it never represents unavailable raw Morris samples.
+- Both importers enforce the same edge profile: 2,000,000 UTF-8 bytes, 25,000
+  JSON nodes, depth 32, raw bounds of at most 128 characters with no C0/C1
+  controls, decimal/exponent syntax only, finite magnitude at most 1e9,
+  trajectories 2 through 5000, and seed 0 through 2^31-1. Disabled invalid
+  rows carry one exact synthesized error; valid disabled ground-tee rows carry
+  null. React recursively freezes accepted documents and rejects oversized
+  browser files before reading them.
+- Text caps count Unicode code points. Duplicate scanning shares the depth
+  ceiling, archived reports cap at 64 assumptions and 1,000 estimates, and
+  aggregate CSV neutralizes formula-leading strings without converting
+  numeric negative measurements to text.
 
 ### 2026-08-12 Morris UI stack alignment
 
@@ -2996,6 +3029,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.36 | fix(rate-of-closure, #4142 R13.8): align React workspace import with the canonical Python/PyQt edge profile: 2 MB bytes, depth/node and raw-text caps, C0/C1 rejection, decimal/exponent-only finite bounds within +/-1e9, trajectories 2..5000, signed-32-bit seed, exact synthesized invalid-row errors, and null error for valid disabled ground tee; recursively freeze imported setup/evidence; reject oversized browser files before FileReader and use a keyboard-focusable focus-visible import button. |
+| 2026-08-12 | 1.16.35 | feat(rate-of-closure, #4142 R13.8): add the dedicated lossless Morris workspace v1 contract and React import/export surface; preserve all canonical factor drafts including disabled invalid raw text, exact authority base and design controls, and only completed aggregate request/job evidence; enforce bounded duplicate-safe exact parsing and cross-layer identity checks before atomic install; label imports archived and unverified-live with inert IDs; export deterministic aggregate CSV with complete provenance and typed denominators; pin Python/React parity to one shared fixture. UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
 | 2026-08-12 | 1.16.34 | merge(rate-of-closure, #4142 R13.7): align the combined React Morris integration on current PyQt PR #4400 head `9e62c9595ccfbcf7eaa14724ad7e6d65d5277cee` through an ordinary merge. Preserve both independently reviewed workflows while inheriting the PyQt test-format repair and internal immutable UI-constant extraction that restores its 500-line changed-file gate. Persistence/export, UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
 | 2026-08-12 | 1.16.33 | merge(rate-of-closure, #4142 R13.7): align the combined React Morris integration on current PyQt PR #4400 head `398415ef6bd4109978c68ee2fd4fc1c5fe034e50` through an ordinary merge. Preserve both independently reviewed implementations; the parent delta is limited to canonical Ruff formatting for one test and its handoff evidence. Persistence/export, UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
 | 2026-08-12 | 1.16.32 | merge(rate-of-closure, #4142 R13.7): integrate the independently reviewed React Morris workflow above the reviewed standalone PyQt child; preserve both exact implementations and reconcile all four handoff documents. React now owns same-origin authority injection, base-centered canonical factor suggestions, fail-closed canonical club/pinned scenario context, bounded single-operation create/status/cancel with immutable request/job identity, terminal cancellation polling, base/unmount abort, and factor/design stale-evidence invalidation. Retain Morris persistence/export, UpstreamDrift replacement, protected parent-first CI/merge, and epic completion as open gates. |

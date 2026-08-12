@@ -1,6 +1,6 @@
 import { datasetToCsv, datasetToJson } from "../model/variationAnalysis";
 import { planToJson, type VariationDatasetTs, type VariationPlanTs } from "../model/variation";
-import { BUTTON_CLASS, PANEL_CLASS, downloadText } from "./variationUi";
+import { BUTTON_CLASS, PANEL_CLASS, downloadText, readFileText } from "./variationUi";
 import {
   swingEnsembleToJson,
   swingTracesToCsv,
@@ -16,14 +16,6 @@ interface VariationActionsProps {
   onImportText: (text: string) => void;
   onImportError: (message: string) => void;
 }
-
-const readFileText = (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.addEventListener("load", () => resolve(String(reader.result ?? "")));
-    reader.addEventListener("error", () => reject(reader.error ?? new Error("File read failed")));
-    reader.readAsText(file);
-  });
 
 export function VariationActions({
   plan,

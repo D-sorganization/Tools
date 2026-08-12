@@ -1,5 +1,34 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R13.8 lossless React Morris workspace
+
+- React can export/import the dedicated strict v1 Morris workspace and export
+  completed aggregate CSV evidence. The schema carries exact authority base,
+  the complete canonical draft registry, design controls, and optional
+  completed request/job evidence; it does not claim raw Morris samples or
+  persist unrelated scenario/torque state.
+- Disabled invalid draft text and its validation error round-trip verbatim.
+  Strict byte/depth/node/text caps, duplicate-key rejection, exact allowlists,
+  finite/domain checks, and full setup/request/job/report identity checks fail
+  closed before atomic installation. Current controls survive any rejection.
+- Imported completed evidence is labeled archived/unverified-live/immutable;
+  request/job IDs do not become transport capability. Editing invalidates the
+  archive normally and running creates a new request identity.
+- Cross-runtime parity is pinned by
+  `tests/rate_of_closure/fixtures/morris_workspace_v1.json`; keep it identical
+  to the Python/PyQt implementation when integrating the two branches.
+- Canonical parity edges are fixed at 2,000,000 UTF-8 bytes, 25,000 JSON
+  nodes, 128 raw-bound characters, C0/C1 rejection, decimal/exponent-only
+  numbers within +/-1e9, 2..5000 trajectories, and seed <= 2^31-1. Disabled
+  invalid rows require the exact synthesized error; a valid disabled ground
+  tee requires null. React deep-freezes all imported evidence, preflights
+  File.size before reading, and exposes import through a focus-visible native
+  button.
+- Unicode limits count code points. Duplicate scanning cannot bypass depth 32,
+  report collections cap at 64 assumptions and 1,000 estimates before nested
+  mapping, and CSV string cells neutralize spreadsheet formula leaders while
+  finite numeric negatives remain numeric.
+
 ## 2026-08-12 #4142 R13.7 React workflow integration
 
 - Branch `codex/4142-morris-react-integration` stacks exact reviewed React

@@ -3,6 +3,35 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 lossless React Morris workspace (#4142 R13.8)
+
+`web/src/model/morrisWorkspaceDocument.ts` is the React strict parser,
+serializer, and aggregate-CSV seam for `rate-of-closure/morris-workspace` v1.
+It preserves all ten canonical factor drafts as raw bounded strings with an
+explicit nullable validation error, so disabled invalid/incomplete drafts are
+not normalized away. Completed evidence is accepted only when exact setup,
+request, job, report design, factor provenance, and sample identities agree.
+
+`MorrisWorkflowPanel` installs a validated workspace atomically, rejects a
+different current authority base without mutation, and shows imported results
+as archived evidence not revalidated against a live authority. Imported IDs
+remain inert: the hook clears transport identity and never resumes, polls, or
+cancels the archived job. Any real edit invalidates that evidence; a new run
+creates a new request. Export is deterministic JSON plus aggregate-only CSV.
+The shared fixture in `tests/rate_of_closure/fixtures/` is consumed directly by
+React tests and must be reconciled byte-for-byte with the Python branch.
+React enforces the shared edge profile before installation: 2 MB UTF-8 input,
+25k nodes, 128-character raw bounds without C0/C1 controls, strict decimal or
+exponent spelling (never JavaScript radix forms), finite +/-1e9 editor values,
+2..5000 trajectories, and a signed-32-bit seed. Validation errors are
+synthetic/exact, valid disabled ground tee bounds carry null, and every nested
+setup/evidence object is frozen. The import button is keyboard-focusable and
+checks File.size before reading an oversized payload.
+Unicode limits count code points; duplicate scanning enforces depth while
+walking source; report collections cap at 64 assumptions and 1,000 estimates;
+and every CSV string cell neutralizes formula-leading text while numeric
+negative results remain numeric.
+
 ## 2026-08-12 Morris UI stack alignment
 
 The combined React branch now has current PyQt PR #4400 head

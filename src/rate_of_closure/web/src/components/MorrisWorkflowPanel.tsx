@@ -9,10 +9,22 @@ import {
   type MorrisFactorDraft,
 } from "../model/morrisAuthorityRequest";
 import { presentMorrisJob } from "../model/morrisPresentation";
+import {
+  createMorrisWorkspaceDocument,
+  createMorrisWorkspaceFromSetup,
+  INVALID_MORRIS_BOUNDS_MESSAGE,
+  MAX_MORRIS_EDITOR_BOUND,
+  morrisWorkspaceMatchesBase,
+  parseMorrisWorkspaceJson,
+  workspaceDraftsForEditor,
+  type MorrisDesignControls,
+  type MorrisWorkspaceSetup,
+} from "../model/morrisWorkspaceDocument";
 import { BUTTON_CLASS, INPUT_CLASS, PANEL_CLASS } from "./variationUi";
 import { MorrisFactorEditor } from "./MorrisFactorEditor";
 import { MorrisResults } from "./MorrisResults";
 import { DecimalInput } from "./DecimalInput";
+import { MorrisWorkspaceActions } from "./MorrisWorkspaceActions";
 
 interface MorrisWorkflowPanelProps {
   readonly client: MorrisAuthorityClient | null;
@@ -20,15 +32,7 @@ interface MorrisWorkflowPanelProps {
   readonly pollIntervalMs?: number;
 }
 
-interface DesignControls {
-  readonly trajectories: number;
-  readonly levels: number;
-  readonly seed: number;
-  readonly minimumEffects: number;
-  readonly workerCount: number;
-}
-
-const DEFAULT_DESIGN: DesignControls = Object.freeze({
+const DEFAULT_DESIGN: MorrisDesignControls = Object.freeze({
   trajectories: 12, levels: 4, seed: 73, minimumEffects: 2, workerCount: 1,
 });
 
@@ -39,11 +43,29 @@ const requestId = (): string => {
 
 export function MorrisWorkflowPanel(props: MorrisWorkflowPanelProps) {
   const [drafts, setDrafts] = useState<readonly MorrisFactorDraft[]>(() => suggestedMorrisFactorDrafts(props.base));
-  const [design, setDesign] = useState<DesignControls>(DEFAULT_DESIGN);
+  const [design, setDesign] = useState<MorrisDesignControls>(DEFAULT_DESIGN);
+  const [importedSetup, setImportedSetup] = useState<MorrisWorkspaceSetup | null>(null);
+  const [workspaceMessage, setWorkspaceMessage] = useState<string | null>(null);
   const workflow = useMorrisAuthority(props.client, props.pollIntervalMs);
   const jobView = useMemo(() => workflow.state.job === null ? null : presentMorrisJob(workflow.state.job), [workflow.state.job]);
   const busy = workflow.state.submitting || (jobView !== null && !jobView.terminal);
   const available = workflow.state.capability?.available === true;
+  const evidence = workflow.state.job?.status === "completed"
+    && workflow.state.submittedRequest !== null
+    ? Object.freeze({ request: workflow.state.submittedRequest, job: workflow.state.job })
+    : null;
+  const workspace = useMemo(() => {
+    try {
+      return importedSetup === null
+        ? createMorrisWorkspaceDocument(props.base, drafts, design, evidence)
+        : createMorrisWorkspaceFromSetup(importedSetup, evidence);
+    } catch {
+      return null;
+    }
+  }, [design, drafts, evidence, importedSetup, props.base]);
+  const archivedInvalidDrafts = importedSetup?.factorDrafts.filter(
+    (draft) => draft.validationError !== null,
+  ) ?? [];
   const status = props.client === null
     ? "Morris authority is not connected; this static client has no browser physics fallback."
     : workflow.state.checking ? "Checking Morris authority capability…"
@@ -53,9 +75,13 @@ export function MorrisWorkflowPanel(props: MorrisWorkflowPanelProps) {
             ? `${jobView.message}: ${jobView.errorMessage}${jobView.errorCode ? ` (${jobView.errorCode})` : ""}`
             : jobView?.message ?? "Morris authority available. Configure an elementary-effects screening study.";
 
-  const updateDesign = (field: keyof DesignControls, value: number) => {
+  const updateDesign = (field: keyof MorrisDesignControls, value: number) => {
     if (Object.is(design[field], value)) return;
     workflow.invalidate();
+    setImportedSetup((current) => current === null ? null : Object.freeze({
+      ...current, [field]: value,
+    }));
+    setWorkspaceMessage(null);
     setDesign((current) => ({ ...current, [field]: value }));
   };
   const updateDrafts = (next: readonly MorrisFactorDraft[]) => {
@@ -67,15 +93,65 @@ export function MorrisWorkflowPanel(props: MorrisWorkflowPanelProps) {
     ));
     if (unchanged) return;
     workflow.invalidate();
+    setImportedSetup((current) => current === null ? null : Object.freeze({
+      ...current,
+      factorDrafts: Object.freeze(current.factorDrafts.map((archived) => {
+        const index = drafts.findIndex((draft) => draft.variableKey === archived.variableKey);
+        const previous = drafts[index]; const replacement = next[index];
+        if (previous === undefined || replacement === undefined
+            || (previous.enabled === replacement.enabled
+              && Object.is(previous.lower, replacement.lower)
+              && Object.is(previous.upper, replacement.upper))) return archived;
+        const valid = replacement.lower !== null && replacement.upper !== null
+          && Number.isFinite(replacement.lower) && Number.isFinite(replacement.upper)
+          && Math.abs(replacement.lower) <= MAX_MORRIS_EDITOR_BOUND
+          && Math.abs(replacement.upper) <= MAX_MORRIS_EDITOR_BOUND
+          && replacement.lower < replacement.upper;
+        return Object.freeze({
+          variableKey: replacement.variableKey,
+          enabled: replacement.enabled,
+          lower: String(replacement.lower ?? ""),
+          upper: String(replacement.upper ?? ""),
+          validationError: replacement.enabled || valid ? null : INVALID_MORRIS_BOUNDS_MESSAGE,
+        });
+      })),
+    }));
+    setWorkspaceMessage(null);
     setDrafts(next);
   };
   const run = () => {
+    setWorkspaceMessage(null);
     const request: MorrisAuthorityRequest = {
       requestId: requestId(), base: props.base, factors: drafts,
       trajectories: design.trajectories, levels: design.levels, seed: design.seed,
       minimumEffects: design.minimumEffects, workerCount: design.workerCount,
     };
     void workflow.run(request);
+  };
+  const importWorkspace = (source: string) => {
+    try {
+      const imported = parseMorrisWorkspaceJson(source);
+      if (!morrisWorkspaceMatchesBase(imported, props.base)) {
+        throw new RangeError("Imported workspace authority base does not match the current simulation.");
+      }
+      const nextDesign: MorrisDesignControls = {
+        trajectories: imported.setup.trajectories,
+        levels: imported.setup.levels,
+        seed: imported.setup.seed,
+        minimumEffects: imported.setup.minimumEffects,
+        workerCount: imported.setup.workerCount,
+      };
+      const nextDrafts = workspaceDraftsForEditor(imported.setup);
+      workflow.installArchivedEvidence(imported.completedEvidence);
+      setDesign(nextDesign);
+      setDrafts(nextDrafts);
+      setImportedSetup(imported.setup);
+      setWorkspaceMessage(imported.completedEvidence === null
+        ? "Workspace setup imported atomically. No completed evidence was present."
+        : "Workspace imported atomically. Results are archived evidence and were not revalidated against a live authority.");
+    } catch (error: unknown) {
+      setWorkspaceMessage(`Workspace import rejected: ${error instanceof Error ? error.message : "Unknown import error."}`);
+    }
   };
   return (
     <div className="space-y-5">
@@ -108,11 +184,11 @@ export function MorrisWorkflowPanel(props: MorrisWorkflowPanelProps) {
           <legend className="font-semibold text-slate-200">Design controls</legend>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
             {([
-              ["trajectories", "Trajectories", 1, undefined], ["levels", "Levels (even)", 4, 2],
-              ["seed", "Random seed", 0, undefined], ["minimumEffects", "Minimum effects", 2, undefined],
-              ["workerCount", "Workers", 1, undefined],
-            ] as const).map(([field, label, min, step]) => <label key={field} className="text-xs text-slate-300">{label}
-              <DecimalInput className={`${INPUT_CLASS} mt-1`} min={min} step={step}
+              ["trajectories", "Trajectories", 2, 5_000, undefined], ["levels", "Levels (even)", 4, 10_000, 2],
+              ["seed", "Random seed", 0, 2 ** 31 - 1, undefined], ["minimumEffects", "Minimum effects", 2, 5_000, undefined],
+              ["workerCount", "Workers", 1, 32, undefined],
+            ] as const).map(([field, label, min, max, step]) => <label key={field} className="text-xs text-slate-300">{label}
+              <DecimalInput className={`${INPUT_CLASS} mt-1`} min={min} max={max} step={step}
                 title={`${label} for the Morris elementary-effects design`}
                 value={design[field]} onCommit={(value) => updateDesign(field, value)} /></label>)}
           </div>
@@ -126,6 +202,22 @@ export function MorrisWorkflowPanel(props: MorrisWorkflowPanelProps) {
             title="Request cancellation of the active authority job"
             onClick={() => void workflow.cancel()}>Cancel Morris Screening</button>
         </div>
+        <MorrisWorkspaceActions workspace={workspace} busy={busy}
+          onImportText={importWorkspace}
+          onImportError={(message) => setWorkspaceMessage(`Workspace import failed: ${message}`)} />
+        {workspace === null && <p className="text-xs text-amber-200">
+          Workspace export is unavailable until all enabled bounds and design controls are valid. Import remains available.
+        </p>}
+        {workspaceMessage && <p role="status" aria-label="Morris workspace status"
+          className="rounded border border-sky-500/30 bg-sky-950/20 p-3 text-xs text-sky-100">
+          {workspaceMessage}
+        </p>}
+        {archivedInvalidDrafts.length > 0 && <details className="rounded border border-amber-500/30 p-3 text-xs text-amber-100">
+          <summary className="cursor-pointer">Archived disabled drafts retained verbatim</summary>
+          <ul className="mt-2 list-disc pl-5">{archivedInvalidDrafts.map((draft) => <li key={draft.variableKey}>
+            {draft.variableKey}: lower “{draft.lower}”, upper “{draft.upper}” — {draft.validationError}
+          </li>)}</ul>
+        </details>}
       </section>
       {workflow.state.job?.report && <MorrisResults report={workflow.state.job.report} />}
     </div>
