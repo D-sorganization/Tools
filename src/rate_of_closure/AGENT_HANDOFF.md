@@ -1,5 +1,26 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4369 regional scalar-result import prerequisite
+
+The unpublished `codex/4369-regional-result-parser` child starts exactly from
+published PR #4368 head `7d2d155b35f2ae55842de120864c4a343a5ebcb6`.
+React now has a strict bounded import-only adapter for the two Python-owned
+regional `scalar-ensemble/v1` result variants. It reuses the shared ensemble
+contract and regional evidence types, preserves exact metadata, digests,
+definition taxonomy, ordered identities, cohorts, and censored typed nulls,
+and rejects duplicate/extra/version/nonfinite/unsafe/Boolean/surrogate/
+oversize/fatal-UTF-8 inputs plus forged row, series, cohort, and evidence
+identity. Both runtimes assert the same Python-produced four-cohort fixture.
+
+Limits are 8 MiB encoded JSON and 100,000 rows, with both declared and actual
+file size checked. This parser does not run browser physics or establish a Run
+claim; it adds no result workspace, persistence, overlay variation,
+solver/capability or wind integration, compiled/downstream parity, protected
+evidence, or release. Focused React/Python, full React, TypeScript, ESLint,
+Vite, Ruff, manifest, and docs gates are recorded in the implementation
+evidence. The implementation and all governance files commit as `SELF`; no
+push or GitHub write occurred.
+
 ## 2026-08-11 local #4273 contextual regional-ground request File controls
 
 The unpublished `codex/4273-ground-variation-file-controls` child starts from

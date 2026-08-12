@@ -1,5 +1,28 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4369 regional scalar-result import prerequisite
+
+The unpublished `codex/4369-regional-result-parser` child starts exactly from
+published PR #4368 head `7d2d155b35f2ae55842de120864c4a343a5ebcb6`.
+It adds a React/TypeScript import-only boundary for the Python-owned study and
+variation `scalar-ensemble/v1` results. Strict parsing preserves exact schema,
+provenance/model/input digests, definitions, units, categories, stages, series
+identity, trial order, cohorts, and typed-null censored outputs; it never
+coerces unavailable evidence to zero. The parser rejects duplicate and extra
+fields, unsupported versions, nonfinite or unsafe numbers, Boolean numerics,
+Unicode surrogates, forged identities/evidence, unknown cohorts, oversize
+documents, and malformed UTF-8. A Python-produced complete/partial/failed/
+unavailable golden fixture is consumed by both runtimes.
+
+The boundary is capped at 8 MiB encoded JSON and 100,000 rows. Browser file
+metadata is checked before reading and the actual buffer is checked again.
+This is not a browser physics implementation or Run claim and adds no result
+workspace, persistence, overlays, solver/capability or wind integration,
+compiled/downstream parity, or release evidence. Focused React and Python,
+full React, TypeScript, ESLint, Vite, Ruff, manifest, and documentation gates
+are recorded in the commit evidence. Code, SPEC, manifest, and all handoffs
+commit together as `SELF`; no push or GitHub write occurred.
+
 ## 2026-08-11 local #4273 contextual regional-ground request File controls
 
 The unpublished `codex/4273-ground-variation-file-controls` child starts from

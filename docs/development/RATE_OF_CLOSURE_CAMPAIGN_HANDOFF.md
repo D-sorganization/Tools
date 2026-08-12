@@ -1,5 +1,28 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4369 regional scalar-result import prerequisite
+
+- The unpublished `codex/4369-regional-result-parser` child starts exactly
+  from published PR #4368 head
+  `7d2d155b35f2ae55842de120864c4a343a5ebcb6`.
+- React strictly imports the Python-owned regional study and variation
+  `scalar-ensemble/v1` results under an 8 MiB encoded-wire and 100,000-row
+  bound. It preserves schema, provenance/model/input digests, definitions,
+  units, categories, stages, series identity, ordered trials, cohorts, and
+  typed-null censored outcomes; unavailable values are never converted to
+  zero. Declared browser file size is checked before read and the returned
+  buffer is independently bounded and fatally decoded as UTF-8.
+- Both runtimes assert a Python-produced complete/partial/failed/unavailable
+  fixture. Duplicate/extra/version/nonfinite/unsafe/Boolean/surrogate and
+  forged identity/evidence inputs fail closed, including duplicate definition
+  or value keys, unknown cohorts, and inconsistent row/series identities.
+- This is parser/import only: no browser physics, Run claim, result workspace,
+  persistence, regional overlays, solver/capability or wind integration,
+  compiled/downstream parity, protected evidence, or release. Focused and full
+  test/static/governance evidence is recorded with the implementation. Code,
+  SPEC, manifest, and all handoffs commit together as `SELF`; no push or
+  GitHub write occurred.
+
 ## 2026-08-11 local #4273 contextual regional-ground request File controls
 
 - The unpublished `codex/4273-ground-variation-file-controls` child starts
