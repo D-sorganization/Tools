@@ -1,7 +1,27 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-12
+
+## 2026-08-12 — PR #4387 Data-Explorer SVG Path Construction
+
+Open PR #4387 on `bolt/optimize-svg-path-building-12382126696986403940`
+targets `main` and supersedes the narrower competing PR #4386. Line,
+scatter-trendline, and spectrum paths now build output without retaining a
+separate command array. The continuation removes prohibited code-restating
+comments, adds exact gap/empty/separator contracts across all three plots, and
+absorbs #4386's unique specification intent while explicitly avoiding an
+engine-specific garbage-collection claim.
+
+Declared Node 24 local evidence includes byte-identical old/new output and a
+30-sample post-warmup benchmark at 1,000/10,000/100,000 points. Concatenation
+medians were 0.210/1.954/17.751 ms versus array/join
+0.285/2.181/21.896 ms; at 100,000 points its median observed heap delta was
+35.093 MiB versus 36.770 MiB. Treat these as local directional evidence, not a
+cross-engine or GC-pause guarantee. All 384 frontend tests pass on Node 24,
+changed-file zero-warning ESLint and TypeScript pass, and the 1,589-module
+production build succeeds. Human review is approved; fresh final-head
+protected checks and ordinary non-admin merge behavior remain mandatory.
 
 ## Where This Repo Is Headed
 

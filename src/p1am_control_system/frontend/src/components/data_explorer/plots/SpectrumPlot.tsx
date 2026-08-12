@@ -51,7 +51,6 @@ function buildPath(
   py: (v: number) => number,
 ): string {
   const n = Math.min(freqs.length, power.length);
-  // ⚡ Bolt Optimization: Build SVG `d` paths using a single-pass `for` loop and string concatenation to eliminate intermediate array allocations.
   let d = "";
   let penDown = false;
   for (let i = 0; i < n; i += 1) {

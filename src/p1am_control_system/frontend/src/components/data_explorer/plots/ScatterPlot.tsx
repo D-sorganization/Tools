@@ -14,6 +14,7 @@ import React from "react";
 import { PlotFrame } from "./PlotFrame";
 import { finitePairs, makeProjector, type HoverSeries } from "./projection";
 import { colorForIndex } from "../../../lib/explorer/palette";
+import { buildPolylinePath } from "./polylinePath";
 
 export type MarkerShape = "circle" | "square" | "triangle";
 
@@ -113,27 +114,6 @@ function Marker(props: {
   );
 }
 
-/** Build an SVG path for the trendline, skipping non-finite points. */
-function buildPath(
-  points: [number, number][],
-  px: (v: number) => number,
-  py: (v: number) => number,
-): string {
-  // ⚡ Bolt Optimization: Build SVG `d` paths using a single-pass `for` loop and string concatenation to eliminate intermediate array allocations.
-  let d = "";
-  let penDown = false;
-  for (const [dx, dy] of points) {
-    if (!Number.isFinite(dx) || !Number.isFinite(dy)) {
-      penDown = false;
-      continue;
-    }
-    if (d.length > 0) d += " ";
-    d += `${penDown ? "L" : "M"}${px(dx)},${py(dy)}`;
-    penDown = true;
-  }
-  return d;
-}
-
 /** Scatter plot with optional trendline. Forwards a ref to the root `<svg>`. */
 export const ScatterPlot = React.forwardRef<SVGSVGElement, ScatterPlotProps>(
   function ScatterPlot(props, ref) {
@@ -207,7 +187,7 @@ export const ScatterPlot = React.forwardRef<SVGSVGElement, ScatterPlotProps>(
         {trendline && trendline.points.length > 0 && (
           <path
             className="plot-trendline"
-            d={buildPath(trendline.points, x, y)}
+            d={buildPolylinePath(trendline.points, x, y)}
             fill="none"
             stroke={trendline.color ?? "var(--accent-cyan)"}
             strokeWidth={trendline.width ?? 2}

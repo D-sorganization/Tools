@@ -46,6 +46,22 @@ describe("SpectrumPlot", () => {
     // freq 0 is excluded on a log-x axis, so only 5 of 6 samples remain.
     const points = (d?.match(/[ML]/g) ?? []).length;
     expect(points).toBe(5);
+    expect(d).not.toMatch(/^ | {2}| $/);
+  });
+
+  it("starts a new segment after each non-finite sample", () => {
+    const { container } = render(
+      <SpectrumPlot
+        width={300}
+        height={200}
+        freqs={[0, 1, 2, 3]}
+        power={[1, 2, NaN, 4]}
+      />,
+    );
+    const d = container.querySelector("path.plot-spectrum")?.getAttribute("d");
+
+    expect(d?.match(/[ML]/g)).toEqual(["M", "L", "M"]);
+    expect(d).not.toMatch(/^ | {2}| $/);
   });
 
   it("shows a hover crosshair with the nearest power sample on move", () => {
