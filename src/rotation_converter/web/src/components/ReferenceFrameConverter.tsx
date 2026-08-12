@@ -105,6 +105,7 @@ export function ReferenceFrameConverter() {
                     key={`${i}-${j}`}
                     type="number"
                     value={entry}
+                    aria-label={`Transform matrix row ${i + 1}, column ${j + 1}`}
                     onChange={(event) => updateMatrix(setTransform, transform, i, j, Number(event.target.value))}
                     className="bg-slate-700 rounded px-2 py-1 text-sm border border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                   />
@@ -118,6 +119,7 @@ export function ReferenceFrameConverter() {
                   key={i}
                   type="number"
                   value={entry}
+                  aria-label={`Twist component ${['ωx', 'ωy', 'ωz', 'vx', 'vy', 'vz'][i]}`}
                   onChange={(event) => {
                     const next = [...twist];
                     next[i] = Number(event.target.value);
@@ -140,6 +142,7 @@ export function ReferenceFrameConverter() {
                     key={`${i}-${j}`}
                     type="number"
                     value={entry}
+                    aria-label={`Rotation matrix row ${i + 1}, column ${j + 1}`}
                     onChange={(event) =>
                       updateMatrix(setRotationMatrix, rotationMatrix, i, j, Number(event.target.value))
                     }
@@ -155,6 +158,7 @@ export function ReferenceFrameConverter() {
                   key={i}
                   type="number"
                   value={entry}
+                  aria-label={`Translation component ${['x', 'y', 'z'][i]}`}
                   onChange={(event) => {
                     const next = [...translation];
                     next[i] = Number(event.target.value);
@@ -176,6 +180,7 @@ export function ReferenceFrameConverter() {
                   key={i}
                   type="number"
                   value={entry}
+                  aria-label={`so(3) vector component ${['x', 'y', 'z'][i]}`}
                   onChange={(event) => {
                     const next = [...so3Vector];
                     next[i] = Number(event.target.value);

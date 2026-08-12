@@ -101,6 +101,7 @@ export function RotationConverter() {
                                 <input
                                     type="number"
                                     value={quaternion[i]}
+                                    aria-label={`Quaternion component ${axis.toUpperCase()}`}
                                     onChange={(e) => {
                                         const newQ = [...quaternion];
                                         newQ[i] = Number(e.target.value);
@@ -133,6 +134,7 @@ export function RotationConverter() {
                                     <input
                                         type="number"
                                         value={euler[i]}
+                                        aria-label={`Euler angle axis ${i + 1}`}
                                         onChange={(e) => {
                                             const newE = [...euler];
                                             newE[i] = Number(e.target.value);
@@ -155,6 +157,7 @@ export function RotationConverter() {
                                 <input
                                     type="number"
                                     value={axisAngle[i]}
+                                    aria-label={`Axis-angle component ${label}`}
                                     onChange={(e) => {
                                         const newA = [...axisAngle];
                                         newA[i] = Number(e.target.value);
@@ -176,6 +179,7 @@ export function RotationConverter() {
                                 <input
                                     type="number"
                                     value={rodrigues[i]}
+                                    aria-label={`Rodrigues vector component ${label}`}
                                     onChange={(e) => {
                                         const newR = [...rodrigues];
                                         newR[i] = Number(e.target.value);
