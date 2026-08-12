@@ -1,5 +1,17 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 Camera carrier acquires unpublished native polish
+
+Exact published #4298 camera child
+`35d04ee4bb4d74045594d3ef0b274e2b09cc5a3b` is the first parent and exact
+unpublished orthographic-axis polish
+`37fa7f86dcdd7bf4225da34286e39f16837caba6` is merged second normally. Exact
+Face On, Down the Line, and Overhead views hide only their screen-depth display
+axis; isometric and manual orbit restore all axes. Behavior, camera state,
+tracking, zoom, physics, and React remain unchanged. This local intermediate
+commit exists only to preserve the required topology before the refreshed
+flight-ground parent is incorporated.
+
 > Update with every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 

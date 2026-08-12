@@ -4,6 +4,40 @@ Status verified 2026-08-10. This isolated integration is published as draft
 [PR #4217](https://github.com/D-sorganization/Tools/pull/4217). No source PR
 branch was rewritten.
 
+## 2026-08-11 camera composite acquires native orthographic polish
+
+- Exact published camera child
+  `35d04ee4bb4d74045594d3ef0b274e2b09cc5a3b` is first and exact unpublished
+  native polish `37fa7f86dcdd7bf4225da34286e39f16837caba6`
+  second in a normal merge. PR #4298's declared base remains
+  `feat/4199-wind-workflow`.
+- The polish hides only the depth display axis in each exact orthographic
+  preset and restores every axis for isometric/manual orbit. All camera state,
+  limits, tracking, zoom, physics, and web behavior remain unchanged.
+- This is an unpublished intermediate topology commit. Refreshed #4288 must be
+  merged next and the complete composite must pass fresh camera/PyQt, React,
+  Playwright, Rust, static, and governance gates.
+
+## 2026-08-10 Native orthographic-axis presentation polish
+
+Native Windows review of the current camera carrier confirmed Face On, Down
+the Line, Overhead, Reset, Track, Auto Fit, Re-center, replay, pause, and loop,
+then identified one presentation defect: the depth-axis labels and ticks
+collapsed into the screen plane and overlapped plot titles or visible axes in
+the exact orthographic presets.
+
+The shared PyQt camera adapter now applies one explicit display-axis contract
+after each Simulation and Flight render. Face On hides only display x/right,
+Down the Line hides only display y/target, and Overhead hides only display
+z/up. The two in-plane physical axes remain labelled. Isometric/reset and
+manual orbit restore all axes, preventing stale visibility across modes. A
+parameterized headless GUI regression proves all three mappings and both
+restoration paths in both viewports. Physics, camera angles, limits, tracking,
+zoom, geometry, and React behavior are unchanged. Fresh focused tests, Ruff,
+pinned MyPy, post-polish native rendered review, protected CI, and review are
+required before this follow-up is released; this entry intentionally does not
+self-record the implementation commit.
+
 ## 2026-08-10 Current-parent propagation into camera PR #4298
 
 - Draft PR `#4298` keeps branch `feat/4284-camera-snap-tracking` and base

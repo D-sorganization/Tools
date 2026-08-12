@@ -1,5 +1,18 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 Camera carrier acquires unpublished native polish
+
+PR `#4298` reconstruction starts from exact published camera child
+`35d04ee4bb4d74045594d3ef0b274e2b09cc5a3b` and normally merges unpublished
+native orthographic-axis polish
+`37fa7f86dcdd7bf4225da34286e39f16837caba6` second. The declared base remains
+`feat/4199-wind-workflow`; neither branch is rebased, retargeted, or rewritten.
+Exact orthographic presets suppress only the screen-depth display axis while
+isometric and manual-orbit paths restore all axes. Camera orientation,
+tracking, zoom, physics, React behavior, and public contracts are unchanged.
+This intermediate local merge exists only to establish the required ordered
+topology before refreshed #4288 is merged; it is not published or released.
+
 > Update this file in every implementation commit and every push to `main`.
 > Current-state only; history lives in git. Last updated: 2026-08-10.
 
