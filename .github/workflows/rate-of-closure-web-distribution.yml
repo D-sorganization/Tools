@@ -73,11 +73,12 @@ jobs:
         run: |
           python -m pip install --disable-pip-version-check \
             pytest==9.0.2 \
+            pytest-asyncio==1.3.0 \
             pytest-benchmark==5.2.3 \
             pytest-xdist==3.8.0 \
             'httpx>=0.25.0' \
             '.[rate-of-closure-web]'
-          PYTHONPATH=src python -m pytest -q \
+          python -m pytest -q \
             tests/rate_of_closure/test_web_asset_distribution.py \
             tests/rate_of_closure/test_web_companion_app.py \
             tests/rate_of_closure/test_web_companion_bundle.py \

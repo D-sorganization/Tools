@@ -4,11 +4,11 @@
 
 Branch `codex/4380-playwright-production-browser` was created at
 `0821557d80c366133e3de5af54d5ad82a01b14b0` as an exact child of Tools
-PR #4390. The corrected parent has since advanced to
-`c3ecfd48910aa5aafb89962a256333690e8e72c5`; that parent must be propagated
-normally before this branch is published. Human review is approved, but parent
-order, fresh protected CI, and ordinary non-admin merge behavior remain
-mandatory. No PR or release carrier is recorded yet.
+PR #4390. Corrected parent head
+`c3ecfd48910aa5aafb89962a256333690e8e72c5` is now propagated normally into
+this branch. Human review is approved, but parent order, fresh protected CI,
+and ordinary non-admin merge behavior remain mandatory. No PR or release
+carrier is recorded yet.
 
 This slice adds deterministic Playwright qualification against the exact
 revision-built production surfaces in Chromium, Firefox, and WebKit. The
@@ -104,6 +104,14 @@ Ordinary parent propagation incorporates corrected #4388 head
 `a35b259fd6a6ad57815544d228d73a806bb8d84e`. The companion workflow preserves
 its broader package-side contract suite while adding the pinned benchmark and
 xdist plugins required by the repository's declared Pytest arguments.
+
+Hosted exact-head run `31592370252` then reached the full 95-test companion
+contract suite and identified two isolated-runner assumptions: an explicit
+`PYTHONPATH=src` polluted the child-environment preservation assertion, and the
+async lifespan regression required the Pytest asyncio plugin. The package-side
+step now exercises the installed project without the source-path override and
+installs pinned `pytest-asyncio==1.3.0`. This changes qualification plumbing
+only, not the companion, authority, physics, or browser contract.
 
 Playwright, forced parent-process tree cleanup, Windows ACL/reparse privacy,
 frozen packages, installers, signing/SBOM/attestation, protected release,
