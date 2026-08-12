@@ -1,5 +1,29 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R13.7 React workflow integration
+
+- Branch `codex/4142-morris-react-integration` stacks exact reviewed React
+  commit `eedfc24a163af736caa47c4f0c74912a7f165036` above exact reviewed PyQt
+  parent `89eb7a0a3432158aa4ff6a3e188f874120337c28`.
+- App-owned dependency injection connects React Variation to the same-origin
+  private authority. Static/unreachable deployments are honest unavailable
+  states and never execute browser physics.
+- Canonical factor rows use actual-base, shared-registry suggestions. Complete
+  canonical club equality and pinned unrepresented scenario values are required;
+  unsupported current context fails closed rather than collapsing to a club name.
+- Capability/create/status/cancel are independently deadline-bounded and share
+  abortable generation ownership. Duplicate submission is excluded before POST,
+  cancellation polls to terminal, lifecycle request/job IDs remain immutable,
+  and real factor/design/base edits invalidate stale reports immediately.
+- Reports select one target and preserve full design/bounds provenance, `mu*`,
+  `mu`, `SE(mu*)`, `sigma`, adequacy/availability, every typed denominator,
+  assumptions, and the interaction/nonlinearity caveat.
+- Exact React evidence: 705 full web tests; 72 reviewer-focused tests;
+  type-check, zero-warning ESLint, production Vite build, diff and minimum-test
+  gates; independent final GO. PyQt evidence remains recorded below.
+- Persistence/export, UpstreamDrift replacement, protected CI, and dependency-
+  ordered merge remain open; do not mark #4142 complete from these UI slices.
+
 ## 2026-08-12 #4142 R13.7 standalone PyQt workflow
 
 - Branch `codex/4142-morris-pyqt-workflow` has exact parent

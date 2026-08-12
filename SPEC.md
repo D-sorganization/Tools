@@ -26,13 +26,36 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.31                                    |
-| **Spec Version**        | 1.16.31                                    |
+| **Current Version**     | 1.16.32                                    |
+| **Spec Version**        | 1.16.32                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
+
+### 2026-08-12 React Morris elementary-effects workflow (#4142 R13.7)
+
+- The Rate React app owns and injects its same-origin Morris client. Variation
+  exposes Monte Carlo and global Morris screening as sibling workflows; a
+  missing or unreachable Python authority disables execution and is never
+  replaced by browser-side physics.
+- Factor suggestions retain canonical order and center on the actual authority
+  base at plus/minus two shared registry scales with physical endpoint clamps.
+  Ground support omits tee height. Custom club specifications or unrepresented
+  scenario differences from the pinned passive fixed-ball authority fail closed
+  with an actionable explanation.
+- One operation is current at a time. Capability/create/status/cancel each have
+  a 30-second deadline; Run disables before POST; polling is sequential through
+  nonterminal cancellation; unmount and base changes abort work. Create must
+  echo the submitted request ID, and every later envelope must retain the pinned
+  request and job IDs.
+- Real factor/design edits clear old evidence while no-op commits preserve it.
+  Reports are ranked within one output target and retain submitted bounds/design,
+  effect estimates and uncertainty, availability/adequacy, typed no-impact,
+  failure and nonfinite counts, assumptions, and the interaction caveat.
+- The existing Monte Carlo persistence schema is intentionally not reused for
+  Morris because it cannot represent the authority request losslessly.
 
 ### 2026-08-12 PyQt Morris Screening workflow (#4142 R13.7)
 

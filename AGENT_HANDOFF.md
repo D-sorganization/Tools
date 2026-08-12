@@ -3,6 +3,38 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 React Morris workflow integration (#4142 R13.7)
+
+Branch `codex/4142-morris-react-integration` stacks the independently reviewed
+React Morris workflow above exact PyQt parent
+`89eb7a0a3432158aa4ff6a3e188f874120337c28`. The React application owns and
+injects one same-origin `MorrisAuthorityClient`; Variation exposes Monte Carlo
+and Morris as explicit sibling workflows with no browser-physics fallback.
+
+- Applicable factors retain canonical order and use base-centered, physically
+  clamped shared-registry suggestions. The current club must match its complete
+  canonical library specification and every unrepresented scenario field must
+  match the pinned passive fixed-ball authority; unsupported context fails
+  closed with an actionable message.
+- Capability, create, status, and cancel operations are sequential, abortable,
+  and independently bounded to 30 seconds. Run is excluded before POST; create
+  must echo the submitted request ID; the accepted request/job identity remains
+  pinned through every poll and cancellation response. Nonterminal cancellation
+  continues polling, and unmount or a real base change aborts current work.
+- Real factor or design edits invalidate the prior job, status, and report;
+  no-op commits preserve evidence. Completed output is target-local and retains
+  bounds/design provenance, effect uncertainty, adequacy, availability, typed
+  no-impact/failure/nonfinite denominators, assumptions, and the interaction
+  caveat.
+- Exact React commit `eedfc24a163af736caa47c4f0c74912a7f165036`
+  received independent GO after 705 full web tests and 72 reviewer-focused
+  tests plus type-check, zero-warning ESLint, and production build. This
+  integration commit reconciles all four handoffs without changing either
+  reviewed implementation.
+
+Morris persistence/export, UpstreamDrift replacement, protected CI, and
+parent-first merge remain open; this does not complete epic #4142.
+
 ## 2026-08-12 Standalone PyQt Morris workflow (#4142 R13.7)
 
 Branch `codex/4142-morris-pyqt-workflow` starts at exact UI-contract parent

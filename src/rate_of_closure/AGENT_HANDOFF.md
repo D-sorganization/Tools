@@ -3,6 +3,27 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 authority-backed React Morris workflow (#4142 R13.7)
+
+`App.tsx` owns the same-origin authority client and injects it through
+`PrimaryWorkspacePanel` into Variation. `MorrisWorkflowPanel` uses the shared
+strict request and presentation contracts; it never mirrors physics in the
+browser. The current club must equal its full canonical library specification,
+and unrepresented scenario fields must equal the pinned passive fixed-ball
+base. Impact offsets remain represented; unsupported context is visibly
+disabled rather than silently projected.
+
+`useMorrisAuthority` owns one abortable generation, immediate submission
+exclusion, independent 30-second operation deadlines, sequential polling,
+terminal cancellation polling, and unmount/base-change cleanup. Create must
+echo the submitted request ID; the first job ID and request ID are pinned and
+validated on every status/cancel response. Real design/factor edits invalidate
+the prior job/error/report while no-op commits preserve evidence. The result
+surface retains target-local rankings, immutable submitted bounds/design,
+uncertainty, availability/adequacy, every typed denominator, assumptions, and
+the interaction caveat. Morris persistence/export remains open because the
+Monte Carlo plan schema is not lossless for this authority request.
+
 ## 2026-08-12 Morris request/presentation seam (#4142 R13.6)
 
 `application/morris/request_document.py` is now the only UI-neutral builder
