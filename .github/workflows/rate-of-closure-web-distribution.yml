@@ -35,11 +35,16 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
-        with:
-          fetch-depth: 1
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          persist-credentials: false
+      - name: Fetch exact public head without credentials
+        env:
+          ROC_RELEASE_REVISION: ${{ github.event.pull_request.head.sha || github.sha }}
+          ROC_SOURCE_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+        run: |
+          git init .
+          git remote add origin "https://github.com/${ROC_SOURCE_REPOSITORY}.git"
+          git fetch --no-tags --depth=1 origin "$ROC_RELEASE_REVISION"
+          git checkout --detach FETCH_HEAD
+          test "$(git rev-parse HEAD)" = "$ROC_RELEASE_REVISION"
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
           python-version: "3.11"

@@ -6,6 +6,7 @@ Branch `codex/4378-static-inspection-runtime` starts exactly from Tools PR
 #4376 head `d14ce6f8ef2696ccaa8971443fa4df7e8d52f21f` and must target
 `codex/4369-authority-restart-recovery`. Human review is approved; protected
 dependency order and ordinary non-admin merging remain mandatory.
+Published child PR: #4388.
 
 The built React application now enters explicit `static_inspection` mode. That
 mode publishes a stable false capability, performs zero authority queries, and
@@ -48,6 +49,10 @@ without dependencies, and resolves from an unrelated Unicode working
 directory. It also proves the intentional generic no-bundle wheel branch. A
 source distribution or generic wheel is not a qualified web distribution;
 exact-revision web wheels require the trusted clean Git build job.
+The public repository is fetched credential-free at the exact event SHA on an
+ephemeral hosted runner. This avoids the checkout action's cleanup failure on
+the repository's intentionally unregistered historical gitlink and leaves no
+repository credential for PR-controlled code.
 
 The production same-origin gateway, browser Playwright qualification, Windows
 authority-state ACL/reparse hardening, frozen web/PyQt artifacts, installers,
