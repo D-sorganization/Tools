@@ -7,8 +7,10 @@ Branch `codex/4380-playwright-production-browser` was created at
 PR #4390. Corrected parent head
 `c3ecfd48910aa5aafb89962a256333690e8e72c5` is now propagated normally into
 this branch. Human review is approved, but parent order, fresh protected CI,
-and ordinary non-admin merge behavior remain mandatory. No PR or release
-carrier is recorded yet.
+and ordinary non-admin merge behavior remain mandatory. Published child PR:
+#4391. Its exact pre-publication browser-qualified head is
+`5de71c74d2de9e7105d486b60c48e4ed6569e8fd`; protected CI must qualify the
+final handoff-recording head independently.
 
 This slice adds deterministic Playwright qualification against the exact
 revision-built production surfaces in Chromium, Firefox, and WebKit. The
@@ -30,6 +32,12 @@ The browser gate exposed and fixes two release-path defects: the companion CSP
 now admits the bundle's local `data:` font payloads without relaxing script or
 connection policy, and Vitest explicitly owns only unit-test paths so it cannot
 mistake Playwright specifications for unit suites.
+
+Local qualification passes TypeScript type-check and zero-warning ESLint, all
+922 React/Vitest tests, six deterministic release-artifact checks with one
+expected Windows symlink skip, 60 focused Python companion/harness contracts,
+all nine three-engine smoke scenarios, and all three three-engine hard-loss
+lifecycle scenarios. The generated release manifest matched the qualified head.
 
 The protected distribution workflow gains an independent 30-minute
 **Production browser qualification** job. It fetches the exact public head
