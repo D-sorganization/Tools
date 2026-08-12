@@ -50,8 +50,8 @@ export function RegionalGroundExecutionFileCommands(props: Props) {
       <p className="mb-2 text-xs leading-relaxed text-slate-400">
         Exact imported authority job and validated result. Browser downloads remain destination-owned.
       </p>
-      <input ref={input} type="file" accept=".json,application/json" className="sr-only"
-        disabled={active} aria-label="Open Regional-Ground Execution Job file"
+      <input ref={input} type="file" accept=".json,application/json" hidden
+        data-testid="regional-ground-execution-job-menu-file-input" disabled={active}
         onChange={(event) => { void importFile(event); }} />
       <button type="button" disabled={active} className={props.commandClassName}
         data-command-id={APP_COMMAND_ID.fileOpenRegionalGroundExecutionJob}

@@ -176,6 +176,10 @@ describe("AppToolstrip", () => {
     expect(screen.getByRole("button", {
       name: "Open Regional-Ground Execution Job",
     })).toBeEnabled();
+    expect(screen.queryByLabelText("Open Regional-Ground Execution Job file"))
+      .not.toBeInTheDocument();
+    expect(screen.getByTestId("regional-ground-execution-job-menu-file-input"))
+      .toHaveAttribute("hidden");
     expect(screen.getByRole("button", {
       name: "Save Regional-Ground Execution Job As",
     })).toBeDisabled();

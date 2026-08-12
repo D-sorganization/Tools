@@ -77,8 +77,8 @@ describe("App regional-ground variation workspace ownership", () => {
     render(<App />);
     fireEvent.click(screen.getByRole("tab", { name: "Ground Playback" }));
     const source = JSON.stringify(executionJobFixture.job);
-    fireEvent.change(await screen.findByLabelText(
-      "Import regional-ground execution job JSON",
+    fireEvent.change(await screen.findByTestId(
+      "regional-ground-execution-job-file-input",
     ), { target: { files: [{
       name: "persistent-job.json",
       size: new TextEncoder().encode(source).byteLength,

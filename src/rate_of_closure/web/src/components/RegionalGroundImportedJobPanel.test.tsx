@@ -47,7 +47,7 @@ const browserFile = (source: string, name: string) => ({
 });
 const uploadJob = async (name = "regional-job.json"): Promise<void> => {
   const source = JSON.stringify(jobFixture.job);
-  fireEvent.change(screen.getByLabelText("Import regional-ground execution job JSON"), {
+  fireEvent.change(screen.getByTestId("regional-ground-execution-job-file-input"), {
     target: { files: [browserFile(source, name)] },
   });
   expect(await screen.findByText(new RegExp(`Loaded ${name}`))).toBeInTheDocument();
@@ -73,6 +73,18 @@ afterEach(() => {
 });
 
 describe("RegionalGroundImportedJobPanel", () => {
+  it("exposes one accessible import action while retaining a programmatic file input", async () => {
+    render(<Harness client={client()} />);
+
+    expect(screen.getAllByRole("button", { name: "Import execution job…" })).toHaveLength(1);
+    expect(screen.queryByLabelText("Import regional-ground execution job JSON"))
+      .not.toBeInTheDocument();
+    expect(screen.getByTestId("regional-ground-execution-job-file-input"))
+      .toHaveAttribute("hidden");
+    expect(await screen.findByLabelText("Local authority capability"))
+      .toHaveTextContent(/qualified_execution_profile/);
+  });
+
   it("requires exact import and explicit confirmation before executing and saving", async () => {
     const authority = client();
     const saveResult = vi.fn();
@@ -106,7 +118,7 @@ describe("RegionalGroundImportedJobPanel", () => {
     render(<Harness client={authority} />);
     await uploadJob("accepted.json");
 
-    fireEvent.change(screen.getByLabelText("Import regional-ground execution job JSON"), {
+    fireEvent.change(screen.getByTestId("regional-ground-execution-job-file-input"), {
       target: { files: [browserFile("{}", "invalid.json")] },
     });
 
@@ -155,7 +167,7 @@ describe("RegionalGroundImportedJobPanel", () => {
     let resolveBytes!: (value: ArrayBuffer) => void;
     const pendingBytes = new Promise<ArrayBuffer>((resolve) => { resolveBytes = resolve; });
     const source = JSON.stringify(jobFixture.job);
-    fireEvent.change(screen.getByLabelText("Import regional-ground execution job JSON"), {
+    fireEvent.change(screen.getByTestId("regional-ground-execution-job-file-input"), {
       target: { files: [{ name: "replacement.json", size: source.length,
         arrayBuffer: () => pendingBytes }] },
     });

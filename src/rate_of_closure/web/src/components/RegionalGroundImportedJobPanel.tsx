@@ -96,8 +96,8 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
         neither constructs jobs from editor state nor executes physics in the browser.
       </p>
       <div className="mt-3 flex flex-wrap gap-2">
-        <input ref={input} type="file" accept=".json,application/json" className="sr-only"
-          aria-label="Import regional-ground execution job JSON" disabled={active}
+        <input ref={input} type="file" accept=".json,application/json" hidden
+          data-testid="regional-ground-execution-job-file-input" disabled={active}
           onChange={(event) => { void importJob(event); }} />
         <button type="button" disabled={active} onClick={() => input.current?.click()}
           className="rounded-md border border-sky-500/60 px-3 py-2 text-sm text-sky-200 disabled:opacity-40">

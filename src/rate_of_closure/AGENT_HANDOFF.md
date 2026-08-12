@@ -1,5 +1,14 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 imported-job accessibility correction
+
+Physical browser inspection of PR #4373 found that the hidden file inputs and
+their visible proxy buttons both appeared as import actions in the accessibility
+tree. The Ground Playback panel and contextual File menu now use truly hidden,
+programmatically activated inputs, leaving each visible button as the sole
+accessible action. Focused React coverage proves the single-action contract and
+preserves strict file-import behavior across workspace navigation.
+
 ## 2026-08-11 #4369 PyQt6 toolstrip protocol correction
 
 Hosted PR #4373 quality-gate job 94021363392 found that the concrete main
