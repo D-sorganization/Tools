@@ -121,6 +121,47 @@ def test_hard_loss_and_replacement_emit_only_boolean_facts(
     _assert_no_private_authority_values((stopped, observed))
 
 
+def test_public_exposure_scan_keeps_private_identity_native(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    runtime = _Runtime()
+    harness = BrowserCompanionHarness(
+        cast(Any, runtime), control_id="opaque-control-id"
+    )
+    monkeypatch.setattr(
+        harness_module,
+        "_read_public_gateway",
+        lambda _url, path: f"safe public response for {path}".encode(),
+    )
+
+    event = harness.dispatch(
+        {"command": "inspect_public_exposure", "control_id": "opaque-control-id"}
+    )
+
+    assert event == {
+        "event": "public_exposure_inspected",
+        "token_absent": True,
+        "child_port_absent": True,
+        "public_identity_safe": True,
+    }
+    _assert_no_private_authority_values(event)
+
+
+def test_gateway_hard_loss_closes_runtime_without_disclosing_identity() -> None:
+    runtime = _Runtime()
+    harness = BrowserCompanionHarness(
+        cast(Any, runtime), control_id="opaque-control-id"
+    )
+
+    event = harness.dispatch(
+        {"command": "gateway_hard_loss", "control_id": "opaque-control-id"}
+    )
+
+    assert runtime.closed is True
+    assert event == {"event": "gateway_stopped", "gateway_stopped": True}
+    _assert_no_private_authority_values(event)
+
+
 @pytest.mark.parametrize(
     "command",
     [

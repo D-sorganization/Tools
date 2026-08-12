@@ -3,10 +3,16 @@ import { expect, type Page, type Request } from "@playwright/test";
 const LOCAL_HOSTS = new Set(["127.0.0.1", "localhost", "[::1]"]);
 
 export interface NetworkAudit {
+  assertBoundaryClean(): void;
   assertClean(): void;
 }
 
-interface AuditOptions { readonly forbidApi?: boolean }
+interface AuditOptions {
+  readonly allowedRuntimeError?: RegExp;
+  readonly forbidApi?: boolean;
+  readonly maxRuntimeErrors?: number;
+  readonly maxTransportFailures?: number;
+}
 
 export const summarizeRuntimeError = (kind: string, detail: string): string => {
   const redacted = detail
@@ -49,10 +55,19 @@ export function auditSameOriginNetwork(page: Page, expectedOrigin: string,
     }
   });
   return {
+    assertBoundaryClean(): void {
+      expect(violations, "browser network boundary violations").toEqual([]);
+    },
     assertClean(): void {
       expect(violations, "browser network boundary violations").toEqual([]);
-      expect(failures, "browser network transport failures").toEqual([]);
-      expect(runtimeErrors, "browser runtime errors").toEqual([]);
+      expect(failures.length, "browser network transport failures")
+        .toBeLessThanOrEqual(options.maxTransportFailures ?? 0);
+      expect(runtimeErrors.length, "browser runtime errors")
+        .toBeLessThanOrEqual(options.maxRuntimeErrors ?? 0);
+      const allowedRuntimeError = options.allowedRuntimeError;
+      if (allowedRuntimeError !== undefined) {
+        runtimeErrors.forEach((error) => expect(error).toMatch(allowedRuntimeError));
+      }
     },
   };
 }
