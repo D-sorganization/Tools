@@ -16,6 +16,32 @@ unchanged. Injected test runners either fail in production preflight before any
 physics or wait solely for cooperative cancellation. No successful physics,
 capability promotion, controls, persistence, protected evidence, downstream
 parity, or release is claimed. Atomic commit and exact gate evidence follow.
+## 2026-08-11 local #4369 versioned flight execution profile
+
+This isolated child starts from exact local composed head
+`7e4069e891d8b4bde3f1d712b5b47897359a414e`. The new application registry
+maps only `waterloo_penner` + `tools-core/1.0.0` to a strict bounded
+`max_time_s`/`step_s`/whole-number `sample_every` schema. Its explicit v1
+recomputation contract uses default Waterloo/Penner coefficients, adaptive
+RK45, the launch-relative transfer plane, base dense-output samples,
+deterministic decimation, and terminal retention.
+
+Qualification returns stable typed evidence for absent identity, invalid
+schema, recomputation failure, either digest mismatch, or exact success. The
+qualified boundary releases the physical flight result only when both job
+digests match. The current canonical fixture recomputes deterministically but
+its synthetic declared digests differ, so runner preflight reports
+`flight_evidence_mismatch`, completes zero trials, invokes no ground physics,
+and publishes no result. Production still injects no runner; capability and
+all client execution controls remain disabled. A new canonical fixture must be
+produced by the exact registered profile under a pinned numerical runtime
+before the physical runner can progress. Keep #4369/#4273/#4267 open.
+
+TDD RED first proved the registry module absent. Evidence passes 20 focused
+registry/preflight tests and 147 composed authority, job/result, manifest, and
+flight/transfer/pipeline tests. Ruff, Black, focused MyPy, Bandit, JSON and
+manifest validation, diff hygiene, and structural limits are clean. No GitHub
+operation occurred.
 
 ## 2026-08-11 local #4369 canonical authority status wire
 

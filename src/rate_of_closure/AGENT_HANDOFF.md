@@ -12,6 +12,28 @@ A validated application-factory runtime seam supports this integration without
 changing the default server factory. The only injected runners are fail-closed
 preflight and cancellation-only test doubles; no flight/ground physics succeeds
 or is claimed, and there is no production registration or visible control.
+## 2026-08-11 local #4369 versioned flight execution profile
+
+From exact local composed head
+`7e4069e891d8b4bde3f1d712b5b47897359a414e`, the application layer now owns
+one exact versioned flight profile for `waterloo_penner` /
+`tools-core/1.0.0`. The registry strictly validates the three settings and
+binds them to launch-relative planar-contact Waterloo/Penner recomputation,
+base sampling, deterministic decimation, and terminal retention.
+
+The evidence contract exposes only stable qualification reasons and computed
+digests; the result-returning boundary fails unless both declared hashes match.
+The canonical job's declared synthetic hashes do not match deterministic
+recomputation, so production preflight remains zero-of-total failed and never
+enters regional-ground physics. No runner injection, capability promotion,
+visible execution control, persistence, or release is included. Keep
+#4369/#4273/#4267 open until a profile-produced fixture, pinned runtime,
+ground runner, and matched clients are qualified.
+
+TDD evidence is green for 20 focused registry/preflight tests and 147 composed
+authority, execution-contract, manifest, and shared flight-pipeline tests.
+Ruff, Black, focused MyPy, Bandit, manifest validation, and structural checks
+are clean. No GitHub write occurred.
 
 ## 2026-08-11 local #4369 canonical authority status wire
 

@@ -1,16 +1,20 @@
 """Fail-closed production-runner qualification for regional-ground jobs.
 
-The v1 execution job records flight evidence, but it does not yet bind a
-versioned model input profile to executable solver semantics.  This module is
-the production boundary: it rejects unqualified profiles before flight or
-ground physics can run and preserves typed cancellation/failure behavior.
+The v1 execution job records generic flight evidence. A separate exact
+versioned profile binds eligible evidence to solver semantics. This module is
+the production boundary: it releases recomputed flight only after both digests
+match and preserves typed cancellation/failure behavior.
 """
 
 from __future__ import annotations
 
 from enum import StrEnum
-from typing import NoReturn
 
+from rate_of_closure.application.flight_execution_profiles import (
+    FlightExecutionProfileQualificationError,
+    FlightExecutionQualificationReason,
+    recompute_qualified_flight_result,
+)
 from rate_of_closure.application.regional_ground_execution_job import (
     RegionalGroundExecutionJob,
 )
@@ -23,7 +27,7 @@ from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationFailureStage,
     GroundRegionalVariationHooks,
 )
-from shared.python.swing_sim.flight import FlightModelType
+from shared.python.swing_sim.flight import FlightModelType, FlightResult
 
 
 class ProductionRunnerPreflightReason(StrEnum):
@@ -31,6 +35,9 @@ class ProductionRunnerPreflightReason(StrEnum):
 
     FLIGHT_MODEL_UNKNOWN = "flight_model_unknown"
     FLIGHT_PROFILE_UNREGISTERED = "flight_profile_unregistered"
+    FLIGHT_SETTINGS_INVALID = "flight_settings_invalid"
+    FLIGHT_RECOMPUTATION_FAILED = "flight_recomputation_failed"
+    FLIGHT_EVIDENCE_MISMATCH = "flight_evidence_mismatch"
 
 
 class RegionalGroundProductionPreflightError(RuntimeError):
@@ -55,33 +62,53 @@ class RegionalGroundProductionPreflightError(RuntimeError):
 
 def preflight_regional_ground_production_job(
     job: RegionalGroundExecutionJob,
-) -> NoReturn:
-    """Reject until a versioned, recomputable flight profile is registered.
+) -> FlightResult:
+    """Return flight only when a registered profile reproduces both digests.
 
-    A future qualified profile must bind the exact model ID and version,
-    settings schema, solver/surface semantics, and recomputable trajectory and
-    result digests.  The generic numeric ``flight.settings`` mapping does not
-    establish any of those semantics, so recognizing a model ID alone is not
-    permission to execute it.
+    The generic numeric ``flight.settings`` mapping alone is not execution
+    authority. The separate registry must recognize its exact model/version,
+    validate its exact schema, recompute with bound solver/surface semantics,
+    and match both declared digests.
     """
     if type(job) is not RegionalGroundExecutionJob:
         raise TypeError("job must be an exact RegionalGroundExecutionJob")
     job.__post_init__()
 
     try:
-        FlightModelType(job.flight.model_id)
-    except ValueError as error:
+        return recompute_qualified_flight_result(
+            job.launch.launch,
+            job.transfer,
+            job.flight,
+        )
+    except FlightExecutionProfileQualificationError as error:
+        reason = _preflight_reason(job, error.qualification.reason)
         raise RegionalGroundProductionPreflightError(
-            ProductionRunnerPreflightReason.FLIGHT_MODEL_UNKNOWN,
+            reason,
             job.flight.model_id,
             job.flight.model_version,
         ) from error
 
-    raise RegionalGroundProductionPreflightError(
-        ProductionRunnerPreflightReason.FLIGHT_PROFILE_UNREGISTERED,
-        job.flight.model_id,
-        job.flight.model_version,
-    )
+
+def _preflight_reason(
+    job: RegionalGroundExecutionJob,
+    reason: FlightExecutionQualificationReason,
+) -> ProductionRunnerPreflightReason:
+    if reason is FlightExecutionQualificationReason.PROFILE_NOT_REGISTERED:
+        try:
+            FlightModelType(job.flight.model_id)
+        except ValueError:
+            return ProductionRunnerPreflightReason.FLIGHT_MODEL_UNKNOWN
+        return ProductionRunnerPreflightReason.FLIGHT_PROFILE_UNREGISTERED
+    if reason is FlightExecutionQualificationReason.SETTINGS_SCHEMA_INVALID:
+        return ProductionRunnerPreflightReason.FLIGHT_SETTINGS_INVALID
+    if reason is FlightExecutionQualificationReason.RECOMPUTATION_FAILED:
+        return ProductionRunnerPreflightReason.FLIGHT_RECOMPUTATION_FAILED
+    if reason in {
+        FlightExecutionQualificationReason.TRAJECTORY_DIGEST_MISMATCH,
+        FlightExecutionQualificationReason.RESULT_DIGEST_MISMATCH,
+    }:
+        return ProductionRunnerPreflightReason.FLIGHT_EVIDENCE_MISMATCH
+    raise AssertionError("qualified flight cannot produce a preflight error")
 
 
 def _raise_if_cancelled(

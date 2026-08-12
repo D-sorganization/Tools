@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.78                                    |
-| **Spec Version**        | 1.14.78                                    |
+| **Current Version**     | 1.14.79                                    |
+| **Spec Version**        | 1.14.79                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -63,6 +63,27 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   production adapter. These tests execute no flight or ground physics, fabricate
   no successful result, add no UI control, and establish no physical-model,
   protected-carrier, downstream-parity, or release claim.
+### 2026-08-11 Versioned Flight Execution-Profile Registry
+
+- The application registry maps the exact `waterloo_penner` model ID and
+  `tools-core/1.0.0` model version to one strict settings schema:
+  `max_time_s` in `(0, 120]`, `step_s` in `[0.0001, 0.1]`, and whole-number
+  `sample_every` in `[1, 10000]`, with a retained interval no greater than one
+  second. Missing, extra, Boolean, fractional-count, non-finite, or out-of-bound
+  values fail before model resolution.
+- The profile binds Waterloo/Penner default coefficients, adaptive RK45,
+  launch-relative planar transfer-surface contact, `step_s` dense-output
+  sampling, deterministic `sample_every` decimation, and mandatory terminal
+  retention under recomputation contract
+  `waterloo-penner-adaptive-rk45-planar-contact/v1`.
+- Typed qualification distinguishes absent profiles, invalid schemas, failed
+  recomputation, trajectory-digest mismatch, result-digest mismatch, and exact
+  qualification. A physical `FlightResult` is released only after both
+  canonical digests match the submitted evidence.
+- The current canonical execution-job fixture recomputes deterministically but
+  its synthetic declared flight digests do not match the registered profile.
+  Runner preflight therefore remains failed with zero accepted trials; ground
+  physics, capability, client controls, persistence, and release stay disabled.
 
 ### 2026-08-11 Canonical Regional-Ground Authority Status Wire
 
@@ -3315,6 +3336,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 | ---- | ------- | ------- |
 | 2026-08-11 | 1.14.78 | test(ground-study, #4369): qualify the PyQt submitter against an actual authenticated loopback Uvicorn/FastAPI process, covering bearer secrecy, canonical submit/status/cancel/result behavior, typed fail-closed production preflight, bounded shutdown, and false-capability non-construction without running or claiming physics. |
 | 2026-08-11 | 1.14.77 | feat(ground-study, #4369): add a UI-neutral authenticated PyQt loopback submitter adapter with canonical job/status/result binding, bounded polling/backoff, cooperative cancellation, best-effort cleanup after accepted-job client failures, typed non-secret errors, stale/late suppression, and fail-closed construction while capability remains unavailable. |
+| 2026-08-11 | 1.14.79 | feat(ground-study, #4369): register one strict versioned Waterloo/Penner flight execution profile with bounded exact settings, launch-relative planar-contact recomputation, terminal-preserving deterministic sampling, and typed digest qualification; retain fail-closed runner behavior because the canonical fixture's synthetic flight digests do not recompute, and leave ground execution and capability disabled. |
 | 2026-08-11 | 1.14.76 | feat(ground-study, #4369): add a typed production-runner preflight that rejects unknown and unregistered versioned flight profiles before any physics; propagate the preflight terminal stage through the canonical Python/React status contract while leaving capability, execution controls, and model invocation disabled until solver and digest semantics are qualified. |
 | 2026-08-11 | 1.14.75 | feat(ground-study, #4369): centralize the six-state authority job-status wire in a transport-neutral strict Python parser/serializer, make the server consume it, and prove Python-produced canonical byte/semantic parity in React across every failure code and stage; keep physics, UI, capability promotion, persistence, and execution claims open. |
 | 2026-08-11 | 1.14.74 | feat(ground-study, #4369): add strict future-facing React submit/status/POST-cancel/result REST client contracts plus one-at-a-time capability polling with AbortController cleanup, obsolete-response suppression, bounded job-bound status/result validation, and every execution-control flag disabled while the Python authority remains unavailable; matching routes exist while a qualified runner, physics invocation, and visible Run integration remain open. |

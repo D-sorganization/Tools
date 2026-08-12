@@ -15,6 +15,29 @@
   UI, persistence, protected, downstream, or release claim is added.
 - Code, tests, SPEC, manifest, and all handoffs commit atomically; exact focused,
   composed, static, and governance evidence follows.
+## 2026-08-11 local #4369 versioned flight execution profile
+
+- Exact source parent: local composed head
+  `7e4069e891d8b4bde3f1d712b5b47897359a414e`.
+- One strict registry identity maps Waterloo/Penner `tools-core/1.0.0` to the
+  exact bounded `max_time_s`, `step_s`, and whole-number `sample_every`
+  settings schema.
+- The v1 recomputation authority binds default model coefficients, adaptive
+  RK45, launch-relative planar transfer-surface contact, base sampling,
+  deterministic decimation, and terminal retention. Only exact trajectory and
+  result digest matches can release the recomputed flight.
+- The canonical fixture deterministically fails trajectory/result hash
+  qualification because its declared flight evidence is synthetic. Preflight
+  reports a typed non-sensitive mismatch at zero trials; ground physics is not
+  invoked and no result is published.
+- Production runner injection, capability, visible client controls,
+  persistence, ground execution, protected integration, and downstream parity
+  remain open. Replace the fixture only with profile-produced evidence under a
+  pinned numerical runtime. Keep #4369/#4273/#4267 open.
+- TDD RED captured the missing registry. Evidence passes 20 focused
+  registry/preflight tests, 147 composed authority/contract/manifest/flight
+  tests, Ruff, Black, focused MyPy, Bandit, JSON/manifest validation, and
+  structural gates. No GitHub write occurred.
 
 ## 2026-08-11 local #4369 canonical authority status wire
 

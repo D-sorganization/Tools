@@ -32,14 +32,14 @@ from tests.rate_of_closure.test_regional_ground_execution_job import _job
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
 
-def test_known_model_still_rejects_unregistered_versioned_execution_profile() -> None:
+def test_known_profile_rejects_mismatched_recomputed_flight_evidence() -> None:
     job = _job()
 
     with pytest.raises(RegionalGroundProductionPreflightError) as raised:
         preflight_regional_ground_production_job(job)
 
     error = raised.value
-    assert error.reason is ProductionRunnerPreflightReason.FLIGHT_PROFILE_UNREGISTERED
+    assert error.reason is ProductionRunnerPreflightReason.FLIGHT_EVIDENCE_MISMATCH
     assert error.model_id == "waterloo_penner"
     assert error.model_version == "tools-core/1.0.0"
     assert "trajectory_sha256" not in str(error)
@@ -76,6 +76,31 @@ def test_unknown_model_identity_is_a_distinct_preflight_failure() -> None:
     assert raised.value.reason is ProductionRunnerPreflightReason.FLIGHT_MODEL_UNKNOWN
 
 
+def test_known_model_with_unregistered_version_is_a_distinct_failure() -> None:
+    source = _job()
+    changed_flight = replace(source.flight, model_version="tools-core/2.0.0")
+    job = build_regional_ground_execution_job(
+        job_id="unregistered-version-ground-study",
+        launch=source.launch.launch,
+        flight=changed_flight,
+        transfer=source.transfer,
+        capture_speed_m_s=source.capture_speed_m_s,
+        execution_options=source.execution_options,
+        regional_execution_options=source.regional_execution_options,
+        variation_request=source.variation_request,
+        producer=source.provenance.producer,
+        producer_version=source.provenance.producer_version,
+        source_revision=source.provenance.source_revision,
+    )
+
+    with pytest.raises(RegionalGroundProductionPreflightError) as raised:
+        preflight_regional_ground_production_job(job)
+
+    assert raised.value.reason is (
+        ProductionRunnerPreflightReason.FLIGHT_PROFILE_UNREGISTERED
+    )
+
+
 def test_generic_flight_settings_contract_does_not_imply_executable_semantics() -> None:
     source = _job()
     arbitrary = FlightExecutionInput(
@@ -102,10 +127,31 @@ def test_generic_flight_settings_contract_does_not_imply_executable_semantics() 
     with pytest.raises(RegionalGroundProductionPreflightError) as raised:
         preflight_regional_ground_production_job(job)
 
-    assert (
-        raised.value.reason
-        is ProductionRunnerPreflightReason.FLIGHT_PROFILE_UNREGISTERED
+    assert raised.value.reason is (
+        ProductionRunnerPreflightReason.FLIGHT_SETTINGS_INVALID
     )
+
+
+def test_solver_failure_is_mapped_without_exposing_internal_text(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    class BrokenModel:
+        def simulate_to_surface(self, *_args: object, **_kwargs: object) -> object:
+            raise RuntimeError("solver-specific secret detail")
+
+    monkeypatch.setattr(
+        "rate_of_closure.application.flight_execution_profiles."
+        "FlightModelRegistry.get_model",
+        lambda _model_type: BrokenModel(),
+    )
+
+    with pytest.raises(RegionalGroundProductionPreflightError) as raised:
+        preflight_regional_ground_production_job(_job())
+
+    assert raised.value.reason is (
+        ProductionRunnerPreflightReason.FLIGHT_RECOMPUTATION_FAILED
+    )
+    assert "solver-specific secret detail" not in str(raised.value)
 
 
 def test_precancel_wins_before_preflight_or_any_physics() -> None:
@@ -142,10 +188,6 @@ def test_preflight_failure_is_typed_and_runs_no_physics(
         calls.append("physics")
         raise AssertionError("physics must not run before profile qualification")
 
-    monkeypatch.setattr(
-        "shared.python.swing_sim.flight.pipeline.simulate",
-        forbidden,
-    )
     monkeypatch.setattr(
         "shared.python.swing_sim.flight.regional_ground_pipeline.execute_regional_ground_from_flight",
         forbidden,
