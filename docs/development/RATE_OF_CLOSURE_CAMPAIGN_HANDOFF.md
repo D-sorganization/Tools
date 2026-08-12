@@ -3,7 +3,7 @@
 ## 2026-08-12 #4379 same-origin source production companion
 
 Branch `codex/4379-same-origin-companion` starts exactly from Tools PR #4388
-head `1616e2de41521789a53f41e00e9ce35f1805f080` and must target
+head `a35b259fd6a6ad57815544d228d73a806bb8d84e` and must target
 `codex/4378-static-inspection-runtime`. Human review is approved; protected
 dependency order and ordinary non-admin merging remain mandatory.
 Published child PR: #4390. Its exact pre-publication artifact-qualified head is
@@ -53,6 +53,11 @@ gates pass. The exact-revision clean-wheel gate and protected CI remain required
 at the final published head. Its installed-artifact smoke materializes the
 `importlib.metadata` entry-point selection as a tuple for Python 3.11-3.13
 compatibility before asserting the exact advertised console script.
+
+Ordinary parent propagation incorporates corrected #4388 head
+`a35b259fd6a6ad57815544d228d73a806bb8d84e`. The companion workflow preserves
+its broader package-side contract suite while adding the pinned benchmark and
+xdist plugins required by the repository's declared Pytest arguments.
 
 Playwright, forced parent-process tree cleanup, Windows ACL/reparse privacy,
 frozen packages, installers, signing/SBOM/attestation, protected release,
@@ -112,6 +117,14 @@ The public repository is fetched credential-free at the exact event SHA on an
 ephemeral hosted runner. This avoids the checkout action's cleanup failure on
 the repository's intentionally unregistered historical gitlink and leaves no
 repository credential for PR-controlled code.
+
+Hosted exact-head run `31587364259` completed checkout and the full React gate,
+then failed before Python test collection because the isolated package-side
+step installed only Pytest while the repository's declared Pytest arguments
+require the benchmark and xdist plugins. The workflow now installs pinned
+`pytest-benchmark==5.2.3` and `pytest-xdist==3.8.0` with `pytest==9.0.2` before
+running the distribution contract. This is CI-environment repair only; it does
+not change product behavior, distribution contents, or the release contract.
 
 The production same-origin gateway, browser Playwright qualification, Windows
 authority-state ACL/reparse hardening, frozen web/PyQt artifacts, installers,
