@@ -1,5 +1,43 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4369 regional-ground execution-job contract
+
+The unpublished `codex/4369-regional-ground-execution-job` branch starts from
+exact PR #4368 head `7d2d155b35f2ae55842de120864c4a343a5ebcb6`.
+It adds the first UI-neutral prerequisite for real seeded regional-ground
+execution: a strict 1 MiB
+`rate-of-closure/regional-ground-execution-job/v1` envelope implemented with
+Python/TypeScript parity and one shared canonical golden fixture.
+
+The immutable job binds the exact SI constant-wind launch and ball setup,
+flight model identity plus bounded numeric settings, independently canonical
+trajectory and result SHA-256 identities, the complete existing
+flight-to-ground transfer surface/calibration/provenance/settings authority,
+capture threshold, bounded trial/parallelism/timeout/fail-fast options, and the
+existing seeded regional-ground variation request. Canonical input and complete
+job digests are recomputed on every import. The parser rejects duplicate or
+extra fields, wrong versions, nonfinite/cross-runtime-unsafe/Boolean numbers,
+surrogates, malformed digests, oversize text, mismatched trial counts, model
+identity drift, and any regional base surface not exactly equal to the
+launch-relative transfer surface.
+
+The contract reuses the existing canonical numeric JSON, strict JSON,
+ball-setup, transfer, surface, regional-plan, and seeded-request authorities.
+It does not duplicate physics, invoke a solver, invent browser execution,
+persist results, or prove that the supplied precomputed flight digests were
+produced by the declared model. Version 1 accepts the current resolved
+constant-wind launch contract; time/space-varying wind requires a separately
+qualified scenario wire contract. Keep #4369/#4273/#4267 open for executor
+binding, cancellation/result evidence, matched UI invocation, wind-scenario,
+compiled/downstream parity, protected publication, and release.
+
+TDD RED captured the absent Python and TypeScript modules. Focused Python and
+React parity suites, Ruff, TypeScript, ESLint, campaign-manifest validation,
+documentation governance, and repository structural gates are the required
+local evidence. The implementation, shared fixture, SPEC, campaign manifest,
+and all canonical handoffs commit together as `SELF`; no push or GitHub write
+occurred.
+
 ## 2026-08-11 local #4273 contextual regional-ground request File controls
 
 - The unpublished `codex/4273-ground-variation-file-controls` child starts

@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.59                                    |
-| **Spec Version**        | 1.14.59                                    |
+| **Current Version**     | 1.14.60                                    |
+| **Spec Version**        | 1.14.60                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3197,6 +3197,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.60 | feat(ground-study, #4369 #4273 #4267): add a strict UI-neutral 1 MiB Python/TypeScript `regional-ground-execution-job/v1` authority with one shared canonical fixture; bind exact launch/ball setup, flight model/settings and trajectory/result digests, transfer surface/settings identity, capture and bounded orchestration controls, the existing seeded regional request, plus recomputed input/job digests; reject cross-contract model or launch-relative surface drift while retaining actual executor invocation, result/cancellation evidence, variable-wind scenario wire, UI execution, compiled/downstream parity, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.59 | feat(ground-study, #4273): bind contextual React and PyQt6 Open/Save As commands to the App-owned seeded regional-ground request; add strict TypeScript v1 parsing and Python-parity canonical serialization, a shared golden payload, bounded transactional browser import, truthful browser download semantics, visible failures, native validate-before-dialog atomic persistence, exact-import retention until editor change, explicit illustrative-draft rejection, and cancel-safe dialogs; retain physics invocation, overlay variation, solver/capability and wind integration, compiled/downstream parity, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.58 | feat(ground-study, #4273): lift the React variation plan, execution policy, regional draft, and exact imported evidence into one App-owned transactional workspace; make both panels controlled across navigation; expose a typed compose/apply request port; register the two inspectable ground inputs while failing closed before unsupported scalar-browser execution; retain File controls, PyQt wiring, browser persistence, pipeline integration, protected release, and issue/epic completion as open. |
 | 2026-08-11 | 1.14.57 | feat(ground-study, #4273): add strict canonical bounded seeded regional-ground request persistence without UI or physics. |
