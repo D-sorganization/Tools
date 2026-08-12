@@ -32,6 +32,12 @@ runtime dependencies, and the root wheel includes `rotation_converter`, which
 the installed authority import graph requires. A clean extra installation can
 import the durable authority store without relying on the development checkout.
 
+The first hosted #4376 quality gate exposed one pinned-MyPy-1.13-only inference
+gap in the deterministic status-fixture stage matrix. The corrective follow-up
+types that matrix against the shared wire literal union; fixture bytes and all
+runtime behavior remain unchanged. The exact pinned CI MyPy command, fixture
+check, Ruff/format, and manifest gates pass locally before the follow-up push.
+
 Local gates are green: 1,252 Rate-of-Closure Python/PyQt tests plus one
 Windows-skipped POSIX-permission test with eight workers; 137 React files and
 909 tests; TypeScript; zero-warning ESLint; the production Vite build; 74

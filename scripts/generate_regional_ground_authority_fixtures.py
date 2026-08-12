@@ -22,6 +22,7 @@ from rate_of_closure.application.flight_execution_profiles import (  # noqa: E40
     qualify_flight_execution_input,
 )
 from rate_of_closure.application.regional_ground_authority_status import (  # noqa: E402
+    AuthorityFailureStage,
     AuthorityJobFailure,
     AuthorityJobSnapshot,
     AuthorityJobStatus,
@@ -44,7 +45,7 @@ _FIXTURES = _ROOT / "src" / "rate_of_closure" / "web" / "src" / "model" / "__fix
 _JOB = _FIXTURES / "regional_ground_execution_job_golden_v1.json"
 _STATUS = _FIXTURES / "regional_ground_authority_job_status_golden_v1.json"
 _RESULT = _FIXTURES / "regional_ground_execution_result_golden_v1.json"
-_FAILURE_STAGES = (
+_FAILURE_STAGES: tuple[AuthorityFailureStage, ...] = (
     "authority_restart",
     "cancellation_callback",
     "preflight",
