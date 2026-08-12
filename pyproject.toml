@@ -31,6 +31,12 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+# Private loopback authority used by the Rate React launcher.
+rate-morris-authority = [
+    "fastapi>=0.100.0",
+    "scipy>=1.10.0,<1.18",
+    "uvicorn>=0.30.0",
+]
 # Full installation with all features
 all = [
     "scipy>=1.10.0,<1.18",
@@ -40,6 +46,8 @@ all = [
     "mujoco>=3.0.0",
     "PyQt6>=6.5.0",
     "sympy>=1.12",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.30.0",
 ]
 # AI and simulation models
 ai = [
@@ -152,6 +160,7 @@ test = [
     "python-multipart>=0.0.7",
     "requests>=2.32.0",
     "sqlmodel>=0.0.22",
+    "uvicorn>=0.30.0",
 ]
 # Development tools
 dev = [

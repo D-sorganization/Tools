@@ -3,6 +3,34 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Private child authority and Vite proxy (#4142 R13.5)
+
+`application/morris/{host,child,runtime}.py` is the bounded local host slice.
+The child alone owns an exclusive IPv4 loopback port-zero socket; parent
+readiness requires the exact bearer-authenticated capability document at
+`/api/rate-of-closure/v1/morris/capabilities`, including both request and job
+schema identities. Parent probes use direct `http.client` connections so proxy
+environment variables cannot receive the credential. Host lifespan closes an
+injected `MorrisJobRegistry` exactly once; shutdown first uses an authenticated
+control route and then a bounded reap fallback. `runtime.py` does not import the
+Uvicorn-owning child module and redacts its token from `repr`. Post-spawn
+`BaseException` paths reap before re-raising and every final reap closes the
+readiness pipe; cleanup failures are generically logged and never replace the
+original startup exception. Pre-lifespan setup failures remain child-owned;
+listener and registry cleanup are both attempted without masking setup errors; successful
+lifespan startup explicitly transfers registry ownership, avoiding leaks and
+double close. Sanitized authenticated 500s, plus 404/422 paths, retain
+no-store/nosniff headers.
+
+`launch_web.py` wraps the complete shared Vite launcher call in that runtime.
+The Vite development server proxies `/api/rate-of-closure` using only
+`ROC_MORRIS_AUTHORITY_URL` and `ROC_MORRIS_AUTHORITY_TOKEN`; strict validation
+rejects non-loopback, credentialed, path/query/fragment, invalid-port, and
+header-unsafe configuration. Preview/static builds do not proxy the authority,
+and no `VITE_` value or CORS path exposes the endpoint/token to browser code.
+The React client defaults to the canonical same-origin v1 prefix. UI startup,
+polling, display, export, persistence, and non-development hosting remain open.
+
 ## 2026-08-12 Morris authority bridge (#4142 R13.5)
 
 `application/morris/` now provides strict primitive request/job v1 contracts,

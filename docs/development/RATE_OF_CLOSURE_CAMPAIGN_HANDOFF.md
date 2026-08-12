@@ -1,5 +1,35 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R13.5 private authority host
+
+- The standalone Rate React launcher now owns one ephemeral authority child
+  around the Vite development server. The child exclusively binds IPv4
+  `127.0.0.1:0`; the parent accepts only a bounded canonical port line and an
+  exact authenticated capability response before launching Vite.
+- The canonical API is `/api/rate-of-closure/v1`; capability discovery is
+  `/api/rate-of-closure/v1/morris/capabilities` and advertises the exact request
+  and job schema IDs. All routes require the generated bearer and return
+  `Cache-Control: no-store` plus `X-Content-Type-Options: nosniff`; there is no
+  CORS, docs, OpenAPI, browser credential, or browser-visible target variable.
+- Vite's development server alone receives `ROC_MORRIS_AUTHORITY_URL` and
+  `ROC_MORRIS_AUTHORITY_TOKEN` and proxies `/api/rate-of-closure`. Targets are
+  strict credential-free IPv4-loopback origins with valid explicit ports;
+  tokens are visible ASCII. Preview/static hosting intentionally has no proxy.
+- Registry ownership is exact-once through FastAPI lifespan. Parent shutdown is
+  authenticated and graceful first, with bounded terminate/kill fallback;
+  startup interrupts and launch errors also reap the child and close its pipe.
+  Secondary reap/pipe errors are contained without replacing the original
+  startup exception. Listener and registry cleanup are both attempted even
+  when either cleanup operation fails.
+  Before lifespan transfer, child-side setup failures close the registry;
+  afterward ASGI lifespan owns the one close. Authenticated 404, 422, and
+  sanitized unhandled-500 responses retain security headers. Real child smoke, host
+  lifecycle/security tests, proxy rejection tests, TypeScript gates, and the
+  production web build are green locally.
+- This does not add the Morris UI, polling, persistence, export, production
+  authority deployment, or UpstreamDrift consumption and does not complete
+  #4142.
+
 ## 2026-08-12 #4142 R13.5 bounded authority bridge
 
 - Added exact request/job v1 contracts, deterministic Rate execution, bounded

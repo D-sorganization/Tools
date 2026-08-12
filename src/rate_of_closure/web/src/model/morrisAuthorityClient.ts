@@ -50,7 +50,7 @@ const responseDocument = async (response: Response): Promise<unknown> => {
 };
 
 export function createMorrisAuthorityClient(options: MorrisAuthorityClientOptions = {}): MorrisAuthorityClient {
-  const baseUrl = normalizedBaseUrl(options.baseUrl ?? "");
+  const baseUrl = normalizedBaseUrl(options.baseUrl ?? "/api/rate-of-closure/v1");
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
   if (typeof fetchImpl !== "function") throw new TypeError("fetchImpl must be callable");
 

@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.28                                    |
-| **Spec Version**        | 1.16.28                                    |
+| **Current Version**     | 1.16.29                                    |
+| **Spec Version**        | 1.16.29                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -2922,6 +2922,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.29 | feat(rate-of-closure, #4142 R13.5): add a bounded private Morris authority host for the standalone React development launcher: exclusive ephemeral IPv4 loopback child socket, exact authenticated capability readiness, redacted bearer, no-store/nosniff no-CORS FastAPI host including sanitized authenticated errors, explicit pre-lifespan-to-ASGI exact-once registry ownership transfer, BaseException-safe startup cleanup and pipe closure that preserve the primary error through secondary cleanup failures, graceful authenticated shutdown with bounded reap fallback, and a strict server-only Vite proxy at the canonical `/api/rate-of-closure/v1` prefix. Declare the optional FastAPI/Uvicorn/SciPy host dependencies and retain UI polling/presentation, export, persistence, static or deployed authority hosting, UpstreamDrift consumption, and epic completion as open gates. |
 | 2026-08-12 | 1.16.28 | feat(rate-of-closure, #4142 R13.5): add exact primitive-only Morris request/job v1 contracts, deterministic execution into unchanged report v1, a dependency-injected mountable FastAPI router with strict bounded raw JSON and lock-linearized ephemeral jobs, and a strict TypeScript parser plus injected transport. Retain presentation, export, persistence, host registration, UpstreamDrift consumption, and a genuine fixed-ball double-pendulum hit as open gates. |
 | 2026-08-12 | 1.16.27 | feat(rate-of-closure, #4142 R13.3): add the bounded Rate fixed-ball Morris evaluator for ten exact global simulation variables and the current 17-scalar output contract; extract shared trial capture/projection so ensemble and Morris execution retain identical hit/miss/numerical-failure availability, apply samples through one public immutable config seam, reject fixed-contact timing no-ops/localized or invalid factors, and validate a genuine double-pendulum miss while retaining double-pendulum fixed-hit validation, UI/export, per-sample failure diagnostics, and UpstreamDrift consumption as open gates. |
 | 2026-08-12 | 1.16.26 | feat(rate-of-closure, #4142 R13.3): add a bounded UI-neutral Morris execution adapter with immutable physical sample identity, injected typed evaluators that explicitly normalize their own domain failures, exact per-output availability, deterministic serial/parallel tensors and completed-prefix progress every eight samples plus final, cooperative no-partial-result cancellation, and named worker/sample/observation-cell resource limits; retain Rate, UI, export, and `evaluate_run` integration as later scope. |

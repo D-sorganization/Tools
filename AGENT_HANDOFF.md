@@ -3,6 +3,35 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Private Morris authority host (#4142 R13.5)
+
+Branch `codex/4142-morris-authority-host` starts at exact authority-bridge
+parent `3c95dcaf88c4a0eacc747b48678e1f5c225f12ec`. The standalone Rate React
+launcher now owns an ephemeral child-process authority for exactly the Vite
+development-server lifetime. The child binds IPv4 `127.0.0.1:0`, announces a
+canonical numeric port over a bounded private pipe, proves the exact
+authenticated capability document, and exits through an authenticated graceful
+control request with bounded terminate/kill fallback. The bearer is redacted
+from runtime representations, never uses a `VITE_` variable, and is injected
+only into Vite's server-side `/api/rate-of-closure` proxy. Every response is
+`no-store`/`nosniff`; there is no CORS, docs, OpenAPI, browser token, or browser
+authority endpoint. Authenticated 404, validation, and sanitized unhandled-500
+responses retain the same headers without exposing exception details.
+`KeyboardInterrupt` and `SystemExit` during post-spawn readiness reap the child
+and close the bounded readiness pipe before propagating unchanged; secondary
+terminate/wait/pipe failures are contained and cannot replace the primary
+startup exception.
+
+The canonical authority prefix is `/api/rate-of-closure/v1`; capability is
+`/api/rate-of-closure/v1/morris/capabilities`. Host lifespan owns the injected
+registry exactly once after startup transfer; the child closes it when socket,
+app, or server setup fails before lifespan. Listener and registry cleanup are
+both attempted, with secondary failures contained whenever a primary setup
+error is active. Optional `rate-morris-authority` dependencies are
+FastAPI, Uvicorn, and SciPy. This is a local development-launch host, not a
+static-preview or deployed-host contract. UI polling/presentation, export,
+persistence, UpstreamDrift consumption, and completion of #4142 remain open.
+
 ## 2026-08-12 Rate Morris authority bridge (#4142 R13.5)
 
 Exact request/job v1 contracts and `RateMorrisService` now bridge the current

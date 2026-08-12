@@ -1,7 +1,11 @@
-import { defineConfig } from "vite";
+import { defineConfig, loadEnv } from "vite";
 import react from "@vitejs/plugin-react";
 
-export default defineConfig({
+import { morrisAuthorityProxy } from "./morrisAuthorityProxy";
+
+export default defineConfig(({ mode }) => {
+  const proxy = morrisAuthorityProxy(loadEnv(mode, process.cwd(), ""));
+  return {
   // Relative base so the built bundle works from any static-host subpath
   // (GitHub Pages project sites included), not just a domain root.
   base: "./",
@@ -17,7 +21,8 @@ export default defineConfig({
   server: {
     port: 5193,
     strictPort: true,
-    open: false
+    open: false,
+    proxy,
   },
   build: {
     outDir: "dist",
@@ -30,5 +35,6 @@ export default defineConfig({
         },
       },
     },
-  }
+  },
+  };
 });

@@ -63,4 +63,16 @@ describe("Morris authority contract", () => {
     expect(fetcher.mock.calls[1]?.[1]).toMatchObject({ method: "DELETE" });
     expect(fetcher.mock.calls[2]?.[1]).toMatchObject({ method: "POST" });
   });
+
+  it("uses the canonical same-origin API prefix by default", async () => {
+    const fetcher = vi.fn<typeof fetch>(async () => new Response(JSON.stringify(completed()), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
+    }));
+    const client = createMorrisAuthorityClient({ fetchImpl: fetcher });
+
+    await client.status("job-1");
+
+    expect(fetcher.mock.calls[0]?.[0]).toBe("/api/rate-of-closure/v1/morris/jobs/job-1");
+  });
 });

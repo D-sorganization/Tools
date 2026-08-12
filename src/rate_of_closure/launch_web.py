@@ -17,7 +17,18 @@ _REPO_ROOT = bootstrap(__file__)
 
 from shared.python.gui_launcher import launch_web_from_gui_info  # noqa: E402
 
+from .application.morris.runtime import MorrisAuthorityRuntime  # noqa: E402
 from .gui_registration import GUI_INFO  # noqa: E402
 
+
+def main() -> int:
+    """Own the private Morris authority for the complete Vite lifecycle."""
+    with MorrisAuthorityRuntime.start() as authority:
+        result: int = launch_web_from_gui_info(
+            GUI_INFO, __file__, env_vars=authority.vite_env
+        )
+        return result
+
+
 if __name__ == "__main__":
-    sys.exit(launch_web_from_gui_info(GUI_INFO, __file__))
+    sys.exit(main())
