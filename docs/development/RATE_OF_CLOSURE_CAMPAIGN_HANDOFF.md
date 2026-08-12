@@ -4,8 +4,11 @@
 
 - The first exact-head protected quality gate failed only Ruff formatting for
   `tests/rate_of_closure/test_morris_pyqt_workflow.py`.
-- The follow-up is a mechanical format repair with no material behavior or
-  contract change; rerun every R13.7 local and protected gate on the new head.
+- The test-file repair is mechanical. The combined follow-up extracts
+  immutable UI labels and bounds to `variation_constants.py` and restores the
+  500-line changed-file gate for `variation_tab.py` without changing public
+  behavior or contracts. Rerun every R13.7 local and protected gate on the new
+  head.
 
 ## 2026-08-12 #4142 R13.7 standalone PyQt workflow
 

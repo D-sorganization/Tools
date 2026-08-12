@@ -8,6 +8,9 @@
 PR #4400's first protected quality gate found only Ruff formatting in
 `test_morris_pyqt_workflow.py`. The follow-up is intentionally mechanical and
 does not change the workflow, authority contract, or scientific semantics.
+It also brings `variation_tab.py` below the enforced 500-line changed-file
+budget by extracting immutable UI labels and bounds to the internal
+`variation_constants.py` module; public behavior remains unchanged.
 
 ## 2026-08-12 Morris request/presentation seam (#4142 R13.6)
 

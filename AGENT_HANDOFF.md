@@ -6,9 +6,12 @@
 ## 2026-08-12 PyQt Morris protected-CI format repair
 
 PR #4400's exact first protected run isolated one actionable defect: Ruff's
-format check rejected the newly added PyQt Morris workflow test. The follow-up
-changes formatting only; there is no material runtime, contract, or scientific
-behavior change. All R13.7 gates below remain required on the new exact head.
+format check rejected the newly added PyQt Morris workflow test. That test-file
+repair changes formatting only. The combined follow-up restores the
+changed-file size gate by extracting immutable UI labels and bounds to internal
+`variation_constants.py`, then consolidating
+imports and comments in `variation_tab.py`; runtime behavior, contracts, and
+scientific semantics remain unchanged. All R13.7 gates remain required.
 
 ## 2026-08-12 Standalone PyQt Morris workflow (#4142 R13.7)
 
