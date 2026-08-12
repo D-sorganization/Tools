@@ -1,10 +1,11 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import App from "../App";
 
 describe("canonical spatial target navigation", () => {
   beforeEach(() => {
+    vi.stubGlobal("fetch", vi.fn(() => new Promise<Response>(() => {})));
     const stored = new Map<string, string>();
     Object.defineProperty(window, "localStorage", {
       configurable: true,
@@ -23,6 +24,12 @@ describe("canonical spatial target navigation", () => {
     vi.spyOn(HTMLCanvasElement.prototype, "getContext").mockReturnValue(
       context as CanvasRenderingContext2D,
     );
+  });
+
+  afterEach(() => {
+    cleanup();
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
   });
 
   it("preserves one edited target across Flight Explorer unmount and Simulation", () => {

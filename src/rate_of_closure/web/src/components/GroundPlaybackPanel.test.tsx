@@ -22,7 +22,7 @@ describe("GroundPlaybackPanel", () => {
     render(<GroundPlaybackPanel />);
     expect(screen.getByText(/does not execute ground physics/i)).toBeInTheDocument();
     expect(screen.getByText(/does not embed surface geometry/i)).toBeInTheDocument();
-    expect(screen.queryByRole("button", { name: /run/i })).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Run imported study" })).not.toBeInTheDocument();
   });
 
   it("imports only a strict result and shows summary, warnings, and provenance", async () => {

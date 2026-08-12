@@ -1,5 +1,33 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 imported-job execution surfaces
+
+React now owns one regional-ground execution workspace above workspace
+navigation. Ground Playback mounts a visible strict imported-job surface with
+exact identity/provenance/digest evidence, explicit confirmation, Run, Cancel,
+progress, typed failure, ambiguous-request reconciliation, canonical job/result
+downloads, and lossless scalar-row CSV export. Active or uncertain authority
+ownership prevents job replacement, the same immutable authority job cannot be
+silently resubmitted, and neither editor state nor TypeScript physics enters the
+job. Contextual File commands share the same App-owned state.
+
+PyQt6 now exposes a dedicated Ground Study module between Ground Surfaces and
+Ground Playback. It uses bounded strict UTF-8 import, QThread execution and
+cooperative cancellation, safe error presentation, exact job/result evidence,
+and native atomic job/result/CSV writes. Close blocks until its worker is
+cancelled and joined. Direct embedded construction remains unavailable unless
+an authority is injected; the source standalone launcher injects the qualified
+direct Python runner without Uvicorn, while frozen distributions remain
+explicitly unqualified.
+
+Focused evidence passes 76 PyQt navigation, toolstrip, controller, file,
+workspace, standalone, registration, and manifest tests. React passes its complete
+875-test suite across 135 files, strict TypeScript, zero-warning ESLint, and the
+production build. Ruff, Black, pinned MyPy 1.13, and diff hygiene pass for the
+Python delta. Current-editor job construction, restart recovery, static-host
+execution, frozen-runtime qualification, compiled/downstream parity, protected
+integration, release, #4369, #4273, and #4267 remain open.
+
 ## 2026-08-11 #4369 qualified headless authority admission
 
 The default environment factory now constructs one inseparable pair: the

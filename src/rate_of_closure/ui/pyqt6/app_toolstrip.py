@@ -155,6 +155,8 @@ class ApplicationToolstrip(QToolBar):
         file_menu = QMenu("File", self)
         self._regional_ground_files.add_to(file_menu)
         file_menu.addSeparator()
+        self._regional_ground_files.add_execution_to(file_menu)
+        file_menu.addSeparator()
         self._add_disabled_file_commands(file_menu)
         self._add_menu_button("File", "fileMenuButton", file_menu)
         self._build_view_menu()

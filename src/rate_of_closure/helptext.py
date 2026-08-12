@@ -204,6 +204,22 @@ HELP_TEXTS: dict[str, HelpEntry] = {
         "does not persist model inputs. Geometry is fixed to the target frame as "
         "flat, static, and coplanar because those are the regional v1 limits.</p>",
     ),
+    "regional_ground_execution": _entry(
+        "Ground Study",
+        "<h3>What this tab does</h3><p>Strictly imports one complete "
+        "regional-ground-execution-job/v1 document and, when an explicitly "
+        "qualified Python authority is injected, executes it outside the GUI "
+        "thread.</p><h3>Workflow</h3><ol><li>Open and review the immutable job, "
+        "model, provenance, input digest, job digest, and trial count.</li>"
+        "<li>Choose Run and explicitly confirm the imported authority.</li>"
+        "<li>Monitor accepted-trial progress or request cooperative "
+        "cancellation.</li><li>After success, atomically save the canonical "
+        "job-bound result or export every retained scalar row as CSV.</li></ol>"
+        "<h3>Qualification</h3><p>Opening a job never executes physics. Direct "
+        "main-window construction is intentionally unavailable unless a "
+        "qualified submitter is injected. This source workflow does not claim "
+        "frozen or packaged authority support.</p>",
+    ),
     "ground_playback": _entry(
         "Ground Playback",
         "<h3>What this tab does</h3><p>Imports either one strict "

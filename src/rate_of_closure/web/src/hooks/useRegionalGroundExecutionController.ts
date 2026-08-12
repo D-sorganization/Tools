@@ -6,10 +6,11 @@ import {
   parseRegionalGroundAuthorityCapability,
   type RegionalGroundAuthorityCapability,
 } from "../model/regionalGroundAuthority";
-import type {
-  RegionalGroundAuthorityClient,
-  RegionalGroundAuthorityJobFailure,
-  RegionalGroundAuthorityJobStatus,
+import {
+  RegionalGroundAuthorityRequestError,
+  type RegionalGroundAuthorityClient,
+  type RegionalGroundAuthorityJobFailure,
+  type RegionalGroundAuthorityJobStatus,
 } from "../model/regionalGroundAuthorityClient";
 import type { RegionalGroundExecutionResult } from "../model/regionalGroundExecutionResult";
 import {
@@ -32,6 +33,7 @@ export type RegionalGroundExecutionPhase =
   | "succeeded"
   | "failed"
   | "cancelled"
+  | "not_found"
   | "request_failed";
 
 export interface RegionalGroundExecutionProgress {
@@ -60,6 +62,7 @@ export interface RegionalGroundExecutionController
   readonly controls: RegionalGroundExecutionControlState;
   readonly submit: (job: RegionalGroundExecutionJob) => Promise<void>;
   readonly cancel: () => Promise<void>;
+  readonly reconcile: () => Promise<void>;
   readonly reset: () => void;
 }
 
@@ -100,6 +103,7 @@ export function useRegionalGroundExecutionController(
   const generation = useRef(0);
   const operation = useRef(0);
   const active = useRef(false);
+  const submitted = useRef(false);
   const timer = useRef<number>();
   const controller = useRef<AbortController>();
   const client = useRef(options.client);
@@ -138,8 +142,17 @@ export function useRegionalGroundExecutionController(
 
   const failRequest = useCallback((run: number, reason: unknown): void => {
     if (!current(run) || isAbort(reason)) return;
-    active.current = false;
     publish(run, { phase: "request_failed", error: asError(reason) });
+  }, [current, publish]);
+
+  const publishNotFound = useCallback((run: number, reason: unknown): boolean => {
+    if (!(reason instanceof RegionalGroundAuthorityRequestError) ||
+        reason.code !== "job_not_found" || !current(run)) return false;
+    active.current = false;
+    submitted.current = false;
+    publish(run, { phase: "not_found", status: null, progress: null, failure: null,
+      result: null, error: reason });
+    return true;
   }, [current, publish]);
 
   const beginRequest = useCallback((): {
@@ -194,12 +207,17 @@ export function useRegionalGroundExecutionController(
       const next = await client.current.status(sourceJob, request.signal);
       if (current(run, request.id)) await processStatus.current?.(next, run);
     } catch (reason) {
-      if (current(run, request.id)) failRequest(run, reason);
+      if (current(run, request.id) && !publishNotFound(run, reason)) {
+        failRequest(run, reason);
+      }
     }
   };
 
   const submit = useCallback(async (source: RegionalGroundExecutionJob): Promise<void> => {
     if (active.current) throw new Error("a regional-ground authority job is already active");
+    if (submitted.current) {
+      throw new Error("the accepted regional-ground authority job has already been submitted");
+    }
     const exactCapability = parseRegionalGroundAuthorityCapability(capability.current);
     if (!qualifiedForExecution(exactCapability)) {
       throw new Error("regional-ground execution capability is unavailable");
@@ -210,6 +228,7 @@ export function useRegionalGroundExecutionController(
     generation.current = run;
     job.current = exactJob;
     active.current = true;
+    submitted.current = true;
     publish(run, { ...initialState(), phase: "submitting", job: exactJob });
     const request = beginRequest();
     try {
@@ -222,6 +241,25 @@ export function useRegionalGroundExecutionController(
       }
     }
   }, [beginRequest, clearPending, current, failRequest, publish]);
+
+  const reconcile = useCallback(async (): Promise<void> => {
+    const sourceJob = job.current;
+    if (!active.current || sourceJob === null) {
+      throw new Error("no uncertain or active regional-ground authority job exists");
+    }
+    const run = generation.current;
+    clearPending();
+    const request = beginRequest();
+    try {
+      const next = await client.current.status(sourceJob, request.signal);
+      if (current(run, request.id)) await processStatus.current?.(next, run);
+    } catch (reason) {
+      if (current(run, request.id) && !publishNotFound(run, reason)) {
+        failRequest(run, reason);
+        throw reason;
+      }
+    }
+  }, [beginRequest, clearPending, current, failRequest, publishNotFound]);
 
   const cancel = useCallback(async (): Promise<void> => {
     const sourceJob = job.current;
@@ -236,17 +274,21 @@ export function useRegionalGroundExecutionController(
       const cancelled = await client.current.cancel(sourceJob, request.signal);
       if (current(run, request.id)) await processStatus.current?.(cancelled, run);
     } catch (reason) {
-      if (current(run, request.id)) {
+      if (current(run, request.id) && !publishNotFound(run, reason)) {
         failRequest(run, reason);
         throw reason;
       }
     }
-  }, [beginRequest, clearPending, current, failRequest, publish]);
+  }, [beginRequest, clearPending, current, failRequest, publish, publishNotFound]);
 
   const reset = useCallback((): void => {
+    if (active.current) {
+      throw new Error("cannot reset an active or uncertain regional-ground authority job");
+    }
     clearPending();
     generation.current += 1;
     active.current = false;
+    submitted.current = false;
     job.current = null;
     setState(initialState());
   }, [clearPending]);
@@ -271,10 +313,10 @@ export function useRegionalGroundExecutionController(
     }
   }, [options.capability]);
   const controls = Object.freeze({
-    submitEnabled: admitted && !active.current,
+    submitEnabled: admitted && !active.current && !submitted.current,
     statusEnabled: active.current,
     cancelEnabled: active.current,
     resultEnabled: state.phase === "succeeded" && state.result !== null,
   });
-  return { ...state, controls, submit, cancel, reset };
+  return { ...state, controls, submit, cancel, reconcile, reset };
 }
