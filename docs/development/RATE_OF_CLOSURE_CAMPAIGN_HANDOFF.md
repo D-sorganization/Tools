@@ -13,6 +13,31 @@
   mismatched-job coverage in both runtimes.
 - This slice adds no physics, UI, persistence, transport adapter, capability
   promotion, or execution claim. Keep #4369/#4273/#4267 open.
+## 2026-08-11 local #4369 production-runner preflight qualification
+
+- Exact source parent: published PR #4372 head
+  `3571952c2344ca23ffa65121c606faab1b735a23`.
+- Audit found no versioned authority mapping the job's generic numeric flight
+  settings, model version, and declared flight digests to exact solver and
+  surface-event semantics. The fixture's `sample_every` key is not consumed by
+  production flight code.
+- A typed runner preflight now distinguishes unknown model IDs from recognized
+  models lacking a qualified profile. It checks cancellation first and maps
+  callback defects or rejection to exact complete-only terminal failures.
+- Tests prove that preflight invokes neither flight nor regional-ground
+  physics; the manager publishes only a generic `preflight` failure with zero
+  completed trials and no result.
+- No profile is registered, the production factory still injects no runner,
+  capability remains unavailable, and no client control or release is
+  promoted. The next physical slice must qualify the exact versioned input,
+  solver/surface, and digest-recomputation contract. Keep #4369/#4273/#4267
+  open.
+- TDD RED captured the missing module. Evidence passes 7 focused runner tests,
+  98 composed authority/contract/variation/manifest tests, 28 physical
+  pipeline regressions, Ruff, Black, focused MyPy, Bandit, and manifest
+  validation. The serial full Rate suite hit the 10-minute local command cap
+  without reporting a failure; root owns the nonredundant complete gate. No
+  GitHub write occurred.
 
 ## 2026-08-11 #4369 authority terminal-count binding
 

@@ -41,7 +41,7 @@ describe("regional-ground authority REST contracts", () => {
     ]));
     expect(new Set(statusFixture.cases.flatMap((item) =>
       item.failure === null ? [] : [item.failure.stage]))).toEqual(new Set([
-      "cancellation_callback", "executor", "validation", "progress_callback",
+      "cancellation_callback", "preflight", "executor", "validation", "progress_callback",
       "publication", "runner", "result_validation",
     ]));
 

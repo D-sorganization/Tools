@@ -25,6 +25,7 @@ MAX_AUTHORITY_JOB_STATUS_BYTES: Final = 4_096
 AuthorityFailureCode = Literal["execution_failed", "result_rejected"]
 AuthorityFailureStage = Literal[
     "cancellation_callback",
+    "preflight",
     "executor",
     "validation",
     "progress_callback",
@@ -36,6 +37,7 @@ _FAILURE_CODES = frozenset({"execution_failed", "result_rejected"})
 _FAILURE_STAGES = frozenset(
     {
         "cancellation_callback",
+        "preflight",
         "executor",
         "validation",
         "progress_callback",

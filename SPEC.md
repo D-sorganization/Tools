@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.75                                    |
-| **Spec Version**        | 1.14.75                                    |
+| **Current Version**     | 1.14.76                                    |
+| **Spec Version**        | 1.14.76                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -49,7 +49,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 ### 2026-08-11 Canonical Regional-Ground Authority Status Wire
 
 - A transport-neutral Python application contract now owns the six authority
-  lifecycle states, the two stable failure codes, all seven stable failure
+  lifecycle states, the two stable failure codes, all eight stable failure
   stages, exact status/failure wire shapes, and a 4,096-byte canonical JSON
   boundary. The server manager imports these objects instead of defining a
   private construction-only projection.
@@ -64,6 +64,20 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - This contract performs no physics, transport, persistence, UI wiring,
   capability promotion, or execution. Production capability remains false and
   every React execution control remains disabled.
+
+### 2026-08-11 Regional-Ground Production-Runner Preflight
+
+- The production-runner boundary now checks cooperative cancellation before
+  qualification and rejects an unknown flight model separately from a known
+  model without a registered versioned execution profile.
+- A recognized model identifier is not execution authority. The v1 generic
+  numeric settings, model-version string, and declared flight digests do not
+  yet bind exact solver arguments, sampling, surface-event semantics, or
+  recomputable trajectory and result bytes.
+- Preflight rejection publishes a typed zero-of-total terminal failure through
+  the canonical Python/React status contract and invokes neither flight nor
+  regional-ground physics. No production runner is injected, so capability
+  and all execution controls remain disabled pending profile qualification.
 
 ### 2026-08-11 React Regional-Ground Authority Client Contracts
 
@@ -3261,6 +3275,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.76 | feat(ground-study, #4369): add a typed production-runner preflight that rejects unknown and unregistered versioned flight profiles before any physics; propagate the preflight terminal stage through the canonical Python/React status contract while leaving capability, execution controls, and model invocation disabled until solver and digest semantics are qualified. |
 | 2026-08-11 | 1.14.75 | feat(ground-study, #4369): centralize the six-state authority job-status wire in a transport-neutral strict Python parser/serializer, make the server consume it, and prove Python-produced canonical byte/semantic parity in React across every failure code and stage; keep physics, UI, capability promotion, persistence, and execution claims open. |
 | 2026-08-11 | 1.14.74 | feat(ground-study, #4369): add strict future-facing React submit/status/POST-cancel/result REST client contracts plus one-at-a-time capability polling with AbortController cleanup, obsolete-response suppression, bounded job-bound status/result validation, and every execution-control flag disabled while the Python authority remains unavailable; matching routes exist while a qualified runner, physics invocation, and visible Run integration remain open. |
 | 2026-08-11 | 1.14.73 | fix(ground-study, #4369): fail closed when an injected authority runner reports cancellation or failure counts that do not match the exact submitted job total or regress observed progress; retain prior progress and expose only a typed validation failure. |

@@ -15,6 +15,34 @@ unsafe fields, impossible progress/result/failure semantics, and mismatch to
 the exact source job; React reserializes every golden case byte-for-byte. This
 adds no physics, UI, transport, persistence, capability promotion, or execution
 claim. All production execution controls remain disabled.
+## 2026-08-11 local #4369 production-runner preflight qualification
+
+This isolated continuation starts from exact published PR #4372 head
+`3571952c2344ca23ffa65121c606faab1b735a23`. The v1 job's generic numeric
+`flight.settings` mapping has no authoritative mapping to the existing flight
+solver, and the golden fixture's `sample_every` setting has no production
+consumer. Its model version and embedded flight digests likewise do not define
+a recomputable execution profile. Invoking flight-through-ground physics would
+therefore fabricate semantics.
+
+The new production-runner boundary fails closed before physics with distinct
+typed reasons for an unknown model and a recognized model lacking a registered
+versioned execution profile. Cancellation wins before preflight; callback
+defects and profile rejection preserve typed terminal stages, exact zero-of-N
+counts, cause chaining, and complete-only authority publication. No profile is
+registered, no runner is injected into the production factory, capability
+remains false, and no UI or release claim is promoted. The next physical slice
+must first define and qualify the exact model/version/settings/solver/surface
+mapping and recompute both declared flight digests. Keep #4369/#4273/#4267
+open.
+
+TDD RED first captured the absent runner module. Evidence is green for 7
+focused runner/preflight tests, 98 composed authority/job/result/variation and
+manifest tests, and 28 underlying flight/regional-ground pipeline tests. Ruff,
+Black, focused MyPy, Bandit, JSON/manifest validation, and the eight manifest
+tests are clean. A serial full Rate suite exceeded the 10-minute local command
+ceiling without reporting a failure; root owns the nonredundant full composed
+gate. No GitHub operation occurred.
 
 ## 2026-08-11 #4369 authority terminal-count binding
 

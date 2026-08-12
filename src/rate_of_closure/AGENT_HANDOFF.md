@@ -13,6 +13,31 @@ trial total; progress, result availability, and failure semantics fail closed.
 canonical-byte parity against the Python-produced shared fixture. No physics,
 UI, persistence, capability promotion, or execution claim is added. Production
 capability and all execution controls remain false.
+## 2026-08-11 local #4369 production-runner preflight qualification
+
+From exact published #4372 head
+`3571952c2344ca23ffa65121c606faab1b735a23`, production-runner qualification
+now rejects every v1 regional-ground job before physical execution. Known
+flight registry IDs receive `flight_profile_unregistered`; unknown IDs receive
+`flight_model_unknown`. The existing generic numeric settings mapping, model
+version string, and declared flight digests do not specify a reproducible
+mapping to solver inputs and surface-event semantics.
+
+Cancellation is evaluated before preflight. Callback defects and preflight
+rejection become typed complete-only batch failures with exact zero-of-total
+counts and chained internal causes; the authority manager exposes only its
+generic stable failure stage and no result. No production execution profile,
+factory runner, capability promotion, visible control, or model invocation is
+added. A future profile must bind and test exact model/version/settings,
+construction, integration/surface behavior, and digest recomputation. Keep
+#4369/#4273/#4267 open.
+
+Evidence passes 7 focused preflight tests, 98 composed authority, contract,
+variation, and manifest tests, and 28 underlying flight/regional-ground
+pipeline tests. Ruff, Black, focused MyPy, Bandit, and manifest validation are
+clean. The serial complete Rate suite reached the 10-minute local command cap
+without a reported failure; root will run the nonredundant full composed gate.
+No GitHub write occurred.
 
 ## 2026-08-11 #4369 authority terminal-count binding
 

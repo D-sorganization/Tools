@@ -41,7 +41,7 @@ const JOB_STATES = [
 ] as const;
 const FAILURE_CODES = ["execution_failed", "result_rejected"] as const;
 const FAILURE_STAGES = [
-  "cancellation_callback", "executor", "validation", "progress_callback",
+  "cancellation_callback", "preflight", "executor", "validation", "progress_callback",
   "publication", "runner", "result_validation",
 ] as const;
 const REQUEST_ERROR_CODES = [

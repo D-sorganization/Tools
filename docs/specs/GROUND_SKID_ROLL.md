@@ -21,6 +21,30 @@ terrain deformation, grass-blade interaction, torsional spin damping,
 roll-to-skid transitions, TypeScript or compiled regional physics, UI delivery,
 or downstream application parity.
 
+## Production-runner preflight boundary
+
+The regional-ground execution job's v1 `flight.settings` field is a bounded
+numeric evidence mapping, not a versioned executable input schema. In
+particular, it does not bind setting names to solver arguments, distinguish
+integration controls from output sampling, select exact surface-event
+semantics, or prove that the embedded trajectory and result digests can be
+recomputed by the selected model version. A registry model-ID match alone is
+therefore insufficient authority to run physical code.
+
+The production-runner boundary fails closed before flight or ground physics.
+It reports a stable distinction between an unknown model ID and a recognized
+model with no registered versioned execution profile. Cancellation is checked
+first; cancellation-callback defects and preflight rejection retain typed
+terminal stages and zero accepted trials. The authority manager may publish
+only the generic terminal stage and never a partial result or raw exception.
+
+No production execution profile is registered in this slice. Registration
+requires an independently tested contract binding exact model ID and version,
+an exact settings schema, model construction and flight-to-surface semantics,
+and recomputable trajectory/result digests. Until then the default authority
+capability remains unavailable and neither client may advertise or invoke a
+physical run.
+
 ## Units, frames, and handoff preconditions
 
 All calculations use target-frame SI units. Position is metres, velocity is

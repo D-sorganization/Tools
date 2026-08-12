@@ -57,6 +57,7 @@ class GroundRegionalVariationFailureStage(StrEnum):
     """Stable terminal stage for a failed batch with no published dataset."""
 
     CANCELLATION_CALLBACK = "cancellation_callback"
+    PREFLIGHT = "preflight"
     EXECUTOR = "executor"
     VALIDATION = "validation"
     PROGRESS_CALLBACK = "progress_callback"

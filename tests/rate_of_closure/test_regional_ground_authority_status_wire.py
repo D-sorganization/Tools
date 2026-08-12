@@ -37,6 +37,7 @@ _FIXTURE = (
 _FIXTURE_SCHEMA = "rate-of-closure/regional-ground-authority-job-status-golden/v1"
 _FAILURE_STAGES = (
     "cancellation_callback",
+    "preflight",
     "executor",
     "validation",
     "progress_callback",
@@ -71,9 +72,11 @@ def _statuses() -> tuple[AuthorityJobSnapshot, ...]:
             status=AuthorityJobStatus.FAILED,
             completed=1,
             failure=AuthorityJobFailure(
-                "result_rejected"
-                if stage == "result_validation"
-                else "execution_failed",
+                (
+                    "result_rejected"
+                    if stage == "result_validation"
+                    else "execution_failed"
+                ),
                 stage,
             ),
         )
