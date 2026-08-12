@@ -1,5 +1,17 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 integrated web-launch repair
+
+Physical launch verification found that Vite 7 mutates each proxy adapter with
+internal routing fields. The strict authority proxy builder now validates the
+loopback URL and ephemeral token, then returns a fresh mutable server-owned
+adapter instead of a frozen object. The token remains confined to Vite and is
+not emitted to browser code. `authorityProxyConfig.test.ts` pins both validation
+and framework extensibility; use `src/rate_of_closure/launch_web.py` for the
+integrated authority-backed client. A physical launch returned HTTP 200 from
+`http://localhost:5193/` and the proxied capability endpoint returned the exact
+qualified `available=true`, `regional_ground_execution=true` v1 evidence.
+
 ## 2026-08-11 #4369 imported-job execution surfaces
 
 React now owns one regional-ground execution workspace above workspace
