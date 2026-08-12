@@ -62,6 +62,15 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   performs no authority request. Companion mode uses only the public
   same-origin gateway and must not expose the bearer token or authority child
   port to browser-visible state. No physics runs in browser code.
+- Companion lifecycle checks cover Python-authoritative request preparation,
+  explicit confirmation, one submit, polling, canonical downloads,
+  reload/import, retained-result recovery, cancellation, prepared-job
+  staleness, private-authority replacement, and public-gateway loss. The
+  browser must neither submit automatically nor construct a physics worker.
+- Adversarial checks reject malformed capability data and missing declared
+  entry assets, recover safe defaults from corrupt persisted UI state, and use
+  a native bounded public-response scan plus credential-free network audit to
+  prove that neither the bearer token nor private child port is published.
 - The independent protected job fetches the exact public head without
   credentials, uses Python 3.11 and Node 22, builds with
   `ROC_RELEASE_REVISION`, installs the packaged web extra plus pinned Pytest

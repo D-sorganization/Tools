@@ -7,6 +7,7 @@ const MOUNT_PATH = "/release/candidate/";
 const MANIFEST_NAME = "rate-of-closure-assets.v1.json";
 const COMMIT_PATTERN = /^[0-9a-f]{40}$/;
 const SAFE_ASSET = /^(?:assets\/[A-Za-z0-9._-]+|index\.html|rate-of-closure-runtime\.v1\.json)$/;
+const ENTRY_SCRIPT = /^assets\/index-[A-Za-z0-9_-]+\.js$/;
 
 interface ManifestAsset {
   readonly path: string;
@@ -24,6 +25,10 @@ export interface StaticReleaseServer {
   readonly origin: string;
   readonly mountUrl: string;
   close(): Promise<void>;
+}
+
+interface StaticReleaseServerOptions {
+  readonly fault?: "missing-script";
 }
 
 const releaseRoot = path.resolve(import.meta.dirname, "../../../dist");
@@ -54,8 +59,16 @@ function reject(response: ServerResponse): void {
   response.end();
 }
 
-export async function startStaticReleaseServer(): Promise<StaticReleaseServer> {
+export async function startStaticReleaseServer(
+  options: StaticReleaseServerOptions = {},
+): Promise<StaticReleaseServer> {
   const assets = await verifiedAssets();
+  const missingScript = options.fault === "missing-script"
+    ? [...assets.values()].find((asset) => ENTRY_SCRIPT.test(asset.path))?.path
+    : undefined;
+  if (options.fault === "missing-script" && missingScript === undefined) {
+    throw new Error("static fault fixture requires a declared script asset");
+  }
   const server = createServer(async (request, response) => {
     try {
       const target = new URL(request.url ?? "", "http://fixture.invalid");
@@ -65,7 +78,7 @@ export async function startStaticReleaseServer(): Promise<StaticReleaseServer> {
       }
       const relative = target.pathname.slice(MOUNT_PATH.length) || "index.html";
       const asset = assets.get(relative);
-      if (asset === undefined) {
+      if (asset === undefined || relative === missingScript) {
         reject(response);
         return;
       }
@@ -100,6 +113,7 @@ function describeServer(server: Server): StaticReleaseServer {
     mountUrl: `${origin}${MOUNT_PATH}`,
     close: () => new Promise<void>((resolve, rejectClose) => {
       server.close((error) => error === undefined ? resolve() : rejectClose(error));
+      server.closeAllConnections();
     }),
   };
 }

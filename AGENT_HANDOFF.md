@@ -2,6 +2,30 @@
 
 ## 2026-08-12 #4380 production-browser qualification
 
+Acceptance completion extension: the release matrix now exercises the complete
+combined-request workflow through Python-authoritative preparation, explicit
+identity confirmation, one submit, polling, canonical job/result downloads,
+reload/import, retained-result recovery, cooperative cancellation, and prepared
+job staleness without automatic resubmission. A forbidden `Worker` constructor
+proves that this ground execution path does not substitute browser physics.
+
+Adversarial browser qualification now covers malformed capability data, a
+missing declared entry script, corrupt persisted workspace/layer preferences,
+private-authority replacement with both token and port rotation, and full public
+gateway loss. The native harness scans bounded public HTML/capability responses
+while retaining the secret identity out of browser state; combined with the
+same-origin credential-free request audit, this proves the bearer token and
+private child port are absent from public responses and requests. Intentional
+cancellation and gateway-loss transport failures are separately bounded while
+all successful paths retain zero console, page, or network failures.
+
+Current working-tree evidence atop `de673971bfae83a9d673bba4859def5322635af9`:
+TypeScript and zero-warning ESLint pass; 15 native harness contracts pass; and
+all 36 deterministic Playwright scenarios pass across Chromium, Firefox, and
+WebKit with configuration-owned zero retries. The publication commit and its
+final handoff-recording child still require exact-revision local gates and fresh
+protected qualification before ordinary merge.
+
 Branch `codex/4380-playwright-production-browser` was created at
 `0821557d80c366133e3de5af54d5ad82a01b14b0` as an exact child of Tools
 PR #4390. Corrected parent head

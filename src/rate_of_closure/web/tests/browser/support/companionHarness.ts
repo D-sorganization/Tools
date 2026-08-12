@@ -13,7 +13,8 @@ interface HarnessEvent {
 
 export interface CompanionHarness {
   readonly origin: string;
-  command(command: "authority_hard_loss" | "observe_replacement"): Promise<HarnessEvent>;
+  command(command: "authority_hard_loss" | "gateway_hard_loss" |
+    "inspect_public_exposure" | "observe_replacement"): Promise<HarnessEvent>;
   close(): Promise<void>;
 }
 

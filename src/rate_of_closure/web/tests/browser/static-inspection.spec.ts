@@ -46,3 +46,41 @@ test("static fixture preserves directory-index and fragment semantics", async ({
     await server.close();
   }
 });
+
+test("missing declared release script fails closed without leaving loopback", async ({ page }) => {
+  const server = await startStaticReleaseServer({ fault: "missing-script" });
+  const audit = auditSameOriginNetwork(page, server.origin, { forbidApi: true });
+  try {
+    const rejectedScript = page.waitForResponse((candidate) =>
+      candidate.status() === 404 &&
+      /\/assets\/index-[A-Za-z0-9_-]+\.js$/.test(new URL(candidate.url()).pathname));
+    const response = await page.goto(server.mountUrl, { waitUntil: "commit" });
+    expect(response?.status()).toBe(200);
+    await rejectedScript;
+    await expect(page.getByRole("heading", { name: "Rate of Closure Impact Explorer" }))
+      .toHaveCount(0);
+    audit.assertBoundaryClean();
+  } finally {
+    await server.close();
+  }
+});
+
+test("corrupt persisted workspace state restores safe defaults", async ({ page }) => {
+  const server = await startStaticReleaseServer();
+  const audit = auditSameOriginNetwork(page, server.origin, { forbidApi: true });
+  try {
+    await page.addInitScript(() => {
+      localStorage.setItem("rate-of-closure.web.workspace-modules.v2", "{not-json");
+      localStorage.setItem("rate-of-closure.impact-scene-layers.v1", "{not-json");
+    });
+    await page.goto(server.mountUrl);
+    await expect(page.getByRole("heading", { name: "Rate of Closure Impact Explorer" }))
+      .toBeVisible();
+    await expect(page.getByRole("tab", { name: "Explorer", exact: true })).toHaveAttribute(
+      "aria-selected", "true",
+    );
+    audit.assertClean();
+  } finally {
+    await server.close();
+  }
+});

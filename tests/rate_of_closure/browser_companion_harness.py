@@ -125,6 +125,27 @@ def _request_authority_replacement(gateway_url: str) -> None:
         connection.close()
 
 
+def _read_public_gateway(gateway_url: str, path: str) -> bytes:
+    """Read one bounded public response without publishing its origin."""
+    parsed = urlsplit(gateway_url)
+    if parsed.scheme != "http" or parsed.hostname != "127.0.0.1":
+        raise HarnessProtocolError("invalid gateway origin")
+    if parsed.port is None or parsed.path != "/" or not path.startswith("/"):
+        raise HarnessProtocolError("invalid gateway request")
+    connection = HTTPConnection(parsed.hostname, parsed.port, timeout=_PROBE_TIMEOUT_S)
+    try:
+        connection.request("GET", path)
+        response = connection.getresponse()
+        body = response.read(_MAX_PROBE_BYTES)
+        if response.status != 200 or len(body) >= _MAX_PROBE_BYTES:
+            raise HarnessProtocolError("gateway exposure probe failed")
+        return body
+    except (OSError, TimeoutError) as error:
+        raise HarnessProtocolError("gateway exposure probe failed") from error
+    finally:
+        connection.close()
+
+
 @dataclass(slots=True)
 class BrowserCompanionHarness:
     """Own one real companion and expose a bounded, secret-free control plane."""
@@ -160,6 +181,11 @@ class BrowserCompanionHarness:
             return self._hard_loss()
         if command == "observe_replacement":
             return self._observe_replacement()
+        if command == "inspect_public_exposure":
+            return self._inspect_public_exposure()
+        if command == "gateway_hard_loss":
+            self.close()
+            return {"event": "gateway_stopped", "gateway_stopped": True}
         if command == "shutdown":
             self.close()
             return {"event": "stopped", "stopped": True}
@@ -211,6 +237,22 @@ class BrowserCompanionHarness:
             "authority_running": running,
             "token_changed": token_changed,
             "port_changed": port_changed,
+        }
+
+    def _inspect_public_exposure(self) -> dict[str, object]:
+        """Scan bounded public responses while keeping private identity native."""
+        authority = self.runtime.authority
+        public = b"\n".join(
+            _read_public_gateway(self.runtime.url, path)
+            for path in ("/", CAPABILITY_PATH)
+        )
+        token_absent = authority.token.encode() not in public
+        port_absent = str(authority.port).encode() not in public
+        return {
+            "event": "public_exposure_inspected",
+            "token_absent": token_absent,
+            "child_port_absent": port_absent,
+            "public_identity_safe": token_absent and port_absent,
         }
 
 
