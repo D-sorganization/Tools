@@ -125,7 +125,7 @@ def test_model_failure_becomes_typed_non_digest_evidence(
     assert evidence.recomputed_result_sha256 is None
 
 
-def test_current_fixture_recomputes_deterministically_but_does_not_qualify() -> None:
+def test_current_fixture_recomputes_deterministically_and_qualifies() -> None:
     job = _job()
 
     first = qualify_flight_execution_input(
@@ -140,12 +140,12 @@ def test_current_fixture_recomputes_deterministically_but_does_not_qualify() -> 
     )
 
     assert first == second
-    assert first.reason is FlightExecutionQualificationReason.TRAJECTORY_DIGEST_MISMATCH
-    assert first.qualified is False
+    assert first.reason is FlightExecutionQualificationReason.QUALIFIED
+    assert first.qualified is True
     assert first.recomputed_trajectory_sha256 is not None
     assert first.recomputed_result_sha256 is not None
-    assert first.recomputed_trajectory_sha256 != job.flight.trajectory_sha256
-    assert first.recomputed_result_sha256 != job.flight.result_sha256
+    assert first.recomputed_trajectory_sha256 == job.flight.trajectory_sha256
+    assert first.recomputed_result_sha256 == job.flight.result_sha256
 
 
 def test_qualified_boundary_returns_only_an_exact_digest_matched_result() -> None:
@@ -178,16 +178,17 @@ def test_qualified_boundary_returns_only_an_exact_digest_matched_result() -> Non
 
 def test_unqualified_boundary_raises_typed_evidence_without_digest_text() -> None:
     job = _job()
+    mismatched = replace(job.flight, trajectory_sha256="0" * 64)
 
     with pytest.raises(FlightExecutionProfileQualificationError) as raised:
         recompute_qualified_flight_result(
             job.launch.launch,
             job.transfer,
-            job.flight,
+            mismatched,
         )
 
     assert raised.value.qualification.reason is (
         FlightExecutionQualificationReason.TRAJECTORY_DIGEST_MISMATCH
     )
-    assert job.flight.trajectory_sha256 not in str(raised.value)
-    assert job.flight.result_sha256 not in str(raised.value)
+    assert mismatched.trajectory_sha256 not in str(raised.value)
+    assert mismatched.result_sha256 not in str(raised.value)

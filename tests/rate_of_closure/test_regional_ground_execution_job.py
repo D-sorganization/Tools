@@ -23,6 +23,9 @@ from rate_of_closure.application.regional_ground_execution_job import (
 from rate_of_closure.application.regional_ground_variation_request import (
     regional_ground_variation_request_from_json,
 )
+from scripts.generate_regional_ground_authority_fixtures import (
+    generated_fixture_texts,
+)
 from shared.python.swing_sim.ball_setup import BallSetup, BallSupportMode
 from shared.python.swing_sim.flight.tests._regional_ground_pipeline_support import (
     _crossing_result,
@@ -66,6 +69,11 @@ def test_shared_golden_round_trip_and_digest_parity() -> None:
     assert job.job_sha256 == fixture["job_sha256"]
     assert job.canonical_sha256 == fixture["canonical_sha256"]
     assert regional_ground_execution_job_from_json(text) == job
+
+
+def test_authority_fixture_family_is_deterministically_generated() -> None:
+    for path, expected in generated_fixture_texts().items():
+        assert path.read_text(encoding="utf-8") == expected
 
 
 def test_flight_digests_bind_every_canonical_result_field() -> None:

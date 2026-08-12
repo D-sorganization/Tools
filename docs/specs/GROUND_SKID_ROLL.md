@@ -50,6 +50,32 @@ profile under a pinned numerical runtime before ground execution can be
 considered. The production factory still injects no runner, capability remains
 unavailable, and neither client may advertise or invoke a physical run.
 
+## Qualified execution and matched non-executing presentation
+
+The canonical job fixture is generated from the registered flight profile, and
+its dependent status/result fixtures are rebuilt from the derived job and input
+identities. Qualified execution reuses one recomputed flight across seeded
+regional trials, applies each sampled base material at the launch-relative
+transfer surface, forwards cooperative cancellation into ground physics, and
+publishes only a complete job-bound result. Transfer rejection remains an
+explicit typed-null trial outcome; executor and publication defects remain
+typed terminal failures with no partial result.
+
+The UI-neutral Python and TypeScript view models project only the validated
+execution job's schema, flight model identity/version, producer
+identity/version, source revision, and input digest. They copy the stable
+reason and detail from the false authority capability and retain immutable,
+monotonic presentation states for progress, cancellation request, terminal
+cancellation, typed failure stage, and complete job-bound result evidence. Raw
+failure causes are not presentation data.
+
+The PyQt6 panel observes existing controller outputs but has no submission or
+cancellation callback. The React component likewise has no execution handlers.
+Both display disabled Run and Cancel controls with the capability explanation.
+The default production factory still injects no runner and exposes false
+capability, so this is qualified execution and discoverability evidence rather
+than released Run integration.
+
 ## Units, frames, and handoff preconditions
 
 All calculations use target-frame SI units. Position is metres, velocity is

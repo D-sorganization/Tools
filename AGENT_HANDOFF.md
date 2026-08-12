@@ -1,5 +1,26 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4369 qualified fixture, runner, and matched presentation
+
+Starting from corrected published PR #4372 head
+`ff1310c09c066a32e57b50e4daee4da5a40d7bf3`, the canonical execution job now
+uses deterministic registered-profile flight digests and a checked generator
+rebuilds its dependent status/result identities. The qualified runner reuses
+one flight solution across seeded regional trials, forwards cancellation into
+physics, retains typed transfer/executor/publication outcomes, and publishes
+only a complete job-bound result. An actual authenticated loopback process now
+proves the successful submit/status/result path.
+
+Matched Python/TypeScript presentation models plus observer-only PyQt6 and
+handler-free React views expose exact job/model/provenance/digest and immutable
+progress/failure/result evidence with visibly disabled controls. The default
+server still registers no runner, capability remains false, and no runnable UI,
+protected release, persistence, compiled-runtime, or downstream claim is made.
+The consolidated gate passes 2,004 Python/PyQt/shared-simulation tests and 858
+React tests plus the focused real-loopback, static, security, build,
+fixture-generation, documentation, manifest, and diff checks. One Rust parity
+test is skipped because this interpreter has no `swing_core` wheel.
+
 ## 2026-08-11 #4369 hosted MyPy 1.13 correction
 
 PR #4372 head `e91ef8dcde8cdd8e6545ffc0ea7cb755058ec2fb` passed hosted

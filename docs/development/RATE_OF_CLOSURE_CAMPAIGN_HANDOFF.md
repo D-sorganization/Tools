@@ -1,5 +1,24 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 qualified fixture, runner, and matched presentation
+
+- Exact published source head before composition:
+  `ff1310c09c066a32e57b50e4daee4da5a40d7bf3`.
+- The checked fixture generator derives flight digests from the registered
+  profile and rebuilds all job/status/result identities deterministically.
+- Qualified jobs reuse one flight solve across seeded regional trials and
+  preserve cooperative cancellation, typed-null transfer rejection, typed
+  terminal defects, and complete-only job-bound publication.
+- Matched PyQt6/React presentation shows exact identity/provenance/progress/
+  failure/result evidence but offers no executing handler. The default runner
+  remains unregistered, capability remains false, and visible Run/Cancel stays
+  disabled pending protected integration and an explicit promotion decision.
+- Consolidated evidence: 2,004 Python/PyQt/shared-simulation tests and 858 React
+  tests, real authenticated loopback success, deterministic fixture `--check`,
+  Ruff/format, MyPy, Bandit, TypeScript, zero-warning ESLint, 214-module build,
+  docs, manifest, and diff gates. The optional Rust parity test remains skipped
+  because the local interpreter has no `swing_core` wheel.
+
 ## 2026-08-11 #4369 hosted MyPy 1.13 correction
 
 - Exact failing PR #4372 head:

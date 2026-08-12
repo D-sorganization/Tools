@@ -25,7 +25,9 @@ from rate_of_closure.application.regional_ground_execution_job import (
     RegionalGroundExecutionJob,
 )
 from rate_of_closure.application.regional_ground_execution_result import (
+    MAX_REGIONAL_GROUND_EXECUTION_RESULT_BYTES,
     RegionalGroundExecutionResult,
+    regional_ground_execution_result_to_json,
 )
 from rate_of_closure.application.regional_ground_loopback_submitter import (
     LoopbackRegionalGroundSubmitter,
@@ -34,8 +36,6 @@ from rate_of_closure.application.regional_ground_loopback_submitter import (
 )
 from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationCancelled,
-    GroundRegionalVariationFailed,
-    GroundRegionalVariationFailureStage,
     GroundRegionalVariationHooks,
 )
 from rate_of_closure.web_authority.api import (
@@ -56,7 +56,7 @@ pytestmark = [pytest.mark.integration, pytest.mark.headless_safe]
 _TOKEN_ENV = "ROC_AUTHORITY_TOKEN"
 _SOURCE_ROOT = Path(__file__).parents[2] / "src"
 _POLICY = RegionalGroundAuthorityPollPolicy(
-    poll_timeout_s=3.0,
+    poll_timeout_s=15.0,
     initial_interval_s=0.01,
     maximum_interval_s=0.05,
     backoff_multiplier=1.5,
@@ -107,7 +107,7 @@ def _factory(name: str) -> str:
     return f"tests.rate_of_closure.test_regional_ground_real_loopback:{name}"
 
 
-def test_real_preflight_authority_auth_status_cancel_and_result_contracts(
+def test_real_qualified_authority_auth_status_cancel_and_result_contracts(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
     job = _job()
@@ -136,11 +136,8 @@ def test_real_preflight_authority_auth_status_cancel_and_result_contracts(
         submitter = LoopbackRegionalGroundSubmitter(
             LoopbackAuthorityHttpTransport(runtime, timeout_s=1.0), policy=_POLICY
         )
-        with pytest.raises(GroundRegionalVariationFailed) as raised:
-            submitter(job, GroundRegionalVariationHooks())
-        assert raised.value.stage is GroundRegionalVariationFailureStage.PREFLIGHT
-        assert (raised.value.completed, raised.value.total) == (0, 4)
-        assert runtime.token not in str(raised.value)
+        published = submitter(job, GroundRegionalVariationHooks())
+        published.assert_matches_job(job)
         submitter.close()
 
         transport = LoopbackAuthorityHttpTransport(runtime, timeout_s=1.0)
@@ -149,16 +146,23 @@ def test_real_preflight_authority_auth_status_cancel_and_result_contracts(
         snapshot = regional_ground_authority_job_status_from_json(
             status.body.decode("utf-8"), job
         )
-        assert snapshot.status is AuthorityJobStatus.FAILED
-        assert snapshot.failure is not None
-        assert snapshot.failure.stage == "preflight"
+        assert snapshot.status is AuthorityJobStatus.SUCCEEDED
+        assert snapshot.failure is None
+        assert snapshot.result_available is True
 
         cancelled = transport.request("POST", f"{job_path}/cancel", None, 4_096)
         assert cancelled.status == 202
-        assert json.loads(cancelled.body)["status"] == "failed"
-        result = transport.request("GET", f"{job_path}/result", None, 4_096)
-        assert result.status == 409
-        assert json.loads(result.body)["code"] == "result_unavailable"
+        assert json.loads(cancelled.body)["status"] == "succeeded"
+        result = transport.request(
+            "GET",
+            f"{job_path}/result",
+            None,
+            MAX_REGIONAL_GROUND_EXECUTION_RESULT_BYTES,
+        )
+        assert result.status == 200
+        assert result.body.decode("utf-8") == regional_ground_execution_result_to_json(
+            published
+        )
         transport.close()
 
 

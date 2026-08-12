@@ -8,6 +8,7 @@ match and preserves typed cancellation/failure behavior.
 
 from __future__ import annotations
 
+from dataclasses import replace
 from enum import StrEnum
 
 from rate_of_closure.application.flight_execution_profiles import (
@@ -20,6 +21,14 @@ from rate_of_closure.application.regional_ground_execution_job import (
 )
 from rate_of_closure.application.regional_ground_execution_result import (
     RegionalGroundExecutionResult,
+    build_regional_ground_execution_result,
+)
+from rate_of_closure.variation.regional_ground_study_adapter import (
+    RegionalGroundStudyOutcome,
+)
+from rate_of_closure.variation.regional_ground_variation import (
+    GroundRegionalVariationTrial,
+    run_regional_ground_variation,
 )
 from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationCancelled,
@@ -27,7 +36,12 @@ from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationFailureStage,
     GroundRegionalVariationHooks,
 )
-from shared.python.swing_sim.flight import FlightModelType, FlightResult
+from shared.python.swing_sim.flight import (
+    FlightGroundTransferError,
+    FlightModelType,
+    FlightResult,
+    execute_regional_ground_from_flight,
+)
 
 
 class ProductionRunnerPreflightReason(StrEnum):
@@ -134,6 +148,62 @@ def _raise_if_cancelled(
         raise GroundRegionalVariationCancelled(0, total)
 
 
+def _execute_qualified_variation(
+    job: RegionalGroundExecutionJob,
+    flight: FlightResult,
+    hooks: GroundRegionalVariationHooks,
+) -> RegionalGroundExecutionResult:
+    """Run the job-bound seeded authority while reusing one qualified flight."""
+    qualified_request = replace(
+        job.variation_request,
+        regional_plan=job.qualified_regional_plan,
+    )
+    regional_options = replace(
+        job.regional_execution_options,
+        is_cancelled=hooks.cancellation_requested,
+    )
+    vertical_translation_m = (
+        job.qualified_regional_plan.base_surface.height_m
+        - job.transfer.surface.height_m
+    )
+
+    def execute(trial: GroundRegionalVariationTrial) -> RegionalGroundStudyOutcome:
+        source_surface = replace(
+            trial.regional_plan.base_surface,
+            height_m=(
+                trial.regional_plan.base_surface.height_m - vertical_translation_m
+            ),
+        )
+        transfer = replace(job.transfer, surface=source_surface)
+        try:
+            return execute_regional_ground_from_flight(
+                flight,
+                job.launch.launch,
+                transfer,
+                trial.regional_plan,
+                job.capture_speed_m_s,
+                options=regional_options,
+            )
+        except FlightGroundTransferError as error:
+            return error
+
+    dataset = run_regional_ground_variation(
+        qualified_request,
+        execute,
+        hooks=hooks,
+    )
+    try:
+        return build_regional_ground_execution_result(job, dataset)
+    except Exception as error:
+        failure = GroundRegionalVariationFailed(
+            GroundRegionalVariationFailureStage.PUBLICATION,
+            job.execution_options.max_trials,
+            job.execution_options.max_trials,
+            error,
+        )
+        raise failure from error
+
+
 def run_regional_ground_production_job(
     job: RegionalGroundExecutionJob,
     hooks: GroundRegionalVariationHooks,
@@ -148,7 +218,7 @@ def run_regional_ground_production_job(
     total = job.execution_options.max_trials
     _raise_if_cancelled(hooks, total)
     try:
-        preflight_regional_ground_production_job(job)
+        flight = preflight_regional_ground_production_job(job)
     except RegionalGroundProductionPreflightError as error:
         failure = GroundRegionalVariationFailed(
             GroundRegionalVariationFailureStage.PREFLIGHT,
@@ -158,7 +228,7 @@ def run_regional_ground_production_job(
         )
         raise failure from error
 
-    raise AssertionError("qualified production execution is not yet registered")
+    return _execute_qualified_variation(job, flight, hooks)
 
 
 __all__ = [

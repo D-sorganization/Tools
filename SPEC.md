@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.82                                    |
-| **Spec Version**        | 1.14.82                                    |
+| **Current Version**     | 1.14.83                                    |
+| **Spec Version**        | 1.14.83                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,29 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Qualified Regional-Ground Execution and Matched Presentation
+
+- One deterministic generator recomputes the canonical job's flight evidence
+  through the registered Waterloo/Penner profile and rebuilds the dependent
+  status and result fixtures from the new job identities. Its check mode makes
+  manual or stale cross-fixture edits a test failure.
+- A qualified job now reuses that single recomputed flight across the seeded
+  regional-ground trials, forwards cooperative cancellation into physical
+  execution, preserves transfer failures as typed-null outcomes, and publishes
+  only a complete result that matches the job, trial order, and series.
+- PyQt6 and React share compact read-only presentation contracts for job,
+  model, producer, source revision, input digest, progress, cancellation,
+  stable failure stage, and result digest. Both continue to display disabled
+  Run and Cancel controls sourced from the false production capability.
+- The default server still injects no runner and advertises execution as
+  unavailable. This slice proves a qualified executor and real-loopback success
+  path without promoting production capability, exposing a runnable UI, or
+  claiming protected release/downstream parity.
+- Consolidated evidence passes 2,004 Python/PyQt/shared-simulation tests and
+  858 React tests. The optional Rust parity test remains skipped because the
+  local interpreter has no `swing_core` wheel; no compiled-runtime claim is
+  made from the Python/TypeScript evidence.
 
 ### 2026-08-11 PyQt Real-Loopback Authority Qualification
 
@@ -3354,6 +3377,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.83 | feat(ground-study, #4369): deterministically regenerate profile-qualified job/status/result fixtures; execute qualified jobs through one reused flight solve and seeded regional ground with typed cancellation/failure and complete-only publication; add matched disabled PyQt6/React identity, progress, failure, and result presentation while retaining false default capability and open protected/downstream gates. |
 | 2026-08-11 | 1.14.81 | chore(ground-study, #4369): record the fully composed authority continuation and consolidated 1,148-Python/PyQt plus 854-React release gate; retain false capability, disabled visible controls, and open protected/ancestor gates because the canonical synthetic flight digests do not qualify. |
 | 2026-08-11 | 1.14.82 | fix(ground-study, #4369): remove a redundant exact-bool cast rejected by the hosted pinned MyPy 1.13 delta gate; runtime cancellation semantics and the fail-closed capability boundary are unchanged. |
 | 2026-08-11 | 1.14.78 | test(ground-study, #4369): qualify the PyQt submitter against an actual authenticated loopback Uvicorn/FastAPI process, covering bearer secrecy, canonical submit/status/cancel/result behavior, typed fail-closed production preflight, bounded shutdown, and false-capability non-construction without running or claiming physics. |

@@ -1,5 +1,23 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 qualified fixture, runner, and matched presentation
+
+The canonical authority fixture family is now generated from registered-profile
+flight evidence and mutually bound job/status/result identities. Qualified
+execution reuses one recomputed flight across seeded regional-ground trials,
+forwards cancellation through the physical solver, and publishes no partial or
+unbound result. The real authenticated loopback success path is exercised.
+
+Python and TypeScript presentation models preserve exact identity, provenance,
+progress, cancellation, typed failure, and complete result evidence. PyQt6 is
+observer-only and React has no handlers; both controls are disabled from the
+false capability. Do not register the runner or promote capability without a
+separate protected, security-reviewed integration and downstream parity gate.
+Consolidated evidence passes 2,004 Python/PyQt/shared-simulation and 858 React
+tests plus real-loopback, static, security, build, fixture, documentation,
+manifest, and diff gates. The optional Rust parity test is skipped because the
+local interpreter has no `swing_core` wheel, so compiled parity remains open.
+
 ## 2026-08-11 #4369 hosted MyPy 1.13 correction
 
 The exact PR #4372 head
