@@ -1,5 +1,11 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 result-digest typing stability
+
+The result digest uses an explicit string local at the imported-helper
+boundary so both isolated skipped-import and full PR-delta MyPy 1.13 roots are
+clean. Runtime serialization and canonical evidence remain unchanged.
+
 ## 2026-08-11 local #4369 PyQt job-submission port
 
 From exact published #4372 head `990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`,

@@ -1,5 +1,11 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 result-digest typing stability
+
+- The result digest now crosses its helper boundary through an explicit string
+  local, keeping both isolated skipped-import and complete PR-delta MyPy 1.13
+  root sets clean without changing runtime bytes or canonical evidence.
+
 ## 2026-08-11 local #4369 PyQt worker/controller prerequisite
 
 - Exact source parent: published PR #4372 head

@@ -61,7 +61,8 @@ class RegionalGroundExecutionResult:
     @property
     def expected_dataset_sha256(self) -> str:
         """Return the digest of the complete canonical scalar-ensemble object."""
-        return sha256(self.dataset.to_wire())
+        dataset_sha256: str = sha256(self.dataset.to_wire())
+        return dataset_sha256
 
     @property
     def canonical_sha256(self) -> str:

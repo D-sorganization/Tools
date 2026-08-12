@@ -1,5 +1,12 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4369 result-digest root-set stability
+
+The composed PyQt continuation exposed a skipped-import MyPy root-set
+dependency at the result-digest helper boundary. An explicit `str` local now
+keeps both the isolated consumer-module and complete 14-file PR-delta MyPy 1.13
+profiles clean without changing runtime bytes or canonical evidence.
+
 ## 2026-08-11 local #4369 widget-free PyQt submission controller
 
 This exact-parent continuation starts from published PR #4372 head
