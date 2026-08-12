@@ -37,9 +37,12 @@ from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationHooks,
 )
 from shared.python.swing_sim.flight import (
+    CancellationCheck,
+    FlightCancellationCallbackError,
     FlightGroundTransferError,
     FlightModelType,
     FlightResult,
+    FlightSimulationCancelled,
     execute_regional_ground_from_flight,
 )
 
@@ -76,6 +79,8 @@ class RegionalGroundProductionPreflightError(RuntimeError):
 
 def preflight_regional_ground_production_job(
     job: RegionalGroundExecutionJob,
+    *,
+    cancellation_requested: CancellationCheck | None = None,
 ) -> FlightResult:
     """Return flight only when a registered profile reproduces both digests.
 
@@ -93,6 +98,7 @@ def preflight_regional_ground_production_job(
             job.launch.launch,
             job.transfer,
             job.flight,
+            cancellation_requested=cancellation_requested,
         )
     except FlightExecutionProfileQualificationError as error:
         reason = _preflight_reason(job, error.qualification.reason)
@@ -218,7 +224,23 @@ def run_regional_ground_production_job(
     total = job.execution_options.max_trials
     _raise_if_cancelled(hooks, total)
     try:
-        flight = preflight_regional_ground_production_job(job)
+        flight = preflight_regional_ground_production_job(
+            job,
+            cancellation_requested=hooks.cancellation_requested,
+        )
+    except FlightSimulationCancelled as error:
+        raise GroundRegionalVariationCancelled(0, total) from error
+    except FlightCancellationCallbackError as error:
+        cause = error.__cause__
+        if not isinstance(cause, Exception):
+            cause = error
+        failure = GroundRegionalVariationFailed(
+            GroundRegionalVariationFailureStage.CANCELLATION_CALLBACK,
+            0,
+            total,
+            cause,
+        )
+        raise failure from cause
     except RegionalGroundProductionPreflightError as error:
         failure = GroundRegionalVariationFailed(
             GroundRegionalVariationFailureStage.PREFLIGHT,

@@ -14,6 +14,7 @@ Import from this facade only; module layout underneath is private.
 
 from __future__ import annotations
 
+from ._cancellation import raise_if_flight_cancelled
 from ._rust_facade import is_rust_available, simulate_trajectory_rust
 from .capability_contract import (
     CapabilityObjective,
@@ -95,6 +96,8 @@ from .models import (
     BallFlightModel,
     ConstantCoefficientModel,
     ConstantCoefficientSpec,
+    FlightCancellationCallbackError,
+    FlightSimulationCancelled,
     MacDonaldHanzelyModel,
     WaterlooPennerModel,
 )
@@ -193,9 +196,11 @@ __all__ = [
     "FlightRegionalGroundPipelineResult",
     "FlightGroundTransferError",
     "FlightGroundTransferSettings",
+    "FlightCancellationCallbackError",
     "FlightStatePoint",
     "FlightRunManifest",
     "FlightSimulatorProtocol",
+    "FlightSimulationCancelled",
     "ForwardEvaluator",
     "ForwardEvaluation",
     "ForwardStatus",
@@ -264,6 +269,7 @@ __all__ = [
     "migrate_launch_direction_mapping",
     "make_capability_flight_evaluator",
     "optimize_capability",
+    "raise_if_flight_cancelled",
     "simulate",
     "simulate_trajectory_rust",
     "solve_inverse_flight",

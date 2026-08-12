@@ -17,16 +17,19 @@ from shared.python.swing_sim.ball_setup import (
 )
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
 from shared.python.swing_sim.flight import (
+    CancellationCheck,
     FlightResult,
     FlightStatePoint,
     LaunchConditions,
+    TrajectoryPoint,
+    raise_if_flight_cancelled,
 )
 
 FLIGHT_FRAME = "flight_frame:x_forward,y_left,z_up"
 MAX_CAPTURE_SPEED_M_S = 100.0
 MAX_EXECUTION_TIMEOUT_S = 3_600.0
 MAX_FLIGHT_SETTINGS = 64
-
+_CANCELLATION_POLL_INTERVAL = 256
 _BALL_SETUP_FIELDS = frozenset(
     {"support_mode", "tee_height_m", "height_reference", "ball_center_m"}
 )
@@ -295,32 +298,59 @@ class GroundExecutionOptions:
         return cls(data["max_trials"])
 
 
-def _trajectory_payload(result: FlightResult) -> list[dict[str, object]]:
+def _trajectory_point_payload(point: TrajectoryPoint) -> dict[str, object]:
+    return {
+        "time_s": point.time,
+        "position_m": point.position.tolist(),
+        "velocity_m_s": point.velocity.tolist(),
+        "angular_velocity_rad_s": point.angular_velocity_rad_s.tolist()
+        if isinstance(point, FlightStatePoint)
+        else None,
+    }
+
+
+def canonical_flight_trajectory_sha256(
+    result: FlightResult,
+    *,
+    cancellation_requested: CancellationCheck | None = None,
+) -> str:
+    """Hash every canonical flight trajectory sample and angular state."""
     if type(result) is not FlightResult:
         raise TypeError("result must be an exact FlightResult")
-    return [
-        {
-            "time_s": point.time,
-            "position_m": point.position.tolist(),
-            "velocity_m_s": point.velocity.tolist(),
-            "angular_velocity_rad_s": point.angular_velocity_rad_s.tolist()
-            if isinstance(point, FlightStatePoint)
-            else None,
-        }
-        for point in result.trajectory
-    ]
+    hasher = hashlib.sha256()
+    hasher.update(b"[")
+    for ordinal, point in enumerate(result.trajectory):
+        if ordinal % _CANCELLATION_POLL_INTERVAL == 0:
+            raise_if_flight_cancelled(cancellation_requested)
+        if ordinal:
+            hasher.update(b",")
+        token = str(canonical_numeric_json(_trajectory_point_payload(point)))
+        hasher.update(token.encode("utf-8"))
+    hasher.update(b"]")
+    raise_if_flight_cancelled(cancellation_requested)
+    return hasher.hexdigest()
 
 
-def canonical_flight_trajectory_sha256(result: FlightResult) -> str:
-    """Hash every canonical flight trajectory sample and angular state."""
-    return sha256(_trajectory_payload(result))
-
-
-def canonical_flight_result_sha256(result: FlightResult) -> str:
+def canonical_flight_result_sha256(
+    result: FlightResult,
+    *,
+    cancellation_requested: CancellationCheck | None = None,
+) -> str:
     """Hash the trajectory identity plus every scalar flight-result field."""
-    return sha256(
+    return canonical_flight_evidence_sha256(
+        result,
+        cancellation_requested=cancellation_requested,
+    )[1]
+
+
+def _result_sha256_from_trajectory(
+    result: FlightResult,
+    trajectory_sha256: str,
+    cancellation_requested: CancellationCheck | None,
+) -> str:
+    value = sha256(
         {
-            "trajectory_sha256": canonical_flight_trajectory_sha256(result),
+            "trajectory_sha256": trajectory_sha256,
             "model_name": result.model_name,
             "carry_distance_m": result.carry_distance,
             "max_height_m": result.max_height,
@@ -329,6 +359,26 @@ def canonical_flight_result_sha256(result: FlightResult) -> str:
             "lateral_deviation_m": result.lateral_deviation,
         }
     )
+    raise_if_flight_cancelled(cancellation_requested)
+    return value
+
+
+def canonical_flight_evidence_sha256(
+    result: FlightResult,
+    *,
+    cancellation_requested: CancellationCheck | None = None,
+) -> tuple[str, str]:
+    """Hash one trajectory once and derive both canonical evidence digests."""
+    trajectory_sha256 = canonical_flight_trajectory_sha256(
+        result,
+        cancellation_requested=cancellation_requested,
+    )
+    result_sha256 = _result_sha256_from_trajectory(
+        result,
+        trajectory_sha256,
+        cancellation_requested,
+    )
+    return trajectory_sha256, result_sha256
 
 
 __all__ = [
@@ -337,6 +387,7 @@ __all__ = [
     "FlightExecutionInput",
     "FlightLaunchInput",
     "GroundExecutionOptions",
+    "canonical_flight_evidence_sha256",
     "canonical_flight_result_sha256",
     "canonical_flight_trajectory_sha256",
     "canonical_text",

@@ -1,5 +1,43 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-12 #4369 qualified flight-recompute cancellation
+
+Branch `codex/4369-flight-recompute-cancellation` starts exactly from Tools PR
+#4374 head `e1da8708c15f966afc926e20eae3fdf084ba8a16` and must target
+`codex/4369-editor-job-preparation`. Human review is approved for this campaign
+continuation; repository protections and required checks still apply.
+
+The Waterloo/Penner surface solver and registered profile recomputation now
+accept one optional keyword-only exact-Boolean cancellation callback. The job
+manager's existing cancellation event is polled before integration, on adaptive
+derivative boundaries, through dense-output materialization, after metrics,
+during chunked retained-trajectory construction, and during canonical evidence
+serialization. Cancellation publishes no partial result and maps to typed
+zero-of-total cancellation. Raising or non-Boolean callbacks preserve their
+original cause internally and map to the existing non-secret callback-failure
+stage. Callback-free and always-false paths preserve existing canonical flight
+digests and every job/wire schema.
+
+Independent review found and this branch closed the original post-solver latency
+gap, duplicate comparison-digest work, oversized profile module, and a SciPy-call-count
+coupled regression test. Deterministic tests cover solver, post-solver digest,
+manager shutdown, callback-defect, no-regional-physics, exact signature, facade,
+and digest-parity behavior. Final local evidence is 1,233 Rate of Closure tests
+with eight workers, 87 focused cancellation/profile/job/runner tests, manifest
+validation plus eight manifest tests, Ruff check/format, changed-source typing,
+module-size and `git diff --check` gates. This slice changes no React or PyQt
+visual surface, so the parent PR #4374 React/PyQt visual and build evidence
+remains the relevant UI gate.
+
+The campaign manifest now records parent PR #4374's exact head. This child must
+not self-record its future PR number; verify and add that carrier in the next
+implementation commit. Durable authority restart recovery, static-host and
+frozen-runtime qualification, measured regional calibration, compiled or
+TypeScript regional physics, downstream UpstreamDrift parity, ancestor-stack
+integration, protected release, and closure of #4369/#4273/#4267 remain open.
+
+
+
 ## 2026-08-11 #4369 current-editor job preparation
 
 Local branch `codex/4369-editor-job-preparation` starts exactly from corrected

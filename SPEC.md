@@ -26,9 +26,9 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.89                                    |
-| **Spec Version**        | 1.14.89                                    |
-| **Last Spec Update**    | 2026-08-11                                 |
+| **Current Version**     | 1.14.90                                    |
+| **Spec Version**        | 1.14.90                                    |
+| **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
 
@@ -45,6 +45,31 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-12 Cooperative Cancellation Through Qualified Flight Recompute
+
+- The registered Waterloo/Penner surface-flight boundary accepts an optional,
+  synchronous, exact-Boolean cancellation callback without changing persisted
+  settings, deterministic preparation, job wire shapes, solver arguments, or
+  callback-free callers.
+- Cancellation is polled before integration, at every adaptive derivative
+  boundary, during dense-output materialization, after metric calculation,
+  during bounded retained-trajectory construction, and while canonical flight
+  evidence is serialized. No partial trajectory, metric, qualification, or
+  regional-ground result is published.
+- A requested cancellation raises a dedicated control exception. A raising or
+  non-Boolean callback raises a separate typed callback defect chained from its
+  original cause. Production maps those signals to zero-of-total cancellation
+  or the existing non-secret cancellation-callback failure stage; ordinary
+  numerical failures retain the existing recomputation-failed mapping.
+- Authority shutdown uses the same job-owned cancellation event and can join a
+  worker interrupted during either ODE execution or post-solver digest work.
+  Always-false callbacks preserve the existing canonical trajectory and result
+  digests exactly.
+- Durable restart recovery, static-host and frozen-runtime qualification,
+  measured regional calibration, compiled/TypeScript regional physics,
+  downstream UpstreamDrift parity, ancestor integration, and protected release
+  remain open and keep #4369/#4273/#4267 incomplete.
 
 ### 2026-08-11 Current-editor regional-ground job preparation
 
@@ -3478,6 +3503,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.14.90 | feat(ground-study, #4369): add exact cooperative cancellation through registered Waterloo/Penner integration, dense-output sampling, retained-trajectory construction, metric publication, and canonical evidence serialization; preserve callback-free digests and wire contracts, map cancellation and callback defects to existing typed production terminals, and prove authority shutdown at solver and post-solver seams while retaining restart/static/frozen/compiled/downstream/release limitations. |
 | 2026-08-11 | 1.14.89 | feat(ground-study, #4369): add a strict bounded current-editor preparation request, registered Python flight recomputation and canonical job construction, authenticated no-enqueue preparation API, transactional PyQt6 and React preparation/review workflows with explicit separate Run confirmation, complete current-hit staleness protection, bounded preparation profiles, substituted-response rejection, cross-runtime meteorological wind parity, render-safe invalid-editor handling, full numerical/calibration disclosure, and exact failure preservation; retain restart/static/frozen/compiled/downstream/release limitations. |
 | 2026-08-11 | 1.14.88 | fix(ground-study, #4369): leave each visible React import button as the sole accessible action by making its programmatically activated file input truly hidden, preserving strict import behavior and workspace state. |
 | 2026-08-11 | 1.14.87 | fix(ground-study, #4369): complete the PyQt6 toolstrip host protocol with the four strict execution-job/result file callbacks required by its contextual command group, restoring the pinned MyPy 1.13 changed-source gate without changing runtime behavior. |
