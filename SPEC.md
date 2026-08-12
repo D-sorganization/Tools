@@ -2703,8 +2703,4 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
 
-## Changelog
-- **2026-08-09**: Optimized CSV parsing in `p1am_control_system/frontend` and `data_explorer` by replacing `Array.from()` with standard `for` loops and pre-allocated arrays to eliminate iterability overhead in hot paths.
-## Changelog
-- **2026-08-09**: Optimized CSV parsing in `p1am_control_system/frontend` and `data_explorer` by replacing `Array.from()` with standard `for` loops and pre-allocated arrays to eliminate iterability overhead in hot paths.
 - **2026-08-09**: Optimized CSV parsing in `p1am_control_system/frontend` and `data_explorer` by replacing `Array.from()` with standard `for` loops and pre-allocated arrays to eliminate iterability overhead in hot paths.

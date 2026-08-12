@@ -112,18 +112,18 @@ class TestFolderPackerGuiLoDFix:
         import inspect
 
         source = inspect.getsource(gui_module.FolderPackerGUI.should_include_file)
-        assert (
-            "file_path.suffix.lower()" not in source
-        ), "LoD violation: should_include_file must not chain .suffix.lower()"
+        assert "file_path.suffix.lower()" not in source, (
+            "LoD violation: should_include_file must not chain .suffix.lower()"
+        )
 
     def test_should_include_directory_no_chained_name_lower(self, gui_module) -> None:
         """Verify should_include_directory does not use dir_path.name.lower() chain."""
         import inspect
 
         source = inspect.getsource(gui_module.FolderPackerGUI.should_include_directory)
-        assert (
-            "dir_path.name.lower()" not in source
-        ), "LoD violation: should_include_directory must not chain .name.lower()"
+        assert "dir_path.name.lower()" not in source, (
+            "LoD violation: should_include_directory must not chain .name.lower()"
+        )
 
     def test_should_include_file_python_file(self, gui_instance) -> None:
         """Test that .py files are included."""
@@ -203,9 +203,9 @@ class TestFolderPackerGuiLoDFix:
             for i, line in enumerate(lines)
             if "print(" in line and not line.strip().startswith("#")
         ]
-        assert (
-            not print_lines
-        ), f"Found print() calls in folder_packer_gui.py: {print_lines}"
+        assert not print_lines, (
+            f"Found print() calls in folder_packer_gui.py: {print_lines}"
+        )
 
 
 class TestFolderPackerGuiDbCContracts:
