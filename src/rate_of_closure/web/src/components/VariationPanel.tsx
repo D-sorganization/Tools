@@ -29,8 +29,14 @@ import {
 import { VariationActions } from "./VariationActions";
 import { VariationPlanLibraryPanel } from "./VariationPlanLibraryPanel";
 import { VariationResults } from "./VariationResults";
+import type { MorrisAuthorityClient } from "../model/morrisAuthorityClient";
+import {
+  morrisAuthorityBaseIdentity,
+  type MorrisAuthorityBase,
+} from "../model/morrisAuthorityRequest";
+import { MorrisWorkflowPanel } from "./MorrisWorkflowPanel";
 import { VariationSetup } from "./VariationSetup";
-import { defaultVariationPlan } from "./variationUi";
+import { BUTTON_CLASS, defaultVariationPlan } from "./variationUi";
 import { DRIVER_TEE_HEIGHT_M } from "../model/ballSetup";
 import { loadBallSetupPreference } from "../model/ballSetupPersistence";
 import { spatialTargetSummary } from "./spatialTargetPresentation";
@@ -46,13 +52,23 @@ export interface VariationPanelProps {
   distanceUnit?: string;
   /** Injectable persistent storage for tests, embedded hosts, and privacy modes. */
   storage?: Storage;
+  /** App-owned authority dependency. Null keeps static builds fail-closed. */
+  morrisClient?: MorrisAuthorityClient | null;
+  /** Current simulation context serialized by the strict shared contract. */
+  morrisBase?: MorrisAuthorityBase;
+  /** Honest fail-closed reason when current app context cannot round-trip. */
+  morrisUnavailableReason?: string;
 }
 
 export function VariationPanel({
   spatialTarget,
   distanceUnit = "yd",
   storage,
+  morrisClient = null,
+  morrisBase,
+  morrisUnavailableReason,
 }: VariationPanelProps = {}): JSX.Element {
+  const [workflow, setWorkflow] = useState<"variation" | "morris">("variation");
   const targetUse = spatialTarget
     ? spatialTargetForGroundWorkflow(spatialTarget, "variation")
     : { targetRegion: null, diagnostic: null };
@@ -183,8 +199,18 @@ export function VariationPanel({
     setPlanName(library.find((entry) => entry.id === id)?.name ?? "");
   };
 
+  if (workflow === "morris" && morrisBase !== undefined) {
+    return <div className="space-y-4">
+      <VariationWorkflowPicker value={workflow} onChange={setWorkflow} />
+      <MorrisWorkflowPanel key={morrisAuthorityBaseIdentity(morrisBase)}
+        client={morrisClient} base={morrisBase} />
+    </div>;
+  }
   return (
-    <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
+    <div className="space-y-4">
+      <VariationWorkflowPicker value={workflow} onChange={setWorkflow}
+        morrisDisabled={morrisBase === undefined} morrisUnavailableReason={morrisUnavailableReason} />
+      <div className="grid gap-6 xl:grid-cols-[420px_1fr]">
       <section aria-label="Variation setup" className="space-y-4">
         {spatialTarget && (
           <p role="status" aria-label="Variation current spatial target"
@@ -233,6 +259,27 @@ export function VariationPanel({
         distanceUnit={distanceUnit}
         ensemble={ensemble}
       />
+      </div>
     </div>
   );
+}
+
+function VariationWorkflowPicker(props: {
+  readonly value: "variation" | "morris";
+  readonly onChange: (value: "variation" | "morris") => void;
+  readonly morrisDisabled?: boolean;
+  readonly morrisUnavailableReason?: string;
+}) {
+  return <nav aria-label="Variation workflows" className="flex flex-wrap gap-2">
+    <button type="button" aria-pressed={props.value === "variation"} className={BUTTON_CLASS}
+      title="Run seeded Monte Carlo variation and one-at-a-time analyses in the browser"
+      onClick={() => props.onChange("variation")}>Monte Carlo Variation</button>
+    <button type="button" aria-pressed={props.value === "morris"} className={BUTTON_CLASS}
+      title={props.morrisUnavailableReason ?? "Run global Morris elementary-effects screening in the local Python authority"}
+      disabled={props.morrisDisabled} onClick={() => props.onChange("morris")}>Morris Screening</button>
+    {props.morrisDisabled && props.morrisUnavailableReason && <span role="status" aria-label="Morris availability"
+      className="self-center text-xs text-amber-300">
+      Morris unavailable: {props.morrisUnavailableReason}
+    </span>}
+  </nav>;
 }

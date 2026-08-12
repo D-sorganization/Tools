@@ -1,10 +1,11 @@
 /** Morris authority client capability and bounded-error tests. */
 
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import {
   createMorrisAuthorityClient,
   MorrisAuthorityClientError,
+  type MorrisAuthorityClient,
 } from "./morrisAuthorityClient";
 
 const capability = {
@@ -17,6 +18,25 @@ const capability = {
 };
 
 describe("Morris authority client", () => {
+  afterEach(() => { vi.useRealTimers(); });
+
+  it.each([
+    ["capability", (client: MorrisAuthorityClient) => client.capability()],
+    ["create", (client: MorrisAuthorityClient) => client.create({})],
+    ["status", (client: MorrisAuthorityClient) => client.status("job-1")],
+    ["cancel", (client: MorrisAuthorityClient) => client.cancel("job-1")],
+  ] as const)("bounds a hung %s operation and returns a deterministic timeout", async (_name, invoke) => {
+    vi.useFakeTimers();
+    const fetcher = vi.fn<typeof fetch>((_input, init) => new Promise((_resolve, reject) => {
+      init?.signal?.addEventListener("abort", () => reject(new DOMException("Aborted", "AbortError")));
+    }));
+    const client = createMorrisAuthorityClient({ fetchImpl: fetcher, timeoutMs: 25 });
+
+    const pending = invoke(client).catch((error: unknown) => error);
+    await vi.advanceTimersByTimeAsync(25);
+    await expect(pending).resolves.toMatchObject({ code: "timeout", status: null });
+  });
+
   it("discovers capability through the canonical endpoint", async () => {
     const fetcher = vi.fn<typeof fetch>(async () => new Response(JSON.stringify(capability), {
       status: 200, headers: { "Content-Type": "application/json" },

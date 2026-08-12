@@ -16,7 +16,8 @@ export type MorrisAuthorityClientErrorCode =
   | "invalid_json"
   | "invalid_error_envelope"
   | "invalid_response"
-  | "transport_error";
+  | "transport_error"
+  | "timeout";
 
 const MAX_ERROR_MESSAGE_LENGTH = 256;
 const MAX_ERROR_RESPONSE_BYTES = 8_192;
@@ -43,9 +44,11 @@ export interface MorrisAuthorityClient {
 
 export interface MorrisAuthorityClientOptions {
   readonly fetchImpl?: typeof fetch;
+  readonly timeoutMs?: number;
 }
 
 const AUTHORITY_BASE_URL = "/api/rate-of-closure/v1";
+const DEFAULT_OPERATION_TIMEOUT_MS = 30_000;
 
 const errorMessage = (value: unknown, status: number): string => {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
@@ -148,11 +151,34 @@ const responseDocument = async (response: Response): Promise<unknown> => {
 };
 
 export function createMorrisAuthorityClient(options: MorrisAuthorityClientOptions = {}): MorrisAuthorityClient {
-  if (Object.keys(options).some((key) => key !== "fetchImpl")) {
+  if (Object.keys(options).some((key) => key !== "fetchImpl" && key !== "timeoutMs")) {
     throw new TypeError("Morris authority client options contain an unsupported key");
   }
   const fetchImpl = options.fetchImpl ?? globalThis.fetch;
   if (typeof fetchImpl !== "function") throw new TypeError("fetchImpl must be callable");
+  const timeoutMs = options.timeoutMs ?? DEFAULT_OPERATION_TIMEOUT_MS;
+  if (!Number.isFinite(timeoutMs) || timeoutMs <= 0) throw new RangeError("timeoutMs must be positive and finite");
+
+  const withDeadline = async <Value>(
+    external: AbortSignal | undefined,
+    task: (signal: AbortSignal) => Promise<Value>,
+  ): Promise<Value> => {
+    const controller = new AbortController();
+    let timedOut = false;
+    const abort = () => controller.abort();
+    if (external?.aborted) controller.abort();
+    external?.addEventListener("abort", abort, { once: true });
+    const timer = globalThis.setTimeout(() => { timedOut = true; controller.abort(); }, timeoutMs);
+    try {
+      return await task(controller.signal);
+    } catch (error: unknown) {
+      if (timedOut) throw new MorrisAuthorityClientError("timeout", "Morris authority operation timed out.", null);
+      throw error;
+    } finally {
+      globalThis.clearTimeout(timer);
+      external?.removeEventListener("abort", abort);
+    }
+  };
 
   const sameOriginFetch = async (path: string, init: RequestInit): Promise<Response> => {
     try {
@@ -183,8 +209,8 @@ export function createMorrisAuthorityClient(options: MorrisAuthorityClientOption
   };
   const jobPath = (jobId: string): string => `/morris/jobs/${encodeURIComponent(stableJobId(jobId))}`;
   return Object.freeze({
-    capability: async (signal?: AbortSignal) => {
-      const response = await sameOriginFetch("/morris/capabilities", { method: "GET", signal });
+    capability: (signal?: AbortSignal) => withDeadline(signal, async (operationSignal) => {
+      const response = await sameOriginFetch("/morris/capabilities", { method: "GET", signal: operationSignal });
       const document = await responseDocument(response);
       if (response.status !== 200) {
         throw new MorrisAuthorityClientError(
@@ -196,11 +222,17 @@ export function createMorrisAuthorityClient(options: MorrisAuthorityClientOption
       } catch {
         throw new MorrisAuthorityClientError("invalid_response", "Morris authority capability failed validation.", response.status);
       }
+    }),
+    create: (request: unknown, signal?: AbortSignal) => withDeadline(signal, (operationSignal) => call("/morris/jobs", {
+      method: "POST", signal: operationSignal, headers: { "Content-Type": "application/json" }, body: JSON.stringify(request),
+    }, [202])),
+    status: (jobId: string, signal?: AbortSignal) => {
+      const path = jobPath(jobId);
+      return withDeadline(signal, (operationSignal) => call(path, { method: "GET", signal: operationSignal }, [200]));
     },
-    create: (request: unknown, signal?: AbortSignal) => call("/morris/jobs", {
-      method: "POST", signal, headers: { "Content-Type": "application/json" }, body: JSON.stringify(request),
-    }, [202]),
-    status: (jobId: string, signal?: AbortSignal) => call(jobPath(jobId), { method: "GET", signal }, [200]),
-    cancel: (jobId: string, signal?: AbortSignal) => call(jobPath(jobId), { method: "DELETE", signal }, [200, 202]),
+    cancel: (jobId: string, signal?: AbortSignal) => {
+      const path = jobPath(jobId);
+      return withDeadline(signal, (operationSignal) => call(path, { method: "DELETE", signal: operationSignal }, [200, 202]));
+    },
   });
 }

@@ -5,10 +5,14 @@ import { describe, expect, it } from "vitest";
 import {
   buildMorrisFactorRows,
   serializeMorrisAuthorityRequest,
+  suggestedMorrisFactorDrafts,
   validateMorrisFactorDrafts,
   type MorrisAuthorityRequest,
   type MorrisFactorDraft,
 } from "./morrisAuthorityRequest";
+import { defaultMorrisAuthorityBase } from "./morrisWorkflowDefaults";
+import { getClub } from "./club";
+import { DEFAULT_SCENARIO } from "./impact";
 
 const draft = (overrides: Partial<MorrisFactorDraft> = {}): MorrisFactorDraft => ({
   variableKey: "swing_sim.swing.yaw_deg",
@@ -28,6 +32,66 @@ const base = (): MorrisAuthorityRequest["base"] => ({
 });
 
 describe("Morris factor rows", () => {
+  it("fails closed when the current scenario cannot round-trip through the pinned authority", () => {
+    expect(() => defaultMorrisAuthorityBase(getClub("Driver 10.5°"), DEFAULT_SCENARIO)).toThrow(
+      /clubheadSpeedMph=113.*current value is unsupported/,
+    );
+    expect(() => defaultMorrisAuthorityBase(getClub("Driver 10.5°"), {
+      ...DEFAULT_SCENARIO, clubheadSpeedMph: 113,
+    })).not.toThrow();
+  });
+
+  it("fails closed instead of discarding custom club geometry", () => {
+    const canonical = getClub("Driver 10.5°");
+    expect(() => defaultMorrisAuthorityBase(
+      { ...canonical, loftDeg: 11.25 },
+      { ...DEFAULT_SCENARIO, clubheadSpeedMph: 113 },
+    )).toThrow(/cannot represent custom club field loftDeg.*canonical Driver 10\.5°/);
+    expect(() => defaultMorrisAuthorityBase(
+      { ...canonical, headStyle: undefined },
+      { ...DEFAULT_SCENARIO, clubheadSpeedMph: 113 },
+    )).not.toThrow();
+  });
+
+  it("matches Python R13.6 base-centered suggestions and ground applicability", () => {
+    const suggested = suggestedMorrisFactorDrafts(base());
+    expect(suggested.map(({ variableKey, enabled }) => ({ variableKey, enabled }))).toEqual([
+      { variableKey: "swing_sim.swing.yaw_deg", enabled: true },
+      { variableKey: "swing_sim.swing.side_tilt_deg", enabled: true },
+      { variableKey: "swing_sim.swing.forward_tilt_deg", enabled: true },
+      { variableKey: "swing_sim.swing.damping_shoulder", enabled: true },
+      { variableKey: "swing_sim.swing.damping_wrist", enabled: true },
+      { variableKey: "swing_sim.impact.delivery.impact_offset_toe_mm", enabled: true },
+      { variableKey: "swing_sim.impact.delivery.impact_offset_high_mm", enabled: true },
+      { variableKey: "swing_sim.club.head_mass_kg", enabled: true },
+      { variableKey: "swing_sim.club.head_moi_kg_m2", enabled: true },
+      { variableKey: "swing_sim.ball_setup.tee_height_m", enabled: true },
+    ]);
+    const expectedBounds = [
+      { variableKey: "swing_sim.swing.yaw_deg", enabled: true, lower: -3, upper: 3 },
+      { variableKey: "swing_sim.swing.side_tilt_deg", enabled: true, lower: -48, upper: -42 },
+      { variableKey: "swing_sim.swing.forward_tilt_deg", enabled: true, lower: -3, upper: 3 },
+      { variableKey: "swing_sim.swing.damping_shoulder", enabled: true, lower: 0.3, upper: 0.5 },
+      { variableKey: "swing_sim.swing.damping_wrist", enabled: true, lower: 0.15, upper: 0.35 },
+      { variableKey: "swing_sim.impact.delivery.impact_offset_toe_mm", enabled: true, lower: -8, upper: 8 },
+      { variableKey: "swing_sim.impact.delivery.impact_offset_high_mm", enabled: true, lower: -6, upper: 6 },
+      { variableKey: "swing_sim.club.head_mass_kg", enabled: true, lower: 0.196, upper: 0.204 },
+      { variableKey: "swing_sim.club.head_moi_kg_m2", enabled: true, lower: 0.00048, upper: 0.00056 },
+      { variableKey: "swing_sim.ball_setup.tee_height_m", enabled: true, lower: 0.0321, upper: 0.0441 },
+    ];
+    expectedBounds.forEach((expected, index) => {
+      expect(suggested[index].lower).toBeCloseTo(expected.lower, 12);
+      expect(suggested[index].upper).toBeCloseTo(expected.upper, 12);
+    });
+    const ground = suggestedMorrisFactorDrafts({
+      ...base(), supportMode: "ground", teeHeightM: 0, clubName: "Pitching Wedge",
+    });
+    expect(ground).toHaveLength(9);
+    expect(ground.map((item) => item.variableKey)).toEqual(
+      expect.not.arrayContaining(["swing_sim.ball_setup.tee_height_m"]),
+    );
+  });
+
   it("uses registry metadata and makes tee height inapplicable on ground", () => {
     const rows = buildMorrisFactorRows([draft(), draft({
       variableKey: "swing_sim.ball_setup.tee_height_m",
