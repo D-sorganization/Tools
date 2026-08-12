@@ -63,7 +63,9 @@ class AuthorityCapability:
 
     def __post_init__(self) -> None:
         """Reject ambiguous or unbounded diagnostic text at construction."""
-        if type(self.reason_code) is not str or self.reason_code not in _REASON_CODES:
+        if type(self.reason_code) is not str:
+            raise TypeError("capability reason code must be text")
+        if self.reason_code not in _REASON_CODES:
             raise ValueError("capability reason code is unsupported")
         if type(self.detail) is not str:
             raise TypeError("capability detail must be text")

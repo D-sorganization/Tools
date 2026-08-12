@@ -68,9 +68,21 @@ def test_qualified_capability_is_internally_consistent() -> None:
         )
 
 
-@pytest.mark.parametrize("reason", ["unknown_reason", 17, None])
-def test_direct_capability_construction_rejects_unknown_reason(reason: object) -> None:
+def test_direct_capability_construction_rejects_unknown_reason() -> None:
     with pytest.raises(ValueError, match="reason"):
+        AuthorityCapability(
+            available=False,
+            regional_ground_execution=False,
+            reason_code="unknown_reason",  # type: ignore[arg-type]
+            detail="Authority is unavailable.",
+        )
+
+
+@pytest.mark.parametrize("reason", [17, None])
+def test_direct_capability_construction_rejects_non_text_reason(
+    reason: object,
+) -> None:
+    with pytest.raises(TypeError, match="reason"):
         AuthorityCapability(
             available=False,
             regional_ground_execution=False,

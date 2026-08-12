@@ -30,6 +30,10 @@ integration, release, #4369, #4273, and #4267 remain open.
 
 ## 2026-08-11 #4369 qualified headless authority admission
 
+- Independent post-admission review verifies deterministic submit-versus-close
+  and exceptional-lifespan regression coverage, exact Python reason/detail
+  typing, and matching TypeScript detail/media-type enforcement. Earlier
+  no-runner statements are historical evidence, not current service state.
 - Default local authority construction now atomically couples the qualified
   regional-ground runner with a strict ready capability; impossible flag,
   reason, or manager/runner combinations fail closed.

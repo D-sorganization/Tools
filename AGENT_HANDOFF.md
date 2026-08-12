@@ -30,6 +30,11 @@ integration, release, #4369, #4273, and #4267 remain open.
 
 ## 2026-08-11 #4369 qualified headless authority admission
 
+Independent post-admission review verified deterministic submit-versus-close
+and exceptional-lifespan regressions, exact Python reason/detail typing, and
+matching TypeScript detail/media-type enforcement. Older no-runner statements
+are historical slice evidence, not the current default-server state.
+
 The default loopback server now atomically binds the qualified production
 runner to an exact true/true service capability. Python and TypeScript reject
 split capability flags or mismatched reasons; FastAPI rejects capability/runner
