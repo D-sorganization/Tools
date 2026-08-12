@@ -24,6 +24,7 @@ const DEFAULT_POLL_INTERVAL_MS = 1_000;
 
 export type RegionalGroundExecutionPhase =
   | "idle"
+  | "reconciling"
   | "submitting"
   | "queued"
   | "running"
@@ -61,6 +62,7 @@ export interface RegionalGroundExecutionController
   extends RegionalGroundExecutionControllerState {
   readonly controls: RegionalGroundExecutionControlState;
   readonly submit: (job: RegionalGroundExecutionJob) => Promise<void>;
+  readonly recover: (job: RegionalGroundExecutionJob) => Promise<void>;
   readonly cancel: () => Promise<void>;
   readonly reconcile: () => Promise<void>;
   readonly reset: () => void;
@@ -113,7 +115,7 @@ export function useRegionalGroundExecutionController(
   const processStatus = useRef<(
     value: RegionalGroundAuthorityJobStatus,
     run: number,
-  ) => Promise<void>>();
+  ) => Promise<boolean>>();
   const poll = useRef<(run: number) => Promise<void>>();
 
   client.current = options.client;
@@ -172,30 +174,32 @@ export function useRegionalGroundExecutionController(
   }, [current]);
 
   processStatus.current = async (value, run) => {
-    if (!current(run)) return;
+    if (!current(run)) return false;
     const progress = Object.freeze({ completed: value.completed, total: value.total });
     const common = { status: value, progress, failure: value.failure, error: null };
     if (value.status === "failed" || value.status === "cancelled") {
       active.current = false;
       publish(run, { ...common, phase: value.status, result: null });
-      return;
+      return true;
     }
     if (value.status !== "succeeded") {
       publish(run, { ...common, phase: value.status, result: null });
       schedulePoll(run);
-      return;
+      return true;
     }
     publish(run, { ...common, phase: "retrieving_result", result: null });
     const sourceJob = job.current;
-    if (sourceJob === null) return;
+    if (sourceJob === null) return false;
     const request = beginRequest();
     try {
       const complete = await client.current.result(sourceJob, request.signal);
-      if (!current(run, request.id)) return;
+      if (!current(run, request.id)) return false;
       active.current = false;
       publish(run, { phase: "succeeded", result: complete });
+      return true;
     } catch (reason) {
       if (current(run, request.id)) failRequest(run, reason);
+      return false;
     }
   };
 
@@ -241,6 +245,41 @@ export function useRegionalGroundExecutionController(
       }
     }
   }, [beginRequest, clearPending, current, failRequest, publish]);
+
+  const recover = useCallback(async (
+    source: RegionalGroundExecutionJob,
+  ): Promise<void> => {
+    if (active.current || submitted.current) {
+      throw new Error("a regional-ground authority job is already owned locally");
+    }
+    const exactCapability = parseRegionalGroundAuthorityCapability(capability.current);
+    if (!qualifiedForExecution(exactCapability)) {
+      throw new Error("regional-ground execution capability is unavailable");
+    }
+    const exactJob = parseRegionalGroundExecutionJob(source);
+    clearPending();
+    const run = generation.current + 1;
+    generation.current = run;
+    job.current = exactJob;
+    active.current = true;
+    submitted.current = true;
+    publish(run, { ...initialState(), phase: "reconciling", job: exactJob });
+    const request = beginRequest();
+    try {
+      const next = await client.current.status(exactJob, request.signal);
+      if (current(run, request.id)) {
+        const recovered = await processStatus.current?.(next, run);
+        if (recovered === false) {
+          throw new Error("retained authority result could not be recovered");
+        }
+      }
+    } catch (reason) {
+      if (current(run)) {
+        if (!publishNotFound(run, reason)) failRequest(run, reason);
+        throw reason;
+      }
+    }
+  }, [beginRequest, clearPending, current, failRequest, publish, publishNotFound]);
 
   const reconcile = useCallback(async (): Promise<void> => {
     const sourceJob = job.current;
@@ -318,5 +357,5 @@ export function useRegionalGroundExecutionController(
     cancelEnabled: active.current,
     resultEnabled: state.phase === "succeeded" && state.result !== null,
   });
-  return { ...state, controls, submit, cancel, reconcile, reset };
+  return { ...state, controls, submit, recover, cancel, reconcile, reset };
 }

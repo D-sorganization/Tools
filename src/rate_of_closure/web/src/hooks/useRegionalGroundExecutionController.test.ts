@@ -229,4 +229,50 @@ describe("regional-ground React execution controller", () => {
     expect(result.current.phase).toBe("not_found");
     expect(result.current.controls.submitEnabled).toBe(true);
   });
+
+  it("recovers an exact retained job with GET only and never submits", async () => {
+    const authority = client({ status: vi.fn().mockResolvedValue(status("succeeded", 4)) });
+    const { result } = renderHook(() => useRegionalGroundExecutionController({
+      client: authority, capability: qualified,
+    }));
+
+    await act(async () => { await result.current.recover(job); });
+
+    expect(authority.status).toHaveBeenCalledWith(job, expect.any(AbortSignal));
+    expect(authority.submit).not.toHaveBeenCalled();
+    expect(authority.result).toHaveBeenCalledWith(job, expect.any(AbortSignal));
+    expect(result.current.phase).toBe("succeeded");
+    expect(result.current.result).toEqual(resultEnvelope);
+  });
+
+  it("publishes not-found recovery and rejects instead of claiming success", async () => {
+    const missing = new RegionalGroundAuthorityRequestError(404, "job_not_found");
+    const authority = client({ status: vi.fn().mockRejectedValue(missing) });
+    const { result } = renderHook(() => useRegionalGroundExecutionController({
+      client: authority, capability: qualified,
+    }));
+
+    await act(async () => { await expect(result.current.recover(job)).rejects.toBe(missing); });
+
+    expect(authority.submit).not.toHaveBeenCalled();
+    expect(authority.result).not.toHaveBeenCalled();
+    expect(result.current.phase).toBe("not_found");
+  });
+
+  it("rejects recovery when the retained complete result cannot be read", async () => {
+    const unreadable = new RegionalGroundAuthorityRequestError(503, "authority_error");
+    const authority = client({
+      status: vi.fn().mockResolvedValue(status("succeeded", 4)),
+      result: vi.fn().mockRejectedValue(unreadable),
+    });
+    const { result } = renderHook(() => useRegionalGroundExecutionController({
+      client: authority, capability: qualified,
+    }));
+
+    await act(async () => { await expect(result.current.recover(job)).rejects.toThrow(); });
+
+    expect(authority.submit).not.toHaveBeenCalled();
+    expect(result.current.phase).toBe("request_failed");
+    expect(result.current.result).toBeNull();
+  });
 });

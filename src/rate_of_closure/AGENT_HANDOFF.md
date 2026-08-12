@@ -1,5 +1,53 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-12 #4369 durable loopback authority recovery
+
+Branch `codex/4369-authority-restart-recovery` starts exactly from approved
+Tools PR #4375 head `9561dae8c048a511722619a7dfdaf065bb1667c7` and must
+target `codex/4369-flight-recompute-cancellation`. Human review is approved;
+normal dependency order, protected checks, and non-admin merge behavior remain
+mandatory.
+
+The source-run React launcher now injects a private, fixed authority state root.
+The isolated Python authority owns a versioned SQLite/WAL store under a
+process-lifetime file lock. It transactionally retains canonical job, status,
+and complete-result bytes plus independent SHA-256 digests, rejects unknown
+schema/version, lock contention, integrity failure, digest substitution,
+impossible status/result pairs, and oversized state, and never persists the
+ephemeral bearer token, raw exceptions, callbacks, threads, or partial rows.
+Queued/running work recovered after process loss becomes terminal
+`execution_failed/authority_restart`; a recovered cancel request becomes
+cancelled. Startup never invokes or replays physics.
+
+The React Ground Study surface adds an explicit **Recover retained status**
+action for an exact accepted/imported job. Recovery performs capability,
+status, and complete-result reads only. It never POSTs a job, cancels work,
+restores confirmation, or substitutes browser physics. Completed result bytes
+and terminal evidence survive hard authority termination; ambiguous or corrupt
+state fails closed. PyQt continues using its direct worker, so this slice makes
+no PyQt restart-recovery claim.
+
+The `rate-of-closure-web` extra now declares the qualified SciPy and file-lock
+runtime dependencies, and the root wheel includes `rotation_converter`, which
+the installed authority import graph requires. A clean extra installation can
+import the durable authority store without relying on the development checkout.
+
+Local gates are green: 1,252 Rate-of-Closure Python/PyQt tests plus one
+Windows-skipped POSIX-permission test with eight workers; 137 React files and
+909 tests; TypeScript; zero-warning ESLint; the production Vite build; 74
+focused Python store/API/process tests plus the same POSIX skip; 49 focused
+React contract/controller/UI tests; deterministic fixture regeneration;
+Ruff check/format; changed-source MyPy; the 400-line module budget; and
+`git diff --check`. The inherited polynomial-generator empty-legend warning
+and existing Vite chunk-size advisory remain unchanged.
+
+The campaign manifest records PR #4375's exact carrier head. This child cannot
+self-record its future PR number. Static-host companion discovery, frozen
+runtime qualification, PyQt direct-worker recovery, measured calibration,
+compiled/TypeScript regional physics, UpstreamDrift parity, ancestor
+integration, protected release, and closure of #4369/#4273/#4267 remain open.
+
+
 ## 2026-08-12 #4369 qualified flight-recompute cancellation
 
 Branch `codex/4369-flight-recompute-cancellation` starts exactly from Tools PR

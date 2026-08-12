@@ -1,27 +1,19 @@
-"""Bounded in-memory lifecycle authority for regional-ground jobs."""
+"""Bounded durable lifecycle authority for regional-ground jobs."""
 
 from __future__ import annotations
 
 import threading
 from collections import deque
-from collections.abc import Callable
-from dataclasses import dataclass
 from typing import Final
 
 from rate_of_closure.application._workspace_validation import stable_id
 from rate_of_closure.application.regional_ground_authority_status import (
-    AUTHORITY_JOB_STATUS_SCHEMA_VERSION,
+    AUTHORITY_JOB_STATUS_SCHEMA_VERSION,  # noqa: F401
     AuthorityFailureCode,
     AuthorityFailureStage,
     AuthorityJobFailure,
     AuthorityJobSnapshot,
     AuthorityJobStatus,
-)
-from rate_of_closure.application.regional_ground_execution_job import (
-    RegionalGroundExecutionJob,
-)
-from rate_of_closure.application.regional_ground_execution_result import (
-    RegionalGroundExecutionResult,
 )
 from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationCancelled,
@@ -30,45 +22,23 @@ from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationProgress,
 )
 
+from .job_lifecycle import (
+    PUBLIC_JOB_EXPORTS,
+    TERMINAL_JOB_STATUSES,
+    AuthorityExecutionUnavailable,
+    AuthorityJobConflict,
+    AuthorityJobResultUnavailable,
+    AuthorityJobRunner,
+    JobRecord,
+    RegionalGroundExecutionJob,
+    RegionalGroundExecutionResult,
+)
+from .job_recovery import recover_authority_jobs
+from .job_store import AuthorityJobStore, RetainedAuthorityJob
+
 DEFAULT_MAX_RETAINED_JOBS: Final = 4
 MAX_RETAINED_JOBS_LIMIT: Final = 16
-
-
-class AuthorityExecutionUnavailable(RuntimeError):
-    """Raised when no qualified physical runner is attached."""
-
-
-class AuthorityJobConflict(RuntimeError):
-    """Raised when submission would violate the one-active-job invariant."""
-
-
-class AuthorityJobResultUnavailable(RuntimeError):
-    """Raised unless a complete validated result has been published."""
-
-
-AuthorityJobRunner = Callable[
-    [RegionalGroundExecutionJob, GroundRegionalVariationHooks],
-    RegionalGroundExecutionResult,
-]
-
-
-@dataclass(slots=True)
-class _JobRecord:
-    job: RegionalGroundExecutionJob
-    cancellation: threading.Event
-    status: AuthorityJobStatus = AuthorityJobStatus.QUEUED
-    completed: int = 0
-    result: RegionalGroundExecutionResult | None = None
-    failure: AuthorityJobFailure | None = None
-
-
-_TERMINAL = frozenset(
-    {
-        AuthorityJobStatus.SUCCEEDED,
-        AuthorityJobStatus.FAILED,
-        AuthorityJobStatus.CANCELLED,
-    }
-)
+__all__ = PUBLIC_JOB_EXPORTS
 
 
 class AuthorityJobManager:
@@ -79,6 +49,7 @@ class AuthorityJobManager:
         *,
         runner: AuthorityJobRunner | None = None,
         max_retained_jobs: int = DEFAULT_MAX_RETAINED_JOBS,
+        store: AuthorityJobStore | None = None,
     ) -> None:
         if runner is not None and not callable(runner):
             raise TypeError("runner must be callable or None")
@@ -90,12 +61,32 @@ class AuthorityJobManager:
             raise ValueError("max_retained_jobs lies outside the supported bound")
         self._runner = runner
         self._max_retained_jobs = max_retained_jobs
-        self._records: dict[str, _JobRecord] = {}
+        if store is not None and store.max_retained_jobs != max_retained_jobs:
+            raise ValueError("store and manager retention bounds must match")
+        self._store = store
+        self._records: dict[str, JobRecord] = {}
         self._terminal_order: deque[str] = deque()
         self._active_job_id: str | None = None
         self._worker: threading.Thread | None = None
         self._closed = False
         self._condition = threading.Condition(threading.RLock())
+        if store is not None:
+            try:
+                recovered = recover_authority_jobs(store)
+            except Exception:
+                store.close()
+                raise
+            for retained in recovered:
+                record = JobRecord(
+                    job=retained.job,
+                    cancellation=threading.Event(),
+                    status=retained.status.status,
+                    completed=retained.status.completed,
+                    result=retained.result,
+                    failure=retained.status.failure,
+                )
+                self._records[record.job.job_id] = record
+                self._terminal_order.append(record.job.job_id)
 
     @property
     def retained_job_count(self) -> int:
@@ -113,16 +104,31 @@ class AuthorityJobManager:
         """Cancel and join the owned worker before authority shutdown."""
         if type(timeout_s) not in {int, float} or timeout_s < 0:
             raise ValueError("timeout_s must be a nonnegative number")
+        persistence_error: Exception | None = None
         with self._condition:
             self._closed = True
             active_id = self._active_job_id
             if active_id is not None:
-                self._records[active_id].cancellation.set()
+                active = self._records[active_id]
+                active.status = AuthorityJobStatus.CANCEL_REQUESTED
+                try:
+                    self._persist_locked()
+                except Exception as error:
+                    persistence_error = error
+                    self._runner = None
+                finally:
+                    active.cancellation.set()
             worker = self._worker
         if worker is not None and worker is not threading.current_thread():
             worker.join(float(timeout_s))
             if worker.is_alive():
                 raise TimeoutError("authority job worker did not stop before timeout")
+        if self._store is not None:
+            self._store.close()
+        if persistence_error is not None:
+            raise AuthorityExecutionUnavailable(
+                "authority shutdown state could not be persisted"
+            ) from persistence_error
 
     def submit(self, job: RegionalGroundExecutionJob) -> AuthorityJobSnapshot:
         """Accept one exact job and start its injected runner on a daemon thread."""
@@ -131,7 +137,7 @@ class AuthorityJobManager:
         job.__post_init__()
         if self._runner is None:
             raise AuthorityExecutionUnavailable("qualified execution is unavailable")
-        record = _JobRecord(job=job, cancellation=threading.Event())
+        record = JobRecord(job=job, cancellation=threading.Event())
         worker = threading.Thread(
             target=self._run,
             args=(record,),
@@ -150,12 +156,20 @@ class AuthorityJobManager:
             queued = self._snapshot(record)
             self._worker = worker
             try:
+                self._persist_locked()
                 worker.start()
             except Exception:
                 self._worker = None
                 self._records.pop(job.job_id, None)
                 self._active_job_id = None
-                raise
+                self._runner = None
+                try:
+                    self._persist_locked()
+                except Exception:
+                    pass
+                raise AuthorityExecutionUnavailable(
+                    "durable job acceptance failed"
+                ) from None
         return queued
 
     def status(self, job_id: str) -> AuthorityJobSnapshot:
@@ -167,9 +181,17 @@ class AuthorityJobManager:
         """Request cooperative cancellation and make publication ineligible."""
         with self._condition:
             record = self._record(job_id)
-            if record.status not in _TERMINAL:
-                record.cancellation.set()
+            if record.status not in TERMINAL_JOB_STATUSES:
                 record.status = AuthorityJobStatus.CANCEL_REQUESTED
+                try:
+                    self._persist_locked()
+                except Exception:
+                    self._runner = None
+                    record.cancellation.set()
+                    raise AuthorityExecutionUnavailable(
+                        "authority state persistence is unavailable"
+                    ) from None
+                record.cancellation.set()
                 self._condition.notify_all()
             return self._snapshot(record)
 
@@ -194,19 +216,26 @@ class AuthorityJobManager:
             raise ValueError("timeout_s must be positive")
         with self._condition:
             reached = self._condition.wait_for(
-                lambda: self._record(job_id).status in _TERMINAL,
+                lambda: self._record(job_id).status in TERMINAL_JOB_STATUSES,
                 timeout=float(timeout_s),
             )
             if not reached:
                 raise TimeoutError("regional-ground authority job did not terminate")
             return self._snapshot(self._record(job_id))
 
-    def _run(self, record: _JobRecord) -> None:
+    def _run(self, record: JobRecord) -> None:
         with self._condition:
             if record.cancellation.is_set():
                 self._finish(record, AuthorityJobStatus.CANCELLED)
                 return
             record.status = AuthorityJobStatus.RUNNING
+            try:
+                self._persist_locked()
+            except Exception:
+                self._runner = None
+                record.cancellation.set()
+                self._finish_failed(record, "execution_failed", "publication")
+                return
             self._condition.notify_all()
         hooks = GroundRegionalVariationHooks(
             progress_callback=lambda progress: self._report(record, progress),
@@ -236,7 +265,7 @@ class AuthorityJobManager:
         self._accept_result(record, result)
 
     def _report(
-        self, record: _JobRecord, progress: GroundRegionalVariationProgress
+        self, record: JobRecord, progress: GroundRegionalVariationProgress
     ) -> None:
         if type(progress) is not GroundRegionalVariationProgress:
             raise TypeError("progress must be exact GroundRegionalVariationProgress")
@@ -245,10 +274,16 @@ class AuthorityJobManager:
             if progress.total != total or progress.completed < record.completed:
                 raise ValueError("progress must be monotonic and match job total")
             record.completed = progress.completed
+            try:
+                self._persist_locked()
+            except Exception:
+                self._runner = None
+                record.cancellation.set()
+                raise RuntimeError("authority progress persistence failed") from None
             self._condition.notify_all()
 
     def _accept_result(
-        self, record: _JobRecord, result: RegionalGroundExecutionResult
+        self, record: JobRecord, result: RegionalGroundExecutionResult
     ) -> None:
         try:
             if type(result) is not RegionalGroundExecutionResult:
@@ -265,14 +300,14 @@ class AuthorityJobManager:
             record.completed = record.job.execution_options.max_trials
             self._finish(record, AuthorityJobStatus.SUCCEEDED)
 
-    def _finish_cancelled(self, record: _JobRecord, completed: int) -> None:
+    def _finish_cancelled(self, record: JobRecord, completed: int) -> None:
         with self._condition:
             record.completed = completed
             self._finish(record, AuthorityJobStatus.CANCELLED)
 
     def _terminal_counts_match(
         self,
-        record: _JobRecord,
+        record: JobRecord,
         completed: int,
         total: int,
     ) -> bool:
@@ -284,7 +319,7 @@ class AuthorityJobManager:
             )
 
     def _finish_variation_failure(
-        self, record: _JobRecord, error: GroundRegionalVariationFailed
+        self, record: JobRecord, error: GroundRegionalVariationFailed
     ) -> None:
         with self._condition:
             record.completed = error.completed
@@ -292,7 +327,7 @@ class AuthorityJobManager:
 
     def _finish_failed(
         self,
-        record: _JobRecord,
+        record: JobRecord,
         code: AuthorityFailureCode,
         stage: AuthorityFailureStage,
     ) -> None:
@@ -300,16 +335,45 @@ class AuthorityJobManager:
             record.failure = AuthorityJobFailure(code, stage)
             self._finish(record, AuthorityJobStatus.FAILED)
 
-    def _finish(self, record: _JobRecord, status: AuthorityJobStatus) -> None:
+    def _finish(self, record: JobRecord, status: AuthorityJobStatus) -> None:
         record.status = status
         self._active_job_id = None
         self._terminal_order.append(record.job.job_id)
         while len(self._terminal_order) > self._max_retained_jobs:
             evicted = self._terminal_order.popleft()
             self._records.pop(evicted, None)
+        try:
+            self._persist_locked()
+        except Exception:
+            record.status = AuthorityJobStatus.FAILED
+            record.result = None
+            record.failure = AuthorityJobFailure("execution_failed", "publication")
+            self._closed = True
+            self._runner = None
+            try:
+                self._persist_locked()
+            except Exception:
+                pass
         self._condition.notify_all()
 
-    def _record(self, job_id: str) -> _JobRecord:
+    def _persist_locked(self) -> None:
+        if self._store is None:
+            return
+        ordered = list(self._terminal_order)
+        if self._active_job_id is not None:
+            ordered.append(self._active_job_id)
+        self._store.replace(
+            tuple(
+                RetainedAuthorityJob(
+                    self._records[job_id].job,
+                    self._snapshot(self._records[job_id]),
+                    self._records[job_id].result,
+                )
+                for job_id in ordered
+            )
+        )
+
+    def _record(self, job_id: str) -> JobRecord:
         try:
             stable_id(job_id, "job_id")
         except (TypeError, ValueError):
@@ -320,7 +384,7 @@ class AuthorityJobManager:
             raise KeyError(job_id) from None
 
     @staticmethod
-    def _snapshot(record: _JobRecord) -> AuthorityJobSnapshot:
+    def _snapshot(record: JobRecord) -> AuthorityJobSnapshot:
         return AuthorityJobSnapshot(
             job_id=record.job.job_id,
             job_sha256=record.job.job_sha256,
@@ -330,15 +394,3 @@ class AuthorityJobManager:
             result_available=record.result is not None,
             failure=record.failure,
         )
-
-
-__all__ = [
-    "AUTHORITY_JOB_STATUS_SCHEMA_VERSION",
-    "AuthorityExecutionUnavailable",
-    "AuthorityJobConflict",
-    "AuthorityJobFailure",
-    "AuthorityJobManager",
-    "AuthorityJobResultUnavailable",
-    "AuthorityJobSnapshot",
-    "AuthorityJobStatus",
-]

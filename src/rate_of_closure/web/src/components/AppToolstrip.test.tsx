@@ -57,12 +57,12 @@ const executionWorkspace = (): RegionalGroundExecutionWorkspace => {
     execution: {
       phase: "idle", job: null, status: null, progress: null, failure: null, result: null, error: null,
       controls: { submitEnabled: true, statusEnabled: false, cancelEnabled: false, resultEnabled: false },
-      submit: vi.fn(), cancel: vi.fn(), reconcile: vi.fn(), reset: vi.fn(),
+      submit: vi.fn(), recover: vi.fn(), cancel: vi.fn(), reconcile: vi.fn(), reset: vi.fn(),
     },
     acceptedJob: null, sourceName: null, confirmed: false,
     importFile: vi.fn(), preparationAvailable: false, preparedJobStale: false,
     prepareCurrentJob: vi.fn(),
-    setConfirmed: vi.fn(), clear: vi.fn(), run: vi.fn(),
+    setConfirmed: vi.fn(), clear: vi.fn(), run: vi.fn(), recover: vi.fn(),
   };
 };
 

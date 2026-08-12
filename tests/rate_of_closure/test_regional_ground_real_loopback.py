@@ -23,6 +23,7 @@ from rate_of_closure.application.regional_ground_authority_transport import (
 )
 from rate_of_closure.application.regional_ground_execution_job import (
     RegionalGroundExecutionJob,
+    regional_ground_execution_job_to_json,
 )
 from rate_of_closure.application.regional_ground_execution_result import (
     MAX_REGIONAL_GROUND_EXECUTION_RESULT_BYTES,
@@ -46,16 +47,18 @@ from rate_of_closure.web_authority.api import (
 from rate_of_closure.web_authority.capability import (
     QUALIFIED_EXECUTION_CAPABILITY,
 )
-from rate_of_closure.web_authority.jobs import AuthorityJobManager
+from rate_of_closure.web_authority.job_store import AuthorityJobStore
+from rate_of_closure.web_authority.jobs import AuthorityJobManager, AuthorityJobRunner
 from rate_of_closure.web_authority.production_runner import (
     run_regional_ground_production_job,
 )
 from rate_of_closure.web_authority.runtime import AuthorityRuntime, start_authority
-from tests.rate_of_closure.test_regional_ground_authority_jobs import _job
+from tests.rate_of_closure.test_regional_ground_authority_jobs import _job, _result
 
 pytestmark = [pytest.mark.integration, pytest.mark.headless_safe]
 
 _TOKEN_ENV = "ROC_AUTHORITY_TOKEN"
+_STATE_ROOT_ENV = "ROC_AUTHORITY_STATE_ROOT"
 _SOURCE_ROOT = Path(__file__).parents[2] / "src"
 _POLICY = RegionalGroundAuthorityPollPolicy(
     poll_timeout_s=15.0,
@@ -97,6 +100,32 @@ def create_cancellable_authority_app() -> FastAPI:
     )
 
 
+def _durable_manager(runner: AuthorityJobRunner) -> AuthorityJobManager:
+    root = Path(os.environ[_STATE_ROOT_ENV])
+    return AuthorityJobManager(
+        runner=runner,
+        store=AuthorityJobStore(root / "authority.v1.sqlite3", max_retained_jobs=4),
+    )
+
+
+def create_durable_test_authority_app() -> FastAPI:
+    """Build a fast durable authority for process-restart qualification."""
+    return create_authority_app(
+        token=os.environ[_TOKEN_ENV],
+        capability=QUALIFIED_EXECUTION_CAPABILITY,
+        job_manager=_durable_manager(lambda job, _hooks: _result(job)),
+    )
+
+
+def create_durable_blocking_authority_app() -> FastAPI:
+    """Build a durable authority whose worker survives until hard process loss."""
+    return create_authority_app(
+        token=os.environ[_TOKEN_ENV],
+        capability=QUALIFIED_EXECUTION_CAPABILITY,
+        job_manager=_durable_manager(_wait_for_cancel),
+    )
+
+
 @contextmanager
 def _authority(factory: str) -> Iterator[AuthorityRuntime]:
     runtime = start_authority(source_root=_SOURCE_ROOT, app_factory=factory)
@@ -111,8 +140,8 @@ def _factory(name: str) -> str:
     return f"tests.rate_of_closure.test_regional_ground_real_loopback:{name}"
 
 
-def test_default_environment_factory_is_qualified_and_executes() -> None:
-    runtime = start_authority(source_root=_SOURCE_ROOT)
+def test_default_environment_factory_is_qualified_and_executes(tmp_path: Path) -> None:
+    runtime = start_authority(source_root=_SOURCE_ROOT, state_root=tmp_path)
     try:
         transport = LoopbackAuthorityHttpTransport(runtime, timeout_s=1.0)
         capability_response = transport.request("GET", CAPABILITY_PATH, None, 4_096)
@@ -231,3 +260,92 @@ def test_real_loopback_submitter_close_posts_cancel_and_joins() -> None:
         assert len(terminals) == 1
         assert isinstance(terminals[0], GroundRegionalVariationCancelled)
         assert runtime.process.poll() is None
+
+
+def test_complete_result_survives_hard_authority_process_restart(
+    tmp_path: Path,
+) -> None:
+    factory = _factory("create_durable_test_authority_app")
+    first = start_authority(
+        source_root=_SOURCE_ROOT, app_factory=factory, state_root=tmp_path
+    )
+    job = _job()
+    submitter = LoopbackRegionalGroundSubmitter(
+        LoopbackAuthorityHttpTransport(first, timeout_s=1.0), policy=_POLICY
+    )
+    expected = submitter(job, GroundRegionalVariationHooks())
+    submitter.close()
+    first.process.kill()
+    first.process.wait(timeout=5.0)
+
+    second = start_authority(
+        source_root=_SOURCE_ROOT, app_factory=factory, state_root=tmp_path
+    )
+    try:
+        transport = LoopbackAuthorityHttpTransport(second, timeout_s=1.0)
+        path = f"{JOB_COLLECTION_PATH}/{job.job_id}"
+        status = transport.request("GET", path, None, 4_096)
+        result = transport.request(
+            "GET", f"{path}/result", None, MAX_REGIONAL_GROUND_EXECUTION_RESULT_BYTES
+        )
+        assert (
+            regional_ground_authority_job_status_from_json(
+                status.body.decode("utf-8"), job
+            ).status
+            is AuthorityJobStatus.SUCCEEDED
+        )
+        assert result.body.decode("utf-8") == regional_ground_execution_result_to_json(
+            expected
+        )
+        transport.close()
+    finally:
+        second.close()
+
+
+def test_hard_loss_marks_running_job_failed_without_automatic_replay(
+    tmp_path: Path,
+) -> None:
+    factory = _factory("create_durable_blocking_authority_app")
+    first = start_authority(
+        source_root=_SOURCE_ROOT, app_factory=factory, state_root=tmp_path
+    )
+    transport = LoopbackAuthorityHttpTransport(first, timeout_s=1.0)
+    job = _job()
+    submitted = transport.request(
+        "POST",
+        JOB_COLLECTION_PATH,
+        regional_ground_execution_job_to_json(job).encode("utf-8"),
+        4_096,
+    )
+    assert submitted.status == 202
+    path = f"{JOB_COLLECTION_PATH}/{job.job_id}"
+    deadline = time.monotonic() + 2.0
+    while time.monotonic() < deadline:
+        status = transport.request("GET", path, None, 4_096)
+        snapshot = regional_ground_authority_job_status_from_json(
+            status.body.decode("utf-8"), job
+        )
+        if snapshot.status is AuthorityJobStatus.RUNNING:
+            break
+        time.sleep(0.01)
+    else:
+        raise AssertionError("durable job did not reach running")
+    transport.close()
+    first.process.kill()
+    first.process.wait(timeout=5.0)
+
+    second = start_authority(
+        source_root=_SOURCE_ROOT, app_factory=factory, state_root=tmp_path
+    )
+    try:
+        recovered_transport = LoopbackAuthorityHttpTransport(second, timeout_s=1.0)
+        recovered = recovered_transport.request("GET", path, None, 4_096)
+        snapshot = regional_ground_authority_job_status_from_json(
+            recovered.body.decode("utf-8"), job
+        )
+        assert snapshot.status is AuthorityJobStatus.FAILED
+        assert snapshot.failure is not None
+        assert snapshot.failure.stage == "authority_restart"
+        recovered_transport.close()
+    finally:
+        second.close()

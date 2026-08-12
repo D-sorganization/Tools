@@ -171,8 +171,14 @@ def create_authority_app(
 
     @app.get(CAPABILITY_PATH, dependencies=[Depends(authorize)])
     def read_capability(response: Response) -> dict[str, object]:
-        """Return the immutable capability state with caching disabled."""
+        """Return fail-closed live capability with caching disabled."""
         response.headers["Cache-Control"] = "no-store"
+        if capability.regional_ground_execution and not manager.execution_available:
+            unavailable = AuthorityCapability.unavailable(
+                reason_code="runner_not_started",
+                detail="Qualified execution authority state is unavailable.",
+            )
+            return dict(unavailable.to_wire())
         return dict(capability.to_wire())
 
     @app.post(JOB_COLLECTION_PATH, dependencies=[Depends(authorize)])
@@ -221,7 +227,7 @@ def create_authority_app(
     @app.post(JOB_PREPARATION_PATH, dependencies=[Depends(authorize)])
     async def prepare_job(request: Request) -> Response:
         """Prepare one canonical job without retaining, enqueueing, or running it."""
-        if preparer is None:
+        if preparer is None or not manager.execution_available:
             return _error(
                 "preparation_unavailable",
                 "Qualified regional-ground job preparation is unavailable.",
@@ -293,6 +299,12 @@ def create_authority_app(
         except KeyError:
             return _error(
                 "job_not_found", "Job was not found.", status.HTTP_404_NOT_FOUND
+            )
+        except AuthorityExecutionUnavailable:
+            return _error(
+                "execution_unavailable",
+                "Qualified execution authority state is unavailable.",
+                status.HTTP_503_SERVICE_UNAVAILABLE,
             )
         return JSONResponse(
             snapshot.to_wire(),

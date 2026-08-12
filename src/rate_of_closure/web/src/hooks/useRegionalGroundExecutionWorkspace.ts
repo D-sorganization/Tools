@@ -61,6 +61,7 @@ export interface RegionalGroundExecutionWorkspace {
   readonly setConfirmed: (confirmed: boolean) => void;
   readonly clear: () => void;
   readonly run: () => Promise<void>;
+  readonly recover: () => Promise<void>;
 }
 
 let preparationSequence = 0;
@@ -232,7 +233,14 @@ export function useRegionalGroundExecutionWorkspace(
     await execution.submit(acceptedJob);
   }, [acceptedJob, confirmed, execution, preparedJobStale]);
 
+  const recover = useCallback(async (): Promise<void> => {
+    if (acceptedJob === null) {
+      throw new Error("an exact accepted job is required for recovery");
+    }
+    await execution.recover(acceptedJob);
+  }, [acceptedJob, execution]);
+
   return { authority, execution, acceptedJob, sourceName, confirmed,
     importFile, preparationAvailable, preparedJobStale, prepareCurrentJob,
-    setConfirmed, clear, run };
+    setConfirmed, clear, run, recover };
 }

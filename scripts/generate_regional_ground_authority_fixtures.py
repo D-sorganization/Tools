@@ -21,6 +21,11 @@ sys.path.insert(0, str(_ROOT / "src"))
 from rate_of_closure.application.flight_execution_profiles import (  # noqa: E402
     qualify_flight_execution_input,
 )
+from rate_of_closure.application.regional_ground_authority_status import (  # noqa: E402
+    AuthorityJobFailure,
+    AuthorityJobSnapshot,
+    AuthorityJobStatus,
+)
 from rate_of_closure.application.regional_ground_execution_job import (  # noqa: E402
     build_regional_ground_execution_job,
     regional_ground_execution_job_from_json,
@@ -39,6 +44,17 @@ _FIXTURES = _ROOT / "src" / "rate_of_closure" / "web" / "src" / "model" / "__fix
 _JOB = _FIXTURES / "regional_ground_execution_job_golden_v1.json"
 _STATUS = _FIXTURES / "regional_ground_authority_job_status_golden_v1.json"
 _RESULT = _FIXTURES / "regional_ground_execution_result_golden_v1.json"
+_FAILURE_STAGES = (
+    "authority_restart",
+    "cancellation_callback",
+    "preflight",
+    "executor",
+    "validation",
+    "progress_callback",
+    "publication",
+    "runner",
+    "result_validation",
+)
 
 
 def _canonical_fixture(value: object) -> str:
@@ -86,10 +102,50 @@ def generated_fixture_texts() -> dict[Path, str]:
         "job_sha256": job.job_sha256,
     }
 
-    status_fixture = json.loads(_STATUS.read_text(encoding="utf-8"))
-    for case in status_fixture["cases"]:
-        case["job_id"] = job.job_id
-        case["job_sha256"] = job.job_sha256
+    status_common = {
+        "job_id": job.job_id,
+        "job_sha256": job.job_sha256,
+        "total": job.execution_options.max_trials,
+    }
+    normal_statuses = (
+        AuthorityJobSnapshot(
+            **status_common, status=AuthorityJobStatus.QUEUED, completed=0
+        ),
+        AuthorityJobSnapshot(
+            **status_common, status=AuthorityJobStatus.RUNNING, completed=1
+        ),
+        AuthorityJobSnapshot(
+            **status_common, status=AuthorityJobStatus.CANCEL_REQUESTED, completed=2
+        ),
+        AuthorityJobSnapshot(
+            **status_common,
+            status=AuthorityJobStatus.SUCCEEDED,
+            completed=job.execution_options.max_trials,
+            result_available=True,
+        ),
+        AuthorityJobSnapshot(
+            **status_common, status=AuthorityJobStatus.CANCELLED, completed=3
+        ),
+    )
+    failed_statuses = tuple(
+        AuthorityJobSnapshot(
+            **status_common,
+            status=AuthorityJobStatus.FAILED,
+            completed=1,
+            failure=AuthorityJobFailure(
+                "result_rejected"
+                if stage == "result_validation"
+                else "execution_failed",
+                stage,
+            ),
+        )
+        for stage in _FAILURE_STAGES
+    )
+    current_status_fixture = json.loads(_STATUS.read_text(encoding="utf-8"))
+    status_fixture = {
+        "fixture_schema": current_status_fixture["fixture_schema"],
+        "cases": [status.to_wire() for status in normal_statuses + failed_statuses],
+    }
 
     current_result_fixture = json.loads(_RESULT.read_text(encoding="utf-8"))
     source_result = regional_ground_execution_result_from_json(

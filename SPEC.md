@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.90                                    |
-| **Spec Version**        | 1.14.90                                    |
+| **Current Version**     | 1.14.91                                    |
+| **Spec Version**        | 1.14.91                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,34 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-12 Durable Source-Loopback Authority Recovery
+
+- The source-run React launcher injects an absolute private state directory into
+  its isolated Python child. The authority owns one fixed SQLite/WAL file under
+  a process-lifetime lock; job identifiers never determine filesystem paths.
+- Every accepted lifecycle transition is committed before it is exposed.
+  Retained records contain canonical bounded job/status/result bytes and
+  independent content digests. The store enforces its application identity,
+  schema version, table shape, integrity check, maximum size, record bound, and
+  single-active-job invariant before qualified readiness.
+- A succeeded job and its exact complete result survive normal or hard process
+  loss. Recovered queued/running work becomes terminal
+  `execution_failed/authority_restart`; recovered cancel-requested work becomes
+  cancelled. Recovery never invokes a runner, resumes physics, publishes a
+  partial result, or restores user confirmation.
+- React exposes an explicit read-only recovery action for an exact accepted job.
+  It calls status and, if complete, result endpoints only. A user must re-import
+  or otherwise possess the exact job; the API remains non-enumerable and the
+  browser does not persist large scientific jobs in local storage.
+- The ephemeral bearer token, URL/port, raw exceptions, callbacks, threads,
+  cancellation objects, and partial rows are never stored. Unknown versions,
+  lock conflicts, corruption, digest substitution, and persistence failure fail
+  closed; live capability becomes unavailable after a state-write failure.
+- This qualification applies to the source-loopback authority only. Static-host
+  companion discovery, frozen executables, PyQt's direct worker, installed ACL
+  qualification, automatic replay, measured calibration, compiled regional
+  physics, downstream parity, and protected release remain non-goals here.
 
 ### 2026-08-12 Cooperative Cancellation Through Qualified Flight Recompute
 
@@ -66,7 +94,7 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   worker interrupted during either ODE execution or post-solver digest work.
   Always-false callbacks preserve the existing canonical trajectory and result
   digests exactly.
-- Durable restart recovery, static-host and frozen-runtime qualification,
+- Static-host and frozen-runtime qualification,
   measured regional calibration, compiled/TypeScript regional physics,
   downstream UpstreamDrift parity, ancestor integration, and protected release
   remain open and keep #4369/#4273/#4267 incomplete.

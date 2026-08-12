@@ -74,6 +74,15 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
     setError(null);
     try { await execution.reconcile(); } catch (reason) { setError(safeRequestMessage(reason)); }
   };
+  const recover = async () => {
+    setError(null);
+    try {
+      await workspace.recover();
+      setMessage("Recovered retained authority status with a read-only lookup.");
+    } catch (reason) {
+      setError(safeRequestMessage(reason));
+    }
+  };
   const saveJob = () => {
     if (job === null) return;
     try {
@@ -188,6 +197,13 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
           className="rounded-md border border-emerald-500/70 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-200 disabled:opacity-40">
           Run imported study
         </button>
+        <button type="button"
+          disabled={job === null || active || execution.job !== null ||
+            !authority.capability.regional_ground_execution}
+          onClick={() => { void recover(); }}
+          className="rounded-md border border-violet-500/70 px-3 py-2 text-sm text-violet-200 disabled:opacity-40">
+          Recover retained status
+        </button>
         <button type="button" disabled={!execution.controls.cancelEnabled} onClick={() => { void cancel(); }}
           className="rounded-md border border-amber-500/70 px-3 py-2 text-sm text-amber-200 disabled:opacity-40">
           Cancel study
@@ -207,8 +223,9 @@ export function RegionalGroundImportedJobPanel(props: RegionalGroundImportedJobP
         aria-label="Regional-ground study progress" value={execution.progress.completed}
         max={execution.progress.total} />}
       <p role="status" aria-live="polite" aria-label="Imported study execution status" className="mt-2 text-sm text-slate-300">
-        {execution.phase.replace(/_/g, " ")} — {execution.progress === null
-          ? visibleMessage : `${execution.progress.completed} / ${execution.progress.total} accepted trials`}
+        {execution.phase.replace(/_/g, " ")} — {visibleMessage}
+        {execution.progress !== null &&
+          ` ${execution.progress.completed} / ${execution.progress.total} accepted trials`}
       </p>
       {execution.result !== null && <p className="mt-2 text-xs text-emerald-200">
         Validated result {execution.result.dataset.result_id}; {execution.result.dataset.rows.length} rows;

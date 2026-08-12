@@ -15,12 +15,15 @@ from pathlib import Path
 from types import MappingProxyType
 from typing import Final
 
+import platformdirs
+
 from .api import CAPABILITY_PATH
 from .capability import AuthorityCapability
 
 LOOPBACK_HOST: Final = "127.0.0.1"
 AUTHORITY_URL_ENV: Final = "ROC_AUTHORITY_URL"
 AUTHORITY_TOKEN_ENV: Final = "ROC_AUTHORITY_TOKEN"
+AUTHORITY_STATE_ROOT_ENV: Final = "ROC_AUTHORITY_STATE_ROOT"
 _READINESS_TIMEOUT_S: Final = 15.0
 _READINESS_INTERVAL_S: Final = 0.05
 _SHUTDOWN_TIMEOUT_S: Final = 5.0
@@ -99,6 +102,7 @@ def build_authority_process_spec(
     token: str,
     port: int,
     source_root: Path,
+    state_root: Path | None = None,
     app_factory: str = DEFAULT_AUTHORITY_APP_FACTORY,
 ) -> AuthorityProcessSpec:
     """Build a loopback-only process spec with its token outside the command."""
@@ -112,6 +116,14 @@ def build_authority_process_spec(
         part for part in (str(source_root), inherited_path) if part
     )
     environment[AUTHORITY_TOKEN_ENV] = token
+    if state_root is not None:
+        if not state_root.is_absolute() or not state_root.is_dir():
+            raise ValueError(
+                "authority state_root must be an existing absolute directory"
+            )
+        if state_root.is_symlink():
+            raise ValueError("authority state_root must not be a symbolic link")
+        environment[AUTHORITY_STATE_ROOT_ENV] = str(state_root)
     return AuthorityProcessSpec(
         command=_authority_command(port, app_factory),
         environment=MappingProxyType(environment),
@@ -145,7 +157,7 @@ def _is_ready(runtime: AuthorityRuntime) -> bool:
         if response.headers.get_content_type() != "application/json":
             return False
         capability = AuthorityCapability.from_json(response.read(4_097).decode("utf-8"))
-        return capability.available and capability.regional_ground_execution
+        return bool(capability.available and capability.regional_ground_execution)
     except (OSError, TimeoutError, UnicodeDecodeError, TypeError, ValueError):
         return False
     finally:
@@ -168,13 +180,22 @@ def start_authority(
     *,
     source_root: Path,
     app_factory: str = DEFAULT_AUTHORITY_APP_FACTORY,
+    state_root: Path | None = None,
 ) -> AuthorityRuntime:
     """Start and authenticate one isolated loopback authority process."""
     token = secrets.token_urlsafe(32)
+    root = state_root or (
+        platformdirs.user_state_path("rate-of-closure", appauthor=False)
+        / "regional-ground-authority-v1"
+    )
+    root.mkdir(parents=True, exist_ok=True)
+    if os.name != "nt":
+        root.chmod(0o700)
     spec = build_authority_process_spec(
         token=token,
         port=_reserve_loopback_port(),
         source_root=source_root,
+        state_root=root,
         app_factory=app_factory,
     )
     process = subprocess.Popen(

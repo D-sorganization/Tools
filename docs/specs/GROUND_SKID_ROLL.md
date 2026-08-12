@@ -275,17 +275,21 @@ also makes any late returned result ineligible for publication.
 
 Only an exact `RegionalGroundExecutionResult` that revalidates against its
 originating job is retained and returned. Running, cancelled, failed, or
-result-mismatched jobs never expose a partial dataset. Terminal records and
-their complete results are in-memory only and evicted oldest-first under a
-small configured bound; there is no persistence or recovery claim.
+result-mismatched jobs never expose a partial dataset. The source-run launcher
+injects a fixed private state root. Its qualified authority transactionally
+stores canonical job, status, and complete-result bytes in a versioned
+SQLite/WAL database under a process-lifetime lock, with independent content
+digests, integrity/schema/size checks, and oldest-first bounded retention.
 
-The production application factory intentionally constructs the manager
-without a runner. It therefore rejects submission as unavailable and continues
-to advertise `regional_ground_execution=false`. Dependency-injected runners
-exist only as a testable application seam and do not promote capability. A real
-flight-through-ground invocation, full cancellation propagation into that
-physical execution, matched client controllers, and protected evidence remain
-required before execution capability can become true.
+Accepted transitions are durable before publication. A succeeded result
+survives process loss. Startup maps interrupted queued/running work to
+`execution_failed/authority_restart` and cancel-requested work to cancelled;
+it never invokes the runner or replays physics. Corruption, lock conflict,
+unknown schema/version, digest substitution, impossible state, and state-write
+failure fail closed. The ephemeral bearer token and raw internal details are
+never stored. React recovery requires possession of the exact job and performs
+GET status/result only. Static hosting, frozen runtimes, and the PyQt direct
+worker retain no recovery claim in this qualification slice.
 
 The additive `ground-regional-execution-result/v1` envelope carries canonical
 SHA-256 identities for both inputs, the ground request/surface and plan IDs,

@@ -33,13 +33,21 @@ from rate_of_closure.application.regional_ground_job_preparation_request import 
 from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationHooks,
 )
-from rate_of_closure.web_authority.api import create_authority_app
+from rate_of_closure.web_authority.api import (
+    CAPABILITY_PATH,
+    JOB_COLLECTION_PATH,
+    create_authority_app,
+)
 from rate_of_closure.web_authority.capability import (
     AUTHORITY_CAPABILITY_SCHEMA_VERSION,
     QUALIFIED_EXECUTION_CAPABILITY,
     AuthorityCapability,
 )
-from rate_of_closure.web_authority.jobs import AuthorityJobManager
+from rate_of_closure.web_authority.job_store import AuthorityJobStore
+from rate_of_closure.web_authority.jobs import (
+    AuthorityExecutionUnavailable,
+    AuthorityJobManager,
+)
 from rate_of_closure.web_authority.runtime import build_authority_process_spec
 from tests.rate_of_closure.test_regional_ground_authority_jobs import _job, _result
 
@@ -171,15 +179,19 @@ def test_capability_endpoint_returns_injected_fail_closed_state() -> None:
 
 
 def test_authority_process_spec_keeps_token_out_of_command(tmp_path) -> None:
+    state_root = tmp_path / "state"
+    state_root.mkdir()
     spec = build_authority_process_spec(
         token="test-ephemeral-token",
         port=54321,
         source_root=tmp_path,
+        state_root=state_root,
     )
 
     assert spec.command[-2:] == ("--no-access-log", "--log-level=warning")
     assert "test-ephemeral-token" not in " ".join(spec.command)
     assert spec.environment["ROC_AUTHORITY_TOKEN"] == "test-ephemeral-token"
+    assert spec.environment["ROC_AUTHORITY_STATE_ROOT"] == str(state_root)
     assert spec.environment["PYTHONPATH"].split(";")[0] == str(tmp_path)
 
 
@@ -471,6 +483,37 @@ def test_attached_runner_and_capability_are_advertised_together() -> None:
     assert response.json()["regional_ground_execution"] is True
 
 
+def test_capability_fails_closed_after_durable_acceptance_failure(
+    tmp_path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    store = AuthorityJobStore(tmp_path / "authority.sqlite3", max_retained_jobs=4)
+    manager = AuthorityJobManager(runner=lambda job, _hooks: _result(job), store=store)
+    client = TestClient(
+        create_authority_app(
+            token="test-ephemeral-token",
+            capability=QUALIFIED_EXECUTION_CAPABILITY,
+            job_manager=manager,
+        )
+    )
+
+    def fail_replace(_records: object) -> None:
+        raise RuntimeError("private persistence detail")
+
+    monkeypatch.setattr(store, "replace", fail_replace)
+    submitted = client.post(
+        JOB_COLLECTION_PATH,
+        content=regional_ground_execution_job_to_json(_job()),
+        headers=_headers(),
+    )
+    capability = client.get(CAPABILITY_PATH, headers=_headers())
+
+    assert submitted.status_code == 503
+    assert "private persistence detail" not in submitted.text
+    assert capability.json()["available"] is False
+    assert capability.json()["reason_code"] == "runner_not_started"
+    manager.close()
+
+
 def test_executable_capability_requires_an_attached_runner() -> None:
     with pytest.raises(ValueError, match="runner"):
         create_authority_app(
@@ -556,6 +599,33 @@ def test_result_is_unavailable_until_complete_and_cancel_is_idempotent() -> None
     assert cancelled_again.status_code == 202
     assert terminal.status.value == "cancelled"
     assert json.loads(cancelled.text)["status"] == "cancel_requested"
+
+
+def test_cancel_reports_stable_unavailable_when_durable_state_fails(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    manager = AuthorityJobManager(runner=lambda job, _hooks: _result(job))
+    client = TestClient(
+        create_authority_app(
+            token="test-ephemeral-token",
+            capability=QUALIFIED_EXECUTION_CAPABILITY,
+            job_manager=manager,
+        )
+    )
+
+    def unavailable(_job_id: str) -> None:
+        raise AuthorityExecutionUnavailable("C:/private/authority.sqlite3")
+
+    monkeypatch.setattr(manager, "cancel", unavailable)
+    response = client.post(
+        "/api/rate-of-closure/v1/regional-ground/jobs/example/cancel",
+        headers=_headers(),
+    )
+
+    assert response.status_code == 503
+    assert response.headers["cache-control"] == "no-store"
+    assert response.json()["code"] == "execution_unavailable"
+    assert "private" not in response.text
 
 
 def test_invalid_and_unknown_job_paths_are_indistinguishable() -> None:

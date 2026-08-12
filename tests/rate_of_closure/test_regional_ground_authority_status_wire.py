@@ -36,6 +36,7 @@ _FIXTURE = (
 )
 _FIXTURE_SCHEMA = "rate-of-closure/regional-ground-authority-job-status-golden/v1"
 _FAILURE_STAGES = (
+    "authority_restart",
     "cancellation_callback",
     "preflight",
     "executor",

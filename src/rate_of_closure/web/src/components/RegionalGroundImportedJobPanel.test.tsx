@@ -284,6 +284,23 @@ describe("RegionalGroundImportedJobPanel", () => {
     expect(saveResult).toHaveBeenCalledWith(result);
   });
 
+  it("recovers retained status read-only without confirmation or submission", async () => {
+    const authority = client();
+    render(<Harness client={authority} />);
+    await uploadJob("recovered.json");
+
+    await userEvent.setup().click(
+      screen.getByRole("button", { name: "Recover retained status" }),
+    );
+
+    await waitFor(() => expect(authority.status)
+      .toHaveBeenCalledWith(job, expect.any(AbortSignal)));
+    expect(authority.submit).not.toHaveBeenCalled();
+    expect(authority.result).toHaveBeenCalledWith(job, expect.any(AbortSignal));
+    expect(screen.getByRole("checkbox")).not.toBeChecked();
+    expect(screen.getByText(/read-only lookup/i)).toBeInTheDocument();
+  });
+
   it("preserves the accepted job when a replacement file is invalid", async () => {
     const authority = client();
     render(<Harness client={authority} />);

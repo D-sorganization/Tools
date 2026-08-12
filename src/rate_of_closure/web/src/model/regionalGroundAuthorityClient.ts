@@ -50,6 +50,7 @@ const JOB_STATES = [
 ] as const;
 const FAILURE_CODES = ["execution_failed", "result_rejected"] as const;
 const FAILURE_STAGES = [
+  "authority_restart",
   "cancellation_callback", "preflight", "executor", "validation", "progress_callback",
   "publication", "runner", "result_validation",
 ] as const;

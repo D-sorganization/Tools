@@ -3975,6 +3975,8 @@ ai = [
     { name = "torch" },
 ]
 all = [
+    { name = "fastapi" },
+    { name = "filelock" },
     { name = "matplotlib" },
     { name = "mujoco" },
     { name = "pandas" },
@@ -3982,6 +3984,7 @@ all = [
     { name = "scipy" },
     { name = "sympy" },
     { name = "trimesh" },
+    { name = "uvicorn" },
 ]
 cad = [
     { name = "build123d" },
@@ -4045,6 +4048,12 @@ process = [
     { name = "pandas" },
     { name = "scipy" },
 ]
+rate-of-closure-web = [
+    { name = "fastapi" },
+    { name = "filelock" },
+    { name = "scipy" },
+    { name = "uvicorn" },
+]
 robotics = [
     { name = "matplotlib" },
     { name = "numpy" },
@@ -4087,8 +4096,12 @@ requires-dist = [
     { name = "defusedxml", specifier = ">=0.7.0" },
     { name = "ezdxf", extras = ["draw"], marker = "extra == 'pid'", specifier = ">=1.4.3" },
     { name = "ezdxf", extras = ["draw"], marker = "extra == 'test'", specifier = ">=1.4.3" },
+    { name = "fastapi", marker = "extra == 'all'", specifier = ">=0.100.0" },
     { name = "fastapi", marker = "extra == 'chat'", specifier = ">=0.100.0" },
+    { name = "fastapi", marker = "extra == 'rate-of-closure-web'", specifier = ">=0.100.0" },
     { name = "fastapi", marker = "extra == 'test'", specifier = ">=0.100.0" },
+    { name = "filelock", marker = "extra == 'all'", specifier = ">=3.16.0" },
+    { name = "filelock", marker = "extra == 'rate-of-closure-web'", specifier = ">=3.16.0" },
     { name = "httpx", marker = "extra == 'test'", specifier = ">=0.25.0" },
     { name = "hypothesis", marker = "extra == 'dev'", specifier = ">=6.0.0" },
     { name = "keyring", specifier = ">=24.0.0" },
@@ -4140,6 +4153,7 @@ requires-dist = [
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.1.0" },
     { name = "scipy", marker = "extra == 'all'", specifier = ">=1.10.0,<1.18" },
     { name = "scipy", marker = "extra == 'process'", specifier = ">=1.10.0,<1.18" },
+    { name = "scipy", marker = "extra == 'rate-of-closure-web'", specifier = ">=1.10.0,<1.18" },
     { name = "scipy", marker = "extra == 'signal'", specifier = ">=1.10.0,<1.18" },
     { name = "scipy", marker = "extra == 'urdf'", specifier = ">=1.10.0,<1.18" },
     { name = "speechrecognition", marker = "extra == 'chat-voice'", specifier = ">=3.10.0" },
@@ -4156,10 +4170,12 @@ requires-dist = [
     { name = "tree-sitter-typescript", marker = "extra == 'codemap'", specifier = ">=0.21" },
     { name = "trimesh", marker = "extra == 'all'", specifier = ">=4.0.0" },
     { name = "trimesh", marker = "extra == 'urdf'", specifier = ">=4.0.0" },
+    { name = "uvicorn", marker = "extra == 'all'", specifier = ">=0.30.0" },
+    { name = "uvicorn", marker = "extra == 'rate-of-closure-web'", specifier = ">=0.30.0" },
     { name = "vcrpy", marker = "extra == 'dev'", specifier = ">=6.0.0" },
     { name = "watchdog", marker = "extra == 'codemap'", specifier = ">=3.0.0" },
 ]
-provides-extras = ["all", "ai", "urdf", "signal", "process", "robotics", "gui", "chat", "chat-voice", "theme", "pid", "terminal", "cad", "dwsim", "codemap", "codemap-mcp", "jupyter", "video-analyzer", "test", "dev"]
+provides-extras = ["all", "ai", "urdf", "signal", "process", "robotics", "gui", "chat", "rate-of-closure-web", "chat-voice", "theme", "pid", "terminal", "cad", "dwsim", "codemap", "codemap-mcp", "jupyter", "video-analyzer", "test", "dev"]
 
 [[package]]
 name = "urllib3"
@@ -4175,8 +4191,8 @@ name = "uvicorn"
 version = "0.47.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "click", marker = "sys_platform != 'emscripten'" },
-    { name = "h11", marker = "sys_platform != 'emscripten'" },
+    { name = "click" },
+    { name = "h11" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/f6/b1/8e7077a8641086aea449e1b5752a570f1b5906c64e0a33cd6d93b63a066b/uvicorn-0.47.0.tar.gz", hash = "sha256:7c9a0ea1a9414106bbab7324609c162d8fa0cdcdcb703060987269d77c7bb533", size = 90582, upload-time = "2026-05-14T18:16:54.455Z" }
 wheels = [
