@@ -1,5 +1,20 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 composed authority continuation ready for PR #4372
+
+- Exact published parent head: `3571952c2344ca23ffa65121c606faab1b735a23`.
+- The composed continuation adds canonical cross-runtime status, typed
+  preflight, the authenticated PyQt client and real-process tests, a strict
+  digest-qualified Waterloo/Penner execution profile, and an abortable
+  one-active-job React controller.
+- The fixture's synthetic flight hashes fail deterministic recomputation, so
+  production still injects no runner, capability remains false, and no visible
+  execution control or ground-physics claim is promoted.
+- Consolidated evidence: 1,148 Python/PyQt and 854 React tests, real loopback,
+  Ruff/format, focused MyPy, changed-file high-severity Bandit, TypeScript,
+  zero-warning ESLint, 214-module build, docs/manifest/structural governance,
+  and diff checks. Protected CI and the full ancestor stack remain mandatory.
+
 ## 2026-08-11 local #4369 PyQt real-loopback qualification
 
 - Exact source parent: composed head

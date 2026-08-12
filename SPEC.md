@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.80                                    |
-| **Spec Version**        | 1.14.80                                    |
+| **Current Version**     | 1.14.81                                    |
+| **Spec Version**        | 1.14.81                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3354,6 +3354,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.81 | chore(ground-study, #4369): record the fully composed authority continuation and consolidated 1,148-Python/PyQt plus 854-React release gate; retain false capability, disabled visible controls, and open protected/ancestor gates because the canonical synthetic flight digests do not qualify. |
 | 2026-08-11 | 1.14.78 | test(ground-study, #4369): qualify the PyQt submitter against an actual authenticated loopback Uvicorn/FastAPI process, covering bearer secrecy, canonical submit/status/cancel/result behavior, typed fail-closed production preflight, bounded shutdown, and false-capability non-construction without running or claiming physics. |
 | 2026-08-11 | 1.14.77 | feat(ground-study, #4369): add a UI-neutral authenticated PyQt loopback submitter adapter with canonical job/status/result binding, bounded polling/backoff, cooperative cancellation, best-effort cleanup after accepted-job client failures, typed non-secret errors, stale/late suppression, and fail-closed construction while capability remains unavailable. |
 | 2026-08-11 | 1.14.79 | feat(ground-study, #4369): register one strict versioned Waterloo/Penner flight execution profile with bounded exact settings, launch-relative planar-contact recomputation, terminal-preserving deterministic sampling, and typed digest qualification; retain fail-closed runner behavior because the canonical fixture's synthetic flight digests do not recompute, and leave ground execution and capability disabled. |

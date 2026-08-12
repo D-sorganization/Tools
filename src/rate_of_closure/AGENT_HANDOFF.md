@@ -1,5 +1,22 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 composed authority continuation
+
+The current continuation composes strict status parity, fail-closed production
+preflight, authenticated PyQt submission over the real loopback process, exact
+flight-profile recomputation, and an abortable React execution controller. The
+canonical job remains unqualified because its synthetic declared flight hashes
+do not match recomputation. Production therefore exposes no runner, true
+capability, visible execution control, successful ground physics, or release
+claim.
+
+Complete local evidence passes 1,148 Python/PyQt and 854 React tests, real
+process retesting, static typing/lint/security gates, the production build, and
+all campaign documentation and structural gates. The next agent must preserve
+the false capability until a profile-produced canonical job is pinned and the
+complete flight-through-ground result is qualified; protected CI and ancestor
+integration remain open.
+
 ## 2026-08-11 local #4369 PyQt real-loopback qualification
 
 The real PyQt transport/submitter now has process-level evidence against an

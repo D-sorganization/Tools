@@ -1,5 +1,25 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4369 composed authority continuation ready for PR #4372
+
+The exact continuation after published head `3571952c2344ca23ffa65121c606faab1b735a23`
+now composes the canonical Python/React status wire, typed fail-closed production
+preflight, authenticated PyQt loopback submitter, actual-process integration,
+strict Waterloo/Penner execution-profile qualification, and UI-neutral React
+execution controller. Production remains unavailable because the canonical
+job's declared synthetic flight digests do not match deterministic profile
+recomputation; no ground physics, capability promotion, or visible Run control
+is claimed.
+
+The consolidated gate passes 1,148 Python/PyQt tests and 854 React tests, plus
+Ruff, changed-file formatting, focused MyPy, changed-file high-severity Bandit,
+strict TypeScript, zero-warning ESLint, the 214-module production build,
+real-loopback retest, docs governance, module budget, minimum-test contract,
+campaign manifest, and diff hygiene. One inherited polynomial empty-legend
+warning and existing Node/Vite advisories remain. Implementation, tests, SPEC,
+manifest, and all canonical handoffs are ready for one guarded fast-forward
+push; protected CI and the open ancestor stack remain release gates.
+
 ## 2026-08-11 local #4369 PyQt real-loopback qualification
 
 From exact composed head `f7342cae7296410f8cfd262fd9877363beb5dc63`,
