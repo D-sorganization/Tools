@@ -46,6 +46,33 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 
 ## 3. Goals & Non-Goals
 
+### 2026-08-12 Production-Browser Qualification
+
+- The exact-revision production web bundle is exercised in Chromium, Firefox,
+  and WebKit through deterministic Playwright projects. Configuration owns the
+  single-worker, zero-retry, JSON-only evidence policy; CI does not weaken it
+  with command-line overrides.
+- Static-inspection qualification covers host-owned nested paths and URL
+  fragments while preserving the network-silent execution boundary. The
+  packaged companion deliberately serves the document shell only at `/` and
+  `/index.html`; declared hashed assets and API routes remain exact, and an
+  arbitrary nested path is not treated as an SPA fallback.
+- Browser checks observe release-revision bootstrap, primary surface rendering,
+  console/page failures, requests, runtime metadata, and storage. Static mode
+  performs no authority request. Companion mode uses only the public
+  same-origin gateway and must not expose the bearer token or authority child
+  port to browser-visible state. No physics runs in browser code.
+- The independent protected job fetches the exact public head without
+  credentials, uses Python 3.11 and Node 22, builds with
+  `ROC_RELEASE_REVISION`, installs the packaged web extra plus pinned Pytest
+  plugins, installs all three browser engines, and runs separate smoke and
+  lifecycle commands. It uploads only structured Playwright JSON qualification
+  evidence, never traces, videos, screenshots, or browser profiles.
+- This qualification covers graceful harness-owned lifecycle behavior. It does
+  not claim cleanup after forced parent-process termination, Windows state ACL
+  or reparse privacy, frozen artifacts, installers, signing, SBOM/attestation,
+  protected release, compiled/calibrated physics, or downstream parity.
+
 ### 2026-08-12 Same-Origin Source Production Companion
 
 - The production web entry point serves only a fully verified, immutable

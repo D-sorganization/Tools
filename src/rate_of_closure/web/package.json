@@ -8,6 +8,9 @@
     "build": "tsc && vite build && node release/generateReleaseArtifacts.mjs",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "test": "vitest run && node --test release/*.node-test.mjs",
+    "test:browser": "playwright test",
+    "test:browser:smoke": "playwright test tests/browser/static-inspection.spec.ts tests/browser/companion-smoke.spec.ts",
+    "test:browser:lifecycle": "playwright test tests/browser/companion-lifecycle.spec.ts",
     "preview": "vite preview",
     "type-check": "tsc --noEmit"
   },
@@ -17,7 +20,9 @@
     "react-dom": "^18.2.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
     "@eslint/js": "^9.21.0",
+    "@playwright/test": "1.62.1",
     "@testing-library/jest-dom": "^6.8.0",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^14.6.1",

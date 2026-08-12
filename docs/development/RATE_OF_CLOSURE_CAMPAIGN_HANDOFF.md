@@ -1,5 +1,51 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-12 #4380 production-browser qualification
+
+Branch `codex/4380-playwright-production-browser` was created at
+`0821557d80c366133e3de5af54d5ad82a01b14b0` as an exact child of Tools
+PR #4390. The corrected parent has since advanced to
+`c3ecfd48910aa5aafb89962a256333690e8e72c5`; that parent must be propagated
+normally before this branch is published. Human review is approved, but parent
+order, fresh protected CI, and ordinary non-admin merge behavior remain
+mandatory. No PR or release carrier is recorded yet.
+
+This slice adds deterministic Playwright qualification against the exact
+revision-built production surfaces in Chromium, Firefox, and WebKit. The
+static-inspection harness exercises the deliberately host-owned nested-path and
+fragment navigation contract. The packaged same-origin companion is stricter:
+only `/` and `/index.html` are document-shell routes, declared hashed assets
+are exact routes, and arbitrary nested application paths remain rejected rather
+than silently becoming an SPA fallback.
+
+Browser assertions cover bootstrap mode and revision, primary surface
+rendering, no unexpected page/console failures, the network-silent
+static-inspection boundary, and the same-origin companion capability/lifecycle
+workflow. Security observation is browser-visible only: requests, DOM,
+runtime metadata, storage, and qualification results must not disclose the
+authority bearer token or child port, and browser code performs no physics.
+This does not claim protection from same-user native malware.
+
+The browser gate exposed and fixes two release-path defects: the companion CSP
+now admits the bundle's local `data:` font payloads without relaxing script or
+connection policy, and Vitest explicitly owns only unit-test paths so it cannot
+mistake Playwright specifications for unit suites.
+
+The protected distribution workflow gains an independent 30-minute
+**Production browser qualification** job. It fetches the exact public head
+without credentials, uses Python 3.11 and Node 22, performs `npm ci`, builds
+with the exact `ROC_RELEASE_REVISION`, installs the packaged web extra and
+pinned Pytest plugins, installs all three browser engines, and runs the separate
+smoke and lifecycle scripts with configuration-owned one-worker/zero-retry
+behavior. Only structured Playwright JSON qualification records are uploaded;
+traces, videos, screenshots, and raw browser profiles are not release evidence.
+
+Forced parent-process termination and descendant-tree cleanup are not qualified
+by this slice. Windows authority-state ACL/reparse privacy, frozen web/PyQt
+artifacts, installers, signing, SBOM/attestation, calibrated or compiled
+physics, downstream parity, protected release, and #4377/#4380 completion all
+remain open.
+
 ## 2026-08-12 #4379 same-origin source production companion
 
 Branch `codex/4379-same-origin-companion` starts exactly from Tools PR #4388
