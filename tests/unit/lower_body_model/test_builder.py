@@ -24,9 +24,9 @@ def test_build_lower_body_xml_generates_valid_mjcf() -> None:
     ]
 
     # We expect floating base / pelvis joints, hip, knee, ankle joints
-    assert (
-        "r_hip_x" in joint_names or "r_hip" in joint_names
-    ), "Should have right hip joint"
+    assert "r_hip_x" in joint_names or "r_hip" in joint_names, (
+        "Should have right hip joint"
+    )
     assert "r_knee" in joint_names, "Should have right knee joint"
     assert "l_knee" in joint_names, "Should have left knee joint"
 
@@ -137,9 +137,9 @@ def test_leg_helper_produces_symmetric_bilateral_model() -> None:
     ):
         r_names = names_by_prefix(obj_type, count, "r_")
         l_names = names_by_prefix(obj_type, count, "l_")
-        assert (
-            r_names == l_names
-        ), f"obj_type={obj_type}: mismatch r={r_names} l={l_names}"
+        assert r_names == l_names, (
+            f"obj_type={obj_type}: mismatch r={r_names} l={l_names}"
+        )
 
 
 def test_builder_total_body_and_joint_counts() -> None:

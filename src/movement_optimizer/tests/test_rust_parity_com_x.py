@@ -42,9 +42,7 @@ def _make_deadlift_dynamics() -> LagrangianDynamics:
     """Deadlift dynamics (arm mass folded into the load, no bar offset)."""
     body = BodyModel(75.0, 1.75)
     load = body.m_arms + 100.0
-    return LagrangianDynamics(
-        body, body.m_deadlift.copy(), body.I_deadlift.copy(), load
-    )
+    return LagrangianDynamics(body, body.m_deadlift.copy(), body.I_deadlift.copy(), load)
 
 
 def _random_q(rng: np.random.Generator, n: int) -> np.ndarray:
