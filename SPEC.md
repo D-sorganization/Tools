@@ -189,8 +189,10 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   recomputable trajectory and result bytes.
 - Preflight rejection publishes a typed zero-of-total terminal failure through
   the canonical Python/React status contract and invokes neither flight nor
-  regional-ground physics. No production runner is injected, so capability
-  and all execution controls remain disabled pending profile qualification.
+  regional-ground physics. At this earlier preflight slice, no production
+  runner was injected, so capability and all execution controls remained
+  disabled pending profile qualification; the later qualified local-authority
+  admission supersedes only that service-level limitation.
 
 ### 2026-08-11 PyQt Regional-Ground Loopback Submitter Adapter
 
