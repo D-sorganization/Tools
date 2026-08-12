@@ -2702,3 +2702,6 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+## 2026-08-12 (Bolt): Optimized SVG path generation
+- Replaced intermediate array allocations and `.join(' ')` with single-pass string concatenation for SVG path generation in LinePlot and ScatterPlot components.
