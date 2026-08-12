@@ -3,6 +3,7 @@ import userEvent from "@testing-library/user-event";
 import { afterEach, describe, expect, it, vi } from "vitest";
 
 import fixture from "../model/__fixtures__/morris_ui_parity_v1.json";
+import workspaceFixture from "../../../../../tests/rate_of_closure/fixtures/morris_workspace_v1.json";
 import { getClub } from "../model/club";
 import { DEFAULT_SCENARIO } from "../model/impact";
 import type { MorrisAuthorityClient } from "../model/morrisAuthorityClient";
@@ -10,6 +11,10 @@ import { parseMorrisAuthorityCapability, type MorrisAuthorityCapability } from "
 import { parseMorrisJobEnvelope, type MorrisJobEnvelope } from "../model/morrisAuthorityContract";
 import { morrisAuthorityBaseIdentity, type MorrisAuthorityBase } from "../model/morrisAuthorityRequest";
 import { defaultMorrisAuthorityBase } from "../model/morrisWorkflowDefaults";
+import {
+  INVALID_MORRIS_BOUNDS_MESSAGE,
+  parseMorrisWorkspaceJson,
+} from "../model/morrisWorkspaceDocument";
 import { MorrisWorkflowPanel } from "./MorrisWorkflowPanel";
 
 const capability = parseMorrisAuthorityCapability({
@@ -345,5 +350,100 @@ describe("MorrisWorkflowPanel", () => {
       /study failed.*could not evaluate.*evaluation_failed/i,
     );
     expect(screen.queryByRole("region", { name: "Morris screening results" })).not.toBeInTheDocument();
+  });
+
+  it("atomically imports the shared completed workspace as immutable archived evidence", async () => {
+    const user = userEvent.setup();
+    const fixtureBase = parseMorrisWorkspaceJson(JSON.stringify(workspaceFixture)).setup.base;
+    render(keyedPanel(clientWith(), fixtureBase));
+    await screen.findByText(/authority available/i);
+    await user.upload(
+      screen.getByLabelText("Import Morris workspace JSON"),
+      new File([JSON.stringify(workspaceFixture)], "workspace.json", { type: "application/json" }),
+    );
+    expect(await screen.findByRole("status", { name: "Morris workspace status" }))
+      .toHaveTextContent(/archived evidence.*not revalidated/i);
+    expect(screen.getByRole("heading", { name: /carry ranking/i })).toBeVisible();
+    expect(screen.getByRole("button", { name: "Cancel Morris Screening" })).toBeDisabled();
+    expect(screen.getByRole("textbox", { name: "Minimum effects" })).toHaveValue("4");
+    expect(screen.getByRole("button", { name: "Export Aggregate CSV" })).toBeEnabled();
+  });
+
+  it("rejects a mismatched-base workspace without replacing current controls", async () => {
+    const user = userEvent.setup();
+    const currentBase = Object.freeze({
+      ...defaultMorrisAuthorityBase(getClub("Driver 10.5°"), PINNED_SCENARIO),
+      impactOffsetToeMm: 4,
+    });
+    render(keyedPanel(clientWith(), currentBase));
+    await screen.findByText(/authority available/i);
+    const trajectories = screen.getByRole("textbox", { name: "Trajectories" });
+    await user.clear(trajectories);
+    await user.type(trajectories, "17");
+    await user.tab();
+    await user.upload(
+      screen.getByLabelText("Import Morris workspace JSON"),
+      new File([JSON.stringify(workspaceFixture)], "workspace.json", { type: "application/json" }),
+    );
+    expect(await screen.findByRole("status", { name: "Morris workspace status" }))
+      .toHaveTextContent(/rejected.*does not match/i);
+    expect(trajectories).toHaveValue("17");
+    expect(screen.queryByRole("heading", { name: /ranking/i })).not.toBeInTheDocument();
+  });
+
+  it("keeps invalid disabled imported draft text in the lossless archive", async () => {
+    const user = userEvent.setup();
+    const wire = structuredClone(workspaceFixture) as unknown as {
+      completed_evidence: unknown;
+      setup: { factor_drafts: Array<{
+        enabled: boolean; lower: string; validation_error: string | null;
+      } & Record<string, unknown>> };
+    };
+    wire.completed_evidence = null;
+    wire.setup.factor_drafts[1] = {
+      ...wire.setup.factor_drafts[1], enabled: false,
+      lower: "draft pending", validation_error: INVALID_MORRIS_BOUNDS_MESSAGE,
+    };
+    const fixtureBase = parseMorrisWorkspaceJson(JSON.stringify(wire)).setup.base;
+    render(keyedPanel(clientWith(), fixtureBase));
+    await screen.findByText(/authority available/i);
+    await user.upload(
+      screen.getByLabelText("Import Morris workspace JSON"),
+      new File([JSON.stringify(wire)], "workspace.json", { type: "application/json" }),
+    );
+    expect(await screen.findByText(/archived disabled drafts retained verbatim/i)).toBeVisible();
+    expect(screen.getByText(/draft pending/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Export Aggregate CSV" })).toBeDisabled();
+    const trajectories = screen.getByRole("textbox", { name: "Trajectories" });
+    await user.clear(trajectories);
+    await user.type(trajectories, "13");
+    await user.tab();
+    expect(screen.getByText(/draft pending/)).toBeInTheDocument();
+  });
+
+  it("aborts active authority work before installing a valid imported workspace", async () => {
+    const user = userEvent.setup();
+    const aborted = vi.fn();
+    const status = vi.fn((_jobId: string, signal?: AbortSignal) => new Promise<MorrisJobEnvelope>(
+      (_resolve, reject) => signal?.addEventListener("abort", () => {
+        aborted();
+        reject(new DOMException("Aborted", "AbortError"));
+      }, { once: true }),
+    ));
+    render(keyedPanel(
+      clientWith({ status }),
+      defaultMorrisAuthorityBase(getClub("Driver 10.5°"), PINNED_SCENARIO),
+    ));
+    await screen.findByText(/authority available/i);
+    await user.click(screen.getByRole("button", { name: "Run Morris Screening" }));
+    await waitFor(() => expect(status).toHaveBeenCalledOnce());
+    await user.upload(
+      screen.getByLabelText("Import Morris workspace JSON"),
+      new File([JSON.stringify(workspaceFixture)], "workspace.json", { type: "application/json" }),
+    );
+    expect(aborted).toHaveBeenCalledOnce();
+    expect(await screen.findByRole("status", { name: "Morris workspace status" }))
+      .toHaveTextContent(/archived evidence.*not revalidated/i);
+    expect(screen.getByRole("heading", { name: /carry ranking/i })).toBeVisible();
   });
 });

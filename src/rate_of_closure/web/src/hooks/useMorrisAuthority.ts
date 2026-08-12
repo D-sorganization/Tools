@@ -6,7 +6,9 @@ import type { MorrisJobEnvelope } from "../model/morrisAuthorityContract";
 import {
   serializeMorrisAuthorityRequest,
   type MorrisAuthorityRequest,
+  type MorrisAuthorityRequestDocument,
 } from "../model/morrisAuthorityRequest";
+import type { MorrisCompletedEvidence } from "../model/morrisWorkspaceDocument";
 
 const DEFAULT_POLL_INTERVAL_MS = 500;
 
@@ -14,6 +16,7 @@ export interface MorrisAuthorityState {
   readonly capability: MorrisAuthorityCapability | null;
   readonly checking: boolean;
   readonly job: MorrisJobEnvelope | null;
+  readonly submittedRequest: MorrisAuthorityRequestDocument | null;
   readonly error: string | null;
   readonly submitting: boolean;
 }
@@ -65,7 +68,8 @@ export function useMorrisAuthority(
     throw new RangeError("pollIntervalMs must be a nonnegative finite number");
   }
   const [state, setState] = useState<MorrisAuthorityState>({
-    capability: null, checking: client !== null, job: null, error: null, submitting: false,
+    capability: null, checking: client !== null, job: null, submittedRequest: null,
+    error: null, submitting: false,
   });
   const generation = useRef(0);
   const operation = useRef<AbortController | null>(null);
@@ -82,18 +86,22 @@ export function useMorrisAuthority(
   useEffect(() => {
     if (client === null) {
       jobIdentity.current = null;
-      setState({ capability: null, checking: false, job: null, error: null, submitting: false });
+      setState({ capability: null, checking: false, job: null, submittedRequest: null,
+        error: null, submitting: false });
       return;
     }
     jobIdentity.current = null;
     const active = beginOperation();
-    setState({ capability: null, checking: true, job: null, error: null, submitting: false });
+    setState({ capability: null, checking: true, job: null, submittedRequest: null,
+      error: null, submitting: false });
     void client.capability(active.controller.signal).then((capability) => {
       if (generation.current !== active.generation) return;
-      setState({ capability, checking: false, job: null, error: null, submitting: false });
+      setState({ capability, checking: false, job: null, submittedRequest: null,
+        error: null, submitting: false });
     }).catch((error: unknown) => {
       if (generation.current !== active.generation || isAbort(error)) return;
-      setState({ capability: null, checking: false, job: null, error: messageFrom(error), submitting: false });
+      setState({ capability: null, checking: false, job: null, submittedRequest: null,
+        error: messageFrom(error), submitting: false });
     });
     return () => {
       generation.current += 1;
@@ -131,10 +139,14 @@ export function useMorrisAuthority(
     inFlight.current = true;
     const active = beginOperation();
     jobIdentity.current = null;
-    setState((current) => ({ ...current, job: null, error: null, submitting: true }));
+    setState((current) => ({ ...current, job: null, submittedRequest: null,
+      error: null, submitting: true }));
     let document: ReturnType<typeof serializeMorrisAuthorityRequest>;
     try {
       document = serializeMorrisAuthorityRequest(request);
+      if (generation.current === active.generation) {
+        setState((current) => ({ ...current, submittedRequest: document }));
+      }
     } catch (error: unknown) {
       if (generation.current === active.generation) {
         inFlight.current = false;
@@ -184,8 +196,24 @@ export function useMorrisAuthority(
     }
     jobIdentity.current = null;
     inFlight.current = false;
-    setState((current) => ({ ...current, job: null, error: null, submitting: false }));
+    setState((current) => ({ ...current, job: null, submittedRequest: null,
+      error: null, submitting: false }));
   }, []);
 
-  return Object.freeze({ state, run, cancel, invalidate });
+  const installArchivedEvidence = useCallback((evidence: MorrisCompletedEvidence | null): void => {
+    operation.current?.abort();
+    operation.current = null;
+    generation.current += 1;
+    jobIdentity.current = null;
+    inFlight.current = false;
+    setState((current) => ({
+      ...current,
+      job: evidence?.job ?? null,
+      submittedRequest: evidence?.request ?? null,
+      error: null,
+      submitting: false,
+    }));
+  }, []);
+
+  return Object.freeze({ state, run, cancel, invalidate, installArchivedEvidence });
 }

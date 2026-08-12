@@ -4,6 +4,8 @@ import { describe, expect, it } from "vitest";
 
 import fixture from "./__fixtures__/morris_global_sensitivity_golden_v1.json";
 import {
+  MAX_MORRIS_REPORT_ASSUMPTIONS,
+  MAX_MORRIS_REPORT_ESTIMATES,
   MORRIS_REPORT_SCHEMA_ID,
   parseMorrisReport,
   parseMorrisReportJson,
@@ -96,6 +98,15 @@ describe("Morris global-sensitivity report parity", () => {
     const report = parseMorrisReportJson(JSON.stringify(fixture));
     expect(report.estimates).toHaveLength(2);
     expect(() => parseMorrisReportJson("not-json")).toThrow("valid JSON");
+  });
+
+  it("enforces report collection caps before mapping nested values", () => {
+    const assumptions = record(cloneFixture());
+    assumptions.assumptions = new Array(MAX_MORRIS_REPORT_ASSUMPTIONS + 1).fill("bounded");
+    expect(() => parseMorrisReport(assumptions)).toThrow(/assumption count/);
+    const estimates = record(cloneFixture());
+    estimates.estimates = new Array(MAX_MORRIS_REPORT_ESTIMATES + 1).fill(null);
+    expect(() => parseMorrisReport(estimates)).toThrow(/estimate count/);
   });
 
   it("accepts a null-prototype record but rejects class and custom prototypes", () => {
