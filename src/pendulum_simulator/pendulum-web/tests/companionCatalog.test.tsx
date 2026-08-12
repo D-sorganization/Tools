@@ -35,6 +35,6 @@ describe("proximal-distal companion catalog", () => {
     expect(html).toContain("Tips");
     expect(html).toContain("What Would Challenge This Result?");
     expect(html).toContain("Limitations");
-    expect(html).toContain('aria-label="Search The Glossary"');
+    expect(html).toContain('aria-label="Search the Glossary"');
   });
 });

@@ -104,7 +104,7 @@ class CompanionGuideDialog(QDialog):
         layout = QVBoxLayout(tab)
         self.glossary_search = QLineEdit()
         self.glossary_search.setPlaceholderText("Search terms and definitions…")
-        self.glossary_search.setAccessibleName("Search The Glossary")
+        self.glossary_search.setAccessibleName("Search the Glossary")
         layout.addWidget(self.glossary_search)
         splitter = QSplitter(Qt.Orientation.Horizontal)
         self.glossary_list = QListWidget()

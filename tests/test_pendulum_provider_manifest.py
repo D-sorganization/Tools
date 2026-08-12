@@ -53,7 +53,7 @@ def test_pendulum_provider_manifest_points_at_console_entry_module() -> None:
     )
     assert entry["path"] == "src/double_pendulum_golf/__main__.py"
     assert entry["embed_adapter"] == (
-        "src/double_pendulum_golf/__main__.py::get_dockable_ui"
+        "src/double_pendulum_golf/_embed_adapter.py::get_dockable_ui"
     )
 
 

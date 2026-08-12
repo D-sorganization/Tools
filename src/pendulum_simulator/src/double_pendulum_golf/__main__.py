@@ -85,17 +85,10 @@ __version__ = "0.1.0"
 
 
 def get_dockable_ui(parent: object | None = None) -> MainWindow:
-    """Return the canonical main window for an embedding host.
+    """Delegate to the provider-safe embedding adapter."""
+    from ._embed_adapter import get_dockable_ui as create_window
 
-    The optional parent is applied only when it is a Qt widget. Standalone
-    launch remains owned by :func:`main`.
-    """
-    from PyQt6.QtWidgets import QWidget
-
-    window = MainWindow()
-    if isinstance(parent, QWidget):
-        window.setParent(parent)
-    return window
+    return create_window(parent)
 
 
 def main() -> None:

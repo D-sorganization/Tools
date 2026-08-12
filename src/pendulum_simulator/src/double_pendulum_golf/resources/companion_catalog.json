@@ -5,7 +5,7 @@
   "experiments": [
     {
       "id": "double-passive-transfer",
-      "title": "Passive Transfer In A Two-Link Chain",
+      "title": "Passive Transfer in a Two-Link Chain",
       "model": "double",
       "purpose": "Separate work done by applied joint torque from redistribution associated with configuration-dependent inertial coupling.",
       "hypothesis": "With matched initial state and proximal drive, changing distal torque changes when energy is retained proximally and when distal angular speed rises.",
@@ -74,7 +74,7 @@
     },
     {
       "id": "golfer-two-hand-couple",
-      "title": "Two-Hand Force And Equivalent-Couple Mechanism",
+      "title": "Two-Hand Force and Equivalent-Couple Mechanism",
       "model": "golfer",
       "purpose": "Resolve bilateral hand action into net force and an equivalent couple, then relate that action to club angular acceleration and constraint forces.",
       "hypothesis": "Opposing hand-force components can produce a club couple and late negative club torque without requiring the same net-force direction or a separately prescribed wrist-torque pulse.",
@@ -97,7 +97,7 @@
     },
     {
       "id": "ztcf-counterfactual",
-      "title": "Pointwise And Forward Zero-Torque Counterfactuals",
+      "title": "Pointwise and Forward Zero-Torque Counterfactuals",
       "model": "golfer",
       "purpose": "Distinguish an instantaneous zero-applied-torque diagnostic from a trajectory recomputed under a changed torque program.",
       "hypothesis": "Pointwise ZTCF identifies the acceleration or reaction-force tendency at the observed state, while a forward counterfactual can diverge because state and geometry evolve.",
@@ -120,7 +120,7 @@
     },
     {
       "id": "robustness-envelope",
-      "title": "Parameter Robustness And Falsifiability Envelope",
+      "title": "Parameter Robustness and Falsifiability Envelope",
       "model": "double",
       "purpose": "Test whether a reported mechanism survives bounded variation in inertial, geometric, damping, and input parameters.",
       "hypothesis": "A useful mechanism should retain its directional prediction over a declared neighborhood rather than only at one tuned parameter set.",
@@ -225,7 +225,7 @@
     },
     {
       "id": "moment-of-force",
-      "term": "Moment Of Force",
+      "term": "Moment of Force",
       "definition": "The rotational tendency produced by a force about a declared point or axis.",
       "plain_language": "Force multiplied by its perpendicular leverage about a point.",
       "units": "N m",
@@ -241,7 +241,7 @@
     },
     {
       "id": "proximal-distal",
-      "term": "Proximal And Distal",
+      "term": "Proximal and Distal",
       "definition": "Relative anatomical or model locations nearer to and farther from the chain's chosen base.",
       "plain_language": "Closer to the body versus farther along the linked chain.",
       "units": "none",

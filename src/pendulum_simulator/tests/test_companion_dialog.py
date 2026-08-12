@@ -35,7 +35,7 @@ def test_toolstrip_makes_companion_discoverable(qapp) -> None:
 
 
 def test_canonical_provider_entrypoint_is_embeddable(qapp) -> None:
-    from double_pendulum_golf.__main__ import get_dockable_ui
+    from double_pendulum_golf._embed_adapter import get_dockable_ui
     from double_pendulum_golf.gui.main_window import MainWindow
 
     window = get_dockable_ui()

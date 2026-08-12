@@ -75,7 +75,7 @@ export function CompanionGuide({ onSelectModel }: CompanionGuideProps) {
               className="btn btn-primary"
               type="button"
               onClick={() => onSelectModel?.(experiment.model)}
-              title={`Switch To The ${experiment.model} Model`}
+              title={`Switch to the ${experiment.model} Model`}
             >
               Open {experiment.model === "golfer" ? "Golfer" : experiment.model} Model
             </button>
@@ -98,10 +98,10 @@ export function CompanionGuide({ onSelectModel }: CompanionGuideProps) {
             <label htmlFor="companion-glossary-search">Glossary</label>
             <input
               id="companion-glossary-search"
-              aria-label="Search The Glossary"
+              aria-label="Search the Glossary"
               type="search"
               value={glossaryQuery}
-              placeholder="Search Terms And Definitions"
+              placeholder="Search Terms and Definitions"
               onChange={(event) => setGlossaryQuery(event.target.value)}
             />
             <dl>
