@@ -51,7 +51,8 @@ function buildPath(
   py: (v: number) => number,
 ): string {
   const n = Math.min(freqs.length, power.length);
-  const segments: string[] = [];
+  // ⚡ Bolt Optimization: Build SVG `d` paths using a single-pass `for` loop and string concatenation to eliminate intermediate array allocations.
+  let d = "";
   let penDown = false;
   for (let i = 0; i < n; i += 1) {
     const f = freqs[i];
@@ -65,10 +66,11 @@ function buildPath(
       penDown = false;
       continue;
     }
-    segments.push(`${penDown ? "L" : "M"}${px(f)},${py(p)}`);
+    if (d.length > 0) d += " ";
+    d += `${penDown ? "L" : "M"}${px(f)},${py(p)}`;
     penDown = true;
   }
-  return segments.join(" ");
+  return d;
 }
 
 /** Frequency-spectrum plot. Forwards a ref to the root `<svg>`. */
