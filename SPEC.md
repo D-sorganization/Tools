@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.67                                    |
-| **Spec Version**        | 1.14.67                                    |
+| **Current Version**     | 1.14.68                                    |
+| **Spec Version**        | 1.14.68                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3218,6 +3218,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.68 | feat(ground-study, #4369): add a strict bounded Python/React execution-result envelope binding job/input identities and canonical scalar-dataset SHA; require expected-job matching for result ID, trial count/order, and series identities. |
 | 2026-08-11 | 1.14.67 | feat(ground-study, #4369): qualify execution jobs with exact physical regional/skid-roll settings, executor revision, and recomputable source-to-launch-origin plan translation; expose only implemented serial fail-fast max-trials orchestration. |
 | 2026-08-11 | 1.14.66 | fix(ground-study, #4369): retain the authenticated loopback authority readiness contract while replacing generic URL opening with an explicit fixed-host HTTP connection for hosted Bandit B310 compliance. |
 | 2026-08-11 | 1.14.65 | fix(ground-study, #4369): make seeded regional-ground outcome validation a typed terminal failure stage; retain original exception chaining and accepted-trial counts, expose no partial rows or dataset, and preserve successful scalar-ensemble bytes. |

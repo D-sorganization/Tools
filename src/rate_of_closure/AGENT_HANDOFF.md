@@ -1,5 +1,19 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4369 job-bound execution result envelope
+
+The bounded Python/React
+`rate-of-closure/regional-ground-execution-result/v1` envelope binds exact
+job/input identities and canonical dataset bytes. Expected-job matching also
+binds result ID, declared trial count, zero-based row order, and every series
+ID. Parsed evidence without its source job is integrity-checked but is not
+authenticated or proof that the declared physics ran.
+
+The Python-produced shared golden preserves complete and censored rows with
+typed nulls. Full local gates passed 1,048 Python/PyQt and 818 React tests plus
+build and static/governance gates. No executor, partial publication,
+UI/backend/storage, compiled physics, or downstream parity is added.
+
 ## 2026-08-11 #4369 physical and launch-origin job qualification
 
 From exact PR #4370 head `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`,

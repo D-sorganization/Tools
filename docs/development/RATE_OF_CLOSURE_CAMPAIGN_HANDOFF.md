@@ -1,5 +1,18 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4369 job-bound result envelope
+
+- Exact source parent: published PR #4370 head
+  `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`.
+- The bounded Python/React execution-result v1 envelope carries job/input
+  identities, complete scalar evidence, and recomputed canonical dataset SHA.
+- Expected-job matching binds result ID, trial count, zero-based order, and
+  every series ID. SHA-256 provides integrity/provenance, not authentication.
+- Full local evidence passed 1,048 Python/PyQt and 818 React tests, production
+  build, static analysis, manifest, and module gates.
+- No executor, partial publication, UI/backend/storage, compiled physics, or
+  downstream parity. Keep #4369/#4273/#4267 open.
+
 ## 2026-08-11 #4369 execution qualification continuation
 
 - Exact source parent: published PR #4370 head

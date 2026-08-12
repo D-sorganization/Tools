@@ -1,5 +1,20 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4369 job-bound execution result envelope
+
+From exact published PR #4370 head
+`0a485958bd6ed46dce18e65fd3e3cd1fa797502a`, the strict bounded Python/React
+`rate-of-closure/regional-ground-execution-result/v1` envelope carries exact
+job/input identities, embeds complete `scalar-ensemble/v1`, and recomputes its
+canonical dataset SHA-256. Explicit expected-job matching additionally binds
+dataset result ID, trial count, zero-based order, and every series ID. Without
+the originating job it proves internal integrity, not authenticity.
+
+Full local gates passed 1,048 Python/PyQt and 818 React tests plus build,
+Ruff, MyPy, TypeScript, ESLint, manifest, and module budgets. The slice adds no
+executor, partial publication, UI/backend/storage, compiled physics, or
+downstream parity. Keep #4369/#4273/#4267 open.
+
 ## 2026-08-11 #4369 execution qualification child
 
 Local branch `codex/4369-execution-qualification` starts exactly from
