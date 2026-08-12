@@ -32,6 +32,12 @@
 
 ## 2. Purpose & Mission
 
+### 2026-08-12 PyQt Morris protected-CI format repair
+
+PR #4400's exact-head quality gate identified a formatting-only defect in its
+new workflow test. Version 1.16.32 records the mechanical Ruff format repair;
+runtime behavior, public contracts, and scientific semantics are unchanged.
+
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
 ### 2026-08-12 React Morris elementary-effects workflow (#4142 R13.7)
