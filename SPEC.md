@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.77                                    |
-| **Spec Version**        | 1.14.77                                    |
+| **Current Version**     | 1.14.78                                    |
+| **Spec Version**        | 1.14.78                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,24 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 PyQt Real-Loopback Authority Qualification
+
+- Process-level integration tests start the actual loopback-only Uvicorn and
+  FastAPI authority and exercise the real HTTP transport used by the PyQt
+  submitter. They prove bearer rejection and non-exposure, canonical job
+  submission/status binding, idempotent cancellation, unavailable-result
+  behavior, typed production-preflight propagation, bounded client shutdown,
+  and authority-process reaping.
+- The runtime gains a narrowly validated application-factory injection seam so
+  integration tests can attach only the fail-closed production preflight runner
+  or a cancellation-only non-physical runner. The default production factory,
+  command shape, loopback host, environment-only token, and lifecycle ownership
+  remain unchanged.
+- Capability remains false-only and the submitter factory still returns no
+  production adapter. These tests execute no flight or ground physics, fabricate
+  no successful result, add no UI control, and establish no physical-model,
+  protected-carrier, downstream-parity, or release claim.
 
 ### 2026-08-11 Canonical Regional-Ground Authority Status Wire
 
@@ -3295,6 +3313,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.78 | test(ground-study, #4369): qualify the PyQt submitter against an actual authenticated loopback Uvicorn/FastAPI process, covering bearer secrecy, canonical submit/status/cancel/result behavior, typed fail-closed production preflight, bounded shutdown, and false-capability non-construction without running or claiming physics. |
 | 2026-08-11 | 1.14.77 | feat(ground-study, #4369): add a UI-neutral authenticated PyQt loopback submitter adapter with canonical job/status/result binding, bounded polling/backoff, cooperative cancellation, best-effort cleanup after accepted-job client failures, typed non-secret errors, stale/late suppression, and fail-closed construction while capability remains unavailable. |
 | 2026-08-11 | 1.14.76 | feat(ground-study, #4369): add a typed production-runner preflight that rejects unknown and unregistered versioned flight profiles before any physics; propagate the preflight terminal stage through the canonical Python/React status contract while leaving capability, execution controls, and model invocation disabled until solver and digest semantics are qualified. |
 | 2026-08-11 | 1.14.75 | feat(ground-study, #4369): centralize the six-state authority job-status wire in a transport-neutral strict Python parser/serializer, make the server consume it, and prove Python-produced canonical byte/semantic parity in React across every failure code and stage; keep physics, UI, capability promotion, persistence, and execution claims open. |

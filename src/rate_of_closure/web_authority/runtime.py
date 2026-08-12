@@ -23,6 +23,9 @@ AUTHORITY_TOKEN_ENV: Final = "ROC_AUTHORITY_TOKEN"
 _READINESS_TIMEOUT_S: Final = 15.0
 _READINESS_INTERVAL_S: Final = 0.05
 _SHUTDOWN_TIMEOUT_S: Final = 5.0
+DEFAULT_AUTHORITY_APP_FACTORY: Final = (
+    "rate_of_closure.web_authority.server:create_app_from_environment"
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -62,12 +65,24 @@ class AuthorityRuntime:
             self.process.wait(timeout=_SHUTDOWN_TIMEOUT_S)
 
 
-def _authority_command(port: int) -> tuple[str, ...]:
+def _app_factory(value: str) -> str:
+    """Validate one import-only Uvicorn application-factory identity."""
+    if type(value) is not str or value != value.strip() or len(value) > 240:
+        raise ValueError("authority app_factory must be bounded trimmed text")
+    module, separator, function = value.partition(":")
+    valid_module = module and all(part.isidentifier() for part in module.split("."))
+    if separator != ":" or not valid_module or not function.isidentifier():
+        raise ValueError("authority app_factory must be module.path:function")
+    return value
+
+
+def _authority_command(port: int, app_factory: str) -> tuple[str, ...]:
+    """Build the fixed Uvicorn child-process command."""
     return (
         sys.executable,
         "-m",
         "uvicorn",
-        "rate_of_closure.web_authority.server:create_app_from_environment",
+        _app_factory(app_factory),
         "--factory",
         "--host",
         LOOPBACK_HOST,
@@ -83,6 +98,7 @@ def build_authority_process_spec(
     token: str,
     port: int,
     source_root: Path,
+    app_factory: str = DEFAULT_AUTHORITY_APP_FACTORY,
 ) -> AuthorityProcessSpec:
     """Build a loopback-only process spec with its token outside the command."""
     if not token or token != token.strip():
@@ -96,19 +112,21 @@ def build_authority_process_spec(
     )
     environment[AUTHORITY_TOKEN_ENV] = token
     return AuthorityProcessSpec(
-        command=_authority_command(port),
+        command=_authority_command(port, app_factory),
         environment=MappingProxyType(environment),
         port=port,
     )
 
 
 def _reserve_loopback_port() -> int:
+    """Reserve and release one ephemeral loopback port."""
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
         listener.bind((LOOPBACK_HOST, 0))
         return int(listener.getsockname()[1])
 
 
 def _is_ready(runtime: AuthorityRuntime) -> bool:
+    """Probe the authenticated capability route on the fixed loopback host."""
     connection = HTTPConnection(
         LOOPBACK_HOST,
         runtime.port,
@@ -128,6 +146,7 @@ def _is_ready(runtime: AuthorityRuntime) -> bool:
 
 
 def _wait_until_ready(runtime: AuthorityRuntime) -> None:
+    """Wait a fixed bound for authenticated child readiness."""
     deadline = time.monotonic() + _READINESS_TIMEOUT_S
     while time.monotonic() < deadline:
         if runtime.process.poll() is not None:
@@ -138,13 +157,18 @@ def _wait_until_ready(runtime: AuthorityRuntime) -> None:
     raise RuntimeError("local Python authority did not become ready")
 
 
-def start_authority(*, source_root: Path) -> AuthorityRuntime:
+def start_authority(
+    *,
+    source_root: Path,
+    app_factory: str = DEFAULT_AUTHORITY_APP_FACTORY,
+) -> AuthorityRuntime:
     """Start and authenticate one isolated loopback authority process."""
     token = secrets.token_urlsafe(32)
     spec = build_authority_process_spec(
         token=token,
         port=_reserve_loopback_port(),
         source_root=source_root,
+        app_factory=app_factory,
     )
     process = subprocess.Popen(
         spec.command,

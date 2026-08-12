@@ -99,6 +99,33 @@ def test_authority_process_spec_keeps_token_out_of_command(tmp_path) -> None:
     assert spec.environment["PYTHONPATH"].split(";")[0] == str(tmp_path)
 
 
+def test_authority_process_spec_accepts_only_bounded_import_factory(tmp_path) -> None:
+    factory = "tests.rate_of_closure.test_module:create_app"
+    spec = build_authority_process_spec(
+        token="test-ephemeral-token",
+        port=54321,
+        source_root=tmp_path,
+        app_factory=factory,
+    )
+
+    assert spec.command[3] == factory
+    assert spec.command[4] == "--factory"
+    for invalid in (
+        "tests.module",
+        "tests.module:create-app",
+        " tests.module:create_app",
+        "tests..module:create_app",
+        f"tests.module:{'x' * 241}",
+    ):
+        with pytest.raises(ValueError, match="app_factory"):
+            build_authority_process_spec(
+                token="test-ephemeral-token",
+                port=54321,
+                source_root=tmp_path,
+                app_factory=invalid,
+            )
+
+
 def _headers(token: str = "test-ephemeral-token") -> dict[str, str]:
     return {"Authorization": f"Bearer {token}", "Content-Type": "application/json"}
 

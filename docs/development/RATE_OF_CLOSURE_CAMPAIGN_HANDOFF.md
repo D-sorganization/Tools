@@ -1,5 +1,21 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4369 PyQt real-loopback qualification
+
+- Exact source parent: composed head
+  `f7342cae7296410f8cfd262fd9877363beb5dc63`.
+- Actual loopback Uvicorn/FastAPI processes validate the PyQt submitter's real
+  bearer HTTP path, canonical submit/status/cancel/result lifecycle, typed
+  production-preflight terminal, bounded close/join, and process reaping.
+- Wrong authentication exposes neither the ephemeral token nor model data. The
+  production false capability still constructs no submitter.
+- A bounded import-factory seam is the only runtime change; the default factory
+  and environment-only token path are unchanged. Test runners reject before
+  physics or wait only for cancellation, so no successful model or physics,
+  UI, persistence, protected, downstream, or release claim is added.
+- Code, tests, SPEC, manifest, and all handoffs commit atomically; exact focused,
+  composed, static, and governance evidence follows.
+
 ## 2026-08-11 local #4369 canonical authority status wire
 
 - Exact parent: published PR #4372 head

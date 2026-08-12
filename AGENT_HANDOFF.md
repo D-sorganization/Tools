@@ -1,5 +1,22 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4369 PyQt real-loopback qualification
+
+From exact composed head `f7342cae7296410f8cfd262fd9877363beb5dc63`,
+process-level tests start the actual loopback Uvicorn/FastAPI authority and run
+the PyQt submitter's real HTTP transport against it. They cover wrong-bearer
+rejection without token exposure, canonical submit and job-bound status,
+idempotent POST cancel, unavailable result, typed production-preflight failure,
+bounded client close/join, false-capability non-construction, and authority
+process reaping.
+
+The runtime accepts a strictly bounded `module.path:function` factory seam for
+process integration only; the default environment-token production factory is
+unchanged. Injected test runners either fail in production preflight before any
+physics or wait solely for cooperative cancellation. No successful physics,
+capability promotion, controls, persistence, protected evidence, downstream
+parity, or release is claimed. Atomic commit and exact gate evidence follow.
+
 ## 2026-08-11 local #4369 canonical authority status wire
 
 From exact published PR #4372 head

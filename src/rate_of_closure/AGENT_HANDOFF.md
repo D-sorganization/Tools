@@ -1,5 +1,18 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4369 PyQt real-loopback qualification
+
+The real PyQt transport/submitter now has process-level evidence against an
+actual loopback Uvicorn/FastAPI authority. Tests prove authenticated canonical
+job lifecycle behavior, typed preflight failure, cooperative cancellation,
+bounded close, token non-exposure, process ownership, and the current
+false-capability factory returning no adapter.
+
+A validated application-factory runtime seam supports this integration without
+changing the default server factory. The only injected runners are fail-closed
+preflight and cancellation-only test doubles; no flight/ground physics succeeds
+or is claimed, and there is no production registration or visible control.
+
 ## 2026-08-11 local #4369 canonical authority status wire
 
 The public transport-neutral
