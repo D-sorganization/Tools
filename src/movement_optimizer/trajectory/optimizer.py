@@ -129,12 +129,7 @@ class TrajectoryOptimizer:
         self.n_dof = n_dof
         self.body, self.dynamics = body, dynamics
         self.exercise_type, self.bar_mass = exercise_type, bar_mass
-        self.q_start, self.q_end, self.q_bounds, self.q_via = (
-            q_start,
-            q_end,
-            q_bounds,
-            q_via,
-        )
+        self.q_start, self.q_end, self.q_bounds, self.q_via = q_start, q_end, q_bounds, q_via
         self.duration, self.n_waypoints, self.n_eval = duration, n_waypoints, n_eval
         self.progress_cb, self.n_starts = progress_cb, n_starts
         self.cancel_event = cancel_event or threading.Event()
@@ -149,9 +144,7 @@ class TrajectoryOptimizer:
         self.balance_center_weight = BALANCE_CENTER_WEIGHT
         self._setup_time_grids()
         self.dt = duration / (n_eval - 1)
-        self._n_damp = max(
-            ENDPOINT_DAMP_MIN_SAMPLES, int(n_eval * ENDPOINT_DAMP_SAMPLE_FRACTION)
-        )
+        self._n_damp = max(ENDPOINT_DAMP_MIN_SAMPLES, int(n_eval * ENDPOINT_DAMP_SAMPLE_FRACTION))
         self._damp_weights = 1.0 - np.arange(self._n_damp) / self._n_damp
         self._progress = ProgressTracker(progress_cb=progress_cb)
         self._progress_lock = self._progress.lock()
@@ -182,9 +175,7 @@ class TrajectoryOptimizer:
             self.n_dof,
         )
 
-    def eval_trajectory(
-        self, splines: CubicSpline
-    ) -> tuple[NDArray, NDArray, NDArray, NDArray]:
+    def eval_trajectory(self, splines: CubicSpline) -> tuple[NDArray, NDArray, NDArray, NDArray]:
         """Evaluate position, velocity, acceleration, jerk at eval grid.
 
         Delegates to :func:`optimizer_spline.eval_trajectory`.
@@ -354,9 +345,7 @@ class TrajectoryOptimizer:
         """Run single-start path and package its result."""
         self._progress.reset()
         wp0 = self._initial_guess()
-        out = self._minimize_single(
-            wp0.flatten(), self.cost, max_iter=MAX_ITER_PER_START * 2
-        )
+        out = self._minimize_single(wp0.flatten(), self.cost, max_iter=MAX_ITER_PER_START * 2)
         if self.cancel_event.is_set():
             metrics.increment(
                 "trajectory_optimization_cancelled_total",
@@ -368,9 +357,7 @@ class TrajectoryOptimizer:
         self._record_result_metrics(result, mode="single")
         return result
 
-    def _finalize_parallel_results(
-        self, results: list[tuple[Any, int]]
-    ) -> OptimizationResult:
+    def _finalize_parallel_results(self, results: list[tuple[Any, int]]) -> OptimizationResult:
         """Select the best result, log summary, and package output."""
         if not results:
             raise CancelledError("All optimization starts were cancelled")
@@ -398,15 +385,11 @@ class TrajectoryOptimizer:
             exercise_type=self.exercise_type,
             mode=mode,
         )
-        metrics.observe(
-            "trajectory_optimization_elapsed_seconds", result.elapsed_s, **labels
-        )
+        metrics.observe("trajectory_optimization_elapsed_seconds", result.elapsed_s, **labels)
         metrics.observe("trajectory_optimization_cost", result.cost, **labels)
         metrics.observe("trajectory_optimization_evaluations", result.n_evals, **labels)
 
-    def _check_solution_feasibility(
-        self, res: Any, q: NDArray, com_x: NDArray
-    ) -> tuple[bool, int]:
+    def _check_solution_feasibility(self, res: Any, q: NDArray, com_x: NDArray) -> tuple[bool, int]:
         """Assess cost finiteness, COM bounds, and joint-limit violations.
 
         SLSQP can report ``success`` while sitting on a point that the

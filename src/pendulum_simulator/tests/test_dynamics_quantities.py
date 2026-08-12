@@ -58,19 +58,19 @@ class TestLinearPowerAt:
     """Unit tests for single-timestep linear power."""
 
     def test_aligned_force_velocity(self):
-        assert linear_power_at(
-            np.array([1.0, 0.0]), np.array([3.0, 0.0])
-        ) == pytest.approx(3.0)
+        assert linear_power_at(np.array([1.0, 0.0]), np.array([3.0, 0.0])) == pytest.approx(
+            3.0
+        )
 
     def test_orthogonal_force_velocity(self):
-        assert linear_power_at(
-            np.array([1.0, 0.0]), np.array([0.0, 1.0])
-        ) == pytest.approx(0.0)
+        assert linear_power_at(np.array([1.0, 0.0]), np.array([0.0, 1.0])) == pytest.approx(
+            0.0
+        )
 
     def test_2d_dot_product(self):
-        assert linear_power_at(
-            np.array([2.0, 3.0]), np.array([4.0, 5.0])
-        ) == pytest.approx(23.0)
+        assert linear_power_at(np.array([2.0, 3.0]), np.array([4.0, 5.0])) == pytest.approx(
+            23.0
+        )
 
     def test_wrong_shape_raises(self):
         with pytest.raises((ValueError, TypeError), match="force must be shape"):
