@@ -1,5 +1,20 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4369 qualification audit after prerequisite composition
+
+The composed local head `915c80f38` is a contract/control/parser prerequisite,
+not a qualified executable authority. A real Waterloo/Penner recomputation did
+not match the execution-job golden fixture's synthetic flight trajectory/result
+digests, so that fixture remains serialization evidence only. The job also does
+not yet bind the physical skid/roll settings or executor revision, implement
+every declared orchestration option, or bind a completed scalar ensemble back
+to the job/input digests. Current editors express regional surfaces at zero
+height, while a teed launch requires an explicit launch-origin translation of
+the base and every overlay with provenance rebinding. Keep Run disabled until
+an exact Python model/profile registry, coordinate qualification adapter,
+complete-result envelope, cancellable authority, loopback host, and matched
+PyQt/React controllers prove these invariants end to end.
+
 ## 2026-08-11 local #4369 regional-ground batch progress and cancellation
 
 The unpublished `codex/4369-regional-ground-execution-job` continuation starts

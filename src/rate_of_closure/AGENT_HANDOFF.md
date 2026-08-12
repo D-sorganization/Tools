@@ -1,5 +1,17 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 qualification audit after prerequisite composition
+
+`915c80f38` composes the job, batch-control, and result-import prerequisites,
+but must remain fail-closed. Its golden job contains synthetic flight digests;
+the contract omits physical skid/roll settings and executor revision; the
+runner does not implement every declared orchestration option; current surface
+editors require an explicit launch-origin translation for teed shots; and the
+scalar result is not yet cryptographically bound to its job. The next authority
+slice must close these gaps in Python, forward cancellation into bounce and
+regional skid/roll, publish a job-bound complete-result envelope, and provide
+one capability handshake consumed by matched PyQt and React controllers.
+
 ## 2026-08-11 local #4369 complete-only variation execution controls
 
 This continuation is stacked on exact local execution-job contract commit

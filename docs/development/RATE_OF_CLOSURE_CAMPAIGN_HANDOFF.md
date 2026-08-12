@@ -1,5 +1,19 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 qualification audit after prerequisite composition
+
+- Exact local composition head `915c80f38` contains the execution-job contract,
+  complete-only batch progress/cancellation, and strict React result import.
+- Do not execute the shared job golden as scientific evidence: recomputed
+  Waterloo/Penner trajectory/result digests differ from its synthetic values.
+- Before enabling Run, bind exact skid/roll settings and executor revision,
+  implement or reject every orchestration option, translate base and overlays
+  into launch-origin coordinates for teed shots, bind result bytes to job/input
+  digests, and expose one cancellable Python authority to both clients.
+- The intended delivery is direct `QThread` use in PyQt and an authenticated
+  loopback FastAPI sidecar plus same-origin Vite proxy for React. Static web
+  builds remain explicitly unavailable and retain strict result import only.
+
 ## 2026-08-11 local #4369 batch progress/cancellation prerequisite
 
 - This continuation starts from exact local execution-job contract commit
