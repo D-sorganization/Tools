@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Strict Morris TypeScript parity contract (#4142 R13.4)
+
+The shared Morris report and its React-side consumer now use stable identity
+`swing-sim/morris-global-sensitivity-report` with independent integer version
+`1`; `morris-elementary-effects` remains the method rather than being
+overloaded as a schema identifier. The exact parent typing repair at
+`f08494f3a2698ddd69f7452dfdb1e70765388ef8` is retained normally.
+
+`web/src/model/morrisGlobalSensitivityContract.ts` parses the Python golden
+payload into frozen typed data. It fails closed for unknown fields, malformed
+or non-finite values, invalid availability/adequacy states, non-null unavailable
+effects, inconsistent complete denominators, bad Morris grid/sample/seed
+provenance, and invalid units, coordinate frames, points, time windows, or
+bounds. Finite no-impact state metrics remain valid while unavailable miss
+pairs retain a separate exclusive cohort.
+
+This remains a model-contract parity slice. It does not modify the React/PyQt6
+views, #4280 exports, simulation adapters, or UpstreamDrift consumption.
+
 ## 2026-08-12 Shared Morris screening foundation (#4142 R13.2-R13.4)
 
 Hosted exact-head MyPy identified five missing NumPy inference annotations.

@@ -1,4 +1,5 @@
 {
+  "schema_id": "swing-sim/morris-global-sensitivity-report",
   "schema_version": 1,
   "method": "morris-elementary-effects",
   "design": {

@@ -1,5 +1,23 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 strict TypeScript Morris report parity (#4142 R13.4)
+
+- The report wire format now has stable identity
+  `swing-sim/morris-global-sensitivity-report`, integer version `1`, and a
+  separately validated `morris-elementary-effects` method value.
+- The TypeScript model layer consumes the shared Python golden report into
+  immutable typed data and rejects unknown fields, unsupported vocabularies,
+  non-finite/coercive values, broken availability/nullability relationships,
+  incomplete denominators, invalid grid/sample/seed provenance, and invalid
+  units, frames, point/time loci, or factor bounds.
+- Denominator validation preserves the scientific distinction that typed
+  no-impact pairs may still supply finite state metrics; unavailable misses,
+  failures, and ordinary non-finite pairs remain exclusive cohorts.
+- This branch normally retains published parent exact head
+  `f08494f3a2698ddd69f7452dfdb1e70765388ef8`. UI/export/execution adapters and
+  UpstreamDrift consumption remain explicit later R13-R15 work; #4142 is not
+  complete and PR #4280-owned presentation/export scope is untouched.
+
 ## 2026-08-12 bounded global-sensitivity analysis slice (#4142)
 
 - Exact-head CI repair adds explicit NumPy array/status annotations required by

@@ -25,6 +25,8 @@ from .morris_design import (
 )
 
 _ADEQUATE_TRAJECTORIES = 10
+MORRIS_REPORT_SCHEMA_ID = "swing-sim/morris-global-sensitivity-report"
+MORRIS_REPORT_SCHEMA_VERSION = 1
 
 
 @dataclass(frozen=True)
@@ -89,7 +91,8 @@ class MorrisReport:
     def to_json_dict(self) -> dict[str, Any]:
         """Return a deterministic, non-finite-safe cross-runtime document."""
         return {
-            "schema_version": 1,
+            "schema_id": MORRIS_REPORT_SCHEMA_ID,
+            "schema_version": MORRIS_REPORT_SCHEMA_VERSION,
             "method": self.method,
             "design": {
                 "trajectories": self.trajectories,
@@ -348,6 +351,8 @@ def _require_effect_count(value: object) -> int:
 
 
 __all__ = [
+    "MORRIS_REPORT_SCHEMA_ID",
+    "MORRIS_REPORT_SCHEMA_VERSION",
     "MorrisEstimate",
     "MorrisReport",
     "analyze_morris",

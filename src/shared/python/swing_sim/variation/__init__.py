@@ -41,7 +41,13 @@ from .ensemble_geometry import (
     compute_position_dispersion_view,
     find_low_variability_intervals,
 )
-from .global_sensitivity import MorrisEstimate, MorrisReport, analyze_morris
+from .global_sensitivity import (
+    MORRIS_REPORT_SCHEMA_ID,
+    MORRIS_REPORT_SCHEMA_VERSION,
+    MorrisEstimate,
+    MorrisReport,
+    analyze_morris,
+)
 from .group_spec import PerturbationGroup
 from .morris_design import (
     MorrisDesign,
@@ -102,6 +108,8 @@ __all__ = [
     "MorrisObservations",
     "MorrisOutput",
     "MorrisReport",
+    "MORRIS_REPORT_SCHEMA_ID",
+    "MORRIS_REPORT_SCHEMA_VERSION",
     "NoiseSpec",
     "OutputStats",
     "PairedIntervention",

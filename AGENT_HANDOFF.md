@@ -3,6 +3,27 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Strict Morris TypeScript parity contract (#4142 R13.4)
+
+- Branch `codex/4142-morris-typescript-parity` fast-forwarded normally from
+  published parent exact head `f08494f3a2698ddd69f7452dfdb1e70765388ef8`;
+  no history, configured base, or parent branch was rewritten.
+- The Python report now emits stable schema identity
+  `swing-sim/morris-global-sensitivity-report` at `schema_version: 1` while
+  `morris-elementary-effects` remains the independent scientific method value.
+- A UI-neutral TypeScript parser consumes the golden fixture into immutable
+  typed source/target/effect/denominator objects. It rejects unknown fields,
+  coercive or non-finite values, unsupported vocabulary, broken source loci,
+  units/frames/bounds, invalid Morris seed/grid/sample provenance, duplicate or
+  inconsistent factors and estimate pairs, and invalid denominator cohorts.
+- Unavailable effects must be four JSON `null` values paired with
+  `insufficient-data`/`insufficient`; available and constant effects must be
+  finite. Typed no-impact totals retain their intentional overlap with valid
+  state outputs while unavailable misses, failures, and non-finite pairs remain
+  mutually exclusive denominator cohorts.
+- This slice deliberately does not add UI, export, simulation execution, or
+  UpstreamDrift wiring owned by later R13-R15 work and PR #4280.
+
 ## 2026-08-12 Bounded Morris global-sensitivity core (#4142 R13.2-R13.4)
 
 - Exact-head CI follow-up: the hosted changed-file MyPy gate exposed five

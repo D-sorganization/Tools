@@ -11,6 +11,8 @@ import pytest
 
 from rate_of_closure.variation.simulation_types import TrialEvaluationStatus
 from shared.python.swing_sim.variation import (
+    MORRIS_REPORT_SCHEMA_ID,
+    MORRIS_REPORT_SCHEMA_VERSION,
     MorrisDesign,
     MorrisFactor,
     MorrisObservations,
@@ -269,4 +271,6 @@ def test_cross_runtime_golden_fixture_matches_serialized_report() -> None:
 
     expected = json.loads(fixture_path.read_text(encoding="utf-8"))
 
+    assert expected["schema_id"] == MORRIS_REPORT_SCHEMA_ID
+    assert expected["schema_version"] == MORRIS_REPORT_SCHEMA_VERSION
     assert report.to_json_dict() == expected

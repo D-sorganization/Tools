@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.21                                    |
-| **Spec Version**        | 1.16.21                                    |
+| **Current Version**     | 1.16.22                                    |
+| **Spec Version**        | 1.16.22                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -2922,6 +2922,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.22 | feat(rate-of-closure, #4142 R13.4): add the strict UI-neutral TypeScript consumer for the Morris global-sensitivity report, give the cross-runtime wire contract the stable `swing-sim/morris-global-sensitivity-report` identity independent of its method vocabulary, and fail closed on unknown/malformed/non-finite payloads, grid/sample provenance errors, invalid units/frames/loci/bounds, unavailable-estimate encoding, typed availability/adequacy states, and denominator inconsistencies; retain UI/export/execution and UpstreamDrift integration as follow-up scope. |
 | 2026-08-12 | 1.16.21 | feat(swing-sim, #4142 R13.2-R13.4): add deterministic validated Morris elementary-effects design/analysis contracts with registered units and finite bounds, source-locus and downstream target attribution, canonical typed hit/no-impact/failure handling, per-output availability, total typed-miss plus unavailable-miss denominators, sample-adequacy and unavailable states, uncertainty/interaction caveats, exact design provenance, JSON-safe report serialization, and a versioned cross-runtime golden fixture; retain finite no-impact state metrics without fabricating impact/shot outputs, while deferring execution adapters, UI/export, and UpstreamDrift consumption. |
 | 2026-08-11 | 1.16.20 | merge(rate-of-closure, #4279 #4280): normally merge exact variation-export child `9b45bd5beca38370c1d541f8c488ef0edad08517` first with exact workspace/toolstrip parent `983805d799b76e5e1ad1dbdc7a5ab28957d805c8` second; preserve the configured base, variation export/continuation behavior, workspace/plot/toolstrip contracts, both append-only histories, and the explicit pre-manifest boundary. |
 | 2026-08-11 | 1.16.19 | merge(rate-of-closure, #4279 #4280): normally merge exact published variation-export child `e6c7460a01082631565fb9ed48aa32538bd7772c` first with exact reconciled workspace/toolstrip parent `89af587c8f4141680bb923fc4295e261829f5c75` second while preserving PR #4280's `feat/4218-toolstrip-workspace` base and both histories; retain variation export, selected-scatter parity, linked selection, accessible evidence, and workspace behavior while inheriting the parent's exact D-plane format-repair ancestry; preserve both append-only handoffs, use one new monotonic unique SPEC version, and keep publication, protected CI, review, unresolved-thread, dependency, and release gates open. |
