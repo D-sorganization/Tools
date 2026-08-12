@@ -1,5 +1,35 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4288 receives refreshed exact #4285 parent
+
+- Open PR `#4288` retains its actual branch
+  `feat/4269-flight-ground-transfer` and base `feat/4268-ground-contract`.
+  Exact published transfer child
+  `3e6e418f98856162420dcb3f5f13dedd48d40439` is first and exact refreshed
+  ground-contract parent `7a6f31b6cb36e05f903c591e207480d36f491c4d`
+  is merged second through a normal no-ff merge.
+- The child-owned Python/TypeScript/Rust/PyO3/WASM transfer, signed terminal
+  angular state, physical contact evidence, fixtures, and cross-runtime
+  contracts remain authoritative. Parent implementation merges without
+  conflict; only SPEC, campaign-handoff, and manifest text require additive
+  reconciliation.
+- Historical PR `#4283` remains merged at reviewed head
+  `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a` and merge SHA
+  `c1827bbdc50a6e11cc475db2636b4e47a4c15416`; current live carriers remain
+  separate ancestry facts. SPEC advances uniquely to `1.16.25`, and the strict
+  manifest remains unreleased.
+- Local qualification passes 302 focused Python/PyQt tests with six explicit
+  optional native-wheel parity skips, covered independently by 137 passing
+  `tools-core` Rust library/transfer/wire tests. Rust workspace formatting and
+  warning-denying Clippy pass. All 100 focused React tests across 12 files,
+  TypeScript, zero-warning ESLint, dependency audit, and the 189-module build
+  pass. Pinned Ruff covers all 13 exact-parent Python paths, MyPy covers all
+  nine production paths, and Bandit, manifest/schema, docs governance,
+  400-line size, changed-policy, minimum-test, exact-base assertion, and diff
+  gates pass.
+- This candidate is local only. Publication, protected exact-head CI,
+  independent review, approval, and release remain open.
+
 ## 2026-08-11 #4288 receives exact reconciled #4285 parent
 
 - Live PR evidence confirms #4288 uses branch
@@ -72,6 +102,36 @@ approval, dependency integration, and release remain open.
 > Update this append-only handoff in every implementation commit and every push
 > to `main`.
 > Last updated: 2026-08-11
+
+## 2026-08-11 #4285 receives refreshed live capability carrier
+
+- Open PR `#4285` retains branch `feat/4268-ground-contract` and base
+  `feat/4197-capability-observer`. Exact published ground-contract child
+  `d36551cead67e2544cf185584bff4d070ee663b3` is first and exact refreshed
+  live capability carrier `0179abbdd8c0166f125d87e4d6ab47aeca15df40`
+  is merged second by a normal no-ff merge.
+- The strict UI-neutral `flight-to-ground/v1` schemas, canonical fixture,
+  migrations, adapters, explicit dependency, and fail-closed unimplemented-
+  physics boundary remain child-owned. Parent implementation merges without
+  conflict; only append-only handoff/SPEC histories conflict textually.
+- Historical merged PR `#4283` remains recorded at head
+  `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a` and merge SHA
+  `c1827bbdc50a6e11cc475db2636b4e47a4c15416`. Its live branch ancestry is
+  tracked separately and does not reopen or rewrite the PR.
+- SPEC advances monotonically from parent `1.16.23` to unique `1.16.24`.
+  The strict manifest records verified current published carrier heads while
+  retaining its unreleased, unprotected status.
+- Local qualification passes 256 focused Python/PyQt tests, 75 focused React
+  tests across nine files, React type-check, zero-warning lint, dependency
+  audit, and the 188-module production build. Twelve `swing-core` Rust tests,
+  workspace formatting, and warning-denying Clippy pass. Pinned Ruff checks and
+  formats all 27 exact-parent Python paths; MyPy accepts all 20 production
+  paths; Bandit, strict manifest/schema, docs governance, 400-line module
+  budget, changed-Python policy, minimum-test, exact-base assertion, and diff
+  gates pass.
+- This candidate is local only. Publication, protected exact-head CI,
+  independent review, approval, normal #4288 propagation, and release remain
+  open.
 
 ## 2026-08-11 #4285 receives exact live #4283 carrier
 
@@ -150,6 +210,30 @@ approval, dependency integration, and release remain open.
 - This is a local publication candidate only. Independent review, ordinary
   publication, fresh exact-head protected CI, required approval, and normal
   downstream #4288 propagation remain mandatory.
+## 2026-08-11 live capability carrier receives refreshed workflow parent
+
+- Historical PR `#4283` remains closed and merged at recorded head
+  `9bbb98e16e435a0d4c74153b909f2ebfefbbce7a` and merge SHA
+  `c1827bbdc50a6e11cc475db2636b4e47a4c15416`; it is not reopened or rewritten.
+- Preserved live carrier branch `feat/4197-capability-observer` starts from exact
+  child `6d10afb184ff79b11be0bdeb6bc2722b3c7d8912` and normally merges exact
+  refreshed workflow parent `51033696634c624f7c92c3822d98a66875ff90a0`
+  second, retaining child-first topology.
+- Capability-observer functionality and history remain authoritative while the
+  refreshed #4279–#4282 chain is inherited. Implementation and tests merge
+  automatically; only append-only handoff/SPEC histories conflict textually.
+- SPEC advances from `1.16.22` to unique `1.16.23`. The strict manifest keeps
+  historical #4283 identity distinct from current live-branch ancestry and
+  remains unreleased.
+- Local qualification passes 145 focused Python/PyQt tests and 75 focused
+  React tests across nine files, plus React type-check, zero-warning lint, and
+  the 188-module production build. Pinned Ruff check/format, MyPy, Bandit,
+  strict manifest/schema, docs governance, module-size, minimum-test, and diff
+  gates pass. The capability observation JSON boundary now explicitly narrows
+  its untyped imported serializer result to the declared `str` contract.
+- This candidate is local only. No PR is reopened, and no remote, branch base,
+  issue state, protected evidence, approval, or release is changed or claimed.
+
 ## 2026-08-11 #4283 carrier receives exact reconciled #4282 parent
 
 - Historical PR `#4283` remains merged at its recorded reviewed head, while
@@ -196,6 +280,36 @@ approval, dependency integration, and release remain open.
 - Publication is explicitly outside this bounded audit;
   protected current-head checks and ordinary dependency propagation into #4285
   remain separate future actions.
+## Inherited refreshed workflow parent history
+
+## 2026-08-11 #4282 receives refreshed exact #4281 parent
+
+- PR `#4282` retains branch `feat/4199-wind-workflow` and base
+  `feat/4199-wind-scalar-adapter`. Exact published workflow child
+  `8c6105d865abe130a68cfa35ffe6afb7eef850c8` is merged first and exact refreshed
+  #4281 parent `73b7f6b45063ec71fa300a39d2185d3f935187b7`
+  second through a normal no-ff merge.
+- Responsive PyQt6/React wind execution, progress, cancellation, controls,
+  scatter, persistence/export, and capability integration remain child-owned.
+  All implementation and tests merge automatically while refreshed
+  scalar-adapter, variation-export, and workspace ancestry is inherited.
+- The append-only root/campaign handoffs and SPEC are reconciled additively;
+  module handoff and manifest merge automatically. SPEC advances from
+  `1.16.21` to unique `1.16.22`.
+- The strict manifest records the currently published #4279–#4282 chain and
+  remains explicitly unreleased. It does not self-reference this future local
+  merge commit.
+- This candidate is local only. No rebase, retarget, force-push, parent rewrite,
+  remote publication, protected evidence, approval, issue closure, or release
+  is performed or claimed.
+- Local evidence is green: pinned Ruff 0.14.10 check/format on 57 Python files,
+  pinned MyPy 1.13 on 38 production files, Bandit at the medium/high threshold,
+  150 focused Python/PyQt tests, 56 focused React tests, TypeScript,
+  zero-warning ESLint, the 188-module Vite build, strict manifest/schema,
+  documentation governance, 500-line budget, changed-Python policy,
+  minimum-test contract, and diff hygiene. Independent review and fresh
+  protected exact-head CI remain required.
+
 ## 2026-08-11 #4282 receives exact reconciled #4281 parent
 
 - PR `#4282` retains branch `feat/4199-wind-workflow` and base
@@ -270,6 +384,33 @@ approval, dependency integration, and release remain open.
 - This is a local reconciliation candidate. Independent review, fresh
   exact-head protected CI, unresolved-thread checks, dependency order, and
   ordinary publication remain required.
+## Inherited refreshed #4281 parent history
+
+## 2026-08-11 #4281 receives refreshed exact #4280 parent
+
+- PR `#4281` retains branch `feat/4199-wind-scalar-adapter` and base
+  `feat/4144-variation-export-continuation`. Exact published child
+  `e934ba563a79bf95ee892fea8593972c81299eeb` is merged first and exact newly
+  published #4280 parent `7fb5d7f489db49742b7bc82ef009570ad2502456`
+  second through a normal no-ff merge.
+- All implementation and test paths merge automatically. The child remains
+  authoritative for Python/TypeScript `scalar-ensemble/v1`, deterministic wind
+  scenarios, and wind-strategy adaptation while inheriting the parent's current
+  variation export and workspace/toolstrip ancestry.
+- Only the three append-only handoffs and `SPEC.md` conflict textually; every
+  dated record is retained. `SPEC.md` advances from the parent's `1.16.20` to
+  unique `1.16.21`. The campaign manifest artifact/checker/test remain absent
+  from both sides of this pre-manifest stack and are not recreated.
+- This candidate is local only. No branch, PR base, remote, issue state,
+  protected evidence, approval, or release claim is changed.
+- Local evidence is green: pinned Ruff 0.14.10 check/format across the exact
+  five-file Python delta, pinned MyPy 1.13 and Bandit across three production
+  files, 101 focused Python/PyQt wind/variation/workspace tests, 18 focused
+  React tests, TypeScript, zero-warning ESLint, the 166-module Vite build,
+  documentation governance, 500/400-line budgets, changed-Python policy, and
+  diff hygiene. Independent review and fresh protected exact-head CI remain
+  required.
+
 ## 2026-08-11 #4281 receives exact reconciled #4280 parent
 
 - PR `#4281` retains branch `feat/4199-wind-scalar-adapter` and base
@@ -350,6 +491,27 @@ approval, dependency integration, and release remain open.
 - This reconciliation is local only. Independent review, fresh exact-head CI,
   unresolved-thread checks, dependency order, and ordinary publication remain
   required before merge or release.
+## Inherited refreshed #4280 parent history
+
+## 2026-08-11 current workspace parent propagation (#4279 → #4280)
+
+- PR `#4280` remains on `feat/4144-variation-export-continuation`, based on
+  `feat/4218-toolstrip-workspace`; neither branch nor PR base is rewritten.
+- Exact clean child head `9b45bd5beca38370c1d541f8c488ef0edad08517`
+  is merged normally, child first, with exact parent head
+  `983805d799b76e5e1ad1dbdc7a5ab28957d805c8`.
+- Variation scatter CSV parity, typed unavailable outcomes, bounded accessible
+  trial tables, linked selection, and all-trial arc analysis remain unchanged
+  alongside the inherited workspace/toolstrip and registry/D-plane contracts.
+- This remains a pre-manifest stack: the later strict campaign release
+  manifest artifact/checker/test exists on neither side and is not recreated.
+  Both histories are retained under a monotonic `1.16.20` through `1.16.0`
+  sequence. Pinned Ruff `0.14.10` check/format is green across all five changed
+  Python files; 87 focused Python and 25 focused React tests pass. React
+  type-check, lint, and production build plus documentation, minimum-test,
+  changed-file-size, module-size, SPEC-version, and diff gates are green.
+  Protected checks, review, and parent-first release order remain mandatory.
+
 ## 2026-08-11 #4280 receives exact reconciled #4279 parent
 
 - PR `#4280` retains branch `feat/4144-variation-export-continuation` and base
@@ -414,6 +576,25 @@ approval, dependency integration, and release remain open.
 - This reconciliation is local only. Independent review, fresh exact-head
   protected CI, unresolved-thread checks, dependency order, and ordinary
   publication remain required before merge or release.
+## 2026-08-11 current registry parent propagation (#4203 → #4279)
+
+- PR `#4279` remains on `feat/4218-toolstrip-workspace`, based on
+  `feat/4181-launch-monitor-registry`; neither branch nor PR base is rewritten.
+- Exact clean child head `89af587c8f4141680bb923fc4295e261829f5c75`
+  is merged normally, child first, with exact parent head
+  `1e29c6e52169de5d984144af29664c0419b51a21`.
+- Workspace documents, File/View/Tools commands, module visibility/order,
+  Impact/Swing/Flight navigation, deterministic playback, and independent plot
+  controls remain unchanged alongside the inherited registry/D-plane history.
+- This remains a pre-manifest stack: the later strict campaign release
+  manifest artifact/checker/test exists on neither side and is not recreated.
+  Both histories are retained under a monotonic `1.15.12` through `1.15.0`
+  sequence. Pinned Ruff `0.14.10` check/format is green across all 27 changed
+  Python files; 142 focused Python and 32 focused React tests pass. React
+  type-check, lint, and production build plus documentation, minimum-test,
+  changed-file-size, module-size, SPEC-version, and diff gates are green.
+  Protected checks, review, and parent-first release order remain mandatory.
+
 ## 2026-08-11 #4279 receives exact reconciled #4203 parent
 
 - PR #4279 keeps branch `feat/4218-toolstrip-workspace` and configured base
@@ -504,6 +685,25 @@ approval, dependency integration, and release remain open.
   size-budget repair.
 - This merge is local only. Fresh exact-head protected CI, review, unresolved
   threads, and dependency gates remain required before publication or merge.
+## 2026-08-11 current D-plane parent propagation (#4202 → #4203)
+
+- PR `#4203` remains on `feat/4181-launch-monitor-registry`, based on
+  `feat/4189-dplane`; neither branch nor PR base is rewritten.
+- Exact clean child head `9ce2c70f11a15420f0ba2d3b4fef6726b6eacefa`
+  is merged normally with exact parent head
+  `9f83cd379ce8ae2805aa4a5608b5645a529f9c3c`.
+- Launch-monitor convention/analytics registries, cross-runtime golden fixture,
+  D-plane ndarray repair, split typed kinetics façade, and pinned Ruff
+  `0.14.10` files remain unchanged. The strict campaign release manifest is
+  still absent from this exact history and is not reconstructed here.
+- Both handoff histories and the parent's seven post-base SPEC records are
+  retained additively under new monotonic `1.14.x` revisions. Pinned Ruff
+  `0.14.10` check/format is green across 18 registry, analytics, D-plane,
+  delivery, and kinetics files; 79 focused Python and 31 focused React tests
+  pass. Documentation, minimum-test, changed-file-size, module-size,
+  SPEC-version, and diff gates are also green. Protected checks, review, and
+  parent-first release order remain mandatory.
+
 ## 2026-08-11 #4203 receives exact current #4202 format repair
 
 - Draft PR #4203 keeps branch `feat/4181-launch-monitor-registry` and base
@@ -1336,6 +1536,23 @@ for both changed test modules. The frozen-dataclass assertion casts only its
 introspection target to `Any`, matching the later carrier boundary while
 retaining the runtime assertion. The minimal WSL environment reports only
 unknown-option warnings for intentionally omitted optional pytest plugins.
+## 2026-08-11 pinned-Ruff parent propagation (#4179 → #4202)
+
+- Child PR `#4202` remains on `feat/4189-dplane`, based on
+  `feat/4162-wedge-impact-visualization`; neither branch nor PR base is
+  rewritten.
+- Exact clean child head `ba4aa35cc384d51ed3aa52eb532a67e960669c27`
+  is merged normally with exact parent head
+  `7e5dfecf569b39dbbf8cc2101c7426cbc53a2771`.
+- The D-plane ndarray typing repair, frame-explicit geometry, pinned Ruff
+  `0.14.10` files, and all impact, wedge/turf, handoff, campaign, and SPEC
+  histories remain additive. No physics, frame, validation, API, schema,
+  persistence, test, export, or UI behavior changes.
+- Pinned Ruff `0.14.10` check/format verification and 129 focused D-plane,
+  impact, solver, kinetics, PyQt, and layout tests are green. Documentation,
+  minimum-test, SPEC-version, and diff gates are also green. Protected checks,
+  review, and parent-first release order remain mandatory.
+
 ## 2026-08-11 PR #4202 pinned-Ruff format repair
 
 - Exact published head `f3363aa88868f6a5c7e9ccfc682a9eca014e86c1`
@@ -1396,6 +1613,22 @@ unknown-option warnings for intentionally omitted optional pytest plugins.
   applicable because this child has no Rust delta. The inherited broad MyPy
   baseline remains 17 Qt/NumPy typing findings in 11 untouched files.
   Protected CI and required review remain release gates.
+## 2026-08-11 pinned-Ruff parent propagation (#4178 → #4179)
+
+- Child PR `#4179` remains on `feat/4162-wedge-impact-visualization`, based on
+  `feat/4166-wedge-turf-physics`; neither branch nor PR base is rewritten.
+- Exact clean child head `ea7acebf033379d6beefd70eb51027ebd3d01be7`
+  is merged normally with exact parent head
+  `188f491ccc88a335ad36afdd66b52289e2e24808`.
+- The inherited Ruff `0.14.10` formatting and all visualization, turf, wedge,
+  Rate, handoff, campaign, and SPEC histories remain additive. No physics,
+  frame, validation, calibration, API, schema, persistence, test, export, or UI
+  behavior changes.
+- Pinned Ruff `0.14.10` check/format verification and 130 focused impact-scene,
+  solver, kinetics, PyQt/layout, wedge-clearance, and turf-model tests are
+  green. Documentation, minimum-test, SPEC-version, and diff gates are also
+  green. Protected checks, review, and parent-first release order remain
+  mandatory.
 
 ## 2026-08-11 PR #4179 pinned-Ruff format repair
 
@@ -1426,7 +1659,35 @@ unknown-option warnings for intentionally omitted optional pytest plugins.
   applicable because this child has no Rust delta. The inherited broad MyPy
   baseline remains 17 Qt/NumPy typing findings in 11 untouched files.
   Protected CI and required review remain release gates.
+## 2026-08-11 pinned-Ruff parent propagation (#4174 → #4178)
 
+- Child PR `#4178` remains on `feat/4166-wedge-turf-physics`, based on
+  `feat/4161-wedge-ground-clearance`; neither branch nor PR base is rewritten.
+- Exact clean child head `ca567fe7d3fa48b1900ad3098045f4200cfe86a7`
+  is merged normally with exact parent head
+  `3e1b44cf42f4c0838149e0bc8e88ce4cb79b72b0`.
+- The inherited Ruff `0.14.10` formatting and all wedge, turf, Rate, handoff,
+  campaign, and SPEC histories remain additive. No physics, frame, validation,
+  calibration, API, schema, persistence, test, or UI behavior changes.
+- Workflow-pinned Ruff check/format and 127 focused turf, wedge, impact,
+  kinetics, PyQt, and layout tests are green. Documentation, minimum-test,
+  SPEC-version, and diff gates are also green. Protected checks, review, and
+  parent-first release order remain mandatory.
+
+## 2026-08-11 pinned-Ruff parent propagation (#4173 → #4174)
+
+- Child PR `#4174` remains on `feat/4161-wedge-ground-clearance`, based on
+  `feat/4163-impact-inspector`; neither branch nor PR base is rewritten.
+- Exact clean child head `01ecf9a7b1922d1609fb99093226799a0b564704`
+  is merged normally with exact parent head
+  `bd48852d303db6281ed5891d4a271d99e76a94e6`.
+- The inherited Ruff `0.14.10` formatting and parent handoff/spec history stay
+  additive to the existing swept wedge ground-clearance contracts. No physics,
+  frame, validation, API, schema, test, persistence, or UI behavior changes.
+- Workflow-pinned Ruff check/format and 98 focused impact, kinetics, wedge,
+  PyQt, and layout tests are green. Documentation, minimum-test, SPEC-version,
+  and diff gates are also green. Protected checks, review, and parent-first
+  release order remain gates.
 ## 2026-08-11 PR #4178 pinned-Ruff format repair
 
 - Exact published head `b8822401f4522e867d6b160125953981a39a770d`
@@ -1486,7 +1747,6 @@ unknown-option warnings for intentionally omitted optional pytest plugins.
   inherited broad MyPy baseline is 17 Qt/NumPy typing findings in 11 untouched
   files and remains outside this propagation scope. Protected CI and review
   remain release gates.
-
 ## 2026-08-10 Parent Repair Propagation (#4167 → #4173)
 
 - Child PR `#4173` remains on `feat/4163-impact-inspector`, based on
@@ -1510,6 +1770,19 @@ unknown-option warnings for intentionally omitted optional pytest plugins.
 - Every implementation commit must update this file, the Rate handoff, the
   campaign handoff, and `SPEC.md`, or explicitly record why there is no
   material handoff change.
+
+## 2026-08-11 pinned-Ruff parent propagation
+
+- Exact published head `3c19aaa9d3e812e4659053735a2955d62a080d34`
+  has the same five-file Ruff `0.14.10` format mismatch proven by child CI.
+- Those files are mechanically formatted with the workflow-pinned version.
+  No variation, impact, plotting, persistence, API, schema, test, or UI
+  behavior changes; this is not completion of issue `#4144`.
+- No material handoff behavior changed. Protected CI and the ordinary carrier
+  into `feat/impact-simulation-platform` remain release gates.
+
+The formatted parent is merged normally into the impact-inspector child; no
+impact-inspection or variation behavior changes.
 
 ## Where This Repo Is Headed
 
