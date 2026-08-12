@@ -76,6 +76,29 @@ def test_store_round_trips_only_validated_job_bound_records(tmp_path: Path) -> N
     store.close()
 
 
+def test_store_replace_removes_only_unretained_records(tmp_path: Path) -> None:
+    path = tmp_path / "authority-jobs.v1.sqlite3"
+    first_job = _job("first-ground-job")
+    second_job = _job("second-ground-job")
+    first = RetainedAuthorityJob(
+        first_job,
+        _snapshot(AuthorityJobStatus.SUCCEEDED, first_job),
+        _result(first_job),
+    )
+    second = RetainedAuthorityJob(
+        second_job,
+        _snapshot(AuthorityJobStatus.SUCCEEDED, second_job),
+        _result(second_job),
+    )
+    store = AuthorityJobStore(path, max_retained_jobs=4)
+    store.replace((first, second))
+
+    store.replace((second,))
+
+    assert store.load() == (second,)
+    store.close()
+
+
 def test_store_rejects_corruption_without_replacing_last_good_state(
     tmp_path: Path,
 ) -> None:

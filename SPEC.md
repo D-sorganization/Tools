@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.92                                    |
-| **Spec Version**        | 1.14.92                                    |
+| **Current Version**     | 1.14.93                                    |
+| **Spec Version**        | 1.14.93                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -72,6 +72,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
 - The deterministic authority fixture generator types every generated failure
   stage against the shared wire literal union, preserving pinned MyPy 1.13 and
   newer-type-checker parity without changing canonical fixture bytes.
+- Durable retention removes obsolete jobs through one static parameterized
+  delete statement per stored identifier. SQL text never depends on retained
+  job count or identifiers, and the complete replacement remains atomic.
 - This qualification applies to the source-loopback authority only. Static-host
   companion discovery, frozen executables, PyQt's direct worker, installed ACL
   qualification, automatic replay, measured calibration, compiled regional

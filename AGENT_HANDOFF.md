@@ -38,6 +38,13 @@ types that matrix against the shared wire literal union; fixture bytes and all
 runtime behavior remain unchanged. The exact pinned CI MyPy command, fixture
 check, Ruff/format, and manifest gates pass locally before the follow-up push.
 
+The next exact-head #4376 gate passed checkout, dependencies, Ruff, format,
+pinned MyPy, and quality policies, then Bandit rejected the retention cleanup's
+dynamically sized parameter-placeholder SQL. The correction reads bounded
+stored identifiers and deletes obsolete rows with one static parameterized
+statement via `executemany`; transaction rollback and retained-row identity
+remain covered. This is an actionable security-gate fix, not a CI retry.
+
 Local gates are green: 1,252 Rate-of-Closure Python/PyQt tests plus one
 Windows-skipped POSIX-permission test with eight workers; 137 React files and
 909 tests; TypeScript; zero-warning ESLint; the production Vite build; 74

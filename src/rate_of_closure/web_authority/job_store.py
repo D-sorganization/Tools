@@ -211,13 +211,11 @@ class AuthorityJobStore:
         connection: sqlite3.Connection,
         retained: tuple[RetainedAuthorityJob, ...],
     ) -> None:
-        if not retained:
-            connection.execute("DELETE FROM retained_jobs")
-            return
-        placeholders = ",".join("?" for _record in retained)
-        connection.execute(
-            f"DELETE FROM retained_jobs WHERE job_id NOT IN ({placeholders})",
-            tuple(record.job.job_id for record in retained),
+        retained_ids = {record.job.job_id for record in retained}
+        stored_ids = connection.execute("SELECT job_id FROM retained_jobs").fetchall()
+        connection.executemany(
+            "DELETE FROM retained_jobs WHERE job_id = ?",
+            ((job_id,) for (job_id,) in stored_ids if job_id not in retained_ids),
         )
 
     def _configure(self) -> None:
