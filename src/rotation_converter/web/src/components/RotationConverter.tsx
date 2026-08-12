@@ -80,8 +80,9 @@ export function RotationConverter() {
                 )}
 
                 <div>
-                    <label className="block text-sm text-slate-300 mb-1">Input Type</label>
+                    <label htmlFor="rotation-input-type" className="block text-sm text-slate-300 mb-1">Input Type</label>
                     <select
+                        id="rotation-input-type"
                         value={inputType}
                         onChange={(e) => setInputType(e.target.value)}
                         className="w-full bg-slate-700 rounded px-3 py-2 border border-slate-600 focus:border-blue-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -118,8 +119,9 @@ export function RotationConverter() {
                 {inputType === 'euler' && (
                     <div className="space-y-4">
                         <div>
-                            <label className="block text-sm text-slate-300 mb-1">Convention</label>
+                            <label htmlFor="euler-convention" className="block text-sm text-slate-300 mb-1">Convention</label>
                             <input
+                                id="euler-convention"
                                 type="text"
                                 value={eulerConvention}
                                 onChange={(e) => setEulerConvention(e.target.value)}

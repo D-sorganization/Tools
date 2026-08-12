@@ -22,6 +22,17 @@ const IDENTITY_3X3 = [
   [0, 0, 1],
 ];
 
+const TWIST_ACCESSIBLE_LABELS = [
+  "Twist angular velocity x",
+  "Twist angular velocity y",
+  "Twist angular velocity z",
+  "Twist linear velocity x",
+  "Twist linear velocity y",
+  "Twist linear velocity z",
+] as const;
+
+const AXES = ["x", "y", "z"] as const;
+
 export function ReferenceFrameConverter() {
   const [operation, setOperation] = useState<Operation>("twist_frame_conversion");
   const [transform, setTransform] = useState<number[][]>(IDENTITY_4X4);
@@ -80,11 +91,14 @@ export function ReferenceFrameConverter() {
           Reference-Frame Operations
         </h2>
 
-        {error && <div className="bg-red-900/40 border border-red-500 rounded p-3 text-red-200">{error}</div>}
+        {error && <div role="alert" className="bg-red-900/40 border border-red-500 rounded p-3 text-red-200">{error}</div>}
 
         <div>
-          <label className="block text-sm text-slate-300 mb-1">Operation</label>
+          <label htmlFor="reference-frame-operation" className="block text-sm text-slate-300 mb-1">
+            Operation
+          </label>
           <select
+            id="reference-frame-operation"
             value={operation}
             onChange={(event) => setOperation(event.target.value as Operation)}
             className="w-full bg-slate-700 rounded px-3 py-2 border border-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
@@ -119,7 +133,7 @@ export function ReferenceFrameConverter() {
                   key={i}
                   type="number"
                   value={entry}
-                  aria-label={`Twist component ${['ωx', 'ωy', 'ωz', 'vx', 'vy', 'vz'][i]}`}
+                  aria-label={TWIST_ACCESSIBLE_LABELS[i]}
                   onChange={(event) => {
                     const next = [...twist];
                     next[i] = Number(event.target.value);
@@ -158,7 +172,7 @@ export function ReferenceFrameConverter() {
                   key={i}
                   type="number"
                   value={entry}
-                  aria-label={`Translation component ${['x', 'y', 'z'][i]}`}
+                  aria-label={`Translation component ${AXES[i]}`}
                   onChange={(event) => {
                     const next = [...translation];
                     next[i] = Number(event.target.value);
@@ -180,7 +194,7 @@ export function ReferenceFrameConverter() {
                   key={i}
                   type="number"
                   value={entry}
-                  aria-label={`so(3) vector component ${['x', 'y', 'z'][i]}`}
+                  aria-label={`Rotation vector component ${AXES[i]}`}
                   onChange={(event) => {
                     const next = [...so3Vector];
                     next[i] = Number(event.target.value);

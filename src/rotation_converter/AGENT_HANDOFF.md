@@ -1,7 +1,22 @@
 # AGENT_HANDOFF — rotation_converter
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-12
+
+## 2026-08-12 — PR #4389 Accessible Input Names
+
+Open PR #4389 on `palette-aria-labels-matrices-3953280844180552522`
+targets `main`. Every dynamic rotation, transform-matrix, twist, translation,
+and rotation-vector number field now has a descriptive accessible name.
+Symbolic twist labels are expanded to angular/linear velocity plus axis, and
+the operation, input-type, and Euler-convention visible labels are explicitly
+bound to their controls. The Palette learning date is corrected to 2026.
+
+TDD evidence: the new accessibility query failed against the original
+symbolic names, then all five focused React tests passed after the production
+labels were clarified. TypeScript, zero-warning ESLint, and the 29-module Vite
+production build pass. Human review is approved, but fresh final-head protected
+checks and ordinary non-admin merge behavior remain mandatory.
 
 ## Where This Tool Is Headed
 
