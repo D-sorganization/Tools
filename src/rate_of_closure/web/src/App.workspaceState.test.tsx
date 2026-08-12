@@ -94,4 +94,38 @@ describe("App regional-ground variation workspace ownership", () => {
     expect(await screen.findByText("persistent-job.json")).toBeInTheDocument();
     expect(screen.getByText(executionJobFixture.job.job_sha256)).toBeInTheDocument();
   });
+
+  it("retains the App-owned current flight launch editor across navigation", () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("tab", { name: "Flight Explorer" }));
+    const launchAngle = screen.getByLabelText("Launch Angle");
+    fireEvent.focus(launchAngle);
+    fireEvent.change(launchAngle, { target: { value: "14.25" } });
+    fireEvent.blur(launchAngle);
+    fireEvent.click(screen.getByRole("radio", { name: "Ground" }));
+
+    fireEvent.click(screen.getByRole("tab", { name: "Variation" }));
+    fireEvent.click(screen.getByRole("tab", { name: "Flight Explorer" }));
+
+    expect(screen.getByLabelText("Launch Angle")).toHaveValue("14.25");
+    expect(screen.getByRole("radio", { name: "Ground" })).toBeChecked();
+  });
+
+  it("keeps the app available and disables preparation for an invalid launch draft", () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole("tab", { name: "Flight Explorer" }));
+    const launchAngle = screen.getByLabelText("Launch Angle");
+    fireEvent.focus(launchAngle);
+    fireEvent.change(launchAngle, { target: { value: "100" } });
+    fireEvent.blur(launchAngle);
+
+    expect(screen.getByRole("tab", { name: "Ground Playback" })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole("tab", { name: "Ground Playback" }));
+    expect(screen.getByRole("button", { name: "Prepare Current Job" })).toBeDisabled();
+    expect(screen.getByText(
+      /Current-editor preparation is unavailable until/,
+    )).toHaveTextContent(
+      "launch and variation editors form one valid strict authority request",
+    );
+  });
 });

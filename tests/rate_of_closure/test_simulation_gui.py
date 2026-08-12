@@ -88,8 +88,38 @@ class TestSimulationTab:
 
     def test_run_populates_launch_rows(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         assert isinstance(ran_tab.last_run(), SimulationRun)
+        assert ran_tab.current_completed_hit() is ran_tab.last_run()
         for field, _label, _unit in LAUNCH_ROWS:
             assert ran_tab._rows[field].value_label.text() != "—", field
+
+    def test_editor_change_invalidates_current_hit_without_discarding_history(
+        self, ran_tab
+    ) -> None:  # type: ignore[no-untyped-def]
+        historical = ran_tab.last_run()
+
+        ran_tab._tilt_spins["yaw_deg"].setValue(1.0)
+
+        assert ran_tab.last_run() is historical
+        assert ran_tab.current_completed_hit() is None
+
+    def test_scenario_and_joint_lock_signal_paths_invalidate_current_hit(
+        self, ran_tab
+    ) -> None:  # type: ignore[no-untyped-def]
+        historical = ran_tab.last_run()
+
+        ran_tab.set_scenario(ImpactScenario(clubhead_speed_mph=105.0))
+
+        assert ran_tab.last_run() is historical
+        assert ran_tab.current_completed_hit() is None
+
+        ran_tab.run_now()
+        assert ran_tab.current_completed_hit() is ran_tab.last_run()
+        first_lock = next(
+            iter(ran_tab._torque_profile_panel.joint_lock_checkboxes().values())
+        )
+        first_lock.setChecked(True)
+
+        assert ran_tab.current_completed_hit() is None
 
     def test_clicking_launch_row_shows_explanation(self, ran_tab) -> None:  # type: ignore[no-untyped-def]
         ran_tab._rows["carry_m"].clicked.emit("carry_m")

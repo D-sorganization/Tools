@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.88                                    |
-| **Spec Version**        | 1.14.88                                    |
+| **Current Version**     | 1.14.89                                    |
+| **Spec Version**        | 1.14.89                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,46 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Current-editor regional-ground job preparation
+
+- Python is the sole authority that turns an exact current launch and validated
+  regional-ground variation request into an executable job. It recomputes the
+  registered Waterloo/Penner surface-contact trajectory, derives both flight
+  digests, translates the regional surface into launch-origin coordinates, and
+  derives all job/provenance digests. Browser code validates and transports the
+  strict request and response but performs no preparation physics.
+- Preparation is distinct from execution. The authenticated preparation route
+  does not retain, enqueue, or run a job. Both clients install the fully
+  validated candidate for review, clear confirmation, and require the existing
+  explicit Run action before submission.
+- The versioned preparation profile visibly discloses its flight settings,
+  transfer limits, capture threshold, callback-free regional solver settings,
+  and explicitly unvalidated zero-confidence editor-surface calibration. It
+  does not claim measured calibration. Every identity and numerical bound is
+  validated when the immutable profile is constructed.
+- PyQt accepts only a successful Simulation result that is still current for
+  every editor. Configuration changes or failed/missed reruns preserve playback
+  history but remove that run's authority for job preparation. Ground/Tee setup
+  is preserved exactly in the prepared launch.
+- Both Python clients enforce the preparation postcondition: the returned job
+  must match the captured job ID, launch, and variation request exactly. React
+  additionally rejects a substituted response and turns an invalid editable
+  launch draft into an accessible unavailable-preparation state rather than an
+  application render failure.
+- The React meteorological-bearing adapter negates its angle only at the legacy
+  Python scalar-wind boundary, preserving the canonical flight-frame wind-to
+  vector for both right and left crosswinds.
+- Version 1 rejects unresolved variable-wind scenarios, unsupported flight
+  identities, illustrative or unvalidated regional editor state, mismatched
+  Simulation/variation models, and malformed, duplicate, non-SI, or oversized
+  request documents. Preparation failure preserves the previously accepted job
+  and result and exposes no private exception detail.
+- Durable authority restart recovery, static-host execution, frozen PyQt
+  qualification, cooperative cancellation during flight recomputation,
+  compiled/TypeScript regional physics, measured calibration, and downstream
+  UpstreamDrift parity remain outside this slice and keep #4369/#4273/#4267
+  open.
 
 ### 2026-08-11 Qualified Local-Authority Admission
 
@@ -3438,6 +3478,8 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.89 | feat(ground-study, #4369): add a strict bounded current-editor preparation request, registered Python flight recomputation and canonical job construction, authenticated no-enqueue preparation API, transactional PyQt6 and React preparation/review workflows with explicit separate Run confirmation, complete current-hit staleness protection, bounded preparation profiles, substituted-response rejection, cross-runtime meteorological wind parity, render-safe invalid-editor handling, full numerical/calibration disclosure, and exact failure preservation; retain restart/static/frozen/compiled/downstream/release limitations. |
+| 2026-08-11 | 1.14.88 | fix(ground-study, #4369): leave each visible React import button as the sole accessible action by making its programmatically activated file input truly hidden, preserving strict import behavior and workspace state. |
 | 2026-08-11 | 1.14.87 | fix(ground-study, #4369): complete the PyQt6 toolstrip host protocol with the four strict execution-job/result file callbacks required by its contextual command group, restoring the pinned MyPy 1.13 changed-source gate without changing runtime behavior. |
 | 2026-08-11 | 1.14.86 | fix(web-authority, #4369): preserve strict loopback URL and ephemeral-token validation while returning the mutable proxy adapter required by Vite 7, restoring the integrated authority-backed web launcher without exposing the token to browser code. |
 | 2026-08-11 | 1.14.85 | feat(ground-study, #4369): add matched strict imported-job execution workflows with App-owned React Run/Cancel/reconciliation and canonical downloads, a dedicated source-qualified PyQt6 Ground Study workspace with QThread lifecycle and atomic JSON/CSV persistence, shared contextual File commands, and explicit static/frozen/editor-construction/restart/downstream/release limitations. |

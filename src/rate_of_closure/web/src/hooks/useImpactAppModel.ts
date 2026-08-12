@@ -4,6 +4,12 @@ import type { UnitSelections } from "../components/ImpactExplorerPanel";
 import { getClub, type ClubSpec } from "../model/club";
 import { generatedHeadFor, type GeneratedHead } from "../model/clubHeadGeneration";
 import { DEFAULT_SCENARIO, type ImpactScenario } from "../model/impact";
+import {
+  DEFAULT_FLIGHT_EXPLORER_DRAFT,
+  executionLaunchForFlightExplorerDraft,
+  type FlightExplorerDraft,
+} from "../model/flightPreparationLaunch";
+import type { ExecutionJobLaunch } from "../model/regionalGroundExecutionJob";
 import type { SpatialTargetTs } from "../model/spatialTarget";
 import { DEFAULT_TARGET, spatialTargetFromRegion } from "../model/targets";
 
@@ -22,6 +28,9 @@ export interface ImpactAppModel {
   readonly setExplained: Dispatch<SetStateAction<string>>;
   readonly glossaryTerm: string | undefined;
   readonly setGlossaryTerm: Dispatch<SetStateAction<string | undefined>>;
+  readonly flightExplorerDraft: FlightExplorerDraft;
+  readonly setFlightExplorerDraft: Dispatch<SetStateAction<FlightExplorerDraft>>;
+  readonly flightPreparationLaunch: ExecutionJobLaunch | null;
 }
 
 const DEFAULT_UNITS: UnitSelections = {
@@ -42,9 +51,23 @@ export function useImpactAppModel(): ImpactAppModel {
   const [clubSpec, setClubSpec] = useState(defaultDriver);
   const [explained, setExplained] = useState("pathDeviationDeg");
   const [glossaryTerm, setGlossaryTerm] = useState<string>();
+  const [flightExplorerDraft, setFlightExplorerDraft] = useState(
+    DEFAULT_FLIGHT_EXPLORER_DRAFT,
+  );
+  const flightPreparationLaunch = useMemo(
+    () => {
+      try {
+        return executionLaunchForFlightExplorerDraft(flightExplorerDraft);
+      } catch {
+        return null;
+      }
+    },
+    [flightExplorerDraft],
+  );
   return {
     scenario, setScenario, spatialTarget, setSpatialTarget, units, setUnits,
     generatedHead, setGeneratedHead, clubSpec, setClubSpec, explained,
-    setExplained, glossaryTerm, setGlossaryTerm,
+    setExplained, glossaryTerm, setGlossaryTerm, flightExplorerDraft,
+    setFlightExplorerDraft, flightPreparationLaunch,
   };
 }

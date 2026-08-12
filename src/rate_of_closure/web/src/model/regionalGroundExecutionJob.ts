@@ -164,7 +164,10 @@ const parseBallSetupWire = (value: unknown): WireObject => {
   return deepFreeze(ballSetupToJson(parsed));
 };
 
-const parseLaunch = (value: unknown): ExecutionJobLaunch => {
+/** Parse and deeply freeze the launch mapping shared by execution and preparation wires. */
+export const parseRegionalGroundExecutionLaunch = (
+  value: unknown,
+): ExecutionJobLaunch => {
   const item = record(value, "launch");
   exact(item, LAUNCH_FIELDS, "launch");
   const spinAxis = vector(item.spin_axis_unit, "spin_axis_unit");
@@ -318,7 +321,7 @@ export const parseRegionalGroundExecutionJob = (
   if (options.max_trials !== integer(variationPlan.n_runs, "variation n_runs", 1)) {
     throw new RangeError("max_trials must equal variation request n_runs");
   }
-  const launch = parseLaunch(item.launch);
+  const launch = parseRegionalGroundExecutionLaunch(item.launch);
   const transfer = parseTransfer(item.transfer);
   const sourcePlan = record(variation.regional_plan, "regional_plan");
   const qualified = parseQualifiedExecutionAuthority(

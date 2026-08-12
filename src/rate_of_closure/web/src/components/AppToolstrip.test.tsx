@@ -60,7 +60,9 @@ const executionWorkspace = (): RegionalGroundExecutionWorkspace => {
       submit: vi.fn(), cancel: vi.fn(), reconcile: vi.fn(), reset: vi.fn(),
     },
     acceptedJob: null, sourceName: null, confirmed: false,
-    importFile: vi.fn(), setConfirmed: vi.fn(), clear: vi.fn(), run: vi.fn(),
+    importFile: vi.fn(), preparationAvailable: false, preparedJobStale: false,
+    prepareCurrentJob: vi.fn(),
+    setConfirmed: vi.fn(), clear: vi.fn(), run: vi.fn(),
   };
 };
 

@@ -11,12 +11,20 @@
 
 import { lazy, Suspense, useState } from "react";
 
+import { BallSetupControl } from "./BallSetupControl";
 import { DecimalInput } from "./DecimalInput";
 import { FieldInfo } from "./FieldInfo";
 import { FlightCanvases } from "./FlightCanvases";
 import { FlightPlayback3D } from "./FlightPlayback3D";
 import { SpatialTargetSection } from "./SpatialTargetSection";
 import type { Launch } from "../model/flight";
+import {
+  DEFAULT_FLIGHT_EXPLORER_DRAFT,
+  FLIGHT_EXPLORER_SPEED_UNITS,
+  directLaunchInputForFlightExplorerDraft,
+  type FlightExplorerDraft,
+  type FlightExplorerSpeedUnit,
+} from "../model/flightPreparationLaunch";
 import {
   compareWind,
   directLaunch,
@@ -32,8 +40,6 @@ import {
 import { FIELD_GUIDANCE, formatDistanceM } from "../model/units";
 import { meteorologicalWind } from "../model/wind";
 import type { SpatialTargetTs } from "../model/spatialTarget";
-
-const SPEED_UNITS: Record<string, number> = { mph: 1.0, "m/s": 2.236936292054402 };
 
 const LazyWindStrategyPanel = lazy(() => import("./WindStrategyPanel").then((module) => ({
   default: module.WindStrategyPanel,
@@ -89,36 +95,33 @@ interface Props {
   distanceUnit?: string;
   spatialTarget: SpatialTargetTs;
   onSpatialTargetChange: (target: SpatialTargetTs) => void;
+  draft?: FlightExplorerDraft;
+  onDraftChange?: (draft: FlightExplorerDraft) => void;
 }
 
 export function FlightExplorerPanel({
   distanceUnit = "yd",
   spatialTarget,
   onSpatialTargetChange,
+  draft: controlledDraft,
+  onDraftChange,
 }: Props) {
-  const [speed, setSpeed] = useState(167.0);
-  const [speedUnit, setSpeedUnit] = useState("mph");
-  const [directionConvention, setDirectionConvention] =
-    useState<LaunchDirectionConvention>("app_native");
-  const [fields, setFields] = useState({
-    launchAngleDeg: 10.9,
-    launchDirectionDeg: 0.0,
-    spinRpm: 2686.0,
-    spinAxisTiltDeg: 0.0,
-  });
-  const [windEnabled, setWindEnabled] = useState(false);
-  const [windSpeedMph, setWindSpeedMph] = useState(10.0);
-  const [windFromDeg, setWindFromDeg] = useState(0.0);
+  const [localDraft, setLocalDraft] = useState(DEFAULT_FLIGHT_EXPLORER_DRAFT);
+  const draft = controlledDraft ?? localDraft;
+  const setDraft = (next: FlightExplorerDraft) => {
+    if (controlledDraft === undefined) setLocalDraft(next);
+    onDraftChange?.(next);
+  };
+  const updateDraft = (change: Partial<FlightExplorerDraft>) =>
+    setDraft({ ...draft, ...change });
   const [result, setResult] = useState<FlightExplorationTs | null>(null);
   const [windComparison, setWindComparison] = useState<WindComparisonTs | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const directionSigns = launchDirectionSignLabels(directionConvention);
+  const directionSigns = launchDirectionSignLabels(draft.directionConvention);
 
-  const currentLaunch = () => directLaunch({
-    ballSpeedMph: speed * (SPEED_UNITS[speedUnit] / SPEED_UNITS.mph),
-    launchDirectionConvention: directionConvention,
-    ...fields,
-  });
+  const currentLaunch = () => directLaunch(
+    directLaunchInputForFlightExplorerDraft(draft),
+  );
   let windStrategyLaunch: Launch | null = null;
   let windStrategyLaunchError: string | null = null;
   try {
@@ -130,8 +133,11 @@ export function FlightExplorerPanel({
   const run = () => {
     try {
       const launch = currentLaunch();
-      const comparison = windEnabled
-        ? compareWind(launch, meteorologicalWind(windSpeedMph / SPEED_UNITS["m/s"], windFromDeg))
+      const comparison = draft.windEnabled
+        ? compareWind(launch, meteorologicalWind(
+            draft.windSpeedMph / FLIGHT_EXPLORER_SPEED_UNITS["m/s"],
+            draft.windFromDeg,
+          ))
         : null;
       const exploration = comparison?.wind ?? exploreFlight(launch);
       setResult(exploration);
@@ -157,27 +163,29 @@ export function FlightExplorerPanel({
             </span>
             <span className="flex min-w-0 gap-2">
               <DecimalInput
-                value={speed}
+                value={draft.speed}
                 aria-label="Ball Speed"
                 title={FIELD_GUIDANCE.fxBallSpeed}
                 min={0.1}
-                onCommit={setSpeed}
+                onCommit={(speed) => updateDraft({ speed })}
                 className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
               />
               <select
-                value={speedUnit}
+                value={draft.speedUnit}
                 title={FIELD_GUIDANCE.fxSpeedUnit}
                 onChange={(e) => {
-                  const next = e.target.value;
+                  const next = e.target.value as FlightExplorerSpeedUnit;
                   // Convert the displayed value in place (canonical mph).
-                  const mph = speed * (SPEED_UNITS[speedUnit] / SPEED_UNITS.mph);
-                  setSpeed(Number((mph * (SPEED_UNITS.mph / SPEED_UNITS[next])).toFixed(2)));
-                  setSpeedUnit(next);
+                  const mph = draft.speed * FLIGHT_EXPLORER_SPEED_UNITS[draft.speedUnit];
+                  updateDraft({
+                    speed: Number((mph / FLIGHT_EXPLORER_SPEED_UNITS[next]).toFixed(2)),
+                    speedUnit: next,
+                  });
                 }}
                 className="min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100"
                 aria-label="Ball speed unit"
               >
-                {Object.keys(SPEED_UNITS).map((unit) => (
+                {Object.keys(FLIGHT_EXPLORER_SPEED_UNITS).map((unit) => (
                   <option key={unit} value={unit}>
                     {unit}
                   </option>
@@ -189,9 +197,11 @@ export function FlightExplorerPanel({
             <span className="mb-1 block">Direction Convention</span>
             <select
               aria-label="Launch Direction Convention"
-              value={directionConvention}
+              value={draft.directionConvention}
               onChange={(event) =>
-                setDirectionConvention(event.target.value as LaunchDirectionConvention)
+                updateDraft({
+                  directionConvention: event.target.value as LaunchDirectionConvention,
+                })
               }
               className="w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100"
             >
@@ -202,7 +212,7 @@ export function FlightExplorerPanel({
               ))}
             </select>
             <span className="mt-1 block text-xs text-slate-500" data-testid="direction-sign-example">
-              0° = straight · + = {directionSigns.positive} · − = {directionSigns.negative} · {LAUNCH_DIRECTION_DEFINITIONS[directionConvention].quantityStatus}
+              0° = straight · + = {directionSigns.positive} · − = {directionSigns.negative} · {LAUNCH_DIRECTION_DEFINITIONS[draft.directionConvention].quantityStatus}
             </span>
           </label>
           {FIELDS.map(({ key, label, unit, guidance }) => (
@@ -214,15 +224,25 @@ export function FlightExplorerPanel({
                 <span className="text-slate-500">{unit}</span>
               </span>
               <DecimalInput
-                value={fields[key]}
+                value={draft[key]}
                 aria-label={label}
                 title={FIELD_GUIDANCE[guidance]}
                 min={key === "spinRpm" ? 0 : undefined}
-                onCommit={(value) => setFields((f) => ({ ...f, [key]: value }))}
+                onCommit={(value) => updateDraft({ [key]: value })}
                 className="no-spinner w-full min-w-16 rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
               />
             </label>
           ))}
+          <BallSetupControl setup={draft.ballSetup}
+            userOverridden={draft.ballSetupUserOverridden}
+            onChange={(ballSetup) => updateDraft({
+              ballSetup,
+              ballSetupUserOverridden: true,
+            })}
+            onUseClubDefault={() => updateDraft({
+              ballSetup: DEFAULT_FLIGHT_EXPLORER_DRAFT.ballSetup,
+              ballSetupUserOverridden: false,
+            })} />
           <button
             type="button"
             onClick={run}
@@ -257,8 +277,8 @@ export function FlightExplorerPanel({
           >
             <input
               type="checkbox"
-              checked={windEnabled}
-              onChange={(event) => setWindEnabled(event.target.checked)}
+              checked={draft.windEnabled}
+              onChange={(event) => updateDraft({ windEnabled: event.target.checked })}
             />
             Compare No Wind and Selected Wind
           </label>
@@ -267,11 +287,11 @@ export function FlightExplorerPanel({
               <span>Wind Speed</span><span className="text-slate-500">mph</span>
             </span>
             <DecimalInput
-              value={windSpeedMph}
+              value={draft.windSpeedMph}
               min={0}
               aria-label="Wind Speed"
               title="Horizontal wind speed in miles per hour. Source: canonical wind-scenario/v1 meteorological adapter."
-              onCommit={setWindSpeedMph}
+              onCommit={(windSpeedMph) => updateDraft({ windSpeedMph })}
               className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
             />
           </label>
@@ -280,28 +300,28 @@ export function FlightExplorerPanel({
               <span>Wind From Bearing</span><span className="text-slate-500">deg</span>
             </span>
             <DecimalInput
-              value={windFromDeg}
+              value={draft.windFromDeg}
               aria-label="Wind From Bearing"
               title="0° is a headwind from the target, 90° comes from the player's right, and 180° is a tailwind"
-              onCommit={setWindFromDeg}
+              onCommit={(windFromDeg) => updateDraft({ windFromDeg })}
               className="no-spinner w-full rounded border border-slate-700 bg-slate-800 px-2 py-1.5 text-slate-100 focus:border-blue-500 focus:outline-none"
             />
           </label>
           <div
             className="mt-3 flex items-center gap-3 rounded-lg border border-slate-800 bg-slate-950/50 px-3 py-2 text-xs text-slate-300"
             role="img"
-            aria-label={`Wind ${windSpeedMph.toFixed(1)} miles per hour from ${windFromDeg.toFixed(1)} degrees`}
+            aria-label={`Wind ${draft.windSpeedMph.toFixed(1)} miles per hour from ${draft.windFromDeg.toFixed(1)} degrees`}
             title="Arrow points where the air moves; the numeric bearing states where it comes from"
           >
             <span
               aria-hidden="true"
               className="inline-block text-xl text-sky-300"
-              style={{ transform: `rotate(${windFromDeg + 180}deg)` }}
+              style={{ transform: `rotate(${draft.windFromDeg + 180}deg)` }}
             >
               ↑
             </span>
             <span>
-              {windSpeedMph.toFixed(1)} mph from {windFromDeg.toFixed(1)}°;
+              {draft.windSpeedMph.toFixed(1)} mph from {draft.windFromDeg.toFixed(1)}°;
               arrow shows the wind-to direction.
             </span>
           </div>

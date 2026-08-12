@@ -205,52 +205,76 @@ def _recompute_waterloo(
     return compute_flight_metrics(retained, raw.model_name)
 
 
-def _identity(flight: FlightExecutionInput) -> tuple[str, str]:
-    return (flight.model_id, flight.model_version)
-
-
-def _not_recomputed(
-    flight: FlightExecutionInput,
-    reason: FlightExecutionQualificationReason,
-) -> FlightExecutionQualification:
-    return FlightExecutionQualification(reason, flight.model_id, flight.model_version)
-
-
 def _evaluate(
     launch: LaunchConditions,
     transfer: FlightGroundTransferSettings,
     flight: FlightExecutionInput,
 ) -> tuple[FlightExecutionQualification, FlightResult | None]:
-    profile = _PROFILES.get(_identity(flight))
+    qualification, result = _recompute_registered(
+        launch,
+        transfer,
+        model_id=flight.model_id,
+        model_version=flight.model_version,
+        settings=flight.settings,
+    )
+    if not qualification.qualified or result is None:
+        return qualification, result
+    return (_compare_digests(flight, result), result)
+
+
+def _recompute_registered(
+    launch: LaunchConditions,
+    transfer: FlightGroundTransferSettings,
+    *,
+    model_id: str,
+    model_version: str,
+    settings: Mapping[str, float],
+) -> tuple[FlightExecutionQualification, FlightResult | None]:
+    """Resolve and recompute one registered profile without declared digests."""
+    stable_id(model_id, "profile model_id")
+    canonical_text(model_version, "profile model_version")
+    profile = _PROFILES.get((model_id, model_version))
     if profile is None:
         return (
-            _not_recomputed(
-                flight,
+            FlightExecutionQualification(
                 FlightExecutionQualificationReason.PROFILE_NOT_REGISTERED,
+                model_id,
+                model_version,
             ),
             None,
         )
     try:
-        settings = _waterloo_settings(flight.settings)
+        resolved_settings = _waterloo_settings(settings)
     except (TypeError, ValueError):
         return (
-            _not_recomputed(
-                flight,
+            FlightExecutionQualification(
                 FlightExecutionQualificationReason.SETTINGS_SCHEMA_INVALID,
+                model_id,
+                model_version,
             ),
             None,
         )
     try:
-        result = _recompute_waterloo(launch, transfer, settings)
+        result = _recompute_waterloo(launch, transfer, resolved_settings)
     except Exception:
         return (
-            _not_recomputed(
-                flight,
+            FlightExecutionQualification(
                 FlightExecutionQualificationReason.RECOMPUTATION_FAILED,
+                model_id,
+                model_version,
             ),
             None,
         )
-    return (_compare_digests(flight, result), result)
+    return (
+        FlightExecutionQualification(
+            FlightExecutionQualificationReason.QUALIFIED,
+            model_id,
+            model_version,
+            canonical_flight_trajectory_sha256(result),
+            canonical_flight_result_sha256(result),
+        ),
+        result,
+    )
 
 
 def _compare_digests(
@@ -282,6 +306,43 @@ def qualify_flight_execution_input(
     _validate_boundary_inputs(launch, transfer, flight)
     qualification, _result = _evaluate(launch, transfer, flight)
     return qualification
+
+
+def build_qualified_flight_execution_input(
+    launch: LaunchConditions,
+    transfer: FlightGroundTransferSettings,
+    *,
+    model_id: str,
+    model_version: str,
+    settings: Mapping[str, float],
+) -> FlightExecutionInput:
+    """Recompute a registered profile and bind its exact result identities."""
+    if type(launch) is not LaunchConditions:
+        raise TypeError("launch must be an exact LaunchConditions")
+    if type(transfer) is not FlightGroundTransferSettings:
+        raise TypeError("transfer must be an exact FlightGroundTransferSettings")
+    qualification, result = _recompute_registered(
+        launch,
+        transfer,
+        model_id=model_id,
+        model_version=model_version,
+        settings=settings,
+    )
+    if not qualification.qualified or result is None:
+        raise FlightExecutionProfileQualificationError(qualification)
+    assert qualification.recomputed_trajectory_sha256 is not None
+    assert qualification.recomputed_result_sha256 is not None
+    built = FlightExecutionInput(
+        model_id,
+        model_version,
+        settings,
+        qualification.recomputed_trajectory_sha256,
+        qualification.recomputed_result_sha256,
+    )
+    evidence = qualify_flight_execution_input(launch, transfer, built)
+    if not evidence.qualified:
+        raise FlightExecutionProfileQualificationError(evidence)
+    return built
 
 
 def recompute_qualified_flight_result(
@@ -317,6 +378,7 @@ __all__ = [
     "FlightExecutionProfileQualificationError",
     "FlightExecutionQualification",
     "FlightExecutionQualificationReason",
+    "build_qualified_flight_execution_input",
     "qualify_flight_execution_input",
     "recompute_qualified_flight_result",
     "registered_flight_execution_profiles",

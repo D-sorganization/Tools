@@ -9,13 +9,26 @@ import threading
 import pytest
 from fastapi.testclient import TestClient
 
+from rate_of_closure.application._regional_ground_execution_job_values import (
+    FlightLaunchInput,
+)
+from rate_of_closure.application.flight_execution_profiles import (
+    FlightExecutionProfileQualificationError,
+    FlightExecutionQualification,
+    FlightExecutionQualificationReason,
+)
 from rate_of_closure.application.regional_ground_execution_job import (
     RegionalGroundExecutionJob,
+    regional_ground_execution_job_from_json,
     regional_ground_execution_job_to_json,
 )
 from rate_of_closure.application.regional_ground_execution_result import (
     RegionalGroundExecutionResult,
     regional_ground_execution_result_from_json,
+)
+from rate_of_closure.application.regional_ground_job_preparation_request import (
+    RegionalGroundJobPreparationRequest,
+    regional_ground_job_preparation_request_to_json,
 )
 from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationHooks,
@@ -242,6 +255,7 @@ def test_all_job_routes_require_authentication_without_logging_token(
     token = "test-ephemeral-token-never-log"
     client = TestClient(create_authority_app(token=token))
     routes = (
+        ("post", "/api/rate-of-closure/v1/regional-ground/job-preparations"),
         ("post", "/api/rate-of-closure/v1/regional-ground/jobs"),
         ("get", "/api/rate-of-closure/v1/regional-ground/jobs/example"),
         ("post", "/api/rate-of-closure/v1/regional-ground/jobs/example/cancel"),
@@ -251,7 +265,7 @@ def test_all_job_routes_require_authentication_without_logging_token(
     with caplog.at_level(logging.DEBUG):
         responses = [getattr(client, method)(path) for method, path in routes]
 
-    assert [response.status_code for response in responses] == [401, 401, 401, 401]
+    assert [response.status_code for response in responses] == [401, 401, 401, 401, 401]
     assert token not in caplog.text
 
 
@@ -266,6 +280,155 @@ def test_default_fail_closed_authority_rejects_job_submission() -> None:
 
     assert response.status_code == 503
     assert response.json()["code"] == "execution_unavailable"
+
+
+def test_default_fail_closed_authority_rejects_job_preparation() -> None:
+    source = _job()
+    request = RegionalGroundJobPreparationRequest(
+        "prepared-job-001", source.launch, source.variation_request
+    )
+    client = TestClient(create_authority_app(token="test-ephemeral-token"))
+
+    response = client.post(
+        "/api/rate-of-closure/v1/regional-ground/job-preparations",
+        content=regional_ground_job_preparation_request_to_json(request),
+        headers=_headers(),
+    )
+
+    assert response.status_code == 503
+    assert response.headers["cache-control"] == "no-store"
+    assert response.json()["code"] == "preparation_unavailable"
+
+
+def test_prepare_returns_canonical_job_without_enqueueing_or_running() -> None:
+    ran = threading.Event()
+
+    def runner(
+        job: RegionalGroundExecutionJob,
+        hooks: GroundRegionalVariationHooks,
+    ) -> RegionalGroundExecutionResult:
+        del job, hooks
+        ran.set()
+        raise AssertionError("preparation must not run a study")
+
+    manager = AuthorityJobManager(runner=runner)
+    client = TestClient(
+        create_authority_app(
+            token="test-ephemeral-token",
+            capability=QUALIFIED_EXECUTION_CAPABILITY,
+            job_manager=manager,
+        )
+    )
+    source = _job()
+    request = RegionalGroundJobPreparationRequest(
+        "prepared-job-001",
+        FlightLaunchInput(source.launch.launch),
+        source.variation_request,
+    )
+
+    response = client.post(
+        "/api/rate-of-closure/v1/regional-ground/job-preparations",
+        content=regional_ground_job_preparation_request_to_json(request),
+        headers=_headers(),
+    )
+
+    assert response.status_code == 200
+    assert response.headers["cache-control"] == "no-store"
+    prepared = regional_ground_execution_job_from_json(response.text)
+    assert prepared.job_id == "prepared-job-001"
+    assert prepared.launch == request.launch
+    assert prepared.variation_request == request.variation_request
+    assert ran.is_set() is False
+    with pytest.raises(KeyError):
+        manager.status("prepared-job-001")
+
+
+def test_prepare_reports_stable_qualification_failure_without_private_detail() -> None:
+    source = _job()
+    request = RegionalGroundJobPreparationRequest(
+        "prepared-job-001", source.launch, source.variation_request
+    )
+    private = "C:/private/numerical-runtime.txt"
+
+    def unavailable_profile(**_kwargs: object) -> object:
+        error = FlightExecutionProfileQualificationError(
+            FlightExecutionQualification(
+                FlightExecutionQualificationReason.RECOMPUTATION_FAILED,
+                "waterloo_penner",
+                "tools-core/1.0.0",
+            )
+        )
+        error.add_note(private)
+        raise error
+
+    manager = AuthorityJobManager(runner=lambda job, _hooks: _result(job))
+    client = TestClient(
+        create_authority_app(
+            token="test-ephemeral-token",
+            capability=QUALIFIED_EXECUTION_CAPABILITY,
+            job_manager=manager,
+            job_preparer=unavailable_profile,
+        )
+    )
+
+    response = client.post(
+        "/api/rate-of-closure/v1/regional-ground/job-preparations",
+        content=regional_ground_job_preparation_request_to_json(request),
+        headers=_headers(),
+    )
+
+    assert response.status_code == 422
+    assert response.json()["code"] == "preparation_failed"
+    assert private not in response.text
+
+
+def test_prepare_rejects_a_valid_but_substituted_preparer_response() -> None:
+    source = _job()
+    request = RegionalGroundJobPreparationRequest(
+        "prepared-job-001", source.launch, source.variation_request
+    )
+    manager = AuthorityJobManager(runner=lambda job, _hooks: _result(job))
+    client = TestClient(
+        create_authority_app(
+            token="test-ephemeral-token",
+            capability=QUALIFIED_EXECUTION_CAPABILITY,
+            job_manager=manager,
+            job_preparer=lambda **_kwargs: source,
+        )
+    )
+
+    response = client.post(
+        "/api/rate-of-closure/v1/regional-ground/job-preparations",
+        content=regional_ground_job_preparation_request_to_json(request),
+        headers=_headers(),
+    )
+
+    assert response.status_code == 400
+    assert response.json()["code"] == "invalid_preparation"
+
+
+@pytest.mark.parametrize(
+    ("headers", "body", "expected"),
+    [
+        ({"Authorization": "Bearer test-ephemeral-token"}, "{}", 415),
+        (_headers(), '{"job_id":"one","job_id":"two"}', 400),
+        (_headers(), '{"schema_version":true}', 400),
+        (_headers(), "é" * 524_289, 413),
+    ],
+    ids=("wrong-media", "duplicate", "typed-invalid", "oversized-utf8"),
+)
+def test_prepare_rejects_wrong_media_duplicate_and_oversized_bodies(
+    headers: dict[str, str], body: str, expected: int
+) -> None:
+    client, _manager = _executable_client()
+
+    response = client.post(
+        "/api/rate-of-closure/v1/regional-ground/job-preparations",
+        content=body.encode("utf-8"),
+        headers=headers,
+    )
+
+    assert response.status_code == expected
 
 
 def test_submit_status_and_complete_result_round_trip() -> None:

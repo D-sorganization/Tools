@@ -11,12 +11,25 @@ from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from rate_of_closure.application.flight_execution_profiles import (
+    FlightExecutionProfileQualificationError,
+)
 from rate_of_closure.application.regional_ground_execution_job import (
     MAX_REGIONAL_GROUND_EXECUTION_JOB_BYTES,
     regional_ground_execution_job_from_json,
+    regional_ground_execution_job_to_json,
 )
 from rate_of_closure.application.regional_ground_execution_result import (
     regional_ground_execution_result_to_json,
+)
+from rate_of_closure.application.regional_ground_job_preparation import (
+    RegionalGroundJobPreparer,
+    prepare_regional_ground_execution_job,
+    require_prepared_job_matches_request,
+)
+from rate_of_closure.application.regional_ground_job_preparation_request import (
+    MAX_REGIONAL_GROUND_JOB_PREPARATION_REQUEST_BYTES,
+    regional_ground_job_preparation_request_from_json,
 )
 
 from .capability import DEFAULT_UNAVAILABLE_CAPABILITY, AuthorityCapability
@@ -29,6 +42,7 @@ from .jobs import (
 
 CAPABILITY_PATH = "/api/rate-of-closure/v1/capabilities"
 JOB_COLLECTION_PATH = "/api/rate-of-closure/v1/regional-ground/jobs"
+JOB_PREPARATION_PATH = "/api/rate-of-closure/v1/regional-ground/job-preparations"
 _BEARER = HTTPBearer(auto_error=False)
 
 
@@ -49,7 +63,7 @@ def _error(code: str, detail: str, status_code: int) -> JSONResponse:
     )
 
 
-def _validate_content_headers(request: Request) -> int | None:
+def _validate_content_headers(request: Request, max_bytes: int) -> int | None:
     """Reject encoded, mistyped, malformed, or declared-oversize bodies."""
     content_type = request.headers.get("content-type", "")
     if content_type.split(";", 1)[0].strip().lower() != "application/json":
@@ -65,18 +79,18 @@ def _validate_content_headers(request: Request) -> int | None:
         raise ValueError("Content-Length must be an integer") from exc
     if length < 0 or str(length) != declared:
         raise ValueError("Content-Length must be canonical and nonnegative")
-    if length > MAX_REGIONAL_GROUND_EXECUTION_JOB_BYTES:
+    if length > max_bytes:
         raise _RequestBodyTooLarge("request body exceeds maximum wire size")
     return length
 
 
-async def _read_job_text(request: Request) -> str:
+async def _read_json_text(request: Request, max_bytes: int) -> str:
     """Read one UTF-8 job document without buffering beyond its wire bound."""
-    declared = _validate_content_headers(request)
+    declared = _validate_content_headers(request, max_bytes)
     body = bytearray()
     async for chunk in request.stream():
         body.extend(chunk)
-        if len(body) > MAX_REGIONAL_GROUND_EXECUTION_JOB_BYTES:
+        if len(body) > max_bytes:
             raise _RequestBodyTooLarge("request body exceeds maximum wire size")
     if declared is not None and declared != len(body):
         raise ValueError("Content-Length does not match the request body")
@@ -100,6 +114,7 @@ def create_authority_app(
     token: str,
     capability: AuthorityCapability = DEFAULT_UNAVAILABLE_CAPABILITY,
     job_manager: AuthorityJobManager | None = None,
+    job_preparer: RegionalGroundJobPreparer | None = None,
 ) -> FastAPI:
     """Create an authenticated, non-cacheable loopback authority application."""
     expected_token = _require_token(token)
@@ -109,6 +124,13 @@ def create_authority_app(
     advertised = capability.to_wire()["regional_ground_execution"]
     if advertised is not manager.execution_available:
         raise ValueError("capability and job-manager runner availability must agree")
+    preparer = (
+        prepare_regional_ground_execution_job
+        if capability.regional_ground_execution and job_preparer is None
+        else job_preparer
+    )
+    if preparer is not None and not callable(preparer):
+        raise TypeError("job_preparer must be callable or None")
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
@@ -157,7 +179,9 @@ def create_authority_app(
     async def submit_job(request: Request) -> Response:
         """Validate and enqueue one bounded canonical execution job."""
         try:
-            text = await _read_job_text(request)
+            text = await _read_json_text(
+                request, MAX_REGIONAL_GROUND_EXECUTION_JOB_BYTES
+            )
             job = regional_ground_execution_job_from_json(text)
             snapshot = manager.submit(job)
         except _RequestBodyTooLarge as error:
@@ -191,6 +215,59 @@ def create_authority_app(
         return JSONResponse(
             snapshot.to_wire(),
             status_code=status.HTTP_202_ACCEPTED,
+            headers={"Cache-Control": "no-store"},
+        )
+
+    @app.post(JOB_PREPARATION_PATH, dependencies=[Depends(authorize)])
+    async def prepare_job(request: Request) -> Response:
+        """Prepare one canonical job without retaining, enqueueing, or running it."""
+        if preparer is None:
+            return _error(
+                "preparation_unavailable",
+                "Qualified regional-ground job preparation is unavailable.",
+                status.HTTP_503_SERVICE_UNAVAILABLE,
+            )
+        try:
+            text = await _read_json_text(
+                request, MAX_REGIONAL_GROUND_JOB_PREPARATION_REQUEST_BYTES
+            )
+            preparation = regional_ground_job_preparation_request_from_json(text)
+            job = require_prepared_job_matches_request(
+                preparer(
+                    job_id=preparation.job_id,
+                    launch=preparation.launch.launch,
+                    variation_request=preparation.variation_request,
+                ),
+                job_id=preparation.job_id,
+                launch=preparation.launch.launch,
+                variation_request=preparation.variation_request,
+            )
+            response_text = regional_ground_execution_job_to_json(job)
+        except _RequestBodyTooLarge as error:
+            return _error(
+                "body_too_large", str(error), status.HTTP_413_CONTENT_TOO_LARGE
+            )
+        except _UnsupportedMediaType as error:
+            return _error(
+                "unsupported_media_type",
+                str(error),
+                status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+            )
+        except (TypeError, ValueError):
+            return _error(
+                "invalid_preparation",
+                "Regional-ground job preparation request is invalid.",
+                status.HTTP_400_BAD_REQUEST,
+            )
+        except FlightExecutionProfileQualificationError:
+            return _error(
+                "preparation_failed",
+                "Qualified regional-ground job preparation failed.",
+                status.HTTP_422_UNPROCESSABLE_CONTENT,
+            )
+        return Response(
+            response_text,
+            media_type="application/json",
             headers={"Cache-Control": "no-store"},
         )
 

@@ -1,5 +1,52 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 current-editor job preparation
+
+Local branch `codex/4369-editor-job-preparation` starts exactly from corrected
+PR #4373 head `cca7c839f8fcaeab57d43fcb9d6f3df3b428e3c4`. It adds a strict
+bounded preparation-request/v1 boundary and a Python-only registered-profile
+builder that recomputes flight evidence, derives canonical trajectory/result,
+input, provenance, qualified-plan, and job digests, and preserves the current
+Ground/Tee setup. The authenticated preparation endpoint returns a canonical
+job without retaining, enqueueing, or running it.
+
+PyQt6 now accepts only a current successful Simulation hit; any relevant editor
+change or failed/missed rerun preserves historical playback but invalidates that
+run as preparation authority. Ground Study can prepare, review, save, and then
+separately confirm/run the accepted job. Failures preserve the prior accepted
+job/result and suppress private causes. The preview discloses flight settings,
+transfer/capture bounds, callback-free regional settings, and the explicitly
+UNVALIDATED zero-confidence editor calibration.
+
+React owns and validates the same full launch snapshot, sends it with the exact
+validated variation/surface request through the same-origin authority client,
+strictly binds the returned job to the captured request, and transactionally
+accepts it with confirmation cleared. Browser code performs no preparation or
+execution physics, and preparation never auto-submits.
+
+Final local evidence is 1,223 Rate of Closure Python/PyQt tests with eight
+workers, 134 focused authority/profile/preparation/UI regressions, and a
+post-review 49-test PyQt preparation/simulation rerun. React is green across
+137 files and 905 tests, TypeScript, zero-warning ESLint, and a 229-module
+production build. Ruff, format, Python 3.11/MyPy 2.1 changed-source typing,
+module-size budget, manifest validation plus its eight tests, and `git diff
+--check` are green. An independent final review found no remaining P0, P1, or
+P2 findings. The default 14-worker full-suite stress run twice hit a loopback
+poll timeout on this loaded workstation; both isolated tests and the complete
+eight-worker suite passed. Compiled MyPy 1.13 under local Python 3.13 also hit
+an internal cache-serialization assertion, so the protected pinned CI check
+remains required. The campaign manifest records exact carrier heads through PR
+#4373.
+
+This child targets corrected PR #4373; verify its live PR number, exact head,
+and protected checks after publication rather than relying on this commit to
+self-record future GitHub state. Durable authority restart recovery,
+static-host execution, frozen-runtime qualification, cooperative cancellation
+inside flight recomputation, measured calibration, compiled/TypeScript regional
+physics, UpstreamDrift consumers, ancestor integration, protected release, and
+#4369/#4273/#4267 completion remain open.
+
+
 ## 2026-08-11 #4369 imported-job accessibility correction
 
 Physical browser inspection of PR #4373 found that the hidden file inputs and
