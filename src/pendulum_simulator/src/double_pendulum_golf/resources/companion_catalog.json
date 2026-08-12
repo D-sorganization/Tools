@@ -1,0 +1,283 @@
+{
+  "schema_version": "1.0.0",
+  "title": "Proximal–Distal Dynamics Companion",
+  "scientific_status": "exploratory_model_output",
+  "experiments": [
+    {
+      "id": "double-passive-transfer",
+      "title": "Passive Transfer In A Two-Link Chain",
+      "model": "double",
+      "purpose": "Separate work done by applied joint torque from redistribution associated with configuration-dependent inertial coupling.",
+      "hypothesis": "With matched initial state and proximal drive, changing distal torque changes when energy is retained proximally and when distal angular speed rises.",
+      "falsifier": "The proposed mechanism is challenged if the matched runs show no repeatable change in the distal energy ledger, wrist-interface power, or clubhead-speed timing beyond numerical tolerance.",
+      "workflow": [
+        "Load the passive-transfer preset and run the baseline.",
+        "Enable force vectors, moment-of-force arrows, and the energy plots.",
+        "Change only the wrist-torque program and rerun.",
+        "Compare applied power, segment energy, and clubhead speed at matched times."
+      ],
+      "tips": [
+        "A negative wrist torque does not imply negative club acceleration at every instant.",
+        "Inspect power and work as well as torque because transfer is configuration and velocity dependent."
+      ],
+      "observables": ["clubhead_speed", "segment_energy", "applied_joint_power", "wrist_interface_power"],
+      "limitations": [
+        "The two-link model omits bilateral hand forces, shaft flexibility, and three-dimensional motion.",
+        "A timing association is not by itself evidence of a unique causal pathway."
+      ]
+    },
+    {
+      "id": "double-wrist-onset",
+      "title": "Distal-Torque Onset Sensitivity",
+      "model": "double",
+      "purpose": "Test whether a delayed distal-torque program changes the timing and magnitude of distal speed under bounded inputs.",
+      "hypothesis": "Within a bounded family of matched programs, later distal-torque onset can retain energy proximally longer and shift distal acceleration later.",
+      "falsifier": "The claim is weakened if onset changes do not survive parameter perturbation, disappear under matched-work comparisons, or reduce clubhead speed across the declared range.",
+      "workflow": [
+        "Select two bounded wrist-torque onset times.",
+        "Keep the proximal program and all physical parameters fixed.",
+        "Run both cases and overlay wrist torque, wrist power, and clubhead speed.",
+        "Repeat with the robustness experiment before generalizing."
+      ],
+      "tips": [
+        "Compare both matched peak torque and matched actuator work.",
+        "Record the parameter range; an optimum in one range is not a universal strategy."
+      ],
+      "observables": ["wrist_torque", "wrist_power", "clubhead_speed", "peak_timing"],
+      "limitations": [
+        "The prescribed torque family is a modeling choice rather than a measured neuromuscular command.",
+        "Impact, grip compliance, and strength-speed limits are outside this experiment."
+      ]
+    },
+    {
+      "id": "triple-cascade",
+      "title": "Three-Link Transfer Cascade",
+      "model": "triple",
+      "purpose": "Examine how an additional proximal joint changes the sequence of segment speeds, powers, and energies.",
+      "hypothesis": "Staged proximal and middle-joint drive produces a configuration-dependent cascade rather than a fixed one-way packet of energy.",
+      "falsifier": "A strict cascade interpretation is challenged when timing order changes without the predicted power-flow signatures or when distal speed is explained entirely by direct distal work.",
+      "workflow": [
+        "Run the staged three-link preset.",
+        "Overlay all joint torques, joint powers, and segment angular speeds.",
+        "Advance and delay the middle-joint program while holding other inputs fixed.",
+        "Inspect whether speed ordering and energy changes remain coupled."
+      ],
+      "tips": [
+        "Peak-speed order is a kinematic observation, not a complete energy-transfer measure.",
+        "Use the mass-matrix view to see how geometric coupling changes through the motion."
+      ],
+      "observables": ["joint_speed_sequence", "joint_power", "segment_energy", "mass_matrix"],
+      "limitations": [
+        "The open chain does not represent the bilateral closed-loop geometry of two hands on a club.",
+        "Segment definitions affect the apparent kinematic sequence."
+      ]
+    },
+    {
+      "id": "golfer-two-hand-couple",
+      "title": "Two-Hand Force And Equivalent-Couple Mechanism",
+      "model": "golfer",
+      "purpose": "Resolve bilateral hand action into net force and an equivalent couple, then relate that action to club angular acceleration and constraint forces.",
+      "hypothesis": "Opposing hand-force components can produce a club couple and late negative club torque without requiring the same net-force direction or a separately prescribed wrist-torque pulse.",
+      "falsifier": "The mechanism is challenged if the reconstructed net-force-plus-couple action fails moment equivalence, if the late negative contribution is not robust to admissible geometry changes, or if it is dominated by an unreported applied torque.",
+      "workflow": [
+        "Load the 8-DOF golfer model and project the initial state onto the constraint manifold.",
+        "Enable hand-force, net-force, couple, and zero-torque overlays.",
+        "Run the bilateral push-pull preset and inspect the late downswing frame by frame.",
+        "Compare overall, ZTCF, and DELTA decompositions at the same configuration."
+      ],
+      "tips": [
+        "Equal and opposite hand forces can have near-zero net force while retaining a nonzero couple.",
+        "Check constraint residuals before interpreting force magnitudes."
+      ],
+      "observables": ["hand_forces", "net_club_force", "equivalent_couple", "constraint_residual", "club_torque"],
+      "limitations": [
+        "The planar closed-loop model simplifies scapular, wrist, grip, and shaft mechanics.",
+        "Constraint forces depend on model geometry and the chosen generalized coordinates."
+      ]
+    },
+    {
+      "id": "ztcf-counterfactual",
+      "title": "Pointwise And Forward Zero-Torque Counterfactuals",
+      "model": "golfer",
+      "purpose": "Distinguish an instantaneous zero-applied-torque diagnostic from a trajectory recomputed under a changed torque program.",
+      "hypothesis": "Pointwise ZTCF identifies the acceleration or reaction-force tendency at the observed state, while a forward counterfactual can diverge because state and geometry evolve.",
+      "falsifier": "The interpretation is challenged if the implementation does not reproduce the declared state, torque removal, sign convention, and constraint treatment or if pointwise and forward results are presented as interchangeable.",
+      "workflow": [
+        "Pause at a selected frame and display the pointwise ZTCF vectors.",
+        "Record the state, applied torques, and constraint residual.",
+        "Run the forward zero-torque comparator from that state.",
+        "Compare only quantities with identical definitions and coordinate conventions."
+      ],
+      "tips": [
+        "Pointwise ZTCF answers a local question; it is not a full alternative swing.",
+        "A forward counterfactual must recompute the state trajectory and constraint forces."
+      ],
+      "observables": ["ztcf_acceleration", "ztcf_force", "forward_trajectory", "constraint_force"],
+      "limitations": [
+        "Removing modeled torque is not equivalent to removing all muscle action or stiffness.",
+        "Counterfactual conclusions remain conditional on model structure and initial state."
+      ]
+    },
+    {
+      "id": "robustness-envelope",
+      "title": "Parameter Robustness And Falsifiability Envelope",
+      "model": "double",
+      "purpose": "Test whether a reported mechanism survives bounded variation in inertial, geometric, damping, and input parameters.",
+      "hypothesis": "A useful mechanism should retain its directional prediction over a declared neighborhood rather than only at one tuned parameter set.",
+      "falsifier": "The proposed generalization is rejected outside the subset where its sign, timing, and effect-size criteria remain satisfied with acceptable numerical residuals.",
+      "workflow": [
+        "Choose the baseline transfer experiment and declare parameter bounds.",
+        "Run the perturbation analysis with a recorded random seed.",
+        "Plot the distribution of effect size and the fraction matching the prediction.",
+        "Export failures as well as successes for inspection."
+      ],
+      "tips": [
+        "Do not hide sign reversals behind an average effect.",
+        "Separate numerical failures from scientifically adverse results."
+      ],
+      "observables": ["effect_size_distribution", "sign_consistency", "peak_timing", "numerical_residual"],
+      "limitations": [
+        "A local parameter envelope does not establish population-level biomechanics.",
+        "Input distributions are assumptions and must be reported with the result."
+      ]
+    }
+  ],
+  "glossary": [
+    {
+      "id": "applied-torque",
+      "term": "Applied Torque",
+      "definition": "A generalized moment supplied explicitly by the model input at a joint.",
+      "plain_language": "The turning input commanded at a modeled joint.",
+      "units": "N m",
+      "caution": "It is not the same as the total moment acting on a segment."
+    },
+    {
+      "id": "interaction-torque",
+      "term": "Interaction Torque",
+      "definition": "The portion of a joint-level dynamic balance associated with motion-dependent coupling among modeled coordinates.",
+      "plain_language": "Turning tendency that appears because the linked system is moving and changing geometry.",
+      "units": "N m",
+      "caution": "Its numerical value depends on the coordinate convention and decomposition."
+    },
+    {
+      "id": "constraint-force",
+      "term": "Constraint Force",
+      "definition": "A reaction force or generalized force required to satisfy the model's kinematic constraints.",
+      "plain_language": "The force needed to keep the two-hand loop closed in the model.",
+      "units": "N",
+      "caution": "Large values can reflect poor constraint conditioning or an inconsistent state."
+    },
+    {
+      "id": "equivalent-couple",
+      "term": "Equivalent Couple",
+      "definition": "The free moment that, together with a resultant force at a chosen point, reproduces the moment of a distributed force system.",
+      "plain_language": "The residual twist left after two hand forces are replaced by one net force.",
+      "units": "N m",
+      "caution": "The net force's moment depends on the selected reduction point; the complete wrench must be compared."
+    },
+    {
+      "id": "forward-counterfactual",
+      "term": "Forward Counterfactual",
+      "definition": "A new trajectory integrated after changing an input or model condition from a declared initial state.",
+      "plain_language": "Rerun the model after changing one rule and let the motion evolve differently.",
+      "units": "varies",
+      "caution": "It answers a different question from a pointwise diagnostic."
+    },
+    {
+      "id": "generalized-coordinate",
+      "term": "Generalized Coordinate",
+      "definition": "A coordinate used to parameterize the model configuration, such as a joint angle.",
+      "plain_language": "One of the numbers used to describe the model's pose.",
+      "units": "rad or m",
+      "caution": "Coordinate choices affect component-wise decompositions but not the underlying physical motion."
+    },
+    {
+      "id": "inertial-coupling",
+      "term": "Inertial Coupling",
+      "definition": "Configuration-dependent off-diagonal terms in the mass matrix that couple generalized accelerations and forces.",
+      "plain_language": "Acceleration of one link changes the effort and response of another linked part.",
+      "units": "model dependent",
+      "caution": "Coupling permits redistribution but does not by itself identify a one-way energy source."
+    },
+    {
+      "id": "jacobian",
+      "term": "Jacobian",
+      "definition": "A matrix mapping generalized velocities to a selected task-space velocity, with a transpose relation for forces.",
+      "plain_language": "A geometry map between joint motion and point motion or force.",
+      "units": "model dependent",
+      "caution": "Near singular configurations, inversion can be ill-conditioned."
+    },
+    {
+      "id": "kinematic-sequence",
+      "term": "Kinematic Sequence",
+      "definition": "The observed ordering of selected segment or joint velocity peaks.",
+      "plain_language": "Which modeled part reaches its peak speed first, second, and so on.",
+      "units": "s",
+      "caution": "Peak order alone does not quantify energy transfer or causation."
+    },
+    {
+      "id": "mass-matrix",
+      "term": "Mass Matrix",
+      "definition": "The configuration-dependent matrix relating generalized acceleration to the inertial portion of generalized force.",
+      "plain_language": "The pose-dependent inertia map of the linked system.",
+      "units": "model dependent",
+      "caution": "Off-diagonal terms depend on the generalized-coordinate definition."
+    },
+    {
+      "id": "moment-of-force",
+      "term": "Moment Of Force",
+      "definition": "The rotational tendency produced by a force about a declared point or axis.",
+      "plain_language": "Force multiplied by its perpendicular leverage about a point.",
+      "units": "N m",
+      "caution": "Always report the point, axis, and sign convention."
+    },
+    {
+      "id": "power",
+      "term": "Mechanical Power",
+      "definition": "The instantaneous rate of mechanical work; at a revolute joint it is torque multiplied by angular velocity under a consistent sign convention.",
+      "plain_language": "How quickly a modeled action adds or removes mechanical energy.",
+      "units": "W",
+      "caution": "Torque sign alone does not determine power sign."
+    },
+    {
+      "id": "proximal-distal",
+      "term": "Proximal And Distal",
+      "definition": "Relative anatomical or model locations nearer to and farther from the chain's chosen base.",
+      "plain_language": "Closer to the body versus farther along the linked chain.",
+      "units": "none",
+      "caution": "The labels describe location, not a guaranteed direction of transfer."
+    },
+    {
+      "id": "slack",
+      "term": "Slack",
+      "definition": "A loss or reduction of effective load transmission caused by compliance, clearance, changing contact, or low tension, which must be defined for the specific model or measurement.",
+      "plain_language": "A condition where motion or force is not transmitted immediately through the intended path.",
+      "units": "model dependent",
+      "caution": "A rigid-link model cannot establish physiological slack without an explicit compliance or contact state."
+    },
+    {
+      "id": "wrist-interface-power",
+      "term": "Wrist-Interface Power",
+      "definition": "Power transferred across the modeled hand-club interface under a declared force, moment, velocity, and sign convention.",
+      "plain_language": "The instantaneous energy rate crossing between the hands and club in the model.",
+      "units": "W",
+      "caution": "Different segment and interface conventions can change the reported component signs."
+    },
+    {
+      "id": "work",
+      "term": "Mechanical Work",
+      "definition": "The time integral of mechanical power over a declared interval.",
+      "plain_language": "Accumulated mechanical energy added or removed during part of the motion.",
+      "units": "J",
+      "caution": "The integration interval and sign convention must accompany the value."
+    },
+    {
+      "id": "ztcf",
+      "term": "Zero-Torque Counterfactual Force",
+      "definition": "A pointwise diagnostic force or acceleration computed at a specified state after setting declared applied torques to zero while retaining the stated model terms.",
+      "plain_language": "What the model predicts locally if the selected commanded torques are removed at this exact state.",
+      "units": "N or rad/s^2",
+      "caution": "ZTCF is a local counterfactual, not automatically a forward no-torque trajectory or a muscle-off condition."
+    }
+  ]
+}

@@ -36,6 +36,9 @@ pendulum-golf = "double_pendulum_golf.__main__:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+double_pendulum_golf = ["resources/*.json", "resources/*.png"]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v --tb=short"

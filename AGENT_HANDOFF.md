@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (monorepo root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-08-12
 
 ## Where This Repo Is Headed
 
@@ -18,6 +18,7 @@ stack of golf-simulation epics:
 | #4120 — Investigation & Variation Suite (plotting/viewers/Monte Carlo/help)   | V1-V4 implemented, stacked on #4119, consolidated into PR **#4124** (open, draft-for-review, no auto-merge yet — targets `feat/investigation-suite`, itself stacked on #4119).                                      |
 | #4125 — Realistic Clubs/Kinetics/Putting/Public Release Mgmt/Showcase Styling | H1-H7 implemented, stacked on #4124, consolidated into PR **#4129** (open, draft-for-review, targets `feat/course-showcase`, stacked on #4124). H5 (public release-management repo) is cross-repo, not yet started. |
 | #4130 — Impact-Interval Club Dynamics (contact-interval rigid-body model)     | Foundation epic only (F1 formulation doc not yet started); no PR yet. Next major physics wave after #4125 lands.                                                                                                    |
+| UpstreamDrift #8511 — Interactive Proximal–Distal Dynamics Workbench          | Active on `feat/proximal-distal-workbench`; reuses the existing pendulum simulator and adds one canonical experiment/glossary contract for PyQt6 and React/Tauri consumers.                                           |
 
 The separate shared Club Builder epic #4146 is active. Its first dependency
 slice, #4147, lives on `feat/4147-club-builder-core` and establishes the

@@ -71,6 +71,9 @@
 | Keyboard shortcuts                             | :white_check_mark: | Ctrl+scroll zoom, Ctrl+E export, etc.                                 |
 | Unit converter sidebar                         | :white_check_mark: | Metric / Imperial                                                     |
 | **3D segment rendering (ellipses, cylinders)** | :white_check_mark: | `segment_geometry.py` — SegmentStyle enum, cross-sections, depth sort |
+| **Proximal–distal companion guide**             | :white_check_mark: | Canonical guided experiments in PyQt6 and React/Tauri                |
+| **Searchable scientific glossary**              | :white_check_mark: | Shared definitions, units, plain language, interpretation cautions    |
+| **Experiment falsifiability contract**          | :white_check_mark: | Hypothesis, falsifier, workflow, tips, observables, limitations        |
 
 ## 4 Analysis & Plotting
 
@@ -132,6 +135,7 @@
 | Trajectory CSV / HDF5 export | :white_check_mark: | Via pandas          |
 | Configuration export         | :white_check_mark: | Serialisable params |
 | Clipboard (matrix, params)   | :white_check_mark: | Copy/paste support  |
+| Self-describing run manifest | :white_check_mark: | Experiment ID, units, model version, scientific status |
 
 ## 9 Testing & Quality
 
@@ -189,4 +193,4 @@ are proposed, implemented, and tested.
 
 ---
 
-_Last updated: 2026-03-12_
+_Last updated: 2026-08-12_

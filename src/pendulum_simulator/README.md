@@ -130,6 +130,22 @@ pip install -e ".[gpu]"   # requires JAX, diffrax, optax
 
 ## Usage
 
+### Proximal–Distal Companion Guide
+
+Both interfaces load the same canonical experiment and glossary catalog from
+`src/double_pendulum_golf/resources/companion_catalog.json`. Open **Companion
+Guide** in the PyQt6 toolstrip or use the guide above the React workbench. Each
+experiment declares its purpose, hypothesis, observable outputs, workflow,
+interpretation tips, falsifier, and limitations before the model is run.
+
+The guide covers two-link passive transfer and distal-torque timing, a
+three-link cascade, bilateral hand-force/equivalent-couple mechanics, pointwise
+versus forward zero-torque counterfactuals, and a parameter-robustness envelope.
+It supplements the simulator; it does not turn model output into a measured
+biomechanical fact. Exported studies should retain the experiment ID, parameter
+values, units, model version, and `exploratory_model_output` status through
+`build_run_manifest()`.
+
 ### PyQt6 Desktop App
 
 ```bash
