@@ -1,5 +1,16 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4369 hosted MyPy 1.13 correction
+
+PR #4372 head `e91ef8dcde8cdd8e6545ffc0ea7cb755058ec2fb` passed hosted
+checkout, dependency installation, Ruff, and formatting, then failed only the
+pinned MyPy 1.13 delta gate because the already exact-bool-validated
+cancellation result was redundantly cast. The cast and now-unused import are
+removed without changing runtime behavior. The exact local pinned MyPy 1.13
+profile and 13-test submitter suite now pass; protected CI, the canonical
+fixture qualification, false production capability, and the open ancestor
+stack remain gates.
+
 ## 2026-08-11 #4369 composed authority continuation ready for PR #4372
 
 The exact continuation after published head `3571952c2344ca23ffa65121c606faab1b735a23`

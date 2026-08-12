@@ -1,5 +1,16 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 hosted MyPy 1.13 correction
+
+The exact PR #4372 head
+`e91ef8dcde8cdd8e6545ffc0ea7cb755058ec2fb` reached the hosted pinned MyPy
+1.13 delta gate after Ruff and formatting passed. Its only error was a
+redundant cast applied after an exact-bool cancellation callback check. The
+cast and unused import are removed; callback validation, typed failure
+behavior, false production capability, and every physics/release limitation
+remain unchanged. The pinned MyPy 1.13 profile and 13 focused submitter tests
+pass locally; protected rerun evidence remains required.
+
 ## 2026-08-11 #4369 composed authority continuation
 
 The current continuation composes strict status parity, fail-closed production

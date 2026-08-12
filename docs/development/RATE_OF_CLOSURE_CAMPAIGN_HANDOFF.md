@@ -1,5 +1,17 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 hosted MyPy 1.13 correction
+
+- Exact failing PR #4372 head:
+  `e91ef8dcde8cdd8e6545ffc0ea7cb755058ec2fb`.
+- Hosted quality-gate job `93999818041` passed checkout, dependency install,
+  Ruff, and formatting, then reported one pinned MyPy 1.13 `redundant-cast`
+  finding in the loopback submitter's exact-bool cancellation path.
+- The redundant cast and unused import are removed with no runtime or
+  capability change. The matching pinned MyPy 1.13 profile and 13-test
+  submitter suite pass locally; protected CI and ancestor integration remain
+  open.
+
 ## 2026-08-11 #4369 composed authority continuation ready for PR #4372
 
 - Exact published parent head: `3571952c2344ca23ffa65121c606faab1b735a23`.

@@ -5,7 +5,7 @@ from __future__ import annotations
 import threading
 import time
 from collections.abc import Callable
-from typing import Final, cast
+from typing import Final
 
 from rate_of_closure.application.regional_ground_authority_failures import (
     authority_failure_stage,
@@ -345,7 +345,7 @@ class LoopbackRegionalGroundSubmitter:
         if callback is None:
             return False
         try:
-            requested = callback()
+            requested: bool = callback()
             if type(requested) is not bool:
                 raise TypeError("cancellation callback must return an exact bool")
         except Exception as error:
@@ -355,7 +355,7 @@ class LoopbackRegionalGroundSubmitter:
                 job,
                 error,
             )
-        return cast(bool, requested)
+        return requested
 
 
 def regional_ground_submitter_if_available(
