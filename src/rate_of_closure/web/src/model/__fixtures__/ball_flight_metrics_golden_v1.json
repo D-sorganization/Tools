@@ -1,0 +1,33 @@
+{
+  "schema_version": "ball-flight-metrics-parity/v1",
+  "catalog_sha256": "32699f61de6108f766e911fc6a02a0a08fe80204e83745a069ee55dca184ac14",
+  "analytic_result_sha256": "dcb78bb3138aa826f9099bc137813ef2a6b2550117624507f593410400d88772",
+  "analytic_case": {
+    "trajectory": [
+      {"time_s": 0.0, "position_m": [0.0, 0.0, 0.0], "velocity_m_s": [10.0, 10.0, 1.0]},
+      {"time_s": 1.0, "position_m": [10.0, 5.0, 1.0], "velocity_m_s": [10.0, 0.0, 1.0]},
+      {"time_s": 2.0, "position_m": [20.0, 1.0, 3.0], "velocity_m_s": [10.0, -5.0, 1.0]},
+      {"time_s": 3.0, "position_m": [30.0, -1.0, 5.0], "velocity_m_s": [10.0, -7.0, 1.0]}
+    ],
+    "spin_vector_rpm": [100.0, 2500.0, -50.0],
+    "target_position_m": [24.0, 0.0, 6.0],
+    "expected_scalars": {
+      "apex_height": 5.0,
+      "ball_speed": 14.177446878757825,
+      "carry_distance": 25.317977802344327,
+      "carry_offline": 4.0,
+      "curve": 1.4925557853149836,
+      "flight_time": 2.5,
+      "landing_angle": 30.83814404628488,
+      "launch_direction": 5.710593137499642,
+      "spin_axis_tilt": 91.1457628381751,
+      "target_downrange_residual": 1.0,
+      "target_lateral_residual": -2.0,
+      "target_residual": 2.23606797749979,
+      "terminal_direction": 5.710593137499642,
+      "terminal_speed": 11.704699910719626,
+      "total_spin": 2502.4987512484395,
+      "vertical_launch_angle": 44.85747259731694
+    }
+  }
+}

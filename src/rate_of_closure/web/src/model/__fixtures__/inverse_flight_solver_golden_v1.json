@@ -1,0 +1,40 @@
+{
+  "request": {
+    "candidate_count": 3,
+    "max_evaluations": 5,
+    "objectives": [
+      {
+        "lower_bound": null,
+        "metric_id": "carry_distance",
+        "mode": "target",
+        "target_value": 75,
+        "tolerance": 20,
+        "unit": "m",
+        "upper_bound": null,
+        "weight": 2
+      },
+      {
+        "lower_bound": 5,
+        "metric_id": "apex_height",
+        "mode": "maximize",
+        "target_value": null,
+        "tolerance": 10,
+        "unit": "m",
+        "upper_bound": null,
+        "weight": 0.25
+      }
+    ],
+    "problem_id": "analytic-parity",
+    "schema_version": "inverse-flight-request/v1",
+    "variables": [
+      {
+        "initial_value": 5,
+        "lower_bound": 0,
+        "parameter_id": "speed",
+        "unit": "m/s",
+        "upper_bound": 10
+      }
+    ]
+  },
+  "result_sha256": "470c39e13c824eaa9efd084c7c9961783f00e9bce1441d244e9838bb844a111b"
+}

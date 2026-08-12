@@ -179,6 +179,13 @@ jobs:
           fi
 
       - name: Install Dependencies
+        # Download caching stays ON (job-level PIP_CACHE_DIR points at the
+        # host-shared persistent cache): the force-reinstall guards below
+        # protect against a corrupted *installed* toolcache package, which
+        # is orthogonal to pip's *download* cache. Disabling the download
+        # cache here made quality-gate re-fetch the full dependency set
+        # (85 MB PyQt6-Qt6 included) every run, which blew the 60-minute
+        # job budget whenever the fleet's uplink was slow.
         # Force-reinstall sortedcontainers (and hypothesis) before anything
         # else: the shared self-hosted runner toolcache occasionally carries a
         # half-installed `sortedcontainers` where pip metadata claims 2.4.0 but
@@ -880,11 +887,11 @@ jobs:
             if [ -z "$BASE_SHA" ]; then
               BASE_SHA="${{ github.event.pull_request.base.sha }}"
             fi
-            RUST_FILES=$(git diff --name-only "$BASE_SHA" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || true)
+            RUST_FILES=$(git diff --name-only "$BASE_SHA" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' 'src/shared/python/swing_sim/**' || true)
           elif [ -n "${{ github.event.before }}" ] && [ "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]; then
-            RUST_FILES=$(git diff --name-only "${{ github.event.before }}" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || true)
+            RUST_FILES=$(git diff --name-only "${{ github.event.before }}" HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' 'src/shared/python/swing_sim/**' || true)
           else
-            RUST_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' || echo "")
+            RUST_FILES=$(git diff --name-only HEAD~1 HEAD -- '*.rs' 'Cargo.toml' '*/Cargo.toml' 'rust-toolchain.toml' 'src/shared/python/swing_sim/**' || echo "")
           fi
 
           if [ -n "$RUST_FILES" ]; then
@@ -995,13 +1002,24 @@ jobs:
           echo "wasm-pack build completed"
           ls pkg/
 
+      - name: Build WASM Module — swing-core (wasm-pack)
+        if: steps.rust-changes.outputs.has_changes == 'true'
+        run: |
+          cd rust_core/swing-core
+          wasm-pack build --target web --features wasm --no-default-features
+          echo "wasm-pack build (swing-core) completed"
+          ls pkg/
+
       - name: Verify WASM Module
         if: steps.rust-changes.outputs.has_changes == 'true'
         run: |
-          # Verify the WASM package was produced with expected files
+          # Verify the WASM packages were produced with expected files
           test -f rust_core/tools-core/pkg/tools_core_bg.wasm && echo "✅ WASM binary exists"
           test -f rust_core/tools-core/pkg/package.json && echo "✅ package.json exists"
           test -f rust_core/tools-core/pkg/tools_core.js && echo "✅ JS glue exists"
+          test -f rust_core/swing-core/pkg/swing_core_bg.wasm && echo "✅ swing-core WASM binary exists"
+          test -f rust_core/swing-core/pkg/package.json && echo "✅ swing-core package.json exists"
+          test -f rust_core/swing-core/pkg/swing_core.js && echo "✅ swing-core JS glue exists"
 
       - name: Run Benchmarks (Criterion)
         if: steps.rust-changes.outputs.has_changes == 'true'
