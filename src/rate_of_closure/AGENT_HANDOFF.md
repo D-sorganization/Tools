@@ -22,6 +22,27 @@ future adapters must not enable execution until a qualified authority is bound.
 Headless evidence passes 7 focused controller tests, 79 composed contract tests,
 and the complete 1,068-test Rate suite, plus focused lint/type and governance
 gates. One existing empty-legend warning remains outside this slice.
+## 2026-08-11 local #4369 authenticated authority job lifecycle
+
+The local `codex/4369-authority-api` child starts exactly from published PR
+#4372 head `990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`. It adds a bounded
+thread-safe manager with one active job, oldest-first terminal retention,
+typed progress/status/failure, cooperative cancellation forwarding, and
+complete exact job-bound result-only publication. The authenticated FastAPI
+boundary now exposes submit, status, cancel, and result routes with no-store
+responses, streaming 1 MiB input enforcement, strict JSON/content handling,
+and generic non-secret errors.
+
+The default isolated authority has no runner. Submit therefore fails closed
+and the capability document remains false even when tests inject a runner.
+Cancellation can only interrupt where the current application/physical runner
+polls; it cannot forcibly stop Python code already inside an uncooperative
+call. No physical invocation, client integration, persistence/recovery,
+compiled physics, protected evidence, or release is claimed. The atomic local
+implementation commit is `SELF`; no push or GitHub write occurs. TDD RED
+captured the absent manager; 21 focused, 88 related contract, and all 1,076
+Rate of Closure Python/PyQt tests pass with Ruff/format, MyPy, Black,
+changed-file Bandit, manifest, placeholder, module-budget, and diff gates.
 
 ## 2026-08-11 local #4369 job-bound execution result envelope
 

@@ -199,6 +199,39 @@ serial and fail-fast and has no wall-clock timeout, so execution-job v1 exposes
 only `max_trials`; unsupported parallelism, timeout, and failure-policy fields
 fail closed.
 
+### Local authority job lifecycle
+
+The loopback Python authority owns at most one queued, running, or
+cancel-requested regional-ground job. An authenticated submit endpoint accepts
+only unencoded `application/json`, incrementally caps the UTF-8 body at the
+execution-job contract's 1 MiB limit, and reuses the strict canonical job
+parser. Status, cancellation, and result endpoints require the same ephemeral
+bearer token and disable caching. The token is environment-only and is never
+part of a command, response, status record, failure record, or application log;
+the isolated Uvicorn process retains disabled access logging.
+
+Status is one of `queued`, `running`, `cancel_requested`, `succeeded`,
+`failed`, or `cancelled`, with exact completed/total counts. Failure records
+expose only a stable code and stage; raw exception messages are not published.
+The manager forwards a cancellation predicate and typed progress callback
+through the existing `GroundRegionalVariationHooks` seam. Cancellation remains
+cooperative at the current runner's polling boundaries, but once requested it
+also makes any late returned result ineligible for publication.
+
+Only an exact `RegionalGroundExecutionResult` that revalidates against its
+originating job is retained and returned. Running, cancelled, failed, or
+result-mismatched jobs never expose a partial dataset. Terminal records and
+their complete results are in-memory only and evicted oldest-first under a
+small configured bound; there is no persistence or recovery claim.
+
+The production application factory intentionally constructs the manager
+without a runner. It therefore rejects submission as unavailable and continues
+to advertise `regional_ground_execution=false`. Dependency-injected runners
+exist only as a testable application seam and do not promote capability. A real
+flight-through-ground invocation, full cancellation propagation into that
+physical execution, matched client controllers, and protected evidence remain
+required before execution capability can become true.
+
 The additive `ground-regional-execution-result/v1` envelope carries canonical
 SHA-256 identities for both inputs, the ground request/surface and plan IDs,
 the exact embedded regional plan and unchanged plan source provenance,

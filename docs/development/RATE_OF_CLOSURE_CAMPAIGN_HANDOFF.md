@@ -25,6 +25,29 @@
   tests, Ruff, Black, focused MyPy, manifest validation/tests, docs governance,
   and structural gates. The full suite's one empty-legend warning predates and
   is unrelated to this slice.
+## 2026-08-11 local #4369 authority job manager and endpoints
+
+- Exact source parent: published PR #4372 head
+  `990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`.
+- One thread-safe in-memory manager owns at most one active job and a bounded
+  oldest-first terminal/result set.
+- Authenticated submit/status/cancel/result endpoints reuse the exact job and
+  result contracts, disable caching, stream-cap requests at 1 MiB, and reject
+  encoded, mistyped, duplicate, malformed, and oversized bodies.
+- Cancellation is forwarded through existing variation hooks and prevents a
+  late result from being published. Typed failure evidence omits raw exception
+  and token text; only a complete result revalidated against its job is exposed.
+- Production has no injected runner, returns `execution_unavailable`, and
+  retains `regional_ground_execution=false`. This is an orchestration boundary,
+  not proof of physical execution or a browser Run feature.
+- TDD RED captured the absent manager. Green evidence includes 21 focused
+  manager/API tests, 88 related contract regressions, all 1,076 Rate of Closure
+  Python/PyQt tests, Ruff/format, focused MyPy, Black, changed-file Bandit,
+  manifest JSON/eight tests, placeholder, module-budget, and diff gates.
+- Code, tests, SPEC, manifest, and all handoffs commit together as `SELF` with
+  no push or GitHub write. Physical job invocation, full in-flight interruption,
+  client controllers, persistence/recovery, compiled/downstream parity,
+  protected evidence, and release remain open.
 
 ## 2026-08-11 local #4369 job-bound result envelope
 

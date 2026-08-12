@@ -35,6 +35,32 @@ and all 1,068 Rate Python/PyQt tests pass; the full suite retains one unrelated
 polynomial-generator empty-legend warning. Ruff, Black, focused MyPy, manifest
 validation and eight manifest tests, docs governance, and structural gates are
 green. No GitHub write occurred.
+## 2026-08-11 local #4369 bounded authority job API
+
+From exact published PR #4372 head
+`990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`, branch
+`codex/4369-authority-api` adds a one-active-job in-memory manager and
+authenticated submit/status/cancel/result routes to the existing loopback
+FastAPI authority. Submission streams and caps the exact job body at 1 MiB,
+rejects encoded or non-JSON content, and retains only a bounded oldest-first
+set of terminal records. Status and failures are typed and publish no raw
+exception or token text. Results appear only after exact job-bound result
+validation; cancellation and every failure leave result unavailable.
+
+Cancellation is forwarded through the existing variation hooks and any late
+return after cancellation is discarded. Production still constructs no
+runner, rejects submission with `execution_unavailable`, and advertises
+`regional_ground_execution=false`; injected runners are a test seam, not a
+capability claim. No physical job invocation, client Run/Cancel controller,
+persistence, restart recovery, compiled runtime, protected carrier, or release
+is included. Keep #4369/#4273/#4267 open.
+
+TDD RED first captured the missing manager module. Green evidence is 21 focused
+manager/API tests, 88 job/result/qualification/variation/manifest regressions,
+and all 1,076 Rate of Closure Python/PyQt tests. Ruff, Ruff format, focused
+MyPy, Black check, changed-file Bandit, manifest JSON/eight tests, placeholder,
+module-budget, and diff gates pass. Code, tests, SPEC, manifest, and all
+handoffs commit together as `SELF`; no push or GitHub write occurs.
 
 ## 2026-08-11 local #4369 job-bound execution result envelope
 
