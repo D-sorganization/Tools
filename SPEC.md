@@ -26,11 +26,17 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.31                                    |
-| **Spec Version**        | 1.16.31                                    |
+| **Current Version**     | 1.16.32                                    |
+| **Spec Version**        | 1.16.32                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-08-12 PyQt Morris protected-CI format repair
+
+PR #4400's exact-head quality gate identified a formatting-only defect in its
+new workflow test. Version 1.16.32 records the mechanical Ruff format repair;
+runtime behavior, public contracts, and scientific semantics are unchanged.
 
 Comprehensive monorepo housing 45+ utility tools for data processing, scientific computing, process engineering, and automation. This is the central tooling hub for the D-sorganization fleet, providing modular engineering calculation tools with PyQt6 GUIs, FastAPI web services, Rust numerical kernels, and a unified launcher with plugin architecture for extensibility.
 
@@ -2957,6 +2963,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.32 | chore(rate-of-closure, #4400): apply Ruff's canonical formatting to the PyQt Morris workflow test after the first protected quality gate isolated that single failure. No material runtime, API, authority, or scientific behavior changes; all R13.7 validation remains required on the new exact head. |
 | 2026-08-12 | 1.16.31 | feat(rate-of-closure, #4142 R13.7): add the standalone PyQt Morris Screening workflow as an explicit sibling of unchanged Monte Carlo dispersion; own the authenticated private authority for exactly the Qt event loop; inject the repr-hidden strict loopback client through launcher/window/workspace seams; provide capability gating, canonical editable factors, bounded design controls, sequential off-thread polling and cancellation, stale-generation suppression, target-local ranked mu-star with uncertainty and complete typed miss/failure denominators, accessible honest unavailable/error states, and fail-closed exact base-config compatibility without a local physics fallback. Retain React presentation, workspace persistence/export, UpstreamDrift consumption, protected CI, dependency-order release, and epic completion as open gates. |
 | 2026-08-12 | 1.16.30 | feat(rate-of-closure, #4142 R13.6): add the UI-neutral Morris application seam shared conceptually across Python and TypeScript: canonical tee-aware factor order and registry-derived bounded drafts, full represented-`SimulationConfig` round-trip with fail-closed pinned semantics, exact request serialization including authority base-physics/vocabulary and named sample/observation resource parity, strict frozen capability/job/report consumers, same-origin/direct-loopback authenticated clients with 16 MiB success and 8 KiB error bounds, exact scientific metric and denominator validation, target-scoped stable `mu*` presentation, and one cross-runtime fixture pinned and verified against Python. Retain widgets, hooks/polling, launchers/host routes, exports, persistence, local physics fallback, UpstreamDrift consumption, and epic completion as open gates. |
 | 2026-08-12 | 1.16.29 | feat(rate-of-closure, #4142 R13.5): add a bounded private Morris authority host for the standalone React development launcher: exclusive ephemeral IPv4 loopback child socket, exact authenticated capability readiness, redacted bearer, no-store/nosniff no-CORS FastAPI host including sanitized authenticated errors, explicit pre-lifespan-to-ASGI exact-once registry ownership transfer, BaseException-safe startup cleanup and pipe closure that preserve the primary error through secondary cleanup failures, graceful authenticated shutdown with bounded reap fallback, and a strict server-only Vite proxy at the canonical `/api/rate-of-closure/v1` prefix. Declare the optional FastAPI/Uvicorn/SciPy host dependencies and retain UI polling/presentation, export, persistence, static or deployed authority hosting, UpstreamDrift consumption, and epic completion as open gates. |

@@ -3,6 +3,13 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 PyQt Morris protected-CI format repair
+
+PR #4400's exact first protected run isolated one actionable defect: Ruff's
+format check rejected the newly added PyQt Morris workflow test. The follow-up
+changes formatting only; there is no material runtime, contract, or scientific
+behavior change. All R13.7 gates below remain required on the new exact head.
+
 ## 2026-08-12 Standalone PyQt Morris workflow (#4142 R13.7)
 
 Branch `codex/4142-morris-pyqt-workflow` starts at exact UI-contract parent

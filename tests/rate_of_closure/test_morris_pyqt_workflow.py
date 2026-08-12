@@ -407,9 +407,7 @@ def test_result_table_is_read_only(qtbot) -> None:  # type: ignore[no-untyped-de
         "cancel-job",
     ),
 )
-def test_worker_fails_closed_when_authority_identity_changes(
-    qtbot, phase: str
-) -> None:  # type: ignore[no-untyped-def]
+def test_worker_fails_closed_when_authority_identity_changes(qtbot, phase: str) -> None:  # type: ignore[no-untyped-def]
     client = _IdentityMismatchClient(phase)
     widget = MorrisScreeningTab(client, poll_interval_ms=1)
     qtbot.addWidget(widget)

@@ -1,5 +1,12 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4400 protected-CI format repair
+
+- The first exact-head protected quality gate failed only Ruff formatting for
+  `tests/rate_of_closure/test_morris_pyqt_workflow.py`.
+- The follow-up is a mechanical format repair with no material behavior or
+  contract change; rerun every R13.7 local and protected gate on the new head.
+
 ## 2026-08-12 #4142 R13.7 standalone PyQt workflow
 
 - Branch `codex/4142-morris-pyqt-workflow` has exact parent

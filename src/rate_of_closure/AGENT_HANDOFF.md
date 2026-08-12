@@ -3,6 +3,12 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 PyQt Morris protected-CI format repair
+
+PR #4400's first protected quality gate found only Ruff formatting in
+`test_morris_pyqt_workflow.py`. The follow-up is intentionally mechanical and
+does not change the workflow, authority contract, or scientific semantics.
+
 ## 2026-08-12 Morris request/presentation seam (#4142 R13.6)
 
 `application/morris/request_document.py` is now the only UI-neutral builder
