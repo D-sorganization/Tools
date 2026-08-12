@@ -84,6 +84,20 @@ def _configure_logging() -> None:
 __version__ = "0.1.0"
 
 
+def get_dockable_ui(parent: object | None = None) -> MainWindow:
+    """Return the canonical main window for an embedding host.
+
+    The optional parent is applied only when it is a Qt widget. Standalone
+    launch remains owned by :func:`main`.
+    """
+    from PyQt6.QtWidgets import QWidget
+
+    window = MainWindow()
+    if isinstance(parent, QWidget):
+        window.setParent(parent)
+    return window
+
+
 def main() -> None:
     # Handle --version flag before any GUI initialization
     if "--version" in sys.argv:

@@ -49,6 +49,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   and exploratory scientific status. The companion does not claim that model
   output is measured biomechanics or that a kinematic sequence alone proves
   energy transfer.
+- The provider manifest exposes the canonical PyQt6 window through a dockable
+  entry point so UpstreamDrift can consume the Tools implementation without
+  maintaining a second launcher implementation.
 
 ### 2026-08-05 Golf Club assembly type-checking compatibility
 

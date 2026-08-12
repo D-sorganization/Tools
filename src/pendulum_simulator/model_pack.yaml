@@ -8,6 +8,7 @@ models:
     description: "Shared pendulum simulation, analysis, and optimization suite for double, triple, and golfer upper-body models."
     type: "special_app"
     path: "src/double_pendulum_golf/__main__.py"
+    embed_adapter: "src/double_pendulum_golf/__main__.py::get_dockable_ui"
     source_root: "src/pendulum_simulator"
     working_dir: "src/pendulum_simulator"
     python_paths:
@@ -17,6 +18,7 @@ models:
       - "simulation"
       - "optimization"
       - "biomechanics"
+      - "proximal-distal-companion"
     tags:
       - "golf"
       - "double-pendulum"

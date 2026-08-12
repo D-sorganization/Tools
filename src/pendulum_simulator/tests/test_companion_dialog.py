@@ -32,3 +32,12 @@ def test_toolstrip_makes_companion_discoverable(qapp) -> None:
 
     assert toolstrip.btn_companion.text() == "Companion Guide"
     assert "glossary" in toolstrip.btn_companion.toolTip().lower()
+
+
+def test_canonical_provider_entrypoint_is_embeddable(qapp) -> None:
+    from double_pendulum_golf.__main__ import get_dockable_ui
+    from double_pendulum_golf.gui.main_window import MainWindow
+
+    window = get_dockable_ui()
+
+    assert isinstance(window, MainWindow)
