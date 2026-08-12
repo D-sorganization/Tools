@@ -39,6 +39,14 @@ expected Windows symlink skip, 60 focused Python companion/harness contracts,
 all nine three-engine smoke scenarios, and all three three-engine hard-loss
 lifecycle scenarios. The generated release manifest matched the qualified head.
 
+Exact-head hosted run `31595498982` built the production bundle and passed all
+13 harness tests before app-contract collection exposed Starlette 1.6's split
+TestClient dependency. The isolated browser job now pins `httpx2==2.10.0`.
+Hosted quality run `31595499033` also correctly classified the native harness
+as changed test support; its exact path is now documented in the fixture-only
+assertion allowlist while behavioral assertions remain in the separate harness
+test module. These are qualification-environment fixes, not product expansion.
+
 The protected distribution workflow gains an independent 30-minute
 **Production browser qualification** job. It fetches the exact public head
 without credentials, uses Python 3.11 and Node 22, performs `npm ci`, builds
