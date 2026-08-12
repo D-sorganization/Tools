@@ -87,6 +87,11 @@ jobs:
               python/src/utils
               shared
               sidekick
+              src/shared
+              src/sidekick
+              src/chat
+              src/python/src/utils
+              src/contracts.py
               src/shared/python
               tests/shared_contracts
               tests/support

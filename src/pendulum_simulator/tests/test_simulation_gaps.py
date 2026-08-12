@@ -124,9 +124,7 @@ def golfer_params() -> GolferParams:
 
 
 class TestGolferSimulationWithJointLimits:
-    def test_limits_code_path_via_direct_call(
-        self, golfer_params: GolferParams
-    ) -> None:
+    def test_limits_code_path_via_direct_call(self, golfer_params: GolferParams) -> None:
         """Directly test the limits branch in the ode_rhs closure.
 
         Instead of running the full simulation (which can hit singular matrices
@@ -188,9 +186,7 @@ class TestGolferConstraintDriftLogging:
     ) -> None:
         """Normal simulation should not trigger constraint abort logging."""
         initial_state = np.zeros(2 * N_DOF)
-        with caplog.at_level(
-            logging.WARNING, logger="double_pendulum_golf.simulation_golfer"
-        ):
+        with caplog.at_level(logging.WARNING, logger="double_pendulum_golf.simulation_golfer"):
             result = run_golfer_sim(
                 golfer_params,
                 initial_state,

@@ -46,29 +46,25 @@ class TestMassMatrixSymmetry:
 class TestMassMatrixPositiveDefinite:
     """The mass matrix must be positive definite (all eigenvalues > 0)."""
 
-    def test_positive_definite_at_various_angles(
-        self, default_params: PendulumParams
-    ) -> None:
+    def test_positive_definite_at_various_angles(self, default_params: PendulumParams) -> None:
         for phi in np.linspace(-np.pi, np.pi, 50):
             M = mass_matrix(phi, default_params)
             eigenvalues = np.linalg.eigvalsh(M)
-            assert all(
-                ev > 0 for ev in eigenvalues
-            ), f"Not positive definite at phi={phi}: eigenvalues={eigenvalues}"
+            assert all(ev > 0 for ev in eigenvalues), (
+                f"Not positive definite at phi={phi}: eigenvalues={eigenvalues}"
+            )
 
 
 class TestMassMatrixCouplingMaximum:
     """Off-diagonal coupling |M12| should be maximized when segments are aligned (phi=0)."""
 
-    def test_coupling_maximized_at_alignment(
-        self, default_params: PendulumParams
-    ) -> None:
+    def test_coupling_maximized_at_alignment(self, default_params: PendulumParams) -> None:
         M12_at_zero = abs(mass_matrix(0.0, default_params)[0, 1])
         for phi in np.linspace(0.1, np.pi, 30):
             M12 = abs(mass_matrix(phi, default_params)[0, 1])
-            assert (
-                M12 <= M12_at_zero + 1e-10
-            ), f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
+            assert M12 <= M12_at_zero + 1e-10, (
+                f"|M12| at phi={phi:.2f} ({M12:.4f}) exceeds value at phi=0 ({M12_at_zero:.4f})"
+            )
 
 
 class TestMassMatrixDiagonalConstant:
@@ -78,9 +74,7 @@ class TestMassMatrixDiagonalConstant:
         M22_ref = mass_matrix(0.0, default_params)[1, 1]
         for phi in np.linspace(-np.pi, np.pi, 30):
             M22 = mass_matrix(phi, default_params)[1, 1]
-            assert np.isclose(
-                M22, M22_ref
-            ), f"M22 changed at phi={phi}: {M22} vs {M22_ref}"
+            assert np.isclose(M22, M22_ref), f"M22 changed at phi={phi}: {M22} vs {M22_ref}"
 
     def test_m22_equals_expected(self, default_params: PendulumParams) -> None:
         """M22 = m2 * L2^2 for point mass at tip."""
@@ -123,9 +117,7 @@ class TestMassMatrixKnownValues:
 class TestCoriolisVector:
     """Tests for the Coriolis/centrifugal force computation."""
 
-    def test_zero_velocity_gives_zero_coriolis(
-        self, default_params: PendulumParams
-    ) -> None:
+    def test_zero_velocity_gives_zero_coriolis(self, default_params: PendulumParams) -> None:
         """No velocity => no velocity-dependent forces."""
         C = coriolis_vector(0.5, 0.0, 0.0, default_params)
         assert np.allclose(C, [0.0, 0.0])
@@ -330,21 +322,15 @@ class TestHermitePenaltyHelper:
 
         # pen >= transition → blend=1 → smooth=1 → full penalty
         pen = 0.05  # exactly at transition
-        result = _hermite_penalty(
-            pen, vel=0.0, transition=0.05, stiffness=500.0, damping=0.0
-        )
+        result = _hermite_penalty(pen, vel=0.0, transition=0.05, stiffness=500.0, damping=0.0)
         assert result == pytest.approx(500.0 * 0.05, rel=1e-9)
 
     def test_large_penetration_clamps_blend(self):
         from double_pendulum_golf.physics import _hermite_penalty
 
         # pen >> transition → blend clamped at 1 → same as full penalty
-        r1 = _hermite_penalty(
-            0.05, vel=0.0, transition=0.05, stiffness=500.0, damping=0.0
-        )
-        r2 = _hermite_penalty(
-            1.0, vel=0.0, transition=0.05, stiffness=500.0, damping=0.0
-        )
+        r1 = _hermite_penalty(0.05, vel=0.0, transition=0.05, stiffness=500.0, damping=0.0)
+        r2 = _hermite_penalty(1.0, vel=0.0, transition=0.05, stiffness=500.0, damping=0.0)
         # Both have blend=1; r2 has larger pen so larger result
         assert r2 > r1
 
@@ -353,13 +339,9 @@ class TestHermitePenaltyHelper:
 
         # vel > 0 means moving into the limit → damping adds
         pen = 0.05
-        r_into = _hermite_penalty(
-            pen, vel=1.0, transition=0.05, stiffness=0.0, damping=20.0
-        )
+        r_into = _hermite_penalty(pen, vel=1.0, transition=0.05, stiffness=0.0, damping=20.0)
         # vel = 0 means no damping contribution
-        r_zero = _hermite_penalty(
-            pen, vel=0.0, transition=0.05, stiffness=0.0, damping=20.0
-        )
+        r_zero = _hermite_penalty(pen, vel=0.0, transition=0.05, stiffness=0.0, damping=20.0)
         assert r_into > r_zero
 
 
@@ -382,9 +364,7 @@ class TestJointLimitTorqueEdgeCases:
     def test_within_limits_gives_zero(self, limits):
         from double_pendulum_golf.physics import joint_limit_torque
 
-        tau = joint_limit_torque(
-            phi=0.0, dphi=0.0, limits=limits, theta1=0.0, dtheta1=0.0
-        )
+        tau = joint_limit_torque(phi=0.0, dphi=0.0, limits=limits, theta1=0.0, dtheta1=0.0)
         np.testing.assert_allclose(tau, [0.0, 0.0], atol=1e-12)
 
     def test_exactly_at_lower_phi_limit_gives_zero(self, limits):
@@ -421,9 +401,9 @@ class TestForwardKinematicsPostconditions:
                 tx, ty = pos["tip"]
                 wrist_dist = np.hypot(wx - sx, wy - sy)
                 tip_dist = np.hypot(tx - wx, ty - wy)
-                assert (
-                    abs(wrist_dist - default_params.L1) < 1e-9
-                ), f"theta1={theta1:.2f}, phi={phi:.2f}: wrist_dist={wrist_dist:.9f}"
-                assert (
-                    abs(tip_dist - default_params.L2) < 1e-9
-                ), f"theta1={theta1:.2f}, phi={phi:.2f}: tip_dist={tip_dist:.9f}"
+                assert abs(wrist_dist - default_params.L1) < 1e-9, (
+                    f"theta1={theta1:.2f}, phi={phi:.2f}: wrist_dist={wrist_dist:.9f}"
+                )
+                assert abs(tip_dist - default_params.L2) < 1e-9, (
+                    f"theta1={theta1:.2f}, phi={phi:.2f}: tip_dist={tip_dist:.9f}"
+                )
