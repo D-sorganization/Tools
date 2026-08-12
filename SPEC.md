@@ -26,15 +26,15 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.35                                    |
-| **Spec Version**        | 1.16.35                                    |
+| **Current Version**     | 1.16.37                                    |
+| **Spec Version**        | 1.16.37                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-12 Lossless Morris workspace v1 (#4142 R13.8)
 
-Version 1.16.35 defines a strict, immutable Morris workspace document shared by
+Version 1.16.37 defines a strict, immutable Morris workspace document shared by
 Python and React. Its allowlisted setup preserves the exact authority base,
 bounded design controls, fixed export scope, and all ten canonical factor rows,
 including disabled invalid raw text and its validation state. Optional evidence
@@ -62,6 +62,11 @@ spin-box numeric value; execution remains blocked until a valid numeric edit
 explicitly replaces that draft state.
 CSV export prefixes formula-significant text (`=`, `+`, `-`, `@`, tab, or
 carriage return) with an apostrophe while retaining numeric fields as numbers.
+React and PyQt now provide equivalent atomic import, archive-only completed
+evidence, and deterministic CSV behavior. Browser files are size-rejected before
+read, the import action is keyboard reachable, and the duplicate scanner applies
+the depth budget before recursion. The parity fixture is byte-identical across
+both test surfaces; raw authority observations remain unavailable by design.
 
 ### 2026-08-12 Morris UI stack alignment
 
@@ -3027,6 +3032,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.37 | merge(rate-of-closure, #4142 R13.8): combine exact independently reviewed Python/PyQt Morris workspace commit `8968f6f3544203029fea8e07659ab494eb050c67` and React parity commit `bcc0b2a0200725b6558abbe4ab056471e597aaa2`; preserve one byte-identical fixture and exact limits, Unicode semantics, immutable evidence binding, atomic imports, archived-ID isolation, accessible pre-read browser defenses, fail-closed invalid draft execution, report caps, and formula-neutral aggregate CSV. Protected CI, dependency-ordered publication, raw-observation retention, UpstreamDrift consumption, and epic completion remain open. |
 | 2026-08-12 | 1.16.36 | fix(rate-of-closure, #4142 R13.8): align React workspace import with the canonical Python/PyQt edge profile: 2 MB bytes, depth/node and raw-text caps, C0/C1 rejection, decimal/exponent-only finite bounds within +/-1e9, trajectories 2..5000, signed-32-bit seed, exact synthesized invalid-row errors, and null error for valid disabled ground tee; recursively freeze imported setup/evidence; reject oversized browser files before FileReader and use a keyboard-focusable focus-visible import button. |
 | 2026-08-12 | 1.16.35 | feat(rate-of-closure, #4142 R13.8): add the dedicated lossless Morris workspace v1 contract and React import/export surface; preserve all canonical factor drafts including disabled invalid raw text, exact authority base and design controls, and only completed aggregate request/job evidence; enforce bounded duplicate-safe exact parsing and cross-layer identity checks before atomic install; label imports archived and unverified-live with inert IDs; export deterministic aggregate CSV with complete provenance and typed denominators; pin Python/React parity to one shared fixture. UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
 | 2026-08-12 | 1.16.34 | merge(rate-of-closure, #4142 R13.7): align the combined React Morris integration on current PyQt PR #4400 head `9e62c9595ccfbcf7eaa14724ad7e6d65d5277cee` through an ordinary merge. Preserve both independently reviewed workflows while inheriting the PyQt test-format repair and internal immutable UI-constant extraction that restores its 500-line changed-file gate. Persistence/export, UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |

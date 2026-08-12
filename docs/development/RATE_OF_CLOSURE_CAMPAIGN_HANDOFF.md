@@ -2,9 +2,10 @@
 
 ## 2026-08-12 Lossless Morris workspace persistence/export (#4142 R13.8)
 
-Branch `codex/4142-morris-workspace-python` starts at exact combined UI parent
-`37fe8d33bdb4ce26465f478757dfd7f081c04372`. It adds the shared Python
-contract and standalone PyQt half of the dedicated Morris workspace v1.
+Branch `codex/4142-morris-workspace-integration` combines exact independently
+reviewed Python/PyQt commit `8968f6f3544203029fea8e07659ab494eb050c67`
+and React commit `bcc0b2a0200725b6558abbe4ab056471e597aaa2`
+above exact UI parent `37fe8d33bdb4ce26465f478757dfd7f081c04372`.
 
 - The exact four-field root stores the complete authority-compatible base, all
   ten canonical factor drafts in order (including disabled and invalid raw bound
@@ -35,8 +36,17 @@ contract and standalone PyQt half of the dedicated Morris workspace v1.
   Text cells are spreadsheet-formula-neutralized while numeric negatives remain
   numeric.
 
-This child does not alter React files or complete #4142; React parity, review,
-protected CI, publication, and UpstreamDrift replacement remain gates.
+- React provides the same strict document, archived-evidence, and aggregate-CSV
+  semantics. Browser import rejects oversized files before `FileReader`, uses a
+  focus-visible keyboard button, freezes the complete parsed graph, bounds the
+  duplicate scanner before recursion, and preserves existing Monte Carlo state.
+- Cross-runtime review pins one byte-identical fixture and identical limits,
+  Unicode code-point counting, report caps, numeric grammar, formula defense,
+  factor order, evidence identities, and disabled-ground-tee behavior.
+
+This child does not complete #4142; protected CI, dependency-ordered
+publication, raw-observation retention, and UpstreamDrift replacement remain
+gates.
 
 
 ## 2026-08-12 #4142 R13.7 React workflow integration
