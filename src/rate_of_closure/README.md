@@ -66,8 +66,11 @@ outcome bias, r = −.14), not a bias you can simply calibrate away.
 # PyQt6 desktop (animated 3D clubhead, closure sweep)
 python src/rate_of_closure/launch_pyqt6.py
 
-# Shareable web version through the repository launcher
+# Exact packaged production companion (Python only; no Node/Vite runtime)
 python src/rate_of_closure/launch_web.py
+
+# Explicit Node/Vite development launcher
+python src/rate_of_closure/launch_web_dev.py
 
 # Equivalent direct Vite development workflow
 cd src/rate_of_closure/web && npm ci && npm run dev
@@ -77,9 +80,11 @@ The web app builds to a manifest-bound static-inspection bundle (`npm run
 build`) that can be hosted as a link. Static inspection performs no authority
 requests: Python-backed prepare/run/cancel/recover actions remain visibly
 unavailable while evidence import, visualization, and download remain local.
-A Tauri wrapper does not exist. The current PyInstaller script is a developer
-candidate, not a qualified standalone release; production companion and frozen
-qualification are tracked separately under Tools epic #4377.
+A Tauri wrapper does not exist. The source production companion requires an
+exact manifest-bound packaged bundle, binds a random IPv4 loopback origin, and
+keeps authority credentials server-side. The current PyInstaller script is a
+developer candidate, not a qualified standalone release; real-browser and
+frozen qualification remain tracked under Tools epic #4377.
 
 Both interfaces open with a generated driver head and its engineering CG
 target visible. The Simulation view runs immediately and supports manual,

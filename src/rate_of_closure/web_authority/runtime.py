@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import os
+import queue
 import secrets
-import socket
 import subprocess
 import sys
+import threading
 import time
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from http.client import HTTPConnection
 from pathlib import Path
 from types import MappingProxyType
@@ -24,9 +25,12 @@ LOOPBACK_HOST: Final = "127.0.0.1"
 AUTHORITY_URL_ENV: Final = "ROC_AUTHORITY_URL"
 AUTHORITY_TOKEN_ENV: Final = "ROC_AUTHORITY_TOKEN"
 AUTHORITY_STATE_ROOT_ENV: Final = "ROC_AUTHORITY_STATE_ROOT"
+AUTHORITY_PORT_ENV: Final = "ROC_AUTHORITY_PORT"
+AUTHORITY_APP_FACTORY_ENV: Final = "ROC_AUTHORITY_APP_FACTORY"
 _READINESS_TIMEOUT_S: Final = 15.0
 _READINESS_INTERVAL_S: Final = 0.05
-_SHUTDOWN_TIMEOUT_S: Final = 5.0
+_SHUTDOWN_TIMEOUT_S: Final = 10.0
+_PORT_REPORT_TIMEOUT_S: Final = 15.0
 DEFAULT_AUTHORITY_APP_FACTORY: Final = (
     "rate_of_closure.web_authority.server:create_app_from_environment"
 )
@@ -37,7 +41,7 @@ class AuthorityProcessSpec:
     """Command and private environment for one isolated authority process."""
 
     command: tuple[str, ...]
-    environment: Mapping[str, str]
+    environment: Mapping[str, str] = field(repr=False)
     port: int
 
 
@@ -46,7 +50,7 @@ class AuthorityRuntime:
     """Owned process and Vite proxy environment for one launcher session."""
 
     process: subprocess.Popen[bytes]
-    token: str
+    token: str = field(repr=False)
     port: int
 
     @property
@@ -59,14 +63,15 @@ class AuthorityRuntime:
 
     def close(self) -> None:
         """Terminate and reap the isolated authority child process."""
-        if self.process.poll() is not None:
-            return
-        self.process.terminate()
-        try:
-            self.process.wait(timeout=_SHUTDOWN_TIMEOUT_S)
-        except subprocess.TimeoutExpired:
-            self.process.kill()
-            self.process.wait(timeout=_SHUTDOWN_TIMEOUT_S)
+        if self.process.poll() is None:
+            self.process.terminate()
+            try:
+                self.process.wait(timeout=_SHUTDOWN_TIMEOUT_S)
+            except subprocess.TimeoutExpired:
+                self.process.kill()
+                self.process.wait(timeout=_SHUTDOWN_TIMEOUT_S)
+        if self.process.stdout is not None:
+            self.process.stdout.close()
 
 
 def _app_factory(value: str) -> str:
@@ -80,20 +85,12 @@ def _app_factory(value: str) -> str:
     return value
 
 
-def _authority_command(port: int, app_factory: str) -> tuple[str, ...]:
-    """Build the fixed Uvicorn child-process command."""
+def _authority_command() -> tuple[str, ...]:
+    """Build the fixed child command without exposing token or selected port."""
     return (
         sys.executable,
         "-m",
-        "uvicorn",
-        _app_factory(app_factory),
-        "--factory",
-        "--host",
-        LOOPBACK_HOST,
-        "--port",
-        str(port),
-        "--no-access-log",
-        "--log-level=warning",
+        "rate_of_closure.web_authority.child",
     )
 
 
@@ -108,14 +105,16 @@ def build_authority_process_spec(
     """Build a loopback-only process spec with its token outside the command."""
     if not token or token != token.strip():
         raise ValueError("authority token must be nonempty and trimmed")
-    if port < 1 or port > 65_535:
-        raise ValueError("authority port must lie within [1, 65535]")
+    if port < 0 or port > 65_535:
+        raise ValueError("authority port must lie within [0, 65535]")
     environment = os.environ.copy()
     inherited_path = environment.get("PYTHONPATH")
     environment["PYTHONPATH"] = os.pathsep.join(
         part for part in (str(source_root), inherited_path) if part
     )
     environment[AUTHORITY_TOKEN_ENV] = token
+    environment[AUTHORITY_PORT_ENV] = str(port)
+    environment[AUTHORITY_APP_FACTORY_ENV] = _app_factory(app_factory)
     if state_root is not None:
         if not state_root.is_absolute() or not state_root.is_dir():
             raise ValueError(
@@ -125,17 +124,35 @@ def build_authority_process_spec(
             raise ValueError("authority state_root must not be a symbolic link")
         environment[AUTHORITY_STATE_ROOT_ENV] = str(state_root)
     return AuthorityProcessSpec(
-        command=_authority_command(port, app_factory),
+        command=_authority_command(),
         environment=MappingProxyType(environment),
         port=port,
     )
 
 
-def _reserve_loopback_port() -> int:
-    """Reserve and release one ephemeral loopback port."""
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
-        listener.bind((LOOPBACK_HOST, 0))
-        return int(listener.getsockname()[1])
+def _read_child_port(process: subprocess.Popen[bytes]) -> int:
+    """Receive the child-owned listener port over one private bounded pipe."""
+    if process.stdout is None:
+        raise RuntimeError("authority child port pipe is unavailable")
+    stdout = process.stdout
+    reports: queue.Queue[bytes] = queue.Queue(maxsize=1)
+
+    def read_report() -> None:
+        reports.put(stdout.readline(16))
+
+    threading.Thread(target=read_report, daemon=True).start()
+    try:
+        report = reports.get(timeout=_PORT_REPORT_TIMEOUT_S)
+    except queue.Empty as exc:
+        raise RuntimeError("authority child did not report its listener") from exc
+    try:
+        source = report.decode("ascii")
+        port = int(source.removesuffix("\n"))
+    except (UnicodeDecodeError, ValueError) as exc:
+        raise RuntimeError("authority child reported an invalid listener") from exc
+    if not source.endswith("\n") or not 1 <= port <= 65_535:
+        raise RuntimeError("authority child reported an invalid listener")
+    return port
 
 
 def _is_ready(runtime: AuthorityRuntime) -> bool:
@@ -193,7 +210,7 @@ def start_authority(
         root.chmod(0o700)
     spec = build_authority_process_spec(
         token=token,
-        port=_reserve_loopback_port(),
+        port=0,
         source_root=source_root,
         state_root=root,
         app_factory=app_factory,
@@ -202,13 +219,20 @@ def start_authority(
         spec.command,
         env=dict(spec.environment),
         shell=False,
-        stdout=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
         stderr=subprocess.DEVNULL,
     )
-    runtime = AuthorityRuntime(process=process, token=token, port=spec.port)
     try:
+        port = _read_child_port(process)
+        runtime = AuthorityRuntime(process=process, token=token, port=port)
         _wait_until_ready(runtime)
     except Exception:
-        runtime.close()
+        if process.poll() is None:
+            process.terminate()
+            try:
+                process.wait(timeout=_SHUTDOWN_TIMEOUT_S)
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=_SHUTDOWN_TIMEOUT_S)
         raise
     return runtime

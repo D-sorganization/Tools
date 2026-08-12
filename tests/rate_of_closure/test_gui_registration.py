@@ -67,9 +67,9 @@ class TestGuiRegistration:
                 "module = importlib.util.module_from_spec(spec)",
                 "spec.loader.exec_module(module)",
                 "module.bootstrap(launcher_path)",
-                "import shared.python.gui_launcher as gui_launcher",
+                "import rate_of_closure.web_companion.cli as companion_cli",
                 "def successful_launch(*_args, **_kwargs): return 0",
-                "gui_launcher.launch_web_from_gui_info = successful_launch",
+                "companion_cli.main = successful_launch",
                 "runpy.run_path(launcher_path, run_name='__main__')",
             )
         )

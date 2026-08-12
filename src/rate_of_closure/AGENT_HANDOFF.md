@@ -1,5 +1,59 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-12 #4379 same-origin source production companion
+
+Branch `codex/4379-same-origin-companion` starts exactly from Tools PR #4388
+head `1616e2de41521789a53f41e00e9ce35f1805f080` and must target
+`codex/4378-static-inspection-runtime`. Human review is approved; protected
+dependency order and ordinary non-admin merging remain mandatory.
+
+Production `launch_web.py` and the `rate-of-closure-web` entry point now run a
+Python-only foreground companion over an exact manifest-qualified packaged
+bundle. Node/Vite remains only in `launch_web_dev.py`. One derived in-memory
+`local_companion` index publishes schema, exact revision, and the fixed relative
+API root; package data stays unchanged and token, child port, state path, PID,
+and environment data remain private.
+
+Gateway and authority bind their own ephemeral IPv4 `127.0.0.1` listeners. The
+authority child owns its listener before reporting the selected port through a
+private bounded pipe, removing the former reserve/release token-disclosure
+race. Token and port are absent from argv and sensitive runtime fields from
+repr.
+
+The gateway admits only capability, preparation, submit, status, cancel, and
+result method/path contracts. It rejects queries, encoding/traversal ambiguity,
+unknown routes, browser credentials, forwarding/CORS headers, unsupported
+media/encoding, duplicate headers, and oversized or mismatched bodies. Exact
+Host is mandatory; POST additionally requires exact Origin and same-origin
+fetch metadata. It reconstructs bounded authority requests and browser
+responses, never relaying upstream errors or headers. Every authority response
+must satisfy the selected route's exact status set and duplicate-safe domain
+decoder before canonical JSON publication. Synchronous authority I/O runs off
+the ASGI event loop, and uncommon methods plus protocol truncation retain the
+same sanitized security envelope. Shell/API are `no-store`,
+hashed assets are immutable-cacheable, and security headers are explicit.
+
+A single-flight supervisor replaces an already-dead authority before a later
+explicit request using a fresh token/port and the same durable state root. It
+never retries after dispatch or replays physics. Normal close stops admission,
+releases the gateway listener, and reaps the live child. Partial startup closes
+every acquired listener/supervisor and releases the durable lock; forced server
+exit remains bounded and retryable. The child-port report deadline tolerates a
+busy 14-worker host while readiness remains independently authenticated.
+
+Current local evidence is 101 focused companion/authority/status tests, 1,313
+complete Rate-of-Closure Python passes with two expected Windows/POSIX skips,
+and all 138 React files / 922 tests plus six Node release-contract passes and
+one expected Windows symlink skip. Changed Ruff/format, focused MyPy, high
+severity Bandit, YAML/TOML, campaign-manifest, module-budget, policy, and diff
+gates pass. The exact-revision clean-wheel gate and protected CI remain required
+at the final published head.
+
+Playwright, forced parent-process tree cleanup, Windows ACL/reparse privacy,
+frozen packages, installers, signing/SBOM/attestation, protected release,
+compiled/calibrated physics, and downstream parity remain open under #4377 and
+#4380-#4385. Same-origin checks do not authenticate same-user native malware.
+
 ## 2026-08-12 #4378 deterministic static-inspection distribution
 
 Branch `codex/4378-static-inspection-runtime` starts exactly from Tools PR

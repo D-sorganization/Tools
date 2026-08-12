@@ -193,6 +193,7 @@ codemap = "shared.python.codemap.cli:main"
 codemap-watch = "shared.python.codemap.watcher:main"
 codemap-mcp = "shared.python.codemap.mcp_server:main"
 video-analyzer = "video_analyzer.launch_video_analyzer:main"
+rate-of-closure-web = "rate_of_closure.web_companion.cli:main"
 
 [project.urls]
 Homepage = "https://github.com/D-sorganization/Tools"

@@ -208,9 +208,9 @@ def _validate_expected_job(
 
 
 def regional_ground_authority_job_status_from_wire(
-    value: object, expected_job: RegionalGroundExecutionJob
+    value: object, expected_job: RegionalGroundExecutionJob | None = None
 ) -> AuthorityJobSnapshot:
-    """Validate one exact status mapping against its source job."""
+    """Validate one exact status mapping and optionally bind it to its job."""
     data = exact_mapping(value, _STATUS_FIELDS, "regional-ground authority job status")
     if data["schema_version"] != AUTHORITY_JOB_STATUS_SCHEMA_VERSION:
         raise ValueError("unsupported schema_version")
@@ -227,14 +227,15 @@ def regional_ground_authority_job_status_from_wire(
         data["result_available"],
         _failure_from_wire(data["failure"]),
     )
-    _validate_expected_job(status, expected_job)
+    if expected_job is not None:
+        _validate_expected_job(status, expected_job)
     return status
 
 
 def regional_ground_authority_job_status_from_json(
-    text: str, expected_job: RegionalGroundExecutionJob
+    text: str, expected_job: RegionalGroundExecutionJob | None = None
 ) -> AuthorityJobSnapshot:
-    """Parse one bounded duplicate-safe canonical status document."""
+    """Parse one bounded status and optionally bind it to its source job."""
     if type(text) is not str:
         raise TypeError("regional-ground authority job status JSON must be text")
     try:

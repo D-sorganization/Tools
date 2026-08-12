@@ -188,9 +188,11 @@ def test_authority_process_spec_keeps_token_out_of_command(tmp_path) -> None:
         state_root=state_root,
     )
 
-    assert spec.command[-2:] == ("--no-access-log", "--log-level=warning")
+    assert spec.command[-2:] == ("-m", "rate_of_closure.web_authority.child")
     assert "test-ephemeral-token" not in " ".join(spec.command)
+    assert "54321" not in " ".join(spec.command)
     assert spec.environment["ROC_AUTHORITY_TOKEN"] == "test-ephemeral-token"
+    assert spec.environment["ROC_AUTHORITY_PORT"] == "54321"
     assert spec.environment["ROC_AUTHORITY_STATE_ROOT"] == str(state_root)
     assert spec.environment["PYTHONPATH"].split(";")[0] == str(tmp_path)
 
@@ -204,8 +206,7 @@ def test_authority_process_spec_accepts_only_bounded_import_factory(tmp_path) ->
         app_factory=factory,
     )
 
-    assert spec.command[3] == factory
-    assert spec.command[4] == "--factory"
+    assert spec.environment["ROC_AUTHORITY_APP_FACTORY"] == factory
     for invalid in (
         "tests.module",
         "tests.module:create-app",

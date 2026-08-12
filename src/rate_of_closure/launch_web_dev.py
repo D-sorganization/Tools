@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Launch the Rate of Closure Python-only production web companion."""
+"""Launch the explicit Node/Vite development web application."""
 
 from __future__ import annotations
 
@@ -17,7 +17,6 @@ class _BootstrapModule(Protocol):
 
 
 def _load_bootstrap() -> _BootstrapModule:
-    """Load the root bootstrap without mutating import paths in this script."""
     bootstrap_path = Path(__file__).resolve().parents[2] / "_bootstrap.py"
     spec = importlib.util.spec_from_file_location("_tools_bootstrap", bootstrap_path)
     if spec is None or spec.loader is None:
@@ -29,12 +28,24 @@ def _load_bootstrap() -> _BootstrapModule:
 
 _REPO_ROOT = _load_bootstrap().bootstrap(__file__)
 
-from rate_of_closure.web_companion.cli import main as companion_main  # noqa: E402
+from rate_of_closure.gui_registration import GUI_INFO  # noqa: E402
+from rate_of_closure.web_authority.runtime import start_authority  # noqa: E402
+from shared.python.gui_launcher import launch_web_from_gui_info  # noqa: E402
 
 
 def main() -> int:
-    """Launch the verified packaged bundle without Node or Vite at runtime."""
-    return int(companion_main())
+    """Launch the isolated authority and explicit Vite development client."""
+    runtime = start_authority(source_root=_REPO_ROOT / "src")
+    try:
+        return int(
+            launch_web_from_gui_info(
+                GUI_INFO,
+                __file__,
+                env_vars=runtime.vite_environment,
+            )
+        )
+    finally:
+        runtime.close()
 
 
 if __name__ == "__main__":

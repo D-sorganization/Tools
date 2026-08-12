@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.94                                    |
-| **Spec Version**        | 1.14.94                                    |
+| **Current Version**     | 1.14.95                                    |
+| **Spec Version**        | 1.14.95                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,47 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-12 Same-Origin Source Production Companion
+
+- The production web entry point serves only a fully verified, immutable
+  exact-revision wheel bundle from a Python foreground companion. Node and Vite
+  are development-only and remain available through an explicitly named
+  launcher.
+- The browser receives one deterministic in-memory `local_companion` overlay
+  containing only schema, exact release revision, and the fixed relative API
+  root. The verified static bundle is never changed on disk, and no bearer
+  token, authority port, state path, PID, or environment data is published.
+- The public companion and isolated authority each bind their own random IPv4
+  `127.0.0.1` listener before disclosing its port. The authority token and port
+  are absent from argv; the child reports its already-owned port through one
+  private bounded pipe before authenticated readiness.
+- The gateway admits only the exact capability, preparation, submit, status,
+  cancel, and result method/path contracts. It rejects query strings,
+  ambiguous encoding or traversal, unknown routes, browser credentials,
+  forwarding/CORS headers, unsupported body encoding/media, oversize bodies,
+  and noncanonical Host. State changes require exact same-origin Origin and
+  fetch metadata.
+- Gateway responses are reconstructed from bounded JSON or immutable manifest
+  bytes. Each authority response must match the selected route's status set,
+  UTF-8 JSON shape, stable error code, and existing duplicate-safe domain
+  decoder before canonical publication. Browser-visible headers never relay
+  authority headers or errors; shell and API responses are non-cacheable,
+  hashed assets are immutable-cacheable, and CSP, MIME, referrer, framing,
+  permissions, and cross-origin isolation policies are explicit even for
+  uncommon methods and protocol failures.
+- A single-flight supervisor replaces an authority that is already dead before
+  a later explicit request, reusing the same durable state root with a new
+  token and child port. It never retries a request after dispatch, never
+  replays physics, and reaps the live child during normal shutdown. Blocking
+  authority I/O does not occupy the ASGI event loop. Partial startup and bounded
+  forced shutdown release every acquired listener, child, and durable-state
+  lock so a later launch can recover normally.
+- Real-browser Playwright qualification, forced parent-process tree cleanup,
+  Windows state ACL/reparse privacy, frozen web/PyQt artifacts, installers,
+  signing, SBOM/attestation, and protected release remain downstream work under
+  #4380-#4385. Same-origin policy does not authenticate against same-user native
+  malware.
 
 ### 2026-08-12 Deterministic Static-Inspection Distribution
 
@@ -71,9 +112,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   resolution from an unrelated working directory. Wheel staging clears the
   exact web-data subtree before copy so obsolete hashed chunks cannot survive
   from a prior build.
-- A production same-origin companion, Playwright browser qualification,
-  Windows ACL/reparse privacy, frozen executables, installers, signing,
-  attestation/SBOM, and execution from a public static host remain non-goals.
+- Playwright browser qualification, Windows ACL/reparse privacy, frozen
+  executables, installers, signing, attestation/SBOM, and execution from a
+  public static host remain non-goals for the static distribution slice.
 
 ### 2026-08-12 Durable Source-Loopback Authority Recovery
 
