@@ -59,6 +59,14 @@ Ordinary parent propagation incorporates corrected #4388 head
 its broader package-side contract suite while adding the pinned benchmark and
 xdist plugins required by the repository's declared Pytest arguments.
 
+Hosted exact-head run `31592370252` then reached the full 95-test companion
+contract suite and identified two isolated-runner assumptions: an explicit
+`PYTHONPATH=src` polluted the child-environment preservation assertion, and the
+async lifespan regression required the Pytest asyncio plugin. The package-side
+step now exercises the installed project without the source-path override and
+installs pinned `pytest-asyncio==1.3.0`. This changes qualification plumbing
+only, not the companion, authority, physics, or browser contract.
+
 Playwright, forced parent-process tree cleanup, Windows ACL/reparse privacy,
 frozen packages, installers, signing/SBOM/attestation, protected release,
 compiled/calibrated physics, and downstream parity remain open under #4377 and
