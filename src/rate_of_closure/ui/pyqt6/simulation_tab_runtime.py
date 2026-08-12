@@ -84,13 +84,13 @@ class SimulationTabRuntimeMixin:
             and selection.profile.model_id == "model.double_pendulum.v1"
         ):
             self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
-        self._invalidate_source()
+        self._emit_config()
 
     def _on_joint_locks_changed(self, *_args: object) -> None:
         """Select the compatible kernel whenever an ideal lock is enabled."""
         if self._torque_profile_panel.joint_locks().has_locks:
             self._source_combo.setCurrentIndex(SOURCE_KINDS.index("double_pendulum"))
-        self._invalidate_source()
+        self._emit_config()
 
     def _reconcile_joint_locks_for_source(self, *_args: object) -> None:
         """Clear constraints when the user explicitly leaves the supported source."""

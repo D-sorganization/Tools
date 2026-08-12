@@ -73,6 +73,8 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         self._scenario = ImpactScenario(clubhead_speed_mph=113.0)
         self._loaded_base: dict[str, float] = {}
         self._worker: VariationWorker | None = None
+        self._generation = 0
+        self._simulation_config_valid = True
         self._dataset: VariationDataset | None = None
         self._sensitivity: SensitivityResult | None = None
         self._ensemble_result: SimulationEnsembleResult | None = None
@@ -220,7 +222,27 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         """Set the complete base request used by trace-capable swing studies."""
         if not isinstance(config, SimulationConfig):
             raise TypeError("config must be a SimulationConfig")
+        changed = config != self._base_simulation_config
+        was_valid = self._simulation_config_valid
+        was_running = bool(self._worker and self._worker.isRunning())
+        if changed:
+            self._invalidate_current_study()
         self._base_simulation_config = config
+        self._simulation_config_valid = True
+        self._set_running(bool(self._worker and self._worker.isRunning()))
+        if changed or not was_valid:
+            self._status.setText(
+                "Simulation changed; cancelling the prior variation study."
+                if was_running
+                else "Ready with the current Simulation inputs."
+            )
+
+    def set_simulation_unavailable(self, message: str) -> None:
+        """Fail closed while the Simulation editor has no valid request."""
+        self._invalidate_current_study()
+        self._simulation_config_valid = False
+        self._set_running(bool(self._worker and self._worker.isRunning()))
+        self._status.setText(message)
 
     def mode(self) -> str:
         """The selected pipeline mode."""
@@ -285,6 +307,11 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
 
     # ── run / cancel ────────────────────────────────────────────────
     def _on_run(self) -> None:
+        if not self._simulation_config_valid:
+            self._status.setText(
+                "Cannot run: current Simulation inputs are incomplete or invalid."
+            )
+            return
         if self._worker is not None and self._worker.isRunning():
             return
         try:
@@ -295,19 +322,41 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         self._dataset = None
         self._sensitivity = None
         self._ensemble_result = None
+        self._generation += 1
+        generation = self._generation
         self._set_running(True)
         worker = VariationWorker(
             plan,
             compute_sensitivity=self._sens_check.isChecked(),
             base_simulation_config=self._base_simulation_config,
         )
-        worker.progressed.connect(self._on_progress)
-        worker.phaseChanged.connect(self._on_phase)
-        worker.succeeded.connect(self._on_succeeded)
-        worker.ensembleSucceeded.connect(self._on_ensemble_succeeded)
-        worker.cancelled.connect(self._on_cancelled)
-        worker.failed.connect(self._on_failed)
-        worker.finished.connect(self._on_finished)
+        worker.progressed.connect(
+            lambda report, current=generation: self._accept_progress(current, report)
+        )
+        worker.phaseChanged.connect(
+            lambda phase, current=generation: self._accept_phase(current, phase)
+        )
+        worker.succeeded.connect(
+            lambda dataset, sensitivity, current=generation: self._accept_succeeded(
+                current, dataset, sensitivity
+            )
+        )
+        worker.ensembleSucceeded.connect(
+            lambda result, current=generation: self._accept_ensemble_succeeded(
+                current, result
+            )
+        )
+        worker.cancelled.connect(
+            lambda current=generation: self._accept_cancelled(current)
+        )
+        worker.failed.connect(
+            lambda message, current=generation: self._accept_failed(current, message)
+        )
+        worker.finished.connect(
+            lambda current=generation, owner=worker: self._accept_finished(
+                current, owner
+            )
+        )
         self._worker = worker
         self._progress.setRange(0, worker.total_runs)
         self._progress.setValue(0)
@@ -315,7 +364,7 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
         worker.start()
 
     def _set_running(self, running: bool) -> None:
-        self._run_button.setEnabled(not running)
+        self._run_button.setEnabled(not running and self._simulation_config_valid)
         self._cancel_button.setEnabled(running)
         self._export_csv.setEnabled(not running and self._dataset is not None)
         self._export_json.setEnabled(not running and self._dataset is not None)
@@ -329,6 +378,48 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             self._status.setText("Cancelling…")
 
     # ── worker callbacks (GUI thread) ───────────────────────────────
+    def _is_current_generation(self, generation: int) -> bool:
+        return generation == self._generation
+
+    def _accept_progress(self, generation: int, report: object) -> None:
+        if self._is_current_generation(generation):
+            self._on_progress(report)
+
+    def _accept_phase(self, generation: int, phase: str) -> None:
+        if self._is_current_generation(generation):
+            self._on_phase(phase)
+
+    def _accept_succeeded(
+        self, generation: int, dataset: object, sensitivity: object
+    ) -> None:
+        if self._is_current_generation(generation) and isinstance(
+            dataset, VariationDataset
+        ):
+            self._on_succeeded(dataset, sensitivity)
+
+    def _accept_ensemble_succeeded(self, generation: int, result: object) -> None:
+        if self._is_current_generation(generation) and isinstance(
+            result, SimulationEnsembleResult
+        ):
+            self._on_ensemble_succeeded(result)
+
+    def _accept_cancelled(self, generation: int) -> None:
+        if self._is_current_generation(generation):
+            self._on_cancelled()
+
+    def _accept_failed(self, generation: int, message: str) -> None:
+        if self._is_current_generation(generation):
+            self._on_failed(message)
+
+    def _accept_finished(self, generation: int, worker: VariationWorker) -> None:
+        owns_current_slot = worker is self._worker
+        if owns_current_slot:
+            self._worker = None
+        if self._is_current_generation(generation):
+            self._on_finished()
+        elif owns_current_slot:
+            self._set_running(False)
+
     def _on_progress(self, report: object) -> None:
         iteration = int(getattr(report, "iteration", 0))
         failed = int(getattr(report, "cost", 0.0))
@@ -396,5 +487,21 @@ class VariationTab(VariationTabIoMixin, VariationTabResultsMixin, QWidget):
             self._spearman_table,
             self._landing,
         )
+
+    def _invalidate_current_study(self) -> None:
+        self._generation += 1
+        if self._worker is not None and self._worker.isRunning():
+            self._worker.cancel()
+        self._dataset = None
+        self._sensitivity = None
+        self._ensemble_result = None
+        self._summary_table.setRowCount(0)
+        for table in (self._sensitivity_table, self._spearman_table):
+            table.setRowCount(0)
+            table.setColumnCount(0)
+        self._landing.clear_view()
+        self._ensemble_scatter.clear_view()
+        self._distribution_matrix.clear_view()
+        self._arc_overlay.clear_view()
 
     # ── export / plan IO ────────────────────────────────────────────

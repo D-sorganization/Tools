@@ -104,6 +104,22 @@ class DistributionMatrixView(QWidget):
         )
         self._set_dataset(dataset, scalar_plot_variables(dataset))
 
+    def clear_view(self) -> None:
+        """Remove every result and restore the honest empty state."""
+        self._plot_dataset = None
+        self._variation = None
+        self._outcomes = ()
+        self._selected_trial = None
+        self._variables = ()
+        self._artist_trial_indices.clear()
+        for selector in self._selectors:
+            selector.clear()
+        self._table.setRowCount(0)
+        self._exports.setEnabled(False)
+        self._status.setText("Run a variation study to populate the matrix.")
+        self._figure.clear()
+        self._canvas.draw_idle()
+
     def _set_dataset(
         self,
         dataset: VariationDataset,

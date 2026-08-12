@@ -180,6 +180,17 @@ class ArcOverlayView(QWidget):
         self._point_combo.setCurrentIndex(max(clubhead, 0))
         self._redraw()
 
+    def clear_view(self) -> None:
+        """Remove every result and restore the honest empty state."""
+        self._dataset = None
+        self._selected_trial = None
+        self._point_combo.clear()
+        self._trial_combo.clear()
+        self._exports.setEnabled(False)
+        self._variability_exports.setEnabled(False)
+        self._status.setText("Run a trace-capable swing variation study.")
+        clear_arc_views(self._canvas, self._variability_canvas)
+
     def set_selected_trial(self, trial_index: int | None) -> None:
         trial_count = self._dataset.result.variation.plan.n_runs if self._dataset else 0
         selected = validated_trial_index(trial_index, trial_count)

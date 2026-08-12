@@ -75,6 +75,8 @@ class SimulationTab(
     glossaryRequested = pyqtSignal(str)  # noqa: N815 - Qt signal convention
     #: Drives conditional Calculation Description sections from model changes.
     configChanged = pyqtSignal(object)  # noqa: N815 - Qt signal convention
+    #: Publishes the exact runnable base to variation-analysis consumers.
+    simulationConfigChanged = pyqtSignal(object)  # noqa: N815 - Qt convention
     #: Requests that the owning workbench adopt a library-club selection.
     clubSelectionChanged = pyqtSignal(str)  # noqa: N815 - Qt signal convention
 
@@ -195,6 +197,12 @@ class SimulationTab(
     def _emit_config(self, *_args: object) -> None:
         self._mark_stale()
         self.configChanged.emit(self.derivation_config())
+        try:
+            config = self.config()
+        except (TypeError, ValueError):
+            self.simulationConfigChanged.emit(None)
+            return
+        self.simulationConfigChanged.emit(config)
 
     def _on_club_changed(self, name: str) -> None:
         """Adopt one library club and keep its geometry internally coherent."""

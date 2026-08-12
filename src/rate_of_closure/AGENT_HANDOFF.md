@@ -1064,6 +1064,52 @@ branches or wait for #4119 to land.
 
 ## Where This Tool Is Headed
 
+## 2026-08-12 PyQt Morris Screening workflow (#4142 R13.7)
+
+- `ui/pyqt6/variation_workspace.py` composes the unchanged `VariationTab` as
+  `Monte Carlo & Dispersion` beside the new authority-only `Morris Screening`
+  workflow. Do not merge these concepts or route Morris through
+  `VariationWorker`.
+- `ui/pyqt6/launcher.py` owns the child runtime around the exact PyQt event
+  loop, creates the strict `MorrisAuthorityClient`, and injects it through
+  `LaunchConfig.window_kwargs` into `RateOfClosureMainWindow`, then into the
+  Morris widget. Widgets do not inspect environment variables or tokens.
+- `morris_worker.py` performs capability and sequential create/status/cancel
+  network calls off the GUI thread. Every response must retain the submitted
+  request ID and authority-issued job ID. Generation IDs suppress stale
+  responses; close requests cancellation without blocking the GUI, retains all
+  live QThreads, and retries the window close only after they finish. The UI
+  never evaluates physics itself.
+- `morris_tab.py` uses shared request/presentation contracts for ordered factor
+  drafts and target-local rankings. It displays μ*, standard error, μ, σ,
+  availability/adequacy, valid pairs, typed no-impact overlap,
+  no-impact-unavailable, failed, and nonfinite counts. Constant-output zeroes
+  remain rankable; unavailable effects remain visibly unranked. Results are
+  read-only and clear immediately when the base simulation, design controls,
+  factor inclusion, or factor bounds change.
+- Exact current simulation semantics must round-trip through the authority
+  request. Manual source/contact modes, custom torque libraries, or other
+  unrepresented semantics disable Run rather than being discarded. The current
+  compatible path is double-pendulum plus fixed-ball contact.
+- `SimulationTab.configChanged` remains the established `DerivationConfig`
+  signal. `simulationConfigChanged` separately publishes the exact runnable
+  `SimulationConfig`, or an explicit invalid state, after normal controls,
+  prescribed-torque mode/profile, and joint-lock changes. Main-window routing
+  updates both Variation workflows and never leaves a stale runnable base.
+  `VariationTab` generation-gates all worker signals, cancels on base changes,
+  clears tables/landing/scatter/matrix/arcs, and ignores delayed completion from
+  a superseded worker (including old-finished/new-worker races).
+- Persistence/export is intentionally not claimed here: existing workspace
+  schemas do not yet own the Morris request/report documents. Add this only in
+  the dedicated follow-up, preserving the generic #4280 variation ownership.
+
+Local evidence: 913 complete Rate tests and 74 focused workflow/integration/
+visualization tests pass; scoped Ruff/MyPy and a real authority-backed 17-target
+smoke are green.
+The branch parent is
+`71c771fb73143f1839449d1cf5a1f5472a55f098`. React remains the next sibling
+child; #4142 is not complete.
+
 Rate of Closure started as a single-page "closure rate" calculator (twist
 model: GC-path vs impact-point-path gap, °/ft). Epics #4103 → #4120 → #4125 →
 #4130 are growing it into a full swing → impact → ball-flight simulator with

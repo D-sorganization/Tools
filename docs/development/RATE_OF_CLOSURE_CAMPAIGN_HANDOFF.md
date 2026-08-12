@@ -1,5 +1,42 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R13.7 standalone PyQt workflow
+
+- Branch `codex/4142-morris-pyqt-workflow` has exact parent
+  `71c771fb73143f1839449d1cf5a1f5472a55f098` and owns only the standalone
+  PyQt presentation/lifecycle child.
+- Variation now contains explicit sibling workflows: unchanged
+  `Monte Carlo & Dispersion` and authority-only `Morris Screening`. The Morris
+  child uses shared factor/request/report presenters and never invokes browser
+  or widget-local physics.
+- The standalone launch owns the authenticated loopback child for exactly the
+  Qt event loop, injects the strict client via constructor kwargs, and closes it
+  in `finally`. Optional authority failure is a visible unavailable state and
+  does not stop the rest of the application.
+- Capability, canonical factor editing, bounded design controls, sequential
+  create/poll/cancel, request/job identity pinning, stale-generation and
+  changed-input invalidation, target selection, read-only ranked μ*,
+  uncertainty, availability, constant/unavailable states, and exact typed-miss/
+  failure denominators are implemented with accessible labels and messages.
+- Window close never waits on the GUI thread or drops a running QThread. It
+  retains capability/create/status/cancel workers and defers the close until
+  all transport calls finish.
+- The app fails closed if the current Simulation config cannot round-trip the
+  pinned authority request. No custom torque/run semantics are silently lost.
+- The existing derivation signal contract is preserved. A separate full-config
+  signal covers real Simulation controls plus torque-mode/profile and joint-lock
+  edits; invalid or incomplete inputs explicitly disable both Monte Carlo and
+  Morris instead of retaining the last valid runnable base.
+- Monte Carlo callbacks are generation- and worker-identity-gated. Base changes
+  cancel the active study, clear every scalar and visualization result surface,
+  and suppress delayed progress/result/error/finish events from the old base.
+- Evidence: Rate suite 913 passed; focused workflow/integration/visualization 74
+  passed; scoped Ruff and MyPy passed; real private authority smoke completed
+  two trajectories and rendered 17 targets.
+- React UI, workspace persistence/export, replacement UpstreamDrift consumer,
+  protected CI, and dependency-ordered merge remain open. Do not mark #4142
+  complete from this child.
+
 ## 2026-08-12 #4142 R13.6 UI-neutral Morris application seam
 
 - Added one canonical tee-aware ten-factor order, registry-derived bounded

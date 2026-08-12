@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import math
 
-from PyQt6.QtCore import QSettings, Qt
+from PyQt6.QtCore import QSettings, Qt, QTimer
 from PyQt6.QtWidgets import (
     QDialog,
     QMainWindow,
@@ -53,12 +53,15 @@ from rate_of_closure.ui.pyqt6.main_window_layout import (
     ResultsSidebar,
     create_primary_tabs,
 )
+from rate_of_closure.ui.pyqt6.morris_tab import MorrisScreeningTab
+from rate_of_closure.ui.pyqt6.morris_worker import MorrisAuthorityPort
 from rate_of_closure.ui.pyqt6.plots_tab import PlotsTab
 from rate_of_closure.ui.pyqt6.putting_tab import PuttingTab
 from rate_of_closure.ui.pyqt6.result_row import ResultRow as _ResultRow
 from rate_of_closure.ui.pyqt6.result_row import explanation_html
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab
+from rate_of_closure.ui.pyqt6.variation_workspace import VariationWorkspace
 from rate_of_closure.ui.pyqt6.workspace_navigation import (
     _DEFAULT_TAB_IDS,
     _NAVIGATION_SETTINGS_APP,
@@ -108,17 +111,18 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         parent: QWidget | None = None,
         *,
         navigation_settings: NavigationSettings | None = None,
+        morris_client: MorrisAuthorityPort | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Rate of Closure Impact Explorer")
         self.setMinimumSize(1024, 700)
 
-        self._create_views()
+        self._create_views(morris_client)
         self._build_application_shell(navigation_settings)
         self._connect_view_signals()
         self._initialize_view_content()
 
-    def _create_views(self) -> None:
+    def _create_views(self, morris_client: MorrisAuthorityPort | None) -> None:
         """Create the application views without coupling their signal graph."""
 
         self._controls = ControlsPanel()
@@ -131,6 +135,12 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._flight_explorer_tab = FlightExplorerTab()
         self._launch_monitor_analytics_tab = LaunchMonitorAnalyticsTab()
         self._variation_tab = VariationTab()
+        self._morris_tab = MorrisScreeningTab(morris_client)
+        self._morris_tab.shutdownReady.connect(self._resume_pending_close)
+        self._close_pending = False
+        self._variation_workspace = VariationWorkspace(
+            self._variation_tab, self._morris_tab
+        )
         self._variation_tab.studyCompleted.connect(self._on_variation_study)
         self._putting_tab = PuttingTab()
         self._glossary_tab = GlossaryTab()
@@ -181,7 +191,7 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
                 self._launch_monitor_analytics_tab,
                 "Launch Monitor Analytics",
             ),
-            ("variation", self._variation_tab, "Variation"),
+            ("variation", self._variation_workspace, "Variation"),
             ("putting", self._putting_tab, "Putting"),
             ("glossary", self._glossary_tab, "Glossary"),
         )
@@ -207,7 +217,10 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._controls.clubHeadRequested.connect(self._on_club_head)
         self._controls.distanceUnitChanged.connect(self._on_distance_unit)
         self._simulation_tab.glossaryRequested.connect(self.open_glossary)
-        self._simulation_tab.configChanged.connect(self._derivation_view.set_config)
+        self._simulation_tab.configChanged.connect(self._on_derivation_config_changed)
+        self._simulation_tab.simulationConfigChanged.connect(
+            self._on_simulation_config_changed
+        )
         self._simulation_tab.clubSelectionChanged.connect(self._controls.set_club_name)
         self._flight_explorer_tab.glossaryRequested.connect(self.open_glossary)
         self._putting_tab.glossaryRequested.connect(self.open_glossary)
@@ -261,6 +274,28 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._simulation_tab.refresh_units()
         self._flight_explorer_tab.refresh_units()
         self._putting_tab.refresh_units()
+
+    def _on_derivation_config_changed(self, config: object) -> None:
+        """Preserve the established derivation-only signal contract."""
+        from rate_of_closure.derivation_models import DerivationConfig
+
+        if isinstance(config, DerivationConfig):
+            self._derivation_view.set_config(config)
+
+    def _on_simulation_config_changed(self, config: object) -> None:
+        """Keep both variation workflows on one exact runnable base."""
+        from rate_of_closure.simulation import SimulationConfig
+
+        if not isinstance(config, SimulationConfig):
+            message = (
+                "Current Simulation inputs are incomplete or invalid; repair them "
+                "before running variation analysis."
+            )
+            self._variation_tab.set_simulation_unavailable(message)
+            self._morris_tab.set_simulation_unavailable(message)
+            return
+        self._variation_tab.set_simulation_config(config)
+        self._morris_tab.set_simulation_config(config)
 
     def _on_variation_study(self, dataset: VariationDataset) -> None:
         """Forward a completed study's landing scatter (#4125 H7b)."""
@@ -375,7 +410,9 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._simulation_tab.set_club_spec(self._controls.club_spec())
         self._simulation_tab.set_scenario(scenario)
         self._variation_tab.set_scenario(scenario)
-        self._variation_tab.set_simulation_config(self._simulation_tab.config())
+        config = self._simulation_tab.config()
+        self._variation_tab.set_simulation_config(config)
+        self._morris_tab.set_simulation_config(config)
         status_bar = self.statusBar()
         if status_bar is None:  # pragma: no cover - Qt always provides one here
             return
@@ -394,4 +431,14 @@ class RateOfClosureMainWindow(WorkspaceNavigationMixin, ThemedWindowMixin, QMain
         self._club_view.stop()
         self._simulation_tab.stop()
         self._variation_tab.stop()
+        if not self._morris_tab.stop():
+            self._close_pending = True
+            event.ignore()
+            return
+        self._close_pending = False
         super().closeEvent(event)
+
+    def _resume_pending_close(self) -> None:
+        """Retry a deferred close after all retained transport threads finish."""
+        if self._close_pending:
+            QTimer.singleShot(0, self.close)

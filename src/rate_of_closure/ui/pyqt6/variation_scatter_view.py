@@ -131,6 +131,20 @@ class DatasetScatterView(QWidget):
         self._exports.setEnabled(True)
         self._redraw()
 
+    def clear_view(self) -> None:
+        """Remove every result and restore the honest empty state."""
+        self._dataset = None
+        self._variation = None
+        self._variables = ()
+        self._outcomes = ()
+        self._selected_trial = None
+        for combo in (self._x_combo, self._y_combo, self._trial_combo):
+            combo.clear()
+        self._table.setRowCount(0)
+        self._exports.setEnabled(False)
+        self._availability.setText("Run a trace-capable variation study.")
+        self._clear()
+
     def _set_variables(self, variables: tuple[ScalarPlotVariable, ...]) -> None:
         """Populate both axis selectors from one canonical variable list."""
         self._variables = variables

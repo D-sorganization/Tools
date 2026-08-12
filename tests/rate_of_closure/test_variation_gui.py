@@ -28,6 +28,7 @@ from shared.python.swing_sim.variation import (  # noqa: E402
     NoiseSpec,
     VariationPlan,
     keys_for_mode,
+    run_variation,
 )
 from shared.python.swing_sim.variation.dataset_io import read_json  # noqa: E402
 
@@ -90,6 +91,57 @@ class TestConstruction:
         assert len(tab._rows) == 1
         tab._remove_row(tab._rows[0])
         assert len(tab._rows) == 1  # refused, status message instead
+
+    def test_base_change_clears_results_and_ignores_stale_callbacks(
+        self, tab: VariationTab
+    ) -> None:
+        dataset = run_variation(_fast_launch_plan(4), n_workers=1)
+        tab._dataset = dataset
+        tab._populate_results()
+        assert tab._summary_table.rowCount() > 0
+        old_generation = tab._generation
+        replacement = SimulationConfig(
+            scenario=ImpactScenario(clubhead_speed_mph=110.0),
+            club=get_club("Driver 10.5°"),
+        )
+
+        tab.set_simulation_config(replacement)
+
+        assert tab._dataset is None
+        assert tab._summary_table.rowCount() == 0
+        expected_status = tab._status.text()
+        tab._accept_succeeded(old_generation, dataset, None)
+        tab._accept_failed(old_generation, "stale failure")
+        assert tab._dataset is None
+        assert tab._summary_table.rowCount() == 0
+        assert tab._status.text() == expected_status
+
+    def test_old_finished_signal_cannot_unlock_a_new_worker(
+        self, tab: VariationTab
+    ) -> None:
+        old_worker = VariationWorker(_fast_launch_plan(4), compute_sensitivity=False)
+        new_worker = VariationWorker(_fast_launch_plan(4), compute_sensitivity=False)
+        tab._generation = 2
+        tab._worker = new_worker
+        tab._set_running(True)
+
+        tab._accept_finished(1, old_worker)
+
+        assert tab._worker is new_worker
+        assert not tab._run_button.isEnabled()
+        assert tab._cancel_button.isEnabled()
+
+    def test_same_valid_base_recovers_from_explicit_invalid_state(
+        self, tab: VariationTab
+    ) -> None:
+        base = tab._base_simulation_config
+        tab.set_simulation_unavailable("Current Simulation inputs are invalid.")
+        assert not tab._run_button.isEnabled()
+
+        tab.set_simulation_config(base)
+
+        assert tab._run_button.isEnabled()
+        assert tab._status.text() == "Ready with the current Simulation inputs."
 
 
 class TestPlanRoundTrip:

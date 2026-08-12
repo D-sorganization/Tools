@@ -3,6 +3,40 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Standalone PyQt Morris workflow (#4142 R13.7)
+
+Branch `codex/4142-morris-pyqt-workflow` starts at exact UI-contract parent
+`71c771fb73143f1839449d1cf5a1f5472a55f098`. It adds an authority-backed
+`Morris Screening` sibling under the existing Variation module; the established
+`Monte Carlo & Dispersion` widget and behavior are unchanged.
+
+- The standalone launcher owns `MorrisAuthorityRuntime` for exactly the Qt
+  event-loop lifetime and injects a strict numeric-loopback client through the
+  reusable `LaunchConfig.window_kwargs` and main-window constructor seams.
+  Tokens are excluded from repr and never read by widgets or globals.
+- The PyQt surface provides a capability gate, canonical editable factor order,
+  trajectories/even-levels/seed/minimum-effects/workers, sequential background
+  create/poll/cancel, pinned request/job identity, stale-generation and
+  changed-input invalidation, read-only target-local ranked μ*, uncertainty,
+  availability/adequacy, and all typed miss/failure denominators. Closing is
+  nonblocking: every live transport thread remains owned and the window close
+  is deferred until the retained workers finish.
+- Unsupported current simulation semantics fail closed with a useful message;
+  no local physics fallback or silent projection is introduced. Optional
+  authority startup failure leaves the rest of the app usable and labels Morris
+  unavailable. The established derivation-only signal remains intact; a
+  separate exact-config signal updates both variation consumers on real control,
+  prescribed-torque, and joint-lock edits, including an explicit invalid state.
+  Monte Carlo now generation-gates worker callbacks and clears every result view
+  when its base changes, preventing a cancelled prior study from resurfacing.
+- Verified locally: complete `tests/rate_of_closure` 913/913 and focused
+  workflow/integration/visualization 74/74; scoped Ruff and MyPy are green, plus a real
+  authority-backed two-trajectory smoke rendering 17 targets.
+
+Morris workspace persistence/export and the React workflow remain open child
+slices. Protected CI, review, parent-first stack release, and UpstreamDrift
+consumption remain release gates; this does not complete epic #4142.
+
 ## 2026-08-12 UI-neutral Morris application contract (#4142 R13.6)
 
 Branch `codex/4142-morris-ui-contract` starts at exact private-authority parent
