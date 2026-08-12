@@ -40,6 +40,8 @@ directory. This is distribution evidence for static inspection only.
 
 The setuptools build hook refuses to include an existing web bundle unless an
 exact `ROC_RELEASE_REVISION` matches a clean checkout and the resolved bundle.
+Before copying package data it clears only the verified Rate-of-Closure web
+staging subtree, preventing obsolete hashed chunks from a prior wheel build.
 The pinned-action distribution workflow rebuilds the exact PR head, runs the
 complete frontend gate, builds one wheel, verifies every wheel member, installs
 without dependencies, and resolves from an unrelated Unicode working

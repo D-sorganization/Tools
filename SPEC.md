@@ -68,7 +68,9 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   explicit frontend build. Setuptools rejects a present bundle unless its
   exact revision matches a clean checkout. The dedicated distribution workflow
   builds the exact head, verifies every wheel member, and proves clean-install
-  resolution from an unrelated working directory.
+  resolution from an unrelated working directory. Wheel staging clears the
+  exact web-data subtree before copy so obsolete hashed chunks cannot survive
+  from a prior build.
 - A production same-origin companion, Playwright browser qualification,
   Windows ACL/reparse privacy, frozen executables, installers, signing,
   attestation/SBOM, and execution from a public static host remain non-goals.

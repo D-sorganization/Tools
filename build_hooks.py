@@ -28,7 +28,16 @@ class RateWebBuildPy(build_py):
             self._verify_web_distribution(root, revision)
         elif revision is not None:
             raise SetupError("ROC_RELEASE_REVISION requires a built web distribution")
+        self._clear_web_build_staging()
         super().run()
+
+    def _clear_web_build_staging(self) -> None:
+        build_root = Path(self.build_lib).resolve()
+        target = (build_root / "rate_of_closure" / "web" / "dist").resolve()
+        if build_root not in target.parents:
+            raise SetupError("web build staging path escaped the build directory")
+        if target.exists():
+            shutil.rmtree(target)
 
     @staticmethod
     def _verify_web_distribution(root: Path, revision: str | None) -> None:
