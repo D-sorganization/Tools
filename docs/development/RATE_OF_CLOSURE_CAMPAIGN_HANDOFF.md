@@ -1,5 +1,17 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4369 validator-failure hardening
+
+- Exact parent: published PR #4370 head
+  `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`.
+- Outcome-validator exceptions now terminate through the same typed,
+  complete-only boundary as executor and callback defects, using stable stage
+  `validation` and explicit exception chaining.
+- Counts include only accepted trials; no partial rows or dataset escape, and
+  the successful-output SHA-256 regression remains authoritative.
+- Scope excludes authority, physics, job binding, backends, workers, browsers,
+  and matched UI. Keep #4369/#4273/#4267 open.
+
 ## 2026-08-11 #4369 authenticated browser-authority capability boundary
 
 The local `codex/4369-ground-authority-capability` child starts from exact

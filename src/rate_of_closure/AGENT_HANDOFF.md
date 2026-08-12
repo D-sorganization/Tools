@@ -1,5 +1,15 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4369 typed validator failure boundary
+
+Stacked from exact published PR #4370 head
+`0a485958bd6ed46dce18e65fd3e3cd1fa797502a`, the complete-only regional
+variation runner now converts injected outcome-validator exceptions into
+`GroundRegionalVariationFailed` with the stable `validation` stage. The
+terminal reports only accepted trials, preserves the original exception as
+`__cause__`, and publishes no rows or dataset. Successful canonical output is
+byte-identical. No authority, physics, worker, or UI execution is added.
+
 ## 2026-08-11 #4369 authenticated browser-authority capability boundary
 
 The local `codex/4369-ground-authority-capability` child starts from exact

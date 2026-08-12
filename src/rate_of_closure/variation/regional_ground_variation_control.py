@@ -58,6 +58,7 @@ class GroundRegionalVariationFailureStage(StrEnum):
 
     CANCELLATION_CALLBACK = "cancellation_callback"
     EXECUTOR = "executor"
+    VALIDATION = "validation"
     PROGRESS_CALLBACK = "progress_callback"
     PUBLICATION = "publication"
 
