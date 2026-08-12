@@ -164,6 +164,38 @@ class TestThermocoupleChannel:
         with pytest.raises(ValidationError):
             ThermocoupleChannel(label="   ")
 
+    def test_scale_percent_zero_based_range(self) -> None:
+        # TC-card style: range_min 0, full scale 1400 -> plain percent-of-scale.
+        ch = ThermocoupleChannel(full_scale_c=1400.0)
+        assert ch.range_min_c == 0.0
+        assert ch.scale_percent(0.0) == pytest.approx(0.0)
+        assert ch.scale_percent(50.0) == pytest.approx(700.0)
+        assert ch.scale_percent(100.0) == pytest.approx(1400.0)
+
+    def test_scale_percent_affine_conditioner_range(self) -> None:
+        # FC-T1 Type-K: -150..1372 C over 4-20 mA (0-100 %).
+        k = ThermocoupleChannel(range_min_c=-150.0, full_scale_c=1372.0)
+        assert k.scale_percent(0.0) == pytest.approx(-150.0)
+        assert k.scale_percent(100.0) == pytest.approx(1372.0)
+        assert k.scale_percent(50.0) == pytest.approx(611.0)
+        # FC-T1 Type-R: 65..1768 C — 4 mA (0 %) reads 65 C, not 0.
+        r = ThermocoupleChannel(range_min_c=65.0, full_scale_c=1768.0)
+        assert r.scale_percent(0.0) == pytest.approx(65.0)
+        assert r.scale_percent(100.0) == pytest.approx(1768.0)
+
+    def test_span_must_be_positive(self) -> None:
+        with pytest.raises(ValidationError):
+            ThermocoupleChannel(range_min_c=1400.0, full_scale_c=1400.0)
+        with pytest.raises(ValidationError):
+            ThermocoupleChannel(range_min_c=100.0, full_scale_c=50.0)
+
+    def test_analog_defaults_use_fc_t1_factory_ranges(self) -> None:
+        cfg = TemperatureConfig()
+        assert (cfg.analog_k.range_min_c, cfg.analog_k.full_scale_c) == (-150.0, 1372.0)
+        assert (cfg.analog_r.range_min_c, cfg.analog_r.full_scale_c) == (65.0, 1768.0)
+        # TC-card channels stay zero-based.
+        assert cfg.type_k.range_min_c == 0.0 and cfg.type_r.range_min_c == 0.0
+
 
 class TestDualThermocouple:
     def test_defaults_have_k_active_on_tag0_and_r_on_tag1(self) -> None:
@@ -266,7 +298,7 @@ class TestAcquisitionPath:
         )
         assert cfg.active_channel is cfg.analog_r
         assert cfg.temp_tag == "TAG_15"
-        assert cfg.temp_full_scale_c == 1400.0
+        assert cfg.temp_full_scale_c == 1768.0  # FC-T1 Type-R top of range
         assert cfg.active_tc_label == "Type R (Analog)"
 
     def test_analog_path_can_use_a_conditioner_specific_full_scale(self) -> None:

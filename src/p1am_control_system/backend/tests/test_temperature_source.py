@@ -73,11 +73,11 @@ class TestAnalogPathControl:
         async def _go() -> None:
             svc = _service()
             _running_on(svc, TcType.TYPE_K, TcPath.ANALOG)
-            # Analog K = TAG_14 at 0 % -> 0 C, well below (700 - deadband).
+            # Analog K (FC-T1 -150..1372 C) at 0 % -> -150 C, well below the band.
             status = await svc.poll({"TAG_14": 0.0, "TAG_15": 0.0})
             assert status.relay_on is True
             assert status.active_tc_path == TcPath.ANALOG
-            assert status.measured_temp_c == pytest.approx(0.0)
+            assert status.measured_temp_c == pytest.approx(-150.0)
 
         asyncio.run(_go())
 
@@ -85,9 +85,9 @@ class TestAnalogPathControl:
         async def _go() -> None:
             svc = _service()
             svc.controller.set_active_source(TcType.TYPE_R, TcPath.ANALOG)
-            # Analog R = TAG_15 at 50 % of 1400 C -> 700 C.
+            # Analog R (FC-T1 65..1768 C) at 50 % -> 65 + 0.5*1703 = 916.5 C.
             status = await svc.poll({"TAG_15": 50.0})
-            assert status.measured_temp_c == pytest.approx(700.0)
+            assert status.measured_temp_c == pytest.approx(916.5)
 
         asyncio.run(_go())
 
@@ -98,7 +98,8 @@ class TestAnalogPathControl:
             svc = _service()
             svc.controller.set_active_source(TcType.TYPE_K, TcPath.ANALOG)
             status = await svc.poll({"TAG_12": 99.0, "TAG_13": 99.0, "TAG_14": 0.0})
-            assert status.measured_temp_c == pytest.approx(0.0)
+            # Reads TAG_14 (0 % -> -150 C), NOT the 99 % on the PSU tags.
+            assert status.measured_temp_c == pytest.approx(-150.0)
 
         asyncio.run(_go())
 
@@ -123,8 +124,9 @@ class TestPublishedPairFollowsPath:
             svc = _service()
             svc.controller.set_active_source(TcType.TYPE_K, TcPath.ANALOG)
             status = await svc.poll(dict(FOUR_TAGS))
-            assert status.type_k_temp_c == pytest.approx(420.0)  # TAG_14 30%
-            assert status.type_r_temp_c == pytest.approx(560.0)  # TAG_15 40%
+            # Analog K 30 %: -150 + 0.3*1522 = 306.6 ; R 40 %: 65 + 0.4*1703 = 746.2
+            assert status.type_k_temp_c == pytest.approx(306.6)  # TAG_14 30%
+            assert status.type_r_temp_c == pytest.approx(746.2)  # TAG_15 40%
 
         asyncio.run(_go())
 
@@ -135,7 +137,7 @@ class TestPublishedPairFollowsPath:
             svc.controller.set_active_source(TcType.TYPE_K, TcPath.ANALOG)
             status = await svc.poll(dict(FOUR_TAGS))
             # No transient hold: the analog-K filter was already warm.
-            assert status.measured_temp_c == pytest.approx(420.0)  # TAG_14 30%
+            assert status.measured_temp_c == pytest.approx(306.6)  # TAG_14 30%
 
         asyncio.run(_go())
 

@@ -177,6 +177,9 @@ export type { TcType, TcPath } from "../lib/tempSource";
 
 export interface ThermocoupleChannel {
   tag: string;
+  /** deg C at 0 % of the tag (4 mA for a 4-20 mA conditioner). Optional for
+   *  back-compat; absent means 0 (TC-card channels are zero-based). */
+  range_min_c?: number;
   full_scale_c: number;
   label: string;
 }

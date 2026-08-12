@@ -68,22 +68,32 @@ def _stripped_label(value: str) -> str:
 
 
 class ThermocoupleChannel(BaseModel):
-    """One thermocouple input: the tag carrying it, its full scale, and a label.
+    """One thermocouple input: the tag carrying it, its range, and a label.
 
-    The firmware scales every TC channel 0-100 % over the *same* full scale
-    (default 1400 C), and the P1-04THM does the per-type linearization on-module,
-    so K and R differ only by which tag they land on — not by how the backend
-    converts percent to deg C.
+    The firmware publishes every channel as 0-100 % of its electrical span, and
+    the backend maps that percent AFFINELY onto ``[range_min_c, full_scale_c]``:
+    ``deg C = range_min_c + pct/100 * (full_scale_c - range_min_c)``.
+
+    - **TC-card channels** (P1-04THM) are linearized on-module and reported as a
+      simple 0-100 % of a full scale, so ``range_min_c`` stays 0 (0 % -> 0 C).
+    - **Analog (conditioner) channels** map the conditioner's 4-20 mA loop, whose
+      4 mA and 20 mA endpoints are NOT 0 and full scale. E.g. an FC-T1 Type-K
+      spans -150..1372 C over 4-20 mA, so ``range_min_c = -150`` and
+      ``full_scale_c = 1372``; 4 mA (0 %) reads -150 C, 20 mA (100 %) reads 1372 C.
     """
 
     tag: str = Field(
         default="TAG_0",
         description="Modbus tag carrying this thermocouple's scaled reading.",
     )
+    range_min_c: float = Field(
+        default=0.0,
+        description="deg C at 0 % of the tag (4 mA for a 4-20 mA conditioner).",
+    )
     full_scale_c: float = Field(
         default=1400.0,
         gt=0.0,
-        description="deg C at 100 % of the tag (must match the firmware scaling).",
+        description="deg C at 100 % of the tag (20 mA for a 4-20 mA conditioner).",
     )
     label: str = Field(
         default="Thermocouple",
@@ -97,6 +107,23 @@ class ThermocoupleChannel(BaseModel):
     def _strip_label(cls, value: str) -> str:
         return _stripped_label(value)
 
+    @model_validator(mode="after")
+    def _check_span(self) -> ThermocoupleChannel:
+        if self.full_scale_c <= self.range_min_c:
+            raise ValueError(
+                f"full_scale_c ({self.full_scale_c}) must exceed range_min_c "
+                f"({self.range_min_c}) — the 0->100 % span must be positive"
+            )
+        return self
+
+    def scale_percent(self, pct: float) -> float:
+        """Map a 0-100 % tag reading to deg C over this channel's range (DRY).
+
+        Single source of truth for percent->deg C, so every reader (control law,
+        HMI display, cross-check) converts identically regardless of channel.
+        """
+        return self.range_min_c + (pct / 100.0) * (self.full_scale_c - self.range_min_c)
+
 
 def _default_type_k() -> ThermocoupleChannel:
     # P1-04THM channel 1 -> TAG_0.
@@ -109,17 +136,18 @@ def _default_type_r() -> ThermocoupleChannel:
 
 
 def _default_analog_k() -> ThermocoupleChannel:
-    # Signal-conditioned type-K on P1-4ADL2DAL AI2 (4-20 mA) -> TAG_14. The
-    # conditioner's configured span (default 1400 C) is the tag's full scale.
+    # Signal-conditioned type-K on P1-4ADL2DAL AI2 (4-20 mA) -> TAG_14.
+    # AutomationDirect FC-T1 Type-K factory range: -150..1372 C over 4-20 mA.
     return ThermocoupleChannel(
-        tag="TAG_14", full_scale_c=1400.0, label="Type K (Analog)"
+        tag="TAG_14", range_min_c=-150.0, full_scale_c=1372.0, label="Type K (Analog)"
     )
 
 
 def _default_analog_r() -> ThermocoupleChannel:
     # Signal-conditioned type-R on P1-4ADL2DAL AI3 (4-20 mA) -> TAG_15.
+    # AutomationDirect FC-T1 Type-R factory range: 65..1768 C over 4-20 mA.
     return ThermocoupleChannel(
-        tag="TAG_15", full_scale_c=1400.0, label="Type R (Analog)"
+        tag="TAG_15", range_min_c=65.0, full_scale_c=1768.0, label="Type R (Analog)"
     )
 
 

@@ -410,17 +410,18 @@ class TemperatureService:
         self.controller.clear_estop()
 
     def _temp_from_tags(self, tags: dict[str, float] | None) -> float:
-        """Scale the thermocouple tag (percent of full scale) into deg C.
+        """Scale the active thermocouple tag (percent) into deg C.
 
-        The firmware publishes every analog channel as 0-100% of its range, so
-        the controlled temperature is ``tag_percent * temp_full_scale_c / 100``
-        (e.g. a 1400 deg C type-K range -> 50% reads as 700 deg C).
+        The firmware publishes every channel as 0-100% of its electrical span;
+        the active channel maps that affinely onto its [range_min_c, full_scale_c]
+        (``channel.scale_percent``), so a conditioner whose 4 mA is not 0 deg C
+        (e.g. FC-T1 Type-R starts at 65 C) still converts correctly.
         """
         if not tags:
             return 0.0
         cfg = self.controller.config
         temp_pct = float(tags.get(cfg.temp_tag, 0.0))
-        return float(temp_pct * cfg.temp_full_scale_c / 100.0)
+        return float(cfg.active_channel.scale_percent(temp_pct))
 
     def _filtered_channel(
         self, tags: dict[str, float] | None, channel: Any, now: float
@@ -442,15 +443,15 @@ class TemperatureService:
         """Scale one thermocouple channel's tag (percent) into deg C, or None.
 
         Returns None when there is no scan data yet (``tags`` is falsy) so the HMI
-        can distinguish "not read" from a genuine 0 deg C. Uses the SAME
-        percent-of-full-scale conversion as ``_temp_from_tags`` (DRY), applied to
-        the given channel rather than the active one, so both K and R are computed
-        identically regardless of which is controlling.
+        can distinguish "not read" from a genuine reading. Uses the SAME affine
+        ``channel.scale_percent`` conversion as ``_temp_from_tags`` (DRY), applied
+        to the given channel rather than the active one, so every source is
+        computed identically regardless of which is controlling.
         """
         if not tags:
             return None
         pct = float(tags.get(channel.tag, 0.0))
-        return float(pct * channel.full_scale_c / 100.0)
+        return float(channel.scale_percent(pct))
 
     async def _write_relay(self, on: bool) -> bool:
         """Command the heater relay via the client's public coil seam.
