@@ -120,7 +120,9 @@ jobs:
           from rate_of_closure.web_authority.api import CAPABILITY_PATH
           from rate_of_closure.web_companion.runtime import start_companion
 
-          scripts = entry_points(group="console_scripts", name="rate-of-closure-web")
+          scripts = tuple(
+              entry_points(group="console_scripts", name="rate-of-closure-web")
+          )
           assert len(scripts) == 1
           assert scripts[0].value == "rate_of_closure.web_companion.cli:main"
           runtime = start_companion(open_browser=False)

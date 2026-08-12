@@ -47,7 +47,9 @@ and all 138 React files / 922 tests plus six Node release-contract passes and
 one expected Windows symlink skip. Changed Ruff/format, focused MyPy, high
 severity Bandit, YAML/TOML, campaign-manifest, module-budget, policy, and diff
 gates pass. The exact-revision clean-wheel gate and protected CI remain required
-at the final published head.
+at the final published head. Its installed-artifact smoke materializes the
+`importlib.metadata` entry-point selection as a tuple for Python 3.11-3.13
+compatibility before asserting the exact advertised console script.
 
 Playwright, forced parent-process tree cleanup, Windows ACL/reparse privacy,
 frozen packages, installers, signing/SBOM/attestation, protected release,
