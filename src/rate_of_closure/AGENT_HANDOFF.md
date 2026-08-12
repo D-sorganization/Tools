@@ -1127,9 +1127,10 @@ branches or wait for #4119 to land.
 Local evidence: 913 complete Rate tests and 74 focused workflow/integration/
 visualization tests pass; scoped Ruff/MyPy and a real authority-backed 17-target
 smoke are green.
-The branch parent is
-`71c771fb73143f1839449d1cf5a1f5472a55f098`. React remains the next sibling
-child; #4142 is not complete.
+The PyQt child parent is
+`71c771fb73143f1839449d1cf5a1f5472a55f098`; the reviewed React sibling is
+integrated in `codex/4142-morris-react-integration`. Persistence/export,
+UpstreamDrift consumption, protected release, and #4142 completion remain open.
 
 Rate of Closure started as a single-page "closure rate" calculator (twist
 model: GC-path vs impact-point-path gap, °/ft). Epics #4103 → #4120 → #4125 →
