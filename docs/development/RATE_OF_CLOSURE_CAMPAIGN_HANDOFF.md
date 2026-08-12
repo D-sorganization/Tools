@@ -1,5 +1,19 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 local #4369 canonical authority status wire
+
+- Exact parent: published PR #4372 head
+  `3571952c2344ca23ffa65121c606faab1b735a23`.
+- The transport-neutral application contract owns strict Python construction,
+  parsing, source-job validation, and canonical serialization for all six
+  status states and every stable failure code/stage under 4,096 bytes.
+- The server manager consumes that contract. A Python-recreated shared golden
+  is parsed and canonically serialized byte-for-byte by React, with adversarial
+  duplicate, extra, typed, non-finite, unsafe-number, state-semantic, and
+  mismatched-job coverage in both runtimes.
+- This slice adds no physics, UI, persistence, transport adapter, capability
+  promotion, or execution claim. Keep #4369/#4273/#4267 open.
+
 ## 2026-08-11 #4369 authority terminal-count binding
 
 - Injected cancellation/failure terminals must match the submitted job total

@@ -6,10 +6,17 @@ import threading
 from collections import deque
 from collections.abc import Callable
 from dataclasses import dataclass
-from enum import StrEnum
-from typing import Final, Literal, TypedDict
+from typing import Final
 
 from rate_of_closure.application._workspace_validation import stable_id
+from rate_of_closure.application.regional_ground_authority_status import (
+    AUTHORITY_JOB_STATUS_SCHEMA_VERSION,
+    AuthorityFailureCode,
+    AuthorityFailureStage,
+    AuthorityJobFailure,
+    AuthorityJobSnapshot,
+    AuthorityJobStatus,
+)
 from rate_of_closure.application.regional_ground_execution_job import (
     RegionalGroundExecutionJob,
 )
@@ -23,92 +30,8 @@ from rate_of_closure.variation.regional_ground_variation_control import (
     GroundRegionalVariationProgress,
 )
 
-AUTHORITY_JOB_STATUS_SCHEMA_VERSION: Final = (
-    "rate-of-closure/regional-ground-authority-job-status/v1"
-)
 DEFAULT_MAX_RETAINED_JOBS: Final = 4
 MAX_RETAINED_JOBS_LIMIT: Final = 16
-
-
-class AuthorityJobStatus(StrEnum):
-    """Exact lifecycle states exposed by the local authority."""
-
-    QUEUED = "queued"
-    RUNNING = "running"
-    CANCEL_REQUESTED = "cancel_requested"
-    SUCCEEDED = "succeeded"
-    FAILED = "failed"
-    CANCELLED = "cancelled"
-
-
-AuthorityFailureCode = Literal["execution_failed", "result_rejected"]
-AuthorityFailureStage = Literal[
-    "cancellation_callback",
-    "executor",
-    "validation",
-    "progress_callback",
-    "publication",
-    "runner",
-    "result_validation",
-]
-
-
-class AuthorityJobFailureWire(TypedDict):
-    """Public failure record without raw exception text."""
-
-    code: AuthorityFailureCode
-    stage: AuthorityFailureStage
-
-
-class AuthorityJobSnapshotWire(TypedDict):
-    """Exact JSON-compatible job lifecycle projection."""
-
-    schema_version: str
-    job_id: str
-    job_sha256: str
-    status: str
-    completed: int
-    total: int
-    result_available: bool
-    failure: AuthorityJobFailureWire | None
-
-
-@dataclass(frozen=True, slots=True)
-class AuthorityJobFailure:
-    """Stable public failure identity with no internal exception detail."""
-
-    code: AuthorityFailureCode
-    stage: AuthorityFailureStage
-
-    def to_wire(self) -> AuthorityJobFailureWire:
-        """Return the exact bounded failure record."""
-        return {"code": self.code, "stage": self.stage}
-
-
-@dataclass(frozen=True, slots=True)
-class AuthorityJobSnapshot:
-    """Immutable point-in-time job state safe for API publication."""
-
-    job_id: str
-    job_sha256: str
-    status: AuthorityJobStatus
-    completed: int
-    total: int
-    result_available: bool
-    failure: AuthorityJobFailure | None
-
-    def to_wire(self) -> AuthorityJobSnapshotWire:
-        """Return the exact status wire projection."""
-        return {
-            "schema_version": AUTHORITY_JOB_STATUS_SCHEMA_VERSION,
-            "job_id": self.job_id,
-            "job_sha256": self.job_sha256,
-            "status": self.status.value,
-            "completed": self.completed,
-            "total": self.total,
-            "result_available": self.result_available,
-            "failure": None if self.failure is None else self.failure.to_wire(),
-        }
 
 
 class AuthorityExecutionUnavailable(RuntimeError):

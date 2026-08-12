@@ -1,12 +1,16 @@
 import { describe, expect, it, vi } from "vitest";
 
 import jobFixture from "./__fixtures__/regional_ground_execution_job_golden_v1.json";
+import statusFixture from "./__fixtures__/regional_ground_authority_job_status_golden_v1.json";
 import resultFixture from "./__fixtures__/regional_ground_execution_result_golden_v1.json";
+import { canonicalGroundJson } from "./flightGroundContract";
 import {
   createRegionalGroundAuthorityClient,
   parseRegionalGroundAuthorityJobStatus,
+  regionalGroundAuthorityJobStatusFromJson,
   RegionalGroundAuthorityRequestError,
   REGIONAL_GROUND_AUTHORITY_JOBS_PATH,
+  stableRegionalGroundAuthorityJobStatusJson,
 } from "./regionalGroundAuthorityClient";
 import { parseRegionalGroundExecutionJob } from "./regionalGroundExecutionJob";
 
@@ -28,6 +32,26 @@ const jsonResponse = (value: unknown): Response => new Response(JSON.stringify(v
 });
 
 describe("regional-ground authority REST contracts", () => {
+  it("matches every Python-produced golden status byte-for-byte and semantically", () => {
+    expect(statusFixture.fixture_schema).toBe(
+      "rate-of-closure/regional-ground-authority-job-status-golden/v1",
+    );
+    expect(new Set(statusFixture.cases.map((item) => item.status))).toEqual(new Set([
+      "queued", "running", "cancel_requested", "succeeded", "failed", "cancelled",
+    ]));
+    expect(new Set(statusFixture.cases.flatMap((item) =>
+      item.failure === null ? [] : [item.failure.stage]))).toEqual(new Set([
+      "cancellation_callback", "executor", "validation", "progress_callback",
+      "publication", "runner", "result_validation",
+    ]));
+
+    for (const item of statusFixture.cases) {
+      const golden = canonicalGroundJson(item);
+      const parsed = regionalGroundAuthorityJobStatusFromJson(golden, job);
+      expect(stableRegionalGroundAuthorityJobStatusJson(parsed, job)).toBe(golden);
+    }
+  });
+
   it("parses, freezes, and binds an exact status to its source job", () => {
     const parsed = parseRegionalGroundAuthorityJobStatus(status, job);
 
@@ -56,6 +80,25 @@ describe("regional-ground authority REST contracts", () => {
       status: "failed",
       failure: { code: "internal_exception", stage: "runner" },
     }, job)).toThrow(/failure code/i);
+  });
+
+  it.each([
+    ["nonfinite completed", { ...status, completed: Number.NaN }, /finite/i],
+    ["unsafe total", { ...status, total: Number.MAX_SAFE_INTEGER + 1 }, /safe/i],
+    ["mismatched job_id", { ...status, job_id: "other-job" }, /job_id/i],
+    ["mismatched total", { ...status, total: 5 }, /total/i],
+    ["numeric Boolean", { ...status, result_available: 1 }, /result_available/i],
+  ])("rejects %s from the Python status boundary", (_name, changed, message) => {
+    expect(() => parseRegionalGroundAuthorityJobStatus(changed, job)).toThrow(message);
+  });
+
+  it("rejects duplicate and oversized status JSON before publication", () => {
+    const source = canonicalGroundJson(status);
+    const duplicate = source.replace('"job_id":', '"job_id":"duplicate","job_id":');
+    expect(() => regionalGroundAuthorityJobStatusFromJson(duplicate, job)).toThrow(/duplicate/i);
+    expect(() => regionalGroundAuthorityJobStatusFromJson(
+      source + " ".repeat(4_096), job,
+    )).toThrow(/byte limit/i);
   });
 
   it("uses the reserved same-origin submit/status/cancel/result routes and strict bodies", async () => {

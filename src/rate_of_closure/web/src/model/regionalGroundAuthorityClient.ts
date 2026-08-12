@@ -23,6 +23,7 @@ import {
   record,
   text,
 } from "./flightGroundValidation";
+import { canonicalGroundJson } from "./flightGroundContract";
 import { parseUniqueJson } from "./strictJson";
 
 export const REGIONAL_GROUND_AUTHORITY_JOB_STATUS_SCHEMA =
@@ -175,6 +176,37 @@ export const parseRegionalGroundAuthorityJobStatus = (
   return parsed;
 };
 
+const validateStatusJsonBytes = (source: string): void => {
+  if (typeof source !== "string") {
+    throw new TypeError("regional-ground authority job status JSON must be text");
+  }
+  if (new TextEncoder().encode(source).byteLength >
+      MAX_REGIONAL_GROUND_AUTHORITY_STATUS_BYTES) {
+    throw new RangeError("regional-ground authority job status exceeds byte limit");
+  }
+};
+
+/** Parse bounded duplicate-safe status JSON against its exact source job. */
+export const regionalGroundAuthorityJobStatusFromJson = (
+  source: string,
+  expectedJob: RegionalGroundExecutionJob,
+): RegionalGroundAuthorityJobStatus => {
+  validateStatusJsonBytes(source);
+  return parseRegionalGroundAuthorityJobStatus(parseUniqueJson(source), expectedJob);
+};
+
+/** Serialize a validated job-bound status with the shared canonical JSON policy. */
+export const stableRegionalGroundAuthorityJobStatusJson = (
+  value: unknown,
+  expectedJob: RegionalGroundExecutionJob,
+): string => {
+  const source = canonicalGroundJson(
+    parseRegionalGroundAuthorityJobStatus(value, expectedJob),
+  );
+  validateStatusJsonBytes(source);
+  return source;
+};
+
 const boundedResponseText = async (response: Response, maximum: number): Promise<string> => {
   const declared = response.headers.get("content-length");
   if (declared !== null && (!/^\d+$/.test(declared) || Number(declared) > maximum)) {
@@ -250,7 +282,7 @@ export const createRegionalGroundAuthorityClient = (
       await fetcher(path, init),
       MAX_REGIONAL_GROUND_AUTHORITY_STATUS_BYTES,
     );
-    return parseRegionalGroundAuthorityJobStatus(parseUniqueJson(source), job);
+    return regionalGroundAuthorityJobStatusFromJson(source, job);
   };
   return Object.freeze({
     capability: (signal?: AbortSignal) =>

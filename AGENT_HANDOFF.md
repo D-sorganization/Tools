@@ -1,5 +1,21 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 local #4369 canonical authority status wire
+
+From exact published PR #4372 head
+`3571952c2344ca23ffa65121c606faab1b735a23`, the transport-neutral
+`rate_of_closure.application.regional_ground_authority_status` module owns the
+six lifecycle states, stable failure codes/stages, exact wire records, and
+duplicate-safe 4,096-byte JSON parser/serializer. The authority manager now
+imports these objects instead of maintaining a server-only projection.
+
+The Python-produced golden covers every state and failure stage and both
+failure codes. Python and React reject extra/duplicate/mistyped/non-finite/
+unsafe fields, impossible progress/result/failure semantics, and mismatch to
+the exact source job; React reserializes every golden case byte-for-byte. This
+adds no physics, UI, transport, persistence, capability promotion, or execution
+claim. All production execution controls remain disabled.
+
 ## 2026-08-11 #4369 authority terminal-count binding
 
 Authority cancellation and failure terminals must match the exact submitted

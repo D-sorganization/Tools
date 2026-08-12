@@ -1,5 +1,19 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 local #4369 canonical authority status wire
+
+The public transport-neutral
+`rate_of_closure.application.regional_ground_authority_status` contract owns
+the six lifecycle states, stable failure codes/stages, immutable snapshots,
+exact wire mapping, and bounded duplicate-safe canonical JSON parse/serialize
+helpers. Every status is bound to the exact execution job ID, job digest, and
+trial total; progress, result availability, and failure semantics fail closed.
+
+`web_authority.jobs` imports these types, while React proves semantic and
+canonical-byte parity against the Python-produced shared fixture. No physics,
+UI, persistence, capability promotion, or execution claim is added. Production
+capability and all execution controls remain false.
+
 ## 2026-08-11 #4369 authority terminal-count binding
 
 The authority manager rejects cancellation/failure terminals whose total does

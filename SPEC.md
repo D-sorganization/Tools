@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.74                                    |
-| **Spec Version**        | 1.14.74                                    |
+| **Current Version**     | 1.14.75                                    |
+| **Spec Version**        | 1.14.75                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,25 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Canonical Regional-Ground Authority Status Wire
+
+- A transport-neutral Python application contract now owns the six authority
+  lifecycle states, the two stable failure codes, all seven stable failure
+  stages, exact status/failure wire shapes, and a 4,096-byte canonical JSON
+  boundary. The server manager imports these objects instead of defining a
+  private construction-only projection.
+- Python parsing rejects duplicate or extra fields, Booleans in numeric slots,
+  non-finite and cross-runtime-unsafe numbers, invalid failure identities,
+  impossible progress/result/failure semantics, and job ID, job digest, or
+  trial-total drift from the exact validated execution job.
+- A Python-recreated canonical fixture covers all six states, both failure
+  codes, and every failure stage. React parses and canonically reserializes each
+  case byte-for-byte and shares the same bounded JSON entry point, preventing
+  server construction and client parsing from drifting independently.
+- This contract performs no physics, transport, persistence, UI wiring,
+  capability promotion, or execution. Production capability remains false and
+  every React execution control remains disabled.
 
 ### 2026-08-11 React Regional-Ground Authority Client Contracts
 
@@ -3242,6 +3261,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.75 | feat(ground-study, #4369): centralize the six-state authority job-status wire in a transport-neutral strict Python parser/serializer, make the server consume it, and prove Python-produced canonical byte/semantic parity in React across every failure code and stage; keep physics, UI, capability promotion, persistence, and execution claims open. |
 | 2026-08-11 | 1.14.74 | feat(ground-study, #4369): add strict future-facing React submit/status/POST-cancel/result REST client contracts plus one-at-a-time capability polling with AbortController cleanup, obsolete-response suppression, bounded job-bound status/result validation, and every execution-control flag disabled while the Python authority remains unavailable; matching routes exist while a qualified runner, physics invocation, and visible Run integration remain open. |
 | 2026-08-11 | 1.14.73 | fix(ground-study, #4369): fail closed when an injected authority runner reports cancellation or failure counts that do not match the exact submitted job total or regress observed progress; retain prior progress and expose only a typed validation failure. |
 | 2026-08-11 | 1.14.72 | feat(ground-study, #4369): add a bounded in-memory authority job manager and authenticated submit/status/cancel/result endpoints; enforce one active job, strict 1 MiB request ingestion, bounded terminal retention, typed non-secret failure/status evidence, cooperative cancellation forwarding, and complete validated result-only publication while retaining the production execution capability as unavailable. |
