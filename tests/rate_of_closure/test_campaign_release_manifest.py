@@ -10,7 +10,6 @@ from pydantic import ValidationError
 
 from scripts.rate_campaign_manifest import (
     CampaignManifest,
-    CarrierRecord,
     load_campaign_manifest,
     validate_repository_evidence,
 )
@@ -131,50 +130,3 @@ def test_schema_is_versioned_and_forbids_extra_fields() -> None:
         "rate-of-closure-campaign/v1"
     )
     assert schema["additionalProperties"] is False
-
-
-@pytest.mark.unit
-def test_carrier_sha_is_immutable_evidence_not_a_self_referential_head(
-    manifest: CampaignManifest,
-) -> None:
-    """Carrier commits identify observed evidence, not the containing commit."""
-    assert all(carrier.evidence_commit_sha for carrier in manifest.carriers)
-    raw = MANIFEST_PATH.read_text(encoding="utf-8")
-    assert '"head_sha"' not in raw
-    camera = next(carrier for carrier in manifest.carriers if carrier.pr == 4298)
-    assert camera.evidence_commit_sha == "".join(
-        ("2095e748", "ddca2d70", "36bbd49a", "731528f5", "634daff9")
-    )
-    parent_carrier = next(
-        carrier for carrier in manifest.carriers if carrier.pr == 4282
-    )
-    assert parent_carrier.evidence_commit_sha == "".join(
-        ("bb101ced", "d555d07d", "493aae99", "8b46050c", "68660cdd")
-    )
-
-
-@pytest.mark.unit
-def test_legacy_head_sha_input_normalizes_to_evidence_commit(
-    manifest: CampaignManifest,
-) -> None:
-    """Existing v1 readers may migrate old head_sha records without ambiguity."""
-    payload = manifest.carriers[0].model_dump(mode="json")
-    evidence_sha = payload.pop("evidence_commit_sha")
-    payload["head_sha"] = evidence_sha
-    migrated = CarrierRecord.model_validate(payload)
-    assert migrated.evidence_commit_sha == evidence_sha
-    assert "head_sha" not in migrated.model_dump(mode="json")
-
-    ambiguous = manifest.carriers[0].model_dump(mode="json")
-    ambiguous["head_sha"] = evidence_sha
-    with pytest.raises(ValidationError, match="head_sha"):
-        CarrierRecord.model_validate(ambiguous)
-
-
-@pytest.mark.unit
-def test_generated_schema_names_the_immutable_carrier_evidence() -> None:
-    """New producers must emit the non-self-referential carrier field."""
-    schema = CampaignManifest.model_json_schema()
-    carrier_properties = schema["$defs"]["CarrierRecord"]["properties"]
-    assert "evidence_commit_sha" in carrier_properties
-    assert "head_sha" not in carrier_properties

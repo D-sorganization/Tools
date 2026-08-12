@@ -12,7 +12,7 @@ handoffs:
 
 - one record for every primary campaign epic, program, or release gate;
 - canonical repository specifications and GitHub issue authorities;
-- shared pull-request carriers and immutable observed evidence commits;
+- shared pull-request carriers and exact observed branch heads;
 - all four supported product surfaces;
 - commit-bound local or hosted test evidence;
 - explicit evidence gaps, limitations, dependencies, and child issue IDs;
@@ -52,22 +52,12 @@ duplicate IDs, malformed SHAs, unresolved carrier or evidence references,
 missing repository paths, placeholders, or contradictory delivery/release
 states.
 
-`evidence_commit_sha` is deliberately not a live PR-head assertion. It names a
-commit already published on the carrier branch whose implementation or state
-was observed. A documentation-only successor can therefore record that tested
-commit without the impossible requirement to contain its own future Git SHA.
-Legacy v1 input using `head_sha` is accepted for migration and normalized to
-`evidence_commit_sha`; new producers and generated schemas emit only the new
-name.
-
 ## Maintenance Procedure
 
 Update the manifest in the same commit as a material carrier, test-evidence, or
 release-state change:
 
-1. Record only an already-published carrier evidence commit, state, and merge
-   evidence; never attempt to self-reference the containing documentation
-   commit.
+1. Refresh only the affected carrier head, state, and merge evidence.
 2. Add commit-bound test evidence; do not replace failed or queued evidence
    with narrative optimism.
 3. Advance a program stage only when its validator preconditions are true.
@@ -76,6 +66,5 @@ release-state change:
 6. Update the root and Rate campaign handoffs in the same commit.
 
 The checked-in snapshot does not query GitHub at validation time. This keeps CI
-deterministic and avoids API-rate coupling. Maintainers add immutable carrier
-observations deliberately after a push, merge, or protected run; a later commit
-on the same branch does not invalidate the earlier evidence record.
+deterministic and avoids API-rate coupling, but means a maintainer must refresh
+carrier observations deliberately after a merge, push, or protected run.

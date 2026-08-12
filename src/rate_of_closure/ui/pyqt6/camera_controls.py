@@ -312,7 +312,10 @@ class CameraViewportMixin:
         ``z=up``. Isometric and manually orbited views restore every physical
         axis so a snap never leaves persistent presentation state behind.
         """
-        hidden_axis = _ORTHOGRAPHIC_DEPTH_AXIS.get(self._camera_state.preset_id)
+        preset_id = self._camera_state.preset_id
+        hidden_axis = (
+            _ORTHOGRAPHIC_DEPTH_AXIS.get(preset_id) if preset_id is not None else None
+        )
         for axis_name, axis in (
             ("x", axes.xaxis),
             ("y", axes.yaxis),
