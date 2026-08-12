@@ -3,6 +3,28 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 UI-neutral Morris execution adapter (#4142 R13.3)
+
+The shared variation package now has an injected execution seam between the
+validated Morris design and observation analyzer. It provides immutable,
+physically scaled samples with stable flattened and trajectory/point identity,
+strict typed hit/no-impact/failure evaluations, exact output availability, and
+preallocated canonical tensors that are invariant across worker counts.
+
+The injected evaluator owns translation of its domain-specific exceptions into
+typed numerical-failure evaluations; the generic executor catches no evaluator
+exceptions. A no-impact evaluation can retain scalar/state-point data but must
+leave impact and shot outputs unavailable, while numerical failure leaves every
+output unavailable. Shared-shape completed-prefix progress appears in canonical
+order every eight samples plus final, and cooperative cancellation returns no
+partial result. Worker, sample, and allocated observation-cell counts are named
+bounded contracts; the worker ceiling is 32.
+
+This branch begins at exact parent
+`cc572243ae0df551237265d72b9e34bff0285f01`. It deliberately does not bind the
+adapter to Rate simulation, `evaluate_run`, PyQt/React, or #4280 export scope;
+those integrations and protected publication remain open.
+
 ## 2026-08-12 Exact Morris serialized-clamp contract (#4142 R13.4)
 
 The consumer now matches the Python wire behavior exactly: `sigma` and `mu*`

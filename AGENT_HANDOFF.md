@@ -3,6 +3,30 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Bounded Morris execution adapter (#4142 R13.3)
+
+- Branch `codex/4142-morris-execution-adapter` starts from exact intended
+  parent `cc572243ae0df551237265d72b9e34bff0285f01`; it must retain that normal
+  history and later receive protected current-head CI before publication.
+- New `morris_execution.py` evaluates the shared Morris design through an
+  injected, UI-neutral typed protocol. Every immutable sample carries its
+  flattened ordinal, trajectory/point coordinates, factor tuple, and exact
+  physical `spec_id` mapping. Results are preallocated and written to disjoint
+  canonical rows, so serial and bounded parallel execution return identical
+  observation tensors.
+- Evaluations retain exact output keys and finite-or-unavailable values.
+  No-impact samples may retain scalar/state-point metrics but cannot fabricate
+  impact/shot values; numerical failures carry no values. Only the explicitly
+  injected evaluator can normalize its own domain error into that status; the
+  generic executor catches no evaluator exceptions, so malformed returns and
+  every thrown exception abort the study.
+- Solver-shaped completed-prefix progress is drained in canonical ordinal order
+  every eight samples and at final completion. Pre-start and between-sample
+  cancellation raises the shared `CancelledError` and returns no partial
+  observations. Named sample, output-cell, and 32-worker caps bound resources.
+- This is shared execution infrastructure only: it does not import Rate, bind
+  `evaluate_run`, add UI/export behavior, or complete #4142.
+
 ## 2026-08-12 Exact Morris serialized-clamp contract (#4142 R13.4)
 
 - The producer maps `sigma` and `mu*` standard error at or below

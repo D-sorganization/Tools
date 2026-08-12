@@ -1,5 +1,24 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 bounded Morris execution adapter (#4142 R13.3)
+
+- Exact parent `cc572243ae0df551237265d72b9e34bff0285f01` gains only the
+  shared, UI-neutral execution seam plus tests/spec/handoffs; no Rate, UI,
+  export, or UpstreamDrift integration is claimed.
+- An injected protocol receives immutable, physically scaled samples in
+  canonical `(trajectory, point)` order and returns strict hit/no-impact/failure
+  evaluations with exact output keys and finite-or-unavailable values.
+- Preallocated disjoint writes make results worker-count invariant. Completed-
+  prefix progress is emitted deterministically every eight flattened ordinals
+  and at final completion; cancellation exposes no partial dataset.
+- Injected evaluators translate their own expected domain errors into typed
+  numerical-failure results. The generic executor catches no evaluator
+  exceptions, so malformed results and thrown errors fail closed. Named
+  32-worker, total-sample, and observation-cell caps prevent unbounded use.
+- This advances bounded R13.3 execution only. Rate adapters, presentations,
+  exports, cross-repository consumption, protected CI, and epic completion are
+  still open.
+
 ## 2026-08-12 exact Morris serialized-clamp contract (#4142 R13.4)
 
 - Serialized `sigma` and `mu*` standard error are now accepted only as exact
