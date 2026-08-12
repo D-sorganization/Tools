@@ -1,8 +1,14 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
-import { auditSameOriginNetwork } from "./support/networkAudit";
+import { auditSameOriginNetwork, summarizeRuntimeError } from "./support/networkAudit";
 import { startStaticReleaseServer } from "./support/staticReleaseServer";
+
+test("runtime diagnostics redact origins and token-like values", () => {
+  expect(summarizeRuntimeError("console error",
+    "failed https://127.0.0.1:5193/private abcdefghijklmnopqrstuvwxyz123456"))
+    .toBe("console error: failed [url] [redacted]");
+});
 
 test("static inspection loads exact release assets from a nested subpath", async ({ page }) => {
   const server = await startStaticReleaseServer();

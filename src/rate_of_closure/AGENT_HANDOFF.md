@@ -47,6 +47,13 @@ as changed test support; its exact path is now documented in the fixture-only
 assertion allowlist while behavioral assertions remain in the separate harness
 test module. These are qualification-environment fixes, not product expansion.
 
+Final-revision local qualification then exposed a WebKit-only lifecycle race:
+the authority could be stopped while the application's initial capability
+request was still in flight, producing a real 502 before successful recovery.
+The browser contract now observes the initial 200 response before inducing
+hard loss. Runtime diagnostics retain bounded error meaning while redacting
+origins and long token-like values, with cross-engine coverage.
+
 The protected distribution workflow gains an independent 30-minute
 **Production browser qualification** job. It fetches the exact public head
 without credentials, uses Python 3.11 and Node 22, performs `npm ci`, builds

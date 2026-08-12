@@ -8,6 +8,15 @@ export interface NetworkAudit {
 
 interface AuditOptions { readonly forbidApi?: boolean }
 
+export const summarizeRuntimeError = (kind: string, detail: string): string => {
+  const redacted = detail
+    .replace(/\b(?:https?|file|blob|data):[^\s]+/giu, "[url]")
+    .replace(/\b[A-Za-z0-9_-]{24,}\b/gu, "[redacted]")
+    .replace(/\s+/gu, " ")
+    .trim();
+  return `${kind}: ${redacted.slice(0, 160) || "no detail"}`;
+};
+
 const requestViolation = (request: Request, expectedOrigin: string): string | null => {
   const target = new URL(request.url());
   if (!LOCAL_HOSTS.has(target.hostname)) return "external-origin request";
@@ -31,9 +40,13 @@ export function auditSameOriginNetwork(page: Page, expectedOrigin: string,
     }
   });
   page.on("requestfailed", () => failures.push("browser request failed"));
-  page.on("pageerror", () => runtimeErrors.push("page error"));
+  page.on("pageerror", (error) => {
+    runtimeErrors.push(summarizeRuntimeError("page error", error.message));
+  });
   page.on("console", (message) => {
-    if (message.type() === "error") runtimeErrors.push("console error");
+    if (message.type() === "error") {
+      runtimeErrors.push(summarizeRuntimeError("console error", message.text()));
+    }
   });
   return {
     assertClean(): void {
