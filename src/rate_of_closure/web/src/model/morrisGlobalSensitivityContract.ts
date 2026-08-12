@@ -70,10 +70,20 @@ const SOURCE_FIELDS = ["spec_id", "variable_key", "unit", "bounds", "time_window
 const TARGET_FIELDS = ["name", "unit", "kind", "time_s", "point_id", "coordinate_frame"] as const;
 const EFFECT_FIELDS = ["mu", "mu_star", "mu_star_standard_error", "sigma"] as const;
 const DENOMINATOR_FIELDS = ["total_pairs", "valid_pairs", "typed_no_impact_pairs", "no_impact_unavailable_pairs", "failed_pairs", "nonfinite_pairs"] as const;
+const C0_CONTROL_MAX = 0x1f;
+const C1_CONTROL_MIN = 0x7f;
+const C1_CONTROL_MAX = 0x9f;
+// Covers accumulated IEEE-754 rounding in the squared four-metric identity,
+// while remaining many orders below scientifically meaningful report values.
+const METRIC_IDENTITY_EPSILON_MULTIPLIER = 256;
 
 const asRecord = (value: unknown, name: string): Record<string, unknown> => {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
-    throw new RangeError(`${name} must be an object`);
+    throw new RangeError(`${name} must be a plain object`);
+  }
+  const prototype = Object.getPrototypeOf(value) as object | null;
+  if (prototype !== Object.prototype && prototype !== null) {
+    throw new RangeError(`${name} must be a plain object`);
   }
   return value as Record<string, unknown>;
 };
@@ -86,10 +96,16 @@ const exactFields = (value: Record<string, unknown>, fields: readonly string[], 
   }
 };
 
+const containsControlCharacter = (value: string): boolean => Array.from(value).some((character) => {
+  const codePoint = character.codePointAt(0) ?? 0;
+  return codePoint <= C0_CONTROL_MAX || (codePoint >= C1_CONTROL_MIN && codePoint <= C1_CONTROL_MAX);
+});
+
 const stableText = (value: unknown, name: string): string => {
   if (typeof value !== "string" || value === "" || value !== value.trim()) {
     throw new RangeError(`${name} must be a nonempty trimmed string`);
   }
+  if (containsControlCharacter(value)) throw new RangeError(`${name} must not contain control characters`);
   return value;
 };
 
@@ -226,6 +242,39 @@ const parseDenominator = (value: unknown): MorrisDenominator => {
   });
 };
 
+const metricsClose = (first: number, second: number, scaleValues: readonly number[]): boolean => {
+  const scale = Math.max(1, ...scaleValues.map((value) => Math.abs(value)));
+  const tolerance = METRIC_IDENTITY_EPSILON_MULTIPLIER * Number.EPSILON * scale;
+  return Math.abs(first - second) <= tolerance;
+};
+
+const validateFiniteMetrics = (estimate: MorrisEstimate): void => {
+  const { mu, muStar, muStarStandardError, sigma } = estimate.effects;
+  if (mu === null || muStar === null || muStarStandardError === null || sigma === null) return;
+  if (muStar === 0) {
+    if (mu !== 0 || sigma !== 0 || muStarStandardError !== 0
+        || estimate.availability !== "constant-output") {
+      throw new RangeError("zero mu_star requires zero metrics and constant-output availability");
+    }
+    return;
+  }
+  if (estimate.availability === "constant-output") {
+    throw new RangeError("constant-output Morris effects must be zero");
+  }
+  if (sigma === 0 && (muStarStandardError !== 0
+      || !metricsClose(muStar, Math.abs(mu), [muStar, mu]))) {
+    throw new RangeError("zero-sigma Morris metric relationship failed");
+  }
+  const sampleCount = estimate.denominator.validPairs;
+  const sigmaSquared = sigma ** 2;
+  const scaledStandardErrorSquared = sampleCount * muStarStandardError ** 2;
+  const meanDifference = sampleCount / (sampleCount - 1) * (muStar ** 2 - mu ** 2);
+  const scaleValues = [sigmaSquared, scaledStandardErrorSquared, meanDifference, muStar ** 2, mu ** 2];
+  if (!metricsClose(sigmaSquared - scaledStandardErrorSquared, meanDifference, scaleValues)) {
+    throw new RangeError("Morris metric identity is inconsistent with valid_pairs");
+  }
+};
+
 const validateEstimate = (estimate: MorrisEstimate, trajectories: number): void => {
   const denominator = estimate.denominator;
   const exclusiveTotal = denominator.validPairs + denominator.noImpactUnavailablePairs
@@ -248,10 +297,7 @@ const validateEstimate = (estimate: MorrisEstimate, trajectories: number): void 
   if (estimate.sampleAdequacy === "limited" && (denominator.validPairs < 2 || denominator.validPairs >= 10)) {
     throw new RangeError("limited Morris estimate requires two through nine valid pairs");
   }
-  if (estimate.availability === "constant-output"
-      && Object.values(estimate.effects).some((metric) => metric !== 0)) {
-    throw new RangeError("constant-output Morris effects must be zero");
-  }
+  validateFiniteMetrics(estimate);
 };
 
 const parseEstimate = (value: unknown, trajectories: number): MorrisEstimate => {
@@ -272,7 +318,7 @@ const parseEstimate = (value: unknown, trajectories: number): MorrisEstimate => 
 const validateReport = (report: MorrisReport): void => {
   const sources = new Map<string, string>();
   const targets = new Map<string, string>();
-  const pairs = new Set<string>();
+  const pairsBySource = new Map<string, Set<string>>();
   for (const estimate of report.estimates) {
     const sourceIdentity = JSON.stringify(estimate.source);
     const previous = sources.get(estimate.source.specId);
@@ -282,15 +328,16 @@ const validateReport = (report: MorrisReport): void => {
     const previousTarget = targets.get(estimate.target.name);
     if (previousTarget !== undefined && previousTarget !== targetIdentity) throw new RangeError("target provenance changes within report");
     targets.set(estimate.target.name, targetIdentity);
-    const pairId = `${estimate.source.specId}\u0000${estimate.target.name}`;
-    if (pairs.has(pairId)) throw new RangeError("source/target estimate pairs must be unique");
-    pairs.add(pairId);
+    const sourceTargets = pairsBySource.get(estimate.source.specId) ?? new Set<string>();
+    if (sourceTargets.has(estimate.target.name)) throw new RangeError("source/target estimate pairs must be unique");
+    sourceTargets.add(estimate.target.name);
+    pairsBySource.set(estimate.source.specId, sourceTargets);
   }
   const expectedSamples = report.design.trajectories * (sources.size + 1);
   if (sources.size === 0 || report.design.totalSamples !== expectedSamples) {
     throw new RangeError("design total_samples does not match trajectories and factor count");
   }
-  if (pairs.size !== sources.size * targets.size) {
+  if (report.estimates.length !== sources.size * targets.size) {
     throw new RangeError("Morris report must contain every source/target estimate pair");
   }
 };

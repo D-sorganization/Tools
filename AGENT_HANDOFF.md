@@ -3,6 +3,25 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Morris TypeScript review hardening (#4142 R13.4)
+
+- Review mutation tests now prove the four reported statistics are jointly
+  realizable for `valid_pairs`: for `n > 1`, the parser checks
+  `sigma^2 - n*SE^2 = n/(n-1)*(mu_star^2-mu^2)` with a documented tolerance
+  of 256 IEEE-754 epsilons scaled to the squared metrics.
+- Exact zero `mu_star` requires zero `mu`, `sigma`, and standard error plus
+  `constant-output`; exact zero `sigma` requires zero standard error and
+  `mu_star` equal to `abs(mu)` within that tolerance. An all-zero tuple labeled
+  `available` fails closed. Explicit insufficient estimates remain all-null and
+  bypass finite-metric algebra without weakening denominator/adequacy checks.
+- The parser accepts only ordinary or null-prototype records, rejects all C0
+  and C1 control characters, and uses nested source/target sets instead of a
+  delimiter-composite identity. Tests pin former NUL collisions, class/custom
+  prototypes, nested missing/excess fields, stable source/target provenance,
+  complete matrices, duplicate pairs, and deep immutability.
+- No Python producer behavior, UI/export/execution adapter, or UpstreamDrift
+  integration changes in this review fix. Later R13-R15 scope remains open.
+
 ## 2026-08-12 Strict Morris TypeScript parity contract (#4142 R13.4)
 
 - Branch `codex/4142-morris-typescript-parity` fast-forwarded normally from

@@ -1,5 +1,21 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 Morris TypeScript review hardening (#4142 R13.4)
+
+- Finite estimates now satisfy the exact Morris sample-moment relationship
+  among `mu`, `mu*`, `mu*` standard error, `sigma`, and `valid_pairs`, allowing
+  only a documented 256-epsilon scale-aware IEEE-754 tolerance.
+- Zero `mu*` is exclusively an all-zero `constant-output` state; zero `sigma`
+  also requires zero standard error and `mu* = abs(mu)`. Unavailable estimates
+  remain explicitly all-null and retain their complete typed denominator.
+- Only plain/null-prototype objects cross the parser boundary. C0/C1 controls
+  are rejected and nested pair maps eliminate delimiter-composite collisions.
+  Tests also pin nested exact fields, deep freeze, stable repeated provenance,
+  duplicate rejection, and a complete source-by-target result matrix.
+- This is a strict-consumer review fix only. Python scientific calculations,
+  UI/export/execution adapters, UpstreamDrift consumption, and later R13-R15
+  acceptance/release work remain unchanged and open.
+
 ## 2026-08-12 strict TypeScript Morris report parity (#4142 R13.4)
 
 - The report wire format now has stable identity

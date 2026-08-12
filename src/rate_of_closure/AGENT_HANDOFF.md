@@ -3,6 +3,23 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Morris TypeScript review hardening (#4142 R13.4)
+
+The strict consumer now rejects statistically impossible combinations of
+Morris `mu`, `mu*`, `mu*` standard error, and sample `sigma`. For finite
+estimates with `n = valid_pairs > 1`, it enforces the shared-second-moment
+identity with a bounded 256-epsilon scaled floating tolerance, plus explicit
+zero-`mu*`, zero-`sigma`, and constant-output implications. All-null
+`insufficient-data` estimates remain valid for zero/one usable pairs and do not
+enter finite-metric algebra.
+
+Parser records must have `Object.prototype` or a null prototype. C0/C1 control
+characters are prohibited, and source/target uniqueness uses nested maps rather
+than delimiter-concatenated IDs. Mutation tests cover prototype attacks, the
+former NUL collision, nested shape drift, incomplete/duplicate matrices,
+provenance disagreement, deep freeze, and metric-identity violations. UI,
+export, execution, Python calculations, and UpstreamDrift wiring are unchanged.
+
 ## 2026-08-12 Strict Morris TypeScript parity contract (#4142 R13.4)
 
 The shared Morris report and its React-side consumer now use stable identity

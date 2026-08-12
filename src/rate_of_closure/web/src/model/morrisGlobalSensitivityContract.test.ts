@@ -15,6 +15,17 @@ const firstEstimate = (value: unknown): Record<string, unknown> => {
   const estimates = record(value).estimates as unknown[];
   return record(estimates[0]);
 };
+const effectsOf = (value: unknown): Record<string, unknown> => record(firstEstimate(value).effects);
+const estimatesOf = (value: unknown): unknown[] => record(value).estimates as unknown[];
+
+const addSecondTargetMatrix = (value: unknown): void => {
+  const estimates = estimatesOf(value);
+  for (const sourceEstimate of [...estimates]) {
+    const copy = structuredClone(sourceEstimate);
+    record(record(copy).target).name = "clubhead_y_m";
+    estimates.push(copy);
+  }
+};
 
 describe("Morris global-sensitivity report parity", () => {
   it("parses the Python golden fixture with complete typed provenance", () => {
@@ -48,6 +59,16 @@ describe("Morris global-sensitivity report parity", () => {
       },
     });
     expect(Object.isFrozen(report)).toBe(true);
+    expect(Object.isFrozen(report.design)).toBe(true);
+    expect(Object.isFrozen(report.assumptions)).toBe(true);
+    expect(Object.isFrozen(report.estimates)).toBe(true);
+    expect(Object.isFrozen(report.estimates[0])).toBe(true);
+    expect(Object.isFrozen(report.estimates[0].source)).toBe(true);
+    expect(Object.isFrozen(report.estimates[0].source.bounds)).toBe(true);
+    expect(Object.isFrozen(report.estimates[0].source.timeWindowS)).toBe(true);
+    expect(Object.isFrozen(report.estimates[0].source.pointIds)).toBe(true);
+    expect(Object.isFrozen(report.estimates[0].target)).toBe(true);
+    expect(Object.isFrozen(report.estimates[0].effects)).toBe(true);
     expect(Object.isFrozen(report.estimates[0].denominator)).toBe(true);
   });
 
@@ -75,6 +96,20 @@ describe("Morris global-sensitivity report parity", () => {
     const report = parseMorrisReportJson(JSON.stringify(fixture));
     expect(report.estimates).toHaveLength(2);
     expect(() => parseMorrisReportJson("not-json")).toThrow("valid JSON");
+  });
+
+  it("accepts a null-prototype record but rejects class and custom prototypes", () => {
+    const plainPayload = record(cloneFixture());
+    const nullPrototype = Object.assign(Object.create(null) as Record<string, unknown>, plainPayload);
+    expect(parseMorrisReport(nullPrototype).schemaVersion).toBe(1);
+
+    class ReportPayload {}
+    const classPayload = Object.assign(new ReportPayload(), plainPayload);
+    expect(() => parseMorrisReport(classPayload)).toThrow("plain object");
+
+    const customDesign = Object.assign(Object.create({ inherited: true }) as Record<string, unknown>, record(plainPayload.design));
+    plainPayload.design = customDesign;
+    expect(() => parseMorrisReport(plainPayload)).toThrow("plain object");
   });
 
   it.each([
@@ -117,6 +152,92 @@ describe("Morris global-sensitivity report parity", () => {
     const estimates = payload.estimates as unknown[];
     record(record(estimates[1]).source).spec_id = "face-window";
     expect(() => parseMorrisReport(payload)).toThrow("source provenance");
+  });
+
+  it("rejects inconsistent target provenance and duplicate source/target pairs", () => {
+    const inconsistent = record(cloneFixture());
+    record(record(estimatesOf(inconsistent)[1]).target).unit = "ft";
+    expect(() => parseMorrisReport(inconsistent)).toThrow("target provenance");
+
+    const duplicate = record(cloneFixture());
+    estimatesOf(duplicate).push(structuredClone(estimatesOf(duplicate)[0]));
+    expect(() => parseMorrisReport(duplicate)).toThrow("pairs must be unique");
+  });
+
+  it("requires the complete source-by-target estimate matrix", () => {
+    const payload = record(cloneFixture());
+    addSecondTargetMatrix(payload);
+    expect(parseMorrisReport(payload).estimates).toHaveLength(4);
+    estimatesOf(payload).pop();
+    expect(() => parseMorrisReport(payload)).toThrow("every source/target");
+  });
+
+  it.each(["\u0000", "\u001f", "\u007f", "\u009f"])(
+    "rejects control character U+%s in stable identifiers",
+    (control) => {
+      const payload = cloneFixture();
+      record(firstEstimate(payload).source).spec_id = `face${control}window`;
+      expect(() => parseMorrisReport(payload)).toThrow("control characters");
+    },
+  );
+
+  it("rejects the former NUL-delimited composite-ID collision", () => {
+    const payload = record(cloneFixture());
+    const estimates = estimatesOf(payload);
+    record(record(estimates[0]).source).spec_id = "a\u0000b";
+    record(record(estimates[0]).target).name = "c";
+    record(record(estimates[1]).source).spec_id = "a";
+    record(record(estimates[1]).target).name = "b\u0000c";
+    expect(() => parseMorrisReport(payload)).toThrow("control characters");
+  });
+
+  it.each([
+    ["missing source field", (item: Record<string, unknown>) => { delete record(item.source).unit; }],
+    ["excess target field", (item: Record<string, unknown>) => { record(item.target).extra = true; }],
+    ["missing effect field", (item: Record<string, unknown>) => { delete record(item.effects).sigma; }],
+    ["excess denominator field", (item: Record<string, unknown>) => { record(item.denominator).extra = 0; }],
+  ])("rejects nested shape with %s", (_name, mutate) => {
+    const payload = cloneFixture();
+    mutate(firstEstimate(payload));
+    expect(() => parseMorrisReport(payload)).toThrow("fields do not match");
+  });
+
+  it("accepts a numerically possible nonconstant metric tuple", () => {
+    const payload = cloneFixture();
+    const effects = effectsOf(payload);
+    effects.mu = 0.5;
+    effects.mu_star = 1.5;
+    effects.sigma = Math.sqrt(27 / 11);
+    effects.mu_star_standard_error = Math.sqrt(3 / 11 / 12);
+    expect(parseMorrisReport(payload).estimates[0].effects.muStar).toBe(1.5);
+  });
+
+  it.each([
+    ["variance identity", (effects: Record<string, unknown>) => { effects.sigma = 0.25; }],
+    ["zero sigma mean magnitude", (effects: Record<string, unknown>) => { effects.mu_star = 3; }],
+    ["zero sigma standard error", (effects: Record<string, unknown>) => { effects.mu_star_standard_error = 0.01; }],
+  ])("rejects impossible Morris metric relationship: %s", (_name, mutate) => {
+    const payload = cloneFixture();
+    mutate(effectsOf(payload));
+    expect(() => parseMorrisReport(payload)).toThrow("metric");
+  });
+
+  it("rejects an available all-zero tuple and accepts the constant-output state", () => {
+    const payload = cloneFixture();
+    const effects = effectsOf(payload);
+    effects.mu = 0;
+    effects.mu_star = 0;
+    expect(() => parseMorrisReport(payload)).toThrow("constant-output");
+    firstEstimate(payload).availability = "constant-output";
+    expect(parseMorrisReport(payload).estimates[0].availability).toBe("constant-output");
+  });
+
+  it("uses a bounded floating tolerance for the metric identity", () => {
+    const payload = cloneFixture();
+    effectsOf(payload).sigma = 1e-8;
+    expect(parseMorrisReport(payload).estimates[0].effects.sigma).toBe(1e-8);
+    effectsOf(payload).sigma = 1e-6;
+    expect(() => parseMorrisReport(payload)).toThrow("metric identity");
   });
 
   it.each([

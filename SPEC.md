@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.22                                    |
-| **Spec Version**        | 1.16.22                                    |
+| **Current Version**     | 1.16.23                                    |
+| **Spec Version**        | 1.16.23                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
@@ -2922,6 +2922,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.23 | fix(rate-of-closure, #4142 R13.4): harden the strict Morris report consumer to accept only plain/null-prototype records, reject C0/C1 controls and composite-identity ambiguity, require complete unique source-target matrices with stable provenance, and verify `mu`, `mu*`, `mu*` standard error, and `sigma` are jointly possible for the declared valid-pair count using the sample-moment identity and a bounded scale-aware tolerance of 256 IEEE-754 epsilons; require zero `mu*` to mean an exact all-zero `constant-output` estimate and enforce zero-sigma implications without weakening explicit null unavailable states. |
 | 2026-08-12 | 1.16.22 | feat(rate-of-closure, #4142 R13.4): add the strict UI-neutral TypeScript consumer for the Morris global-sensitivity report, give the cross-runtime wire contract the stable `swing-sim/morris-global-sensitivity-report` identity independent of its method vocabulary, and fail closed on unknown/malformed/non-finite payloads, grid/sample provenance errors, invalid units/frames/loci/bounds, unavailable-estimate encoding, typed availability/adequacy states, and denominator inconsistencies; retain UI/export/execution and UpstreamDrift integration as follow-up scope. |
 | 2026-08-12 | 1.16.21 | feat(swing-sim, #4142 R13.2-R13.4): add deterministic validated Morris elementary-effects design/analysis contracts with registered units and finite bounds, source-locus and downstream target attribution, canonical typed hit/no-impact/failure handling, per-output availability, total typed-miss plus unavailable-miss denominators, sample-adequacy and unavailable states, uncertainty/interaction caveats, exact design provenance, JSON-safe report serialization, and a versioned cross-runtime golden fixture; retain finite no-impact state metrics without fabricating impact/shot outputs, while deferring execution adapters, UI/export, and UpstreamDrift consumption. |
 | 2026-08-11 | 1.16.20 | merge(rate-of-closure, #4279 #4280): normally merge exact variation-export child `9b45bd5beca38370c1d541f8c488ef0edad08517` first with exact workspace/toolstrip parent `983805d799b76e5e1ad1dbdc7a5ab28957d805c8` second; preserve the configured base, variation export/continuation behavior, workspace/plot/toolstrip contracts, both append-only histories, and the explicit pre-manifest boundary. |
