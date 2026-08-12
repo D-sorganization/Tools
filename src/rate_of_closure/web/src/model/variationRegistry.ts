@@ -34,7 +34,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     unit: "deg",
     default: 0,
     typicalScale: 1.5,
-    guidance: "Typical variation: 1-3 deg about vertical.",
+    guidance: "Typical variation: 1-3 deg about vertical. Source: 3-D motion-capture swing-plane studies collected in the AffineDrift dossier.",
   },
   {
     key: `${CATEGORY_SWING}.side_tilt_deg`,
@@ -42,7 +42,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     unit: "deg",
     default: -45,
     typicalScale: 1.5,
-    guidance: "Typical variation: 1-3 deg about plane lean.",
+    guidance: "Typical variation: 1-3 deg about the plane lean. Source: 3-D motion-capture swing-plane studies collected in the AffineDrift dossier.",
   },
   {
     key: `${CATEGORY_SWING}.forward_tilt_deg`,
@@ -50,7 +50,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     unit: "deg",
     default: 0,
     typicalScale: 1.5,
-    guidance: "Typical variation: 1-3 deg toward or away from target.",
+    guidance: "Typical variation: 1-3 deg toward/away from target. Source: 3-D motion-capture swing-plane studies collected in the AffineDrift dossier.",
   },
   {
     key: `${CATEGORY_SWING}.impact_time_offset_s`,
@@ -66,7 +66,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     unit: "N·m·s",
     default: 0.4,
     typicalScale: 0.05,
-    guidance: "Passive double-pendulum shoulder damping.",
+    guidance: "Typical variation: 0.02-0.1 N·m·s about the 0.4 golf default. Source: double-pendulum golf-swing literature parameters used by swing_sim.",
   },
   {
     key: `${CATEGORY_SWING}.damping_wrist`,
@@ -74,7 +74,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     unit: "N·m·s",
     default: 0.25,
     typicalScale: 0.05,
-    guidance: "Passive double-pendulum wrist damping.",
+    guidance: "Typical variation: 0.02-0.1 N·m·s about the 0.25 golf default. Source: double-pendulum golf-swing literature parameters used by swing_sim.",
   },
   {
     key: `${CATEGORY_CLUB}.head_mass_kg`,
@@ -82,7 +82,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     unit: "kg",
     default: 0.2,
     typicalScale: 0.002,
-    guidance: "Manufacturing tolerance: a few grams about 200 g.",
+    guidance: "Manufacturing tolerance: a few grams about 200 g. Source: shared swing_sim impact constants (driver head, USGA COR limit region).",
   },
   {
     key: `${CATEGORY_CLUB}.head_moi_kg_m2`,
@@ -90,7 +90,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     unit: "kg·m²",
     default: 4.5e-4,
     typicalScale: 2e-5,
-    guidance: "Scalar clubhead MOI about the shaft axis.",
+    guidance: "Typical driver MOI spread about 4.5e-4 kg·m². Source: shared swing_sim impact constants (driver head, USGA COR limit region).",
   },
   {
     key: `${CATEGORY_CLUB}.cor`,
@@ -106,7 +106,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     unit: "m",
     default: 0.0381,
     typicalScale: 0.003,
-    guidance: "Ground-plane clearance to the bottom of the ball; Tee mode only.",
+    guidance: "Applicable only when Ball Support is Tee. Height is measured from the ground plane to the bottom of the ball.",
     applicability: "tee_only",
   },
   {
@@ -156,7 +156,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     unit: "mm",
     default: 0.0,
     typicalScale: 4.0,
-    guidance: "Typical strike dispersion: 3-8 mm across the face.",
+    guidance: "Typical strike dispersion: 3-8 mm across the face. Source: published robot-test impact maps.",
   },
   {
     key: `${CATEGORY_DELIVERY}.impact_offset_high_mm`,
@@ -164,7 +164,7 @@ export const VARIABLE_REGISTRY: VariableDefTs[] = [
     unit: "mm",
     default: 0.0,
     typicalScale: 3.0,
-    guidance: "Typical strike dispersion: 2-6 mm vertically.",
+    guidance: "Typical strike dispersion: 2-6 mm vertically. Source: published robot-test impact maps.",
   },
   {
     key: `${CATEGORY_LAUNCH}.ball_speed_mph`,

@@ -1,6 +1,7 @@
 /** Strict, UI-neutral consumer for the versioned Morris screening report. */
 
 import { validateMorrisMetrics } from "./morrisMetricValidation";
+import { morrisStableId } from "./morrisStableId";
 
 export const MORRIS_REPORT_SCHEMA_ID = "swing-sim/morris-global-sensitivity-report" as const;
 export const MORRIS_REPORT_SCHEMA_VERSION = 1 as const;
@@ -180,12 +181,14 @@ const parseSource = (value: unknown): MorrisSourceProvenance => {
   const item = asRecord(value, "Morris source");
   exactFields(item, SOURCE_FIELDS, "Morris source");
   return Object.freeze({
-    specId: stableText(item.spec_id, "source spec_id"),
+    specId: morrisStableId(item.spec_id, "source spec_id"),
     variableKey: stableText(item.variable_key, "source variable_key"),
     unit: stableText(item.unit, "source unit"),
     bounds: pair(item.bounds, "source bounds"),
     timeWindowS: optionalPair(item.time_window_s, "source time_window_s"),
-    pointIds: textArray(item.point_ids, "source point_ids"),
+    pointIds: Object.freeze(textArray(item.point_ids, "source point_ids").map(
+      (pointId) => morrisStableId(pointId, "source point_id"),
+    )),
   });
 };
 
@@ -199,7 +202,7 @@ const parseTarget = (value: unknown): MorrisTargetProvenance => {
     throw new RangeError("state-point target requires point_id and coordinate_frame");
   }
   return Object.freeze({
-    name: stableText(item.name, "target name"),
+    name: morrisStableId(item.name, "target name"),
     unit: stableText(item.unit, "target unit"),
     kind,
     timeS: nullableFinite(item.time_s, "target time_s"),

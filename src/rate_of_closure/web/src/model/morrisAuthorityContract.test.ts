@@ -39,29 +39,25 @@ describe("Morris authority contract", () => {
     expect(() => parseMorrisJobEnvelope(payload)).toThrow();
   });
 
-  it("uses only the injected base URL and forwards AbortSignal for status", async () => {
+  it("uses the canonical same-origin base and forwards AbortSignal", async () => {
     const fetcher = vi.fn<typeof fetch>(async (input, init) => {
       void input;
-      void init;
       return new Response(JSON.stringify(completed()), {
-        status: 200,
+        status: init?.method === "POST" ? 202 : 200,
         headers: { "Content-Type": "application/json" },
       });
     });
-    const client = createMorrisAuthorityClient({
-      baseUrl: "http://127.0.0.1:8765/mount",
-      fetchImpl: fetcher,
-    });
+    const client = createMorrisAuthorityClient({ fetchImpl: fetcher });
     const signal = new AbortController().signal;
 
     await client.status("job-1", signal);
     await client.cancel("job-1");
     await client.create({ schema_id: "request" });
 
-    expect(fetcher.mock.calls[0]?.[0]).toBe("http://127.0.0.1:8765/mount/morris/jobs/job-1");
-    expect(fetcher.mock.calls[0]?.[1]).toMatchObject({ method: "GET", signal });
-    expect(fetcher.mock.calls[1]?.[1]).toMatchObject({ method: "DELETE" });
-    expect(fetcher.mock.calls[2]?.[1]).toMatchObject({ method: "POST" });
+    expect(fetcher.mock.calls[0]?.[0]).toBe("/api/rate-of-closure/v1/morris/jobs/job-1");
+    expect(fetcher.mock.calls[0]?.[1]).toMatchObject({ method: "GET", signal, redirect: "error" });
+    expect(fetcher.mock.calls[1]?.[1]).toMatchObject({ method: "DELETE", redirect: "error" });
+    expect(fetcher.mock.calls[2]?.[1]).toMatchObject({ method: "POST", redirect: "error" });
   });
 
   it("uses the canonical same-origin API prefix by default", async () => {

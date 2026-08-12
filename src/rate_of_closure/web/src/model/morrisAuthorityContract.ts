@@ -1,6 +1,7 @@
 /** Strict wire parser and injected transport for the Rate Morris authority. */
 
 import { parseMorrisReport, type MorrisReport } from "./morrisGlobalSensitivityContract";
+import { morrisStableId } from "./morrisStableId";
 
 export const MORRIS_JOB_SCHEMA_ID = "rate-of-closure/morris-job" as const;
 export const MORRIS_AUTHORITY_SCHEMA_VERSION = 1 as const;
@@ -69,7 +70,7 @@ const parseError = (value: unknown): MorrisJobError | null => {
   if (value === null) return null;
   const item = record(value, "Morris job error");
   exact(item, ERROR_FIELDS, "Morris job error");
-  return Object.freeze({ code: text(item.code, "error code"), message: text(item.message, "error message") });
+  return Object.freeze({ code: morrisStableId(item.code, "error code"), message: text(item.message, "error message") });
 };
 
 const statusValue = (value: unknown): MorrisJobStatus => {
@@ -97,8 +98,8 @@ export function parseMorrisJobEnvelope(value: unknown): MorrisJobEnvelope {
   return Object.freeze({
     schemaId: MORRIS_JOB_SCHEMA_ID,
     schemaVersion: MORRIS_AUTHORITY_SCHEMA_VERSION,
-    jobId: text(item.job_id, "job_id"),
-    requestId: text(item.request_id, "request_id"),
+    jobId: morrisStableId(item.job_id, "job_id"),
+    requestId: morrisStableId(item.request_id, "request_id"),
     status,
     completedSamples,
     totalSamples,

@@ -3,6 +3,33 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Morris request/presentation seam (#4142 R13.6)
+
+`application/morris/request_document.py` is now the only UI-neutral builder
+from immutable `SimulationConfig` to the v1 authority request. It preserves the
+canonical factor order, clamps registry suggestions to existing physical
+endpoint bounds, omits tee height on ground, and delegates final validation to
+`parse_morris_request`. A reconstructed base must equal the caller config, so
+unrepresented impact timing, manual delivery, prescribed torque, joint locks,
+or other semantics fail closed. `MorrisAuthorityRequest.to_json_dict()` is the
+canonical serializer.
+
+`client.py`, `response_contract.py`, and `presentation.py` add the strict
+parent-side capability/job/report client and pure lifecycle/factor/result view
+models. The client accepts only numeric `127.0.0.1`, a copied visible bearer,
+bounded time, exact status/media/UTF-8/unique-key JSON, 16 MiB successful bodies
+and 8 KiB errors; credentials are redacted. The React counterparts are
+same-origin-only and enforce equivalent bounded streaming, endpoint, authority
+base-physics, club/flight vocabulary, and sample/observation resource checks.
+Both request paths canonicalize factor order independent of draft order. Lazy
+application package exports preserve existing names while the request, client,
+response, and presentation modules import without optional scientific/server
+dependencies.
+Rows rank finite `mu*` only within a selected target, use canonical factor order
+for ties, leave unavailable effects unranked, and retain every denominator
+without treating typed no-impact as exclusive. UI widgets, polling hooks,
+exports, persistence, and UpstreamDrift consumption remain intentionally open.
+
 ## 2026-08-12 Private child authority and Vite proxy (#4142 R13.5)
 
 `application/morris/{host,child,runtime}.py` is the bounded local host slice.

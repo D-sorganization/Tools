@@ -1,5 +1,31 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 #4142 R13.6 UI-neutral Morris application seam
+
+- Added one canonical tee-aware ten-factor order, registry-derived bounded
+  drafts, exact request serialization, and full represented-config round-trip.
+  Any unrepresented `SimulationConfig` semantic differing from the pinned
+  passive fixed-ball authority is rejected before submission.
+- Added frozen strict capability/job/report consumers and pure factor,
+  lifecycle, and selected-target result presentation in Python and TypeScript.
+  Stable `mu*` ranking is target-local; unavailable values stay null/unranked;
+  every typed miss/failure/nonfinite denominator remains explicit.
+- Added direct authenticated no-proxy numeric-loopback Python HTTP and a
+  canonical same-origin-only browser client. Both reject malformed media,
+  lengths, UTF-8, schemas, IDs and endpoint values; successful bodies are
+  bounded to 16 MiB and errors to 8 KiB without reflecting bearer secrets.
+- TypeScript submission rejects base club/flight vocabulary drift, impossible
+  pendulum/support/strike semantics, and the same named sample and 17-target
+  observation-cell resource caps as Python before any authority request.
+- Reversed draft input is canonicalized identically before seeded designs, and
+  lazy package façades keep the four UI-neutral modules importable in a
+  SciPy/FastAPI/Uvicorn-free base or GUI-only environment.
+- One `morris_ui_parity_v1.json` fixture is pinned, verified against Python,
+  and consumed by both runtimes for request, factor-row, completed-job, and
+  presentation parity. This slice adds
+  no widgets, hooks, polling, launcher/host routes, exports, persistence, or
+  local physics. Those and UpstreamDrift consumption remain open #4142 gates.
+
 ## 2026-08-12 #4142 R13.5 private authority host
 
 - The standalone Rate React launcher now owns one ephemeral authority child

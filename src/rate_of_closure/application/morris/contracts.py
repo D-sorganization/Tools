@@ -4,32 +4,17 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import TYPE_CHECKING, Any, Literal
 
 from rate_of_closure.application._workspace_validation import exact_mapping, stable_id
-from rate_of_closure.club import CLUB_LIBRARY
 from rate_of_closure.club.types import SPEC_BOUNDS
-from rate_of_closure.model import ImpactScenario
-from rate_of_closure.simulation import (
-    BallSetup,
-    BallSupportMode,
-    ContactMode,
-    SimulationConfig,
-)
-from rate_of_closure.variation.morris_rate_adapter import RATE_MORRIS_VARIABLE_KEYS
-from rate_of_closure.variation.request_builder import apply_global_simulation_values
-from shared.python.swing_sim.flight.registry import FlightModelType
-from shared.python.swing_sim.types import PendulumParameters, PlaneOrientation
-from shared.python.swing_sim.variation import (
-    CATEGORY_DELIVERY,
-    MAX_MORRIS_OBSERVATION_CELLS,
-    MAX_MORRIS_SAMPLES,
-    MAX_MORRIS_WORKERS,
-    MorrisDesign,
-    MorrisFactor,
-    generate_morris_design,
-    variable_registry,
-)
+
+if TYPE_CHECKING:
+    from rate_of_closure.simulation.records import SimulationConfig
+    from shared.python.swing_sim.variation.morris_design import (
+        MorrisDesign,
+        MorrisFactor,
+    )
 
 MORRIS_REQUEST_SCHEMA_ID = "rate-of-closure/morris-request"
 MORRIS_JOB_SCHEMA_ID = "rate-of-closure/morris-job"
@@ -88,11 +73,14 @@ _PENDULUM_POSITIVE = (
 _DAMPING_KEYS = frozenset(
     {"swing_sim.swing.damping_shoulder", "swing_sim.swing.damping_wrist"}
 )
-_TOE_KEY = f"{CATEGORY_DELIVERY}.impact_offset_toe_mm"
-_HIGH_KEY = f"{CATEGORY_DELIVERY}.impact_offset_high_mm"
+_TOE_KEY = "swing_sim.impact.delivery.impact_offset_toe_mm"
+_HIGH_KEY = "swing_sim.impact.delivery.impact_offset_high_mm"
 _HEAD_MASS_KEY = "swing_sim.club.head_mass_kg"
 _HEAD_MOI_KEY = "swing_sim.club.head_moi_kg_m2"
 _TEE_KEY = "swing_sim.ball_setup.tee_height_m"
+_MAX_MORRIS_SAMPLES = 100_000
+_MAX_MORRIS_OBSERVATION_CELLS = 1_000_000
+_MAX_MORRIS_WORKERS = 32
 
 
 def _finite(value: object, name: str) -> float:
@@ -118,6 +106,13 @@ class MorrisBaseRequest:
 
     def simulation_config(self) -> SimulationConfig:
         """Reconstruct the one pinned passive fixed-ball authority config."""
+        from rate_of_closure.club.library import CLUB_LIBRARY
+        from rate_of_closure.model import ImpactScenario
+        from rate_of_closure.simulation.contact import ContactMode
+        from rate_of_closure.simulation.records import SimulationConfig
+        from shared.python.swing_sim.ball_setup import BallSetup, BallSupportMode
+        from shared.python.swing_sim.types import PendulumParameters, PlaneOrientation
+
         value = self.values
         support = BallSupportMode(str(value["support_mode"]))
         scenario = ImpactScenario(
@@ -179,9 +174,37 @@ class MorrisAuthorityRequest:
 
     def design(self) -> MorrisDesign:
         """Generate this request's deterministic Morris design."""
+        from shared.python.swing_sim.variation.morris_design import (
+            generate_morris_design,
+        )
+
         return generate_morris_design(
             self.factors, self.trajectories, self.levels, self.seed
         )
+
+    def to_json_dict(self) -> dict[str, Any]:
+        """Serialize the exact validated v1 request document."""
+        return {
+            "schema_id": MORRIS_REQUEST_SCHEMA_ID,
+            "schema_version": MORRIS_AUTHORITY_SCHEMA_VERSION,
+            "request_id": self.request_id,
+            "base": dict(self.base.values),
+            "factors": [
+                {
+                    "spec_id": factor.spec_id,
+                    "variable_key": factor.variable_key,
+                    "lower": factor.lower,
+                    "upper": factor.upper,
+                    "unit": factor.unit,
+                }
+                for factor in self.factors
+            ],
+            "trajectories": self.trajectories,
+            "levels": self.levels,
+            "seed": self.seed,
+            "minimum_effects": self.minimum_effects,
+            "worker_count": self.worker_count,
+        }
 
     @property
     def total_samples(self) -> int:
@@ -231,6 +254,9 @@ class MorrisJobEnvelope:
 
 
 def _parse_base(value: object) -> MorrisBaseRequest:
+    from rate_of_closure.club.library import CLUB_LIBRARY
+    from shared.python.swing_sim.flight.registry import FlightModelType
+
     item = dict(exact_mapping(value, _BASE_FIELDS, "Morris base"))
     for name in _BASE_FIELDS - {"club_name", "support_mode", "flight_model"}:
         item[name] = _finite(item[name], f"base {name}")
@@ -273,6 +299,8 @@ def _bounded(value: float, bounds: tuple[float, float], name: str) -> None:
 
 
 def _parse_factors(value: object, config: SimulationConfig) -> tuple[MorrisFactor, ...]:
+    from rate_of_closure.variation.request_builder import apply_global_simulation_values
+
     if not isinstance(value, list) or not value:
         raise TypeError("factors must be a nonempty array")
     factors = tuple(_parse_factor(item) for item in value)
@@ -289,6 +317,10 @@ def _parse_factors(value: object, config: SimulationConfig) -> tuple[MorrisFacto
 
 
 def _parse_factor(value: object) -> MorrisFactor:
+    from rate_of_closure.variation.morris_rate_adapter import RATE_MORRIS_VARIABLE_KEYS
+    from shared.python.swing_sim.variation.morris_design import MorrisFactor
+    from shared.python.swing_sim.variation.spec import variable_registry
+
     item = exact_mapping(value, _FACTOR_FIELDS, "Morris factor")
     key = item["variable_key"]
     if not isinstance(key, str) or key not in RATE_MORRIS_VARIABLE_KEYS:
@@ -310,6 +342,8 @@ def _parse_factor(value: object) -> MorrisFactor:
 
 
 def _validate_factor_endpoint(key: str, value: float, config: SimulationConfig) -> None:
+    from shared.python.swing_sim.ball_setup import BallSupportMode
+
     if key in _DAMPING_KEYS and value < 0.0:
         raise ValueError("damping factor endpoints must be nonnegative")
     if key == _TOE_KEY:
@@ -345,7 +379,7 @@ def parse_morris_request(value: object) -> MorrisAuthorityRequest:
     if levels % 2:
         raise ValueError("levels must be even")
     total = trajectories * (len(factors) + 1)
-    if total > MAX_MORRIS_SAMPLES or total * 17 > MAX_MORRIS_OBSERVATION_CELLS:
+    if total > _MAX_MORRIS_SAMPLES or total * 17 > _MAX_MORRIS_OBSERVATION_CELLS:
         raise ValueError("Morris sample allocation exceeds resource limits")
     return MorrisAuthorityRequest(
         stable_id(item["request_id"], "request_id"),
@@ -355,7 +389,7 @@ def parse_morris_request(value: object) -> MorrisAuthorityRequest:
         levels,
         _integer(item["seed"], "seed", 0, 2**32 - 1),
         _integer(item["minimum_effects"], "minimum_effects", 2, trajectories),
-        _integer(item["worker_count"], "worker_count", 1, MAX_MORRIS_WORKERS),
+        _integer(item["worker_count"], "worker_count", 1, _MAX_MORRIS_WORKERS),
     )
 
 

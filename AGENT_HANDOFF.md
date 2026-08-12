@@ -3,6 +3,33 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 UI-neutral Morris application contract (#4142 R13.6)
+
+Branch `codex/4142-morris-ui-contract` starts at exact private-authority parent
+`4986b6cfe5132cd67fb7ad4b13b9a5f0208f1500`. Python and TypeScript now share
+the UI-facing contract below widgets: canonical ordered ten-factor metadata,
+registry-derived suggested bounds, tee/ground applicability, exact request
+serialization, strict capability/job/report consumers, direct authenticated
+loopback Python transport, same-origin browser transport, and target-scoped
+stable `mu*` presentation with unchanged denominator diagnostics. Request
+construction round-trips the complete represented `SimulationConfig` and
+rejects every unrepresented semantic difference from the pinned passive,
+unlocked, fixed-ball authority rather than silently discarding it.
+
+`morris_ui_parity_v1.json` is pinned and verified against Python values and consumed by
+both runtimes. Response consumers enforce exact schemas, portable IDs, complete
+source-target matrices, immutable provenance, scientific availability and
+adequacy, typed no-impact overlap, and the producer's sample-moment/clamp
+identity. Python performs no-proxy numeric IPv4 loopback requests with copied
+bearer headers; React has no cross-origin base override. Both cap successful
+responses at 16 MiB and error responses at 8 KiB. No bearer enters browser
+code or errors. TypeScript also mirrors authority club/flight vocabularies,
+base-physics invariants, and named sample/observation-cell resource caps before
+transport. Both serializers canonicalize reversed drafts before seeded design
+mapping. Lazy application/Morris façades keep all four UI contract modules
+importable without SciPy, FastAPI, or Uvicorn. Widgets, hooks, polling orchestration, exports, persistence,
+launcher changes, local physics fallback, and #4142 completion remain open.
+
 ## 2026-08-12 Private Morris authority host (#4142 R13.5)
 
 Branch `codex/4142-morris-authority-host` starts at exact authority-bridge
