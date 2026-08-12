@@ -478,9 +478,80 @@
       "state": "open",
       "merge_commit_sha": null,
       "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4376",
+      "pr": 4376,
+      "branch": "codex/4369-authority-restart-recovery",
+      "base_branch": "codex/4369-flight-recompute-cancellation",
+      "head_sha": "d14ce6f8ef2696ccaa8971443fa4df7e8d52f21f",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4388",
+      "pr": 4388,
+      "branch": "codex/4378-static-inspection-runtime",
+      "base_branch": "codex/4369-authority-restart-recovery",
+      "head_sha": "a35b259fd6a6ad57815544d228d73a806bb8d84e",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4390",
+      "pr": 4390,
+      "branch": "codex/4379-same-origin-companion",
+      "base_branch": "codex/4378-static-inspection-runtime",
+      "head_sha": "c3ecfd48910aa5aafb89962a256333690e8e72c5",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4391",
+      "pr": 4391,
+      "branch": "codex/4380-playwright-production-browser",
+      "base_branch": "codex/4379-same-origin-companion",
+      "head_sha": "0de3de8a41c018aec03dead8371a1f3ec6e1912f",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
+    },
+    {
+      "id": "pr-4392",
+      "pr": 4392,
+      "branch": "codex/4385-windows-state-security",
+      "base_branch": "codex/4380-playwright-production-browser",
+      "head_sha": "dde43534babf385530a95b2ff6ce3477f73ac9b3",
+      "state": "open",
+      "merge_commit_sha": null,
+      "protection_evidence": "not_recorded"
     }
   ],
   "test_evidence": [
+    {
+      "id": "windows-state-security-local-dde4",
+      "kind": "local",
+      "commit_sha": "dde43534babf385530a95b2ff6ce3477f73ac9b3",
+      "outcome": "passed",
+      "commands": [
+        "python -m pytest tests/rate_of_closure/test_authority_state_security.py tests/rate_of_closure/test_regional_ground_authority_store.py -q",
+        "python -m pytest tests/rate_of_closure -q",
+        "python -m ruff check src/rate_of_closure tests/rate_of_closure scripts/qualify_windows_authority_state_install.py",
+        "python -m ruff format --check src/rate_of_closure tests/rate_of_closure scripts/qualify_windows_authority_state_install.py",
+        "installed-wheel python -I scripts/qualify_windows_authority_state_install.py --phase seed --state-root <isolated-state> --job-fixture <job> --result-fixture <result> --report <report>",
+        "installed-wheel python -I scripts/qualify_windows_authority_state_install.py --phase recover --state-root <isolated-state> --job-fixture <job> --result-fixture <result> --report <report>"
+      ],
+      "summary": "The published Windows state-security child passed focused native/store/API/loopback/workflow qualification, independent review, and clean Python 3.11 and 3.12 installed-wheel recovery checks. Four local symlink-privilege cases and the POSIX-mode case skipped as expected. Dedicated protected Windows 3.11/3.12 evidence remains blocked because no registered runner has the restricted d-sorg-windows-security label.",
+      "source_paths": [
+        "AGENT_HANDOFF.md",
+        "src/rate_of_closure/AGENT_HANDOFF.md",
+        "docs/development/RATE_OF_CLOSURE_CAMPAIGN_HANDOFF.md",
+        "docs/specs/GROUND_SKID_ROLL.md"
+      ]
+    },
     {
       "id": "rate-stack-local-c182",
       "kind": "local",
@@ -1661,7 +1732,11 @@
         4275,
         4276,
         4369,
-        4380
+        4377,
+        4378,
+        4379,
+        4380,
+        4385
       ],
       "carrier_ids": [
         "pr-4285",
@@ -1692,7 +1767,14 @@
         "pr-4370",
         "pr-4371",
         "pr-4372",
-        "pr-4373"
+        "pr-4373",
+        "pr-4374",
+        "pr-4375",
+        "pr-4376",
+        "pr-4388",
+        "pr-4390",
+        "pr-4391",
+        "pr-4392"
       ],
       "supported_surfaces": {
         "tools.pyqt6": "implemented_unverified",
@@ -1709,9 +1791,10 @@
         "ground-regional-wire-local-74a0",
         "ground-regional-ui-local-cbb9",
         "ground-regional-ui-helper-local-d217",
-        "ground-regional-io-local-8e1c"
+        "ground-regional-io-local-8e1c",
+        "windows-state-security-local-dde4"
       ],
-      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, repeated-bounce request-wire, UI-neutral repeated-bounce execution, flight-to-bounce composition, full flight-through-regional-ground composition, qualified study-adapter, matched ground-playback, post-ground target, and seeded base-material variation carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, 4356, 4357, 4359, 4360, 4361, 4363, 4364, 4365, 4366, 4367, 4368, 4370, 4371, 4372, 4373, 4374, 4375, and 4376. The #4369 continuation includes strict canonical request persistence, App-owned React editor state, matched File commands, execution job/result/status authorities, complete-only execution controls, the registered Waterloo/Penner flight profile and qualified production runner, authenticated loopback APIs and clients, visible imported-job workflows, strict Python-authoritative current-editor job preparation, and cooperative cancellation through qualified Waterloo/Penner integration and evidence serialization. Published PR #4376 adds a locked versioned SQLite/WAL source-loopback authority store, fail-closed hard-loss reconciliation with no physics replay, exact complete-result survival, and explicit React GET-only retained-status recovery. The #4378 child on PR #4388 adds descriptor-bound network-silent static inspection, a deterministic web asset manifest, immutable Python readiness, no public source maps, fail-closed exact-revision wheel admission, stale-staging cleanup, and credential-free exact-head hosted clean-install qualification without claiming execution. The #4379 child on PR #4390 adds a Python-only exact-bundle same-origin companion, immutable in-memory runtime overlay, closed route broker, strict Host/origin/fetch/body and route-specific response-domain policies, event-loop-safe authority transport, all-method security headers, partial-start cleanup, child-owned ephemeral authority binding, token/port argv removal, normal reaping, and pre-request fresh-token hard-loss replacement without replay. Published PR #4391 for #4380 adds exact-revision Chromium, Firefox, and WebKit harness contracts plus an independent protected-job definition for static inspection and the same-origin companion. Its local acceptance extension now covers prepare-confirm-run-poll-download-reload-import-recover, cancellation, stale prepared state, server and authority hard loss, port rotation, invalid assets and capability, corrupt browser state, no automatic submit, no browser physics, accessibility, clean successful-path runtime diagnostics, and native token/private-port absence scans, but the final publication head still requires fresh protected evidence and does not establish forced descendant-tree cleanup. Windows ACL/reparse privacy, frozen qualification, fresh protected release evidence, regional-overlay variation, variable-wind scenario wire, measured calibration, changing geometry, rendered visual QA, camera presets/tracking, compiled-runtime physics, and downstream parity remain absent.",
+      "evidence_gap": "The contract, flight-transfer, impact/bounce, static-plane skid/roll, regional-surface, regional-plan wire, regional-editor, regional request-I/O, regional execution, evidence-readback, complete-result, ledger-inspection, trajectory-export, repeated-bounce result-wire, repeated-bounce request-wire, UI-neutral repeated-bounce execution, flight-to-bounce composition, full flight-through-regional-ground composition, qualified study-adapter, matched ground-playback, post-ground target, and seeded base-material variation carriers remain open on PRs 4285, 4288, 4302, 4304, 4332, 4335, 4339, 4342, 4350, 4351, 4352, 4353, 4354, 4355, 4356, 4357, 4359, 4360, 4361, 4363, 4364, 4365, 4366, 4367, 4368, 4370, 4371, 4372, 4373, 4374, 4375, 4376, 4388, 4390, 4391, and 4392. The #4369 continuation includes strict canonical request persistence, App-owned React editor state, matched File commands, execution job/result/status authorities, complete-only execution controls, the registered Waterloo/Penner flight profile and qualified production runner, authenticated loopback APIs and clients, visible imported-job workflows, strict Python-authoritative current-editor job preparation, and cooperative cancellation through qualified Waterloo/Penner integration and evidence serialization. Published PR #4376 adds a locked versioned SQLite/WAL source-loopback authority store, fail-closed hard-loss reconciliation with no physics replay, exact complete-result survival, and explicit React GET-only retained-status recovery. The #4378 child on PR #4388 adds descriptor-bound network-silent static inspection, a deterministic web asset manifest, immutable Python readiness, no public source maps, fail-closed exact-revision wheel admission, stale-staging cleanup, and credential-free exact-head hosted clean-install qualification without claiming execution. The #4379 child on PR #4390 adds a Python-only exact-bundle same-origin companion, immutable in-memory runtime overlay, closed route broker, strict Host/origin/fetch/body and route-specific response-domain policies, event-loop-safe authority transport, all-method security headers, partial-start cleanup, child-owned ephemeral authority binding, token/port argv removal, normal reaping, and pre-request fresh-token hard-loss replacement without replay. Published PR #4391 for #4380 adds exact-revision Chromium, Firefox, and WebKit harness contracts plus an independent protected-job definition for static inspection and the same-origin companion. PR #4392 for #4385 adds fixed-local-NTFS state admission, exact protected owner/SYSTEM/Administrators DACLs, retained anti-substitution handles, reparse/hard-link/ADS rejection, bounded in-place migration and rollback, explicit retention, and clean installed-wheel restart recovery. The final handoff head still requires fresh protected evidence; the dedicated Windows 3.11/3.12 jobs cannot run until a restricted d-sorg-windows-security runner is registered. Frozen qualification, forced descendant-tree cleanup, fresh protected release evidence, regional-overlay variation, variable-wind scenario wire, measured calibration, changing geometry, rendered visual QA, camera presets/tracking, compiled-runtime physics, and downstream parity remain absent.",
       "limitations": [
         "The strict imported-job child mounts visible React Run/Cancel/progress/reconciliation and canonical job/result/CSV downloads over one App-owned authenticated authority workspace. PyQt6 mounts a dedicated Ground Study using bounded import, exact evidence, explicit confirmation, QThread cancellation, and atomic job/result/CSV writes; the source standalone injects the direct qualified Python runner. PR #4374 adds Python-authoritative current-editor preparation with strict bounded request/response binding, no enqueue or auto-run, exact Ground/Tee setup, current-hit staleness protection, and explicit UNVALIDATED calibration disclosure. PR #4375 makes qualified flight recomputation cooperatively cancellable; PR #4376 durably preserves source-loopback lifecycle evidence without automatic replay and removes obsolete retained rows only through static parameterized SQL. They do not enable static hosting, qualify frozen distributions or PyQt direct-worker restart recovery, prove compiled/downstream parity, or complete protected release.",
         "Historical prerequisite: matched Python/TypeScript presentation models first exposed exact compact job/model/provenance/input-digest identity while their controls remained disabled and unmounted. The newer imported-job child supersedes that UI state with visible, strict, authority-bound workflows without adding current-editor job construction.",

@@ -2,13 +2,15 @@
 
 ## 2026-08-12 #4385 Windows authority-state security
 
-Branch `codex/4385-windows-state-security` is being implemented from
-`de673971bfae83a9d673bba4859def5322635af9`, an ancestor of the current Tools
-PR #4391 head `0de3de8a41c018aec03dead8371a1f3ec6e1912f`. It must follow #4391 by
-normal parent propagation before publication; do not rebase, force-push,
-retarget, or rewrite the shared browser branch. Human review is approved, but
-fresh protected CI, dependency order, and ordinary non-admin merge behavior
-remain mandatory.
+Published draft PR #4392 carries branch `codex/4385-windows-state-security`
+against `codex/4380-playwright-production-browser`. Implementation commit
+`48197ad25` was reconciled by normal parent propagation with exact PR #4391
+head `0de3de8a41c018aec03dead8371a1f3ec6e1912f`; the resulting published
+pre-handoff head is `dde43534babf385530a95b2ff6ce3477f73ac9b3`. It must follow #4391 in
+ordinary dependency order; do not rebase, force-push, retarget, rewrite the
+shared browser branch, or bypass protection. Human review is approved, but
+fresh exact-head protected CI and ordinary non-admin merge behavior remain
+mandatory.
 
 The Windows authority store now requires a named path on fixed local NTFS with
 persistent ACL and named-stream support. A process-lifetime native lease opens
@@ -65,12 +67,16 @@ unrelated-CWD pollution. Wheel metadata and both installs prove
 `pywin32>=311` is a Windows base dependency; the existing
 `rate-of-closure-web` extra supplies the separate SciPy web runtime boundary.
 
-No campaign-manifest carrier is recorded in this implementation commit because
-#4385 has not yet been published as a PR and therefore has no exact remote head
-or protected evidence to record. Add that carrier and commit-bound evidence in
-the publication handoff commit. The system volume was nearly full during local
-qualification, so all disposable build/test environments were isolated on
-`D:`; this is local infrastructure context, not product evidence.
+The publication handoff records PR #4392 and reconciles the previously missing
+#4376/#4388/#4390/#4391 carriers in the campaign manifest. Independent review
+found no remaining P1/P2 code findings and classified this slice as code-ready,
+not ship-ready: no registered runner carries the restricted
+`d-sorg-windows-security` label, so both protected Windows matrix jobs remain
+an explicit external release blocker. The final documentation head requires
+fresh checks and must not inherit evidence from the pre-handoff SHA. The system
+volume was nearly full during local qualification, so all disposable build and
+test environments were isolated on `D:`; this is local infrastructure context,
+not product evidence.
 
 ## 2026-08-12 #4380 production-browser qualification
 
