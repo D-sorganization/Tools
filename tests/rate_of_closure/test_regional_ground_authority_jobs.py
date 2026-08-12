@@ -15,6 +15,7 @@ from rate_of_closure.application.regional_ground_execution_result import (
     build_regional_ground_execution_result,
 )
 from rate_of_closure.variation.regional_ground_variation_control import (
+    GroundRegionalVariationCancelled,
     GroundRegionalVariationFailed,
     GroundRegionalVariationFailureStage,
     GroundRegionalVariationHooks,
@@ -175,6 +176,36 @@ def test_wrong_job_result_is_rejected_before_publication() -> None:
         "code": "result_rejected",
         "stage": "result_validation",
     }
+    assert terminal.result_available is False
+
+
+@pytest.mark.parametrize("terminal_kind", ["cancelled", "failed"])
+def test_terminal_counts_must_match_the_submitted_job(terminal_kind: str) -> None:
+    def runner(
+        job: RegionalGroundExecutionJob,
+        hooks: GroundRegionalVariationHooks,
+    ) -> RegionalGroundExecutionResult:
+        del job, hooks
+        if terminal_kind == "cancelled":
+            raise GroundRegionalVariationCancelled(completed=1, total=5)
+        raise GroundRegionalVariationFailed(
+            GroundRegionalVariationFailureStage.EXECUTOR,
+            completed=1,
+            total=5,
+            cause=RuntimeError("wrong terminal authority"),
+        )
+
+    manager = AuthorityJobManager(runner=runner)
+    submitted = manager.submit(_job())
+    terminal = manager.wait_for_terminal(submitted.job_id, timeout_s=2.0)
+
+    assert terminal.status is AuthorityJobStatus.FAILED
+    assert terminal.failure is not None
+    assert terminal.failure.to_wire() == {
+        "code": "execution_failed",
+        "stage": "validation",
+    }
+    assert terminal.completed == 0
     assert terminal.result_available is False
 
 

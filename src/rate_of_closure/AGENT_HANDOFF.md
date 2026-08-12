@@ -1,5 +1,11 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 authority terminal-count binding
+
+The authority manager rejects cancellation/failure terminals whose total does
+not match the submitted job or whose completed count regresses observed
+progress. It retains the prior count and emits a typed validation failure only.
+
 ## 2026-08-11 #4369 result-digest typing stability
 
 The result digest uses an explicit string local at the imported-helper

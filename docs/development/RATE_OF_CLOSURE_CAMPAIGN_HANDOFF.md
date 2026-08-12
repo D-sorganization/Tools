@@ -1,5 +1,11 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 authority terminal-count binding
+
+- Injected cancellation/failure terminals must match the submitted job total
+  and cannot regress observed progress. Mismatches retain the prior count and
+  become typed validation failures with no result publication.
+
 ## 2026-08-11 #4369 result-digest typing stability
 
 - The result digest now crosses its helper boundary through an explicit string

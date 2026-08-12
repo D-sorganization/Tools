@@ -270,9 +270,15 @@ class AuthorityJobManager:
         try:
             result = runner(record.job, hooks)
         except GroundRegionalVariationCancelled as error:
+            if not self._terminal_counts_match(record, error.completed, error.total):
+                self._finish_failed(record, "execution_failed", "validation")
+                return
             self._finish_cancelled(record, error.completed)
             return
         except GroundRegionalVariationFailed as error:
+            if not self._terminal_counts_match(record, error.completed, error.total):
+                self._finish_failed(record, "execution_failed", "validation")
+                return
             self._finish_variation_failure(record, error)
             return
         except Exception:
@@ -314,6 +320,19 @@ class AuthorityJobManager:
         with self._condition:
             record.completed = completed
             self._finish(record, AuthorityJobStatus.CANCELLED)
+
+    def _terminal_counts_match(
+        self,
+        record: _JobRecord,
+        completed: int,
+        total: int,
+    ) -> bool:
+        """Require terminal progress to belong to this exact submitted job."""
+        with self._condition:
+            return bool(
+                total == record.job.execution_options.max_trials
+                and record.completed <= completed <= total
+            )
 
     def _finish_variation_failure(
         self, record: _JobRecord, error: GroundRegionalVariationFailed

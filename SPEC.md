@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.72                                    |
-| **Spec Version**        | 1.14.72                                    |
+| **Current Version**     | 1.14.73                                    |
+| **Spec Version**        | 1.14.73                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -3218,6 +3218,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.73 | fix(ground-study, #4369): fail closed when an injected authority runner reports cancellation or failure counts that do not match the exact submitted job total or regress observed progress; retain prior progress and expose only a typed validation failure. |
 | 2026-08-11 | 1.14.72 | feat(ground-study, #4369): add a bounded in-memory authority job manager and authenticated submit/status/cancel/result endpoints; enforce one active job, strict 1 MiB request ingestion, bounded terminal retention, typed non-secret failure/status evidence, cooperative cancellation forwarding, and complete validated result-only publication while retaining the production execution capability as unavailable. |
 | 2026-08-11 | 1.14.71 | fix(ground-study, #4369): stabilize the result-digest type boundary under both the full PR-delta and isolated skipped-import MyPy 1.13 root sets by binding the helper result to an explicit string local, without changing runtime bytes or canonical evidence. |
 | 2026-08-11 | 1.14.70 | feat(ground-study, #4369): add a widget-free PyQt6 QThread worker/controller port for dependency-injected qualified regional-ground job submission; forward immutable typed progress, cooperative cancellation, and typed failures across Qt signals; reject overlapping jobs, stale signals, mismatched terminal counts, and non-job-bound results; publish only a complete validated execution-result envelope while retaining physical authority, visible controls, browser submission, protected integration, and release as open. |

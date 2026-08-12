@@ -1,5 +1,12 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4369 authority terminal-count binding
+
+Authority cancellation and failure terminals must match the exact submitted
+job total and cannot regress already observed progress. Mismatches now retain
+the prior completed count and publish only a typed validation failure; no
+result or misleading cancellation state escapes.
+
 ## 2026-08-11 #4369 result-digest root-set stability
 
 The composed PyQt continuation exposed a skipped-import MyPy root-set
