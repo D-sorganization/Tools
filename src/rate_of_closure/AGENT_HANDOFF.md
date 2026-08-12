@@ -1,5 +1,33 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 authenticated browser-authority capability boundary
+
+The local `codex/4369-ground-authority-capability` child starts from exact
+published prerequisite PR #4370 head
+`0a485958bd6ed46dce18e65fd3e3cd1fa797502a`. It adds an isolated,
+loopback-only FastAPI/Uvicorn process, an ephemeral bearer token passed only
+through the child and Vite dev-server environments, a same-origin Vite proxy
+that injects that token server-side, and strict Python/TypeScript
+`rate-of-closure/regional-ground-authority-capability/v1` contracts. The
+launcher owns and reaps the authority process. The browser converts unreachable,
+unauthenticated, malformed, oversized, or unqualified evidence into explicit
+non-executable capability states without exposing exception text or silently
+falling back to TypeScript physics.
+
+This slice is deliberately fail-closed: the only authority endpoint is the
+authenticated capability query, and it advertises
+`regional_ground_execution=false`. It adds no job submission, result polling,
+cancellation endpoint, qualified execution profile, Python model invocation,
+or Run-button enablement. Issue #4369 remains open until those contracts,
+matched PyQt6/React controllers, process isolation limits, job-bound result
+evidence, and protected integration are complete.
+
+Focused evidence is green: seven Python authority/launcher tests, six React
+capability/proxy tests, strict TypeScript, zero-warning ESLint, Ruff/format,
+focused MyPy, and a live isolated-process readiness/authentication/shutdown
+probe. The shared `node_modules` directory used for local React verification
+is an untracked junction and is not publication content.
+
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
 `915c80f38` composes the job, batch-control, and result-import prerequisites,
