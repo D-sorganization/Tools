@@ -202,15 +202,27 @@ describe("Morris global-sensitivity report parity", () => {
     expect(() => parseMorrisReport(payload)).toThrow("fields do not match");
   });
 
-  it("accepts a numerically possible nonconstant metric tuple", () => {
+  it.each([[4, 1], [12, 1], [12, 1e6]])(
+    "accepts a possible metric tuple for n=%i at scale %d",
+    (validPairs, scale) => {
     const payload = cloneFixture();
     const effects = effectsOf(payload);
-    effects.mu = 0.5;
-    effects.mu_star = 1.5;
-    effects.sigma = Math.sqrt(27 / 11);
-    effects.mu_star_standard_error = Math.sqrt(3 / 11 / 12);
-    expect(parseMorrisReport(payload).estimates[0].effects.muStar).toBe(1.5);
-  });
+      effects.mu = 0.5 * scale;
+      effects.mu_star = 1.5 * scale;
+      effects.sigma = scale * Math.sqrt(validPairs * 2.25 / (validPairs - 1));
+      effects.mu_star_standard_error = scale * 0.5 / Math.sqrt(validPairs - 1);
+      firstEstimate(payload).sample_adequacy = validPairs >= 10 ? "adequate" : "limited";
+      firstEstimate(payload).denominator = {
+        total_pairs: 12,
+        valid_pairs: validPairs,
+        typed_no_impact_pairs: 0,
+        no_impact_unavailable_pairs: 0,
+        failed_pairs: 0,
+        nonfinite_pairs: 12 - validPairs,
+      };
+      expect(parseMorrisReport(payload).estimates[0].effects.muStar).toBe(1.5 * scale);
+    },
+  );
 
   it.each([
     ["variance identity", (effects: Record<string, unknown>) => { effects.sigma = 0.25; }],
@@ -234,10 +246,10 @@ describe("Morris global-sensitivity report parity", () => {
 
   it("uses a bounded floating tolerance for the metric identity", () => {
     const payload = cloneFixture();
+    effectsOf(payload).sigma = 1e-14;
+    expect(parseMorrisReport(payload).estimates[0].effects.sigma).toBe(1e-14);
     effectsOf(payload).sigma = 1e-8;
-    expect(parseMorrisReport(payload).estimates[0].effects.sigma).toBe(1e-8);
-    effectsOf(payload).sigma = 1e-6;
-    expect(() => parseMorrisReport(payload)).toThrow("metric identity");
+    expect(() => parseMorrisReport(payload)).toThrow("metric");
   });
 
   it.each([

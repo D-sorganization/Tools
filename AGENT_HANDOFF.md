@@ -3,6 +3,19 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Morris clamp-scale tolerance correction (#4142 R13.4)
+
+- The earlier squared-space unit floor was too permissive near
+  `mu_star = abs(mu)` and zero standard error. The consumer now mirrors the
+  producer clamp exactly as `delta = 64*epsilon*max(1, mu_star)` and propagates
+  `2*abs(metric)*delta + delta^2` through `sigma^2`, `n*SE^2`, both mean-square
+  terms, and the `n/(n-1)` correction.
+- A metric-level degeneracy invariant rejects `sigma` above `delta` when the
+  mean-magnitude difference and standard error are within `delta`. Mutation
+  tests reject `sigma=1e-8`, accept a serializer-scale `1e-14` perturbation,
+  and pin realizable identities for `n=4`, `n=12`, and scale `10^6`.
+- No producer, UI, export, execution, or UpstreamDrift behavior changed.
+
 ## 2026-08-12 Morris TypeScript review hardening (#4142 R13.4)
 
 - Review mutation tests now prove the four reported statistics are jointly

@@ -3,6 +3,16 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Morris clamp-scale tolerance correction (#4142 R13.4)
+
+The squared moment check no longer uses a unit-floor tolerance. It derives the
+same metric delta as the Python producer (`64*epsilon*max(1, mu_star)`),
+propagates it through every squared statistic and sample-count coefficient, and
+adds a metric-level near-degenerate check. Therefore `sigma=1e-8` cannot hide
+behind cancellation when `mu*=abs(mu)` and standard error is zero, while a
+`1e-14` serializer-scale perturbation remains admissible. Tests cover valid
+`n=4`/`n=12` identities and a `10^6` metric scale. Other scopes are unchanged.
+
 ## 2026-08-12 Morris TypeScript review hardening (#4142 R13.4)
 
 The strict consumer now rejects statistically impossible combinations of

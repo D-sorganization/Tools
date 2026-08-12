@@ -1,5 +1,16 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 Morris clamp-scale tolerance correction (#4142 R13.4)
+
+- The strict consumer now derives tolerance from the producer's exact
+  `64*epsilon*max(1, mu_star)` metric clamp and propagates its squared error
+  through every term and sample-count multiplier in the Morris identity.
+- A complementary clamp-scale degeneracy invariant rejects impossible
+  `sigma=1e-8` near `mu*=abs(mu)`/zero standard error, while accepting only
+  serializer-scale perturbations near `1e-14`.
+- Tests pin the relationship at `n=4`, `n=12`, unit scale, and `10^6` scale.
+  Python output, UI/export/execution, and UpstreamDrift scope are unchanged.
+
 ## 2026-08-12 Morris TypeScript review hardening (#4142 R13.4)
 
 - Finite estimates now satisfy the exact Morris sample-moment relationship

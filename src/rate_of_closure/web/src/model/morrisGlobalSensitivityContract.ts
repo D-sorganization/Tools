@@ -73,9 +73,9 @@ const DENOMINATOR_FIELDS = ["total_pairs", "valid_pairs", "typed_no_impact_pairs
 const C0_CONTROL_MAX = 0x1f;
 const C1_CONTROL_MIN = 0x7f;
 const C1_CONTROL_MAX = 0x9f;
-// Covers accumulated IEEE-754 rounding in the squared four-metric identity,
-// while remaining many orders below scientifically meaningful report values.
-const METRIC_IDENTITY_EPSILON_MULTIPLIER = 256;
+// Mirrors the Python producer's metric-level numerical clamp exactly. The
+// squared-identity bound below propagates this delta through every square.
+const PRODUCER_METRIC_CLAMP_EPSILON_MULTIPLIER = 64;
 
 const asRecord = (value: unknown, name: string): Record<string, unknown> => {
   if (value === null || typeof value !== "object" || Array.isArray(value)) {
@@ -242,10 +242,21 @@ const parseDenominator = (value: unknown): MorrisDenominator => {
   });
 };
 
-const metricsClose = (first: number, second: number, scaleValues: readonly number[]): boolean => {
-  const scale = Math.max(1, ...scaleValues.map((value) => Math.abs(value)));
-  const tolerance = METRIC_IDENTITY_EPSILON_MULTIPLIER * Number.EPSILON * scale;
-  return Math.abs(first - second) <= tolerance;
+const metricClampDelta = (muStar: number): number => (
+  PRODUCER_METRIC_CLAMP_EPSILON_MULTIPLIER * Number.EPSILON * Math.max(1, muStar)
+);
+
+const squaredMetricError = (metric: number, delta: number): number => (
+  2 * Math.abs(metric) * delta + delta ** 2
+);
+
+const metricIdentityTolerance = (effects: MorrisEffects, sampleCount: number, delta: number): number => {
+  const { mu, muStar, muStarStandardError, sigma } = effects;
+  if (mu === null || muStar === null || muStarStandardError === null || sigma === null) return 0;
+  const sampleCorrection = sampleCount / (sampleCount - 1);
+  return squaredMetricError(sigma, delta)
+    + sampleCount * squaredMetricError(muStarStandardError, delta)
+    + sampleCorrection * (squaredMetricError(muStar, delta) + squaredMetricError(mu, delta));
 };
 
 const validateFiniteMetrics = (estimate: MorrisEstimate): void => {
@@ -261,16 +272,22 @@ const validateFiniteMetrics = (estimate: MorrisEstimate): void => {
   if (estimate.availability === "constant-output") {
     throw new RangeError("constant-output Morris effects must be zero");
   }
+  const delta = metricClampDelta(muStar);
+  const meanMagnitudeDifference = Math.abs(muStar - Math.abs(mu));
+  if (meanMagnitudeDifference <= delta && muStarStandardError <= delta && sigma > delta) {
+    throw new RangeError("Morris metric clamp-scale degeneracy is inconsistent");
+  }
   if (sigma === 0 && (muStarStandardError !== 0
-      || !metricsClose(muStar, Math.abs(mu), [muStar, mu]))) {
+      || meanMagnitudeDifference > delta)) {
     throw new RangeError("zero-sigma Morris metric relationship failed");
   }
   const sampleCount = estimate.denominator.validPairs;
   const sigmaSquared = sigma ** 2;
   const scaledStandardErrorSquared = sampleCount * muStarStandardError ** 2;
   const meanDifference = sampleCount / (sampleCount - 1) * (muStar ** 2 - mu ** 2);
-  const scaleValues = [sigmaSquared, scaledStandardErrorSquared, meanDifference, muStar ** 2, mu ** 2];
-  if (!metricsClose(sigmaSquared - scaledStandardErrorSquared, meanDifference, scaleValues)) {
+  const residual = sigmaSquared - scaledStandardErrorSquared - meanDifference;
+  const tolerance = metricIdentityTolerance(estimate.effects, sampleCount, delta);
+  if (Math.abs(residual) > tolerance) {
     throw new RangeError("Morris metric identity is inconsistent with valid_pairs");
   }
 };
