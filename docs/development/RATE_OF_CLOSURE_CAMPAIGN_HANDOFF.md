@@ -54,6 +54,34 @@
   no push or GitHub write. Physical job invocation, full in-flight interruption,
   client controllers, persistence/recovery, compiled/downstream parity,
   protected evidence, and release remain open.
+## 2026-08-11 local #4369 React authority client contracts
+
+- Exact parent: published PR #4372 head
+  `990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`; local branch
+  `codex/4369-authority-react-client-v1`.
+- React reserves strict same-origin canonical submit, job-bound status,
+  POST-cancel, and complete-result retrieval contracts. Responses are
+  byte-bounded, duplicate-safe, exact-shape validated, and bound to the source
+  job before state/result publication; invalid jobs produce no network I/O.
+- Status matches the authority API exactly: queued, running,
+  cancel-requested, succeeded, failed, and cancelled states; completed/total
+  progress; result availability; and a nullable stable failure code/stage.
+  Auth, unknown-job, unavailable, malformed-server-error, and abort behavior
+  are explicit and tested without publishing synthetic status.
+- Capability polling is one request at a time. Cleanup clears scheduled polls,
+  aborts active fetches, and prevents an earlier effect from publishing stale
+  capability state after its query changes or the component unmounts.
+- All submit/status/cancel/result flags remain disabled while the Python-owned
+  capability is false. The separately composed API exposes these routes, but
+  its production runner remains unavailable, so this is not Run integration
+  and adds no physics, qualified job execution, visible controls, persistence,
+  downstream parity, protected evidence, or issue completion.
+- Complete local evidence passes 1,061 Python/PyQt and 841 React tests across
+  130 files, the 214-module production build, strict TypeScript, zero-warning
+  ESLint, manifest validation/tests, and module/minimum-test budgets. Existing
+  Hypothesis collection, polynomial empty-legend, Node local-storage, and Vite
+  chunk notices remain. No push or GitHub mutation is authorized for this
+  child.
 
 ## 2026-08-11 local #4369 job-bound result envelope
 

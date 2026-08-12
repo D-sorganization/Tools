@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.73                                    |
-| **Spec Version**        | 1.14.73                                    |
+| **Current Version**     | 1.14.74                                    |
+| **Spec Version**        | 1.14.74                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,30 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 React Regional-Ground Authority Client Contracts
+
+- React reserves same-origin REST contracts for canonical job submission,
+  identity-bound status, POST cancellation, and complete-result retrieval. Submit
+  sends the existing canonical execution-job v1 bytes; result retrieval reuses
+  the existing strict result parser and expected-job assertion. No TypeScript
+  physics or alternate result authority is introduced.
+- The exact bounded job-status v1 contract carries job and job-digest identity,
+  queued/running/cancel-requested/succeeded/failed/cancelled state, completed
+  and total trials, result availability, and a typed nullable failure record
+  with stable code and stage. It rejects
+  duplicate/extra/oversized/mistyped responses, identity or trial-count drift,
+  impossible progress, incomplete complete states, and failures without codes.
+- A React capability hook keeps no more than one request active, schedules the
+  next poll only after the current request settles, passes an `AbortSignal`,
+  aborts and clears timers on cleanup, and cannot publish a response from an
+  obsolete effect generation. Every execution-control flag remains disabled
+  while the exact Python capability advertises execution as unavailable.
+- This is a client-contract prerequisite only. The separately composed Python
+  API provides matching authenticated routes, but its production capability
+  remains false because no qualified execution runner is attached. Visible
+  controls, model invocation, persistence, and downstream parity remain
+  unimplemented and disabled.
 
 ### 2026-08-11 Regional-Ground Scalar Result Import
 
@@ -3218,6 +3242,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.74 | feat(ground-study, #4369): add strict future-facing React submit/status/POST-cancel/result REST client contracts plus one-at-a-time capability polling with AbortController cleanup, obsolete-response suppression, bounded job-bound status/result validation, and every execution-control flag disabled while the Python authority remains unavailable; matching routes exist while a qualified runner, physics invocation, and visible Run integration remain open. |
 | 2026-08-11 | 1.14.73 | fix(ground-study, #4369): fail closed when an injected authority runner reports cancellation or failure counts that do not match the exact submitted job total or regress observed progress; retain prior progress and expose only a typed validation failure. |
 | 2026-08-11 | 1.14.72 | feat(ground-study, #4369): add a bounded in-memory authority job manager and authenticated submit/status/cancel/result endpoints; enforce one active job, strict 1 MiB request ingestion, bounded terminal retention, typed non-secret failure/status evidence, cooperative cancellation forwarding, and complete validated result-only publication while retaining the production execution capability as unavailable. |
 | 2026-08-11 | 1.14.71 | fix(ground-study, #4369): stabilize the result-digest type boundary under both the full PR-delta and isolated skipped-import MyPy 1.13 root sets by binding the helper result to an explicit string local, without changing runtime bytes or canonical evidence. |

@@ -49,6 +49,28 @@ implementation commit is `SELF`; no push or GitHub write occurs. TDD RED
 captured the absent manager; 21 focused, 88 related contract, and all 1,076
 Rate of Closure Python/PyQt tests pass with Ruff/format, MyPy, Black,
 changed-file Bandit, manifest, placeholder, module-budget, and diff gates.
+## 2026-08-11 local #4369 React authority client contracts
+
+From exact published #4372 head
+`990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`, the React model layer now reserves
+strict same-origin submit/status/POST-cancel/result REST contracts around the
+existing canonical execution job and job-bound complete result. The bounded
+status parser validates exact job identity and digest, completed/total
+progress, the six authority lifecycle states, result availability, and the
+nullable stable failure code/stage before publication. Auth, unknown-job,
+unavailable, malformed-error, and abort outcomes publish no synthetic status.
+
+The capability hook is serial, abortable, timer-clean, and stale-response safe.
+Its four execution-control flags remain disabled under the only capability the
+current Python authority can produce: unavailable. A separately composed child
+provides matching Python routes, but no qualified production runner. There is
+no executor invocation, browser physics, visible control wiring, result
+storage, or release claim in this slice. Keep #4369/#4273/#4267 open.
+
+Complete local regression evidence passes 1,061 Python/PyQt and 841 React
+tests, production build, static checks, manifest governance, and module/test
+budgets. Existing Hypothesis collection, polynomial empty-legend, Node
+local-storage, and Vite chunk notices remain non-blocking and unchanged.
 
 ## 2026-08-11 local #4369 job-bound execution result envelope
 

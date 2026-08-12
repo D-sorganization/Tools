@@ -68,6 +68,35 @@ and all 1,076 Rate of Closure Python/PyQt tests. Ruff, Ruff format, focused
 MyPy, Black check, changed-file Bandit, manifest JSON/eight tests, placeholder,
 module-budget, and diff gates pass. Code, tests, SPEC, manifest, and all
 handoffs commit together as `SELF`; no push or GitHub write occurs.
+## 2026-08-11 local #4369 React authority client contracts
+
+The unpublished `codex/4369-authority-react-client-v1` child starts exactly
+from published PR #4372 head
+`990b2a156e4a939dbd1bd0c874895dc4f3fd53e7`. It adds strict same-origin React
+client contracts for future canonical submit, job-bound status, POST cancel,
+and complete-result retrieval routes. Status/result parsing is bounded,
+duplicate-safe, identity-bound to the exact validated job, and rejects
+impossible terminal/progress semantics. Invalid jobs fail before network I/O.
+Status matches the composed authority API's six exact lifecycle states,
+completed/total progress, result-availability rule, and nullable stable
+failure code/stage. Typed failures distinguish authentication, unknown jobs,
+execution unavailability, known API errors, malformed errors, and aborts.
+
+`useRegionalGroundAuthority` polls the capability endpoint serially, forwards
+an `AbortSignal`, clears its timer, aborts active work on cleanup, and suppresses
+obsolete effect responses. All submit/status/cancel/result control flags remain
+false because the current Python-owned v1 capability accepts only
+`regional_ground_execution=false`. A separately composed child supplies the
+matching Python routes, but no qualified production runner. This client child
+adds no Python endpoint, model execution, TypeScript physics, visible Run
+control, persistence, or downstream parity.
+
+Complete local gates pass 1,061 Python/PyQt tests and 841 React tests across
+130 files, the 214-module production build, strict TypeScript, zero-warning
+ESLint, release-manifest validation/tests, and module/minimum-test budgets.
+Pytest retains 14 Hypothesis collection notices and one unrelated polynomial
+empty-legend warning; Node retains its local-storage notices and Vite its
+existing main-chunk advisory. No GitHub write or push belongs to this child.
 
 ## 2026-08-11 local #4369 job-bound execution result envelope
 

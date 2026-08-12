@@ -35,7 +35,7 @@ export interface RegionalGroundAuthorityCapability {
 
 type Fetcher = (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
 
-const unavailable = (
+export const unavailableRegionalGroundAuthorityCapability = (
   reason_code: RegionalGroundAuthorityReason,
   detail: string,
 ): RegionalGroundAuthorityCapability => Object.freeze({
@@ -64,7 +64,7 @@ export const parseRegionalGroundAuthorityCapability = (
   if (item.regional_ground_execution !== false) {
     throw new RangeError("regional-ground execution is not qualified");
   }
-  return unavailable(
+  return unavailableRegionalGroundAuthorityCapability(
     oneOf(item.reason_code, PYTHON_REASONS, "authority reason"),
     text(item.detail, "authority detail"),
   );
@@ -84,6 +84,7 @@ const readCapabilityResponse = async (response: Response): Promise<unknown> => {
 /** Query the same-origin proxy and convert every failure into typed unavailability. */
 export const fetchRegionalGroundAuthorityCapability = async (
   fetcher: Fetcher = fetch,
+  signal?: AbortSignal,
 ): Promise<RegionalGroundAuthorityCapability> => {
   let response: Response;
   try {
@@ -91,9 +92,10 @@ export const fetchRegionalGroundAuthorityCapability = async (
       cache: "no-store",
       credentials: "omit",
       headers: { Accept: "application/json" },
+      signal,
     });
   } catch {
-    return unavailable(
+    return unavailableRegionalGroundAuthorityCapability(
       "authority_unreachable",
       "Local Python execution authority is unreachable.",
     );
@@ -101,7 +103,7 @@ export const fetchRegionalGroundAuthorityCapability = async (
   try {
     return parseRegionalGroundAuthorityCapability(await readCapabilityResponse(response));
   } catch {
-    return unavailable(
+    return unavailableRegionalGroundAuthorityCapability(
       "authority_invalid_response",
       "Local Python execution authority returned invalid capability evidence.",
     );
