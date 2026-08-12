@@ -37,6 +37,13 @@ only `test_regional_ground_variation_request_io.py` after the implementation
 commit. This is a test-layout-only follow-up with no material handoff, runtime,
 wire, UI, or physics change; the focused gates were rerun before publication.
 
+Hosted-current-head audit then found one MyPy-only mixin boundary: the file
+controller requires a `QWidget` parent while the reusable mixin cannot prove its
+eventual `QMainWindow` base statically. The follow-up now performs an explicit
+TYPE_CHECKING-only `QWidget` cast at that construction boundary. The runtime
+object and behavior are unchanged; the exact hosted MyPy profile and focused
+file-control tests are required before treating the repair as green.
+
 ## 2026-08-11 local #4273 React request-workspace ownership
 
 The unpublished `codex/4273-ground-variation-file-ui` branch starts from exact

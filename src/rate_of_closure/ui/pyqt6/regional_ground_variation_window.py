@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 from rate_of_closure.application.regional_surface_plan import (
     editor_draft_from_regional_surface_plan_request,
@@ -16,7 +16,7 @@ from rate_of_closure.variation.regional_ground_variation import (
 )
 
 if TYPE_CHECKING:
-    from PyQt6.QtWidgets import QStatusBar
+    from PyQt6.QtWidgets import QStatusBar, QWidget
 
     from rate_of_closure.ui.pyqt6.app_toolstrip import ApplicationToolstrip
     from rate_of_closure.ui.pyqt6.regional_surface_plan_tab import (
@@ -42,7 +42,7 @@ class RegionalGroundVariationWindowMixin:
         """Register extension variables and create the native file controller."""
         self._loaded_regional_ground_variation_request = None
         actions = RegionalGroundVariationRequestFileActions
-        self._regional_ground_variation_files = actions(self, self)
+        self._regional_ground_variation_files = actions(self, cast("QWidget", self))
 
     def _update_toolstrip_context(self, *_args: object) -> None:
         """Keep contextual File commands aligned with the active module."""
