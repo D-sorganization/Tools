@@ -6,9 +6,10 @@
 ## 2026-08-12 Morris UI stack alignment
 
 The combined React branch now has current PyQt PR #4400 head
-`398415ef6bd4109978c68ee2fd4fc1c5fe034e50` as an ancestor. The alignment adds
-no runtime or scientific change beyond the already-reviewed workflows; it
-records the PyQt test's protected-CI format repair before publication.
+`9e62c9595ccfbcf7eaa14724ad7e6d65d5277cee` as an ancestor. The alignment adds
+no runtime or scientific behavior change beyond the already-reviewed workflows;
+it inherits the PyQt test-format repair and internal immutable UI-constant
+extraction that restored its 500-line changed-file budget.
 
 ## 2026-08-12 authority-backed React Morris workflow (#4142 R13.7)
 

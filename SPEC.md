@@ -26,18 +26,18 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.16.33                                    |
-| **Spec Version**        | 1.16.33                                    |
+| **Current Version**     | 1.16.34                                    |
+| **Spec Version**        | 1.16.34                                    |
 | **Last Spec Update**    | 2026-08-12                                 |
 
 ## 2. Purpose & Mission
 
 ### 2026-08-12 Morris UI stack alignment
 
-Version 1.16.33 records the ordinary merge of current PyQt PR #4400 head
-`398415ef6bd4109978c68ee2fd4fc1c5fe034e50` into the React integration branch.
-The combined runtime and scientific tree is unchanged from its independent
-review; only the format-repair and handoff ancestry are added.
+Version 1.16.34 records the ordinary merge of current PyQt PR #4400 head
+`9e62c9595ccfbcf7eaa14724ad7e6d65d5277cee` into the React integration branch.
+The combined runtime and scientific behavior remains unchanged; the integration
+inherits the test-format and internal immutable-constant file-size repairs.
 
 ### 2026-08-12 PyQt Morris protected-CI format repair
 
@@ -2996,6 +2996,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-12 | 1.16.34 | merge(rate-of-closure, #4142 R13.7): align the combined React Morris integration on current PyQt PR #4400 head `9e62c9595ccfbcf7eaa14724ad7e6d65d5277cee` through an ordinary merge. Preserve both independently reviewed workflows while inheriting the PyQt test-format repair and internal immutable UI-constant extraction that restores its 500-line changed-file gate. Persistence/export, UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
 | 2026-08-12 | 1.16.33 | merge(rate-of-closure, #4142 R13.7): align the combined React Morris integration on current PyQt PR #4400 head `398415ef6bd4109978c68ee2fd4fc1c5fe034e50` through an ordinary merge. Preserve both independently reviewed implementations; the parent delta is limited to canonical Ruff formatting for one test and its handoff evidence. Persistence/export, UpstreamDrift consumption, protected CI/merge, and epic completion remain open. |
 | 2026-08-12 | 1.16.32 | merge(rate-of-closure, #4142 R13.7): integrate the independently reviewed React Morris workflow above the reviewed standalone PyQt child; preserve both exact implementations and reconcile all four handoff documents. React now owns same-origin authority injection, base-centered canonical factor suggestions, fail-closed canonical club/pinned scenario context, bounded single-operation create/status/cancel with immutable request/job identity, terminal cancellation polling, base/unmount abort, and factor/design stale-evidence invalidation. Retain Morris persistence/export, UpstreamDrift replacement, protected parent-first CI/merge, and epic completion as open gates. |
 | 2026-08-12 | 1.16.31 | feat(rate-of-closure, #4142 R13.7): add the standalone PyQt Morris Screening workflow as an explicit sibling of unchanged Monte Carlo dispersion; own the authenticated private authority for exactly the Qt event loop; inject the repr-hidden strict loopback client through launcher/window/workspace seams; provide capability gating, canonical editable factors, bounded design controls, sequential off-thread polling and cancellation, stale-generation suppression, target-local ranked mu-star with uncertainty and complete typed miss/failure denominators, accessible honest unavailable/error states, and fail-closed exact base-config compatibility without a local physics fallback. Retain React presentation, workspace persistence/export, UpstreamDrift consumption, protected CI, dependency-order release, and epic completion as open gates. |

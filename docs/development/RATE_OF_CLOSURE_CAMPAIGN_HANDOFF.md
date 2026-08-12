@@ -4,9 +4,10 @@
 
 - Branch `codex/4142-morris-react-integration` stacks exact reviewed React
   commit `eedfc24a163af736caa47c4f0c74912a7f165036` above current PyQt PR #4400
-  parent `398415ef6bd4109978c68ee2fd4fc1c5fe034e50`. Reviewed PyQt production is
+  parent `9e62c9595ccfbcf7eaa14724ad7e6d65d5277cee`. Reviewed PyQt production is
   still the blob-exact `89eb7a0a3432158aa4ff6a3e188f874120337c28` tree; the
-  parent follow-up changes only test formatting and handoff evidence.
+  parent follow-up repairs test formatting and extracts immutable UI constants
+  internally to satisfy the 500-line changed-file gate without behavior change.
 - App-owned dependency injection connects React Variation to the same-origin
   private authority. Static/unreachable deployments are honest unavailable
   states and never execute browser physics.
