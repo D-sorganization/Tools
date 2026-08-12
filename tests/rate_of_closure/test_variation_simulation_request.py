@@ -9,6 +9,9 @@ import pytest
 from rate_of_closure.club import get_club
 from rate_of_closure.model import ImpactScenario
 from rate_of_closure.simulation import BallSetup, BallSupportMode, SimulationConfig
+from rate_of_closure.variation.request_builder import (
+    apply_global_simulation_values,
+)
 from rate_of_closure.variation.simulation_adapter import (
     build_simulation_ensemble_request,
 )
@@ -31,6 +34,8 @@ def _key(category: str, name: str) -> str:
 
 
 _YAW = _key(CATEGORY_SWING, "yaw_deg")
+_SIDE_TILT = _key(CATEGORY_SWING, "side_tilt_deg")
+_FORWARD_TILT = _key(CATEGORY_SWING, "forward_tilt_deg")
 _DAMPING_SHOULDER = _key(CATEGORY_SWING, "damping_shoulder")
 _DAMPING_WRIST = _key(CATEGORY_SWING, "damping_wrist")
 _IMPACT_OFFSET = _key(CATEGORY_SWING, "impact_time_offset_s")
@@ -114,6 +119,42 @@ def test_builder_uses_default_pendulum_parameters_when_not_explicit() -> None:
 
     expected = PendulumParameters.golf_default()
     assert all(config.pendulum_parameters == expected for config in request.configs)
+
+
+def test_global_value_seam_applies_every_fixed_contact_morris_variable() -> None:
+    values = {
+        _YAW: 1.0,
+        _SIDE_TILT: -42.0,
+        _FORWARD_TILT: 3.0,
+        _DAMPING_SHOULDER: 0.41,
+        _DAMPING_WRIST: 0.24,
+        _TOE: 2.0,
+        _HIGH: -1.0,
+        _HEAD_MASS: 0.201,
+        _HEAD_MOI: 4.6e-4,
+        _TEE: 0.04,
+    }
+
+    config = apply_global_simulation_values(_base_config(), values)
+
+    assert dataclasses.asdict(config.plane) == {
+        "yaw_deg": 1.0,
+        "side_tilt_deg": -42.0,
+        "forward_tilt_deg": 3.0,
+    }
+    assert config.pendulum_parameters.d1 == pytest.approx(0.41)
+    assert config.pendulum_parameters.d2 == pytest.approx(0.24)
+    assert config.scenario.impact_offset_toe_mm == pytest.approx(2.0)
+    assert config.scenario.impact_offset_high_mm == pytest.approx(-1.0)
+    assert config.club.head_mass_kg == pytest.approx(0.201)
+    assert config.club.moi_about_shaft_kg_m2 == pytest.approx(4.6e-4)
+    assert config.ball_setup.tee_height_m == pytest.approx(0.04)
+
+
+@pytest.mark.parametrize("value", [True, "1.0", float("inf")])
+def test_global_value_seam_rejects_coercive_or_nonfinite_values(value: object) -> None:
+    with pytest.raises(ContractViolationError, match="real scalars|finite"):
+        apply_global_simulation_values(_base_config(), {_YAW: value})  # type: ignore[dict-item]
 
 
 def test_builder_rejects_non_global_or_unmapped_variables() -> None:

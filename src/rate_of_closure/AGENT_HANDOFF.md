@@ -3,6 +3,33 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Rate fixed-ball Morris execution (#4142 R13.3)
+
+The shared Morris executor now has a Rate-owned injected adapter over exact
+parent `b2fa365087f184d9ada16a6d35b08cbce64879c6`. It accepts only validated
+double-pendulum `FIXED_BALL_CONTACT` configs and ten exact global factors: plane
+yaw/side/forward tilt, shoulder/wrist damping, toe/high strike offsets, head
+mass/MOI, and tee height. Factors require unique variable keys, registry units,
+no time/point locus, and Tee support where applicable. The otherwise trace-
+capable `impact_time_offset_s` is rejected because fixed contact ignores it.
+
+`RATE_MORRIS_OUTPUTS` pins the current 17 `SimulationTrialOutcome` scalars with
+audited units, kinds, order, and coordinate-frame metadata. The former private
+ensemble capture/outcome logic moved to a bounded shared Rate module, so both
+paths use the exact numerical-failure tuple and availability contract: contact
+scalars for evaluated hit/miss, downstream values only for hit, and no values
+for failure. Config/sample mapping precedes capture, while programming defects
+outside the existing numerical tuple propagate.
+
+Real execution proves the short double-pendulum fixed-ball miss without
+fabricated downstream metrics; source-neutral projection is pinned with a real
+manual fixed hit. No real double-pendulum fixed hit was proven, so that remains
+an explicit physical acceptance gate. The detector is sampled reference-point
+to sphere only, without clubface mesh, swept inter-sample collision, or ball
+compression. Cancellation waits for any running simulation to return, and the
+Morris tensor intentionally loses per-sample failure diagnostics beyond status.
+UI/export/UpstreamDrift integration and protected publication remain open.
+
 ## 2026-08-12 UI-neutral Morris execution adapter (#4142 R13.3)
 
 The shared variation package now has an injected execution seam between the

@@ -3,6 +3,32 @@
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-08-12
 
+## 2026-08-12 Rate fixed-ball Morris evaluator (#4142 R13.3)
+
+- Branch `codex/4142-morris-rate-adapter` starts at exact shared-executor parent
+  `b2fa365087f184d9ada16a6d35b08cbce64879c6`; publication and protected
+  current-head gates remain open.
+- A Rate-owned injected evaluator maps ten exact global variables through the
+  public immutable `apply_global_simulation_values(config, values)` seam. It
+  requires a double-pendulum, fixed-ball base, registered units, unique global
+  variable keys, and Tee support for tee height. The fixed-contact no-op
+  `impact_time_offset_s` and all unsupported/localized factors fail closed.
+- The exact current 17-scalar output order is typed as three contact scalars,
+  five impact metrics, and nine shot outcomes with audited units/frame metadata.
+  Extracted trial capture/projection is shared by Morris and ensemble execution,
+  preserving the existing caught numerical-failure tuple and exact hit/miss/
+  failure availability while allowing programming `TypeError` defects to abort.
+- A genuine double-pendulum fixed-ball miss is validated end to end; a manual
+  fixed hit proves source-neutral projection only. A genuine double-pendulum
+  fixed hit remains an explicit physical validation gate, not an inferred claim.
+- Fixed contact remains sampled clubhead-reference-point to ball-sphere
+  proximity: it has no clubface mesh, swept collision between samples, or ball
+  compression. Cancellation is cooperative between complete simulations, so
+  one already-running simulation bounds latency. Morris observations retain
+  status and values but not per-sample failure type/message diagnostics.
+- UI, #4280 export, UpstreamDrift integration, protected CI, and #4142 epic
+  completion remain open.
+
 ## 2026-08-12 Bounded Morris execution adapter (#4142 R13.3)
 
 - Branch `codex/4142-morris-execution-adapter` starts from exact intended

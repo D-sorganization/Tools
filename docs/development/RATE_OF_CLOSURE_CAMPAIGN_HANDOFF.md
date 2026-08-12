@@ -1,5 +1,28 @@
 # Rate of Closure Campaign Handoff
 
+## 2026-08-12 Rate fixed-ball Morris evaluator (#4142 R13.3)
+
+- Exact shared-executor parent `b2fa365087f184d9ada16a6d35b08cbce64879c6`
+  gains a Rate-only injected adapter and one DRY global-config seam; shared Morris
+  execution, TypeScript, UI, and exports are unchanged.
+- Validation admits ten exact global, registered, unique simulation factors on
+  a double-pendulum fixed-ball base. Local loci, unsupported keys, unit drift,
+  ground tee-height variation, and ignored fixed-contact impact-time offset all
+  fail closed before execution.
+- The exact 17-scalar Rate result contract carries audited order, units, target
+  kinds, and selective app-frame metadata. Ensemble and Morris now share one
+  extracted capture/projection implementation and therefore identical caught
+  numerical failures and no-fabrication status/value semantics.
+- A genuine double-pendulum fixed miss is green. The only proven fixed hit here
+  is a source-neutral projection fixture from the manual source, so a genuine
+  double-pendulum fixed hit remains a final physical gate.
+- Contact is only sampled reference-point/sphere proximity; no mesh, swept
+  collision, or compression is modeled. Cooperative cancellation latency is
+  bounded by one running simulation. Failure type/message diagnostics remain in
+  ensemble outcomes but are reduced to numerical-failure status in Morris data.
+- UI, #4280 export, UpstreamDrift integration, protected CI, and epic completion
+  remain open.
+
 ## 2026-08-12 bounded Morris execution adapter (#4142 R13.3)
 
 - Exact parent `cc572243ae0df551237265d72b9e34bff0285f01` gains only the

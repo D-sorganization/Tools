@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import math
+from collections.abc import Mapping
 from dataclasses import replace
+from numbers import Real
 from types import MappingProxyType
 
 import numpy as np
@@ -54,6 +57,10 @@ TRACE_CAPABLE_VARIABLE_KEYS = frozenset(
 )
 
 
+def _is_real_scalar(value: object) -> bool:
+    return isinstance(value, Real) and not isinstance(value, (bool, np.bool_))
+
+
 def build_simulation_ensemble_request(
     plan: VariationPlan,
     base_config: SimulationConfig,
@@ -97,10 +104,38 @@ def _apply_row(
     """Apply one sampled row plus explicit plan bases to ``base``."""
     values = dict(plan.base_variables)
     values.update(zip((spec.variable_key for spec in plan.noise), row, strict=True))
-    config = _apply_plane_and_dynamics(base, values)
-    config = _apply_scenario(config, values)
-    config = _apply_club(config, values)
-    return _apply_tee(config, values)
+    return apply_global_simulation_values(base, values)
+
+
+def apply_global_simulation_values(
+    config: SimulationConfig, values: Mapping[str, float]
+) -> SimulationConfig:
+    """Apply exact supported global variation values to one Rate config.
+
+    Preconditions: keys are trace-capable and values are finite. Contextual tee
+    support is validated before returning a new immutable configuration.
+    """
+    require(isinstance(config, SimulationConfig), "config must be SimulationConfig")
+    require(isinstance(values, Mapping), "values must be a mapping")
+    require(
+        all(isinstance(key, str) for key in values),
+        "global simulation value keys must be strings",
+    )
+    unsupported = sorted(set(values) - TRACE_CAPABLE_VARIABLE_KEYS)
+    require(not unsupported, "variables are not trace-capable", unsupported)
+    require(
+        all(_is_real_scalar(value) for value in values.values()),
+        "global simulation values must be real scalars",
+    )
+    normalized = {key: float(value) for key, value in values.items()}
+    require(
+        all(math.isfinite(value) for value in normalized.values()),
+        "global simulation values must be finite",
+    )
+    updated = _apply_plane_and_dynamics(config, normalized)
+    updated = _apply_scenario(updated, normalized)
+    updated = _apply_club(updated, normalized)
+    return _apply_tee(updated, normalized)
 
 
 def _apply_plane_and_dynamics(
@@ -183,5 +218,6 @@ TRACE_CAPABILITIES = MappingProxyType(
 __all__ = [
     "TRACE_CAPABILITIES",
     "TRACE_CAPABLE_VARIABLE_KEYS",
+    "apply_global_simulation_values",
     "build_simulation_ensemble_request",
 ]
