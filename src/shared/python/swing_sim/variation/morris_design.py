@@ -7,21 +7,20 @@ from dataclasses import dataclass, field
 from typing import Any, cast
 
 import numpy as np
+import numpy.typing as npt
 
 from shared.python.contracts import require
 
+from ._morris_vocabulary import (
+    EVALUATED_NO_IMPACT_VALUE,
+    NUMERICAL_FAILURE_VALUE,
+    OUTCOMES,
+    OUTPUT_KINDS,
+    normalize_outcomes,
+)
 from .ensemble_types import immutable_array
 from .spec import NoiseSpec, variable_registry
 
-EVALUATED_HIT_VALUE = "evaluated_hit"
-EVALUATED_NO_IMPACT_VALUE = "evaluated_no_impact"
-NUMERICAL_FAILURE_VALUE = "numerical_failure"
-OUTCOMES = (
-    EVALUATED_HIT_VALUE,
-    EVALUATED_NO_IMPACT_VALUE,
-    NUMERICAL_FAILURE_VALUE,
-)
-OUTPUT_KINDS = ("scalar", "state-point", "impact", "shot-outcome")
 CONSTANT_TOLERANCE = 1e-14
 
 
@@ -280,9 +279,8 @@ def generate_morris_design(
 ) -> MorrisDesign:
     """Generate deterministic randomized Morris trajectories.
 
-    The classical even-level step ``levels / (2 * (levels - 1))`` is used.
-    Each trajectory changes every factor exactly once in randomized order and
-    remains inside the closed normalized domain.
+    Each trajectory uses the classical step, changes every factor once, and
+    remains inside the closed normalized domain in randomized order.
     """
     levels = _require_integer(levels, "levels", 4)
     require(levels % 2 == 0, "levels must be even and >= 4", levels)
@@ -293,9 +291,13 @@ def generate_morris_design(
     rng = np.random.default_rng(seed)
     step_units = levels // 2
     delta = step_units / (levels - 1)
-    points = np.empty((trajectories, factor_count + 1, factor_count), dtype=float)
-    changed = np.empty((trajectories, factor_count), dtype=int)
-    signed_steps = np.empty((trajectories, factor_count), dtype=float)
+    points: npt.NDArray[np.float64] = np.empty(
+        (trajectories, factor_count + 1, factor_count), dtype=float
+    )
+    changed: npt.NDArray[np.int_] = np.empty((trajectories, factor_count), dtype=int)
+    signed_steps: npt.NDArray[np.float64] = np.empty(
+        (trajectories, factor_count), dtype=float
+    )
     for trajectory in range(trajectories):
         signs = rng.choice(np.array((-1, 1), dtype=int), size=factor_count)
         low_starts = rng.integers(0, levels - step_units, size=factor_count)
@@ -338,7 +340,7 @@ class MorrisObservations:
             "Morris output names must be unique",
         )
         values = np.asarray(self.values, dtype=float)
-        outcomes = _normalize_outcomes(self.outcomes)
+        outcomes = normalize_outcomes(self.outcomes)
         expected_prefix = (self.design.trajectories, len(self.design.factors) + 1)
         require(
             values.shape == expected_prefix + (len(outputs),),
@@ -364,13 +366,6 @@ class MorrisObservations:
         object.__setattr__(self, "outputs", outputs)
         object.__setattr__(self, "values", immutable_array(values, float))
         object.__setattr__(self, "outcomes", immutable_array(outcomes, str))
-
-
-def _normalize_outcomes(value: Any) -> np.ndarray:
-    """Normalize canonical TrialEvaluationStatus values without reverse imports."""
-    raw = np.asarray(value, dtype=object)
-    normalized = [str(getattr(item, "value", item)) for item in raw.ravel()]
-    return np.asarray(normalized, dtype=str).reshape(raw.shape)
 
 
 def _validate_noimpact_availability(

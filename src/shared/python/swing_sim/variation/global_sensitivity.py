@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from typing import Any, cast
 
 import numpy as np
+import numpy.typing as npt
 
 from shared.python.contracts import require
 
@@ -171,7 +172,9 @@ def _effect_arrays(
     changed = observations.design.changed_factor_indices
     factor_count = len(observations.design.factors)
     effects = np.empty_like(raw)
-    failed_by_factor = np.empty((observations.design.trajectories, factor_count), bool)
+    failed_by_factor: npt.NDArray[np.bool_] = np.empty(
+        (observations.design.trajectories, factor_count), dtype=np.bool_
+    )
     no_impact_by_factor = np.empty_like(failed_by_factor)
     finite_by_factor = np.empty_like(raw, dtype=bool)
     effects[rows, changed, :] = raw

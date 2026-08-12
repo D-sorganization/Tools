@@ -5,6 +5,10 @@
 
 ## 2026-08-12 Shared Morris screening foundation (#4142 R13.2-R13.4)
 
+Hosted exact-head MyPy identified five missing NumPy inference annotations.
+The follow-up types the design arrays, per-factor failure mask, and normalized
+status array without changing Morris calculations, denominators, or wire data.
+
 The reusable owner `src/shared/python/swing_sim/variation/` now includes a
 deterministic, bounded Morris elementary-effects design and analysis contract.
 It carries source variable/spec/locus/unit and downstream target

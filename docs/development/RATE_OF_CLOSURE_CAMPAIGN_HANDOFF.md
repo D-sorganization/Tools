@@ -2,6 +2,9 @@
 
 ## 2026-08-12 bounded global-sensitivity analysis slice (#4142)
 
+- Exact-head CI repair adds explicit NumPy array/status annotations required by
+  the hosted changed-file MyPy command. This is a behavior-neutral typing
+  correction; the scientific contract and golden payload remain unchanged.
 - `codex/4142-global-sensitivity` normally merges exact intended parent
   `feat/4144-variation-export-continuation@7fb5d7f489db49742b7bc82ef009570ad2502456`;
   its future PR must retain that configured base and normal history.
