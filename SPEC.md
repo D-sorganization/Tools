@@ -26,8 +26,8 @@
 | **Owner**               | D-sorganization                            |
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
-| **Current Version**     | 1.14.63                                    |
-| **Spec Version**        | 1.14.63                                    |
+| **Current Version**     | 1.14.64                                    |
+| **Spec Version**        | 1.14.64                                    |
 | **Last Spec Update**    | 2026-08-11                                 |
 
 ## 2. Purpose & Mission
@@ -45,6 +45,27 @@ Comprehensive monorepo housing 45+ utility tools for data processing, scientific
   module-size budget for the complete stacked Rate feature branches.
 
 ## 3. Goals & Non-Goals
+
+### 2026-08-11 Regional-Ground Execution Qualification
+
+- The execution job now retains the unmodified source regional plan and a
+  separately hashed execution plan. A deterministic qualification authority
+  translates the base surface, every overlay, and the regional axis origin
+  into launch-origin coordinates using the exact ball radius and ball setup.
+- Qualification provenance hashes the complete source plan, transfer surface,
+  ball radius, and ball setup. Python and TypeScript independently recompute
+  that authority and reject teed-shot, overlay, axis, provenance, or digest
+  drift.
+- The job binds an exact callback-free `RegionalGroundExecutionOptions`, its
+  exact `SkidRollSettings`, and executor source revision. Sub-canonical numeric
+  tolerances use canonical decimal text so values such as `1e-12` survive the
+  shared 11-decimal JSON policy without loss.
+- Orchestration v1 exposes only `max_trials`, matching the existing serial,
+  fail-fast, complete-only runner. Unimplemented parallelism, wall-clock
+  timeout, and configurable fail-fast controls are rejected as unknown fields.
+- This contract slice does not invoke flight or ground physics, validate the
+  fixture as scientific output, bind a completed result to the job, provide a
+  worker/sidecar, or enable Run in either client.
 
 ### 2026-08-11 Regional-Ground Scalar Result Import
 
@@ -3218,6 +3239,7 @@ Active development with stable core, continuous tool expansion, and web API in p
 
 | Date | Version | Changes |
 | ---- | ------- | ------- |
+| 2026-08-11 | 1.14.64 | feat(ground-study, #4369): qualify regional execution jobs with exact callback-free physical `RegionalGroundExecutionOptions`/`SkidRollSettings` and executor revision; retain source plus launch-origin-qualified plans; translate base, every overlay, and axis origin with recomputable provenance and plan digests; preserve Python/TypeScript canonical parity including sub-11-decimal tolerances; and narrow v1 orchestration to truthful serial complete-only `max_trials` while retaining executor invocation, job-bound results, workers/clients, protected evidence, and release as open. |
 | 2026-08-11 | 1.14.63 | docs(ground-study, #4369): record that composed execution-job, complete-only batch-control, and browser result-import prerequisites remain non-executable until exact flight-profile/digest qualification, skid/roll settings and executor revision binding, launch-origin regional-surface translation, orchestration semantics, job-bound result evidence, cancellable Python authority, loopback host, and matched client controllers are implemented and tested. |
 | 2026-08-11 | 1.14.62 | feat(ground-study, #4369): add a strict bounded React import-only adapter for the two Python-owned regional `scalar-ensemble/v1` result variants; preserve exact schema, provenance/model/input digests, definitions, units, categories, stages, ordered identities, cohorts, and censored typed nulls; add a Python-produced four-cohort golden fixture asserted by both runtimes; reject duplicate/extra/version/nonfinite/unsafe/Boolean/surrogate/oversize/fatal-UTF-8 and forged identity/evidence inputs; retain browser physics, Run claims, result UI/persistence, overlays, solver/capability and wind integration, compiled/downstream parity, protected evidence, and release as open. |
 | 2026-08-11 | 1.14.61 | feat(ground-study, #4369 #4273 #4267): add a UI-neutral Python execution-control boundary for seeded regional-ground variation with immutable exact completed/total progress, cooperative cancellation immediately before and after every injected executor call, typed cancellation/executor/callback/publication terminal failures, and complete-only scalar-ensemble publication; preserve the existing executor signature, deterministic seed/trial identities, and byte-identical successful output while retaining job-to-executor binding, matched UI controllers, browser-capable qualified physics, result import/workspace integration, protected release, and issue/epic completion as open. |

@@ -1,5 +1,39 @@
 # AGENT_HANDOFF — Tools
 
+## 2026-08-11 #4369 execution qualification child
+
+Local branch `codex/4369-execution-qualification` starts exactly from
+published PR #4370 head `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`.
+It closes the contract-level physical/coordinate blockers without adding a
+backend or UI. The job binds exact callback-free regional execution options,
+all skid/roll settings, and the executor source revision. It retains the source
+regional plan and a separately hashed launch-origin plan whose base, every
+overlay, and axis origin are translated together. Qualification provenance
+rebinds the complete source plan, transfer surface, ball radius, and ball
+setup; matched Python/TypeScript validators recompute it.
+
+The v1 orchestration schema now contains only `max_trials`. The existing batch
+authority is serial and fail-fast and implements no wall-clock timeout, so
+`max_parallelism`, `timeout_s`, and configurable `fail_fast` are rejected as
+unknown fields. Decimal-text tolerance fields preserve exact physical settings
+below the shared 11-decimal numeric serialization threshold. The shared teed-
+driver fixture now has input/job/canonical SHA-256 values
+`a95d6bdbf30863d3d6babfcacb9f4edbd18d0ffc119b21c886b0b7977518f664`,
+`45504ca7113ad3b4445f0b8ccb5776e9b2f55a0d60da9ff9c73ecafea25bc488`, and
+`5a670fc7913ed5595ad168cdf37dd1404032494a632701edcf9e7710f9a414a8`.
+
+No GitHub write occurs in this child. Physics invocation, scientific flight-
+digest qualification, job-bound result publication, in-flight cancellation,
+workers/sidecar, matched Run controls, compiled/downstream parity, protected
+evidence, and release remain open; keep #4369/#4273/#4267 open.
+
+Exact local gates are green: 243 Python ground/flight/variation regressions;
+35 focused Python job/qualification tests; the complete React suite at 125
+files / 804 tests; focused MyPy; Ruff check/format; TypeScript; zero-warning
+ESLint; the 214-module production build; manifest validation plus eight
+manifest tests; module-size and diff checks. The inherited 500 kB Vite chunk
+advisory remains.
+
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
 The composed local head `915c80f38` is a contract/control/parser prerequisite,

@@ -1,5 +1,30 @@
 # AGENT_HANDOFF — rate_of_closure
 
+## 2026-08-11 #4369 physical and launch-origin job qualification
+
+The local `codex/4369-execution-qualification` child is based exactly on PR
+#4370 head `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`. The execution job now embeds
+an exact callback-free `RegionalGroundExecutionOptions`, all
+`SkidRollSettings`, and executor revision. It also preserves the source plan
+beside a separately digested execution plan. A pure qualifier translates the
+base, every overlay, and axis origin by the same tee/ball-center offset and
+rebinds provenance to the complete source-plan/launch/transfer authority.
+Python and React recompute rather than trust that evidence.
+
+The serial complete-only runner is represented truthfully: v1 retains only
+`max_trials` and rejects unsupported parallelism, timeout, and configurable
+fail-fast fields. Tiny physical tolerances are encoded as canonical decimal
+text and reconstructed into the exact physical settings. The shared teed-
+driver fixture is serialization evidence only; no physics or browser Run path
+is added. Job-to-executor invocation, result binding, worker/sidecar/client
+controllers, protected checks, downstream parity, and release remain open.
+
+Local evidence is green: 243 Python ground/flight/variation regressions, 35
+focused Python tests, 125 React files / 804 tests, focused MyPy, Ruff
+check/format, TypeScript, zero-warning ESLint, the 214-module production build,
+manifest validation plus eight manifest tests, and module-size/diff checks.
+The inherited 500 kB build advisory is unchanged.
+
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
 `915c80f38` composes the job, batch-control, and result-import prerequisites,

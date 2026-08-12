@@ -24,16 +24,13 @@ from shared.python.swing_sim.flight import (
 
 FLIGHT_FRAME = "flight_frame:x_forward,y_left,z_up"
 MAX_CAPTURE_SPEED_M_S = 100.0
-MAX_EXECUTION_PARALLELISM = 32
 MAX_EXECUTION_TIMEOUT_S = 3_600.0
 MAX_FLIGHT_SETTINGS = 64
 
 _BALL_SETUP_FIELDS = frozenset(
     {"support_mode", "tee_height_m", "height_reference", "ball_center_m"}
 )
-_EXECUTION_FIELDS = frozenset(
-    {"max_trials", "max_parallelism", "timeout_s", "fail_fast"}
-)
+_EXECUTION_FIELDS = frozenset({"max_trials"})
 _FLIGHT_FIELDS = frozenset(
     {"model_id", "model_version", "settings", "trajectory_sha256", "result_sha256"}
 )
@@ -276,44 +273,26 @@ class FlightExecutionInput:
 
 @dataclass(frozen=True)
 class GroundExecutionOptions:
-    """Bounded orchestration controls that do not define physics."""
+    """Truthful v1 batch bound for the existing serial fail-fast runner.
+
+    Parallelism, wall-clock timeout, and configurable failure policy are not
+    implemented by the current authority and therefore are not represented.
+    """
 
     max_trials: int
-    max_parallelism: int
-    timeout_s: float
-    fail_fast: bool
 
     def __post_init__(self) -> None:
         integer(self.max_trials, "max_trials", 1, 10_000)
-        integer(
-            self.max_parallelism,
-            "max_parallelism",
-            1,
-            MAX_EXECUTION_PARALLELISM,
-        )
-        positive(self.timeout_s, "timeout_s", MAX_EXECUTION_TIMEOUT_S)
-        if type(self.fail_fast) is not bool:
-            raise TypeError("fail_fast must be a boolean")
 
     def to_dict(self) -> dict[str, object]:
         """Return the exact execution-options mapping."""
-        return {
-            "max_trials": self.max_trials,
-            "max_parallelism": self.max_parallelism,
-            "timeout_s": self.timeout_s,
-            "fail_fast": self.fail_fast,
-        }
+        return {"max_trials": self.max_trials}
 
     @classmethod
     def from_dict(cls, value: object) -> GroundExecutionOptions:
         """Parse exact bounded orchestration controls."""
         data = exact_mapping(value, _EXECUTION_FIELDS, "execution_options")
-        return cls(
-            data["max_trials"],
-            data["max_parallelism"],
-            data["timeout_s"],
-            data["fail_fast"],
-        )
+        return cls(data["max_trials"])
 
 
 def _trajectory_payload(result: FlightResult) -> list[dict[str, object]]:

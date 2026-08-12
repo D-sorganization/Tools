@@ -1,5 +1,33 @@
 # Rate of Closure Ball-Flight Campaign Handoff
 
+## 2026-08-11 #4369 execution qualification continuation
+
+- Local branch `codex/4369-execution-qualification` starts at exact published
+  PR #4370 head `0a485958bd6ed46dce18e65fd3e3cd1fa797502a`; it is not pushed.
+- The job now binds exact callback-free physical regional options, every
+  skid/roll setting, and executor revision. Source and launch-origin-qualified
+  regional plans are both retained, and both the qualifier provenance and
+  qualified-plan digest are recomputed in Python and TypeScript.
+- Teed-driver coverage proves that base, every overlay, and the axis origin
+  receive one identical vertical translation. Adversarial source-surface,
+  overlay, settings, digest, and unsupported-policy inputs fail closed.
+- V1 removes false orchestration claims: only `max_trials` remains because the
+  current authority is serial and fail-fast with no wall-clock timeout.
+  Physical tolerances smaller than the shared numeric JSON precision are
+  losslessly bound as canonical decimal text.
+- The golden input/job/document digests are `a95d6bdbf30863d3d6babfcacb9f4edbd18d0ffc119b21c886b0b7977518f664`,
+  `45504ca7113ad3b4445f0b8ccb5776e9b2f55a0d60da9ff9c73ecafea25bc488`,
+  and `5a670fc7913ed5595ad168cdf37dd1404032494a632701edcf9e7710f9a414a8`.
+- This remains a contract qualification, not an execution release. Flight
+  recomputation, job/result binding, physical invocation, in-flight cancel,
+  worker/sidecar/controllers, compiled/downstream parity, protected evidence,
+  and issue completion remain open.
+- Local evidence is green: 243 Python ground/flight/variation regressions; 35
+  focused Python job/qualification tests; 125 React files / 804 tests; focused
+  MyPy; Ruff check/format; TypeScript; zero-warning ESLint; the 214-module
+  production build; manifest validation plus eight manifest tests; and module-
+  size/diff checks. The inherited 500 kB chunk advisory remains.
+
 ## 2026-08-11 #4369 qualification audit after prerequisite composition
 
 - Exact local composition head `915c80f38` contains the execution-job contract,

@@ -187,6 +187,18 @@ executor source revision; there is no resolver field. The executor requires
 fingerprint, constructs the resolver solely from the plan, and calls the
 existing `simulate_skid_roll` and `compose_ground_result` authorities.
 
+The Rate-owned execution-job boundary separately carries an exact
+callback-free `RegionalGroundExecutionOptions`, including every
+`SkidRollSettings` value and the executor source revision. It retains the
+source regional plan and a qualified execution plan. Qualification subtracts
+the launch ball-center height from the base surface, every overlay surface,
+and the regional axis origin; its provenance hashes the full source plan,
+transfer surface, ball radius, and tee/ground setup. Both runtimes recompute
+the qualification and qualified-plan digest. The current batch authority is
+serial and fail-fast and has no wall-clock timeout, so execution-job v1 exposes
+only `max_trials`; unsupported parallelism, timeout, and failure-policy fields
+fail closed.
+
 The additive `ground-regional-execution-result/v1` envelope carries canonical
 SHA-256 identities for both inputs, the ground request/surface and plan IDs,
 the exact embedded regional plan and unchanged plan source provenance,
