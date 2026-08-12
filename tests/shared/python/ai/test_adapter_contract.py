@@ -44,18 +44,18 @@ def _assert_canonical_usage(usage: dict[str, int], adapter_name: str) -> None:
         f"got {set(usage.keys())!r}"
     )
     for key in _CANONICAL_USAGE_KEYS:
-        assert isinstance(
-            usage[key], int
-        ), f"{adapter_name}: usage['{key}'] must be int, got {type(usage[key])!r}"
+        assert isinstance(usage[key], int), (
+            f"{adapter_name}: usage['{key}'] must be int, got {type(usage[key])!r}"
+        )
 
 
 def _assert_stream_terminates(chunks: Iterator[AgentChunk], adapter_name: str) -> None:
     """Consume *chunks* and assert at least one has ``is_final=True``."""
     chunk_list = list(chunks)
     finals = [c for c in chunk_list if c.is_final]
-    assert (
-        finals
-    ), f"{adapter_name}: stream_response did not emit any chunk with is_final=True"
+    assert finals, (
+        f"{adapter_name}: stream_response did not emit any chunk with is_final=True"
+    )
 
 
 # ---------------------------------------------------------------------------

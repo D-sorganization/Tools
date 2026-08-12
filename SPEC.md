@@ -2702,3 +2702,6 @@ The command injection check logic in `cli_tools.py` has been fortified. The inpu
 
 - Removed chained array maps and reduces in the parseVariableAssignments function within `src/web_applications/calculator/static/app.js`.
 - Improved execution speed by using standard single pass for loop and string `indexOf` / `substring` techniques.
+
+## 2024-05-28 (Bolt): Optimized CSV generation memory usage
+- Replaced `.map().join()` with single-pass string concatenation loops in the `downloadCsv` utility in `src/p1am_control_system/frontend/src/lib/chartSnapshot.ts` to reduce intermediate array allocations.

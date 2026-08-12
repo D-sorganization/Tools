@@ -164,12 +164,8 @@ class TestChainPlots:
         plotters = (
             lambda ax: plot_chain_tension(ax, chain_history, legend=False),
             lambda ax: plot_chain_curvature(ax, chain_history, legend=False),
-            lambda ax: plot_chain_energy(
-                ax, np.linspace(0, 1, _T), np.zeros(_T), legend=False
-            ),
-            lambda ax: plot_chain_tip_speed(
-                ax, np.linspace(0, 1, _T), np.zeros(_T), legend=False
-            ),
+            lambda ax: plot_chain_energy(ax, np.linspace(0, 1, _T), np.zeros(_T), legend=False),
+            lambda ax: plot_chain_tip_speed(ax, np.linspace(0, 1, _T), np.zeros(_T), legend=False),
         )
         for plotter in plotters:
             figure = Figure()
